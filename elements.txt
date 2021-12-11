@@ -1,1 +1,0 @@
-Fire,Water,Air,Electrical,Geological,Botanical,Chemical,Light,Dark,Explosive,Psychic,Spectral

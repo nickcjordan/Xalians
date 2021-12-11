@@ -9,7 +9,9 @@ module.exports = {
     selectRandomSublist: selectRandomSublist,
     selectRandom: selectRandom,
     randomBool: randomBool,
-    randomThreshold: randomThreshold
+    randomThreshold: randomThreshold,
+    getJson: getJson,
+    getObject: getObject
 };
 
 
@@ -26,6 +28,20 @@ function getProperties(fileName) {
         } else {
             return data.toString().split("\n");
         }
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+function getObject(fileName) {
+    return JSON.parse(getJson(fileName));
+}
+
+function getJson(fileName) {
+    fileName = "json/" + fileName + ".json";
+    try {
+        const data = fs.readFileSync(fileName, 'utf8');
+        return data.toString()
     } catch (err) {
         console.error(err);
     }

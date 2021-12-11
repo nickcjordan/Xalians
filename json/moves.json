@@ -1,0 +1,938 @@
+[
+  {
+    "word": "Abrasion",
+    "definitions": [
+      "erosion by friction"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Ambush",
+    "definitions": [
+      "the act of concealing yourself and lying in wait to attack by surprise"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Assault",
+    "definitions": [
+      "the crime of forcing a person to submit to sexual intercourse against his or her will",
+      "a threatened or attempted physical attack by someone who appears to be able to cause bodily harm if not stopped",
+      "close fighting during the culmination of a military attack",
+      "thoroughbred that won the triple crown in 1946"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Attack",
+    "definitions": [
+      "ideas or actions intended to deal with a problem or situation",
+      "(military) an offensive against an enemy (using weapons)",
+      "a decisive manner of beginning a musical tone or phrase",
+      "intense adverse criticism",
+      "the act of attacking",
+      "an offensive move in a sport or game",
+      "a sudden occurrence of an uncontrollable condition",
+      "strong criticism",
+      "the onset of a corrosive or destructive process (as by a chemical agent)"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Ball",
+    "definitions": [
+      "a lavish dance requiring formal attire",
+      "United States comedienne best known as the star of a popular television program (1911-1989)",
+      "a solid projectile that is shot by a musket",
+      "a ball game played with a bat and ball between two teams of nine players; teams take turns at bat trying to score runs",
+      "a compact mass",
+      "one of the two male reproductive glands that produce spermatozoa and secrete androgens",
+      "an object with a spherical shape",
+      "a more or less rounded anatomical body or mass",
+      "a pitch that is not in the strike zone",
+      "a spherical object used as a plaything",
+      "round object that is hit or thrown or kicked in games",
+      "the people assembled at a lavish formal dance"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Bam",
+    "definitions": [
+      "a sudden very loud noise",
+      "an ancient city in southeastern Iran; destroyed by an earthquake in 2003"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Bang",
+    "definitions": [
+      "a vigorous blow",
+      "a conspicuous success",
+      "a border of hair that is cut short and hangs across the forehead",
+      "a sudden very loud noise",
+      "the swift release of a store of affective force"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Barrage",
+    "definitions": [
+      "the heavy fire of artillery to saturate an area rather than hit a specific target"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Bash",
+    "definitions": [
+      "a vigorous blow"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Battery",
+    "definitions": [
+      "an assault in which the assailant makes physical contact"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Beam",
+    "definitions": [
+      "a column of light (as from a beacon)"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Belt",
+    "definitions": [
+      "a vigorous blow"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Biff",
+    "definitions": [
+      "(boxing) a blow with the fist"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Bite",
+    "definitions": [
+      "a wound resulting from biting by an animal or a person"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Blare",
+    "definitions": [
+      "a loud harsh or strident noise"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Blast",
+    "definitions": [
+      "a strong current of particles; an explosion"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Blow",
+    "definitions": [
+      "a powerful stroke with the fist or a weapon"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Bolt",
+    "definitions": [
+      "a discharge of a powerful energy source"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Bomb",
+    "definitions": [
+      "an explosive device fused to explode under specific conditions"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Bombardment",
+    "definitions": [
+      "the heavy fire of artillery to saturate an area rather than hit a specific target"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Bonanza",
+    "definitions": [
+      "an intense, overwhelming onslaught"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Boom",
+    "definitions": [
+      "a deep prolonged force accompanied by a loud noise"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Boot",
+    "definitions": [
+      "the act of delivering a blow with the foot"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Bop",
+    "definitions": [
+      "a playful, harmless smack"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Brawl",
+    "definitions": [
+      "a noisy, physical fight"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Bullet",
+    "definitions": [
+      "a high velocity projectile"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Burst",
+    "definitions": [
+      "the act of exploding"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Bushwhack",
+    "definitions": [
+      "guerrilla warfare styled attack"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Cannon",
+    "definitions": [
+      "a large artillery weapon firing a heavy object"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Charge",
+    "definitions": [
+      "an impetuous rush toward someone or something"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Chomp",
+    "definitions": [
+      "the act of gripping or chewing off with the teeth and jaws"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Chop",
+    "definitions": [
+      "aggressively slicing with a swift motion"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Clobber",
+    "definitions": [
+      "smashing with great physical force"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Crash",
+    "definitions": [
+      "the act of colliding with something"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Crunch",
+    "definitions": [
+      "the act of crushing"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Crush",
+    "definitions": [
+      "extreme force; smashing"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Curse",
+    "definitions": [
+      "an evil spell"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Cut",
+    "definitions": [
+      "the act of penetrating or opening open with a sharp edge"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Dash",
+    "definitions": [
+      "trampling with great haste"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Drill",
+    "definitions": [
+      "repeatedly cutting with a sharp point as to form a hole"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Enchantment",
+    "definitions": [
+      "a magical spell"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Eruption",
+    "definitions": [
+      "the sudden occurrence of a violent discharge of material"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Explosion",
+    "definitions": [
+      "a violent release of energy caused by a chemical or nuclear reaction"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Flail",
+    "definitions": [
+      "the act of aimlessly swinging"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Flare",
+    "definitions": [
+      "a sudden eruption of intense high-energy radiation"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Flash",
+    "definitions": [
+      "a sudden intense burst of radiant energy"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Fling",
+    "definitions": [
+      "tossing carelessly"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Flow",
+    "definitions": [
+      "an uninterrupted stream or discharge"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Flush",
+    "definitions": [
+      "the swift release of a store of affective force"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Foray",
+    "definitions": [
+      "a sudden short attack"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Force",
+    "definitions": [
+      "wave of physical energy or intensity"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Fracture",
+    "definitions": [
+      "breaking of hard tissue such as bone"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Fusillade",
+    "definitions": [
+      "rapid simultaneous discharge of firearms"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Gash",
+    "definitions": [
+      "a strong sweeping cut made with a sharp instrument"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Gust",
+    "definitions": [
+      "a strong current or flow"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Hack",
+    "definitions": [
+      "cut with rough or heavy blows"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Hammer",
+    "definitions": [
+      "the act of pounding (delivering repeated heavy blows)"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Heave",
+    "definitions": [
+      "throwing something with great effort"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Hex",
+    "definitions": [
+      "an evil spell"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Hook",
+    "definitions": [
+      "a short swinging punch delivered from the side"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Hurl",
+    "definitions": [
+      "a violent throw"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Impact",
+    "definitions": [
+      "the striking of one body against another"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Jab",
+    "definitions": [
+      "a quick short straight punch"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Jinx",
+    "definitions": [
+      "an evil spell"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Jolt",
+    "definitions": [
+      "a sudden jarring impact"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Jounce",
+    "definitions": [
+      "a sudden jarring impact"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Kick",
+    "definitions": [
+      "the act of delivering a blow with the foot"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Knock",
+    "definitions": [
+      "a vigorous blow"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Laser",
+    "definitions": [
+      "an intense monochromatic beam of coherent light"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Lash",
+    "definitions": [
+      "a quick blow delivered with a whip or whiplike object"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Lunge",
+    "definitions": [
+      "the act of striking forward suddenly"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Maraud",
+    "definitions": [
+      "a sudden short attack"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Onslaught",
+    "definitions": [
+      "the rapid and continuous delivery of attacks"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Outbreak",
+    "definitions": [
+      "a sudden violent spontaneous attack"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Outburst",
+    "definitions": [
+      "a sudden violent disturbance"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Pinch",
+    "definitions": [
+      "a small sharp bite or snip"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Poke",
+    "definitions": [
+      "a sharp hand gesture resembling a blow"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Pound",
+    "definitions": [
+      "the act of delivering repeated heavy blows"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Prick",
+    "definitions": [
+      "the act of puncturing with a small point"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Punch",
+    "definitions": [
+      "a blow with the fist"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Push",
+    "definitions": [
+      "the act of applying force"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Rage",
+    "definitions": [
+      "a fit fueled by intense anger"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Raid",
+    "definitions": [
+      "a sudden short attack"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Ram",
+    "definitions": [
+      "act of driving or forcing something by impact"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Ray",
+    "definitions": [
+      "a column of light; beam"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Round",
+    "definitions": [
+      "a regular route for a sentry or policeman",
+      "an interval during which a recurring sequence of events occurs",
+      "the activity of playing 18 holes of golf",
+      "any circular or rotating mechanism",
+      "the usual activities in your day",
+      "a partsong in which voices follow each other; one voice starts and others join in one after another until all are singing different parts of the song at the same time",
+      "a charge of ammunition for a single shot",
+      "(sports) a division during which one team is on the offensive",
+      "a serving to each of a group (usually alcoholic)",
+      "a crosspiece between the legs of a chair",
+      "a cut of beef between the rump and the lower leg",
+      "an outburst of applause",
+      "(often plural) a series of professional calls (usually in a set order)",
+      "the course along which communications spread"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Rush",
+    "definitions": [
+      "a sudden forceful flow"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Scrape",
+    "definitions": [
+      "scratching or carving into a surface"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Scratch",
+    "definitions": [
+      "scraping or carving into a surface"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Shock",
+    "definitions": [
+      "a sudden jarring impact"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Shot",
+    "definitions": [
+      "a blow hard enough to cause injury"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Shove",
+    "definitions": [
+      "the act of giving a push to someone or something"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Slam",
+    "definitions": [
+      "a forceful impact that makes a loud noise"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Slap",
+    "definitions": [
+      "the act of smacking something; a blow delivered with an open hand"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Slash",
+    "definitions": [
+      "a strong sweeping cut made with a sharp instrument"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Slice",
+    "definitions": [
+      "to cut into pieces with a sharp object"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Smack",
+    "definitions": [
+      "a blow delivered with an open hand"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Smash",
+    "definitions": [
+      "a vigorous blow"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Spell",
+    "definitions": [
+      "a magical force"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Squash",
+    "definitions": [
+      "to crush or squeeze with force"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Squeeze",
+    "definitions": [
+      "a tight or amorous embrace"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Stab",
+    "definitions": [
+      "a strong blow with a sharp pointed instrument"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Stomp",
+    "definitions": [
+      "a powerful stamping step"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Storm",
+    "definitions": [
+      "a violent commotion or disturbance"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Strike",
+    "definitions": [
+      "a gentle blow"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Swipe",
+    "definitions": [
+      "a sweeping stroke or blow"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Tackle",
+    "definitions": [
+      "stopping by throwing to the ground"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Tap",
+    "definitions": [
+      "a light touch or stroke"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Tear",
+    "definitions": [
+      "the act of forcibly as by pulling apart"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Thrash",
+    "definitions": [
+      "to hit hard and repeatedly"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Throw",
+    "definitions": [
+      "the act of propelling something with a rapid movement"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Thrust",
+    "definitions": [
+      "the act of applying force to propel something"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Thump",
+    "definitions": [
+      "a heavy blow with the hand"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Thwack",
+    "definitions": [
+      "a hard blow with a flat object"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Tornado",
+    "definitions": [
+      "a violently destructive swirl"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Toss",
+    "definitions": [
+      "the act of propelling something with force"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Trample",
+    "definitions": [
+      "tread on and crush"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Trance",
+    "definitions": [
+      "a psychological state induced by (or as if induced by) a magical incantation"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Trap",
+    "definitions": [
+      "a magical force preventing movement"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Undercut",
+    "definitions": [
+      "cut or wear away from beneath"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Vortex",
+    "definitions": [
+      "a powerful circular current"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Wallop",
+    "definitions": [
+      "a severe blow"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Wave",
+    "definitions": [
+      "a rapid disturbance of a substance's particles"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Whack",
+    "definitions": [
+      "the act of hitting vigorously"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Whang",
+    "definitions": [
+      "the act of hitting vigorously"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Whip",
+    "definitions": [
+      "a quick blow delivered with a whip or whiplike object"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Wrath",
+    "definitions": [
+      "a vengeful attacking force, often magical"
+    ],
+    "effectRating": 5
+  },
+  {
+    "word": "Zap",
+    "definitions": [
+      "a sudden bolt of energy"
+    ],
+    "effectRating": 5
+  }
+]

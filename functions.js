@@ -10,7 +10,9 @@ var statCountRemaining = constants.STAT_COUNT_PER_CHARACTER;
 var elements = tools.getProperties("elements.txt");
 var species = tools.getProperties("species.txt");
 var moveNames = tools.getProperties("move_names.txt");
-var moveQualifiers = tools.getProperties("qualifiers.txt");
+// var moveQualifiers = tools.getProperties("qualifiers.txt");
+var moveQualifiers = tools.getObject("qualifier_ratings");
+
 
 
 
@@ -52,13 +54,14 @@ function getMove(character) {
     } else {
         m.element = null;
     }
-    let qualifier = capitalize(tools.selectFromList(1, moveQualifiers));
+    let qualifier = tools.selectFromList(1, moveQualifiers)[0];
+    m.qualifier = qualifier;
     let baseMove = capitalize(tools.selectFromList(1, moveNames));
     m.baseMove = baseMove;
     if (hasElement) {
-        m.name = qualifier + " " + m.element + " " + baseMove;
+        m.name = qualifier.word + " " + m.element + " " + baseMove;
     } else {
-        m.name = qualifier + " " + baseMove;
+        m.name = qualifier.word + " " + baseMove;
     }
     return m;
 }
