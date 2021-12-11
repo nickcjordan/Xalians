@@ -1,14 +1,182 @@
 [
-  "Air",
-  "Botanical",
-  "Chemical",
-  "Dark",
-  "Electrical",
-  "Explosive",
-  "Fire",
-  "Geological",
-  "Light",
-  "Psychic",
-  "Spectral",
-  "Water"
+  {
+    "name": "Electrical",
+    "synonyms": [
+      "electric",
+      "plasma",
+      "lightening",
+      "thunder",
+      "static",
+      "electron",
+      "voltage",
+      "electro",
+      "power",
+      "spark"
+    ]
+  },
+  {
+    "name": "Air",
+    "synonyms": [
+      "atmospheric",
+      "wind",
+      "aerial",
+      "sky",
+      "storm",
+      "cloud",
+      "cumulus",
+      "haze",
+      "fog",
+      "nimbus"
+    ]
+  },
+  {
+    "name": "Light",
+    "synonyms": [
+      "radiation",
+      "ultraviolet",
+      "infrared",
+      "photon",
+      "rainbow",
+      "sunlight",
+      "glow",
+      "lightwave",
+      "gamma",
+      "blinding"
+    ]
+  },
+  {
+    "name": "Botanical",
+    "synonyms": [
+      "phyto",
+      "growth",
+      "vine",
+      "spore",
+      "bloom",
+      "thorn",
+      "synthesis",
+      "hydroponic",
+      "fungis",
+      "blossom"
+    ]
+  },
+  {
+    "name": "Geological",
+    "synonyms": [
+      "rock",
+      "magma",
+      "stone",
+      "lava",
+      "boulder",
+      "crystal",
+      "igneous",
+      "mineral",
+      "geode",
+      "quartz"
+    ]
+  },
+  {
+    "name": "Chemical",
+    "synonyms": [
+      "acid",
+      "molecular",
+      "noxious",
+      "poison",
+      "toxin",
+      "venom",
+      "corrosive",
+      "microbe",
+      "infectious",
+      "neurotoxin"
+    ]
+  },
+  {
+    "name": "Dark",
+    "synonyms": [
+      "midnight",
+      "twilight",
+      "shadow",
+      "omen",
+      "shadey",
+      "sacrificial",
+      "voodoo",
+      "horror",
+      "terror",
+      "nightmare"
+    ]
+  },
+  {
+    "name": "Explosive",
+    "synonyms": [
+      "nitro",
+      "quake",
+      "rocket",
+      "supersonic",
+      "subsonic",
+      "combustion",
+      "supernova",
+      "nuclear",
+      "atomic",
+      "energy"
+    ]
+  },
+  {
+    "name": "Psychic",
+    "synonyms": [
+      "illusion",
+      "telepathic",
+      "clairvoyant",
+      "hypnosis",
+      "enchanting",
+      "extrasensory",
+      "confusion",
+      "bewitching",
+      "amnesia",
+      "charm"
+    ] 
+  },
+  {
+    "name": "Spectral",
+    "synonyms": [
+      "ghost",
+      "spirit",
+      "phantom",
+      "supernatural",
+      "banshee",
+      "wraith",
+      "undead",
+      "haunted",
+      "genie",
+      "aura"
+    ]
+  },
+  {
+    "name": "Fire",
+    "synonyms": [
+      "flame",
+      "ember",
+      "burning",
+      "fire",
+      "blazen",
+      "inferno",
+      "incinerating",
+      "scorching",
+      "smoldering",
+      "sweltering"
+    ]
+  },
+  {
+    "name": "Water",
+    "synonyms": [
+      "dousing",
+      "rain",
+      "hydro",
+      "aqua",
+      "aquatic",
+      "ice",
+      "hydraulic",
+      "water",
+      "splashing",
+      "spraying"
+    ]
+  }
 ]

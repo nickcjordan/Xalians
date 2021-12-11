@@ -11,7 +11,8 @@ module.exports = {
     randomBool: randomBool,
     randomThreshold: randomThreshold,
     getJson: getJson,
-    getObject: getObject
+    getObject: getObject,
+    capitalize: capitalize
 };
 
 
@@ -97,4 +98,9 @@ function randomThreshold() {
     } else if (num == 2) {
         return constants.HIGH_THRESHOLD;
     }
+}
+
+function capitalize(str) {
+    const lower = (str + '').toLowerCase();
+    return (str + '').charAt(0).toUpperCase() + lower.slice(1);
 }

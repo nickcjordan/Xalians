@@ -16,9 +16,13 @@ const axios = require("axios").default;
 
 // addDefinitions("ordered");
 
-// fixJson("move_data");
+// fixJson("moves");
 
-filterJson("fixedmove_data");
+// filterJson("fixedmove_data");
+
+// buildElementJson("elements");
+
+getSynonymsAsync("built_elements");
 
 function capitalize(str) {
     const lower = (str + '').toLowerCase();
@@ -31,7 +35,7 @@ function fix(fileName) {
     list.forEach(element => {
         if (!newList.includes(capitalize(element))) {
             newList.push(capitalize(element))
-        } 
+        }
     });
     newList.sort();
     var newTextList = "";
@@ -52,32 +56,32 @@ function newSynonyms(fileName) {
 }
 
 function synonyms(word) {
-    var logger = fs.createWriteStream('synonyms.txt', {
-      flags: 'a' // 'a' means appending (old data will be preserved)
+    var logger = fs.createWriteStream('txt/synonyms.txt', {
+        flags: 'a' // 'a' means appending (old data will be preserved)
     });
     var options = {
         method: 'GET',
         url: `https://wordsapiv1.p.rapidapi.com/words/${word}/synonyms`,
         headers: {
-          'x-rapidapi-host': 'wordsapiv1.p.rapidapi.com',
-          'x-rapidapi-key': 'e2491ca8b6msh2ac61811d62c960p17f530jsn81de2cbaa68d'
+            'x-rapidapi-host': 'wordsapiv1.p.rapidapi.com',
+            'x-rapidapi-key': 'e2491ca8b6msh2ac61811d62c960p17f530jsn81de2cbaa68d'
         }
-      };
-      
-      axios.request(options).then(function (response) {
+    };
+
+    axios.request(options).then(function (response) {
         response.data.synonyms.forEach(x => {
             logger.write(x + '\n');
         });
-      }).catch(function (error) {
-          console.error(error);
-      });
+    }).catch(function (error) {
+        console.error(error);
+    });
 }
 
 function filter(fileName) {
     var list = tools.getProperties(fileName + ".txt");
-    var logger = fs.createWriteStream('ordered.txt', {
+    var logger = fs.createWriteStream('txt/filtered_' + fileName + '.txt', {
         flags: 'a' // 'a' means appending (old data will be preserved)
-      });
+    });
     var newList = [];
     list.forEach(x => {
         if (!x.includes("-") && !x.includes(" ") && !newList.includes(capitalize(x))) {
@@ -118,6 +122,43 @@ function combineLists(fileName, destination) {
     });
 }
 
+function getSynonymsAsync(fileName) {
+    const data = fs.readFileSync("json/" + fileName + ".json", 'utf8');
+    var nodes = JSON.parse(data.toString());
+    var output = [];
+    nodes.forEach(node => {
+
+        var options = {
+            method: 'GET',
+            url: `https://wordsapiv1.p.rapidapi.com/words/${node.name}/synonyms`,
+            headers: {
+                'x-rapidapi-host': 'wordsapiv1.p.rapidapi.com',
+                'x-rapidapi-key': 'e2491ca8b6msh2ac61811d62c960p17f530jsn81de2cbaa68d'
+            }
+        };
+        axios.request(options).then(function (response) {
+            let list = response.data.synonyms;
+            var newNode = {
+                "name": node.name,
+                "synonyms": list
+            }
+            output.push(newNode);
+        }).catch(function (error) {
+            console.error(error);
+        });
+    });
+
+    setTimeout(function() {
+        console.log('done waiting');
+
+        let data = JSON.stringify(output, null, 2);
+        // console.log(`data:\n${data}`);
+        fs.writeFileSync('json/populated_' + fileName + '.json', data);
+        // let allData = JSON.stringify(allOutput, null, 2);
+        // console.log(`all data:\n${allData}`);
+        // fs.writeFileSync('json/' + 'all_move_data' + '.json', allData);
+    }, 15000);
+}
 
 // function addDefinitions(fileName) {
 //     var allOutput = [];
@@ -160,7 +201,7 @@ function combineLists(fileName, destination) {
 
 //     setTimeout(function() {
 //         console.log('done waiting');
-        
+
 //         let data = JSON.stringify(output, null, 2);
 //         // console.log(`data:\n${data}`);
 //         fs.writeFileSync('json/' + 'move_data' + '.json', data);
@@ -170,7 +211,7 @@ function combineLists(fileName, destination) {
 //     }, 120000);
 // }
 
-function filterJson(fileName) {
+function alterJson(fileName) {
     const data = fs.readFileSync("json/" + fileName + ".json", 'utf8');
     var nodes = JSON.parse(data.toString());
 
@@ -188,38 +229,36 @@ function filterJson(fileName) {
         }
     });
 
-    fs.writeFileSync("json/filtered_" + fileName + ".json", JSON.stringify(newNodes, null, 2));
+    fs.writeFileSync("json/altered_" + fileName + ".json", JSON.stringify(newNodes, null, 2));
 }
 
 function fixJson(fileName) {
     const data = fs.readFileSync("json/" + fileName + ".json", 'utf8');
     var nodes = JSON.parse(data.toString());
 
-    nodes.sort(function (x, y) {
-        if (x.word < y.word) {
-            return -1;
-        }
-        if (x.word > y.word) {
-            return 1;
-        }
-        return 0;
-    });
+    // nodes.sort(function (x, y) {
+    //     if (x.word < y.word) {
+    //         return -1;
+    //     }
+    //     if (x.word > y.word) {
+    //         return 1;
+    //     }
+    //     return 0;
+    // });
 
     var newNodes = [];
 
     nodes.forEach(x => {
-        if (x.definitions.length > 0) {
-            let newNode = {
-                "word": x.word,
-                "definitions": x.definitions,
-                "effectRating": 5,
-                "keep": 1
-            }
-            newNodes.push(newNode);
+        let def = x.definitions[0];
+        let newNode = {
+            "name": x.word,
+            "definition": def,
+            "effectRating": x.effectRating
         }
+        newNodes.push(newNode);
     });
 
-    fs.writeFileSync("json/fixed" + fileName + ".json", JSON.stringify(newNodes, null, 2));
+    fs.writeFileSync("json/redone_" + fileName + ".json", JSON.stringify(newNodes, null, 2));
 }
 
 function sortJson(fileName) {
@@ -249,4 +288,21 @@ function sortJson(fileName) {
     });
 
     fs.writeFileSync("json/new" + fileName + ".json", JSON.stringify(newNodes, null, 2));
+}
+
+function buildElementJson(fileName) {
+    var elementNames = tools.getProperties(fileName + ".txt");
+
+
+    var newNodes = [];
+
+    elementNames.forEach(x => {
+        let newNode = {
+            "name": x,
+            "synonyms": []
+        }
+        newNodes.push(newNode);
+    });
+
+    fs.writeFileSync("json/built_" + fileName + ".json", JSON.stringify(newNodes, null, 2));
 }

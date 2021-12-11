@@ -3,15 +3,14 @@ var Move = require('./move.js');
 
 const tools = require('./tools.js');
 const constants = require('./constants.js');
+const moveBuilder = require('./moveBuilder.js');
 
 var maxStatPointsRemaining = constants.STAT_COUNT_PER_CHARACTER * constants.STAT_POINT_MAX;
 var statCountRemaining = constants.STAT_COUNT_PER_CHARACTER;
 
-var elements = tools.getProperties("elements.txt");
+// var elements = tools.getProperties("elements.txt");
+var elements = tools.getObject("elements");
 var species = tools.getProperties("species.txt");
-var moveNames = tools.getProperties("move_names.txt");
-// var moveQualifiers = tools.getProperties("qualifiers.txt");
-var moveQualifiers = tools.getObject("qualifier_ratings");
 
 
 
@@ -22,7 +21,7 @@ function main() {
     let x = new Xalian();
 
     x.species = tools.selectRandom(species);
-    x.elements = tools.selectFromList(constants.MAX_ELEMENT_COUNT_PER_CHARACTER, elements);
+    x.elements = selectElements(x);
     x.standardAttackPoints = getStatPointVariation(tools.randomThreshold());
     x.standardAttackPoints = getStatPointVariation(tools.randomThreshold());
     x.specialAttackPoints = getStatPointVariation(tools.randomThreshold());
@@ -34,10 +33,10 @@ function main() {
     x.staminaPoints = getStatPointVariation(tools.randomThreshold());
     x.recoveryPoints = getStatPointVariation(tools.randomThreshold());
 
-    x.moves.push(getMove(x));
-    x.moves.push(getMove(x));
-    x.moves.push(getMove(x));
-    x.moves.push(getMove(x));
+    x.moves.push(moveBuilder.getMove(x));
+    x.moves.push(moveBuilder.getMove(x));
+    x.moves.push(moveBuilder.getMove(x));
+    x.moves.push(moveBuilder.getMove(x));
 
     console.log(`\n${JSON.stringify(x, null, 2)}`);
 
@@ -45,33 +44,11 @@ function main() {
     // fs.writeFileSync('student-2.json', data);
 }
 
-function getMove(character) {
-    let m = new Move();
-    let hasElement = tools.randomBool();
-    if (hasElement) {
-        let element = capitalize(tools.selectFromList(1, character.elements));
-        m.element = element;
-    } else {
-        m.element = null;
-    }
-    let qualifier = tools.selectFromList(1, moveQualifiers)[0];
-    m.qualifier = qualifier;
-    let baseMove = capitalize(tools.selectFromList(1, moveNames));
-    m.baseMove = baseMove;
-    if (hasElement) {
-        m.name = qualifier.word + " " + m.element + " " + baseMove;
-    } else {
-        m.name = qualifier.word + " " + baseMove;
-    }
-    return m;
+
+
+function selectElements(xalian) {
+    return tools.selectFromList(constants.MAX_ELEMENT_COUNT_PER_CHARACTER, elements);
 }
-
-function capitalize(str) {
-    const lower = (str + '').toLowerCase();
-    return (str + '').charAt(0).toUpperCase() + lower.slice(1);
-}
-
-
 
 function getStatPointVariation(statRangeFactor) {
     // var avg = getRemainingAvgPerStat();

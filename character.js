@@ -1,7 +1,7 @@
 module.exports = class Xalian {
 
     constructor() {
-        this.species = "";
+        this.species = null;
         this.origin = "";
         this.elements = [];
         this.standardAttackPoints = 0;
