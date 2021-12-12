@@ -4,13 +4,13 @@
     "origin": null,
     "description": null,
     "statRatings": {
-      "healthRating": "",
       "standardAttackRating": "",
       "specialAttackRating": "",
-      "standardDefenseRating": "high",
-      "specialDefenseRating": "high",
-      "speedRating": "low",
-      "evasionRating": "low",
+      "standardDefenseRating": "",
+      "specialDefenseRating": "",
+      "speedRating": "",
+      "evasionRating": "",
+      "healthRating": "",
       "staminaRating": "",
       "recoveryRating": ""
     }
@@ -20,13 +20,13 @@
     "origin": null,
     "description": null,
     "statRatings": {
-      "healthRating": "",
-      "standardAttackRating": "high",
-      "specialAttackRating": "medium",
+      "standardAttackRating": "",
+      "specialAttackRating": "",
       "standardDefenseRating": "",
       "specialDefenseRating": "",
-      "speedRating": "high",
-      "evasionRating": "medium",
+      "speedRating": "",
+      "evasionRating": "",
+      "healthRating": "",
       "staminaRating": "",
       "recoveryRating": ""
     }
@@ -36,13 +36,13 @@
     "origin": null,
     "description": null,
     "statRatings": {
-      "healthRating": "",
-      "standardAttackRating": "high",
-      "specialAttackRating": "medium",
+      "standardAttackRating": "",
+      "specialAttackRating": "",
       "standardDefenseRating": "",
       "specialDefenseRating": "",
-      "speedRating": "medium",
-      "evasionRating": "high",
+      "speedRating": "",
+      "evasionRating": "",
+      "healthRating": "",
       "staminaRating": "",
       "recoveryRating": ""
     }
@@ -52,15 +52,15 @@
     "origin": null,
     "description": null,
     "statRatings": {
-      "healthRating": "",
       "standardAttackRating": "",
       "specialAttackRating": "",
-      "standardDefenseRating": "medium",
-      "specialDefenseRating": "medium",
-      "speedRating": "low",
+      "standardDefenseRating": "",
+      "specialDefenseRating": "",
+      "speedRating": "",
       "evasionRating": "",
+      "healthRating": "",
       "staminaRating": "",
-      "recoveryRating": "high"
+      "recoveryRating": ""
     }
   }
 ]

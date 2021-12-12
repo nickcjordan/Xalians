@@ -11,9 +11,10 @@ var moveQualifiers = tools.getObject("qualifiers");
 var moves = tools.getObject("moves");
 
 function getMove(character) {
+    moves = tools.shuffle(moves);
+    moveQualifiers = tools.shuffle(moveQualifiers);
     let m = new Move();
     let hasElement = tools.randomBool();
-    var element = null;
     if (hasElement) {
         // let element = tools.capitalize(tools.selectFromList(1, character.elements));
         m.element = tools.selectRandom(character.elements);

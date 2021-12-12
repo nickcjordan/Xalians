@@ -1,6 +1,8 @@
 const tools = require('./tools.js');
 const fs = require('fs')
 const axios = require("axios").default;
+const statConstants = require('./statConstants.js');
+const ratingValueConstants = require('./ratingValueConstants.js');
 
 
 // fix("elements");
@@ -22,7 +24,9 @@ const axios = require("axios").default;
 
 // buildElementJson("elements");
 
-getSynonymsAsync("built_elements");
+// getSynonymsAsync("built_elements");
+
+alterJson("species");
 
 function capitalize(str) {
     const lower = (str + '').toLowerCase();
@@ -218,15 +222,26 @@ function alterJson(fileName) {
 
     var newNodes = [];
 
+    const stats = new Map();
+
+    stats[statConstants.STANDARD_ATTACK_RATING] = ratingValueConstants.UNSET;
+    stats[statConstants.SPECIAL_ATTACK_RATING] = ratingValueConstants.UNSET;
+    stats[statConstants.STANDARD_DEFENSE_RATING] = ratingValueConstants.UNSET;
+    stats[statConstants.SPECIAL_DEFENSE_RATING] = ratingValueConstants.UNSET;
+    stats[statConstants.SPEED_RATING] = ratingValueConstants.UNSET;
+    stats[statConstants.EVASION_RATING] = ratingValueConstants.UNSET;
+    stats[statConstants.HEALTH_RATING] = ratingValueConstants.UNSET;
+    stats[statConstants.STAMINA_RATING] = ratingValueConstants.UNSET;
+    stats[statConstants.RECOVERY_RATING] = ratingValueConstants.UNSET;
+
     nodes.forEach(x => {
-        if ((x.definitions.length > 0) && (x.keep == 1)) {
             let newNode = {
-                "word": x.word,
-                "definitions": x.definitions,
-                "effectRating": 5
+                "name": x.name,
+                "origin": null,
+                "description": null,
+                "statRatings": stats
             }
             newNodes.push(newNode);
-        }
     });
 
     fs.writeFileSync("json/altered_" + fileName + ".json", JSON.stringify(newNodes, null, 2));
