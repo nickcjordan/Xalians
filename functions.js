@@ -6,7 +6,12 @@ const constants = require('./constants.js');
 const moveBuilder = require('./moveBuilder.js');
 const ai = require('./ai.js');
 
-main();
+
+for (var i = 0; i<1000; i++) {
+    main();
+}
+
+ai.giveSummary();
 
 function main() {
     let x = new Xalian();
@@ -20,7 +25,7 @@ function main() {
     x.moves.push(moveBuilder.getMove(x));
     x.moves.push(moveBuilder.getMove(x));
 
-    console.log(`\n${JSON.stringify(x, null, 2)}`);
+    // console.log(`\n${JSON.stringify(x, null, 2)}`);
 }
 
 

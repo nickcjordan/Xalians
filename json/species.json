@@ -1,66 +1,18 @@
 [
   {
-    "name": "Bioflim",
+    "name": "Test",
     "origin": null,
     "description": null,
     "statRatings": {
       "healthRating": "",
-      "standardAttackRating": "",
-      "specialAttackRating": "",
-      "standardDefenseRating": "high",
+      "standardAttackRating": "high",
+      "specialAttackRating": "low",
+      "standardDefenseRating": "low",
       "specialDefenseRating": "high",
-      "speedRating": "low",
-      "evasionRating": "low",
-      "staminaRating": "",
-      "recoveryRating": ""
-    }
-  },
-  {
-    "name": "Dromeus",
-    "origin": null,
-    "description": null,
-    "statRatings": {
-      "healthRating": "",
-      "standardAttackRating": "high",
-      "specialAttackRating": "medium",
-      "standardDefenseRating": "",
-      "specialDefenseRating": "",
       "speedRating": "high",
-      "evasionRating": "medium",
-      "staminaRating": "",
-      "recoveryRating": ""
-    }
-  },
-  {
-    "name": "Tetrahive",
-    "origin": null,
-    "description": null,
-    "statRatings": {
-      "healthRating": "",
-      "standardAttackRating": "high",
-      "specialAttackRating": "medium",
-      "standardDefenseRating": "",
-      "specialDefenseRating": "",
-      "speedRating": "medium",
       "evasionRating": "high",
-      "staminaRating": "",
-      "recoveryRating": ""
-    }
-  },
-  {
-    "name": "Xylum",
-    "origin": null,
-    "description": null,
-    "statRatings": {
-      "healthRating": "",
-      "standardAttackRating": "",
-      "specialAttackRating": "",
-      "standardDefenseRating": "medium",
-      "specialDefenseRating": "medium",
-      "speedRating": "low",
-      "evasionRating": "",
-      "staminaRating": "",
-      "recoveryRating": "high"
+      "staminaRating": "low",
+      "recoveryRating": "low"
     }
   }
 ]

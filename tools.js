@@ -13,7 +13,8 @@ module.exports = {
     getJson: getJson,
     getObject: getObject,
     capitalize: capitalize,
-    shuffle: shuffle
+    shuffle: shuffle,
+    rand: rand
 };
 
 
@@ -60,7 +61,7 @@ function random(min, max) {
 }
 
 function randomStat(maxRange) {
-    return Math.floor(Math.random() * (maxRange));
+    return Math.floor(rand() * (maxRange));
 }
 
 function selectFromList(maxCount, list) {
@@ -86,12 +87,12 @@ function selectRandom(list) {
 }
 
 function randomBool() {
-    let val = Math.random();
+    let val = rand();
     return val >= 0.5;
 }
 
 function randomThreshold() {
-    let num = Math.floor(Math.random() * 3);
+    let num = Math.floor(rand() * 3);
     if (num == 0) {
         return constants.LOW_THRESHOLD;
     } else if (num == 1) {
@@ -113,7 +114,7 @@ function shuffle(array) {
     while (currentIndex != 0) {
 
         // Pick a remaining element...
-        randomIndex = Math.floor(Math.random() * currentIndex);
+        randomIndex = Math.floor(rand() * currentIndex);
         currentIndex--;
 
         // And swap it with the current element.
@@ -122,4 +123,56 @@ function shuffle(array) {
     }
 
     return array;
+}
+
+var rando = getRandomFunction(new Date().getTime());
+
+function getRandomFunction(userSeed) {
+    let seed = xmur3(userSeed);
+    return sfc32(seed(), seed(), seed(), seed());
+}
+
+function rand() {
+    var a = Math.random();
+    var b = rando();
+    var c = rando();
+    var x = (a + b + c) / 3;
+    // console.log(`a=${a} :: b=${b} :: c=${c} :: x=${x}`);
+    return x;
+}
+
+// function rand() {
+//     return randn_bm();
+// }
+
+function randn_bm() {
+    var u = 0, v = 0;
+    while(u === 0) u = Math.random(); //Converting [0,1) to (0,1)
+    while(v === 0) v = Math.random();
+    return Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+}
+
+function xmur3(str) {
+    for(var i = 0, h = 1779033703 ^ str.length; i < str.length; i++)
+        h = Math.imul(h ^ str.charCodeAt(i), 3432918353),
+        h = h << 13 | h >>> 19;
+    return function() {
+        h = Math.imul(h ^ h >>> 16, 2246822507);
+        h = Math.imul(h ^ h >>> 13, 3266489909);
+        return (h ^= h >>> 16) >>> 0;
+    }
+}
+
+function sfc32(a, b, c, d) {
+    return function() {
+      a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0; 
+      var t = (a + b) | 0;
+      a = b ^ b >>> 9;
+      b = c + (c << 3) | 0;
+      c = (c << 21 | c >>> 11);
+      d = d + 1 | 0;
+      t = t + d | 0;
+      c = c + t | 0;
+      return (t >>> 0) / 4294967296;
+    }
 }
