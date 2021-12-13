@@ -13,7 +13,12 @@ module.exports.handler = async (event) => {
     return {
         statusCode: 200,
         headers: {
-            'Content-Type': 'application/json',
+            "Content-Type" : "application/json",
+            "Access-Control-Allow-Headers" : "*",
+            "Access-Control-Allow-Methods" : "*",
+            "Access-Control-Allow-Credentials" : true,
+            "Access-Control-Allow-Origin" : "*",
+            "X-Requested-With" : "*"
         },
         body: JSON.stringify({
             message: responseMessage,
