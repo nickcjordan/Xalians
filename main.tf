@@ -104,14 +104,14 @@ resource "aws_iam_role_policy_attachment" "lambda_policy" {
 # API gateway
 
 resource "aws_apigatewayv2_api" "lambda" {
-  name          = "serverless_lambda_gw"
+  name          = "XalianAPI"
   protocol_type = "HTTP"
 }
 
 resource "aws_apigatewayv2_stage" "lambda" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  name        = "serverless_lambda_stage"
+  name        = "xalian-test"
   auto_deploy = true
 
   access_log_settings {
