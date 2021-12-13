@@ -8,13 +8,22 @@ const ai = require('./ai.js');
 const fs = require('fs')
 const translator = require('./translator.js');
 
-// for (var i = 0; i<50000; i++) {
-    main();
-// }
+// module.exports = {
+//     main: main
+// };
 
-ai.giveSummary();
+main();
 
 function main() {
+    // for (var i = 0; i<50000; i++) {
+        buildXalian();
+    // }
+
+    ai.giveSummary();
+}
+
+
+function buildXalian() {
     let x = new Xalian();
 
     x.species = ai.selectSpecies(x);
@@ -32,6 +41,7 @@ function main() {
     let translated = translator.translateCharacterToPresentableType(x);
     let json = JSON.stringify(translated, null, 2);
     console.log(`json:\n\n${json}\n`);
+    return json;
     // fs.writeFileSync("json/current_xalian.json", json);
 }
 

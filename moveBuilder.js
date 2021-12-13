@@ -27,9 +27,9 @@ function getMove(character) {
     if (hasElement) {
         let elementSynonym = tools.capitalize(tools.selectRandom(m.element.synonyms));
         m.name = qualifier.name + " " + elementSynonym + " " + baseMove.name;
-        description += `${m.element.name}-typed ${m.qualifier.definition} ${m.baseMove.definition}`;
+        description += `${m.element.name}-typed ${m.qualifier.definition}${m.baseMove.sentencePrefix} ${m.baseMove.definition}`;
     } else {
-        description += `${tools.capitalize(m.qualifier.definition)} ${m.baseMove.definition}`;
+        description += `${tools.capitalize(m.qualifier.definition)}${m.baseMove.sentencePrefix} ${m.baseMove.definition}`;
         m.name = qualifier.name + " " + baseMove.name;
     }
     m.description = description;

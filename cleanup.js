@@ -26,7 +26,9 @@ const ratingValueConstants = require('./ratingValueConstants.js');
 
 // getSynonymsAsync("built_elements");
 
-alterJson("species");
+// alterJson("species");
+
+fixJson("moves");
 
 function capitalize(str) {
     const lower = (str + '').toLowerCase();
@@ -264,11 +266,11 @@ function fixJson(fileName) {
     var newNodes = [];
 
     nodes.forEach(x => {
-        let def = x.definitions[0];
         let newNode = {
-            "name": x.word,
-            "definition": def,
-            "effectRating": x.effectRating
+            "name": x.name,
+            "definition": x.definition,
+            "effectRating": x.effectRating,
+            "sentencePrefix": ""
         }
         newNodes.push(newNode);
     });

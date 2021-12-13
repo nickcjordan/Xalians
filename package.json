@@ -1,23 +1,14 @@
 {
   "name": "xalians",
-  "version": "1.0.0",
-  "description": "unique collectable battle creatures",
-  "main": "start.js",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
-    "start": "node start.js"
+    "start": "node ./bin/www"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/nickcjordan/Xalians.git"
-  },
-  "author": "labs",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/nickcjordan/Xalians/issues"
-  },
-  "homepage": "https://github.com/nickcjordan/Xalians#readme",
   "dependencies": {
-    "fs": "^0.0.1-security",
-    "node": "^17.2.0"
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "morgan": "~1.9.1"
   }
 }
