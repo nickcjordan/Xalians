@@ -1,6 +1,6 @@
-const constants = require('./constants.js');
+const constants = require('./constants/constants.js');
 const tools = require('./tools.js');
-var Xalian = require('./character.js');
+var Xalian = require('./model/character.js');
 
 module.exports = {
     translateCharacterToPresentableType: translateCharacterToPresentableType

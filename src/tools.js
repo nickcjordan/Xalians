@@ -1,5 +1,5 @@
 const fs = require('fs')
-const constants = require('./constants.js');
+const constants = require('./constants/constants.js');
 
 module.exports = {
     getProperties: getProperties,
@@ -21,9 +21,9 @@ module.exports = {
 
 function getProperties(fileName) {
     if (fileName.includes('json')) {
-        fileName = "json/" + fileName;
+        fileName = "./json/" + fileName;
     } else if (fileName.includes('txt')) {
-        fileName = "txt/" + fileName;
+        fileName = "./txt/" + fileName;
     }
     try {
         const data = fs.readFileSync(fileName, 'utf8');
@@ -42,13 +42,28 @@ function getObject(fileName) {
 }
 
 function getJson(fileName) {
-    fileName = "json/" + fileName + ".json";
     try {
-        const data = fs.readFileSync(fileName, 'utf8');
-        return data.toString()
+        return getJsonFromLocal(fileName);
     } catch (err) {
         console.error(err);
+        try {
+            return getJsonFromAWS(fileName);
+        } catch (e) {
+            console.error(err);
+        }
     }
+}
+
+function getJsonFromLocal(fileName) {
+    fileName = "json/" + fileName + ".json";
+    const data = fs.readFileSync(fileName, 'utf8');
+    return data.toString()
+}
+
+function getJsonFromAWS(fileName) {
+    fileName = "./src/json/" + fileName + ".json";
+    const data = fs.readFileSync(fileName, 'utf8');
+    return data.toString()
 }
 
 

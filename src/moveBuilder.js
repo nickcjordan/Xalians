@@ -1,7 +1,7 @@
 const fs = require('fs')
-const constants = require('./constants.js');
+const constants = require('./constants/constants.js');
 const tools = require('./tools.js');
-var Move = require('./move.js');
+var Move = require('./model/move.js');
 
 module.exports = {
     getMove: getMove

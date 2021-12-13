@@ -12,7 +12,7 @@ output "lambda_bucket_name" {
 output "function_name" {
   description = "Name of the Lambda function."
 
-  value = aws_lambda_function.hello_world.function_name
+  value = aws_lambda_function.lambda_function_generate_xalian.function_name
 }
 
 

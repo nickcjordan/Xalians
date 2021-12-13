@@ -22,13 +22,12 @@ provider "aws" {
 }
 
 resource "random_pet" "lambda_bucket_name" {
-  prefix = "learn-terraform-functions"
+  prefix = "chronic-labs"
   length = 4
 }
 
 resource "aws_s3_bucket" "lambda_bucket" {
   bucket = random_pet.lambda_bucket_name.id
-
   acl           = "private"
   force_destroy = true
 }
@@ -37,20 +36,20 @@ resource "aws_s3_bucket" "lambda_bucket" {
 
 # copy to s3 bucket
 
-data "archive_file" "lambda_hello_world" {
+data "archive_file" "lambda_generate_xalian" {
   type = "zip"
 
-  source_dir  = "${path.module}/hello-world"
-  output_path = "${path.module}/hello-world.zip"
+  source_dir  = "${path.module}/src"
+  output_path = "${path.module}/generate_xalian_lambda.zip"
 }
 
-resource "aws_s3_bucket_object" "lambda_hello_world" {
+resource "aws_s3_bucket_object" "lambda_generate_xalian_object" {
   bucket = aws_s3_bucket.lambda_bucket.id
 
-  key    = "hello-world.zip"
-  source = data.archive_file.lambda_hello_world.output_path
+  key    = "generate_xalian_lambda.zip"
+  source = data.archive_file.lambda_generate_xalian.output_path
 
-  etag = filemd5(data.archive_file.lambda_hello_world.output_path)
+  etag = filemd5(data.archive_file.lambda_generate_xalian.output_path)
 }
 
 
@@ -58,22 +57,22 @@ resource "aws_s3_bucket_object" "lambda_hello_world" {
 
 # lambda function and resources
 
-resource "aws_lambda_function" "hello_world" {
-  function_name = "HelloWorld"
+resource "aws_lambda_function" "lambda_function_generate_xalian" {
+  function_name = "GenerateXalian"
 
   s3_bucket = aws_s3_bucket.lambda_bucket.id
-  s3_key    = aws_s3_bucket_object.lambda_hello_world.key
+  s3_key    = aws_s3_bucket_object.lambda_generate_xalian_object.key
 
   runtime = "nodejs12.x"
-  handler = "hello.handler"
+  handler = "generateXalianLambda.handler"
 
-  source_code_hash = data.archive_file.lambda_hello_world.output_base64sha256
+  source_code_hash = data.archive_file.lambda_generate_xalian.output_base64sha256
 
   role = aws_iam_role.lambda_exec.arn
 }
 
-resource "aws_cloudwatch_log_group" "hello_world" {
-  name = "/aws/lambda/${aws_lambda_function.hello_world.function_name}"
+resource "aws_cloudwatch_log_group" "lambda_function_generate_xalian" {
+  name = "/aws/lambda/${aws_lambda_function.lambda_function_generate_xalian.function_name}"
 
   retention_in_days = 30
 }
@@ -134,19 +133,19 @@ resource "aws_apigatewayv2_stage" "lambda" {
   }
 }
 
-resource "aws_apigatewayv2_integration" "hello_world" {
+resource "aws_apigatewayv2_integration" "lambda_function_generate_xalian" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  integration_uri    = aws_lambda_function.hello_world.invoke_arn
+  integration_uri    = aws_lambda_function.lambda_function_generate_xalian.invoke_arn
   integration_type   = "AWS_PROXY"
   integration_method = "POST"
 }
 
-resource "aws_apigatewayv2_route" "hello_world" {
+resource "aws_apigatewayv2_route" "lambda_function_generate_xalian" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  route_key = "GET /hello"
-  target    = "integrations/${aws_apigatewayv2_integration.hello_world.id}"
+  route_key = "GET /xalian"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_function_generate_xalian.id}"
 }
 
 resource "aws_cloudwatch_log_group" "api_gw" {
@@ -158,7 +157,7 @@ resource "aws_cloudwatch_log_group" "api_gw" {
 resource "aws_lambda_permission" "api_gw" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.hello_world.function_name
+  function_name = aws_lambda_function.lambda_function_generate_xalian.function_name
   principal     = "apigateway.amazonaws.com"
 
   source_arn = "${aws_apigatewayv2_api.lambda.execution_arn}/*/*"

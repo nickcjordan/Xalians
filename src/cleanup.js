@@ -1,8 +1,8 @@
 const tools = require('./tools.js');
 const fs = require('fs')
 const axios = require("axios").default;
-const statConstants = require('./statConstants.js');
-const ratingValueConstants = require('./ratingValueConstants.js');
+const statConstants = require('./constants/statConstants.js');
+const ratingValueConstants = require('./constants/ratingValueConstants.js');
 
 
 // fix("elements");

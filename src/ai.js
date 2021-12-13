@@ -1,7 +1,7 @@
 const tools = require('./tools.js');
-const constants = require('./constants.js');
-const statConstants = require('./statConstants.js');
-const ratingValueConstants = require('./ratingValueConstants.js');
+const constants = require('./constants/constants.js');
+const statConstants = require('./constants/statConstants.js');
+const ratingValueConstants = require('./constants/ratingValueConstants.js');
 
 module.exports = {
     selectSpecies: selectSpecies,
