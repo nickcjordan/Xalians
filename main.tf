@@ -104,14 +104,14 @@ resource "aws_iam_role_policy_attachment" "lambda_policy" {
 # API gateway
 
 resource "aws_apigatewayv2_api" "lambda" {
-  name          = "XalianAPI"
+  name          = "xalian_api_gateway"
   protocol_type = "HTTP"
 }
 
 resource "aws_apigatewayv2_stage" "lambda" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  name        = "xalian-test"
+  name        = "dev"
   auto_deploy = true
 
   access_log_settings {
@@ -161,6 +161,66 @@ resource "aws_lambda_permission" "api_gw" {
   principal     = "apigateway.amazonaws.com"
 
   source_arn = "${aws_apigatewayv2_api.lambda.execution_arn}/*/*"
+}
+
+// certs
+
+// resource "aws_acm_certificate" "cert" {
+//   domain_name       = "xalians.com"
+//   validation_method = "DNS"
+
+//   tags = {
+//     group = "xalians"
+//   }
+
+//   lifecycle {
+//     create_before_destroy = true
+//   }
+// }
+
+
+//
+
+// resource "aws_route53_zone" "primary" {
+//   name = "xalians.com"
+// }
+
+// referenceing existing zone
+
+data "aws_route53_zone" "xalian_zone" {
+    name = "xalians.com"
+}
+
+
+resource "aws_apigatewayv2_domain_name" "api" {
+  domain_name = "api.xalians.com"
+
+  domain_name_configuration {
+    certificate_arn = var.cert_arn
+    endpoint_type   = "REGIONAL"
+    security_policy = "TLS_1_2"
+  }
+}
+
+resource "aws_route53_record" "api" {
+  zone_id = data.aws_route53_zone.xalian_zone.zone_id
+  name    = aws_apigatewayv2_domain_name.api.domain_name
+  type    = "A"
+
+  alias {
+    name                   = aws_apigatewayv2_domain_name.api.domain_name_configuration[0].target_domain_name
+    zone_id                = aws_apigatewayv2_domain_name.api.domain_name_configuration[0].hosted_zone_id
+    evaluate_target_health = true
+  }
+}
+
+
+//
+
+resource "aws_apigatewayv2_api_mapping" "api_mapping" {
+  api_id      = aws_apigatewayv2_api.lambda.id
+  domain_name = aws_apigatewayv2_domain_name.api.id
+  stage       = aws_apigatewayv2_stage.lambda.id
 }
 
 
