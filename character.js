@@ -4,6 +4,7 @@ module.exports = class Xalian {
         this.species = null;
         this.origin = "";
         this.elements = [];
+		this.meta = null;
         this.standardAttackPoints = 0;
 		this.specialAttackPoints = 0;
 		this.standardDefensePoints = 0;

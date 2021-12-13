@@ -4,7 +4,8 @@ module.exports = {
     STAT_COUNT_PER_CHARACTER: 8,
     MAX_ELEMENT_COUNT_PER_CHARACTER: 3,
     //
-    CHAOS: 0.4,
+    CHAOS: 0,
+    RANDOM_WEIGHT: 0.5,
     //
     STAT_THRESHOLD_VARIABILITY: 0.25,
     LOW_THRESHOLD: 0.25,

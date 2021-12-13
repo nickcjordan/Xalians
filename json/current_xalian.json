@@ -1,0 +1,50 @@
+{
+  "species": {
+    "name": "Test",
+    "origin": ""
+  },
+  "elements": [
+    "Air"
+  ],
+  "healthPoints": 999,
+  "stats": {
+    "standardAttackPoints": 605,
+    "specialAttackPoints": 671,
+    "standardDefensePoints": 296,
+    "specialDefensePoints": 232,
+    "speedPoints": 815,
+    "evasionPoints": 655,
+    "staminaPoints": 217,
+    "recoveryPoints": 285
+  },
+  "moves": [
+    {
+      "name": "Monumental Crunch",
+      "description": "Physically imposing or powerful crush using teeth",
+      "element": "none",
+      "rating": 13,
+      "cost": 10
+    },
+    {
+      "name": "Pernicious Haze Burst",
+      "description": "Air-typed exceedingly harmful breaking or splitting as a result of internal pressure",
+      "element": "Air",
+      "rating": 12,
+      "cost": 10
+    },
+    {
+      "name": "Canny Storm Foray",
+      "description": "Air-typed pleasant or nice sudden short attack",
+      "element": "Air",
+      "rating": 6,
+      "cost": 10
+    },
+    {
+      "name": "Sublime Cloud Throw",
+      "description": "Air-typed greatest extreme or maximal application of force to propel something",
+      "element": "Air",
+      "rating": 10,
+      "cost": 10
+    }
+  ]
+}

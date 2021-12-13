@@ -7,7 +7,8 @@ module.exports = {
     selectSpecies: selectSpecies,
     selectElements: selectElements,
     populateStats: populateStats,
-    giveSummary: giveSummary
+    giveSummary: giveSummary,
+    pickStatisticalRandomRating: pickStatisticalRandomRating
 };
 
 var elements = tools.getObject("elements");
@@ -21,6 +22,7 @@ var ratedSecondary = [];
 var unratedSecondary = [];
 var percentages = [];
 var totalPercentages = [];
+var totalStatsList = [];
 
 var debug = false;
 
@@ -127,7 +129,11 @@ function populateStats(xalian) {
         let maxLeftForCategory = primaryMax - primaryTotal;
 
         let possibleRatings = buildListOfPossibleRatings(maxLeftForCategory, remainingPrimaryCount);
-        let selectedRating = tools.selectRandom(possibleRatings);
+        
+        
+        // let selectedRating = tools.selectRandom(possibleRatings);
+        var selectedRating = pickStatisticalRandomRating(possibleRatings.length);
+        
         let ratingNumber = valMapping[selectedRating];
         let ratingName = valFlippedMapping[ratingNumber];
         // console.log(`\nprimary calculated ==>\n\tstat=${stat}\n\tmaxLeftForCategory=${maxLeftForCategory}\n\t# left in category=${remainingPrimaryCount}\n\tpossibleRatings=${possibleRatings}\n\tselectedRating=${selectedRating}\n\tratingNumber=${ratingNumber}\n\tratingName=${ratingName}`);
@@ -141,7 +147,10 @@ function populateStats(xalian) {
 
 
         let possibleRatings = buildListOfPossibleRatings(maxLeftForCategory, remainingSecondaryCount);
-        let selectedRating = tools.selectRandom(possibleRatings);
+        
+        // let selectedRating = tools.selectRandom(possibleRatings);
+        var selectedRating = pickStatisticalRandomRating(possibleRatings.length);
+        
         let ratingNumber = valMapping[selectedRating];
         let ratingName = valFlippedMapping[ratingNumber];
         // console.log(`\nsecondary calculated ==>\n\tstat=${stat}\n\tmaxLeftForCategory=${maxLeftForCategory}\n\t# left in category=${remainingSecondaryCount}\n\tpossibleRatings=${possibleRatings}\n\tselectedRating=${selectedRating}\n\tratingNumber=${ratingNumber}\n\tratingName=${ratingName}`);
@@ -171,12 +180,19 @@ function populateStats(xalian) {
         sum += p;
     });
     var avgPerc = Math.floor(sum / percentages.length);
-    console.log(`percentage :: avg=${avgPerc}% :: ${JSON.stringify(percentages)}`);
+    // console.log(`percentage :: avg=${avgPerc}% :: ${JSON.stringify(percentages)}`);
     totalPercentages.push(avgPerc);
     // console.log(`totalPercentages=${JSON.stringify(totalPercentages)}`);
     //
 
+    totalStatsList.push(totalStats);
 
+    xalian.meta = {
+        "percentages": percentages,
+        "avgPercentage": avgPerc,
+        "totalStatPoints": totalStats
+    };
+    
 
     return xalian;
 }
@@ -199,15 +215,14 @@ function generateStatFromRange(xalian, statName) {
     // var base = Math.floor((getRemainingAvgPerStat() + constants.STAT_POINT_MAX) / 2);
 
     var rand = tools.rand();
-    var diff = (1 - rand) * constants.CHAOS;
 
-    var adjustedStatThresholdVariability = (rand + diff) * constants.STAT_THRESHOLD_VARIABILITY;
+    var adjustedStatThresholdVariability = (rand) * constants.STAT_THRESHOLD_VARIABILITY;
     var newBase = base * adjustedStatThresholdVariability;
     var delta = Math.floor(newBase);
 
 
     var trackingOldDelta = Math.floor(newBase);
-    let neg = tools.randomBool();
+    let neg = tools.randomBoolWeighted(constants.RANDOM_WEIGHT);
     if (neg) {
         delta = 0 - delta;
     }
@@ -289,12 +304,70 @@ function getRemainingAvgPerStat() {
 function giveSummary() {
     // debug
     var sum = 0;
+    totalPercentages.sort(function(a, b) {
+        return a - b;
+      });
     totalPercentages.forEach(p => {
         sum += p;
     });
+
+    var curve = new Map();
+
+    // totalPercentages.forEach(p => {
+    //     if (curve[p] != undefined && curve[p] != null) {
+    //         var val = curve[p];
+    //         val += 1;
+    //         curve[p] = val;
+    //     } else {
+    //         curve[p] = 1;
+    //     }
+    // });
+
+    totalStatsList.forEach(p => {
+        if (curve[p] != undefined && curve[p] != null) {
+            var val = curve[p];
+            val += 1;
+            curve[p] = val;
+        } else {
+            curve[p] = 1;
+        }
+    });
+
+
+    var flip = true;
+    console.log("\n")
+    for (const key in curve) {
+        let val = curve[key];
+        var bar = "";
+        for (var i = 0; i<val; i++) {
+            bar += "|";
+        }
+        if (flip) {
+            console.log(`${key}\t${val}\t--${bar}`);
+        }
+        flip = !flip;
+    }
+    console.log("\n");
+
+    totalPercentages.reverse().slice(0, 20).forEach(p => {
+        console.log(p);
+    });
+    console.log("\n...\n");
+
+    let midIndex = (totalPercentages.length / 2);
+    totalPercentages.slice(midIndex - 10, midIndex + 10).forEach(p => {
+        console.log(p);
+    });
+
+    console.log("\n...\n");
+    totalPercentages.reverse().slice(0, 20).reverse().forEach(p => {
+        console.log(p);
+    });
     var avg = Math.floor(sum / totalPercentages.length);
     //
+    
     console.log(`\n\n\t\tavg= ${avg} :: std dev = ${getStandardDeviation(totalPercentages)}%`);
+    console.log(``);
 }
 
 function getStandardDeviation(array) {
@@ -304,21 +377,34 @@ function getStandardDeviation(array) {
 }
 
 
-var rarities = [{
-    type: "common",
+var raritiesFull = [{
+    type: ratingValueConstants.LOW,
     chance: 0
 }, {
-    type: "mythics",
+    type: ratingValueConstants.MEDIUM,
     chance: 35
 }, {
-    type: "legends",
+    type: ratingValueConstants.HIGH,
     chance: 20
-}, {
-    type: "ub",
-    chance: 1
 }];
 
-function pickStatistical() {
+var raritiesNoHigh = [{
+    type: ratingValueConstants.LOW,
+    chance: 0
+}, {
+    type: ratingValueConstants.MEDIUM,
+    chance: 50
+}];
+
+function pickStatisticalRandomRating(highest = 3) {
+    var rarities = null;
+    if (highest > 2) {
+        rarities = raritiesFull;
+    } else if (highest > 1) {
+        rarities = raritiesNoHigh;
+    } else {
+        return ratingValueConstants.LOW;
+    }
     // Calculate chances for common
     var filler = 100 - rarities.map(r => r.chance).reduce((sum, current) => sum + current);
 

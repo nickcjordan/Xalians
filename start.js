@@ -5,11 +5,12 @@ const tools = require('./tools.js');
 const constants = require('./constants.js');
 const moveBuilder = require('./moveBuilder.js');
 const ai = require('./ai.js');
+const fs = require('fs')
+const translator = require('./translator.js');
 
-
-for (var i = 0; i<1000; i++) {
+// for (var i = 0; i<50000; i++) {
     main();
-}
+// }
 
 ai.giveSummary();
 
@@ -25,7 +26,13 @@ function main() {
     x.moves.push(moveBuilder.getMove(x));
     x.moves.push(moveBuilder.getMove(x));
 
-    // console.log(`\n${JSON.stringify(x, null, 2)}`);
+    // if (parseInt(x.meta.totalStatPoints) > 4600) {
+    //     console.log(`\n${JSON.stringify(x, null, 2)}`);
+    // }
+    let translated = translator.translateCharacterToPresentableType(x);
+    let json = JSON.stringify(translated, null, 2);
+    console.log(`json:\n\n${json}\n`);
+    // fs.writeFileSync("json/current_xalian.json", json);
 }
 
 

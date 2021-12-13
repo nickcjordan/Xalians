@@ -14,7 +14,8 @@ module.exports = {
     getObject: getObject,
     capitalize: capitalize,
     shuffle: shuffle,
-    rand: rand
+    rand: rand,
+    randomBoolWeighted: randomBoolWeighted
 };
 
 
@@ -91,6 +92,13 @@ function randomBool() {
     return val >= 0.5;
 }
 
+function randomBoolWeighted(weight = 0.5) {
+    let val = rand();
+    return val >= weight;
+}
+
+
+
 function randomThreshold() {
     let num = Math.floor(rand() * 3);
     if (num == 0) {
@@ -140,6 +148,17 @@ function rand() {
     // console.log(`a=${a} :: b=${b} :: c=${c} :: x=${x}`);
     return x;
 }
+
+function gaussianRand() {
+    var rand = 0;
+    var k = 100;
+  
+    for (var i = 0; i < k; i += 1) {
+      rand += Math.random();
+    }
+  
+    return rand / k;
+  }
 
 // function rand() {
 //     return randn_bm();
