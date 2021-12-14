@@ -1,14 +1,11 @@
 const xalianBuilder = require('./xalianBuilder.js');
+const translator = require('./translator.js');
 
 module.exports.handler = async (event) => {
-    console.log('Event: ', event);
+    // console.log('Event: ', event);
 
-    // if (event.queryStringParameters && event.queryStringParameters['Name']) {
-    //   responseMessage = 'Helloo, new ' + event.queryStringParameters['Name'] + '!';
-    // }
-
-    // let responseMessage = 'Helloo, World!';
-
+    let xalian = xalianBuilder.buildXalian();
+    let translatedXalian = translator.translateCharacterToPresentableType(xalian);
     return {
         statusCode: 200,
         headers: {
@@ -19,6 +16,6 @@ module.exports.handler = async (event) => {
             "Access-Control-Allow-Origin" : "*",
             "X-Requested-With" : "*"
         },
-        body: JSON.stringify(xalianBuilder.buildXalian())
+        body: JSON.stringify(translatedXalian)
     }
 }

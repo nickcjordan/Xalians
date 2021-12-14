@@ -23,12 +23,13 @@ function buildXalian() {
     x.moves.push(moveBuilder.getMove(x));
 
     // if (parseInt(x.meta.totalStatPoints) > 4600) {
-    //     console.log(`\n${JSON.stringify(x, null, 2)}`);
+        // console.log(`\n${JSON.stringify(x, null, 2)}`);
     // }
-    let translated = translator.translateCharacterToPresentableType(x);
+    return x;
+    // let xalian = translator.translateCharacterToPresentableType(x);
     // let json = JSON.stringify(translated, null, 2);
     // console.log(`json:\n\n${json}\n`);
     // return json;
-    return translated;
+    // return xalian;
     // fs.writeFileSync("json/current_xalian.json", json);
 }

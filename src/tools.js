@@ -45,7 +45,7 @@ function getJson(fileName) {
     try {
         return getJsonFromLocal(fileName);
     } catch (err) {
-        console.error(err);
+        // console.error(err);
         try {
             return getJsonFromAWS(fileName);
         } catch (e) {
@@ -55,7 +55,7 @@ function getJson(fileName) {
 }
 
 function getJsonFromLocal(fileName) {
-    fileName = "json/" + fileName + ".json";
+    fileName = "./json/" + fileName + ".json";
     const data = fs.readFileSync(fileName, 'utf8');
     return data.toString()
 }

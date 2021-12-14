@@ -4,6 +4,7 @@ import Badge from 'react-bootstrap/Badge';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Table from 'react-bootstrap/Table'
 
 class CharacterStats extends React.Component {
 
@@ -32,38 +33,37 @@ class CharacterStats extends React.Component {
         }
     }
 
-    buildRow(key, val) {
-        return <Row className="stat-row">
-                <Col xs={8}>
-                        <div className="d-flex justify-content-between align-items-start stat-name-col">
-                            {this.translateStatName(key)}
-                        </div>
-                </Col>
-                <Col xs={4}>
-                    <div className="stat-rating-col">
-                        {val}
-                    </div>
-                </Col>
-            </Row>;
+    buildRow(val) {
+        return  <tr>
+                    <td>{this.translateStatName(val.name)}</td>
+                    <td>{val.range}</td>
+                    <td>{val.points}</td>
+                    <td>{val.percentage}%</td>
+                </tr>
     }
 
     render() {
         let list = [];
         for (const key in this.props.stats) {
             let val = this.props.stats[key];
-            list.push(this.buildRow(key, val));
+            list.push(this.buildRow(val));
         }
-        return list;
+
+        return <Table striped bordered hover variant="dark" size="sm" className="stat-table">
+            <thead>
+                <tr>
+                    <th>Stat</th>
+                    <th>Range</th>
+                    <th>Points</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                {list}
+            </tbody>
+        </Table>;
     }
 
 }
 
 export default CharacterStats;
-
-
-// let i = <ListGroup.Item as="li" className="d-flex justify-content-between align-items-start stat-list-item">
-//                 <div className="ms-2 me-auto">
-//                     <div className="fw-bold">{key}</div>
-//                 </div>
-//                 <Badge variant="primary" pill>{val}</Badge>
-//             </ListGroup.Item>;

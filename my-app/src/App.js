@@ -35,6 +35,15 @@ class App extends React.Component {
     return list.reduce((a, b, index) => a + ", " + b, "").slice(2);
   }
 
+  xalianisNull() {
+    let x = this.state.xalian;
+    let isNull = (x == null) || (x == undefined);
+    if (!isNull) {
+      console.log(JSON.stringify(x, null, 2));
+    }
+    return isNull;
+  }
+
   render() {
     return (
       <div className="App">
@@ -42,26 +51,44 @@ class App extends React.Component {
 
             { (this.state.xalian == null) && <p>Thinking...</p> }
 
-            { (this.state.xalian != null) && 
+            { !this.xalianisNull() && 
               <React.Fragment>
 
 
 
-              <Container fluid="md">
+              <Container fluid className="whole-container">
                 <Row className="d-flex align-items-center stat-row">
-                  <Col sm={true}>
-                    <div className="species-title">
-                      <article>{this.state.xalian.species.name}</article>
-                    </div>
-                    <div className="elements">
-                      {this.getString(this.state.xalian.elements)}
-                    </div>
+                  <Col sm={true} className="title-col">
+                    <Row>
+                      <article className="species-title">{this.state.xalian.species.name}</article>
+                      <span style={{color: 'lightgray', fontSize: '12pt'}}>{this.state.xalian.meta.totalStatPoints} : {this.state.xalian.meta.avgPercentage}%</span>
+                    </Row>
+                    <Row style={{paddingBottom: 50}}>
+                      <span className="elements">
+                        <span className="large-brackets">[  </span>
+                        {this.getString(this.state.xalian.elements)}
+                        <span className="large-brackets">  ]</span>
+                      </span>
+                    </Row>
+                    <Row style={{paddingBottom: 50}}>
+                      <div className="species-description-div">
+                        <span className="species-description">
+                          {this.state.xalian.species.description}
+                        </span>
+                      </div>
+                    </Row>
                   </Col>
-                  <Col sm={true}>
+                  <Col lg>
                     <CharacterStats stats={this.state.xalian.stats}></CharacterStats>
                   </Col>
                 </Row>
+                <Row>
+                  <Col sm={6}>
                 <CharacterMoves stats={this.state.xalian.moves}></CharacterMoves>
+                  </Col>
+                  <Col sm={6}>
+                  </Col>
+                </Row>
               </Container>
 
 

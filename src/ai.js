@@ -161,14 +161,24 @@ function populateStats(xalian) {
     // console.log(`built character ranges:\n${JSON.stringify(xalian.species.statRatings, null, 2)}`);
 
 
-    xalian.standardAttackPoints = generateStatFromRange(xalian, statConstants.STANDARD_ATTACK_RATING);
-    xalian.specialAttackPoints = generateStatFromRange(xalian, statConstants.SPECIAL_ATTACK_RATING);
-    xalian.standardDefensePoints = generateStatFromRange(xalian, statConstants.STANDARD_DEFENSE_RATING);
-    xalian.specialDefensePoints = generateStatFromRange(xalian, statConstants.SPECIAL_DEFENSE_RATING);
-    xalian.speedPoints = generateStatFromRange(xalian, statConstants.SPEED_RATING);
-    xalian.evasionPoints = generateStatFromRange(xalian, statConstants.EVASION_RATING);
-    xalian.recoveryPoints = generateStatFromRange(xalian, statConstants.RECOVERY_RATING);
-    xalian.staminaPoints = generateStatFromRange(xalian, statConstants.STAMINA_RATING);
+    // xalian.standardAttackPoints = generateStatFromRange(xalian, statConstants.STANDARD_ATTACK_RATING);
+    // xalian.specialAttackPoints = generateStatFromRange(xalian, statConstants.SPECIAL_ATTACK_RATING);
+    // xalian.standardDefensePoints = generateStatFromRange(xalian, statConstants.STANDARD_DEFENSE_RATING);
+    // xalian.specialDefensePoints = generateStatFromRange(xalian, statConstants.SPECIAL_DEFENSE_RATING);
+    // xalian.speedPoints = generateStatFromRange(xalian, statConstants.SPEED_RATING);
+    // xalian.evasionPoints = generateStatFromRange(xalian, statConstants.EVASION_RATING);
+    // xalian.recoveryPoints = generateStatFromRange(xalian, statConstants.RECOVERY_RATING);
+    // xalian.staminaPoints = generateStatFromRange(xalian, statConstants.STAMINA_RATING);
+    var stats = new Map();
+    stats[statConstants.STANDARD_ATTACK_POINTS] = generateStatFromRange(xalian, statConstants.STANDARD_ATTACK_RATING);
+    stats[statConstants.SPECIAL_ATTACK_POINTS] = generateStatFromRange(xalian, statConstants.SPECIAL_ATTACK_RATING);
+    stats[statConstants.STANDARD_DEFENSE_POINTS] = generateStatFromRange(xalian, statConstants.STANDARD_DEFENSE_RATING);
+    stats[statConstants.SPECIAL_DEFENSE_POINTS] = generateStatFromRange(xalian, statConstants.SPECIAL_DEFENSE_RATING);
+    stats[statConstants.SPEED_POINTS] = generateStatFromRange(xalian, statConstants.SPEED_RATING);
+    stats[statConstants.EVASION_POINTS] = generateStatFromRange(xalian, statConstants.EVASION_RATING);
+    stats[statConstants.RECOVERY_POINTS] = generateStatFromRange(xalian, statConstants.RECOVERY_RATING);
+    stats[statConstants.STAMINA_POINTS] = generateStatFromRange(xalian, statConstants.STAMINA_RATING);
+    xalian.stats = stats;
 
     // xalian.healthPoints = generateStatFromRange(xalian, statConstants.HEALTH_RATING);
     xalian.healthPoints = constants.STAT_POINT_MAX;
@@ -188,7 +198,6 @@ function populateStats(xalian) {
     totalStatsList.push(totalStats);
 
     xalian.meta = {
-        "percentages": percentages,
         "avgPercentage": avgPerc,
         "totalStatPoints": totalStats
     };
@@ -246,11 +255,18 @@ function generateStatFromRange(xalian, statName) {
     statCountRemaining -= 1;
     totalStats += adjustedResult;
 
-
     if (debug) {console.log(`\n${statName}\n\trate=${rate}\n\tbase=${base}\n\tfactor=${statRangeFactor}\n\trand=${rand}\n\tadjustedStatThresholdVariability=${adjustedStatThresholdVariability}\n\tnewBase=${newBase}\n\toriginalDelta=${trackingOldDelta}\n\tneg=${neg}\n\tdelta=${delta}\n\tresult=${result}\n\tfinal=${adjustedResult}\n\t${rate} :: ${adjustedResult} / ${potentialMax} = ${percent}%`);}
     if (debug) {console.log(`\nrunning totals:\n\ttotalStatPointsUnallocated=${totalStatPointsUnallocated}\n\tstatCountRemaining=${statCountRemaining}\n\ttotalStatsBuilt=${totalStats}\n\tavg remaining=${getRemainingAvgPerStat()}`);}
     percentages.push(percent);
-    return adjustedResult;
+
+    return {
+        "name": statsMapping[statName],
+        "range": rate,
+        "points": adjustedResult,
+        "percentage": percent
+    }
+
+    // return adjustedResult;
 }
 
 

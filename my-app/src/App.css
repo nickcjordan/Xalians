@@ -38,6 +38,11 @@
 }
 
 
+.whole-container {
+  max-width: 90%;
+  margin: auto;
+}
+
 .species-title {
   font-size: 48pt;
   font-weight: 750;
@@ -46,7 +51,8 @@
 .elements {
   font-size: 20pt;
   font-style: italic;
-  padding-bottom: 50px;;
+  padding-top: 0px;
+  text-align: center;
 }
 
 /* .stat-row {
@@ -75,19 +81,48 @@
   font-size: 12pt;
 }
 
-.stat-name-col {
-  color: rgb(128, 128, 128);
-  font-size: 18pt;
-}
-
-.stat-rating-col {
-  color: cadetblue;
-  font-size: 20pt;
-}
-
 .generateButton {
   margin-top: 20px;;
 }
+
+.title-col {
+  text-align: center;
+}
+
+.species-description {
+  font-size: 14pt;
+  font-style: italic;
+  color: cadetblue;
+}
+
+.species-description-div {
+  text-align: center;
+  font-size: 14pt;
+  max-width: 75% !important;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.large-brackets {
+  font-style: normal;
+  font-size: 30pt;
+  font-weight: 500;
+}
+
+/* .outer {
+
+} */
+
+
+
+.stat-table thead tr th {
+  font-size: 16pt;
+}
+
+.stat-table tbody tr td {
+  font-size: 12pt;
+}
+
 
 /* SPECIAL TEXT */
 article {

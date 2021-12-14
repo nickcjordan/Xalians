@@ -12,21 +12,13 @@ function translateCharacterToPresentableType(xalian) {
         "species": {
           "name": xalian.species.name,
           "origin": xalian.origin,
-          "description": xalian.description,
+          "description": xalian.species.description,
         },
         "elements": xalian.elements.map(x => x.name),
         "healthPoints": xalian.healthPoints,
-        stats: {
-            "standardAttackPoints": xalian.standardAttackPoints,
-            "specialAttackPoints": xalian.specialAttackPoints,
-            "standardDefensePoints": xalian.standardDefensePoints,
-            "specialDefensePoints": xalian.specialDefensePoints,
-            "speedPoints": xalian.speedPoints,
-            "evasionPoints": xalian.evasionPoints,
-            "staminaPoints": xalian.staminaPoints,
-            "recoveryPoints": xalian.recoveryPoints
-        },
-        "moves": conditionedMoves
+        "stats": xalian.stats,
+        "moves": conditionedMoves,
+        "meta": xalian.meta
       };
 }
 
