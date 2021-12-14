@@ -2,7 +2,7 @@
   {
     "name": "Bioflim",
     "origin": null,
-    "description": null,
+    "description": "Acid slime organism protected by thick rocky exoskeleton; a regenerative outer shell allows for high defense",
     "statRatings": {
       "healthRating": "",
       "standardAttackRating": "",
@@ -18,7 +18,7 @@
   {
     "name": "Dromeus",
     "origin": null,
-    "description": null,
+    "description": "Partially feathered, velociraptor-like clawed ground bird; they are extremely quick with razor sharp teeth and talons",
     "statRatings": {
       "healthRating": "",
       "standardAttackRating": "high",
@@ -34,7 +34,7 @@
   {
     "name": "Tetrahive",
     "origin": null,
-    "description": null,
+    "description": "Swarm of tiny, bat-like flying organisms with teeth like a pirhanna; the hive is controlled by the mind of the 'Queen Bee' as one cohesive unit",
     "statRatings": {
       "healthRating": "",
       "standardAttackRating": "high",
@@ -50,7 +50,7 @@
   {
     "name": "Xylum",
     "origin": null,
-    "description": null,
+    "description": "Giant root-based organism with thorned, tentacle-like arms; lives mostly underground",
     "statRatings": {
       "healthRating": "",
       "standardAttackRating": "",

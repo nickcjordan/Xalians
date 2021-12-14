@@ -163,35 +163,6 @@ resource "aws_lambda_permission" "api_gw" {
   source_arn = "${aws_apigatewayv2_api.lambda.execution_arn}/*/*"
 }
 
-// certs
-
-// resource "aws_acm_certificate" "cert" {
-//   domain_name       = "xalians.com"
-//   validation_method = "DNS"
-
-//   tags = {
-//     group = "xalians"
-//   }
-
-//   lifecycle {
-//     create_before_destroy = true
-//   }
-// }
-
-
-//
-
-// resource "aws_route53_zone" "primary" {
-//   name = "xalians.com"
-// }
-
-// referenceing existing zone
-
-data "aws_route53_zone" "xalian_zone" {
-    name = "xalians.com"
-}
-
-
 resource "aws_apigatewayv2_domain_name" "api" {
   domain_name = "api.xalians.com"
 
@@ -200,6 +171,13 @@ resource "aws_apigatewayv2_domain_name" "api" {
     endpoint_type   = "REGIONAL"
     security_policy = "TLS_1_2"
   }
+}
+
+
+// ROUTE 53
+
+data "aws_route53_zone" "xalian_zone" {
+    name = "xalians.com"
 }
 
 resource "aws_route53_record" "api" {
@@ -214,9 +192,6 @@ resource "aws_route53_record" "api" {
   }
 }
 
-
-//
-
 resource "aws_apigatewayv2_api_mapping" "api_mapping" {
   api_id      = aws_apigatewayv2_api.lambda.id
   domain_name = aws_apigatewayv2_domain_name.api.id
@@ -226,3 +201,98 @@ resource "aws_apigatewayv2_api_mapping" "api_mapping" {
 
 
 
+###################
+# react front end #
+###################
+
+resource "aws_s3_bucket" "react_bucket" {
+  bucket = "${var.frontend_bucket_name}"
+  acl    = "public-read"
+
+  policy = <<EOF
+{
+  "Id": "bucket_policy_site",
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "bucket_policy_site_main",
+      "Action": [
+        "s3:GetObject"
+      ],
+      "Effect": "Allow",
+      "Resource": "arn:aws:s3:::${var.frontend_bucket_name}/*",
+      "Principal": "*"
+    }
+  ]
+}
+EOF
+
+  website {
+    index_document = "index.html"
+    error_document = "index.html"
+  }
+
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["GET"]
+    allowed_origins = ["*"]
+    max_age_seconds = 3000
+  }
+}
+
+// api gateway domain name
+
+// resource "aws_apigatewayv2_domain_name" "ui" {
+//   domain_name = "xalians.com"
+
+//   domain_name_configuration {
+//     certificate_arn = var.cert_arn
+//     endpoint_type   = "REGIONAL"
+//     security_policy = "TLS_1_2"
+//   }
+// }
+
+// route53 for frontend
+
+resource "aws_route53_record" "xalians-frontend" {
+  zone_id = data.aws_route53_zone.xalian_zone.zone_id
+  name    = "xalians.com"
+  type    = "A"
+
+  alias {
+    name = aws_s3_bucket.react_bucket.website_domain
+    zone_id = aws_s3_bucket.react_bucket.hosted_zone_id
+    evaluate_target_health = true
+  }
+}
+
+
+// api gateway mapping
+
+// resource "aws_apigatewayv2_api_mapping" "ui_mapping" {
+//   api_id      = aws_apigatewayv2_api.lambda.id
+//   domain_name = aws_apigatewayv2_domain_name.ui.id
+//   stage       = aws_apigatewayv2_stage.lambda.id
+// }
+
+// // api gateway integration
+
+// resource "aws_apigatewayv2_integration" "ui_integration" {
+//   api_id = aws_apigatewayv2_api.lambda.id
+
+//   integration_uri    = aws_lambda_function.lambda_function_generate_xalian.invoke_arn
+//   integration_type   = "AWS_PROXY"
+//   integration_method = "POST"
+// }
+
+// resource "aws_apigatewayv2_route" "base_route" {
+//   api_id = aws_apigatewayv2_api.lambda.id
+
+//   route_key = "GET /"
+//   target    = "integrations/${aws_apigatewayv2_integration.ui_integration.id}"
+// }
+
+// resource "aws_s3_access_point" "xalian_access" {
+//   bucket = aws_s3_bucket.react_bucket.id
+//   name   = "xalian"
+// }

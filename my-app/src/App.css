@@ -36,3 +36,67 @@
     transform: rotate(360deg);
   }
 }
+
+
+.species-title {
+  font-size: 48pt;
+  font-weight: 750;
+}
+
+.elements {
+  font-size: 20pt;
+  font-style: italic;
+  padding-bottom: 50px;;
+}
+
+/* .stat-row {
+  font-size: 24pt;
+} */
+
+.moves-row {
+  padding-top: 50px;
+}
+
+.move-name {
+  font-size: 24pt;
+}
+
+.move-description {
+  font-size: 14pt;
+  font-style: italic;
+  color: cadetblue;
+}
+
+.move-rating {
+  font-size: 24pt;
+}
+
+.stat-list-item {
+  font-size: 12pt;
+}
+
+.stat-name-col {
+  color: rgb(128, 128, 128);
+  font-size: 18pt;
+}
+
+.stat-rating-col {
+  color: cadetblue;
+  font-size: 20pt;
+}
+
+.generateButton {
+  margin-top: 20px;;
+}
+
+/* SPECIAL TEXT */
+article {
+  background: linear-gradient(
+    to right, 
+    hsl(98 100% 62%), 
+    hsl(204 100% 59%)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+}

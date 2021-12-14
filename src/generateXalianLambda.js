@@ -7,7 +7,6 @@ module.exports.handler = async (event) => {
     //   responseMessage = 'Helloo, new ' + event.queryStringParameters['Name'] + '!';
     // }
 
-    var responseMessage = xalianBuilder.buildXalian();
     // let responseMessage = 'Helloo, World!';
 
     return {
@@ -20,8 +19,6 @@ module.exports.handler = async (event) => {
             "Access-Control-Allow-Origin" : "*",
             "X-Requested-With" : "*"
         },
-        body: JSON.stringify({
-            message: responseMessage,
-        }),
+        body: JSON.stringify(xalianBuilder.buildXalian())
     }
 }

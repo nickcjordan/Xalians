@@ -26,8 +26,9 @@ function buildXalian() {
     //     console.log(`\n${JSON.stringify(x, null, 2)}`);
     // }
     let translated = translator.translateCharacterToPresentableType(x);
-    let json = JSON.stringify(translated, null, 2);
-    console.log(`json:\n\n${json}\n`);
-    return json;
+    // let json = JSON.stringify(translated, null, 2);
+    // console.log(`json:\n\n${json}\n`);
+    // return json;
+    return translated;
     // fs.writeFileSync("json/current_xalian.json", json);
 }

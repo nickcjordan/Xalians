@@ -24,3 +24,13 @@ output "base_url" {
 
   value = aws_apigatewayv2_stage.lambda.invoke_url
 }
+
+
+# frontend
+output "website_domain" {
+  value = "${aws_s3_bucket.react_bucket.website_domain}"
+}
+
+output "website_endpoint" {
+  value = "${aws_s3_bucket.react_bucket.website_endpoint}"
+}
