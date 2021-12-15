@@ -10,9 +10,9 @@ const translator = require('./src/translator.js');
 main();
 
 function main() {
-    // for (var i = 0; i<50000; i++) {
+    // for (var i = 0; i<30000; i++) {
         let x = xalianBuilder.buildXalian();
-        console.log(JSON.stringify(x, null, 2));
+        // console.log(JSON.stringify(x, null, 2));
         let translated = translator.translateCharacterToPresentableType(x);
         console.log("\n\n" + JSON.stringify(translated, null, 2));
     // }

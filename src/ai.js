@@ -329,17 +329,7 @@ function giveSummary() {
 
     var curve = new Map();
 
-    // totalPercentages.forEach(p => {
-    //     if (curve[p] != undefined && curve[p] != null) {
-    //         var val = curve[p];
-    //         val += 1;
-    //         curve[p] = val;
-    //     } else {
-    //         curve[p] = 1;
-    //     }
-    // });
-
-    totalStatsList.forEach(p => {
+    totalPercentages.forEach(p => {
         if (curve[p] != undefined && curve[p] != null) {
             var val = curve[p];
             val += 1;
@@ -348,6 +338,16 @@ function giveSummary() {
             curve[p] = 1;
         }
     });
+
+    // totalStatsList.forEach(p => {
+    //     if (curve[p] != undefined && curve[p] != null) {
+    //         var val = curve[p];
+    //         val += 1;
+    //         curve[p] = val;
+    //     } else {
+    //         curve[p] = 1;
+    //     }
+    // });
 
 
     var flip = true;
