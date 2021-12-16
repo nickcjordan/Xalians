@@ -113,14 +113,20 @@
 
 } */
 
-
+.stat-table {
+  background-color: #282c344d;
+}
 
 .stat-table thead tr th {
   font-size: 16pt;
+  color: white;
+  background-color: #282c34;
 }
 
 .stat-table tbody tr td {
   font-size: 12pt;
+  color: white;
+  background-color: #282c344d;
 }
 
 
@@ -134,4 +140,9 @@ article {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-align: center;
+}
+
+
+.xalian-image {
+  max-width: 400px;
 }

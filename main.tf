@@ -163,6 +163,14 @@ resource "aws_lambda_permission" "api_gw" {
   source_arn = "${aws_apigatewayv2_api.lambda.execution_arn}/*/*"
 }
 
+// reference the cert that is created already
+# Find a certificate issued by (not imported into) ACM
+// data "aws_acm_certificate" "amazon_issued" {
+//   domain      = "*.xalians.com"
+//   types       = ["AMAZON_ISSUED"]
+//   most_recent = true
+// }
+
 resource "aws_apigatewayv2_domain_name" "api" {
   domain_name = "api.xalians.com"
 
@@ -172,6 +180,7 @@ resource "aws_apigatewayv2_domain_name" "api" {
     security_policy = "TLS_1_2"
   }
 }
+
 
 
 // ROUTE 53
@@ -254,14 +263,20 @@ EOF
 
 // route53 for frontend
 
-resource "aws_route53_record" "xalians-frontend" {
+data "aws_cloudfront_distribution" "distribution" {
+  id = var.cloudfront_id
+}
+
+resource "aws_route53_record" "www-xalians-frontend" {
   zone_id = data.aws_route53_zone.xalian_zone.zone_id
-  name    = "xalians.com"
+  name    = "www.xalians.com"
   type    = "A"
 
   alias {
-    name = aws_s3_bucket.react_bucket.website_domain
-    zone_id = aws_s3_bucket.react_bucket.hosted_zone_id
+    name = data.aws_cloudfront_distribution.distribution.domain_name
+    // name = aws_s3_bucket.react_bucket.website_domain
+    // zone_id = aws_s3_bucket.react_bucket.hosted_zone_id
+    zone_id = data.aws_cloudfront_distribution.distribution.hosted_zone_id
     evaluate_target_health = true
   }
 }

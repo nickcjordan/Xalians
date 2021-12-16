@@ -11,6 +11,7 @@ import CharacterMoves from './components/characterMove';
 // import { Routes, Route, Router } from 'react-router-dom';
 // import { Link } from 'react-router-dom';
 import Home from './pages/home';
+import ExplorePage from './pages/explore'
 
 import React from "react";
 import {
@@ -22,37 +23,9 @@ import {
 
 class App extends React.Component {
 
-  state = {
-    xalian: null
-  }
+ 
+
   
-  componentDidMount() {
-    this.getXalian();
-  }
-
-  getXalian() {
-    const url = "https://api.xalians.com/xalian";
-    axios.get(url)
-      .then(response => {
-        var xalianObject = response.data;
-        this.setState({ xalian: xalianObject })
-        console.log(JSON.stringify(xalianObject, null, 2))
-      }
-    );
-  }
-
-  getString(list) {
-    return list.reduce((a, b, index) => a + ", " + b, "").slice(2);
-  }
-
-  xalianisNull() {
-    let x = this.state.xalian;
-    let isNull = (x == null) || (x == undefined);
-    if (!isNull) {
-      console.log(JSON.stringify(x, null, 2));
-    }
-    return isNull;
-  }
 
   render() {
     // return (
@@ -130,6 +103,9 @@ class App extends React.Component {
             <Switch>
               <Route exact path="/">
                 <Home />
+              </Route>
+              <Route exact path="/engine">
+                <ExplorePage />
               </Route>
             </Switch>
           </div>

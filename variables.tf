@@ -23,3 +23,15 @@ variable "hosted_zone_id" {
 variable "frontend_bucket_name" {
   default = "xalians.com"
 }
+
+variable "cloudfront_arn" {
+  description = "arn"
+  type = string
+  default = "arn:aws:cloudfront::174497891311:distribution/E25EPFZCU2J0HP"
+}
+
+variable "cloudfront_id" {
+  description = "cloudfront"
+  type = string
+  default = "E25EPFZCU2J0HP"
+}

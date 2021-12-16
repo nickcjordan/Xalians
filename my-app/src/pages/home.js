@@ -1,6 +1,7 @@
 import React from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 
 class Home extends React.Component {
@@ -57,7 +58,13 @@ class Home extends React.Component {
                         </div>
                     </div>
 
-                    <div class="row gy-4 mt-5 justify-content-center" data-aos="zoom-in" data-aos-delay="250">
+                    <div class="row justify-content-center xalian-generator-button" data-aos="fade-up" data-aos-delay="300">
+                        <div class="col-xl-6 col-lg-8">
+                            <Button href="/engine" variant="outline-warning">Try the Xalian Generator</Button>{' '}
+                        </div>
+                    </div>
+
+                    <div class="row gy-4 mt-5 justify-content-center" data-aos="zoom-in" data-aos-delay="450">
                             <div class="col-xl-2 col-md-4">
                         <a href="#story">
                                 <div class="icon-box">
@@ -83,7 +90,7 @@ class Home extends React.Component {
                             </a>
                         </div>
                         <div class="col-xl-2 col-md-4">
-                        <a href="#testimony">
+                        <a href="#testimonials">
                             <div class="icon-box">
                                 <i class="bi bi-coin"></i>
                                 <h3>Tokens</h3>
@@ -523,7 +530,7 @@ For a team to be eligible for battle, the combined battle fee of the team must n
                                 <Col sm={true} class="d-flex">
                                     <div class="member" data-aos="fade-up" data-aos-delay="100">
                                         <div class="member-img">
-                                            <img src="assets/img/team/team-1.jpg" class="img-fluid" alt=""></img>
+                                            <img src="assets/img/xalians/xalians_icon_xylum.png" class="img-fluid" alt=""></img>
                                             <div class="social">
                                                 <a href=""><i class="bi bi-twitter"></i></a>
                                                 <a href=""><i class="bi bi-facebook"></i></a>
@@ -541,7 +548,7 @@ For a team to be eligible for battle, the combined battle fee of the team must n
                                 <Col sm={true} class="d-flex">
                                     <div class="member" data-aos="fade-up" data-aos-delay="200">
                                         <div class="member-img">
-                                            <img src="assets/img/team/team-2.jpg" class="img-fluid" alt=""></img>
+                                            <img src="assets/img/xalians/xalians_icon_dromeus.png" class="img-fluid" alt=""></img>
                                             <div class="social">
                                                 <a href=""><i class="bi bi-twitter"></i></a>
                                                 <a href=""><i class="bi bi-facebook"></i></a>
@@ -559,7 +566,7 @@ For a team to be eligible for battle, the combined battle fee of the team must n
                                 <Col sm={true} class="d-flex">
                                     <div class="member" data-aos="fade-up" data-aos-delay="400">
                                         <div class="member-img">
-                                            <img src="assets/img/team/team-4.jpg" class="img-fluid" alt=""></img>
+                                            <img src="assets/img/xalians/xalians_icon_unknown.png" class="img-fluid" alt=""></img>
                                             <div class="social">
                                                 <a href=""><i class="bi bi-twitter"></i></a>
                                                 <a href=""><i class="bi bi-facebook"></i></a>
@@ -658,17 +665,14 @@ For a team to be eligible for battle, the combined battle fee of the team must n
 
                             <div class="col-lg-3 col-md-6 social-links-footer">
                                 <div class="footer-info">
-                                    <h3>Chronic Labs<span>.</span></h3>
+                                    <h3>come check it out<span>.</span></h3>
 
                                     {/* ADD SOCIALS BELOW */}
 
-                                    {/* <div class="social-links mt-3">
-                                        <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
-                                        <a href="#" class="facebook"><i class="bx bxl-facebook"></i></a>
-                                        <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
-                                        <a href="#" class="google-plus"><i class="bx bxl-skype"></i></a>
-                                        <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
-                                    </div> */}
+                                    <div class="social-links mt-3">
+                                        <a href="https://discord.gg/fWMvsQ7v" class="discord"><i class="bi bi-discord"></i></a>
+                                        <a href="https://twitter.com/xaliansgame" class="twitter"><i class="bi bi-twitter"></i></a>
+                                    </div>
                                 </div>
                             </div>
 {/* 

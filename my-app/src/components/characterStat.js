@@ -49,7 +49,8 @@ class CharacterStats extends React.Component {
             list.push(this.buildRow(val));
         }
 
-        return <Table striped bordered hover variant="dark" size="sm" className="stat-table">
+        // return <Table striped bordered hover variant="dark" size="sm" className="stat-table">
+        return <Table hover variant="dark" bordered size="sm" className="stat-table">
             <thead>
                 <tr>
                     <th>Stat</th>
