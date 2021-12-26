@@ -15,9 +15,11 @@ function getMove(character) {
     moveQualifiers = tools.shuffle(moveQualifiers);
     let m = new Move();
     let hasElement = tools.randomBool();
+    console.log(JSON.stringify(character, null, 2));
     if (hasElement) {
-        // let element = tools.capitalize(tools.selectFromList(1, character.elements));
-        m.element = tools.selectRandom(character.elements);
+        let selectedType = selectRandomElementTypeFromCharacter(character.elements);
+        m.type = selectedType;
+        m.element = tools.capitalize(tools.selectRandom(selectedType.moveTypes));
     }
     let qualifier = tools.selectRandom(moveQualifiers);
     m.qualifier = qualifier;
@@ -25,14 +27,25 @@ function getMove(character) {
     m.baseMove = baseMove;
     var description = "";
     if (hasElement) {
-        let elementSynonym = tools.capitalize(tools.selectRandom(m.element.synonyms));
-        m.name = qualifier.name + " " + elementSynonym + " " + baseMove.name;
-        description += `${m.element.name}-typed ${m.qualifier.definition}${m.baseMove.sentencePrefix} ${m.baseMove.definition}`;
+        // let synonyms = m.element.moveTypes;
+        // let selected = tools.selectRandom(synonyms);
+        // let elementSynonym = tools.capitalize(selected);
+        m.name = qualifier.name + " " + m.element + " " + baseMove.name;
+        description += `${m.type.name}-typed ${m.qualifier.definition}${m.baseMove.sentencePrefix} ${m.baseMove.definition}`;
     } else {
         description += `${tools.capitalize(m.qualifier.definition)}${m.baseMove.sentencePrefix} ${m.baseMove.definition}`;
         m.name = qualifier.name + " " + baseMove.name;
     }
     m.description = description;
+    m.potential = parseInt(m.baseMove.effectRating) + parseInt(m.qualifier.effectRating); 
     return m;
+}
+
+function selectRandomElementTypeFromCharacter(characterElementsNode) {
+    if (tools.randomBool()) {
+        return characterElementsNode.primaryType;
+    } else {
+        return characterElementsNode.secondaryType;
+    }
 }
 

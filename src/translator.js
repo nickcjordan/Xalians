@@ -8,18 +8,28 @@ module.exports = {
 
 function translateCharacterToPresentableType(xalian) {
     let conditionedMoves = makeMovesPresentable(xalian);
+    let cleanedElements = makeElementsPresentable(xalian.elements);
     return {
         "species": {
           "name": xalian.species.name,
           "origin": xalian.origin,
           "description": xalian.species.description,
         },
-        "elements": xalian.elements.map(x => x.name),
+        "elements": makeElementsPresentable(xalian.elements),
         "healthPoints": xalian.healthPoints,
         "stats": xalian.stats,
         "moves": conditionedMoves,
         "meta": xalian.meta
       };
+}
+
+function makeElementsPresentable(e) {
+    return {
+        "primaryType": tools.capitalize(e.primaryType.name),
+        "primaryElement": tools.capitalize(e.primaryElement),
+        "secondaryType": tools.capitalize(e.secondaryType.name),
+        "secondaryElement": tools.capitalize(e.secondaryElement)
+    }
 }
 
 function makeMovesPresentable(xalian) {
@@ -33,13 +43,24 @@ function makeMovesPresentable(xalian) {
 }
 
 function fixMove(move) {
+    var moveType = move.type;
     var totalMoveRating = parseInt(move.baseMove.effectRating) + parseInt(move.qualifier.effectRating); 
-    var elementName = move.element != null ? move.element.name : "none";
-    return {
-        "name": move.name,
-        "description": move.description,
-        "element": elementName,
-        "rating": totalMoveRating,
-        "cost": move.cost
-    };
+    if (moveType) {
+        return {
+            "name": move.name,
+            "description": move.description,
+            "type": move.type.name,
+            "element": move.element,
+            "rating": totalMoveRating,
+            "cost": move.cost
+        };
+    } else {
+        return {
+            "name": move.name,
+            "description": move.description,
+            "rating": totalMoveRating,
+            "cost": move.cost
+        };
+    }
+   
 }

@@ -2,7 +2,7 @@
   {
     "name": "Abrasion",
     "definition": "erosion by the use of friction",
-    "effectRating": 3,
+    "effectRating": 2,
     "sentencePrefix": "",
     "category": "standard"
   },
@@ -16,7 +16,7 @@
   {
     "name": "Assault",
     "definition": "physical attack attempting to cause bodily harm",
-    "effectRating": 6,
+    "effectRating": 5,
     "sentencePrefix": ",",
     "category": "standard"
   },
@@ -44,7 +44,7 @@
   {
     "name": "Barrage",
     "definition": "heavy fire of artillery saturating an area",
-    "effectRating": 4,
+    "effectRating": 6,
     "sentencePrefix": "",
     "category": "special"
   },
@@ -100,14 +100,14 @@
   {
     "name": "Bombardment",
     "definition": "heavy fire of artillery to saturate an area",
-    "effectRating": 4,
+    "effectRating": 6,
     "sentencePrefix": ",",
     "category": "special"
   },
   {
     "name": "Bonanza",
     "definition": "chaotic onslaught",
-    "effectRating": 6,
+    "effectRating": 5,
     "sentencePrefix": ",",
     "category": "standard"
   },
@@ -116,7 +116,7 @@
     "definition": "deep prolonged force accompanied by a loud noise",
     "effectRating": 4,
     "sentencePrefix": ",",
-    "category": "special"
+    "category": "standard"
   },
   {
     "name": "Boot",
@@ -155,7 +155,7 @@
   },
   {
     "name": "Bushwhack",
-    "definition": "guerrilla warfare style attack",
+    "definition": "guerrilla warfare styled attack",
     "effectRating": 4,
     "sentencePrefix": "",
     "category": "standard"
@@ -177,21 +177,21 @@
   {
     "name": "Chomp",
     "definition": "gripping or chewing off with the teeth and jaws",
-    "effectRating": 7,
+    "effectRating": 5,
     "sentencePrefix": "",
     "category": "standard"
   },
   {
     "name": "Chop",
     "definition": "aggressive slice with a swift motion",
-    "effectRating": 6,
+    "effectRating": 5,
     "sentencePrefix": ",",
     "category": "standard"
   },
   {
     "name": "Clobber",
     "definition": "smash with great physical force",
-    "effectRating": 8,
+    "effectRating": 6,
     "sentencePrefix": "",
     "category": "standard"
   },
@@ -205,7 +205,7 @@
   {
     "name": "Crunch",
     "definition": "crush using teeth",
-    "effectRating": 7,
+    "effectRating": 6,
     "sentencePrefix": "",
     "category": "standard"
   },
@@ -240,14 +240,14 @@
   {
     "name": "Drill",
     "definition": "repeated cut with a sharp point as to form a hole",
-    "effectRating": 7,
+    "effectRating": 5,
     "sentencePrefix": "",
     "category": "standard"
   },
   {
     "name": "Enchantment",
     "definition": "magical spell",
-    "effectRating": 6,
+    "effectRating": 7,
     "sentencePrefix": ",",
     "category": "special"
   },
@@ -275,7 +275,7 @@
   {
     "name": "Flare",
     "definition": "sudden eruption of intense high-energy particles",
-    "effectRating": 4,
+    "effectRating": 6,
     "sentencePrefix": ",",
     "category": "special"
   },
@@ -289,7 +289,7 @@
   {
     "name": "Fling",
     "definition": "careless toss",
-    "effectRating": 5,
+    "effectRating": 4,
     "sentencePrefix": ",",
     "category": "standard"
   },
@@ -317,14 +317,14 @@
   {
     "name": "Force",
     "definition": "wave of physical energy or intensity",
-    "effectRating": 6,
+    "effectRating": 5,
     "sentencePrefix": "",
     "category": "special"
   },
   {
     "name": "Fracture",
     "definition": "break of hard tissue such as bone",
-    "effectRating": 8,
+    "effectRating": 6,
     "sentencePrefix": "",
     "category": "standard"
   },
@@ -352,7 +352,7 @@
   {
     "name": "Hammer",
     "definition": "repeated heavy attacks",
-    "effectRating": 7,
+    "effectRating": 6,
     "sentencePrefix": ",",
     "category": "standard"
   },
@@ -373,14 +373,14 @@
   {
     "name": "Hook",
     "definition": "short swinging punch delivered from the side",
-    "effectRating": 6,
+    "effectRating": 5,
     "sentencePrefix": ",",
     "category": "standard"
   },
   {
     "name": "Hurl",
     "definition": "violent throw",
-    "effectRating": 6,
+    "effectRating": 5,
     "sentencePrefix": ",",
     "category": "standard"
   },
@@ -422,7 +422,7 @@
   {
     "name": "Kick",
     "definition": "attack delivered by the foot",
-    "effectRating": 5,
+    "effectRating": 4,
     "sentencePrefix": "",
     "category": "standard"
   },
@@ -471,7 +471,7 @@
   {
     "name": "Outbreak",
     "definition": "sudden violent spontaneous attack",
-    "effectRating": 6,
+    "effectRating": 4,
     "sentencePrefix": ",",
     "category": "standard"
   },
@@ -499,7 +499,7 @@
   {
     "name": "Pound",
     "definition": "repeated heavy attacks",
-    "effectRating": 6,
+    "effectRating": 5,
     "sentencePrefix": ",",
     "category": "standard"
   },
@@ -527,21 +527,21 @@
   {
     "name": "Rage",
     "definition": "fit fueled by intense anger",
-    "effectRating": 7,
+    "effectRating": 6,
     "sentencePrefix": "",
     "category": "standard"
   },
   {
     "name": "Raid",
     "definition": "sudden short attack",
-    "effectRating": 7,
+    "effectRating": 6,
     "sentencePrefix": ",",
     "category": "standard"
   },
   {
     "name": "Ram",
     "definition": "impactful force",
-    "effectRating": 7,
+    "effectRating": 5,
     "sentencePrefix": ",",
     "category": "standard"
   },
@@ -597,7 +597,7 @@
   {
     "name": "Slam",
     "definition": "forceful impact that makes a loud noise",
-    "effectRating": 7,
+    "effectRating": 5,
     "sentencePrefix": ",",
     "category": "standard"
   },
@@ -611,14 +611,14 @@
   {
     "name": "Slash",
     "definition": "strong sweeping cut made with a sharp instrument",
-    "effectRating": 7,
+    "effectRating": 5,
     "sentencePrefix": ",",
     "category": "standard"
   },
   {
     "name": "Slice",
     "definition": "slash with a sharp object",
-    "effectRating": 7,
+    "effectRating": 5,
     "sentencePrefix": "",
     "category": "standard"
   },
@@ -641,34 +641,6 @@
     "definition": "magical force",
     "effectRating": 7,
     "sentencePrefix": ",",
-    "category": "special"
-  },
-  {
-    "name": "Cast",
-    "definition": "act of sending a spell",
-    "effectRating": 4,
-    "sentencePrefix": ",",
-    "category": "special"
-  },
-  {
-    "name": "Conjuration",
-    "definition": "magical incantation or spell",
-    "effectRating": 5,
-    "sentencePrefix": ",",
-    "category": "special"
-  },
-  {
-    "name": "Rune",
-    "definition": "spell or incantation",
-    "effectRating": 4,
-    "sentencePrefix": "",
-    "category": "special"
-  },
-  {
-    "name": "Incantation",
-    "definition": "chant producing a magical spell",
-    "effectRating": 4,
-    "sentencePrefix": "",
     "category": "special"
   },
   {
@@ -702,7 +674,7 @@
   {
     "name": "Storm",
     "definition": "violent commotion or disturbance",
-    "effectRating": 6,
+    "effectRating": 8,
     "sentencePrefix": ",",
     "category": "special"
   },
@@ -744,14 +716,14 @@
   {
     "name": "Thrash",
     "definition": "repeated, hard hit",
-    "effectRating": 7,
+    "effectRating": 6,
     "sentencePrefix": ",",
     "category": "standard"
   },
   {
     "name": "Throw",
     "definition": "application of force to propel something",
-    "effectRating": 5,
+    "effectRating": 4,
     "sentencePrefix": "",
     "category": "standard"
   },
@@ -786,7 +758,7 @@
   {
     "name": "Toss",
     "definition": "application of force to propel something",
-    "effectRating": 5,
+    "effectRating": 4,
     "sentencePrefix": "",
     "category": "standard"
   },
@@ -814,35 +786,35 @@
   {
     "name": "Undercut",
     "definition": "attack from beneath",
-    "effectRating": 6,
+    "effectRating": 5,
     "sentencePrefix": "",
     "category": "standard"
   },
   {
     "name": "Vortex",
     "definition": "powerful, circular current",
-    "effectRating": 7,
+    "effectRating": 8,
     "sentencePrefix": ",",
     "category": "special"
   },
   {
     "name": "Wallop",
     "definition": "severe attack",
-    "effectRating": 6,
+    "effectRating": 5,
     "sentencePrefix": ",",
     "category": "standard"
   },
   {
     "name": "Waves",
     "definition": "rapid disturbance of a substance's particles",
-    "effectRating": 7,
+    "effectRating": 8,
     "sentencePrefix": ",",
     "category": "special"
   },
   {
     "name": "Whack",
     "definition": "vigorous smack",
-    "effectRating": 6,
+    "effectRating": 5,
     "sentencePrefix": ",",
     "category": "standard"
   },
@@ -856,7 +828,7 @@
   {
     "name": "Wrath",
     "definition": "vengeful attacking force",
-    "effectRating": 9,
+    "effectRating": 7,
     "sentencePrefix": ",",
     "category": "standard"
   },

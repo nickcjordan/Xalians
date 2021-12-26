@@ -11,7 +11,7 @@ module.exports = {
     pickStatisticalRandomRating: pickStatisticalRandomRating
 };
 
-var elements = tools.getObject("elements");
+var elementTypes = tools.getObject("elements");
 var species = tools.getObject("species");
 var totalStats = 0;
 var totalStatPointsUnallocated = Math.floor((constants.STAT_COUNT_PER_CHARACTER * constants.STAT_POINT_MAX) / 2); // cut in half to have each stat avg to 500/1000
@@ -34,7 +34,32 @@ function selectSpecies(xalian) {
 }
 
 function selectElements(xalian) {
-    return tools.selectFromList(constants.MAX_ELEMENT_COUNT_PER_CHARACTER, elements);
+
+    var primaryType = getTypeNodeFromName(xalian.species.type);
+    var primaryElement = tools.selectRandom(primaryType.elements);
+    
+    let secondaryType;
+    while(!secondaryType || (secondaryType.name == xalian.species.type)) {
+        secondaryType = tools.selectRandom(elementTypes);
+    }
+    let secondaryElement = tools.selectRandom(secondaryType.elements);
+    
+    return {
+        "primaryType": primaryType,
+        "primaryElement": primaryElement,
+        "secondaryType": secondaryType,
+        "secondaryElement": secondaryElement
+    }
+}
+
+function getTypeNodeFromName(typeName) {
+    var selected;
+    elementTypes.forEach(type => {
+        if (type.name.toLowerCase() == typeName.toLowerCase()) {
+            selected = type;
+        }
+    });
+    return selected;
 }
 
 const valMapping = new Map();
@@ -161,14 +186,6 @@ function populateStats(xalian) {
     // console.log(`built character ranges:\n${JSON.stringify(xalian.species.statRatings, null, 2)}`);
 
 
-    // xalian.standardAttackPoints = generateStatFromRange(xalian, statConstants.STANDARD_ATTACK_RATING);
-    // xalian.specialAttackPoints = generateStatFromRange(xalian, statConstants.SPECIAL_ATTACK_RATING);
-    // xalian.standardDefensePoints = generateStatFromRange(xalian, statConstants.STANDARD_DEFENSE_RATING);
-    // xalian.specialDefensePoints = generateStatFromRange(xalian, statConstants.SPECIAL_DEFENSE_RATING);
-    // xalian.speedPoints = generateStatFromRange(xalian, statConstants.SPEED_RATING);
-    // xalian.evasionPoints = generateStatFromRange(xalian, statConstants.EVASION_RATING);
-    // xalian.recoveryPoints = generateStatFromRange(xalian, statConstants.RECOVERY_RATING);
-    // xalian.staminaPoints = generateStatFromRange(xalian, statConstants.STAMINA_RATING);
     var stats = new Map();
     stats[statConstants.STANDARD_ATTACK_POINTS] = generateStatFromRange(xalian, statConstants.STANDARD_ATTACK_RATING);
     stats[statConstants.SPECIAL_ATTACK_POINTS] = generateStatFromRange(xalian, statConstants.SPECIAL_ATTACK_RATING);

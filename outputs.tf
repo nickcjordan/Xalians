@@ -22,7 +22,7 @@ output "function_name" {
 output "base_url" {
   description = "Base URL for API Gateway stage."
 
-  value = aws_apigatewayv2_stage.lambda.invoke_url
+  value = aws_apigatewayv2_stage.prod.invoke_url
 }
 
 

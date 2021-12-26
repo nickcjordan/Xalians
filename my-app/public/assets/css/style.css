@@ -355,7 +355,7 @@ h1, h2, h3, h4, h5, h6 {
 #hero {
   width: 100%;
   height: 100vh;
-  background: url("../img/galaxy-banner.jpg") top center;
+  background: url("../img/background/valleron.jpg") top center;
   background-size: cover;
   position: relative;
 }
@@ -634,7 +634,7 @@ section {
 # Cta
 --------------------------------------------------------------*/
 .ruins {
-  background: linear-gradient(rgba(2, 2, 2, 0.5), rgba(0, 0, 0, 0.5)), url("../img/star_swipe_other.jpg") fixed center center;
+  background: linear-gradient(rgba(2, 2, 2, 0.5), rgba(0, 0, 0, 0.5)), url("../img/background/eclipse_background.jpg") fixed center center;
   background-size: cover;
   padding: 60px 0;
 }
@@ -909,10 +909,11 @@ section {
 --------------------------------------------------------------*/
 .testimonials {
   padding: 80px 0;
-  background: url("../img/star_swipe.jpg") no-repeat;
+  background: url("../img/background/vault.jpg") no-repeat;
   background-position: center center;
   background-size: cover;
   position: relative;
+  background-color: black !important;
 }
 .testimonials::before {
   content: "";
@@ -1007,12 +1008,13 @@ section {
   margin-bottom: 20px;
   overflow: hidden;
   border-radius: 5px;
-  background: #fff;
+  background: rgb(0, 0, 0);
   box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
 }
 .team .member .member-img {
   position: relative;
   overflow: hidden;
+  background: rgb(242, 255, 63);
 }
 .team .member .social {
   position: absolute;
@@ -1025,14 +1027,14 @@ section {
 }
 .team .member .social a {
   transition: color 0.3s;
-  color: #151515;
+  color: #f3f3f3;
   margin: 0 3px;
   border-radius: 4px;
   width: 36px;
   height: 36px;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(0, 0, 0, 0.8);
   transition: ease-in-out 0.3s;
-  color: #484848;
+  color: #bdbdbd;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -1052,7 +1054,7 @@ section {
   font-weight: 700;
   margin-bottom: 5px;
   font-size: 18px;
-  color: #151515;
+  color: #777777;
 }
 .team .member .member-info span {
   display: block;
@@ -1367,7 +1369,7 @@ section {
   border-radius: 0 4px 4px 0;
 }
 #footer .footer-top .footer-newsletter form input[type=submit]:hover {
-  background: #ffcd6b;
+  background: #ffc451;
 }
 #footer .copyright {
   text-align: center;
@@ -1420,4 +1422,33 @@ section {
 
 .xalian-generator-button {
   padding-top: 50px;
+}
+
+.centered-div {
+  margin: auto !important;
+  padding: 10px !important;
+}
+
+.embedded-img-wrapper {
+  max-width: 400px;
+  align-self: auto;
+  margin: auto;
+}
+
+.social-media-links {
+  margin: auto;
+  padding: 20px;
+}
+
+.social-media-links i {
+  color: #ffc451;
+  font-size: 28pt;
+}
+
+.shadow-text {
+  text-shadow: 1px 1px 2px rgb(0, 0, 0) !important;
+  max-width: 600px;
+  align-self: center;
+  margin: auto;
+  font-size: 3vw;
 }

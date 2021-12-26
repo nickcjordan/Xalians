@@ -1,52 +1,118 @@
 [
   {
     "name": "Electrical",
-    "synonyms": [
+    "moveTypes": [
+      "electrical",
       "electric",
       "plasma",
-      "lightening",
+      "lightning",
       "thunder",
       "static",
       "electron",
       "voltage",
       "electro",
       "power",
-      "spark"
+      "spark",
+      "botanical"
+    ],
+    "effectiveness": {
+      "Electrical": 1,
+      "Air": 0.5,
+      "Light": 0.5,
+      "Botanical": 2,
+      "Geological": 0.5,
+      "Chemical": 2,
+      "Dark": 2,
+      "Explosive": 1,
+      "Psychic": 1,
+      "Spectral": 1,
+      "Fire": 1,
+      "Water": 0
+    },
+    "elements": [
+      "electricity",
+      "plasma",
+      "lightning",
+      "thunder",
+      "static"
     ]
   },
   {
     "name": "Air",
-    "synonyms": [
+    "moveTypes": [
       "atmospheric",
-      "wind",
+      "windy",
       "aerial",
-      "sky",
+      "skyward",
+      "stormy",
+      "cloudy",
+      "hazy",
+      "foggy",
+      "vapor",
+      "air"
+    ],
+    "effectiveness": {
+      "Electrical": 0.5,
+      "Air": 1,
+      "Light": 1,
+      "Botanical": 0.5,
+      "Geological": 2,
+      "Chemical": 2,
+      "Dark": 1,
+      "Explosive": 0,
+      "Psychic": 1,
+      "Spectral": 0.5,
+      "Fire": 2,
+      "Water": 1
+    },
+    "elements": [
+      "air",
+      "wind",
       "storm",
       "cloud",
-      "cumulus",
-      "haze",
-      "fog",
-      "nimbus"
+      "vapor"
     ]
   },
   {
     "name": "Light",
-    "synonyms": [
-      "radiation",
+    "moveTypes": [
+      "radioactive",
       "ultraviolet",
       "infrared",
       "photon",
       "rainbow",
       "sunlight",
-      "glow",
+      "glowing",
       "lightwave",
       "gamma",
-      "blinding"
+      "blinding",
+      "light"
+    ],
+    "effectiveness": {
+      "Electrical": 0.5,
+      "Air": 0,
+      "Light": 1,
+      "Botanical": 2,
+      "Geological": 0.5,
+      "Chemical": 1,
+      "Dark": 2,
+      "Explosive": 1,
+      "Psychic": 0.5,
+      "Spectral": 2,
+      "Fire": 1,
+      "Water": 1
+    },
+    "elements": [
+      "light",
+      "radiation",
+      "photon",
+      "rainbow",
+      "gamma"
     ]
   },
   {
     "name": "Botanical",
-    "synonyms": [
+    "moveTypes": [
       "phyto",
       "growth",
       "vine",
@@ -55,13 +121,35 @@
       "thorn",
       "synthesis",
       "hydroponic",
-      "fungis",
-      "blossom"
+      "fungus",
+      "blossom",
+      "algae"
+    ],
+    "effectiveness": {
+      "Electrical": 2,
+      "Air": 1,
+      "Light": 2,
+      "Botanical": 1,
+      "Geological": 1,
+      "Chemical": 1,
+      "Dark": 0.5,
+      "Explosive": 0.5,
+      "Psychic": 0,
+      "Spectral": 1,
+      "Fire": 0.5,
+      "Water": 2
+    },
+    "elements": [
+      "botanical",
+      "phyto",
+      "spore",
+      "fungus",
+      "algae"
     ]
   },
   {
     "name": "Geological",
-    "synonyms": [
+    "moveTypes": [
       "rock",
       "magma",
       "stone",
@@ -71,27 +159,71 @@
       "igneous",
       "mineral",
       "geode",
+      "metallic",
       "quartz"
+    ],
+    "effectiveness": {
+      "Electrical": 2,
+      "Air": 0.5,
+      "Light": 1,
+      "Botanical": 1,
+      "Geological": 1,
+      "Chemical": 1,
+      "Dark": 1,
+      "Explosive": 0.5,
+      "Psychic": 2,
+      "Spectral": 0,
+      "Fire": 2,
+      "Water": 0.5
+    },
+    "elements": [
+      "rock",
+      "metal",
+      "lava",
+      "mineral",
+      "geological"
     ]
   },
   {
     "name": "Chemical",
-    "synonyms": [
+    "moveTypes": [
       "acid",
       "molecular",
       "noxious",
-      "poison",
-      "toxin",
-      "venom",
+      "poisonous",
+      "toxic",
+      "venomous",
       "corrosive",
       "microbe",
       "infectious",
+      "neurotoxin",
+      "chemical"
+    ],
+    "effectiveness": {
+      "Electrical": 1,
+      "Air": 2,
+      "Light": 0,
+      "Botanical": 2,
+      "Geological": 1,
+      "Chemical": 1,
+      "Dark": 1,
+      "Explosive": 0.5,
+      "Psychic": 2,
+      "Spectral": 1,
+      "Fire": 0.5,
+      "Water": 0.5
+    },
+    "elements": [
+      "chemical",
+      "acid",
+      "poison",
+      "infection",
       "neurotoxin"
     ]
   },
   {
     "name": "Dark",
-    "synonyms": [
+    "moveTypes": [
       "midnight",
       "twilight",
       "shadow",
@@ -101,12 +233,35 @@
       "voodoo",
       "horror",
       "terror",
-      "nightmare"
+      "nightmare",
+      "dark",
+      "smoky"
+    ],
+    "effectiveness": {
+      "Electrical": 0.5,
+      "Air": 1,
+      "Light": 2,
+      "Botanical": 0,
+      "Geological": 1,
+      "Chemical": 0.5,
+      "Dark": 1,
+      "Explosive": 1,
+      "Psychic": 2,
+      "Spectral": 2,
+      "Fire": 0.5,
+      "Water": 1
+    },
+    "elements": [
+      "twilight",
+      "shadow",
+      "voodoo",
+      "smoke",
+      "dark"
     ]
   },
   {
     "name": "Explosive",
-    "synonyms": [
+    "moveTypes": [
       "nitro",
       "quake",
       "rocket",
@@ -116,12 +271,34 @@
       "supernova",
       "nuclear",
       "atomic",
-      "energy"
+      "energy",
+      "explosive"
+    ],
+    "effectiveness": {
+      "Electrical": 2,
+      "Air": 2,
+      "Light": 1,
+      "Botanical": 1,
+      "Geological": 2,
+      "Chemical": 1,
+      "Dark": 0.5,
+      "Explosive": 1,
+      "Psychic": 1,
+      "Spectral": 0.5,
+      "Fire": 0,
+      "Water": 0.5
+    },
+    "elements": [
+      "nitro",
+      "nuclear",
+      "atomic",
+      "energy",
+      "explosive"
     ]
   },
   {
     "name": "Psychic",
-    "synonyms": [
+    "moveTypes": [
       "illusion",
       "telepathic",
       "clairvoyant",
@@ -131,12 +308,34 @@
       "confusion",
       "bewitching",
       "amnesia",
-      "charm"
-    ] 
+      "charm",
+      "psychic"
+    ],
+    "effectiveness": {
+      "Electrical": 1,
+      "Air": 1,
+      "Light": 2,
+      "Botanical": 0.5,
+      "Geological": 0.5,
+      "Chemical": 0.5,
+      "Dark": 0,
+      "Explosive": 2,
+      "Psychic": 1,
+      "Spectral": 2,
+      "Fire": 1,
+      "Water": 1
+    },
+    "elements": [
+      "illusion",
+      "hypnotic",
+      "telepathic",
+      "enchanting",
+      "psychic"
+    ]
   },
   {
     "name": "Spectral",
-    "synonyms": [
+    "moveTypes": [
       "ghost",
       "spirit",
       "phantom",
@@ -146,12 +345,34 @@
       "undead",
       "haunted",
       "genie",
-      "aura"
+      "spectral"
+    ],
+    "effectiveness": {
+      "Electrical": 1,
+      "Air": 2,
+      "Light": 0.5,
+      "Botanical": 1,
+      "Geological": 1,
+      "Chemical": 0,
+      "Dark": 0.5,
+      "Explosive": 2,
+      "Psychic": 0.5,
+      "Spectral": 1,
+      "Fire": 1,
+      "Water": 2
+    },
+    "elements": [
+      "ghost",
+      "phantom",
+      "supernatural",
+      "wraith",
+      "undead",
+      "spectral"
     ]
   },
   {
     "name": "Fire",
-    "synonyms": [
+    "moveTypes": [
       "flame",
       "ember",
       "burning",
@@ -161,12 +382,34 @@
       "incinerating",
       "scorching",
       "smoldering",
-      "sweltering"
+      "sweltering",
+      "pyro"
+    ],
+    "effectiveness": {
+      "Electrical": 1,
+      "Air": 0.5,
+      "Light": 0.5,
+      "Botanical": 2,
+      "Geological": 0.5,
+      "Chemical": 2,
+      "Dark": 2,
+      "Explosive": 1,
+      "Psychic": 1,
+      "Spectral": 1,
+      "Fire": 1,
+      "Water": 0
+    },
+    "elements": [
+      "flame",
+      "fire",
+      "inferno",
+      "pyro",
+      "ember"
     ]
   },
   {
     "name": "Water",
-    "synonyms": [
+    "moveTypes": [
       "dousing",
       "rain",
       "hydro",
@@ -176,7 +419,29 @@
       "hydraulic",
       "water",
       "splashing",
-      "spraying"
+      "spraying",
+      "frost"
+    ],
+    "effectiveness": {
+      "Electrical": 0,
+      "Air": 1,
+      "Light": 1,
+      "Botanical": 0.5,
+      "Geological": 2,
+      "Chemical": 0.5,
+      "Dark": 1,
+      "Explosive": 2,
+      "Psychic": 1,
+      "Spectral": 0.5,
+      "Fire": 2,
+      "Water": 1
+    },
+    "elements": [
+      "hydro",
+      "aqua",
+      "ice",
+      "water",
+      "frost"
     ]
   }
 ]

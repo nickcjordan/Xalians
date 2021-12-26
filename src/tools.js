@@ -18,15 +18,21 @@ module.exports = {
     randomBoolWeighted: randomBoolWeighted
 };
 
-
 function getProperties(fileName) {
-    if (fileName.includes('json')) {
-        fileName = "./json/" + fileName;
-    } else if (fileName.includes('txt')) {
-        fileName = "./txt/" + fileName;
-    }
     try {
-        const data = fs.readFileSync(fileName, 'utf8');
+        return getPropsFromFile("./src/txt/" + fileName + ".txt");
+    } catch (err) {
+        try {
+            return getPropsFromFile("./txt/" + fileName + ".txt");
+        } catch (e) {
+            console.error(err);
+        }
+    }
+}
+
+function getPropsFromFile(fullfileName) {
+    try {
+        const data = fs.readFileSync(fullfileName, 'utf8');
         if (data.includes(",")) {
             return data.toString().split(",");
         } else {
@@ -43,29 +49,20 @@ function getObject(fileName) {
 
 function getJson(fileName) {
     try {
-        return getJsonFromLocal(fileName);
+        return getJsonFromFile("./json/" + fileName + ".json");
     } catch (err) {
-        // console.error(err);
         try {
-            return getJsonFromAWS(fileName);
+            return getJsonFromFile("./src/json/" + fileName + ".json");
         } catch (e) {
             console.error(err);
         }
     }
 }
 
-function getJsonFromLocal(fileName) {
-    fileName = "./json/" + fileName + ".json";
+function getJsonFromFile(fileName) {
     const data = fs.readFileSync(fileName, 'utf8');
     return data.toString()
 }
-
-function getJsonFromAWS(fileName) {
-    fileName = "./src/json/" + fileName + ".json";
-    const data = fs.readFileSync(fileName, 'utf8');
-    return data.toString()
-}
-
 
 
 

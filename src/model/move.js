@@ -4,6 +4,7 @@ module.exports = class Move {
         this.name = "";
         this.description = "";
         this.baseMove = null;
+        this.type = null;
         this.element = null;
         this.qualifier = null;
         this.potential = 10;

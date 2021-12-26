@@ -108,10 +108,35 @@ resource "aws_apigatewayv2_api" "lambda" {
   protocol_type = "HTTP"
 }
 
-resource "aws_apigatewayv2_stage" "lambda" {
+resource "aws_apigatewayv2_stage" "prod" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  name        = "dev"
+  name        = "prod"
+  auto_deploy = true
+
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.api_gw.arn
+
+    format = jsonencode({
+      requestId               = "$context.requestId"
+      sourceIp                = "$context.identity.sourceIp"
+      requestTime             = "$context.requestTime"
+      protocol                = "$context.protocol"
+      httpMethod              = "$context.httpMethod"
+      resourcePath            = "$context.resourcePath"
+      routeKey                = "$context.routeKey"
+      status                  = "$context.status"
+      responseLength          = "$context.responseLength"
+      integrationErrorMessage = "$context.integrationErrorMessage"
+      }
+    )
+  }
+}
+
+resource "aws_apigatewayv2_stage" "test" {
+  api_id = aws_apigatewayv2_api.lambda.id
+
+  name        = "test"
   auto_deploy = true
 
   access_log_settings {
@@ -181,6 +206,16 @@ resource "aws_apigatewayv2_domain_name" "api" {
   }
 }
 
+resource "aws_apigatewayv2_domain_name" "testapi" {
+  domain_name = "testapi.xalians.com"
+
+  domain_name_configuration {
+    certificate_arn = var.cert_arn
+    endpoint_type   = "REGIONAL"
+    security_policy = "TLS_1_2"
+  }
+}
+
 
 
 // ROUTE 53
@@ -204,7 +239,13 @@ resource "aws_route53_record" "api" {
 resource "aws_apigatewayv2_api_mapping" "api_mapping" {
   api_id      = aws_apigatewayv2_api.lambda.id
   domain_name = aws_apigatewayv2_domain_name.api.id
-  stage       = aws_apigatewayv2_stage.lambda.id
+  stage       = aws_apigatewayv2_stage.prod.id
+}
+
+resource "aws_apigatewayv2_api_mapping" "testapi_mapping" {
+  api_id      = aws_apigatewayv2_api.lambda.id
+  domain_name = aws_apigatewayv2_domain_name.testapi.id
+  stage       = aws_apigatewayv2_stage.test.id
 }
 
 
@@ -280,34 +321,3 @@ resource "aws_route53_record" "www-xalians-frontend" {
     evaluate_target_health = true
   }
 }
-
-
-// api gateway mapping
-
-// resource "aws_apigatewayv2_api_mapping" "ui_mapping" {
-//   api_id      = aws_apigatewayv2_api.lambda.id
-//   domain_name = aws_apigatewayv2_domain_name.ui.id
-//   stage       = aws_apigatewayv2_stage.lambda.id
-// }
-
-// // api gateway integration
-
-// resource "aws_apigatewayv2_integration" "ui_integration" {
-//   api_id = aws_apigatewayv2_api.lambda.id
-
-//   integration_uri    = aws_lambda_function.lambda_function_generate_xalian.invoke_arn
-//   integration_type   = "AWS_PROXY"
-//   integration_method = "POST"
-// }
-
-// resource "aws_apigatewayv2_route" "base_route" {
-//   api_id = aws_apigatewayv2_api.lambda.id
-
-//   route_key = "GET /"
-//   target    = "integrations/${aws_apigatewayv2_integration.ui_integration.id}"
-// }
-
-// resource "aws_s3_access_point" "xalian_access" {
-//   bucket = aws_s3_bucket.react_bucket.id
-//   name   = "xalian"
-// }
