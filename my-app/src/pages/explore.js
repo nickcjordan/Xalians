@@ -8,13 +8,17 @@ import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
 import CharacterStats from '../components/characterStat';
 import CharacterMoves from '../components/characterMove';
+import XalianNavbar from '../components/navbar';
 
 
 class ExplorePage extends React.Component {
 
     state = {
-        xalian: null
+        xalian: null,
+        isLoading: true
       }
+
+    
       
       componentDidMount() {
         this.getXalian();
@@ -23,7 +27,9 @@ class ExplorePage extends React.Component {
       render() {
           return <React.Fragment>
               <div className="App">
-                  <header className="App-header">
+                  <header className="content-background-container">
+              <XalianNavbar></XalianNavbar>
+             
 
                       {(this.state.xalian == null) && <p>Thinking...</p>}
 
@@ -33,11 +39,11 @@ class ExplorePage extends React.Component {
 
 
                               <Container fluid className="whole-container">
-                                  <Row className="d-flex align-items-center stat-row">
+                                  <Row className="d-flex align-items-center">
                                       <Col sm={true} className="title-col">
                                           <Row>
                                               <article className="species-title">{this.state.xalian.species.name}</article>
-                                              <span style={{ color: 'lightgray', fontSize: '12pt' }}>Point Total: {this.state.xalian.meta.totalStatPoints} : {this.state.xalian.meta.avgPercentage}%</span>
+                                              <span class="light-text">Point Total: {this.state.xalian.meta.totalStatPoints} : {this.state.xalian.meta.avgPercentage}%</span>
                                           </Row>
                                           <Row style={{ paddingBottom: 50 }}>
                                               <span className="elements">
@@ -54,7 +60,7 @@ class ExplorePage extends React.Component {
                                               </div>
                                           </Row>
                                       </Col>
-                                      <Col lg>
+                                      <Col sm={true}>
                                         <Image src={this.getImageLocationFromSpecies(this.state.xalian.species.name)} rounded className="xalian-image"/>
                                       </Col>
                                   </Row>
@@ -71,6 +77,7 @@ class ExplorePage extends React.Component {
                       }
                   </header>
               </div>
+              { this.state.isLoading && <div id="preloader"></div> }
           </React.Fragment>;
       }
 
@@ -79,7 +86,10 @@ class ExplorePage extends React.Component {
         axios.get(url)
           .then(response => {
             var xalianObject = response.data;
-            this.setState({ xalian: xalianObject })
+            this.setState({ 
+                xalian: xalianObject,
+                isLoading: false
+            })
             console.log(JSON.stringify(xalianObject, null, 2))
           }
         );

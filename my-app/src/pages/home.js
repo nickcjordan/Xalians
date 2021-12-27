@@ -3,71 +3,49 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
+import XalianNavbar from '../components/navbar';
+
+
 
 class Home extends React.Component {
+    
+
+    state = { isLoading: true }
+
+    
+    componentDidMount() {
+        this.setState({isLoading: false})
+    }
 
     render() {
 
         return <React.Fragment>
-            {/*   <header id="header" class="fixed-top">
-                <div class="container d-flex align-items-center justify-content-lg-between">
-
-                    <h1 class="logo me-auto me-lg-0"><a href="index.html">Gp<span>.</span></a></h1>
-
-                    <nav id="navbar" class="navbar order-last order-lg-0">
-                        <ul>
-                            <li><a class="nav-link scrollto active" href="#hero">Home</a></li>
-                            <li><a class="nav-link scrollto" href="#about">About</a></li>
-                            <li><a class="nav-link scrollto" href="#services">Services</a></li>
-                            <li><a class="nav-link scrollto " href="#portfolio">Portfolio</a></li>
-                            <li><a class="nav-link scrollto" href="#team">Team</a></li>
-                            <li class="dropdown"><a href="#"><span>Drop Down</span> <i class="bi bi-chevron-down"></i></a>
-                                <ul>
-                                    <li><a href="#">Drop Down 1</a></li>
-                                    <li class="dropdown"><a href="#"><span>Deep Drop Down</span> <i class="bi bi-chevron-right"></i></a>
-                                        <ul>
-                                            <li><a href="#">Deep Drop Down 1</a></li>
-                                            <li><a href="#">Deep Drop Down 2</a></li>
-                                            <li><a href="#">Deep Drop Down 3</a></li>
-                                            <li><a href="#">Deep Drop Down 4</a></li>
-                                            <li><a href="#">Deep Drop Down 5</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="#">Drop Down 2</a></li>
-                                    <li><a href="#">Drop Down 3</a></li>
-                                    <li><a href="#">Drop Down 4</a></li>
-                                </ul>
-                            </li>
-                            <li><a class="nav-link scrollto" href="#contact">Contact</a></li>
-                        </ul>
-                        <i class="bi bi-list mobile-nav-toggle"></i>
-                    </nav>
-
-                    <a href="#about" class="get-started-btn scrollto">Get Started</a>
-
-                </div>
-            </header> */}
+            
+            <span class="content-wrapper">
+                <XalianNavbar></XalianNavbar>
 
             <section id="hero" class="d-flex align-items-center justify-content-center">
                 <div class="container" data-aos="fade-up">
 
                     <div class="row justify-content-center" data-aos="fade-up" data-aos-delay="150">
                         <div class="col-xl-6 col-lg-8">
-                            <h1>Xalians<span>.</span></h1>
-                            <h2>Battles coming soon...</h2>
+                            {/* <h1>Xalians<span>.</span></h1> */}
+                            <img src="assets/img/logo/xalians_logo.png" height="100px" />
+                            <h2 class="splash-subtitle">CREATE : EARN : TRADE : PLAY</h2>
+                            <h4>Battles coming soon...</h4>
                             <div class="social-media-links">
-                                    <a href="https://discord.gg/fWMvsQ7v" class="social-media-links"><i class="bi bi-discord"></i></a>
+                                    <a href="https://discord.gg/sgGNhNJ2KN" class="social-media-links"><i class="bi bi-discord"></i></a>
                                     <a href="https://twitter.com/xaliansgame" class="social-media-links"><i class="bi bi-twitter"></i></a>
                             </div>
                         </div>
                     </div>
 
 
-                    <div class="row justify-content-center xalian-generator-button" data-aos="fade-up" data-aos-delay="300">
+                    {/* <div class="row justify-content-center xalian-generator-button" data-aos="fade-up" data-aos-delay="300">
                         <div class="col-xl-6 col-lg-8">
                             <Button href="/engine" variant="outline-warning">Try the Xalian Generator</Button>{' '}
                         </div>
-                    </div>
+                    </div> */}
 
                     <div class="row gy-4 mt-5 justify-content-center" data-aos="zoom-in" data-aos-delay="450">
                         <div class="col-xl-2 col-md-4">
@@ -197,24 +175,8 @@ class Home extends React.Component {
                     </div>
                 </section>
 
-                <section id="project_details" class="project_details light info-section-padded">
+                {/* <section id="project_details" class="project_details light info-section-padded">
                 <div class="container" data-aos="fade-up" data-aos-delay="10">
-                    <Row>
-                        <Col md={true}>
-                            <div class="text-center shadow-text">
-                                <h3>Create</h3>
-                                <p>
-                                - Each generation of Xalians NFTs will be designed by the community through a submission and voting process
-	- a generation will be limited to a certain number
-- Each Xalian will be generated on mint with 500 unique attributes
-	- dont know the purpose of all of them today, but the game will grow around the NFTs
-	- we want the NFTs to be used for projects far beyond our game
-- Xalian attributes will determine its power and abilities in the battle arena
-                                </p>
-                            </div>
-                        </Col>
-                    </Row>
-
                         <div class="text-center shadow-text">
                             <h3>The Tokens</h3>
                             <p>
@@ -227,7 +189,7 @@ class Home extends React.Component {
                         </div>
 
                     </div>
-                </section>
+                </section> */}
 
 
                 <section id="team" class="team light">
@@ -319,7 +281,7 @@ class Home extends React.Component {
                                     {/* ADD SOCIALS BELOW */}
 
                                     <div class="social-links mt-3">
-                                        <a href="https://discord.gg/fWMvsQ7v" class="discord"><i class="bi bi-discord"></i></a>
+                                        <a href="https://discord.gg/sgGNhNJ2KN" class="discord"><i class="bi bi-discord"></i></a>
                                         <a href="https://twitter.com/xaliansgame" class="twitter"><i class="bi bi-twitter"></i></a>
                                     </div>
                                 </div>
@@ -338,10 +300,11 @@ class Home extends React.Component {
                         Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
                     </div>
                 </div> */}
+            {/* <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a> */}
             </footer>
+                { this.state.isLoading && <div id="preloader"></div> }
 
-            {/* <div id="preloader"></div> */}
-            <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+            </span>
         </React.Fragment>
 
 
@@ -349,7 +312,5 @@ class Home extends React.Component {
     }
 
 }
-
-
 
 export default Home;
