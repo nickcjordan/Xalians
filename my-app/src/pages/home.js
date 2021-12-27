@@ -15,6 +15,8 @@ class Home extends React.Component {
     
     componentDidMount() {
         this.setState({isLoading: false})
+        var navbar = document.getElementById('navvy');
+        navbar.classList.add('no-height');
     }
 
     render() {
@@ -24,7 +26,7 @@ class Home extends React.Component {
             <span class="content-wrapper">
                 <XalianNavbar></XalianNavbar>
 
-            <section id="hero" class="d-flex align-items-center justify-content-center">
+            <section id="splash" class="d-flex align-items-center justify-content-center">
                 <div class="container" data-aos="fade-up">
 
                     <div class="row justify-content-center" data-aos="fade-up" data-aos-delay="150">
@@ -32,7 +34,7 @@ class Home extends React.Component {
                             {/* <h1>Xalians<span>.</span></h1> */}
                             <img src="assets/img/logo/xalians_logo.png" height="100px" />
                             <h2 class="splash-subtitle">CREATE : EARN : TRADE : PLAY</h2>
-                            <h4>Battles coming soon...</h4>
+                            <h3>Battles coming soon...</h3>
                             <div class="social-media-links">
                                     <a href="https://discord.gg/sgGNhNJ2KN" class="social-media-links"><i class="bi bi-discord"></i></a>
                                     <a href="https://twitter.com/xaliansgame" class="social-media-links"><i class="bi bi-twitter"></i></a>
@@ -47,7 +49,7 @@ class Home extends React.Component {
                         </div>
                     </div> */}
 
-                    <div class="row gy-4 mt-5 justify-content-center" data-aos="zoom-in" data-aos-delay="450">
+                    {/* <div class="row gy-4 mt-5 justify-content-center" data-aos="zoom-in" data-aos-delay="450">
                         <div class="col-xl-2 col-md-4">
                             <a href="#story">
                                 <div class="icon-box">
@@ -57,7 +59,7 @@ class Home extends React.Component {
                             </a>
                         </div>
                         <div class="col-xl-2 col-md-4">
-                            <a href="#ruins">
+                            <a href="#planet-xalia-section">
                                 <div class="icon-box">
                                     <i class="bi bi-stars"></i>
                                     <h3>Planet of Xalia</h3>
@@ -65,7 +67,7 @@ class Home extends React.Component {
                             </a>
                         </div>
                         <div class="col-xl-2 col-md-4">
-                            <a href="#portfolio">
+                            <a href="#tournament-section">
                                 <div class="icon-box">
                                     <i class="bi bi-trophy"></i>
                                     <h3>Tournament</h3>
@@ -73,26 +75,26 @@ class Home extends React.Component {
                             </a>
                         </div>
                         <div class="col-xl-2 col-md-4">
-                            <a href="#testimonials">
+                            <a href="#tokens-section">
                                 <div class="icon-box">
                                     <i class="bi bi-coin"></i>
                                     <h3>Tokens</h3>
                                 </div>
                             </a>
                         </div>
-                    </div>
+                    </div> */}
 
                 </div>
             </section>
 
             <main id="main">
 
-                <section id="story" class="story light info-section-padded">
+                <section id="story" class="story light info-section-padded gradient-background-section">
                     <div class="container" data-aos="fade-up">
 
                         <div class="row align-items-center">
 
-                            <Col md={true} className="centered-div shadow-text" data-aos="fade-right" data-aos-delay="10">
+                            <Col md={true} className="centered-div shadow-text text-wrapper" data-aos="fade-right" data-aos-delay="10">
                                 <h3>The Backstory</h3>
                                 <p>
                                     For hundreds of years, the galaxy of Valleron was plagued with disastrous, interplanetary warfare.
@@ -110,10 +112,10 @@ class Home extends React.Component {
                     </div>
                 </section>
 
-                <section id="ruins" class="ruins light info-section-padded">
+                <section id="planet-xalia-section" class="planet-xalia-section light info-section-padded">
                     <div class="container" data-aos="zoom-in" data-aos-delay="10">
 
-                        <div class="text-center shadow-text">
+                        <div class="text-center shadow-text text-wrapper">
                             <h3>The Planet of Xalia</h3>
                             <p>
                                 Xalia is home to a wide range of powerful, magical creatures originating from planets all across the galaxy.
@@ -128,7 +130,7 @@ class Home extends React.Component {
                 </section>
 
 
-                <section id="portfolio" class="portfolio light info-section-padded">
+                <section id="tournament-section" class="tournament-section light info-section-padded gradient-background-section">
                     <div class="container" data-aos="fade-up" data-aos-delay="10">
 
                         <div class="row align-items-center">
@@ -138,7 +140,7 @@ class Home extends React.Component {
                                     <img src="assets/img/background/arena.png" class="img-fluid" alt=""></img>
                                 </div>
                             </Col>
-                            <Col md={true} className="centered-div shadow-text" data-aos="fade-left" data-aos-delay="10">
+                            <Col md={true} className="centered-div shadow-text text-wrapper" data-aos="fade-left" data-aos-delay="10">
                                 <h3>The Tournament</h3>
                                 <p>
                                     King Kozrak's empire has organized battles all across Xalia for factions to compete to prove they are worthy of a spot in the tournament.
@@ -157,11 +159,11 @@ class Home extends React.Component {
                 </section>
 
 
-                <section id="testimonials" class="testimonials light info-section-padded">
+                <section id="tokens-section" class="tokens-section light info-section-padded">
                     <div class="container" data-aos="zoom-in" data-aos-delay="10">
 
 
-                        <div class="text-center shadow-text">
+                        <div class="text-center shadow-text text-wrapper">
                             <h3>The Tokens</h3>
                             <p>
                                 As a faction earns tokens, they can spend these tokens on new recruits to the faction.
@@ -175,30 +177,15 @@ class Home extends React.Component {
                     </div>
                 </section>
 
-                {/* <section id="project_details" class="project_details light info-section-padded">
-                <div class="container" data-aos="fade-up" data-aos-delay="10">
-                        <div class="text-center shadow-text">
-                            <h3>The Tokens</h3>
-                            <p>
-                                As a faction earns tokens, they can spend these tokens on new recruits to the faction.
-                                Each new Xalian has a unique set of traits, abilities, skill levels, etc.
-                                Based on these stats, the Xalian will be assigned an appropriate battle fee.
-                                To ensure a competitive match, King Kozrak has imposed a battle fee limit.
-                                For a team to be eligible for battle, the combined battle fee of the team must not exceed the battle fee limit.
-                            </p>
-                        </div>
-
-                    </div>
-                </section> */}
 
 
-                <section id="team" class="team light">
+                <section id="team" class="team light gradient-background-section">
                     <Container className="team-container" fluid="sm" data-aos="fade-up" >
                         <h3>The Team</h3>
                         <Row className="team-row">
 
                             <Col md={true} class="d-flex">
-                                <div class="member" data-aos="fade-up" data-aos-delay="100">
+                                <div class="member" data-aos="fade-up" data-aos-delay="50">
                                     <div class="member-img">
                                         <img src="assets/img/xalians/xalians_icon_xylum.png" class="img-fluid" alt=""></img>
                                         <div class="social">
@@ -214,7 +201,7 @@ class Home extends React.Component {
                             </Col>
 
                             <Col md={true} class="d-flex">
-                                <div class="member" data-aos="fade-up" data-aos-delay="200">
+                                <div class="member" data-aos="fade-up" data-aos-delay="100">
                                     <div class="member-img">
                                         <img src="assets/img/xalians/xalians_icon_tetrahive.png" class="img-fluid" alt=""></img>
                                         <div class="social">
@@ -230,7 +217,7 @@ class Home extends React.Component {
                             </Col>
 
                             <Col md={true} class="d-flex">
-                                <div class="member" data-aos="fade-up" data-aos-delay="400">
+                                <div class="member" data-aos="fade-up" data-aos-delay="150">
                                     <div class="member-img">
                                         <img src="assets/img/xalians/xalians_icon_unknown.png" class="img-fluid" alt=""></img>
                                         {/* <div class="social">
@@ -246,7 +233,7 @@ class Home extends React.Component {
                             </Col>
 
                             <Col md={true} class="d-flex">
-                                <div class="member" data-aos="fade-up" data-aos-delay="400">
+                                <div class="member" data-aos="fade-up" data-aos-delay="200">
                                     <div class="member-img">
                                         <img src="assets/img/xalians/xalians_icon_unknown.png" class="img-fluid" alt=""></img>
                                         {/* <div class="social">

@@ -10,8 +10,33 @@ import NavDropdown from 'react-bootstrap/NavDropdown'
 
 
 class XalianNavbar extends React.Component {
+
+
+    componentDidMount() {
+        var navbar = document.getElementById('navvy');
+        document.addEventListener("DOMContentLoaded", function () {
+            if (navbar) {
+                var last_scroll_top = 0;
+                window.addEventListener('scroll', function () {
+                    navbar.classList.remove('no-height');
+                    let scroll_top = window.scrollY;
+                    if (scroll_top < last_scroll_top) {
+                        navbar.classList.remove('hidden');
+                        navbar.classList.add('visible');
+                    }
+                    else {
+                        navbar.classList.remove('visible');
+                        navbar.classList.add('hidden');
+                    }
+                    last_scroll_top = scroll_top;
+                });
+            }
+        });
+
+    }
+
     render() {
-        return <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" sticky="top" className="xalian-navbar">
+        return <Navbar id="navvy" collapseOnSelect expand="lg" variant="dark" sticky="top" className="xalian-navbar">
             <Container>
                 <Navbar.Brand href="/"><img src="assets/img/logo/xalians_logo_small.png" height="30px" /></Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -35,7 +60,7 @@ class XalianNavbar extends React.Component {
                     </Nav>
                 </Navbar.Collapse>
             </Container>
-        </Navbar>;
+        </Navbar>
     }
 
 }
