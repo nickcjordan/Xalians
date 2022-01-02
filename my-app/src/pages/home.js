@@ -27,12 +27,11 @@ class Home extends React.Component {
                 <XalianNavbar></XalianNavbar>
 
             <section id="splash" class="d-flex align-items-center justify-content-center">
-                <div class="container" data-aos="fade-up">
+                <div class="container">
 
-                    <div class="row justify-content-center" data-aos="fade-up" data-aos-delay="150">
+                    <div class="row justify-content-center" data-aos="fade-up">
                         <div class="col-xl-6 col-lg-8">
-                            {/* <h1>Xalians<span>.</span></h1> */}
-                            <img src="assets/img/logo/xalians_logo.png" height="100px" />
+                            <img src="assets/img/logo/xalians_logo.png" class="xalians-logo" />
                             <h2 class="splash-subtitle">CREATE : EARN : TRADE : PLAY</h2>
                             <h3>Battles coming soon...</h3>
                             <div class="social-media-links">
@@ -90,11 +89,11 @@ class Home extends React.Component {
             <main id="main">
 
                 <section id="story" class="story light info-section-padded gradient-background-section">
-                    <div class="container" data-aos="fade-up">
+                    <div class="container">
 
                         <div class="row align-items-center">
 
-                            <Col md={true} className="centered-div shadow-text text-wrapper" data-aos="fade-right" data-aos-delay="10">
+                            <Col md={true} className="text-center centered-div shadow-text text-wrapper" data-aos="fade-right">
                                 <h3>The Backstory</h3>
                                 <p>
                                     For hundreds of years, the galaxy of Valleron was plagued with disastrous, interplanetary warfare.
@@ -102,7 +101,7 @@ class Home extends React.Component {
                                     As a result, most life forms across the galaxy have concentrated to the capitol planet, Xalia.
                                 </p>
                             </Col>
-                            <Col md={true} className="centered-div" data-aos="fade-left" data-aos-delay="100">
+                            <Col md={true} className="centered-div" data-aos="fade-left" data-aos-delay="10">
                                 <div className="embedded-img-wrapper">
                                     <img src="assets/img/background/castle.jpg" class="img-fluid" alt=""></img>
                                 </div>
@@ -113,10 +112,10 @@ class Home extends React.Component {
                 </section>
 
                 <section id="planet-xalia-section" class="planet-xalia-section light info-section-padded">
-                    <div class="container" data-aos="zoom-in" data-aos-delay="10">
+                    <div class="container" data-aos="zoom-in">
 
                         <div class="text-center shadow-text text-wrapper">
-                            <h3>The Planet of Xalia</h3>
+                            <h3 className="section-title">The Planet of Xalia</h3>
                             <p>
                                 Xalia is home to a wide range of powerful, magical creatures originating from planets all across the galaxy.
                                 The planet is controlled by a powerful empire, ruled by the mad and tyrannous King Kozrak.
@@ -131,7 +130,7 @@ class Home extends React.Component {
 
 
                 <section id="tournament-section" class="tournament-section light info-section-padded gradient-background-section">
-                    <div class="container" data-aos="fade-up" data-aos-delay="10">
+                    <div class="container">
 
                         <div class="row align-items-center">
 
@@ -140,7 +139,7 @@ class Home extends React.Component {
                                     <img src="assets/img/background/arena.png" class="img-fluid" alt=""></img>
                                 </div>
                             </Col>
-                            <Col md={true} className="centered-div shadow-text text-wrapper" data-aos="fade-left" data-aos-delay="10">
+                            <Col md={true} className="text-center centered-div shadow-text text-wrapper" data-aos="fade-left" data-aos-delay="10">
                                 <h3>The Tournament</h3>
                                 <p>
                                     King Kozrak's empire has organized battles all across Xalia for factions to compete to prove they are worthy of a spot in the tournament.
@@ -160,7 +159,7 @@ class Home extends React.Component {
 
 
                 <section id="tokens-section" class="tokens-section light info-section-padded">
-                    <div class="container" data-aos="zoom-in" data-aos-delay="10">
+                    <div class="container" data-aos="zoom-in">
 
 
                         <div class="text-center shadow-text text-wrapper">
@@ -180,11 +179,11 @@ class Home extends React.Component {
 
 
                 <section id="team" class="team light gradient-background-section">
-                    <Container className="team-container" fluid="sm" data-aos="fade-up" >
+                    <Container className="team-container" >
                         <h3>The Team</h3>
                         <Row className="team-row">
 
-                            <Col md={true} class="d-flex">
+                            <Col sm={true} class="d-flex">
                                 <div class="member" data-aos="fade-up" data-aos-delay="50">
                                     <div class="member-img">
                                         <img src="assets/img/xalians/xalians_icon_xylum.png" class="img-fluid" alt=""></img>
@@ -194,13 +193,13 @@ class Home extends React.Component {
                                     </div>
                                     <div class="member-info">
                                         <h4>Doctor J</h4>
-                                        <span>Xalian Geneticist</span>
+                                        <span class="underline">Xalian Geneticist</span>
                                         <span>Tech Engineer</span>
                                     </div>
                                 </div>
                             </Col>
 
-                            <Col md={true} class="d-flex">
+                            <Col sm={true} class="d-flex">
                                 <div class="member" data-aos="fade-up" data-aos-delay="100">
                                     <div class="member-img">
                                         <img src="assets/img/xalians/xalians_icon_tetrahive.png" class="img-fluid" alt=""></img>
@@ -210,13 +209,13 @@ class Home extends React.Component {
                                     </div>
                                     <div class="member-info">
                                         <h4>Professor M</h4>
-                                        <span>Xalian Astrophysicist</span>
+                                        <span class="underline">Xalian Astrophysicist</span>
                                         <span>Execution Engineer</span>
                                     </div>
                                 </div>
                             </Col>
 
-                            <Col md={true} class="d-flex">
+                            <Col sm={true} class="d-flex">
                                 <div class="member" data-aos="fade-up" data-aos-delay="150">
                                     <div class="member-img">
                                         <img src="assets/img/xalians/xalians_icon_unknown.png" class="img-fluid" alt=""></img>
@@ -226,13 +225,13 @@ class Home extends React.Component {
                                     </div>
                                     <div class="member-info">
                                         <h4>Unknown Human</h4>
-                                        <span>Xalian Researcher</span>
+                                        <span class="underline">Xalian Researcher</span>
                                         <span>Story Creator / Writer</span>
                                     </div>
                                 </div>
                             </Col>
 
-                            <Col md={true} class="d-flex">
+                            <Col sm={true} class="d-flex">
                                 <div class="member" data-aos="fade-up" data-aos-delay="200">
                                     <div class="member-img">
                                         <img src="assets/img/xalians/xalians_icon_unknown.png" class="img-fluid" alt=""></img>
@@ -242,7 +241,7 @@ class Home extends React.Component {
                                     </div>
                                     <div class="member-info">
                                         <h4>Unknown Human</h4>
-                                        <span>Xalian Researcher</span>
+                                        <span class="underline">Xalian Researcher</span>
                                         <span>Visual Creator / Artist</span>
                                     </div>
                                 </div>

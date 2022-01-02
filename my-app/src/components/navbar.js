@@ -14,6 +14,7 @@ class XalianNavbar extends React.Component {
 
     componentDidMount() {
         var navbar = document.getElementById('navvy');
+        
         document.addEventListener("DOMContentLoaded", function () {
             if (navbar) {
                 var last_scroll_top = 0;
@@ -42,6 +43,7 @@ class XalianNavbar extends React.Component {
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="responsive-navbar-nav">
                     <Nav className="me-auto">
+                        <Nav.Link href="/">Home</Nav.Link>
                         <Nav.Link href="/project">Learn More</Nav.Link>
                         {/* <Nav.Link href="#pricing">Pricing</Nav.Link> */}
                         {/* <NavDropdown title="Dropdown" id="collasible-nav-dropdown">
