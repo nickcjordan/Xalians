@@ -10,14 +10,17 @@ import XalianNavbar from '../components/navbar';
 class Home extends React.Component {
     
 
-    state = { isLoading: true }
-
+    state = { 
+        isLoading: true
+     }
     
     componentDidMount() {
         this.setState({isLoading: false})
         var navbar = document.getElementById('navvy');
         navbar.classList.add('no-height');
+        navbar.classList.add('hidden');
     }
+
 
     render() {
 
@@ -28,7 +31,6 @@ class Home extends React.Component {
 
             <section id="splash" class="d-flex align-items-center justify-content-center">
                 <div class="container">
-
                     <div class="row justify-content-center" data-aos="fade-up">
                         <div class="col-xl-6 col-lg-8">
                             <img src="assets/img/logo/xalians_logo.png" class="xalians-logo" />

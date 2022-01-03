@@ -2,6 +2,8 @@ import './App.css';
 import Home from './pages/home';
 import ExplorePage from './pages/explore';
 import ProjectPage from './pages/projectPage';
+import FAQPage from './pages/faqPage';
+import PlanetPage from './pages/planetPage';
 import React from "react";
 import XalianNavbar from './components/navbar';
 import Container from 'react-bootstrap/Container';
@@ -32,6 +34,12 @@ class App extends React.Component {
             </Route>
             <Route exact path="/project">
               <ProjectPage />
+            </Route>
+            <Route exact path="/faq">
+              <FAQPage />
+            </Route>
+            <Route exact path="/planets">
+              <PlanetPage />
             </Route>
           </Switch>
         </div>
