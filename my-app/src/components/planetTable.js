@@ -24,15 +24,37 @@ class PlanetTable extends React.Component {
       let val = this.props.data[key];
       list.push(this.buildRow(key, val));
     }
+
     return <React.Fragment>
 
-      {this.props.title && this.getTitle()}
+      <Container className="planet-div">
+        
+        <Row className="planet-details-row vertically-center-contents">
+          <Col sm={3}>
+            <img src={this.props.planetImage} class="planet-gif" alt=""></img>
+          </Col>
+          <Col sm={6} className="planet-description-col">
+          <Row className="planet-title-row">
+          <Col>
+            <h2>{this.props.name}</h2>
+          </Col>
+        </Row>
+            <div class="planet-table">
+              {this.props.title && this.getTitle()}
 
-      <table class="planet-table">
-        <tbody>
-          {list}
-        </tbody>
-      </table>
+              <table class="planet-table">
+                <tbody>
+                  {list}
+                </tbody>
+              </table>
+
+            </div>
+          </Col>
+          <Col sm={3}>
+            <img src={this.props.image} class="planet-img img-fluid" alt=""></img>
+          </Col>
+        </Row>
+      </Container>
 
     </React.Fragment>;
   }
@@ -44,36 +66,3 @@ class PlanetTable extends React.Component {
 
 export default PlanetTable;
 
-
-
-// buildRow(val) {
-//   return  <tr>
-//               <td>{this.translateStatName(val.name)}</td>
-//               <td>{val.range}</td>
-//               <td>{val.points}</td>
-//               <td>{val.percentage}%</td>
-//           </tr>
-// }
-
-// render() {
-//   let list = [];
-//   for (const key in this.props.stats) {
-//       let val = this.props.stats[key];
-//       list.push(this.buildRow(val));
-//   }
-
-//   // return <Table striped bordered hover variant="dark" size="sm" className="stat-table">
-//   return <Table hover variant="dark" bordered size="sm" className="stat-table">
-//       <thead>
-//           <tr>
-//               <th>Stat</th>
-//               <th>Range</th>
-//               <th>Points</th>
-//               <th>Result</th>
-//           </tr>
-//       </thead>
-//       <tbody>
-//           {list}
-//       </tbody>
-//   </Table>;
-// }
