@@ -265,12 +265,15 @@ resource "aws_s3_bucket" "react_bucket" {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "bucket_policy_site_main",
+      "Sid": "PublicRead",
       "Action": [
         "s3:GetObject"
       ],
       "Effect": "Allow",
-      "Resource": "arn:aws:s3:::${var.frontend_bucket_name}/*",
+      "Resource": [
+        "arn:aws:s3:::${var.frontend_bucket_name}",
+        "arn:aws:s3:::${var.frontend_bucket_name}/*"
+      ],
       "Principal": "*"
     }
   ]
