@@ -22,7 +22,7 @@ class PlanetPage extends React.Component {
                 <Container className="content-container">
                     <Row className="content-row">
 
-                        <Col lg={10} className="planet-col-wrapper">
+                        <Col lg={10} className="template-col-wrapper">
                             <h1>Discovered Planets</h1>
 
                             <PlanetTable

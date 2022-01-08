@@ -1,9 +1,8 @@
 [
   {
     "name": "Bioflim",
-    "id": "000004",
+    "id": "0004",
     "type": "Chemical",
-    "planet": "Drainov",
     "description": "An acid slime organism protected by a thick rocky exoskeleton. It's slime can continually regenerate an outer shell, allowing for great defense.",
     "statRatings": {
       "healthRating": "",
@@ -19,9 +18,8 @@
   },
   {
     "name": "Dromeus",
-    "id": "000002",
+    "id": "0002",
     "type": "Fire",
-    "planet": "Magmuth",
     "description": "A partially feathered ground bird with lizard features, somewhat resembling a velociraptor. These creatures are extremely quick with razor sharp teeth, and prefer to hunt in packs.",
     "statRatings": {
       "healthRating": "",
@@ -37,10 +35,9 @@
   },
   {
     "name": "Tetrahive",
-    "id": "000003",
+    "id": "0003",
     "type": "Dark",
-    "planet": "Grimedes",
-    "description": "A swarm of small flying creatures with teeth like piranhas, synchronously controlled by the single mind of the 'Queen' of the hive flying among them.",
+    "description": "A flying swarm of small creatures with teeth like piranhas, synchronously controlled by the single mind of the 'Queen' of the hive flying among them.",
     "statRatings": {
       "healthRating": "",
       "standardAttackRating": "medium",
@@ -55,10 +52,9 @@
   },
   {
     "name": "Xylum",
-    "id": "000001",
+    "id": "0001",
     "type": "Botanical",
-    "planet": "Floria",
-    "description": "A giant organism of thick, intertwined roots that act as tentacles. It lives mostly underground as this is where it absorbs it's power.",
+    "description": "A giant organism of thick, intertwined roots with thorny, tentacle-like arms. It lives mostly underground as this is where it absorbs it's power.",
     "statRatings": {
       "healthRating": "",
       "standardAttackRating": "",
@@ -73,9 +69,8 @@
   },
   {
     "name": "Smokat",
-    "id": "000005",
+    "id": "0005",
     "type": "Spectral",
-    "planet": "Phantiri",
     "description": "Feline shaped in normal form, this clever creature can instantly atomize into a cloud of smoke for a sneak attack or quick evasion.",
     "statRatings": {
       "healthRating": "",
@@ -91,9 +86,8 @@
   },
   {
     "name": "Newtapede",
-    "id": "000006",
+    "id": "0006",
     "type": "Water",
-    "planet": "Poseidas",
     "description": "A 16 legged amphibious creature with a long, segmented body. While adapted to land, it's slender frame and webbed feet make it a formidable opponent in water.",
     "statRatings": {
       "healthRating": "",
@@ -111,17 +105,17 @@
     "name": "Voltish",
     "id": "0007",
     "type": "Electrical",
-    "planet": "Zolton",
     "description": "With bones and claws made from a tough, conductive metal alloy, this daunting creature can store electrical energy from it's surroundings and release the shock into enemies.",
     "statRatings": {
       "healthRating": "",
       "standardAttackRating": "",
-      "specialAttackRating": "high",
+      "specialAttackRating": "",
       "standardDefenseRating": "",
-      "specialDefenseRating": "",
+      "specialDefenseRating": "low",
       "speedRating": "",
       "evasionRating": "",
-      "staminaRating": "high",
-      "recoveryRating": ""
+      "staminaRating": "",
+      "recoveryRating": "high"
     }
+  }
 ]

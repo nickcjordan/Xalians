@@ -30,7 +30,8 @@ if (debug) {console.log(`\ninitial totals:\n\tmaxStatPoints=${totalStatPointsUna
 
 
 function selectSpecies(xalian) {
-    return tools.selectRandom(species);
+    // return tools.selectRandom(species);
+    return tools.selectRandom(tools.shuffle(species));
 }
 
 function selectElements(xalian) {

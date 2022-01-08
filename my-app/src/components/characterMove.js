@@ -11,20 +11,20 @@ class CharacterMoves extends React.Component {
         return <React.Fragment>
             <Row className="moves-row">
                 <Col xs={2}>
-                    <div className="d-flex justify-content-between align-items-center move-rating">
+                    <h3 className="d-flex justify-content-between align-items-center move-rating">
                         {val.rating}
-                    </div>
+                    </h3>
                 </Col>
                 <Col xs={10}>
                     <Row>
-                        <div className="d-flex justify-content-between align-items-center move-name">
+                        <h4 className="d-flex justify-content-between align-items-center move-name">
                             {val.name}
-                        </div>
+                        </h4>
                     </Row>
                     <Row>
-                        <div className="d-flex align-items-center move-description">
+                        <h5 className="d-flex align-items-center move-description">
                             {val.description}
-                        </div>
+                        </h5>
                     </Row>
                 </Col>
 

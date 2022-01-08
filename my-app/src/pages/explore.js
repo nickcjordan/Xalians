@@ -38,29 +38,34 @@ class ExplorePage extends React.Component {
 
                             <Container fluid className="whole-container">
                                 <Row className="d-flex align-items-center">
-                                    <Col sm={true} className="title-col">
+                                    <Col md={true} className="title-col">
                                         <Row>
                                             <article className="species-title">{this.state.xalian.species.name}</article>
-                                            <span class="species-description">Generation 0</span>
-                                            <span class="light-text">Point Total: {this.state.xalian.meta.totalStatPoints} : {this.state.xalian.meta.avgPercentage}%</span>
+                                            <h4 class="species-description">Generation 0</h4>
+                                            <h4 class="light-text">Point Total: {this.state.xalian.meta.totalStatPoints} : {this.state.xalian.meta.avgPercentage}%</h4>
                                         </Row>
-                                        <Row style={{ paddingBottom: 50 }}>
-                                            <span className="elements">
-                                                <span className="large-brackets">[  </span>
-                                                {this.getString(this.state.xalian.elements)}
-                                                <span className="large-brackets">  ]</span>
-                                            </span>
+                                        <Row>
+                                            <h2>
+                                                {this.state.xalian.elements.primaryType} [{this.state.xalian.elements.primaryElement}]
+                                            </h2>
                                         </Row>
-                                        <Row style={{ paddingBottom: 50 }}>
+                                        {this.state.xalian.elements.secondaryType && 
+                                            <React.Fragment>
+                                            <h3>
+                                                {this.state.xalian.elements.secondaryType} [{this.state.xalian.elements.secondaryElement}]
+                                            </h3>
+                                            </React.Fragment>
+                                        }
+                                        <Row>
                                             <div className="species-description-div">
-                                                <span className="species-description">
+                                                <h4 className="species-description">
                                                     {this.state.xalian.species.description}
-                                                </span>
+                                                </h4>
                                             </div>
                                         </Row>
                                     </Col>
-                                    <Col sm={true}>
-                                        <Image src={this.getImageLocationFromSpecies(this.state.xalian.species.name)} rounded className="xalian-image" />
+                                    <Col md={true}>
+                                        <Image src={this.getImageLocationFromSpecies(this.state.xalian.species.name)} rounded className={this.getTypeColorClassName() + " xalian-image"} />
                                     </Col>
                                 </Row>
                                 <Row className="d-flex align-items-center">
@@ -80,6 +85,10 @@ class ExplorePage extends React.Component {
         </React.Fragment>;
     }
 
+    getTypeColorClassName() {
+        return `${this.state.xalian.elements.primaryType.toLowerCase()}-color`;
+    }
+
     getXalian() {
         const url = "https://api.xalians.com/xalian";
         axios.get(url)
@@ -92,10 +101,6 @@ class ExplorePage extends React.Component {
                 console.log(JSON.stringify(xalianObject, null, 2))
             }
             );
-    }
-
-    getString(list) {
-        return list.reduce((a, b, index) => a + ", " + b, "").slice(2);
     }
 
     xalianisNull() {

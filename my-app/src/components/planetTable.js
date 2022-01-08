@@ -27,18 +27,18 @@ class PlanetTable extends React.Component {
 
     return <React.Fragment>
 
-      <Container className="planet-div">
-        
+      <Container className="dark-section-div">
+
         <Row className="planet-details-row vertically-center-contents">
-          <Col sm={3}>
+          <Col sm={3} className="planet-details-row-col">
             <img src={this.props.planetImage} class="planet-gif" alt=""></img>
           </Col>
           <Col sm={6} className="planet-description-col">
-          <Row className="planet-title-row">
-          <Col>
-            <h2>{this.props.name}</h2>
-          </Col>
-        </Row>
+            <Row className="planet-title-row">
+              <Col>
+                <h2>{this.props.name}</h2>
+              </Col>
+            </Row>
             <div class="planet-table">
               {this.props.title && this.getTitle()}
 

@@ -40,12 +40,13 @@ class XalianNavbar extends React.Component {
     render() {
         return <Navbar id="navvy" collapseOnSelect expand="lg" variant="dark" sticky="top" className="xalian-navbar">
             <Container>
-                <Navbar.Brand href="/"><img src="assets/img/logo/xalians_logo_small.png" height="30px" /></Navbar.Brand>
+                <Navbar.Brand href="/"><img src="/assets/img/logo/xalians_logo_small.png" height="30px" /></Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="responsive-navbar-nav">
                     <Nav className="me-auto nav-text-shadow">
                         <Nav.Link href="/">Home</Nav.Link>
                         <Nav.Link href="/project">Learn More</Nav.Link>
+                        <Nav.Link href="/species">Species</Nav.Link>
                         <Nav.Link href="/planets">Planets</Nav.Link>
                         <Nav.Link href="/faq">FAQ</Nav.Link>
                         {/* <Nav.Link href="#pricing">Pricing</Nav.Link> */}

@@ -11,23 +11,35 @@ const attackCalculator = require('./src/gameplay/attackCalculator.js');
 main();
 
 function main() {
-    // for (var i = 0; i<30000; i++) {
-        let attacker = xalianBuilder.buildXalian();
-        let defender = xalianBuilder.buildXalian();
-        // console.log(JSON.stringify(x, null, 2));
-        console.log("attacker\n");
-        logTranslated(attacker);
-        console.log("defender\n");
-        logTranslated(defender);
-    // }
+    printXalian();
+}
+
+function printXalian() {
+    let x = xalianBuilder.buildXalian();
+    let translated = translator.translateCharacterToPresentableType(x);
+    console.log("\n\n\traw:\n\n" + JSON.stringify(x, null, 2) + "\n\n\n\ttranslated:\n\n" + JSON.stringify(translated, null, 2));
+}
+
+function runSummary() {
+    for (var i = 0; i < 30000; i++) {
+        let x = xalianBuilder.buildXalian();
+    }
+    ai.giveSummary();
+}
+
+function simulateAttacks() {
+    let attacker = xalianBuilder.buildXalian();
+    let defender = xalianBuilder.buildXalian();
+    console.log("attacker\n");
+    logTranslated(attacker);
+    console.log("defender\n");
+    logTranslated(defender);
 
 
-    for (var i = 0; i<4; i++) {
+    for (var i = 0; i < 4; i++) {
         let move = attacker.moves[i];
         logMove(move, attacker, defender);
     }
-
-    // ai.giveSummary();
 }
 
 function logTranslated(x) {
