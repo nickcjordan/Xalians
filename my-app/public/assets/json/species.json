@@ -1,9 +1,12 @@
 [
   {
     "name": "Bioflim",
-    "id": "000004",
+    "id": "00004",
     "type": "Chemical",
-    "description": "An acid slime organism protected by a thick rocky exoskeleton. It's slime can continually regenerate an outer shell, allowing for great defense.",
+    "planet": "Drainov",
+    "height": "",
+    "weight": "",
+    "description": "An acid slime organism protected by a thick rocky exoskeleton. Its slime can continually regenerate an outer shell, allowing for great defense.",
     "statRatings": {
       "healthRating": "",
       "standardAttackRating": "",
@@ -18,8 +21,11 @@
   },
   {
     "name": "Dromeus",
-    "id": "000002",
+    "id": "00002",
     "type": "Fire",
+    "planet": "Magmuth",
+    "height": "",
+    "weight": "",
     "description": "A partially feathered ground bird with lizard features, somewhat resembling a velociraptor. These creatures are extremely quick with razor sharp teeth, and prefer to hunt in packs.",
     "statRatings": {
       "healthRating": "",
@@ -35,9 +41,12 @@
   },
   {
     "name": "Tetrahive",
-    "id": "000003",
+    "id": "00003",
     "type": "Dark",
-    "description": "A flying swarm of small creatures with teeth like piranhas, synchronously controlled by the single mind of the 'Queen' of the hive flying among them.",
+    "planet": "Grimedes",
+    "height": "30 in / 76 cm",
+    "weight": "27 lbs / 12 kg",
+    "description": "When in battle, this creature summons a swarm of small flying familiars with teeth like piranhas. It controls the swarm with its mind, attacking or defending as one unit.",
     "statRatings": {
       "healthRating": "",
       "standardAttackRating": "medium",
@@ -52,9 +61,12 @@
   },
   {
     "name": "Xylum",
-    "id": "000001",
+    "id": "00001",
     "type": "Botanical",
-    "description": "A giant organism of thick, intertwined roots with thorny, tentacle-like arms. It lives mostly underground as this is where it absorbs it's power.",
+    "planet": "Floria",
+    "height": "178 in / 452 cm",
+    "weight": "743 lbs / 337 kg",
+    "description": "A giant organism of thick, intertwined roots that act as tentacles. It lives mostly underground as this is where it absorbs its power.",
     "statRatings": {
       "healthRating": "",
       "standardAttackRating": "",
@@ -69,8 +81,11 @@
   },
   {
     "name": "Smokat",
-    "id": "000005",
+    "id": "00005",
     "type": "Spectral",
+    "planet": "Phantiri",
+    "height": "59 in / 150 cm",
+    "weight": "66 lbs / 30 kg",
     "description": "Feline shaped in normal form, this clever creature can instantly atomize into a cloud of smoke for a sneak attack or quick evasion.",
     "statRatings": {
       "healthRating": "",
@@ -86,9 +101,12 @@
   },
   {
     "name": "Newtapede",
-    "id": "000006",
+    "id": "00006",
     "type": "Water",
-    "description": "A 16 legged amphibious creature with a long, segmented body. While adapted to land, it's slender frame and webbed feet make it a formidable opponent in water.",
+    "planet": "Poseidas",
+    "height": "91 in / 231 cm",
+    "weight": "238 lbs / 108 kg",
+    "description": "A 16 legged amphibious creature with a long, segmented body. While adapted to land, its slender frame and webbed feet make it a formidable opponent in water.",
     "statRatings": {
       "healthRating": "",
       "standardAttackRating": "",
@@ -99,6 +117,126 @@
       "evasionRating": "",
       "staminaRating": "",
       "recoveryRating": "high"
+    }
+  },
+  {
+    "name": "Voltish",
+    "id": "00007",
+    "type": "Electrical",
+    "planet": "Zolton",
+    "height": "85 in / 216 cm",
+    "weight": "271 lbs / 123 kg",
+    "description": "With bones and claws made from a tough, conductive metal alloy, this daunting creature can store electrical energy from its surroundings and release the shock into enemies.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "",
+      "specialAttackRating": "high",
+      "standardDefenseRating": "",
+      "specialDefenseRating": "",
+      "speedRating": "",
+      "evasionRating": "",
+      "staminaRating": "high",
+      "recoveryRating": ""
+    }
+  },
+  {
+    "name": "Hypnox",
+    "id": "00008",
+    "type": "Psychic",
+    "planet": "Telypso",
+    "height": "35 in / 89 cm",
+    "weight": "44 lbs / 20 kg",
+    "description": "It uses its tail to draw attention to its big, hypnotic eyes. Once eye contact is made, this creature can attack from within your mind.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "",
+      "specialAttackRating": "high",
+      "standardDefenseRating": "",
+      "specialDefenseRating": "",
+      "speedRating": "high",
+      "evasionRating": "",
+      "staminaRating": "",
+      "recoveryRating": ""
+    }
+  },
+  {
+    "name": "Crystorn",
+    "id": "00009",
+    "type": "Light",
+    "planet": "Luminax",
+    "height": "70 in / 178 cm",
+    "weight": "340 lbs / 154 kg",
+    "description": "The gems growing out of this creature's head transmit powerful light energy, don't be deceived by its calm temperment.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "",
+      "specialAttackRating": "high",
+      "standardDefenseRating": "",
+      "specialDefenseRating": "",
+      "speedRating": "high",
+      "evasionRating": "",
+      "staminaRating": "",
+      "recoveryRating": ""
+    }
+  },
+  {
+    "name": "Luceras",
+    "id": "00010",
+    "type": "Air",
+    "planet": "Saiphus",
+    "height": "22 in / 56 cm",
+    "weight": "29 lbs / 13 kg",
+    "description": "This creature can jump so high that at times it seems as if it is flying. Once up in the air, it comes missiling down on its enemy like a battering ram.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "medium",
+      "specialAttackRating": "",
+      "standardDefenseRating": "",
+      "specialDefenseRating": "",
+      "speedRating": "",
+      "evasionRating": "high",
+      "staminaRating": "",
+      "recoveryRating": ""
+    }
+  },
+  {
+    "name": "Codazzo",
+    "id": "00011",
+    "type": "Explosive",
+    "planet": "Nitros",
+    "height": "18 in / 46 cm",
+    "weight": "36 lbs / 16 kg",
+    "description": "This creature digs its body underground when spooked, exposing only its tail made of explosive barbs. If provoked, it won't hesitate to fire off a few projectiles, as its regenerative power can quickly grow more.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "",
+      "specialAttackRating": "high",
+      "standardDefenseRating": "",
+      "specialDefenseRating": "",
+      "speedRating": "",
+      "evasionRating": "",
+      "staminaRating": "",
+      "recoveryRating": "high"
+    }
+  },
+  {
+    "name": "X1",
+    "id": "00012",
+    "type": "Psychic",
+    "planet": "Telypso",
+    "height": "52 in / 132 cm",
+    "weight": "44 lbs / 20 kg",
+    "description": "Little is known about this mysterious creature. Few sightings have been reported.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "",
+      "specialAttackRating": "high",
+      "standardDefenseRating": "",
+      "specialDefenseRating": "",
+      "speedRating": "",
+      "evasionRating": "high",
+      "staminaRating": "",
+      "recoveryRating": ""
     }
   }
 ]

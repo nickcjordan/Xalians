@@ -12,8 +12,10 @@ function translateCharacterToPresentableType(xalian) {
     return {
         "species": {
           "name": xalian.species.name,
-          "origin": xalian.origin,
+          "planet": xalian.planet,
           "description": xalian.species.description,
+          "height": xalian.species.height,
+          "weight": xalian.species.weight
         },
         "elements": makeElementsPresentable(xalian.elements),
         "healthPoints": xalian.healthPoints,

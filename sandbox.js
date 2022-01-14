@@ -12,7 +12,9 @@ const tools = require('./src/tools.js');
 
 // addNewMoves();
 
-printMoveStats();
+// printMoveStats();
+
+printNumbers();
 
 function printMoveStats() {
     var map = new Map();
@@ -72,6 +74,23 @@ function printMoveStats() {
 
     // console.log(JSON.stringify(helperMap, null, 2));
    
+}
+
+function printNumbers() {
+    var species = JSON.parse(fs.readFileSync("src/json/" + "species" + ".json", 'utf8').toString());
+    var elements = JSON.parse(fs.readFileSync("src/json/" + "elements" + ".json", 'utf8').toString());
+
+    var subelements = 0;
+    var moveTypes = 0;
+    for (var ind in elements) {
+        let val = elements[ind];
+        moveTypes += val.moveTypes.length
+        subelements += val.elements.length
+    }
+
+    var moves = JSON.parse(fs.readFileSync("src/json/" + "moves" + ".json", 'utf8').toString());
+    var qualifiers = JSON.parse(fs.readFileSync("src/json/" + "qualifiers" + ".json", 'utf8').toString());
+    console.log(`species=${species.length}\ntypes=${elements.length}\nmoves=${moves.length}\nqualifiers=${qualifiers.length}\nsubelements=${subelements}\nmoveTypes=${moveTypes}\n`);
 }
 
 function addNewMoves() {

@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { LabelList, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LabelList, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 
 
@@ -39,7 +39,8 @@ class CharacterStatRangeChart extends React.Component {
             let val = stats[key];
             let translated = transMap[key];
             let intVal = valMap[val];
-            if (translated) {
+            if (translated && val) {
+                // if (translated) {
                 dataSet.push({
                     statName: key,
                     statLabel: translated,
@@ -55,14 +56,18 @@ class CharacterStatRangeChart extends React.Component {
                     <BarChart
                         data={dataSet}
                         layout="vertical"
-                        
+                        maxBarSize={35}
                     >
                         <XAxis type="number" hide />
-                        <YAxis type="category" dataKey="statLabel" />
+                        <YAxis type="category" dataKey="statLabel" stroke="#80ffb1" />
                         <Tooltip />
 
-                        <Bar dataKey="valueNumber" fill="#80ffb179" >
-                            <LabelList dataKey="valueName" position="center" className="chart-bar-label"/>
+                        <Bar 
+                        dataKey="valueNumber" 
+                        fill="#80ffb134" 
+                        
+                        >
+                            <LabelList dataKey="valueName" position="center" fill="white" className="chart-bar-label" id="stat-bar-label"/>
                         </Bar>
                     </BarChart>
                 </ResponsiveContainer>

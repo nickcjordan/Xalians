@@ -16,9 +16,9 @@ class Home extends React.Component {
     
     componentDidMount() {
         this.setState({isLoading: false})
-        var navbar = document.getElementById('navvy');
-        navbar.classList.add('no-height');
-        navbar.classList.add('hidden');
+        // var navbar = document.getElementById('navvy');
+        // navbar.classList.add('no-height');
+        // navbar.classList.add('hidden');
     }
 
 
@@ -117,7 +117,7 @@ class Home extends React.Component {
                     <div class="container" data-aos="zoom-in">
 
                         <div class="text-center shadow-text text-wrapper">
-                            <h3 className="section-title">The Planet of Xalia</h3>
+                            <h3 className="section-title">The Galaxy of Xalia</h3>
                             <p>
                                 Xalia is home to a wide range of powerful, magical creatures originating from planets all across the galaxy.
                                 The planet is controlled by a powerful empire, ruled by the mad and tyrannous King Kozrak.
@@ -204,13 +204,13 @@ class Home extends React.Component {
                             <Col sm={true} class="d-flex">
                                 <div class="member" data-aos="fade-up" data-aos-delay="100">
                                     <div class="member-img">
-                                        <img src="assets/img/xalians/xalians_icon_tetrahive.png" class="img-fluid" alt=""></img>
+                                        <img src="assets/img/xalians/xalians_icon_crystorn.png" class="img-fluid" alt=""></img>
                                         <div class="social">
                                             <a href=""><i class="bi bi-twitter"></i></a>
                                         </div>
                                     </div>
                                     <div class="member-info">
-                                        <h4>Professor M</h4>
+                                        <h4>Captain M</h4>
                                         <span class="underline">Xalian Astrophysicist</span>
                                         <span>Execution Engineer</span>
                                     </div>
@@ -220,14 +220,14 @@ class Home extends React.Component {
                             <Col sm={true} class="d-flex">
                                 <div class="member" data-aos="fade-up" data-aos-delay="150">
                                     <div class="member-img">
-                                        <img src="assets/img/xalians/xalians_icon_unknown.png" class="img-fluid" alt=""></img>
+                                        <img src="assets/img/xalians/xalians_icon_smokat.png" class="img-fluid" alt=""></img>
                                         {/* <div class="social">
                                                 <a href=""><i class="bi bi-twitter"></i></a>
                                             </div> */}
                                     </div>
                                     <div class="member-info">
-                                        <h4>Unknown Human</h4>
-                                        <span class="underline">Xalian Researcher</span>
+                                        <h4>Professor V</h4>
+                                        <span class="underline">Cosmic Librarian</span>
                                         <span>Story Creator / Writer</span>
                                     </div>
                                 </div>

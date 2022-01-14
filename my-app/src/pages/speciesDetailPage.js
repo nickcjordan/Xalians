@@ -33,7 +33,7 @@ class SpeciesDetailPage extends React.Component {
             xalian: xal
         });
     }
-
+   
     render() {
         return <React.Fragment>
 
@@ -48,10 +48,10 @@ class SpeciesDetailPage extends React.Component {
                             <Col md={6} className="">
                                 <Row className="vertically-center-contents species-detail-title-row">
                                     <Col md={true}>
-                                        <h1 class="species-detail-name">{this.state.xalian.name}</h1>
+                                        <h1 className="species-detail-name">{this.state.xalian.name}</h1>
                                     </Col>
                                     <Col md={true}>
-                                        <h4 class="species-detail-id">#{this.state.xalian.id}</h4>
+                                        <h4 className="species-detail-id">#{this.state.xalian.id}</h4>
                                     </Col>
                                 </Row>
                                 <Row>
@@ -63,6 +63,7 @@ class SpeciesDetailPage extends React.Component {
                                     <tbody>
                                         <tr><th>Type:</th><td>{this.state.xalian.type}</td></tr>
                                         <tr><th>Origin Planet:</th><td>{this.state.xalian.planet}</td></tr>
+                                        <tr><th>Avg Height:</th><td>{this.state.xalian.height}</td></tr>
                                     </tbody>
                                 </Table>
 

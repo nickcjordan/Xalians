@@ -1,9 +1,9 @@
 .fire-color {
-    background-color: #C0392B;
+    background-color: #b65848;
 }
 
 .water-color {
-    background-color: #2471A3;
+    background-color: #4b90a1;
 }
 
 .air-color {
@@ -11,7 +11,7 @@
 }
 
 .electrical-color {
-    background-color: #F4D03F;
+    background-color: #e2bd43;
 }
 
 .geological-color {
@@ -19,11 +19,11 @@
 }
 
 .botanical-color {
-    background-color: #01740B;
+    background-color: #2b6e30;
 }
 
 .chemical-color {
-    background-color: #55FA4E;
+    background-color: #73d870;
 }
 
 .light-color {
@@ -31,11 +31,11 @@
 }
 
 .dark-color {
-    background-color: #17202A;
+    background-color: #393f75;
 }
 
 .explosive-color {
-    background-color: #7F8C8D;
+    background-color: #705454;
 }
 
 .psychic-color {
@@ -43,5 +43,5 @@
 }
 
 .spectral-color {
-    background-color: #6C3483;
+    background-color: #704d7e;
 }

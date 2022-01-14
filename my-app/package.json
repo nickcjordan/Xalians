@@ -19,7 +19,7 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "cp -rf ../src/json public/assets && react-scripts start",
     "build": "react-scripts build",
     "build-deploy": "cp -rf ../src/json public/assets && react-scripts build && npm run build && aws s3 sync build s3://xalians.com",
     "deploy": "npm run build && aws s3 sync build s3://xalians.com",

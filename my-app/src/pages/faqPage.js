@@ -37,13 +37,13 @@ class ProjectPage extends React.Component {
                                         When you log into the Xalians Game website, all Xalian NFTs in your wallet will be available for you to play with. You will be able to buy, sell, and trade Xalian NFTs on the open market, and mint them directly on our website.
                                     </p>
                                 </ListGroup.Item>
-                                <ListGroup.Item className="question-section">
+                                {/* <ListGroup.Item className="question-section">
                                     <h2>Who designs the Xalians?</h2>
                                     <h4>You!</h4>
                                     <p>
                                         Our team will design a small (Generation 0) batch of Xalians that will be used as samples in the early stages of the project, but from Generation 1 on, the community will design, submit, and select which Xalians make it into each new generation. 
                                     </p>
-                                </ListGroup.Item>
+                                </ListGroup.Item> */}
                                 
                                 <ListGroup.Item className="question-section">
                                     <h2>Why make it an NFT? Isn't an NFT just a picture?</h2>

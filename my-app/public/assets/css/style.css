@@ -1647,7 +1647,7 @@ article {
 
 .species-detail-description {
   font-style: italic;
-  color: cadetblue;
+  color: rgb(255, 255, 255);
 }
 
 .species-detail-description-div {
@@ -1668,8 +1668,7 @@ article {
 
 .xalian-image-detail {
   height: auto;
-  /* width: 80% ; */
-  max-width: 33vh !important;
+  max-width: 300px !important;
   /* margin-top: 20px; */
   padding: 0 !important;
   margin: auto;
@@ -1706,27 +1705,20 @@ article {
 }
 
 .chart-container {
-  width: 200px;
+  /* width: 200px; */
 }
 
 .chart-div {
   width: 1000px;
   max-width: 80vw;
-  height: 40vh;
-}
-
-.chart-bar-label {
-  color: #80ffb0 !important;
-}
-
-.chart-div * text {
-  color: white;
-}
-
-.species-tab-group ul li button {
+  min-height: 300px !important;
+  height: 100%;
 }
 
 #gridTab-tab-grid {
   background-color: rgba(0, 0, 0, 0);
-  color: #80ffb1;
+}
+
+.chart-bar-label {
+  font-size: larger;
 }
