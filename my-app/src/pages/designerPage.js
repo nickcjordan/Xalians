@@ -9,6 +9,7 @@ import Form from "react-bootstrap/Form";
 import nameSuggestions from "../json/designer/names.json";
 import mammalSuggestions from "../json/designer/mammal_species_names.json";
 import birdSuggestions from "../json/designer/bird_species_names.json";
+import languages from "../json/designer/languages.json";
 
 class DesignerPage extends React.Component {
   state = {
@@ -36,60 +37,15 @@ class DesignerPage extends React.Component {
     });
   }
 
-  //     const [inputs, setInputs] = useState({});
-
-  //   const handleChange = (event) => {
-  //     const name = event.target.name;
-  //     const value = event.target.value;
-  //     setInputs(values => ({...values, [name]: value}))
-  //   }
-
-  //   const handleSubmit = (event) => {
-  //     event.preventDefault();
-  //     alert(inputs);
-  //   }
-
-  //   return (
-  //     <form onSubmit={handleSubmit}>
-  //       <label>Enter your name:
-  //       <input
-  //         type="text"
-  //         name="username"
-  //         value={inputs.username || ""}
-  //         onChange={handleChange}
-  //       />
-  //       </label>
-  //       <label>Enter your age:
-  //         <input
-  //           type="number"
-  //           name="age"
-  //           value={inputs.age || ""}
-  //           onChange={handleChange}
-  //         />
-  //         </label>
-  //         <input type="submit" />
-  //     </form>
-  //   )
-
-  // handleSubmit = (event) => {
-  //     const form = event.currentTarget;
-  //     if (form.checkValidity() === false) {
-  //         event.preventDefault();
-  //         event.stopPropagation();
-  //     }
-
-  //     setValidated(true);
-  // };
 
   redo() {
-
     // var randomMammals = this.pickRandomAnimalFromList(this.state.mammals);
     // var randomBird = this.pickRandomAnimalFromList(this.state.birds);
 
     // var pickedNames = [];
     var randomMammals = [];
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 1; i++) {
       // pickedNames.push(this.selectRandom(this.state.names));
       randomMammals.push(this.pickRandomAnimalFromList(this.state.mammals));
     }
@@ -100,31 +56,31 @@ class DesignerPage extends React.Component {
   }
 
   pickRandomAnimalFromList(list) {
-    var familyMap = new Map();
-    list.forEach(animal => {
-      if (familyMap[animal.parent]) {
-        let list = familyMap[animal.parent];
+    var genusMap = new Map();
+    list.forEach((animal) => {
+      if (genusMap[animal.genus]) {
+        let list = genusMap[animal.genus];
         list.push(animal);
-        familyMap[animal.parent] = list;
+        genusMap[animal.genus] = list;
       } else {
         let list = [];
         list.push(animal);
-        familyMap[animal.parent] = list;
+        genusMap[animal.genus] = list;
       }
     });
 
-    let familyList = [];
-    for (let key in familyMap) {
-      familyList.push(familyMap[key]);
+    let genusList = [];
+    for (let key in genusMap) {
+      genusList.push(genusMap[key]);
     }
 
-    console.log(``);
+    // console.log(``);
 
-    this.shuffleArray(familyList);
-    var randomFamList = this.selectRandom(familyList);
+    this.shuffleArray(genusList);
+    var randomGenusList = this.selectRandom(genusList);
 
-    this.shuffleArray(randomFamList);
-    return this.selectRandom(randomFamList);
+    this.shuffleArray(randomGenusList);
+    return this.selectRandom(randomGenusList);
   }
 
   selectRandom(list) {
@@ -143,39 +99,71 @@ class DesignerPage extends React.Component {
 
   buildSuggestionList(selectedList) {
     var list = [];
-    selectedList.forEach(animal => {
+    selectedList.forEach((animal) => {
       list.push(this.buildSuggestion(animal));
     });
     return list;
+    // var list = [];
+    // selectedList.forEach((animal) => {
+    //   list.push(this.buildSuggestion(animal));
+    // });
+    // return list;
+  }
+
+  putTextOnClipboard(selected, searchLink, languageClipboardText) {
+    navigator.clipboard.writeText(`${selected.english}\n${searchLink}${languageClipboardText}`);
   }
 
   buildSuggestion(selected) {
     var searchLink = `https://www.google.com/search?igu=1&q=${selected.english + " " + selected.scientific}`;
-    var whitelist = ["ak", "ace", "af", "als", "ay", "bar", "bjn", "bm", "br", "bs", "ca", "cdo", "cy", "de", "diq", "eml", "es", "et", "eu", "fr", "frr", "gl", "gn", "ha", "id", "is", "it", "jbo", "kg", "kw", "lad", "lb", "ms", "mt", "mwl", "nds", "nl", "nn", "nrm", "pam", "pdc", "pt", "qu", "rw", "sn", "so", "sq", "srn", "stq", "tl", "tpi", "vec", "war", "wo"];
-    var otherList = [];
+    var whitelist = ["ace", "af", "als", "ay", "bar", "bjn", "bm", "br", "bs", "ca", "cdo", "cy", "de", "diq", "eml", "es", "et", "eu", "fr", "frr", "gl", "gn", "ha", "id", "is", "it", "jbo", "kg", "kw", "lad", "lb", "ms", "mt", "mwl", "nds", "nl", "nn", "nrm", "pam", "pdc", "pt", "qu", "rw", "sn", "so", "sq", "srn", "stq", "tl", "tpi", "vec", "war", "wo", "eo", "da", "et", "de"];
+    
+    // var debugMap = new Map();
+
+    // whitelist.forEach(lang => {
+    //   debugMap[lang] = "";
+    //   // debuglist.push(<iframe className="frame" sandbox="allow-same-origin allow-scripts allow-popups allow-forms" src={`https://www.google.com/search?igu=1&q=iso language code ${lang}`}></iframe>);
+    // });
+    // console.log(JSON.stringify(debugMap));
+    
+    // return (
+    //   <React.Fragment>
+    //     <Row className="">
+    //       <Col md={8} className="designer-suggestion-box">
+    //         {/* {debuglist} */}
+    //       </Col>
+    //     </Row>
+    //   </React.Fragment>
+    // );
+    
     var langMap = new Map();
     if (selected.others) {
       selected.others.forEach((translation) => {
+        let languageName = languages[translation.lang];
         if (whitelist.includes(translation.lang)) {
           if (langMap[translation.name]) {
             let list = langMap[translation.name];
-            list.push(translation.lang);
+            list.push(languageName);
             langMap[translation.name] = list;
           } else {
             let list = [];
-            list.push(translation.lang);
+            list.push(languageName);
             langMap[translation.name] = list;
           }
         }
       });
     }
-
+    
+    var otherList = [];
+    var languageClipboardText = "";
     for (let key in langMap) {
       let langList = langMap[key];
       let langString = langList.join(", ");
+      let displayString = `${key} (${langString})`;
+      languageClipboardText = languageClipboardText + `\n\t${displayString}`;
       otherList.push(
         <h6>
-          {key} ({langString})
+          {displayString}
         </h6>
       );
     }
@@ -185,24 +173,35 @@ class DesignerPage extends React.Component {
       namesRows.push(<h4>{this.selectRandom(this.state.names)}</h4>);
     }
 
-    let nameMinusFamily = selected.scientific.replace(selected.parent + " ", "");
-    let combined = <React.Fragment>
-      <h2><span className="design-species-family-text">{selected.parent}</span> {nameMinusFamily}</h2>
-    </React.Fragment>;
+    let nameMinusgenus = selected.scientific.replace(selected.genus + " ", "");
+    let combined = (
+      <React.Fragment>
+        <h2>
+          <span className="design-species-genus-text">{selected.genus}</span> {nameMinusgenus}
+        </h2>
+      </React.Fragment>
+    );
 
     return (
       <React.Fragment>
         <Row className="dark-section-div design-results-row vertically-center-contents">
           <Col md={1}>
-          <Button onClick={() => { navigator.clipboard.writeText(searchLink); }} ><i class="bi bi-clipboard-plus"></i></Button>
-          <br/><br/>
+            <Button
+              onClick={() => {
+                this.putTextOnClipboard(selected, searchLink, languageClipboardText);
+              }}
+            >
+              <i class="bi bi-clipboard-plus"></i>
+            </Button>
+            <br />
+            <br />
             {namesRows}
-            </Col>
+          </Col>
           <Col md={3}>
             <a href={`https://www.google.com/search?q=${selected.english}`} target="_blank">
               <h1>{selected.english}</h1>
             </a>
-              <hr/>
+            <hr />
             <a href={`https://www.google.com/search?q=${selected.scientific}`} target="_blank">
               {combined}
             </a>
@@ -217,6 +216,7 @@ class DesignerPage extends React.Component {
       </React.Fragment>
     );
   }
+
   render() {
     return (
       <React.Fragment>
@@ -225,16 +225,10 @@ class DesignerPage extends React.Component {
 
           <Container fluid>
             <Row className="content-row">
+            <span className="sticky-div"><Button onClick={this.redo}>Run Again</Button></span>
               <Col className="centered-view">
                 <h1 className="design-page-title">Xalian Design AI</h1>
-
-                <Button onClick={this.redo}>Run Suggestion</Button>
-
-                {this.state.selectedMammals && 
-                <React.Fragment>
-                  {this.buildSuggestionList(this.state.selectedMammals)}
-                </React.Fragment>}
-
+                {this.state.selectedMammals && <React.Fragment>{this.buildSuggestionList(this.state.selectedMammals)}</React.Fragment>}
               </Col>
             </Row>
           </Container>
