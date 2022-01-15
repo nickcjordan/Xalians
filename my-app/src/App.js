@@ -6,6 +6,7 @@ import FAQPage from './pages/faqPage';
 import PlanetPage from './pages/planetPage';
 import SpeciesPage from './pages/speciesPage';
 import SpeciesDetailPage from './pages/speciesDetailPage';
+import DesignerPage from './pages/designerPage';
 import React from "react";
 import XalianNavbar from './components/navbar';
 import Container from 'react-bootstrap/Container';
@@ -36,6 +37,7 @@ class App extends React.Component {
                   render={({ match }) => <SpeciesDetailPage id={match.params.id} />}
                 />
               <Route exact path="/planets"><PlanetPage /></Route>
+              <Route exact path="/designer"><DesignerPage /></Route>
             </Switch>
           </div>
         </Router>
