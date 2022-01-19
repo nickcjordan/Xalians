@@ -1,0 +1,4255 @@
+[
+  {
+    "name": "Aboleth",
+    "meta": "Large aberration, lawful evil",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The aboleth can breathe air and water."
+      },
+      {
+        "name": "Mucous Cloud",
+        "detail": "While underwater, the aboleth is surrounded by transformative mucus. A creature that touches the aboleth or that hits it with a melee attack while within 5 feet of it must make a DC 14 Constitution saving throw. On a failure, the creature is diseased for 1d4 hours. The diseased creature can breathe only underwater."
+      },
+      {
+        "name": "Probing Telepathy",
+        "detail": "If a creature communicates telepathically with the aboleth, the aboleth learns the creature's greatest desires if the aboleth can see the creature."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/11/1000/1000/636238825975375671.jpeg"
+  },
+  {
+    "name": "Acolyte",
+    "meta": "Medium humanoid, any",
+    "traits": [
+      {
+        "name": "Spellcasting",
+        "detail": "The acolyte is a 1st-level spellcaster. Its spellcasting ability is Wisdom (spell save DC 12, +4 to hit with spell attacks). The acolyte has following cleric spells prepared:Cantrips (at will): light, sacred flame, thaumaturgy 1st level (3 slots): bless, cure wounds, sanctuary"
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/656/humanoid.jpg"
+  },
+  {
+    "name": "Adult Black Dragon",
+    "meta": "Huge dragon, chaotic evil",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The dragon can breathe air and water."
+      },
+      {
+        "name": "Legendary Resistance (3/Day)",
+        "detail": "If the dragon fails a saving throw, it can choose to succeed instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/13/1000/1000/636238871029832086.jpeg"
+  },
+  {
+    "name": "Adult Blue Dragon",
+    "meta": "Huge dragon, lawful evil",
+    "traits": [
+      {
+        "name": "Legendary Resistance (3/Day)",
+        "detail": "If the dragon fails a saving throw, it can choose to succeed instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/16/1000/1000/636238882493439723.jpeg"
+  },
+  {
+    "name": "Adult Brass Dragon",
+    "meta": "Huge dragon, chaotic good",
+    "traits": [
+      {
+        "name": "Legendary Resistance (3/Day)",
+        "detail": "If the dragon fails a saving throw, it can choose to succeed instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/18/1000/1000/636238885681129014.jpeg"
+  },
+  {
+    "name": "Adult Bronze Dragon",
+    "meta": "Huge dragon, lawful good",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The dragon can breathe air and water."
+      },
+      {
+        "name": "Legendary Resistance (3/Day)",
+        "detail": "If the dragon fails a saving throw, it can choose to succeed instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/20/1000/1000/636238888310108665.jpeg"
+  },
+  {
+    "name": "Adult Copper Dragon",
+    "meta": "Huge dragon, chaotic good",
+    "traits": [
+      {
+        "name": "Legendary Resistance (3/Day)",
+        "detail": "If the dragon fails a saving throw, it can choose to succeed instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/22/1000/1000/636238956325913912.jpeg"
+  },
+  {
+    "name": "Adult Gold Dragon",
+    "meta": "Huge dragon, lawful good",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The dragon can breathe air and water."
+      },
+      {
+        "name": "Legendary Resistance (3/Day)",
+        "detail": "If the dragon fails a saving throw, it can choose to succeed instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/24/1000/1000/636238958915127190.jpeg"
+  },
+  {
+    "name": "Adult Green Dragon",
+    "meta": "Huge dragon, lawful evil",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The dragon can breathe air and water."
+      },
+      {
+        "name": "Legendary Resistance (3/Day)",
+        "detail": "If the dragon fails a saving throw, it can choose to succeed instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/26/1000/1000/636238962276510242.jpeg"
+  },
+  {
+    "name": "Adult Red Dragon",
+    "meta": "Huge dragon, chaotic evil",
+    "traits": [
+      {
+        "name": "Legendary Resistance (3/Day)",
+        "detail": "If the dragon fails a saving throw, it can choose to succeed instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/28/1000/1000/636238971817119794.jpeg"
+  },
+  {
+    "name": "Adult Silver Dragon",
+    "meta": "Huge dragon, lawful good",
+    "traits": [
+      {
+        "name": "Legendary Resistance (3/Day)",
+        "detail": "If the dragon fails a saving throw, it can choose to succeed instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/123/1000/1000/636252753945133025.jpeg"
+  },
+  {
+    "name": "Adult White Dragon",
+    "meta": "Huge dragon, chaotic evil",
+    "traits": [
+      {
+        "name": "Ice Walk",
+        "detail": "The dragon can move across and climb icy surfaces without needing to make an ability check. Additionally, difficult terrain composed of ice or snow doesn't cost it extra movement."
+      },
+      {
+        "name": "Legendary Resistance (3/Day)",
+        "detail": "If the dragon fails a saving throw, it can choose to succeed instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/125/1000/1000/636252755468117001.jpeg"
+  },
+  {
+    "name": "Air Elemental",
+    "meta": "Large elemental, neutral",
+    "traits": [
+      {
+        "name": "Air Form",
+        "detail": "The elemental can enter a hostile creature's space and stop there. It can move through a space as narrow as 1 inch wide without squeezing."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/127/1000/1000/636252755648556800.jpeg"
+  },
+  {
+    "name": "Allosaurus",
+    "meta": "Large beast, unaligned",
+    "traits": [
+      {
+        "name": "Pounce",
+        "detail": "If the allosaurus moves at least 30 feet straight toward a creature and then hits it with a claw attack on the same turn, that target must succeed on a DC 13 Strength saving throw or be knocked prone. If the target is prone, the allosaurus can make one bite attack against it as a bonus action."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Ancient Black Dragon",
+    "meta": "Gargantuan dragon, chaotic evil",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The dragon can breathe air and water."
+      },
+      {
+        "name": "Legendary Resistance (3/Day)",
+        "detail": "If the dragon fails a saving throw, it can choose to succeed instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/129/315/315/636252755854649337.jpeg"
+  },
+  {
+    "name": "Ancient Blue Dragon",
+    "meta": "Gargantuan dragon, lawful evil",
+    "traits": [
+      {
+        "name": "Legendary Resistance (3/Day)",
+        "detail": "If the dragon fails a saving throw, it can choose to succeed instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/131/1000/1000/636252756020185006.jpeg"
+  },
+  {
+    "name": "Ancient Brass Dragon",
+    "meta": "Gargantuan dragon, chaotic good",
+    "traits": [
+      {
+        "name": "Legendary Resistance (3/Day)",
+        "detail": "If the dragon fails a saving throw, it can choose to succeed instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/133/1000/1000/636252756157427258.jpeg"
+  },
+  {
+    "name": "Ancient Bronze Dragon",
+    "meta": "Gargantuan dragon, lawful good",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The dragon can breathe air and water."
+      },
+      {
+        "name": "Legendary Resistance (3/Day)",
+        "detail": "If the dragon fails a saving throw, it can choose to succeed instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/135/315/315/636252756372367681.jpeg"
+  },
+  {
+    "name": "Ancient Copper Dragon",
+    "meta": "Gargantuan dragon, chaotic good",
+    "traits": [
+      {
+        "name": "Legendary Resistance (3/Day)",
+        "detail": "If the dragon fails a saving throw, it can choose to succeed instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/137/1000/1000/636252756714896878.jpeg"
+  },
+  {
+    "name": "Ancient Gold Dragon",
+    "meta": "Gargantuan dragon, lawful good",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The dragon can breathe air and water."
+      },
+      {
+        "name": "Legendary Resistance (3/Day)",
+        "detail": "If the dragon fails a saving throw, it can choose to succeed instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/139/315/315/636252756930565101.jpeg"
+  },
+  {
+    "name": "Ancient Green Dragon",
+    "meta": "Gargantuan dragon, lawful evil",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The dragon can breathe air and water."
+      },
+      {
+        "name": "Legendary Resistance (3/Day)",
+        "detail": "If the dragon fails a saving throw, it can choose to succeed instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/141/1000/1000/636252757319464533.jpeg"
+  },
+  {
+    "name": "Ancient Red Dragon",
+    "meta": "Gargantuan dragon, chaotic evil",
+    "traits": [
+      {
+        "name": "Legendary Resistance (3/Day)",
+        "detail": "If the dragon fails a saving throw, it can choose to succeed instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/147/1000/1000/636252758629652181.jpeg"
+  },
+  {
+    "name": "Ancient Silver Dragon",
+    "meta": "Gargantuan dragon, lawful good",
+    "traits": [
+      {
+        "name": "Legendary Resistance (3/Day)",
+        "detail": "If the dragon fails a saving throw, it can choose to succeed instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/151/1000/1000/636252758799225927.jpeg"
+  },
+  {
+    "name": "Ancient White Dragon",
+    "meta": "Gargantuan dragon, chaotic evil",
+    "traits": [
+      {
+        "name": "Ice Walk",
+        "detail": "The dragon can move across and climb icy surfaces without needing to make an ability check. Additionally, difficult terrain composed of ice or snow doesn't cost it extra movement."
+      },
+      {
+        "name": "Legendary Resistance (3/Day)",
+        "detail": "If the dragon fails a saving throw, it can choose to succeed instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/153/1000/1000/636252758955886210.jpeg"
+  },
+  {
+    "name": "Androsphinx",
+    "meta": "Large monstrosity, lawful neutral",
+    "traits": [
+      {
+        "name": "Inscrutable",
+        "detail": "The sphinx is immune to any effect that would sense its emotions or read its thoughts, as well as any divination spell that it refuses. Wisdom (Insight) checks made to ascertain the sphinx's intentions or sincerity have disadvantage."
+      },
+      {
+        "name": "Magic Weapons",
+        "detail": "The sphinx's weapon attacks are magical."
+      },
+      {
+        "name": "Spellcasting",
+        "detail": "The sphinx is a 12th-level spellcaster. Its spellcasting ability is Wisdom (spell save DC 18, +10 to hit with spell attacks). It requires no material components to cast its spells. The sphinx has the following cleric spells prepared:Cantrips (at will): sacred flame, spare the dying, thaumaturgy 1st level (4 slots): command, detect evil and good, detect magic 2nd level (3 slots): lesser restoration, zone of truth 3rd level (3 slots): dispel magic, tongues 4th level (3 slots): banishment, freedom of movement 5th level (2 slots): flame strike, greater restoration 6th level (1 slot): heroes' feast"
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/157/1000/1000/636252759145617281.jpeg"
+  },
+  {
+    "name": "Animated Armor",
+    "meta": "Medium construct, unaligned",
+    "traits": [
+      {
+        "name": "Antimagic Susceptibility",
+        "detail": "The armor is incapacitated while in the area of an antimagic field. If targeted by dispel magic, the armor must succeed on a Constitution saving throw against the caster's spell save DC or fall unconscious for 1 minute."
+      },
+      {
+        "name": "False Appearance",
+        "detail": "While the armor remains motionless, it is indistinguishable from a normal suit of armor."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/8/429/1000/1000/636306156895834255.jpeg"
+  },
+  {
+    "name": "Ankheg",
+    "meta": "Large monstrosity, unaligned",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/161/315/315/636252759871983921.jpeg"
+  },
+  {
+    "name": "Ankylosaurus",
+    "meta": "Huge beast, unaligned",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Ape",
+    "meta": "Medium beast, unaligned",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Archmage",
+    "meta": "Medium humanoid, any",
+    "traits": [
+      {
+        "name": "Magic Resistance",
+        "detail": "The archmage has advantage on saving throws against spells and other magical effects."
+      },
+      {
+        "name": "Spellcasting",
+        "detail": "The archmage is an 18th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 17, +9 to hit with spell attacks). The archmage can cast disguise self and invisibility at will and has the following wizard spells prepared:Cantrips (at will): fire bolt, light, mage hand, prestidigitation, shocking grasp1st level (4 slots): detect magic, identify, mage armor, magic missile2nd level (3 slots): detect thoughts, mirror image, misty step3rd level (3 slots): counterspell, fly, lightning bolt4th level (3 slots): banishment, fire shield, stoneskin5th level (3 slots): cone of cold, scrying, wall of force6th level (1 slot): globe of invulnerability7th level (1 slot): teleport8th level (1 slot): mind blank9th level (1 slot): time stop*The archmage casts mind blank, stoneskin and mage armor spells on itself before combat."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/167/1000/1000/636252760213195530.jpeg"
+  },
+  {
+    "name": "Assassin",
+    "meta": "Medium humanoid, any",
+    "traits": [
+      {
+        "name": "Assassinate",
+        "detail": "During its first turn, the assassin has advantage on attack rolls against any creature that hasn't taken a turn. Any hit the assassin scores against a surprised creature is a critical hit."
+      },
+      {
+        "name": "Evasion",
+        "detail": "If the assassin is subjected to an effect that allows it to make a Dexterity saving throw to take only half damage, the assassin instead takes no damage if it succeeds on the saving throw, and only half damage if it fails."
+      },
+      {
+        "name": "Sneak Attack",
+        "detail": "Once per turn, the assassin deals an extra 14 (4d6) damage when it hits a target with a weapon attack and has advantage on the attack roll, or when the target is within 5 feet of an ally of the assassin that isn't incapacitated and the assassin doesn't have disadvantage on the attack roll."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/9/910/315/315/636334293020978804.png"
+  },
+  {
+    "name": "Awakened Shrub",
+    "meta": "Small plant, unaligned",
+    "traits": [
+      {
+        "name": "False Appearance",
+        "detail": "While the shrub remains motionless, it is indistinguishable from a normal shrub."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/659/plant.jpg"
+  },
+  {
+    "name": "Awakened Tree",
+    "meta": "Huge plant, unaligned",
+    "traits": [
+      {
+        "name": "False Appearance",
+        "detail": "While the tree remains motionless, it is indistinguishable from a normal tree."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/659/plant.jpg"
+  },
+  {
+    "name": "Axe Beak",
+    "meta": "Large beast, unaligned",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Azer",
+    "meta": "Medium elemental, lawful neutral",
+    "traits": [
+      {
+        "name": "Heated Body",
+        "detail": "A creature that touches the azer or hits it with a melee attack while within 5 feet of it takes 5 (1d10) fire damage."
+      },
+      {
+        "name": "Heated Weapons",
+        "detail": "When the azer hits with a metal melee weapon, it deals an extra 3 (1d6) fire damage (included in the attack)."
+      },
+      {
+        "name": "Illumination",
+        "detail": "The azer sheds bright light in a 10-­foot radius and dim light for an additional 10 feet."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/171/1000/1000/636252761112348397.jpeg"
+  },
+  {
+    "name": "Baboon",
+    "meta": "Small beast, unaligned",
+    "traits": [
+      {
+        "name": "Pack Tactics",
+        "detail": "The baboon has advantage on an attack roll against a creature if at least one of the baboon's allies is within 5 feet of the creature and the ally isn't incapacitated."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Badger",
+    "meta": "Tiny beast, unaligned",
+    "traits": [
+      {
+        "name": "Keen Smell",
+        "detail": "The badger has advantage on Wisdom (Perception) checks that rely on smell."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/528/1000/1000/636376327632236333.jpeg"
+  },
+  {
+    "name": "Balor",
+    "meta": "Huge fiend, chaotic evil",
+    "traits": [
+      {
+        "name": "Death Throes",
+        "detail": "When the balor dies, it explodes, and each creature within 30 feet of it must make a DC 20 Dexterity saving throw, taking 70 (20d6) fire damage on a failed save, or half as much damage on a successful one. The explosion ignites flammable objects in that area that aren't being worn or carried, and it destroys the balor's weapons."
+      },
+      {
+        "name": "Fire Aura",
+        "detail": "At the start of each of the balor's turns, each creature within 5 feet of it takes 10 (3d6) fire damage, and flammable objects in the aura that aren't being worn or carried ignite. A creature that touches the balor or hits it with a melee attack while within 5 feet of it takes 10 (3d6) fire damage."
+      },
+      {
+        "name": "Magic Resistance",
+        "detail": "The balor has advantage on saving throws against spells and other magical effects."
+      },
+      {
+        "name": "Magic Weapons",
+        "detail": "The balor's weapon attacks are magical."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/175/1000/1000/636252761612038117.jpeg"
+  },
+  {
+    "name": "Bandit",
+    "meta": "Medium humanoid, any",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/656/humanoid.jpg"
+  },
+  {
+    "name": "Bandit Captain",
+    "meta": "Medium humanoid, any",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/181/1000/1000/636252761965117015.jpeg"
+  },
+  {
+    "name": "Banshee",
+    "meta": "Medium undead, chaotic evil",
+    "traits": [
+      {
+        "name": "Detect Life",
+        "detail": "The banshee can magically sense the presence of creatures up to 5 miles away that aren’t undead or constructs. She knows the general direction they’re in but not their exact locations."
+      },
+      {
+        "name": "Incorporeal Movement",
+        "detail": "The banshee can move through other creatures and objects as if they were difficult terrain. She takes 5 (1d10) force damage if she ends her turn inside an object."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/8/446/315/315/636306384206418474.jpeg"
+  },
+  {
+    "name": "Barbed Devil",
+    "meta": "Medium fiend, lawful evil",
+    "traits": [
+      {
+        "name": "Barbed Hide",
+        "detail": "At the start of each of its turns, the barbed devil deals 5 (1d10) piercing damage to any creature grappling it."
+      },
+      {
+        "name": "Devil's Sight",
+        "detail": "Magical darkness doesn't impede the devil's darkvision."
+      },
+      {
+        "name": "Magic Resistance",
+        "detail": "The devil has advantage on saving throws against spells and other magical effects."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/486/315/315/636376302569423870.jpeg"
+  },
+  {
+    "name": "Basilisk",
+    "meta": "Medium monstrosity, unaligned",
+    "traits": [
+      {
+        "name": "Petrifying Gaze",
+        "detail": "If a creature starts its turn within 30 feet of the basilisk and the two of them can see each other, the basilisk can force the creature to make a DC 12 Constitution saving throw if the basilisk isn't incapacitated. On a failed save, the creature magically begins to turn to stone and is restrained. It must repeat the saving throw at the end of its next turn. On a success, the effect ends. On a failure, the creature is petrified until freed by the greater restoration spell or other magic.A creature that isn't surprised can avert its eyes to avoid the saving throw at the start of its turn. If it does so, it can't see the basilisk until the start of its next turn, when it can avert its eyes again.If it looks at the basilisk in the meantime, it must immediately make the save. If the basilisk sees its reflection within 30 feet of it in bright light, it mistakes itself for a rival and targets itself with its gaze."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/185/1000/1000/636252762168821795.jpeg"
+  },
+  {
+    "name": "Bat",
+    "meta": "Tiny beast, unaligned",
+    "traits": [
+      {
+        "name": "Echolocation",
+        "detail": "The bat can't use its blindsight while deafened."
+      },
+      {
+        "name": "Keen Hearing",
+        "detail": "The bat has advantage on Wisdom (Perception) checks that rely on hearing."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/18/305/1000/1000/636379812593010967.jpeg"
+  },
+  {
+    "name": "Bearded Devil",
+    "meta": "Medium fiend, lawful evil",
+    "traits": [
+      {
+        "name": "Devil's Sight",
+        "detail": "Magical darkness doesn't impede the devil's darkvision."
+      },
+      {
+        "name": "Magic Resistance",
+        "detail": "The devil has advantage on saving throws against spells and other magical effects."
+      },
+      {
+        "name": "Steadfast",
+        "detail": "The devil can't be frightened while it can see an allied creature within 30 feet of it."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/193/1000/1000/636252763397604505.jpeg"
+  },
+  {
+    "name": "Behir",
+    "meta": "Huge monstrosity, neutral evil",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/195/1000/1000/636252763748680024.jpeg"
+  },
+  {
+    "name": "Berserker",
+    "meta": "Medium humanoid, any",
+    "traits": [
+      {
+        "name": "Reckless",
+        "detail": "At the start of its turn, the berserker can gain advantage on all melee weapon attack rolls during that turn, but attack rolls against it have advantage until the start of its next turn."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/656/humanoid.jpg"
+  },
+  {
+    "name": "Black Bear",
+    "meta": "Medium beast, unaligned",
+    "traits": [
+      {
+        "name": "Keen Smell",
+        "detail": "The bear has advantage on Wisdom (Perception) checks that rely on smell."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Black Dragon Wyrmling",
+    "meta": "Medium dragon, chaotic evil",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The dragon can breathe air and water."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/496/1000/1000/636376308217017511.jpeg"
+  },
+  {
+    "name": "Black Pudding",
+    "meta": "Large ooze, unaligned",
+    "traits": [
+      {
+        "name": "Amorphous",
+        "detail": "The pudding can move through a space as narrow as 1 inch wide without squeezing."
+      },
+      {
+        "name": "Corrosive Form",
+        "detail": "A creature that touches the pudding or hits it with a melee attack while within 5 feet of it takes 4 (1d8) acid damage. Any nonmagical weapon made of metal or wood that hits the pudding corrodes. After dealing damage, the weapon takes a permanent and cumulative −1 penalty to damage rolls. If its penalty drops to −5, the weapon is destroyed.Nonmagical ammunition made of metal or wood that hits the pudding is destroyed after dealing damage.The pudding can eat through 2-inch-thick, nonmagical wood or metal in 1 round."
+      },
+      {
+        "name": "Spider Climb",
+        "detail": "The pudding can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/201/315/315/636252764027417823.jpeg"
+  },
+  {
+    "name": "Blink Dog",
+    "meta": "Medium fey, lawful good",
+    "traits": [
+      {
+        "name": "Keen Hearing and Smell",
+        "detail": "The dog has advantage on Wisdom (Perception) checks that rely on hearing or smell."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/205/315/315/636252764168652859.jpeg"
+  },
+  {
+    "name": "Blood Hawk",
+    "meta": "Small beast, unaligned",
+    "traits": [
+      {
+        "name": "Keen Sight",
+        "detail": "The hawk has advantage on Wisdom (Perception) checks that rely on sight."
+      },
+      {
+        "name": "Pack Tactics",
+        "detail": "The hawk has advantage on an attack roll against a creature if at least one of the hawk's allies is within 5 feet of the creature and the ally isn't incapacitated."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Blue Dragon Wyrmling",
+    "meta": "Medium dragon, lawful evil",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/209/1000/1000/636252764637244026.jpeg"
+  },
+  {
+    "name": "Boar",
+    "meta": "Medium beast, unaligned",
+    "traits": [
+      {
+        "name": "Charge",
+        "detail": "If the boar moves at least 20 feet straight toward a target and then hits it with a tusk attack on the same turn, the target takes an extra 3 (1d6) slashing damage. If the target is a creature, it must succeed on a DC 11 Strength saving throw or be knocked prone."
+      },
+      {
+        "name": "Relentless (Recharges after a Short or Long Rest)",
+        "detail": "If the boar takes 7 damage or less that would reduce it to 0 hit points, it is reduced to 1 hit point instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Bone Devil",
+    "meta": "Large fiend, lawful evil",
+    "traits": [
+      {
+        "name": "Devil's Sight",
+        "detail": "Magical darkness doesn't impede the devil's darkvision."
+      },
+      {
+        "name": "Magic Resistance",
+        "detail": "The devil has advantage on saving throws against spells and other magical effects."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/9/481/1000/1000/636328225187253200.jpeg"
+  },
+  {
+    "name": "Brass Dragon Wyrmling",
+    "meta": "Medium dragon, chaotic good",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/215/315/315/636252764963208954.jpeg"
+  },
+  {
+    "name": "Bronze Dragon Wyrmling",
+    "meta": "Medium dragon, lawful good",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The dragon can breathe air and water."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/492/315/315/636376306909593829.jpeg"
+  },
+  {
+    "name": "Brown Bear",
+    "meta": "Large beast, unaligned",
+    "traits": [
+      {
+        "name": "Keen Smell",
+        "detail": "The bear has advantage on Wisdom (Perception) checks that rely on smell."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Bugbear",
+    "meta": "Medium humanoid, chaotic evil",
+    "traits": [
+      {
+        "name": "Brute",
+        "detail": "A melee weapon deals one extra die of its damage when the bugbear hits with it (included in the attack)."
+      },
+      {
+        "name": "Surprise Attack",
+        "detail": "If the bugbear surprises a creature and hits it with an attack during the first round of combat, the target takes an extra 7 (2d6) damage from the attack."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/221/1000/1000/636252765234633232.jpeg"
+  },
+  {
+    "name": "Bulette",
+    "meta": "Large monstrosity, unaligned",
+    "traits": [
+      {
+        "name": "Standing Leap",
+        "detail": "The bulette's long jump is up to 30 feet and its high jump is up to 15 feet, with or without a running start."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/223/315/315/636252765369632881.jpeg"
+  },
+  {
+    "name": "Camel",
+    "meta": "Large beast, unaligned",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Cat",
+    "meta": "Tiny beast, unaligned",
+    "traits": [
+      {
+        "name": "Keen Smell",
+        "detail": "The cat has advantage on Wisdom (Perception) checks that rely on smell."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Centaur",
+    "meta": "Large monstrosity, neutral good",
+    "traits": [
+      {
+        "name": "Charge",
+        "detail": "If the centaur moves at least 30 feet straight toward a target and then hits it with a pike attack on the same turn, the target takes an extra 10 (3d6) piercing damage."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/227/1000/1000/636252765573266420.jpeg"
+  },
+  {
+    "name": "Chain Devil",
+    "meta": "Medium fiend, lawful evil",
+    "traits": [
+      {
+        "name": "Devil's Sight",
+        "detail": "Magical darkness doesn't impede the devil's darkvision."
+      },
+      {
+        "name": "Magic Resistance",
+        "detail": "The devil has advantage on saving throws against spells and other magical effects."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/235/1000/1000/636252766618069332.jpeg"
+  },
+  {
+    "name": "Chimera",
+    "meta": "Large monstrosity, chaotic evil",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/237/1000/1000/636252766770156389.jpeg"
+  },
+  {
+    "name": "Chuul",
+    "meta": "Large aberration, chaotic evil",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The chuul can breathe air and water."
+      },
+      {
+        "name": "Sense Magic",
+        "detail": "The chuul senses magic within 120 feet of it at will. This trait otherwise works like the detect magic spell but isn't itself magical."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/241/1000/1000/636252767122656355.jpeg"
+  },
+  {
+    "name": "Clay Golem",
+    "meta": "Large construct, unaligned",
+    "traits": [
+      {
+        "name": "Acid Absorption",
+        "detail": "Whenever the golem is subjected to acid damage, it takes no damage and instead regains a number of hit points equal to the acid damage dealt."
+      },
+      {
+        "name": "Berserk",
+        "detail": "Whenever the golem starts its turn with 60 hit points or fewer, roll a d6. On a 6, the golem goes berserk. On each of its turns while berserk, the golem attacks the nearest creature it can see. If no creature is near enough to move to and attack, the golem attacks an object, with preference for an object smaller than itself. Once the golem goes berserk, it continues to do so until it is destroyed or regains all its hit points."
+      },
+      {
+        "name": "Immutable Form",
+        "detail": "The golem is immune to any spell or effect that would alter its form."
+      },
+      {
+        "name": "Magic Resistance",
+        "detail": "The golem has advantage on saving throws against spells and other magical effects."
+      },
+      {
+        "name": "Magic Weapons",
+        "detail": "The golem's weapon attacks are magical."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/243/315/315/636252767318152303.jpeg"
+  },
+  {
+    "name": "Cloaker",
+    "meta": "Large aberration, chaotic neutral",
+    "traits": [
+      {
+        "name": "Damage Transfer",
+        "detail": "While attached to a creature, the cloaker takes only half the damage dealt to it (rounded down), and that creature takes the other half."
+      },
+      {
+        "name": "False Appearance",
+        "detail": "While the cloaker remains motionless without its underside exposed, it is indistinguishable from a dark leather cloak."
+      },
+      {
+        "name": "Light Sensitivity",
+        "detail": "While in bright light, the cloaker has disadvantage on attack rolls and Wisdom (Perception) checks that rely on sight."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/245/1000/1000/636252767458838228.jpeg"
+  },
+  {
+    "name": "Cloud Giant",
+    "meta": "Huge giant, neutral",
+    "traits": [
+      {
+        "name": "Keen Smell",
+        "detail": "The giant has advantage on Wisdom (Perception) checks that rely on smell."
+      },
+      {
+        "name": "Innate Spellcasting",
+        "detail": "The giant's innate spellcasting ability is Charisma. It can innately cast the following spells, requiring no material components:At will: detect magic, fog cloud, light 3/day each: feather fall, fly, misty step, telekinesis 1/day each: control weather, gaseous form"
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/249/1000/1000/636252767619414260.jpeg"
+  },
+  {
+    "name": "Cockatrice",
+    "meta": "Small monstrosity, unaligned",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/251/315/315/636252767744669874.jpeg"
+  },
+  {
+    "name": "Commoner",
+    "meta": "Medium humanoid, any",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/656/humanoid.jpg"
+  },
+  {
+    "name": "Constrictor Snake",
+    "meta": "Large beast, unaligned",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Copper Dragon Wyrmling",
+    "meta": "Medium dragon, chaotic good",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/255/1000/1000/636252768002215182.jpeg"
+  },
+  {
+    "name": "Couatl",
+    "meta": "Medium celestial, lawful good",
+    "traits": [
+      {
+        "name": "Innate Spellcasting",
+        "detail": "The couatl's spellcasting ability is Charisma (spell save DC 14). It can innately cast the following spells, requiring only verbal components:At will: detect evil and good, detect magic, detect thoughts 3/day each: bless, create food and water, cure wounds, lesser restoration, protection from poison, sanctuary, shield 1/day each: dream, greater restoration, scrying "
+      },
+      {
+        "name": "Magic Weapons",
+        "detail": "The couatl's weapon attacks are magical."
+      },
+      {
+        "name": "Shielded Mind",
+        "detail": "The couatl is immune to scrying and to any effect that would sense its emotions, read its thoughts, or detect its location."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/257/1000/1000/636252768143323827.jpeg"
+  },
+  {
+    "name": "Crab",
+    "meta": "Tiny beast, unaligned",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The crab can breathe air and water."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Crocodile",
+    "meta": "Large beast, unaligned",
+    "traits": [
+      {
+        "name": "Hold Breath",
+        "detail": "The crocodile can hold its breath for 15 minutes."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Cult Fanatic",
+    "meta": "Medium humanoid, any",
+    "traits": [
+      {
+        "name": "Dark Devotion",
+        "detail": "The fanatic has advantage on saving throws against being charmed or frightened."
+      },
+      {
+        "name": "Spellcasting",
+        "detail": "The fanatic is a 4th-level spellcaster. Its spellcasting ability is Wisdom (spell save DC 11, +3 to hit with spell attacks). The fanatic has the following cleric spells prepared:Cantrips (at will): light, sacred flame, thaumaturgy 1st level (4 slots): command, inflict wounds, shield of faith 2nd level (3 slots): hold person, spiritual weapon"
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/259/1000/1000/636252768307230924.jpeg"
+  },
+  {
+    "name": "Cultist",
+    "meta": "Medium humanoid, any",
+    "traits": [
+      {
+        "name": "Dark Devotion",
+        "detail": "The cultist has advantage on saving throws against being charmed or frightened."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/14/481/1000/1000/636364323106021375.png"
+  },
+  {
+    "name": "Cyclops",
+    "meta": "Huge giant, chaotic neutral",
+    "traits": [
+      {
+        "name": "Poor Depth Perception",
+        "detail": "The cyclops has disadvantage on any attack roll against a target more than 30 feet away."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/470/1000/1000/636376290137285130.jpeg"
+  },
+  {
+    "name": "Darkmantle",
+    "meta": "Small monstrosity, unaligned",
+    "traits": [
+      {
+        "name": "Echolocation",
+        "detail": "The darkmantle can't use its blindsight while deafened."
+      },
+      {
+        "name": "False Appearance",
+        "detail": "While the darkmantle remains motionless, it is indistinguishable from a cave formation such as a stalactite or stalagmite."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/263/315/315/636252768676699519.jpeg"
+  },
+  {
+    "name": "Death Dog",
+    "meta": "Medium monstrosity, neutral evil",
+    "traits": [
+      {
+        "name": "Two-Headed",
+        "detail": "The dog has advantage on Wisdom (Perception) checks and on saving throws against being blinded, charmed, deafened, frightened, stunned, or knocked unconscious."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/265/1000/1000/636252768823194310.jpeg"
+  },
+  {
+    "name": "Deep Gnome (Svirfneblin)",
+    "meta": "Small humanoid, neutral good",
+    "traits": [
+      {
+        "name": "Stone Camouflage",
+        "detail": "The gnome has advantage on Dexterity (Stealth) checks made to hide in rocky terrain."
+      },
+      {
+        "name": "Gnome Cunning",
+        "detail": "The gnome has advantage on Intelligence, Wisdom, and Charisma saving throws against magic."
+      },
+      {
+        "name": "Innate Spellcasting",
+        "detail": "The gnome’s innate spellcasting ability is Intelligence (spell save DC 11). It can innately cast the following spells, requiring no material components:At will: nondetection (self only)1/day each: blindness/deafness, blur, disguise self"
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/9/112/1000/1000/636323610009818415.jpeg"
+  },
+  {
+    "name": "Deer",
+    "meta": "Medium beast, unaligned",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Deva",
+    "meta": "Medium celestial, lawful good",
+    "traits": [
+      {
+        "name": "Angelic Weapons",
+        "detail": "The deva's weapon attacks are magical. When the deva hits with any weapon, the weapon deals an extra 4d8 radiant damage (included in the attack)."
+      },
+      {
+        "name": "Innate Spellcasting",
+        "detail": "The deva's spellcasting ability is Charisma (spell save DC 17). The deva can innately cast the following spells, requiring only verbal components:At will: detect evil and good 1/day each: commune, raise dead "
+      },
+      {
+        "name": "Magic Resistance",
+        "detail": "The deva has advantage on saving throws against spells and other magical effects."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/267/1000/1000/636252768980059444.jpeg"
+  },
+  {
+    "name": "Dire Wolf",
+    "meta": "Large beast, unaligned",
+    "traits": [
+      {
+        "name": "Keen Hearing and Smell",
+        "detail": "The wolf has advantage on Wisdom (Perception) checks that rely on hearing or smell."
+      },
+      {
+        "name": "Pack Tactics",
+        "detail": "The wolf has advantage on an attack roll against a creature if at least one of the wolf's allies is within 5 feet of the creature and the ally isn't incapacitated."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/484/315/315/636376300478361995.jpeg"
+  },
+  {
+    "name": "Djinni",
+    "meta": "Large elemental, chaotic good",
+    "traits": [
+      {
+        "name": "Elemental Demise",
+        "detail": "If the djinni dies, its body disintegrates into a warm breeze, leaving behind only equipment the djinni was wearing or carrying."
+      },
+      {
+        "name": "Innate Spellcasting",
+        "detail": "The djinni's innate spellcasting ability is Charisma (spell save DC 17, +9 to hit with spell attacks). It can innately cast the following spells, requiring no material components:At will: detect evil and good, detect magic, thunderwave 3/day each: create food and water (can create wine instead of water) , tongues, wind walk 1/day each: conjure elemental (air elemental only), creation, gaseous form, invisibility, major image, plane shift"
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/281/315/315/636252770322204007.jpeg"
+  },
+  {
+    "name": "Doppelganger",
+    "meta": "Medium monstrosity, neutral",
+    "traits": [
+      {
+        "name": "Shapechanger",
+        "detail": "The doppelganger can use its action to polymorph into a Small or Medium humanoid it has seen, or back into its true form. Its statistics, other than its size, are the same in each form. Any equipment it is wearing or carrying isn't transformed. It reverts to its true form if it dies."
+      },
+      {
+        "name": "Ambusher",
+        "detail": "The doppelganger has advantage on attack rolls against any creature it has surprised."
+      },
+      {
+        "name": "Surprise Attack",
+        "detail": "If the doppelganger surprises a creature and hits it with an attack during the first round of combat, the target takes an extra 10 (3d6) damage from the attack."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/289/315/315/636252770983164351.jpeg"
+  },
+  {
+    "name": "Draft Horse",
+    "meta": "Large beast, unaligned",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Dragon Turtle",
+    "meta": "Gargantuan dragon, neutral",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The dragon turtle can breathe air and water."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/291/1000/1000/636252771128151641.jpeg"
+  },
+  {
+    "name": "Dretch",
+    "meta": "Small fiend, chaotic evil",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/293/1000/1000/636252771253285096.jpeg"
+  },
+  {
+    "name": "Drider",
+    "meta": "Large monstrosity, chaotic evil",
+    "traits": [
+      {
+        "name": "Fey Ancestry",
+        "detail": "The drider has advantage on saving throws against being charmed, and magic can't put the drider to sleep."
+      },
+      {
+        "name": "Innate Spellcasting",
+        "detail": "The drider's innate spellcasting ability is Wisdom (spell save DC 13). The drider can innately cast the following spells, requiring no material components:At will: dancing lights 1/day each: darkness, faerie fire "
+      },
+      {
+        "name": "Spider Climb",
+        "detail": "The drider can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check."
+      },
+      {
+        "name": "Sunlight Sensitivity",
+        "detail": "While in sunlight, the drider has disadvantage on attack rolls, as well as on Wisdom (Perception) checks that rely on sight."
+      },
+      {
+        "name": "Web Walker",
+        "detail": "The drider ignores movement restrictions caused by webbing."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/295/1000/1000/636252771409285458.jpeg"
+  },
+  {
+    "name": "Drow",
+    "meta": "Medium humanoid, neutral evil",
+    "traits": [
+      {
+        "name": "Fey Ancestry",
+        "detail": "The drow has advantage on saving throws against being charmed, and magic can’t put the drow to sleep."
+      },
+      {
+        "name": "Innate Spellcasting",
+        "detail": "The drow’s spellcasting ability is Charisma (spell save DC 11). It can innately cast the following spells, requiring no material components:At will: dancing lights1/day each: darkness, faerie fire"
+      },
+      {
+        "name": "Sunlight Sensitivity",
+        "detail": "While in sunlight, the drow has disadvantage on attack rolls, as well as on Wisdom (Perception) checks that rely on sight."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/501/1000/1000/636376310726273495.jpeg"
+  },
+  {
+    "name": "Druid",
+    "meta": "Medium humanoid, any",
+    "traits": [
+      {
+        "name": "Spellcasting",
+        "detail": "The druid is a 4th-level spellcaster. Its spellcasting ability is Wisdom (spell save DC 12, +4 to hit with spell attacks). It has the following druid spells prepared:Cantrips (at will): druidcraft, produce flame, shillelagh 1st level (4 slots): entangle, longstrider, speak with animals, thunderwave 2nd level (3 slots): animal messenger, barkskin"
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/299/1000/1000/636252771583275655.jpeg"
+  },
+  {
+    "name": "Dryad",
+    "meta": "Medium fey, neutral",
+    "traits": [
+      {
+        "name": "Innate Spellcasting",
+        "detail": "The dryad's innate spellcasting ability is Charisma (spell save DC 14). The dryad can innately cast the following spells, requiring no material components:At will: druidcraft 3/day each: entangle, goodberry 1/day each: barkskin, pass without trace, shillelagh "
+      },
+      {
+        "name": "Magic Resistance",
+        "detail": "The dryad has advantage on saving throws against spells and other magical effects."
+      },
+      {
+        "name": "Speak with Beasts and Plants",
+        "detail": "The dryad can communicate with beasts and plants as if they shared a language."
+      },
+      {
+        "name": "Tree Stride",
+        "detail": "Once on her turn, the dryad can use 10 feet of her movement to step magically into one living tree within her reach and emerge from a second living tree within 60 feet of the first tree, appearing in an unoccupied space within 5 feet of the second tree. Both trees must be Large or bigger."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/307/1000/1000/636252771953950206.jpeg"
+  },
+  {
+    "name": "Duergar",
+    "meta": "Medium humanoid, lawful evil",
+    "traits": [
+      {
+        "name": "Duergar Resilience",
+        "detail": "The duergar has advantage on saving throws against poison, spells, and illusions, as well as to resist being charmed or paralyzed."
+      },
+      {
+        "name": "Sunlight Sensitivity",
+        "detail": "While in sunlight, the duergar has disadvantage on attack rolls, as well as on Wisdom (Perception) checks that rely on sight."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/309/1000/1000/636252772101183765.jpeg"
+  },
+  {
+    "name": "Dust Mephit",
+    "meta": "Small elemental, neutral evil",
+    "traits": [
+      {
+        "name": "Death Burst",
+        "detail": "When the mephit dies, it explodes in a burst of dust. Each creature within 5 feet of it must then succeed on a DC 10 Constitution saving throw or be blinded for 1 minute. A blinded creature can repeat the saving throw on each of its turns, ending the effect on itself on a success."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/313/1000/1000/636252772213922157.jpeg"
+  },
+  {
+    "name": "Eagle",
+    "meta": "Small beast, unaligned",
+    "traits": [
+      {
+        "name": "Keen Sight",
+        "detail": "The eagle has advantage on Wisdom (Perception) checks that rely on sight."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/515/1000/1000/636376317171111968.jpeg"
+  },
+  {
+    "name": "Earth Elemental",
+    "meta": "Large elemental, neutral",
+    "traits": [
+      {
+        "name": "Earth Glide",
+        "detail": "The elemental can burrow through nonmagical, unworked earth and stone. While doing so, the elemental doesn't disturb the material it moves through."
+      },
+      {
+        "name": "Siege Monster",
+        "detail": "The elemental deals double damage to objects and structures."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/317/315/315/636252772331779404.jpeg"
+  },
+  {
+    "name": "Efreeti",
+    "meta": "Large elemental, lawful evil",
+    "traits": [
+      {
+        "name": "Elemental Demise",
+        "detail": "If the efreeti dies, its body disintegrates in a flash of fire and puff of smoke, leaving behind only equipment the efreeti was wearing or carrying."
+      },
+      {
+        "name": "Innate Spellcasting",
+        "detail": "The efreeti's innate spellcasting ability is Charisma (spell save DC 15, +7 to hit with spell attacks). It can innately cast the following spells, requiring no material components:At will: detect magic 3/day: enlarge/reduce, tongues 1/day each: conjure elemental (fire elemental only), gaseous form, invisibility, major image, plane shift, wall of fire"
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/325/1000/1000/636252775714332067.jpeg"
+  },
+  {
+    "name": "Elephant",
+    "meta": "Huge beast, unaligned",
+    "traits": [
+      {
+        "name": "Trampling Charge",
+        "detail": "If the elephant moves at least 20 feet straight toward a creature and then hits it with a gore attack on the same turn, that target must succeed on a DC 12 Strength saving throw or be knocked prone. If the target is prone, the elephant can make one stomp attack against it as a bonus action."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Elk",
+    "meta": "Large beast, unaligned",
+    "traits": [
+      {
+        "name": "Charge",
+        "detail": "If the elk moves at least 20 feet straight toward a target and then hits it with a ram attack on the same turn, the target takes an extra 7 (2d6) damage. If the target is a creature, it must succeed on a DC 13 Strength saving throw or be knocked prone."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Erinyes",
+    "meta": "Medium fiend, lawful evil",
+    "traits": [
+      {
+        "name": "Hellish Weapons",
+        "detail": "The erinyes's weapon attacks are magical and deal an extra 13 (3d8) poison damage on a hit (included in the attacks)."
+      },
+      {
+        "name": "Magic Resistance",
+        "detail": "The erinyes has advantage on saving throws against spells and other magical effects."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/329/1000/1000/636252776041158657.jpeg"
+  },
+  {
+    "name": "Ettercap",
+    "meta": "Medium monstrosity, neutral evil",
+    "traits": [
+      {
+        "name": "Spider Climb",
+        "detail": "The ettercap can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check."
+      },
+      {
+        "name": "Web Sense",
+        "detail": "While in contact with a web, the ettercap knows the exact location of any other creature in contact with the same web."
+      },
+      {
+        "name": "Web Walker",
+        "detail": "The ettercap ignores movement restrictions caused by webbing."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/339/315/315/636252776771842998.jpeg"
+  },
+  {
+    "name": "Ettin",
+    "meta": "Large giant, chaotic evil",
+    "traits": [
+      {
+        "name": "Two Heads",
+        "detail": "The ettin has advantage on Wisdom (Perception) checks and on saving throws against being blinded, charmed, deafened, frightened, stunned, and knocked unconscious."
+      },
+      {
+        "name": "Wakeful",
+        "detail": "When one of the ettin's heads is asleep, its other head is awake."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/341/1000/1000/636252776953634777.jpeg"
+  },
+  {
+    "name": "Fire Elemental",
+    "meta": "Large elemental, neutral",
+    "traits": [
+      {
+        "name": "Fire Form",
+        "detail": "The elemental can move through a space as narrow as 1 inch wide without squeezing. A creature that touches the elemental or hits it with a melee attack while within 5 feet of it takes 5 (1d10) fire damage. In addition, the elemental can enter a hostile creature's space and stop there. The first time it enters a creature's space on a turn, that creature takes 5 (1d10) fire damage and catches fire; until someone takes an action to douse the fire, the creature takes 5 (1d10) fire damage at the start of each of its turns."
+      },
+      {
+        "name": "Illumination",
+        "detail": "The elemental sheds bright light in a 30-foot radius and dim light in an additional 30 feet."
+      },
+      {
+        "name": "Water Susceptibility",
+        "detail": "For every 5 feet the elemental moves in water, or for every gallon of water splashed on it, it takes 1 cold damage."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/343/1000/1000/636252777098624896.jpeg"
+  },
+  {
+    "name": "Fire Giant",
+    "meta": "Huge giant, lawful evil",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/357/1000/1000/636252778143767005.jpeg"
+  },
+  {
+    "name": "Flameskull",
+    "meta": "Tiny undead, neutral evil",
+    "traits": [
+      {
+        "name": "Illumination",
+        "detail": "The flameskull sheds either dim light in a 15-foot radius, or bright light in a 15-foot radius and dim light for an additional 15 feet. It can switch between the options as an action."
+      },
+      {
+        "name": "Magic Resistance",
+        "detail": "The flameskull has advantage on saving throws against spells and other magical effects."
+      },
+      {
+        "name": "Rejuvenation",
+        "detail": "If the flameskull is destroyed, it regains all its hit points in 1 hour unless holy water is sprinkled on its remains or a dispel magic or remove curse spell is cast on them."
+      },
+      {
+        "name": "Spellcasting",
+        "detail": "The flameskull is a 5th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 13, +5 to hit with spell attacks). It requires no somatic or material components to cast its spells. The flameskull has the following wizard spells prepared:\nCantrip (at will): mage hand\n1st level (3 slots): magic missile, shield\n2nd level (2 slots): blur, flaming sphere\n3rd level (1 slot): fireball\n"
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/14/487/315/315/636364325235118776.png"
+  },
+  {
+    "name": "Flesh Golem",
+    "meta": "Medium construct, neutral",
+    "traits": [
+      {
+        "name": "Berserk",
+        "detail": "Whenever the golem starts its turn with 40 hit points or fewer, roll a d6. On a 6, the golem goes berserk. On each of its turns while berserk, the golem attacks the nearest creature it can see. If no creature is near enough to move to and attack, the golem attacks an object, with preference for an object smaller than itself. Once the golem goes berserk, it continues to do so until it is destroyed or regains all its hit points.The golem's creator, if within 60 feet of the berserk golem, can try to calm it by speaking firmly and persuasively. The golem must be able to hear its creator, who must take an action to make a DC 15 Charisma (Persuasion) check. If the check succeeds, the golem ceases being berserk. If it takes damage while still at 40 hit points or fewer, the golem might go berserk again."
+      },
+      {
+        "name": "Aversion of Fire",
+        "detail": "If the golem takes fire damage, it has disadvantage on attack rolls and ability checks until the end of its next turn."
+      },
+      {
+        "name": "Immutable Form",
+        "detail": "The golem is immune to any spell or effect that would alter its form.Lightning Absorption."
+      },
+      {
+        "name": "Magic Weapons",
+        "detail": "The golem's weapon attacks are magical."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/359/315/315/636252778311644574.jpeg"
+  },
+  {
+    "name": "Flying Snake",
+    "meta": "Tiny beast, unaligned",
+    "traits": [
+      {
+        "name": "Flyby",
+        "detail": "The snake doesn't provoke opportunity attacks when it flies out of an enemy's reach."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/517/1000/1000/636376319640572721.jpeg"
+  },
+  {
+    "name": "Flying Sword",
+    "meta": "Small construct, unaligned",
+    "traits": [
+      {
+        "name": "Antimagic Susceptibility",
+        "detail": "The sword is incapacitated while in the area of an antimagic field. If targeted by dispel magic, the sword must succeed on a Constitution saving throw against the caster's spell save DC or fall unconscious for 1 minute."
+      },
+      {
+        "name": "False Appearance",
+        "detail": "While the sword remains motionless and isn't flying, it is indistinguishable from a normal sword."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/77/599/1000/1000/636473151106171093.png"
+  },
+  {
+    "name": "Frog",
+    "meta": "Tiny beast, unaligned",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The frog can breathe air and water."
+      },
+      {
+        "name": "Standing Leap",
+        "detail": "The frog's long jump is up to 10 feet and its high jump is up to 5 feet, with or without a running start."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/523/315/315/636376321230650501.jpeg"
+  },
+  {
+    "name": "Frost Giant",
+    "meta": "Huge giant, neutral evil",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/405/1000/1000/636252786158646348.jpeg"
+  },
+  {
+    "name": "Gargoyle",
+    "meta": "Medium elemental, chaotic evil",
+    "traits": [
+      {
+        "name": "False Appearance",
+        "detail": "While the gargoyle remains motionless, it is indistinguishable from an inanimate statue."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/407/315/315/636252786295384889.jpeg"
+  },
+  {
+    "name": "Gelatinous Cube",
+    "meta": "Large ooze, unaligned",
+    "traits": [
+      {
+        "name": "Ooze Cube",
+        "detail": "The cube takes up its entire space. Other creatures can enter the space, but a creature that does so is subjected to the cube's Engulf and has disadvantage on the saving throw.Creatures inside the cube can be seen but have total cover.A creature within 5 feet of the cube can take an action to pull a creature or object out of the cube. Doing so requires a successful DC 12 Strength check, and the creature making the attempt takes 10 (3d6) acid damage.The cube can hold only one Large creature or up to four Medium or smaller creatures inside it at a time. "
+      },
+      {
+        "name": "Transparent",
+        "detail": "Even when the cube is in plain sight, it takes a successful DC 15 Wisdom (Perception) check to spot a cube that has neither moved nor attacked. A creature that tries to enter the cube's space while unaware of the cube is surprised by the cube."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/409/1000/1000/636252786406028958.jpeg"
+  },
+  {
+    "name": "Ghast",
+    "meta": "Medium undead, chaotic evil",
+    "traits": [
+      {
+        "name": "Stench",
+        "detail": "Any creature that starts its turn within 5 feet of the ghast must succeed on a DC 10 Constitution saving throw or be poisoned until the start of its next turn. On a successful saving throw, the creature is immune to the ghast's Stench for 24 hours."
+      },
+      {
+        "name": "Turning Defiance",
+        "detail": "The ghast and any ghouls within 30 feet of it have advantage on saving throws against effects that turn undead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/411/315/315/636252786516023032.jpeg"
+  },
+  {
+    "name": "Ghost",
+    "meta": "Medium undead, any",
+    "traits": [
+      {
+        "name": "Ethereal Sight",
+        "detail": "The ghost can see 60 feet into the Ethereal Plane when it is on the Material Plane, and vice versa."
+      },
+      {
+        "name": "Incorporeal Movement",
+        "detail": "The ghost can move through other creatures and objects as if they were difficult terrain. It takes 5 (1d10) force damage if it ends its turn inside an object."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/413/1000/1000/636252786639798307.jpeg"
+  },
+  {
+    "name": "Ghoul",
+    "meta": "Medium undead, chaotic evil",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/14/483/315/315/636364323937041514.png"
+  },
+  {
+    "name": "Giant Ape",
+    "meta": "Huge beast, unaligned",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Giant Badger",
+    "meta": "Medium beast, unaligned",
+    "traits": [
+      {
+        "name": "Keen Smell",
+        "detail": "The badger has advantage on Wisdom (Perception) checks that rely on smell."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/530/1000/1000/636376327839601860.jpeg"
+  },
+  {
+    "name": "Giant Bat",
+    "meta": "Large beast, unaligned",
+    "traits": [
+      {
+        "name": "Echolocation",
+        "detail": "The bat can't use its blindsight while deafened."
+      },
+      {
+        "name": "Keen Hearing",
+        "detail": "The bat has advantage on Wisdom (Perception) checks that rely on hearing."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Giant Boar",
+    "meta": "Large beast, unaligned",
+    "traits": [
+      {
+        "name": "Charge",
+        "detail": "If the boar moves at least 20 feet straight toward a target and then hits it with a tusk attack on the same turn, the target takes an extra 7 (2d6) slashing damage. If the target is a creature, it must succeed on a DC 13 Strength saving throw or be knocked prone."
+      },
+      {
+        "name": "Relentless (Recharges after a Short or Long Rest)",
+        "detail": "If the boar takes 10 damage or less that would reduce it to 0 hit points, it is reduced to 1 hit point instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Giant Centipede",
+    "meta": "Small beast, unaligned",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Giant Constrictor Snake",
+    "meta": "Huge beast, unaligned",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Giant Crab",
+    "meta": "Medium beast, unaligned",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The crab can breathe air and water."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Giant Crocodile",
+    "meta": "Huge beast, unaligned",
+    "traits": [
+      {
+        "name": "Hold Breath",
+        "detail": "The crocodile can hold its breath for 30 minutes."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Giant Eagle",
+    "meta": "Large beast, neutral good",
+    "traits": [
+      {
+        "name": "Keen Sight",
+        "detail": "The eagle has advantage on Wisdom (Perception) checks that rely on sight."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/9/894/315/315/636334286969931904.jpeg"
+  },
+  {
+    "name": "Giant Elk",
+    "meta": "Huge beast, unaligned",
+    "traits": [
+      {
+        "name": "Charge",
+        "detail": "If the elk moves at least 20 feet straight toward a target and then hits it with a ram attack on the same turn, the target takes an extra 7 (2d6) damage. If the target is a creature, it must succeed on a DC 14 Strength saving throw or be knocked prone."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Giant Fire Beetle",
+    "meta": "Small beast, unaligned",
+    "traits": [
+      {
+        "name": "Illumination",
+        "detail": "The beetle sheds bright light in a 10-foot radius and dim light for an additional 10 feet."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/9/896/1000/1000/636334287498492864.jpeg"
+  },
+  {
+    "name": "Giant Frog",
+    "meta": "Medium beast, unaligned",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The frog can breathe air and water."
+      },
+      {
+        "name": "Standing Leap",
+        "detail": "The frog's long jump is up to 20 feet and its high jump is up to 10 feet, with or without a running start."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/521/1000/1000/636376321052503535.jpeg"
+  },
+  {
+    "name": "Giant Goat",
+    "meta": "Large beast, unaligned",
+    "traits": [
+      {
+        "name": "Charge",
+        "detail": "If the goat moves at least 20 feet straight toward a target and then hits it with a ram attack on the same turn, the target takes an extra 5 (2d4) bludgeoning damage. If the target is a creature, it must succeed on a DC 13 Strength saving throw or be knocked prone."
+      },
+      {
+        "name": "Sure-Footed",
+        "detail": "The goat has advantage on Strength and Dexterity saving throws made against effects that would knock it prone."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Giant Hyena",
+    "meta": "Large beast, unaligned",
+    "traits": [
+      {
+        "name": "Rampage",
+        "detail": "When the hyena reduces a creature to 0 hit points with a melee attack on its turn, the hyena can take a bonus action to move up to half its speed and make a bite attack."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Giant Lizard",
+    "meta": "Large beast, unaligned",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Giant Octopus",
+    "meta": "Large beast, unaligned",
+    "traits": [
+      {
+        "name": "Hold Breath",
+        "detail": "While out of water, the octopus can hold its breath for 1 hour."
+      },
+      {
+        "name": "Underwater Camouflage",
+        "detail": "The octopus has advantage on Dexterity (Stealth) checks made while underwater."
+      },
+      {
+        "name": "Water Breathing",
+        "detail": "The octopus can breathe only underwater."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/9/898/315/315/636334288003435302.jpeg"
+  },
+  {
+    "name": "Giant Owl",
+    "meta": "Large beast, neutral",
+    "traits": [
+      {
+        "name": "Flyby",
+        "detail": "The owl doesn't provoke opportunity attacks when it flies out of an enemy's reach."
+      },
+      {
+        "name": "Keen Hearing and Sight",
+        "detail": "The owl has advantage on Wisdom (Perception) checks that rely on hearing or sight."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/535/1000/1000/636376331788287090.jpeg"
+  },
+  {
+    "name": "Giant Poisonous Snake",
+    "meta": "Medium beast, unaligned",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Giant Rat",
+    "meta": "Small beast, unaligned",
+    "traits": [
+      {
+        "name": "Keen Smell",
+        "detail": "The rat has advantage on Wisdom (Perception) checks that rely on smell."
+      },
+      {
+        "name": "Pack Tactics",
+        "detail": "The rat has advantage on an attack roll against a creature if at least one of the rat's allies is within 5 feet of the creature and the ally isn't incapacitated."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/538/1000/1000/636376332197953299.jpeg"
+  },
+  {
+    "name": "Giant Scorpion",
+    "meta": "Large beast, unaligned",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Giant Sea Horse",
+    "meta": "Large beast, unaligned",
+    "traits": [
+      {
+        "name": "Charge",
+        "detail": "If the sea horse moves at least 20 feet straight toward a target and then hits it with a ram attack on the same turn, the target takes an extra 7 (2d6) bludgeoning damage. It the target is a creature, it must succeed on a DC 11 Strength saving throw or be knocked prone."
+      },
+      {
+        "name": "Water Breathing",
+        "detail": "The sea horse can breathe only underwater."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Giant Shark",
+    "meta": "Huge beast, unaligned",
+    "traits": [
+      {
+        "name": "Blood Frenzy",
+        "detail": "The shark has advantage on melee attack rolls against any creature that doesn't have all its hit points."
+      },
+      {
+        "name": "Water Breathing",
+        "detail": "The shark can breathe only underwater."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Giant Spider",
+    "meta": "Large beast, unaligned",
+    "traits": [
+      {
+        "name": "Spider Climb",
+        "detail": "The spider can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check."
+      },
+      {
+        "name": "Web Sense",
+        "detail": "While in contact with a web, the spider knows the exact location of any other creature in contact with the same web."
+      },
+      {
+        "name": "Web Walker",
+        "detail": "The spider ignores movement restrictions caused by webbing."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/323/1000/1000/636252775648743317.jpeg"
+  },
+  {
+    "name": "Giant Toad",
+    "meta": "Large beast, unaligned",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The toad can breathe air and water."
+      },
+      {
+        "name": "Standing Leap",
+        "detail": "The toad's long jump is up to 20 feet and its high jump is up to 10 feet, with or without a running start."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Giant Vulture",
+    "meta": "Large beast, neutral",
+    "traits": [
+      {
+        "name": "Keen Sight and Smell",
+        "detail": "The vulture has advantage on Wisdom (Perception) checks that rely on sight or smell."
+      },
+      {
+        "name": "Pack Tactics",
+        "detail": "The vulture has advantage on an attack roll against a creature if at least one of the vulture's allies is within 5 feet of the creature and the ally isn't incapacitated."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Giant Wasp",
+    "meta": "Medium beast, unaligned",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Giant Weasel",
+    "meta": "Medium beast, unaligned",
+    "traits": [
+      {
+        "name": "Keen Hearing and Smell",
+        "detail": "The weasel has advantage on Wisdom (Perception) checks that rely on hearing or smell."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Giant Wolf Spider",
+    "meta": "Medium beast, unaligned",
+    "traits": [
+      {
+        "name": "Spider Climb",
+        "detail": "The spider can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check."
+      },
+      {
+        "name": "Web Sense",
+        "detail": "While in contact with a web, the spider knows the exact location of any other creature in contact with the same web."
+      },
+      {
+        "name": "Web Walker",
+        "detail": "The spider ignores movement restrictions caused by webbing."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Gibbering Mouther",
+    "meta": "Medium aberration, neutral",
+    "traits": [
+      {
+        "name": "Aberrant Ground",
+        "detail": "The ground in a 10-foot radius around the mouther is doughlike difficult terrain. Each creature that starts its turn in that area must succeed on a DC 10 Strength saving throw or have its speed reduced to 0 until the start of its next turn."
+      },
+      {
+        "name": "Gibbering",
+        "detail": "The mouther babbles incoherently while it can see any creature and isn't incapacitated. Each creature that starts its turn within 20 feet of the mouther and can hear the gibbering must succeed on a DC 10 Wisdom saving throw. On a failure, the creature can't take reactions until the start of its next turn and rolls a d8 to determine what it does during its turn. On a 1 to 4, the creature does nothing. On a 5 or 6, the creature takes no action or bonus action and uses all its movement to move in a randomly determined direction. On a 7 or 8, the creature makes a melee attack against a randomly determined creature within its reach or does nothing if it can't make such an attack."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/333/315/315/636252776252001529.jpeg"
+  },
+  {
+    "name": "Glabrezu",
+    "meta": "Large fiend, chaotic evil",
+    "traits": [
+      {
+        "name": "Innate Spellcasting",
+        "detail": "The glabrezu's spellcasting ability is Intelligence (spell save DC 16). The glabrezu can innately cast the following spells, requiring no material components:At will: darkness, detect magic, dispel magic 1/day each: confusion, fly, power word stun "
+      },
+      {
+        "name": "Magic Resistance",
+        "detail": "The glabrezu has advantage on saving throws against spells and other magical effects."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/337/315/315/636252776677682465.jpeg"
+  },
+  {
+    "name": "Gladiator",
+    "meta": "Medium humanoid, any",
+    "traits": [
+      {
+        "name": "Brave",
+        "detail": "The gladiator has advantage on saving throws against being frightened."
+      },
+      {
+        "name": "Brute",
+        "detail": "A melee weapon deals one extra die of its damage when the gladiator hits with it (included in the attack)."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/656/humanoid.jpg"
+  },
+  {
+    "name": "Gnoll",
+    "meta": "Medium humanoid, chaotic evil",
+    "traits": [
+      {
+        "name": "Rampage",
+        "detail": "When the gnoll reduces a creature to 0 hit points with a melee attack on its turn, the gnoll can take a bonus action to move up to half its speed and make a bite attack."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/345/1000/1000/636252777224997611.jpeg"
+  },
+  {
+    "name": "Goat",
+    "meta": "Medium beast, unaligned",
+    "traits": [
+      {
+        "name": "Charge",
+        "detail": "If the goat moves at least 20 feet straight toward a target and then hits it with a ram attack on the same turn, the target takes an extra 2 (1d4) bludgeoning damage. If the target is a creature, it must succeed on a DC 10 Strength saving throw or be knocked prone."
+      },
+      {
+        "name": "Sure-Footed",
+        "detail": "The goat has advantage on Strength and Dexterity saving throws made against effects that would knock it prone."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Goblin",
+    "meta": "Small humanoid, neutral evil",
+    "traits": [
+      {
+        "name": "Nimble Escape",
+        "detail": "The goblin can take the Disengage or Hide action as a bonus action on each of its turns."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/351/315/315/636252777818652432.jpeg"
+  },
+  {
+    "name": "Gold Dragon Wyrmling",
+    "meta": "Medium dragon, lawful good",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/7/516/315/315/636285466148376212.jpeg"
+  },
+  {
+    "name": "Gorgon",
+    "meta": "Large monstrosity, unaligned",
+    "traits": [
+      {
+        "name": "Trampling Charge",
+        "detail": "If the gorgon moves at least 20 feet straight toward a creature and then hits it with a gore attack on the same turn, that target must succeed on a DC 16 Strength saving throw or be knocked prone. If the target is prone, the gorgon can make one attack with its hooves against it as a bonus action."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/355/315/315/636252778125099430.jpeg"
+  },
+  {
+    "name": "Gray Ooze",
+    "meta": "Medium ooze, unaligned",
+    "traits": [
+      {
+        "name": "Amorphous",
+        "detail": "The ooze can move through a space as narrow as 1 inch wide without squeezing."
+      },
+      {
+        "name": "Corrode Metal",
+        "detail": "Any nonmagical weapon made of metal that hits the ooze corrodes. After dealing damage, the weapon takes a permanent and cumulative −1 penalty to damage rolls. If its penalty drops to −5, the weapon is destroyed. Nonmagical ammunition made of metal that hits the ooze is destroyed after dealing damage.The ooze can eat through 2-inch-thick, nonmagical metal in 1 round."
+      },
+      {
+        "name": "False Appearance",
+        "detail": "While the ooze remains motionless, it is indistinguishable from an oily pool or wet rock."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/658/ooze.jpg"
+  },
+  {
+    "name": "Green Dragon Wyrmling",
+    "meta": "Medium dragon, lawful evil",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The dragon can breathe air and water."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/363/315/315/636252778639163748.jpeg"
+  },
+  {
+    "name": "Green Hag",
+    "meta": "Medium fey, neutral evil",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The hag can breathe air and water."
+      },
+      {
+        "name": "Innate Spellcasting",
+        "detail": "The hag's innate spellcasting ability is Charisma (spell save DC 12). She can innately cast the following spells, requiring no material components:At will: dancing lights, minor illusion, vicious mockery "
+      },
+      {
+        "name": "Mimicry",
+        "detail": "The hag can mimic animal sounds and humanoid voices. A creature that hears the sounds can tell they are imitations with a successful DC 14 Wisdom (Insight) check."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/365/315/315/636252778948574879.jpeg"
+  },
+  {
+    "name": "Grick",
+    "meta": "Medium monstrosity, neutral",
+    "traits": [
+      {
+        "name": "Stone Camouflage",
+        "detail": "The grick has advantage on Dexterity (Stealth) checks made to hide in rocky terrain."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/369/1000/1000/636252779341924439.jpeg"
+  },
+  {
+    "name": "Griffon",
+    "meta": "Large monstrosity, unaligned",
+    "traits": [
+      {
+        "name": "Keen Sight",
+        "detail": "The griffon has advantage on Wisdom (Perception) checks that rely on sight."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/373/315/315/636252779693862725.jpeg"
+  },
+  {
+    "name": "Grimlock",
+    "meta": "Medium humanoid, neutral evil",
+    "traits": [
+      {
+        "name": "Keen Hearing and Smell",
+        "detail": "The grimlock has advantage on Wisdom (Perception) checks that rely on hearing or smell."
+      },
+      {
+        "name": "Stone Camouflage",
+        "detail": "The grimlock has advantage on Dexterity (Stealth) checks made to hide in rocky terrain."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/375/315/315/636252780049813181.jpeg"
+  },
+  {
+    "name": "Guard",
+    "meta": "Medium humanoid, any",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/656/humanoid.jpg"
+  },
+  {
+    "name": "Guardian Naga",
+    "meta": "Large monstrosity, lawful good",
+    "traits": [
+      {
+        "name": "Rejuvenation",
+        "detail": "If it dies, the naga returns to life in 1d6 days and regains all its hit points. Only a wish spell can prevent this trait from functioning."
+      },
+      {
+        "name": "Spellcasting",
+        "detail": "The naga is an 11th-level spellcaster. Its spellcasting ability is Wisdom (spell save DC 16, +8 to hit with spell attacks), and it needs only verbal components to cast its spells. It has the following cleric spells prepared:Cantrips (at will): mending, sacred flame, thaumaturgy 1st level (4 slots): command, cure wounds, shield of faith 2nd level (3 slots): calm emotions, hold person 3rd level (3 slots): bestow curse, clairvoyance 4th level (3 slots): banishment, freedom of movement 5th level (2 slots): flame strike, geas 6th level (1 slot): true seeing"
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/377/315/315/636252780447421771.jpeg"
+  },
+  {
+    "name": "Gynosphinx",
+    "meta": "Large monstrosity, lawful neutral",
+    "traits": [
+      {
+        "name": "Inscrutable",
+        "detail": "The sphinx is immune to any effect that would sense its emotions or read its thoughts, as well as any divination spell that it refuses. Wisdom (Insight) checks made to ascertain the sphinx's intentions or sincerity have disadvantage."
+      },
+      {
+        "name": "Magic Weapons",
+        "detail": "The sphinx's weapon attacks are magical."
+      },
+      {
+        "name": "Spellcasting",
+        "detail": "The sphinx is a 9th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 16, +8 to hit with spell attacks). It requires no material components to cast its spells. The sphinx has the following wizard spells prepared:Cantrips (at will): mage hand, minor illusion, prestidigitation 1st level (4 slots): detect magic, identify, shield 2nd level (3 slots): darkness, locate object, suggestion 3rd level (3 slots): dispel magic, remove curse, tongues 4th level (3 slots): banishment, greater invisibility 5th level (1 slot): legend lore"
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/383/315/315/636252780786457550.jpeg"
+  },
+  {
+    "name": "Half-Red Dragon Veteran",
+    "meta": "Medium humanoid, any",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/387/315/315/636252781353903793.jpeg"
+  },
+  {
+    "name": "Harpy",
+    "meta": "Medium monstrosity, chaotic evil",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/391/315/315/636252781955908234.jpeg"
+  },
+  {
+    "name": "Hawk",
+    "meta": "Tiny beast, unaligned",
+    "traits": [
+      {
+        "name": "Keen Sight",
+        "detail": "The hawk has advantage on Wisdom (Perception) checks that rely on sight."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/9/900/1000/1000/636334288270143064.jpeg"
+  },
+  {
+    "name": "Hell Hound",
+    "meta": "Medium fiend, lawful evil",
+    "traits": [
+      {
+        "name": "Keen Hearing and Smell",
+        "detail": "The hound has advantage on Wisdom (Perception) checks that rely on hearing or smell."
+      },
+      {
+        "name": "Pack Tactics",
+        "detail": "The hound has advantage on an attack roll against a creature if at least one of the hound's allies is within 5 feet of the creature and the ally isn't incapacitated."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/393/315/315/636252782461361426.jpeg"
+  },
+  {
+    "name": "Hezrou",
+    "meta": "Large fiend, chaotic evil",
+    "traits": [
+      {
+        "name": "Magic Resistance",
+        "detail": "The hezrou has advantage on saving throws against spells and other magical effects."
+      },
+      {
+        "name": "Stench",
+        "detail": "Any creature that starts its turn within 10 feet of the hezrou must succeed on a DC 14 Constitution saving throw or be poisoned until the start of its next turn. On a successful saving throw, the creature is immune to the hezrou's stench for 24 hours."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/321/315/315/636252775562934524.jpeg"
+  },
+  {
+    "name": "Hill Giant",
+    "meta": "Huge giant, chaotic evil",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/331/315/315/636252776196140305.jpeg"
+  },
+  {
+    "name": "Hippogriff",
+    "meta": "Large monstrosity, unaligned",
+    "traits": [
+      {
+        "name": "Keen Sight",
+        "detail": "The hippogriff has advantage on Wisdom (Perception) checks that rely on sight."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/335/315/315/636252776578605778.jpeg"
+  },
+  {
+    "name": "Hobgoblin",
+    "meta": "Medium humanoid, lawful evil",
+    "traits": [
+      {
+        "name": "Martial Advantage",
+        "detail": "Once per turn, the hobgoblin can deal an extra 7 (2d6) damage to a creature it hits with a weapon attack if that creature is within 5 feet of an ally of the hobgoblin that isn't incapacitated."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/389/315/315/636252781431932597.jpeg"
+  },
+  {
+    "name": "Homunculus",
+    "meta": "Tiny construct, neutral",
+    "traits": [
+      {
+        "name": "Telepathic Bond",
+        "detail": "While the homunculus is on the same plane of existence as its master, it can magically convey what it senses to its master, and the two can communicate telepathically."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/18/287/315/315/636379803928245506.jpeg"
+  },
+  {
+    "name": "Horned Devil",
+    "meta": "Large fiend, lawful evil",
+    "traits": [
+      {
+        "name": "Devil's Sight",
+        "detail": "Magical darkness doesn't impede the devil's darkvision."
+      },
+      {
+        "name": "Magic Resistance",
+        "detail": "The devil has advantage on saving throws against spells and other magical effects."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/347/315/315/636252777255936976.jpeg"
+  },
+  {
+    "name": "Hunter Shark",
+    "meta": "Large beast, unaligned",
+    "traits": [
+      {
+        "name": "Blood Frenzy",
+        "detail": "The shark has advantage on melee attack rolls against any creature that doesn't have all its hit points."
+      },
+      {
+        "name": "Water Breathing",
+        "detail": "The shark can breathe only underwater."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Hydra",
+    "meta": "Huge monstrosity, unaligned",
+    "traits": [
+      {
+        "name": "Hold Breath",
+        "detail": "The hydra can hold its breath for 1 hour."
+      },
+      {
+        "name": "Multiple Heads",
+        "detail": "The hydra has five heads. While it has more than one head, the hydra has advantage on saving throws against being blinded, charmed, deafened, frightened, stunned, and knocked unconscious.Whenever the hydra takes 25 or more damage in a single turn, one of its heads dies. If all its heads die, the hydra dies.At the end of its turn, it grows two heads for each of its heads that died since its last turn, unless it has taken fire damage since its last turn. The hydra regains 10 hit points for each head regrown in this way."
+      },
+      {
+        "name": "Reactive Heads",
+        "detail": "For each head the hydra has beyond one, it gets an extra reaction that can be used only for opportunity attacks."
+      },
+      {
+        "name": "Wakeful",
+        "detail": "While the hydra sleeps, at least one of its heads is awake."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/349/315/315/636252777669218389.jpeg"
+  },
+  {
+    "name": "Hyena",
+    "meta": "Medium beast, unaligned",
+    "traits": [
+      {
+        "name": "Pack Tactics",
+        "detail": "The hyena has advantage on an attack roll against a creature if at least one of the hyena's allies is within 5 feet of the creature and the ally isn't incapacitated."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/9/902/1000/1000/636334288674955736.jpeg"
+  },
+  {
+    "name": "Ice Devil",
+    "meta": "Large fiend, lawful evil",
+    "traits": [
+      {
+        "name": "Devil's Sight",
+        "detail": "Magical darkness doesn't impede the devil's darkvision."
+      },
+      {
+        "name": "Magic Resistance",
+        "detail": "The devil has advantage on saving throws against spells and other magical effects."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/353/315/315/636252777966974765.jpeg"
+  },
+  {
+    "name": "Ice Mephit",
+    "meta": "Small elemental, neutral evil",
+    "traits": [
+      {
+        "name": "Death Burst",
+        "detail": "When the mephit dies, it explodes in a burst of jagged ice. Each creature within 5 feet of it must make a DC 10 Dexterity saving throw, taking 4 (1d8) slashing damage on a failed save, or half as much damage on a successful one."
+      },
+      {
+        "name": "False Appearance",
+        "detail": "While the mephit remains motionless, it is indistinguishable from an ordinary shard of ice."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/18/290/315/315/636379804105821214.jpeg"
+  },
+  {
+    "name": "Imp",
+    "meta": "Tiny fiend, lawful evil",
+    "traits": [
+      {
+        "name": "Shapechanger",
+        "detail": "The imp can use its action to polymorph into a beast form that resembles a rat (speed 20 ft.), a raven (20 ft., fly 60 ft.), or a spider (20 ft., climb 20 ft.), or back into its true form. Its statistics are the same in each form, except for the speed changes noted. Any equipment it is wearing or carrying isn't transformed. It reverts to its true form if it dies."
+      },
+      {
+        "name": "Devil's Sight",
+        "detail": "Magical darkness doesn't impede the imp's darkvision."
+      },
+      {
+        "name": "Magic Resistance",
+        "detail": "The imp has advantage on saving throws against spells and other magical effects."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/361/315/315/636252778560366227.jpeg"
+  },
+  {
+    "name": "Invisible Stalker",
+    "meta": "Medium elemental, neutral",
+    "traits": [
+      {
+        "name": "Invisibility",
+        "detail": "The stalker is invisible."
+      },
+      {
+        "name": "Faultless Tracker",
+        "detail": "The stalker is given a quarry by its summoner. The stalker knows the direction and distance to its quarry as long as the two of them are on the same plane of existence. The stalker also knows the location of its summoner."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/367/315/315/636252779159282339.jpeg"
+  },
+  {
+    "name": "Iron Golem",
+    "meta": "Large construct, unaligned",
+    "traits": [
+      {
+        "name": "Fire Absorption",
+        "detail": "Whenever the golem is subjected to fire damage, it takes no damage and instead regains a number of hit points equal to the fire damage dealt."
+      },
+      {
+        "name": "Immutable Form",
+        "detail": "The golem is immune to any spell or effect that would alter its form."
+      },
+      {
+        "name": "Magic Resistance",
+        "detail": "The golem has advantage on saving throws against spells and other magical effects."
+      },
+      {
+        "name": "Magic Weapons",
+        "detail": "The golem's weapon attacks are magical."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/371/315/315/636252779460570049.jpeg"
+  },
+  {
+    "name": "Jackal",
+    "meta": "Small beast, unaligned",
+    "traits": [
+      {
+        "name": "Keen Hearing and Smell",
+        "detail": "The jackal has advantage on Wisdom (Perception) checks that rely on hearing or smell."
+      },
+      {
+        "name": "Pack Tactics",
+        "detail": "The jackal has advantage on an attack roll against a creature if at least one of the jackal's allies is within 5 feet of the creature and the ally isn't incapacitated."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Killer Whale",
+    "meta": "Huge beast, unaligned",
+    "traits": [
+      {
+        "name": "Echolocation",
+        "detail": "The whale can't use its blindsight while deafened."
+      },
+      {
+        "name": "Hold Breath",
+        "detail": "The whale can hold its breath for 30 minutes."
+      },
+      {
+        "name": "Keen Hearing",
+        "detail": "The whale has advantage on Wisdom (Perception) checks that rely on hearing."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Knight",
+    "meta": "Medium humanoid, any",
+    "traits": [
+      {
+        "name": "Brave",
+        "detail": "The knight has advantage on saving throws against being frightened."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/656/humanoid.jpg"
+  },
+  {
+    "name": "Kobold",
+    "meta": "Small humanoid, lawful evil",
+    "traits": [
+      {
+        "name": "Sunlight Sensitivity",
+        "detail": "While in sunlight, the kobold has disadvantage on attack rolls, as well as on Wisdom (Perception) checks that rely on sight."
+      },
+      {
+        "name": "Pack Tactics",
+        "detail": "The kobold has advantage on an attack roll against a creature if at least one of the kobold's allies is within 5 feet of the creature and the ally isn't incapacitated."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/379/1000/1000/636252780450300625.jpeg"
+  },
+  {
+    "name": "Kraken",
+    "meta": "Gargantuan monstrosity, chaotic evil",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The kraken can breathe air and water."
+      },
+      {
+        "name": "Freedom of Movement",
+        "detail": "The kraken ignores difficult terrain, and magical effects can't reduce its speed or cause it to be restrained. It can spend 5 feet of movement to escape from nonmagical restraints or being grappled."
+      },
+      {
+        "name": "Siege Monster",
+        "detail": "The kraken deals double damage to objects and structures."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/381/1000/1000/636252780680163799.jpeg"
+  },
+  {
+    "name": "Lamia",
+    "meta": "Large monstrosity, chaotic evil",
+    "traits": [
+      {
+        "name": "Innate Spellcasting",
+        "detail": "The lamia's innate spellcasting ability is Charisma (spell save DC 13). It can innately cast the following spells, requiring no material components.At will: disguise self (any humanoid form), major image 3/day each: charm person, mirror image, scrying, suggestion 1/day: geas"
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/385/315/315/636252780906064244.jpeg"
+  },
+  {
+    "name": "Lemure",
+    "meta": "Medium fiend, lawful evil",
+    "traits": [
+      {
+        "name": "Devil's Sight",
+        "detail": "Magical darkness doesn't impede the lemure's darkvision."
+      },
+      {
+        "name": "Hellish Rejuvenation",
+        "detail": "A lemure that dies in the Nine Hells comes back to life with all its hit points in 1d10 days unless it is killed by a good-aligned creature with a bless spell cast on that creature or its remains are sprinkled with holy water."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/149/1000/1000/636252758704142054.jpeg"
+  },
+  {
+    "name": "Lich",
+    "meta": "Medium undead, any evil alignment",
+    "traits": [
+      {
+        "name": "Legendary Resistance (3/Day)",
+        "detail": "If the lich fails a saving throw, it can choose to succeed instead."
+      },
+      {
+        "name": "Rejuvenation",
+        "detail": "If it has a phylactery, a destroyed lich gains a new body in 1d10 days, regaining all its hit points and becoming active again. The new body appears within 5 feet of the phylactery."
+      },
+      {
+        "name": "Spellcasting",
+        "detail": "The lich is an 18th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 20, +12 to hit with spell attacks). The lich has the following wizard spells prepared:Cantrips (at will): mage hand, prestidigitation, ray of frost 1st level (4 slots): detect magic, magic missile, shield, thunderwave 2nd level (3 slots): acid arrow, detect thoughts, invisibility, mirror image 3rd level (3 slots): animate dead, counterspell, dispel magic, fireball 4th level (3 slots): blight, dimension door 5th level (3 slots): cloudkill, scrying 6th level (1 slot): disintegrate, globe of invulnerability 7th level (1 slot): finger of death, plane shift 8th level (1 slot): dominate monster, power word stun 9th level (1 slot): power word kill "
+      },
+      {
+        "name": "Turn Resistance",
+        "detail": "The lich has advantage on saving throws against any effect that turns undead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/165/1000/1000/636252760084366499.jpeg"
+  },
+  {
+    "name": "Lion",
+    "meta": "Large beast, unaligned",
+    "traits": [
+      {
+        "name": "Keen Smell",
+        "detail": "The lion has advantage on Wisdom (Perception) checks that rely on smell."
+      },
+      {
+        "name": "Pounce",
+        "detail": "If the lion moves at least 20 feet straight toward a creature and then hits it with a claw attack on the same turn, that target must succeed on a DC 13 Strength saving throw or be knocked prone. If the target is prone, the lion can make one bite attack against it as a bonus action."
+      },
+      {
+        "name": "Running Leap",
+        "detail": "With a 10-foot running start, the lion can long jump up to 25 feet."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Lizard",
+    "meta": "Tiny beast, unaligned",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Lizardfolk",
+    "meta": "Medium humanoid, neutral",
+    "traits": [
+      {
+        "name": "Hold Breath",
+        "detail": "The lizardfolk can hold its breath for 15 minutes."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/233/315/315/636252766314905259.jpeg"
+  },
+  {
+    "name": "Mage",
+    "meta": "Medium humanoid, any",
+    "traits": [
+      {
+        "name": "Spellcasting",
+        "detail": "The mage is a 9th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 14, +6 to hit with spell attacks). The mage has the following wizard spells prepared:Cantrips (at will): fire bolt, light, mage hand, prestidigitation 1st level (4 slots): detect magic, mage armor, magic missile, shield 2nd level (3 slots): misty step, suggestion 3rd level (3 slots): counterspell, fireball, fly 4th level (3 slots): greater invisibility, ice storm 5th level (1 slot): cone of cold"
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/656/humanoid.jpg"
+  },
+  {
+    "name": "Magma Mephit",
+    "meta": "Small elemental, neutral evil",
+    "traits": [
+      {
+        "name": "Death Burst",
+        "detail": "When the mephit dies, it explodes in a burst of lava. Each creature within 5 feet of it must make a DC 11 Dexterity saving throw, taking 7 (2d6) fire damage on a failed save, or half as much damage on a successful one."
+      },
+      {
+        "name": "False Appearance",
+        "detail": "While the mephit remains motionless, it is indistinguishable from an ordinary mound of magma."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/18/292/315/315/636379804350894228.jpeg"
+  },
+  {
+    "name": "Magmin",
+    "meta": "Small elemental, chaotic neutral",
+    "traits": [
+      {
+        "name": "Death Burst",
+        "detail": "When the magmin dies, it explodes in a burst of fire and magma. Each creature within 10 feet of it must make a DC 11 Dexterity saving throw, taking 7 (2d6) fire damage on a failed save, or half as much damage on a successful one. Flammable objects that aren't being worn or carried in that area are ignited."
+      },
+      {
+        "name": "Ignited Illumination",
+        "detail": "As a bonus action, the magmin can set itself ablaze or extinguish its flames. While ablaze, the magmin sheds bright light in a 10-foot radius and dim light for an additional 10 feet."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/183/315/315/636252762034276620.jpeg"
+  },
+  {
+    "name": "Mammoth",
+    "meta": "Huge beast, unaligned",
+    "traits": [
+      {
+        "name": "Trampling Charge",
+        "detail": "If the mammoth moves at least 20 feet straight toward a creature and then hits it with a gore attack on the same turn, that target must succeed on a DC 18 Strength saving throw or be knocked prone. If the target is prone, the mammoth can make one stomp attack against it as a bonus action."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Manticore",
+    "meta": "Large monstrosity, lawful evil",
+    "traits": [
+      {
+        "name": "Tail Spike Regrowth",
+        "detail": "The manticore has twenty-four tail spikes. Used spikes regrow when the manticore finishes a long rest."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/187/315/315/636252762623266809.jpeg"
+  },
+  {
+    "name": "Marilith",
+    "meta": "Large fiend, chaotic evil",
+    "traits": [
+      {
+        "name": "Magic Resistance",
+        "detail": "The marilith has advantage on saving throws against spells and other magical effects."
+      },
+      {
+        "name": "Magic Weapons",
+        "detail": "The marilith's weapon attacks are magical."
+      },
+      {
+        "name": "Reactive",
+        "detail": "The marilith can take one reaction on every turn in a combat."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/189/315/315/636252763036079032.jpeg"
+  },
+  {
+    "name": "Mastiff",
+    "meta": "Medium beast, unaligned",
+    "traits": [
+      {
+        "name": "Keen Hearing and Smell",
+        "detail": "The mastiff has advantage on Wisdom (Perception) checks that rely on hearing or smell."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/191/1000/1000/636252763295291063.jpeg"
+  },
+  {
+    "name": "Medusa",
+    "meta": "Medium monstrosity, lawful evil",
+    "traits": [
+      {
+        "name": "Petrifying Gaze",
+        "detail": "When a creature that can see the medusa's eyes starts its turn within 30 feet of the medusa, the medusa can force it to make a DC 14 Constitution saving throw if the medusa isn't incapacitated and can see the creature. If the saving throw fails by 5 or more, the creature is instantly petrified. Otherwise, a creature that fails the save begins to turn to stone and is restrained. The restrained creature must repeat the saving throw at the end of its next turn, becoming petrified on a failure or ending the effect on a success. The petrification lasts until the creature is freed by the greater restoration spell or other magic.Unless surprised, a creature can avert its eyes to avoid the saving throw at the start of its turn. If the creature does so, it can't see the medusa until the start of its next turn, when it can avert its eyes again. If the creature looks at the medusa in the meantime, it must immediately make the save.If the medusa sees itself reflected on a polished surface within 30 feet of it and in an area of bright light, the medusa is, due to its curse, affected by its own gaze."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/580/1000/1000/636376361850900325.jpeg"
+  },
+  {
+    "name": "Merfolk",
+    "meta": "Medium humanoid, neutral",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The merfolk can breathe air and water."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/197/1000/1000/636252763841141413.jpeg"
+  },
+  {
+    "name": "Merrow",
+    "meta": "Large monstrosity, chaotic evil",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The merrow can breathe air and water."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/203/315/315/636252764097970952.jpeg"
+  },
+  {
+    "name": "Mimic",
+    "meta": "Medium monstrosity, neutral",
+    "traits": [
+      {
+        "name": "Shapechanger",
+        "detail": "The mimic can use its action to polymorph into an object or back into its true, amorphous form. Its statistics are the same in each form. Any equipment it is wearing or carrying isn't transformed. It reverts to its true form if it dies."
+      },
+      {
+        "name": "Adhesive (Object Form Only)",
+        "detail": "The mimic adheres to anything that touches it. A Huge or smaller creature adhered to the mimic is also grappled by it (escape DC 13). Ability checks made to escape this grapple have disadvantage."
+      },
+      {
+        "name": "False Appearance (Object Form Only)",
+        "detail": "While the mimic remains motionless, it is indistinguishable from an ordinary object."
+      },
+      {
+        "name": "Grappler",
+        "detail": "The mimic has advantage on attack rolls against any creature grappled by it."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/211/315/315/636252764731637373.jpeg"
+  },
+  {
+    "name": "Minotaur",
+    "meta": "Large monstrosity, chaotic evil",
+    "traits": [
+      {
+        "name": "Charge",
+        "detail": "If the minotaur moves at least 10 feet straight toward a target and then hits it with a gore attack on the same turn, the target takes an extra 9 (2d8) piercing damage. If the target is a creature, it must succeed on a DC 14 Strength saving throw or be pushed up to 10 feet away and knocked prone."
+      },
+      {
+        "name": "Labyrinthine Recall",
+        "detail": "The minotaur can perfectly recall any path it has traveled."
+      },
+      {
+        "name": "Reckless",
+        "detail": "At the start of its turn, the minotaur can gain advantage on all melee weapon attack rolls it makes during that turn, but attack rolls against it have advantage until the start of its next turn."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/217/1000/1000/636252765009181721.jpeg"
+  },
+  {
+    "name": "Minotaur Skeleton",
+    "meta": "Large undead, lawful evil",
+    "traits": [
+      {
+        "name": "Charge",
+        "detail": "If the skeleton moves at least 10 feet straight toward a target and then hits it with a gore attack on the same turn, the target takes an extra 9 (2d8) piercing damage. If the target is a creature, it must succeed on a DC 14 Strength saving throw or be pushed up to 10 feet away and knocked prone."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/480/1000/1000/636376298435934058.jpeg"
+  },
+  {
+    "name": "Mule",
+    "meta": "Medium beast, unaligned",
+    "traits": [
+      {
+        "name": "Beast of Burden",
+        "detail": "The mule is considered to be a Large animal for the purpose of determining its carrying capacity."
+      },
+      {
+        "name": "Sure-Footed",
+        "detail": "The mule has advantage on Strength and Dexterity saving throws made against effects that would knock it prone."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Mummy",
+    "meta": "Medium undead, lawful evil",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/225/1000/1000/636252765553048566.jpeg"
+  },
+  {
+    "name": "Mummy Lord",
+    "meta": "Medium undead, lawful evil",
+    "traits": [
+      {
+        "name": "Magic Resistance",
+        "detail": "The mummy lord has advantage on saving throws against spells and other magical effects."
+      },
+      {
+        "name": "Rejuvenation",
+        "detail": "A destroyed mummy lord gains a new body in 24 hours if its heart is intact, regaining all its hit points and becoming active again. The new body appears within 5 feet of the mummy lord's heart."
+      },
+      {
+        "name": "Spellcasting",
+        "detail": "The mummy lord is a 10th-level spellcaster. Its spellcasting ability is Wisdom (spell save DC 17, +9 to hit with spell attacks). The mummy lord has the following cleric spells prepared:Cantrips (at will): sacred flame, thaumaturgy1st level (4 slots): command, guiding bolt, shield of faith2nd level (3 slots): hold person, silence, spiritual weapon3rd level (3 slots): animate dead, dispel magic4th level (3 slots): divination, guardian of faith5th level (2 slots): contagion, insect plague6th level (1 slot): harm"
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/660/undead.jpg"
+  },
+  {
+    "name": "Nalfeshnee",
+    "meta": "Large fiend, chaotic evil",
+    "traits": [
+      {
+        "name": "Magic Resistance",
+        "detail": "The nalfeshnee has advantage on saving throws against spells and other magical effects."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/261/1000/1000/636252768396688147.jpeg"
+  },
+  {
+    "name": "Night Hag",
+    "meta": "Medium fiend, neutral evil",
+    "traits": [
+      {
+        "name": "Innate Spellcasting",
+        "detail": "The hag's innate spellcasting ability is Charisma (spell save DC 14, +6 to hit with spell attacks). She can innately cast the following spells, requiring no material components:At will: detect magic, magic missile 2/day each: plane shift (self only), ray of enfeeblement, sleep "
+      },
+      {
+        "name": "Magic Resistance",
+        "detail": "The hag has advantage on saving throws against spells and other magical effects."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/269/1000/1000/636252769277562895.jpeg"
+  },
+  {
+    "name": "Nightmare",
+    "meta": "Large fiend, neutral evil",
+    "traits": [
+      {
+        "name": "Confer Fire Resistance",
+        "detail": "The nightmare can grant resistance to fire damage to anyone riding it."
+      },
+      {
+        "name": "Illumination",
+        "detail": "The nightmare sheds bright light in a 10-foot radius and dim light for an additional 10 feet."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/273/315/315/636252769493472144.jpeg"
+  },
+  {
+    "name": "Noble",
+    "meta": "Medium humanoid, any",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/277/1000/1000/636252769861281900.jpeg"
+  },
+  {
+    "name": "Nothic",
+    "meta": "Medium aberration, neutral evil",
+    "traits": [
+      {
+        "name": "Keen Sight",
+        "detail": "The nothic has advantage on Wisdom (Perception) checks that rely on sight."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/14/475/1000/1000/636364321398842272.png"
+  },
+  {
+    "name": "Ochre Jelly",
+    "meta": "Large ooze, unaligned",
+    "traits": [
+      {
+        "name": "Amorphous",
+        "detail": "The jelly can move through a space as narrow as 1 inch wide without squeezing."
+      },
+      {
+        "name": "Spider Climb",
+        "detail": "The jelly can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/279/1000/1000/636252770058723674.jpeg"
+  },
+  {
+    "name": "Octopus",
+    "meta": "Small beast, unaligned",
+    "traits": [
+      {
+        "name": "Hold Breath",
+        "detail": "While out of water, the octopus can hold its breath for 30 minutes."
+      },
+      {
+        "name": "Underwater Camouflage",
+        "detail": "The octopus has advantage on Dexterity (Stealth) checks made while underwater."
+      },
+      {
+        "name": "Water Breathing",
+        "detail": "The octopus can breathe only underwater."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/9/921/315/315/636334602449110996.jpeg"
+  },
+  {
+    "name": "Ogre",
+    "meta": "Large giant, chaotic evil",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/285/315/315/636252770535203221.jpeg"
+  },
+  {
+    "name": "Ogre Zombie",
+    "meta": "Large undead, neutral evil",
+    "traits": [
+      {
+        "name": "Undead Fortitude",
+        "detail": "If damage reduces the zombie to 0 hit points, it must make a Constitution saving throw with a DC of 5 + the damage taken, unless the damage is radiant or from a critical hit. On a success, the zombie drops to 1 hit point instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/287/315/315/636252770700032248.jpeg"
+  },
+  {
+    "name": "Oni",
+    "meta": "Large giant, lawful evil",
+    "traits": [
+      {
+        "name": "Innate Spellcasting",
+        "detail": "The oni's innate spellcasting ability is Charisma (spell save DC 13). The oni can innately cast the following spells, requiring no material components:At will: darkness, invisibility1/day each: charm person, cone of cold, gaseous form, sleep"
+      },
+      {
+        "name": "Magic Weapons",
+        "detail": "The oni's weapon attacks are magical."
+      },
+      {
+        "name": "Regeneration",
+        "detail": "The oni regains 10 hit points at the start of its turn if it has at least 1 hit point."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/297/1000/1000/636252771507213738.jpeg"
+  },
+  {
+    "name": "Orc",
+    "meta": "Medium humanoid, chaotic evil",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/301/1000/1000/636252771691385727.jpeg"
+  },
+  {
+    "name": "Otyugh",
+    "meta": "Large aberration, neutral",
+    "traits": [
+      {
+        "name": "Limited Telepathy",
+        "detail": "The otyugh can magically transmit simple messages and images to any creature within 120 feet of it that can understand a language. This form of telepathy doesn't allow the receiving creature to telepathically respond."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/305/315/315/636252771931366466.jpeg"
+  },
+  {
+    "name": "Owl",
+    "meta": "Tiny beast, unaligned",
+    "traits": [
+      {
+        "name": "Flyby",
+        "detail": "The owl doesn't provoke opportunity attacks when it flies out of an enemy's reach."
+      },
+      {
+        "name": "Keen Hearing and Sight",
+        "detail": "The owl has advantage on Wisdom (Perception) checks that rely on hearing or sight."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/533/1000/1000/636376331660233857.jpeg"
+  },
+  {
+    "name": "Owlbear",
+    "meta": "Large monstrosity, unaligned",
+    "traits": [
+      {
+        "name": "Keen Sight and Smell",
+        "detail": "The owlbear has advantage on Wisdom (Perception) checks that rely on sight or smell."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/315/315/315/636252772225295187.jpeg"
+  },
+  {
+    "name": "Panther",
+    "meta": "Medium beast, unaligned",
+    "traits": [
+      {
+        "name": "Keen Smell",
+        "detail": "The panther has advantage on Wisdom (Perception) checks that rely on smell."
+      },
+      {
+        "name": "Pounce",
+        "detail": "If the panther moves at least 20 feet straight toward a creature and then hits it with a claw attack on the same turn, that target must succeed on a DC 12 Strength saving throw or be knocked prone. If the target is prone, the panther can make one bite attack against it as a bonus action."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Pegasus",
+    "meta": "Large celestial, chaotic good",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/18/303/1000/1000/636379808797059368.png"
+  },
+  {
+    "name": "Phase Spider",
+    "meta": "Large monstrosity, unaligned",
+    "traits": [
+      {
+        "name": "Ethereal Jaunt",
+        "detail": "As a bonus action, the spider can magically shift from the Material Plane to the Ethereal Plane, or vice versa."
+      },
+      {
+        "name": "Spider Climb",
+        "detail": "The spider can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check."
+      },
+      {
+        "name": "Web Walker",
+        "detail": "The spider ignores movement restrictions caused by webbing."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/319/315/315/636252772538300448.jpeg"
+  },
+  {
+    "name": "Pit Fiend",
+    "meta": "Large fiend, lawful evil",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/311/315/315/636252772132434763.jpeg"
+  },
+  {
+    "name": "Planetar",
+    "meta": "Large celestial, lawful good",
+    "traits": [
+      {
+        "name": "Angelic Weapons",
+        "detail": "The planetar's weapon attacks are magical. When the planetar hits with any weapon, the weapon deals an extra 5d8 radiant damage (included in the attack)."
+      },
+      {
+        "name": "Divine Awareness",
+        "detail": "The planetar knows if it hears a lie."
+      },
+      {
+        "name": "Innate Spellcasting",
+        "detail": "The planetar's spellcasting ability is Charisma (spell save DC 20). The planetar can innately cast the following spells, requiring no material components:At will: detect evil and good, invisibility (self only) 3/day each: blade barrier, dispel evil and good, flame strike, raise dead 1/day each: commune, control weather, insect plague "
+      },
+      {
+        "name": "Magic Resistance",
+        "detail": "The planetar has advantage on saving throws against spells and other magical effects."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/303/315/315/636252771762002496.jpeg"
+  },
+  {
+    "name": "Plesiosaurus",
+    "meta": "Large beast, unaligned",
+    "traits": [
+      {
+        "name": "Hold Breath",
+        "detail": "The plesiosaurus can hold its breath for 1 hour."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/488/315/315/636376304583147024.jpeg"
+  },
+  {
+    "name": "Poisonous Snake",
+    "meta": "Tiny beast, unaligned",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Polar Bear",
+    "meta": "Large beast, unaligned",
+    "traits": [
+      {
+        "name": "Keen Smell",
+        "detail": "The bear has advantage on Wisdom (Perception) checks that rely on smell."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Pony",
+    "meta": "Medium beast, unaligned",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Priest",
+    "meta": "Medium humanoid, any",
+    "traits": [
+      {
+        "name": "Divine Eminence",
+        "detail": "As a bonus action, the priest can expend a spell slot to cause its melee weapon attacks to magically deal an extra 10 (3d6) radiant damage to a target on a hit. This benefit lasts until the end of the turn. If the priest expends a spell slot of 2nd level or higher, the extra damage increases by 1d6 for each level above 1st."
+      },
+      {
+        "name": "Spellcasting",
+        "detail": "The priest is a 5th-level spellcaster. Its spellcasting ability is Wisdom (spell save DC 13, +5 to hit with spell attacks). The priest has the following cleric spells prepared:Cantrips (at will): light, sacred flame, thaumaturgy1st level (4 slots): cure wounds, guiding bolt, sanctuary2nd level (3 slots): lesser restoration, spiritual weapon3rd level (2 slots): dispel magic, spirit guardians"
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/656/humanoid.jpg"
+  },
+  {
+    "name": "Pseudodragon",
+    "meta": "Tiny dragon, neutral good",
+    "traits": [
+      {
+        "name": "Magic Resistance",
+        "detail": "The pseudodragon has advantage on saving throws against spells and other magical effects."
+      },
+      {
+        "name": "Limited Telepathy",
+        "detail": "The pseudodragon can magically communicate simple ideas, emotions, and images telepathically with any creature within 100 feet of it that can understand a language."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/283/1000/1000/636252770521719244.jpeg"
+  },
+  {
+    "name": "Pteranodon",
+    "meta": "Medium beast, unaligned",
+    "traits": [
+      {
+        "name": "Flyby",
+        "detail": "The pteranodon doesn’t provoke an opportunity attack when it flies out of an enemy’s reach."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Purple Worm",
+    "meta": "Gargantuan monstrosity, unaligned",
+    "traits": [
+      {
+        "name": "Tunneler",
+        "detail": "The worm can burrow through solid rock at half its burrow speed and leaves a 10-foot-diameter tunnel in its wake."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/275/315/315/636252769846436684.jpeg"
+  },
+  {
+    "name": "Quasit",
+    "meta": "Tiny fiend, chaotic evil",
+    "traits": [
+      {
+        "name": "Shapechanger",
+        "detail": "The quasit can use its action to polymorph into a beast form that resembles a bat (speed 10 ft. fly 40 ft.), a centipede (40 ft., climb 40 ft.), or a toad (40 ft., swim 40 ft.), or back into its true form. Its statistics are the same in each form, except for the speed changes noted. Any equipment it is wearing or carrying isn't transformed. It reverts to its true form if it dies."
+      },
+      {
+        "name": "Magic Resistance",
+        "detail": "The quasit has advantage on saving throws against spells and other magical effects."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/271/315/315/636252769318699115.jpeg"
+  },
+  {
+    "name": "Quipper",
+    "meta": "Tiny beast, unaligned",
+    "traits": [
+      {
+        "name": "Blood Frenzy",
+        "detail": "The quipper has advantage on melee attack rolls against any creature that doesn't have all its hit points."
+      },
+      {
+        "name": "Water Breathing",
+        "detail": "The quipper can breathe only underwater."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/253/1000/1000/636252767919065233.jpeg"
+  },
+  {
+    "name": "Rakshasa",
+    "meta": "Medium fiend, lawful evil",
+    "traits": [
+      {
+        "name": "Limited Magic Immunity",
+        "detail": "The rakshasa can't be affected or detected by spells of 6th level or lower unless it wishes to be. It has advantage on saving throws against all other spells and magical effects."
+      },
+      {
+        "name": "Innate Spellcasting",
+        "detail": "The rakshasa's innate spellcasting ability is Charisma (spell save DC 18, +10 to hit with spell attacks). The rakshasa can innately cast the following spells, requiring no material components:At will: detect thoughts, disguise self, mage hand, minor illusion3/day each: charm person, detect magic, invisibility, major image, suggestion1/day each: dominate person, fly, plane shift, true seeing"
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/247/315/315/636252767480157951.jpeg"
+  },
+  {
+    "name": "Rat",
+    "meta": "Tiny beast, unaligned",
+    "traits": [
+      {
+        "name": "Keen Smell",
+        "detail": "The rat has advantage on Wisdom (Perception) checks that rely on smell."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/541/315/315/636376335435407571.jpeg"
+  },
+  {
+    "name": "Raven",
+    "meta": "Tiny beast, unaligned",
+    "traits": [
+      {
+        "name": "Mimicry",
+        "detail": "The raven can mimic simple sounds it has heard, such as a person whispering, a baby crying, or an animal chittering. A creature that hears the sounds can tell they are imitations with a successful DC 10 Wisdom (Insight) check."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/553/1000/1000/636376341568391037.jpeg"
+  },
+  {
+    "name": "Red Dragon Wyrmling",
+    "meta": "Medium dragon, chaotic evil",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/239/315/315/636252766855622680.jpeg"
+  },
+  {
+    "name": "Reef Shark",
+    "meta": "Medium beast, unaligned",
+    "traits": [
+      {
+        "name": "Pack Tactics",
+        "detail": "The shark has advantage on an attack roll against a creature if at least one of the shark's allies is within 5 feet of the creature and the ally isn't incapacitated."
+      },
+      {
+        "name": "Water Breathing",
+        "detail": "The shark can breathe only underwater."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Remorhaz",
+    "meta": "Huge monstrosity, unaligned",
+    "traits": [
+      {
+        "name": "Heated Body",
+        "detail": "A creature that touches the remorhaz or hits it with a melee attack while within 5 feet of it takes 10 (3d6) fire damage."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/231/315/315/636252766143328421.jpeg"
+  },
+  {
+    "name": "Rhinoceros",
+    "meta": "Large beast, unaligned",
+    "traits": [
+      {
+        "name": "Charge",
+        "detail": "If the rhinoceros moves at least 20 feet straight toward a target and then hits it with a gore attack on the same turn, the target takes an extra 9 (2d8) bludgeoning damage. If the target is a creature, it must succeed on a DC 15 Strength saving throw or be knocked prone."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Riding Horse",
+    "meta": "Large beast, unaligned",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/9/904/315/315/636334288913250513.jpeg"
+  },
+  {
+    "name": "Roc",
+    "meta": "Gargantuan monstrosity, unaligned",
+    "traits": [
+      {
+        "name": "Keen Sight",
+        "detail": "The roc has advantage on Wisdom (Perception) checks that rely on sight."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/229/315/315/636252765590929622.jpeg"
+  },
+  {
+    "name": "Roper",
+    "meta": "Large monstrosity, neutral evil",
+    "traits": [
+      {
+        "name": "False Appearance",
+        "detail": "While the roper remains motionless, it is indistinguishable from a normal cave formation, such as a stalagmite."
+      },
+      {
+        "name": "Grasping Tendrils",
+        "detail": "The roper can have up to six tendrils at a time. Each tendril can be attacked (AC 20; 10 hit points; immunity to poison and psychic damage). Destroying a tendril deals no damage to the roper, which can extrude a replacement tendril on its next turn. A tendril can also be broken if a creature takes an action and succeeds on a DC 15 Strength check against it."
+      },
+      {
+        "name": "Spider Climb",
+        "detail": "The roper can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/560/1000/1000/636376344528091115.jpeg"
+  },
+  {
+    "name": "Rug of Smothering",
+    "meta": "Large construct, unaligned",
+    "traits": [
+      {
+        "name": "Antimagic Susceptibility",
+        "detail": "The rug is incapacitated while in the area of an antimagic field. If targeted by dispel magic, the rug must succeed on a Constitution saving throw against the caster's spell save DC or fall unconscious for 1 minute."
+      },
+      {
+        "name": "Damage Transfer",
+        "detail": "While it is grappling a creature, the rug takes only half the damage dealt to it, and the creature grappled by the rug takes the other half."
+      },
+      {
+        "name": "False Appearance",
+        "detail": "While the rug remains motionless, it is indistinguishable from a normal rug."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/213/1000/1000/636252764761726261.jpeg"
+  },
+  {
+    "name": "Rust Monster",
+    "meta": "Medium monstrosity, unaligned",
+    "traits": [
+      {
+        "name": "Iron Scent",
+        "detail": "The rust monster can pinpoint, by scent, the location of ferrous metal within 30 feet of it."
+      },
+      {
+        "name": "Rust Metal",
+        "detail": "Any nonmagical weapon made of metal that hits the rust monster corrodes. After dealing damage, the weapon takes a permanent and cumulative −1 penalty to damage rolls. If its penalty drops to −5, the weapon is destroyed. Nonmagical ammunition made of metal that hits the rust monster is destroyed after dealing damage."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/207/1000/1000/636252764265020108.jpeg"
+  },
+  {
+    "name": "Saber-Toothed Tiger",
+    "meta": "Large beast, unaligned",
+    "traits": [
+      {
+        "name": "Keen Smell",
+        "detail": "The tiger has advantage on Wisdom (Perception) checks that rely on smell."
+      },
+      {
+        "name": "Pounce",
+        "detail": "If the tiger moves at least 20 feet straight toward a creature and then hits it with a claw attack on the same turn, that target must succeed on a DC 14 Strength saving throw or be knocked prone. If the target is prone, the tiger can make one bite attack against it as a bonus action."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Sahuagin",
+    "meta": "Medium humanoid, lawful evil",
+    "traits": [
+      {
+        "name": "Blood Frenzy",
+        "detail": "The sahuagin has advantage on melee attack rolls against any creature that doesn't have all its hit points."
+      },
+      {
+        "name": "Limited Amphibiousness",
+        "detail": "The sahuagin can breathe air and water, but it needs to be submerged at least once every 4 hours to avoid suffocating."
+      },
+      {
+        "name": "Shark Telepathy",
+        "detail": "The sahuagin can magically command any shark within 120 feet of it, using a limited telepathy."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/177/1000/1000/636252761683746719.jpeg"
+  },
+  {
+    "name": "Salamander",
+    "meta": "Large elemental, neutral evil",
+    "traits": [
+      {
+        "name": "Heated Body",
+        "detail": "A creature that touches the salamander or hits it with a melee attack while within 5 feet of it takes 7 (2d6) fire damage."
+      },
+      {
+        "name": "Heated Weapons",
+        "detail": "Any metal melee weapon the salamander wields deals an extra 3 (1d6) fire damage on a hit (included in the attack)."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/173/1000/1000/636252761197608364.jpeg"
+  },
+  {
+    "name": "Satyr",
+    "meta": "Medium fey, chaotic neutral",
+    "traits": [
+      {
+        "name": "Magic Resistance",
+        "detail": "The satyr has advantage on saving throws against spells and other magical effects."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/169/1000/1000/636252760706340605.jpeg"
+  },
+  {
+    "name": "Scorpion",
+    "meta": "Tiny beast, unaligned",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Scout",
+    "meta": "Medium humanoid, any",
+    "traits": [
+      {
+        "name": "Keen Hearing and Sight",
+        "detail": "The scout has advantage on Wisdom (Perception) checks that rely on hearing or sight."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/163/1000/1000/636252759915100020.jpeg"
+  },
+  {
+    "name": "Sea Hag",
+    "meta": "Medium fey, chaotic evil",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The hag can breathe air and water."
+      },
+      {
+        "name": "Horrific Appearance",
+        "detail": "Any humanoid that starts its turn within 30 feet of the hag and can see the hag's true form must make a DC 11 Wisdom saving throw. On a failed save, the creature is frightened for 1 minute. A creature can repeat the saving throw at the end of each of its turns, with disadvantage if the hag is within line of sight, ending the effect on itself on a success. If a creature's saving throw is successful or the effect ends for it, the creature is immune to the hag's Horrific Appearance for the next 24 hours.Unless the target is surprised or the revelation of the hag's true form is sudden, the target can avert its eyes and avoid making the initial saving throw. Until the start of its next turn, a creature that averts its eyes has disadvantage on attack rolls against the hag."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/159/1000/1000/636252759356069260.jpeg"
+  },
+  {
+    "name": "Sea Horse",
+    "meta": "Tiny beast, unaligned",
+    "traits": [
+      {
+        "name": "Water Breathing",
+        "detail": "The sea horse can breathe only underwater."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Shadow",
+    "meta": "Medium undead, chaotic evil",
+    "traits": [
+      {
+        "name": "Amorphous",
+        "detail": "The shadow can move through a space as narrow as 1 inch wide without squeezing."
+      },
+      {
+        "name": "Shadow Stealth",
+        "detail": "While in dim light or darkness, the shadow can take the Hide action as a bonus action."
+      },
+      {
+        "name": "Sunlight Weakness",
+        "detail": "While in sunlight, the shadow has disadvantage on attack rolls, ability checks, and saving throws."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/155/315/315/636252758977032019.jpeg"
+  },
+  {
+    "name": "Shambling Mound",
+    "meta": "Large plant, unaligned",
+    "traits": [
+      {
+        "name": "Lightning Absorption",
+        "detail": "Whenever the shambling mound is subjected to lightning damage, it takes no damage and regains a number of hit points equal to the lightning damage dealt."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/563/315/315/636376346968079714.jpeg"
+  },
+  {
+    "name": "Shield Guardian",
+    "meta": "Large construct, unaligned",
+    "traits": [
+      {
+        "name": "Bound",
+        "detail": "The shield guardian is magically bound to an amulet. As long as the guardian and its amulet are on the same plane of existence, the amulet's wearer can telepathically call the guardian to travel to it, and the guardian knows the distance and direction to the amulet. If the guardian is within 60 feet of the amulet's wearer, half of any damage the wearer takes (rounded up) is transferred to the guardian."
+      },
+      {
+        "name": "Regeneration",
+        "detail": "The shield guardian regains 10 hit points at the start of its turn if it has at least 1 hit point."
+      },
+      {
+        "name": "Spell Storing",
+        "detail": "A spellcaster who wears the shield guardian's amulet can cause the guardian to store one spell of 4th level or lower. To do so, the wearer must cast the spell on the guardian. The spell has no effect but is stored within the guardian. When commanded to do so by the wearer or when a situation arises that was predefined by the spellcaster, the guardian casts the stored spell with any parameters set by the original caster, requiring no components. When the spell is cast or a new spell is stored, any previously stored spell is lost."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/145/315/315/636252758362792494.jpeg"
+  },
+  {
+    "name": "Shrieker",
+    "meta": "Medium plant, unaligned",
+    "traits": [
+      {
+        "name": "False Appearance",
+        "detail": "While the shrieker remains motionless, it is indistinguishable from an ordinary fungus."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/571/1000/1000/636376357634308010.jpeg"
+  },
+  {
+    "name": "Silver Dragon Wyrmling",
+    "meta": "Medium dragon, lawful good",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/143/315/315/636252757538355953.jpeg"
+  },
+  {
+    "name": "Skeleton",
+    "meta": "Medium undead, lawful evil",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/472/315/315/636376294573239565.jpeg"
+  },
+  {
+    "name": "Solar",
+    "meta": "Large celestial, lawful good",
+    "traits": [
+      {
+        "name": "Angelic Weapons",
+        "detail": "The solar's weapon attacks are magical. When the solar hits with any weapon, the weapon deals an extra 6d8 radiant damage (included in the attack)."
+      },
+      {
+        "name": "Divine Awareness",
+        "detail": "The solar knows if it hears a lie."
+      },
+      {
+        "name": "Innate Spellcasting",
+        "detail": "The solar's spellcasting ability is Charisma (spell save DC 25). It can innately cast the following spells, requiring no material components:At will: detect evil and good, invisibility (self only) 3/day each: blade barrier, dispel evil and good, resurrection 1/day each: commune, control weather "
+      },
+      {
+        "name": "Magic Resistance",
+        "detail": "The solar has advantage on saving throws against spells and other magical effects."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/121/315/315/636252748079664097.jpeg"
+  },
+  {
+    "name": "Spectator",
+    "meta": "Medium aberration, lawful neutral",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/14/485/315/315/636364324602733616.png"
+  },
+  {
+    "name": "Specter",
+    "meta": "Medium undead, chaotic evil",
+    "traits": [
+      {
+        "name": "Incorporeal Movement",
+        "detail": "The specter can move through other creatures and objects as if they were difficult terrain. It takes 5 (1d10) force damage if it ends its turn inside an object."
+      },
+      {
+        "name": "Sunlight Sensitivity",
+        "detail": "While in sunlight, the specter has disadvantage on attack rolls, as well as on Wisdom (Perception) checks that rely on sight."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/119/1000/1000/636252747399435720.jpeg"
+  },
+  {
+    "name": "Spider",
+    "meta": "Tiny beast, unaligned",
+    "traits": [
+      {
+        "name": "Spider Climb",
+        "detail": "The spider can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check."
+      },
+      {
+        "name": "Web Sense",
+        "detail": "While in contact with a web, the spider knows the exact location of any other creature in contact with the same web."
+      },
+      {
+        "name": "Web Walker",
+        "detail": "The spider ignores movement restrictions caused by webbing."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/575/315/315/636376359864842950.jpeg"
+  },
+  {
+    "name": "Spirit Naga",
+    "meta": "Large monstrosity, chaotic evil",
+    "traits": [
+      {
+        "name": "Rejuvenation",
+        "detail": "If it dies, the naga returns to life in 1d6 days and regains all its hit points. Only a wish spell can prevent this trait from functioning."
+      },
+      {
+        "name": "Spellcasting",
+        "detail": "The naga is a 10th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 14, +6 to hit with spell attacks), and it needs only verbal components to cast its spells. It has the following wizard spells prepared:Cantrips (at will): mage hand, minor illusion, ray of frost 1st level (4 slots): charm person, detect magic, sleep 2nd level (3 slots): detect thoughts, hold person 3rd level (3 slots): lightning bolt, water breathing 4th level (3 slots): blight, dimension door 5th level (2 slots): dominate person"
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/117/315/315/636252746851035686.jpeg"
+  },
+  {
+    "name": "Sprite",
+    "meta": "Tiny fey, neutral good",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/115/315/315/636252746444973630.jpeg"
+  },
+  {
+    "name": "Spy",
+    "meta": "Medium humanoid, any",
+    "traits": [
+      {
+        "name": "Cunning Action",
+        "detail": "On each of its turns, the spy can use a bonus action to take the Dash, Disengage, or Hide action."
+      },
+      {
+        "name": "Sneak Attack (1/Turn)",
+        "detail": "The spy deals an extra 7 (2d6) damage when it hits a target with a weapon attack and has advantage on the attack roll, or when the target is within 5 feet of an ally of the spy that isn't incapacitated and the spy doesn't have disadvantage on the attack roll."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/656/humanoid.jpg"
+  },
+  {
+    "name": "Steam Mephit",
+    "meta": "Small elemental, neutral evil",
+    "traits": [
+      {
+        "name": "Death Burst",
+        "detail": "When the mephit dies, it explodes in a cloud of steam. Each creature within 5 feet of the mephit must succeed on a DC 10 Dexterity saving throw or take 4 (1d8) fire damage."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/113/315/315/636252745841820724.jpeg"
+  },
+  {
+    "name": "Stirge",
+    "meta": "Tiny beast, unaligned",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/111/1000/1000/636252745395103202.jpeg"
+  },
+  {
+    "name": "Stone Giant",
+    "meta": "Huge giant, neutral",
+    "traits": [
+      {
+        "name": "Stone Camouflage",
+        "detail": "The giant has advantage on Dexterity (Stealth) checks made to hide in rocky terrain."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/109/315/315/636252744518731463.jpeg"
+  },
+  {
+    "name": "Stone Golem",
+    "meta": "Large construct, unaligned",
+    "traits": [
+      {
+        "name": "Immutable Form",
+        "detail": "The golem is immune to any spell or effect that would alter its form."
+      },
+      {
+        "name": "Magic Resistance",
+        "detail": "The golem has advantage on saving throws against spells and other magical effects."
+      },
+      {
+        "name": "Magic Weapons",
+        "detail": "The golem's weapon attacks are magical."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/107/315/315/636252743780112834.jpeg"
+  },
+  {
+    "name": "Storm Giant",
+    "meta": "Huge giant, chaotic good",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The giant can breathe air and water."
+      },
+      {
+        "name": "Innate Spellcasting",
+        "detail": "The giant's innate spellcasting ability is Charisma (spell save DC 17). It can innately cast the following spells, requiring no material components:At will: detect magic, feather fall, levitate, light 3/day each: control weather, water breathing"
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/105/315/315/636252743254029469.jpeg"
+  },
+  {
+    "name": "Succubus/Incubus",
+    "meta": "Medium fiend, neutral evil",
+    "traits": [
+      {
+        "name": "Telepathic Bond",
+        "detail": "The fiend ignores the range restriction on its telepathy when communicating with a creature it has charmed. The two don't even need to be on the same plane of existence."
+      },
+      {
+        "name": "Shapechanger",
+        "detail": "The fiend can use its action to polymorph into a Small or Medium humanoid, or back into its true form. Without wings, the fiend loses its flying speed. Other than its size and speed, its statistics are the same in each form. Any equipment it is wearing or carrying isn't transformed. It reverts to its true form if it dies."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/103/315/315/636252742573312994.jpeg"
+  },
+  {
+    "name": "Swarm of Bats",
+    "meta": "Medium beast, unaligned",
+    "traits": [
+      {
+        "name": "Echolocation",
+        "detail": "The swarm can’t use its blindsight while deafened."
+      },
+      {
+        "name": "Keen Hearing",
+        "detail": "The swarm has advantage on Wisdom (Perception) checks that rely on hearing."
+      },
+      {
+        "name": "Swarm",
+        "detail": "The swarm can occupy another creature’s space and vice versa, and the swarm can move through any opening large enough for a Tiny bat. The swarm can’t regain hit points or gain temporary hit points."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/9/906/315/315/636334289313689439.jpeg"
+  },
+  {
+    "name": "Swarm of Insects",
+    "meta": "Medium beast, unaligned",
+    "traits": [
+      {
+        "name": "Swarm",
+        "detail": "The swarm can occupy another creature's space and vice versa, and the swarm can move through any opening large enough for a Tiny insect. The swarm can't regain hit points or gain temporary hit points."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Swarm of Poisonous Snakes",
+    "meta": "Medium beast, unaligned",
+    "traits": [
+      {
+        "name": "Swarm",
+        "detail": "The swarm can occupy another creature's space and vice versa, and the swarm can move through any opening large enough for a Tiny snake. The swarm can't regain hit points or gain temporary hit points."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Swarm of Quippers",
+    "meta": "Medium beast, unaligned",
+    "traits": [
+      {
+        "name": "Blood Frenzy",
+        "detail": "The swarm has advantage on melee attack rolls against any creature that doesn't have all its hit points."
+      },
+      {
+        "name": "Swarm",
+        "detail": "The swarm can occupy another creature's space and vice versa, and the swarm can move through any opening large enough for a Tiny quipper. The swarm can't regain hit points or gain temporary hit points."
+      },
+      {
+        "name": "Water Breathing",
+        "detail": "The swarm can breathe only underwater."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/18/276/315/315/636379781035768521.jpeg"
+  },
+  {
+    "name": "Swarm of Rats",
+    "meta": "Medium beast, unaligned",
+    "traits": [
+      {
+        "name": "Keen Smell",
+        "detail": "The swarm has advantage on Wisdom (Perception) checks that rely on smell."
+      },
+      {
+        "name": "Swarm",
+        "detail": "The swarm can occupy another creature's space and vice versa, and the swarm can move through any opening large enough for a Tiny rat. The swarm can't regain hit points or gain temporary hit points."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/9/908/315/315/636334289541603972.jpeg"
+  },
+  {
+    "name": "Swarm of Ravens",
+    "meta": "Medium beast, unaligned",
+    "traits": [
+      {
+        "name": "Swarm",
+        "detail": "The swarm can occupy another creature's space and vice versa, and the swarm can move through any opening large enough for a Tiny raven. The swarm can't regain hit points or gain temporary hit points."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/555/315/315/636376341743427326.jpeg"
+  },
+  {
+    "name": "Tarrasque",
+    "meta": "Gargantuan monstrosity, unaligned",
+    "traits": [
+      {
+        "name": "Legendary Resistance (3/Day)",
+        "detail": "If the tarrasque fails a saving throw, it can choose to succeed instead."
+      },
+      {
+        "name": "Magic Resistance",
+        "detail": "The tarrasque has advantage on saving throws against spells and other magical effects."
+      },
+      {
+        "name": "Reflective Carapace",
+        "detail": "Any time the tarrasque is targeted by a magic missile spell, a line spell, or a spell that requires a ranged attack roll, roll a d6. On a 1 to 5, the tarrasque is unaffected. On a 6, the tarrasque is unaffected, and the effect is reflected back at the caster as though it originated from the tarrasque, turning the caster into the target."
+      },
+      {
+        "name": "Siege Monster",
+        "detail": "The tarrasque deals double damage to objects and structures."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/101/1000/1000/636252741877524077.jpeg"
+  },
+  {
+    "name": "Thug",
+    "meta": "Medium humanoid, any",
+    "traits": [
+      {
+        "name": "Pack Tactics",
+        "detail": "The thug has advantage on an attack roll against a creature if at least one of the thug's allies is within 5 feet of the creature and the ally isn't incapacitated."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/99/1000/1000/636252741335519081.jpeg"
+  },
+  {
+    "name": "Tiger",
+    "meta": "Large beast, unaligned",
+    "traits": [
+      {
+        "name": "Keen Smell",
+        "detail": "The tiger has advantage on Wisdom (Perception) checks that rely on smell."
+      },
+      {
+        "name": "Pounce",
+        "detail": "If the tiger moves at least 20 feet straight toward a creature and then hits it with a claw attack on the same turn, that target must succeed on a DC 13 Strength saving throw or be knocked prone. If the target is prone, the tiger can make one bite attack against it as a bonus action."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Treant",
+    "meta": "Huge plant, chaotic good",
+    "traits": [
+      {
+        "name": "False Appearance",
+        "detail": "While the treant remains motionless, it is indistinguishable from a normal tree."
+      },
+      {
+        "name": "Siege Monster",
+        "detail": "The treant deals double damage to objects and structures."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/97/315/315/636252740537990664.jpeg"
+  },
+  {
+    "name": "Tribal Warrior",
+    "meta": "Medium humanoid, any",
+    "traits": [
+      {
+        "name": "Pack Tactics",
+        "detail": "The warrior has advantage on an attack roll against a creature if at least one of the warrior's allies is within 5 feet of the creature and the ally isn't incapacitated."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/656/humanoid.jpg"
+  },
+  {
+    "name": "Triceratops",
+    "meta": "Huge beast, unaligned",
+    "traits": [
+      {
+        "name": "Trampling Charge",
+        "detail": "If the triceratops moves at least 20 feet straight toward a creature and then hits it with a gore attack on the same turn, that target must succeed on a DC 13 Strength saving throw or be knocked prone. If the target is prone, the triceratops can make one stomp attack against it as a bonus action."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Troll",
+    "meta": "Large giant, chaotic evil",
+    "traits": [
+      {
+        "name": "Keen Smell",
+        "detail": "The troll has advantage on Wisdom (Perception) checks that rely on smell."
+      },
+      {
+        "name": "Regeneration",
+        "detail": "The troll regains 10 hit points at the start of its turn. If the troll takes acid or fire damage, this trait doesn't function at the start of the troll's next turn. The troll dies only if it starts its turn with 0 hit points and doesn't regenerate."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/95/315/315/636252739682234623.jpeg"
+  },
+  {
+    "name": "Twig Blight",
+    "meta": "Small plant, neutral evil",
+    "traits": [
+      {
+        "name": "False Appearance",
+        "detail": "While the blight remains motionless, it is indistinguishable from a dead shrub."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/464/1000/1000/636376286997771487.png"
+  },
+  {
+    "name": "Tyrannosaurus Rex",
+    "meta": "Huge beast, unaligned",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/594/1000/1000/636376369004412963.jpeg"
+  },
+  {
+    "name": "Unicorn",
+    "meta": "Large celestial, lawful good",
+    "traits": [
+      {
+        "name": "Charge",
+        "detail": "If the unicorn moves at least 20 feet straight toward a target and then hits it with a horn attack on the same turn, the target takes an extra 9 (2d8) piercing damage. If the target is a creature, it must succeed on a DC 15 Strength saving throw or be knocked prone."
+      },
+      {
+        "name": "Innate Spellcasting",
+        "detail": "The unicorn's innate spellcasting ability is Charisma (spell save DC 14). The unicorn can innately cast the following spells, requiring no components:At will: detect evil and good, druidcraft, pass without trace 1/day each: calm emotions, dispel evil and good, entangle "
+      },
+      {
+        "name": "Magic Resistance",
+        "detail": "The unicorn has advantage on saving throws against spells and other magical effects."
+      },
+      {
+        "name": "Magic Weapons",
+        "detail": "The unicorn's weapon attacks are magical."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/93/1000/1000/636252739248798123.jpeg"
+  },
+  {
+    "name": "Vampire",
+    "meta": "Medium undead, lawful evil",
+    "traits": [
+      {
+        "name": "Shapechanger",
+        "detail": "If the vampire isn't in sunlight or running water, it can use its action to polymorph into a Tiny bat or a Medium cloud of mist, or back into its true form.While in bat form, the vampire can't speak, its walking speed is 5 feet, and it has a flying speed of 30 feet. Its statistics, other than its size and speed, are unchanged. Anything it is wearing transforms with it, but nothing it is carrying does. It reverts to its true form if it dies.While in mist form, the vampire can't take any actions, speak, or manipulate objects. It is weightless, has a flying speed of 20 feet, can hover, and can enter a hostile creature's space and stop there. In addition, if air can pass through a space, the mist can do so without squeezing, and it can’t pass through water. It has advantage on Strength, Dexterity, and Constitution saving throws, and it is immune to all nonmagical damage, except the damage it takes from sunlight."
+      },
+      {
+        "name": "Legendary Resistance (3/Day)",
+        "detail": "If the vampire fails a saving throw, it can choose to succeed instead."
+      },
+      {
+        "name": "Misty Escape",
+        "detail": "When it drops to 0 hit points outside its resting place, the vampire transforms into a cloud of mist (as in the Shapechanger trait) instead of falling unconscious, provided that it isn't in sunlight or running water. If it can't transform, it is destroyed.While it has 0 hit points in mist form, it can't revert to its vampire form, and it must reach its resting place within 2 hours or be destroyed. Once in its resting place, it reverts to its vampire form. It is then paralyzed until it regains at least 1 hit point. After spending 1 hour in its resting place with 0 hit points, it regains 1 hit point."
+      },
+      {
+        "name": "Regeneration",
+        "detail": "The vampire regains 20 hit points at the start of its turn if it has at least 1 hit point and isn't in sunlight or running water. If the vampire takes radiant damage or damage from holy water, this trait doesn't function at the start of the vampire's next turn."
+      },
+      {
+        "name": "Spider Climb",
+        "detail": "The vampire can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check."
+      },
+      {
+        "name": "Vampire Weaknesses",
+        "detail": "The vampire has the following flaws:Forbiddance. The vampire can't enter a residence without an invitation from one of the occupants. Harmed by Running Water. The vampire takes 20 acid damage if it ends its turn in running water. Stake to the Heart. If a piercing weapon made of wood is driven into the vampire's heart while the vampire is incapacitated in its resting place, the vampire is paralyzed until the stake is removed. Sunlight Hypersensitivity. The vampire takes 20 radiant damage when it starts its turn in sunlight. While in sunlight, it has disadvantage on attack rolls and ability checks."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/91/1000/1000/636252738665379794.jpeg"
+  },
+  {
+    "name": "Vampire Spawn",
+    "meta": "Medium undead, neutral evil",
+    "traits": [
+      {
+        "name": "Regeneration",
+        "detail": "The vampire regains 10 hit points at the start of its turn if it has at least 1 hit point and isn't in sunlight or running water. If the vampire takes radiant damage or damage from holy water, this trait doesn't function at the start of the vampire's next turn."
+      },
+      {
+        "name": "Spider Climb",
+        "detail": "The vampire can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check."
+      },
+      {
+        "name": "Vampire Weaknesses",
+        "detail": "The vampire has the following flaws:Forbiddance. The vampire can't enter a residence without an invitation from one of the occupants. Harmed by Running Water. The vampire takes 20 acid damage when it ends its turn in running water. Stake to the Heart. The vampire is destroyed if a piercing weapon made of wood is driven into its heart while it is incapacitated in its resting place. Sunlight Hypersensitivity. The vampire takes 20 radiant damage when it starts its turn in sunlight. While in sunlight, it has disadvantage on attack rolls and ability checks."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/89/1000/1000/636252738148839638.jpeg"
+  },
+  {
+    "name": "Veteran",
+    "meta": "Medium humanoid, any",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/656/humanoid.jpg"
+  },
+  {
+    "name": "Violet Fungus",
+    "meta": "Medium plant, unaligned",
+    "traits": [
+      {
+        "name": "False Appearance",
+        "detail": "While the violet fungus remains motionless, it is indistinguishable from an ordinary fungus."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/573/315/315/636376357964412799.jpeg"
+  },
+  {
+    "name": "Vrock",
+    "meta": "Large fiend, chaotic evil",
+    "traits": [
+      {
+        "name": "Magic Resistance",
+        "detail": "The vrock has advantage on saving throws against spells and other magical effects."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/87/315/315/636252737538172594.jpeg"
+  },
+  {
+    "name": "Vulture",
+    "meta": "Medium beast, unaligned",
+    "traits": [
+      {
+        "name": "Keen Sight and Smell",
+        "detail": "The vulture has advantage on Wisdom (Perception) checks that rely on sight or smell."
+      },
+      {
+        "name": "Pack Tactics",
+        "detail": "The vulture has advantage on an attack roll against a creature if at least one of the vulture's allies is within 5 feet of the creature and the ally isn't incapacitated."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Warhorse",
+    "meta": "Large beast, unaligned",
+    "traits": [
+      {
+        "name": "Trampling Charge",
+        "detail": "If the horse moves at least 20 feet straight toward a creature and then hits it with a hooves attack on the same turn, that target must succeed on a DC 14 Strength saving throw or be knocked prone. If the target is prone, the horse can make another attack with its hooves against it as a bonus action."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Warhorse Skeleton",
+    "meta": "Large undead, lawful evil",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/660/undead.jpg"
+  },
+  {
+    "name": "Water Elemental",
+    "meta": "Large elemental, neutral",
+    "traits": [
+      {
+        "name": "Water Form",
+        "detail": "The elemental can enter a hostile creature's space and stop there. It can move through a space as narrow as 1 inch wide without squeezing."
+      },
+      {
+        "name": "Freeze",
+        "detail": "If the elemental takes cold damage, it partially freezes; its speed is reduced by 20 feet until the end of its next turn."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/84/315/315/636252736680781387.jpeg"
+  },
+  {
+    "name": "Weasel",
+    "meta": "Tiny beast, unaligned",
+    "traits": [
+      {
+        "name": "Keen Hearing and Smell",
+        "detail": "The weasel has advantage on Wisdom (Perception) checks that rely on hearing or smell."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/attachments/2/648/beast.jpg"
+  },
+  {
+    "name": "Werebear",
+    "meta": "Medium humanoid, neutral good",
+    "traits": [
+      {
+        "name": "Shapechanger",
+        "detail": "The werebear can use its action to polymorph into a Large bear-humanoid hybrid or into a Large bear, or back into its true form, which is humanoid. Its statistics, other than its size and AC, are the same in each form. Any equipment it is wearing or carrying isn't transformed. It reverts to its true form if it dies."
+      },
+      {
+        "name": "Keen Smell",
+        "detail": "The werebear has advantage on Wisdom (Perception) checks that rely on smell."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/82/1000/1000/636252736005297867.jpeg"
+  },
+  {
+    "name": "Wereboar",
+    "meta": "Medium humanoid, neutral evil",
+    "traits": [
+      {
+        "name": "Shapechanger",
+        "detail": "The wereboar can use its action to polymorph into a boar-humanoid hybrid or into a boar, or back into its true form, which is humanoid. Its statistics, other than its AC, are the same in each form. Any equipment it is wearing or carrying isn't transformed. It reverts to its true form if it dies."
+      },
+      {
+        "name": "Charge (Boar or Hybrid Form Only)",
+        "detail": "If the wereboar moves at least 15 feet straight toward a target and then hits it with its tusks on the same turn, the target takes an extra 7 (2d6) slashing damage. If the target is a creature, it must succeed on a DC 13 Strength saving throw or be knocked prone."
+      },
+      {
+        "name": "Relentless (Recharges after a Short or Long Rest)",
+        "detail": "If the wereboar takes 14 damage or less that would reduce it to 0 hit points, it is reduced to 1 hit point instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/80/315/315/636252735506840152.jpeg"
+  },
+  {
+    "name": "Wererat",
+    "meta": "Medium humanoid, lawful evil",
+    "traits": [
+      {
+        "name": "Shapechanger",
+        "detail": "The wererat can use its action to polymorph into a rat-humanoid hybrid or into a giant rat, or back into its true form, which is humanoid. Its statistics, other than its size, are the same in each form. Any equipment it is wearing or carrying isn't transformed. It reverts to its true form if it dies."
+      },
+      {
+        "name": "Keen Smell",
+        "detail": "The wererat has advantage on Wisdom (Perception) checks that rely on smell."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/78/1000/1000/636252735121410517.jpeg"
+  },
+  {
+    "name": "Weretiger",
+    "meta": "Medium humanoid, neutral",
+    "traits": [
+      {
+        "name": "Shapechanger",
+        "detail": "The weretiger can use its action to polymorph into a tiger-humanoid hybrid or into a tiger, or back into its true form, which is humanoid. Its statistics, other than its size, are the same in each form. Any equipment it is wearing or carrying isn't transformed. It reverts to its true form if it dies."
+      },
+      {
+        "name": "Keen Hearing and Smell",
+        "detail": "The weretiger has advantage on Wisdom (Perception) checks that rely on hearing or smell."
+      },
+      {
+        "name": "Pounce (Tiger or Hybrid Form Only)",
+        "detail": "If the weretiger moves at least 15 feet straight toward a creature and then hits it with a claw attack on the same turn, that target must succeed on a DC 14 Strength saving throw or be knocked prone. If the target is prone, the weretiger can make one bite attack against it as a bonus action."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/76/1000/1000/636252734783831163.jpeg"
+  },
+  {
+    "name": "Werewolf",
+    "meta": "Medium humanoid, chaotic evil",
+    "traits": [
+      {
+        "name": "Shapechanger",
+        "detail": "The werewolf can use its action to polymorph into a wolf-humanoid hybrid or into a wolf, or back into its true form, which is humanoid. Its statistics, other than its AC, are the same in each form. Any equipment it is wearing or carrying isn't transformed. It reverts to its true form if it dies."
+      },
+      {
+        "name": "Keen Hearing and Smell",
+        "detail": "The werewolf has advantage on Wisdom (Perception) checks that rely on hearing or smell."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/74/1000/1000/636252734224239957.jpeg"
+  },
+  {
+    "name": "White Dragon Wyrmling",
+    "meta": "Medium dragon, chaotic evil",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/415/1000/1000/636252789083357808.jpeg"
+  },
+  {
+    "name": "Wight",
+    "meta": "Medium undead, neutral evil",
+    "traits": [
+      {
+        "name": "Sunlight Sensitivity",
+        "detail": "While in sunlight, the wight has disadvantage on attack rolls, as well as on Wisdom (Perception) checks that rely on sight."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/56/315/315/636252726349692861.jpeg"
+  },
+  {
+    "name": "Will-o'-Wisp",
+    "meta": "Tiny undead, chaotic evil",
+    "traits": [
+      {
+        "name": "Consume Life",
+        "detail": "As a bonus action, the will-o'-wisp can target one creature it can see within 5 feet of it that has 0 hit points and is still alive. The target must succeed on a DC 10 Constitution saving throw against this magic or die. If the target dies, the will-o'-wisp regains 10 (3d6) hit points."
+      },
+      {
+        "name": "Ephemeral",
+        "detail": "The will-o'-wisp can't wear or carry anything."
+      },
+      {
+        "name": "Incorporeal Movement",
+        "detail": "The will-o'-wisp can move through other creatures and objects as if they were difficult terrain. It takes 5 (1d10) force damage if it ends its turn inside an object."
+      },
+      {
+        "name": "Variable Illumination",
+        "detail": "The will-o'-wisp sheds bright light in a 5- to 20-foot radius and dim light for an additional number of feet equal to the chosen radius. The will-o'-wisp can alter the radius as a bonus action."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/585/315/315/636376363763232290.jpeg"
+  },
+  {
+    "name": "Winter Wolf",
+    "meta": "Large monstrosity, neutral evil",
+    "traits": [
+      {
+        "name": "Keen Hearing and Smell",
+        "detail": "The wolf has advantage on Wisdom (Perception) checks that rely on hearing or smell."
+      },
+      {
+        "name": "Pack Tactics",
+        "detail": "The wolf has advantage on an attack roll against a creature if at least one of the wolf's allies is within 5 feet of the creature and the ally isn't incapacitated."
+      },
+      {
+        "name": "Snow Camouflage",
+        "detail": "The wolf has advantage on Dexterity (Stealth) checks made to hide in snowy terrain."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/54/315/315/636252725270715296.jpeg"
+  },
+  {
+    "name": "Wolf",
+    "meta": "Medium beast, unaligned",
+    "traits": [
+      {
+        "name": "Keen Hearing and Smell",
+        "detail": "The wolf has advantage on Wisdom (Perception) checks that rely on hearing or smell."
+      },
+      {
+        "name": "Pack Tactics",
+        "detail": "The wolf has advantage on attack rolls against a creature if at least one of the wolf's allies is within 5 feet of the creature and the ally isn't incapacitated."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/482/1000/1000/636376300223855327.jpeg"
+  },
+  {
+    "name": "Worg",
+    "meta": "Large monstrosity, neutral evil",
+    "traits": [
+      {
+        "name": "Keen Hearing and Smell",
+        "detail": "The worg has advantage on Wisdom (Perception) checks that rely on hearing or smell."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/52/1000/1000/636252724662073178.jpeg"
+  },
+  {
+    "name": "Wraith",
+    "meta": "Medium undead, neutral evil",
+    "traits": [
+      {
+        "name": "Incorporeal Movement",
+        "detail": "The wraith can move through other creatures and objects as if they were difficult terrain. It takes 5 (1d10) force damage if it ends its turn inside an object."
+      },
+      {
+        "name": "Sunlight Sensitivity",
+        "detail": "While in sunlight, the wraith has disadvantage on attack rolls, as well as on Wisdom (Perception) checks that rely on sight."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/50/1000/1000/636252724191790008.jpeg"
+  },
+  {
+    "name": "Wyvern",
+    "meta": "Large dragon, unaligned",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/48/315/315/636252723695596000.jpeg"
+  },
+  {
+    "name": "Xorn",
+    "meta": "Medium elemental, neutral",
+    "traits": [
+      {
+        "name": "Earth Glide",
+        "detail": "The xorn can burrow through nonmagical, unworked earth and stone. While doing so, the xorn doesn't disturb the material it moves through."
+      },
+      {
+        "name": "Stone Camouflage",
+        "detail": "The xorn has advantage on Dexterity (Stealth) checks made to hide in rocky terrain."
+      },
+      {
+        "name": "Treasure Sense",
+        "detail": "The xorn can pinpoint, by scent, the location of precious metals and stones, such as coins and gems, within 60 feet of it."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/46/1000/1000/636252723241554579.jpeg"
+  },
+  {
+    "name": "Yeti",
+    "meta": "Large monstrosity, chaotic evil",
+    "traits": [
+      {
+        "name": "Fear of Fire",
+        "detail": "If the yeti takes fire damage, it has disadvantage on attack rolls and ability checks until the end of its next turn.\n"
+      },
+      {
+        "name": "Keen Smell",
+        "detail": "The yeti has advantage on Wisdom (Perception) checks that rely on smell.\n"
+      },
+      {
+        "name": "Snow Camouflage",
+        "detail": "The yeti has advantage on Dexterity (Stealth) checks made to hide in snowy terrain.\n"
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/8/662/1000/1000/636313413410825930.jpeg"
+  },
+  {
+    "name": "Young Black Dragon",
+    "meta": "Large dragon, chaotic evil",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The dragon can breathe air and water."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/70/1000/1000/636252732861675698.jpeg"
+  },
+  {
+    "name": "Young Blue Dragon",
+    "meta": "Large dragon, lawful evil",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/68/1000/1000/636252732434296782.jpeg"
+  },
+  {
+    "name": "Young Brass Dragon",
+    "meta": "Large dragon, chaotic good",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/66/1000/1000/636252731911060874.jpeg"
+  },
+  {
+    "name": "Young Bronze Dragon",
+    "meta": "Large dragon, lawful good",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The dragon can breathe air and water."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/64/315/315/636252731269768088.jpeg"
+  },
+  {
+    "name": "Young Copper Dragon",
+    "meta": "Large dragon, chaotic good",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/62/1000/1000/636252729761648292.jpeg"
+  },
+  {
+    "name": "Young Gold Dragon",
+    "meta": "Large dragon, lawful good",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The dragon can breathe air and water."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/60/1000/1000/636252729283446963.jpeg"
+  },
+  {
+    "name": "Young Green Dragon",
+    "meta": "Large dragon, lawful evil",
+    "traits": [
+      {
+        "name": "Amphibious",
+        "detail": "The dragon can breathe air and water."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/58/315/315/636252728834677623.jpeg"
+  },
+  {
+    "name": "Young Red Dragon",
+    "meta": "Large dragon, chaotic evil",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/399/315/315/636252784386259001.jpeg"
+  },
+  {
+    "name": "Young Silver Dragon",
+    "meta": "Large dragon, lawful good",
+    "traits": [],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/401/315/315/636252784740667730.jpeg"
+  },
+  {
+    "name": "Young White Dragon",
+    "meta": "Large dragon, chaotic evil",
+    "traits": [
+      {
+        "name": "Ice Walk",
+        "detail": "The dragon can move across and climb icy surfaces without needing to make an ability check. Additionally, difficult terrain composed of ice or snow doesn't cost it extra movement."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/403/1000/1000/636252785358767533.jpeg"
+  },
+  {
+    "name": "Zombie",
+    "meta": "Medium undead, neutral evil",
+    "traits": [
+      {
+        "name": "Undead Fortitude",
+        "detail": "If damage reduces the zombie to 0 hit points, it must make a Constitution saving throw with a DC of 5 + the damage taken, unless the damage is radiant or from a critical hit. On a success, the zombie drops to 1 hit point instead."
+      }
+    ],
+    "imageUrl": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/71/1000/1000/636252733510786769.jpeg"
+  }
+]

@@ -238,5 +238,25 @@
       "staminaRating": "",
       "recoveryRating": ""
     }
+  },
+  {
+    "name": "Foromeer",
+    "id": "00013",
+    "type": "Geological",
+    "planet": "Telypso",
+    "height": "52 in / 132 cm",
+    "weight": "44 lbs / 20 kg",
+    "description": "This creature has a metallic exoskeleton on its limbs, with long drill-like horns for arms. Thought to once be used for mineral excavation, its powerful horns can break through the strongest of material.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "",
+      "specialAttackRating": "high",
+      "standardDefenseRating": "",
+      "specialDefenseRating": "",
+      "speedRating": "",
+      "evasionRating": "high",
+      "staminaRating": "",
+      "recoveryRating": ""
+    }
   }
 ]

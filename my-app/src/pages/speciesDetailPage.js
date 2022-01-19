@@ -27,7 +27,6 @@ class SpeciesDetailPage extends React.Component {
         }
         let inboundId = this.props.id;
         let xal = map[inboundId];
-        console.log("found xal " + xal.name);
         this.setState({
             id: inboundId,
             xalian: xal

@@ -1178,7 +1178,7 @@ section {
 }
 
 /* .content-row {
-  max-width:
+  max-width:/
 } */
 
 .content-container {
@@ -1797,7 +1797,7 @@ article {
   margin: 5px;
 }
 
-.design-species-family-text {
+.design-species-genus-text {
   font-style: italic;
   color: rgba(128, 255, 177, 0.671);
 }
@@ -1813,4 +1813,19 @@ article {
   background-color: rgb(0, 0, 0);
   border-color: rgba(128, 255, 177, 0.671);
   box-shadow: 0px 0px 12px 4px rgb(0, 0, 0);
+}
+
+.scrollable-section {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 400px;
+}
+
+.search-bar {
+  width: 200px !important;
+}
+
+.monster-image {
+  height: auto;
+  max-width: 300px !important;
 }

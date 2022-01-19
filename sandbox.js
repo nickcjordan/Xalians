@@ -8,20 +8,57 @@ const csv = require("csv-parser");
 const tools = require("./src/tools.js");
 
 // module.exports = {
-    //     main: main
-    // };
-    
-    // addNewMoves();
-    
-    // printMoveStats();
-    
-    // printNumbers();
-    
-    // aggregateAnimalsFromFiles();
-    
-    
-    // getNamesFromAPI();
-    
+//     main: main
+// };
+
+// addNewMoves();
+
+// printMoveStats();
+
+// printNumbers();
+
+// aggregateAnimalsFromFiles();
+
+// getNamesFromAPI();
+
+cleanupMonsters();
+
+function cleanupMonsters() {
+  let monsters = JSON.parse(fs.readFileSync("src/json/designer/monsters.json", "utf8").toString());
+
+  var fixed = [];
+  monsters.forEach(monster => {
+    fixed.push({
+      name: monster.name,
+      meta: monster.meta,
+      traits: buildTraits(monster.Traits),
+      imageUrl: monster.img_url
+    });
+  });
+
+  fs.writeFileSync("src/json/designer/test_monsters.json", JSON.stringify(fixed, null, 2))
+}
+
+function buildTraits(originalTraits) {
+  var traits = [];
+  if (originalTraits) {
+    let split = originalTraits.split('<p><em><strong>');
+    split.forEach(rawTrait => {
+      if (rawTrait && rawTrait !== '') {
+        let splitTrait = rawTrait.split('</strong></em> ');
+        if (splitTrait && splitTrait.length > 1) {
+          let traitName = splitTrait[0].replace('.', '');
+          let traitDetail = splitTrait[1].replace(' </p>', '');
+          traits.push({
+            name: traitName,
+            detail: traitDetail
+          });
+        }
+      }
+    });
+  }
+  return traits;
+}
 
 function extractCommonName(node) {
   var returnVal = null;
@@ -37,26 +74,48 @@ function getNamesFromAPI() {
   const url = "https://randommer.io/api/Name?nameType=firstname&quantity=999";
 
   let promises = [];
-  for (i = 0; i < 25; i++) {
-    promises.push(axios.get(url, { headers: { "x-api-key": "c256e18c8c9546f4804861405f832851" } }));
+  for (i = 0; i < 100; i++) {
+    try {
+      promises.push(axios.get(url, { headers: { "x-api-key": "c256e18c8c9546f4804861405f832851" } }));
+      var seconds = 0.5;
+      var waitTill = new Date(new Date().getTime() + seconds * 1000);
+      while (waitTill > new Date()) {}
+      console.log(`done waiting :: count=${promises.length}`);
+    } catch(e) {
+      console.log(`error :: ${e.message}`);
+    }
   }
 
-  Promise.all(promises).then((responses) => {
-    const nameSet = new Set();
-    responses.forEach((response) => {
-      console.log(JSON.stringify(response.data, null, 2));
-      response.data.forEach((name) => {
-        nameSet.add(name);
+  const nameSet = new Set();
+  var exported = [];
+  try {
+    Promise.all(promises).then((responses) => {
+      responses.forEach((response) => {
+        // console.log(JSON.stringify(response.data, null, 2));
+        response.data.forEach((name) => {
+          nameSet.add(name);
+        });
       });
+
+      nameSet.forEach((name) => {
+        if (name.length > 2) {
+          exported.push(name);
+        }
+      });
+      exported.sort();
+      console.log(`exported ${exported.length} names`);
+      fs.writeFileSync("src/json/designer/test_new_name_ideas.json", JSON.stringify(exported, null, 2));
     });
-    var exported = [];
+  } catch (e) {
     nameSet.forEach((name) => {
-      exported.push(name);
+      if (name.length > 2) {
+        exported.push(name);
+      }
     });
     exported.sort();
     console.log(`exported ${exported.length} names`);
-    fs.writeFileSync("src/json/designer/new_name_ideas.json", JSON.stringify(exported, null, 2));
-  });
+    fs.writeFileSync("src/json/designer/test_new_name_ideas.json", JSON.stringify(exported, null, 2));
+  }
 }
 
 function aggregateAnimalsFromFiles() {

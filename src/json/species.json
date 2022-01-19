@@ -233,8 +233,68 @@
       "specialAttackRating": "high",
       "standardDefenseRating": "",
       "specialDefenseRating": "",
+      "speedRating": "high",
+      "evasionRating": "",
+      "staminaRating": "",
+      "recoveryRating": ""
+    }
+  },
+  {
+    "name": "Foromeer",
+    "id": "00013",
+    "type": "Geological",
+    "planet": "Telypso",
+    "height": "52 in / 132 cm",
+    "weight": "44 lbs / 20 kg",
+    "description": "This creature has a metallic exoskeleton on its limbs, with long drill-like horns for arms. Thought to once be used for mineral excavation, its powerful horns can break through the strongest of material.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "medium",
+      "specialAttackRating": "",
+      "standardDefenseRating": "",
+      "specialDefenseRating": "",
       "speedRating": "",
-      "evasionRating": "high",
+      "evasionRating": "",
+      "staminaRating": "",
+      "recoveryRating": "high"
+    }
+  },
+  {
+    "name": "Venemist",
+    "id": "00014",
+    "type": "Chemical",
+    "planet": "Drainov",
+    "height": "38 in / 96 cm",
+    "weight": "103 lbs / 46 kg",
+    "description": "The toxic mist expelled from a tube in its mouth helps to dissolve its prey. With only 2 teeth, this tactic is necessary for the creature to survive.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "",
+      "specialAttackRating": "medium",
+      "standardDefenseRating": "",
+      "specialDefenseRating": "",
+      "speedRating": "",
+      "evasionRating": "",
+      "staminaRating": "high",
+      "recoveryRating": ""
+    }
+  },
+  {
+    "name": "Kosanos",
+    "id": "00015",
+    "type": "Botanical",
+    "planet": "Floria",
+    "height": "77 in / 195 cm",
+    "weight": "420 lbs / 190 kg",
+    "description": "With a large blade at the end of its trunk, this simple yet powerful creature is thought to have been designed to clear the thick brush of Floria.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "",
+      "specialAttackRating": "low",
+      "standardDefenseRating": "",
+      "specialDefenseRating": "",
+      "speedRating": "low",
+      "evasionRating": "",
       "staminaRating": "",
       "recoveryRating": ""
     }
