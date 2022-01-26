@@ -17,7 +17,8 @@ function main() {
 function printXalian() {
     let x = xalianBuilder.buildXalian();
     let translated = translator.translateCharacterToPresentableType(x);
-    console.log("\n\n\traw:\n\n" + JSON.stringify(x, null, 2) + "\n\n\n\ttranslated:\n\n" + JSON.stringify(translated, null, 2));
+    // console.log("\n\n\traw:\n\n" + JSON.stringify(x, null, 2) + "\n\n\n\ttranslated:\n\n" + JSON.stringify(translated, null, 2));
+    console.log(JSON.stringify(translated, null, 2));
 }
 
 function runSummary() {

@@ -15,7 +15,7 @@ function getMove(character) {
     moveQualifiers = tools.shuffle(moveQualifiers);
     let m = new Move();
     let hasElement = tools.randomBool();
-    console.log(JSON.stringify(character, null, 2));
+    // console.log(JSON.stringify(character, null, 2));
     if (hasElement) {
         let selectedType = selectRandomElementTypeFromCharacter(character.elements);
         m.type = selectedType;

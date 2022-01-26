@@ -7,20 +7,23 @@ module.exports = {
 };
 
 function translateCharacterToPresentableType(xalian) {
-    let conditionedMoves = makeMovesPresentable(xalian);
-    let cleanedElements = makeElementsPresentable(xalian.elements);
     return {
+        "xalianId": xalian.xalianId,
+        "speciesId": xalian.species.id,
+        "createTimestamp": xalian.createTimestamp,
         "species": {
+          "id": xalian.species.id,
           "name": xalian.species.name,
-          "planet": xalian.planet,
+          "planet": xalian.species.planet,
           "description": xalian.species.description,
           "height": xalian.species.height,
-          "weight": xalian.species.weight
+          "weight": xalian.species.weight,
+          "generation": xalian.species.generation
         },
         "elements": makeElementsPresentable(xalian.elements),
         "healthPoints": xalian.healthPoints,
         "stats": xalian.stats,
-        "moves": conditionedMoves,
+        "moves": makeMovesPresentable(xalian),
         "meta": xalian.meta
       };
 }

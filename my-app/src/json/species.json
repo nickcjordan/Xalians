@@ -298,5 +298,25 @@
       "staminaRating": "",
       "recoveryRating": ""
     }
+  },
+  {
+    "name": "Imprit",
+    "id": "00016",
+    "type": "Fire",
+    "planet": "Magmuth",
+    "height": "34 in / 86 cm",
+    "weight": "92 lbs / 41 kg",
+    "description": "Imprits are demonic looking creatures, resembling flaming, horned monkeys backed by long tails with scythe-like tips. Imprits possess fire-retardant fur that protects their bodies from the flammable oils they secrete, allowing them to survive despite being in a state of constant immolation.  They are remarkably intelligent among other Xalians, having been designed in ancient times as natural tinkerers and let loose into the various lightless mining shafts of Magmuth, where they were left to their own devices to fix, maintain, and often jerry-rig the mining equipment sent deep into the earth by the Vallerii. Today, they are known for being entirely erratic, likely driven mad by the isolation of the deep tunnels in which they tinkered and toiled. When released from their claustrophobic confines and set loose on the surface, Imprits take ecstatic pleasure from using their tails to swing through the air from place to place and setting fires where they least belong.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "low",
+      "specialAttackRating": "",
+      "standardDefenseRating": "",
+      "specialDefenseRating": "",
+      "speedRating": "",
+      "evasionRating": "high",
+      "staminaRating": "",
+      "recoveryRating": ""
+    }
   }
 ]

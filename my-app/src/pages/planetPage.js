@@ -29,12 +29,7 @@ class PlanetPage extends React.Component {
         var list = [];
         for (var ind in planets) {
             const p = planets[ind];
-            list.push(<PlanetTable
-                name={p.name}
-                image={p.image}
-                planetImage={p.planetImage}
-                data={p.data}>
-            </PlanetTable>);
+            list.push(<PlanetTable planet={p}/>);
         }
         return list;
     }
@@ -47,7 +42,7 @@ class PlanetPage extends React.Component {
                 <XalianNavbar></XalianNavbar>
 
                 <Container className="content-container">
-                    <Row className="content-row">
+                    <Row className="">
 
                         <Col lg={10} className="template-col-wrapper">
                             <h1>Discovered Planets</h1>

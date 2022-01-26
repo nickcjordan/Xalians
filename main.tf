@@ -32,49 +32,22 @@ resource "aws_s3_bucket" "lambda_bucket" {
   force_destroy = true
 }
 
-
-
 # copy to s3 bucket
 
-data "archive_file" "lambda_generate_xalian" {
+data "archive_file" "lambda_zip" {
   type = "zip"
 
-  source_dir  = "${path.module}/src"
-  output_path = "${path.module}/generate_xalian_lambda.zip"
+  source_dir  = "../${path.root}/src"
+  output_path = "../${path.root}/lambda_zip.zip"
 }
 
-resource "aws_s3_bucket_object" "lambda_generate_xalian_object" {
+resource "aws_s3_bucket_object" "lambda_zip_s3_object" {
   bucket = aws_s3_bucket.lambda_bucket.id
 
-  key    = "generate_xalian_lambda.zip"
-  source = data.archive_file.lambda_generate_xalian.output_path
+  key    = "lambda_zip.zip"
+  source = data.archive_file.lambda_zip.output_path
 
-  etag = filemd5(data.archive_file.lambda_generate_xalian.output_path)
-}
-
-
-
-
-# lambda function and resources
-
-resource "aws_lambda_function" "lambda_function_generate_xalian" {
-  function_name = "GenerateXalian"
-
-  s3_bucket = aws_s3_bucket.lambda_bucket.id
-  s3_key    = aws_s3_bucket_object.lambda_generate_xalian_object.key
-
-  runtime = "nodejs12.x"
-  handler = "generateXalianLambda.handler"
-
-  source_code_hash = data.archive_file.lambda_generate_xalian.output_base64sha256
-
-  role = aws_iam_role.lambda_exec.arn
-}
-
-resource "aws_cloudwatch_log_group" "lambda_function_generate_xalian" {
-  name = "/aws/lambda/${aws_lambda_function.lambda_function_generate_xalian.function_name}"
-
-  retention_in_days = 30
+  etag = filemd5(data.archive_file.lambda_zip.output_path)
 }
 
 resource "aws_iam_role" "lambda_exec" {
@@ -158,35 +131,13 @@ resource "aws_apigatewayv2_stage" "test" {
   }
 }
 
-resource "aws_apigatewayv2_integration" "lambda_function_generate_xalian" {
-  api_id = aws_apigatewayv2_api.lambda.id
-
-  integration_uri    = aws_lambda_function.lambda_function_generate_xalian.invoke_arn
-  integration_type   = "AWS_PROXY"
-  integration_method = "POST"
-}
-
-resource "aws_apigatewayv2_route" "lambda_function_generate_xalian" {
-  api_id = aws_apigatewayv2_api.lambda.id
-
-  route_key = "GET /xalian"
-  target    = "integrations/${aws_apigatewayv2_integration.lambda_function_generate_xalian.id}"
-}
-
 resource "aws_cloudwatch_log_group" "api_gw" {
   name = "/aws/api_gw/${aws_apigatewayv2_api.lambda.name}"
 
   retention_in_days = 30
 }
 
-resource "aws_lambda_permission" "api_gw" {
-  statement_id  = "AllowExecutionFromAPIGateway"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.lambda_function_generate_xalian.function_name
-  principal     = "apigateway.amazonaws.com"
 
-  source_arn = "${aws_apigatewayv2_api.lambda.execution_arn}/*/*"
-}
 
 // reference the cert that is created already
 # Find a certificate issued by (not imported into) ACM
@@ -323,4 +274,36 @@ resource "aws_route53_record" "www-xalians-frontend" {
     zone_id = data.aws_cloudfront_distribution.distribution.hosted_zone_id
     evaluate_target_health = true
   }
+}
+
+
+
+
+###################
+#     database    #
+###################
+
+resource "aws_dynamodb_table" "xalian_table" {
+  name             = "XalianTable"
+  hash_key         = "speciesId"
+  range_key        = "xalianId"
+  billing_mode     = "PAY_PER_REQUEST"
+
+  attribute {
+    name = "speciesId"
+    type = "S"
+  }
+
+  attribute {
+    name = "xalianId"
+    type = "S"
+  }
+
+  // replica {
+  //   region_name = "us-east-2"
+  // }
+
+  // replica {
+  //   region_name = "us-west-2"
+  // }
 }
