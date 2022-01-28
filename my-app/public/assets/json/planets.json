@@ -11,7 +11,17 @@
             "Gravity": "1.25 x Earth",
             "Temperature Low": "65 °C / 149 °F",
             "Temperature High": "355 °C / 671 °F"
-        }
+        },
+        "history": [
+            "Magmuth is an inhospitable nightmare of boiling oceans of lava and molten rock pocked with obsidian islands and jagged spires of volcanic glass. The planet is locked in orbital resonance with a number of supermassive moons whose gravitational pulls physically stretch the world’s shape in and out, causing extreme friction in its mantle that stimulates extraordinary levels of volcanic activity. In fact, Magmuth is so volcanically active that its crust is constantly being reshaped with molten lava, completely renewing itself every fifty years. Furthermore, the planet’s complete lack of plate tectonics causes the bottled-up pressure in its interior to build up beneath its innumerable volcanoes overtime, causing them to periodically erupt in cataclysmic cycles that replace nearly all of the planet’s surface features at once. ",
+            "Magmuth orbits a red dwarf star, bringing hellish heat to the world’s surface. Its elliptical orbit means that whole regions can liquify into molten seas when the distance between Magmuth and its superheated star narrows. The resulting lava flows form into temporary islands due to rapid cooling as the planet swings further out into orbit. These islands are hot desiccated barrens consisting of hardened lava flows that have become little more than desolate expanses of obsidian and basalt filled with fields of ash and bubbling tar-pits. Over time, the islands become scarred with jagged chasms, shattered crags, sharp fissures, and charred, broken cliffs. Almost everything on Magmuth is covered in a thick layer of ash, and the cracks in the earth glow an eerie red from the magma that seeps up from the planet’s many deep and fiery crevasses.",
+            "Magmuth is an infernal world. The acrid air is thick with volcanic smoke, staining the sky crimson and lacing the atmosphere with sulfuric ash and pungent, toxic fumes.  Burning hot vapors jettison themselves from the ground. Geysers erupt unexpectedly, causing it to rain bouts of flame and molten rock. Rivers of fire flash across the wastes with little to no warning, pools of hot lava bubble to the surface overnight, and violent ash storms thunder across the world, sometimes triggering unrelenting firestorms so hot that they liquify entire sections of the planet and suck the oxygen from the atmosphere. Erratic volcanic eruptions create pyroclastic flows that barrel through the ashy mountains and obsidian spires, consuming everything in their path.",
+            "Given the innate hostility of the planet, one might think it would be best to leave Magmuth alone. However, the world is home to one of the richest natural resource reserves in the galaxy. Volcanic activity continually uncovers deposits of exotic ores and valuable minerals. The geysers that dot the planet’s surface spew forth all manner of high-octane gases used to fuel spacecraft and various reactor cores, and when the planet’s surface cools, the transient islands that form from the hardened lava are known to be replate with heavy metals. ",
+            "The invention of the Xalian Generators allowed the Vallerii to finally capitalize on Magmuth’s immense wealth. The planet came to be dominated by some of the most intensive natural resource operations in Vallerii history, fielded by Xalia’s most powerful corporations. These corporations designed all manner of Xalians to help extract the planet’s metals, minerals, and gases – creatures capable of adapting to Magmuth’s primeval conditions and bioengineered to survive in a world of heat, fire, lava, and ash. Under the labor of such creatures, the mineral laden islands that floated atop the planet’s molten surface became lucrative mining zones, transforming Magmuth into a goldmine of industry and unimaginable riches. Indeed, the Xalian population of Magmuth and the heavy metals obtained from their efforts quickly coincided with a manufacturing boom that fueled a golden age in the then rapidly growing Vallerii economy.",
+            "But all that glitters is not gold. The immense wealth that Magmuth brought to the Vallerii also brought immense friction. Like the planet itself, such heat and friction could only last for so long beneath the surface before it would erupt. Vying for control over ever larger shares of the planet’s natural resources, Magmuth’s corporations grew increasingly greedy and hostile toward one another. It began with aggressive business tactics, corporate espionage, and occasional sabotage, but soon these disputes escalated into open conflict. The Vallerii began using Xalian miners and forge-workers for combat, converting them into corporate raiders in the truest sense of the word. These “company wars” went on in limited fashion for decades until the Magmuth Massacre, when a neutral mining territory with a working population of over a hundred thousand Xalians was surprise attacked and raided for resources, its Xalian laborers slain to the last creature. This set off a worldwide Xalian revolution, with the planet devolving into anarchy as the laboring Xalians rebelled against their violent corporate overlords.",
+            "It could not have come at a worse time. The Magmuth Massacre occurred mere months before APEX would turn on the Vallerii race. With their most valuable world  collapsing under civil unrest, the Vallerii experienced shortages of nearly every raw material required to fuel the war effort, crippling their military industrial complex and allowing APEX to swiftly project its power across the galaxy in the early stages of the End Wars. To make matters worse, the Xalian population on Magmuth actively sided with APEX, their hostility toward the Vallerii having already been ignited from decades of warfare and centuries of violent labor suppression campaigns. As a result, Magmuth became an intensive battleground during the End War, known for being fought by one of the most fervent and aggressive of APEX’s Xalian armies. In fact, even when Source Code 606 disconnected APEX’s consciousness from Magmuth’s Xalian Generator, the Xalians on Magmuth continued to fight against the Vallerii and even launched raids against Vallerii-allied worlds, believing that they were liberating the indigenous Xalian populations from tyranny and oppression. To this day, Magmuthites are stereotyped by other Xalians as being the most aggressive, rebellious, and warlike of their kind. ",
+            "Magmuth’s Xalian population shed few tears for the death of the Vallerii at the hands of the Nemesis Plague, but old scars left over from the time of the Vallerii remain to this day. Internecine warfare wracks the Magmuthites, fueled by old blood feuds that arose from the company wars of long ago. Although the violence that plagues Magmuth is chaotic and horrid to behold, all of Xalia now looks to the planet with a collective sigh of relief – for if the Magmuthites were ever to abandon their old grudges and unite, they would certainly turn their warlike ways upon the galaxy, perhaps even launching a full-scale invasion of Valleron to capture its ever-valuable Mercurius Machine and the Scrambler Tokens which it produces. Until then, the Xalian population of Magmuth is replenished by those few Magmuthites who choose to test their mettle in Valleron’s arenas, winning the Scrambler Tokens necessary to bring home and continue their various blood feuds."
+        ]
     },
     {
         "name": "Poseidas",
@@ -25,7 +35,8 @@
             "Gravity": "1.7 x Earth",
             "Temperature Low": "5 °C / 41 °F",
             "Temperature High": "67 °C / 152.6 °F"
-        }
+        },
+        "history": []
     },
     {
         "name": "Grimedes",
@@ -33,13 +44,14 @@
         "planetImage": "assets/img/planets/gif/dark_planet_gif.gif",
         "data": {
             "Type": "Dark",
-            "Terrain": "Ice Canyons, Rocky Crystalline Mountains",
+            "Terrain": "Flat Land, Thick Stalky Undergrowth, Ominous Haze",
             "Size": "2.1 x Earth",
             "Radius": "8,313 miles / 13,379 km",
             "Gravity": "0.90 x Earth",
-            "Temperature Low": "-170 °C / -274 °F",
-            "Temperature High": "-78 °C / -108.4 °F"
-        }
+            "Temperature Low": "-6 °C / 21.2 °F",
+            "Temperature High": "93 °C / 199.4 °F"
+        },
+        "history": []
     },
     {
         "name": "Luminax",
@@ -53,7 +65,8 @@
             "Gravity": "1.17 x Earth",
             "Temperature Low": "24.5 °C / 76.1 °F",
             "Temperature High": "122 °C / 251.6 °F"
-        }
+        },
+        "history": []
     },
     {
         "name": "Floria",
@@ -67,7 +80,20 @@
             "Gravity": "0.80 x Earth",
             "Temperature Low": "-4 °C / 24.8 °F",
             "Temperature High": "40 °C / 104 °F"
-        }
+        },
+        "history": [
+            "For most of Vallerii history, the world of Floria was wholly uninteresting to all but the most esoteric of astronomers, who found the planet’s meteorological patterns to be an interesting example of the extreme conditions that could be found on exoplanets across the galaxy of Xalia.",
+            "Things have changed drastically since that time, but the original Floria was a world unique for its simplicity. The planet was mostly comprised of nothing but shallow oceans dotted with featureless continents of smooth rock. However, the planet had a thinly squeezed elliptical orbit which once per revolution would bring it extremely close to its star. The heat generated from such close proximity would cause Floria’s oceans to simultaneously vaporize, forming clouds so dense they blotted out the sun entirely before raining back down in a torrent of unimaginable magnitude and washing the entire world smooth with the force of its impact. ",
+            "For thousands of years, these freakish weather conditions prohibited the Vallerii from ever endeavoring to colonize the planet. Any attempt to do so would simply be deluged into oblivion within a year’s time. That was, until the invention of the Xalian Generator.",
+            "It was on Floria that the first tests in the bioengineering of Xalians ever took place. The idea at the time was that any of the innumerable possible mistakes that could be made in the then dangerously unknown scientific frontier of creating new life would simply be washed away in due time. It was under that guarantee that the Genesis Prototype, the first Xalian Generator, was constructed. But once it had been built, there was no going back.",
+            "The Genesis Prototype was just that, a prototype – untested and highly experimental. Being the first of its kind, the Vallerii had not yet learned how to calibrate a Xalian Generator’s various thresholds. Most importantly, they had not yet learned how to limit the rate at which it conducted synthesized biogenesis. When first activated on Floria, the Genesis Prototype went into overdrive, spewing forth not just the Xalians that its Vallerii scientists had carefully designed for testing purposes, but also all manner of organisms as it saw fit for habitation on Floria. An uncontrollable population boom erupted from the machine that sent the Valerii fleeing back into space. ",
+            "Realizing that this was exactly the kind of situation the planet of Floria had been selected for, the Vallerii scientists simply left. They would return in a year’s time after the oceans had vaporized and washed away their creations and begin anew. But when the Vallerii returned for the next cycle, the world of Floria had changed entirely. ",
+            "This was not a world that had been decimated by planetwide floods, of entire oceans rising into the air before being dumped over all of Floria in calamity. This was a world of verdant green, so thick no body of rock nor water could be identified from orbit, and the Vallerii scanners were picking up voluminous lifeforms on the planet’s surface.",
+            "When the Vallerii landed, they found that the entire world had been covered in marshy wetlands and abundant forests, teaming with plant-like Xalians. The Genesis Prototype had run at full capacity through the entire storm, pumping out life unabatedly – not just Xalians of every shape and size but the vegetation, fungi and jungles to support them in abundance. Most importantly, it had created the World Trees, towering plants who reached far into the sky, covering what seemed like the entire world in a sphere of massive interwoven branches so thick they could be used as roads and leaves so wide they doubled as landing pads. These World Trees were so large that each ones’ canopies covered the breadth of cities. Together, their thick canopies had shaded the underforests from the immense heat of Floria’s star while their deep roots drained the world of its water, preventing the annual deluge from ever occurring. The entirety of Floria’s oceans had been absorbed into the trunks of the World Trees, to be moderated and disbursed amongst the grand forests which had come to encompass the world as needed for the proliferation of life on a previously inhospitable planet. With its world fully populated and its safety secured, the Xalian Generator died down to a more regulated level of activity, as if its sensors could detect the stability it had created.  Almost unintentionally, the Vallerii had terraformed Floria.",
+            "After the construction of the galaxy’s Xalian Generators, Floria remained a research base for the Vallerii, who were ever-fascinated by the World Trees and the Xalians that lived amongst them. Furthermore, the dense underforests carried all manner of strange flora and fauna, many of them extremely useful for scientific pursuits in medicine, agriculture, and bioengineering. However, the planet was hostile to any attempt to establish military bases, urban population centers, or industrial zones. Any endeavor to do so was met with herds of crazed, stampeding, plant-like Xalians, freakish overgrowths of forest and jungle, and massive infestations of toxic fungi. It was almost as if the planet of Floria had come alive. Or perhaps the Xalian Generator itself had come to the conclusion that life on Floria would adapt best without the intrusive machinations of the Vallerii. As a result, Vallerii activity on the planet remained limited to small settlements, research labs, and exploration parties. Indeed, most scientists preferred to conduct their studies from orbit as much as possible. Despite its beauty, the dark underforests of Floria contained many perils.",
+            "Given its lack of infrastructure or civilization, Floria was not seen as a military target during the End Wars and was largely left alone by APEX. Although the planet remained under the loose control of the Vallerii, it was mostly overseen by a small and almost fraternal group of independent scientists and the corporations that funded them. Taking inspiration from the outcome of the original Genesis Prototype, many of these scientists and their proteges would go on to become the inventors of the Mercurius Machine which saved Xalian life from extinction at the hands of the Nemesis Plague.",
+            "In its isolation, Floria is one of the few planets which has not yet been wholly contaminated by the Nemesis Plague. Deep in the brush of the underforests and in the great boughs of the World Trees lie ancient Xalians whose memory harkens back to the days before the End Wars. Some say that there are even some Xalians on Floria that pre-date all other Xalians in the galaxy – creatures born from the first seeds of the Genesis Prototype. Whether true or not, one thing is certain, if Floria is to preserve the peace and abundance of its vast and untamed wilderness, its otherwise reclusive denizens will need to grow beyond their homeworld and reach for the stars in pursuit of the Scrambler Tokens which might protect their forests from the plague that is burning through the galaxy."
+        ]
     },
     {
         "name": "Zolton",
@@ -81,7 +107,8 @@
             "Gravity": "1.59 x Earth",
             "Temperature Low": "-71 °C / -95.8 °F",
             "Temperature High": "57 °C / 134.6 °F"
-        }
+        },
+        "history": []
     },
     {
         "name": "Phantiri",
@@ -95,7 +122,8 @@
             "Gravity": "1.65 x Earth",
             "Temperature Low": "-58 °C / -72.4 °F",
             "Temperature High": "53 °C / 127.4 °F"
-        }
+        },
+        "history": []
     },
     {
         "name": "Stonera",
@@ -109,7 +137,8 @@
             "Gravity": "0.74 x Earth",
             "Temperature Low": "-28 °C / -18.4 °F",
             "Temperature High": "34 °C / 93.2 °F"
-        }
+        },
+        "history": []
     },
     {
         "name": "Drainov",
@@ -123,7 +152,18 @@
             "Gravity": "0.94 x Earth",
             "Temperature Low": "-24 °C / -11.2 °F",
             "Temperature High": "43 °C / 109.4 °F"
-        }
+        },
+        "history": [
+            "Long ago, Drainov was an idyllic garden planet, situated perfectly in the habitable zone of its star. Drainov was the first planet to be identified for colonization by the Vallerii due to its remarkable similarity to their home world. Having been settled long before the sterilizing effects of their Tachyon Drive Cores had taken effect, Vallerii civilization flourished for thousands of years in the lush and compatible environment of Drainov, at one point making it the most populous planet in Xalia. ",
+            "However, history is prone to repeating itself on any world, and Drainov was certainly no exception. As the Vallerii continued to expand and reach further and further into Xalia, Drainov became the industrial powerbase beating at the heart of their colonization efforts. Overpopulation and rapid industrialization turned the once beautiful world into a massive, sprawling factoryscape mired by smog and other industrial pollutants. Poisons choked the air, chemicals seeped into the waterways, and the depths of Drainov’s undercity became saturated in toxic waste.  Change on Drainov had always meant ramming against the near-unbreakable wall that was the commercial and industrial might of Drainov’s largest corporations, but pro-environment revolutionaries who had been waging a guerilla war in the undercity were close to achieving a sweeping round of environmental reform when calamity struck. ",
+            "Aggressive cost cutting efforts at the Carbide-1 Factoryscape led to a catastrophic electrical fire culminating in a plant-wide meltdown. The conflagration at Carbide-1 set off a chain reaction along the entire feedstock system that vented hazardous chemicals across the grid and overloaded the containment structures of plants and refineries across the world. Within the first hour of what would come to be known as the Drainov Disaster, two million Vallerii had died from exposure to various toxins. By the end of the day, billions of metric tons of poisonous gas had been released into Drainov’s atmosphere at once in what was quickly determined to be a planet-killing event. Rapid evacuation efforts were put in place to move the Vallerii off-world, but by the time the fleets had arrived, the death toll had already climbed into the hundreds of millions.",
+            "In the centuries to come, the situation on Drainov would only grow more dire. The planet was entirely devoid of intelligent life. Saturated under toxic plumes of thick green smoke, various abandoned processing facilities and chemical plants continued to chug along on automated systems, but very few safety measures had been activated due to the haste of the evacuation efforts. Orbital monitoring stations continued to detect annual meltdowns, explosions, and leaks at unprecedented levels, and at least three events equal in proportion to the Drainov Disaster have been measured since, turning the entire planet into a desolated hellscape of urban decay melting into acid swamps and blanketed in a miasma of toxic smog. ",
+            "Having been the industrial core of the Vallerii civilization, Drainov remained at the crux of interstellar trade routes, but the Vallerii had determined the planet would never recover to a usable state. As such, it quickly became a dumping ground for various corporations, who began depositing vast sums of starship and planetary waste into Drainov’s orbit. To this day, it is not uncommon for it to rain burning refuse, industrial waste, and hazardous materials on Drainov, or for entire derelict starships to fall from the sky, only to be dissolved in the acidic swamps that mire the surface.  ",
+            "Drainov was one of the first planets to be selected for the installment of a Xalian Generator in order to demonstrate the momentousness of the technology. The planet was not only a ghoulish nightmare of a place seemingly incapable of harboring life, but it was viewed as a symbol of the vibrant and productive past that the Vallerii had lost during the Age of Unbirth. Reviving life on Drainov would therefore not only be a great achievement of science, but a historic moment worthy of gathering the attention of the masses. Although nothing could be done for the planet’s poisonous and chemical-ridden environment, Drainov’s Xalian Generator was able to miraculously bioengineer new forms of life capable of surviving within the planet’s hostile wastelands. The Xalians on Drainov quickly adapted to not only the smog and industrial waste common to the world but also to its bubbling acid swamps, steaming corrosive rain, asphyxiating fumes, slow-drifting clouds of neurotoxic gases, and virulent pathogens. The performance of the Xalian Generator on Drainov was so successful that it inspired other worlds to adopt the technology, but it had also given Drainov a new hope and the Vallerii a sense of redemption a millennium in the making.",
+            "During the beginning of the End Wars, the planet of Drainov was largely ignored by the Vallerii. Although it had a functioning Xalian Generator, the planet was so inhospitable to any organism that had not evolved on its surface that sending a manned mission to assume control of the Generator seemed like suicide. However, APEX was not bound by the limits of organic life. It quickly realized the value of a Xalian Generator situated in a toxic environment - a planetary defense mechanism that effortlessly guarded against Vallerii invasion. Indeed, for centuries Drainov would continue to pump out Xalians in service to APEX and its armies, generating horrid creatures that served as living chemical weapons capable of saturating the battlefield with all manner of acid, gas, and toxic sludge. As such, Drainov became the target of the some of the largest offensives by the Vallerii, who sought to seize control of its surrounding space and to bombard its Generator from orbit. Hundreds of battles were waged in the planet’s skies, raining ever more toxic debris to the surface. However, it wasn’t until Source Code 606 that APEX was finally dislodged from the planet.",
+            "From that point on, an eerie quiet dominated Drainov’s star system. The Vallerii set up a defensive perimeter designed to detect the presence of artificial intelligence to ensure that the planet could never be re-taken by APEX and left the otherwise deadly planet behind. The lack of any corporate or APEX presence left a power vacuum on the planet, and in the time since, Drainov came to be controlled by a loose conglomerate of Vallerii space pirates and interstellar crime syndicates. Taking advantage of the anarchic environment, these gas-masked rogues descended into Drainov’s swamps and ruins in hazmat suits to convert Drainov’s Xalian population by force and intimidation into a revenue stream for their criminal enterprises. Soon, Xalians were manning the once-abandoned factories, refineries, and chemical plants that remained dormant across Drainov’s surface, churning out all matter of valuable chemicals and synthetic substances to be taken into orbit and traded on the black market. The planet would remain a smugglers den and haven for the galactic criminal underground until the Nemesis Plague wiped every last Vallerii from its greasy surface. ",
+            "Today, the planet belongs to a new generation of Xalians who now not only have acid swamps and toxic gases to contend with, but a deadly plague that is spreading across the galaxy. Only the accumulation of more Scrambler Tokens will revive Drainov once more."
+        ]
     },
     {
         "name": "Saiphus",
@@ -134,24 +174,11 @@
             "Terrain": "Clusters of Rolling Plains, Canyons, Dense Fog",
             "Size": "1.63 x Earth",
             "Radius": "6,453 miles / 10,385 km",
-            "Gravity": "1.16 x Earth",
+            "Gravity": "0.36 x Earth",
             "Temperature Low": "-66 °C / -86.8 °F",
             "Temperature High": "58 °C / 136.4 °F"
-        }
-    },
-    {
-        "name": "Nitros",
-        "image": "assets/img/planets/landscape/explosive_landscape_planet.jpg",
-        "planetImage": "assets/img/planets/gif/explosive_planet_gif.gif",
-        "data": {
-            "Type": "Explosive",
-            "Terrain": "Desert, Combustible Gas Pockets, Smoky Atmosphere",
-            "Size": "3.43 x Earth",
-            "Radius": "13,579 miles / 21,853 km",
-            "Gravity": "0.97 x Earth",
-            "Temperature Low": "-63 °C / -81.4 °F",
-            "Temperature High": "117 °C / 242.6 °F"
-        }
+        },
+        "history": []
     },
     {
         "name": "Telypso",
@@ -165,6 +192,22 @@
             "Gravity": "0.90 x Earth",
             "Temperature Low": "7 °C / 44.6 °F",
             "Temperature High": "65 °C / 149 °F"
-        }
+        },
+        "history": []
+    },
+    {
+        "name": "Krystos",
+        "image": "assets/img/planets/landscape/ice_landscape_planet.jpg",
+        "planetImage": "assets/img/planets/gif/ice_planet_gif.gif",
+        "data": {
+            "Type": "Ice",
+            "Terrain": "Snow Covered Permafrost, Frozen Tundra, Ice Crystal Peaks",
+            "Size": "1.82 x Earth",
+            "Radius": "7,205 miles / 11,595 km",
+            "Gravity": "1.2 x Earth",
+            "Temperature Low": "-122 °C / -187.6 °F",
+            "Temperature High": "-10 °C / 14 °F"
+        },
+        "history": []
     }
 ]

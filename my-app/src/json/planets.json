@@ -44,12 +44,12 @@
         "planetImage": "assets/img/planets/gif/dark_planet_gif.gif",
         "data": {
             "Type": "Dark",
-            "Terrain": "Ice Canyons, Rocky Crystalline Mountains",
+            "Terrain": "Flat Land, Thick Stalky Undergrowth, Ominous Haze",
             "Size": "2.1 x Earth",
             "Radius": "8,313 miles / 13,379 km",
             "Gravity": "0.90 x Earth",
-            "Temperature Low": "-170 °C / -274 °F",
-            "Temperature High": "-78 °C / -108.4 °F"
+            "Temperature Low": "-6 °C / 21.2 °F",
+            "Temperature High": "93 °C / 199.4 °F"
         },
         "history": []
     },
@@ -174,24 +174,9 @@
             "Terrain": "Clusters of Rolling Plains, Canyons, Dense Fog",
             "Size": "1.63 x Earth",
             "Radius": "6,453 miles / 10,385 km",
-            "Gravity": "1.16 x Earth",
+            "Gravity": "0.36 x Earth",
             "Temperature Low": "-66 °C / -86.8 °F",
             "Temperature High": "58 °C / 136.4 °F"
-        },
-        "history": []
-    },
-    {
-        "name": "Nitros",
-        "image": "assets/img/planets/landscape/explosive_landscape_planet.jpg",
-        "planetImage": "assets/img/planets/gif/explosive_planet_gif.gif",
-        "data": {
-            "Type": "Explosive",
-            "Terrain": "Desert, Combustible Gas Pockets, Smoky Atmosphere",
-            "Size": "3.43 x Earth",
-            "Radius": "13,579 miles / 21,853 km",
-            "Gravity": "0.97 x Earth",
-            "Temperature Low": "-63 °C / -81.4 °F",
-            "Temperature High": "117 °C / 242.6 °F"
         },
         "history": []
     },
@@ -207,6 +192,36 @@
             "Gravity": "0.90 x Earth",
             "Temperature Low": "7 °C / 44.6 °F",
             "Temperature High": "65 °C / 149 °F"
+        },
+        "history": []
+    },
+    {
+        "name": "Krystos",
+        "image": "assets/img/planets/landscape/ice_landscape_planet.jpg",
+        "planetImage": "assets/img/planets/gif/ice_planet_gif.gif",
+        "data": {
+            "Type": "Ice",
+            "Terrain": "Snow Covered Permafrost, Frozen Tundra, Ice Crystal Peaks",
+            "Size": "1.82 x Earth",
+            "Radius": "7,205 miles / 11,595 km",
+            "Gravity": "1.2 x Earth",
+            "Temperature Low": "-122 °C / -187.6 °F",
+            "Temperature High": "-10 °C / 14 °F"
+        },
+        "history": []
+    },
+    {
+        "name": "Veridium",
+        "image": "assets/img/planets/landscape/metallic_landscape_planet.jpg",
+        "planetImage": "assets/img/planets/gif/metallic_planet_gif.gif",
+        "data": {
+            "Type": "Metallic",
+            "Terrain": "Ore Filled Soil, Mineral Plated Vegetation, Liquid Metal Rivers",
+            "Size": "2.38 x Earth",
+            "Radius": "9,422 miles / 15,163 km",
+            "Gravity": "1.83 x Earth",
+            "Temperature Low": "-34 °C / -29.2 °F",
+            "Temperature High": "36 °C / 96.8 °F"
         },
         "history": []
     }

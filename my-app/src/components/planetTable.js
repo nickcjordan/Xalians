@@ -40,7 +40,7 @@ class PlanetTable extends React.Component {
         return <React.Fragment>
         <Button className="planet-show-toggle-button" onClick={this.toggleShowHistory}>
           <div class="planet-history-wrapper">
-            <h2>{this.props.planet.name} History</h2>
+            <h2 class={this.props.planet.data.Type.toLowerCase() + "-text-color"}>{this.props.planet.name} History</h2>
             {this.getHistoryParagraphs(this.props.planet.history)}
             <i class="bi bi-chevron-up"></i>
           </div>
@@ -50,7 +50,7 @@ class PlanetTable extends React.Component {
       return <React.Fragment>
         <Button className="planet-show-toggle-button" onClick={this.toggleShowHistory}>
           <div class="planet-history-wrapper">
-            <h2>{this.props.planet.name} History</h2>
+            <h2 class={this.props.planet.data.Type.toLowerCase() + "-text-color"}>{this.props.planet.name} History</h2>
             <i class="bi bi-chevron-down"></i>
           </div>
         </Button>
@@ -68,7 +68,7 @@ class PlanetTable extends React.Component {
 
     return <React.Fragment>
 
-      <Container className="dark-section-div">
+      <Container className={"dark-section-div " + this.props.planet.data.Type.toLowerCase() + "-border-color"}>
 
         <Row className="planet-details-row vertically-center-contents">
           <Col sm={3} className="planet-details-row-col">
@@ -77,7 +77,7 @@ class PlanetTable extends React.Component {
           <Col sm={6} className="planet-description-col">
             <Row className="planet-title-row">
               <Col>
-                <h2>{this.props.planet.name}</h2>
+                <h2 class={this.props.planet.data.Type.toLowerCase() + "-text-color"}>{this.props.planet.name}</h2>
               </Col>
             </Row>
             <div class="planet-table">

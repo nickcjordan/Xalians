@@ -7,14 +7,14 @@
 }
 
 .air-color {
-    background-color: #cbe7fc;
+    background-color: #ffffff;
 }
 
 .electrical-color {
     background-color: #e2bd43;
 }
 
-.explosive-color {
+.geological-color {
     background-color: #714932;
 }
 
@@ -34,7 +34,7 @@
     background-color: #37477c;
 }
 
-.geological-color {
+.metallic-color {
     background-color: #6d6868;
 }
 
@@ -44,4 +44,129 @@
 
 .spectral-color {
     background-color: #6c4c8a;
+}
+
+.ice-color {
+    background-color: #74d9e0;
+}
+
+.sand-color {
+    background-color: #cc9e61;
+}
+
+
+/* text color */
+.fire-text-color {
+    color: #db6947;
+}
+
+.water-text-color {
+    color: #4b81a1;
+}
+
+.air-text-color {
+    color: #ffffff;
+}
+
+.electrical-text-color {
+    color: #e2bd43;
+}
+
+.geological-text-color {
+    color: #714932;
+}
+
+.botanical-text-color {
+    color: #2b6e30;
+}
+
+.chemical-text-color {
+    color: #7de682;
+}
+
+.light-text-color {
+    color: #FFFFAB;
+}
+
+.dark-text-color {
+    color: #37477c;
+}
+
+.metallic-text-color {
+    color: #6d6868;
+}
+
+.psychic-text-color {
+    color: #cc9bd3;
+}
+
+.spectral-text-color {
+    color: #6c4c8a;
+}
+
+.ice-text-color {
+    color: #74d9e0;
+}
+
+.sand-text-color {
+    color: #cc9e61;
+}
+
+
+
+/* border color */
+.fire-border-color {
+    border-color: #db6947;
+}
+
+.water-border-color {
+    border-color: #4b81a1;
+}
+
+.air-border-color {
+    border-color: #ffffff;
+}
+
+.electrical-border-color {
+    border-color: #e2bd43;
+}
+
+.geological-border-color {
+    border-color: #714932;
+}
+
+.botanical-border-color {
+    border-color: #2b6e30;
+}
+
+.chemical-border-color {
+    border-color: #7de682;
+}
+
+.light-border-color {
+    border-color: #FFFFAB;
+}
+
+.dark-border-color {
+    border-color: #37477c;
+}
+
+.metallic-border-color {
+    border-color: #6d6868;
+}
+
+.psychic-border-color {
+    border-color: #cc9bd3;
+}
+
+.spectral-border-color {
+    border-color: #6c4c8a;
+}
+
+.ice-border-color {
+    border-color: #74d9e0;
+}
+
+.sand-border-color {
+    border-color: #cc9e61;
 }
