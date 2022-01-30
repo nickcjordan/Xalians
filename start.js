@@ -1,8 +1,8 @@
-const ai = require('./src/ai.js');
+const ai = require('./lambda/src/ai.js');
 const fs = require('fs')
-const xalianBuilder = require('./src/xalianBuilder.js');
-const translator = require('./src/translator.js');
-const attackCalculator = require('./src/gameplay/attackCalculator.js');
+const xalianBuilder = require('./lambda/src/xalianBuilder.js');
+const translator = require('./lambda/src/translator.js');
+const attackCalculator = require('./lambda/src/gameplay/attackCalculator.js');
 
 // module.exports = {
 //     main: main

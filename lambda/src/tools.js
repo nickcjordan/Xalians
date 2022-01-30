@@ -49,10 +49,10 @@ function getObject(fileName) {
 
 function getJson(fileName) {
     try {
-        return getJsonFromFile("./json/" + fileName + ".json");
+        return getJsonFromFile("./src/json/" + fileName + ".json");
     } catch (err) {
         try {
-            return getJsonFromFile("./src/json/" + fileName + ".json");
+            return getJsonFromFile("./lambda/src/json/" + fileName + ".json");
         } catch (e) {
             console.error(err);
         }

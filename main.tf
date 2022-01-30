@@ -39,7 +39,7 @@ resource "aws_s3_bucket" "lambda_bucket" {
 data "archive_file" "lambda_generate_xalian" {
   type = "zip"
 
-  source_dir  = "${path.module}/src"
+  source_dir  = "${path.module}/lambda"
   output_path = "${path.module}/generate_xalian_lambda.zip"
 }
 
@@ -64,7 +64,7 @@ resource "aws_lambda_function" "lambda_function_generate_xalian" {
   s3_key    = aws_s3_bucket_object.lambda_generate_xalian_object.key
 
   runtime = "nodejs12.x"
-  handler = "generateXalianLambda.handler"
+  handler = "src/generateXalianLambda.handler"
 
   source_code_hash = data.archive_file.lambda_generate_xalian.output_base64sha256
 
@@ -307,23 +307,25 @@ EOF
 
 // route53 for frontend
 
-data "aws_cloudfront_distribution" "distribution" {
-  id = var.cloudfront_id
-}
 
-resource "aws_route53_record" "www-xalians-frontend" {
-  zone_id = data.aws_route53_zone.xalian_zone.zone_id
-  name    = "www.xalians.com"
-  type    = "A"
+// STILL NEED THIS IT IS JUST ALREADY CREATED
+// data "aws_cloudfront_distribution" "distribution" {
+//   id = var.cloudfront_id
+// }
 
-  alias {
-    name = data.aws_cloudfront_distribution.distribution.domain_name
-    // name = aws_s3_bucket.react_bucket.website_domain
-    // zone_id = aws_s3_bucket.react_bucket.hosted_zone_id
-    zone_id = data.aws_cloudfront_distribution.distribution.hosted_zone_id
-    evaluate_target_health = true
-  }
-}
+// resource "aws_route53_record" "www-xalians-frontend" {
+//   zone_id = data.aws_route53_zone.xalian_zone.zone_id
+//   name    = "www.xalians.com"
+//   type    = "A"
+
+//   alias {
+//     name = data.aws_cloudfront_distribution.distribution.domain_name
+//     // name = aws_s3_bucket.react_bucket.website_domain
+//     // zone_id = aws_s3_bucket.react_bucket.hosted_zone_id
+//     zone_id = data.aws_cloudfront_distribution.distribution.hosted_zone_id
+//     evaluate_target_health = true
+//   }
+// }
 
 
 

@@ -260,43 +260,6 @@
     ]
   },
   {
-    "name": "Explosive",
-    "moveTypes": [
-      "nitro",
-      "quake",
-      "rocket",
-      "supersonic",
-      "subsonic",
-      "combustion",
-      "supernova",
-      "nuclear",
-      "atomic",
-      "energy",
-      "explosive"
-    ],
-    "effectiveness": {
-      "Electrical": 2,
-      "Air": 2,
-      "Light": 1,
-      "Botanical": 1,
-      "Geological": 2,
-      "Chemical": 1,
-      "Dark": 0.5,
-      "Explosive": 1,
-      "Psychic": 1,
-      "Spectral": 0.5,
-      "Fire": 0,
-      "Water": 0.5
-    },
-    "elements": [
-      "nitro",
-      "nuclear",
-      "atomic",
-      "energy",
-      "explosive"
-    ]
-  },
-  {
     "name": "Psychic",
     "moveTypes": [
       "illusion",
@@ -415,12 +378,10 @@
       "hydro",
       "aqua",
       "aquatic",
-      "ice",
       "hydraulic",
       "water",
       "splashing",
-      "spraying",
-      "frost"
+      "spraying"
     ],
     "effectiveness": {
       "Electrical": 0,
@@ -439,9 +400,78 @@
     "elements": [
       "hydro",
       "aqua",
+      "water"
+    ]
+  },
+  {
+    "name": "Ice",
+    "moveTypes": [
       "ice",
-      "water",
       "frost"
+    ],
+    "effectiveness": {
+      "Electrical": 0,
+      "Air": 1,
+      "Light": 1,
+      "Botanical": 0.5,
+      "Geological": 2,
+      "Chemical": 0.5,
+      "Dark": 1,
+      "Explosive": 2,
+      "Psychic": 1,
+      "Spectral": 0.5,
+      "Fire": 2,
+      "Water": 1
+    },
+    "elements": [
+      "ice",
+      "frost"
+    ]
+  },
+  {
+    "name": "Metallic",
+    "moveTypes": [
+      "metal"
+    ],
+    "effectiveness": {
+      "Electrical": 0,
+      "Air": 1,
+      "Light": 1,
+      "Botanical": 0.5,
+      "Geological": 2,
+      "Chemical": 0.5,
+      "Dark": 1,
+      "Explosive": 2,
+      "Psychic": 1,
+      "Spectral": 0.5,
+      "Fire": 2,
+      "Water": 1
+    },
+    "elements": [
+      "metal"
+    ]
+  },
+  {
+    "name": "Sand",
+    "moveTypes": [
+      "sand"
+    ],
+    "effectiveness": {
+      "Electrical": 0,
+      "Air": 1,
+      "Light": 1,
+      "Botanical": 0.5,
+      "Geological": 2,
+      "Chemical": 0.5,
+      "Dark": 1,
+      "Explosive": 2,
+      "Psychic": 1,
+      "Spectral": 0.5,
+      "Fire": 2,
+      "Water": 1
+    },
+    "elements": [
+      "sand"
     ]
   }
 ]
