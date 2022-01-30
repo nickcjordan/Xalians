@@ -173,7 +173,7 @@
       "specialAttackRating": "high",
       "standardDefenseRating": "",
       "specialDefenseRating": "",
-      "speedRating": "high",
+      "speedRating": "low",
       "evasionRating": "",
       "staminaRating": "",
       "recoveryRating": ""
@@ -202,8 +202,8 @@
   {
     "name": "Codazzo",
     "id": "00011",
-    "type": "Explosive",
-    "planet": "Nitros",
+    "type": "Geological",
+    "planet": "Stonera",
     "height": "18 in / 46 cm",
     "weight": "36 lbs / 16 kg",
     "description": "This creature digs its body underground when spooked, exposing only its tail made of explosive barbs. If provoked, it won't hesitate to fire off a few projectiles, as its regenerative power can quickly grow more.",
@@ -242,8 +242,8 @@
   {
     "name": "Foromeer",
     "id": "00013",
-    "type": "Geological",
-    "planet": "Telypso",
+    "type": "Metallic",
+    "planet": "Veridium",
     "height": "52 in / 132 cm",
     "weight": "44 lbs / 20 kg",
     "description": "This creature has a metallic exoskeleton on its limbs, with long drill-like horns for arms. Thought to once be used for mineral excavation, its powerful horns can break through the strongest of material.",
