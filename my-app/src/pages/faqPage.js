@@ -34,25 +34,25 @@ class ProjectPage extends React.Component {
                                 <ListGroup.Item className="question-section">
                                     <h2>How do I use my Xalian NFT?</h2>
                                     <p>
-                                        When you log into the Xalians Game website, all Xalian NFTs in your wallet will be available for you to play with. You will be able to buy, sell, and trade Xalian NFTs on the open market, and mint them directly on our website.
+                                        When you log into the Xalians Game website, all Xalian NFTs in your wallet will be available for you to play with in Xalians Game. You will be able to buy, sell, and trade Xalian NFTs on the open market, and mint them directly on our website.
                                     </p>
                                 </ListGroup.Item>
-                                {/* <ListGroup.Item className="question-section">
+                                <ListGroup.Item className="question-section">
                                     <h2>Who designs the Xalians?</h2>
                                     <h4>You!</h4>
                                     <p>
-                                        Our team will design a small (Generation 0) batch of Xalians that will be used as samples in the early stages of the project, but from Generation 1 on, the community will design, submit, and select which Xalians make it into each new generation. 
+                                        Our team will design Generation 0, a small batch of Xalians that will be used as samples in the early stages of the project. However, starting with Generation 1, the community will design, submit, and select which Xalians make it into each new generation. 
                                     </p>
-                                </ListGroup.Item> */}
+                                </ListGroup.Item>
                                 
                                 <ListGroup.Item className="question-section">
-                                    <h2>Why make it an NFT? Isn't an NFT just a picture?</h2>
+                                    <h2>Isn't an NFT just a picture?</h2>
                                     <p>
-                                        Without getting too technical, an NFT is essentially just a set of data. Often times this data can describe an image, but it does not have to! Since the community will be the ones designing and selecting each new type of Xalian, we want these NFTs to be thought of from a conceptual point of view. 
+                                        A "non-fungible token" is simply a unique unit of data stored on a blockchain. Often times this data can describe an image, but it does not have to! 
                                         <br></br><br></br>
-                                        The data in the NFT you own will contain all the details about the creature itself, incuding some descriptors that will help you imagine what the creature will look like. In the beginning, the Xalians Game may not use all of the data points in battle, but the Xalian NFTs are more than just pieces in the Xalians Game! 
+                                        The data in the Xalian NFT you own will contain all of the details about the creature itself, incuding some general descriptors that will help you imagine what the creature will look like. In the beginning, the Xalians Game may not use all of the data points in battle, but the Xalian NFTs are more than just pieces in the Xalians Game! 
                                         <br></br><br></br>
-                                        The Xalians website will have one representation of what the creature could look like based on the data in the NFT, but the idea is that we want to create the NFTs in a way that will be reusabe across all types of future projects!
+                                        The Xalians website will have one representation of what the creature could look like based on the data in the NFT, but the idea is that we want to create the NFTs in a way that will be reusable across all types of future projects.
                                     </p>
                                 </ListGroup.Item>
 

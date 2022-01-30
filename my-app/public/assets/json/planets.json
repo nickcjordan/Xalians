@@ -59,7 +59,7 @@
         "planetImage": "assets/img/planets/gif/light_planet_gif.gif",
         "data": {
             "Type": "Light",
-            "Terrain": "Smooth Sandy Deserts, Rocky Plateus, Scarce Oases",
+            "Terrain": "Patchy Grassland, Short Scattered Vegetation",
             "Size": "0.84 x Earth",
             "Radius": "3,325 miles / 5,352 km",
             "Gravity": "1.17 x Earth",
@@ -131,7 +131,7 @@
         "planetImage": "assets/img/planets/gif/geological_planet_gif.gif",
         "data": {
             "Type": "Geological",
-            "Terrain": "Rough, Rocky Landscape, Craters, Snowcapped Mountains",
+            "Terrain": "Deep Canyons, Rocky Craters, Gray Skies",
             "Size": "8.78 x Earth",
             "Radius": "34,758 miles / 55,937 km",
             "Gravity": "0.74 x Earth",
@@ -207,6 +207,36 @@
             "Gravity": "1.2 x Earth",
             "Temperature Low": "-122 °C / -187.6 °F",
             "Temperature High": "-10 °C / 14 °F"
+        },
+        "history": []
+    },
+    {
+        "name": "Veridium",
+        "image": "assets/img/planets/landscape/metallic_landscape_planet.jpg",
+        "planetImage": "assets/img/planets/gif/metallic_planet_gif.gif",
+        "data": {
+            "Type": "Metallic",
+            "Terrain": "Ore Filled Soil, Mineral Plated Vegetation, Liquid Metal Rivers",
+            "Size": "2.38 x Earth",
+            "Radius": "9,422 miles / 15,163 km",
+            "Gravity": "1.83 x Earth",
+            "Temperature Low": "-34 °C / -29.2 °F",
+            "Temperature High": "36 °C / 96.8 °F"
+        },
+        "history": []
+    },
+    {
+        "name": "Endessa",
+        "image": "assets/img/planets/landscape/sand_landscape_planet.jpg",
+        "planetImage": "assets/img/planets/gif/sand_planet_gif.gif",
+        "data": {
+            "Type": "Sand",
+            "Terrain": "Rolling Sand Dunes, Dust Storms",
+            "Size": "8.23 x Earth",
+            "Radius": "32,581 miles / 52,433 km",
+            "Gravity": "0.70 x Earth",
+            "Temperature Low": "-50 °C / -58 °F",
+            "Temperature High": "173 °C / 343.4 °F"
         },
         "history": []
     }

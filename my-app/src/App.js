@@ -7,6 +7,7 @@ import PlanetPage from './pages/planetPage';
 import SpeciesPage from './pages/speciesPage';
 import SpeciesDetailPage from './pages/speciesDetailPage';
 import DesignerPage from './pages/designerPage';
+import GlossaryPage from './pages/glossaryPage';
 import React from "react";
 import XalianNavbar from './components/navbar';
 import Container from 'react-bootstrap/Container';
@@ -38,6 +39,7 @@ class App extends React.Component {
                 />
               <Route exact path="/planets"><PlanetPage /></Route>
               <Route exact path="/designer"><DesignerPage /></Route>
+              <Route exact path="/glossary"><GlossaryPage /></Route>
             </Switch>
           </div>
         </Router>
