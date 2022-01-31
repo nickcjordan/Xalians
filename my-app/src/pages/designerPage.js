@@ -248,16 +248,18 @@ class DesignerPage extends React.Component {
 
       var result = "";
       if (feet > 0) {
-        result = result + `${feet}ft ${remainderInches}in [${inches}in]`;
+        result = result + `${feet}ft ${remainderInches}in`;
       } else {
         result = result + `${inches}in`;
       }
 
       if (meters > 0) {
-        result = result + ` / ${meters}m ${remainderCentimeters}cm [${centimeters}cm]`;
+        result = result + ` / ${meters}m ${remainderCentimeters}cm`;
       } else {
         result = result + ` / ${centimeters}cm`;
       }
+
+      result = result + ` :: ${inches} in / ${centimeters} cm`;
 
       return result;
     }

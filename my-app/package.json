@@ -18,11 +18,11 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "cp -rf ../src/json public/assets && react-scripts start",
+    "start": "cp -rf ../lambda/src/json public/assets && react-scripts start",
     "build": "react-scripts build",
-    "build-deploy": "cp -rf ../src/json public/assets && react-scripts build && npm run build && aws s3 sync build s3://xalians.com",
+    "build-deploy": "cp -rf ../lambda/src/json public/assets && react-scripts build && npm run build && aws s3 sync build s3://xalians.com",
     "deploy": "npm run build && aws s3 sync build s3://xalians.com",
-    "copy-json": "cp -rf ../src/json src",
+    "copy-json": "cp -rf ../lambda/src/json src",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

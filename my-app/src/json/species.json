@@ -338,5 +338,25 @@
       "staminaRating": "medium",
       "recoveryRating": ""
     }
+  },
+  {
+    "name": "Akinza",
+    "id": "00018",
+    "type": "Ice",
+    "planet": "Krystos",
+    "height": "58 in / 147 cm",
+    "weight": "138 lbs / 62 kg",
+    "description": "This creature's incredible stealth and night vision allow it to sneak through the night with ease.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "",
+      "specialAttackRating": "",
+      "standardDefenseRating": "",
+      "specialDefenseRating": "",
+      "speedRating": "high",
+      "evasionRating": "high",
+      "staminaRating": "",
+      "recoveryRating": ""
+    }
   }
 ]
