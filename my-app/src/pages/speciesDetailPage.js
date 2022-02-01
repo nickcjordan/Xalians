@@ -11,7 +11,6 @@ import CharacterMoves from '../components/characterMove';
 import XalianNavbar from '../components/navbar';
 import species from '../json/species.json';
 import Table from 'react-bootstrap/Table';
-import ApexCharts from 'apexcharts';
 import CharacterStatRangeChart from '../components/characterStatRangeChart';
 
 class SpeciesDetailPage extends React.Component {

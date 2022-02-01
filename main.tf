@@ -51,12 +51,12 @@ resource "aws_iam_role_policy_attachment" "dynamodb_policy" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
 }
+#####                                               #####
 #########################################################
 
 #########################################################
 #####                COMMON LAMBDA                  #####
 #########################################################
-
 resource "random_pet" "lambda_bucket_name" {
   prefix = "chronic-labs"
   length = 4
@@ -82,7 +82,6 @@ resource "aws_s3_bucket_object" "lambda_bucket_object" {
   source = data.archive_file.lambda_zip_file.output_path
   etag   = filemd5(data.archive_file.lambda_zip_file.output_path)
 }
-
 #####                                               #####
 #########################################################
 
@@ -90,7 +89,6 @@ resource "aws_s3_bucket_object" "lambda_bucket_object" {
 #########################################################
 #####               API Gateway Common              #####
 #########################################################
-
 resource "aws_apigatewayv2_api" "lambda" {
   name          = "XalianAPIGateway"
   protocol_type = "HTTP"
@@ -150,7 +148,7 @@ resource "aws_cloudwatch_log_group" "api_gw" {
   name              = "/aws/api_gw/${aws_apigatewayv2_api.lambda.name}"
   retention_in_days = 7
 }
-
+#####                                               #####
 #########################################################
 
 
@@ -158,24 +156,6 @@ resource "aws_cloudwatch_log_group" "api_gw" {
 #####               LAMBDA INSTANCE                 #####
 ##              Generate Xalian Lambda                 ##
 #########################################################
-
-# lambda function
-// resource "aws_lambda_function" "lambda_function_generate_xalian" {
-//   function_name    = "GenerateXalian"
-//   s3_bucket        = aws_s3_bucket.lambda_bucket.id
-//   s3_key           = aws_s3_bucket_object.lambda_bucket_object.key
-//   runtime          = "nodejs12.x"
-//   handler          = "src/generateXalianLambda.handler"
-//   source_code_hash = data.archive_file.lambda_zip_file.output_base64sha256
-//   role             = aws_iam_role.lambda_exec.arn
-// }
-
-// # lambda function cloudwatch log group
-// resource "aws_cloudwatch_log_group" "lambda_function_generate_xalian" {
-//   name              = "/aws/lambda/${aws_lambda_function.lambda_function_generate_xalian.function_name}"
-//   retention_in_days = 7
-// }
-
 module "generate_xalian_lambda_module" {
   source = "./terraform/modules/lambda"
 
@@ -188,8 +168,8 @@ module "generate_xalian_lambda_module" {
   apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
   apigw_lambda_route_key          = "GET /xalian"
   base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type = "NONE"
 }
-
 #####                                               #####
 #########################################################
 
@@ -198,24 +178,6 @@ module "generate_xalian_lambda_module" {
 #####               LAMBDA INSTANCE                 #####
 ##            Table Create Xalian Lambda               ##
 #########################################################
-
-// # lambda function
-// resource "aws_lambda_function" "lambda_function_table_create_xalian" {
-//   function_name = "TableCreateXalian"
-//   s3_bucket = aws_s3_bucket.lambda_bucket.id
-//   s3_key    = aws_s3_bucket_object.lambda_bucket_object.key
-//   runtime = "nodejs12.x"
-//   handler = "src/database/xalianTableCRUDLambdas.createXalian"
-//   source_code_hash = data.archive_file.lambda_zip_file.output_base64sha256
-//   role = aws_iam_role.lambda_exec.arn
-// }
-
-// # lambda function cloudwatch log group
-// resource "aws_cloudwatch_log_group" "lambda_function_table_create_xalian_cloudwatch_group" {
-//   name = "/aws/lambda/${aws_lambda_function.lambda_function_table_create_xalian.function_name}"
-//   retention_in_days = 7
-// }
-
 module "table_create_xalian_lambda_module" {
   source = "./terraform/modules/lambda"
 
@@ -228,34 +190,16 @@ module "table_create_xalian_lambda_module" {
   apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
   apigw_lambda_route_key          = "POST /db/xalian"
   base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type = "AWS_IAM"
 }
-
 #####                                               #####
 #########################################################
+
 
 #########################################################
 #####               LAMBDA INSTANCE                 #####
 ##           Table Retrieve Xalian Lambda              ##
 #########################################################
-
-// # lambda function
-// resource "aws_lambda_function" "lambda_function_table_retrieve_xalian" {
-//   function_name    = "TableRetrieveXalian"
-//   s3_bucket        = aws_s3_bucket.lambda_bucket.id
-//   s3_key           = aws_s3_bucket_object.lambda_bucket_object.key
-//   runtime          = "nodejs12.x"
-//   handler          = "src/database/xalianTableCRUDLambdas.retrieveXalian"
-//   source_code_hash = data.archive_file.lambda_zip_file.output_base64sha256
-//   role             = aws_iam_role.lambda_exec.arn
-// }
-
-// # lambda function cloudwatch log group
-// resource "aws_cloudwatch_log_group" "lambda_function_table_retrieve_xalian_cloudwatch_group" {
-//   name              = "/aws/lambda/${aws_lambda_function.lambda_function_table_retrieve_xalian.function_name}"
-//   retention_in_days = 7
-// }
-
-
 module "table_retrieve_xalian_lambda_module" {
   source = "./terraform/modules/lambda"
 
@@ -268,52 +212,9 @@ module "table_retrieve_xalian_lambda_module" {
   iam_role_arn                    = aws_iam_role.lambda_exec.arn
   apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
   base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type = "AWS_IAM"
 }
-
 #####                                               #####
-#########################################################
-
-
-
-
-
-
-
-
-
-
-
-#########################################################
-#####   API Gateway Integration :: GenerateXalian   #####
-#########################################################
-
-// # integration from api gateway to lambda
-// resource "aws_apigatewayv2_integration" "lambda_generate_xalian_apigw_integration" {
-//   api_id = aws_apigatewayv2_api.lambda.id
-
-//   integration_uri    = aws_lambda_function.lambda_function_generate_xalian.invoke_arn
-//   integration_type   = "AWS_PROXY"
-//   integration_method = "POST"
-// }
-
-// # route from api gateway to lambda
-// resource "aws_apigatewayv2_route" "lambda_function_generate_xalian_route" {
-//   api_id = aws_apigatewayv2_api.lambda.id
-
-//   route_key = "GET /xalian"
-//   target    = "integrations/${aws_apigatewayv2_integration.lambda_generate_xalian_apigw_integration.id}"
-// }
-
-// # permission from api gateway to lambda
-// resource "aws_lambda_permission" "api_gw" {
-//   statement_id  = "AllowExecutionFromAPIGateway"
-//   action        = "lambda:InvokeFunction"
-//   function_name = aws_lambda_function.lambda_function_generate_xalian.function_name
-//   principal     = "apigateway.amazonaws.com"
-
-//   source_arn = "${aws_apigatewayv2_api.lambda.execution_arn}/*/*"
-// }
-
 #########################################################
 
 

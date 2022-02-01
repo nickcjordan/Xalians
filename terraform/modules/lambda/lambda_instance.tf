@@ -4,32 +4,32 @@
 
 variable "function_name" {
   description = "name of lambda function to be created"
-  type = string
+  type        = string
 }
 
 variable "lambda_bucket_id" {
   description = "id of the lambda bucket holding the code"
-  type = string
+  type        = string
 }
 
 variable "lambda_bucket_object_key" {
   description = "key of the object with the lambda function"
-  type = string
+  type        = string
 }
 
 variable "lambda_handler_path" {
   description = "file path of lambda handler for function"
-  type = string
+  type        = string
 }
 
 variable "lambda_archive_file_output_hash" {
   description = "output_base64sha256 of lambda file zip"
-  type = string
+  type        = string
 }
 
 variable "iam_role_arn" {
   description = "arn of iam role for lambda to assume"
-  type = string
+  type        = string
 }
 
 
@@ -41,18 +41,18 @@ variable "iam_role_arn" {
 
 # lambda function
 resource "aws_lambda_function" "lambda_function" {
-  function_name = var.function_name
-  s3_bucket = var.lambda_bucket_id
-  s3_key    = var.lambda_bucket_object_key
-  runtime = "nodejs12.x"
-  handler = var.lambda_handler_path
+  function_name    = var.function_name
+  s3_bucket        = var.lambda_bucket_id
+  s3_key           = var.lambda_bucket_object_key
+  runtime          = "nodejs12.x"
+  handler          = var.lambda_handler_path
   source_code_hash = var.lambda_archive_file_output_hash
-  role = var.iam_role_arn
+  role             = var.iam_role_arn
 }
 
 # lambda function cloudwatch log group
 resource "aws_cloudwatch_log_group" "lambda_function_cloudwatch_group" {
-  name = "/aws/lambda/${aws_lambda_function.lambda_function.function_name}"
+  name              = "/aws/lambda/${aws_lambda_function.lambda_function.function_name}"
   retention_in_days = 7
 }
 
@@ -65,17 +65,22 @@ resource "aws_cloudwatch_log_group" "lambda_function_cloudwatch_group" {
 
 variable "apigw_lambda_id" {
   description = "id of base api gateway instance"
-  type = string
+  type        = string
 }
 
 variable "apigw_lambda_route_key" {
   description = "route key of path for api gateway that maps to the lambda function"
-  type = string
+  type        = string
 }
 
 variable "base_apigw_lambda_execution_arn" {
   description = "execution arn of base api gateway"
-  type = string
+  type        = string
+}
+
+variable "authorization_type" {
+  description = "type of auth on method"
+  type        = string
 }
 
 
@@ -94,10 +99,10 @@ resource "aws_apigatewayv2_integration" "lambda_apigw_integration" {
 
 # route from api gateway to lambda
 resource "aws_apigatewayv2_route" "lambda_function_route" {
-  api_id = var.apigw_lambda_id
-
-  route_key = var.apigw_lambda_route_key
-  target    = "integrations/${aws_apigatewayv2_integration.lambda_apigw_integration.id}"
+  api_id             = var.apigw_lambda_id
+  route_key          = var.apigw_lambda_route_key
+  authorization_type = var.authorization_type
+  target             = "integrations/${aws_apigatewayv2_integration.lambda_apigw_integration.id}"
 }
 
 # permission from api gateway to lambda

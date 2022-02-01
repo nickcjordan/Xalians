@@ -14,6 +14,16 @@ function main() {
     printXalian();
 }
 
+var AWS = require("aws-sdk");
+
+AWS.config.getCredentials(function(err) {
+  if (err) console.log(err.stack);
+  // credentials not loaded
+  else {
+    console.log("Access key:", JSON.stringify(AWS.config.credentials));
+  }
+});
+
 function printXalian() {
     let x = xalianBuilder.buildXalian();
     let translated = translator.translateCharacterToPresentableType(x);
