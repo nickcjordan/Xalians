@@ -8,6 +8,7 @@ import SpeciesPage from './pages/speciesPage';
 import SpeciesDetailPage from './pages/speciesDetailPage';
 import DesignerPage from './pages/designerPage';
 import GlossaryPage from './pages/glossaryPage';
+import GeneratorPage from './pages/generatorPage';
 import React from "react";
 import XalianNavbar from './components/navbar';
 import Container from 'react-bootstrap/Container';
@@ -31,6 +32,7 @@ class App extends React.Component {
             <Switch>
               <Route exact path="/"><Home /></Route>
               <Route exact path="/engine"><ExplorePage /></Route>
+              <Route exact path="/generator"><GeneratorPage /></Route>
               <Route exact path="/project"><ProjectPage /></Route>
               <Route exact path="/faq"><FAQPage /></Route>
               <Route exact path="/species"><SpeciesPage /></Route>

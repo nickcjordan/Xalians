@@ -61,7 +61,8 @@ class XalianNavbar extends React.Component {
                         </NavDropdown> */}
                     </Nav>
                     <Nav>
-                        <Nav.Link className="xalian-generator-button" href="/engine">Try the Xalian Generator</Nav.Link>
+                        {/* <Nav.Link className="xalian-generator-button" href="/engine">Try the Xalian Generator</Nav.Link> */}
+                        <Nav.Link className="xalian-generator-button" href="/generator">Try the Xalian Generator</Nav.Link>
                         {/* <Nav.Link eventKey={2} href="#memes">
                             Dank memes
                         </Nav.Link> */}
