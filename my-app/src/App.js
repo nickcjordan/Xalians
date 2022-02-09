@@ -9,9 +9,12 @@ import SpeciesDetailPage from './pages/speciesDetailPage';
 import DesignerPage from './pages/designerPage';
 import GlossaryPage from './pages/glossaryPage';
 import GeneratorPage from './pages/generatorPage';
+import UserAccountPage from './pages/userAccountPage';
 import React from "react";
 import XalianNavbar from './components/navbar';
 import Container from 'react-bootstrap/Container';
+
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -19,14 +22,19 @@ import {
   Link
 } from "react-router-dom";
 
+import Amplify from 'aws-amplify';
+import awsconfig from './aws-exports';
+
+Amplify.configure(awsconfig);
+
+
+
 class App extends React.Component {
 
   render() {
 
     return (
       <React.Fragment>
-
-
         <Router>
           <div>
             <Switch>
@@ -42,6 +50,7 @@ class App extends React.Component {
               <Route exact path="/planets"><PlanetPage /></Route>
               <Route exact path="/designer"><DesignerPage /></Route>
               <Route exact path="/glossary"><GlossaryPage /></Route>
+              <Route exact path="/login"><UserAccountPage /></Route>
             </Switch>
           </div>
         </Router>

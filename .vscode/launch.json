@@ -5,29 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Chrome",
-            "type": "chrome",
+            "name": "Watch Xalians",
             "request": "launch",
+            "type": "pwa-chrome",
             "url": "http://localhost:3000",
-            "webRoot": "${workspaceRoot}/src"
-        },
-        {
-            "type": "pwa-node",
-            "request": "launch",
-            "name": "Debug start.js",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "program": "${workspaceFolder}\\start.js"
-        },
-        {
-            "type": "pwa-node",
-            "request": "launch",
-            "name": "Debug sandbox.js",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "program": "${workspaceFolder}\\sandbox.js"
+            "webRoot": "${workspaceFolder}"
         }
     ]
 }

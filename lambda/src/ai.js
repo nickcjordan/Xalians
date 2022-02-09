@@ -243,19 +243,25 @@ function generateStatFromRange(xalian, statName) {
 
     var rand = tools.rand();
 
+    // get random scalar between 0 and 0.25
     var adjustedStatThresholdVariability = (rand) * constants.STAT_THRESHOLD_VARIABILITY;
+    // get difference in base adjused for randomness
     var newBase = base * adjustedStatThresholdVariability;
     var delta = Math.floor(newBase);
 
 
     var trackingOldDelta = Math.floor(newBase);
+    // decide 50/50 if it is a negative or positive value
     let neg = tools.randomBoolWeighted(constants.RANDOM_WEIGHT);
     if (neg) {
         delta = 0 - delta;
     }
+    // find result as the base adjusted for delta
     var result = base + delta;
+    // multiply random result by the low medium or high category value (0.25, 05, 0.75)
     var adjustedResult = Math.floor(result * statRangeFactor);
 
+    // adjusting any outliers
     if (adjustedResult > constants.STAT_POINT_MAX) {
         adjustedResult = constants.STAT_POINT_MAX;
     }
@@ -264,9 +270,10 @@ function generateStatFromRange(xalian, statName) {
     }
 
     // SAFE GUARD TO PREVENT SUPER MAX CHARACTER
+    // I dont think I am going to do this because it limits potentials, need to run numbers on how possible it is though
     // adjustedResult = Math.min(adjustedResult, totalStatPointsUnallocated);
 
-
+    // for stat collecting purposes to compare to what was possible given ranges 
     let potentialMax = Math.ceil(base * statRangeFactor);
     let percent = Math.floor((adjustedResult / potentialMax) * 100);
     totalStatPointsUnallocated -= adjustedResult;

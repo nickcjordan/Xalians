@@ -1,0 +1,33 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-amplifyxalians-dev-74008-authRole",
+      "UnauthRoleArn": "arn:aws:iam::174497891311:role/amplify-amplifyxalians-dev-74008-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::174497891311:role/amplify-amplifyxalians-dev-74008-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-amplifyxalians-dev-74008-deployment",
+      "UnauthRoleName": "amplify-amplifyxalians-dev-74008-unauthRole",
+      "StackName": "amplify-amplifyxalians-dev-74008",
+      "StackId": "arn:aws:cloudformation:us-east-1:174497891311:stack/amplify-amplifyxalians-dev-74008/a5608550-88e4-11ec-a9ef-0ab43f9d4bff",
+      "AmplifyAppId": "dtcf3i7nqj53l",
+      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-amplifyxalians-dev-74008-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
+    },
+    "categories": {
+      "auth": {
+        "xalianSignUpSignInResource": {},
+        "userPoolGroups": {}
+      },
+      "function": {
+        "xalianSignUpSignInResourcePostConfirmation": {
+          "GROUP": "xalianAuthenticatedUserGroup",
+          "deploymentBucketName": "amplify-amplifyxalians-dev-74008-deployment",
+          "s3Key": "amplify-builds/xalianSignUpSignInResourcePostConfirmation-704a7177704756543941-build.zip"
+        },
+        "AdminQueriesc0a581bf": {
+          "deploymentBucketName": "amplify-amplifyxalians-dev-74008-deployment",
+          "s3Key": "amplify-builds/AdminQueriesc0a581bf-33583957694845716f44-build.zip"
+        }
+      }
+    }
+  }
+}

@@ -70,10 +70,10 @@
     },
     {
         "name": "Floria",
-        "image": "assets/img/planets/landscape/botanical_landscape_planet.jpg",
-        "planetImage": "assets/img/planets/gif/botanical_planet_gif.gif",
+        "image": "assets/img/planets/landscape/plant_landscape_planet.jpg",
+        "planetImage": "assets/img/planets/gif/plant_planet_gif.gif",
         "data": {
-            "Type": "Botanical",
+            "Type": "Plant",
             "Terrain": "Abundant Forests, Marshy Wetlands",
             "Size": "8.17 x Earth",
             "Radius": "32,343 miles / 52,051 km",
@@ -112,10 +112,10 @@
     },
     {
         "name": "Phantiri",
-        "image": "assets/img/planets/landscape/spectral_landscape_planet.jpg",
-        "planetImage": "assets/img/planets/gif/spectral_planet_gif.gif",
+        "image": "assets/img/planets/landscape/undead_landscape_planet.jpg",
+        "planetImage": "assets/img/planets/gif/undead_planet_gif.gif",
         "data": {
-            "Type": "Spectral",
+            "Type": "Undead",
             "Terrain": "Rocky Cliffs, Shallow Oceans, Thick Haze",
             "Size": "7.92 x Earth",
             "Radius": "31,353 miles / 50,458 km",
@@ -127,10 +127,10 @@
     },
     {
         "name": "Stonera",
-        "image": "assets/img/planets/landscape/geological_landscape_planet.jpg",
-        "planetImage": "assets/img/planets/gif/geological_planet_gif.gif",
+        "image": "assets/img/planets/landscape/rock_landscape_planet.jpg",
+        "planetImage": "assets/img/planets/gif/rock_planet_gif.gif",
         "data": {
-            "Type": "Geological",
+            "Type": "rock",
             "Terrain": "Deep Canyons, Rocky Craters, Gray Skies",
             "Size": "8.78 x Earth",
             "Radius": "34,758 miles / 55,937 km",

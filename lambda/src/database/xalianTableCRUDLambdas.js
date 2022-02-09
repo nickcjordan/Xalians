@@ -51,10 +51,11 @@ function buildResponse(status, body) {
   return {
     statusCode: status,
     headers: {
-      "content-type": "application/json"
+      "content-type": "application/json",
+      "Access-Control-Allow-Origin": "*"
     },
-    // body: JSON.stringify(body)
-    body: body
+    body: JSON.stringify(body)
+    // body: body
   };
 }
 
@@ -62,7 +63,9 @@ const TABLE_NAME = 'XalianTable';
 
 module.exports.createXalian = (event, context, callback) => {
 
-  const xalian = event;
+  const xalian = JSON.parse(event.body);
+  console.log(`inbound event: ` + JSON.stringify(event, null, 2));
+  console.log(`inbound xalian: ` + JSON.stringify(xalian, null, 2));
 
   var params = {
     TableName: TABLE_NAME,
@@ -93,8 +96,9 @@ module.exports.retrieveXalian = (event, context, callback) => {
   
   // let xalianId = JSON.parse(event.body).xalianId;
   let xalianId = event.queryStringParameters.xalianId;
-  console.log('xalianId=' + xalianId)
+  console.log('inbound xalianId=' + xalianId);
   let extractedSpeciesId = xalianId.split('-')[0];
+  console.log('extracted speciesId=' + extractedSpeciesId);
   var params = {
     TableName: TABLE_NAME,
     Key: {
@@ -105,9 +109,13 @@ module.exports.retrieveXalian = (event, context, callback) => {
    
    dynamoDb.get(params, function(err, data) {
      if (err) {
+       console.log(`ERROR :: ${JSON.stringify(err, null, 2)}`);
       callback(buildError(err));
     } else {
-      callback(undefined, buildResponse(200, data.Item.attributes));
+      console.log(`SUCCESS :: data:\n${JSON.stringify(data.Item.attributes, null, 2)}`);
+      let response = buildResponse(200, data.Item.attributes);
+      console.log(`SUCCESS :: returning response:\n${JSON.stringify(response, null, 2)}`);
+      callback(undefined, response);
     }
    });
 };

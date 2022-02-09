@@ -1,0 +1,10 @@
+[
+  {
+    "groupName": "xalianAdminUserGroup",
+    "precedence": 1
+  },
+  {
+    "groupName": "xalianStandardUserGroup",
+    "precedence": 2
+  }
+]

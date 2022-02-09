@@ -14,11 +14,11 @@
     background-color: #e2bd43;
 }
 
-.geological-color {
+.rock-color {
     background-color: #714932;
 }
 
-.botanical-color {
+.plant-color {
     background-color: #2b6e30;
 }
 
@@ -42,7 +42,7 @@
     background-color: #cc9bd3;
 }
 
-.spectral-color {
+.undead-color {
     background-color: #6c4c8a;
 }
 
@@ -72,11 +72,11 @@
     color: #e2bd43;
 }
 
-.geological-text-color {
+.rock-text-color {
     color: #714932;
 }
 
-.botanical-text-color {
+.plant-text-color {
     color: #2b6e30;
 }
 
@@ -100,7 +100,7 @@
     color: #cc9bd3;
 }
 
-.spectral-text-color {
+.undead-text-color {
     color: #6c4c8a;
 }
 
@@ -131,11 +131,11 @@
     border-color: #e2bd43;
 }
 
-.geological-border-color {
+.rock-border-color {
     border-color: #714932;
 }
 
-.botanical-border-color {
+.plant-border-color {
     border-color: #2b6e30;
 }
 
@@ -159,7 +159,7 @@
     border-color: #cc9bd3;
 }
 
-.spectral-border-color {
+.undead-border-color {
     border-color: #6c4c8a;
 }
 

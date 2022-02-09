@@ -62,7 +62,7 @@
   {
     "name": "Xylum",
     "id": "00001",
-    "type": "Botanical",
+    "type": "Plant",
     "planet": "Floria",
     "height": "178 in / 452 cm",
     "weight": "743 lbs / 337 kg",
@@ -82,7 +82,7 @@
   {
     "name": "Smokat",
     "id": "00005",
-    "type": "Spectral",
+    "type": "Undead",
     "planet": "Phantiri",
     "height": "59 in / 150 cm",
     "weight": "66 lbs / 30 kg",
@@ -202,7 +202,7 @@
   {
     "name": "Codazzo",
     "id": "00011",
-    "type": "Geological",
+    "type": "Rock",
     "planet": "Stonera",
     "height": "18 in / 46 cm",
     "weight": "36 lbs / 16 kg",
@@ -282,7 +282,7 @@
   {
     "name": "Kosanos",
     "id": "00015",
-    "type": "Botanical",
+    "type": "Plant",
     "planet": "Floria",
     "height": "77 in / 195 cm",
     "weight": "420 lbs / 190 kg",
@@ -355,6 +355,26 @@
       "specialDefenseRating": "",
       "speedRating": "high",
       "evasionRating": "high",
+      "staminaRating": "",
+      "recoveryRating": ""
+    }
+  },
+  {
+    "name": "Avilily",
+    "id": "00019",
+    "type": "Plant",
+    "planet": "Floria",
+    "height": "11 in / 27 cm",
+    "weight": "14 lbs / 6 kg",
+    "description": "Carnivorous little green birds with bright, floral plumage, Avililies flit between Floria’s trees, camouflaging into the planet’s many flowery meadows as they travel. Their beaks resemble the closed pedals of a flower but when they open their mouths that 'flower' blooms. They attract insects with their sweet, syrupy smelling saliva and vibrant floral display, but their saliva contains a powerful sedative which paralyzes anything that it comes in contact with. In ancient times, Avililies were used by Vallerii scientists and explorers to trap insects, serving as mobile bug repellent on Florian ventures. Today, the sedative properties of their saliva have been enhanced for a far-more dangerous galaxy, and swarms of flittering Avilies protect the most sacred parts of Floria’s jungles, paralyzing and consuming all who dare to threaten the pristineness of their forests.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "",
+      "specialAttackRating": "",
+      "standardDefenseRating": "low",
+      "specialDefenseRating": "",
+      "speedRating": "high",
+      "evasionRating": "",
       "staminaRating": "",
       "recoveryRating": ""
     }

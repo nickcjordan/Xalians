@@ -60,7 +60,7 @@ class CharacterStatRangeChart extends React.Component {
                     >
                         <XAxis type="number" hide />
                         <YAxis type="category" dataKey="statLabel" stroke="#80ffb1" />
-                        <Tooltip />
+                        {/* <Tooltip /> */}
 
                         <Bar 
                         dataKey="valueNumber" 

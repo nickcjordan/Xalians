@@ -92,6 +92,13 @@ resource "aws_s3_bucket_object" "lambda_bucket_object" {
 resource "aws_apigatewayv2_api" "lambda" {
   name          = "XalianAPIGateway"
   protocol_type = "HTTP"
+  cors_configuration {
+    allow_origins = ["http://*", "https://*"]
+    allow_methods = ["*"]
+    allow_headers = ["*"]
+    allow_credentials = true
+    max_age       = 300
+  }
 }
 
 resource "aws_apigatewayv2_stage" "prod" {
@@ -168,7 +175,7 @@ module "generate_xalian_lambda_module" {
   apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
   apigw_lambda_route_key          = "GET /xalian"
   base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
-  authorization_type = "NONE"
+  authorization_type              = "NONE"
 }
 #####                                               #####
 #########################################################
@@ -190,7 +197,7 @@ module "table_create_xalian_lambda_module" {
   apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
   apigw_lambda_route_key          = "POST /db/xalian"
   base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
-  authorization_type = "AWS_IAM"
+  authorization_type              = "AWS_IAM"
 }
 #####                                               #####
 #########################################################
@@ -212,7 +219,7 @@ module "table_retrieve_xalian_lambda_module" {
   iam_role_arn                    = aws_iam_role.lambda_exec.arn
   apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
   base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
-  authorization_type = "AWS_IAM"
+  authorization_type              = "AWS_IAM"
 }
 #####                                               #####
 #########################################################

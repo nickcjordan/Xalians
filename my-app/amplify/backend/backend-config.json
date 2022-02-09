@@ -1,0 +1,99 @@
+{
+  "auth": {
+    "userPoolGroups": {
+      "service": "Cognito-UserPool-Groups",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [
+        {
+          "category": "auth",
+          "resourceName": "xalianSignUpSignInResource",
+          "attributes": [
+            "UserPoolId",
+            "AppClientIDWeb",
+            "AppClientID",
+            "IdentityPoolId"
+          ]
+        }
+      ]
+    },
+    "xalianSignUpSignInResource": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [
+        {
+          "category": "function",
+          "resourceName": "xalianSignUpSignInResourcePostConfirmation",
+          "triggerProvider": "Cognito",
+          "attributes": [
+            "Arn",
+            "Name"
+          ]
+        }
+      ],
+      "customAuth": false,
+      "frontendAuthConfig": {
+        "socialProviders": [],
+        "usernameAttributes": [],
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyMinLength": 8,
+          "passwordPolicyCharacters": []
+        },
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      }
+    }
+  },
+  "function": {
+    "xalianSignUpSignInResourcePostConfirmation": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "AdminQueriesc0a581bf": {
+      "service": "Lambda",
+      "providerPlugin": "awscloudformation",
+      "build": true,
+      "dependsOn": [
+        {
+          "category": "auth",
+          "resourceName": "xalianSignUpSignInResource",
+          "attributes": [
+            "UserPoolId"
+          ]
+        }
+      ]
+    }
+  },
+  "api": {
+    "AdminQueries": {
+      "service": "API Gateway",
+      "providerPlugin": "awscloudformation",
+      "authorizationType": "AMAZON_COGNITO_USER_POOLS",
+      "dependsOn": [
+        {
+          "category": "auth",
+          "resourceName": "xalianSignUpSignInResource",
+          "attributes": [
+            "UserPoolId"
+          ]
+        },
+        {
+          "category": "function",
+          "resourceName": "AdminQueriesc0a581bf",
+          "attributes": [
+            "Arn",
+            "Name"
+          ]
+        }
+      ]
+    }
+  }
+}

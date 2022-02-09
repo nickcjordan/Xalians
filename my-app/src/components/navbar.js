@@ -7,12 +7,20 @@ import Col from 'react-bootstrap/Col';
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
 import NavDropdown from 'react-bootstrap/NavDropdown'
+import {Authenticator} from '@aws-amplify/ui-react';
+import AuthButtonGroup from './auth/authButtonGroup'
+import { Hub } from 'aws-amplify';
+import { store } from 'state-pool';
 
+import * as authUtil from '../utils/authUtil';
+import { Auth } from 'aws-amplify';
 
 class XalianNavbar extends React.Component {
 
+    state = {}
 
     componentDidMount() {
+        // this.flipShowAuth = this.flipShowAuth.bind(this);
         var navbar = document.getElementById('navvy');
         document.addEventListener("DOMContentLoaded", function () {
             if (navbar) {
@@ -35,6 +43,19 @@ class XalianNavbar extends React.Component {
             }
         });
 
+        Auth.currentUserInfo().then(data => {
+            if (data && data.attributes) {
+                this.handleUserAuthAction(authUtil.buildAuthState(data.username, data.attributes.nickname, data.attributes.email, data.attributes.email_verified));
+            }
+        });
+
+    }
+
+    handleUserAuthAction = (user) => {
+        if (this.props.authAlertCallback) {
+            this.props.authAlertCallback(user);
+        }
+        this.setState({ loggedInUser: user});
     }
 
     render() {
@@ -50,8 +71,8 @@ class XalianNavbar extends React.Component {
                         <Nav.Link href="/planets">Planets</Nav.Link>
                         <Nav.Link href="/glossary">Glossary</Nav.Link>
                         <Nav.Link href="/faq">FAQ</Nav.Link>
+                        {/* <Nav.Link href="/login">Login</Nav.Link> */}
                         {/* <Nav.Link href="/designer">Designer</Nav.Link> */}
-                        {/* <Nav.Link href="#pricing">Pricing</Nav.Link> */}
                         {/* <NavDropdown title="Dropdown" id="collasible-nav-dropdown">
                             <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
                             <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
@@ -62,10 +83,13 @@ class XalianNavbar extends React.Component {
                     </Nav>
                     <Nav>
                         {/* <Nav.Link className="xalian-generator-button" href="/engine">Try the Xalian Generator</Nav.Link> */}
-                        <Nav.Link className="xalian-generator-button" href="/generator">Try the Xalian Generator</Nav.Link>
+                        <Nav.Link className="xalian-generator-button" href="/generator">{this.state.loggedInUser ? 'Generate a Xalian' : 'Try the Xalian Generator'}</Nav.Link>
                         {/* <Nav.Link eventKey={2} href="#memes">
                             Dank memes
                         </Nav.Link> */}
+                    </Nav>
+                    <Nav>
+                        <AuthButtonGroup authAlertCallback={this.handleUserAuthAction}></AuthButtonGroup>
                     </Nav>
                 </Navbar.Collapse>
             </Container>

@@ -98,9 +98,9 @@ class Home extends React.Component {
                             <Col md={true} className="text-center centered-div shadow-text text-wrapper" data-aos="fade-right">
                                 <h3>The Backstory</h3>
                                 <p>
-                                    For hundreds of years, the galaxy of Valleron was plagued with disastrous, interplanetary warfare.
-                                    The wars have long ended, but the destruction they caused has left few planets habitable.
-                                    As a result, most life forms across the galaxy have concentrated to the capitol planet, Xalia.
+                                    For hundreds of years, the galaxy of Xalia was plagued with disastrous, interplanetary warfare.
+                                    The wars have long ended, but the destruction they caused has left few planets habitable. 
+                                    From the Xalian Generators that were left behind, new life has begun to emerge.
                                 </p>
                             </Col>
                             <Col md={true} className="centered-div" data-aos="fade-left" data-aos-delay="10">
@@ -120,7 +120,7 @@ class Home extends React.Component {
                             <h3 className="section-title">The Galaxy of Xalia</h3>
                             <p>
                                 Xalia is home to a wide range of powerful, magical creatures originating from planets all across the galaxy.
-                                The planet is controlled by a powerful empire, ruled by the mad and tyrannous King Kozrak.
+                                The galaxy is ruled by a powerful empire, controlled by the mad and tyrannous King Kozrak.
                                 Recently, the king has announced plans for a worldwide tournament promising the winning faction enormous gold and riches.
                                 In order to compete in the king's tournament, factions must first prove to him they are worthy.
                                 Only the strongest factions will survive.
