@@ -209,5 +209,20 @@
             "Temperature High": "-10 °C / 14 °F"
         },
         "history": []
+    },
+    {
+        "name": "Veridium",
+        "image": "assets/img/planets/landscape/metallic_landscape_planet.jpg",
+        "planetImage": "assets/img/planets/gif/metallic_planet_gif.gif",
+        "data": {
+            "Type": "Metallic",
+            "Terrain": "Ore Filled Soil, Mineral Plated Vegetation, Liquid Metal Rivers",
+            "Size": "2.38 x Earth",
+            "Radius": "9,422 miles / 15,163 km",
+            "Gravity": "1.83 x Earth",
+            "Temperature Low": "-34 °C / -29.2 °F",
+            "Temperature High": "36 °C / 96.8 °F"
+        },
+        "history": []
     }
 ]
