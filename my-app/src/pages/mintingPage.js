@@ -1,11 +1,46 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import XalianNavbar from '../components/navbar';
 import ListGroup from 'react-bootstrap/ListGroup';
 import axios from 'axios';
+// import { Alert, Button, Card, Col, Input, List, Menu, Row } from "antd"; // use UI components from "react-bootstrap" instead of "antd"
+
+import Portis from "@portis/web3";
+import WalletConnectProvider from "@walletconnect/web3-provider";
+import "antd/dist/antd.css";
+import Authereum from "authereum";
+import {
+    useBalance,
+    useContractLoader,
+    useContractReader,
+    useGasPrice,
+    useOnBlock,
+    useUserProviderAndSigner,
+} from "eth-hooks";
+import { useExchangeEthPrice } from "eth-hooks/dapps/dex";
+import { useEventListener } from "eth-hooks/events/useEventListener";
+import Fortmatic from "fortmatic";
+// https://www.npmjs.com/package/ipfs-http-client
+// import { create } from "ipfs-http-client";
+import ReactJson from "react-json-view";
+import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
+//import Torus from "@toruslabs/torus-embed"
+import WalletLink from "walletlink";
+import Web3Modal from "web3modal";
+// import "./App.css";
+import { Account, Address, AddressInput, Contract, Faucet, GasGauge, Header, Ramp, ThemeSwitch } from "../components";
+import { INFURA_ID, NETWORK, NETWORKS } from "../constants";
+import { Transactor } from "./helpers";
+import { useContractConfig } from "./hooks";
+// import Hints from "./Hints";
+
+const { BufferList } = require("bl");
+const ipfsAPI = require("ipfs-http-client");
+const ipfs = ipfsAPI({ host: "ipfs.infura.io", port: "5001", protocol: "https" });
+
+const { ethers } = require("ethers");
 
 // import Web3Modal from "web3modal";
 // import WalletConnectProvider from "@walletconnect/web3-provider";
