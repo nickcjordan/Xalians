@@ -1847,3 +1847,28 @@ article {
   height: auto;
   max-width: 300px !important;
 }
+
+
+/* 
+*******************
+**    Glossary    **
+******************* 
+*/
+
+.glossary-wrapper {
+  padding-top: 25px;
+}
+
+.glossary-word-row {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.glossary-word-row h3 {
+  font-weight: bolder;
+  text-align: right;
+}
+
+.glossary-word-row h5 {
+  color: white;
+}
