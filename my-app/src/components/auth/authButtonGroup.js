@@ -87,6 +87,7 @@ class AuthButtonGroup extends React.Component {
 
     verifyEmailCallback = () => {
         this.setState({signInModalShow: true})
+        
     }
 
     handleSignOut = () => {
@@ -135,7 +136,7 @@ class AuthButtonGroup extends React.Component {
                 {this.state.loggedInUser &&
                     <React.Fragment>
                          <h5 className="navbar-user-name-wrapper vertically-center-contents centered-view">
-                            {this.state.loggedInUser.alias}
+                            {this.state.loggedInUser.username}
                         </h5>
                     </React.Fragment>
                 }

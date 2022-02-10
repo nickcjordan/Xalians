@@ -95,7 +95,7 @@ resource "aws_apigatewayv2_api" "lambda" {
   cors_configuration {
     allow_origins = ["http://*", "https://*"]
     allow_methods = ["*"]
-    allow_headers = ["*"]
+    allow_headers = ["host", "authorization", "x-amz-date", "X-Amz-Security-Token", "Content-Type"]
     allow_credentials = true
     max_age       = 300
   }
@@ -213,6 +213,48 @@ module "table_retrieve_xalian_lambda_module" {
   function_name                   = "TableRetrieveXalian"
   lambda_handler_path             = "src/database/xalianTableCRUDLambdas.retrieveXalian"
   apigw_lambda_route_key          = "GET /db/xalian"
+  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
+  lambda_bucket_object_key        = aws_s3_bucket_object.lambda_bucket_object.key
+  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
+  iam_role_arn                    = aws_iam_role.lambda_exec.arn
+  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
+  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type              = "AWS_IAM"
+}
+#####                                               #####
+#########################################################
+
+#########################################################
+#####               LAMBDA INSTANCE                 #####
+##             Table Retrieve User Lambda              ##
+#########################################################
+module "table_retrieve_xalian_user_lambda_module" {
+  source = "./terraform/modules/lambda"
+
+  function_name                   = "TableRetrieveXalianUser"
+  lambda_handler_path             = "src/database/userTableCRUDLambdas.retrieveXalianUser"
+  apigw_lambda_route_key          = "GET /db/user"
+  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
+  lambda_bucket_object_key        = aws_s3_bucket_object.lambda_bucket_object.key
+  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
+  iam_role_arn                    = aws_iam_role.lambda_exec.arn
+  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
+  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type              = "AWS_IAM"
+}
+#####                                               #####
+#########################################################
+
+#########################################################
+#####               LAMBDA INSTANCE                 #####
+##              Table Create User Lambda               ##
+#########################################################
+module "table_create_xalian_user_lambda_module" {
+  source = "./terraform/modules/lambda"
+
+  function_name                   = "TableCreateXalianUser"
+  lambda_handler_path             = "src/database/userTableCRUDLambdas.createXalianUser"
+  apigw_lambda_route_key          = "POST /db/user"
   lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
   lambda_bucket_object_key        = aws_s3_bucket_object.lambda_bucket_object.key
   lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256

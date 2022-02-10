@@ -193,7 +193,7 @@ class GeneratorPage extends React.Component {
 
     test = () => {
 
-        dbApi.callGetXalian().then(x => {
+        dbApi.callGetXalian(this.state.xalian.xalianId).then(x => {
             alert('WOOO!\n\n' + JSON.stringify(x, null, 2));
         }).catch(error => {
             alert('AHHH!!!!\n\n' + JSON.stringify(error, null, 2));

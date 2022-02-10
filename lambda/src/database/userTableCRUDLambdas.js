@@ -51,22 +51,25 @@ function buildResponse(status, body) {
   return {
     statusCode: status,
     headers: {
-      "content-type": "application/json"
+      "content-type": "application/json",
+      "Access-Control-Allow-Origin": "*"
     },
-    // body: JSON.stringify(body)
-    body: body
+    body: JSON.stringify(body)
+    // body: body
   };
 }
 
 const TABLE_NAME = 'XalianUsersTable';
 
-module.exports.createUser = (event, context, callback) => {
+module.exports.createXalianUser = (event, context, callback) => {
 
-  const user = event;
+  const user = JSON.parse(event.body);
+  console.log(`inbound event: ` + JSON.stringify(event, null, 2));
+  console.log(`inbound user: ` + JSON.stringify(user, null, 2));
 
   var params = {
     TableName: TABLE_NAME,
-    Item: bulidUserTableItem(xalian),
+    Item: bulidXalianUsersTableItem(xalian),
   };
 
   dynamoDb.put(params,
@@ -79,20 +82,20 @@ module.exports.createUser = (event, context, callback) => {
     });
 };
 
-function bulidUserTableItem(user) {
+function bulidXalianUsersTableItem(user) {
   return {
     userId: user.userId,
-    attributes: user.attributes
+    attributes: user
  }
 }
 
 
 
-module.exports.retrieveUser = (event, context, callback) => {
+module.exports.retrieveXalianUser = (event, context, callback) => {
   
   // let xalianId = JSON.parse(event.body).xalianId;
   let userId = event.queryStringParameters.userId;
-  console.log('userId=' + userId)
+  console.log('inbound userId=' + userId);
   var params = {
     TableName: TABLE_NAME,
     Key: {
@@ -102,9 +105,13 @@ module.exports.retrieveUser = (event, context, callback) => {
    
    dynamoDb.get(params, function(err, data) {
      if (err) {
+       console.log(`ERROR :: ${JSON.stringify(err, null, 2)}`);
       callback(buildError(err));
     } else {
-      callback(undefined, buildResponse(200, data.Item.attributes));
+      console.log(`SUCCESS :: data:\n${JSON.stringify(data.Item.attributes, null, 2)}`);
+      let response = buildResponse(200, data.Item.attributes);
+      console.log(`SUCCESS :: returning response:\n${JSON.stringify(response, null, 2)}`);
+      callback(undefined, response);
     }
    });
 };

@@ -23,6 +23,107 @@ async function signRequest(url, method, service, region, body, headers) {
    return Signer.sign(params, credentials, serviceInfo);
 }
 
+
+export const callCreateUser = (user) => {
+
+    const url = "https://api.xalians.com/prod/db/user";
+    const method = 'POST';
+
+    return new Promise((resolve) => {
+
+        try {
+            signRequest(url, method, "execute-api", 'us-east-1', user, { "content-type": "application/json" }).then(signedRequest => {
+
+                axios.defaults.withCredentials = true;
+                axios({
+                    method: 'post',
+                    url: signedRequest.url,
+                    headers: signedRequest.headers,
+                    data: signedRequest.data
+                })
+                    .then(response => {
+                        console.log('RESPONSE: ' + JSON.stringify(response));
+                        resolve(response.data);
+                    }).catch(e => {
+                        console.log('axios ERROR : ' + e);
+                    });
+
+            })
+            
+        } catch (e) {
+            console.log('caught ERROR : ' + e);
+        }
+
+        
+    });
+
+}
+
+export const callGetUser = (id) => {
+
+    const url = "https://api.xalians.com/prod/db/user?userId=" + id;
+    const method = 'GET';
+    axios.defaults.withCredentials = true;
+
+    return new Promise((resolve) => {
+
+        try {
+            signRequest(url, method, "execute-api", 'us-east-1').then(signedRequest => {
+                console.log("signed request:\n" + JSON.stringify(signedRequest, null, 2));
+                axios.get(signedRequest.url, { 
+                    headers: signedRequest.headers
+                })
+                    .then(response => {
+                        console.log('RESPONSE: ' + JSON.stringify(response));
+                        resolve(response.data);
+                    }).catch(e => {
+                        alert('BOOOOO \n\n' + 'axios GET ERROR : \n' + JSON.stringify(e, null, 2));
+                        console.log('axios GET ERROR : ' + e);
+                    });
+
+            })
+            
+        } catch (e) {
+            console.log('caught ERROR : ' + e);
+        }
+
+    });
+
+}
+
+// export const callUpdateUser = (id, val) => {
+
+//     const url = "https://api.xalians.com/prod/db/user?userId=" + id;
+//     const method = 'GET';
+//     axios.defaults.withCredentials = true;
+
+//     return new Promise((resolve) => {
+
+//         try {
+//             signRequest(url, method, "execute-api", 'us-east-1').then(signedRequest => {
+//                 console.log("signed request:\n" + JSON.stringify(signedRequest, null, 2));
+//                 axios.get(signedRequest.url, { 
+//                     headers: signedRequest.headers
+//                 })
+//                     .then(response => {
+//                         console.log('RESPONSE: ' + JSON.stringify(response));
+//                         resolve(response.data);
+//                     }).catch(e => {
+//                         alert('BOOOOO \n\n' + 'axios GET ERROR : \n' + JSON.stringify(e, null, 2));
+//                         console.log('axios GET ERROR : ' + e);
+//                     });
+
+//             })
+            
+//         } catch (e) {
+//             console.log('caught ERROR : ' + e);
+//         }
+
+//     });
+
+// }
+
+
 export const callCreateXalian = (xalian) => {
 
     const url = "https://api.xalians.com/prod/db/xalian";
