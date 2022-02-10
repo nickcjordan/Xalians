@@ -4,11 +4,11 @@
   "private": true,
   "dependencies": {
     "@aws-amplify/core": "^4.3.14",
-    "@aws-amplify/ui-react": "^2.2.1",
+    "@aws-amplify/ui-react": "^2.3.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
-    "aws-amplify": "^4.3.13",
+    "aws-amplify": "^4.3.14",
     "aws4": "^1.11.0",
     "axios": "^0.24.0",
     "bootstrap": "^5.1.3",
