@@ -318,5 +318,25 @@
       "staminaRating": "",
       "recoveryRating": ""
     }
+  },
+  {
+    "name": "Scalatto",
+    "id": "00017",
+    "type": "Sand",
+    "planet": "Endessa",
+    "height": "28 in / 71 cm",
+    "weight": "120 lbs / 54 kg",
+    "description": "Shielded by a scaly exoskeleton, this creature can roll into a ball to protect itself.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "",
+      "specialAttackRating": "",
+      "standardDefenseRating": "high",
+      "specialDefenseRating": "",
+      "speedRating": "",
+      "evasionRating": "",
+      "staminaRating": "medium",
+      "recoveryRating": ""
+    }
   }
 ]
