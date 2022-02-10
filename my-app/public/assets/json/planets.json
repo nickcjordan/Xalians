@@ -224,8 +224,6 @@
             "Temperature High": "36 °C / 96.8 °F"
         },
         "history": []
-<<<<<<< HEAD
-=======
     },
     {
         "name": "Endessa",
@@ -241,6 +239,5 @@
             "Temperature High": "173 °C / 343.4 °F"
         },
         "history": []
->>>>>>> cfc97c050b1b9fb7e645115e932261570ded4bee
     }
 ]
