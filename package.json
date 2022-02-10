@@ -2,8 +2,57 @@
   "name": "xalians",
   "version": "0.0.0",
   "private": true,
+  "keywords": [
+    "ethereum",
+    "react",
+    "uniswap",
+    "workspaces",
+    "yarn"
+  ],
   "scripts": {
-    "start": "node start.js"
+    "react-app:build": "yarn workspace my-app build --max-old-space-size=12288",
+    "react-app:eject": "yarn workspace my-app eject",
+    "react-app:start": "yarn workspace my-app start",
+    "react-app:test": "yarn workspace my-app test",
+    "build": "yarn workspace my-app build --max-old-space-size=12288",
+    "prettier": "yarn workspace my-app prettier",
+    "chain": "yarn workspace hardhat chain",
+    "fork": "yarn workspace hardhat fork",
+    "node": "yarn workspace hardhat chain",
+    "test": "yarn workspace hardhat test",
+    "start": "yarn workspace my-app start",
+    "compile": "yarn workspace hardhat compile",
+    "deploy": "yarn workspace hardhat deploy",
+    "watch": "yarn workspace hardhat watch",
+    "accounts": "yarn workspace hardhat accounts",
+    "verify": "yarn workspace hardhat verify",
+    "balance": "yarn workspace hardhat balance",
+    "send": "yarn workspace hardhat send",
+    "ipfs": "yarn workspace my-app ipfs",
+    "surge": "yarn workspace my-app surge",
+    "s3": "yarn workspace my-app s3",
+    "ship": "yarn workspace my-app ship",
+    "generate": "yarn workspace hardhat generate",
+    "account": "yarn workspace hardhat account",
+    "mineContractAddress": "cd my-app/hardhat && npx hardhat mineContractAddress",
+    "wallet": "cd my-app/hardhat && npx hardhat wallet",
+    "fundedwallet": "cd my-app/hardhat && npx hardhat fundedwallet",
+    "flatten": "cd my-app/hardhat && npx hardhat flatten",
+    "clean": "cd my-app/hardhat && npx hardhat clean",
+    "run-graph-node": "yarn workspace services run-graph-node",
+    "remove-graph-node": "yarn workspace services remove-graph-node",
+    "clean-graph-node": "yarn workspace services clean-graph-node",
+    "graph-prepare": "mustache my-app/subgraph/config/config.json my-app/subgraph/src/subgraph.template.yaml > my-app/subgraph/subgraph.yaml",
+    "graph-codegen": "yarn workspace subgraph graph codegen",
+    "graph-build": "yarn workspace subgraph graph build",
+    "graph-create-local": "yarn workspace subgraph graph create --node http://localhost:8020/ scaffold-eth/your-contract",
+    "graph-remove-local": "yarn workspace subgraph graph remove --node http://localhost:8020/ scaffold-eth/your-contract",
+    "graph-deploy-local": "yarn workspace subgraph graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 scaffold-eth/your-contract",
+    "graph-ship-local": "yarn graph-prepare && yarn graph-codegen && yarn graph-deploy-local",
+    "deploy-and-graph": "yarn deploy && yarn graph-ship-local",
+    "mint": "yarn workspace hardhat mint",
+    "theme": "yarn workspace my-app theme",
+    "watch-theme": "yarn workspace my-app watch"
   },
   "dependencies": {
     "aws-sdk": "^2.1059.0",
@@ -17,5 +66,18 @@
     "morgan": "~1.9.1",
     "terraform": "^1.20.1",
     "uuid": "^8.3.2"
+  },
+  "workspaces": {
+    "packages": [
+      "my-app/*"
+    ],
+    "nohoist": [
+      "**/@graphprotocol/graph-ts",
+      "**/@graphprotocol/graph-ts/**",
+      "**/hardhat",
+      "**/hardhat/**",
+      "**/hardhat-ts",
+      "**/hardhat-ts/**"
+    ]
   }
 }
