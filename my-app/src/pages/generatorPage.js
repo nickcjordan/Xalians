@@ -14,6 +14,7 @@ import Table from 'react-bootstrap/Table';
 import CharacterGeneratedStatChart from '../components/characterGeneratedStatChart';
 import * as xalianApi from '../utils/xalianApi';
 import * as dbApi from '../utils/dbApi';
+import * as alertUtil from '../utils/alertUtil';
 import Modal from 'react-bootstrap/Modal';
 import Stack from 'react-bootstrap/Stack'
 import { a } from 'aws-amplify';
@@ -45,7 +46,7 @@ class GeneratorPage extends React.Component {
 
 
 
-            <Container fluid className="generator-page-content-background-container">
+            <Container className="generator-page-content-background-container ">
 
                 <XalianNavbar authAlertCallback={this.setLoggedInUser}></XalianNavbar>
 
@@ -83,7 +84,7 @@ class GeneratorPage extends React.Component {
 
                 {this.state.xalian &&
                     <React.Fragment>
-                        <Container fluid className="whole-container">
+                        <Container fluid className="whole-container ">
 
                             <Row className="generator-button-row">
                                 <Col class="">
@@ -141,7 +142,7 @@ class GeneratorPage extends React.Component {
                                     </h4>
                                 </div>
                             </Row>
-                            <Row className="centered-squeezed-view third-height">
+                            <Row className="third-height ">
                                 <Col>
                                     <CharacterGeneratedStatChart xalian={this.state.xalian} />
                                 </Col>
@@ -170,19 +171,18 @@ class GeneratorPage extends React.Component {
     }
 
     saveXalian = () => {
+        
         // this.setState({
         //     isLoading: true
         // })
 
-        // TODO
-
-        // console.log('TODO: implement saving xalian to account in db');
-
-        dbApi.callCreateXalian(this.state.xalian).then(x => {
+        dbApi.callUpdateUserAddXalian(this.state.loggedInUser.username, this.state.xalian.xalianId).then(x => {
             console.log(JSON.stringify(x, null, 2));
+            // dbApi.update
             this.setState({
                 isLoading: false
-            })
+            });
+            alertUtil.sendAlert('Xalian Saved!', null, 'success');
         }).catch(error => {
             console.log(JSON.stringify(error, null, 2));
             this.setState({
@@ -193,11 +193,24 @@ class GeneratorPage extends React.Component {
 
     test = () => {
 
-        dbApi.callGetXalian(this.state.xalian.xalianId).then(x => {
-            alert('WOOO!\n\n' + JSON.stringify(x, null, 2));
-        }).catch(error => {
-            alert('AHHH!!!!\n\n' + JSON.stringify(error, null, 2));
-        });
+        // dbApi.callGetXalian(this.state.xalian.xalianId).then(x => {
+        //     alert('WOOO!\n\n' + JSON.stringify(x, null, 2));
+        // }).catch(error => {
+        //     alert('AHHH!!!!\n\n' + JSON.stringify(error, null, 2));
+        // });
+        
+        // let loggedInUser = this.state.loggedInUser;
+        // dbApi.callGetUser(loggedInUser.userId).then(x => {
+        //     alert('WOOO!\n\n' + JSON.stringify(x, null, 2));
+        // }).catch(error => {
+        //     alert('AHHH!!!!\n\n' + JSON.stringify(error, null, 2));
+        // });
+
+        if (this.state.loggedInUser.username) {
+            alertUtil.sendAlert('Logged in as ' + this.state.loggedInUser.username, 'You have successfully logged in', 'success');
+        } else {
+            alertUtil.sendAlert('No user logged in', null, 'error');
+        }
     }
 
     getTypeColorClassName() {

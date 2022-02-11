@@ -1313,12 +1313,14 @@ section {
 .generator-page-content-background-container {
   background: rgb(24, 24, 24);
   min-height: 100vh;
-  min-width: 100vw;
+  min-width: 99.5vw;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-family: 'Abel';
   color: white;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .content-wrapper {
@@ -1357,7 +1359,7 @@ section {
 
 
 .whole-container {
-  max-width: 90%;
+  /* max-width: 90%; */
   margin: auto;
 }
 
@@ -2007,10 +2009,16 @@ article {
 */
 
 .expanded-chart-div {
-  width: 1000px;
+  width: 1250px;
   max-width: 80vw;
   min-height: 600px !important;
   height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.hide-overflow-x {
+  overflow-x: hidden;
 }
 
 
@@ -2117,4 +2125,25 @@ input, textarea {
 
 .fill-height-view {
   height: 50vh;
+}
+
+/* 
+*******************
+**    alerts    **
+******************* 
+*/
+
+.custom-alert {
+  z-index: 1000 !important; 
+	position: absolute !important;
+  width: 100% !important;
+}
+
+.alert-hidden {
+  opacity: 0;
+  transition: all 250ms linear 2s;
+}
+.alert-shown {
+  opacity: 0;
+  transition: all 250ms linear 2s;
 }

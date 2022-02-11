@@ -10,26 +10,24 @@ import { Hub } from 'aws-amplify';
 class SignInModal extends React.Component {
 
     state = {
-        errorMessage: null,
-        email: null,
+        username: null,
         password: null,
-        isThinking: false
+        isThinking: false,
+        errors: {}
     }
 
     constructor(props) {
         super(props);
-        this.setState({
-            errorMessage: this.props.errorMessage,
-            hasSubmitted: this.props.hasSubmitted || false
-        });
     }
 
     componentDidMount() {
         Hub.listen('auth', (data) => {
             if (data.payload.event === 'signIn_failure') {
                 if (data.payload.data.code === 'UserNotConfirmedException') {
-                    this.props.verifyEmailCallback(this.state.email);
-                    this.exit();
+                    this.setState({errorMessage: null}, () => {
+                        this.props.onHide();
+                        this.props.mustVerifyEmailCallback(this.state.username);
+                    });
                 }
                 if (data.payload.data.code === 'UserNotFoundException') {
                     this.setState({errorMessage: 'User not found'});
@@ -40,22 +38,21 @@ class SignInModal extends React.Component {
     }
 
     handleSubmit = event => {
+        event.preventDefault();
         this.setState({isThinking: true, errorMessage: null});
         authUtil.signIn(
-            this.state.email,
+            this.state.username,
             this.state.password
         ).then(() => {
             this.setState({isThinking: false});
             this.props.callback();
-            this.exit();
+            this.closeModal();
         });
-        event.preventDefault();
     }
 
-    exit = () => {
-        this.setState({errorMessage: null}, () => {
-            this.props.onHide();
-        });
+    closeModal = () => {
+        this.setState({isThinking: false, errorMessage: null, errors: {}});
+        this.props.onHide();
     }
 
 
@@ -96,8 +93,8 @@ class SignInModal extends React.Component {
                                 <Form.Control
                                     required
                                     type="text"
-                                    value={this.state.email}
-                                    onChange={e => this.setState({ email: e.target.value, errorMessage: null })}
+                                    value={this.state.username}
+                                    onChange={e => this.setState({ username: e.target.value, errorMessage: null })}
                                     placeholder='Username'
                                     className="text-input"
                                 />
@@ -122,7 +119,7 @@ class SignInModal extends React.Component {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button className="themed-modal-button" onClick={this.exit}>Close</Button>
+                    <Button className="themed-modal-button" onClick={this.closeModal}>Close</Button>
                     <Button className="themed-modal-button" type="submit" form='signInForm'>
                         {this.state.isThinking ? <Spinner variant='secondary' as="span" animation="border" size="sm" role="status" aria-hidden="true"/> : 'Submit'}
                     </Button>

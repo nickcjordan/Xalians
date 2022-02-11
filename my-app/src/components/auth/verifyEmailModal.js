@@ -9,47 +9,42 @@ import Spinner from 'react-bootstrap/Spinner';
 class VerifyEmailModal extends React.Component {
 
     state = {
+        username: null,
+        code: null,
         errorMessage: null,
-        email: null,
-        code: null
+        verificationMessage: null
     }
 
     constructor(props) {
         super(props);
-        this.setState({
-            errorMessage: this.props.errorMessage,
-            hasSubmitted: this.props.hasSubmitted || false,
-            email: this.props.email
-        });
     }
 
     componentDidMount() {
     }
 
     handleSubmit = event => {
-        this.setState({isThinking: true});
+        this.setState({ isThinking: true, verificationMessage: null });
         event.preventDefault();
-        var email = this.state.email || this.props.email
         authUtil.confirmSignUp(
-            email,
+            this.state.username || this.props.username,
             this.state.code
         ).then(response => {
-            this.setState({isThinking: false});
+            this.setState({ isThinking: false });
             this.props.callback();
             this.props.onHide();
         });
     }
 
     sendVerificationCode = event => {
-        var e = this.state.email || this.props.email
-        if (e) {
-            authUtil.resendConfirmationCode(e).then(response => {
+        var user = this.state.username || this.props.username
+        if (user) {
+            authUtil.resendConfirmationCode(user).then(response => {
                 console.log(JSON.stringify(response, null, 2));
                 this.props.callback(response);
-                this.setState({verificationMessage: 'Email sent!'});
+                this.setState({ verificationMessage: 'Email sent!' });
             });
         } else {
-            this.setState({errorMessage: 'Please enter your email'})
+            this.setState({ errorMessage: 'Please enter your username' })
         }
     }
 
@@ -73,18 +68,30 @@ class VerifyEmailModal extends React.Component {
 
                     <Form id='verifyEmailForm' onSubmit={this.handleSubmit}>
 
-                        <Form.Group className="mb-3" controlId="formBasicEmail">
-                            <FloatingLabel controlId="floatingEmail" label="Email Address">
+
+                        <Form.Group className="mb-3" controlId="formBasicUsername">
+                            <FloatingLabel controlId="floatingUsername" label="Username">
                                 <Form.Control
-                                    disabled={this.state.email || this.props.email}
-                                    required
-                                    type="email"
-                                    value={this.state.email || this.props.email}
-                                    onChange={e => this.setState({ email: e.target.value, errorMessage: null, verificationMessage: null })}
-                                    placeholder='Email Address'
+                                    disabled={this.props.username && this.props.email}
+                                    type="text"
+                                    value={this.state.username || this.props.username}
+                                    onChange={e => this.setState({ username: e.target.value, errorMessage: null })}
+                                    placeholder='Username'
                                 />
                             </FloatingLabel>
                         </Form.Group>
+                        {this.props.email && this.props.username && 
+                            <Form.Group className="mb-3" controlId="formBasicEmail">
+                                <FloatingLabel controlId="floatingEmail" label="Email Address">
+                                    <Form.Control
+                                        disabled={true}
+                                        type="email"
+                                        value={this.props.email}
+                                        placeholder='Email Address'
+                                    />
+                                </FloatingLabel>
+                            </Form.Group>
+                        }
 
                         <Form.Group className="mb-3" controlId="formBasicCode">
                             <FloatingLabel controlId="floatingCode" label="Verification Code">
@@ -110,7 +117,7 @@ class VerifyEmailModal extends React.Component {
                         <h3 className="error-message">{this.state.errorMessage}</h3>
                         <h3 className="verification-message"></h3>
                         <Form.Text className="text-muted">
-                        {this.state.verificationMessage}
+                            {this.state.verificationMessage}
                         </Form.Text>
 
                     </Form>
@@ -118,7 +125,7 @@ class VerifyEmailModal extends React.Component {
                 <Modal.Footer>
                     <Button onClick={this.props.onHide}>Close</Button>
                     <Button type="submit" form='verifyEmailForm'>
-                    {this.state.isThinking ? <Spinner variant='secondary' as="span" animation="border" size="sm" role="status" aria-hidden="true"/> : 'Verify Email'}
+                        {this.state.isThinking ? <Spinner variant='secondary' as="span" animation="border" size="sm" role="status" aria-hidden="true" /> : 'Verify Email'}
                     </Button>
                 </Modal.Footer>
             </Modal>

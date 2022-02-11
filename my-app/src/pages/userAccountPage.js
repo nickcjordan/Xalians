@@ -45,23 +45,14 @@ class UserAccountPage extends React.Component {
             store.clear();
             this.setState({ loggedInUser: null});
         } else if (addLoginInfo.includes(name)) {
-            this.setAuthState(data.username, data.attributes.nickname, data.attributes.email, data.attributes.email_verified);
+            this.setAuthState(data);
         }
     }
 
-    setAuthState = (username, alias, email, hasVerifiedEmail) => {
-        let authState = this.buildAuthState(username, alias, email, hasVerifiedEmail);
+    setAuthState = (data) => {
+        let authState = authUtil.buildAuthState(data);
         store.setState('loggedInUser', authState);
         this.setState({ loggedInUser: authState});
-    }
-
-    buildAuthState(username, alias, email, hasVerifiedEmail) {
-        return {
-            username: username,
-            alias: alias, 
-            email: email,
-            hasVerifiedEmail: hasVerifiedEmail
-        }
     }
 
     componentDidMount() {
