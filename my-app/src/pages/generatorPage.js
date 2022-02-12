@@ -175,6 +175,7 @@ class GeneratorPage extends React.Component {
         // this.setState({
         //     isLoading: true
         // })
+        dbApi.callCreateXalian(this.state.xalian);
 
         dbApi.callUpdateUserAddXalian(this.state.loggedInUser.username, this.state.xalian.xalianId).then(x => {
             console.log(JSON.stringify(x, null, 2));

@@ -11,6 +11,7 @@ import PlanetTable from '../components/planetTable';
 import Tabs from 'react-bootstrap/Tabs'
 import Tab from 'react-bootstrap/Tab'
 import species from '../json/species.json';
+import XalianImage from '../components/xalianImage'
 
 class SpeciesPage extends React.Component {
 
@@ -39,7 +40,8 @@ class SpeciesPage extends React.Component {
     buildSpeciesIcon(x) {
         return <Col sm={4} md={2} className="species-col">
             <a href={"/species/" + x.id}>
-                <Image src={this.getImageLocationFromSpecies(x.name)} rounded className={this.getTypeColorClassName(x) + " xalian-image"} />
+                {/* <Image src={this.getImageLocationFromSpecies(x.name)} rounded className={this.getTypeColorClassName(x) + " xalian-image"} /> */}
+                <XalianImage colored bordered speciesName={x.name} speciesType={x.type} moreClasses='xalian-image-grid'/>
                 <h4>#{x.id}</h4>
                 <h2>{x.name}</h2>
                 <h3>{x.type}</h3>
