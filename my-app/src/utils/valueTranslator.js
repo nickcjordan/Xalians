@@ -27,6 +27,15 @@ condensedTransMap['evasionPoints'] = 'EV';
 condensedTransMap['staminaPoints'] = 'STA';
 condensedTransMap['recoveryPoints'] = 'REC';
 
+condensedTransMap['standardAttackRating'] = 'ATT';
+condensedTransMap['specialAttackRating'] = 'Sp.ATT';
+condensedTransMap['standardDefenseRating'] = 'DEF';
+condensedTransMap['specialDefenseRating'] = 'Sp.DEF';
+condensedTransMap['speedRating'] = 'SPD';
+condensedTransMap['evasionRating'] = 'EV';
+condensedTransMap['staminaRating'] = 'STA';
+condensedTransMap['recoveryRating'] = 'REC';
+
 let transMap = new Map();
 transMap['standardAttackRating'] = 'Attack';
 transMap['specialAttackRating'] = 'Sp. Attack';

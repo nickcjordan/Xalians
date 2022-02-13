@@ -54,7 +54,7 @@ class App extends React.Component {
               <Route exact path="/planets"><PlanetPage /></Route>
               <Route exact path="/designer"><DesignerPage /></Route>
               <Route exact path="/glossary"><GlossaryPage /></Route>
-              <Route exact path="/login"><UserAccountPage /></Route>
+              <Route exact path="/account"><UserAccountPage /></Route>
             </Switch>
           </div>
         </Router>

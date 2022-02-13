@@ -1,192 +1,122 @@
 // const xalianBuilder = require('../xalianBuilder.js');
 // const translator = require('../translator.js');
 
-const AWS = require("aws-sdk");
-AWS.config.setPromisesDependency(require("bluebird"));
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
+// const AWS = require("aws-sdk");
+// AWS.config.setPromisesDependency(require("bluebird"));
+// const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
-// module.exports.handler = async (event) => {
-//     // console.log('Event: ', event);
-
-//     let xalian = xalianBuilder.buildXalian();
-//     let translatedXalian = translator.translateCharacterToPresentableType(xalian);
-//     return {
-//         statusCode: 200,
-//         headers: {
-//             'Content-Type' : 'application/json',
-//             'Access-Control-Allow-Headers' : '*',
-//             'Access-Control-Allow-Methods' : '*',
-//             'Access-Control-Allow-Credentials' : true,
-//             'Access-Control-Allow-Origin' : '*',
-//             'X-Requested-With' : '*'
-//         },
-//         body: JSON.stringify(translatedXalian)
-//     }
-// }
-
-("use strict");
-
-function buildXalianError(errorCode, errorMessage, status = 400) {
-  return {
-    statusCode: status,
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({
-      errorMessage: errorMessage,
-      errorCode: errorCode,
-    }),
-  };
-}
-
-function buildError(e, status = 500) {
-  console.error("Error JSON: ", JSON.stringify(e, null, 2));
-  // console.log('Error', err);
-  return {
-    statusCode: status,
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(e),
-  };
-}
-
-function buildSuccess(text = "ok") {
-  console.log("Success: " + text);
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      message: text,
-    }),
-  };
-}
-
-function buildResponse(status, body) {
-  return {
-    statusCode: status,
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify(body),
-    // body: body
-  };
-}
-
-const TABLE_NAME = "XalianUsersTable";
-
-module.exports.createXalianUser = (event, context, callback) => {
-  const user = JSON.parse(event.body);
-  console.log(`inbound event: ` + JSON.stringify(event, null, 2));
-  console.log(`inbound user: ` + JSON.stringify(user, null, 2));
-
-  var params = {
-    TableName: TABLE_NAME,
-    Item: bulidXalianUsersTableItem(user),
-  };
-
-  dynamoDb.put(params, function (err, data) {
-    if (err) {
-      callback(buildError(err));
-    } else {
-      callback(undefined, buildSuccess());
-    }
-  });
-};
-
-function bulidXalianUsersTableItem(user) {
-  return {
-    userId: user.userId.toLowerCase(),
-    attributes: user,
-  };
-}
+const delegate = require('./userDbDelegate.js');
+const xalianDelegate = require('./xalianDbDelegate.js');
+const builder = require('./responseBuilder.js');
 
 module.exports.retrieveXalianUser = (event, context, callback) => {
-  // let xalianId = JSON.parse(event.body).xalianId;
-  try {
-    let userId = event.queryStringParameters.userId.toLowerCase();
-    console.log("inbound userId=" + userId);
-    var params = {
-      TableName: TABLE_NAME,
-      Key: {
-        userId: userId,
-      },
-    };
+	try {
+		console.log('event :: \n' + JSON.stringify(event, null, 2));
+		if (!event.queryStringParameters.userId) {
+			callback(null, builder.buildXalianError('BAD_REQUEST', 'No userId found in query string parameters'));
+		}
+		let userId = event.queryStringParameters.userId.toLowerCase();
+		console.log('inbound userId=' + userId);
 
-    dynamoDb.get(params, function (err, data) {
-      if (err) {
-        console.log(`ERROR :: ${JSON.stringify(err, null, 2)}`);
-        callback(buildError(err));
-      } else {
-        if (data.Item) {
-          console.log(`SUCCESS :: data:\n${JSON.stringify(data.Item.attributes, null, 2)}`);
-          // let response = buildResponse(200, data.Item.attributes);
-          let response = buildResponse(200, data.Item);
-          console.log(`SUCCESS :: returning response:\n${JSON.stringify(response, null, 2)}`);
-          callback(undefined, response);
-        } else {
-          callback(null, buildXalianError("USER_NOT_FOUND", "Did not find user with userId=" + userId));
-        }
-      }
-    });
-  } catch (e) {
-    callback(buildError(e));
-  }
+		delegate.getUser(
+			userId,
+			function onSuccess(user) {
+				if (event.queryStringParameters.populateXalians && event.queryStringParameters.populateXalians === 'true') {
+					console.log('populating xalians');
+					xalianDelegate.getXalianBatch(
+						user.xalianIds,
+						function onSuccess(xalians) {
+							user.xalians = xalians;
+							let response = builder.buildResponse(200, user);
+							console.log(`SUCCESS :: returning response:\n${JSON.stringify(response, null, 2)}`);
+							callback(undefined, response);
+						},
+						function onFail(error) {
+							console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
+							callback(builder.buildError(err));
+						}
+					);
+				} else {
+					let response = builder.buildResponse(200, user);
+					console.log(`SUCCESS :: returning response:\n${JSON.stringify(response, null, 2)}`);
+					callback(undefined, response);
+				}
+			},
+			function onNotFound() {
+				callback(null, builder.buildXalianError('USER_NOT_FOUND', 'Did not find user with userId=' + userId));
+			},
+			function onFail(error) {
+				console.log(`ERROR :: ${JSON.stringify(err, null, 2)}`);
+				callback(builder.buildError(error));
+			}
+		);
+	} catch (e) {
+		callback(builder.buildError(e));
+	}
+};
+
+module.exports.createXalianUser = (event, context, callback) => {
+	const user = JSON.parse(event.body);
+
+	console.log(`inbound event: ` + JSON.stringify(event, null, 2));
+	console.log(`inbound user: ` + JSON.stringify(user, null, 2));
+
+	try {
+		delegate.createUser(
+			user,
+			function onSuccess() {
+				callback(undefined, builder.buildSuccess());
+			},
+			function onFail(error) {
+				console.log(`ERROR :: ${JSON.stringify(err, null, 2)}`);
+				callback(builder.buildError(error));
+			}
+		);
+	} catch (e) {
+		callback(builder.buildError(e));
+	}
 };
 
 module.exports.updateXalianUser = (event, context, callback) => {
-  const request = JSON.parse(event.body);
-  console.log(`action=${request.action} :: userId=${request.userId} :: value=${request.value}`);
+	const request = JSON.parse(event.body);
+	console.log(`action=${request.action} :: userId=${request.userId} :: value=${request.value}`);
 
-  dynamoDb.get(
-    {
-      TableName: TABLE_NAME,
-      Key: {
-        userId: request.userId.toLowerCase(),
-      },
-    },
-    function (err, data) {
-      if (err) {
-        console.log(`ERROR :: ${JSON.stringify(err, null, 2)}`);
-        callback(buildError(err));
-      } else {
-        if (data.Item) {
-          var updatedXalianIds = data.Item.xalianIds || [];
-          if (request.action === "REMOVE_XALIAN_ID") {
-            if (updatedXalianIds.includes(request.value)) {
-              const index = updatedXalianIds.indexOf(request.value);
-              if (index > -1) {
-                updatedXalianIds.splice(index, 1); // 2nd parameter means remove one item only
-              }
-            }
-          } else if (request.action === "ADD_XALIAN_ID") {
-            updatedXalianIds.push(request.value);
-          } else {
-            callback(null, buildXalianError("UNKNOWN_ACTION", "Update action [" + request.action + "] is not valid"));
-          }
-
-          // do update
-          var params = {
-            TableName: TABLE_NAME,
-            Key: {
-              userId: request.userId,
-            },
-            UpdateExpression: "set xalianIds = :ids",
-            ExpressionAttributeValues: {
-              ":ids": updatedXalianIds,
-            },
-          };
-
-          dynamoDb.update(params, function (err, data) {
-            if (err) {
-              console.log("Error", err);
-              callback(buildError(e));
-            } else {
-              console.log("Success", data);
-              callback(undefined, buildSuccess());
-            }
-          });
-        } else {
-          callback(null, buildXalianError("USER_NOT_FOUND", "Did not find user with userId=" + userId));
-        }
-      }
-    }
-  );
+	delegate.getUser(
+		request.userId,
+		function onSuccess(user) {
+			var updatedXalianIds = user.xalianIds || [];
+			if (request.action === 'REMOVE_XALIAN_ID') {
+				const index = updatedXalianIds.indexOf(request.value);
+				if (index > -1) {
+					updatedXalianIds.splice(index, 1);
+				} else {
+					callback(null, builder.buildXalianError('XALIAN_NOT_FOUND_IN_USER', 'Did not find xalian with xalianId=' + request.value));
+				}
+			} else if (request.action === 'ADD_XALIAN_ID') {
+				updatedXalianIds.push(request.value);
+			} else {
+				callback(null, builder.buildXalianError('UNKNOWN_ACTION', 'Update action [' + request.action + '] is not valid'));
+			}
+			delegate.updateUser(
+				request.userId,
+				updatedXalianIds,
+				function onSuccess() {
+					callback(null, builder.buildSuccess());
+				},
+				function onFail(error) {
+					console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
+					callback(builder.buildError(error));
+				}
+			);
+		},
+		function onNotFound() {
+			callback(null, builder.buildXalianError('USER_NOT_FOUND', 'Did not find user with userId=' + userId));
+		},
+		function onFail(error) {
+			console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
+			callback(builder.buildError(error));
+		}
+	);
 };
 
 // module.exports.deleteXalian = (event, context, callback) => {

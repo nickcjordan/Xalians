@@ -12,86 +12,76 @@ import XalianNavbar from '../components/navbar';
 import species from '../json/species.json';
 import Table from 'react-bootstrap/Table';
 import CharacterStatRangeChart from '../components/characterStatRangeChart';
+import Stack from 'react-bootstrap/Stack';
+import XalianMoveSet from '../components/xalianMoveSet';
+import XalianAttributeChart from '../components/xalianAttributeChart';
+import XalianImage from '../components/xalianImage';
+import XalianStatRatingChart from '../components/xalianStatRatingChart';
 
 class SpeciesDetailPage extends React.Component {
+	state = {};
 
-    state = {};
+	componentDidMount() {
+		console.log(`INBOUND: ${JSON.stringify(this.props, null, 2)} :: ${this.props.id.toString()}`);
+		var map = new Map();
+		for (var ind in species) {
+			let x = species[ind];
+			map[x.id] = x;
+		}
+		let inboundId = this.props.id;
+		let xal = map[inboundId];
+		this.setState({
+			id: inboundId,
+			xalian: xal,
+		});
+	}
 
-    componentDidMount() {
-        console.log(`INBOUND: ${JSON.stringify(this.props, null, 2)} :: ${this.props.id.toString()}`)
-        var map = new Map();
-        for (var ind in species) {
-            let x = species[ind];
-            map[x.id] = x;
-        }
-        let inboundId = this.props.id;
-        let xal = map[inboundId];
-        this.setState({
-            id: inboundId,
-            xalian: xal
-        });
-    }
-   
-    render() {
-        return <React.Fragment>
+	render() {
+		return (
+			<React.Fragment>
+				{this.state.xalian && (
+					<Container fluid className="content-background-container">
+						<XalianNavbar></XalianNavbar>
+						<Container fluid className="whole-container ">
+							<Row className="centered-view squeezed-view third-height stackable-padding">
+								<Col lg={3} md={6} sm={6} className="xalian-species-title">
+									<Stack>
+										<h1 className="species-detail-name">{this.state.xalian.name}</h1>
+										<h4 className="species-detail-id">#{this.state.xalian.id}</h4>
+									</Stack>
+								</Col>
+								<Col lg={3} md={6} sm={6} className="">
+									<Row className="xalian-image-row">
+										<XalianImage colored bordered shadowed speciesName={this.state.xalian.name} speciesType={this.state.xalian.type} moreClasses="xalian-image-detail" />
+									</Row>
+								</Col>
+								<Col lg={true} className="vertically-center-contents centered-view">
+									<XalianAttributeChart species={this.state.xalian} />
+								</Col>
+							</Row>
+							<Row className="centered-view squeezed-view third-height">
+								<div className="species-detail-description-div">
+									<h5 className="species-detail-description">{this.state.xalian.description}</h5>
+								</div>
+							</Row>
+							<Row className="third-height ">
+								<Col>
+									<XalianStatRatingChart axisLabelColor={'white'} includeLabel labelFontSize={'10pt'} barSize={30} stats={this.state.xalian.statRatings} moreClasses="condensed-chart-div padded-row" />
+								</Col>
+							</Row>
+						</Container>
+					</Container>
+				)}
+			</React.Fragment>
+		);
+	}
 
-            {this.state.xalian &&
+	getTypeColorClassName() {
+		return `${this.state.xalian.type.toLowerCase()}-color`;
+	}
 
-
-                <Container fluid className="content-background-container">
-
-                    <XalianNavbar></XalianNavbar>
-                    <Container fluid className="whole-container">
-                        <Row className="centered-view squeezed-view third-height">
-                            <Col md={6} className="">
-                                <Row className="vertically-center-contents species-detail-title-row">
-                                    <Col md={true}>
-                                        <h1 className="species-detail-name">{this.state.xalian.name}</h1>
-                                    </Col>
-                                    <Col md={true}>
-                                        <h4 className="species-detail-id">#{this.state.xalian.id}</h4>
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Image src={this.getImageLocationFromSpecies(this.state.xalian.name)} rounded className={this.getTypeColorClassName() + " xalian-image-detail"} />
-                                </Row>
-                            </Col>
-                            <Col md={6} className="vertically-center-contents">
-                                <Table hover size="sm" className="species-detail-table">
-                                    <tbody>
-                                        <tr><th>Type:</th><td>{this.state.xalian.type}</td></tr>
-                                        <tr><th>Origin Planet:</th><td>{this.state.xalian.planet}</td></tr>
-                                        <tr><th>Avg Height:</th><td>{this.state.xalian.height}</td></tr>
-                                    </tbody>
-                                </Table>
-
-                            </Col>
-                        </Row>
-                        <Row className="centered-view squeezed-view third-height">
-                            <div className="species-detail-description-div">
-                                <h4 className="species-detail-description">
-                                    {this.state.xalian.description}
-                                </h4>
-                            </div>
-                        </Row>
-                        <Row className="centered-squeezed-view third-height">
-                            <Col>
-                                <CharacterStatRangeChart xalian={this.state.xalian}/>
-                            </Col>
-                        </Row>
-                    </Container>
-                </Container>
-            }
-        </React.Fragment>;
-    }
-
-    getTypeColorClassName() {
-        return `${this.state.xalian.type.toLowerCase()}-color`;
-    }
-
-    getImageLocationFromSpecies(name) {
-        return `/assets/img/xalians/xalians_icon_${name.toLowerCase()}.png`;
-    }
-
+	getImageLocationFromSpecies(name) {
+		return `/assets/img/xalians/xalians_icon_${name.toLowerCase()}.png`;
+	}
 }
 export default SpeciesDetailPage;

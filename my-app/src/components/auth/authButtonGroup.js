@@ -146,7 +146,7 @@ class AuthButtonGroup extends React.Component {
                 {this.state.loggedInUser &&
                     <React.Fragment>
                         <h5 className="navbar-user-name-wrapper vertically-center-contents centered-view">
-                            <a href={'/user/' + this.state.loggedInUser.username}>{this.state.loggedInUser.username}</a>
+                            <a href={'/account'}>{this.state.loggedInUser.username}</a>
                         </h5>
                     </React.Fragment>
                 }

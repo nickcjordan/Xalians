@@ -1385,22 +1385,7 @@ section {
   color: lightgrey;
 }
 
-.moves-row {
-  padding-top: 50px;
-}
 
-.move-name {
-  color: white;
-}
-
-.move-description {
-  font-style: italic;
-  color: cadetblue;
-}
-
-.move-rating {
-  font-style: italic;
-}
 
 .stat-list-item {
   font-size: 0.75em;
@@ -1458,37 +1443,6 @@ article {
   -webkit-text-fill-color: transparent;
   text-align: center;
 }
-
-.xalian-image-grid {
-  width: 80% !important;
-  max-width: 50vh !important;
-  margin-top: 20px;
-}
-
-.xalian-image {
-  height: auto;
-  margin: auto;
-  padding: 0 !important;
-  /* border-color: black;
-  border-width: 2px;
-  border-radius: 4px;
-  border-style: solid; */
-}
-
-.xalian-image-bordered {
-  /* height: auto; */
-  /* width: 80% !important; */
-  /* max-width: 50vh !important; */
-  /* margin: auto; */
-  /* margin-top: 20px; */
-  /* padding: 0 !important; */
-  border-color: black;
-  border-width: 2px;
-  border-radius: 4px;
-  border-style: solid;
-}
-
-
 
 
 
@@ -1719,6 +1673,8 @@ article {
 .vertically-center-contents {
   display: flex;
   align-items: center;
+  align-content: center;
+  
 }
 
 .planet-key-col h4 {
@@ -1780,17 +1736,22 @@ article {
   justify-content: center;
   align-content: center;
   text-align: center;
+  padding-bottom: 15px !important;
+  padding-top: 15px !important;
 }
 
 .species-col h4 {
   color: lightgrey;
   opacity: 0.75;
   font-style: italic;
-  padding-top: 10px;
 }
 
 .species-col h2 {
   color: white;
+}
+
+.species-name-title {
+  padding-bottom: 15px;
 }
 
 .centered-view {
@@ -1802,12 +1763,14 @@ article {
 }
 
 .squeezed-view {
-  max-width: 70vw;
+  width: 1000px;
+  max-width: 80vw;
 }
 
 .species-detail-description {
   font-style: italic;
   color: rgb(255, 255, 255);
+  text-align: left;
 }
 
 .species-detail-description-div {
@@ -1824,6 +1787,7 @@ article {
 .species-detail-name {
   text-align: center;
   font-weight: bolder;
+  color: white;
   /* font-size: ; */
 }
 
@@ -1845,26 +1809,6 @@ article {
   padding-bottom: 2vh;
 }
 
-.species-detail-table {
-  /* background-color: #282c344d; */
-  margin: auto;
-  margin-top: 25px !important;
-}
-
-.species-detail-table tbody {
-  color: white;
-  background-color: rgba(255, 255, 255, 0) !important;
-}
-
-.species-detail-table tbody tr th {
-  color: white;
-  background-color: rgba(255, 255, 255, 0) !important;
-}
-
-.species-detail-table tbody tr td {
-  color: white;
-  background-color: rgba(255, 255, 255, 0) !important;
-}
 
 .chart-container {
   /* width: 200px; */
@@ -1885,6 +1829,16 @@ article {
   text-shadow: 1px 1px 2px rgb(0, 0, 0) !important;;
 }
 
+.species-tab {
+  background-color: rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 0px 10px rgb(0, 0, 0);
+  border-radius: 10px;
+}
+
+.condensed-row {
+  padding: 0 ;
+  margin: 0 ;
+}
 
 /* 
 *******************
@@ -2165,16 +2119,209 @@ input, textarea {
 
 
 /* 
-****************************
-**    user detail page    **
-****************************
+**************************************
+**    user detail / account page    **
+**************************************
 */
 
+.account-page-xalians-title > h1 {
+  margin: auto;
+  margin-top: 25px;
+  margin-bottom: 25px;
+  color: white;
+  text-align: center;
+}
+
+/*--------------------------------------------------------------
+#                     XALAIN VIEWS / ELEMENTS
+--------------------------------------------------------------*/
+
+.xalian-image-grid {
+  width: 80% !important;
+  max-width: 50vh !important;
+  margin-top: 20px;
+}
+
+.xalian-image-detail {
+  width: 100% !important;
+  max-width: 60vw !important;
+  /* margin-top: 20px; */
+}
+
+.xalian-image-in-row {
+  width: 100% !important;
+  max-width: 60vw !important;
+}
+
+.xalian-image {
+  height: auto;
+  margin: auto;
+  padding: 0 !important;
+}
+
+.xalian-image-bordered {
+  border-color: black;
+  border-width: 2px;
+  border-radius: 4px;
+  border-style: solid;
+}
+
+.xalian-image-shadowed {
+  box-shadow: 0px 0px 10px rgb(0, 0, 0);
+}
+
+.xalian-stat-row-view-wrapper {
+  background-color: rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 0px 10px rgb(0, 0, 0);
+  border-radius: 10px;
+  padding: 15px !important;
+  margin: 15px;
+  max-width: 90vw !important;
+  margin: auto !important;
+}
+
 .condensed-chart-div {
-  width: 400px;
+  /* width: 400px; */
+  width: 100%;
   max-width: 80vw;
-  min-height: 200px !important;
-  height: 100%;
+  height: 200px ;
+  /* height: 100%; */
   padding: 0;
   margin: 0;
 }
+
+.ultra-condensed-chart-div {
+  width: 100%;
+  max-width: 80vw;
+  height: 100px ;
+  /* height: 100%; */
+  padding: 0;
+  margin: 0;
+}
+
+.full-chart-div {
+  width: 600px;
+  max-width: 80vw;
+  height: 400px ;
+  /* height: 100%; */
+  padding: 0;
+  margin: 0;
+}
+
+.padded-row {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.xalian-info-box {
+  margin: auto !important;
+}
+
+.xalian-move-set-wrapper {
+  width: 100%;
+}
+
+.xalian-species-badge {
+  border-radius: 10px;
+  border-color: black;
+  border-width: 1px;
+  border-style: solid;
+  max-width: 80%;
+  width: 100px;
+  height: 35px;
+  text-align: center;
+  margin: 5px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.xalian-badge-text {
+  font-weight: bold;
+  margin: 5px;
+  margin-left: auto;
+  margin-right: auto;
+  /* text-shadow: 1px 1px 2px black; */
+  color: rgb(0, 0, 0);
+
+}
+
+.delete-button {
+  /* width: 35px; */
+  /* height: auto; */
+  color: white;
+  margin: auto;
+}
+
+.species-detail-chart {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  width: 100%;
+}
+
+.species-detail-chart-header {
+  color: white;
+  text-align: right;
+}
+
+.species-detail-chart-text {
+  color: gray;
+  text-align: left;
+}
+
+.species-detail-chart > .row {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.xalian-image-row {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.moves-row {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  /* width: 600px; */
+  max-width: 80vw;
+
+}
+
+.move-name {
+  color: white;
+  text-align: left;
+}
+
+.move-description {
+  font-style: italic;
+  color: cadetblue;
+  text-align: left;
+}
+
+.move-rating {
+  font-style: italic;
+  text-align: right;
+}
+
+.move-rating-col {
+  width: fit-content;
+}
+
+.xalian-move-set-wrapper {
+
+}
+
+.xalian-species-title {
+  padding-top: 25px;
+  padding-bottom: 25px;
+}
+
+.stackable-padding {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.stackable-margin {
+  margin-top: 15px !important;
+  margin-bottom: 15px !important;
+}
+

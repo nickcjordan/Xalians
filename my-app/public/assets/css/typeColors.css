@@ -1,172 +1,49 @@
-.fire-color {
-    background-color: #df6d5e;
-}
-
-.water-color {
-    background-color: #4b81a1;
-}
-
-.air-color {
-    background-color: #ffffff;
-}
-
-.electrical-color {
-    background-color: #e2bd43;
-}
-
-.rock-color {
-    background-color: #714932;
-}
-
-.plant-color {
-    background-color: #2b6e30;
-}
-
-.chemical-color {
-    background-color: #7de682;
-}
-
-.light-color {
-    background-color: #FFFFAB;
-}
-
-.dark-color {
-    background-color: #37477c;
-}
-
-.metallic-color {
-    background-color: #6d6868;
-}
-
-.psychic-color {
-    background-color: #cc9bd3;
-}
-
-.undead-color {
-    background-color: #6c4c8a;
-}
-
-.ice-color {
-    background-color: #74d9e0;
-}
-
-.sand-color {
-    background-color: #cc9e61;
-}
+.fire-color {background-color: #df6d5e;}
+.water-color {background-color: #4b81a1;}
+.air-color {background-color: #ffffff;}
+.electrical-color {background-color: #e2bd43;}
+.rock-color {background-color: #714932;}
+.plant-color {background-color: #37661b;}
+.chemical-color {background-color: #64bd8c;}
+.light-color {background-color: #FFFFAB;}
+.dark-color {background-color: #37477c;}
+.metallic-color {background-color: #6d6868;}
+.psychic-color {background-color: #cc9bd3;}
+.undead-color {background-color: #6c4c8a;}
+.ice-color {background-color: #74d9e0;}
+.sand-color {background-color: #cc9e61;}
 
 
 /* text color */
-.fire-text-color {
-    color: #df6d5e;
-}
-
-.water-text-color {
-    color: #4b81a1;
-}
-
-.air-text-color {
-    color: #ffffff;
-}
-
-.electrical-text-color {
-    color: #e2bd43;
-}
-
-.rock-text-color {
-    color: #714932;
-}
-
-.plant-text-color {
-    color: #2b6e30;
-}
-
-.chemical-text-color {
-    color: #7de682;
-}
-
-.light-text-color {
-    color: #FFFFAB;
-}
-
-.dark-text-color {
-    color: #37477c;
-}
-
-.metallic-text-color {
-    color: #6d6868;
-}
-
-.psychic-text-color {
-    color: #cc9bd3;
-}
-
-.undead-text-color {
-    color: #6c4c8a;
-}
-
-.ice-text-color {
-    color: #74d9e0;
-}
-
-.sand-text-color {
-    color: #cc9e61;
-}
+.fire-text-color {color: #df6d5e;}
+.water-text-color {color: #4b81a1;}
+.air-text-color {color: #ffffff;}
+.electrical-text-color {color: #e2bd43;}
+.rock-text-color {color: #714932;}
+.plant-text-color {color: #2b6e30;}
+.chemical-text-color {color: #64bd8c;}
+.light-text-color {color: #FFFFAB;}
+.dark-text-color {color: #37477c;}
+.metallic-text-color {color: #6d6868;}
+.psychic-text-color {color: #cc9bd3;}
+.undead-text-color {color: #6c4c8a;}
+.ice-text-color {color: #74d9e0;}
+.sand-text-color {color: #cc9e61;}
 
 
 
 /* border color */
-.fire-border-color {
-    border-color: #df6d5e;
-}
-
-.water-border-color {
-    border-color: #4b81a1;
-}
-
-.air-border-color {
-    border-color: #ffffff;
-}
-
-.electrical-border-color {
-    border-color: #e2bd43;
-}
-
-.rock-border-color {
-    border-color: #714932;
-}
-
-.plant-border-color {
-    border-color: #2b6e30;
-}
-
-.chemical-border-color {
-    border-color: #7de682;
-}
-
-.light-border-color {
-    border-color: #FFFFAB;
-}
-
-.dark-border-color {
-    border-color: #37477c;
-}
-
-.metallic-border-color {
-    border-color: #6d6868;
-}
-
-.psychic-border-color {
-    border-color: #cc9bd3;
-}
-
-.undead-border-color {
-    border-color: #6c4c8a;
-}
-
-.ice-border-color {
-    border-color: #74d9e0;
-}
-
-.sand-border-color {
-    border-color: #cc9e61;
-}
+.fire-border-color {border-color: #df6d5e;}
+.water-border-color {border-color: #4b81a1;}
+.air-border-color {border-color: #ffffff;}
+.electrical-border-color {border-color: #e2bd43;}
+.rock-border-color {border-color: #714932;}
+.plant-border-color {border-color: #2b6e30;}
+.chemical-border-color {border-color: #64bd8c;}
+.light-border-color {border-color: #FFFFAB;}
+.dark-border-color {border-color: #37477c;}
+.metallic-border-color {border-color: #6d6868;}
+.psychic-border-color {border-color: #cc9bd3;}
+.undead-border-color {border-color: #6c4c8a;}
+.ice-border-color {border-color: #74d9e0;}
+.sand-border-color {border-color: #cc9e61;}
