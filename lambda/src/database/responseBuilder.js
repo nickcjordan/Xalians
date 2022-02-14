@@ -3,9 +3,9 @@ module.exports = {
 	buildError: buildError,
 	buildSuccess: buildSuccess,
 	buildResponse: buildResponse,
-	bulidXalianUsersTableItem: bulidXalianUsersTableItem,
-	bulidXalianTableItem: bulidXalianTableItem,
-    buildBatchGetParams: buildBatchGetParams
+	buildXalianUsersTableItem: buildXalianUsersTableItem,
+	buildXalianTableItem: buildXalianTableItem,
+    buildBatchGetParams: buildBatchGetParams,
 };
 
 function buildXalianError(errorCode, errorMessage, status = 400) {
@@ -50,14 +50,15 @@ function buildResponse(status, body) {
 	};
 }
 
-function bulidXalianUsersTableItem(user) {
+function buildXalianUsersTableItem(user) {
 	return {
 		userId: user.userId.toLowerCase(),
+		xalianIds: user.xalianIds,
 		attributes: user,
 	};
 }
 
-function bulidXalianTableItem(xalian) {
+function buildXalianTableItem(xalian) {
 	return {
 		speciesId: xalian.speciesId,
 		xalianId: xalian.xalianId,

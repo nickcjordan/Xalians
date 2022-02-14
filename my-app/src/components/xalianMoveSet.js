@@ -9,7 +9,6 @@ class XalianMoveSet extends React.Component {
 	buildMoveRow(val) {
 		return (
 			<Row style={{ paddingTop: this.props.spacing || '5px', paddingBottom: this.props.spacing || '5px' }} className="moves-row ms-auto me-auto ">
-				<Row>
 					<Col xs={2} className="move-rating-col">
 						<h4 className="move-rating">{val.rating}</h4>
 					</Col>
@@ -19,13 +18,12 @@ class XalianMoveSet extends React.Component {
 						</Row>
 					</Col>
 					{this.props.showDescription && (
-						<Col lg={6} className="">
+						<Col lg={12} md={12} sm={12} xs={12} className="">
 							<Row>
 								<h6 className="move-description">{val.description}</h6>
 							</Row>
 						</Col>
 					)}
-				</Row>
 				{/* {this.props.showDescription && (
 					<Row>
 						<h6 className="move-description">{val.description}</h6>

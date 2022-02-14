@@ -1,6 +1,7 @@
 
 import React from 'react';
 import Image from 'react-bootstrap/Image'
+import * as constants from '../constants/constants'
 
 class XalianImage extends React.Component {
 
@@ -18,7 +19,18 @@ class XalianImage extends React.Component {
     }
 
     render() {
-        return <Image src={this.getImageLocationFromSpecies(this.props.speciesName)} rounded className={"xalian-image " + this.getTypeColorClassName(this.props.speciesType)} />
+        console.log('constants = ' + JSON.stringify(constants.themeColors['air'], null, 2));
+        for (const item in constants.themeColors) {
+            console.log(`${item} : ${constants.themeColors[item]}`)
+
+          }
+        if (this.props.secondaryType) {
+            let primaryColor = constants.themeColors[this.props.primaryType.toLowerCase()];
+            let secondaryColor = constants.themeColors[this.props.secondaryType.toLowerCase()];
+            return <Image style={{ background: `linear-gradient(135deg, ${primaryColor} 15%, ${secondaryColor} 85%)` }} src={this.getImageLocationFromSpecies(this.props.speciesName)} rounded className={"xalian-image " + this.getTypeColorClassName(this.props.primaryType)} />
+        } else {
+            return <Image style={{ background: `radial-gradient(circle, ${constants.themeColors[this.props.primaryType.toLowerCase()]} 60%, ${constants.themeColors[this.props.primaryType.toLowerCase()] + '85'} 100%)` }} src={this.getImageLocationFromSpecies(this.props.speciesName)} rounded className={"xalian-image " + this.getTypeColorClassName(this.props.primaryType)} />
+        }
     }
 
 }

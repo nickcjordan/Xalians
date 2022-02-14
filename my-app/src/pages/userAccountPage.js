@@ -20,14 +20,19 @@ class UserAccountPage extends React.Component {
 		verifyRemoveXalianModalShow: null,
 		loggedInUser: null,
 		xalianToDelete: null,
+		isLoading: false
 	};
 
-	constructor(props) {
-		super(props);
+	// constructor(props) {
+	// 	super(props);
+	// }
+
+	componentDidMount() {
+		this.setState({isLoading: true});
 		Auth.currentUserInfo().then((data) => {
 			if (data) {
 				let u = authUtil.buildAuthState(data);
-				this.setState({ loggedInUser: u });
+				this.setState({ loggedInUser: u, isLoading: false });
 				this.updateXaliansState(u.username);
 			}
 		});
@@ -89,6 +94,7 @@ class UserAccountPage extends React.Component {
 
 					{this.state.xalianToDelete && <VerifyRemoveXalianModal show={this.state.verifyRemoveXalianModalShow} onHide={() => this.closeModalCallback()} onXalianDelete={() => this.verifyRemoveXalianCallback()} xalian={this.state.xalianToDelete.attributes} username={this.state.loggedInUser.username}></VerifyRemoveXalianModal>}
 				</Container>
+				{this.state.isLoading && <div id="preloader"></div>}
 			</React.Fragment>
 		);
 	}

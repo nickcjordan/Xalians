@@ -13,13 +13,13 @@ class XalianAttributeChart extends React.Component {
                 {this.props.xalian && this.props.xalian.elements && 
                     <React.Fragment>
                         <Row>
-                            <Col className="species-detail-chart-header">Primary Element Type:</Col>
+                            <Col className="species-detail-chart-header">Primary Element:</Col>
                             <Col className="species-detail-chart-text">
                                 {this.props.xalian.elements.primaryType} [{this.props.xalian.elements.primaryElement}]
                             </Col>
                         </Row>
                         <Row>
-                            <Col className="species-detail-chart-header">Secondary Element Type:</Col>
+                            <Col className="species-detail-chart-header">Secondary Element:</Col>
                             <Col className="species-detail-chart-text">
                                 {this.props.xalian.elements.secondaryType} [{this.props.xalian.elements.secondaryElement}]
                             </Col>

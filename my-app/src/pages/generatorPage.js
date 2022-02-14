@@ -49,37 +49,6 @@ class GeneratorPage extends React.Component {
 				<Container className="generator-page-content-background-container ">
 					<XalianNavbar authAlertCallback={this.setLoggedInUser}></XalianNavbar>
 
-					{/* <Modal
-                    show={this.state.jsonModalShow}
-                    onHide={() => this.setState({ jsonModalShow: false })}
-                    size="lg"
-                    aria-labelledby="contained-modal-title-vcenter"
-                    centered
-                    className="themed-modal"
-                >
-                    <Modal.Header closeButton>
-                        <Modal.Title id="contained-modal-title-vcenter">
-                            Your {this.state.xalian ? this.state.xalian.species.name : 'Xalian'}'s Details
-                        </Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <pre>
-                            {JSON.stringify(this.state.xalian, null, 2)}
-                        </pre>
-
-                    </Modal.Body>
-                </Modal> */}
-
-					{/* {!this.state.xalian &&
-                    <React.Fragment>
-                        <Row className="d-flex align-items-center  vertically-center-contents">
-                            <Col md={true} className="title-col xalian-generator-button-col vertically-center-contents centered-view">
-                                <button onClick={this.getXalian} className='xalian-generator-page-button'>Generate Xalian</button>
-                            </Col>
-                        </Row>
-                    </React.Fragment>
-                } */}
-
 					{this.state.xalian && (
 						<React.Fragment>
 							<Container fluid className="whole-container ">
@@ -101,8 +70,6 @@ class GeneratorPage extends React.Component {
 
 								<hr className="xalian-hr" />
 
-								<Row className="xalian-species-title"></Row>
-
 								<Row className="centered-view squeezed-view third-height">
 									<Col lg={3} md={6} xs={6} className='stackable-padding'>
 										<XalianInfoBox xalian={this.state.xalian} json={JSON.stringify(this.state.xalian, null, 2)} />
@@ -110,7 +77,12 @@ class GeneratorPage extends React.Component {
 
 									<Col lg={3} md={6} xs={6} className='stackable-padding'>
 										<Row className="xalian-image-row">
-											<XalianImage colored bordered shadowed speciesName={this.state.xalian.species.name} speciesType={this.state.xalian.elements.primaryType} moreClasses="xalian-image-detail" />
+											<XalianImage 
+                                            colored bordered shadowed 
+                                            speciesName={this.state.xalian.species.name} 
+                                            primaryType={this.state.xalian.elements.primaryType} 
+                                            secondaryType={this.state.xalian.elements.secondaryType} 
+                                            moreClasses="xalian-image-detail" />
 										</Row>
 									</Col>
 									<Col lg={true} className="vertically-center-contents centered-view stackable-padding">
@@ -122,16 +94,19 @@ class GeneratorPage extends React.Component {
 										<h6 className="species-detail-description">{this.state.xalian.species.description}</h6>
 									</div>
 								</Row>
-								<Row className="third-height stackable-padding">
+								<Row className="centered-view squeezed-view third-height stackable-padding">
 									<Col>
 										<XalianStatChart axisLabelColor={'white'} includeLabel labelFontSize={'10pt'} barSize={30} stats={this.state.xalian.stats} moreClasses="full-chart-div padded-row" />
 									</Col>
-								</Row>
-								<Row className="centered-view squeezed-view third-height stackable-padding">
-									<Col>
+                                    <Col>
 										<XalianMoveSet showDescription moves={this.state.xalian.moves}></XalianMoveSet>
 									</Col>
 								</Row>
+								{/* <Row className="centered-view squeezed-view third-height stackable-padding">
+									<Col>
+										<XalianMoveSet showDescription moves={this.state.xalian.moves}></XalianMoveSet>
+									</Col>
+								</Row> */}
 							</Container>
 						</React.Fragment>
 					)}

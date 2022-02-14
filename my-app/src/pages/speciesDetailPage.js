@@ -52,7 +52,7 @@ class SpeciesDetailPage extends React.Component {
 								</Col>
 								<Col lg={3} md={6} sm={6} className="">
 									<Row className="xalian-image-row">
-										<XalianImage colored bordered shadowed speciesName={this.state.xalian.name} speciesType={this.state.xalian.type} moreClasses="xalian-image-detail" />
+										<XalianImage colored bordered shadowed speciesName={this.state.xalian.name} primaryType={this.state.xalian.type} moreClasses="xalian-image-detail" />
 									</Row>
 								</Col>
 								<Col lg={true} className="vertically-center-contents centered-view">

@@ -23,7 +23,7 @@ class XalianSpeciesRowView extends React.Component {
                         <XalianInfoBox species={this.props.species}/>
                     </Col>
 					<Col className='vertically-center-contents' lg={2}>
-						<XalianImage colored shadowed speciesName={this.props.species.name} speciesType={this.props.species.type} moreClasses="xalian-image-in-row" />
+						<XalianImage colored shadowed speciesName={this.props.species.name} primaryType={this.props.species.type} moreClasses="xalian-image-in-row" />
 					</Col>
 					<Col className='vertically-center-contents' lg={true}>
 						<XalianStatRatingChart axisLabelColor={'white'} includeLabel labelFontSize={'8pt'} barSize={20} stats={this.props.species.statRatings} abbreviatedNames moreClasses='ultra-condensed-chart-div'/>

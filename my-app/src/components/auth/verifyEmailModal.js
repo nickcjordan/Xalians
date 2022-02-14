@@ -31,7 +31,7 @@ class VerifyEmailModal extends React.Component {
         ).then(response => {
             this.setState({ isThinking: false });
             this.props.callback();
-            this.props.onHide();
+            // this.props.onHide();
         });
     }
 

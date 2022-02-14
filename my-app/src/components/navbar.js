@@ -85,7 +85,7 @@ class XalianNavbar extends React.Component {
             </Nav>
             <Nav>
               {/* <Nav.Link className="xalian-generator-button" href="/engine">Try the Xalian Generator</Nav.Link> */}
-              <Nav.Link className="xalian-generator-button" href="/generator">
+              <Nav.Link className="me-auto xalian-generator-navbar-button" href="/generator">
                 {this.state.loggedInUser ? "Generate a Xalian" : "Try the Xalian Generator"}
               </Nav.Link>
               {/* <Nav.Link eventKey={2} href="#memes">

@@ -1,6 +1,7 @@
 const AWS = require('aws-sdk');
 AWS.config.setPromisesDependency(require('bluebird'));
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
+const builder = require('./responseBuilder.js');
 
 const TABLE_NAME = 'XalianUsersTable';
 
@@ -10,13 +11,13 @@ module.exports = {
     updateUser: updateUser
 };
 
-function getUser(userId, onSuccess, onNotFound, onFail) {
+function getUser(id, onSuccess, onNotFound, onFail) {
 	try {
-		console.log('inbound userId=' + userId);
+		console.log('inbound userId=' + id);
 		var params = {
 			TableName: TABLE_NAME,
 			Key: {
-				userId: userId,
+				userId: id
 			},
 		};
 
@@ -46,7 +47,7 @@ function createUser(user, onSuccess, onFail) {
 	try {
 		var params = {
 			TableName: TABLE_NAME,
-			Item: builder.bulidXalianUsersTableItem(user),
+			Item: builder.buildXalianUsersTableItem(user)
 		};
 
 		dynamoDb.put(params, function (err, data) {
@@ -61,12 +62,12 @@ function createUser(user, onSuccess, onFail) {
 	}
 }
 
-function updateUser(userId, updatedXalianIds, onSuccess, onFail) {
+function updateUser(id, updatedXalianIds, onSuccess, onFail) {
 	try {
 		var params = {
 			TableName: TABLE_NAME,
 			Key: {
-				userId: userId,
+				userId: id
 			},
 			UpdateExpression: 'set xalianIds = :ids',
 			ExpressionAttributeValues: {

@@ -13,6 +13,8 @@ import { store } from 'state-pool';
 import { Auth } from 'aws-amplify';
 import { Hub, Logger } from 'aws-amplify';
 import Button from 'react-bootstrap/Button';
+import NavbarBrand from 'react-bootstrap/esm/NavbarBrand';
+import Navbar from "react-bootstrap/Navbar";
 
 
 class AuthButtonGroup extends React.Component {
@@ -111,6 +113,7 @@ class AuthButtonGroup extends React.Component {
     }
 
     emailVerifiedCallback = () => {
+        this.setState({verifyEmailModalShow: false});
         authUtil.signIn(
             this.state.username,
             this.state.password
@@ -118,7 +121,7 @@ class AuthButtonGroup extends React.Component {
             this.setState({ isThinking: false });
             dbApi.callCreateUser({
                 userId: this.state.username,
-                attributes: {}
+                xalianIds: []
             });
         }).catch(e => {
             this.setState({ signInModalShow: true });
@@ -145,23 +148,23 @@ class AuthButtonGroup extends React.Component {
             <React.Fragment>
                 {this.state.loggedInUser &&
                     <React.Fragment>
-                        <h5 className="navbar-user-name-wrapper vertically-center-contents centered-view">
-                            <a href={'/account'}>{this.state.loggedInUser.username}</a>
-                        </h5>
+                        <Navbar.Text className="navbar-user-name-wrapper vertically-center-contents">
+                            <a className='username-navbar-link' href={'/account'}>{this.state.loggedInUser.username}</a>
+                        </Navbar.Text>
                     </React.Fragment>
                 }
                 {!this.state.loggedInUser &&
                     <React.Fragment>
-                        <div className="navbar-auth-button-wrapper">
-                            <Button variant="primary" onClick={() => this.setState({ signInModalShow: true })}>
+                        <Navbar.Text className="navbar-auth-button-wrapper vertically-center-contents">
+                            <Button onClick={() => this.setState({ signInModalShow: true })}>
                                 Sign In
                             </Button>
-                        </div>
+                        </Navbar.Text>
                     </React.Fragment>
                 }
                 {!this.state.loggedInUser &&
                     <React.Fragment>
-                        <div className="navbar-auth-button-wrapper">
+                        <div className="navbar-auth-button-wrapper vertically-center-contents">
                             <Button variant="primary" onClick={() => this.setState({ signupModalShow: true })}>
                                 Sign Up
                             </Button>
@@ -170,7 +173,7 @@ class AuthButtonGroup extends React.Component {
                 }
                 {((this.state.loggedInUser && !this.state.loggedInUser.hasVerifiedEmail)) &&
                     <React.Fragment>
-                        <div className="navbar-auth-button-wrapper">
+                        <div className="navbar-auth-button-wrapper vertically-center-contents">
                             <Button variant="primary" onClick={() => this.setState({ verifyEmailModalShow: true })}>
                                 Verify Email
                             </Button>
@@ -179,7 +182,7 @@ class AuthButtonGroup extends React.Component {
                 }
                 {this.state.loggedInUser &&
                     <React.Fragment>
-                        <div className="navbar-auth-button-wrapper">
+                        <div className="navbar-auth-button-wrapper vertically-center-contents">
                             <Button variant="primary" onClick={() => this.handleSignOut()}>
                                 Sign Out
                             </Button>

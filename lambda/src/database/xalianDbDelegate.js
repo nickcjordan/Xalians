@@ -61,7 +61,7 @@ function createXalian(xalian, onSuccess, onFail) {
 	try {
 		var params = {
 			TableName: TABLE_NAME,
-			Item: builder.bulidXalianTableItem(xalian),
+			Item: builder.buildXalianTableItem(xalian),
 		};
 
 		dynamoDb.put(params, function (err, data) {

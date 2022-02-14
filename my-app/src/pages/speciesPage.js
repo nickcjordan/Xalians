@@ -57,7 +57,7 @@ class SpeciesPage extends React.Component {
         return <Col md={2} sm={3} xs={6} className="species-col">
             <a href={"/species/" + x.id}>
                 {/* <Image src={this.getImageLocationFromSpecies(x.name)} rounded className={this.getTypeColorClassName(x) + " xalian-image"} /> */}
-                <XalianImage colored bordered speciesName={x.name} speciesType={x.type} moreClasses='xalian-image-grid'/>
+                <XalianImage colored bordered speciesName={x.name} primaryType={x.type} moreClasses='xalian-image-grid'/>
                 <h4 className='condensed-row' >#{x.id}</h4>
                 <h2 className='condensed-row species-name-title'>{x.name}</h2>
                 {/* <h3 className='condensed-row'><XalianSpeciesBadge type={x.type} /></h3> */}
@@ -66,7 +66,7 @@ class SpeciesPage extends React.Component {
     }
 
     buildStatRow(x) {
-        return <XalianSpeciesRowView species={x} />
+        return <a href={"/species/" + x.id}><XalianSpeciesRowView species={x} /></a>;
     }
 
     getImageLocationFromSpecies(name) {

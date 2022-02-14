@@ -22,9 +22,10 @@ module.exports.retrieveXalianUser = (event, context, callback) => {
 			userId,
 			function onSuccess(user) {
 				if (event.queryStringParameters.populateXalians && event.queryStringParameters.populateXalians === 'true') {
-					console.log('populating xalians');
-					xalianDelegate.getXalianBatch(
-						user.xalianIds,
+					if (user.xalianIds && user.xalianIds.length > 0) {
+						console.log('populating xalians');
+						xalianDelegate.getXalianBatch(
+							user.xalianIds,
 						function onSuccess(xalians) {
 							user.xalians = xalians;
 							let response = builder.buildResponse(200, user);
@@ -35,7 +36,12 @@ module.exports.retrieveXalianUser = (event, context, callback) => {
 							console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
 							callback(builder.buildError(err));
 						}
-					);
+						);
+					} else {
+						let response = builder.buildResponse(200, user);
+						console.log(`SUCCESS :: returning response:\n${JSON.stringify(response, null, 2)}`);
+						callback(undefined, response);
+					}
 				} else {
 					let response = builder.buildResponse(200, user);
 					console.log(`SUCCESS :: returning response:\n${JSON.stringify(response, null, 2)}`);
@@ -73,7 +79,9 @@ module.exports.createXalianUser = (event, context, callback) => {
 			}
 		);
 	} catch (e) {
-		callback(builder.buildError(e));
+		console.log('ERROR: ' + JSON.stringify(e.errorMessage, null, 2));
+		// callback(builder.buildError(e.errorMessage));
+		callback(null, builder.buildXalianError('UNKNOWN_ERROR', 'error json = ' + JSON.stringify(e)));
 	}
 };
 
@@ -110,7 +118,7 @@ module.exports.updateXalianUser = (event, context, callback) => {
 			);
 		},
 		function onNotFound() {
-			callback(null, builder.buildXalianError('USER_NOT_FOUND', 'Did not find user with userId=' + userId));
+			callback(null, builder.buildXalianError('USER_NOT_FOUND', 'Did not find user with userId=' + request.userId));
 		},
 		function onFail(error) {
 			console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
