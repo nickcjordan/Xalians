@@ -158,15 +158,9 @@ function populateStats(xalian) {
 
     // -- set remaining PRIMARY stat ranges from amount left to be allocated 
     for (const ind in unratedPrimary) {
-        // get list of possible ['high', 'medium', 'low'] based on remaining amount in category
-        let possibleRatings = buildListOfPossibleRatings(primaryMax - primaryTotal, remainingPrimaryCount);  
-        
-        
-        var selectedRating = pickStatisticalRandomRating(possibleRatings.length);
-        
-        let ratingNumber = valMapping[selectedRating];
+        // select random from list of possible ['high', 'medium', 'low'] values based on remaining amount in category
+        let ratingNumber = valMapping[pickStatisticalRandomRating(getHighestPossibleRatingValue(primaryMax - primaryTotal, remainingPrimaryCount))];
         let ratingName = valFlippedMapping[ratingNumber];
-        // console.log(`\nprimary calculated ==>\n\tstat=${stat}\n\tmaxLeftForCategory=${maxLeftForCategory}\n\t# left in category=${remainingPrimaryCount}\n\tpossibleRatings=${possibleRatings}\n\tselectedRating=${selectedRating}\n\tratingNumber=${ratingNumber}\n\tratingName=${ratingName}`);
         remainingPrimaryCount -= 1;
         primaryTotal += ratingNumber;
         xalian.species.statRatings[unratedPrimary[ind]] = ratingName;
@@ -174,25 +168,14 @@ function populateStats(xalian) {
 
     // -- set remaining SECONDARY stat ranges from amount left to be allocated 
     for (const ind in unratedSecondary) {
-        let stat = unratedSecondary[ind];
-        let maxLeftForCategory = secondaryMax - secondaryTotal;
-
-
-        let possibleRatings = buildListOfPossibleRatings(maxLeftForCategory, remainingSecondaryCount);
-        
-        // let selectedRating = tools.selectRandom(possibleRatings);
-        var selectedRating = pickStatisticalRandomRating(possibleRatings.length);
-        
-        let ratingNumber = valMapping[selectedRating];
+        let ratingNumber = valMapping[pickStatisticalRandomRating(getHighestPossibleRatingValue(secondaryMax - secondaryTotal, remainingSecondaryCount))];
         let ratingName = valFlippedMapping[ratingNumber];
-        // console.log(`\nsecondary calculated ==>\n\tstat=${stat}\n\tmaxLeftForCategory=${maxLeftForCategory}\n\t# left in category=${remainingSecondaryCount}\n\tpossibleRatings=${possibleRatings}\n\tselectedRating=${selectedRating}\n\tratingNumber=${ratingNumber}\n\tratingName=${ratingName}`);
         remainingSecondaryCount -= 1;
         secondaryTotal += ratingNumber;
-        xalian.species.statRatings[stat] = ratingName;
+        xalian.species.statRatings[unratedSecondary[ind]] = ratingName;
     }
-    // console.log(`built character ranges:\n${JSON.stringify(xalian.species.statRatings, null, 2)}`);
 
-
+    // -- generate numeric values for stats and create 'stats' object to attach to xalian
     var stats = new Map();
     stats[statConstants.STANDARD_ATTACK_POINTS] = generateStatFromRange(xalian, statConstants.STANDARD_ATTACK_RATING);
     stats[statConstants.SPECIAL_ATTACK_POINTS] = generateStatFromRange(xalian, statConstants.SPECIAL_ATTACK_RATING);
@@ -205,18 +188,16 @@ function populateStats(xalian) {
     xalian.stats = stats;
 
     // xalian.healthPoints = generateStatFromRange(xalian, statConstants.HEALTH_RATING);
+    // -- for now I guess we will have the health be a standard 999 value 
     xalian.healthPoints = constants.STAT_POINT_MAX;
 
 
-    // debug
     var sum = 0;
     percentages.forEach(p => {
         sum += p;
     });
     var avgPerc = Math.floor(sum / percentages.length);
-    // console.log(`percentage :: avg=${avgPerc}% :: ${JSON.stringify(percentages)}`);
     totalPercentages.push(avgPerc);
-    // console.log(`totalPercentages=${JSON.stringify(totalPercentages)}`);
     //
 
     totalStatsList.push(totalStats);
@@ -231,27 +212,28 @@ function populateStats(xalian) {
 }
 
 function generateStatFromRange(xalian, statName) {
-    var rate = xalian.species.statRatings[statName];
-    statRangeFactor = ratingToThresholdMapping[rate];
-
     /* 
-    
     This can be changed to flatten out the average result and make them less sporadic
         essentially it is using a base of max versus using a base of avgLeft 
-
     */
-
-    // var base = getRemainingAvgPerStat();
-    // var base = Math.min(getRemainingAvgPerStat(), constants.STAT_POINT_MAX);
+                // var base = getRemainingAvgPerStat();
+                // var base = Math.min(getRemainingAvgPerStat(), constants.STAT_POINT_MAX);
     var base = constants.STAT_POINT_MAX;
-    // var base = Math.max(getRemainingAvgPerStat(), constants.STAT_POINT_MAX);
-    // var base = Math.floor((getRemainingAvgPerStat() + constants.STAT_POINT_MAX) / 2);
+                // var base = Math.max(getRemainingAvgPerStat(), constants.STAT_POINT_MAX);
+                // var base = Math.floor((getRemainingAvgPerStat() + constants.STAT_POINT_MAX) / 2);
 
+
+
+
+    var rate = xalian.species.statRatings[statName];
+    statRangeFactor = ratingToThresholdMapping[rate];
     var rand = tools.rand();
 
-    // get random scalar between 0 and 0.25
+    // -- get random scalar between 0 and 0.25
+    //      -- used as the percentage amount 0% to 25% to scale the base value 
+    //      -- result delta value will be point value to add or subtract from original base
+    //              -- example: if delta=50, base= 
     var adjustedStatThresholdVariability = (rand) * constants.STAT_THRESHOLD_VARIABILITY;
-    // get difference in base adjused for randomness
     var newBase = base * adjustedStatThresholdVariability;
     var delta = Math.floor(newBase);
 
