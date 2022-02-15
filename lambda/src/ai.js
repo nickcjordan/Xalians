@@ -11,6 +11,10 @@ module.exports = {
     pickStatisticalRandomRating: pickStatisticalRandomRating
 };
 
+const HIGH_VALUE = 3;
+const MEDIUM_VALUE = 2;
+const LOW_VALUE = 1;
+
 var elementTypes = tools.getObject("elements");
 var species = tools.getObject("species");
 var totalStats = 0;
@@ -64,9 +68,9 @@ function getTypeNodeFromName(typeName) {
 }
 
 const valMapping = new Map();
-valMapping[ratingValueConstants.HIGH] = 3;
-valMapping[ratingValueConstants.MEDIUM] = 2;
-valMapping[ratingValueConstants.LOW] = 1;
+valMapping[ratingValueConstants.HIGH] = HIGH_VALUE;
+valMapping[ratingValueConstants.MEDIUM] = MEDIUM_VALUE;
+valMapping[ratingValueConstants.LOW] = LOW_VALUE;
 valMapping[ratingValueConstants.UNSET] = 0;
 
 const ratingToThresholdMapping = new Map();
@@ -77,8 +81,8 @@ ratingToThresholdMapping[ratingValueConstants.LOW] = constants.LOW_THRESHOLD;
 
 const valFlippedMapping = new Map();
 valFlippedMapping[3] = ratingValueConstants.HIGH;
-valFlippedMapping[2] = ratingValueConstants.MEDIUM;
-valFlippedMapping[1] = ratingValueConstants.LOW;
+valFlippedMapping[MEDIUM_VALUE] = ratingValueConstants.MEDIUM;
+valFlippedMapping[LOW_VALUE] = ratingValueConstants.LOW;
 valFlippedMapping[0] = ratingValueConstants.UNSET;
 
 const statsMapping = new Map();
@@ -104,12 +108,13 @@ function resetGlobals() {
 }
 
 function populateStats(xalian) {
-    resetGlobals();
+    resetGlobals(); // sets meta tracking back to 0
 
+    // -- iterate through preset stat ranges specific to species
+    // -- generate ranges for any that were not preset
     var map = xalian.species.statRatings;
     for (const key in map) {
         let val = map[key];
-        // console.log(`key=${key}: val=${val}`);
         if (val != ratingValueConstants.UNSET) {
             xalian.species.statRatings[key] = val;
             if (isPrimaryStat(key)) {
@@ -126,15 +131,16 @@ function populateStats(xalian) {
         }
     }
 
-    // console.log(`primary rated: ${JSON.stringify(ratedPrimary)}\nprimary unrated: ${JSON.stringify(unratedPrimary)}`);
-    // console.log(`secondary rated: ${JSON.stringify(ratedSecondary)}\nsecondary unrated: ${JSON.stringify(unratedSecondary)}`);
-
+    // -- set max for generated ranges 
+    //      -- 4 categories in both primary and secondary
+    //      -- '1', '2', or '3' for 'low', 'medium', or 'high'; 
+    //      -- average each stat to medium ('2') ==> 2 * 4 = 8 total range points per stat category
     var primaryMax = 8;
     var secondaryMax = 8;
     var primaryTotal = 0;
     var secondaryTotal = 0;
 
-    // sum totals for pre-rated
+    // -- set summed totals for preset ranges in primary and secondary categories 
     for (const ind in ratedPrimary) {
         let stat = ratedPrimary[ind];
         let threshold = map[stat]
@@ -145,19 +151,17 @@ function populateStats(xalian) {
         let threshold = map[stat];
         secondaryTotal += valMapping[threshold];
     }
-    if (debug) {console.log(`primary: ${primaryTotal} :: secondary: ${secondaryTotal}`);}
 
+    // -- get remaining points to be allocated to unset ranges
     var remainingPrimaryCount = unratedPrimary.length;
     var remainingSecondaryCount = unratedSecondary.length;
-    // set vals for unrated
-    for (const ind in unratedPrimary) {
-        let stat = unratedPrimary[ind];
-        let maxLeftForCategory = primaryMax - primaryTotal;
 
-        let possibleRatings = buildListOfPossibleRatings(maxLeftForCategory, remainingPrimaryCount);
+    // -- set remaining PRIMARY stat ranges from amount left to be allocated 
+    for (const ind in unratedPrimary) {
+        // get list of possible ['high', 'medium', 'low'] based on remaining amount in category
+        let possibleRatings = buildListOfPossibleRatings(primaryMax - primaryTotal, remainingPrimaryCount);  
         
         
-        // let selectedRating = tools.selectRandom(possibleRatings);
         var selectedRating = pickStatisticalRandomRating(possibleRatings.length);
         
         let ratingNumber = valMapping[selectedRating];
@@ -165,8 +169,10 @@ function populateStats(xalian) {
         // console.log(`\nprimary calculated ==>\n\tstat=${stat}\n\tmaxLeftForCategory=${maxLeftForCategory}\n\t# left in category=${remainingPrimaryCount}\n\tpossibleRatings=${possibleRatings}\n\tselectedRating=${selectedRating}\n\tratingNumber=${ratingNumber}\n\tratingName=${ratingName}`);
         remainingPrimaryCount -= 1;
         primaryTotal += ratingNumber;
-        xalian.species.statRatings[stat] = ratingName;
+        xalian.species.statRatings[unratedPrimary[ind]] = ratingName;
     }
+
+    // -- set remaining SECONDARY stat ranges from amount left to be allocated 
     for (const ind in unratedSecondary) {
         let stat = unratedSecondary[ind];
         let maxLeftForCategory = secondaryMax - secondaryTotal;
@@ -294,28 +300,26 @@ function generateStatFromRange(xalian, statName) {
     // return adjustedResult;
 }
 
-
-// function getThreshold(val) {
-//     var thresholds = [constants.LOW_THRESHOLD, constants.MEDIUM_THRESHOLD, constants.HIGH_THRESHOLD];
-//     return thresholds[val - 1];
+// -- build list of ['HIGH', 'MEDIUM', 'LOW'] potential ranges to have randomizer select from
+//      -- range can be limited by remaining points to allocate for a range category 
+// function buildListOfPossibleRatings(maxLeftForCategory, remainingCount) {
+//     var ratings = [];
+//     if (remainingCount == 1) { return [valFlippedMapping[maxLeftForCategory]]; }
+//     let val = (maxLeftForCategory - (remainingCount - 1));
+//     if (val >= 1) { ratings.push(ratingValueConstants.LOW); }
+//     if (val >= 2) { ratings.push(ratingValueConstants.MEDIUM); }
+//     if (val >= 3) { ratings.push(ratingValueConstants.HIGH); }
+//     return ratings;
 // }
 
-function buildListOfPossibleRatings(maxLeftForCategory, remainingCount) {
-    var ratings = [];
-    if (remainingCount == 1) {
-        return [valFlippedMapping[maxLeftForCategory]];
-    }
-    let val = (maxLeftForCategory - (remainingCount - 1));;
-    if (val >= 1) {
-        ratings.push(ratingValueConstants.LOW);
-    }
-    if (val >= 2) {
-        ratings.push(ratingValueConstants.MEDIUM);
-    }
-    if (val >= 3) {
-        ratings.push(ratingValueConstants.HIGH);
-    }
-    return ratings;
+// -- get highest possible category between 'HIGH', 'MEDIUM', 'LOW'
+//      -- range can be limited by remaining points to allocate for a range category  
+function getHighestPossibleRatingValue(maxLeftForCategory, remainingCount) {
+    if (remainingCount == 1) { return maxLeftForCategory; }
+    let numberOfCategoriesToAllocateAfterThisIteration = remainingCount - 1;
+    let remainingAmountToAllocateIfAllOtherRangesRandomizedToLowest = maxLeftForCategory - (numberOfCategoriesToAllocateAfterThisIteration * LOW_VALUE);
+    if (remainingAmountToAllocateIfAllOtherRangesRandomizedToLowest > HIGH_VALUE) {return HIGH_VALUE; }
+    else { return remainingAmountToAllocateIfAllOtherRangesRandomizedToLowest; }
 }
 
 function isPrimaryStat(stat) {
@@ -437,11 +441,11 @@ var raritiesNoHigh = [{
     chance: 50
 }];
 
-function pickStatisticalRandomRating(highest = 3) {
+function pickStatisticalRandomRating(highest = HIGH_VALUE) {
     var rarities = null;
-    if (highest > 2) {
+    if (highest > MEDIUM_VALUE) {
         rarities = raritiesFull;
-    } else if (highest > 1) {
+    } else if (highest > LOW_VALUE) {
         rarities = raritiesNoHigh;
     } else {
         return ratingValueConstants.LOW;
