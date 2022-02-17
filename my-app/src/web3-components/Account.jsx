@@ -1,6 +1,6 @@
 import { Button } from "antd";
 import React from "react";
-import { useThemeSwitcher } from "react-css-theme-switcher";
+//import { useThemeSwitcher } from "react-css-theme-switcher";
 import Address from "./Address";
 import Balance from "./Balance";
 import Wallet from "./Wallet";
@@ -81,7 +81,7 @@ export default function Account({
     }
   }
 
-  const { currentTheme } = useThemeSwitcher();
+  //const { currentTheme } = useThemeSwitcher();
 
   const display = minimized ? (
     ""
@@ -99,7 +99,8 @@ export default function Account({
         signer={userSigner}
         ensProvider={mainnetProvider}
         price={price}
-        color={currentTheme === "light" ? "#1890ff" : "#2caad9"}
+        //color={currentTheme === "light" ? "#1890ff" : "#2caad9"}
+        color="#1890ff" 
       />
     </span>
   );

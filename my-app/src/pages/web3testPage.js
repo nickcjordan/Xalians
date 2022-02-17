@@ -22,17 +22,17 @@ import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 //import Torus from "@toruslabs/torus-embed"
 import WalletLink from "walletlink";
 import Web3Modal from "web3modal";
-import "./App.css";
-import { Account, Address, AddressInput, Contract, Faucet, GasGauge, Header, Ramp, ThemeSwitch } from "./components";
-import { INFURA_ID, NETWORK, NETWORKS } from "./constants";
-import { Transactor } from "./helpers";
-import { useContractConfig } from "./hooks";
+// import "./App.css";
+import { Account, Address, AddressInput, Contract, Faucet, GasGauge, Header, Ramp, ThemeSwitch } from "../web3-components";
+import { INFURA_ID, NETWORK, NETWORKS } from "../web3-constants";
+import { Transactor } from "../web3-helpers";
+import { useContractConfig } from "../web3-hooks";
 // import Hints from "./Hints";
-import { Card } from "antd";
 
-const { BufferList } = require("bl");
-const ipfsAPI = require("ipfs-http-client");
-const ipfs = ipfsAPI({ host: "ipfs.infura.io", port: "5001", protocol: "https" });
+
+// const { BufferList }  = require("bl");
+// const ipfsAPI = require("ipfs-http-client");
+// const ipfs = ipfsAPI({ host: "ipfs.infura.io", port: "5001", protocol: "https" });
 
 const { ethers } = require("ethers");
 
@@ -56,7 +56,7 @@ const { ethers } = require("ethers");
 */
 
 /// 📡 What chain are your contracts deployed to?
-const targetNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+const targetNetwork = NETWORKS.kovan; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
 const DEBUG = true;
@@ -82,18 +82,18 @@ const STARTING_JSON = {
 
 // helper function to "Get" from IPFS
 // you usually go content.toString() after this...
-const getFromIPFS = async hashToGet => {
-  for await (const file of ipfs.get(hashToGet)) {
-    console.log(file.path);
-    if (!file.content) continue;
-    const content = new BufferList();
-    for await (const chunk of file.content) {
-      content.append(chunk);
-    }
-    console.log(content);
-    return content;
-  }
-};
+// const getFromIPFS = async hashToGet => {
+//   for await (const file of ipfs.get(hashToGet)) {
+//     console.log(file.path);
+//     if (!file.content) continue;
+//     const content = new BufferList();
+//     for await (const chunk of file.content) {
+//       content.append(chunk);
+//     }
+//     console.log(content);
+//     return content;
+//   }
+// };
 
 // 🛰 providers
 if (DEBUG) console.log("📡 Connecting to Mainnet Ethereum");
@@ -285,37 +285,37 @@ function App(props) {
   const yourBalance = balance && balance.toNumber && balance.toNumber();
   const [yourCollectibles, setYourCollectibles] = useState();
 
-  useEffect(() => {
-    const updateYourCollectibles = async () => {
-      const collectibleUpdate = [];
-      for (let tokenIndex = 0; tokenIndex < balance; tokenIndex++) {
-        try {
-          console.log("GEtting token index", tokenIndex);
-          const tokenId = await readContracts.YourCollectible.tokenOfOwnerByIndex(address, tokenIndex);
-          console.log("tokenId", tokenId);
-          const tokenURI = await readContracts.YourCollectible.tokenURI(tokenId);
-          console.log("tokenURI", tokenURI);
+  // useEffect(() => {
+  //   const updateYourCollectibles = async () => {
+  //     const collectibleUpdate = [];
+  //     for (let tokenIndex = 0; tokenIndex < balance; tokenIndex++) {
+  //       try {
+  //         console.log("GEtting token index", tokenIndex);
+  //         const tokenId = await readContracts.YourCollectible.tokenOfOwnerByIndex(address, tokenIndex);
+  //         console.log("tokenId", tokenId);
+  //         const tokenURI = await readContracts.YourCollectible.tokenURI(tokenId);
+  //         console.log("tokenURI", tokenURI);
 
-          const ipfsHash = tokenURI.replace("https://ipfs.io/ipfs/", "");
-          console.log("ipfsHash", ipfsHash);
+  //         const ipfsHash = tokenURI.replace("https://ipfs.io/ipfs/", "");
+  //         console.log("ipfsHash", ipfsHash);
 
-          const jsonManifestBuffer = await getFromIPFS(ipfsHash);
+  //         const jsonManifestBuffer = await getFromIPFS(ipfsHash);
 
-          try {
-            const jsonManifest = JSON.parse(jsonManifestBuffer.toString());
-            console.log("jsonManifest", jsonManifest);
-            collectibleUpdate.push({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest });
-          } catch (e) {
-            console.log(e);
-          }
-        } catch (e) {
-          console.log(e);
-        }
-      }
-      setYourCollectibles(collectibleUpdate);
-    };
-    updateYourCollectibles();
-  }, [address, yourBalance]);
+  //         try {
+  //           const jsonManifest = JSON.parse(jsonManifestBuffer.toString());
+  //           console.log("jsonManifest", jsonManifest);
+  //           collectibleUpdate.push({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest });
+  //         } catch (e) {
+  //           console.log(e);
+  //         }
+  //       } catch (e) {
+  //         console.log(e);
+  //       }
+  //     }
+  //     setYourCollectibles(collectibleUpdate);
+  //   };
+  //   updateYourCollectibles();
+  // }, [address, yourBalance]);
 
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
@@ -641,32 +641,32 @@ function App(props) {
     },
   };
 
-  const mintItem = async () => {
-    // upload to ipfs
-    const uploaded = await ipfs.add(JSON.stringify(json[count]));
-    setCount(count + 1);
-    console.log("Uploaded Hash: ", uploaded);
-    const result = tx(
-      writeContracts &&
-        writeContracts.YourCollectible &&
-        writeContracts.YourCollectible.mintItem(address, uploaded.path),
-      update => {
-        console.log("📡 Transaction Update:", update);
-        if (update && (update.status === "confirmed" || update.status === 1)) {
-          console.log(" 🍾 Transaction " + update.hash + " finished!");
-          console.log(
-            " ⛽️ " +
-              update.gasUsed +
-              "/" +
-              (update.gasLimit || update.gas) +
-              " @ " +
-              parseFloat(update.gasPrice) / 1000000000 +
-              " gwei",
-          );
-        }
-      },
-    );
-  };
+  // const mintItem = async () => {
+  //   // upload to ipfs
+  //   const uploaded = await ipfs.add(JSON.stringify(json[count]));
+  //   setCount(count + 1);
+  //   console.log("Uploaded Hash: ", uploaded);
+  //   const result = tx(
+  //     writeContracts &&
+  //       writeContracts.YourCollectible &&
+  //       writeContracts.YourCollectible.mintItem(address, uploaded.path),
+  //     update => {
+  //       console.log("📡 Transaction Update:", update);
+  //       if (update && (update.status === "confirmed" || update.status === 1)) {
+  //         console.log(" 🍾 Transaction " + update.hash + " finished!");
+  //         console.log(
+  //           " ⛽️ " +
+  //             update.gasUsed +
+  //             "/" +
+  //             (update.gasLimit || update.gas) +
+  //             " @ " +
+  //             parseFloat(update.gasPrice) / 1000000000 +
+  //             " gwei",
+  //         );
+  //       }
+  //     },
+  //   );
+  // };
 
   return (
     <div className="App">
@@ -729,7 +729,7 @@ function App(props) {
         <Switch>
           <Route exact path="/">
             <div style={{ width: 640, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
-              <Button
+              {/* <Button
                 disabled={minting}
                 shape="round"
                 size="large"
@@ -738,7 +738,7 @@ function App(props) {
                 }}
               >
                 MINT NFT
-              </Button>
+              </Button> */}
             </div>
             <div style={{ width: 640, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
               <List
@@ -813,7 +813,7 @@ function App(props) {
             </div>
           </Route>
 
-          <Route path="/ipfsup">
+          {/* <Route path="/ipfsup">
             <div style={{ paddingTop: 32, width: 740, margin: "auto", textAlign: "left" }}>
               <ReactJson
                 style={{ padding: 8 }}
@@ -854,8 +854,8 @@ function App(props) {
             </Button>
 
             <div style={{ padding: 16, paddingBottom: 150 }}>{ipfsHash}</div>
-          </Route>
-          <Route path="/ipfsdown">
+          </Route> */}
+          {/* <Route path="/ipfsdown">
             <div style={{ paddingTop: 32, width: 740, margin: "auto" }}>
               <Input
                 value={ipfsDownHash}
@@ -886,7 +886,7 @@ function App(props) {
             </Button>
 
             <pre style={{ padding: 16, width: 500, margin: "auto", paddingBottom: 150 }}>{ipfsContent}</pre>
-          </Route>
+          </Route> */}
           <Route path="/debugcontracts">
             <Contract
               name="YourCollectible"
@@ -900,7 +900,7 @@ function App(props) {
         </Switch>
       </BrowserRouter>
 
-      <ThemeSwitch />
+   
 
       {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
       <div style={{ position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10 }}>

@@ -51,6 +51,7 @@ class XalianNavbar extends React.Component {
                         <Nav.Link href="/glossary">Glossary</Nav.Link>
                         <Nav.Link href="/faq">FAQ</Nav.Link>
                         <Nav.Link href="/minting">Mint</Nav.Link>
+                        <Nav.Link href="/web3test">Web3Test</Nav.Link>
                         {/* <Nav.Link href="/designer">Designer</Nav.Link> */}
                         {/* <Nav.Link href="#pricing">Pricing</Nav.Link> */}
                         {/* <NavDropdown title="Dropdown" id="collasible-nav-dropdown">

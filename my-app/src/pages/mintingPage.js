@@ -6,6 +6,7 @@ import Container from 'react-bootstrap/Container';
 import XalianNavbar from '../components/navbar';
 import ListGroup from 'react-bootstrap/ListGroup';
 import axios from 'axios';
+import { Alert, Card, Input, List, Menu} from "antd";
 
 //web3 imports below
 import Portis from "@portis/web3";
@@ -146,8 +147,25 @@ const web3Modal = new Web3Modal({
 });
 
 
+//web3 stuff below
+
+
+
+// const userProviderAndSigner = useUserProviderAndSigner(injectedProvider, localProvider);
+// const userSigner = userProviderAndSigner.signer;
+//web3 stuff above
+
+
+
+
 class MintingPage extends React.Component {
 
+
+
+
+
+
+    
     state = {
         xalian: null,
         isLoading: true
@@ -181,15 +199,21 @@ class MintingPage extends React.Component {
 
                                         
                                         } </h1>
-                            <h1>Testing</h1>
-                            {/* <Contract
-                                name="TestName"
-                                signer={userSigner}
-                                provider={localProvider}
-                                address={address}
-                                blockExplorer={blockExplorer}
-                                contractConfig={contractConfig}
-                            /> */}
+                                        
+                            <h1>Messing around below</h1>
+                            
+
+
+                            
+
+                            <h1>Messing around above</h1>
+
+
+
+
+
+
+
                         
                                 </React.Fragment>            
                                 
