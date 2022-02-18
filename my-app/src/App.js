@@ -1,6 +1,5 @@
 import './App.css';
 import Home from './pages/home';
-import ExplorePage from './pages/explore';
 import ProjectPage from './pages/projectPage';
 import FAQPage from './pages/faqPage';
 import PlanetPage from './pages/planetPage';
@@ -11,6 +10,7 @@ import GlossaryPage from './pages/glossaryPage';
 import GeneratorPage from './pages/generatorPage';
 import UserAccountPage from './pages/userAccountPage';
 import UserDetailsPage from './pages/userDetailsPage';
+import CommunityPage from './pages/communityPage';
 import React from "react";
 import XalianNavbar from './components/navbar';
 import Container from 'react-bootstrap/Container';
@@ -40,7 +40,6 @@ class App extends React.Component {
           <div>
             <Switch>
               <Route exact path="/"><Home /></Route>
-              <Route exact path="/engine"><ExplorePage /></Route>
               <Route exact path="/generator"><GeneratorPage /></Route>
               <Route exact path="/project"><ProjectPage /></Route>
               <Route exact path="/faq"><FAQPage /></Route>
@@ -55,6 +54,7 @@ class App extends React.Component {
               <Route exact path="/designer"><DesignerPage /></Route>
               <Route exact path="/glossary"><GlossaryPage /></Route>
               <Route exact path="/account"><UserAccountPage /></Route>
+              <Route exact path="/community"><CommunityPage /></Route>
             </Switch>
           </div>
         </Router>

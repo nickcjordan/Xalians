@@ -80,6 +80,7 @@ body {
   font-family: "Abel", sans-serif;
   color: #ffffff;
   background-color: #0d0d0d !important;
+  overflow-x: hidden;
 }
 
 a {
@@ -168,14 +169,27 @@ h6 {
 * Desktop Navigation 
 */
 
+.visible {
+  transform: scaleY(1);
+  transform-origin: top;
+  transition: transform 0.26s ease;
+}
+
+.hidden {
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.26s ease;
+}
+
 .xalian-navbar {
-  padding-top: 0px !important;
-  padding-bottom: 0px !important;
+  padding: 0px !important;
+  /* padding-bottom: 0px !important; */
   background-color: #0e0e0eea !important;
   border: 0;
   border-bottom: 1px solid #80ffb133;
   /* border-radius: 6px; */
-  max-width: 100vw;
+  width: 100%;
+  opacity: 1;
 }
 
 .navbar {
@@ -288,7 +302,7 @@ h6 {
 }
 
 #navvy {
-  margin: auto;
+  /* margin: auto; */
 }
 
 .nav-text-shadow {
@@ -409,7 +423,7 @@ h6 {
   display: none;
   margin: 10px 20px;
   padding: 10px 0;
-  z-index: 99;
+  z-index: 1;
   opacity: 1;
   visibility: visible;
   background: #fff;
@@ -470,20 +484,30 @@ h6 {
   color: white !important;
 }
 
+.content-wrapper {
+  background: rgb(75, 74, 74);
+  background: radial-gradient(circle, rgba(75, 74, 74, 1) 21%, rgba(57, 57, 57, 1) 53%, rgba(28, 28, 28, 1) 100%);
+  justify-content: center;
+  font-family: 'Abel' !important;
+  color: white;
+  width: 100vw;
+  padding: 0 !important;
+}
 
 /*--------------------------------------------------------------
 # Splash Section
 --------------------------------------------------------------*/
-#splash {
-  width: 100%;
-  height: 100vh !important;
-  background: url("../img/background/valleron.jpg") top center;
+.home-background-image  {
+  width: 100vw;
+  /* height: 100vh !important; */
+  background: url("../img/background/galaxy-splash-dark.png") top center;
   background-size: cover;
   position: relative;
   background-attachment: fixed;
+  padding: 0 !important;
 }
 
-#splash:before {
+/* .home-background-image:before {
   content: "";
   background: rgba(0, 0, 0, 0.75);
   position: absolute;
@@ -491,6 +515,33 @@ h6 {
   top: 0;
   left: 0;
   right: 0;
+} */
+
+.home-background  {
+  width: 100vw;
+  height: 100vh !important;
+  /* background: url("../img/background/galaxy-splash.jpg") top center; */
+  /* background-size: cover; */
+  /* position: relative; */
+  /* background-attachment: fixed; */
+  padding: 0 !important;
+}
+
+/* .home-background:before { */
+  /* content: ""; */
+  /* background: rgba(0, 0, 0, 0.75); */
+  /* position: absolute; */
+  /* bottom: 0; */
+  /* top: 0; */
+  /* left: 0; */
+  /* right: 0; */
+/* } */
+
+#splash {
+  width: 100%;
+  height: 100vh !important;
+  position: relative;
+  padding: 0px !important;
 }
 
 #splash .container {
@@ -501,7 +552,7 @@ h6 {
 
 #splash .icon-box {
   padding: 30px 20px;
-  transition: ease-in-out 0.3s;
+  /* transition: ease-in-out 0.3s; */
   border: 1px solid rgba(255, 255, 255, 0.3);
   height: 100%;
   text-align: center;
@@ -566,9 +617,9 @@ a:active {
 }
 
 @media (max-width: 768px) {
-  #splash {
+  /* #splash {
     height: auto;
-  }
+  } */
 
   #splash h2 {
     font-size: 1.5em;
@@ -580,9 +631,9 @@ a:active {
 }
 
 @media (max-width: 400px) {
-  #splash {
+  /* #splash {
     height: auto;
-  }
+  } */
 
   #splash h2 {
     font-size: 1.2em;
@@ -592,6 +643,7 @@ a:active {
     font-size: 1.2em;
   }
 }
+
 
 
 /*--------------------------------------------------------------
@@ -1320,6 +1372,7 @@ section {
   justify-content: center;
   font-family: 'Abel';
   color: white;
+  padding: 0 !important;
 }
 
 .generator-page-content-background-container {
@@ -1342,7 +1395,7 @@ section {
   font-family: 'Abel' !important;
   color: white;
   width: 100vw;
-
+  padding: 0 !important;
 }
 
 .topic-column .list-group .list-group-item {
@@ -1508,17 +1561,7 @@ article {
   height: 0;
 }
 
-.visible {
-  transform: scaleY(1);
-  transform-origin: top;
-  transition: transform 0.26s ease;
-}
 
-.hidden {
-  transform: scaleY(0);
-  transform-origin: top;
-  transition: transform 0.26s ease;
-}
 
 
 /* 
@@ -1528,8 +1571,10 @@ article {
 */
 
 .xalians-logo {
-  max-height: 100px;
+  height: auto;
+  width: 100%;
   max-width: 80vw;
+  margin: auto;
 }
 
 /* 
@@ -2337,3 +2382,38 @@ input, textarea {
   margin-bottom: 15px !important;
 }
 
+/* 
+-------------------------------------------
+|   COMMUNITY PAGE
+-------------------------------------------
+*/
+
+.community-poll-wrapper {
+
+}
+
+
+
+.themed-scene-div-wrapper {
+  /* max-width: 90vw !important; */
+  /* margin: auto !important; */
+  /* margin-bottom: 0 !important; */
+  /* padding: 0 !important; */
+  color: white;
+}
+
+
+.themed-scene-div-content-wrapper {
+    background-color: rgba(0, 0, 0, 0.7);
+    text-shadow: 0px 0px 10px rgb(0, 0, 0);
+    border-radius: 10px;
+    /* padding: 15px !important; */
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
+.section-top-scene {
+  margin: auto !important;
+  padding: 0px !important;
+  width: 90vw !important;
+}
