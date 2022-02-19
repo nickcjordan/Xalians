@@ -18,6 +18,7 @@ import XalianAttributeChart from '../components/xalianAttributeChart';
 import XalianImage from '../components/xalianImage';
 import XalianStatRatingChart from '../components/xalianStatRatingChart';
 
+
 class SpeciesDetailPage extends React.Component {
 	state = {};
 
@@ -35,6 +36,8 @@ class SpeciesDetailPage extends React.Component {
 			xalian: xal,
 		});
 	}
+
+	
 
 	render() {
 		return (

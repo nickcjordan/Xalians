@@ -220,13 +220,13 @@
     }
   },
   {
-    "name": "X1",
+    "name": "Figzy",
     "id": "00012",
     "type": "Psychic",
     "planet": "Telypso",
     "height": "52 in / 132 cm",
     "weight": "44 lbs / 20 kg",
-    "description": "Little is known about this mysterious creature. Few sightings have been reported.",
+    "description": "What this creature lacks in stature it makes up for with its incredible magical abilities. It is deceptively smart, yet known to be docile when it trusts you.",
     "statRatings": {
       "healthRating": "",
       "standardAttackRating": "",

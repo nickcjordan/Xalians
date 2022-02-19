@@ -6,6 +6,7 @@ import Container from 'react-bootstrap/Container';
 import XalianNavbar from '../components/navbar';
 import ListGroup from 'react-bootstrap/ListGroup';
 import glossary from '../json/glossary.json';
+import XaliansLogoAnimatedSVG from '../svg/logo/xaliansLogoAnimatedSVG';
 
 class Sandbox extends React.Component {
 	render() {
@@ -15,10 +16,9 @@ class Sandbox extends React.Component {
 					<XalianNavbar></XalianNavbar>
 
 					<Container>
-						<Row className="">
+						<Row className="vertically-center-contents sandbox">
 							<Col className="stackable-margin vertically-center-contents">
-								Welcome to the Xalian Community
-								<iframe className='community-poll-wrapper' scrolling="no" frameborder="0" style={{ display: 'block', height: '760px', width: '100%', maxWidth: '460px'}} src={"https://embed.pollforall.com/?pollId=" + POLL_ID}></iframe>
+							<XaliansLogoAnimatedSVG/>
 							</Col>
 						</Row>
 					</Container>

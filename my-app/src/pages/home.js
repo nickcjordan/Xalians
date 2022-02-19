@@ -5,9 +5,14 @@ import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import XalianNavbar from '../components/navbar';
 import ThemedSceneDiv from '../components/views/themedSceneDiv'
-import { Reveal, Tween, ScrollTrigger, Controls, Timeline, PlayState } from 'react-gsap';
+// import { Reveal, Tween, ScrollTrigger, Controls, Timeline, PlayState } from 'react-gsap';
 import * as animations from '../components/animations/fadeAnimation';
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import FigzyAnimatedSVG from '../svg/figzyAnimatedSVG';
+import VoltishAnimatedSVG from '../svg/voltishAnimatedSVG';
+import XaliansLogoAnimatedSVG from '../svg/logo/xaliansLogoAnimatedSVG';
+gsap.registerPlugin(ScrollTrigger);
 
 class Home extends React.Component {
     
@@ -24,30 +29,56 @@ class Home extends React.Component {
     
     componentDidMount() {
         this.setState({isLoading: false})
-		// console.log(`this.xalianLogoRef = ${this.xalianLogoRef}`);
-		// gsap.to(this.xalianLogoRef.current, { rotation: "+=360" });
+		let main = document.querySelector("#main");
+
+		ScrollTrigger.create({
+			trigger: "#animated-xalians-row",
+			start: "bottom bottom",
+			endTrigger: "main",
+			end: "top bottom",
+			pin: true,
+			onRefreshInit: self => main.style.paddingBottom = self.trigger.offsetHeight + "px",
+			pinSpacing: false
+		  });
+
+		// splashTl.fromTo("#xalianLogo", {opacity: 0}, {opacity: 1, duration: 1, ease:'sine.in'});
+		// splashTl.to("#xalianLogo", {duration: 3, x: 50, delay: 1});
 
 
-		// var animationTimeline = gsap.timeline({ repeat: -1, yoyo: true});
+		this.buildLetterEntry("#xalians-logo-s", 0.5);
+		this.buildLetterEntry("#xalians-logo-n", 0.55);
+		this.buildLetterEntry("#xalians-logo-a2", 0.6);
+		this.buildLetterEntry("#xalians-logo-i", 0.65);
+		this.buildLetterEntry("#xalians-logo-l", 0.7);
+		this.buildLetterEntry("#xalians-logo-a1", 0.75);
+		this.buildLetterEntry("#xalians-logo-x", 0.8);
+		// gsap.from("#xalians-logo-s", {duration: 1, x: 0, y:});
+		// gsap.from("#xalians-logo-n", {duration: 1, x: "-=1000", delay:0.55});
+		// gsap.from("#xalians-logo-a2", {duration: 1, x: "-=1000", delay:0.6});
+		// gsap.from("#xalians-logo-i", {duration: 1, x: "-=1000", delay:0.65});
+		// gsap.from("#xalians-logo-l", {duration: 1, x: "-=1000", delay:0.7});
+		// gsap.from("#xalians-logo-a1", {duration: 1, x: "-=1000", delay:0.75});
+		// gsap.from("#xalians-logo-x", {duration: 1, x: "-=1000", delay:0.8});
+
+		gsap.fromTo("#navvy", {opacity: 0}, {opacity: 1, duration: 1, ease:'sine.in', delay: 1});
+
 		var splashTl = gsap.timeline({ repeat: 0});
-		splashTl.fromTo("#xalianLogo", {opacity: 0}, {opacity: 1, duration: 1, ease:'sine.in'});
-		splashTl.fromTo("#first-line", {opacity: 0}, {opacity: 1, duration: 0.5});
+
+		splashTl.fromTo("#animated-xalians-row", {opacity: 0}, {opacity: 1, duration: 1, ease:'sine.in', delay: 1});
+		
+		splashTl.fromTo("#first-line", {opacity: 0}, {opacity: 1, duration: 0.5, delay: 1});
 		splashTl.fromTo("#second-line", {opacity: 0}, {opacity: 1, duration: 0.5});
 		splashTl.fromTo("#third-line", {opacity: 0}, {opacity: 1, duration: 0.5});
-		splashTl.fromTo("#navvy", {opacity: 0}, {opacity: 1, duration: 1, ease:'sine.in'});
 
-		gsap.to("#inside-spinner", {duration: 10, rotation: 360, transformOrigin: "50% 50%", repeat: -1, ease: 'none', });
-		gsap.to("#outside-spinner", {duration: 20, rotation: -360, transformOrigin: "50% 50%", repeat: -1, ease: 'none', });
-		// gsap.from("#story", {
-		// 	scrollTrigger: {
-		// 		trigger: "#story",
-		// 		toggleActions: "restart pause reverse pause",
-		// 		start: "top 80%",
-		// 		scrub: 1
-		// 	},
-		// 	opacity: 0
-		// })
+		gsap.set("#figzy-svg", {height: "60%", marginTop: "auto !important", marginBottom: "0px !important"});
+		
     }
+
+	buildLetterEntry = (id, d) => {
+		var logoLetter = gsap.timeline();
+		logoLetter.from(id, {duration: 1, x:"-=1000", delay:d});
+		logoLetter.from(id, {duration: 1, yPercent:100});
+	}
 
 
     render() {
@@ -55,37 +86,23 @@ class Home extends React.Component {
 
         return (
 			<React.Fragment>
-				{/* <Controls playState={PlayState.stop}>
-					<Timeline target={this.xalianLogoRef}>
-						<Tween from={{ opacity: 0 }} to={{ opacity: 1 }} duration={2} />
-						<Tween to={{ x: '200px' }} />
-						<Tween to={{ rotation: 180 }} position="+=1" />
-					</Timeline>
-				</Controls> */}
-
 				<Container fluid className=" home-background-image">
 					<XalianNavbar></XalianNavbar>
 
 					<section id="splash" className="d-flex align-items-center justify-content-center home-background">
-						<div className="container">
+						<Container className="splash-container vertically-center-contents-grid">
 							{/* <div className="row justify-content-center" data-aos="fade-up"> */}
-							<div className="row justify-content-center">
-								<div className="col-xl-6 col-lg-8">
-									{/* <Reveal repeat>
-										<Tween from={{ opacity: 0 }} to={{ opacity: 1 }} duration={4}>
-                                        <img src="assets/img/logo/xalians_logo.png" className="xalians-logo" />
-										</Tween>
-									</Reveal> */}
-									{/* <animations.FadeIn> */}
-									{/* <div ref={this.xalianLogoRef}> */}
+							<Row className="row justify-content-center">
+								<Col lg={8}>
+									{/* <img id="xalianLogo" src="assets/img/logo/xalians_logo.png" className="xalians-logo" /> */}
 
-										<img id='xalianLogo' src="assets/img/logo/xalians_logo.png" className="xalians-logo" />
-									{/* </div> */}
-									{/* </animations.FadeIn> */}
+									<XaliansLogoAnimatedSVG id="xalianLogo" />
 
-									<h2 id='first-line' className="splash-subtitle">CREATE : EARN : TRADE : PLAY</h2>
-									<h3 id='second-line' >Battles coming soon...</h3>
-									<div id='third-line'  className="social-media-links">
+									<h2 id="first-line" className="splash-subtitle">
+										CREATE : EARN : TRADE : PLAY
+									</h2>
+									<h3 id="second-line">Battles coming soon...</h3>
+									<div id="third-line" className="social-media-links">
 										<a href="https://discord.gg/sgGNhNJ2KN" className="social-media-links">
 											<i className="bi bi-discord"></i>
 										</a>
@@ -93,8 +110,19 @@ class Home extends React.Component {
 											<i className="bi bi-twitter"></i>
 										</a>
 									</div>
-								</div>
-							</div>
+								</Col>
+							</Row>
+							<Row id="animated-xalians-row">
+							<Col xs={1} />
+							<Col xs={4} className="xalian-svg-col">
+								<FigzyAnimatedSVG colored id="figzy-svg" />
+							</Col>
+							<Col xs={true} />
+							<Col xs={4} className="xalian-svg-col">
+								<VoltishAnimatedSVG colored id="voltish-svg"/>
+							</Col>
+							<Col xs={1} />
+						</Row>
 
 							{/* <div className="row justify-content-center xalian-generator-button" data-aos="fade-up" data-aos-delay="300">
                         <div className="col-xl-6 col-lg-8">
@@ -136,13 +164,11 @@ class Home extends React.Component {
                             </a>
                         </div>
                     </div> */}
-						</div>
+						</Container>
 					</section>
 
 					<main id="main">
-
-
-
+						
 						<ThemedSceneDiv id="story" className="story light info-section-padded gradient-background-section">
 							<div className="container">
 								<div className="row align-items-center">
@@ -163,7 +189,7 @@ class Home extends React.Component {
 
 						<section id="planet-xalia-section" className="planet-xalia-section light info-section-padded">
 							{/* <div className="container" data-aos="zoom-in"> */}
-							<div className="container" >
+							<div className="container">
 								<div className="text-center shadow-text text-wrapper">
 									<h3 className="section-title">The Galaxy of Xalia</h3>
 									<p>Xalia is home to a wide range of powerful, magical creatures originating from planets all across the galaxy. The galaxy is ruled by a powerful empire, controlled by the mad and tyrannous King Kozrak. Recently, the king has announced plans for a worldwide tournament promising the winning faction enormous gold and riches. In order to compete in the king's tournament, factions must first prove to him they are worthy. Only the strongest factions will survive.</p>
@@ -254,7 +280,7 @@ class Home extends React.Component {
 									</Col>
 
 									<Col sm={true} className="d-flex">
-										<div className="member" >
+										<div className="member">
 											<div className="member-img">
 												<img src="assets/img/xalians/xalians_icon_unknown.png" className="img-fluid" alt=""></img>
 												{/* <div className="social">

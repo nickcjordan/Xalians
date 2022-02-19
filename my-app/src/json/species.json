@@ -4,8 +4,8 @@
     "id": "00004",
     "type": "Chemical",
     "planet": "Drainov",
-    "height": "",
-    "weight": "",
+    "height": "86 in / 218 cm",
+    "weight": "920 lbs / 417 kg",
     "description": "An acid slime organism protected by a thick rocky exoskeleton. Its slime can continually regenerate an outer shell, allowing for great defense.",
     "statRatings": {
       "healthRating": "",
@@ -24,8 +24,8 @@
     "id": "00002",
     "type": "Fire",
     "planet": "Magmuth",
-    "height": "",
-    "weight": "",
+    "height": "38 in / 96 cm",
+    "weight": "103 lbs / 46 kg",
     "description": "A partially feathered ground bird with lizard features, somewhat resembling a velociraptor. These creatures are extremely quick with razor sharp teeth, and prefer to hunt in packs.",
     "statRatings": {
       "healthRating": "",
@@ -220,13 +220,13 @@
     }
   },
   {
-    "name": "X1",
+    "name": "Figzy",
     "id": "00012",
     "type": "Psychic",
     "planet": "Telypso",
     "height": "52 in / 132 cm",
     "weight": "44 lbs / 20 kg",
-    "description": "Little is known about this mysterious creature. Few sightings have been reported.",
+    "description": "What this creature lacks in stature it makes up for with its incredible magical abilities. It is deceptively smart, yet known to be docile when it trusts you.",
     "statRatings": {
       "healthRating": "",
       "standardAttackRating": "",
