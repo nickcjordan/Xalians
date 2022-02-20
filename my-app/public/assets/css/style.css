@@ -17,6 +17,10 @@
   src: local('Procrastinating Pixie'), url(./fonts/ProcrastinatingPixie-WyVOO.ttf) format('truetype');
 }
 
+.xalian-font {
+  font-family: 'ProcrastinatingPixie';
+}
+
 .btn-xalianGreen {
   color: black !important;
   background-color: #80ffb0 !important;
@@ -75,6 +79,13 @@
 hr.xalian-hr {
   border-top: 1px solid rgba(128, 128, 128, 0.212);
   margin-bottom: 20px;
+}
+
+.xalian-splash-generator-button {
+ max-width: 75vw !important;
+ margin: auto !important;
+ margin-top: 15px !important;
+ font-size: x-large !important;
 }
 
 /*--------------------------------------------------------------
@@ -166,6 +177,14 @@ h6 {
     transition-delay: 0 !important;
   }
 }
+
+/* @media screen 
+  and (device-width: 320px) 
+  and (device-height: 640px) 
+  and (orientation: portrait) {
+body { width: 100%; max-width: 100%; height: auto;
+ }
+} */
 
 
 /*--------------------------------------------------------------
@@ -503,65 +522,76 @@ h6 {
 /*--------------------------------------------------------------
 # Splash Section
 --------------------------------------------------------------*/
-.home-background-image  {
-  width: 100vw;
-  /* height: 100vh !important; */
-  background: url("../img/background/galaxy-splash-dark.png") top center;
-  background-size: cover;
-  position: relative;
-  background-attachment: fixed;
+.splash-background  {
+  width: 100vw !important;
+  height: 100vh !important;
+  /* background: url("../img/background/galaxy-splash-dark.png") top center; */
+  /* background-size: cover; */
+  /* min-height: 100%; */
+  /* position: relative; */
+  /* background-attachment: fixed; */
   padding: 0 !important;
+}
+#splash-section {
+  /* width: 100%; */
+  /* height: 100vh !important; */
+  /* position: relative; */
+  padding: 0px !important;
+  text-align: center;
+}
+
+.splash-container {
+  /* height: 100%; */
+
+}
+.title-logo-row {
+  max-height: 80vh !important;
+  height: 100% !important;
+  margin: auto;
+}
+
+.title-logo-col {
+  align-content: center;
 }
 
 .home-background  {
-  width: 100vw;
-  height: 100vh !important;
-  /* background: url("../img/background/galaxy-splash.jpg") top center; */
-  /* background-size: cover; */
-  /* position: relative; */
-  /* background-attachment: fixed; */
+  /* background: rgb(0,0,0); */
+/* background: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(33,33,33,1) 25%, rgba(33,33,33,1) 75%, rgba(0,0,0,1) 100%); */
+  min-height: 100vh;
+  min-width: 100vw;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Abel';
+  color: white;
   padding: 0 !important;
 }
 
 .xalian-logo {
   max-width: 80vw !important;
   /* max-width: 2000px !important; */
-  padding-bottom: 50px;
+  padding-bottom: 50px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 .xalian-svg-col {
   display: flex;
-  align-items: end;
+  flex-direction: column;
   align-content: center;
-}
-
-/* .home-background:before { */
-  /* content: ""; */
-  /* background: rgba(0, 0, 0, 0.75); */
-  /* position: absolute; */
-  /* bottom: 0; */
-  /* top: 0; */
-  /* left: 0; */
-  /* right: 0; */
-/* } */
-
-#splash {
-  width: 100%;
-  /* height: 100vh !important; */
-  /* position: relative; */
-  padding: 0px !important;
-}
-
-.splash-container {
-  height: 100%;
-
-}
-
-#splash .container {
-  /* position: relative; */
   text-align: center;
-  /* padding-top: 74px; */
 }
+
+
+.animated-xalians-row {
+  height: 100%;
+  /* height: fit-content; */
+}
+
+.animated-xalians-col {
+  height: 100%;
+}
+
 
 #splash .icon-box {
   padding: 30px 20px;
@@ -613,32 +643,44 @@ a:active {
   }
 }
 
-#splash h2 {
+.splash-subtitle-white {
   font-size: 2em;
   color: white;
-}
-
-#splash h3 {
-  font-size: 1.5em;
-  color: rgba(255, 255, 255, 0.507);
-}
-
-#splash h3 {
   padding-top: 25px;
   padding-bottom: 25px;
   font-weight: 500 !important;
 }
 
-@media (max-width: 768px) {
-  /* #splash {
-    height: auto;
-  } */
+.splash-subtitle {
+  font-size: 3em;
+  color: #80ffb0;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  font-weight: 500 !important;
+  opacity: 0;
+}
 
-  #splash h2 {
+.splash-subtitle-smaller {
+  font-size: 0.5em;
+}
+
+.splash-subline {
+  color: rgba(212, 212, 212, 0.89);
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-top: 0;
+  margin-bottom: 0;
+  opacity: 0;
+}
+
+
+@media (max-width: 768px) {
+
+  .splash-subtitle-white {
     font-size: 1.5em;
   }
 
-  #splash h3 {
+  .splash-subtitle-gray {
     font-size: 1.2em;
   }
 }
@@ -648,11 +690,11 @@ a:active {
     height: auto;
   } */
 
-  #splash h2 {
+  .splash-subtitle-white {
     font-size: 1.2em;
   }
 
-  #splash h3 {
+  .splash-subtitle-gray {
     font-size: 1.2em;
   }
 }
@@ -1587,7 +1629,7 @@ article {
   height: auto;
   width: 100%;
   max-width: 80vw;
-  margin: auto;
+  margin: auto !important;
 }
 
 /* 
@@ -2450,12 +2492,86 @@ input, textarea {
   /* max-width: ; */
   /* min-height: 20vh; */
   overflow: visible;
+  align-content: center;
+  /* -webkit-appearance: none !important; */
+  
+}
+
+.splash-bg-star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background:white;
+    visibility: hidden;
+    opacity: 0;
 }
 
 
 
-
-
 .sandbox {
-  height: 100vh;
+  height: 100%;
+  max-height: 100vh !important;
+  width: 100%;
+  /* display: contents; */
+  align-items: center;
+  align-content: center;
+  text-align: center;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.spacer {
+  height: 400vh;
+  width: 100%;
+  padding: 0 !important;
+  margin: 0 !important;
+  background-color: #18d26e;
+}
+
+.sandbox-col {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.fullscreen {
+  width: 100vw !important;
+  /* height: 100vh !important; */
+  /* background: rgb(165, 0, 0); */
+  /* background: radial-gradient(circle, rgb(54, 54, 54) 21%, rgba(57, 57, 57, 1) 53%, rgba(28, 28, 28, 1) 100%); */
+  /* background-size: cover; */
+  /* min-height: 100vh; */
+  min-width: 100vw;
+  /* flex-direction: column;
+  align-items: center;
+  justify-content: center; */
+  font-family: 'Abel';
+  color: white;
+  padding: 0 !important;
+  /* margin: 0 !important; */
+
+  /* background: url("../img/background/galaxy-splash-dark.png") top center; */
+  /* background-size: auto, 100vh; */
+  /* min-height: 100%; */
+  /* position: relative; */
+  /* background-attachment: fixed; */
+  /* padding: 0 !important; */
+}
+
+
+.galaxy-splash-animation-bg {
+  z-index: -1 !important;
+  position: fixed !important;
+}
+
+.splash-galaxy-animation-container {
+  padding: 0px !important;
+  margin: 0px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.splash-galaxy-animation-children-wrapper {
+  z-index: 1;
+  /* text-align: center; */
+  margin: auto;
 }

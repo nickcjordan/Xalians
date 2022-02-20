@@ -7,25 +7,32 @@ import XalianNavbar from '../components/navbar';
 import ListGroup from 'react-bootstrap/ListGroup';
 import glossary from '../json/glossary.json';
 import XaliansLogoAnimatedSVG from '../svg/logo/xaliansLogoAnimatedSVG';
+import SplashGalaxyBackground from '../components/views/splashGalaxyBackground';
 
 class Sandbox extends React.Component {
 	render() {
 		return (
 			<React.Fragment>
-				<Container fluid className="content-background-container">
-					<XalianNavbar></XalianNavbar>
-
-					<Container>
-						<Row className="vertically-center-contents sandbox">
-							<Col className="stackable-margin vertically-center-contents">
-							<XaliansLogoAnimatedSVG/>
+					{/* <Container className="fullscreen">
+						<Row className="sandbox">
+							<Col className="sandbox-col">
+								<XaliansLogoAnimatedSVG/>
 							</Col>
 						</Row>
-					</Container>
-				</Container>
+						<Row className="spacer">
+							<Col className="sandbox-col">
+							</Col>
+						</Row>
+					</Container> */}
+					{/* <canvas style={{ position: 'absolute', top: 0, left: 0 }}></canvas> */}
+					<SplashGalaxyBackground className="galaxy-splash-animation-bg">
+						<div><p>HI!!</p></div>
+					</SplashGalaxyBackground>
 			</React.Fragment>
 		);
 	}
 }
+
+
 
 export default Sandbox;

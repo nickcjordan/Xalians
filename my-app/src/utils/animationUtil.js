@@ -1,19 +1,27 @@
 import { gsap } from 'gsap';
 import * as constants from '../constants/constants';
 
-export function addShuffleSpeciesColorAnimation(id, delay=0) {
-	let shuffledColors = constants.themeColors;
-  // for (let step = 0; step < shuffles; step++) {
-  //   shuffleArray(shuffledColors);
-  // }
-	// let first = shuffledColors[0];
-	var t = gsap.timeline({ yoyo: true, repeat: -1, delay: delay });
-  // t.to(id, { fill: first, duration: 1 });
-	for (const item in shuffledColors) {
-		// t.to(id, { fill: shuffledColors[item], duration: 1 });
-    t.to(id, {filter: `drop-shadow(0px 0px 10px ${shuffledColors[item]})`, duration: 1});
-    
-	}
+export function addShuffleSpeciesColorAnimation(id, delay = 0) {
+	let colors = constants.themeColors;
+	gsap.set(id, { stroke: '#FFFFFF', strokeWidth: '2px', filter: 'drop-shadow(0px 0px 10px #FFFFFF)' });
+	var t = gsap.timeline({ repeat: -1, delay: delay, repeatDelay: 0 });
+  var keys = [];
+  shuffleArray(colors);
+  for (const item in colors) {
+    keys.push(item);
+  }
+  for (var i = 0; i<10; i++) {
+    let randomIndex = Math.floor(Math.random() * keys.length);
+    let randomKey = keys[randomIndex];
+    let c = colors[randomKey];
+    t.to(id, {
+      filter: `drop-shadow(0px 0px 10px ${c})`,
+      duration: 1,
+      stroke: `${c}`,
+      strokeWidth: '2px',
+      delay: 0.5
+    });
+  }
 }
 
 function shuffleArray(array) {
@@ -21,8 +29,5 @@ function shuffleArray(array) {
 		const j = Math.floor(Math.random() * (i + 1));
 		[array[i], array[j]] = [array[j], array[i]];
 	}
-};
-
-export function addMorph(fromSVG, toSVG) {
-  gsap.to(fromSVG, {duration: 1, morphSVG:toSVG});
 }
+
