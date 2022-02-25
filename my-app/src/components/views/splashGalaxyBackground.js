@@ -108,7 +108,6 @@ class SplashGalaxyBackground extends React.Component {
 				}}
 			>
 				<div style={{zIndex: 999}}>{this.props.children}</div>
-                <h1>TEST</h1>
 			</Particles>
 
 			

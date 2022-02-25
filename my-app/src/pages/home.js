@@ -84,7 +84,7 @@ class Home extends React.Component {
 				<Container fluid className="home-background">
 					<SplashGalaxyBackground direction={this.state.backgroundAnimationStarDirection} speed={this.state.backgroundAnimationStarSpeed}>
 						<XalianNavbar></XalianNavbar>
-
+						
 						<section id="splash-section" className="">
 							<Container id="splash-container" className="splash-container vertically-center-contents-grid splash-background">
 									<Row className="row justify-content-center title-logo-row">

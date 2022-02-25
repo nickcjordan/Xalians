@@ -12,6 +12,7 @@ import UserAccountPage from './pages/userAccountPage';
 import UserDetailsPage from './pages/userDetailsPage';
 import CommunityPage from './pages/communityPage';
 import Sandbox from './pages/sandbox';
+import Sandboxtwo from './pages/sandboxtwo';
 import React from "react";
 import XalianNavbar from './components/navbar';
 import Container from 'react-bootstrap/Container';
@@ -57,6 +58,7 @@ class App extends React.Component {
               <Route exact path="/account"><UserAccountPage /></Route>
               <Route exact path="/community"><CommunityPage /></Route>
               <Route exact path="/sandbox"><Sandbox /></Route>
+              <Route exact path="/sandboxtwo"><Sandboxtwo /></Route>
             </Switch>
           </div>
         </Router>

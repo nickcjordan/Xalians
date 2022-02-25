@@ -2272,8 +2272,13 @@ input, textarea {
 
 .xalian-image {
   height: auto;
-  margin: auto;
+  aspect-ratio: 1;
+  margin: auto !important;
   padding: 0 !important;
+}
+
+.xalian-image-wrapper {
+
 }
 
 .xalian-image-bordered {
@@ -2520,6 +2525,15 @@ input, textarea {
   margin: 0 !important;
 }
 
+.sandboxtwo {
+  align-items: center;
+  align-content: center;
+  text-align: center;
+  padding: 0 !important;
+  margin: 0 !important;
+  /* overflow-x: hidden; */
+}
+
 .spacer {
   height: 400vh;
   width: 100%;
@@ -2533,12 +2547,17 @@ input, textarea {
   margin: 0 !important;
 }
 
+.sandboxtwo-col {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
 .fullscreen {
   width: 100vw !important;
-  /* height: 100vh !important; */
+  /* height: 200vh !important; */
   /* background: rgb(165, 0, 0); */
-  /* background: radial-gradient(circle, rgb(54, 54, 54) 21%, rgba(57, 57, 57, 1) 53%, rgba(28, 28, 28, 1) 100%); */
-  /* background-size: cover; */
+  background: radial-gradient(circle, rgb(54, 54, 54) 21%, rgba(57, 57, 57, 1) 53%, rgba(28, 28, 28, 1) 100%);
+  background-size: contain;
   /* min-height: 100vh; */
   min-width: 100vw;
   /* flex-direction: column;
@@ -2574,4 +2593,60 @@ input, textarea {
   z-index: 1;
   /* text-align: center; */
   margin: auto;
+}
+
+#tsparticles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  background-image: url("");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 50% 50%;
+}
+
+/* .panel {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+  position: relative;
+  box-sizing: border-box;
+  padding: 0px;
+} */
+
+
+.main-splash-panel {
+  width: 100%;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+  padding: 0px;
+  border: 2px solid yellow;
+}
+
+.splash-panel {
+  height: 100vh;
+  background-color: #000000;
+  border: 1px dotted rgb(0, 255, 136);
+}
+
+.animation1-scroll-trigger-wrapper {
+  height: 100vh !important;
+  min-height: 100vh !important;
+  max-height: 100vh !important;
+  width: 100vw;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: 'Abel';
+  color: white;
+  padding: 0 !important;
 }

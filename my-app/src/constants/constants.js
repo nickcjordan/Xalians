@@ -13,6 +13,6 @@ module.exports = {
 		sand: '#cc9e61',
 		chemical: '#64bd8c',
 		psychic: '#cc9bd3',
-		undead: '#6c4c8a'
-	}
+		undead: '#6c4c8a',
+	},
 };
