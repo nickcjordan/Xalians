@@ -57,7 +57,7 @@ class Sandboxtwo extends React.Component {
 							<div>MAIN SECTION</div>
 						</div>
 						<div className="splash-panel" id="sec2">
-							<SpeciesBlueprintSubmissionAnimation parentId="sec2" animationWidth={window.innerWidth / 4} />
+							<SpeciesBlueprintSubmissionAnimation parentId="sec2" animationWidth={Math.min(window.innerWidth / 5, window.innerHeight / 5)} />
 						</div>
 						<section className="splash-panel" id="sec3">
 							SECTION 3
@@ -66,25 +66,6 @@ class Sandboxtwo extends React.Component {
 				</Container>
 			</React.Fragment>
 		);
-		// return (
-		// 	<React.Fragment>
-		//         <Container className="trigger-container">
-		//             <div className="inset-container" style={{width: `${(100 * (sectionCount))}%`}}>
-
-		// 					<section className="splash-panel panel" id="sec1">
-		// 								<div>SECTION 1</div>
-		// 					</section>
-		//                     <section className="splash-panel panel" id="sec2">
-		// 								<SpeciesBlueprintSubmissionAnimation/>
-		// 					</section>
-		//                     <section className="splash-panel panel" id="sec3">
-		// 							SECTION 3
-		// 					</section>
-		//             </div>
-		// 		</Container>
-
-		// 	</React.Fragment>
-		// );
 	}
 }
 

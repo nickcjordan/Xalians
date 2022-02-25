@@ -68,9 +68,14 @@ class SpeciesBlueprintSubmissionAnimation extends React.Component {
 
 		let change = getTargetDelta('vote-submission', this.props.parentId);
 
+		gsap.to('#vote-animation-title-text', { autoAlpha: 0, duration: 0.15});
+		gsap.to('#vote-animation-title-text', { text: { value: 'Design Your Own Xalian Species', speed: 20}});
+		gsap.to('#vote-animation-title-text', { autoAlpha: 1, duration: 0.15});
+
 		// SETUP VIEW
 		gsap.set('#vote-submission', { 
 			overflow: 'visible', 
+			autoAlpha: 0,
 			x: change.dx,
             y: change.dy // sets to center of screen
 		});
@@ -84,47 +89,29 @@ class SpeciesBlueprintSubmissionAnimation extends React.Component {
             y: (change2.dy/2)
 		});
 		
-		let gh = getViewportOrigin('species-blueprint');
-		let ghf = getViewportOrigin('vote-row6');
-
         
 		var tl = gsap.timeline({ delay: 2, repeatDelay: 2, repeat: -1,
 			scrollTrigger: {
-				// trigger: `#${this.props.parentId || 'animation1-scroll-trigger-wrapper'}`,
                 trigger: `#${this.props.parentId}`,
 				markers: true,
                 toggleActions: "play pause pause pause",
-                // start: "center center",
-                // end: "bottom 10%",
-				// pin: true,
-                // scrub: true,
-                // duration: 10
 			}
 		});
-
 		
+		tl.to('#species-blueprint', { scaleY: 1.5, scaleX: 1.5, ease: "slow(0.7, 0.7, false)", duration: 0.5, delay: 1});
+		tl.to('#species-blueprint', { scaleY: 1, scaleX: 1, ease: "slow(0.7, 0.7, false)", duration: 0.5});
+		
+		tl.to('#vote-submission', { autoAlpha: 1, duration: 0.5});
+
 		// TRANSFORM BLUEPRINT TO ROW
-		tl.to('#blueprint-text', { autoAlpha: 0, duration: 0.5, delay: 1}, "<");
+		tl.to('#blueprint-text', { autoAlpha: 0, duration: 0.5});
 		tl.to('#blueprint-lines', { autoAlpha: 0,	duration: 0.5}, "<");
 		
+
 		// SCALE
 		tl.to('#species-blueprint', { scaleY: 0.06, ease: "slow(0.7, 0.7, false)", duration: 1 }, "<");
 		
 		
-		// BLUEPRINT MOTION FOLLOW PATH
-		// tl.to('#species-blueprint', {
-			// 	duration: 1,
-			// 	motionPath: {
-				// 		path: [
-					// 			{ x: 0, y: 0 },
-					// 			{ x: x/3, y: y/2 },
-					// 			{ x: x/2, y: y },
-					// 			{ x: x, y: y },
-					// 		],
-					// 		type: 'cubic',
-		// 	},
-		// 	ease: "slow(0.7, 0.7, false)",
-		// }, "<");
 		let blueprintMoveDelta = getTargetDelta('species-blueprint', 'vote-row6');
 
 		tl.to('#species-blueprint', {
@@ -139,7 +126,9 @@ class SpeciesBlueprintSubmissionAnimation extends React.Component {
 		tl.to("#vote-row6", {autoAlpha: 1, duration: 0.5});
 		tl.to("#species-blueprint", {autoAlpha: 0, duration: 0.5}, "<");
 
-
+		tl.to('#vote-animation-title-text', { autoAlpha: 0, duration: 0.15});
+		tl.to('#vote-animation-title-text', { text: { value: 'Vote for Your Favorites', speed: 20}});
+		tl.to('#vote-animation-title-text', { autoAlpha: 1, duration: 0.15});
 		// CHECK MARK 1 ON
 		tl.to('#vote-check-2', {autoAlpha: 1, scaleX:1.5, scaleY:1.5, duration: 0.15});
 		tl.to('#vote-check-2', {scaleX:1, scaleY:1, duration: 0.15});
@@ -156,6 +145,10 @@ class SpeciesBlueprintSubmissionAnimation extends React.Component {
 		tl.to("#vote-row5", { yPercent: 200, duration: 0.5 }, "<");
 		tl.to("#vote-row4", { yPercent: 200, duration: 0.5 }, "<");
 
+		tl.to('#vote-animation-title-text', { autoAlpha: 0, duration: 0.15});
+		tl.to('#vote-animation-title-text', { text: { value: 'Highest Voted Blueprints Become New Xalian Species!', speed: 20}});
+		tl.to('#vote-animation-title-text', { autoAlpha: 1, duration: 0.15});
+		
 		// SHOW HIGHEST VOTES BOX
 		tl.to("#vote-selected-box", { autoAlpha: 0.5, duration: 0.5 });
 
@@ -236,6 +229,7 @@ class SpeciesBlueprintSubmissionAnimation extends React.Component {
 	render() {
 		return (
 			<React.Fragment>
+				<h2 id="vote-animation-title-text" className="animation-title-text">Design Your Own Xalian Species</h2>
                 <div id="animation1-scroll-trigger-wrapper" className="animation1-scroll-trigger-wrapper">
 
 									<SpeciesBlueprintSVG id="species-blueprint" />

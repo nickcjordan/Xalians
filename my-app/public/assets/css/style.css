@@ -2632,15 +2632,19 @@ input, textarea {
 }
 
 .splash-panel {
-  height: 100vh;
+  height: 500px;
+  max-height: 100vh;
   background-color: #000000;
   border: 1px dotted rgb(0, 255, 136);
+  text-align: center;
+  align-items: center;
+  justify-content: center;
 }
 
 .animation1-scroll-trigger-wrapper {
-  height: 100vh !important;
-  min-height: 100vh !important;
-  max-height: 100vh !important;
+  /* height: 100vh !important; */
+  /* min-height: 100vh !important; */
+  /* max-height: 100vh !important; */
   width: 100vw;
   flex-direction: column;
   align-items: center;
@@ -2649,4 +2653,10 @@ input, textarea {
   font-family: 'Abel';
   color: white;
   padding: 0 !important;
+}
+
+.animation-title-text {
+  max-width: 80vw;
+  margin: auto;
+  padding: 25px 0px 15px 0px;
 }
