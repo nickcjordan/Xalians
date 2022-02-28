@@ -14,6 +14,9 @@ class SplashBackgroundAnimatedSVG extends React.Component {
 
         animationUtil.addShuffleSpeciesColorAnimation("#voltish-body", 1);
         animationUtil.addShuffleSpeciesColorAnimation("#figzy-body");
+        animationUtil.addShuffleSpeciesColorAnimation("#animation-hill-svg", 2);
+
+        
         
         let lightColor = "#e1b4ff";
         let darkColor = "#cd83ff";

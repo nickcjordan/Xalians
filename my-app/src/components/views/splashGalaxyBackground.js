@@ -43,7 +43,7 @@ class SplashGalaxyBackground extends React.Component {
                         position: "top center",
                         size: "cover"
 					},
-					fpsLimit: 120,
+					fpsLimit: 60,
                     fullScreen: {
                         enable: true,
                         zIndex: -1
@@ -75,8 +75,8 @@ class SplashGalaxyBackground extends React.Component {
                             particles: {
                               enable: true,
                               color: "#ffffff",
-                              frequency: 0.005,
-                              opacity: 0.3
+                              frequency: 0.0075,
+                              opacity: 0.4
                             }
                           },
 						number: {

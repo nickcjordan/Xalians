@@ -7,7 +7,7 @@ import { gsap } from "gsap"
 class XaliansLogoAnimatedSVG extends React.Component {
 
     componentDidMount() {
-        let delay = 1.5;
+        let delay = this.props.delay || 1.5;
 		this.buildLetterEntry("#xalians-logo-s", delay + 0);
 		this.buildLetterEntry("#xalians-logo-n", delay + 0.05);
 		this.buildLetterEntry("#xalians-logo-a2", delay + 0.1);

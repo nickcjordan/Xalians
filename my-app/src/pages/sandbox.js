@@ -175,7 +175,7 @@ class Sandbox extends React.Component {
 	render() {
 		return (
 			<React.Fragment>
-				<Container className="fullscreen">
+				<Container className="sandbox-fullscreen">
 					<Row className="sandbox">
 						<Col className="sandbox-col">
 							{/* <SmokeEmitter/> */}
