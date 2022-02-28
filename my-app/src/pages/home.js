@@ -43,7 +43,7 @@ class Home extends React.Component {
 	
 
 		var splashTl = gsap.timeline({
-			repeat: 0,
+			// repeat: 0,
 			delay: 2,
 			scrollTrigger: {
 				// trigger: '#xalian-generator-link',
@@ -51,7 +51,7 @@ class Home extends React.Component {
                 // start: 'top 20%',
                 // endTrigger: '#splash-section',
 				end: 'bottom top',
-				// toggleActions: 'play pause play none',
+				toggleActions: 'restart none restart none',
                 markers: true,
 			},
 		});
@@ -72,12 +72,13 @@ class Home extends React.Component {
 
         var splashPiecesRemovalTl = gsap.timeline({
 			scrollTrigger: {
-				trigger: '#xalianLogo',
-				start: 'top 20%',
+				// trigger: '#xalianLogo',
+                trigger: '#splash-section',
+				start: 'bottom 80%',
 				// endTrigger: '#splash-section',
 				end: 'bottom top',
 				// markers: true,
-				// toggleActions: 'play pause reverse pause',
+				toggleActions: 'play reset play reset',
 				scrub: 1,
                 pinSpacing: false
 			},
@@ -98,8 +99,9 @@ class Home extends React.Component {
                 pin: true,
                 scrub: true,
                 start: 'top top',
-                end: '+=400%',
+                end: '+=600%',
                 snap: "labelsDirectional",
+                onSnapComplete: ({progress, direction, isActive}) => console.log(progress, direction, isActive)
                 // snap:(1/ (sections - 1))
                 // snap: "100vh",
             },
@@ -140,20 +142,28 @@ class Home extends React.Component {
         contentParentTl.addLabel('horizontal-content-end');
 
 
-        function buildPanelAnimation(tl, secId, panId, text) {
-            tl
-            // .addLabel(secId + 'start')
-            .fromTo(panId, {rotate: 12 }, {rotate: 0, duration: 0.5 })
-            .from(panId, { scale: 0.1, xPercent: 50, autoAlpha: 0, ease: 'power4', duration: 1 }, "<")
-            .to(panId + ' p', { speed: 3, text: { value: text }})
-            .addLabel(secId)
-            .to(panId, { scale: 0.1, xPercent: -50, autoAlpha: 0, ease: 'power4', duration: 1, delay: 1 })
-            .to(panId, {duration: 0.5, rotate: -12 }, "<")
-            // .addLabel(secId + 'end');
-            // return tl;
-            // if (nextSectionId) {
-            //     tl.to(window, {duration: 2, scrollTo: nextSectionId});
-            // }
+        function buildPanelAnimation(tl, secId, panId, text, timescale = 4) {
+            // tl
+            // .fromTo(panId, {rotate: 12 }, {rotate: 0, duration: (timescale/2) })
+            // .from(panId, { scale: 0.1, xPercent: 50, autoAlpha: 0, ease: 'power4', duration: timescale }, "<")
+            // .add(gsap.timeline().to(panId + ' p', { speed: 3, text: { value: text }}))
+            // .addLabel(secId)
+            // .to(panId, { scale: 0.1, xPercent: -50, autoAlpha: 0, ease: 'power4', duration: timescale, delay: timescale })
+            // .to(panId, {duration: (timescale/2), rotate: -12 }, "<")
+
+            let inTl = gsap.timeline();
+            inTl.fromTo(panId, {rotate: 12 }, {rotate: 0, duration: (timescale/2) })
+            .from(panId, { scale: 0.1, xPercent: 50, autoAlpha: 0, ease: 'power2', duration: timescale }, "<")
+            .to(panId + ' p', { speed: 3, text: { value: text }});
+            
+            let outTl = gsap.timeline();
+            outTl.to(panId, { scale: 4, xPercent: -200, ease: 'power2', duration: timescale/2, delay: timescale })
+            outTl.to(panId, { autoAlpha: 0, duration: timescale }, "<")
+            outTl.to(panId, {duration: (timescale/2), rotate: -12 }, "<");
+
+            tl.add(inTl);
+            tl.addLabel(secId);
+            tl.add(outTl);
         }
 
 	}

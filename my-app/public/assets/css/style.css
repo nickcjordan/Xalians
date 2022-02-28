@@ -730,9 +730,27 @@ a:active {
 
 .splash-page-content-panel {
   background-color: rgba(0, 0, 0, 0.7);
+  background: url("../img/planets/gif/dark_planet_gif.gif") top center;
+  background-size: contain;
+  background-repeat: no-repeat;
   text-shadow: 0px 0px 10px rgb(0, 0, 0);
   border-radius: 10px;
   align-items: center;
+  height: 80% !important;
+  width: 90% !important;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.splash-page-full-content-wrapper {
+  /* width: 100%; */
+  margin: 0px !important;
+  padding: 0px !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  /* border: 1px solid rgb(105, 105, 105); */
 }
 
 .splash-page-content-panel-row {
@@ -833,26 +851,7 @@ a:active {
   padding: 25px 0px 15px 0px;
 }
 
-.splash-page-content-panel {
-  height: 80% !important;
-  width: 90% !important;
-  background-color: #00000059;
-  /* border: 1px dotted rgb(0, 255, 136); */
-  text-align: center;
-  align-items: center;
-  justify-content: center;
-  overflow: visible;
-  /* border: 1px dotted rgb(0, 255, 136); */
-}
 
-.splash-page-full-content-wrapper {
-  /* width: 100%; */
-  margin: 0px !important;
-  padding: 0px !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  /* border: 1px solid rgb(105, 105, 105); */
-}
 
 .text-wrapper {
   text-align: left;
