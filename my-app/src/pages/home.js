@@ -46,12 +46,13 @@ class Home extends React.Component {
 			repeat: 0,
 			delay: 2,
 			scrollTrigger: {
-				trigger: '#xalian-generator-link',
+				// trigger: '#xalian-generator-link',
+                trigger: '#splash-section',
                 // start: 'top 20%',
                 // endTrigger: '#splash-section',
 				end: 'bottom top',
 				// toggleActions: 'play pause play none',
-                // markers: true,
+                markers: true,
 			},
 		});
 
@@ -73,7 +74,7 @@ class Home extends React.Component {
 			scrollTrigger: {
 				trigger: '#xalianLogo',
 				start: 'top 20%',
-				endTrigger: '#splash-section',
+				// endTrigger: '#splash-section',
 				end: 'bottom top',
 				// markers: true,
 				// toggleActions: 'play pause reverse pause',
@@ -163,7 +164,7 @@ class Home extends React.Component {
 			<React.Fragment>
 				<Container fluid className="home-background">
 					<SplashGalaxyBackground direction={this.state.backgroundAnimationStarDirection} speed={this.state.backgroundAnimationStarSpeed}>
-						{/* <XalianNavbar></XalianNavbar> */}
+						<XalianNavbar></XalianNavbar>
 
 						<section id="splash-section" className="">
 							<Container id="splash-container" className="splash-container vertically-center-contents-grid splash-background">
@@ -200,55 +201,6 @@ class Home extends React.Component {
 						</section>
 
 						<div id="splash-page-spacer" className="splash-page-full-content-wrapper">
-							{/* <section id="content-section-1" class="splash-page-content-section">
-								<div className="splash-page-content-panel">
-									<Row className="splash-page-content-panel-row">
-										<Col sm={12} md={8} lg={6} className="shadow-text centered-div text-wrapper">
-											<h3>Xalian Creatures</h3>
-											<p></p>
-										</Col>
-										<Col sm={12} md={4} lg={6} className="centered-div">
-											<div className="embedded-img-wrapper">
-												<img src="assets/img/background/castle.jpg" className="img-fluid" alt=""></img>
-											</div>
-										</Col>
-									</Row>
-								</div>
-							</section>
-
-							<section id="content-section-2" class="splash-page-content-section">
-								<div className="splash-page-content-panel">
-									<Row className="splash-page-content-panel-row">
-										<Col sm={12} md={8} lg={6} className="shadow-text centered-div text-wrapper">
-											<h3>Fall of the Vallerii</h3>
-											<p></p>
-										</Col>
-										<Col sm={12} md={4} lg={6} className="centered-div">
-											<div className="embedded-img-wrapper">
-												<img src="assets/img/background/castle.jpg" className="img-fluid" alt=""></img>
-											</div>
-										</Col>
-									</Row>
-								</div>
-							</section>
-
-							<section id="content-section-3" class="splash-page-content-section">
-								<div className="splash-page-content-panel">
-									<Row className="splash-page-content-panel-row">
-										<Col sm={12} md={8} lg={6} className="shadow-text centered-div text-wrapper">
-											<h3>End War</h3>
-											<p></p>
-										</Col>
-										<Col sm={12} md={4} lg={6} className="centered-div">
-											<div className="embedded-img-wrapper">
-												<img src="assets/img/background/castle.jpg" className="img-fluid" alt=""></img>
-											</div>
-										</Col>
-									</Row>
-								</div>
-							</section>
-
-							<section id="" class="splash-page-content-end-section"></section> */}
 
                             <section id="content-section-1" class="splash-page-content-section">
 								<div className="splash-page-content-panel">
