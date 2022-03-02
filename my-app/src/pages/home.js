@@ -19,28 +19,52 @@ import SplashGalaxyBackground from '../components/views/splashGalaxyBackground';
 import XaliansLogoAnimatedSVG from '../svg/logo/xaliansLogoAnimatedSVG';
 import SplashBackgroundAnimatedSVG from '../svg/background/splashBackgroundAnimatedSVG';
 import { useState, useEffect } from 'react';
+import { ReactComponent as SpaceshipWindowSVG } from '../svg/animations/xalian_spaceship_window.svg'
+import { ReactComponent as SpaceshipComputerSVG } from '../svg/animations/species_blueprint.svg'
+import { IconMaximize } from '@aws-amplify/ui-react';
+import Carousel from 'react-bootstrap/Carousel'
 gsap.registerPlugin(ScrollTrigger);
 gsap.registerPlugin(TextPlugin);
 gsap.registerPlugin(EasePack);
 gsap.registerPlugin(ScrollToPlugin);
+
+const reqSvgs = require.context ( '../svg', true, /\.svg$/ );
+const svgs = reqSvgs.keys () .map ( path => ({ path, file: reqSvgs ( path ) }) );
 
 class Home extends React.Component {
 	state = {
 		isLoading: true,
 		backgroundAnimationStarDirection: 'bottom-left',
 		backgroundAnimationStarSpeed: 0.2,
+		width: null,
+		height: null
 	};
 
 	constructor(props) {
 		super(props);
+		this.setState({width: window.innerWidth, height: window.innerHeight});
+	}
+
+	setSize = (w, h) => {
+		this.setState({width: w, height: h, max: Math.max(w, h)});
+	}
+
+	updateSize = () => {
+		this.setSize(window.innerWidth, window.innerHeight);
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener('resize', this.updateSize);
 	}
 
 	componentDidMount() {
 		this.setState({ isLoading: false });
+		window.addEventListener('resize', this.updateSize);
+		this.updateSize();
 
 		gsap.from('#navvy', { opacity: 0, duration: 2, ease: 'sine.in', delay: 2.5 });
-		gsap.from('#xalian-splash-svg-animation', { yPercent: 100, duration: 3, delay: 0.5, ease: 'power4.out' });
-	
+		// gsap.set('#spaceship-window-animation-svg', {transformOrigin: "center"});
+		
 
 		var splashTl = gsap.timeline({
 			// repeat: 0,
@@ -51,7 +75,7 @@ class Home extends React.Component {
                 // start: 'top 20%',
                 // endTrigger: '#splash-section',
 				end: 'bottom top',
-				toggleActions: 'restart none restart none',
+				// toggleActions: 'restart none restart none',
                 markers: true,
 			},
 		});
@@ -61,7 +85,7 @@ class Home extends React.Component {
 		splashTl.to('#subline3', { opacity: 1, duration: 0.5 }, '<');
 		splashTl.fromTo('#xalian-generator-link', { opacity: 0 }, { opacity: 1, duration: 1 });
 		splashTl.fromTo('#third-line', { opacity: 0 }, { opacity: 1, duration: 1, delay: 0.2 }, "<");
-
+		
 		splashTl.to('#first-line', { opacity: 1, duration: 0.5, delay: 0.4 }, "<");
 		splashTl.to('#first-line', { text: { type: 'diff', value: 'EARN', speed: 3 }, delay: 0.08 });
 		splashTl.to('#first-line', { text: { type: 'diff', value: 'TRADE', speed: 3 }, delay: 0.08 });
@@ -72,24 +96,59 @@ class Home extends React.Component {
 
         var splashPiecesRemovalTl = gsap.timeline({
 			scrollTrigger: {
-				// trigger: '#xalianLogo',
                 trigger: '#splash-section',
 				start: 'bottom 80%',
-				// endTrigger: '#splash-section',
 				end: 'bottom top',
-				// markers: true,
-				toggleActions: 'play reset play reset',
+				toggleActions: 'play complete reverse reset',
 				scrub: 1,
-                pinSpacing: false
 			},
 		});
-		splashPiecesRemovalTl.to('#xalian-splash-svg-animation, #xalianLogo', { autoAlpha: 0, duration: 0.5, delay: 0 });
+		splashPiecesRemovalTl.to('#xalianLogo', { autoAlpha: 0, duration: 0.5, delay: 0 });
 		splashPiecesRemovalTl.to('#xalian-generator-link', { scale: 2, duration: 2, delay: 0 }, '<');
-		splashPiecesRemovalTl.to('#xalian-splash-svg-animation, #xalianLogo', { scale: 100, duration: 2, delay: 0 }, '<');
+		splashPiecesRemovalTl.to('#xalianLogo', { scale: 10, duration: 2, delay: 0 }, '<');
 
-		splashPiecesRemovalTl.to('#xalian-splash-svg-animation, #xalian-generator-link', { yPercent: 200, duration: 0.8, delay: 0 }, '<');
+		splashPiecesRemovalTl.to('#xalian-generator-link', { yPercent: 200, duration: 0.8, delay: 0 }, '<');
 		splashPiecesRemovalTl.to('#xalianLogo', { yPercent: -200, duration: 0.8, delay: 0 }, '<');
 		splashPiecesRemovalTl.to('#first-line, #third-line, #subline1, #subline2, #subline3', { autoAlpha: 0, duration: 0.1 }, '<');
+		
+		// let max = Math.max(window.innerHeight, window.innerWidth);
+		// gsap.set("#splash-page-spaceship-window-animation", { height: max, width: max});
+		let rect = document.getElementById('spaceship-window-animation-svg').getBoundingClientRect();
+		let rect2 = document.getElementById('spaceship-computer-animation-svg').getBoundingClientRect();
+
+		
+		// let max = Math.max(window.innerWidth, window.innerHeight);
+		let max = window.innerWidth;
+		let tempx = max / 2;
+		let rectX = rect.width/2;
+		
+
+		// let wrapperRect = window;
+		// let centerX = wrapperRect.left + (wrapperRect.width/2);
+		// let svgCenterX = rect.left + (rect.width/2);
+		// gsap.set('#spaceship-window-animation-svg', { x: `+=${centerX - svgCenterX}`});
+
+		// gsap.set('#spaceship-window-animation-svg', {x: `${tempx - rectX}`});
+		// gsap.set('#spaceship-computer-animation-svg', {x: (window.innerWidth/2) - (rect2.width/2), y: (window.innerHeight/2) - (rect2.height/2)});
+		// gsap.set('#spaceship-computer-animation-svg', {yPercent: -100, xPercent: 100, ease: 'none'});
+		// gsap.set('#spaceship-computer-animation-svg', {yPercent: -100, xPercent: 100, ease: 'none'});
+		var spaceshipTl = gsap.timeline({
+            scrollTrigger: {
+                trigger: '#splash-section',
+                scrub: true,
+                start: 'bottom bottom',
+                end: '+=200%',
+				markers: true
+                // snap: "labelsDirectional",
+            },
+        });
+		spaceshipTl.from('#spaceship-window-animation-svg', { scale: 10, duration: 1, ease: 'none' })
+		.to('#spaceship-window-animation-svg', { xPercent: -100, ease: 'none' })
+		.from('#spaceship-computer-animation-svg', { xPercent: 100, ease: 'none' }, "<");
+		// .to('#splash-page-spaceship-window-animation', { backgroundColor: '#000000', duration: 0}, "<25%");
+
+
+		
 
 
         let sections = 3;
@@ -100,42 +159,27 @@ class Home extends React.Component {
                 scrub: true,
                 start: 'top top',
                 end: '+=600%',
-                snap: "labelsDirectional",
-                onSnapComplete: ({progress, direction, isActive}) => console.log(progress, direction, isActive)
-                // snap:(1/ (sections - 1))
-                // snap: "100vh",
+                // snap: "labelsDirectional",
+                // onSnapComplete: ({progress, direction, isActive}) => console.log(progress, direction, isActive)
             },
-            // scrollTrigger: {
-            //     trigger: secId,
-            //     scrub: true,
-            //     pin: true,
-            //     // markers: true,
-            //     start: 'top top',
-            //     end: '+=100%',
-            //     snap: "labelsDirectional",
-            //     // snap: "labels",
-            //     pinSpacing: false
-            // },
         });
+
 
         contentParentTl.addLabel('horizontal-content-start');
 
         buildPanelAnimation(contentParentTl,
             '#content-section-1', 
             '#content-section-1', 
-            // '#content-section-1 .splash-page-content-panel', 
             'For thousands of years, the ancient race known as the Vallerii dominated the galaxy of Xalia. Their mastery of biotechnology led to generating the first species of Xalians – bioengineered organisms designed to thrive in Xalia’s most extreme environments.',
         );
         buildPanelAnimation(contentParentTl,
             '#content-section-2', 
             '#content-section-2', 
-            // '#content-section-2 .splash-page-content-panel',
             'The high technology of the Vallerii would eventually prove to be their downfall when their own artificial intelligence took control of the Xalian Generators, turning the creatures against their creators.',
         );
         buildPanelAnimation(contentParentTl,
             '#content-section-3', 
             '#content-section-3', 
-            // '#content-section-3 .splash-page-content-panel',
             'The centuries-long interplanetary assault known as the End Wars have long since ended, but the destruction they caused all but wiped out the Vallerii and has forever changed the galaxy.'
         );
 
@@ -143,14 +187,6 @@ class Home extends React.Component {
 
 
         function buildPanelAnimation(tl, secId, panId, text, timescale = 4) {
-            // tl
-            // .fromTo(panId, {rotate: 12 }, {rotate: 0, duration: (timescale/2) })
-            // .from(panId, { scale: 0.1, xPercent: 50, autoAlpha: 0, ease: 'power4', duration: timescale }, "<")
-            // .add(gsap.timeline().to(panId + ' p', { speed: 3, text: { value: text }}))
-            // .addLabel(secId)
-            // .to(panId, { scale: 0.1, xPercent: -50, autoAlpha: 0, ease: 'power4', duration: timescale, delay: timescale })
-            // .to(panId, {duration: (timescale/2), rotate: -12 }, "<")
-
             let inTl = gsap.timeline();
             inTl.fromTo(panId, {rotate: 12 }, {rotate: 0, duration: (timescale/2) })
             .from(panId, { scale: 0.1, xPercent: 50, autoAlpha: 0, ease: 'power2', duration: timescale }, "<")
@@ -164,17 +200,25 @@ class Home extends React.Component {
             tl.add(inTl);
             tl.addLabel(secId);
             tl.add(outTl);
+
         }
 
 	}
     
 
 	render() {
+		let im = svgs[0];
 		return (
 			<React.Fragment>
 				<Container fluid className="home-background">
 					<SplashGalaxyBackground direction={this.state.backgroundAnimationStarDirection} speed={this.state.backgroundAnimationStarSpeed}>
 						<XalianNavbar></XalianNavbar>
+						<image src={im}/>
+						{/* <div id="splash-page-spaceship-window-animation" className="splash-page-spaceship-window-animation debug-box" style={{width: Math.max(window.innerHeight, window.innerWidth) * 2, height: window.innerHeight}}> */}
+						<div id="splash-page-spaceship-window-animation" className="splash-page-spaceship-window-animation debug-box">
+							<SpaceshipWindowSVG className='debug-box' id='spaceship-window-animation-svg' style={{left: ((window.innerWidth/2) - (this.state.max/2)), width: this.state.max, height: this.state.max}} />
+							<div className='debug-box' id='spaceship-computer-animation-svg' style={{left: ((window.innerWidth/2) - (this.state.max/2)), width: this.state.max, height: this.state.max}} />
+						</div>
 
 						<section id="splash-section" className="">
 							<Container id="splash-container" className="splash-container vertically-center-contents-grid splash-background">
@@ -204,13 +248,20 @@ class Home extends React.Component {
 												<i className="bi bi-twitter"></i>
 											</a>
 										</div>
-										<SplashBackgroundAnimatedSVG id="xalian-splash-svg-animation" />
+										{/* <SplashBackgroundAnimatedSVG id="xalian-splash-svg-animation" /> */}
 									</Col>
 								</Row>
 							</Container>
 						</section>
 
+					
+
+						{/* <div id="splash-page-spaceship-computer-animation" className="splash-page-spaceship-computer-animation">
+							 <SpaceshipComputerSVG id='spaceship-computer-animation-svg' /> 
+						</div> */}
+
 						<div id="splash-page-spacer" className="splash-page-full-content-wrapper">
+
 
                             <section id="content-section-1" class="splash-page-content-section">
 								<div className="splash-page-content-panel">
@@ -364,5 +415,55 @@ class Home extends React.Component {
 		);
 	}
 }
+
+function ScrollingCarousel() {
+	const [index, setIndex] = useState(0);
+  
+	const handleSelect = (selectedIndex, e) => {
+	  setIndex(selectedIndex);
+	};
+  
+	return (
+	  <Carousel activeIndex={index} onSelect={handleSelect}>
+		<Carousel.Item>
+		  <img
+			className="d-block w-100"
+			src="holder.js/800x400?text=First slide&bg=373940"
+			alt="First slide"
+		  />
+		  <Carousel.Caption>
+			<h3>First slide label</h3>
+			<p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+		  </Carousel.Caption>
+		</Carousel.Item>
+		<Carousel.Item>
+		  <img
+			className="d-block w-100"
+			src="holder.js/800x400?text=Second slide&bg=282c34"
+			alt="Second slide"
+		  />
+  
+		  <Carousel.Caption>
+			<h3>Second slide label</h3>
+			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+		  </Carousel.Caption>
+		</Carousel.Item>
+		<Carousel.Item>
+		  <img
+			className="d-block w-100"
+			src="holder.js/800x400?text=Third slide&bg=20232a"
+			alt="Third slide"
+		  />
+  
+		  <Carousel.Caption>
+			<h3>Third slide label</h3>
+			<p>
+			  Praesent commodo cursus magna, vel scelerisque nisl consectetur.
+			</p>
+		  </Carousel.Caption>
+		</Carousel.Item>
+	  </Carousel>
+	);
+  }
 
 export default Home;
