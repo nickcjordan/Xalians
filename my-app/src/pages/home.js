@@ -20,9 +20,9 @@ import XaliansLogoAnimatedSVG from '../svg/logo/xaliansLogoAnimatedSVG';
 import SplashBackgroundAnimatedSVG from '../svg/background/splashBackgroundAnimatedSVG';
 import { useState, useEffect } from 'react';
 import { ReactComponent as SpaceshipWindowSVG } from '../svg/animations/xalian_spaceship_window.svg'
-import { ReactComponent as SpaceshipScreenGridSVG } from '../svg/animations/ship_computer_screen_grid.svg'
+import { ReactComponent as SpaceshipComputerScreenGridSVG } from '../svg/animations/spaceship_computer_screen_grid.svg'
+import { ReactComponent as SpaceshipComputerScreenSVG } from '../svg/animations/spaceship_computer_screen.svg'
 import { ReactComponent as SpaceshipWallSVG } from '../svg/animations/spaceship_wall.svg'
-import { ReactComponent as SpaceshipComputerSVG } from '../svg/animations/species_blueprint.svg'
 import { IconMaximize } from '@aws-amplify/ui-react';
 import Carousel from 'react-bootstrap/Carousel'
 gsap.registerPlugin(ScrollTrigger);
@@ -121,28 +121,6 @@ class Home extends React.Component {
 		splashPiecesRemovalTl.to('#xalianLogo', { yPercent: -200, duration: 0.8, delay: 0 }, '<');
 		splashPiecesRemovalTl.to('#first-line, #third-line, #subline1, #subline2, #subline3', { autoAlpha: 0, duration: 0.1 }, '<');
 		
-		// let max = Math.max(this.state.height, this.state.width);
-		// gsap.set("#splash-page-spaceship-window-animation", { height: max, width: max});
-		// let rect = document.getElementById('spaceship-window-animation-svg').getBoundingClientRect();
-		// let rect2 = document.getElementById('spaceship-computer-animation-svg').getBoundingClientRect();
-
-		// let max = Math.max(this.state.width, this.state.height);
-		
-		// let max = this.state.width;
-		// let tempx = max / 2;
-		// let rectX = rect.width/2;
-		// gsap.set('#spaceship-window-animation-svg', {x: `${tempx - rectX}`});
-		
-
-		// let wrapperRect = window;
-		// let centerX = wrapperRect.left + (wrapperRect.width/2);
-		// let svgCenterX = rect.left + (rect.width/2);
-		// gsap.set('#spaceship-window-animation-svg', { x: `+=${centerX - svgCenterX}`});
-
-		// gsap.set('#spaceship-computer-animation-svg', {x: (this.state.width/2) - (rect2.width/2), y: (this.state.height/2) - (rect2.height/2)});
-		// gsap.set('#spaceship-computer-animation-svg', {yPercent: -100, xPercent: 100, ease: 'none'});
-		// gsap.set('#spaceship-computer-animation-svg', {yPercent: -100, xPercent: 100, ease: 'none'});
-
 
 
 		var spaceshipTl = gsap.timeline({
@@ -152,18 +130,19 @@ class Home extends React.Component {
                 start: 'bottom bottom',
                 end: '+=200%',
 				markers: true,
-                // snap: "labelsDirectional",
-				preventOverlaps: "spaceship-animation-group"
+                snap: "labelsDirectional",
+				preventOverlaps: "spaceship-animation-group",
+				anticipatePin: 1
             },
         });
-		spaceshipTl.from('#spaceship-window-animation-svg', { scale: 10, duration: 1, ease: 'none' })
+		spaceshipTl
+		.addLabel("before-spaceship-window-animation")
+		.from('#spaceship-window-animation-svg', { scale: 10, duration: 1, ease: 'none' })
 		.to('#spaceship-window-animation-svg', { xPercent: -100, ease: 'none' })
-		// .fromTo('#spaceship-animation-panel-wrapper', { xPercent: 100, ease: 'none' }, {xPercent: 25}, "<")
 		.from('#spaceship-animation-panel-wrapper', { xPercent: 100, ease: 'none' }, "<")
 		.to('#spaceship-computer-outside-animation', { autoAlpha: 0, scale: 5 })
-		// .to('#splash-page-spaceship-window-animation', { backgroundColor: '#000000'}, "<")
 		.fromTo('#spaceship-computer-screen-animation-svg', {autoAlpha: 0 }, { width: this.state.max, height: this.state.max, autoAlpha: 1 }, "<")
-		.addLabel("end-of-spaceship-window-animation");
+		.addLabel("after-spaceship-window-animation");
 
 
 		var contentParentTl = gsap.timeline({
@@ -172,7 +151,6 @@ class Home extends React.Component {
                 pin: true,
                 scrub: true,
                 start: 'center center',
-				// horizontal: true,
                 end: '+=600%',
                 // snap: "labelsDirectional",
                 onSnapComplete: ({progress, direction, isActive}) => console.log(progress, direction, isActive),
@@ -277,11 +255,8 @@ class Home extends React.Component {
 								<SpaceshipWindowSVG className='debug-box' id='spaceship-window-animation-svg' style={{left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max}} /> 
 							</div>
 							<div id="spaceship-animation-panel-wrapper" className="spaceship-animation-screen-panel-wrapper" style={{left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max}}>
-								<SpaceshipScreenGridSVG className='debug-box spaceship-screen-grid-svg' id='spaceship-computer-screen-animation-svg' style={{left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max}}/>
-								{/* <div className='debug-box spaceship-screen' id='spaceship-computer-outside-animation' style={{backgroundSize: this.state.min, left: this.state.minXOffset, top: this.state.minYOffset, width: this.state.min, height: this.state.min}}/> */}
+								<SpaceshipComputerScreenGridSVG className='debug-box spaceship-screen-grid-svg' id='spaceship-computer-screen-animation-svg' style={{left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max}}/>
 								<div className='debug-box spaceship-screen' id='spaceship-computer-outside-animation' style={{backgroundSize: this.state.min, width: this.state.min, height: this.state.min}}/>
-								{/* <div className='debug-box spaceship-screen' id='spaceship-computer-outside-animation' style={{backgroundSize: this.state.max, left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max}}/> */}
-
 							</div>
 						</div>
 					

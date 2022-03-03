@@ -959,9 +959,9 @@ a:active {
 }
 
 .spaceship-screen {
+  /* background: rgb(62,75,75); */
   background: no-repeat center url("../img/animation/ship_screen.png");
-  background-color: #000000;
-  /* background-size: cover; */
+  background-color: rgb(0, 0, 0);
   background-repeat: no-repeat;
   /* height: 100%; */
   /* width: 100%; */
@@ -996,15 +996,16 @@ a:active {
 }
 
 .spaceship-screen-grid-svg {
-  background: radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(33,33,33,1) 25%, rgba(33,33,33,1) 75%, rgba(0,0,0,1) 100%);
+  background: rgb(62,75,75);
+background: radial-gradient(circle, rgba(62,75,75,1) 53%, rgba(20,23,23,1) 100%);
 }
 
 
 section {
-  border: 1px dotted rgb(0, 255, 136);
+  /* border: 1px dotted rgb(0, 255, 136); */
 }
 .debug-box {
-  border: 1px dotted rgb(7, 164, 255);
+  /* border: 1px dotted rgb(7, 164, 255); */
 }
 
 /*--------------------------------------------------------------
