@@ -20,6 +20,8 @@ import XaliansLogoAnimatedSVG from '../svg/logo/xaliansLogoAnimatedSVG';
 import SplashBackgroundAnimatedSVG from '../svg/background/splashBackgroundAnimatedSVG';
 import { useState, useEffect } from 'react';
 import { ReactComponent as SpaceshipWindowSVG } from '../svg/animations/xalian_spaceship_window.svg'
+import { ReactComponent as SpaceshipScreenGridSVG } from '../svg/animations/ship_computer_screen_grid.svg'
+import { ReactComponent as SpaceshipWallSVG } from '../svg/animations/spaceship_wall.svg'
 import { ReactComponent as SpaceshipComputerSVG } from '../svg/animations/species_blueprint.svg'
 import { IconMaximize } from '@aws-amplify/ui-react';
 import Carousel from 'react-bootstrap/Carousel'
@@ -46,7 +48,15 @@ class Home extends React.Component {
 	}
 
 	setSize = (w, h) => {
-		this.setState({width: w, height: h, max: Math.max(w, h)});
+		let max = Math.max(w, h);
+		let min = Math.min(w, h);
+		
+		this.setState({
+			width: w, height: h, 
+			max: max, min: min, 
+			minXOffset: (w/2) - (min/2), minYOffset: (h/2) - (min/2), 
+			maxXOffset: (w/2) - (max/2), maxYOffset: (h/2) - (max/2),
+		});
 	}
 
 	updateSize = () => {
@@ -111,16 +121,17 @@ class Home extends React.Component {
 		splashPiecesRemovalTl.to('#xalianLogo', { yPercent: -200, duration: 0.8, delay: 0 }, '<');
 		splashPiecesRemovalTl.to('#first-line, #third-line, #subline1, #subline2, #subline3', { autoAlpha: 0, duration: 0.1 }, '<');
 		
-		// let max = Math.max(window.innerHeight, window.innerWidth);
+		// let max = Math.max(this.state.height, this.state.width);
 		// gsap.set("#splash-page-spaceship-window-animation", { height: max, width: max});
-		let rect = document.getElementById('spaceship-window-animation-svg').getBoundingClientRect();
-		let rect2 = document.getElementById('spaceship-computer-animation-svg').getBoundingClientRect();
+		// let rect = document.getElementById('spaceship-window-animation-svg').getBoundingClientRect();
+		// let rect2 = document.getElementById('spaceship-computer-animation-svg').getBoundingClientRect();
 
+		// let max = Math.max(this.state.width, this.state.height);
 		
-		// let max = Math.max(window.innerWidth, window.innerHeight);
-		let max = window.innerWidth;
-		let tempx = max / 2;
-		let rectX = rect.width/2;
+		// let max = this.state.width;
+		// let tempx = max / 2;
+		// let rectX = rect.width/2;
+		// gsap.set('#spaceship-window-animation-svg', {x: `${tempx - rectX}`});
 		
 
 		// let wrapperRect = window;
@@ -128,39 +139,44 @@ class Home extends React.Component {
 		// let svgCenterX = rect.left + (rect.width/2);
 		// gsap.set('#spaceship-window-animation-svg', { x: `+=${centerX - svgCenterX}`});
 
-		// gsap.set('#spaceship-window-animation-svg', {x: `${tempx - rectX}`});
-		// gsap.set('#spaceship-computer-animation-svg', {x: (window.innerWidth/2) - (rect2.width/2), y: (window.innerHeight/2) - (rect2.height/2)});
+		// gsap.set('#spaceship-computer-animation-svg', {x: (this.state.width/2) - (rect2.width/2), y: (this.state.height/2) - (rect2.height/2)});
 		// gsap.set('#spaceship-computer-animation-svg', {yPercent: -100, xPercent: 100, ease: 'none'});
 		// gsap.set('#spaceship-computer-animation-svg', {yPercent: -100, xPercent: 100, ease: 'none'});
+
+
+
 		var spaceshipTl = gsap.timeline({
             scrollTrigger: {
                 trigger: '#splash-section',
                 scrub: true,
                 start: 'bottom bottom',
                 end: '+=200%',
-				markers: true
+				markers: true,
                 // snap: "labelsDirectional",
+				preventOverlaps: "spaceship-animation-group"
             },
         });
 		spaceshipTl.from('#spaceship-window-animation-svg', { scale: 10, duration: 1, ease: 'none' })
 		.to('#spaceship-window-animation-svg', { xPercent: -100, ease: 'none' })
-		.from('#spaceship-computer-animation-svg', { xPercent: 100, ease: 'none' }, "<");
-		// .to('#splash-page-spaceship-window-animation', { backgroundColor: '#000000', duration: 0}, "<25%");
+		// .fromTo('#spaceship-animation-panel-wrapper', { xPercent: 100, ease: 'none' }, {xPercent: 25}, "<")
+		.from('#spaceship-animation-panel-wrapper', { xPercent: 100, ease: 'none' }, "<")
+		.to('#spaceship-computer-outside-animation', { autoAlpha: 0, scale: 5 })
+		// .to('#splash-page-spaceship-window-animation', { backgroundColor: '#000000'}, "<")
+		.fromTo('#spaceship-computer-screen-animation-svg', {autoAlpha: 0 }, { width: this.state.max, height: this.state.max, autoAlpha: 1 }, "<")
+		.addLabel("end-of-spaceship-window-animation");
 
 
-		
-
-
-        let sections = 3;
-        var contentParentTl = gsap.timeline({
+		var contentParentTl = gsap.timeline({
             scrollTrigger: {
                 trigger: '#splash-page-spacer',
                 pin: true,
                 scrub: true,
-                start: 'top top',
+                start: 'center center',
+				// horizontal: true,
                 end: '+=600%',
                 // snap: "labelsDirectional",
-                // onSnapComplete: ({progress, direction, isActive}) => console.log(progress, direction, isActive)
+                onSnapComplete: ({progress, direction, isActive}) => console.log(progress, direction, isActive),
+				preventOverlaps: "spaceship-animation-group"
             },
         });
 
@@ -182,8 +198,15 @@ class Home extends React.Component {
             '#content-section-3', 
             'The centuries-long interplanetary assault known as the End Wars have long since ended, but the destruction they caused all but wiped out the Vallerii and has forever changed the galaxy.'
         );
-
         contentParentTl.addLabel('horizontal-content-end');
+
+
+
+
+			spaceshipTl.add(contentParentTl);
+
+
+
 
 
         function buildPanelAnimation(tl, secId, panId, text, timescale = 4) {
@@ -214,11 +237,7 @@ class Home extends React.Component {
 					<SplashGalaxyBackground direction={this.state.backgroundAnimationStarDirection} speed={this.state.backgroundAnimationStarSpeed}>
 						<XalianNavbar></XalianNavbar>
 						<image src={im}/>
-						{/* <div id="splash-page-spaceship-window-animation" className="splash-page-spaceship-window-animation debug-box" style={{width: Math.max(window.innerHeight, window.innerWidth) * 2, height: window.innerHeight}}> */}
-						<div id="splash-page-spaceship-window-animation" className="splash-page-spaceship-window-animation debug-box">
-							<SpaceshipWindowSVG className='debug-box' id='spaceship-window-animation-svg' style={{left: ((window.innerWidth/2) - (this.state.max/2)), width: this.state.max, height: this.state.max}} />
-							<div className='debug-box' id='spaceship-computer-animation-svg' style={{left: ((window.innerWidth/2) - (this.state.max/2)), width: this.state.max, height: this.state.max}} />
-						</div>
+						{/* <div id="splash-page-spaceship-window-animation" className="splash-page-spaceship-window-animation debug-box" style={{width: Math.max(this.state.height, this.state.width) * 2, height: this.state.height}}> */}
 
 						<section id="splash-section" className="">
 							<Container id="splash-container" className="splash-container vertically-center-contents-grid splash-background">
@@ -237,10 +256,10 @@ class Home extends React.Component {
 										<h1 id="first-line" className="splash-subtitle shadow-text">
 											CREATE
 										</h1>
-										<Button variant="xalianGreen" className="xalian-font xalian-splash-generator-button" id="xalian-generator-link" href="/generator">
+										<Button variant="xalianGreen" className="xalian-font xalian-splash-generator-button clickable" id="xalian-generator-link" href="/generator">
 											GENERATE XALIANS
 										</Button>
-										<div id="third-line" className="social-media-links">
+										<div id="third-line" className="social-media-links clickable">
 											<a href="https://discord.gg/sgGNhNJ2KN" className="social-media-links">
 												<i className="bi bi-discord"></i>
 											</a>
@@ -253,7 +272,18 @@ class Home extends React.Component {
 								</Row>
 							</Container>
 						</section>
+						<div id="splash-page-spaceship-window-animation" className="splash-page-spaceship-window-animation debug-box" >
+							<div className="spaceship-animation-window-panel-wrapper" style={{left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max}}>
+								<SpaceshipWindowSVG className='debug-box' id='spaceship-window-animation-svg' style={{left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max}} /> 
+							</div>
+							<div id="spaceship-animation-panel-wrapper" className="spaceship-animation-screen-panel-wrapper" style={{left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max}}>
+								<SpaceshipScreenGridSVG className='debug-box spaceship-screen-grid-svg' id='spaceship-computer-screen-animation-svg' style={{left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max}}/>
+								{/* <div className='debug-box spaceship-screen' id='spaceship-computer-outside-animation' style={{backgroundSize: this.state.min, left: this.state.minXOffset, top: this.state.minYOffset, width: this.state.min, height: this.state.min}}/> */}
+								<div className='debug-box spaceship-screen' id='spaceship-computer-outside-animation' style={{backgroundSize: this.state.min, width: this.state.min, height: this.state.min}}/>
+								{/* <div className='debug-box spaceship-screen' id='spaceship-computer-outside-animation' style={{backgroundSize: this.state.max, left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max}}/> */}
 
+							</div>
+						</div>
 					
 
 						{/* <div id="splash-page-spaceship-computer-animation" className="splash-page-spaceship-computer-animation">

@@ -118,6 +118,10 @@ hr.xalian-hr {
   font-size: x-large !important;
 }
 
+.clickable {
+  z-index: 100;
+}
+
 /*--------------------------------------------------------------
 # General / common
 --------------------------------------------------------------*/
@@ -761,7 +765,7 @@ a:active {
 
 .splash-page-content-panel {
   background-color: rgba(0, 0, 0, 0.7);
-  background: url("../img/planets/gif/dark_planet_gif.gif") top center;
+  /* background: url("../../../src/svg/animations/ship_screen.svg") top center; */
   background-size: contain;
   background-repeat: no-repeat;
   text-shadow: 0px 0px 10px rgb(0, 0, 0);
@@ -898,7 +902,11 @@ a:active {
   align-items: center;
   /* height: 100% !important; */
   /* width: 100% !important; */
-  /* height: 100vh !important; */
+
+  /* THIS TELLS HOW MUCH SPPACE TO GIVE UNTIL SHOWING COMPUTER CONTENT */
+  height: 100vh !important;
+  
+  
   /* width: 100vw !important; */
   text-align: center;
   /* justify-content: center; */
@@ -934,8 +942,8 @@ a:active {
 
 
 #spaceship-computer-animation-svg {
-  background-color: rgb(255, 0, 255);
-  background: radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(33,33,33,1) 25%, rgba(33,33,33,1) 75%, rgba(0,0,0,1) 100%);
+  background-color: rgb(0, 0, 0);
+  /* background: radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(33,33,33,1) 25%, rgba(33,33,33,1) 75%, rgba(0,0,0,1) 100%); */
 /* width: 200px;  */
 	/* height: 200px; */
   /* width: 100%;   */
@@ -950,7 +958,46 @@ a:active {
   /* z-index: 5; */
 }
 
+.spaceship-screen {
+  background: no-repeat center url("../img/animation/ship_screen.png");
+  background-color: #000000;
+  /* background-size: cover; */
+  background-repeat: no-repeat;
+  /* height: 100%; */
+  /* width: 100%; */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 
+.spaceship-animation-window-panel-wrapper {
+  
+  /* background-color: #000000; */
+  position: fixed;
+  top: 0; 
+  left: 0; 
+  /* height: 100vh;  */
+  /* width: 100%; */
+}
+
+.spaceship-animation-screen-panel-wrapper {
+  
+  background-color: #000000;
+  position: fixed;
+  top: 0; 
+  left: 0; 
+  /* height: 100vh;  */
+  /* width: 100%; */
+
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.spaceship-screen-grid-svg {
+  background: radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(33,33,33,1) 25%, rgba(33,33,33,1) 75%, rgba(0,0,0,1) 100%);
+}
 
 
 section {
