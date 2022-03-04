@@ -92,7 +92,8 @@ class Home extends React.Component {
 		// gsap.set('#subline1, #subline2, #subline3, #splash-animated-changing-text, #splash-social-media-links, #xalian-generator-link, #xalians-logo-a1, #xalians-logo-l, #xalians-logo-i, #xalians-logo-a2, #xalians-logo-n, #xalians-logo-s',
 		//  {opacity: 0 } );
 
-		let logoTl = this.buildLogoAnimation();
+		let main = gsap.timeline();
+
 
 		var splashTl = gsap.timeline({
 			// repeat: 0,
@@ -111,7 +112,7 @@ class Home extends React.Component {
 		splashTl
 		// .addLabel("before-anything")
 		// Xalian Logo
-		.add(logoTl)
+		.add(this.buildLogoAnimation())
 		// Generator Button
 		.fromTo('#xalian-generator-link', { opacity: 0 }, { opacity: 1, duration: 1, delay: 0.5 }, "<")
 		// CREATE :: EARN :: TRADE :: PLAY
@@ -155,44 +156,18 @@ class Home extends React.Component {
                 scrub: true,
 				markers: true,
                 start: 'center center',
-                // start: 'bottom bottom',
-                // end: '+=200%',
-				// endTrigger: "#"
                 end: 'bottom 20%',
-				// markers: true,
                 // snap: "labelsDirectional",
-				snap: {
-					snapTo: "labels",
-					duration: 1,
-					inertia: false
-				},
+				// snap: {
+				// 	snapTo: "labels",
+				// 	duration: 1,
+				// 	inertia: false
+				// },
 				// preventOverlaps: "spaceship-animation-group",
 				toggleActions: 'play complete reverse reset',
 				anticipatePin: 1
             },
         });
-
-		// gsap.timeline({
-		// 	scrollTrigger: {
-		// 		trigger: '#splash-section',
-		// 		pin: true,
-		// 		scrub: true,
-		// 		start: 'bottom bottom',
-		// 		end: '+=200%',
-		// 		toggleActions: 'play complete reverse reset',
-		// 	},
-		// });
-
-		// document.getElementById('xalians-logo-x').
-
-		// function goToSection(i, anim) {
-		// 	gsap.to(window, {
-		// 	  scrollTo: {y: i*innerHeight + firstElem.offsetTop, autoKill: false},
-		// 	  duration: 1
-		// 	});
-			
-		// 	}
-		//   }
 
 		let xElement = document.getElementById("xalians-logo-x");
 		let xRect = xElement.getBoundingClientRect();
@@ -203,23 +178,15 @@ class Home extends React.Component {
 
 			ScrollTrigger.create({
 			  trigger: '#splash-section',
-			  onEnter: () => { gsap.to(window, { scrollTo: { y: 0, autoKill: false } }) },
-			  onEnterBack: () => { gsap.to(window, { scrollTo: { y: 0, autoKill: false } }) }
+			  start: 'center center',
+			//   end: 'bottom 20%',
+			  onLeave: () => { gsap.to(window, { scrollTo: { duration: 3, y: "#splash-page-spacer", autoKill: false } }) },
+			  onEnterBack: () => { gsap.to(window, { scrollTo: { duration: 3, y: 0, autoKill: false } }) }
 			});
 			
-			// ScrollTrigger.create({
-			//   trigger: '#splash-section',
-			// //   start: "bottom bottom",
-			// });
-
 		spaceshipTl
-		// .fromTo("#xalians-logo-x",  {x: "0"}, { x: `+=${offset}px`}) 
-		// .to("#xalians-logo-x", { x: `+=${offset}px`}) 
-		// .fromTo("#xalians-logo-x",  {xPercent: 0}, { xPercent: a1}) 
-		.to('#subline1, #subline2, #subline3, #splash-animated-changing-text, #splash-social-media-links, #xalian-generator-link, #xalians-logo-a1, #xalians-logo-l, #xalians-logo-i, #xalians-logo-a2, #xalians-logo-n, #xalians-logo-s',
-		{ opacity: 0 }, "<")
-		.addLabel("before-spaceship-window-animation")
-
+		.to('#subline1, #subline2, #subline3, #splash-animated-changing-text, #splash-social-media-links, #xalian-generator-link, #xalians-logo-a1, #xalians-logo-l, #xalians-logo-i, #xalians-logo-a2, #xalians-logo-n, #xalians-logo-s', { opacity: 0 }, "<")
+		// .addLabel("before-spaceship-window-animation")
 		.from('#spaceship-window-animation-svg', { scale: 10, duration: 1, ease: 'none' })
 		.to('#spaceship-window-animation-svg', { xPercent: -100, ease: 'none' })
 		.from('#spaceship-animation-panel-wrapper', { xPercent: 100, ease: 'none' }, "<")

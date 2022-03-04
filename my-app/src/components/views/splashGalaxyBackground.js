@@ -53,16 +53,6 @@ class SplashGalaxyBackground extends React.Component {
 						color: {
 							value: '#ffffff',
 						},
-						links: {
-							color: '#ffffff',
-							distance: 150,
-							enable: false,
-							opacity: 0.5,
-							width: 1,
-						},
-						collisions: {
-							enable: false,
-						},
 						move: {
 							direction: this.props.direction || 'left',
 							enable: true,
@@ -97,12 +87,19 @@ class SplashGalaxyBackground extends React.Component {
 							},
 						},
 						shape: {
-							type: 'circle',
+							type: 'star',
 						},
 						size: {
 							random: true,
 							value: 1,
 						},
+						rotate: {
+							animation: {
+								enable: true,
+								speed: 5,
+								sync: false
+							}
+						}
 					},
 					detectRetina: true,
 				}}
