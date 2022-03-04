@@ -22,15 +22,14 @@ import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 //import Torus from "@toruslabs/torus-embed"
 import WalletLink from "walletlink";
 import Web3Modal from "web3modal";
-// import "./App.css";
+import "../App.css";
 import { Account, Address, AddressInput, Contract, Faucet, GasGauge, Header, Ramp, ThemeSwitch } from "../web3-components";
 import { INFURA_ID, NETWORK, NETWORKS } from "../web3-constants";
 import { Transactor } from "../web3-helpers";
 import { useContractConfig } from "../web3-hooks";
 // import Hints from "./Hints";
 
-
-// const { BufferList }  = require("bl");
+//const { BufferList } = require("bl");
 // const ipfsAPI = require("ipfs-http-client");
 // const ipfs = ipfsAPI({ host: "ipfs.infura.io", port: "5001", protocol: "https" });
 
@@ -65,9 +64,9 @@ const NETWORKCHECK = true;
 // EXAMPLE STARTING JSON:
 const STARTING_JSON = {
   description: "It's actually a bison?",
-  external_url: "https://austingriffith.com/portfolio/paintings/", // <-- this can link to a page for the specific file too
-  image: "https://austingriffith.com/images/paintings/buffalo.jpg",
-  name: "Buffalo",
+  external_url: "https://www.xalians.com/species/", // <-- this can link to a page for the specific file too
+  image: "https://www.xalians.com/assets/img/xalians/xalians_icon_xylum.png",
+  name: "Xylum",
   attributes: [
     {
       trait_type: "BackgroundColor",
@@ -75,7 +74,7 @@ const STARTING_JSON = {
     },
     {
       trait_type: "Eyes",
-      value: "googly",
+      value: "big",
     },
   ],
 };
@@ -272,11 +271,11 @@ function App(props) {
   ]);
 
   // keep track of a variable from the contract in the local React state:
-  const balance = useContractReader(readContracts, "YourCollectible", "balanceOf", [address]);
+  const balance = useContractReader(readContracts, "XaliansNFT", "balanceOf", [address]);
   console.log("🤗 balance:", balance);
 
   // 📟 Listen for broadcast events
-  const transferEvents = useEventListener(readContracts, "YourCollectible", "Transfer", localProvider, 1);
+  const transferEvents = useEventListener(readContracts, "XaliansNFT", "Transfer", localProvider, 1);
   console.log("📟 Transfer events:", transferEvents);
 
   //
@@ -291,9 +290,9 @@ function App(props) {
   //     for (let tokenIndex = 0; tokenIndex < balance; tokenIndex++) {
   //       try {
   //         console.log("GEtting token index", tokenIndex);
-  //         const tokenId = await readContracts.YourCollectible.tokenOfOwnerByIndex(address, tokenIndex);
+  //         const tokenId = await readContracts.XaliansNFT.tokenOfOwnerByIndex(address, tokenIndex);
   //         console.log("tokenId", tokenId);
-  //         const tokenURI = await readContracts.YourCollectible.tokenURI(tokenId);
+  //         const tokenURI = await readContracts.XaliansNFT.tokenURI(tokenId);
   //         console.log("tokenURI", tokenURI);
 
   //         const ipfsHash = tokenURI.replace("https://ipfs.io/ipfs/", "");
@@ -486,8 +485,10 @@ function App(props) {
     localProvider &&
     localProvider._network &&
     localProvider._network.chainId == 31337 &&
-    yourLocalBalance &&
-    ethers.utils.formatEther(yourLocalBalance) <= 0
+    yourLocalBalance 
+    // &&
+    // ethers.utils.formatEther(yourLocalBalance) <= 0
+    //took this^ out so I could keep grabbing funds easily - DM
   ) {
     faucetHint = (
       <div style={{ padding: 16 }}>
@@ -496,9 +497,10 @@ function App(props) {
           onClick={() => {
             faucetTx({
               to: address,
-              value: ethers.utils.parseEther("0.01"),
+              value: ethers.utils.parseEther("1"),
             });
-            setFaucetClicked(true);
+            //setFaucetClicked(true);
+            //took this^ out so I could keep grabbing funds easily - DM
           }}
         >
           💰 Grab funds from the faucet ⛽️
@@ -509,10 +511,10 @@ function App(props) {
 
   const [yourJSON, setYourJSON] = useState(STARTING_JSON);
   const [sending, setSending] = useState();
-  const [ipfsHash, setIpfsHash] = useState();
-  const [ipfsDownHash, setIpfsDownHash] = useState();
+  // const [ipfsHash, setIpfsHash] = useState();
+  // const [ipfsDownHash, setIpfsDownHash] = useState();
   const [downloading, setDownloading] = useState();
-  const [ipfsContent, setIpfsContent] = useState();
+  // const [ipfsContent, setIpfsContent] = useState();
   const [transferToAddresses, setTransferToAddresses] = useState({});
   const [minting, setMinting] = useState(false);
   const [count, setCount] = useState(1);
@@ -520,10 +522,10 @@ function App(props) {
   // the json for the nfts
   const json = {
     1: {
-      description: "It's actually a bison?",
-      external_url: "https://austingriffith.com/portfolio/paintings/", // <-- this can link to a page for the specific file too
-      image: "https://austingriffith.com/images/paintings/buffalo.jpg",
-      name: "Buffalo",
+      description: "A giant organism of thick, intertwined roots that act as tentacles. It lives mostly underground as this is where it absorbs its power.",
+      external_url: "https://www.xalians.com/species/", // <-- this can link to a page for the specific file too
+      image: "https://www.xalians.com/assets/img/xalians/xalians_icon_xylum.png",
+      name: "Xylum",
       attributes: [
         {
           trait_type: "BackgroundColor",
@@ -531,7 +533,7 @@ function App(props) {
         },
         {
           trait_type: "Eyes",
-          value: "googly",
+          value: "big",
         },
         {
           trait_type: "Stamina",
@@ -540,18 +542,18 @@ function App(props) {
       ],
     },
     2: {
-      description: "What is it so worried about?",
-      external_url: "https://austingriffith.com/portfolio/paintings/", // <-- this can link to a page for the specific file too
-      image: "https://austingriffith.com/images/paintings/zebra.jpg",
-      name: "Zebra",
+      description: "A partially feathered ground bird with lizard features, somewhat resembling a velociraptor. These creatures are extremely quick with razor sharp teeth, and prefer to hunt in packs.",
+      external_url: "https://www.xalians.com/species/", // <-- this can link to a page for the specific file too
+      image: "https://www.xalians.com/assets/img/xalians/xalians_icon_dromeus.png",
+      name: "Dromeus",
       attributes: [
         {
           trait_type: "BackgroundColor",
-          value: "blue",
+          value: "orange",
         },
         {
           trait_type: "Eyes",
-          value: "googly",
+          value: "scary",
         },
         {
           trait_type: "Stamina",
@@ -560,10 +562,10 @@ function App(props) {
       ],
     },
     3: {
-      description: "What a horn!",
-      external_url: "https://austingriffith.com/portfolio/paintings/", // <-- this can link to a page for the specific file too
-      image: "https://austingriffith.com/images/paintings/rhino.jpg",
-      name: "Rhino",
+      description: "An acid slime organism protected by a thick rocky exoskeleton. Its slime can continually regenerate an outer shell, allowing for great defense.",
+      external_url: "https://www.xalians.com/species/", // <-- this can link to a page for the specific file too
+      image: "https://www.xalians.com/assets/img/xalians/xalians_icon_bioflim.png",
+      name: "Biofilm",
       attributes: [
         {
           trait_type: "BackgroundColor",
@@ -580,10 +582,10 @@ function App(props) {
       ],
     },
     4: {
-      description: "Is that an underbyte?",
-      external_url: "https://austingriffith.com/portfolio/paintings/", // <-- this can link to a page for the specific file too
-      image: "https://austingriffith.com/images/paintings/fish.jpg",
-      name: "Fish",
+      description: "When in battle, this creature summons a swarm of small flying familiars with teeth like piranhas. It controls the swarm with its mind, attacking or defending as one unit.",
+      external_url: "https://www.xalians.com/species/", // <-- this can link to a page for the specific file too
+      image: "https://www.xalians.com/assets/img/xalians/xalians_icon_tetrahive.png",
+      name: "Tetrahive",
       attributes: [
         {
           trait_type: "BackgroundColor",
@@ -600,10 +602,10 @@ function App(props) {
       ],
     },
     5: {
-      description: "So delicate.",
-      external_url: "https://austingriffith.com/portfolio/paintings/", // <-- this can link to a page for the specific file too
-      image: "https://austingriffith.com/images/paintings/flamingo.jpg",
-      name: "Flamingo",
+      description: "The gems growing out of this creature's head transmit powerful light energy, don't be deceived by its calm temperment.",
+      external_url: "https://www.xalians.com/species/", // <-- this can link to a page for the specific file too
+      image: "https://www.xalians.com/assets/img/xalians/xalians_icon_crystorn.png",
+      name: "Crysorn",
       attributes: [
         {
           trait_type: "BackgroundColor",
@@ -620,10 +622,10 @@ function App(props) {
       ],
     },
     6: {
-      description: "Raaaar!",
-      external_url: "https://austingriffith.com/portfolio/paintings/", // <-- this can link to a page for the specific file too
-      image: "https://austingriffith.com/images/paintings/godzilla.jpg",
-      name: "Godzilla",
+      description: "Imprits are demonic looking creatures, resembling flaming, horned monkeys backed by long tails with scythe-like tips. Imprits possess fire-retardant fur that protects their bodies from the flammable oils they secrete, allowing them to survive despite being in a state of constant immolation. They are remarkably intelligent among other Xalians, having been designed in ancient times as natural tinkerers and let loose into the various lightless mining shafts of Magmuth, where they were left to their own devices to fix, maintain, and often jerry-rig the mining equipment sent deep into the earth by the Vallerii. Today, they are known for being entirely erratic, likely driven mad by the isolation of the deep tunnels in which they tinkered and toiled. When released from their claustrophobic confines and set loose on the surface, Imprits take ecstatic pleasure from using their tails to swing through the air from place to place and setting fires where they least belong.",
+      external_url: "https://www.xalians.com/species/", // <-- this can link to a page for the specific file too
+      image: "https://www.xalians.com/assets/img/xalians/xalians_icon_imprit.png",
+      name: "Imprits",
       attributes: [
         {
           trait_type: "BackgroundColor",
@@ -639,6 +641,30 @@ function App(props) {
         },
       ],
     },
+    7: {
+      description: "All done...",
+      external_url: "https://www.xalians.com/species/", // <-- this can link to a page for the specific file too
+      image: "https://www.drawingforall.net/wp-content/uploads/2020/11/how-to-draw-a-smiley-face.jpg",
+      name: "LAST ONE",
+      attributes: [
+        {
+          trait_type: "BackgroundColor",
+          value: "Blue",
+        },
+        {
+          trait_type: "Eyes",
+          value: "hearts",
+        },
+        {
+          trait_type: "Stamina",
+          value: 9999,
+        },
+      ],
+    },
+
+
+
+
   };
 
   // const mintItem = async () => {
@@ -648,8 +674,8 @@ function App(props) {
   //   console.log("Uploaded Hash: ", uploaded);
   //   const result = tx(
   //     writeContracts &&
-  //       writeContracts.YourCollectible &&
-  //       writeContracts.YourCollectible.mintItem(address, uploaded.path),
+  //       writeContracts.XaliansNFT &&
+  //       writeContracts.XaliansNFT.mintItem(address, uploaded.path),
   //     update => {
   //       console.log("📡 Transaction Update:", update);
   //       if (update && (update.status === "confirmed" || update.status === 1)) {
@@ -682,7 +708,7 @@ function App(props) {
               }}
               to="/"
             >
-              YourCollectibles
+              XaliansNFT
             </Link>
           </Menu.Item>
           <Menu.Item key="/transfers">
@@ -729,16 +755,16 @@ function App(props) {
         <Switch>
           <Route exact path="/">
             <div style={{ width: 640, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
-              {/* <Button
+              <Button
                 disabled={minting}
                 shape="round"
                 size="large"
                 onClick={() => {
-                  mintItem();
+                  //mintItem();
                 }}
               >
-                MINT NFT
-              </Button> */}
+                Click Here to Use Xalian Generator
+              </Button>
             </div>
             <div style={{ width: 640, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
               <List
@@ -782,7 +808,7 @@ function App(props) {
                         <Button
                           onClick={() => {
                             console.log("writeContracts", writeContracts);
-                            tx(writeContracts.YourCollectible.transferFrom(address, transferToAddresses[id], id));
+                            tx(writeContracts.XaliansNFT.transferFrom(address, transferToAddresses[id], id));
                           }}
                         >
                           Transfer
@@ -889,7 +915,7 @@ function App(props) {
           </Route> */}
           <Route path="/debugcontracts">
             <Contract
-              name="YourCollectible"
+              name="XaliansNFT"
               signer={userSigner}
               provider={localProvider}
               address={address}
@@ -900,7 +926,7 @@ function App(props) {
         </Switch>
       </BrowserRouter>
 
-   
+      {/* <ThemeSwitch /> */}
 
       {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
       <div style={{ position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10 }}>

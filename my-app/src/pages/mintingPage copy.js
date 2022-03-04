@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
@@ -20,8 +20,6 @@ import {
   useGasPrice,
   useOnBlock,
   useUserProviderAndSigner,
-  useContractExistsAtAddress,
-  useBlockNumber,
 } from "eth-hooks";
 import { useExchangeEthPrice } from "eth-hooks/dapps/dex";
 import { useEventListener } from "eth-hooks/events/useEventListener";
@@ -34,7 +32,7 @@ import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 import WalletLink from "walletlink";
 import Web3Modal from "web3modal";
 //import "./App.css";
-import { Account, Address, Balance, AddressInput, Contract, Faucet, GasGauge, Header, Ramp, ThemeSwitch } from "../web3-components";
+import { Account, Address, AddressInput, Contract, Faucet, GasGauge, Header, Ramp, ThemeSwitch } from "../web3-components";
 import { INFURA_ID, NETWORK, NETWORKS } from "../web3-constants";
 import { Transactor } from "../web3-helpers";
 import { useContractConfig } from "../web3-hooks";
@@ -149,112 +147,119 @@ const web3Modal = new Web3Modal({
 });
 
 
-function App (props) {
-  
-  const mainnetProvider =
-    poktMainnetProvider && poktMainnetProvider._isProvider
-      ? poktMainnetProvider
-      : scaffoldEthProvider && scaffoldEthProvider._network
-      ? scaffoldEthProvider
-      : mainnetInfura;
+//web3 stuff below
 
-const address = '0x1b8Bfc9EC2729E3bEB5302Ac3EC6F7eA8AF3A289'
-const provider = new ethers.providers.JsonRpcProvider('https://kovan.infura.io/v3/54db8d77410745c2b76b33773b6938e6','kovan', );
-const price = useGasPrice(targetNetwork, "fast");
-const contractCheck = useContractExistsAtAddress(provider,address);
-console.log('gasprice: ' + price)
-console.log('contractcheck:' + contractCheck)
+// function App(props) {
+// const mainnetProvider =
+// poktMainnetProvider && poktMainnetProvider._isProvider
+//   ? poktMainnetProvider
+//   : scaffoldEthProvider && scaffoldEthProvider._network
+//   ? scaffoldEthProvider
+//   : mainnetInfura;
 
-
-const contractConfig = useContractConfig();
-
-
-const [injectedProvider, setInjectedProvider] = useState();
+// const [injectedProvider, setInjectedProvider] = useState();
 // const [address, setAddress] = useState();
 
-// Use your injected provider from 🦊 Metamask or if you don't have it then instantly generate a 🔥 burner wallet.
-const userProviderAndSigner = useUserProviderAndSigner(injectedProvider, localProvider);
-const userSigner = userProviderAndSigner.signer;
+// const logoutOfWeb3Modal = async () => {
+// await web3Modal.clearCachedProvider();
+// if (injectedProvider && injectedProvider.provider && typeof injectedProvider.provider.disconnect == "function") {
+//   await injectedProvider.provider.disconnect();
+// }
+// setTimeout(() => {
+//   window.location.reload();
+// }, 1);
+// };
+
+// /* 💵 This hook will get the price of ETH from 🦄 Uniswap: */
+// const price = useExchangeEthPrice(targetNetwork, mainnetProvider);
+
+// /* 🔥 This hook will get the price of Gas from ⛽️ EtherGasStation */
+// const gasPrice = useGasPrice(targetNetwork, "fast");
+// // Use your injected provider from 🦊 Metamask or if you don't have it then instantly generate a 🔥 burner wallet.
+// const userProviderAndSigner = useUserProviderAndSigner(injectedProvider, localProvider);
+// const userSigner = userProviderAndSigner.signer;
 
 // useEffect(() => {
-//   async function getAddress() {
-//     if (userSigner) {
-//       const newAddress = await userSigner.getAddress();
-//       setAddress(newAddress);
-//     }
+// async function getAddress() {
+//   if (userSigner) {
+//     const newAddress = await userSigner.getAddress();
+//     setAddress(newAddress);
 //   }
-//   getAddress();
+// }
+// getAddress();
 // }, [userSigner]);
 
 
+// // const userProviderAndSigner = useUserProviderAndSigner(injectedProvider, localProvider);
+// // const userSigner = userProviderAndSigner.signer;
+// //web3 stuff above
+
+// }
 
 
-console.log('blockexplorer: ' + blockExplorer)
+
+
+
+
+
+
+class MintingPage extends React.Component {
+
+
+
+
+
+
+    
+    // state = {
+    //     xalian: null,
+    //     isLoading: true
+    // }
+    
+
+    // componentDidMount() {
+    //     this.getXalian();
+    // }
+
   
-return (
-  <React.Fragment>
+    render() {
 
-    <Container fluid className="content-background-container">
-        <XalianNavbar></XalianNavbar>
+        return <React.Fragment>
 
-        {/* {(this.state.xalian == null) && <p>Thinking...</p>} */}
+            <Container fluid className="content-background-container">
+                <XalianNavbar></XalianNavbar>
 
-        <Container className="content-container">
-            <Row className="content-row">
+                {/* {(this.state.xalian == null) && <p>Thinking...</p>} */}
 
-                <Col lg={8} className="topic-column">
-                    <h1>View NFT Contract</h1>
-                    <p> {
-                        
-                        // this.state.xalian && 
-                        <React.Fragment>
-                            <h1> {
-                                // JSON.stringify(this.state.xalian, null, 2)
-                                String(contractCheck)
+                <Container className="content-container">
+                    <Row className="content-row">
+
+                        <Col lg={8} className="topic-column">
+                            <h1>Minting</h1>
+                            <p> {
                                 
-                                } </h1>
-                            <h1> {
+                                // this.state.xalian && 
+                                <React.Fragment>
+                                    <h1> {
+                                        // JSON.stringify(this.state.xalian, null, 2)
+
+                                        
+                                        } </h1>
+                                        
+                            <h1>----------------------------</h1>
                             
-                              price
-                              
+                              <Contract
+                                name="YourCollectible"
+                                // signer={userSigner}
+                                // provider={localProvider}
+                                // address={address}
+                                // blockExplorer={blockExplorer}
+                                // contractConfig={contractConfig}
+                              />
+
                             
-                            } </h1>
-                           
-                            <h1>
-                              Local PC Kovan Adress_____   
 
-                              <Address address={'0x0e53C614204B43f8B2c4235ebf240cC1C62281E6'} ensProvider={mainnetProvider} blockExplorer={blockExplorer} />
-                              <Balance address='0x0e53C614204B43f8B2c4235ebf240cC1C62281E6' provider={provider} price={price} />
-                            </h1>
-                            <h1>
-                              XaliansNFT Address____
-
-                              <Address address={address} ensProvider={mainnetProvider} blockExplorer={blockExplorer} />
-                              <Balance address={address} provider={provider} price={price} />
-                            </h1>
-
-                    <h1>----------------------------</h1>
-                      <Contract
-                        name="XaliansNFT"
-                        //signer={userSigner}
-                        provider={provider}
-                        address={address}
-                        blockExplorer={blockExplorer}
-                        contractConfig={contractConfig}
-                      />
-                      {/* <Contract
-                        name="XaliansNFT"
-                        signer={userSigner}
-                        provider={provider}
-                        address={address}//'0x1b8Bfc9EC2729E3bEB5302Ac3EC6F7eA8AF3A289'
-                        blockExplorer= {blockExplorer}//'https://kovan.etherscan.io/'
-                        contractConfig={contractConfig}
-                      /> */}
-
-                    
-                    
-
-                    <h1>----------------------------</h1>
+                            <h1>----------------------------</h1>
 
 
 
@@ -262,19 +267,39 @@ return (
 
 
 
-                
-                        </React.Fragment>            
                         
-                        } </p>
+                                </React.Fragment>            
+                                
+                                } </p>
 
-                </Col>
+                        </Col>
 
-            </Row>
+                    </Row>
 
-        </Container>
-    </Container>
-  </React.Fragment>
-);
+                </Container>
+            </Container>
+        </React.Fragment>
+
+
+    }
+
+    getXalian() {
+        const url = "https://api.xalians.com/xalian";
+        axios.get(url)
+            .then(response => {
+                var xalianObject = response.data;
+                this.setState({
+                    xalian: xalianObject,
+                    isLoading: false
+                })
+                console.log(JSON.stringify(xalianObject, null, 2))
+            }
+            );
+    }
+
+    
+
 }
 
-export default App;
+
+export default MintingPage;
