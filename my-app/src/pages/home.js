@@ -24,9 +24,11 @@ import { ReactComponent as SpaceshipWindowSVG } from '../svg/animations/xalian_s
 import { ReactComponent as SpaceshipComputerScreenGridSVG } from '../svg/animations/spaceship_computer_screen_grid.svg'
 import { ReactComponent as SpaceshipComputerScreenSVG } from '../svg/animations/spaceship_computer_screen.svg'
 import { ReactComponent as SpaceshipComputerScreenInfoPanelSVG } from '../svg/animations/spaceship_computer_screen_info_panel1.svg'
+import { ReactComponent as SpaceshipComputerScreenTitlePanelSVG } from '../svg/animations/spaceship_computer_screen_title_panel.svg'
 import { ReactComponent as SpaceshipWallSVG } from '../svg/animations/spaceship_wall.svg'
 import { IconMaximize } from '@aws-amplify/ui-react';
 import Carousel from 'react-bootstrap/Carousel'
+import spaceshipComputerScreenTitlePanel from '../svg/animations/spaceship_computer_screen_title_panel.svg';
 gsap.registerPlugin(ScrollTrigger);
 gsap.registerPlugin(TextPlugin);
 gsap.registerPlugin(EasePack);
@@ -91,8 +93,6 @@ class Home extends React.Component {
 
 		// gsap.set('#subline1, #subline2, #subline3, #splash-animated-changing-text, #splash-social-media-links, #xalian-generator-link, #xalians-logo-a1, #xalians-logo-l, #xalians-logo-i, #xalians-logo-a2, #xalians-logo-n, #xalians-logo-s',
 		//  {opacity: 0 } );
-
-		let main = gsap.timeline();
 
 
 		var splashTl = gsap.timeline({
@@ -176,13 +176,13 @@ class Home extends React.Component {
 		let perc = xRect.width/window.innerWidth;
 		let a1 = Math.floor(perc * 1000);
 
-			ScrollTrigger.create({
-			  trigger: '#splash-section',
-			  start: 'center center',
-			//   end: 'bottom 20%',
-			  onLeave: () => { gsap.to(window, { scrollTo: { duration: 3, y: "#splash-page-spacer", autoKill: false } }) },
-			  onEnterBack: () => { gsap.to(window, { scrollTo: { duration: 3, y: 0, autoKill: false } }) }
-			});
+			// ScrollTrigger.create({
+			//   trigger: '#splash-section',
+			//   start: 'center center',
+			// //   end: 'bottom 20%',
+			//   onLeave: () => { gsap.to(window, { scrollTo: { duration: 3, y: "#splash-page-spacer", autoKill: false } }) },
+			//   onEnterBack: () => { gsap.to(window, { scrollTo: { duration: 3, y: 0, autoKill: false } }) }
+			// });
 			
 		spaceshipTl
 		.to('#subline1, #subline2, #subline3, #splash-animated-changing-text, #splash-social-media-links, #xalian-generator-link, #xalians-logo-a1, #xalians-logo-l, #xalians-logo-i, #xalians-logo-a2, #xalians-logo-n, #xalians-logo-s', { opacity: 0 }, "<")
@@ -193,9 +193,6 @@ class Home extends React.Component {
 		.to('#spaceship-computer-outside-animation', { autoAlpha: 0, scale: 5 })
 		.fromTo('#spaceship-computer-screen-animation-svg', {autoAlpha: 0 }, { width: this.state.max, height: this.state.max, autoAlpha: 1 }, "<")
 		.addLabel("after-spaceship-window-animation")
-		.then(() => {
-			// this.getWindow();
-		})
 		;
 
 		var contentParentTl = gsap.timeline({
@@ -231,20 +228,15 @@ class Home extends React.Component {
         );
         contentParentTl.addLabel('horizontal-content-end');
 
-
-
-
-			spaceshipTl.add(contentParentTl);
-
-
+		spaceshipTl.add(contentParentTl);
 
         function buildPanelAnimation(tl, secId, panId, text, timescale = 4) {
 			
 			let inTl = gsap.timeline();
-            inTl.fromTo(panId, {opacity: 0}, {opacity: 1, duration: timescale })
+            inTl.fromTo(panId, {autoAlpha: 0}, {autoAlpha: 1, duration: timescale })
             
             let outTl = gsap.timeline();
-            outTl.to(panId, { opacity: 0, duration: timescale }, "<")
+            outTl.to(panId, { autoAlpha: 0, duration: timescale }, "<")
 
             tl.add(inTl);
             tl.addLabel(secId);
@@ -376,25 +368,54 @@ class Home extends React.Component {
 						<div id="splash-page-spacer" className="splash-page-full-content-wrapper">
 
 
-                            <section id="content-section-1" class="splash-page-content-section">
-								<SpaceshipComputerScreenInfoPanelSVG preserveAspectRatio="none" className="spaceship-computer-screen-info-panel splash-page-content-panel" style={{backgroundSize: `${this.state.width} ${this.state.height}`, width: this.state.width, height: this.state.height}}>
-									<Row className="splash-page-content-panel-row">
-										<Col sm={12} md={8} lg={6} className="shadow-text centered-div text-wrapper">
-											<h3>Xalian Creatures</h3>
-											<p></p>
+
+
+                            <section id="content-section-1" class="splash-computer-section">
+
+								<Container className="splash-computer-container" style={{backgroundSize: `${this.state.width} ${this.state.height}`, width: this.state.width, height: this.state.height}}>
+									
+									<Row className="splash-computer-container-row">
+
+										<Col sm={12} md={6} className="splash-computer-container-row-title-and-image-col">
+
+											<Row className="splash-computer-container-row-title-and-image-col-title-row">
+
+												<Col xs={12} className=" debug-box computer-screen-panel-title-col"  preserveAspectRatio='none'>
+													<h3 className='computer-screen-element'>Title</h3>
+													<SpaceshipComputerScreenTitlePanelSVG preserveAspectRatio='none' className="computer-screen-element" />
+												</Col>
+
+											</Row>
+											
+											<Row className="splash-computer-container-row-title-and-image-col-image-row">
+
+												<Col xs={12} className="debug-box" >
+													<div className="splash-computer-container-row-title-and-image-col-image-row-image-wrapper">
+														<img src="assets/img/background/castle.jpg" className="img-fluid" alt=""></img>
+													</div> 
+												</Col>
+
+											</Row>
+
 										</Col>
-										<Col sm={12} md={4} lg={6} className="centered-div">
-											<div className="embedded-img-wrapper">
-												<img src="assets/img/background/castle.jpg" className="img-fluid" alt=""></img>
-											</div>
+
+										<Col sm={12} md={6} className="splash-computer-container-row-text-col debug-box">
+											<p>text</p>
 										</Col>
+
 									</Row>
-								</SpaceshipComputerScreenInfoPanelSVG>
+
+								</Container>
+
 							</section>
 
-							<section id="content-section-2" class="splash-page-content-section">
-								<div className="splash-page-content-panel">
-									<Row className="splash-page-content-panel-row">
+
+
+
+
+							<section id="content-section-2" class="splash-computer-section">
+								<div className="splash-computer-container">
+									<Row className="splash-computer-container-row">
 										<Col sm={12} md={8} lg={6} className="shadow-text centered-div text-wrapper">
 											<h3>Fall of the Vallerii</h3>
 											<p></p>
@@ -408,9 +429,9 @@ class Home extends React.Component {
 								</div>
 							</section>
 
-							<section id="content-section-3" class="splash-page-content-section">
-								<div className="splash-page-content-panel">
-									<Row className="splash-page-content-panel-row">
+							<section id="content-section-3" class="splash-computer-section">
+								<div className="splash-computer-container">
+									<Row className="splash-computer-container-row">
 										<Col sm={12} md={8} lg={6} className="shadow-text centered-div text-wrapper">
 											<h3>End War</h3>
 											<p></p>
