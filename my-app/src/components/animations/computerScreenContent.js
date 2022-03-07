@@ -27,13 +27,21 @@ class ComputerScreenContent extends React.Component {
         .add(this.buildArrowAnimation('#computer-screen-arrow-outside', 0.3), "<")
         .add(this.buildXAnimation(), "<")
         
-        .to('#' + this.props.sectionId + '-title-text', {duration: 0.5, text: this.props.title, ease: 'none'}, "<")
-        .to('#' + this.props.sectionId + '-text', {duration: 0.5, text: {
-            value: this.props.text,
-            delimiter: " ",
-            ease: 'none'
-        }}, "<")
+        // .to('#' + this.props.sectionId + '-title-text', {duration: 0.5, text: this.props.title, ease: 'none'}, "<")
+        // .to('#' + this.props.sectionId + '-text', {duration: 0.5, text: {
+        //     value: this.props.text,
+        //     // delimiter: " ",
+        //     // ease: 'none',
+        //     speed: 3
+        // }}, "<")
         ;
+        gsap.to('#' + this.props.sectionId + '-title-text', {duration: 0.5, text: this.props.title, ease: 'none'});
+        gsap.to('#' + this.props.sectionId + '-text', {duration: 0.5, text: {
+            value: this.props.text,
+            // delimiter: " ",
+            // ease: 'none',
+            speed: 3
+        }});
 
         this.buildPanelSquareShimmerAnimations();
         // this.buildPanelCircleAnimations();
@@ -45,8 +53,9 @@ class ComputerScreenContent extends React.Component {
         let delay = 0;
         circles.forEach((target) => {
 			var zoomIn = gsap.timeline({ repeat: -1});
+            
 			zoomIn
-				.to(target, { delay: delay, duration: 0.2, yPercent: -10, ease: 'elastic.in(1, 0.3)' })
+				.to(target, { delay: delay, duration: 0.2, yPercent: -(Math.random()*100*delay), ease: 'elastic.in(1, 0.3)' })
 				.to(target, { duration: 0.2, yPercent: 0, ease: 'power4.in' });
             delay += 0.05;
 		}); 
@@ -115,24 +124,30 @@ class ComputerScreenContent extends React.Component {
 			<section id={this.props.sectionId} class="splash-computer-section">
 				<Container className="splash-computer-container">
 					<Row className="splash-computer-container-row" style={{ height: '15%' }}>
+                        {/* <Col className="debug-box vertically-center-contents splash-computer-col">
+							<SpaceshipComputerScreenTitlePanelSVG preserveAspectRatio="none" className="computer-screen-element" />
+							<div className="screen-title-wrapper vertically-center-contents">
+								<h1 id={this.props.sectionId + '-title-text'} className="screen-panel-title"></h1>
+							</div>
+						</Col> */}
 						<Col className="debug-box vertically-center-contents splash-computer-col">
 							<SpaceshipComputerScreenTitlePanelSVG preserveAspectRatio="none" className="computer-screen-element" />
 							<div className="screen-title-wrapper vertically-center-contents">
-								<h3 id={this.props.sectionId + '-title-text'} className="screen-panel-title"></h3>
+								<h1 id={this.props.sectionId + '-title-text'} className="screen-panel-title"></h1>
 							</div>
 						</Col>
 					</Row>
 					<Row className="splash-computer-container-row" style={{ height: '30%' }}>
 						<Col className="debug-box vertically-center-contents splash-computer-col">
 							<SpaceshipComputerScreenImagePanelSVG preserveAspectRatio="none" className="computer-screen-element" />
-							<img src={this.props.imageLocation || 'assets/img/background/castle.jpg'} className="splash-computer-image" alt=""></img>
+							<img id={this.props.sectionId + '-image'} src={this.props.imageLocation || 'assets/img/background/castle.jpg'} className="splash-computer-image" alt=""></img>
 						</Col>
 					</Row>
 					<Row className="splash-computer-container-row" style={{ height: '40%' }}>
 						<Col className="debug-box vertically-center-contents splash-computer-col">
 							<SpaceshipComputerScreenInfoPanelSVG preserveAspectRatio="none" className="computer-screen-element" />
-							<div className="">
-								<h3 id={this.props.sectionId + '-text'} ></h3>
+							<div className="screen-text-wrapper vertically-center-contents">
+								<h2 className="computer-screen-font" id={this.props.sectionId + '-text'} ></h2>
 							</div>
 						</Col>
 					</Row>

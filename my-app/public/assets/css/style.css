@@ -856,7 +856,7 @@ a:active {
   /* height: 100% !important; */
   /* width: 100% !important; */
 
-  /* THIS TELLS HOW MUCH SPPACE TO GIVE UNTIL SHOWING COMPUTER CONTENT */
+  /* THIS TELLS HOW MUCH SPACE TO GIVE UNTIL SHOWING COMPUTER CONTENT */
   height: 100vh !important;
   
   pointer-events:none;
@@ -945,7 +945,7 @@ a:active {
 
 .spaceship-animation-screen-panel-wrapper {
   
-  /* background-color: #000000; */
+  background-color: #000000;
   position: fixed;
   top: 0; 
   left: 0; 
@@ -994,7 +994,7 @@ a:active {
 
 .splash-computer-container {
   width: 100%;
-  max-width: 1000px !important;
+  max-width: 600px !important;
   height: 100%;
   margin: auto;
   padding: 0 !important;
@@ -1003,7 +1003,11 @@ a:active {
 }
 
 .screen-title-wrapper {
+  max-width: 90%;
+}
 
+.screen-text-wrapper {
+  max-width: 90%;
 }
 
 .splash-computer-container-row {
@@ -1127,6 +1131,11 @@ a:active {
   padding: 0px;
   pointer-events: none;
   
+}
+
+.computer-screen-font {
+  color: #ffffffb0;
+  text-shadow: 1px 1px 2px rgb(0, 0, 0) !important;
 }
 
 .screen-panel-title {

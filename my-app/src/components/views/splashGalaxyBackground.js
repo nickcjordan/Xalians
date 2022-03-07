@@ -39,8 +39,8 @@ class SplashGalaxyBackground extends React.Component {
 				loaded={particlesLoaded}
 				options={{
 					background: {
-						image: "url('assets/img/background/galaxy-splash-dark.png')",
-                        position: "top center",
+						image: "url('assets/img/background/galaxy-splash.png')",
+                        position: "center center",
                         size: "cover"
 					},
 					fpsLimit: 60,
