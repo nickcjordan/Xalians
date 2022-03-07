@@ -12,7 +12,6 @@ import XalianMoveSet from '../xalianMoveSet';
 import * as valueTranslator from '../../utils/valueTranslator';
 import XalianInfoBox from '../xalianInfoBox';
 import { ReactComponent as SVG } from './xalian.svg';
-import FigzyAnimatedSVG from '../../svg/figzyAnimatedSVG';
 import { Linear, gsap, Sine } from 'gsap';
 import { ExpoScaleEase, RoughEase, SlowMo } from 'gsap/EasePack';
 

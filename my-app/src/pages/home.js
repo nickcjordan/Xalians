@@ -2,6 +2,7 @@ import React from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
+import Image from 'react-bootstrap/Image';
 import Stack from 'react-bootstrap/Stack';
 import Container from 'react-bootstrap/Container';
 import XalianNavbar from '../components/navbar';
@@ -13,8 +14,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { TextPlugin } from 'gsap/TextPlugin';
 import { EasePack } from 'gsap/EasePack';
-import FigzyAnimatedSVG from '../svg/figzyAnimatedSVG';
-import VoltishAnimatedSVG from '../svg/voltishAnimatedSVG';
 import SplashGalaxyBackground from '../components/views/splashGalaxyBackground';
 // import XaliansLogoAnimatedSVG from '../svg/logo/xaliansLogoAnimatedSVG';
 import { ReactComponent as XaliansLogoSVG } from '../svg/logo/xalians_logo.svg';
@@ -36,7 +35,7 @@ gsap.registerPlugin(TextPlugin);
 gsap.registerPlugin(EasePack);
 gsap.registerPlugin(ScrollToPlugin);
 
-const reqSvgs = require.context ( '../svg', true, /\.svg$/ );
+const reqSvgs = require.context ( '../svg/species', true, /\.svg$/ );
 const svgs = reqSvgs.keys () .map ( path => ({ path, file: reqSvgs ( path ) }) );
 
 class Home extends React.Component {
@@ -198,12 +197,12 @@ class Home extends React.Component {
 			// discord and twitter links
 			.fromTo('#splash-social-media-links', { opacity: 0 }, { opacity: 1, duration: 1, delay: 0.2 }, '<')
 
-			.to('#splash-animated-changing-text', { opacity: 1, duration: 0.5, delay: 0.4 }, '<')
-			.to('#splash-animated-changing-text', { text: { type: 'diff', value: 'EARN', speed: 3 }, delay: 0.08 })
-			.to('#splash-animated-changing-text', { text: { type: 'diff', value: 'TRADE', speed: 3 }, delay: 0.08 })
-			.to('#splash-animated-changing-text', { text: { type: 'diff', value: 'PLAY', speed: 3 }, delay: 0.08 })
-			.to('#splash-animated-changing-text', { text: { type: 'diff', value: 'Start Generating Now...', speed: 4, newClass: 'splash-subtitle-smaller' }, delay: 0.5 })
-			.to('#splash-animated-changing-text', { opacity: 0, duration: 0.5, delay: 0.5 });
+			// .to('#splash-animated-changing-text', { opacity: 1, duration: 0.5, delay: 0.4 }, '<')
+			// .to('#splash-animated-changing-text', { text: { type: 'diff', value: 'EARN', speed: 3 }, delay: 0.08 })
+			// .to('#splash-animated-changing-text', { text: { type: 'diff', value: 'TRADE', speed: 3 }, delay: 0.08 })
+			// .to('#splash-animated-changing-text', { text: { type: 'diff', value: 'PLAY', speed: 3 }, delay: 0.08 })
+			// .to('#splash-animated-changing-text', { text: { type: 'diff', value: 'Start Generating Now...', speed: 4, newClass: 'splash-subtitle-smaller' }, delay: 0.5 })
+			// .to('#splash-animated-changing-text', { opacity: 0, duration: 0.5, delay: 0.5 });
 
 		var spaceshipTl = gsap.timeline({
 			scrollTrigger: {
@@ -212,7 +211,8 @@ class Home extends React.Component {
 				scrub: true,
 				// markers: true,
 				start: 'center center',
-				end: 'bottom 20%',
+				// end: 'bottom 20%',
+				end: 'bottom top',
 				// snap: "labelsDirectional",
 				// snap: {
 				// 	snapTo: "labels",
@@ -242,7 +242,8 @@ class Home extends React.Component {
 
 		spaceshipTl
 		// .addLabel("before-spaceship-window-animation")
-			.to('#subline1, #subline2, #subline3, #splash-animated-changing-text, #splash-social-media-links, #xalian-generator-link, #xalians-logo-a1, #xalians-logo-l, #xalians-logo-i, #xalians-logo-a2, #xalians-logo-n, #xalians-logo-s', { opacity: 0 }, '<')
+			// .to('#subline1, #subline2, #subline3, #splash-animated-changing-text, #splash-social-media-links, #xalian-generator-link, #xalians-logo-a1, #xalians-logo-l, #xalians-logo-i, #xalians-logo-a2, #xalians-logo-n, #xalians-logo-s', { opacity: 0 }, '<')
+			.to('#subline1, #subline2, #subline3, #splash-social-media-links, #xalian-generator-link, #xalians-logo-a1, #xalians-logo-l, #xalians-logo-i, #xalians-logo-a2, #xalians-logo-n, #xalians-logo-s', { opacity: 0 }, '<')
 			.from('#spaceship-window-animation-svg', { scale: 10, duration: 1, ease: 'none' })
 			.to('#spaceship-window-animation-svg', { xPercent: -100, ease: 'none' })
 			.from('#spaceship-animation-panel-wrapper', { xPercent: 100, ease: 'none' }, '<')
@@ -251,33 +252,46 @@ class Home extends React.Component {
 			// .addLabel('after-spaceship-window-animation')
 			;
 
+
 		ScrollTrigger.create({
 			trigger: '#splash-page-spacer',
 				pin: true,
 				scrub: 1,
 				start: 'top top',
 				end: '+=100%',
-				markers: true,
+				// markers: true,
 				// snap: "labelsDirectional",
 				// onEnter: () => { gsap.to(window, { scrollTo: { duration: 3, y: "#splash-page-spacer", autoKill: false } }) },
 		  		// onEnterBack: () => { gsap.to(window, { scrollTo: { duration: 3, y: 0, autoKill: false } }) },
 				// onSnapComplete: ({ progress, direction, isActive }) => console.log(progress, direction, isActive),
+				// onLeave: () => { gsap.to('#splash-page-spaceship-window-animation', {autoAlpha: 0}) },
+				onLeaveBack: () => { gsap.to('#splash-page-spaceship-window-animation', {autoAlpha: 1}) },
+				onToggle: self => { 
+					if (self.isActive) {
+						gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 1}) 
+					} else {
+						gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 0}) 
+					}
+				}
 				// preventOverlaps: "spaceship-animation-group"
 		});
 
 		ScrollTrigger.create({
-			trigger: '#splash-page-spacer',
-				// pin: true,
-				// scrub: 1,
-				start: 'top bottom',
+			trigger: '#xalian-svg-carousel',
+				start: 'center center',
+				pin: true,
 				end: '+=100%',
-				markers: true,
-				// snap: "labelsDirectional",
-				onEnter: () => { gsap.to(window, { scrollTo: { duration: 1, y: "#splash-page-spacer", autoKill: false } }) },
-		  		// onEnterBack: () => { gsap.to(window, { scrollTo: { duration: 3, y: 0, autoKill: false } }) },
-				// onSnapComplete: ({ progress, direction, isActive }) => console.log(progress, direction, isActive),
-				// preventOverlaps: "spaceship-animation-group"
+				// markers: true,
+				// onEnter: () => { gsap.to(window, { scrollTo: { duration: 1, y: "#splash-page-spacer", autoKill: false } }) },
 		});
+
+		// ScrollTrigger.create({
+		// 	trigger: '#splash-page-spacer',
+		// 		start: 'top bottom',
+		// 		end: '+=100%',
+		// 		markers: true,
+		// 		onEnter: () => { gsap.to(window, { scrollTo: { duration: 1, y: "#splash-page-spacer", autoKill: false } }) },
+		// });
 
 		// contentParentTl.addLabel('horizontal-content-start');
 
@@ -358,14 +372,11 @@ class Home extends React.Component {
 	};
 
 	render() {
-		let im = svgs[0];
 		return (
 			<React.Fragment>
 				<Container fluid className="home-background">
 					<SplashGalaxyBackground direction={this.state.backgroundAnimationStarDirection} speed={this.state.backgroundAnimationStarSpeed}>
 						<XalianNavbar></XalianNavbar>
-						{/* <image src={im}/> */}
-						{/* <div id="splash-page-spaceship-window-animation" className="splash-page-spaceship-window-animation debug-box" style={{width: Math.max(this.state.height, this.state.width) * 2, height: this.state.height}}> */}
 
 						<section id="splash-section" className="splash-section-debug">
 							<Container id="splash-container" className="splash-container vertically-center-contents-grid splash-background">
@@ -381,9 +392,9 @@ class Home extends React.Component {
 										<h5 id="subline3" className="splash-subline">
 											Designed, Voted On, & Owned by You
 										</h5>
-										<h1 id="splash-animated-changing-text" className="splash-subtitle shadow-text">
+										{/* <h1 id="splash-animated-changing-text" className="splash-subtitle shadow-text">
 											CREATE
-										</h1>
+										</h1> */}
 										<Button variant="xalianGreen" className="xalian-font xalian-splash-generator-button clickable" id="xalian-generator-link" href="/generator">
 											TRY THE GENERATOR
 										</Button>
@@ -395,7 +406,7 @@ class Home extends React.Component {
 												<i className="bi bi-twitter"></i>
 											</a>
 										</div>
-										{/* <ScrollingCarousel/> */}
+										<ScrollingCarousel />
 									</Col>
 								</Row>
 							</Container>
@@ -410,82 +421,10 @@ class Home extends React.Component {
 							</div>
 						</div>
 
-						{/* <div id="splash-page-spaceship-computer-animation" className="splash-page-spaceship-computer-animation">
-							 <SpaceshipComputerSVG id='spaceship-computer-animation-svg' /> 
-						</div> */}
+		=
 
 						<div id="splash-page-spacer" className="splash-page-full-content-wrapper">
-							{/* 
-                            <section id="content-section-1" class="splash-computer-section">
-
-								<Container className="splash-computer-container" style={{backgroundSize: `${this.state.width} ${this.state.height}`, width: this.state.width, height: this.state.height}}>
-									
-									<Row className="splash-computer-container-row">
-
-										<Col sm={12} md={6} className="splash-computer-container-row-title-and-image-col">
-
-											<Row className="splash-computer-container-row-title-and-image-col-title-row">
-
-												<Col xs={12} className=" debug-box computer-screen-panel-title-col"  preserveAspectRatio='none'>
-													<h3 className='computer-screen-element'>Title</h3>
-													<SpaceshipComputerScreenTitlePanelSVG preserveAspectRatio='none' className="computer-screen-element" />
-												</Col>
-
-											</Row>
-											
-											<Row className="splash-computer-container-row-title-and-image-col-image-row">
-
-												<Col xs={12} className="debug-box" >
-													<div className="splash-computer-container-row-title-and-image-col-image-row-image-wrapper">
-														<img src="assets/img/background/castle.jpg" className="img-fluid" alt=""></img>
-													</div> 
-												</Col>
-
-											</Row>
-
-										</Col>
-
-										<Col sm={12} md={6} className="splash-computer-container-row-text-col debug-box">
-											<p>text</p>
-										</Col>
-
-									</Row>
-
-								</Container>
-
-							</section> */}
-
-							{/* <section id="content-section-2" class="splash-computer-section">
-								<div className="splash-computer-container">
-									<Row className="splash-computer-container-row">
-										<Col sm={12} md={8} lg={6} className="shadow-text centered-div text-wrapper">
-											<h3>Fall of the Vallerii</h3>
-											<p></p>
-										</Col>
-										<Col sm={12} md={4} lg={6} className="centered-div">
-											<div className="embedded-img-wrapper">
-												<img src="assets/img/background/castle.jpg" className="img-fluid" alt=""></img>
-											</div>
-										</Col>
-									</Row>
-								</div>
-							</section> */}
-
-							{/* <section id="content-section-3" class="splash-computer-section">
-								<div className="splash-computer-container">
-									<Row className="splash-computer-container-row">
-										<Col sm={12} md={8} lg={6} className="shadow-text centered-div text-wrapper">
-											<h3>End War</h3>
-											<p></p>
-										</Col>
-										<Col sm={12} md={4} lg={6} className="centered-div">
-											<div className="embedded-img-wrapper">
-												<img src="assets/img/background/castle.jpg" className="img-fluid" alt=""></img>
-											</div>
-										</Col>
-									</Row>
-								</div>
-							</section> */}
+				
 
 							{this.state.computerScreenCurrentContent && 
 								<ComputerScreenContent id="computer-content-section-wrapper"
@@ -497,29 +436,7 @@ class Home extends React.Component {
 									backArrowTappedCallback={this.handleBackArrowClick}
 								/>
 							}
-							{/* <ComputerScreenContent sectionId="content-section-1" 
-								title="" 
-								text="" 
-								nextArrowTappedCallback={() => {
-									console.log('NEXT');
-									// gsap.to(window, {duration: 2, scrollTo: "#content-section-2"});
-								}} 
-								backArrowTappedCallback={() => console.log('BACK')} 
-							/> */}
-							{/* 
-							<ComputerScreenContent sectionId="content-section-1" 
-								title="Fall of the Vallerii" 
-								text="The high technology of the Vallerii would eventually prove to be their downfall when their own artificial intelligence took control of the Xalian Generators, turning the creatures against their creators." 
-								nextArrowTappedCallback={() => console.log('NEXT')} 
-								backArrowTappedCallback={() => console.log('BACK')} 
-							/>
-
-							<ComputerScreenContent sectionId="content-section-1" 
-								title="End War" 
-								text="The centuries-long interplanetary assault known as the End Wars have long since ended, but the destruction they caused all but wiped out the Vallerii and has forever changed the galaxy." 
-								nextArrowTappedCallback={() => console.log('NEXT')} 
-								backArrowTappedCallback={() => console.log('BACK')} 
-							/> */}
+			
 
 							<section id="" class="splash-page-content-end-section"></section>
 						</div>
@@ -629,21 +546,22 @@ function ScrollingCarousel() {
 	var items = [];
 
 	svgs.forEach( xalianSvg => {
+		
 		console.log(`xalian = ${JSON.stringify(xalianSvg, null, 2)}`);
 		items.push(buildImage(xalianSvg));
 	})
 
 	function buildImage(svg) {
-		return (<Carousel.Item>
-		  <img
-			className="d-block w-100"
-			src="holder.js/800x400?text=First slide&bg=373940"
+		return (<Carousel.Item className="xalian-svg-carousel-item">
+		  <Image style={{ height: '25vh', fill: '#FFFFFF', color: '#FFFFFF'}}
+			className="splash-xalian-species-carousel-image"
+			src={svg.file.default}
 			alt="First slide"
 		  />
-		  <Carousel.Caption>
+		  {/* <Carousel.Caption>
 			<h3>First slide label</h3>
 			<p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
-		  </Carousel.Caption>
+		  </Carousel.Caption> */}
 		</Carousel.Item>);
 	}
 
@@ -654,7 +572,7 @@ function ScrollingCarousel() {
 	};
 
 	return (
-	  <Carousel className="xalian-svg-carousel" activeIndex={index} onSelect={handleSelect}>
+	  <Carousel indicators={false} interval={2000} controls={false} id="xalian-svg-carousel" className="xalian-svg-carousel" activeIndex={index} onSelect={handleSelect} variant='dark'>
 		{items}
 	  </Carousel>
 	);

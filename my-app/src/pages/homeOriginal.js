@@ -12,8 +12,6 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { TextPlugin } from 'gsap/TextPlugin';
 import { EasePack } from 'gsap/EasePack';
-import FigzyAnimatedSVG from '../svg/figzyAnimatedSVG';
-import VoltishAnimatedSVG from '../svg/voltishAnimatedSVG';
 import SplashGalaxyBackground from '../components/views/splashGalaxyBackground';
 import XaliansLogoAnimatedSVG from '../svg/logo/xaliansLogoAnimatedSVG';
 import SplashBackgroundAnimatedSVG from '../svg/background/splashBackgroundAnimatedSVG';

@@ -11,7 +11,6 @@ import XalianStatRatingChart from '../xalianStatRatingChart';
 import XalianMoveSet from '../xalianMoveSet';
 import * as valueTranslator from '../../utils/valueTranslator';
 import XalianInfoBox from '../xalianInfoBox';
-import FigzyAnimatedSVG from '../../svg/figzyAnimatedSVG';
 import { Linear, gsap, Sine } from 'gsap';
 import { ExpoScaleEase, RoughEase, SlowMo } from 'gsap/EasePack';
 

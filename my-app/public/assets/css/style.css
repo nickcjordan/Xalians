@@ -249,7 +249,7 @@ body { width: 100%; max-width: 100%; height: auto;
   /* border-radius: 6px; */
   width: 100%;
   opacity: 1;
-  z-index: 1000;
+  z-index: 9998;
 }
 
 .navbar {
@@ -967,17 +967,63 @@ a:active {
 }
 
 .xalian-svg-carousel {
-  position: fixed;
-  bottom: 0;
-  left: 0;
+  /* position: fixed; */
+  /* top: 0; */
+  /* left: 0; */
   /* transform: translate(-50%, 0%); */
-  width: 100vw;
+  /* width: 200px; */
+  max-width:100%;
+  width: 100%;
+  max-height: 100%;
+/* max-height:20%; */
+position: relative;
+/* display: flex; */
+}
+
+.xalian-svg-carousel .carousel-inner {
+  /* position: fixed; */
+  /* top: 0; */
+  /* left: 0; */
+  /* transform: translate(-50%, 0%); */
+  /* width: 200px; */
+  max-width:100%;
+  
+/* max-height:20%; */
+position: relative;
+width: 100%
+/* display: flex; */
 }
 
 .xalian-svg-carousel-item {
-
+/* min-height: 100px; */
+height: 100%;
+/* width: 100%; */
+max-width:100%;
+max-height:100%;
+/* width: 200px; */
+/* height: 200px; */
+/* align-self: flex-start; */
+/* position: relative; */
+/* flex:content; */
+/* max-height: 20vh; */
 }
 
+.splash-xalian-species-carousel-image {
+  max-width: 90%;
+  max-height: 90%;
+  height: 100px;
+  /* object-fit: contain; */
+  /* position: absolute; */
+  background: #ffffff80;
+  border-radius: 10px;
+  border: none;
+  padding: 5px;
+}
+
+.xalian-svg-carousel {
+  /* height: 100%; */
+  /* width: auto; */
+}
 
 
 
@@ -1146,14 +1192,14 @@ a:active {
 }
 
 section {
-  border: 1px dotted rgb(0, 255, 136);
+  /* border: 1px dotted rgb(0, 255, 136); */
 }
 .debug-box {
   /* border: 1px dotted rgb(7, 164, 255); */
 }
 
 .splash-section-debug {
-  border: 2px dotted rgb(237, 104, 255);
+  /* border: 2px dotted rgb(237, 104, 255); */
 }
 
 
@@ -1381,6 +1427,7 @@ section {
 
 .team-container {
   max-width: 60vw;
+
 }
 
 @media (max-width: 750px) {

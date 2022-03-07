@@ -6,7 +6,7 @@ import XalianSVG from './xalianSVG';
 
 class XalianImage extends React.Component {
 	getImageLocationFromSpecies(name) {
-		return require(`../svg/${name.toLowerCase()}.svg`)?.default;
+		return require(`../svg/species/${name.toLowerCase()}.svg`)?.default;
 	}
 
     getTypeColorClassName(type) {
