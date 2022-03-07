@@ -112,7 +112,7 @@ hr.xalian-hr {
 }
 
 .xalian-splash-generator-button {
-  max-width: 50vw !important;
+  max-width: 75vw !important;
   margin: auto !important;
   margin-top: 15px !important;
   font-size: x-large !important;
@@ -752,7 +752,7 @@ a:active {
 
 
 .animated-xalian-svg {
-  width: 100%;
+  width: 95%;
   overflow: visible;
   align-content: center;
 
@@ -973,10 +973,11 @@ a:active {
   /* transform: translate(-50%, 0%); */
   /* width: 200px; */
   max-width:100%;
-  width: 100%;
+  /* width: 100%; */
   max-height: 100%;
 /* max-height:20%; */
 position: relative;
+overflow: visible;
 /* display: flex; */
 }
 
@@ -987,17 +988,19 @@ position: relative;
   /* transform: translate(-50%, 0%); */
   /* width: 200px; */
   max-width:100%;
+  overflow: visible;
   
 /* max-height:20%; */
 position: relative;
-width: 100%
+/* width: 100% */
 /* display: flex; */
 }
 
 .xalian-svg-carousel-item {
 /* min-height: 100px; */
 height: 100%;
-/* width: 100%; */
+width: 100%;
+margin: auto;
 max-width:100%;
 max-height:100%;
 /* width: 200px; */
@@ -1010,19 +1013,27 @@ max-height:100%;
 
 .splash-xalian-species-carousel-image {
   max-width: 90%;
-  max-height: 90%;
+  /* max-height: 90%; */
   height: 100px;
   /* object-fit: contain; */
   /* position: absolute; */
   background: #ffffff80;
   border-radius: 10px;
-  border: none;
+  border: 1px solid black;
   padding: 5px;
+  box-shadow: 0px 0px 10px rgb(0, 0, 0);
+  
+}
+
+.splash-xalian-carousel-image-text {
+  color: white;
+  font-size: x-large;
 }
 
 .xalian-svg-carousel {
   /* height: 100%; */
-  /* width: auto; */
+  width: auto;
+  margin: auto;
 }
 
 
@@ -1202,16 +1213,6 @@ section {
   /* border: 2px dotted rgb(237, 104, 255); */
 }
 
-
-/* GRID SPLASH */
-
-.splash-screen-computer-grid-section {
-
-}
-
-.splash-screen-computer-grid-container {
-
-}
 
 
 
@@ -2790,20 +2791,37 @@ input, textarea {
   height: auto;
   aspect-ratio: 1;
   margin: auto !important;
-  padding: 0 !important;
+  padding: 5px !important;
 }
 
-.xalian-image-wrapper {}
+.splash-xalian-image {
+  /* max-height: 20vh; */
+  padding: 25px;
+}
+
+
+.xalian-image-wrapper {
+  padding: 10px;
+}
 
 .xalian-image-bordered {
   border-color: black;
   border-width: 2px;
-  border-radius: 4px;
+  border-radius: 8px;
   border-style: solid;
 }
 
 .xalian-image-shadowed {
   box-shadow: 0px 0px 10px rgb(0, 0, 0);
+}
+
+.splash-xalian-stat-row-view {
+  max-width: 400px;
+  background-color: rgb(0, 0, 0);
+  box-shadow: 0px 0px 10px rgb(0, 0, 0);
+  border-radius: 10px;
+  margin: auto;
+  padding: 10px;
 }
 
 .xalian-stat-row-view-wrapper {

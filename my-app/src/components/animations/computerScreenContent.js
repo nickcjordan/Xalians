@@ -140,7 +140,8 @@ class ComputerScreenContent extends React.Component {
 					<Row className="splash-computer-container-row" style={{ height: '30%' }}>
 						<Col className="debug-box vertically-center-contents splash-computer-col">
 							<SpaceshipComputerScreenImagePanelSVG preserveAspectRatio="none" className="computer-screen-element" />
-							<img id={this.props.sectionId + '-image'} src={this.props.imageLocation || 'assets/img/background/castle.jpg'} className="splash-computer-image" alt=""></img>
+                            {this.props.svgElement}
+							{/* <img id={this.props.sectionId + '-image'} src={this.props.imageLocation || 'assets/img/background/castle.jpg'} className="splash-computer-image" alt=""></img> */}
 						</Col>
 					</Row>
 					<Row className="splash-computer-container-row" style={{ height: '40%' }}>

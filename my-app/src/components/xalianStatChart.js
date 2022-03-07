@@ -47,7 +47,7 @@ class XalianStatChart extends React.Component {
 		return {
 			statName: key,
 			statLabel: translated,
-			rangeName: rangeName + ' Range',
+			rangeName: rangeName,
 			rangeNumber: rangeVal,
 			points: stat.points,
 			percentageText: percentageText,

@@ -21,7 +21,9 @@ class XalianInfoBox extends React.Component {
 					<Col className="vertically-center-contents xalian-info-box">
 						<Stack>
 							<h1 className="species-detail-name ">{this.props.xalian.species.name}</h1>
-							<h4 className="species-detail-id">#{this.props.xalian.speciesId}</h4>
+							{!this.props.hideId && 
+								<h4 className="species-detail-id">#{this.props.xalian.speciesId}</h4>
+							}
 							<XalianSpeciesBadge type={this.props.xalian.elements.primaryType} />
 							<XalianSpeciesBadge type={this.props.xalian.elements.secondaryType} />
 							{this.props.json && (
@@ -38,7 +40,9 @@ class XalianInfoBox extends React.Component {
 					<Col className="vertically-center-contents xalian-info-box">
 						<Stack>
 							<h1 className="species-detail-name ">{this.props.species.name}</h1>
-							<h4 className="species-detail-id">#{this.props.species.id}</h4>
+							{!this.props.hideId && 
+								<h4 className="species-detail-id">#{this.props.xalian.speciesId}</h4>
+							}
 							<XalianSpeciesBadge type={this.props.species.type} />
 							{this.props.json && (
 								<div className="centered-view">

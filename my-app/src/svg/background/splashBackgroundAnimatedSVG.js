@@ -69,7 +69,7 @@ class SplashBackgroundAnimatedSVG extends React.Component {
 
     
     render() {
-        return <SVG {...this.props} className="animated-xalian-svg fixed-bottom" ></SVG>
+        return <SVG {...this.props} className="animated-xalian-svg" ></SVG>
     }
 
     // buildLetterEntry = (id, d) => {

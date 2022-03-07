@@ -50,7 +50,7 @@ class XalianStatRatingChart extends React.Component {
         return {
 			statName: key,
 			statLabel: translated,
-			rangeName: rangeName + ' Range',
+			rangeName: rangeName,
 			rangeNumber: rangeVal
 		};
 	};

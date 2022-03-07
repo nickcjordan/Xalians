@@ -27,6 +27,12 @@ import { ReactComponent as SpaceshipComputerScreenSVG } from '../svg/animations/
 import { ReactComponent as SpaceshipWallSVG } from '../svg/animations/spaceship_wall.svg'
 import { IconMaximize } from '@aws-amplify/ui-react';
 import Carousel from 'react-bootstrap/Carousel'
+import species from '../json/species.json';
+import XalianSpeciesBadge from '../components/xalianSpeciesBadge';
+import XalianImage from '../components/xalianImage';
+import XalianSpeciesRowView from '../components/views/xalianSpeciesRowView';
+import XalianStatRatingChart from '../components/xalianStatRatingChart';
+import XalianInfoBox from '../components/xalianInfoBox';
 // import spaceshipComputerScreenTitlePanel from '../svg/animations/spaceship_computer_screen_title_panel.svg';
 
 import ComputerScreenContent from '../components/animations/computerScreenContent';
@@ -76,17 +82,20 @@ class Home extends React.Component {
 			computerScreenContentIndex: ind
 		});
 		gsap.timeline()
-		.fromTo('#computer-content-section', {xPercent: 0, autoAlpha: 1}, {xPercent:-100, autoAlpha: 0})
-		.to('#computer-content-section-title-text', {text: " ", ease: 'none'})
-        .to('#computer-content-section-text', { text: { value: " ", delimiter: " ", speed: 20}}, "<")
-		.to('#computer-content-section-image', { attr: { src: content.image } }, "<")
-		.fromTo('#computer-content-section', {xPercent:100, autoAlpha: 0}, {xPercent: 0, autoAlpha: 1})
-		.to('#computer-content-section-title-text', {text: content.title, ease: 'none'})
+		.fromTo('#computer-content-section', {xPercent: 0}, {xPercent:-100, duration: 0.3})
+		.fromTo('#computer-content-section', {autoAlpha: 1}, {autoAlpha: 0, duration: 0.2}, "<")
+		.set('#computer-content-section-title-text', {text: " ", ease: 'none', delay: 0.3})
+        .set('#computer-content-section-text', { text: { value: " ", delimiter: " ", delay: 0.3}}, "<")
+		.set('#computer-content-section-image', { attr: { src: content.image }, delay: 0.3}, "<")
+		.fromTo('#computer-content-section', {autoAlpha: 0}, {autoAlpha: 1, duration: 0.2})
+		.fromTo('#computer-content-section', {xPercent:100}, {xPercent: 0, duration: 0.3}, "<")
+		.to('#computer-content-section-title-text', {text: content.title, ease: 'none', speed: 5})
         .to('#computer-content-section-text', { text: {
 			value: content.text,
-            // delimiter: " ",
+            delimiter: " ",
             speed: 3
-        }}, "<");
+        }}, "<")
+		;
 	}
 
 	setInitialStateContent = (ind = 0) => {
@@ -108,6 +117,7 @@ class Home extends React.Component {
 		content.push({
 			title: 'The Creatures of Xalia',
 			image: '',
+			svg: <SplashBackgroundAnimatedSVG/>,
 			text: 'For thousands of years, the ancient race known as the Vallerii dominated the galaxy of Xalia. Their mastery of biotechnology led to generating the first species of Xalians – bioengineered organisms designed to thrive in Xalia’s most extreme environments.',
 		});
 		content.push({
@@ -222,6 +232,9 @@ class Home extends React.Component {
 				// preventOverlaps: "spaceship-animation-group",
 				toggleActions: 'play complete reverse reset',
 				anticipatePin: 1,
+				onLeave: () => {
+					gsap.to(window, { scrollTo: { duration: 1, y: "#splash-page-spacer", autoKill: false} });
+				}
 			},
 		});
 
@@ -243,97 +256,46 @@ class Home extends React.Component {
 		spaceshipTl
 		// .addLabel("before-spaceship-window-animation")
 			// .to('#subline1, #subline2, #subline3, #splash-animated-changing-text, #splash-social-media-links, #xalian-generator-link, #xalians-logo-a1, #xalians-logo-l, #xalians-logo-i, #xalians-logo-a2, #xalians-logo-n, #xalians-logo-s', { opacity: 0 }, '<')
-			.to('#subline1, #subline2, #subline3, #splash-social-media-links, #xalian-generator-link, #xalians-logo-a1, #xalians-logo-l, #xalians-logo-i, #xalians-logo-a2, #xalians-logo-n, #xalians-logo-s', { opacity: 0 }, '<')
+			// .to('#subline1, #subline2, #subline3, #splash-social-media-links, #xalian-generator-link, #xalians-logo-a1, #xalians-logo-l, #xalians-logo-i, #xalians-logo-a2, #xalians-logo-n, #xalians-logo-s', { opacity: 0 }, '<')
+			.to('#subline1, #subline2, #subline3, #splash-social-media-links, #xalian-generator-link, #xaliansLogo', { opacity: 0 }, '<')
 			.from('#spaceship-window-animation-svg', { scale: 10, duration: 1, ease: 'none' })
 			.to('#spaceship-window-animation-svg', { xPercent: -100, ease: 'none' })
 			.from('#spaceship-animation-panel-wrapper', { xPercent: 100, ease: 'none' }, '<')
 			.to('#spaceship-computer-outside-animation', { autoAlpha: 0, scale: 5 })
 			.fromTo('#spaceship-computer-screen-animation-svg', { autoAlpha: 0 }, { width: this.state.max, height: this.state.max, autoAlpha: 1 }, '<')
+			
 			// .addLabel('after-spaceship-window-animation')
 			;
 
-
+		// DIM COMPUTER SCREEN WHEN AT THE BOTTOM OF THE PAGE
 		ScrollTrigger.create({
 			trigger: '#splash-page-spacer',
 				pin: true,
 				scrub: 1,
 				start: 'top top',
-				end: '+=100%',
-				// markers: true,
-				// snap: "labelsDirectional",
-				// onEnter: () => { gsap.to(window, { scrollTo: { duration: 3, y: "#splash-page-spacer", autoKill: false } }) },
-		  		// onEnterBack: () => { gsap.to(window, { scrollTo: { duration: 3, y: 0, autoKill: false } }) },
-				// onSnapComplete: ({ progress, direction, isActive }) => console.log(progress, direction, isActive),
-				// onLeave: () => { gsap.to('#splash-page-spaceship-window-animation', {autoAlpha: 0}) },
-				onLeaveBack: () => { gsap.to('#splash-page-spaceship-window-animation', {autoAlpha: 1}) },
-				onToggle: self => { 
-					if (self.isActive) {
-						gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 1}) 
-					} else {
-						gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 0}) 
-					}
-				}
+				end: '+=25%',
+				onLeaveBack: () => { gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 1}) },
+				onLeave: () => { gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 0})},
+				// onEnterBack: () => { gsap.to(window, { scrollTo: { duration: 1, y: "#splash-section", autoKill: false} })}
 				// preventOverlaps: "spaceship-animation-group"
 		});
 
+		// PIN CAROUSEL TO MIDDLE OF SCREEN AS IT TRANSITIONS AWAY
 		ScrollTrigger.create({
 			trigger: '#xalian-svg-carousel',
 				start: 'center center',
 				pin: true,
+				pinSpacing: false,
+				// scrub: true,
 				end: '+=100%',
 				// markers: true,
-				// onEnter: () => { gsap.to(window, { scrollTo: { duration: 1, y: "#splash-page-spacer", autoKill: false } }) },
 		});
 
-		// ScrollTrigger.create({
-		// 	trigger: '#splash-page-spacer',
-		// 		start: 'top bottom',
-		// 		end: '+=100%',
-		// 		markers: true,
-		// 		onEnter: () => { gsap.to(window, { scrollTo: { duration: 1, y: "#splash-page-spacer", autoKill: false } }) },
-		// });
-
-		// contentParentTl.addLabel('horizontal-content-start');
-
-		// buildPanelAnimation(contentParentTl, '#content-section-1');
-		// buildPanelAnimation(contentParentTl, '#content-section-2');
-		// buildPanelAnimation(contentParentTl, '#content-section-3');
-		// contentParentTl.addLabel('horizontal-content-end');
-
-		// spaceshipTl.add(contentParentTl);
-
-		function buildPanelAnimation(tl, id, timescale = 4) {
-			// let inTl = gsap.timeline();
-			// inTl.fromTo(id, { autoAlpha: 0 }, { autoAlpha: 1, duration: timescale });
-
-			// let outTl = gsap.timeline();
-			// outTl.to(id, { autoAlpha: 0, duration: timescale }, '<');
-
-			// tl.add(inTl);
-			// tl.addLabel(id);
-			// tl.add(outTl);
-		}
+	
 	}
-
-	getWindow = () => {
-		let ww = window;
-		let screen = ww.screen;
-		let logo = document.getElementById('xaliansLogo');
-		console.log('got window');
-	};
 
 	buildLogoAnimation = (delay = 0) => {
 		let main = gsap.timeline({
-			// scrollTrigger: {
-			// trigger: '#splash-section',
-			// start: 'top 20%',
-			// endTrigger: '#splash-section',
-			// end: 'bottom top',
-			// end: 'bottom top',
-			// toggleActions: 'play reset play reset',
-			// toggleActions: 'play complete reverse reset',
-			// markers: true,
-			// }
 		});
 		main.add(this.buildLetterEntry('#xalians-logo-s', delay + 0), '<')
 			.add(this.buildLetterEntry('#xalians-logo-n', delay + 0.05), '<')
@@ -395,7 +357,7 @@ class Home extends React.Component {
 										{/* <h1 id="splash-animated-changing-text" className="splash-subtitle shadow-text">
 											CREATE
 										</h1> */}
-										<Button variant="xalianGreen" className="xalian-font xalian-splash-generator-button clickable" id="xalian-generator-link" href="/generator">
+										<Button variant="xalianGray" className="xalian-font xalian-splash-generator-button clickable" id="xalian-generator-link" href="/generator">
 											TRY THE GENERATOR
 										</Button>
 										<div id="splash-social-media-links" className="social-media-links clickable">
@@ -421,7 +383,6 @@ class Home extends React.Component {
 							</div>
 						</div>
 
-		=
 
 						<div id="splash-page-spacer" className="splash-page-full-content-wrapper">
 				
@@ -432,6 +393,7 @@ class Home extends React.Component {
 									title={this.state.computerScreenCurrentContent.title}
 									text={this.state.computerScreenCurrentContent.text}
 									imageLocation={this.state.computerScreenCurrentContent.image}
+									svgElement={this.state.computerScreenCurrentContent.svg}
 									nextArrowTappedCallback={this.handleNextArrowClick}
 									backArrowTappedCallback={this.handleBackArrowClick}
 								/>
@@ -544,25 +506,59 @@ class Home extends React.Component {
 function ScrollingCarousel() {
 
 	var items = [];
+	// var svgMap = new Map();
+	var speciesMap = new Map();
+
+	species.forEach( s => {
+		speciesMap[s.name.toLowerCase()] = s;
+	})
 
 	svgs.forEach( xalianSvg => {
 		
 		console.log(`xalian = ${JSON.stringify(xalianSvg, null, 2)}`);
-		items.push(buildImage(xalianSvg));
+		let path = xalianSvg.path;
+		let speciesName = path.substring(2, path.length - 4);
+		let species = speciesMap[speciesName];
+		// svgMap[speciesName] = {
+			// svg: xalianSvg,
+			// name: speciesName,
+			// element: img
+		// };
+		var img = buildImage(xalianSvg, species);
+		items.push(img);
 	})
 
-	function buildImage(svg) {
-		return (<Carousel.Item className="xalian-svg-carousel-item">
-		  <Image style={{ height: '25vh', fill: '#FFFFFF', color: '#FFFFFF'}}
-			className="splash-xalian-species-carousel-image"
+	function buildImage(svg, species) {
+		return (
+			<Carousel.Item className="xalian-svg-carousel-item">
+				{/* <Image style={{ height: '25vh', background: `radial-gradient(circle, #dadada 60%, #dadada85 100%)` }}
+			className="splash-xalian-species-carousel-image xalian-image-shadowed xalian-image-bordered"
 			src={svg.file.default}
 			alt="First slide"
-		  />
-		  {/* <Carousel.Caption>
-			<h3>First slide label</h3>
-			<p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+		  /> */}
+				{/* <XalianSpeciesRowView species={species} /> */}
+				{/* <div className="vertically-center-contents stackable-margin"> */}
+				<div className="splash-xalian-stat-row-view centered-view">
+					<Row style={{ width: '100%' }}>
+						<Col className="vertically-center-contents" xs={6} lg={true}>
+							<XalianInfoBox hideId species={species} />
+						</Col>
+						<Col className="vertically-center-contents xalian-image-wrapper" xs={6} lg={true}>
+							<XalianImage colored shadowed speciesName={species.name} primaryType={species.type} moreClasses="xalian-image-in-row xalian-image splash-xalian-image" />
+						</Col>
+						<Col className="vertically-center-contents" xs={12}>
+							<XalianStatRatingChart axisLabelColor={'white'} includeLabel labelFontSize={'8pt'} barSize={20} stats={species.statRatings} abbreviatedNames moreClasses="ultra-condensed-chart-div" />
+						</Col>
+					</Row>
+				</div>
+
+				{/* </div> */}
+				{/* <Carousel.Caption>
+			<XalianSpeciesBadge type={species.type} />
 		  </Carousel.Caption> */}
-		</Carousel.Item>);
+				{/* <h1 className="shadow-text splash-xalian-carousel-image-text" >{species.name}</h1> */}
+			</Carousel.Item>
+		);
 	}
 
 	const [index, setIndex] = useState(0);
@@ -572,7 +568,7 @@ function ScrollingCarousel() {
 	};
 
 	return (
-	  <Carousel indicators={false} interval={2000} controls={false} id="xalian-svg-carousel" className="xalian-svg-carousel" activeIndex={index} onSelect={handleSelect} variant='dark'>
+	  <Carousel fade={true} indicators={false} interval={2500} controls={false} id="xalian-svg-carousel" className="xalian-svg-carousel" activeIndex={index} onSelect={handleSelect}>
 		{items}
 	  </Carousel>
 	);
