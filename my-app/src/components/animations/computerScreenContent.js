@@ -9,7 +9,7 @@ import { ReactComponent as SpaceshipComputerScreenInfoPanelSVG } from '../../svg
 import { ReactComponent as SpaceshipComputerScreenImagePanelSVG } from '../../svg/animations/spaceship_computer_screen_image_panel.svg';
 import { ReactComponent as SpaceshipComputerScreenNextArrowSVG } from '../../svg/animations/spaceship_computer_screen_next_arrow.svg';
 import { ReactComponent as SpaceshipComputerScreenXSVG } from '../../svg/animations/spaceship_computer_screen_x.svg';
-
+import fitty from 'fitty';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { TextPlugin } from 'gsap/TextPlugin';
@@ -17,7 +17,7 @@ gsap.registerPlugin(TextPlugin);
 gsap.registerPlugin(ScrollTrigger);
 
 class ComputerScreenContent extends React.Component {
-	state = {};
+	state = {  }; 
 
     componentDidMount() {
         gsap.timeline({
@@ -27,21 +27,9 @@ class ComputerScreenContent extends React.Component {
         .add(this.buildArrowAnimation('#computer-screen-arrow-outside', 0.3), "<")
         .add(this.buildXAnimation(), "<")
         
-        // .to('#' + this.props.sectionId + '-title-text', {duration: 0.5, text: this.props.title, ease: 'none'}, "<")
-        // .to('#' + this.props.sectionId + '-text', {duration: 0.5, text: {
-        //     value: this.props.text,
-        //     // delimiter: " ",
-        //     // ease: 'none',
-        //     speed: 3
-        // }}, "<")
+        .set('#' + this.props.sectionId + '-title-text', {duration: 0.5, text: this.props.title, ease: 'none'}, "<")
+        .set('#' + this.props.sectionId + '-text', {duration: 0.5, text: this.props.text}, "<")
         ;
-        gsap.to('#' + this.props.sectionId + '-title-text', {duration: 0.5, text: this.props.title, ease: 'none'});
-        gsap.to('#' + this.props.sectionId + '-text', {duration: 0.5, text: {
-            value: this.props.text,
-            // delimiter: " ",
-            // ease: 'none',
-            speed: 3
-        }});
 
         this.buildPanelSquareShimmerAnimations();
         // this.buildPanelCircleAnimations();
@@ -148,7 +136,7 @@ class ComputerScreenContent extends React.Component {
 						<Col className="debug-box vertically-center-contents splash-computer-col">
 							<SpaceshipComputerScreenInfoPanelSVG preserveAspectRatio="none" className="computer-screen-element" />
 							<div className="screen-text-wrapper vertically-center-contents">
-								<h2 className="computer-screen-font" id={this.props.sectionId + '-text'} ></h2>
+								<h4 className="computer-screen-font" id={this.props.sectionId + '-text'} ></h4>
 							</div>
 						</Col>
 					</Row>

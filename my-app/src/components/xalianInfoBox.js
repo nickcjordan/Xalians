@@ -41,7 +41,7 @@ class XalianInfoBox extends React.Component {
 						<Stack>
 							<h1 className="species-detail-name ">{this.props.species.name}</h1>
 							{!this.props.hideId && 
-								<h4 className="species-detail-id">#{this.props.xalian.speciesId}</h4>
+								<h4 className="species-detail-id">#{this.props.species.id}</h4>
 							}
 							<XalianSpeciesBadge type={this.props.species.type} />
 							{this.props.json && (

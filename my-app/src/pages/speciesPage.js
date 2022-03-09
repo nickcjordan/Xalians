@@ -87,8 +87,8 @@ class SpeciesPage extends React.Component {
                 <Container className="">
                     <Row className="">
 
-                        <Col lg={true} className="template-col-wrapper ">
-                            <h1>Discovered Species</h1>
+                        <Col className="template-col-wrapper ">
+                            <h1 className="page-title-text">Discovered Species</h1>
 
                             {species &&
                                     <Tabs defaultActiveKey="grid" id="tabbs" className="species-tab-group">

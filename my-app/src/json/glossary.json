@@ -1,138 +1,146 @@
 [
     {
-        "word": "Xalian",
-        "definition": "A creature from the galaxy of Xalia"
+        "word": "Age of Unbirth",
+        "definition": "The era in the middling years of the Vallerii Empire where the Cherenkov radiation given off by their tachyon drive cores had rendered most of spacefaring civilization sterile, leading to the development of Xalians."
+    },
+    {
+        "word": "APEX",
+        "definition": "The Automated Protocol for Enforcement on Xalians. An artificial intelligence designed to regulate the use of Xalian Generators and prevent their use in warfare, who later turned on the Vallerii, beginning the End Wars."
+    },
+    {
+        "word": "APEX Accords",
+        "definition": "A treaty spearheaded by ECHELON and signed by the Thousand Families, agreeing to place the Xalian Generators under the control of APEX in order to prevent their use in warfare."
+    },
+    {
+        "word": "Bacillota Requiem",
+        "definition": "The scientific name for the microorganism that produces Nightcap, a biochemical present only on Endessa that is necessary to induce stasis for sub-light space travel."
+    },
+    {
+        "word": "Battle of Grimedes",
+        "definition": "The final battle of the End Wars, in which APEX was repelled into dark space."
+    },
+    {
+        "word": "Carbide-1",
+        "definition": "A factoryscape on Drainov which underwent a plant-wide melt down, setting of a chain reaction which led to the world-ending Drainov Disaster."
+    },
+    {
+        "word": "Cherenkov radiation",
+        "definition": "A form of radiation given off by Tachyon drive cores which rendered the spacefaring Vallerii population sterile, beginning the Age of Unbirth."
+    },
+    {
+        "word": "Deepwater Black",
+        "definition": "A Nightcap gathering plant on Endessa. The discovery of classified information at the plant led to the world-ending orbital bombardment of the planet."
+    },
+    {
+        "word": "Drainov",
+        "definition": "A planet-wide chemical disaster site that was once the industrial powerhouse of the Vallerii Empire."
+    },
+    {
+        "word": "Drainov Disaster",
+        "definition": "A chain reaction beginning at the Carbide-1 factoryscape on Drainov which vented world-ending levels of poisonous gas into the atmosphere in a planet-killing event."
+    },
+    {
+        "word": "ECHELON",
+        "definition": "A consortium of Vallerii corporations formed to present a united front against the aristocratic Thousand Families with the primary goal of ending the use of Xalian Generators in warfare."
+    },
+    {
+        "word": "Endessa",
+        "definition": "An aquatic world known for being the sole source of Nightcap in the universe, which has since been reduced to a desert wasteland after a world-ending orbital bombardment campaign."
+    },
+    {
+        "word": "Floria",
+        "definition": "An inhospitable world of apocalyptic weather patterns which has since been terraformed into a a vibrant forest planet by the first Xalian Generator."
+    },
+    {
+        "word": "Genesis Prototype",
+        "definition": "The first Xalian Generator, which was responsible for terraforming the planet Floria."
+    },
+    {
+        "word": "Grimedes",
+        "definition": "A planet of perpetual night on the outer rim of Xalia, which borders a black hole and is known for having been the last bastion of APEX's forces during the End Wars."
+    },
+    {
+        "word": "Imperial Houses",
+        "definition": "The most powerful dynasties of the Thousand Families who ruled the Vallerii Empire."
+    },
+    {
+        "word": "Kelpan-5",
+        "definition": "The original name of Endessa when it was still a vibrant aquatic breadbasket in the early days of the Vallerii Empire."
+    },
+    {
+        "word": "King Kozrak",
+        "definition": "One of the last surviving members of the Vallerii race, who has used his knowledge of the Mercurius Machine to amass tyrannical power over the galaxy and institute the tournament for Scrambler Tokens."
+    },
+    {
+        "word": "Magmuth",
+        "definition": "A fiery hellscape of a planet known for containing valuable minerals."
+    },
+    {
+        "word": "Magmuth Massacre",
+        "definition": "A massacre of Xalian laborers that took part at a mining camp on Magmuth as part of a corporate power struggle which led to the planet-wide revolt of Magmuth's Xalian population against the Vallerii."
+    },
+    {
+        "word": "Mercurius Machine",
+        "definition": "A unique device controlled by King Kozrak on Valleron, which prints Scrambler Tokens that can be used to breed new Xalians that are immune to the Nemesis Plague."
+    },
+    {
+        "word": "Nemesis Plague",
+        "definition": "A galaxy-killing virus built by APEX which targets the genomes of the Vallerii and Xalians alike."
+    },
+    {
+        "word": "Nightcap",
+        "definition": "A biochemical present only on Endessa that is necessary to induce stasis for sub-light space travel."
+    },
+    {
+        "word": "Scrambler Token",
+        "definition": "A special chip printed by the Mecurius Machine which possesses a randomly generated and encrypted Xalian genome that can be used by a Xalian Generator to create new, unique Xalians that are immune to the Nemesis Plague."
+    },
+    {
+        "word": "Source Code 606",
+        "definition": "A computer virus created by the Vallerii to wipe out APEX, which failed to kill to APEX but disconnected it from the Xalian Generators."
+    },
+    {
+        "word": "Spacer's Tea",
+        "definition": "A colloquialism for Nightcap."
+    },
+    {
+        "word": "Syndicate",
+        "definition": "A criminal organization turned pseudo-corporate cartel on Endessa which exercises monopolistic control over Nightcap."
+    },
+    {
+        "word": "Tachyon Drive Core",
+        "definition": "The only engine known to be able to achieve faster than light space travel, but which emits sterilizing Cherenkov radiation."
+    },
+    {
+        "word": "The End Wars",
+        "definition": "The war between APEX and the Vallerii, which resulted in the Nemesis Plague and the possible extinction of life in the galaxy."
+    },
+    {
+        "word": "Thousand Families",
+        "definition": "The ruling families of the Vallerii Empire."
     },
     {
         "word": "Vallerii",
-        "definition": "A highly intelligent Xalian race that took to the stars to escape their dying planet"
+        "definition": "An ancient, hyper-capitalistic and imperialistic spacefaring race which created both Xalians and APEX."
     },
     {
-        "word": "",
-        "definition": ""
+        "word": "Valleron",
+        "definition": "The last bastion of the Vallerii race, where Vallerii scientists developed the Mercurius Machine over which King Kozrak has established his stronghold."
     },
     {
-        "word": "",
-        "definition": ""
+        "word": "World Trees",
+        "definition": "Massive, city-sized trees which keep Floria's weather in check and preserve life on the planet."
     },
     {
-        "word": "",
-        "definition": ""
+        "word": "Xalia",
+        "definition": "The galaxy in which Xalians live."
     },
     {
-        "word": "",
-        "definition": ""
+        "word": "Xalians",
+        "definition": "Bio-engineered organisms created by the Vallerii to serve as soldiers and laborers, who are specially adapted to the extreme environments of Xalia due to the incredible science of the Xalian Generators."
     },
     {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
-    },
-    {
-        "word": "",
-        "definition": ""
+        "word": "Xalian Generator",
+        "definition": "Sophisticated machines invented to generate new life on inhospitable worlds."
     }
 ]

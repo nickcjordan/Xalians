@@ -10,6 +10,7 @@ import ThemedSceneDiv from '../components/views/themedSceneDiv';
 // import { Reveal, Tween, ScrollTrigger, Controls, Timeline, PlayState } from 'react-gsap';
 import * as animations from '../components/animations/fadeAnimation';
 import { gsap } from 'gsap';
+import fitty from 'fitty';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { TextPlugin } from 'gsap/TextPlugin';
@@ -81,20 +82,20 @@ class Home extends React.Component {
 			computerScreenCurrentContent: content,
 			computerScreenContentIndex: ind
 		});
-		gsap.timeline()
-		.fromTo('#computer-content-section', {xPercent: 0}, {xPercent:-100, duration: 0.3})
+		let tl = gsap.timeline();
+		tl.fromTo('#computer-content-section', {xPercent: 0}, {xPercent:-100, duration: 0.3})
 		.fromTo('#computer-content-section', {autoAlpha: 1}, {autoAlpha: 0, duration: 0.2}, "<")
-		.set('#computer-content-section-title-text', {text: " ", ease: 'none', delay: 0.3})
-        .set('#computer-content-section-text', { text: { value: " ", delimiter: " ", delay: 0.3}}, "<")
-		.set('#computer-content-section-image', { attr: { src: content.image }, delay: 0.3}, "<")
+		.set('#computer-content-section-title-text', {text: content.title})
+        .set('#computer-content-section-text', { text: content.text})
+		.then(() => {
+			let fit = fitty('#computer-content-section-text')[0];
+			fit.fit();
+			fit.unsubscribe();
+		});
+		tl
+		.to('#computer-content-section-image', { attr: { src: content.image }, delay: 0.3})
 		.fromTo('#computer-content-section', {autoAlpha: 0}, {autoAlpha: 1, duration: 0.2})
 		.fromTo('#computer-content-section', {xPercent:100}, {xPercent: 0, duration: 0.3}, "<")
-		.to('#computer-content-section-title-text', {text: content.title, ease: 'none', speed: 5})
-        .to('#computer-content-section-text', { text: {
-			value: content.text,
-            delimiter: " ",
-            speed: 3
-        }}, "<")
 		;
 	}
 
@@ -102,12 +103,16 @@ class Home extends React.Component {
 		let contentArray = this.buildComputerScreenContent();
 		// let element = this.buildComputerScreenElement(ind, contentArray[ind]);
 		let content = contentArray[ind];
+		// let textFit = fitty('#computer-content-section-text')[0];
 		this.setState({ 
 			width: window.innerWidth, 
 			height: window.innerHeight, 
 			computerScreenContent: contentArray,
 			computerScreenCurrentContent: content,
-			computerScreenContentIndex: ind
+			computerScreenContentIndex: ind,
+			// textFit: textFit
+		}, () => {
+			this.updateScreenContentState(0);
 		});
 	}
 
@@ -169,17 +174,14 @@ class Home extends React.Component {
 	};
 
 	componentDidMount() {
-		this.setState({ isLoading: false });
+		this.setState({ isLoading: false, fit: fitty('#computer-content-section-text') });
 		this.setInitialStateContent();
 		window.addEventListener('resize', this.updateSize);
 		this.updateSize();
 
-		gsap.from('#navvy', { opacity: 0, duration: 2, ease: 'sine.in', delay: 2.5 });
-		// gsap.set('#spaceship-window-animation-svg', {transformOrigin: "center"});
-		// gsap.set("#computer-screen-panel", {width: this.state.width, height: this.state.height});
+		
 
-		// gsap.set('#subline1, #subline2, #subline3, #splash-animated-changing-text, #splash-social-media-links, #xalian-generator-link, #xalians-logo-a1, #xalians-logo-l, #xalians-logo-i, #xalians-logo-a2, #xalians-logo-n, #xalians-logo-s',
-		//  {opacity: 0 } );
+		gsap.from('#navvy', { opacity: 0, duration: 2, ease: 'sine.in', delay: 2.5 });
 
 
 		var splashTl = gsap.timeline({
@@ -201,11 +203,11 @@ class Home extends React.Component {
 			// Generator Button
 			.fromTo('#xalian-generator-link', { opacity: 0 }, { opacity: 1, duration: 1, delay: 0.5 }, '<')
 			// CREATE :: EARN :: TRADE :: PLAY
-			.to('#subline1', { opacity: 1, duration: 0.5, delay: 0.5 }, '<')
-			.to('#subline2', { opacity: 1, duration: 0.5, delay: 0.6 }, '<')
-			.to('#subline3', { opacity: 1, duration: 0.5, delay: 0.7 }, '<')
+			.fromTo('#splash-social-media-links', { opacity: 0 }, { opacity: 1, duration: 1, delay: 0 }, '<')
+			.to('#subline1', { opacity: 1, duration: 0.5, delay: 0.25 }, '<')
+			.to('#subline2', { opacity: 1, duration: 0.5, delay: 0.5 }, '<')
+			.to('#subline3', { opacity: 1, duration: 0.5, delay: 0.75 }, '<')
 			// discord and twitter links
-			.fromTo('#splash-social-media-links', { opacity: 0 }, { opacity: 1, duration: 1, delay: 0.2 }, '<')
 
 			// .to('#splash-animated-changing-text', { opacity: 1, duration: 0.5, delay: 0.4 }, '<')
 			// .to('#splash-animated-changing-text', { text: { type: 'diff', value: 'EARN', speed: 3 }, delay: 0.08 })
@@ -218,11 +220,12 @@ class Home extends React.Component {
 			scrollTrigger: {
 				trigger: '#splash-section',
 				// pin: true,
-				scrub: true,
+				scrub: 2,
 				// markers: true,
 				start: 'center center',
 				// end: 'bottom 20%',
 				end: 'bottom top',
+				// end: '+=200%',
 				// snap: "labelsDirectional",
 				// snap: {
 				// 	snapTo: "labels",
@@ -232,8 +235,12 @@ class Home extends React.Component {
 				// preventOverlaps: "spaceship-animation-group",
 				toggleActions: 'play complete reverse reset',
 				anticipatePin: 1,
+				// onEnter: () => {
+				// 	gsap.to(window, { scrollTo: { duration: 10, y: "#splash-page-spaceship-window-animation", autoKill: false} });
+				// },
 				onLeave: () => {
 					gsap.to(window, { scrollTo: { duration: 1, y: "#splash-page-spacer", autoKill: false} });
+					// document.querySelector('#splash-page-spacer').scrollIntoView({ behavior: 'smooth' });
 				}
 			},
 		});
@@ -275,7 +282,10 @@ class Home extends React.Component {
 				start: 'top top',
 				end: '+=25%',
 				onLeaveBack: () => { gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 1}) },
-				onLeave: () => { gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 0})},
+				onLeave: () => { 
+					gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 0});
+
+				},
 				// onEnterBack: () => { gsap.to(window, { scrollTo: { duration: 1, y: "#splash-section", autoKill: false} })}
 				// preventOverlaps: "spaceship-animation-group"
 		});
@@ -290,6 +300,13 @@ class Home extends React.Component {
 				end: '+=100%',
 				// markers: true,
 		});
+
+		// MAKE XALIAN GENERATOR LINK GLOW
+		gsap.timeline({ repeat: -1 })
+		.fromTo('#xalian-generator-link', { boxShadow: '0px 0px 4px 4px #80ffb100' }, { boxShadow: '0px 0px 10px 10px #80ffb0', duration: 1})
+		.fromTo('#xalian-generator-link', { boxShadow: '0px 0px 10px 10px #80ffb0', duration: 1 }, { boxShadow: '0px 0px 4px 4px #80ffb100' });
+
+		
 
 	
 	}
@@ -320,8 +337,10 @@ class Home extends React.Component {
 		zoomIn
 			// .set(id, {opacity: 0.2})
 			.from(id, { duration: 0.6, x: '-=100vw', delay: d, skewX: 25 })
-			.to(id, { duration: 0.3, yPercent: -100, ease: 'elastic.in(1, 0.3)' })
-			.to(id, { duration: 0.3, yPercent: 0, ease: 'power4.in' });
+			// .to(id, { duration: 0.3, yPercent: -100, ease: 'elastic.in(1, 0.3)' })
+			// .to(id, { duration: 0.3, yPercent: 0, ease: 'power4.in' });
+			.to(id, { duration: 0.3, y: '-=50px', ease: 'elastic.in(1, 0.3)' })
+			.to(id, { duration: 0.3, y: '+=50px', ease: 'power4.in' });
 
 		// var flicker = gsap.timeline({ delay: 2, repeat: -1 });
 		// flicker.to(id, { ease: 'none', yoyo: true, repeat: true, opacity:((Math.random()*0.5) + 0.5), duration: (Math.random()*0.5), delay: Math.floor(2 + (Math.random() * 8.3))});
@@ -341,37 +360,39 @@ class Home extends React.Component {
 						<XalianNavbar></XalianNavbar>
 
 						<section id="splash-section" className="splash-section-debug">
-							<Container id="splash-container" className="splash-container vertically-center-contents-grid splash-background">
-								<Row className="row justify-content-center title-logo-row">
-									<Col lg={8} md={9} sm={10} xs={11} className="title-logo-col vertically-center-contents-grid">
-										<XaliansLogoSVG onClick={this.handleDebugClick} id="xaliansLogo" className="animated-xalian-svg xalian-logo" />
-										<h5 id="subline1" className="splash-subline">
-											Magical, Bioengineered, Digital Creatures
-										</h5>
-										<h5 id="subline2" className="splash-subline">
-											100% Unique AI Generated Stats
-										</h5>
-										<h5 id="subline3" className="splash-subline">
-											Designed, Voted On, & Owned by You
-										</h5>
-										{/* <h1 id="splash-animated-changing-text" className="splash-subtitle shadow-text">
+							<div id="splash-container" className="splash-container vertically-center-contents splash-background">
+								<Row className="title-logo-row centered-div">
+									<Col lg={8} md={9} sm={10} xs={11} className="title-logo-col vertically-center-contents">
+										<Stack className="splash-stack">
+											<XaliansLogoSVG onClick={this.handleDebugClick} id="xaliansLogo" className="animated-xalian-svg xalian-logo" />
+											<h6 id="subline1" className="splash-subline">
+												Magical, Bioengineered, Digital Creatures
+											</h6>
+											<h6 id="subline2" className="splash-subline">
+												100% Unique AI Generated Stats
+											</h6>
+											<h6 id="subline3" className="splash-subline">
+												Designed, Voted On, & Owned by You
+											</h6>
+											{/* <h1 id="splash-animated-changing-text" className="splash-subtitle shadow-text">
 											CREATE
 										</h1> */}
-										<Button variant="xalianGray" className="xalian-font xalian-splash-generator-button clickable" id="xalian-generator-link" href="/generator">
-											TRY THE GENERATOR
-										</Button>
-										<div id="splash-social-media-links" className="social-media-links clickable">
-											<a href="https://discord.gg/sgGNhNJ2KN" className="social-media-links">
-												<i className="bi bi-discord"></i>
-											</a>
-											<a href="https://twitter.com/xaliansgame" className="social-media-links">
-												<i className="bi bi-twitter"></i>
-											</a>
-										</div>
-										<ScrollingCarousel />
+											<div id="splash-social-media-links" className="social-media-link-row clickable">
+												<a href="https://discord.gg/sgGNhNJ2KN" className="social-media-links">
+													<i className="bi bi-discord"></i>
+												</a>
+												<a href="https://twitter.com/xaliansgame" className="social-media-links">
+													<i className="bi bi-twitter"></i>
+												</a>
+											</div>
+											<Button id="xalian-generator-link" variant="xalianGray" className="xalian-font xalian-splash-generator-button clickable" href="/generator">
+												TRY THE GENERATOR
+											</Button>
+											<ScrollingCarousel />
+										</Stack>
 									</Col>
 								</Row>
-							</Container>
+							</div>
 						</section>
 						<div id="splash-page-spaceship-window-animation" className="splash-page-spaceship-window-animation debug-box">
 							<div className="spaceship-animation-window-panel-wrapper" style={{ left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max }}>
@@ -383,22 +404,8 @@ class Home extends React.Component {
 							</div>
 						</div>
 
-
 						<div id="splash-page-spacer" className="splash-page-full-content-wrapper">
-				
-
-							{this.state.computerScreenCurrentContent && 
-								<ComputerScreenContent id="computer-content-section-wrapper"
-									sectionId={"computer-content-section"}
-									title={this.state.computerScreenCurrentContent.title}
-									text={this.state.computerScreenCurrentContent.text}
-									imageLocation={this.state.computerScreenCurrentContent.image}
-									svgElement={this.state.computerScreenCurrentContent.svg}
-									nextArrowTappedCallback={this.handleNextArrowClick}
-									backArrowTappedCallback={this.handleBackArrowClick}
-								/>
-							}
-			
+							{this.state.computerScreenCurrentContent && <ComputerScreenContent id="computer-content-section-wrapper" sectionId={'computer-content-section'} title={this.state.computerScreenCurrentContent.title} text={this.state.computerScreenCurrentContent.text} imageLocation={this.state.computerScreenCurrentContent.image} svgElement={this.state.computerScreenCurrentContent.svg} nextArrowTappedCallback={this.handleNextArrowClick} backArrowTappedCallback={this.handleBackArrowClick} />}
 
 							<section id="" class="splash-page-content-end-section"></section>
 						</div>
@@ -409,7 +416,7 @@ class Home extends React.Component {
 									<Col sm={true} className="d-flex">
 										<div className="member">
 											<div className="member-img">
-												<img src="assets/img/xalians/xalians_icon_xylum.png" className="img-fluid" alt=""></img>
+												<img src="assets/img/background/vault.jpg" className="img-fluid" alt=""></img>
 												<div className="social">
 													<a href="https://twitter.com/KingKozrak">
 														<i className="bi bi-twitter"></i>
@@ -427,7 +434,7 @@ class Home extends React.Component {
 									<Col sm={true} className="d-flex">
 										<div className="member">
 											<div className="member-img">
-												<img src="assets/img/xalians/xalians_icon_crystorn.png" className="img-fluid" alt=""></img>
+												<img src="assets/img/background/valleron.jpg" className="img-fluid" alt=""></img>
 												<div className="social">
 													<a href="">
 														<i className="bi bi-twitter"></i>
@@ -445,7 +452,7 @@ class Home extends React.Component {
 									<Col sm={true} className="d-flex">
 										<div className="member">
 											<div className="member-img">
-												<img src="assets/img/xalians/xalians_icon_smokat.png" className="img-fluid" alt=""></img>
+												<img src="assets/img/background/castle.jpg" className="img-fluid" alt=""></img>
 											</div>
 											<div className="member-info">
 												<h4>Professor V</h4>
@@ -458,7 +465,7 @@ class Home extends React.Component {
 									<Col sm={true} className="d-flex">
 										<div className="member">
 											<div className="member-img">
-												<img src="assets/img/xalians/xalians_icon_unknown.png" className="img-fluid" alt=""></img>
+												<img src="assets/img/background/arena.png" className="img-fluid" alt=""></img>
 											</div>
 											<div className="member-info">
 												<h4>Unknown Human</h4>
@@ -544,7 +551,7 @@ function ScrollingCarousel() {
 							<XalianInfoBox hideId species={species} />
 						</Col>
 						<Col className="vertically-center-contents xalian-image-wrapper" xs={6} lg={true}>
-							<XalianImage colored shadowed speciesName={species.name} primaryType={species.type} moreClasses="xalian-image-in-row xalian-image splash-xalian-image" />
+							<XalianImage bordered colored shadowed speciesName={species.name} primaryType={species.type} moreClasses="xalian-image-in-row xalian-image splash-xalian-image" />
 						</Col>
 						<Col className="vertically-center-contents" xs={12}>
 							<XalianStatRatingChart axisLabelColor={'white'} includeLabel labelFontSize={'8pt'} barSize={20} stats={species.statRatings} abbreviatedNames moreClasses="ultra-condensed-chart-div" />
@@ -568,7 +575,7 @@ function ScrollingCarousel() {
 	};
 
 	return (
-	  <Carousel fade={true} indicators={false} interval={2500} controls={false} id="xalian-svg-carousel" className="xalian-svg-carousel" activeIndex={index} onSelect={handleSelect}>
+	  <Carousel indicators={false} interval={2000} controls={false} id="xalian-svg-carousel" className="xalian-svg-carousel" activeIndex={index} onSelect={handleSelect}>
 		{items}
 	  </Carousel>
 	);

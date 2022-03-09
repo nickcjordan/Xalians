@@ -32,79 +32,81 @@ class SplashGalaxyBackground extends React.Component {
 		};
 		return (
             <Container className="splash-galaxy-animation-container">
-			<Particles className="galaxy-splash-animation-bg"
-				id="tsparticles"
-				init={particlesInit}
-				loaded={particlesLoaded}
-				options={{
-					background: {
-						image: "url('assets/img/background/galaxy-splash.png')",
-                        position: "center center",
-                        size: "cover"
-					},
-					fpsLimit: 60,
-                    fullScreen: {
-                        enable: true,
-                        zIndex: -1
-                    },
-
-					particles: {
-						color: {
-							value: '#ffffff',
+				<Particles className="galaxy-splash-animation-bg"
+					id="tsparticles"
+					init={particlesInit}
+					loaded={particlesLoaded}
+					options={{
+						background: {
+							// image: "url('assets/img/background/galaxy-splash.png')",
+							image: "url('assets/img/background/seamless_stars.png')",
+							position: "center center",
+							size: "contain",
+							repeat: "repeat"
 						},
-						move: {
-							direction: this.props.direction || 'left',
+						fpsLimit: 60,
+						fullScreen: {
 							enable: true,
-							outMode: 'out',
-							random: false,
-							speed: this.props.speed || 0.2,
-							straight: true,
+							zIndex: -1
 						},
-                        twinkle: {
-                            particles: {
-                              enable: true,
-                              color: "#ffffff",
-                              frequency: 0.0075,
-                              opacity: 0.4
-                            }
-                          },
-						number: {
-							density: {
-								enable: true,
-								area: 400,
+
+						particles: {
+							color: {
+								value: '#ffffff',
 							},
-							value: 100,
-						},
-						opacity: {
-							value: 0.5,
-							random: true,
-							anim: {
+							move: {
+								direction: this.props.direction || 'left',
 								enable: true,
-								speed: 0.1,
-								opacity_min: 0.1,
-								sync: false,
+								outMode: 'out',
+								random: false,
+								speed: this.props.speed || 0.2,
+								straight: true,
 							},
-						},
-						shape: {
-							type: 'star',
-						},
-						size: {
-							random: true,
-							value: 1,
-						},
-						rotate: {
-							animation: {
+							twinkle: {
+								particles: {
 								enable: true,
-								speed: 5,
-								sync: false
+								color: "#ffffff",
+								frequency: 0.0075,
+								opacity: 0.4
+								}
+							},
+							number: {
+								density: {
+									enable: true,
+									area: 400,
+								},
+								value: 100,
+							},
+							opacity: {
+								value: 0.5,
+								random: true,
+								anim: {
+									enable: true,
+									speed: 0.1,
+									opacity_min: 0.1,
+									sync: false,
+								},
+							},
+							shape: {
+								type: 'star',
+							},
+							size: {
+								random: true,
+								value: 1,
+							},
+							rotate: {
+								animation: {
+									enable: true,
+									speed: 5,
+									sync: false
+								}
 							}
-						}
-					},
-					detectRetina: true,
-				}}
-			>
-				<div style={{zIndex: 999}}>{this.props.children}</div>
-			</Particles>
+						},
+						detectRetina: true,
+					}}
+				>
+					<div style={{zIndex: 999}}>{this.props.children}</div>
+				</Particles>
 
 			
 				{/* <SVG fill="rgba(0, 0, 0, 0.7)" className="section-top-scene" ></SVG> */}

@@ -18,14 +18,14 @@ class XalianSpeciesRowView extends React.Component {
 	render() {
 		return (
 			<div className="xalian-stat-row-view-wrapper vertically-center-contents stackable-margin">
-				<Row>
-					<Col className='vertically-center-contents' lg={true}>
+				<Row style={{ width: '100%' }} >
+					<Col className='vertically-center-contents' xs={12} sm={6} lg={4}>
                         <XalianInfoBox species={this.props.species}/>
                     </Col>
-					<Col className='vertically-center-contents' lg={2}>
-						<XalianImage colored shadowed speciesName={this.props.species.name} primaryType={this.props.species.type} moreClasses="xalian-image-in-row" />
+					<Col className='vertically-center-contents' xs={12} sm={6} lg={4}>
+						<XalianImage colored shadowed speciesName={this.props.species.name} primaryType={this.props.species.type} moreClasses="xalian-image-in-row centered-div" />
 					</Col>
-					<Col className='vertically-center-contents' lg={true}>
+					<Col className='vertically-center-contents' xs={12} sm={12} lg={4}>
 						<XalianStatRatingChart axisLabelColor={'white'} includeLabel labelFontSize={'8pt'} barSize={20} stats={this.props.species.statRatings} abbreviatedNames moreClasses='ultra-condensed-chart-div'/>
 					</Col>
 				</Row>

@@ -41,11 +41,11 @@ class PlanetPage extends React.Component {
             <Container fluid className="content-background-container">
                 <XalianNavbar></XalianNavbar>
 
-                <Container className="content-container">
-                    <Row className="">
+                <Container className="content-container" >
+                    <Row >
 
-                        <Col lg={10} className="template-col-wrapper">
-                            <h1>Discovered Planets</h1>
+                        <Col className="template-col-wrapper">
+                            <h1 className="page-title-text">Discovered Planets</h1>
                             {this.buildPlanets()}
                         </Col>
 

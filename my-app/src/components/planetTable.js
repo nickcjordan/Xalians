@@ -27,9 +27,18 @@ class PlanetTable extends React.Component {
   }
 
   getHistoryParagraphs(history) {
+    let images = ["assets/img/background/castle.jpg", "assets/img/background/castle.jpg", "assets/img/background/castle.jpg"]
     var result = [];
+    var tempImage = null;
     history.forEach(para => {
-      result.push(<p>{para}</p>);
+      if (tempImage) {
+        result.push(<p>{para} <img src={tempImage} style={{ float: 'left', maxWidth: '25vw', width: '100px', padding: '5px' }} /></p>);
+        tempImage = null;
+      } else if (para.toString().includes('IMAGE_INSERT:')) {
+        tempImage = para.replace('IMAGE_INSERT:', '');
+      } else {
+        result.push(<p>{para}</p>);
+      }
     });
     return result;
   }
@@ -71,10 +80,10 @@ class PlanetTable extends React.Component {
       <Container className={"dark-section-div " + this.props.planet.data.Type.toLowerCase() + "-border-color"}>
 
         <Row className="planet-details-row vertically-center-contents">
-          <Col sm={3} className="planet-details-row-col">
+          <Col xs={12} lg={3} className="planet-details-row-col">
             <img src={this.props.planet.planetImage} class="planet-gif" alt=""></img>
           </Col>
-          <Col sm={6} className="planet-description-col">
+          <Col xs={12} lg={6} className="planet-description-col">
             <Row className="planet-title-row">
               <Col>
                 <h2 class={this.props.planet.data.Type.toLowerCase() + "-text-color"}>{this.props.planet.name}</h2>
@@ -88,7 +97,7 @@ class PlanetTable extends React.Component {
               </table>
             </div>
           </Col>
-          <Col sm={3} className="planet-details-row-col">
+          <Col xs={12} lg={3} className="planet-details-row-col">
             <img src={this.props.planet.image} class="planet-img img-fluid" alt=""></img>
           </Col>
         </Row>
