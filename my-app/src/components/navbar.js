@@ -79,8 +79,8 @@ class XalianNavbar extends React.Component {
 								<Navbar.Collapse id="responsive-navbar-nav">
 									<Nav className="me-auto nav-text-shadow">
 										<Nav.Link href="/">Home</Nav.Link>
-										<Nav.Link href="/community">Xalian Community</Nav.Link>
-										<Nav.Link href="/project">Learn More</Nav.Link>
+										{/* <Nav.Link href="/community">Xalian Community</Nav.Link> */}
+										{/* <Nav.Link href="/project">Learn More</Nav.Link> */}
 										<Nav.Link href="/species">Species</Nav.Link>
 										<Nav.Link href="/planets">Planets</Nav.Link>
 										<Nav.Link href="/glossary">Glossary</Nav.Link>

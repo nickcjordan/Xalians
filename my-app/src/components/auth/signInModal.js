@@ -66,7 +66,7 @@ class SignInModal extends React.Component {
                 centered
                 className="themed-modal"
             >
-                <Modal.Header closeButton>
+                <Modal.Header closeButton  closeVariant='white'>
                     <Modal.Title id="contained-modal-title-vcenter">
                         Sign In
                     </Modal.Title>

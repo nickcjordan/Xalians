@@ -48,7 +48,7 @@ class VerifyRemoveXalianModal extends React.Component {
                 centered
                 className="themed-modal"
             >
-                <Modal.Header closeButton>
+                <Modal.Header closeButton  closeVariant='white'>
                     <Modal.Title id="contained-modal-title-vcenter">
                         Delete this {this.getXalianName} Xalian?
                     </Modal.Title>

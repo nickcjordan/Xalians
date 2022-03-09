@@ -128,6 +128,9 @@ hr.xalian-hr {
 /*--------------------------------------------------------------
 # General / common
 --------------------------------------------------------------*/
+/* html {
+  scroll-behavior: smooth;
+} */
 
 body {
   font-family: "Abel", sans-serif;
@@ -620,9 +623,15 @@ body { width: 100%; max-width: 100%; height: auto;
   padding: 0 !important;
   overflow-x: hidden;
 }
+/* 
+*******************
+**  xalians logo **
+******************* 
+*/
 
 .xalian-logo {
-  max-width: 80vw !important;
+  width: 80% !important;
+  max-width: 600px;
   /* max-width: 2000px !important; */
   padding-bottom: 25px !important;
   margin-left: auto !important;
@@ -2158,18 +2167,7 @@ article {
 
 
 
-/* 
-*******************
-**  xalians logo **
-******************* 
-*/
 
-.xalians-logo {
-  height: auto;
-  width: 100%;
-  max-width: 80vw;
-  margin: auto !important;
-}
 
 /* 
 *******************
@@ -2209,6 +2207,7 @@ article {
   padding-bottom: 10px;
   text-align: center;
   text-shadow: 0px 0px 10px rgb(0, 0, 0);
+  align-items: center;
 }
 
 .planet-title-row h2 {
@@ -2317,6 +2316,14 @@ article {
   margin: auto !important;
 }
 
+.white-outline-text {
+  text-shadow:
+   -1px -1px 0 #FFF,  
+    1px -1px 0 #FFF,
+    -1px 1px 0 #FFF,
+     1px 1px 0 #FFF;
+}
+
 .planet-key-col {
   border-color: rgb(128, 255, 176, 0.3);
   border-style: solid;
@@ -2327,6 +2334,11 @@ article {
   border-color: rgb(128, 255, 176, 0.3);
   border-style: solid;
   border-width: 1px;
+}
+
+.planet-history-link {
+  /* color: rgba(255, 255, 255, 0.5); */
+  padding: 5px;
 }
 
 .vertically-center-contents {
@@ -2369,6 +2381,8 @@ article {
   background-color: rgba(0, 0, 0, 0) !important;
   border: 0 !important;
   width: 100%;
+  margin: 0px !important;
+  padding: 0px !important;
 }
 
 .planet-history-wrapper {
@@ -2627,14 +2641,22 @@ article {
 
 .glossary-word-row h3 {
   font-weight: bolder;
-  text-align: right;
 }
 
 .glossary-word-row h5 {
   color: white;
 }
 
+.glossary-title {
+  text-align: right;
+}
 
+ /* HAPPENS WHEN SCREEN GOES TO SMALL OR XSMALL I THINK */
+@media (max-width: 575px) {
+  .glossary-title {
+    text-align: left;
+  }
+}
 
 /* 
 *******************
@@ -2667,7 +2689,7 @@ article {
 }
 
 .themed-modal .modal-content {
-  background-color: #0e0e0e;
+  background-color: #1a1a1a;
   color: white;
   filter: drop-shadow(5px 5px 4px #000000);
 }

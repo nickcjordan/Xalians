@@ -29,7 +29,7 @@ class GlossaryPage extends React.Component {
                 list.push(
                     <Row className="glossary-word-row vertically-center-contents">
                         <Col sm={4}>
-                            <h3>{row.word}</h3>
+                            <h3 className="glossary-title">{row.word}</h3>
                         </Col>
                         <Col sm={true}>
                             <h5>{row.definition}</h5>
@@ -50,7 +50,7 @@ class GlossaryPage extends React.Component {
 
                 <Container>
                     <Row className="glossary-wrapper">
-                        <Col lg={10} className="">
+                        <Col className="">
                             {this.buildDictionary()}
                         </Col>
                     </Row>
