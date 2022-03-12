@@ -17,6 +17,7 @@ import XalianMoveSet from '../components/xalianMoveSet';
 import XalianAttributeChart from '../components/xalianAttributeChart';
 import XalianImage from '../components/xalianImage';
 import XalianStatRatingChart from '../components/xalianStatRatingChart';
+import XalianInfoBox from '../components/xalianInfoBox';
 
 
 class SpeciesDetailPage extends React.Component {
@@ -48,10 +49,11 @@ class SpeciesDetailPage extends React.Component {
 						<Container fluid className="whole-container ">
 							<Row className="centered-view squeezed-view third-height stackable-padding">
 								<Col lg={3} md={6} sm={6} className="xalian-species-title">
-									<Stack>
+									{/* <Stack>
 										<h1 className="species-detail-name">{this.state.xalian.name}</h1>
 										<h4 className="species-detail-id">#{this.state.xalian.id}</h4>
-									</Stack>
+									</Stack> */}
+									<XalianInfoBox species={this.state.xalian}/>
 								</Col>
 								<Col lg={3} md={6} sm={6} className="">
 									<Row className="xalian-image-row">

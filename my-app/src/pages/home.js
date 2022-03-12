@@ -531,8 +531,10 @@ function ScrollingCarousel() {
 			// name: speciesName,
 			// element: img
 		// };
-		var img = buildImage(xalianSvg, species);
-		items.push(img);
+		if (species) {
+			var img = buildImage(xalianSvg, species);
+			items.push(img);
+		}
 	})
 
 	function buildImage(svg, species) {

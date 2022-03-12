@@ -215,8 +215,10 @@ class DesignerPage extends React.Component {
   }
 
   handleSizeChange(val) {
+    let MAGIC_NUMBER = 2.75;
+
     let inches = Math.floor((this.state.maxHeight - this.state.minHeight) * (val / 1000) + this.state.minHeight);
-    let lbs = Math.floor(inches * 2.75);
+    let lbs = Math.floor(inches * MAGIC_NUMBER);
     let currentDiff = lbs - this.state.minWeight;
     let weightDiff = this.state.maxWeight - this.state.minWeight;
     let diffRatio = currentDiff / weightDiff;

@@ -5,15 +5,16 @@ import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import XalianNavbar from '../components/navbar';
 import ListGroup from 'react-bootstrap/ListGroup';
-import Image from 'react-bootstrap/Image'
-import Table from 'react-bootstrap/Table'
+import Image from 'react-bootstrap/Image';
+import Table from 'react-bootstrap/Table';
 import PlanetTable from '../components/planetTable';
-import Tabs from 'react-bootstrap/Tabs'
-import Tab from 'react-bootstrap/Tab'
+import Tabs from 'react-bootstrap/Tabs';
+import Tab from 'react-bootstrap/Tab';
 import species from '../json/species.json';
-import XalianImage from '../components/xalianImage'
-import XalianSpeciesRowView from '../components/views/xalianSpeciesRowView'
-import XalianSpeciesBadge from '../components/xalianSpeciesBadge'
+import XalianImage from '../components/xalianImage';
+import XalianSpeciesRowView from '../components/views/xalianSpeciesRowView';
+import XalianSpeciesBadge from '../components/xalianSpeciesBadge';
+import XalianSpeciesSizeComparisonView from '../components/views/xalianSpeciesSizeComparisonView';
 
 
 class SpeciesPage extends React.Component {
@@ -23,13 +24,44 @@ class SpeciesPage extends React.Component {
         statRowList: [],
     }
 
-    
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.updateSize);
+    }
+
     componentDidMount() {
+        window.addEventListener('resize', this.updateSize);
+        this.updateSize();
         this.setState({
             gridList: this.buildSpeciesIcons(),
-            statRowList: this.buildStatRows()
+            statRowList: this.buildStatRows(),
+            // sizeList: this.buildSizeComparison()
         });
     }
+
+    setSize = (w, h) => {
+        let max = Math.max(w, h)
+        let min = Math.min(w, h);
+
+        let padding = 20;
+
+        this.setState({
+            size: {
+                width: w - padding,
+                height: h,
+                max: max - padding,
+                min: min - padding,
+            },
+        });
+    };
+
+    updateSize = () => {
+        this.setSize(window.innerWidth, window.innerHeight * 0.6);
+    };
+
+
+    // buildSizeComparison() {
+    //     return <XalianSpeciesSizeComparisonView size={this.state.size} />;
+    // }
 
     buildSpeciesIcons() {
         species.sort((a, b) => a.id - b.id);
@@ -56,10 +88,9 @@ class SpeciesPage extends React.Component {
     buildSpeciesIcon(x) {
         return <Col md={2} sm={3} xs={6} className="species-col">
             <a href={"/species/" + x.id}>
-                {/* <Image src={this.getImageLocationFromSpecies(x.name)} rounded className={this.getTypeColorClassName(x) + " xalian-image"} /> */}
-                <XalianImage colored bordered speciesName={x.name} primaryType={x.type} moreClasses='xalian-image-grid'/>
-                <h4 className='condensed-row' >#{x.id}</h4>
-                <h2 className='condensed-row species-name-title'>{x.name}</h2>
+                <XalianImage colored bordered speciesName={x.name} primaryType={x.type} moreClasses='xalian-image-grid' />
+                <h6 className='condensed-row' >#{x.id}</h6>
+                <h4 className='condensed-row species-name-title'>{x.name}</h4>
                 {/* <h3 className='condensed-row'><XalianSpeciesBadge type={x.type} /></h3> */}
             </a>
         </Col>
@@ -67,10 +98,6 @@ class SpeciesPage extends React.Component {
 
     buildStatRow(x) {
         return <a href={"/species/" + x.id}><XalianSpeciesRowView species={x} /></a>;
-    }
-
-    getImageLocationFromSpecies(name) {
-        return `/assets/img/xalians/xalians_icon_${name.toLowerCase()}.png`;
     }
 
     getTypeColorClassName(x) {
@@ -91,18 +118,25 @@ class SpeciesPage extends React.Component {
                             <h1 className="page-title-text">Discovered Species</h1>
 
                             {species &&
-                                    <Tabs defaultActiveKey="grid" id="tabbs" className="species-tab-group">
-                                        <Tab eventKey="grid" title="Grid" className="species-tab">
-                                            <Row>
+                                <Tabs defaultActiveKey="grid" id="tabbs" className="species-tab-group">
+                                    <Tab eventKey="grid" title="Grid" className="species-tab">
+                                        <Row>
                                             {this.state.gridList}
-                                            </Row>
-                                        </Tab>
-                                        <Tab eventKey="stat-row" title="Stats" className="">
-                                            <Row>
-                                                {this.state.statRowList}
-                                            </Row>
-                                        </Tab>
-                                    </Tabs>
+                                        </Row>
+                                    </Tab>
+                                    <Tab eventKey="stat-row" title="Stats" className="">
+                                        <Row>
+                                            {this.state.statRowList}
+                                        </Row>
+                                    </Tab>
+                                    <Tab eventKey="size-comparison" title="Size Comparison" className="">
+                                        <Row>
+                                            {this.state.size &&
+                                                <XalianSpeciesSizeComparisonView size={this.state.size} />
+                                            }
+                                        </Row>
+                                    </Tab>
+                                </Tabs>
                             }
 
                         </Col>

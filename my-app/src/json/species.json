@@ -64,8 +64,8 @@
     "id": "00001",
     "type": "Plant",
     "planet": "Floria",
-    "height": "178 in / 452 cm",
-    "weight": "743 lbs / 337 kg",
+    "height": "126 in / 320 cm",
+    "weight": "524 lbs / 237 kg",
     "description": "A giant organism of thick, intertwined roots that act as tentacles. It lives mostly underground as this is where it absorbs its power.",
     "statRatings": {
       "healthRating": "",
@@ -84,8 +84,8 @@
     "id": "00005",
     "type": "Undead",
     "planet": "Phantiri",
-    "height": "59 in / 150 cm",
-    "weight": "66 lbs / 30 kg",
+    "height": "67 in / 170 cm",
+    "weight": "171 lbs / 77 kg",
     "description": "Feline shaped in normal form, this clever creature can instantly atomize into a cloud of smoke for a sneak attack or quick evasion.",
     "statRatings": {
       "healthRating": "",
@@ -104,8 +104,8 @@
     "id": "00006",
     "type": "Water",
     "planet": "Poseidas",
-    "height": "91 in / 231 cm",
-    "weight": "238 lbs / 108 kg",
+    "height": "79 in / 200 cm",
+    "weight": "204 lbs / 92 kg",
     "description": "A 16 legged amphibious creature with a long, segmented body. While adapted to land, its slender frame and webbed feet make it a formidable opponent in water.",
     "statRatings": {
       "healthRating": "",
@@ -204,8 +204,8 @@
     "id": "00011",
     "type": "Rock",
     "planet": "Stonera",
-    "height": "18 in / 46 cm",
-    "weight": "36 lbs / 16 kg",
+    "height": "27 in / 68 cm",
+    "weight": "56 lbs / 25 kg",
     "description": "This creature digs its body underground when spooked, exposing only its tail made of explosive barbs. If provoked, it won't hesitate to fire off a few projectiles, as its regenerative power can quickly grow more.",
     "statRatings": {
       "healthRating": "",
@@ -224,8 +224,8 @@
     "id": "00012",
     "type": "Psychic",
     "planet": "Telypso",
-    "height": "52 in / 132 cm",
-    "weight": "44 lbs / 20 kg",
+    "height": "46 in / 116 cm",
+    "weight": "108 lbs / 48 kg",
     "description": "What this creature lacks in stature it makes up for with its incredible magical abilities. It is deceptively smart, yet known to be docile when it trusts you.",
     "statRatings": {
       "healthRating": "",
@@ -244,8 +244,8 @@
     "id": "00013",
     "type": "Metallic",
     "planet": "Veridium",
-    "height": "52 in / 132 cm",
-    "weight": "44 lbs / 20 kg",
+    "height": "79 in / 200 cm",
+    "weight": "216 lbs / 97 kg",
     "description": "This creature has a metallic exoskeleton on its limbs, with long drill-like horns for arms. Thought to once be used for mineral excavation, its powerful horns can break through the strongest of material.",
     "statRatings": {
       "healthRating": "",
@@ -264,8 +264,8 @@
     "id": "00014",
     "type": "Chemical",
     "planet": "Drainov",
-    "height": "38 in / 96 cm",
-    "weight": "103 lbs / 46 kg",
+    "height": "42 in / 106 cm",
+    "weight": "114 lbs / 51 kg",
     "description": "The toxic mist expelled from a tube in its mouth helps to dissolve its prey. With only 2 teeth, this tactic is necessary for the creature to survive.",
     "statRatings": {
       "healthRating": "",
@@ -284,8 +284,8 @@
     "id": "00015",
     "type": "Plant",
     "planet": "Floria",
-    "height": "77 in / 195 cm",
-    "weight": "420 lbs / 190 kg",
+    "height": "93 in / 236 cm",
+    "weight": "830 lbs / 376 kg",
     "description": "With a large blade at the end of its trunk, this simple yet powerful creature is thought to have been designed to clear the thick brush of Floria.",
     "statRatings": {
       "healthRating": "",
@@ -324,8 +324,8 @@
     "id": "00017",
     "type": "Sand",
     "planet": "Endessa",
-    "height": "28 in / 71 cm",
-    "weight": "120 lbs / 54 kg",
+    "height": "42 in / 106 cm",
+    "weight": "155 lbs / 70 kg",
     "description": "Shielded by a scaly exoskeleton, this creature can roll into a ball to protect itself.",
     "statRatings": {
       "healthRating": "",
@@ -364,8 +364,8 @@
     "id": "00019",
     "type": "Plant",
     "planet": "Floria",
-    "height": "11 in / 27 cm",
-    "weight": "14 lbs / 6 kg",
+    "height": "19 in / 48 cm",
+    "weight": "18 lbs / 8 kg",
     "description": "Carnivorous little green birds with bright, floral plumage, Avililies flit between Floria’s trees, camouflaging into the planet’s many flowery meadows as they travel. Their beaks resemble the closed pedals of a flower but when they open their mouths that 'flower' blooms. They attract insects with their sweet, syrupy smelling saliva and vibrant floral display, but their saliva contains a powerful sedative which paralyzes anything that it comes in contact with. In ancient times, Avililies were used by Vallerii scientists and explorers to trap insects, serving as mobile bug repellent on Florian ventures. Today, the sedative properties of their saliva have been enhanced for a far-more dangerous galaxy, and swarms of flittering Avilies protect the most sacred parts of Floria’s jungles, paralyzing and consuming all who dare to threaten the pristineness of their forests.",
     "statRatings": {
       "healthRating": "",
@@ -376,6 +376,26 @@
       "speedRating": "high",
       "evasionRating": "",
       "staminaRating": "",
+      "recoveryRating": ""
+    }
+  },
+  {
+    "name": "Thirstaserp",
+    "id": "00020",
+    "type": "Sand",
+    "planet": "Endessa",
+    "height": "86 in / 218 cm",
+    "weight": "268 lbs / 121 kg",
+    "description": "A large, cobra-like creature that hides beneath the sand, Thirstaserps emit a subsonic vibration from the rattles on their tails that can lure and mesmerize opponents long enough for them to draw near and attack with a unique venom that drains the victim’s water when bitten, causing them to suffer and die from extreme dehydration.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "high",
+      "specialAttackRating": "",
+      "standardDefenseRating": "",
+      "specialDefenseRating": "",
+      "speedRating": "",
+      "evasionRating": "",
+      "staminaRating": "medium",
       "recoveryRating": ""
     }
   }

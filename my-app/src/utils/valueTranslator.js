@@ -84,4 +84,45 @@ export const statFieldToBarColor = (val) => {
 	return statColorMap[val];
 };
 
+export const translateHeightString = (val) => {
+	let split = val.split(' / ');
+	let inches = split[0].replace(' in', '');
+	let cm = split[1].replace(' cm', '');
+
+	return translateToHeightStringInches(inches) + ' / ' + translateToHeightStringCentimeters(cm);
+};
+
+export const translateToHeightStringInches = (inches) => {
+	var result = "";
+
+	let feet = Math.floor(inches / 12);
+	let remainderInches = Math.floor(inches % 12);
+	
+	if (feet > 0) {
+	  result = result + `${feet}ft ${remainderInches}in`;
+	} else {
+	  result = result + `${inches}in`;
+	}
+
+	return result;
+};
+
+export const translateToHeightStringCentimeters = (cm) => {
+	var result = "";
+
+	let meters = Math.floor(cm / 100);
+	let remainderCentimeters = Math.floor(cm % 100);
+	
+	if (meters > 0) {
+	  result = result + `${meters}m ${remainderCentimeters}cm`;
+	} else {
+	  result = result + `${cm}cm`;
+	}
+
+	return result;
+};
+
+     
+
+
 

@@ -7,6 +7,7 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import TextReaderModal from '../components/textReaderModal';
 import * as constants from '../constants/constants';
+import * as styleUtil from '../utils/styleUtil';
 
 class PlanetTable extends React.Component {
 
@@ -68,7 +69,7 @@ class PlanetTable extends React.Component {
 						<Row className="planet-title-row">
 							<Col xs={12}>
 								{/* <h2 className={this.props.planet.data.Type.toLowerCase() + '-text-color white-outline-text'} style={{ textShadow: getBorder(this.props.planet.data.Type.toLowerCase()) }} >{this.props.planet.name}</h2> */}
-								<h2 className={this.props.planet.data.Type.toLowerCase() + '-text-color'} style={{ textShadow: textBorder('black', 2) + ', ' + getBorder(this.props.planet.data.Type.toLowerCase(), 6, 12), color: '#ffffffff' }} >{this.props.planet.name}</h2>
+								<h2 className={this.props.planet.data.Type.toLowerCase() + '-text-color'} style={{ textShadow: styleUtil.textBorder('black', 2) + ', ' + styleUtil.getBorder(this.props.planet.data.Type.toLowerCase(), 6, 12), color: '#ffffffff' }} >{this.props.planet.name}</h2>
 							</Col>
 							{this.props.planet.history && this.props.planet.history.length > 0 && (
 								<Col xs={12}>
@@ -103,14 +104,7 @@ class PlanetTable extends React.Component {
   
 }
 
-function getBorder(type, thickness, blur) {
-  let color = constants.themeColors[type];
-  return textBorder(color, thickness, blur);
-}
 
-function textBorder(color = 'white', thickness = 1, blur = 0) {
-  return `-${thickness}px -${thickness}px ${blur}px ${color}, ${thickness}px -${thickness}px ${blur}px ${color}, -${thickness}px ${thickness}px ${blur}px ${color}, ${thickness}px ${thickness}px ${blur}px ${color}`;
-}
 
 export default PlanetTable;
 
