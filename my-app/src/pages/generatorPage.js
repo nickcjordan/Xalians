@@ -95,7 +95,7 @@ class GeneratorPage extends React.Component {
 									</div>
 								</Row>
 								<Row className="centered-view squeezed-view third-height stackable-padding">
-									<Col>
+									<Col style={{ padding: '0px' }}>
 										<XalianStatChart axisLabelColor={'white'} includeLabel labelFontSize={'10pt'} barSize={30} stats={this.state.xalian.stats} moreClasses="full-chart-div padded-row" />
 									</Col>
                                     <Col>

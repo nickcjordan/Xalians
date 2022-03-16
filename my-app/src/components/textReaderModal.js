@@ -24,6 +24,7 @@ class TextReaderModal extends React.Component {
                 centered
                 className="themed-modal"
                 scrollable
+                fullscreen="xxl-down"
             >
                 <Modal.Header closeButton closeVariant='white'>
                 { this.props.title && 

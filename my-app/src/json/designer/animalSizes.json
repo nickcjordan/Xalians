@@ -1,0 +1,282 @@
+[
+    {
+      "name": "Western Gorilla",
+      "size": 155,
+      "mass": 158,
+      "density": 1.01,
+      "image": "",
+      "searchName": "Gorilla"
+    },
+    {
+      "name": "Rat",
+      "size": 25,
+      "mass": 1,
+      "density": 0.04,
+      "image": "",
+      "searchName": "Rat"
+    },
+    {
+      "name": "Rabbit",
+      "size": 40,
+      "mass": 2.7,
+      "density": 0.06,
+      "image": "",
+      "searchName": "Rabbit"
+    },
+    {
+      "name": "Cat",
+      "size": 50,
+      "mass": 5,
+      "density": 0.1,
+      "image": "",
+      "searchName": "Cat"
+    },
+    {
+      "name": "Red Fox",
+      "size": 65,
+      "mass": 10,
+      "density": 0.15,
+      "image": "",
+      "searchName": "Fox"
+    },
+    {
+      "name": "Dog",
+      "size": 70,
+      "mass": 15,
+      "density": 0.21,
+      "image": "",
+      "searchName": "Dog"
+    },
+    {
+      "name": "Capybara",
+      "size": 90,
+      "mass": 50,
+      "density": 0.55,
+      "image": "",
+      "searchName": "Capybara"
+    },
+    {
+      "name": "Snow Leopard",
+      "size": 110,
+      "mass": 32,
+      "density": 0.29,
+      "image": "",
+      "searchName": "Leopard"
+    },
+    {
+      "name": "Sheep",
+      "size": 117,
+      "mass": 100,
+      "density": 0.85,
+      "image": "",
+      "searchName": "Sheep"
+    },
+    {
+      "name": "Cheetah",
+      "size": 130,
+      "mass": 52,
+      "density": 0.4,
+      "image": "",
+      "searchName": "Cheetah"
+    },
+    {
+      "name": "Gray Wolf",
+      "size": 150,
+      "mass": 45,
+      "density": 0.3,
+      "image": "",
+      "searchName": "Wolf"
+    },
+    {
+      "name": "White Tailed Deer",
+      "size": 170,
+      "mass": 80,
+      "density": 0.47,
+      "image": "",
+      "searchName": "Deer"
+    },
+    {
+      "name": "Human",
+      "size": 175,
+      "mass": 61,
+      "density": 0.34,
+      "image": "",
+      "searchName": "Human"
+    },
+    {
+      "name": "Grizzly Bear",
+      "size": 200,
+      "mass": 360,
+      "density": 1.8,
+      "image": "",
+      "searchName": "Bear"
+    },
+    {
+      "name": "Zebra",
+      "size": 220,
+      "mass": 350,
+      "density": 1.59,
+      "image": "",
+      "searchName": "Zebra"
+    },
+    {
+      "name": "Lion",
+      "size": 250,
+      "mass": 180,
+      "density": 0.72,
+      "image": "",
+      "searchName": "Lion"
+    },
+    {
+      "name": "Tiger",
+      "size": 270,
+      "mass": 200,
+      "density": 0.74,
+      "image": "",
+      "searchName": "Tiger"
+    },
+    {
+      "name": "Yak",
+      "size": 330,
+      "mass": 450,
+      "density": 1.36,
+      "image": "",
+      "searchName": "Yak"
+    },
+    {
+      "name": "Camel",
+      "size": 340,
+      "mass": 440,
+      "density": 1.29,
+      "image": "",
+      "searchName": "Camel"
+    },
+    {
+      "name": "Rhinoceros",
+      "size": 400,
+      "mass": 950,
+      "density": 2.37,
+      "image": "",
+      "searchName": "Rhinoceros"
+    },
+    {
+      "name": "Hippopotamus",
+      "size": 450,
+      "mass": 1500,
+      "density": 3.33,
+      "image": "",
+      "searchName": "Hippopotamus"
+    },
+    {
+      "name": "African Elephant",
+      "size": 550,
+      "mass": 4500,
+      "density": 8.18,
+      "image": "",
+      "searchName": "Elephant"
+    },
+    {
+      "name": "Giraffe",
+      "size": 600,
+      "mass": 1180,
+      "density": 1.96,
+      "image": "",
+      "searchName": "Giraffe"
+    },
+    {
+      "name": "American Alligator",
+      "size": 335,
+      "mass": 225,
+      "density": 0.67,
+      "image": "",
+      "searchName": "Alligator"
+    },
+    {
+      "name": "Anaconda",
+      "size": 914,
+      "mass": 250,
+      "density": 0.27,
+      "image": "",
+      "searchName": "Anaconda"
+    },
+    {
+      "name": "Baboon",
+      "size": 70,
+      "mass": 27,
+      "density": 0.38,
+      "image": "",
+      "searchName": "Baboon"
+    },
+    {
+      "name": "Badger",
+      "size": 28,
+      "mass": 12,
+      "density": 0.42,
+      "image": "",
+      "searchName": "Badger"
+    },
+    {
+      "name": "American Bison",
+      "size": 280,
+      "mass": 545,
+      "density": 1.94,
+      "image": "",
+      "searchName": "Bison"
+    },
+    {
+      "name": "Jaguar",
+      "size": 137,
+      "mass": 75,
+      "density": 0.54,
+      "image": "",
+      "searchName": "Jaguar"
+    },
+    {
+      "name": "Bobcat",
+      "size": 90,
+      "mass": 13,
+      "density": 0.14,
+      "image": "",
+      "searchName": "Bobcat"
+    },
+    {
+      "name": "Chicken",
+      "size": 65,
+      "mass": 2.6,
+      "density": 0.04,
+      "image": "",
+      "searchName": "Chicken"
+    },
+    {
+      "name": "Bottlenose Dolphin",
+      "size": 274,
+      "mass": 362,
+      "density": 1.32,
+      "image": "",
+      "searchName": "Dolphin"
+    },
+    {
+      "name": "Donkey",
+      "size": 121,
+      "mass": 272,
+      "density": 2.24,
+      "image": "",
+      "searchName": "Donkey"
+    },
+    {
+      "name": "Giant Moray Eel",
+      "size": 298,
+      "mass": 30,
+      "density": 0.1,
+      "image": "",
+      "searchName": "Eel"
+    },
+    {
+      "name": "Emu",
+      "size": 175,
+      "mass": 49,
+      "density": 0.28,
+      "image": "",
+      "searchName": "Emu"
+    }
+  ]

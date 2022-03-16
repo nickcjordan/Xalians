@@ -69,13 +69,21 @@ class XalianAttributeChart extends React.Component {
                 {this.props.xalian && this.props.xalian.meta &&
                     <React.Fragment>
 
-                    <Row>
+                    {/* <Row>
                         <Col className="species-detail-chart-header">Total Stat Points:</Col>
                         <Col className="species-detail-chart-text">{this.props.xalian.meta.totalStatPoints}</Col>
                     </Row>
                     <Row>
-                        <Col className="species-detail-chart-header">Avg Stat Percentage:</Col>
-                        <Col className="species-detail-chart-text">{this.props.xalian.meta.avgPercentage}</Col>
+                        <Col className="species-detail-chart-header">Potential Stat Points:</Col>
+                        <Col className="species-detail-chart-text">{this.props.xalian.meta.potentialStatPoints}</Col>
+                    </Row> */}
+                    <Row>
+                        <Col className="species-detail-chart-header">Stat Score:</Col>
+                        <Col className="species-detail-chart-text">{this.props.xalian.meta.statScore}</Col>
+                    </Row>
+                    <Row>
+                        <Col className="species-detail-chart-header">Stat Potential Score:</Col>
+                        <Col className="species-detail-chart-text">{this.props.xalian.meta.potentialStatScore}</Col>
                     </Row>
                     </React.Fragment>
                 }

@@ -108,7 +108,8 @@
 
 hr.xalian-hr {
   border-top: 1px solid rgba(128, 128, 128, 0.212);
-  margin-bottom: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .xalian-splash-generator-button {
@@ -130,6 +131,10 @@ hr.xalian-hr {
 --------------------------------------------------------------*/
 /* html {
   scroll-behavior: smooth;
+} */
+
+/* .row {
+  width: 100%;
 } */
 
 body {
@@ -395,8 +400,8 @@ body { width: 100%; max-width: 100%; height: auto;
 
 
 .generator-button-row {
-  padding-top: 15px;
-  padding-bottom: 15px;
+  padding-top: 5px;
+  /* padding-bottom: 15px; */
   align-items: center;
   justify-content: center;
   align-content: center;
@@ -2349,6 +2354,11 @@ article {
   padding: 5px;
 }
 
+.planet-history-link:hover {
+  color: white;
+  text-decoration: underline;
+}
+
 .vertically-center-contents {
   display: flex;
   align-items: center;
@@ -2497,6 +2507,9 @@ article {
   padding-bottom: 2vh;
 }
 
+.recharts-tooltip-cursor {
+  border-radius: 10px !important;
+}
 
 .chart-container {
   /* width: 200px; */
@@ -2509,13 +2522,18 @@ article {
   height: 100%;
 }
 
+.stat-tooltip {
+  box-shadow: 0px 0px 10px #000000de;
+  background-color: #000000de;
+  color: white;
+}
+
 #gridTab-tab-grid {
   background-color: rgba(0, 0, 0, 0);
 }
 
 .chart-bar-label {
   text-shadow: 1px 1px 2px rgb(0, 0, 0) !important;
-  ;
 }
 
 .species-tab {
@@ -2528,6 +2546,12 @@ article {
   padding: 0;
   margin: 0;
 }
+
+.stat-tooltip-label {
+  padding: 5px;
+  margin: 0px;
+}
+
 
 /* 
 *******************

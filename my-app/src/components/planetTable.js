@@ -95,7 +95,14 @@ class PlanetTable extends React.Component {
         </Row> */}
 			</Container>
 
-			{this.props.planet.history && <TextReaderModal title={'The History of ' + this.props.planet.name} body={this.getHistoryParagraphs(this.props.planet.history)} show={this.state.showing} onHide={() => this.setState({ showing: false })}></TextReaderModal>}
+			{this.props.planet.history && 
+        <TextReaderModal 
+          title={'The History of ' + this.props.planet.name} 
+          body={this.getHistoryParagraphs(this.props.planet.history)} 
+          show={this.state.showing} 
+          onHide={() => this.setState({ showing: false })}>
+        </TextReaderModal>
+      }
 		</React.Fragment>
 	);
   }

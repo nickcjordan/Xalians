@@ -43,7 +43,7 @@ class XalianStatChart extends React.Component {
 		let translated = this.props.abbreviatedNames ? valueTranslator.statFieldToDescriptionCondensed(key) : valueTranslator.statFieldToDescription(key);
 		let rangeVal = valueTranslator.statRangeToScaledVal(stat.range);
 		let rangeName = valueTranslator.statFieldToDescription(stat.range);
-		let percentageText = this.props.longDescription ? stat.points + ' Points, ' + stat.percentage + '%' : stat.points;
+		let percentageText = this.props.longDescription ? stat.points + ' Points, ' + stat.initialPointAllocationPercentage + '%' : stat.points;
 		return {
 			statName: key,
 			statLabel: translated,
@@ -51,10 +51,13 @@ class XalianStatChart extends React.Component {
 			rangeNumber: rangeVal,
 			points: stat.points,
 			percentageText: percentageText,
+			potentialPoints: (stat.maxPoints - stat.points),
+			potentialPointsLabel: (stat.maxPoints - stat.points).toString()
 		};
 	};
 
 	render() {
+		const minBarLength = 20;
 		return (
 			<div className={(this.props.moreClasses || '') + " centered-view"}>
 				{this.props.stats && (
@@ -65,15 +68,20 @@ class XalianStatChart extends React.Component {
 							<YAxis width={this.props.abbreviatedNames ? 60 : 60} type="category" dataKey="statLabel" stroke={this.props.axisLabelColor || '#ffffff'} interval={0} />
 
 							{this.props.includeRange && (
-								<Bar radius={[10, 10, 10, 10]} isAnimationActive={false} animationBegin={50} dataKey="rangeNumber" fill="#ecff8234">
+								<Bar radius={[10, 10, 10, 10]} isAnimationActive={false} dataKey="rangeNumber" fill="#ecff8234"  minPointSize={minBarLength} >
 									{this.props.includeLabel && <LabelList dataKey="rangeName" position={this.props.labelPosition || 'center'} fill="white" style={{ fontSize: this.props.labelFontSize || '12pt' }} className="chart-bar-label" />}
 									{this.state.data && this.state.data.map((entry, index) => <Cell key={`cell-${index}`} fill={valueTranslator.statFieldToBarColor(entry.statName)} />)}
 								</Bar>
 							)}
-							<Bar radius={[10, 10, 10, 10]} isAnimationActive={false} animationBegin={50} dataKey="points" fill="#80dbff34">
+							<Bar radius={[0, 0, 0, 0]} isAnimationActive={false} dataKey="points" fill="#80dbff34" stackId="a"  minPointSize={minBarLength} >
 								{this.props.includeLabel && <LabelList dataKey="percentageText" position={this.props.labelPosition || 'center'} fill="white" style={{ fontSize: this.props.labelFontSize || '12pt' }} className="chart-bar-label" />}
 								{this.setupData(this.props.stats).map((entry, index) => <Cell key={`cell-${index}`} fill={valueTranslator.statFieldToBarColor(entry.statName)} />)}
 							</Bar>
+							<Bar style={{opacity: 0.35 }} radius={[0, 10, 10, 0]} isAnimationActive={false} dataKey="potentialPoints" fill="#80dbff34" stackId="a" minPointSize={minBarLength} >
+								{this.props.includeLabel && <LabelList dataKey="potentialPointsLabel" position={this.props.labelPosition || 'center'} fill="#ffffff50" style={{ fontSize: this.props.labelFontSize || '12pt' }} className="chart-bar-label" />}
+								{this.setupData(this.props.stats).map((entry, index) => <Cell key={`cell-${index}`} fill={valueTranslator.statFieldToBarColor(entry.statName)} />)}
+							</Bar>
+							<Tooltip  cursor={{fill: '#FFFFFF25'  }} content={<CustomTooltip />} />
 						</BarChart>
 					</ResponsiveContainer>
 				)}
@@ -81,5 +89,20 @@ class XalianStatChart extends React.Component {
 		);
 	}
 }
+
+const CustomTooltip = ({ active, payload, label }) => {
+	if (active && payload && payload.length) {
+	  return (
+		<div style={{border: 'solid 2px' + valueTranslator.statFieldToBarColor(payload[0].payload.statName) }} className="stat-tooltip">
+		  <h5 style={{ color: 'white' }} className="stat-tooltip-label">{payload[0].payload.statLabel}</h5>
+		  <h6 style={{ color: '#cccccc' }} className="stat-tooltip-label">{`${payload[0].payload.rangeName}: ${payload[0].payload.points}`}</h6>
+		  <h6 style={{ color: '#cccccc' }} className="stat-tooltip-label">{`${payload[1].value} potential points`}</h6>
+		</div>
+	  );
+	}
+  
+	return null;
+};
+
 
 export default XalianStatChart;

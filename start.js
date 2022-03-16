@@ -11,24 +11,76 @@ const attackCalculator = require('./lambda/src/gameplay/attackCalculator.js');
 main();
 
 function main() {
-    printXalian();
+    runSet();
+    // printXalian();
 }
 
-var AWS = require("aws-sdk");
+// var AWS = require("aws-sdk");
 
-AWS.config.getCredentials(function(err) {
-  if (err) console.log(err.stack);
-  // credentials not loaded
-  else {
-    console.log("Access key:", JSON.stringify(AWS.config.credentials));
-  }
-});
+// AWS.config.getCredentials(function(err) {
+//   if (err) console.log(err.stack);
+//   // credentials not loaded
+//   else {
+//     console.log("Access key:", JSON.stringify(AWS.config.credentials));
+//   }
+// });
 
 function printXalian() {
-    let x = xalianBuilder.buildXalian();
-    let translated = translator.translateCharacterToPresentableType(x);
-    // console.log("\n\n\traw:\n\n" + JSON.stringify(x, null, 2) + "\n\n\n\ttranslated:\n\n" + JSON.stringify(translated, null, 2));
+
+        let x = xalianBuilder.buildXalian();
+        let translated = translator.translateCharacterToPresentableType(x);
+
+
     console.log(JSON.stringify(translated, null, 2));
+}
+
+function runSet() {
+
+    var max = 0;
+    var maxChar = null;
+    var maxCharTranslated = null;
+    
+    var maxPotential = 0;
+    var maxCharPotential = null;
+    var maxCharTranslatedPotential = null;
+
+    var min = 5000;
+    var minChar = null;
+    var minCharTranslated = null;
+
+    let xalians = [];
+
+
+    for (var i = 0; i<10000; i++) {
+        let x = xalianBuilder.buildXalian();
+        let translated = translator.translateCharacterToPresentableType(x);
+        xalians.push(x);
+        if (x.meta.statScore > max) {
+            max = x.meta.statScore;
+            maxChar = x;
+            maxCharTranslated = translated;
+        } else if (x.meta.statScore < min) {
+            min = x.meta.statScore;
+            minChar = x;
+            minCharTranslated = translated;
+        }
+
+        if (x.meta.potentialStatScore > maxPotential) {
+            maxPotential = x.meta.potentialStatScore;
+            maxCharPotential = x;
+            maxCharTranslatedPotential = translated;
+        }
+    }
+
+
+
+
+
+    console.log('LOSER:\n\n' + JSON.stringify(minCharTranslated, null, 2));
+    console.log('\n\nWINNER:\n\n' + JSON.stringify(maxCharTranslated, null, 2));
+    console.log('\n\nWINNER POTENTIAL:\n\n' + JSON.stringify(maxCharTranslatedPotential, null, 2));
+    // console.log("\n\n\traw:\n\n" + JSON.stringify(x, null, 2) + "\n\n\n\ttranslated:\n\n" + JSON.stringify(translated, null, 2));
+    // console.log(JSON.stringify(translated, null, 2));
 }
 
 function runSummary() {

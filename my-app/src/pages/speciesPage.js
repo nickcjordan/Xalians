@@ -130,11 +130,9 @@ class SpeciesPage extends React.Component {
                                         </Row>
                                     </Tab>
                                     <Tab eventKey="size-comparison" title="Size Comparison" className="">
-                                        <Row>
                                             {this.state.size &&
                                                 <XalianSpeciesSizeComparisonView size={this.state.size} />
                                             }
-                                        </Row>
                                     </Tab>
                                 </Tabs>
                             }

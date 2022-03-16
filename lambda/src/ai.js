@@ -1,7 +1,9 @@
 const tools = require('./tools.js');
-const constants = require('./constants/constants.js');
+const c = require('./constants/constants.js');
 const statConstants = require('./constants/statConstants.js');
 const ratingValueConstants = require('./constants/ratingValueConstants.js');
+const statLevelConstants = require('./constants/statLevelConstants.js');
+const mappings = require('./util/mappings.js');
 
 module.exports = {
     selectSpecies: selectSpecies,
@@ -11,15 +13,16 @@ module.exports = {
     pickStatisticalRandomRating: pickStatisticalRandomRating
 };
 
-const HIGH_VALUE = 3;
-const MEDIUM_VALUE = 2;
-const LOW_VALUE = 1;
+// TWEAK SETTINGS 
+// const 
 
 var elementTypes = tools.getObject("elements");
 var species = tools.getObject("species");
-var totalStats = 0;
-var totalStatPointsUnallocated = Math.floor((constants.STAT_COUNT_PER_CHARACTER * constants.STAT_POINT_MAX) / 2); // cut in half to have each stat avg to 500/1000
-var statCountRemaining = constants.STAT_COUNT_PER_CHARACTER;
+
+
+var totalAllocatedStatPoints = 0;
+var totalUnallocatedStatPoints = Math.floor((c.STAT_COUNT_PER_CHARACTER * c.STAT_POINT_MAX) / 2); // cut in half to have each stat avg to 500/1000
+var statCountRemaining = c.STAT_COUNT_PER_CHARACTER;
 var ratedPrimary = [];
 var unratedPrimary = [];
 var ratedSecondary = [];
@@ -28,9 +31,12 @@ var percentages = [];
 var totalPercentages = [];
 var totalStatsList = [];
 
+
+var allocations = [];
+
 var debug = false;
 
-if (debug) {console.log(`\ninitial totals:\n\tmaxStatPoints=${totalStatPointsUnallocated}\n\ttotalStatCount=${statCountRemaining}`);}
+if (debug) {console.log(`\ninitial totals:\n\tmaxStatPoints=${totalUnallocatedStatPoints}\n\ttotalStatCount=${statCountRemaining}`);}
 
 
 function selectSpecies(xalian) {
@@ -67,23 +73,32 @@ function getTypeNodeFromName(typeName) {
     return selected;
 }
 
-const valMapping = new Map();
-valMapping[ratingValueConstants.HIGH] = HIGH_VALUE;
-valMapping[ratingValueConstants.MEDIUM] = MEDIUM_VALUE;
-valMapping[ratingValueConstants.LOW] = LOW_VALUE;
-valMapping[ratingValueConstants.UNSET] = 0;
+// const valMapping = new Map();
+// valMapping[ratingValueConstants.HIGH] = HIGH_VALUE;
+// valMapping[ratingValueConstants.MEDIUM] = MEDIUM_VALUE;
+// valMapping[ratingValueConstants.LOW] = LOW_VALUE;
+// valMapping[ratingValueConstants.UNSET] = 0;
 
-const ratingToThresholdMapping = new Map();
-ratingToThresholdMapping[ratingValueConstants.HIGH] = constants.HIGH_THRESHOLD;
-ratingToThresholdMapping[ratingValueConstants.MEDIUM] = constants.MEDIUM_THRESHOLD;
-ratingToThresholdMapping[ratingValueConstants.LOW] = constants.LOW_THRESHOLD;
+// const ratingToThresholdMapping = new Map();
+// ratingToThresholdMapping[statLevelConstants.VERY_HIGH.] = c.HIGH_THRESHOLD;
+// ratingToThresholdMapping[ratingValueConstants.HIGH] = c.HIGH_THRESHOLD;
+// ratingToThresholdMapping[ratingValueConstants.MEDIUM] = c.MEDIUM_THRESHOLD;
+// ratingToThresholdMapping[ratingValueConstants.LOW] = c.LOW_THRESHOLD;
 
 
-const valFlippedMapping = new Map();
-valFlippedMapping[3] = ratingValueConstants.HIGH;
-valFlippedMapping[MEDIUM_VALUE] = ratingValueConstants.MEDIUM;
-valFlippedMapping[LOW_VALUE] = ratingValueConstants.LOW;
-valFlippedMapping[0] = ratingValueConstants.UNSET;
+// const valFlippedMapping = new Map();
+// valFlippedMapping[3] = ratingValueConstants.HIGH;
+// valFlippedMapping[2] = ratingValueConstants.MEDIUM;
+// valFlippedMapping[1] = ratingValueConstants.LOW;
+// valFlippedMapping[0] = ratingValueConstants.UNSET;
+
+// const valFlippedMapping = new Map();
+// valFlippedMapping[5] = statLevelConstants.levels.VERY_HIGH;
+// valFlippedMapping[3] = ratingValueConstants.HIGH;
+// valFlippedMapping[2] = ratingValueConstants.MEDIUM;
+// valFlippedMapping[1] = ratingValueConstants.LOW;
+// valFlippedMapping[1] = ratingValueConstants.LOW;
+// valFlippedMapping[0] = ratingValueConstants.UNSET;
 
 const statsMapping = new Map();
 statsMapping[statConstants.STANDARD_ATTACK_RATING] = statConstants.STANDARD_ATTACK_POINTS;
@@ -97,9 +112,10 @@ statsMapping[statConstants.STAMINA_RATING] = statConstants.STAMINA_POINTS;
 statsMapping[statConstants.RECOVERY_RATING] = statConstants.RECOVERY_POINTS;
 
 function resetGlobals() {
-    totalStats = 0;
-    totalStatPointsUnallocated = Math.floor((constants.STAT_COUNT_PER_CHARACTER * constants.STAT_POINT_MAX) / 2); // cut in half to have each stat avg to 500/1000
-    statCountRemaining = constants.STAT_COUNT_PER_CHARACTER;
+    totalAllocatedStatPoints = 0;
+    allocations = [];
+    totalUnallocatedStatPoints = Math.floor((c.STAT_COUNT_PER_CHARACTER * c.STAT_POINT_MAX) / 2); // cut in half to have each stat avg to 500/1000
+    statCountRemaining = c.STAT_COUNT_PER_CHARACTER;
     ratedPrimary = [];
     unratedPrimary = [];
     ratedSecondary = [];
@@ -115,7 +131,7 @@ function populateStats(xalian) {
     var map = xalian.species.statRatings;
     for (const key in map) {
         let val = map[key];
-        if (val != ratingValueConstants.UNSET) {
+        if (val != statLevelConstants.levels.UNSET.pointValue) {
             xalian.species.statRatings[key] = val;
             if (isPrimaryStat(key)) {
                 ratedPrimary.push(key);
@@ -133,10 +149,14 @@ function populateStats(xalian) {
 
     // -- set max for generated ranges 
     //      -- 4 categories in both primary and secondary
-    //      -- '1', '2', or '3' for 'low', 'medium', or 'high'; 
-    //      -- average each stat to medium ('2') ==> 2 * 4 = 8 total range points per stat category
-    var primaryMax = 8;
-    var secondaryMax = 8;
+    //      -- '1', '2', '3', '4', or '5' for 'very low', 'low', 'medium', 'high', 'very high'; 
+    //      -- average each stat to medium ('3') ==> 3 * 4 = 12 total range points per stat category
+    const NUMBER_OF_PRIMARY_STATS = 4;
+    const NUMBER_OF_SECONDARY_STATS = 4;
+    // const AVG_STAT_LEVEL = statLevelConstants.levels.HIGH;
+    const AVG_STAT_LEVEL = statLevelConstants.levels.MEDIUM;
+    const AVG_STAT_LEVEL_POINTS = AVG_STAT_LEVEL.pointValue;
+    var MAX_POINTS_PER_STAT_CATEGORY = AVG_STAT_LEVEL_POINTS * NUMBER_OF_PRIMARY_STATS;
     var primaryTotal = 0;
     var secondaryTotal = 0;
 
@@ -144,12 +164,12 @@ function populateStats(xalian) {
     for (const ind in ratedPrimary) {
         let stat = ratedPrimary[ind];
         let threshold = map[stat]
-        primaryTotal += valMapping[threshold]
+        primaryTotal += mappings.statValueToObject(threshold).pointValue;
     }
     for (const ind in ratedSecondary) {
         let stat = ratedSecondary[ind];
         let threshold = map[stat];
-        secondaryTotal += valMapping[threshold];
+        secondaryTotal += mappings.statValueToObject(threshold).pointValue;
     }
 
     // -- get remaining points to be allocated to unset ranges
@@ -158,9 +178,9 @@ function populateStats(xalian) {
 
     // -- set remaining PRIMARY stat ranges from amount left to be allocated 
     for (const ind in unratedPrimary) {
-        // select random from list of possible ['high', 'medium', 'low'] values based on remaining amount in category
-        let ratingNumber = valMapping[pickStatisticalRandomRating(getHighestPossibleRatingValue(primaryMax - primaryTotal, remainingPrimaryCount))];
-        let ratingName = valFlippedMapping[ratingNumber];
+        // select random from list of possible ['very high', 'high', 'medium', 'low', 'very low'] values based on remaining amount in category
+        let ratingNumber = pickStatisticalRandomRating(getHighestPossibleRatingValue(MAX_POINTS_PER_STAT_CATEGORY - primaryTotal, remainingPrimaryCount)).pointValue;
+        let ratingName = mappings.statValueToObject(ratingNumber).displayText.toLowerCase();
         remainingPrimaryCount -= 1;
         primaryTotal += ratingNumber;
         xalian.species.statRatings[unratedPrimary[ind]] = ratingName;
@@ -168,8 +188,8 @@ function populateStats(xalian) {
 
     // -- set remaining SECONDARY stat ranges from amount left to be allocated 
     for (const ind in unratedSecondary) {
-        let ratingNumber = valMapping[pickStatisticalRandomRating(getHighestPossibleRatingValue(secondaryMax - secondaryTotal, remainingSecondaryCount))];
-        let ratingName = valFlippedMapping[ratingNumber];
+        let ratingNumber = pickStatisticalRandomRating(getHighestPossibleRatingValue(MAX_POINTS_PER_STAT_CATEGORY - secondaryTotal, remainingSecondaryCount)).pointValue;
+        let ratingName = mappings.statValueToObject(ratingNumber).displayText.toLowerCase();
         remainingSecondaryCount -= 1;
         secondaryTotal += ratingNumber;
         xalian.species.statRatings[unratedSecondary[ind]] = ratingName;
@@ -189,7 +209,7 @@ function populateStats(xalian) {
 
     // xalian.healthPoints = generateStatFromRange(xalian, statConstants.HEALTH_RATING);
     // -- for now I guess we will have the health be a standard 999 value 
-    xalian.healthPoints = constants.STAT_POINT_MAX;
+    xalian.healthPoints = c.STAT_POINT_MAX;
 
 
     var sum = 0;
@@ -200,11 +220,35 @@ function populateStats(xalian) {
     totalPercentages.push(avgPerc);
     //
 
-    totalStatsList.push(totalStats);
+    totalStatsList.push(totalAllocatedStatPoints);
+
+    // let allocation = {
+    //     "name": statsMapping[statName],
+    //     "range": statRangeName,
+    //     "initialPoints": finalResult,
+    //     "points": finalResult,
+    //     "maxPoints": adjustedMaxResult,
+    //     "initialPointAllocationPercentage": percentFinal,
+    //     "maxPointAllocationPercentage": percentMax,
+    // };
+
+	const totalPoints = allocations.map(a => a.points).reduce((prev, curr) => prev + curr);
+	const potentialStatPoints = allocations.map(a => a.maxPoints).reduce((prev, curr) => prev + curr);
+    const totalPerc = Math.floor((totalPoints/potentialStatPoints) * 100);
+	const averagePercentages = Math.floor(allocations.map(a => a.initialPointAllocationPercentage).reduce((prev, curr) => prev + curr) / c.STAT_COUNT_PER_CHARACTER);
+	const averagePotentialPercentages = Math.floor(allocations.map(a => a.maxPointAllocationPercentage).reduce((prev, curr) => prev + curr) / c.STAT_COUNT_PER_CHARACTER);
+    const totalMaxPotentialPoints = AVG_STAT_LEVEL.rangeMax * c.STAT_POINT_MAX * c.STAT_COUNT_PER_CHARACTER;
+    const statScore = Math.floor((totalPoints/totalMaxPotentialPoints) * 1000);
+    const potentialStatScore = Math.floor((potentialStatPoints/totalMaxPotentialPoints) * 1000);
 
     xalian.meta = {
-        "avgPercentage": avgPerc,
-        "totalStatPoints": totalStats
+        "totalStatPoints": totalPoints,
+        "potentialStatPoints": potentialStatPoints,
+        "percentageOfPointsAllocated": totalPerc,
+        "averageStatPercentage": averagePercentages,
+        "averageStatPotentialPercentage": averagePotentialPercentages,
+        "statScore": statScore,
+        "potentialStatScore": potentialStatScore
     };
     
 
@@ -217,91 +261,93 @@ function generateStatFromRange(xalian, statName) {
         essentially it is using a base of max versus using a base of avgLeft 
     */
                 // var base = getRemainingAvgPerStat();
-                // var base = Math.min(getRemainingAvgPerStat(), constants.STAT_POINT_MAX);
-    var base = constants.STAT_POINT_MAX;
-                // var base = Math.max(getRemainingAvgPerStat(), constants.STAT_POINT_MAX);
-                // var base = Math.floor((getRemainingAvgPerStat() + constants.STAT_POINT_MAX) / 2);
+                // var base = Math.min(getRemainingAvgPerStat(), c.STAT_POINT_MAX);
+    var base = c.STAT_POINT_MAX;
+                // var base = Math.max(getRemainingAvgPerStat(), c.STAT_POINT_MAX);
+                // var base = Math.floor((getRemainingAvgPerStat() + c.STAT_POINT_MAX) / 2);
 
 
 
 
-    var rate = xalian.species.statRatings[statName];
-    statRangeFactor = ratingToThresholdMapping[rate];
+    var statRangeName = xalian.species.statRatings[statName];
+    let level = mappings.statValueToObject(statRangeName);
+    // statRangeFactor = ratingToThresholdMapping[statRangeName];
     var rand = tools.rand();
 
     // -- get random scalar between 0 and 0.25
     //      -- used as the percentage amount 0% to 25% to scale the base value 
     //      -- result delta value will be point value to add or subtract from original base
     //              -- example: if delta=50, base= 
-    var adjustedStatThresholdVariability = (rand) * constants.STAT_THRESHOLD_VARIABILITY;
+    var adjustedStatThresholdVariability = (rand) * c.STAT_THRESHOLD_VARIABILITY;
     var newBase = base * adjustedStatThresholdVariability;
     var delta = Math.floor(newBase);
 
 
     var trackingOldDelta = Math.floor(newBase);
     // decide 50/50 if it is a negative or positive value
-    let neg = tools.randomBoolWeighted(constants.RANDOM_WEIGHT);
+    let neg = tools.randomBoolWeighted(c.RANDOM_WEIGHT);
     if (neg) {
         delta = 0 - delta;
     }
     // find result as the base adjusted for delta
     var result = base + delta;
     // multiply random result by the low medium or high category value (0.25, 05, 0.75)
-    var adjustedResult = Math.floor(result * statRangeFactor);
+    // var adjustedResult = Math.floor(result * statRangeFactor);
+    var adjustedMinResult = Math.floor(result * level.rangeMin);
+    var adjustedMaxResult = Math.floor(result * level.rangeMax);
 
     // adjusting any outliers
-    if (adjustedResult > constants.STAT_POINT_MAX) {
-        adjustedResult = constants.STAT_POINT_MAX;
-    }
-    if (adjustedResult < constants.STAT_POINT_MIN) {
-        adjustedResult = constants.STAT_POINT_MIN;
-    }
+    if (adjustedMinResult > c.STAT_POINT_MAX) { adjustedMinResult = c.STAT_POINT_MAX; }
+    if (adjustedMinResult < c.STAT_POINT_MIN) { adjustedMinResult = c.STAT_POINT_MIN; }
+    if (adjustedMaxResult > c.STAT_POINT_MAX) { adjustedMaxResult = c.STAT_POINT_MAX; }
+    if (adjustedMaxResult < c.STAT_POINT_MIN) { adjustedMaxResult = c.STAT_POINT_MIN; }
+
+    // SELECT STARTING VALUE FOR RESULT :: RANGE OF adjustedMinResult TO adjustedMaxResult
+    let adjustedDiff = adjustedMaxResult - adjustedMinResult;
+    let randomDiff = adjustedDiff * Math.random();
+    let finalResult = Math.floor(adjustedMinResult + randomDiff);
 
     // SAFE GUARD TO PREVENT SUPER MAX CHARACTER
     // I dont think I am going to do this because it limits potentials, need to run numbers on how possible it is though
-    // adjustedResult = Math.min(adjustedResult, totalStatPointsUnallocated);
+    // adjustedResult = Math.min(adjustedResult, totalUnallocatedStatPoints);
 
     // for stat collecting purposes to compare to what was possible given ranges 
-    let potentialMax = Math.ceil(base * statRangeFactor);
-    let percent = Math.floor((adjustedResult / potentialMax) * 100);
-    totalStatPointsUnallocated -= adjustedResult;
+    // let potentialAllocatedPoints = Math.ceil(base * statRangeFactor);
+    let potentialAllocatedPointsMin = Math.ceil(base * level.rangeMin);
+    let potentialAllocatedPointsMax = Math.ceil(base * level.rangeMax);
+    // let percent = Math.floor((adjustedResult / potentialAllocatedPoints) * 100);
+    let percentMin = Math.floor((adjustedMinResult / potentialAllocatedPointsMin) * 100);
+    let percentMax = Math.floor((adjustedMaxResult / potentialAllocatedPointsMax) * 100);
+    let percentFinal = Math.floor((finalResult / potentialAllocatedPointsMax) * 100);
     statCountRemaining -= 1;
-    totalStats += adjustedResult;
 
-    if (debug) {console.log(`\n${statName}\n\trate=${rate}\n\tbase=${base}\n\tfactor=${statRangeFactor}\n\trand=${rand}\n\tadjustedStatThresholdVariability=${adjustedStatThresholdVariability}\n\tnewBase=${newBase}\n\toriginalDelta=${trackingOldDelta}\n\tneg=${neg}\n\tdelta=${delta}\n\tresult=${result}\n\tfinal=${adjustedResult}\n\t${rate} :: ${adjustedResult} / ${potentialMax} = ${percent}%`);}
-    if (debug) {console.log(`\nrunning totals:\n\ttotalStatPointsUnallocated=${totalStatPointsUnallocated}\n\tstatCountRemaining=${statCountRemaining}\n\ttotalStatsBuilt=${totalStats}\n\tavg remaining=${getRemainingAvgPerStat()}`);}
-    percentages.push(percent);
+    if (debug) {console.log(`\n${statName}\n\trate=${statRangeName}\n\tbase=${base}\n\tminFactor=${level.rangeMin}\n\tmaxFactor=${level.rangeMax}\n\trand=${rand}\n\tadjustedStatThresholdVariability=${adjustedStatThresholdVariability}\n\tnewBase=${newBase}\n\toriginalDelta=${trackingOldDelta}\n\tneg=${neg}\n\tdelta=${delta}\n\tresult=${result}\n\tfinalMinPoints=${adjustedMinResult}\n\tfinalMaxPoints=${adjustedMaxResult}\n\t${statRangeName} :: MIN/MAX: ${adjustedMinResult} / ${potentialAllocatedPointsMin} = ${percentMin}% ::  SELECTED: ${finalResult} / ${potentialAllocatedPointsMax} = ${percentMax}%`);}
+    percentages.push(percentFinal);
 
-    return {
+
+
+    let allocation = {
         "name": statsMapping[statName],
-        "range": rate,
-        "points": adjustedResult,
-        "percentage": percent
-    }
+        "range": statRangeName,
+        "initialPoints": finalResult,
+        "points": finalResult,
+        "maxPoints": adjustedMaxResult,
+        "initialPointAllocationPercentage": percentFinal,
+        "maxPointAllocationPercentage": percentMax,
+    };
+    allocations.push(allocation);
+    return allocation;
 
     // return adjustedResult;
 }
 
-// -- build list of ['HIGH', 'MEDIUM', 'LOW'] potential ranges to have randomizer select from
-//      -- range can be limited by remaining points to allocate for a range category 
-// function buildListOfPossibleRatings(maxLeftForCategory, remainingCount) {
-//     var ratings = [];
-//     if (remainingCount == 1) { return [valFlippedMapping[maxLeftForCategory]]; }
-//     let val = (maxLeftForCategory - (remainingCount - 1));
-//     if (val >= 1) { ratings.push(ratingValueConstants.LOW); }
-//     if (val >= 2) { ratings.push(ratingValueConstants.MEDIUM); }
-//     if (val >= 3) { ratings.push(ratingValueConstants.HIGH); }
-//     return ratings;
-// }
-
-// -- get highest possible category between 'HIGH', 'MEDIUM', 'LOW'
+// -- get highest possible category between 'VERY_HIGH', 'HIGH', 'MEDIUM', 'LOW', 'VERY_LOW'
 //      -- range can be limited by remaining points to allocate for a range category  
 function getHighestPossibleRatingValue(maxLeftForCategory, remainingCount) {
     if (remainingCount == 1) { return maxLeftForCategory; }
     let numberOfCategoriesToAllocateAfterThisIteration = remainingCount - 1;
-    let remainingAmountToAllocateIfAllOtherRangesRandomizedToLowest = maxLeftForCategory - (numberOfCategoriesToAllocateAfterThisIteration * LOW_VALUE);
-    if (remainingAmountToAllocateIfAllOtherRangesRandomizedToLowest > HIGH_VALUE) {return HIGH_VALUE; }
-    else { return remainingAmountToAllocateIfAllOtherRangesRandomizedToLowest; }
+    let remainingAmountThatCanBeAllocatedAssumingAllOtherRangesRandomizedToLowest = maxLeftForCategory - (numberOfCategoriesToAllocateAfterThisIteration * statLevelConstants.levels.VERY_LOW.pointValue);
+    return Math.min(remainingAmountThatCanBeAllocatedAssumingAllOtherRangesRandomizedToLowest, statLevelConstants.levels.VERY_HIGH.pointValue);
 }
 
 function isPrimaryStat(stat) {
@@ -322,10 +368,6 @@ function isSecondaryStat(stat) {
     );
 }
 
-
-function getRemainingAvgPerStat() {
-    return Math.floor(totalStatPointsUnallocated / statCountRemaining);
-}
 
 //debug
 function giveSummary() {
@@ -349,16 +391,6 @@ function giveSummary() {
             curve[p] = 1;
         }
     });
-
-    // totalStatsList.forEach(p => {
-    //     if (curve[p] != undefined && curve[p] != null) {
-    //         var val = curve[p];
-    //         val += 1;
-    //         curve[p] = val;
-    //     } else {
-    //         curve[p] = 1;
-    //     }
-    // });
 
 
     var flip = true;
@@ -403,35 +435,87 @@ function getStandardDeviation(array) {
     return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n)
 }
 
-
-var raritiesFull = [{
-    type: ratingValueConstants.LOW,
-    chance: 0
-}, {
-    type: ratingValueConstants.MEDIUM,
-    chance: 35
-}, {
-    type: ratingValueConstants.HIGH,
-    chance: 20
-}];
-
-var raritiesNoHigh = [{
-    type: ratingValueConstants.LOW,
-    chance: 0
-}, {
-    type: ratingValueConstants.MEDIUM,
-    chance: 50
-}];
-
-function pickStatisticalRandomRating(highest = HIGH_VALUE) {
-    var rarities = null;
-    if (highest > MEDIUM_VALUE) {
-        rarities = raritiesFull;
-    } else if (highest > LOW_VALUE) {
-        rarities = raritiesNoHigh;
-    } else {
-        return ratingValueConstants.LOW;
+// 0 means 'fill remaining percentage'
+var raritiesFull = [
+    {
+        type: statLevelConstants.levels.VERY_LOW,
+        chance: 0
+    },
+    {
+        type: statLevelConstants.levels.LOW,
+        chance: 20
+    }, 
+    {
+        type: statLevelConstants.levels.MEDIUM,
+        chance: 20
+    }, 
+    {
+        type: statLevelConstants.levels.HIGH,
+        chance: 20
+    },
+    {
+        type: statLevelConstants.levels.VERY_HIGH,
+        chance: 20
     }
+];
+
+var raritiesNoVeryHigh = [
+    {
+        type: statLevelConstants.levels.VERY_LOW,
+        chance: 0
+    },
+    {
+        type: statLevelConstants.levels.LOW,
+        chance: 25
+    }, 
+    {
+        type: statLevelConstants.levels.MEDIUM,
+        chance: 25
+    }, 
+    {
+        type: statLevelConstants.levels.HIGH,
+        chance: 25
+    }
+];
+
+var raritiesNoHigh = [
+    {
+        type: statLevelConstants.levels.VERY_LOW,
+        chance: 0
+    },
+    {
+        type: statLevelConstants.levels.LOW,
+        chance: 33
+    }, 
+    {
+        type: statLevelConstants.levels.MEDIUM,
+        chance: 33
+    }
+];
+
+var raritiesNoMedium = [
+    {
+        type: statLevelConstants.levels.VERY_LOW,
+        chance: 0
+    },
+    {
+        type: statLevelConstants.levels.LOW,
+        chance: 50
+    }
+];
+
+function pickStatisticalRandomRating(val = null) {
+    var highest = val;
+    if (highest == null) {
+        highest = statLevelConstants.levels.VERY_HIGH.pointValue;
+    } 
+    var rarities = null;
+    if     (highest == statLevelConstants.levels.VERY_HIGH.pointValue) {    rarities = raritiesFull;
+    } else if (highest == statLevelConstants.levels.HIGH.pointValue) {    rarities = raritiesNoVeryHigh;
+    } else if (highest == statLevelConstants.levels.MEDIUM.pointValue) {    rarities = raritiesNoHigh;
+    } else if (highest == statLevelConstants.levels.LOW.pointValue) {    rarities = raritiesNoMedium;
+    } else {  return                                                    statLevelConstants.levels.VERY_LOW; }
+
     // Calculate chances for common
     var filler = 100 - rarities.map(r => r.chance).reduce((sum, current) => sum + current);
 

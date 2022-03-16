@@ -8,3 +8,7 @@ export const getBorder = (type, thickness, blur) => {
 export const textBorder = (color = 'white', thickness = 1, blur = 0) => {
 	return `-${thickness}px -${thickness}px ${blur}px ${color}, ${thickness}px -${thickness}px ${blur}px ${color}, -${thickness}px ${thickness}px ${blur}px ${color}, ${thickness}px ${thickness}px ${blur}px ${color}`;
 };
+
+export const getTypeColor = (type) => {
+	return constants.themeColors[type];
+};

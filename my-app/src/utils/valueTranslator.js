@@ -55,14 +55,19 @@ transMap['evasionPoints'] = 'Evasion';
 transMap['staminaPoints'] = 'Stamina';
 transMap['recoveryPoints'] = 'Recovery';
 
+
+transMap["very low"] = "Very Low";
 transMap["low"] = "Low";
 transMap["medium"] = "Medium";
 transMap["high"] = "High";
+transMap["very high"] = "Very High";
 
 let valMap = new Map();
-valMap["low"] = 1;
-valMap["medium"] = 2;
-valMap["high"] = 3;
+valMap["very low"] = 1;
+valMap["low"] = 2;
+valMap["medium"] = 3;
+valMap["high"] = 4;
+valMap["very high"] = 5;
 
 export const statFieldToDescription = (val) => {
 	return transMap[val];

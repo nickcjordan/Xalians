@@ -20,7 +20,7 @@ import { ReactComponent as SpaceshipComputerScreenImagePanelSVG } from '../svg/a
 import { ReactComponent as SpaceshipComputerScreenNextArrowSVG } from '../svg/animations/spaceship_computer_screen_next_arrow.svg';
 import { ReactComponent as SpaceshipComputerScreenXSVG } from '../svg/animations/spaceship_computer_screen_x.svg';
 
-import ComputerScreenContent from '../components/animations/computerScreenContent';
+import SpeciesDesignerSizeSelector from '../components/views/speciesDesignerSizeSelector';
 
 import XalianSpeciesSizeComparisonView from '../components/views/xalianSpeciesSizeComparisonView';
 
@@ -32,44 +32,23 @@ gsap.registerPlugin(ScrollTrigger);
 
 class Sandboxtwo extends React.Component {
 	state = {
-		isLoading: true,
-		backgroundAnimationStarDirection: 'bottom-left',
-		backgroundAnimationStarSpeed: 0.2,
 	};
 
 	componentWillUnmount() {
-		window.removeEventListener('resize', this.updateSize);
 	}
 
 	componentDidMount() {
-		this.updateSize();
-		window.addEventListener('resize', this.updateSize);
+		
 	}
 
-	setSize = (w, h) => {
-		let max = Math.max(w, h)
-		let min = Math.min(w, h);
-
-		this.setState({
-			width: w,
-			height: h,
-			max: max,
-			min: min,
-		});
-	};
-
-	updateSize = () => {
-		this.setSize(window.innerWidth, window.innerHeight);
-	};
+	
 
 	render() {
 		let sectionCount = 3;
 		return (
 			<React.Fragment>
 				<Container>
-					<Row >
-						<XalianSpeciesSizeComparisonView  width={this.state.width}  height={this.state.height} />
-					</Row>
+					<SpeciesDesignerSizeSelector/>
 				</Container>
 			</React.Fragment>
 		);

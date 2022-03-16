@@ -165,7 +165,7 @@
     "type": "Light",
     "planet": "Luminax",
     "height": "70 in / 178 cm",
-    "weight": "340 lbs / 154 kg",
+    "weight": "822 lbs / 373 kg",
     "description": "The gems growing out of this creature's head transmit powerful light energy, don't be deceived by its calm temperment.",
     "statRatings": {
       "healthRating": "",
@@ -306,7 +306,7 @@
     "planet": "Magmuth",
     "height": "34 in / 86 cm",
     "weight": "92 lbs / 41 kg",
-    "description": "Imprits are demonic looking creatures, resembling flaming, horned monkeys backed by long tails with scythe-like tips. Imprits possess fire-retardant fur that protects their bodies from the flammable oils they secrete, allowing them to survive despite being in a state of constant immolation.  They are remarkably intelligent among other Xalians, having been designed in ancient times as natural tinkerers and let loose into the various lightless mining shafts of Magmuth, where they were left to their own devices to fix, maintain, and often jerry-rig the mining equipment sent deep into the earth by the Vallerii. Today, they are known for being entirely erratic, likely driven mad by the isolation of the deep tunnels in which they tinkered and toiled. When released from their claustrophobic confines and set loose on the surface, Imprits take ecstatic pleasure from using their tails to swing through the air from place to place and setting fires where they least belong.",
+    "description": "Imprits are demonic looking creatures, resembling flaming, horned monkeys backed by long tails with scythe-like tips. Imprits possess fire-retardant fur that protects their bodies from the flammable oils they secrete, allowing them to survive despite being in a state of constant immolation.  They are remarkably intelligent among other Xalians, having been designed in ancient times as natural tinkerers and let loose into the various lightless mining shafts of Magmuth, where they were left to their own devices to fix and maintain the often makeshift mining equipment sent deep into the earth by the Vallerii. Today, they are known for being entirely erratic, likely driven mad by the isolation of the deep tunnels in which they tinkered and toiled. When released from their claustrophobic confines and set loose on the surface, Imprits take ecstatic pleasure from using their tails to swing through the air from place to place and setting fires where they least belong.",
     "statRatings": {
       "healthRating": "",
       "standardAttackRating": "low",
@@ -396,6 +396,26 @@
       "speedRating": "",
       "evasionRating": "",
       "staminaRating": "medium",
+      "recoveryRating": ""
+    }
+  },
+  {
+    "name": "Graviclaw",
+    "id": "00021",
+    "type": "Dark",
+    "planet": "Grimedes",
+    "height": "75 in / 191 cm",
+    "weight": "355 lbs / 161 kg",
+    "description": "With the black-shelled body of a crab and an upright torso, the centaur-like crustacean known as the Graviclaw lurks just beneath the foggy wetlands of Grimedes, using its bizarre control over the intensification of gravitational waves to generate miniature black holes in the water and draw its helpless prey right into its clutches. Graviclaws can strengthen the gravitational pull of their massive claws in order to snap them shut with a force many times heavier than their implied mass, severing through even the hardest of materials with crushing pressure. When facing larger foes, the Graviclaw can use its powers to root itself to the ground, becoming an immovable wall of chitin.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "high",
+      "specialAttackRating": "",
+      "standardDefenseRating": "high",
+      "specialDefenseRating": "",
+      "speedRating": "",
+      "evasionRating": "",
+      "staminaRating": "",
       "recoveryRating": ""
     }
   }

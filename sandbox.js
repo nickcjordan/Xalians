@@ -1,11 +1,11 @@
 const axios = require("axios");
-const ai = require("./src/ai.js");
+const ai = require("./lambda/src/ai.js");
 const fs = require("fs");
-const xalianBuilder = require("./src/xalianBuilder.js");
-const translator = require("./src/translator.js");
-const attackCalculator = require("./src/gameplay/attackCalculator.js");
+const xalianBuilder = require("./lambda/src/xalianBuilder.js");
+const translator = require("./lambda/src/translator.js");
+const attackCalculator = require("./lambda/src/gameplay/attackCalculator.js");
 const csv = require("csv-parser");
-const tools = require("./src/tools.js");
+const tools = require("./lambda/src/tools.js");
 
 // module.exports = {
 //     main: main
@@ -21,23 +21,43 @@ const tools = require("./src/tools.js");
 
 // getNamesFromAPI();
 
-cleanupMonsters();
+// cleanupMonsters();
 
-function cleanupMonsters() {
-  let monsters = JSON.parse(fs.readFileSync("src/json/designer/monsters.json", "utf8").toString());
+cleanupDesignerAnimalReferences();
+
+function cleanupDesignerAnimalReferences() {
+  let animals = JSON.parse(fs.readFileSync("lambda/src/json/designer/animalSizes.json", "utf8").toString());
 
   var fixed = [];
-  monsters.forEach(monster => {
+  animals.forEach(x => {
     fixed.push({
-      name: monster.name,
-      meta: monster.meta,
-      traits: buildTraits(monster.Traits),
-      imageUrl: monster.img_url
+      name: x.name,
+      size: x.size,
+      mass: x.mass,
+      density: Math.floor((x.mass / x.size) * 100) / 100,
+      image: "",
+      searchName: x.name
     });
   });
 
-  fs.writeFileSync("src/json/designer/test_monsters.json", JSON.stringify(fixed, null, 2))
+  fs.writeFileSync("lambda/src/json/designer/test_animalSizes.json", JSON.stringify(fixed, null, 2))
 }
+
+// function cleanupMonsters() {
+//   let monsters = JSON.parse(fs.readFileSync("src/json/designer/monsters.json", "utf8").toString());
+
+//   var fixed = [];
+//   monsters.forEach(monster => {
+//     fixed.push({
+//       name: monster.name,
+//       meta: monster.meta,
+//       traits: buildTraits(monster.Traits),
+//       imageUrl: monster.img_url
+//     });
+//   });
+
+//   fs.writeFileSync("src/json/designer/test_monsters.json", JSON.stringify(fixed, null, 2))
+// }
 
 function buildTraits(originalTraits) {
   var traits = [];
