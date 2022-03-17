@@ -12,6 +12,8 @@ import * as animations from '../components/animations/fadeAnimation';
 import { gsap } from 'gsap';
 import fitty from 'fitty';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
+import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { TextPlugin } from 'gsap/TextPlugin';
 import { EasePack } from 'gsap/EasePack';
@@ -37,10 +39,7 @@ import XalianInfoBox from '../components/xalianInfoBox';
 // import spaceshipComputerScreenTitlePanel from '../svg/animations/spaceship_computer_screen_title_panel.svg';
 
 import ComputerScreenContent from '../components/animations/computerScreenContent';
-gsap.registerPlugin(ScrollTrigger);
-gsap.registerPlugin(TextPlugin);
-gsap.registerPlugin(EasePack);
-gsap.registerPlugin(ScrollToPlugin);
+gsap.registerPlugin(ScrollTrigger, TextPlugin, EasePack, ScrollToPlugin, DrawSVGPlugin, ScrambleTextPlugin);
 
 const reqSvgs = require.context ( '../svg/species', true, /\.svg$/ );
 const svgs = reqSvgs.keys () .map ( path => ({ path, file: reqSvgs ( path ) }) );
@@ -204,9 +203,9 @@ class Home extends React.Component {
 			.fromTo('#xalian-generator-link', { opacity: 0 }, { opacity: 1, duration: 1, delay: 0.5 }, '<')
 			// CREATE :: EARN :: TRADE :: PLAY
 			.fromTo('#splash-social-media-links', { opacity: 0 }, { opacity: 1, duration: 1, delay: 0 }, '<')
-			.to('#subline1', { opacity: 1, duration: 0.5, delay: 0.25 }, '<')
-			.to('#subline2', { opacity: 1, duration: 0.5, delay: 0.5 }, '<')
-			.to('#subline3', { opacity: 1, duration: 0.5, delay: 0.75 }, '<')
+			.to('#subline1', { scrambleText:{ chars: '1234567890', text: "{original}", revealDelay: "0.5" }, opacity: 1, duration: 3, delay: 0.25 }, '<')
+			.to('#subline2', { scrambleText:{ chars: '1234567890', text: "{original}", revealDelay: "0.5" }, opacity: 1, duration: 3, delay: 0.5 }, '<')
+			.to('#subline3', { scrambleText:{ chars: '1234567890', text: "{original}", revealDelay: "0.5" }, opacity: 1, duration: 3, delay: 0.75 }, '<')
 			// discord and twitter links
 
 			// .to('#splash-animated-changing-text', { opacity: 1, duration: 0.5, delay: 0.4 }, '<')
@@ -245,12 +244,12 @@ class Home extends React.Component {
 			},
 		});
 
-		let xElement = document.getElementById('xalians-logo-x');
-		let xRect = xElement.getBoundingClientRect();
+		// let xElement = document.getElementById('xalians-logo-x');
+		// let xRect = xElement.getBoundingClientRect();
 		// let offset = ((xRect.x) - (window.innerWidth/2));
-		let offset = window.innerWidth / 2 - (xRect.width / 2 + xRect.x);
-		let perc = xRect.width / window.innerWidth;
-		let a1 = Math.floor(perc * 1000);
+		// let offset = window.innerWidth / 2 - (xRect.width / 2 + xRect.x);
+		// let perc = xRect.width / window.innerWidth;
+		// let a1 = Math.floor(perc * 1000);
 
 		// ScrollTrigger.create({
 		//   trigger: '#splash-section',
@@ -314,40 +313,48 @@ class Home extends React.Component {
 	buildLogoAnimation = (delay = 0) => {
 		let main = gsap.timeline({
 		});
-		main.add(this.buildLetterEntry('#xalians-logo-s', delay + 0), '<')
-			.add(this.buildLetterEntry('#xalians-logo-n', delay + 0.05), '<')
-			.add(this.buildLetterEntry('#xalians-logo-a2', delay + 0.1), '<')
-			.add(this.buildLetterEntry('#xalians-logo-i', delay + 0.15), '<')
-			.add(this.buildLetterEntry('#xalians-logo-l', delay + 0.2), '<')
-			.add(this.buildLetterEntry('#xalians-logo-a1', delay + 0.25), '<')
-			.add(this.buildLetterEntry('#xalians-logo-x', delay + 0.3), '<');
+		main
+		.add(this.buildLetterEntry('#xalians-logo-x', delay + 0.3), '<')
+		.add(this.buildLetterEntry('#xalians-logo-a1', delay + 0.25), '<')
+		.add(this.buildLetterEntry('#xalians-logo-l', delay + 0.2), '<')
+		.add(this.buildLetterEntry('#xalians-logo-i', delay + 0.15), '<')
+		.add(this.buildLetterEntry('#xalians-logo-a2', delay + 0.1), '<')
+		.add(this.buildLetterEntry('#xalians-logo-n', delay + 0.05), '<')
+		.add(this.buildLetterEntry('#xalians-logo-s', delay + 0), '<')
+		;
 		return main;
 	};
 
 	buildLetterEntry = (id, d) => {
-		let main = gsap.timeline({});
-		var turnLightOn = gsap.timeline({ delay: d });
-		for (var i = 1; i < 6; i += 2) {
-			turnLightOn.to(id, { duration: Math.random() / 2, opacity: i / 10 });
-			turnLightOn.to(id, { duration: Math.random() / 2, opacity: i / 20 });
-		}
-		turnLightOn.to(id, { duration: 1, opacity: 1 });
+		let main = gsap.timeline();
+		// var turnLightOn = gsap.timeline({ delay: d });
+		// for (var i = 1; i < 6; i += 2) {
+			// turnLightOn.to(id, { duration: Math.random() / 2, opacity: i / 10 });
+			// turnLightOn.to(id, { duration: Math.random() / 2, opacity: i / 20 });
+		// }
+		// turnLightOn.to(id, { duration: 1, opacity: 1 });
 
 		var zoomIn = gsap.timeline();
 		zoomIn
-			// .set(id, {opacity: 0.2})
-			.from(id, { duration: 0.6, x: '-=100vw', delay: d, skewX: 25 })
-			// .to(id, { duration: 0.3, yPercent: -100, ease: 'elastic.in(1, 0.3)' })
-			// .to(id, { duration: 0.3, yPercent: 0, ease: 'power4.in' });
-			.to(id, { duration: 0.3, y: '-=50px', ease: 'elastic.in(1, 0.3)' })
+			// .from(id, { duration: 0.6, x: '-=100vw', delay: d, skewX: 25 })
+			.to(id, { duration: 0.3, y: '-=50px', ease: 'elastic.in(1, 0.3)', delay: d })
 			.to(id, { duration: 0.3, y: '+=50px', ease: 'power4.in' });
+
+
+			var path = gsap.timeline();
+			path
+				.fromTo(id, {drawSVG: "50% 50%" }, { duration: 3, drawSVG: "100%" })
 
 		// var flicker = gsap.timeline({ delay: 2, repeat: -1 });
 		// flicker.to(id, { ease: 'none', yoyo: true, repeat: true, opacity:((Math.random()*0.5) + 0.5), duration: (Math.random()*0.5), delay: Math.floor(2 + (Math.random() * 8.3))});
 		// flicker.to(id, { ease: 'none', yoyo: true, repeat: true, opacity:((Math.random()*0.5) + 0.5), duration: (Math.random()*0.5), delay: Math.floor(2 + (Math.random() * 3.1))});
 		// flicker.to(id, { ease: 'none', yoyo: true, repeat: true, opacity:((Math.random()*0.5) + 0.5), duration: (Math.random()*0.5), delay: Math.floor(2 + (Math.random() * 1.7))});
 
-		main.add(zoomIn).add(turnLightOn);
+		// main.add(zoomIn).add(turnLightOn).add(path);
+		main
+		.add(path)
+		.add(zoomIn)
+		;
 		// .add(flicker, "<")
 		return main;
 	};

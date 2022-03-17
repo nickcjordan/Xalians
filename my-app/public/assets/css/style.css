@@ -998,7 +998,7 @@ a:active {
 }
 
 .xalian-logo-letter {
-  opacity: 0.5;
+  opacity: 1;
 }
 
 .xalian-svg-carousel {
@@ -1245,7 +1245,7 @@ section {
   /* border: 1px dotted rgb(0, 255, 136); */
 }
 .debug-box {
-  /* border: 1px dotted rgb(7, 164, 255); */
+  border: 1px dotted rgb(7, 164, 255);
 }
 
 .splash-section-debug {
@@ -3261,4 +3261,34 @@ input, textarea {
 
 .species-compare-text {
   color: white;
+}
+
+.game-container {
+  aspect-ratio: 1;
+  background-color: #000000;
+  box-shadow: 0px 0px 30px rgb(0, 0, 0);
+  margin: auto;
+  margin-top: 5px !important;
+
+  
+}
+
+.match-card-game-wrapper {
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  align-content: stretch;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-flow: column wrap;
+
+  overflow: visible;
+}
+
+.match-game-card-flipped {
+  position: absolute;
+  /* transform: translate(-50%, -50%); */
+  top: 0;
+  left: 0;
 }

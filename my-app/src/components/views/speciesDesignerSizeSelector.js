@@ -21,7 +21,7 @@ class SpeciesDesignerSizeSelector extends React.Component {
 	componentDidMount() {
 		let animals = [];
 		animalSizes.forEach((animal) => {
-			animal.density = Math.floor((animal.mass / animal.size) * 100) / 100;
+			animal.density = Math.floor((animal.mass * 100 / animal.size) );
 			animals.push(animal);
 		});
 		let planetOptions = this.buildPlanetOptions();
@@ -30,7 +30,7 @@ class SpeciesDesignerSizeSelector extends React.Component {
 			maxMass: 1000,
 			minHeight: 6,
 			maxHeight: 240,
-			massRangeValue: 0,
+			densityRangeValue: 0,
 			sizeRangeValue: 0,
 			animals: animals,
 			closestSize: animals[0],
@@ -39,8 +39,8 @@ class SpeciesDesignerSizeSelector extends React.Component {
 			planetOptions: planetOptions,
 			nextSpeciesId: this.getNextSpeciesId(),
 		});
-		this.handleSizeChange(10);
-		this.handleMassChange(10);
+		// this.handleSizeChange(0);
+		// this.handleMassChange(0);
 	}
 
 	getNextSpeciesId() {
@@ -57,24 +57,34 @@ class SpeciesDesignerSizeSelector extends React.Component {
 
 	handleSizeChange(val) {
 		let sizeRef = this.getClosestSizeReference(val);
-		let densityRef = this.getClosestDensityReference(val, this.state.massRangeValue);
+		let massRef = this.getClosestMassReference((val * this.state.densityRangeValue)/100);
 		let xalianSpeciesRef = this.getClosestSpeciesReference(val);
 		this.setState({
 			sizeRangeValue: val,
-			closestDensity: densityRef,
 			closestSize: sizeRef,
 			xalianSpeciesRefLow: xalianSpeciesRef.low,
 			xalianSpeciesRefHigh: xalianSpeciesRef.high,
+			closestMass: massRef
 		});
 	}
 
-	handleMassChange(val) {
-		let massRef = this.getClosestMassReference(val);
-		let densityRef = this.getClosestDensityReference(this.state.sizeRangeValue, val);
+	// handleMassChange(val) {
+	// 	let massRef = this.getClosestMassReference(val);
+	// 	let densityRef = this.getClosestDensityReference(this.state.sizeRangeValue, val);
+	// 	this.setState({
+	// 		massRangeValue: val,
+	// 		closestMass: massRef,
+	// 		closestDensity: densityRef,
+	// 	});
+	// }
+
+	handleDensityChange(val) {
+		let densityRef = this.getClosestDensityReference(val);
+		let massRef = this.getClosestMassReference((val * this.state.sizeRangeValue) / 100);
 		this.setState({
-			massRangeValue: val,
-			closestMass: massRef,
+			densityRangeValue: val,
 			closestDensity: densityRef,
+			closestMass: massRef
 		});
 	}
 
@@ -104,11 +114,24 @@ class SpeciesDesignerSizeSelector extends React.Component {
 		return selected;
 	};
 
-	getClosestDensityReference = (size, mass) => {
+	// getClosestDensityReference = (size, mass) => {
+	// 	var selected = null;
+	// 	var diff = 1000000;
+	// 	this.state.animals.forEach((ref) => {
+	// 		let thisDiff = Math.abs(mass / size - ref.density);
+	// 		if (thisDiff < diff) {
+	// 			diff = thisDiff;
+	// 			selected = ref;
+	// 		}
+	// 	});
+	// 	return selected;
+	// };
+
+	getClosestDensityReference = (val) => {
 		var selected = null;
 		var diff = 1000000;
 		this.state.animals.forEach((ref) => {
-			let thisDiff = Math.abs(mass / size - ref.density);
+			let thisDiff = Math.abs(val - ref.density);
 			if (thisDiff < diff) {
 				diff = thisDiff;
 				selected = ref;
@@ -143,7 +166,12 @@ class SpeciesDesignerSizeSelector extends React.Component {
 
 	getCurrentSizeString() {
 		if (this.state.sizeRangeValue) {
-			let centimeters = this.state.sizeRangeValue;
+			return this.getSizeString(this.state.sizeRangeValue);
+		}
+	}
+
+	getSizeString(cm) {
+			let centimeters = cm;
 			let inches = Math.floor(centimeters / 2.54);
 			let feet = Math.floor(inches / 12);
 			let remainderInches = Math.floor(inches % 12);
@@ -166,21 +194,15 @@ class SpeciesDesignerSizeSelector extends React.Component {
 			result = result + ` :: ${inches} in / ${centimeters} cm`;
 
 			return result;
-		}
 	}
 
-	getCurrentMassString() {
-		if (this.state.massRangeValue) {
-			let massVal = this.state.massRangeValue;
-			let kg = Math.floor(massVal);
-			let lbs = Math.floor(kg * 2.205);
-
-			var result = `${lbs} lbs  /  ${kg} kg`;
-
+	getCurrentDensityString() {
+		if (this.state.densityRangeValue) {
+			let densityVal = this.state.densityRangeValue;
+			var result = `${densityVal} g/cm`;
 			return result;
 		}
 	}
-
 	getAnimalNameLangages(animal) {
 		var mammals = [];
 		mammalSuggestions.forEach((mammal) => {
@@ -278,49 +300,57 @@ class SpeciesDesignerSizeSelector extends React.Component {
 		return (
 			<div className=" vertically-center-contents stackable-margin">
 				<Row style={{ width: '100%' }}>
-					<Row>
+					{/* <Row>
 						<Col className="centered-div">
 							<h1>{this.getCurrentSizeString()}</h1>
 							<h1>{this.getCurrentMassString()}</h1>
 						</Col>
-					</Row>
+					</Row> */}
 					<Row>
 						<Col className="centered-div">
 							<div classsName="range-wrapper">
-								<h3>{(this.state.closestSize && `Size of a ${this.state.closestSize.name}  [${this.state.closestSize.size} cm]`) || 'Select Size'}</h3>
-								<h4 style={{ paddingTop: '15px', color: 'whitesmoke' }} >{(this.state.xalianSpeciesRefLow && `Bigger than ${this.state.xalianSpeciesRefLow.name} [${this.state.xalianSpeciesRefLow.height}]`) || ' '}</h4>
-								<h4 style={{ paddingBottom: '15px', color: 'whitesmoke' }} >{(this.state.xalianSpeciesRefHigh && `Smaller than ${this.state.xalianSpeciesRefHigh.name} [${this.state.xalianSpeciesRefHigh.height}]`) || ' '}</h4>
-								<Form.Label>Size ({this.state.sizeRangeValue})</Form.Label>
+								<h3>{(this.state.closestSize && `Size of a ${this.state.closestSize.name}  [${this.getSizeString(this.state.closestSize.size)}]`) || 'Select Size'}</h3>
+								<Form.Label style={{color:'whitesmoke'}}>{this.getCurrentSizeString()}</Form.Label>
 								<Form.Range max={1000} value={this.state.sizeRangeValue} onChange={(event) => this.handleSizeChange(event.target.value)} />
 							</div>
-							<div classsName="range-wrapper">
+							{/* <div classsName="range-wrapper">
 								<h3>{(this.state.closestMass && `Mass of a ${this.state.closestMass.name}  [${this.state.closestMass.mass} kg]`) || 'Select Mass'}</h3>
-								<Form.Label>Mass ({this.state.massRangeValue})</Form.Label>
+								<Form.Label style={{color:'whitesmoke'}}>{this.getCurrentMassString()}</Form.Label>
 								<Form.Range max={5000} value={this.state.massRangeValue} onChange={(event) => this.handleMassChange(event.target.value)} />
+							</div> */}
+							<div classsName="range-wrapper">
+								<h3>{(this.state.closestDensity && `Density of a ${this.state.closestDensity.name}  [${this.state.closestDensity.density} g/cm]`) || 'Select Density'}</h3>
+								<Form.Label style={{color:'whitesmoke'}}>{this.getCurrentDensityString()}</Form.Label>
+								<Form.Range max={800} value={this.state.densityRangeValue} onChange={(event) => this.handleDensityChange(event.target.value)} />
 							</div>
 						</Col>
 					</Row>
 					<Row>
-						<Col className="centered-div">{this.state.closestDensity && <h2>Density of a: {this.state.closestDensity.name + ': ' + this.state.closestDensity.density + 'kg/cm'}</h2>}</Col>
+						<Col className="centered-div">
+								{this.state.closestMass && <h2>Mass of a: {this.state.closestMass.name + ': ' + this.state.closestMass.mass + 'kg'}</h2>}
+								<h4 style={{ paddingTop: '15px', color: 'whitesmoke' }}>{(this.state.xalianSpeciesRefLow && `Bigger than ${this.state.xalianSpeciesRefLow.name} [${this.state.xalianSpeciesRefLow.height}]`) || ' '}</h4>
+								<h4 style={{ paddingBottom: '15px', color: 'whitesmoke' }}>{(this.state.xalianSpeciesRefHigh && `Smaller than ${this.state.xalianSpeciesRefHigh.name} [${this.state.xalianSpeciesRefHigh.height}]`) || ' '}</h4>
+						</Col>
 					</Row>
 					<Row>
-						<Col className="centered-div">{this.state.closestSize && <h2>Languages: {this.getListOfTranslations(this.state.closestSize)}</h2>}</Col>
+						<Col className="centered-div">
+							{this.state.closestSize && (
+								<React.Fragment>
+									<h2>Languages:</h2>
+									<div className="scrollable-section" style={{ maxHeight: '150px', border: 'solid 1px whitesmoke', borderRadius: '4px', padding: '4px' }} >{this.getListOfTranslations(this.state.closestSize)}</div>
+								</React.Fragment>
+							)}
+						</Col>
 					</Row>
 					<Row>
 						<Col className="centered-div">
 							<Form.Select onChange={(event) => this.handlePlanetChange(event.target.value)}>
-								<option>Open this select menu</option>
+								<option>Select Origin Planet</option>
 								{this.state.planetOptions}
 							</Form.Select>
 						</Col>
+						<Col>{this.state.selectedPlanet && <img style={{ maxWidth: '200px', maxHeight: '200px', height: 'auto', width: 'auto' }} src={this.state.selectedPlanet.planetImage} class="planet-gif" alt=""></img>}</Col>
 					</Row>
-					{this.state.selectedPlanet && (
-						<Row>
-							<Col>
-								<img src={this.state.selectedPlanet.planetImage} class="planet-gif" alt=""></img>
-							</Col>
-						</Row>
-					)}
 				</Row>
 			</div>
 		);

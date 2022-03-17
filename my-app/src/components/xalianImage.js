@@ -25,13 +25,13 @@ class XalianImage extends React.Component {
             let builtClasses = this.getTypeColorClassName(this.props.primaryType);
 			if (this.props.colored) {
 				return (
-					<div className={'xalian-image-wrapper ' + builtClasses} style={{ background: `linear-gradient(135deg, ${primaryColor} 15%, ${secondaryColor} 85%)` }}>
+					<div id={this.props.id} className={'xalian-image-wrapper ' + builtClasses} style={{ background: `linear-gradient(135deg, ${primaryColor} 15%, ${secondaryColor} 85%)` }}>
 						<Image src={this.getImageLocationFromSpecies(this.props.speciesName)} className={'xalian-image'} />
 					</div>
 				);
 			} else {
 				return (
-					<div className={'xalian-image-wrapper ' + builtClasses}>
+					<div id={this.props.id} className={'xalian-image-wrapper ' + builtClasses}>
 						<Image src={this.getImageLocationFromSpecies(this.props.speciesName)} className={'xalian-image'} />
 					</div>
 				);
@@ -42,13 +42,13 @@ class XalianImage extends React.Component {
             let builtClasses = this.getTypeColorClassName(this.props.primaryType);
 			if (this.props.colored) {
 				return (
-					<div className={'xalian-image-wrapper ' + builtClasses} style={{ background: `radial-gradient(circle, ${primaryColor} 60%, ${primaryColor + '85'} 100%)` }} >
+					<div id={this.props.id} className={'xalian-image-wrapper ' + builtClasses} style={{ background: `radial-gradient(circle, ${primaryColor} 60%, ${primaryColor + '85'} 100%)` }} >
 						<Image src={this.getImageLocationFromSpecies(this.props.speciesName)} className='xalian-image'/>
 					</div>
 				);
 			} else {
 				return (
-					<div className={'xalian-image-wrapper ' + builtClasses}>
+					<div id={this.props.id} className={'xalian-image-wrapper ' + builtClasses}>
 						<Image src={this.getImageLocationFromSpecies(this.props.speciesName)} className='xalian-image'/>
 					</div>
 				);

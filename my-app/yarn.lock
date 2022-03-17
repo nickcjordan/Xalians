@@ -8776,9 +8776,9 @@
   "resolved" "https://registry.npmjs.org/growly/-/growly-1.3.0.tgz"
   "version" "1.3.0"
 
-"gsap@^3.9.1", "gsap@>=3":
-  "integrity" "sha512-JSGVYoC6da4pIjdF/yxFU6Rz8OojOIDkbooveZlfNg0+JIoFoRruyfWAEi6R/gUeNcuOiTqUIb0gi1nCNrHf8w=="
-  "resolved" "https://registry.npmjs.org/gsap/-/gsap-3.9.1.tgz"
+"gsap@>=3", "gsap@file:gsap-bonus.tgz":
+  "integrity" "sha512-AkVycF1AK9LzGtuCdIL2ZLI3uMBd64hLkKoKKk4nbFoTsfjF8Sx7jrR/H9tF0qwybsTU+GPXSoIXfBQwDwW79A=="
+  "resolved" "file:gsap-bonus.tgz"
   "version" "3.9.1"
 
 "gzip-size@5.1.1":
