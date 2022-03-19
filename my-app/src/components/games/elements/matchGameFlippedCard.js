@@ -20,10 +20,7 @@ class MatchGameFlippedCard extends React.Component {
 
     componentDidMount() {
         gsap.timeline({ repeat: -1, yoyo: true, delay: this.props.delay, repeatDelay: 0 })
-        // .fromTo('#xalians-logo-x', {drawSVG: "0%" }, { duration: 1, drawSVG: "0% 10%", ease: 'none' })
-        .fromTo('#'+this.props.id+'-svg>path', {drawSVG: "0% 25%" }, { duration: 3, drawSVG: "65% 90%", ease: 'none' })
-        // .fromTo('#xalians-logo-x', {drawSVG: "90% 100%" }, { duration: 3, drawSVG: "0% 20%", ease: 'none' })
-        // .fromTo('#xalians-logo-x', {drawSVG: "80% 100%" }, {drawSVG: "0% 20%" }, )
+        .fromTo('#'+this.props.id+'-svg>path', {drawSVG: "0% 25%" }, { duration: 6, drawSVG: "65% 90%", ease: 'none' })
         ;
     }
 

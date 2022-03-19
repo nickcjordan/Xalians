@@ -1245,7 +1245,7 @@ section {
   /* border: 1px dotted rgb(0, 255, 136); */
 }
 .debug-box {
-  border: 1px dotted rgb(7, 164, 255);
+  /* border: 1px dotted rgb(7, 164, 255); */
 }
 
 .splash-section-debug {
@@ -3263,13 +3263,19 @@ input, textarea {
   color: white;
 }
 
+
+/* 
+-------------------------------------------
+|   GAMES
+-------------------------------------------
+*/
+
 .game-container {
   aspect-ratio: 1;
   background-color: #000000;
   box-shadow: 0px 0px 30px rgb(0, 0, 0);
-  margin: auto;
-  margin-top: 5px !important;
-
+  /* margin-top: 5px !important; */
+  padding: 5px !important;
   
 }
 
@@ -3278,9 +3284,9 @@ input, textarea {
   width: 100%;
 
   display: flex;
-  align-content: stretch;
+  align-content: center;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: center;
   flex-flow: column wrap;
 
   overflow: visible;
@@ -3288,7 +3294,37 @@ input, textarea {
 
 .match-game-card-flipped {
   position: absolute;
+  height: 100%;
+  width: 100%;
+  /* padding: 10px; */
   /* transform: translate(-50%, -50%); */
-  top: 0;
-  left: 0;
+  /* top: 50%; */
+  /* left: 50%; */
+}
+
+.game-centered-over-object {
+  position: absolute;
+  z-index: 1000;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  /* bottom: 0%; */
+  left: 50%;
+  margin: auto;
+}
+
+.game-bottom-over-object {
+  position: absolute;
+  z-index: 1000;
+  transform: translate(-50%, 0%);
+  /* top: 50%; */
+  bottom: 2%;
+  left: 50%;
+  margin: auto;
+}
+
+.game-display-text {
+  font-weight: bold !important;
+  font-size: 2em;
+  text-shadow: 0px 0px 2px 2px rgb(0, 0, 0) !important;
+  color: black;
 }

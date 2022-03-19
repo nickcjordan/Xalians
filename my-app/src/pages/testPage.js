@@ -24,41 +24,47 @@ import { ReactComponent as SpaceshipComputerScreenXSVG } from '../svg/animations
 import SpeciesDesignerSizeSelector from '../components/views/speciesDesignerSizeSelector';
 
 import XalianSpeciesSizeComparisonView from '../components/views/xalianSpeciesSizeComparisonView';
+import { ReactComponent as FigzySVG } from '../svg/species/figzy.svg';
+import { ReactComponent as FigzyRotateSixtySVG } from '../svg/games/figzy_rotate_60.svg';
+import Form from "react-bootstrap/Form";
+import PhysicsGamePage from './games/physicsGamePage';
+
+
+
 
 import { gsap, Linear } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
+import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin';
 import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
-gsap.registerPlugin(MotionPathPlugin, DrawSVGPlugin, ScrollTrigger);
+import { Draggable } from 'gsap/Draggable';
+import { InertiaPlugin } from 'gsap/InertiaPlugin';
+import { Physics2DPlugin } from 'gsap/Physics2DPlugin';
+
+gsap.registerPlugin(MotionPathPlugin, DrawSVGPlugin, ScrollTrigger, MorphSVGPlugin, InertiaPlugin, Draggable, Physics2DPlugin);
+
 
 class TestPage extends React.Component {
-    getImageLocation() {
-		return require('../svg/logo/xalians_logo.svg')?.default;
-	}
 
-    getClasses() {
-		var x = 'xalian-image-bordered xalian-image-shadowed xalian-image-wrapper-padded ';
-		x = x + this.props.moreClasses;
-		return x;
-	}
+    
 
     componentDidMount() {
-        var path = gsap.timeline();
-			path
-				.fromTo('#xalians-logo-x', {drawSVG: "50% 50%" }, { duration: 3, drawSVG: "100%" })
-        // gsap.fromTo('.xalian-logo-letter-x', {drawSVG: "50% 50%" }, { duration: 3, drawSVG: "100%" });
-        console.log("uhmm");
+        // MorphSVGPlugin.convertToPath("#figzy");
+        // MorphSVGPlugin.convertToPath("#figzy_rotate_60");
+        
+
+
     }
 
+    
+
 	render() {
-			let primaryColor = '#000000';
-			let secondaryColor = '#1f1f1f';
-            let builtClasses = this.getClasses();
             return (
-                // <div id={this.props.id} className={'xalian-image-wrapper ' + builtClasses} style={{ background: `linear-gradient(135deg, ${primaryColor} 15%, ${secondaryColor} 85%)`, visibility: this.props.visibility }}>
-                    <Image src={this.getImageLocation()} className='' />
-                // </div>
-            );
+                <Container fluid>
+                    <PhysicsGamePage/>
+                </Container>
+				
+			);
 	}
 }
 
