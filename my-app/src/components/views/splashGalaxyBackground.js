@@ -39,9 +39,9 @@ class SplashGalaxyBackground extends React.Component {
 					options={{
 						background: {
 							// image: "url('assets/img/background/galaxy-splash.png')",
-							image: "url('assets/img/background/seamless_stars.png')",
+							image: "url('assets/img/background/stars_bg.png')",
 							position: "center center",
-							size: "contain",
+							size: "50%",
 							repeat: "repeat"
 						},
 						fpsLimit: 60,
@@ -88,7 +88,7 @@ class SplashGalaxyBackground extends React.Component {
 								},
 							},
 							shape: {
-								type: 'star',
+								type: 'circle',
 							},
 							size: {
 								random: true,

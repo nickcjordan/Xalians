@@ -19,7 +19,7 @@ gsap.registerPlugin(MotionPathPlugin, TextPlugin, ScrollTrigger, DrawSVGPlugin);
 
 class MatchCardGamePage extends React.Component {
 	state = {
-		cardRowSize: 2,
+		cardRowSize: 4,
 		text: '',
 		flippedStatus: new Map(),
 		started: false,

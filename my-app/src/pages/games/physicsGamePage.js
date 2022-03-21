@@ -21,9 +21,12 @@ import { Draggable } from 'gsap/Draggable';
 import { InertiaPlugin } from 'gsap/InertiaPlugin';
 import { Physics2DPlugin } from 'gsap/Physics2DPlugin';
 import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin';
+import { GSDevTools } from 'gsap/GSDevTools';
+import PhysicsPropsPlugin from 'gsap/PhysicsPropsPlugin';
 import ThemedSceneDiv from '../../components/views/themedSceneDiv';
 import BaseGamePage from './baseGamePage';
-gsap.registerPlugin(MotionPathPlugin, TextPlugin, ScrollTrigger, DrawSVGPlugin, Draggable, InertiaPlugin, Physics2DPlugin, MorphSVGPlugin);
+gsap.registerPlugin(MotionPathPlugin, TextPlugin, ScrollTrigger, DrawSVGPlugin, Draggable, InertiaPlugin, Physics2DPlugin, MorphSVGPlugin, GSDevTools, PhysicsPropsPlugin);
+
 
 class PhysicsGamePage extends React.Component {
 
@@ -34,28 +37,76 @@ class PhysicsGamePage extends React.Component {
 
 
 	componentDidMount() {
-        window.addEventListener('resize', this.updateSize);
-		this.updateSize();
+        InertiaPlugin.track("#target", "x,y"); 
+     
         gsap.set('#figzy-body', { transformOrigin: '50%, bottom'});
         gsap.set('#figzy-inside-spinner, #figzy-outside-spinner', { transformOrigin: '50%, 50%' });
         gsap.to('#figzy-inside-spinner, #figzy-outside-spinner', {scale: ((this.state.powerValue + 50) / 100)});
 
-        Draggable.create('#figzy-outside-spinner', {
-			bounds: window,
-			edgeResistance: 0.65,
-			type: 'x,y',
-			inertia: true,
-			autoScroll: true,
-			// liveSnap: liveSnap,
-			snap: {
-				x: function (endValue) {
-					return true || true ? Math.round(endValue / 500) * 500 : endValue;
-				},
-				y: function (endValue) {
-					return true || true ? Math.round(endValue / 500) * 500 : endValue;
-				},
-			},
-		});
+        // window.addEventListener('resize', this.updateSize);
+		this.updateSize(() => {
+            // Draggable.create('#figzy-outside-spinner', {
+
+                // gsap.to('#target', {
+                //     physics2D: {
+                //         gravity: '400'
+                //     }
+                // });
+
+            Draggable.create('#target', {
+                bounds: document.getElementById("arena"),
+                // edgeResistance: 1,
+                type: 'x,y',
+                inertia: true,
+                overshootTolerance : 0,
+                snap:{y: 1000},
+                // autoScroll: true,
+                // liveSnap: liveSnap,
+                // snap: {
+                // 	x: function (endValue) {
+                // 		return true || true ? Math.round(endValue / 500) * 500 : endValue;
+                // 	},
+                // 	y: function (endValue) {
+                // 		return true || true ? Math.round(endValue / 500) * 500 : endValue;
+                // 	},
+                // },
+                onDragEnd: function() {
+                    console.log("x velocity is: " + InertiaPlugin.getVelocity(this.target, "x") + " and the duration is " + this.tween.duration() + " seconds.");
+                    console.log("y velocity is: " + InertiaPlugin.getVelocity(this.target, "y"));
+                    // gsap.to('#target', {
+                    //     duration: this.tween.duration(),
+                    //     physicsProps: {
+                    //         y: {acceleration: '1'},
+                    //         x: 
+                    //     }
+                    // });
+                    let velocityX = InertiaPlugin.getVelocity(this.target, "x");
+                    let velocityY = InertiaPlugin.getVelocity(this.target, "y");
+                    var angleInDegrees = Math.atan2(velocityX,velocityY)*180/Math.PI;
+                    // gsap.killTweensOf('#target');
+                    // gsap.to('#target', {
+                        // duration: this.tween.duration(),
+                        // physics2D: {
+                        //     gravity: '400',
+                        // },
+                        // physicsProps: {
+                        //     x: {velocity: velocityX},
+                        //     y: {velocity: velocityY, acceleration: 400}
+                        // },
+                        // inertia: {
+                        //     x: {
+                        //         velocity: velocityX,
+                        //     },
+                        //     y: {
+                        //         velocity: velocityY,
+                        //     }
+                        // }
+                    // });
+                }
+            });
+
+        });
+
     }
 
     componentWillUnmount() {
@@ -73,9 +124,7 @@ class PhysicsGamePage extends React.Component {
     }
 
     action = () => {
-        // gsap.to('#figzy-inside-spinner, #figzy-outside-spinner', {x: '+= 100px', y: '+= 100px', ease: "power2.inOut"});
-        gsap.to('#figzy-inside-spinner, #figzy-outside-spinner', {onUpdate: this.checkHit, duration: 20, physics2D: {velocity: this.state.powerValue*10, angle: -this.state.rotateValue, gravity: 400}});
-
+       gsap.to('#target', {x: 0, y: 0});
     }
 
     checkHit = () => {
@@ -85,15 +134,15 @@ class PhysicsGamePage extends React.Component {
         }
       }
 
-    undoIt = () => {
-        MorphSVGPlugin.convertToPath("G");
-        gsap.timeline().to('#figzy-body', {morphSVG: '#figzy-body-rotate-60', duration: 1}).then(() => {
-            console.log('done');
-        });
-    }
+    // undoIt = () => {
+    //     MorphSVGPlugin.convertToPath("G");
+    //     gsap.timeline().to('#figzy-body', {morphSVG: '#figzy-body-rotate-60', duration: 1}).then(() => {
+    //         console.log('done');
+    //     });
+    // }
 
     
-	setSize = (w, h) => {
+	setSize = (w, h, callback) => {
 		let max = Math.max(w, h);
 		let min = Math.min(w, h);
 
@@ -106,19 +155,20 @@ class PhysicsGamePage extends React.Component {
 				max: max - padding,
 				min: min - padding,
 			},
-		});
+		}, callback);
 	};
 
-	updateSize = () => {
-		this.setSize(window.innerWidth, Math.min(window.innerHeight*0.8, window.innerHeight - 100));
+	updateSize = (callback) => {
+		this.setSize(window.innerWidth, Math.min(window.innerHeight*0.8, window.innerHeight - 100), callback);
+
 	};
 
 
 	render() {
 		return (
 			<React.Fragment>
-				{/* <Container fluid className="content-background-container"> */}
-					{/* <XalianNavbar></XalianNavbar> */}
+				<Container fluid className="content-background-container">
+					<XalianNavbar></XalianNavbar>
 
 					<Row style={{ margin: '5px' }}>
 						<Col>
@@ -138,7 +188,7 @@ class PhysicsGamePage extends React.Component {
 										<Col style={{ height: '100%'}}>
 											<div id="arena" style={{ height: '100%', width: '100%', position: 'relative', backgroundColor: '#8fa2f85e' }}>
 												<div style={{ maxHeight: this.state.size.min * 0.1, maxWidth: this.state.size.min * 0.1, margin: 'auto', position: 'absolute', bottom: '0%', left: '0' }}>
-													<FigzySVG style={{ height: '100%', width: '100%', overflow: 'visible', pointerEvents: 'none' }} />
+													<FigzySVG style={{ height: '100%', width: '100%', overflow: 'visible' }} />
 												</div>
                                                     <div id="target" style={{ backgroundColor: 'blue', width: '50px', height: '50px', position: 'absolute', bottom: '0%', right: '0' }}></div>
 											</div>
@@ -158,7 +208,7 @@ class PhysicsGamePage extends React.Component {
 						</Col>
 						<Col>{/* <h1>{this.state.started.toString()}</h1> */}</Col>
 					</Row>
-				{/* </Container> */}
+				</Container>
 			</React.Fragment>
 		);
 	}

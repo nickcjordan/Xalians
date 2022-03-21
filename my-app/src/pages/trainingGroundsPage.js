@@ -20,8 +20,8 @@ class TrainingGroundsPage extends React.Component {
     buildGamesList = () => {
         let list = []
         
-        list.push(<a href="/games/match"> <h1>Xalian Match</h1></a>);
-        list.push(<a href="/games/match"> <h1>Xalian Match</h1></a>);
+        list.push(<a href="/train/match"> <h1>Xalian Match</h1></a>);
+        list.push(<a href="/train/physics"> <h1>Physics</h1></a>);
 
         this.setState({ games: list });
     }
@@ -34,8 +34,8 @@ class TrainingGroundsPage extends React.Component {
                 <XalianNavbar></XalianNavbar>
 
                     <Row className="">
-                        <Col >
-                        {this.state.games}
+                        <Col style={{ textAlign: 'center' }} >
+                            {this.state.games}
                         </Col>
                     </Row>
 

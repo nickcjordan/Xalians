@@ -17,6 +17,7 @@ import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { TextPlugin } from 'gsap/TextPlugin';
 import { EasePack } from 'gsap/EasePack';
+import GSDevTools from 'gsap/GSDevTools';
 import SplashGalaxyBackground from '../components/views/splashGalaxyBackground';
 // import XaliansLogoAnimatedSVG from '../svg/logo/xaliansLogoAnimatedSVG';
 import { ReactComponent as XaliansLogoSVG } from '../svg/logo/xalians_logo.svg';
@@ -37,10 +38,11 @@ import XalianSpeciesRowView from '../components/views/xalianSpeciesRowView';
 import XalianStatRatingChart from '../components/xalianStatRatingChart';
 import XalianInfoBox from '../components/xalianInfoBox';
 // import spaceshipComputerScreenTitlePanel from '../svg/animations/spaceship_computer_screen_title_panel.svg';
+import { ExpoScaleEase } from 'gsap/EasePack';
 
 import ComputerScreenContent from '../components/animations/computerScreenContent';
-gsap.registerPlugin(ScrollTrigger, TextPlugin, EasePack, ScrollToPlugin, DrawSVGPlugin, ScrambleTextPlugin);
-
+gsap.registerPlugin(ScrollTrigger, TextPlugin, EasePack, ScrollToPlugin, DrawSVGPlugin, ScrambleTextPlugin, GSDevTools, ExpoScaleEase);
+// GSDevTools.create();
 const reqSvgs = require.context ( '../svg/species', true, /\.svg$/ );
 const svgs = reqSvgs.keys () .map ( path => ({ path, file: reqSvgs ( path ) }) );
 
@@ -81,7 +83,7 @@ class Home extends React.Component {
 			computerScreenCurrentContent: content,
 			computerScreenContentIndex: ind
 		});
-		let tl = gsap.timeline();
+		let tl = gsap.timeline({id: 'computer-screen-content-animation'});
 		tl.fromTo('#computer-content-section', {xPercent: 0}, {xPercent:-100, duration: 0.3})
 		.fromTo('#computer-content-section', {autoAlpha: 1}, {autoAlpha: 0, duration: 0.2}, "<")
 		.set('#computer-content-section-title-text', {text: content.title})
@@ -185,7 +187,8 @@ class Home extends React.Component {
 
 		var splashTl = gsap.timeline({
 			// repeat: 0,
-			delay: 0.5,
+			id: 'splash-timeline-animation',
+			// delay: 0.5,
 			scrollTrigger: {
 				trigger: '#splash-section',
 				// start: 'top 20%',
@@ -203,9 +206,9 @@ class Home extends React.Component {
 			.fromTo('#xalian-generator-link', { opacity: 0 }, { opacity: 1, duration: 1, delay: 0.5 }, '<')
 			// CREATE :: EARN :: TRADE :: PLAY
 			.fromTo('#splash-social-media-links', { opacity: 0 }, { opacity: 1, duration: 1, delay: 0 }, '<')
-			.to('#subline1', { scrambleText:{ chars: '1234567890', text: "{original}", revealDelay: "0.5" }, opacity: 1, duration: 3, delay: 0.25 }, '<')
-			.to('#subline2', { scrambleText:{ chars: '1234567890', text: "{original}", revealDelay: "0.5" }, opacity: 1, duration: 3, delay: 0.5 }, '<')
-			.to('#subline3', { scrambleText:{ chars: '1234567890', text: "{original}", revealDelay: "0.5" }, opacity: 1, duration: 3, delay: 0.75 }, '<')
+			.to('#subline1', { scrambleText:{ chars: 'abcdefghijklmnopqrstuvwxyz', text: "{original}", revealDelay: "0.25" }, opacity: 1, duration: 3, delay: 0.25 }, '<')
+			.to('#subline2', { scrambleText:{ chars: 'abcdefghijklmnopqrstuvwxyz', text: "{original}", revealDelay: "0.25" }, opacity: 1, duration: 3, delay: 0.5 }, '<')
+			.to('#subline3', { scrambleText:{ chars: 'abcdefghijklmnopqrstuvwxyz', text: "{original}", revealDelay: "0.25" }, opacity: 1, duration: 3, delay: 0.75 }, '<')
 			// discord and twitter links
 
 			// .to('#splash-animated-changing-text', { opacity: 1, duration: 0.5, delay: 0.4 }, '<')
@@ -216,61 +219,27 @@ class Home extends React.Component {
 			// .to('#splash-animated-changing-text', { opacity: 0, duration: 0.5, delay: 0.5 });
 
 		var spaceshipTl = gsap.timeline({
+			id: 'spaceship-timeline-animation',
 			scrollTrigger: {
 				trigger: '#splash-section',
 				// pin: true,
-				scrub: 2,
+				scrub: 4,
 				// markers: true,
 				start: 'center center',
 				// end: 'bottom 20%',
 				end: 'bottom top',
-				// end: '+=200%',
-				// snap: "labelsDirectional",
-				// snap: {
-				// 	snapTo: "labels",
-				// 	duration: 3,
-				// 	inertia: false
-				// },
-				// preventOverlaps: "spaceship-animation-group",
 				toggleActions: 'play complete reverse reset',
-				anticipatePin: 1,
-				// onEnter: () => {
-				// 	gsap.to(window, { scrollTo: { duration: 10, y: "#splash-page-spaceship-window-animation", autoKill: false} });
-				// },
-				onLeave: () => {
-					gsap.to(window, { scrollTo: { duration: 1, y: "#splash-page-spacer", autoKill: false} });
-					// document.querySelector('#splash-page-spacer').scrollIntoView({ behavior: 'smooth' });
-				}
 			},
 		});
 
-		// let xElement = document.getElementById('xalians-logo-x');
-		// let xRect = xElement.getBoundingClientRect();
-		// let offset = ((xRect.x) - (window.innerWidth/2));
-		// let offset = window.innerWidth / 2 - (xRect.width / 2 + xRect.x);
-		// let perc = xRect.width / window.innerWidth;
-		// let a1 = Math.floor(perc * 1000);
-
-		// ScrollTrigger.create({
-		//   trigger: '#splash-section',
-		//   start: 'center center',
-		// //   end: 'bottom 20%',
-		//   onLeave: () => { gsap.to(window, { scrollTo: { duration: 3, y: "#splash-page-spacer", autoKill: false } }) },
-		//   onEnterBack: () => { gsap.to(window, { scrollTo: { duration: 3, y: 0, autoKill: false } }) }
-		// });
 
 		spaceshipTl
-		// .addLabel("before-spaceship-window-animation")
-			// .to('#subline1, #subline2, #subline3, #splash-animated-changing-text, #splash-social-media-links, #xalian-generator-link, #xalians-logo-a1, #xalians-logo-l, #xalians-logo-i, #xalians-logo-a2, #xalians-logo-n, #xalians-logo-s', { opacity: 0 }, '<')
-			// .to('#subline1, #subline2, #subline3, #splash-social-media-links, #xalian-generator-link, #xalians-logo-a1, #xalians-logo-l, #xalians-logo-i, #xalians-logo-a2, #xalians-logo-n, #xalians-logo-s', { opacity: 0 }, '<')
 			.to('#subline1, #subline2, #subline3, #splash-social-media-links, #xalian-generator-link, #xaliansLogo', { opacity: 0 }, '<')
-			.from('#spaceship-window-animation-svg', { scale: 10, duration: 1, ease: 'none' })
-			.to('#spaceship-window-animation-svg', { xPercent: -100, ease: 'none' })
-			.from('#spaceship-animation-panel-wrapper', { xPercent: 100, ease: 'none' }, '<')
-			.to('#spaceship-computer-outside-animation', { autoAlpha: 0, scale: 5 })
-			.fromTo('#spaceship-computer-screen-animation-svg', { autoAlpha: 0 }, { width: this.state.max, height: this.state.max, autoAlpha: 1 }, '<')
-			
-			// .addLabel('after-spaceship-window-animation')
+			.from('#spaceship-window-animation-svg', { scale: 10, duration: 3, ease: 'expoScale(10, 1)' })
+			.to('#spaceship-window-animation-svg', { xPercent: -100, duration: 2, ease: 'none' })
+			.from('#spaceship-animation-panel-wrapper', { xPercent: 100, duration: 2, ease: 'none' }, '<')
+			.to("#splash-section", { backgroundColor: 'black' }, "<")
+			.to('#spaceship-computer-outside-animation', { scale: 5, duration: 3, ease: 'expoScale(1, 5)' })
 			;
 
 		// DIM COMPUTER SCREEN WHEN AT THE BOTTOM OF THE PAGE
@@ -281,10 +250,10 @@ class Home extends React.Component {
 				start: 'top top',
 				end: '+=25%',
 				onLeaveBack: () => { gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 1}) },
-				onLeave: () => { 
-					gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 0});
-
-				},
+				onEnter: () => { gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 1}) },
+				onLeave: () => { gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 0}
+			);
+			},
 				// onEnterBack: () => { gsap.to(window, { scrollTo: { duration: 1, y: "#splash-section", autoKill: false} })}
 				// preventOverlaps: "spaceship-animation-group"
 		});
@@ -301,7 +270,7 @@ class Home extends React.Component {
 		});
 
 		// MAKE XALIAN GENERATOR LINK GLOW
-		gsap.timeline({ repeat: -1 })
+		gsap.timeline({ id: 'generator-link-glow-timeline', repeat: -1 })
 		.fromTo('#xalian-generator-link', { boxShadow: '0px 0px 4px 4px #80ffb100' }, { boxShadow: '0px 0px 10px 10px #80ffb0', duration: 1})
 		.fromTo('#xalian-generator-link', { boxShadow: '0px 0px 10px 10px #80ffb0', duration: 1 }, { boxShadow: '0px 0px 4px 4px #80ffb100' });
 
@@ -311,16 +280,16 @@ class Home extends React.Component {
 	}
 
 	buildLogoAnimation = (delay = 0) => {
-		let main = gsap.timeline({
+		let main = gsap.timeline({ id: 'xalian-logo-timeline'
 		});
 		main
-		.add(this.buildLetterEntry('#xalians-logo-x', delay + 0.3), '<')
-		.add(this.buildLetterEntry('#xalians-logo-a1', delay + 0.25), '<')
-		.add(this.buildLetterEntry('#xalians-logo-l', delay + 0.2), '<')
+		.add(this.buildLetterEntry('#xalians-logo-s', delay + 0.3), '<')
+		.add(this.buildLetterEntry('#xalians-logo-n', delay + 0.25), '<')
+		.add(this.buildLetterEntry('#xalians-logo-a2', delay + 0.2), '<')
 		.add(this.buildLetterEntry('#xalians-logo-i', delay + 0.15), '<')
-		.add(this.buildLetterEntry('#xalians-logo-a2', delay + 0.1), '<')
-		.add(this.buildLetterEntry('#xalians-logo-n', delay + 0.05), '<')
-		.add(this.buildLetterEntry('#xalians-logo-s', delay + 0), '<')
+		.add(this.buildLetterEntry('#xalians-logo-l', delay + 0.1), '<')
+		.add(this.buildLetterEntry('#xalians-logo-a1', delay + 0.05), '<')
+		.add(this.buildLetterEntry('#xalians-logo-x', delay + 0), '<')
 		;
 		return main;
 	};
@@ -342,8 +311,10 @@ class Home extends React.Component {
 
 
 			var path = gsap.timeline();
-			path
-				.fromTo(id, {drawSVG: "50% 50%" }, { duration: 3, drawSVG: "100%" })
+			path.fromTo(id, {drawSVG: "50% 50%" }, { duration: 5, drawSVG: "100%", strokeWidth: '5px' });
+
+			var pathContinued = gsap.timeline({ repeat: -1, yoyo: true, delay: d })
+        	.to(id, { duration: 0.25, opacity: 0.4, ease: 'none', delay: 1 });
 
 		// var flicker = gsap.timeline({ delay: 2, repeat: -1 });
 		// flicker.to(id, { ease: 'none', yoyo: true, repeat: true, opacity:((Math.random()*0.5) + 0.5), duration: (Math.random()*0.5), delay: Math.floor(2 + (Math.random() * 8.3))});
@@ -354,6 +325,7 @@ class Home extends React.Component {
 		main
 		.add(path)
 		.add(zoomIn)
+		.add(pathContinued)
 		;
 		// .add(flicker, "<")
 		return main;
@@ -368,7 +340,7 @@ class Home extends React.Component {
 
 						<section id="splash-section" className="splash-section-debug">
 							<div id="splash-container" className="splash-container vertically-center-contents splash-background">
-								<Row className="title-logo-row centered-div">
+								<Row className="title-logo-row">
 									<Col lg={8} md={9} sm={10} xs={11} className="title-logo-col vertically-center-contents">
 										<Stack className="splash-stack">
 											<XaliansLogoSVG onClick={this.handleDebugClick} id="xaliansLogo" className="animated-xalian-svg xalian-logo" />
@@ -405,8 +377,8 @@ class Home extends React.Component {
 							<div className="spaceship-animation-window-panel-wrapper" style={{ left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max }}>
 								<SpaceshipWindowSVG className="debug-box" id="spaceship-window-animation-svg" style={{ left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max }} />
 							</div>
-							<div id="spaceship-animation-panel-wrapper" className="spaceship-animation-screen-panel-wrapper" style={{ left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max }}>
-								<SpaceshipComputerScreenGridSVG className="debug-box spaceship-screen-grid-svg" id="spaceship-computer-screen-animation-svg" style={{ left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max }} />
+							<div id="spaceship-animation-panel-wrapper" className="spaceship-animation-screen-panel-wrapper" style={{ left: this.state.maxXOffset - 1, top: this.state.maxYOffset, width: this.state.max, height: this.state.max }}>
+								{/* <SpaceshipComputerScreenGridSVG className="debug-box spaceship-screen-grid-svg" id="spaceship-computer-screen-animation-svg" style={{ left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max }} /> */}
 								<div className="debug-box spaceship-screen" id="spaceship-computer-outside-animation" style={{ backgroundSize: this.state.min, width: this.state.min, height: this.state.min }} />
 							</div>
 						</div>

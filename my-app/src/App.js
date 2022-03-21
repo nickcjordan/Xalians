@@ -17,7 +17,9 @@ import Sandboxtwo from './pages/sandboxtwo';
 import React from "react";
 import XalianNavbar from './components/navbar';
 import Container from 'react-bootstrap/Container';
-
+import MatchCardGamePage from './pages/games/matchCardGamePage';
+import PhysicsGamePage from './pages/games/physicsGamePage';
+import TrainingGroundsPage from './pages/trainingGroundsPage';
 
 import {
   BrowserRouter as Router,
@@ -28,7 +30,6 @@ import {
 
 import Amplify from 'aws-amplify';
 import awsconfig from './aws-exports';
-import TrainingGroundsPage from './pages/trainingGroundsPage';
 
 Amplify.configure(awsconfig);
 
@@ -62,6 +63,8 @@ class App extends React.Component {
               <Route exact path="/sandbox"><Sandbox /></Route>
               <Route exact path="/sandboxtwo"><Sandboxtwo /></Route>
               <Route exact path="/train"><TrainingGroundsPage /></Route>
+                <Route exact path="/train/match"><MatchCardGamePage /></Route>
+                <Route exact path="/train/physics"><PhysicsGamePage /></Route>
               <Route exact path="/test"><TestPage /></Route>
             </Switch>
           </div>

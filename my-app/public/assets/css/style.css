@@ -8,6 +8,8 @@
 *     background gray: #0d0d0d
 *     light gray: #cccccc
 */
+
+
 /*--------------------------------------------------------------
 # Custom Theme
 --------------------------------------------------------------*/
@@ -600,20 +602,25 @@ body { width: 100%; max-width: 100%; height: auto;
 
 .splash-container {
   height: 100%;
-
+  margin: auto;
 }
 
 .title-logo-row {
   /* max-height: 80vh !important; */
-  height: calc(100vh - 50px);
+  height: calc(100vh - 60px);
   /* height: 100vh !important; */
-  margin: auto;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  margin-top: 0px !important;
   width: 100%;
   /* padding-top: 50px; */
+  justify-content: center;
 }
 
 .splash-stack {
   margin: auto;
+  /* margin-top: 10%; */
+  /* margin-bottom: 0px; */
 }
 
 .title-logo-col {
@@ -966,6 +973,7 @@ a:active {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  /* border: solid 4px black; */
 }
 
 .spaceship-animation-window-panel-wrapper {
@@ -2722,42 +2730,22 @@ article {
   color: rgb(197, 49, 49);
 }
 
-.themed-modal .modal-content {
+.resend-verification-link-wrapper a {
+  color: rgb(130, 130, 255) !important;
+}
+
+.dark-themed-modal .modal-content {
   background-color: #1a1a1a;
   color: white;
   filter: drop-shadow(5px 5px 4px #000000);
 }
 
-.themed-modal>input {
+.dark-themed-modal>input {
   color: white;
 }
 
-/* .themed-modal > .form-floating {
-  background-color: #22222241;
-  color: white;
-} */
-/* #floatingEmail {
-  background-color: #22222241 !important;
-  color: white !important;
-  border: none !important;
-} */
-/* .themed-modal > .form-floating > input {
-  background-color: #22222241 !important;
-  color: white !important;
-  border: none !important;
-} */
-
-/* .text-input {
-  background-color: #22222241 !important;
-  color: white !important;
-} */
-
-.resend-verification-link-wrapper a {
-  color: rgb(130, 130, 255) !important;
-}
-
-input,
-textarea {
+.dark-themed-modal input,
+.dark-themed-modal textarea {
   /* background-color: #202020 !important; */
   background-color: #20202000 !important;
   color: #80ffb0 !important;
@@ -2766,31 +2754,54 @@ textarea {
   border-radius: 0 !important;
 }
 
-input:disabled,
-textarea {
+.dark-themed-modal input:disabled,
+.dark-themed-modal textarea {
   background-color: #29292950 !important;
   color: #c0c0c0 !important;
 }
 
-/* input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
-input:-webkit-autofill:active{
-    -webkit-box-shadow: 0 0 0 3px #333333 inset !important;
-    color: #333333 !important;
+.dark-themed-modal input:-webkit-autofill {
+  -webkit-text-fill-color: #80ffb0 !important;
 }
- */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
+
+
+.light-themed-modal .modal-content {
+  background-color: #cccccc;
+  color: rgb(0, 0, 0);
+  filter: drop-shadow(5px 5px 4px #000000);
+}
+
+.light-themed-modal>input {
+  color: rgb(0, 0, 0);
+}
+
+.light-themed-modal input,
+.light-themed-modal textarea {
+  /* background-color: #202020 !important; */
+  background-color: #cccccc !important;
+  color: #242424 !important;
+  border: none !important;
+  border-bottom: 2px solid rgb(70, 70, 70) !important;
+  border-radius: 0 !important;
+}
+
+.light-themed-modal input:disabled,
+.light-themed-modal textarea {
+  background-color: #cccccc !important;
+  color: #3b3b3b !important;
+}
+
+.light-themed-modal input:-webkit-autofill {
+  -webkit-text-fill-color: #252525 !important;
+}
+
+ input:-webkit-autofill,
+ input:-webkit-autofill:hover,
+ input:-webkit-autofill:focus,
+ input:-webkit-autofill:active {
   transition: background-color 5000s ease-in-out 0s;
 }
 
-input:-webkit-autofill {
-  -webkit-text-fill-color: #80ffb0 !important;
-
-}
 
 /* 
 input, textarea {

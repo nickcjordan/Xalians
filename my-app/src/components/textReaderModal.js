@@ -22,11 +22,11 @@ class TextReaderModal extends React.Component {
                 size="xl"
                 aria-labelledby="contained-modal-title-vcenter"
                 centered
-                className="themed-modal"
+                className={this.props.light ? "light-themed-modal" : "dark-themed-modal"}
                 scrollable
                 fullscreen="xxl-down"
             >
-                <Modal.Header closeButton closeVariant='white'>
+                <Modal.Header closeButton closeVariant={this.props.light ? '' : 'white'}>
                 { this.props.title && 
                     <Modal.Title id="contained-modal-title-vcenter">
                         {this.props.title}

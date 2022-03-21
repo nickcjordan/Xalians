@@ -100,6 +100,7 @@ class PlanetTable extends React.Component {
           title={'The History of ' + this.props.planet.name} 
           body={this.getHistoryParagraphs(this.props.planet.history)} 
           show={this.state.showing} 
+          light
           onHide={() => this.setState({ showing: false })}>
         </TextReaderModal>
       }

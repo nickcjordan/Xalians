@@ -8,7 +8,8 @@ const TABLE_NAME = 'XalianUsersTable';
 module.exports = {
 	getUser: getUser,
 	createUser: createUser,
-    updateUser: updateUser
+    updateUserXalianIds: updateUserXalianIds,
+	updateUserAttributes: updateUserAttributes
 };
 
 function getUser(id, onSuccess, onNotFound, onFail) {
@@ -27,10 +28,13 @@ function getUser(id, onSuccess, onNotFound, onFail) {
 				onFail(err);
 			} else {
 				if (data.Item) {
-					console.log(`SUCCESS :: data:\n${JSON.stringify(data.Item.attributes, null, 2)}`);
+
+					console.log(`SUCCESS :: data:\n${JSON.stringify(data.Item, null, 2)}`);
 					var user = {
 						userId: data.Item.userId,
-						xalianIds: data.Item.xalianIds
+						xalianIds: data.Item.xalianIds,
+						tokens: data.Item.attributes.tokens || 0,
+						attributes: data.Item.attributes
 					};
 					onSuccess(user);
 				} else {
@@ -62,7 +66,7 @@ function createUser(user, onSuccess, onFail) {
 	}
 }
 
-function updateUser(id, updatedXalianIds, onSuccess, onFail) {
+function updateUserXalianIds(id, updatedXalianIds, onSuccess, onFail) {
 	try {
 		var params = {
 			TableName: TABLE_NAME,
@@ -72,6 +76,31 @@ function updateUser(id, updatedXalianIds, onSuccess, onFail) {
 			UpdateExpression: 'set xalianIds = :ids',
 			ExpressionAttributeValues: {
 				':ids': updatedXalianIds,
+			},
+		};
+
+		dynamoDb.update(params, function (err, data) {
+			if (err) {
+				onFail(err);
+			} else {
+				onSuccess();
+			}
+		});
+	} catch (e) {
+		onFail(e);
+	}
+}
+
+function updateUserAttributes(id, updatedAttributes, onSuccess, onFail) {
+	try {
+		var params = {
+			TableName: TABLE_NAME,
+			Key: {
+				userId: id
+			},
+			UpdateExpression: 'set attributes = :attr',
+			ExpressionAttributeValues: {
+				':attr': updatedAttributes,
 			},
 		};
 
