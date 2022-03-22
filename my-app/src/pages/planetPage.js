@@ -9,7 +9,7 @@ import Image from 'react-bootstrap/Image'
 import Table from 'react-bootstrap/Table'
 import PlanetTable from '../components/planetTable';
 import planets from '../json/planets.json';
-
+import SplashGalaxyBackground from '../components/views/splashGalaxyBackground';
 
 class PlanetPage extends React.Component {
 
@@ -38,7 +38,8 @@ class PlanetPage extends React.Component {
 
         return <React.Fragment>
 
-            <Container fluid className="content-background-container">
+            <Container fluid className="home-background">
+            <SplashGalaxyBackground direction={'bottom-left'} speed={0.2}>
                 <XalianNavbar></XalianNavbar>
 
                 <Container className="content-container" >
@@ -52,6 +53,7 @@ class PlanetPage extends React.Component {
                     </Row>
 
                 </Container>
+                </SplashGalaxyBackground>
             </Container>
         </React.Fragment>
 

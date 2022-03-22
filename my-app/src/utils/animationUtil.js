@@ -31,3 +31,44 @@ function shuffleArray(array) {
 	}
 }
 
+export function prepareVoltishAnimation() {
+  prepareBoltOne("#voltish-bolt-1");
+  prepareBoltTwo("#voltish-bolt-2");
+  prepareBoltThree("#voltish-bolt-3");
+}
+
+function prepareBoltOne(id) {
+  gsap.set(id, {fill: "#ffffeb", filter: "drop-shadow(0px 0px 3px white)"})
+  var tl = gsap.timeline({repeat: -1, repeatDelay: 1.33});
+  tl.to(id, {opacity: 1, duration: 0.1});
+  tl.to(id, {opacity: 0, duration: 1});
+  tl.to(id, {opacity: 0.8, duration: 0.1, delay: 1});
+  tl.to(id, {opacity: 0, duration: 0.4});
+  tl.to(id, {opacity: 0.8, duration: 0.1});
+  tl.to(id, {opacity: 0, duration: 1});
+}
+
+function prepareBoltTwo(id) {
+  gsap.set(id, {fill: "#ffffeb", filter: "drop-shadow(0px 0px 3px white)"})
+  var tl = gsap.timeline({repeat: -1, repeatDelay: 0.7});
+  tl.to(id, {opacity: 1, duration: 0.1, delay: 0.4});
+  tl.to(id, {opacity: 0, duration: 1});
+  tl.to(id, {opacity: 0.8, duration: 0.1, delay: 1});
+  tl.to(id, {opacity: 0, duration: 0.4});
+  tl.to(id, {opacity: 0.8, duration: 0.1});
+  tl.to(id, {opacity: 0, duration: 0.7});
+  tl.to(id, {opacity: 0.4, duration: 0.1});
+  tl.to(id, {opacity: 0, duration: 0.73});
+}
+
+function prepareBoltThree(id) {
+  gsap.set(id, {fill: "#ffffeb", filter: "drop-shadow(0px 0px 3px white)"})
+  var tl = gsap.timeline({repeat: -1, repeatDelay: 0.47});
+  tl.to(id, {opacity: 1, duration: 0.1, delay: 0.8});
+  tl.to(id, {opacity: 0, duration: 1});
+  tl.to(id, {opacity: 0.8, duration: 0.1, delay: 1});
+  tl.to(id, {opacity: 0, duration: 0.4});
+  tl.to(id, {opacity: 0.8, duration: 0.1});
+  tl.to(id, {opacity: 0, duration: 1});
+}
+

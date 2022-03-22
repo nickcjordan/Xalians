@@ -12,3 +12,8 @@ export const textBorder = (color = 'white', thickness = 1, blur = 0) => {
 export const getTypeColor = (type) => {
 	return constants.themeColors[type];
 };
+
+export const getInsideGlowThemeColor = (type) => {
+	let color = constants.themeColors[type.toLowerCase()];
+	return { border: `solid 2px ${color}90`, boxShadow: `inset 0px 0px 30px ${color}`, backgroundColor: color + "11" };
+}

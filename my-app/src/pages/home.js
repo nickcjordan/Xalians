@@ -50,7 +50,7 @@ class Home extends React.Component {
 	state = {
 		isLoading: true,
 		backgroundAnimationStarDirection: 'bottom-left',
-		backgroundAnimationStarSpeed: 0.2,
+		backgroundAnimationStarSpeed: 0.4,
 		width: null,
 		height: null,
 		computerScreenContentIndex: 0,
@@ -64,40 +64,46 @@ class Home extends React.Component {
 	// }
 
 	handleNextArrowClick = () => {
-		console.log('NEXT');
 		var ind = this.state.computerScreenContentIndex;
-		ind = ((ind + 1) == this.state.computerScreenContent.length) ? 0 : (ind + 1);
+		// ind = ((ind + 1) == this.state.computerScreenContent.length) ? 0 : (ind + 1);
+		ind = gsap.utils.wrap(0, this.state.computerScreenContent.length, ind + 1);
 		this.updateScreenContentState(ind);
 	}
 
 	handleBackArrowClick = () => {
-		console.log('BACK');
 		var ind = this.state.computerScreenContentIndex;
-		ind = ((ind - 1) < 0) ? (this.state.computerScreenContent.length - 1) : (ind - 1);
+		// ind = ((ind - 1) < 0) ? (this.state.computerScreenContent.length - 1) : (ind - 1);
+		ind = gsap.utils.wrap(0, this.state.computerScreenContent.length, ind - 1);
 		this.updateScreenContentState(ind);
 	}
 
 	updateScreenContentState = (ind = 0) => {
 		let content = this.state.computerScreenContent[ind];
-		this.setState({ 
-			computerScreenCurrentContent: content,
-			computerScreenContentIndex: ind
-		});
 		let tl = gsap.timeline({id: 'computer-screen-content-animation'});
-		tl.fromTo('#computer-content-section', {xPercent: 0}, {xPercent:-100, duration: 0.3})
-		.fromTo('#computer-content-section', {autoAlpha: 1}, {autoAlpha: 0, duration: 0.2}, "<")
-		.set('#computer-content-section-title-text', {text: content.title})
-        .set('#computer-content-section-text', { text: content.text})
+		tl
+		// .fromTo('#computer-content-section', {xPercent: 0}, {xPercent:-100, duration: 0.6})
+		// .fromTo('#computer-content-section-image', {opacity: 1}, {opacity: 0, duration: 0.2})
+		// .fromTo('#computer-content-section', {opacity: 1}, {opacity: 0, duration: 2})
 		.then(() => {
 			let fit = fitty('#computer-content-section-text')[0];
 			fit.fit();
 			fit.unsubscribe();
+			gsap.set('#computer-content-section-image', { attr: { src: content.image }});
+			gsap.set('#computer-content-section-title-text', {text: content.title});
+        	gsap.set('#computer-content-section-text', { text: content.text});
 		});
-		tl
-		.to('#computer-content-section-image', { attr: { src: content.image }, delay: 0.3})
-		.fromTo('#computer-content-section', {autoAlpha: 0}, {autoAlpha: 1, duration: 0.2})
-		.fromTo('#computer-content-section', {xPercent:100}, {xPercent: 0, duration: 0.3}, "<")
-		;
+		
+		// tl
+		// .to('#computer-content-section-image', { attr: { src: content.image }, delay: 0})
+		// .fromTo('#computer-content-section', {xPercent: 0}, {xPercent:-100, duration: 0.6})
+		// .fromTo('#computer-content-section', {opacity: 0}, {opacity: 1, duration: 0.4, delay: 0.1})
+		// .fromTo('#computer-content-section-image', {opacity: 0}, {opacity: 1, duration: 0.2}, "<")
+		// .fromTo('#computer-content-section', {xPercent:100}, {xPercent: 0, duration: 0.3}, "<")
+		// ;
+		this.setState({ 
+			computerScreenCurrentContent: content,
+			computerScreenContentIndex: ind
+		});
 	}
 
 	setInitialStateContent = (ind = 0) => {
@@ -206,9 +212,9 @@ class Home extends React.Component {
 			.fromTo('#xalian-generator-link', { opacity: 0 }, { opacity: 1, duration: 1, delay: 0.5 }, '<')
 			// CREATE :: EARN :: TRADE :: PLAY
 			.fromTo('#splash-social-media-links', { opacity: 0 }, { opacity: 1, duration: 1, delay: 0 }, '<')
-			.to('#subline1', { scrambleText:{ chars: 'abcdefghijklmnopqrstuvwxyz', text: "{original}", revealDelay: "0.25" }, opacity: 1, duration: 3, delay: 0.25 }, '<')
-			.to('#subline2', { scrambleText:{ chars: 'abcdefghijklmnopqrstuvwxyz', text: "{original}", revealDelay: "0.25" }, opacity: 1, duration: 3, delay: 0.5 }, '<')
-			.to('#subline3', { scrambleText:{ chars: 'abcdefghijklmnopqrstuvwxyz', text: "{original}", revealDelay: "0.25" }, opacity: 1, duration: 3, delay: 0.75 }, '<')
+			.to('#subline1', { scrambleText:{ chars: 'abcdefghijklmnopqrstuvwxyz', text: "{original}", revealDelay: "0.25" }, opacity: 1, duration: 2, delay: 0.25 }, '<')
+			.to('#subline2', { scrambleText:{ chars: 'abcdefghijklmnopqrstuvwxyz', text: "{original}", revealDelay: "0.25" }, opacity: 1, duration: 2, delay: 0.5 }, '<')
+			.to('#subline3', { scrambleText:{ chars: 'abcdefghijklmnopqrstuvwxyz', text: "{original}", revealDelay: "0.25" }, opacity: 1, duration: 2, delay: 0.75 }, '<')
 			// discord and twitter links
 
 			// .to('#splash-animated-changing-text', { opacity: 1, duration: 0.5, delay: 0.4 }, '<')
@@ -223,7 +229,7 @@ class Home extends React.Component {
 			scrollTrigger: {
 				trigger: '#splash-section',
 				// pin: true,
-				scrub: 4,
+				scrub: 3,
 				// markers: true,
 				start: 'center center',
 				// end: 'bottom 20%',
@@ -234,7 +240,7 @@ class Home extends React.Component {
 
 
 		spaceshipTl
-			.to('#subline1, #subline2, #subline3, #splash-social-media-links, #xalian-generator-link, #xaliansLogo', { opacity: 0 }, '<')
+			// .to('#subline1, #subline2, #subline3, #splash-social-media-links, #xalian-generator-link, #xaliansLogo', { opacity: 0 }, '<')
 			.from('#spaceship-window-animation-svg', { scale: 10, duration: 3, ease: 'expoScale(10, 1)' })
 			.to('#spaceship-window-animation-svg', { xPercent: -100, duration: 2, ease: 'none' })
 			.from('#spaceship-animation-panel-wrapper', { xPercent: 100, duration: 2, ease: 'none' }, '<')
@@ -242,21 +248,48 @@ class Home extends React.Component {
 			.to('#spaceship-computer-outside-animation', { scale: 5, duration: 3, ease: 'expoScale(1, 5)' })
 			;
 
+
 		// DIM COMPUTER SCREEN WHEN AT THE BOTTOM OF THE PAGE
-		ScrollTrigger.create({
-			trigger: '#splash-page-spacer',
+		gsap.set('#splash-page-spacer', {autoAlpha: 0});
+
+		// ScrollTrigger.create({
+		// 	trigger: '#splash-page-spacer',
+		// 	pin: true,
+		// 	scrub: 1,
+		// 	start: 'top top',
+		// 	end: '+=50%',
+		// 	onEnter: () => { gsap.fromTo("#splash-page-spacer", {autoAlpha: 0}, {autoAlpha: 1, duration: 0.5}) },
+		// 	onLeave: () => { gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 0}) },
+		// 	onLeaveBack: () => { gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 1}) },
+		// 	onEnterBack: () => { gsap.to('#splash-page-spacer', {autoAlpha: 0, duration: 0.5}) }
+		// 		// onEnterBack: () => { gsap.to(window, { scrollTo: { duration: 1, y: "#splash-section", autoKill: false} })}
+		// 		// preventOverlaps: "spaceship-animation-group"
+		// });
+
+		gsap.timeline({
+			scrollTrigger: {
+				trigger: '#splash-page-spacer',
 				pin: true,
 				scrub: 1,
 				start: 'top top',
-				end: '+=25%',
-				onLeaveBack: () => { gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 1}) },
-				onEnter: () => { gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 1}) },
-				onLeave: () => { gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 0}
-			);
-			},
-				// onEnterBack: () => { gsap.to(window, { scrollTo: { duration: 1, y: "#splash-section", autoKill: false} })}
-				// preventOverlaps: "spaceship-animation-group"
-		});
+				end: '+=50%',
+				toggleActions: 'play complete reverse reset',
+				snap: {
+					snapTo: 'labelsDirectional'
+				}
+				// onEnter: () => { gsap.fromTo("#splash-page-spacer", {autoAlpha: 0}, {autoAlpha: 1, duration: 0.5}) },
+				// onLeave: () => { gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 0}) },
+				// onLeaveBack: () => { gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 1}) },
+				// onEnterBack: () => { gsap.to('#splash-page-spacer', {autoAlpha: 0, duration: 0.5}) }
+					// onEnterBack: () => { gsap.to(window, { scrollTo: { duration: 1, y: "#splash-section", autoKill: false} })}
+					// preventOverlaps: "spaceship-animation-group"
+			}
+		})
+		.to("#splash-page-spacer", {autoAlpha: 1, duration: 0.5})
+		.addLabel("content")
+		.to("#splash-page-spaceship-window-animation, #splash-page-spacer", {autoAlpha: 0, duration: 0.5})
+		.to(".pin-spacer, .home-background", {backgroundColor: '#000000', duration: 0.5}, "<");
+		;
 
 		// PIN CAROUSEL TO MIDDLE OF SCREEN AS IT TRANSITIONS AWAY
 		ScrollTrigger.create({
@@ -311,7 +344,7 @@ class Home extends React.Component {
 
 
 			var path = gsap.timeline();
-			path.fromTo(id, {drawSVG: "50% 50%" }, { duration: 5, drawSVG: "100%", strokeWidth: '5px' });
+			path.fromTo(id, {drawSVG: "50% 50%" }, { duration: 4, drawSVG: "100%", strokeWidth: '5px' });
 
 			var pathContinued = gsap.timeline({ repeat: -1, yoyo: true, delay: d })
         	.to(id, { duration: 0.25, opacity: 0.4, ease: 'none', delay: 1 });
@@ -334,9 +367,9 @@ class Home extends React.Component {
 	render() {
 		return (
 			<React.Fragment>
+						<XalianNavbar></XalianNavbar>
 				<Container fluid className="home-background">
 					<SplashGalaxyBackground direction={this.state.backgroundAnimationStarDirection} speed={this.state.backgroundAnimationStarSpeed}>
-						<XalianNavbar></XalianNavbar>
 
 						<section id="splash-section" className="splash-section-debug">
 							<div id="splash-container" className="splash-container vertically-center-contents splash-background">
@@ -356,7 +389,7 @@ class Home extends React.Component {
 											{/* <h1 id="splash-animated-changing-text" className="splash-subtitle shadow-text">
 											CREATE
 										</h1> */}
-											<div id="splash-social-media-links" className="social-media-link-row clickable">
+											<div id="splash-social-media-links" className="social-media-link-row">
 												<a href="https://discord.gg/sgGNhNJ2KN" className="social-media-links">
 													<i className="bi bi-discord"></i>
 												</a>
@@ -364,7 +397,7 @@ class Home extends React.Component {
 													<i className="bi bi-twitter"></i>
 												</a>
 											</div>
-											<Button id="xalian-generator-link" variant="xalianGray" className="xalian-font xalian-splash-generator-button clickable" href="/generator">
+											<Button id="xalian-generator-link" variant="xalianGray" className="xalian-font xalian-splash-generator-button" href="/generator">
 												TRY THE GENERATOR
 											</Button>
 											<ScrollingCarousel />
@@ -500,8 +533,6 @@ function ScrollingCarousel() {
 	})
 
 	svgs.forEach( xalianSvg => {
-		
-		console.log(`xalian = ${JSON.stringify(xalianSvg, null, 2)}`);
 		let path = xalianSvg.path;
 		let speciesName = path.substring(2, path.length - 4);
 		let species = speciesMap[speciesName];

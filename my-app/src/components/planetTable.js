@@ -60,7 +60,7 @@ class PlanetTable extends React.Component {
 
     return (
 		<React.Fragment>
-			<Container className={'dark-section-div ' + this.props.planet.data.Type.toLowerCase() + '-border-color'}>
+			<Container className={'dark-section-div'} style={styleUtil.getInsideGlowThemeColor(this.props.planet.data.Type.toLowerCase())} >
 				<Row className="planet-details-row vertically-center-contents">
 					<Col xs={12} md={3} className="planet-details-row-col">
 						<img src={this.props.planet.planetImage} class="planet-gif" alt=""></img>

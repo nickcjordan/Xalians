@@ -140,7 +140,7 @@ hr.xalian-hr {
 } */
 
 body {
-  font-family: "Abel", sans-serif;
+  font-family: "Abel", sans-serif !important;
   color: #ffffff;
   background-color: #0d0d0d !important;
   overflow-x: hidden;
@@ -638,8 +638,7 @@ body { width: 100%; max-width: 100%; height: auto;
   /* flex-direction: row; */
   align-items: center;
   justify-content: center;
-  font-family: 'Abel';
-  color: white;
+  
   padding: 0 !important;
   overflow-x: hidden;
 }
@@ -795,6 +794,7 @@ a:active {
 
 .animated-xalian-svg {
   width: 95%;
+  height: 80%;
   overflow: visible;
   align-content: center;
 
@@ -913,6 +913,7 @@ a:active {
   flex-wrap: nowrap;
   justify-content: flex-start;
   align-items: stretch;
+  z-index: 9999 !important;
 }
 
 #spaceship-window-animation-svg {
@@ -1093,6 +1094,7 @@ max-height:100%;
   justify-content: center;
   margin: 0;
   padding: 0;
+  /* opacity: 0 ; */
 }
 
 .splash-computer-container {
@@ -2214,7 +2216,7 @@ article {
 */
 
 .dark-section-div {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   border-color: rgb(128, 255, 176, 0.6);
   border-style: solid;
   border-width: 1px;
@@ -2531,7 +2533,7 @@ article {
 }
 
 .stat-tooltip {
-  box-shadow: 0px 0px 10px #000000de;
+  box-shadow: 0px 0px 10px #00000044;
   background-color: #000000de;
   color: white;
 }
