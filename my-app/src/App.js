@@ -14,6 +14,7 @@ import CommunityPage from './pages/communityPage';
 import Sandbox from './pages/sandbox';
 import TestPage from './pages/testPage';
 import Sandboxtwo from './pages/sandboxtwo';
+import Sandboxthree from './pages/sandboxthree';
 import React from "react";
 import XalianNavbar from './components/navbar';
 import Container from 'react-bootstrap/Container';
@@ -62,6 +63,7 @@ class App extends React.Component {
               <Route exact path="/community"><CommunityPage /></Route>
               <Route exact path="/sandbox"><Sandbox /></Route>
               <Route exact path="/sandboxtwo"><Sandboxtwo /></Route>
+              <Route exact path="/sandboxthree"><Sandboxthree /></Route>
               <Route exact path="/train"><TrainingGroundsPage /></Route>
                 <Route exact path="/train/match"><MatchCardGamePage /></Route>
                 <Route exact path="/train/physics"><PhysicsGamePage /></Route>

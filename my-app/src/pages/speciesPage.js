@@ -15,7 +15,8 @@ import XalianImage from '../components/xalianImage';
 import XalianSpeciesRowView from '../components/views/xalianSpeciesRowView';
 import XalianSpeciesBadge from '../components/xalianSpeciesBadge';
 import XalianSpeciesSizeComparisonView from '../components/views/xalianSpeciesSizeComparisonView';
-
+import SplashGalaxyBackground from '../components/views/splashGalaxyBackground';
+import * as svgUtil from '../utils/svgUtil';
 
 class SpeciesPage extends React.Component {
 
@@ -32,7 +33,7 @@ class SpeciesPage extends React.Component {
         window.addEventListener('resize', this.updateSize);
         this.updateSize();
         this.setState({
-            gridList: this.buildSpeciesIcons(),
+            gridList: this.buildSpeciesGridList(),
             statRowList: this.buildStatRows(),
             // sizeList: this.buildSizeComparison()
         });
@@ -63,7 +64,7 @@ class SpeciesPage extends React.Component {
     //     return <XalianSpeciesSizeComparisonView size={this.state.size} />;
     // }
 
-    buildSpeciesIcons() {
+    buildSpeciesGridList() {
         species.sort((a, b) => a.id - b.id);
         var list = [];
         for (let ind in species) {
@@ -86,14 +87,26 @@ class SpeciesPage extends React.Component {
     }
 
     buildSpeciesIcon(x) {
-        return <Col md={2} sm={3} xs={6} className="species-col">
-            <a href={"/species/" + x.id}>
-                <XalianImage colored bordered speciesName={x.name} primaryType={x.type} moreClasses='xalian-image-grid' />
-                <h6 className='condensed-row' >#{x.id}</h6>
-                <h4 className='condensed-row species-name-title'>{x.name}</h4>
-                {/* <h3 className='condensed-row'><XalianSpeciesBadge type={x.type} /></h3> */}
-            </a>
-        </Col>
+        return (
+			<Col md={2} sm={3} xs={6} className="species-col">
+				<a href={'/species/' + x.id}>
+					<XalianImage colored bordered speciesName={x.name} primaryType={x.type} moreClasses="xalian-image-grid" />
+					<Row style={{ width: '100%', margin: '0px', padding: '0px' }}>
+						<Col xs={5} style={{ margin: 'auto', padding: '0px', paddingRight: '5px', textAlign: 'right' }}>
+							{svgUtil.getSpeciesTypeSymbol(x.type, true, 25)}
+						</Col>
+						<Col xs={7} style={{ padding: '0px', height: '100%', margin: 'auto' }}>
+							<h6 className="condensed-row" style={{ textAlign: 'left', margin: 'auto', height: '100%', width: '100%' }}>
+								#{x.id}
+							</h6>
+						</Col>
+					</Row>
+					<h5 className="condensed-row species-name-title" style={{ textAlign: 'center' }}>
+						{x.name}
+					</h5>
+				</a>
+			</Col>
+		);
     }
 
     buildStatRow(x) {
@@ -108,8 +121,9 @@ class SpeciesPage extends React.Component {
 
         return <React.Fragment>
 
-            <Container fluid className="content-background-container">
                 <XalianNavbar></XalianNavbar>
+                <SplashGalaxyBackground direction={this.state.backgroundAnimationStarDirection} speed={this.state.backgroundAnimationStarSpeed}>
+            {/* <Container fluid className="content-background-container"> */}
 
                 <Container className="">
                     <Row className="">
@@ -142,7 +156,8 @@ class SpeciesPage extends React.Component {
                     </Row>
 
                 </Container>
-            </Container>
+            {/* </Container> */}
+            </SplashGalaxyBackground>
         </React.Fragment>
 
 

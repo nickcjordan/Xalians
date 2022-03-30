@@ -8,14 +8,12 @@ import Button from 'react-bootstrap/Button';
 import TextReaderModal from '../components/textReaderModal';
 import * as constants from '../constants/constants';
 import * as styleUtil from '../utils/styleUtil';
+import { Hub } from 'aws-amplify';
+import XalianSpeciesBadge from './xalianSpeciesBadge';
 
 class PlanetTable extends React.Component {
 
   state = { showing: false }
-
-  // constructor() {
-  //   super()
-  // }
 
   buildRow(key, val) {
     return <tr>
@@ -25,12 +23,11 @@ class PlanetTable extends React.Component {
   }
 
   toggleShowHistory = () => {
+    if (!this.state.showing) {
+      Hub.dispatch('navbar-channel', { event: 'hide-navbar', data: null, message: null });
+    }
     this.setState({ showing: !this.state.showing });
   }
-
-  // closeModalCallback = () => {
-	// 	this.setState({ showing: false });
-	// };
 
   getHistoryParagraphs(history) {
     let images = ["assets/img/background/castle.jpg", "assets/img/background/castle.jpg", "assets/img/background/castle.jpg"]
@@ -55,7 +52,9 @@ class PlanetTable extends React.Component {
     let list = [];
     for (const key in this.props.planet.data) {
       let val = this.props.planet.data[key];
-      list.push(this.buildRow(key, val));
+      if (key.toLowerCase() != 'type') {
+        list.push(this.buildRow(key, val));
+      }
     }
 
     return (
@@ -68,17 +67,21 @@ class PlanetTable extends React.Component {
 					<Col xs={12} md={6} className="planet-description-col">
 						<Row className="planet-title-row">
 							<Col xs={12}>
-								{/* <h2 className={this.props.planet.data.Type.toLowerCase() + '-text-color white-outline-text'} style={{ textShadow: getBorder(this.props.planet.data.Type.toLowerCase()) }} >{this.props.planet.name}</h2> */}
-								<h2 className={this.props.planet.data.Type.toLowerCase() + '-text-color'} style={{ textShadow: styleUtil.textBorder('black', 2) + ', ' + styleUtil.getBorder(this.props.planet.data.Type.toLowerCase(), 6, 12), color: '#ffffffff' }} >{this.props.planet.name}</h2>
+								<h2 className={this.props.planet.data.Type.toLowerCase() + '-text-color black-text-shadow'} style={{ textShadow: styleUtil.textBorder('black', 2) + ', ' + styleUtil.getBorder(this.props.planet.data.Type.toLowerCase(), 6, 12), color: '#ffffffff' }} >{this.props.planet.name}</h2>
 							</Col>
+                <Col xs={12}>
+                  <XalianSpeciesBadge type={this.props.planet.data.Type.toLowerCase()} />
+								</Col>
 							{this.props.planet.history && this.props.planet.history.length > 0 && (
 								<Col xs={12}>
 									<h6 className="planet-history-link" onClick={this.toggleShowHistory}>
-										<i class="bi bi-book"></i> <span style={{ fontStyle: 'italic' }}>The History of {this.props.planet.name}</span>
+										<i class="bi bi-book"> </i><span style={{ fontStyle: 'italic', textDecoration: 'underline' }}>Read the Story of {this.props.planet.name}</span>
 									</h6>
 								</Col>
 							)}
 						</Row>
+            {/* <Row style={{ marginBottom: '10px' }} >
+            </Row> */}
 						<div class="planet-table">
 							<table class="planet-table">
 								<tbody>{list}</tbody>

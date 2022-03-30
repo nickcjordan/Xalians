@@ -316,8 +316,8 @@ class DesignerPage extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <Container fluid className="content-background-container">
           <XalianNavbar></XalianNavbar>
+        <Container fluid className="content-background-container">
 
           <Container fluid>
             <Row>

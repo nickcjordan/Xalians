@@ -50,7 +50,7 @@ export const callGet = (url, params) => {
             resolve(response.data);
           })
           .catch((e) => {
-            alert("BOOOOO \n\n" + "axios GET ERROR : \n" + JSON.stringify(e, null, 2));
+            alert("BOOOOO in get \n\n" + "axios GET ERROR : \n" + JSON.stringify(e, null, 2));
             console.log("axios GET ERROR : " + e);
           });
       });
@@ -99,7 +99,7 @@ export const callGetBatch = (url, ids) => {
             resolve(response.data);
           })
           .catch((e) => {
-            alert("BOOOOO \n\n" + "axios GET ERROR : \n" + JSON.stringify(e, null, 2));
+            alert("BOOOOO batch \n\n" + "axios GET ERROR : \n" + JSON.stringify(e, null, 2));
             console.log("axios GET ERROR : " + e);
           });
       });
@@ -176,7 +176,7 @@ export const callUpdateUserXalian = (action, userId, xalianId) => {
             resolve(response.data);
           })
           .catch((e) => {
-            alert("axios ERROR : " + e);
+            alert("axios update user ERROR : " + e);
             console.log("caught ERROR : " + e);
           });
       });

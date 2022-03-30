@@ -42,7 +42,7 @@ class XalianImage extends React.Component {
             let builtClasses = this.getTypeColorClassName(this.props.primaryType);
 			if (this.props.colored) {
 				return (
-					<div id={this.props.id} className={'xalian-image-wrapper ' + builtClasses} style={{ background: `radial-gradient(circle, ${primaryColor} 60%, ${primaryColor + '85'} 100%)` }} >
+					<div id={this.props.id} className={'xalian-image-wrapper ' + builtClasses} style={{ background: `radial-gradient(circle, ${primaryColor} 65%, ${primaryColor + '90'} 100%)` }} >
 						<Image src={this.getImageLocationFromSpecies(this.props.speciesName)} className='xalian-image'/>
 					</div>
 				);

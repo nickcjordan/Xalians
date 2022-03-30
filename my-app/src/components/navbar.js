@@ -22,6 +22,19 @@ class XalianNavbar extends React.Component {
 	componentDidMount() {
 		var navbar = document.getElementById('navvy');
 
+
+		Hub.listen('navbar-channel', (data) => {
+			if (navbar) {
+				if (data.payload.event === 'show-navbar') {
+					navbar.classList.remove('hidden');
+					navbar.classList.add('visible');
+				} else if (data.payload.event === 'hide-navbar') {
+					navbar.classList.remove('visible');
+					navbar.classList.add('hidden');
+				} 
+			}
+		})
+
 		// var animationTimeline = gsap.timeline({ repeat: 0});
 		// animationTimeline.fromTo("#navvy", {opacity: 0}, {opacity: 1, duration: 2, ease:'sine.in'});
 

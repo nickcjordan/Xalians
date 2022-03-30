@@ -22,7 +22,7 @@ class GamePageGameFinishedModal extends React.Component {
                 size="md"
                 aria-labelledby="contained-modal-title-vcenter"
                 centered
-                className={this.props.light ? "light-themed-modal" : "dark-themed-modal"}
+                className={this.props.light ? "themed-modal light-themed-modal" : "themed-modal dark-themed-modal"}
                 scrollable={this.props.scrollable || false}
                 fullscreen="sm-down"
             >

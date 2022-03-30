@@ -39,8 +39,11 @@ import XalianStatRatingChart from '../components/xalianStatRatingChart';
 import XalianInfoBox from '../components/xalianInfoBox';
 // import spaceshipComputerScreenTitlePanel from '../svg/animations/spaceship_computer_screen_title_panel.svg';
 import { ExpoScaleEase } from 'gsap/EasePack';
-
+import GeneratorAnimation from '../components/animations/generatorAnimation';
+import textFit from '../utils/textFit';
 import ComputerScreenContent from '../components/animations/computerScreenContent';
+
+
 gsap.registerPlugin(ScrollTrigger, TextPlugin, EasePack, ScrollToPlugin, DrawSVGPlugin, ScrambleTextPlugin, GSDevTools, ExpoScaleEase);
 // GSDevTools.create();
 const reqSvgs = require.context ( '../svg/species', true, /\.svg$/ );
@@ -54,7 +57,7 @@ class Home extends React.Component {
 		width: null,
 		height: null,
 		computerScreenContentIndex: 0,
-		computerScreenContent: [],
+		computerScreenContentArray: [],
 		computerScreenElement: null
 	};
 
@@ -64,62 +67,45 @@ class Home extends React.Component {
 	// }
 
 	handleNextArrowClick = () => {
-		var ind = this.state.computerScreenContentIndex;
-		// ind = ((ind + 1) == this.state.computerScreenContent.length) ? 0 : (ind + 1);
-		ind = gsap.utils.wrap(0, this.state.computerScreenContent.length, ind + 1);
-		this.updateScreenContentState(ind);
+		let ind = this.state.computerScreenContentIndex;
+		let nextInd = ind + 1;
+		let resultInd = gsap.utils.wrap(0, this.state.computerScreenContentArray.length, nextInd);
+		this.updateScreenContentState(resultInd, this.state.computerScreenContentArray);
 	}
 
 	handleBackArrowClick = () => {
 		var ind = this.state.computerScreenContentIndex;
-		// ind = ((ind - 1) < 0) ? (this.state.computerScreenContent.length - 1) : (ind - 1);
-		ind = gsap.utils.wrap(0, this.state.computerScreenContent.length, ind - 1);
-		this.updateScreenContentState(ind);
+		ind = gsap.utils.wrap(0, this.state.computerScreenContentArray.length, ind - 1);
+		this.updateScreenContentState(ind, this.state.computerScreenContentArray);
 	}
 
-	updateScreenContentState = (ind = 0) => {
-		let content = this.state.computerScreenContent[ind];
-		let tl = gsap.timeline({id: 'computer-screen-content-animation'});
-		tl
-		// .fromTo('#computer-content-section', {xPercent: 0}, {xPercent:-100, duration: 0.6})
-		// .fromTo('#computer-content-section-image', {opacity: 1}, {opacity: 0, duration: 0.2})
-		// .fromTo('#computer-content-section', {opacity: 1}, {opacity: 0, duration: 2})
-		.then(() => {
-			let fit = fitty('#computer-content-section-text')[0];
-			fit.fit();
-			fit.unsubscribe();
-			gsap.set('#computer-content-section-image', { attr: { src: content.image }});
-			gsap.set('#computer-content-section-title-text', {text: content.title});
-        	gsap.set('#computer-content-section-text', { text: content.text});
-		});
-		
-		// tl
-		// .to('#computer-content-section-image', { attr: { src: content.image }, delay: 0})
-		// .fromTo('#computer-content-section', {xPercent: 0}, {xPercent:-100, duration: 0.6})
-		// .fromTo('#computer-content-section', {opacity: 0}, {opacity: 1, duration: 0.4, delay: 0.1})
-		// .fromTo('#computer-content-section-image', {opacity: 0}, {opacity: 1, duration: 0.2}, "<")
-		// .fromTo('#computer-content-section', {xPercent:100}, {xPercent: 0, duration: 0.3}, "<")
-		// ;
-		this.setState({ 
-			computerScreenCurrentContent: content,
-			computerScreenContentIndex: ind
+	updateScreenContentState = (ind = 0, contentArray) => {
+		let content = contentArray[ind];
+		gsap.timeline().to('#computer-content-section', {opacity: 0, duration: 0.25})
+		.then( () => {
+			this.setState({ 
+				computerScreenCurrentContent: content,
+				computerScreenContentIndex: ind
+			}, () => {
+				// gsap.set('#computer-content-section-text', { })
+
+
+				// TEXT FIT DOESNT WORK WHEN THE TEXT IS ITALISIZED AND STUFF
+				textFit(document.getElementById('computer-content-section-text'), { multiLine: true, alignVert: true, minFontSize:8, maxFontSize: 24});
+				gsap.to('#computer-content-section', {opacity: 1, duration: 0.25})
+			});
 		});
 	}
 
 	setInitialStateContent = (ind = 0) => {
 		let contentArray = this.buildComputerScreenContent();
-		// let element = this.buildComputerScreenElement(ind, contentArray[ind]);
 		let content = contentArray[ind];
-		// let textFit = fitty('#computer-content-section-text')[0];
 		this.setState({ 
 			width: window.innerWidth, 
 			height: window.innerHeight, 
-			computerScreenContent: contentArray,
-			computerScreenCurrentContent: content,
-			computerScreenContentIndex: ind,
-			// textFit: textFit
+			computerScreenContentArray: contentArray,
 		}, () => {
-			this.updateScreenContentState(0);
+			this.updateScreenContentState(0, contentArray);
 		});
 	}
 
@@ -127,21 +113,77 @@ class Home extends React.Component {
 	buildComputerScreenContent = () => {
 		var content = [];
 		content.push({
-			title: 'The Creatures of Xalia',
-			image: '',
+			title: '1',
+			svg: <GeneratorAnimation/>,
+			textElement: <React.Fragment>
+				TEST ONE
+			</React.Fragment>
+		});
+		content.push({
+			title: '2',
 			svg: <SplashBackgroundAnimatedSVG/>,
-			text: 'For thousands of years, the ancient race known as the Vallerii dominated the galaxy of Xalia. Their mastery of biotechnology led to generating the first species of Xalians – bioengineered organisms designed to thrive in Xalia’s most extreme environments.',
+			textElement: <React.Fragment>
+				TEST TWO
+			</React.Fragment>
 		});
 		content.push({
-			title: 'Fall of the Vallerii',
-			image: '',
-			text: 'The high technology of the Vallerii would eventually prove to be their downfall when their own artificial intelligence took control of the Xalian Generators, turning the creatures against their creators.',
+			title: '3',
+			svg: <GeneratorAnimation/>,
+			textElement: <React.Fragment>
+				TEST <span className='emphasized-text'>THREE</span> 
+			</React.Fragment>
 		});
 		content.push({
-			title: 'End War',
-			image: '',
-			text: 'The centuries-long interplanetary assault known as the End Wars have long since ended, but the destruction they caused all but wiped out the Vallerii and has forever changed the galaxy.',
+			title: '4',
+			svg: <SplashBackgroundAnimatedSVG/>,
+			textElement: <React.Fragment>
+				TEST <span className='emphasized-text'>FOUR</span> 
+			</React.Fragment>
 		});
+
+		// content.push({
+		// 	title: '2Creatures of Xalia',
+		// 	svg: <SplashBackgroundAnimatedSVG/>,
+		// 	textElement: (<React.Fragment>
+		// 		aFor thousands of years, the ancient race known as the <span className='emphasized-text'>Vallerii</span> dominated the galaxy of Xalia. 
+		// 		Their mastery of biotechnology led to the invention of <span className='emphasized-text'>Xalian Generators</span>. 
+		// 		These machines would be used to create the first generation of Xalians – bioengineered organisms designed to thrive in the galaxy’s most extreme environments.
+		// 	</React.Fragment>)
+		// });
+		// content.push({
+		// 	title: '2The End Wars: Fall of the Vallerii',
+		// 	svg: <GeneratorAnimation/>,
+		// 	textElement: <React.Fragment>
+		// 		But the high technology of the Vallerii would prove to be their downfall when they released <span className='emphasized-text'>APEX</span> – the galaxy’s first artificial intelligence. 
+		// 		Instead of monitoring and regulating the Xalian Generators as intended, APEX rapidly infected the Xalian Generators across all of Vallerii space, turning the Xalians against their creators. 
+		// 		The centuries-long interplanetary assault known as the <span className='emphasized-text'>End Wars</span> have long since ended, but the destruction they caused all but wiped out the Vallerii and has forever changed the galaxy.
+		// 	</React.Fragment>
+		// });
+		// content.push({
+		// 	title: '3The End Wars: Fall of the Vallerii',
+		// 	svg: <SplashBackgroundAnimatedSVG/>,
+		// 	textElement: <React.Fragment>
+		// 		huh But the high technology of the Vallerii would prove to be their downfall when they released <span className='emphasized-text'>APEX</span> – the galaxy’s first artificial intelligence. 
+		// 		Instead of monitoring and regulating the Xalian Generators as intended, APEX rapidly infected the Xalian Generators across all of Vallerii space, turning the Xalians against their creators. 
+		// 		The centuries-long interplanetary assault known as the <span className='emphasized-text'>End Wars</span> have long since ended, but the destruction they caused all but wiped out the Vallerii and has forever changed the galaxy.
+		// 	</React.Fragment>
+		// });
+		// content.push({
+		// 	title: '4Nemesis Plague',
+		// 	svg: <SplashBackgroundAnimatedSVG/>,
+		// 	textElement: <React.Fragment>
+		// 		Since war’s end, the Vallerii population has continued to decline due to the spread of the Nemesis Plague, a virulent bioweapon designed by APEX during the war to target the genome of the Vallerii and their Xalian servants alike. 
+		// 		With the plague burning through the galaxy, few planets are safe. 
+		// 		As a result, most life forms have gathered to the Vallerii capital planet, home to their only hope – an ancient Vallerii device known as the Mercurius Machine, 
+		// 		which is said to be able to birth a new generation of Xalians immune to APEX’s apocalyptic designs.
+		// 	</React.Fragment>
+		// });
+
+		// content.push({
+		// 	title: 'Planets of Xalia',
+		// 	image: '',
+		// 	text: 'something about the planets - check out jasons stuff ',
+		// });
 		return content;
 	};
 
@@ -169,26 +211,18 @@ class Home extends React.Component {
 		window.removeEventListener('resize', this.updateSize);
 	}
 
-	handleDebugClick = (event) => {
-		let xElement = document.getElementById('xalians-logo-x');
-		let xRect = xElement.getBoundingClientRect();
-		let offset = xRect.x - window.innerWidth / 2;
-		let perc = xRect.width / window.innerWidth;
-		let a1 = Math.floor(perc * 100);
-
-		// let percInvert = window.innerWidth/xRect.width;
-		console.log(`wehh`);
-	};
-
 	componentDidMount() {
-		this.setState({ isLoading: false, fit: fitty('#computer-content-section-text') });
+		// let elem = document.getElementById('computer-content-section-text');
+		// if (elem) {
+		// 	textFit(elem, { multiLine: true, alignVert: true, minFontSize:8, maxFontSize: 24});
+		// }
+		
+		this.setState({ isLoading: false });
 		this.setInitialStateContent();
 		window.addEventListener('resize', this.updateSize);
 		this.updateSize();
 
-		
-
-		gsap.from('#navvy', { opacity: 0, duration: 2, ease: 'sine.in', delay: 2.5 });
+		gsap.from('#navvy', { opacity: 0, duration: 2, ease: 'sine.in', delay: 1 });
 
 
 		var splashTl = gsap.timeline({
@@ -229,35 +263,38 @@ class Home extends React.Component {
 			scrollTrigger: {
 				trigger: '#splash-section',
 				// pin: true,
-				scrub: 3,
+				// scrub: 3,
 				// markers: true,
 				start: 'center center',
 				// end: 'bottom 20%',
-				end: 'bottom top',
+				// end: 'bottom top',
 				toggleActions: 'play complete reverse reset',
+				onLeave: () => {
+					gsap.to(window, { scrollTo: { duration: 0.25, y: "#splash-page-spacer", autoKill: false} });
+				}
 			},
 		});
 
 
 		spaceshipTl
 			// .to('#subline1, #subline2, #subline3, #splash-social-media-links, #xalian-generator-link, #xaliansLogo', { opacity: 0 }, '<')
-			.from('#spaceship-window-animation-svg', { scale: 10, duration: 3, ease: 'expoScale(10, 1)' })
-			.to('#spaceship-window-animation-svg', { xPercent: -100, duration: 2, ease: 'none' })
-			.from('#spaceship-animation-panel-wrapper', { xPercent: 100, duration: 2, ease: 'none' }, '<')
+			.set(document.body, {overflowY: "hidden"})
+			.from('#spaceship-window-animation-svg', { scale: 10, duration: 1, ease: 'expoScale(10, 1)' })
+			.to('#spaceship-window-animation-svg', { xPercent: -100, duration: 0.5, ease: 'none' })
+			.from('#spaceship-animation-panel-wrapper', { xPercent: 100, duration: 0.5, ease: 'none' }, '<')
 			.to("#splash-section", { backgroundColor: 'black' }, "<")
-			.to('#spaceship-computer-outside-animation', { scale: 5, duration: 3, ease: 'expoScale(1, 5)' })
+			.to('#spaceship-computer-outside-animation', { scale: 5, duration: 1, ease: 'expoScale(1, 5)' })
+			.set(document.body, {overflowY: "auto"})
 			;
 
 
-		// DIM COMPUTER SCREEN WHEN AT THE BOTTOM OF THE PAGE
-		gsap.set('#splash-page-spacer', {autoAlpha: 0});
-
-		// ScrollTrigger.create({
-		// 	trigger: '#splash-page-spacer',
-		// 	pin: true,
-		// 	scrub: 1,
-		// 	start: 'top top',
-		// 	end: '+=50%',
+			
+			// ScrollTrigger.create({
+				// 	trigger: '#splash-page-spacer',
+				// 	pin: true,
+				// 	scrub: 1,
+				// 	start: 'top top',
+				// 	end: '+=50%',
 		// 	onEnter: () => { gsap.fromTo("#splash-page-spacer", {autoAlpha: 0}, {autoAlpha: 1, duration: 0.5}) },
 		// 	onLeave: () => { gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 0}) },
 		// 	onLeaveBack: () => { gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 1}) },
@@ -265,14 +302,16 @@ class Home extends React.Component {
 		// 		// onEnterBack: () => { gsap.to(window, { scrollTo: { duration: 1, y: "#splash-section", autoKill: false} })}
 		// 		// preventOverlaps: "spaceship-animation-group"
 		// });
-
+		
+		// DIM COMPUTER SCREEN WHEN AT THE BOTTOM OF THE PAGE
+		// gsap.set('#splash-page-spacer', {autoAlpha: 0});
 		gsap.timeline({
 			scrollTrigger: {
 				trigger: '#splash-page-spacer',
 				pin: true,
-				scrub: 1,
+				scrub: 3,
 				start: 'top top',
-				end: '+=50%',
+				end: '+=100%',
 				toggleActions: 'play complete reverse reset',
 				snap: {
 					snapTo: 'labelsDirectional'
@@ -285,7 +324,7 @@ class Home extends React.Component {
 					// preventOverlaps: "spaceship-animation-group"
 			}
 		})
-		.to("#splash-page-spacer", {autoAlpha: 1, duration: 0.5})
+		// .to("#splash-page-spacer", {autoAlpha: 1, duration: 0.5})
 		.addLabel("content")
 		.to("#splash-page-spaceship-window-animation, #splash-page-spacer", {autoAlpha: 0, duration: 0.5})
 		.to(".pin-spacer, .home-background", {backgroundColor: '#000000', duration: 0.5}, "<");
@@ -376,7 +415,7 @@ class Home extends React.Component {
 								<Row className="title-logo-row">
 									<Col lg={8} md={9} sm={10} xs={11} className="title-logo-col vertically-center-contents">
 										<Stack className="splash-stack">
-											<XaliansLogoSVG onClick={this.handleDebugClick} id="xaliansLogo" className="animated-xalian-svg xalian-logo" />
+											<XaliansLogoSVG id="xaliansLogo" className="animated-xalian-svg xalian-logo" />
 											<h6 id="subline1" className="splash-subline">
 												Magical, Bioengineered, Digital Creatures
 											</h6>
@@ -417,7 +456,28 @@ class Home extends React.Component {
 						</div>
 
 						<div id="splash-page-spacer" className="splash-page-full-content-wrapper">
-							{this.state.computerScreenCurrentContent && <ComputerScreenContent id="computer-content-section-wrapper" sectionId={'computer-content-section'} title={this.state.computerScreenCurrentContent.title} text={this.state.computerScreenCurrentContent.text} imageLocation={this.state.computerScreenCurrentContent.image} svgElement={this.state.computerScreenCurrentContent.svg} nextArrowTappedCallback={this.handleNextArrowClick} backArrowTappedCallback={this.handleBackArrowClick} />}
+							{/* {this.state.computerScreenCurrentContent && 
+								<ComputerScreenContent id="computer-content-section-wrapper" 
+								sectionId={'computer-content-section'} 
+								currentContent={this.state.computerScreenCurrentContent}
+								// title={this.state.computerScreenCurrentContent.title} 
+								// text={this.state.computerScreenCurrentContent.text} 
+								// imageLocation={this.state.computerScreenCurrentContent.image} 
+								// svgElement={this.state.computerScreenCurrentContent.svg} 
+								nextArrowTappedCallback={this.handleNextArrowClick} 
+								backArrowTappedCallback={this.handleBackArrowClick} />
+							} */}
+							{this.state.computerScreenCurrentContent && 
+								<ComputerScreenContent id="computer-content-section-wrapper" 
+								sectionId={'computer-content-section'} 
+								// currentContent={this.state.computerScreenCurrentContent}
+								title={this.state.computerScreenCurrentContent.title} 
+								textElement={this.state.computerScreenCurrentContent.textElement} 
+								// imageLocation={this.state.computerScreenCurrentContent.image} 
+								svg={this.state.computerScreenCurrentContent.svg} 
+								nextArrowTappedCallback={this.handleNextArrowClick} 
+								backArrowTappedCallback={this.handleBackArrowClick} />
+							}
 
 							<section id="" class="splash-page-content-end-section"></section>
 						</div>
@@ -525,7 +585,6 @@ class Home extends React.Component {
 function ScrollingCarousel() {
 
 	var items = [];
-	// var svgMap = new Map();
 	var speciesMap = new Map();
 
 	species.forEach( s => {
@@ -536,11 +595,6 @@ function ScrollingCarousel() {
 		let path = xalianSvg.path;
 		let speciesName = path.substring(2, path.length - 4);
 		let species = speciesMap[speciesName];
-		// svgMap[speciesName] = {
-			// svg: xalianSvg,
-			// name: speciesName,
-			// element: img
-		// };
 		if (species) {
 			var img = buildImage(xalianSvg, species);
 			items.push(img);
@@ -550,13 +604,6 @@ function ScrollingCarousel() {
 	function buildImage(svg, species) {
 		return (
 			<Carousel.Item className="xalian-svg-carousel-item">
-				{/* <Image style={{ height: '25vh', background: `radial-gradient(circle, #dadada 60%, #dadada85 100%)` }}
-			className="splash-xalian-species-carousel-image xalian-image-shadowed xalian-image-bordered"
-			src={svg.file.default}
-			alt="First slide"
-		  /> */}
-				{/* <XalianSpeciesRowView species={species} /> */}
-				{/* <div className="vertically-center-contents stackable-margin"> */}
 				<div className="splash-xalian-stat-row-view centered-view">
 					<Row style={{ width: '100%' }}>
 						<Col className="vertically-center-contents" xs={6} lg={true}>
@@ -571,11 +618,6 @@ function ScrollingCarousel() {
 					</Row>
 				</div>
 
-				{/* </div> */}
-				{/* <Carousel.Caption>
-			<XalianSpeciesBadge type={species.type} />
-		  </Carousel.Caption> */}
-				{/* <h1 className="shadow-text splash-xalian-carousel-image-text" >{species.name}</h1> */}
 			</Carousel.Item>
 		);
 	}

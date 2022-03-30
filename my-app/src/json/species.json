@@ -82,7 +82,7 @@
   {
     "name": "Smokat",
     "id": "00005",
-    "type": "Undead",
+    "type": "Ghost",
     "planet": "Phantiri",
     "height": "67 in / 170 cm",
     "weight": "171 lbs / 77 kg",
@@ -122,7 +122,7 @@
   {
     "name": "Voltish",
     "id": "00007",
-    "type": "Electrical",
+    "type": "Electric",
     "planet": "Zolton",
     "height": "85 in / 216 cm",
     "weight": "271 lbs / 123 kg",
@@ -242,7 +242,7 @@
   {
     "name": "Foromeer",
     "id": "00013",
-    "type": "Metallic",
+    "type": "Metal",
     "planet": "Veridium",
     "height": "79 in / 200 cm",
     "weight": "216 lbs / 97 kg",

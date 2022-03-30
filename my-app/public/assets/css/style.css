@@ -144,6 +144,7 @@ body {
   color: #ffffff;
   background-color: #0d0d0d !important;
   overflow-x: hidden;
+  overscroll-behavior: none !important;
 }
 
 a {
@@ -271,7 +272,7 @@ body { width: 100%; max-width: 100%; height: auto;
   /* border-radius: 6px; */
   width: 100%;
   opacity: 1;
-  z-index: 9998;
+  z-index: 99999 !important;
 }
 
 .navbar {
@@ -638,10 +639,11 @@ body { width: 100%; max-width: 100%; height: auto;
   /* flex-direction: row; */
   align-items: center;
   justify-content: center;
-  
+
   padding: 0 !important;
   overflow-x: hidden;
 }
+
 /* 
 *******************
 **  xalians logo **
@@ -811,11 +813,12 @@ a:active {
 
 
 .galaxy-splash-animation-bg {
-  z-index: -1 !important;
+  z-index: -2 !important;
   position: fixed !important;
 }
 
 .splash-galaxy-animation-container {
+  z-index: -1 !important;
   padding: 0px !important;
   margin: 0px !important;
   width: 100% !important;
@@ -900,8 +903,8 @@ a:active {
 
   /* THIS TELLS HOW MUCH SPACE TO GIVE UNTIL SHOWING COMPUTER CONTENT */
   height: 100vh !important;
-  
-  pointer-events:none;
+
+  pointer-events: none;
 
   /* width: 100vw !important; */
   text-align: center;
@@ -931,7 +934,7 @@ a:active {
   left: 0;
   /* left: 0; */
   /* right: 50%; */
-    /* transform: translateX(-50%); */
+  /* transform: translateX(-50%); */
   /* transform: translate(-50%, -50%); */
   /* bottom: 0; */
   /* right: 0; */
@@ -941,10 +944,10 @@ a:active {
 #spaceship-computer-animation-svg {
   background-color: rgb(0, 0, 0);
   /* background: radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(33,33,33,1) 25%, rgba(33,33,33,1) 75%, rgba(0,0,0,1) 100%); */
-/* width: 200px;  */
-	/* height: 200px; */
+  /* width: 200px;  */
+  /* height: 200px; */
   /* width: 100%;   */
-	/* height: 100%; */
+  /* height: 100%; */
   margin: 0px !important;
   padding: 0px !important;
   border: 1px dotted rgb(217, 255, 0);
@@ -978,21 +981,21 @@ a:active {
 }
 
 .spaceship-animation-window-panel-wrapper {
-  
+
   /* background-color: #000000; */
   position: fixed;
-  top: 0; 
-  left: 0; 
+  top: 0;
+  left: 0;
   /* height: 100vh;  */
   /* width: 100%; */
 }
 
 .spaceship-animation-screen-panel-wrapper {
-  
+
   background-color: #000000;
   position: fixed;
-  top: 0; 
-  left: 0; 
+  top: 0;
+  left: 0;
   /* height: 100vh;  */
   /* width: 100%; */
 
@@ -1002,8 +1005,8 @@ a:active {
 }
 
 .spaceship-screen-grid-svg {
-  background: rgb(62,75,75);
-  background: radial-gradient(circle, rgba(62,75,75,1) 53%, rgba(20,23,23,1) 100%);
+  background: rgb(62, 75, 75);
+  background: radial-gradient(circle, rgba(62, 75, 75, 1) 53%, rgba(20, 23, 23, 1) 100%);
 }
 
 .xalian-logo-letter {
@@ -1016,14 +1019,14 @@ a:active {
   /* left: 0; */
   /* transform: translate(-50%, 0%); */
   /* width: 200px; */
-  max-width:100%;
+  max-width: 100%;
   /* width: 100%; */
   /* max-height: 100%; */
-/* max-height:20%; */
-position: relative;
-overflow: visible;
-margin: 0;
-/* display: flex; */
+  /* max-height:20%; */
+  position: relative;
+  overflow: visible;
+  margin: 0;
+  /* display: flex; */
 }
 
 /* .xalian-svg-carousel {
@@ -1038,28 +1041,28 @@ margin: 0;
   /* left: 0; */
   /* transform: translate(-50%, 0%); */
   /* width: 200px; */
-  max-width:100%;
+  max-width: 100%;
   overflow: visible;
-  
-/* max-height:20%; */
-position: relative;
-/* width: 100% */
-/* display: flex; */
+
+  /* max-height:20%; */
+  position: relative;
+  /* width: 100% */
+  /* display: flex; */
 }
 
 .xalian-svg-carousel-item {
-/* min-height: 100px; */
-height: 100%;
-width: 100%;
-margin: auto;
-max-width:100%;
-max-height:100%;
-/* width: 200px; */
-/* height: 200px; */
-/* align-self: flex-start; */
-/* position: relative; */
-/* flex:content; */
-/* max-height: 20vh; */
+  /* min-height: 100px; */
+  height: 100%;
+  width: 100%;
+  margin: auto;
+  max-width: 100%;
+  max-height: 100%;
+  /* width: 200px; */
+  /* height: 200px; */
+  /* align-self: flex-start; */
+  /* position: relative; */
+  /* flex:content; */
+  /* max-height: 20vh; */
 }
 
 .splash-xalian-species-carousel-image {
@@ -1073,7 +1076,7 @@ max-height:100%;
   border: 1px solid black;
   padding: 5px;
   box-shadow: 0px 0px 10px rgb(0, 0, 0);
-  
+
 }
 
 .splash-xalian-carousel-image-text {
@@ -1113,7 +1116,13 @@ max-height:100%;
 
 .screen-text-wrapper {
   max-width: 90%;
-  max-height: 90%;
+  height: 100%;
+  /* max-height: 90% !important; */
+  /* padding-top: 15px; */
+  /* padding-bottom: 15px; */
+  /* overflow-y: auto; */
+  /* max-height: 80% !important; */
+  /* display: block !important */
 }
 
 .splash-computer-container-row {
@@ -1175,7 +1184,7 @@ max-height:100%;
 
 .blue {
   background-color: rgba(38, 230, 255, 0.24);
-}  
+}
 
 .flipped {
   -webkit-transform: scaleX(-1);
@@ -1191,6 +1200,11 @@ max-height:100%;
   width: 100%;
   z-index: 1;
   padding: 10px;
+  pointer-events: none;
+}
+
+.emphasized-text {
+  font-style: italic;
 }
 
 .computer-screen-arrow-wrapper {
@@ -1236,12 +1250,15 @@ max-height:100%;
   box-sizing: border-box;
   padding: 0px;
   pointer-events: none;
-  
+
 }
 
 .computer-screen-font {
   color: #ffffffb0;
   text-shadow: 1px 1px 2px rgb(0, 0, 0) !important;
+  height: 100%;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 .screen-panel-title {
@@ -1254,6 +1271,7 @@ max-height:100%;
 section {
   /* border: 1px dotted rgb(0, 255, 136); */
 }
+
 .debug-box {
   /* border: 1px dotted rgb(7, 164, 255); */
 }
@@ -1317,20 +1335,6 @@ section {
 /*--------------------------------------------------------------
 # story
 --------------------------------------------------------------*/
-/* .story h3 {
-  color: rgb(0, 0, 0);
-  font-size: 28px;
-  font-weight: 700;
-}
-.story p {
-  color: rgb(0, 0, 0);
-} */
-/* 
-.story .content h3 {
-  font-weight: 700;
-  font-size: 28px;
-  font-family: "Poppins", sans-serif;
-} */
 .story .content ul {
   list-style: none;
   padding: 0;
@@ -1341,13 +1345,6 @@ section {
   position: relative;
 }
 
-/* .story .content ul i {
-  position: absolute;
-  font-size: 20px;
-  left: 0;
-  top: -3px;
-  color: #80ffb0;
-} */
 .story .content p:last-child {
   margin-bottom: 0;
 }
@@ -2002,7 +1999,7 @@ section {
 }
 
 .generator-page-content-background-container {
-  background: rgb(24, 24, 24);
+  background-color: rgb(24, 24, 24, 0.5);
   min-height: 100vh;
   min-width: 99.5vw;
   /* flex-direction: column; */
@@ -2229,7 +2226,6 @@ article {
   padding-top: 10px;
   padding-bottom: 10px;
   text-align: center;
-  text-shadow: 0px 0px 10px rgb(0, 0, 0);
   align-items: center;
 }
 
@@ -2242,7 +2238,8 @@ article {
   border-radius: 25px !important;
   box-shadow: 0px 0px 10px rgb(0, 0, 0);
   margin: auto;
-  max-width: 60vw !important;
+  max-width: 250px !important;
+  /* max-width: 60vw !important; */
   width: 100%;
 }
 
@@ -2253,7 +2250,8 @@ article {
   width: 100%;
   /* max-width: 40vw !important; */
   /* max-width: 400px !important; */
-  max-width: 60vw !important;
+  max-width: 200px !important;
+  /* max-width: 60vw !important; */
   padding: 10px;
 }
 
@@ -2267,7 +2265,6 @@ article {
 .planet-details-row {
   padding-top: 10px;
   padding-bottom: 10px;
-  text-shadow: 0px 0px 10px rgb(0, 0, 0);
 }
 
 .planet-details-row-col {
@@ -2301,7 +2298,8 @@ article {
 }
 
 .planet-table tbody * td {
-  color: rgb(179, 179, 179);
+  /* color: rgb(179, 179, 179); */
+  color: #;
   padding: 3px;
   font-style: italic;
   text-align: left !important;
@@ -2341,10 +2339,18 @@ article {
 
 .white-outline-text {
   text-shadow:
-   -1px -1px 0 #FFF,  
+    -1px -1px 0 #FFF,
     1px -1px 0 #FFF,
     -1px 1px 0 #FFF,
-     1px 1px 0 #FFF;
+    1px 1px 0 #FFF;
+}
+
+.white-outline-text {
+  text-shadow:
+    -1px -1px 0 #FFF,
+    1px -1px 0 #FFF,
+    -1px 1px 0 #FFF,
+    1px 1px 0 #FFF;
 }
 
 .planet-key-col {
@@ -2354,13 +2360,13 @@ article {
 }
 
 .planet-val-col {
-  border-color: rgb(128, 255, 176, 0.3);
+  border-color: #cccccc;
   border-style: solid;
   border-width: 1px;
 }
 
 .planet-history-link {
-  /* color: rgba(255, 255, 255, 0.5); */
+  color: rgb(194, 194, 194);
   padding: 5px;
 }
 
@@ -2452,8 +2458,9 @@ article {
   font-style: italic;
 }
 
-.species-col h4 {
+.species-col h5 {
   color: white;
+
 }
 
 .species-name-title {
@@ -2695,7 +2702,7 @@ article {
   text-align: right;
 }
 
- /* HAPPENS WHEN SCREEN GOES TO SMALL OR XSMALL I THINK */
+/* HAPPENS WHEN SCREEN GOES TO SMALL OR XSMALL I THINK */
 @media (max-width: 575px) {
   .glossary-title {
     text-align: left;
@@ -2736,6 +2743,20 @@ article {
   color: rgb(130, 130, 255) !important;
 }
 
+
+.themed-modal .modal-content {
+  filter: drop-shadow(5px 5px 4px #000000);
+}
+
+
+.themed-modal input,
+.themed-modal textarea {
+  border: none !important;
+  border-bottom: 2px solid rgb(70, 70, 70) !important;
+  border-radius: 0 !important;
+}
+
+
 .dark-themed-modal .modal-content {
   background-color: #1a1a1a;
   color: white;
@@ -2748,12 +2769,8 @@ article {
 
 .dark-themed-modal input,
 .dark-themed-modal textarea {
-  /* background-color: #202020 !important; */
   background-color: #20202000 !important;
   color: #80ffb0 !important;
-  border: none !important;
-  border-bottom: 2px solid rgb(70, 70, 70) !important;
-  border-radius: 0 !important;
 }
 
 .dark-themed-modal input:disabled,
@@ -2779,12 +2796,8 @@ article {
 
 .light-themed-modal input,
 .light-themed-modal textarea {
-  /* background-color: #202020 !important; */
   background-color: #cccccc !important;
   color: #242424 !important;
-  border: none !important;
-  border-bottom: 2px solid rgb(70, 70, 70) !important;
-  border-radius: 0 !important;
 }
 
 .light-themed-modal input:disabled,
@@ -2797,10 +2810,10 @@ article {
   -webkit-text-fill-color: #252525 !important;
 }
 
- input:-webkit-autofill,
- input:-webkit-autofill:hover,
- input:-webkit-autofill:focus,
- input:-webkit-autofill:active {
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
   transition: background-color 5000s ease-in-out 0s;
 }
 
@@ -2876,6 +2889,7 @@ input, textarea {
   max-width: 50vh !important;
   /* margin-top: 20px; */
   margin: auto;
+  /* margin-left: 0px; */
   justify-content: center;
   text-align: center;
 }
@@ -3002,21 +3016,64 @@ input, textarea {
   border-width: 1px;
   border-style: solid;
   max-width: 100%;
-  width: 100px;
+  width: 130px;
   height: 35px;
   text-align: center;
-  margin: 5px;
+  /* margin: 5px; */
   margin-left: auto;
   margin-right: auto;
 }
 
+.species-type-symbol {
+  /* max-height: 30px; */
+  /* max-width: 30px; */
+  /* height: 30px; */
+  /* width: 30px; */
+  /* padding-top: 2.5px; */
+  /* padding-bottom: 2.5px; */
+  padding: 2px;
+}
+
+
+
+.species-badge-wrapper {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.species-badge-icon-col {
+  margin: 0px;
+  padding: 0px !important;
+  align-items: center;
+  display: flex;
+  justify-content: right;
+}
+
+.species-badge-text-col {
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  padding: 0px !important;
+  /* align-items: left; */
+  display: flex;
+}
+
 .xalian-badge-text {
   font-weight: bold;
-  margin: 5px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: auto !important;
+  /* margin-left: auto; */
+  /* margin-right: auto; */
+  max-height: 30px;
+  min-width: 30px;
+  max-width: 100%;
+  /* height: 30px; */
+  /* width: 30px; */
+  width: 100%;
   /* text-shadow: 1px 1px 2px black; */
   color: rgb(0, 0, 0);
+  /* position: relative; */
+  text-align: center;
 
 }
 
@@ -3289,7 +3346,7 @@ input, textarea {
   box-shadow: 0px 0px 30px rgb(0, 0, 0);
   /* margin-top: 5px !important; */
   padding: 5px !important;
-  
+
 }
 
 .match-card-game-wrapper {
@@ -3340,4 +3397,37 @@ input, textarea {
   font-size: 2em;
   text-shadow: 0px 0px 2px 2px rgb(0, 0, 0) !important;
   color: black;
+}
+
+/* 
+-------------------------------------------
+|   SMOKE BACKGROUND
+-------------------------------------------
+*/
+
+#smokeBackgroundCanvas {
+  width: 100vw !important;
+  height: 100vh !important;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0;
+}
+
+#smokeBackgroundCanvasBelow {
+  width: 100vw !important;
+  height: 100vh !important;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -2;
+  pointer-events: none;
+  /* opacity: 0; */
+}
+
+.give-some-padding {
+  margin-top: 200px !important;
+  padding-top: 200px !important;
 }

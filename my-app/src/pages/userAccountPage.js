@@ -14,6 +14,7 @@ import { store } from 'state-pool';
 import { Auth } from 'aws-amplify';
 import { Hub, Logger } from 'aws-amplify';
 import XalianStatRowView from '../components/views/xalianStatRowView';
+import gsap from 'gsap';
 
 class UserAccountPage extends React.Component {
 	state = {
@@ -32,7 +33,7 @@ class UserAccountPage extends React.Component {
 		Auth.currentUserInfo().then((data) => {
 			if (data) {
 				let u = authUtil.buildAuthState(data);
-				this.setState({ loggedInUser: u, isLoading: false });
+				this.setState({ loggedInUser: u });
 				this.updateXaliansState(u.username);
 			}
 		});
@@ -40,11 +41,13 @@ class UserAccountPage extends React.Component {
 
 	updateXaliansState = (username) => {
 		dbApi
-			.callGetUser(username || this.state.user.username, true)
+			.callGetUser(username || this.state.loggedInUser.username, true)
 			.then((user) => {
 				this.setState({
 					user: user,
 					xalians: user.xalians,
+				}, () => {
+					this.buildXaliansView();
 				});
 			})
 			.catch((e) => {
@@ -67,12 +70,22 @@ class UserAccountPage extends React.Component {
 				rows.push(<XalianStatRowView accountPage accountPageCallback={this.deleteXalianCallback} xalian={xalian} />);
 			});
 		}
-		return rows;
+		this.setState({ xalianRows: rows, isLoading: false });
+		// return rows;
 	};
 
 	verifyRemoveXalianCallback = () => {
+		let deleted = this.state.xalianToDelete;
+		console.log(deleted);
+		let rows = this.state.xalianRows;
+		rows.forEach( row => {
+			let x = row.props.xalian;
+			if (x.xalianId == deleted.xalianId) {
+				rows.splice(rows.indexOf(row), 1);
+			}
+		})
+
 		this.setState({ verifyRemoveXalianModalShow: false, xalianToDelete: false });
-		this.updateXaliansState();
 	};
 
 	closeModalCallback = () => {
@@ -89,7 +102,7 @@ class UserAccountPage extends React.Component {
 						<Row className='account-page-xalians-title vertically-center-contents'>
 							<h1>Your Xalian Faction</h1>
 						</Row>
-						<Row className="">{this.buildXaliansView()}</Row>
+						<Row className="">{this.state.xalianRows}</Row>
 					</Container>
 
 					{this.state.xalianToDelete && <VerifyRemoveXalianModal show={this.state.verifyRemoveXalianModalShow} onHide={() => this.closeModalCallback()} onXalianDelete={() => this.verifyRemoveXalianCallback()} xalian={this.state.xalianToDelete.attributes} username={this.state.loggedInUser.username}></VerifyRemoveXalianModal>}

@@ -69,8 +69,8 @@ class SmokeEmitter extends React.Component {
                     }
                   },
 				size: {
-                    value: 40,
-                    random: { enable: true, minimumValue: 20 },
+                    value: this.props.size || 40,
+                    random: { enable: true, maximumValue: this.props.size },
                     animation: {
                       enable: false,
                       speed: 10,
@@ -97,7 +97,7 @@ class SmokeEmitter extends React.Component {
                         enable: true,
                         acceleration: -0.5
                       },
-					speed: 4,
+					speed: this.props.size / 20,
 					direction: "top",
 					random: false,
 					straight: false,
@@ -118,7 +118,7 @@ class SmokeEmitter extends React.Component {
                 },
                 position: {
                   x: 50,
-                  y: 50
+                  y: 90
                 }
               },
 		};
@@ -136,87 +136,7 @@ class SmokeEmitter extends React.Component {
 		};
 
 		return (
-			<Container className="">
-				<Particles id="tsparticles" options={config} init={particlesInit} loaded={particlesLoaded} />
-
-				{/* <Particles className=""
-				id="tsparticles"
-				init={particlesInit}
-				loaded={particlesLoaded}
-				options={{
-					background: {
-						image: "url('assets/img/background/galaxy-splash-dark.png')",
-                        position: "top center",
-                        size: "cover"
-					},
-					fpsLimit: 120,
-                    fullScreen: {
-                        enable: true,
-                        zIndex: -1
-                    },
-
-					particles: {
-						color: {
-							value: '#ffffff',
-						},
-						links: {
-							color: '#ffffff',
-							distance: 150,
-							enable: false,
-							opacity: 0.5,
-							width: 1,
-						},
-						collisions: {
-							enable: false,
-						},
-						move: {
-							direction: this.props.direction || 'left',
-							enable: true,
-							outMode: 'out',
-							random: false,
-							speed: this.props.speed || 0.2,
-							straight: true,
-						},
-                        twinkle: {
-                            particles: {
-                              enable: true,
-                              color: "#ffffff",
-                              frequency: 0.005,
-                              opacity: 0.3
-                            }
-                          },
-						number: {
-							density: {
-								enable: true,
-								area: 400,
-							},
-							value: 100,
-						},
-						opacity: {
-							value: 0.5,
-							random: true,
-							anim: {
-								enable: true,
-								speed: 0.1,
-								opacity_min: 0.1,
-								sync: false,
-							},
-						},
-						shape: {
-							type: 'circle',
-						},
-						size: {
-							random: true,
-							value: 1,
-						},
-					},
-					detectRetina: true,
-				}}
-			> */}
-				{/* <div style={{zIndex: 999}}>{this.props.children}</div> */}
-				{/* <h1>TEST</h1> */}
-				{/* </Particles> */}
-			</Container>
+				<Particles id={this.props.id || 'tsparticles-smoke'} options={config} init={particlesInit} loaded={particlesLoaded} style={{ zIndex: '99', overflow: 'visible' }} width={100} height={400} />
 		);
 	}
 }

@@ -11,7 +11,7 @@ import * as authUtil from '../../utils/authUtil';
 import * as dbApi from '../../utils/dbApi';
 import { store } from 'state-pool';
 import { Auth } from 'aws-amplify';
-import { Hub, Logger } from 'aws-amplify';
+import { Hub } from 'aws-amplify';
 import Button from 'react-bootstrap/Button';
 import NavbarBrand from 'react-bootstrap/esm/NavbarBrand';
 import Navbar from "react-bootstrap/Navbar";

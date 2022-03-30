@@ -27,8 +27,8 @@ class ComputerScreenContent extends React.Component {
         .add(this.buildArrowAnimation('#computer-screen-arrow-outside', 0.3), "<")
         .add(this.buildXAnimation(), "<")
         
-        .set('#' + this.props.sectionId + '-title-text', {duration: 0.5, text: this.props.title, ease: 'none'}, "<")
-        .set('#' + this.props.sectionId + '-text', {duration: 0.5, text: this.props.text}, "<")
+        // .set('#' + this.props.sectionId + '-title-text', {duration: 0.5, text: this.props.title, ease: 'none'}, "<")
+        // .set('#' + this.props.sectionId + '-text', {duration: 0.5, text: this.props.text}, "<")
         ;
 
         this.buildPanelSquareShimmerAnimations();
@@ -111,32 +111,31 @@ class ComputerScreenContent extends React.Component {
 		return (
 			<section id={this.props.sectionId} class="splash-computer-section">
 				<Container className="splash-computer-container">
+                    <Row className="splash-computer-container-row" style={{ height: '7%' }}/>
 					<Row className="splash-computer-container-row" style={{ height: '15%' }}>
-                        {/* <Col className="debug-box vertically-center-contents splash-computer-col">
-							<SpaceshipComputerScreenTitlePanelSVG preserveAspectRatio="none" className="computer-screen-element" />
-							<div className="screen-title-wrapper vertically-center-contents">
-								<h1 id={this.props.sectionId + '-title-text'} className="screen-panel-title"></h1>
-							</div>
-						</Col> */}
 						<Col className="debug-box vertically-center-contents splash-computer-col">
 							<SpaceshipComputerScreenTitlePanelSVG preserveAspectRatio="none" className="computer-screen-element" />
 							<div className="screen-title-wrapper vertically-center-contents">
-								<h1 id={this.props.sectionId + '-title-text'} className="screen-panel-title"></h1>
+								<h1 id={this.props.sectionId + '-title-text'} className="screen-panel-title">{this.props.title}</h1>
+								{/* <h1 id={this.props.sectionId + '-title-text'} className="screen-panel-title">{this.props.currentContent.title}</h1> */}
 							</div>
 						</Col>
 					</Row>
-					<Row className="splash-computer-container-row" style={{ height: '30%' }}>
+					<Row className="splash-computer-container-row" style={{ height: '25%' }}>
 						<Col className="debug-box vertically-center-contents splash-computer-col">
 							<SpaceshipComputerScreenImagePanelSVG preserveAspectRatio="none" className="computer-screen-element" />
-                            {this.props.svgElement}
+                            {/* {this.props.currentContent.svg} */}
+                            {this.props.svg}
 							{/* <img id={this.props.sectionId + '-image'} src={this.props.imageLocation || 'assets/img/background/castle.jpg'} className="splash-computer-image" alt=""></img> */}
 						</Col>
 					</Row>
-					<Row className="splash-computer-container-row" style={{ height: '40%' }}>
-						<Col className="debug-box vertically-center-contents splash-computer-col">
+					<Row className="splash-computer-container-row" style={{ height: '30%' }}>
+						<Col className="debug-box vertically-center-contents splash-computer-col" >
 							<SpaceshipComputerScreenInfoPanelSVG preserveAspectRatio="none" className="computer-screen-element" />
-							<div className="screen-text-wrapper vertically-center-contents">
-								<h4 className="computer-screen-font" id={this.props.sectionId + '-text'} ></h4>
+							<div className="screen-text-wrapper" style={{ width: '100%', height: '85%', position: 'relative' }}>
+								{/* <h4 className="computer-screen-font" id={this.props.sectionId + '-text'}  >{this.props.currentContent.text}</h4> */}
+								{/* <h4 className="computer-screen-font" id={this.props.sectionId + '-text'}  >{this.props.currentContent.textElement}</h4> */}
+								<h4 className="computer-screen-font" id={this.props.sectionId + '-text'}  >{this.props.textElement}</h4>
 							</div>
 						</Col>
 					</Row>
@@ -157,6 +156,7 @@ class ComputerScreenContent extends React.Component {
 							</div>
 						</Col>
 					</Row>
+                    <Row className="splash-computer-container-row" style={{ height: '8%' }}/>
 				</Container>
 			</section>
 		);

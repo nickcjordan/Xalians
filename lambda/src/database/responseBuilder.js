@@ -33,6 +33,9 @@ function buildSuccess(text = 'ok') {
 	console.log('Success: ' + text);
 	return {
 		statusCode: 200,
+		headers: {
+			'content-type': 'application/json',
+		},
 		body: JSON.stringify({
 			message: text,
 		}),

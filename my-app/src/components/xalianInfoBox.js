@@ -56,7 +56,7 @@ class XalianInfoBox extends React.Component {
 				)}
 
 			{this.props.json && 
-				<Modal show={this.state.jsonModalShow} onHide={() => this.setState({ jsonModalShow: false })} size="lg" aria-labelledby="contained-modal-title-vcenter" centered className={this.props.light ? "light-themed-modal" : "dark-themed-modal"}>
+				<Modal show={this.state.jsonModalShow} onHide={() => this.setState({ jsonModalShow: false })} size="lg" aria-labelledby="contained-modal-title-vcenter" centered className={this.props.light ? "themed-modal light-themed-modal" : "themed-modal dark-themed-modal"}>
 					<Modal.Header closeButton closeVariant={this.props.light ? '' : 'white'}>
 						<Modal.Title id="contained-modal-title-vcenter">{this.props.xalian ? this.props.xalian.species.name : this.props.species ? this.props.species.name : 'Xalian'} JSON Details</Modal.Title>
 					</Modal.Header>

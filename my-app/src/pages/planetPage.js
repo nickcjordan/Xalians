@@ -38,9 +38,9 @@ class PlanetPage extends React.Component {
 
         return <React.Fragment>
 
+                <XalianNavbar></XalianNavbar>
             <Container fluid className="home-background">
             <SplashGalaxyBackground direction={'bottom-left'} speed={0.2}>
-                <XalianNavbar></XalianNavbar>
 
                 <Container className="content-container" >
                     <Row >

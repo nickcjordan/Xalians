@@ -1,8 +1,8 @@
 [
   {
-    "name": "Electrical",
+    "name": "Electric",
     "moveTypes": [
-      "electrical",
+      "electric",
       "electric",
       "plasma",
       "lightning",
@@ -16,7 +16,7 @@
       "plant"
     ],
     "effectiveness": {
-      "Electrical": 1,
+      "Electric": 1,
       "Air": 0.5,
       "Light": 0.5,
       "Plant": 2,
@@ -25,7 +25,7 @@
       "Dark": 2,
       "Explosive": 1,
       "Psychic": 1,
-      "Undead": 1,
+      "Ghost": 1,
       "Fire": 1,
       "Water": 0
     },
@@ -52,7 +52,7 @@
       "air"
     ],
     "effectiveness": {
-      "Electrical": 0.5,
+      "Electric": 0.5,
       "Air": 1,
       "Light": 1,
       "Plant": 0.5,
@@ -61,7 +61,7 @@
       "Dark": 1,
       "Explosive": 0,
       "Psychic": 1,
-      "Undead": 0.5,
+      "Ghost": 0.5,
       "Fire": 2,
       "Water": 1
     },
@@ -89,7 +89,7 @@
       "light"
     ],
     "effectiveness": {
-      "Electrical": 0.5,
+      "Electric": 0.5,
       "Air": 0,
       "Light": 1,
       "Plant": 2,
@@ -98,7 +98,7 @@
       "Dark": 2,
       "Explosive": 1,
       "Psychic": 0.5,
-      "Undead": 2,
+      "Ghost": 2,
       "Fire": 1,
       "Water": 1
     },
@@ -126,7 +126,7 @@
       "algae"
     ],
     "effectiveness": {
-      "Electrical": 2,
+      "Electric": 2,
       "Air": 1,
       "Light": 2,
       "Plant": 1,
@@ -135,7 +135,7 @@
       "Dark": 0.5,
       "Explosive": 0.5,
       "Psychic": 0,
-      "Undead": 1,
+      "Ghost": 1,
       "Fire": 0.5,
       "Water": 2
     },
@@ -159,11 +159,11 @@
       "igneous",
       "mineral",
       "geode",
-      "metallic",
+      "metal",
       "quartz"
     ],
     "effectiveness": {
-      "Electrical": 2,
+      "Electric": 2,
       "Air": 0.5,
       "Light": 1,
       "Plant": 1,
@@ -172,7 +172,7 @@
       "Dark": 1,
       "Explosive": 0.5,
       "Psychic": 2,
-      "Undead": 0,
+      "Ghost": 0,
       "Fire": 2,
       "Water": 0.5
     },
@@ -199,7 +199,7 @@
       "chemical"
     ],
     "effectiveness": {
-      "Electrical": 1,
+      "Electric": 1,
       "Air": 2,
       "Light": 0,
       "Plant": 2,
@@ -208,7 +208,7 @@
       "Dark": 1,
       "Explosive": 0.5,
       "Psychic": 2,
-      "Undead": 1,
+      "Ghost": 1,
       "Fire": 0.5,
       "Water": 0.5
     },
@@ -237,7 +237,7 @@
       "smoky"
     ],
     "effectiveness": {
-      "Electrical": 0.5,
+      "Electric": 0.5,
       "Air": 1,
       "Light": 2,
       "Plant": 0,
@@ -246,7 +246,7 @@
       "Dark": 1,
       "Explosive": 1,
       "Psychic": 2,
-      "Undead": 2,
+      "Ghost": 2,
       "Fire": 0.5,
       "Water": 1
     },
@@ -274,7 +274,7 @@
       "psychic"
     ],
     "effectiveness": {
-      "Electrical": 1,
+      "Electric": 1,
       "Air": 1,
       "Light": 2,
       "Plant": 0.5,
@@ -283,7 +283,7 @@
       "Dark": 0,
       "Explosive": 2,
       "Psychic": 1,
-      "Undead": 2,
+      "Ghost": 2,
       "Fire": 1,
       "Water": 1
     },
@@ -296,7 +296,7 @@
     ]
   },
   {
-    "name": "Undead",
+    "name": "Ghost",
     "moveTypes": [
       "ghost",
       "spirit",
@@ -304,13 +304,13 @@
       "supernatural",
       "banshee",
       "wraith",
-      "undead",
+      "ghost",
       "haunted",
       "genie",
-      "undead"
+      "ghost"
     ],
     "effectiveness": {
-      "Electrical": 1,
+      "Electric": 1,
       "Air": 2,
       "Light": 0.5,
       "Plant": 1,
@@ -319,7 +319,7 @@
       "Dark": 0.5,
       "Explosive": 2,
       "Psychic": 0.5,
-      "Undead": 1,
+      "Ghost": 1,
       "Fire": 1,
       "Water": 2
     },
@@ -328,8 +328,8 @@
       "phantom",
       "supernatural",
       "wraith",
-      "undead",
-      "undead"
+      "ghost",
+      "ghost"
     ]
   },
   {
@@ -348,7 +348,7 @@
       "pyro"
     ],
     "effectiveness": {
-      "Electrical": 1,
+      "Electric": 1,
       "Air": 0.5,
       "Light": 0.5,
       "Plant": 2,
@@ -357,7 +357,7 @@
       "Dark": 2,
       "Explosive": 1,
       "Psychic": 1,
-      "Undead": 1,
+      "Ghost": 1,
       "Fire": 1,
       "Water": 0
     },
@@ -383,7 +383,7 @@
       "spraying"
     ],
     "effectiveness": {
-      "Electrical": 0,
+      "Electric": 0,
       "Air": 1,
       "Light": 1,
       "Plant": 0.5,
@@ -392,7 +392,7 @@
       "Dark": 1,
       "Explosive": 2,
       "Psychic": 1,
-      "Undead": 0.5,
+      "Ghost": 0.5,
       "Fire": 2,
       "Water": 1
     },
@@ -409,7 +409,7 @@
       "frost"
     ],
     "effectiveness": {
-      "Electrical": 0,
+      "Electric": 0,
       "Air": 1,
       "Light": 1,
       "Plant": 0.5,
@@ -418,7 +418,7 @@
       "Dark": 1,
       "Explosive": 2,
       "Psychic": 1,
-      "Undead": 0.5,
+      "Ghost": 0.5,
       "Fire": 2,
       "Water": 1
     },
@@ -428,12 +428,12 @@
     ]
   },
   {
-    "name": "Metallic",
+    "name": "Metal",
     "moveTypes": [
       "metal"
     ],
     "effectiveness": {
-      "Electrical": 0,
+      "Electric": 0,
       "Air": 1,
       "Light": 1,
       "Plant": 0.5,
@@ -442,7 +442,7 @@
       "Dark": 1,
       "Explosive": 2,
       "Psychic": 1,
-      "Undead": 0.5,
+      "Ghost": 0.5,
       "Fire": 2,
       "Water": 1
     },
@@ -456,7 +456,7 @@
       "sand"
     ],
     "effectiveness": {
-      "Electrical": 0,
+      "Electric": 0,
       "Air": 1,
       "Light": 1,
       "Plant": 0.5,
@@ -465,7 +465,7 @@
       "Dark": 1,
       "Explosive": 2,
       "Psychic": 1,
-      "Undead": 0.5,
+      "Ghost": 0.5,
       "Fire": 2,
       "Water": 1
     },

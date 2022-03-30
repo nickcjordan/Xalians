@@ -1,49 +1,51 @@
 .fire-color {background-color: #df6d5e;}
-.water-color {background-color: #4b81a1;}
+.water-color {background-color: #60a0c5;}
 .air-color {background-color: #ffffff;}
-.electrical-color {background-color: #e2bd43;}
-.rock-color {background-color: #714932;}
-.plant-color {background-color: #37661b;}
-.chemical-color {background-color: #64bd8c;}
-.light-color {background-color: #FFFFAB;}
-.dark-color {background-color: #37477c;}
-.metallic-color {background-color: #6d6868;}
-.psychic-color {background-color: #cc9bd3;}
-.undead-color {background-color: #6c4c8a;}
-.ice-color {background-color: #74d9e0;}
-.sand-color {background-color: #cc9e61;}
+.electric-color {background-color: #e2bd43;}
+.rock-color {background-color: #8d7050;}
+.plant-color {background-color: #708844;}
+.chemical-color {background-color: #64bd9f;}
+.light-color {background-color: #ffffc7;}
+/* .dark-color {background-color: #57619c;} */
+
+.dark-color {background-color: #57619c;}
+.metal-color {background-color: #8d8d8d;}
+.psychic-color {background-color: #d39bcb;}
+.ghost-color {background-color: #8764a8;}
+.ice-color {background-color: #85dde4;}
+.sand-color {background-color: #e6b26f;}
 
 
 /* text color */
 .fire-text-color {color: #df6d5e;}
-.water-text-color {color: #4b81a1;}
+.water-text-color {color: #60a0c5;}
 .air-text-color {color: #ffffff;}
-.electrical-text-color {color: #e2bd43;}
-.rock-text-color {color: #714932;}
-.plant-text-color {color: #2b6e30;}
-.chemical-text-color {color: #64bd8c;}
-.light-text-color {color: #FFFFAB;}
-.dark-text-color {color: #37477c;}
-.metallic-text-color {color: #6d6868;}
-.psychic-text-color {color: #cc9bd3;}
-.undead-text-color {color: #6c4c8a;}
-.ice-text-color {color: #74d9e0;}
-.sand-text-color {color: #cc9e61;}
+.electric-text-color {color: #e2bd43;}
+.rock-text-color {color: #8d7050;}
+.plant-text-color {color: #708844;}
+.chemical-text-color {color: #64bd9f;}
+.light-text-color {color: #ffffc7;}
+.dark-text-color {color: #57619c;}
+.metal-text-color {color: #8d8d8d;}
+.psychic-text-color {color: #d39bcb;}
+.ghost-text-color {color: #8764a8;}
+.ice-text-color {color: #85dde4;}
+.sand-text-color {color: #e6b26f;}
 
 
 
 /* border color */
 .fire-border-color {border-color: #df6d5e;}
-.water-border-color {border-color: #4b81a1;}
+.water-border-color {border-color: #60a0c5;}
 .air-border-color {border-color: #ffffff;}
-.electrical-border-color {border-color: #e2bd43;}
-.rock-border-color {border-color: #714932;}
-.plant-border-color {border-color: #2b6e30;}
-.chemical-border-color {border-color: #64bd8c;}
-.light-border-color {border-color: #FFFFAB;}
-.dark-border-color {border-color: #37477c;}
-.metallic-border-color {border-color: #6d6868;}
-.psychic-border-color {border-color: #cc9bd3;}
-.undead-border-color {border-color: #6c4c8a;}
-.ice-border-color {border-color: #74d9e0;}
-.sand-border-color {border-color: #cc9e61;}
+.electric-border-color {border-color: #e2bd43;}
+.rock-border-color {border-color: #8d7050;}
+.plant-border-color {border-color: #708844;}
+.chemical-border-color {border-color: #64bd9f;}
+.light-border-color {border-color: #ffffc7;}
+.dark-border-color {border-color: #57619c;}
+.metal-border-color {border-color: #8d8d8d;}
+.psychic-border-color {border-color: #d39bcb;}
+.ghost-border-color {border-color: #8764a8;}
+.ice-border-color {border-color: #85dde4;}
+.sand-border-color {border-color: #e6b26f;}

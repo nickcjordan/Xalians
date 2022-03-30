@@ -57,7 +57,7 @@ class VerifyEmailModal extends React.Component {
                 size="lg"
                 aria-labelledby="contained-modal-title-vcenter"
                 centered
-                className={this.props.light ? "light-themed-modal" : "dark-themed-modal"}
+                className={this.props.light ? "themed-modal light-themed-modal" : "themed-modal dark-themed-modal"}
             >
                 <Modal.Header closeButton closeVariant={this.props.light ? '' : 'white'}>
                     <Modal.Title id="contained-modal-title-vcenter">
