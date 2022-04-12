@@ -31,11 +31,12 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "cp -rf ../lambda/src/json src && react-scripts start",
+    "start": "npm run copy-js && npm run copy-json && react-scripts start",
     "build": "react-scripts build",
-    "build-deploy": "cp -rf ../lambda/src/json src && npm run build && aws s3 sync build s3://xalians.com",
+    "build-deploy": "npm run copy-js && npm run copy-json && npm run build && aws s3 sync build s3://xalians.com",
     "deploy": "npm run build && aws s3 sync build s3://xalians.com",
     "copy-json": "cp -rf ../lambda/src/json src",
+    "copy-js": "cp -rf ../lambda/src/constants src && cp -rf ../lambda/src/gameplay src && cp -rf ../lambda/src/model src && cp -rf ../lambda/src/util src",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

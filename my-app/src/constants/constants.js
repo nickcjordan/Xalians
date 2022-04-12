@@ -1,18 +1,20 @@
 module.exports = {
-	themeColors: {
-		electric: '#e2bd43',
-		air: '#ffffff',
-		fire: '#df6d5e',
-		water: '#60a0c5',
-		ice: '#85dde4',
-		plant: '#708844',
-		rock: '#8d7050',
-		light: '#ffffc7',
-		dark: '#57619c',
-		metal: '#8d8d8d',
-		sand: '#e6b26f',
-		chemical: '#64bd9f',
-		psychic: '#d39bcb',
-		ghost: '#8764a8',
-	},
-};
+    STAT_POINT_MAX: 999,
+    STAT_POINT_MIN: 1,
+    STAT_COUNT_PER_CHARACTER: 8,
+    MAX_ELEMENT_COUNT_PER_CHARACTER: 2,
+    //
+    CHAOS: 0,
+    RANDOM_WEIGHT: 0.5,
+    //
+    // STAT_THRESHOLD_VARIABILITY: 0.25,
+    STAT_THRESHOLD_VARIABILITY: 0.2,
+    // LOW_THRESHOLD: 0.25,
+    // MEDIUM_THRESHOLD: 0.5,
+    // HIGH_THRESHOLD: 0.75
+    //
+    // STAT_THRESHOLD_VARIABILITY: 0.35,
+    // LOW_THRESHOLD: 0.35,
+    // MEDIUM_THRESHOLD: 0.5,
+    // HIGH_THRESHOLD: 0.65
+}

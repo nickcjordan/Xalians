@@ -17,7 +17,7 @@ class XaliansLogoDnaAnimated extends React.Component {
 	
 	render() {
 		return (
-				<XaliansLogoSVG id="dna_logo" style={{ margin: 'auto', display: 'flex', paddingBottom: '10px' }} />
+				<XaliansLogoSVG id="dna_logo" style={{ margin: 'auto', display: 'flex', padding: '2vh', maxHeight: '20vh' }} />
 		);
 	}
 }
