@@ -609,14 +609,17 @@ body { width: 100%; max-width: 100%; height: auto;
 
 .title-logo-row {
   /* max-height: 80vh !important; */
-  height: calc(100vh - 60px);
-  /* height: 100vh !important; */
-  margin-left: auto !important;
-  margin-right: auto !important;
+  /* height: calc(100vh - 60px); */
+  height: calc(100vh - 60px) !important;
+  /* margin-left: auto !important; */
+  /* margin-right: auto !important; */
+  margin: auto !important;
   margin-top: 0px !important;
   width: 100%;
+  height: 100%;
   /* padding-top: 50px; */
   justify-content: center;
+  /* padding-top: 20px; */
 }
 
 .splash-stack {

@@ -92,7 +92,7 @@ class Home extends React.Component {
 
 
 				// TEXT FIT DOESNT WORK WHEN THE TEXT IS ITALISIZED AND STUFF
-				textFit(document.getElementById('computer-content-section-text'), { multiLine: true, alignVert: true, minFontSize:8, maxFontSize: 24});
+				// textFit(document.getElementById('computer-content-section-text'), { multiLine: true, alignVert: true, minFontSize:8, maxFontSize: 24});
 				gsap.to('#computer-content-section', {opacity: 1, duration: 0.25})
 			});
 		});
@@ -254,95 +254,75 @@ class Home extends React.Component {
 			.to('#subline3', { scrambleText:{ chars: 'abcdefghijklmnopqrstuvwxyz', text: "{original}", revealDelay: "0.25" }, opacity: 1, duration: 2, delay: 0.75 }, '<')
 			// discord and twitter links
 
-			// .to('#splash-animated-changing-text', { opacity: 1, duration: 0.5, delay: 0.4 }, '<')
-			// .to('#splash-animated-changing-text', { text: { type: 'diff', value: 'EARN', speed: 3 }, delay: 0.08 })
-			// .to('#splash-animated-changing-text', { text: { type: 'diff', value: 'TRADE', speed: 3 }, delay: 0.08 })
-			// .to('#splash-animated-changing-text', { text: { type: 'diff', value: 'PLAY', speed: 3 }, delay: 0.08 })
-			// .to('#splash-animated-changing-text', { text: { type: 'diff', value: 'Start Generating Now...', speed: 4, newClass: 'splash-subtitle-smaller' }, delay: 0.5 })
-			// .to('#splash-animated-changing-text', { opacity: 0, duration: 0.5, delay: 0.5 });
-
-		var spaceshipTl = gsap.timeline({
-			id: 'spaceship-timeline-animation',
-			scrollTrigger: {
-				trigger: '#splash-section',
+			// var spaceshipTl = gsap.timeline({
+			// id: 'spaceship-timeline-animation',
+			// scrollTrigger: {
+				// trigger: '#splash-section',
 				// pin: true,
 				// scrub: 3,
 				// markers: true,
-				start: 'center center',
-				// end: 'bottom 20%',
+				// start: 'center center',
+				// end: '20%',
 				// end: 'bottom top',
-				toggleActions: 'play complete reverse reset',
-				onLeave: () => {
-					gsap.to(window, { scrollTo: { duration: 0.25, y: "#splash-page-spacer", autoKill: false} });
-				}
-			},
-		});
+				// toggleActions: 'play complete reverse reset',
+				// onLeave: () => {
+				// 	gsap.to(window, { scrollTo: { duration: 0.25, y: "#splash-page-spacer", autoKill: false} });
+				// }
+			// },
+		// });
 
 
-		spaceshipTl
+		// spaceshipTl
 			// .to('#subline1, #subline2, #subline3, #splash-social-media-links, #xalian-generator-link, #xaliansLogo', { opacity: 0 }, '<')
-			.set(document.body, {overflowY: "hidden"})
-			.from('#spaceship-window-animation-svg', { scale: 10, duration: 1, ease: 'expoScale(10, 1)' })
-			.to('#spaceship-window-animation-svg', { xPercent: -100, duration: 0.5, ease: 'none' })
-			.from('#spaceship-animation-panel-wrapper', { xPercent: 100, duration: 0.5, ease: 'none' }, '<')
-			.to("#splash-section", { backgroundColor: 'black' }, "<")
-			.to('#spaceship-computer-outside-animation', { scale: 5, duration: 1, ease: 'expoScale(1, 5)' })
-			.set(document.body, {overflowY: "auto"})
-			;
+			// .set(document.body, {overflowY: "hidden"})
+			// .from('#spaceship-window-animation-svg', { scale: 10, duration: 1, ease: 'expoScale(10, 1)' })
+			// .to('#spaceship-window-animation-svg', { xPercent: -100, duration: 0.5, ease: 'none' })
+			// .from('#spaceship-animation-panel-wrapper', { xPercent: 100, duration: 0.5, ease: 'none' }, '<')
+			// .to("#splash-section", { backgroundColor: 'black' }, "<")
+			// .to('#spaceship-computer-outside-animation', { scale: 5, duration: 1, ease: 'expoScale(1, 5)' })
+			// .set(document.body, {overflowY: "auto"})
+			// ;
 
 
 			
-			// ScrollTrigger.create({
-				// 	trigger: '#splash-page-spacer',
-				// 	pin: true,
-				// 	scrub: 1,
-				// 	start: 'top top',
-				// 	end: '+=50%',
-		// 	onEnter: () => { gsap.fromTo("#splash-page-spacer", {autoAlpha: 0}, {autoAlpha: 1, duration: 0.5}) },
-		// 	onLeave: () => { gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 0}) },
-		// 	onLeaveBack: () => { gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 1}) },
-		// 	onEnterBack: () => { gsap.to('#splash-page-spacer', {autoAlpha: 0, duration: 0.5}) }
-		// 		// onEnterBack: () => { gsap.to(window, { scrollTo: { duration: 1, y: "#splash-section", autoKill: false} })}
-		// 		// preventOverlaps: "spaceship-animation-group"
-		// });
 		
 		// DIM COMPUTER SCREEN WHEN AT THE BOTTOM OF THE PAGE
 		// gsap.set('#splash-page-spacer', {autoAlpha: 0});
 		gsap.timeline({
-			scrollTrigger: {
-				trigger: '#splash-page-spacer',
-				pin: true,
-				scrub: 3,
-				start: 'top top',
-				end: '+=100%',
-				toggleActions: 'play complete reverse reset',
-				snap: {
-					snapTo: 'labelsDirectional'
-				}
-				// onEnter: () => { gsap.fromTo("#splash-page-spacer", {autoAlpha: 0}, {autoAlpha: 1, duration: 0.5}) },
-				// onLeave: () => { gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 0}) },
-				// onLeaveBack: () => { gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 1}) },
-				// onEnterBack: () => { gsap.to('#splash-page-spacer', {autoAlpha: 0, duration: 0.5}) }
-					// onEnterBack: () => { gsap.to(window, { scrollTo: { duration: 1, y: "#splash-section", autoKill: false} })}
-					// preventOverlaps: "spaceship-animation-group"
-			}
+			// scrollTrigger: {
+			// 	trigger: '#splash-page-spacer',
+			// 	pin: true,
+			// 	scrub: 3,
+			// 	start: 'top top',
+			// 	end: '+=100%',
+			// 	toggleActions: 'play complete reverse reset',
+			// 	snap: {
+			// 		snapTo: 'labelsDirectional'
+			// 	}
+			// 	// onEnter: () => { gsap.fromTo("#splash-page-spacer", {autoAlpha: 0}, {autoAlpha: 1, duration: 0.5}) },
+			// 	// onLeave: () => { gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 0}) },
+			// 	// onLeaveBack: () => { gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 1}) },
+			// 	// onEnterBack: () => { gsap.to('#splash-page-spacer', {autoAlpha: 0, duration: 0.5}) }
+			// 		// onEnterBack: () => { gsap.to(window, { scrollTo: { duration: 1, y: "#splash-section", autoKill: false} })}
+			// 		// preventOverlaps: "spaceship-animation-group"
+			// }
 		})
 		// .to("#splash-page-spacer", {autoAlpha: 1, duration: 0.5})
 		.addLabel("content")
 		.to("#splash-page-spaceship-window-animation, #splash-page-spacer", {autoAlpha: 0, duration: 0.5})
-		.to(".pin-spacer, .home-background", {backgroundColor: '#000000', duration: 0.5}, "<");
+		// .to(".pin-spacer, .home-background", {backgroundColor: '#000000', duration: 0.5}, "<");
 		;
 
 		// PIN CAROUSEL TO MIDDLE OF SCREEN AS IT TRANSITIONS AWAY
-		ScrollTrigger.create({
-			trigger: '#xalian-svg-carousel',
-				start: 'center center',
-				pin: true,
-				pinSpacing: false,
-				// scrub: true,
-				end: '+=100%',
-				// markers: true,
-		});
+		// ScrollTrigger.create({
+		// 	trigger: '#xalian-svg-carousel',
+		// 		start: 'center center',
+		// 		pin: true,
+		// 		pinSpacing: false,
+		// 		// scrub: true,
+		// 		end: '+=100%',
+		// 		// markers: true,
+		// });
 
 		// MAKE XALIAN GENERATOR LINK GLOW
 		gsap.timeline({ id: 'generator-link-glow-timeline', repeat: -1 })
@@ -455,17 +435,17 @@ class Home extends React.Component {
 								</Row>
 							</div>
 						</section>
-						<div id="splash-page-spaceship-window-animation" className="splash-page-spaceship-window-animation debug-box">
-							<div className="spaceship-animation-window-panel-wrapper" style={{ left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max }}>
-								<SpaceshipWindowSVG className="debug-box" id="spaceship-window-animation-svg" style={{ left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max }} />
-							</div>
-							<div id="spaceship-animation-panel-wrapper" className="spaceship-animation-screen-panel-wrapper" style={{ left: this.state.maxXOffset - 1, top: this.state.maxYOffset, width: this.state.max, height: this.state.max }}>
+						{/* <div id="splash-page-spaceship-window-animation" className="splash-page-spaceship-window-animation debug-box"> */}
+							{/* <div className="spaceship-animation-window-panel-wrapper" style={{ left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max }}> */}
+								{/* <SpaceshipWindowSVG className="debug-box" id="spaceship-window-animation-svg" style={{ left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max }} /> */}
+							{/* </div> */}
+							{/* <div id="spaceship-animation-panel-wrapper" className="spaceship-animation-screen-panel-wrapper" style={{ left: this.state.maxXOffset - 1, top: this.state.maxYOffset, width: this.state.max, height: this.state.max }}> */}
 								{/* <SpaceshipComputerScreenGridSVG className="debug-box spaceship-screen-grid-svg" id="spaceship-computer-screen-animation-svg" style={{ left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max }} /> */}
-								<div className="debug-box spaceship-screen" id="spaceship-computer-outside-animation" style={{ backgroundSize: this.state.min, width: this.state.min, height: this.state.min }} />
-							</div>
-						</div>
+								{/* <div className="debug-box spaceship-screen" id="spaceship-computer-outside-animation" style={{ backgroundSize: this.state.min, width: this.state.min, height: this.state.min }} /> */}
+							{/* </div> */}
+						{/* </div> */}
 
-						<div id="splash-page-spacer" className="splash-page-full-content-wrapper">
+						{/* <div id="splash-page-spacer" className="splash-page-full-content-wrapper"> */}
 							{/* {this.state.computerScreenCurrentContent && 
 								<ComputerScreenContent id="computer-content-section-wrapper" 
 								sectionId={'computer-content-section'} 
@@ -477,7 +457,7 @@ class Home extends React.Component {
 								nextArrowTappedCallback={this.handleNextArrowClick} 
 								backArrowTappedCallback={this.handleBackArrowClick} />
 							} */}
-							{this.state.computerScreenCurrentContent && 
+							{/* {this.state.computerScreenCurrentContent && 
 								<ComputerScreenContent id="computer-content-section-wrapper" 
 								sectionId={'computer-content-section'} 
 								// currentContent={this.state.computerScreenCurrentContent}
@@ -487,10 +467,10 @@ class Home extends React.Component {
 								svg={this.state.computerScreenCurrentContent.svg} 
 								nextArrowTappedCallback={this.handleNextArrowClick} 
 								backArrowTappedCallback={this.handleBackArrowClick} />
-							}
+							} */}
 
-							<section id="" class="splash-page-content-end-section"></section>
-						</div>
+							{/* <section id="" class="splash-page-content-end-section"></section> */}
+						{/* </div> */}
 						<section id="team" className="team light gradient-background-section">
 							<Container className="team-container">
 								<h3>The Team</h3>
