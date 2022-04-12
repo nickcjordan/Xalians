@@ -121,6 +121,7 @@ hr.xalian-hr {
   margin-bottom: 10px !important;
   font-size: large !important;
   padding: 8px;
+  /* stroke-width: 2px; */
   /* box-shadow: 0px 0px 0px 1px #80ffb0; */
 }
 
@@ -657,6 +658,11 @@ body { width: 100%; max-width: 100%; height: auto;
   padding-bottom: 25px !important;
   margin-left: auto !important;
   margin-right: auto !important;
+}
+
+#xalians-logo-dna > line, #xalians-logo-dna > path, #xalians-logo-dna-x {
+  opacity: 0;
+  stroke-width: 0;
 }
 
 .xalian-svg-col {
@@ -3340,15 +3346,6 @@ input, textarea {
 -------------------------------------------
 */
 
-.game-container {
-  aspect-ratio: 1;
-  background-color: #000000;
-  box-shadow: 0px 0px 30px rgb(0, 0, 0);
-  /* margin-top: 5px !important; */
-  padding: 5px !important;
-
-}
-
 .match-card-game-wrapper {
   height: 100%;
   width: 100%;
@@ -3397,6 +3394,40 @@ input, textarea {
   font-size: 2em;
   text-shadow: 0px 0px 2px 2px rgb(0, 0, 0) !important;
   color: black;
+}
+
+/* 
+-------------------------------------------
+|   Game Container
+-------------------------------------------
+*/
+
+.game-container {
+  aspect-ratio: 1;
+  box-shadow: 0px 0px 30px rgb(0, 0, 0);
+  /* margin-top: 5px !important; */
+  background-color: rgb(24, 24, 24, 0.5);
+  min-height: 100vh;
+  max-height: 100vh;
+  min-width: 100vw;
+  max-width: 100vw;
+  align-items: center;
+  justify-content: center;
+  margin: 0 !important;
+  padding: 0 !important;
+  position: 'relative';
+  display: flex;
+}
+
+.game-container-content-wrapper {
+  /* background-color: red; */
+  /* position: absolute; */
+  /* transform-origin: center; */
+  /* transform: translate(50%, 50%); */
+  /* top: 5%; */
+  /* left: 50%; */
+  position: relative;
+  /* margin: auto; */
 }
 
 /* 

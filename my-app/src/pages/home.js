@@ -42,9 +42,10 @@ import { ExpoScaleEase } from 'gsap/EasePack';
 import GeneratorAnimation from '../components/animations/generatorAnimation';
 import textFit from '../utils/textFit';
 import ComputerScreenContent from '../components/animations/computerScreenContent';
+import MorphSVGPlugin from 'gsap/MorphSVGPlugin';
+import XaliansLogoDnaAnimated from '../components/animations/xaliansLogoDnaAnimated.js'
 
-
-gsap.registerPlugin(ScrollTrigger, TextPlugin, EasePack, ScrollToPlugin, DrawSVGPlugin, ScrambleTextPlugin, GSDevTools, ExpoScaleEase);
+gsap.registerPlugin(ScrollTrigger, TextPlugin, EasePack, ScrollToPlugin, DrawSVGPlugin, ScrambleTextPlugin, GSDevTools, ExpoScaleEase, MorphSVGPlugin);
 // GSDevTools.create();
 const reqSvgs = require.context ( '../svg/species', true, /\.svg$/ );
 const svgs = reqSvgs.keys () .map ( path => ({ path, file: reqSvgs ( path ) }) );
@@ -240,8 +241,10 @@ class Home extends React.Component {
 		});
 		splashTl
 			// .addLabel("before-anything")
+
 			// Xalian Logo
-			.add(this.buildLogoAnimation())
+			// .add(this.buildLogoAnimation())
+
 			// Generator Button
 			.fromTo('#xalian-generator-link', { opacity: 0 }, { opacity: 1, duration: 1, delay: 0.5 }, '<')
 			// CREATE :: EARN :: TRADE :: PLAY
@@ -345,63 +348,65 @@ class Home extends React.Component {
 		gsap.timeline({ id: 'generator-link-glow-timeline', repeat: -1 })
 		.fromTo('#xalian-generator-link', { boxShadow: '0px 0px 4px 4px #80ffb100' }, { boxShadow: '0px 0px 10px 10px #80ffb0', duration: 1})
 		.fromTo('#xalian-generator-link', { boxShadow: '0px 0px 10px 10px #80ffb0', duration: 1 }, { boxShadow: '0px 0px 4px 4px #80ffb100' });
+		// .set('#xalian-generator-link', { strokeWidth: '2px', stroke: '2px #80ffb0' })
+		// .to('#xalian-generator-link>*', { drawSVG: '50% 50%', duration: 1, stroke: '#80ffb0', strokeWidth: '2px' });
 
 		
 
 	
 	}
 
-	buildLogoAnimation = (delay = 0) => {
-		let main = gsap.timeline({ id: 'xalian-logo-timeline'
-		});
-		main
-		.add(this.buildLetterEntry('#xalians-logo-s', delay + 0.3), '<')
-		.add(this.buildLetterEntry('#xalians-logo-n', delay + 0.25), '<')
-		.add(this.buildLetterEntry('#xalians-logo-a2', delay + 0.2), '<')
-		.add(this.buildLetterEntry('#xalians-logo-i', delay + 0.15), '<')
-		.add(this.buildLetterEntry('#xalians-logo-l', delay + 0.1), '<')
-		.add(this.buildLetterEntry('#xalians-logo-a1', delay + 0.05), '<')
-		.add(this.buildLetterEntry('#xalians-logo-x', delay + 0), '<')
-		;
-		return main;
-	};
+	// buildLogoAnimation = (delay = 0) => {
+	// 	let main = gsap.timeline({ id: 'xalian-logo-timeline'
+	// 	});
+	// 	main
+	// 	.add(this.buildLetterEntry('#xalians-logo-s', delay + 0.3), '<')
+	// 	.add(this.buildLetterEntry('#xalians-logo-n', delay + 0.25), '<')
+	// 	.add(this.buildLetterEntry('#xalians-logo-a2', delay + 0.2), '<')
+	// 	.add(this.buildLetterEntry('#xalians-logo-i', delay + 0.15), '<')
+	// 	.add(this.buildLetterEntry('#xalians-logo-l', delay + 0.1), '<')
+	// 	.add(this.buildLetterEntry('#xalians-logo-a1', delay + 0.05), '<')
+	// 	.add(this.buildLetterEntry('#xalians-logo-x', delay + 0), '<')
+	// 	;
+	// 	return main;
+	// };
 
-	buildLetterEntry = (id, d) => {
-		let main = gsap.timeline();
-		// var turnLightOn = gsap.timeline({ delay: d });
-		// for (var i = 1; i < 6; i += 2) {
-			// turnLightOn.to(id, { duration: Math.random() / 2, opacity: i / 10 });
-			// turnLightOn.to(id, { duration: Math.random() / 2, opacity: i / 20 });
-		// }
-		// turnLightOn.to(id, { duration: 1, opacity: 1 });
+	// buildLetterEntry = (id, d) => {
+	// 	let main = gsap.timeline();
+	// 	// var turnLightOn = gsap.timeline({ delay: d });
+	// 	// for (var i = 1; i < 6; i += 2) {
+	// 		// turnLightOn.to(id, { duration: Math.random() / 2, opacity: i / 10 });
+	// 		// turnLightOn.to(id, { duration: Math.random() / 2, opacity: i / 20 });
+	// 	// }
+	// 	// turnLightOn.to(id, { duration: 1, opacity: 1 });
 
-		var zoomIn = gsap.timeline();
-		zoomIn
-			// .from(id, { duration: 0.6, x: '-=100vw', delay: d, skewX: 25 })
-			.to(id, { duration: 0.3, y: '-=50px', ease: 'elastic.in(1, 0.3)', delay: d })
-			.to(id, { duration: 0.3, y: '+=50px', ease: 'power4.in' });
+	// 	var zoomIn = gsap.timeline();
+	// 	zoomIn
+	// 		// .from(id, { duration: 0.6, x: '-=100vw', delay: d, skewX: 25 })
+	// 		.to(id, { duration: 0.3, y: '-=50px', ease: 'elastic.in(1, 0.3)', delay: d })
+	// 		.to(id, { duration: 0.3, y: '+=50px', ease: 'power4.in' });
 
 
-			var path = gsap.timeline();
-			path.fromTo(id, {drawSVG: "50% 50%" }, { duration: 4, drawSVG: "100%", strokeWidth: '5px' });
+	// 		var path = gsap.timeline();
+	// 		path.fromTo(id, {drawSVG: "50% 50%" }, { duration: 4, drawSVG: "100%", strokeWidth: '5px' });
 
-			var pathContinued = gsap.timeline({ repeat: -1, yoyo: true, delay: d })
-        	.to(id, { duration: 0.25, opacity: 0.4, ease: 'none', delay: 1 });
+	// 		var pathContinued = gsap.timeline({ repeat: -1, yoyo: true, delay: d })
+    //     	.to(id, { duration: 0.25, opacity: 0.4, ease: 'none', delay: 1 });
 
-		// var flicker = gsap.timeline({ delay: 2, repeat: -1 });
-		// flicker.to(id, { ease: 'none', yoyo: true, repeat: true, opacity:((Math.random()*0.5) + 0.5), duration: (Math.random()*0.5), delay: Math.floor(2 + (Math.random() * 8.3))});
-		// flicker.to(id, { ease: 'none', yoyo: true, repeat: true, opacity:((Math.random()*0.5) + 0.5), duration: (Math.random()*0.5), delay: Math.floor(2 + (Math.random() * 3.1))});
-		// flicker.to(id, { ease: 'none', yoyo: true, repeat: true, opacity:((Math.random()*0.5) + 0.5), duration: (Math.random()*0.5), delay: Math.floor(2 + (Math.random() * 1.7))});
+	// 	// var flicker = gsap.timeline({ delay: 2, repeat: -1 });
+	// 	// flicker.to(id, { ease: 'none', yoyo: true, repeat: true, opacity:((Math.random()*0.5) + 0.5), duration: (Math.random()*0.5), delay: Math.floor(2 + (Math.random() * 8.3))});
+	// 	// flicker.to(id, { ease: 'none', yoyo: true, repeat: true, opacity:((Math.random()*0.5) + 0.5), duration: (Math.random()*0.5), delay: Math.floor(2 + (Math.random() * 3.1))});
+	// 	// flicker.to(id, { ease: 'none', yoyo: true, repeat: true, opacity:((Math.random()*0.5) + 0.5), duration: (Math.random()*0.5), delay: Math.floor(2 + (Math.random() * 1.7))});
 
-		// main.add(zoomIn).add(turnLightOn).add(path);
-		main
-		.add(path)
-		.add(zoomIn)
-		.add(pathContinued)
-		;
-		// .add(flicker, "<")
-		return main;
-	};
+	// 	// main.add(zoomIn).add(turnLightOn).add(path);
+	// 	main
+	// 	.add(path)
+	// 	.add(zoomIn)
+	// 	.add(pathContinued)
+	// 	;
+	// 	// .add(flicker, "<")
+	// 	return main;
+	// };
 
 	render() {
 		return (
@@ -415,7 +420,12 @@ class Home extends React.Component {
 								<Row className="title-logo-row">
 									<Col lg={8} md={9} sm={10} xs={11} className="title-logo-col vertically-center-contents">
 										<Stack className="splash-stack">
-											<XaliansLogoSVG id="xaliansLogo" className="animated-xalian-svg xalian-logo" />
+
+											{/* <XaliansLogoSVG id="xaliansLogo" className="animated-xalian-svg xalian-logo" /> */}
+
+											<XaliansLogoDnaAnimated/>
+
+											
 											<h6 id="subline1" className="splash-subline">
 												Magical, Bioengineered, Digital Creatures
 											</h6>

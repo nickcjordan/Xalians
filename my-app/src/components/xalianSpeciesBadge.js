@@ -13,16 +13,16 @@ class XalianSpeciesBadge extends React.Component {
 	};
 
 	componentDidMount() {
-		this.setState({ 
-			symbol: svgUtil.getSpeciesTypeSymbol(this.props.type, false, 30)
-		});
+		// this.setState({ 
+		// 	symbol: svgUtil.getSpeciesTypeSymbol(this.props.type, false, 30)
+		// });
 		
-		document.addEventListener('DOMContentLoaded', function () {
-			let badgeText = document.getElementById('fitted-badge-text');
-			if (badgeText) {
-				// textFit(badgeText, { multiLine: false, alignHoriz: true, alignVert: true, minFontSize:12, maxFontSize: 24});
-			}
-		});
+		// document.addEventListener('DOMContentLoaded', function () {
+		// 	let badgeText = document.getElementById('fitted-badge-text');
+		// 	if (badgeText) {
+		// 		// textFit(badgeText, { multiLine: false, alignHoriz: true, alignVert: true, minFontSize:12, maxFontSize: 24});
+		// 	}
+		// });
 	}
 
 	render() {
@@ -36,7 +36,8 @@ class XalianSpeciesBadge extends React.Component {
 						{!this.props.hideSymbol && (
 							<Col xs={!this.props.hideName ? 4 : true} style={{}} className="species-badge-icon-col">
 								{/* <div> */}
-									{this.state.symbol}
+									{/* {this.state.symbol} */}
+									{ svgUtil.getSpeciesTypeSymbol(this.props.type, false, 30) }
 								{/* </div> */}
 							</Col>
 						)}

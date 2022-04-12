@@ -12,6 +12,8 @@ import species from '../../json/species.json';
 import { ReactComponent as FigzySVG } from '../../svg/species/figzy.svg';
 import Form from "react-bootstrap/Form";
 
+import GameContainer from '../../components/games/elements/gameContainer';
+
 import { gsap, Linear } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
@@ -59,8 +61,8 @@ class PhysicsGamePage extends React.Component {
                 type: 'x,y',
                 inertia: true,
                 overshootTolerance : 0,
-                snap:{y: 1000},
-                // autoScroll: true,
+                snap:{y: 1},
+                // autoScroll: 1,
                 // liveSnap: liveSnap,
                 // snap: {
                 // 	x: function (endValue) {
@@ -167,13 +169,11 @@ class PhysicsGamePage extends React.Component {
 	render() {
 		return (
 			<React.Fragment>
-				<Container fluid className="content-background-container">
+				{/* <Container fluid className="content-background-container">
 					<XalianNavbar></XalianNavbar>
-
-					<Row style={{ margin: '5px' }}>
-						<Col>
-							{this.state.size && (
-								<Container fluid className="game-container game-centered-over-object" style={{ backgroundColor: 'whitesmoke', height: this.state.size.min, width: this.state.size.min, overflow: 'visible' }}>
+                    <GameContainer> */}
+                            {this.state.size && <React.Fragment>
+								 {/* <Container fluid className="game-container game-centered-over-object" style={{ backgroundColor: 'whitesmoke', height: this.state.size.min, width: this.state.size.min, overflow: 'visible' }}> */}
 									<Row style={{ position: 'absolute', width: '100%', zIndex: '999'}}>
 										<Button onClick={this.action}>FIRE</Button>
 										<Form.Label>Rotate ({this.state.rotateValue})</Form.Label>
@@ -188,27 +188,26 @@ class PhysicsGamePage extends React.Component {
 										<Col style={{ height: '100%'}}>
 											<div id="arena" style={{ height: '100%', width: '100%', position: 'relative', backgroundColor: '#8fa2f85e' }}>
 												<div style={{ maxHeight: this.state.size.min * 0.1, maxWidth: this.state.size.min * 0.1, margin: 'auto', position: 'absolute', bottom: '0%', left: '0' }}>
-													<FigzySVG style={{ height: '100%', width: '100%', overflow: 'visible' }} />
+                                                    <FigzySVG style={{ height: '100%', width: '100%', overflow: 'visible' }} />
 												</div>
                                                     <div id="target" style={{ backgroundColor: 'blue', width: '50px', height: '50px', position: 'absolute', bottom: '0%', right: '0' }}></div>
 											</div>
 										</Col>
 									</Row>
-								</Container>
-							)}
+								{/* // </Container> */}
+                                    </React.Fragment>
+    }
 							{/* <div className="game-bottom-over-object">
 								<Button id="match-game-start-button" variant="xalianGreen" onClick={this.startGameTapped} style={{ fontSize: 'large', padding: '20px' }}>
-									Start
+                                Start
 								</Button>
 								<h1 className="game-display-text white-outline-text">{this.state.text}</h1>
 								<h1 className="game-display-text white-outline-text" id="match-game-display-text">
-									Ready...
+                                Ready...
 								</h1>
 							</div> */}
-						</Col>
-						<Col>{/* <h1>{this.state.started.toString()}</h1> */}</Col>
-					</Row>
-				</Container>
+                    {/* </GameContainer>
+				</Container> */}
 			</React.Fragment>
 		);
 	}

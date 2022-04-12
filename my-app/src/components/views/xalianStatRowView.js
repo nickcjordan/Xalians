@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, lazy } from 'react';
 import { LabelList, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
@@ -7,10 +7,13 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import XalianImage from '../xalianImage';
-import XalianStatChart from '../xalianStatChart';
 import XalianMoveSet from '../xalianMoveSet';
 import * as valueTranslator from '../../utils/valueTranslator';
 import XalianInfoBox from '../xalianInfoBox';
+
+import XalianStatChart from '../xalianStatChart';
+// const XalianStatChart = lazy(() => import('../xalianStatChart'));
+
 
 class XalianStatRowView extends React.Component {
 	state = {};

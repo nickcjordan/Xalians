@@ -9,7 +9,7 @@ class XalianImage extends React.Component {
 		return require(`../svg/species/${name.toLowerCase()}.svg`)?.default;
 	}
 
-    getTypeColorClassName(type) {
+	getTypeColorClassName(type) {
 		var x = this.props.colored ? ` ${type.toLowerCase()}-color ` : '';
 		x = x + (this.props.bordered ? ` xalian-image-bordered ` : '');
 		x = x + (this.props.shadowed ? ' xalian-image-shadowed ' : '');
@@ -22,38 +22,40 @@ class XalianImage extends React.Component {
 		if (this.props.secondaryType) {
 			let primaryColor = constants.themeColors[this.props.primaryType.toLowerCase()];
 			let secondaryColor = constants.themeColors[this.props.secondaryType.toLowerCase()];
-            let builtClasses = this.getTypeColorClassName(this.props.primaryType);
+			let builtClasses = this.getTypeColorClassName(this.props.primaryType);
 			if (this.props.colored) {
 				return (
 					<div id={this.props.id} className={'xalian-image-wrapper ' + builtClasses} style={{ background: `linear-gradient(135deg, ${primaryColor} 15%, ${secondaryColor} 85%)` }}>
-						<Image src={this.getImageLocationFromSpecies(this.props.speciesName)} className={'xalian-image'} />
+						{this.props.lazy && <img data-src={this.getImageLocationFromSpecies(this.props.speciesName)} className={'xalian-image lazyload'} />}
+						{!this.props.lazy && <Image src={this.getImageLocationFromSpecies(this.props.speciesName)} className={'xalian-image'} />}
 					</div>
 				);
 			} else {
 				return (
 					<div id={this.props.id} className={'xalian-image-wrapper ' + builtClasses}>
-						<Image src={this.getImageLocationFromSpecies(this.props.speciesName)} className={'xalian-image'} />
+						{this.props.lazy && <img data-src={this.getImageLocationFromSpecies(this.props.speciesName)} className={'xalian-image lazyload'} />}
+						{!this.props.lazy && <Image src={this.getImageLocationFromSpecies(this.props.speciesName)} className={'xalian-image'} />}
 					</div>
 				);
 			}
-			
 		} else {
-            let primaryColor = constants.themeColors[this.props.primaryType.toLowerCase()];
-            let builtClasses = this.getTypeColorClassName(this.props.primaryType);
+			let primaryColor = constants.themeColors[this.props.primaryType.toLowerCase()];
+			let builtClasses = this.getTypeColorClassName(this.props.primaryType);
 			if (this.props.colored) {
 				return (
-					<div id={this.props.id} className={'xalian-image-wrapper ' + builtClasses} style={{ background: `radial-gradient(circle, ${primaryColor} 65%, ${primaryColor + '90'} 100%)` }} >
-						<Image src={this.getImageLocationFromSpecies(this.props.speciesName)} className='xalian-image'/>
+					<div id={this.props.id} className={'xalian-image-wrapper ' + builtClasses} style={{ background: `radial-gradient(circle, ${primaryColor} 65%, ${primaryColor + '90'} 100%)` }}>
+						{this.props.lazy && <img data-src={this.getImageLocationFromSpecies(this.props.speciesName)} className="xalian-image lazyload" />}
+						{!this.props.lazy && <Image src={this.getImageLocationFromSpecies(this.props.speciesName)} className="xalian-image" />}
 					</div>
 				);
 			} else {
 				return (
 					<div id={this.props.id} className={'xalian-image-wrapper ' + builtClasses}>
-						<Image src={this.getImageLocationFromSpecies(this.props.speciesName)} className='xalian-image'/>
+						{this.props.lazy && <img data-src={this.getImageLocationFromSpecies(this.props.speciesName)} className="xalian-image lazyload" />}
+						{!this.props.lazy && <Image src={this.getImageLocationFromSpecies(this.props.speciesName)} className="xalian-image" />}
 					</div>
 				);
 			}
-			
 		}
 	}
 }

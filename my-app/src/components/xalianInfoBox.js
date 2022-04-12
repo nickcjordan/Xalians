@@ -24,8 +24,8 @@ class XalianInfoBox extends React.Component {
 							{!this.props.hideId && 
 								<h4 className="species-detail-id">#{this.props.xalian.speciesId}</h4>
 							}
-							<XalianSpeciesBadge type={this.props.xalian.elements.primaryType} />
-							<XalianSpeciesBadge type={this.props.xalian.elements.secondaryType} />
+							<XalianSpeciesBadge type={this.props.xalian.elements.primaryType.toLowerCase()} />
+							<XalianSpeciesBadge type={this.props.xalian.elements.secondaryType.toLowerCase()} />
 							{this.props.json && (
 								<div className="centered-view">
 									<button className="json-modal-button" onClick={() => this.setState({ jsonModalShow: true })}>
@@ -43,7 +43,7 @@ class XalianInfoBox extends React.Component {
 							{!this.props.hideId && 
 								<h4 className="species-detail-id">#{this.props.species.id}</h4>
 							}
-							<XalianSpeciesBadge type={this.props.species.type} />
+							<XalianSpeciesBadge type={this.props.species.type.toLowerCase()} />
 							{this.props.json && (
 								<div className="centered-view">
 									<button className="json-modal-button" onClick={() => this.setState({ jsonModalShow: true })}>

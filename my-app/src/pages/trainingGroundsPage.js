@@ -5,12 +5,16 @@ import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import XalianNavbar from '../components/navbar';
 import ListGroup from 'react-bootstrap/ListGroup';
-
+import MatchCardGamePage from './games/matchCardGamePage';
+import PhysicsGamePage from './games/physicsGamePage';
+import GameContainer from '../components/games/elements/gameContainer';
 
 class TrainingGroundsPage extends React.Component {
 
     state = {
-        games: []
+        games: [],
+        selectedGameIndex: 0,
+        selectedGame: null
     }
 
     componentDidMount() {
@@ -20,10 +24,18 @@ class TrainingGroundsPage extends React.Component {
     buildGamesList = () => {
         let list = []
         
-        list.push(<a href="/train/match"> <h1>Xalian Match</h1></a>);
-        list.push(<a href="/train/physics"> <h1>Physics</h1></a>);
+        // list.push(<a href="/train/match"> <h1>Xalian Match</h1></a>);
+        // list.push(<a href="/train/physics"> <h1>Physics</h1></a>);
 
-        this.setState({ games: list });
+        list.push(<MatchCardGamePage/>);
+        list.push(<PhysicsGamePage/>);
+
+        this.setState({ games: list, selectedGame: list[0] });
+    }
+
+    change = () => {
+        let g = this.state.games[this.state.selectedGameIndex];
+        this.setState({ selectedGameIndex: 1, selectedGame: g })
     }
 
     render() {
@@ -35,7 +47,10 @@ class TrainingGroundsPage extends React.Component {
 
                     <Row className="">
                         <Col style={{ textAlign: 'center' }} >
-                            {this.state.games}
+                            <Button onClick={ this.change }>switch</Button>
+                            <GameContainer>
+                                {this.state.selectedGame}
+                            </GameContainer>
                         </Col>
                     </Row>
 
