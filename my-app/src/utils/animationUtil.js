@@ -1,5 +1,5 @@
 import { gsap } from 'gsap';
-import * as constants from '../constants/constants';
+import * as constants from '../constants/colorConstants';
 import SmokeEmitter from '../components/animations/smokeEmitter';
 import { ReactDOM } from 'react';
 import ScrambleTextPlugin from 'gsap/ScrambleTextPlugin';

@@ -11,8 +11,9 @@ const attackCalculator = require('./lambda/src/gameplay/attackCalculator.js');
 main();
 
 function main() {
-    runSet();
     // printXalian();
+
+    simulateAttacks();
 }
 
 // var AWS = require("aws-sdk");

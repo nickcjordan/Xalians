@@ -1,8 +1,8 @@
-const tools = require('./tools.js');
+const tools = require('./lambda/src/tools.js');
 const fs = require('fs')
 const axios = require("axios").default;
-const statConstants = require('./constants/statConstants.js');
-const ratingValueConstants = require('./constants/ratingValueConstants.js');
+const statConstants = require('./lambda/src/constants/statConstants.js');
+const ratingValueConstants = require('./lambda/src/constants/ratingValueConstants.js');
 
 
 // fix("elements");
@@ -28,7 +28,7 @@ const ratingValueConstants = require('./constants/ratingValueConstants.js');
 
 // alterJson("species");
 
-fixJson("moves");
+fixJson("species");
 
 function capitalize(str) {
     const lower = (str + '').toLowerCase();
@@ -249,33 +249,60 @@ function alterJson(fileName) {
     fs.writeFileSync("json/altered_" + fileName + ".json", JSON.stringify(newNodes, null, 2));
 }
 
-function fixJson(fileName) {
-    const data = fs.readFileSync("json/" + fileName + ".json", 'utf8');
-    var nodes = JSON.parse(data.toString());
+// function fixJson(fileName) {
+//     const data = fs.readFileSync("json/" + fileName + ".json", 'utf8');
+//     var nodes = JSON.parse(data.toString());
 
-    // nodes.sort(function (x, y) {
-    //     if (x.word < y.word) {
-    //         return -1;
-    //     }
-    //     if (x.word > y.word) {
-    //         return 1;
-    //     }
-    //     return 0;
-    // });
+//     // nodes.sort(function (x, y) {
+//     //     if (x.word < y.word) {
+//     //         return -1;
+//     //     }
+//     //     if (x.word > y.word) {
+//     //         return 1;
+//     //     }
+//     //     return 0;
+//     // });
+
+//     var newNodes = [];
+
+//     nodes.forEach(x => {
+//         let newNode = {
+//             "name": x.name,
+//             "definition": x.definition,
+//             "effectRating": x.effectRating,
+//             "sentencePrefix": ""
+//         }
+//         newNodes.push(newNode);
+//     });
+
+//     fs.writeFileSync("json/redone_" + fileName + ".json", JSON.stringify(newNodes, null, 2));
+// }
+
+function fixJson(fileName) {
+    const data = fs.readFileSync("lambda/src/json/" + fileName + ".json", 'utf8');
+    var nodes = JSON.parse(data.toString());
 
     var newNodes = [];
 
     nodes.forEach(x => {
-        let newNode = {
-            "name": x.name,
-            "definition": x.definition,
-            "effectRating": x.effectRating,
-            "sentencePrefix": ""
-        }
-        newNodes.push(newNode);
+        let traits = new Map();
+        traits["canFly"] = false;
+        traits["attackRange"] = "low"
+        x.traits = traits;
+        newNodes.push(x);
     });
 
-    fs.writeFileSync("json/redone_" + fileName + ".json", JSON.stringify(newNodes, null, 2));
+    newNodes.sort(function (x, y) {
+        if (x.id < y.id) {
+            return -1;
+        }
+        if (x.id > y.id) {
+            return 1;
+        }
+        return 0;
+    });
+
+    fs.writeFileSync("lambda/src/json/redone_" + fileName + ".json", JSON.stringify(newNodes, null, 2));
 }
 
 function sortJson(fileName) {

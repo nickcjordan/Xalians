@@ -16,18 +16,20 @@
       "plant"
     ],
     "effectiveness": {
-      "Electric": 1,
+      "Fire": 1,
+      "Water": 2,
       "Air": 0.5,
-      "Light": 0.5,
-      "Plant": 2,
-      "Rock": 0.5,
-      "Chemical": 2,
-      "Dark": 2,
-      "Explosive": 1,
+      "Electric": 1,
+      "Rock": 0,
+      "Plant": 0.5,
+      "Chemical": 1.5,
+      "Light": 1,
+      "Dark": 1.5,
       "Psychic": 1,
       "Ghost": 1,
-      "Fire": 1,
-      "Water": 0
+      "Metal": 2,
+      "Ice": 1,
+      "Sand": 0
     },
     "elements": [
       "electricity",
@@ -52,18 +54,20 @@
       "air"
     ],
     "effectiveness": {
-      "Electric": 0.5,
-      "Air": 1,
-      "Light": 1,
+      "Fire": 1.5,
+      "Water": 1,
+      "Air": 1.5,
+      "Electric": 1,
+      "Rock": 1.5,
       "Plant": 0.5,
-      "Rock": 2,
-      "Chemical": 2,
+      "Chemical": 1.5,
+      "Light": 1,
       "Dark": 1,
-      "Explosive": 0,
       "Psychic": 1,
-      "Ghost": 0.5,
-      "Fire": 2,
-      "Water": 1
+      "Ghost": 0,
+      "Metal": 0.5,
+      "Ice": 0.5,
+      "Sand": 1.5
     },
     "elements": [
       "air",
@@ -89,18 +93,20 @@
       "light"
     ],
     "effectiveness": {
-      "Electric": 0.5,
+      "Fire": 1,
+      "Water": 1,
       "Air": 0,
-      "Light": 1,
-      "Plant": 2,
+      "Electric": 1,
       "Rock": 0.5,
+      "Plant": 1,
       "Chemical": 1,
+      "Light": 0.5,
       "Dark": 2,
-      "Explosive": 1,
       "Psychic": 0.5,
       "Ghost": 2,
-      "Fire": 1,
-      "Water": 1
+      "Metal": 1,
+      "Ice": 2,
+      "Sand": 0.5
     },
     "elements": [
       "light",
@@ -126,18 +132,20 @@
       "algae"
     ],
     "effectiveness": {
-      "Electric": 2,
-      "Air": 1,
-      "Light": 2,
-      "Plant": 1,
-      "Rock": 1,
-      "Chemical": 1,
-      "Dark": 0.5,
-      "Explosive": 0.5,
-      "Psychic": 0,
-      "Ghost": 1,
       "Fire": 0.5,
-      "Water": 2
+      "Water": 2,
+      "Air": 1.5,
+      "Electric": 1,
+      "Rock": 1.5,
+      "Plant": 1,
+      "Chemical": 1,
+      "Light": 1.5,
+      "Dark": 0.5,
+      "Psychic": 0.5,
+      "Ghost": 1,
+      "Metal": 0,
+      "Ice": 0.5,
+      "Sand": 1.5
     },
     "elements": [
       "plant",
@@ -163,18 +171,20 @@
       "quartz"
     ],
     "effectiveness": {
-      "Electric": 2,
+      "Fire": 1.5,
+      "Water": 0.5,
       "Air": 0.5,
-      "Light": 1,
-      "Plant": 1,
+      "Electric": 1,
       "Rock": 1,
+      "Plant": 1.5,
       "Chemical": 1,
+      "Light": 1,
       "Dark": 1,
-      "Explosive": 0.5,
-      "Psychic": 2,
+      "Psychic": 1,
       "Ghost": 0,
-      "Fire": 2,
-      "Water": 0.5
+      "Metal": 0.5,
+      "Ice": 2,
+      "Sand": 1.5
     },
     "elements": [
       "rock",
@@ -199,18 +209,20 @@
       "chemical"
     ],
     "effectiveness": {
-      "Electric": 1,
-      "Air": 2,
-      "Light": 0,
-      "Plant": 2,
-      "Rock": 1,
-      "Chemical": 1,
-      "Dark": 1,
-      "Explosive": 0.5,
-      "Psychic": 2,
-      "Ghost": 1,
       "Fire": 0.5,
-      "Water": 0.5
+      "Water": 0.5,
+      "Air": 2,
+      "Electric": 1,
+      "Rock": 0.5,
+      "Plant": 1.5,
+      "Chemical": 1,
+      "Light": 0,
+      "Dark": 1,
+      "Psychic": 2,
+      "Ghost": 1.5,
+      "Metal": 2,
+      "Ice": 0,
+      "Sand": 0.5
     },
     "elements": [
       "chemical",
@@ -237,18 +249,20 @@
       "smoky"
     ],
     "effectiveness": {
-      "Electric": 0.5,
+      "Fire": 0.5,
+      "Water": 1,
       "Air": 1,
-      "Light": 2,
-      "Plant": 0,
+      "Electric": 1,
       "Rock": 1,
+      "Plant": 0,
       "Chemical": 0.5,
-      "Dark": 1,
-      "Explosive": 1,
+      "Light": 2,
+      "Dark": 0.5,
       "Psychic": 2,
       "Ghost": 2,
-      "Fire": 0.5,
-      "Water": 1
+      "Metal": 1,
+      "Ice": 0.5,
+      "Sand": 1
     },
     "elements": [
       "twilight",
@@ -274,18 +288,20 @@
       "psychic"
     ],
     "effectiveness": {
-      "Electric": 1,
+      "Fire": 1.5,
+      "Water": 1.5,
       "Air": 1,
-      "Light": 2,
-      "Plant": 0.5,
-      "Rock": 0.5,
-      "Chemical": 0.5,
-      "Dark": 0,
-      "Explosive": 2,
-      "Psychic": 1,
+      "Electric": 1,
+      "Rock": 1,
+      "Plant": 1,
+      "Chemical": 0,
+      "Light": 1.5,
+      "Dark": 0.5,
+      "Psychic": 0.5,
       "Ghost": 2,
-      "Fire": 1,
-      "Water": 1
+      "Metal": 0.5,
+      "Ice": 1,
+      "Sand": 1
     },
     "elements": [
       "illusion",
@@ -310,18 +326,20 @@
       "ghost"
     ],
     "effectiveness": {
-      "Electric": 1,
+      "Fire": 1.5,
+      "Water": 1.5,
       "Air": 2,
+      "Electric": 1.5,
+      "Rock": 1.5,
+      "Plant": 0.5,
+      "Chemical": 1,
       "Light": 0.5,
-      "Plant": 1,
-      "Rock": 1,
-      "Chemical": 0,
       "Dark": 0.5,
-      "Explosive": 2,
       "Psychic": 0.5,
-      "Ghost": 1,
-      "Fire": 1,
-      "Water": 2
+      "Ghost": 0.5,
+      "Metal": 0,
+      "Ice": 1,
+      "Sand": 1.5
     },
     "elements": [
       "ghost",
@@ -348,18 +366,20 @@
       "pyro"
     ],
     "effectiveness": {
-      "Electric": 1,
+      "Fire": 0.5,
+      "Water": 0.5,
       "Air": 0.5,
-      "Light": 0.5,
-      "Plant": 2,
+      "Electric": 1,
       "Rock": 0.5,
-      "Chemical": 2,
-      "Dark": 2,
-      "Explosive": 1,
+      "Plant": 2,
+      "Chemical": 1.5,
+      "Light": 0.5,
+      "Dark": 1.5,
       "Psychic": 1,
-      "Ghost": 1,
-      "Fire": 1,
-      "Water": 0
+      "Ghost": 0,
+      "Metal": 2,
+      "Ice": 2,
+      "Sand": 0.5
     },
     "elements": [
       "flame",
@@ -383,18 +403,20 @@
       "spraying"
     ],
     "effectiveness": {
-      "Electric": 0,
+      "Fire": 2,
+      "Water": 1,
       "Air": 1,
-      "Light": 1,
+      "Electric": 0.5,
+      "Rock": 1.5,
       "Plant": 0.5,
-      "Rock": 2,
-      "Chemical": 0.5,
+      "Chemical": 1,
+      "Light": 1,
       "Dark": 1,
-      "Explosive": 2,
       "Psychic": 1,
       "Ghost": 0.5,
-      "Fire": 2,
-      "Water": 1
+      "Metal": 1.5,
+      "Ice": 0,
+      "Sand": 1.5
     },
     "elements": [
       "hydro",
@@ -409,18 +431,20 @@
       "frost"
     ],
     "effectiveness": {
-      "Electric": 0,
-      "Air": 1,
-      "Light": 1,
-      "Plant": 0.5,
-      "Rock": 2,
-      "Chemical": 0.5,
+      "Fire": 0,
+      "Water": 1,
+      "Air": 1.5,
+      "Electric": 1,
+      "Rock": 0.5,
+      "Plant": 2,
+      "Chemical": 1,
+      "Light": 0.5,
       "Dark": 1,
-      "Explosive": 2,
       "Psychic": 1,
-      "Ghost": 0.5,
-      "Fire": 2,
-      "Water": 1
+      "Ghost": 2,
+      "Metal": 1,
+      "Ice": 1,
+      "Sand": 0.5
     },
     "elements": [
       "ice",
@@ -433,18 +457,20 @@
       "metal"
     ],
     "effectiveness": {
-      "Electric": 0,
-      "Air": 1,
-      "Light": 1,
-      "Plant": 0.5,
+      "Fire": 0.5,
+      "Water": 0,
+      "Air": 0.5,
+      "Electric": 0.5,
       "Rock": 2,
+      "Plant": 1,
       "Chemical": 0.5,
+      "Light": 2,
       "Dark": 1,
-      "Explosive": 2,
       "Psychic": 1,
-      "Ghost": 0.5,
-      "Fire": 2,
-      "Water": 1
+      "Ghost": 1,
+      "Metal": 1,
+      "Ice": 1.5,
+      "Sand": 1.5
     },
     "elements": [
       "metal"
@@ -456,18 +482,20 @@
       "sand"
     ],
     "effectiveness": {
-      "Electric": 0,
-      "Air": 1,
+      "Fire": 1.5,
+      "Water": 0.5,
+      "Air": 0.5,
+      "Electric": 1.5,
+      "Rock": 1,
+      "Plant": 1,
+      "Chemical": 1.5,
       "Light": 1,
-      "Plant": 0.5,
-      "Rock": 2,
-      "Chemical": 0.5,
       "Dark": 1,
-      "Explosive": 2,
       "Psychic": 1,
       "Ghost": 0.5,
-      "Fire": 2,
-      "Water": 1
+      "Metal": 1,
+      "Ice": 1,
+      "Sand": 1
     },
     "elements": [
       "sand"

@@ -1,4 +1,4 @@
-import * as constants from '../constants/constants';
+import * as constants from '../constants/colorConstants';
 import gsap from 'gsap';
 
 import { ReactComponent as AirSymbolSVG } from '../svg/symbols/air_symbol.svg';

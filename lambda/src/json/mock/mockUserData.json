@@ -1,0 +1,566 @@
+{
+	"userId": "king_kozrak",
+	"xalianIds": [
+		"00018-11cefad5-3873-4ce6-870f-b73d8f01f442",
+		"00009-c31c82af-68f0-4f6e-b999-aa7662b08259",
+		"00020-d1f66321-7017-4528-bdb2-d350bca0a9ed",
+		"00005-7da2d068-8481-452c-9d8a-45e66bacb8a1",
+		"00007-ef14fb57-1b63-4fc1-8958-9a38945e62fc",
+		"00018-b8b62aba-cef9-4d53-8cd5-38cc6fb6b22a"
+	],
+	"tokens": 6,
+	"attributes": {
+		"userId": "King_Kozrak",
+		"tokens": 6
+	},
+	"xalians": [
+		{
+			"speciesId": "00020",
+			"xalianId": "00020-d1f66321-7017-4528-bdb2-d350bca0a9ed",
+			"attributes": {
+				"xalianId": "00020-d1f66321-7017-4528-bdb2-d350bca0a9ed",
+				"species": {
+					"generation": "0",
+					"planet": "Endessa",
+					"name": "Thirstaserp",
+					"description": "A large, cobra-like creature that hides beneath the sand, Thirstaserps emit a subsonic vibration from the rattles on their tails that can lure and mesmerize opponents long enough for them to draw near and attack with a unique venom that drains the victim’s water when bitten, causing them to suffer and die from extreme dehydration.",
+					"weight": "268 lbs / 121 kg",
+					"id": "00020",
+					"height": "86 in / 218 cm"
+				},
+				"healthPoints": 999,
+				"stats": {
+					"evasionPoints": {
+						"maxPoints": 823,
+						"name": "evasionPoints",
+						"range": "high",
+						"initialPoints": 750,
+						"initialPointAllocationPercentage": 93,
+						"maxPointAllocationPercentage": 102,
+						"points": 750
+					},
+					"standardAttackPoints": {
+						"maxPoints": 848,
+						"name": "standardAttackPoints",
+						"range": "high",
+						"initialPoints": 762,
+						"initialPointAllocationPercentage": 95,
+						"maxPointAllocationPercentage": 106,
+						"points": 762
+					},
+					"standardDefensePoints": {
+						"maxPoints": 352,
+						"name": "standardDefensePoints",
+						"range": "low",
+						"initialPoints": 336,
+						"initialPointAllocationPercentage": 84,
+						"maxPointAllocationPercentage": 88,
+						"points": 336
+					},
+					"staminaPoints": {
+						"maxPoints": 666,
+						"name": "staminaPoints",
+						"range": "medium",
+						"initialPoints": 599,
+						"initialPointAllocationPercentage": 99,
+						"maxPointAllocationPercentage": 111,
+						"points": 599
+					},
+					"specialDefensePoints": {
+						"maxPoints": 375,
+						"name": "specialDefensePoints",
+						"range": "low",
+						"initialPoints": 293,
+						"initialPointAllocationPercentage": 73,
+						"maxPointAllocationPercentage": 93,
+						"points": 293
+					},
+					"recoveryPoints": {
+						"maxPoints": 426,
+						"name": "recoveryPoints",
+						"range": "low",
+						"initialPoints": 349,
+						"initialPointAllocationPercentage": 87,
+						"maxPointAllocationPercentage": 106,
+						"points": 349
+					},
+					"specialAttackPoints": {
+						"maxPoints": 650,
+						"name": "specialAttackPoints",
+						"range": "medium",
+						"initialPoints": 555,
+						"initialPointAllocationPercentage": 92,
+						"maxPointAllocationPercentage": 108,
+						"points": 555
+					},
+					"speedPoints": {
+						"maxPoints": 684,
+						"name": "speedPoints",
+						"range": "medium",
+						"initialPoints": 656,
+						"initialPointAllocationPercentage": 109,
+						"maxPointAllocationPercentage": 113,
+						"points": 656
+					}
+				},
+				"moves": [
+					{
+						"name": "Delirious Crystal Conjuration",
+						"rating": 8,
+						"description": "Rock-typed wildly excited or emotional, magical incantation or spell",
+						"cost": 10,
+						"type": "Rock",
+						"element": "Crystal"
+					},
+					{
+						"name": "Gilded Shock",
+						"rating": 14,
+						"description": "Ostentatiously rich and superior, sudden jarring impact",
+						"cost": 10
+					},
+					{
+						"name": "Grueling Pound",
+						"rating": 12,
+						"description": "Physically exhausting, repeated heavy attacks",
+						"cost": 10
+					},
+					{
+						"name": "Wondrous Charge",
+						"rating": 13,
+						"description": "Extraordinarily good or great, impetuous rush toward someone or something",
+						"cost": 10
+					}
+				],
+				"meta": {
+					"totalStatPoints": 4300,
+					"averageStatPotentialPercentage": 103,
+					"potentialStatScore": 1006,
+					"averageStatPercentage": 91,
+					"percentageOfPointsAllocated": 89,
+					"statScore": 896,
+					"potentialStatPoints": 4824
+				},
+				"elements": {
+					"secondaryType": "Rock",
+					"primaryType": "Sand",
+					"secondaryElement": "Lava",
+					"primaryElement": "Sand"
+				},
+				"speciesId": "00020",
+				"createTimestamp": 1648826506566
+			}
+		},
+		{
+			"speciesId": "00007",
+			"xalianId": "00007-ef14fb57-1b63-4fc1-8958-9a38945e62fc",
+			"attributes": {
+				"xalianId": "00007-ef14fb57-1b63-4fc1-8958-9a38945e62fc",
+				"species": {
+					"generation": "0",
+					"planet": "Zolton",
+					"name": "Voltish",
+					"description": "With bones and claws made from a tough, conductive metal alloy, this daunting creature can store electrical energy from its surroundings and release the shock into enemies.",
+					"weight": "271 lbs / 123 kg",
+					"id": "00007",
+					"height": "85 in / 216 cm"
+				},
+				"healthPoints": 999,
+				"stats": {
+					"evasionPoints": {
+						"maxPoints": 450,
+						"name": "evasionPoints",
+						"range": "low",
+						"initialPoints": 280,
+						"initialPointAllocationPercentage": 70,
+						"maxPointAllocationPercentage": 112,
+						"points": 280
+					},
+					"standardAttackPoints": {
+						"maxPoints": 999,
+						"name": "standardAttackPoints",
+						"range": "very high",
+						"initialPoints": 955,
+						"initialPointAllocationPercentage": 95,
+						"maxPointAllocationPercentage": 100,
+						"points": 955
+					},
+					"standardDefensePoints": {
+						"maxPoints": 355,
+						"name": "standardDefensePoints",
+						"range": "low",
+						"initialPoints": 184,
+						"initialPointAllocationPercentage": 46,
+						"maxPointAllocationPercentage": 88,
+						"points": 184
+					},
+					"staminaPoints": {
+						"maxPoints": 699,
+						"name": "staminaPoints",
+						"range": "high",
+						"initialPoints": 618,
+						"initialPointAllocationPercentage": 77,
+						"maxPointAllocationPercentage": 87,
+						"points": 618
+					},
+					"specialDefensePoints": {
+						"maxPoints": 223,
+						"name": "specialDefensePoints",
+						"range": "very low",
+						"initialPoints": 124,
+						"initialPointAllocationPercentage": 62,
+						"maxPointAllocationPercentage": 111,
+						"points": 124
+					},
+					"recoveryPoints": {
+						"maxPoints": 639,
+						"name": "recoveryPoints",
+						"range": "medium",
+						"initialPoints": 480,
+						"initialPointAllocationPercentage": 80,
+						"maxPointAllocationPercentage": 106,
+						"points": 480
+					},
+					"specialAttackPoints": {
+						"maxPoints": 855,
+						"name": "specialAttackPoints",
+						"range": "high",
+						"initialPoints": 692,
+						"initialPointAllocationPercentage": 86,
+						"maxPointAllocationPercentage": 106,
+						"points": 692
+					},
+					"speedPoints": {
+						"maxPoints": 371,
+						"name": "speedPoints",
+						"range": "low",
+						"initialPoints": 264,
+						"initialPointAllocationPercentage": 66,
+						"maxPointAllocationPercentage": 92,
+						"points": 264
+					}
+				},
+				"moves": [
+					{
+						"name": "Ingenious Blazen Push",
+						"rating": 10,
+						"description": "Fire-typed showing inventiveness and skill exertion of force",
+						"cost": 10,
+						"type": "Fire",
+						"element": "Blazen"
+					},
+					{
+						"name": "Downhearted Kick",
+						"rating": 7,
+						"description": "Dispirited or gloomy attack delivered by the foot",
+						"cost": 10
+					},
+					{
+						"name": "Agile Chop",
+						"rating": 12,
+						"description": "Quick and lightly moving, aggressive slice with a swift motion",
+						"cost": 10
+					},
+					{
+						"name": "Soft Attack",
+						"rating": 6,
+						"description": "Mild and pleasant, aggressive and violent action",
+						"cost": 10
+					}
+				],
+				"meta": {
+					"totalStatPoints": 3597,
+					"averageStatPotentialPercentage": 100,
+					"potentialStatScore": 957,
+					"averageStatPercentage": 72,
+					"percentageOfPointsAllocated": 78,
+					"statScore": 750,
+					"potentialStatPoints": 4591
+				},
+				"elements": {
+					"secondaryType": "Fire",
+					"primaryType": "Electric",
+					"secondaryElement": "Inferno",
+					"primaryElement": "Plasma"
+				},
+				"speciesId": "00007",
+				"createTimestamp": 1649853391038
+			}
+		},
+		{
+			"speciesId": "00018",
+			"xalianId": "00018-b8b62aba-cef9-4d53-8cd5-38cc6fb6b22a",
+			"attributes": {
+				"xalianId": "00018-b8b62aba-cef9-4d53-8cd5-38cc6fb6b22a",
+				"species": {
+					"generation": "0",
+					"planet": "Krystos",
+					"name": "Akinza",
+					"description": "This creature's incredible stealth and night vision allow it to sneak through the night with ease.",
+					"weight": "138 lbs / 62 kg",
+					"id": "00018",
+					"height": "58 in / 147 cm"
+				},
+				"healthPoints": 999,
+				"stats": {
+					"evasionPoints": {
+						"maxPoints": 830,
+						"name": "evasionPoints",
+						"range": "high",
+						"initialPoints": 659,
+						"initialPointAllocationPercentage": 82,
+						"maxPointAllocationPercentage": 103,
+						"points": 659
+					},
+					"standardAttackPoints": {
+						"maxPoints": 538,
+						"name": "standardAttackPoints",
+						"range": "medium",
+						"initialPoints": 505,
+						"initialPointAllocationPercentage": 84,
+						"maxPointAllocationPercentage": 89,
+						"points": 505
+					},
+					"standardDefensePoints": {
+						"maxPoints": 860,
+						"name": "standardDefensePoints",
+						"range": "high",
+						"initialPoints": 821,
+						"initialPointAllocationPercentage": 102,
+						"maxPointAllocationPercentage": 107,
+						"points": 821
+					},
+					"staminaPoints": {
+						"maxPoints": 664,
+						"name": "staminaPoints",
+						"range": "medium",
+						"initialPoints": 640,
+						"initialPointAllocationPercentage": 106,
+						"maxPointAllocationPercentage": 110,
+						"points": 640
+					},
+					"specialDefensePoints": {
+						"maxPoints": 382,
+						"name": "specialDefensePoints",
+						"range": "low",
+						"initialPoints": 338,
+						"initialPointAllocationPercentage": 84,
+						"maxPointAllocationPercentage": 95,
+						"points": 338
+					},
+					"recoveryPoints": {
+						"maxPoints": 223,
+						"name": "recoveryPoints",
+						"range": "very low",
+						"initialPoints": 144,
+						"initialPointAllocationPercentage": 72,
+						"maxPointAllocationPercentage": 111,
+						"points": 144
+					},
+					"specialAttackPoints": {
+						"maxPoints": 573,
+						"name": "specialAttackPoints",
+						"range": "medium",
+						"initialPoints": 484,
+						"initialPointAllocationPercentage": 80,
+						"maxPointAllocationPercentage": 95,
+						"points": 484
+					},
+					"speedPoints": {
+						"maxPoints": 904,
+						"name": "speedPoints",
+						"range": "high",
+						"initialPoints": 688,
+						"initialPointAllocationPercentage": 86,
+						"maxPointAllocationPercentage": 112,
+						"points": 688
+					}
+				},
+				"moves": [
+					{
+						"name": "Sensational Extrasensory Shove",
+						"rating": 10,
+						"description": "Psychic-typed attention commanding, forceful push",
+						"cost": 10,
+						"type": "Psychic",
+						"element": "Extrasensory"
+					},
+					{
+						"name": "Terrific Shove",
+						"rating": 11,
+						"description": "Extraordinarily good or great, forceful push",
+						"cost": 10
+					},
+					{
+						"name": "Forbidding Enchanting Tap",
+						"rating": 7,
+						"description": "Psychic-typed threatening or foreshadowing, light touch or stroke",
+						"cost": 10,
+						"type": "Psychic",
+						"element": "Enchanting"
+					},
+					{
+						"name": "Sensational Gust",
+						"rating": 10,
+						"description": "Attention commanding, strong current or flow",
+						"cost": 10
+					}
+				],
+				"meta": {
+					"totalStatPoints": 4279,
+					"averageStatPotentialPercentage": 102,
+					"potentialStatScore": 1037,
+					"averageStatPercentage": 87,
+					"percentageOfPointsAllocated": 86,
+					"statScore": 892,
+					"potentialStatPoints": 4974
+				},
+				"elements": {
+					"secondaryType": "Psychic",
+					"primaryType": "Ice",
+					"secondaryElement": "Hypnotic",
+					"primaryElement": "Ice"
+				},
+				"speciesId": "00018",
+				"createTimestamp": 1650313580421
+			}
+		},
+		{
+			"speciesId": "00005",
+			"xalianId": "00005-7da2d068-8481-452c-9d8a-45e66bacb8a1",
+			"attributes": {
+				"xalianId": "00005-7da2d068-8481-452c-9d8a-45e66bacb8a1",
+				"species": {
+					"generation": "0",
+					"planet": "Phantiri",
+					"name": "Smokat",
+					"description": "Feline shaped in normal form, this clever creature can instantly atomize into a cloud of smoke for a sneak attack or quick evasion.",
+					"weight": "171 lbs / 77 kg",
+					"id": "00005",
+					"height": "67 in / 170 cm"
+				},
+				"healthPoints": 999,
+				"stats": {
+					"evasionPoints": {
+						"maxPoints": 859,
+						"name": "evasionPoints",
+						"range": "high",
+						"initialPoints": 812,
+						"initialPointAllocationPercentage": 101,
+						"maxPointAllocationPercentage": 107,
+						"points": 812
+					},
+					"standardAttackPoints": {
+						"maxPoints": 715,
+						"name": "standardAttackPoints",
+						"range": "high",
+						"initialPoints": 640,
+						"initialPointAllocationPercentage": 80,
+						"maxPointAllocationPercentage": 89,
+						"points": 640
+					},
+					"standardDefensePoints": {
+						"maxPoints": 432,
+						"name": "standardDefensePoints",
+						"range": "low",
+						"initialPoints": 261,
+						"initialPointAllocationPercentage": 65,
+						"maxPointAllocationPercentage": 108,
+						"points": 261
+					},
+					"staminaPoints": {
+						"maxPoints": 865,
+						"name": "staminaPoints",
+						"range": "high",
+						"initialPoints": 751,
+						"initialPointAllocationPercentage": 93,
+						"maxPointAllocationPercentage": 108,
+						"points": 751
+					},
+					"specialDefensePoints": {
+						"maxPoints": 192,
+						"name": "specialDefensePoints",
+						"range": "very low",
+						"initialPoints": 121,
+						"initialPointAllocationPercentage": 60,
+						"maxPointAllocationPercentage": 96,
+						"points": 121
+					},
+					"recoveryPoints": {
+						"maxPoints": 220,
+						"name": "recoveryPoints",
+						"range": "very low",
+						"initialPoints": 191,
+						"initialPointAllocationPercentage": 95,
+						"maxPointAllocationPercentage": 110,
+						"points": 191
+					},
+					"specialAttackPoints": {
+						"maxPoints": 763,
+						"name": "specialAttackPoints",
+						"range": "high",
+						"initialPoints": 719,
+						"initialPointAllocationPercentage": 89,
+						"maxPointAllocationPercentage": 95,
+						"points": 719
+					},
+					"speedPoints": {
+						"maxPoints": 688,
+						"name": "speedPoints",
+						"range": "medium",
+						"initialPoints": 668,
+						"initialPointAllocationPercentage": 111,
+						"maxPointAllocationPercentage": 114,
+						"points": 668
+					}
+				},
+				"moves": [
+					{
+						"name": "Nonsensical Thrust",
+						"rating": 6,
+						"description": "Foolish and absurd application of force to propel something",
+						"cost": 10
+					},
+					{
+						"name": "Sublime Supernatural Scratch",
+						"rating": 9,
+						"description": "Ghost-typed greatest extreme or maximal scrape or carving into a surface",
+						"cost": 10,
+						"type": "Ghost",
+						"element": "Supernatural"
+					},
+					{
+						"name": "Balmy Horror Trample",
+						"rating": 7,
+						"description": "Dark-typed mild and pleasant, continual stomping",
+						"cost": 10,
+						"type": "Dark",
+						"element": "Horror"
+					},
+					{
+						"name": "Elevated Outburst",
+						"rating": 11,
+						"description": "Raised or superior, sudden violent disturbance",
+						"cost": 10
+					}
+				],
+				"meta": {
+					"totalStatPoints": 4163,
+					"averageStatPotentialPercentage": 103,
+					"potentialStatScore": 987,
+					"averageStatPercentage": 86,
+					"percentageOfPointsAllocated": 87,
+					"statScore": 868,
+					"potentialStatPoints": 4734
+				},
+				"elements": {
+					"secondaryType": "Dark",
+					"primaryType": "Ghost",
+					"secondaryElement": "Voodoo",
+					"primaryElement": "Wraith"
+				},
+				"speciesId": "00005",
+				"createTimestamp": 1649853363519
+			}
+		}
+	]
+}

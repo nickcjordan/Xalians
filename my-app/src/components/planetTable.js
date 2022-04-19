@@ -1,12 +1,12 @@
 import React from 'react'
-import ListGroup from 'react-bootstrap/ListGroup';
-import Badge from 'react-bootstrap/Badge';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
+import ListGroup from 'react-bootstrap/ListGroup';
+import Badge from 'react-bootstrap/Badge';
 import TextReaderModal from '../components/textReaderModal';
-import * as constants from '../constants/constants';
+import * as constants from '../constants/colorConstants';
 import * as styleUtil from '../utils/styleUtil';
 import { Hub } from 'aws-amplify';
 import XalianSpeciesBadge from './xalianSpeciesBadge';

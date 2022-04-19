@@ -1,0 +1,538 @@
+[
+	{
+		"xalianId": "00003-ef4a85e1-2352-435f-8359-bb520076b525",
+		"speciesId": "00003",
+		"createTimestamp": 1650372895283,
+		"species": {
+			"id": "00003",
+			"name": "Tetrahive",
+			"planet": "Grimedes",
+			"description": "When in battle, this creature summons a swarm of small flying familiars with teeth like piranhas. It controls the swarm with its mind, attacking or defending as one unit.",
+			"height": "30 in / 76 cm",
+			"weight": "27 lbs / 12 kg",
+			"generation": "0"
+		},
+		"elements": {
+			"primaryType": "Dark",
+			"primaryElement": "Shadow",
+			"secondaryType": "Psychic",
+			"secondaryElement": "Telepathic"
+		},
+		"healthPoints": 999,
+		"stats": {
+			"standardAttackPoints": {
+				"name": "standardAttackPoints",
+				"range": "medium",
+				"initialPoints": 482,
+				"points": 482,
+				"maxPoints": 664,
+				"initialPointAllocationPercentage": 80,
+				"maxPointAllocationPercentage": 110
+			},
+			"specialAttackPoints": {
+				"name": "specialAttackPoints",
+				"range": "very high",
+				"initialPoints": 741,
+				"points": 741,
+				"maxPoints": 898,
+				"initialPointAllocationPercentage": 74,
+				"maxPointAllocationPercentage": 89
+			},
+			"standardDefensePoints": {
+				"name": "standardDefensePoints",
+				"range": "low",
+				"initialPoints": 205,
+				"points": 205,
+				"maxPoints": 345,
+				"initialPointAllocationPercentage": 51,
+				"maxPointAllocationPercentage": 86
+			},
+			"specialDefensePoints": {
+				"name": "specialDefensePoints",
+				"range": "very low",
+				"initialPoints": 24,
+				"points": 24,
+				"maxPoints": 172,
+				"initialPointAllocationPercentage": 12,
+				"maxPointAllocationPercentage": 86
+			},
+			"speedPoints": {
+				"name": "speedPoints",
+				"range": "medium",
+				"initialPoints": 690,
+				"points": 690,
+				"maxPoints": 693,
+				"initialPointAllocationPercentage": 114,
+				"maxPointAllocationPercentage": 115
+			},
+			"evasionPoints": {
+				"name": "evasionPoints",
+				"range": "high",
+				"initialPoints": 658,
+				"points": 658,
+				"maxPoints": 834,
+				"initialPointAllocationPercentage": 82,
+				"maxPointAllocationPercentage": 104
+			},
+			"recoveryPoints": {
+				"name": "recoveryPoints",
+				"range": "low",
+				"initialPoints": 231,
+				"points": 231,
+				"maxPoints": 453,
+				"initialPointAllocationPercentage": 57,
+				"maxPointAllocationPercentage": 113
+			},
+			"staminaPoints": {
+				"name": "staminaPoints",
+				"range": "low",
+				"initialPoints": 213,
+				"points": 213,
+				"maxPoints": 425,
+				"initialPointAllocationPercentage": 53,
+				"maxPointAllocationPercentage": 106
+			}
+		},
+		"moves": [
+			{
+				"name": "Pitiless Outburst",
+				"description": "Merciless and unrelenting, sudden violent disturbance",
+				"rating": 9,
+				"cost": 10
+			},
+			{
+				"name": "Immediate Sacrificial Bang",
+				"description": "Dark-typed extremely quick, vigorous attack",
+				"type": "Dark",
+				"element": "Sacrificial",
+				"rating": 9,
+				"cost": 10
+			},
+			{
+				"name": "Complete Enchantment",
+				"description": "Highly skilled, magical spell",
+				"rating": 10,
+				"cost": 10
+			},
+			{
+				"name": "Disastrous Voodoo Chomp",
+				"description": "Dark-typed extremely unfortunate or calamitous gripping or chewing off with the teeth and jaws",
+				"type": "Dark",
+				"element": "Voodoo",
+				"rating": 14,
+				"cost": 10
+			}
+		],
+		"meta": {
+			"totalStatPoints": 3244,
+			"potentialStatPoints": 4484,
+			"percentageOfPointsAllocated": 72,
+			"averageStatPercentage": 65,
+			"averageStatPotentialPercentage": 101,
+			"statScore": 676,
+			"potentialStatScore": 935
+		}
+	},
+	{
+		"xalianId": "00014-7f5fb348-a327-4f30-8ec8-5f85ffd51e00",
+		"speciesId": "00014",
+		"createTimestamp": 1650372925983,
+		"species": {
+			"id": "00014",
+			"name": "Venemist",
+			"planet": "Drainov",
+			"description": "The toxic mist expelled from a tube in its mouth helps to dissolve its prey. With only 2 teeth, this tactic is necessary for the creature to survive.",
+			"height": "42 in / 106 cm",
+			"weight": "114 lbs / 51 kg",
+			"generation": "0"
+		},
+		"elements": {
+			"primaryType": "Chemical",
+			"primaryElement": "Infection",
+			"secondaryType": "Fire",
+			"secondaryElement": "Fire"
+		},
+		"healthPoints": 999,
+		"stats": {
+			"standardAttackPoints": {
+				"name": "standardAttackPoints",
+				"range": "very low",
+				"initialPoints": 39,
+				"points": 39,
+				"maxPoints": 177,
+				"initialPointAllocationPercentage": 19,
+				"maxPointAllocationPercentage": 88
+			},
+			"specialAttackPoints": {
+				"name": "specialAttackPoints",
+				"range": "medium",
+				"initialPoints": 423,
+				"points": 423,
+				"maxPoints": 538,
+				"initialPointAllocationPercentage": 70,
+				"maxPointAllocationPercentage": 89
+			},
+			"standardDefensePoints": {
+				"name": "standardDefensePoints",
+				"range": "very high",
+				"initialPoints": 941,
+				"points": 941,
+				"maxPoints": 999,
+				"initialPointAllocationPercentage": 94,
+				"maxPointAllocationPercentage": 100
+			},
+			"specialDefensePoints": {
+				"name": "specialDefensePoints",
+				"range": "low",
+				"initialPoints": 239,
+				"points": 239,
+				"maxPoints": 364,
+				"initialPointAllocationPercentage": 59,
+				"maxPointAllocationPercentage": 91
+			},
+			"speedPoints": {
+				"name": "speedPoints",
+				"range": "medium",
+				"initialPoints": 437,
+				"points": 437,
+				"maxPoints": 500,
+				"initialPointAllocationPercentage": 72,
+				"maxPointAllocationPercentage": 83
+			},
+			"evasionPoints": {
+				"name": "evasionPoints",
+				"range": "medium",
+				"initialPoints": 553,
+				"points": 553,
+				"maxPoints": 643,
+				"initialPointAllocationPercentage": 92,
+				"maxPointAllocationPercentage": 107
+			},
+			"recoveryPoints": {
+				"name": "recoveryPoints",
+				"range": "low",
+				"initialPoints": 332,
+				"points": 332,
+				"maxPoints": 340,
+				"initialPointAllocationPercentage": 83,
+				"maxPointAllocationPercentage": 85
+			},
+			"staminaPoints": {
+				"name": "staminaPoints",
+				"range": "high",
+				"initialPoints": 711,
+				"points": 711,
+				"maxPoints": 854,
+				"initialPointAllocationPercentage": 88,
+				"maxPointAllocationPercentage": 106
+			}
+		},
+		"moves": [
+			{
+				"name": "Meek Venomous Impact",
+				"description": "Chemical-typed overly submissive or compliant strike of one body against another",
+				"type": "Chemical",
+				"element": "Venomous",
+				"rating": 8,
+				"cost": 10
+			},
+			{
+				"name": "Unrelenting Tap",
+				"description": "Punishingly harsh, light touch or stroke",
+				"rating": 9,
+				"cost": 10
+			},
+			{
+				"name": "Immediate Venomous Abrasion",
+				"description": "Chemical-typed extremely quick erosion by the use of friction",
+				"type": "Chemical",
+				"element": "Venomous",
+				"rating": 8,
+				"cost": 10
+			},
+			{
+				"name": "Deplorable Fire Bomb",
+				"description": "Fire-typed low quality, explosive device fused to explode under specific conditions",
+				"type": "Fire",
+				"element": "Fire",
+				"rating": 9,
+				"cost": 10
+			}
+		],
+		"meta": {
+			"totalStatPoints": 3675,
+			"potentialStatPoints": 4415,
+			"percentageOfPointsAllocated": 83,
+			"averageStatPercentage": 72,
+			"averageStatPotentialPercentage": 93,
+			"statScore": 766,
+			"potentialStatScore": 920
+		}
+	},
+	{
+		"xalianId": "00017-ba1300d0-8e5b-4a0a-9ed2-95c97e9b6973",
+		"speciesId": "00017",
+		"createTimestamp": 1650372970469,
+		"species": {
+			"id": "00017",
+			"name": "Scalatto",
+			"planet": "Endessa",
+			"description": "Shielded by a scaly exoskeleton, this creature can roll into a ball to protect itself.",
+			"height": "42 in / 106 cm",
+			"weight": "155 lbs / 70 kg",
+			"generation": "0"
+		},
+		"elements": {
+			"primaryType": "Sand",
+			"primaryElement": "Sand",
+			"secondaryType": "Plant",
+			"secondaryElement": "Fungus"
+		},
+		"healthPoints": 999,
+		"stats": {
+			"standardAttackPoints": {
+				"name": "standardAttackPoints",
+				"range": "very low",
+				"initialPoints": 153,
+				"points": 153,
+				"maxPoints": 174,
+				"initialPointAllocationPercentage": 76,
+				"maxPointAllocationPercentage": 87
+			},
+			"specialAttackPoints": {
+				"name": "specialAttackPoints",
+				"range": "medium",
+				"initialPoints": 526,
+				"points": 526,
+				"maxPoints": 550,
+				"initialPointAllocationPercentage": 87,
+				"maxPointAllocationPercentage": 91
+			},
+			"standardDefensePoints": {
+				"name": "standardDefensePoints",
+				"range": "high",
+				"initialPoints": 726,
+				"points": 726,
+				"maxPoints": 775,
+				"initialPointAllocationPercentage": 90,
+				"maxPointAllocationPercentage": 96
+			},
+			"specialDefensePoints": {
+				"name": "specialDefensePoints",
+				"range": "low",
+				"initialPoints": 222,
+				"points": 222,
+				"maxPoints": 440,
+				"initialPointAllocationPercentage": 55,
+				"maxPointAllocationPercentage": 110
+			},
+			"speedPoints": {
+				"name": "speedPoints",
+				"range": "medium",
+				"initialPoints": 473,
+				"points": 473,
+				"maxPoints": 674,
+				"initialPointAllocationPercentage": 78,
+				"maxPointAllocationPercentage": 112
+			},
+			"evasionPoints": {
+				"name": "evasionPoints",
+				"range": "low",
+				"initialPoints": 346,
+				"points": 346,
+				"maxPoints": 441,
+				"initialPointAllocationPercentage": 86,
+				"maxPointAllocationPercentage": 110
+			},
+			"recoveryPoints": {
+				"name": "recoveryPoints",
+				"range": "low",
+				"initialPoints": 285,
+				"points": 285,
+				"maxPoints": 347,
+				"initialPointAllocationPercentage": 71,
+				"maxPointAllocationPercentage": 86
+			},
+			"staminaPoints": {
+				"name": "staminaPoints",
+				"range": "medium",
+				"initialPoints": 392,
+				"points": 392,
+				"maxPoints": 550,
+				"initialPointAllocationPercentage": 65,
+				"maxPointAllocationPercentage": 91
+			}
+		},
+		"moves": [
+			{
+				"name": "Downhearted Hydroponic Gust",
+				"description": "Plant-typed dispirited or gloomy, strong current or flow",
+				"type": "Plant",
+				"element": "Hydroponic",
+				"rating": 6,
+				"cost": 10
+			},
+			{
+				"name": "Sodding Laser",
+				"description": "Obnoxious or contemptible beam of intense particles",
+				"rating": 11,
+				"cost": 10
+			},
+			{
+				"name": "Sensational Jinx",
+				"description": "Attention commanding, evil spell",
+				"rating": 12,
+				"cost": 10
+			},
+			{
+				"name": "Howling Eruption",
+				"description": "Extraordinarily good or great, sudden occurrence of a violent discharge of material",
+				"rating": 13,
+				"cost": 10
+			}
+		],
+		"meta": {
+			"totalStatPoints": 3123,
+			"potentialStatPoints": 3951,
+			"percentageOfPointsAllocated": 79,
+			"averageStatPercentage": 76,
+			"averageStatPotentialPercentage": 97,
+			"statScore": 651,
+			"potentialStatScore": 824
+		}
+	},
+	{
+		"xalianId": "00004-78659676-bc06-496d-8ab5-28f1b24d9b04",
+		"speciesId": "00004",
+		"createTimestamp": 1650372996349,
+		"species": {
+			"id": "00004",
+			"name": "Bioflim",
+			"planet": "Drainov",
+			"description": "An acid slime organism protected by a thick rocky exoskeleton. Its slime can continually regenerate an outer shell, allowing for great defense.",
+			"height": "86 in / 218 cm",
+			"weight": "920 lbs / 417 kg",
+			"generation": "0"
+		},
+		"elements": {
+			"primaryType": "Chemical",
+			"primaryElement": "Infection",
+			"secondaryType": "Ghost",
+			"secondaryElement": "Ghost"
+		},
+		"healthPoints": 999,
+		"stats": {
+			"standardAttackPoints": {
+				"name": "standardAttackPoints",
+				"range": "medium",
+				"initialPoints": 564,
+				"points": 564,
+				"maxPoints": 565,
+				"initialPointAllocationPercentage": 94,
+				"maxPointAllocationPercentage": 94
+			},
+			"specialAttackPoints": {
+				"name": "specialAttackPoints",
+				"range": "low",
+				"initialPoints": 254,
+				"points": 254,
+				"maxPoints": 421,
+				"initialPointAllocationPercentage": 63,
+				"maxPointAllocationPercentage": 105
+			},
+			"standardDefensePoints": {
+				"name": "standardDefensePoints",
+				"range": "high",
+				"initialPoints": 635,
+				"points": 635,
+				"maxPoints": 669,
+				"initialPointAllocationPercentage": 79,
+				"maxPointAllocationPercentage": 83
+			},
+			"specialDefensePoints": {
+				"name": "specialDefensePoints",
+				"range": "very low",
+				"initialPoints": 18,
+				"points": 18,
+				"maxPoints": 210,
+				"initialPointAllocationPercentage": 9,
+				"maxPointAllocationPercentage": 105
+			},
+			"speedPoints": {
+				"name": "speedPoints",
+				"range": "low",
+				"initialPoints": 320,
+				"points": 320,
+				"maxPoints": 350,
+				"initialPointAllocationPercentage": 80,
+				"maxPointAllocationPercentage": 87
+			},
+			"evasionPoints": {
+				"name": "evasionPoints",
+				"range": "high",
+				"initialPoints": 866,
+				"points": 866,
+				"maxPoints": 882,
+				"initialPointAllocationPercentage": 108,
+				"maxPointAllocationPercentage": 110
+			},
+			"recoveryPoints": {
+				"name": "recoveryPoints",
+				"range": "low",
+				"initialPoints": 231,
+				"points": 231,
+				"maxPoints": 416,
+				"initialPointAllocationPercentage": 57,
+				"maxPointAllocationPercentage": 104
+			},
+			"staminaPoints": {
+				"name": "staminaPoints",
+				"range": "medium",
+				"initialPoints": 492,
+				"points": 492,
+				"maxPoints": 532,
+				"initialPointAllocationPercentage": 82,
+				"maxPointAllocationPercentage": 88
+			}
+		},
+		"moves": [
+			{
+				"name": "Otiose Poisonous Eruption",
+				"description": "Chemical-typed pointless and lazy, sudden occurrence of a violent discharge of material",
+				"type": "Chemical",
+				"element": "Poisonous",
+				"rating": 9,
+				"cost": 10
+			},
+			{
+				"name": "Epic Ambush",
+				"description": "Very imposing or impressive act of concealing, lying, and waiting to attack by surprise",
+				"rating": 13,
+				"cost": 10
+			},
+			{
+				"name": "Ethereal Scrape",
+				"description": "Divine, spiritually perfect scratch or carving into a surface",
+				"rating": 12,
+				"cost": 10
+			},
+			{
+				"name": "Crafty Infectious Swipe",
+				"description": "Chemical-typed deceptively skillful sweeping stroke of an attack",
+				"type": "Chemical",
+				"element": "Infectious",
+				"rating": 8,
+				"cost": 10
+			}
+		],
+		"meta": {
+			"totalStatPoints": 3380,
+			"potentialStatPoints": 4045,
+			"percentageOfPointsAllocated": 83,
+			"averageStatPercentage": 71,
+			"averageStatPotentialPercentage": 97,
+			"statScore": 704,
+			"potentialStatScore": 843
+		}
+	}
+]

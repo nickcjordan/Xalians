@@ -1,4 +1,4 @@
-import * as constants from '../constants/constants';
+import * as constants from '../constants/colorConstants';
 import gsap from 'gsap';
 
 export const getBorder = (type, thickness, blur) => {

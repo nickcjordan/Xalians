@@ -1,6 +1,8 @@
 import { Auth } from 'aws-amplify';
 import * as authUtil from './authUtil';
 import * as dbApi from '../utils/dbApi';
+import mockUserData from '../json/mock/mockUserData.json'
+import mockXalianList from '../json/mock/mockXalianList.json'
 
 export function getCurrentUserAndXalians() {
     return new Promise((resolve) => {
@@ -12,6 +14,7 @@ export function getCurrentUserAndXalians() {
                     dbApi
                     .callGetUser(username, true)
                     .then((user) => {
+                        console.log(JSON.stringify(user, null, 2));
                         resolve(user);
                     })
                     .catch((e) => {
@@ -24,4 +27,15 @@ export function getCurrentUserAndXalians() {
         }
       });
     
+}
+
+export function getMockCurrentUserAndXalians() {
+    return new Promise((resolve) => {
+        resolve(mockUserData);
+    });
+    
+}
+
+export function getMockXalianList() {
+    return mockXalianList;
 }

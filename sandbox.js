@@ -6,6 +6,7 @@ const translator = require("./lambda/src/translator.js");
 const attackCalculator = require("./lambda/src/gameplay/attackCalculator.js");
 const csv = require("csv-parser");
 const tools = require("./lambda/src/tools.js");
+const readline = require('readline');
 
 // module.exports = {
 //     main: main
@@ -23,25 +24,98 @@ const tools = require("./lambda/src/tools.js");
 
 // cleanupMonsters();
 
-cleanupDesignerAnimalReferences();
+// cleanupDesignerAnimalReferences();
 
-function cleanupDesignerAnimalReferences() {
-  let animals = JSON.parse(fs.readFileSync("lambda/src/json/designer/animalSizes.json", "utf8").toString());
+// fixElementEffectiveness();
+fixTypes();
 
-  var fixed = [];
-  animals.forEach(x => {
-    fixed.push({
-      name: x.name,
-      size: x.size,
-      mass: x.mass,
-      density: Math.floor((x.mass / x.size) * 100) / 100,
-      image: "",
-      searchName: x.name
-    });
+function fixElementEffectiveness() {
+    // let elements = JSON.parse(fs.readFileSync("lambda/src/json/designer/animalSizes.json", "utf8").toString());
+  
+    // var fixed = [];
+    // animals.forEach(x => {
+    //   fixed.push({
+    //     name: x.name,
+    //     size: x.size,
+    //     mass: x.mass,
+    //     density: Math.floor((x.mass / x.size) * 100) / 100,
+    //     image: "",
+    //     searchName: x.name
+    //   });
+    // });
+  
+    // fs.writeFileSync("lambda/src/json/designer/test_animalSizes.json", JSON.stringify(fixed, null, 2))
+
+    const readInterface = readline.createInterface({
+      input: fs.createReadStream('lambda/src/csv/character_element_matrix_final.csv'),
+      output: process.stdout,
+      console: false
   });
+  var rowInd = 0;
+  var typeOrderList = [];
+  var matrix = new Map();
+  readInterface.on('line', function(line) {
+    let cols = line.split(",");
+    if (rowInd == 0) {
+      var colInd = 0;
+      cols.forEach( elementType => {
+        if (colInd != 0) {
+          typeOrderList.push(elementType);
+        }
+        colInd += 1;
+      })
+    } else {
+      var colInd = 0;
+      let typeName = cols[0];
+      let effectivenessMap = new Map();
+      cols.forEach( colVal => {
+        if (colInd != 0 && colInd != cols.length-1) {
+          effectivenessMap[typeOrderList[colInd - 1]] = parseFloat(colVal);
+        }
+        colInd += 1;
+      })
+      if (typeName !== 'total') {
+        matrix[typeName] = effectivenessMap;
+      }
+    }
+    rowInd += 1;
+  });
+  new Promise(resolve => setTimeout(resolve, 1000)).then( () => {
+    console.log(JSON.stringify(matrix, null, 2));
 
-  fs.writeFileSync("lambda/src/json/designer/test_animalSizes.json", JSON.stringify(fixed, null, 2))
+  })
+
 }
+
+function fixTypes() {
+  var elements = JSON.parse(fs.readFileSync("lambda/src/json/" + "elements" + ".json", "utf8").toString());
+  var matrix = JSON.parse(fs.readFileSync("lambda/src/json/" + "typeEffectivenessMatrix" + ".json", "utf8").toString());
+  elements.forEach( e => {
+    let map = matrix[e.name];
+    e.effectiveness = map;
+  })
+  let dataOut = JSON.stringify(elements, null, 2);
+  fs.writeFileSync("lambda/src/json/new_elements" + ".json", dataOut);
+}
+
+
+// function cleanupDesignerAnimalReferences() {
+//   let animals = JSON.parse(fs.readFileSync("lambda/src/json/designer/animalSizes.json", "utf8").toString());
+
+//   var fixed = [];
+//   animals.forEach(x => {
+//     fixed.push({
+//       name: x.name,
+//       size: x.size,
+//       mass: x.mass,
+//       density: Math.floor((x.mass / x.size) * 100) / 100,
+//       image: "",
+//       searchName: x.name
+//     });
+//   });
+
+//   fs.writeFileSync("lambda/src/json/designer/test_animalSizes.json", JSON.stringify(fixed, null, 2))
+// }
 
 // function cleanupMonsters() {
 //   let monsters = JSON.parse(fs.readFileSync("src/json/designer/monsters.json", "utf8").toString());

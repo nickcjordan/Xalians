@@ -78,7 +78,7 @@ export const statFieldToDescriptionCondensed = (val) => {
 };
 
 export const statRangeToInteger = (val) => {
-	return valMap[val];
+	return parseInt(valMap[val]);
 };
 
 export const statRangeToScaledVal = (val) => {

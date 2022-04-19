@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'react-bootstrap/Image';
-import * as constants from '../constants/constants';
+import * as constants from '../constants/colorConstants';
 // import * as constants from '../svg/constants'
 import XalianSVG from './xalianSVG';
 
@@ -12,6 +12,7 @@ class XalianImage extends React.Component {
 	getTypeColorClassName(type) {
 		var x = this.props.colored ? ` ${type.toLowerCase()}-color ` : '';
 		x = x + (this.props.bordered ? ` xalian-image-bordered ` : '');
+		x = x + (this.props.selected ? ` xalian-image-selected ` : '');
 		x = x + (this.props.shadowed ? ' xalian-image-shadowed ' : '');
 		x = x + (!this.props.unPadded ? ' xalian-image-wrapper-padded ' : '');
 		x = x + this.props.moreClasses;

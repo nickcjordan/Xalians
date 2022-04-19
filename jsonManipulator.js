@@ -4,7 +4,6 @@ const xalianBuilder = require('./src/xalianBuilder.js');
 const translator = require('./src/translator.js');
 const attackCalculator = require('./src/gameplay/attackCalculator.js');
 const csv = require('csv-parser');
-const tools = require('./src/tools.js');
 
 
 addPropertyToEachSpecies();

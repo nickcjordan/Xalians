@@ -2,6 +2,6 @@ import elements from './json/elements.json';
 
 export function getJson(fileName) {
     if (fileName == 'elements') {
-        return elements;
+        return JSON.stringify(elements);
     }
 }

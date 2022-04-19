@@ -12,42 +12,75 @@ import GameContainer from '../../components/games/elements/gameContainer';
 import * as calc from '../../gameplay/attackCalculator';
 import * as retrievalUtil from '../../utils/retrievalUtil';
 import * as svgUtil from '../../utils/svgUtil';
+import { Client } from 'boardgame.io/react';
+import { Duel } from '../../components/games/duel';
+import DuelBoard  from '../../components/games/elements/duelBoard';
+import * as translator from '../../utils/valueTranslator';
+import * as gameConstants from '../../constants/attackCalculationConstants'
 
 class CalculatorPage extends React.Component {
 	state = {
 		user: null,
-		xalians: []
+		xalians: [],
+		instructionText: 'Select Attacker',
+		resultText: '',
 	};
 
-	componentWillUnmount() {
-	}
+	componentWillUnmount() {}
 
 	componentDidMount() {
-		retrievalUtil.getCurrentUserAndXalians().then(user => {
-			
-			let grid = [];
-			user.xalians.forEach( x => {
-				grid.push(this.buildSpeciesIcon(x))
-			})
-			
-			
-			this.setState({ user: user, xalians: user.xalians })
+		// retrievalUtil.getCurrentUserAndXalians().then((user) => {
+		retrievalUtil.getMockCurrentUserAndXalians().then((user) => {
+			let xalians = [];
+			user.xalians.forEach((x) => {
+				// xalians.push(this.buildSpeciesIcon(x.attributes));
+				xalians.push(x.attributes);
+			});
 
-		})
+			this.setState({ user: user, xalians: xalians });
+		});
 	}
 
+	handleClick = (id) => {
+		this.state.xalians.forEach((x) => {
+			if (x.xalianId === id) {
+				this.handleXalianSelection(x.attributes);
+			}
+		});
+	};
+
+	handleXalianSelection = (xalian) => {
+		if (this.state.instructionText === 'Select Attacker') {
+			this.handleAttackerSelection(xalian);
+		} else {
+			this.handleDefenderSelection(xalian);
+		}
+	};
+
+	handleAttackerSelection = (xalian) => {
+		this.setState({ instructionText: 'Now Select Defender', resultText: this.state.resultText + '\n :: ', attacker: xalian });
+	};
+
+	handleDefenderSelection = (xalian) => {
+		let a = this.state.attacker;
+
+		let attackResult = calc.calculateAttackResult(a.moves[0], a, xalian);
+		this.setState({ instructionText: 'Select Attacker', resultText: this.state.resultText + ` :: ${a.species.name} [attack=${a.stats['standardAttackPoints'].points}] attacks ${xalian.species.name} [defense=${xalian.stats['standardDefensePoints'].points}] for a result of ${attackResult}` });
+	};
+
 	buildSpeciesIcon(x) {
-        return (
+		return (
 			<Col md={2} sm={3} xs={6} className="species-col">
-				<a href={'/species/' + x.id}>
-					<XalianImage colored bordered speciesName={x.name} primaryType={x.type} moreClasses="xalian-image-grid" />
+				<a onClick={() => this.handleClick(x.xalianId)}>
+					<XalianImage colored bordered speciesName={x.species.name} primaryType={x.elements.primaryType} moreClasses="xalian-image-grid" />
 					<Row style={{ width: '100%', margin: '0px', padding: '0px' }}>
-						<Col xs={5} style={{ margin: 'auto', padding: '0px', paddingRight: '5px', textAlign: 'right' }}>
-							{svgUtil.getSpeciesTypeSymbol(x.type, true, 25)}
-						</Col>
-						<Col xs={7} style={{ padding: '0px', height: '100%', margin: 'auto' }}>
+						{/* <Col xs={5} style={{ margin: 'auto', padding: '0px', paddingRight: '5px', textAlign: 'right' }}>
+							{svgUtil.getSpeciesTypeSymbol(x.elements.primaryType, true, 25)}
+						</Col> */}
+						{/* <Col xs={7} style={{ padding: '0px', height: '100%', margin: 'auto' }}> */}
+						<Col style={{ padding: '0px', height: '100%', margin: 'auto' }}>
 							<h6 className="condensed-row" style={{ textAlign: 'left', margin: 'auto', height: '100%', width: '100%' }}>
-								#{x.id}
+								#{x.xalianId.split("-").pop()}
 							</h6>
 						</Col>
 					</Row>
@@ -57,30 +90,150 @@ class CalculatorPage extends React.Component {
 				</a>
 			</Col>
 		);
-    }
+	}
+
+	transformXalianToGamePiece = (xalian) => {
+		let stAttackPts = translator.statRangeToInteger(xalian.stats["standardAttackPoints"].range);
+		let spAttackPts = translator.statRangeToInteger(xalian.stats["specialAttackPoints"].range);
+		// let attackPts = Math.floor(((stAttackPts + spAttackPts)*10)/2)/10; // round to 1 decimal if necessary
+		let attackPts = Math.floor(((stAttackPts + spAttackPts)*10))/10; // round to 1 decimal if necessary
+
+		let stDefensePts = translator.statRangeToInteger(xalian.stats["standardDefensePoints"].range);
+		let spDefensePts = translator.statRangeToInteger(xalian.stats["specialDefensePoints"].range);
+		// let defensePts = Math.floor(((stDefensePts + spDefensePts)*10)/2)/10; // round to 1 decimal if necessary
+		let defensePts = Math.floor(((stDefensePts + spDefensePts)*10))/10; // round to 1 decimal if necessary
+		
+		let speedPts = translator.statRangeToInteger(xalian.stats["speedPoints"].range) * 2;
+		let evasionPts = translator.statRangeToInteger(xalian.stats["evasionPoints"].range) * 2;
+
+		return {
+			xalianId: xalian.xalianId,
+			species: xalian.species,
+			elements: xalian.elements,
+			stats: {
+				attack: attackPts,
+				defense: defensePts,
+				speed: speedPts,
+				evasion: evasionPts,
+				health: gameConstants.MAX_HEALTH_POINTS
+			}
+		}
+	}
 
 	render() {
+		
+		if (this.state.xalians && this.state.xalians.length > 0) {
+			let allPieces = [];
+			let playerPieces = [];
+			let opponentPieces = [];
+			this.state.xalians.forEach( x => {
+				let transformed = this.transformXalianToGamePiece(x); 
+				allPieces.push(transformed);
+				playerPieces.push(transformed);
+			})
+			let opponentXalians = retrievalUtil.getMockXalianList();
+			opponentXalians.forEach(x => {
+				let transformed = this.transformXalianToGamePiece(x); 
+				allPieces.push(transformed);
+				opponentPieces.push(transformed);
+			})
+			const duel = Duel(
+				{
+					user: this.state.user,
+					playerXalians: playerPieces,
+					opponentXalians: opponentPieces,
+					xalians: allPieces
+				}
+			);
 
-        return <React.Fragment>
+			const DuelClient = Client({
+				// A game object.
+				game: duel,
+			
+				// The number of players.
+				numPlayers: 2,
+			
+				// Your React component representing the game board.
+				// The props that this component receives are listed below.
+				// When using TypeScript, type the component's properties as
+				// extending BoardProps.
+				board: DuelBoard,
+			
+				// Optional: React component to display while the client
+				// is in the "loading" state prior to the initial sync
+				// with the game master. Relevant only in multiplayer mode.
+				// If this is not provided, the client displays "connecting...".
+				// loading: LoadingComponent,
+			
+				// Set this to one of the following to enable multiplayer:
+				//
+				// SocketIO
+				//   Implementation that talks to a remote server using socket.io.
+				//
+				//   How to import:
+				//     import { SocketIO } from 'boardgame.io/multiplayer'
+				//
+				//   Arguments:
+				//     Object with 2 parameters
+				//        1. 'socketOpts' options to pass directly to socket.io client.
+				//        2. 'server' specifies the server location in the format: [http[s]://]hostname[:port];
+				//            defaults to current page host.
+				//
+				// Local
+				//   Special local mode that uses an in-memory game master. Useful
+				//   for testing multiplayer interactions locally without having to
+				//   connect to a server.
+				//
+				//   How to import:
+				//     import { Local } from 'boardgame.io/multiplayer'
+				//
+				// Additionally, you can write your own transport implementation.
+				// See `src/client/client.js` for details.
+				// multiplayer: false,
+			
+				// Set to false to disable the Debug UI.
+				debug: true,
+			
+				// An optional Redux store enhancer.
+				// This is useful for augmenting the Redux store
+				// for purposes of debugging or simply intercepting
+				// events in order to kick off other side-effects in
+				// response to moves.
+				// enhancer: applyMiddleware(your_middleware),
+			});
+			
+			return (
+				<React.Fragment>
+					<Container fluid className="content-background-container">
+					<XalianNavbar></XalianNavbar>
+				
 
-            <Container fluid className="content-background-container">
-                <XalianNavbar></XalianNavbar>
+					<GameContainer>
+					<DuelClient/>
+					</GameContainer>
+					
+					</Container>
 
-                            <GameContainer>
-								{this.state.xalianGrid && <React.Fragment>
-									
-								</React.Fragment>}
-                                
-                            </GameContainer>
+				</React.Fragment>
+			);
+		} else {
+			return (
+				<React.Fragment>
+					<Container fluid className="content-background-container">
+					<XalianNavbar></XalianNavbar>
+				
 
-            </Container>
-        </React.Fragment>
+					<GameContainer>
+					WAITING ON RESPONSE...
+					</GameContainer>
+					
+					</Container>
 
-
-    }
-
-
-	
+				</React.Fragment>
+			);
+		}
+	}
 }
+
 
 export default CalculatorPage;

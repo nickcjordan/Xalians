@@ -1,0 +1,1 @@
+export const BOARD_COLUMN_SIZE = 8;

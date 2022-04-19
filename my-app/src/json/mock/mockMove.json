@@ -1,0 +1,8 @@
+{
+    "name": "Immediate Corrosive Shot",
+    "description": "Chemical-typed extremely quick attack hard enough to cause injury",
+    "type": "Chemical",
+    "element": "Corrosive",
+    "rating": 11,
+    "cost": 10
+  }

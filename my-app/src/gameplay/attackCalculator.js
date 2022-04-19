@@ -2,7 +2,7 @@ const fs = require('fs')
 const constants = require('../constants/constants.js');
 const attackConstants = require('../constants/attackCalculationConstants.js');
 const tools = require('../tools.js');
-var Move = require('../model/move.js');
+// var Move = require('../model/move.js');
 
 
 module.exports.calculateAttackResult = (move, attacker, defender, matchState) => {
@@ -25,7 +25,7 @@ module.exports.calculateAttackResult = (move, attacker, defender, matchState) =>
 function calculateBaseValue(move, attacker, defender) {
     try {
         let k = calculateLevelK(attacker);
-        let power = move.potential;
+        let power = move.potential || move.rating;
         let a_d = calculateEffectiveAttackAndDefense(move, attacker, defender);
         let baseTop = k * power * a_d;
         let baseResult = (baseTop / attackConstants.BASE_BOTTOM_VAR) + 2;
@@ -106,12 +106,16 @@ function calculateSameTypeAttackBonus(move, attacker) {
     if (!move.type) {
         return 1;
     }
+
+    let type = move.type && move.type.name ? move.type.name.toLowerCase() : move.type.toLowerCase();
+    let attackerPrimary = attacker.elements.primaryType && attacker.elements.primaryType.name ? attacker.elements.primaryType.name.toLowerCase() : attacker.elements.primaryType.toLowerCase();
+    let attackerSecondary = attacker.elements.secondaryType && attacker.elements.secondaryType.name ? attacker.elements.secondaryType.name.toLowerCase() : attacker.elements.secondaryType.toLowerCase();
     
     var multiplier = 1;
-    if (move.type && move.type.name.toLowerCase() == attacker.elements.primaryType.name.toLowerCase()) {
+    if (type == attackerPrimary) {
         multiplier += 0.5;
     }
-    if (move.type && move.type.name.toLowerCase() == attacker.elements.secondaryType.name.toLowerCase()) {
+    if (type == attackerSecondary) {
         multiplier += 0.5;
     }
     console.log(`STAB: ${multiplier}`);
@@ -138,14 +142,18 @@ function calculateTypeEffectiveness(move, defender) {
     let nodes = JSON.parse(json.toString());
     let map = new Map();
     nodes.forEach(node => {
-        map[node.name] = node.effectiveness;
+        map[node.name.toLowerCase()] = node.effectiveness;
     });
 
     var base = 1;
 
-    let effectivenessMap = map[move.type.name];
-    base *= effectivenessMap[defender.elements.primaryType.name];
-    base *= effectivenessMap[defender.elements.secondaryType.name];
+    let type = move.type && move.type.name ? move.type.name.toLowerCase() : move.type.toLowerCase();
+    let defenderPrimary = defender.elements.primaryType && defender.elements.primaryType.name ? defender.elements.primaryType.name.toLowerCase() : defender.elements.primaryType.toLowerCase();
+    let defenderSecondary = defender.elements.secondaryType && defender.elements.secondaryType.name ? defender.elements.secondaryType.name.toLowerCase() : defender.elements.secondaryType.toLowerCase();
+
+    let effectivenessMap = map[type];
+    base *= effectivenessMap[defenderPrimary];
+    base *= effectivenessMap[defenderSecondary];
 
     console.log(`type effectiveness = ${base}`);
 
