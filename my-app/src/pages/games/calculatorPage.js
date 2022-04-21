@@ -104,7 +104,10 @@ class CalculatorPage extends React.Component {
 		let defensePts = Math.floor(((stDefensePts + spDefensePts)*10))/10; // round to 1 decimal if necessary
 		
 		let speedPts = translator.statRangeToInteger(xalian.stats["speedPoints"].range) * 2;
+		let distance = Math.round(Math.sqrt(speedPts));
 		let evasionPts = translator.statRangeToInteger(xalian.stats["evasionPoints"].range) * 2;
+
+		var selectedSpecies = species.filter( s => s.id === xalian.species.id)[0];
 
 		return {
 			xalianId: xalian.xalianId,
@@ -114,9 +117,11 @@ class CalculatorPage extends React.Component {
 				attack: attackPts,
 				defense: defensePts,
 				speed: speedPts,
+				distance: distance,
 				evasion: evasionPts,
 				health: gameConstants.MAX_HEALTH_POINTS
-			}
+			},
+			traits: selectedSpecies.traits
 		}
 	}
 

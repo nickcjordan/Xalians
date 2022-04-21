@@ -3459,6 +3459,10 @@ input, textarea {
   border: 1px solid #555;
 }
 
+.xalian-cell-highlighted {
+  background-color: #18d26e !important;
+}
+
 .xalian-cell-selected {
   border: 4px solid rgb(255, 255, 255);
 }

@@ -164,7 +164,7 @@
     },
     "traits": {
       "canFly": false,
-      "attackRange": "high"
+      "attackRange": "low"
     }
   },
   {

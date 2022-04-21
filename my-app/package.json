@@ -16,6 +16,7 @@
     "fitty": "^2.3.6",
     "gsap": "file:gsap-bonus.tgz",
     "history": "^5.1.0",
+    "pathfinding": "^0.4.7",
     "prop-types": "^15.8.1",
     "qs": "^6.10.3",
     "react": "latest",

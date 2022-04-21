@@ -9254,6 +9254,11 @@
     "capital-case" "^1.0.4"
     "tslib" "^2.0.3"
 
+"heap@0.2.2":
+  "integrity" "sha1-/CBKF+a8WKTvdamLwax5XxR8ih8="
+  "resolved" "https://registry.npmjs.org/heap/-/heap-0.2.2.tgz"
+  "version" "0.2.2"
+
 "hermes-engine@~0.9.0":
   "integrity" "sha512-r7U+Y4P2Qg/igFVZN+DpT7JFfXUn1MM4dFne8aW+cCrF6RRymof+VqrUHs1kl07j8h8V2CNesU19RKgWbr3qPw=="
   "resolved" "https://registry.npmjs.org/hermes-engine/-/hermes-engine-0.9.0.tgz"
@@ -12595,6 +12600,13 @@
   "integrity" "sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw=="
   "resolved" "https://registry.npmjs.org/path-type/-/path-type-4.0.0.tgz"
   "version" "4.0.0"
+
+"pathfinding@^0.4.7":
+  "integrity" "sha1-IAulu7nhhsUvkCdhDJ7tOfObibY="
+  "resolved" "https://registry.npmjs.org/pathfinding/-/pathfinding-0.4.7.tgz"
+  "version" "0.4.7"
+  dependencies:
+    "heap" "0.2.2"
 
 "pbkdf2@^3.0.3":
   "integrity" "sha512-4Ejy1OPxi9f2tt1rRV7Go7zmfDQ+ZectEQz3VGUQhgq62HtIRPDyG/JtnwIxs6x3uNMwo2V7q1fMvKjb+Tnpqg=="

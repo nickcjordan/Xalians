@@ -69,6 +69,16 @@ valMap["medium"] = 3;
 valMap["high"] = 4;
 valMap["very high"] = 5;
 
+
+let duelRangeMap = new Map();
+duelRangeMap["low"] = 1;
+duelRangeMap["medium"] = 2;
+duelRangeMap["high"] = 3;
+
+export const duelStatRangeToVal = (val) => {
+	return duelRangeMap[val];
+};
+
 export const statFieldToDescription = (val) => {
 	return transMap[val];
 };

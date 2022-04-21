@@ -4,7 +4,164 @@ const attackConstants = require('../constants/attackCalculationConstants.js');
 const tools = require('../tools.js');
 // var Move = require('../model/move.js');
 const mockMove = require('../json/mock/mockMove.json'); 
+const translator = require('../utils/valueTranslator.js');
+const duelUtil = require('../utils/duelUtil.js');
+var PF = require('pathfinding');
 
+
+function buildGrid(G) {
+    let totalSquares = G.cells.length;
+    let boardSize = Math.sqrt(totalSquares);
+
+    let rows = [];
+    let index = 0;
+    let map = new Map();
+    for (var col = 0; col < boardSize; col++) {
+        let cols = [];
+        for (var row = 0; row < boardSize; row++) {
+            let entry = [row, col];
+            map[index] = entry;
+            cols.push(index++);
+        }
+        rows.push(cols);
+    }
+    return {
+        map: map,
+        rows: rows
+    }
+}
+
+module.exports.calculateIndicesWithinDistance = (currentIndex, distance, G, ctx) => {
+    let totalSquares = G.cells.length;
+    let boardSize = Math.sqrt(totalSquares);
+
+    let grid = buildGrid(G);
+    let rows = grid.rows;
+    let map = grid.map;
+    
+    let movableIndices = [];
+    
+    let coord = map[parseInt(currentIndex)];
+    for (var x = coord[0]; x >= 0; x--) {
+        var y = coord[1];
+        let xOff = Math.abs(coord[0] - x);
+        var remainingMoves = distance - xOff;
+        var r = remainingMoves;
+        while(r >= 0) {
+            if (y + r < boardSize) {
+                let n = rows[y + r];
+                let m = n[x];
+                movableIndices.push(m);
+            }
+            if (y - r >= 0) {
+                let n = rows[y-r];
+                let m = n[x];
+                movableIndices.push(m);
+            }
+            r -= 1;
+        }
+
+    }
+    for (var x = coord[0]; x < boardSize; x++) {
+        var y = coord[1];
+        let xOff = Math.abs(coord[0] - x);
+        var remainingMoves = distance - xOff;
+        var r = remainingMoves;
+        while(r >= 0) {
+            if (y + r < boardSize) {
+                let n = rows[y + r];
+                let m = n[x];
+                movableIndices.push(m);
+            }
+            if (y - r >= 0) {
+                let n = rows[y-r];
+                let m = n[x];
+                movableIndices.push(m);
+            }
+            r -= 1;
+        }
+
+    }
+
+
+    return movableIndices;
+}
+
+module.exports.calculateDistanceBetweenIndices = (i1, i2, G, ctx) => {
+    // implement
+    
+
+
+}
+
+// module.exports.calculateMovableIndices = (currentIndex, xalian, G, ctx) => {
+//     let distance = Math.round(Math.sqrt(parseInt(xalian.stats.speed)));
+//     return module.exports.calculateIndicesWithinDistance(currentIndex, distance, G, ctx);
+// }
+
+module.exports.calculateValidPaths = (currentIndex, xalian, G, ctx) => {
+    // let distance = Math.round(Math.sqrt(parseInt(xalian.stats.speed)));
+    let distance = G.currentTurnState.hasMoved ? G.currentTurnState.remainingSpacesToMove : xalian.stats.distance;
+    let size = Math.sqrt(G.cells.length);
+    var grid = new PF.Grid(size, size); 
+    let indicesWithinDistance = module.exports.calculateIndicesWithinDistance(currentIndex, distance, G, ctx);
+    var unoccupied = [];
+    var occupied = [];
+    indicesWithinDistance.forEach( i => {
+        if (G.cells[i]) {
+            occupied.push(i);
+        } else {
+            unoccupied.push(i);
+        }
+    });
+
+    let boardGrid = buildGrid(G);
+
+    occupied.forEach( i => {
+        let coord = boardGrid.map[i];
+        grid.setWalkableAt(coord[0], coord[1], false);
+    })
+
+    var finder = new PF.AStarFinder();
+    var currentCoord = boardGrid.map[currentIndex];
+    var valid = [];
+    unoccupied.forEach( i => {
+        var gridBackup = grid.clone();
+        var endCoord = boardGrid.map[i];
+        var path = finder.findPath(currentCoord[0], currentCoord[1], endCoord[0], endCoord[1], gridBackup);
+        if (path && path.length > 0 && (path.length - 1) <= distance) {
+            valid.push({
+                startIndex: currentIndex, 
+                startCoord: currentCoord, 
+                endIndex: i, 
+                endCoord: endCoord, 
+                path: path
+            });
+        }
+        console.log(path);
+    })
+
+    return valid;
+}
+
+module.exports.calculateMovableIndices = (currentIndex, xalian, G, ctx) => {
+    let valid = module.exports.calculateValidPaths(currentIndex, xalian, G, ctx);
+    return valid.map( path => path.endIndex );
+}
+
+module.exports.calculateAttackableIndices = (currentIndex, xalian, G, ctx) => {
+    let range = translator.duelStatRangeToVal(xalian.traits.attackRange);
+    let indicesWithinAttackRange = module.exports.calculateIndicesWithinDistance(currentIndex, range, G, ctx);
+    let attackableIndices = [];
+    indicesWithinAttackRange.forEach( i => {
+        if (G.cells[i]) {
+            if (!duelUtil.xaliansAreOnSameTeam(xalian.xalianId, G.cells[i], G, ctx)) {
+                attackableIndices.push(i);
+            }
+        }
+    });
+    return attackableIndices;
+}
 
 // module.exports.calculateAttackResult = (move, attacker, defender, matchState) => {
 module.exports.calculateAttackResult = (attacker, defender, G, ctx) => {
