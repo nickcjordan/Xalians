@@ -15,139 +15,139 @@
 	},
 	"xalians": [
 		{
-			"speciesId": "00020",
-			"xalianId": "00020-d1f66321-7017-4528-bdb2-d350bca0a9ed",
+			"speciesId": "00019",
+			"xalianId": "00019-0ef9c918-52f6-4251-b3cd-b138d62bc128",
 			"attributes": {
-				"xalianId": "00020-d1f66321-7017-4528-bdb2-d350bca0a9ed",
+				"xalianId": "00019-0ef9c918-52f6-4251-b3cd-b138d62bc128",
+				"speciesId": "00019",
+				"createTimestamp": 1651263311221,
 				"species": {
-					"generation": "0",
-					"planet": "Endessa",
-					"name": "Thirstaserp",
-					"description": "A large, cobra-like creature that hides beneath the sand, Thirstaserps emit a subsonic vibration from the rattles on their tails that can lure and mesmerize opponents long enough for them to draw near and attack with a unique venom that drains the victim’s water when bitten, causing them to suffer and die from extreme dehydration.",
-					"weight": "268 lbs / 121 kg",
-					"id": "00020",
-					"height": "86 in / 218 cm"
+					"id": "00019",
+					"name": "Avilily",
+					"planet": "Floria",
+					"description": "Carnivorous little green birds with bright, floral plumage, Avililies flit between Floria’s trees, camouflaging into the planet’s many flowery meadows as they travel. Their beaks resemble the closed pedals of a flower but when they open their mouths that 'flower' blooms. They attract insects with their sweet, syrupy smelling saliva and vibrant floral display, but their saliva contains a powerful sedative which paralyzes anything that it comes in contact with. In ancient times, Avililies were used by Vallerii scientists and explorers to trap insects, serving as mobile bug repellent on Florian ventures. Today, the sedative properties of their saliva have been enhanced for a far-more dangerous galaxy, and swarms of flittering Avilies protect the most sacred parts of Floria’s jungles, paralyzing and consuming all who dare to threaten the pristineness of their forests.",
+					"height": "19 in / 48 cm",
+					"weight": "18 lbs / 8 kg",
+					"generation": "0"
+				},
+				"elements": {
+					"primaryType": "Plant",
+					"primaryElement": "Spore",
+					"secondaryType": "Water",
+					"secondaryElement": "Aqua"
 				},
 				"healthPoints": 999,
 				"stats": {
-					"evasionPoints": {
-						"maxPoints": 823,
-						"name": "evasionPoints",
-						"range": "high",
-						"initialPoints": 750,
-						"initialPointAllocationPercentage": 93,
-						"maxPointAllocationPercentage": 102,
-						"points": 750
-					},
 					"standardAttackPoints": {
-						"maxPoints": 848,
 						"name": "standardAttackPoints",
 						"range": "high",
-						"initialPoints": 762,
-						"initialPointAllocationPercentage": 95,
-						"maxPointAllocationPercentage": 106,
-						"points": 762
-					},
-					"standardDefensePoints": {
-						"maxPoints": 352,
-						"name": "standardDefensePoints",
-						"range": "low",
-						"initialPoints": 336,
-						"initialPointAllocationPercentage": 84,
-						"maxPointAllocationPercentage": 88,
-						"points": 336
-					},
-					"staminaPoints": {
-						"maxPoints": 666,
-						"name": "staminaPoints",
-						"range": "medium",
-						"initialPoints": 599,
-						"initialPointAllocationPercentage": 99,
-						"maxPointAllocationPercentage": 111,
-						"points": 599
-					},
-					"specialDefensePoints": {
-						"maxPoints": 375,
-						"name": "specialDefensePoints",
-						"range": "low",
-						"initialPoints": 293,
-						"initialPointAllocationPercentage": 73,
-						"maxPointAllocationPercentage": 93,
-						"points": 293
-					},
-					"recoveryPoints": {
-						"maxPoints": 426,
-						"name": "recoveryPoints",
-						"range": "low",
-						"initialPoints": 349,
-						"initialPointAllocationPercentage": 87,
-						"maxPointAllocationPercentage": 106,
-						"points": 349
+						"initialPoints": 687,
+						"points": 687,
+						"maxPoints": 887,
+						"initialPointAllocationPercentage": 85,
+						"maxPointAllocationPercentage": 110
 					},
 					"specialAttackPoints": {
-						"maxPoints": 650,
 						"name": "specialAttackPoints",
 						"range": "medium",
-						"initialPoints": 555,
-						"initialPointAllocationPercentage": 92,
-						"maxPointAllocationPercentage": 108,
-						"points": 555
+						"initialPoints": 436,
+						"points": 436,
+						"maxPoints": 531,
+						"initialPointAllocationPercentage": 72,
+						"maxPointAllocationPercentage": 88
+					},
+					"standardDefensePoints": {
+						"name": "standardDefensePoints",
+						"range": "low",
+						"initialPoints": 379,
+						"points": 379,
+						"maxPoints": 458,
+						"initialPointAllocationPercentage": 94,
+						"maxPointAllocationPercentage": 114
+					},
+					"specialDefensePoints": {
+						"name": "specialDefensePoints",
+						"range": "low",
+						"initialPoints": 223,
+						"points": 223,
+						"maxPoints": 420,
+						"initialPointAllocationPercentage": 55,
+						"maxPointAllocationPercentage": 105
 					},
 					"speedPoints": {
-						"maxPoints": 684,
 						"name": "speedPoints",
+						"range": "high",
+						"initialPoints": 726,
+						"points": 726,
+						"maxPoints": 870,
+						"initialPointAllocationPercentage": 90,
+						"maxPointAllocationPercentage": 108
+					},
+					"evasionPoints": {
+						"name": "evasionPoints",
 						"range": "medium",
-						"initialPoints": 656,
-						"initialPointAllocationPercentage": 109,
-						"maxPointAllocationPercentage": 113,
-						"points": 656
+						"initialPoints": 469,
+						"points": 469,
+						"maxPoints": 532,
+						"initialPointAllocationPercentage": 78,
+						"maxPointAllocationPercentage": 88
+					},
+					"recoveryPoints": {
+						"name": "recoveryPoints",
+						"range": "low",
+						"initialPoints": 223,
+						"points": 223,
+						"maxPoints": 430,
+						"initialPointAllocationPercentage": 55,
+						"maxPointAllocationPercentage": 107
+					},
+					"staminaPoints": {
+						"name": "staminaPoints",
+						"range": "low",
+						"initialPoints": 313,
+						"points": 313,
+						"maxPoints": 329,
+						"initialPointAllocationPercentage": 78,
+						"maxPointAllocationPercentage": 82
 					}
 				},
 				"moves": [
 					{
-						"name": "Delirious Crystal Conjuration",
-						"rating": 8,
-						"description": "Rock-typed wildly excited or emotional, magical incantation or spell",
-						"cost": 10,
-						"type": "Rock",
-						"element": "Crystal"
-					},
-					{
-						"name": "Gilded Shock",
-						"rating": 14,
-						"description": "Ostentatiously rich and superior, sudden jarring impact",
-						"cost": 10
-					},
-					{
-						"name": "Grueling Pound",
-						"rating": 12,
-						"description": "Physically exhausting, repeated heavy attacks",
-						"cost": 10
-					},
-					{
-						"name": "Wondrous Charge",
+						"name": "Disabling Drill",
+						"description": "Crippling or incapacitating repeated cut with a sharp point as to form a hole",
 						"rating": 13,
-						"description": "Extraordinarily good or great, impetuous rush toward someone or something",
+						"cost": 10
+					},
+					{
+						"name": "Downhearted Flail",
+						"description": "Dispirited or gloomy, useless struggle while swinging appendages",
+						"rating": 4,
+						"cost": 10
+					},
+					{
+						"name": "Pestering Hydro Jab",
+						"description": "Water-typed irritating or annoying, quick short straight punch",
+						"type": "Water",
+						"element": "Hydro",
+						"rating": 8,
+						"cost": 10
+					},
+					{
+						"name": "Wondrous Tap",
+						"description": "Extraordinarily good or great, light touch or stroke",
+						"rating": 9,
 						"cost": 10
 					}
 				],
 				"meta": {
-					"totalStatPoints": 4300,
-					"averageStatPotentialPercentage": 103,
-					"potentialStatScore": 1006,
-					"averageStatPercentage": 91,
-					"percentageOfPointsAllocated": 89,
-					"statScore": 896,
-					"potentialStatPoints": 4824
-				},
-				"elements": {
-					"secondaryType": "Rock",
-					"primaryType": "Sand",
-					"secondaryElement": "Lava",
-					"primaryElement": "Sand"
-				},
-				"speciesId": "00020",
-				"createTimestamp": 1648826506566
+					"totalStatPoints": 3456,
+					"potentialStatPoints": 4457,
+					"percentageOfPointsAllocated": 77,
+					"averageStatPercentage": 75,
+					"averageStatPotentialPercentage": 100,
+					"statScore": 720,
+					"potentialStatScore": 929
+				}
 			}
 		},
 		{
@@ -425,141 +425,141 @@
 			}
 		},
 		{
-			"speciesId": "00005",
-			"xalianId": "00005-7da2d068-8481-452c-9d8a-45e66bacb8a1",
+			"speciesId": "00012",
+			"xalianId": "00012-0f3752bb-b1a1-402d-ac41-0c031a5bef05",
 			"attributes": {
-				"xalianId": "00005-7da2d068-8481-452c-9d8a-45e66bacb8a1",
+				"xalianId": "00012-0f3752bb-b1a1-402d-ac41-0c031a5bef05",
+				"speciesId": "00012",
+				"createTimestamp": 1651263413739,
 				"species": {
-					"generation": "0",
-					"planet": "Phantiri",
-					"name": "Smokat",
-					"description": "Feline shaped in normal form, this clever creature can instantly atomize into a cloud of smoke for a sneak attack or quick evasion.",
-					"weight": "171 lbs / 77 kg",
-					"id": "00005",
-					"height": "67 in / 170 cm"
+					"id": "00012",
+					"name": "Figzy",
+					"planet": "Telypso",
+					"description": "What this creature lacks in stature it makes up for with its incredible magical abilities. It is deceptively smart, yet known to be docile when it trusts you.",
+					"height": "46 in / 116 cm",
+					"weight": "108 lbs / 48 kg",
+					"generation": "0"
+				},
+				"elements": {
+					"primaryType": "Psychic",
+					"primaryElement": "Telepathic",
+					"secondaryType": "Ghost",
+					"secondaryElement": "Wraith"
 				},
 				"healthPoints": 999,
 				"stats": {
-					"evasionPoints": {
-						"maxPoints": 859,
-						"name": "evasionPoints",
-						"range": "high",
-						"initialPoints": 812,
-						"initialPointAllocationPercentage": 101,
-						"maxPointAllocationPercentage": 107,
-						"points": 812
-					},
 					"standardAttackPoints": {
-						"maxPoints": 715,
 						"name": "standardAttackPoints",
-						"range": "high",
-						"initialPoints": 640,
-						"initialPointAllocationPercentage": 80,
-						"maxPointAllocationPercentage": 89,
-						"points": 640
-					},
-					"standardDefensePoints": {
-						"maxPoints": 432,
-						"name": "standardDefensePoints",
-						"range": "low",
-						"initialPoints": 261,
-						"initialPointAllocationPercentage": 65,
-						"maxPointAllocationPercentage": 108,
-						"points": 261
-					},
-					"staminaPoints": {
-						"maxPoints": 865,
-						"name": "staminaPoints",
-						"range": "high",
-						"initialPoints": 751,
-						"initialPointAllocationPercentage": 93,
-						"maxPointAllocationPercentage": 108,
-						"points": 751
-					},
-					"specialDefensePoints": {
-						"maxPoints": 192,
-						"name": "specialDefensePoints",
-						"range": "very low",
-						"initialPoints": 121,
-						"initialPointAllocationPercentage": 60,
-						"maxPointAllocationPercentage": 96,
-						"points": 121
-					},
-					"recoveryPoints": {
-						"maxPoints": 220,
-						"name": "recoveryPoints",
-						"range": "very low",
-						"initialPoints": 191,
-						"initialPointAllocationPercentage": 95,
-						"maxPointAllocationPercentage": 110,
-						"points": 191
+						"range": "medium",
+						"initialPoints": 594,
+						"points": 594,
+						"maxPoints": 672,
+						"initialPointAllocationPercentage": 99,
+						"maxPointAllocationPercentage": 112
 					},
 					"specialAttackPoints": {
-						"maxPoints": 763,
 						"name": "specialAttackPoints",
 						"range": "high",
-						"initialPoints": 719,
-						"initialPointAllocationPercentage": 89,
-						"maxPointAllocationPercentage": 95,
-						"points": 719
+						"initialPoints": 646,
+						"points": 646,
+						"maxPoints": 745,
+						"initialPointAllocationPercentage": 80,
+						"maxPointAllocationPercentage": 93
+					},
+					"standardDefensePoints": {
+						"name": "standardDefensePoints",
+						"range": "medium",
+						"initialPoints": 487,
+						"points": 487,
+						"maxPoints": 530,
+						"initialPointAllocationPercentage": 81,
+						"maxPointAllocationPercentage": 88
+					},
+					"specialDefensePoints": {
+						"name": "specialDefensePoints",
+						"range": "low",
+						"initialPoints": 245,
+						"points": 245,
+						"maxPoints": 448,
+						"initialPointAllocationPercentage": 61,
+						"maxPointAllocationPercentage": 112
 					},
 					"speedPoints": {
-						"maxPoints": 688,
 						"name": "speedPoints",
-						"range": "medium",
-						"initialPoints": 668,
-						"initialPointAllocationPercentage": 111,
-						"maxPointAllocationPercentage": 114,
-						"points": 668
+						"range": "high",
+						"initialPoints": 641,
+						"points": 641,
+						"maxPoints": 705,
+						"initialPointAllocationPercentage": 80,
+						"maxPointAllocationPercentage": 88
+					},
+					"evasionPoints": {
+						"name": "evasionPoints",
+						"range": "low",
+						"initialPoints": 323,
+						"points": 323,
+						"maxPoints": 366,
+						"initialPointAllocationPercentage": 80,
+						"maxPointAllocationPercentage": 91
+					},
+					"recoveryPoints": {
+						"name": "recoveryPoints",
+						"range": "low",
+						"initialPoints": 273,
+						"points": 273,
+						"maxPoints": 367,
+						"initialPointAllocationPercentage": 68,
+						"maxPointAllocationPercentage": 91
+					},
+					"staminaPoints": {
+						"name": "staminaPoints",
+						"range": "low",
+						"initialPoints": 239,
+						"points": 239,
+						"maxPoints": 383,
+						"initialPointAllocationPercentage": 59,
+						"maxPointAllocationPercentage": 95
 					}
 				},
 				"moves": [
 					{
-						"name": "Nonsensical Thrust",
-						"rating": 6,
-						"description": "Foolish and absurd application of force to propel something",
+						"name": "Wondrous Telepathic Impact",
+						"description": "Psychic-typed extraordinarily good or great strike of one body against another",
+						"type": "Psychic",
+						"element": "Telepathic",
+						"rating": 12,
 						"cost": 10
 					},
 					{
-						"name": "Sublime Supernatural Scratch",
-						"rating": 9,
-						"description": "Ghost-typed greatest extreme or maximal scrape or carving into a surface",
-						"cost": 10,
+						"name": "Vexing Ghost Trance",
+						"description": "Ghost-typed extremely annoying or displeasing, magical incantation inducing undesirable psychological state",
 						"type": "Ghost",
-						"element": "Supernatural"
+						"element": "Ghost",
+						"rating": 12,
+						"cost": 10
 					},
 					{
-						"name": "Balmy Horror Trample",
-						"rating": 7,
-						"description": "Dark-typed mild and pleasant, continual stomping",
-						"cost": 10,
-						"type": "Dark",
-						"element": "Horror"
+						"name": "Desperate Bop",
+						"description": "Extremely wishful, playful, harmless smack",
+						"rating": 4,
+						"cost": 10
 					},
 					{
-						"name": "Elevated Outburst",
-						"rating": 11,
-						"description": "Raised or superior, sudden violent disturbance",
+						"name": "Bowelless Thump",
+						"description": "Competitively ruthless, heavy attack with the hand",
+						"rating": 9,
 						"cost": 10
 					}
 				],
 				"meta": {
-					"totalStatPoints": 4163,
-					"averageStatPotentialPercentage": 103,
-					"potentialStatScore": 987,
-					"averageStatPercentage": 86,
-					"percentageOfPointsAllocated": 87,
-					"statScore": 868,
-					"potentialStatPoints": 4734
-				},
-				"elements": {
-					"secondaryType": "Dark",
-					"primaryType": "Ghost",
-					"secondaryElement": "Voodoo",
-					"primaryElement": "Wraith"
-				},
-				"speciesId": "00005",
-				"createTimestamp": 1649853363519
+					"totalStatPoints": 3448,
+					"potentialStatPoints": 4216,
+					"percentageOfPointsAllocated": 81,
+					"averageStatPercentage": 76,
+					"averageStatPotentialPercentage": 96,
+					"statScore": 719,
+					"potentialStatScore": 879
+				}
 			}
 		}
 	]

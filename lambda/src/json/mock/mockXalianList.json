@@ -270,137 +270,139 @@
 		}
 	},
 	{
-		"xalianId": "00017-ba1300d0-8e5b-4a0a-9ed2-95c97e9b6973",
-		"speciesId": "00017",
-		"createTimestamp": 1650372970469,
+		"xalianId": "00002-b7ccbe86-5658-4632-a536-f272374a9697",
+		"speciesId": "00002",
+		"createTimestamp": 1651263358720,
 		"species": {
-			"id": "00017",
-			"name": "Scalatto",
-			"planet": "Endessa",
-			"description": "Shielded by a scaly exoskeleton, this creature can roll into a ball to protect itself.",
-			"height": "42 in / 106 cm",
-			"weight": "155 lbs / 70 kg",
-			"generation": "0"
+		  "id": "00002",
+		  "name": "Dromeus",
+		  "planet": "Magmuth",
+		  "description": "A partially feathered ground bird with lizard features, somewhat resembling a velociraptor. These creatures are extremely quick with razor sharp teeth, and prefer to hunt in packs.",
+		  "height": "38 in / 96 cm",
+		  "weight": "103 lbs / 46 kg",
+		  "generation": "0"
 		},
 		"elements": {
-			"primaryType": "Sand",
-			"primaryElement": "Sand",
-			"secondaryType": "Plant",
-			"secondaryElement": "Fungus"
+		  "primaryType": "Fire",
+		  "primaryElement": "Pyro",
+		  "secondaryType": "Ghost",
+		  "secondaryElement": "Wraith"
 		},
 		"healthPoints": 999,
 		"stats": {
-			"standardAttackPoints": {
-				"name": "standardAttackPoints",
-				"range": "very low",
-				"initialPoints": 153,
-				"points": 153,
-				"maxPoints": 174,
-				"initialPointAllocationPercentage": 76,
-				"maxPointAllocationPercentage": 87
-			},
-			"specialAttackPoints": {
-				"name": "specialAttackPoints",
-				"range": "medium",
-				"initialPoints": 526,
-				"points": 526,
-				"maxPoints": 550,
-				"initialPointAllocationPercentage": 87,
-				"maxPointAllocationPercentage": 91
-			},
-			"standardDefensePoints": {
-				"name": "standardDefensePoints",
-				"range": "high",
-				"initialPoints": 726,
-				"points": 726,
-				"maxPoints": 775,
-				"initialPointAllocationPercentage": 90,
-				"maxPointAllocationPercentage": 96
-			},
-			"specialDefensePoints": {
-				"name": "specialDefensePoints",
-				"range": "low",
-				"initialPoints": 222,
-				"points": 222,
-				"maxPoints": 440,
-				"initialPointAllocationPercentage": 55,
-				"maxPointAllocationPercentage": 110
-			},
-			"speedPoints": {
-				"name": "speedPoints",
-				"range": "medium",
-				"initialPoints": 473,
-				"points": 473,
-				"maxPoints": 674,
-				"initialPointAllocationPercentage": 78,
-				"maxPointAllocationPercentage": 112
-			},
-			"evasionPoints": {
-				"name": "evasionPoints",
-				"range": "low",
-				"initialPoints": 346,
-				"points": 346,
-				"maxPoints": 441,
-				"initialPointAllocationPercentage": 86,
-				"maxPointAllocationPercentage": 110
-			},
-			"recoveryPoints": {
-				"name": "recoveryPoints",
-				"range": "low",
-				"initialPoints": 285,
-				"points": 285,
-				"maxPoints": 347,
-				"initialPointAllocationPercentage": 71,
-				"maxPointAllocationPercentage": 86
-			},
-			"staminaPoints": {
-				"name": "staminaPoints",
-				"range": "medium",
-				"initialPoints": 392,
-				"points": 392,
-				"maxPoints": 550,
-				"initialPointAllocationPercentage": 65,
-				"maxPointAllocationPercentage": 91
-			}
+		  "standardAttackPoints": {
+			"name": "standardAttackPoints",
+			"range": "high",
+			"initialPoints": 724,
+			"points": 724,
+			"maxPoints": 871,
+			"initialPointAllocationPercentage": 90,
+			"maxPointAllocationPercentage": 108
+		  },
+		  "specialAttackPoints": {
+			"name": "specialAttackPoints",
+			"range": "low",
+			"initialPoints": 322,
+			"points": 322,
+			"maxPoints": 363,
+			"initialPointAllocationPercentage": 80,
+			"maxPointAllocationPercentage": 90
+		  },
+		  "standardDefensePoints": {
+			"name": "standardDefensePoints",
+			"range": "medium",
+			"initialPoints": 607,
+			"points": 607,
+			"maxPoints": 631,
+			"initialPointAllocationPercentage": 101,
+			"maxPointAllocationPercentage": 105
+		  },
+		  "specialDefensePoints": {
+			"name": "specialDefensePoints",
+			"range": "low",
+			"initialPoints": 255,
+			"points": 255,
+			"maxPoints": 367,
+			"initialPointAllocationPercentage": 63,
+			"maxPointAllocationPercentage": 91
+		  },
+		  "speedPoints": {
+			"name": "speedPoints",
+			"range": "high",
+			"initialPoints": 789,
+			"points": 789,
+			"maxPoints": 847,
+			"initialPointAllocationPercentage": 98,
+			"maxPointAllocationPercentage": 105
+		  },
+		  "evasionPoints": {
+			"name": "evasionPoints",
+			"range": "very high",
+			"initialPoints": 937,
+			"points": 937,
+			"maxPoints": 999,
+			"initialPointAllocationPercentage": 93,
+			"maxPointAllocationPercentage": 100
+		  },
+		  "recoveryPoints": {
+			"name": "recoveryPoints",
+			"range": "very low",
+			"initialPoints": 19,
+			"points": 19,
+			"maxPoints": 217,
+			"initialPointAllocationPercentage": 9,
+			"maxPointAllocationPercentage": 108
+		  },
+		  "staminaPoints": {
+			"name": "staminaPoints",
+			"range": "very low",
+			"initialPoints": 174,
+			"points": 174,
+			"maxPoints": 195,
+			"initialPointAllocationPercentage": 87,
+			"maxPointAllocationPercentage": 97
+		  }
 		},
 		"moves": [
-			{
-				"name": "Downhearted Hydroponic Gust",
-				"description": "Plant-typed dispirited or gloomy, strong current or flow",
-				"type": "Plant",
-				"element": "Hydroponic",
-				"rating": 6,
-				"cost": 10
-			},
-			{
-				"name": "Sodding Laser",
-				"description": "Obnoxious or contemptible beam of intense particles",
-				"rating": 11,
-				"cost": 10
-			},
-			{
-				"name": "Sensational Jinx",
-				"description": "Attention commanding, evil spell",
-				"rating": 12,
-				"cost": 10
-			},
-			{
-				"name": "Howling Eruption",
-				"description": "Extraordinarily good or great, sudden occurrence of a violent discharge of material",
-				"rating": 13,
-				"cost": 10
-			}
+		  {
+			"name": "Tremendous Banshee Hack",
+			"description": "Ghost-typed extraordinarily good or great cut with rough or heavy attacks",
+			"type": "Ghost",
+			"element": "Banshee",
+			"rating": 12,
+			"cost": 10
+		  },
+		  {
+			"name": "Brutish Jab",
+			"description": "Savagely violent, quick short straight punch",
+			"rating": 12,
+			"cost": 10
+		  },
+		  {
+			"name": "Impregnable Chop",
+			"description": "Impossibly tough or difficult, aggressive slice with a swift motion",
+			"rating": 13,
+			"cost": 10
+		  },
+		  {
+			"name": "Mad Phantom Wrath",
+			"description": "Ghost-typed insane or crazy, vengeful attacking force",
+			"type": "Ghost",
+			"element": "Phantom",
+			"rating": 14,
+			"cost": 10
+		  }
 		],
 		"meta": {
-			"totalStatPoints": 3123,
-			"potentialStatPoints": 3951,
-			"percentageOfPointsAllocated": 79,
-			"averageStatPercentage": 76,
-			"averageStatPotentialPercentage": 97,
-			"statScore": 651,
-			"potentialStatScore": 824
+		  "totalStatPoints": 3827,
+		  "potentialStatPoints": 4490,
+		  "percentageOfPointsAllocated": 85,
+		  "averageStatPercentage": 77,
+		  "averageStatPotentialPercentage": 100,
+		  "statScore": 798,
+		  "potentialStatScore": 936
 		}
-	},
+	  },
 	{
 		"xalianId": "00004-78659676-bc06-496d-8ab5-28f1b24d9b04",
 		"speciesId": "00004",

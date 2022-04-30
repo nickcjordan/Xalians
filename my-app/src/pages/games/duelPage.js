@@ -13,12 +13,16 @@ import * as calc from '../../gameplay/attackCalculator';
 import * as retrievalUtil from '../../utils/retrievalUtil';
 import * as svgUtil from '../../utils/svgUtil';
 import { Client } from 'boardgame.io/react';
-import { Duel } from '../../components/games/duel';
-import DuelBoard  from '../../components/games/elements/duelBoard';
+import { Duel } from '../../components/games/duel/duel';
+import DuelBoard  from '../../components/games/duel/duelBoard';
 import * as translator from '../../utils/valueTranslator';
 import * as gameConstants from '../../constants/attackCalculationConstants'
+import { Local } from 'boardgame.io/multiplayer';
+import { MCTSBot, RandomBot } from 'boardgame.io/ai';
+import DuelBotInstance from '../../components/games/duel/duelBotInstance';
+// import DuelBot from '../../components/games/duel/duelBot';
 
-class CalculatorPage extends React.Component {
+class DuelPage extends React.Component {
 	state = {
 		user: null,
 		xalians: [],
@@ -109,6 +113,13 @@ class CalculatorPage extends React.Component {
 
 		var selectedSpecies = species.filter( s => s.id === xalian.species.id)[0];
 
+		let ranges = new Map();
+		ranges['high'] = 3;
+		ranges['medium'] = 2;
+		ranges['low'] = 1;
+
+		let attackRange = ranges[selectedSpecies.traits.attackRange];
+
 		return {
 			xalianId: xalian.xalianId,
 			species: xalian.species,
@@ -117,6 +128,7 @@ class CalculatorPage extends React.Component {
 				attack: attackPts,
 				defense: defensePts,
 				speed: speedPts,
+				range: attackRange,
 				distance: distance,
 				evasion: evasionPts,
 				health: gameConstants.MAX_HEALTH_POINTS
@@ -154,22 +166,22 @@ class CalculatorPage extends React.Component {
 			const DuelClient = Client({
 				// A game object.
 				game: duel,
-			
+
 				// The number of players.
 				numPlayers: 2,
-			
+
 				// Your React component representing the game board.
 				// The props that this component receives are listed below.
 				// When using TypeScript, type the component's properties as
 				// extending BoardProps.
 				board: DuelBoard,
-			
+
 				// Optional: React component to display while the client
 				// is in the "loading" state prior to the initial sync
 				// with the game master. Relevant only in multiplayer mode.
 				// If this is not provided, the client displays "connecting...".
 				// loading: LoadingComponent,
-			
+
 				// Set this to one of the following to enable multiplayer:
 				//
 				// SocketIO
@@ -195,10 +207,15 @@ class CalculatorPage extends React.Component {
 				// Additionally, you can write your own transport implementation.
 				// See `src/client/client.js` for details.
 				// multiplayer: false,
-			
+				multiplayer: Local({
+					bots: {
+						1: DuelBotInstance
+					},
+				}),
+
 				// Set to false to disable the Debug UI.
 				debug: true,
-			
+
 				// An optional Redux store enhancer.
 				// This is useful for augmenting the Redux store
 				// for purposes of debugging or simply intercepting
@@ -214,7 +231,7 @@ class CalculatorPage extends React.Component {
 				
 
 					<GameContainer>
-					<DuelClient/>
+					<DuelClient playerID="0" />
 					</GameContainer>
 					
 					</Container>
@@ -241,4 +258,4 @@ class CalculatorPage extends React.Component {
 }
 
 
-export default CalculatorPage;
+export default DuelPage;

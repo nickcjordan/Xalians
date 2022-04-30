@@ -38,19 +38,27 @@ export function isOpponentsTurn(ctx) {
     return (parseInt(ctx.currentPlayer) == 1);
 }
 
+export function getPlayerStartingIndices(G) {
+    let indices = [];
+    for (var i = (G.cells.length - Math.sqrt(G.cells.length)); i< G.cells.length; i++) {
+        indices.push(i);
+    }
+    return indices;
+}
+
+export function getOpponentStartingIndices(G) {
+    let indices = [];
+    for (var i = 0; i< Math.sqrt(G.cells.length); i++) {
+        indices.push(i);
+    }
+    return indices;
+}
+
 export function getStartingIndices(G, ctx) {
     if (isPlayersTurn(ctx)) {
-        let indices = [];
-        for (var i = (G.cells.length - Math.sqrt(G.cells.length)); i< G.cells.length; i++) {
-            indices.push(i);
-        }
-        return indices;
+        return getPlayerStartingIndices(G);
     } else if (isOpponentsTurn(ctx)) {
-        let indices = [];
-        for (var i = 0; i< Math.sqrt(G.cells.length); i++) {
-            indices.push(i);
-        }
-        return indices;
+        return getOpponentStartingIndices(G);
     }
 }
 
@@ -60,4 +68,94 @@ export function getXalianFromId(id, G) {
 
 export function xaliansAreOnSameTeam(id1, id2, G) {
     return (isPlayerPiece(id1, G) && isPlayerPiece(id2, G)) || (isOpponentPiece(id1, G) && isOpponentPiece(id2, G))
+}
+
+export function getIndexOfXalian(id, G) {
+    let index = null;
+    for (var i = 0; i < G.cells.length; i++) {
+        if (G.cells[i] === id) {
+            index = i;
+        }
+    }
+    return index;
+}
+
+export function getCurrentTurnActiveXalianIds(G, ctx) {
+    if (isPlayersTurn(ctx)) {
+        return G.activeXalianIds;
+    } else if (isOpponentsTurn(ctx)) {
+        return G.activeOpponentXalianIds;
+    }
+}
+
+export function getCurrentTurnXalianIds(G, ctx) {
+    if (isPlayersTurn(ctx)) {
+        return getPlayerXalianIds(G)
+    } else if (isOpponentsTurn(ctx)) {
+        return getOpponentXalianIds(G);
+    }
+}
+
+export function getPlayerXalianIds(G) {
+    return G.activeXalianIds.concat(G.unsetXalianIds).concat(G.inactiveXalianIds);
+}
+
+export function getOpponentXalianIds(G) {
+    return G.activeOpponentXalianIds.concat(G.unsetOpponentXalianIds).concat(G.inactiveOpponentXalianIds);
+}
+
+export function getOpponentHealth(G) {
+    let h = 0;
+    getOpponentXalianIds(G).forEach(id => {
+        let xalian = getXalianFromId(id, G);
+        h += xalian.stats.health;
+    });
+    return h;
+}
+
+export function getPlayerHealth(G) {
+	let h = 0;
+	getPlayerXalianIds(G).forEach((id) => {
+		let xalian = getXalianFromId(id, G);
+		h += xalian.stats.health;
+	});
+	return h;
+}
+
+export function getCurrentTurnTargetFlagIndex(G, ctx) {
+    return isPlayersTurn(ctx) ? getPlayerFlagIndex(G) : isOpponentsTurn(ctx) ? getOpponentFlagIndex(G) : null;
+}
+
+export function getOpponentFlagIndex(G) {
+    return getFlagIndex(getFlagState(1, G), G);
+}
+
+export function getPlayerFlagIndex(G) {
+    return getFlagIndex(getFlagState(0, G), G);
+}
+
+export function getOpponentFlagState(G) {
+    return getFlagState(1, G);
+}
+
+export function getPlayerFlagState(G) {
+    return getFlagState(0, G);
+}
+
+export function getFlagState(playerId, G) {
+    let flag = null
+    G.flags.forEach( f => {
+        if (f.player === playerId) {
+            flag = f;
+        }
+    });
+    return flag;
+}
+
+export function getFlagIndex(flag, G) {
+    if (flag && flag.index != null && flag.index != undefined) {
+        return flag.index;
+    } else if (flag && flag.holder) {
+        return getIndexOfXalian(flag.holder, G);
+    }
 }

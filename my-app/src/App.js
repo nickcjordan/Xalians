@@ -21,7 +21,7 @@ import Container from 'react-bootstrap/Container';
 import MatchCardGamePage from './pages/games/matchCardGamePage';
 import PhysicsGamePage from './pages/games/physicsGamePage';
 import TrainingGroundsPage from './pages/trainingGroundsPage';
-import CalculatorPage from './pages/games/calculatorPage';
+import DuelPage from './pages/games/duelPage';
 
 import {
   BrowserRouter as Router,
@@ -61,7 +61,7 @@ class App extends React.Component {
               <Route exact path="/designer"><DesignerPage /></Route>
               <Route exact path="/glossary"><GlossaryPage /></Route>
 
-              <Route exact path="/calculator"><CalculatorPage/></Route>
+              <Route exact path="/duel"><DuelPage/></Route>
 
 
               <Route exact path="/account"><UserAccountPage /></Route>
