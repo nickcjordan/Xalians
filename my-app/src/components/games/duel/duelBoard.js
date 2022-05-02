@@ -18,9 +18,21 @@ import XalianImage from '../../xalianImage';
 import { Collapse } from 'react-bootstrap';
 import * as duelUtil from '../../../utils/duelUtil';
 import * as duelCalculator from '../../../gameplay/duel/duelCalculator';
+import { ReactComponent as AttackIcon } from '../../../svg/games/duel/duel_attack_icon.svg';
+import species from '../../../json/species.json';
+
+
+import { Hub } from "aws-amplify";
+import XalianDuelStatChart from './xalianDuelStatChart';
+import XalianDuelStatBadge from './xalianDuelStatBadge';
+
+const reqSvgs = require.context ( '../../../svg/species', true, /\.svg$/ );
+const svgs = reqSvgs.keys () .map ( path => ({ path, file: reqSvgs ( path ) }) );
 
 class DuelBoard extends React.Component {
-	state = {};
+	state = {
+		speciesSvgMap: {}
+	};
 
 	static propTypes = {
 		G: PropTypes.any.isRequired,
@@ -30,6 +42,63 @@ class DuelBoard extends React.Component {
 		isActive: PropTypes.bool,
 		isMultiplayer: PropTypes.bool,
 	};
+
+	componentDidMount() {
+		var speciesMap = new Map();
+		var svgMap = new Map();
+
+		species.forEach( s => {
+			speciesMap[s.name.toLowerCase()] = s;
+		})
+
+		svgs.forEach( xalianSvg => {
+			let path = xalianSvg.path.toLowerCase();
+			let speciesName = path.substring(2, path.length - 4);
+			let species = speciesMap[speciesName];
+			if (species) {
+				svgMap[speciesName] = {
+					species: species,
+					svg: xalianSvg
+				}
+			}
+		})
+
+		this.setState({ speciesSvgMap: svgMap });
+
+
+		if (this.props.ctx.gameover) {
+			this.setState({ winner: this.props.ctx.gameover.winner !== undefined ? <div id="winner">Winner: {this.props.ctx.gameover.winner}</div> : <div id="winner">Draw!</div> });
+		}
+
+		this.setupAnimationHub()
+		
+	}
+	
+	setupAnimationHub = () => {
+		Hub.listen("duel-animation-event", (data) => {
+			const type = data.payload.event;
+			const req = data.payload.data;
+			if (type == "attack") {
+			//   this.setState(
+			// 	{
+			// 	  isShowing: true,
+			// 	  variant: req.variant || "dark",
+			// 	  headerText: req.title,
+			// 	  bodyText: req.text,
+			// 	},
+			// 	() => {
+			// 	  setTimeout(() => {
+			// 		Hub.dispatch("alert", { event: "hide-alert", data: null, message: null });
+			// 	  }, 3000);
+			// 	}
+			//   );
+			} else if (type == "hide-alert") {
+			//   this.setState({ isShowing: false });
+			} else if (type == "show-alert") {
+			//   this.setState({ isShowing: true });
+			}
+		  });
+	}
 
 	setSelection = (id, index) => {
 		if (duelUtil.isPlayersTurn(this.props.ctx)) {
@@ -48,8 +117,8 @@ class DuelBoard extends React.Component {
 		let selectedIndex = duelUtil.getIndexOfXalian(selectedId, this.props.G);
 
 		var paths = [];
-		if (selectedId && (selectedIndex != null && selectedIndex != undefined)) {
-			paths = duelCalculator.calculateMovablePaths(selectedIndex, this.getXalianFromId(selectedId), this.props.G, this.props.ctx);
+		if (this.props.ctx.phase === 'play' && selectedId && (selectedIndex != null && selectedIndex != undefined)) {
+			paths = duelCalculator.calculateMovablePaths(selectedIndex, duelUtil.getXalianFromId(selectedId, this.props.G), this.props.G, this.props.ctx);
 		}
 		let moves = paths.map( path => path.endIndex );
 
@@ -96,11 +165,6 @@ class DuelBoard extends React.Component {
 		}
 	};
 
-	componentDidMount() {
-		if (this.props.ctx.gameover) {
-			this.setState({ winner: this.props.ctx.gameover.winner !== undefined ? <div id="winner">Winner: {this.props.ctx.gameover.winner}</div> : <div id="winner">Draw!</div> });
-		}
-	}
 
 	// called in setup when a piece is selected to be placed
 	handleInitialPieceSelection = (xalian) => {
@@ -142,10 +206,10 @@ class DuelBoard extends React.Component {
 			} else {
 				var attackablePaths = [];
 				if (selectedId && (selectedIndex != null && selectedIndex != undefined)) {
-					attackablePaths = duelCalculator.calculateAttackablePaths(selectedIndex, this.getXalianFromId(selectedId), this.props.G, this.props.ctx);
+					attackablePaths = duelCalculator.calculateAttackablePaths(selectedIndex, duelUtil.getXalianFromId(selectedId, this.props.G), this.props.G, this.props.ctx);
 				}
 				var attackableIndices = attackablePaths.map( p => p.endIndex);
-				if (attackableIndices.includes(index) && (!this.props.G.currentTurnState.hasAttacked)) {
+				if (attackableIndices.includes(index) && (!this.props.G.currentTurnDetails.hasAttacked)) {
 					// do attack action
 					let path = duelCalculator.calculatePathToTarget(selectedIndex, index, this.props.G, this.props.ctx)
 					this.props.moves.doAttack(path);
@@ -189,27 +253,67 @@ class DuelBoard extends React.Component {
 				<a onClick={() => this.handleInitialPieceSelection(x)}>
 					<XalianImage colored bordered selected={isSelected} speciesName={x.species.name} primaryType={x.elements.primaryType} moreClasses="xalian-image-grid" style={{ opacity: opac }} />
 					<Row style={{ width: '100%', margin: '0px', padding: '0px' }}>
-						{/* <Col xs={5} style={{ margin: 'auto', padding: '0px', paddingRight: '5px', textAlign: 'right' }}>
-							{svgUtil.getSpeciesTypeSymbol(x.elements.primaryType, true, 25)}
-						</Col> */}
-						{/* <Col xs={7} style={{ padding: '0px', height: '100%', margin: 'auto' }}> */}
 						<Col style={{ padding: '0px', height: '100%', margin: 'auto' }}>
 							<h6 className="condensed-row" style={{ textAlign: 'center', margin: 'auto', height: '100%', width: '100%' }}>
 								{x.xalianId.split('-').pop().substring(0, 4)}
 							</h6>
 						</Col>
 					</Row>
-					{/* <h5 className="condensed-row species-name-title" style={{ textAlign: 'center' }}>
-						{x.name}
-					</h5> */}
 				</a>
 			</Col>
 		);
 	}
 
-	getXalianFromId = (id) => {
-		return this.props.G.xalians.filter((x) => x.xalianId === id)[0];
-	};
+	buildOccupiedCell = (index, selectedIndex, selectedId, border, attackableIndices, G) => {
+		let xalianId = G.cells[index];
+		let xalian = duelUtil.getXalianFromId(xalianId, G);
+		let cellClass = selectedId && selectedId === xalian.xalianId ? 'xalian-cell xalian-cell-selected' : 'xalian-cell';
+		let bg = G.activeXalianIds.includes(xalianId) ? '#9380eb85' : '#e4939385';
+
+		let attackable = attackableIndices && attackableIndices.includes(index) && (index != selectedIndex) && (!G.currentTurnDetails.hasAttacked);
+		var healthBarPercentage = (xalian.stats.health/gameConstants.MAX_HEALTH_POINTS) * 100; 
+		healthBarPercentage = healthBarPercentage < 5 ? 5 : healthBarPercentage;
+		let barColor = healthBarPercentage > 50 ? 'green' : healthBarPercentage > 25 ? 'orange' : 'red'; 
+
+		let moveDistanceIndicators = [];
+		for (var i = 0; i < xalian.stats.distance; i++) {
+			moveDistanceIndicators.push(<React.Fragment>
+				<Col xs={1} style={{padding: '10%', paddingTop: '0px'}}>
+					<div style={{ width: '2px', height: '2px', margin: 'auto', backgroundColor: 'yellow', zIndex: '999' }} />
+				</Col>
+			</React.Fragment>)
+		}
+		// let xalianSvg = this.state.speciesSvgMap ? this.state.speciesSvgMap[xalian.species.name.toLowerCase()].svg : {}; 
+		return (
+			// <div style={{ backgroundColor: bg, border: border !== '' ? border : attackable ? 'solid 2px red' : '' }} className={cellClass} onClick={() => this.handleActivePieceSelection(xalian, index)}>
+			<div style={{ backgroundColor: bg, border: border, position: 'relative'}} className={cellClass} onClick={() => this.handleActivePieceSelection(xalian, index)}>
+				
+				<XalianImage padding={'0px'} speciesName={xalian.species.name} primaryType={xalian.elements.primaryType} moreClasses="duel-piece-xalian-icon" />
+				
+				<Row style={{zIndex: '9999', position: 'absolute', top: 0, left: 0, marginLeft: 0, marginRight: 0, width: '100%', justifyContent: 'center'}}>
+					{moveDistanceIndicators}
+				</Row>
+
+
+				{attackable && 
+					<AttackIcon style={{ position: 'absolute', top: 0, left: 0, opacity: 0.4, height: '100%', width: '100%' }} />
+				}
+				<div style={{ width: `${healthBarPercentage}%`, backgroundColor: barColor }} className='duel-health-bar'/>
+			</div>
+		);
+	}
+
+	buildUnoccupiedCell(moves, index, border) {
+		let highlighted = moves && moves.includes(index);
+
+		let sty = { backgroundColor: highlighted ? '#18d26e' : '#FFFFFF', border: border, color: '#9e9e9e' };
+		let cName = highlighted ? 'xalian-cell xalian-cell-highlighted' : 'xalian-cell';
+		return (
+			<button style={sty} className={cName} onClick={() => this.handleEmptyCellSelection(index)}>
+				{index}
+			</button>
+		);
+	}
 
 	render() {
 		let selectedId = this.props.G.selectedId;
@@ -237,29 +341,9 @@ class DuelBoard extends React.Component {
 					: isOpponentFlagIndex ? 'double 8px #ff7a7aff': '';
 
 				if (this.props.G.cells[index]) {
-					let xalianId = this.props.G.cells[index];
-					// let xalian = this.props.G.xalians.filter( x => x.xalianId === xalianId )[0];
-					let xalian = duelUtil.getXalianFromId(xalianId, this.props.G);
-					let cellClass = selectedId && selectedId === xalian.xalianId ? 'xalian-cell xalian-cell-selected' : 'xalian-cell';
-					let bg = this.props.G.activeXalianIds.includes(xalianId) ? '#3b22a885' : '#a8222285';
-					let attackable = attackableIndices && attackableIndices.includes(index) && (index != selectedIndex) && (!this.props.G.currentTurnState.hasAttacked);
-					
-					cell = (
-						<div style={{ backgroundColor: bg, border: border !== '' ? border : attackable ? 'solid 2px red' : '' }} className={cellClass} onClick={() => this.handleActivePieceSelection(xalian, index)}>
-							<h5>{xalian.species.name}</h5>
-							<h6>{xalian.stats.health}</h6>
-						</div>
-					);
+					cell = this.buildOccupiedCell(index, selectedIndex, selectedId, border, attackableIndices, this.props.G);
 				} else {
-					let highlighted = moves && moves.includes(index);
-					
-					let sty = { backgroundColor: highlighted ? '#18d26e' : '#FFFFFF', border: border };
-					let cName = highlighted ? 'xalian-cell xalian-cell-highlighted' : 'xalian-cell';
-					cell = (
-						<button style={sty} className={cName} onClick={() => this.handleEmptyCellSelection(index)}>
-							{index}
-						</button>
-					);
+					cell = this.buildUnoccupiedCell(moves, index, border);
 				}
 
 				cells.push(<td key={index}>{cell}</td>);
@@ -311,7 +395,7 @@ class DuelBoard extends React.Component {
 		let isPlayersTurn = parseInt(this.props.ctx.currentPlayer) == 0;
 
 		let selectedXalian = duelUtil.getXalianFromId(this.props.G.selectedId || this.state.referencedXalianId, this.props.G);
-		let selectedXalianDescription = JSON.stringify(selectedXalian, null, 2);
+		// let selectedXalianDescription = JSON.stringify(selectedXalian, null, 2);
 
 		return (
 			<div>
@@ -327,28 +411,57 @@ class DuelBoard extends React.Component {
 					<Row style={{ backgroundColor: '#3b22a885' }}>{cols}</Row>
 					<Row style={{ backgroundColor: '#170d4185' }}>{outCols}</Row>
 				</div>
-				<Row>
-					<Col>
-					
-						<div style={{ backgroundColor: 'black' }}>
-							{selectedXalianDescription}
-						</div>
-
-					</Col>
-				</Row>
+				{selectedXalian &&
+					<Row style={{ width: '50%' }} >
+						<Col>
+							<XalianDuelStatBadge type='attack' val={selectedXalian.stats.attack} />
+						</Col>
+						<Col>
+							<XalianDuelStatBadge type='defense' val={selectedXalian.stats.defense} />
+						</Col>
+						<Col>
+							<XalianDuelStatBadge type='move' val={selectedXalian.stats.distance} />
+						</Col>
+						<Col>
+							<XalianDuelStatBadge type='range' val={selectedXalian.stats.range} />
+						</Col>
+						<Col>
+							<XalianDuelStatBadge type='evasion' val={selectedXalian.stats.evasion} />
+						</Col>
+					</Row>
+				}
+				{/* <Row style={{ height: '100px' }}> */}
+					{/* <Col style={{ height: '100px' }}> */}
+					{/*  */}
+						{/* <div style={{ height: '100px' }}> */}
+							{/* {selectedXalianDescription} */}
+							{/* {selectedXalian &&  */}
+								{/* <React.Fragment> */}
+									{/* <h5>{selectedXalian.species.name}</h5> */}
+									{/* <XalianDuelStatChart xalian={selectedXalian} moreClasses='duel-stat-chart' /> */}
+								{/* </React.Fragment> */}
+							{/* } */}
+						{/* </div> */}
+{/*  */}
+					{/* </Col> */}
+				{/* </Row> */}
 			</div>
 		);
 	}
 
 	
+
+	
 }
+
+
 
 function getMovableIndices(selectedId, selectedIndex, G, ctx) {
 	var moves = [];
 		if (ctx.phase === 'setup' && selectedId) {
 			moves = duelUtil.getStartingIndices(G, ctx);
 		} else if (ctx.phase === 'play' && selectedId && (selectedIndex != null && selectedIndex != undefined)) {
-			let xalian = G.xalians.filter((x) => x.xalianId === selectedId)[0];
+			let xalian = duelUtil.getXalianFromId(selectedId, G);
 			moves = duelCalculator.calculateMovableIndices(selectedIndex, xalian, G, ctx);
 		}
 	return moves;

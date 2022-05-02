@@ -2354,12 +2354,13 @@ article {
     1px 1px 0 #FFF;
 }
 
-.white-outline-text {
+
+.black-outline-text {
   text-shadow:
-    -1px -1px 0 #FFF,
-    1px -1px 0 #FFF,
-    -1px 1px 0 #FFF,
-    1px 1px 0 #FFF;
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
 }
 
 .planet-key-col {
@@ -2921,7 +2922,8 @@ input, textarea {
   height: 100%;
   aspect-ratio: 1;
   margin: auto !important;
-  padding: 5px !important;
+  padding: 5px;
+  /* padding: 5px !important; */
 }
 
 .splash-xalian-image {

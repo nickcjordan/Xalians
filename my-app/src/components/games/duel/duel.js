@@ -3,7 +3,7 @@ import * as gameConstants from '../../../gameplay/duel/duelGameConstants';
 import * as duelUtil from '../../../utils/duelUtil';
 import * as duelCalculator from '../../../gameplay/duel/duelCalculator';
 import * as duelBot from '../../../gameplay/duel/duelBot';
-import { GameLift } from 'aws-sdk';
+import * as duelConstants from '../../../gameplay/duel/duelGameConstants'
 
 export const Duel = (data) => {
 	return {
@@ -70,10 +70,9 @@ export const Duel = (data) => {
 			onBegin: (G, ctx) => {
 				// console.log('STARTING TURN');
 				G.currentTurnState = {
-					hasAttacked: false,
-					hasMoved: false,
-					remainingSpacesToMove: 0
+					actions: [] 
 				};
+				G.currentTurnDetails = null;
 			},
 
 			// Called at the end of a turn.
@@ -86,38 +85,41 @@ export const Duel = (data) => {
 			// Ends the turn if this returns true.
 			endIf: (G, ctx) => {
 				if (ctx.phase === 'play') {
+					// let turnState = duelUtil.currentTurnState(G);
+					let turnState = G.currentTurnDetails;
 
-					let cantMove = (G.currentTurnState.hasMoved && G.currentTurnState.remainingSpacesToMove == 0);
-					var canAttack = 0;
+					var hasValidActionAvailable = false;
 					if (duelUtil.isPlayersTurn(ctx)) {
 						G.activeXalianIds.forEach( id => {
-							let xalian = duelUtil.getXalianFromId(id, G);
-							let ind = G.cells.indexOf(G.cells.filter( c => ( c && c === id ))[0]);
-							let attackableSpaces = duelCalculator.calculateAttackablePaths(ind, xalian, G, ctx);
-							if (attackableSpaces && attackableSpaces.length > 0) {
-								canAttack++;
+							if (duelUtil.xalianHasValidActionAvailable(id, G, ctx)) {
+								hasValidActionAvailable = true;
 							}
 						})
 					} else if (duelUtil.isOpponentsTurn(ctx)) {
 						G.activeOpponentXalianIds.forEach( id => {
-							let xalian = duelUtil.getXalianFromId(id, G);
-							let ind = G.cells.indexOf(G.cells.filter( c => ( c && c === id ))[0]);
-							let attackableSpaces = duelCalculator.calculateAttackablePaths(ind, xalian, G, ctx);
-							if (attackableSpaces && attackableSpaces.length > 0) {
-								canAttack++;
+							if (duelUtil.xalianHasValidActionAvailable(id, G, ctx)) {
+								hasValidActionAvailable = true;
 							}
 						})
-					} 
-					let cantAttack = G.currentTurnState.hasAttacked || canAttack == 0;
-					return G.currentTurnState && (
-						cantMove && cantAttack
-						);
+					}
+
+					// var cantMove = (turnState.hasMoved && turnState.remainingSpacesToMove == 0);
+					
+					// var canAttack = 0;
+					
+					// let cantAttack = turnState.hasAttacked || canAttack == 0;
+					// return cantMove && cantAttack;
+					return turnState.isComplete || !hasValidActionAvailable;
 				}
 			},
 
 			// Called at the end of each move.
 			onMove: (G, ctx) => {
 				// console.log('MOVE END');
+				if (ctx.phase === 'play') {
+					let turnState = duelUtil.currentTurnState(G, ctx);
+					G.currentTurnDetails = turnState;
+				}
 			},
 
 			// Prevents ending the turn before a minimum number of moves.
@@ -188,12 +190,13 @@ export const Duel = (data) => {
 		ai: {
 			enumerate: (G, ctx) => {
 				let moves = [];
-
+				// let turnState = duelUtil.currentTurnState(G);
+				let turnState = duelUtil.currentTurnState(G, ctx);
 				// only building moves if it is the bot's turn and it has a valid action yet to take
 				if (duelUtil.isOpponentsTurn(ctx) 
-					&& (!G.currentTurnState.hasAttacked 
-						|| !G.currentTurnState.hasMoved 
-						|| (G.currentTurnState.hasMoved && G.currentTurnState.remainingSpacesToMove > 0))) {
+					&& (!turnState.hasAttacked 
+						|| !turnState.hasMoved 
+						|| (turnState.hasMoved && turnState.remainingSpacesToMove > 0))) {
 
 
 					if (ctx.phase === 'setup') {
@@ -207,12 +210,14 @@ export const Duel = (data) => {
 					else if (ctx.phase === 'play') {
 						let best = duelBot.getBestBotActionForXalianIds(G, ctx, G.activeOpponentXalianIds);
 						moves.push(best);
+
 						// G.activeOpponentXalianIds.forEach( id => {
 							// moves = moves.concat(possible);
 						// })
-						if (G.currentTurnState.hasMoved || G.currentTurnState.hasAttacked) {
-							moves.push({ move: 'endTurn', args: [] });
-						}
+
+						// if (duelUtil.currentTurnState(G).hasMoved || duelUtil.currentTurnState(G).hasAttacked) {
+						// 	moves.push({ move: 'endTurn', args: [] });
+						// }
 					}
 					
 				} else {
@@ -296,27 +301,12 @@ function movePieceThenAttack(G, ctx, movePath, attackPath, data = {}) {
 function movePiece(G, ctx, path, data = {}) {
 	let xalianIdToMove = G.cells[path.startIndex];
 	let xalian = duelUtil.getXalianFromId(xalianIdToMove, G);
-	if (!G.currentTurnState.hasMoved) {
-		G.currentTurnState.hasMoved = true;
-		G.currentTurnState.remainingSpacesToMove = xalian.stats.distance;
-	}
 
-	if (path) {
-		ctx.log.setMetadata(JSON.stringify(path, null, 2));
-		let distance = path.path.length - 1; // subtract starting sqare from path length;
-		G.currentTurnState.remainingSpacesToMove = G.currentTurnState.remainingSpacesToMove - distance;
-	} else {
-		console.log("NO INDEX?!?");
-	}
 
 	let target = duelUtil.getCurrentTurnTargetFlagIndex(G, ctx);
 
+	// set flag holder
 	if (path.endIndex == target) {
-		// let flag = duelUtil.getFlagState(, G);
-		// if (flag) {
-		// 	flag.index = null;
-		// 	flag.holder = xalianIdToMove;
-		// }
 		let flag = G.flags[parseInt(ctx.currentPlayer)];
 		if (flag) {
 			flag.index = null;
@@ -327,11 +317,20 @@ function movePiece(G, ctx, path, data = {}) {
 
 	G.cells[path.startIndex] = null;
 	G.cells[path.endIndex] = xalianIdToMove;
+
+	let action = {
+		type: duelConstants.actionTypes.MOVE,
+		move: {
+			moverId: xalianIdToMove,
+			path: path
+		}
+	};
+	G.currentTurnState.actions.push(action);
+
 }
 
 
 function doAttack(G, ctx, path, data = {}) {
-	G.currentTurnState.hasAttacked = true;
 	let attackerIndex = path.startIndex;
 	let defenderIndex = path.endIndex;
 	let attackerId = G.cells[attackerIndex];
@@ -363,7 +362,16 @@ function doAttack(G, ctx, path, data = {}) {
 		}
 		G.cells[defenderIndex] = null;
 	}
-	G.currentTurnState.hasAttacked = true;
+
+	let action = {
+		type: duelConstants.actionTypes.ATTACK,
+		attack: {
+			attackerId: attackerId,
+			defenderId: defenderId,
+			path: path
+		}
+	};
+	G.currentTurnState.actions.push(action);
 }
 
 function removeItemFromList(item, list) {

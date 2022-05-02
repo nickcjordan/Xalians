@@ -6,6 +6,7 @@ const tools = require('../../tools.js');
 const mockMove = require('../../json/mock/mockMove.json'); 
 const translator = require('../../utils/valueTranslator.js');
 const duelUtil = require('../../utils/duelUtil.js');
+const duelConstants = require('../../gameplay/duel/duelGameConstants.js');
 var PF = require('pathfinding');
 
 export function buildPath(startIndex, startCoord, endIndex, endCoord, path) {
@@ -14,7 +15,8 @@ export function buildPath(startIndex, startCoord, endIndex, endCoord, path) {
         startCoord: startCoord, 
         endIndex: endIndex, 
         endCoord: endCoord, 
-        path: path
+        path: path,
+        spacesMoved: path.length - 1
     };
 }
 
@@ -101,30 +103,24 @@ export function calculateIndicesWithinDistance(currentIndex, distance, G, ctx) {
 }
 
 
-// export function calculateMovableIndices(currentIndex, xalian, G, ctx) {
-//     let distance = Math.round(Math.sqrt(parseInt(xalian.stats.speed)));
-//     return module.exports.calculateIndicesWithinDistance(currentIndex, distance, G, ctx);
-// }
-
-export function calculatePathToTarget(currentIndex, endIndex, G, ctx) {
+export function calculatePathToTarget(currentIndex, endIndex, G, ctx, builtGrid = null) {
     let size = Math.sqrt(G.cells.length);
-    var grid = new PF.Grid(size, size);
-
+    
     let boardGrid = buildGrid(G.cells.length);
-
-
+    
+    
     var finder = new PF.AStarFinder();
     var currentCoord = boardGrid.map[currentIndex];
+
+    var grid = new PF.Grid(size, size);
     var gridBackup = grid.clone();
+    if (builtGrid) {
+        gridBackup = builtGrid;
+    }
+
     var endCoord = boardGrid.map[endIndex];
     var path = finder.findPath(currentCoord[0], currentCoord[1], endCoord[0], endCoord[1], gridBackup);
-    return {
-        startIndex: currentIndex,
-        startCoord: currentCoord,
-        endIndex: endIndex,
-        endCoord: endCoord,
-        path: path
-    }
+    return buildPath(currentIndex, currentCoord, endIndex, endCoord, path);
 }
 
 export function calculateAllValidPaths(G, ctx, currentIndex, distance) {
@@ -140,8 +136,6 @@ export function calculateValidUnoccupiedPaths(G, ctx, currentIndex, distance, is
 }
 
 function calculateValidPaths(G, ctx, currentIndex, distance, findOccupied, findUnoccupied, isBot = false) {
-    // let distance = Math.round(Math.sqrt(parseInt(xalian.stats.speed)));
-    
     let size = Math.sqrt(G.cells.length);
     var grid = new PF.Grid(size, size); 
     let indicesWithinDistance = calculateIndicesWithinDistance(currentIndex, distance, G, ctx);
@@ -180,19 +174,14 @@ function calculateValidPaths(G, ctx, currentIndex, distance, findOccupied, findU
         })
     }
 
-    var finder = new PF.AStarFinder();
-    var currentCoord = boardGrid.map[currentIndex];
     var valid = [];
     selectedPaths.forEach( i => {
         let defenderId = G.cells[i];
         let attackerId = G.cells[currentIndex];
         if (!defenderId || (defenderId && !duelUtil.xaliansAreOnSameTeam(defenderId, attackerId, G))) {
-            var gridBackup = grid.clone();
-            var endCoord = boardGrid.map[i];
-            // var path = finder.findPath(currentCoord[0], currentCoord[1], endCoord[0], endCoord[1], gridBackup);
-            var path = calculatePathToTarget(currentIndex, i, G, ctx);
-            if (path && path.path.length > 0 && (path.path.length - 1) <= distance) {
-                valid.push(buildPath(currentIndex, currentCoord, i, endCoord, path.path));
+            var path = calculatePathToTarget(currentIndex, i, G, ctx, grid.clone());
+            if (path && path.spacesMoved > 0 && path.spacesMoved <= distance) {
+                valid.push(path);
             } else {
                 console.error("INVALID ATTACK PATH?");
             }
@@ -215,8 +204,43 @@ export function calculateMovableIndices(currentIndex, xalian, G, ctx) {
 }
 
 export function calculateMovablePaths(currentIndex, xalian, G, ctx, isBot = false) {
-    let distance = G.currentTurnState.hasMoved ? G.currentTurnState.remainingSpacesToMove : xalian.stats.distance;
-    return calculateValidUnoccupiedPaths(G, ctx, currentIndex, distance, isBot);
+    // let distance = G.currentTurnDetails.hasMoved ? G.currentTurnDetails.remainingSpacesToMove : xalian.stats.distance;
+    if (ctx.phase === 'play') {
+
+        var remainingForTurn = duelConstants.MAX_SPACES_MOVED_PER_TURN;
+        var remainingForXalian = xalian.stats.distance;
+
+        if (G.currentTurnDetails) {
+            remainingForTurn = G.currentTurnDetails.remainingSpacesToMove;
+            G.currentTurnDetails.moves.forEach( move => {
+                if (xalian.xalianId === move.moverId) {
+                    remainingForXalian -= move.spacesMoved;
+                }
+            })
+        } else {
+            if (G.currentTurnState && G.currentTurnState.actions) {
+                G.currentTurnState.actions.forEach(action => {
+                    if (action.type == duelConstants.actionTypes.MOVE) {
+                        let moveDistance = action.move.path.spacesMoved;
+                        remainingForTurn -= moveDistance;
+
+                        if (xalian.xalianId === action.move.moverId) {
+                            remainingForXalian -= moveDistance
+                        }
+                    }
+                })
+            }
+        }
+        
+        // let moves = turnState.moves || [];
+        // moves.forEach( move => {
+        //     if (move.id === xalian.xalianId) {
+        //         remainingForXalian -= move.spacesMoved;
+        //     }
+        // })
+        var distance = Math.min(remainingForXalian, remainingForTurn);
+        return calculateValidUnoccupiedPaths(G, ctx, currentIndex, distance, isBot);
+    }
 }
 
 export function calculateAttackablePaths(currentIndex, xalian, G, ctx) {

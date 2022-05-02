@@ -16,7 +16,7 @@ import { Client } from 'boardgame.io/react';
 import { Duel } from '../../components/games/duel/duel';
 import DuelBoard  from '../../components/games/duel/duelBoard';
 import * as translator from '../../utils/valueTranslator';
-import * as gameConstants from '../../constants/attackCalculationConstants'
+import * as gameConstants from '../../gameplay/duel/duelGameConstants'
 import { Local } from 'boardgame.io/multiplayer';
 import { MCTSBot, RandomBot } from 'boardgame.io/ai';
 import DuelBotInstance from '../../components/games/duel/duelBotInstance';
@@ -107,8 +107,11 @@ class DuelPage extends React.Component {
 		// let defensePts = Math.floor(((stDefensePts + spDefensePts)*10)/2)/10; // round to 1 decimal if necessary
 		let defensePts = Math.floor(((stDefensePts + spDefensePts)*10))/10; // round to 1 decimal if necessary
 		
-		let speedPts = translator.statRangeToInteger(xalian.stats["speedPoints"].range) * 2;
-		let distance = Math.round(Math.sqrt(speedPts));
+		let speedPts = translator.statRangeToInteger(xalian.stats["speedPoints"].range);
+		
+		// let distance = Math.round(Math.sqrt(speedPts));
+		let distance = speedPts > 3 ? 3 : speedPts > 2 ? 2 : 1;
+
 		let evasionPts = translator.statRangeToInteger(xalian.stats["evasionPoints"].range) * 2;
 
 		var selectedSpecies = species.filter( s => s.id === xalian.species.id)[0];

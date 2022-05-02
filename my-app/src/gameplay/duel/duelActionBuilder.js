@@ -34,8 +34,8 @@ export function buildAttackActionsWithScore(currentIndex, attacker, G, ctx) {
         // add closeness factor of attack so it will be better than combos where the combo is moving away from the flag but attacking same target
         let flagIndex = duelUtil.getOpponentFlagIndex(G);
         let pathToTargetFlag = duelCalculator.calculatePathToTarget(path.startIndex, flagIndex, G, ctx); 
-        let flagClosenessFactor = (duelConstants.BOARD_COLUMN_SIZE * 2) - pathToTargetFlag.path.length;
-        attack.description += `:: TARGET FLAG : +${flagClosenessFactor}`;
+        let flagClosenessFactor = (duelConstants.BOARD_COLUMN_SIZE * 2) - pathToTargetFlag.spacesMoved;
+        attack.description += `:: RESULTING DISTANCE TO TARGET FLAG : +${flagClosenessFactor}`;
         attack.score += flagClosenessFactor;
 
         attackMoves.push(attack);
@@ -58,7 +58,7 @@ function buildAttackAction(attacker, path, G, ctx) {
     let pathToFlagFromDefender = duelCalculator.calculatePathToTarget(path.endIndex, duelUtil.getPlayerFlagIndex(G), G, ctx);
 
     // SCORE :: DEFENDER DISTANCE TO GRABBING TARGET FLAG
-    let flagClosenessFactor = (duelConstants.BOARD_COLUMN_SIZE * 2) - pathToFlagFromDefender.path.length;
+    let flagClosenessFactor = (duelConstants.BOARD_COLUMN_SIZE * 2) - pathToFlagFromDefender.spacesMoved;
     score += flagClosenessFactor;
     action.description += `:: ENEMY FLAG DISTANCE : +${flagClosenessFactor}`;
 
@@ -113,8 +113,8 @@ export function buildMoveActionsWithScore(currentIndex, xalian, paths, G, ctx) {
             action.description = "";
         }
         // SCORE :: PROMOTE LONGER DISTANCE MOVES
-        action.score += (path.path.length - 1);
-        action.description += `:: MOVE DISTANCE : +${path.path.length - 1}`;
+        action.score += (path.spacesMoved);
+        action.description += `:: MOVE DISTANCE : +${path.spacesMoved}`;
         
 
         // SCORE :: CAPTURE THE FLAG
@@ -216,7 +216,7 @@ function scorePathsMovingTowardsFlag(currentIndex, actions, G, ctx) {
         // }
 
         let pathToTargetFlag = duelCalculator.calculatePathToTarget(action.path.endIndex, flagIndex, G, ctx); 
-        let flagClosenessFactor = (duelConstants.BOARD_COLUMN_SIZE * 2) - pathToTargetFlag.path.length;
+        let flagClosenessFactor = (duelConstants.BOARD_COLUMN_SIZE * 2) - pathToTargetFlag.spacesMoved;
         action.description += `:: TARGET FLAG : +${flagClosenessFactor}`;
         action.score += flagClosenessFactor;
         // console.log(`PATH SCORE: current: ${startCoord}, middle: ${endCoord}, end: ${flagCoord} ==> ${action.score}`);

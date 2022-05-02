@@ -60,21 +60,23 @@ export function getBestBotActionForXalian(G, ctx, id) {
 
     var bestAction = null;
 
+    let details = G.currentTurnDetails || duelUtil.currentTurnState(G, ctx);
+
     if (ctx.phase === 'play') {
         // get all paths within move range
-        let allPaths = (G.currentTurnState.hasMoved && G.currentTurnState.remainingSpacesToMove == 0) ? [] 
+        let allPaths = (details.hasMoved && details.remainingSpacesToMove == 0) ? [] 
             : duelCalculator.calculateMovablePaths(currentIndex, attacker, G, ctx, true);
 
         // score moves based on how advantageous
-        let moveActions = (G.currentTurnState.hasMoved && G.currentTurnState.remainingSpacesToMove == 0) ? [] 
+        let moveActions = (details.hasMoved && details.remainingSpacesToMove == 0) ? [] 
             : actionBuilder.buildMoveActionsWithScore(currentIndex, attacker, allPaths, G, ctx);
 
         // find moves that allow for attacks in second part of move and score them
-        let comboActions = (G.currentTurnState.hasMoved && G.currentTurnState.remainingSpacesToMove == 0) ? [] 
+        let comboActions = ((details.hasMoved && details.remainingSpacesToMove == 0) || details.hasAttacked) ? [] 
             : actionBuilder.buildComboActionsWithScore(attacker, allPaths, G, ctx);
 
         // score attack actions
-        let attackActions = (G.currentTurnState.hasAttacked) ? [] 
+        let attackActions = (details.hasAttacked) ? [] 
             : actionBuilder.buildAttackActionsWithScore(currentIndex, attacker, G, ctx);
 
         // let comboActions = [];
@@ -91,7 +93,7 @@ export function getBestBotActionForXalian(G, ctx, id) {
 
 
         if (allActions.length == 0) {
-            console.error(`NO ACTIONS BUILT FOR BOT :: ${attacker.species.name} : moved ? ${G.currentTurnState.hasMoved} : remaining=${G.currentTurnState.remainingSpacesToMove}`);
+            console.error(`NO ACTIONS BUILT FOR BOT :: ${attacker.species.name} : moved ? ${details.hasMoved} : remaining=${details.remainingSpacesToMove}`);
         } else {
             bestAction = allActions[0];
             let path = bestAction.path;

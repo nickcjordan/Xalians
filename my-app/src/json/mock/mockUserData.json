@@ -76,10 +76,10 @@
 					},
 					"speedPoints": {
 						"name": "speedPoints",
-						"range": "high",
-						"initialPoints": 726,
-						"points": 726,
-						"maxPoints": 870,
+						"range": "low",
+						"initialPoints": 200,
+						"points": 200,
+						"maxPoints": 300,
 						"initialPointAllocationPercentage": 90,
 						"maxPointAllocationPercentage": 108
 					},

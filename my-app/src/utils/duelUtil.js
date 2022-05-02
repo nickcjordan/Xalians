@@ -1,3 +1,5 @@
+import * as constants from '../gameplay/duel/duelGameConstants';
+import * as duelCalculator from '../gameplay/duel/duelCalculator';
 
 export function isPlayerPiece(id, G) {
     return  (G.unsetXalianIds && G.unsetXalianIds.includes(id)) 
@@ -158,4 +160,58 @@ export function getFlagIndex(flag, G) {
     } else if (flag && flag.holder) {
         return getIndexOfXalian(flag.holder, G);
     }
+}
+
+export function currentTurnState(G, ctx) {
+    var hasAttacked = false;
+    var hasMoved = false;
+    var remainingSpacesToMove = constants.MAX_SPACES_MOVED_PER_TURN;
+    var isComplete = false;
+    let moveMap = new Map();
+    G.currentTurnState.actions.forEach( action => {
+        if (action.type == constants.actionTypes.ATTACK) {
+            hasAttacked = true;
+        }
+        
+        if (action.type == constants.actionTypes.MOVE) {
+            hasMoved = true;
+            let spacesMovedInAction = action.move.path.spacesMoved;
+            remainingSpacesToMove -= spacesMovedInAction;
+            var spacesMovedForXalian = 0;
+            if (moveMap[action.move.moverId]) {
+                let entry = moveMap[action.move.moverId];
+                spacesMovedForXalian = entry.value;
+            }
+            spacesMovedForXalian += spacesMovedInAction;
+            moveMap[action.move.moverId] = { 
+                key: action.move.moverId,
+                value: spacesMovedForXalian
+            };
+        }
+    });
+
+    isComplete = (remainingSpacesToMove == 0 && hasAttacked);
+
+
+    var moves = [];
+    Object.values(moveMap).forEach((entry) => {
+        moves.push({ moverId: entry.key, spacesMoved: entry.value });
+    });
+
+
+    return {
+        hasAttacked: hasAttacked,
+        hasMoved: hasMoved,
+        remainingSpacesToMove: remainingSpacesToMove,
+        moves: moves,
+        isComplete: isComplete
+    }
+}
+
+export function xalianHasValidActionAvailable(id, G, ctx) {
+    let xalian = getXalianFromId(id, G);
+    let ind = getIndexOfXalian(id, G);
+    let attackableSpaces = duelCalculator.calculateAttackablePaths(ind, xalian, G, ctx);
+    let movableSpaces = duelCalculator.calculateMovablePaths(ind, xalian, G, ctx);
+    return (attackableSpaces && attackableSpaces.length > 0) || (movableSpaces && movableSpaces.length > 0);
 }
