@@ -20,7 +20,10 @@ export function buildPath(startIndex, startCoord, endIndex, endCoord, path) {
     };
 }
 
-export function buildGrid(totalSquares) {
+export function buildGrid(totalSquares = 0) {
+    if (totalSquares == 0) {
+        totalSquares = duelConstants.BOARD_COLUMN_SIZE * duelConstants.BOARD_COLUMN_SIZE;
+    }
     let boardSize = Math.sqrt(totalSquares);
 
     let rows = [];
@@ -167,12 +170,12 @@ function calculateValidPaths(G, ctx, currentIndex, distance, findOccupied, findU
         })
     }
 
-    if (!findUnoccupied) {
-        unoccupied.forEach( i => {
-            let coord = boardGrid.map[i];
-            grid.setWalkableAt(coord[0], coord[1], false);
-        })
-    }
+    // if (!findUnoccupied) {
+    //     unoccupied.forEach( i => {
+    //         let coord = boardGrid.map[i];
+    //         grid.setWalkableAt(coord[0], coord[1], false);
+    //     })
+    // }
 
     var valid = [];
     selectedPaths.forEach( i => {

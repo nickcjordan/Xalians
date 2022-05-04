@@ -18,13 +18,18 @@ import XalianImage from '../../xalianImage';
 import { Collapse } from 'react-bootstrap';
 import * as duelUtil from '../../../utils/duelUtil';
 import * as duelCalculator from '../../../gameplay/duel/duelCalculator';
+import * as duelConstants from '../../../gameplay/duel/duelGameConstants';
 import { ReactComponent as AttackIcon } from '../../../svg/games/duel/duel_attack_icon.svg';
+import { ReactComponent as DuelCellDot } from '../../../svg/games/duel/duel_cell_dot.svg';
+import { ReactComponent as DuelFlagIcon } from '../../../svg/games/duel/duel_flag_icon.svg';
+import { ReactComponent as DuelCellConnector } from '../../../svg/games/duel/duel_cell_connector.svg';
 import species from '../../../json/species.json';
 
 
 import { Hub } from "aws-amplify";
 import XalianDuelStatChart from './xalianDuelStatChart';
 import XalianDuelStatBadge from './xalianDuelStatBadge';
+import XalianSVGIcon from '../../../svg/species/dynamicSvg';
 
 const reqSvgs = require.context ( '../../../svg/species', true, /\.svg$/ );
 const svgs = reqSvgs.keys () .map ( path => ({ path, file: reqSvgs ( path ) }) );
@@ -264,11 +269,13 @@ class DuelBoard extends React.Component {
 		);
 	}
 
-	buildOccupiedCell = (index, selectedIndex, selectedId, border, attackableIndices, G) => {
+	// buildOccupiedCell = (index, selectedIndex, selectedId, border, attackableIndices, G) => {
+	buildOccupiedCell = (index, selectedIndex, selectedId, flagIfPresent, attackableIndices, G) => {
 		let xalianId = G.cells[index];
 		let xalian = duelUtil.getXalianFromId(xalianId, G);
-		let cellClass = selectedId && selectedId === xalian.xalianId ? 'xalian-cell xalian-cell-selected' : 'xalian-cell';
-		let bg = G.activeXalianIds.includes(xalianId) ? '#9380eb85' : '#e4939385';
+		let isSelectedXalian = selectedId && selectedId === xalian.xalianId;
+		let cellClass = isSelectedXalian ? 'xalian-cell xalian-cell-selected' : 'xalian-cell';
+		let teamColor = G.activeXalianIds.includes(xalianId) ? '#9480eb34' : '#e493933a';
 
 		let attackable = attackableIndices && attackableIndices.includes(index) && (index != selectedIndex) && (!G.currentTurnDetails.hasAttacked);
 		var healthBarPercentage = (xalian.stats.health/gameConstants.MAX_HEALTH_POINTS) * 100; 
@@ -284,36 +291,144 @@ class DuelBoard extends React.Component {
 			</React.Fragment>)
 		}
 		// let xalianSvg = this.state.speciesSvgMap ? this.state.speciesSvgMap[xalian.species.name.toLowerCase()].svg : {}; 
+
+		let connectors = this.buildConnectorsForOccupiedCell(index);
+		
 		return (
 			// <div style={{ backgroundColor: bg, border: border !== '' ? border : attackable ? 'solid 2px red' : '' }} className={cellClass} onClick={() => this.handleActivePieceSelection(xalian, index)}>
-			<div style={{ backgroundColor: bg, border: border, position: 'relative'}} className={cellClass} onClick={() => this.handleActivePieceSelection(xalian, index)}>
-				
-				<XalianImage padding={'0px'} speciesName={xalian.species.name} primaryType={xalian.elements.primaryType} moreClasses="duel-piece-xalian-icon" />
-				
-				<Row style={{zIndex: '9999', position: 'absolute', top: 0, left: 0, marginLeft: 0, marginRight: 0, width: '100%', justifyContent: 'center'}}>
-					{moveDistanceIndicators}
-				</Row>
+			// <div style={{ backgroundColor: bg, border: border, position: 'relative'}} className={cellClass} onClick={() => this.handleActivePieceSelection(xalian, index)}>
+			<div className={cellClass} >
+				<div style={{ position: 'relative', height: '100%',  width: '100%'}} onClick={() => this.handleActivePieceSelection(xalian, index)}>
 
+					
+					<XalianImage padding={'0px'} speciesName={xalian.species.name} primaryType={xalian.elements.primaryType} moreClasses="duel-piece-xalian-icon" fillColor={teamColor} />
+					
+					<Row style={{zIndex: '9999', position: 'absolute', top: 0, left: 0, marginLeft: 0, marginRight: 0, width: '100%', justifyContent: 'center'}}>
+						{moveDistanceIndicators}
+					</Row>
 
-				{attackable && 
-					<AttackIcon style={{ position: 'absolute', top: 0, left: 0, opacity: 0.4, height: '100%', width: '100%' }} />
-				}
-				<div style={{ width: `${healthBarPercentage}%`, backgroundColor: barColor }} className='duel-health-bar'/>
+					{connectors}
+
+					{flagIfPresent}
+
+					{attackable && 
+						<AttackIcon style={{ position: 'absolute', top: 0, left: 0, opacity: 0.4, height: '100%', width: '100%' }} />
+					}
+					<div style={{ width: `${healthBarPercentage}%`, backgroundColor: barColor }} className='duel-health-bar'/>
+				</div>
 			</div>
 		);
 	}
 
-	buildUnoccupiedCell(moves, index, border) {
-		let highlighted = moves && moves.includes(index);
+	buildConnectorsForOccupiedCell = (index) => {
+		var cellConnectors = [];
+		let grid = duelCalculator.buildGrid();
+		let offset = duelConstants.BOARD_COLUMN_SIZE;
+		let currentCoord = grid.map[index];
+		
+		// build top connector
+		let leftIndex = 	this.getIndexIfValidCell(currentCoord[0] - 1, currentCoord[1], grid);
+		let topIndex = 		this.getIndexIfValidCell(currentCoord[0], currentCoord[1] - 1, grid);
+		let rightIndex = 	this.getIndexIfValidCell(currentCoord[0] + 1, currentCoord[1], grid);
+		let bottomIndex = 	this.getIndexIfValidCell(currentCoord[0], currentCoord[1] + 1, grid);
 
-		let sty = { backgroundColor: highlighted ? '#18d26e' : '#FFFFFF', border: border, color: '#9e9e9e' };
+
+		if (leftIndex != undefined && !this.cellIsOccupied(leftIndex)) {
+			cellConnectors.push(
+				<div style={{ zIndex: 100, backgroundColor: 'white', position: 'absolute', width: '100%', height: '5px', top: '50%', left: '0', transform: 'translate(-50%, -50%)', opacity: 0.1, pointerEvents: 'none' }} />			
+			)
+		}
+		if (topIndex != undefined && !this.cellIsOccupied(topIndex)) {
+			cellConnectors.push(
+				<div style={{ zIndex: 100, backgroundColor: 'white', position: 'absolute', width: '5px', height: '100%', top: '0', left: '50%', transform: 'translate(-50%, -50%)', opacity: 0.1, pointerEvents: 'none' }} />
+			)
+		}
+
+		if (rightIndex != undefined && !this.cellIsOccupied(rightIndex)) {
+			cellConnectors.push(
+				<div style={{ zIndex: 100, backgroundColor: 'white', position: 'absolute', width: '100%', height: '5px', top: '50%', left: '100%', transform: 'translate(-50%, -50%)', opacity: 0.1, pointerEvents: 'none' }} />			
+			)
+		}
+		if (bottomIndex != undefined && !this.cellIsOccupied(bottomIndex)) {
+			cellConnectors.push(
+				<div style={{ zIndex: 100, backgroundColor: 'white', position: 'absolute', width: '5px', height: '100%', top: '100%', left: '50%', transform: 'translate(-50%, -50%)', opacity: 0.1, pointerEvents: 'none' }} />
+			)
+		}
+		
+		return cellConnectors;
+
+	}
+
+	getIndexIfValidCell(x, y, grid) {
+		if (grid.rows[y]) {
+			let index = grid.rows[y][x];
+			if (index != undefined && index != null) {
+				return index;
+			} 
+		}
+	}
+
+	cellIsOccupied(index) {
+		return this.props.G.cells[index];
+	}
+
+	shouldConnectToEmptyCellLeft(grid, currentIndex) {
+		var connect = true;
+		let currentCoord = grid.map[currentIndex];
+		if (currentCoord[0] == 0) {
+			connect = false;
+		} else {
+			let leftCellIndex = currentIndex - 1;
+			if (this.props.G.cells[leftCellIndex]) {
+				connect = false;
+			}
+		}
+		return connect;
+	}
+
+	shouldConnectToEmptyCellTop(grid, currentIndex) {
+		var connect = true;
+		let currentCoord = grid.map[currentIndex];
+		if (currentCoord[1] == 0) {
+			connect = false;
+		} else {
+			let topCellIndex = currentIndex - duelConstants.BOARD_COLUMN_SIZE;
+			if (this.props.G.cells[topCellIndex]) {
+				connect = false;
+			}
+		}
+		return connect;
+	}
+
+	// buildUnoccupiedCell(moves, index, border) {
+	buildUnoccupiedCell(moves, index, flagIfPresent) {
+		let highlighted = moves && moves.includes(index);
+		let sty = { backgroundColor: highlighted ? '#18d26f7e' : '', border: 0, position: 'relative' };
+		// let sty = { backgroundColor: highlighted ? '#18d26f7e' : '', border: border, position: 'relative' };
 		let cName = highlighted ? 'xalian-cell xalian-cell-highlighted' : 'xalian-cell';
+
+		let grid = duelCalculator.buildGrid();
+		let shouldConnectCellLeft = this.shouldConnectToEmptyCellLeft(grid, index);
+		let shouldConnectCellTop = this.shouldConnectToEmptyCellTop(grid, index);
+		// let dotBg = 'radial-gradient(circle, rgba(128,255,176,1) 0%, rgba(128,255,176,0) 50%)';
+		let dotBg = 'radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0.5) 5%, rgba(255,255,255,0.25) 20%, rgba(255,255,255,0) 60%)';
 		return (
-			<button style={sty} className={cName} onClick={() => this.handleEmptyCellSelection(index)}>
-				{index}
-			</button>
+			<div style={sty} className={cName} onClick={() => this.handleEmptyCellSelection(index)}>
+				<h6 style={{ position: 'absolute', color: '#9e9e9e2c' }} >{index}</h6>
+				<div style={{ background: dotBg, position: 'absolute', width: '50%', maxWidth: '25px', height: '50%', maxHeight: '20px', margin: 'auto', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', opacity: 1, pointerEvents: 'none' }} />
+
+				{shouldConnectCellLeft &&
+					<div style={{ backgroundColor: 'white', position: 'absolute', width: '100%', height: '5px', top: '50%', left: '0', transform: 'translate(-50%, -50%)', opacity: 0.1, pointerEvents: 'none' }} />
+				}
+				{shouldConnectCellTop &&
+					<div style={{ backgroundColor: 'white', position: 'absolute', width: '5px', height: '100%', top: '0', left: '50%', transform: 'translate(-50%, -50%)', opacity: 0.1, pointerEvents: 'none' }} />
+				}
+				{flagIfPresent}
+
+			</div>
 		);
 	}
+
 
 	render() {
 		let selectedId = this.props.G.selectedId;
@@ -337,13 +452,18 @@ class DuelBoard extends React.Component {
 				let isOpponentFlagIndex = duelUtil.getOpponentFlagIndex(this.props.G) == index;
 
 
-				let border = isPlayerFlagIndex ? 'double 8px #947dfaff' 
-					: isOpponentFlagIndex ? 'double 8px #ff7a7aff': '';
+				// let border = isPlayerFlagIndex ? 'double 8px #947dfaff' 
+					// : isOpponentFlagIndex ? 'double 8px #ff7a7aff': '';
+
+				let flag = isPlayerFlagIndex ? <DuelFlagIcon style={{ position: 'absolute', top: 0, left: 0, opacity: 0.4, height: '100%', width: '100%', fill: '#947dfaff' }} /> :
+				isOpponentFlagIndex ? <DuelFlagIcon style={{ position: 'absolute', top: 0, left: 0, opacity: 0.4, height: '100%', width: '100%', fill: '#ff7a7aff' }} /> : null;
 
 				if (this.props.G.cells[index]) {
-					cell = this.buildOccupiedCell(index, selectedIndex, selectedId, border, attackableIndices, this.props.G);
+					// cell = this.buildOccupiedCell(index, selectedIndex, selectedId, border, attackableIndices, this.props.G);
+					cell = this.buildOccupiedCell(index, selectedIndex, selectedId, flag, attackableIndices, this.props.G);
 				} else {
-					cell = this.buildUnoccupiedCell(moves, index, border);
+					cell = this.buildUnoccupiedCell(moves, index, flag);
+					// cell = this.buildUnoccupiedCell(moves, index, border);
 				}
 
 				cells.push(<td key={index}>{cell}</td>);
@@ -430,6 +550,11 @@ class DuelBoard extends React.Component {
 						</Col>
 					</Row>
 				}
+
+				<XalianSVGIcon name="figzy" style={{ fill: 'blue' }} />
+
+
+
 				{/* <Row style={{ height: '100px' }}> */}
 					{/* <Col style={{ height: '100px' }}> */}
 					{/*  */}

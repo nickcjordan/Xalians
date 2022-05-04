@@ -1,6 +1,32 @@
+
+.xalian-duel-selected-cell {
+    border-color: rgb(255, 255, 255);
+    border-width: 4px;
+    border-radius: 8px;
+    border-style: solid;
+  }
+  
+  .xalian-cell {
+    border-radius: 8px;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+  }
+  
+  .xalian-cell-highlighted {
+    background-color: #18d26e !important;
+  }
+  
+  .xalian-cell-selected {
+    border: 4px solid rgb(255, 255, 255);
+  }
+  
+
+
 .duel-health-bar {
     position: absolute;
-    bottom: 0;
+    top: -60%;
     left: 0;
     height: 8px;
     background-color: green;
@@ -8,11 +34,12 @@
 
 .duel-piece-xalian-icon {
     position: absolute;
-    top: 0;
+    top: -40%;
     left: 0;
     height: 100%;
     width: 100%;
     padding: 0px !important;
+    z-index: 101;
 }
 
 .duel-stat-chart {
