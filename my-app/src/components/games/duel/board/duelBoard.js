@@ -12,31 +12,26 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import PropTypes from 'prop-types';
-import * as gameConstants from '../../../gameplay/duel/duelGameConstants';
-import * as svgUtil from '../../../utils/svgUtil';
-import XalianImage from '../../xalianImage';
-import { Collapse } from 'react-bootstrap';
-import * as duelUtil from '../../../utils/duelUtil';
-import * as duelCalculator from '../../../gameplay/duel/duelCalculator';
-import * as duelConstants from '../../../gameplay/duel/duelGameConstants';
-import { ReactComponent as AttackIcon } from '../../../svg/games/duel/duel_attack_icon.svg';
-import { ReactComponent as DuelCellDot } from '../../../svg/games/duel/duel_cell_dot.svg';
-import { ReactComponent as DuelFlagIcon } from '../../../svg/games/duel/duel_flag_icon.svg';
-import { ReactComponent as DuelCellConnector } from '../../../svg/games/duel/duel_cell_connector.svg';
-import species from '../../../json/species.json';
-
-
+import * as gameConstants from '../../../../gameplay/duel/duelGameConstants';
+import XalianImage from '../../../xalianImage';
+import * as duelUtil from '../../../../utils/duelUtil';
+import * as duelCalculator from '../../../../gameplay/duel/duelCalculator';
+import * as duelConstants from '../../../../gameplay/duel/duelGameConstants';
+import { ReactComponent as AttackIcon } from '../../../../svg/games/duel/duel_attack_icon.svg';
+import { ReactComponent as DuelFlagIcon } from '../../../../svg/games/duel/duel_flag_icon.svg';
+import species from '../../../../json/species.json';
 import { Hub } from "aws-amplify";
-import XalianDuelStatChart from './xalianDuelStatChart';
-import XalianDuelStatBadge from './xalianDuelStatBadge';
-import XalianSVGIcon from '../../../svg/species/dynamicSvg';
+import XalianTypeSymbolBadge from './xalianTypeSymbolBadge';
+import DuelXalianSuggestionDetails from './duelXalianSelectionDetails';
 
-const reqSvgs = require.context ( '../../../svg/species', true, /\.svg$/ );
+const reqSvgs = require.context ( '../../../../svg/species', true, /\.svg$/ );
 const svgs = reqSvgs.keys () .map ( path => ({ path, file: reqSvgs ( path ) }) );
 
 class DuelBoard extends React.Component {
 	state = {
-		speciesSvgMap: {}
+		speciesSvgMap: {},
+		size: { min: 50 },
+		contentLoaded: false,
 	};
 
 	static propTypes = {
@@ -48,7 +43,36 @@ class DuelBoard extends React.Component {
 		isMultiplayer: PropTypes.bool,
 	};
 
+	state = {};
+
+	componentWillUnmount() {
+		window.removeEventListener('resize', this.updateSize);
+	}
+
+	setSize = (w, h) => {
+		let max = Math.max(w, h);
+		let min = Math.min(w, h);
+		
+		let padding = 10;
+		
+		this.setState({
+			contentLoaded: true,
+			size: {
+				width: w - padding,
+				height: h - padding,
+				max: max - padding,
+				min: min - padding,
+			},
+		});
+	};
+
+	updateSize = () => {
+		this.setSize(window.innerWidth, Math.min(window.innerHeight * 0.8, window.innerHeight - 100));
+	};
+	
 	componentDidMount() {
+		document.addEventListener('DOMContentLoaded', this.updateSize);
+		window.addEventListener('resize', this.updateSize);
 		var speciesMap = new Map();
 		var svgMap = new Map();
 
@@ -76,6 +100,8 @@ class DuelBoard extends React.Component {
 		}
 
 		this.setupAnimationHub()
+
+		
 		
 	}
 	
@@ -174,7 +200,7 @@ class DuelBoard extends React.Component {
 	// called in setup when a piece is selected to be placed
 	handleInitialPieceSelection = (xalian) => {
 
-		if (true) { // DEBUG
+		if (false) { // DEBUG
 			let options = [56, 57, 58, 59, 60, 61, 62, 63];
 			var ind = -1;
 			var isEmpty = false;
@@ -254,13 +280,14 @@ class DuelBoard extends React.Component {
 		let opac = isOut ? 0.4 : 1;
 
 		return (
-			<Col md={2} sm={3} xs={6} className="species-col">
+			// <Col md={2} sm={3} xs={6} className="species-col">
+			<Col xs={true} className="species-col">
 				<a onClick={() => this.handleInitialPieceSelection(x)}>
-					<XalianImage colored bordered selected={isSelected} speciesName={x.species.name} primaryType={x.elements.primaryType} moreClasses="xalian-image-grid" style={{ opacity: opac }} />
+					<XalianImage colored bordered selected={isSelected} speciesName={x.species.name} primaryType={x.elements.primaryType} moreClasses="duel-xalian-unselected" style={{ opacity: opac }} />
 					<Row style={{ width: '100%', margin: '0px', padding: '0px' }}>
 						<Col style={{ padding: '0px', height: '100%', margin: 'auto' }}>
 							<h6 className="condensed-row" style={{ textAlign: 'center', margin: 'auto', height: '100%', width: '100%' }}>
-								{x.xalianId.split('-').pop().substring(0, 4)}
+								{x.species.name}
 							</h6>
 						</Col>
 					</Row>
@@ -269,15 +296,39 @@ class DuelBoard extends React.Component {
 		);
 	}
 
-	// buildOccupiedCell = (index, selectedIndex, selectedId, border, attackableIndices, G) => {
-	buildOccupiedCell = (index, selectedIndex, selectedId, flagIfPresent, attackableIndices, G) => {
-		let xalianId = G.cells[index];
-		let xalian = duelUtil.getXalianFromId(xalianId, G);
-		let isSelectedXalian = selectedId && selectedId === xalian.xalianId;
-		let cellClass = isSelectedXalian ? 'xalian-cell xalian-cell-selected' : 'xalian-cell';
-		let teamColor = G.activeXalianIds.includes(xalianId) ? '#9480eb34' : '#e493933a';
+	buildUnoccupiedCell(moves, index, flagIfPresent, size) {
+		let highlighted = moves && moves.includes(index);
+		let sty = { backgroundColor: highlighted ? '#18d26f3f' : '', border: 0, position: 'relative', width: size, height: size, lineHeight: size, textAlign: 'center' };
+		let grid = duelCalculator.buildGrid();
+		let shouldConnectCellLeft = this.shouldConnectToEmptyCellLeft(grid, index);
+		let shouldConnectCellTop = this.shouldConnectToEmptyCellTop(grid, index);
+		let dotBg = 'radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0.5) 5%, rgba(255,255,255,0.25) 20%, rgba(255,255,255,0) 60%)';
+		return (
+			<div style={sty} onClick={() => this.handleEmptyCellSelection(index)}>
+				<h6 style={{ position: 'absolute', color: '#9e9e9e2c' }} >{index}</h6>
+				<div style={{ background: dotBg, position: 'absolute', width: '50%', maxWidth: '25px', height: '50%', maxHeight: '20px', margin: 'auto', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', opacity: 1, pointerEvents: 'none' }} />
 
-		let attackable = attackableIndices && attackableIndices.includes(index) && (index != selectedIndex) && (!G.currentTurnDetails.hasAttacked);
+				{shouldConnectCellLeft &&
+					<div style={{ backgroundColor: 'white', position: 'absolute', width: '100%', height: '5px', top: '50%', left: '0', transform: 'translate(-50%, -50%)', opacity: 0.1, pointerEvents: 'none' }} />
+				}
+				{shouldConnectCellTop &&
+					<div style={{ backgroundColor: 'white', position: 'absolute', width: '5px', height: '100%', top: '0', left: '50%', transform: 'translate(-50%, -50%)', opacity: 0.1, pointerEvents: 'none' }} />
+				}
+				{flagIfPresent}
+
+			</div>
+		);
+	}
+		
+
+	// buildOccupiedCell = (index, selectedIndex, selectedId, border, attackableIndices, G) => {
+	buildOccupiedCell = (index, selectedIndex, selectedId, flagIfPresent, attackableIndices, size) => {
+		let xalianId = this.props.G.cells[index];
+		let xalian = duelUtil.getXalianFromId(xalianId, this.props.G);
+		let isSelectedXalian = selectedId && selectedId === xalian.xalianId;
+		let teamColor = this.props.G.activeXalianIds.includes(xalianId) ? '#9480eb' : '#e49393';
+
+		let attackable = attackableIndices && attackableIndices.includes(index) && (index != selectedIndex) && (!this.props.G.currentTurnDetails.hasAttacked);
 		var healthBarPercentage = (xalian.stats.health/gameConstants.MAX_HEALTH_POINTS) * 100; 
 		healthBarPercentage = healthBarPercentage < 5 ? 5 : healthBarPercentage;
 		let barColor = healthBarPercentage > 50 ? 'green' : healthBarPercentage > 25 ? 'orange' : 'red'; 
@@ -295,28 +346,33 @@ class DuelBoard extends React.Component {
 		let connectors = this.buildConnectorsForOccupiedCell(index);
 		
 		return (
-			// <div style={{ backgroundColor: bg, border: border !== '' ? border : attackable ? 'solid 2px red' : '' }} className={cellClass} onClick={() => this.handleActivePieceSelection(xalian, index)}>
-			// <div style={{ backgroundColor: bg, border: border, position: 'relative'}} className={cellClass} onClick={() => this.handleActivePieceSelection(xalian, index)}>
-			<div className={cellClass} >
-				<div style={{ position: 'relative', height: '100%',  width: '100%'}} onClick={() => this.handleActivePieceSelection(xalian, index)}>
+				<div style={{ position: 'relative', height: '100%',  width: '100%', width: size, height: size, lineHeight: size, textAlign: 'center'}} onClick={() => this.handleActivePieceSelection(xalian, index)}>
 
 					
-					<XalianImage padding={'0px'} speciesName={xalian.species.name} primaryType={xalian.elements.primaryType} moreClasses="duel-piece-xalian-icon" fillColor={teamColor} />
+					<XalianImage  padding={'0px'} speciesName={xalian.species.name} primaryType={xalian.elements.primaryType} moreClasses="duel-piece-xalian-icon" fill={'black'} filter={`drop-shadow(0px 0px 3px ${teamColor})`}/>
 					
-					<Row style={{zIndex: '9999', position: 'absolute', top: 0, left: 0, marginLeft: 0, marginRight: 0, width: '100%', justifyContent: 'center'}}>
+					{/* MOVE DISTANCE INDICATORS */}
+					<Row style={{zIndex: '9999', position: 'absolute', top: '-55%', left: 0, marginLeft: 0, marginRight: 0, width: '100%', justifyContent: 'center'}}>
 						{moveDistanceIndicators}
 					</Row>
+
+					{/* UNDERGLOW */}
+					<div style={{zIndex: '1', background: `radial-gradient(circle, ${teamColor} 0%, ${teamColor + '00'} 100%)`, position: 'absolute', width: '100%', height: '20%', bottom: '20%', left: '0', opacity: 1, pointerEvents: 'none', filter: `drop-shadow(0px 0px 10px ${teamColor})` }} />
 
 					{connectors}
 
 					{flagIfPresent}
 
 					{attackable && 
-						<AttackIcon style={{ position: 'absolute', top: 0, left: 0, opacity: 0.4, height: '100%', width: '100%' }} />
+						<AttackIcon style={{ fill: 'red', zIndex: '106', position: 'absolute', top: '-40%', left: 0, opacity: 0.4, height: '100%', width: '100%',  pointerEvents: 'none' }} />
 					}
-					<div style={{ width: `${healthBarPercentage}%`, backgroundColor: barColor }} className='duel-health-bar'/>
+
+					{/* HEALTH BAR */}
+					<div style={{ width: `${healthBarPercentage}%`, backgroundColor: barColor,  pointerEvents: 'none' }} className='duel-health-bar'/>
+
+					{/* TYPE SYMBOL */}
+					<XalianTypeSymbolBadge size={20} type={xalian.elements.primaryType.toLowerCase()}  />
 				</div>
-			</div>
 		);
 	}
 
@@ -400,36 +456,6 @@ class DuelBoard extends React.Component {
 		return connect;
 	}
 
-	// buildUnoccupiedCell(moves, index, border) {
-	buildUnoccupiedCell(moves, index, flagIfPresent) {
-		let highlighted = moves && moves.includes(index);
-		let sty = { backgroundColor: highlighted ? '#18d26f7e' : '', border: 0, position: 'relative' };
-		// let sty = { backgroundColor: highlighted ? '#18d26f7e' : '', border: border, position: 'relative' };
-		let cName = highlighted ? 'xalian-cell xalian-cell-highlighted' : 'xalian-cell';
-
-		let grid = duelCalculator.buildGrid();
-		let shouldConnectCellLeft = this.shouldConnectToEmptyCellLeft(grid, index);
-		let shouldConnectCellTop = this.shouldConnectToEmptyCellTop(grid, index);
-		// let dotBg = 'radial-gradient(circle, rgba(128,255,176,1) 0%, rgba(128,255,176,0) 50%)';
-		let dotBg = 'radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0.5) 5%, rgba(255,255,255,0.25) 20%, rgba(255,255,255,0) 60%)';
-		return (
-			<div style={sty} className={cName} onClick={() => this.handleEmptyCellSelection(index)}>
-				<h6 style={{ position: 'absolute', color: '#9e9e9e2c' }} >{index}</h6>
-				<div style={{ background: dotBg, position: 'absolute', width: '50%', maxWidth: '25px', height: '50%', maxHeight: '20px', margin: 'auto', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', opacity: 1, pointerEvents: 'none' }} />
-
-				{shouldConnectCellLeft &&
-					<div style={{ backgroundColor: 'white', position: 'absolute', width: '100%', height: '5px', top: '50%', left: '0', transform: 'translate(-50%, -50%)', opacity: 0.1, pointerEvents: 'none' }} />
-				}
-				{shouldConnectCellTop &&
-					<div style={{ backgroundColor: 'white', position: 'absolute', width: '5px', height: '100%', top: '0', left: '50%', transform: 'translate(-50%, -50%)', opacity: 0.1, pointerEvents: 'none' }} />
-				}
-				{flagIfPresent}
-
-			</div>
-		);
-	}
-
-
 	render() {
 		let selectedId = this.props.G.selectedId;
 		let selectedIndex = duelUtil.getIndexOfXalian(selectedId, this.props.G);
@@ -455,14 +481,16 @@ class DuelBoard extends React.Component {
 				// let border = isPlayerFlagIndex ? 'double 8px #947dfaff' 
 					// : isOpponentFlagIndex ? 'double 8px #ff7a7aff': '';
 
-				let flag = isPlayerFlagIndex ? <DuelFlagIcon style={{ position: 'absolute', top: 0, left: 0, opacity: 0.4, height: '100%', width: '100%', fill: '#947dfaff' }} /> :
-				isOpponentFlagIndex ? <DuelFlagIcon style={{ position: 'absolute', top: 0, left: 0, opacity: 0.4, height: '100%', width: '100%', fill: '#ff7a7aff' }} /> : null;
+				let flag = isPlayerFlagIndex ? <DuelFlagIcon style={{ zIndex: '110', position: 'absolute', top: 0, left: '20%', opacity: 0.75, height: '60%', width: '60%', fill: '#947dfaff' }} /> :
+				isOpponentFlagIndex ? <DuelFlagIcon style={{ zIndex: '110', position: 'absolute', top: 0, left: '20%', opacity: 0.75, height: '60%', width: '60%', fill: '#ff7a7aff' }} /> : null;
 
+				// let size = '75px';
+				let size = this.determineCellSize();
 				if (this.props.G.cells[index]) {
 					// cell = this.buildOccupiedCell(index, selectedIndex, selectedId, border, attackableIndices, this.props.G);
-					cell = this.buildOccupiedCell(index, selectedIndex, selectedId, flag, attackableIndices, this.props.G);
+					cell = this.buildOccupiedCell(index, selectedIndex, selectedId, flag, attackableIndices, size);
 				} else {
-					cell = this.buildUnoccupiedCell(moves, index, flag);
+					cell = this.buildUnoccupiedCell(moves, index, flag, size);
 					// cell = this.buildUnoccupiedCell(moves, index, border);
 				}
 
@@ -518,60 +546,71 @@ class DuelBoard extends React.Component {
 		// let selectedXalianDescription = JSON.stringify(selectedXalian, null, 2);
 
 		return (
-			<div>
-				<div style={{ border: isPlayersTurn ? '0px' : 'solid 4px white' }}>
-					<Row style={{ backgroundColor: '#a8222285' }}>{opponentCols}</Row>
-					<Row style={{ backgroundColor: '#4b0f0f85' }}>{opponentOutCols}</Row>
-				</div>
-				<table id="board">
-					<tbody>{tbody}</tbody>
-				</table>
-				{this.state.winner}
-				<div style={{ border: isPlayersTurn ? 'solid 4px white' : '0px' }}>
-					<Row style={{ backgroundColor: '#3b22a885' }}>{cols}</Row>
-					<Row style={{ backgroundColor: '#170d4185' }}>{outCols}</Row>
-				</div>
-				{selectedXalian &&
-					<Row style={{ width: '50%' }} >
-						<Col>
-							<XalianDuelStatBadge type='attack' val={selectedXalian.stats.attack} />
-						</Col>
-						<Col>
-							<XalianDuelStatBadge type='defense' val={selectedXalian.stats.defense} />
-						</Col>
-						<Col>
-							<XalianDuelStatBadge type='move' val={selectedXalian.stats.distance} />
-						</Col>
-						<Col>
-							<XalianDuelStatBadge type='range' val={selectedXalian.stats.range} />
-						</Col>
-						<Col>
-							<XalianDuelStatBadge type='evasion' val={selectedXalian.stats.evasion} />
-						</Col>
+			<React.Fragment>
+
+				<Container >
+					{this.state.winner}
+					<Row>
+						<div style={{ border: isPlayersTurn ? '0px' : 'solid 4px white', height: '100px' }}>
+							<Row style={{ backgroundColor: '#a8222285' }}>{opponentCols}</Row>
+							<Row style={{ backgroundColor: '#4b0f0f85' }}>{opponentOutCols}</Row>
+						</div>
 					</Row>
-				}
+					</Container>
+					{this.state.contentLoaded && 
+						<Container fluid style={{ paddingTop: '50px' }} >
+							{/* <Row style={{ paddingTop: '50px' }}> */}
+								<table id="board" style={{ width: 'auto', margin: 'auto' }}>
+									<tbody>{tbody}</tbody>
+								</table>
+							{/* </Row> */}
+						</Container>
+					}
+					<Container>
+					<Row>
+						{this.props.G.currentTurnDetails && (this.props.G.currentTurnDetails.hasMoved || this.props.G.currentTurnDetails.hasAttacked) &&
+							<Button variant='xalianGray' onClick={this.endPlayerTurn} style={{ width: '200px', maxWidth: '50vw', margin: 'auto', marginBottom: '10px', marginTop: '10px' }} >End turn</Button>
+						}
+					</Row>
+					<Row>
+						<div style={{ border: isPlayersTurn ? 'solid 4px white' : '0px' }}>
+							<Row style={{ backgroundColor: '#3b22a885', alignItems: 'center' }}>{cols}</Row>
+							<Row style={{ backgroundColor: '#170d4185' }}>{outCols}</Row>
+						</div>
+					</Row>
 
-				<XalianSVGIcon name="figzy" style={{ fill: 'blue' }} />
+					{selectedXalian &&
+						<DuelXalianSuggestionDetails xalian={selectedXalian} />
+					}
+
+				</Container>
 
 
-
-				{/* <Row style={{ height: '100px' }}> */}
-					{/* <Col style={{ height: '100px' }}> */}
-					{/*  */}
-						{/* <div style={{ height: '100px' }}> */}
-							{/* {selectedXalianDescription} */}
-							{/* {selectedXalian &&  */}
-								{/* <React.Fragment> */}
-									{/* <h5>{selectedXalian.species.name}</h5> */}
-									{/* <XalianDuelStatChart xalian={selectedXalian} moreClasses='duel-stat-chart' /> */}
-								{/* </React.Fragment> */}
-							{/* } */}
-						{/* </div> */}
-{/*  */}
-					{/* </Col> */}
-				{/* </Row> */}
-			</div>
+			</React.Fragment>
 		);
+	}
+
+	endPlayerTurn = () => {
+		this.props.moves.endTurn();
+	}
+
+	determineCellSize = () => {
+		if (this.state.size) {
+			let windowSize = this.state.size.min;
+			let initialSize = Math.floor((windowSize) / duelConstants.BOARD_COLUMN_SIZE);
+			// let cellSize = `${Math.floor((windowSize - initialSize) / duelConstants.BOARD_COLUMN_SIZE)}px`;
+			let cellSize = Math.floor((windowSize - initialSize) / duelConstants.BOARD_COLUMN_SIZE);
+			// console.log('CELL SIZE => ' + cellSize);
+			return cellSize + 'px';
+			// return '35px'; 
+		} else {
+			return '50px';
+		}
+		// if (window && window.innerWidth > 0) {
+			// return `${window.innerWidth}px`;
+		// } else {
+			return '50px';
+		// }
 	}
 
 	

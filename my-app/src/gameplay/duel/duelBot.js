@@ -88,7 +88,7 @@ export function getBestBotActionForXalian(G, ctx, id) {
         });
 
         if (comboActions && comboActions.length > 0) {
-            console.log();
+            // console.log();
         }
 
 

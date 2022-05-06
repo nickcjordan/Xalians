@@ -14,13 +14,11 @@ import * as retrievalUtil from '../../utils/retrievalUtil';
 import * as svgUtil from '../../utils/svgUtil';
 import { Client } from 'boardgame.io/react';
 import { Duel } from '../../components/games/duel/duel';
-import DuelBoard  from '../../components/games/duel/duelBoard';
+import DuelBoard  from '../../components/games/duel/board/duelBoard';
 import * as translator from '../../utils/valueTranslator';
 import * as gameConstants from '../../gameplay/duel/duelGameConstants'
 import { Local } from 'boardgame.io/multiplayer';
-import { MCTSBot, RandomBot } from 'boardgame.io/ai';
-import DuelBotInstance from '../../components/games/duel/duelBotInstance';
-// import DuelBot from '../../components/games/duel/duelBot';
+import DuelBotInstance from '../../components/games/duel/bot/duelBotInstance';
 
 class DuelPage extends React.Component {
 	state = {
@@ -142,21 +140,45 @@ class DuelPage extends React.Component {
 
 	render() {
 		
+		let xaliansPerTeam = 4;
+
 		if (this.state.xalians && this.state.xalians.length > 0) {
 			let allPieces = [];
 			let playerPieces = [];
 			let opponentPieces = [];
-			this.state.xalians.forEach( x => {
-				let transformed = this.transformXalianToGamePiece(x); 
+
+			let samples = retrievalUtil.getMockXalianList();
+			shuffleArray(samples);
+
+			while (playerPieces.length < xaliansPerTeam) {
+				let transformed = this.transformXalianToGamePiece(samples.pop()); 
 				allPieces.push(transformed);
 				playerPieces.push(transformed);
-			})
-			let opponentXalians = retrievalUtil.getMockXalianList();
-			opponentXalians.forEach(x => {
-				let transformed = this.transformXalianToGamePiece(x); 
+			}
+
+			while (opponentPieces.length < xaliansPerTeam) {
+				let transformed = this.transformXalianToGamePiece(samples.pop()); 
 				allPieces.push(transformed);
 				opponentPieces.push(transformed);
-			})
+			}
+
+
+
+
+				// IMPLEMENT ONCE YOU SETUP USING XALIANS FROM PLAYER"S FACTION
+			// this.state.xalians.forEach( x => {
+			// 	let transformed = this.transformXalianToGamePiece(x); 
+			// 	allPieces.push(transformed);
+			// 	playerPieces.push(transformed);
+			// })
+			// let opponentXalians = retrievalUtil.getMockXalianList();
+			// opponentXalians.forEach(x => {
+			// 	let transformed = this.transformXalianToGamePiece(x); 
+			// 	allPieces.push(transformed);
+			// 	opponentPieces.push(transformed);
+			// })
+
+
 			const duel = Duel(
 				{
 					user: this.state.user,
@@ -218,6 +240,7 @@ class DuelPage extends React.Component {
 
 				// Set to false to disable the Debug UI.
 				debug: true,
+				// debug: false,
 
 				// An optional Redux store enhancer.
 				// This is useful for augmenting the Redux store
@@ -233,9 +256,9 @@ class DuelPage extends React.Component {
 					<XalianNavbar></XalianNavbar>
 				
 
-					<GameContainer>
+					{/* <GameContainer> */}
 					<DuelClient playerID="0" />
-					</GameContainer>
+					{/* </GameContainer> */}
 					
 					</Container>
 
@@ -260,5 +283,13 @@ class DuelPage extends React.Component {
 	}
 }
 
+function shuffleArray(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
 
 export default DuelPage;

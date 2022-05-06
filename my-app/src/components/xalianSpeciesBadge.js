@@ -26,19 +26,17 @@ class XalianSpeciesBadge extends React.Component {
 	}
 
 	render() {
-		var badgeWidth = this.props.hideSymbol ? 0 : 30;
+		var badgeWidth = this.props.hideSymbol ? 0 : this.props.size || 30;
 		badgeWidth += this.props.hideName ? 0 : 100;
 		let primaryColor = styleUtil.getTypeColor(this.props.type);
+		let expandedClass = this.props.duel ? ' duel-type-badge ' : ' xalian-species-badge ';
 		return (
-			<div className={this.getBgClassFromType(this.props.type) + ' xalian-species-badge vertically-center-contents'} style={{ width: badgeWidth, background: primaryColor, background: `radial-gradient(circle, ${primaryColor} 60%, ${primaryColor + '85'} 100%)` }}>
+			<div className={this.getBgClassFromType(this.props.type) + ' vertically-center-contents ' + this.props.moreClasses + expandedClass} style={{ width: badgeWidth, background: primaryColor, background: `radial-gradient(circle, ${primaryColor} 60%, ${primaryColor + '85'} 100%)` }}>
 				<div id={this.props.id} className={'species-badge-wrapper'}>
 					<Row style={{ margin: '0px', padding: '0px', height: '100%', width: '100%' }}>
 						{!this.props.hideSymbol && (
-							<Col xs={!this.props.hideName ? 4 : true} style={{}} className="species-badge-icon-col">
-								{/* <div> */}
-									{/* {this.state.symbol} */}
-									{ svgUtil.getSpeciesTypeSymbol(this.props.type, false, 30) }
-								{/* </div> */}
+							<Col xs={!this.props.hideName ? 4 : true} className="species-badge-icon-col">
+								{ svgUtil.getSpeciesTypeSymbol(this.props.type, false, 30, 'species-type-symbol') }
 							</Col>
 						)}
 						{!this.props.hideName && (

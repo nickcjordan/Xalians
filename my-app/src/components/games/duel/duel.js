@@ -58,7 +58,8 @@ export const Duel = (data) => {
 				unsetOpponentXalianIds: unsetOpponentXalianIds,
 				selectedId: null,
 				selectedIndex: null,
-				flags: flagStates
+				flags: flagStates,
+				turnHasEnded: false
 			};
 		},
 
@@ -73,6 +74,7 @@ export const Duel = (data) => {
 					actions: [] 
 				};
 				G.currentTurnDetails = null;
+				G.turnHasEnded = false;
 			},
 
 			// Called at the end of a turn.
@@ -80,12 +82,14 @@ export const Duel = (data) => {
 				// console.log('ENDING TURN');
 				G.selectedIndex = null;
 				G.selectedId = null;
+				G.turnHasEnded = true;
 			},
 
 			// Ends the turn if this returns true.
 			endIf: (G, ctx) => {
 				if (ctx.phase === 'play') {
-					// let turnState = duelUtil.currentTurnState(G);
+					if (G.turnHasEnded) { return true; }
+
 					let turnState = G.currentTurnDetails;
 
 					var hasValidActionAvailable = false;
@@ -194,6 +198,7 @@ export const Duel = (data) => {
 				let turnState = duelUtil.currentTurnState(G, ctx);
 				// only building moves if it is the bot's turn and it has a valid action yet to take
 				if (duelUtil.isOpponentsTurn(ctx) 
+					&& !G.turnHasEnded
 					&& (!turnState.hasAttacked 
 						|| !turnState.hasMoved 
 						|| (turnState.hasMoved && turnState.remainingSpacesToMove > 0))) {
@@ -220,8 +225,10 @@ export const Duel = (data) => {
 						// }
 					}
 					
-				} else {
-					// moves.push({ move: 'endTurn', args: [] });
+				} 
+				
+				if (moves.length == 0 && ctx.phase == 'play') {
+					moves.push({ move: 'endTurn', args: [] });
 				}
 
 				
@@ -260,6 +267,13 @@ function selectPiece(G, ctx, id) {
 }
 
 function endTurn(G, ctx) {
+	G.currentTurnDetails = {
+            hasAttacked: true,
+            hasMoved: true,
+            remainingSpacesToMove: 0,
+            moves: [],
+            isComplete: true
+        }
 	ctx.events.endTurn();
 }
 

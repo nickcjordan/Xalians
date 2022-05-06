@@ -163,48 +163,58 @@ export function getFlagIndex(flag, G) {
 }
 
 export function currentTurnState(G, ctx) {
-    var hasAttacked = false;
-    var hasMoved = false;
-    var remainingSpacesToMove = constants.MAX_SPACES_MOVED_PER_TURN;
-    var isComplete = false;
-    let moveMap = new Map();
-    G.currentTurnState.actions.forEach( action => {
-        if (action.type == constants.actionTypes.ATTACK) {
-            hasAttacked = true;
+    if (G.turnHasEnded) {
+        return {
+            hasAttacked: true,
+            hasMoved: true,
+            remainingSpacesToMove: 0,
+            moves: [],
+            isComplete: true
         }
-        
-        if (action.type == constants.actionTypes.MOVE) {
-            hasMoved = true;
-            let spacesMovedInAction = action.move.path.spacesMoved;
-            remainingSpacesToMove -= spacesMovedInAction;
-            var spacesMovedForXalian = 0;
-            if (moveMap[action.move.moverId]) {
-                let entry = moveMap[action.move.moverId];
-                spacesMovedForXalian = entry.value;
+    } else {
+        var hasAttacked = false;
+        var hasMoved = false;
+        var remainingSpacesToMove = constants.MAX_SPACES_MOVED_PER_TURN;
+        var isComplete = false;
+        let moveMap = new Map();
+        G.currentTurnState.actions.forEach(action => {
+            if (action.type == constants.actionTypes.ATTACK) {
+                hasAttacked = true;
             }
-            spacesMovedForXalian += spacesMovedInAction;
-            moveMap[action.move.moverId] = { 
-                key: action.move.moverId,
-                value: spacesMovedForXalian
-            };
+
+            if (action.type == constants.actionTypes.MOVE) {
+                hasMoved = true;
+                let spacesMovedInAction = action.move.path.spacesMoved;
+                remainingSpacesToMove -= spacesMovedInAction;
+                var spacesMovedForXalian = 0;
+                if (moveMap[action.move.moverId]) {
+                    let entry = moveMap[action.move.moverId];
+                    spacesMovedForXalian = entry.value;
+                }
+                spacesMovedForXalian += spacesMovedInAction;
+                moveMap[action.move.moverId] = {
+                    key: action.move.moverId,
+                    value: spacesMovedForXalian
+                };
+            }
+        });
+
+        isComplete = (remainingSpacesToMove == 0 && hasAttacked);
+
+
+        var moves = [];
+        Object.values(moveMap).forEach((entry) => {
+            moves.push({ moverId: entry.key, spacesMoved: entry.value });
+        });
+
+
+        return {
+            hasAttacked: hasAttacked,
+            hasMoved: hasMoved,
+            remainingSpacesToMove: remainingSpacesToMove,
+            moves: moves,
+            isComplete: isComplete
         }
-    });
-
-    isComplete = (remainingSpacesToMove == 0 && hasAttacked);
-
-
-    var moves = [];
-    Object.values(moveMap).forEach((entry) => {
-        moves.push({ moverId: entry.key, spacesMoved: entry.value });
-    });
-
-
-    return {
-        hasAttacked: hasAttacked,
-        hasMoved: hasMoved,
-        remainingSpacesToMove: remainingSpacesToMove,
-        moves: moves,
-        isComplete: isComplete
     }
 }
 

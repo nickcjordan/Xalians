@@ -1,10 +1,10 @@
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
-import { ReactComponent as AttackIcon } from '../../../svg/games/duel/duel_attack_icon.svg';
-import { ReactComponent as DefenseIcon } from '../../../svg/games/duel/duel_defense_icon.svg';
-import { ReactComponent as MoveIcon } from '../../../svg/games/duel/duel_move_icon.svg';
-import { ReactComponent as RangeIcon } from '../../../svg/games/duel/duel_range_icon.svg';
-import { ReactComponent as EvasionIcon } from '../../../svg/games/duel/duel_evasion_icon.svg';
+import { ReactComponent as AttackIcon } from '../../../../svg/games/duel/duel_attack_icon.svg';
+import { ReactComponent as DefenseIcon } from '../../../../svg/games/duel/duel_defense_icon.svg';
+import { ReactComponent as MoveIcon } from '../../../../svg/games/duel/duel_move_icon.svg';
+import { ReactComponent as RangeIcon } from '../../../../svg/games/duel/duel_range_icon.svg';
+import { ReactComponent as EvasionIcon } from '../../../../svg/games/duel/duel_evasion_icon.svg';
 
 class XalianDuelStatBadge extends React.Component {
 
@@ -24,12 +24,15 @@ class XalianDuelStatBadge extends React.Component {
 
 		let badge = badgeMap[this.props.type];
 
+		let type = this.props.type;
+
 		return (
 			<div className='duel-badge-wrapper' style={{ maxWidth: size, height: size, borderRadius: `${size/2}px` }}>
-
+				
                 {badge}
                 <h5 className='duel-badge-text' style={{ textAlign: 'center', alignItems: 'center', margin: 'auto', position: 'relative', width: '100%' }} >{this.props.val}</h5>
 				
+                <h6 className='duel-badge-text-name' style={{ textAlign: 'center', alignItems: 'center', margin: 'auto', position: 'absolute', bottom: '0', left: '50%', transform: 'translate(-50%, 100%)' }} >{type.toUpperCase()}</h6>
 			</div>
 		);
 	}

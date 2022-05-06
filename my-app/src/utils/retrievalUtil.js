@@ -1,8 +1,9 @@
 import { Auth } from 'aws-amplify';
 import * as authUtil from './authUtil';
 import * as dbApi from '../utils/dbApi';
-import mockUserData from '../json/mock/mockUserData.json'
-import mockXalianList from '../json/mock/mockXalianList.json'
+import mockUserData from '../json/mock/mockUserData.json';
+import mockXalianList from '../json/mock/mockXalianList.json';
+import xalianSamples from '../json/mock/xalianSamples.json';
 
 export function getCurrentUserAndXalians() {
     return new Promise((resolve) => {
@@ -37,5 +38,12 @@ export function getMockCurrentUserAndXalians() {
 }
 
 export function getMockXalianList() {
-    return mockXalianList;
+    // let selected = [];
+    // selected.push(xalianSamples[(parseInt(Math.round(xalianSamples.length * Math.random())))]);
+    // selected.push(xalianSamples[(parseInt(Math.round(xalianSamples.length * Math.random())))]);
+    // selected.push(xalianSamples[(parseInt(Math.round(xalianSamples.length * Math.random())))]);
+    // selected.push(xalianSamples[(parseInt(Math.round(xalianSamples.length * Math.random())))]);
+    // return selected;
+    return xalianSamples;
+    // return mockXalianList;
 }

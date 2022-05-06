@@ -1,3 +1,4 @@
+const species = require('./lambda/src/json/species.json');
 const axios = require("axios");
 const ai = require("./lambda/src/ai.js");
 const fs = require("fs");
@@ -7,6 +8,8 @@ const attackCalculator = require("./lambda/src/gameplay/attackCalculator.js");
 const csv = require("csv-parser");
 const tools = require("./lambda/src/tools.js");
 const readline = require('readline');
+
+
 
 // module.exports = {
 //     main: main
@@ -27,7 +30,34 @@ const readline = require('readline');
 // cleanupDesignerAnimalReferences();
 
 // fixElementEffectiveness();
-fixTypes();
+// fixTypes();
+
+
+// print all the xalians
+printAllTheXalians();
+
+function printAllTheXalians() {
+  let ids = [];
+  let xalians = [];
+  species.forEach(s => {
+
+    if (ids.includes(s.name)) {
+      console.log("DUPLICATE");
+    }
+
+    let x = xalianBuilder.buildXalian(s);
+    let translated = translator.translateCharacterToPresentableType(x);
+    xalians.push(translated);
+
+  });
+  console.log("complete");
+  // console.log(JSON.stringify(xalians, null, 2));
+  fs.writeFileSync("lambda/src/json/mock/xalianSamples.json", JSON.stringify(xalians, null, 2))
+
+
+
+}
+
 
 function fixElementEffectiveness() {
     // let elements = JSON.parse(fs.readFileSync("lambda/src/json/designer/animalSizes.json", "utf8").toString());

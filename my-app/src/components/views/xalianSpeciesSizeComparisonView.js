@@ -8,7 +8,7 @@ import species from '../../json/species.json';
 import XalianImage from '../../components/xalianImage';
 import * as translater from '../../utils/valueTranslator';
 import fitty from 'fitty';
-import * as constants from '../../constants/constants';
+import * as constants from '../../constants/colorConstants';
 import * as styleUtil from '../../utils/styleUtil';
 
 class XalianSpeciesSizeComparisonView extends React.Component {

@@ -10,10 +10,14 @@ module.exports = {
 };
 
 
-function buildXalian() {
+function buildXalian(selectedSpecies = null) {
     let x = new Xalian();
     x.createTimestamp = Date.now();
-    x.species = ai.selectSpecies(x);
+    if (selectedSpecies) {
+        x.species = selectedSpecies;
+    } else {
+        x.species = ai.selectSpecies(x);
+    }
     x.xalianId = generateXalianId(x.species.id);
     x.speciesId = x.species.id;
     x.elements = ai.selectElements(x);
