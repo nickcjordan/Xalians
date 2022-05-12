@@ -49,6 +49,8 @@ export function getBestBotActionForXalianIds(G, ctx, ids) {
             `CHOSEN: ${xalian.species.name} ${selectedAction.type} {${selectedAction.score}} :: ${selectedAction.path.startIndex} -> ${selectedAction.path.endIndex}  [${JSON.stringify(path ? path.path : {})}]`
             );
             return selectedMove;
+    } else {
+        console.error(`NO ACTIONS BUILT FOR ANY BOT :: ${JSON.stringify(ids)}`);
     }
 }
 
@@ -173,23 +175,48 @@ function buildBotMove(action, data = {}) {
 //   }
 
 // function buildBotObjectives(G, ctx) {
-// export function buildBotObjectives(initialG, initialCtx) {
-// 	if (!initialG.activeXalianIds) {
-// 		return [];
-// 	}
-// 	let initialHealth = duelUtil.getPlayerHealth(initialG);
-// 	let objectives = [];
-// 	let obj = {
-// 		checker: (G, ctx) => {
-// 			let resultHealth = duelUtil.getPlayerHealth(G);
-// 			let better = resultHealth < initialHealth;
-// 			if (better) {
-// 				console.log('ayyy');
-// 			}
-// 			return better;
-// 		},
-// 		weight: 10,
-// 	};
-// 	objectives.push(obj);
-// 	return objectives;
-// }
+export function buildBotObjectives() {
+	// if (!G.activeXalianIds) {
+	// 	return [];
+	// }
+	// let initialHealth = duelUtil.getPlayerHealth(G);
+	// let objectives = [];
+	// let obj = {
+	// 	checker: (G, ctx) => {
+	// 		let resultHealth = duelUtil.getPlayerHealth(G);
+	// 		let better = resultHealth < initialHealth;
+	// 		if (better) {
+	// 			console.log('ayyy');
+	// 		}
+	// 		return better;
+	// 	},
+	// 	weight: 10,
+	// };
+	// objectives.push(obj);
+	// return objectives;
+
+    return (G, ctx) => ({
+        'flag-captured': {
+            checker: (G, ctx) => {
+                // console.log("BOT :: checking for flag captured");
+                return duelUtil.getOpponentStartingIndices(G).includes(duelUtil.getOpponentFlagIndex(G));
+            },
+            weight: 100,
+        },
+        'flag-held': {
+            checker: (G, ctx) => {
+              let flag = duelUtil.getOpponentFlagState(G);
+              return flag.holder ? true : false;
+            },
+            weight: 50,
+        },
+        'opponents-eliminated': {
+            checker: (G, ctx) => {
+              return G.activeXalianIds.length == 0 && G.unsetXalianIds.length == 0;
+            },
+            weight: 100,
+        }
+      })
+}
+
+

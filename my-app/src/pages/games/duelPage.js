@@ -140,7 +140,7 @@ class DuelPage extends React.Component {
 
 	render() {
 		
-		let xaliansPerTeam = 4;
+		let xaliansPerTeam = 2;
 
 		if (this.state.xalians && this.state.xalians.length > 0) {
 			let allPieces = [];
@@ -150,16 +150,22 @@ class DuelPage extends React.Component {
 			let samples = retrievalUtil.getMockXalianList();
 			shuffleArray(samples);
 
-			while (playerPieces.length < xaliansPerTeam) {
-				let transformed = this.transformXalianToGamePiece(samples.pop()); 
-				allPieces.push(transformed);
-				playerPieces.push(transformed);
+			while (playerPieces.length < xaliansPerTeam && samples.length > 0) {
+				let sample = samples.pop();
+				if (sample) {
+					let transformed = this.transformXalianToGamePiece(sample); 
+					allPieces.push(transformed);
+					playerPieces.push(transformed);
+				}
 			}
 
-			while (opponentPieces.length < xaliansPerTeam) {
-				let transformed = this.transformXalianToGamePiece(samples.pop()); 
-				allPieces.push(transformed);
-				opponentPieces.push(transformed);
+			while (opponentPieces.length < xaliansPerTeam && samples.length > 0) {
+				let sample = samples.pop();
+				if (sample) {
+					let transformed = this.transformXalianToGamePiece(sample); 
+					allPieces.push(transformed);
+					opponentPieces.push(transformed);
+				}
 			}
 
 
@@ -252,8 +258,8 @@ class DuelPage extends React.Component {
 			
 			return (
 				<React.Fragment>
-					<Container fluid className="content-background-container">
-					<XalianNavbar></XalianNavbar>
+					<Container fluid className="content-background-container" style={{ background: '#1f1f1fff'}}>
+					{/* <XalianNavbar></XalianNavbar> */}
 				
 
 					{/* <GameContainer> */}

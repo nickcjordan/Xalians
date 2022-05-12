@@ -12,6 +12,7 @@ export const BOT_ACTION_SCORE_FOR_ATTACKING_ENEMY_GUARDING_FLAG = 400;
 
 
 function buildAction(type, score, path) {
+    path.isSelectedBotAction = false;
     return {
         type: type,
         score: score,
@@ -63,7 +64,8 @@ function buildAttackAction(attacker, path, G, ctx) {
     action.description += `:: ENEMY FLAG DISTANCE : +${flagClosenessFactor}`;
 
     // SCORE :: ESTIMATED DAMAGE TO DEFENDER
-    let estimatedDamage = duelCalculator.calculateAttackResult(attacker, defender, G, ctx, true);
+    let attackResult = duelCalculator.calculateAttackResult(attacker, defender, G, ctx, true);
+    let estimatedDamage = attackResult.damage;
     score += estimatedDamage;
     action.description += `:: ESTIMATED DAMAGE : +${estimatedDamage}`;
 
@@ -155,10 +157,13 @@ function scorePathsMovingTowardsGoal(currentIndex, moveActions, G, ctx) {
         let yRowFactor = (duelConstants.BOARD_COLUMN_SIZE * 2) - yRowDifference;
         action.description += `:: Y ROW DISTANCE FACTOR : +${yRowFactor}`;
         action.score += yRowFactor;
-        action.score += BOT_ACTION_SCORE_FOR_HAVING_FLAG_AND_MOVING_TOWARDS_GOAL;
 
+        action.description += `:: BONUS POINTS FOR MOVING TOWARDS GOAL WITH FLAG : +${BOT_ACTION_SCORE_FOR_HAVING_FLAG_AND_MOVING_TOWARDS_GOAL}`;
+        action.score += BOT_ACTION_SCORE_FOR_HAVING_FLAG_AND_MOVING_TOWARDS_GOAL;
+        
         // SCORE :: WIN THE GAME
         if (endCoord[1] == 0) {
+            action.description += `:: BONUS POINTS FOR MOVING INTO GOAL WITH FLAG : +${BOT_ACTION_SCORE_FOR_HAVING_FLAG_AND_MOVING_INTO_GOAL}`;
             action.score += BOT_ACTION_SCORE_FOR_HAVING_FLAG_AND_MOVING_INTO_GOAL;
         }
     })

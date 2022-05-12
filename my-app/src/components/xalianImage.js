@@ -23,7 +23,7 @@ class XalianImage extends React.Component {
 		return <XalianSVG 
 			name={this.props.speciesName.toLowerCase()} className={'xalian-image'} 
 			style={{ 
-				padding: this.props.padding || '5px', 
+				padding: this.props.padding || '2%', 
 				fill: this.props.fill || 'black',
 				stroke: this.props.stroke || '0',
 				strokeWidth: this.props.strokeWidth,

@@ -1,6 +1,7 @@
 import React from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Col';
 import XalianDuelStatBadge from './xalianDuelStatBadge';
 import XalianTypeEffectivenessSummary from './xalianTypeEffectivenessSummary';
 import XalianImage from '../../../xalianImage';
@@ -39,9 +40,9 @@ class DuelXalianSuggestionDetails extends React.Component {
 
         
 		return (
-						<div className="duel-selection-details-box">
-							<div className="splash-xalian-stat-row-view centered-view">
-								<Row style={{ width: '100%' }}>
+						<Container className="duel-selection-details-box">
+							<Row className="splash-xalian-stat-row-view centered-view">
+								{/* <Row style={{ width: '100%' }}> */}
 									<Col className="vertically-center-contents" xs={6}>
 										<XalianInfoBox hideId species={xalian.species} type={xalian.elements.primaryType} />
 									</Col>
@@ -68,10 +69,10 @@ class DuelXalianSuggestionDetails extends React.Component {
 									<Col className="" xs={12} style={{ display: 'flex', marginTop: '50px', borderRadius: '5px', border: 'solid 1px darkgray', padding: '10px' }}>
 										<XalianTypeEffectivenessSummary type={xalian.elements.primaryType} />
 									</Col>
-								</Row>
-							</div>
+								{/* </Row> */}
+							</Row>
 
-						</div>
+						</Container>
 
 
 

@@ -42,12 +42,15 @@ import XalianImage from '../components/xalianImage';
 import XalianDuelStatBadge from '../components/games/duel/board/xalianDuelStatBadge';
 import XalianTypeEffectivenessSummary from '../components/games/duel/board/xalianTypeEffectivenessSummary';
 
-
+import AttackActionModal from './../components/games/duel/attackActionModal';
 
 gsap.registerPlugin(MotionPathPlugin);
 gsap.registerPlugin(ScrollTrigger, MorphSVGPlugin, DrawSVGPlugin);
 
 class Sandboxthree extends React.Component {
+
+
+	state = {show : true}
 
 	componentDidMount() {
 		// document.addEventListener('DOMContentLoaded', function () {
@@ -72,58 +75,29 @@ class Sandboxthree extends React.Component {
 			}
 		}
 
+		let attackData = {
+			attackerIndex: 24,
+			attackerId: '1234',
+			attackerType: 'Water',
+			defenderIndex: 25,
+			defenderId: '4321',
+			defenderType: 'Electric'
+		  };
+
 
 
 
 
 		return (
 			<React.Fragment>
-				{/* <Button onClick={morph}>morph</Button> */}
 				<GameContainer>
-					<div style={{ backgroundColor: '#333333', height: '100%', width: '100%', display: 'flex' }}>
-						
-						
-						
-						
-						<div className="duel-selection-details-box">
-							<div className="splash-xalian-stat-row-view centered-view">
-								<Row style={{ width: '100%' }}>
-									<Col className="vertically-center-contents" xs={6}>
-										<XalianInfoBox hideId species={xalian.species} />
-									</Col>
-									<Col className="vertically-center-contents xalian-image-wrapper" xs={6}>
-										<XalianImage bordered colored shadowed speciesName={xalian.species.name} primaryType={xalian.species.type} moreClasses="xalian-image-in-row xalian-image splash-xalian-image" />
-									</Col>
-									<Col className="vertically-center-contents" xs={12}>
-											<Col>
-												<XalianDuelStatBadge type='attack' val={xalian.stats.attack} />
-											</Col>
-											<Col>
-												<XalianDuelStatBadge type='defense' val={xalian.stats.defense} />
-											</Col>
-											<Col>
-												<XalianDuelStatBadge type='move' val={xalian.stats.distance} />
-											</Col>
-											<Col>
-												<XalianDuelStatBadge type='range' val={xalian.stats.range} />
-											</Col>
-											<Col>
-												<XalianDuelStatBadge type='evasion' val={xalian.stats.evasion} />
-											</Col>
-									</Col>
-									<Col className="" xs={12} style={{ display: 'flex', marginTop: '50px', borderRadius: '5px', border: 'solid 1px darkgray', padding: '10px' }}>
-										<XalianTypeEffectivenessSummary type={xalian.species.type} />
-									</Col>
-								</Row>
-							</div>
+					
+				<AttackActionModal 
+						show={this.state.show}
+						onHide={() => {this.setState({show: false})}}
+						attackData={attackData}
+					/>
 
-						</div>
-
-
-
-
-
-					</div>
 				</GameContainer>
 			</React.Fragment>
 		);

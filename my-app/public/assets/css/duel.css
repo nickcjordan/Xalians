@@ -20,13 +20,24 @@
   
 
 
-.duel-health-bar {
+.duel-health-bar-wrapper {
     position: absolute;
-    top: -60%;
-    left: 0;
-    height: 8px;
-    background-color: green;
+    top: -50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 2px;
     z-index: 105;
+    pointer-events: none;
+    width: 90%;
+}
+
+.duel-health-bar {
+  /* position: absolute; */
+  /* top: -70%; */
+  /* left: 0; */
+  height: 100%;
+  background-color: green;
+  pointer-events: none;
 }
 
 .duel-piece-xalian-icon {
@@ -88,8 +99,11 @@
 }
 
 .duel-xalian-unselected {
-    width: 100% !important;
-    max-width: 75px !important;
+    /* width: 100% !important; */
+    width: auto;
+    /* max-width: 75px !important; */
+    height: 8vh;
+    max-height: 75px;
     /* margin-top: 20px; */
     margin: auto;
     /* margin-left: 0px; */
@@ -99,14 +113,35 @@
 
  .duel-type-badge {
     position: absolute;
-    bottom: 0;
-    right: 0;
-    border-radius: 10px;
+    bottom: 20%;
+    right: 5%;
+    z-index: 105;
+    border-radius: 50%;
     border-color: black;
     border-width: 1px;
     border-style: solid;
     text-align: center;
-    z-index: 105;
+}
+
+.type-badge {
+  border-radius: 50%;
+  border-color: black;
+  border-width: 1px;
+  border-style: solid;
+  text-align: center;
+  margin: auto;
+}
+
+.duel-type-attack-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-radius: 50%;
+  border-color: black;
+  border-width: 1px;
+  border-style: solid;
+  text-align: center;
+  z-index: 105;
 }
 
 .duel-type-badge-symbol {
@@ -120,4 +155,99 @@
   filter: drop-shadow(5px 5px 5px #000000);
   margin: auto;
   padding-bottom: 50px;
+}
+
+.duel-xalian-bench {
+  height: 10%;
+  max-height: 75px;
+}
+
+.duel-board-wrapper {
+  width: fit-content;
+  margin: auto;
+  padding: min(5%, 25px);
+  /* padding-top: 5%; */
+  margin-top: min(5%, 25px);
+  /* padding-bottom: 5%; */
+  margin-bottom: min(5%, 25px);
+  border-radius: 10%;
+  background-color: rgb(0, 0, 0);
+  position: relative;
+  box-shadow: 2px 2px 10px #000000;
+  border: solid 2px black;
+}
+
+.duel-board-wrapper-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* background: url("../img/background/dirt_texture.jpg") top center ; */
+  background: url("https://1.bp.blogspot.com/-Yov9qYnqB00/TtEOBrEEWbI/AAAAAAAAAGU/2b35kl0CmiI/s1600/Seamless+ground+rock.jpg") top center ;
+  background-size: 20%;
+  background-repeat: repeat;
+  height: 100%;
+  width: 100%;
+  border-radius: 10%;
+}
+
+.duel-board-wrapper-background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* background-color: #000; */
+  background: rgb(0,0,0);
+  background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%);
+  /* opacity: 0.75; */
+  height: 100%;
+  width: 100%;
+  border-radius: 10%;
+}
+
+/* CELLS */
+.duel-board-cell-connector {
+  background-color: black;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  opacity: 0.1;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.duel-board-cell-dot {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  z-index: 101;
+}
+
+.duel-attack-cell-icon {
+  fill: rgba(255, 0, 0, 0.507);
+  z-index: 106;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  opacity: 1;
+  /* stroke: white; */
+  /* stroke-width: 4px; */
+  height: 60%;
+  width: 60%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0px 0px px #000000);
+  padding: 5%;
+  background-color: #000;
+  border-radius: 50%;
+}
+
+.duel-xalian-cell-badge-row {
+  width: 100%;
+  margin: auto !important;
+  position: absolute;
+  bottom: 0;
+  left: 0;
 }

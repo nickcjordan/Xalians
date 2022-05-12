@@ -262,8 +262,7 @@ export function calculateAttackablePaths(currentIndex, xalian, G, ctx) {
     return attackablePaths;
 }
 
-// export function calculateAttackResult(move, attacker, defender, matchState) => {
-export function calculateAttackResult(attacker, defender, G, ctx, simulate = false) {
+export function calculateAttackResult(attacker, defender, G, ctx, simulate = false, secondary = false) {
     let base = calculateBaseValue(attacker, defender);
     let targets = calculateMultipleTargetsValue(attacker);
     let weather = calculatePlanetEffectValue(attacker, G);
@@ -272,15 +271,23 @@ export function calculateAttackResult(attacker, defender, G, ctx, simulate = fal
     let random = simulate ? 1 : calculateRandom();
     // let sameTypeBonus = calculateSameTypeAttackBonus(move, attacker);
     let sameTypeBonus = 1;
-    let typeEffectiveness = calculateTypeEffectiveness(attacker, defender);
+    let typeEffectiveness = calculateTypeEffectiveness(attacker, defender, secondary);
     let hinderingStatus = calculateHindranceEffect(attacker);
     let other = calculateRemainingFactors(attacker, defender, G, ctx);
     let result = base * targets * weather * badge * critical * random * sameTypeBonus * typeEffectiveness * hinderingStatus * other;
     let final = Math.floor(result * 10)/10;
     // console.log(`base=${base}, random=${random}, sameTypeBonus=${sameTypeBonus}, final=${final}`);
     
+
+    // BUILD SUMMARY OBJECT
+
     // return defender.stats.health;
-    return final * 2;
+    let damage = final * 2;
+
+    return {
+        damage: damage,
+        typeEffectiveness: typeEffectiveness
+    }
 }
 
 function calculateBaseValue(attacker, defender) {
@@ -383,7 +390,7 @@ function calculateRandom() {
 //     return multiplier;
 // }
 
-function calculateTypeEffectiveness(attacker, defender) {
+function calculateTypeEffectiveness(attacker, defender, secondary = true) {
     // This can be 0 (ineffective); 0.25, 0.5 (not very effective); 1 (normally effective); 2, or 4 (super effective)
     
     /*
@@ -429,6 +436,7 @@ function calculateTypeEffectiveness(attacker, defender) {
 
     let final = sum / 10;
 
+
     // let attackerPrimary = attacker.elements.primaryType && attacker.elements.primaryType.name ? attacker.elements.primaryType.name.toLowerCase() : attacker.elements.primaryType.toLowerCase();
     // let attackerSecondary = attacker.elements.secondaryType && attacker.elements.secondaryType.name ? attacker.elements.secondaryType.name.toLowerCase() : attacker.elements.secondaryType.toLowerCase();
    
@@ -440,7 +448,12 @@ function calculateTypeEffectiveness(attacker, defender) {
 
     // console.log(`type effectiveness = ${final}`);
 
-    return final;
+    if (secondary) {
+        return final;
+    } else {
+        return effectivenessOfAttackerPrimaryOnDefenderPrimary;
+    }
+    // return final;
 }
 
 function calculateHindranceEffect(attacker) {

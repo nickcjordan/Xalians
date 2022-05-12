@@ -9,14 +9,6 @@ import XalianNavbar from '../components/navbar';
 import ThemedSceneDiv from '../components/views/themedSceneDiv';
 // import { Reveal, Tween, ScrollTrigger, Controls, Timeline, PlayState } from 'react-gsap';
 import * as animations from '../components/animations/fadeAnimation';
-import { gsap } from 'gsap';
-import fitty from 'fitty';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
-import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
-import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
-import { TextPlugin } from 'gsap/TextPlugin';
-import { EasePack } from 'gsap/EasePack';
 import GSDevTools from 'gsap/GSDevTools';
 import SplashGalaxyBackground from '../components/views/splashGalaxyBackground';
 // import XaliansLogoAnimatedSVG from '../svg/logo/xaliansLogoAnimatedSVG';
@@ -38,12 +30,21 @@ import XalianSpeciesRowView from '../components/views/xalianSpeciesRowView';
 import XalianStatRatingChart from '../components/xalianStatRatingChart';
 import XalianInfoBox from '../components/xalianInfoBox';
 // import spaceshipComputerScreenTitlePanel from '../svg/animations/spaceship_computer_screen_title_panel.svg';
-import { ExpoScaleEase } from 'gsap/EasePack';
 import GeneratorAnimation from '../components/animations/generatorAnimation';
 import textFit from '../utils/textFit';
 import ComputerScreenContent from '../components/animations/computerScreenContent';
-import MorphSVGPlugin from 'gsap/MorphSVGPlugin';
 import XaliansLogoDnaAnimated from '../components/animations/xaliansLogoDnaAnimated.js'
+import fitty from 'fitty';
+
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
+import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
+import { TextPlugin } from 'gsap/TextPlugin';
+import { EasePack } from 'gsap/EasePack';
+import { ExpoScaleEase } from 'gsap/EasePack';
+import MorphSVGPlugin from 'gsap/MorphSVGPlugin';
 
 gsap.registerPlugin(ScrollTrigger, TextPlugin, EasePack, ScrollToPlugin, DrawSVGPlugin, ScrambleTextPlugin, GSDevTools, ExpoScaleEase, MorphSVGPlugin);
 // GSDevTools.create();

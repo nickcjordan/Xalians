@@ -1,12 +1,22 @@
 import { INVALID_MOVE } from 'boardgame.io/core';
+import { ActivePlayers } from 'boardgame.io/core';
 import * as gameConstants from '../../../gameplay/duel/duelGameConstants';
 import * as duelUtil from '../../../utils/duelUtil';
 import * as duelCalculator from '../../../gameplay/duel/duelCalculator';
 import * as duelBot from '../../../gameplay/duel/duelBot';
-import * as duelConstants from '../../../gameplay/duel/duelGameConstants'
+import * as duelConstants from '../../../gameplay/duel/duelGameConstants';
+import * as plugins from '../../../gameplay/duel/plugins';
+
+
+import { Hub } from "aws-amplify";
 
 export const Duel = (data) => {
 	return {
+
+		name: 'xalians-duel',
+
+		plugins: [plugins.actionPlugin],
+
 		setup: (ctx, setupData) => {
 			let unsetXalianIds = [];
 			data.playerXalians.forEach((x) => {
@@ -75,6 +85,8 @@ export const Duel = (data) => {
 				};
 				G.currentTurnDetails = null;
 				G.turnHasEnded = false;
+				// G.readyAnimations = null;
+				
 			},
 
 			// Called at the end of a turn.
@@ -83,6 +95,11 @@ export const Duel = (data) => {
 				G.selectedIndex = null;
 				G.selectedId = null;
 				G.turnHasEnded = true;
+				if (ctx.phase === 'play' && G.currentTurnState.actions && G.currentTurnState.actions.length > 0) {
+					let actions = G.currentTurnState.actions;
+					console.log('GET READY FOR ACTION!! \n' + JSON.stringify(actions, null, 2));
+					G.readyAnimations = actions;
+				}
 			},
 
 			// Ends the turn if this returns true.
@@ -90,8 +107,7 @@ export const Duel = (data) => {
 				if (ctx.phase === 'play') {
 					if (G.turnHasEnded) { return true; }
 
-					let turnState = G.currentTurnDetails;
-
+					
 					var hasValidActionAvailable = false;
 					if (duelUtil.isPlayersTurn(ctx)) {
 						G.activeXalianIds.forEach( id => {
@@ -106,14 +122,17 @@ export const Duel = (data) => {
 							}
 						})
 					}
-
+					
 					// var cantMove = (turnState.hasMoved && turnState.remainingSpacesToMove == 0);
 					
 					// var canAttack = 0;
 					
 					// let cantAttack = turnState.hasAttacked || canAttack == 0;
 					// return cantMove && cantAttack;
-					return turnState.isComplete || !hasValidActionAvailable;
+
+
+					let turnState = G.currentTurnDetails;
+					return (turnState && turnState.isComplete) || !hasValidActionAvailable;
 				}
 			},
 
@@ -123,6 +142,7 @@ export const Duel = (data) => {
 				if (ctx.phase === 'play') {
 					let turnState = duelUtil.currentTurnState(G, ctx);
 					G.currentTurnDetails = turnState;
+					// ctx.events.setStage('EFFECT');
 				}
 			},
 
@@ -134,7 +154,18 @@ export const Duel = (data) => {
 
 			// Calls setActivePlayers with this as argument at the
 			// beginning of the turn.
-			// activePlayers: { ... },
+			// activePlayers: ActivePlayers.ALL,
+
+			// stages: {
+			// 	ACTION: { 
+			// 		maxMoves: 1,
+			// 		next: 'EFFECT'
+			// 	},
+			// 	EFFECT: { 
+			// 		moves: {},
+			// 		next: 'ACTION'
+			// 	}
+			// }
 		},
 
 		phases: {
@@ -189,6 +220,13 @@ export const Duel = (data) => {
 			} else if (totalOpponentHealth == 0) {
 				return { winner: 0 };
 			} 
+
+
+			if (G.activeXalianIds.length == 0 && G.unsetXalianIds.length == 0) {
+				return { winner: 1 };
+			} else if (G.activeOpponentXalianIds.length == 0 && G.unsetOpponentXalianIds.length == 0) {
+				return { winner: 0 };
+			} 
 		},
 
 		ai: {
@@ -214,7 +252,9 @@ export const Duel = (data) => {
 					
 					else if (ctx.phase === 'play') {
 						let best = duelBot.getBestBotActionForXalianIds(G, ctx, G.activeOpponentXalianIds);
-						moves.push(best);
+						if (best) {
+							moves.push(best);
+						}
 
 						// G.activeOpponentXalianIds.forEach( id => {
 							// moves = moves.concat(possible);
@@ -225,35 +265,24 @@ export const Duel = (data) => {
 						// }
 					}
 					
+					if (moves.length == 0 && ctx.phase === 'play') {
+						moves.push({ move: 'endTurn', args: [] });
+					}
 				} 
 				
-				if (moves.length == 0 && ctx.phase == 'play') {
-					moves.push({ move: 'endTurn', args: [] });
-				}
 
 				
 				return moves;
 			},
-			// objectives: buildBotObjectives
-			objectives: () => ({
-				'flag-captured': {
-				  checker: (G) => {
-					//   console.log("doing check");
-					  return duelUtil.getOpponentStartingIndices(G).includes(duelUtil.getOpponentFlagIndex(G));
-					},
-				  weight: 100,
-				},
-			  }),
+			objectives: duelBot.buildBotObjectives(),
+			// iterationCallback: (data) => {
+				// console.log("itty");
+			// },
 			  playoutDepth: 500,
-			  iterations: 500
+			  iterations: 100
 		},
 	};
 };
-
-
-// BOT
-
-
 
 
 
@@ -291,7 +320,12 @@ function setPiece(G, ctx, index, selectedXalianId) {
 	} else if (duelUtil.isOpponentsTurn(ctx) && G.unsetOpponentXalianIds) {
 		moveXalianToActive(selectedXalianId, G.unsetOpponentXalianIds, G.activeOpponentXalianIds, ctx, true);
 	}
-	ctx.events.endTurn();
+
+	if (G.unsetXalianIds.length == 0 && G.unsetOpponentXalianIds.length == 0) {
+		ctx.events.endPhase();
+	} else {
+		ctx.events.endTurn();
+	}
 }
 
 function moveXalianToActive(id, unset, active, ctx, endTurnAfterMove = false) {
@@ -303,7 +337,6 @@ function moveXalianToActive(id, unset, active, ctx, endTurnAfterMove = false) {
 		}
 	}
 }
-
 
 // GAMEPLAY
 function movePieceThenAttack(G, ctx, movePath, attackPath, data = {}) {
@@ -341,26 +374,32 @@ function movePiece(G, ctx, path, data = {}) {
 	};
 	G.currentTurnState.actions.push(action);
 
+	if (path.isSelectedBotAction) {
+		console.log();
+	}
+
 }
 
 
-function doAttack(G, ctx, path, data = {}) {
+function doAttack(G, ctx, path, data = {}, isSelectedBotAction = false) {
 	let attackerIndex = path.startIndex;
 	let defenderIndex = path.endIndex;
 	let attackerId = G.cells[attackerIndex];
 	let attacker = G.xalians.filter((x) => x.xalianId === attackerId)[0];
 	let defenderId = G.cells[defenderIndex];
 	let defender = G.xalians.filter((x) => x.xalianId === defenderId)[0];
-	// console.log('xalian ' + attacker.species.name + ' from square ' + attackerIndex + ' is attacking xalian ' + defender.species.name + ' on square ' + defenderIndex);
-	var existingDefenderHealth = parseInt(defender.stats.health);
-	let damage = duelCalculator.calculateAttackResult(attacker, defender, G, ctx);
-	defender.stats.health = existingDefenderHealth - damage;
-	// console.log('resulting health = ' + defender.stats.health);
-	if (defender.stats.health <= 0) {
-		if (duelUtil.isPlayerPiece(defenderId, G)) {
-			removeItemFromList(defenderId, G.activeXalianIds);
-			G.inactiveXalianIds.push(defenderId);
-			let flag = duelUtil.getPlayerFlagState(G);
+	if (attacker && defender) {
+		// console.log('xalian ' + attacker.species.name + ' from square ' + attackerIndex + ' is attacking xalian ' + defender.species.name + ' on square ' + defenderIndex);
+		var existingDefenderHealth = parseInt(defender.stats.health);
+		let attackResult = duelCalculator.calculateAttackResult(attacker, defender, G, ctx);
+		let damage = attackResult.damage;
+		defender.stats.health = existingDefenderHealth - damage;
+		// console.log('resulting health = ' + defender.stats.health);
+		if (defender.stats.health <= 0) {
+			if (duelUtil.isPlayerPiece(defenderId, G)) {
+				removeItemFromList(defenderId, G.activeXalianIds);
+				G.inactiveXalianIds.push(defenderId);
+				let flag = duelUtil.getPlayerFlagState(G);
 			if (flag.holder && flag.holder === defenderId) {
 				flag.holder = null;
 				flag.index = defenderIndex;
@@ -375,6 +414,22 @@ function doAttack(G, ctx, path, data = {}) {
 			}
 		}
 		G.cells[defenderIndex] = null;
+		
+		}
+
+		if (ctx.currentPlayer == 0) {
+			Hub.dispatch("duel-animation-event", { event: "attack", data: { 
+				attackerIndex: attackerIndex,
+				attackerId: attackerId,
+				attackerType: attacker.elements.primaryType,
+				defenderIndex: defenderIndex,
+				defenderId: defenderId,
+				defenderType: defender.elements.primaryType,
+				attackResult: attackResult
+				
+			}, message: null });
+		}
+	
 	}
 
 	let action = {
@@ -386,6 +441,11 @@ function doAttack(G, ctx, path, data = {}) {
 		}
 	};
 	G.currentTurnState.actions.push(action);
+
+	if (isSelectedBotAction) {
+		console.log('THE ONE AND ONLY!');
+	}
+	
 }
 
 function removeItemFromList(item, list) {

@@ -27,12 +27,13 @@ class XalianDuelStatBadge extends React.Component {
 		let type = this.props.type;
 
 		return (
-			<div className='duel-badge-wrapper' style={{ maxWidth: size, height: size, borderRadius: `${size/2}px` }}>
+			<div className='duel-badge-wrapper' style={{ maxWidth: size, height: size, borderRadius: '50%' }}>
 				
                 {badge}
                 <h5 className='duel-badge-text' style={{ textAlign: 'center', alignItems: 'center', margin: 'auto', position: 'relative', width: '100%' }} >{this.props.val}</h5>
-				
-                <h6 className='duel-badge-text-name' style={{ textAlign: 'center', alignItems: 'center', margin: 'auto', position: 'absolute', bottom: '0', left: '50%', transform: 'translate(-50%, 100%)' }} >{type.toUpperCase()}</h6>
+				{!this.props.hideName && 
+                	<h6 className='duel-badge-text-name' style={{ textAlign: 'center', alignItems: 'center', margin: 'auto', position: 'absolute', bottom: '0', left: '50%', transform: 'translate(-50%, 100%)' }} >{type.toUpperCase()}</h6>
+				}
 			</div>
 		);
 	}
