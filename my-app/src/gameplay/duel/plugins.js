@@ -1,5 +1,7 @@
 
 import { Hub } from "aws-amplify";
+import { v4 as uuidv4 } from 'uuid'; 
+
 
 export const actionPlugin = {
     
@@ -15,7 +17,7 @@ export const actionPlugin = {
     // under `ctx['plugin-name']`.
     // This is called at the beginning of a move or event.
     // This object will be held in memory until flush (below)
-    // is called.
+    // is called.35
     // api: ({ G, ctx, game, data, playerID }) => {
     //     return {
     //         message: 'huh'
@@ -63,6 +65,9 @@ export const actionPlugin = {
   }
 
   function preprocess(G, ctx, args) {
+
+    
+    ctx.log.setMetadata({ moveId: uuidv4() });
       if (args && args.length > 0) {
           if (ctx.currentPlayer == 1) {
               console.log('BEFORE BOT ACTION');
