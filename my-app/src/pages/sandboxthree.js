@@ -44,6 +44,8 @@ import XalianTypeEffectivenessSummary from '../components/games/duel/board/xalia
 
 import AttackActionModal from './../components/games/duel/attackActionModal';
 
+import { Counter } from '../store/Counter';
+
 gsap.registerPlugin(MotionPathPlugin);
 gsap.registerPlugin(ScrollTrigger, MorphSVGPlugin, DrawSVGPlugin);
 
@@ -92,11 +94,13 @@ class Sandboxthree extends React.Component {
 			<React.Fragment>
 				<GameContainer>
 					
-				<AttackActionModal 
+				{/* <AttackActionModal 
 						show={this.state.show}
 						onHide={() => {this.setState({show: false})}}
 						attackData={attackData}
-					/>
+					/> */}
+
+					<Counter/>
 
 				</GameContainer>
 			</React.Fragment>

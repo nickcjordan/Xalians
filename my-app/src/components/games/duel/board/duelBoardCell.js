@@ -26,9 +26,9 @@ class DuelBoardCell extends React.Component {
 	
 	componentDidMount() {
 
-        if (this.props.ctx.gameover) {
-			this.setState({ winner: this.props.ctx.gameover.winner !== undefined ? <div id="winner">Winner: {this.props.ctx.gameover.winner}</div> : <div id="winner">Draw!</div> });
-		}
+        // if (this.props.ctx.gameover) {
+		// 	this.setState({ winner: this.props.ctx.gameover.winner !== undefined ? <div id="winner">Winner: {this.props.ctx.gameover.winner}</div> : <div id="winner">Draw!</div> });
+		// }
 
 		// this.setupAnimationHub()
 
@@ -70,7 +70,7 @@ class DuelBoardCell extends React.Component {
 		let shouldConnectCellTop = this.shouldConnectToEmptyCellTop(grid, index);
 		// let dotBg = 'radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0.5) 5%, rgba(255,255,255,0.25) 20%, rgba(255,255,255,0) 60%)';
 		return (
-			<div id={`cell-${index}`} style={sty} onClick={() => this.props.handleEmptyCellSelection(index)}>
+			<div id={`cell-${index}`} style={sty} onClick={() => this.props.handleEmptyCellSelection(index, this.props.boardState)}>
 				<h6 style={{ position: 'absolute', color: '#9e9e9e2c' }} >{index}</h6>
 
 
@@ -97,12 +97,12 @@ class DuelBoardCell extends React.Component {
 
 	// buildOccupiedCell = (index, selectedIndex, selectedId, border, attackableIndices, G) => {
 	buildOccupiedCell = (index, selectedIndex, selectedId, flagIfPresent, attackableIndices, size, attackAnimation) => {
-		let xalianId = this.props.G.cells[index];
-		let xalian = duelUtil.getXalianFromId(xalianId, this.props.G);
+		let xalianId = this.props.boardState.cells[index];
+		let xalian = duelUtil.getXalianFromIdAndXalians(xalianId, this.props.boardState.xalians);
 		let isSelectedXalian = selectedId && selectedId === xalian.xalianId;
-		let teamColor = this.props.G.activeXalianIds.includes(xalianId) ? '#9480eb' : '#e49393';
+		let teamColor = this.props.boardState.activeXalianIds.includes(xalianId) ? '#9480eb' : '#e49393';
 
-		let attackable = attackableIndices && attackableIndices.includes(index) && (index != selectedIndex) && (!this.props.G.currentTurnDetails.hasAttacked);
+		let attackable = attackableIndices && attackableIndices.includes(index) && (index != selectedIndex) && (!this.props.boardState.currentTurnDetails.hasAttacked);
 		var healthBarPercentage = (xalian.stats.health/gameConstants.MAX_HEALTH_POINTS) * 100; 
 		healthBarPercentage = healthBarPercentage < 5 ? 5 : healthBarPercentage;
 		let barColor = healthBarPercentage > 50 ? 'green' : healthBarPercentage > 25 ? 'orange' : 'red'; 
@@ -120,13 +120,13 @@ class DuelBoardCell extends React.Component {
 		let connectors = this.buildConnectorsForOccupiedCell(index);
 		
 		return (
-				<div   style={{ zIndex: 100 + parseInt(index), position: 'relative', width: size, height: size, lineHeight: size, textAlign: 'center'}} onClick={() => this.props.handleActivePieceSelection(xalian, index)}>
+				<div   style={{ zIndex: 100 + parseInt(index), position: 'relative', width: size, height: size, lineHeight: size, textAlign: 'center'}} onClick={() => this.props.handleActivePieceSelection(xalian, index, this.props.boardState)}>
 
 						{connectors}
 						
 					<div id={'duel-' + xalian.xalianId + '-piece'} className={'duel-' + xalian.xalianId + '-piece'} style={{position: 'relative', height: '100%',  width: '100%'}}>
 
-						<XalianImage className='animate-state' padding={'0px'} speciesName={xalian.species.name} primaryType={xalian.elements.primaryType} moreClasses="duel-piece-xalian-icon" fill={'black'} filter={`drop-shadow(0px 0px 8px ${teamColor})`}/>
+						<XalianImage className='animate-state' padding={'0px'} speciesName={xalian.species.name} primaryType={xalian.elements.primaryType} moreClasses="duel-piece-xalian-icon" fill={'black'} filter={`drop-shadow(0px 0px ${parseInt(size.replace('px', ''))/20}px ${isSelectedXalian ? 'white' : teamColor}) drop-shadow(0px 0px ${parseInt(size.replace('px', ''))/8}px ${isSelectedXalian ? 'white' : teamColor})`}/>
 						
 						{/* MOVE DISTANCE INDICATORS */}
 						{/* <Row style={{zIndex: '9999', position: 'absolute', top: '-50%', left: 0, marginLeft: 0, marginRight: 0, width: '100%', justifyContent: 'center', pointerEvents: 'none'}}> */}
@@ -219,7 +219,7 @@ class DuelBoardCell extends React.Component {
 	}
 
 	cellIsOccupied(index) {
-		return this.props.G.cells[index];
+		return this.props.boardState.cells[index];
 	}
 
 	shouldConnectToEmptyCellLeft(grid, currentIndex) {
@@ -229,7 +229,7 @@ class DuelBoardCell extends React.Component {
 			connect = false;
 		} else {
 			let leftCellIndex = currentIndex - 1;
-			if (this.props.G.cells[leftCellIndex]) {
+			if (this.props.boardState.cells[leftCellIndex]) {
 				connect = false;
 			}
 		}
@@ -243,7 +243,7 @@ class DuelBoardCell extends React.Component {
 			connect = false;
 		} else {
 			let topCellIndex = currentIndex - duelConstants.BOARD_COLUMN_SIZE;
-			if (this.props.G.cells[topCellIndex]) {
+			if (this.props.boardState.cells[topCellIndex]) {
 				connect = false;
 			}
 		}
@@ -255,13 +255,13 @@ class DuelBoardCell extends React.Component {
 	render() {
 		// let size = this.determineCellSize();
 		// let selectedId = this.props.G.selectedId;
-		// let selectedIndex = duelUtil.getIndexOfXalian(selectedId, this.props.G);
-		// let xalian = duelUtil.getXalianFromId(selectedId, this.props.G);
+		// let selectedIndex = duelUtil.getIndexOfXalian(selectedId, this.props.boardState);
+		// let xalian = duelUtil.getXalianFromId(selectedId, this.props.boardState);
 		// // let selectedIndex = this.props.G.selectedIndex;
-		// var moves = getMovableIndices(selectedId, selectedIndex, this.props.G, this.props.ctx);
+		// var moves = getMovableIndices(selectedId, selectedIndex, this.props.boardState, this.props.ctx);
 		// var attackablePaths = [];
 		// if (selectedId && (selectedIndex != null && selectedIndex != undefined)) {
-		// 	attackablePaths = duelCalculator.calculateAttackablePaths(selectedIndex, xalian, this.props.G, this.props.ctx);
+		// 	attackablePaths = duelCalculator.calculateAttackablePaths(selectedIndex, xalian, this.props.boardState, this.props.ctx);
 		// }
 		// var attackableIndices = attackablePaths.map(p => p.endIndex);
 
@@ -277,11 +277,12 @@ class DuelBoardCell extends React.Component {
 
 		var cell = null;
 
-        if (this.props.G.cells[cellIndex]) {
+		if (this.props.boardState && this.props.boardState.cells && this.props.boardState.cells[cellIndex]) {
             cell = this.buildOccupiedCell(cellIndex, selectedIndex, selectedId, flag, attackableIndices, size, attackAnimation);
         } else {
             cell = this.buildUnoccupiedCell(movableIndices, cellIndex, flag, size, attackAnimation);
         }
+
 		return cell;
 	}
 

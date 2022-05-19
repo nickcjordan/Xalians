@@ -45,16 +45,18 @@ export function buildGrid(totalSquares = 0) {
 }
 
 export function calculateIndicesWithinDistance(currentIndex, distance, G, ctx) {
-    let totalSquares = G.cells.length;
-    let boardSize = Math.sqrt(totalSquares);
+    let boardSize = duelConstants.BOARD_COLUMN_SIZE;
 
-    let grid = buildGrid(G.cells.length);
+    let grid = buildGrid();
     let rows = grid.rows;
     let map = grid.map;
     
     let movableIndices = [];
     
     let coord = map[parseInt(currentIndex)];
+    if (!coord) {
+        console.error("!");
+    }
     for (var x = coord[0]; x >= 0; x--) {
         var y = coord[1];
         let xOff = Math.abs(coord[0] - x);

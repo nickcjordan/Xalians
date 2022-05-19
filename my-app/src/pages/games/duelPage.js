@@ -19,6 +19,7 @@ import * as translator from '../../utils/valueTranslator';
 import * as gameConstants from '../../gameplay/duel/duelGameConstants'
 import { Local } from 'boardgame.io/multiplayer';
 import DuelBotInstance from '../../components/games/duel/bot/duelBotInstance';
+import * as duelConstants from '../../gameplay/duel/duelGameConstants'; 
 
 class DuelPage extends React.Component {
 	state = {
@@ -141,6 +142,7 @@ class DuelPage extends React.Component {
 	render() {
 		
 		let xaliansPerTeam = 2;
+		// let xaliansPerTeam = duelConstants.XALIANS_PER_TEAM;
 
 		if (this.state.xalians && this.state.xalians.length > 0) {
 			let allPieces = [];

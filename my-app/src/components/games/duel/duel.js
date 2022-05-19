@@ -6,7 +6,7 @@ import * as duelCalculator from '../../../gameplay/duel/duelCalculator';
 import * as duelBot from '../../../gameplay/duel/duelBot';
 import * as duelConstants from '../../../gameplay/duel/duelGameConstants';
 import * as plugins from '../../../gameplay/duel/plugins';
-
+import { v4 as uuidv4 } from 'uuid'; 
 
 import { Hub } from "aws-amplify";
 
@@ -70,6 +70,7 @@ export const Duel = (data) => {
 				selectedIndex: null,
 				flags: flagStates,
 				turnHasEnded: false
+				
 			};
 		},
 
@@ -85,7 +86,6 @@ export const Duel = (data) => {
 				};
 				G.currentTurnDetails = null;
 				G.turnHasEnded = false;
-				// G.readyAnimations = null;
 				
 			},
 
@@ -95,11 +95,11 @@ export const Duel = (data) => {
 				G.selectedIndex = null;
 				G.selectedId = null;
 				G.turnHasEnded = true;
-				if (ctx.phase === 'play' && G.currentTurnState.actions && G.currentTurnState.actions.length > 0) {
-					let actions = G.currentTurnState.actions;
-					console.log('GET READY FOR ACTION!! \n' + JSON.stringify(actions, null, 2));
-					G.readyAnimations = actions;
-				}
+				// if (ctx.phase === 'play' && G.currentTurnState.actions && G.currentTurnState.actions.length > 0) {
+					// let actions = G.currentTurnState.actions;
+					// console.log('GET READY FOR ACTION!! \n' + JSON.stringify(actions, null, 2));
+					// G.readyAnimations = actions;
+				// }
 			},
 
 			// Ends the turn if this returns true.
@@ -142,7 +142,7 @@ export const Duel = (data) => {
 				if (ctx.phase === 'play') {
 					let turnState = duelUtil.currentTurnState(G, ctx);
 					G.currentTurnDetails = turnState;
-					// ctx.events.setStage('EFFECT');
+
 				}
 			},
 
@@ -228,6 +228,9 @@ export const Duel = (data) => {
 				return { winner: 0 };
 			} 
 		},
+
+		// deltaState: true,
+		disableUndo: true,
 
 		ai: {
 			enumerate: (G, ctx) => {

@@ -23,6 +23,7 @@ import PhysicsGamePage from './pages/games/physicsGamePage';
 import TrainingGroundsPage from './pages/trainingGroundsPage';
 import DuelPage from './pages/games/duelPage';
 
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -33,6 +34,9 @@ import {
 import Amplify from 'aws-amplify';
 import awsconfig from './aws-exports';
 
+import { Provider } from 'react-redux'
+import store from './store/store';
+
 Amplify.configure(awsconfig);
 
 
@@ -42,6 +46,9 @@ class App extends React.Component {
   render() {
 
     return (
+      <Provider store={store}>
+
+      
       <React.Fragment>
         <Router>
           <div>
@@ -77,6 +84,7 @@ class App extends React.Component {
           </div>
         </Router>
       </React.Fragment>
+      </Provider>
     );
   }
 
