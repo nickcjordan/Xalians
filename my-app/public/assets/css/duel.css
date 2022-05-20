@@ -26,18 +26,19 @@
     left: 50%;
     transform: translate(-50%, -50%);
     height: 2px;
-    z-index: 105;
+    z-index: 205;
     pointer-events: none;
     width: 90%;
-}
-
-.duel-health-bar {
-  /* position: absolute; */
-  /* top: -70%; */
-  /* left: 0; */
-  height: 100%;
-  background-color: green;
-  pointer-events: none;
+  }
+  
+  .duel-health-bar {
+    /* position: absolute; */
+    /* top: -70%; */
+    /* left: 0; */
+    height: 100%;
+    background-color: green;
+    pointer-events: none;
+    z-index: 205;
 }
 
 .duel-piece-xalian-icon {
@@ -207,22 +208,22 @@
 .duel-board-cell-connector {
   background-color: black;
   position: absolute;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) !important;
   opacity: 0.1;
   pointer-events: none;
-  z-index: 100;
+  z-index: 1;
 }
 
 .duel-board-cell-dot {
   position: absolute;
   width: 50%;
   height: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) !important;
   pointer-events: none;
   top: 50%;
   left: 50%;
   border-radius: 50%;
-  z-index: 101;
+  z-index: 201;
 }
 
 .duel-attack-cell-icon {
@@ -250,4 +251,13 @@
   position: absolute;
   bottom: 0;
   left: 0;
+}
+
+.duel-flag {
+  z-index: 110;
+  position: absolute;
+  top: 0;
+  left: 20%;
+  opacity: 0.8;
+  height: 60%;
 }

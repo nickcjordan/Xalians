@@ -1,10 +1,3 @@
-/*
- * Copyright 2017 The boardgame.io Authors.
- *
- * Use of this source code is governed by a MIT-style
- * license that can be found in the LICENSE file or at
- * https://opensource.org/licenses/MIT.
- */
 
 import React from 'react';
 import Container from 'react-bootstrap/Container';
@@ -30,7 +23,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { addAnimationToQueue } from '../../../../store/duelAnimationQueueSlice';
 import { AnimationHub } from '../../../../store/AnimationHub';
 import * as boardStateManager from '../../../../gameplay/duel/boardStateManager';
-
+import * as moveAnimationManager from '../../../../gameplay/duel/moveAnimationManager';
 
 import gsap from 'gsap';
 import Flip from 'gsap/Flip';
@@ -62,10 +55,6 @@ class DuelBoard extends React.Component {
 		isActive: PropTypes.bool,
 		isMultiplayer: PropTypes.bool,
 	};
-
-	// shouldComponentUpdate(nextProps, nextState) {
-	// 	return (this.state.animationTl.isActive()) ? false : true;
-	// }
 
 
 	componentWillUnmount() {
@@ -124,468 +113,33 @@ class DuelBoard extends React.Component {
 		if (this.props.ctx.gameover) {
 			this.setState({ winner: this.props.ctx.gameover.winner !== undefined ? <div id="winner">Winner: {this.props.ctx.gameover.winner}</div> : <div id="winner">Draw!</div> });
 		}
-
-		
-		this.setupAnimationHub();
-		
-
-		
-		
 		
 	}
 
 	componentDidUpdate() {
-		if (!this.state.animationTl.isActive()) {
-
+		let tl = this.state.animationTl;
+		if (!tl.isActive()) {
 			let logs = boardStateManager.getAllMoveActionsFromLog(this.props.log);
 			if (this.state.logIndex < logs.length) {
 				let log = logs[this.state.logIndex];
-				this.handleMoveAnimation(this.state.animationTl, log, () => {
+				moveAnimationManager.handleMoveAnimation(tl, log, () => {
 					console.log(`incrementing index to ${this.state.logIndex + 1}`);
-					this.setState({ logIndex: this.state.logIndex + 1 });
+					this.setState({ logIndex: this.state.logIndex + 1 }, () => {
+						// show green dots again once piece is done moving
+						let elems = document.querySelectorAll(".duel-movable-cell-dot");
+						if (elems) {
+							gsap.to(gsap.utils.toArray(elems), { opacity: 1 });
+						}
+					});
 				})
-				// this.handleMoveAnimation(this.state.animationTl, log);
 			}
 		}
 	}
 
-	// handleNextAnimationFromQueue = () => {
-	// 	if (!this.state.isAnimating) { 
-	// 		this.setState({isAnimating: true, animationQueue: queue}, () => {
-	// 			let queue = this.state.animationQueue;
-	// 			if (queue.length > 0) {
-	// 				let next = queue.pop();
-	// 				this.setState({isAnimating: true, animationQueue: queue}, () => {
-	// 					this.handleMoveAnimation(next);
-	// 				});
-					
-	// 			}
-	// 		});
-	// 	} else {
-			
-	// 	}
-	// 		let queue = this.state.animationQueue;
-	// 		if (queue.length > 0) {
-	// 			let next = queue.pop();
-	// 			this.setState({isAnimating: true, animationQueue: queue}, () => {
-	// 				this.handleMoveAnimation(next);
-	// 			});
-				
-	// 		}
-	// 	// }
-	// }
-
-	// handleAnimationsOnQueue = (queue) => {
-		// let tl = gsap.timeline();
-		// let tl = this.state.animationTl;
-		// var ind = this.state.gIndex;
-		// while (queue.length > 0) {
-			// let next = queue.pop();
-			// this.setState({isAnimating: true, animationQueue: queue}, () => {
-				// this.handleMoveAnimation(tl, next, () => {
-					// ind = ind + 1;
-					// this.setState({ gIndex: this.state.gIndex + 1, animationQueue: queue });
-				// });
-			// });
-			// if (queue.length == 0) {
-				// this.setState({ gIndex: this.state.gIndex + 1 });
-			// }
-		// } 
-		// try {
-		// 	if (tl.then) {
-
-			// if (needsUpdate && tl.then) {
-			// 			tl.then(() => {
-			// 	this.setState({ gIndex: this.state.gIndex + 1 });
-			// 			});
-			// }
-		// 	}
-		// } catch (e) {
-		// 	console.log(e);
-		// }
-	// }
-
-	// addMostRecentMoveToAnimationQueue = (callback) => {
-	// 	if (this.props.log && this.props.log.length > 0) {
-	// 		let logs = this.props.log.filter( log =>   log.action && log.action.type && log.action.type === 'MAKE_MOVE'	);
-
-	// 		let lastLog = logs[logs.length - 1];
-	// 		let lastAction = lastLog.action;
-
-
-	// 		if (lastAction.payload.type !== 'selectPiece' && lastAction.payload.type !== 'setPiece') {
-	// 			// console.log(`ANIMATING :: ${JSON.stringify(lastAction, null, 2)}`);
-
-	// 			let moveId = lastLog.metadata.moveId;
-	// 			let animationQueue = this.state.animationQueue;
-	// 			var isDuplicate = false;
-	// 			animationQueue.forEach( log => {
-	// 				if (log.metadata.moveId === moveId) {
-	// 					isDuplicate = true;
-	// 				}
-	// 			});
-
-
-	// 			// if (!animationQueue.map( log => log.metadata.moveId).includes(moveId)) {
-	// 			// 	animationQueue.splice(0, 0, lastLog);
-	// 			// 	this.setState({animationQueue: animationQueue});
-	// 			// }
-
-	// 			if (!isDuplicate) {
-	// 				animationQueue.splice(0, 0, lastLog);
-	// 				addAnimationToQueue(lastLog);
-	// 				// this.setState({animationQueue: animationQueue}, callback(animationQueue));
-	// 				callback(animationQueue);
-	// 			}
-
-	// 		}
-
-
-	// 	}
-	// }
 
 	
-
-	// addMostRecentMoveToAnimationQueue = (callback) => {
-	// 	let logs = this.getAllMoveActionsFromLog(this.props.log);
-	// 	if (logs.length > 0) {
-	// 		let lastLog = logs[logs.length - 1];
-
-	// 			if (lastLog) {
-
-				// 	let moveId = lastLog.metadata.moveId;
-				// 	let animationQueue = this.state.animationQueue;
-				// 	var isDuplicate = false;
-				// animationQueue.forEach( log => {
-				// 	if (log.metadata.moveId === moveId) {
-				// 		isDuplicate = true;
-				// 	}
-				// });
-				
-				
-				// // if (!animationQueue.map( log => log.metadata.moveId).includes(moveId)) {
-				// 	// 	animationQueue.splice(0, 0, lastLog);
-				// 	// 	this.setState({animationQueue: animationQueue});
-				// 	// }
-					
-				// 	if (!isDuplicate) {
-				// 		animationQueue.splice(0, 0, lastLog);
-				// 		// addAnimationToQueue(lastLog);
-				// 		// this.setState({animationQueue: animationQueue}, callback(animationQueue));
-				// 		callback(animationQueue);
-				// 	}
-				// }
-
-			// }
-
-
-		// }
-	// }
-
-	handleMoveAnimation = (tl, log, callback) => {
-			let action = log.action;
-			let boardState = log.metadata.startState;
-
-			
-
-				let moveName = action.payload.type;
-				if (moveName === 'setPiece') {
-					// DO SET PIECE ANIMATION
-					console.log(`setPiece :: `);
-					
-					// get location of original piece
-					
-					let destIndex = action.payload.args[0];
-					let xalianId = action.payload.args[1];
-
-					// get new location
-					let elem = document.getElementById(`${xalianId}-piece`);
-					console.log(elem);
-					// animate from one to the other
-
-				} else if (moveName === 'movePiece') {
-					// DO MOVE ANIMATION
-					console.log(`movePiece :: `);
-
-					let path = action.payload.args[0];
-
-					let x = boardState.cells[path.startIndex];
-					// let x2 = boardState.cells[path.endIndex];
-
-					// let elem = document.getElementById(`duel-${x2}-piece`);
-					let elem = document.getElementById(`duel-${x}-piece`);
-					
-					// let elemCell = document.getElementById(`cell-${path.startIndex}`);
-					// gsap.to(elem, { x: elemCell.offsetLeft, y: elemCell.offsetTop, duration: 2 });
-					// gsap.to(elem, { x: 1000, y: 1000, duration: 2 });
-					// const s = Flip.getState(`#${elem.id}, #${elemCell.id}`);
-					// const s = Flip.getState(`#${elem.id}, #${elem.id}>*`);
-					// const s = Flip.getState(`#${elem.id}`);
-					// Flip.to(s, {
-					// 	duration: 1, 
-					// 	ease: "power1.inOut"
-					// });
-
-					// let grid = duelCalculator.buildGrid();
-
-					
-					// let coords = [];
-					// let size = this.determineCellSize();
-
-					const getDiff = (pathStartCoord, pathNextCoord, currentCoord) => {
-						let xStartCoordDiff = currentCoord[0] - pathStartCoord[0];
-						let yStartCoordDiff = currentCoord[1] - pathStartCoord[1];
-						let xEndCoordDiff = currentCoord[0] - pathNextCoord[0];
-						let yEndCoordDiff = currentCoord[1] - pathNextCoord[1];
-
-						let xStartDiff = xStartCoordDiff * 100; // for 100%
-						let yStartDiff = yStartCoordDiff * 100;
-
-						let xEndDiff = xEndCoordDiff * 100;
-						let yEndDiff = yEndCoordDiff * 100;
-
-						let resp = {
-							from: [xStartDiff, yStartDiff],
-							to: [xEndDiff, yEndDiff]
-						};
-						return resp;
-					} 
-
-					// const translateToTextForm = (diffVal) => {
-					// 	return diffVal < 0 ? `-=${Math.abs(diffVal)}px` : `+=${Math.abs(diffVal)}px`; 
-					// }
-					// let animations = [];
-					// path.path.slice(0, path.path.length).forEach((pathCoord, index, array) => {
-					path.path.forEach((pathCoord, index, array) => {
-						// if (coord[0] > start[0]) {
-						// 	tl.from(elem, {x: '-=' + size});
-						// }
-
-						// if (coord[0] < start[0]) {
-						// 	tl.from(elem, {x: '+=' + size});
-						// }
-
-						// if (coord[1] > start[1]) {
-						// 	tl.from(elem, {y: '-=' + size});
-						// }
-
-						// if (coord[1] < start[1]) {
-						// 	tl.from(elem, {y: '+=' + size});
-						// }
-						// start = coord;
-						if ((index + 1) < array.length) {
-
-							let pathNext = array[index + 1];
 	
-							let diff = getDiff(pathCoord, pathNext, path.path[0]);
-							// let diff = getDiff(pathCoord, pathNext, pathEnd);
-							// let diff = getDiff(pathCoord, pathNext, pathCoord);
-							
-							// let animation = gsap.fromTo(elem, 
-							// 	{xPercent: -(diff.from[0]), yPercent: -(diff.from[1])},
-							// 	{xPercent: -(diff.to[0]), yPercent: -(diff.to[1])}
-							// );
-							// tl.add(animation, ">");
-							tl.to(elem, 
-								// {xPercent: -(diff.from[0]), yPercent: -(diff.from[1])},
-								{xPercent: -(diff.to[0]), yPercent: -(diff.to[1])}
-							);
-							// tl.fromTo(elem, 
-							// 	{xPercent: -(diff.from[0]), yPercent: -(diff.from[1])},
-							// 	{xPercent: -(diff.to[0]), yPercent: -(diff.to[1])}
-							// );
-							// tl.add(animation, ">");
-							// .add(() => {
-								// this.setState({ gIndex: this.state.logIndex + 1, isAnimating: false });
-							// }, ">");
-							// animations.push(diff);
-						} else {
-							tl.add(callback, ">");
-						}
-
-					})
-
-					
-					// let ind = grid.map[coord[0]][coord[1]];
-
-
-
-					// gsap.from(elem, {
-					// 	motionPath: [{x:100, y:50}, {x:200, y:0}, {x:300, y:100}],
-					// 	transformOrigin: "50% 50%",
-					// 	duration: 2,
-					// 	ease: "power1.inOut"
-					// });
-					
-					// gsap.from(elem, { x: elemCell.offsetLeft, y: elemCell.offsetTop, duration: 2 });
-					// gsap.from(elem, {yPercent: 250});
-
-				} else if (moveName === 'doAttack') {
-					// DO ATTACK ANIMATION
-					console.log(`doAttack :: `);
-					
-				} else if (moveName === 'movePieceThenAttack') {
-					// DO COMBO ANIMATION
-					console.log(`movePieceThenAttack :: `);
-					
-				}
-
-				// tl.then( () => {
-				// 	if (this.state.animationQueue.length > 0) {
-				// 		this.handleNextAnimationFromQueue();
-				// 	} else {
-				// 		this.setState({isAnimating: false});
-				// 	}
-				// })
-				
-
-				// tl.add(callback);
-
-
-	}
 	
-	// handleMoveAnimation = () => {
-	// 	if (this.props.log && this.props.log.length > 0) {
-	// 		let logs = this.props.log.filter( log =>   log.action && log.action.type && log.action.type === 'MAKE_MOVE'	);
-
-	// 		let lastAction = logs[logs.length - 1].action;
-
-	// 		if (lastAction.payload.type !== 'selectPiece') {
-	// 			console.log(`ANIMATING :: ${JSON.stringify(lastAction, null, 2)}`);
-	// 			let moveName = lastAction.payload.type;
-	// 			if (moveName === 'setPiece') {
-	// 				// DO SET PIECE ANIMATION
-	// 				console.log(`setPiece :: `);
-					
-	// 				// get location of original piece
-					
-	// 				let destIndex = lastAction.payload.args[0];
-	// 				let xalianId = lastAction.payload.args[1];
-
-	// 				// get new location
-	// 				let elem = document.getElementById(`${xalianId}-piece`);
-	// 				console.log(elem);
-	// 				// animate from one to the other
-
-	// 			} else if (moveName === 'movePiece') {
-	// 				// DO MOVE ANIMATION
-	// 				console.log(`movePiece :: `);
-
-	// 				let path = lastAction.payload.args[0];
-
-	// 				let x = this.props.G.cells[path.startIndex];
-	// 				let x2 = this.props.G.cells[path.endIndex];
-	// 				console.log();
-
-	// 				let elem = document.getElementById(`duel-${x2}-piece`);
-	// 				console.log(elem);
-					
-	// 				let elemCell = document.getElementById(`cell-${path.startIndex}`);
-	// 				// gsap.to(elem, { x: elemCell.offsetLeft, y: elemCell.offsetTop, duration: 2 });
-	// 				// gsap.to(elem, { x: 1000, y: 1000, duration: 2 });
-	// 				// const s = Flip.getState(`#${elem.id}, #${elemCell.id}`);
-	// 				// const s = Flip.getState(`#${elem.id}, #${elem.id}>*`);
-	// 				// const s = Flip.getState(`#${elem.id}`);
-	// 				// Flip.to(s, {
-	// 				// 	duration: 1, 
-	// 				// 	ease: "power1.inOut"
-	// 				// });
-
-	// 				let grid = duelCalculator.buildGrid();
-
-	// 				let tl = gsap.timeline();
-	// 				let coords = [];
-	// 				let size = this.determineCellSize();
-	// 				var pathEnd = path.path[path.path.length - 1];
-
-	// 				const getDiff = (pathStartCoord, pathNextCoord, currentCoord, size = 50) => {
-	// 					let xStartCoordDiff = currentCoord[0] - pathStartCoord[0];
-	// 					let yStartCoordDiff = currentCoord[1] - pathStartCoord[1];
-	// 					let xEndCoordDiff = currentCoord[0] - pathNextCoord[0];
-	// 					let yEndCoordDiff = currentCoord[1] - pathNextCoord[1];
-
-	// 					let xStartDiff = xStartCoordDiff * size;
-	// 					let yStartDiff = yStartCoordDiff * size;
-
-	// 					let xEndDiff = xEndCoordDiff * size;
-	// 					let yEndDiff = yEndCoordDiff * size;
-
-	// 					let resp = {
-	// 						from: [xStartDiff, yStartDiff],
-	// 						to: [xEndDiff, yEndDiff]
-	// 					};
-	// 					return resp;
-	// 				} 
-
-	// 				// const translateToTextForm = (diffVal) => {
-	// 				// 	return diffVal < 0 ? `-=${Math.abs(diffVal)}px` : `+=${Math.abs(diffVal)}px`; 
-	// 				// }
-	// 				// let animations = [];
-	// 				path.path.slice(0, path.path.length).forEach((pathCoord, index, array) => {
-	// 					// if (coord[0] > start[0]) {
-	// 					// 	tl.from(elem, {x: '-=' + size});
-	// 					// }
-
-	// 					// if (coord[0] < start[0]) {
-	// 					// 	tl.from(elem, {x: '+=' + size});
-	// 					// }
-
-	// 					// if (coord[1] > start[1]) {
-	// 					// 	tl.from(elem, {y: '-=' + size});
-	// 					// }
-
-	// 					// if (coord[1] < start[1]) {
-	// 					// 	tl.from(elem, {y: '+=' + size});
-	// 					// }
-	// 					// start = coord;
-
-	// 					if ((index + 1) <= array.length - 1) {
-
-	// 						let pathStart = pathCoord;
-	// 						let pathNext = array[index + 1];
-	
-	// 						let diff = getDiff(pathStart, pathNext, pathEnd, 100);
-							
-	// 						tl.fromTo(elem, 
-	// 							{xPercent: -(diff.from[0]), yPercent: -(diff.from[1])},
-	// 							{xPercent: -(diff.to[0]), yPercent: -(diff.to[1])}
-	// 						);
-	// 						// animations.push(diff);
-	// 					}
-
-	// 				})
-
-					
-	// 				// let ind = grid.map[coord[0]][coord[1]];
-
-
-
-	// 				// gsap.from(elem, {
-	// 				// 	motionPath: [{x:100, y:50}, {x:200, y:0}, {x:300, y:100}],
-	// 				// 	transformOrigin: "50% 50%",
-	// 				// 	duration: 2,
-	// 				// 	ease: "power1.inOut"
-	// 				// });
-					
-	// 				// gsap.from(elem, { x: elemCell.offsetLeft, y: elemCell.offsetTop, duration: 2 });
-	// 				// gsap.from(elem, {yPercent: 250});
-
-	// 				console.log(`temp :: `);
-	// 			} else if (moveName === 'doAttack') {
-	// 				// DO ATTACK ANIMATION
-	// 				console.log(`doAttack :: `);
-					
-	// 			} else if (moveName === 'movePieceThenAttack') {
-	// 				// DO COMBO ANIMATION
-	// 				console.log(`movePieceThenAttack :: `);
-					
-	// 			}
-	// 		}
-
-
-	// 	}
-	// }
-
 	setSelection = (id, index) => {
 		if (duelUtil.isPlayersTurn(this.props.ctx)) {
 			// this.setState({ selectedId: id, selectedIndex: index }); 
@@ -595,59 +149,39 @@ class DuelBoard extends React.Component {
 	}
 
 	handleEmptyCellSelection = (destinationIndex, boardState) => {
-		let game = boardState;
-		// let selectedId = this.state.selectedId;
 		let selectedId = this.props.G.selectedId;
-		// let selectedIndex = this.state.selectedIndex;
-		// let selectedIndex = this.props.G.selectedIndex;
 		let selectedIndex = duelUtil.getIndexOfXalian(selectedId, boardState);
 
 		var paths = [];
 		if (this.props.ctx.phase === 'play' && selectedId && (selectedIndex != null && selectedIndex != undefined)) {
 			paths = duelCalculator.calculateMovablePaths(selectedIndex, duelUtil.getXalianFromId(selectedId, boardState), boardState, this.props.ctx);
 		}
-		let moves = paths.map( path => path.endIndex );
+		let movableIndices = paths.map(path => path.endIndex);
 
 		if (selectedId) { // moving a piece
-			// if (duelUtil.isPlayerPiece(selectedId, game)) {
-				// handle player move
-				if (duelUtil.isUnset(selectedId, game)) { // setting piece initially
-					if (duelUtil.getStartingIndices(boardState, this.props.ctx).includes(destinationIndex)) {
-						this.props.moves.setPiece(destinationIndex, selectedId);
-						this.setState({ referencedXalianId: null });
-					} else {
-						console.error("CAN NOT SET INITIAL PIECE HERE");
-					}
-				} else if (duelUtil.isActive(selectedId, game)) { // moving existing piece
-					if (moves.includes(destinationIndex)) { // valid move
-						let path = duelCalculator.calculatePathToTarget(selectedIndex, destinationIndex, boardState, this.props.ctx);
-						this.props.moves.movePiece(path);
-					} else {
-						console.log("INVALID MOVE");
-					}
+			if (duelUtil.isUnset(selectedId, boardState)) { // setting piece initially
+				if (duelUtil.getStartingIndices(boardState, this.props.ctx).includes(destinationIndex)) {
+					this.props.moves.setPiece(destinationIndex, selectedId);
+					this.setState({ referencedXalianId: null });
 				} else {
-					// do nothing because piece is out ?
+					console.error("CAN NOT SET INITIAL PIECE HERE");
 				}
-			// } else if (duelUtil.isOpponentPiece(selectedId, game)) {
-			// 	// handle opponent move
-			// 	if (duelUtil.isUnset(selectedId, game)) { // setting piece initially
-			// 		if (duelUtil.getStartingIndices(boardState, this.props.ctx).includes(destinationIndex)) {
-			// 			this.props.moves.setPiece(destinationIndex, selectedId);
-			// 			this.setState({ selectedId: null, selectedIndex: null });
-			// 		} else {
-			// 			console.error("CAN NOT SET INITIAL PIECE HERE");
-			// 		}
-			// 	} else if (duelUtil.isActive(selectedId, game)) { // moving existing piece
-			// 		if (moves.includes(destinationIndex)) { // valid move
-			// 			this.props.moves.movePiece(selectedIndex, destinationIndex, selectedId);
-			// 			this.setState({ selectedId: null, selectedIndex: null });
-			// 		} else {
-			// 			console.log("INVALID MOVE");
-			// 		}
-			// 	} else {
-			// 		// do nothing because piece is out ?
-			// 	}
-			// }
+			} else if (duelUtil.isActive(selectedId, boardState)) { // moving existing piece
+				if (movableIndices.includes(destinationIndex)) { // valid move
+					let path = duelCalculator.calculatePathToTarget(selectedIndex, destinationIndex, boardState, this.props.ctx);
+					this.props.moves.movePiece(path);
+				} else {
+					this.setSelection(null, null);
+					this.setState({ referencedXalianId: null });
+					console.log("INVALID MOVE");
+				}
+			} else {
+				// do nothing because piece is out ?
+				this.setSelection(null, null);
+				this.setState({ referencedXalianId: selectedId });
+			}
+		} else if (this.state.referencedXalianId) {
+			this.setState({ referencedXalianId: null });
 		}
 	};
 
@@ -683,7 +217,6 @@ class DuelBoard extends React.Component {
 	handleActivePieceSelection = (xalian, index, boardState) => {
 		if (this.props.G.selectedId && boardState.xalians) {
 			let selectedId = this.props.G.selectedId;
-			// let selectedIndex = this.props.G.selectedIndex;
 			let selectedIndex = duelUtil.getIndexOfXalian(selectedId, boardState);
 			
 			if ((duelUtil.isPlayerPiece(selectedId, boardState) && duelUtil.isPlayerPiece(xalian.xalianId, boardState)) 
@@ -780,20 +313,18 @@ class DuelBoard extends React.Component {
 			for (let j = 0; j < gameConstants.BOARD_COLUMN_SIZE; j++) {
 				const index = gameConstants.BOARD_COLUMN_SIZE * i + j;
 
-				let isPlayerFlagIndex = duelUtil.getPlayerFlagIndex(boardState) == index;
-				let isOpponentFlagIndex = duelUtil.getOpponentFlagIndex(boardState) == index;
-
-
-				// let border = isPlayerFlagIndex ? 'double 8px #947dfaff' 
-					// : isOpponentFlagIndex ? 'double 8px #ff7a7aff': '';
-
-				let flag = isPlayerFlagIndex ? <DuelFlagIcon style={{ zIndex: '110', position: 'absolute', top: 0, left: '20%', opacity: 0.75, height: '60%', width: '60%', fill: '#947dfaff' }} /> :
-				isOpponentFlagIndex ? <DuelFlagIcon style={{ zIndex: '110', position: 'absolute', top: 0, left: '20%', opacity: 0.75, height: '60%', width: '60%', fill: '#ff7a7aff' }} /> : null;
-
-
-				let ind = Math.min(this.state.logIndex, (this.props.log.length - 1));
-				// var boardGStatePriorToAnimating = this.props.G.history && this.props.G.history.length > 0 ? this.props.G.history[ind] : this.props.G; 
-				var cell = <DuelBoardCell handleEmptyCellSelection={this.handleEmptyCellSelection} handleActivePieceSelection={this.handleActivePieceSelection} selectedIndex={selectedIndex} selectedId={selectedId} size={size} flag={flag} cellIndex={index} attackableIndices={attackableIndices} movableIndices={moves} boardState={boardState} ctx={this.props.ctx} />;
+				var cell = <DuelBoardCell
+					handleEmptyCellSelection={this.handleEmptyCellSelection} 
+					handleActivePieceSelection={this.handleActivePieceSelection} 
+					selectedIndex={selectedIndex} 
+					selectedId={selectedId} 
+					size={size} 
+					cellIndex={index} 
+					attackableIndices={attackableIndices} 
+					movableIndices={moves} 
+					boardState={boardState} 
+					ctx={this.props.ctx} 
+				/>;
 
 				cells.push(<td key={index}>{cell}</td>);
 			}
@@ -942,7 +473,7 @@ class DuelBoard extends React.Component {
 			let windowSize = this.state.size.min;
 			let initialSize = Math.floor((windowSize) / duelConstants.BOARD_COLUMN_SIZE);
 			let cellSize = Math.floor((windowSize - initialSize) / duelConstants.BOARD_COLUMN_SIZE);
-			let maxSize = Math.max(25, Math.min(cellSize, 75));
+			let maxSize = Math.max(35, Math.min(cellSize, 75));
 
 			return maxSize;
 		} else {
