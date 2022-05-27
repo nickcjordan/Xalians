@@ -4,12 +4,19 @@ import * as duelUtil from '../../utils/duelUtil';
 import * as duelCalculator from './duelCalculator';
 import * as actionBuilder from './duelActionBuilder';
 import * as duelConstants from './duelGameConstants';
+import * as boardStateManager from './boardStateManager';
 
 function actionTypeToMoveNameMap() {
     let map =new Map();
     map[duelConstants.actionTypes.ATTACK] = 'doAttack';
     map[duelConstants.actionTypes.MOVE] = 'movePiece';
-    map[duelConstants.actionTypes.COMBO] = 'movePieceThenAttack';
+    // map[duelConstants.actionTypes.COMBO] = 'movePieceThenAttack';
+
+    /* 
+        my theory here is that if the bot knows that moving to the position then attacking is the best combo, 
+        then surely moving to the position then allowing the bot to select another action will end in the same result
+    */
+    map[duelConstants.actionTypes.COMBO] = 'movePiece'; 
     return map;
 }
 
@@ -17,19 +24,20 @@ export function buildSetupBotMoves(G, ctx, id) {
     let moves = [];
     let movable = duelUtil.getOpponentStartingIndices(G);
     movable.forEach((i) => {
-        if (G.cells[i] == null) {
+        if (G.cells[i] == null || G.cells[i] == undefined) {
             moves.push({ move: 'setPiece', args: [i, id] });
         }
     });
     return moves;
 }
 
-export function getBestBotActionForXalianIds(G, ctx, ids) {
+export function getBestBotActionsForXalianIds(G, ctx, ids) {
     var allActions = [];
 
 
     ids.forEach( id => {
-        allActions.push(getBestBotActionForXalian(G, ctx, id));
+        let pieceActions = getBestBotActionsForXalian(G, ctx, id);
+        allActions = allActions.concat(pieceActions);
     })
 
     allActions = allActions.filter( action => action != null && action != undefined);
@@ -41,28 +49,29 @@ export function getBestBotActionForXalianIds(G, ctx, ids) {
     if (selectedAction) {
 
         let selectedMove = buildBotMove(selectedAction);
-        let path = selectedAction.path;
-        let xalian = duelUtil.getXalianFromId(G.cells[path.startIndex], G);
+        // let path = selectedAction.path;
+        // let xalian = duelUtil.getXalianFromId(G.cells[path.startIndex], G);
         // console.log('selected best action:\n' + JSON.stringify(selectedAction, null, 2));
-        console.log(
-            // 'selected best action:\n' + JSON.stringify(bestAction) + 
-            `CHOSEN: ${xalian.species.name} ${selectedAction.type} {${selectedAction.score}} :: ${selectedAction.path.startIndex} -> ${selectedAction.path.endIndex}  [${JSON.stringify(path ? path.path : {})}]`
-            );
+        // console.log(
+        //     // 'selected best action:\n' + JSON.stringify(bestAction) + 
+        //     `CHOSEN: ${xalian.species.name} ${selectedAction.type} {${selectedAction.score}} :: ${selectedAction.path.startIndex} -> ${selectedAction.path.endIndex}  [${JSON.stringify(path ? path.path : {})}]`
+        //     );
             return selectedMove;
     } else {
         console.error(`NO ACTIONS BUILT FOR ANY BOT :: ${JSON.stringify(ids)}`);
     }
 }
 
-export function getBestBotActionForXalian(G, ctx, id) {
+export function getBestBotActionsForXalian(G, ctx, id) {
     let attacker = duelUtil.getXalianFromId(id, G);
     let currentIndex = duelUtil.getIndexOfXalian(id, G);
 
     // let actions = [];
 
     var bestAction = null;
+    var allActions = [];
 
-    let details = G.currentTurnDetails || duelUtil.currentTurnState(G, ctx);
+    let details = G.currentTurnDetails || boardStateManager.currentTurnState(G, ctx);
 
     if (ctx.phase === 'play') {
         // get all paths within move range
@@ -81,17 +90,12 @@ export function getBestBotActionForXalian(G, ctx, id) {
         let attackActions = (details.hasAttacked) ? [] 
             : actionBuilder.buildAttackActionsWithScore(currentIndex, attacker, G, ctx);
 
-        // let comboActions = [];
 
-        var allActions = [].concat(moveActions).concat(attackActions).concat(comboActions);
+        allActions = allActions.concat(moveActions).concat(attackActions).concat(comboActions);
 
         allActions.sort(function (a, b) {
             return (a.score > b.score) ? -1 : (a.score < b.score) ? 1 : 0;
         });
-
-        if (comboActions && comboActions.length > 0) {
-            // console.log();
-        }
 
 
         if (allActions.length == 0) {
@@ -108,14 +112,15 @@ export function getBestBotActionForXalian(G, ctx, id) {
         // actions = buildSetupBotMoves(G, ctx, id);
     }
 
-    return bestAction;
+    // return bestAction;
+    return allActions.slice(0, Math.min(5, allActions.length));
 }
 
 function buildBotMove(action, data = {}) {
     if (action.type == duelConstants.actionTypes.COMBO) {
         return { 
             move: actionTypeToMoveNameMap()[action.type], 
-            args: [action.moveAction.path, action.attackAction.path, data] 
+            args: [action.moveAction.path, data] 
         };
     } else {
         return { 

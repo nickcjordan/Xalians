@@ -46,3 +46,10 @@ export const getSpeciesTypeSymbolSVG = (type, typeColor, size, classes) => {
     if (type.toLowerCase() == 'sand') { return <SandSymbolSVG style={{ fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
     if (type.toLowerCase() == 'electric') { return <ElectricSymbolSVG style={{ fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
 };
+
+
+export const getStripedBackgroundImage = (fillColor = '#9C92AC', fillOpacity = 0.4) => {
+    let translatedFillVal = fillColor.replace('#', '');
+    // return `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23${translatedFillVal}' fill-opacity='${fillOpacity}' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E")`;
+    return `url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23${translatedFillVal}' fill-opacity='${fillOpacity}' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E")`;
+}

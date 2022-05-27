@@ -22,13 +22,14 @@
 
 .duel-health-bar-wrapper {
     position: absolute;
-    top: -50%;
+    top: -40%;
     left: 50%;
     transform: translate(-50%, -50%);
     height: 2px;
     z-index: 205;
     pointer-events: none;
-    width: 90%;
+    width: 95%;
+    margin: auto;
   }
   
   .duel-health-bar {
@@ -43,12 +44,18 @@
 
 .duel-piece-xalian-icon {
     position: absolute;
-    top: -40%;
+    bottom: 30%;
     left: 0;
     height: 100%;
     width: 100%;
     padding: 0px !important;
     z-index: 101;
+}
+
+.duel-attack-action-xalian {
+  height: 100%;
+  width: 100%;
+  padding: 0px !important;
 }
 
 .duel-stat-chart {
@@ -216,8 +223,8 @@
 
 .duel-board-cell-dot {
   position: absolute;
-  width: 50%;
-  height: 50%;
+  width: 35%;
+  height: 35%;
   transform: translate(-50%, -50%) !important;
   pointer-events: none;
   top: 50%;
@@ -227,22 +234,38 @@
 }
 
 .duel-attack-cell-icon {
-  fill: rgba(255, 0, 0, 0.507);
   z-index: 106;
   position: absolute;
-  top: 0;
+  bottom: 0%;
   left: 50%;
   opacity: 1;
   /* stroke: white; */
   /* stroke-width: 4px; */
-  height: 60%;
-  width: 60%;
+  height: 80%;
+  width: 80%;
   pointer-events: none;
   transform: translate(-50%, -50%);
-  filter: drop-shadow(0px 0px px #000000);
+  
   padding: 5%;
-  background-color: #000;
-  border-radius: 50%;
+  /* border-radius: 50%; */
+  overflow: visible;
+  filter: drop-shadow(0px 0px 2px #000000) drop-shadow(0px 0px 6px #000000);
+}
+
+.duel-attack-icon-wrapper {
+  /* background-color: rgba(0, 0, 0, 0.25); */
+  pointer-events: none;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  min-height: 10px !important;
+  /* top: -40%; */
+  
+}
+
+.duel-attack-icon-wrapper > h6 {
+  color: white;
+  text-shadow: 1px 1px 2px rgb(0, 0, 0)
 }
 
 .duel-xalian-cell-badge-row {
@@ -254,10 +277,41 @@
 }
 
 .duel-flag {
-  z-index: 110;
+  z-index: 410;
   position: absolute;
-  top: 0;
+  top: -20%;
   left: 20%;
   opacity: 0.8;
   height: 60%;
+  filter: drop-shadow(0px 0px 2px #000000);
+}
+
+.duel-flag-carried {
+  z-index: 410;
+  position: absolute;
+  opacity: 0.8;
+  height: 60%;
+  filter: drop-shadow(0px 0px 2px #000000) drop-shadow(0px 0px 6px #000000);
+}
+
+.fit-text {
+  text-align: center;
+  margin: auto;
+}
+
+
+
+/* PATTERN */
+.attack-pattern-background {
+  /* background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.4'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41zM20 18.6l2.83-2.83 1.41 1.41L21.41 20l2.83 2.83-1.41 1.41L20 21.41l-2.83 2.83-1.41-1.41L18.59 20l-2.83-2.83 1.41-1.41L20 18.59z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); */
+  /* background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E"); */
+  border-radius: 50%;
+}
+
+.duel-cell-style-covered {
+  pointer-events: none;
+  position: absolute;
+  /* transform: translate(-50%, -50%); */
+  /* top: 50%; */
+  /* left: 50%; */
 }

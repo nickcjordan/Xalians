@@ -28,7 +28,8 @@ class XalianImage extends React.Component {
 				stroke: this.props.stroke || '0',
 				strokeWidth: this.props.strokeWidth,
 				strokeLinecap: 'round',
-				filter: this.props.filter
+				filter: this.props.filter,
+				opacity: this.props.opacity || 1
 			}} 
 		/>;
 	} 
@@ -42,17 +43,12 @@ class XalianImage extends React.Component {
 			if (this.props.colored) {
 				return (
 					<div id={this.props.id} className={'xalian-image-wrapper ' + builtClasses} style={{ background: `linear-gradient(135deg, ${primaryColor} 15%, ${secondaryColor} 85%)` }}>
-						{/* {this.props.lazy && <img data-src={this.getImageLocationFromSpecies(this.props.speciesName)} className={'xalian-image lazyload'} />} */}
-						{/* {!this.props.lazy && <Image src={this.getImageLocationFromSpecies(this.props.speciesName)} className={'xalian-image'} style={{ padding: this.props.padding || '5px' }} />} */}
 						{xalian}
 					</div>
 				);
 			} else {
 				return (
 					<div id={this.props.id} className={'xalian-image-wrapper ' + builtClasses}>
-						{/* {this.props.lazy && <img data-src={this.getImageLocationFromSpecies(this.props.speciesName)} className={'xalian-image lazyload'} />} */}
-						{/* {!this.props.lazy && <Image src={this.getImageLocationFromSpecies(this.props.speciesName)} className={'xalian-image'}  style={{ padding: this.props.padding || '5px' }} />} */}
-						{/* <XalianSVG name={this.props.speciesName.toLowerCase()} className={'xalian-image'}  style={{ padding: this.props.padding || '5px' }} /> */}
 						{xalian}
 					</div>
 				);
@@ -63,18 +59,12 @@ class XalianImage extends React.Component {
 			if (this.props.colored) {
 				return (
 					<div id={this.props.id} className={'xalian-image-wrapper ' + builtClasses} style={{ background: `radial-gradient(circle, ${primaryColor} 65%, ${primaryColor + '90'} 100%)` }}>
-						{/* {this.props.lazy && <img data-src={this.getImageLocationFromSpecies(this.props.speciesName)} className="xalian-image lazyload" />} */}
-						{/* {!this.props.lazy && <Image src={this.getImageLocationFromSpecies(this.props.speciesName)} className="xalian-image"  style={{ padding: this.props.padding || '5px' }} />} */}
-						{/* <XalianSVG name={this.props.speciesName.toLowerCase()} className="xalian-image"  style={{ padding: this.props.padding || '5px' }} /> */}
 						{xalian}
 					</div>
 				);
 			} else {
 				return (
 					<div id={this.props.id} className={'xalian-image-wrapper ' + builtClasses}>
-						{/* {this.props.lazy && <img data-src={this.getImageLocationFromSpecies(this.props.speciesName)} className="xalian-image lazyload" />} */}
-						{/* {!this.props.lazy && <Image src={this.getImageLocationFromSpecies(this.props.speciesName)} className="xalian-image" style={{ padding: this.props.padding || '5px' }}  />} */}
-						{/* <XalianSVG name={this.props.speciesName.toLowerCase()} className="xalian-image" style={{ padding: this.props.padding || '5px' }}  /> */}
 						{xalian}
 					</div>
 				);

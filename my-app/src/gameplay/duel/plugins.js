@@ -87,7 +87,8 @@ function postprocess(G, ctx) {
   ctx.log.setMetadata({
     moveId: G.moveId, 
     startState: G.startState,
-    endState: endState
+    endState: endState,
+    attackActionResult: G.attackActionResult
   });
 
   return G;

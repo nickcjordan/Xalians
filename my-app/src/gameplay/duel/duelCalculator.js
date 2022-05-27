@@ -56,6 +56,7 @@ export function calculateIndicesWithinDistance(currentIndex, distance, G, ctx) {
     let coord = map[parseInt(currentIndex)];
     if (!coord) {
         console.error("!");
+        return [];
     }
     for (var x = coord[0]; x >= 0; x--) {
         var y = coord[1];
@@ -140,7 +141,8 @@ export function calculateValidUnoccupiedPaths(G, ctx, currentIndex, distance, is
     return calculateValidPaths(G, ctx, currentIndex, distance, false, true, isBot);
 }
 
-function calculateValidPaths(G, ctx, currentIndex, distance, findOccupied, findUnoccupied, isBot = false) {
+function calculateValidPaths(G, ctx, currentIndex, uneditedDistance, findOccupied, findUnoccupied, isBot = false) {
+    let distance = Math.max(uneditedDistance, 0);
     let size = Math.sqrt(G.cells.length);
     var grid = new PF.Grid(size, size); 
     let indicesWithinDistance = calculateIndicesWithinDistance(currentIndex, distance, G, ctx);
@@ -171,13 +173,6 @@ function calculateValidPaths(G, ctx, currentIndex, distance, findOccupied, findU
             grid.setWalkableAt(coord[0], coord[1], false);
         })
     }
-
-    // if (!findUnoccupied) {
-    //     unoccupied.forEach( i => {
-    //         let coord = boardGrid.map[i];
-    //         grid.setWalkableAt(coord[0], coord[1], false);
-    //     })
-    // }
 
     var valid = [];
     selectedPaths.forEach( i => {
@@ -223,8 +218,8 @@ export function calculateMovablePaths(currentIndex, xalian, G, ctx, isBot = fals
                 }
             })
         } else {
-            if (G.currentTurnState && G.currentTurnState.actions) {
-                G.currentTurnState.actions.forEach(action => {
+            if (G.currentTurnActions) {
+                G.currentTurnActions.forEach(action => {
                     if (action.type == duelConstants.actionTypes.MOVE) {
                         let moveDistance = action.move.path.spacesMoved;
                         remainingForTurn -= moveDistance;
@@ -248,17 +243,24 @@ export function calculateMovablePaths(currentIndex, xalian, G, ctx, isBot = fals
     }
 }
 
-export function calculateAttackablePaths(currentIndex, xalian, G, ctx) {
+export function calculateAttackableIndices(currentIndex, xalian, boardState, ctx, onlyOccupiedCells = true) {
+    let valid = calculateAttackablePaths(currentIndex, xalian, boardState, ctx, onlyOccupiedCells);
+    return valid.map( path => path.endIndex );
+}
+
+export function calculateAttackablePaths(currentIndex, xalian, boardState, ctx, onlyOccupiedCells = true) {
     // let range = translator.duelStatRangeToVal(xalian.traits.attackRange);
     let range = xalian.stats.range;
-    let paths = calculateValidEnemyTargetPaths(G, ctx, currentIndex, range);
+    let paths = onlyOccupiedCells ? calculateValidEnemyTargetPaths(boardState, ctx, currentIndex, range) : calculateAllValidPaths(boardState, ctx, currentIndex, range);
     let attackablePaths = [];
     paths.forEach( path => {
-        if (G.cells[path.endIndex]) {
-            let defenderId = G.cells[path.endIndex];
-            if (!duelUtil.xaliansAreOnSameTeam(xalian.xalianId, defenderId, G, ctx)) {
+        if (boardState.cells[path.endIndex]) {
+            let defenderId = boardState.cells[path.endIndex];
+            if (!duelUtil.xaliansAreOnSameTeam(xalian.xalianId, defenderId, boardState, ctx)) {
                 attackablePaths.push(path);
             }
+        } else if (!onlyOccupiedCells) {
+            attackablePaths.push(path);
         }
     });
     return attackablePaths;
@@ -288,6 +290,7 @@ export function calculateAttackResult(attacker, defender, G, ctx, simulate = fal
 
     return {
         damage: damage,
+        reactionDamage: 0,
         typeEffectiveness: typeEffectiveness
     }
 }
@@ -392,7 +395,7 @@ function calculateRandom() {
 //     return multiplier;
 // }
 
-function calculateTypeEffectiveness(attacker, defender, secondary = true) {
+export function calculateTypeEffectiveness(attacker, defender, secondary = true) {
     // This can be 0 (ineffective); 0.25, 0.5 (not very effective); 1 (normally effective); 2, or 4 (super effective)
     
     /*

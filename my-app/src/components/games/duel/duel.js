@@ -5,6 +5,7 @@ import * as duelUtil from '../../../utils/duelUtil';
 import * as duelCalculator from '../../../gameplay/duel/duelCalculator';
 import * as duelBot from '../../../gameplay/duel/duelBot';
 import * as duelConstants from '../../../gameplay/duel/duelGameConstants';
+import * as boardStateManager from '../../../gameplay/duel/boardStateManager';
 import * as plugins from '../../../gameplay/duel/plugins';
 import { v4 as uuidv4 } from 'uuid'; 
 
@@ -69,8 +70,8 @@ export const Duel = (data) => {
 				selectedId: null,
 				selectedIndex: null,
 				flags: flagStates,
-				turnHasEnded: false
-				
+				attackActionResult: null,
+				currentTurnActions: []
 			};
 		},
 
@@ -81,31 +82,23 @@ export const Duel = (data) => {
 			// Called at the beginning of a turn.
 			onBegin: (G, ctx) => {
 				// console.log('STARTING TURN');
-				G.currentTurnState = {
-					actions: [] 
-				};
+				G.currentTurnActions = [];
 				G.currentTurnDetails = null;
-				G.turnHasEnded = false;
+				G.selectedIndex = null;
+				G.selectedId = null;
 				
 			},
 
 			// Called at the end of a turn.
 			onEnd: (G, ctx) => {
-				// console.log('ENDING TURN');
-				G.selectedIndex = null;
-				G.selectedId = null;
-				G.turnHasEnded = true;
-				// if (ctx.phase === 'play' && G.currentTurnState.actions && G.currentTurnState.actions.length > 0) {
-					// let actions = G.currentTurnState.actions;
-					// console.log('GET READY FOR ACTION!! \n' + JSON.stringify(actions, null, 2));
-					// G.readyAnimations = actions;
-				// }
+				// G.selectedIndex = null;
+				// G.selectedId = null;
+
 			},
 
 			// Ends the turn if this returns true.
 			endIf: (G, ctx) => {
 				if (ctx.phase === 'play') {
-					if (G.turnHasEnded) { return true; }
 
 					
 					var hasValidActionAvailable = false;
@@ -138,11 +131,8 @@ export const Duel = (data) => {
 
 			// Called at the end of each move.
 			onMove: (G, ctx) => {
-				// console.log('MOVE END');
 				if (ctx.phase === 'play') {
-					let turnState = duelUtil.currentTurnState(G, ctx);
-					G.currentTurnDetails = turnState;
-
+					G.currentTurnDetails = boardStateManager.currentTurnState(G, ctx);
 				}
 			},
 
@@ -178,7 +168,15 @@ export const Duel = (data) => {
 				next: 'play'
 			},
 			play: {
-				moves: { selectPiece, movePiece, movePieceThenAttack, doAttack, endTurn },
+				// moves: { selectPiece, movePiece, movePieceThenAttack, doAttack, endTurn },
+				moves: { 
+					selectPiece, 
+					movePiece: {
+						move: movePiece
+					}, 
+					doAttack, 
+					endTurn
+				},
 			},
 		},
 
@@ -235,11 +233,9 @@ export const Duel = (data) => {
 		ai: {
 			enumerate: (G, ctx) => {
 				let moves = [];
-				// let turnState = duelUtil.currentTurnState(G);
-				let turnState = duelUtil.currentTurnState(G, ctx);
+				let turnState = boardStateManager.currentTurnState(G, ctx);
 				// only building moves if it is the bot's turn and it has a valid action yet to take
 				if (duelUtil.isOpponentsTurn(ctx) 
-					&& !G.turnHasEnded
 					&& (!turnState.hasAttacked 
 						|| !turnState.hasMoved 
 						|| (turnState.hasMoved && turnState.remainingSpacesToMove > 0))) {
@@ -249,23 +245,9 @@ export const Duel = (data) => {
 						G.unsetOpponentXalianIds.forEach( id => {
 							moves = moves.concat(duelBot.buildSetupBotMoves(G, ctx, id));
 						})
-					}
-					
-					
-					
-					else if (ctx.phase === 'play') {
-						let best = duelBot.getBestBotActionForXalianIds(G, ctx, G.activeOpponentXalianIds);
-						if (best) {
-							moves.push(best);
-						}
-
-						// G.activeOpponentXalianIds.forEach( id => {
-							// moves = moves.concat(possible);
-						// })
-
-						// if (duelUtil.currentTurnState(G).hasMoved || duelUtil.currentTurnState(G).hasAttacked) {
-						// 	moves.push({ move: 'endTurn', args: [] });
-						// }
+					} else if (ctx.phase === 'play') {
+						let bestActions = duelBot.getBestBotActionsForXalianIds(G, ctx, G.activeOpponentXalianIds);
+						moves = moves.concat(bestActions);
 					}
 					
 					if (moves.length == 0 && ctx.phase === 'play') {
@@ -278,9 +260,6 @@ export const Duel = (data) => {
 				return moves;
 			},
 			objectives: duelBot.buildBotObjectives(),
-			// iterationCallback: (data) => {
-				// console.log("itty");
-			// },
 			  playoutDepth: 500,
 			  iterations: 100
 		},
@@ -299,13 +278,13 @@ function selectPiece(G, ctx, id) {
 }
 
 function endTurn(G, ctx) {
-	G.currentTurnDetails = {
-            hasAttacked: true,
-            hasMoved: true,
-            remainingSpacesToMove: 0,
-            moves: [],
-            isComplete: true
-        }
+	// G.currentTurnDetails = {
+    //         hasAttacked: true,
+    //         hasMoved: true,
+    //         remainingSpacesToMove: 0,
+    //         moves: [],
+    //         isComplete: true
+    //     }
 	ctx.events.endTurn();
 }
 
@@ -342,10 +321,10 @@ function moveXalianToActive(id, unset, active, ctx, endTurnAfterMove = false) {
 }
 
 // GAMEPLAY
-function movePieceThenAttack(G, ctx, movePath, attackPath, data = {}) {
-	movePiece(G, ctx, movePath, data);
-	doAttack(G, ctx, attackPath, data);
-}
+// function movePieceThenAttack(G, ctx, movePath, attackPath, data = {}) {
+// 	movePiece(G, ctx, movePath, data);
+// 	doAttack(G, ctx, attackPath, data);
+// }
 
 // function movePiece(G, ctx, startIndex, endIndex, data = {}) {
 function movePiece(G, ctx, path, data = {}) {
@@ -353,10 +332,10 @@ function movePiece(G, ctx, path, data = {}) {
 	let xalian = duelUtil.getXalianFromId(xalianIdToMove, G);
 
 
-	let target = duelUtil.getCurrentTurnTargetFlagIndex(G, ctx);
+	let targetFlagIndex = duelUtil.getCurrentTurnTargetFlagIndex(G, ctx);
 
 	// set flag holder
-	if (path.endIndex == target) {
+	if (path.endIndex == targetFlagIndex) {
 		let flag = G.flags[parseInt(ctx.currentPlayer)];
 		if (flag) {
 			flag.index = null;
@@ -375,16 +354,13 @@ function movePiece(G, ctx, path, data = {}) {
 			path: path
 		}
 	};
-	G.currentTurnState.actions.push(action);
-
-	if (path.isSelectedBotAction) {
-		console.log();
-	}
+	// G.currentTurnState.actions.push(action);
+	G.currentTurnActions.push(action);
 
 }
 
 
-function doAttack(G, ctx, path, data = {}, isSelectedBotAction = false) {
+function doAttack(G, ctx, path, data = {}) {
 	let attackerIndex = path.startIndex;
 	let defenderIndex = path.endIndex;
 	let attackerId = G.cells[attackerIndex];
@@ -396,59 +372,62 @@ function doAttack(G, ctx, path, data = {}, isSelectedBotAction = false) {
 		var existingDefenderHealth = parseInt(defender.stats.health);
 		let attackResult = duelCalculator.calculateAttackResult(attacker, defender, G, ctx);
 		let damage = attackResult.damage;
-		defender.stats.health = existingDefenderHealth - damage;
+		defender.stats.health = Math.max(0, existingDefenderHealth - damage);
 		// console.log('resulting health = ' + defender.stats.health);
 		if (defender.stats.health <= 0) {
 			if (duelUtil.isPlayerPiece(defenderId, G)) {
 				removeItemFromList(defenderId, G.activeXalianIds);
 				G.inactiveXalianIds.push(defenderId);
 				let flag = duelUtil.getPlayerFlagState(G);
-			if (flag.holder && flag.holder === defenderId) {
-				flag.holder = null;
-				flag.index = defenderIndex;
+				if (flag.holder && flag.holder === defenderId) {
+					flag.holder = null;
+					flag.index = defenderIndex;
+				}
+			} else if (duelUtil.isOpponentPiece(defenderId, G)) {
+				removeItemFromList(defenderId, G.activeOpponentXalianIds);
+				G.inactiveOpponentXalianIds.push(defenderId);
+				let flag = duelUtil.getOpponentFlagState(G);
+				if (flag.holder && flag.holder === defenderId) {
+					flag.holder = null;
+					flag.index = defenderIndex;
+				}
 			}
-		} else if (duelUtil.isOpponentPiece(defenderId, G)) {
-			removeItemFromList(defenderId, G.activeOpponentXalianIds);
-			G.inactiveOpponentXalianIds.push(defenderId);
-			let flag = duelUtil.getOpponentFlagState(G);
-			if (flag.holder && flag.holder === defenderId) {
-				flag.holder = null;
-				flag.index = defenderIndex;
-			}
-		}
-		G.cells[defenderIndex] = null;
-		
+			G.cells[defenderIndex] = null;
+
 		}
 
-		if (ctx.currentPlayer == 0) {
-			Hub.dispatch("duel-animation-event", { event: "attack", data: { 
-				attackerIndex: attackerIndex,
-				attackerId: attackerId,
-				attackerType: attacker.elements.primaryType,
-				defenderIndex: defenderIndex,
-				defenderId: defenderId,
-				defenderType: defender.elements.primaryType,
-				attackResult: attackResult
-				
-			}, message: null });
-		}
-	
-	}
-
-	let action = {
-		type: duelConstants.actionTypes.ATTACK,
-		attack: {
+		// if (ctx.currentPlayer == 0) {
+		// 	Hub.dispatch("duel-animation-event", { event: "attack", data: 
+		let attackActionResult = {
+			attackerIndex: attackerIndex,
 			attackerId: attackerId,
+			attackerType: attacker.elements.primaryType,
+			defenderIndex: defenderIndex,
 			defenderId: defenderId,
-			path: path
-		}
-	};
-	G.currentTurnState.actions.push(action);
+			defenderType: defender.elements.primaryType,
+			attackResult: attackResult
 
-	if (isSelectedBotAction) {
-		console.log('THE ONE AND ONLY!');
+		};
+		G.attackActionResult = attackActionResult;
+		// , message: null });
+		// }
+
+		let action = {
+			type: duelConstants.actionTypes.ATTACK,
+			attack: {
+				attackerId: attackerId,
+				defenderId: defenderId,
+				path: path,
+				result: attackActionResult
+			}
+		};
+		// G.currentTurnState.actions.push(action);
+		G.currentTurnActions.push(action);
+	} else {
+		console.error(`ERROR :: DID NOT FIND ONE OF ATTACKER [${attacker}] OR DEFENDER [${defender}] DURING ATTACK ACTION`);
 	}
-	
+
+
 }
 
 function removeItemFromList(item, list) {

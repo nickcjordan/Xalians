@@ -1,5 +1,6 @@
-import * as constants from '../gameplay/duel/duelGameConstants';
+import * as duelConstants from '../gameplay/duel/duelGameConstants';
 import * as duelCalculator from '../gameplay/duel/duelCalculator';
+import * as boardStateManager from '../gameplay/duel/boardStateManager';
 
 export function isPlayerPiece(id, G) {
     return  (G.unsetXalianIds && G.unsetXalianIds.includes(id)) 
@@ -65,11 +66,11 @@ export function getStartingIndices(boardState, ctx) {
 }
 
 export function getXalianFromId(id, boardState) {
-    return boardState.xalians.filter((x) => x.xalianId === id)[0];
+    return getXalianFromIdAndXalians(id, boardState.xalians);
 };
 
 export function getXalianFromIdAndXalians(id, xalians) {
-    return xalians.filter((x) => x.xalianId === id)[0];
+    return id ? xalians.filter((x) => x.xalianId === id)[0] : null;
 };
 
 export function xaliansAreOnSameTeam(id1, id2, G) {
@@ -166,70 +167,99 @@ export function getFlagIndex(flag, boardState) {
     }
 }
 
-export function currentTurnState(G, ctx) {
-    if (G.turnHasEnded) {
-        return {
-            hasAttacked: true,
-            hasMoved: true,
-            remainingSpacesToMove: 0,
-            moves: [],
-            isComplete: true
-        }
-    } else {
-        var hasAttacked = false;
-        var hasMoved = false;
-        var remainingSpacesToMove = constants.MAX_SPACES_MOVED_PER_TURN;
-        var isComplete = false;
-        let moveMap = new Map();
-        G.currentTurnState.actions.forEach(action => {
-            if (action.type == constants.actionTypes.ATTACK) {
-                hasAttacked = true;
-            }
-
-            if (action.type == constants.actionTypes.MOVE) {
-                hasMoved = true;
-                let spacesMovedInAction = action.move.path.spacesMoved;
-                remainingSpacesToMove -= spacesMovedInAction;
-                var spacesMovedForXalian = 0;
-                if (moveMap[action.move.moverId]) {
-                    let entry = moveMap[action.move.moverId];
-                    spacesMovedForXalian = entry.value;
-                }
-                spacesMovedForXalian += spacesMovedInAction;
-                moveMap[action.move.moverId] = {
-                    key: action.move.moverId,
-                    value: spacesMovedForXalian
-                };
-            }
-        });
-
-        isComplete = (remainingSpacesToMove == 0 && hasAttacked);
-
-
-        var moves = [];
-        Object.values(moveMap).forEach((entry) => {
-            moves.push({ moverId: entry.key, spacesMoved: entry.value });
-        });
-
-
-        return {
-            hasAttacked: hasAttacked,
-            hasMoved: hasMoved,
-            remainingSpacesToMove: remainingSpacesToMove,
-            moves: moves,
-            isComplete: isComplete
-        }
-    }
-}
 
 export function xalianHasValidActionAvailable(id, G, ctx) {
     let xalian = getXalianFromId(id, G);
     let ind = getIndexOfXalian(id, G);
     if (ind) {
-        let attackableSpaces = duelCalculator.calculateAttackablePaths(ind, xalian, G, ctx);
-        let movableSpaces = duelCalculator.calculateMovablePaths(ind, xalian, G, ctx);
-        return (attackableSpaces && attackableSpaces.length > 0) || (movableSpaces && movableSpaces.length > 0);
+        var canAttack = true;
+        var canMove = true;
+
+        let xalianStatus = getXalianCurrentTurnStatus(xalian, G);
+
+        if (xalianStatus.xalianHasAttacked) {
+            canAttack = false;
+        } else {
+            let attackableSpaces = duelCalculator.calculateAttackablePaths(ind, xalian, G, ctx);
+            if (!attackableSpaces || attackableSpaces.length == 0) {
+                canAttack = false;
+            }
+        }
+        if (xalianStatus.xalianHasMoved && xalianStatus.remainingSpacesXalianCanMove == 0) {
+            canMove = false;
+        } else {
+            // let movableSpaces = duelCalculator.calculateMovablePaths(ind, xalian, G, ctx);
+            let movableSpaces = duelCalculator.calculateValidUnoccupiedPaths(G, ctx, ind, xalianStatus.remainingSpacesXalianCanMove)
+            if (!movableSpaces || movableSpaces.length == 0) {
+                canMove = false;
+            }
+        }
+        return canAttack || canMove;
     } else {
         return false;
     }
+}
+
+export function getXalianCurrentTurnStatus(xalian, boardState) {
+    let xalianId = xalian.xalianId;
+    let currentTurnDetails = boardState.currentTurnDetails || boardStateManager.currentTurnState(boardState);
+    let currentTurnActions = boardState.currentTurnActions || currentTurnDetails.actions || [];
+
+    var xalianHasAttacked = false;
+    var xalianHasMoved = false;
+    // var remainingSpacesXalianCanMove = Math.min(currentTurnDetails.remainingSpacesToMove, xalian.stats.distance);
+    var remainingSpacesXalianCanMove = xalian.stats.distance;
+
+    currentTurnActions.forEach(action => {
+        if (action.type == duelConstants.actionTypes.ATTACK && action.attack.attackerId === xalianId) {
+            xalianHasAttacked = true;
+        }
+
+        if (action.type == duelConstants.actionTypes.MOVE && action.move.moverId === xalianId) {
+            xalianHasMoved = true;
+            let spacesMovedInAction = action.move.path.spacesMoved;
+            remainingSpacesXalianCanMove -= spacesMovedInAction;
+            // var spacesMovedForXalian = 0;
+            // if (moveMap[action.move.moverId]) {
+            //     let entry = moveMap[action.move.moverId];
+            //     spacesMovedForXalian = entry.value;
+            // }
+            // spacesMovedForXalian += spacesMovedInAction;
+            // moveMap[action.move.moverId] = {
+            //     key: action.move.moverId,
+            //     value: spacesMovedForXalian
+            // };
+        }
+    });
+    remainingSpacesXalianCanMove = Math.min(remainingSpacesXalianCanMove, currentTurnDetails.remainingSpacesToMove);
+    remainingSpacesXalianCanMove = Math.max(remainingSpacesXalianCanMove, 0);
+
+    return {
+        xalianHasAttacked: xalianHasAttacked,
+        xalianHasMoved: xalianHasMoved,
+        remainingSpacesXalianCanMove: remainingSpacesXalianCanMove
+    }
+}
+
+
+export function getMovableIndices(xalianId, boardState, ctx) {
+	var moves = [];
+		if (ctx.phase === 'setup' && xalianId) {
+			moves = getStartingIndices(boardState, ctx);
+		} else if (ctx.phase === 'play' && xalianId) {
+			let xalian = getXalianFromId(xalianId, boardState);
+			let index = getIndexOfXalian(xalianId, boardState);
+			moves = duelCalculator.calculateMovableIndices(index, xalian, boardState, ctx);
+		}
+	return moves;
+}
+
+export function getAttackableIndices(xalianId, boardState, ctx, onlyOccupiedCells = true) {
+	var attacks = [];
+		if (ctx.phase === 'play' && xalianId) {
+			let xalian = getXalianFromId(xalianId, boardState);
+			let index = getIndexOfXalian(xalianId, boardState);
+			attacks = duelCalculator.calculateAttackableIndices(index, xalian, boardState, ctx, onlyOccupiedCells);
+		}
+	return attacks;
 }

@@ -8,3 +8,14 @@ export const actionTypes = {
     ATTACK: 'attack',
     COMBO: 'combo'
 }
+
+export const typeEffectiveness = {
+    IMMUNE: 'Immune',
+    LOW_EFFECT: 'Weak',
+    MEDIUM_EFFECT: 'Average',
+    HIGH_EFFECT: 'Good',
+    SUPER_EFFECT: 'Strong'
+}
+
+export const PLAYER_ONE_COLOR = '#947dfaff';
+export const PLAYER_TWO_COLOR = '#ff7a7aff';

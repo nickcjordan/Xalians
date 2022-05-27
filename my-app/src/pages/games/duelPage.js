@@ -29,8 +29,6 @@ class DuelPage extends React.Component {
 		resultText: '',
 	};
 
-	componentWillUnmount() {}
-
 	componentDidMount() {
 		// retrievalUtil.getCurrentUserAndXalians().then((user) => {
 		retrievalUtil.getMockCurrentUserAndXalians().then((user) => {
@@ -44,56 +42,56 @@ class DuelPage extends React.Component {
 		});
 	}
 
-	handleClick = (id) => {
-		this.state.xalians.forEach((x) => {
-			if (x.xalianId === id) {
-				this.handleXalianSelection(x.attributes);
-			}
-		});
-	};
+	// handleClick = (id) => {
+	// 	this.state.xalians.forEach((x) => {
+	// 		if (x.xalianId === id) {
+	// 			this.handleXalianSelection(x.attributes);
+	// 		}
+	// 	});
+	// };
 
-	handleXalianSelection = (xalian) => {
-		if (this.state.instructionText === 'Select Attacker') {
-			this.handleAttackerSelection(xalian);
-		} else {
-			this.handleDefenderSelection(xalian);
-		}
-	};
+	// handleXalianSelection = (xalian) => {
+	// 	if (this.state.instructionText === 'Select Attacker') {
+	// 		this.handleAttackerSelection(xalian);
+	// 	} else {
+	// 		this.handleDefenderSelection(xalian);
+	// 	}
+	// };
 
-	handleAttackerSelection = (xalian) => {
-		this.setState({ instructionText: 'Now Select Defender', resultText: this.state.resultText + '\n :: ', attacker: xalian });
-	};
+	// handleAttackerSelection = (xalian) => {
+	// 	this.setState({ instructionText: 'Now Select Defender', resultText: this.state.resultText + '\n :: ', attacker: xalian });
+	// };
 
-	handleDefenderSelection = (xalian) => {
-		let a = this.state.attacker;
+	// handleDefenderSelection = (xalian) => {
+	// 	let a = this.state.attacker;
 
-		let attackResult = calc.calculateAttackResult(a.moves[0], a, xalian);
-		this.setState({ instructionText: 'Select Attacker', resultText: this.state.resultText + ` :: ${a.species.name} [attack=${a.stats['standardAttackPoints'].points}] attacks ${xalian.species.name} [defense=${xalian.stats['standardDefensePoints'].points}] for a result of ${attackResult}` });
-	};
+	// 	let attackResult = calc.calculateAttackResult(a.moves[0], a, xalian);
+	// 	this.setState({ instructionText: 'Select Attacker', resultText: this.state.resultText + ` :: ${a.species.name} [attack=${a.stats['standardAttackPoints'].points}] attacks ${xalian.species.name} [defense=${xalian.stats['standardDefensePoints'].points}] for a result of ${attackResult}` });
+	// };
 
-	buildSpeciesIcon(x) {
-		return (
-			<Col md={2} sm={3} xs={6} className="species-col">
-				<a onClick={() => this.handleClick(x.xalianId)}>
-					<XalianImage colored bordered speciesName={x.species.name} primaryType={x.elements.primaryType} moreClasses="xalian-image-grid" />
-					<Row style={{ width: '100%', margin: '0px', padding: '0px' }}>
-						{/* <Col xs={5} style={{ margin: 'auto', padding: '0px', paddingRight: '5px', textAlign: 'right' }}>
-							{svgUtil.getSpeciesTypeSymbol(x.elements.primaryType, true, 25)}
-						</Col> */}
-						{/* <Col xs={7} style={{ padding: '0px', height: '100%', margin: 'auto' }}> */}
-						<Col style={{ padding: '0px', height: '100%', margin: 'auto' }}>
-							<h6 className="condensed-row" style={{ textAlign: 'left', margin: 'auto', height: '100%', width: '100%' }}>
-								#{x.xalianId.split("-").pop()}
-							</h6>
-						</Col>
-					</Row>
-					<h5 className="condensed-row species-name-title" style={{ textAlign: 'center' }}>
-						{x.name}
-					</h5>
-				</a>
-			</Col>
-		);
-	}
+	// buildSpeciesIcon(x) {
+	// 	return (
+	// 		<Col md={2} sm={3} xs={6} className="species-col">
+	// 			<a onClick={() => this.handleClick(x.xalianId)}>
+	// 				<XalianImage colored bordered speciesName={x.species.name} primaryType={x.elements.primaryType} moreClasses="xalian-image-grid" />
+	// 				<Row style={{ width: '100%', margin: '0px', padding: '0px' }}>
+	// 					{/* <Col xs={5} style={{ margin: 'auto', padding: '0px', paddingRight: '5px', textAlign: 'right' }}>
+	// 						{svgUtil.getSpeciesTypeSymbol(x.elements.primaryType, true, 25)}
+	// 					</Col> */}
+	// 					{/* <Col xs={7} style={{ padding: '0px', height: '100%', margin: 'auto' }}> */}
+	// 					<Col style={{ padding: '0px', height: '100%', margin: 'auto' }}>
+	// 						<h6 className="condensed-row" style={{ textAlign: 'left', margin: 'auto', height: '100%', width: '100%' }}>
+	// 							#{x.xalianId.split("-").pop()}
+	// 						</h6>
+	// 					</Col>
+	// 				</Row>
+	// 				<h5 className="condensed-row species-name-title" style={{ textAlign: 'center' }}>
+	// 					{x.name}
+	// 				</h5>
+	// 			</a>
+	// 		</Col>
+	// 	);
+	// }
 
 	transformXalianToGamePiece = (xalian) => {
 		let stAttackPts = translator.statRangeToInteger(xalian.stats["standardAttackPoints"].range);
@@ -141,7 +139,7 @@ class DuelPage extends React.Component {
 
 	render() {
 		
-		let xaliansPerTeam = 2;
+		let xaliansPerTeam = 5;
 		// let xaliansPerTeam = duelConstants.XALIANS_PER_TEAM;
 
 		if (this.state.xalians && this.state.xalians.length > 0) {

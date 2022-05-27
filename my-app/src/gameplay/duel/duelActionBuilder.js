@@ -12,7 +12,6 @@ export const BOT_ACTION_SCORE_FOR_ATTACKING_ENEMY_GUARDING_FLAG = 400;
 
 
 function buildAction(type, score, path) {
-    path.isSelectedBotAction = false;
     return {
         type: type,
         score: score,
@@ -57,6 +56,9 @@ function buildAttackAction(attacker, path, G, ctx) {
     var score = 0;
     let defender = duelUtil.getXalianFromId(G.cells[path.endIndex], G);
     let pathToFlagFromDefender = duelCalculator.calculatePathToTarget(path.endIndex, duelUtil.getPlayerFlagIndex(G), G, ctx);
+
+    action.attackerId = attacker.xalianId;
+    action.defenderId = defender.xalianId;
 
     // SCORE :: DEFENDER DISTANCE TO GRABBING TARGET FLAG
     let flagClosenessFactor = (duelConstants.BOARD_COLUMN_SIZE * 2) - pathToFlagFromDefender.spacesMoved;
@@ -110,6 +112,7 @@ export function buildMoveActionsWithScore(currentIndex, xalian, paths, G, ctx) {
 
         // buld initial action object with score to be passed along
         let action = buildAction(duelConstants.actionTypes.MOVE, 0, path);
+        action.moverId = xalian.xalianId;
 
         if (action.description == null || action.description == undefined) {
             action.description = "";
@@ -176,26 +179,23 @@ function scorePathsMovingTowardsFlag(currentIndex, actions, G, ctx) {
     }
 
     let flagIndex = duelUtil.getOpponentFlagIndex(G);
-    let grid = duelCalculator.buildGrid(G.cells.length);
-    let startCoord = grid.map[currentIndex];
-    let flagCoord = grid.map[flagIndex];
+    // let grid = duelCalculator.buildGrid(G.cells.length);
+    // let startCoord = grid.map[currentIndex];
+    // let flagCoord = grid.map[flagIndex];
 
-    let startX = parseInt(startCoord[0]);
-    let startY = parseInt(startCoord[1]);
+    // let startX = parseInt(startCoord[0]);
+    // let startY = parseInt(startCoord[1]);
     
-    if (!flagCoord) {
-        console.log();
-    }
-    let flagX = parseInt(flagCoord[0]);
-    let flagY = parseInt(flagCoord[1]);
+    // let flagX = parseInt(flagCoord[0]);
+    // let flagY = parseInt(flagCoord[1]);
 
     actions.forEach(action => {
         if (action.description == null || action.description == undefined) {
             action.description = "";
         }
-        let endCoord = grid.map[action.path.endIndex];
-        let endX = parseInt(endCoord[0]);
-        let endY = parseInt(endCoord[1]);
+        // let endCoord = grid.map[action.path.endIndex];
+        // let endX = parseInt(endCoord[0]);
+        // let endY = parseInt(endCoord[1]);
         // if (isInCorrectDirection(startX, endX, flagX)) {
         //     action.score += BOT_ACTION_SCORE_FOR_MOVING_CORRECT_DIRECTION;
         //     action.description += `:: CORRECT X : +${BOT_ACTION_SCORE_FOR_MOVING_CORRECT_DIRECTION}`;
