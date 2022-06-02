@@ -2951,9 +2951,13 @@ input, textarea {
 
 .xalian-image-bordered {
   border-color: black;
-  border-width: 2px;
+  border-width: min(2%, 2px);
   border-radius: 8px;
   border-style: solid;
+}
+
+.xalian-image-rounded {
+  border-radius: min(10%, 8px);
 }
 
 .xalian-image-selected {
@@ -3208,7 +3212,12 @@ input, textarea {
   width: 90vw !important;
 }
 
-
+.absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 
 /* 
 -------------------------------------------

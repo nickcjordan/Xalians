@@ -27,7 +27,7 @@ function getDiff(pathStartCoord, pathNextCoord, currentCoord) {
     return resp;
 }
 
-export function handleMoveAnimation(tl, log, callback, setStateCallback) {
+export function handleMoveAnimation(tl, log, callback, setStateCallback, isLastLog = false) {
     if (log.action && log.action.payload && log.action.payload.args && log.action.payload.args[0]) {
 
         // if (moveName === 'setPiece') {
@@ -48,7 +48,10 @@ export function handleMoveAnimation(tl, log, callback, setStateCallback) {
 
         let moveName = log.action.payload.type;
         if (moveName === 'movePiece') {
-            handleMoveAction(log.action.payload.args[0], tl, log.metadata, callback)
+            let moveAction = log.action.payload.args[0];
+            let shouldAnimateAction = !isLastLog || (isLastLog && !moveAction.dragged);
+            handleMoveAction(moveAction, tl, log.metadata, callback, shouldAnimateAction);
+            
 
         } else if (moveName === 'doAttack') {
             handleAttackAction(log.action.payload.args[0], tl, log.metadata, callback, setStateCallback);
@@ -59,10 +62,10 @@ export function handleMoveAnimation(tl, log, callback, setStateCallback) {
 
 }
 
-function handleMoveAction(movePath, tl, meta, callback) {
+function handleMoveAction(movePath, tl, meta, callback, shouldAnimateAction = true) {
     let moveTl = gsap.timeline();
     // DO MOVE ANIMATION
-    console.log(`movePiece :: `);
+    // console.log(`movePiece :: `);
     let boardState = meta.startState;
 
     let moverId = boardState.cells[movePath.startIndex];
@@ -71,28 +74,32 @@ function handleMoveAction(movePath, tl, meta, callback) {
 
     // let dots = document.querySelectorAll(".duel-movable-cell-dot");
     let dots = document.querySelectorAll(".fade-out-animation-on-move");
-    if (dots) {
+    if (dots && dots.length > 0) {
         gsap.to(gsap.utils.toArray(dots), { autoAlpha: 0 });
     }
 
     // gsap.to(gsap.utils.toArray(document.querySelectorAll(".fade-out-animation-on-move")), { autoAlpha: 0 });
 
-    movePath.path.forEach((pathCoord, index, array) => {
+    if (shouldAnimateAction) {
+        movePath.path.forEach((pathCoord, index, array) => {
+            if ((index + 1) < array.length) {
+                let pathNext = array[index + 1];
+                let diff = getDiff(pathCoord, pathNext, movePath.path[0]);
+                moveTl.to(elem,
+                    // {xPercent: -(diff.from[0]), yPercent: -(diff.from[1])},
+                    { xPercent: -(diff.to[0]), yPercent: -(diff.to[1]), duration: 0.25 }
+                );
+    
+            } else {
+                // gsap.to(gsap.utils.toArray(document.querySelectorAll(".fade-out-animation-on-move")), { autoAlpha: 1 });
+                moveTl.add(callback, ">");
+            }
+    
+        });
+    } else {
+        moveTl.add(callback, ">");
+    }
 
-        if ((index + 1) < array.length) {
-            let pathNext = array[index + 1];
-            let diff = getDiff(pathCoord, pathNext, movePath.path[0]);
-            moveTl.to(elem,
-                // {xPercent: -(diff.from[0]), yPercent: -(diff.from[1])},
-                { xPercent: -(diff.to[0]), yPercent: -(diff.to[1]), duration: 0.25 }
-            );
-
-        } else {
-            // gsap.to(gsap.utils.toArray(document.querySelectorAll(".fade-out-animation-on-move")), { autoAlpha: 1 });
-            moveTl.add(callback, ">");
-        }
-
-    })
 
     tl.add(moveTl);
 
@@ -101,7 +108,7 @@ function handleMoveAction(movePath, tl, meta, callback) {
 
 function handleAttackAction(attackPath, tl, meta, callback, setStateCallback) {
     // DO ATTACK ANIMATION
-    console.log(`doAttack :: `);
+    // console.log(`doAttack :: `);
 
     let boardState = meta.startState;
     let attackActionResult = meta.attackActionResult;

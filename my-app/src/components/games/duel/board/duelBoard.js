@@ -4,6 +4,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
+import Stack from 'react-bootstrap/Stack';
 import PropTypes from 'prop-types';
 import * as gameConstants from '../../../../gameplay/duel/duelGameConstants';
 import XalianImage from '../../../xalianImage';
@@ -25,23 +26,18 @@ import { AnimationHub } from '../../../../store/AnimationHub';
 import * as boardStateManager from '../../../../gameplay/duel/boardStateManager';
 import * as moveAnimationManager from '../../../../gameplay/duel/moveAnimationManager';
 
+import fitty from 'fitty';
+import LocalDuelStorage from '../../../../store/LocalStorage';
+
 import gsap from 'gsap';
 import Flip from 'gsap/Flip';
+import Draggable from 'gsap/Draggable';
 import MotionPathPlugin from 'gsap/MotionPathPlugin';
-gsap.registerPlugin(Flip);
-gsap.registerPlugin(MotionPathPlugin);
+gsap.registerPlugin(Flip, MotionPathPlugin, Draggable);
 
-
-const reqSvgs = require.context ( '../../../../svg/species', true, /\.svg$/ );
-const svgs = reqSvgs.keys () .map ( path => ({ path, file: reqSvgs ( path ) }) );
-
-const player1Color = '';
-const player2Color = '';
 
 class DuelBoard extends React.Component {
 	state = {
-		// speciesSvgMap: {},
-		size: { min: 50 },
 		contentLoaded: false,
 		attackResult: {},
 		animationQueue: [],
@@ -66,31 +62,43 @@ class DuelBoard extends React.Component {
 
 
 	setSize = (w, h) => {
-		let max = Math.max(w, h);
-		let min = Math.min(w, h);
-		
-		let padding = 10;
-		
-		this.setState({
-			contentLoaded: true,
-			size: {
+		if (w > 0 && h > 0) {
+			let max = Math.max(w, h);
+			let min = Math.min(w, h);
+			
+			let padding = 10;
+			
+			let boardSize = {
 				width: w - padding,
 				height: h - padding,
 				max: max - padding,
 				min: min - padding,
-			},
-		});
+			};
+			
+			LocalDuelStorage.setBoardSize(boardSize);
+			
+			
+			this.setState({
+				contentLoaded: true,
+				size: boardSize,
+			});
+		}
 	};
 
 	updateSize = () => {
 		if (window && window.innerWidth) {
-			this.setSize(window.innerWidth, Math.min(window.innerHeight * 0.8, window.innerHeight - 100));
+			this.setSize(window.innerWidth, window.innerHeight * 0.5);
 		}
 	};
 	
 	componentDidMount() {
 		document.addEventListener('DOMContentLoaded', this.updateSize);
 		window.addEventListener('resize', this.updateSize);
+
+		let fits = fitty('.fit-xalian-name-text', {
+			minSize: 10,
+			maxSize: 14,
+		});
 
 		
 		
@@ -102,20 +110,25 @@ class DuelBoard extends React.Component {
 			let logs = boardStateManager.getAllMoveActionsFromLog(this.props.log);
 			if (this.state.logIndex < logs.length) {
 				let log = logs[this.state.logIndex];
-				moveAnimationManager.handleMoveAnimation(tl, log, this.onMoveAnimationComplete, this.onAttackAnimationSetStateAttackDetails)
+				let isLastLog = this.state.logIndex == (logs.length - 1);
+				moveAnimationManager.handleMoveAnimation(tl, log, this.onMoveAnimationComplete, this.onAttackAnimationSetStateAttackDetails, isLastLog);
 			}
 		}
 		if (this.props.ctx.gameover && this.state.winnerText == undefined) {
 			this.setState({ winnerText: this.props.ctx.gameover.winner !== undefined && this.props.ctx.gameover.winner == 0 ? 'You Win!' : 'You Lose!' });
 		}
+
+		
 	}
 
 	onMoveAnimationComplete = () => {
-		console.log(`incrementing index to ${this.state.logIndex + 1}`);
 		this.setState({ logIndex: this.state.logIndex + 1 }, () => {
 			// show green dots again once piece is done moving
 			// let elems = document.querySelectorAll(".duel-movable-cell-dot");
-			gsap.to(gsap.utils.toArray(document.querySelectorAll(".fade-out-animation-on-move")), { autoAlpha: 1 });
+			let target = document.querySelectorAll(".fade-out-animation-on-move");
+			if (target && target.length > 0) {
+				gsap.to(gsap.utils.toArray(target), { autoAlpha: 1 });
+			}
 		});
 	}
 	
@@ -136,16 +149,8 @@ class DuelBoard extends React.Component {
 		});
 	}
 	
-	setSelection = (id, index) => {
-		if (duelUtil.isPlayersTurn(this.props.ctx)) {
-			// this.setState({ selectedId: id, selectedIndex: index }); 
-			// disallowed move when not your turn
-			this.props.moves.selectPiece(id);
-		}
-	}
-
-	handleEmptyCellSelection = (destinationIndex, boardState) => {
-		let selectedId = this.props.G.selectedId;
+	handleEmptyCellSelection = (destinationIndex, boardState, dragged = false) => {
+		let selectedId = this.getSelectedXalianId();
 		let selectedIndex = duelUtil.getIndexOfXalian(selectedId, boardState);
 
 		var paths = [];
@@ -155,31 +160,92 @@ class DuelBoard extends React.Component {
 		let movableIndices = paths.map(path => path.endIndex);
 
 		if (selectedId) { // moving a piece
-			if (duelUtil.isUnset(selectedId, boardState)) { // setting piece initially
+			if (duelUtil.isUnset(selectedId, boardState)) {
+				/*
+					SET INITIAL PIECE 
+				*/
 				if (duelUtil.getStartingIndices(boardState, this.props.ctx).includes(destinationIndex)) {
-					this.props.moves.setPiece(destinationIndex, selectedId);
-					this.setState({ referencedXalianId: null });
+					this.setXalianIds(null, null, () => {
+						this.props.moves.setPiece(destinationIndex, selectedId);
+					});
 				} else {
 					console.error("CAN NOT SET INITIAL PIECE HERE");
 				}
-			} else if (duelUtil.isActive(selectedId, boardState)) { // moving existing piece
+			} else if (duelUtil.isActive(selectedId, boardState)) {
+				/*
+					MOVE PIECE 
+				*/
 				if (movableIndices.includes(destinationIndex)) { // valid move
-					let path = duelCalculator.calculatePathToTarget(selectedIndex, destinationIndex, boardState, this.props.ctx);
-					this.props.moves.movePiece(path);
+					let path = paths.filter(p => (p.endIndex == destinationIndex))[0];
+					path.dragged = dragged;
+					this.setXalianIds(null, null, () => {
+						this.props.moves.movePiece(path);
+					});
+					
 				} else {
-					this.setSelection(null, null);
-					this.setState({ referencedXalianId: null });
+					this.setXalianIds();
 					console.log("INVALID MOVE");
 				}
 			} else {
-				this.setSelection(null, null);
+				/*
+					REFERENCE INVALID PIECE
+				*/
 				// piece is out, but can still show details for xalian
-				this.setState({ referencedXalianId: selectedId });
+				this.setReferencedXalianId(selectedId);
 			}
-		} else if (this.state.referencedXalianId) {
-			this.setState({ referencedXalianId: null });
+		} else if (this.getReferencedXalianId()) {
+			/*
+				SETTING NEW REFERENCED XALIAN
+			*/
+			if (selectedId === this.getReferencedXalianId()) {
+				this.setReferencedXalianId();
+			} else {
+				this.setReferencedXalianId(selectedId);
+			}
 		}
 	};
+
+	setReferencedXalianId = (id = null) => {
+		if (id && id !== 'null') {
+			LocalDuelStorage.setReferencedXalianId(id);
+			this.setState({ referencedXalianId: id }); 
+		} else {
+			LocalDuelStorage.removeReferencedXalianId();
+			this.setState({ referencedXalianId: null }); 
+		}
+	}
+
+	setSelectedXalianId = (id, callback) => {
+		if (duelUtil.isPlayersTurn(this.props.ctx)) {
+			if (id) {
+				LocalDuelStorage.setSelectedXalianId(id);
+				this.setState({ selectedXalianId: id }, callback); 
+			} else {
+				LocalDuelStorage.removeSelectedXalianId();
+				this.setState({ selectedXalianId: null }, callback); 
+			}
+		}
+	}
+
+	setXalianIds = (selectionId = null, referenceId = null, callback = null) => {
+		this.setState({ 
+			selectedXalianId: selectionId,
+			referencedXalianId: referenceId
+		}, callback); 
+	}
+
+	getSelectedXalianId = () => {
+		let local = LocalDuelStorage.getSelectedXalianId();
+		let s = this.state.selectedXalianId;
+		return s;
+	}
+
+	getReferencedXalianId = () => {
+		let local = LocalDuelStorage.getReferencedXalianId();
+		let s = this.state.referencedXalianId;
+		return s;
+	}
+
 
 
 	// called in setup when a piece is selected to be placed
@@ -196,23 +262,26 @@ class DuelBoard extends React.Component {
 			let selection = options[ind];
 			this.props.moves.setPiece(selection, xalian.xalianId);
 		} else {
-			if (this.props.G.selectedId && this.props.G.selectedId === xalian.xalianId) {
+			if (this.getSelectedXalianId() && this.getSelectedXalianId() === xalian.xalianId) {
+				// this.setState({ referencedXalianId: null });
 				console.log('UNselected xalian ' + xalian.species.name + ' from placing');
-				this.setSelection(null, null); 
-				this.setState({ referencedXalianId: null });
+				this.setXalianIds()
+				// this.setSelectedXalianId(); 
+				// this.setReferencedXalianId();
 			} else if (duelUtil.isCurrentTurnsXalian(xalian.xalianId, boardState, this.props.ctx)) {
 				console.log('selected xalian ' + xalian.species.name + ' to place');
-				this.setSelection(xalian.xalianId, null); 
+				this.setSelectedXalianId(xalian.xalianId); 
 			} else {
 				console.log("CAN NOT SELECT OTHER PLAYERS PIECE");
-				this.setState({ referencedXalianId: xalian.xalianId });
+				// this.setState({ referencedXalianId: xalian.xalianId });
+				this.setReferencedXalianId(xalian.xalianId);
 			}
 		}
 	};
 
-	handleActivePieceSelection = (xalian, index, boardState) => {
-		if (this.props.G.selectedId && boardState.xalians) {
-			let selectedId = this.props.G.selectedId;
+	handleActivePieceSelection = (xalian, index, boardState, callback) => {
+		if (this.getSelectedXalianId() && boardState.xalians) {
+			let selectedId = this.getSelectedXalianId();
 			let selectedIndex = duelUtil.getIndexOfXalian(selectedId, boardState);
 			
 			if ((duelUtil.isPlayerPiece(selectedId, boardState) && duelUtil.isPlayerPiece(xalian.xalianId, boardState)) 
@@ -232,31 +301,38 @@ class DuelBoard extends React.Component {
 					
 	
 					// reset selection
-					this.setState({ referencedXalianId: null });
+					// this.setState({ referencedXalianId: null });
+					// LocalDuelStorage.removeReferencedXalianId();
+					// this.setReferencedXalianId();
 				} else {
 					console.log("CAN NOT ATTACK SPACE");
 				}
 				
 			}
 		} else {
-			this.selectPiece(xalian, index, boardState);
+			this.selectPiece(xalian, index, boardState, callback);
 		}
 	};
 
-	selectPiece = (xalian, index, boardState) => {
-		let selectedId = this.props.G.selectedId;
+	selectPiece = (xalian, index, boardState, callback) => {
+		let selectedId = this.getSelectedXalianId();
 		let selectedIndex = duelUtil.getIndexOfXalian(selectedId, boardState);
 		if (selectedIndex === index) { // unselect
 			console.log('UNselecting xalian ' + xalian.species.name + ' from square ' + index);
-			this.setSelection(null, null);
-			this.setState({ referencedXalianId: null });
+			// this.setSelectedXalianId();
+			// this.setReferencedXalianId();
+			this.setXalianIds();
+			// this.setState({ referencedXalianId: null });
+			// LocalDuelStorage.removeReferencedXalianId();
 		} else {
 			if (duelUtil.isCurrentTurnsXalian(xalian.xalianId, boardState, this.props.ctx)) {
 				console.log('selected xalian ' + xalian.species.name + ' from square ' + index);
-				this.setSelection(xalian.xalianId, index);
+				this.setSelectedXalianId(xalian.xalianId, callback);
 			} else {
 				console.log('only referencing xalian ' + xalian.species.name + ' from square ' + index);
-				this.setState({ referencedXalianId: xalian.xalianId });
+				// this.setState({ referencedXalianId: xalian.xalianId });
+				// LocalDuelStorage.setReferencedXalianId(xalian.xalianId);
+				this.setReferencedXalianId(xalian.xalianId);
 			}
 		}
 	};
@@ -265,23 +341,25 @@ class DuelBoard extends React.Component {
 	
 	
 	buildInitialSpeciesIcon(x, boardState, isOut = false) {
-		let isSelected = this.props.G.selectedId && this.props.G.selectedId === x.xalianId;
+		let isSelected = this.getSelectedXalianId() && this.getSelectedXalianId() === x.xalianId;
 		let opac = isOut ? 0.4 : 1;
+		let cellSizeText = this.determineCellSizeText();
 
 		return (
 			// <Col md={2} sm={3} xs={6} className="species-col">
-			<Col xs={true} className="species-col animate-state">
-				<a onClick={() => this.handleInitialPieceSelection(x, boardState)}>
-					<XalianImage padding='2%' colored bordered selected={isSelected} speciesName={x.species.name} primaryType={x.elements.primaryType} moreClasses="duel-xalian-unselected" style={{ opacity: opac }} />
-					<Row style={{ width: '100%', margin: '0px', padding: '0px' }}>
-						<Col style={{ padding: '0px', height: '100%', margin: 'auto' }}>
-							<h6 className="condensed-row" style={{ textAlign: 'center', margin: 'auto', height: '100%', width: '100%' }}>
+			// <div className="">
+			
+				<Col style={{ maxWidth: cellSizeText }} className='duel-unset-piece-wrapper' onClick={() => this.handleInitialPieceSelection(x, boardState)}>
+					<XalianImage padding='2%' colored rounded shadowed selected={isSelected} speciesName={x.species.name} primaryType={x.elements.primaryType} moreClasses="duel-xalian-unselected" style={{ opacity: opac }} />
+					{/* <Row style={{ width: '100%', margin: '0px', padding: '0px' }}> */}
+						<div style={{ padding: '0px', height: '100%', width: '100%', margin: 'auto' }}>
+							<h6 className="fit-xalian-name-text" style={{ textAlign: 'center', margin: 'auto', height: '100%', width: '100%', color: 'white', opacity: 0.5 }}>
 								{x.species.name}
 							</h6>
-						</Col>
-					</Row>
-				</a>
-			</Col>
+						</div>
+					{/* </Row> */}
+				</Col>
+			// </div>
 		);
 	}
 
@@ -297,13 +375,14 @@ class DuelBoard extends React.Component {
 		let cellSizeText = this.determineCellSizeText();
 		let cellSize = this.determineCellSize();
 		let boardState = this.getStartingBoardState();
-		let selectedId = this.props.G.selectedId;
+		let selectedId = this.getSelectedXalianId();
 
 		var selectedXalianMovableIndices = duelUtil.getMovableIndices(selectedId, boardState, this.props.ctx);
 		var selectedXalianAttackableIndices = duelUtil.getAttackableIndices(selectedId, boardState, this.props.ctx, false);
 
-		var referencedXalianMovableIndices = duelUtil.getMovableIndices(this.state.referencedXalianId, boardState, this.props.ctx);
-		var referencedXalianAttackableIndices = duelUtil.getAttackableIndices(this.state.referencedXalianId, boardState, this.props.ctx, false);
+		let referencedId = this.getReferencedXalianId();
+		var referencedXalianMovableIndices = referencedId ? duelUtil.getMovableIndices(referencedId, boardState, this.props.ctx) : [];
+		var referencedXalianAttackableIndices = referencedId ? duelUtil.getAttackableIndices(referencedId, boardState, this.props.ctx, false) : [];
 
 		let tbody = [];
 		for (let i = 0; i < gameConstants.BOARD_COLUMN_SIZE; i++) {
@@ -322,7 +401,7 @@ class DuelBoard extends React.Component {
 					selectedXalianId={selectedId} 
 					selectedXalianMovableIndices={selectedXalianMovableIndices} 
 					selectedXalianAttackableIndices={selectedXalianAttackableIndices} 
-					referencedXalianId={this.state.referencedXalianId}
+					referencedXalianId={referencedId}
 					referencedXalianMovableIndices={referencedXalianMovableIndices}
 					referencedXalianAttackableIndices={referencedXalianAttackableIndices}
 				/>;
@@ -332,114 +411,102 @@ class DuelBoard extends React.Component {
 			tbody.push(<tr key={i}>{cells}</tr>);
 		}
 
-		var cols = [];
-		var outCols = [];
-		var opponentCols = [];
-		var opponentOutCols = [];
-
-		if (boardState.unsetXalianIds && boardState.unsetXalianIds.length > 0 && boardState.xalians) {
-			boardState.unsetXalianIds.forEach((id) => {
-				let x = boardState.xalians.filter((x) => x.xalianId === id)[0];
-				if (x) {
-					cols.push(this.buildInitialSpeciesIcon(x, boardState));
-				}
-			});
-		}
-
-		if (boardState.unsetOpponentXalianIds && boardState.xalians) {
-			boardState.unsetOpponentXalianIds.forEach((id) => {
-				let x = boardState.xalians.filter((x) => x.xalianId === id)[0];
-				if (x) {
-					opponentCols.push(this.buildInitialSpeciesIcon(x, boardState));
-				}
-			});
-		}
-
-		if (boardState.inactiveOpponentXalianIds && boardState.xalians) {
-			boardState.inactiveOpponentXalianIds.forEach((id) => {
-				let x = boardState.xalians.filter((x) => x.xalianId === id)[0];
-				if (x) {
-					opponentOutCols.push(this.buildInitialSpeciesIcon(x, boardState, true));
-				}
-			});
-		}
-
-		if (boardState.inactiveXalianIds && boardState.xalians) {
-			boardState.inactiveXalianIds.forEach((id) => {
-				let x = boardState.xalians.filter((x) => x.xalianId === id)[0];
-				if (x) {
-					outCols.push(this.buildInitialSpeciesIcon(x, boardState, true));
-				}
-			});
-		}
+		var cols = this.buildTeamList(boardState.unsetXalianIds, boardState);
+		var outCols = this.buildTeamList(boardState.inactiveXalianIds, boardState);
+		var opponentCols = this.buildTeamList(boardState.unsetOpponentXalianIds, boardState);
+		var opponentOutCols = this.buildTeamList(boardState.inactiveOpponentXalianIds, boardState);
 
 		let isPlayersTurn = parseInt(this.props.ctx.currentPlayer) == 0;
 		let glowIfCurrentTurnPlayer = isPlayersTurn ? '0px 0px 5px 5px #ffffff' : 'none';
 		let glowIfCurrentTurnOpponent = !isPlayersTurn ? '0px 0px 5px 5px #ffffff' : 'none';
 
 		let selectedXalian = duelUtil.getXalianFromId(selectedId, boardState);
-		let referencedXalian = duelUtil.getXalianFromId(this.state.referencedXalianId, boardState);
+		// let referencedXalian = duelUtil.getXalianFromId(this.state.referencedXalianId, boardState);
+		let referencedXalian = duelUtil.getXalianFromId(this.getReferencedXalianId(), boardState);
 		let xalianDetailsToShow = selectedXalian || referencedXalian;
 		return (
 			<React.Fragment>
+				<div className='duel-page-background-overlay' />
 
-				<Container >
-					{this.state.winner}
-					<Row style={{ backgroundColor: '#a8222285', boxShadow: glowIfCurrentTurnOpponent }}>{opponentCols}</Row>
-					<Row style={{ backgroundColor: '#4b0f0f85' }}>{opponentOutCols}</Row>
-				</Container>
+				<Container fluid style={{ width: '100%', padding: '0px', margin: '0px', position: 'relative', height: '100vh', width: '100vw'}}>
+					<Stack className='' style={{ width: '100%', padding: '0px', margin: 'auto', position: 'relative' }}>
 
-				<Container fluid style={{ padding: '0' }}>
-					<div className='duel-board-wrapper'>
-						<div className='duel-board-wrapper-background' />
-						<div className='duel-board-wrapper-background-overlay' />
-						<table id="board" style={{ display: 'flex', justifyContent: 'center' }}>
-							<tbody >{tbody}</tbody>
-						</table>
-					</div>
-				</Container>
+						{/* INFO BOX */}
+						<Container style={{ height: '100px', display: 'flex'}}>
+							{this.state.winnerText &&
+								// <div>
+									<h1 className='vertically-center-contents' style={{ margin: 'auto !important', textAlign: 'center' }} >{this.state.winnerText}</h1>
+								// </div>
+							}
+							<h1 style={{ margin: 'auto', textAlign: 'center' }}>{this.props.ctx.currentPlayer == 0 ? 'Your Turn' : ''}</h1>
+						</Container>
 
-				{this.state.winnerText && 
-						<div>
-							<h1 style={{margin: 'auto', textAlign: 'center'}} >{this.state.winnerText}</h1>
-						</div>
-					}
+						<Container style={{}}>
+							<Row className='duel-unset-piece-row' style={{ backgroundColor: '#a8222285', borderRadius: '5px' }}>{opponentCols}{opponentOutCols}</Row>
+						</Container>
 
-				<Container>
-					<Row>
-						{boardState.currentTurnDetails && (boardState.currentTurnDetails.hasMoved || boardState.currentTurnDetails.hasAttacked) &&
-							<Button variant='xalianGray' onClick={this.endPlayerTurn} style={{ width: '200px', maxWidth: '50vw', margin: 'auto', marginBottom: '10px', marginTop: '10px' }} >End turn</Button>
+						<Container fluid style={{ width: '100%', padding: '0px', margin: '0px' }}>
+							<div className='duel-board-wrapper'>
+								<div className='duel-board-wrapper-background' />
+								<div className='duel-board-wrapper-background-overlay' />
+								<table id="board" style={{ display: 'flex', justifyContent: 'center' }}>
+									<tbody >{tbody}</tbody>
+								</table>
+							</div>
+							{this.state.attackAnimationData &&
+								<AttackActionModal
+									show={this.state.showActionModal}
+									onHide={this.onAttackActionComplete}
+									attacker={this.state.attackAnimationData.attacker}
+									defender={this.state.attackAnimationData.defender}
+									result={this.state.attackAnimationData.result}
+									attackerColor={this.state.attackAnimationData.attackerColor}
+									defenderColor={this.state.attackAnimationData.defenderColor}
+									cellSize={this.determineCellSize()}
+									attackerStartRect={this.state.attackAnimationData.attackerStartRect}
+									defenderStartRect={this.state.attackAnimationData.defenderStartRect}
+									animationTl={this.state.animationTl}
+								/>
+							}
+						</Container>
+
+
+
+						<Container style={{}}>
+
+							<Row>
+								<Button variant='xalianGray' onClick={this.endPlayerTurn} style={{ opacity: boardState.currentTurnDetails && (boardState.currentTurnDetails.hasMoved || boardState.currentTurnDetails.hasAttacked) ? 1 : 0, width: '200px', maxWidth: '50vw', margin: 'auto', marginBottom: '10px', marginTop: '10px' }} >End turn</Button>
+							</Row>
+							{/* <Row className='duel-unset-piece-row' style={{ width: '100%', backgroundColor: '#3b22a885', boxShadow: glowIfCurrentTurnPlayer }}>{cols}{outCols}</Row> */}
+							<Row className='duel-unset-piece-row' style={{ width: '100%', backgroundColor: '#3b22a885', borderRadius: '5px' }}>{cols}{outCols}</Row>
+
+
+						</Container>
+
+						{xalianDetailsToShow &&
+							<Container>
+								<DuelXalianSuggestionDetails xalian={xalianDetailsToShow} />
+							</Container>
 						}
-					</Row>
-					<Row style={{ backgroundColor: '#3b22a885', boxShadow: glowIfCurrentTurnPlayer }}>{cols}</Row>
-					<Row style={{ backgroundColor: '#170d4185' }}>{outCols}</Row>
 
-					{xalianDetailsToShow &&
-						<DuelXalianSuggestionDetails xalian={xalianDetailsToShow} />
-					}
-					{this.state.attackAnimationData && 
-						<AttackActionModal 
-							show={this.state.showActionModal}
-							onHide={this.onAttackActionComplete}
-							attacker={this.state.attackAnimationData.attacker}
-							defender={this.state.attackAnimationData.defender}
-							result={this.state.attackAnimationData.result}
-							attackerColor={this.state.attackAnimationData.attackerColor}
-							defenderColor={this.state.attackAnimationData.defenderColor}
-							cellSize={this.determineCellSize()}
-							attackerStartRect={this.state.attackAnimationData.attackerStartRect}
-							defenderStartRect={this.state.attackAnimationData.defenderStartRect}
-							animationTl={this.state.animationTl}
-						/>
-					}
-					{/* <AnimationHub {...this.props} tl={this.state.animationTl}/> */}
 
-				
+					</Stack>
 				</Container>
-
-
 			</React.Fragment>
 		);
+	}
+
+	buildTeamList = (list, boardState) => {
+		let cols = [];
+		if (list && boardState.xalians) {
+			list.forEach((id) => {
+				let x = boardState.xalians.filter((x) => x.xalianId === id)[0];
+				if (x) {
+					cols.push(this.buildInitialSpeciesIcon(x, boardState));
+				}
+			});
+		}
+		return cols;
 	}
 
 
@@ -454,15 +521,37 @@ class DuelBoard extends React.Component {
 
 	determineCellSize = () => {
 		if (this.state.size) {
-			let windowSize = this.state.size.min;
-			let initialSize = Math.floor((windowSize) / duelConstants.BOARD_COLUMN_SIZE);
-			let cellSize = Math.floor((windowSize - initialSize) / duelConstants.BOARD_COLUMN_SIZE);
-			let maxSize = Math.max(35, Math.min(cellSize, 75));
-
-			return maxSize;
+			return this.buildCellSizeFromBoardSize(this.state.size.min);
 		} else {
-			return 75;
+			let localBoardSize = LocalDuelStorage.getBoardSize();
+			if (localBoardSize) {
+				return this.buildCellSizeFromBoardSize(localBoardSize.min);
+			} else {
+				return 35;
+			}
 		}
+	}
+
+	getBoardSize = () => {
+		if (this.state.size) {
+			return this.state.size.min;
+		} else {
+			let localBoardSize = LocalDuelStorage.getBoardSize();
+			if (localBoardSize) {
+				return localBoardSize.min;
+			} else {
+				return 100;
+			}
+		}
+	}
+
+	buildCellSizeFromBoardSize = (boardSize) => {
+		let windowSize = boardSize;
+		let initialSize = Math.floor((windowSize) / duelConstants.BOARD_COLUMN_SIZE);
+		let cellSize = Math.floor((windowSize - initialSize) / duelConstants.BOARD_COLUMN_SIZE);
+		let maxSize = Math.max(35, Math.min(cellSize, 75));
+
+		return maxSize;
 	}
 
 	setupAnimationHub = () => {
@@ -489,7 +578,7 @@ class DuelBoard extends React.Component {
 				);
 			} else if (type === 'move') {
 				let movePath = d.path;
-				console.log('MOVE ANIMATION :: ' + JSON.stringify(movePath.path));
+				// console.log('MOVE ANIMATION :: ' + JSON.stringify(movePath.path));
 			}
 		  });
 	}

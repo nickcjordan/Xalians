@@ -18,7 +18,7 @@ module.exports.calculateAttackResult = (move, attacker, defender, matchState) =>
     let other = calculateRemainingFactors(move, attacker, defender, matchState);
     let result = base * targets * weather * badge * critical * random * sameTypeBonus * typeEffectiveness * hinderingStatus * other;
     let final = Math.floor(result * 100);
-    console.log(`base=${base}, random=${random}, sameTypeBonus=${sameTypeBonus}, final=${final}`);
+    // console.log(`base=${base}, random=${random}, sameTypeBonus=${sameTypeBonus}, final=${final}`);
     return final;
 }
 
@@ -29,7 +29,7 @@ function calculateBaseValue(move, attacker, defender) {
         let a_d = calculateEffectiveAttackAndDefense(move, attacker, defender);
         let baseTop = k * power * a_d;
         let baseResult = (baseTop / attackConstants.BASE_BOTTOM_VAR) + 2;
-        console.log(`level=${k}, a_d=${a_d}, baseTop=${baseTop}, baseResult=${baseResult}`);
+        // console.log(`level=${k}, a_d=${a_d}, baseTop=${baseTop}, baseResult=${baseResult}`);
         return baseResult;
     } catch (e) {
         return 1;
@@ -118,7 +118,7 @@ function calculateSameTypeAttackBonus(move, attacker) {
     if (type == attackerSecondary) {
         multiplier += 0.5;
     }
-    console.log(`STAB: ${multiplier}`);
+    // console.log(`STAB: ${multiplier}`);
     return multiplier;
 }
 
@@ -155,7 +155,7 @@ function calculateTypeEffectiveness(move, defender) {
     base *= effectivenessMap[defenderPrimary];
     base *= effectivenessMap[defenderSecondary];
 
-    console.log(`type effectiveness = ${base}`);
+    // console.log(`type effectiveness = ${base}`);
 
     return base;
 }

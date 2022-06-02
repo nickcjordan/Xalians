@@ -45,10 +45,15 @@ export function getBestBotActionsForXalianIds(G, ctx, ids) {
         return (a.score > b.score) ? -1 : (a.score < b.score) ? 1 : 0;
     });
 
-    let selectedAction = allActions[0];
-    if (selectedAction) {
+    let botMoves = [];
+    allActions.forEach( action => {
+        botMoves.push(buildBotMove(action));
+    })
 
-        let selectedMove = buildBotMove(selectedAction);
+    if (botMoves && botMoves.length > 0) {
+        
+        let selectedAction = botMoves[0];
+        // let selectedMove = buildBotMove(selectedAction);
         // let path = selectedAction.path;
         // let xalian = duelUtil.getXalianFromId(G.cells[path.startIndex], G);
         // console.log('selected best action:\n' + JSON.stringify(selectedAction, null, 2));
@@ -56,7 +61,9 @@ export function getBestBotActionsForXalianIds(G, ctx, ids) {
         //     // 'selected best action:\n' + JSON.stringify(bestAction) + 
         //     `CHOSEN: ${xalian.species.name} ${selectedAction.type} {${selectedAction.score}} :: ${selectedAction.path.startIndex} -> ${selectedAction.path.endIndex}  [${JSON.stringify(path ? path.path : {})}]`
         //     );
-            return selectedMove;
+            return selectedAction;
+
+            // return botMoves;
     } else {
         console.error(`NO ACTIONS BUILT FOR ANY BOT :: ${JSON.stringify(ids)}`);
     }
@@ -99,13 +106,14 @@ export function getBestBotActionsForXalian(G, ctx, id) {
 
 
         if (allActions.length == 0) {
-            console.error(`NO ACTIONS BUILT FOR BOT :: ${attacker.species.name} : moved ? ${details.hasMoved} : remaining=${details.remainingSpacesToMove}`);
+            // console.error(`NO ACTIONS BUILT FOR BOT :: ${attacker.species.name} : moved ? ${details.hasMoved} : remaining=${details.remainingSpacesToMove}`);
+            return [];
         } else {
             bestAction = allActions[0];
             let path = bestAction.path;
-            console.log(
-            `\t${attacker.species.name} ${bestAction.type} {${bestAction.score}} :: ${bestAction.description} :: ${bestAction.path.startIndex} -> ${bestAction.path.endIndex}  [${JSON.stringify(path ? path.path : {})}]`
-            );
+            // console.log(
+            // `\t${attacker.species.name} ${bestAction.type} {${bestAction.score}} :: ${bestAction.description} :: ${bestAction.path.startIndex} -> ${bestAction.path.endIndex}  [${JSON.stringify(path ? path.path : {})}]`
+            // );
         }
         // actions.push();
     } else {
@@ -113,6 +121,7 @@ export function getBestBotActionsForXalian(G, ctx, id) {
     }
 
     // return bestAction;
+    // return allActions;
     return allActions.slice(0, Math.min(5, allActions.length));
 }
 
@@ -206,7 +215,7 @@ export function buildBotObjectives() {
                 // console.log("BOT :: checking for flag captured");
                 return duelUtil.getOpponentStartingIndices(G).includes(duelUtil.getOpponentFlagIndex(G));
             },
-            weight: 100,
+            weight: 1000,
         },
         'flag-held': {
             checker: (G, ctx) => {
@@ -215,11 +224,25 @@ export function buildBotObjectives() {
             },
             weight: 50,
         },
+        'enemy-flag-not-held-by-enemy': {
+            checker: (G, ctx) => {
+              let flag = duelUtil.getPlayerFlagState(G);
+              return flag.holder ?  false : true;
+            },
+            weight: 100,
+        },
+        'flag-guarded': {
+            checker: (G, ctx) => {
+              let flag = duelUtil.getPlayerFlagState(G);
+              return flag.holder ? true : false;
+            },
+            weight: 50,
+        },
         'opponents-eliminated': {
             checker: (G, ctx) => {
               return G.activeXalianIds.length == 0 && G.unsetXalianIds.length == 0;
             },
-            weight: 100,
+            weight: 1000,
         }
       })
 }

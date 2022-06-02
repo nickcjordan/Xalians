@@ -55,7 +55,7 @@ export function calculateIndicesWithinDistance(currentIndex, distance, G, ctx) {
     
     let coord = map[parseInt(currentIndex)];
     if (!coord) {
-        console.error("!");
+        // console.error("!");
         return [];
     }
     for (var x = coord[0]; x >= 0; x--) {
@@ -183,15 +183,15 @@ function calculateValidPaths(G, ctx, currentIndex, uneditedDistance, findOccupie
             if (path && path.spacesMoved > 0 && path.spacesMoved <= distance) {
                 valid.push(path);
             } else {
-                console.error("INVALID ATTACK PATH?");
+                // console.error("INVALID ATTACK PATH?");
             }
         }
     })
 
     if (findUnoccupied && valid.length == 0) {
-        console.error("NO VALID PATHS");
+        // console.error("NO VALID PATHS");
         if (isBot) {
-            console.error("NO VALID PATHS for BOT");
+            // console.error("NO VALID PATHS for BOT");
         }
     }
 

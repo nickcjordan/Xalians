@@ -17,13 +17,176 @@ import XalianTypeSymbolBadge from './xalianTypeSymbolBadge';
 import DuelXalianSuggestionDetails from './duelXalianSelectionDetails';
 import XalianDuelStatBadge from './xalianDuelStatBadge';
 import AttackableMoveBadge from './attackableMoveBadge';
-import gsap from 'gsap';
 import * as svgUtil from '../../../../utils/svgUtil';
+
+
+import gsap from 'gsap';
+import Draggable from 'gsap/Draggable';
+import Flip from 'gsap/Flip';
+gsap.registerPlugin(Draggable, Flip);
 
 class DuelBoardCell extends React.Component {
 	state = {
 		contentLoaded: false,
 	};
+
+	componentDidMount() {
+	// 	document.addEventListener('DOMContentLoaded', this.setAsDraggable);
+		
+	}
+
+	componentDidUpdate() {
+		let xalianId = this.props.boardState.cells[this.props.cellIndex];
+		let isCurrentTurnXalian = xalianId ? duelUtil.isCurrentTurnsXalian(xalianId, this.props.boardState, this.props.ctx) : null;
+
+		if (isCurrentTurnXalian) {
+
+				let elemId = '.duel-' + xalianId + '-piece';
+				// let elemId = '.duel-piece';
+				let cellXalian = duelUtil.getXalianFromIdAndXalians(xalianId, this.props.boardState.xalians);
+
+
+				//the overlapThreshold can be a percentage ("50%", for example, would only trigger when 50% or more of the surface area of either element overlaps) or a number of pixels (20 would only trigger when 20 pixels or more overlap), or 0 will trigger when any part of the two elements overlap.
+				var overlapThreshold = "50%"; 
+
+				// implement this : https://codepen.io/GreenSock/pen/ndBZjZ
+
+				//      https://codepen.io/GreenSock/pen/Pqwxvw?editors=0010
+
+				var droppables = document.querySelectorAll(".duel-unoccupied-cell");
+				var snappablePoints = [];
+				let grid = duelCalculator.buildGrid();
+				let startCoord = grid.map[this.props.cellIndex];
+				snappablePoints.push({x: 0,	y: 0});
+				if (this.props.selectedXalianMovableIndices) {
+					this.props.selectedXalianMovableIndices.forEach( i => {
+						let movableCoord = grid.map[i];
+						let diffX = movableCoord[0] - startCoord[0];
+						let diffY = movableCoord[1] - startCoord[1];
+						let diffPxX = diffX * this.props.cellSize;
+						let diffPxY = diffY * this.props.cellSize;
+						snappablePoints.push({
+							x: diffPxX,
+							y: diffPxY
+						});
+					})
+				}
+				// loop thorugh movableIndices creating a list of offset coords for that 
+				Draggable.create(elemId, {
+					type: "x,y",
+					edgeResistance: 1,
+					bounds: ".duel-board-wrapper",
+					// inertia: true,
+					// liveSnap: true,
+					liveSnap: {
+						points: snappablePoints,
+        				radius: 0
+					},
+					// 	snap: {
+					// 	x: function (endValue) {
+					// 		return Math.round(endValue / cellSize) * cellSize;
+					// 	},
+					// 	y: function (endValue) {
+					// 		return Math.round(endValue / cellSize) * cellSize;
+					// 	}
+					// },
+					onDragEndParams: [this.props, cellXalian],
+					onDragEnd: function (props, cellXalian) {
+
+
+						gsap.to(this.target, { opacity: 1 });
+						// var droppables = document.getElementsByClassName("duel-unoccupied-cell");
+						var i = droppables.length;
+						while (--i > -1) {
+							let droppable = droppables[i];
+
+							if ((i != props.cellIndex) && droppable && this.hitTest(droppable, overlapThreshold)) {
+								// props.handleActivePieceSelection(cellXalian, props.cellIndex, props.boardState);
+								droppable.classList.remove("duel-piece-draggable-hovering");
+								// gsap.to(droppable, {className: "-=duel-piece-draggable-hovering"});
+								let droppableIndex = parseInt(droppable.id.replace('cell-', ''));
+								props.handleEmptyCellSelection(droppableIndex, props.boardState, true);
+							}
+						}
+					},
+					// onPressParams: [this.props, cellXalian],
+					// onPress: function (props, cellXalian) {
+					// 	let self = this;
+					// 	props.handleActivePieceSelection(cellXalian, props.cellIndex, props.boardState, () => {
+					// 		self.startDrag(self.pointerEvent, true);
+					// 	});
+					// },
+							
+							
+					onDragStartParams: [this.props, cellXalian],
+					onDragStart: function (props, cellXalian) {
+						gsap.to(this.target, {opacity: 0.25});
+						// if (props.selectedXalianId !== cellXalian.xalianId) {
+							
+						// }
+
+						// let self = this;
+						// props.handleActivePieceSelection(cellXalian, props.cellIndex, props.boardState, () => {
+						// 	self.startDrag(self.pointerEvent, true);
+						// });
+
+
+
+
+						// var droppables = document.getElementsByClassName("duel-unoccupied-cell");
+						// var i = droppables.length;
+						// while (--i > -1) {
+						// 	let droppable = droppables[i];
+						// 	if (droppable) {
+						// 		if (this.hitTest(droppable, overlapThreshold)) {
+						// 			// onDrop(this.target, droppable);
+									
+						// 		}
+						// 	}
+						// }
+					},
+					onDrag: function (e) {
+						var i = droppables.length;
+						while (--i > -1) {
+							var droppable = droppables[i];
+							if (droppable) {
+								const cellState = Flip.getState(droppable, {props: "backgroundColor,borderRadius,height,width"});
+
+								var shouldAnimate = false;
+								if (this.hitTest(droppable, overlapThreshold) && !droppable.classList.contains("duel-piece-draggable-hovering")) {
+
+									droppable.classList.add("duel-piece-draggable-hovering");
+									shouldAnimate = true;
+								} else if (droppable.classList.contains("duel-piece-draggable-hovering")) {
+									droppable.classList.remove("duel-piece-draggable-hovering");
+									shouldAnimate = true;
+								}
+								if (shouldAnimate) {
+									Flip.from(cellState, {	absolute: false  });
+								}
+
+								/* ALTERNATE TEST: you can use the static Draggable.hitTest() method for even more flexibility, like passing in a mouse event to see if the mouse is overlapping with the element...
+						   if (Draggable.hitTest(droppables[i], e) && droppables[i] !== this.target) {
+							 $(droppables[i]).addClass("highlight");
+						   } else {
+							   $(droppables[i]).removeClass("highlight");
+							}
+							*/
+							}
+						}
+					}
+					// onDragStartParams: [this.props, cellXalian],
+					// onDragStart: function (props, cellXalian) {
+						// 	props.handleActivePieceSelection(cellXalian, props.cellIndex, props.boardState);
+						// },
+						// onDragEnd: function (event) {
+							// 	let e = event;
+							// 	this.props.handleEmptyCellSelection(this.props.cellIndex, this.props.boardState)
+							// }
+						});
+		}
+	}
+	
 
 	buildUnoccupiedCell() {
 		let isMovableBySelectedXalian = this.props.selectedXalianMovableIndices && this.props.selectedXalianMovableIndices.includes(this.props.cellIndex);
@@ -43,7 +206,7 @@ class DuelBoardCell extends React.Component {
 		let isOpponentFlagIndex = duelUtil.getOpponentFlagIndex(this.props.boardState) == this.props.cellIndex;
 		let flagIfPresent = isPlayerFlagIndex ? <DuelFlagIcon className="duel-flag" style={{ fill: '#947dfaff' }} /> : isOpponentFlagIndex ? <DuelFlagIcon className="duel-flag" style={{ fill: '#ff7a7aff' }} /> : null;
 		return (
-			<div id={`cell-${this.props.cellIndex}`} style={sty} onClick={() => this.props.handleEmptyCellSelection(this.props.cellIndex, this.props.boardState)}>
+			<div className='duel-unoccupied-cell' id={`cell-${this.props.cellIndex}`} style={sty} onClick={() => this.props.handleEmptyCellSelection(this.props.cellIndex, this.props.boardState)}>
 				<h6 style={{ position: 'absolute', color: '#9e9e9e2c' }} >{this.props.cellIndex}</h6>
 
 				{(isAttackableBySelectedXalian && !this.props.boardState.currentTurnDetails.hasAttacked) &&
@@ -68,7 +231,7 @@ class DuelBoardCell extends React.Component {
 					<div className="duel-board-cell-dot fade-out-animation-on-move" style={{ background: 'radial-gradient(circle, #32a852 0%, #32a85200 100%)', filter: 'drop-shadow(0px 0px 5px #32a852)' }} />
 				}
 
-				{isMovableByReferencedXalian &&
+				{(isMovableByReferencedXalian && !isMovableBySelectedXalian) &&
 					<div className="duel-board-cell-dot fade-out-animation-on-move" style={{ background: 'radial-gradient(circle, #8dd8a17e 0%, #32a85200 100%)', filter: 'drop-shadow(0px 0px 5px #8dd8a17e)' }} />
 				}
 
@@ -137,14 +300,14 @@ class DuelBoardCell extends React.Component {
 
 		return (
 			<div id={`cell-${this.props.cellIndex}`} style={{ position: 'relative', width: `${this.props.cellSize}px`, height: `${this.props.cellSize}px`, lineHeight: `${this.props.cellSize}px`, textAlign: 'center' }} onClick={() => this.props.handleActivePieceSelection(cellXalian, this.props.cellIndex, this.props.boardState)}>
+			{/* <div id={`cell-${this.props.cellIndex}`} style={{ position: 'relative', width: `${this.props.cellSize}px`, height: `${this.props.cellSize}px`, lineHeight: `${this.props.cellSize}px`, textAlign: 'center' }} > */}
 
 				{connectors}
 				<div className="duel-board-cell-dot" style={{ background: 'radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 5%, rgba(0,0,0,0.25) 20%, rgba(0,0,0,0) 60%)', margin: 'auto' }} />
 
-				<div id={'duel-' + cellXalian.xalianId + '-piece'} className={'duel-' + cellXalian.xalianId + '-piece'} style={{ position: 'absolute', height: '100%', width: '100%', zIndex: 200 + parseInt(this.props.cellIndex) }}>
+				<div id={'duel-' + cellXalian.xalianId + '-piece'} className={'duel-' + cellXalian.xalianId + '-piece duel-piece'} style={{ position: 'absolute', height: '100%', width: '100%', zIndex: 200 + parseInt(this.props.cellIndex) }}>
 
 					{/* XALIAN IMAGE */}
-					<span style={{ opacity: cellXalianOpacity }}>
 						<XalianImage className='animate-state' 
 							padding={'0px'} 
 							speciesName={cellXalian.species.name} 
@@ -153,7 +316,15 @@ class DuelBoardCell extends React.Component {
 							filter={this.buildDropShadowFilter(teamColor)} 
 							moreClasses="duel-piece-xalian-icon" 
 						/>
-					</span>
+					{/* GHOST IMAGE WHEN DRAGGING */}
+					{/* <XalianImage className='animate-state' 
+							padding={'0px'} 
+							speciesName={cellXalian.species.name} 
+							primaryType={cellXalian.elements.primaryType} 
+							fill={'black'} 
+							filter={this.buildDropShadowFilter(teamColor)} 
+							moreClasses="duel-piece-xalian-icon" 
+						/> */}
 
 
 					{/* UNDERGLOW */}
@@ -303,6 +474,10 @@ class DuelBoardCell extends React.Component {
 	// }
 
 }
+
+function onDrop(dragged, dropped) {
+	gsap.fromTo(dropped, {opacity:1}, {duration: 0.1, opacity:0, repeat:3, yoyo:true});
+  }
 
 
 

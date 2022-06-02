@@ -27,9 +27,9 @@ class XalianSpeciesSizeComparisonView extends React.Component {
         this.setSpeciesContent();
 
         let fits = fitty('.species-compare-text');
-        fits.forEach( fit => {
-            console.log(fit);
-        })
+        // fits.forEach( fit => {
+        //     console.log(fit);
+        // })
 
         let scrollContainer = document.getElementById("species-compare-box");
         scrollContainer.addEventListener("wheel", (event) => {

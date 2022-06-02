@@ -110,7 +110,7 @@
     /* width: 100% !important; */
     width: auto;
     /* max-width: 75px !important; */
-    height: 8vh;
+    /* height: 8vh; */
     max-height: 75px;
     /* margin-top: 20px; */
     margin: auto;
@@ -211,6 +211,18 @@
   border-radius: 10%;
 }
 
+.duel-page-background-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  /* background-color: #000; */
+  background: #161820;
+  /* background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, rgba(0, 0, 0, 0.473) 100%); */
+  /* opacity: 0.75; */
+  height: 100%;
+  width: 100%;
+}
+
 /* CELLS */
 .duel-board-cell-connector {
   background-color: black;
@@ -299,7 +311,20 @@
   margin: auto;
 }
 
+.duel-unset-piece-row {
+  width: 100%;
+  margin: 0 !important;
+  padding: 0;
+  justify-content: space-evenly;
+  align-items: center;
+  filter: drop-shadow(0px 0px 2px #000000)
+}
 
+.duel-unset-piece-wrapper {
+  padding: clamp(1px, 1%, 5px) !important;
+  height: 100%;
+  width: 100%;
+}
 
 /* PATTERN */
 .attack-pattern-background {
@@ -314,4 +339,14 @@
   /* transform: translate(-50%, -50%); */
   /* top: 50%; */
   /* left: 50%; */
+}
+
+
+
+/* PIECE HOVER */
+.duel-piece-draggable-hovering {
+  background-color: rgba(4, 131, 0, 0.541);
+  border-radius: 50%;
+  height: 50%;
+  width: 50%;
 }

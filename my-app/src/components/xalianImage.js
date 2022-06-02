@@ -12,6 +12,7 @@ class XalianImage extends React.Component {
 	getTypeColorClassName(type) {
 		var x = this.props.colored ? ` ${type.toLowerCase()}-color ` : '';
 		x = x + (this.props.bordered ? ` xalian-image-bordered ` : '');
+		x = x + (this.props.rounded ? ` xalian-image-rounded ` : '');
 		x = x + (this.props.selected ? ` xalian-image-selected ` : '');
 		x = x + (this.props.shadowed ? ' xalian-image-shadowed ' : '');
 		x = x + (!this.props.unPadded ? ' xalian-image-wrapper-padded ' : '');

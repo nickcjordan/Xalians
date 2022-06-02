@@ -8,7 +8,7 @@ import * as duelConstants from '../../../gameplay/duel/duelGameConstants';
 import * as boardStateManager from '../../../gameplay/duel/boardStateManager';
 import * as plugins from '../../../gameplay/duel/plugins';
 import { v4 as uuidv4 } from 'uuid'; 
-
+import gsap from 'gsap';
 import { Hub } from "aws-amplify";
 
 export const Duel = (data) => {
@@ -134,6 +134,10 @@ export const Duel = (data) => {
 				if (ctx.phase === 'play') {
 					G.currentTurnDetails = boardStateManager.currentTurnState(G, ctx);
 				}
+				let target = gsap.utils.toArray(document.querySelectorAll(".fade-out-animation-on-move"));
+				if (target && target.length > 0) {
+					gsap.to(target, { autoAlpha: 1 });
+				}
 			},
 
 			// Prevents ending the turn before a minimum number of moves.
@@ -160,7 +164,8 @@ export const Duel = (data) => {
 
 		phases: {
 			setup: {
-				moves: { selectPiece, setPiece },
+				// moves: { selectPiece, setPiece },
+				moves: { setPiece },
 				start: true,
 				endIf: G => ( 
 					(G.unsetXalianIds.length == 0 && G.unsetOpponentXalianIds.length == 0)
@@ -170,7 +175,7 @@ export const Duel = (data) => {
 			play: {
 				// moves: { selectPiece, movePiece, movePieceThenAttack, doAttack, endTurn },
 				moves: { 
-					selectPiece, 
+					// selectPiece, 
 					movePiece: {
 						move: movePiece
 					}, 
@@ -261,7 +266,7 @@ export const Duel = (data) => {
 			},
 			objectives: duelBot.buildBotObjectives(),
 			  playoutDepth: 500,
-			  iterations: 100
+			  iterations: 1000
 		},
 	};
 };
@@ -272,7 +277,7 @@ export const Duel = (data) => {
 
 // COMMON
 // function selectPiece(G, ctx, index, id) {
-function selectPiece(G, ctx, id) {
+function selectPiece(G, ctx, id, dragged) {
 	// G.selectedIndex = index;
 	G.selectedId = id;
 }

@@ -139,7 +139,7 @@ class DuelPage extends React.Component {
 
 	render() {
 		
-		let xaliansPerTeam = 5;
+		let xaliansPerTeam = 8;
 		// let xaliansPerTeam = duelConstants.XALIANS_PER_TEAM;
 
 		if (this.state.xalians && this.state.xalians.length > 0) {
@@ -257,18 +257,18 @@ class DuelPage extends React.Component {
 			});
 			
 			return (
-				<React.Fragment>
-					<Container fluid className="content-background-container" style={{ background: '#1f1f1fff'}}>
-					{/* <XalianNavbar></XalianNavbar> */}
+				// <React.Fragment>
+					// <Container fluid className="content-background-container" style={{ background: '#1f1f1fff'}}>
+					// <XalianNavbar></XalianNavbar>
 				
 
-					{/* <GameContainer> */}
+					// <GameContainer>
 					<DuelClient playerID="0" />
-					{/* </GameContainer> */}
+					// </GameContainer>
 					
-					</Container>
+					// </Container>
 
-				</React.Fragment>
+				// </React.Fragment>
 			);
 		} else {
 			return (

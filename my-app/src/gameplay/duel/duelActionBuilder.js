@@ -45,7 +45,7 @@ export function buildAttackActionsWithScore(currentIndex, attacker, G, ctx) {
     });
 
     if (attackMoves.length > 0) {
-        console.log();
+        // console.log();
     }
     return attackMoves.slice(0, 10);
 }
