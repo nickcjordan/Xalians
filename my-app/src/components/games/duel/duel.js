@@ -6,6 +6,7 @@ import * as duelCalculator from '../../../gameplay/duel/duelCalculator';
 import * as duelBot from '../../../gameplay/duel/duelBot';
 import * as duelConstants from '../../../gameplay/duel/duelGameConstants';
 import * as boardStateManager from '../../../gameplay/duel/boardStateManager';
+import * as playerStateManager from '../../../gameplay/duel/playerStateManager';
 import * as plugins from '../../../gameplay/duel/plugins';
 import { v4 as uuidv4 } from 'uuid'; 
 import gsap from 'gsap';
@@ -57,21 +58,37 @@ export const Duel = (data) => {
 				}
 			]
 
+			let playerStates = [
+				{
+					activeXalianIds: [],
+					inactiveXalianIds: [],
+					unsetXalianIds: unsetXalianIds,
+					playerID: 0
+				},
+				{
+					activeXalianIds: [],
+					inactiveXalianIds: [],
+					unsetXalianIds: unsetOpponentXalianIds,
+					playerID: 1
+				}
+			]
+
 			return {
 				cells: Array(totalSquares).fill(null),
 				xalians: data.xalians,
 				user: user,
-				activeXalianIds: [],
-				inactiveXalianIds: [],
-				unsetXalianIds: unsetXalianIds,
-				activeOpponentXalianIds: [],
-				inactiveOpponentXalianIds: [],
-				unsetOpponentXalianIds: unsetOpponentXalianIds,
-				selectedId: null,
-				selectedIndex: null,
+				// activeXalianIds: [],
+				// inactiveXalianIds: [],
+				// unsetXalianIds: unsetXalianIds,
+				// activeOpponentXalianIds: [],
+				// inactiveOpponentXalianIds: [],
+				// unsetOpponentXalianIds: unsetOpponentXalianIds,
+				// selectedId: null,
+				// selectedIndex: null,
 				flags: flagStates,
 				attackActionResult: null,
-				currentTurnActions: []
+				currentTurnActions: [],
+				playerStates: playerStates
 			};
 		},
 
@@ -103,13 +120,13 @@ export const Duel = (data) => {
 					
 					var hasValidActionAvailable = false;
 					if (duelUtil.isPlayersTurn(ctx)) {
-						G.activeXalianIds.forEach( id => {
+						G.playerStates[0].activeXalianIds.forEach( id => {
 							if (duelUtil.xalianHasValidActionAvailable(id, G, ctx)) {
 								hasValidActionAvailable = true;
 							}
 						})
 					} else if (duelUtil.isOpponentsTurn(ctx)) {
-						G.activeOpponentXalianIds.forEach( id => {
+						G.playerStates[1].activeXalianIds.forEach( id => {
 							if (duelUtil.xalianHasValidActionAvailable(id, G, ctx)) {
 								hasValidActionAvailable = true;
 							}
@@ -165,10 +182,10 @@ export const Duel = (data) => {
 		phases: {
 			setup: {
 				// moves: { selectPiece, setPiece },
-				moves: { setPiece },
+				moves: { setPiece, initializeSetup },
 				start: true,
 				endIf: G => ( 
-					(G.unsetXalianIds.length == 0 && G.unsetOpponentXalianIds.length == 0)
+					(G.playerStates[0].unsetXalianIds.length == 0 && G.playerStates[1].unsetXalianIds.length == 0)
 					),
 				next: 'play'
 			},
@@ -225,9 +242,9 @@ export const Duel = (data) => {
 			} 
 
 
-			if (G.activeXalianIds.length == 0 && G.unsetXalianIds.length == 0) {
+			if (G.playerStates[0].activeXalianIds.length == 0 && G.playerStates[0].unsetXalianIds.length == 0) {
 				return { winner: 1 };
-			} else if (G.activeOpponentXalianIds.length == 0 && G.unsetOpponentXalianIds.length == 0) {
+			} else if (G.playerStates[1].activeXalianIds.length == 0 && G.playerStates[1].unsetXalianIds.length == 0) {
 				return { winner: 0 };
 			} 
 		},
@@ -247,11 +264,11 @@ export const Duel = (data) => {
 
 
 					if (ctx.phase === 'setup') {
-						G.unsetOpponentXalianIds.forEach( id => {
+						G.playerStates[1].unsetXalianIds.forEach( id => {
 							moves = moves.concat(duelBot.buildSetupBotMoves(G, ctx, id));
 						})
 					} else if (ctx.phase === 'play') {
-						let bestActions = duelBot.getBestBotActionsForXalianIds(G, ctx, G.activeOpponentXalianIds);
+						let bestActions = duelBot.getBestBotActionsForXalianIds(G, ctx, G.playerStates[1].activeXalianIds);
 						moves = moves.concat(bestActions);
 					}
 					
@@ -283,17 +300,33 @@ function selectPiece(G, ctx, id, dragged) {
 }
 
 function endTurn(G, ctx) {
-	// G.currentTurnDetails = {
-    //         hasAttacked: true,
-    //         hasMoved: true,
-    //         remainingSpacesToMove: 0,
-    //         moves: [],
-    //         isComplete: true
-    //     }
 	ctx.events.endTurn();
 }
 
 // SETUP
+
+function initializeSetup(G, ctx) {
+	let cells = G.cells;
+	G.playerStates.forEach( playerState => {
+		initializeSetupForPlayer(playerState, G, cells);
+	})
+	G.cells = cells;
+	// ctx.events.endPhase();
+	// ctx.events.endTurn({ next: '0' });
+	return G;
+}
+
+function initializeSetupForPlayer(playerState, G, cells) {
+	let startingIndices = gsap.utils.shuffle(duelUtil.getStartingIndicesOfPlayer(playerState.playerID, G));
+	playerState.unsetXalianIds.forEach( xalianId => {
+		let selectedIndex = startingIndices.pop();
+		G.cells[selectedIndex] = xalianId;
+		cells[selectedIndex] = xalianId;
+	});
+	playerState.activeXalianIds = playerState.unsetXalianIds;
+	playerState.unsetXalianIds = [];
+}
+
 
 function setPiece(G, ctx, index, selectedXalianId) {
 	if (G.cells[index] !== null) {
@@ -302,13 +335,13 @@ function setPiece(G, ctx, index, selectedXalianId) {
 	// console.log(JSON.stringify(ctx, null, 2));
 	G.cells[index] = selectedXalianId;
 
-	if (duelUtil.isPlayersTurn(ctx) && G.unsetXalianIds) {
-		moveXalianToActive(selectedXalianId, G.unsetXalianIds, G.activeXalianIds, ctx, true);
-	} else if (duelUtil.isOpponentsTurn(ctx) && G.unsetOpponentXalianIds) {
-		moveXalianToActive(selectedXalianId, G.unsetOpponentXalianIds, G.activeOpponentXalianIds, ctx, true);
+	if (duelUtil.isPlayersTurn(ctx) && G.playerStates[0].unsetXalianIds) {
+		moveXalianToActive(selectedXalianId, G.playerStates[0].unsetXalianIds, G.playerStates[0].activeXalianIds, ctx, true);
+	} else if (duelUtil.isOpponentsTurn(ctx) && G.playerStates[1].unsetXalianIds) {
+		moveXalianToActive(selectedXalianId, G.playerStates[1].unsetXalianIds, G.playerStates[1].activeXalianIds, ctx, true);
 	}
 
-	if (G.unsetXalianIds.length == 0 && G.unsetOpponentXalianIds.length == 0) {
+	if (G.playerStates[0].unsetXalianIds.length == 0 && G.playerStates[1].unsetXalianIds.length == 0) {
 		ctx.events.endPhase();
 	} else {
 		ctx.events.endTurn();
@@ -381,16 +414,16 @@ function doAttack(G, ctx, path, data = {}) {
 		// console.log('resulting health = ' + defender.stats.health);
 		if (defender.stats.health <= 0) {
 			if (duelUtil.isPlayerPiece(defenderId, G)) {
-				removeItemFromList(defenderId, G.activeXalianIds);
-				G.inactiveXalianIds.push(defenderId);
+				removeItemFromList(defenderId, G.playerStates[0].activeXalianIds);
+				G.playerStates[0].inactiveXalianIds.push(defenderId);
 				let flag = duelUtil.getPlayerFlagState(G);
 				if (flag.holder && flag.holder === defenderId) {
 					flag.holder = null;
 					flag.index = defenderIndex;
 				}
 			} else if (duelUtil.isOpponentPiece(defenderId, G)) {
-				removeItemFromList(defenderId, G.activeOpponentXalianIds);
-				G.inactiveOpponentXalianIds.push(defenderId);
+				removeItemFromList(defenderId, G.playerStates[1].activeXalianIds);
+				G.playerStates[1].inactiveXalianIds.push(defenderId);
 				let flag = duelUtil.getOpponentFlagState(G);
 				if (flag.holder && flag.holder === defenderId) {
 					flag.holder = null;

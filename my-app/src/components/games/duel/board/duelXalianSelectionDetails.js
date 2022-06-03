@@ -46,8 +46,8 @@ class DuelXalianSuggestionDetails extends React.Component {
 									<Col className="vertically-center-contents" xs={6}>
 										<XalianInfoBox hideId species={xalian.species} type={xalian.elements.primaryType} />
 									</Col>
-									<Col className="vertically-center-contents xalian-image-wrapper" xs={6}>
-										<XalianImage bordered colored shadowed speciesName={xalian.species.name} primaryType={xalian.elements.primaryType} moreClasses="xalian-image-in-row xalian-image splash-xalian-image" />
+									<Col className="vertically-center-contents" xs={6}>
+										<XalianImage bordered colored shadowed speciesName={xalian.species.name} primaryType={xalian.elements.primaryType} moreClasses="xalian-image duel-xalian-details-image" />
 									</Col>
 									<Col className="vertically-center-contents" xs={12}>
 											<Col>

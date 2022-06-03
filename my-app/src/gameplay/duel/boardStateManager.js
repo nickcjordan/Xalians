@@ -11,12 +11,7 @@ export function buildBoardState(G) {
         xalians: G.xalians,
         flags: G.flags,
         currentTurnDetails: details,
-        activeXalianIds: G.activeXalianIds,
-        inactiveXalianIds: G.inactiveXalianIds,
-        unsetXalianIds: G.unsetXalianIds,
-        activeOpponentXalianIds: G.activeOpponentXalianIds,
-        inactiveOpponentXalianIds: G.inactiveOpponentXalianIds,
-        unsetOpponentXalianIds: G.unsetOpponentXalianIds
+        playerStates: G.playerStates
        }
 }
 
@@ -28,9 +23,10 @@ export function getAllMoveActionsFromLog(logs) {
             log.action.type === 'MAKE_MOVE' &&
             log.action.payload &&
             log.action.payload.type &&
-            log.action.payload.type !== 'selectPiece' &&
-            log.action.payload.type !== 'setPiece')
-    : [];
+            (log.action.payload.type === 'movePiece' || log.action.payload.type === 'doAttack'))
+            : [];
+            // log.action.payload.type !== 'selectPiece' &&
+            // log.action.payload.type !== 'setPiece')
 }
 
 export function currentTurnState(G) {

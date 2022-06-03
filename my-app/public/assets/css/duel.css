@@ -25,10 +25,10 @@
     top: -40%;
     left: 50%;
     transform: translate(-50%, -50%);
-    height: 2px;
+    height: 1px;
     z-index: 205;
     pointer-events: none;
-    width: 95%;
+    width: 90%;
     margin: auto;
   }
   
@@ -243,6 +243,22 @@
   left: 50%;
   border-radius: 50%;
   z-index: 201;
+  margin: auto;
+}
+
+.duel-board-cell-dot-light {
+  background: radial-gradient(circle, #32a852 0%, #32a85200 100%);
+  filter: drop-shadow(0px 0px 5px #32a852);
+}
+
+.duel-board-cell-dot-light-faded {
+  background: radial-gradient(circle, #8dd8a17e 0%, #32a85200 100%);
+  filter: drop-shadow(0px 0px 5px #8dd8a17e);
+}
+
+.duel-board-cell-dot-dark {
+  background: radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 5%, rgba(0,0,0,0.25) 20%, rgba(0,0,0,0) 60%);
+  filter: none;
 }
 
 .duel-attack-cell-icon {
@@ -349,4 +365,18 @@
   border-radius: 50%;
   height: 50%;
   width: 50%;
+}
+
+.duel-xalian-details-image {
+  height: auto;
+  width: 80%;
+  max-width: 100px;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.hidden {
+  visibility: hidden;
 }

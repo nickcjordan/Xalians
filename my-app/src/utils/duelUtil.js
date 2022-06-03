@@ -3,30 +3,30 @@ import * as duelCalculator from '../gameplay/duel/duelCalculator';
 import * as boardStateManager from '../gameplay/duel/boardStateManager';
 
 export function isPlayerPiece(id, G) {
-    return  (G.unsetXalianIds && G.unsetXalianIds.includes(id)) 
-        || (G.activeXalianIds && G.activeXalianIds.includes(id))
-        || (G.inactiveXalianIds && G.inactiveXalianIds.includes(id))
+    return  (G.playerStates[0].unsetXalianIds && G.playerStates[0].unsetXalianIds.includes(id)) 
+        || (G.playerStates[0].activeXalianIds && G.playerStates[0].activeXalianIds.includes(id))
+        || (G.playerStates[0].inactiveXalianIds && G.playerStates[0].inactiveXalianIds.includes(id))
 }
 
 export function isOpponentPiece(id, G) {
-    return  (G.unsetOpponentXalianIds && G.unsetOpponentXalianIds.includes(id)) 
-        || (G.activeOpponentXalianIds && G.activeOpponentXalianIds.includes(id))
-        || (G.inactiveOpponentXalianIds && G.inactiveOpponentXalianIds.includes(id))
+    return  (G.playerStates[1].unsetXalianIds && G.playerStates[1].unsetXalianIds.includes(id)) 
+        || (G.playerStates[1].activeXalianIds && G.playerStates[1].activeXalianIds.includes(id))
+        || (G.playerStates[1].inactiveXalianIds && G.playerStates[1].inactiveXalianIds.includes(id))
 }
 
 export function isUnset(id, G) {
-    return  (G.unsetXalianIds && G.unsetXalianIds.includes(id)) 
-    || (G.unsetOpponentXalianIds && G.unsetOpponentXalianIds.includes(id))
+    return  (G.playerStates[0].unsetXalianIds && G.playerStates[0].unsetXalianIds.includes(id)) 
+    || (G.playerStates[1].unsetXalianIds && G.playerStates[1].unsetXalianIds.includes(id))
 }
 
 export function isActive(id, G) {
-    return  (G.activeXalianIds && G.activeXalianIds.includes(id)) 
-    || (G.activeOpponentXalianIds && G.activeOpponentXalianIds.includes(id))
+    return  (G.playerStates[0].activeXalianIds && G.playerStates[0].activeXalianIds.includes(id)) 
+    || (G.playerStates[1].activeXalianIds && G.playerStates[1].activeXalianIds.includes(id))
 }
 
 export function isInactive(id, G) {
-    return  (G.inactiveXalianIds && G.inactiveXalianIds.includes(id)) 
-    || (G.inactiveOpponentXalianIds && G.inactiveOpponentXalianIds.includes(id))
+    return  (G.playerStates[0].inactiveXalianIds && G.playerStates[0].inactiveXalianIds.includes(id)) 
+    || (G.playerStates[1].inactiveXalianIds && G.playerStates[1].inactiveXalianIds.includes(id))
 }
 
 export function isCurrentTurnsXalian(id, boardState, ctx) {
@@ -55,6 +55,14 @@ export function getOpponentStartingIndices(boardState) {
         indices.push(i);
     }
     return indices;
+}
+
+export function getStartingIndicesOfPlayer(playerID, boardState) {
+    if (playerID == 0) {
+        return getPlayerStartingIndices(boardState);
+    } else if (playerID == 1) {
+        return getOpponentStartingIndices(boardState);
+    }
 }
 
 export function getStartingIndices(boardState, ctx) {
@@ -89,9 +97,9 @@ export function getIndexOfXalian(id, boardState) {
 
 export function getCurrentTurnActiveXalianIds(G, ctx) {
     if (isPlayersTurn(ctx)) {
-        return G.activeXalianIds;
+        return G.playerStates[0].activeXalianIds;
     } else if (isOpponentsTurn(ctx)) {
-        return G.activeOpponentXalianIds;
+        return G.playerStates[1].activeXalianIds;
     }
 }
 
@@ -104,11 +112,11 @@ export function getCurrentTurnXalianIds(G, ctx) {
 }
 
 export function getPlayerXalianIds(G) {
-    return G.activeXalianIds.concat(G.unsetXalianIds).concat(G.inactiveXalianIds);
+    return G.playerStates[0].activeXalianIds.concat(G.playerStates[0].unsetXalianIds).concat(G.playerStates[0].inactiveXalianIds);
 }
 
 export function getOpponentXalianIds(G) {
-    return G.activeOpponentXalianIds.concat(G.unsetOpponentXalianIds).concat(G.inactiveOpponentXalianIds);
+    return G.playerStates[1].activeXalianIds.concat(G.playerStates[1].unsetXalianIds).concat(G.playerStates[1].inactiveXalianIds);
 }
 
 export function getOpponentHealth(G) {
@@ -262,4 +270,15 @@ export function getAttackableIndices(xalianId, boardState, ctx, onlyOccupiedCell
 			attacks = duelCalculator.calculateAttackableIndices(index, xalian, boardState, ctx, onlyOccupiedCells);
 		}
 	return attacks;
+}
+
+export function extractXalianId(text) {
+    // const xalianIdRegex = '[0-9]{5}-[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}';
+    const xalianIdRegex = /[0-9]{5}-[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}/g;
+    let extraction = text.match(xalianIdRegex);
+    if (extraction && extraction.length > 0) {
+        return extraction[0];
+    } else {
+        return null;
+    }
 }

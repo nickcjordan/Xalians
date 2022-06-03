@@ -190,7 +190,7 @@ function buildBotMove(action, data = {}) {
 
 // function buildBotObjectives(G, ctx) {
 export function buildBotObjectives() {
-	// if (!G.activeXalianIds) {
+	// if (!G.playerStates[0].activeXalianIds) {
 	// 	return [];
 	// }
 	// let initialHealth = duelUtil.getPlayerHealth(G);
@@ -240,7 +240,7 @@ export function buildBotObjectives() {
         },
         'opponents-eliminated': {
             checker: (G, ctx) => {
-              return G.activeXalianIds.length == 0 && G.unsetXalianIds.length == 0;
+              return G.playerStates[0].activeXalianIds.length == 0 && G.playerStates[0].unsetXalianIds.length == 0;
             },
             weight: 1000,
         }

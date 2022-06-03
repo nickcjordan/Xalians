@@ -139,7 +139,7 @@ class DuelPage extends React.Component {
 
 	render() {
 		
-		let xaliansPerTeam = 8;
+		let xaliansPerTeam = 2;
 		// let xaliansPerTeam = duelConstants.XALIANS_PER_TEAM;
 
 		if (this.state.xalians && this.state.xalians.length > 0) {

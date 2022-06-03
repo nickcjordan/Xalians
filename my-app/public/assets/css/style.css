@@ -2961,10 +2961,10 @@ input, textarea {
 }
 
 .xalian-image-selected {
-  border-color: rgb(255, 255, 255);
-  border-width: 4px;
+  border-bottom-color: rgb(255, 255, 255);
+  border-bottom-width: 2px;
   border-radius: 8px;
-  border-style: solid;
+  border-bottom-style: solid;
 }
 
 .xalian-image-shadowed {
