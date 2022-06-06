@@ -159,7 +159,10 @@ class DuelBoard extends React.Component {
 	handleEmptyCellSelection = (destinationIndex, boardState, dragged = false) => {
 		let selectedId = this.getSelectedXalianId();
 		let selectedIndex = duelUtil.getIndexOfXalian(selectedId, boardState);
+		this.takeActionOnCell(destinationIndex, boardState, selectedId, selectedIndex, dragged);
+	};
 
+	takeActionOnCell = (destinationIndex, boardState, selectedId, selectedIndex, dragged) => {
 		var paths = [];
 		if (this.props.ctx.phase === 'play' && selectedId && (selectedIndex != null && selectedIndex != undefined)) {
 			paths = duelCalculator.calculateMovablePaths(selectedIndex, duelUtil.getXalianFromId(selectedId, boardState), boardState, this.props.ctx);
@@ -185,9 +188,13 @@ class DuelBoard extends React.Component {
 				if (movableIndices.includes(destinationIndex)) { // valid move
 					let path = paths.filter(p => (p.endIndex == destinationIndex))[0];
 					path.dragged = dragged;
-					this.setXalianIds(null, null, () => {
+					if (boardState.currentTurnDetails.isComplete) {
+						this.setXalianIds(null, null, () => {
+							this.props.moves.movePiece(path);
+						});
+					} else {
 						this.props.moves.movePiece(path);
-					});
+					}
 					
 				} else {
 					this.setXalianIds();
@@ -210,7 +217,7 @@ class DuelBoard extends React.Component {
 				this.setReferencedXalianId(selectedId);
 			}
 		}
-	};
+	}
 
 	setReferencedXalianId = (id = null) => {
 		if (id && id !== 'null') {
@@ -357,7 +364,7 @@ class DuelBoard extends React.Component {
 
 	getStartingBoardState = () => {
 		let actionLogs = boardStateManager.getAllMoveActionsFromLog(this.props.log);
-		let s = (actionLogs && actionLogs.length > 0 && actionLogs.length > this.state.logIndex) ? actionLogs[this.state.logIndex].metadata.startState : boardStateManager.buildBoardState(this.props.G);
+		let s = (actionLogs && actionLogs.length > 0 && actionLogs.length > this.state.logIndex) ? actionLogs[this.state.logIndex].metadata.startState : boardStateManager.buildBoardState(this.props.G, this.props.ctx);
 		return s;
 	}
 
@@ -405,6 +412,7 @@ class DuelBoard extends React.Component {
 				var cell = <DuelBoardCell
 					handleEmptyCellSelection={this.handleEmptyCellSelection} 
 					handleActivePieceSelection={this.handleActivePieceSelection} 
+					takeActionOnCell={this.takeActionOnCell}
 					cellSizeText={cellSizeText} 
 					cellSize={cellSize}
 					cellIndex={index} 
@@ -416,6 +424,7 @@ class DuelBoard extends React.Component {
 					referencedXalianId={referencedId}
 					referencedXalianMovableIndices={referencedXalianMovableIndices}
 					referencedXalianAttackableIndices={referencedXalianAttackableIndices}
+					{...this.props}
 				/>;
 
 				cells.push(<td key={index}>{cell}</td>);

@@ -183,7 +183,7 @@ export function xalianHasValidActionAvailable(id, G, ctx) {
         var canAttack = true;
         var canMove = true;
 
-        let xalianStatus = getXalianCurrentTurnStatus(xalian, G);
+        let xalianStatus = getXalianCurrentTurnStatus(xalian, G, ctx);
 
         if (xalianStatus.xalianHasAttacked) {
             canAttack = false;
@@ -208,11 +208,11 @@ export function xalianHasValidActionAvailable(id, G, ctx) {
     }
 }
 
-export function getXalianCurrentTurnStatus(xalian, boardState) {
+export function getXalianCurrentTurnStatus(xalian, boardState, ctx) {
     let xalianId = xalian.xalianId;
-    let currentTurnDetails = boardState.currentTurnDetails || boardStateManager.currentTurnState(boardState);
+    let currentTurnDetails = boardState.currentTurnDetails || boardStateManager.currentTurnState(boardState, ctx);
     let currentTurnActions = boardState.currentTurnActions || currentTurnDetails.actions || [];
-
+    let remainingSpacesToMoveForTurn = currentTurnDetails.remainingSpacesToMove;
     var xalianHasAttacked = false;
     var xalianHasMoved = false;
     // var remainingSpacesXalianCanMove = Math.min(currentTurnDetails.remainingSpacesToMove, xalian.stats.distance);
@@ -239,7 +239,7 @@ export function getXalianCurrentTurnStatus(xalian, boardState) {
             // };
         }
     });
-    remainingSpacesXalianCanMove = Math.min(remainingSpacesXalianCanMove, currentTurnDetails.remainingSpacesToMove);
+    remainingSpacesXalianCanMove = Math.min(remainingSpacesXalianCanMove, remainingSpacesToMoveForTurn);
     remainingSpacesXalianCanMove = Math.max(remainingSpacesXalianCanMove, 0);
 
     return {

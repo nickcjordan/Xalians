@@ -70,7 +70,7 @@ function preprocess(G, ctx, args) {
   //     console.log('BEFORE BOT ACTION');
   //   }
   // }
-  let startState = boardStateManager.buildBoardState(G);
+  let startState = boardStateManager.buildBoardState(G, ctx);
   let moveId = uuidv4();
   return { 
     ...G, 
@@ -83,7 +83,7 @@ function postprocess(G, ctx) {
   // if (ctx.currentPlayer == 1) {
   //   console.log('AFTER BOT ACTION');
   // }
-  let endState = boardStateManager.buildBoardState(G);
+  let endState = boardStateManager.buildBoardState(G, ctx);
   ctx.log.setMetadata({
     moveId: G.moveId, 
     startState: G.startState,

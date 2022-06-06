@@ -1,9 +1,11 @@
 
 
 import * as duelConstants from './duelGameConstants';
+import * as duelUtil from '../../utils/duelUtil';
+import * as playerStateManager from './playerStateManager';
 
-export function buildBoardState(G) {
-    var details = G.currentTurnDetails || currentTurnState(G);
+export function buildBoardState(G, ctx) {
+    var details = G.currentTurnDetails || currentTurnState(G, ctx);
 
     return { 
         moveId: G.moveId,
@@ -29,7 +31,7 @@ export function getAllMoveActionsFromLog(logs) {
             // log.action.payload.type !== 'setPiece')
 }
 
-export function currentTurnState(G) {
+export function currentTurnState(G, ctx) {
     // if (G.turnHasEnded) {
     //     return {
     //         ...G,
@@ -65,7 +67,10 @@ export function currentTurnState(G) {
                     };
                 }
             });
-        
+
+
+        // var currentPlayerState = G.playerStates[ctx.currentPlayer];
+        // isComplete = (remainingSpacesToMove == 0 && hasAttacked) || !playerStateManager.playerStateHasMoveAvailable(currentPlayerState, G, ctx);
         isComplete = (remainingSpacesToMove == 0 && hasAttacked);
 
 
@@ -73,6 +78,7 @@ export function currentTurnState(G) {
         Object.values(moveMap).forEach((entry) => {
             moves.push({ moverId: entry.key, spacesMoved: entry.value });
         });
+
 
 
         return {
@@ -85,3 +91,4 @@ export function currentTurnState(G) {
         }
     // }
 }
+

@@ -118,31 +118,33 @@ export const Duel = (data) => {
 				if (ctx.phase === 'play') {
 
 					
-					var hasValidActionAvailable = false;
-					if (duelUtil.isPlayersTurn(ctx)) {
-						G.playerStates[0].activeXalianIds.forEach( id => {
-							if (duelUtil.xalianHasValidActionAvailable(id, G, ctx)) {
-								hasValidActionAvailable = true;
-							}
-						})
-					} else if (duelUtil.isOpponentsTurn(ctx)) {
-						G.playerStates[1].activeXalianIds.forEach( id => {
-							if (duelUtil.xalianHasValidActionAvailable(id, G, ctx)) {
-								hasValidActionAvailable = true;
-							}
-						})
-					}
+					// var hasValidActionAvailable = false;
+					// if (duelUtil.isPlayersTurn(ctx)) {
+					// 	G.playerStates[0].activeXalianIds.forEach( id => {
+					// 		if (duelUtil.xalianHasValidActionAvailable(id, G, ctx)) {
+					// 			hasValidActionAvailable = true;
+					// 		}
+					// 	})
+					// } else if (duelUtil.isOpponentsTurn(ctx)) {
+					// 	G.playerStates[1].activeXalianIds.forEach( id => {
+					// 		if (duelUtil.xalianHasValidActionAvailable(id, G, ctx)) {
+					// 			hasValidActionAvailable = true;
+					// 		}
+					// 	})
+					// }
 					
-					// var cantMove = (turnState.hasMoved && turnState.remainingSpacesToMove == 0);
+					// // var cantMove = (turnState.hasMoved && turnState.remainingSpacesToMove == 0);
 					
-					// var canAttack = 0;
+					// // var canAttack = 0;
 					
-					// let cantAttack = turnState.hasAttacked || canAttack == 0;
-					// return cantMove && cantAttack;
-
-
+					// // let cantAttack = turnState.hasAttacked || canAttack == 0;
+					// // return cantMove && cantAttack;
+					let playerID = parseInt(ctx.currentPlayer);
+					let playerState = G.playerStates[playerID];
+					let playerCanMove = playerStateManager.playerStateHasMoveAvailable(playerState, G, ctx);
 					let turnState = G.currentTurnDetails;
-					return (turnState && turnState.isComplete) || !hasValidActionAvailable;
+					// return (turnState && turnState.isComplete) || !hasValidActionAvailable;
+					return (turnState && turnState.isComplete) || !playerCanMove;
 				}
 			},
 
@@ -151,10 +153,10 @@ export const Duel = (data) => {
 				if (ctx.phase === 'play') {
 					G.currentTurnDetails = boardStateManager.currentTurnState(G, ctx);
 				}
-				let target = gsap.utils.toArray(document.querySelectorAll(".fade-out-animation-on-move"));
-				if (target && target.length > 0) {
-					gsap.to(target, { autoAlpha: 1 });
-				}
+				// let target = gsap.utils.toArray(document.querySelectorAll(".fade-in-animation-on-move"));
+				// if (target && target.length > 0) {
+					// gsap.to(target, { autoAlpha: 1 });
+				// }
 			},
 
 			// Prevents ending the turn before a minimum number of moves.
