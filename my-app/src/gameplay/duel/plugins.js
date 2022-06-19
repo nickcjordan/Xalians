@@ -2,6 +2,7 @@
 import { Hub } from "aws-amplify";
 import { v4 as uuidv4 } from 'uuid';
 import * as boardStateManager from './boardStateManager';
+import * as duelConstants from './duelGameConstants';
 
 export const actionPlugin = {
 
@@ -65,12 +66,8 @@ export const actionPlugin = {
 }
 
 function preprocess(G, ctx, args) {
-  // if (args && args.length > 0) {
-  //   if (ctx.currentPlayer == 1) {
-  //     console.log('BEFORE BOT ACTION');
-  //   }
-  // }
   let startState = boardStateManager.buildBoardState(G, ctx);
+  
   let moveId = uuidv4();
   return { 
     ...G, 
@@ -80,16 +77,35 @@ function preprocess(G, ctx, args) {
 }
 
 function postprocess(G, ctx) {
-  // if (ctx.currentPlayer == 1) {
-  //   console.log('AFTER BOT ACTION');
-  // }
-  let endState = boardStateManager.buildBoardState(G, ctx);
-  ctx.log.setMetadata({
-    moveId: G.moveId, 
-    startState: G.startState,
-    endState: endState,
-    attackActionResult: G.attackActionResult
-  });
 
-  return G;
+  // let actionMeta = {
+  //   moveId: G.moveId,
+  //   startState: G.startState
+  // }; 
+
+  let actionMeta = {
+    moveId: G.moveId
+  }; 
+
+  // grab attack result from currentTurnActions so it will be available in action meta
+  let lastAction = G.currentTurnActions[G.currentTurnActions.length - 1];
+  if (lastAction && (lastAction.type == duelConstants.actionTypes.ATTACK) && lastAction.attack.result) {
+    actionMeta.attackActionResult = lastAction.attack.result;
+  }
+
+  // add current state index to meta
+  actionMeta.boardStateIndex = G.boardStateHistory ? G.boardStateHistory.length : 0;;
+
+  // add post-move-G-state to history 
+  let history = G.boardStateHistory ? [...G.boardStateHistory] : [];
+  history.push(G.startState);
+
+  // set this moves log meta
+  ctx.log.setMetadata(actionMeta);
+
+  return {
+    ...G, 
+    startState: null,
+    boardStateHistory: history
+  };
 }

@@ -48,11 +48,13 @@ export const Duel = (data) => {
 			let flagStates = [
 				{
 					index: playerTargetFlagIndex,
+					startIndex: playerTargetFlagIndex,
 					holder: null,
 					player: 0 // indicates the player that will be targeting this flag
 				},
 				{
 					index: opponentTargetFlagIndex,
+					startIndex: opponentTargetFlagIndex,
 					holder: null,
 					player: 1
 				}
@@ -72,21 +74,12 @@ export const Duel = (data) => {
 					playerID: 1
 				}
 			]
+			
 
 			return {
 				cells: Array(totalSquares).fill(null),
 				xalians: data.xalians,
-				user: user,
-				// activeXalianIds: [],
-				// inactiveXalianIds: [],
-				// unsetXalianIds: unsetXalianIds,
-				// activeOpponentXalianIds: [],
-				// inactiveOpponentXalianIds: [],
-				// unsetOpponentXalianIds: unsetOpponentXalianIds,
-				// selectedId: null,
-				// selectedIndex: null,
 				flags: flagStates,
-				attackActionResult: null,
 				currentTurnActions: [],
 				playerStates: playerStates
 			};
@@ -110,35 +103,18 @@ export const Duel = (data) => {
 			onEnd: (G, ctx) => {
 				// G.selectedIndex = null;
 				// G.selectedId = null;
+				let playerState = G.playerStates[parseInt(ctx.currentPlayer)];
+				playerState.activeXalianIds.forEach( id => {
+					let xalian = duelUtil.getXalianFromId(id, G);
+					xalian.state.stamina = Math.min(duelConstants.MAX_STAMINA_POINTS, xalian.state.stamina + 1);
+				});
 
 			},
 
 			// Ends the turn if this returns true.
 			endIf: (G, ctx) => {
 				if (ctx.phase === 'play') {
-
 					
-					// var hasValidActionAvailable = false;
-					// if (duelUtil.isPlayersTurn(ctx)) {
-					// 	G.playerStates[0].activeXalianIds.forEach( id => {
-					// 		if (duelUtil.xalianHasValidActionAvailable(id, G, ctx)) {
-					// 			hasValidActionAvailable = true;
-					// 		}
-					// 	})
-					// } else if (duelUtil.isOpponentsTurn(ctx)) {
-					// 	G.playerStates[1].activeXalianIds.forEach( id => {
-					// 		if (duelUtil.xalianHasValidActionAvailable(id, G, ctx)) {
-					// 			hasValidActionAvailable = true;
-					// 		}
-					// 	})
-					// }
-					
-					// // var cantMove = (turnState.hasMoved && turnState.remainingSpacesToMove == 0);
-					
-					// // var canAttack = 0;
-					
-					// // let cantAttack = turnState.hasAttacked || canAttack == 0;
-					// // return cantMove && cantAttack;
 					let playerID = parseInt(ctx.currentPlayer);
 					let playerState = G.playerStates[playerID];
 					let playerCanMove = playerStateManager.playerStateHasMoveAvailable(playerState, G, ctx);
@@ -227,13 +203,13 @@ export const Duel = (data) => {
 			let totalPlayerHealth = 0;
 			duelUtil.getPlayerXalianIds(G).forEach(id => {
 				let xalian = duelUtil.getXalianFromId(id, G);
-				totalPlayerHealth += xalian.stats.health;
+				totalPlayerHealth += xalian.state.health;
 			})
 
 			let totalOpponentHealth = 0;
 			duelUtil.getOpponentXalianIds(G).forEach(id => {
 				let xalian = duelUtil.getXalianFromId(id, G);
-				totalOpponentHealth += xalian.stats.health;
+				totalOpponentHealth += xalian.state.health;
 			})
 
 			
@@ -370,10 +346,10 @@ function moveXalianToActive(id, unset, active, ctx, endTurnAfterMove = false) {
 function movePiece(G, ctx, path, data = {}) {
 	let xalianIdToMove = G.cells[path.startIndex];
 	let xalian = duelUtil.getXalianFromId(xalianIdToMove, G);
-
+	
 
 	let targetFlagIndex = duelUtil.getCurrentTurnTargetFlagIndex(G, ctx);
-
+	let opponentFlagState = G.flags[parseInt(ctx.currentPlayer === '0' ? 1 : 0)];
 	// set flag holder
 	if (path.endIndex == targetFlagIndex) {
 		let flag = G.flags[parseInt(ctx.currentPlayer)];
@@ -384,8 +360,14 @@ function movePiece(G, ctx, path, data = {}) {
 		G.flags[parseInt(ctx.currentPlayer)] = flag;
 	}
 
+	// move flag back to start if recaptured
+	if (path.endIndex == opponentFlagState.index) {
+		opponentFlagState.index = opponentFlagState.startIndex;
+	}
+
 	G.cells[path.startIndex] = null;
 	G.cells[path.endIndex] = xalianIdToMove;
+	xalian.state.stamina = xalian.state.stamina - path.spacesMoved;
 
 	let action = {
 		type: duelConstants.actionTypes.MOVE,
@@ -405,16 +387,18 @@ function doAttack(G, ctx, path, data = {}) {
 	let defenderIndex = path.endIndex;
 	let attackerId = G.cells[attackerIndex];
 	let attacker = G.xalians.filter((x) => x.xalianId === attackerId)[0];
+	// attacker.state.stamina = attacker.state.stamina - duelConstants.ATTACK_STAMINA_COST;
+	attacker.state.stamina = attacker.state.stamina - path.spacesMoved;
 	let defenderId = G.cells[defenderIndex];
 	let defender = G.xalians.filter((x) => x.xalianId === defenderId)[0];
 	if (attacker && defender) {
 		// console.log('xalian ' + attacker.species.name + ' from square ' + attackerIndex + ' is attacking xalian ' + defender.species.name + ' on square ' + defenderIndex);
-		var existingDefenderHealth = parseInt(defender.stats.health);
+		var existingDefenderHealth = parseInt(defender.state.health);
 		let attackResult = duelCalculator.calculateAttackResult(attacker, defender, G, ctx);
 		let damage = attackResult.damage;
-		defender.stats.health = Math.max(0, existingDefenderHealth - damage);
-		// console.log('resulting health = ' + defender.stats.health);
-		if (defender.stats.health <= 0) {
+		defender.state.health = Math.max(0, existingDefenderHealth - damage);
+		// console.log('resulting health = ' + defender.state.health);
+		if (defender.state.health <= 0) {
 			if (duelUtil.isPlayerPiece(defenderId, G)) {
 				removeItemFromList(defenderId, G.playerStates[0].activeXalianIds);
 				G.playerStates[0].inactiveXalianIds.push(defenderId);
@@ -441,16 +425,13 @@ function doAttack(G, ctx, path, data = {}) {
 		let attackActionResult = {
 			attackerIndex: attackerIndex,
 			attackerId: attackerId,
-			attackerType: attacker.elements.primaryType,
+			attackerType: attacker.elementType,
 			defenderIndex: defenderIndex,
 			defenderId: defenderId,
-			defenderType: defender.elements.primaryType,
+			defenderType: defender.elementType,
 			attackResult: attackResult
 
 		};
-		G.attackActionResult = attackActionResult;
-		// , message: null });
-		// }
 
 		let action = {
 			type: duelConstants.actionTypes.ATTACK,
@@ -461,7 +442,6 @@ function doAttack(G, ctx, path, data = {}) {
 				result: attackActionResult
 			}
 		};
-		// G.currentTurnState.actions.push(action);
 		G.currentTurnActions.push(action);
 	} else {
 		console.error(`ERROR :: DID NOT FIND ONE OF ATTACKER [${attacker}] OR DEFENDER [${defender}] DURING ATTACK ACTION`);

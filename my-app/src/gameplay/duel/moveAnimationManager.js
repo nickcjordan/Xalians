@@ -11,8 +11,8 @@ import AttackActionModal from '../../components/games/duel/board/attackActionMod
 function getDiff(pathStartCoord, pathNextCoord, currentCoord) {
     let xStartCoordDiff = currentCoord[0] - pathStartCoord[0];
     let yStartCoordDiff = currentCoord[1] - pathStartCoord[1];
-    let xEndCoordDiff = currentCoord[0] - pathNextCoord[0];
-    let yEndCoordDiff = currentCoord[1] - pathNextCoord[1];
+    let xEndCoordDiff = pathNextCoord[0] - currentCoord[0];
+    let yEndCoordDiff = pathNextCoord[1] - currentCoord[1];
 
     let xStartDiff = xStartCoordDiff * 100; // for 100%
     let yStartDiff = yStartCoordDiff * 100;
@@ -27,7 +27,7 @@ function getDiff(pathStartCoord, pathNextCoord, currentCoord) {
     return resp;
 }
 
-export function handleMoveAnimation(tl, log, callback, setStateCallback, isLastLog = false) {
+export function handleMoveAnimation(tl, log, callback, setStateCallback, isLastLog, G) {
     if (log.action && log.action.payload && log.action.payload.args && log.action.payload.args[0]) {
 
         // if (moveName === 'setPiece') {
@@ -49,12 +49,12 @@ export function handleMoveAnimation(tl, log, callback, setStateCallback, isLastL
         let moveName = log.action.payload.type;
         if (moveName === 'movePiece') {
             let moveAction = log.action.payload.args[0];
-            let shouldAnimateAction = !isLastLog || (isLastLog && !moveAction.dragged);
-            handleMoveAction(moveAction, tl, log.metadata, callback, shouldAnimateAction);
+            let shouldAnimateAction = !(isLastLog && moveAction.dragged);
+            handleMoveAction(moveAction, tl, log.metadata, callback, shouldAnimateAction, G);
             
 
         } else if (moveName === 'doAttack') {
-            handleAttackAction(log.action.payload.args[0], tl, log.metadata, callback, setStateCallback);
+            handleAttackAction(log.metadata, tl, callback, setStateCallback, G);
         }
 
     }
@@ -62,32 +62,41 @@ export function handleMoveAnimation(tl, log, callback, setStateCallback, isLastL
 
 }
 
-function handleMoveAction(movePath, tl, meta, callback, shouldAnimateAction = true) {
+function handleMoveAction(movePath, tl, meta, callback, isNotDraggingAnimation = true, G) {
     let moveTl = gsap.timeline();
     // DO MOVE ANIMATION
     // console.log(`movePiece :: `);
-    let boardState = meta.startState;
+    let boardState = G.boardStateHistory[meta.boardStateIndex];
 
     let moverId = boardState.cells[movePath.startIndex];
-    let elem = document.getElementById(`duel-${moverId}-piece`);
+    // let elemId = `duel-${moverId}-piece`;
+    // let elemId = "ghost-xalian-on-drag-" + moverId;
+    // let elem = document.getElementById(elemId);
 
 
-    // let dots = document.querySelectorAll(".duel-movable-cell-dot");
-    let dots = document.querySelectorAll(".fade-out-animation-on-move");
-    if (dots && dots.length > 0) {
-        gsap.to(gsap.utils.toArray(dots), { autoAlpha: 0 });
-    }
+    // let fadingElementsOnMove = document.querySelectorAll(".duel-board-cell-dot-light");
+    // let fadingElementsOnMove = document.querySelectorAll(".attack-pattern-background");
+    // if (fadingElementsOnMove && fadingElementsOnMove.length > 0) {
+        // gsap.to(gsap.utils.toArray(fadingElementsOnMove), { autoAlpha: 0, duration: 0.1 });
+    // }
 
     // gsap.to(gsap.utils.toArray(document.querySelectorAll(".fade-out-animation-on-move")), { autoAlpha: 0 });
-
-    if (shouldAnimateAction) {
+    var elemId = `duel-${moverId}-piece`;
+    if (!isNotDraggingAnimation) {
+        elemId = "ghost-xalian-on-drag-" + moverId;
+    }
+    var elem = document.getElementById(elemId);
         movePath.path.forEach((pathCoord, index, array) => {
             if ((index + 1) < array.length) {
                 let pathNext = array[index + 1];
                 let diff = getDiff(pathCoord, pathNext, movePath.path[0]);
+                // let diff = getDiff(movePath.path[0], pathNext, pathCoord);
+                // moveTl.fromTo(elem,
                 moveTl.to(elem,
-                    // {xPercent: -(diff.from[0]), yPercent: -(diff.from[1])},
-                    { xPercent: -(diff.to[0]), yPercent: -(diff.to[1]), duration: 0.25 }
+                    // { xPercent: (diff.from[0]), yPercent: (diff.from[1]) },
+                    // { x: 0, y: 0 },
+                    { xPercent: (diff.to[0]), yPercent: (diff.to[1]), duration: 0.25, delay: 0.1 }
+                    // { xPercent: -(diff.to[0]), yPercent: -(diff.to[1]), duration: 0.25, delay: 0.1 }
                 );
     
             } else {
@@ -96,9 +105,9 @@ function handleMoveAction(movePath, tl, meta, callback, shouldAnimateAction = tr
             }
     
         });
-    } else {
-        moveTl.add(callback, ">");
-    }
+    // } else {
+        // moveTl.add(callback, ">");
+    // }
 
 
     tl.add(moveTl);
@@ -106,11 +115,11 @@ function handleMoveAction(movePath, tl, meta, callback, shouldAnimateAction = tr
 
 }
 
-function handleAttackAction(attackPath, tl, meta, callback, setStateCallback) {
+function handleAttackAction(meta, tl, callback, setStateCallback, G) {
     // DO ATTACK ANIMATION
     // console.log(`doAttack :: `);
 
-    let boardState = meta.startState;
+    let boardState = G.boardStateHistory[meta.boardStateIndex];
     let attackActionResult = meta.attackActionResult;
     
     let attacker = duelUtil.getXalianFromId(attackActionResult.attackerId, boardState);

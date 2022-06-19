@@ -73,10 +73,10 @@ class DuelPage extends React.Component {
 	// 	return (
 	// 		<Col md={2} sm={3} xs={6} className="species-col">
 	// 			<a onClick={() => this.handleClick(x.xalianId)}>
-	// 				<XalianImage colored bordered speciesName={x.species.name} primaryType={x.elements.primaryType} moreClasses="xalian-image-grid" />
+	// 				<XalianImage colored bordered speciesName={x.species.name} primaryType={x.elementType} moreClasses="xalian-image-grid" />
 	// 				<Row style={{ width: '100%', margin: '0px', padding: '0px' }}>
 	// 					{/* <Col xs={5} style={{ margin: 'auto', padding: '0px', paddingRight: '5px', textAlign: 'right' }}>
-	// 						{svgUtil.getSpeciesTypeSymbol(x.elements.primaryType, true, 25)}
+	// 						{svgUtil.getSpeciesTypeSymbol(x.elementType, true, 25)}
 	// 					</Col> */}
 	// 					{/* <Col xs={7} style={{ padding: '0px', height: '100%', margin: 'auto' }}> */}
 	// 					<Col style={{ padding: '0px', height: '100%', margin: 'auto' }}>
@@ -120,10 +120,18 @@ class DuelPage extends React.Component {
 
 		let attackRange = ranges[selectedSpecies.traits.attackRange];
 
+		function buildReducedSpecies(fullSpecies) {
+			return {
+				id: fullSpecies.id,
+				name: fullSpecies.name,
+				planet: fullSpecies.planet
+			}
+		}
+
 		return {
 			xalianId: xalian.xalianId,
-			species: xalian.species,
-			elements: xalian.elements,
+			species: buildReducedSpecies(xalian.species),
+			elementType: xalian.elements.primaryType,
 			stats: {
 				attack: attackPts,
 				defense: defensePts,
@@ -131,7 +139,10 @@ class DuelPage extends React.Component {
 				range: attackRange,
 				distance: distance,
 				evasion: evasionPts,
-				health: gameConstants.MAX_HEALTH_POINTS
+			},
+			state: {
+				health: gameConstants.MAX_HEALTH_POINTS,
+				stamina: gameConstants.MAX_STAMINA_POINTS
 			},
 			traits: selectedSpecies.traits
 		}
@@ -139,7 +150,7 @@ class DuelPage extends React.Component {
 
 	render() {
 		
-		let xaliansPerTeam = 2;
+		let xaliansPerTeam = 5;
 		// let xaliansPerTeam = duelConstants.XALIANS_PER_TEAM;
 
 		if (this.state.xalians && this.state.xalians.length > 0) {

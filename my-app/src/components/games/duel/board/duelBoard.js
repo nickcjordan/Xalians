@@ -47,7 +47,8 @@ class DuelBoard extends React.Component {
 		isAnimating: false,
 		animationTl: gsap.timeline(),
 		logIndex: 0,
-		randomlyAssignStartingPositions: true
+		randomlyAssignStartingPositions: true,
+		hideXalianDetails: false
 	};
 
 	static propTypes = {
@@ -107,25 +108,63 @@ class DuelBoard extends React.Component {
 		if (this.props.ctx.phase === 'setup' && this.state.randomlyAssignStartingPositions) {
 			this.props.moves.initializeSetup();
 		}
+
+		// alert("READ THIS FIRST! (DEBUG MODE: after you tap ok, tap the white-boxed arrow to hide the debug menu) READ THIS NEXT PART THEN TAP OK! =====> GOAL OF GAME ==> grab your blue flag and move it to your side's first row (bottom of board), OR defeat all enemies :::::::: HOW TO PLAY: (you are blue) ==> you can move any of your pieces on your turn, up to 3 spaces per turn :: the 3 spaces do not have to be moved by the same piece :: you are allowed one attack per turn :: you can move and attack in any order :: once a piece's health reaches 0, it is eliminated :: you can move more than once per turn, as long as your total spaces moved and your active pieces' range allows it :: when a piece is selected, the red X's indicate how effective your selected piece's attack would be against the opponent, the red-striped circles indicate attack range, the green dots indicate viable moves :: a piece cannot move through another piece :: bot goes first :: have fun!");
 		
 	}
 
-	componentDidUpdate() {
-		
-		let tl = this.state.animationTl;
-		if (!tl.isActive() && !tl.paused()) {
+	isAnimationHappening = () => {
+		return (this.state.animationTl) && (this.state.animationTl.isActive() || this.state.animationTl.paused());
+	} 
+
+	componentDidUpdate(prevProps, prevState) {
+		if (this.state.selectedXalianId && (this.props.ctx.currentPlayer === '1')) {
+			this.setXalianIds();
+		}
+		if (!this.isAnimationHappening()) {
+			// console.log('\n\n' + JSON.stringify(this.props.log, null, 2) + '\n\n');
 			let logs = boardStateManager.getAllMoveActionsFromLog(this.props.log);
 			if (this.state.logIndex < logs.length) {
 				let log = logs[this.state.logIndex];
 				let isLastLog = this.state.logIndex == (logs.length - 1);
-				moveAnimationManager.handleMoveAnimation(tl, log, this.onMoveAnimationComplete, this.onAttackAnimationSetStateAttackDetails, isLastLog);
+				moveAnimationManager.handleMoveAnimation(this.state.animationTl, log, this.onMoveAnimationComplete, this.onAttackAnimationSetStateAttackDetails, isLastLog, this.props.G);
 			}
+			//  else {
+				// this.setSelectedXalianIdFromLastActionOfPlayer();
+			// }
 		}
 		if (this.props.ctx.gameover && this.state.winnerText == undefined) {
 			this.setState({ winnerText: this.props.ctx.gameover.winner !== undefined && this.props.ctx.gameover.winner == 0 ? 'You Win!' : 'You Lose!' });
 		}
 
+		gsap.set(document.querySelectorAll(".duel-piece"), {transform: 'none'});
+
 		
+	}
+
+	setSelectedXalianIdFromLastActionOfPlayer = (callback = () => { }) => {
+		if (!this.state.selectedXalianId) {
+			let logs = boardStateManager.getAllMoveActionsFromLog(this.props.log);
+			let lastLog = logs[logs.length - 1];
+			if (lastLog.action.payload.playerID === this.props.ctx.currentPlayer) {
+
+				let lastLogForCurrentPlayer = logs.filter(log => (log.action.payload.playerID === this.props.ctx.currentPlayer)).pop();
+				if (lastLogForCurrentPlayer) {
+					let payload = lastLogForCurrentPlayer.action.payload;
+					if (payload.type === 'movePiece') {
+						let startState = this.props.G.boardStateHistory[lastLogForCurrentPlayer.metadata.boardStateIndex];
+						let moverId = startState.cells[payload.args[0].startIndex];
+						if (moverId) {
+							this.setXalianIds(moverId, null, callback);
+						}
+					} else if (payload.type === 'doAttack') {
+						console.log(lastLogForCurrentPlayer);
+						let attackerId = lastLogForCurrentPlayer.metadata.attackActionResult.attackerId;
+						this.setXalianIds(attackerId, null, callback);
+					}
+				}
+			}
+		}
 	}
 
 	onMoveAnimationComplete = () => {
@@ -134,8 +173,10 @@ class DuelBoard extends React.Component {
 			// let elems = document.querySelectorAll(".duel-movable-cell-dot");
 			let target = document.querySelectorAll(".fade-out-animation-on-move");
 			if (target && target.length > 0) {
-				gsap.to(gsap.utils.toArray(target), { autoAlpha: 1 });
+				// gsap.to(gsap.utils.toArray(target), { autoAlpha: 1 });
 			}
+
+			this.setSelectedXalianIdFromLastActionOfPlayer();
 		});
 	}
 	
@@ -152,6 +193,8 @@ class DuelBoard extends React.Component {
 		}, () => {
 			if (this.state.animationTl) {
 				this.state.animationTl.play();
+			} else {
+				this.setSelectedXalianIdFromLastActionOfPlayer();
 			}
 		});
 	}
@@ -188,13 +231,7 @@ class DuelBoard extends React.Component {
 				if (movableIndices.includes(destinationIndex)) { // valid move
 					let path = paths.filter(p => (p.endIndex == destinationIndex))[0];
 					path.dragged = dragged;
-					if (boardState.currentTurnDetails.isComplete) {
-						this.setXalianIds(null, null, () => {
-							this.props.moves.movePiece(path);
-						});
-					} else {
-						this.props.moves.movePiece(path);
-					}
+					this.makeMoveToCell(path, boardState);
 					
 				} else {
 					this.setXalianIds();
@@ -219,13 +256,25 @@ class DuelBoard extends React.Component {
 		}
 	}
 
+	makeMoveToCell = (path, boardState) => {
+		let playerHasMoveAvailable = duelUtil.currentTurnHasMoveAvailable(boardState, this.props.ctx);
+		let shouldResetSelectedXalian = boardState.currentTurnDetails.isComplete || !playerHasMoveAvailable;
+		// if (shouldResetSelectedXalian) {
+			this.setXalianIds(null, null, () => {
+				this.props.moves.movePiece(path);
+			});
+		// } else {
+			// this.props.moves.movePiece(path);
+		// }
+	}
+
 	setReferencedXalianId = (id = null) => {
 		if (id && id !== 'null') {
 			LocalDuelStorage.setReferencedXalianId(id);
-			this.setState({ referencedXalianId: id }); 
+			this.setState({ referencedXalianId: id, hideXalianDetails: false }); 
 		} else {
 			LocalDuelStorage.removeReferencedXalianId();
-			this.setState({ referencedXalianId: null }); 
+			this.setState({ referencedXalianId: null, hideXalianDetails: false }); 
 		}
 	}
 
@@ -233,10 +282,10 @@ class DuelBoard extends React.Component {
 		if (duelUtil.isPlayersTurn(this.props.ctx)) {
 			if (id) {
 				LocalDuelStorage.setSelectedXalianId(id);
-				this.setState({ selectedXalianId: id }, callback); 
+				this.setState({ selectedXalianId: id, hideXalianDetails: false }, callback); 
 			} else {
 				LocalDuelStorage.removeSelectedXalianId();
-				this.setState({ selectedXalianId: null }, callback); 
+				this.setState({ selectedXalianId: null, hideXalianDetails: false }, callback); 
 			}
 		}
 	}
@@ -244,7 +293,8 @@ class DuelBoard extends React.Component {
 	setXalianIds = (selectionId = null, referenceId = null, callback = null) => {
 		this.setState({ 
 			selectedXalianId: selectionId,
-			referencedXalianId: referenceId
+			referencedXalianId: referenceId,
+			hideXalianDetails: false
 		}, callback); 
 	}
 
@@ -277,7 +327,7 @@ class DuelBoard extends React.Component {
 	};
 
 	handleActivePieceSelection = (xalian, index, boardState, callback) => {
-		if (this.getSelectedXalianId() && boardState.xalians) {
+		if (this.getSelectedXalianId() && this.props.G.xalians) {
 			let selectedId = this.getSelectedXalianId();
 			let selectedIndex = duelUtil.getIndexOfXalian(selectedId, boardState);
 			
@@ -347,7 +397,7 @@ class DuelBoard extends React.Component {
 			// <div className="">
 			
 				<Col style={{ maxWidth: cellSizeText }} className='duel-unset-piece-wrapper' onClick={() => this.handleInitialPieceSelection(x, boardState)}>
-					<XalianImage padding='2%' colored rounded shadowed selected={isSelected} speciesName={x.species.name} primaryType={x.elements.primaryType} moreClasses="duel-xalian-unselected" style={{ opacity: opac }} />
+					<XalianImage padding='2%' colored rounded shadowed selected={isSelected} speciesName={x.species.name} primaryType={x.elementType} moreClasses="duel-xalian-unselected" style={{ opacity: opac }} />
 					{/* <Row style={{ width: '100%', margin: '0px', padding: '0px' }}> */}
 						<div style={{ padding: '0px', height: '100%', width: '100%', margin: 'auto' }}>
 							<h6 className="fit-xalian-name-text" style={{ textAlign: 'center', margin: 'auto', height: '100%', width: '100%', color: 'white', opacity: 0.5 }}>
@@ -364,7 +414,7 @@ class DuelBoard extends React.Component {
 
 	getStartingBoardState = () => {
 		let actionLogs = boardStateManager.getAllMoveActionsFromLog(this.props.log);
-		let s = (actionLogs && actionLogs.length > 0 && actionLogs.length > this.state.logIndex) ? actionLogs[this.state.logIndex].metadata.startState : boardStateManager.buildBoardState(this.props.G, this.props.ctx);
+		let s = (actionLogs && actionLogs.length > 0 && actionLogs.length > this.state.logIndex) ? this.props.G.boardStateHistory[actionLogs[this.state.logIndex].metadata.boardStateIndex] : boardStateManager.buildBoardState(this.props.G, this.props.ctx);
 		return s;
 	}
 
@@ -412,7 +462,7 @@ class DuelBoard extends React.Component {
 				var cell = <DuelBoardCell
 					handleEmptyCellSelection={this.handleEmptyCellSelection} 
 					handleActivePieceSelection={this.handleActivePieceSelection} 
-					takeActionOnCell={this.takeActionOnCell}
+					makeMoveToCell={this.makeMoveToCell}
 					cellSizeText={cellSizeText} 
 					cellSize={cellSize}
 					cellIndex={index} 
@@ -447,15 +497,16 @@ class DuelBoard extends React.Component {
 		let xalianDetailsToShow = selectedXalian || referencedXalian;
 		
 		let userActionButtons = this.buildUserActionButtons(boardState);
+
 		return (
 			<React.Fragment>
 				<div className='duel-page-background-overlay' />
 
 				<Container fluid style={{ width: '100%', padding: '0px', margin: '0px', position: 'relative', height: '100vh', width: '100vw'}}>
-					<Stack className='' style={{ width: '100%', padding: '0px', margin: 'auto', position: 'relative' }}>
+					{/* <Stack className='' style={{ width: '100%', padding: '0px', margin: 'auto', position: 'relative' }}> */}
 
 						{/* INFO BOX */}
-						<Container style={{ height: '100px', display: 'flex'}}>
+						<Container style={{ height: '100px', display: 'flex'}} onClick={() => { this.setState({  dummy: (this.state.dummy || 0) + 1 }) }}>
 							<h6>{this.state.dummy}</h6>
 							{this.state.winnerText &&
 								<h1 className='vertically-center-contents' style={{ margin: 'auto', textAlign: 'center' }} >{this.state.winnerText}</h1>
@@ -465,65 +516,57 @@ class DuelBoard extends React.Component {
 							}
 						</Container>
 
-						<Container style={{}}>
-							<Row className='duel-unset-piece-row' style={{ backgroundColor: '#a8222285', borderRadius: '5px' }}>{opponentCols}{opponentOutCols}</Row>
-						</Container>
+						<div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'absolute', top: '50%', left: '50%', height: 'auto', width: '100%', transform: 'translate(-50%, -50%)' }}>
 
-						<Container fluid style={{ width: '100%', padding: '0px', margin: '0px' }}>
-							<div className='duel-board-wrapper'>
-								<div className='duel-board-wrapper-background' />
-								<div className='duel-board-wrapper-background-overlay' />
-								<table id="board" style={{ display: 'flex', justifyContent: 'center' }}>
-									<tbody >{tbody}</tbody>
-								</table>
-							</div>
-							{this.state.attackAnimationData &&
-								<AttackActionModal
-									show={this.state.showActionModal}
-									onHide={this.onAttackActionComplete}
-									attacker={this.state.attackAnimationData.attacker}
-									defender={this.state.attackAnimationData.defender}
-									result={this.state.attackAnimationData.result}
-									attackerColor={this.state.attackAnimationData.attackerColor}
-									defenderColor={this.state.attackAnimationData.defenderColor}
-									cellSize={this.determineCellSize()}
-									attackerStartRect={this.state.attackAnimationData.attackerStartRect}
-									defenderStartRect={this.state.attackAnimationData.defenderStartRect}
-									animationTl={this.state.animationTl}
-								/>
-							}
-						</Container>
+							<Container style={{}}>
+								<Row className='duel-unset-piece-row' style={{ backgroundColor: '#a8222285', borderRadius: '5px' }}>{opponentCols}{opponentOutCols}</Row>
+							</Container>
 
+							<Container fluid style={{ width: '100%', padding: '0px', margin: '0px' }}>
+								<div className='duel-board-wrapper'>
+									<div className='duel-board-wrapper-background' />
+									<div className='duel-board-wrapper-background-overlay' />
+									<table id="board" style={{ display: 'flex', justifyContent: 'center' }}>
+										<tbody >{tbody}</tbody>
+									</table>
+								</div>
+								{this.state.attackAnimationData &&
+									<AttackActionModal
+										show={this.state.showActionModal}
+										onHide={this.onAttackActionComplete}
+										attacker={this.state.attackAnimationData.attacker}
+										defender={this.state.attackAnimationData.defender}
+										result={this.state.attackAnimationData.result}
+										attackerColor={this.state.attackAnimationData.attackerColor}
+										defenderColor={this.state.attackAnimationData.defenderColor}
+										cellSize={this.determineCellSize()}
+										attackerStartRect={this.state.attackAnimationData.attackerStartRect}
+										defenderStartRect={this.state.attackAnimationData.defenderStartRect}
+										animationTl={this.state.animationTl}
+									/>
+								}
+							</Container>
 
+							<Container style={{}}>
+								<Row className='duel-unset-piece-row' style={{ width: '100%', backgroundColor: '#3b22a885', borderRadius: '5px' }}>{cols}{outCols}</Row>
+							</Container>
 
-						<Container style={{}}>
+						</div>
 
-							<Row className='duel-unset-piece-row' style={{ width: '100%', backgroundColor: '#3b22a885', borderRadius: '5px' }}>{cols}{outCols}</Row>
-							{/* <Row> */}
-								
-							{/* </Row> */}
-							{/* <Row className='duel-unset-piece-row' style={{ width: '100%', backgroundColor: '#3b22a885', boxShadow: glowIfCurrentTurnPlayer }}>{cols}{outCols}</Row> */}
-
-
-						</Container>
-
-						{xalianDetailsToShow &&
-						// <Offcanvas scroll backdrop={true} placement="top" show={xalianDetailsToShow} onHide={this.onHideXalianDetails}>
-						// 	<Offcanvas.Header closeButton>
-						// 		<Offcanvas.Title>Offcanvas</Offcanvas.Title>
-						// 	</Offcanvas.Header>
-						// 	<Offcanvas.Body>
-						// 		<DuelXalianSuggestionDetails xalian={xalianDetailsToShow} />
-						// 	</Offcanvas.Body>
-						// </Offcanvas>
-								<Container fluid='sm' style={{ maxWidth: '400px'}}>
+						{(xalianDetailsToShow && !this.state.hideXalianDetails) &&
+							<Offcanvas scroll backdrop={false} placement="top" show={xalianDetailsToShow} onHide={this.onHideXalianDetails} style={{backgroundColor: '#00000000', border: '0'}} >
+								<Offcanvas.Body>
 									<DuelXalianSuggestionDetails xalian={xalianDetailsToShow} />
-								</Container>
+								</Offcanvas.Body>
+							</Offcanvas>
+								// <Container fluid='sm' style={{ maxWidth: '400px', position: }}>
+								// 	<DuelXalianSuggestionDetails xalian={xalianDetailsToShow} />
+								// </Container>
 						}
 
 
 
-					</Stack>
+					{/* </Stack> */}
 						<div className="fixed-bottom" style={{ background: 'linear-gradient(0deg, rgba(0,0,0,1) 15%, rgba(0,0,0,0.8099614845938375) 89%, rgba(0,0,0,0.6138830532212884) 94%, rgba(0,0,0,0) 100%)' }}>
 							<Row >
 								{userActionButtons}
@@ -535,14 +578,14 @@ class DuelBoard extends React.Component {
 	}
 
 	onHideXalianDetails = () => {
-		// ??
+		this.setState({ hideXalianDetails: true });
 	}
 
 	buildTeamList = (list, boardState) => {
 		let cols = [];
-		if (list && boardState.xalians) {
+		if (list && this.props.G) {
 			list.forEach((id) => {
-				let x = boardState.xalians.filter((x) => x.xalianId === id)[0];
+				let x = this.props.G.xalians.filter((x) => x.xalianId === id)[0];
 				if (x) {
 					cols.push(this.buildInitialSpeciesIcon(x, boardState));
 				}

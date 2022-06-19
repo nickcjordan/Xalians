@@ -43,10 +43,9 @@ import XalianImage from '../components/xalianImage';
 import XalianDuelStatBadge from '../components/games/duel/board/xalianDuelStatBadge';
 import XalianTypeEffectivenessSummary from '../components/games/duel/board/xalianTypeEffectivenessSummary';
 
-import AttackActionModal from './../components/games/duel/board/attackActionModal';
+import AttackActionModal from '../components/games/duel/board/attackActionModal';
 
 import { Counter } from '../store/Counter';
-import XalianPieceStateChart from '../components/games/duel/board/xalianPieceStateChart';
 
 gsap.registerPlugin(MotionPathPlugin);
 gsap.registerPlugin(ScrollTrigger, MorphSVGPlugin, DrawSVGPlugin);
@@ -59,24 +58,23 @@ class Sandboxthree extends React.Component {
 	}
 
 	componentDidMount() {
-		// document.addEventListener('DOMContentLoaded', this.setRex);
+		document.addEventListener('DOMContentLoaded', this.setRex);
 	}
 
-	// setRex = () => {
-		// this.setState({
-			// attackerStartRect: document.getElementById('attackerStart').getBoundingClientRect(),
-			// defenderStartRect: document.getElementById('defenderStart').getBoundingClientRect()
-		// });
-	// }
+	setRex = () => {
+		this.setState({
+			attackerStartRect: document.getElementById('attackerStart').getBoundingClientRect(),
+			defenderStartRect: document.getElementById('defenderStart').getBoundingClientRect()
+		});
+	}
 	
 	
 	render() {
 
 		
-		let xalian = {
+		let attacker = {
 			xalianId: "00009-9a311cbc-8e80-4295-ba06-ea4bf0c53a57",
 			species: species.filter( s => (s.id === "00009"))[0],
-			type: 'Water',
 			elements: {
 				primaryType: "Water",
 				primaryElement: "Rainbow",
@@ -89,11 +87,8 @@ class Sandboxthree extends React.Component {
 				speed: 2,
 				range: 2,
 				distance: 1,
-				evasion: 8
-			},
-			state: {
-				health: 10,
-				stamina: 10
+				evasion: 8,
+				health: 10
 			},
 			traits: {
 				canFly: false,
@@ -101,11 +96,65 @@ class Sandboxthree extends React.Component {
 			}
 		};
 
+		let defender = {
+			xalianId: "00002-930f7542-ff51-47eb-9d57-1203893c0a2f",
+			species: species.filter( s => (s.id === "00002"))[0],
+			elements: {
+				primaryType: "Fire",
+				primaryElement: "Ember",
+				secondaryType: "Psychic",
+				secondaryElement: "Telepathic"
+			},
+			stats: {
+				attack: 8,
+				defense: 1,
+				speed: 4,
+				range: 1,
+				distance: 3,
+				evasion: 8,
+				health: 5.4
+			},
+			traits: {
+				canFly: false,
+				attackRange: "low"
+			}
+		};
+
+		// let attackData = {
+		// 	attackerIndex: 24,
+		// 	attackerId: '1234',
+		// 	attackerType: 'Water',
+		// 	defenderIndex: 25,
+		// 	defenderId: '4321',
+		// 	defenderType: 'Electric'
+		//   };
+
+
+		  let result = duelCalculator.calculateAttackResult(attacker, defender, {}, {});
+		  result.reactionDamage = 0;
+		  
+
 		return (
 			<React.Fragment>
 				<GameContainer>
 
-					<XalianPieceStateChart size={"200px"} xalian={xalian}/>
+					<div id='attackerStart' style={{ backgroundColor: '#947dfaff', position: 'absolute', top: '100px', left: '200px', width: '200px', height: '200px' }} />
+					<div id='defenderStart' style={{ backgroundColor: '#ff7a7aff', position: 'absolute', top: '300px', left: '200px', width: '200px', height: '200px' }} />
+
+					{this.state.attackerStartRect &&
+						<AttackActionModal
+							show={this.state.show}
+							onHide={() => { this.setState({ show: false }) }}
+							attacker={attacker}
+							defender={defender}
+							result={result}
+							attackerColor={'#947dfaff'}
+							defenderColor={'#ff7a7aff'}
+							cellSize={100}
+							attackerStartRect={this.state.attackerStartRect}
+							defenderStartRect={this.state.defenderStartRect}
+						/>
+					}
 
 
 

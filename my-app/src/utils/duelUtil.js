@@ -1,6 +1,7 @@
 import * as duelConstants from '../gameplay/duel/duelGameConstants';
 import * as duelCalculator from '../gameplay/duel/duelCalculator';
 import * as boardStateManager from '../gameplay/duel/boardStateManager';
+import * as playerStateManager from '../gameplay/duel/playerStateManager';
 
 export function isPlayerPiece(id, G) {
     return  (G.playerStates[0].unsetXalianIds && G.playerStates[0].unsetXalianIds.includes(id)) 
@@ -123,7 +124,7 @@ export function getOpponentHealth(G) {
     let h = 0;
     getOpponentXalianIds(G).forEach(id => {
         let xalian = getXalianFromId(id, G);
-        h += xalian.stats.health;
+        h += xalian.state.health;
     });
     return h;
 }
@@ -132,7 +133,7 @@ export function getPlayerHealth(G) {
 	let h = 0;
 	getPlayerXalianIds(G).forEach((id) => {
 		let xalian = getXalianFromId(id, G);
-		h += xalian.stats.health;
+		h += xalian.state.health;
 	});
 	return h;
 }
@@ -175,6 +176,10 @@ export function getFlagIndex(flag, boardState) {
     }
 }
 
+export function currentTurnHasMoveAvailable(boardState, ctx) {
+    return playerStateManager.playerStateHasMoveAvailable(boardState.playerStates[parseInt(ctx.currentPlayer)], boardState, ctx);
+}
+
 
 export function xalianHasValidActionAvailable(id, G, ctx) {
     let xalian = getXalianFromId(id, G);
@@ -197,12 +202,13 @@ export function xalianHasValidActionAvailable(id, G, ctx) {
             canMove = false;
         } else {
             // let movableSpaces = duelCalculator.calculateMovablePaths(ind, xalian, G, ctx);
-            let movableSpaces = duelCalculator.calculateValidUnoccupiedPaths(G, ctx, ind, xalianStatus.remainingSpacesXalianCanMove)
+            let movableSpaces = duelCalculator.calculateValidUnoccupiedPaths(G, ctx, ind, xalianStatus.remainingSpacesXalianCanMove, xalian.state.stamina)
             if (!movableSpaces || movableSpaces.length == 0) {
                 canMove = false;
             }
         }
-        return canAttack || canMove;
+        let hasMoveAvailable =  canAttack || canMove;
+        return hasMoveAvailable;
     } else {
         return false;
     }

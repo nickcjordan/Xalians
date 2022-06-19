@@ -31,20 +31,20 @@ export const getSpeciesTypeSymbol = (type, fillTypeColor = false, size = 30, cla
 };
 
 export const getSpeciesTypeSymbolSVG = (type, typeColor, size, classes) => {
-    if (type.toLowerCase() == 'air') { return <AirSymbolSVG style={{ fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
-    if (type.toLowerCase() == 'water') { return <WaterSymbolSVG style={{ fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
-    if (type.toLowerCase() == 'fire') { return <FireSymbolSVG style={{ fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
-    if (type.toLowerCase() == 'plant') { return <PlantSymbolSVG style={{ fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
-    if (type.toLowerCase() == 'ghost') { return <GhostSymbolSVG style={{ fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
-    if (type.toLowerCase() == 'psychic') { return <PsychicSymbolSVG style={{ fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
-    if (type.toLowerCase() == 'metal') { return <MetalSymbolSVG style={{ fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
-    if (type.toLowerCase() == 'chemical') { return <ChemicalSymbolSVG style={{ fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
-    if (type.toLowerCase() == 'light') { return <LightSymbolSVG style={{ fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
-    if (type.toLowerCase() == 'dark') { return <DarkSymbolSVG style={{ fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
-    if (type.toLowerCase() == 'rock') { return <RockSymbolSVG style={{ fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
-    if (type.toLowerCase() == 'ice') { return <IceSymbolSVG style={{ fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
-    if (type.toLowerCase() == 'sand') { return <SandSymbolSVG style={{ fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
-    if (type.toLowerCase() == 'electric') { return <ElectricSymbolSVG style={{ fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
+    if (type.toLowerCase() == 'air') { return <AirSymbolSVG style={{ margin: 'auto', fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
+    if (type.toLowerCase() == 'water') { return <WaterSymbolSVG style={{ margin: 'auto', fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
+    if (type.toLowerCase() == 'fire') { return <FireSymbolSVG style={{ margin: 'auto', fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
+    if (type.toLowerCase() == 'plant') { return <PlantSymbolSVG style={{ margin: 'auto', fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
+    if (type.toLowerCase() == 'ghost') { return <GhostSymbolSVG style={{ margin: 'auto', fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
+    if (type.toLowerCase() == 'psychic') { return <PsychicSymbolSVG style={{ margin: 'auto', fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
+    if (type.toLowerCase() == 'metal') { return <MetalSymbolSVG style={{ margin: 'auto', fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
+    if (type.toLowerCase() == 'chemical') { return <ChemicalSymbolSVG style={{ margin: 'auto', fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
+    if (type.toLowerCase() == 'light') { return <LightSymbolSVG style={{ margin: 'auto', fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
+    if (type.toLowerCase() == 'dark') { return <DarkSymbolSVG style={{ margin: 'auto', fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
+    if (type.toLowerCase() == 'rock') { return <RockSymbolSVG style={{ margin: 'auto', fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
+    if (type.toLowerCase() == 'ice') { return <IceSymbolSVG style={{ margin: 'auto', fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
+    if (type.toLowerCase() == 'sand') { return <SandSymbolSVG style={{ margin: 'auto', fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
+    if (type.toLowerCase() == 'electric') { return <ElectricSymbolSVG style={{ margin: 'auto', fill: typeColor,  width: `${size}px`, height: `${size}px`, maxWidth: `${size}px !important`, maxHeight: `${size}px !important` }} className={classes} /> };
 };
 
 

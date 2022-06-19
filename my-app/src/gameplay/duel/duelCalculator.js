@@ -129,19 +129,19 @@ export function calculatePathToTarget(currentIndex, endIndex, G, ctx, builtGrid 
     return buildPath(currentIndex, currentCoord, endIndex, endCoord, path);
 }
 
-export function calculateAllValidPaths(G, ctx, currentIndex, distance) {
-    return calculateValidPaths(G, ctx, currentIndex, distance, true, true);
+export function calculateAllValidPaths(G, ctx, currentIndex, distance, stamina) {
+    return calculateValidPaths(G, ctx, currentIndex, distance, true, true, stamina);
 }
 
-export function calculateValidEnemyTargetPaths(G, ctx, currentIndex, distance) {
-    return calculateValidPaths(G, ctx, currentIndex, distance, true, false);
+export function calculateValidEnemyTargetPaths(G, ctx, currentIndex, distance, stamina) {
+    return calculateValidPaths(G, ctx, currentIndex, distance, true, false, stamina);
 }
 
-export function calculateValidUnoccupiedPaths(G, ctx, currentIndex, distance, isBot = false) {
-    return calculateValidPaths(G, ctx, currentIndex, distance, false, true, isBot);
+export function calculateValidUnoccupiedPaths(G, ctx, currentIndex, distance, stamina, isBot = false) {
+    return calculateValidPaths(G, ctx, currentIndex, distance, false, true, stamina, isBot);
 }
 
-function calculateValidPaths(G, ctx, currentIndex, uneditedDistance, findOccupied, findUnoccupied, isBot = false) {
+function calculateValidPaths(G, ctx, currentIndex, uneditedDistance, findOccupied, findUnoccupied, stamina, isBot = false) {
     let distance = Math.max(uneditedDistance, 0);
     let size = Math.sqrt(G.cells.length);
     var grid = new PF.Grid(size, size); 
@@ -180,20 +180,13 @@ function calculateValidPaths(G, ctx, currentIndex, uneditedDistance, findOccupie
         let attackerId = G.cells[currentIndex];
         if (!defenderId || (defenderId && !duelUtil.xaliansAreOnSameTeam(defenderId, attackerId, G))) {
             var path = calculatePathToTarget(currentIndex, i, G, ctx, grid.clone());
-            if (path && path.spacesMoved > 0 && path.spacesMoved <= distance) {
+            if (path && path.spacesMoved > 0 && path.spacesMoved <= distance && path.spacesMoved <= stamina) {
                 valid.push(path);
             } else {
                 // console.error("INVALID ATTACK PATH?");
             }
         }
     })
-
-    if (findUnoccupied && valid.length == 0) {
-        // console.error("NO VALID PATHS");
-        if (isBot) {
-            // console.error("NO VALID PATHS for BOT");
-        }
-    }
 
     return valid;
 }
@@ -239,7 +232,7 @@ export function calculateMovablePaths(currentIndex, xalian, G, ctx, isBot = fals
         //     }
         // })
         var distance = Math.min(remainingForXalian, remainingForTurn);
-        return calculateValidUnoccupiedPaths(G, ctx, currentIndex, distance, isBot);
+        return calculateValidUnoccupiedPaths(G, ctx, currentIndex, distance, xalian.state.stamina, isBot);
     }
 }
 
@@ -251,7 +244,7 @@ export function calculateAttackableIndices(currentIndex, xalian, boardState, ctx
 export function calculateAttackablePaths(currentIndex, xalian, boardState, ctx, onlyOccupiedCells = true) {
     // let range = translator.duelStatRangeToVal(xalian.traits.attackRange);
     let range = xalian.stats.range;
-    let paths = onlyOccupiedCells ? calculateValidEnemyTargetPaths(boardState, ctx, currentIndex, range) : calculateAllValidPaths(boardState, ctx, currentIndex, range);
+    let paths = onlyOccupiedCells ? calculateValidEnemyTargetPaths(boardState, ctx, currentIndex, range, xalian.state.stamina) : calculateAllValidPaths(boardState, ctx, currentIndex, range, xalian.state.stamina);
     let attackablePaths = [];
     paths.forEach( path => {
         if (boardState.cells[path.endIndex]) {
@@ -285,7 +278,7 @@ export function calculateAttackResult(attacker, defender, G, ctx, simulate = fal
 
     // BUILD SUMMARY OBJECT
 
-    // return defender.stats.health;
+    // return defender.state.health;
     let damage = final * 2;
 
     return {
@@ -381,7 +374,7 @@ function calculateRandom() {
 //     }
 
 //     let type = move.type && move.type.name ? move.type.name.toLowerCase() : move.type.toLowerCase();
-//     let attackerPrimary = attacker.elements.primaryType && attacker.elements.primaryType.name ? attacker.elements.primaryType.name.toLowerCase() : attacker.elements.primaryType.toLowerCase();
+//     let attackerPrimary = attacker.elementType && attacker.elementType.name ? attacker.elementType.name.toLowerCase() : attacker.elementType.toLowerCase();
 //     let attackerSecondary = attacker.elements.secondaryType && attacker.elements.secondaryType.name ? attacker.elements.secondaryType.name.toLowerCase() : attacker.elements.secondaryType.toLowerCase();
     
 //     var multiplier = 1;
@@ -406,7 +399,6 @@ export function calculateTypeEffectiveness(attacker, defender, secondary = true)
         - If the type of move is completely ineffective against one of the opponent's types, then the move does no damage, even if the opponent has a second type that would be vulnerable to it (as in Thunderbolt, an Electric-type move, used against a Quagsire, a Water/Ground Pokémon).
     */
 
-
     let json = tools.getJson("elements");
     let nodes = JSON.parse(json.toString());
     let effectivenessOfAttackByElementMap = new Map();
@@ -414,51 +406,25 @@ export function calculateTypeEffectiveness(attacker, defender, secondary = true)
         effectivenessOfAttackByElementMap[node.name.toLowerCase()] = node.effectiveness;
     });
 
-    var base = 1;
-
-    
-    // let type = move.type && move.type.name ? move.type.name.toLowerCase() : move.type.toLowerCase();
-    
-    let attackerPrimaryType = attacker.elements.primaryType;
-    let attackerSecondaryType = attacker.elements.secondaryType;
-
-    let defenderPrimaryType = defender.elements.primaryType;
-    let defenderSecondaryType = defender.elements.secondaryType;
-
-    let effectivenessOfAttackerPrimaryMap = effectivenessOfAttackByElementMap[attackerPrimaryType.toLowerCase()];
-    let effectivenessOfAttackerSecondaryMap = effectivenessOfAttackByElementMap[attackerSecondaryType.toLowerCase()];
-
-    let effectivenessOfAttackerPrimaryOnDefenderPrimary = effectivenessOfAttackerPrimaryMap[defenderPrimaryType];
-    let effectivenessOfAttackerPrimaryOnDefenderSecondary = effectivenessOfAttackerPrimaryMap[defenderSecondaryType];
-
-    let effectivenessOfAttackerSecondaryOnDefenderPrimary = effectivenessOfAttackerSecondaryMap[defenderPrimaryType];
-    let effectivenessOfAttackerSecondaryOnDefenderSecondary = effectivenessOfAttackerSecondaryMap[defenderSecondaryType];
-
-    let sum = (effectivenessOfAttackerPrimaryOnDefenderPrimary * 4)
-    + (effectivenessOfAttackerPrimaryOnDefenderSecondary * 3)
-    + (effectivenessOfAttackerSecondaryOnDefenderPrimary * 2)
-    + (effectivenessOfAttackerSecondaryOnDefenderSecondary * 1);
-
-    let final = sum / 10;
-
-
-    // let attackerPrimary = attacker.elements.primaryType && attacker.elements.primaryType.name ? attacker.elements.primaryType.name.toLowerCase() : attacker.elements.primaryType.toLowerCase();
-    // let attackerSecondary = attacker.elements.secondaryType && attacker.elements.secondaryType.name ? attacker.elements.secondaryType.name.toLowerCase() : attacker.elements.secondaryType.toLowerCase();
-   
-    // let defenderPrimary = defender.elements.primaryType && defender.elements.primaryType.name ? defender.elements.primaryType.name.toLowerCase() : defender.elements.primaryType.toLowerCase();
-    // let defenderSecondary = defender.elements.secondaryType && defender.elements.secondaryType.name ? defender.elements.secondaryType.name.toLowerCase() : defender.elements.secondaryType.toLowerCase();
-
-    // base *= map[attackerPrimary][defenderPrimary];
-    // base *= map[attackerSecondary][defenderSecondary];
-
-    // console.log(`type effectiveness = ${final}`);
-
-    if (secondary) {
-        return final;
-    } else {
+    let effectivenessOfAttackerPrimaryMap = effectivenessOfAttackByElementMap[attacker.elementType.toLowerCase()];
+    let effectivenessOfAttackerPrimaryOnDefenderPrimary = effectivenessOfAttackerPrimaryMap[defender.elementType];
+    if (!secondary) {
         return effectivenessOfAttackerPrimaryOnDefenderPrimary;
+    } else {
+        let effectivenessOfAttackerSecondaryMap = effectivenessOfAttackByElementMap[attacker.elements.secondaryType.toLowerCase()];
+        let defenderSecondaryType = defender.elements.secondaryType;
+        let effectivenessOfAttackerSecondaryOnDefenderSecondary = effectivenessOfAttackerSecondaryMap[defenderSecondaryType];
+        let effectivenessOfAttackerPrimaryOnDefenderSecondary = effectivenessOfAttackerPrimaryMap[defenderSecondaryType];
+        
+        let sum = (effectivenessOfAttackerPrimaryOnDefenderPrimary * 4)
+        + (effectivenessOfAttackerPrimaryOnDefenderSecondary * 3)
+        + (effectivenessOfAttackerSecondaryMap[defender.elementType] * 2)
+        + (effectivenessOfAttackerSecondaryOnDefenderSecondary * 1);
+    
+        let final = sum / 10;
+        return final;
+
     }
-    // return final;
 }
 
 function calculateHindranceEffect(attacker) {

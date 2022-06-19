@@ -50,8 +50,8 @@ class DuelBotInstance extends MCTSBot {
   //         let defenderId = G.cells[attackPath.endIndex];
   //         let attacker = duelUtil.getXalianFromId(attackerId, G);
   //         let defender = duelUtil.getXalianFromId(defenderId, G);
-  //         let attackerType = attacker && attacker.elements.primaryType;
-  //         let defenderType = defender && defender.elements.primaryType;
+  //         let attackerType = attacker && attacker.elementType;
+  //         let defenderType = defender && defender.elementType;
 
   //         let attackResult = duelCalculator.calculateAttackResult(attacker, defender, G, ctx);
 

@@ -84,7 +84,7 @@ function buildAttackAction(attacker, path, G, ctx) {
     }
 
     // SCORE :: HOW CLOSE THE ENEMY IS TO 0 HEALTH
-    let defenderHealthScore = 10 - defender.stats.health;
+    let defenderHealthScore = 10 - defender.state.health;
     score += defenderHealthScore;
     action.description += `:: DEFENDER HEALTH : +${defenderHealthScore}`;
 

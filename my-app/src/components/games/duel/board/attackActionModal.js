@@ -89,8 +89,8 @@ class AttackActionModal extends React.Component {
         let effectivenessTextElem = document.getElementById('duel-attack-action-effectiveness-text');
         modalTl.fromTo(effectivenessTextElem, {opacity: 0}, {opacity: 1});
 
-        let defenderHealthDelta = this.buildXalianHealthDelta(this.props.defender.stats.health, this.props.result.damage);
-        let attackerHealthDelta = this.buildXalianHealthDelta(this.props.attacker.stats.health, this.props.result.reactionDamage);
+        let defenderHealthDelta = this.buildXalianHealthDelta(this.props.defender.state.health, this.props.result.damage);
+        let attackerHealthDelta = this.buildXalianHealthDelta(this.props.attacker.state.health, this.props.result.reactionDamage);
 
         let defenderDropShadowBlur = Math.min(4, defenderHealthDelta.end.percent);
         let attackerDropShadowBlur = Math.min(4, attackerHealthDelta.end.percent);
@@ -175,8 +175,8 @@ class AttackActionModal extends React.Component {
         let effectivenessText = duelValueTranslator.effectivenessScoreToTextConversational(effectivenessScore);
 
 
-        let defenderHealthDelta = this.buildXalianHealthDelta(this.props.defender.stats.health, this.props.result.damage);
-        let attackerHealthDelta = this.buildXalianHealthDelta(this.props.attacker.stats.health, this.props.result.reactionDamage);
+        let defenderHealthDelta = this.buildXalianHealthDelta(this.props.defender.state.health, this.props.result.damage);
+        let attackerHealthDelta = this.buildXalianHealthDelta(this.props.attacker.state.health, this.props.result.reactionDamage);
         return (<React.Fragment>
 
             {this.props.result &&
@@ -205,7 +205,7 @@ class AttackActionModal extends React.Component {
                                     <XalianTypeSymbolBadge
                                         size={(this.props.cellSize || 50) / 2}
                                         style={{ top: '50%', right: 0, margin: 'auto' }}
-                                        type={this.props.attacker.elements.primaryType}
+                                        type={this.props.attacker.elementType}
                                         classes='type-badge' />
                                 </div>
                             </Col>
@@ -215,7 +215,7 @@ class AttackActionModal extends React.Component {
                                     <XalianTypeSymbolBadge
                                         size={(this.props.cellSize || 50) / 2}
                                         style={{ top: '50%', left: 0, margin: 'auto' }}
-                                        type={this.props.defender.elements.primaryType}
+                                        type={this.props.defender.elementType}
                                         classes='type-badge' />
                                 </div>
                             </Col>
@@ -224,7 +224,7 @@ class AttackActionModal extends React.Component {
                             <Col >
                                 <XalianImage id={'duel-attack-action-' + this.props.attacker.xalianId + '-animation'}
                                     speciesName={this.props.attacker.species.name}
-                                    primaryType={this.props.attacker.elements.primaryType}
+                                    primaryType={this.props.attacker.elementType}
                                     padding={'0px'}
                                     moreClasses="duel-attack-action-xalian"
                                     fill={'black'}
@@ -234,7 +234,7 @@ class AttackActionModal extends React.Component {
                             <Col >
                                 <XalianImage id={'duel-attack-action-' + this.props.defender.xalianId + '-animation'}
                                     speciesName={this.props.defender.species.name}
-                                    primaryType={this.props.defender.elements.primaryType}
+                                    primaryType={this.props.defender.elementType}
                                     padding={'0px'}
                                     moreClasses="duel-attack-action-xalian"
                                     fill={'black'}
