@@ -79,16 +79,6 @@ export function getBestBotActionsForXalian(G, ctx, id) {
             : actionBuilder.buildMoveActionsWithScore(currentIndex, attacker, allPaths, G, ctx);
 
         // find moves that allow for attacks in second part of move and score them
-
-        // comboActions.push({
-        //     moveAction: moveAction,
-        //     attackAction: attackAction,
-        //     type: duelConstants.actionTypes.COMBO,
-        //     score: moveAction.score + attackAction.score,
-        //     path: movePath,
-        //     description: "COMBO ==> MOVE THEN ATTACK ==> MOVE: " + moveAction.description + " :::: ATTACK: " + attackAction.description
-        // });
-
         let comboActions = ((details.hasMoved && details.remainingSpacesToMove == 0) || details.hasAttacked) ? [] 
             : actionBuilder.buildComboActionsWithScore(currentIndex, attacker, allPaths, G, ctx);
 

@@ -451,8 +451,10 @@ class DuelBoardCell extends React.Component {
 
 				{/* ATTACK INDICATOR */}
 				{/* {isAttackIndicatorVisible && */}
+				{this.props.isActive &&
+
 					<div className='duel-cell-style-covered attack-pattern-background fade-out-animation-on-move' style={{ opacity: isAttackIndicatorVisible ? 1 : 0, backgroundColor: '#9700002c', height: `${this.props.cellSize}px`, width: `${this.props.cellSize}px`, transformOrigin: 'center', transform: 'rotate(90deg)', backgroundImage: svgUtil.getStripedBackgroundImage('#ff0000', 0.5) }} ></div>
-				{/* } */}
+				}
 				
 				{/* GHOST IMAGE WHEN DRAGGING */}
 

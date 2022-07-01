@@ -229,16 +229,19 @@ class DuelPage extends React.Component {
 
 					// <GameContainer>
 					<>
-					{/* {details.bot && 
-						// <DuelClient playerID="0" />
-					} */}
+					{details.bot && 
+						<>
+						<DuelClient playerID="0" />
+						{/* <DuelClient playerID="1" /> */}
+						</>
+					} 
 
-					{/* {!details.bot &&  */}
+					{!details.bot && 
 						<>
 						<DuelClient playerID="0" />
 						<DuelClient playerID="1" />
 						</>
-					{/* } */}
+					}
 					</>
 					// </GameContainer>
 					

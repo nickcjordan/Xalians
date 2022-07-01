@@ -145,7 +145,7 @@ export function buildMoveActionsWithScore(currentIndex, xalian, paths, G, ctx) {
 
     var moveActions = [];
     paths.forEach(path => {
-        var disregardPath = false;
+        // var disregardPath = false;
         // build initial action object with score to be passed along
         let action = buildAction(duelConstants.actionTypes.MOVE, 0, path);
         action.moverId = xalian.xalianId;
@@ -159,7 +159,7 @@ export function buildMoveActionsWithScore(currentIndex, xalian, paths, G, ctx) {
             // STAY PUT GUARDING FLAG
             action.score = 0;
             action.description += `:: CLEARING SCORE BECAUSE I AM GUARDING`;
-            disregardPath = true;
+            // disregardPath = true;
         } 
 
         if (path.endIndex == flagIndexToGuard) {
@@ -175,9 +175,9 @@ export function buildMoveActionsWithScore(currentIndex, xalian, paths, G, ctx) {
             action.description += `:: FLAG GRAB : +${BOT_ACTION_SCORE_FOR_GRABBING_FLAG}`;
         }
 
-        if (!disregardPath) {
+        // if (!disregardPath) {
             moveActions.push(action);
-        }
+        // }
 
     })
 
@@ -190,7 +190,10 @@ export function buildMoveActionsWithScore(currentIndex, xalian, paths, G, ctx) {
         /* 
         *       2) GUARDING TEAM FLAG
         */
-        moveActions = []; // dont think this matters because it should get cleared when building actions
+       // dont allow piece to move unless it is the last active
+       if (playerState.activeXalianIds.length > 1) {
+           moveActions = []; 
+       }
 
         // you could try to find moves where the guarder has enough stamina to move off space to attack then move back to guard
 

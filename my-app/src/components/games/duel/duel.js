@@ -273,32 +273,36 @@ export const Duel = (data) => {
 				let moves = [];
 				let turnState = boardStateManager.currentTurnState(G, ctx);
 				// only building moves if it is the bot's turn and it has a valid action yet to take
-				if (duelUtil.isOpponentsTurn(ctx) 
-					&& (!turnState.hasAttacked 
-						|| !turnState.hasMoved 
-						|| (turnState.hasMoved && turnState.remainingSpacesToMove > 0))) {
-
+				if (duelUtil.isOpponentsTurn(ctx)) {
 
 					if (ctx.phase === 'setup') {
-						G.playerStates[1].unsetXalianIds.forEach( id => {
+						G.playerStates[1].unsetXalianIds.forEach(id => {
 							moves = moves.concat(duelBot.buildSetupBotMoves(G, ctx, id));
 						})
 						if (G.randomizeStartingPositions) {
 							moves = [{ move: 'initializeSetup', args: [1] }];
 						}
 					} else if (ctx.phase === 'play') {
-						let bestActions = duelBot.getBestBotActionsForXalianIds(G, ctx, G.playerStates[1].activeXalianIds);
-						moves = moves.concat(bestActions);
+
+						if ((!turnState.hasAttacked
+							|| !turnState.hasMoved
+							|| (turnState.hasMoved && turnState.remainingSpacesToMove > 0))) {
+
+							let bestActions = duelBot.getBestBotActionsForXalianIds(G, ctx, G.playerStates[1].activeXalianIds);
+							moves = moves.concat(bestActions);
+
+							moves = moves.filter(m => (m != undefined && m != null));
+
+							if (moves.length == 0 && ctx.phase === 'play') {
+								moves.push({ move: 'endTurn', args: [] });
+							}
+						}
 					}
-					
-					// if (ctx.phase === 'play') {
-					if (moves.length == 0 && ctx.phase === 'play') {
-						moves.push({ move: 'endTurn', args: [] });
-					}
-				} 
+
+				}
 				
-				moves = moves.filter( m => ( m != undefined && m != null));
 				
+				moves = moves.filter(m => (m != undefined && m != null));
 				return moves;
 			},
 			objectives: duelBot.buildBotObjectives(),

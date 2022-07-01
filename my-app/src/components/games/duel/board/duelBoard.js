@@ -109,9 +109,7 @@ class DuelBoard extends React.Component {
 		this.updateSize();
 		// alert("READ THIS FIRST! (DEBUG MODE: after you tap ok, tap the white-boxed arrow to hide the debug menu) READ THIS NEXT PART THEN TAP OK! =====> GOAL OF GAME ==> grab your blue flag and move it to your side's first row (bottom of board), OR defeat all enemies :::::::: HOW TO PLAY: (you are blue) ==> you can move any of your pieces on your turn, up to 3 spaces per turn :: the 3 spaces do not have to be moved by the same piece :: you are allowed one attack per turn :: you can move and attack in any order :: once a piece's health reaches 0, it is eliminated :: you can move more than once per turn, as long as your total spaces moved and your active pieces' range allows it :: when a piece is selected, the red X's indicate how effective your selected piece's attack would be against the opponent, the red-striped circles indicate attack range, the green dots indicate viable moves :: a piece cannot move through another piece :: bot goes first :: have fun!");
 		this.transitionClientViewForActivePlayer();
-		if (this.props.isActive && this.props.ctx.phase === 'setup' && this.props.G.randomizeStartingPositions) {
-			this.props.moves.initializeSetup(parseInt(this.props.playerID));
-		}
+		
 	}
 
 	isAnimationHappening = () => {
@@ -157,6 +155,25 @@ class DuelBoard extends React.Component {
 		if (prevProps.ctx.turn < this.props.ctx.turn) {
 			// new turn :: should be switching client
 			this.transitionClientViewForActivePlayer();
+		}
+
+		if (prevProps.isActive && !this.props.isActive) {// transitioning from active player to not active player
+			// let fadingElementsOnMove = document.querySelectorAll(".duel-board-cell-dot-light");
+			// let fadingElementsOnMove = document.querySelectorAll(".attack-pattern-background");
+			// if (fadingElementsOnMove && fadingElementsOnMove.length > 0) {
+				// gsap.to(gsap.utils.toArray(fadingElementsOnMove), { autoAlpha: 0, duration: 0.1 });
+			// }
+
+			// gsap.to(gsap.utils.toArray(document.querySelectorAll(".fade-out-animation-on-move")), { autoAlpha: 0 });
+		} else if (!prevProps.isActive && this.props.isActive) { // transitioning from not active player to active player
+			// gsap.to(gsap.utils.toArray(document.querySelectorAll(".fade-out-animation-on-move")), { autoAlpha: 1 });
+		}
+
+		if (this.props.isActive && this.props.ctx.phase === 'setup' && this.props.G.randomizeStartingPositions && !this.state.hasInitialized) {
+			this.setState({ hasInitialized: true }, () => {
+				this.props.moves.initializeSetup(parseInt(this.props.playerID));
+			});
+			
 		}
 
 		
@@ -243,7 +260,7 @@ class DuelBoard extends React.Component {
 								// this.props.ctx.events.endTurn();
 							}
 						}
-					}, 800);
+					}, 500);
 				}
 		} else if (!this.props.ctx.gameover) {
 			// this.setSelectedXalianIdFromLastActionOfPlayer();
@@ -251,8 +268,10 @@ class DuelBoard extends React.Component {
 	}
 	
 	onAttackAnimationSetStateAttackDetails = (newState) => {
-		this.state.animationTl.pause();
-		this.setState(newState);
+		
+		this.setState(newState, () => {
+			this.state.animationTl.pause();
+		});
 	}
 	
 	onAttackActionComplete = () => {
@@ -507,30 +526,33 @@ class DuelBoard extends React.Component {
 	buildUserActionButtons = (boardState) => {
 		let showEndTurnButton = this.props.ctx.phase === 'play' && boardState.currentTurnDetails && (boardState.currentTurnDetails.hasMoved || boardState.currentTurnDetails.hasAttacked);
 		let userActionButtons = [];
-		userActionButtons.push(
-			<Col style={{ display: 'flex', justifyContent: 'center' }}>
-				<Button variant='xalianGray' disabled={!showEndTurnButton} onClick={this.endPlayerTurn} style={{ margin: 'auto', marginBottom: '10px', marginTop: '10px' }} >End turn</Button>
-			</Col>
-		)
 
 		userActionButtons.push(
 			<Col style={{ display: 'flex', justifyContent: 'center' }}>
 				<Button variant='xalianGray' onClick={ this.doDebugAction } style={{ margin: 'auto', marginBottom: '10px', marginTop: '10px' }} >DEBUG</Button>
 			</Col>
 		)
+
+		userActionButtons.push(
+			<Col style={{ display: 'flex', justifyContent: 'center' }}>
+				<Button variant='xalianGray' disabled={!showEndTurnButton} onClick={this.endPlayerTurn} style={{ margin: 'auto', marginBottom: '10px', marginTop: '10px' }} >End turn</Button>
+			</Col>
+		)
+
+		
 		return userActionButtons;
 	}
 
 	doDebugAction = () => {
-		if (this.state.dummy) {
-			this.setState({ dummy: null});
+		if (this.state.debugText) {
+			this.setState({ debugText: null});
 		} else {
 			var message = '';
 			message += `\n\nlogIndex: ${this.state.logIndex}`;
 			message += `\n\nctx:\n${JSON.stringify(this.props.ctx, null, 2)}`;
 			message += `\n\nPlayers:\n${JSON.stringify(this.props.G.playerStates, null, 2)}`;
 			message += `\n\nTurn:\n${JSON.stringify(this.props.G.currentTurnDetails, null, 2)}`;
-			this.setState({dummy: message});
+			this.setState({debugText: message});
 		}
 	}
 
@@ -635,7 +657,7 @@ class DuelBoard extends React.Component {
 								}
 								{!this.state.winnerText &&
 									<div style={{width: '100%', padding: '0px', margin: '0px', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
-										<h4 style={{ margin: 'auto', textAlign: 'center', marginBottom: '25px', color: 'darkgray', opacity: isCurrentLogIndex ? 1 : 0.25 }}>[{this.state.logIndex}] {turnSummaryText}</h4>
+										{/* <h4 style={{ margin: 'auto', textAlign: 'center', marginBottom: '25px', color: 'darkgray', opacity: isCurrentLogIndex ? 1 : 0.25 }}>[{this.state.logIndex}] {turnSummaryText}</h4> */}
 										<h4 style={{ margin: 'auto', textAlign: 'center' , opacity: isCurrentLogIndex ? 1 : 0.25 }}>{viewText}</h4>
 									</div>
 								}
@@ -715,13 +737,14 @@ class DuelBoard extends React.Component {
 									borderRadius: '10px',
 									background: 'linear-gradient(0deg, rgba(0,0,0,1) 15%, rgba(0,0,0,0.8099614845938375) 89%, rgba(0,0,0,0.6138830532212884) 94%, rgba(0,0,0,0) 100%)' 
 								}}>
+								<h4 style={{ margin: 'auto', textAlign: 'center', paddingTop: '5px', color: 'darkgray', opacity: isCurrentLogIndex ? 1 : 0.25 }}>[{this.state.logIndex}] {turnSummaryText}</h4>
 								<Row >
 									{userActionButtons}
 								</Row>
 							</div>
-							{this.state.dummy && 
+							{this.state.debugText && 
 								<div className="fixed-top" style={{ width: '100%', height: '90vh', backgroundColor: '#0000007a' }}>
-									<pre style={{ width: '100%', height: '100%', color: 'white' }}>{this.state.dummy}</pre>
+									<pre style={{ width: '100%', height: '100%', color: 'white' }}>{this.state.debugText}</pre>
 								</div>
 							}
 					</Container>
