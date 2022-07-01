@@ -36,6 +36,7 @@ import awsconfig from './aws-exports';
 
 import { Provider } from 'react-redux'
 import store from './store/store';
+import DuelStartPage from './pages/games/duelStartPage';
 
 Amplify.configure(awsconfig);
 
@@ -68,7 +69,7 @@ class App extends React.Component {
               <Route exact path="/designer"><DesignerPage /></Route>
               <Route exact path="/glossary"><GlossaryPage /></Route>
 
-              <Route exact path="/duel"><DuelPage/></Route>
+              <Route exact path="/duel"><DuelStartPage/></Route>
 
 
               <Route exact path="/account"><UserAccountPage /></Route>

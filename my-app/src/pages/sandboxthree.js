@@ -25,6 +25,7 @@ import * as timerUtil from '../utils/timerUtil';
 import Timer from '../components/games/elements/timer';
 
 import * as animationUtil from '../utils/animationUtil';
+import * as retrievalUtil from '../utils/retrievalUtil';
 import * as duelCalculator from '../gameplay/duel/duelCalculator';
 
 import GeneratorAnimation from '../components/animations/generatorAnimation';
@@ -47,6 +48,11 @@ import AttackActionModal from './../components/games/duel/board/attackActionModa
 
 import { Counter } from '../store/Counter';
 import XalianPieceStateChart from '../components/games/duel/board/xalianPieceStateChart';
+import DuelXalianSuggestionDetails from '../components/games/duel/board/duelXalianSelectionDetails';
+
+import * as duelPieceBuilder from '../gameplay/duel/duelPieceBuilder';
+
+
 
 gsap.registerPlugin(MotionPathPlugin);
 gsap.registerPlugin(ScrollTrigger, MorphSVGPlugin, DrawSVGPlugin);
@@ -73,39 +79,16 @@ class Sandboxthree extends React.Component {
 	render() {
 
 		
-		let xalian = {
-			xalianId: "00009-9a311cbc-8e80-4295-ba06-ea4bf0c53a57",
-			species: species.filter( s => (s.id === "00009"))[0],
-			type: 'Water',
-			elements: {
-				primaryType: "Water",
-				primaryElement: "Rainbow",
-				secondaryType: "Plant",
-				secondaryElement: "Spore"
-			},
-			stats: {
-				attack: 10,
-				defense: 4,
-				speed: 2,
-				range: 2,
-				distance: 1,
-				evasion: 8
-			},
-			state: {
-				health: 10,
-				stamina: 10
-			},
-			traits: {
-				canFly: false,
-				attackRange: "medium"
-			}
-		};
+		let samples = retrievalUtil.getMockXalianList();
+		let xalian = gsap.utils.random(samples);
+
+		let piece = duelPieceBuilder.buildDuelPiece(xalian);
 
 		return (
 			<React.Fragment>
 				<GameContainer>
 
-					<XalianPieceStateChart size={"200px"} xalian={xalian}/>
+					<DuelXalianSuggestionDetails size={"200px"} xalian={piece}/>
 
 
 

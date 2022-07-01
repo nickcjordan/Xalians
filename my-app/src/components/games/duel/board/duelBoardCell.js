@@ -413,6 +413,17 @@ class DuelBoardCell extends React.Component {
 		let isPlayerFlagIndex = duelUtil.getPlayerFlagIndex(this.props.boardState) == this.props.cellIndex;
 		let isOpponentFlagIndex = duelUtil.getOpponentFlagIndex(this.props.boardState) == this.props.cellIndex;
 
+
+		/*
+
+				TO DO:
+
+					fix this so that if you are both guarding your flag and carrying target flag, they both show 
+
+
+		*/
+
+
 		let flagIfPresent = 
 		// p1 piece carrying p1 flag
 			(isPlayerFlagIndex && duelUtil.isPlayerPiece(xalianId, this.props.boardState)) ? 

@@ -27,7 +27,7 @@ class AttackableMoveBadge extends React.Component {
 			// <React.Fragment>
 
 					<div className="duel-attack-icon-wrapper" style={{zIndex: this.props.zIndex,  opacity: this.props.isEnemy ? 1 : 0}}>
-						<Stack gap={0} direction="horizontal" style={{ backgroundColor: '#00000081', borderRadius: '10%', opacity: 1, padding: '5%', width: '100%', position: 'absolute', top: '-20%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+						<Stack gap={0} direction="horizontal" style={{ backgroundColor: '#00000081', borderRadius: '10%', opacity: 1, padding: '5%', width: '100%', position: 'absolute', bottom: '20%', left: '50%', transform: 'translate(-50%, -50%)' }}>
 							{icons}
 						</Stack>
 					</div>

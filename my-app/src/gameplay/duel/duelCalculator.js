@@ -268,6 +268,7 @@ export function calculateAttackResult(attacker, defender, G, ctx, simulate = fal
     let random = simulate ? 1 : calculateRandom();
     // let sameTypeBonus = calculateSameTypeAttackBonus(move, attacker);
     let sameTypeBonus = 1;
+    // This can be 0 (ineffective); 0.25, 0.5 (not very effective); 1 (normally effective); 2, or 4 (super effective)
     let typeEffectiveness = calculateTypeEffectiveness(attacker, defender, secondary);
     let hinderingStatus = calculateHindranceEffect(attacker);
     let other = calculateRemainingFactors(attacker, defender, G, ctx);

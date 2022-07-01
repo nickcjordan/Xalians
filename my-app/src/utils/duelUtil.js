@@ -3,6 +3,10 @@ import * as duelCalculator from '../gameplay/duel/duelCalculator';
 import * as boardStateManager from '../gameplay/duel/boardStateManager';
 import * as playerStateManager from '../gameplay/duel/playerStateManager';
 
+export function isBotsTurn(G, ctx) {
+    return (G.hasBot && ctx.currentPlayer === '1');
+}
+
 export function isPlayerPiece(id, G) {
     return  (G.playerStates[0].unsetXalianIds && G.playerStates[0].unsetXalianIds.includes(id)) 
         || (G.playerStates[0].activeXalianIds && G.playerStates[0].activeXalianIds.includes(id))

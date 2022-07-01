@@ -27,9 +27,9 @@ gsap.registerPlugin(ScrollTrigger, TextPlugin, EasePack, ScrollToPlugin, DrawSVG
 class AttackActionModal extends React.Component {
 
     closeModal = () => {
-        if (this.props.animationTl) {
-            this.props.animationTl.play();
-        }
+        // if (this.props.animationTl) {
+        //     this.props.animationTl.play();
+        // }
         gsap.to('#attack-action-modal', {autoAlpha: 0, duration: 0.35}).then(this.props.onHide);
         
     }

@@ -102,7 +102,7 @@ function postprocess(G, ctx) {
 
   // set this moves log meta
   ctx.log.setMetadata(actionMeta);
-
+  
   return {
     ...G, 
     startState: null,

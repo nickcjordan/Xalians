@@ -1,37 +1,30 @@
-
 .xalian-duel-selected-cell {
-    border-color: rgb(255, 255, 255);
-    border-width: 4px;
-    border-radius: 8px;
-    border-style: solid;
-  }
-  
-  /* .xalian-cell { */
-    /* border-radius: 8px; */
-    /* width: 75px; */
-    /* height: 75px; */
-    /* line-height: 75px; */
-    /* text-align: center; */
-  /* } */
-  
-  .xalian-cell-selected {
-    border: 4px solid rgb(255, 255, 255);
-  }
-  
+  border-color: rgb(255, 255, 255);
+  border-width: 4px;
+  border-radius: 8px;
+  border-style: solid;
+}
 
+/* .xalian-cell { */
+/* border-radius: 8px; */
+/* width: 75px; */
+/* height: 75px; */
+/* line-height: 75px; */
+/* text-align: center; */
+/* } */
 
-
-
-
+.xalian-cell-selected {
+  border: 4px solid rgb(255, 255, 255);
+}
 
 .duel-piece-xalian-icon {
-    position: absolute;
-    bottom: 35%;
-    left: 5%;
-    height: 95%;
-    width: 95%;
-    padding: 0px !important;
-    z-index: 101;
+  position: absolute;
+  bottom: 35%;
+  left: 5%;
+  height: 95%;
+  width: 95%;
+  padding: 0px !important;
+  z-index: 101;
 }
 
 .duel-attack-action-xalian {
@@ -41,25 +34,25 @@
 }
 
 .duel-stat-chart {
-    height: 200px;
+  height: 200px;
 }
 
 .duel-badge-icon {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    filter: drop-shadow(0px 0px 5px #000000);
-    fill: 'gray';
-    padding: 5px;
-    /* box-shadow: 0px 0px 10px #00000044; */
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  filter: drop-shadow(0px 0px 5px #000000);
+  fill: 'gray';
+  padding: 5px;
+  /* box-shadow: 0px 0px 10px #00000044; */
 }
 
 .duel-badge-text {
-    /* text-shadow: 0px 0px 5px rgb(0, 0, 0); */
-    filter: drop-shadow(0px 0px 5px #000000);
-    color: white;
+  /* text-shadow: 0px 0px 5px rgb(0, 0, 0); */
+  filter: drop-shadow(0px 0px 5px #000000);
+  color: white;
 }
 
 
@@ -72,45 +65,45 @@
 }
 
 .duel-badge-wrapper {
-    position: relative;
-    margin: auto;
-    display: flex;
-    box-shadow: 0px 0px 8px #000;
-    background-color: black;
-    text-shadow:
-      -1px -1px 0 #000,
-      1px -1px 0 #000,
-      -1px 1px 0 #000,
-      1px 1px 0 #000,
-      -2px -2px 0 #000,
-      2px -2px 0 #000,
-      -2px 2px 0 #000,
-      2px 2px 0 #000;
+  position: relative;
+  margin: auto;
+  display: flex;
+  box-shadow: 0px 0px 8px #000;
+  background-color: black;
+  text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000,
+    -2px -2px 0 #000,
+    2px -2px 0 #000,
+    -2px 2px 0 #000,
+    2px 2px 0 #000;
 }
 
 .duel-xalian-unselected {
-    /* width: 100% !important; */
-    width: auto;
-    /* max-width: 75px !important; */
-    /* height: 8vh; */
-    max-height: 75px;
-    /* margin-top: 20px; */
-    margin: auto;
-    /* margin-left: 0px; */
-    justify-content: center;
-    text-align: center;
-  }
+  /* width: 100% !important; */
+  width: auto;
+  /* max-width: 75px !important; */
+  /* height: 8vh; */
+  max-height: 75px;
+  /* margin-top: 20px; */
+  margin: auto;
+  /* margin-left: 0px; */
+  justify-content: center;
+  text-align: center;
+}
 
- .duel-type-badge {
-    position: absolute;
-    bottom: 0;
-    left: -5%;
-    z-index: 105;
-    border-radius: 50%;
-    border-color: black;
-    border-width: 1px;
-    border-style: solid;
-    text-align: center;
+.duel-type-badge {
+  position: absolute;
+  bottom: 0;
+  left: -5%;
+  z-index: 105;
+  border-radius: 50%;
+  border-color: black;
+  border-width: 1px;
+  border-style: solid;
+  text-align: center;
 }
 
 .type-badge {
@@ -142,7 +135,7 @@
 .duel-selection-details-box {
   width: 96%;
   margin: auto;
-  padding-bottom: 50px;
+  /* padding-bottom: 50px; */
 }
 
 .duel-xalian-bench {
@@ -162,12 +155,13 @@
 
 .duel-board-wrapper {
   width: fit-content;
-  margin: auto;
+  margin-left: auto;
+  margin-right: auto;
   padding: min(5%, 25px);
-  /* padding-top: 5%; */
-  margin-top: min(5%, 25px);
-  /* padding-bottom: 5%; */
-  margin-bottom: min(5%, 25px);
+  /* margin-top: min(5%, 25px); */
+  margin-top: min(5%, 5px);
+  /* margin-bottom: min(5%, 25px); */
+  margin-bottom: min(5%, 5px);
   border-radius: 10%;
   background-color: rgb(0, 0, 0);
   position: relative;
@@ -180,8 +174,10 @@
   top: 0;
   left: 0;
   /* background: url("../img/background/dirt_texture.jpg") top center ; */
-  background: url("https://1.bp.blogspot.com/-Yov9qYnqB00/TtEOBrEEWbI/AAAAAAAAAGU/2b35kl0CmiI/s1600/Seamless+ground+rock.jpg") top center ;
-  background-size: 20%;
+  /* background: url("https://1.bp.blogspot.com/-Yov9qYnqB00/TtEOBrEEWbI/AAAAAAAAAGU/2b35kl0CmiI/s1600/Seamless+ground+rock.jpg") top center; */
+  /* background: url("https://3.bp.blogspot.com/-3Nv74A0f8ZA/TtELKUKQU6I/AAAAAAAAAD8/4FuZtBwL18s/s1600/Grass+03+seamless.jpg") top center; */
+  background: url("https://3.bp.blogspot.com/-aUsK5m_AvDI/UFwYXcqbUSI/AAAAAAAACOY/IrUarx-9sB4/s1600/Tileable+eroded+scratch+metal+texture+background+03.jpg") top center;
+  background-size: 25%;
   background-repeat: repeat;
   height: 100%;
   width: 100%;
@@ -193,8 +189,8 @@
   top: 0;
   left: 0;
   /* background-color: #000; */
-  background: rgb(0,0,0);
-  background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%);
+  background: rgb(0, 0, 0);
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.8) 100%);
   /* opacity: 0.75; */
   height: 100%;
   width: 100%;
@@ -247,7 +243,7 @@
 }
 
 .duel-board-cell-dot-dark {
-  background: radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 5%, rgba(0,0,0,0.25) 20%, rgba(0,0,0,0) 60%);
+  background: radial-gradient(circle, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.5) 5%, rgba(0, 0, 0, 0.25) 20%, rgba(0, 0, 0, 0) 60%);
   filter: none;
 }
 
@@ -269,7 +265,7 @@
   width: 80%;
   pointer-events: none;
   transform: translate(-50%, -50%);
-  
+
   padding: 5%;
   /* border-radius: 50%; */
   overflow: visible;
@@ -284,10 +280,10 @@
   width: 100%;
   min-height: 10px !important;
   /* top: -40%; */
-  
+
 }
 
-.duel-attack-icon-wrapper > h6 {
+.duel-attack-icon-wrapper>h6 {
   color: white;
   text-shadow: 1px 1px 2px rgb(0, 0, 0)
 }
@@ -324,12 +320,13 @@
 }
 
 .duel-unset-piece-row {
-  width: 100%;
-  margin: 0 !important;
+  /* width: 100%; */
+  /* margin: 0 !important; */
   padding: 0;
   justify-content: space-evenly;
   align-items: center;
-  filter: drop-shadow(0px 0px 2px #000000)
+  filter: drop-shadow(0px 0px 2px #000000);
+  margin: auto !important;
 }
 
 .duel-unset-piece-wrapper {
@@ -365,7 +362,7 @@
   right: 0;
 }
 
-.duel-state-chart-wrapper-position > div > div > svg {
+.duel-state-chart-wrapper-position>div>div>svg {
   vertical-align: unset;
 }
 

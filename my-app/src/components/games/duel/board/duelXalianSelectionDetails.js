@@ -12,6 +12,14 @@ import XalianPieceStateChart from './xalianPieceStateChart';
 
 class DuelXalianSuggestionDetails extends React.Component {
 
+	componentDidMount() {
+		// let scrollContainer = document.getElementById("species-compare-box");
+        // scrollContainer.addEventListener("wheel", (event) => {
+        //     event.preventDefault();
+        //     scrollContainer.scrollLeft += event.deltaY;
+        //  });
+	}
+
 
 	render() {
 		let xalian = this.props.xalian;
@@ -35,7 +43,7 @@ class DuelXalianSuggestionDetails extends React.Component {
 							<XalianImage bordered colored shadowed speciesName={xalian.species.name} primaryType={xalian.elementType} moreClasses="xalian-image duel-xalian-details-image" />
 						</Col>
 						<Col className="" xs={4} style={{ paddingTop: '10px'}}>
-							<Row ><h6 style={{margin: '0px', textAlign: 'right', color: '#ffffff85'}}>Health: </h6></Row>
+							<Row><h6 style={{margin: '0px', textAlign: 'right', color: '#ffffff85'}}>Health: </h6></Row>
 							<Row><h6 style={{margin: '0px', textAlign: 'right', color: '#ffffff85'}}>Stamina: </h6></Row>
 						</Col>
 						<Col className="vertically-center-contents" xs={8} style={{ paddingTop: '10px'}}>

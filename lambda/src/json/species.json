@@ -164,7 +164,7 @@
     },
     "traits": {
       "canFly": false,
-      "attackRange": "low"
+      "attackRange": "medium"
     }
   },
   {
@@ -485,7 +485,7 @@
     "type": "Dark",
     "planet": "Grimedes",
     "height": "75 in / 191 cm",
-    "weight": "355 lbs / 161 kg",
+    "weight": "465 lbs / 211 kg",
     "description": "With the black-shelled body of a crab and an upright torso, the centaur-like crustacean known as the Graviclaw lurks just beneath the foggy wetlands of Grimedes, using its bizarre control over the intensification of gravitational waves to generate miniature black holes in the water and draw its helpless prey right into its clutches. Graviclaws can strengthen the gravitational pull of their massive claws in order to snap them shut with a force many times heavier than their implied mass, severing through even the hardest of materials with crushing pressure. When facing larger foes, the Graviclaw can use its powers to root itself to the ground, becoming an immovable wall of chitin.",
     "statRatings": {
       "healthRating": "",
@@ -501,6 +501,102 @@
     "traits": {
       "canFly": false,
       "attackRange": "low"
+    }
+  },
+  {
+    "name": "Yetimoth",
+    "id": "00022",
+    "type": "Ice",
+    "planet": "Krystos",
+    "height": "90 in / 229 cm",
+    "weight": "859 lbs / 390 kg",
+    "description": "Hulking, white-furred apes with the heads of mammoths and tusks made of pure ice, the Yetimoths formed the rank and file of Krystos' prisonguards in ancient times.  If their enormous size and strength was not enough to keep prisoners in line, they could also form thick sheets of ice from thin air, covering themselves in a near-impenetrable armor, blocking off escape routes in walls of frost, or encapsulating their opponents until they could lumber over close enough to pummel them into submission with their meaty, ice-gauntleted fists.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "high",
+      "specialAttackRating": "",
+      "standardDefenseRating": "",
+      "specialDefenseRating": "",
+      "speedRating": "",
+      "evasionRating": "low",
+      "staminaRating": "",
+      "recoveryRating": ""
+    },
+    "traits": {
+      "canFly": false,
+      "attackRange": "low"
+    }
+  },
+  {
+    "name": "Chromocat",
+    "id": "00023",
+    "type": "Light",
+    "planet": "Luminax",
+    "height": "55 in / 142 cm",
+    "weight": "165 lbs / 75 kg",
+    "description": "Used in ancient times to quickly harvest the vast crop yields of Luminax's fields, the large, albino feline known as the Chromocat possesses two sickle-shaped blades infused with pure ionized radiation that extend backwards from its front paws. These 'energy swords' allowed them to cut through grains with minimal effort, and their ability to enter a photonic-state and leap through fields at the speed of light meant they could comb through and harvest entire fields in record time. Today, their wicked speed and ionic blades allow them to seemingly 'teleport' around the battlefield, harassing their opponents by barraging them with rapid cuts in a slice-and-dice pattern so swift that reaction becomes nearly impossible.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "",
+      "specialAttackRating": "",
+      "standardDefenseRating": "low",
+      "specialDefenseRating": "",
+      "speedRating": "high",
+      "evasionRating": "",
+      "staminaRating": "",
+      "recoveryRating": ""
+    },
+    "traits": {
+      "canFly": false,
+      "attackRange": "low"
+    }
+  },
+  {
+    "name": "Ectoghoul",
+    "id": "00024",
+    "type": "Ghost",
+    "planet": "Phantiri",
+    "height": "35 in / 90 cm",
+    "weight": "6 lbs / 3 kg",
+    "description": "Appearing as a spectral green mist that forms the vague impression of a grinning skull with a ghost-like tail for a body, Ectoghouls zip across the Dreadscape, emitting a terrifying cackle wherever they go. They seem to amuse themselves by terrorizing other Xalians, disappearing and re-appearing at will, passing through surfaces, and zapping their opponents with blasts of gooey ectoplasm.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "",
+      "specialAttackRating": "medium",
+      "standardDefenseRating": "",
+      "specialDefenseRating": "",
+      "speedRating": "",
+      "evasionRating": "high",
+      "staminaRating": "",
+      "recoveryRating": ""
+    },
+    "traits": {
+      "canFly": true,
+      "attackRange": "medium"
+    }
+  },
+  {
+    "name": "Hippochamp",
+    "id": "00025",
+    "type": "Water",
+    "planet": "Poseidas",
+    "height": "50 in / 129 cm",
+    "weight": "310 lbs / 141 kg",
+    "description": "Four-legged creatures resembling a seahorse that patrol the various hydro-processing fleets on Poseidas, Hippochamps were designed as emergency response crews for the various electrical and chemical fires that occur on rigs, as well as a means of defense against pirates seeking to steal valuable Algael. Their long, trunk-like snouts serve as high-pressure water cannons, and can maintain a steady stream that allows them to hose down fires and threats alike.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "medium",
+      "specialAttackRating": "",
+      "standardDefenseRating": "",
+      "specialDefenseRating": "",
+      "speedRating": "",
+      "evasionRating": "",
+      "staminaRating": "high",
+      "recoveryRating": ""
+    },
+    "traits": {
+      "canFly": false,
+      "attackRange": "high"
     }
   }
 ]

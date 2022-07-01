@@ -81,7 +81,9 @@ export const Duel = (data) => {
 				xalians: data.xalians,
 				flags: flagStates,
 				currentTurnActions: [],
-				playerStates: playerStates
+				playerStates: playerStates,
+				hasBot: data.bot,
+				randomizeStartingPositions: data.randomizeStartingPositions
 			};
 		},
 
@@ -109,11 +111,32 @@ export const Duel = (data) => {
 					xalian.state.stamina = Math.min(duelConstants.MAX_STAMINA_POINTS, xalian.state.stamina + 1);
 				});
 
+				// if (ctx.phase === 'setup') {
+				// 	let totalXaliansActive = G.playerStates[0].activeXalianIds.length + G.playerStates[1].activeXalianIds.length;
+				// 	let totalXaliansUnset = G.playerStates[0].unsetXalianIds.length + G.playerStates[1].unsetXalianIds.length;
+				// 	let allPiecesAreSet = (totalXaliansActive == G.xalians.length);
+				// 	let noPiecesAreUnset = (totalXaliansUnset == 0);
+				// 	if (allPiecesAreSet && noPiecesAreUnset) {
+				// 		ctx.events.endPhase();
+				// 	}
+				// }
+
 			},
 
 			// Ends the turn if this returns true.
 			endIf: (G, ctx) => {
-				if (ctx.phase === 'play') {
+				// if (ctx.phase === 'setup') {
+				// 	let totalXaliansActive = G.playerStates[0].activeXalianIds.length + G.playerStates[1].activeXalianIds.length;
+				// 	let totalXaliansUnset = G.playerStates[0].unsetXalianIds.length + G.playerStates[1].unsetXalianIds.length;
+				// 	let allPiecesAreSet = (totalXaliansActive == G.xalians.length);
+				// 	let noPiecesAreUnset = (totalXaliansUnset == 0);
+				// 	return  allPiecesAreSet && noPiecesAreUnset;
+				// }
+
+
+				// if ( (G.hasBot && ctx.phase === 'play' && ctx.currentPlayer === '1')) {
+				if ((!G.hasBot && ctx.phase === 'play') || (G.hasBot && ctx.phase === 'play' && ctx.currentPlayer === '1')) {
+				// if (ctx.phase === 'play') {
 					
 					let playerID = parseInt(ctx.currentPlayer);
 					let playerState = G.playerStates[playerID];
@@ -126,9 +149,12 @@ export const Duel = (data) => {
 
 			// Called at the end of each move.
 			onMove: (G, ctx) => {
-				if (ctx.phase === 'play') {
+				// if (ctx.phase === 'play') {
 					G.currentTurnDetails = boardStateManager.currentTurnState(G, ctx);
-				}
+				// } 
+				// if (ctx.phase === 'setup') {
+				// 	ctx.events.endTurn();
+				// }
 				// let target = gsap.utils.toArray(document.querySelectorAll(".fade-in-animation-on-move"));
 				// if (target && target.length > 0) {
 					// gsap.to(target, { autoAlpha: 1 });
@@ -136,7 +162,7 @@ export const Duel = (data) => {
 			},
 
 			// Prevents ending the turn before a minimum number of moves.
-			minMoves: 1,
+			// minMoves: 1,
 
 			// Ends the turn automatically after a number of moves.
 			// maxMoves: 2,
@@ -160,14 +186,26 @@ export const Duel = (data) => {
 		phases: {
 			setup: {
 				// moves: { selectPiece, setPiece },
-				moves: { setPiece, initializeSetup },
+				moves: data.randomizeStartingPositions ? { initializeSetup } : { setPiece, initializeSetup },
+				// start: data.randomizeStartingPositions? false : true,
 				start: true,
-				endIf: G => ( 
-					(G.playerStates[0].unsetXalianIds.length == 0 && G.playerStates[1].unsetXalianIds.length == 0)
-					),
+				endIf: G => { 
+					let totalXaliansActive = G.playerStates[0].activeXalianIds.length + G.playerStates[1].activeXalianIds.length;
+					let totalXaliansUnset = G.playerStates[0].unsetXalianIds.length + G.playerStates[1].unsetXalianIds.length;
+					let allPiecesAreSet = (totalXaliansActive == G.xalians.length);
+					let noPiecesAreUnset = (totalXaliansUnset == 0);
+					let shouldEndPhase = allPiecesAreSet && noPiecesAreUnset;
+					return  shouldEndPhase;
+				},
 				next: 'play'
+				// onBegin: (G, ctx) => {
+				// 	if (G.randomizeStartingPositions) {
+				// 		initializeSetup(G, ctx, null);
+				// 	}
+				// }
 			},
 			play: {
+				// start: data.randomizeStartingPositions? true : false,
 				// moves: { selectPiece, movePiece, movePieceThenAttack, doAttack, endTurn },
 				moves: { 
 					// selectPiece, 
@@ -220,11 +258,11 @@ export const Duel = (data) => {
 			} 
 
 
-			if (G.playerStates[0].activeXalianIds.length == 0 && G.playerStates[0].unsetXalianIds.length == 0) {
-				return { winner: 1 };
-			} else if (G.playerStates[1].activeXalianIds.length == 0 && G.playerStates[1].unsetXalianIds.length == 0) {
-				return { winner: 0 };
-			} 
+			// if (G.playerStates[0].activeXalianIds.length == 0 && G.playerStates[0].unsetXalianIds.length == 0) {
+			// 	return { winner: 1 };
+			// } else if (G.playerStates[1].activeXalianIds.length == 0 && G.playerStates[1].unsetXalianIds.length == 0) {
+			// 	return { winner: 0 };
+			// } 
 		},
 
 		// deltaState: true,
@@ -245,17 +283,21 @@ export const Duel = (data) => {
 						G.playerStates[1].unsetXalianIds.forEach( id => {
 							moves = moves.concat(duelBot.buildSetupBotMoves(G, ctx, id));
 						})
+						if (G.randomizeStartingPositions) {
+							moves = [{ move: 'initializeSetup', args: [1] }];
+						}
 					} else if (ctx.phase === 'play') {
 						let bestActions = duelBot.getBestBotActionsForXalianIds(G, ctx, G.playerStates[1].activeXalianIds);
 						moves = moves.concat(bestActions);
 					}
 					
+					// if (ctx.phase === 'play') {
 					if (moves.length == 0 && ctx.phase === 'play') {
 						moves.push({ move: 'endTurn', args: [] });
 					}
 				} 
 				
-
+				moves = moves.filter( m => ( m != undefined && m != null));
 				
 				return moves;
 			},
@@ -283,26 +325,26 @@ function endTurn(G, ctx) {
 
 // SETUP
 
-function initializeSetup(G, ctx) {
-	let cells = G.cells;
-	G.playerStates.forEach( playerState => {
-		initializeSetupForPlayer(playerState, G, cells);
-	})
-	G.cells = cells;
-	// ctx.events.endPhase();
-	// ctx.events.endTurn({ next: '0' });
-	return G;
+function initializeSetup(G, ctx, playerId = null) {
+
+	// G.playerStates.forEach( playerState => {
+	// 	initializeSetupForPlayer(playerState, G);
+	// })
+	
+		initializeSetupForPlayer(G.playerStates[playerId], G);
+		ctx.events.endTurn();
 }
 
-function initializeSetupForPlayer(playerState, G, cells) {
+function initializeSetupForPlayer(playerState, G) {
 	let startingIndices = gsap.utils.shuffle(duelUtil.getStartingIndicesOfPlayer(playerState.playerID, G));
 	playerState.unsetXalianIds.forEach( xalianId => {
 		let selectedIndex = startingIndices.pop();
 		G.cells[selectedIndex] = xalianId;
-		cells[selectedIndex] = xalianId;
 	});
 	playerState.activeXalianIds = playerState.unsetXalianIds;
 	playerState.unsetXalianIds = [];
+
+
 }
 
 
@@ -312,18 +354,24 @@ function setPiece(G, ctx, index, selectedXalianId) {
 	}
 	// console.log(JSON.stringify(ctx, null, 2));
 	G.cells[index] = selectedXalianId;
-
-	if (duelUtil.isPlayersTurn(ctx) && G.playerStates[0].unsetXalianIds) {
-		moveXalianToActive(selectedXalianId, G.playerStates[0].unsetXalianIds, G.playerStates[0].activeXalianIds, ctx, true);
-	} else if (duelUtil.isOpponentsTurn(ctx) && G.playerStates[1].unsetXalianIds) {
-		moveXalianToActive(selectedXalianId, G.playerStates[1].unsetXalianIds, G.playerStates[1].activeXalianIds, ctx, true);
+	let currentTurnPlayerId = parseInt(ctx.currentPlayer);
+	let currentPlayerState = G.playerStates[currentTurnPlayerId];
+	if (currentPlayerState.unsetXalianIds) {
+		let unset = currentPlayerState.unsetXalianIds;
+		let active = currentPlayerState.activeXalianIds;
+		moveXalianToActive(selectedXalianId, unset, active, ctx, true);
 	}
+	//  else if (duelUtil.isOpponentsTurn(ctx) && G.playerStates[1].unsetXalianIds) {
+	// 	moveXalianToActive(selectedXalianId, G.playerStates[1].unsetXalianIds, G.playerStates[1].activeXalianIds, ctx, true);
+	// }
 
-	if (G.playerStates[0].unsetXalianIds.length == 0 && G.playerStates[1].unsetXalianIds.length == 0) {
-		ctx.events.endPhase();
-	} else {
-		ctx.events.endTurn();
-	}
+	// G.playerStates[currentTurnPlayerId] = currentPlayerState;
+	// if (G.playerStates[0].unsetXalianIds.length == 0 && G.playerStates[1].unsetXalianIds.length == 0) {
+	// 	ctx.events.endPhase();
+	// } else {
+	// 	ctx.events.endTurn();
+	// }
+	// return G;
 }
 
 function moveXalianToActive(id, unset, active, ctx, endTurnAfterMove = false) {

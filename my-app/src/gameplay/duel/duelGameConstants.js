@@ -1,6 +1,6 @@
 export const BOARD_COLUMN_SIZE = 8;
 export const MAX_HEALTH_POINTS = 10;
-export const MAX_STAMINA_POINTS = 10;
+export const MAX_STAMINA_POINTS = 6;
 export const MAX_SPACES_MOVED_PER_TURN = 3;
 export const XALIANS_PER_TEAM = 6;
 // export const ATTACK_STAMINA_COST = MAX_STAMINA_POINTS / 2;
@@ -20,4 +20,6 @@ export const typeEffectiveness = {
 }
 
 export const PLAYER_ONE_COLOR = '#3bbedf';
+export const PLAYER_ONE_COLOR_NO_ALPHA = PLAYER_ONE_COLOR + '00';
 export const PLAYER_TWO_COLOR = '#C39738';
+export const PLAYER_TWO_COLOR_NO_ALPHA = PLAYER_TWO_COLOR + '00';

@@ -86,6 +86,17 @@ class SpeciesPage extends React.Component {
         return list;
     }
 
+    // buildTypeRows() {
+    //     species.sort((a, b) => a.id - b.id);
+    //     var list = [];
+    //     for (let ind in species) {
+    //         list.push(
+    //             this.buildStatRow(species[ind])
+    //         );
+    //     }
+    //     return list;
+    // }
+
     buildSpeciesIcon(x) {
         return (
 			<Col md={2} sm={3} xs={6} className="species-col">
@@ -148,6 +159,9 @@ class SpeciesPage extends React.Component {
                                                 <XalianSpeciesSizeComparisonView size={this.state.size} />
                                             }
                                     </Tab>
+                                    {/* <Tab eventKey="grid-by-type" title="Elements" className="">
+                                            {this.state.typeRowList}
+                                    </Tab> */}
                                 </Tabs>
                             }
 

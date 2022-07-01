@@ -41,9 +41,12 @@ export function getBestBotActionsForXalianIds(G, ctx, ids) {
     })
 
     allActions = allActions.filter( action => action != null && action != undefined);
-    allActions.sort(function (a, b) {
-        return (a.score > b.score) ? -1 : (a.score < b.score) ? 1 : 0;
-    });
+    sortActions(allActions);
+
+    let best = allActions[0];
+    if (best && best.xalian) {
+        console.log(`BEST MOVE: [${ctx.turn}:${ctx.numMoves}] ${best.xalian.species.name} ${best.type} {${best.score}} :: ${best.path.startIndex} -> ${best.path.endIndex}  [${JSON.stringify(best.path ? best.path.path : {})}] :: ${best.description}`);
+    }
 
     let botMoves = [];
     allActions.forEach( action => {
@@ -51,19 +54,8 @@ export function getBestBotActionsForXalianIds(G, ctx, ids) {
     })
 
     if (botMoves && botMoves.length > 0) {
-        
         let selectedAction = botMoves[0];
-        // let selectedMove = buildBotMove(selectedAction);
-        // let path = selectedAction.path;
-        // let xalian = duelUtil.getXalianFromId(G.cells[path.startIndex], G);
-        // console.log('selected best action:\n' + JSON.stringify(selectedAction, null, 2));
-        // console.log(
-        //     // 'selected best action:\n' + JSON.stringify(bestAction) + 
-        //     `CHOSEN: ${xalian.species.name} ${selectedAction.type} {${selectedAction.score}} :: ${selectedAction.path.startIndex} -> ${selectedAction.path.endIndex}  [${JSON.stringify(path ? path.path : {})}]`
-        //     );
-            return selectedAction;
-
-            // return botMoves;
+        return [selectedAction];
     } else {
         console.error(`NO ACTIONS BUILT FOR ANY BOT :: ${JSON.stringify(ids)}`);
     }
@@ -73,9 +65,6 @@ export function getBestBotActionsForXalian(G, ctx, id) {
     let attacker = duelUtil.getXalianFromId(id, G);
     let currentIndex = duelUtil.getIndexOfXalian(id, G);
 
-    // let actions = [];
-
-    var bestAction = null;
     var allActions = [];
 
     let details = G.currentTurnDetails || boardStateManager.currentTurnState(G, ctx);
@@ -90,8 +79,18 @@ export function getBestBotActionsForXalian(G, ctx, id) {
             : actionBuilder.buildMoveActionsWithScore(currentIndex, attacker, allPaths, G, ctx);
 
         // find moves that allow for attacks in second part of move and score them
+
+        // comboActions.push({
+        //     moveAction: moveAction,
+        //     attackAction: attackAction,
+        //     type: duelConstants.actionTypes.COMBO,
+        //     score: moveAction.score + attackAction.score,
+        //     path: movePath,
+        //     description: "COMBO ==> MOVE THEN ATTACK ==> MOVE: " + moveAction.description + " :::: ATTACK: " + attackAction.description
+        // });
+
         let comboActions = ((details.hasMoved && details.remainingSpacesToMove == 0) || details.hasAttacked) ? [] 
-            : actionBuilder.buildComboActionsWithScore(attacker, allPaths, G, ctx);
+            : actionBuilder.buildComboActionsWithScore(currentIndex, attacker, allPaths, G, ctx);
 
         // score attack actions
         let attackActions = (details.hasAttacked) ? [] 
@@ -100,17 +99,15 @@ export function getBestBotActionsForXalian(G, ctx, id) {
 
         allActions = allActions.concat(moveActions).concat(attackActions).concat(comboActions);
 
-        allActions.sort(function (a, b) {
-            return (a.score > b.score) ? -1 : (a.score < b.score) ? 1 : 0;
-        });
+        sortActions(allActions);
 
 
         if (allActions.length == 0) {
             // console.error(`NO ACTIONS BUILT FOR BOT :: ${attacker.species.name} : moved ? ${details.hasMoved} : remaining=${details.remainingSpacesToMove}`);
             return [];
         } else {
-            bestAction = allActions[0];
-            let path = bestAction.path;
+            // bestAction = allActions[0];
+            // let path = bestAction.path;
             // console.log(
             // `\t${attacker.species.name} ${bestAction.type} {${bestAction.score}} :: ${bestAction.description} :: ${bestAction.path.startIndex} -> ${bestAction.path.endIndex}  [${JSON.stringify(path ? path.path : {})}]`
             // );
@@ -122,7 +119,44 @@ export function getBestBotActionsForXalian(G, ctx, id) {
 
     // return bestAction;
     // return allActions;
+    allActions.forEach( action => {
+        action.xalian = attacker;
+    })
     return allActions.slice(0, Math.min(5, allActions.length));
+}
+
+function sortActions(allActions) {
+    allActions.sort(function (a, b) {
+        if (a.type == duelConstants.actionTypes.COMBO || b.type == duelConstants.actionTypes.COMBO) {
+            if (a.type == duelConstants.actionTypes.COMBO) { // 'a' is combo :: determining how to accurately and fairly compare to 'b'
+                if (b.type == duelConstants.actionTypes.COMBO) { // both combos :: compare equally
+                    return (a.score > b.score) ? -1 : (a.score < b.score) ? 1 : 0;
+                } else if (b.type == duelConstants.actionTypes.ATTACK) { // 'b' is attack :: compare against 'a' attack 
+                    return (a.attackAction.score > b.score) ? -1 : (a.attackAction.score < b.score) ? 1 : 0;
+                }  else { 
+                    // although 'b' is move, compare combo 'a' attack score
+                    // the thinking here:
+                    //      - the attack will still be compared to other attack for the best one, so this will only be picked if it is the best attack
+                    //      - if this is the best attack, it will always be worth it unless an edge case:
+                    //            -- if the mover is holding the flag and moving towards goal :: still should be accounted for with move action bonuses
+                    return (a.attackAction.score > b.score) ? -1 : (a.attackAction.score < b.score) ? 1 : 0;
+                }
+            } else { // 'b' is combo :: determining how to accurately and fairly compare to 'a'
+                if (a.type == duelConstants.actionTypes.ATTACK) { // 'a' is attack :: compare against 'b' attack 
+                    return (a.score > b.attackAction.score) ? -1 : (a.score < b.attackAction.score) ? 1 : 0;
+                }  else { 
+                    // although 'a' is move, compare combo 'b' attack score
+                    // the thinking here:
+                    //      - the attack will still be compared to other attack for the best one, so this will only be picked if it is the best attack
+                    //      - if this is the best attack, it will always be worth it unless an edge case:
+                    //            -- if the mover is holding the flag and moving towards goal :: still should be accounted for with move action bonuses
+                    return (a.score > b.attackAction.score) ? -1 : (a.score < b.attackAction.score) ? 1 : 0;
+                }
+            }
+        } else { // neither are combos :: compare equally
+            return (a.score > b.score) ? -1 : (a.score < b.score) ? 1 : 0;
+        }
+    });
 }
 
 function buildBotMove(action, data = {}) {

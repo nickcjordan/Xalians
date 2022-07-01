@@ -55,7 +55,13 @@ export function handleMoveAnimation(tl, log, callback, setStateCallback, isLastL
 
         } else if (moveName === 'doAttack') {
             handleAttackAction(log.metadata, tl, callback, setStateCallback, G);
-        }
+        } 
+        // if (moveName === 'setPiece') {
+        //     // handleAttackAction(log.metadata, tl, callback, setStateCallback, G);
+        //     callback();
+        // }
+
+
 
     }
 
@@ -95,7 +101,7 @@ function handleMoveAction(movePath, tl, meta, callback, isNotDraggingAnimation =
                 moveTl.to(elem,
                     // { xPercent: (diff.from[0]), yPercent: (diff.from[1]) },
                     // { x: 0, y: 0 },
-                    { xPercent: (diff.to[0]), yPercent: (diff.to[1]), duration: 0.25, delay: 0.1 }
+                    { xPercent: (diff.to[0]), yPercent: (diff.to[1]), duration: 0.25, delay: 0.1, ease: "none"  }
                     // { xPercent: -(diff.to[0]), yPercent: -(diff.to[1]), duration: 0.25, delay: 0.1 }
                 );
     

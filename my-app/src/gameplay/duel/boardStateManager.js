@@ -19,15 +19,15 @@ export function buildBoardState(G, ctx) {
 }
 
 export function getAllMoveActionsFromLog(logs) {
-    return (logs && logs.length > 0) ? 
-    logs.filter(log =>
-            log.action &&
-            log.action.type &&
-            log.action.type === 'MAKE_MOVE' &&
-            log.action.payload &&
-            log.action.payload.type &&
-            (log.action.payload.type === 'movePiece' || log.action.payload.type === 'doAttack'))
-            : [];
+    let filtered = logs.filter(log =>
+        log.action &&
+        log.action.type &&
+        log.action.type === 'MAKE_MOVE' &&
+        log.action.payload &&
+        log.action.payload.type &&
+        (log.action.payload.type === 'movePiece' || log.action.payload.type === 'doAttack' ));
+    return (logs && logs.length > 0) ? filtered : [];
+    
             // log.action.payload.type !== 'selectPiece' &&
             // log.action.payload.type !== 'setPiece')
 }

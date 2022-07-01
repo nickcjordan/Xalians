@@ -7,11 +7,9 @@ import XalianNavbar from '../../components/navbar';
 import Form from 'react-bootstrap/Form';
 import XalianImage from '../../components/xalianImage';
 import MatchGameFlippedCard from '../../components/games/elements/matchGameFlippedCard';
-import species from '../../json/species.json';
+
 import GameContainer from '../../components/games/elements/gameContainer';
-import * as calc from '../../gameplay/attackCalculator';
 import * as retrievalUtil from '../../utils/retrievalUtil';
-import * as svgUtil from '../../utils/svgUtil';
 import { Client } from 'boardgame.io/react';
 import { Duel } from '../../components/games/duel/duel';
 import DuelBoard  from '../../components/games/duel/board/duelBoard';
@@ -20,26 +18,31 @@ import * as gameConstants from '../../gameplay/duel/duelGameConstants'
 import { Local } from 'boardgame.io/multiplayer';
 import DuelBotInstance from '../../components/games/duel/bot/duelBotInstance';
 import * as duelConstants from '../../gameplay/duel/duelGameConstants'; 
+import * as duelPieceBuilder from '../../gameplay/duel/duelPieceBuilder'; 
+import gsap from 'gsap';
+import { dataTree } from 'terraform/lib/helpers/raw';
 
 class DuelPage extends React.Component {
 	state = {
 		user: null,
-		xalians: [],
 		instructionText: 'Select Attacker',
 		resultText: '',
 	};
 
 	componentDidMount() {
 		// retrievalUtil.getCurrentUserAndXalians().then((user) => {
-		retrievalUtil.getMockCurrentUserAndXalians().then((user) => {
-			let xalians = [];
-			user.xalians.forEach((x) => {
-				// xalians.push(this.buildSpeciesIcon(x.attributes));
-				xalians.push(x.attributes);
-			});
+		if (!this.state.xalians) {
 
-			this.setState({ user: user, xalians: xalians });
-		});
+			retrievalUtil.getMockCurrentUserAndXalians().then((user) => {
+				let xalians = [];
+				user.xalians.forEach((x) => {
+					// xalians.push(this.buildSpeciesIcon(x.attributes));
+					xalians.push(x.attributes);
+				});
+				
+				this.setState({ user: user, xalians: xalians });
+			});
+		}
 	}
 
 	// handleClick = (id) => {
@@ -93,64 +96,17 @@ class DuelPage extends React.Component {
 	// 	);
 	// }
 
-	transformXalianToGamePiece = (xalian) => {
-		let stAttackPts = translator.statRangeToInteger(xalian.stats["standardAttackPoints"].range);
-		let spAttackPts = translator.statRangeToInteger(xalian.stats["specialAttackPoints"].range);
-		// let attackPts = Math.floor(((stAttackPts + spAttackPts)*10)/2)/10; // round to 1 decimal if necessary
-		let attackPts = Math.floor(((stAttackPts + spAttackPts)*10))/10; // round to 1 decimal if necessary
-
-		let stDefensePts = translator.statRangeToInteger(xalian.stats["standardDefensePoints"].range);
-		let spDefensePts = translator.statRangeToInteger(xalian.stats["specialDefensePoints"].range);
-		// let defensePts = Math.floor(((stDefensePts + spDefensePts)*10)/2)/10; // round to 1 decimal if necessary
-		let defensePts = Math.floor(((stDefensePts + spDefensePts)*10))/10; // round to 1 decimal if necessary
-		
-		let speedPts = translator.statRangeToInteger(xalian.stats["speedPoints"].range);
-		
-		// let distance = Math.round(Math.sqrt(speedPts));
-		let distance = speedPts > 3 ? 3 : speedPts > 2 ? 2 : 1;
-
-		let evasionPts = translator.statRangeToInteger(xalian.stats["evasionPoints"].range) * 2;
-
-		var selectedSpecies = species.filter( s => s.id === xalian.species.id)[0];
-
-		let ranges = new Map();
-		ranges['high'] = 3;
-		ranges['medium'] = 2;
-		ranges['low'] = 1;
-
-		let attackRange = ranges[selectedSpecies.traits.attackRange];
-
-		function buildReducedSpecies(fullSpecies) {
-			return {
-				id: fullSpecies.id,
-				name: fullSpecies.name,
-				planet: fullSpecies.planet
-			}
-		}
-
-		return {
-			xalianId: xalian.xalianId,
-			species: buildReducedSpecies(xalian.species),
-			elementType: xalian.elements.primaryType,
-			stats: {
-				attack: attackPts,
-				defense: defensePts,
-				speed: speedPts,
-				range: attackRange,
-				distance: distance,
-				evasion: evasionPts,
-			},
-			state: {
-				health: gameConstants.MAX_HEALTH_POINTS,
-				stamina: gameConstants.MAX_STAMINA_POINTS
-			},
-			traits: selectedSpecies.traits
-		}
-	}
+	
 
 	render() {
-		
-		let xaliansPerTeam = 5;
+		let details = this.props.gameDetails;
+		let xaliansPerTeam = details.numberOfPieces;
+		let selectedMultiplayer = details.bot ? Local({
+			bots: {
+				1: DuelBotInstance
+			},
+		})
+		: Local();
 		// let xaliansPerTeam = duelConstants.XALIANS_PER_TEAM;
 
 		if (this.state.xalians && this.state.xalians.length > 0) {
@@ -159,12 +115,12 @@ class DuelPage extends React.Component {
 			let opponentPieces = [];
 
 			let samples = retrievalUtil.getMockXalianList();
-			shuffleArray(samples);
+			gsap.utils.shuffle(samples);
 
 			while (playerPieces.length < xaliansPerTeam && samples.length > 0) {
 				let sample = samples.pop();
 				if (sample) {
-					let transformed = this.transformXalianToGamePiece(sample); 
+					let transformed = duelPieceBuilder.buildDuelPiece(sample); 
 					allPieces.push(transformed);
 					playerPieces.push(transformed);
 				}
@@ -173,7 +129,7 @@ class DuelPage extends React.Component {
 			while (opponentPieces.length < xaliansPerTeam && samples.length > 0) {
 				let sample = samples.pop();
 				if (sample) {
-					let transformed = this.transformXalianToGamePiece(sample); 
+					let transformed = duelPieceBuilder.buildDuelPiece(sample); 
 					allPieces.push(transformed);
 					opponentPieces.push(transformed);
 				}
@@ -182,7 +138,7 @@ class DuelPage extends React.Component {
 
 
 
-				// IMPLEMENT ONCE YOU SETUP USING XALIANS FROM PLAYER"S FACTION
+				// IMPLEMENT ONCE YOU SETUP USING XALIANS FROM PLAYER'S FACTION
 			// this.state.xalians.forEach( x => {
 			// 	let transformed = this.transformXalianToGamePiece(x); 
 			// 	allPieces.push(transformed);
@@ -201,7 +157,9 @@ class DuelPage extends React.Component {
 					user: this.state.user,
 					playerXalians: playerPieces,
 					opponentXalians: opponentPieces,
-					xalians: allPieces
+					xalians: allPieces,
+					bot: details.bot,
+					randomizeStartingPositions: details.randomizeStartingPositions
 				}
 			);
 
@@ -249,11 +207,7 @@ class DuelPage extends React.Component {
 				// Additionally, you can write your own transport implementation.
 				// See `src/client/client.js` for details.
 				// multiplayer: false,
-				multiplayer: Local({
-					bots: {
-						1: DuelBotInstance
-					},
-				}),
+				multiplayer: selectedMultiplayer,
 
 				// Set to false to disable the Debug UI.
 				debug: true,
@@ -274,7 +228,18 @@ class DuelPage extends React.Component {
 				
 
 					// <GameContainer>
-					<DuelClient playerID="0" />
+					<>
+					{/* {details.bot && 
+						// <DuelClient playerID="0" />
+					} */}
+
+					{/* {!details.bot &&  */}
+						<>
+						<DuelClient playerID="0" />
+						<DuelClient playerID="1" />
+						</>
+					{/* } */}
+					</>
 					// </GameContainer>
 					
 					// </Container>
