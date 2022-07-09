@@ -51,16 +51,16 @@ class DuelStartPage extends React.Component {
 
     componentDidMount() {
         // DEBUG
-        // this.setGameDetails({
-        //     numberOfPieces: 2,
-        //     players: 1,
-        //     bot: true,
-        //     randomizeStartingPositions: false
-        // });
+        this.setGameDetails({
+            numberOfPieces: 4,
+            players: 1,
+            bot: true,
+            randomizeStartingPositions: true
+        });
 
         // this.setGameDetails({
         //     numberOfPieces: 2,
-        //     players: 1,
+        //     players: 2,
         //     bot: false,
         //     randomizeStartingPositions: true
         // });

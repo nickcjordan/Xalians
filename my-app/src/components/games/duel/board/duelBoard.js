@@ -26,6 +26,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { addAnimationToQueue } from '../../../../store/duelAnimationQueueSlice';
 import { AnimationHub } from '../../../../store/AnimationHub';
 import * as boardStateManager from '../../../../gameplay/duel/boardStateManager';
+import * as boardUtil from '../../../../gameplay/duel/utils/boardUtil';
 import * as playerStateManager from '../../../../gameplay/duel/playerStateManager';
 import * as moveAnimationManager from '../../../../gameplay/duel/moveAnimationManager';
 
@@ -65,41 +66,9 @@ class DuelBoard extends React.Component {
 		window.removeEventListener('resize', this.updateSize);
 	}
 
-
-	setSize = (w, h) => {
-		if (w > 0 && h > 0) {
-			let max = Math.max(w, h);
-			let min = Math.min(w, h);
-			
-			// let padding = 10;
-			// let boardSize = {
-			// 	width: w - padding,
-			// 	height: h - padding,
-			// 	max: max - padding,
-			// 	min: min - padding,
-			// };
-
-			let padPercent = 0.05;
-			let boardSize = {
-				width: w - (w * padPercent),
-				height: h - (h * padPercent),
-				max: max - (max * padPercent),
-				min: min - (min * padPercent),
-			};
-			
-			LocalDuelStorage.setBoardSize(boardSize);
-			
-			
-			this.setState({
-				contentLoaded: true,
-				size: boardSize,
-			});
-		}
-	};
-
 	updateSize = () => {
 		if (window && window.innerWidth) {
-			this.setSize(window.innerWidth, window.innerHeight * 0.5);
+			this.setState(boardUtil.buildBoardSizeState(window.innerWidth, window.innerHeight * 0.5));
 		}
 	};
 	
@@ -150,6 +119,7 @@ class DuelBoard extends React.Component {
 			this.setState({ winnerText: this.props.ctx.gameover.winner !== undefined && this.props.ctx.gameover.winner == 0 ? 'You Win!' : 'You Lose!' });
 		}
 
+		// fixing issue where sometimes the piece would have some weird extra leftovr x and y transform translation
 		gsap.set(document.querySelectorAll(".duel-piece"), {transform: 'none'});
 
 		if (prevProps.ctx.turn < this.props.ctx.turn) {
@@ -180,6 +150,7 @@ class DuelBoard extends React.Component {
 	}
 
 	transitionClientViewForActivePlayer = () => {
+		// fade background from previous player's color to the active player's color 
 		let elemid = `duel-page-background-overlay-client-${this.props.playerID}`;
 		let clientViewElem = document.getElementById(elemid);
 		if (clientViewElem) {
@@ -193,41 +164,22 @@ class DuelBoard extends React.Component {
 	}
 
 	setSelectedXalianIdFromLastActionOfPlayer = (callback = () => { }) => {
-		// if (!this.state.selectedXalianId) {
-			let logs = boardStateManager.getAllMoveActionsFromLog(this.props.log);
-			// let lastLog = logs[logs.length - 1];
-			// if (
-			// 	lastLog &&
-			// 	lastLog.action &&
-			// 	lastLog.action.payload &&
-			// 	lastLog.action.payload.playerID &&
-			// 	lastLog.action.payload.playerID === this.props.ctx.currentPlayer) {
-
-				let logsForCurrentPlayer = logs.filter(log => ( 
-					log.action && log.action.payload && log.action.payload.playerID &&
-					log.action.payload.playerID === this.props.playerID)
-				);
-				let lastLogForCurrentPlayer = logsForCurrentPlayer.pop();
-				if (lastLogForCurrentPlayer
-					&& lastLogForCurrentPlayer.action
-					&& lastLogForCurrentPlayer.action.payload
-					&& lastLogForCurrentPlayer.action.payload.type
-					) {
-					let payload = lastLogForCurrentPlayer.action.payload;
-					// if (payload.type === 'movePiece' && payload.args && payload.args[0] && lastLogForCurrentPlayer.metadata && lastLogForCurrentPlayer.metadata.boardStateIndex) {
-					if ((payload.type === 'movePiece' || payload.type === 'doAttack') && payload.args && payload.args[0] && lastLogForCurrentPlayer.metadata && lastLogForCurrentPlayer.metadata.boardStateIndex) {
-						let startState = this.props.G.boardStateHistory[lastLogForCurrentPlayer.metadata.boardStateIndex];
-						let moverId = startState.cells[payload.args[0].startIndex];
-						if (moverId) {
-							this.setXalianIds(moverId, null, callback);
-						}
-					} else if (payload.type === 'doAttack' && lastLogForCurrentPlayer.metadata && lastLogForCurrentPlayer.metadata.attackActionResult && lastLogForCurrentPlayer.metadata.attackActionResult.attackerId) {
-						let attackerId = lastLogForCurrentPlayer.metadata.attackActionResult.attackerId;
-						this.setXalianIds(attackerId, null, callback);
-					}
+		let lastLogForCurrentPlayer = boardStateManager.getLastActionOfPlayer(this.props.log, this.props.playerID);
+		if (lastLogForCurrentPlayer) {
+			let payload = lastLogForCurrentPlayer.action.payload;
+			// if ((payload.type === 'movePiece' || payload.type === 'doAttack') && payload.args && payload.args[0] && lastLogForCurrentPlayer.metadata && lastLogForCurrentPlayer.metadata.boardStateIndex) {
+			if ((payload.type === 'movePiece' || payload.type === 'doAttack') && payload.args && payload.args[0] && lastLogForCurrentPlayer.metadata && lastLogForCurrentPlayer.metadata.startState) {
+				// let startState = this.props.G.boardStateHistory[lastLogForCurrentPlayer.metadata.boardStateIndex];
+				let startState = lastLogForCurrentPlayer.metadata.startState;
+				let moverId = startState.cells[payload.args[0].startIndex];
+				if (moverId) {
+					this.setXalianIds(moverId, null, callback);
 				}
-			// }
-		// }
+			} else if (payload.type === 'doAttack' && lastLogForCurrentPlayer.metadata && lastLogForCurrentPlayer.metadata.attackActionResult && lastLogForCurrentPlayer.metadata.attackActionResult.attackerId) {
+				let attackerId = lastLogForCurrentPlayer.metadata.attackActionResult.attackerId;
+				this.setXalianIds(attackerId, null, callback);
+			}
+		}
 	}
 
 	onMoveAnimationComplete = () => {
@@ -398,13 +350,13 @@ class DuelBoard extends React.Component {
 	}
 
 	getSelectedXalianId = () => {
-		let local = LocalDuelStorage.getSelectedXalianId();
+		// let local = LocalDuelStorage.getSelectedXalianId();
 		let s = this.state.selectedXalianId;
 		return s;
 	}
 
 	getReferencedXalianId = () => {
-		let local = LocalDuelStorage.getReferencedXalianId();
+		// let local = LocalDuelStorage.getReferencedXalianId();
 		let s = this.state.referencedXalianId;
 		return s;
 	}
@@ -519,7 +471,11 @@ class DuelBoard extends React.Component {
 
 	getStartingBoardState = () => {
 		let actionLogs = boardStateManager.getAllMoveActionsFromLog(this.props.log);
-		let s = (actionLogs && actionLogs.length > 0 && actionLogs.length > this.state.logIndex) ? this.props.G.boardStateHistory[actionLogs[this.state.logIndex].metadata.boardStateIndex] : boardStateManager.buildBoardState(this.props.G, this.props.ctx);
+		// let s = (actionLogs && actionLogs.length > 0 && actionLogs.length > this.state.logIndex) ? this.props.G.boardStateHistory[actionLogs[this.state.logIndex].metadata.boardStateIndex] : boardStateManager.buildBoardState(this.props.G, this.props.ctx);
+		let s = (actionLogs && actionLogs.length > 0 && actionLogs.length > this.state.logIndex) ? 
+			// this.props.G.boardStateHistory[actionLogs[this.state.logIndex].metadata.boardStateIndex] : 
+			actionLogs[this.state.logIndex].metadata.startState : 
+			boardStateManager.buildBoardState(this.props.G, this.props.ctx);
 		return s || this.props.G;
 	}
 

@@ -18,7 +18,7 @@ export const actionPlugin = {
   // under `ctx['plugin-name']`.
   // This is called at the beginning of a move or event.
   // This object will be held in memory until flush (below)
-  // is called.35
+  // is called.
   // api: ({ G, ctx, game, data, playerID }) => {
   //     return {
   //         message: 'huh'
@@ -42,7 +42,7 @@ export const actionPlugin = {
   fnWrap: (fn) => (G, ctx, ...args) => {
     G = preprocess(G, ctx, args);
     G = fn(G, ctx, ...args);
-    G = postprocess(G, ctx);
+    G = postprocess(G, ctx, args);
 
     return G;
   },
@@ -76,36 +76,65 @@ function preprocess(G, ctx, args) {
   };
 }
 
-function postprocess(G, ctx) {
+function boardStatesAreTheSame(boardStateA, boardStateB) {
+  let copyA = { ...boardStateA, moveId: null };
+  let copyB = { ...boardStateB, moveId: null };
+  return JSON.stringify(copyA) === JSON.stringify(copyB);
+}
 
+function postprocess(G, ctx, args) {
+
+  
   // let actionMeta = {
-  //   moveId: G.moveId,
-  //   startState: G.startState
-  // }; 
-
+    //   moveId: G.moveId,
+    //   startState: G.startState
+    // }; 
+    
+  // initialize action metadata
   let actionMeta = {
     moveId: G.moveId
   }; 
-
+  
   // grab attack result from currentTurnActions so it will be available in action meta
   let lastAction = G.currentTurnActions[G.currentTurnActions.length - 1];
-  if (lastAction && (lastAction.type == duelConstants.actionTypes.ATTACK) && lastAction.attack.result) {
-    actionMeta.attackActionResult = lastAction.attack.result;
-  }
-
+  if (lastAction) {
+    if ((lastAction.type == duelConstants.actionTypes.ATTACK) && lastAction.attack.result) {
+      actionMeta.attackActionResult = lastAction.attack.result;
+    }
+    
+  } 
+  
+  
+  // let history = G.boardStateHistory ? [...G.boardStateHistory] : [];
+  
+  // make sure the board state being added is not a duplicate of the previous
+  // let endState = boardStateManager.buildBoardState(G, ctx);
+  // if (history.length > 0) {
+  //   let prevState = history[history.length - 1];
+  //   if (boardStatesAreTheSame(prevState, endState)) {
+  //     history.pop();
+  //   }
+  // }
+  
+  // add start state to history so animation knows where to begin
+  // history.push(G.startState);
+  
   // add current state index to meta
-  actionMeta.boardStateIndex = G.boardStateHistory ? G.boardStateHistory.length : 0;;
+  actionMeta.boardStateIndex = G.boardStateHistory ? G.boardStateHistory.length : 0;
+  actionMeta.startState = G.startState;
 
-  // add post-move-G-state to history 
-  let history = G.boardStateHistory ? [...G.boardStateHistory] : [];
-  history.push(G.startState);
+
 
   // set this moves log meta
   ctx.log.setMetadata(actionMeta);
   
+  // return {
+  //   ...G, 
+  //   startState: null,
+  //   boardStateHistory: history
+  // };
   return {
     ...G, 
-    startState: null,
-    boardStateHistory: history
+    startState: null
   };
 }

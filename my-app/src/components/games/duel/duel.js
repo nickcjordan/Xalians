@@ -8,33 +8,56 @@ import * as duelConstants from '../../../gameplay/duel/duelGameConstants';
 import * as boardStateManager from '../../../gameplay/duel/boardStateManager';
 import * as playerStateManager from '../../../gameplay/duel/playerStateManager';
 import * as plugins from '../../../gameplay/duel/plugins';
+import { PluginPlayer } from 'boardgame.io/plugins';
 import { v4 as uuidv4 } from 'uuid'; 
 import gsap from 'gsap';
 import Flip from 'gsap/Flip';
 import { Hub } from "aws-amplify";
 gsap.registerPlugin(Flip);
 
+// define a function to initialize each player’s state
+const playerSetup = (playerID) => {
+	return {
+		activeXalianIds: [],
+		inactiveXalianIds: [],
+		unsetXalianIds: [],
+		playerID: playerID
+	}
+}
+
+// filter data returned to each client to hide secret state (OPTIONAL)
+const playerView = (players, playerID) => ({
+  [playerID]: players[playerID],
+});
+
 export const Duel = (data) => {
 	return {
 
 		name: 'xalians-duel',
 
-		plugins: [plugins.actionPlugin],
+		plugins: [
+			plugins.actionPlugin, 
+			PluginPlayer({
+				setup: playerSetup,
+				playerView: playerView,
+			  }),
+		],
 
 		setup: (ctx, setupData) => {
-			let unsetXalianIds = [];
-			data.playerXalians.forEach((x) => {
-				unsetXalianIds.push(x.xalianId);
-			});
+			// let unsetXalianIds = [];
+			// data.playerXalians.forEach((x) => {
+			// 	unsetXalianIds.push(x.xalianId);
+			// });
 
-			let unsetOpponentXalianIds = [];
-			data.opponentXalians.forEach((x) => {
-				unsetOpponentXalianIds.push(x.xalianId);
-			});
+			// let unsetOpponentXalianIds = [];
+			// data.opponentXalians.forEach((x) => {
+			// 	unsetOpponentXalianIds.push(x.xalianId);
+			// });
+
+			// data.teams[0]
 
 			let totalSquares = gameConstants.BOARD_COLUMN_SIZE * gameConstants.BOARD_COLUMN_SIZE;
 
-			let user = data.user;
 			let grid = duelCalculator.buildGrid(totalSquares);
 			let playerFlagOptions = grid.rows[gameConstants.BOARD_COLUMN_SIZE - 2];
 			let randomPlayerInd = Math.round(Math.random()*(gameConstants.BOARD_COLUMN_SIZE-1));
@@ -66,13 +89,13 @@ export const Duel = (data) => {
 				{
 					activeXalianIds: [],
 					inactiveXalianIds: [],
-					unsetXalianIds: unsetXalianIds,
+					unsetXalianIds: data.teams[0],
 					playerID: 0
 				},
 				{
 					activeXalianIds: [],
 					inactiveXalianIds: [],
-					unsetXalianIds: unsetOpponentXalianIds,
+					unsetXalianIds: data.teams[1],
 					playerID: 1
 				}
 			]

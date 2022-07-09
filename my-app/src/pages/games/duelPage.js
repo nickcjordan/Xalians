@@ -159,12 +159,16 @@ class DuelPage extends React.Component {
 			// 	opponentPieces.push(transformed);
 			// })
 
+			let teams = [];
+			teams.push(playerPieces.map(x => (x.xalianId)));
+			teams.push(opponentPieces.map(x => (x.xalianId)));
 
 			const duel = Duel(
 				{
 					user: this.state.user,
 					playerXalians: playerPieces,
 					opponentXalians: opponentPieces,
+					teams: teams,
 					xalians: allPieces,
 					bot: details.bot,
 					randomizeStartingPositions: details.randomizeStartingPositions
@@ -240,7 +244,7 @@ class DuelPage extends React.Component {
 					{details.bot && 
 						<>
 						<DuelClient playerID="0" />
-						{/* <DuelClient playerID="1" /> */}
+						<DuelClient playerID="1" />
 						</>
 					} 
 
@@ -274,6 +278,8 @@ class DuelPage extends React.Component {
 			);
 		}
 	}
+
+	
 }
 
 function shuffleArray(array) {

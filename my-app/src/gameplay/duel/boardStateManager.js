@@ -18,6 +18,12 @@ export function buildBoardState(G, ctx) {
        }
 }
 
+export function getLastActionOfPlayer(fullLog, playerID) {
+    let logs = getAllMoveActionsFromLog(fullLog);
+	let logsForCurrentPlayer = getAllActionsForPlayer(playerID, logs);
+    return logsForCurrentPlayer.pop();
+}
+
 export function getAllMoveActionsFromLog(logs) {
     let filtered = logs.filter(log =>
         log.action &&
@@ -30,6 +36,13 @@ export function getAllMoveActionsFromLog(logs) {
     
             // log.action.payload.type !== 'selectPiece' &&
             // log.action.payload.type !== 'setPiece')
+}
+
+export function getAllActionsForPlayer(playerID, logs) {
+    return logs.filter(log => (
+        log.action && log.action.payload && log.action.payload.type && log.action.payload.playerID &&
+        log.action.payload.playerID === playerID)
+    );
 }
 
 export function currentTurnState(G, ctx) {

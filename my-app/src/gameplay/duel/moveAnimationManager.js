@@ -72,7 +72,10 @@ function handleMoveAction(movePath, tl, meta, callback, isNotDraggingAnimation =
     let moveTl = gsap.timeline();
     // DO MOVE ANIMATION
     // console.log(`movePiece :: `);
-    let boardState = G.boardStateHistory[meta.boardStateIndex];
+
+    
+    // let boardState = G.boardStateHistory[meta.boardStateIndex];
+    let boardState = meta.startState;
 
     let moverId = boardState.cells[movePath.startIndex];
     // let elemId = `duel-${moverId}-piece`;
@@ -125,7 +128,8 @@ function handleAttackAction(meta, tl, callback, setStateCallback, G) {
     // DO ATTACK ANIMATION
     // console.log(`doAttack :: `);
 
-    let boardState = G.boardStateHistory[meta.boardStateIndex];
+    // let boardState = G.boardStateHistory[meta.boardStateIndex];
+    let boardState = meta.startState;
     let attackActionResult = meta.attackActionResult;
     
     let attacker = duelUtil.getXalianFromId(attackActionResult.attackerId, boardState);
