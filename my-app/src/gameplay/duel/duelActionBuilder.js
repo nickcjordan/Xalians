@@ -227,7 +227,7 @@ export function buildMoveActionsWithScore(currentIndex, xalian, paths, G, ctx) {
         *               -- ADD BONUS POINTS FOR HOW EFFECTIVE THE ATTACKER IS AGAINST DEFENDER
         *               -- MAKE SURE ATTACKER IS NOT IMMUNE TO DEFENDER
         *            
-        */
+        */ 
         scorePathsMovingTowardsTargetFlag(flagIndexToRetrieve, moveActions, G, ctx);
     } 
 
