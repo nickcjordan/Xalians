@@ -10,7 +10,9 @@ import * as playerStateManager from '../../../gameplay/duel/playerStateManager';
 import * as plugins from '../../../gameplay/duel/plugins';
 import { v4 as uuidv4 } from 'uuid'; 
 import gsap from 'gsap';
+import Flip from 'gsap/Flip';
 import { Hub } from "aws-amplify";
+gsap.registerPlugin(Flip);
 
 export const Duel = (data) => {
 	return {
@@ -99,6 +101,13 @@ export const Duel = (data) => {
 				G.selectedIndex = null;
 				G.selectedId = null;
 				
+				// if (G.hasBot && ctx.currentPlayer === '0') {
+				// 	var allCellElems = document.querySelectorAll(".duel-board-cell");
+				// 	const cellState = Flip.getState(allCellElems, { props: "background,filter,opacity,backgroundColor" });
+				// 	boardStateManager.setVisualsForAllCells(G, allCellElems, movableIndicesFromStartingSpot, attackableIndicesFromHoverSpot, draggingXalianId, hoverCellIndex);
+				// 	Flip.from(cellState);
+				// }
+
 			},
 
 			// Called at the end of a turn.
@@ -110,6 +119,13 @@ export const Duel = (data) => {
 					let xalian = duelUtil.getXalianFromId(id, G);
 					xalian.state.stamina = Math.min(duelConstants.MAX_STAMINA_POINTS, xalian.state.stamina + 1);
 				});
+
+				// doFadesAfterMove = () => {
+					// var allCellElems = document.querySelectorAll(".duel-board-cell");
+					// const cellState = Flip.getState(allCellElems, { props: "background,filter,opacity,backgroundColor" });
+					// boardStateManager.clearVisualsForAllCells(allCellElems);
+					// Flip.from(cellState);
+				// }
 
 				// if (ctx.phase === 'setup') {
 				// 	let totalXaliansActive = G.playerStates[0].activeXalianIds.length + G.playerStates[1].activeXalianIds.length;

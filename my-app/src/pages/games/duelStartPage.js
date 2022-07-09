@@ -28,7 +28,8 @@ import DuelPage from './duelPage';
 class DuelStartPage extends React.Component {
 
     state = {
-        randomizeStartingPositions: true
+        randomizeStartingPositions: true,
+        debugMode: true
     }
 
     // componentDidUpdate(prevProps, prevState) {
@@ -42,7 +43,8 @@ class DuelStartPage extends React.Component {
             numberOfPieces: this.state.numberOfPieces,
             players: this.state.players,
             bot: this.state.players == 1 ? true : false,
-            randomizeStartingPositions: this.state.randomizeStartingPositions
+            randomizeStartingPositions: this.state.randomizeStartingPositions,
+            debugMode: this.state.debugMode
         };
         this.setState({gameDetails: passedIn || details})
     }
@@ -86,7 +88,7 @@ class DuelStartPage extends React.Component {
                         <XalianNavbar></XalianNavbar>
 
 
-                        <GameContainer>
+                        {/* <GameContainer> */}
                             <div style={{ display: 'flex', flexDirection: 'column', justifyItems: 'center', maxWidth: '400px', margin: 'auto' }}>
 
                                 <h4 style={{ margin: 'auto', textAlign: 'center', marginTop: '25px', marginBottom: '10px' }}>Players:</h4>
@@ -131,8 +133,21 @@ class DuelStartPage extends React.Component {
                                             }>
                                         <ToggleButton key={`randomize-positions-1`} id={`randomize-positions-1`} type="checkbox" name="randomize-checkbox" variant={this.state.randomizeStartingPositions ? 'xalianGreen' : 'xalianGray'} style={{ padding: '0px', margin: 'auto', height: '35px', width: '35px' }}
                                             value={true}
-                                            checked={!this.state.randomizeStartingPositions}
+                                            checked={this.state.randomizeStartingPositions}
                                         >{this.state.randomizeStartingPositions && <i class="bi bi-check" style={{ fontSize: '35px', lineHeight: '35px' }} />}</ToggleButton>
+                                    </ToggleButtonGroup>
+
+                                </div>
+
+                                <div style={{ height: '100%', display: 'flex', justifyContent: 'space-evenly', alignItems: 'stretch', alignContent: 'center', marginTop: '50px'}}>
+                                    <h4 style={{ marginTop: 'auto', marginBottom: 'auto', alignSelf: 'center', textAlign: 'center', width: 'fit-content' }}>Debug Mode:</h4>
+                                    <ToggleButtonGroup style={{ textAlign: 'center', width: '35px' }} type='checkbox' onChange={(e) =>
+                                                this.setState({ debugMode: !this.state.debugMode })
+                                            }>
+                                        <ToggleButton key={`debugMode-1`} id={`debugMode-1`} type="checkbox" name="debugMode-checkbox" variant={this.state.debugMode ? 'xalianGreen' : 'xalianGray'} style={{ padding: '0px', margin: 'auto', height: '35px', width: '35px' }}
+                                            value={true}
+                                            checked={this.state.debugMode}
+                                        >{this.state.debugMode && <i class="bi bi-check" style={{ fontSize: '35px', lineHeight: '35px' }} />}</ToggleButton>
                                     </ToggleButtonGroup>
 
                                 </div>
@@ -143,7 +158,7 @@ class DuelStartPage extends React.Component {
                                 size='lg' disabled={!this.state.players  || !this.state.numberOfPieces} variant='xalianGreen' style={{ width: 'fit-content', margin: 'auto', marginTop: '50px'}}>Start Duel!</Button>
                             </div>
 
-                        </GameContainer>
+                        {/* </GameContainer> */}
 
                     </Container>
 

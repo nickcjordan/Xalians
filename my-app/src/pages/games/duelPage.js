@@ -106,7 +106,15 @@ class DuelPage extends React.Component {
 				1: DuelBotInstance
 			},
 		})
-		: Local();
+		: Local(
+			{
+				  // Enable localStorage cache.
+					// persist: true,
+
+					// Set custom prefix to store data under. Default: 'bgio'.
+					// storageKey: 'bgio',
+			}
+		);
 		// let xaliansPerTeam = duelConstants.XALIANS_PER_TEAM;
 
 		if (this.state.xalians && this.state.xalians.length > 0) {
@@ -210,7 +218,7 @@ class DuelPage extends React.Component {
 				multiplayer: selectedMultiplayer,
 
 				// Set to false to disable the Debug UI.
-				debug: true,
+				debug: details.debugMode,
 				// debug: false,
 
 				// An optional Redux store enhancer.

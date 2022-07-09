@@ -737,7 +737,7 @@ class DuelBoard extends React.Component {
 									borderRadius: '10px',
 									background: 'linear-gradient(0deg, rgba(0,0,0,1) 15%, rgba(0,0,0,0.8099614845938375) 89%, rgba(0,0,0,0.6138830532212884) 94%, rgba(0,0,0,0) 100%)' 
 								}}>
-								<h4 style={{ margin: 'auto', textAlign: 'center', paddingTop: '5px', color: 'darkgray', opacity: isCurrentLogIndex ? 1 : 0.25 }}>[{this.state.logIndex}] {turnSummaryText}</h4>
+								<h4 style={{ margin: 'auto', textAlign: 'center', paddingTop: '5px', color: 'darkgray', opacity: isCurrentLogIndex ? 1 : 0.25 }}>{!isCurrentLogIndex ? 'NEEDS UPDATE' : null}[{this.state.logIndex}] {turnSummaryText}</h4>
 								<Row >
 									{userActionButtons}
 								</Row>

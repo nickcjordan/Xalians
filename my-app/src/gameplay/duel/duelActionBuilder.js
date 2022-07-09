@@ -213,9 +213,12 @@ export function buildMoveActionsWithScore(currentIndex, xalian, paths, G, ctx) {
         /* 
         *       5) MAKE PROGRESS TOWARDS PROTECTING TEAM FLAG
         *            - SCORE MOVE BASED ON HOW CLOSE THE PIECE IS TO GUARD FLAG
+        *            - REALLY ONLY WORRIED ABOUT GUARDING IF NOT LAST PLAYER
         *            
         */
-        scorePathsMovingTowardsTeamFlag(flagIndexToGuard, moveActions, G, ctx);
+        if (playerState.activeXalianIds.length > 1) {
+            scorePathsMovingTowardsTeamFlag(flagIndexToGuard, moveActions, G, ctx);
+        }
     } else {
         /* 
         *       6) MAKE PROGRESS TOWARDS GRABBING TARGET FLAG

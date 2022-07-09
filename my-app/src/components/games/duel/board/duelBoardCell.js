@@ -38,8 +38,18 @@ class DuelBoardCell extends React.Component {
 		// this.setDraggables();
 	}
 
-	componentDidUpdate() {
+	componentDidUpdate(prevProps, prevState) {
 		this.setDraggables();
+		// if (this.props.ctx.turn < 3 && this.props.isActive && (prevProps.ctx.turn < this.props.ctx.turn)) {
+		// 	this.doFadesAfterMove();
+		// }
+	}
+
+	doFadesAfterMove = () => {
+		var allCellElems = document.querySelectorAll(".duel-board-cell");
+		const cellState = Flip.getState(allCellElems, { props: "background,filter,opacity,backgroundColor" });
+		boardStateManager.clearVisualsForAllCells(allCellElems);
+		Flip.from(cellState);
 	}
 
 	
@@ -253,22 +263,6 @@ class DuelBoardCell extends React.Component {
 								props.makeMoveToCell(path, props.boardState);
 								// props.moves.movePiece(path);
 
-								
-
-								
-
-								/*
-	
-	
-													do more here, this isnt really working I think
-
-													only makes move if it is selected already
-
-													probs need to make the call to the 'movePiece' move directly
-	
-	
-	
-								*/
 
 							}
 						})
