@@ -49,7 +49,8 @@ class DuelBoard extends React.Component {
 		isAnimating: false,
 		animationTl: gsap.timeline(),
 		logIndex: 0,
-		showXalianDetails: false
+		showXalianDetails: false,
+		animationIndex: -1
 	};
 
 	static propTypes = {
@@ -91,7 +92,8 @@ class DuelBoard extends React.Component {
 			minSize: 10,
 			maxSize: 14,
 		});
-		if (!this.isAnimationHappening()) {
+		// if (!this.isAnimationHappening()) {
+		if (this.state.animationIndex == -1 || this.state.animationIndex < this.state.logIndex) {
 			let logs = boardStateManager.getAllMoveActionsFromLog(this.props.log);
 			if (this.state.logIndex < logs.length) {
 					let log = logs[this.state.logIndex];
@@ -105,6 +107,8 @@ class DuelBoard extends React.Component {
 					} else {
 							// setTimeout(function() {
 							moveAnimationManager.handleMoveAnimation(tl, log, onMoveAnimation, onAttackAnimation, isLastLog, boardState);
+
+							this.setState({ animationIndex: this.state.animationIndex + 1});
 							//   }, 1000);
 						}
 					// }
@@ -190,7 +194,10 @@ class DuelBoard extends React.Component {
 			// if (target && target.length > 0) {
 				// gsap.to(gsap.utils.toArray(target), { autoAlpha: 1 });
 			// }
-			this.endTurnIfNoMovesAvailable();
+			if (this.state.animationTl.totalProgress() == 1) {
+				this.endTurnIfNoMovesAvailable();
+			}
+			// this.endTurnIfNoMovesAvailable();
 			// if (!this.props.ctx.gameover) {
 				// this.setSelectedXalianIdFromLastActionOfPlayer();
 			// }
@@ -233,13 +240,19 @@ class DuelBoard extends React.Component {
 			logIndex: this.state.logIndex + 1
 		}, () => {
 			if (this.state.animationTl) {
+
+				if (this.state.animationTl.totalProgress() == 1) {
+					this.endTurnIfNoMovesAvailable();
+				}
+
 				this.state.animationTl.play();
+
 			} else {
 				// if (!this.props.ctx.gameover) {
 					// this.setSelectedXalianIdFromLastActionOfPlayer();
 				// }
 			}
-			this.endTurnIfNoMovesAvailable();
+			
 			
 
 
@@ -534,7 +547,7 @@ class DuelBoard extends React.Component {
 			let cells = [];
 			for (let j = 0; j < gameConstants.BOARD_COLUMN_SIZE; j++) {
 				const index = gameConstants.BOARD_COLUMN_SIZE * i + j;
-
+				let animationTl = this.state.animationTl || { totalProgress: () => { return 1 } };
 				var cell = <DuelBoardCell
 					handleEmptyCellSelection={this.handleEmptyCellSelection} 
 					handleActivePieceSelection={this.handleActivePieceSelection} 
@@ -550,6 +563,7 @@ class DuelBoard extends React.Component {
 					referencedXalianId={referencedId}
 					referencedXalianMovableIndices={referencedXalianMovableIndices}
 					referencedXalianAttackableIndices={referencedXalianAttackableIndices}
+					animationTl={this.state.animationTl}
 					{...this.props}
 				/>;
 

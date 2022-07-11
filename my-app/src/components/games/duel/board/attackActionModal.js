@@ -30,7 +30,10 @@ class AttackActionModal extends React.Component {
         // if (this.props.animationTl) {
         //     this.props.animationTl.play();
         // }
-        gsap.to('#attack-action-modal', {autoAlpha: 0, duration: 0.35}).then(this.props.onHide);
+        gsap.to('#attack-action-modal', {autoAlpha: 0, duration: 0.35}).then(() => {
+            this.props.onHide();
+        }
+        );
         
     }
 

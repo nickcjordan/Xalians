@@ -244,7 +244,7 @@ class DuelPage extends React.Component {
 					{details.bot && 
 						<>
 						<DuelClient playerID="0" />
-						<DuelClient playerID="1" />
+						{/* <DuelClient playerID="1" /> */}
 						</>
 					} 
 

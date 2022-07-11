@@ -315,15 +315,17 @@ class DuelBoardCell extends React.Component {
 	
 
 	buildUnoccupiedCell() {
-		let isMovableBySelectedXalian = this.props.selectedXalianMovableIndices && this.props.selectedXalianMovableIndices.includes(this.props.cellIndex);
-		let isAttackableBySelectedXalian = this.props.selectedXalianId && this.props.selectedXalianAttackableIndices && this.props.selectedXalianAttackableIndices.includes(this.props.cellIndex);
-		let isAttackIndicatorVisible = (isAttackableBySelectedXalian && !this.props.boardState.currentTurnDetails.hasAttacked);
+		let animationProgress = this.props.animationTl ? this.props.animationTl.totalProgress() : 0;
+		let animationsAreComplete = animationProgress == 1 || animationProgress == 0;
+		let isMovableBySelectedXalian = (this.props.isActive && animationsAreComplete) && this.props.selectedXalianMovableIndices && this.props.selectedXalianMovableIndices.includes(this.props.cellIndex);
+		let isAttackableBySelectedXalian = (this.props.isActive && animationsAreComplete) && this.props.selectedXalianId && this.props.selectedXalianAttackableIndices && this.props.selectedXalianAttackableIndices.includes(this.props.cellIndex);
+		let isAttackIndicatorVisible = (this.props.isActive && animationsAreComplete) && (isAttackableBySelectedXalian && !this.props.boardState.currentTurnDetails.hasAttacked);
 		let attackIndicatorVisibilityClass = isAttackIndicatorVisible ? '' : 'invisible-attack-indicator';
 		let attackIndicatorVisibility = isAttackIndicatorVisible ? 1 : 0;
 		
-		let isMovableByReferencedXalian = this.props.referencedXalianMovableIndices && this.props.referencedXalianMovableIndices.includes(this.props.cellIndex);
+		let isMovableByReferencedXalian = (this.props.isActive && animationsAreComplete) && this.props.referencedXalianMovableIndices && this.props.referencedXalianMovableIndices.includes(this.props.cellIndex);
 		// let isMovableByReferencedXalian = isMovableBySelectedXalian && !duelUtil.isCurrentTurnsXalian(this.props.selectedXalianId, this.props.boardState, this.props.ctx);
-		let isAttackableByReferencedXalian = this.props.referencedXalianAttackableIndices && this.props.referencedXalianAttackableIndices.includes(this.props.cellIndex);
+		let isAttackableByReferencedXalian = (this.props.isActive && animationsAreComplete) && this.props.referencedXalianAttackableIndices && this.props.referencedXalianAttackableIndices.includes(this.props.cellIndex);
 
 		let cellSizeWithUnits = `${this.props.cellSize}px`;
 		let sty = { border: 0, position: 'relative', width: cellSizeWithUnits, height: cellSizeWithUnits, lineHeight: cellSizeWithUnits, textAlign: 'center' };
@@ -386,6 +388,9 @@ class DuelBoardCell extends React.Component {
 
 	buildOccupiedCell = () => {
 
+		let animationProgress = this.props.animationTl ? this.props.animationTl.totalProgress() : 0;
+		let animationsAreComplete = animationProgress == 1 || animationProgress == 0;
+
 		let xalianId = this.props.boardState.cells[this.props.cellIndex];
 		let cellXalian = duelUtil.getXalianFromIdAndXalians(xalianId, this.props.boardState.xalians);
 		let isSelectedXalian = this.props.selectedXalianId && this.props.selectedXalianId === cellXalian.xalianId;
@@ -431,6 +436,7 @@ class DuelBoardCell extends React.Component {
 			: isOpponentFlagIndex ? <DuelFlagIcon className="duel-flag" style={{ fill: duelConstants.PLAYER_TWO_COLOR  }} /> 
 			: null;
 
+		
 
 		return (<React.Fragment>
 			<div className='' style={{width: `${this.props.cellSize}px`, height: `${this.props.cellSize}px`, lineHeight: `${this.props.cellSize}px`, position: 'absolute'}} >
@@ -445,7 +451,7 @@ class DuelBoardCell extends React.Component {
 
 				{/* ATTACK INDICATOR */}
 				{/* {isAttackIndicatorVisible && */}
-				{this.props.isActive &&
+				{(this.props.isActive && animationsAreComplete) &&
 
 					<div className='duel-cell-style-covered attack-pattern-background fade-out-animation-on-move' style={{ opacity: isAttackIndicatorVisible ? 1 : 0, backgroundColor: '#9700002c', height: `${this.props.cellSize}px`, width: `${this.props.cellSize}px`, transformOrigin: 'center', transform: 'rotate(90deg)', backgroundImage: svgUtil.getStripedBackgroundImage('#ff0000', 0.5) }} ></div>
 				}
