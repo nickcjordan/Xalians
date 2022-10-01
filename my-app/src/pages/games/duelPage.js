@@ -20,7 +20,6 @@ import DuelBotInstance from '../../components/games/duel/bot/duelBotInstance';
 import * as duelConstants from '../../gameplay/duel/duelGameConstants'; 
 import * as duelPieceBuilder from '../../gameplay/duel/duelPieceBuilder'; 
 import gsap from 'gsap';
-import { dataTree } from 'terraform/lib/helpers/raw';
 
 class DuelPage extends React.Component {
 	state = {

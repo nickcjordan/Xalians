@@ -128,10 +128,11 @@ class DuelBoard extends React.Component {
 
 		if (prevProps.ctx.turn < this.props.ctx.turn) {
 			// new turn :: should be switching client
+			//commented out because it was making things kinda slow
 			this.transitionClientViewForActivePlayer();
 		}
 
-		if (prevProps.isActive && !this.props.isActive) {// transitioning from active player to not active player
+		// if (prevProps.isActive && !this.props.isActive) {// transitioning from active player to not active player
 			// let fadingElementsOnMove = document.querySelectorAll(".duel-board-cell-dot-light");
 			// let fadingElementsOnMove = document.querySelectorAll(".attack-pattern-background");
 			// if (fadingElementsOnMove && fadingElementsOnMove.length > 0) {
@@ -139,9 +140,12 @@ class DuelBoard extends React.Component {
 			// }
 
 			// gsap.to(gsap.utils.toArray(document.querySelectorAll(".fade-out-animation-on-move")), { autoAlpha: 0 });
-		} else if (!prevProps.isActive && this.props.isActive) { // transitioning from not active player to active player
-			// gsap.to(gsap.utils.toArray(document.querySelectorAll(".fade-out-animation-on-move")), { autoAlpha: 1 });
-		}
+		// } else 
+		// if (!prevProps.isActive && this.props.isActive) { // transitioning from not active player to active player
+		// 	gsap.to(gsap.utils.toArray(document.querySelectorAll(".fade-out-animation-on-move")), { opacity: 1 });
+		// } else {
+		// 	gsap.to(gsap.utils.toArray(document.querySelectorAll(".fade-out-animation-on-move")), { opacity: 0 });
+		// }
 
 		if (this.props.isActive && this.props.ctx.phase === 'setup' && this.props.G.randomizeStartingPositions && !this.state.hasInitialized) {
 			this.setState({ hasInitialized: true }, () => {
@@ -159,10 +163,10 @@ class DuelBoard extends React.Component {
 		let clientViewElem = document.getElementById(elemid);
 		if (clientViewElem) {
 			if (this.shouldShowClientView()) {
-				gsap.fromTo(clientViewElem, {autoAlpha: 0}, {autoAlpha: 1, duration: 1});
+				gsap.fromTo(clientViewElem, {autoAlpha: 0}, {autoAlpha: 1, duration: 1, delay: 0.5});
 			} 
 			else {
-				gsap.fromTo(clientViewElem, {autoAlpha: 1}, {autoAlpha: 0, duration: 1});
+				gsap.fromTo(clientViewElem, {autoAlpha: 1}, {autoAlpha: 0, duration: 1, delay: 0.5});
 			}
 		}
 	}
@@ -219,7 +223,7 @@ class DuelBoard extends React.Component {
 								// this.props.ctx.events.endTurn();
 							}
 						}
-					}, 500);
+					}, 250);
 				}
 		} else if (!this.props.ctx.gameover) {
 			// this.setSelectedXalianIdFromLastActionOfPlayer();
@@ -245,7 +249,7 @@ class DuelBoard extends React.Component {
 					this.endTurnIfNoMovesAvailable();
 				}
 
-				this.state.animationTl.play();
+				this.state.animationTl.resume();
 
 			} else {
 				// if (!this.props.ctx.gameover) {
@@ -409,9 +413,9 @@ class DuelBoard extends React.Component {
 					let path = attackablePaths.filter( p => (p.endIndex == index))[0];
 					// let path = duelCalculator.calculatePathToTarget(selectedIndex, index, boardState, this.props.ctx)
 
-					this.setXalianIds(null, null, () => {
+					// this.setXalianIds(null, null, () => {
 						this.props.moves.doAttack(path);
-					});
+					// });
 					
 	
 					// reset selection
@@ -724,6 +728,7 @@ class DuelBoard extends React.Component {
 		if (this.shouldShowClientView()) {
 			return clientView;
 		} else {
+			// return <div style={{visibility: 'hidden'}}>{clientView}</div>;
 			return null;
 		}
 	}

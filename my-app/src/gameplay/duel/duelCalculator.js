@@ -1,4 +1,3 @@
-const fs = require('fs')
 const constants = require('../../constants/constants.js');
 const attackConstants = require('../../constants/attackCalculationConstants.js');
 const tools = require('../../tools.js');

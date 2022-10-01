@@ -39,9 +39,16 @@ class DuelStartPage extends React.Component {
     // }
 
     setGameDetails = (passedIn = null) => {
+        // let details = {
+        //     numberOfPieces: this.state.numberOfPieces,
+        //     players: this.state.players,
+        //     bot: this.state.players == 1 ? true : false,
+        //     randomizeStartingPositions: this.state.randomizeStartingPositions,
+        //     debugMode: this.state.debugMode
+        // };
         let details = {
             numberOfPieces: this.state.numberOfPieces,
-            players: this.state.players,
+            players: 2,
             bot: this.state.players == 1 ? true : false,
             randomizeStartingPositions: this.state.randomizeStartingPositions,
             debugMode: this.state.debugMode
@@ -51,12 +58,12 @@ class DuelStartPage extends React.Component {
 
     componentDidMount() {
         // DEBUG
-        this.setGameDetails({
-            numberOfPieces: 4,
-            players: 1,
-            bot: true,
-            randomizeStartingPositions: true
-        });
+        // this.setGameDetails({
+        //     numberOfPieces: 6,
+        //     players: 2,
+        //     bot: true,
+        //     randomizeStartingPositions: true
+        // });
 
         // this.setGameDetails({
         //     numberOfPieces: 2,

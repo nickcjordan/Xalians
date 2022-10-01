@@ -30,7 +30,7 @@
     "planet": "Magmuth",
     "height": "38 in / 96 cm",
     "weight": "103 lbs / 46 kg",
-    "description": "A partially feathered ground bird with lizard features, somewhat resembling a velociraptor. These creatures are extremely quick with razor sharp teeth, and prefer to hunt in packs.",
+    "description": "Partially feathered ground birds with lizard features, these creatures are extremely quick with razor sharp teeth. When running at high speeds, they can spread their wings to temporarily take flight as they launch into the air and sink their teeth into their prey.",
     "statRatings": {
       "healthRating": "",
       "standardAttackRating": "high",
@@ -168,7 +168,7 @@
     }
   },
   {
-    "name": "Hypnox",
+    "name": "Tizzie",
     "id": "00008",
     "type": "Psychic",
     "planet": "Telypso",
@@ -597,6 +597,102 @@
     "traits": {
       "canFly": false,
       "attackRange": "high"
+    }
+  },
+  {
+    "name": "Neph",
+    "id": "00026",
+    "type": "Air",
+    "planet": "Saiphus",
+    "height": "180 in / 457 cm",
+    "weight": "120 lbs / 54 kg",
+    "description": "Colossal hydrogen jellyfish that travel in free-floating herds across Saiphus's lower atmosphere, the Neph are instrumental to the Benthane industry. These domesticated creatures roam the clouds in flocks, grazing off of the biochemicals and atmospheric plankton contained in the gas-liquid slush of Saiphus's deeper atmosphere using long, trailing tentacles that vacuum up valuable Benthane along with their food. When threatened, these same tentacles can be used to pull in opponents with considerable suction or to jettison air at high pressure. Neph can also forcibly expel jets of Benthane gas, which is typically used a coolant for starship engines, from their tentacles in order to blast their enemies with freezing air. Finally, being composed almost entirely hydrogen means that the Neph can also spray their enemies with bouts of flammable gas.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "",
+      "specialAttackRating": "high",
+      "standardDefenseRating": "",
+      "specialDefenseRating": "",
+      "speedRating": "low",
+      "evasionRating": "",
+      "staminaRating": "",
+      "recoveryRating": ""
+    },
+    "traits": {
+      "canFly": true,
+      "attackRange": "high"
+    }
+  },
+  {
+    "name": "Terragoyle",
+    "id": "00027",
+    "type": "Rock",
+    "planet": "Stonera",
+    "height": "64 in / 163 cm",
+    "weight": "837 lbs / 380 kg",
+    "description": "Resembling horned and vaguely humanoid bats with elongated tails tipped with a levatating ball of stone, Terragoygles can be found lining the edges of the Chasm. They were originally used to airlift debris out of Stonera's strip mines with their levitational tails, but now stand guard over the perimeter in a statue-like state, hibernating to conserve their energy until a threat is detected. When awoken, Terragoyles rise high into the sky, using their tails to levitate boulders and fling them like great flying catapults across the Chasm beneath them or to carpet bomb intruders with strafing runs of gravel and rock as they soar overhead.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "",
+      "specialAttackRating": "",
+      "standardDefenseRating": "high",
+      "specialDefenseRating": "",
+      "speedRating": "",
+      "evasionRating": "low",
+      "staminaRating": "",
+      "recoveryRating": ""
+    },
+    "traits": {
+      "canFly": true,
+      "attackRange": "medium"
+    }
+  },
+  {
+    "name": "Hypnopet",
+    "id": "00028",
+    "type": "Psychic",
+    "planet": "Telypso",
+    "height": "14 in / 35 cm",
+    "weight": "28 lbs / 13 kg",
+    "description": "Hypnopets resemble glowing, golden-furred bunny rabbits with a single color-changing unicorn horn atop their heads. They were created by the Telypso Generator as service animals and therapists for the insane Vallerii imprisoned on the world, where their natural empathic healing abilities served to balance and treat patients. When their horn begins to pulse and swirl with psychedelic color, it hypnotizes others and locks them in a trance, which was useful for sedating patients when they entered into dangerous bouts of mania. With the Nemesis Plague reducing the patient population of Telypso, many Hypnopets have taken to the stars as healers, though some have been forced into service by King Kozrak, who uses their hypnotic abilities as crowd control on rebellious worlds.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "low",
+      "specialAttackRating": "",
+      "standardDefenseRating": "",
+      "specialDefenseRating": "",
+      "speedRating": "",
+      "evasionRating": "",
+      "staminaRating": "",
+      "recoveryRating": "high"
+    },
+    "traits": {
+      "canFly": false,
+      "attackRange": "medium"
+    }
+  },
+  {
+    "name": "Drilltail",
+    "id": "00029",
+    "type": "Sand",
+    "planet": "Endessa",
+    "height": "28 in /  71 cm",
+    "weight": "65 lbs / 30 kg",
+    "description": "Dog-sized, scorpion-like creatures, Drilltails were originally used by wildcatters who lacked the funding to employ larger drilling Xalians like the Frackworm. Drilltails use their small, stinger-like drills to quickly tunnel through the earth, darting in and out of the surface as they hunt for prey to ambush with their sharp, scissor-like claws.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "medium",
+      "specialAttackRating": "",
+      "standardDefenseRating": "",
+      "specialDefenseRating": "",
+      "speedRating": "",
+      "evasionRating": "high",
+      "staminaRating": "",
+      "recoveryRating": ""
+    },
+    "traits": {
+      "canFly": false,
+      "attackRange": "low"
     }
   }
 ]

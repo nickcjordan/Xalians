@@ -332,7 +332,25 @@ class Home extends React.Component {
 		// .set('#xalian-generator-link', { strokeWidth: '2px', stroke: '2px #80ffb0' })
 		// .to('#xalian-generator-link>*', { drawSVG: '50% 50%', duration: 1, stroke: '#80ffb0', strokeWidth: '2px' });
 
+
+		// PIN STORY TO SCREEN AS YOU SCROLL THROUGH
+		ScrollTrigger.create({
+			trigger: '#background-story-subsection',
+				start: 'center center',
+				pin: true
+		});
+
+		ScrollTrigger.create({
+			trigger: '#galaxy-story-subsection',
+				start: 'center center',
+				pin: true
+		});
 		
+		ScrollTrigger.create({
+			trigger: '#tokens-story-subsection',
+				start: 'center center',
+				pin: true
+		});
 
 	
 	}
@@ -436,6 +454,92 @@ class Home extends React.Component {
 								</Row>
 							</div>
 						</section>
+
+
+
+						<section id="story-section" >
+							<Container id="background-story-subsection" style={{ marginBottom: '50px' }}>
+								<div className="story-splash-section">
+
+									<h3>The Story</h3>
+									<Row className="">
+										<Col sm={true} >
+											<h6 className="story-text">
+												For thousands of years, the ancient race known as the Vallerii dominated the galaxy of Xalia. With their god-like mastery of biotechnology, they birthed the first Xalians – bioengineered organisms designed to thrive in Xalia’s most extreme environments - and forged an empire that would come to span the stars.
+											</h6>
+											<h6 className="story-text">
+												But the high technology of the Vallerii would prove to be their downfall when they released APEX – the galaxy’s first artificial intelligence. APEX rapidly infected Xalian Generators across Vallerii space and turned the Xalians against their masters in a centuries-long interplanetary assault that would come to be known as the End Wars.
+											</h6>
+											<h6 className="story-text">
+												The wars have long since ended, but the destruction they caused has forever changed the galaxy. The Vallerii are now all but wiped out, having been ravaged by the Nemesis Plague, a virulent bioweapon designed by APEX to target the genome of the Vallerii and their Xalian servants alike.
+											</h6>
+											<h6 className="story-text">
+												With the plague burning through the galaxy, few planets are safe. As a result, most life forms have gathered to the capital planet of Valleron, home to their only hope – an ancient Vallerii device known as the Mercurius Machine, which is said to be able to birth a new generation of Xalians immune to APEX’s apocalyptic designs.
+											</h6>
+										</Col>
+
+									</Row>
+								</div>
+							</Container>
+
+							<Container id="galaxy-story-subsection" style={{ marginBottom: '50px' }}>
+								<div className="story-splash-section">
+
+									<h3>The Galaxy of Xalia</h3>
+									<Row className="">
+										<Col sm={true} >
+											<h6 className="story-text">
+											Xalia is home to a wide range of powerful, bioengineered creatures originating from extreme worlds all across the galaxy. The capitol planet of Valleron is now controlled by the mad and tyrannous King Kozrak, one of the last of the Vallerii race. Using his god-like knowledge of the Mercurius Machine, he has seized control of the galaxy, ruling from Valleron with an iron fist. 
+											</h6>
+											<h6 className="story-text">
+											Recently, the king has announced plans for a galactic tournament, promising the winning faction access to a treasure trove of the miraculous output of the Mercurius Machine – the Scrambler Tokens that serve as the last hope for the continuance of Xalian life in the galaxy. In order to compete in the king’s tournament, factions must first prove to him they are worthy. 
+											</h6>
+											<h6 className="story-text">
+											Only the strongest factions will survive...
+											</h6>
+										</Col>
+
+									</Row>
+								</div>
+							</Container>
+
+							<Container id="tokens-story-subsection" style={{ marginBottom: '50px' }}>
+								<div className="story-splash-section">
+
+									<h3>The Tournament & Tokens</h3>
+									<Row className="">
+										<Col sm={true} >
+											<h6 className="story-text">
+											King Kozrak has organized battles all across Xalia for factions to compete to prove they are worthy of a spot in the tournament. Factions must select a team of 6 to compete in each battle, and the winning faction will earn Scrambler Tokens. The more victories a faction has, the more proof of a faction’s power.
+											</h6>
+											<h6 className="story-text">
+											By scrambling and encrypting the genome of a Xalian design, Scrambler Tokens avert the killing gaze of the Nemesis Plague. Thanks to APEX, they are now the only way to safely generate new Xalians. 
+											</h6>
+											<h6 className="story-text">
+											As a faction earns tokens, they can spend these tokens on new Xalians to add to the faction. Each new Xalian has a unique set of traits, abilities, and skill levels. 
+											</h6>
+											<h6 className="story-text">
+											Based on these stats, the Xalian will be assigned an appropriate battle fee. To ensure a competitive match, King Kozrak has imposed a battle fee limit. For a team to be eligible for battle, the combined battle fee of the team must not exceed the battle fee limit.
+											</h6>
+										</Col>
+
+									</Row>
+								</div>
+							</Container>
+
+
+
+						</section>
+
+
+
+
+
+
+
+
+
+
 						{/* <div id="splash-page-spaceship-window-animation" className="splash-page-spaceship-window-animation debug-box"> */}
 							{/* <div className="spaceship-animation-window-panel-wrapper" style={{ left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max }}> */}
 								{/* <SpaceshipWindowSVG className="debug-box" id="spaceship-window-animation-svg" style={{ left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max }} /> */}
@@ -478,14 +582,14 @@ class Home extends React.Component {
 								<Row className="team-row">
 									<Col sm={true} className="d-flex">
 										<div className="member">
-											<div className="member-img">
+											{/* <div className="member-img">
 												<img src="assets/img/background/vault.jpg" className="img-fluid" alt=""></img>
 												<div className="social">
 													<a href="https://twitter.com/KingKozrak">
 														<i className="bi bi-twitter"></i>
 													</a>
 												</div>
-											</div>
+											</div> */}
 											<div className="member-info">
 												<h4>Doctor J</h4>
 												<span className="underline">Xalian Geneticist</span>
@@ -496,14 +600,14 @@ class Home extends React.Component {
 
 									<Col sm={true} className="d-flex">
 										<div className="member">
-											<div className="member-img">
+											{/* <div className="member-img">
 												<img src="assets/img/background/valleron.jpg" className="img-fluid" alt=""></img>
 												<div className="social">
 													<a href="">
 														<i className="bi bi-twitter"></i>
 													</a>
 												</div>
-											</div>
+											</div> */}
 											<div className="member-info">
 												<h4>Captain M</h4>
 												<span className="underline">Xalian Astrophysicist</span>
@@ -514,9 +618,9 @@ class Home extends React.Component {
 
 									<Col sm={true} className="d-flex">
 										<div className="member">
-											<div className="member-img">
+											{/* <div className="member-img">
 												<img src="assets/img/background/castle.jpg" className="img-fluid" alt=""></img>
-											</div>
+											</div> */}
 											<div className="member-info">
 												<h4>Professor V</h4>
 												<span className="underline">Cosmic Librarian</span>
@@ -527,9 +631,9 @@ class Home extends React.Component {
 
 									<Col sm={true} className="d-flex">
 										<div className="member">
-											<div className="member-img">
+											{/* <div className="member-img">
 												<img src="assets/img/background/arena.png" className="img-fluid" alt=""></img>
-											</div>
+											</div> */}
 											<div className="member-info">
 												<h4>Unknown Human</h4>
 												<span className="underline">Xalian Researcher</span>

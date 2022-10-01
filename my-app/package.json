@@ -1,6 +1,6 @@
 {
-  "name": "my-app",
-  "version": "0.1.0",
+  "name": "xalians",
+  "version": "0.0.1",
   "private": true,
   "dependencies": {
     "@aws-amplify/core": "^4.3.14",
@@ -24,22 +24,30 @@
     "react-bootstrap": "^2.0.3",
     "react-dom": "latest",
     "react-gsap": "^3.2.1",
+    "react-inlinesvg": "^3.0.1",
     "react-redux": "^8.0.1",
     "react-router-dom": "^5.3.0",
     "react-scripts": "latest",
     "react-tsparticles": "^1.41.2",
     "recharts": "^2.1.8",
     "snapsvg": "^0.5.1",
+    "source-map-explorer": "^2.5.3",
     "state-pool": "^0.6.0",
     "three": "^0.138.0",
     "uuid": "^8.3.2",
     "web-vitals": "^1.0.1"
   },
+  "browser": {
+    "fs": false,
+    "path": false,
+    "os": false
+  },
   "scripts": {
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "npm run copy-js && npm run copy-json && react-scripts start",
     "build": "react-scripts build",
-    "build-deploy": "npm run copy-js && npm run copy-json && npm run build && aws s3 sync build s3://xalians.com",
-    "deploy": "npm run build && aws s3 sync build s3://xalians.com",
+    "build-deploy": "npm run copy-js && npm run copy-json && npm run build && aws s3 sync build s3://xalians.com --delete",
+    "deploy": "aws s3 sync build s3://xalians.com --delete",
     "copy-json": "cp -rf ../lambda/src/json src",
     "copy-js": "cp -rf ../lambda/src/constants src && cp -rf ../lambda/src/gameplay src",
     "test": "react-scripts test",
@@ -64,6 +72,20 @@
     ]
   },
   "devDependencies": {
-    "@redux-devtools/core": "^3.12.0"
+    "@redux-devtools/core": "^3.12.0",
+    "@webpack-cli/generators": "^2.5.0",
+    "css-loader": "^6.7.1",
+    "html-webpack-plugin": "^5.5.0",
+    "mini-css-extract-plugin": "^2.6.1",
+    "prettier": "^2.7.1",
+    "sass": "^1.55.0",
+    "sass-loader": "^13.0.2",
+    "style-loader": "^3.3.1",
+    "ts-loader": "^9.4.1",
+    "typescript": "^4.8.4",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.11.1",
+    "workbox-webpack-plugin": "^6.5.4"
   }
 }
