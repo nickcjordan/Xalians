@@ -34,7 +34,26 @@ const readline = require('readline');
 
 
 // print all the xalians
-printAllTheXalians();
+// printAllTheXalians();
+
+writeImportLine();
+
+function writeImportLine() {
+  species.forEach(s => {
+
+    let lowercaseName = s.name;
+    // console.log(`import { ReactComponent as ${capitalizeFirstLetter(s.name)}SVG } from './${s.name.toLowerCase()}.svg';`);
+
+    console.log(`if (speciesName == '${s.name.toLowerCase()}') { return <${s.name}SVG style={this.props.style} className={this.props.className}/> }`);
+
+
+  });
+}
+
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 
 function printAllTheXalians() {
   let ids = [];

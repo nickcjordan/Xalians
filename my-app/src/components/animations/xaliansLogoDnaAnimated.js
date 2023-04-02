@@ -10,9 +10,13 @@ gsap.registerPlugin(MorphSVGPlugin, DrawSVGPlugin);
 class XaliansLogoDnaAnimated extends React.Component {
 
 	componentDidMount() {
-		document.addEventListener('DOMContentLoaded', function () {
+		if (document.readyState !== 'loading') {
 			morph();
-		});
+		} else {
+			document.addEventListener('DOMContentLoaded', function () {
+				morph();
+			});
+		}
 	}
 	
 	render() {

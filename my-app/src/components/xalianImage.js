@@ -9,6 +9,10 @@ class XalianImage extends React.Component {
 		return require(`../svg/species/${name.toLowerCase()}.svg`)?.default;
 	}
 
+	// getImageLocationFromSpecies(name) {
+	// 	return require(`./img/species/${name.toLowerCase()}.png`)?.default;
+	// }
+
 	getTypeColorClassName(type) {
 		var x = this.props.colored ? ` ${type.toLowerCase()}-color ` : '';
 		x = x + (this.props.bordered ? ` xalian-image-bordered ` : '');

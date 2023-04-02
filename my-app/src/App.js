@@ -1,27 +1,28 @@
 import './App.css';
-import Home from './pages/home';
-import ProjectPage from './pages/projectPage';
-import FAQPage from './pages/faqPage';
-import PlanetPage from './pages/planetPage';
-import SpeciesPage from './pages/speciesPage';
-import SpeciesDetailPage from './pages/speciesDetailPage';
-import DesignerPage from './pages/designerPage';
-import GlossaryPage from './pages/glossaryPage';
-import GeneratorPage from './pages/generatorPage';
-import UserAccountPage from './pages/userAccountPage';
-import UserDetailsPage from './pages/userDetailsPage';
-import CommunityPage from './pages/communityPage';
-import Sandbox from './pages/sandbox';
-import TestPage from './pages/testPage';
-import Sandboxtwo from './pages/sandboxtwo';
-import Sandboxthree from './pages/sandboxthree';
-import React from "react";
+// import Home from './pages/home';
+// import ProjectPage from './pages/projectPage';
+// import FAQPage from './pages/faqPage';
+// import PlanetPage from './pages/planetPage';
+// import SpeciesPage from './pages/speciesPage';
+// import SpeciesDetailPage from './pages/speciesDetailPage';
+// import DesignerPage from './pages/designerPage';
+// import GlossaryPage from './pages/glossaryPage';
+// import GeneratorPage from './pages/generatorPage';
+// import UserAccountPage from './pages/userAccountPage';
+// import UserDetailsPage from './pages/userDetailsPage';
+// import CommunityPage from './pages/communityPage';
+// import Sandbox from './pages/sandbox';
+// import TestPage from './pages/testPage';
+// import Sandboxtwo from './pages/sandboxtwo';
+// import Sandboxthree from './pages/sandboxthree';
+// import MatchCardGamePage from './pages/games/matchCardGamePage';
+// import PhysicsGamePage from './pages/games/physicsGamePage';
+// import TrainingGroundsPage from './pages/trainingGroundsPage';
+// import DuelPage from './pages/games/duelPage';
+
 import XalianNavbar from './components/navbar';
 import Container from 'react-bootstrap/Container';
-import MatchCardGamePage from './pages/games/matchCardGamePage';
-import PhysicsGamePage from './pages/games/physicsGamePage';
-import TrainingGroundsPage from './pages/trainingGroundsPage';
-import DuelPage from './pages/games/duelPage';
+import React, { Suspense, lazy } from 'react';
 
 
 import {
@@ -36,11 +37,31 @@ import awsconfig from './aws-exports';
 
 import { Provider } from 'react-redux'
 import store from './store/store';
-import DuelStartPage from './pages/games/duelStartPage';
+
+
+const Home = lazy(() => import('./pages/home'));
+const ProjectPage = lazy(() => import('./pages/projectPage'));
+const FAQPage = lazy(() => import('./pages/faqPage'));
+const PlanetPage = lazy(() => import('./pages/planetPage'));
+const SpeciesPage = lazy(() => import('./pages/speciesPage'));
+const SpeciesDetailPage = lazy(() => import('./pages/speciesDetailPage'));
+const DesignerPage = lazy(() => import('./pages/designerPage'));
+const GlossaryPage = lazy(() => import('./pages/glossaryPage'));
+const GeneratorPage = lazy(() => import('./pages/generatorPage'));
+const UserAccountPage = lazy(() => import('./pages/userAccountPage'));
+const UserDetailsPage = lazy(() => import('./pages/userDetailsPage'));
+const CommunityPage = lazy(() => import('./pages/communityPage'));
+const Sandbox = lazy(() => import('./pages/sandbox'));
+const TestPage = lazy(() => import('./pages/testPage'));
+const Sandboxtwo = lazy(() => import('./pages/sandboxtwo'));
+const Sandboxthree = lazy(() => import('./pages/sandboxthree'));
+const MatchCardGamePage = lazy(() => import('./pages/games/matchCardGamePage'));
+const PhysicsGamePage = lazy(() => import('./pages/games/physicsGamePage'));
+const TrainingGroundsPage = lazy(() => import('./pages/trainingGroundsPage'));
+const DuelPage = lazy(() => import('./pages/games/duelPage'));
+const DuelStartPage = lazy(() => import('./pages/games/duelStartPage'));
 
 Amplify.configure(awsconfig);
-
-
 
 class App extends React.Component {
 
@@ -52,6 +73,7 @@ class App extends React.Component {
       
       <React.Fragment>
         <Router>
+          <Suspense fallback={<div>Loading...</div>}>
           <div>
             <Switch>
               <Route exact path="/"><Home /></Route>
@@ -83,6 +105,7 @@ class App extends React.Component {
               <Route exact path="/test"><TestPage /></Route>
             </Switch>
           </div>
+          </Suspense>
         </Router>
       </React.Fragment>
       </Provider>

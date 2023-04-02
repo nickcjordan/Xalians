@@ -2,39 +2,21 @@ import React from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import Image from 'react-bootstrap/Image';
 import Stack from 'react-bootstrap/Stack';
 import Container from 'react-bootstrap/Container';
 import XalianNavbar from '../components/navbar';
-import ThemedSceneDiv from '../components/views/themedSceneDiv';
-// import { Reveal, Tween, ScrollTrigger, Controls, Timeline, PlayState } from 'react-gsap';
-import * as animations from '../components/animations/fadeAnimation';
 import GSDevTools from 'gsap/GSDevTools';
 import SplashGalaxyBackground from '../components/views/splashGalaxyBackground';
-// import XaliansLogoAnimatedSVG from '../svg/logo/xaliansLogoAnimatedSVG';
-import { ReactComponent as XaliansLogoSVG } from '../svg/logo/xalians_logo.svg';
 import SplashBackgroundAnimatedSVG from '../svg/background/splashBackgroundAnimatedSVG';
-import { useState, useEffect } from 'react';
-import { ReactComponent as SpaceshipWindowSVG } from '../svg/animations/xalian_spaceship_window.svg'
-import { ReactComponent as SpaceshipComputerScreenGridSVG } from '../svg/animations/spaceship_computer_screen_grid.svg'
-import { ReactComponent as SpaceshipComputerScreenSVG } from '../svg/animations/spaceship_computer_screen.svg'
-// import { ReactComponent as SpaceshipComputerScreenInfoPanelSVG } from '../svg/animations/spaceship_computer_screen_info_panel1.svg'
-// import { ReactComponent as SpaceshipComputerScreenTitlePanelSVG } from '../svg/animations/spaceship_computer_screen_title_panel.svg'
-import { ReactComponent as SpaceshipWallSVG } from '../svg/animations/spaceship_wall.svg'
-import { IconMaximize } from '@aws-amplify/ui-react';
+import { useState } from 'react';
 import Carousel from 'react-bootstrap/Carousel'
 import species from '../json/species.json';
-import XalianSpeciesBadge from '../components/xalianSpeciesBadge';
 import XalianImage from '../components/xalianImage';
-import XalianSpeciesRowView from '../components/views/xalianSpeciesRowView';
 import XalianStatRatingChart from '../components/xalianStatRatingChart';
 import XalianInfoBox from '../components/xalianInfoBox';
 // import spaceshipComputerScreenTitlePanel from '../svg/animations/spaceship_computer_screen_title_panel.svg';
 import GeneratorAnimation from '../components/animations/generatorAnimation';
-import textFit from '../utils/textFit';
-import ComputerScreenContent from '../components/animations/computerScreenContent';
 import XaliansLogoDnaAnimated from '../components/animations/xaliansLogoDnaAnimated.js'
-import fitty from 'fitty';
 
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -44,12 +26,12 @@ import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { TextPlugin } from 'gsap/TextPlugin';
 import { EasePack } from 'gsap/EasePack';
 import { ExpoScaleEase } from 'gsap/EasePack';
-import MorphSVGPlugin from 'gsap/MorphSVGPlugin';
+import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin';
 
 gsap.registerPlugin(ScrollTrigger, TextPlugin, EasePack, ScrollToPlugin, DrawSVGPlugin, ScrambleTextPlugin, GSDevTools, ExpoScaleEase, MorphSVGPlugin);
 // GSDevTools.create();
-const reqSvgs = require.context ( '../svg/species', true, /\.svg$/ );
-const svgs = reqSvgs.keys () .map ( path => ({ path, file: reqSvgs ( path ) }) );
+// const reqSvgs = require.context ( '../svg/species', true, /\.svg$/ );
+// const svgs = reqSvgs.keys () .map ( path => ({ path, file: reqSvgs ( path ) }) );
 
 class Home extends React.Component {
 	state = {
@@ -100,48 +82,48 @@ class Home extends React.Component {
 	}
 
 	setInitialStateContent = (ind = 0) => {
-		let contentArray = this.buildComputerScreenContent();
-		let content = contentArray[ind];
+		// let contentArray = this.buildComputerScreenContent();
+		// let content = contentArray[ind];
 		this.setState({ 
 			width: window.innerWidth, 
 			height: window.innerHeight, 
-			computerScreenContentArray: contentArray,
+			// computerScreenContentArray: contentArray,
 		}, () => {
-			this.updateScreenContentState(0, contentArray);
+			// this.updateScreenContentState(0, contentArray);
 		});
 	}
 
 
-	buildComputerScreenContent = () => {
-		var content = [];
-		content.push({
-			title: '1',
-			svg: <GeneratorAnimation/>,
-			textElement: <React.Fragment>
-				TEST ONE
-			</React.Fragment>
-		});
-		content.push({
-			title: '2',
-			svg: <SplashBackgroundAnimatedSVG/>,
-			textElement: <React.Fragment>
-				TEST TWO
-			</React.Fragment>
-		});
-		content.push({
-			title: '3',
-			svg: <GeneratorAnimation/>,
-			textElement: <React.Fragment>
-				TEST <span className='emphasized-text'>THREE</span> 
-			</React.Fragment>
-		});
-		content.push({
-			title: '4',
-			svg: <SplashBackgroundAnimatedSVG/>,
-			textElement: <React.Fragment>
-				TEST <span className='emphasized-text'>FOUR</span> 
-			</React.Fragment>
-		});
+	// buildComputerScreenContent = () => {
+		// var content = [];
+		// content.push({
+		// 	title: '1',
+		// 	svg: <GeneratorAnimation/>,
+		// 	textElement: <React.Fragment>
+		// 		TEST ONE
+		// 	</React.Fragment>
+		// });
+		// content.push({
+		// 	title: '2',
+		// 	svg: <SplashBackgroundAnimatedSVG/>,
+		// 	textElement: <React.Fragment>
+		// 		TEST TWO
+		// 	</React.Fragment>
+		// });
+		// content.push({
+		// 	title: '3',
+		// 	svg: <GeneratorAnimation/>,
+		// 	textElement: <React.Fragment>
+		// 		TEST <span className='emphasized-text'>THREE</span> 
+		// 	</React.Fragment>
+		// });
+		// content.push({
+		// 	title: '4',
+		// 	svg: <SplashBackgroundAnimatedSVG/>,
+		// 	textElement: <React.Fragment>
+		// 		TEST <span className='emphasized-text'>FOUR</span> 
+		// 	</React.Fragment>
+		// });
 
 		// content.push({
 		// 	title: '2Creatures of Xalia',
@@ -186,8 +168,8 @@ class Home extends React.Component {
 		// 	image: '',
 		// 	text: 'something about the planets - check out jasons stuff ',
 		// });
-		return content;
-	};
+		// return content;
+	// };
 
 	setSize = (w, h) => {
 		let max = Math.max(w, h);
@@ -684,31 +666,33 @@ function ScrollingCarousel() {
 
 	species.forEach( s => {
 		speciesMap[s.name.toLowerCase()] = s;
+		var img = buildImage(s);
+		items.push(img);
 	})
 
-	svgs.forEach( xalianSvg => {
-		let path = xalianSvg.path;
-		let speciesName = path.substring(2, path.length - 4);
-		let species = speciesMap[speciesName];
-		if (species) {
-			var img = buildImage(xalianSvg, species);
-			items.push(img);
-		}
-	})
+	// svgs.forEach( xalianSvg => {
+	// 	let path = xalianSvg.path;
+	// 	let speciesName = path.substring(2, path.length - 4);
+	// 	let species = speciesMap[speciesName];
+	// 	if (species) {
+	// 		var img = buildImage(species);
+	// 		items.push(img);
+	// 	}
+	// })
 
-	function buildImage(svg, species) {
+	function buildImage(s) {
 		return (
 			<Carousel.Item className="xalian-svg-carousel-item">
 				<div className="splash-xalian-stat-row-view centered-view">
 					<Row style={{ width: '100%' }}>
 						<Col className="vertically-center-contents" xs={6} lg={true}>
-							<XalianInfoBox hideId species={species} />
+							<XalianInfoBox hideId species={s} />
 						</Col>
 						<Col className="vertically-center-contents xalian-image-wrapper" xs={6} lg={true}>
-							<XalianImage bordered colored shadowed speciesName={species.name} primaryType={species.type} moreClasses="xalian-image-in-row xalian-image splash-xalian-image" />
+							<XalianImage bordered colored shadowed speciesName={s.name} primaryType={s.type} moreClasses="xalian-image-in-row xalian-image splash-xalian-image" />
 						</Col>
 						<Col className="vertically-center-contents" xs={12}>
-							<XalianStatRatingChart axisLabelColor={'white'} includeLabel labelFontSize={'8pt'} barSize={20} stats={species.statRatings} abbreviatedNames moreClasses="ultra-condensed-chart-div" />
+							<XalianStatRatingChart axisLabelColor={'white'} includeLabel labelFontSize={'8pt'} barSize={20} stats={s.statRatings} abbreviatedNames moreClasses="ultra-condensed-chart-div" />
 						</Col>
 					</Row>
 				</div>
