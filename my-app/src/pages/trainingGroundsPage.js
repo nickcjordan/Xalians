@@ -34,8 +34,8 @@ class TrainingGroundsPage extends React.Component {
     }
 
     change = () => {
-        let g = this.state.games[this.state.selectedGameIndex];
-        this.setState({ selectedGameIndex: 1, selectedGame: g })
+        let nextIndex = (this.state.selectedGameIndex + 1) % this.state.games.length;
+        this.setState({ selectedGameIndex: nextIndex, selectedGame: this.state.games[nextIndex] })
     }
 
     render() {

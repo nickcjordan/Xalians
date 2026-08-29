@@ -27,8 +27,8 @@ class PlanetPage extends React.Component {
           });
 
         var list = [];
-        for (var ind in planets) {
-            const p = planets[ind];
+        for (var ind in sortedPlanets) {
+            const p = sortedPlanets[ind];
             list.push(<PlanetTable planet={p}/>);
         }
         return list;

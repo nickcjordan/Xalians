@@ -121,7 +121,8 @@ class DuelPage extends React.Component {
 			let playerPieces = [];
 			let opponentPieces = [];
 
-			let samples = retrievalUtil.getMockXalianList();
+			// copy the shared module array so shuffling/popping doesn't destroy it for later renders/games
+			let samples = [...retrievalUtil.getMockXalianList()];
 			gsap.utils.shuffle(samples);
 
 			while (playerPieces.length < xaliansPerTeam && samples.length > 0) {

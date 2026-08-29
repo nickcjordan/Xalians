@@ -139,11 +139,6 @@ class AuthButtonGroup extends React.Component {
     }
 
     render() {
-        let list = [];
-        for (const key in this.props.stats) {
-            let val = this.props.stats[key];
-            list.push(this.buildMoveRow(val));
-        }
         return (
             <React.Fragment>
                 {this.state.loggedInUser &&

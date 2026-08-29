@@ -7,6 +7,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import * as valueTranslator from '../utils/valueTranslator';
+import * as constants from '../constants/constants';
 
 class XalianStatChart extends React.Component {
 	state = {};
@@ -43,7 +44,9 @@ class XalianStatChart extends React.Component {
 		let translated = this.props.abbreviatedNames ? valueTranslator.statFieldToDescriptionCondensed(key) : valueTranslator.statFieldToDescription(key);
 		let rangeVal = valueTranslator.statRangeToScaledVal(stat.range);
 		let rangeName = valueTranslator.statFieldToDescription(stat.range);
-		let percentageText = this.props.longDescription ? stat.points + ' Points, ' + stat.initialPointAllocationPercentage + '%' : stat.points;
+		let percentageText = this.props.longDescription ? stat.points + ' Points, ' + stat.percentage + '%' : stat.points;
+		let maxPoints = constants.STAT_POINT_MAX;
+		let potentialPoints = Math.max(0, maxPoints - stat.points);
 		return {
 			statName: key,
 			statLabel: translated,
@@ -51,8 +54,8 @@ class XalianStatChart extends React.Component {
 			rangeNumber: rangeVal,
 			points: stat.points,
 			percentageText: percentageText,
-			potentialPoints: (stat.maxPoints - stat.points),
-			potentialPointsLabel: (stat.maxPoints - stat.points).toString()
+			potentialPoints: potentialPoints,
+			potentialPointsLabel: potentialPoints.toString()
 		};
 	};
 

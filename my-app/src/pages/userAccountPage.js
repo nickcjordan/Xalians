@@ -35,7 +35,11 @@ class UserAccountPage extends React.Component {
 				let u = authUtil.buildAuthState(data);
 				this.setState({ loggedInUser: u });
 				this.updateXaliansState(u.username);
+			} else {
+				this.setState({ isLoading: false, message: 'Sign in to see your Xalian Faction' });
 			}
+		}).catch(() => {
+			this.setState({ isLoading: false, message: 'Sign in to see your Xalian Faction' });
 		});
 	}
 
@@ -51,7 +55,7 @@ class UserAccountPage extends React.Component {
 				});
 			})
 			.catch((e) => {
-				this.setState({ message: `ERROR : ${JSON.stringify(e, null, 2)}` });
+				this.setState({ isLoading: false, message: 'Could not load your Xalians — please try again later' });
 			});
 	};
 
@@ -76,16 +80,13 @@ class UserAccountPage extends React.Component {
 
 	verifyRemoveXalianCallback = () => {
 		let deleted = this.state.xalianToDelete;
-		console.log(deleted);
-		let rows = this.state.xalianRows;
-		rows.forEach( row => {
-			let x = row.props.xalian;
-			if (x.xalianId == deleted.xalianId) {
-				rows.splice(rows.indexOf(row), 1);
-			}
-		})
-
-		this.setState({ verifyRemoveXalianModalShow: false, xalianToDelete: false });
+		let remaining = (this.state.xalians || []).filter((x) => x.xalianId != deleted.xalianId);
+		this.setState({
+			xalians: remaining,
+			xalianRows: this.state.xalianRows.filter((row) => row.props.xalian.xalianId != deleted.xalianId),
+			verifyRemoveXalianModalShow: false,
+			xalianToDelete: false,
+		});
 	};
 
 	closeModalCallback = () => {
@@ -102,6 +103,7 @@ class UserAccountPage extends React.Component {
 						<Row className='account-page-xalians-title vertically-center-contents'>
 							<h1>Your Xalian Faction</h1>
 						</Row>
+						{this.state.message && <Row><p style={{ textAlign: 'center' }}>{this.state.message}</p></Row>}
 						<Row className="">{this.state.xalianRows}</Row>
 					</Container>
 

@@ -2,11 +2,11 @@ const delegate = require('./xalianDbDelegate.js');
 const builder = require('./responseBuilder.js');
 
 module.exports.createXalian = (event, context, callback) => {
-	const xalian = JSON.parse(event.body);
 	console.log(`inbound event: ` + JSON.stringify(event, null, 2));
-	console.log(`inbound xalian: ` + JSON.stringify(xalian, null, 2));
 
 	try {
+		const xalian = JSON.parse(event.body);
+		console.log(`inbound xalian: ` + JSON.stringify(xalian, null, 2));
 		delegate.createXalian(
 			xalian,
 			function onSuccess() {
@@ -14,19 +14,20 @@ module.exports.createXalian = (event, context, callback) => {
 			},
 			function onFail(error) {
 				console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
-				callback(builder.buildError(err));
+				callback(null, builder.buildError(error));
 			}
 		);
 	} catch (e) {
-		callback(builder.buildError(e));
+		callback(null, builder.buildError(e));
 	}
 
 };
 
 module.exports.retrieveXalian = (event, context, callback) => {
-  if (!event.queryStringParameters.xalianId) {
-    callback(null, builder.buildXalianError('BAD_REQUEST', 'No xalianId found in query string parameters'));
-  }
+	if (!event.queryStringParameters || !event.queryStringParameters.xalianId) {
+		callback(null, builder.buildXalianError('BAD_REQUEST', 'No xalianId found in query string parameters'));
+		return;
+	}
 
 	let xalianIds = event.queryStringParameters.xalianId.split(',');
 
@@ -44,8 +45,8 @@ module.exports.retrieveXalian = (event, context, callback) => {
 				callback(null, builder.buildXalianError('XALIAN_NOT_FOUND', 'Did not find xalian with xaianId=' + xalianId));
 			},
 			function onFail(error) {
-				console.log(`ERROR :: ${JSON.stringify(err, null, 2)}`);
-				callback(builder.buildError(err));
+				console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
+				callback(null, builder.buildError(error));
 			}
 		);
 
@@ -59,11 +60,15 @@ module.exports.retrieveXalian = (event, context, callback) => {
 			},
 			function onFail(error) {
 				console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
-				callback(builder.buildError(err));
+				callback(null, builder.buildError(error));
 			}
 		);
 	}
 };
+
+// GET /db/xalians is wired to this handler in main.tf; it accepts the same
+// comma-separated xalianId query param as retrieveXalian
+module.exports.retrieveXalianBatch = module.exports.retrieveXalian;
 
 
 

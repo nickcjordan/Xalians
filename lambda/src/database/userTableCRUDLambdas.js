@@ -34,7 +34,7 @@ module.exports.retrieveXalianUser = (event, context, callback) => {
 						},
 						function onFail(error) {
 							console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
-							callback(builder.buildError(err));
+							callback(null, builder.buildError(error));
 						}
 						);
 					} else {
@@ -52,12 +52,12 @@ module.exports.retrieveXalianUser = (event, context, callback) => {
 				callback(null, builder.buildXalianError('USER_NOT_FOUND', 'Did not find user with userId=' + userId));
 			},
 			function onFail(error) {
-				console.log(`ERROR :: ${JSON.stringify(err, null, 2)}`);
-				callback(builder.buildError(error));
+				console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
+				callback(null, builder.buildError(error));
 			}
 		);
 	} catch (e) {
-		callback(builder.buildError(e));
+		callback(null, builder.buildError(e));
 	}
 };
 
@@ -74,8 +74,8 @@ module.exports.createXalianUser = (event, context, callback) => {
 				callback(undefined, builder.buildSuccess());
 			},
 			function onFail(error) {
-				console.log(`ERROR :: ${JSON.stringify(err, null, 2)}`);
-				callback(builder.buildError(error));
+				console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
+				callback(null, builder.buildError(error));
 			}
 		);
 	} catch (e) {
@@ -121,7 +121,7 @@ module.exports.createXalianUser = (event, context, callback) => {
 // 				},
 // 				function onFail(error) {
 // 					console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
-// 					callback(builder.buildError(error));
+// 					callback(null, builder.buildError(error));
 // 				}
 // 			);
 // 		},
@@ -130,7 +130,7 @@ module.exports.createXalianUser = (event, context, callback) => {
 // 		},
 // 		function onFail(error) {
 // 			console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
-// 			callback(builder.buildError(error));
+// 			callback(null, builder.buildError(error));
 // 		}
 // 	);
 // };
@@ -163,23 +163,23 @@ module.exports.updateXalianUser = (event, context, callback) => {
 				const index = updatedXalianIds.indexOf(request.value);
 				if (index > -1) {
 					updatedXalianIds.splice(index, 1);
-					updateUserXalianIds(request.userId, updatedXalianIds, callback);
+					updateUserXalianIds(userId, updatedXalianIds, callback);
 				} else {
 					callback(null, builder.buildXalianError('XALIAN_NOT_FOUND_IN_USER', 'Did not find xalian with xalianId=' + request.value));
 				}
 			} else if (request.action === 'ADD_XALIAN_ID') {
 				updatedXalianIds.push(request.value);
-				updateUserXalianIds(request.userId, updatedXalianIds, callback);
+				updateUserXalianIds(userId, updatedXalianIds, callback);
 			} else if (request.action === 'ADD_TOKENS') {
 				attributes.tokens =  existingTokens + parseInt(request.value);
-				updateUserAttributes(request.userId, attributes, callback);
+				updateUserAttributes(userId, attributes, callback);
 			} else if (request.action === 'REMOVE_TOKENS') {
 				let tokensToRemove = parseInt(request.value);
 				if (tokensToRemove > existingTokens) {
 					callback(null, builder.buildXalianError('INSUFFICIENT_TOKENS', `User tokens [${existingTokens}] was not enough to remove requested [${tokensToRemove}]`));
 				} else {
 					attributes.tokens =  existingTokens - tokensToRemove;
-					updateUserAttributes(request.userId, attributes, callback);
+					updateUserAttributes(userId, attributes, callback);
 				}
 			} else {
 				callback(null, builder.buildXalianError('UNKNOWN_ACTION', 'Update action [' + request.action + '] is not valid'));
@@ -190,7 +190,7 @@ module.exports.updateXalianUser = (event, context, callback) => {
 		},
 		function onFail(error) {
 			console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
-			callback(builder.buildError(error));
+			callback(null, builder.buildError(error));
 		}
 	);
 };
@@ -205,7 +205,7 @@ function updateUserXalianIds(userId, updatedXalianIds, callback) {
 		},
 		function onFail(error) {
 			console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
-			callback(builder.buildError(error));
+			callback(null, builder.buildError(error));
 		}
 	);
 }
@@ -219,7 +219,7 @@ function updateUserAttributes(userId, updatedAttributes, callback) {
 		},
 		function onFail(error) {
 			console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
-			callback(builder.buildError(error));
+			callback(null, builder.buildError(error));
 		}
 	);
 }

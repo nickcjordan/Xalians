@@ -49,7 +49,7 @@ export function buildAttackActionsWithScore(currentIndex, attacker, G, ctx) {
         attackMoves.push(attack);
     });
     attackMoves.sort(function (a, b) {
-        return a.score < b.score ? -1 : a.score > b.score ? 1 : 0;
+        return a.score > b.score ? -1 : a.score < b.score ? 1 : 0;
     });
 
     if (attackMoves.length > 0) {
@@ -133,13 +133,13 @@ export function buildMoveActionsWithScore(currentIndex, xalian, paths, G, ctx) {
 
     let xalianIdOnTargetFlagIfAny = G.cells[flagIndexToRetrieve];
     let targetFlagIsOpen = xalianIdOnTargetFlagIfAny ? false : true;
-    let targetFlagIsGuardedByEnemy = xalianIdOnTargetFlagIfAny ? enemyState.activeXalianIds.includes[xalianIdOnTargetFlagIfAny] : false;
+    let targetFlagIsGuardedByEnemy = xalianIdOnTargetFlagIfAny ? enemyState.activeXalianIds.includes(xalianIdOnTargetFlagIfAny) : false;
     let targetFlagIsHeldByTeam = flagToRetrieve.holder ? true : false;
     let isHoldingTargetFlag = flagToRetrieve.holder === xalian.xalianId;
     
     let xalianIdOnTeamFlagIfAny = G.cells[flagIndexToGuard];
     let teamFlagIsOpen = xalianIdOnTeamFlagIfAny ? false : true;
-    let teamFlagIsGuardedByTeam = xalianIdOnTeamFlagIfAny ? playerState.activeXalianIds.includes[xalianIdOnTeamFlagIfAny] : false;
+    let teamFlagIsGuardedByTeam = xalianIdOnTeamFlagIfAny ? playerState.activeXalianIds.includes(xalianIdOnTeamFlagIfAny) : false;
     let teamFlagIsHeldByEnemy = flagToGuard.holder ? true : false;
     let isGuardingTeamFlag = currentIndex == flagIndexToGuard;
 
@@ -248,8 +248,8 @@ function scorePathsWhenHoldingTargetFlag(currentIndex, moveActions, G, ctx) {
         }
         let endCoord = grid.map[action.path.endIndex];
         // SCORE :: DISTANCE TO WINNING WITH FLAG
-        let yRowDifference = parseInt(endCoord[1]) - parseInt(startCoord[1]);
-        // let yRowFactor = (duelConstants.BOARD_COLUMN_SIZE * 2) - yRowDifference;
+        // the bot (player 1) scores at row 0, so moving to a LOWER row index is progress
+        let yRowDifference = parseInt(startCoord[1]) - parseInt(endCoord[1]);
         let yRowFactor = yRowDifference;
         action.description += `:: Y ROW DISTANCE FACTOR : +${yRowFactor}`;
         action.score += yRowFactor;
@@ -363,7 +363,7 @@ function scorePathsMovingTowardsTargetFlag(flagIndex, actions, G, ctx) {
         let flagClosenessFactorFromStart = (duelConstants.BOARD_COLUMN_SIZE * 2) - pathToTargetFlagFromMoveStart.spacesMoved;
         let flagClosenessFactorFromEnd = (duelConstants.BOARD_COLUMN_SIZE * 2) - pathToTargetFlagFromMoveResult.spacesMoved;
         let progressTowardsFlag = flagClosenessFactorFromEnd - flagClosenessFactorFromStart;
-        if (flagIndex != action.endIndex) {
+        if (flagIndex != action.path.endIndex) {
             action.description += `:: PROGRESS TOWARDS TARGET FLAG : +${progressTowardsFlag}`;
             action.score += progressTowardsFlag;
         }
@@ -494,7 +494,7 @@ export function buildComboActionsWithScore(currentIndex, attacker, allPaths, G, 
 
     
     comboActions.sort(function (a, b) {
-        return a.score < b.score ? -1 : a.score > b.score ? 1 : 0;
+        return a.score > b.score ? -1 : a.score < b.score ? 1 : 0;
     });
     return comboActions.slice(0, 10);
 }

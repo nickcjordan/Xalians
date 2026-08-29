@@ -231,7 +231,7 @@ class DuelBoardCell extends React.Component {
 						}
 					})
 
-					if (hoverCellIndex) {
+					if (hoverCellIndex != null && hoverCellIndex >= 0) {
 						attackablePathsFromHoverSpot = duelCalculator.calculateAttackablePaths(hoverCellIndex, draggingXalian, props.boardState, props.ctx, false);
 						attackableIndicesFromHoverSpot = attackablePathsFromHoverSpot.map(p => (p.endIndex));
 					}

@@ -41,7 +41,10 @@ if (debug) {console.log(`\ninitial totals:\n\tmaxStatPoints=${totalUnallocatedSt
 
 function selectSpecies(xalian) {
     // return tools.selectRandom(species);
-    return tools.selectRandom(tools.shuffle(species));
+    // deep-copy the selected record: populateStats writes rolled ratings onto the species,
+    // and mutating the shared species.json module state would leak one generation's
+    // ratings into every later generation in the same process (e.g. a warm lambda)
+    return JSON.parse(JSON.stringify(tools.selectRandom(tools.shuffle(species))));
 }
 
 function selectElements(xalian) {
@@ -344,7 +347,9 @@ function generateStatFromRange(xalian, statName) {
 // -- get highest possible category between 'VERY_HIGH', 'HIGH', 'MEDIUM', 'LOW', 'VERY_LOW'
 //      -- range can be limited by remaining points to allocate for a range category  
 function getHighestPossibleRatingValue(maxLeftForCategory, remainingCount) {
-    if (remainingCount == 1) { return maxLeftForCategory; }
+    // cap at VERY_HIGH so pickStatisticalRandomRating recognizes the value; an uncapped
+    // leftover budget (6+) fell through to VERY_LOW, forcing the last stat in a category low
+    if (remainingCount == 1) { return Math.min(maxLeftForCategory, statLevelConstants.levels.VERY_HIGH.pointValue); }
     let numberOfCategoriesToAllocateAfterThisIteration = remainingCount - 1;
     let remainingAmountThatCanBeAllocatedAssumingAllOtherRangesRandomizedToLowest = maxLeftForCategory - (numberOfCategoriesToAllocateAfterThisIteration * statLevelConstants.levels.VERY_LOW.pointValue);
     return Math.min(remainingAmountThatCanBeAllocatedAssumingAllOtherRangesRandomizedToLowest, statLevelConstants.levels.VERY_HIGH.pointValue);

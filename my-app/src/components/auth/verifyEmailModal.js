@@ -32,6 +32,8 @@ class VerifyEmailModal extends React.Component {
             this.setState({ isThinking: false });
             this.props.callback();
             // this.props.onHide();
+        }).catch(e => {
+            this.setState({ isThinking: false, errorMessage: (e && e.message) || 'Verification failed — please check the code and try again' });
         });
     }
 
@@ -39,9 +41,9 @@ class VerifyEmailModal extends React.Component {
         var user = this.state.username || this.props.username
         if (user) {
             authUtil.resendConfirmationCode(user).then(response => {
-                console.log(JSON.stringify(response, null, 2));
-                this.props.callback(response);
-                this.setState({ verificationMessage: 'Email sent!' });
+                this.setState({ verificationMessage: 'Email sent!', errorMessage: null });
+            }).catch(e => {
+                this.setState({ errorMessage: (e && e.message) || 'Could not send a new code — please try again' });
             });
         } else {
             this.setState({ errorMessage: 'Please enter your username' })

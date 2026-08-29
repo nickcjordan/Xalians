@@ -29,7 +29,9 @@ class SmokeEffectBackground extends React.Component {
 	// };
 
 	componentWillUnmount() {
-		// window.removeEventListener('resize', this.updateSize);
+		if (this.smokeInterval) {
+			clearInterval(this.smokeInterval);
+		}
 	}
 
     componentDidMount() {
@@ -71,8 +73,7 @@ class SmokeEffectBackground extends React.Component {
         };
 
         // Once the callback is arranged then set the source of the image
-        // imageObj.src = '${resourcesFolderName}/Smoke.png';
-        imageObj.src = 'http://www.blog.jonnycornwell.com/wp-content/uploads/2012/07/Smoke10.png';
+        imageObj.src = '/assets/img/elements/smoke_particle.png';
 
         let canvasId = this.props.id;
 
@@ -217,7 +218,7 @@ class SmokeEffectBackground extends React.Component {
 
         // If the context is set then we can draw the scene (if not then the browser does not support canvas)
         if (context) {
-            setInterval(function () {
+            this.smokeInterval = setInterval(function () {
                 // Update the scene befoe drawing
                 update();
 
@@ -231,7 +232,7 @@ class SmokeEffectBackground extends React.Component {
 		return (
 			<React.Fragment>
 
-				<canvas id={this.props.id} className="" ></canvas>
+				<canvas id={this.props.id} width={this.props.width || 400} height={this.props.height || 400} className="" ></canvas>
 			</React.Fragment>
 		);
 	}

@@ -47,6 +47,13 @@ class SignInModal extends React.Component {
             this.setState({isThinking: false});
             this.props.callback();
             this.closeModal();
+        }).catch(e => {
+            // UserNotConfirmedException / UserNotFoundException are handled by the
+            // 'auth' Hub listener above; surface everything else here
+            if (e && e.code !== 'UserNotConfirmedException' && e.code !== 'UserNotFoundException') {
+                this.setState({errorMessage: e.message || 'Sign in failed'});
+            }
+            this.setState({isThinking: false});
         });
     }
 

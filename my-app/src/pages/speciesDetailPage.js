@@ -24,17 +24,16 @@ class SpeciesDetailPage extends React.Component {
 	state = {};
 
 	componentDidMount() {
-		console.log(`INBOUND: ${JSON.stringify(this.props, null, 2)} :: ${this.props.id.toString()}`);
-		var map = new Map();
-		for (var ind in species) {
-			let x = species[ind];
-			map[x.id] = x;
+		let inboundId = this.props.id ? this.props.id.toString() : '';
+		// ids in species.json are zero-padded 5-digit strings; accept "/species/1" as well as "/species/00001"
+		if (inboundId && inboundId.length < 5) {
+			inboundId = inboundId.padStart(5, '0');
 		}
-		let inboundId = this.props.id;
-		let xal = map[inboundId];
+		let xal = species.find((x) => x.id === inboundId);
 		this.setState({
 			id: inboundId,
 			xalian: xal,
+			notFound: !xal,
 		});
 	}
 
@@ -43,6 +42,17 @@ class SpeciesDetailPage extends React.Component {
 	render() {
 		return (
 			<React.Fragment>
+				{this.state.notFound && (
+					<Container fluid className="content-background-container">
+						<XalianNavbar></XalianNavbar>
+						<Container className="content-container">
+							<h1 className="page-title-text">Species not found</h1>
+							<p style={{ textAlign: 'center' }}>
+								No Xalian species matches this id. <a href="/species">Browse all species</a>
+							</p>
+						</Container>
+					</Container>
+				)}
 				{this.state.xalian && (
 					<Container fluid className="content-background-container">
 						<XalianNavbar></XalianNavbar>
