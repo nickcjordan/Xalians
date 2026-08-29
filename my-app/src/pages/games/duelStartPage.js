@@ -29,7 +29,7 @@ class DuelStartPage extends React.Component {
 
     state = {
         randomizeStartingPositions: true,
-        debugMode: true,
+        debugMode: process.env.NODE_ENV !== 'production',
         selectedXalianIds: []
     }
 
