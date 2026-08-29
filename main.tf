@@ -438,21 +438,6 @@ resource "aws_s3_bucket_cors_configuration" "react_bucket" {
   }
 }
 
-import {
-  to = aws_s3_bucket_policy.react_bucket
-  id = "xalians.com"
-}
-
-import {
-  to = aws_s3_bucket_website_configuration.react_bucket
-  id = "xalians.com"
-}
-
-import {
-  to = aws_s3_bucket_cors_configuration.react_bucket
-  id = "xalians.com"
-}
-
 // api gateway domain name
 
 // resource "aws_apigatewayv2_domain_name" "ui" {
