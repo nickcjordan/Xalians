@@ -151,14 +151,23 @@ function sortActions(allActions) {
 
 function buildBotMove(action, data = {}) {
     if (action.type == duelConstants.actionTypes.COMBO) {
-        return { 
-            move: actionTypeToMoveNameMap()[action.type], 
-            args: [action.moveAction.path, data] 
+        return {
+            move: actionTypeToMoveNameMap()[action.type],
+            args: [action.moveAction.path, data]
+        };
+    } else if (action.type == duelConstants.actionTypes.ATTACK) {
+        let attackData = { ...data };
+        if (Number.isInteger(action.moveIndex)) {
+            attackData.moveIndex = action.moveIndex;
+        }
+        return {
+            move: actionTypeToMoveNameMap()[action.type],
+            args: [action.path, attackData]
         };
     } else {
-        return { 
-            move: actionTypeToMoveNameMap()[action.type], 
-            args: [action.path, data] 
+        return {
+            move: actionTypeToMoveNameMap()[action.type],
+            args: [action.path, data]
         };
 
     }

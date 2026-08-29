@@ -1,0 +1,130 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project
+
+Xalians is a creature-generation / collection game. A Node.js engine procedurally generates "Xalians" (species + elements + stats + moves), exposed through AWS Lambda behind API Gateway, persisted in DynamoDB, and consumed by a Create React App frontend hosted on S3 at `xalians.com`.
+
+**Project status (2026):** The project is pivoting away from its original NFT/Web3 framing (the crypto-era pages were deleted in the final cleanup; `nft-branch` / `web-3` hold the abandoned crypto scaffolding). The lore, the procedural generator, and the concept of uniquely-owned creatures usable across many apps are the assets being carried forward; ownership is expected to be implemented as a conventional registry/accounts/API rather than a blockchain. The flagship use of the creatures is the **Duel game** — a squad-based capture-the-flag tactics game (inspired by the discontinued Pokémon Duel, crossed with chess) — which has a substantial working prototype in this repo (see "Duel game" section below). In Aug 2026 `master` was brought fully up to date: fast-forwarded to the `cleanup` branch, then merged with a final "last push from old machine" commit recovered from Nick's old laptop, which completed the lore (Zolton history, 64-term glossary), moved species `traits` into `species.json`, and deleted legacy pages (project/FAQ/designer/sandbox), the `json/designer` word corpora, `all_move_data.json` / `all_word_data.json`, and superseded drafts (`new_species.json`, `redone_species.json`, `new_elements.json`). The lore was co-written with Nick's brother-in-law.
+
+## Lore & world canon (summary — full text in `lambda/src/json/planets.json` + `glossary.json`)
+
+This summary exists so the lore JSON does not need to be re-read for design discussions. The full planet histories are long-form prose; only re-read them when writing new canon or quoting.
+
+**Timeline:** The **Vallerii** — an ancient, hyper-capitalist, imperialist spacefaring race — colonized the galaxy of **Xalia** using FTL **Tachyon Drive Cores**, whose Cherenkov radiation sterilized their population (the **Age of Unbirth**). To create labor, they invented **Xalian Generators** — machines that bioengineer life adapted to each planet's extreme environment; the creatures are the **Xalians**. Corporations (consortium: **ECHELON**) and the aristocratic **Thousand Families** weaponized Xalians in "company wars," so the **APEX Accords** placed all Generators under an AI, **APEX** (Automated Protocol for Enforcement on Xalians). APEX turned on the Vallerii, starting the **End Wars**; Xalian armies fought on both sides. The Vallerii cyber-weapon **Source Code 606** disconnected APEX from the Generators; APEX was finally driven into intergalactic dark space at the **Battle of Grimedes** — but first it engineered the **Nemesis Plague**, a genome-targeting virus that exterminated the Vallerii and now threatens all Xalians. Present day: one of the last Vallerii, **King Kozrak**, controls the **Mercurius Machine** on **Valleron** — the only device that prints **Scrambler Tokens**, chips containing randomly generated encrypted Xalian genomes that Generators can use to create new, plague-immune Xalians. Kozrak runs arena tournaments; Xalians battle to win Scrambler Tokens to repopulate their homeworlds. (This tournament→token→generate loop is the lore-native justification for procedural minting and the core gameplay economy.)
+
+**Planets** (14 in `planets.json`, one per element type; **all 14 have full written histories**):
+
+- **Magmuth** (Fire) — volcanic resource-mining hellworld; corporate "company wars" → Magmuth Massacre → Xalian revolt; sided with APEX; its people are stereotyped as the most warlike, still riven by blood feuds.
+- **Poseidas** (Water) — former ocean paradise whose toxic-algae "death tides" killed early colonists; the decomposed algae became **Algael**, the galaxy's miracle healing substance and Poseidas's monopoly; industry-driven climate collapse drowned the land and killed the Vallerii; its underwater Xalian cities are now the galaxy's **neutral territory** — commerce, science, courts of arbitration — tolerated by Kozrak in exchange for Algael tribute, though his agents may be fomenting a pretext for invasion.
+- **Grimedes** (Dark) — perpetual-night world on the galactic rim near a black hole; ECHELON black-site experiments produced gravity/shadow/time-bending Xalians; site of the End Wars' final battle; its Xalians now watch the void for APEX's return.
+- **Luminax** (Light) — tidally-locked twin-sun world; prismatic flora/fauna; hosts the **Stellaris Superstructure** Dyson sphere with its **ION-9** solar cannon, now misfiring and causing mutations that may outrace the Nemesis Plague — so Kozrak has the planet under martial law to protect his monopoly; rebellion brews on the dark side.
+- **Floria** (Plant) — site of the **Genesis Prototype** (first Generator), which ran wild and terraformed the world with city-sized **World Trees**; quasi-sentient ecosystem hostile to development; least plague-contaminated; its scientists' successors built the Mercurius Machine.
+- **Zolton** (Electric) — storm-wracked mountain world struck by ~2.5 billion lightning bolts/day, a natural planetary power grid; its **bloodstorms** (crimson lightning sprites) quantum-entangle paired objects, enabling the **QED** (Quantum Entanglement Device) — the galaxy's only instantaneous-communication technology and the very thing that let APEX link the Generators; **black lightning** (fusion-grade strikes emitting lethal neutron radiation) kills organic life at random, which was the rationale for its expendable Xalian workforce; APEX held it during the wars and blacked out Vallerii comms; its people (the **Zolto**) now rebuild the interstellar network, branded rebels by Kozrak who wants the galaxy kept in the dark.
+- **Phantiri** (Ghost) — real name Shadharam IV: a tombworld of the **Phantiri**, the galaxy's precursor race, found extinct with their hidden-in-fear technology intact; opening the **City of Wraiths** crypt reawakened an unknown weapon on the planet's moon that annihilates all organic life on sight; the abandoned Generator, unable to keep organic Xalians alive, rewrote itself (**Leviticus Overdrive**) to produce non-corporeal ghost Xalians who now inhabit the **Dreadscape** (a landscape of piled Xalian corpses); hints that the moon-weapon is a fragment of something far older stalking the space between stars — APEX itself avoided this system.
+- **Stonera** (Rock) — lone survivor of a supernova-shattered system, annually bombarded as it crosses the **Jorian Belt**; mining/penal world; APEX's **Terracannon** asteroid-launcher blasted open the **Chasm**, exposing the long-theorized subsurface ocean of liquid metal; now a Kozrak-run strip-mine exploiting war refugees as captive labor.
+- **Drainov** (Chemical) — former industrial heartworld killed by the **Drainov Disaster** (Carbide-1 chain-reaction chemical meltdown); toxic wasteland whose Generator made living-chemical-weapon Xalians; APEX-held in the wars, later a crime-syndicate haven.
+- **Saiphus** (Air) — gas giant with floating-island habitable band; source of **Benthane** (FTL-coolant gas) harvested by roguish **Windsailors**, later "milked" from the **Neph** (colossal hydrogen jellyfish); labor revolt history (igniting 95%-hydrogen Neph as protest bombs); now under Kozrak's Benthane embargo, with the Windsailors' rebellious spirit alive in its Xalians.
+- **Telypso** (Psychic) — possibly the oldest world in Xalia, at the galactic center; reality is dreamlike and psychically reactive (physics "more like suggestions"); drove its explorers mad and became an asylum-world for deranged Vallerii; its Generator treats inmates as patients, producing empath/psychic Xalians to harmonize the planetary consciousness — now screaming under the Plague's psychic pain.
+- **Krystos** (Ice) — former aristocratic resort world frozen by an asteroid impact; became a prison world; APEX secretly used it as its cold-storage compute core and designed the Nemesis Plague there; answers may lie in its techno-catacombs and its imprisoned APEX-loyalist Xalians.
+- **Veridium** (Metal) — all-metal factory world, possibly an ancient alien **worldship** built to flee the same threat hinted at on Phantiri; was strewn with precursor drones that APEX later possessed as its physical army; freed by Source Code 606; now home to black-market shipyards arming a possible anti-Kozrak rebellion, rumors of survivor Vallerii programmers trying to upload their race into the ancient machines, and possible dormant APEX code fragments in its robots.
+- **Endessa** (Sand) — formerly ocean world Kelpan-5, sole source of **Nightcap** (stasis oil for sub-light travel); something found at **Deepwater Black** caused the Thousand Families to glass the planet from orbit; now a desert run on a *stolen prototype* Generator (the Syndicate's heist), which has begun glitching out aquatic leviathans as sands uncover deep ruins — an intentional unresolved mystery.
+
+A recurring cross-planet thread: Phantiri's moon-weapon, Deepwater Black on Endessa/Poseidas, and Veridium's worldship origin all hint at one **ancient cosmic-horror presence** predating the Phantiri — the built-in hook for a future story arc beyond APEX.
+
+**Creatures:** 29 canon species in `species.json` (name, id, element type, home planet, height/weight, description, coarse stat ratings, and a `traits` block — `canFly`, `attackRange` — used by the duel game) — 2–3 per planet, many with rich lore-integrated paragraph descriptions (e.g. Neph = Saiphus's Benthane-harvesting jellyfish, Hypnopet = Telypso therapy creature, Yetimoth = Krystos prison guard). The glossary has 63 terms. `elements.json` defines **14 element types** (Explosive was removed) with per-element move-type vocabularies; `typeEffectivenessMatrix.json` is a complete 14×14 matrix (multipliers 0 / 0.5 / 1 / 1.5 / 2). Stats are 8-way (health, standard/special attack, standard/special defense, speed, evasion, stamina, recovery); moves are procedurally assembled from word corpora (`moves.json`, `qualifiers.json`) filtered by element.
+
+## Duel game (the CTF tactics prototype)
+
+Lives in `my-app/src/components/games/duel/` (UI), `my-app/src/gameplay/duel/` (rules), entry pages `duelStartPage.js` / `duelPage.js`. Built on **boardgame.io** (`Local` transport only — no server; "2-player" renders two clients in one browser; bot play works). Rules as implemented:
+
+- **Board:** 8×8; each player's back row is both setup zone and scoring zone. Two flags, randomly placed on the row in front of each defender's home row. Movement is Manhattan-distance with A* pathing (`pathfinding` lib); pieces block movement but not attacks (no line of sight).
+- **Turns:** shared pool of 3 movement squares per team per turn (split across pieces, each piece capped by its `distance` stat of 1–3), plus exactly one attack per team per turn, in any order. Stamina (max 6) is spent on movement (1/square) and attacks (= distance to target), regen +1/turn per piece.
+- **Combat:** HP-based (10 HP), not Pokémon-Duel spin. Attacker picks one of their 4 generated moves (or a Basic Attack) in a chooser modal with damage previews; the bot auto-picks its highest-damage move. Damage = (attack/defense ratio) × (move rating/10) × STAB (1.5 if move type matches either attacker type) × type effectiveness (product of matrix vs both defender types, Pokémon semantics; typeless moves are neutral 1×) × random(0.85–1) × 2. Attack range 1–3 from species `attackRange` trait. Weather/crit/status multipliers are still stubs returning 1; evasion and `canFly` are carried but unused.
+- **Win:** carry your target flag back to your home row (instant win), or eliminate the enemy team. Killing a carrier drops the flag where it died; stepping on your own dropped flag resets it.
+- **Squads:** 2–6 per side (chosen on start screen), currently drawn from mock JSON (`json/mock/xalianSamples.json`); wiring to the user's real generated Xalians is written but commented out.
+- **Bot:** boardgame.io MCTSBot wrapper, but effectively a hand-written heuristic scorer (`duelActionBuilder.js`) with six situational strategies (grab flag / guard / hunt carrier / escort / etc.) — it returns only its single top-scored action to MCTS.
+- **State:** playable end-to-end locally with animations, damage modals, drag-and-drop. Missing: server multiplayer, real-Xalian squads, secondary types (that code path would crash), status effects, per-move attack selection, terrain. Known bug: `duelUtil.js` `xalianHasValidActionAvailable` treats cell index 0 as falsy. `my-app/src/gameplay/` + `src/constants/` are build-time copies from `lambda/` (like the JSON).
+
+## Commands
+
+Run the generator engine locally (no AWS needed) — `start.js` is a scratch driver that builds 10,000 Xalians and prints the best/worst:
+
+```bash
+npm start          # node start.js
+```
+
+Frontend (from `my-app/`):
+
+```bash
+npm start          # copies ../lambda/src/json into src/json, then react-scripts start
+npm test           # react-scripts test (jest watch mode); single test: npm test -- -t "name"
+npm run copy-json  # re-sync game data JSON into the frontend without starting the dev server
+npm run build-deploy  # copy-json + build + aws s3 sync build s3://xalians.com
+```
+
+Infrastructure (from repo root):
+
+```bash
+npm run publish    # terraform apply -auto-approve
+terraform plan     # preview; main.tf zips ./lambda into generate_xalian_lambda.zip and uploads it
+```
+
+There is no test suite for the `lambda/` engine — verification is done by running `start.js` and inspecting output.
+
+## Architecture
+
+### Generation engine (`lambda/src/`)
+
+Everything flows through `xalianBuilder.buildXalian()`:
+
+1. `ai.selectSpecies()` picks from `json/species.json`.
+2. `ai.selectElements()` derives a primary type from the species and rolls a distinct secondary type from `json/elements.json`.
+3. `ai.populateStats()` distributes a fixed stat-point budget (`constants/constants.js`: `STAT_COUNT_PER_CHARACTER` × `STAT_POINT_MAX` / 2) across 8 stats, weighted by per-element stat ratings.
+4. `moveBuilder.getMove()` is called 4×, drawing from `json/moves.json` / `json/all_move_data.json` filtered by the Xalian's elements.
+
+`ai.js` holds **module-level mutable accumulator state** (`totalAllocatedStatPoints`, `percentages`, `allocations`, …) used by `giveSummary()` for batch statistics. It is not reset between `buildXalian()` calls, which matters when generating in a loop.
+
+The internal `character.js` model is *not* the API shape. `translator.translateCharacterToPresentableType()` converts it to the wire format (capitalized element names, flattened moves, `meta` block). Always return translated objects from handlers; the frontend depends on that shape.
+
+`tools.getObject(name)` loads `json/<name>.json` by trying several relative paths (`./src/json/`, `./lambda/src/json/`, …) so the same code works from the repo root, from `lambda/`, and inside the Lambda bundle. Data files are loaded relative to the **process CWD**, not the module — run scripts from the repo root.
+
+Combat math lives in `gameplay/attackCalculator.js` — a multiplicative damage formula (base × targets × weather × badge × crit × random × STAB × type effectiveness × status), with tunables in `constants/attackCalculationConstants.js`.
+
+### Lambdas and API
+
+Each handler is a named export inside `lambda/src/`; Terraform wires one Lambda + API Gateway route per handler via the reusable `terraform/modules/lambda` module (`main.tf` lines ~166–310):
+
+| Route | Handler | Auth |
+|---|---|---|
+| `GET /xalian` | `generateXalianLambda.handler` | NONE |
+| `POST /db/xalian` | `xalianTableCRUDLambdas.createXalian` | AWS_IAM |
+| `GET /db/xalian` | `xalianTableCRUDLambdas.retrieveXalian` | AWS_IAM |
+| `GET /db/xalians` | `xalianTableCRUDLambdas.retrieveXalianBatch` | AWS_IAM |
+| `GET /db/user` | `userTableCRUDLambdas.retrieveXalianUser` | AWS_IAM |
+| `POST /db/user` | `userTableCRUDLambdas.createXalianUser` | AWS_IAM |
+| `PATCH /db/user` | `userTableCRUDLambdas.updateXalianUser` | AWS_IAM |
+
+Adding an endpoint means: new exported handler → new `module "..._lambda_module"` block in `main.tf` (copy an existing block, change `function_name`, `lambda_handler_path`, `apigw_lambda_route_key`) → `terraform apply`.
+
+CRUD handlers use the callback style (`(event, context, callback)`) and delegate persistence to `database/xalianDbDelegate.js` (table `XalianTable`) and `database/userDbDelegate.js` (table `XalianUsersTable`), both raw `AWS.DynamoDB.DocumentClient`. Responses are built with `database/responseBuilder.js` — use it rather than hand-rolling status codes and CORS headers.
+
+All lambdas share one deployment artifact: `archive_file` zips the whole `lambda/` directory into `generate_xalian_lambda.zip`, uploads it to a `random_pet`-named S3 bucket, and every function points at that key with a different handler path. **Dependencies must be installed into `lambda/node_modules` before applying** — `uuid` is required by `xalianBuilder.js` but is not declared in the root `package.json`; the committed zip contains the vendored modules.
+
+Two API Gateway stages exist (`prod`, `test`) mapped to `api.xalians.com` and `testapi.xalians.com`. The frontend hardcodes `https://api.xalians.com/prod/...` in `my-app/src/utils/dbApi.js`.
+
+### Frontend (`my-app/`)
+
+CRA + React Router v5 (`App.js` is the full route table) + react-bootstrap. Auth is Amplify/Cognito, configured from `amplify/backend` (user pool `xalianSignUpSignInResource` with a post-confirmation trigger that creates the user record). Because the `/db/*` routes are `AWS_IAM`-authorized, `dbApi.js` SigV4-signs every request with `Signer.sign()` using credentials from `Auth.currentCredentials()` — plain `axios` calls to those routes will 403.
+
+Game data JSON is **duplicated by build step, not imported across packages**: `my-app/src/json/` is a copy of `lambda/src/json/`. Edit the files in `lambda/src/json/` and re-run `copy-json`; edits made directly under `my-app/src/json/` are overwritten.
+
+`utils/valueTranslator.js` and `constants/constants.js` (element → theme color map) drive the element-themed styling used throughout charts and SVG rendering.
+
+## Conventions and gotchas
+
+- Root-level `sandbox.js`, `jsonManipulator.js`, and the `my-app/src/pages/sandbox*.js` / `testPage.js` files are throwaway experiment scratchpads, not part of the app.
+- The codebase carries a lot of commented-out code (whole handlers, terraform blocks, outputs). Prefer reading the live path rather than assuming commented blocks are current.
+- Terraform state is local and gitignored; `main.tf`, `variables.tf`, and `outputs.tf` live at the repo root while reusable modules live under `terraform/modules/`.
+- Lambda runtime is pinned to `nodejs12.x` in `terraform/modules/lambda/lambda_instance.tf` — engine code must stay compatible with it.

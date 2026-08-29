@@ -82,7 +82,17 @@ function buildAttackAction(attacker, path, G, ctx) {
     action.description += `:: ENEMY FLAG DISTANCE : +${flagClosenessFactor}`;
 
     // SCORE :: ESTIMATED DAMAGE TO DEFENDER
-    let attackResult = duelCalculator.calculateAttackResult(attacker, defender, G, ctx, true);
+    // evaluate every candidate move (plus the generic null-move attack) and pick the one that does the most damage
+    let bestMoveIndex = null;
+    let attackResult = duelCalculator.calculateAttackResult(attacker, defender, G, ctx, true, null);
+    (attacker.moves || []).forEach((candidateMove, candidateIndex) => {
+        let candidateResult = duelCalculator.calculateAttackResult(attacker, defender, G, ctx, true, candidateMove);
+        if (candidateResult.damage > attackResult.damage) {
+            attackResult = candidateResult;
+            bestMoveIndex = candidateIndex;
+        }
+    });
+    action.moveIndex = bestMoveIndex;
     let estimatedDamage = attackResult.damage;
     score += estimatedDamage;
     action.description += `:: ESTIMATED DAMAGE : +${estimatedDamage}`;
@@ -300,7 +310,7 @@ function scorePathsGettingOutOfTheWayOfFlagHolder(turnXalian, flagIndexToRetriev
             let effectivenessTowardsEnemy = [];
             G.playerStates[0].activeXalianIds.forEach(enemyXalianId => {
                 let enemyXalian = duelUtil.getXalianFromId(enemyXalianId, G);
-                let attackEffectiveness = duelCalculator.calculateTypeEffectiveness(turnXalian, enemyXalian, false);
+                let attackEffectiveness = duelCalculator.calculateTypeEffectiveness(turnXalian.elementType, enemyXalian);
                 effectivenessTowardsEnemy.push({ enemyXalian: enemyXalian, attackEffectiveness: attackEffectiveness});
             })
             effectivenessTowardsEnemy.sort(function (a, b) {
@@ -337,7 +347,7 @@ function scorePathsTowardsAttackingEnemyFlagHolder(turnXalian, enemyXalianId, fl
         action.description += `:: CLOSENESS FACTOR OF MOVING TOWARDS ENEMY WITH FLAG: +${enemyClosenessFactor}`;
         action.score += enemyClosenessFactor;
         
-        let attackEffectiveness = duelCalculator.calculateTypeEffectiveness(turnXalian, enemyXalian, false);
+        let attackEffectiveness = duelCalculator.calculateTypeEffectiveness(turnXalian.elementType, enemyXalian);
         let attackEffectivenessBonus = attackEffectiveness * 2;
         // SCORE :: BONUS FOR EFFECTIVENESS OF ATTACK
         action.description += `:: BONUS FOR EFFECTIVENESS OF ATTACK ON ENEMY WITH FLAG: +${attackEffectivenessBonus}`;

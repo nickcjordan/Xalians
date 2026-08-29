@@ -71,7 +71,7 @@ A full polish audit of the frontend, duel game, and lambda backend. Items marked
 - The game-level `endIf` also runs during the `setup` phase; flag-row math is asymmetric (`grid.rows[1]` hardcoded vs `grid.rows[BOARD_COLUMN_SIZE - 2]` derived) — safe at 8×8, breaks if board size changes.
 - Recapturing a *carried* flag can never fire (`flag.index` is null while held) — only dropped flags reset. Confirm whether that's the intended rule.
 - `duelBot` objectives: `flag-guarded` is a copy-paste of `enemy-flag-not-held-by-enemy` with opposite polarity — they cancel to a net weight and nothing measures "my flag is guarded". Bot TODOs documented at `duelBot.js:184-190`.
-- Dual-type effectiveness branch in `duelCalculator.js` (weighted-average path) is unreachable and would crash on duel pieces (they carry only a primary `elementType`). A complete STAB implementation sits commented out in `duelCalculator.calculateSameTypeAttackBonus`. Damage multiplier stubs (weather/planet, crit, badge, multi-target, status) intentionally return 1 — these are design hooks, not bugs.
+- ~~Dual-type effectiveness / STAB~~ — implemented in the moves-in-combat milestone (per-move type, dual-type product effectiveness, STAB 1.5×). Remaining damage multiplier stubs (weather/planet, crit, badge, multi-target, status) intentionally return 1 — design hooks, not bugs.
 - Single-id batch shape inconsistency: `GET /db/xalian` returns a bare xalian for one id but wrapper items (`{speciesId, xalianId, attributes}`) for 2+ ids — a one-element "batch" breaks `x.attributes` readers.
 - `debugMode` defaults to `true` on the duel start page, and a DEBUG button + boardgame.io debug panel render for all users.
 - Hot-seat "2 player" mode renders two clients in one browser; there is no real server multiplayer (no boardgame.io `Server` anywhere; transport is always `Local()`).
@@ -120,7 +120,7 @@ A full polish audit of the frontend, duel game, and lambda backend. Items marked
 | Physics game | `/train/physics` → `physicsGamePage.js` | Also embedded in Training Grounds |
 | Public user faction page | `/user/:id` → `userDetailsPage.js` | Nothing links to it |
 | Token economy endpoints | `ADD_TOKENS`/`REMOVE_TOKENS` in `userTableCRUDLambdas.js` | Includes insufficient-funds path; no client calls them (now functional after the reserved-word fix) |
-| STAB damage bonus | `duelCalculator.calculateSameTypeAttackBonus` | Real logic, commented out |
+| STAB damage bonus | `duelCalculator.calculateSameTypeAttackBonus` | Implemented (1.5×, moves-in-combat milestone) |
 | Redux animation queue | `store/duelAnimationQueueSlice.js`, `AnimationHub.js` | Fully built; duel uses gsap timeline instead |
 | Move-then-attack combo move | `duel.js` `movePieceThenAttack` | Commented out; bot executes combos as bare moves |
 | `selectPiece` move + selection state | `duel.js` | Defined but registered in no phase |

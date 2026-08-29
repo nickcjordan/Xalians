@@ -22,6 +22,7 @@ import DuelXalianSuggestionDetails from './duelXalianSelectionDetails';
 import XalianDuelStatBadge from './xalianDuelStatBadge';
 import DuelBoardCell from './duelBoardCell';
 import AttackActionModal from './attackActionModal';
+import AttackMoveChooserModal from './attackMoveChooserModal';
 import { useSelector, useDispatch } from 'react-redux'
 import { addAnimationToQueue } from '../../../../store/duelAnimationQueueSlice';
 import { AnimationHub } from '../../../../store/AnimationHub';
@@ -410,15 +411,13 @@ class DuelBoard extends React.Component {
 				}
 				var attackableIndices = attackablePaths.map( p => p.endIndex);
 				if (attackableIndices.includes(index) && (!boardState.currentTurnDetails.hasAttacked)) {
-					// do attack action
+					// stash pending attack and let the player choose a move before executing it
 					let path = attackablePaths.filter( p => (p.endIndex == index))[0];
 					// let path = duelCalculator.calculatePathToTarget(selectedIndex, index, boardState, this.props.ctx)
 
-					// this.setXalianIds(null, null, () => {
-						this.props.moves.doAttack(path);
-					// });
-					
-	
+					this.setState({ pendingAttack: { path: path, attackerId: selectedId, defenderId: xalian.xalianId } });
+
+
 					// reset selection
 					// this.setState({ referencedXalianId: null });
 					// LocalDuelStorage.removeReferencedXalianId();
@@ -677,7 +676,25 @@ class DuelBoard extends React.Component {
 											animationTl={this.state.animationTl}
 										/>
 									}
-								
+
+									{this.state.pendingAttack &&
+										<AttackMoveChooserModal
+											show={!!this.state.pendingAttack}
+											attacker={duelUtil.getXalianFromId(this.state.pendingAttack.attackerId, boardState)}
+											defender={duelUtil.getXalianFromId(this.state.pendingAttack.defenderId, boardState)}
+											G={this.props.G}
+											ctx={this.props.ctx}
+											onSelect={(moveIndex) => {
+												let pendingAttack = this.state.pendingAttack;
+												this.props.moves.doAttack(pendingAttack.path, moveIndex != null ? { moveIndex } : undefined);
+												this.setState({ pendingAttack: null });
+											}}
+											onCancel={() => {
+												this.setState({ pendingAttack: null });
+											}}
+										/>
+									}
+
 								</Container>
 
 

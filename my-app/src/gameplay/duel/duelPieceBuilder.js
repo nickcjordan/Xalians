@@ -44,6 +44,11 @@ export function buildDuelPiece(xalian) {
         xalianId: xalian.xalianId,
         species: buildReducedSpecies(xalian.species),
         elementType: xalian.elements.primaryType,
+        moves: xalian.moves || [],
+        elements: {
+            primaryType: xalian.elements.primaryType,
+            secondaryType: xalian.elements.secondaryType || null
+        },
         stats: {
             attack: attackPts,
             defense: defensePts,
