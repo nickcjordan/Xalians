@@ -44,7 +44,7 @@ resource "aws_lambda_function" "lambda_function" {
   function_name    = var.function_name
   s3_bucket        = var.lambda_bucket_id
   s3_key           = var.lambda_bucket_object_key
-  runtime          = "nodejs12.x"
+  runtime          = "nodejs20.x"
   handler          = var.lambda_handler_path
   source_code_hash = var.lambda_archive_file_output_hash
   role             = var.iam_role_arn

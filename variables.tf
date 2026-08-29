@@ -24,6 +24,12 @@ variable "frontend_bucket_name" {
   default = "xalians.com"
 }
 
+variable "lambda_bucket_name" {
+  description = "S3 bucket holding the lambda deployment zip (originally random_pet-generated, now pinned to the live bucket)"
+  type        = string
+  default     = "chronic-labs-officially-correctly-relaxed-prawn"
+}
+
 variable "cloudfront_arn" {
   description = "arn"
   type = string
