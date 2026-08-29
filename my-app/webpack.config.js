@@ -1,7 +1,7 @@
 // Generated using webpack-cli https://github.com/webpack/webpack-cli
-
+var webpack = require('webpack');
 const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const SplitChunksPlugin = require("split-chunks-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const WorkboxWebpackPlugin = require("workbox-webpack-plugin");
 
@@ -13,7 +13,7 @@ const config = {
   entry: "./src/index.js",
   output: {
     path: path.resolve(__dirname, "dist"),
-    filename: 'xalians.bundle.js',
+    filename: '[name].bundle.js',
   },
   resolve: {
     fallback: {
@@ -24,11 +24,16 @@ const config = {
     open: true,
     host: "localhost",
   },
+  optimization: {
+    splitChunks: {
+      // include all types of chunks
+      chunks: 'all',
+    },
+  },
   plugins: [
 
     new MiniCssExtractPlugin(),
-    // new HtmlWebpackPlugin(),
-
+    new webpack.SplitChunksPlugin()
     // Add your plugins here
     // Learn more about plugins from https://webpack.js.org/configuration/plugins/
   ],
@@ -58,7 +63,7 @@ const config = {
   },
   resolve: {
     extensions: [".tsx", ".ts", ".jsx", ".js", "..."],
-  },
+  }
 };
 
 module.exports = () => {

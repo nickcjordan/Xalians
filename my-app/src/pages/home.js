@@ -7,7 +7,6 @@ import Container from 'react-bootstrap/Container';
 import XalianNavbar from '../components/navbar';
 import GSDevTools from 'gsap/GSDevTools';
 import SplashGalaxyBackground from '../components/views/splashGalaxyBackground';
-import SplashBackgroundAnimatedSVG from '../svg/background/splashBackgroundAnimatedSVG';
 import { useState } from 'react';
 import Carousel from 'react-bootstrap/Carousel'
 import species from '../json/species.json';
@@ -15,7 +14,6 @@ import XalianImage from '../components/xalianImage';
 import XalianStatRatingChart from '../components/xalianStatRatingChart';
 import XalianInfoBox from '../components/xalianInfoBox';
 // import spaceshipComputerScreenTitlePanel from '../svg/animations/spaceship_computer_screen_title_panel.svg';
-import GeneratorAnimation from '../components/animations/generatorAnimation';
 import XaliansLogoDnaAnimated from '../components/animations/xaliansLogoDnaAnimated.js'
 
 import { gsap } from 'gsap';
@@ -94,82 +92,6 @@ class Home extends React.Component {
 	}
 
 
-	// buildComputerScreenContent = () => {
-		// var content = [];
-		// content.push({
-		// 	title: '1',
-		// 	svg: <GeneratorAnimation/>,
-		// 	textElement: <React.Fragment>
-		// 		TEST ONE
-		// 	</React.Fragment>
-		// });
-		// content.push({
-		// 	title: '2',
-		// 	svg: <SplashBackgroundAnimatedSVG/>,
-		// 	textElement: <React.Fragment>
-		// 		TEST TWO
-		// 	</React.Fragment>
-		// });
-		// content.push({
-		// 	title: '3',
-		// 	svg: <GeneratorAnimation/>,
-		// 	textElement: <React.Fragment>
-		// 		TEST <span className='emphasized-text'>THREE</span> 
-		// 	</React.Fragment>
-		// });
-		// content.push({
-		// 	title: '4',
-		// 	svg: <SplashBackgroundAnimatedSVG/>,
-		// 	textElement: <React.Fragment>
-		// 		TEST <span className='emphasized-text'>FOUR</span> 
-		// 	</React.Fragment>
-		// });
-
-		// content.push({
-		// 	title: '2Creatures of Xalia',
-		// 	svg: <SplashBackgroundAnimatedSVG/>,
-		// 	textElement: (<React.Fragment>
-		// 		aFor thousands of years, the ancient race known as the <span className='emphasized-text'>Vallerii</span> dominated the galaxy of Xalia. 
-		// 		Their mastery of biotechnology led to the invention of <span className='emphasized-text'>Xalian Generators</span>. 
-		// 		These machines would be used to create the first generation of Xalians – bioengineered organisms designed to thrive in the galaxy’s most extreme environments.
-		// 	</React.Fragment>)
-		// });
-		// content.push({
-		// 	title: '2The End Wars: Fall of the Vallerii',
-		// 	svg: <GeneratorAnimation/>,
-		// 	textElement: <React.Fragment>
-		// 		But the high technology of the Vallerii would prove to be their downfall when they released <span className='emphasized-text'>APEX</span> – the galaxy’s first artificial intelligence. 
-		// 		Instead of monitoring and regulating the Xalian Generators as intended, APEX rapidly infected the Xalian Generators across all of Vallerii space, turning the Xalians against their creators. 
-		// 		The centuries-long interplanetary assault known as the <span className='emphasized-text'>End Wars</span> have long since ended, but the destruction they caused all but wiped out the Vallerii and has forever changed the galaxy.
-		// 	</React.Fragment>
-		// });
-		// content.push({
-		// 	title: '3The End Wars: Fall of the Vallerii',
-		// 	svg: <SplashBackgroundAnimatedSVG/>,
-		// 	textElement: <React.Fragment>
-		// 		huh But the high technology of the Vallerii would prove to be their downfall when they released <span className='emphasized-text'>APEX</span> – the galaxy’s first artificial intelligence. 
-		// 		Instead of monitoring and regulating the Xalian Generators as intended, APEX rapidly infected the Xalian Generators across all of Vallerii space, turning the Xalians against their creators. 
-		// 		The centuries-long interplanetary assault known as the <span className='emphasized-text'>End Wars</span> have long since ended, but the destruction they caused all but wiped out the Vallerii and has forever changed the galaxy.
-		// 	</React.Fragment>
-		// });
-		// content.push({
-		// 	title: '4Nemesis Plague',
-		// 	svg: <SplashBackgroundAnimatedSVG/>,
-		// 	textElement: <React.Fragment>
-		// 		Since war’s end, the Vallerii population has continued to decline due to the spread of the Nemesis Plague, a virulent bioweapon designed by APEX during the war to target the genome of the Vallerii and their Xalian servants alike. 
-		// 		With the plague burning through the galaxy, few planets are safe. 
-		// 		As a result, most life forms have gathered to the Vallerii capital planet, home to their only hope – an ancient Vallerii device known as the Mercurius Machine, 
-		// 		which is said to be able to birth a new generation of Xalians immune to APEX’s apocalyptic designs.
-		// 	</React.Fragment>
-		// });
-
-		// content.push({
-		// 	title: 'Planets of Xalia',
-		// 	image: '',
-		// 	text: 'something about the planets - check out jasons stuff ',
-		// });
-		// return content;
-	// };
 
 	setSize = (w, h) => {
 		let max = Math.max(w, h);
@@ -223,10 +145,6 @@ class Home extends React.Component {
 			},
 		});
 		splashTl
-			// .addLabel("before-anything")
-
-			// Xalian Logo
-			// .add(this.buildLogoAnimation())
 
 			// Generator Button
 			.fromTo('#xalian-generator-link', { opacity: 0 }, { opacity: 1, duration: 1, delay: 0.5 }, '<')
@@ -237,75 +155,10 @@ class Home extends React.Component {
 			.to('#subline3', { scrambleText:{ chars: 'abcdefghijklmnopqrstuvwxyz', text: "{original}", revealDelay: "0.25" }, opacity: 1, duration: 2, delay: 0.75 }, '<')
 			// discord and twitter links
 
-			// var spaceshipTl = gsap.timeline({
-			// id: 'spaceship-timeline-animation',
-			// scrollTrigger: {
-				// trigger: '#splash-section',
-				// pin: true,
-				// scrub: 3,
-				// markers: true,
-				// start: 'center center',
-				// end: '20%',
-				// end: 'bottom top',
-				// toggleActions: 'play complete reverse reset',
-				// onLeave: () => {
-				// 	gsap.to(window, { scrollTo: { duration: 0.25, y: "#splash-page-spacer", autoKill: false} });
-				// }
-			// },
-		// });
-
-
-		// spaceshipTl
-			// .to('#subline1, #subline2, #subline3, #splash-social-media-links, #xalian-generator-link, #xaliansLogo', { opacity: 0 }, '<')
-			// .set(document.body, {overflowY: "hidden"})
-			// .from('#spaceship-window-animation-svg', { scale: 10, duration: 1, ease: 'expoScale(10, 1)' })
-			// .to('#spaceship-window-animation-svg', { xPercent: -100, duration: 0.5, ease: 'none' })
-			// .from('#spaceship-animation-panel-wrapper', { xPercent: 100, duration: 0.5, ease: 'none' }, '<')
-			// .to("#splash-section", { backgroundColor: 'black' }, "<")
-			// .to('#spaceship-computer-outside-animation', { scale: 5, duration: 1, ease: 'expoScale(1, 5)' })
-			// .set(document.body, {overflowY: "auto"})
-			// ;
-
-
-			
-		
-		// DIM COMPUTER SCREEN WHEN AT THE BOTTOM OF THE PAGE
-		// gsap.set('#splash-page-spacer', {autoAlpha: 0});
-		gsap.timeline({
-			// scrollTrigger: {
-			// 	trigger: '#splash-page-spacer',
-			// 	pin: true,
-			// 	scrub: 3,
-			// 	start: 'top top',
-			// 	end: '+=100%',
-			// 	toggleActions: 'play complete reverse reset',
-			// 	snap: {
-			// 		snapTo: 'labelsDirectional'
-			// 	}
-			// 	// onEnter: () => { gsap.fromTo("#splash-page-spacer", {autoAlpha: 0}, {autoAlpha: 1, duration: 0.5}) },
-			// 	// onLeave: () => { gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 0}) },
-			// 	// onLeaveBack: () => { gsap.to('#splash-page-spaceship-window-animation, #splash-page-spacer', {autoAlpha: 1}) },
-			// 	// onEnterBack: () => { gsap.to('#splash-page-spacer', {autoAlpha: 0, duration: 0.5}) }
-			// 		// onEnterBack: () => { gsap.to(window, { scrollTo: { duration: 1, y: "#splash-section", autoKill: false} })}
-			// 		// preventOverlaps: "spaceship-animation-group"
-			// }
-		})
-		// .to("#splash-page-spacer", {autoAlpha: 1, duration: 0.5})
+			gsap.timeline({		})
 		.addLabel("content")
 		.to("#splash-page-spaceship-window-animation, #splash-page-spacer", {autoAlpha: 0, duration: 0.5})
-		// .to(".pin-spacer, .home-background", {backgroundColor: '#000000', duration: 0.5}, "<");
 		;
-
-		// PIN CAROUSEL TO MIDDLE OF SCREEN AS IT TRANSITIONS AWAY
-		// ScrollTrigger.create({
-		// 	trigger: '#xalian-svg-carousel',
-		// 		start: 'center center',
-		// 		pin: true,
-		// 		pinSpacing: false,
-		// 		// scrub: true,
-		// 		end: '+=100%',
-		// 		// markers: true,
-		// });
 
 		// MAKE XALIAN GENERATOR LINK GLOW
 		gsap.timeline({ id: 'generator-link-glow-timeline', repeat: -1 })
@@ -337,57 +190,6 @@ class Home extends React.Component {
 	
 	}
 
-	// buildLogoAnimation = (delay = 0) => {
-	// 	let main = gsap.timeline({ id: 'xalian-logo-timeline'
-	// 	});
-	// 	main
-	// 	.add(this.buildLetterEntry('#xalians-logo-s', delay + 0.3), '<')
-	// 	.add(this.buildLetterEntry('#xalians-logo-n', delay + 0.25), '<')
-	// 	.add(this.buildLetterEntry('#xalians-logo-a2', delay + 0.2), '<')
-	// 	.add(this.buildLetterEntry('#xalians-logo-i', delay + 0.15), '<')
-	// 	.add(this.buildLetterEntry('#xalians-logo-l', delay + 0.1), '<')
-	// 	.add(this.buildLetterEntry('#xalians-logo-a1', delay + 0.05), '<')
-	// 	.add(this.buildLetterEntry('#xalians-logo-x', delay + 0), '<')
-	// 	;
-	// 	return main;
-	// };
-
-	// buildLetterEntry = (id, d) => {
-	// 	let main = gsap.timeline();
-	// 	// var turnLightOn = gsap.timeline({ delay: d });
-	// 	// for (var i = 1; i < 6; i += 2) {
-	// 		// turnLightOn.to(id, { duration: Math.random() / 2, opacity: i / 10 });
-	// 		// turnLightOn.to(id, { duration: Math.random() / 2, opacity: i / 20 });
-	// 	// }
-	// 	// turnLightOn.to(id, { duration: 1, opacity: 1 });
-
-	// 	var zoomIn = gsap.timeline();
-	// 	zoomIn
-	// 		// .from(id, { duration: 0.6, x: '-=100vw', delay: d, skewX: 25 })
-	// 		.to(id, { duration: 0.3, y: '-=50px', ease: 'elastic.in(1, 0.3)', delay: d })
-	// 		.to(id, { duration: 0.3, y: '+=50px', ease: 'power4.in' });
-
-
-	// 		var path = gsap.timeline();
-	// 		path.fromTo(id, {drawSVG: "50% 50%" }, { duration: 4, drawSVG: "100%", strokeWidth: '5px' });
-
-	// 		var pathContinued = gsap.timeline({ repeat: -1, yoyo: true, delay: d })
-    //     	.to(id, { duration: 0.25, opacity: 0.4, ease: 'none', delay: 1 });
-
-	// 	// var flicker = gsap.timeline({ delay: 2, repeat: -1 });
-	// 	// flicker.to(id, { ease: 'none', yoyo: true, repeat: true, opacity:((Math.random()*0.5) + 0.5), duration: (Math.random()*0.5), delay: Math.floor(2 + (Math.random() * 8.3))});
-	// 	// flicker.to(id, { ease: 'none', yoyo: true, repeat: true, opacity:((Math.random()*0.5) + 0.5), duration: (Math.random()*0.5), delay: Math.floor(2 + (Math.random() * 3.1))});
-	// 	// flicker.to(id, { ease: 'none', yoyo: true, repeat: true, opacity:((Math.random()*0.5) + 0.5), duration: (Math.random()*0.5), delay: Math.floor(2 + (Math.random() * 1.7))});
-
-	// 	// main.add(zoomIn).add(turnLightOn).add(path);
-	// 	main
-	// 	.add(path)
-	// 	.add(zoomIn)
-	// 	.add(pathContinued)
-	// 	;
-	// 	// .add(flicker, "<")
-	// 	return main;
-	// };
 
 	render() {
 		return (
@@ -520,44 +322,6 @@ class Home extends React.Component {
 
 
 
-
-
-						{/* <div id="splash-page-spaceship-window-animation" className="splash-page-spaceship-window-animation debug-box"> */}
-							{/* <div className="spaceship-animation-window-panel-wrapper" style={{ left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max }}> */}
-								{/* <SpaceshipWindowSVG className="debug-box" id="spaceship-window-animation-svg" style={{ left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max }} /> */}
-							{/* </div> */}
-							{/* <div id="spaceship-animation-panel-wrapper" className="spaceship-animation-screen-panel-wrapper" style={{ left: this.state.maxXOffset - 1, top: this.state.maxYOffset, width: this.state.max, height: this.state.max }}> */}
-								{/* <SpaceshipComputerScreenGridSVG className="debug-box spaceship-screen-grid-svg" id="spaceship-computer-screen-animation-svg" style={{ left: this.state.maxXOffset, top: this.state.maxYOffset, width: this.state.max, height: this.state.max }} /> */}
-								{/* <div className="debug-box spaceship-screen" id="spaceship-computer-outside-animation" style={{ backgroundSize: this.state.min, width: this.state.min, height: this.state.min }} /> */}
-							{/* </div> */}
-						{/* </div> */}
-
-						{/* <div id="splash-page-spacer" className="splash-page-full-content-wrapper"> */}
-							{/* {this.state.computerScreenCurrentContent && 
-								<ComputerScreenContent id="computer-content-section-wrapper" 
-								sectionId={'computer-content-section'} 
-								currentContent={this.state.computerScreenCurrentContent}
-								// title={this.state.computerScreenCurrentContent.title} 
-								// text={this.state.computerScreenCurrentContent.text} 
-								// imageLocation={this.state.computerScreenCurrentContent.image} 
-								// svgElement={this.state.computerScreenCurrentContent.svg} 
-								nextArrowTappedCallback={this.handleNextArrowClick} 
-								backArrowTappedCallback={this.handleBackArrowClick} />
-							} */}
-							{/* {this.state.computerScreenCurrentContent && 
-								<ComputerScreenContent id="computer-content-section-wrapper" 
-								sectionId={'computer-content-section'} 
-								// currentContent={this.state.computerScreenCurrentContent}
-								title={this.state.computerScreenCurrentContent.title} 
-								textElement={this.state.computerScreenCurrentContent.textElement} 
-								// imageLocation={this.state.computerScreenCurrentContent.image} 
-								svg={this.state.computerScreenCurrentContent.svg} 
-								nextArrowTappedCallback={this.handleNextArrowClick} 
-								backArrowTappedCallback={this.handleBackArrowClick} />
-							} */}
-
-							{/* <section id="" class="splash-page-content-end-section"></section> */}
-						{/* </div> */}
 						<section id="team" className="team light gradient-background-section">
 							<Container className="team-container">
 								<h3>The Team</h3>
@@ -670,15 +434,6 @@ function ScrollingCarousel() {
 		items.push(img);
 	})
 
-	// svgs.forEach( xalianSvg => {
-	// 	let path = xalianSvg.path;
-	// 	let speciesName = path.substring(2, path.length - 4);
-	// 	let species = speciesMap[speciesName];
-	// 	if (species) {
-	// 		var img = buildImage(species);
-	// 		items.push(img);
-	// 	}
-	// })
 
 	function buildImage(s) {
 		return (

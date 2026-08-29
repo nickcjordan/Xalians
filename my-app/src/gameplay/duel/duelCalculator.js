@@ -2,7 +2,6 @@ const constants = require('../../constants/constants.js');
 const attackConstants = require('../../constants/attackCalculationConstants.js');
 const tools = require('../../tools.js');
 // var Move = require('../model/move.js');
-const mockMove = require('../../json/mock/mockMove.json'); 
 const translator = require('../../utils/valueTranslator.js');
 const duelUtil = require('../../utils/duelUtil.js');
 const duelConstants = require('../../gameplay/duel/duelGameConstants.js');
