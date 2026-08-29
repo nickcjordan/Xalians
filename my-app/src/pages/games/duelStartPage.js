@@ -29,7 +29,8 @@ class DuelStartPage extends React.Component {
 
     state = {
         randomizeStartingPositions: true,
-        debugMode: true
+        debugMode: true,
+        selectedXalianIds: []
     }
 
     // componentDidUpdate(prevProps, prevState) {
@@ -38,39 +39,52 @@ class DuelStartPage extends React.Component {
         // }
     // }
 
-    setGameDetails = (passedIn = null) => {
-        // let details = {
-        //     numberOfPieces: this.state.numberOfPieces,
-        //     players: this.state.players,
-        //     bot: this.state.players == 1 ? true : false,
-        //     randomizeStartingPositions: this.state.randomizeStartingPositions,
-        //     debugMode: this.state.debugMode
-        // };
+    setGameDetails = (playerSquad = null) => {
         let details = {
             numberOfPieces: this.state.numberOfPieces,
             players: 2,
             bot: this.state.players == 1 ? true : false,
             randomizeStartingPositions: this.state.randomizeStartingPositions,
-            debugMode: this.state.debugMode
+            debugMode: this.state.debugMode,
+            playerSquad: playerSquad
         };
-        this.setState({gameDetails: passedIn || details})
+        this.setState({gameDetails: details})
     }
 
     componentDidMount() {
-        // DEBUG
-        // this.setGameDetails({
-        //     numberOfPieces: 6,
-        //     players: 2,
-        //     bot: true,
-        //     randomizeStartingPositions: true
-        // });
+        retrievalUtil.getCurrentUserAndXalians()
+            .then((user) => {
+                if (user && user.xalians && user.xalians.length > 0) {
+                    this.setState({ userXalians: user.xalians.map((x) => x.attributes) });
+                }
+            })
+            .catch(() => {
+                // signed out or API unavailable — duel falls back to random squads
+            });
+    }
 
-        // this.setGameDetails({
-        //     numberOfPieces: 2,
-        //     players: 2,
-        //     bot: false,
-        //     randomizeStartingPositions: true
-        // });
+    handleStartClicked = () => {
+        if (this.state.userXalians && this.state.userXalians.length > 0) {
+            this.setState({ choosingSquad: true });
+        } else {
+            this.setGameDetails();
+        }
+    }
+
+    toggleXalianSelection = (xalianId) => {
+        this.setState((prev) => {
+            if (prev.selectedXalianIds.includes(xalianId)) {
+                return { selectedXalianIds: prev.selectedXalianIds.filter((id) => id !== xalianId) };
+            } else if (prev.selectedXalianIds.length < prev.numberOfPieces) {
+                return { selectedXalianIds: [...prev.selectedXalianIds, xalianId] };
+            }
+            return null;
+        });
+    }
+
+    startWithSelectedSquad = () => {
+        let squad = this.state.userXalians.filter((x) => this.state.selectedXalianIds.includes(x.xalianId));
+        this.setGameDetails(squad);
     }
 
 
@@ -87,6 +101,48 @@ class DuelStartPage extends React.Component {
         if (this.state.gameDetails) {
             return (
                 <DuelPage gameDetails={this.state.gameDetails} />
+            );
+        } else if (this.state.choosingSquad) {
+            let needed = this.state.numberOfPieces;
+            let selectedCount = this.state.selectedXalianIds.length;
+            let fillerCount = needed - selectedCount;
+            return (
+                <React.Fragment>
+                    <Container fluid className="content-background-container">
+                        <XalianNavbar></XalianNavbar>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', justifyItems: 'center', maxWidth: '600px', margin: 'auto' }}>
+                            <h4 style={{ margin: 'auto', textAlign: 'center', marginTop: '25px', marginBottom: '10px' }}>Choose Your Squad ({selectedCount}/{needed}):</h4>
+
+                            <Row style={{ margin: 'auto', justifyContent: 'center' }}>
+                                {this.state.userXalians.map((x) => {
+                                    let selected = this.state.selectedXalianIds.includes(x.xalianId);
+                                    return (
+                                        <Col key={`squad-pick-${x.xalianId}`} xs={4} sm={3} style={{ padding: '5px' }}>
+                                            <a onClick={() => this.toggleXalianSelection(x.xalianId)} style={{ cursor: 'pointer' }}>
+                                                <div style={{ borderRadius: '10px', padding: '3px', border: selected ? '3px solid #4caf50' : '3px solid transparent', opacity: selected || selectedCount < needed ? 1 : 0.4 }}>
+                                                    <XalianImage colored bordered speciesName={x.species.name} primaryType={x.elements.primaryType} moreClasses="xalian-image-grid" />
+                                                    <h6 className="condensed-row" style={{ textAlign: 'center', marginTop: '5px', marginBottom: '0px' }}>{x.species.name}</h6>
+                                                    <p style={{ textAlign: 'center', fontSize: '8pt', marginBottom: '0px', opacity: 0.7 }}>#{x.xalianId.split('-').pop().substring(0, 8)}</p>
+                                                </div>
+                                            </a>
+                                        </Col>
+                                    );
+                                })}
+                            </Row>
+
+                            {selectedCount > 0 && fillerCount > 0 &&
+                                <p style={{ margin: 'auto', textAlign: 'center', marginTop: '10px', opacity: 0.7 }}>{fillerCount} remaining squad slot{fillerCount > 1 ? 's' : ''} will be filled randomly</p>
+                            }
+
+                            <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '30px', marginBottom: '50px' }}>
+                                <Button onClick={() => this.setGameDetails()} size='lg' variant='xalianGray' style={{ width: 'fit-content' }}>Random Squad</Button>
+                                <Button onClick={this.startWithSelectedSquad} size='lg' disabled={selectedCount < 1} variant='xalianGreen' style={{ width: 'fit-content' }}>Enter Duel!</Button>
+                            </div>
+                        </div>
+
+                    </Container>
+                </React.Fragment>
             );
         } else {
             return (
@@ -159,9 +215,7 @@ class DuelStartPage extends React.Component {
 
                                 </div>
 
-                                <Button onClick={ () => {
-                                    this.setGameDetails();
-                                } }
+                                <Button onClick={this.handleStartClicked}
                                 size='lg' disabled={!this.state.players  || !this.state.numberOfPieces} variant='xalianGreen' style={{ width: 'fit-content', margin: 'auto', marginTop: '50px'}}>Start Duel!</Button>
                             </div>
 

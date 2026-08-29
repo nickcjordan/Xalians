@@ -150,8 +150,10 @@ module.exports.updateXalianUser = (event, context, callback) => {
 	const request = JSON.parse(event.body);
 	console.log(`action=${request.action} :: userId=${request.userId} :: value=${request.value}`);
 
+	const userId = request.userId.toLowerCase();
+
 	delegate.getUser(
-		request.userId,
+		userId,
 		function onSuccess(user) {
 
 			console.log('got user to update: \n' + JSON.stringify(user));
