@@ -10,15 +10,10 @@ on:
       - "outputs.tf"
       - "terraform/**"
       - ".github/workflows/deploy-backend.yml"
+  # no paths filter on PRs: "Terraform plan" is a required status check for
+  # auto-merge, so it must run (and pass) on every PR
   pull_request:
     branches: [master]
-    paths:
-      - "lambda/**"
-      - "main.tf"
-      - "variables.tf"
-      - "outputs.tf"
-      - "terraform/**"
-      - ".github/workflows/deploy-backend.yml"
   workflow_dispatch:
 
 permissions:
