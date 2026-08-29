@@ -5,29 +5,16 @@ import mockUserData from '../json/mock/mockUserData.json';
 import mockXalianList from '../json/mock/mockXalianList.json';
 import xalianSamples from '../json/mock/xalianSamples.json';
 
+// resolves with the user record (xalians populated) when signed in, or null when signed out;
+// rejects if the API call itself fails
 export function getCurrentUserAndXalians() {
-    return new Promise((resolve) => {
-        try {
-            Auth.currentUserInfo().then((data) => {
-                if (data) {
-                    let u = authUtil.buildAuthState(data);
-                    let username = u.username;
-                    dbApi
-                    .callGetUser(username, true)
-                    .then((user) => {
-                        console.log(JSON.stringify(user, null, 2));
-                        resolve(user);
-                    })
-                    .catch((e) => {
-                       console.log(`ERROR : ${JSON.stringify(e, null, 2)}`);
-                    });
-                }
-            });
-        } catch (e) {
-          console.log("caught ERROR : " + e);
+    return Auth.currentUserInfo().then((data) => {
+        if (!data) {
+            return null;
         }
-      });
-    
+        let u = authUtil.buildAuthState(data);
+        return dbApi.callGetUser(u.username, true);
+    });
 }
 
 export function getMockCurrentUserAndXalians() {

@@ -28,7 +28,9 @@ export function buildDuelPiece(xalian) {
     ranges['medium'] = 2;
     ranges['low'] = 1;
 
-    let attackRange = ranges[selectedSpecies.traits.attackRange];
+    // real saved xalians may predate the current species list — default rather than crash
+    let traits = (selectedSpecies && selectedSpecies.traits) || { attackRange: 'medium', canFly: false };
+    let attackRange = ranges[traits.attackRange] || 2;
 
     function buildReducedSpecies(fullSpecies) {
         return {
@@ -54,6 +56,6 @@ export function buildDuelPiece(xalian) {
             health: duelConstants.MAX_HEALTH_POINTS,
             stamina: duelConstants.MAX_STAMINA_POINTS
         },
-        traits: selectedSpecies.traits
+        traits: traits
     }
 }

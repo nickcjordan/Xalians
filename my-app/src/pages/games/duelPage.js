@@ -29,19 +29,52 @@ class DuelPage extends React.Component {
 	};
 
 	componentDidMount() {
-		// retrievalUtil.getCurrentUserAndXalians().then((user) => {
+		// build the piece pools once so re-renders don't reshuffle mid-game
 		if (!this.state.xalians) {
-
-			retrievalUtil.getMockCurrentUserAndXalians().then((user) => {
-				let xalians = [];
-				user.xalians.forEach((x) => {
-					// xalians.push(this.buildSpeciesIcon(x.attributes));
-					xalians.push(x.attributes);
-				});
-				
-				this.setState({ user: user, xalians: xalians });
-			});
+			this.setState({ xalians: this.buildTeams() });
 		}
+	}
+
+	buildTeams = () => {
+		let details = this.props.gameDetails;
+		let xaliansPerTeam = details.numberOfPieces;
+
+		let allPieces = [];
+		let playerPieces = [];
+		let opponentPieces = [];
+
+		// the player's chosen real xalians, if any, go on team 0 first
+		let squad = (details.playerSquad || []).slice(0, xaliansPerTeam);
+		let squadIds = new Set(squad.map((x) => x.xalianId));
+		squad.forEach((x) => {
+			let transformed = duelPieceBuilder.buildDuelPiece(x);
+			allPieces.push(transformed);
+			playerPieces.push(transformed);
+		});
+
+		// copy the shared module array so shuffling/popping doesn't destroy it for later renders/games
+		let samples = [...retrievalUtil.getMockXalianList()].filter((s) => !squadIds.has(s.xalianId));
+		gsap.utils.shuffle(samples);
+
+		while (playerPieces.length < xaliansPerTeam && samples.length > 0) {
+			let sample = samples.pop();
+			if (sample) {
+				let transformed = duelPieceBuilder.buildDuelPiece(sample);
+				allPieces.push(transformed);
+				playerPieces.push(transformed);
+			}
+		}
+
+		while (opponentPieces.length < xaliansPerTeam && samples.length > 0) {
+			let sample = samples.pop();
+			if (sample) {
+				let transformed = duelPieceBuilder.buildDuelPiece(sample);
+				allPieces.push(transformed);
+				opponentPieces.push(transformed);
+			}
+		}
+
+		return { allPieces: allPieces, playerPieces: playerPieces, opponentPieces: opponentPieces };
 	}
 
 	// handleClick = (id) => {
@@ -116,48 +149,8 @@ class DuelPage extends React.Component {
 		);
 		// let xaliansPerTeam = duelConstants.XALIANS_PER_TEAM;
 
-		if (this.state.xalians && this.state.xalians.length > 0) {
-			let allPieces = [];
-			let playerPieces = [];
-			let opponentPieces = [];
-
-			// copy the shared module array so shuffling/popping doesn't destroy it for later renders/games
-			let samples = [...retrievalUtil.getMockXalianList()];
-			gsap.utils.shuffle(samples);
-
-			while (playerPieces.length < xaliansPerTeam && samples.length > 0) {
-				let sample = samples.pop();
-				if (sample) {
-					let transformed = duelPieceBuilder.buildDuelPiece(sample); 
-					allPieces.push(transformed);
-					playerPieces.push(transformed);
-				}
-			}
-
-			while (opponentPieces.length < xaliansPerTeam && samples.length > 0) {
-				let sample = samples.pop();
-				if (sample) {
-					let transformed = duelPieceBuilder.buildDuelPiece(sample); 
-					allPieces.push(transformed);
-					opponentPieces.push(transformed);
-				}
-			}
-
-
-
-
-				// IMPLEMENT ONCE YOU SETUP USING XALIANS FROM PLAYER'S FACTION
-			// this.state.xalians.forEach( x => {
-			// 	let transformed = this.transformXalianToGamePiece(x); 
-			// 	allPieces.push(transformed);
-			// 	playerPieces.push(transformed);
-			// })
-			// let opponentXalians = retrievalUtil.getMockXalianList();
-			// opponentXalians.forEach(x => {
-			// 	let transformed = this.transformXalianToGamePiece(x); 
-			// 	allPieces.push(transformed);
-			// 	opponentPieces.push(transformed);
-			// })
+		if (this.state.xalians) {
+			let { allPieces, playerPieces, opponentPieces } = this.state.xalians;
 
 			let teams = [];
 			teams.push(playerPieces.map(x => (x.xalianId)));
