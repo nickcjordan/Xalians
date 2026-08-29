@@ -435,14 +435,46 @@ function moveXalianToActive(id, unset, active, ctx, endTurnAfterMove = false) {
 
 // function movePiece(G, ctx, startIndex, endIndex, data = {}) {
 function movePiece(G, ctx, path, data = {}) {
+	// sanity-check the client-submitted path shape before trusting any of it
+	if (!path
+		|| !Number.isInteger(path.startIndex) || !Number.isInteger(path.endIndex)
+		|| path.startIndex < 0 || path.startIndex > 63
+		|| path.endIndex < 0 || path.endIndex > 63) {
+		return INVALID_MOVE;
+	}
+
+	if (ctx.phase !== 'play') {
+		return INVALID_MOVE;
+	}
+
 	let xalianIdToMove = G.cells[path.startIndex];
+	if (!xalianIdToMove || !duelUtil.isCurrentTurnsXalian(xalianIdToMove, G, ctx)) {
+		return INVALID_MOVE;
+	}
+
 	let xalian = duelUtil.getXalianFromId(xalianIdToMove, G);
-	
+	if (!xalian) {
+		return INVALID_MOVE;
+	}
+
+	// recompute the valid destinations for this piece server-side; never trust the client's endIndex/spacesMoved
+	let validPaths = duelCalculator.calculateMovablePaths(path.startIndex, xalian, G, ctx);
+	let serverPath = validPaths && validPaths.find(p => p.endIndex === path.endIndex);
+	if (!serverPath) {
+		return INVALID_MOVE;
+	}
+
+	let xalianStatus = duelUtil.getXalianCurrentTurnStatus(xalian, G, ctx);
+	let turnState = boardStateManager.currentTurnState(G, ctx);
+	if (xalianStatus.remainingSpacesXalianCanMove < serverPath.spacesMoved
+		|| turnState.remainingSpacesToMove < serverPath.spacesMoved) {
+		return INVALID_MOVE;
+	}
 
 	let targetFlagIndex = duelUtil.getCurrentTurnTargetFlagIndex(G, ctx);
 	let opponentFlagState = G.flags[parseInt(ctx.currentPlayer === '0' ? 1 : 0)];
 	// set flag holder
-	if (path.endIndex == targetFlagIndex) {
+	if (serverPath.endIndex == targetFlagIndex) {
 		let flag = G.flags[parseInt(ctx.currentPlayer)];
 		if (flag) {
 			flag.index = null;
@@ -452,19 +484,19 @@ function movePiece(G, ctx, path, data = {}) {
 	}
 
 	// move flag back to start if recaptured
-	if (path.endIndex == opponentFlagState.index) {
+	if (serverPath.endIndex == opponentFlagState.index) {
 		opponentFlagState.index = opponentFlagState.startIndex;
 	}
 
-	G.cells[path.startIndex] = null;
-	G.cells[path.endIndex] = xalianIdToMove;
-	xalian.state.stamina = xalian.state.stamina - path.spacesMoved;
+	G.cells[serverPath.startIndex] = null;
+	G.cells[serverPath.endIndex] = xalianIdToMove;
+	xalian.state.stamina = xalian.state.stamina - serverPath.spacesMoved;
 
 	let action = {
 		type: duelConstants.actionTypes.MOVE,
 		move: {
 			moverId: xalianIdToMove,
-			path: path
+			path: serverPath
 		}
 	};
 	// G.currentTurnState.actions.push(action);
@@ -474,76 +506,105 @@ function movePiece(G, ctx, path, data = {}) {
 
 
 function doAttack(G, ctx, path, data = {}) {
+	// sanity-check the client-submitted path shape before trusting any of it
+	if (!path
+		|| !Number.isInteger(path.startIndex) || !Number.isInteger(path.endIndex)
+		|| path.startIndex < 0 || path.startIndex > 63
+		|| path.endIndex < 0 || path.endIndex > 63) {
+		return INVALID_MOVE;
+	}
+
+	if (ctx.phase !== 'play') {
+		return INVALID_MOVE;
+	}
+
 	let attackerIndex = path.startIndex;
 	let defenderIndex = path.endIndex;
 	let attackerId = G.cells[attackerIndex];
 	let attacker = G.xalians.filter((x) => x.xalianId === attackerId)[0];
 	let defenderId = G.cells[defenderIndex];
 	let defender = G.xalians.filter((x) => x.xalianId === defenderId)[0];
-	if (attacker && defender) {
-		// attacker.state.stamina = attacker.state.stamina - duelConstants.ATTACK_STAMINA_COST;
-		attacker.state.stamina = attacker.state.stamina - path.spacesMoved;
-		// console.log('xalian ' + attacker.species.name + ' from square ' + attackerIndex + ' is attacking xalian ' + defender.species.name + ' on square ' + defenderIndex);
-		var existingDefenderHealth = parseInt(defender.state.health);
-		let moveIndex = Number.isInteger(data.moveIndex) && attacker.moves && data.moveIndex >= 0 && data.moveIndex < attacker.moves.length ? data.moveIndex : null;
-		let move = moveIndex != null ? attacker.moves[moveIndex] : null;
-		let attackResult = duelCalculator.calculateAttackResult(attacker, defender, G, ctx, false, move);
-		let damage = attackResult.damage;
-		defender.state.health = Math.max(0, existingDefenderHealth - damage);
-		// console.log('resulting health = ' + defender.state.health);
-		if (defender.state.health <= 0) {
-			if (duelUtil.isPlayerPiece(defenderId, G)) {
-				removeItemFromList(defenderId, G.playerStates[0].activeXalianIds);
-				G.playerStates[0].inactiveXalianIds.push(defenderId);
-				let flag = duelUtil.getPlayerFlagState(G);
-				if (flag.holder && flag.holder === defenderId) {
-					flag.holder = null;
-					flag.index = defenderIndex;
-				}
-			} else if (duelUtil.isOpponentPiece(defenderId, G)) {
-				removeItemFromList(defenderId, G.playerStates[1].activeXalianIds);
-				G.playerStates[1].inactiveXalianIds.push(defenderId);
-				let flag = duelUtil.getOpponentFlagState(G);
-				if (flag.holder && flag.holder === defenderId) {
-					flag.holder = null;
-					flag.index = defenderIndex;
-				}
-			}
-			G.cells[defenderIndex] = null;
 
-		}
-
-		// if (ctx.currentPlayer == 0) {
-		// 	Hub.dispatch("duel-animation-event", { event: "attack", data: 
-		let attackActionResult = {
-			attackerIndex: attackerIndex,
-			attackerId: attackerId,
-			attackerType: attacker.elementType,
-			defenderIndex: defenderIndex,
-			defenderId: defenderId,
-			defenderType: defender.elementType,
-			moveName: move ? move.name : null,
-			moveType: move && move.type ? move.type : null,
-			typeEffectiveness: attackResult.typeEffectiveness,
-			attackResult: attackResult
-
-		};
-
-		let action = {
-			type: duelConstants.actionTypes.ATTACK,
-			attack: {
-				attackerId: attackerId,
-				defenderId: defenderId,
-				path: path,
-				result: attackActionResult
-			}
-		};
-		G.currentTurnActions.push(action);
-	} else {
-		console.error(`ERROR :: DID NOT FIND ONE OF ATTACKER [${attacker}] OR DEFENDER [${defender}] DURING ATTACK ACTION`);
+	if (!attacker || !attackerId || !duelUtil.isCurrentTurnsXalian(attackerId, G, ctx)) {
+		return INVALID_MOVE;
 	}
 
+	if (!defender || !defenderId || duelUtil.xaliansAreOnSameTeam(attackerId, defenderId, G)) {
+		return INVALID_MOVE;
+	}
 
+	// only one attack per team per turn, and this attacker must not have already attacked this turn
+	let turnState = boardStateManager.currentTurnState(G, ctx);
+	let attackerStatus = duelUtil.getXalianCurrentTurnStatus(attacker, G, ctx);
+	if (turnState.hasAttacked || attackerStatus.xalianHasAttacked) {
+		return INVALID_MOVE;
+	}
+
+	// recompute the valid attack targets for this piece server-side; never trust the client's endIndex/spacesMoved
+	let validPaths = duelCalculator.calculateAttackablePaths(attackerIndex, attacker, G, ctx);
+	let serverPath = validPaths && validPaths.find(p => p.endIndex === defenderIndex);
+	if (!serverPath) {
+		return INVALID_MOVE;
+	}
+
+	// attacker.state.stamina = attacker.state.stamina - duelConstants.ATTACK_STAMINA_COST;
+	attacker.state.stamina = attacker.state.stamina - serverPath.spacesMoved;
+	// console.log('xalian ' + attacker.species.name + ' from square ' + attackerIndex + ' is attacking xalian ' + defender.species.name + ' on square ' + defenderIndex);
+	var existingDefenderHealth = parseInt(defender.state.health);
+	let moveIndex = Number.isInteger(data.moveIndex) && attacker.moves && data.moveIndex >= 0 && data.moveIndex < attacker.moves.length ? data.moveIndex : null;
+	let move = moveIndex != null ? attacker.moves[moveIndex] : null;
+	let attackResult = duelCalculator.calculateAttackResult(attacker, defender, G, ctx, false, move);
+	let damage = attackResult.damage;
+	defender.state.health = Math.max(0, existingDefenderHealth - damage);
+	// console.log('resulting health = ' + defender.state.health);
+	if (defender.state.health <= 0) {
+		if (duelUtil.isPlayerPiece(defenderId, G)) {
+			removeItemFromList(defenderId, G.playerStates[0].activeXalianIds);
+			G.playerStates[0].inactiveXalianIds.push(defenderId);
+			let flag = duelUtil.getPlayerFlagState(G);
+			if (flag.holder && flag.holder === defenderId) {
+				flag.holder = null;
+				flag.index = defenderIndex;
+			}
+		} else if (duelUtil.isOpponentPiece(defenderId, G)) {
+			removeItemFromList(defenderId, G.playerStates[1].activeXalianIds);
+			G.playerStates[1].inactiveXalianIds.push(defenderId);
+			let flag = duelUtil.getOpponentFlagState(G);
+			if (flag.holder && flag.holder === defenderId) {
+				flag.holder = null;
+				flag.index = defenderIndex;
+			}
+		}
+		G.cells[defenderIndex] = null;
+
+	}
+
+	// if (ctx.currentPlayer == 0) {
+	// 	Hub.dispatch("duel-animation-event", { event: "attack", data:
+	let attackActionResult = {
+		attackerIndex: attackerIndex,
+		attackerId: attackerId,
+		attackerType: attacker.elementType,
+		defenderIndex: defenderIndex,
+		defenderId: defenderId,
+		defenderType: defender.elementType,
+		moveName: move ? move.name : null,
+		moveType: move && move.type ? move.type : null,
+		typeEffectiveness: attackResult.typeEffectiveness,
+		attackResult: attackResult
+
+	};
+
+	let action = {
+		type: duelConstants.actionTypes.ATTACK,
+		attack: {
+			attackerId: attackerId,
+			defenderId: defenderId,
+			path: serverPath,
+			result: attackActionResult
+		}
+	};
+	G.currentTurnActions.push(action);
 }
 
 function removeItemFromList(item, list) {

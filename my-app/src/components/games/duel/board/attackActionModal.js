@@ -30,11 +30,17 @@ class AttackActionModal extends React.Component {
         // if (this.props.animationTl) {
         //     this.props.animationTl.play();
         // }
-        gsap.to('#attack-action-modal', {autoAlpha: 0, duration: 0.35}).then(() => {
+        let modalElem = document.getElementById('attack-action-modal');
+        if (!modalElem) {
+            // element missing — nothing to animate, but the shared timeline MUST still resume
+            this.props.onHide();
+            return;
+        }
+        gsap.to(modalElem, {autoAlpha: 0, duration: 0.35}).then(() => {
             this.props.onHide();
         }
         );
-        
+
     }
 
     onAnimationComplete = () => {
@@ -42,75 +48,96 @@ class AttackActionModal extends React.Component {
     }
 
     componentDidMount() {
-        // calculate variables
-        let attackerElem = document.getElementById('duel-attack-action-' + this.props.attacker.xalianId + '-animation');
-        let defenderElem = document.getElementById('duel-attack-action-' + this.props.defender.xalianId + '-animation');
-        let attackerRect = attackerElem.getBoundingClientRect();
-        let defenderRect = defenderElem.getBoundingClientRect();
+        try {
+            // calculate variables
+            let attackerElem = document.getElementById('duel-attack-action-' + this.props.attacker.xalianId + '-animation');
+            let defenderElem = document.getElementById('duel-attack-action-' + this.props.defender.xalianId + '-animation');
 
-        let attackerBadge = document.getElementById("duel-attack-action-attacker-type-icon");
-        let defenderBadge = document.getElementById("duel-attack-action-defender-type-icon");
-        let badgeWidthOffset = attackerBadge.clientWidth/2;
-        let xOffset = badgeWidthOffset;
+            let attackerBadge = document.getElementById("duel-attack-action-attacker-type-icon");
+            let defenderBadge = document.getElementById("duel-attack-action-defender-type-icon");
 
-        // init modal-global timeline
-        let modalTl = gsap.timeline({ onComplete: this.onAnimationComplete });
+            if (!attackerElem || !defenderElem || !attackerBadge || !defenderBadge) {
+                // required element missing — skip the fancy animation and fail safe so the
+                // shared timeline (paused elsewhere for the duration of the attack) still resumes
+                throw new Error('attackActionModal: required animation element missing');
+            }
 
-        // fade in entire modal
-        modalTl.to('#attack-action-modal', {autoAlpha: 1, duration: 0.25});
-        
-        // fade in pieces
-        // modalTl.from(attackerElem, { ease: "expo.in", opacity: 0}, "<");
-        // modalTl.from(defenderElem, { ease: "expo.in", delay: 0.2, opacity: 0}, "<");
+            let attackerRect = attackerElem.getBoundingClientRect();
+            let defenderRect = defenderElem.getBoundingClientRect();
+            let badgeWidthOffset = attackerBadge.clientWidth/2;
+            let xOffset = badgeWidthOffset;
 
-        if (this.props.attackerStartRect && this.props.defenderStartRect) { // move pieces in from location on board if provided
-            modalTl.from(attackerElem, {x: this.props.attackerStartRect.x - attackerRect.x, y: this.props.attackerStartRect.y - attackerRect.y, ease: "expo.in"}, "<");
-            modalTl.from(defenderElem, {x: this.props.defenderStartRect.x - defenderRect.x, y: this.props.defenderStartRect.y - defenderRect.y, ease: "expo.in"}, "<");
-        } else { // otherwise fade in from the side
-            modalTl.from(attackerElem, {xPercent: -200, opacity: 0, ease: "expo.in"}, "<");
-            // modalTl.from(attackerElem, {xPercent: -200, ease: "expo.in"}, "<");
-            modalTl.from(defenderElem, {xPercent: 200, opacity: 0, ease: "expo.in", delay: 0.2}, "<");
-            // modalTl.from(defenderElem, {xPercent: 200, ease: "expo.in", delay: 0.2}, "<");
+            // init modal-global timeline
+            let modalTl = gsap.timeline({ onComplete: this.onAnimationComplete });
+
+            // fade in entire modal
+            modalTl.to('#attack-action-modal', {autoAlpha: 1, duration: 0.25});
+
+            // fade in pieces
+            // modalTl.from(attackerElem, { ease: "expo.in", opacity: 0}, "<");
+            // modalTl.from(defenderElem, { ease: "expo.in", delay: 0.2, opacity: 0}, "<");
+
+            if (this.props.attackerStartRect && this.props.defenderStartRect) { // move pieces in from location on board if provided
+                modalTl.from(attackerElem, {x: this.props.attackerStartRect.x - attackerRect.x, y: this.props.attackerStartRect.y - attackerRect.y, ease: "expo.in"}, "<");
+                modalTl.from(defenderElem, {x: this.props.defenderStartRect.x - defenderRect.x, y: this.props.defenderStartRect.y - defenderRect.y, ease: "expo.in"}, "<");
+            } else { // otherwise fade in from the side
+                modalTl.from(attackerElem, {xPercent: -200, opacity: 0, ease: "expo.in"}, "<");
+                // modalTl.from(attackerElem, {xPercent: -200, ease: "expo.in"}, "<");
+                modalTl.from(defenderElem, {xPercent: 200, opacity: 0, ease: "expo.in", delay: 0.2}, "<");
+                // modalTl.from(defenderElem, {xPercent: 200, ease: "expo.in", delay: 0.2}, "<");
+            }
+
+
+            let attackerBadgeTl = gsap.timeline();
+            attackerBadgeTl.fromTo(attackerBadge, {opacity: 0}, {opacity: 1, duration: 0.2});
+            attackerBadgeTl.to(attackerBadge, {x: xOffset, scale: 1.5, ease: "expo.in"}, "<");
+
+            let defenderBadgeTl = gsap.timeline();
+            defenderBadgeTl.fromTo(defenderBadge, {opacity: 0}, {opacity: 1, duration: 0.2});
+            defenderBadgeTl.to(defenderBadge, {x: -xOffset, scale: 1.5, ease: "expo.in"}, "<");
+
+            // bounce to type badge based on effectiveness
+            let effectivenessScore = this.props.result && this.props.result.typeEffectiveness ? this.props.result.typeEffectiveness : 0;
+            let effectiveness = duelValueTranslator.effectivenessScoreToText(effectivenessScore);
+            this.addBounceAnimation(effectiveness, attackerBadgeTl, attackerBadge, defenderBadgeTl, defenderBadge, xOffset);
+
+            modalTl.add(attackerBadgeTl).add(defenderBadgeTl, "<");
+
+            let effectivenessTextElem = document.getElementById('duel-attack-action-effectiveness-text');
+            modalTl.fromTo(effectivenessTextElem, {opacity: 0}, {opacity: 1});
+
+            let defenderHealthDelta = this.buildXalianHealthDelta(this.props.defender.state.health, this.props.result.damage);
+            let attackerHealthDelta = this.buildXalianHealthDelta(this.props.attacker.state.health, this.props.result.reactionDamage);
+
+            let defenderDropShadowBlur = Math.min(4, defenderHealthDelta.end.percent);
+            let attackerDropShadowBlur = Math.min(4, attackerHealthDelta.end.percent);
+
+
+            modalTl.fromTo('#duel-attack-action-attacker-health-bar-wrapper, #duel-attack-action-defender-health-bar-wrapper', {autoAlpha: 0}, {autoAlpha: 1, duration: 0.15}, "<");
+            modalTl.to('#duel-attack-action-defender-health-bar', {width: `${defenderHealthDelta.end.percent}%`, backgroundColor: defenderHealthDelta.end.color, boxShadow: `0px 0px ${defenderDropShadowBlur}px ${defenderDropShadowBlur}px ${defenderHealthDelta.end.color}`, duration: 0.5});
+            modalTl.to('#duel-attack-action-attacker-health-bar', {width: `${attackerHealthDelta.end.percent}%`, backgroundColor: attackerHealthDelta.end.color, boxShadow: `0px 0px ${attackerDropShadowBlur}px ${attackerDropShadowBlur}px ${attackerHealthDelta.end.color}`, duration: 0.5}, "<");
+            modalTl.fromTo('#duel-attack-action-attacker-result-damage, #duel-attack-action-defender-result-damage', {autoAlpha: 0}, {autoAlpha: 1, duration: 0.5}, "<");
+            if (defenderDropShadowBlur == 0) {
+                modalTl.to(defenderElem, {opacity: 0.25, duration: 0.25});
+            }
+            if (attackerDropShadowBlur == 0) {
+                modalTl.to(attackerElem, {opacity: 0.25, duration: 0.25});
+            }
+
+            let fits = fitty('.fit-text'); // fitting title to modal
+        } catch (err) {
+            // fail safe: something required for the fancy animation was missing or threw.
+            // We must not deadlock the board — make the modal visible if possible (so the
+            // damage text can still flash) and force the completion/close path to run so the
+            // shared, paused gsap timeline resumes.
+            console.error('attackActionModal: animation setup failed, falling back to safe close', err);
+            try {
+                gsap.set('#attack-action-modal', { autoAlpha: 1 });
+            } catch (setErr) {
+                // ignore — modal element may not exist either
+            }
+            this.onAnimationComplete();
         }
-
-        
-        let attackerBadgeTl = gsap.timeline();
-        attackerBadgeTl.fromTo(attackerBadge, {opacity: 0}, {opacity: 1, duration: 0.2});
-        attackerBadgeTl.to(attackerBadge, {x: xOffset, scale: 1.5, ease: "expo.in"}, "<");
-        
-        let defenderBadgeTl = gsap.timeline();
-        defenderBadgeTl.fromTo(defenderBadge, {opacity: 0}, {opacity: 1, duration: 0.2});
-        defenderBadgeTl.to(defenderBadge, {x: -xOffset, scale: 1.5, ease: "expo.in"}, "<");
-        
-        // bounce to type badge based on effectiveness
-        let effectivenessScore = this.props.result && this.props.result.typeEffectiveness ? this.props.result.typeEffectiveness : 0;
-        let effectiveness = duelValueTranslator.effectivenessScoreToText(effectivenessScore);
-        this.addBounceAnimation(effectiveness, attackerBadgeTl, attackerBadge, defenderBadgeTl, defenderBadge, xOffset);
-
-        modalTl.add(attackerBadgeTl).add(defenderBadgeTl, "<");
-        
-        let effectivenessTextElem = document.getElementById('duel-attack-action-effectiveness-text');
-        modalTl.fromTo(effectivenessTextElem, {opacity: 0}, {opacity: 1});
-
-        let defenderHealthDelta = this.buildXalianHealthDelta(this.props.defender.state.health, this.props.result.damage);
-        let attackerHealthDelta = this.buildXalianHealthDelta(this.props.attacker.state.health, this.props.result.reactionDamage);
-
-        let defenderDropShadowBlur = Math.min(4, defenderHealthDelta.end.percent);
-        let attackerDropShadowBlur = Math.min(4, attackerHealthDelta.end.percent);
-        
-
-        modalTl.fromTo('#duel-attack-action-attacker-health-bar-wrapper, #duel-attack-action-defender-health-bar-wrapper', {autoAlpha: 0}, {autoAlpha: 1, duration: 0.15}, "<");
-        modalTl.to('#duel-attack-action-defender-health-bar', {width: `${defenderHealthDelta.end.percent}%`, backgroundColor: defenderHealthDelta.end.color, boxShadow: `0px 0px ${defenderDropShadowBlur}px ${defenderDropShadowBlur}px ${defenderHealthDelta.end.color}`, duration: 0.5});
-        modalTl.to('#duel-attack-action-attacker-health-bar', {width: `${attackerHealthDelta.end.percent}%`, backgroundColor: attackerHealthDelta.end.color, boxShadow: `0px 0px ${attackerDropShadowBlur}px ${attackerDropShadowBlur}px ${attackerHealthDelta.end.color}`, duration: 0.5}, "<");
-        modalTl.fromTo('#duel-attack-action-attacker-result-damage, #duel-attack-action-defender-result-damage', {autoAlpha: 0}, {autoAlpha: 1, duration: 0.5}, "<");
-        if (defenderDropShadowBlur == 0) {
-            modalTl.to(defenderElem, {opacity: 0.25, duration: 0.25});
-        }
-        if (attackerDropShadowBlur == 0) {
-            modalTl.to(attackerElem, {opacity: 0.25, duration: 0.25});
-        }
-
-        let fits = fitty('.fit-text'); // fitting title to modal
     }
 
     addBounceAnimation = (effectiveness, attackerBadgeTl, attackerBadge, defenderBadgeTl, defenderBadge, xOffset) => {

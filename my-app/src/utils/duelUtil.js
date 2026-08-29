@@ -250,6 +250,7 @@ export function getXalianCurrentTurnStatus(xalian, boardState, ctx) {
         }
     });
     remainingSpacesXalianCanMove = Math.min(remainingSpacesXalianCanMove, remainingSpacesToMoveForTurn);
+    remainingSpacesXalianCanMove = Math.min(remainingSpacesXalianCanMove, xalian.state && Number.isFinite(xalian.state.stamina) ? xalian.state.stamina : remainingSpacesXalianCanMove);
     remainingSpacesXalianCanMove = Math.max(remainingSpacesXalianCanMove, 0);
 
     return {
