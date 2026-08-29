@@ -33,6 +33,8 @@ class DuelBoardCell extends React.Component {
 		contentLoaded: false,
 	};
 
+	draggableInstances = [];
+
 	componentDidMount() {
 		// document.addEventListener('DOMContentLoaded', this.setAsDraggable);
 		// this.setDraggables();
@@ -43,6 +45,15 @@ class DuelBoardCell extends React.Component {
 		// if (this.props.ctx.turn < 3 && this.props.isActive && (prevProps.ctx.turn < this.props.ctx.turn)) {
 		// 	this.doFadesAfterMove();
 		// }
+	}
+
+	componentWillUnmount() {
+		this.killDraggables();
+	}
+
+	killDraggables = () => {
+		(this.draggableInstances || []).forEach(d => d.kill());
+		this.draggableInstances = [];
 	}
 
 	doFadesAfterMove = () => {
@@ -103,7 +114,8 @@ class DuelBoardCell extends React.Component {
 				})
 			}
 			console.log("DRAGGABLES CREATED");
-			Draggable.create(elemId, {
+			this.killDraggables();
+			this.draggableInstances = Draggable.create(elemId, {
 				type: "x,y",
 				edgeResistance: 1,
 				bounds: ".duel-board-wrapper",
@@ -296,6 +308,7 @@ class DuelBoardCell extends React.Component {
 
 			});
 		} else {
+			this.killDraggables();
 			console.log();
 		}
 	}
