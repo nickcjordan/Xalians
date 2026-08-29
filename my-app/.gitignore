@@ -32,7 +32,8 @@ amplify/backend/.temp
 build/
 dist/
 node_modules/
-aws-exports.js
+# aws-exports.js is committed deliberately: it holds only public Cognito client ids
+# (already visible in the shipped JS bundle) and CI cannot build without it
 awsconfiguration.json
 amplifyconfiguration.json
 amplifyconfiguration.dart
