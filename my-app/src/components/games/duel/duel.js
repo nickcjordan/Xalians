@@ -485,7 +485,9 @@ function doAttack(G, ctx, path, data = {}) {
 		attacker.state.stamina = attacker.state.stamina - path.spacesMoved;
 		// console.log('xalian ' + attacker.species.name + ' from square ' + attackerIndex + ' is attacking xalian ' + defender.species.name + ' on square ' + defenderIndex);
 		var existingDefenderHealth = parseInt(defender.state.health);
-		let attackResult = duelCalculator.calculateAttackResult(attacker, defender, G, ctx);
+		let moveIndex = Number.isInteger(data.moveIndex) && attacker.moves && data.moveIndex >= 0 && data.moveIndex < attacker.moves.length ? data.moveIndex : null;
+		let move = moveIndex != null ? attacker.moves[moveIndex] : null;
+		let attackResult = duelCalculator.calculateAttackResult(attacker, defender, G, ctx, false, move);
 		let damage = attackResult.damage;
 		defender.state.health = Math.max(0, existingDefenderHealth - damage);
 		// console.log('resulting health = ' + defender.state.health);
@@ -520,6 +522,9 @@ function doAttack(G, ctx, path, data = {}) {
 			defenderIndex: defenderIndex,
 			defenderId: defenderId,
 			defenderType: defender.elementType,
+			moveName: move ? move.name : null,
+			moveType: move && move.type ? move.type : null,
+			typeEffectiveness: attackResult.typeEffectiveness,
 			attackResult: attackResult
 
 		};

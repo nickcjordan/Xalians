@@ -257,23 +257,24 @@ export function calculateAttackablePaths(currentIndex, xalian, boardState, ctx, 
     return attackablePaths;
 }
 
-export function calculateAttackResult(attacker, defender, G, ctx, simulate = false, secondary = false) {
+export function calculateAttackResult(attacker, defender, G, ctx, simulate = false, move = null) {
     let base = calculateBaseValue(attacker, defender);
+    let power = move && move.rating ? move.rating / 10 : 1;
     let targets = calculateMultipleTargetsValue(attacker);
     let weather = calculatePlanetEffectValue(attacker, G);
     let badge = calculateUserExperienceValue(attacker);
     let critical = calculateCriticalValue();
     let random = simulate ? 1 : calculateRandom();
-    // let sameTypeBonus = calculateSameTypeAttackBonus(move, attacker);
-    let sameTypeBonus = 1;
+    let sameTypeBonus = calculateSameTypeAttackBonus(move, attacker);
     // This can be 0 (ineffective); 0.25, 0.5 (not very effective); 1 (normally effective); 2, or 4 (super effective)
-    let typeEffectiveness = calculateTypeEffectiveness(attacker, defender, secondary);
+    let attackType = move && move.type ? move.type : null;
+    let typeEffectiveness = calculateTypeEffectiveness(attackType, defender);
     let hinderingStatus = calculateHindranceEffect(attacker);
     let other = calculateRemainingFactors(attacker, defender, G, ctx);
-    let result = base * targets * weather * badge * critical * random * sameTypeBonus * typeEffectiveness * hinderingStatus * other;
+    let result = base * power * targets * weather * badge * critical * random * sameTypeBonus * typeEffectiveness * hinderingStatus * other;
     let final = Math.floor(result * 10)/10;
     // console.log(`base=${base}, random=${random}, sameTypeBonus=${sameTypeBonus}, final=${final}`);
-    
+
 
     // BUILD SUMMARY OBJECT
 
@@ -283,17 +284,16 @@ export function calculateAttackResult(attacker, defender, G, ctx, simulate = fal
     return {
         damage: damage,
         reactionDamage: 0,
-        typeEffectiveness: typeEffectiveness
+        typeEffectiveness: typeEffectiveness,
+        move: move ? { name: move.name, type: move.type || null } : null
     }
 }
 
 function calculateBaseValue(attacker, defender) {
     try {
         let k = calculateLevelK(attacker);
-        // let power = move.potential || move.rating;
-        let power = 1;
         let a_d = calculateEffectiveAttackAndDefense(attacker, defender);
-        let baseTop = k * power * a_d;
+        let baseTop = k * a_d;
         let baseResult = (baseTop / attackConstants.BASE_BOTTOM_VAR) + 2;
         // console.log(`level=${k}, a_d=${a_d}, baseTop=${baseTop}, baseResult=${baseResult}`);
         return baseResult;
@@ -366,63 +366,58 @@ function calculateRandom() {
     }
 }
 
-// function calculateSameTypeAttackBonus(move, attacker) {
-//     // 1.5 if the move's type matches any of the user's types, and 1 if otherwise.
-//     if (!move.type) {
-//         return 1;
-//     }
+function calculateSameTypeAttackBonus(move, attacker) {
+    // 1.5 if the move's type matches any of the attacker's types, and 1 otherwise.
+    if (!move || !move.type) {
+        return 1;
+    }
 
-//     let type = move.type && move.type.name ? move.type.name.toLowerCase() : move.type.toLowerCase();
-//     let attackerPrimary = attacker.elementType && attacker.elementType.name ? attacker.elementType.name.toLowerCase() : attacker.elementType.toLowerCase();
-//     let attackerSecondary = attacker.elements.secondaryType && attacker.elements.secondaryType.name ? attacker.elements.secondaryType.name.toLowerCase() : attacker.elements.secondaryType.toLowerCase();
-    
-//     var multiplier = 1;
-//     if (type == attackerPrimary) {
-//         multiplier += 0.5;
-//     }
-//     if (type == attackerSecondary) {
-//         multiplier += 0.5;
-//     }
-//     console.log(`STAB: ${multiplier}`);
-//     return multiplier;
-// }
+    try {
+        let elements = attacker.elements || { primaryType: attacker.elementType, secondaryType: null };
+        let type = move.type.toLowerCase();
+        let attackerPrimary = elements.primaryType ? elements.primaryType.toLowerCase() : null;
+        let attackerSecondary = elements.secondaryType ? elements.secondaryType.toLowerCase() : null;
 
-export function calculateTypeEffectiveness(attacker, defender, secondary = true) {
-    // This can be 0 (ineffective); 0.25, 0.5 (not very effective); 1 (normally effective); 2, or 4 (super effective)
-    
-    /*
-    For targets that have multiple types, the type effectiveness of a move is the product of its effectiveness against each of the types:
-        - If the type of a move is super effective against both of the opponent's types (such as Dig, a Ground-type move, used against an Aggron, a Steel/Rock Pokémon), then the move does 4 times the damage;
-        - If the type of a move is not very effective against both of the opponent's types (such as Wake-Up Slap, a Fighting-type move, used against a Sigilyph, a Psychic/Flying Pokémon), then the move only does ¼ of the damage;
-        - If the type of a move is super effective against one of the opponent's types but not very effective against the other (such as Razor Leaf, a Grass-type move, used against a Gyarados, a Water/Flying Pokémon), then the move deals regular damage;
-        - If the type of move is completely ineffective against one of the opponent's types, then the move does no damage, even if the opponent has a second type that would be vulnerable to it (as in Thunderbolt, an Electric-type move, used against a Quagsire, a Water/Ground Pokémon).
-    */
+        if (type === attackerPrimary || type === attackerSecondary) {
+            return 1.5;
+        }
+        return 1;
+    } catch (e) {
+        return 1;
+    }
+}
 
-    let json = tools.getJson("elements");
-    let nodes = JSON.parse(json.toString());
-    let effectivenessOfAttackByElementMap = new Map();
-    nodes.forEach(node => {
-        effectivenessOfAttackByElementMap[node.name.toLowerCase()] = node.effectiveness;
-    });
+export function calculateTypeEffectiveness(attackType, defender) {
+    // This can be 0 (ineffective); 0.5 (not very effective); 1 (normally effective); 1.5, or 2 (super effective)
+    // For targets that have multiple types, the type effectiveness of a move is the product of its effectiveness against each of the types.
+    if (!attackType) {
+        return 1;
+    }
 
-    let effectivenessOfAttackerPrimaryMap = effectivenessOfAttackByElementMap[attacker.elementType.toLowerCase()];
-    let effectivenessOfAttackerPrimaryOnDefenderPrimary = effectivenessOfAttackerPrimaryMap[defender.elementType];
-    if (!secondary) {
-        return effectivenessOfAttackerPrimaryOnDefenderPrimary;
-    } else {
-        let effectivenessOfAttackerSecondaryMap = effectivenessOfAttackByElementMap[attacker.elements.secondaryType.toLowerCase()];
-        let defenderSecondaryType = defender.elements.secondaryType;
-        let effectivenessOfAttackerSecondaryOnDefenderSecondary = effectivenessOfAttackerSecondaryMap[defenderSecondaryType];
-        let effectivenessOfAttackerPrimaryOnDefenderSecondary = effectivenessOfAttackerPrimaryMap[defenderSecondaryType];
-        
-        let sum = (effectivenessOfAttackerPrimaryOnDefenderPrimary * 4)
-        + (effectivenessOfAttackerPrimaryOnDefenderSecondary * 3)
-        + (effectivenessOfAttackerSecondaryMap[defender.elementType] * 2)
-        + (effectivenessOfAttackerSecondaryOnDefenderSecondary * 1);
-    
-        let final = sum / 10;
-        return final;
+    try {
+        let json = tools.getJson("elements");
+        let nodes = JSON.parse(json.toString());
+        let effectivenessOfAttackByElementMap = new Map();
+        nodes.forEach(node => {
+            effectivenessOfAttackByElementMap[node.name.toLowerCase()] = node.effectiveness;
+        });
 
+        let effectivenessMap = effectivenessOfAttackByElementMap[attackType.toLowerCase()];
+        let defenderPrimaryType = defender.elementType;
+        let defenderSecondaryType = defender.elements && defender.elements.secondaryType;
+
+        let effectivenessOnPrimary = effectivenessMap[defenderPrimaryType];
+        effectivenessOnPrimary = typeof effectivenessOnPrimary === 'number' ? effectivenessOnPrimary : 1;
+
+        let effectivenessOnSecondary = 1;
+        if (defenderSecondaryType) {
+            let val = effectivenessMap[defenderSecondaryType];
+            effectivenessOnSecondary = typeof val === 'number' ? val : 1;
+        }
+
+        return effectivenessOnPrimary * effectivenessOnSecondary;
+    } catch (e) {
+        return 1;
     }
 }
 
