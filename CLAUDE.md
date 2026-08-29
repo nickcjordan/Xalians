@@ -73,6 +73,16 @@ terraform plan     # preview; main.tf zips ./lambda into generate_xalian_lambda.
 
 There is no test suite for the `lambda/` engine — verification is done by running `start.js` and inspecting output.
 
+## Backlog & workflow
+
+**GitHub Issues on this repo is the single backlog** — see `docs/BACKLOG.md` for the label taxonomy, milestones, and full workflow rules. The operational summary:
+
+- File out-of-scope findings as issues immediately (labels: one of `P1`/`P2`/`P3` + type + area); don't park them in chat or docs.
+- Reference tickets from PRs with `Fixes #N` so merges auto-close them.
+- "Work the backlog" means P1s first; `question`-labeled issues need Nick's answer before implementation.
+- CI/CD is fully automated: PRs run frontend build + terraform plan (both required checks on `master`); merging auto-deploys frontend (S3+CloudFront) and backend (terraform apply). Auto-merge on green is enabled — open the PR, run `gh pr merge <n> --auto --merge`, done. Never run `aws s3 sync` or `terraform apply` manually unless CI is broken.
+- `docs/AUDIT_FINDINGS.md` is a historical record of the 2026-08-29 audit; its open items were migrated to issues.
+
 ## Architecture
 
 ### Generation engine (`lambda/src/`)
