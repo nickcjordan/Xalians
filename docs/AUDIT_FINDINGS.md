@@ -83,8 +83,8 @@ A full polish audit of the frontend, duel game, and lambda backend. Items marked
 - ~~Terraform state local and gitignored~~ **FIXED (PR #2)** — S3 remote state with lockfile; the lost local state was rebuilt from live resource IDs via `imports.tf` (delete that file after it has applied once — it already has).
 - ~~No CI/CD~~ **FIXED (PR #2)** — GitHub Actions: PR build + terraform plan; master push → frontend deploy (S3+CloudFront) and backend `terraform apply`, all via OIDC roles (`xalians-github-deploy`, `xalians-github-terraform`).
 - ~~aws-exports.js gitignored~~ **FIXED (PR #2)** — committed (public Cognito client IDs only).
-- **OPEN — live, unmanaged route `POST /db/xalian/unauth` with NO auth** on API `6y8832nrlf` (route id `w3sz1ai`) — an unauthenticated write endpoint not in terraform. Probably an old experiment; recommend deleting.
-- OPEN — unmanaged extras in AWS: `prod`/`test` api mappings on api.xalians.com (why both `/xalian` and `/prod/xalian` work), a `debug.xalians.com` apigw domain, and three orphaned older `chronic-labs-*` artifact buckets.
+- ~~Live, unmanaged route `POST /db/xalian/unauth` with NO auth~~ **FIXED (2026-08-29)** — deleted with Nick's approval; the API now serves exactly the 7 terraform-managed routes.
+- OPEN — unmanaged extras in AWS: `prod`/`test` api mappings on api.xalians.com (why both `/xalian` and `/prod/xalian` work — note `dbApi.js` uses the `/prod` form, so don't remove the `prod` mapping without updating the frontend), a `debug.xalians.com` apigw domain, and three orphaned older `chronic-labs-*` artifact buckets.
 - OPEN — the dev toolchain (webpack-4-era react-scripts resolved by yarn.lock) requires `NODE_OPTIONS=--openssl-legacy-provider` on Node 17+ (baked into the workflows; still applies locally).
 - OPEN — `package.json` pins `react`, `react-dom`, `react-scripts` to `"latest"` — only `yarn.lock` holds the working versions; an `npm install` today would pull incompatible majors.
 - OPEN — the lambda handlers still use aws-sdk v2 (vendored); the long-term path is migrating `database/*Delegate.js` to SDK v3 clients and dropping the ~60MB vendored dependency.
