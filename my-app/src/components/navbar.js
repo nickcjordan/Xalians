@@ -23,7 +23,7 @@ class XalianNavbar extends React.Component {
 		var navbar = document.getElementById('navvy');
 
 
-		Hub.listen('navbar-channel', (data) => {
+		this.hubListener = (data) => {
 			if (navbar) {
 				if (data.payload.event === 'show-navbar') {
 					navbar.classList.remove('hidden');
@@ -31,44 +31,51 @@ class XalianNavbar extends React.Component {
 				} else if (data.payload.event === 'hide-navbar') {
 					navbar.classList.remove('visible');
 					navbar.classList.add('hidden');
-				} 
+				}
 			}
-		})
+		};
+		Hub.listen('navbar-channel', this.hubListener);
 
 		// var animationTimeline = gsap.timeline({ repeat: 0});
 		// animationTimeline.fromTo("#navvy", {opacity: 0}, {opacity: 1, duration: 2, ease:'sine.in'});
 
-		// this.flipShowAuth = this.flipShowAuth.bind(this);
-		// var navbar = document.getElementById('navvy');
-		document.addEventListener('DOMContentLoaded', function () {
-			if (navbar) {
-				var last_scroll_top = 0;
-				window.addEventListener('scroll', function () {
-					let scroll_top = window.scrollY;
-					if (scroll_top > 30) {
-						// navbar.classList.remove('no-height');
-						if (scroll_top < last_scroll_top) {
-							// gsap.fromTo("#navvy", {opacity: 0, duration: 0.25}, {opacity: 1, duration: 0.25});
-							navbar.classList.remove('hidden');
-							navbar.classList.add('visible');
-						} else {
-							// gsap.fromTo("#navvy", {opacity: 1, height: '35px', duration: 2, ease:'sine.in'}, {opacity: 0, height: '0px', duration: 2, ease:'sine.out'});
-							// gsap.fromTo("#navvy", {opacity: 1, duration: 0.25}, {opacity: 0, duration: 0.25});
-							navbar.classList.remove('visible');
-							navbar.classList.add('hidden');
-						}
+		if (navbar) {
+			var last_scroll_top = 0;
+			this.scrollListener = function () {
+				let scroll_top = window.scrollY;
+				if (scroll_top > 30) {
+					if (scroll_top < last_scroll_top) {
+						navbar.classList.remove('hidden');
+						navbar.classList.add('visible');
+					} else {
+						navbar.classList.remove('visible');
+						navbar.classList.add('hidden');
 					}
+				} else {
+					// at the top of the page the navbar should always be visible
+					navbar.classList.remove('hidden');
+					navbar.classList.add('visible');
+				}
 
-					last_scroll_top = scroll_top;
-				});
-			}
-		});
+				last_scroll_top = scroll_top;
+			};
+			window.addEventListener('scroll', this.scrollListener);
+		}
 
 		Auth.currentUserInfo().then((data) => {
 			if (data && data.attributes) {
 				this.handleUserAuthAction(authUtil.buildAuthState(data));
 			}
 		});
+	}
+
+	componentWillUnmount() {
+		if (this.hubListener) {
+			Hub.remove('navbar-channel', this.hubListener);
+		}
+		if (this.scrollListener) {
+			window.removeEventListener('scroll', this.scrollListener);
+		}
 	}
 
 	handleUserAuthAction = (user) => {

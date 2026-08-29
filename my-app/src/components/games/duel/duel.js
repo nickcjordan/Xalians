@@ -478,11 +478,11 @@ function doAttack(G, ctx, path, data = {}) {
 	let defenderIndex = path.endIndex;
 	let attackerId = G.cells[attackerIndex];
 	let attacker = G.xalians.filter((x) => x.xalianId === attackerId)[0];
-	// attacker.state.stamina = attacker.state.stamina - duelConstants.ATTACK_STAMINA_COST;
-	attacker.state.stamina = attacker.state.stamina - path.spacesMoved;
 	let defenderId = G.cells[defenderIndex];
 	let defender = G.xalians.filter((x) => x.xalianId === defenderId)[0];
 	if (attacker && defender) {
+		// attacker.state.stamina = attacker.state.stamina - duelConstants.ATTACK_STAMINA_COST;
+		attacker.state.stamina = attacker.state.stamina - path.spacesMoved;
 		// console.log('xalian ' + attacker.species.name + ' from square ' + attackerIndex + ' is attacking xalian ' + defender.species.name + ' on square ' + defenderIndex);
 		var existingDefenderHealth = parseInt(defender.state.health);
 		let attackResult = duelCalculator.calculateAttackResult(attacker, defender, G, ctx);

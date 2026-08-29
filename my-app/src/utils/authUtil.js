@@ -80,53 +80,18 @@ export const signUp = (email, user, pass) => {
 }
 
 export const confirmSignUp = (user, code) => {
-    return new Promise((resolve) => {
-        try {
-            Auth.confirmSignUp(user, code).then(() => {
-                console.log('confirmed');
-                resolve();
-            });
-        } catch (error) {
-            console.log('error confirming signing up:', error);
-        }
-    });
+    return Auth.confirmSignUp(user, code);
 }
 
 export const resendConfirmationCode = (user) => {
-    return new Promise((resolve) => {
-        try {
-            Auth.resendSignUp(user).then(() => {
-                resolve();
-            });
-        } catch (error) {
-            console.log('error resending confirmation code:', error);
-        }
-    });
+    return Auth.resendSignUp(user);
 }
 
 export const signIn = (user, pass) => {
-    return new Promise((resolve, reject) => {
-        try {
-            Auth.signIn(user, pass).then(() => {
-                resolve();
-            }).catch(e => {
-                reject();
-            });
-        } catch (error) {
-            console.log('error signing in:', error);
-        }
-    });
+    return Auth.signIn(user, pass);
 }
 
 export const signOut = () => {
-    return new Promise((resolve) => {
-        try {
-            Auth.signOut().then(() => {
-                resolve(true);
-            });
-        } catch (error) {
-            console.log('error signing out:', error);
-        }
-    });
+    return Auth.signOut().then(() => true);
 }
 

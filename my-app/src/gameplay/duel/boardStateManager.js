@@ -25,6 +25,9 @@ export function getLastActionOfPlayer(fullLog, playerID) {
 }
 
 export function getAllMoveActionsFromLog(logs) {
+    if (!logs || logs.length === 0) {
+        return [];
+    }
     let filtered = logs.filter(log =>
         log.action &&
         log.action.type &&

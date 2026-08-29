@@ -30,11 +30,12 @@ function getUser(id, onSuccess, onNotFound, onFail) {
 				if (data.Item) {
 
 					console.log(`SUCCESS :: data:\n${JSON.stringify(data.Item, null, 2)}`);
+					var attributes = data.Item.attributes || {};
 					var user = {
 						userId: data.Item.userId,
 						xalianIds: data.Item.xalianIds,
-						tokens: data.Item.attributes.tokens || 0,
-						attributes: data.Item.attributes
+						tokens: attributes.tokens || 0,
+						attributes: attributes
 					};
 					onSuccess(user);
 				} else {
@@ -98,7 +99,11 @@ function updateUserAttributes(id, updatedAttributes, onSuccess, onFail) {
 			Key: {
 				userId: id
 			},
-			UpdateExpression: 'set attributes = :attr',
+			// 'attributes' is a DynamoDB reserved word, so it needs an expression attribute name
+			UpdateExpression: 'set #attrs = :attr',
+			ExpressionAttributeNames: {
+				'#attrs': 'attributes',
+			},
 			ExpressionAttributeValues: {
 				':attr': updatedAttributes,
 			},

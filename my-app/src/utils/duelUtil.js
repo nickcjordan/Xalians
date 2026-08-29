@@ -188,7 +188,7 @@ export function currentTurnHasMoveAvailable(boardState, ctx) {
 export function xalianHasValidActionAvailable(id, G, ctx) {
     let xalian = getXalianFromId(id, G);
     let ind = getIndexOfXalian(id, G);
-    if (ind) {
+    if (ind != null && ind >= 0) {
         var canAttack = true;
         var canMove = true;
 

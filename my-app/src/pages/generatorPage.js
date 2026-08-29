@@ -120,7 +120,7 @@ class GeneratorPage extends React.Component {
 		// this.setState({ showXalian: false }, () => {
 			// gsap.to('#generated-xalian-div', { opacity: 0, duration: 1, ease: 'power2.in' });
 			gsap.timeline()
-                .to('#generated-xalian-div', { opacity: 0, duration: 1, ease: 'power2.in' })
+                .to('#generated-xalian-fragment', { opacity: 0, duration: 1, ease: 'power2.in' })
 				.to('#smokeBackgroundCanvas', { opacity: 1, duration: 1, ease: 'power2.out' }, '<')
 				.then(() => {
 					xalianApi.callGenerateXalian().then((x) => {
@@ -133,10 +133,14 @@ class GeneratorPage extends React.Component {
 							() => {
 								// this.setState({ showXalian: true }, () => {
 									gsap.to('#smokeBackgroundCanvas', { opacity: 0, duration: 1, ease: 'power2.in' });
-									gsap.to('#generated-xalian-div', { opacity: 1, duration: 0.5, ease: 'power2.out' }, '<');
+									gsap.to('#generated-xalian-fragment', { opacity: 1, duration: 0.5, ease: 'power2.out' }, '<');
 								// });
 							}
 						);
+					}).catch(() => {
+						alertUtil.sendAlert('Could not generate a Xalian — please try again', null, 'danger');
+						gsap.to('#smokeBackgroundCanvas', { opacity: 0, duration: 1, ease: 'power2.in' });
+						gsap.to('#generated-xalian-fragment', { opacity: 1, duration: 0.5, ease: 'power2.out' }, '<');
 					});
 				});
 		// });
@@ -146,10 +150,10 @@ class GeneratorPage extends React.Component {
 		this.setState({
 			isLoading: true,
 		});
-		dbApi.callCreateXalian(this.state.xalian);
-
+		// create the xalian record first so the user record never references a xalian that doesn't exist
 		dbApi
-			.callUpdateUserAddXalian(this.state.loggedInUser.username, this.state.xalian.xalianId)
+			.callCreateXalian(this.state.xalian)
+			.then(() => dbApi.callUpdateUserAddXalian(this.state.loggedInUser.username, this.state.xalian.xalianId))
 			.then((x) => {
 				this.setState({ isLoading: false });
 				console.log(JSON.stringify(x, null, 2));
@@ -158,6 +162,7 @@ class GeneratorPage extends React.Component {
 			.catch((error) => {
 				this.setState({ isLoading: false });
 				console.log(JSON.stringify(error, null, 2));
+				alertUtil.sendAlert('Could not save your Xalian — please try again', null, 'danger');
 			});
 	};
 

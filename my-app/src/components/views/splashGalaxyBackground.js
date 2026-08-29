@@ -39,7 +39,7 @@ class SplashGalaxyBackground extends React.Component {
 					options={{
 						background: {
 							// image: "url('assets/img/background/galaxy-splash.png')",
-							image: "url('assets/img/background/stars_bg.png')",
+							image: "url('/assets/img/background/stars_bg.png')",
 							position: "center center",
 							size: "50%",
 							repeat: "repeat"

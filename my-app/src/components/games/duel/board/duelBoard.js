@@ -120,7 +120,8 @@ class DuelBoard extends React.Component {
 		} else {
 		}
 		if (this.props.ctx.gameover && this.state.winnerText == undefined) {
-			this.setState({ winnerText: this.props.ctx.gameover.winner !== undefined && this.props.ctx.gameover.winner == 0 ? 'You Win!' : 'You Lose!' });
+			let myPlayerId = this.props.playerID != null ? this.props.playerID : '0';
+			this.setState({ winnerText: this.props.ctx.gameover.winner !== undefined && this.props.ctx.gameover.winner == myPlayerId ? 'You Win!' : 'You Lose!' });
 		}
 
 		// fixing issue where sometimes the piece would have some weird extra leftovr x and y transform translation

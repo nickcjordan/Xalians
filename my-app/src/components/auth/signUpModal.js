@@ -71,10 +71,11 @@ class SignUpModal extends React.Component {
                 this.setState({isThinking: false});
                 console.log('error signing up:', error);
                 if (error.code === 'UsernameExistsException') {
-                    this.setState({isThinking: false});
                     this.setError('username', 'Username already exists');
-
-
+                } else if (error.code === 'InvalidPasswordException') {
+                    this.setError('password', error.message || 'Password does not meet requirements');
+                } else {
+                    this.setError('general', (error && error.message) || 'Sign up failed — please try again');
                 }
             });
 

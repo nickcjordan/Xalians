@@ -28,8 +28,9 @@ class VerifyRemoveXalianModal extends React.Component {
             this.props.onXalianDelete();
         }).catch(error => {
             console.log(JSON.stringify(error, null, 2));
+            alertUtil.sendAlert('Could not delete Xalian — please try again', null, 'danger');
             this.setState({
-                isLoading: false
+                isThinking: false
             });
         });
     }
@@ -50,7 +51,7 @@ class VerifyRemoveXalianModal extends React.Component {
             >
                 <Modal.Header closeButton  closeVariant={this.props.light ? '' : 'white'}>
                     <Modal.Title id="contained-modal-title-vcenter">
-                        Delete this {this.getXalianName} Xalian?
+                        Delete this {this.getXalianName()} Xalian?
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>

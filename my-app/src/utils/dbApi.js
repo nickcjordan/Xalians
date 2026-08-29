@@ -3,18 +3,13 @@ import qs from "qs";
 import Amplify, { API, Auth } from "aws-amplify";
 import { Signer } from "@aws-amplify/core";
 
-async function signRequest(url, method, body, headers, qp) {
-  const urlParams = new URLSearchParams();
-  urlParams.set("ids", qp);
-  const editedUrl = qp ? url + "?" + urlParams.toString() : url;
-
+async function signRequest(url, method, body, headers) {
   const essentialCredentials = Auth.essentialCredentials(await Auth.currentCredentials());
   const params = {
     method: method,
-    url: editedUrl,
+    url: url,
     data: JSON.stringify(body),
     headers: headers,
-    params: qp,
   };
   const credentials = {
     secret_key: essentialCredentials.secretAccessKey,
@@ -30,7 +25,6 @@ export const callGetXalian = (id = "00009-4c1d8607-d3de-4313-91b1-84eecd5ce921")
 };
 
 export const callGetUser = (id, populateXalians = false) => {
-  // return callGet("https://api.xalians.com/prod/db/user?userId=" + encodeURIComponent(id));
   if (populateXalians) {
     return callGet("https://api.xalians.com/prod/db/user?userId=" + id + "&populateXalians=true");
   } else {
@@ -38,25 +32,12 @@ export const callGetUser = (id, populateXalians = false) => {
   }
 };
 
-export const callGet = (url, params) => {
-  return new Promise((resolve) => {
-    try {
-      signRequest(url, "GET").then((signedRequest) => {
-        axios.defaults.withCredentials = true;
-        axios
-          .get(signedRequest.url, { headers: signedRequest.headers })
-          .then((response) => {
-            console.log("RESPONSE: " + JSON.stringify(response));
-            resolve(response.data);
-          })
-          .catch((e) => {
-            alert("BOOOOO in get \n\n" + "axios GET ERROR : \n" + JSON.stringify(e, null, 2));
-            console.log("axios GET ERROR : " + e);
-          });
-      });
-    } catch (e) {
-      console.log("caught ERROR : " + e);
-    }
+export const callGet = (url) => {
+  return signRequest(url, "GET").then((signedRequest) => {
+    axios.defaults.withCredentials = true;
+    return axios
+      .get(signedRequest.url, { headers: signedRequest.headers })
+      .then((response) => response.data);
   });
 };
 
@@ -77,38 +58,6 @@ export const callGetXalianBatch = (ids) => {
   return callGet("https://api.xalians.com/prod/db/xalian?xalianId=" + encodeURIComponent(qString));
 };
 
-//   export const callGetUserBatch = (id) => {
-//     // return callGet("https://api.xalians.com/prod/db/user?userId=" + encodeURIComponent(id));
-//     return callGet("https://api.xalians.com/prod/db/user?userId=" + id);
-//   };
-
-export const callGetBatch = (url, ids) => {
-  var editedUrl = url + "?xalianId=";
-  // ids.
-  axios.defaults.withCredentials = true;
-  return new Promise((resolve) => {
-    try {
-      signRequest(editedUrl, "GET").then((signedRequest) => {
-        axios
-          .get(signedRequest.url, {
-            headers: signedRequest.headers,
-          })
-          .then((response) => {
-            console.log("RESPONSE: " + JSON.stringify(response));
-            console.log('\n\n' + JSON.stringify(response.data) + '\n\n');
-            resolve(response.data);
-          })
-          .catch((e) => {
-            alert("BOOOOO batch \n\n" + "axios GET ERROR : \n" + JSON.stringify(e, null, 2));
-            console.log("axios GET ERROR : " + e);
-          });
-      });
-    } catch (e) {
-      console.log("caught ERROR : " + e);
-    }
-  });
-};
-
 export const callCreateXalian = (xalian) => {
   return callCreate("https://api.xalians.com/prod/db/xalian", xalian);
 };
@@ -118,28 +67,14 @@ export const callCreateUser = (user) => {
 };
 
 export const callCreate = (url, data) => {
-  return new Promise((resolve) => {
-    try {
-      signRequest(url, "POST", data, { "content-type": "application/json" }).then((signedRequest) => {
-        axios.defaults.withCredentials = true;
-        axios({
-          method: "post",
-          url: signedRequest.url,
-          headers: signedRequest.headers,
-          data: signedRequest.data,
-        })
-          .then((response) => {
-            console.log("RESPONSE: " + JSON.stringify(response));
-            resolve(response.data);
-          })
-          .catch((e) => {
-            alert("axios ERROR : " + e);
-            console.log("caught ERROR : " + e);
-          });
-      });
-    } catch (e) {
-      console.log("caught ERROR : " + e);
-    }
+  return signRequest(url, "POST", data, { "content-type": "application/json" }).then((signedRequest) => {
+    axios.defaults.withCredentials = true;
+    return axios({
+      method: "post",
+      url: signedRequest.url,
+      headers: signedRequest.headers,
+      data: signedRequest.data,
+    }).then((response) => response.data);
   });
 };
 
@@ -161,28 +96,13 @@ export const callUpdateUserXalian = (action, userId, xalianId) => {
   const url = "https://api.xalians.com/prod/db/user";
   const method = "PATCH";
 
-  return new Promise((resolve) => {
-    try {
-      signRequest(url, method, data, { "content-type": "application/json" }).then((signedRequest) => {
-        axios.defaults.withCredentials = true;
-        axios({
-          method: method,
-          url: signedRequest.url,
-          headers: signedRequest.headers,
-          data: signedRequest.data,
-        })
-          .then((response) => {
-            console.log("RESPONSE: " + JSON.stringify(response));
-            resolve(response.data);
-          })
-          .catch((e) => {
-            alert("axios update user ERROR : " + e);
-            console.log("caught ERROR : " + e);
-          });
-      });
-    } catch (e) {
-      console.log("caught ERROR : " + e);
-    }
+  return signRequest(url, method, data, { "content-type": "application/json" }).then((signedRequest) => {
+    axios.defaults.withCredentials = true;
+    return axios({
+      method: method,
+      url: signedRequest.url,
+      headers: signedRequest.headers,
+      data: signedRequest.data,
+    }).then((response) => response.data);
   });
 };
-

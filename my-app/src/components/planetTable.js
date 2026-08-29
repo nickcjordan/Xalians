@@ -25,8 +25,15 @@ class PlanetTable extends React.Component {
   toggleShowHistory = () => {
     if (!this.state.showing) {
       Hub.dispatch('navbar-channel', { event: 'hide-navbar', data: null, message: null });
+    } else {
+      Hub.dispatch('navbar-channel', { event: 'show-navbar', data: null, message: null });
     }
     this.setState({ showing: !this.state.showing });
+  }
+
+  hideHistory = () => {
+    Hub.dispatch('navbar-channel', { event: 'show-navbar', data: null, message: null });
+    this.setState({ showing: false });
   }
 
   getHistoryParagraphs(history) {
@@ -102,9 +109,9 @@ class PlanetTable extends React.Component {
         <TextReaderModal 
           title={'The History of ' + this.props.planet.name} 
           body={this.getHistoryParagraphs(this.props.planet.history)} 
-          show={this.state.showing} 
+          show={this.state.showing}
           light
-          onHide={() => this.setState({ showing: false })}>
+          onHide={this.hideHistory}>
         </TextReaderModal>
       }
 		</React.Fragment>
