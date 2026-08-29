@@ -1,0 +1,11 @@
+{
+  "name": "xalians-lambda",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Xalian generation engine and CRUD lambdas. Dependencies here are installed into lambda/node_modules and shipped in the deployment zip (nodejs20.x runtimes do not bundle aws-sdk v2).",
+  "dependencies": {
+    "aws-sdk": "^2.1692.0",
+    "bluebird": "^3.7.2",
+    "uuid": "^8.3.2"
+  }
+}

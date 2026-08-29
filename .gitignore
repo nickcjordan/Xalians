@@ -59,3 +59,6 @@ node_modules/
 .secret-*
 **.sample
 #amplify-do-not-edit-end
+
+# lambda deploy artifact is built by CI, not committed
+generate_xalian_lambda.zip

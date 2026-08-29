@@ -1,0 +1,77 @@
+name: Deploy backend
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "lambda/**"
+      - "main.tf"
+      - "variables.tf"
+      - "outputs.tf"
+      - "terraform/**"
+      - ".github/workflows/deploy-backend.yml"
+  pull_request:
+    branches: [master]
+    paths:
+      - "lambda/**"
+      - "main.tf"
+      - "variables.tf"
+      - "outputs.tf"
+      - "terraform/**"
+      - ".github/workflows/deploy-backend.yml"
+  workflow_dispatch:
+
+permissions:
+  id-token: write # required for OIDC
+  contents: read
+
+concurrency:
+  group: deploy-backend
+  cancel-in-progress: false
+
+jobs:
+  terraform:
+    name: ${{ github.event_name == 'pull_request' && 'Terraform plan' || 'Terraform apply' }}
+    runs-on: ubuntu-latest
+    env:
+      TF_IN_AUTOMATION: "true"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: lambda/package-lock.json
+
+      - name: Install lambda dependencies (shipped in the zip)
+        working-directory: lambda
+        run: npm ci --omit=dev
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "~1.14"
+
+      - name: Terraform fmt check
+        run: terraform fmt -check -recursive
+        continue-on-error: true # legacy formatting; tighten once the tree is fmt-clean
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::174497891311:role/xalians-github-terraform
+          aws-region: us-east-1
+
+      - name: Terraform init
+        run: terraform init -input=false
+
+      - name: Terraform validate
+        run: terraform validate
+
+      - name: Terraform plan
+        if: github.event_name == 'pull_request'
+        run: terraform plan -input=false -no-color
+
+      - name: Terraform apply
+        if: github.event_name != 'pull_request'
+        run: terraform apply -input=false -auto-approve -no-color

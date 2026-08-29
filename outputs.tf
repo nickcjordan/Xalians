@@ -28,11 +28,11 @@ output "base_url" {
 
 # frontend
 output "website_domain" {
-  value = "${aws_s3_bucket.react_bucket.website_domain}"
+  value = aws_s3_bucket_website_configuration.react_bucket.website_domain
 }
 
 output "website_endpoint" {
-  value = "${aws_s3_bucket.react_bucket.website_endpoint}"
+  value = aws_s3_bucket_website_configuration.react_bucket.website_endpoint
 }
 
 
