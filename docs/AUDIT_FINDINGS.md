@@ -60,55 +60,15 @@ A full polish audit of the frontend, duel game, and lambda backend. Items marked
 
 ---
 
-## 2. Open — known issues deliberately deferred (need design/refactor, not spot fixes)
+## 2. Open items — MIGRATED TO GITHUB ISSUES (2026-08-29)
 
-### Duel game architecture
-- **No move validation**: `movePiece`/`doAttack` blindly apply whatever path the client sends — no occupancy, adjacency, distance, stamina, or turn-ownership checks in the game logic itself (`duel.js:437-542`). Combined with the next item, a piece can be silently overwritten off the board (it stays in `activeXalianIds` and can never be killed, making the elimination win unreachable).
-- **Input computed from stale board state**: the UI deliberately renders from the animation log's historical `metadata.startState` (`duelBoard.getStartingBoardState`), and click/drag actions are derived from that historical state while `G` has moved on.
-- **GSAP Draggable leak**: `Draggable.create()` runs on every `componentDidUpdate` for current-turn pieces and old instances are never killed — after N updates a single drop fires N stale `onDragEnd` handlers.
-- **Animation timeline deadlock risk**: the shared timeline is paused for attack animations and only `AttackActionModal.onHide` can resume it; the modal's `componentDidMount` dereferences four `getElementById` results unguarded — one missing element freezes the board for the rest of the game.
-- `getXalianCurrentTurnStatus` ignores stamina when computing `remainingSpacesXalianCanMove` (disagrees with `duelCalculator`, which enforces it) — currently masked, wrong for any new consumer.
-- The game-level `endIf` also runs during the `setup` phase; flag-row math is asymmetric (`grid.rows[1]` hardcoded vs `grid.rows[BOARD_COLUMN_SIZE - 2]` derived) — safe at 8×8, breaks if board size changes.
-- Recapturing a *carried* flag can never fire (`flag.index` is null while held) — only dropped flags reset. Confirm whether that's the intended rule.
-- `duelBot` objectives: `flag-guarded` is a copy-paste of `enemy-flag-not-held-by-enemy` with opposite polarity — they cancel to a net weight and nothing measures "my flag is guarded". Bot TODOs documented at `duelBot.js:184-190`.
-- ~~Dual-type effectiveness / STAB~~ — implemented in the moves-in-combat milestone (per-move type, dual-type product effectiveness, STAB 1.5×). Remaining damage multiplier stubs (weather/planet, crit, badge, multi-target, status) intentionally return 1 — design hooks, not bugs.
-- Single-id batch shape inconsistency: `GET /db/xalian` returns a bare xalian for one id but wrapper items (`{speciesId, xalianId, attributes}`) for 2+ ids — a one-element "batch" breaks `x.attributes` readers.
-- `debugMode` defaults to `true` on the duel start page, and a DEBUG button + boardgame.io debug panel render for all users.
-- Hot-seat "2 player" mode renders two clients in one browser; there is no real server multiplayer (no boardgame.io `Server` anywhere; transport is always `Local()`).
-- Duel squads come from mock `xalianSamples.json`; wiring to the signed-in user's real Xalians is written but commented out (`duelPage.js:148-159`).
+Every open item formerly listed here now lives in the repo's GitHub Issues backlog (see `docs/BACKLOG.md` for the ticketing standards). This section is no longer maintained. Notable closures since the audit, for the record:
 
-### Deploy / infrastructure
-- ~~Lambda zip carried no reproducible deps~~ **FIXED (PR #2)** — `lambda/package.json` declares `uuid`/`bluebird`/`aws-sdk` v2; CI installs before terraform zips; the committed prebuilt zip was removed.
-- ~~Runtime pinned to nodejs12.x~~ **FIXED (PR #2)** — all 7 lambdas on `nodejs20.x`, applied and verified live.
-- ~~Terraform state local and gitignored~~ **FIXED (PR #2)** — S3 remote state with lockfile; the lost local state was rebuilt from live resource IDs via `imports.tf` (delete that file after it has applied once — it already has).
-- ~~No CI/CD~~ **FIXED (PR #2)** — GitHub Actions: PR build + terraform plan; master push → frontend deploy (S3+CloudFront) and backend `terraform apply`, all via OIDC roles (`xalians-github-deploy`, `xalians-github-terraform`).
-- ~~aws-exports.js gitignored~~ **FIXED (PR #2)** — committed (public Cognito client IDs only).
-- **OPEN — live, unmanaged route `POST /db/xalian/unauth` with NO auth** on API `6y8832nrlf` (route id `w3sz1ai`) — an unauthenticated write endpoint not in terraform. Probably an old experiment; recommend deleting.
-- OPEN — unmanaged extras in AWS: `prod`/`test` api mappings on api.xalians.com (why both `/xalian` and `/prod/xalian` work), a `debug.xalians.com` apigw domain, and three orphaned older `chronic-labs-*` artifact buckets.
-- OPEN — the dev toolchain (webpack-4-era react-scripts resolved by yarn.lock) requires `NODE_OPTIONS=--openssl-legacy-provider` on Node 17+ (baked into the workflows; still applies locally).
-- OPEN — `package.json` pins `react`, `react-dom`, `react-scripts` to `"latest"` — only `yarn.lock` holds the working versions; an `npm install` today would pull incompatible majors.
-- OPEN — the lambda handlers still use aws-sdk v2 (vendored); the long-term path is migrating `database/*Delegate.js` to SDK v3 clients and dropping the ~60MB vendored dependency.
-- OPEN — benign perpetual terraform diff: the artifact object's `filemd5` etag never matches the multipart-upload etag, so every apply re-uploads the zip (acceptable: CD ships latest code each merge).
-
-### Frontend, smaller open items
-- `Hub.listen` subscriptions without teardown in `authButtonGroup.js`, `signInModal.js`, `fadeAlert.js` (duplicate listeners across SPA navigations; navbar itself was fixed in PR #1).
-- `xalianSpeciesSizeComparisonView.js`: wheel listener never removed; mutates and re-sorts the shared imported `species.json` module array (currently masked by re-sorts elsewhere); doesn't respond to window resize (builds once in `componentDidMount`).
-- `xalianStatRatingChart.js` snapshots `stats` at mount only — stale bars if the prop ever changes.
-- Controlled inputs initialized to `null` in the auth modals (React uncontrolled→controlled warning).
-- `xalianSvg.js` name-miss fallback does a dynamic `require('./' + name + '.svg')` that throws instead of degrading.
-- Duplicate-key React warnings in `DuelBoard`/`DuelBoardCell` list rendering; `class` vs `className` on some duel start page icons.
-- `utils/timerUtil.js` has a module-level `Hub.listen` using `this.setState` (would throw if the file were ever imported; currently imported nowhere).
-- `utils/animationUtil.js`: `addShuffleSpeciesColorAnimation` passes an object to an array shuffle (silent no-op) and line 4 imports a nonexistent `ReactDOM` named export from `react`.
-- Dead files with broken imports (deleted `json/designer/*`, `svg/animations/*` targets): `designerSuggestionRow.js`, `speciesDesignerSizeSelector.js`, `computerScreenContent.js`, `generatorAnimation.js`, `speciesBlueprintSubmissionAnimation.js`, `voltishAnimatedSVG.js` (also wrong import depth). Not compiled today because nothing imports them — decide keep-and-fix vs remove per feature.
-- Root `jsonManipulator.js` requires `./src/ai.js` etc. — paths assume the file still lives in `lambda/`; broken since the move. Root `sandbox.js` still writes to the deleted `src/json/designer/` directory (scratch file).
-- `lambda/src/json/` ships several files no lambda loads (`planets.json`, `glossary.json`, `typeEffectivenessMatrix.json`, `populated_moves.json`, `helping_moves.json`, `current_xalian.json`, csv) — harmless zip weight; the engine loads only `elements`, `species`, `qualifiers`, `moves`.
-
-### Data
-- `elements.json` per-element `moveTypes`/`elements` word lists have copy-paste stubs for Ice/Metal/Sand (e.g. Ice offers only "ice, frost"; Metal only "metal") and Ghost lists "ghost" three times — generated move variety is thin for those types. The 14×14 `typeEffectivenessMatrix.json` itself is complete and consistent.
-- `species.json` populates only 2 of 9 `statRatings` per species (uniform across all 29 — reads as intentional "notable stats" but worth confirming the other slots are meant to be rolled randomly).
-- Glossary is missing entries referenced by newer planet lore (e.g. Leviticus Overdrive, Dreadscape, Stellaris entries exist — spot-check when next editing lore).
-
----
+- Backend CI/CD, remote terraform state, nodejs20.x runtimes, real lambda packaging, committed aws-exports.js — **fixed** (PR #2/#3).
+- Unauthenticated `POST /db/xalian/unauth` route — **deleted** from the live API (approved 2026-08-29).
+- `debug.xalians.com` domain and the three orphaned `chronic-labs-*` buckets — **deleted** (2026-08-29 tidy-up); the extra `prod`/`test` mappings on api.xalians.com remain **intentionally** (the frontend uses `/prod` URLs).
+- Duel squads from mock JSON — **fixed** (PR #5: real Xalian squads + squad picker; also fixed the broken ADD_XALIAN_ID lambda path).
+- Dual-type effectiveness, STAB, per-move combat — **implemented** (PR #7).
 
 ## 3. Hidden / unexposed features (built, not reachable — do NOT treat as dead code)
 
