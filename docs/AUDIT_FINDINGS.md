@@ -78,13 +78,17 @@ A full polish audit of the frontend, duel game, and lambda backend. Items marked
 - Duel squads come from mock `xalianSamples.json`; wiring to the signed-in user's real Xalians is written but commented out (`duelPage.js:148-159`).
 
 ### Deploy / infrastructure
-- The terraform `archive_file` zips `lambda/` which contains no `node_modules` — the *committed prebuilt zip* is what carries the vendored deps. A fresh `terraform apply` from a clean checkout would ship lambdas that crash on `Cannot find module 'uuid'`/`'bluebird'`.
-- `terraform/modules/lambda` pins `runtime = "nodejs12.x"` — AWS no longer accepts this for create/update; any new deploy requires a runtime bump (engine code must be checked for compatibility with the new runtime, though it's all CommonJS and should be fine).
-- Terraform state is local and gitignored — nothing about the deployed infra is reproducible from the repo alone.
-- No CI/CD of any kind (being addressed separately).
-- `src/aws-exports.js` is Amplify-generated and gitignored — a fresh clone cannot build. The values it contains (Cognito pool/client IDs) are public in the shipped JS bundle.
-- The dev toolchain (webpack-4-era react-scripts resolved by yarn.lock) requires `NODE_OPTIONS=--openssl-legacy-provider` on Node 17+.
-- `package.json` pins `react`, `react-dom`, `react-scripts` to `"latest"` — only `yarn.lock` holds the working versions; an `npm install` today would pull incompatible majors.
+- ~~Lambda zip carried no reproducible deps~~ **FIXED (PR #2)** — `lambda/package.json` declares `uuid`/`bluebird`/`aws-sdk` v2; CI installs before terraform zips; the committed prebuilt zip was removed.
+- ~~Runtime pinned to nodejs12.x~~ **FIXED (PR #2)** — all 7 lambdas on `nodejs20.x`, applied and verified live.
+- ~~Terraform state local and gitignored~~ **FIXED (PR #2)** — S3 remote state with lockfile; the lost local state was rebuilt from live resource IDs via `imports.tf` (delete that file after it has applied once — it already has).
+- ~~No CI/CD~~ **FIXED (PR #2)** — GitHub Actions: PR build + terraform plan; master push → frontend deploy (S3+CloudFront) and backend `terraform apply`, all via OIDC roles (`xalians-github-deploy`, `xalians-github-terraform`).
+- ~~aws-exports.js gitignored~~ **FIXED (PR #2)** — committed (public Cognito client IDs only).
+- **OPEN — live, unmanaged route `POST /db/xalian/unauth` with NO auth** on API `6y8832nrlf` (route id `w3sz1ai`) — an unauthenticated write endpoint not in terraform. Probably an old experiment; recommend deleting.
+- OPEN — unmanaged extras in AWS: `prod`/`test` api mappings on api.xalians.com (why both `/xalian` and `/prod/xalian` work), a `debug.xalians.com` apigw domain, and three orphaned older `chronic-labs-*` artifact buckets.
+- OPEN — the dev toolchain (webpack-4-era react-scripts resolved by yarn.lock) requires `NODE_OPTIONS=--openssl-legacy-provider` on Node 17+ (baked into the workflows; still applies locally).
+- OPEN — `package.json` pins `react`, `react-dom`, `react-scripts` to `"latest"` — only `yarn.lock` holds the working versions; an `npm install` today would pull incompatible majors.
+- OPEN — the lambda handlers still use aws-sdk v2 (vendored); the long-term path is migrating `database/*Delegate.js` to SDK v3 clients and dropping the ~60MB vendored dependency.
+- OPEN — benign perpetual terraform diff: the artifact object's `filemd5` etag never matches the multipart-upload etag, so every apply re-uploads the zip (acceptable: CD ships latest code each merge).
 
 ### Frontend, smaller open items
 - `Hub.listen` subscriptions without teardown in `authButtonGroup.js`, `signInModal.js`, `fadeAlert.js` (duplicate listeners across SPA navigations; navbar itself was fixed in PR #1).
