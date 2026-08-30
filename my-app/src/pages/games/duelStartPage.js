@@ -24,13 +24,16 @@ import * as duelConstants from '../../gameplay/duel/duelGameConstants';
 import * as duelPieceBuilder from '../../gameplay/duel/duelPieceBuilder';
 import gsap from 'gsap';
 import DuelPage from './duelPage';
+import HowToPlayModal from '../../components/games/duel/howToPlayModal';
+import LocalDuelStorage from '../../store/LocalStorage';
 
 class DuelStartPage extends React.Component {
 
     state = {
         randomizeStartingPositions: true,
         debugMode: process.env.NODE_ENV !== 'production',
-        selectedXalianIds: []
+        selectedXalianIds: [],
+        showHowToPlay: false
     }
 
     // componentDidUpdate(prevProps, prevState) {
@@ -61,6 +64,13 @@ class DuelStartPage extends React.Component {
             .catch(() => {
                 // signed out or API unavailable — duel falls back to random squads
             });
+    }
+
+    // reading the rules here counts as having seen them, so the board does not
+    // pop the same modal again the moment the duel starts
+    onHideHowToPlay = () => {
+        LocalDuelStorage.setHowToPlaySeen();
+        this.setState({ showHowToPlay: false });
     }
 
     handleStartClicked = () => {
@@ -202,6 +212,7 @@ class DuelStartPage extends React.Component {
 
                                 </div>
 
+                                {process.env.NODE_ENV !== 'production' &&
                                 <div style={{ height: '100%', display: 'flex', justifyContent: 'space-evenly', alignItems: 'stretch', alignContent: 'center', marginTop: '50px'}}>
                                     <h4 style={{ marginTop: 'auto', marginBottom: 'auto', alignSelf: 'center', textAlign: 'center', width: 'fit-content' }}>Debug Mode:</h4>
                                     <ToggleButtonGroup style={{ textAlign: 'center', width: '35px' }} type='checkbox' onChange={(e) =>
@@ -214,10 +225,17 @@ class DuelStartPage extends React.Component {
                                     </ToggleButtonGroup>
 
                                 </div>
+                                }
 
-                                <Button onClick={this.handleStartClicked}
-                                size='lg' disabled={!this.state.players  || !this.state.numberOfPieces} variant='xalianGreen' style={{ width: 'fit-content', margin: 'auto', marginTop: '50px'}}>Start Duel!</Button>
+                                <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', flexWrap: 'wrap', marginTop: '50px' }}>
+                                    <Button onClick={() => this.setState({ showHowToPlay: true })}
+                                    size='lg' variant='xalianGray' style={{ width: 'fit-content' }}>How to Play</Button>
+                                    <Button onClick={this.handleStartClicked}
+                                    size='lg' disabled={!this.state.players  || !this.state.numberOfPieces} variant='xalianGreen' style={{ width: 'fit-content' }}>Start Duel!</Button>
+                                </div>
                             </div>
+
+                            <HowToPlayModal show={this.state.showHowToPlay} onHide={this.onHideHowToPlay} />
 
                         {/* </GameContainer> */}
 
