@@ -54,7 +54,9 @@ module.exports.retrieveXalian = (event, context, callback) => {
 		delegate.getXalianBatch(
 			xalianIds,
 			function onSuccess(xalians) {
-				let response = builder.buildResponse(200, xalians);
+				// return bare xalians like the single-id path does, not raw table items
+				let unwrapped = xalians.map((x) => (x && x.attributes ? x.attributes : x));
+				let response = builder.buildResponse(200, unwrapped);
 				console.log(`SUCCESS :: returning response:\n${JSON.stringify(response, null, 2)}`);
 				callback(undefined, response);
 			},
