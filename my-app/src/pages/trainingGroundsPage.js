@@ -22,20 +22,16 @@ class TrainingGroundsPage extends React.Component {
     }
 
     buildGamesList = () => {
-        let list = []
-        
-        // list.push(<a href="/train/match"> <h1>Xalian Match</h1></a>);
-        // list.push(<a href="/train/physics"> <h1>Physics</h1></a>);
+        let list = [
+            { name: 'Xalian Match', element: <MatchCardGamePage key="match" /> },
+            { name: 'Physics', element: <PhysicsGamePage key="physics" /> },
+        ];
 
-        list.push(<MatchCardGamePage/>);
-        list.push(<PhysicsGamePage/>);
-
-        this.setState({ games: list, selectedGame: list[0] });
+        this.setState({ games: list, selectedGame: list[0].element });
     }
 
-    change = () => {
-        let nextIndex = (this.state.selectedGameIndex + 1) % this.state.games.length;
-        this.setState({ selectedGameIndex: nextIndex, selectedGame: this.state.games[nextIndex] })
+    selectGame = (index) => {
+        this.setState({ selectedGameIndex: index, selectedGame: this.state.games[index].element });
     }
 
     render() {
@@ -47,7 +43,24 @@ class TrainingGroundsPage extends React.Component {
 
                     <Row className="">
                         <Col style={{ textAlign: 'center' }} >
-                            <Button onClick={ this.change }>switch</Button>
+                            <h1 className="page-title-text">Training Grounds</h1>
+                            <p className="training-grounds-subtitle">Warm-up games while you wait for a duel.</p>
+
+                            {/* was a single unlabelled bootstrap-blue "switch" button that
+                                cycled games without saying which one you were on */}
+                            <div className="training-game-switcher">
+                                {this.state.games.map((game, index) => (
+                                    <Button
+                                        key={game.name}
+                                        variant={this.state.selectedGameIndex === index ? 'xalianGreen' : 'xalianGray'}
+                                        onClick={() => this.selectGame(index)}
+                                        aria-pressed={this.state.selectedGameIndex === index}
+                                    >
+                                        {game.name}
+                                    </Button>
+                                ))}
+                            </div>
+
                             <GameContainer>
                                 {this.state.selectedGame}
                             </GameContainer>
