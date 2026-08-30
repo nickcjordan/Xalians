@@ -276,6 +276,16 @@ body { width: 100%; max-width: 100%; height: auto;
   z-index: 99999 !important;
 }
 
+/* the navbar above sits at 99999, which would otherwise cover the top of any
+   modal (bootstrap's own modal layer is only 1055). modals must outrank it. */
+.modal-backdrop {
+  z-index: 99999;
+}
+
+.modal {
+  z-index: 100000 !important;
+}
+
 .navbar {
   padding: 0;
 }

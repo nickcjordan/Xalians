@@ -23,6 +23,7 @@ import XalianDuelStatBadge from './xalianDuelStatBadge';
 import DuelBoardCell from './duelBoardCell';
 import AttackActionModal from './attackActionModal';
 import AttackMoveChooserModal from './attackMoveChooserModal';
+import HowToPlayModal from '../howToPlayModal';
 import { useSelector, useDispatch } from 'react-redux'
 import { addAnimationToQueue } from '../../../../store/duelAnimationQueueSlice';
 import { AnimationHub } from '../../../../store/AnimationHub';
@@ -53,7 +54,8 @@ class DuelBoard extends React.Component {
 		animationTl: gsap.timeline(),
 		logIndex: 0,
 		showXalianDetails: false,
-		animationIndex: -1
+		animationIndex: -1,
+		showHowToPlay: false
 	};
 
 	static propTypes = {
@@ -80,9 +82,20 @@ class DuelBoard extends React.Component {
 		document.addEventListener('DOMContentLoaded', this.updateSize);
 		window.addEventListener('resize', this.updateSize);
 		this.updateSize();
-		// alert("READ THIS FIRST! (DEBUG MODE: after you tap ok, tap the white-boxed arrow to hide the debug menu) READ THIS NEXT PART THEN TAP OK! =====> GOAL OF GAME ==> grab your blue flag and move it to your side's first row (bottom of board), OR defeat all enemies :::::::: HOW TO PLAY: (you are blue) ==> you can move any of your pieces on your turn, up to 3 spaces per turn :: the 3 spaces do not have to be moved by the same piece :: you are allowed one attack per turn :: you can move and attack in any order :: once a piece's health reaches 0, it is eliminated :: you can move more than once per turn, as long as your total spaces moved and your active pieces' range allows it :: when a piece is selected, the red X's indicate how effective your selected piece's attack would be against the opponent, the red-striped circles indicate attack range, the green dots indicate viable moves :: a piece cannot move through another piece :: bot goes first :: have fun!");
+		this.showHowToPlayOnFirstVisit();
 		this.transitionClientViewForActivePlayer();
 		
+	}
+
+	showHowToPlayOnFirstVisit = () => {
+		if (!LocalDuelStorage.hasSeenHowToPlay()) {
+			this.setState({ showHowToPlay: true });
+		}
+	}
+
+	onHideHowToPlay = () => {
+		LocalDuelStorage.setHowToPlaySeen();
+		this.setState({ showHowToPlay: false });
 	}
 
 	isAnimationHappening = () => {
@@ -532,6 +545,12 @@ class DuelBoard extends React.Component {
 		}
 
 		userActionButtons.push(
+			<Col key="duel-action-how-to-play" xs="auto" style={{ display: 'flex', justifyContent: 'center' }}>
+				<Button variant='xalianGray' title='How to play' aria-label='How to play' onClick={() => this.setState({ showHowToPlay: true })} style={{ margin: 'auto', marginBottom: '10px', marginTop: '10px' }} ><i className="bi bi-question-lg" /></Button>
+			</Col>
+		)
+
+		userActionButtons.push(
 			<Col key="duel-action-end-turn" style={{ display: 'flex', justifyContent: 'center' }}>
 				<Button variant='xalianGray' disabled={!showEndTurnButton} onClick={this.endPlayerTurn} style={{ margin: 'auto', marginBottom: '10px', marginTop: '10px' }} >End turn</Button>
 			</Col>
@@ -703,6 +722,8 @@ class DuelBoard extends React.Component {
 									}
 
 									<FadeAlert />
+
+								<HowToPlayModal show={this.state.showHowToPlay} onHide={this.onHideHowToPlay} />
 
 									{this.state.pendingAttack &&
 										<AttackMoveChooserModal

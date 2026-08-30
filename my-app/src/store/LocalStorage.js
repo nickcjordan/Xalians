@@ -64,7 +64,31 @@ var LocalDuelStorage = (function () {
     };
     
 
+    // unlike the rest of this module, "have they read the rules?" should outlive the
+    // browser session - so it uses localStorage, guarded because private-mode browsers
+    // can throw on access rather than simply returning nothing.
+    var HOW_TO_PLAY_SEEN_KEY = 'duel_how_to_play_seen';
+
+    var hasSeenHowToPlay = function () {
+        try {
+            return window.localStorage.getItem(HOW_TO_PLAY_SEEN_KEY) === 'true';
+        } catch (e) {
+            return true; // can't remember the dismissal, so don't nag on every visit
+        }
+    };
+
+    var setHowToPlaySeen = function () {
+        try {
+            window.localStorage.setItem(HOW_TO_PLAY_SEEN_KEY, 'true');
+        } catch (e) {
+            // nothing to do - the modal is still reachable from the ? button
+        }
+    };
+
+
     return {
+        hasSeenHowToPlay: hasSeenHowToPlay,
+        setHowToPlaySeen: setHowToPlaySeen,
         getBoardSize: getBoardSize,
         setBoardSize: setBoardSize,
         getSelectedXalianId: getSelectedXalianId,
