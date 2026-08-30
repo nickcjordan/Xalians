@@ -74,6 +74,19 @@ data "archive_file" "lambda_zip_file" {
   type        = "zip"
   source_dir  = "${path.module}/lambda"
   output_path = "${path.module}/generate_xalian_lambda.zip"
+
+  # The engine only loads elements/species/qualifiers/moves. The rest of lambda/src/json
+  # lives here because it is the source of truth for the frontend's copy-json step, so it
+  # stays in the repo but does not need to ship inside the function bundle.
+  excludes = [
+    "src/json/planets.json",
+    "src/json/glossary.json",
+    "src/json/typeEffectivenessMatrix.json",
+    "src/json/populated_moves.json",
+    "src/json/helping_moves.json",
+    "src/json/current_xalian.json",
+    "src/json/mock",
+  ]
 }
 
 # lambda bucket object
@@ -84,7 +97,11 @@ resource "aws_s3_object" "lambda_bucket_object" {
   bucket = aws_s3_bucket.lambda_bucket.id
   key    = "generate_xalian_lambda.zip"
   source = data.archive_file.lambda_zip_file.output_path
-  etag   = filemd5(data.archive_file.lambda_zip_file.output_path)
+  # source_hash rather than etag: S3 stores a multipart etag for larger uploads, which
+  # never matches filemd5() locally, so etag produced a diff on every single apply.
+  # source_hash is compared against its own stored value, so it changes only when the
+  # zip contents actually change.
+  source_hash = data.archive_file.lambda_zip_file.output_base64sha256
 }
 #####                                               #####
 #########################################################

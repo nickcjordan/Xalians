@@ -1,6 +1,6 @@
-const AWS = require('aws-sdk');
-AWS.config.setPromisesDependency(require('bluebird'));
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
+const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
+const { DynamoDBDocumentClient, GetCommand, PutCommand, BatchGetCommand } = require('@aws-sdk/lib-dynamodb');
+const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const builder = require('./responseBuilder.js');
 
 const TABLE_NAME = 'XalianTable';
@@ -22,19 +22,18 @@ function getXalian(xalianId, onSuccess, onNotFound, onFail) {
 			},
 		};
 
-		dynamoDb.get(params, function (err, data) {
-			if (err) {
-				console.log(`ERROR :: ${JSON.stringify(err, null, 2)}`);
-				onFail(err);
-			} else {
+		dynamoDb.send(new GetCommand(params))
+			.then((data) => {
 				if (data.Item) {
 					console.log(`SUCCESS :: data:\n${JSON.stringify(data.Item.attributes, null, 2)}`);
 					onSuccess(data.Item.attributes);
 				} else {
 					onNotFound();
 				}
-			}
-		});
+			}, (err) => {
+				console.log(`ERROR :: ${JSON.stringify(err, null, 2)}`);
+				onFail(err);
+			});
 	} catch (e) {
 		onFail(e);
 	}
@@ -45,13 +44,12 @@ function getXalianBatch(xalianIds, onSuccess, onFail) {
         var params = builder.buildBatchGetParams(xalianIds);
 		console.log(`params: \n${JSON.stringify(params, null, 2)}`);
 
-		dynamoDb.batchGet(params, function (err, data) {
-			if (err) {
-				onFail(err);
-			} else {
+		dynamoDb.send(new BatchGetCommand(params))
+			.then((data) => {
 				onSuccess(data.Responses.XalianTable);
-			}
-		});
+			}, (err) => {
+				onFail(err);
+			});
 	} catch (e) {
 		onFail(e);
 	}
@@ -64,13 +62,12 @@ function createXalian(xalian, onSuccess, onFail) {
 			Item: builder.buildXalianTableItem(xalian),
 		};
 
-		dynamoDb.put(params, function (err, data) {
-			if (err) {
-				onFail(err);
-			} else {
+		dynamoDb.send(new PutCommand(params))
+			.then(() => {
 				onSuccess();
-			}
-		});
+			}, (err) => {
+				onFail(err);
+			});
 	} catch (e) {
 		onFail(e);
 	}
