@@ -26,6 +26,12 @@ jobs:
       - name: Sync shared game data and engine code from lambda/
         run: yarn copy-json && yarn copy-js
 
+      - name: Test
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
+          CI: "true"
+        run: yarn test --watchAll=false --passWithNoTests
+
       - name: Build
         # legacy provider: the lockfile's webpack toolchain uses md4 hashing,
         # which OpenSSL 3 (Node 17+) removed
