@@ -42,6 +42,16 @@ export function buildGrid(totalSquares = 0) {
     }
 }
 
+// each side's flag row is the second row in from that side's home row (home rows are the first and last rows of the board)
+export function getFlagRowIndices(boardSize = duelConstants.BOARD_COLUMN_SIZE) {
+    let playerHomeRow = boardSize - 1;
+    let opponentHomeRow = 0;
+    return {
+        playerFlagRow: playerHomeRow - 1,
+        opponentFlagRow: opponentHomeRow + 1
+    };
+}
+
 export function calculateIndicesWithinDistance(currentIndex, distance, G, ctx) {
     let boardSize = duelConstants.BOARD_COLUMN_SIZE;
 
