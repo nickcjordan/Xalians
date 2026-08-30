@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import { LabelList, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { brand, chart } from "../constants/designTokens";
+import { phosphor, chart } from "../constants/designTokens";
 
 const d = [];
 
@@ -77,7 +77,7 @@ class CharacterGeneratedStatChart extends React.Component {
             <BarChart data={this.setupData(this.props.xalian)} layout="vertical" maxBarSize={35}>
               <XAxis type="number" hide />
               {/* was #80ffb1, one digit off the brand green - a typo, not a second colour */}
-              <YAxis type="category" dataKey="statLabel" stroke={brand.green} />
+              <YAxis type="category" dataKey="statLabel" stroke={phosphor.base} />
               {/* <Tooltip cursor={false}/> */}
 
               <Bar isAnimationActive={false} animationBegin={50} dataKey="rangeNumber" fill={chart.rangeTrack}>

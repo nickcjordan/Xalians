@@ -1,54 +1,53 @@
 /**
- * Xalians design tokens
- * -----------------------------------------------------------------------------
- * The single source of truth for colour, spacing, radius, type scale and glow.
+ * COMPATIBILITY SHIM — temporary, delete when the last --x-* reference is gone.
+ * =============================================================================
+ * The design system now lives in system.css under the --g-* namespace. A lot of
+ * older CSS in style.css still asks for --x-* names, and rewriting every one of
+ * those rules in a single pass would be a large, risky diff for no visual gain.
  *
- * Before this file the brand palette lived in a COMMENT at the top of style.css
- * and was then hand-copied as raw hex into ~70 places across the CSS and another
- * ~67 inline styles in JSX. Anything reused should be added here rather than
- * pasted as a literal.
+ * So this file re-points the old names at the new ones. Legacy rules keep
+ * working and immediately pick up the retrofuture palette, and pages can be
+ * migrated to .g-* components one at a time instead of all at once.
  *
- * Element/type colours are mirrored in src/constants/colorConstants.js, which is
- * what the JS side reads. The two are kept honest by a test:
- * src/__tests__/designTokens.test.js fails if they ever drift apart.
+ * Rules:
+ *   - Do NOT add new --x-* tokens here. New work uses --g-* from system.css.
+ *   - When a page is migrated, delete the --x-* rules it leaves behind.
+ *   - This file disappears entirely once nothing references --x-*.
+ *
+ * Loaded BEFORE system.css so system.css remains the source of truth.
  */
 
 :root {
-	/* --- brand ------------------------------------------------------------ */
-	--x-green: #80ffb0;
-	--x-green-hover: #b3ffd0;
-	--x-green-active: #57aa77;
-	--x-green-border: #6bd493;
-	/* translucent greens, for borders and focus rings */
-	--x-green-a15: rgba(128, 255, 176, 0.15);
-	--x-green-a30: rgba(128, 255, 176, 0.3);
-	--x-green-a60: rgba(128, 255, 176, 0.6);
+	/* brand green -> the CRT phosphor */
+	--x-green: #74ffb0;
+	--x-green-hover: #b9ffd7;
+	--x-green-active: #1f8f5c;
+	--x-green-border: #6b5423;
+	--x-green-a15: rgba(116, 255, 176, 0.15);
+	--x-green-a30: rgba(116, 255, 176, 0.30);
+	--x-green-a60: rgba(116, 255, 176, 0.60);
 
-	/* --- surfaces --------------------------------------------------------- */
-	/* the galactic backdrop: near-black, never pure #000, so starfields read */
-	--x-bg: #0d0d0d;
-	--x-surface-1: #151515;
-	--x-surface-2: #1a1a1a;
-	--x-surface-3: #232323;
-	--x-surface-overlay: rgba(13, 13, 13, 0.85);
-	--x-border: #333333;
-	--x-border-strong: #4a4a4a;
+	/* surfaces -> hull */
+	--x-bg: #0d0b09;
+	--x-surface-1: #16160f;
+	--x-surface-2: #23231a;
+	--x-surface-3: #32322a;
+	--x-surface-overlay: rgba(13, 11, 9, 0.85);
+	--x-border: rgba(216, 207, 184, 0.14);
+	--x-border-strong: rgba(216, 207, 184, 0.28);
 
-	/* --- text ------------------------------------------------------------- */
-	--x-text: #ffffff;
-	--x-text-muted: #cccccc;
-	/* --x-text-dim is the lowest step that still clears 4.5:1 on --x-bg;
-	   anything fainter is decorative only and must not carry meaning */
-	--x-text-dim: #949494;
-	--x-text-inverse: #000000;
+	/* text -> ink */
+	--x-text: #ddd4bd;
+	--x-text-muted: #9a9280;
+	--x-text-dim: #6b665a;
+	--x-text-inverse: #14120c;
 
-	/* --- feedback --------------------------------------------------------- */
-	--x-danger: #ff5b5b;
-	--x-warning: #e2bd43;
-	--x-success: var(--x-green);
+	/* feedback -> lamps */
+	--x-danger: #e4483c;
+	--x-warning: #ffb037;
+	--x-success: #74ffb0;
 
-	/* --- element / type colours ------------------------------------------- */
-	/* mirrored in src/constants/colorConstants.js - see note above */
+	/* element colours are unchanged by the redesign */
 	--x-type-fire: #df6d5e;
 	--x-type-water: #60a0c5;
 	--x-type-air: #ffffff;
@@ -64,27 +63,7 @@
 	--x-type-ice: #85dde4;
 	--x-type-sand: #e6b26f;
 
-	/* --- stat colours ----------------------------------------------------- */
-	/* semantic: attack is red, defense is blue, speed yellow-green, stamina and
-	   recovery green. Each "special" variant is a darker shade of the same hue
-	   so the standard/special pairs read as related. */
-	--x-stat-standard-attack: #a84032;
-	--x-stat-special-attack: #753027;
-	--x-stat-standard-defense: #535dc2;
-	--x-stat-special-defense: #494f8c;
-	--x-stat-speed: #d0d466;
-	--x-stat-evasion: #aaad53;
-	--x-stat-stamina: #4bbf4e;
-	--x-stat-recovery: #479e4a;
-
-	/* --- charts ----------------------------------------------------------- */
-	--x-chart-range-track: #ecff8234;
-	--x-chart-points-fill: #80dbff34;
-	--x-chart-bar-label: #ffffff50;
-	--x-chart-cursor-fill: #ffffff25;
-	--x-chart-axis: #ffffff;
-
-	/* --- spacing ---------------------------------------------------------- */
+	/* spacing / radius / motion map straight onto the new scale */
 	--x-space-1: 4px;
 	--x-space-2: 8px;
 	--x-space-3: 12px;
@@ -94,198 +73,31 @@
 	--x-space-7: 48px;
 	--x-space-8: 64px;
 
-	/* --- radius ----------------------------------------------------------- */
-	--x-radius-sm: 6px;
-	--x-radius-md: 10px;
-	--x-radius-lg: 16px;
-	--x-radius-xl: 25px;
+	--x-radius-sm: 3px;
+	--x-radius-md: 4px;
+	--x-radius-lg: 8px;
+	--x-radius-xl: 14px;
 	--x-radius-pill: 999px;
 
-	/* --- elevation / glow ------------------------------------------------- */
-	/* glow is this site's depth cue instead of drop shadow - space has no sun */
 	--x-glow-inset: inset 0px 0px 30px;
 	--x-shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.5);
 	--x-shadow-md: 0 6px 20px rgba(0, 0, 0, 0.6);
 
-	/* --- typography ------------------------------------------------------- */
-	--x-font-display: 'ProcrastinatingPixie', 'Abel', sans-serif;
-	--x-font-body: 'Abel', 'Open Sans', sans-serif;
+	/* the old display font is gone; these now resolve to the console faces */
+	--x-font-display: 'Oswald', 'Barlow Condensed', Impact, sans-serif;
+	--x-font-body: 'Barlow', system-ui, sans-serif;
+
 	--x-text-xs: 0.75rem;
 	--x-text-sm: 0.875rem;
 	--x-text-md: 1rem;
 	--x-text-lg: 1.25rem;
 	--x-text-xl: 1.75rem;
 	--x-text-2xl: 2.5rem;
-	/* cap body copy at a readable measure - the lore sections used to run the
-	   full 1400px viewport, roughly 200 characters per line */
-	--x-measure: 70ch;
+	--x-measure: 68ch;
 
-	/* --- motion ----------------------------------------------------------- */
-	--x-transition-fast: 0.15s ease;
-	--x-transition: 0.3s ease;
+	--x-transition-fast: 90ms cubic-bezier(0.3, 0, 0.2, 1);
+	--x-transition: 200ms cubic-bezier(0.3, 0, 0.2, 1);
 
-	/* --- layers ----------------------------------------------------------- */
-	/* the navbar historically sat at 99999, which put every bootstrap modal
-	   (1055) underneath it. Layers belong in one ordered list, here. */
-	--x-layer-navbar: 99999;
-	--x-layer-modal: 100000;
+	--x-layer-navbar: 500;
+	--x-layer-modal: 1000;
 }
-
-/*--------------------------------------------------------------
-# Primitives
-# Built from the language already proven on the planets page: a
-# tinted, inset-glowing panel keyed to an element colour.
---------------------------------------------------------------*/
-
-/* A surface panel. Set --x-panel-tint on it (or use .x-panel--type-* below)
-   to key it to an element colour; it falls back to the brand green. */
-.x-panel {
-	--x-panel-tint: var(--x-green);
-	border: solid 2px color-mix(in srgb, var(--x-panel-tint) 60%, transparent);
-	box-shadow: var(--x-glow-inset) var(--x-panel-tint);
-	background-color: color-mix(in srgb, var(--x-panel-tint) 12%, rgba(0, 0, 0, 0.75));
-	border-radius: var(--x-radius-xl);
-	padding: var(--x-space-5);
-}
-
-/* A quieter panel for dense content (lists, tables) where a full glow is noise */
-.x-panel--flat {
-	box-shadow: none;
-	border-width: 1px;
-	border-radius: var(--x-radius-md);
-	background-color: var(--x-surface-1);
-}
-
-/* Constrain body copy to a readable line length, centred in its column. */
-.x-measure {
-	max-width: var(--x-measure);
-	margin-left: auto;
-	margin-right: auto;
-}
-
-/* Section heading used above panels and page sections. */
-.x-section-title {
-	color: var(--x-green);
-	font-family: var(--x-font-body);
-	margin-bottom: var(--x-space-4);
-}
-
-/* Tabs. Bootstrap's defaults are blue links on a white pill, which is the one
-   piece of unthemed chrome that reads as broken against the starfield. */
-.x-tabs.nav-tabs {
-	border-bottom: 1px solid var(--x-border);
-	gap: var(--x-space-2);
-}
-
-.x-tabs.nav-tabs .nav-link {
-	color: var(--x-text-muted);
-	background-color: transparent;
-	border: 1px solid transparent;
-	border-bottom: none;
-	border-radius: var(--x-radius-md) var(--x-radius-md) 0 0;
-	padding: var(--x-space-2) var(--x-space-4);
-	transition: color var(--x-transition-fast), background-color var(--x-transition-fast);
-}
-
-.x-tabs.nav-tabs .nav-link:hover {
-	color: var(--x-green-hover);
-	background-color: var(--x-green-a15);
-	border-color: transparent;
-}
-
-.x-tabs.nav-tabs .nav-link.active {
-	color: var(--x-green);
-	background-color: var(--x-surface-2);
-	border-color: var(--x-green-a30);
-	border-bottom-color: transparent;
-}
-
-.x-tabs.nav-tabs .nav-link:focus-visible {
-	outline: 2px solid var(--x-green);
-	outline-offset: -2px;
-}
-
-/* --- page headers -------------------------------------------------------
-   Every page hand-rolled its own title treatment, so "Discovered Species",
-   "Discovered Planets" and "Glossary" were each styled slightly differently. */
-.x-page-title {
-	text-align: center;
-	color: var(--x-text);
-	padding-top: var(--x-space-7);
-	padding-bottom: var(--x-space-3);
-	margin: 0;
-}
-
-.x-page-subtitle {
-	text-align: center;
-	color: var(--x-text-dim);
-	max-width: var(--x-measure);
-	margin: 0 auto var(--x-space-6) auto;
-}
-
-/* --- label / value rows -------------------------------------------------
-   The generator, species detail and planet pages all show rows of
-   "Attribute: value". The value is the information, so it gets the emphasis;
-   the label is chrome and stays dim. */
-.x-detail-row {
-	padding-top: var(--x-space-1);
-	padding-bottom: var(--x-space-1);
-}
-
-.x-detail-label {
-	color: var(--x-text-dim);
-	text-align: right;
-}
-
-.x-detail-value {
-	color: var(--x-text);
-	text-align: left;
-}
-
-/* --- form controls ------------------------------------------------------
-   Bootstrap's inputs are white-on-white, which reads as a hole punched in the
-   starfield. */
-.x-input.form-control {
-	background-color: var(--x-surface-2) !important;
-	border: 1px solid var(--x-border) !important;
-	color: var(--x-text) !important;
-}
-
-.x-input.form-control::placeholder {
-	color: var(--x-text-dim);
-}
-
-.x-input.form-control:focus {
-	border-color: var(--x-green-a60) !important;
-	box-shadow: 0 0 0 0.2rem var(--x-green-a15) !important;
-}
-
-.x-input-addon.input-group-text {
-	background-color: var(--x-surface-2) !important;
-	border: 1px solid var(--x-border) !important;
-	color: var(--x-green) !important;
-}
-
-/* --- empty state -------------------------------------------------------- */
-.x-empty-state {
-	color: var(--x-text-dim);
-	text-align: center;
-	padding: var(--x-space-7) var(--x-space-4);
-}
-
-/* Element-keyed panel tints, so JSX can pick a panel colour with a class
-   instead of computing inline styles. */
-.x-panel--type-fire { --x-panel-tint: var(--x-type-fire); }
-.x-panel--type-water { --x-panel-tint: var(--x-type-water); }
-.x-panel--type-air { --x-panel-tint: var(--x-type-air); }
-.x-panel--type-electric { --x-panel-tint: var(--x-type-electric); }
-.x-panel--type-rock { --x-panel-tint: var(--x-type-rock); }
-.x-panel--type-plant { --x-panel-tint: var(--x-type-plant); }
-.x-panel--type-chemical { --x-panel-tint: var(--x-type-chemical); }
-.x-panel--type-light { --x-panel-tint: var(--x-type-light); }
-.x-panel--type-dark { --x-panel-tint: var(--x-type-dark); }
-.x-panel--type-metal { --x-panel-tint: var(--x-type-metal); }
-.x-panel--type-psychic { --x-panel-tint: var(--x-type-psychic); }
-.x-panel--type-ghost { --x-panel-tint: var(--x-type-ghost); }
-.x-panel--type-ice { --x-panel-tint: var(--x-type-ice); }
-.x-panel--type-sand { --x-panel-tint: var(--x-type-sand); }

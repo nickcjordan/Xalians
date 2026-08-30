@@ -2,7 +2,7 @@ import React from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import * as duelConstants from '../../../gameplay/duel/duelGameConstants';
-import { surface } from '../../../constants/designTokens';
+import { hull } from '../../../constants/designTokens';
 
 // The rules text is derived from constants rather than hardcoded so it cannot
 // drift away from the actual game as tunables change.
@@ -110,16 +110,16 @@ class HowToPlayModal extends React.Component {
                 scrollable
                 className="themed-modal dark-themed-modal"
             >
-                <Modal.Header closeButton closeVariant="white" style={{ borderBottom: '1px solid #444', backgroundColor: surface.surface2 }}>
+                <Modal.Header closeButton closeVariant="white" style={{ borderBottom: '1px solid #444', backgroundColor: hull.base }}>
                     <Modal.Title style={{ color: 'white', fontSize: '1.2em' }}>How to play Duel</Modal.Title>
                 </Modal.Header>
-                <Modal.Body style={{ backgroundColor: surface.surface2 }}>
+                <Modal.Body style={{ backgroundColor: hull.base }}>
                     <p style={{ color: '#a0a0a0', fontSize: '0.9em', marginBottom: '20px' }}>
                         Duel is a squad tactics game: capture the flag on a chess-sized board, with elemental creatures instead of chess pieces.
                     </p>
                     {SECTIONS.map(this.renderSection)}
                 </Modal.Body>
-                <Modal.Footer style={{ borderTop: '1px solid #444', backgroundColor: surface.surface2 }}>
+                <Modal.Footer style={{ borderTop: '1px solid #444', backgroundColor: hull.base }}>
                     <Button variant="xalianGreen" onClick={this.props.onHide}>Got it</Button>
                 </Modal.Footer>
             </Modal>

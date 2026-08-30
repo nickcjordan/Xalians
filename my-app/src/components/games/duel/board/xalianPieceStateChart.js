@@ -6,7 +6,7 @@ import * as svgUtil from '../../../../utils/svgUtil';
 import { PieChart, Pie, Sector, Cell, ResponsiveContainer } from 'recharts';
 import * as gameConstants from '../../../../gameplay/duel/duelGameConstants';
 import gsap from 'gsap';
-import { text } from '../../../../constants/designTokens';
+import { ink } from '../../../../constants/designTokens';
 
 const COLORS = ['#0088FE', '#00000000'];
 const STROKES = ['black', '#00000000'];
@@ -42,11 +42,11 @@ class XalianPieceStateChart extends React.Component {
         
         return (
             <div className={classes} style={{ height: 'auto', minWidth: '25px', pointerEvents: 'none', width: '100%', zIndex: '104' }}>
-                <div className={wrapperClasses} style={{display: 'flex', flexDirection: 'column', filter: `drop-shadow(0px 0px 2px ${text.inverse})` }}>
-                    <div style={{ width: '100%', height: '100%', filter: `drop-shadow(0px 0px 1px ${text.inverse}) drop-shadow(0px 0px 2px ${text.inverse})`, border: `1px outset ${healthBarColor}`, borderRadius: '4px'}}>
+                <div className={wrapperClasses} style={{display: 'flex', flexDirection: 'column', filter: `drop-shadow(0px 0px 2px ${ink.invert})` }}>
+                    <div style={{ width: '100%', height: '100%', filter: `drop-shadow(0px 0px 1px ${ink.invert}) drop-shadow(0px 0px 2px ${ink.invert})`, border: `1px outset ${healthBarColor}`, borderRadius: '4px'}}>
                         <div style={{ ...style, width: `${healthBarPercentage}%`, background: this.buildBackgroundGradient(healthBarLighterColor), pointerEvents: 'none', boxShadow: `0px 0px 1px 1px ${healthBarColor}`, borderRadius: '4px' }} />
                     </div>
-                    <div style={{ width: '100%', height: '100%', filter: `drop-shadow(0px 0px 1px ${text.inverse}) drop-shadow(0px 0px 2px ${text.inverse})`, border: `1px outset #4d4bc2`, borderRadius: '4px', marginTop: spacing}}>
+                    <div style={{ width: '100%', height: '100%', filter: `drop-shadow(0px 0px 1px ${ink.invert}) drop-shadow(0px 0px 2px ${ink.invert})`, border: `1px outset #4d4bc2`, borderRadius: '4px', marginTop: spacing}}>
                         <div style={{ ...style, width: `${staminaBarPercentage}%`, background: this.buildBackgroundGradient('#6d8ed9'), pointerEvents: 'none', boxShadow: `0px 0px 1px 1px #4d4bc2`, borderRadius: '4px' }}  />
                     </div>
                 </div>

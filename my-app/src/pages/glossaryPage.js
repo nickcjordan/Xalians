@@ -3,7 +3,6 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
 import XalianNavbar from '../components/navbar';
 import glossary from '../json/glossary.json';
 
@@ -40,14 +39,10 @@ class GlossaryPage extends React.Component {
     // screen reader and conveyed none of the term-to-definition relationship.
     buildDictionary(entries) {
         return entries.map((row) => (
-            <Row className="glossary-word-row vertically-center-contents" key={row.word} as="div">
-                <Col sm={3}>
-                    <dt className="glossary-title">{row.word}</dt>
-                </Col>
-                <Col sm={true}>
-                    <dd className="glossary-definition">{row.definition}</dd>
-                </Col>
-            </Row>
+            <div className="g-record" key={row.word}>
+                <dt className="g-record-term">{row.word}</dt>
+                <dd className="g-record-body">{row.definition}</dd>
+            </div>
         ));
     }
 
@@ -55,30 +50,28 @@ class GlossaryPage extends React.Component {
         let entries = this.getMatchingEntries();
         let total = this.getSortedEntries().length;
 
-        return <React.Fragment>
+        return (
+            <div className="g-console">
+                <XalianNavbar />
 
-            <Container fluid className="content-background-container">
-                <XalianNavbar></XalianNavbar>
-
-                <Container>
-                    <h1 className="x-page-title">Glossary</h1>
+                <div className="g-shell page-shell">
+                    <header className="page-header">
+                        <p className="g-kicker">Vallerii Archive</p>
+                        <h1 className="g-title">Glossary</h1>
+                    </header>
 
                     <Row className="justify-content-center">
                         <Col md={7} lg={6}>
-                            <InputGroup className="glossary-search">
-                                <InputGroup.Text className="x-input-addon">
-                                    <i className="bi bi-search" />
-                                </InputGroup.Text>
-                                <Form.Control
-                                    type="search"
-                                    placeholder="Search the galaxy's terms..."
-                                    aria-label="Search glossary terms"
-                                    value={this.state.query}
-                                    onChange={(e) => this.setState({ query: e.target.value })}
-                                    className="x-input"
-                                />
-                            </InputGroup>
-                            <p className="glossary-result-count">
+                            {/* the search field is a screen, so it reads as phosphor on glass */}
+                            <Form.Control
+                                type="search"
+                                placeholder="SEARCH TERMS"
+                                aria-label="Search glossary terms"
+                                value={this.state.query}
+                                onChange={(e) => this.setState({ query: e.target.value })}
+                                className="g-input"
+                            />
+                            <p className="glossary-result-count g-kicker">
                                 {this.state.query
                                     ? `${entries.length} of ${total} terms`
                                     : `${total} terms`}
@@ -86,19 +79,15 @@ class GlossaryPage extends React.Component {
                         </Col>
                     </Row>
 
-                    <Row className="glossary-wrapper">
-                        <Col className="">
-                            {entries.length > 0
-                                ? <dl className="glossary-list">{this.buildDictionary(entries)}</dl>
-                                : <p className="x-empty-state">No terms match “{this.state.query}”.</p>
-                            }
-                        </Col>
-                    </Row>
-                </Container>
-            </Container>
-        </React.Fragment>
-
-
+                    <div className="g-panel g-panel--recessed glossary-wrapper">
+                        {entries.length > 0
+                            ? <dl className="glossary-list">{this.buildDictionary(entries)}</dl>
+                            : <p className="g-empty">No terms match “{this.state.query}”</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        );
     }
 
 }

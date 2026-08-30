@@ -24,114 +24,98 @@
 }
 
 /* Buttons.
-   Two variants: xalianGreen is the primary action, xalianGray the secondary.
-   Both are driven by tokens. The !important flags are load-bearing - bootstrap's
-   own .btn rules are more specific than these class selectors. */
+   react-bootstrap composes these from `variant="xalianGreen"` / `"xalianGray"`,
+   so the class names stay even though the design changed underneath them. Both
+   are now moulded keys from system.css: xalianGreen is the committing action and
+   wears hazard paint; xalianGray is a plain bakelite key.
+
+   The !important flags are load-bearing - bootstrap's own .btn rules are more
+   specific than these class selectors. */
+
+.btn-xalianGreen,
+.btn-xalianGray {
+  font-family: var(--g-font-stencil) !important;
+  font-size: var(--g-size-body) !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  letter-spacing: var(--g-track-label);
+  border-radius: var(--g-radius) !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  transition: background-color var(--g-snap), transform var(--g-snap), box-shadow var(--g-snap) !important;
+}
 
 .btn-xalianGreen {
-  color: var(--x-text-inverse) !important;
-  background-color: var(--x-green) !important;
-  border-color: var(--x-green-border) !important;
-  font-weight: bold !important;
-  transition: background-color var(--x-transition-fast), border-color var(--x-transition-fast) !important;
+  color: #17120a !important;
+  background-color: var(--g-hazard) !important;
+  border-color: var(--g-hazard-dark) !important;
+  box-shadow: var(--g-relief), 0 3px 0 var(--g-seam), 0 4px 8px rgba(0, 0, 0, 0.55) !important;
 }
 
 .btn-xalianGreen:hover {
-  background-color: var(--x-green-hover) !important;
-  border-color: var(--x-text) !important;
-}
-
-.btn-check:focus+.btn-xalianGreen,
-.btn-xalianGreen:focus {
-  background-color: var(--x-green) !important;
-  border-color: var(--x-green-border) !important;
-  box-shadow: 0 0 0 0.25rem var(--x-green-a30) !important;
-}
-
-.btn-check:checked+.btn-xalianGreen,
-.btn-check:active+.btn-xalianGreen,
-.btn-xalianGreen:active,
-.btn-xalianGreen.active,
-.show>.btn-xalianGreen.dropdown-toggle {
-  background-color: var(--x-green-active) !important;
-  border-color: var(--x-green-border) !important;
-}
-
-.btn-check:checked+.btn-xalianGreen:focus,
-.btn-check:active+.btn-xalianGreen:focus,
-.btn-xalianGreen:active:focus,
-.btn-xalianGreen.active:focus,
-.show>.btn-xalianGreen.dropdown-toggle:focus {
-  box-shadow: 0 0 0 0.25rem var(--x-green-a30) !important;
-}
-
-/* disabled kept black text over a near-transparent green, which disappeared
-   against the dark page. Disabled controls still have to be legible. */
-.btn-xalianGreen:disabled,
-.btn-xalianGreen.disabled {
-  color: var(--x-text-dim) !important;
-  background-color: var(--x-surface-3) !important;
-  border-color: var(--x-border-strong) !important;
-  opacity: 1 !important;
+  background-color: #f0b71a !important;
+  border-color: var(--g-hazard-dark) !important;
 }
 
 .btn-xalianGray {
-  color: var(--x-text) !important;
-  background-color: var(--x-surface-3) !important;
-  border-color: var(--x-border-strong) !important;
-  text-shadow: 1px 1px 2px var(--x-text-inverse) !important;
-  transition: background-color var(--x-transition-fast), border-color var(--x-transition-fast) !important;
-}
-
-/* the gray button used to go pale green on hover while keeping white text,
-   which landed around 1.3:1 and was effectively unreadable mid-hover. It now
-   lifts a surface step and picks up a green border instead. */
-.btn-xalianGray:hover {
-  background-color: var(--x-border-strong) !important;
-  border-color: var(--x-green) !important;
-}
-
-.btn-check:focus+.btn-xalianGray,
-.btn-xalianGray:focus {
-  background-color: var(--x-surface-3) !important;
-  border-color: var(--x-green-border) !important;
-  box-shadow: 0 0 0 0.25rem var(--x-green-a30) !important;
-}
-
-/* checked/active is a real selected state for the toggle groups, so it keeps
-   the green fill - with dark text, which the plain gray variant does not use */
-.btn-check:checked+.btn-xalianGray,
-.btn-check:active+.btn-xalianGray,
-.btn-xalianGray:active,
-.btn-xalianGray.active,
-.show>.btn-xalianGray.dropdown-toggle {
-  color: var(--x-text-inverse) !important;
-  background-color: var(--x-green-active) !important;
-  border-color: var(--x-green-border) !important;
+  color: var(--g-ink) !important;
+  background-color: var(--g-hull-hi) !important;
+  border-color: var(--g-seam) !important;
   text-shadow: none !important;
+  box-shadow: var(--g-relief), 0 3px 0 var(--g-seam), 0 4px 8px rgba(0, 0, 0, 0.55) !important;
 }
 
-.btn-check:checked+.btn-xalianGray:focus,
-.btn-check:active+.btn-xalianGray:focus,
-.btn-xalianGray:active:focus,
-.btn-xalianGray.active:focus,
-.show>.btn-xalianGray.dropdown-toggle:focus {
-  box-shadow: 0 0 0 0.25rem var(--x-green-a30) !important;
+.btn-xalianGray:hover {
+  background-color: #3c3c32 !important;
+  border-color: var(--g-seam) !important;
 }
 
+/* the key travels down onto the panel */
+.btn-xalianGreen:active,
+.btn-xalianGray:active,
+.btn-check:checked + .btn-xalianGreen,
+.btn-check:checked + .btn-xalianGray {
+  transform: translateY(3px);
+  box-shadow: var(--g-recess) !important;
+}
+
+/* a thrown selector key lights in hazard paint */
+.btn-check:checked + .btn-xalianGray,
+.btn-xalianGray.active {
+  color: #17120a !important;
+  background-color: var(--g-hazard) !important;
+  border-color: var(--g-hazard-dark) !important;
+}
+
+.btn-check:checked + .btn-xalianGreen,
+.btn-xalianGreen.active {
+  background-color: #b7890c !important;
+}
+
+.btn-xalianGreen:focus,
+.btn-xalianGray:focus,
+.btn-check:focus + .btn-xalianGreen,
+.btn-check:focus + .btn-xalianGray {
+  box-shadow: var(--g-relief), 0 3px 0 var(--g-seam) !important;
+}
+
+.btn:focus-visible,
+.btn-check:focus-visible + .btn {
+  outline: 2px solid var(--g-phosphor) !important;
+  outline-offset: 2px !important;
+}
+
+/* Unpowered, not faded: the key is still moulded there, the legend is dead. */
+.btn-xalianGreen:disabled,
+.btn-xalianGreen.disabled,
 .btn-xalianGray:disabled,
 .btn-xalianGray.disabled {
-  color: var(--x-text-dim) !important;
-  background-color: var(--x-surface-3) !important;
-  border-color: var(--x-border-strong) !important;
+  color: var(--g-ink-low) !important;
+  background-color: var(--g-hull-lo) !important;
+  border-color: var(--g-seam) !important;
   text-shadow: none !important;
+  box-shadow: var(--g-recess) !important;
   opacity: 1 !important;
-}
-
-/* keyboard users get a visible ring on every button variant */
-.btn:focus-visible {
-  outline: 2px solid var(--x-green) !important;
-  outline-offset: 2px !important;
 }
 
 hr.xalian-hr {
@@ -184,16 +168,40 @@ a:hover {
   text-decoration: none;
 }
 
-/* Headings default to the brand green site-wide. Anything that needs a white
-   heading (page titles, for instance) opts out explicitly. */
+/* Headings are stencilled onto the hull: condensed caps in bone silkscreen.
+   They are deliberately NOT phosphor - green is emitted light, and only a
+   screen or a lamp is allowed to emit. */
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  font-family: var(--x-font-body);
-  color: var(--x-green);
+  font-family: var(--g-font-stencil);
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  color: var(--g-ink);
+}
+
+/* Uppercase is applied by the .g-title / .g-h2 / .g-h3 type styles rather than
+   globally: several places in this codebase use a heading tag to hold prose,
+   and shouting a paragraph is worse than the wrong tag. */
+h1, h2, h3 {
+  text-transform: uppercase;
+}
+
+/* species and planet descriptions are prose that happens to sit in an h6 */
+.species-detail-description {
+  font-family: var(--g-font-ui);
+  font-weight: 400;
+  font-style: normal;
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: var(--g-size-body);
+  line-height: 1.65;
+  color: var(--g-ink-mid);
+  max-width: var(--g-measure);
+  margin: 0 auto;
 }
 
 
@@ -2369,11 +2377,22 @@ article {
   padding: 3px;
 }
 
+/* planet spec values are machine-reported, so they print in the mono voice
+   rather than the italic serif-ish default the template shipped */
 .planet-table tbody * td {
-  color: var(--x-text-muted);
-  padding: 3px;
-  font-style: italic;
+  color: var(--g-ink);
+  padding: var(--g-1) var(--g-2);
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-small);
+  font-style: normal;
   text-align: left !important;
+}
+
+.planet-table tbody * th {
+  font-family: var(--g-font-stencil);
+  font-weight: 500;
+  letter-spacing: var(--g-track-label);
+  color: var(--g-ink-low);
 }
 
 
@@ -2749,57 +2768,36 @@ article {
 */
 
 .glossary-wrapper {
-  padding-top: var(--x-space-5);
-  padding-bottom: var(--x-space-8);
-}
-
-/* each term is its own surface, so 63 entries scan as a list of cards rather
-   than one unbroken wall of prose */
-.glossary-word-row {
-  padding: var(--x-space-4) var(--x-space-3);
-  margin-bottom: var(--x-space-3);
-  border: 1px solid var(--x-border);
-  border-left: 3px solid var(--x-green-a60);
-  border-radius: var(--x-radius-md);
-  background-color: rgba(0, 0, 0, 0.35);
-  transition: border-color var(--x-transition-fast), background-color var(--x-transition-fast);
-}
-
-.glossary-word-row:hover {
-  border-color: var(--x-green-a30);
-  border-left-color: var(--x-green);
-  background-color: var(--x-surface-1);
+  padding: var(--g-2) var(--g-2) var(--g-3);
+  margin-bottom: var(--g-9);
 }
 
 .glossary-list {
-  margin-bottom: 0;
-}
-
-.glossary-title {
-  text-align: right;
-  font-weight: bolder;
-  font-size: var(--x-text-lg);
-  color: var(--x-green);
-  margin-bottom: 0;
-}
-
-.glossary-definition {
-  color: var(--x-text-muted);
-  line-height: 1.55;
-  margin-bottom: 0;
-}
-
-.glossary-search {
-  margin-top: var(--x-space-3);
+  margin: 0;
 }
 
 .glossary-result-count {
-  color: var(--x-text-dim);
-  font-size: var(--x-text-sm);
   text-align: right;
-  margin: var(--x-space-2) 0 0 0;
+  margin: var(--g-2) 0 var(--g-6) 0;
 }
 
+/* Shared page scaffolding for every migrated page. */
+.page-shell {
+  padding-top: var(--g-8);
+  padding-bottom: var(--g-9);
+}
+
+.page-header {
+  margin-bottom: var(--g-7);
+}
+
+.page-header .g-title {
+  margin-top: var(--g-2);
+}
+
+.page-header .g-body {
+  margin-top: var(--g-3);
+}
 
 /* HAPPENS WHEN SCREEN GOES TO SMALL OR XSMALL I THINK */
 @media (max-width: 575px) {
@@ -3585,118 +3583,217 @@ input, textarea {
 }
 
 /*--------------------------------------------------------------
-# Style Guide
-# The living design system reference at /styleguide.
+# Style Guide page layout
+# Page-specific scaffolding only. Everything that is part of the
+# design system itself lives in system.css.
 --------------------------------------------------------------*/
 
-.styleguide-container {
-  padding-bottom: var(--x-space-8);
+.sg-page {
+  padding-top: var(--g-8);
+  padding-bottom: var(--g-9);
 }
 
-.styleguide-section {
-  margin-bottom: var(--x-space-8);
+.sg-masthead {
+  max-width: var(--g-measure);
+  margin-bottom: var(--g-8);
 }
 
-.styleguide-heading {
-  color: var(--x-green);
-  border-bottom: 1px solid var(--x-border);
-  padding-bottom: var(--x-space-2);
-  margin-bottom: var(--x-space-4);
+.sg-masthead .g-title {
+  margin: var(--g-3) 0 var(--g-4) 0;
 }
 
-.styleguide-note {
-  color: var(--x-text-dim);
-  font-size: var(--x-text-sm);
-  max-width: var(--x-measure);
-  margin-bottom: var(--x-space-4);
-}
-
-.styleguide-swatch-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: var(--x-space-4);
-}
-
-.styleguide-swatch-chip {
-  height: 56px;
-  border-radius: var(--x-radius-md);
-  border: 1px solid var(--x-border);
-  margin-bottom: var(--x-space-2);
-}
-
-.styleguide-swatch-name {
-  display: block;
-  color: var(--x-text);
-  font-size: var(--x-text-xs);
-  word-break: break-all;
-}
-
-.styleguide-swatch-value {
-  display: block;
-  color: var(--x-text-dim);
-  font-size: var(--x-text-xs);
-}
-
-.styleguide-space-row {
+.sg-masthead-status {
   display: flex;
-  align-items: center;
-  gap: var(--x-space-4);
-  margin-bottom: var(--x-space-2);
-}
-
-.styleguide-space-name {
-  color: var(--x-text-dim);
-  font-size: var(--x-text-xs);
-  min-width: 110px;
-}
-
-.styleguide-space-bar {
-  height: 16px;
-  background-color: var(--x-green);
-  border-radius: var(--x-radius-sm);
-}
-
-.styleguide-radius-grid {
-  display: flex;
-  gap: var(--x-space-5);
   flex-wrap: wrap;
+  gap: var(--g-5);
+  margin-top: var(--g-5);
 }
 
-.styleguide-radius-box {
-  width: 80px;
-  height: 80px;
-  background-color: var(--x-surface-3);
-  border: 1px solid var(--x-green-a30);
-  margin-bottom: var(--x-space-2);
-}
-
-.styleguide-panel-col {
-  margin-bottom: var(--x-space-4);
-}
-
-.styleguide-tint-grid {
+.sg-index {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: var(--x-space-3);
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--g-1);
+  margin-bottom: var(--g-9);
 }
 
-.styleguide-tint {
+.sg-index-item {
+  display: flex;
+  align-items: baseline;
+  gap: var(--g-2);
+  padding: var(--g-2) var(--g-3);
+  text-decoration: none;
+  transition: background var(--g-snap);
+}
+
+.sg-index-item:hover {
+  background: rgba(255, 244, 214, 0.05);
+}
+
+.sg-index-num {
+  font-size: var(--g-size-micro);
+  color: var(--g-hazard);
+}
+
+.sg-index-name {
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-micro);
+  text-transform: uppercase;
+  letter-spacing: var(--g-track-label);
+  color: var(--g-ink-mid);
+}
+
+.sg-section {
+  margin-bottom: var(--g-9);
+  scroll-margin-top: var(--g-8);
+}
+
+.sg-section-head {
+  position: relative;
+  padding-top: var(--g-4);
+  border-top: var(--g-hairline) solid var(--g-rule);
+  margin-bottom: var(--g-6);
+}
+
+.sg-section-index {
+  position: absolute;
+  top: var(--g-4);
+  right: 0;
+  font-size: var(--g-size-micro);
+  color: var(--g-ink-low);
+  letter-spacing: var(--g-track-wide);
+}
+
+.sg-section-note {
+  margin-top: var(--g-3);
+  margin-bottom: 0;
+}
+
+.sg-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+  gap: var(--g-4);
+  margin-bottom: var(--g-4);
+}
+
+.sg-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--g-4);
+  margin-bottom: var(--g-4);
+}
+
+.sg-swatch-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: var(--g-3);
+}
+
+.sg-swatch-chip {
+  height: 52px;
+  border: var(--g-hairline) solid var(--g-rule);
+  margin-bottom: var(--g-2);
+}
+
+.sg-swatch-name {
+  display: block;
+  font-size: var(--g-size-micro);
+  color: var(--g-ink);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.sg-swatch-use {
+  display: block;
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-micro);
+  color: var(--g-ink-low);
+}
+
+.sg-type-plate .g-h3 {
+  margin: var(--g-2) 0 var(--g-3) 0;
+}
+
+.sg-readout-demo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--g-2);
+}
+
+.sg-element-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--g-3);
+  margin-bottom: var(--g-5);
+}
+
+.sg-element-cell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--g-2);
+  padding: var(--g-4);
+}
+
+.sg-element-hex {
+  font-size: var(--g-size-micro);
+  color: var(--g-ink-low);
+}
+
+.sg-element-meter {
+  margin-top: var(--g-1);
+}
+
+.sg-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--g-2);
+}
+
+.sg-btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--g-3);
+}
+
+.sg-small-body {
+  font-size: var(--g-size-small);
+  margin: 0;
+}
+
+.sg-mb { margin-bottom: var(--g-3); }
+.sg-mt { margin-top: var(--g-4); }
+
+.sg-specimen-card {
+  display: grid;
+  grid-template-columns: minmax(200px, 320px) 1fr;
+  gap: var(--g-6);
+  align-items: start;
+}
+
+.sg-specimen-name {
+  margin-top: var(--g-4);
+}
+
+.sg-specimen-id {
+  font-size: var(--g-size-small);
+  color: var(--g-ink-low);
+  margin: var(--g-1) 0 var(--g-4) 0;
+}
+
+.sg-specimen-img {
+  width: 100%;
+  height: 100%;
+}
+
+.sg-footer {
+  padding-top: var(--g-5);
+  border-top: var(--g-hairline) solid var(--g-rule);
   text-align: center;
-  text-transform: capitalize;
-  padding: var(--x-space-4) var(--x-space-2);
-  border-radius: var(--x-radius-md);
 }
 
-.styleguide-button-row {
-  display: flex;
-  gap: var(--x-space-3);
-  flex-wrap: wrap;
-}
-
-.styleguide-measure-demo {
-  color: var(--x-text-muted);
-  border-left: 3px solid var(--x-green-a60);
-  padding-left: var(--x-space-4);
+@media (max-width: 720px) {
+  .sg-specimen-card {
+    grid-template-columns: 1fr;
+  }
 }
 
 /*--------------------------------------------------------------
@@ -3755,4 +3852,90 @@ input, textarea {
     animation: none;
     opacity: 1;
   }
+}
+
+/* style guide: CRT demo layout */
+.sg-screen-layout {
+  display: grid;
+  grid-template-columns: 1fr minmax(180px, 260px);
+  gap: var(--g-4);
+  align-items: stretch;
+}
+
+.sg-screen-figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--g-2);
+  text-align: center;
+}
+
+.sg-mb-lg { margin-bottom: var(--g-4); }
+
+@media (max-width: 720px) {
+  .sg-screen-layout { grid-template-columns: 1fr; }
+}
+
+/* Page titles need clearance under the sticky console header. The old
+   .page-title-text carried this padding; .g-title is a pure type style, so the
+   spacing lives here where the page composes it. */
+.template-col-wrapper .g-title,
+.g-shell > .page-header .g-title {
+  margin-top: 0;
+}
+
+.template-col-wrapper {
+  padding-top: var(--g-7);
+  padding-bottom: var(--g-5);
+}
+
+.template-col-wrapper > .g-title {
+  margin-bottom: var(--g-5);
+  text-align: center;
+}
+
+/* Planet record panels */
+.planet-panel {
+  margin-bottom: var(--g-6);
+  padding: var(--g-5) var(--g-4);
+}
+
+.planet-panel .planet-key-col,
+.planet-panel .planet-val-col {
+  border: 0;
+}
+
+.planet-panel .planet-key-col h4 {
+  font-family: var(--g-font-stencil);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--g-track-label);
+  color: var(--g-ink-low);
+  font-size: var(--g-size-small);
+}
+
+.planet-panel .planet-val-col h4 {
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-small);
+  font-style: normal;
+  color: var(--g-ink);
+}
+
+.planet-panel .planet-history-link {
+  font-family: var(--g-font-stencil);
+  text-transform: uppercase;
+  letter-spacing: var(--g-track-label);
+  color: var(--g-ink-mid);
+  font-style: normal;
+}
+
+.planet-panel .planet-history-link:hover {
+  color: var(--g-hazard);
+}
+
+/* the training page composes its own header, so it needs the same clearance
+   under the sticky console header that .template-col-wrapper provides */
+.page-header {
+  padding-top: var(--g-7);
 }

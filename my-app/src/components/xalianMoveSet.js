@@ -8,7 +8,7 @@ import Col from 'react-bootstrap/Col';
 class XalianMoveSet extends React.Component {
 	buildMoveRow(val) {
 		return (
-			<Row style={{ paddingTop: this.props.spacing || '5px', paddingBottom: this.props.spacing || '5px' }} className="moves-row ms-auto me-auto ">
+			<Row key={val.name} style={{ paddingTop: this.props.spacing || '5px', paddingBottom: this.props.spacing || '5px' }} className="moves-row ms-auto me-auto ">
 					<Col xs={2} className="move-rating-col">
 						<h4 className="move-rating">{val.rating}</h4>
 					</Col>

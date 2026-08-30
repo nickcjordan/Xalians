@@ -43,8 +43,10 @@ class TrainingGroundsPage extends React.Component {
 
                     <Row className="">
                         <Col style={{ textAlign: 'center' }} >
-                            <h1 className="x-page-title">Training Grounds</h1>
-                            <p className="training-grounds-subtitle">Warm-up games while you wait for a duel.</p>
+                            <header className="page-header">
+                                <h1 className="g-title">Training Grounds</h1>
+                                <p className="training-grounds-subtitle">Warm-up games while you wait for a duel.</p>
+                            </header>
 
                             {/* was a single unlabelled bootstrap-blue "switch" button that
                                 cycled games without saying which one you were on */}
