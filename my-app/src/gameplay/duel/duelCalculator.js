@@ -292,18 +292,25 @@ export function calculateAttackResult(attacker, defender, G, ctx, simulate = fal
     let hinderingStatus = calculateHindranceEffect(attacker);
     let evasion = calculateEvasionMitigation(defender);
     let other = calculateRemainingFactors(attacker, defender, G, ctx);
-    let result = base * power * targets * weather * badge * critical * random * sameTypeBonus * typeEffectiveness * hinderingStatus * evasion * other;
+    let result = base * power * targets * weather * badge * critical * random * sameTypeBonus * typeEffectiveness * hinderingStatus * other;
     let final = Math.floor(result * 10)/10;
     // console.log(`base=${base}, random=${random}, sameTypeBonus=${sameTypeBonus}, final=${final}`);
 
 
     // BUILD SUMMARY OBJECT
 
-    // return defender.state.health;
-    let damage = final * 2;
+    // No single blow may take a full health bar: stacking move power, STAB and a
+    // dual-type weakness used to reach ~25 against 15 HP. Type advantage should win
+    // the trade, not delete the piece outright. Expressed as a share of max health so
+    // it follows MAX_HEALTH_POINTS if that is ever retuned.
+    let rawDamage = final * 2;
+    let ceiling = duelConstants.MAX_SINGLE_HIT_HEALTH_FRACTION * duelConstants.MAX_HEALTH_POINTS;
+    // evasion applies after the ceiling so it still matters against the biggest hits
+    let damage = Math.floor(Math.min(rawDamage, ceiling) * evasion * 10) / 10;
 
     return {
         damage: damage,
+        uncappedDamage: rawDamage,
         reactionDamage: 0,
         typeEffectiveness: typeEffectiveness,
         move: move ? { name: move.name, type: move.type || null } : null

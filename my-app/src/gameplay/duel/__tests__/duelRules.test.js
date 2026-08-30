@@ -115,6 +115,8 @@ describe('movement: carrying a flag slows a piece down', () => {
 });
 
 describe('combat', () => {
+	const CEILING = duelConstants.MAX_SINGLE_HIT_HEALTH_FRACTION * duelConstants.MAX_HEALTH_POINTS;
+
 	function attackResult(attacker, defender, move = null) {
 		const G = buildBoard([
 			{ index: 32, piece: attacker, team: 0 },
@@ -160,6 +162,51 @@ describe('combat', () => {
 		const boosted = attackResult(attacker, defender, stabbed).damage;
 
 		expect(boosted).toBeGreaterThan(plain);
+	});
+
+	it('never lets a single hit take a full health bar', () => {
+		// the worst case the generator can produce: a big attacker, a high-rating STAB
+		// move, and a defender weak to it on both types
+		const brute = piece('brute', { stats: { ...piece('x').stats, attack: 400 } });
+		// Plant hits Water for 2x and Rock for 1.5x, so this defender takes a 3x product
+		const doublyWeak = piece('doubly-weak', {
+			elementType: 'Water',
+			elements: { primaryType: 'Water', secondaryType: 'Rock' },
+			stats: { ...piece('x').stats, defense: 1 },
+		});
+		const heavyStab = { name: 'Overkill', type: 'Plant', rating: 15 };
+
+		const result = attackResult(brute, doublyWeak, heavyStab);
+
+		expect(result.uncappedDamage).toBeGreaterThan(duelConstants.MAX_HEALTH_POINTS);
+		expect(result.damage).toBeLessThan(duelConstants.MAX_HEALTH_POINTS);
+		// damage is floored to one decimal, so the capped value sits just under the ceiling
+		expect(result.damage).toBeLessThanOrEqual(CEILING);
+		expect(result.damage).toBeGreaterThan(CEILING - 0.1);
+	});
+
+	it('keeps evasion meaningful against a capped hit', () => {
+		const brute = piece('brute', { stats: { ...piece('x').stats, attack: 400 } });
+		const plain = piece('plain', { stats: { ...piece('x').stats, defense: 1 } });
+		const slippery = piece('slippery', { stats: { ...piece('x').stats, defense: 1, evasion: 10 } });
+
+		const hit = attackResult(brute, plain).damage;
+		const dodged = attackResult(brute, slippery).damage;
+
+		expect(hit).toBeGreaterThan(CEILING - 0.1);
+		expect(dodged).toBeLessThan(hit);
+	});
+
+	it('leaves an immune matchup at zero damage', () => {
+		const attacker = piece('attacker');
+		// Electric is listed as doing 0 against Rock in elements.json
+		const grounded = piece('grounded', {
+			elementType: 'Rock',
+			elements: { primaryType: 'Rock', secondaryType: null },
+		});
+		const zap = { name: 'Zap', type: 'Electric', rating: 15 };
+
+		expect(attackResult(attacker, grounded, zap).damage).toBe(0);
 	});
 
 	it('treats a typeless move as neutral rather than crashing', () => {

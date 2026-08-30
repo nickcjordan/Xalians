@@ -14,6 +14,11 @@ export const MAX_EVASION_DAMAGE_REDUCTION = 0.25;
 // carrying a flag slows a piece down, so a fast grab still has to survive the walk home
 export const FLAG_CARRIER_MAX_SPACES_PER_TURN = 2;
 
+// hard ceiling on a single attack, as a share of a full health bar. keeps a
+// super-effective STAB hit devastating (three quarters of a bar) without ever
+// being an outright one-shot.
+export const MAX_SINGLE_HIT_HEALTH_FRACTION = 0.75;
+
 export const actionTypes = {
     MOVE: 'move',
     ATTACK: 'attack',
