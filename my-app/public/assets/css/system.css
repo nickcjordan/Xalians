@@ -351,10 +351,40 @@
 	}
 }
 
-/* Keyed to an element: a painted colour band along the top edge. The panel
-   stays matte metal — the machine does not light up because a specimen is
-   psychic. */
-.g-panel--tagged { border-top: 3px solid var(--g-el); }
+/* Keyed to an element.
+   This was a coloured strip across the top edge, which is the house style of
+   every dashboard card ever made and said nothing about this machine. It is now
+   painted livery: a corner flash sprayed onto the plate, the way a unit marking
+   or a hazard classification is applied to real equipment. Drawn as a
+   background so the panel's rounded corner clips it for free. */
+.g-panel--tagged {
+	background-image:
+		linear-gradient(135deg,
+			var(--g-el) 0 40px,
+			var(--g-seam) 40px 43px,
+			transparent 43px);
+	background-size: 72px 72px;
+	background-position: top left;
+	background-repeat: no-repeat;
+}
+
+/* The element's designation, stencilled onto the plate beside the flash.
+   Set data-tag on the panel to print it. */
+.g-panel--tagged[data-tag] { position: relative; }
+
+.g-panel--tagged[data-tag]::after {
+	content: attr(data-tag);
+	position: absolute;
+	top: var(--g-3);
+	left: 56px;
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	color: var(--g-ink-low);
+	pointer-events: none;
+}
 
 /* -------------------------------------------------------------------------
    SCREEN

@@ -235,14 +235,15 @@ class StyleGuidePage extends React.Component {
                         </div>
 
                         <div className="sg-grid-2">
-                            <div className="g-panel g-panel--tagged g-el-psychic">
+                            <div className="g-panel g-panel--tagged g-el-psychic" data-tag="Psychic">
                                 <div className="g-panel-head">
                                     <span className="g-label">Tagged panel</span>
                                     <span className="g-kicker">keyed to element</span>
                                 </div>
                                 <p className="g-body sg-small-body">
-                                    A band of the element's colour painted along the top edge. Used when a
-                                    panel belongs to a specific creature, planet or type.
+                                    Livery: a corner flash sprayed onto the plate, optionally with the
+                                    designation stencilled beside it. Used when a panel belongs to a
+                                    specific creature, planet or type.
                                 </p>
                             </div>
 

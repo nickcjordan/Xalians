@@ -179,8 +179,14 @@ h5,
 h6 {
   font-family: var(--g-font-stencil);
   font-weight: 600;
-  letter-spacing: var(--g-track-label);
   color: var(--g-ink);
+}
+
+/* Tracking and uppercase belong to the display sizes only. h4-h6 are used in
+   this codebase to hold prose, and tracking out a paragraph makes it harder to
+   read, not more designed. */
+h1, h2, h3 {
+  letter-spacing: var(--g-track-label);
 }
 
 /* Uppercase is applied by the .g-title / .g-h2 / .g-h3 type styles rather than
@@ -1533,29 +1539,37 @@ section {
    copy - the heading and the prose sit in different containers, so centring
    them separately left the heading floating off to one side. */
 .story-splash-section {
-  background: radial-gradient(circle, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
-  border: 2px solid var(--x-green-a30);
-  border-radius: var(--x-radius-lg);
-  box-shadow: var(--x-glow-inset) var(--x-green-a15);
-  padding: var(--x-space-6);
-  max-width: calc(var(--x-measure) + (2 * var(--x-space-6)));
+  /* a matte panel, like every other surface: the lore is printed on the hull,
+     it is not a lit screen */
+  background: var(--g-hull);
+  border: var(--g-hairline) solid var(--g-seam);
+  border-radius: var(--g-radius-panel);
+  box-shadow: var(--g-relief), var(--g-drop);
+  padding: var(--g-7) var(--g-6);
+  max-width: calc(var(--g-measure) + (2 * var(--g-6)));
   margin-left: auto;
   margin-right: auto;
 }
 
 .story-splash-section h3 {
-  margin-bottom: var(--x-space-5);
-  color: var(--x-green);
+  margin-bottom: var(--g-5);
+  color: var(--g-ink);
+  text-transform: uppercase;
+  letter-spacing: var(--g-track-label);
 }
 
 .story-text {
-  color: var(--x-text-muted);
-  font-weight: lighter !important;
+  color: var(--g-ink-mid);
+  font-weight: 400 !important;
   /* was a Segoe UI stack, the only place on the site that broke from the
      body font - the lore read like it came from a different product */
-  font-family: var(--x-font-body);
-  line-height: 1.6;
-  margin-bottom: var(--x-space-4);
+  font-family: var(--g-font-ui);
+  font-size: var(--g-size-body);
+  /* explicitly reset: this is a paragraph that happens to sit in an h6 */
+  letter-spacing: normal;
+  text-transform: none;
+  line-height: 1.7;
+  margin-bottom: var(--g-4);
 }
 
 
@@ -2386,6 +2400,7 @@ article {
   font-size: var(--g-size-small);
   font-style: normal;
   text-align: left !important;
+  width: 60%;
 }
 
 .planet-table tbody * th {
@@ -2538,15 +2553,23 @@ article {
   padding-bottom: 12px !important;
 }
 
+/* the catalogue index is machine output, the name is a stencilled legend */
 .species-col h6 {
-  color: lightgrey;
-  opacity: 0.75;
-  font-style: italic;
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-micro);
+  font-style: normal;
+  letter-spacing: normal;
+  color: var(--g-ink-low);
+  opacity: 1;
 }
 
 .species-col h5 {
-  color: white;
-
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-body);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--g-track-label);
+  color: var(--g-ink);
 }
 
 .species-name-title {
@@ -2777,8 +2800,14 @@ article {
 }
 
 .glossary-result-count {
-  text-align: right;
+  text-align: left;
   margin: var(--g-2) 0 var(--g-6) 0;
+}
+
+/* a definition is prose: cap it so it does not run 140 characters wide on a
+   large monitor */
+.g-record-body {
+  max-width: var(--g-measure);
 }
 
 /* Shared page scaffolding for every migrated page. */
@@ -3895,47 +3924,123 @@ input, textarea {
   text-align: center;
 }
 
-/* Planet record panels */
+/* Planetary survey record ------------------------------------------------- */
+
 .planet-panel {
   margin-bottom: var(--g-6);
-  padding: var(--g-5) var(--g-4);
+  padding: var(--g-6);
 }
 
-.planet-panel .planet-key-col,
-.planet-panel .planet-val-col {
-  border: 0;
+.planet-record {
+  display: grid;
+  grid-template-columns: minmax(240px, 320px) 1fr;
+  gap: var(--g-8);
+  align-items: center;
 }
 
-.planet-panel .planet-key-col h4 {
-  font-family: var(--g-font-stencil);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: var(--g-track-label);
-  color: var(--g-ink-low);
-  font-size: var(--g-size-small);
+/* the photographic plate: the world itself, mounted in a brass bezel */
+.planet-record-plate {
+  position: relative;
 }
 
-.planet-panel .planet-val-col h4 {
-  font-family: var(--g-font-mono);
-  font-size: var(--g-size-small);
-  font-style: normal;
-  color: var(--g-ink);
+.planet-plate {
+  padding: 6px;
+  background: linear-gradient(160deg, var(--g-hull-hi), var(--g-hull));
+  border: 2px solid var(--g-brass-dark);
+  border-radius: var(--g-radius-housing);
+  box-shadow: var(--g-relief), var(--g-drop);
 }
 
-.planet-panel .planet-history-link {
-  font-family: var(--g-font-stencil);
-  text-transform: uppercase;
-  letter-spacing: var(--g-track-label);
-  color: var(--g-ink-mid);
-  font-style: normal;
+.planet-plate-img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--g-radius);
+  box-shadow: var(--g-recess);
 }
 
-.planet-panel .planet-history-link:hover {
-  color: var(--g-hazard);
+/* the rendered globe, pinned over the corner of the plate as a locator */
+.planet-globe {
+  position: absolute;
+  left: calc(-1 * var(--g-5));
+  bottom: calc(-1 * var(--g-4));
+  width: 38%;
+  max-width: 130px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.8));
 }
+
+.planet-record-body {
+  min-width: 0;
+}
+
+.planet-record-name {
+  margin: var(--g-1) 0 var(--g-3) 0;
+}
+
+.planet-spec {
+  margin: var(--g-5) 0 var(--g-5) 0;
+  grid-template-columns: minmax(6rem, 10rem) 1fr;
+  gap: var(--g-2) var(--g-5);
+  max-width: 34rem;
+}
+
+.planet-spec dd {
+  margin: 0;
+}
+
+.planet-story-btn {
+  margin-top: 0;
+}
+
+@media (max-width: 767px) {
+  .planet-record {
+    grid-template-columns: 1fr;
+    gap: var(--g-7);
+  }
+
+  .planet-globe {
+    left: auto;
+    right: calc(-1 * var(--g-2));
+    bottom: calc(-1 * var(--g-4));
+    width: 30%;
+  }
+}
+
 
 /* the training page composes its own header, so it needs the same clearance
    under the sticky console header that .template-col-wrapper provides */
 .page-header {
   padding-top: var(--g-7);
+}
+
+/* trailing margin on the last paragraph makes a panel look bottom-heavy */
+.story-splash-section .story-text:last-child,
+.g-panel > p:last-child,
+.planet-panel .planet-table {
+  margin-bottom: 0;
+}
+
+/* the badge centres itself by default (it sits alone in a column elsewhere);
+   in a left-aligned record it has to sit under the name */
+.planet-record-body .xalian-species-badge {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+@media (max-width: 575px) {
+  /* a 10rem label column leaves the values almost no room on a phone */
+  .planet-spec {
+    grid-template-columns: 1fr;
+    gap: 0 0;
+  }
+
+  .planet-spec .g-spec-key {
+    margin-top: var(--g-3);
+  }
+
+  .planet-spec .g-spec-val {
+    margin-bottom: 0;
+  }
 }
