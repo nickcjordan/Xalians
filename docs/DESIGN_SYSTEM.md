@@ -54,7 +54,7 @@ The single most useful thing in the system. Put `.g-el-fire` (or any element) on
 | Class | What it is |
 |---|---|
 | `.g-console` | The page. Warm near-black with paint tooth. Wraps everything. |
-| `.g-panel` | An enamelled steel panel. `--raised`, `--recessed`, `--bolted` (rivets), `--tagged` (element colour band). |
+| `.g-panel` | An enamelled steel panel. `--raised`, `--recessed`, `--bolted` (rivets), `--tagged` (painted corner flash keyed to the element, plus an optional stencilled `data-tag`). |
 | `.g-panel-head` | The stencilled title strip across the top of a panel. |
 | `.g-screen` | **A CRT.** Phosphor text on glass, scanlines, brass bezel. The only thing that emits. |
 | `.g-screen-line`, `--dim` | A line of terminal output. |
@@ -65,6 +65,7 @@ The single most useful thing in the system. Put `.g-el-fire` (or any element) on
 | `.g-input`, `.g-select` | Text entry is a screen: phosphor on glass in a brass bezel. |
 | `.g-segmented` + `.g-segment` | A bank of selector keys. Use `aria-pressed`. |
 | `.g-check` + `.g-check-box` | A toggle with a real throw. |
+| `.g-range` | A slider: recessed channel, moulded knob. |
 | `.g-lamp`, `--amber` / `--red` / `--off` | Indicator bulbs. Static — they do not pulse. |
 | `.g-notice`, `--alert` / `--ok` / `--inert` | An inline notice with a painted edge. |
 | `.g-working` | Indeterminate progress. The machine will not fake a percentage. |
@@ -76,6 +77,21 @@ The single most useful thing in the system. Put `.g-el-fire` (or any element) on
 | `.g-data` | A data table. |
 | `.g-hazard-strip`, `.g-seam-rule`, `.g-rivet-rule` | Livery and dividers. |
 | `.g-shell`, `.g-measure` | Layout: page width, readable line length. |
+
+### Page-level compositions
+
+These live in `style.css` rather than `system.css`, because they are arrangements of the components above rather than components themselves. All three are the same document printed for a different subject, so they share a shape: designation across the top, plate on the left, printed data beside it, readouts hung below.
+
+| Class | What it is | Used by |
+|---|---|---|
+| `.planet-record` | A planetary survey record. The rendered globe is a locator in a brass-ringed porthole pinned to the landscape plate — it needs that dark socket, or a green globe vanishes into green vegetation. | `/planets` |
+| `.specimen-record` (`.specimen-head`, `-body`, `-plate`, `-data`, `-readouts`) | A creature record. | `/generator`, `/species/:id` |
+| `.record-strip` (`--wide`) | The compact form: plate, identity block, one or two readouts on a single row. | species stats list, `/account` |
+| `.species-tile` | A catalogue tile — portrait in a housing with a stencilled name plate under it. | `/species`, duel squad picker |
+| `.game-curtain` | Covers a game board until the round starts. It covers the *whole* board rather than floating over a corner of it, so nothing is obscured mid-play. | training games |
+
+Spec grids run **two key/value pairs per row** on wide viewports and collapse to one under 1200px. That is what stops six short specs from leaving half a card empty.
+
 
 ## Rules for new work
 
@@ -109,4 +125,5 @@ These were tried and removed, because stacking every effect at once is what make
 ## Known debt
 
 - `tokens.css` is a temporary shim. Every page migrated to `.g-*` should shrink it; delete it when nothing references `--x-*`.
-- `style.css` is a 3504-line BootstrapMade template ("Gp v4.7.0") with many unused rules. A naive scan says ~115 of 293 class names are unreferenced, **but that has false positives**: `btn-xalianGreen` *is* used, composed by bootstrap from `variant='xalianGreen'`. Do not bulk-delete on that signal.
+- Landmines survive in the template CSS: a bare `article { -webkit-text-fill-color: transparent }` rule made every semantic `<article>` render invisible text until it was found and removed. Suspect the template first when text has correct computed colour but does not paint.
+- `style.css` is a BootstrapMade template ("Gp v4.7.0") with many unused rules. A naive scan says ~115 of 293 class names are unreferenced, **but that has false positives**: `btn-xalianGreen` *is* used, composed by bootstrap from `variant='xalianGreen'`. Do not bulk-delete on that signal.

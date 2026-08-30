@@ -1,28 +1,15 @@
 import React from 'react';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
-import ToggleButton from 'react-bootstrap/ToggleButton';
 import XalianNavbar from '../../components/navbar';
-import Form from 'react-bootstrap/Form';
 import XalianImage from '../../components/xalianImage';
-import MatchGameFlippedCard from '../../components/games/elements/matchGameFlippedCard';
 
-import GameContainer from '../../components/games/elements/gameContainer';
 import * as retrievalUtil from '../../utils/retrievalUtil';
 import { Client } from 'boardgame.io/react';
 import { Duel } from '../../components/games/duel/duel';
-import DuelBoard from '../../components/games/duel/board/duelBoard';
 import * as translator from '../../utils/valueTranslator';
 import * as gameConstants from '../../gameplay/duel/duelGameConstants'
 import { Local } from 'boardgame.io/multiplayer';
-import DuelBotInstance from '../../components/games/duel/bot/duelBotInstance';
 import * as duelConstants from '../../gameplay/duel/duelGameConstants';
 import * as duelPieceBuilder from '../../gameplay/duel/duelPieceBuilder';
-import gsap from 'gsap';
 import DuelPage from './duelPage';
 import HowToPlayModal from '../../components/games/duel/howToPlayModal';
 import LocalDuelStorage from '../../store/LocalStorage';
@@ -117,135 +104,145 @@ class DuelStartPage extends React.Component {
             let selectedCount = this.state.selectedXalianIds.length;
             let fillerCount = needed - selectedCount;
             return (
-                <React.Fragment>
-                    <Container fluid className="content-background-container">
-                        <XalianNavbar></XalianNavbar>
+                <div className="g-console">
+                    <XalianNavbar />
 
-                        <div style={{ display: 'flex', flexDirection: 'column', justifyItems: 'center', maxWidth: '600px', margin: 'auto' }}>
-                            <h4 style={{ margin: 'auto', textAlign: 'center', marginTop: '25px', marginBottom: '10px' }}>Choose Your Squad ({selectedCount}/{needed}):</h4>
+                    <div className="g-shell page-shell duel-setup-shell">
+                        <header className="page-header">
+                            <p className="g-kicker">Arena Control</p>
+                            <h1 className="g-title">Choose Your Squad</h1>
+                        </header>
 
-                            <Row style={{ margin: 'auto', justifyContent: 'center' }}>
+                        <div className="g-panel duel-setup-panel">
+                            <div className="duel-setup-head">
+                                <span className="duel-setup-label">Selected</span>
+                                <span className="duel-squad-count">{selectedCount} / {needed}</span>
+                            </div>
+
+                            <div className="species-grid duel-squad-grid">
                                 {this.state.userXalians.map((x) => {
                                     let selected = this.state.selectedXalianIds.includes(x.xalianId);
+                                    let element = x.elements.primaryType.toLowerCase();
                                     return (
-                                        <Col key={`squad-pick-${x.xalianId}`} xs={4} sm={3} style={{ padding: '5px' }}>
-                                            <a onClick={() => this.toggleXalianSelection(x.xalianId)} style={{ cursor: 'pointer' }}>
-                                                <div style={{ borderRadius: '10px', padding: '3px', border: selected ? '3px solid #4caf50' : '3px solid transparent', opacity: selected || selectedCount < needed ? 1 : 0.4 }}>
-                                                    <XalianImage colored bordered speciesName={x.species.name} primaryType={x.elements.primaryType} moreClasses="xalian-image-grid" />
-                                                    <h6 className="condensed-row" style={{ textAlign: 'center', marginTop: '5px', marginBottom: '0px' }}>{x.species.name}</h6>
-                                                    <p style={{ textAlign: 'center', fontSize: '8pt', marginBottom: '0px', opacity: 0.7 }}>#{x.xalianId.split('-').pop().substring(0, 8)}</p>
-                                                </div>
-                                            </a>
-                                        </Col>
+                                        <button
+                                            type="button"
+                                            key={`squad-pick-${x.xalianId}`}
+                                            aria-pressed={selected}
+                                            className={`species-tile duel-squad-tile g-el-${element}${selected ? ' duel-squad-tile--selected' : ''}`}
+                                            onClick={() => this.toggleXalianSelection(x.xalianId)}>
+                                            <span className="species-tile-plate">
+                                                <XalianImage colored speciesName={x.species.name} primaryType={x.elements.primaryType} moreClasses="species-tile-img" />
+                                            </span>
+                                            <span className="species-tile-legend">
+                                                <span className="species-tile-name">{x.species.name}</span>
+                                                <span className="species-tile-meta">
+                                                    <span className="species-tile-id">#{x.xalianId.split('-').pop().substring(0, 8)}</span>
+                                                </span>
+                                            </span>
+                                        </button>
                                     );
                                 })}
-                            </Row>
+                            </div>
 
                             {selectedCount > 0 && fillerCount > 0 &&
-                                <p style={{ margin: 'auto', textAlign: 'center', marginTop: '10px', opacity: 0.7 }}>{fillerCount} remaining squad slot{fillerCount > 1 ? 's' : ''} will be filled randomly</p>
+                                <p className="duel-setup-note">
+                                    {fillerCount} remaining squad slot{fillerCount > 1 ? 's' : ''} will be filled randomly
+                                </p>
                             }
 
-                            <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '30px', marginBottom: '50px' }}>
-                                <Button onClick={() => this.setGameDetails()} size='lg' variant='xalianGray' style={{ width: 'fit-content' }}>Random Squad</Button>
-                                <Button onClick={this.startWithSelectedSquad} size='lg' disabled={selectedCount < 1} variant='xalianGreen' style={{ width: 'fit-content' }}>Enter Duel!</Button>
+                            <div className="duel-setup-actions">
+                                <button type="button" className="g-btn" onClick={() => this.setGameDetails()}>Random Squad</button>
+                                <button type="button" className="g-btn g-btn--primary" disabled={selectedCount < 1} onClick={this.startWithSelectedSquad}>Enter Duel</button>
                             </div>
                         </div>
-
-                    </Container>
-                </React.Fragment>
+                    </div>
+                </div>
             );
         } else {
             return (
-                <React.Fragment>
-                    <Container fluid className="content-background-container">
-                        <XalianNavbar></XalianNavbar>
+                <div className="g-console">
+                    <XalianNavbar />
 
+                    <div className="g-shell page-shell duel-setup-shell">
+                        <header className="page-header">
+                            <p className="g-kicker">Arena Control</p>
+                            <h1 className="g-title">Duel Setup</h1>
+                        </header>
 
-                        {/* <GameContainer> */}
-                            <div style={{ display: 'flex', flexDirection: 'column', justifyItems: 'center', maxWidth: '400px', margin: 'auto' }}>
+                        {/* the match parameters, set on one panel of controls rather
+                            than floating loose on the starfield */}
+                        <div className="g-panel duel-setup-panel">
 
-                                <h4 style={{ margin: 'auto', textAlign: 'center', marginTop: '25px', marginBottom: '10px' }}>Players:</h4>
-                                <ToggleButtonGroup name='players-button-group' style={{width: 'fit-content', margin: 'auto'}} onChange={(val) => {
-                                    this.setState({ players: val })
-                                }}> 
-                                <ToggleButton key={`players-radio-${0}`} id={`players-radio-${0}`} type="radio" variant='xalianGray' name="radio" style={{ width: 'fit-content', margin: 'auto' }}
-                                    value={1}
-                                    checked={this.state.players == 1}
-                                >
-                                    <i className="bi bi-person-fill" style={{ paddingRight: '10px', fontSize: '24pt' }}></i> vs. <i className="bi bi-robot" style={{ paddingLeft: '10px', fontSize: '24pt' }}></i>
-                                </ToggleButton>
-
-                                <ToggleButton key={`players-radio-${1}`} id={`players-radio-${1}`} type="radio" variant='xalianGray' name="radio" style={{ width: 'fit-content', margin: 'auto' }}
-                                    value={2}
-                                    checked={this.state.players == 2}
-                                >
-                                    <i className="bi bi-person-fill" style={{ paddingRight: '10px', fontSize: '24pt' }}></i> vs. <i className="bi bi-person-fill" style={{ paddingLeft: '10px', fontSize: '24pt' }}></i>
-                                </ToggleButton>
-                                </ToggleButtonGroup>
-
-                                
-                                <h4 style={{ margin: 'auto', textAlign: 'center', marginTop: '50px', marginBottom: '10px'}}>Team Size:</h4>
-                                <ToggleButtonGroup style={{ margin: 'auto', textAlign: 'center' }} name='pieces-per-team-button-group' onChange={(val) => {
-                                    this.setState({ numberOfPieces: val });
-                                }}>
-                                    {piecesPerTeamOptions.map((radio, idx) => (
-                                        <ToggleButton key={`pieces-per-team-radio-${idx}`} id={`pieces-per-team-radio-${idx}`} type="radio" variant='xalianGray' name="radio" style={{ fontSize: '18pt' }}
-                                            value={radio.value}
-                                            checked={this.state.numberOfPieces == radio.value}
-                                            
-                                        >
-                                            {radio.name}
-                                        </ToggleButton>
-                                    ))}
-                                </ToggleButtonGroup>
-
-                                <div style={{ height: '100%', display: 'flex', justifyContent: 'space-evenly', alignItems: 'stretch', alignContent: 'center', marginTop: '50px'}}>
-                                    <h4 style={{ marginTop: 'auto', marginBottom: 'auto', alignSelf: 'center', textAlign: 'center', width: 'fit-content' }}>Randomize Start Positions:</h4>
-                                    <ToggleButtonGroup style={{ textAlign: 'center', width: '35px' }} type='checkbox' onChange={(e) =>
-                                                this.setState({ randomizeStartingPositions: !this.state.randomizeStartingPositions })
-                                            }>
-                                        <ToggleButton key={`randomize-positions-1`} id={`randomize-positions-1`} type="checkbox" name="randomize-checkbox" variant={this.state.randomizeStartingPositions ? 'xalianGreen' : 'xalianGray'} style={{ padding: '0px', margin: 'auto', height: '35px', width: '35px' }}
-                                            value={true}
-                                            checked={this.state.randomizeStartingPositions}
-                                        >{this.state.randomizeStartingPositions && <i className="bi bi-check" style={{ fontSize: '35px', lineHeight: '35px' }} />}</ToggleButton>
-                                    </ToggleButtonGroup>
-
-                                </div>
-
-                                {process.env.NODE_ENV !== 'production' &&
-                                <div style={{ height: '100%', display: 'flex', justifyContent: 'space-evenly', alignItems: 'stretch', alignContent: 'center', marginTop: '50px'}}>
-                                    <h4 style={{ marginTop: 'auto', marginBottom: 'auto', alignSelf: 'center', textAlign: 'center', width: 'fit-content' }}>Debug Mode:</h4>
-                                    <ToggleButtonGroup style={{ textAlign: 'center', width: '35px' }} type='checkbox' onChange={(e) =>
-                                                this.setState({ debugMode: !this.state.debugMode })
-                                            }>
-                                        <ToggleButton key={`debugMode-1`} id={`debugMode-1`} type="checkbox" name="debugMode-checkbox" variant={this.state.debugMode ? 'xalianGreen' : 'xalianGray'} style={{ padding: '0px', margin: 'auto', height: '35px', width: '35px' }}
-                                            value={true}
-                                            checked={this.state.debugMode}
-                                        >{this.state.debugMode && <i className="bi bi-check" style={{ fontSize: '35px', lineHeight: '35px' }} />}</ToggleButton>
-                                    </ToggleButtonGroup>
-
-                                </div>
-                                }
-
-                                <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', flexWrap: 'wrap', marginTop: '50px' }}>
-                                    <Button onClick={() => this.setState({ showHowToPlay: true })}
-                                    size='lg' variant='xalianGray' style={{ width: 'fit-content' }}>How to Play</Button>
-                                    <Button onClick={this.handleStartClicked}
-                                    size='lg' disabled={!this.state.players  || !this.state.numberOfPieces} variant='xalianGreen' style={{ width: 'fit-content' }}>Start Duel!</Button>
+                            <div className="duel-setup-row">
+                                <span className="duel-setup-label">Players</span>
+                                <div className="g-segmented" role="group" aria-label="Players">
+                                    <button type="button" className="g-segment duel-players-segment"
+                                        aria-pressed={this.state.players === 1}
+                                        onClick={() => this.setState({ players: 1 })}>
+                                        <i className="bi bi-person-fill" /> vs <i className="bi bi-robot" />
+                                    </button>
+                                    <button type="button" className="g-segment duel-players-segment"
+                                        aria-pressed={this.state.players === 2}
+                                        onClick={() => this.setState({ players: 2 })}>
+                                        <i className="bi bi-person-fill" /> vs <i className="bi bi-person-fill" />
+                                    </button>
                                 </div>
                             </div>
 
-                            <HowToPlayModal show={this.state.showHowToPlay} onHide={this.onHideHowToPlay} />
+                            <div className="duel-setup-row">
+                                <span className="duel-setup-label">Team Size</span>
+                                <div className="g-segmented" role="group" aria-label="Team size">
+                                    {piecesPerTeamOptions.map((option) => (
+                                        <button type="button" className="g-segment" key={`pieces-${option.value}`}
+                                            aria-pressed={this.state.numberOfPieces === option.value}
+                                            onClick={() => this.setState({ numberOfPieces: option.value })}>
+                                            {option.name}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
 
-                        {/* </GameContainer> */}
+                            <div className="duel-setup-row">
+                                <span className="duel-setup-label">Randomize Start Positions</span>
+                                <label className="g-check">
+                                    <input
+                                        type="checkbox"
+                                        checked={this.state.randomizeStartingPositions}
+                                        onChange={() => this.setState({ randomizeStartingPositions: !this.state.randomizeStartingPositions })} />
+                                    <span className="g-check-box" />
+                                </label>
+                            </div>
 
-                    </Container>
+                            {process.env.NODE_ENV !== 'production' &&
+                                <div className="duel-setup-row">
+                                    <span className="duel-setup-label">Debug Mode</span>
+                                    <label className="g-check">
+                                        <input
+                                            type="checkbox"
+                                            checked={this.state.debugMode}
+                                            onChange={() => this.setState({ debugMode: !this.state.debugMode })} />
+                                        <span className="g-check-box" />
+                                    </label>
+                                </div>
+                            }
 
-                </React.Fragment>
+                            <div className="duel-setup-actions">
+                                <button type="button" className="g-btn" onClick={() => this.setState({ showHowToPlay: true })}>
+                                    How to Play
+                                </button>
+                                <button type="button" className="g-btn g-btn--primary"
+                                    disabled={!this.state.players || !this.state.numberOfPieces}
+                                    onClick={this.handleStartClicked}>
+                                    Start Duel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <HowToPlayModal show={this.state.showHowToPlay} onHide={this.onHideHowToPlay} />
+                </div>
             );
         }
-
-
     }
 }
 

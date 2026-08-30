@@ -654,6 +654,15 @@
 
 .g-btn--danger:hover:not(:disabled) { --btn-face: #94332d; }
 
+/* A square key carrying a glyph instead of a legend. */
+.g-btn--icon {
+	padding: 0;
+	width: 36px;
+	height: 36px;
+	font-size: var(--g-size-body);
+	line-height: 1;
+}
+
 /* Unpowered, not faded: the key is still moulded there, the legend is dead. */
 .g-btn:disabled {
 	--btn-face: var(--g-hull-lo);
@@ -1037,8 +1046,14 @@
 	font-size: var(--g-size-lead);
 	text-transform: uppercase;
 	letter-spacing: var(--g-track-label);
-	color: var(--g-el);
+	/* a printed term on the hull, not machine output: it does not emit. Records
+	   inside an element-keyed container still retune, via .g-el-* below. */
+	color: var(--g-ink);
 	margin: 0;
+}
+
+[class*='g-el-'] .g-record-term {
+	color: var(--g-el);
 }
 
 .g-record-body {
@@ -1282,4 +1297,55 @@
 .g-tabs.nav-tabs .nav-link:focus-visible {
 	outline: 2px solid var(--g-phosphor);
 	outline-offset: -3px;
+}
+
+/* A slider is a track with a thumb you can grip: recessed channel, moulded
+   knob, no gradients. */
+.g-range {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 100%;
+	height: 14px;
+	background: transparent;
+	cursor: pointer;
+}
+
+.g-range::-webkit-slider-runnable-track {
+	height: 8px;
+	background: var(--g-seam);
+	border-radius: 2px;
+	box-shadow: var(--g-recess);
+}
+
+.g-range::-moz-range-track {
+	height: 8px;
+	background: var(--g-seam);
+	border-radius: 2px;
+	box-shadow: var(--g-recess);
+}
+
+.g-range::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 14px;
+	height: 20px;
+	margin-top: -6px;
+	background: var(--g-hull-hi);
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: 2px;
+	box-shadow: var(--g-relief), 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.g-range::-moz-range-thumb {
+	width: 14px;
+	height: 20px;
+	background: var(--g-hull-hi);
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: 2px;
+	box-shadow: var(--g-relief), 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.g-range:focus-visible {
+	outline: 2px solid var(--g-phosphor);
+	outline-offset: 4px;
 }

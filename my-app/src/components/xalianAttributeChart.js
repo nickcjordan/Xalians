@@ -1,93 +1,57 @@
 import React from 'react';
-import ListGroup from 'react-bootstrap/ListGroup';
-import Badge from 'react-bootstrap/Badge';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Table from 'react-bootstrap/Table';
 
+/**
+ * The specimen's attributes, printed as a spec grid.
+ *
+ * This was a stack of bootstrap Rows with a right-aligned label column, which
+ * put a wide unexplained gutter between every label and its value. It is a
+ * description list — the design system draws one as `.g-spec`, the same
+ * treatment the planetary survey records use.
+ */
 class XalianAttributeChart extends React.Component {
+
+	pair(key, label, value) {
+		return (
+			<React.Fragment key={key}>
+				<dt className="g-spec-key">{label}</dt>
+				<dd className="g-spec-val">{value}</dd>
+			</React.Fragment>
+		);
+	}
+
+	buildPairs() {
+		let pairs = [];
+		let xalian = this.props.xalian;
+		let species = this.props.species;
+
+		if (xalian && xalian.elements) {
+			pairs.push(this.pair('primary', 'Primary Element', `${xalian.elements.primaryType} [${xalian.elements.primaryElement}]`));
+			pairs.push(this.pair('secondary', 'Secondary Element', `${xalian.elements.secondaryType} [${xalian.elements.secondaryElement}]`));
+		}
+
+		// a generated Xalian carries its species inline; a canon species page
+		// passes the species record directly
+		let source = (xalian && xalian.species) || species;
+		if (source) {
+			pairs.push(this.pair('generation', 'Generation', source.generation || '0'));
+			pairs.push(this.pair('planet', 'Origin Planet', source.planet));
+			pairs.push(this.pair('height', 'Avg Height', source.height));
+			pairs.push(this.pair('weight', 'Avg Weight', source.weight));
+		}
+
+		if (xalian && xalian.meta) {
+			pairs.push(this.pair('statScore', 'Stat Score', xalian.meta.statScore));
+			pairs.push(this.pair('potentialScore', 'Potential Score', xalian.meta.potentialStatScore));
+		}
+
+		return pairs;
+	}
+
 	render() {
 		return (
-			<div className="species-detail-chart">
-                {this.props.xalian && this.props.xalian.elements && 
-                    <React.Fragment>
-                        <Row>
-                            <Col className="g-spec-key">Primary Element:</Col>
-                            <Col className="g-spec-val">
-                                {this.props.xalian.elements.primaryType} [{this.props.xalian.elements.primaryElement}]
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col className="g-spec-key">Secondary Element:</Col>
-                            <Col className="g-spec-val">
-                                {this.props.xalian.elements.secondaryType} [{this.props.xalian.elements.secondaryElement}]
-                            </Col>
-                        </Row>
-                    </React.Fragment>
-                }
-                {this.props.xalian && this.props.xalian.species && 
-                    <React.Fragment>
-                        <Row>
-                            <Col className="g-spec-key">Generation:</Col>
-                            <Col className="g-spec-val">{this.props.xalian.species.generation}</Col>
-                        </Row>
-                        <Row>
-                            <Col className="g-spec-key">Origin Planet:</Col>
-                            <Col className="g-spec-val">{this.props.xalian.species.planet}</Col>
-                        </Row>
-                        <Row>
-                            <Col className="g-spec-key">Avg Height:</Col>
-                            <Col className="g-spec-val">{this.props.xalian.species.height}</Col>
-                        </Row>
-                        <Row>
-                            <Col className="g-spec-key">Avg Weight:</Col>
-                            <Col className="g-spec-val">{this.props.xalian.species.weight}</Col>
-                        </Row>
-                    </React.Fragment>
-                }
-                {this.props.species && 
-                    <React.Fragment>
-                        <Row>
-                            <Col className="g-spec-key">Generation:</Col>
-                            <Col className="g-spec-val">{this.props.species.generation || '0'}</Col>
-                        </Row>
-                        <Row>
-                            <Col className="g-spec-key">Origin Planet:</Col>
-                            <Col className="g-spec-val">{this.props.species.planet}</Col>
-                        </Row>
-                        <Row>
-                            <Col className="g-spec-key">Avg Height:</Col>
-                            <Col className="g-spec-val">{this.props.species.height}</Col>
-                        </Row>
-                        <Row>
-                            <Col className="g-spec-key">Avg Weight:</Col>
-                            <Col className="g-spec-val">{this.props.species.weight}</Col>
-                        </Row>
-                    </React.Fragment>
-                }
-                {this.props.xalian && this.props.xalian.meta &&
-                    <React.Fragment>
-
-                    {/* <Row>
-                        <Col className="g-spec-key">Total Stat Points:</Col>
-                        <Col className="g-spec-val">{this.props.xalian.meta.totalStatPoints}</Col>
-                    </Row>
-                    <Row>
-                        <Col className="g-spec-key">Potential Stat Points:</Col>
-                        <Col className="g-spec-val">{this.props.xalian.meta.potentialStatPoints}</Col>
-                    </Row> */}
-                    <Row>
-                        <Col className="g-spec-key">Stat Score:</Col>
-                        <Col className="g-spec-val">{this.props.xalian.meta.statScore}</Col>
-                    </Row>
-                    <Row>
-                        <Col className="g-spec-key">Stat Potential Score:</Col>
-                        <Col className="g-spec-val">{this.props.xalian.meta.potentialStatScore}</Col>
-                    </Row>
-                    </React.Fragment>
-                }
-			</div>
+			<dl className={`g-spec specimen-spec ${this.props.moreClasses || ''}`}>
+				{this.buildPairs()}
+			</dl>
 		);
 	}
 }

@@ -174,23 +174,45 @@ class PhysicsGamePage extends React.Component {
                     <GameContainer> */}
                             {this.state.size && <React.Fragment>
 								 {/* <Container fluid className="game-container game-centered-over-object" style={{ backgroundColor: 'whitesmoke', height: this.state.size.min, width: this.state.size.min, overflow: 'visible' }}> */}
-									<Row style={{ position: 'absolute', width: '100%', zIndex: '999'}}>
-										<Button onClick={this.action}>FIRE</Button>
-										<Form.Label>Rotate ({this.state.rotateValue})</Form.Label>
-										<Form.Range max={60} value={this.state.rotateValue} onChange={(event) => this.handleRotateChange(event.target.value)} />
+									{/* was a full-bleed bootstrap-blue button and two default range
+									    inputs laid over the arena; these are the machine's controls,
+									    so they sit on a rail with stencilled legends */}
+									<div className="physics-controls">
+										<label className="physics-control">
+											<span className="physics-control-label">
+												Rotate <span className="physics-control-value">{this.state.rotateValue}&deg;</span>
+											</span>
+											<input
+												type="range"
+												className="g-range"
+												max={60}
+												value={this.state.rotateValue}
+												onChange={(event) => this.handleRotateChange(event.target.value)} />
+										</label>
 
-										<Form.Label style={{ paddingTop: '10px' }}>
-											Power ({this.state.powerValue}) - scale {(parseInt(this.state.powerValue) + 50) / 100}
-										</Form.Label>
-										<Form.Range max={100} value={this.state.powerValue} onChange={(event) => this.handlePowerChange(event.target.value)} />
-									</Row>
+										<label className="physics-control">
+											<span className="physics-control-label">
+												Power <span className="physics-control-value">{this.state.powerValue}</span>
+											</span>
+											<input
+												type="range"
+												className="g-range"
+												max={100}
+												value={this.state.powerValue}
+												onChange={(event) => this.handlePowerChange(event.target.value)} />
+										</label>
+
+										<button type="button" className="g-btn g-btn--primary physics-fire" onClick={this.action}>
+											Fire
+										</button>
+									</div>
 									<Row style={{ height: '100%'}}>
 										<Col style={{ height: '100%'}}>
-											<div id="arena" style={{ height: '100%', width: '100%', position: 'relative', backgroundColor: '#8fa2f85e' }}>
+											<div id="arena" className="physics-arena">
 												<div style={{ maxHeight: this.state.size.min * 0.1, maxWidth: this.state.size.min * 0.1, margin: 'auto', position: 'absolute', bottom: '0%', left: '0' }}>
                                                     <FigzySVG style={{ height: '100%', width: '100%', overflow: 'visible' }} />
 												</div>
-                                                    <div id="target" style={{ backgroundColor: 'blue', width: '50px', height: '50px', position: 'absolute', bottom: '0%', right: '0' }}></div>
+                                                    <div id="target" className="physics-target"></div>
 											</div>
 										</Col>
 									</Row>

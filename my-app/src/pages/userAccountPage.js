@@ -1,12 +1,6 @@
 import React from 'react';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
 import XalianNavbar from '../components/navbar';
-import SignUpModal from '../components/auth/signUpModal';
 import VerifyRemoveXalianModal from '../components/verifyRemoveXalianModal';
-import SignInModal from '../components/auth/signInModal';
 import * as authUtil from '../utils/authUtil';
 import * as alertUtil from '../utils/alertUtil';
 import * as dbApi from '../utils/dbApi';
@@ -14,7 +8,6 @@ import { store } from 'state-pool';
 import { Auth } from 'aws-amplify';
 import { Hub, Logger } from 'aws-amplify';
 import XalianStatRowView from '../components/views/xalianStatRowView';
-import gsap from 'gsap';
 
 class UserAccountPage extends React.Component {
 	state = {
@@ -96,19 +89,31 @@ class UserAccountPage extends React.Component {
 	render() {
 		return (
 			<React.Fragment>
-				<Container fluid className="content-background-container">
+				<div className="g-console">
 					<XalianNavbar></XalianNavbar>
 
-					<Container className="content-container">
-						<Row className='account-page-xalians-title vertically-center-contents'>
-							<h1>Your Xalian Faction</h1>
-						</Row>
-						{this.state.message && <Row><p style={{ textAlign: 'center' }}>{this.state.message}</p></Row>}
-						<Row className="">{this.state.xalianRows}</Row>
-					</Container>
+					<div className="g-shell page-shell account-shell">
+						<header className="page-header">
+							<p className="g-kicker">Registry Holdings</p>
+							<h1 className="g-title">Your Xalian Faction</h1>
+						</header>
+
+						{/* signed out, or an empty faction: say so on a panel with the way
+						    forward on it, rather than one line of green text on a starfield */}
+						{this.state.message &&
+							<div className="g-panel account-notice">
+								<p className="g-empty account-notice-text">{this.state.message}</p>
+								<a className="g-btn g-btn--primary" href="/generator">Generate a Xalian</a>
+							</div>
+						}
+
+						{this.state.xalianRows && this.state.xalianRows.length > 0 &&
+							<div className="species-stat-rows">{this.state.xalianRows}</div>
+						}
+					</div>
 
 					{this.state.xalianToDelete && <VerifyRemoveXalianModal show={this.state.verifyRemoveXalianModalShow} onHide={() => this.closeModalCallback()} onXalianDelete={() => this.verifyRemoveXalianCallback()} xalian={this.state.xalianToDelete.attributes} username={this.state.loggedInUser.username}></VerifyRemoveXalianModal>}
-				</Container>
+				</div>
 				{this.state.isLoading && <div id="preloader"></div>}
 			</React.Fragment>
 		);

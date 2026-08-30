@@ -1426,103 +1426,71 @@ section {
 /*--------------------------------------------------------------
 # Team
 --------------------------------------------------------------*/
+/* The crew, as riveted name plates rather than black boxes with green text.
+   Same object language as every other card on the site: hull, bevel, stencil
+   legend, machine-set caption. */
 .team {
-  background: linear-gradient(0deg, rgba(26, 26, 26, 1) 0%, rgba(29, 29, 29, 1) 50%, rgba(26, 26, 26, 1) 100%);
-  padding: 60px 0;
+  background: var(--g-hull-lo);
+  border-top: var(--g-hairline) solid var(--g-seam);
+  border-bottom: var(--g-hairline) solid var(--g-seam);
+  padding: var(--g-9) 0;
 }
 
-.team .member {
-  margin-bottom: 20px;
-  overflow: hidden;
-  border-radius: 5px;
-  background: rgb(0, 0, 0);
-  box-shadow: 0px 0px 10px rgb(0, 0, 0);
+.team-container {
+  max-width: 1100px;
 }
 
-.team .member .member-img {
-  position: relative;
-  overflow: hidden;
-  background: #80ffb0;
-}
-
-.team .member .social {
-  position: absolute;
-  left: 0;
-  bottom: 30px;
-  right: 0;
-  opacity: 0;
-  transition: ease-in-out 0.3s;
+.team-container > h3 {
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-h3);
+  text-transform: uppercase;
+  letter-spacing: var(--g-track-label);
+  color: var(--g-ink);
   text-align: center;
-}
-
-.team .member .social a {
-  transition: color 0.3s;
-  color: #f3f3f3;
-  margin: 0 3px;
-  border-radius: 4px;
-  width: 36px;
-  height: 36px;
-  background: rgba(0, 0, 0, 0.8);
-  transition: ease-in-out 0.3s;
-  color: #bdbdbd;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.team .member .social a:hover {
-  color: #151515;
-  background: #80ffb0;
-}
-
-.team .member .social i {
-  font-size: 18px;
-  line-height: 0;
-}
-
-.team .member .member-info {
-  padding: 25px 15px;
-}
-
-.team .member .member-info h4 {
-  font-weight: 700;
-  margin-bottom: 5px;
-  font-size: 1.25em;
-  color: #777777;
-}
-
-.team .member .member-info span {
-  display: block;
-  font-size: 1em;
-  font-weight: 400;
-  color: #aaaaaa;
-}
-
-
-.team .member:hover .social {
-  opacity: 1;
-  bottom: 15px;
+  margin-bottom: var(--g-6);
 }
 
 .team-row {
   text-align: center;
 }
 
-.team-container {
-  max-width: 60vw;
-
+.team .member {
+  width: 100%;
+  margin-bottom: var(--g-4);
+  border-radius: var(--g-radius-panel);
+  background: var(--g-hull);
+  border: var(--g-hairline) solid var(--g-seam);
+  box-shadow: var(--g-relief), var(--g-drop);
 }
 
-@media (max-width: 750px) {
-  .team .member .member-info h4 {
-    font-weight: 400;
-    font-size: 1em;
-  }
+.team .member .member-info {
+  padding: var(--g-5) var(--g-4);
+}
 
-  .team .member .member-info span {
-    font-size: 0.8em;
-    font-weight: 200;
-  }
+.team .member .member-info h4 {
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-body);
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-ink);
+  margin-bottom: var(--g-2);
+}
+
+/* the in-world title, then the real-world job: one is the legend on the plate,
+   the other is the note stamped under it */
+.team .member .member-info span {
+  display: block;
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-tiny);
+  color: var(--g-ink-low);
+}
+
+.team .member .member-info span.underline {
+  color: var(--g-brass-light);
+  text-decoration: none;
+  border-bottom: 0;
+  margin-bottom: var(--g-1);
 }
 
 .underline {
@@ -1777,16 +1745,15 @@ section {
 # Footer
 --------------------------------------------------------------*/
 #footer {
-  background: black;
-  padding: 0 0 0px 0;
-  color: #fff;
-  font-size: 14px;
+  background: var(--g-void);
+  color: var(--g-ink-mid);
+  font-size: var(--g-size-small);
 }
 
 #footer .footer-top {
-  background: #151515;
-  border-bottom: 1px solid #222222;
-  padding: 60px 0 30px 0;
+  background: var(--g-hull-lo);
+  border-top: var(--g-hairline) solid var(--g-seam);
+  padding: var(--g-8) 0 var(--g-7) 0;
 }
 
 #footer .footer-top .footer-info {
@@ -1795,16 +1762,20 @@ section {
 }
 
 #footer .footer-top .footer-info h3 {
-  font-size: 28px;
-  margin: 0 0 20px 0;
-  padding: 2px 0 2px 0;
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-h3);
+  margin: 0 0 var(--g-5) 0;
   line-height: 1;
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
   text-transform: uppercase;
+  color: var(--g-ink);
 }
 
+/* the trailing colon was a decorative flourish in a different colour; the
+   heading reads as a heading without it */
 #footer .footer-top .footer-info h3 span {
-  color: #80ffb0;
+  display: none;
 }
 
 #footer .footer-top .footer-info p {
@@ -1815,25 +1786,32 @@ section {
   color: #fff;
 }
 
+/* each link is a moulded key carrying a glyph, matching .g-btn--icon */
 #footer .footer-top .social-links a {
-  font-size: 18px;
-  display: inline-block;
-  background: #292929;
-  color: #fff;
-  line-height: 1;
-  padding: 8px 0;
-  margin-right: 4px;
-  border-radius: 4px;
-  text-align: center;
-  width: 36px;
+  font-size: var(--g-size-body);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--g-hull-hi);
+  border: var(--g-hairline) solid var(--g-seam);
+  color: var(--g-ink-mid);
+  margin-right: var(--g-2);
+  border-radius: var(--g-radius);
+  box-shadow: var(--g-relief), var(--g-drop);
+  width: 40px;
   height: 36px;
-  transition: 0.3s;
+  transition: color var(--g-snap), background var(--g-snap), transform var(--g-snap);
 }
 
 #footer .footer-top .social-links a:hover {
-  background: #80ffb0;
-  color: #151515;
+  background: var(--g-hull);
+  color: var(--g-ink);
   text-decoration: none;
+}
+
+#footer .footer-top .social-links a:active {
+  transform: translateY(2px);
+  box-shadow: var(--g-recess);
 }
 
 #footer .footer-top h4 {
@@ -2212,16 +2190,9 @@ section {
 
 /* cadet blue hsl(182, 25%, 50%) #5f9ea0 */
 
-/* SPECIAL TEXT */
-article {
-  background: linear-gradient(to right,
-      hsl(143, 100%, 76%),
-      hsl(143, 100%, 76%),
-      hsl(210, 100%, 60%));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-align: center;
-}
+/* A leftover gradient-text hack from the template, scoped to the bare
+   `article` element type - so any semantic <article> on the site rendered its
+   text in transparent fill and vanished. Nothing used it. */
 
 
 
@@ -2250,10 +2221,6 @@ article {
 .member-info {
   max-width: 50vw;
   width: 250px;
-}
-
-.member-info h4 {
-  color: #80ffb0 !important;
 }
 
 
@@ -3511,17 +3478,51 @@ input, textarea {
   position: absolute;
   z-index: 1000;
   transform: translate(-50%, 0%);
-  /* top: 50%; */
   bottom: 2%;
   left: 50%;
   margin: auto;
 }
 
+/* The pre-round curtain. It covers the board rather than floating on top of a
+   corner of it, so nothing is obscured while it is up and nothing is left
+   overlapping once the round starts. */
+.game-curtain {
+  position: absolute;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--g-3);
+  background: rgba(13, 11, 9, 0.82);
+  border-radius: var(--g-radius-housing);
+}
+
+.game-curtain-kicker {
+  margin: 0;
+}
+
 .game-display-text {
-  font-weight: bold !important;
-  font-size: 2em;
-  text-shadow: 0px 0px 2px 2px rgb(0, 0, 0) !important;
-  color: black;
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-readout);
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-ink);
+  margin: 0;
+}
+
+.game-curtain-note {
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-small);
+  color: var(--g-ink-mid);
+  margin: 0;
+}
+
+.game-curtain-btn {
+  margin-top: var(--g-3);
+  padding: var(--g-3) var(--g-7);
 }
 
 /* 
@@ -3531,20 +3532,19 @@ input, textarea {
 */
 
 .game-container {
-  aspect-ratio: 1;
-  box-shadow: 0px 0px 30px rgb(0, 0, 0);
-  /* margin-top: 5px !important; */
-  /* background-color: rgba(211, 211, 211, 0.5); */
-  background-color: rgb(24, 24, 24, 0.5);
-  min-height: 100vh;
-  max-height: 100vh;
-  min-width: 100vw;
-  max-width: 100vw;
+  /* was pinned to 100vw/100vh, so the board sat in its own full-screen black
+     box unrelated to the page it is part of */
+  background: var(--g-hull-lo);
+  border: var(--g-hairline) solid var(--g-seam);
+  border-radius: var(--g-radius-housing);
+  box-shadow: var(--g-relief), var(--g-drop);
   align-items: center;
   justify-content: center;
-  margin: 0 !important;
-  padding: 0 !important;
-  position: 'relative';
+  margin: 0 auto var(--g-8) auto !important;
+  padding: var(--g-4) !important;
+  width: fit-content !important;
+  max-width: 100%;
+  position: relative;
   display: flex;
 }
 
@@ -3598,17 +3598,20 @@ input, textarea {
 --------------------------------------------------------------*/
 
 .training-grounds-subtitle {
-  color: var(--x-text-dim);
+  font-family: var(--g-font-ui);
+  color: var(--g-ink-mid);
   text-align: center;
-  margin-bottom: var(--x-space-5);
+  margin: var(--g-2) 0 var(--g-6) 0;
 }
 
 .training-game-switcher {
   display: flex;
   justify-content: center;
-  gap: var(--x-space-3);
-  flex-wrap: wrap;
-  margin-bottom: var(--x-space-5);
+  margin-bottom: var(--g-6);
+}
+
+.training-shell {
+  padding-bottom: var(--g-8);
 }
 
 /*--------------------------------------------------------------
@@ -3931,17 +3934,50 @@ input, textarea {
   padding: var(--g-6);
 }
 
+/* Heading across the top, then plate and specs beneath it. The earlier
+   two-column version left the whole right half of a wide card empty, because
+   six short spec pairs cannot fill 900px on their own. */
 .planet-record {
   display: grid;
-  grid-template-columns: minmax(240px, 320px) 1fr;
-  gap: var(--g-8);
+  grid-template-columns: minmax(200px, 260px) 1fr;
+  grid-template-areas:
+    "head  head"
+    "plate specs";
+  column-gap: var(--g-7);
+  row-gap: var(--g-6);
+  align-items: stretch;
+}
+
+.planet-record-head {
+  grid-area: head;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--g-4);
+  padding-bottom: var(--g-4);
+  border-bottom: var(--g-hairline) solid var(--g-seam);
+}
+
+.planet-record-actions {
+  display: flex;
   align-items: center;
+  gap: var(--g-4);
+}
+
+.planet-record-plate {
+  grid-area: plate;
+}
+
+.planet-spec {
+  grid-area: specs;
 }
 
 /* the photographic plate: the world itself, mounted in a brass bezel */
 .planet-record-plate {
   position: relative;
 }
+
 
 .planet-plate {
   padding: 6px;
@@ -3954,36 +3990,55 @@ input, textarea {
 .planet-plate-img {
   display: block;
   width: 100%;
-  aspect-ratio: 1;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
   border-radius: var(--g-radius);
   box-shadow: var(--g-recess);
 }
 
-/* the rendered globe, pinned over the corner of the plate as a locator */
-.planet-globe {
+/* The globe is a locator sitting over the corner of the plate. On its own it
+   was a green render on green vegetation and vanished; mounting it in a
+   darkened, brass-ringed porthole gives it a hard edge and its own ground. */
+.planet-globe-mount {
   position: absolute;
   left: calc(-1 * var(--g-5));
-  bottom: calc(-1 * var(--g-4));
-  width: 38%;
-  max-width: 130px;
-  object-fit: contain;
-  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.8));
+  bottom: calc(-1 * var(--g-5));
+  display: grid;
+  place-items: center;
+  width: 44%;
+  max-width: 118px;
+  aspect-ratio: 1;
+  padding: 7px;
+  border: 2px solid var(--g-brass-dark);
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 40%, var(--g-hull-lo) 0%, #000 78%);
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.95),
+    inset 0 2px 6px rgba(0, 0, 0, 0.9),
+    inset 0 -1px 0 var(--g-bevel-light);
 }
 
-.planet-record-body {
-  min-width: 0;
+.planet-globe {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.9));
 }
 
 .planet-record-name {
-  margin: var(--g-1) 0 var(--g-3) 0;
+  margin: var(--g-1) 0 0 0;
 }
 
 .planet-spec {
-  margin: var(--g-5) 0 var(--g-5) 0;
-  grid-template-columns: minmax(6rem, 10rem) 1fr;
-  gap: var(--g-2) var(--g-5);
-  max-width: 34rem;
+  margin: 0;
+  /* two key/value pairs per row on a wide card, so six specs occupy the width
+     rather than stacking in a narrow strip beside the plate */
+  grid-template-columns: minmax(5.5rem, 8rem) minmax(0, 1fr) minmax(5.5rem, 8rem) minmax(0, 1fr);
+  gap: var(--g-3) var(--g-5);
+  /* the spec rows distribute over the height of the plate beside them, the way
+     a printed form fills its box - otherwise the right half of the card ends
+     in a band of dead space */
+  align-content: space-between;
 }
 
 .planet-spec dd {
@@ -3994,17 +4049,31 @@ input, textarea {
   margin-top: 0;
 }
 
+/* below ~1100px the four-column spec grid squeezes the values, so fall back to
+   a single key/value pair per row */
+@media (max-width: 1199px) {
+  .planet-spec {
+    grid-template-columns: minmax(5.5rem, 9rem) minmax(0, 1fr);
+  }
+}
+
 @media (max-width: 767px) {
   .planet-record {
     grid-template-columns: 1fr;
-    gap: var(--g-7);
+    grid-template-areas:
+      "head"
+      "plate"
+      "specs";
+    row-gap: var(--g-6);
   }
 
-  .planet-globe {
-    left: auto;
-    right: calc(-1 * var(--g-2));
-    bottom: calc(-1 * var(--g-4));
-    width: 30%;
+  .planet-record-plate {
+    max-width: 320px;
+  }
+
+  .planet-globe-mount {
+    left: calc(-1 * var(--g-3));
+    width: 34%;
   }
 }
 
@@ -4023,17 +4092,22 @@ input, textarea {
 }
 
 /* the badge centres itself by default (it sits alone in a column elsewhere);
-   in a left-aligned record it has to sit under the name */
-.planet-record-body .xalian-species-badge {
-  margin-left: 0;
-  margin-right: 0;
+   in the record header it sits inline beside the story key */
+.planet-record-actions .xalian-species-badge {
+  margin: 0;
 }
 
 @media (max-width: 575px) {
-  /* a 10rem label column leaves the values almost no room on a phone */
+  /* a 9rem label column leaves the values almost no room on a phone */
   .planet-spec {
     grid-template-columns: 1fr;
     gap: 0 0;
+  }
+
+  /* the header's two halves stop fitting side by side */
+  .planet-record-head {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .planet-spec .g-spec-key {
@@ -4043,4 +4117,657 @@ input, textarea {
   .planet-spec .g-spec-val {
     margin-bottom: 0;
   }
+}
+
+
+/* Specimen record ---------------------------------------------------------
+   The creature counterpart of the planetary survey record: the same document,
+   printed for a different subject. Both the generator and the species pages
+   used to scatter name, portrait, attributes and description across four loose
+   columns floating on the starfield, with no housing around any of it. */
+
+.specimen-panel {
+  margin-bottom: var(--g-6);
+  /* the extra top padding clears the painted corner flash, which is 40px deep */
+  padding: var(--g-7) var(--g-6) var(--g-6);
+}
+
+.specimen-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--g-4);
+  padding-bottom: var(--g-4);
+  border-bottom: var(--g-hairline) solid var(--g-seam);
+}
+
+.specimen-name {
+  margin: var(--g-1) 0 0 0;
+}
+
+.specimen-head-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--g-3);
+}
+
+/* the designation is machine output, so it is set in mono and stamped into the
+   hull rather than written on it */
+.specimen-id {
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-small);
+  color: var(--g-ink-mid);
+  padding: var(--g-1) var(--g-3);
+  background: var(--g-hull-lo);
+  border: var(--g-hairline) solid var(--g-seam);
+  border-radius: var(--g-radius);
+  box-shadow: var(--g-recess);
+}
+
+.specimen-head-meta .xalian-species-badge {
+  margin: 0;
+}
+
+.specimen-body {
+  display: grid;
+  grid-template-columns: minmax(200px, 260px) 1fr;
+  column-gap: var(--g-7);
+  row-gap: var(--g-6);
+  align-items: stretch;
+  padding-top: var(--g-6);
+}
+
+/* the portrait, mounted in a brass bezel like the planetary plate */
+.specimen-plate {
+  padding: 6px;
+  background: linear-gradient(160deg, var(--g-hull-hi), var(--g-hull));
+  border: 2px solid var(--g-brass-dark);
+  border-radius: var(--g-radius-housing);
+  box-shadow: var(--g-relief), var(--g-drop);
+  align-self: start;
+}
+
+.specimen-plate .xalian-image-wrapper {
+  border-radius: var(--g-radius);
+  box-shadow: var(--g-recess);
+  aspect-ratio: 1;
+  width: 100%;
+  margin: 0;
+}
+
+.specimen-data {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--g-5);
+}
+
+.specimen-spec {
+  margin: 0;
+  /* two pairs per row, the same as the survey records, so the data fills the
+     card instead of running down a narrow strip */
+  grid-template-columns: minmax(6rem, 10.5rem) minmax(0, 1fr) minmax(6rem, 10.5rem) minmax(0, 1fr);
+  gap: var(--g-3) var(--g-5);
+  align-content: start;
+}
+
+/* the description was centred italic prose floating in open space; it is a
+   caption on a record, so it is set as one */
+.specimen-description {
+  margin: 0;
+  font-family: var(--g-font-ui);
+  font-size: var(--g-size-body);
+  font-style: normal;
+  line-height: 1.7;
+  color: var(--g-ink-mid);
+  max-width: var(--g-measure);
+  padding-top: var(--g-4);
+  border-top: var(--g-hairline) solid var(--g-seam);
+}
+
+/* Readouts hanging below the record proper: charts and move sets. */
+.specimen-readouts {
+  display: grid;
+  /* capped rather than 1fr: a single readout stretched to 1200px turns a
+     meter strip into a rule and a move list into a line of confetti */
+  grid-template-columns: repeat(auto-fit, minmax(340px, 560px));
+  justify-content: start;
+  gap: var(--g-5);
+  margin-top: var(--g-6);
+  padding-top: var(--g-6);
+  border-top: var(--g-hairline) solid var(--g-seam);
+}
+
+.specimen-readout {
+  background: var(--g-hull-lo);
+  border: var(--g-hairline) solid var(--g-seam);
+  border-radius: var(--g-radius-panel);
+  box-shadow: var(--g-recess);
+  padding: var(--g-5);
+  min-width: 0;
+}
+
+.specimen-readout > .g-kicker {
+  margin: 0 0 var(--g-4) 0;
+}
+
+.specimen-chart {
+  height: 300px;
+}
+
+.specimen-json {
+  max-height: 60vh;
+  overflow: auto;
+  font-size: var(--g-size-tiny);
+  margin: 0;
+}
+
+@media (max-width: 1199px) {
+  .specimen-spec {
+    grid-template-columns: minmax(6rem, 9rem) minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .specimen-body {
+    grid-template-columns: 1fr;
+  }
+
+  .specimen-plate {
+    max-width: 280px;
+  }
+}
+
+@media (max-width: 575px) {
+  .specimen-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .specimen-spec {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .specimen-spec .g-spec-key { margin-top: var(--g-3); }
+  .specimen-spec .g-spec-val { margin-bottom: 0; }
+}
+
+
+/* Move set ---------------------------------------------------------------- */
+
+.xalian-move-set {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.move-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--g-4);
+  align-items: baseline;
+  padding: var(--g-3) 0;
+  border-bottom: var(--g-hairline) solid var(--g-seam);
+}
+
+.move-row:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.move-row:first-child {
+  padding-top: 0;
+}
+
+/* the rating is a stamped figure, not a heading */
+.move-rating {
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-lead);
+  font-variant-numeric: tabular-nums;
+  color: var(--g-el, var(--g-phosphor));
+  min-width: 2.25rem;
+  text-align: right;
+}
+
+.move-name {
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-body);
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-ink);
+  margin: 0;
+}
+
+.move-description {
+  font-family: var(--g-font-ui);
+  font-size: var(--g-size-small);
+  font-style: normal;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--g-ink-low);
+  margin: var(--g-1) 0 0 0;
+}
+
+
+/* Generator page ---------------------------------------------------------- */
+
+.generator-shell {
+  padding-top: var(--g-6);
+  padding-bottom: var(--g-8);
+  position: relative;
+  z-index: 2;
+}
+
+.generator-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--g-3);
+  margin-bottom: var(--g-6);
+}
+
+
+/* an unrated stat is not zero, it is unknown: the strip stays dark and the
+   caption says so, rather than implying the creature is bad at it */
+.species-meter-row--unrated .g-meter-value {
+  color: var(--g-ink-low);
+  font-style: normal;
+}
+
+.species-meter-row--unrated .g-meter {
+  opacity: 0.6;
+}
+
+
+/* Species catalogue ------------------------------------------------------- */
+
+.species-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--g-4);
+  padding: var(--g-2) 0 var(--g-8) 0;
+}
+
+/* each specimen sits in a housing, the same as every other object on the site */
+.species-tile {
+  display: block;
+  text-decoration: none;
+  background: var(--g-hull);
+  border: var(--g-hairline) solid var(--g-seam);
+  border-radius: var(--g-radius-panel);
+  box-shadow: var(--g-relief), var(--g-drop);
+  padding: var(--g-2);
+  transition: transform var(--g-snap), box-shadow var(--g-snap);
+}
+
+.species-tile:hover,
+.species-tile:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: var(--g-relief), 0 8px 20px rgba(0, 0, 0, 0.6);
+  border-color: color-mix(in srgb, var(--g-el) 45%, var(--g-seam));
+}
+
+.species-tile:focus-visible {
+  outline: 2px solid var(--g-el);
+  outline-offset: 2px;
+}
+
+.species-tile-plate {
+  display: block;
+  border-radius: var(--g-radius);
+  overflow: hidden;
+  box-shadow: var(--g-recess);
+}
+
+.species-tile-plate .xalian-image-wrapper {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  margin: 0;
+  border-radius: var(--g-radius);
+}
+
+/* the name plate: stencilled legend on the hull below the specimen */
+.species-tile-legend {
+  display: block;
+  padding: var(--g-3) var(--g-1) var(--g-1) var(--g-1);
+  text-align: center;
+}
+
+.species-tile-name {
+  display: block;
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-small);
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-ink);
+}
+
+.species-tile-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--g-1);
+  margin-top: var(--g-1);
+}
+
+.species-tile-id {
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-micro);
+  color: var(--g-ink-low);
+}
+
+.species-stat-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--g-3);
+  padding: var(--g-2) 0 var(--g-8) 0;
+}
+
+.species-stat-rows > a {
+  text-decoration: none;
+}
+
+/* catalogue pages centre their title, so the kicker above it centres too */
+.template-col-wrapper .page-header {
+  text-align: center;
+}
+
+
+/* Duel setup -------------------------------------------------------------- */
+
+.duel-setup-shell {
+  padding-bottom: var(--g-9);
+}
+
+.duel-setup-panel {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--g-6);
+}
+
+.duel-setup-row,
+.duel-setup-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--g-4);
+  padding: var(--g-4) 0;
+  border-bottom: var(--g-hairline) solid var(--g-seam);
+}
+
+.duel-setup-row:first-child,
+.duel-setup-head:first-child {
+  padding-top: 0;
+}
+
+.duel-setup-label {
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-small);
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-ink-mid);
+}
+
+/* the players toggle carries glyphs rather than a legend, so it needs room */
+.duel-players-segment {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--g-2);
+  font-size: var(--g-size-body);
+}
+
+.duel-squad-count {
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-lead);
+  font-variant-numeric: tabular-nums;
+  color: var(--g-phosphor);
+}
+
+.duel-squad-grid {
+  padding: var(--g-5) 0 var(--g-2) 0;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+}
+
+/* a selected squad member is latched: brass edge, seated deeper in the hull */
+.duel-squad-tile {
+  border-width: 2px;
+  cursor: pointer;
+  font: inherit;
+  text-align: inherit;
+}
+
+.duel-squad-tile--selected {
+  border-color: var(--g-brass);
+  box-shadow: var(--g-recess), 0 0 0 1px var(--g-brass-dark);
+  transform: translateY(1px);
+}
+
+.duel-setup-note {
+  font-family: var(--g-font-ui);
+  font-size: var(--g-size-small);
+  color: var(--g-ink-low);
+  margin: var(--g-3) 0 0 0;
+}
+
+.duel-setup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--g-3);
+  padding-top: var(--g-6);
+}
+
+@media (max-width: 575px) {
+  .duel-setup-row,
+  .duel-setup-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .duel-setup-actions {
+    justify-content: stretch;
+  }
+
+  .duel-setup-actions .g-btn {
+    flex: 1;
+  }
+}
+
+.training-shell .page-header,
+.duel-setup-shell .page-header {
+  text-align: center;
+}
+
+/* Account ------------------------------------------------------------------ */
+
+.account-shell {
+  padding-bottom: var(--g-9);
+}
+
+.account-notice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--g-5);
+  padding: var(--g-8) var(--g-6);
+  max-width: 560px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.account-notice-text {
+  margin: 0;
+}
+
+/* an anchor styled as a key still has to sit on its baseline like one */
+a.g-btn {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+
+/* Record strip ------------------------------------------------------------
+   The compact form of the specimen record: a plate, an identity block and one
+   or two readouts on a single panel. Used by the species stats list and the
+   account page. */
+
+.record-strip {
+  display: grid;
+  grid-template-columns: 92px minmax(150px, 200px) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--g-5);
+  padding: var(--g-4) var(--g-5);
+}
+
+.record-strip--wide {
+  grid-template-columns: 92px minmax(150px, 190px) minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.record-strip-plate {
+  padding: 4px;
+  background: linear-gradient(160deg, var(--g-hull-hi), var(--g-hull));
+  border: 2px solid var(--g-brass-dark);
+  border-radius: var(--g-radius-panel);
+  box-shadow: var(--g-relief), var(--g-drop);
+}
+
+.record-strip-plate .xalian-image-wrapper {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  margin: 0;
+  border-radius: 3px;
+  box-shadow: var(--g-recess);
+}
+
+.record-strip-ident {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--g-2);
+  min-width: 0;
+}
+
+.record-strip-name {
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-h3);
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-ink);
+  margin: 0;
+}
+
+.record-strip-ident .xalian-species-badge {
+  margin: 0;
+}
+
+.record-strip-delete {
+  margin-top: var(--g-2);
+}
+
+.record-strip-readout {
+  min-width: 0;
+}
+
+.record-strip-chart {
+  height: 190px;
+}
+
+@media (max-width: 991px) {
+  .record-strip,
+  .record-strip--wide {
+    grid-template-columns: 92px minmax(0, 1fr);
+  }
+
+  .record-strip-readout {
+    grid-column: 1 / -1;
+  }
+}
+
+
+/* Physics trainer ---------------------------------------------------------- */
+
+.physics-controls {
+  position: absolute;
+  z-index: 999;
+  top: var(--g-3);
+  left: var(--g-3);
+  right: var(--g-3);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--g-4);
+  padding: var(--g-3) var(--g-4);
+  background: var(--g-hull);
+  border: var(--g-hairline) solid var(--g-seam);
+  border-radius: var(--g-radius-panel);
+  box-shadow: var(--g-relief), var(--g-drop);
+}
+
+.physics-control {
+  flex: 1 1 180px;
+  min-width: 140px;
+  margin: 0;
+}
+
+.physics-control-label {
+  display: block;
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-tiny);
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-ink-mid);
+  margin-bottom: var(--g-1);
+}
+
+.physics-control-value {
+  font-family: var(--g-font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--g-ink);
+  letter-spacing: normal;
+}
+
+.physics-fire {
+  flex: 0 0 auto;
+}
+
+.physics-arena {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  background: var(--g-hull-lo);
+  border-radius: var(--g-radius-panel);
+  box-shadow: var(--g-recess);
+  overflow: hidden;
+}
+
+.physics-target {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 50px;
+  height: 50px;
+  background: var(--g-hazard);
+  border: 2px solid var(--g-hazard-dark);
+  border-radius: var(--g-radius);
+}
+
+.sg-range-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--g-3);
+  margin-bottom: var(--g-2);
 }

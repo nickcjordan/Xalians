@@ -35,7 +35,7 @@ const STATS = [
 
 class StyleGuidePage extends React.Component {
 
-    state = { channel: 'grid' };
+    state = { channel: 'grid', power: 50 };
 
     renderSectionHead(index, name, note) {
         return (
@@ -378,6 +378,25 @@ class StyleGuidePage extends React.Component {
                                 <p className="g-body sg-small-body sg-mt">
                                     Key <span className="g-mono">{this.state.channel}</span> is thrown. Selector keys light in hazard
                                     paint rather than moving an underline.
+                                </p>
+
+                                <hr className="g-seam-rule" />
+
+                                <p className="g-kicker sg-mb">Slider</p>
+                                <label className="sg-range-label" htmlFor="sg-range-demo">
+                                    <span className="g-label">Power</span>
+                                    <span className="g-mono">{this.state.power}</span>
+                                </label>
+                                <input
+                                    id="sg-range-demo"
+                                    className="g-range"
+                                    type="range"
+                                    max={100}
+                                    value={this.state.power}
+                                    onChange={(e) => this.setState({ power: e.target.value })} />
+                                <p className="g-body sg-small-body sg-mt">
+                                    A recessed channel with a moulded knob — the same two shadows every other
+                                    control uses, so a slider reads as hardware rather than as a browser default.
                                 </p>
                             </div>
                         </div>

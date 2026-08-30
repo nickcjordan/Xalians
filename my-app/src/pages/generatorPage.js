@@ -1,24 +1,11 @@
-import axios from 'axios';
 import React from 'react';
-import Button from 'react-bootstrap/Button';
-import ListGroup from 'react-bootstrap/ListGroup';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Image from 'react-bootstrap/Image';
-import CharacterStats from '../components/characterStat';
 import XalianMoveSet from '../components/xalianMoveSet';
-import XalianAttributeChart from '../components/xalianAttributeChart';
-import XalianImage from '../components/xalianImage';
-import XalianInfoBox from '../components/xalianInfoBox';
+import XalianRecord from '../components/xalianRecord';
 import XalianNavbar from '../components/navbar';
-import species from '../json/species.json';
 import XalianStatChart from '../components/xalianStatChart';
 import * as xalianApi from '../utils/xalianApi';
 import * as dbApi from '../utils/dbApi';
 import * as alertUtil from '../utils/alertUtil';
-import Modal from 'react-bootstrap/Modal';
-import Stack from 'react-bootstrap/Stack';
 import SmokeEffectBackground from '../components/views/smokeEffectBackground';
 import gsap from 'gsap';
 
@@ -59,67 +46,47 @@ class GeneratorPage extends React.Component {
 						<div className="generator-loading-sub">Running the Xalian Generator</div>
 					</div>
 				}
-				<Container className="generator-page-content-background-container ">
-					<React.Fragment>
-						<Container fluid className="whole-container ">
-							<Row className="generator-button-row">
-								{/* {this.state.xalian && this.state.showXalian && ( */}
-								<Col>
-									<Button variant="xalianGray" disabled={!this.state.loggedInUser} onClick={this.saveXalian} className="save-xalian-generator-page-button">
-										{this.state.loggedInUser ? 'Save to Your Faction' : 'Sign In to Keep'}
-									</Button>
-								</Col>
-								{/* )} */}
-								<Col>
-									<Button variant="xalianGreen" onClick={this.getXalian}>
-										Generate New Xalian
-									</Button>
-								</Col>
-								{/* <Col>
-                                    <Button variant='xalianGray' onClick={this.test} className='save-xalian-generator-page-button'>Test</Button>
-                                </Col> */}
-							</Row>
+				<div className="g-shell generator-shell">
+					{/* the two keys that drive the machine, on their own rail above the
+					    record they produce */}
+					<div className="generator-controls">
+						<button type="button" className="g-btn g-btn--primary" onClick={this.getXalian}>
+							Generate New Xalian
+						</button>
+						<button
+							type="button"
+							className="g-btn"
+							disabled={!this.state.loggedInUser}
+							onClick={this.saveXalian}>
+							{this.state.loggedInUser ? 'Save to Your Faction' : 'Sign In to Keep'}
+						</button>
+					</div>
 
-							<hr className="xalian-hr" />
-							{this.state.xalian  && (
-								<div id="generated-xalian-fragment">
-									<Row className="centered-view squeezed-view third-height">
-										<Col lg={3} md={6} xs={6} className="stackable-padding">
-											<XalianInfoBox xalian={this.state.xalian} json={JSON.stringify(this.state.xalian, null, 2)} />
-										</Col>
+					{this.state.xalian && (
+						<div id="generated-xalian-fragment">
+							<XalianRecord
+								kicker="Generator Output"
+								xalian={this.state.xalian}
+								json={JSON.stringify(this.state.xalian, null, 2)}>
 
-										<Col lg={3} md={6} xs={6} className="stackable-padding">
-											<Row className="xalian-image-row">
-												<XalianImage colored bordered shadowed speciesName={this.state.xalian.species.name} primaryType={this.state.xalian.elements.primaryType} secondaryType={this.state.xalian.elements.secondaryType} moreClasses="xalian-image-detail" />
-											</Row>
-										</Col>
-										<Col lg={true} className="vertically-center-contents centered-view stackable-padding">
-											<XalianAttributeChart xalian={this.state.xalian} />
-										</Col>
-									</Row>
-									<Row className="centered-view squeezed-view third-height ">
-										<div className="species-detail-description-div">
-											<h6 className="species-detail-description">{this.state.xalian.species.description}</h6>
-										</div>
-									</Row>
-									<Row className="centered-view squeezed-view third-height stackable-padding">
-										<Col style={{ padding: '0px' }}>
-											<XalianStatChart axisLabelColor={'white'} includeLabel labelFontSize={'10pt'} barSize={30} stats={this.state.xalian.stats} moreClasses="full-chart-div padded-row" />
-										</Col>
-										<Col>
-											<XalianMoveSet showDescription moves={this.state.xalian.moves}></XalianMoveSet>
-										</Col>
-									</Row>
-								</div>
-							)}
-							{/* <Row className="centered-view squeezed-view third-height stackable-padding">
-									<Col>
-										<XalianMoveSet showDescription moves={this.state.xalian.moves}></XalianMoveSet>
-									</Col>
-								</Row> */}
-						</Container>
-					</React.Fragment>
-				</Container>
+								<section className="specimen-readout">
+									<p className="g-kicker">Stat Allocation</p>
+									<XalianStatChart
+										includeLabel
+										labelFontSize={'10pt'}
+										barSize={26}
+										stats={this.state.xalian.stats}
+										moreClasses="specimen-chart" />
+								</section>
+
+								<section className="specimen-readout">
+									<p className="g-kicker">Move Set</p>
+									<XalianMoveSet showDescription moves={this.state.xalian.moves} />
+								</section>
+							</XalianRecord>
+						</div>
+					)}
+				</div>
 
 				{/* {this.state.isLoading && <div id="preloader"></div>} */}
 			</React.Fragment>

@@ -1,20 +1,14 @@
 import React from 'react';
-import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
-import XalianNavbar from '../../components/navbar';
 
 import XalianImage from '../../components/xalianImage';
 import MatchGameFlippedCard from '../../components/games/elements/matchGameFlippedCard';
 import species from '../../json/species.json';
-import GameContainer from '../../components/games/elements/gameContainer';
 import { gsap, Linear } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { TextPlugin } from 'gsap/TextPlugin';
 import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
-import ThemedSceneDiv from '../../components/views/themedSceneDiv';
 gsap.registerPlugin(MotionPathPlugin, TextPlugin, ScrollTrigger, DrawSVGPlugin);
 
 class MatchCardGamePage extends React.Component {
@@ -40,6 +34,9 @@ class MatchCardGamePage extends React.Component {
 		if (!this.state.started) {
 			let tl = gsap.timeline();
 			tl.to('#match-game-start-button', { autoAlpha: 0 });
+			// the curtain covers the whole board, so it has to clear out of the way
+			// once the round begins - only the countdown legend stays on top
+			tl.to('#match-game-curtain', { backgroundColor: 'rgba(13, 11, 9, 0)', pointerEvents: 'none', duration: 0.4 }, '<');
 			this.flipAllCardsUp(tl);
 			tl.to('#match-game-display-text', { text: { padSpace: true, preserveSpaces: true, value: '    3...' }, duration: 1 })
 				.to('#match-game-display-text', { text: { padSpace: true, preserveSpaces: true, value: '    2...' }, duration: 1 })
@@ -314,14 +311,18 @@ class MatchCardGamePage extends React.Component {
 			<React.Fragment>
 				<div id="match-card-game-wrapper" className="match-card-game-wrapper">
 					{this.state.cards}
-					<div className="game-bottom-over-object">
-						<Button id="match-game-start-button" variant="xalianGreen" onClick={this.startGameTapped} style={{ fontSize: 'large', padding: '20px' }}>
-							Start
-						</Button>
-						<h1 className="game-display-text white-outline-text">{this.state.text}</h1>
-						<h1 className="game-display-text white-outline-text" id="match-game-display-text">
+					{/* the start control used to sit on top of the middle of the board,
+					    covering two cards; it is a curtain over the whole board until
+					    the round begins, which is what it was always acting as */}
+					<div className="game-curtain" id="match-game-curtain">
+						<p className="g-kicker game-curtain-kicker">Xalian Match</p>
+						<h2 className="game-display-text" id="match-game-display-text">
 							Ready...
-						</h1>
+						</h2>
+						{this.state.text && <p className="game-curtain-note">{this.state.text}</p>}
+						<button type="button" id="match-game-start-button" className="g-btn g-btn--primary game-curtain-btn" onClick={this.startGameTapped}>
+							Start
+						</button>
 					</div>
 				</div>
 			</React.Fragment>
