@@ -135,11 +135,11 @@ export function calculateValidEnemyTargetPaths(G, ctx, currentIndex, distance, s
     return calculateValidPaths(G, ctx, currentIndex, distance, true, false, stamina);
 }
 
-export function calculateValidUnoccupiedPaths(G, ctx, currentIndex, distance, stamina, isBot = false) {
-    return calculateValidPaths(G, ctx, currentIndex, distance, false, true, stamina, isBot);
+export function calculateValidUnoccupiedPaths(G, ctx, currentIndex, distance, stamina, canFlyOver = false) {
+    return calculateValidPaths(G, ctx, currentIndex, distance, false, true, stamina, canFlyOver);
 }
 
-function calculateValidPaths(G, ctx, currentIndex, uneditedDistance, findOccupied, findUnoccupied, stamina, isBot = false) {
+function calculateValidPaths(G, ctx, currentIndex, uneditedDistance, findOccupied, findUnoccupied, stamina, canFlyOver = false) {
     let distance = Math.max(uneditedDistance, 0);
     let size = Math.sqrt(G.cells.length);
     var grid = new PF.Grid(size, size); 
@@ -165,7 +165,9 @@ function calculateValidPaths(G, ctx, currentIndex, uneditedDistance, findOccupie
 
     let boardGrid = buildGrid(G.cells.length);
 
-    if (!findOccupied) {
+    // pieces block movement - unless the mover can fly, which lets it path OVER them
+    // (it still can't land on an occupied square: only unoccupied cells are candidates)
+    if (!findOccupied && !canFlyOver) {
         occupied.forEach( i => {
             let coord = boardGrid.map[i];
             grid.setWalkableAt(coord[0], coord[1], false);
@@ -230,8 +232,26 @@ export function calculateMovablePaths(currentIndex, xalian, G, ctx, isBot = fals
         //     }
         // })
         var distance = Math.min(remainingForXalian, remainingForTurn);
-        return calculateValidUnoccupiedPaths(G, ctx, currentIndex, distance, xalian.state.stamina, isBot);
+
+        // hauling a flag slows you down
+        if (isCarryingFlag(xalian, G)) {
+            distance = Math.min(distance, duelConstants.FLAG_CARRIER_MAX_SPACES_PER_TURN);
+        }
+
+        return calculateValidUnoccupiedPaths(G, ctx, currentIndex, distance, xalian.state.stamina, canFly(xalian));
     }
+}
+
+export function isCarryingFlag(xalian, G) {
+    try {
+        return (G.flags || []).some((flag) => flag && flag.holder === xalian.xalianId);
+    } catch (e) {
+        return false;
+    }
+}
+
+function canFly(xalian) {
+    return !!(xalian && xalian.traits && xalian.traits.canFly);
 }
 
 export function calculateAttackableIndices(currentIndex, xalian, boardState, ctx, onlyOccupiedCells = true) {
@@ -270,8 +290,9 @@ export function calculateAttackResult(attacker, defender, G, ctx, simulate = fal
     let attackType = move && move.type ? move.type : null;
     let typeEffectiveness = calculateTypeEffectiveness(attackType, defender);
     let hinderingStatus = calculateHindranceEffect(attacker);
+    let evasion = calculateEvasionMitigation(defender);
     let other = calculateRemainingFactors(attacker, defender, G, ctx);
-    let result = base * power * targets * weather * badge * critical * random * sameTypeBonus * typeEffectiveness * hinderingStatus * other;
+    let result = base * power * targets * weather * badge * critical * random * sameTypeBonus * typeEffectiveness * hinderingStatus * evasion * other;
     let final = Math.floor(result * 10)/10;
     // console.log(`base=${base}, random=${random}, sameTypeBonus=${sameTypeBonus}, final=${final}`);
 
@@ -286,6 +307,20 @@ export function calculateAttackResult(attacker, defender, G, ctx, simulate = fal
         reactionDamage: 0,
         typeEffectiveness: typeEffectiveness,
         move: move ? { name: move.name, type: move.type || null } : null
+    }
+}
+
+// evasion softens incoming damage instead of rolling a dodge - see duelGameConstants
+function calculateEvasionMitigation(defender) {
+    try {
+        let evasion = defender && defender.stats ? defender.stats.evasion : 0;
+        if (!Number.isFinite(evasion) || evasion <= 0) {
+            return 1;
+        }
+        let reduction = Math.min(evasion * duelConstants.EVASION_DAMAGE_REDUCTION_PER_POINT, duelConstants.MAX_EVASION_DAMAGE_REDUCTION);
+        return 1 - reduction;
+    } catch (e) {
+        return 1;
     }
 }
 

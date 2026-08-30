@@ -206,7 +206,7 @@ export function xalianHasValidActionAvailable(id, G, ctx) {
             canMove = false;
         } else {
             // let movableSpaces = duelCalculator.calculateMovablePaths(ind, xalian, G, ctx);
-            let movableSpaces = duelCalculator.calculateValidUnoccupiedPaths(G, ctx, ind, xalianStatus.remainingSpacesXalianCanMove, xalian.state.stamina)
+            let movableSpaces = duelCalculator.calculateValidUnoccupiedPaths(G, ctx, ind, xalianStatus.remainingSpacesXalianCanMove, xalian.state.stamina, !!(xalian.traits && xalian.traits.canFly))
             if (!movableSpaces || movableSpaces.length == 0) {
                 canMove = false;
             }
