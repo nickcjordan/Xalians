@@ -55,7 +55,11 @@ export const callGetXalianBatch = (ids) => {
     qString = qString + id + ",";
   });
   qString = qString.slice(0, qString.length - 1);
-  return callGet("https://api.xalians.com/prod/db/xalian?xalianId=" + encodeURIComponent(qString));
+  // the API returns a bare xalian object for a single id and an array for 2+;
+  // normalize so callers always get an array of bare xalians
+  return callGet("https://api.xalians.com/prod/db/xalian?xalianId=" + encodeURIComponent(qString)).then((result) =>
+    Array.isArray(result) ? result : [result]
+  );
 };
 
 export const callCreateXalian = (xalian) => {
