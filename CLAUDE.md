@@ -41,8 +41,10 @@ Lives in `my-app/src/components/games/duel/` (UI), `my-app/src/gameplay/duel/` (
 
 - **Board:** 8×8; each player's back row is both setup zone and scoring zone. Two flags, randomly placed on the row in front of each defender's home row. Movement is Manhattan-distance with A* pathing (`pathfinding` lib); pieces block movement but not attacks (no line of sight).
 - **Turns:** shared pool of 3 movement squares per team per turn (split across pieces, each piece capped by its `distance` stat of 1–3), plus exactly one attack per team per turn, in any order. Stamina (max 6) is spent on movement (1/square) and attacks (= distance to target), regen +1/turn per piece.
-- **Combat:** HP-based (10 HP), not Pokémon-Duel spin. Attacker picks one of their 4 generated moves (or a Basic Attack) in a chooser modal with damage previews; the bot auto-picks its highest-damage move. Damage = (attack/defense ratio) × (move rating/10) × STAB (1.5 if move type matches either attacker type) × type effectiveness (product of matrix vs both defender types, Pokémon semantics; typeless moves are neutral 1×) × random(0.85–1) × 2. Attack range 1–3 from species `attackRange` trait. Weather/crit/status multipliers are still stubs returning 1; evasion and `canFly` are carried but unused.
+- **Combat:** HP-based (15 HP), not Pokémon-Duel spin. Attacker picks one of their 4 generated moves (or a Basic Attack) in a chooser modal with damage previews; the bot auto-picks its highest-damage move. Damage = (attack/defense ratio) × (move rating/10) × STAB (1.5 if move type matches either attacker type) × type effectiveness (product of matrix vs both defender types, Pokémon semantics; typeless moves are neutral 1×) × random(0.85–1) × 2. Attack range 1–3 from species `attackRange` trait. Evasion is a flat damage reduction (2%/point, capped 25%). Weather/crit/status multipliers are still stubs returning 1.
+- **Traits:** `canFly` pieces path *over* occupied squares (they still cannot land on one); 6 of 29 species fly. Carrying a flag caps movement at 2 squares/turn.
 - **Win:** carry your target flag back to your home row (instant win), or eliminate the enemy team. Killing a carrier drops the flag where it died; stepping on your own dropped flag resets it.
+- **Rules are authoritative:** `movePiece`/`doAttack` re-derive legality from `G` (ownership, phase, budgets, server-recomputed paths) and return `INVALID_MOVE` otherwise, so the UI cannot corrupt state. The board renders a historical snapshot while animations replay, but input is always derived from live `G`.
 - **Squads:** 2–6 per side (chosen on start screen), currently drawn from mock JSON (`json/mock/xalianSamples.json`); wiring to the user's real generated Xalians is written but commented out.
 - **Bot:** boardgame.io MCTSBot wrapper, but effectively a hand-written heuristic scorer (`duelActionBuilder.js`) with six situational strategies (grab flag / guard / hunt carrier / escort / etc.) — it returns only its single top-scored action to MCTS.
 - **State:** playable end-to-end locally with animations, damage modals, drag-and-drop. Missing: server multiplayer, real-Xalian squads, secondary types (that code path would crash), status effects, per-move attack selection, terrain. Known bug: `duelUtil.js` `xalianHasValidActionAvailable` treats cell index 0 as falsy. `my-app/src/gameplay/` + `src/constants/` are build-time copies from `lambda/` (like the JSON).
@@ -71,7 +73,7 @@ npm run publish    # terraform apply -auto-approve
 terraform plan     # preview; main.tf zips ./lambda into generate_xalian_lambda.zip and uploads it
 ```
 
-There is no test suite for the `lambda/` engine — verification is done by running `start.js` and inspecting output.
+There is no test suite for the `lambda/` engine — verification is done by running `start.js` and inspecting output. The frontend has tests for the duel rules (`my-app/src/gameplay/duel/__tests__/duelRules.test.js`, run via `yarn test`); CI runs them on every PR. Add to them when changing combat or movement rules.
 
 ## Backlog & workflow
 
