@@ -320,10 +320,12 @@
       "supernatural",
       "banshee",
       "wraith",
-      "ghost",
       "haunted",
       "genie",
-      "ghost"
+      "spectral",
+      "poltergeist",
+      "seance",
+      "dreadscape"
     ],
     "effectiveness": {
       "Fire": 1.5,
@@ -345,9 +347,7 @@
       "ghost",
       "phantom",
       "supernatural",
-      "wraith",
-      "ghost",
-      "ghost"
+      "wraith"
     ]
   },
   {
@@ -428,7 +428,17 @@
     "name": "Ice",
     "moveTypes": [
       "ice",
-      "frost"
+      "frost",
+      "cryo",
+      "glacial",
+      "arctic",
+      "subzero",
+      "hail",
+      "blizzard",
+      "permafrost",
+      "frostbite",
+      "snowdrift",
+      "freezing"
     ],
     "effectiveness": {
       "Fire": 0,
@@ -447,14 +457,28 @@
       "Sand": 0.5
     },
     "elements": [
-      "ice",
-      "frost"
+      "frost",
+      "cryo",
+      "glacial",
+      "arctic",
+      "blizzard"
     ]
   },
   {
     "name": "Metal",
     "moveTypes": [
-      "metal"
+      "metal",
+      "steel",
+      "iron",
+      "chrome",
+      "alloy",
+      "magnetic",
+      "titanium",
+      "forged",
+      "plated",
+      "gilded",
+      "mechanized",
+      "razorwire"
     ],
     "effectiveness": {
       "Fire": 0.5,
@@ -473,13 +497,28 @@
       "Sand": 1.5
     },
     "elements": [
-      "metal"
+      "steel",
+      "chrome",
+      "alloy",
+      "magnetic",
+      "forged"
     ]
   },
   {
     "name": "Sand",
     "moveTypes": [
-      "sand"
+      "sand",
+      "dune",
+      "dust",
+      "sirocco",
+      "quicksand",
+      "sandstorm",
+      "desert",
+      "eroding",
+      "silica",
+      "mirage",
+      "scouring",
+      "burying"
     ],
     "effectiveness": {
       "Fire": 1.5,
@@ -498,7 +537,11 @@
       "Sand": 1
     },
     "elements": [
-      "sand"
+      "dune",
+      "sirocco",
+      "silica",
+      "mirage",
+      "sandstorm"
     ]
   }
 ]

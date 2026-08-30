@@ -265,9 +265,25 @@ export function buildBotObjectives() {
             weight: 100,
         },
         'flag-guarded': {
+            // true when the bot has at least one active piece within Manhattan distance 2 of its own (unstolen) flag
             checker: (G, ctx) => {
               let flag = duelUtil.getPlayerFlagState(G);
-              return flag.holder ? true : false;
+              if (flag.holder || flag.index == null) {
+                return false;
+              }
+              let boardSize = duelConstants.BOARD_COLUMN_SIZE;
+              let flagRow = Math.floor(flag.index / boardSize);
+              let flagCol = flag.index % boardSize;
+              return G.playerStates[1].activeXalianIds.some((id) => {
+                let index = duelUtil.getIndexOfXalian(id, G);
+                if (index == null) {
+                  return false;
+                }
+                let row = Math.floor(index / boardSize);
+                let col = index % boardSize;
+                let distance = Math.abs(row - flagRow) + Math.abs(col - flagCol);
+                return distance <= 2;
+              });
             },
             weight: 50,
         },

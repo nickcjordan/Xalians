@@ -21,7 +21,7 @@ class SignInModal extends React.Component {
     }
 
     componentDidMount() {
-        Hub.listen('auth', (data) => {
+        this.authListener = (data) => {
             if (data.payload.event === 'signIn_failure') {
                 if (data.payload.data.code === 'UserNotConfirmedException') {
                     this.setState({errorMessage: null}, () => {
@@ -34,7 +34,14 @@ class SignInModal extends React.Component {
                 }
                 this.setState({isThinking: false})
             }
-        })
+        };
+        Hub.listen('auth', this.authListener);
+    }
+
+    componentWillUnmount() {
+        if (this.authListener) {
+            Hub.remove('auth', this.authListener);
+        }
     }
 
     handleSubmit = event => {

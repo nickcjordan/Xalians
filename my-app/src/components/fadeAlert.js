@@ -11,7 +11,7 @@ class FadeAlert extends React.Component {
   };
 
   componentDidMount() {
-    Hub.listen("alert", (data) => {
+    this.alertListener = (data) => {
       const type = data.payload.event;
       const req = data.payload.data;
       if (type == "new-alert") {
@@ -33,7 +33,14 @@ class FadeAlert extends React.Component {
       } else if (type == "show-alert") {
         this.setState({ isShowing: true });
       }
-    });
+    };
+    Hub.listen("alert", this.alertListener);
+  }
+
+  componentWillUnmount() {
+    if (this.alertListener) {
+      Hub.remove("alert", this.alertListener);
+    }
   }
 
   render() {
