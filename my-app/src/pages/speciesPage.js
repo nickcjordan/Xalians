@@ -141,7 +141,7 @@ class SpeciesPage extends React.Component {
                     <Row className="">
 
                         <Col className="template-col-wrapper ">
-                            <h1 className="page-title-text">Discovered Species</h1>
+                            <h1 className="x-page-title">Discovered Species</h1>
 
                             {species &&
                                 <Tabs defaultActiveKey="grid" id="tabbs" className="species-tab-group x-tabs">

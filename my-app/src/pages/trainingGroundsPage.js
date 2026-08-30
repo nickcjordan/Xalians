@@ -43,7 +43,7 @@ class TrainingGroundsPage extends React.Component {
 
                     <Row className="">
                         <Col style={{ textAlign: 'center' }} >
-                            <h1 className="page-title-text">Training Grounds</h1>
+                            <h1 className="x-page-title">Training Grounds</h1>
                             <p className="training-grounds-subtitle">Warm-up games while you wait for a duel.</p>
 
                             {/* was a single unlabelled bootstrap-blue "switch" button that

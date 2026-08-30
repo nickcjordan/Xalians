@@ -1,5 +1,6 @@
 import React, { PureComponent } from "react";
 import { LabelList, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { brand, chart } from "../constants/designTokens";
 
 const d = [];
 
@@ -75,13 +76,14 @@ class CharacterGeneratedStatChart extends React.Component {
           <ResponsiveContainer className="chart-container centered-view">
             <BarChart data={this.setupData(this.props.xalian)} layout="vertical" maxBarSize={35}>
               <XAxis type="number" hide />
-              <YAxis type="category" dataKey="statLabel" stroke="#80ffb1" />
+              {/* was #80ffb1, one digit off the brand green - a typo, not a second colour */}
+              <YAxis type="category" dataKey="statLabel" stroke={brand.green} />
               {/* <Tooltip cursor={false}/> */}
 
-              <Bar isAnimationActive={false} animationBegin={50} dataKey="rangeNumber" fill="#ecff8234">
+              <Bar isAnimationActive={false} animationBegin={50} dataKey="rangeNumber" fill={chart.rangeTrack}>
                 <LabelList dataKey="rangeName" position="center" fill="white" className="chart-bar-label" id="stat-bar-label" />
               </Bar>
-              <Bar isAnimationActive={false} animationBegin={50} dataKey="points" fill="#80dbff34">
+              <Bar isAnimationActive={false} animationBegin={50} dataKey="points" fill={chart.pointsFill}>
                 <LabelList dataKey="percentageText" position="center" fill="white" className="chart-bar-label" id="stat-bar-label" />
               </Bar>
               {/* <Bar dataKey="percentage" fill="#80dbff34" >

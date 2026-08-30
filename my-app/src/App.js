@@ -47,6 +47,7 @@ const PlanetPage = lazy(() => import('./pages/planetPage'));
 const SpeciesPage = lazy(() => import('./pages/speciesPage'));
 const SpeciesDetailPage = lazy(() => import('./pages/speciesDetailPage'));
 const GlossaryPage = lazy(() => import('./pages/glossaryPage'));
+const StyleGuidePage = lazy(() => import('./pages/styleGuidePage'));
 const GeneratorPage = lazy(() => import('./pages/generatorPage'));
 const UserAccountPage = lazy(() => import('./pages/userAccountPage'));
 const UserDetailsPage = lazy(() => import('./pages/userDetailsPage'));
@@ -81,6 +82,9 @@ class App extends React.Component {
                 />
               <Route exact path="/planets"><PlanetPage /></Route>
               <Route exact path="/glossary"><GlossaryPage /></Route>
+              {/* the design system reference - unlinked from the navbar, it is a
+                  developer tool rather than a page for players */}
+              <Route exact path="/styleguide"><StyleGuidePage /></Route>
               <Route exact path="/duel"><DuelStartPage/></Route>
               <Route exact path="/account"><UserAccountPage /></Route>
               <Route exact path="/train"><TrainingGroundsPage /></Route>

@@ -6,6 +6,7 @@ import Col from 'react-bootstrap/Col';
 import Stack from 'react-bootstrap/Stack';
 import XalianTypeSymbolBadge from './xalianTypeSymbolBadge';
 import * as duelCalculator from '../../../../gameplay/duel/duelCalculator';
+import { surface } from '../../../../constants/designTokens';
 
 class AttackMoveChooserModal extends React.Component {
 
@@ -98,7 +99,7 @@ class AttackMoveChooserModal extends React.Component {
                         {this.props.attacker.species.name} attacks {this.props.defender.species.name}
                     </Modal.Title>
                 </Modal.Header>
-                <Modal.Body style={{ backgroundColor: '#1a1a1a' }}>
+                <Modal.Body style={{ backgroundColor: surface.surface2 }}>
                     <Stack gap={1}>
                         {moves.map((move, index) => this.renderMoveRow(move, index))}
                         {this.renderBasicAttackRow()}

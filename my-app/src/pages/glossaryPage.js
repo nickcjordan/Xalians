@@ -61,12 +61,12 @@ class GlossaryPage extends React.Component {
                 <XalianNavbar></XalianNavbar>
 
                 <Container>
-                    <h1 className="page-title-text template-col-wrapper" style={{ textAlign: 'center' }}>Glossary</h1>
+                    <h1 className="x-page-title">Glossary</h1>
 
                     <Row className="justify-content-center">
                         <Col md={7} lg={6}>
                             <InputGroup className="glossary-search">
-                                <InputGroup.Text className="glossary-search-icon">
+                                <InputGroup.Text className="x-input-addon">
                                     <i className="bi bi-search" />
                                 </InputGroup.Text>
                                 <Form.Control
@@ -75,7 +75,7 @@ class GlossaryPage extends React.Component {
                                     aria-label="Search glossary terms"
                                     value={this.state.query}
                                     onChange={(e) => this.setState({ query: e.target.value })}
-                                    className="glossary-search-input"
+                                    className="x-input"
                                 />
                             </InputGroup>
                             <p className="glossary-result-count">
@@ -90,7 +90,7 @@ class GlossaryPage extends React.Component {
                         <Col className="">
                             {entries.length > 0
                                 ? <dl className="glossary-list">{this.buildDictionary(entries)}</dl>
-                                : <p className="glossary-empty">No terms match “{this.state.query}”.</p>
+                                : <p className="x-empty-state">No terms match “{this.state.query}”.</p>
                             }
                         </Col>
                     </Row>

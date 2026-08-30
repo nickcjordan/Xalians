@@ -23,24 +23,29 @@
   font-family: 'ProcrastinatingPixie';
 }
 
+/* Buttons.
+   Two variants: xalianGreen is the primary action, xalianGray the secondary.
+   Both are driven by tokens. The !important flags are load-bearing - bootstrap's
+   own .btn rules are more specific than these class selectors. */
+
 .btn-xalianGreen {
-  color: black !important;
-  background-color: #80ffb0 !important;
-  border-color: #6bd493 !important;
+  color: var(--x-text-inverse) !important;
+  background-color: var(--x-green) !important;
+  border-color: var(--x-green-border) !important;
   font-weight: bold !important;
-  /* text-shadow: 1px 1px 2px rgb(255, 255, 255) !important; */
+  transition: background-color var(--x-transition-fast), border-color var(--x-transition-fast) !important;
 }
 
 .btn-xalianGreen:hover {
-  background-color: #bdffd5 !important;
-  border-color: #ffffff !important;
+  background-color: var(--x-green-hover) !important;
+  border-color: var(--x-text) !important;
 }
 
 .btn-check:focus+.btn-xalianGreen,
 .btn-xalianGreen:focus {
-  background-color: #80ffb0 !important;
-  border-color: #6bd493 !important;
-  box-shadow: 0 0 0 0.25rem #80ffb13d !important;
+  background-color: var(--x-green) !important;
+  border-color: var(--x-green-border) !important;
+  box-shadow: 0 0 0 0.25rem var(--x-green-a30) !important;
 }
 
 .btn-check:checked+.btn-xalianGreen,
@@ -48,8 +53,8 @@
 .btn-xalianGreen:active,
 .btn-xalianGreen.active,
 .show>.btn-xalianGreen.dropdown-toggle {
-  background-color: #57aa77 !important;
-  border-color: #74a587 !important;
+  background-color: var(--x-green-active) !important;
+  border-color: var(--x-green-border) !important;
 }
 
 .btn-check:checked+.btn-xalianGreen:focus,
@@ -57,41 +62,53 @@
 .btn-xalianGreen:active:focus,
 .btn-xalianGreen.active:focus,
 .show>.btn-xalianGreen.dropdown-toggle:focus {
-  box-shadow: 0 0 0 0.25rem #80ffb13d !important;
+  box-shadow: 0 0 0 0.25rem var(--x-green-a30) !important;
 }
 
+/* disabled kept black text over a near-transparent green, which disappeared
+   against the dark page. Disabled controls still have to be legible. */
 .btn-xalianGreen:disabled,
 .btn-xalianGreen.disabled {
-  background-color: #62a17a3d !important;
-  border-color: #35473c3d !important;
+  color: var(--x-text-dim) !important;
+  background-color: var(--x-surface-3) !important;
+  border-color: var(--x-border-strong) !important;
+  opacity: 1 !important;
 }
 
 .btn-xalianGray {
-  color: rgb(255, 255, 255) !important;
-  background-color: #525252 !important;
-  border-color: #3a3a3a !important;
-  text-shadow: 1px 1px 2px rgb(0, 0, 0) !important;
+  color: var(--x-text) !important;
+  background-color: var(--x-surface-3) !important;
+  border-color: var(--x-border-strong) !important;
+  text-shadow: 1px 1px 2px var(--x-text-inverse) !important;
+  transition: background-color var(--x-transition-fast), border-color var(--x-transition-fast) !important;
 }
 
+/* the gray button used to go pale green on hover while keeping white text,
+   which landed around 1.3:1 and was effectively unreadable mid-hover. It now
+   lifts a surface step and picks up a green border instead. */
 .btn-xalianGray:hover {
-  background-color: #bdffd5 !important;
-  border-color: #ffffff !important;
+  background-color: var(--x-border-strong) !important;
+  border-color: var(--x-green) !important;
 }
 
 .btn-check:focus+.btn-xalianGray,
 .btn-xalianGray:focus {
-  background-color: #80ffb0 !important;
-  border-color: #6bd493 !important;
-  box-shadow: 0 0 0 0.25rem #80ffb13d !important;
+  background-color: var(--x-surface-3) !important;
+  border-color: var(--x-green-border) !important;
+  box-shadow: 0 0 0 0.25rem var(--x-green-a30) !important;
 }
 
+/* checked/active is a real selected state for the toggle groups, so it keeps
+   the green fill - with dark text, which the plain gray variant does not use */
 .btn-check:checked+.btn-xalianGray,
 .btn-check:active+.btn-xalianGray,
 .btn-xalianGray:active,
 .btn-xalianGray.active,
 .show>.btn-xalianGray.dropdown-toggle {
-  background-color: #57aa77 !important;
-  border-color: #74a587 !important;
+  color: var(--x-text-inverse) !important;
+  background-color: var(--x-green-active) !important;
+  border-color: var(--x-green-border) !important;
+  text-shadow: none !important;
 }
 
 .btn-check:checked+.btn-xalianGray:focus,
@@ -99,13 +116,22 @@
 .btn-xalianGray:active:focus,
 .btn-xalianGray.active:focus,
 .show>.btn-xalianGray.dropdown-toggle:focus {
-  box-shadow: 0 0 0 0.25rem #80ffb13d !important;
+  box-shadow: 0 0 0 0.25rem var(--x-green-a30) !important;
 }
 
 .btn-xalianGray:disabled,
 .btn-xalianGray.disabled {
-  background-color: #62a17a3d !important;
-  border-color: #35473c3d !important;
+  color: var(--x-text-dim) !important;
+  background-color: var(--x-surface-3) !important;
+  border-color: var(--x-border-strong) !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+/* keyboard users get a visible ring on every button variant */
+.btn:focus-visible {
+  outline: 2px solid var(--x-green) !important;
+  outline-offset: 2px !important;
 }
 
 hr.xalian-hr {
@@ -158,22 +184,16 @@ a:hover {
   text-decoration: none;
 }
 
+/* Headings default to the brand green site-wide. Anything that needs a white
+   heading (page titles, for instance) opts out explicitly. */
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  font-family: "Abel", sans-serif;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  color: #80ffb0;
+  font-family: var(--x-font-body);
+  color: var(--x-green);
 }
 
 
@@ -2357,11 +2377,6 @@ article {
 }
 
 
-.page-title-text {
-  padding-top: 40px;
-  padding-bottom: 20px;
-}
-
 .template-col-wrapper h1 {
   text-align: center;
   color: white;
@@ -2778,30 +2793,6 @@ article {
   margin-top: var(--x-space-3);
 }
 
-/* bootstrap's .input-group-text ships a light background, which reads as a
-   white block against the starfield - hence the overrides */
-.glossary-search-icon.input-group-text {
-  background-color: var(--x-surface-2) !important;
-  border: 1px solid var(--x-border) !important;
-  border-right: none !important;
-  color: var(--x-green) !important;
-}
-
-.glossary-search-input {
-  background-color: var(--x-surface-2) !important;
-  border: 1px solid var(--x-border) !important;
-  color: var(--x-text) !important;
-}
-
-.glossary-search-input::placeholder {
-  color: var(--x-text-dim);
-}
-
-.glossary-search-input:focus {
-  border-color: var(--x-green-a60) !important;
-  box-shadow: 0 0 0 0.2rem var(--x-green-a15) !important;
-}
-
 .glossary-result-count {
   color: var(--x-text-dim);
   font-size: var(--x-text-sm);
@@ -2809,11 +2800,6 @@ article {
   margin: var(--x-space-2) 0 0 0;
 }
 
-.glossary-empty {
-  color: var(--x-text-dim);
-  text-align: center;
-  padding: var(--x-space-7) 0;
-}
 
 /* HAPPENS WHEN SCREEN GOES TO SMALL OR XSMALL I THINK */
 @media (max-width: 575px) {
@@ -3216,19 +3202,6 @@ input, textarea {
   width: 100%;
 }
 
-/* the label is chrome and the value is the information, so the value gets the
-   emphasis. This was inverted - values were `gray` (~4.0:1 on the page
-   background, under the 4.5:1 minimum) against pure-white labels. */
-.species-detail-chart-header {
-  color: var(--x-text-dim);
-  text-align: right;
-}
-
-.species-detail-chart-text {
-  color: var(--x-text);
-  text-align: left;
-}
-
 .species-detail-chart>.row {
   padding-top: 5px;
   padding-bottom: 5px;
@@ -3609,4 +3582,177 @@ input, textarea {
   gap: var(--x-space-3);
   flex-wrap: wrap;
   margin-bottom: var(--x-space-5);
+}
+
+/*--------------------------------------------------------------
+# Style Guide
+# The living design system reference at /styleguide.
+--------------------------------------------------------------*/
+
+.styleguide-container {
+  padding-bottom: var(--x-space-8);
+}
+
+.styleguide-section {
+  margin-bottom: var(--x-space-8);
+}
+
+.styleguide-heading {
+  color: var(--x-green);
+  border-bottom: 1px solid var(--x-border);
+  padding-bottom: var(--x-space-2);
+  margin-bottom: var(--x-space-4);
+}
+
+.styleguide-note {
+  color: var(--x-text-dim);
+  font-size: var(--x-text-sm);
+  max-width: var(--x-measure);
+  margin-bottom: var(--x-space-4);
+}
+
+.styleguide-swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--x-space-4);
+}
+
+.styleguide-swatch-chip {
+  height: 56px;
+  border-radius: var(--x-radius-md);
+  border: 1px solid var(--x-border);
+  margin-bottom: var(--x-space-2);
+}
+
+.styleguide-swatch-name {
+  display: block;
+  color: var(--x-text);
+  font-size: var(--x-text-xs);
+  word-break: break-all;
+}
+
+.styleguide-swatch-value {
+  display: block;
+  color: var(--x-text-dim);
+  font-size: var(--x-text-xs);
+}
+
+.styleguide-space-row {
+  display: flex;
+  align-items: center;
+  gap: var(--x-space-4);
+  margin-bottom: var(--x-space-2);
+}
+
+.styleguide-space-name {
+  color: var(--x-text-dim);
+  font-size: var(--x-text-xs);
+  min-width: 110px;
+}
+
+.styleguide-space-bar {
+  height: 16px;
+  background-color: var(--x-green);
+  border-radius: var(--x-radius-sm);
+}
+
+.styleguide-radius-grid {
+  display: flex;
+  gap: var(--x-space-5);
+  flex-wrap: wrap;
+}
+
+.styleguide-radius-box {
+  width: 80px;
+  height: 80px;
+  background-color: var(--x-surface-3);
+  border: 1px solid var(--x-green-a30);
+  margin-bottom: var(--x-space-2);
+}
+
+.styleguide-panel-col {
+  margin-bottom: var(--x-space-4);
+}
+
+.styleguide-tint-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: var(--x-space-3);
+}
+
+.styleguide-tint {
+  text-align: center;
+  text-transform: capitalize;
+  padding: var(--x-space-4) var(--x-space-2);
+  border-radius: var(--x-radius-md);
+}
+
+.styleguide-button-row {
+  display: flex;
+  gap: var(--x-space-3);
+  flex-wrap: wrap;
+}
+
+.styleguide-measure-demo {
+  color: var(--x-text-muted);
+  border-left: 3px solid var(--x-green-a60);
+  padding-left: var(--x-space-4);
+}
+
+/*--------------------------------------------------------------
+# Generator loading state
+--------------------------------------------------------------*/
+
+.generator-page-gradient-overlay {
+  z-index: -1;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0) 25%, rgba(20, 23, 23, 1) 100%);
+}
+
+/* sits above the smoke canvas (z-index 999) so the message is readable while
+   the generator is working */
+.generator-loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  text-align: center;
+}
+
+.generator-loading-text {
+  color: var(--x-green);
+  font-size: var(--x-text-xl);
+  text-shadow: 0 0 12px rgba(0, 0, 0, 0.9);
+  animation: generator-loading-pulse 1.6s ease-in-out infinite;
+}
+
+.generator-loading-sub {
+  color: var(--x-text);
+  font-size: var(--x-text-sm);
+  margin-top: var(--x-space-2);
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.9);
+}
+
+@keyframes generator-loading-pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+/* respect a reduced-motion preference - the pulse is decorative */
+@media (prefers-reduced-motion: reduce) {
+  .generator-loading-text {
+    animation: none;
+    opacity: 1;
+  }
 }

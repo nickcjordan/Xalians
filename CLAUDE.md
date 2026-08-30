@@ -134,6 +134,17 @@ Game data JSON is **duplicated by build step, not imported across packages**: `m
 
 `utils/valueTranslator.js` and `constants/constants.js` (element → theme color map) drive the element-themed styling used throughout charts and SVG rendering.
 
+### Design system
+
+**Read `docs/DESIGN_SYSTEM.md` before changing anything visual.** The short version:
+
+- The palette lives **twice on purpose**: `public/assets/css/tokens.css` (`--x-*` custom properties, the CSS source of truth) and `src/constants/designTokens.js` (the same values for recharts `fill` props, GSAP tweens and SVG attributes, which cannot read a CSS variable). `src/__tests__/designTokens.test.js` fails if the two disagree — **never edit one side alone**.
+- Element/type colours stay in `constants/colorConstants.js` and are re-exported through `designTokens.js` as `themeColors`; they are mirrored as `--x-type-*` and enforced identical by the same test.
+- Reusable classes are prefixed `.x-` and defined in `tokens.css`: `.x-panel` (the tinted inset-glow card, the site's core surface), `.x-page-title`, `.x-detail-label`/`.x-detail-value`, `.x-measure`, `.x-tabs`, `.x-input`, `.x-empty-state`.
+- **No new raw hex** in CSS or JSX. Add a token to both sides plus the test's `PAIRINGS` list instead.
+- `/styleguide` is a living reference page rendering every token and primitive. It is deliberately not linked from the navbar — it is a developer tool.
+- `style.css` is a 3504-line BootstrapMade template. Many class names look unused but that signal has false positives (`btn-xalianGreen` is composed by bootstrap from `variant='xalianGreen'`), so do not bulk-delete it.
+
 ## Conventions and gotchas
 
 - Root-level `sandbox.js`, `jsonManipulator.js`, and the `my-app/src/pages/sandbox*.js` / `testPage.js` files are throwaway experiment scratchpads, not part of the app.
