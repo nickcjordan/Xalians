@@ -57,7 +57,7 @@ class XalianRecord extends React.Component {
 
 		return (
 			<React.Fragment>
-				<Container className={`g-panel g-panel--tagged g-el-${element} specimen-panel`}>
+				<div className={`g-panel g-panel--tagged g-el-${element} specimen-panel`}>
 
 					<header className="specimen-head">
 						<div className="specimen-ident">
@@ -107,7 +107,7 @@ class XalianRecord extends React.Component {
 						<div className="specimen-readouts">{this.props.children}</div>
 					}
 
-				</Container>
+				</div>
 
 				{this.props.json &&
 					<Modal

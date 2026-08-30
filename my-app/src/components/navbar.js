@@ -90,8 +90,13 @@ class XalianNavbar extends React.Component {
 			<React.Fragment>
 				{/* <ScrollTrigger start="-200px center" end="200px center" scrub={0.5} markers> */}
 					{/* <Tween from={{ opacity: 0 }} duration={2}> */}
-						<Navbar id="navvy" collapseOnSelect expand="lg" variant="dark" sticky="top" className="xalian-navbar">
-							<Container>
+						<Navbar id="navvy" collapseOnSelect expand="xl" variant="dark" sticky="top" className="xalian-navbar">
+							{/* the bar carries a brand, six links, a CTA and two auth keys, which
+							    together need more than bootstrap's fixed container width - they were
+							    being clipped off the right edge between 1200 and 1400px. Fluid, with
+							    the same gutter the page shell uses, so the bar lines up with the
+							    content beneath it. */}
+							<Container fluid className="navbar-shell">
 								<Navbar.Brand href="/">
 									<img src="/assets/img/logo/xalians_logo_small.png" height="30px" />
 								</Navbar.Brand>

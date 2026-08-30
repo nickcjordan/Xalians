@@ -130,10 +130,7 @@ class SpeciesPage extends React.Component {
                 <SplashGalaxyBackground direction={this.state.backgroundAnimationStarDirection} speed={this.state.backgroundAnimationStarSpeed}>
             {/* <Container fluid className="content-background-container"> */}
 
-                <Container className="">
-                    <Row className="">
-
-                        <Col className="template-col-wrapper ">
+                <div className="g-shell page-shell">
                             <header className="page-header">
                                 <p className="g-kicker">Xalian Registry</p>
                                 <h1 className="g-title">Discovered Species</h1>
@@ -162,11 +159,7 @@ class SpeciesPage extends React.Component {
                                 </Tabs>
                             }
 
-                        </Col>
-
-                    </Row>
-
-                </Container>
+                </div>
             {/* </Container> */}
             </SplashGalaxyBackground>
         </React.Fragment>

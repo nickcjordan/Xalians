@@ -70,7 +70,7 @@ class PlanetTable extends React.Component {
       <React.Fragment>
         {/* the corner flash keys the card to its element; the badge below
             already names it, so the panel does not repeat it with data-tag */}
-        <Container className={`g-panel g-panel--tagged g-el-${type} planet-panel`}>
+        <div className={`g-panel g-panel--tagged g-el-${type} planet-panel`}>
           <div className="planet-record">
 
             {/* the heading spans the full width so the name and the story key
@@ -107,7 +107,7 @@ class PlanetTable extends React.Component {
             </dl>
 
           </div>
-        </Container>
+        </div>
 
         {this.props.planet.history &&
           <TextReaderModal

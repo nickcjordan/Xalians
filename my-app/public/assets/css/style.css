@@ -683,7 +683,9 @@ body { width: 100%; max-width: 100%; height: auto;
   /* max-height: 100vh; */
   /* max-width: 100vw;   */
   min-height: 100vh;
-  min-width: 100vw;
+  /* 100vw counts the scrollbar, so this wrapper was 10px wider than the scroll
+     area and pushed page content 5px off the rail the navbar sits on */
+  min-width: 100%;
   /* display: flex; */
   /* flex-direction: row; */
   align-items: center;
@@ -1440,6 +1442,7 @@ section {
   max-width: 1100px;
 }
 
+.team.light .team-container > h3,
 .team-container > h3 {
   font-family: var(--g-font-stencil);
   font-size: var(--g-size-h3);
@@ -1452,11 +1455,13 @@ section {
 
 .team-row {
   text-align: center;
+  row-gap: var(--g-4);
+  margin-bottom: 0;
 }
 
 .team .member {
   width: 100%;
-  margin-bottom: var(--g-4);
+  margin-bottom: 0;
   border-radius: var(--g-radius-panel);
   background: var(--g-hull);
   border: var(--g-hairline) solid var(--g-seam);
@@ -2058,7 +2063,7 @@ section {
   background-repeat: no-repeat, repeat;
   background-attachment: fixed, fixed;
   min-height: 100vh;
-  min-width: 100vw;
+  min-width: 100%;
   /* flex-direction: column; */
   align-items: center;
   justify-content: center;
@@ -2070,7 +2075,7 @@ section {
 .generator-page-content-background-container {
   background-color: rgb(24, 24, 24, 0.5);
   min-height: 100vh;
-  min-width: 99.5vw;
+  min-width: 100%;
   /* flex-direction: column; */
   align-items: center;
   justify-content: center;
@@ -2219,8 +2224,7 @@ section {
 }
 
 .member-info {
-  max-width: 50vw;
-  width: 250px;
+  width: 100%;
 }
 
 
@@ -2783,8 +2787,21 @@ section {
   padding-bottom: var(--g-9);
 }
 
+@media (max-width: 575px) {
+  .page-shell {
+    padding-top: var(--g-6);
+    padding-bottom: var(--g-8);
+  }
+}
+
 .page-header {
   margin-bottom: var(--g-7);
+}
+
+@media (max-width: 575px) {
+  .page-header {
+    margin-bottom: var(--g-5);
+  }
 }
 
 .page-header .g-title {
@@ -3540,7 +3557,8 @@ input, textarea {
   box-shadow: var(--g-relief), var(--g-drop);
   align-items: center;
   justify-content: center;
-  margin: 0 auto var(--g-8) auto !important;
+  /* the board sits on the page rail like every other block */
+  margin: 0 0 var(--g-8) 0 !important;
   padding: var(--g-4) !important;
   width: fit-content !important;
   max-width: 100%;
@@ -3600,13 +3618,14 @@ input, textarea {
 .training-grounds-subtitle {
   font-family: var(--g-font-ui);
   color: var(--g-ink-mid);
-  text-align: center;
-  margin: var(--g-2) 0 var(--g-6) 0;
+  /* the header, its note and the game selector all sit on the page's one rail */
+  text-align: left;
+  margin: var(--g-2) 0 0 0;
 }
 
 .training-game-switcher {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   margin-bottom: var(--g-6);
 }
 
@@ -3922,16 +3941,20 @@ input, textarea {
   padding-bottom: var(--g-5);
 }
 
-.template-col-wrapper > .g-title {
-  margin-bottom: var(--g-5);
-  text-align: center;
-}
+
 
 /* Planetary survey record ------------------------------------------------- */
 
 .planet-panel {
   margin-bottom: var(--g-6);
-  padding: var(--g-6);
+  /* the extra top padding clears the painted corner flash, which is 40px deep */
+  padding: var(--g-7) var(--g-6) var(--g-6);
+}
+
+@media (max-width: 575px) {
+  .planet-panel {
+    padding: var(--g-7) var(--g-4) var(--g-5);
+  }
 }
 
 /* Heading across the top, then plate and specs beneath it. The earlier
@@ -4047,6 +4070,21 @@ input, textarea {
 
 .planet-story-btn {
   margin-top: 0;
+  white-space: nowrap;
+}
+
+@media (max-width: 575px) {
+  /* the badge and the key stop fitting on one line; give them a row each so
+     neither has to wrap mid-word */
+  .planet-record-actions {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: var(--g-3);
+  }
+
+  .planet-story-btn {
+    white-space: normal;
+  }
 }
 
 /* below ~1100px the four-column spec grid squeezes the values, so fall back to
@@ -4071,9 +4109,13 @@ input, textarea {
     max-width: 320px;
   }
 
+  /* the porthole tucks under the plate rather than hanging off the card: at
+     this width the panel edge is only a few pixels further out */
   .planet-globe-mount {
-    left: calc(-1 * var(--g-3));
-    width: 34%;
+    left: calc(-1 * var(--g-2));
+    bottom: calc(-1 * var(--g-3));
+    width: 30%;
+    max-width: 92px;
   }
 }
 
@@ -4132,6 +4174,12 @@ input, textarea {
   padding: var(--g-7) var(--g-6) var(--g-6);
 }
 
+@media (max-width: 575px) {
+  .specimen-panel {
+    padding: var(--g-7) var(--g-4) var(--g-5);
+  }
+}
+
 .specimen-head {
   display: flex;
   flex-wrap: wrap;
@@ -4148,6 +4196,7 @@ input, textarea {
 
 .specimen-head-meta {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--g-3);
 }
@@ -4229,10 +4278,9 @@ input, textarea {
 /* Readouts hanging below the record proper: charts and move sets. */
 .specimen-readouts {
   display: grid;
-  /* capped rather than 1fr: a single readout stretched to 1200px turns a
-     meter strip into a rule and a move list into a line of confetti */
-  grid-template-columns: repeat(auto-fit, minmax(340px, 560px));
-  justify-content: start;
+  /* readouts fill the card, so their edges line up with the record above
+     them; two fit side by side on a wide card and one fills the row */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
   gap: var(--g-5);
   margin-top: var(--g-6);
   padding-top: var(--g-6);
@@ -4366,7 +4414,7 @@ input, textarea {
 .generator-controls {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   gap: var(--g-3);
   margin-bottom: var(--g-6);
 }
@@ -4453,8 +4501,17 @@ input, textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--g-1);
+  gap: var(--g-2);
   margin-top: var(--g-1);
+}
+
+/* svgUtil sets margin:auto inline on the symbol, which in a flex row throws it
+   and the designation to opposite ends of the plate */
+.species-tile-meta > svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 0 !important;
 }
 
 .species-tile-id {
@@ -4474,10 +4531,9 @@ input, textarea {
   text-decoration: none;
 }
 
-/* catalogue pages centre their title, so the kicker above it centres too */
-.template-col-wrapper .page-header {
-  text-align: center;
-}
+/* Page headers are left-aligned on every route. Centring some titles and not
+   others left the kicker, the title and the content below on three different
+   rails, which is what read as "not quite aligned". */
 
 
 /* Duel setup -------------------------------------------------------------- */
@@ -4488,7 +4544,6 @@ input, textarea {
 
 .duel-setup-panel {
   max-width: 720px;
-  margin: 0 auto;
   padding: var(--g-6);
 }
 
@@ -4579,13 +4634,12 @@ input, textarea {
 
   .duel-setup-actions .g-btn {
     flex: 1;
+    /* stretched keys were breaking their legends across two lines */
+    white-space: nowrap;
   }
 }
 
-.training-shell .page-header,
-.duel-setup-shell .page-header {
-  text-align: center;
-}
+
 
 /* Account ------------------------------------------------------------------ */
 
@@ -4596,12 +4650,11 @@ input, textarea {
 .account-notice {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--g-5);
-  padding: var(--g-8) var(--g-6);
+  padding: var(--g-7) var(--g-6);
   max-width: 560px;
-  margin: 0 auto;
-  text-align: center;
+  text-align: left;
 }
 
 .account-notice-text {
@@ -4656,6 +4709,10 @@ a.g-btn {
   align-items: flex-start;
   gap: var(--g-2);
   min-width: 0;
+}
+
+.record-strip-ident .xalian-species-badge {
+  max-width: 100%;
 }
 
 .record-strip-name {
