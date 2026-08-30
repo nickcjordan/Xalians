@@ -60,8 +60,8 @@ class GlossaryPage extends React.Component {
                         <h1 className="g-title">Glossary</h1>
                     </header>
 
-                    <Row className="justify-content-center">
-                        <Col md={7} lg={6}>
+                    <Row>
+                        <Col md={7} lg={5}>
                             {/* the search field is a screen, so it reads as phosphor on glass */}
                             <Form.Control
                                 type="search"
