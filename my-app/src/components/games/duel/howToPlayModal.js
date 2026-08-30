@@ -86,17 +86,17 @@ class HowToPlayModal extends React.Component {
 
     renderSection = (section) => {
         return (
-            <div key={`duel-how-to-${section.title}`} style={{ marginBottom: '22px' }}>
-                <h6 style={{ color: '#3ddc5b', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.8em' }}>
-                    <i className={`bi ${section.icon}`} style={{ marginRight: '8px' }} />
+            <section className="howto-section" key={`duel-how-to-${section.title}`}>
+                <h3 className="howto-title">
+                    <i className={`bi ${section.icon}`} />
                     {section.title}
-                </h6>
+                </h3>
                 {section.lines.map((line, i) => (
-                    <p key={`duel-how-to-${section.title}-${i}`} style={{ color: '#d8d8d8', fontSize: '0.9em', marginBottom: '6px', lineHeight: '1.45' }}>
+                    <p className="howto-line" key={`duel-how-to-${section.title}-${i}`}>
                         {line}
                     </p>
                 ))}
-            </div>
+            </section>
         );
     }
 

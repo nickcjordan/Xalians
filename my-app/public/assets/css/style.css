@@ -310,16 +310,11 @@ body { width: 100%; max-width: 100%; height: auto;
   z-index: var(--x-layer-navbar) !important;
 }
 
-/* the navbar above sits at --x-layer-navbar, which would otherwise cover the
-   top of any modal (bootstrap's own modal layer is only 1055). Modals must
-   outrank it. Both live in the layer scale in tokens.css. */
-.modal-backdrop {
-  z-index: var(--x-layer-navbar);
-}
-
-.modal {
-  z-index: var(--x-layer-modal) !important;
-}
+/* Modal layering is bootstrap's own: backdrop 1050, modal 1055. This file used
+   to restack them from the --x-* layer scale, which set the modal to 1000 and
+   left the backdrop on bootstrap's 1050 - so the backdrop covered the dialog
+   and swallowed every wheel and click inside it. The navbar sits at 500, well
+   under both, so there is nothing here to correct. */
 
 .navbar {
   padding: 0;
@@ -2855,7 +2850,43 @@ section {
 
 
 .themed-modal .modal-content {
-  filter: drop-shadow(5px 5px 4px #000000);
+  border: 2px solid var(--g-brass-dark);
+  border-radius: var(--g-radius-housing);
+  box-shadow: var(--g-drop);
+}
+
+/* the dialog's own title strip, stencilled onto the housing */
+.themed-modal .modal-header {
+  border-bottom: var(--g-hairline) solid var(--g-seam);
+  padding: var(--g-4) var(--g-5);
+}
+
+.themed-modal .modal-title {
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-h3);
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+}
+
+.themed-modal .modal-body {
+  /* the same horizontal padding as the header, so the prose starts on the
+     same rail as the title rather than floating in the middle of the page */
+  padding: var(--g-6) var(--g-5) var(--g-7);
+}
+
+/* long-form prose: measure, leading and paragraph spacing that suit reading a
+   planet's history rather than a UI string */
+.themed-modal .modal-body p {
+  font-family: var(--g-font-ui);
+  font-size: var(--g-size-body);
+  line-height: 1.75;
+  max-width: var(--g-measure);
+  margin: 0 0 var(--g-5) 0;
+}
+
+.themed-modal .modal-body p:last-child {
+  margin-bottom: 0;
 }
 
 
@@ -2868,9 +2899,12 @@ section {
 
 
 .dark-themed-modal .modal-content {
-  background-color: #1a1a1a;
-  color: white;
-  filter: drop-shadow(5px 5px 4px #000000);
+  background: var(--g-hull);
+  color: var(--g-ink);
+}
+
+.dark-themed-modal .modal-title {
+  color: var(--g-ink);
 }
 
 .dark-themed-modal>input {
@@ -2895,9 +2929,22 @@ section {
 
 
 .light-themed-modal .modal-content {
-  background-color: #cccccc;
-  color: rgb(0, 0, 0);
-  filter: drop-shadow(5px 5px 4px #000000);
+  /* printed paper: bone stock and dark ink, not a white browser dialog */
+  background: var(--g-ink);
+  color: var(--g-ink-invert);
+}
+
+.light-themed-modal .modal-header {
+  background: color-mix(in srgb, var(--g-ink) 88%, var(--g-ink-invert));
+  border-bottom-color: color-mix(in srgb, var(--g-ink) 55%, var(--g-ink-invert));
+}
+
+.light-themed-modal .modal-title {
+  color: var(--g-ink-invert);
+}
+
+.light-themed-modal .modal-body p {
+  color: #241f16;
 }
 
 .light-themed-modal>input {
@@ -4826,5 +4873,38 @@ a.g-btn {
   align-items: baseline;
   justify-content: space-between;
   gap: var(--g-3);
+  margin-bottom: var(--g-2);
+}
+
+
+/* Duel how-to-play -------------------------------------------------------- */
+
+.howto-section {
+  margin-bottom: var(--g-5);
+}
+
+.howto-section:last-child {
+  margin-bottom: 0;
+}
+
+/* was a green h6 set with inline hex; the rules are printed on the hull, so
+   they wear the same stencil as every other section legend */
+.howto-title {
+  display: flex;
+  align-items: center;
+  gap: var(--g-2);
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-small);
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-brass-light);
+  margin: 0 0 var(--g-2) 0;
+}
+
+.themed-modal .modal-body p.howto-line {
+  font-size: var(--g-size-small);
+  line-height: 1.6;
+  color: var(--g-ink-mid);
   margin-bottom: var(--g-2);
 }
