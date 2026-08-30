@@ -48,24 +48,34 @@ class GeneratorPage extends React.Component {
 				<XalianNavbar authAlertCallback={this.setLoggedInUser}></XalianNavbar>
 				<SmokeEffectBackground id="smokeBackgroundCanvasBelow" particleCount={10} />
 				<SmokeEffectBackground id="smokeBackgroundCanvas" />
-				<div style={{ zIndex: '-1', width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, background: 'linear-gradient(0deg, rgba(0,0,0,0) 25%, rgba(20,23,23,1) 100%)' }}/>
+				<div className="generator-page-gradient-overlay" />
+
+				{/* The smoke effect covers the whole viewport while the Lambda is
+				    answering, which on a cold start is several seconds of opaque grey
+				    with nothing to say the site is still working. */}
+				{this.state.isGenerating &&
+					<div className="generator-loading-overlay" role="status" aria-live="polite">
+						<div className="generator-loading-text">Generating Xalian...</div>
+						<div className="generator-loading-sub">Running the Xalian Generator</div>
+					</div>
+				}
 				<Container className="generator-page-content-background-container ">
 					<React.Fragment>
 						<Container fluid className="whole-container ">
 							<Row className="generator-button-row">
 								{/* {this.state.xalian && this.state.showXalian && ( */}
-								<Col class="">
+								<Col>
 									<Button variant="xalianGray" disabled={!this.state.loggedInUser} onClick={this.saveXalian} className="save-xalian-generator-page-button">
 										{this.state.loggedInUser ? 'Save to Your Faction' : 'Sign In to Keep'}
 									</Button>
 								</Col>
 								{/* )} */}
-								<Col class="">
+								<Col>
 									<Button variant="xalianGreen" onClick={this.getXalian}>
 										Generate New Xalian
 									</Button>
 								</Col>
-								{/* <Col class="">
+								{/* <Col>
                                     <Button variant='xalianGray' onClick={this.test} className='save-xalian-generator-page-button'>Test</Button>
                                 </Col> */}
 							</Row>
@@ -117,6 +127,7 @@ class GeneratorPage extends React.Component {
 	}
 
 	getXalian = () => {
+		this.setState({ isGenerating: true });
 		// this.setState({ showXalian: false }, () => {
 			// gsap.to('#generated-xalian-div', { opacity: 0, duration: 1, ease: 'power2.in' });
 			gsap.timeline()
@@ -129,6 +140,7 @@ class GeneratorPage extends React.Component {
 							{
 								xalian: x,
 								isLoading: false,
+								isGenerating: false,
 							},
 							() => {
 								// this.setState({ showXalian: true }, () => {
@@ -138,6 +150,7 @@ class GeneratorPage extends React.Component {
 							}
 						);
 					}).catch(() => {
+						this.setState({ isGenerating: false });
 						alertUtil.sendAlert('Could not generate a Xalian — please try again', null, 'danger');
 						gsap.to('#smokeBackgroundCanvas', { opacity: 0, duration: 1, ease: 'power2.in' });
 						gsap.to('#generated-xalian-fragment', { opacity: 1, duration: 0.5, ease: 'power2.out' }, '<');

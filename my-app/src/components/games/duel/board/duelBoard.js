@@ -42,6 +42,7 @@ import MotionPathPlugin from 'gsap/MotionPathPlugin';
 import constants from '../../../../constants/constants';
 import * as alertUtil from '../../../../utils/alertUtil';
 import FadeAlert from '../../../fadeAlert';
+import { text } from '../../../../constants/designTokens';
 gsap.registerPlugin(Flip, MotionPathPlugin, Draggable);
 
 
@@ -626,8 +627,8 @@ class DuelBoard extends React.Component {
 		var opponentOutCols = this.buildTeamList(boardState.playerStates[1].inactiveXalianIds, boardState);
 
 		let isPlayersTurn = parseInt(this.props.ctx.currentPlayer) == 0;
-		let glowIfCurrentTurnPlayer = isPlayersTurn ? '0px 0px 5px 5px #ffffff' : 'none';
-		let glowIfCurrentTurnOpponent = !isPlayersTurn ? '0px 0px 5px 5px #ffffff' : 'none';
+		let glowIfCurrentTurnPlayer = isPlayersTurn ? `0px 0px 5px 5px ${text.primary}` : 'none';
+		let glowIfCurrentTurnOpponent = !isPlayersTurn ? `0px 0px 5px 5px ${text.primary}` : 'none';
 
 		let selectedXalian = duelUtil.getXalianFromId(selectedId, boardState);
 		// let referencedXalian = duelUtil.getXalianFromId(this.state.referencedXalianId, boardState);

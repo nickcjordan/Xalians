@@ -1,21 +1,23 @@
-let statColorMap = new Map();
-statColorMap['standardAttackRating'] = '#a84032';
-statColorMap['specialAttackRating'] = '#753027';
-statColorMap['standardDefenseRating'] = '#535dc2';
-statColorMap['specialDefenseRating'] = '#494f8c';
-statColorMap['speedRating'] = '#d0d466';
-statColorMap['evasionRating'] = '#aaad53';
-statColorMap['staminaRating'] = '#4bbf4e';
-statColorMap['recoveryRating'] = '#479e4a';
+import { stat, statPoints } from '../constants/designTokens';
 
-statColorMap['standardAttackPoints'] = '#df9320be';
-statColorMap['specialAttackPoints'] = '#b37519d0';
-statColorMap['standardDefensePoints'] = '#70a5dbb7';
-statColorMap['specialDefensePoints'] = '#2e73b8c2';
-statColorMap['speedPoints'] = '#64b43cc2';
-statColorMap['evasionPoints'] = '#4b862dc4';
-statColorMap['staminaPoints'] = '#c04141c9';
-statColorMap['recoveryPoints'] = '#8f1f1fc9';
+let statColorMap = new Map();
+statColorMap['standardAttackRating'] = stat.standardAttack;
+statColorMap['specialAttackRating'] = stat.specialAttack;
+statColorMap['standardDefenseRating'] = stat.standardDefense;
+statColorMap['specialDefenseRating'] = stat.specialDefense;
+statColorMap['speedRating'] = stat.speed;
+statColorMap['evasionRating'] = stat.evasion;
+statColorMap['staminaRating'] = stat.stamina;
+statColorMap['recoveryRating'] = stat.recovery;
+
+statColorMap['standardAttackPoints'] = statPoints.standardAttack;
+statColorMap['specialAttackPoints'] = statPoints.specialAttack;
+statColorMap['standardDefensePoints'] = statPoints.standardDefense;
+statColorMap['specialDefensePoints'] = statPoints.specialDefense;
+statColorMap['speedPoints'] = statPoints.speed;
+statColorMap['evasionPoints'] = statPoints.evasion;
+statColorMap['staminaPoints'] = statPoints.stamina;
+statColorMap['recoveryPoints'] = statPoints.recovery;
 
 let condensedTransMap = new Map();
 condensedTransMap['standardAttackPoints'] = 'ATT';

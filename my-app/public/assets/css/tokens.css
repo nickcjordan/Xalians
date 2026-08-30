@@ -64,6 +64,26 @@
 	--x-type-ice: #85dde4;
 	--x-type-sand: #e6b26f;
 
+	/* --- stat colours ----------------------------------------------------- */
+	/* semantic: attack is red, defense is blue, speed yellow-green, stamina and
+	   recovery green. Each "special" variant is a darker shade of the same hue
+	   so the standard/special pairs read as related. */
+	--x-stat-standard-attack: #a84032;
+	--x-stat-special-attack: #753027;
+	--x-stat-standard-defense: #535dc2;
+	--x-stat-special-defense: #494f8c;
+	--x-stat-speed: #d0d466;
+	--x-stat-evasion: #aaad53;
+	--x-stat-stamina: #4bbf4e;
+	--x-stat-recovery: #479e4a;
+
+	/* --- charts ----------------------------------------------------------- */
+	--x-chart-range-track: #ecff8234;
+	--x-chart-points-fill: #80dbff34;
+	--x-chart-bar-label: #ffffff50;
+	--x-chart-cursor-fill: #ffffff25;
+	--x-chart-axis: #ffffff;
+
 	/* --- spacing ---------------------------------------------------------- */
 	--x-space-1: 4px;
 	--x-space-2: 8px;
@@ -183,6 +203,74 @@
 .x-tabs.nav-tabs .nav-link:focus-visible {
 	outline: 2px solid var(--x-green);
 	outline-offset: -2px;
+}
+
+/* --- page headers -------------------------------------------------------
+   Every page hand-rolled its own title treatment, so "Discovered Species",
+   "Discovered Planets" and "Glossary" were each styled slightly differently. */
+.x-page-title {
+	text-align: center;
+	color: var(--x-text);
+	padding-top: var(--x-space-7);
+	padding-bottom: var(--x-space-3);
+	margin: 0;
+}
+
+.x-page-subtitle {
+	text-align: center;
+	color: var(--x-text-dim);
+	max-width: var(--x-measure);
+	margin: 0 auto var(--x-space-6) auto;
+}
+
+/* --- label / value rows -------------------------------------------------
+   The generator, species detail and planet pages all show rows of
+   "Attribute: value". The value is the information, so it gets the emphasis;
+   the label is chrome and stays dim. */
+.x-detail-row {
+	padding-top: var(--x-space-1);
+	padding-bottom: var(--x-space-1);
+}
+
+.x-detail-label {
+	color: var(--x-text-dim);
+	text-align: right;
+}
+
+.x-detail-value {
+	color: var(--x-text);
+	text-align: left;
+}
+
+/* --- form controls ------------------------------------------------------
+   Bootstrap's inputs are white-on-white, which reads as a hole punched in the
+   starfield. */
+.x-input.form-control {
+	background-color: var(--x-surface-2) !important;
+	border: 1px solid var(--x-border) !important;
+	color: var(--x-text) !important;
+}
+
+.x-input.form-control::placeholder {
+	color: var(--x-text-dim);
+}
+
+.x-input.form-control:focus {
+	border-color: var(--x-green-a60) !important;
+	box-shadow: 0 0 0 0.2rem var(--x-green-a15) !important;
+}
+
+.x-input-addon.input-group-text {
+	background-color: var(--x-surface-2) !important;
+	border: 1px solid var(--x-border) !important;
+	color: var(--x-green) !important;
+}
+
+/* --- empty state -------------------------------------------------------- */
+.x-empty-state {
+	color: var(--x-text-dim);
+	text-align: center;
+	padding: var(--x-space-7) var(--x-space-4);
 }
 
 /* Element-keyed panel tints, so JSX can pick a panel colour with a class

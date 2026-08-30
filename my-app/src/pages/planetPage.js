@@ -46,7 +46,7 @@ class PlanetPage extends React.Component {
                     <Row >
 
                         <Col className="template-col-wrapper">
-                            <h1 className="page-title-text">Discovered Planets</h1>
+                            <h1 className="x-page-title">Discovered Planets</h1>
                             {this.buildPlanets()}
                         </Col>
 

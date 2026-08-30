@@ -8,6 +8,7 @@ import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import * as valueTranslator from '../utils/valueTranslator';
 import * as constants from '../constants/constants';
+import { chart, text } from '../constants/designTokens';
 
 class XalianStatChart extends React.Component {
 	state = {};
@@ -68,23 +69,23 @@ class XalianStatChart extends React.Component {
 						<BarChart data={this.setupData(this.props.stats)} layout="vertical" maxBarSize={this.props.barSize || 35}>
 							<XAxis type="number" hide />
 							{/* <YAxis width={60} type="category" dataKey="statLabel" stroke="#80ffb1" interval={0}/> */}
-							<YAxis width={this.props.abbreviatedNames ? 60 : 60} type="category" dataKey="statLabel" stroke={this.props.axisLabelColor || '#ffffff'} interval={0} />
+							<YAxis width={this.props.abbreviatedNames ? 60 : 60} type="category" dataKey="statLabel" stroke={this.props.axisLabelColor || chart.axis} interval={0} />
 
 							{this.props.includeRange && (
-								<Bar radius={[10, 10, 10, 10]} isAnimationActive={false} dataKey="rangeNumber" fill="#ecff8234"  minPointSize={minBarLength} >
+								<Bar radius={[10, 10, 10, 10]} isAnimationActive={false} dataKey="rangeNumber" fill={chart.rangeTrack}  minPointSize={minBarLength} >
 									{this.props.includeLabel && <LabelList dataKey="rangeName" position={this.props.labelPosition || 'center'} fill="white" style={{ fontSize: this.props.labelFontSize || '12pt' }} className="chart-bar-label" />}
 									{this.state.data && this.state.data.map((entry, index) => <Cell key={`cell-${index}`} fill={valueTranslator.statFieldToBarColor(entry.statName)} />)}
 								</Bar>
 							)}
-							<Bar radius={[0, 0, 0, 0]} isAnimationActive={false} dataKey="points" fill="#80dbff34" stackId="a"  minPointSize={minBarLength} >
+							<Bar radius={[0, 0, 0, 0]} isAnimationActive={false} dataKey="points" fill={chart.pointsFill} stackId="a"  minPointSize={minBarLength} >
 								{this.props.includeLabel && <LabelList dataKey="percentageText" position={this.props.labelPosition || 'center'} fill="white" style={{ fontSize: this.props.labelFontSize || '12pt' }} className="chart-bar-label" />}
 								{this.setupData(this.props.stats).map((entry, index) => <Cell key={`cell-${index}`} fill={valueTranslator.statFieldToBarColor(entry.statName)} />)}
 							</Bar>
-							<Bar style={{opacity: 0.35 }} radius={[0, 10, 10, 0]} isAnimationActive={false} dataKey="potentialPoints" fill="#80dbff34" stackId="a" minPointSize={minBarLength} >
-								{this.props.includeLabel && <LabelList dataKey="potentialPointsLabel" position={this.props.labelPosition || 'center'} fill="#ffffff50" style={{ fontSize: this.props.labelFontSize || '12pt' }} className="chart-bar-label" />}
+							<Bar style={{opacity: 0.35 }} radius={[0, 10, 10, 0]} isAnimationActive={false} dataKey="potentialPoints" fill={chart.pointsFill} stackId="a" minPointSize={minBarLength} >
+								{this.props.includeLabel && <LabelList dataKey="potentialPointsLabel" position={this.props.labelPosition || 'center'} fill={chart.barLabel} style={{ fontSize: this.props.labelFontSize || '12pt' }} className="chart-bar-label" />}
 								{this.setupData(this.props.stats).map((entry, index) => <Cell key={`cell-${index}`} fill={valueTranslator.statFieldToBarColor(entry.statName)} />)}
 							</Bar>
-							<Tooltip  cursor={{fill: '#FFFFFF25'  }} content={<CustomTooltip />} />
+							<Tooltip  cursor={{fill: chart.cursorFill  }} content={<CustomTooltip />} />
 						</BarChart>
 					</ResponsiveContainer>
 				)}
@@ -98,8 +99,8 @@ const CustomTooltip = ({ active, payload, label }) => {
 	  return (
 		<div style={{border: 'solid 2px' + valueTranslator.statFieldToBarColor(payload[0].payload.statName) }} className="stat-tooltip">
 		  <h5 style={{ color: 'white' }} className="stat-tooltip-label">{payload[0].payload.statLabel}</h5>
-		  <h6 style={{ color: '#cccccc' }} className="stat-tooltip-label">{`${payload[0].payload.rangeName}: ${payload[0].payload.points}`}</h6>
-		  <h6 style={{ color: '#cccccc' }} className="stat-tooltip-label">{`${payload[1].value} potential points`}</h6>
+		  <h6 style={{ color: text.muted }} className="stat-tooltip-label">{`${payload[0].payload.rangeName}: ${payload[0].payload.points}`}</h6>
+		  <h6 style={{ color: text.muted }} className="stat-tooltip-label">{`${payload[1].value} potential points`}</h6>
 		</div>
 	  );
 	}
