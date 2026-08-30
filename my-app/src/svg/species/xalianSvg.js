@@ -78,7 +78,13 @@ class XalianSVG extends React.Component {
         if (speciesName == 'hypnopet') { return <HypnopetSVG style={this.props.style} className={this.props.className} /> }
         if (speciesName == 'drilltail') { return <DrilltailSVG style={this.props.style} className={this.props.className} /> }
         else {
-            const elem = require(`./${this.props.name}.svg`).default;
+            let elem = null;
+            try {
+                elem = require(`./${this.props.name}.svg`).default;
+            } catch (error) {
+                console.log(`No SVG found for species "${this.props.name}"`, error.message);
+                return null;
+            }
                     return (<React.Fragment>
             {elem &&
                 <SVG src={elem} onError={(error) => console.log(error.message)} style={this.props.style} className={this.props.className}/>

@@ -12,10 +12,10 @@ class SignUpModal extends React.Component {
     state = {
         errorMessage: null,
         validated: false,
-        username: null,
-        email: null,
-        firstPassword: null,
-        secondPassword: null,
+        username: '',
+        email: '',
+        firstPassword: '',
+        secondPassword: '',
         errors: {}
     }
 

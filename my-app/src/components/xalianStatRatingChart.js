@@ -9,12 +9,6 @@ import Table from 'react-bootstrap/Table';
 import * as valueTranslator from '../utils/valueTranslator';
 
 class XalianStatRatingChart extends React.Component {
-	state = {};
-
-	componentDidMount() {
-		this.setState({ data: this.setupData(this.props.stats) });
-	}
-
 	setupData = (stats) => {
 		if (!stats) {
 			return [];
@@ -56,17 +50,18 @@ class XalianStatRatingChart extends React.Component {
 	};
 
 	render() {
+		let data = this.setupData(this.props.stats);
 		return (
 			<div className={(this.props.moreClasses || '') + " centered-view"}>
 				{this.props.stats && (
 					<ResponsiveContainer className="chart-container centered-view">
-						<BarChart data={this.state.data} layout="vertical" maxBarSize={this.props.barSize || 35}>
+						<BarChart data={data} layout="vertical" maxBarSize={this.props.barSize || 35}>
 							<XAxis type="number" hide />
 							<YAxis width={60} type="category" dataKey="statLabel" stroke={this.props.axisLabelColor || '#ffffff'} interval={0} />
 
 								<Bar radius={[10, 10, 10, 10]} isAnimationActive={false} animationBegin={50} dataKey="rangeNumber" fill="#ecff8234">
 									{this.props.includeLabel && <LabelList dataKey="rangeName" position={this.props.labelPosition || 'center'} fill="white" style={{ fontSize: this.props.labelFontSize || '12pt' }} className="chart-bar-label" />}
-									{this.state.data && this.state.data.map((val, index) => <Cell key={`cell-${index}`} fill={valueTranslator.statFieldToBarColor(val.statName)} />)}
+									{data && data.map((val, index) => <Cell key={`cell-${index}`} fill={valueTranslator.statFieldToBarColor(val.statName)} />)}
 								</Bar>
 						</BarChart>
 					</ResponsiveContainer>

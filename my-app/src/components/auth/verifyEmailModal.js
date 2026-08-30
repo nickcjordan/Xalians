@@ -9,8 +9,8 @@ import Spinner from 'react-bootstrap/Spinner';
 class VerifyEmailModal extends React.Component {
 
     state = {
-        username: null,
-        code: null,
+        username: '',
+        code: '',
         errorMessage: null,
         verificationMessage: null
     }

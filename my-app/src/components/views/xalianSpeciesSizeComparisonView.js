@@ -32,11 +32,27 @@ class XalianSpeciesSizeComparisonView extends React.Component {
         // })
 
         let scrollContainer = document.getElementById("species-compare-box");
-        scrollContainer.addEventListener("wheel", (event) => {
+        this.onWheelScroll = (event) => {
             event.preventDefault();
             scrollContainer.scrollLeft += event.deltaY;
-         });
+         };
+        scrollContainer.addEventListener("wheel", this.onWheelScroll);
+
+        this.onWindowResize = () => {
+            this.setSpeciesContent();
+        };
+        window.addEventListener("resize", this.onWindowResize);
 	}
+
+    componentWillUnmount() {
+        let scrollContainer = document.getElementById("species-compare-box");
+        if (scrollContainer && this.onWheelScroll) {
+            scrollContainer.removeEventListener("wheel", this.onWheelScroll);
+        }
+        if (this.onWindowResize) {
+            window.removeEventListener("resize", this.onWindowResize);
+        }
+    }
 
     componentDidUpdate() {
         // fitty.fitAll();
@@ -45,7 +61,9 @@ class XalianSpeciesSizeComparisonView extends React.Component {
 
 
     setSpeciesContent = () => {
-        let s = species;
+        // copy the elements too, not just the array: species.json is a shared module
+        // import and this writes size/heightString onto each entry
+        let s = species.map((element) => ({ ...element }));
         s.forEach(element => {
             element.size = this.getHeight(element);
             element.heightString = translater.translateHeightString(element.height);
@@ -99,7 +117,7 @@ class XalianSpeciesSizeComparisonView extends React.Component {
         let minSizeForWholeWrapper = 150;
 
 		return (
-			<React.Fragment>
+			<React.Fragment key={`species-compare-${x.id}`}>
 				<div className="species-compare-whole-wrapper" style={{ width: x.size * sizeRatio, height: x.size * sizeRatio + spaceToLeaveForSpeciesText, minWidth: Math.max(minSizeForWholeWrapper, x.size * sizeRatio) }}>
 					<div className="species-compare-image-wrapper" style={{ width: x.size * sizeRatio, height: x.size * sizeRatio }}>
 						<a href={'/species/' + x.id}>

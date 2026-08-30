@@ -10,8 +10,8 @@ import { Hub } from 'aws-amplify';
 class SignInModal extends React.Component {
 
     state = {
-        username: null,
-        password: null,
+        username: '',
+        password: '',
         isThinking: false,
         errors: {}
     }
