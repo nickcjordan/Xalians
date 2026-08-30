@@ -136,13 +136,17 @@ Game data JSON is **duplicated by build step, not imported across packages**: `m
 
 ### Design system
 
-**Read `docs/DESIGN_SYSTEM.md` before changing anything visual.** The short version:
+**Read `docs/DESIGN_SYSTEM.md` before changing anything visual.** The site is styled as the control panel of a Xalian Generator — Star Wars by way of Fallout, where the machine is centuries ahead but the interface is enamelled steel, brass and bakelite. The short version:
 
-- The palette lives **twice on purpose**: `public/assets/css/tokens.css` (`--x-*` custom properties, the CSS source of truth) and `src/constants/designTokens.js` (the same values for recharts `fill` props, GSAP tweens and SVG attributes, which cannot read a CSS variable). `src/__tests__/designTokens.test.js` fails if the two disagree — **never edit one side alone**.
-- Element/type colours stay in `constants/colorConstants.js` and are re-exported through `designTokens.js` as `themeColors`; they are mirrored as `--x-type-*` and enforced identical by the same test.
-- Reusable classes are prefixed `.x-` and defined in `tokens.css`: `.x-panel` (the tinted inset-glow card, the site's core surface), `.x-page-title`, `.x-detail-label`/`.x-detail-value`, `.x-measure`, `.x-tabs`, `.x-input`, `.x-empty-state`.
-- **No new raw hex** in CSS or JSX. Add a token to both sides plus the test's `PAIRINGS` list instead.
-- `/styleguide` is a living reference page rendering every token and primitive. It is deliberately not linked from the navbar — it is a developer tool.
+- **Panels are matte and never glow.** Depth is a bevel plus rivets. Phosphor, scanlines and bloom live strictly inside `.g-screen` (a CRT bolted into the hull), which is the only thing that emits light. Lamps (`.g-lamp`) are the other lit thing, and they are static.
+- **Colour is energy or a warning.** The hull is olive/bone/gunmetal; the 14 element hues and the hazard livery are the only saturated things. Element colours are fixed points — do not restyle them.
+- `--g-el` is the element in scope: put `.g-el-fire` on any container and every meter, chip and tagged panel inside it retunes. Components read `--g-el` rather than naming a colour.
+- The palette lives **twice on purpose**: `public/assets/css/system.css` (`--g-*`, the CSS source of truth) and `src/constants/designTokens.js` (the same values for recharts `fill` props, GSAP tweens and SVG attributes, which cannot read a CSS variable). `src/__tests__/designTokens.test.js` fails if they disagree — **never edit one side alone**.
+- Components are prefixed `.g-`: `.g-panel`, `.g-screen`, `.g-meter`, `.g-chip`, `.g-btn`, `.g-input`, `.g-segmented`, `.g-lamp`, `.g-specimen`, `.g-tile`, `.g-record`, `.g-spec`, `.g-data`.
+- **No new raw hex** in CSS or JSX. Add a token to both sides plus the test's `PAIRINGS` list.
+- Type is Oswald (stencilled legends), Barlow (prose), IBM Plex Mono (machine output, always tabular).
+- `/styleguide` is a living reference rendering every token and component. It is deliberately not linked from the navbar — it is a developer tool.
+- `public/assets/css/tokens.css` is a **temporary shim** mapping old `--x-*` names onto the new `--g-*` ones so unmigrated CSS still looks right. Do not add to it; delete rules from it as pages migrate.
 - `style.css` is a 3504-line BootstrapMade template. Many class names look unused but that signal has false positives (`btn-xalianGreen` is composed by bootstrap from `variant='xalianGreen'`), so do not bulk-delete it.
 
 ## Conventions and gotchas

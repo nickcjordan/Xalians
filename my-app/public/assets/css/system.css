@@ -104,6 +104,27 @@
 	/* The element in scope. One class on a container retunes everything inside. */
 	--g-el: var(--g-phosphor);
 
+	/* --- stat colours -----------------------------------------------------
+	   Semantic and independent of element: attack is red, defense blue, speed
+	   yellow-green, stamina and recovery green. Each "special" variant is a
+	   darker shade of its standard pair so the two read as related. */
+	--g-stat-standard-attack: #a84032;
+	--g-stat-special-attack: #753027;
+	--g-stat-standard-defense: #535dc2;
+	--g-stat-special-defense: #494f8c;
+	--g-stat-speed: #d0d466;
+	--g-stat-evasion: #aaad53;
+	--g-stat-stamina: #4bbf4e;
+	--g-stat-recovery: #479e4a;
+
+	/* --- charts -----------------------------------------------------------
+	   Recharts paints these from JS, so they are mirrored in designTokens.js. */
+	--g-chart-range-track: #ecff8234;
+	--g-chart-points-fill: #80dbff34;
+	--g-chart-bar-label: #ffffff50;
+	--g-chart-cursor-fill: #ffffff25;
+	--g-chart-axis: #ddd4bd;
+
 	/* --- type -------------------------------------------------------------
 	   Oswald is a mid-century poster and signage face: the condensed caps
 	   stencilled onto equipment and painted on placards. IBM Plex Mono is the
@@ -611,18 +632,21 @@
 	box-shadow: var(--g-recess);
 }
 
-/* Text entry is a screen, so it is phosphor on glass. */
+/* Text entry is a screen, so it is phosphor on glass.
+   The !important flags are load-bearing: bootstrap ships a `.form-control`
+   rule in an injected <style> tag, which outranks any linked stylesheet at
+   equal specificity. */
 .g-input,
 .g-select {
 	width: 100%;
 	padding: var(--g-3) var(--g-4);
-	font-family: var(--g-font-mono);
+	font-family: var(--g-font-mono) !important;
 	font-size: var(--g-size-small);
-	color: var(--g-phosphor);
-	background: var(--g-screen-glass);
-	border: 2px solid var(--g-brass-dark);
-	border-radius: var(--g-radius);
-	box-shadow: var(--g-recess);
+	color: var(--g-phosphor) !important;
+	background: var(--g-screen-glass) !important;
+	border: 2px solid var(--g-brass-dark) !important;
+	border-radius: var(--g-radius) !important;
+	box-shadow: var(--g-recess) !important;
 }
 
 .g-input::placeholder { color: rgba(116, 255, 176, 0.32); }
@@ -630,8 +654,8 @@
 .g-input:focus,
 .g-select:focus {
 	outline: none;
-	border-color: var(--g-brass);
-	box-shadow: var(--g-recess), var(--g-screen-bloom);
+	border-color: var(--g-brass) !important;
+	box-shadow: var(--g-recess), var(--g-screen-bloom) !important;
 }
 
 .g-select {
@@ -1182,4 +1206,50 @@
 	letter-spacing: var(--g-track-label);
 	color: var(--g-hazard);
 	text-decoration: none;
+}
+
+/* -------------------------------------------------------------------------
+   BOOTSTRAP TABS
+   react-bootstrap <Tabs> renders .nav-tabs, whose defaults are blue links on a
+   white pill. Restyled as the same bank of selector keys as .g-segmented.
+   ------------------------------------------------------------------------- */
+
+.g-tabs.nav-tabs {
+	border-bottom: var(--g-hairline) solid var(--g-rule);
+	gap: 3px;
+	padding: 3px 3px 0;
+	background: var(--g-seam);
+	border-radius: var(--g-radius) var(--g-radius) 0 0;
+}
+
+.g-tabs.nav-tabs .nav-link {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-mid);
+	background: var(--g-hull);
+	border: 0;
+	border-radius: 2px 2px 0 0;
+	box-shadow: var(--g-relief);
+	padding: var(--g-2) var(--g-5);
+	transition: background var(--g-snap), color var(--g-snap);
+}
+
+.g-tabs.nav-tabs .nav-link:hover:not(.active) {
+	background: var(--g-hull-hi);
+	color: var(--g-ink);
+	border: 0;
+}
+
+.g-tabs.nav-tabs .nav-link.active {
+	color: var(--g-ink-invert);
+	background: var(--g-hazard);
+	border: 0;
+}
+
+.g-tabs.nav-tabs .nav-link:focus-visible {
+	outline: 2px solid var(--g-phosphor);
+	outline-offset: -3px;
 }

@@ -3,82 +3,89 @@ const path = require('path');
 const colorConstants = require('../constants/colorConstants');
 const designTokens = require('../constants/designTokens');
 
-// The palette exists on both sides of the stack by necessity: CSS classes paint
-// with custom properties, while recharts `fill` props, GSAP tweens and SVG
+// The palette exists on both sides of the stack by necessity: CSS paints with
+// custom properties, while recharts `fill` props, GSAP tweens and SVG
 // attributes can only take a JS string. Nothing enforces that the two agree at
-// runtime, so this test does it at build time - edit a colour in one place and
-// this fails naming the token that no longer matches.
+// runtime, so this does it at build time — edit a colour in one place and this
+// fails naming the token that no longer matches.
 
-const TOKENS_PATH = path.join(__dirname, '..', '..', 'public', 'assets', 'css', 'tokens.css');
+const SYSTEM_PATH = path.join(__dirname, '..', '..', 'public', 'assets', 'css', 'system.css');
 const TYPE_COLORS_PATH = path.join(__dirname, '..', '..', 'public', 'assets', 'css', 'typeColors.css');
 
-const readAllTokens = () => {
-	const css = fs.readFileSync(TOKENS_PATH, 'utf8');
+const readTokens = () => {
+	const css = fs.readFileSync(SYSTEM_PATH, 'utf8');
 	const tokens = {};
-	const re = /(--x-[a-z0-9-]+):\s*([^;]+);/g;
+	const re = /(--g-[a-z0-9-]+):\s*([^;]+);/g;
 	let match;
 	while ((match = re.exec(css)) !== null) {
-		tokens[match[1]] = match[2].trim().toLowerCase();
+		// only the first definition wins, matching the cascade in :root
+		if (!(match[1] in tokens)) {
+			tokens[match[1]] = match[2].trim().toLowerCase();
+		}
 	}
 	return tokens;
 };
 
-const tokens = readAllTokens();
+const tokens = readTokens();
 
-// Each entry maps a JS token to the CSS custom property that must match it.
 const PAIRINGS = [
-	['--x-green', designTokens.brand.green],
-	['--x-green-hover', designTokens.brand.greenHover],
-	['--x-green-active', designTokens.brand.greenActive],
-	['--x-green-border', designTokens.brand.greenBorder],
+	['--g-void', designTokens.hull.void],
+	['--g-hull-lo', designTokens.hull.lo],
+	['--g-hull', designTokens.hull.base],
+	['--g-hull-hi', designTokens.hull.hi],
+	['--g-seam', designTokens.hull.seam],
 
-	['--x-bg', designTokens.surface.bg],
-	['--x-surface-1', designTokens.surface.surface1],
-	['--x-surface-2', designTokens.surface.surface2],
-	['--x-surface-3', designTokens.surface.surface3],
-	['--x-border', designTokens.surface.border],
-	['--x-border-strong', designTokens.surface.borderStrong],
+	['--g-brass', designTokens.brass.base],
+	['--g-brass-dark', designTokens.brass.dark],
+	['--g-brass-light', designTokens.brass.light],
 
-	['--x-text', designTokens.text.primary],
-	['--x-text-muted', designTokens.text.muted],
-	['--x-text-dim', designTokens.text.dim],
-	['--x-text-inverse', designTokens.text.inverse],
+	['--g-ink', designTokens.ink.base],
+	['--g-ink-mid', designTokens.ink.mid],
+	['--g-ink-low', designTokens.ink.low],
+	['--g-ink-invert', designTokens.ink.invert],
 
-	['--x-danger', designTokens.feedback.danger],
-	['--x-warning', designTokens.feedback.warning],
+	['--g-phosphor', designTokens.phosphor.base],
+	['--g-screen-glass', designTokens.phosphor.glass],
 
-	['--x-stat-standard-attack', designTokens.stat.standardAttack],
-	['--x-stat-special-attack', designTokens.stat.specialAttack],
-	['--x-stat-standard-defense', designTokens.stat.standardDefense],
-	['--x-stat-special-defense', designTokens.stat.specialDefense],
-	['--x-stat-speed', designTokens.stat.speed],
-	['--x-stat-evasion', designTokens.stat.evasion],
-	['--x-stat-stamina', designTokens.stat.stamina],
-	['--x-stat-recovery', designTokens.stat.recovery],
+	['--g-lamp-amber', designTokens.lamp.amber],
+	['--g-lamp-red', designTokens.lamp.red],
+	['--g-lamp-off', designTokens.lamp.off],
 
-	['--x-chart-range-track', designTokens.chart.rangeTrack],
-	['--x-chart-points-fill', designTokens.chart.pointsFill],
-	['--x-chart-bar-label', designTokens.chart.barLabel],
-	['--x-chart-cursor-fill', designTokens.chart.cursorFill],
-	['--x-chart-axis', designTokens.chart.axis],
+	['--g-hazard', designTokens.hazard.base],
+	['--g-hazard-dark', designTokens.hazard.dark],
+
+	['--g-stat-standard-attack', designTokens.stat.standardAttack],
+	['--g-stat-special-attack', designTokens.stat.specialAttack],
+	['--g-stat-standard-defense', designTokens.stat.standardDefense],
+	['--g-stat-special-defense', designTokens.stat.specialDefense],
+	['--g-stat-speed', designTokens.stat.speed],
+	['--g-stat-evasion', designTokens.stat.evasion],
+	['--g-stat-stamina', designTokens.stat.stamina],
+	['--g-stat-recovery', designTokens.stat.recovery],
+
+	['--g-chart-range-track', designTokens.chart.rangeTrack],
+	['--g-chart-points-fill', designTokens.chart.pointsFill],
+	['--g-chart-bar-label', designTokens.chart.barLabel],
+	['--g-chart-cursor-fill', designTokens.chart.cursorFill],
+	['--g-chart-axis', designTokens.chart.axis],
 ];
 
 describe('design tokens', () => {
 
 	describe('element colours', () => {
-		const typeTokens = Object.fromEntries(
+		const elementTokens = Object.fromEntries(
 			Object.entries(tokens)
-				.filter(([name]) => name.startsWith('--x-type-'))
-				.map(([name, value]) => [name.replace('--x-type-', ''), value])
+				.filter(([name]) => name.startsWith('--g-el-'))
+				.map(([name, value]) => [name.replace('--g-el-', ''), value])
 		);
 
-		it('defines a --x-type-* token for every element in colorConstants', () => {
-			expect(Object.keys(typeTokens).sort()).toEqual(Object.keys(colorConstants.themeColors).sort());
+		it('defines a --g-el-* token for every element in colorConstants', () => {
+			expect(Object.keys(elementTokens).sort()).toEqual(Object.keys(colorConstants.themeColors).sort());
 		});
 
 		it('matches colorConstants exactly, so CSS and JS paint the same colours', () => {
 			Object.entries(colorConstants.themeColors).forEach(([type, hex]) => {
-				expect(`${type}: ${typeTokens[type]}`).toEqual(`${type}: ${hex.toLowerCase()}`);
+				expect(`${type}: ${elementTokens[type]}`).toEqual(`${type}: ${hex.toLowerCase()}`);
 			});
 		});
 	});

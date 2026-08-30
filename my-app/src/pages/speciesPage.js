@@ -141,10 +141,10 @@ class SpeciesPage extends React.Component {
                     <Row className="">
 
                         <Col className="template-col-wrapper ">
-                            <h1 className="x-page-title">Discovered Species</h1>
+                            <h1 className="g-title">Discovered Species</h1>
 
                             {species &&
-                                <Tabs defaultActiveKey="grid" id="tabbs" className="species-tab-group x-tabs">
+                                <Tabs defaultActiveKey="grid" id="tabbs" className="species-tab-group g-tabs">
                                     <Tab eventKey="grid" title="Grid" className="species-tab">
                                         <Row>
                                             {this.state.gridList}

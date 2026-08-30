@@ -8,7 +8,7 @@ import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import * as valueTranslator from '../utils/valueTranslator';
 import * as constants from '../constants/constants';
-import { chart, text } from '../constants/designTokens';
+import { chart, ink } from '../constants/designTokens';
 
 class XalianStatChart extends React.Component {
 	state = {};
@@ -99,8 +99,8 @@ const CustomTooltip = ({ active, payload, label }) => {
 	  return (
 		<div style={{border: 'solid 2px' + valueTranslator.statFieldToBarColor(payload[0].payload.statName) }} className="stat-tooltip">
 		  <h5 style={{ color: 'white' }} className="stat-tooltip-label">{payload[0].payload.statLabel}</h5>
-		  <h6 style={{ color: text.muted }} className="stat-tooltip-label">{`${payload[0].payload.rangeName}: ${payload[0].payload.points}`}</h6>
-		  <h6 style={{ color: text.muted }} className="stat-tooltip-label">{`${payload[1].value} potential points`}</h6>
+		  <h6 style={{ color: ink.mid }} className="stat-tooltip-label">{`${payload[0].payload.rangeName}: ${payload[0].payload.points}`}</h6>
+		  <h6 style={{ color: ink.mid }} className="stat-tooltip-label">{`${payload[1].value} potential points`}</h6>
 		</div>
 	  );
 	}

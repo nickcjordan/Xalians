@@ -66,7 +66,9 @@ class PlanetTable extends React.Component {
 
     return (
 		<React.Fragment>
-			<Container className={'dark-section-div'} style={styleUtil.getInsideGlowThemeColor(this.props.planet.data.Type.toLowerCase())} >
+			{/* a panel is matte metal: the element shows as a painted band along the
+			    top edge rather than as a glow bleeding out of the card */}
+			<Container className={`g-panel g-panel--tagged g-el-${this.props.planet.data.Type.toLowerCase()} planet-panel`} >
 				<Row className="planet-details-row vertically-center-contents">
 					<Col xs={12} md={3} className="planet-details-row-col">
 						<img src={this.props.planet.planetImage} class="planet-gif" alt=""></img>
@@ -74,7 +76,8 @@ class PlanetTable extends React.Component {
 					<Col xs={12} md={6} className="planet-description-col">
 						<Row className="planet-title-row">
 							<Col xs={12}>
-								<h2 className={this.props.planet.data.Type.toLowerCase() + '-text-color black-text-shadow'} style={{ textShadow: styleUtil.textBorder('black', 2) + ', ' + styleUtil.getBorder(this.props.planet.data.Type.toLowerCase(), 6, 12), color: '#ffffffff' }} >{this.props.planet.name}</h2>
+								{/* a planet name is stencilled on the plate, not glowing */}
+								<h2 className="g-h2">{this.props.planet.name}</h2>
 							</Col>
                 <Col xs={12}>
                   <XalianSpeciesBadge type={this.props.planet.data.Type.toLowerCase()} />

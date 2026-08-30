@@ -1,60 +1,71 @@
 /**
- * The JavaScript half of the design token system.
+ * The JavaScript half of the design system.
  *
- * Some things can only be styled from JS - recharts takes colours as `fill`
+ * Some things can only be styled from JS — recharts takes colours as `fill`
  * props, GSAP tweens take them as tween values, and SVG components take them as
- * attributes. Those consumers cannot read a CSS custom property, so the palette
- * has to exist on both sides.
+ * attributes. None of those can read a CSS custom property, so the palette has
+ * to exist on both sides.
  *
- * public/assets/css/tokens.css is the CSS half. The two are kept identical by
+ * public/assets/css/system.css is the CSS half. The two are held identical by
  * src/__tests__/designTokens.test.js, which fails if any value here disagrees
- * with the matching --x-* token. Change a colour in one place and the test will
+ * with the matching --g-* token. Change a colour in one place and the test will
  * tell you about the other.
  *
- * Element/type colours live in colorConstants.js (imported and re-exported here
- * so there is one import for consumers) because they predate this file and are
+ * Element colours live in colorConstants.js (imported and re-exported here so
+ * consumers have a single import) because they predate this file and are
  * referenced widely.
  */
 
 const colorConstants = require('./colorConstants');
 
-// --- brand ---------------------------------------------------------------
-const brand = {
-	green: '#80ffb0',
-	greenHover: '#b3ffd0',
-	greenActive: '#57aa77',
-	greenBorder: '#6bd493',
+/**
+ * The hull: enamelled steel, brass and bone silkscreen. Deliberately
+ * desaturated — the element hues are the only saturated things in the system.
+ */
+const hull = {
+	void: '#0d0b09',
+	lo: '#16160f',
+	base: '#23231a',
+	hi: '#32322a',
+	seam: '#0a0a07',
 };
 
-// --- surfaces ------------------------------------------------------------
-const surface = {
-	bg: '#0d0d0d',
-	surface1: '#151515',
-	surface2: '#1a1a1a',
-	surface3: '#232323',
-	border: '#333333',
-	borderStrong: '#4a4a4a',
+const brass = {
+	base: '#b08d3f',
+	dark: '#6b5423',
+	light: '#d8b45e',
 };
 
-// --- text ----------------------------------------------------------------
-const text = {
-	primary: '#ffffff',
-	muted: '#cccccc',
-	dim: '#949494',
-	inverse: '#000000',
+/** Printed matter. Never pure white: paint yellows. */
+const ink = {
+	base: '#ddd4bd',
+	mid: '#9a9280',
+	low: '#6b665a',
+	invert: '#14120c',
 };
 
-// --- feedback ------------------------------------------------------------
-const feedback = {
-	danger: '#ff5b5b',
-	warning: '#e2bd43',
-	success: '#80ffb0',
+/** The CRT. The only pure saturated light, confined to screens. */
+const phosphor = {
+	base: '#74ffb0',
+	glass: '#07120c',
+};
+
+/** Bulbs behind coloured plastic, and painted warning livery. */
+const lamp = {
+	amber: '#ffb037',
+	red: '#e4483c',
+	off: '#3d3a30',
+};
+
+const hazard = {
+	base: '#d9a410',
+	dark: '#6d5108',
 };
 
 /**
- * Stat colours. These are semantic - attack is red, defense is blue, speed is
- * yellow-green, stamina/recovery are green - and the "special" variant of each
- * is a darker shade of the same hue so the pairs read as related.
+ * Stat colours. Semantic and independent of element: attack red, defense blue,
+ * speed yellow-green, stamina and recovery green, with each "special" variant a
+ * darker shade of its standard pair.
  */
 const stat = {
 	standardAttack: '#a84032',
@@ -67,10 +78,7 @@ const stat = {
 	recovery: '#479e4a',
 };
 
-/**
- * The same eight stats as they appear in the points charts, where bars are
- * drawn translucent over a range track.
- */
+/** The same eight stats as drawn in the points charts, translucent over a track. */
 const statPoints = {
 	standardAttack: '#df9320be',
 	specialAttack: '#b37519d0',
@@ -82,24 +90,21 @@ const statPoints = {
 	recovery: '#8f1f1fc9',
 };
 
-// --- charts --------------------------------------------------------------
 const chart = {
-	/* the faint track a stat bar is drawn against */
 	rangeTrack: '#ecff8234',
-	/* the filled portion of a stat bar */
 	pointsFill: '#80dbff34',
-	/* label text drawn on top of a bar */
 	barLabel: '#ffffff50',
-	/* the hover highlight behind a tooltip */
 	cursorFill: '#ffffff25',
-	axis: '#ffffff',
+	axis: '#ddd4bd',
 };
 
 module.exports = {
-	brand,
-	surface,
-	text,
-	feedback,
+	hull,
+	brass,
+	ink,
+	phosphor,
+	lamp,
+	hazard,
 	stat,
 	statPoints,
 	chart,

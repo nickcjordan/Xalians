@@ -13,14 +13,14 @@ class XalianAttributeChart extends React.Component {
                 {this.props.xalian && this.props.xalian.elements && 
                     <React.Fragment>
                         <Row>
-                            <Col className="x-detail-label">Primary Element:</Col>
-                            <Col className="x-detail-value">
+                            <Col className="g-spec-key">Primary Element:</Col>
+                            <Col className="g-spec-val">
                                 {this.props.xalian.elements.primaryType} [{this.props.xalian.elements.primaryElement}]
                             </Col>
                         </Row>
                         <Row>
-                            <Col className="x-detail-label">Secondary Element:</Col>
-                            <Col className="x-detail-value">
+                            <Col className="g-spec-key">Secondary Element:</Col>
+                            <Col className="g-spec-val">
                                 {this.props.xalian.elements.secondaryType} [{this.props.xalian.elements.secondaryElement}]
                             </Col>
                         </Row>
@@ -29,40 +29,40 @@ class XalianAttributeChart extends React.Component {
                 {this.props.xalian && this.props.xalian.species && 
                     <React.Fragment>
                         <Row>
-                            <Col className="x-detail-label">Generation:</Col>
-                            <Col className="x-detail-value">{this.props.xalian.species.generation}</Col>
+                            <Col className="g-spec-key">Generation:</Col>
+                            <Col className="g-spec-val">{this.props.xalian.species.generation}</Col>
                         </Row>
                         <Row>
-                            <Col className="x-detail-label">Origin Planet:</Col>
-                            <Col className="x-detail-value">{this.props.xalian.species.planet}</Col>
+                            <Col className="g-spec-key">Origin Planet:</Col>
+                            <Col className="g-spec-val">{this.props.xalian.species.planet}</Col>
                         </Row>
                         <Row>
-                            <Col className="x-detail-label">Avg Height:</Col>
-                            <Col className="x-detail-value">{this.props.xalian.species.height}</Col>
+                            <Col className="g-spec-key">Avg Height:</Col>
+                            <Col className="g-spec-val">{this.props.xalian.species.height}</Col>
                         </Row>
                         <Row>
-                            <Col className="x-detail-label">Avg Weight:</Col>
-                            <Col className="x-detail-value">{this.props.xalian.species.weight}</Col>
+                            <Col className="g-spec-key">Avg Weight:</Col>
+                            <Col className="g-spec-val">{this.props.xalian.species.weight}</Col>
                         </Row>
                     </React.Fragment>
                 }
                 {this.props.species && 
                     <React.Fragment>
                         <Row>
-                            <Col className="x-detail-label">Generation:</Col>
-                            <Col className="x-detail-value">{this.props.species.generation || '0'}</Col>
+                            <Col className="g-spec-key">Generation:</Col>
+                            <Col className="g-spec-val">{this.props.species.generation || '0'}</Col>
                         </Row>
                         <Row>
-                            <Col className="x-detail-label">Origin Planet:</Col>
-                            <Col className="x-detail-value">{this.props.species.planet}</Col>
+                            <Col className="g-spec-key">Origin Planet:</Col>
+                            <Col className="g-spec-val">{this.props.species.planet}</Col>
                         </Row>
                         <Row>
-                            <Col className="x-detail-label">Avg Height:</Col>
-                            <Col className="x-detail-value">{this.props.species.height}</Col>
+                            <Col className="g-spec-key">Avg Height:</Col>
+                            <Col className="g-spec-val">{this.props.species.height}</Col>
                         </Row>
                         <Row>
-                            <Col className="x-detail-label">Avg Weight:</Col>
-                            <Col className="x-detail-value">{this.props.species.weight}</Col>
+                            <Col className="g-spec-key">Avg Weight:</Col>
+                            <Col className="g-spec-val">{this.props.species.weight}</Col>
                         </Row>
                     </React.Fragment>
                 }
@@ -70,20 +70,20 @@ class XalianAttributeChart extends React.Component {
                     <React.Fragment>
 
                     {/* <Row>
-                        <Col className="x-detail-label">Total Stat Points:</Col>
-                        <Col className="x-detail-value">{this.props.xalian.meta.totalStatPoints}</Col>
+                        <Col className="g-spec-key">Total Stat Points:</Col>
+                        <Col className="g-spec-val">{this.props.xalian.meta.totalStatPoints}</Col>
                     </Row>
                     <Row>
-                        <Col className="x-detail-label">Potential Stat Points:</Col>
-                        <Col className="x-detail-value">{this.props.xalian.meta.potentialStatPoints}</Col>
+                        <Col className="g-spec-key">Potential Stat Points:</Col>
+                        <Col className="g-spec-val">{this.props.xalian.meta.potentialStatPoints}</Col>
                     </Row> */}
                     <Row>
-                        <Col className="x-detail-label">Stat Score:</Col>
-                        <Col className="x-detail-value">{this.props.xalian.meta.statScore}</Col>
+                        <Col className="g-spec-key">Stat Score:</Col>
+                        <Col className="g-spec-val">{this.props.xalian.meta.statScore}</Col>
                     </Row>
                     <Row>
-                        <Col className="x-detail-label">Stat Potential Score:</Col>
-                        <Col className="x-detail-value">{this.props.xalian.meta.potentialStatScore}</Col>
+                        <Col className="g-spec-key">Stat Potential Score:</Col>
+                        <Col className="g-spec-val">{this.props.xalian.meta.potentialStatScore}</Col>
                     </Row>
                     </React.Fragment>
                 }

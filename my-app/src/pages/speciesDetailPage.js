@@ -46,7 +46,7 @@ class SpeciesDetailPage extends React.Component {
 					<Container fluid className="content-background-container">
 						<XalianNavbar></XalianNavbar>
 						<Container className="content-container">
-							<h1 className="x-page-title">Species not found</h1>
+							<h1 className="g-title">Species not found</h1>
 							<p style={{ textAlign: 'center' }}>
 								No Xalian species matches this id. <a href="/species">Browse all species</a>
 							</p>

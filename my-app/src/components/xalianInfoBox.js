@@ -25,7 +25,7 @@ class XalianInfoBox extends React.Component {
 							{this.props.json && (
 								<div className="centered-view">
 									<button className="json-modal-button" onClick={() => this.setState({ jsonModalShow: true })}>
-										<i class="bi bi-file-earmark-binary"></i>
+										<i className="bi bi-file-earmark-binary"></i>
 									</button>
 								</div>
 							)}
@@ -44,7 +44,7 @@ class XalianInfoBox extends React.Component {
 							{this.props.json && (
 								<div className="centered-view">
 									<button className="json-modal-button" onClick={() => this.setState({ jsonModalShow: true })}>
-										<i class="bi bi-file-earmark-binary"></i>
+										<i className="bi bi-file-earmark-binary"></i>
 									</button>
 								</div>
 							)}
