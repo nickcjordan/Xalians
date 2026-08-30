@@ -522,11 +522,14 @@ class DuelBoard extends React.Component {
 		let showEndTurnButton = this.props.ctx.phase === 'play' && boardState.currentTurnDetails && (boardState.currentTurnDetails.hasMoved || boardState.currentTurnDetails.hasAttacked);
 		let userActionButtons = [];
 
-		userActionButtons.push(
-			<Col key="duel-action-debug" style={{ display: 'flex', justifyContent: 'center' }}>
-				<Button variant='xalianGray' onClick={ this.doDebugAction } style={{ margin: 'auto', marginBottom: '10px', marginTop: '10px' }} >DEBUG</Button>
-			</Col>
-		)
+		// the DEBUG button dumps raw game state - dev builds only, never for players
+		if (process.env.NODE_ENV !== 'production') {
+			userActionButtons.push(
+				<Col key="duel-action-debug" style={{ display: 'flex', justifyContent: 'center' }}>
+					<Button variant='xalianGray' onClick={ this.doDebugAction } style={{ margin: 'auto', marginBottom: '10px', marginTop: '10px' }} >DEBUG</Button>
+				</Col>
+			)
+		}
 
 		userActionButtons.push(
 			<Col key="duel-action-end-turn" style={{ display: 'flex', justifyContent: 'center' }}>

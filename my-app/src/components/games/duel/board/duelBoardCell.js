@@ -363,7 +363,7 @@ class DuelBoardCell extends React.Component {
 				<div className="duel-board-cell-connector unoccupied-cell-connector" style={{ opacity: shouldConnectCellTop ? 0.1 : 0, width: '5px', height: cellSizeWithUnits, top: '0', left: '50%' }} />
 			</div>
 			<div className='duel-unoccupied-cell duel-board-cell' id={`cell-${this.props.cellIndex}`} style={sty} onClick={() => this.props.handleEmptyCellSelection(this.props.cellIndex, this.props.boardState)}>
-				<h6 style={{ position: 'absolute', color: '#9e9e9e2c' }} >{this.props.cellIndex}</h6>
+				{process.env.NODE_ENV !== 'production' && <h6 style={{ position: 'absolute', color: '#9e9e9e2c' }} >{this.props.cellIndex}</h6>}
 
 				{/* ATTACK INDICATOR */}
 				{/* <div className='duel-cell-style-covered attack-pattern-background attack-pattern-background-selected fade-out-animation-on-move' style={{ visibility: isAttackIndicatorVisible ? 'visible' : 'hidden', backgroundColor: '#9700002c', height: cellSizeWithUnits, width: cellSizeWithUnits, transformOrigin: 'center', transform: 'rotate(90deg)', backgroundImage: svgUtil.getStripedBackgroundImage('#ff0000', 0.5) }} ></div> */}
