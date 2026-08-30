@@ -38,14 +38,21 @@ class AuthButtonGroup extends React.Component {
             }
         });
 
-        Hub.listen('auth', (data) => {
+        this.authListener = (data) => {
             if (data.payload.event === 'signIn_failure') {
                 if (data.payload.data.code === 'UserNotConfirmedException') {
                     this.setState({ verifyEmailModalShow: true })
                 }
             }
             this.handleAuthEvent(data.payload.event, data.payload.data);
-        })
+        };
+        Hub.listen('auth', this.authListener);
+    }
+
+    componentWillUnmount() {
+        if (this.authListener) {
+            Hub.remove('auth', this.authListener);
+        }
     }
 
     handleAuthEvent = (name, data) => {

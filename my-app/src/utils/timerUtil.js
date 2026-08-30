@@ -1,15 +1,4 @@
-import { Hub } from 'aws-amplify';
-
-Hub.listen('game-timer', (data) => {
-	const type = data.payload.event;
-	const req = data.payload.data;
-	if (type === 'start-timer') {
-	} else if (type === 'stop-timer') {
-		this.setState({ isShowing: false });
-	} else if (type === 'show-alert') {
-		this.setState({ isShowing: true });
-	}
-});
+// timer Hub wiring removed — was module-level Hub.listen with this.setState (broken); re-add inside a component if ever needed
 
 // export const start = () => {
 //     let startTime = performance.now();
@@ -46,4 +35,3 @@ Hub.listen('game-timer', (data) => {
 // export const convertMillisToSeconds = (ms) => {
 //     return Math.round(ms / 1000 * 100)/100;
 // }
-
