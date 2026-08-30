@@ -273,17 +273,18 @@ body { width: 100%; max-width: 100%; height: auto;
   /* border-radius: 6px; */
   width: 100%;
   opacity: 1;
-  z-index: 99999 !important;
+  z-index: var(--x-layer-navbar) !important;
 }
 
-/* the navbar above sits at 99999, which would otherwise cover the top of any
-   modal (bootstrap's own modal layer is only 1055). modals must outrank it. */
+/* the navbar above sits at --x-layer-navbar, which would otherwise cover the
+   top of any modal (bootstrap's own modal layer is only 1055). Modals must
+   outrank it. Both live in the layer scale in tokens.css. */
 .modal-backdrop {
-  z-index: 99999;
+  z-index: var(--x-layer-navbar);
 }
 
 .modal {
-  z-index: 100000 !important;
+  z-index: var(--x-layer-modal) !important;
 }
 
 .navbar {
@@ -1500,18 +1501,33 @@ section {
 --------------------------------------------------------------*/
 
 
+/* The panel itself carries the measure, rather than each child centring its own
+   copy - the heading and the prose sit in different containers, so centring
+   them separately left the heading floating off to one side. */
 .story-splash-section {
   background: radial-gradient(circle, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
-  border: 5px outset #80ffb183;
-  border-radius: 10px;
-  padding: 10px;
+  border: 2px solid var(--x-green-a30);
+  border-radius: var(--x-radius-lg);
+  box-shadow: var(--x-glow-inset) var(--x-green-a15);
+  padding: var(--x-space-6);
+  max-width: calc(var(--x-measure) + (2 * var(--x-space-6)));
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.story-splash-section h3 {
+  margin-bottom: var(--x-space-5);
+  color: var(--x-green);
 }
 
 .story-text {
-  color: whitesmoke;
+  color: var(--x-text-muted);
   font-weight: lighter !important;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  /* font-size: 80%; */
+  /* was a Segoe UI stack, the only place on the site that broke from the
+     body font - the lore read like it came from a different product */
+  font-family: var(--x-font-body);
+  line-height: 1.6;
+  margin-bottom: var(--x-space-4);
 }
 
 
@@ -2323,8 +2339,7 @@ article {
 }
 
 .planet-table tbody * td {
-  /* color: rgb(179, 179, 179); */
-  color: #;
+  color: var(--x-text-muted);
   padding: 3px;
   font-style: italic;
   text-align: left !important;
@@ -2708,24 +2723,85 @@ article {
 */
 
 .glossary-wrapper {
-  padding-top: 25px;
+  padding-top: var(--x-space-5);
+  padding-bottom: var(--x-space-8);
 }
 
+/* each term is its own surface, so 63 entries scan as a list of cards rather
+   than one unbroken wall of prose */
 .glossary-word-row {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding: var(--x-space-4) var(--x-space-3);
+  margin-bottom: var(--x-space-3);
+  border: 1px solid var(--x-border);
+  border-left: 3px solid var(--x-green-a60);
+  border-radius: var(--x-radius-md);
+  background-color: rgba(0, 0, 0, 0.35);
+  transition: border-color var(--x-transition-fast), background-color var(--x-transition-fast);
 }
 
-.glossary-word-row h3 {
-  font-weight: bolder;
+.glossary-word-row:hover {
+  border-color: var(--x-green-a30);
+  border-left-color: var(--x-green);
+  background-color: var(--x-surface-1);
 }
 
-.glossary-word-row h5 {
-  color: white;
+.glossary-list {
+  margin-bottom: 0;
 }
 
 .glossary-title {
   text-align: right;
+  font-weight: bolder;
+  font-size: var(--x-text-lg);
+  color: var(--x-green);
+  margin-bottom: 0;
+}
+
+.glossary-definition {
+  color: var(--x-text-muted);
+  line-height: 1.55;
+  margin-bottom: 0;
+}
+
+.glossary-search {
+  margin-top: var(--x-space-3);
+}
+
+/* bootstrap's .input-group-text ships a light background, which reads as a
+   white block against the starfield - hence the overrides */
+.glossary-search-icon.input-group-text {
+  background-color: var(--x-surface-2) !important;
+  border: 1px solid var(--x-border) !important;
+  border-right: none !important;
+  color: var(--x-green) !important;
+}
+
+.glossary-search-input {
+  background-color: var(--x-surface-2) !important;
+  border: 1px solid var(--x-border) !important;
+  color: var(--x-text) !important;
+}
+
+.glossary-search-input::placeholder {
+  color: var(--x-text-dim);
+}
+
+.glossary-search-input:focus {
+  border-color: var(--x-green-a60) !important;
+  box-shadow: 0 0 0 0.2rem var(--x-green-a15) !important;
+}
+
+.glossary-result-count {
+  color: var(--x-text-dim);
+  font-size: var(--x-text-sm);
+  text-align: right;
+  margin: var(--x-space-2) 0 0 0;
+}
+
+.glossary-empty {
+  color: var(--x-text-dim);
+  text-align: center;
+  padding: var(--x-space-7) 0;
 }
 
 /* HAPPENS WHEN SCREEN GOES TO SMALL OR XSMALL I THINK */
@@ -3129,13 +3205,16 @@ input, textarea {
   width: 100%;
 }
 
+/* the label is chrome and the value is the information, so the value gets the
+   emphasis. This was inverted - values were `gray` (~4.0:1 on the page
+   background, under the 4.5:1 minimum) against pure-white labels. */
 .species-detail-chart-header {
-  color: white;
+  color: var(--x-text-dim);
   text-align: right;
 }
 
 .species-detail-chart-text {
-  color: gray;
+  color: var(--x-text);
   text-align: left;
 }
 
