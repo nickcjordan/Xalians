@@ -39,6 +39,8 @@ import Flip from 'gsap/Flip';
 import Draggable from 'gsap/Draggable';
 import MotionPathPlugin from 'gsap/MotionPathPlugin';
 import constants from '../../../../constants/constants';
+import * as alertUtil from '../../../../utils/alertUtil';
+import FadeAlert from '../../../fadeAlert';
 gsap.registerPlugin(Flip, MotionPathPlugin, Draggable);
 
 
@@ -274,7 +276,12 @@ class DuelBoard extends React.Component {
 	takeActionOnCell = (destinationIndex, boardState, selectedId, selectedIndex, dragged) => {
 		var paths = [];
 		if (this.props.ctx.phase === 'play' && selectedId && (selectedIndex != null && selectedIndex != undefined)) {
-			paths = duelCalculator.calculateMovablePaths(selectedIndex, duelUtil.getXalianFromId(selectedId, boardState), boardState, this.props.ctx);
+			// movement is validated against live G by the rules layer, so derive it from live state
+			let live = this.getLiveBoardState();
+			let liveSelectedIndex = duelUtil.getIndexOfXalian(selectedId, live);
+			if (liveSelectedIndex != null && liveSelectedIndex >= 0) {
+				paths = duelCalculator.calculateMovablePaths(liveSelectedIndex, duelUtil.getXalianFromId(selectedId, live), live, this.props.ctx);
+			}
 		}
 		let movableIndices = paths.map(path => path.endIndex);
 
@@ -306,7 +313,9 @@ class DuelBoard extends React.Component {
 					
 				} else {
 					this.setXalianIds();
-					console.log("INVALID MOVE");
+					if (this.isReplayingAnimations()) {
+						alertUtil.sendAlert('Hold on', 'The board is still catching up — try that again in a moment.');
+					}
 				}
 			} else {
 				/*
@@ -399,33 +408,34 @@ class DuelBoard extends React.Component {
 	handleActivePieceSelection = (xalian, index, boardState) => {
 		if (this.getSelectedXalianId() && this.props.G.xalians) {
 			let selectedId = this.getSelectedXalianId();
-			let selectedIndex = duelUtil.getIndexOfXalian(selectedId, boardState);
-			
-			if ((duelUtil.isPlayerPiece(selectedId, boardState) && duelUtil.isPlayerPiece(xalian.xalianId, boardState)) 
-			|| (duelUtil.isOpponentPiece(selectedId, boardState) && duelUtil.isOpponentPiece(xalian.xalianId, boardState))) {
+			// attacks are validated against live G by the rules layer, so derive them from it too
+			let live = this.getLiveBoardState();
+			let selectedIndex = duelUtil.getIndexOfXalian(selectedId, live);
+
+			if ((duelUtil.isPlayerPiece(selectedId, live) && duelUtil.isPlayerPiece(xalian.xalianId, live))
+			|| (duelUtil.isOpponentPiece(selectedId, live) && duelUtil.isOpponentPiece(xalian.xalianId, live))) {
 				this.selectPiece(xalian, index, boardState); // switching piece selection from same team
+			} else if (live.cells[index] !== xalian.xalianId) {
+				// the rendered snapshot is behind live state — the clicked square no longer holds
+				// that piece, so the click is ambiguous. Refuse rather than submit a doomed action.
+				alertUtil.sendAlert('Hold on', 'The board is still catching up — try that again in a moment.');
 			} else {
 				var attackablePaths = [];
 				if (selectedId && (selectedIndex != null && selectedIndex != undefined)) {
-					attackablePaths = duelCalculator.calculateAttackablePaths(selectedIndex, duelUtil.getXalianFromId(selectedId, boardState), boardState, this.props.ctx);
+					attackablePaths = duelCalculator.calculateAttackablePaths(selectedIndex, duelUtil.getXalianFromId(selectedId, live), live, this.props.ctx);
 				}
 				var attackableIndices = attackablePaths.map( p => p.endIndex);
-				if (attackableIndices.includes(index) && (!boardState.currentTurnDetails.hasAttacked)) {
+				if (attackableIndices.includes(index) && (!live.currentTurnDetails.hasAttacked)) {
 					// stash pending attack and let the player choose a move before executing it
 					let path = attackablePaths.filter( p => (p.endIndex == index))[0];
-					// let path = duelCalculator.calculatePathToTarget(selectedIndex, index, boardState, this.props.ctx)
 
 					this.setState({ pendingAttack: { path: path, attackerId: selectedId, defenderId: xalian.xalianId } });
-
-
-					// reset selection
-					// this.setState({ referencedXalianId: null });
-					// LocalDuelStorage.removeReferencedXalianId();
-					// this.setReferencedXalianId();
+				} else if (live.currentTurnDetails.hasAttacked) {
+					alertUtil.sendAlert('No attack left', 'Your team has already attacked this turn.');
 				} else {
-					console.log("CAN NOT ATTACK SPACE");
+					alertUtil.sendAlert('Out of range', `${duelUtil.getXalianFromId(selectedId, live).species.name} can't reach that square.`);
 				}
-				
+
 			}
 		} else {
 			this.selectPiece(xalian, index, boardState);
@@ -485,6 +495,18 @@ class DuelBoard extends React.Component {
 	}
 
 	
+
+	// the board deliberately RENDERS a historical snapshot while animations replay
+	// (see getStartingBoardState). Actions must never be derived from that snapshot —
+	// the rules layer validates against live G and would reject stale-derived paths.
+	getLiveBoardState = () => {
+		return boardStateManager.buildBoardState(this.props.G, this.props.ctx);
+	}
+
+	isReplayingAnimations = () => {
+		let logs = boardStateManager.getAllMoveActionsFromLog(this.props.log);
+		return this.state.logIndex < logs.length;
+	}
 
 	getStartingBoardState = () => {
 		let actionLogs = boardStateManager.getAllMoveActionsFromLog(this.props.log);
@@ -677,11 +699,13 @@ class DuelBoard extends React.Component {
 										/>
 									}
 
+									<FadeAlert />
+
 									{this.state.pendingAttack &&
 										<AttackMoveChooserModal
 											show={!!this.state.pendingAttack}
-											attacker={duelUtil.getXalianFromId(this.state.pendingAttack.attackerId, boardState)}
-											defender={duelUtil.getXalianFromId(this.state.pendingAttack.defenderId, boardState)}
+											attacker={duelUtil.getXalianFromId(this.state.pendingAttack.attackerId, this.getLiveBoardState())}
+											defender={duelUtil.getXalianFromId(this.state.pendingAttack.defenderId, this.getLiveBoardState())}
 											G={this.props.G}
 											ctx={this.props.ctx}
 											onSelect={(moveIndex) => {
