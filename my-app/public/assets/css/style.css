@@ -3585,118 +3585,217 @@ input, textarea {
 }
 
 /*--------------------------------------------------------------
-# Style Guide
-# The living design system reference at /styleguide.
+# Style Guide page layout
+# Page-specific scaffolding only. Everything that is part of the
+# design system itself lives in system.css.
 --------------------------------------------------------------*/
 
-.styleguide-container {
-  padding-bottom: var(--x-space-8);
+.sg-page {
+  padding-top: var(--g-8);
+  padding-bottom: var(--g-9);
 }
 
-.styleguide-section {
-  margin-bottom: var(--x-space-8);
+.sg-masthead {
+  max-width: var(--g-measure);
+  margin-bottom: var(--g-8);
 }
 
-.styleguide-heading {
-  color: var(--x-green);
-  border-bottom: 1px solid var(--x-border);
-  padding-bottom: var(--x-space-2);
-  margin-bottom: var(--x-space-4);
+.sg-masthead .g-title {
+  margin: var(--g-3) 0 var(--g-4) 0;
 }
 
-.styleguide-note {
-  color: var(--x-text-dim);
-  font-size: var(--x-text-sm);
-  max-width: var(--x-measure);
-  margin-bottom: var(--x-space-4);
-}
-
-.styleguide-swatch-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: var(--x-space-4);
-}
-
-.styleguide-swatch-chip {
-  height: 56px;
-  border-radius: var(--x-radius-md);
-  border: 1px solid var(--x-border);
-  margin-bottom: var(--x-space-2);
-}
-
-.styleguide-swatch-name {
-  display: block;
-  color: var(--x-text);
-  font-size: var(--x-text-xs);
-  word-break: break-all;
-}
-
-.styleguide-swatch-value {
-  display: block;
-  color: var(--x-text-dim);
-  font-size: var(--x-text-xs);
-}
-
-.styleguide-space-row {
+.sg-masthead-status {
   display: flex;
-  align-items: center;
-  gap: var(--x-space-4);
-  margin-bottom: var(--x-space-2);
-}
-
-.styleguide-space-name {
-  color: var(--x-text-dim);
-  font-size: var(--x-text-xs);
-  min-width: 110px;
-}
-
-.styleguide-space-bar {
-  height: 16px;
-  background-color: var(--x-green);
-  border-radius: var(--x-radius-sm);
-}
-
-.styleguide-radius-grid {
-  display: flex;
-  gap: var(--x-space-5);
   flex-wrap: wrap;
+  gap: var(--g-5);
+  margin-top: var(--g-5);
 }
 
-.styleguide-radius-box {
-  width: 80px;
-  height: 80px;
-  background-color: var(--x-surface-3);
-  border: 1px solid var(--x-green-a30);
-  margin-bottom: var(--x-space-2);
-}
-
-.styleguide-panel-col {
-  margin-bottom: var(--x-space-4);
-}
-
-.styleguide-tint-grid {
+.sg-index {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: var(--x-space-3);
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--g-1);
+  margin-bottom: var(--g-9);
 }
 
-.styleguide-tint {
+.sg-index-item {
+  display: flex;
+  align-items: baseline;
+  gap: var(--g-2);
+  padding: var(--g-2) var(--g-3);
+  text-decoration: none;
+  transition: background var(--g-snap);
+}
+
+.sg-index-item:hover {
+  background: rgba(255, 244, 214, 0.05);
+}
+
+.sg-index-num {
+  font-size: var(--g-size-micro);
+  color: var(--g-hazard);
+}
+
+.sg-index-name {
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-micro);
+  text-transform: uppercase;
+  letter-spacing: var(--g-track-label);
+  color: var(--g-ink-mid);
+}
+
+.sg-section {
+  margin-bottom: var(--g-9);
+  scroll-margin-top: var(--g-8);
+}
+
+.sg-section-head {
+  position: relative;
+  padding-top: var(--g-4);
+  border-top: var(--g-hairline) solid var(--g-rule);
+  margin-bottom: var(--g-6);
+}
+
+.sg-section-index {
+  position: absolute;
+  top: var(--g-4);
+  right: 0;
+  font-size: var(--g-size-micro);
+  color: var(--g-ink-low);
+  letter-spacing: var(--g-track-wide);
+}
+
+.sg-section-note {
+  margin-top: var(--g-3);
+  margin-bottom: 0;
+}
+
+.sg-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+  gap: var(--g-4);
+  margin-bottom: var(--g-4);
+}
+
+.sg-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--g-4);
+  margin-bottom: var(--g-4);
+}
+
+.sg-swatch-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: var(--g-3);
+}
+
+.sg-swatch-chip {
+  height: 52px;
+  border: var(--g-hairline) solid var(--g-rule);
+  margin-bottom: var(--g-2);
+}
+
+.sg-swatch-name {
+  display: block;
+  font-size: var(--g-size-micro);
+  color: var(--g-ink);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.sg-swatch-use {
+  display: block;
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-micro);
+  color: var(--g-ink-low);
+}
+
+.sg-type-plate .g-h3 {
+  margin: var(--g-2) 0 var(--g-3) 0;
+}
+
+.sg-readout-demo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--g-2);
+}
+
+.sg-element-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--g-3);
+  margin-bottom: var(--g-5);
+}
+
+.sg-element-cell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--g-2);
+  padding: var(--g-4);
+}
+
+.sg-element-hex {
+  font-size: var(--g-size-micro);
+  color: var(--g-ink-low);
+}
+
+.sg-element-meter {
+  margin-top: var(--g-1);
+}
+
+.sg-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--g-2);
+}
+
+.sg-btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--g-3);
+}
+
+.sg-small-body {
+  font-size: var(--g-size-small);
+  margin: 0;
+}
+
+.sg-mb { margin-bottom: var(--g-3); }
+.sg-mt { margin-top: var(--g-4); }
+
+.sg-specimen-card {
+  display: grid;
+  grid-template-columns: minmax(200px, 320px) 1fr;
+  gap: var(--g-6);
+  align-items: start;
+}
+
+.sg-specimen-name {
+  margin-top: var(--g-4);
+}
+
+.sg-specimen-id {
+  font-size: var(--g-size-small);
+  color: var(--g-ink-low);
+  margin: var(--g-1) 0 var(--g-4) 0;
+}
+
+.sg-specimen-img {
+  width: 100%;
+  height: 100%;
+}
+
+.sg-footer {
+  padding-top: var(--g-5);
+  border-top: var(--g-hairline) solid var(--g-rule);
   text-align: center;
-  text-transform: capitalize;
-  padding: var(--x-space-4) var(--x-space-2);
-  border-radius: var(--x-radius-md);
 }
 
-.styleguide-button-row {
-  display: flex;
-  gap: var(--x-space-3);
-  flex-wrap: wrap;
-}
-
-.styleguide-measure-demo {
-  color: var(--x-text-muted);
-  border-left: 3px solid var(--x-green-a60);
-  padding-left: var(--x-space-4);
+@media (max-width: 720px) {
+  .sg-specimen-card {
+    grid-template-columns: 1fr;
+  }
 }
 
 /*--------------------------------------------------------------
@@ -3755,4 +3854,27 @@ input, textarea {
     animation: none;
     opacity: 1;
   }
+}
+
+/* style guide: CRT demo layout */
+.sg-screen-layout {
+  display: grid;
+  grid-template-columns: 1fr minmax(180px, 260px);
+  gap: var(--g-4);
+  align-items: stretch;
+}
+
+.sg-screen-figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--g-2);
+  text-align: center;
+}
+
+.sg-mb-lg { margin-bottom: var(--g-4); }
+
+@media (max-width: 720px) {
+  .sg-screen-layout { grid-template-columns: 1fr; }
 }

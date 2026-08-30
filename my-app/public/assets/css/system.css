@@ -1,0 +1,1185 @@
+/**
+ * XALIAN GENERATOR — design system v2
+ * =============================================================================
+ * The premise: this is the control panel of a Xalian Generator. The machine can
+ * bioengineer life on a dead world — but it was built by an industrial empire
+ * during its atomic age, and it looks like it. Enamelled steel, brass bezels,
+ * bakelite keys, a small green CRT bolted into a hole in the panel.
+ *
+ * Star Wars by way of Fallout: the capability is centuries ahead, the interface
+ * is decades behind. Nothing here is sleek. Everything is a physical object
+ * that somebody screwed to a frame in a factory.
+ *
+ * Four rules:
+ *
+ *  1. PANELS ARE MATTE OBJECTS. Enamel over pressed steel. Depth comes from a
+ *     bevel — light on the top edge, shadow underneath — plus rivets and seams.
+ *     Nothing on the hull glows, ever.
+ *  2. ONLY SCREENS AND LAMPS EMIT. Phosphor, scanlines and bloom live strictly
+ *     inside .g-screen. A CRT behind glass is the one lit thing in the room,
+ *     which is precisely why the eye goes to it.
+ *  3. COLOUR IS ENERGY OR A WARNING. The hull is olive, bone and gunmetal. The
+ *     fourteen element hues and the hazard channels are the only saturated
+ *     things in the system, so they read instantly.
+ *  4. LEGENDS ARE STENCILLED. Condensed industrial caps for anything painted on
+ *     the hull; monospace for anything the machine itself prints.
+ *
+ * Namespace is --g-* / .g-*, alongside the old --x-* system during migration.
+ */
+
+/* -------------------------------------------------------------------------
+   TOKENS
+   ------------------------------------------------------------------------- */
+
+:root {
+	/* --- the room ---------------------------------------------------------
+	   Warm near-black, tinted brown rather than blue. A hangar, not a showroom. */
+	--g-void: #0d0b09;
+
+	/* --- hull -------------------------------------------------------------
+	   Enamelled steel in olive drab. Three steps — recessed, standard, raised —
+	   deliberately close together, because it is all one pressed sheet. */
+	--g-hull-lo: #16160f;
+	--g-hull: #23231a;
+	--g-hull-hi: #32322a;
+	--g-seam: #0a0a07;
+
+	/* Bevel. A painted edge catches light along the top and drops shadow below.
+	   These two values are what make a panel read as an object. */
+	--g-bevel-light: rgba(255, 244, 214, 0.11);
+	--g-bevel-dark: rgba(0, 0, 0, 0.6);
+	--g-rule: rgba(216, 207, 184, 0.14);
+	--g-rule-faint: rgba(216, 207, 184, 0.06);
+
+	/* --- brass ------------------------------------------------------------
+	   Bezels, trim rings and fasteners. Oxidised, not polished. */
+	--g-brass: #b08d3f;
+	--g-brass-dark: #6b5423;
+	--g-brass-light: #d8b45e;
+
+	/* --- printed matter ---------------------------------------------------
+	   Bone-white silkscreen and cream bakelite. Never pure white — paint yellows. */
+	--g-ink: #ddd4bd;
+	--g-ink-mid: #9a9280;
+	--g-ink-low: #6b665a;
+	--g-ink-invert: #14120c;
+
+	/* --- phosphor ---------------------------------------------------------
+	   The CRT. The only pure saturated light in the interface, confined to
+	   .g-screen. */
+	--g-phosphor: #74ffb0;
+	--g-phosphor-dim: rgba(116, 255, 176, 0.42);
+	--g-phosphor-a20: rgba(116, 255, 176, 0.20);
+	--g-screen-glass: #07120c;
+
+	/* --- lamps ------------------------------------------------------------
+	   Bulbs behind coloured plastic. */
+	--g-lamp-amber: #ffb037;
+	--g-lamp-red: #e4483c;
+	--g-lamp-off: #3d3a30;
+
+	/* --- hazard -----------------------------------------------------------
+	   Painted warning livery, straight off a loading bay. */
+	--g-hazard: #d9a410;
+	--g-hazard-dark: #6d5108;
+
+	/* --- element energy ---------------------------------------------------
+	   Unchanged, and the fixed point of the whole system: fire is red because
+	   fire is red. The hull went colourless so these own every saturated pixel. */
+	--g-el-fire: #df6d5e;
+	--g-el-water: #60a0c5;
+	--g-el-air: #ffffff;
+	--g-el-electric: #e2bd43;
+	--g-el-rock: #8d7050;
+	--g-el-plant: #708844;
+	--g-el-chemical: #64bd9f;
+	--g-el-light: #ffffc7;
+	--g-el-dark: #57619c;
+	--g-el-metal: #8d8d8d;
+	--g-el-psychic: #d39bcb;
+	--g-el-ghost: #8764a8;
+	--g-el-ice: #85dde4;
+	--g-el-sand: #e6b26f;
+
+	/* The element in scope. One class on a container retunes everything inside. */
+	--g-el: var(--g-phosphor);
+
+	/* --- type -------------------------------------------------------------
+	   Oswald is a mid-century poster and signage face: the condensed caps
+	   stencilled onto equipment and painted on placards. IBM Plex Mono is the
+	   machine's own output — a terminal line, a printed slip. Neither is a
+	   "sci-fi" typeface, because the fiction is industrial, not futuristic. */
+	--g-font-stencil: 'Oswald', 'Barlow Condensed', Impact, sans-serif;
+	--g-font-ui: 'Barlow', system-ui, sans-serif;
+	--g-font-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+
+	--g-size-micro: 0.6875rem;
+	--g-size-tiny: 0.75rem;
+	--g-size-small: 0.875rem;
+	--g-size-body: 1rem;
+	--g-size-lead: 1.125rem;
+	--g-size-h3: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+	--g-size-h2: clamp(1.75rem, 1.4rem + 1.6vw, 2.5rem);
+	--g-size-h1: clamp(2.5rem, 1.8rem + 3.4vw, 4.25rem);
+	--g-size-readout: clamp(1.75rem, 1.2rem + 2.2vw, 2.75rem);
+
+	--g-track-label: 0.12em;
+	--g-track-wide: 0.26em;
+
+	/* --- space ------------------------------------------------------------ */
+	--g-1: 4px;
+	--g-2: 8px;
+	--g-3: 12px;
+	--g-4: 16px;
+	--g-5: 24px;
+	--g-6: 32px;
+	--g-7: 48px;
+	--g-8: 64px;
+	--g-9: 96px;
+
+	/* --- geometry ---------------------------------------------------------
+	   Streamline moderne: softly rounded housings, not sharp corners and not
+	   sci-fi chamfers. Moulded plastic and pressed steel both have a radius. */
+	--g-radius: 4px;
+	--g-radius-panel: 8px;
+	--g-radius-housing: 14px;
+	--g-hairline: 1px;
+
+	/* --- light ------------------------------------------------------------
+	   Hull does not emit. Screens and lamps do. */
+	--g-relief: inset 0 1px 0 var(--g-bevel-light), inset 0 -1px 0 var(--g-bevel-dark);
+	--g-drop: 0 1px 0 rgba(0, 0, 0, 0.5), 0 4px 14px rgba(0, 0, 0, 0.5);
+	--g-recess: inset 0 2px 6px rgba(0, 0, 0, 0.8), inset 0 -1px 0 var(--g-bevel-light);
+	--g-screen-bloom: 0 0 26px rgba(116, 255, 176, 0.13);
+
+	/* --- motion -----------------------------------------------------------
+	   Mechanical. Switches throw; they do not glide. */
+	--g-snap: 90ms cubic-bezier(0.3, 0, 0.2, 1);
+	--g-move: 200ms cubic-bezier(0.3, 0, 0.2, 1);
+
+	--g-measure: 68ch;
+
+	--g-layer-nav: 500;
+	--g-layer-modal: 1000;
+}
+
+/* Element keying. */
+.g-el-fire { --g-el: var(--g-el-fire); }
+.g-el-water { --g-el: var(--g-el-water); }
+.g-el-air { --g-el: var(--g-el-air); }
+.g-el-electric { --g-el: var(--g-el-electric); }
+.g-el-rock { --g-el: var(--g-el-rock); }
+.g-el-plant { --g-el: var(--g-el-plant); }
+.g-el-chemical { --g-el: var(--g-el-chemical); }
+.g-el-light { --g-el: var(--g-el-light); }
+.g-el-dark { --g-el: var(--g-el-dark); }
+.g-el-metal { --g-el: var(--g-el-metal); }
+.g-el-psychic { --g-el: var(--g-el-psychic); }
+.g-el-ghost { --g-el: var(--g-el-ghost); }
+.g-el-ice { --g-el: var(--g-el-ice); }
+.g-el-sand { --g-el: var(--g-el-sand); }
+
+/* -------------------------------------------------------------------------
+   THE HULL
+   The page is a painted bulkhead. No grid, no scanlines, no vignette — that
+   equipment belongs on the screens.
+   ------------------------------------------------------------------------- */
+
+.g-console {
+	position: relative;
+	min-height: 100vh;
+	background-color: var(--g-void);
+	/* uneven light across a big enamelled surface */
+	background-image:
+		radial-gradient(ellipse 110% 60% at 25% -10%, rgba(255, 236, 194, 0.05), transparent 62%),
+		radial-gradient(ellipse 80% 50% at 95% 108%, rgba(255, 236, 194, 0.028), transparent 60%);
+	color: var(--g-ink);
+	font-family: var(--g-font-ui);
+}
+
+/* Paint tooth. One small turbulence tile at low opacity — what stops a large
+   flat surface reading as a CSS gradient. */
+.g-console::before {
+	content: '';
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	z-index: 1;
+	opacity: 0.18;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+
+.g-console > * {
+	position: relative;
+	z-index: 2;
+}
+
+/* -------------------------------------------------------------------------
+   TYPE
+   ------------------------------------------------------------------------- */
+
+.g-kicker,
+.g-label {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	margin: 0;
+}
+
+.g-kicker { color: var(--g-ink-low); }
+.g-label { color: var(--g-ink-mid); }
+
+.g-title {
+	font-family: var(--g-font-stencil);
+	font-weight: 700;
+	font-size: var(--g-size-h1);
+	text-transform: uppercase;
+	letter-spacing: 0.005em;
+	line-height: 0.95;
+	color: var(--g-ink);
+	margin: 0;
+}
+
+.g-h2 {
+	font-family: var(--g-font-stencil);
+	font-weight: 600;
+	font-size: var(--g-size-h2);
+	text-transform: uppercase;
+	letter-spacing: 0.015em;
+	line-height: 1;
+	color: var(--g-ink);
+	margin: 0;
+}
+
+.g-h3 {
+	font-family: var(--g-font-stencil);
+	font-weight: 600;
+	font-size: var(--g-size-h3);
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+	color: var(--g-ink);
+	margin: 0;
+}
+
+.g-body {
+	font-family: var(--g-font-ui);
+	font-size: var(--g-size-body);
+	line-height: 1.65;
+	color: var(--g-ink-mid);
+	max-width: var(--g-measure);
+}
+
+.g-mono {
+	font-family: var(--g-font-mono);
+	font-variant-numeric: tabular-nums;
+}
+
+/* -------------------------------------------------------------------------
+   PANEL
+   Enamelled steel bolted to the hull. Matte. Depth is the bevel plus, where
+   it earns it, four rivets.
+   ------------------------------------------------------------------------- */
+
+.g-panel {
+	--panel-fill: var(--g-hull);
+	position: relative;
+	padding: var(--g-5);
+	background: var(--panel-fill);
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: var(--g-radius-panel);
+	box-shadow: var(--g-relief), var(--g-drop);
+}
+
+.g-panel--raised { --panel-fill: var(--g-hull-hi); }
+
+.g-panel--recessed {
+	--panel-fill: var(--g-hull-lo);
+	box-shadow: var(--g-recess);
+}
+
+/* Fasteners, one per corner — drawn, not marked up, and small enough to read
+   as construction rather than as ornament. */
+.g-panel--bolted {
+	background-image:
+		radial-gradient(circle at 11px 11px, rgba(0,0,0,0.6) 1.5px, var(--g-brass-dark) 2.4px, var(--g-bevel-light) 3px, transparent 3.6px),
+		radial-gradient(circle at calc(100% - 11px) 11px, rgba(0,0,0,0.6) 1.5px, var(--g-brass-dark) 2.4px, var(--g-bevel-light) 3px, transparent 3.6px),
+		radial-gradient(circle at 11px calc(100% - 11px), rgba(0,0,0,0.6) 1.5px, var(--g-brass-dark) 2.4px, var(--g-bevel-light) 3px, transparent 3.6px),
+		radial-gradient(circle at calc(100% - 11px) calc(100% - 11px), rgba(0,0,0,0.6) 1.5px, var(--g-brass-dark) 2.4px, var(--g-bevel-light) 3px, transparent 3.6px);
+}
+
+/* The stencilled title strip along the top of a panel. */
+.g-panel-head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--g-3);
+	padding-bottom: var(--g-2);
+	margin-bottom: var(--g-4);
+	border-bottom: var(--g-hairline) solid var(--g-rule);
+}
+
+/* On a narrow panel the legend and its annotation fight for the same line and
+   both wrap. Stack them instead, and drop the annotation down a step. */
+@media (max-width: 720px) {
+	.g-panel-head {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var(--g-1);
+	}
+}
+
+/* Keyed to an element: a painted colour band along the top edge. The panel
+   stays matte metal — the machine does not light up because a specimen is
+   psychic. */
+.g-panel--tagged { border-top: 3px solid var(--g-el); }
+
+/* -------------------------------------------------------------------------
+   SCREEN
+   A CRT set into a hole in the panel, behind a brass bezel. The only thing in
+   the system that emits light, and the only place scanlines exist.
+   ------------------------------------------------------------------------- */
+
+.g-screen {
+	position: relative;
+	padding: var(--g-4);
+	background:
+		radial-gradient(ellipse 120% 90% at 50% 40%, rgba(116, 255, 176, 0.055), transparent 70%),
+		var(--g-screen-glass);
+	border: 2px solid var(--g-brass-dark);
+	border-radius: var(--g-radius);
+	box-shadow:
+		var(--g-recess),
+		0 0 0 1px rgba(0, 0, 0, 0.8),
+		var(--g-screen-bloom);
+	color: var(--g-phosphor);
+	font-family: var(--g-font-mono);
+	overflow: hidden;
+}
+
+/* Scanlines and the curve of the glass — confined to the screen, which is the
+   entire point of having a screen. */
+.g-screen::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	background-image:
+		repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.32) 0 1px, transparent 1px 3px),
+		radial-gradient(ellipse 130% 130% at 50% 50%, transparent 52%, rgba(0, 0, 0, 0.6) 100%);
+}
+
+.g-screen-line {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-tiny);
+	line-height: 1.7;
+	color: var(--g-phosphor);
+	text-shadow: 0 0 6px var(--g-phosphor-dim);
+	margin: 0;
+}
+
+.g-screen-line--dim {
+	color: var(--g-phosphor-dim);
+	text-shadow: none;
+}
+
+.g-readout {
+	font-family: var(--g-font-mono);
+	font-variant-numeric: tabular-nums;
+	font-size: var(--g-size-readout);
+	font-weight: 500;
+	line-height: 1;
+	color: var(--g-el);
+	text-shadow: 0 0 14px color-mix(in srgb, var(--g-el) 55%, transparent);
+}
+
+.g-readout-unit {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-tiny);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-phosphor-dim);
+}
+
+/* -------------------------------------------------------------------------
+   LIVERY
+   ------------------------------------------------------------------------- */
+
+.g-hazard-strip {
+	height: 12px;
+	background-image: repeating-linear-gradient(
+		-45deg,
+		var(--g-hazard) 0 11px,
+		#15130c 11px 22px
+	);
+	border-radius: 2px;
+	box-shadow: var(--g-relief);
+	opacity: 0.9;
+}
+
+.g-seam-rule {
+	height: 2px;
+	border: 0;
+	margin: var(--g-5) 0;
+	background: linear-gradient(180deg, var(--g-seam) 0 1px, var(--g-bevel-light) 1px 2px);
+}
+
+/* A riveted trim strip — used to break up long runs of bare panel. */
+.g-rivet-rule {
+	height: 8px;
+	border: 0;
+	margin: var(--g-5) 0;
+	background-image:
+		linear-gradient(180deg, var(--g-seam) 0 1px, var(--g-bevel-light) 1px 2px, transparent 2px),
+		radial-gradient(circle at 6px 6px, var(--g-brass-dark) 1.4px, transparent 2px);
+	background-size: 100% 100%, 28px 100%;
+	background-repeat: no-repeat, repeat-x;
+}
+
+/* -------------------------------------------------------------------------
+   METER
+   Segmented, because an instrument quantises. A recessed strip of bulbs let
+   into the hull, lit in the element's colour.
+   ------------------------------------------------------------------------- */
+
+.g-meter {
+	--seg: 7px;
+	--gap: 3px;
+	position: relative;
+	height: 14px;
+	background-color: var(--g-seam);
+	border-radius: 2px;
+	box-shadow: var(--g-recess);
+}
+
+.g-meter-track {
+	position: absolute;
+	inset: 2px;
+	background-image: repeating-linear-gradient(
+		90deg,
+		rgba(255, 244, 214, 0.05) 0 var(--seg),
+		transparent var(--seg) calc(var(--seg) + var(--gap))
+	);
+}
+
+/* Headroom the stat could still grow into: bulbs that exist but are not lit. */
+.g-meter-ghost {
+	position: absolute;
+	top: 2px;
+	bottom: 2px;
+	left: 2px;
+	background-image: repeating-linear-gradient(
+		90deg,
+		color-mix(in srgb, var(--g-el) 30%, transparent) 0 var(--seg),
+		transparent var(--seg) calc(var(--seg) + var(--gap))
+	);
+}
+
+/* Lit bulbs: what the stat actually is. */
+.g-meter-fill {
+	position: absolute;
+	top: 2px;
+	bottom: 2px;
+	left: 2px;
+	background-image: repeating-linear-gradient(
+		90deg,
+		var(--g-el) 0 var(--seg),
+		transparent var(--seg) calc(var(--seg) + var(--gap))
+	);
+	filter: drop-shadow(0 0 4px color-mix(in srgb, var(--g-el) 70%, transparent));
+	transition: width var(--g-move);
+}
+
+.g-meter-row {
+	display: grid;
+	grid-template-columns: 8.5rem 1fr 3.5rem;
+	align-items: center;
+	gap: var(--g-3);
+	padding: var(--g-1) 0;
+}
+
+.g-meter-name {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-mid);
+}
+
+.g-meter-value {
+	font-family: var(--g-font-mono);
+	font-variant-numeric: tabular-nums;
+	font-size: var(--g-size-tiny);
+	color: var(--g-ink);
+	text-align: right;
+}
+
+/* -------------------------------------------------------------------------
+   CHIP
+   A printed classification label, like a sticker on a specimen jar.
+   ------------------------------------------------------------------------- */
+
+.g-chip {
+	display: inline-flex;
+	align-items: center;
+	padding: 2px var(--g-3);
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-invert);
+	background: var(--g-el);
+	border-radius: 2px;
+	box-shadow: var(--g-relief);
+}
+
+.g-chip--outline {
+	color: var(--g-el);
+	background: transparent;
+	border: var(--g-hairline) solid color-mix(in srgb, var(--g-el) 55%, transparent);
+	box-shadow: none;
+}
+
+/* -------------------------------------------------------------------------
+   CONTROLS
+   A button is a moulded bakelite key that sits proud of the panel and travels
+   when pressed.
+   ------------------------------------------------------------------------- */
+
+.g-btn {
+	--btn-face: var(--g-hull-hi);
+	--btn-ink: var(--g-ink);
+	--btn-edge: var(--g-seam);
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--g-2);
+	padding: var(--g-3) var(--g-5);
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-body);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--btn-ink);
+	background: var(--btn-face);
+	border: var(--g-hairline) solid var(--btn-edge);
+	border-radius: var(--g-radius);
+	box-shadow: var(--g-relief), 0 3px 0 var(--g-seam), 0 4px 8px rgba(0, 0, 0, 0.55);
+	cursor: pointer;
+	transition: background var(--g-snap), transform var(--g-snap), box-shadow var(--g-snap);
+}
+
+.g-btn:hover:not(:disabled) { --btn-face: #3c3c32; }
+
+/* The key travels down onto the panel. */
+.g-btn:active:not(:disabled) {
+	transform: translateY(3px);
+	box-shadow: var(--g-recess);
+}
+
+.g-btn:focus-visible {
+	outline: 2px solid var(--g-phosphor);
+	outline-offset: 2px;
+}
+
+/* The committing action wears hazard paint. */
+.g-btn--primary {
+	--btn-face: var(--g-hazard);
+	--btn-ink: #17120a;
+	--btn-edge: var(--g-hazard-dark);
+}
+
+.g-btn--primary:hover:not(:disabled) { --btn-face: #f0b71a; }
+
+.g-btn--danger {
+	--btn-face: #7c2b26;
+	--btn-ink: #ffdedb;
+	--btn-edge: #43110e;
+}
+
+.g-btn--danger:hover:not(:disabled) { --btn-face: #94332d; }
+
+/* Unpowered, not faded: the key is still moulded there, the legend is dead. */
+.g-btn:disabled {
+	--btn-face: var(--g-hull-lo);
+	--btn-ink: var(--g-ink-low);
+	cursor: not-allowed;
+	box-shadow: var(--g-recess);
+}
+
+/* Text entry is a screen, so it is phosphor on glass. */
+.g-input,
+.g-select {
+	width: 100%;
+	padding: var(--g-3) var(--g-4);
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-small);
+	color: var(--g-phosphor);
+	background: var(--g-screen-glass);
+	border: 2px solid var(--g-brass-dark);
+	border-radius: var(--g-radius);
+	box-shadow: var(--g-recess);
+}
+
+.g-input::placeholder { color: rgba(116, 255, 176, 0.32); }
+
+.g-input:focus,
+.g-select:focus {
+	outline: none;
+	border-color: var(--g-brass);
+	box-shadow: var(--g-recess), var(--g-screen-bloom);
+}
+
+.g-select {
+	appearance: none;
+	padding-right: var(--g-7);
+	background-image:
+		linear-gradient(45deg, transparent 50%, var(--g-phosphor) 50%),
+		linear-gradient(135deg, var(--g-phosphor) 50%, transparent 50%);
+	background-position: right 20px center, right 14px center;
+	background-size: 6px 6px, 6px 6px;
+	background-repeat: no-repeat;
+	cursor: pointer;
+}
+
+.g-field-label {
+	display: block;
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-low);
+	margin-bottom: var(--g-2);
+}
+
+/* A bank of selector keys in a recessed housing. */
+.g-segmented {
+	display: inline-flex;
+	padding: 3px;
+	gap: 3px;
+	background: var(--g-seam);
+	border-radius: var(--g-radius);
+	box-shadow: var(--g-recess);
+}
+
+.g-segment {
+	padding: var(--g-2) var(--g-4);
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-mid);
+	background: var(--g-hull);
+	border: 0;
+	border-radius: 2px;
+	box-shadow: var(--g-relief);
+	cursor: pointer;
+	transition: background var(--g-snap), color var(--g-snap);
+}
+
+.g-segment:hover:not([aria-pressed='true']) {
+	background: var(--g-hull-hi);
+	color: var(--g-ink);
+}
+
+.g-segment[aria-pressed='true'] {
+	color: var(--g-ink-invert);
+	background: var(--g-hazard);
+}
+
+.g-segment:focus-visible {
+	outline: 2px solid var(--g-phosphor);
+	outline-offset: -3px;
+}
+
+/* A toggle with a real throw. */
+.g-check {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--g-3);
+	cursor: pointer;
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-body);
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-mid);
+}
+
+.g-check input {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.g-check-box {
+	position: relative;
+	width: 46px;
+	height: 24px;
+	flex: none;
+	background: var(--g-seam);
+	border-radius: 3px;
+	box-shadow: var(--g-recess);
+	transition: background var(--g-snap);
+}
+
+.g-check-box::after {
+	content: '';
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	width: 20px;
+	height: 18px;
+	background: var(--g-hull-hi);
+	border-radius: 2px;
+	box-shadow: var(--g-relief), 0 1px 3px rgba(0, 0, 0, 0.7);
+	transition: transform var(--g-snap), background var(--g-snap);
+}
+
+.g-check input:checked + .g-check-box { background: #40340b; }
+.g-check input:checked + .g-check-box::after {
+	transform: translateX(20px);
+	background: var(--g-hazard);
+}
+
+.g-check input:focus-visible + .g-check-box {
+	outline: 2px solid var(--g-phosphor);
+	outline-offset: 2px;
+}
+
+/* -------------------------------------------------------------------------
+   LAMPS
+   Bulbs behind coloured plastic. Lit or unlit — they do not pulse.
+   ------------------------------------------------------------------------- */
+
+.g-lamp {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--g-2);
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-mid);
+}
+
+.g-lamp::before {
+	content: '';
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	flex: none;
+	background: var(--g-phosphor);
+	box-shadow: 0 0 8px var(--g-phosphor), inset 0 -2px 2px rgba(0, 0, 0, 0.45);
+}
+
+.g-lamp--amber::before {
+	background: var(--g-lamp-amber);
+	box-shadow: 0 0 8px var(--g-lamp-amber), inset 0 -2px 2px rgba(0, 0, 0, 0.45);
+}
+
+.g-lamp--red::before {
+	background: var(--g-lamp-red);
+	box-shadow: 0 0 8px var(--g-lamp-red), inset 0 -2px 2px rgba(0, 0, 0, 0.45);
+}
+
+.g-lamp--off::before {
+	background: var(--g-lamp-off);
+	box-shadow: inset 0 -2px 2px rgba(0, 0, 0, 0.55);
+}
+
+/* -------------------------------------------------------------------------
+   FEEDBACK
+   ------------------------------------------------------------------------- */
+
+.g-notice {
+	--tone: var(--g-hazard);
+	display: flex;
+	gap: var(--g-3);
+	padding: var(--g-3) var(--g-4);
+	background: var(--g-hull-lo);
+	border-left: 4px solid var(--tone);
+	border-radius: var(--g-radius);
+	box-shadow: var(--g-relief);
+	font-family: var(--g-font-ui);
+	font-size: var(--g-size-small);
+	color: var(--g-ink);
+}
+
+.g-notice--alert { --tone: var(--g-lamp-red); }
+.g-notice--ok { --tone: var(--g-phosphor); }
+.g-notice--inert { --tone: var(--g-ink-low); }
+
+.g-notice-title {
+	display: block;
+	font-family: var(--g-font-stencil);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--tone);
+}
+
+/* Working: a sweep across a recessed strip. Indeterminate on purpose — the
+   machine will not pretend to know how long it needs. */
+.g-working {
+	display: flex;
+	align-items: center;
+	gap: var(--g-3);
+}
+
+.g-working-bar {
+	position: relative;
+	flex: 1;
+	height: 14px;
+	overflow: hidden;
+	background: var(--g-seam);
+	border-radius: 2px;
+	box-shadow: var(--g-recess);
+}
+
+.g-working-bar::after {
+	content: '';
+	position: absolute;
+	top: 2px;
+	bottom: 2px;
+	left: 0;
+	width: 30%;
+	background-image: repeating-linear-gradient(90deg, var(--g-hazard) 0 7px, transparent 7px 10px);
+	animation: g-sweep 1.4s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+@keyframes g-sweep {
+	0% { transform: translateX(-110%); }
+	100% { transform: translateX(360%); }
+}
+
+.g-working-label {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-mid);
+	white-space: nowrap;
+}
+
+.g-empty {
+	padding: var(--g-8) var(--g-4);
+	text-align: center;
+	border: 2px dashed var(--g-rule);
+	border-radius: var(--g-radius);
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-body);
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-low);
+}
+
+/* -------------------------------------------------------------------------
+   SPECIMEN MOUNT
+   Artwork behind glass in a brass-bezelled housing, bolted to the panel.
+   ------------------------------------------------------------------------- */
+
+.g-specimen {
+	position: relative;
+	aspect-ratio: 1;
+	padding: 8px;
+	background: linear-gradient(160deg, var(--g-hull-hi), var(--g-hull));
+	border: 2px solid var(--g-brass-dark);
+	border-radius: var(--g-radius-housing);
+	box-shadow: var(--g-relief), var(--g-drop);
+}
+
+.g-specimen-inner {
+	position: relative;
+	height: 100%;
+	background: color-mix(in srgb, var(--g-el) 80%, transparent);
+	border-radius: var(--g-radius);
+	box-shadow: var(--g-recess);
+	overflow: hidden;
+}
+
+.g-specimen-inner img,
+.g-specimen-inner svg,
+.g-specimen-inner > div {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+}
+
+/* -------------------------------------------------------------------------
+   COLLECTIONS
+   ------------------------------------------------------------------------- */
+
+.g-tile {
+	display: block;
+	text-decoration: none;
+	padding: var(--g-2);
+	background: var(--g-hull);
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: var(--g-radius);
+	box-shadow: var(--g-relief);
+	transition: background var(--g-snap), transform var(--g-snap);
+}
+
+.g-tile:hover {
+	background: var(--g-hull-hi);
+	transform: translateY(-1px);
+}
+
+.g-tile-art {
+	aspect-ratio: 1;
+	background: color-mix(in srgb, var(--g-el) 85%, transparent);
+	border-radius: 2px;
+	box-shadow: var(--g-recess);
+	overflow: hidden;
+}
+
+.g-tile-meta {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--g-2);
+	padding: var(--g-2) var(--g-1) 0;
+}
+
+.g-tile-name {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-body);
+	font-weight: 600;
+	text-transform: uppercase;
+	color: var(--g-ink);
+}
+
+.g-tile-id {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-low);
+}
+
+.g-record {
+	display: grid;
+	grid-template-columns: minmax(8rem, 15rem) 1fr;
+	gap: var(--g-3) var(--g-5);
+	padding: var(--g-4);
+	border-bottom: var(--g-hairline) solid var(--g-rule-faint);
+	transition: background var(--g-snap);
+}
+
+.g-record:hover { background: rgba(255, 244, 214, 0.03); }
+
+.g-record-term {
+	font-family: var(--g-font-stencil);
+	font-weight: 600;
+	font-size: var(--g-size-lead);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-el);
+	margin: 0;
+}
+
+.g-record-body {
+	font-family: var(--g-font-ui);
+	font-size: var(--g-size-small);
+	line-height: 1.6;
+	color: var(--g-ink-mid);
+	margin: 0;
+}
+
+/* Key/value, as printed on a spec plate riveted to the machine. */
+.g-spec {
+	display: grid;
+	grid-template-columns: minmax(7rem, auto) 1fr;
+	gap: var(--g-2) var(--g-5);
+	align-items: baseline;
+}
+
+.g-spec-key {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-low);
+}
+
+.g-spec-val {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-small);
+	font-variant-numeric: tabular-nums;
+	color: var(--g-ink);
+}
+
+.g-data {
+	width: 100%;
+	border-collapse: collapse;
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-tiny);
+}
+
+.g-data th {
+	text-align: left;
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-low);
+	padding: var(--g-2) var(--g-3);
+	border-bottom: var(--g-hairline) solid var(--g-rule);
+}
+
+.g-data td {
+	padding: var(--g-2) var(--g-3);
+	border-bottom: var(--g-hairline) solid var(--g-rule-faint);
+	color: var(--g-ink);
+	font-variant-numeric: tabular-nums;
+}
+
+.g-data tr:hover td { background: rgba(255, 244, 214, 0.03); }
+
+.g-link {
+	color: var(--g-el);
+	text-decoration: underline;
+	text-underline-offset: 3px;
+	text-decoration-thickness: 1px;
+}
+
+.g-link:hover { color: var(--g-ink); }
+
+/* -------------------------------------------------------------------------
+   LAYOUT
+   ------------------------------------------------------------------------- */
+
+.g-shell {
+	max-width: 1320px;
+	margin: 0 auto;
+	padding: 0 var(--g-5);
+}
+
+.g-measure { max-width: var(--g-measure); }
+
+@media (max-width: 640px) {
+	.g-record { grid-template-columns: 1fr; gap: var(--g-2); }
+}
+
+/* -------------------------------------------------------------------------
+   REDUCED MOTION
+   ------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+	.g-working-bar::after {
+		animation: none;
+		width: 100%;
+		opacity: 0.6;
+	}
+
+	.g-btn,
+	.g-meter-fill,
+	.g-segment,
+	.g-check-box::after,
+	.g-tile {
+		transition: none;
+	}
+}
+
+/* -------------------------------------------------------------------------
+   CONSOLE HEADER
+   The navbar as a bulkhead strip: enamelled metal, stencilled legends, one
+   hazard-painted key. Overrides bootstrap, hence the specificity.
+   ------------------------------------------------------------------------- */
+
+.xalian-navbar.navbar {
+	background: linear-gradient(180deg, var(--g-hull-hi) 0%, var(--g-hull) 100%) !important;
+	border: 0 !important;
+	border-bottom: 2px solid var(--g-seam) !important;
+	box-shadow: inset 0 1px 0 var(--g-bevel-light), 0 3px 10px rgba(0, 0, 0, 0.6);
+	padding: var(--g-2) 0 !important;
+	z-index: var(--g-layer-nav) !important;
+}
+
+.xalian-navbar .nav-link {
+	font-family: var(--g-font-stencil) !important;
+	font-size: var(--g-size-body) !important;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-mid) !important;
+	padding: var(--g-2) var(--g-4) !important;
+	transition: color var(--g-snap);
+}
+
+.xalian-navbar .nav-link:hover,
+.xalian-navbar .nav-link:focus-visible {
+	color: var(--g-ink) !important;
+}
+
+.xalian-navbar .xalian-generator-navbar-button {
+	color: #17120a !important;
+	background: var(--g-hazard);
+	border: var(--g-hairline) solid var(--g-hazard-dark);
+	border-radius: var(--g-radius);
+	box-shadow: var(--g-relief), 0 3px 0 var(--g-seam);
+	margin-left: var(--g-3);
+	font-style: normal !important;
+	font-weight: 600;
+	transition: background var(--g-snap), transform var(--g-snap);
+}
+
+.xalian-navbar .xalian-generator-navbar-button:hover {
+	background: #f0b71a;
+	color: #17120a !important;
+}
+
+.xalian-navbar .xalian-generator-navbar-button:active {
+	transform: translateY(3px);
+	box-shadow: var(--g-recess);
+}
+
+.xalian-navbar .navbar-auth-button-wrapper { margin-left: var(--g-2); }
+
+.xalian-navbar .navbar-auth-button-wrapper .btn {
+	font-family: var(--g-font-stencil) !important;
+	font-size: var(--g-size-body) !important;
+	font-style: normal !important;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink) !important;
+	background: var(--g-hull-hi) !important;
+	border: var(--g-hairline) solid var(--g-seam) !important;
+	border-radius: var(--g-radius) !important;
+	padding: var(--g-1) var(--g-4) !important;
+	box-shadow: var(--g-relief), 0 3px 0 var(--g-seam) !important;
+}
+
+.xalian-navbar .navbar-auth-button-wrapper .btn:hover {
+	background: #3c3c32 !important;
+}
+
+.xalian-navbar .navbar-toggler {
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: var(--g-radius);
+	background: var(--g-hull-hi);
+	box-shadow: var(--g-relief);
+	padding: var(--g-2) var(--g-3);
+}
+
+.xalian-navbar .username-navbar-link {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-body);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-hazard);
+	text-decoration: none;
+}
