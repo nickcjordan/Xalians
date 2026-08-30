@@ -2023,9 +2023,20 @@ section {
   color: #80ffb0;
 }
 
+/* Pages using this container used to sit on a flat grey radial gradient while
+   home/species/planets showed a starfield, so half the site read as galactic
+   and half did not. This paints the same starfield tile those pages use, over
+   the space background token - the drifting-particle canvas stays opt-in for
+   the pages that mount SplashGalaxyBackground, so this costs no JS. */
 .content-background-container {
-  background: rgb(75, 74, 74);
-  background: radial-gradient(circle, rgb(54, 54, 54) 21%, rgba(57, 57, 57, 1) 53%, rgba(28, 28, 28, 1) 100%);
+  background-color: var(--x-bg);
+  background-image:
+    radial-gradient(circle, rgba(35, 35, 35, 0.55) 21%, rgba(13, 13, 13, 0.85) 100%),
+    url("../img/background/stars_bg.png");
+  background-size: auto, 50%;
+  background-position: center center, center center;
+  background-repeat: no-repeat, repeat;
+  background-attachment: fixed, fixed;
   min-height: 100vh;
   min-width: 100vw;
   /* flex-direction: column; */
@@ -3581,4 +3592,21 @@ input, textarea {
 .give-some-padding {
   margin-top: 200px !important;
   padding-top: 200px !important;
+}
+/*--------------------------------------------------------------
+# Training Grounds
+--------------------------------------------------------------*/
+
+.training-grounds-subtitle {
+  color: var(--x-text-dim);
+  text-align: center;
+  margin-bottom: var(--x-space-5);
+}
+
+.training-game-switcher {
+  display: flex;
+  justify-content: center;
+  gap: var(--x-space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--x-space-5);
 }
