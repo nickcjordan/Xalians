@@ -18,10 +18,10 @@ class AttackableMoveBadge extends React.Component {
 
 			let icons = [];
 			for (var i = 0; i < effectivenessIconCount; i++) {
-				icons.push(<AttackIcon className="" style={{ fill: 'rgb(255, 0, 0)',stroke: 'black', strokeWidth: '2px', filter: `drop-shadow( 0px 0px 1px black)`, height: `25%`, width: '25%' }} />);
+				icons.push(<AttackIcon key={`effective-icon-${i}`} className="" style={{ fill: 'rgb(255, 0, 0)',stroke: 'black', strokeWidth: '2px', filter: `drop-shadow( 0px 0px 1px black)`, height: `25%`, width: '25%' }} />);
 			}
 			while (icons.length < 4) {
-				icons.push(<AttackIcon className="" style={{ fill: 'black', stroke: 'white', strokeWidth: '2px', filter: `drop-shadow( 0px 0px 1px white)`, height: `25%`, width: '25%' }} />);
+				icons.push(<AttackIcon key={`empty-icon-${icons.length}`} className="" style={{ fill: 'black', stroke: 'white', strokeWidth: '2px', filter: `drop-shadow( 0px 0px 1px white)`, height: `25%`, width: '25%' }} />);
 			}
 			return (
 			// <React.Fragment>

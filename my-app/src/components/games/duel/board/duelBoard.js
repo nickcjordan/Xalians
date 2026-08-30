@@ -483,7 +483,7 @@ class DuelBoard extends React.Component {
 		let cellSizeText = this.determineCellSizeText();
 
 		return (
-				<Col style={{ maxWidth: cellSizeText, maxHeight: cellSizeText, opacity: opac }} className='duel-unset-piece-wrapper' onClick={() => this.handleInitialPieceSelection(x, boardState)}>
+				<Col key={x.xalianId} style={{ maxWidth: cellSizeText, maxHeight: cellSizeText, opacity: opac }} className='duel-unset-piece-wrapper' onClick={() => this.handleInitialPieceSelection(x, boardState)}>
 					<XalianImage padding='2%' colored rounded shadowed selected={isSelected} speciesName={x.species.name} primaryType={x.elementType} moreClasses="duel-xalian-unselected" />
 						{/* <div style={{ padding: '0px', height: '100%', width: '100%', margin: 'auto' }}>
 							<h6 className="fit-xalian-name-text" style={{ textAlign: 'center', margin: 'auto', height: '100%', width: '100%', color: 'white', opacity: 0.5 }}>
@@ -523,13 +523,13 @@ class DuelBoard extends React.Component {
 		let userActionButtons = [];
 
 		userActionButtons.push(
-			<Col style={{ display: 'flex', justifyContent: 'center' }}>
+			<Col key="duel-action-debug" style={{ display: 'flex', justifyContent: 'center' }}>
 				<Button variant='xalianGray' onClick={ this.doDebugAction } style={{ margin: 'auto', marginBottom: '10px', marginTop: '10px' }} >DEBUG</Button>
 			</Col>
 		)
 
 		userActionButtons.push(
-			<Col style={{ display: 'flex', justifyContent: 'center' }}>
+			<Col key="duel-action-end-turn" style={{ display: 'flex', justifyContent: 'center' }}>
 				<Button variant='xalianGray' disabled={!showEndTurnButton} onClick={this.endPlayerTurn} style={{ margin: 'auto', marginBottom: '10px', marginTop: '10px' }} >End turn</Button>
 			</Col>
 		)

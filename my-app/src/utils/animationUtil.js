@@ -1,7 +1,6 @@
 import { gsap } from 'gsap';
 import * as constants from '../constants/colorConstants';
 import SmokeEmitter from '../components/animations/smokeEmitter';
-import { ReactDOM } from 'react';
 import ScrambleTextPlugin from 'gsap/ScrambleTextPlugin';
 import TextPlugin from 'gsap/TextPlugin';
 
@@ -12,11 +11,8 @@ export function addShuffleSpeciesColorAnimation(id, delay = 0) {
 	let colors = constants.themeColors;
 	gsap.set(id, { stroke: '#FFFFFF', strokeWidth: '2px', filter: 'drop-shadow(0px 0px 10px #FFFFFF)' });
 	var t = gsap.timeline({ repeat: -1, delay: delay, repeatDelay: 0 });
-  var keys = [];
-  shuffleArray(colors);
-  for (const item in colors) {
-    keys.push(item);
-  }
+  var keys = Object.keys(colors);
+  shuffleArray(keys);
   for (var i = 0; i<10; i++) {
     let randomIndex = Math.floor(Math.random() * keys.length);
     let randomKey = keys[randomIndex];

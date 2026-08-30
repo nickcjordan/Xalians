@@ -560,23 +560,23 @@ class DuelBoardCell extends React.Component {
 
 		if (leftIndex != undefined && !this.cellIsOccupied(leftIndex)) {
 			cellConnectors.push(
-				<div className="duel-board-cell-connector occupied-connector" style={{ width: '100%', height: '5px', top: '50%', left: '0' }} />
+				<div key={`connector-${index}-left`} className="duel-board-cell-connector occupied-connector" style={{ width: '100%', height: '5px', top: '50%', left: '0' }} />
 			)
 		}
 		if (topIndex != undefined && !this.cellIsOccupied(topIndex)) {
 			cellConnectors.push(
-				<div className="duel-board-cell-connector occupied-connector" style={{ width: '5px', height: '100%', top: '0', left: '50%' }} />
+				<div key={`connector-${index}-top`} className="duel-board-cell-connector occupied-connector" style={{ width: '5px', height: '100%', top: '0', left: '50%' }} />
 			)
 		}
 
 		if (rightIndex != undefined && !this.cellIsOccupied(rightIndex)) {
 			cellConnectors.push(
-				<div className="duel-board-cell-connector occupied-connector" style={{ width: '100%', height: '5px', top: '50%', left: '100%' }} />
+				<div key={`connector-${index}-right`} className="duel-board-cell-connector occupied-connector" style={{ width: '100%', height: '5px', top: '50%', left: '100%' }} />
 			)
 		}
 		if (bottomIndex != undefined && !this.cellIsOccupied(bottomIndex)) {
 			cellConnectors.push(
-				<div className="duel-board-cell-connector occupied-connector" style={{ width: '5px', height: '100%', top: '100%', left: '50%' }} />
+				<div key={`connector-${index}-bottom`} className="duel-board-cell-connector occupied-connector" style={{ width: '5px', height: '100%', top: '100%', left: '50%' }} />
 			)
 		}
 

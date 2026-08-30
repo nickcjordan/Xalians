@@ -65,22 +65,23 @@ class SpeciesPage extends React.Component {
     // }
 
     buildSpeciesGridList() {
-        species.sort((a, b) => a.id - b.id);
+        // copy before sorting: species.json is a shared module import
+        let sorted = [...species].sort((a, b) => a.id - b.id);
         var list = [];
-        for (let ind in species) {
+        for (let ind in sorted) {
             list.push(
-                this.buildSpeciesIcon(species[ind])
+                this.buildSpeciesIcon(sorted[ind])
             );
         }
         return list;
     }
 
     buildStatRows() {
-        species.sort((a, b) => a.id - b.id);
+        let sorted = [...species].sort((a, b) => a.id - b.id);
         var list = [];
-        for (let ind in species) {
+        for (let ind in sorted) {
             list.push(
-                this.buildStatRow(species[ind])
+                this.buildStatRow(sorted[ind])
             );
         }
         return list;
@@ -99,7 +100,7 @@ class SpeciesPage extends React.Component {
 
     buildSpeciesIcon(x) {
         return (
-			<Col md={2} sm={3} xs={6} className="species-col">
+			<Col key={`species-icon-${x.id}`} md={2} sm={3} xs={6} className="species-col">
 				<a href={'/species/' + x.id}>
 					<XalianImage colored bordered speciesName={x.name} primaryType={x.type} moreClasses="xalian-image-grid" />
 					<Row style={{ width: '100%', margin: '0px', padding: '0px' }}>
@@ -121,7 +122,7 @@ class SpeciesPage extends React.Component {
     }
 
     buildStatRow(x) {
-        return <a href={"/species/" + x.id}><XalianSpeciesRowView species={x} /></a>;
+        return <a key={`species-stat-row-${x.id}`} href={"/species/" + x.id}><XalianSpeciesRowView species={x} /></a>;
     }
 
     getTypeColorClassName(x) {

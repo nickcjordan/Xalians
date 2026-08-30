@@ -162,14 +162,14 @@ class DuelStartPage extends React.Component {
                                     value={1}
                                     checked={this.state.players == 1}
                                 >
-                                    <i class="bi bi-person-fill" style={{ paddingRight: '10px', fontSize: '24pt' }}></i> vs. <i class="bi bi-robot" style={{ paddingLeft: '10px', fontSize: '24pt' }}></i>
+                                    <i className="bi bi-person-fill" style={{ paddingRight: '10px', fontSize: '24pt' }}></i> vs. <i className="bi bi-robot" style={{ paddingLeft: '10px', fontSize: '24pt' }}></i>
                                 </ToggleButton>
 
                                 <ToggleButton key={`players-radio-${1}`} id={`players-radio-${1}`} type="radio" variant='xalianGray' name="radio" style={{ width: 'fit-content', margin: 'auto' }}
                                     value={2}
                                     checked={this.state.players == 2}
                                 >
-                                    <i class="bi bi-person-fill" style={{ paddingRight: '10px', fontSize: '24pt' }}></i> vs. <i class="bi bi-person-fill" style={{ paddingLeft: '10px', fontSize: '24pt' }}></i>
+                                    <i className="bi bi-person-fill" style={{ paddingRight: '10px', fontSize: '24pt' }}></i> vs. <i className="bi bi-person-fill" style={{ paddingLeft: '10px', fontSize: '24pt' }}></i>
                                 </ToggleButton>
                                 </ToggleButtonGroup>
 
@@ -197,7 +197,7 @@ class DuelStartPage extends React.Component {
                                         <ToggleButton key={`randomize-positions-1`} id={`randomize-positions-1`} type="checkbox" name="randomize-checkbox" variant={this.state.randomizeStartingPositions ? 'xalianGreen' : 'xalianGray'} style={{ padding: '0px', margin: 'auto', height: '35px', width: '35px' }}
                                             value={true}
                                             checked={this.state.randomizeStartingPositions}
-                                        >{this.state.randomizeStartingPositions && <i class="bi bi-check" style={{ fontSize: '35px', lineHeight: '35px' }} />}</ToggleButton>
+                                        >{this.state.randomizeStartingPositions && <i className="bi bi-check" style={{ fontSize: '35px', lineHeight: '35px' }} />}</ToggleButton>
                                     </ToggleButtonGroup>
 
                                 </div>
@@ -210,7 +210,7 @@ class DuelStartPage extends React.Component {
                                         <ToggleButton key={`debugMode-1`} id={`debugMode-1`} type="checkbox" name="debugMode-checkbox" variant={this.state.debugMode ? 'xalianGreen' : 'xalianGray'} style={{ padding: '0px', margin: 'auto', height: '35px', width: '35px' }}
                                             value={true}
                                             checked={this.state.debugMode}
-                                        >{this.state.debugMode && <i class="bi bi-check" style={{ fontSize: '35px', lineHeight: '35px' }} />}</ToggleButton>
+                                        >{this.state.debugMode && <i className="bi bi-check" style={{ fontSize: '35px', lineHeight: '35px' }} />}</ToggleButton>
                                     </ToggleButtonGroup>
 
                                 </div>

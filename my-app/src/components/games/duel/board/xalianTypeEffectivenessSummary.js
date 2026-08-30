@@ -32,7 +32,7 @@ class XalianTypeEffectivenessSummary extends React.Component {
         if (map) {
             Object.keys(map).forEach(key => {
                 let val = map[key];
-                let badge = <XalianSpeciesBadge hideName type={key.toLowerCase()} />;
+                let badge = <XalianSpeciesBadge key={key.toLowerCase()} hideName type={key.toLowerCase()} />;
                 if (val == 0) { noEffectTypes.push(badge); }
                 if (val == 0.5) { lowEffectTypes.push(badge); }
                 if (val == 1) { mediumEffectTypes.push(badge); }
