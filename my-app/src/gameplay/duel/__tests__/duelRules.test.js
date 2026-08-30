@@ -114,6 +114,19 @@ describe('movement: carrying a flag slows a piece down', () => {
 	});
 });
 
+describe('setup: flag row placement', () => {
+	it('gives both sides a flag row that is symmetric on an 8x8 board', () => {
+		const { playerFlagRow, opponentFlagRow } = duelCalculator.getFlagRowIndices(duelConstants.BOARD_COLUMN_SIZE);
+		expect(playerFlagRow).toBe(6);
+		expect(opponentFlagRow).toBe(1);
+	});
+
+	it('stays symmetric (equidistant from each side\'s home row) for other board sizes', () => {
+		expect(duelCalculator.getFlagRowIndices(10)).toEqual({ playerFlagRow: 8, opponentFlagRow: 1 });
+		expect(duelCalculator.getFlagRowIndices(6)).toEqual({ playerFlagRow: 4, opponentFlagRow: 1 });
+	});
+});
+
 describe('combat', () => {
 	const CEILING = duelConstants.MAX_SINGLE_HIT_HEALTH_FRACTION * duelConstants.MAX_HEALTH_POINTS;
 

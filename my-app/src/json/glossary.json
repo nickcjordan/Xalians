@@ -250,5 +250,21 @@
     {
         "word": "QED",
         "definition": "Quantum Entanglement Device. A specially engineered computer chip exposed to a Bloodstorm on Zolton, which can be used to link communications equipment across the galaxy."
+    },
+    {
+        "word": "Leviticus Overdrive",
+        "definition": "The name given to the Phantiri Generator's unprecedented act of re-writing its own code after centuries of watching its creations die on arrival. Under this new programming it abandoned organic life entirely, learning instead to produce ghost-like Xalians formed of spectral energy with no corporeal bodies at all."
+    },
+    {
+        "word": "Dreadscape",
+        "definition": "The vast wasteland blanketing Phantiri, formed from the piled remains of the countless Xalians its Generator produced only for them to die on sight. Their bodies have compressed into islands of corpses crowned with macabre forests of splayed limbs, divided by deep, tarry oceans of the fluids that seep from a planetwide mass grave."
+    },
+    {
+        "word": "Veridians",
+        "definition": "The people of Veridium. During the End Wars, APEX drove the planet's ancient drones and robotic servants as a single hive mind and corralled the Veridians into a formidable fighting force, supplied by starship foundries large enough to spread its menace across the galaxy."
+    },
+    {
+        "word": "Battle Fee",
+        "definition": "A value assigned to each Xalian based on the strength of its stats, used to keep King Kozrak's tournaments competitive. A faction may only enter a team whose combined battle fee falls within the imposed battle fee limit."
     }
 ]

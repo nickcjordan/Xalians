@@ -59,11 +59,12 @@ export const Duel = (data) => {
 			let totalSquares = gameConstants.BOARD_COLUMN_SIZE * gameConstants.BOARD_COLUMN_SIZE;
 
 			let grid = duelCalculator.buildGrid(totalSquares);
-			let playerFlagOptions = grid.rows[gameConstants.BOARD_COLUMN_SIZE - 2];
-			let randomPlayerInd = Math.round(Math.random()*(gameConstants.BOARD_COLUMN_SIZE-1));
+			let flagRows = duelCalculator.getFlagRowIndices(gameConstants.BOARD_COLUMN_SIZE);
+			let playerFlagOptions = grid.rows[flagRows.playerFlagRow];
+			let randomPlayerInd = Math.floor(Math.random()*gameConstants.BOARD_COLUMN_SIZE);
 			let opponentTargetFlagIndex = playerFlagOptions[randomPlayerInd];
-			let opponentFlagOptions = grid.rows[1];
-			let randomOpponentInd = Math.round(Math.random()*(gameConstants.BOARD_COLUMN_SIZE-1));
+			let opponentFlagOptions = grid.rows[flagRows.opponentFlagRow];
+			let randomOpponentInd = Math.floor(Math.random()*gameConstants.BOARD_COLUMN_SIZE);
 			let playerTargetFlagIndex = opponentFlagOptions[randomOpponentInd];
 
 			if (playerTargetFlagIndex == undefined || opponentTargetFlagIndex == undefined) {
@@ -267,6 +268,9 @@ export const Duel = (data) => {
 			// 	return { draw: true };
 			// }
 
+			if (ctx.phase !== 'play') {
+				return undefined;
+			}
 
 			if (duelUtil.getOpponentStartingIndices(G).includes(duelUtil.getOpponentFlagIndex(G))) {
 				return { winner: 1 };

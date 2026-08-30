@@ -1,6 +1,6 @@
-const AWS = require('aws-sdk');
-AWS.config.setPromisesDependency(require('bluebird'));
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
+const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
+const { DynamoDBDocumentClient, GetCommand, PutCommand, UpdateCommand } = require('@aws-sdk/lib-dynamodb');
+const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const builder = require('./responseBuilder.js');
 
 const TABLE_NAME = 'XalianUsersTable';
@@ -22,11 +22,8 @@ function getUser(id, onSuccess, onNotFound, onFail) {
 			},
 		};
 
-		dynamoDb.get(params, function (err, data) {
-			if (err) {
-				console.log(`ERROR :: ${JSON.stringify(err, null, 2)}`);
-				onFail(err);
-			} else {
+		dynamoDb.send(new GetCommand(params))
+			.then((data) => {
 				if (data.Item) {
 
 					console.log(`SUCCESS :: data:\n${JSON.stringify(data.Item, null, 2)}`);
@@ -41,8 +38,10 @@ function getUser(id, onSuccess, onNotFound, onFail) {
 				} else {
 					onNotFound();
 				}
-			}
-		});
+			}, (err) => {
+				console.log(`ERROR :: ${JSON.stringify(err, null, 2)}`);
+				onFail(err);
+			});
 	} catch (e) {
 		onFail(e);
 	}
@@ -55,13 +54,12 @@ function createUser(user, onSuccess, onFail) {
 			Item: builder.buildXalianUsersTableItem(user)
 		};
 
-		dynamoDb.put(params, function (err, data) {
-			if (err) {
-				onFail(err);
-			} else {
+		dynamoDb.send(new PutCommand(params))
+			.then(() => {
 				onSuccess();
-			}
-		});
+			}, (err) => {
+				onFail(err);
+			});
 	} catch (e) {
 		onFail(e);
 	}
@@ -80,13 +78,12 @@ function updateUserXalianIds(id, updatedXalianIds, onSuccess, onFail) {
 			},
 		};
 
-		dynamoDb.update(params, function (err, data) {
-			if (err) {
-				onFail(err);
-			} else {
+		dynamoDb.send(new UpdateCommand(params))
+			.then(() => {
 				onSuccess();
-			}
-		});
+			}, (err) => {
+				onFail(err);
+			});
 	} catch (e) {
 		onFail(e);
 	}
@@ -109,13 +106,12 @@ function updateUserAttributes(id, updatedAttributes, onSuccess, onFail) {
 			},
 		};
 
-		dynamoDb.update(params, function (err, data) {
-			if (err) {
-				onFail(err);
-			} else {
+		dynamoDb.send(new UpdateCommand(params))
+			.then(() => {
 				onSuccess();
-			}
-		});
+			}, (err) => {
+				onFail(err);
+			});
 	} catch (e) {
 		onFail(e);
 	}
