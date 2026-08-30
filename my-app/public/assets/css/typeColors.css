@@ -1,51 +1,57 @@
-.fire-color {background-color: #df6d5e;}
-.water-color {background-color: #60a0c5;}
-.air-color {background-color: #ffffff;}
-.electric-color {background-color: #e2bd43;}
-.rock-color {background-color: #8d7050;}
-.plant-color {background-color: #708844;}
-.chemical-color {background-color: #64bd9f;}
-.light-color {background-color: #ffffc7;}
-/* .dark-color {background-color: #57619c;} */
+/**
+ * Element colour utilities.
+ *
+ * Every value here comes from the --x-type-* tokens in tokens.css; this file
+ * only maps them onto the three properties the app actually paints with.
+ * Add a new element by adding its token, then one line in each block below.
+ */
 
-.dark-color {background-color: #57619c;}
-.metal-color {background-color: #8d8d8d;}
-.psychic-color {background-color: #d39bcb;}
-.ghost-color {background-color: #8764a8;}
-.ice-color {background-color: #85dde4;}
-.sand-color {background-color: #e6b26f;}
+/* background color */
+.fire-color {background-color: var(--x-type-fire);}
+.water-color {background-color: var(--x-type-water);}
+.air-color {background-color: var(--x-type-air);}
+.electric-color {background-color: var(--x-type-electric);}
+.rock-color {background-color: var(--x-type-rock);}
+.plant-color {background-color: var(--x-type-plant);}
+.chemical-color {background-color: var(--x-type-chemical);}
+.light-color {background-color: var(--x-type-light);}
+.dark-color {background-color: var(--x-type-dark);}
+.metal-color {background-color: var(--x-type-metal);}
+.psychic-color {background-color: var(--x-type-psychic);}
+.ghost-color {background-color: var(--x-type-ghost);}
+.ice-color {background-color: var(--x-type-ice);}
+.sand-color {background-color: var(--x-type-sand);}
 
 
 /* text color */
-.fire-text-color {color: #df6d5e;}
-.water-text-color {color: #60a0c5;}
-.air-text-color {color: #ffffff;}
-.electric-text-color {color: #e2bd43;}
-.rock-text-color {color: #8d7050;}
-.plant-text-color {color: #708844;}
-.chemical-text-color {color: #64bd9f;}
-.light-text-color {color: #ffffc7;}
-.dark-text-color {color: #57619c;}
-.metal-text-color {color: #8d8d8d;}
-.psychic-text-color {color: #d39bcb;}
-.ghost-text-color {color: #8764a8;}
-.ice-text-color {color: #85dde4;}
-.sand-text-color {color: #e6b26f;}
-
+.fire-text-color {color: var(--x-type-fire);}
+.water-text-color {color: var(--x-type-water);}
+.air-text-color {color: var(--x-type-air);}
+.electric-text-color {color: var(--x-type-electric);}
+.rock-text-color {color: var(--x-type-rock);}
+.plant-text-color {color: var(--x-type-plant);}
+.chemical-text-color {color: var(--x-type-chemical);}
+.light-text-color {color: var(--x-type-light);}
+.dark-text-color {color: var(--x-type-dark);}
+.metal-text-color {color: var(--x-type-metal);}
+.psychic-text-color {color: var(--x-type-psychic);}
+.ghost-text-color {color: var(--x-type-ghost);}
+.ice-text-color {color: var(--x-type-ice);}
+.sand-text-color {color: var(--x-type-sand);}
 
 
 /* border color */
-.fire-border-color {border-color: #df6d5e;}
-.water-border-color {border-color: #60a0c5;}
-.air-border-color {border-color: #ffffff;}
-.electric-border-color {border-color: #e2bd43;}
-.rock-border-color {border-color: #8d7050;}
-.plant-border-color {border-color: #708844;}
-.chemical-border-color {border-color: #64bd9f;}
-.light-border-color {border-color: #ffffc7;}
-.dark-border-color {border-color: #57619c;}
-.metal-border-color {border-color: #8d8d8d;}
-.psychic-border-color {border-color: #d39bcb;}
-.ghost-border-color {border-color: #8764a8;}
-.ice-border-color {border-color: #85dde4;}
-.sand-border-color {border-color: #e6b26f;}
+.fire-border-color {border-color: var(--x-type-fire);}
+.water-border-color {border-color: var(--x-type-water);}
+.air-border-color {border-color: var(--x-type-air);}
+.electric-border-color {border-color: var(--x-type-electric);}
+.rock-border-color {border-color: var(--x-type-rock);}
+.plant-border-color {border-color: var(--x-type-plant);}
+.chemical-border-color {border-color: var(--x-type-chemical);}
+.light-border-color {border-color: var(--x-type-light);}
+.dark-border-color {border-color: var(--x-type-dark);}
+.metal-border-color {border-color: var(--x-type-metal);}
+.psychic-border-color {border-color: var(--x-type-psychic);}
+.ghost-border-color {border-color: var(--x-type-ghost);}
+.ice-border-color {border-color: var(--x-type-ice);}
+.sand-border-color {border-color: var(--x-type-sand);}
