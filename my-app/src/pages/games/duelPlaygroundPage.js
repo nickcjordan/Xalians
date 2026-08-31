@@ -263,14 +263,14 @@ class DuelPlaygroundPage extends React.Component {
 			{ caption: 'At rest', note: 'Your side.', piece: { team: 'own' } },
 			{ caption: 'At rest', note: 'Theirs.', piece: { team: 'foe' } },
 			{ caption: 'Commanded', note: 'The rim is energised and casts a pool of team colour on the floor.', piece: { team: 'own', selected: true } },
-			{ caption: 'Inspected', note: 'Lit, but in no side\'s colour, because nothing is being commanded.', piece: { team: 'foe', referenced: true } },
-			{ caption: 'In reach', note: 'Nothing is drawn on the creature at all - the whole mark lives on the floor, which is why this study needs an attacker to be a study of anything. See section 05.', piece: { team: 'foe', targetable: true }, withTarget: true },
-			{ caption: 'Carrying', note: 'The win condition, so it is the loudest thing a piece can wear: a pennant plus a ring in the flag\'s colour.', piece: { team: 'own', carrying: true, flagTeam: 'foe' } },
+			{ caption: 'Inspected', note: 'The tile is lit, but in no side\'s colour, because nothing is being commanded.', piece: { team: 'foe', referenced: true } },
+			{ caption: 'In reach', note: 'Nothing is drawn on the creature - the bracket is on the square, containing it. It needs an attacker to be a study of anything, because reach is a relationship. See section 05.', piece: { team: 'foe', targetable: true }, withTarget: true },
+			{ caption: 'Carrying', note: 'The win condition, so it gets the loudest thing the floor has: the square goes hazard-striped in the flag\'s colour. Being the tile rather than the creature, it stacks with being commanded.', piece: { team: 'own', carrying: true, flagTeam: 'foe' } },
 		];
 
 		return (
 			<section className="sg-section" id={section.id}>
-				{this.renderSectionHead(section, 'A creature stands on a machined disc rimmed in its side\'s colour, so a piece reads as an object on the floor rather than as artwork printed onto the square. Vitals are not painted on it: twelve pairs of two-pixel bars could not have communicated a number and were competing with the board at all times. They live in the rail, and surface on the board only when you point at a piece.')}
+				{this.renderSectionHead(section, 'The square is the instrument and the creature standing in it is cargo. Every state below is a property of the tile rather than furniture attached to the creature, which is what lets them stack - a commanded carrier is a lit tile that is also striped - and what leaves the creature\'s canonical silhouette untouched. Creatures used to be drawn pushed a fifth of a square up out of the ground they stood on, so no mark on the floor could ever appear to contain one; they sit in their squares now.')}
 
 				<div className="dp-row">
 					{states.map((s, i) => (

@@ -200,33 +200,41 @@
    a piece reads as an object standing on the floor rather than as a sticker
    printed on it. */
 .duel-piece-base {
+  /* THE PLATE - the square a creature is standing in, and the carrier of every
+     state on this board.
+     Was a 70%-wide ellipse pinned to the bottom of the square: the ground shadow
+     a creature drawn in elevation needs. With creatures seated in their own
+     squares that ellipse cut a line through every body.
+     At rest it draws nothing but a soft contact shadow. An outline here would
+     put a box around all twelve pieces at all times, which turns a board of
+     creatures into a board of tiles and spends the one mark that ought to mean
+     "something is true of this square". */
   position: absolute;
-  bottom: 3%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 70%;
-  height: 20%;
-  border-radius: 50%;
-  /* a milled disc: light catches its far lip, and it drops a hard shadow onto
-     the square it is standing on */
-  background:
-    radial-gradient(ellipse at 50% 20%, rgba(255, 244, 214, 0.14) 0%, transparent 55%),
-    radial-gradient(ellipse at 50% 55%, var(--g-hull-hi) 0%, var(--g-hull) 48%, var(--g-seam) 100%);
-  /* brass rim, not the team colour: the creature's own rim light already says
-     which side it is on, and two colours on one piece read as a glowing pill */
-  border: 1px solid var(--g-brass-dark);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 244, 214, 0.18);
-  opacity: 0.95;
-  z-index: 100;
+  inset: 1px;
+  border-radius: 2px;
+  background: radial-gradient(ellipse at 50% 92%, rgba(0, 0, 0, 0.55) 0%, transparent 62%);
+  border: 1px solid transparent;
+  opacity: 1;
+  z-index: 99;
   pointer-events: none;
 }
 
+/* THE CREATURE SITS IN ITS SQUARE.
+   This was bottom: 35% on a 95%-tall image, which pushed roughly a fifth of
+   every creature up out of the square it occupies. That one line was the reason
+   three separate attempts at a floor mark all read as "a sticker under a
+   creature": the floor was drawn in plan and the creature was drawn in
+   elevation, so no mark on the floor could ever appear to contain it.
+
+   Seated in its own square, a bracket around the square is a bracket around the
+   creature, a lit square is a lit creature, and the marks stop needing to
+   compensate for a perspective the board was not actually using. */
 .duel-piece-xalian-icon {
   position: absolute;
-  bottom: 35%;
+  bottom: 4%;
   left: 5%;
-  height: 95%;
-  width: 95%;
+  height: 90%;
+  width: 90%;
   padding: 0px !important;
   z-index: 101;
 }
@@ -399,22 +407,20 @@
    coloured halo is a UI convention drawn over a world-space object, which is the
    mistake this whole design keeps having to unlearn. */
 .duel-piece--selected .duel-piece-base {
-  border-color: color-mix(in srgb, var(--duel-team) 85%, white);
+  border-color: color-mix(in srgb, var(--duel-team) 90%, white);
   border-width: 2px;
   background:
-    radial-gradient(ellipse at 50% 30%,
-      color-mix(in srgb, var(--duel-team) 75%, white) 0%,
-      color-mix(in srgb, var(--duel-team) 55%, transparent) 40%,
-      transparent 70%),
-    radial-gradient(ellipse at 50% 55%,
-      color-mix(in srgb, var(--duel-team) 48%, var(--g-hull-hi)) 0%,
-      color-mix(in srgb, var(--duel-team) 30%, var(--g-hull)) 48%,
-      var(--g-seam) 100%);
-  opacity: 1;
+    linear-gradient(160deg, rgba(255, 244, 214, 0.09) 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 110%,
+      color-mix(in srgb, var(--duel-team) 55%, transparent) 0%,
+      color-mix(in srgb, var(--duel-team) 18%, transparent) 55%,
+      transparent 80%),
+    linear-gradient(0deg,
+      color-mix(in srgb, var(--duel-team) 22%, transparent) 0%,
+      color-mix(in srgb, var(--duel-team) 6%, transparent) 100%);
   box-shadow:
-    0 3px 6px rgba(0, 0, 0, 0.9),
-    inset 0 1px 0 rgba(255, 244, 214, 0.35),
-    0 0 16px color-mix(in srgb, var(--duel-team) 90%, transparent);
+    inset 0 1px 0 rgba(255, 244, 214, 0.18),
+    0 0 14px color-mix(in srgb, var(--duel-team) 70%, transparent);
 }
 
 /* The pool of light the energised plinth casts on the floor.
@@ -425,35 +431,26 @@
    the square, the pool is 96%) so what shows is the floor around the plinth
    rather than the plinth itself, and it sits above the base so that ring of
    floor is actually lit. */
+/* The pool of light a plinth cast on the floor around it. With the plate now
+   being the square, the lit tile is that pool - a second glow on top of it was
+   the halo this design has been trying to get rid of. */
 .duel-piece--selected::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 102;
-  pointer-events: none;
-  background: radial-gradient(
-    ellipse 60% 20% at 50% 88%,
-    color-mix(in srgb, var(--duel-team) 85%, transparent) 0%,
-    color-mix(in srgb, var(--duel-team) 45%, transparent) 38%,
-    color-mix(in srgb, var(--duel-team) 14%, transparent) 68%,
-    transparent 100%
-  );
+  content: none;
 }
 
 /* a piece you are only inspecting: the plinth is lit, but not in a side's
    colour, because nothing is being commanded */
+/* a piece you are only inspecting: the tile is lit, but in no side's colour,
+   because nothing is being commanded */
+.duel-piece--referenced .duel-piece-base {
+  border-color: rgba(221, 212, 189, 0.5);
+  background:
+    linear-gradient(160deg, rgba(255, 244, 214, 0.07) 0%, transparent 45%),
+    linear-gradient(0deg, rgba(221, 212, 189, 0.12) 0%, rgba(221, 212, 189, 0.03) 100%);
+}
+
 .duel-piece--referenced::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 102;
-  pointer-events: none;
-  background: radial-gradient(
-    ellipse 44% 13% at 50% 88%,
-    rgba(221, 212, 189, 0.34) 0%,
-    rgba(221, 212, 189, 0.14) 45%,
-    transparent 100%
-  );
+  content: none;
 }
 
 /* VITALS ON THE BOARD.
@@ -581,14 +578,12 @@
   background:
     repeating-linear-gradient(
       -45deg,
-      color-mix(in srgb, var(--duel-flag, var(--g-brass)) 78%, transparent) 0 3px,
-      rgba(12, 10, 7, 0.85) 3px 6px),
-    radial-gradient(ellipse at 50% 55%, var(--g-hull-hi) 0%, var(--g-hull) 48%, var(--g-seam) 100%);
-  opacity: 1;
+      color-mix(in srgb, var(--duel-flag, var(--g-brass)) 42%, transparent) 0 4px,
+      transparent 4px 9px),
+    linear-gradient(160deg, rgba(255, 244, 214, 0.05) 0%, transparent 45%);
   box-shadow:
-    0 3px 6px rgba(0, 0, 0, 0.9),
-    inset 0 1px 0 rgba(255, 244, 214, 0.25),
-    0 0 14px color-mix(in srgb, var(--duel-flag, var(--g-brass)) 70%, transparent);
+    inset 0 1px 0 rgba(255, 244, 214, 0.14),
+    0 0 12px color-mix(in srgb, var(--duel-flag, var(--g-brass)) 55%, transparent);
 }
 
 /* -------------------------------------------------------------------------

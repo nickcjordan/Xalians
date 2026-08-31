@@ -26,21 +26,21 @@ export function verdictFor(effectiveness) {
 	return { key: 'super', label: 'x2' };
 }
 
-/** how far the solution stops short of each piece, so it runs floor to floor */
-const CLEARANCE = 0.44;
+/** how far the solution stops short of each piece, so it runs edge to edge
+    rather than under the two creatures it connects */
+const CLEARANCE = 0.5;
 
 /**
- * The bracket is drawn on the lower part of the tile rather than around all of
- * it. A creature's art rises about a quarter of a square above the ground it is
- * standing on - its footprint is the token base near the tile's bottom edge, not
- * the tile's outline - so a bracket squared up on the full tile put its top two
- * corners behind the creature's head, and a mark floating behind a creature does
- * not read as ground. Sitting low and wide it reads as the patch of floor the
- * thing is standing on, which is what it is.
+ * The bracket squares up on the whole tile.
+ *
+ * It used to hug the tile's lower half, because creatures were drawn pushed a
+ * fifth of a square up out of the ground they stood on and a full-tile bracket
+ * put its top corners behind their heads. That displacement is gone - a creature
+ * now sits in its own square - so the bracket can be what it should always have
+ * been: a mark on the square, containing the thing standing in it.
  */
-const TICK_INSET = 0.085;
-const TICK_TOP = 0.42;
-const TICK_LENGTH = 0.26;
+const TICK_INSET = 0.06;
+const TICK_LENGTH = 0.3;
 
 class DuelTargetLayer extends React.Component {
 
@@ -79,17 +79,15 @@ class DuelTargetLayer extends React.Component {
 		const r = Math.floor(targetIndex / columns);
 		const i = TICK_INSET;
 		const L = TICK_LENGTH;
-		// the floor patch: the full width of the tile, but only its lower half
 		const x0 = c + i;
 		const x1 = c + 1 - i;
-		const y0 = r + TICK_TOP;
+		const y0 = r + i;
 		const y1 = r + 1 - i;
-		const V = Math.min(L, (y1 - y0) / 2.2);
 		const ticks = [
-			`M ${x0} ${y0 + V} L ${x0} ${y0} L ${x0 + L} ${y0}`,
-			`M ${x1 - L} ${y0} L ${x1} ${y0} L ${x1} ${y0 + V}`,
-			`M ${x0} ${y1 - V} L ${x0} ${y1} L ${x0 + L} ${y1}`,
-			`M ${x1 - L} ${y1} L ${x1} ${y1} L ${x1} ${y1 - V}`,
+			`M ${x0} ${y0 + L} L ${x0} ${y0} L ${x0 + L} ${y0}`,
+			`M ${x1 - L} ${y0} L ${x1} ${y0} L ${x1} ${y0 + L}`,
+			`M ${x0} ${y1 - L} L ${x0} ${y1} L ${x0 + L} ${y1}`,
+			`M ${x1 - L} ${y1} L ${x1} ${y1} L ${x1} ${y1 - L}`,
 		].join(' ');
 
 		return (
@@ -101,12 +99,11 @@ class DuelTargetLayer extends React.Component {
 				    catching its lip is a thing the floor has. */}
 				<path className="duel-target-groove" d={ticks} vectorEffect="non-scaling-stroke" />
 				<path className="duel-target-ticks" d={ticks} vectorEffect="non-scaling-stroke" />
-				{/* The multiplier, stencilled beside the patch - only when it is
-				    worth saying, because a neutral trade is the default. It rides
-				    the bracket's top right because a piece's element disc sits at
-				    its bottom left, and the two were colliding. */}
+				{/* The multiplier, stencilled on the bracket's top edge - only when
+				    it is worth saying, because a neutral trade is the default. Top
+				    right because a piece's element disc sits at its bottom left. */}
 				{verdict.key !== 'even' &&
-					<text className="duel-target-figure" x={x1 - 0.03} y={y0 - 0.09} textAnchor="end">
+					<text className="duel-target-figure" x={x1 - 0.02} y={y0 - 0.07} textAnchor="end">
 						{verdict.label}
 					</text>
 				}
