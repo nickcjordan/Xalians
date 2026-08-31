@@ -1,14 +1,19 @@
 import React from 'react';
 import * as gameConstants from '../../../../gameplay/duel/duelGameConstants';
-import { lamp, brass, hull, stat } from '../../../../constants/designTokens';
+import { lamp, brass, stat } from '../../../../constants/designTokens';
 
 /**
- * A piece's vitals, as two bulb strips under its base.
+ * A piece's vitals, as a small plate that surfaces when you point at it.
  *
- * Was two rounded bars with outset borders, coloured glow and a gradient fill —
- * the only place on the site still lighting the hull. These are segmented
- * strips like every other meter in the system: health reads green, amber then
- * red as it falls, stamina reads brass, and neither of them glows.
+ * These were two full-width bars two pixels tall, sitting under the token. At a
+ * 48px cell that is a one-pixel line: enough to say "there is a meter here" and
+ * not enough to say anything about a number, which is the entire job. Worse,
+ * they were the same width as the square, so twelve of them tiled the board with
+ * horizontal rules.
+ *
+ * It is now a readout - the figure first, because the figure is what you act on,
+ * with a short track beside it for the at-a-glance shape. It floats above the
+ * creature on hover rather than hiding beneath it.
  */
 class XalianPieceStateChart extends React.Component {
 
@@ -18,37 +23,35 @@ class XalianPieceStateChart extends React.Component {
         return lamp.red;
     }
 
-    /** a strip of lit bulbs: colour where filled, dead socket where not */
-    buildStrip(pct, colour, height) {
-        return {
-            height,
-            marginTop: '1px',
-            pointerEvents: 'none',
-            borderRadius: '1px',
-            background: hull.seam,
-            boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.9)',
-            backgroundImage: `linear-gradient(90deg, ${colour} 0 ${pct}%, transparent ${pct}% 100%)`,
-        };
-    }
-
     render() {
-        let classes = this.props.classes || 'duel-state-chart-wrapper-position';
-        let wrapperClasses = this.props.wrapperClasses || 'duel-status-bar-wrapper';
-        let barHeight = this.props.barHeight || '2px';
-
         let xalianState = this.props.xalianState;
 
-        let healthPct = (xalianState.health / gameConstants.MAX_HEALTH_POINTS) * 100;
-        healthPct = healthPct < 4 ? 4 : healthPct;
+        let health = xalianState.health;
+        let stamina = xalianState.stamina;
+        let healthPct = Math.max(0, Math.min(100, (health / gameConstants.MAX_HEALTH_POINTS) * 100));
+        let staminaPct = Math.max(0, Math.min(100, (stamina / gameConstants.MAX_STAMINA_POINTS) * 100));
 
-        let staminaPct = (xalianState.stamina / gameConstants.MAX_STAMINA_POINTS) * 100;
-        staminaPct = staminaPct < 4 ? 4 : staminaPct;
+        // damage is fractional, so health is too - round it to something a
+        // player can act on rather than printing 5.9999
+        let shownHealth = Math.round(health * 10) / 10;
 
         return (
-            <div className={classes} style={{ height: 'auto', minWidth: '25px', pointerEvents: 'none', width: '100%', zIndex: '104' }}>
-                <div className={wrapperClasses} style={{ display: 'flex', flexDirection: 'column' }}>
-                    <div style={this.buildStrip(healthPct, this.healthColour(healthPct), barHeight)} />
-                    <div style={this.buildStrip(staminaPct, brass.base, barHeight)} />
+            <div className="duel-vitals-plate">
+                <div className="duel-vitals-row">
+                    <span className="duel-vitals-figure">{shownHealth}</span>
+                    <span className="duel-vitals-track">
+                        <span
+                            className="duel-vitals-fill"
+                            style={{ width: `${healthPct}%`, background: this.healthColour(healthPct) }} />
+                    </span>
+                </div>
+                <div className="duel-vitals-row duel-vitals-row--stamina">
+                    <span className="duel-vitals-figure">{stamina}</span>
+                    <span className="duel-vitals-track">
+                        <span
+                            className="duel-vitals-fill"
+                            style={{ width: `${staminaPct}%`, background: brass.base }} />
+                    </span>
                 </div>
             </div>
         );

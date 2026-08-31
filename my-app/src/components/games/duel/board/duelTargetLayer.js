@@ -95,6 +95,11 @@ class DuelTargetLayer extends React.Component {
 		return (
 			<g key={`tile-${targetIndex}`} className={`duel-target-tile duel-target-tile--${verdict.key}`}>
 				<rect className="duel-target-wash" x={x0} y={y0} width={x1 - x0} height={y1 - y0} />
+				{/* The bracket is cut into the floor rather than drawn over it: a dark
+				    groove first, then the lit edge sitting a hair above it. One flat
+				    stroke of red was a diagram laid on the arena; a groove with light
+				    catching its lip is a thing the floor has. */}
+				<path className="duel-target-groove" d={ticks} vectorEffect="non-scaling-stroke" />
 				<path className="duel-target-ticks" d={ticks} vectorEffect="non-scaling-stroke" />
 				{/* The multiplier, stencilled beside the patch - only when it is
 				    worth saying, because a neutral trade is the default. It rides

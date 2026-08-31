@@ -325,12 +325,27 @@
   opacity: 0.07;
 }
 
+/* The bracket's backing plate.
+   The idea was a groove: a dark stroke behind a lit one, reading as a cut with
+   light on its lip. On a floor this dark that buys a one-pixel black halo
+   against near-black - depth you can measure and cannot see. What actually
+   separates the mark from the floor is the opposite: a warm metal edge, as if
+   the bracket were a brass inlay set into the stone rather than a line drawn
+   over it. That reads at any size and belongs to the same hull vocabulary as
+   every other machined thing on this board. */
+.duel-target-groove {
+  fill: none;
+  stroke: color-mix(in srgb, var(--g-brass-dark) 70%, black);
+  stroke-width: 5;
+  stroke-linecap: square;
+}
+
 .duel-target-ticks {
   fill: none;
   stroke: var(--g-lamp-red);
-  stroke-width: 2.5;
+  stroke-width: 2;
   stroke-linecap: square;
-  opacity: 0.85;
+  opacity: 0.95;
 }
 
 /* The figure is set in viewBox units - one unit is one square - so it scales
@@ -352,13 +367,19 @@
    is drawn at full strength; one that is not recedes to unlit metal, so a bad
    trade reads as "not this one" without having to be decoded. */
 .duel-target-tile--super .duel-target-ticks,
-.duel-target-tile--strong .duel-target-ticks { opacity: 1; stroke-width: 3; }
+.duel-target-tile--strong .duel-target-ticks { opacity: 1; stroke-width: 2.75; }
+
+.duel-target-tile--super .duel-target-groove,
+.duel-target-tile--strong .duel-target-groove { stroke-width: 4.75; }
 
 .duel-target-tile--super .duel-target-wash,
 .duel-target-tile--strong .duel-target-wash { opacity: 0.11; }
 
 .duel-target-tile--weak .duel-target-ticks,
-.duel-target-tile--immune .duel-target-ticks { stroke: var(--g-ink-mid); stroke-width: 2; opacity: 0.85; }
+.duel-target-tile--immune .duel-target-ticks { stroke: var(--g-ink-mid); stroke-width: 1.75; opacity: 0.85; }
+
+.duel-target-tile--weak .duel-target-groove,
+.duel-target-tile--immune .duel-target-groove { stroke-width: 3.5; }
 
 .duel-target-tile--weak .duel-target-figure,
 .duel-target-tile--immune .duel-target-figure { fill: var(--g-ink-mid); }
@@ -372,22 +393,28 @@
    mistake as the target ring - camera-space furniture stapled to a world-space
    object - and they had the extra problem of being the target's shape in a
    different colour. Changing the object beats drawing on top of it. */
+/* The plate the commanded piece stands on is powered: the disc goes from
+   gunmetal to the side's colour and is lit from inside rather than ringed.
+   A creature standing on a lit plate is a physical situation; a creature with a
+   coloured halo is a UI convention drawn over a world-space object, which is the
+   mistake this whole design keeps having to unlearn. */
 .duel-piece--selected .duel-piece-base {
-  border-color: var(--duel-team, var(--g-brass));
+  border-color: color-mix(in srgb, var(--duel-team) 85%, white);
   border-width: 2px;
-  /* the disc itself takes the side's colour rather than staying gunmetal, so
-     the commanded piece is legible as an object and not just as a rim */
   background:
-    radial-gradient(ellipse at 50% 20%, rgba(255, 244, 214, 0.2) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 30%,
+      color-mix(in srgb, var(--duel-team) 75%, white) 0%,
+      color-mix(in srgb, var(--duel-team) 55%, transparent) 40%,
+      transparent 70%),
     radial-gradient(ellipse at 50% 55%,
-      color-mix(in srgb, var(--duel-team) 42%, var(--g-hull-hi)) 0%,
-      color-mix(in srgb, var(--duel-team) 26%, var(--g-hull)) 48%,
+      color-mix(in srgb, var(--duel-team) 48%, var(--g-hull-hi)) 0%,
+      color-mix(in srgb, var(--duel-team) 30%, var(--g-hull)) 48%,
       var(--g-seam) 100%);
   opacity: 1;
   box-shadow:
     0 3px 6px rgba(0, 0, 0, 0.9),
-    inset 0 1px 0 rgba(255, 244, 214, 0.3),
-    0 0 14px color-mix(in srgb, var(--duel-team) 85%, transparent);
+    inset 0 1px 0 rgba(255, 244, 214, 0.35),
+    0 0 16px color-mix(in srgb, var(--duel-team) 90%, transparent);
 }
 
 /* The pool of light the energised plinth casts on the floor.
@@ -433,18 +460,76 @@
    These live in the roster rail now. On a piece they are a detail you ask for
    by pointing at it, so twelve pairs of two-pixel bars are not competing with
    the board at all times. */
+/* Vitals float above the creature rather than sitting inside its square, and
+   they are sized in pixels rather than in percentages of a cell. Anything scaled
+   to the square shrinks to nothing on a small board, which is exactly how the
+   old two-pixel bars happened. */
 .duel-piece-vitals {
   position: absolute;
-  inset: 0;
+  left: 50%;
+  bottom: 88%;
+  transform: translateX(-50%);
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--g-fast);
+  z-index: 620;
 }
 
+.duel-vitals-plate {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 5px;
+  border-radius: var(--g-radius-sm);
+  background: rgba(16, 14, 10, 0.94);
+  border: 1px solid var(--g-brass-dark);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+  line-height: 1;
+}
+
+.duel-vitals-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.duel-vitals-figure {
+  font-family: var(--g-font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--g-ink-high);
+  min-width: 20px;
+  text-align: right;
+}
+
+.duel-vitals-row--stamina .duel-vitals-figure {
+  color: var(--g-ink-mid);
+}
+
+.duel-vitals-track {
+  display: block;
+  position: relative;
+  width: 34px;
+  height: 4px;
+  border-radius: 1px;
+  background: var(--g-seam);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
+}
+
+.duel-vitals-fill {
+  display: block;
+  height: 100%;
+}
+
+/* Hover and focus only. When vitals were a two-pixel bar tucked under the token
+   it cost nothing to leave them up on the selected and referenced pieces; now
+   that they are a plate floating above the creature, doing so would park a panel
+   over the square behind whichever piece you are commanding - which is usually
+   the square you are trying to read. The rail carries the standing readout. */
 .duel-board-cell:hover .duel-piece-vitals,
-.duel-board-cell:focus-within .duel-piece-vitals,
-.duel-piece--selected .duel-piece-vitals,
-.duel-piece--referenced .duel-piece-vitals {
+.duel-board-cell:focus-within .duel-piece-vitals {
   opacity: 1;
 }
 
@@ -465,21 +550,45 @@
 
 /* Carrying the enemy flag wins the game outright, so a carrier is the loudest
    piece on the board: a pennant plus a ring around its base in the flag colour. */
+/* A CARRIED FLAG.
+   This was a pennant at 58% of the creature's height, hung outside the token box
+   at top right, floating in the air beside the body with nothing joining the two.
+   It was the most literal sticker on the board.
+
+   A carried flag is now a standard planted on the plate: smaller, tucked against
+   the creature's flank, its foot on the disc rather than its head in the sky, so
+   the creature is holding something rather than having something hovering near
+   it. The loud part of the state moved to the plate, which is where every other
+   state on this board lives. */
 .duel-flag-carried {
-  z-index: 610;
+  /* in front of the creature (101) and its plate (100): it is being held, not
+     standing behind the thing holding it */
+  z-index: 103;
   position: absolute;
-  top: -18%;
-  right: -14%;
-  height: 58%;
+  bottom: 8%;
+  right: 2%;
+  height: 46%;
   filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.95));
 }
 
+/* The plate a carrier stands on is hazard-striped in the flag's colour. Carrying
+   is the win condition, so it gets the loudest treatment the floor has - and
+   because it is on the plate rather than on the creature, it stacks with
+   selection instead of fighting it. */
 .duel-piece--carrying .duel-piece-base {
-  border-color: var(--duel-flag, var(--g-brass));
+  border-color: color-mix(in srgb, var(--duel-flag, var(--g-brass)) 85%, white);
+  border-width: 2px;
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, var(--duel-flag, var(--g-brass)) 78%, transparent) 0 3px,
+      rgba(12, 10, 7, 0.85) 3px 6px),
+    radial-gradient(ellipse at 50% 55%, var(--g-hull-hi) 0%, var(--g-hull) 48%, var(--g-seam) 100%);
+  opacity: 1;
   box-shadow:
     0 3px 6px rgba(0, 0, 0, 0.9),
-    inset 0 1px 0 rgba(255, 244, 214, 0.18),
-    0 0 10px color-mix(in srgb, var(--duel-flag, var(--g-brass)) 55%, transparent);
+    inset 0 1px 0 rgba(255, 244, 214, 0.25),
+    0 0 14px color-mix(in srgb, var(--duel-flag, var(--g-brass)) 70%, transparent);
 }
 
 /* -------------------------------------------------------------------------
