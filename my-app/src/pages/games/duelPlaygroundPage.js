@@ -262,8 +262,8 @@ class DuelPlaygroundPage extends React.Component {
 		const states = [
 			{ caption: 'At rest', note: 'Your side.', piece: { team: 'own' } },
 			{ caption: 'At rest', note: 'Theirs.', piece: { team: 'foe' } },
-			{ caption: 'Commanded', note: 'The rim is energised and casts a pool of team colour on the floor.', piece: { team: 'own', selected: true } },
-			{ caption: 'Inspected', note: 'The tile is lit, but in no side\'s colour, because nothing is being commanded.', piece: { team: 'foe', referenced: true } },
+			{ caption: 'Commanded', note: 'The square is powered. Not a halo around the creature - the tile it is standing on is lit in the side\'s colour.', piece: { team: 'own', selected: true } },
+			{ caption: 'Inspected', note: 'Outlined rather than lit. Inspecting is a question, not a command, so it does not spend a fill.', piece: { team: 'foe', referenced: true } },
 			{ caption: 'In reach', note: 'Nothing is drawn on the creature - the bracket is on the square, containing it. It needs an attacker to be a study of anything, because reach is a relationship. See section 05.', piece: { team: 'foe', targetable: true }, withTarget: true },
 			{ caption: 'Carrying', note: 'The win condition, so it gets the loudest thing the floor has: the square goes hazard-striped in the flag\'s colour. Being the tile rather than the creature, it stacks with being commanded.', piece: { team: 'own', carrying: true, flagTeam: 'foe' } },
 		];

@@ -223,18 +223,41 @@
    This was bottom: 35% on a 95%-tall image, which pushed roughly a fifth of
    every creature up out of the square it occupies. That one line was the reason
    three separate attempts at a floor mark all read as "a sticker under a
-   creature": the floor was drawn in plan and the creature was drawn in
-   elevation, so no mark on the floor could ever appear to contain it.
+   creature": the floor was drawn in plan and the creature in elevation, so no
+   mark on the floor could ever appear to contain it.
 
-   Seated in its own square, a bracket around the square is a bracket around the
-   creature, a lit square is a lit creature, and the marks stop needing to
-   compensate for a perspective the board was not actually using. */
+   The replacement is not just that shift deleted. Two things decide where a
+   creature sits, and both are deliberate:
+
+   1. The box is square and centred horizontally. Species art is authored at
+      roughly 900x985 in its own viewBox and preserveAspectRatio letterboxes it
+      to fit, so a box that is not square shifts every creature by a different
+      amount depending on how tall its art happens to be. Percentage insets on
+      each edge separately gave 4px of margin at the top and 3px at the bottom -
+      close enough to look centred and not actually centred.
+
+   2. It is nudged down, not centred, and by a known amount. Art fills its
+      viewBox to the edges, so the bottom of the ink is the bottom of the box: a
+      centred box floats the creature a hair above the square's own floor. One
+      pixel of lift reads as standing; more reads as hovering. inset with a
+      larger bottom value is the whole adjustment, and it is stated in pixels so
+      it does not scale into a shrug on a small board. */
 .duel-piece-xalian-icon {
   position: absolute;
-  bottom: 4%;
+  /* The wrapper carries aspect-ratio: 1, so pinning all four edges
+     over-constrains it - the height wins and the art hangs out of the square.
+     Width and height are both given as the same percentage of a square cell, so
+     the box is square by construction rather than by two different percentages
+     that happen to agree at one width.
+
+     Anchored to the bottom rather than centred. Species art fills its own
+     viewBox to the edges, so the foot of the ink is the foot of the box, and a
+     centred box floats every creature a little above the floor of the square it
+     is standing in. */
   left: 5%;
-  height: 90%;
+  bottom: 2%;
   width: 90%;
+  height: 90%;
   padding: 0px !important;
   z-index: 101;
 }
@@ -442,11 +465,13 @@
    colour, because nothing is being commanded */
 /* a piece you are only inspecting: the tile is lit, but in no side's colour,
    because nothing is being commanded */
+/* Inspecting is a question, not a command, so the tile is outlined rather than
+   filled - a dashed edge and no wash. Filled in bone it read as a lit tile in a
+   colour no side owns, which is a fourth state nobody asked for. */
 .duel-piece--referenced .duel-piece-base {
-  border-color: rgba(221, 212, 189, 0.5);
-  background:
-    linear-gradient(160deg, rgba(255, 244, 214, 0.07) 0%, transparent 45%),
-    linear-gradient(0deg, rgba(221, 212, 189, 0.12) 0%, rgba(221, 212, 189, 0.03) 100%);
+  border-color: rgba(221, 212, 189, 0.45);
+  border-style: dashed;
+  background: radial-gradient(ellipse at 50% 92%, rgba(0, 0, 0, 0.55) 0%, transparent 62%);
 }
 
 .duel-piece--referenced::after {
