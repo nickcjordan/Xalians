@@ -4,16 +4,20 @@ import * as duelCalculator from '../../../../gameplay/duel/duelCalculator';
 /**
  * The mark on an enemy you can strike right now.
  *
- * This was four X icons in a row laid over the creature's face, lighting N of
- * them where N was type effectiveness times two. So it was a nought-to-four pip
- * meter encoding a 0/0.5/1/1.5/2 multiplier, drawn on top of the artwork you
- * need in order to tell the pieces apart, on every eligible enemy at once.
+ * This began as four X icons laid over the creature's face, lighting N of them
+ * where N was type effectiveness times two: a nought-to-four pip meter encoding
+ * a 0/0.5/1/1.5/2 multiplier, drawn on top of the artwork you need in order to
+ * tell the pieces apart.
  *
- * The question it was trying to answer is a single one: if I spend my one
- * attack here, does it go well? So it is now a reticle bracketing the token
- * (targetable) plus one chip carrying the multiplier — and the chip only
- * appears when the answer is interesting, because a neutral matchup is the
- * default and does not need saying.
+ * Replacing it with a ring around the body fixed the occlusion but not the
+ * deeper problem, which is that a ring is screen-space UI stamped onto a
+ * world-space object. You are looking down into an arena; a circle floating over
+ * a creature belongs to a heads-up display, not to the floor.
+ *
+ * So the mark is painted on the arena floor instead: an ellipse concentric with
+ * the piece's own footprint, in the same perspective as its plinth and drawn
+ * beneath it, so the creature stands inside a marked strike zone. The multiplier
+ * rides the edge of that zone, and only when it is worth saying.
  */
 
 /** the five readings the type matrix can produce, as marks rather than pips */
@@ -40,17 +44,15 @@ class AttackableMoveBadge extends React.Component {
 		let verdict = verdictFor(effectiveness);
 
 		return (
-			<span className="duel-target" style={{ zIndex: this.props.zIndex }}>
-				{/* a ring, not a bracket: the selected piece already wears corner
-				    brackets, and two marks separated only by colour is exactly the
-				    confusion the old selected/referenced pair created */}
-				<span className="duel-target-ring" />
+			<React.Fragment>
+				{/* painted on the floor, under the plinth, in the floor's perspective */}
+				<span className="duel-target-zone" />
 				{verdict.key !== 'even' &&
 					<span className={`duel-target-verdict duel-target-verdict--${verdict.key}`}>
 						{verdict.label}
 					</span>
 				}
-			</span>
+			</React.Fragment>
 		);
 	}
 }

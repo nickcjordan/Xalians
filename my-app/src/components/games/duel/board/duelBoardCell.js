@@ -3,17 +3,13 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import PropTypes from 'prop-types';
-import * as gameConstants from '../../../../gameplay/duel/duelGameConstants';
 import XalianImage from '../../../xalianImage';
 import * as duelUtil from '../../../../utils/duelUtil';
 import * as duelCalculator from '../../../../gameplay/duel/duelCalculator';
 import * as boardStateManager from '../../../../gameplay/duel/boardStateManager';
 import * as duelConstants from '../../../../gameplay/duel/duelGameConstants';
 import { ReactComponent as DuelFlagIcon } from '../../../../svg/games/duel/duel_flag_icon.svg';
-import { ReactComponent as AttackRangePatternSVG } from '../../../../svg/patterns/hideout.svg';
 import species from '../../../../json/species.json';
-import { Hub } from "aws-amplify";
 import XalianTypeSymbolBadge from './xalianTypeSymbolBadge';
 import AttackableMoveBadge from './attackableMoveBadge';
 
@@ -501,17 +497,11 @@ class DuelBoardCell extends React.Component {
 					    than as artwork printed onto the square */}
 					<span className="duel-piece-base" />
 
-					{/* WHO IS ACTING - corner brackets in the team colour */}
-					{isSelectedXalian &&
-						<span className="duel-piece-cursor" aria-hidden="true">
-							<span className="duel-cursor-tick duel-cursor-tick--tl" />
-							<span className="duel-cursor-tick duel-cursor-tick--tr" />
-							<span className="duel-cursor-tick duel-cursor-tick--bl" />
-							<span className="duel-cursor-tick duel-cursor-tick--br" />
-						</span>
-					}
+					{/* WHO IS ACTING is drawn by the piece's own plinth lighting up
+					    (see .duel-piece--selected in duel.css) rather than by
+					    brackets stamped over the creature. */}
 
-					{/* WHAT YOU MAY STRIKE - reticle plus a matchup chip */}
+					{/* WHAT YOU MAY STRIKE - a strike zone painted on the floor */}
 					<AttackableMoveBadge zIndex={'605'} isTargetable={isTargetable} attacker={selectedXalian} defender={cellXalian} {...this.props} />
 
 					{/* TYPE SYMBOL */}

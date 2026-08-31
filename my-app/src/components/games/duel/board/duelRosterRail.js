@@ -137,7 +137,10 @@ class DuelRosterRail extends React.Component {
 						{isDown && <span className="duel-roster-tag duel-roster-tag--down">Down</span>}
 						{isPlaceable && <span className="duel-roster-tag duel-roster-tag--place">Place</span>}
 						{isUnset && !isPlaceable && <span className="duel-roster-tag">Unplaced</span>}
-						{isTargetable && verdict &&
+						{/* the slot's hazard border already says "you can reach this",
+						    so the multiplier only appears when it is worth saying -
+						    the same rule the board's strike zone follows */}
+						{isTargetable && verdict && verdict.key !== 'even' &&
 							<span className={`duel-roster-tag duel-roster-tag--verdict duel-roster-verdict--${verdict.key}`}>
 								{verdict.label}
 							</span>

@@ -8,23 +8,17 @@ import Navbar from 'react-bootstrap/Navbar';
 import Stack from 'react-bootstrap/Stack';
 import PropTypes from 'prop-types';
 import * as gameConstants from '../../../../gameplay/duel/duelGameConstants';
-import XalianImage from '../../../xalianImage';
 import * as duelUtil from '../../../../utils/duelUtil';
 import * as duelCalculator from '../../../../gameplay/duel/duelCalculator';
 import * as duelConstants from '../../../../gameplay/duel/duelGameConstants';
-import { ReactComponent as AttackIcon } from '../../../../svg/games/duel/duel_attack_icon.svg';
-import { ReactComponent as DuelFlagIcon } from '../../../../svg/games/duel/duel_flag_icon.svg';
 import species from '../../../../json/species.json';
 import { Hub } from "aws-amplify";
-import XalianTypeSymbolBadge from './xalianTypeSymbolBadge';
 import DuelBoardCell from './duelBoardCell';
 import DuelRosterRail from './duelRosterRail';
 import { verdictFor } from './attackableMoveBadge';
 import AttackActionModal from './attackActionModal';
 import AttackMoveChooserModal from './attackMoveChooserModal';
 import HowToPlayModal from '../howToPlayModal';
-import { useSelector, useDispatch } from 'react-redux'
-import { addAnimationToQueue } from '../../../../store/duelAnimationQueueSlice';
 import { AnimationHub } from '../../../../store/AnimationHub';
 import * as boardStateManager from '../../../../gameplay/duel/boardStateManager';
 import * as boardUtil from '../../../../gameplay/duel/utils/boardUtil';
@@ -41,7 +35,6 @@ import MotionPathPlugin from 'gsap/MotionPathPlugin';
 import constants from '../../../../constants/constants';
 import * as alertUtil from '../../../../utils/alertUtil';
 import FadeAlert from '../../../fadeAlert';
-import { ink } from '../../../../constants/designTokens';
 gsap.registerPlugin(Flip, MotionPathPlugin, Draggable);
 
 

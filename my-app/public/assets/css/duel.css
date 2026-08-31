@@ -159,6 +159,15 @@
 .duel-region-edge-left { border-left: 1px solid rgba(255, 176, 55, 0.38); }
 .duel-region-edge-right { border-right: 1px solid rgba(255, 176, 55, 0.38); }
 
+/* Round a corner only where the region actually turns one: both of the edges
+   meeting there have to be drawn. Concave corners, where the region folds back
+   on itself, stay square - rounding those would pull the outline away from the
+   squares it is describing. */
+.duel-move-region.duel-region-edge-top.duel-region-edge-left { border-top-left-radius: 10px; }
+.duel-move-region.duel-region-edge-top.duel-region-edge-right { border-top-right-radius: 10px; }
+.duel-move-region.duel-region-edge-bottom.duel-region-edge-left { border-bottom-left-radius: 10px; }
+.duel-move-region.duel-region-edge-bottom.duel-region-edge-right { border-bottom-right-radius: 10px; }
+
 /* Where a piece you are only inspecting could go. This used to be the same
    lamp at lower opacity, which reads as "dimmer for reasons unknown". An
    outline with no fill is a different statement, not a weaker one. */
@@ -280,29 +289,39 @@
    ------------------------------------------------------------------------- */
 
 /* WHAT YOU MAY STRIKE.
-   A reticle bracketing the token. The old mark was four X icons laid over the
-   creature's face plus a fifth big X on top of those, which between them hid
-   the artwork you need in order to tell the pieces apart. */
-.duel-target {
+   Painted on the arena floor rather than drawn over the creature: an ellipse
+   concentric with the piece's own plinth, in the same perspective, sitting
+   beneath it so the creature stands inside a marked strike zone. A ring around
+   the body was screen-space UI stamped on a world-space object, which is why it
+   read as a sticker no matter what the ring was made of. */
+.duel-target-zone {
   position: absolute;
-  inset: 6%;
-  pointer-events: none;
-}
-
-.duel-target-ring {
-  position: absolute;
-  inset: 0;
+  /* concentric with .duel-piece-base, which spans 3%-23% from the bottom */
+  bottom: -3%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 98%;
+  height: 32%;
   border-radius: 50%;
-  border: 2px dashed var(--g-hazard);
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.95));
+  /* under the plinth (100) and the creature (101), over the floor */
+  z-index: 99;
+  pointer-events: none;
+  border: 2px solid color-mix(in srgb, var(--g-hazard) 80%, transparent);
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    color-mix(in srgb, var(--g-hazard) 22%, transparent) 0%,
+    color-mix(in srgb, var(--g-hazard) 7%, transparent) 62%,
+    transparent 100%
+  );
 }
 
-/* The matchup, as one figure. Only drawn when it is worth saying: a neutral
-   trade is the default and does not need a chip. */
+/* The matchup, as one figure riding the edge of the painted zone. Only drawn
+   when it is worth saying: a neutral trade is the default. */
 .duel-target-verdict {
   position: absolute;
-  top: -12%;
-  right: -12%;
+  bottom: 1%;
+  right: -6%;
+  z-index: 103;
   padding: 0 3px;
   font-family: var(--g-font-mono);
   font-size: 10px;
@@ -327,27 +346,49 @@
   color: var(--g-ink-low);
 }
 
-/* WHO IS ACTING. Corner brackets in the side's own colour, so the selected
-   piece and a target piece are never the same mark in two colours. */
-.duel-piece-cursor {
+/* WHO IS ACTING.
+   The piece's own plinth is energised: its rim takes the side's colour and
+   throws light onto the square it is standing on. Corner brackets were the same
+   mistake as the target ring - camera-space furniture stapled to a world-space
+   object - and they had the extra problem of being the target's shape in a
+   different colour. Changing the object beats drawing on top of it. */
+.duel-piece--selected .duel-piece-base {
+  border-color: var(--duel-team, var(--g-brass));
+  box-shadow:
+    0 3px 6px rgba(0, 0, 0, 0.9),
+    inset 0 1px 0 rgba(255, 244, 214, 0.25),
+    0 0 12px color-mix(in srgb, var(--duel-team) 70%, transparent);
+}
+
+/* the pool of light the energised plinth casts on the floor */
+.duel-piece--selected::after {
+  content: '';
   position: absolute;
-  inset: 2%;
+  inset: 0;
+  z-index: 98;
   pointer-events: none;
-  z-index: 604;
+  background: radial-gradient(
+    ellipse 60% 25% at 50% 88%,
+    color-mix(in srgb, var(--duel-team) 34%, transparent) 0%,
+    color-mix(in srgb, var(--duel-team) 10%, transparent) 55%,
+    transparent 78%
+  );
 }
 
-.duel-cursor-tick {
+/* a piece you are only inspecting: the plinth is lit, but not in a side's
+   colour, because nothing is being commanded */
+.duel-piece--referenced::after {
+  content: '';
   position: absolute;
-  width: 22%;
-  height: 22%;
-  border: 2px solid var(--duel-team, var(--g-ink));
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.95));
+  inset: 0;
+  z-index: 98;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 55% 22% at 50% 88%,
+    rgba(221, 212, 189, 0.16) 0%,
+    transparent 72%
+  );
 }
-
-.duel-cursor-tick--tl { top: 0; left: 0; border-right: 0; border-bottom: 0; }
-.duel-cursor-tick--tr { top: 0; right: 0; border-left: 0; border-bottom: 0; }
-.duel-cursor-tick--bl { bottom: 0; left: 0; border-right: 0; border-top: 0; }
-.duel-cursor-tick--br { bottom: 0; right: 0; border-left: 0; border-top: 0; }
 
 /* VITALS ON THE BOARD.
    These live in the roster rail now. On a piece they are a detail you ask for

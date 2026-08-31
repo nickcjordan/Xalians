@@ -6,7 +6,6 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import FloatingLabel from 'react-bootstrap/FloatingLabel'
 import Spinner from 'react-bootstrap/Spinner'
-import { Hub } from 'aws-amplify';
 import fitty from 'fitty';
 
 import { gsap } from 'gsap';
@@ -204,14 +203,11 @@ class AttackActionModal extends React.Component {
     }
     
     render() {
-
-        
-
-        document.body.click(function (event) {
-            if (!document.getElementById(event.target).closest('#openModal').length && !document.getElementById(event.target).is('#openModal')) {
-                this.closeModal();
-            }
-        })
+        // Was: document.body.click(fn) on every render. HTMLElement.click() takes
+        // no handler, so the callback was dropped and the call simply dispatched
+        // a synthetic click on <body> each time this rendered. Dismissal is
+        // already handled by the backdrop below and by the animation's own
+        // timeout, so nothing replaces it.
 
         let effectivenessScore = this.props.result && this.props.result.typeEffectiveness ? this.props.result.typeEffectiveness : 0;
         let effectivenessText = duelValueTranslator.effectivenessScoreToTextConversational(effectivenessScore);
