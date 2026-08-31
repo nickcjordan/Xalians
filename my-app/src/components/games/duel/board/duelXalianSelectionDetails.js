@@ -42,31 +42,25 @@ class DuelXalianSuggestionDetails extends React.Component {
 						<Col className="vertically-center-contents" xs={6}>
 							<XalianImage bordered colored shadowed speciesName={xalian.species.name} primaryType={xalian.elementType} moreClasses="xalian-image duel-xalian-details-image" />
 						</Col>
+						{/* legends stencilled beside the vitals strips, on the same
+						    rail as every other label on the console */}
 						<Col className="" xs={4} style={{ paddingTop: '10px'}}>
-							<Row><h6 style={{margin: '0px', textAlign: 'right', color: '#ffffff85'}}>Health: </h6></Row>
-							<Row><h6 style={{margin: '0px', textAlign: 'right', color: '#ffffff85'}}>Stamina: </h6></Row>
+							<Row><span className="duel-vitals-legend">Health</span></Row>
+							<Row><span className="duel-vitals-legend">Stamina</span></Row>
 						</Col>
 						<Col className="vertically-center-contents" xs={8} style={{ paddingTop: '10px'}}>
 							<XalianPieceStateChart classes="none" wrapperClasses="none" xalianState={xalian.state} spacing="8px" barHeight="4px" />
 						</Col>
-						<Col className="vertically-center-contents" xs={12} style={{ paddingTop: '10px'}}>
-							<Col>
-								<XalianDuelStatBadge type='attack' val={xalian.stats.attack} />
-							</Col>
-							<Col>
-								<XalianDuelStatBadge type='defense' val={xalian.stats.defense} />
-							</Col>
-							<Col>
-								<XalianDuelStatBadge type='move' val={xalian.stats.distance} />
-							</Col>
-							<Col>
-								<XalianDuelStatBadge type='range' val={xalian.stats.range} />
-							</Col>
-							<Col>
-								<XalianDuelStatBadge type='evasion' val={xalian.stats.evasion} />
-							</Col>
+						{/* the five duel stats as a row of plates, evenly spaced —
+						    they were five nested Cols, which stacked them */}
+						<Col xs={12} className="duel-stat-plates">
+							<XalianDuelStatBadge type='attack' val={xalian.stats.attack} />
+							<XalianDuelStatBadge type='defense' val={xalian.stats.defense} />
+							<XalianDuelStatBadge type='move' val={xalian.stats.distance} />
+							<XalianDuelStatBadge type='range' val={xalian.stats.range} />
+							<XalianDuelStatBadge type='evasion' val={xalian.stats.evasion} />
 						</Col>
-						<Col className="" xs={12} style={{ display: 'flex', marginTop: '50px', borderRadius: '5px', border: 'solid 1px darkgray', padding: '10px' }}>
+						<Col className="duel-effectiveness-panel" xs={12}>
 							<XalianTypeEffectivenessSummary type={xalian.elementType} />
 						</Col>
 						{/* </Row> */}

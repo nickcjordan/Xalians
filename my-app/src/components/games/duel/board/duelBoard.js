@@ -500,7 +500,7 @@ class DuelBoard extends React.Component {
 				<Col key={x.xalianId} style={{ maxWidth: cellSizeText, maxHeight: cellSizeText, opacity: opac }} className='duel-unset-piece-wrapper' onClick={() => this.handleInitialPieceSelection(x, boardState)}>
 					<XalianImage padding='2%' colored rounded shadowed selected={isSelected} speciesName={x.species.name} primaryType={x.elementType} moreClasses="duel-xalian-unselected" />
 						{/* <div style={{ padding: '0px', height: '100%', width: '100%', margin: 'auto' }}>
-							<h6 className="fit-xalian-name-text" style={{ textAlign: 'center', margin: 'auto', height: '100%', width: '100%', color: 'white', opacity: 0.5 }}>
+							<h6 className="fit-xalian-name-text" style={{ textAlign: 'center', margin: 'auto', height: '100%', width: '100%', color: 'var(--g-ink-mid)' }}>
 								{x.species.name}
 							</h6>
 						</div> */}
@@ -539,22 +539,31 @@ class DuelBoard extends React.Component {
 		// the DEBUG button dumps raw game state - dev builds only, never for players
 		if (process.env.NODE_ENV !== 'production') {
 			userActionButtons.push(
-				<Col key="duel-action-debug" style={{ display: 'flex', justifyContent: 'center' }}>
-					<Button variant='xalianGray' onClick={ this.doDebugAction } style={{ margin: 'auto', marginBottom: '10px', marginTop: '10px' }} >DEBUG</Button>
-				</Col>
+				<button type="button" key="duel-action-debug" className="g-btn" onClick={this.doDebugAction}>Debug</button>
 			)
 		}
 
 		userActionButtons.push(
-			<Col key="duel-action-how-to-play" xs="auto" style={{ display: 'flex', justifyContent: 'center' }}>
-				<Button variant='xalianGray' title='How to play' aria-label='How to play' onClick={() => this.setState({ showHowToPlay: true })} style={{ margin: 'auto', marginBottom: '10px', marginTop: '10px' }} ><i className="bi bi-question-lg" /></Button>
-			</Col>
+			<button
+				type="button"
+				key="duel-action-how-to-play"
+				className="g-btn g-btn--icon"
+				title="How to play"
+				aria-label="How to play"
+				onClick={() => this.setState({ showHowToPlay: true })}>
+				<i className="bi bi-question-lg" />
+			</button>
 		)
 
 		userActionButtons.push(
-			<Col key="duel-action-end-turn" style={{ display: 'flex', justifyContent: 'center' }}>
-				<Button variant='xalianGray' disabled={!showEndTurnButton} onClick={this.endPlayerTurn} style={{ margin: 'auto', marginBottom: '10px', marginTop: '10px' }} >End turn</Button>
-			</Col>
+			<button
+				type="button"
+				key="duel-action-end-turn"
+				className="g-btn g-btn--primary"
+				disabled={!showEndTurnButton}
+				onClick={this.endPlayerTurn}>
+				End Turn
+			</button>
 		)
 
 		
@@ -638,20 +647,25 @@ class DuelBoard extends React.Component {
 		
 		let userActionButtons = this.buildUserActionButtons(boardState);
 
-		let duelPieceBoxStyle = { borderRadius: `${this.determineCellSize() / 2}px`, width: `${this.getBoardSize() * 0.85}px`, height: this.determineCellSize() };
-		let p1Opacity = this.props.playerID === '0' && this.props.isActive ? 0.35 : 0.9; 
-		let p2Opacity = this.props.playerID === '1' && this.props.isActive ? 0.35 : 0.9; 
-		let playerOnePiecesBoxStyle = { boxShadow: `inset 0px 0px ${this.determineCellSize() / 2}px ${gsap.utils.interpolate(duelConstants.PLAYER_TWO_COLOR, duelConstants.PLAYER_TWO_COLOR_NO_ALPHA, p2Opacity)}`, ...duelPieceBoxStyle };
-		let playerTwoPiecesBoxStyle = { boxShadow: `inset 0px 0px ${this.determineCellSize() / 2}px ${gsap.utils.interpolate(duelConstants.PLAYER_ONE_COLOR, duelConstants.PLAYER_ONE_COLOR_NO_ALPHA, p1Opacity)}`, ...duelPieceBoxStyle };
+		let duelPieceBoxStyle = { borderRadius: 'var(--g-radius)', width: `${this.getBoardSize() * 0.85}px`, height: this.determineCellSize() };
+		// the rail belonging to the side whose turn it is carries an edge light
+		let p1Lit = this.props.playerID === '1' && this.props.isActive;
+		let p2Lit = this.props.playerID === '0' && this.props.isActive;
+		let railLight = (color, lit) => ({
+			boxShadow: lit ? `var(--g-recess), inset 0 0 12px ${color}55` : 'var(--g-recess)',
+			...duelPieceBoxStyle,
+		});
+		let playerOnePiecesBoxStyle = railLight(duelConstants.PLAYER_TWO_COLOR, p1Lit);
+		let playerTwoPiecesBoxStyle = railLight(duelConstants.PLAYER_ONE_COLOR, p2Lit);
 
 		let viewText = this.props.G.hasBot ? (this.props.playerID === '0' ? 'Player View' : 'Bot View') : (this.props.playerID === '0' ? 'First Player' : 'Second Player');
-		let turnSummaryText = (this.props.ctx.phase === 'play' && boardState.currentTurnDetails) ? (`Moves: ${boardState.currentTurnDetails.remainingSpacesToMove}` + (boardState.currentTurnDetails.hasAttacked ? '' : ' + Attack')) : '';
+		let turnDetails = (this.props.ctx.phase === 'play' && boardState.currentTurnDetails) ? boardState.currentTurnDetails : null;
 
-		var backGroundClientColor = this.props.playerID === '0' ? duelConstants.PLAYER_ONE_COLOR : duelConstants.PLAYER_TWO_COLOR;
-		let backGroundClientColorNoAlpha = this.props.playerID === '0' ? duelConstants.PLAYER_ONE_COLOR_NO_ALPHA : duelConstants.PLAYER_TWO_COLOR_NO_ALPHA;
-		backGroundClientColor = gsap.utils.interpolate(backGroundClientColor, backGroundClientColorNoAlpha, 0.75);
-		let backgroundClientColorDirection = this.props.playerID === '0' ? 180 : 0;
-		let backgroundForClient = `linear-gradient(${backgroundClientColorDirection}deg, ${backGroundClientColorNoAlpha} 20%, ${backGroundClientColor} 100%)` 
+		let clientColor = this.props.playerID === '0' ? duelConstants.PLAYER_ONE_COLOR : duelConstants.PLAYER_TWO_COLOR;
+		// which end of the room you are sitting at: a low glow along your own
+		// edge, not a wash over the whole page
+		let clientEdge = this.props.playerID === '0' ? '115%' : '-15%';
+		let backgroundForClient = `radial-gradient(60% 32% at 50% ${clientEdge}, ${clientColor}22 0%, ${clientColor}00 100%)` 
 		
 
 		
@@ -672,12 +686,12 @@ class DuelBoard extends React.Component {
 							{/* <Container style={{ height: '100px', display: 'flex'}}> */}
 								
 								{this.state.winnerText &&
-									<h1 style={{ margin: 'auto', textAlign: 'center' }} >{this.state.winnerText}</h1>
+									<h1 className="duel-winner-text">{this.state.winnerText}</h1>
 								}
 								{!this.state.winnerText &&
 									<div style={{width: '100%', padding: '0px', margin: '0px', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
 										{/* <h4 style={{ margin: 'auto', textAlign: 'center', marginBottom: '25px', color: 'darkgray', opacity: isCurrentLogIndex ? 1 : 0.25 }}>[{this.state.logIndex}] {turnSummaryText}</h4> */}
-										<h4 style={{ margin: 'auto', textAlign: 'center' , opacity: isCurrentLogIndex ? 1 : 0.25 }}>{viewText}</h4>
+										<p className="duel-view-label" style={{ opacity: isCurrentLogIndex ? 1 : 0.25 }}>{viewText}</p>
 									</div>
 								}
 								{/* return {
@@ -772,16 +786,29 @@ class DuelBoard extends React.Component {
 
 
 						{/* </Stack> */}
-							<div className="fixed-bottom" style={{ 
-								margin: 'auto',
-								maxWidth: '400px',
-									borderRadius: '10px',
-									background: 'linear-gradient(0deg, rgba(0,0,0,1) 15%, rgba(0,0,0,0.8099614845938375) 89%, rgba(0,0,0,0.6138830532212884) 94%, rgba(0,0,0,0) 100%)' 
-								}}>
-								<h4 style={{ margin: 'auto', textAlign: 'center', paddingTop: '5px', color: 'darkgray', opacity: isCurrentLogIndex ? 1 : 0.25 }}>{!isCurrentLogIndex ? 'NEEDS UPDATE' : null}[{this.state.logIndex}] {turnSummaryText}</h4>
-								<Row >
+							{/* the turn's instruments, on a panel bolted along the bottom of
+							    the console rather than a black gradient bar */}
+							<div className="fixed-bottom duel-status-strip" style={{ opacity: isCurrentLogIndex ? 1 : 0.4 }}>
+								{!isCurrentLogIndex &&
+									<p className="duel-status-stale">Replaying — showing turn {this.state.logIndex}</p>
+								}
+								{turnDetails &&
+									<div className="duel-status-readouts">
+										<span className="duel-readout">
+											<span className="duel-readout-label">Movement</span>
+											<span className="duel-readout-value">{turnDetails.remainingSpacesToMove}</span>
+										</span>
+										<span className="duel-readout">
+											<span className="duel-readout-label">Attack</span>
+											<span className={`duel-readout-value ${turnDetails.hasAttacked ? 'duel-readout-value--spent' : 'duel-readout-value--held'}`}>
+												{turnDetails.hasAttacked ? 'SPENT' : 'READY'}
+											</span>
+										</span>
+									</div>
+								}
+								<div className="duel-status-actions">
 									{userActionButtons}
-								</Row>
+								</div>
 							</div>
 							{this.state.debugText && 
 								<div className="fixed-top" style={{ width: '100%', height: '90vh', backgroundColor: '#0000007a' }}>

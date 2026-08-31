@@ -5,6 +5,7 @@ import { ReactComponent as DefenseIcon } from '../../../../svg/games/duel/duel_d
 import { ReactComponent as MoveIcon } from '../../../../svg/games/duel/duel_move_icon.svg';
 import { ReactComponent as RangeIcon } from '../../../../svg/games/duel/duel_range_icon.svg';
 import { ReactComponent as EvasionIcon } from '../../../../svg/games/duel/duel_evasion_icon.svg';
+import { ink } from '../../../../constants/designTokens';
 
 class XalianDuelStatBadge extends React.Component {
 
@@ -12,7 +13,8 @@ class XalianDuelStatBadge extends React.Component {
 	render() {
 		var size = this.props.size || 40;
 
-		let style = {fill:'darkgray'}
+		// the icon is engraved into the plate, not printed on it
+		let style = { fill: ink.mid }
 		let classes = 'duel-badge-icon';
 
 		let badgeMap = new Map();
@@ -27,7 +29,7 @@ class XalianDuelStatBadge extends React.Component {
 		let type = this.props.type;
 
 		return (
-			<div className='duel-badge-wrapper' style={{ maxWidth: size, height: size, borderRadius: '50%' }}>
+			<div className='duel-badge-wrapper' style={{ maxWidth: size, height: size }}>
 				
                 {badge}
                 <h5 className='duel-badge-text' style={{ textAlign: 'center', alignItems: 'center', margin: 'auto', position: 'relative', width: '100%' }} >{this.props.val}</h5>

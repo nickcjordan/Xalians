@@ -11,6 +11,7 @@ import * as duelCalculator from '../../../../gameplay/duel/duelCalculator';
 import * as boardStateManager from '../../../../gameplay/duel/boardStateManager';
 import * as duelConstants from '../../../../gameplay/duel/duelGameConstants';
 import { ReactComponent as DuelFlagIcon } from '../../../../svg/games/duel/duel_flag_icon.svg';
+import { hazard, lamp } from '../../../../constants/designTokens';
 import { ReactComponent as AttackRangePatternSVG } from '../../../../svg/patterns/hideout.svg';
 import species from '../../../../json/species.json';
 import { Hub } from "aws-amplify";
@@ -359,22 +360,25 @@ class DuelBoardCell extends React.Component {
 		return (<React.Fragment>
 			{/* BOX FOR CELL CONNECTORS */}
 			<div className='' style={{width: cellSizeWithUnits, height: cellSizeWithUnits, lineHeight: cellSizeWithUnits, position: 'absolute'}} >
-				<div className="duel-board-cell-connector unoccupied-cell-connector" style={{ opacity: shouldConnectCellLeft ? 0.1 : 0, width: cellSizeWithUnits, height: '5px', top: '50%', left: '0' }} />
-				<div className="duel-board-cell-connector unoccupied-cell-connector" style={{ opacity: shouldConnectCellTop ? 0.1 : 0, width: '5px', height: cellSizeWithUnits, top: '0', left: '50%' }} />
+				{/* the scoring in the floor. Strength lives on the class, so an
+				    empty cell's lines match an occupied cell's - overriding the
+				    opacity here made the lattice break around every piece. */}
+				<div className="duel-board-cell-connector unoccupied-cell-connector" style={{ display: shouldConnectCellLeft ? 'block' : 'none', width: cellSizeWithUnits, height: '2px', top: '50%', left: '0' }} />
+				<div className="duel-board-cell-connector unoccupied-cell-connector" style={{ display: shouldConnectCellTop ? 'block' : 'none', width: '2px', height: cellSizeWithUnits, top: '0', left: '50%' }} />
 			</div>
 			<div className='duel-unoccupied-cell duel-board-cell' id={`cell-${this.props.cellIndex}`} style={sty} onClick={() => this.props.handleEmptyCellSelection(this.props.cellIndex, this.props.boardState)}>
 				{process.env.NODE_ENV !== 'production' && <h6 style={{ position: 'absolute', color: '#9e9e9e2c' }} >{this.props.cellIndex}</h6>}
 
 				{/* ATTACK INDICATOR */}
-				{/* <div className='duel-cell-style-covered attack-pattern-background attack-pattern-background-selected fade-out-animation-on-move' style={{ visibility: isAttackIndicatorVisible ? 'visible' : 'hidden', backgroundColor: '#9700002c', height: cellSizeWithUnits, width: cellSizeWithUnits, transformOrigin: 'center', transform: 'rotate(90deg)', backgroundImage: svgUtil.getStripedBackgroundImage('#ff0000', 0.5) }} ></div> */}
+				{/* <div className='duel-cell-style-covered attack-pattern-background attack-pattern-background-selected fade-out-animation-on-move' style={{ visibility: isAttackIndicatorVisible ? 'visible' : 'hidden', height: cellSizeWithUnits, width: cellSizeWithUnits, transformOrigin: 'center', transform: 'rotate(90deg)', backgroundImage: svgUtil.getStripedBackgroundImage(hazard.base, 0.28) }} ></div> */}
 				{isAttackableBySelectedXalian && 
-					<div className='duel-cell-style-covered attack-pattern-background attack-pattern-background-selected fade-out-animation-on-move' style={{opacity: attackIndicatorVisibility, height: cellSizeWithUnits, width: cellSizeWithUnits, backgroundImage: svgUtil.getStripedBackgroundImage('#ff0000', 0.5) }} ></div>
+					<div className='duel-cell-style-covered attack-pattern-background attack-pattern-background-selected fade-out-animation-on-move' style={{opacity: attackIndicatorVisibility, height: cellSizeWithUnits, width: cellSizeWithUnits, backgroundImage: svgUtil.getStripedBackgroundImage(hazard.base, 0.28) }} ></div>
 				}
-				{/* <div className={'duel-cell-style-covered attack-pattern-background attack-pattern-background-selected ' + attackIndicatorVisibilityClass} style={{backgroundColor: '#9700002c', height: cellSizeWithUnits, width: cellSizeWithUnits, transformOrigin: 'center', transform: 'rotate(90deg)', backgroundImage: svgUtil.getStripedBackgroundImage('#ff0000', 0.5) }} ></div> */}
+				{/* <div className={'duel-cell-style-covered attack-pattern-background attack-pattern-background-selected ' + attackIndicatorVisibilityClass} style={{height: cellSizeWithUnits, width: cellSizeWithUnits, transformOrigin: 'center', transform: 'rotate(90deg)', backgroundImage: svgUtil.getStripedBackgroundImage(hazard.base, 0.28) }} ></div> */}
 				
 				{/* REFERENCED XALIAN ATTACK INDICATOR */}
 				{isAttackableByReferencedXalian &&
-					<div className='duel-cell-style-covered attack-pattern-background attack-pattern-background-referenced fade-out-animation-on-move' style={{opacity: attackIndicatorVisibility, height: cellSizeWithUnits, width: cellSizeWithUnits, backgroundImage: svgUtil.getStripedBackgroundImage('#c05c5c', 0.25) }} ></div>
+					<div className='duel-cell-style-covered attack-pattern-background attack-pattern-background-referenced fade-out-animation-on-move' style={{opacity: attackIndicatorVisibility, height: cellSizeWithUnits, width: cellSizeWithUnits, backgroundImage: svgUtil.getStripedBackgroundImage(hazard.base, 0.2) }} ></div>
 				}
 
 
@@ -473,7 +477,7 @@ class DuelBoardCell extends React.Component {
 				{/* {isAttackIndicatorVisible && */}
 				{(this.props.isActive && animationsAreComplete) &&
 
-					<div className='duel-cell-style-covered attack-pattern-background fade-out-animation-on-move' style={{ opacity: isAttackIndicatorVisible ? 1 : 0, backgroundColor: '#9700002c', height: `${this.props.cellSize}px`, width: `${this.props.cellSize}px`, transformOrigin: 'center', transform: 'rotate(90deg)', backgroundImage: svgUtil.getStripedBackgroundImage('#ff0000', 0.5) }} ></div>
+					<div className='duel-cell-style-covered attack-pattern-background fade-out-animation-on-move' style={{ opacity: isAttackIndicatorVisible ? 1 : 0, height: `${this.props.cellSize}px`, width: `${this.props.cellSize}px`, transformOrigin: 'center', transform: 'rotate(90deg)', backgroundImage: svgUtil.getStripedBackgroundImage(hazard.base, 0.28) }} ></div>
 				}
 				
 				{/* GHOST IMAGE WHEN DRAGGING */}
@@ -503,15 +507,15 @@ class DuelBoardCell extends React.Component {
 				
 
 
-					{/* UNDERGLOW */}
-					{/* <div style={{ zIndex: '1', background: `radial-gradient(circle, ${teamColor} 0%, ${teamColor + '00'} 100%)`, position: 'absolute', width: '100%', height: '10%', 
-						bottom: '20%', left: '0', opacity: 1, pointerEvents: 'none', filter: `drop-shadow(0px 0px 10px ${teamColor})` }} 
-					/> */}
+					{/* TOKEN BASE — the creature stands on a machined disc rimmed in its
+					    team's colour, so a piece reads as an object on the floor rather
+					    than as artwork printed onto the square */}
+					<span className="duel-piece-base" />
 
 						{/* ATTACK BADGE */}
 					{/* { (isEnemy && !this.props.boardState.currentTurnDetails.hasAttacked) && */}
 					<AttackableMoveBadge zIndex={'605'} isEnemy={isEnemy} attacker={selectedXalian} defender={cellXalian} {...this.props} />
-					<AttackIcon className="duel-attack-cell-icon" style={{ fill: 'rgb(255, 0, 0)', pointerEvents: 'none', opacity: attackable ? 1 : 0 }} />
+					<AttackIcon className="duel-attack-cell-icon" style={{ fill: lamp.red, pointerEvents: 'none', opacity: attackable ? 1 : 0 }} />
 					{/* } */}
 
 
@@ -537,8 +541,12 @@ class DuelBoardCell extends React.Component {
 		);
 	}
 
+	// A tight rim in the team's colour plus a shadow cast onto the floor. The
+	// old three-layer halo bloomed a sixth of a cell in every direction, which
+	// washed out the creature it was supposed to identify and lit the arena
+	// floor around it.
 	buildDropShadowFilter = (teamColor) => {
-        return `${this.dropShadow(this.props.cellSize / 50, gsap.utils.interpolate(teamColor, "white", 0.75))} ${this.dropShadow(this.props.cellSize / 25, gsap.utils.interpolate(teamColor, "white", 0.5))} ${this.dropShadow(this.props.cellSize / 6, teamColor)}`;
+        return `${this.dropShadow(1, gsap.utils.interpolate(teamColor, "white", 0.25))} ${this.dropShadow(this.props.cellSize / 26, gsap.utils.interpolate(teamColor, "black", 0.25))} ${this.dropShadow(this.props.cellSize / 14, 'rgba(0, 0, 0, 0.85)', 0, this.props.cellSize / 22)}`;
     }
 
     dropShadow = (blur, color, x = 0, y = 0) => {
@@ -560,23 +568,23 @@ class DuelBoardCell extends React.Component {
 
 		if (leftIndex != undefined && !this.cellIsOccupied(leftIndex)) {
 			cellConnectors.push(
-				<div key={`connector-${index}-left`} className="duel-board-cell-connector occupied-connector" style={{ width: '100%', height: '5px', top: '50%', left: '0' }} />
+				<div key={`connector-${index}-left`} className="duel-board-cell-connector occupied-connector" style={{ width: '100%', height: '2px', top: '50%', left: '0' }} />
 			)
 		}
 		if (topIndex != undefined && !this.cellIsOccupied(topIndex)) {
 			cellConnectors.push(
-				<div key={`connector-${index}-top`} className="duel-board-cell-connector occupied-connector" style={{ width: '5px', height: '100%', top: '0', left: '50%' }} />
+				<div key={`connector-${index}-top`} className="duel-board-cell-connector occupied-connector" style={{ width: '2px', height: '100%', top: '0', left: '50%' }} />
 			)
 		}
 
 		if (rightIndex != undefined && !this.cellIsOccupied(rightIndex)) {
 			cellConnectors.push(
-				<div key={`connector-${index}-right`} className="duel-board-cell-connector occupied-connector" style={{ width: '100%', height: '5px', top: '50%', left: '100%' }} />
+				<div key={`connector-${index}-right`} className="duel-board-cell-connector occupied-connector" style={{ width: '100%', height: '2px', top: '50%', left: '100%' }} />
 			)
 		}
 		if (bottomIndex != undefined && !this.cellIsOccupied(bottomIndex)) {
 			cellConnectors.push(
-				<div key={`connector-${index}-bottom`} className="duel-board-cell-connector occupied-connector" style={{ width: '5px', height: '100%', top: '100%', left: '50%' }} />
+				<div key={`connector-${index}-bottom`} className="duel-board-cell-connector occupied-connector" style={{ width: '2px', height: '100%', top: '100%', left: '50%' }} />
 			)
 		}
 

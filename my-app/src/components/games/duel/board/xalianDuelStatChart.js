@@ -6,6 +6,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
+import { chart } from '../../../../constants/designTokens';
 
 class XalianDuelStatChart extends React.Component {
 	state = {};
@@ -65,9 +66,9 @@ class XalianDuelStatChart extends React.Component {
                         <ResponsiveContainer className="chart-container centered-view">
                             <BarChart data={data} layout="vertical" maxBarSize={this.props.barSize || 35}>
                                 <XAxis type="number" hide />
-                                <YAxis width={60} type="category" dataKey="statLabel" stroke={this.props.axisLabelColor || '#ffffff'} interval={0} />
+                                <YAxis width={60} type="category" dataKey="statLabel" stroke={this.props.axisLabelColor || chart.axis} interval={0} />
 
-                                <Bar radius={[10, 10, 10, 10]} isAnimationActive={false} animationBegin={50} dataKey="statValue" fill="#ecff8234">
+                                <Bar radius={[10, 10, 10, 10]} isAnimationActive={false} animationBegin={50} dataKey="statValue" fill={chart.rangeTrack}>
                                     <LabelList dataKey="statValue" position={this.props.labelPosition || 'center'} fill="white" style={{ fontSize: this.props.labelFontSize || '12pt' }} className="chart-bar-label" />
                                     {data && data.map((val, index) => <Cell key={`cell-${index}`} fill={'blue'} />)}
                                 </Bar>

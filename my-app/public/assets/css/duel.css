@@ -1,20 +1,213 @@
-.xalian-duel-selected-cell {
-  border-color: var(--x-text);
-  border-width: 4px;
-  border-radius: 8px;
-  border-style: solid;
+/**
+ * DUEL — the arena, seen from a perch above it.
+ *
+ * The rest of the site is the Generator's control panel. The duel is the one
+ * place you are not looking at an instrument: you are looking down into a real
+ * arena floor, set into a machined tray in the console. So the floor is dirt
+ * and scored stone, the frame around it is hull and brass, and the only lit
+ * things are the lamps that mark where a piece may go — plus the creatures
+ * themselves, which keep their element colour.
+ *
+ * Everything here is on the --g-* scale. This file used to run on the --x-*
+ * shim, which was the last thing keeping tokens.css alive.
+ */
+
+/* -------------------------------------------------------------------------
+   THE ROOM
+   ------------------------------------------------------------------------- */
+
+/* The ground behind the tray. The per-client tint (which side you are) is
+   applied inline from duelBoard.js; this is the ground it sits on. */
+.duel-page-background-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: var(--g-void);
+  height: 100%;
+  width: 100%;
 }
 
-/* .xalian-cell { */
-/* border-radius: 8px; */
-/* width: 75px; */
-/* height: 75px; */
-/* line-height: 75px; */
-/* text-align: center; */
-/* } */
+/* The legend over the board: whose view this is. */
+.duel-view-label {
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-small);
+  font-weight: 600;
+  letter-spacing: var(--g-track-wide);
+  text-transform: uppercase;
+  color: var(--g-ink-low);
+  text-align: center;
+  margin: 0;
+}
 
-.xalian-cell-selected {
-  border: 4px solid var(--x-text);
+.duel-winner-text {
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-h2);
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-ink);
+  text-align: center;
+  margin: auto;
+}
+
+/* -------------------------------------------------------------------------
+   THE TRAY
+   ------------------------------------------------------------------------- */
+
+/* A machined tray bolted into the console, with the arena floor recessed into
+   it. Was a black box with a 10% radius floating in its own glow. */
+.duel-board-wrapper {
+  width: fit-content;
+  margin: min(5%, 5px) auto;
+  padding: min(4%, 18px);
+  position: relative;
+  border-radius: var(--g-radius-housing);
+  background: linear-gradient(160deg, var(--g-hull-hi), var(--g-hull));
+  border: 2px solid var(--g-brass-dark);
+  box-shadow: var(--g-relief), var(--g-drop);
+  /* four fasteners, drawn rather than marked up */
+  background-image:
+    radial-gradient(circle at 12px 12px, rgba(0, 0, 0, 0.6) 1.5px, var(--g-brass-dark) 2.4px, var(--g-bevel-light) 3px, transparent 3.6px),
+    radial-gradient(circle at calc(100% - 12px) 12px, rgba(0, 0, 0, 0.6) 1.5px, var(--g-brass-dark) 2.4px, var(--g-bevel-light) 3px, transparent 3.6px),
+    radial-gradient(circle at 12px calc(100% - 12px), rgba(0, 0, 0, 0.6) 1.5px, var(--g-brass-dark) 2.4px, var(--g-bevel-light) 3px, transparent 3.6px),
+    radial-gradient(circle at calc(100% - 12px) calc(100% - 12px), rgba(0, 0, 0, 0.6) 1.5px, var(--g-brass-dark) 2.4px, var(--g-bevel-light) 3px, transparent 3.6px),
+    linear-gradient(160deg, var(--g-hull-hi), var(--g-hull));
+}
+
+/* The arena floor. Was a hotlinked JPG from a blogspot page — a live
+   production dependency on somebody's blog. This is grain and scoring
+   generated in CSS: warm dust over dark stone, with the faint scoured arcs a
+   floor gets from things being dragged across it. */
+.duel-board-wrapper-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: var(--g-radius);
+  background-color: #1b1710;
+  /* dust and scouring, not corduroy: the marks have to be visible only when
+     you look for them, or the floor competes with the pieces standing on it */
+  background-image:
+    repeating-linear-gradient(58deg, rgba(255, 244, 214, 0.014) 0 1px, transparent 1px 23px),
+    repeating-linear-gradient(-31deg, rgba(0, 0, 0, 0.16) 0 1px, transparent 1px 31px),
+    radial-gradient(ellipse at 28% 22%, rgba(176, 141, 63, 0.05) 0%, transparent 55%),
+    radial-gradient(ellipse at 74% 76%, rgba(176, 141, 63, 0.035) 0%, transparent 50%),
+    radial-gradient(ellipse at 62% 34%, rgba(0, 0, 0, 0.28) 0%, transparent 45%);
+}
+
+/* Vignette: the tray is deep, so the floor darkens toward its walls. */
+.duel-board-wrapper-background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: var(--g-radius);
+  background:
+    radial-gradient(circle at 50% 45%, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.72) 100%);
+  box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.9), inset 0 -1px 0 var(--g-bevel-light);
+}
+
+/* -------------------------------------------------------------------------
+   THE GRID
+   ------------------------------------------------------------------------- */
+
+/* Scored into the floor: a dark cut with the light catching its upper lip. */
+.duel-board-cell-connector {
+  background-color: rgba(0, 0, 0, 0.7);
+  box-shadow: 0 1px 0 rgba(255, 244, 214, 0.05);
+  position: absolute;
+  transform: translate(-50%, -50%) !important;
+  /* deep enough to read as a cut floor, shallow enough that the pieces
+     standing on it stay the loudest thing in the tray */
+  opacity: 0.45;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.duel-board-cell-dot {
+  position: absolute;
+  width: 35%;
+  height: 35%;
+  transform: translate(-50%, -50%) !important;
+  pointer-events: none;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  z-index: 201;
+  margin: auto;
+}
+
+/* A square you may move to: a lamp set into the floor. Lamps are allowed to
+   emit — they are the second lit thing in the whole system after the CRT. */
+.duel-board-cell-dot-light {
+  background: radial-gradient(circle, var(--g-lamp-amber) 0%, rgba(255, 176, 55, 0) 70%);
+  filter: drop-shadow(0 0 5px rgba(255, 176, 55, 0.85));
+}
+
+/* Reachable, but not this turn: the bulb is in the socket, unlit. */
+.duel-board-cell-dot-light-faded {
+  background: radial-gradient(circle, rgba(255, 176, 55, 0.4) 0%, rgba(255, 176, 55, 0) 70%);
+  filter: drop-shadow(0 0 4px rgba(255, 176, 55, 0.3));
+}
+
+/* An ordinary square: a drilled pip, not a light. */
+.duel-board-cell-dot-dark {
+  /* a scribed centre mark, not a drilled hole - at full strength these read as
+     a polka-dot pattern laid over the arena */
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.34) 0%, rgba(0, 0, 0, 0.12) 38%, rgba(0, 0, 0, 0) 62%);
+  filter: none;
+}
+
+.duel-piece-draggable-hovering {
+  background: radial-gradient(circle, rgba(255, 176, 55, 0.35) 0%, rgba(255, 176, 55, 0) 70%);
+  filter: drop-shadow(0 0 6px rgba(255, 176, 55, 0.6));
+}
+
+/* Painted hazard livery over the squares a piece can strike. */
+.attack-pattern-background {
+  border-radius: 50%;
+  transform-origin: center;
+  transform: rotate(90deg);
+  /* paint worn into the floor, not a lit disc: a faint fill inside a scribed
+     ring, so the strike zone reads as a marking you could scuff off */
+  background-color: rgba(217, 164, 16, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(217, 164, 16, 0.28);
+}
+
+.duel-cell-style-covered {
+  pointer-events: none;
+  position: absolute;
+}
+
+/* -------------------------------------------------------------------------
+   PIECES
+   ------------------------------------------------------------------------- */
+
+/* Each creature stands on a token base — a machined disc with a brass rim, so
+   a piece reads as an object standing on the floor rather than as a sticker
+   printed on it. */
+.duel-piece-base {
+  position: absolute;
+  bottom: 3%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  height: 20%;
+  border-radius: 50%;
+  /* a milled disc: light catches its far lip, and it drops a hard shadow onto
+     the square it is standing on */
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(255, 244, 214, 0.14) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 55%, var(--g-hull-hi) 0%, var(--g-hull) 48%, var(--g-seam) 100%);
+  /* brass rim, not the team colour: the creature's own rim light already says
+     which side it is on, and two colours on one piece read as a glowing pill */
+  border: 1px solid var(--g-brass-dark);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 244, 214, 0.18);
+  opacity: 0.95;
+  z-index: 100;
+  pointer-events: none;
 }
 
 .duel-piece-xalian-icon {
@@ -37,80 +230,69 @@
   height: 200px;
 }
 
+/* -------------------------------------------------------------------------
+   PIECE BADGES
+   ------------------------------------------------------------------------- */
+
 .duel-badge-icon {
   position: absolute;
   top: 0;
   left: 0;
   height: 100%;
   width: 100%;
-  filter: drop-shadow(0px 0px 5px var(--x-text-inverse));
-  fill: 'gray';
   padding: 5px;
-  /* box-shadow: 0px 0px 10px #00000044; */
 }
 
 .duel-badge-text {
-  /* text-shadow: 0px 0px 5px rgb(0, 0, 0); */
-  filter: drop-shadow(0px 0px 5px var(--x-text-inverse));
-  color: white;
+  font-family: var(--g-font-mono);
+  color: var(--g-ink);
 }
 
-
 .duel-badge-text-name {
-  filter: drop-shadow(0px 0px 5px var(--x-text-inverse));
-  color: white;
-  opacity: 0.5;
+  font-family: var(--g-font-stencil);
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-ink-mid);
   width: auto;
   position: absolute;
 }
 
+/* was a black chip ringed by an eight-way text-shadow outline */
 .duel-badge-wrapper {
   position: relative;
   margin: auto;
   display: flex;
-  box-shadow: 0px 0px 8px var(--x-text-inverse);
-  background-color: black;
-  text-shadow:
-    -1px -1px 0 var(--x-text-inverse),
-    1px -1px 0 var(--x-text-inverse),
-    -1px 1px 0 var(--x-text-inverse),
-    1px 1px 0 var(--x-text-inverse),
-    -2px -2px 0 var(--x-text-inverse),
-    2px -2px 0 var(--x-text-inverse),
-    -2px 2px 0 var(--x-text-inverse),
-    2px 2px 0 var(--x-text-inverse);
+  background: var(--g-hull);
+  border: var(--g-hairline) solid var(--g-seam);
+  border-radius: var(--g-radius);
+  box-shadow: var(--g-relief), 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .duel-xalian-unselected {
-  /* width: 100% !important; */
   width: auto;
-  /* max-width: 75px !important; */
-  /* height: 8vh; */
   max-height: 75px;
-  /* margin-top: 20px; */
   margin: auto;
-  /* margin-left: 0px; */
   justify-content: center;
   text-align: center;
 }
 
+/* The element discs pinned to a piece: bulbs behind coloured plastic, seated
+   in a metal ring. */
 .duel-type-badge {
   position: absolute;
   bottom: 0;
   left: -5%;
   z-index: 105;
   border-radius: 50%;
-  border-color: black;
-  border-width: 1px;
-  border-style: solid;
+  border: 1px solid var(--g-seam);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), inset 0 1px 0 var(--g-bevel-light);
   text-align: center;
 }
 
 .type-badge {
   border-radius: 50%;
-  border-color: black;
-  border-width: 1px;
-  border-style: solid;
+  border: 1px solid var(--g-seam);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), inset 0 1px 0 var(--g-bevel-light);
   text-align: center;
   margin: auto;
 }
@@ -120,9 +302,8 @@
   top: 0;
   right: 0;
   border-radius: 50%;
-  border-color: black;
-  border-width: 1px;
-  border-style: solid;
+  border: 1px solid var(--g-seam);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
   text-align: center;
   z-index: 105;
 }
@@ -130,162 +311,6 @@
 .duel-type-badge-symbol {
   padding: 2%;
   margin: auto !important;
-}
-
-.duel-selection-details-box {
-  width: 96%;
-  margin: auto;
-  /* padding-bottom: 50px; */
-}
-
-.duel-xalian-bench {
-  height: 10%;
-  max-height: 75px;
-}
-
-.duel-xalian-details-box {
-  max-width: 400px;
-  background-color: rgba(0, 0, 0, 0.75);
-  filter: drop-shadow(5px 5px 5px var(--x-text-inverse));
-  border-radius: var(--x-radius-md);
-  margin: auto;
-  padding: 10px;
-}
-
-
-.duel-board-wrapper {
-  width: fit-content;
-  margin-left: auto;
-  margin-right: auto;
-  padding: min(5%, 25px);
-  /* margin-top: min(5%, 25px); */
-  margin-top: min(5%, 5px);
-  /* margin-bottom: min(5%, 25px); */
-  margin-bottom: min(5%, 5px);
-  border-radius: 10%;
-  background-color: var(--x-text-inverse);
-  position: relative;
-  box-shadow: 2px 2px 10px var(--x-text-inverse);
-  border: solid 2px black;
-}
-
-.duel-board-wrapper-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  /* background: url("../img/background/dirt_texture.jpg") top center ; */
-  /* background: url("https://1.bp.blogspot.com/-Yov9qYnqB00/TtEOBrEEWbI/AAAAAAAAAGU/2b35kl0CmiI/s1600/Seamless+ground+rock.jpg") top center; */
-  /* background: url("https://3.bp.blogspot.com/-3Nv74A0f8ZA/TtELKUKQU6I/AAAAAAAAAD8/4FuZtBwL18s/s1600/Grass+03+seamless.jpg") top center; */
-  background: url("https://3.bp.blogspot.com/-aUsK5m_AvDI/UFwYXcqbUSI/AAAAAAAACOY/IrUarx-9sB4/s1600/Tileable+eroded+scratch+metal+texture+background+03.jpg") top center;
-  background-size: 25%;
-  background-repeat: repeat;
-  height: 100%;
-  width: 100%;
-  border-radius: 10%;
-}
-
-.duel-board-wrapper-background-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  /* background-color: #000; */
-  background: var(--x-text-inverse);
-  background: radial-gradient(circle, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.8) 100%);
-  /* opacity: 0.75; */
-  height: 100%;
-  width: 100%;
-  border-radius: 10%;
-}
-
-.duel-page-background-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  /* background-color: #000; */
-  background: #161820;
-  /* background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, rgba(0, 0, 0, 0.473) 100%); */
-  /* opacity: 0.75; */
-  height: 100%;
-  width: 100%;
-}
-
-/* CELLS */
-.duel-board-cell-connector {
-  background-color: black;
-  position: absolute;
-  transform: translate(-50%, -50%) !important;
-  opacity: 0.1;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.duel-board-cell-dot {
-  position: absolute;
-  width: 35%;
-  height: 35%;
-  transform: translate(-50%, -50%) !important;
-  pointer-events: none;
-  top: 50%;
-  left: 50%;
-  border-radius: 50%;
-  z-index: 201;
-  margin: auto;
-}
-
-.duel-board-cell-dot-light {
-  background: radial-gradient(circle, #32a852 0%, #32a85200 100%);
-  filter: drop-shadow(0px 0px 5px #32a852);
-}
-
-.duel-board-cell-dot-light-faded {
-  background: radial-gradient(circle, #8dd8a17e 0%, #32a85200 100%);
-  filter: drop-shadow(0px 0px 5px #8dd8a17e);
-}
-
-.duel-board-cell-dot-dark {
-  background: radial-gradient(circle, var(--x-text-inverse) 0%, rgba(0, 0, 0, 0.5) 5%, rgba(0, 0, 0, 0.25) 20%, rgba(0, 0, 0, 0) 60%);
-  filter: none;
-}
-
-/* PIECE HOVER */
-.duel-piece-draggable-hovering {
-  background: radial-gradient(circle, var(--x-text) 0%, #ffffff00 100%);
-  filter: drop-shadow(0px 0px 5px var(--x-text));
-}
-
-.duel-attack-cell-icon {
-  z-index: 106;
-  position: absolute;
-  bottom: 0%;
-  left: 50%;
-  opacity: 1;
-  /* stroke: white; */
-  /* stroke-width: 4px; */
-  height: 80%;
-  width: 80%;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-
-  padding: 5%;
-  /* border-radius: 50%; */
-  overflow: visible;
-  filter: drop-shadow(0px 0px 2px var(--x-text-inverse)) drop-shadow(0px 0px 6px var(--x-text-inverse));
-}
-
-.duel-attack-icon-wrapper {
-  /* background-color: rgba(0, 0, 0, 0.25); */
-  pointer-events: none;
-  position: relative;
-  height: 100%;
-  width: 100%;
-  min-height: 10px !important;
-  /* top: -40%; */
-
-}
-
-.duel-attack-icon-wrapper>h6 {
-  color: white;
-  text-shadow: 1px 1px 2px var(--x-text-inverse)
 }
 
 .duel-xalian-cell-badge-row {
@@ -296,37 +321,73 @@
   left: 0;
 }
 
+/* -------------------------------------------------------------------------
+   TARGETS AND FLAGS
+   ------------------------------------------------------------------------- */
+
+/* A struck target wears a warning lamp rather than a red cross. */
+.duel-attack-cell-icon {
+  z-index: 106;
+  position: absolute;
+  bottom: 0%;
+  left: 50%;
+  opacity: 1;
+  height: 80%;
+  width: 80%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  padding: 5%;
+  overflow: visible;
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 7px rgba(228, 72, 60, 0.5));
+}
+
+.duel-attack-icon-wrapper {
+  pointer-events: none;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  min-height: 10px !important;
+}
+
+.duel-attack-icon-wrapper > h6 {
+  font-family: var(--g-font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--g-ink);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.95);
+}
+
 .duel-flag {
   z-index: 410;
   position: absolute;
   top: -20%;
   left: 20%;
-  opacity: 0.8;
+  opacity: 0.9;
   height: 60%;
-  filter: drop-shadow(0px 0px 2px var(--x-text-inverse));
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.9));
 }
 
 .duel-flag-carried {
   z-index: 410;
   position: absolute;
-  opacity: 0.8;
+  opacity: 0.9;
   height: 60%;
-  filter: drop-shadow(0px 0px 2px var(--x-text-inverse)) drop-shadow(0px 0px 6px var(--x-text-inverse));
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 6px rgba(0, 0, 0, 0.6));
 }
 
-.fit-text {
-  text-align: center;
-  margin: auto;
-}
+/* -------------------------------------------------------------------------
+   BENCH RAILS
+   ------------------------------------------------------------------------- */
 
+/* The pieces not yet placed, in a recessed rail above and below the tray. Was
+   a glowing glass pill in the player's colour. */
 .duel-unset-piece-row {
-  /* width: 100%; */
-  /* margin: 0 !important; */
   padding: 0;
   justify-content: space-evenly;
   align-items: center;
-  filter: drop-shadow(0px 0px 2px var(--x-text-inverse));
   margin: auto !important;
+  background: var(--g-hull-lo);
+  border: var(--g-hairline) solid var(--g-seam);
+  box-shadow: var(--g-recess);
 }
 
 .duel-unset-piece-wrapper {
@@ -335,19 +396,37 @@
   width: 100%;
 }
 
-/* PATTERN */
-.attack-pattern-background {
-  /* background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.4'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41zM20 18.6l2.83-2.83 1.41 1.41L21.41 20l2.83 2.83-1.41 1.41L20 21.41l-2.83 2.83-1.41-1.41L18.59 20l-2.83-2.83 1.41-1.41L20 18.59z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); */
-  /* background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E"); */
-  border-radius: 50%;
-  transform-origin: center;
-  transform: rotate(90deg);
-  background-color: #9700002c;
+.xalian-duel-selected-cell {
+  border: 3px solid var(--g-lamp-amber);
+  border-radius: var(--g-radius);
 }
 
-.duel-cell-style-covered {
-  pointer-events: none;
-  position: absolute;
+.xalian-cell-selected {
+  border: 3px solid var(--g-lamp-amber);
+}
+
+/* -------------------------------------------------------------------------
+   DETAIL PANELS
+   ------------------------------------------------------------------------- */
+
+.duel-selection-details-box {
+  width: 96%;
+  margin: auto;
+}
+
+.duel-xalian-bench {
+  height: 10%;
+  max-height: 75px;
+}
+
+.duel-xalian-details-box {
+  max-width: 400px;
+  margin: auto;
+  padding: var(--g-4);
+  background: var(--g-hull);
+  border: var(--g-hairline) solid var(--g-seam);
+  border-radius: var(--g-radius-panel);
+  box-shadow: var(--g-relief), var(--g-drop);
 }
 
 .duel-xalian-details-image {
@@ -356,19 +435,345 @@
   max-width: 100px;
 }
 
+/* the vitals are a small gauge set into the token base, not a pair of bars
+   laid across the square */
 .duel-state-chart-wrapper-position {
   position: absolute;
-  bottom: 5%;
-  right: 0;
+  bottom: 7%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 52%;
 }
 
-.duel-state-chart-wrapper-position>div>div>svg {
+.duel-state-chart-wrapper-position > div > div > svg {
   vertical-align: unset;
 }
 
+.fit-text {
+  text-align: center;
+  margin: auto;
+}
+
+/* -------------------------------------------------------------------------
+   STATUS STRIP
+   ------------------------------------------------------------------------- */
+
+/* The instruments for the turn, on a panel bolted along the bottom of the
+   console. Was a black gradient bar with bootstrap buttons on it. */
 .duel-status-bar-wrapper {
   pointer-events: none;
-  width: 70%;
-  margin-left: auto;
-  /* opacity: 0.8; */
+  width: 100%;
+}
+
+.duel-status-strip {
+  margin: 0 auto;
+  max-width: 460px;
+  padding: var(--g-3) var(--g-4) var(--g-4);
+  background: var(--g-hull);
+  border: var(--g-hairline) solid var(--g-seam);
+  border-bottom: 0;
+  border-radius: var(--g-radius-panel) var(--g-radius-panel) 0 0;
+  box-shadow: var(--g-relief), 0 -4px 14px rgba(0, 0, 0, 0.6);
+}
+
+.duel-status-readouts {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--g-5);
+  padding-bottom: var(--g-3);
+  margin-bottom: var(--g-3);
+  border-bottom: var(--g-hairline) solid var(--g-seam);
+}
+
+.duel-readout {
+  text-align: center;
+}
+
+.duel-readout-label {
+  display: block;
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-micro);
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-ink-low);
+}
+
+.duel-readout-value {
+  display: block;
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-lead);
+  font-variant-numeric: tabular-nums;
+  color: var(--g-ink);
+  line-height: 1.2;
+}
+
+/* the attack is either still in hand or it is spent */
+.duel-readout-value--spent {
+  color: var(--g-ink-low);
+}
+
+.duel-readout-value--held {
+  color: var(--g-lamp-amber);
+}
+
+.duel-status-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--g-3);
+}
+
+.duel-status-stale {
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-micro);
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-lamp-red);
+  text-align: center;
+  margin: 0 0 var(--g-2) 0;
+}
+
+/* -------------------------------------------------------------------------
+   DIALOGS
+   The two dialogs the duel raises mid-match — pick a move, watch it land.
+   They sit on the same housing as the rest of the console; nothing in them
+   is a bootstrap default.
+   ------------------------------------------------------------------------- */
+
+/* a control dialog, not a page of prose: narrower than .themed-modal's
+   reading measure */
+.duel-modal .modal-dialog {
+  max-width: 460px;
+}
+
+.duel-modal .modal-title {
+  font-size: var(--g-size-body);
+}
+
+/* the verb between the two names is printed, not stencilled */
+.duel-modal-title-joiner {
+  font-family: var(--g-font-ui);
+  font-weight: 400;
+  text-transform: lowercase;
+  letter-spacing: 0;
+  color: var(--g-ink-low);
+}
+
+.duel-move-legend {
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-micro);
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-ink-low);
+  margin: 0 0 var(--g-3) 0;
+}
+
+.duel-move-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--g-2);
+}
+
+/* one firing solution: a recessed row you press */
+.duel-move-option {
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  align-items: center;
+  gap: var(--g-3);
+  width: 100%;
+  padding: var(--g-3);
+  text-align: left;
+  background: var(--g-hull-lo);
+  border: var(--g-hairline) solid var(--g-seam);
+  border-radius: var(--g-radius);
+  box-shadow: var(--g-recess);
+  transition: background var(--g-fast), border-color var(--g-fast);
+}
+
+.duel-move-option:hover,
+.duel-move-option:focus-visible {
+  background: var(--g-hull);
+  border-color: var(--g-brass-dark);
+  outline: none;
+}
+
+.duel-move-option:active {
+  background: var(--g-seam);
+}
+
+/* the element plate the move is cut for */
+.duel-move-plate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+}
+
+.duel-move-ident {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.duel-move-name {
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-body);
+  font-weight: 500;
+  letter-spacing: var(--g-track-tight);
+  text-transform: uppercase;
+  color: var(--g-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.duel-move-rating {
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-micro);
+  font-variant-numeric: tabular-nums;
+  color: var(--g-ink-low);
+}
+
+.duel-move-readout {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
+/* the projected number, in machine type, the way every other readout on the
+   console prints a figure */
+.duel-move-damage {
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-lead);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  color: var(--g-lamp-amber);
+}
+
+.duel-move-effect {
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-micro);
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+}
+
+.duel-move-cancel-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--g-4);
+}
+
+/* The blow landing. Fitty sizes the two headings to the dialog, so they set no
+   size of their own — only face, tracking and colour. */
+.duel-action-modal .modal-body {
+  padding: var(--g-5);
+}
+
+.duel-action-heading {
+  width: 90%;
+  margin: 0 auto;
+  padding: var(--g-2) 0;
+}
+
+.duel-action-title {
+  font-family: var(--g-font-stencil);
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-ink);
+  text-align: center;
+  margin: 0;
+}
+
+/* the verdict — how well it worked */
+.duel-action-effect {
+  font-family: var(--g-font-stencil);
+  font-weight: 500;
+  letter-spacing: var(--g-track-wide);
+  text-transform: uppercase;
+  color: var(--g-lamp-amber);
+  text-align: center;
+  margin: 0;
+}
+
+/* each combatant's health, as the same dead-socket strip the pieces carry */
+.duel-action-vitals {
+  width: 100%;
+  height: 3px;
+  margin-top: 10%;
+  border-radius: 1px;
+  background: var(--g-seam);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
+}
+
+.duel-action-damage {
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-lead);
+  font-variant-numeric: tabular-nums;
+  color: var(--g-lamp-red);
+  text-align: center;
+  margin: 0;
+}
+
+/* -------------------------------------------------------------------------
+   THE SELECTED PIECE
+   ------------------------------------------------------------------------- */
+
+.duel-vitals-legend {
+  display: block;
+  width: 100%;
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-micro);
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-ink-low);
+  text-align: right;
+}
+
+/* the five duel stats, on one rail */
+.duel-stat-plates {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--g-3);
+  padding-top: var(--g-3);
+  padding-bottom: var(--g-6);
+}
+
+/* what this element is strong and weak against, in its own recessed well */
+.duel-effectiveness-panel {
+  display: flex;
+  margin-top: var(--g-6);
+  padding: var(--g-4);
+  background: var(--g-hull-lo);
+  border: var(--g-hairline) solid var(--g-seam);
+  border-radius: var(--g-radius);
+  box-shadow: var(--g-recess);
+}
+
+/* the column legends over the effectiveness discs */
+.duel-effect-column-label {
+  display: block;
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-micro);
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-ink-low);
+  margin-bottom: var(--g-2);
+}
+
+/* the standfirst above the how-to sections */
+.themed-modal .modal-body p.howto-standfirst {
+  font-size: var(--g-size-small);
+  color: var(--g-ink-mid);
+  margin-bottom: var(--g-6);
+}
+
+.duel-modal-footer {
+  border-top: var(--g-hairline) solid var(--g-seam);
+  padding: var(--g-4) var(--g-5);
 }
