@@ -126,55 +126,55 @@
   z-index: 1;
 }
 
-.duel-board-cell-dot {
+/* WHERE YOU MAY GO.
+   Sixty-four resting pips and two opacity-separated copies of every mark are
+   gone. A reachable square is a warm wash in the floor, and the border is drawn
+   only on the sides where the region actually ends, so ten squares read as one
+   shape you can walk into rather than ten things to count. */
+.duel-move-region {
   position: absolute;
-  width: 35%;
-  height: 35%;
-  transform: translate(-50%, -50%) !important;
+  inset: 0;
   pointer-events: none;
+  z-index: 6;
+  background: rgba(255, 176, 55, 0.045);
+  box-shadow: inset 0 0 14px rgba(255, 176, 55, 0.05);
+}
+
+/* the centre mark, so a single detached square still reads as a destination */
+.duel-move-region::after {
+  content: '';
+  position: absolute;
   top: 50%;
   left: 50%;
+  width: 14%;
+  height: 14%;
   border-radius: 50%;
-  z-index: 201;
-  margin: auto;
+  transform: translate(-50%, -50%);
+  background: var(--g-lamp-amber);
+  opacity: 0.7;
 }
 
-/* A square you may move to: a lamp set into the floor. Lamps are allowed to
-   emit — they are the second lit thing in the whole system after the CRT. */
-.duel-board-cell-dot-light {
-  background: radial-gradient(circle, var(--g-lamp-amber) 0%, rgba(255, 176, 55, 0) 70%);
-  filter: drop-shadow(0 0 5px rgba(255, 176, 55, 0.85));
+.duel-region-edge-top { border-top: 1px solid rgba(255, 176, 55, 0.38); }
+.duel-region-edge-bottom { border-bottom: 1px solid rgba(255, 176, 55, 0.38); }
+.duel-region-edge-left { border-left: 1px solid rgba(255, 176, 55, 0.38); }
+.duel-region-edge-right { border-right: 1px solid rgba(255, 176, 55, 0.38); }
+
+/* Where a piece you are only inspecting could go. This used to be the same
+   lamp at lower opacity, which reads as "dimmer for reasons unknown". An
+   outline with no fill is a different statement, not a weaker one. */
+.duel-move-region--referenced {
+  background: none;
+  box-shadow: none;
 }
 
-/* Reachable, but not this turn: the bulb is in the socket, unlit. */
-.duel-board-cell-dot-light-faded {
-  background: radial-gradient(circle, rgba(255, 176, 55, 0.4) 0%, rgba(255, 176, 55, 0) 70%);
-  filter: drop-shadow(0 0 4px rgba(255, 176, 55, 0.3));
+.duel-move-region--referenced::after {
+  display: none;
 }
 
-/* An ordinary square: a drilled pip, not a light. */
-.duel-board-cell-dot-dark {
-  /* a scribed centre mark, not a drilled hole - at full strength these read as
-     a polka-dot pattern laid over the arena */
-  background: radial-gradient(circle, rgba(0, 0, 0, 0.34) 0%, rgba(0, 0, 0, 0.12) 38%, rgba(0, 0, 0, 0) 62%);
-  filter: none;
-}
-
-.duel-piece-draggable-hovering {
-  background: radial-gradient(circle, rgba(255, 176, 55, 0.35) 0%, rgba(255, 176, 55, 0) 70%);
-  filter: drop-shadow(0 0 6px rgba(255, 176, 55, 0.6));
-}
-
-/* Painted hazard livery over the squares a piece can strike. */
-.attack-pattern-background {
-  border-radius: 50%;
-  transform-origin: center;
-  transform: rotate(90deg);
-  /* paint worn into the floor, not a lit disc: a faint fill inside a scribed
-     ring, so the strike zone reads as a marking you could scuff off */
-  background-color: rgba(217, 164, 16, 0.05);
-  box-shadow: inset 0 0 0 1px rgba(217, 164, 16, 0.28);
-}
+.duel-move-region--referenced.duel-region-edge-top { border-top-color: rgba(221, 212, 189, 0.28); }
+.duel-move-region--referenced.duel-region-edge-bottom { border-bottom-color: rgba(221, 212, 189, 0.28); }
+.duel-move-region--referenced.duel-region-edge-left { border-left-color: rgba(221, 212, 189, 0.28); }
+.duel-move-region--referenced.duel-region-edge-right { border-right-color: rgba(221, 212, 189, 0.28); }
 
 .duel-cell-style-covered {
   pointer-events: none;
@@ -230,52 +230,6 @@
   height: 200px;
 }
 
-/* -------------------------------------------------------------------------
-   PIECE BADGES
-   ------------------------------------------------------------------------- */
-
-.duel-badge-icon {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  padding: 5px;
-}
-
-.duel-badge-text {
-  font-family: var(--g-font-mono);
-  color: var(--g-ink);
-}
-
-.duel-badge-text-name {
-  font-family: var(--g-font-stencil);
-  letter-spacing: var(--g-track-label);
-  text-transform: uppercase;
-  color: var(--g-ink-mid);
-  width: auto;
-  position: absolute;
-}
-
-/* was a black chip ringed by an eight-way text-shadow outline */
-.duel-badge-wrapper {
-  position: relative;
-  margin: auto;
-  display: flex;
-  background: var(--g-hull);
-  border: var(--g-hairline) solid var(--g-seam);
-  border-radius: var(--g-radius);
-  box-shadow: var(--g-relief), 0 2px 4px rgba(0, 0, 0, 0.8);
-}
-
-.duel-xalian-unselected {
-  width: auto;
-  max-height: 75px;
-  margin: auto;
-  justify-content: center;
-  text-align: center;
-}
-
 /* The element discs pinned to a piece: bulbs behind coloured plastic, seated
    in a metal ring. */
 .duel-type-badge {
@@ -325,37 +279,100 @@
    TARGETS AND FLAGS
    ------------------------------------------------------------------------- */
 
-/* A struck target wears a warning lamp rather than a red cross. */
-.duel-attack-cell-icon {
-  z-index: 106;
+/* WHAT YOU MAY STRIKE.
+   A reticle bracketing the token. The old mark was four X icons laid over the
+   creature's face plus a fifth big X on top of those, which between them hid
+   the artwork you need in order to tell the pieces apart. */
+.duel-target {
   position: absolute;
-  bottom: 0%;
-  left: 50%;
-  opacity: 1;
-  height: 80%;
-  width: 80%;
+  inset: 6%;
   pointer-events: none;
-  transform: translate(-50%, -50%);
-  padding: 5%;
-  overflow: visible;
-  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 7px rgba(228, 72, 60, 0.5));
 }
 
-.duel-attack-icon-wrapper {
-  pointer-events: none;
-  position: relative;
-  height: 100%;
-  width: 100%;
-  min-height: 10px !important;
+.duel-target-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px dashed var(--g-hazard);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.95));
 }
 
-.duel-attack-icon-wrapper > h6 {
+/* The matchup, as one figure. Only drawn when it is worth saying: a neutral
+   trade is the default and does not need a chip. */
+.duel-target-verdict {
+  position: absolute;
+  top: -12%;
+  right: -12%;
+  padding: 0 3px;
   font-family: var(--g-font-mono);
+  font-size: 10px;
+  line-height: 1.4;
   font-variant-numeric: tabular-nums;
-  color: var(--g-ink);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.95);
+  border-radius: var(--g-radius-sm);
+  background: var(--g-seam);
+  border: 1px solid var(--g-hazard);
+  color: var(--g-hazard);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
 
+.duel-target-verdict--super,
+.duel-target-verdict--strong {
+  border-color: var(--g-lamp-amber);
+  color: var(--g-lamp-amber);
+}
+
+.duel-target-verdict--weak,
+.duel-target-verdict--immune {
+  border-color: var(--g-ink-low);
+  color: var(--g-ink-low);
+}
+
+/* WHO IS ACTING. Corner brackets in the side's own colour, so the selected
+   piece and a target piece are never the same mark in two colours. */
+.duel-piece-cursor {
+  position: absolute;
+  inset: 2%;
+  pointer-events: none;
+  z-index: 604;
+}
+
+.duel-cursor-tick {
+  position: absolute;
+  width: 22%;
+  height: 22%;
+  border: 2px solid var(--duel-team, var(--g-ink));
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.95));
+}
+
+.duel-cursor-tick--tl { top: 0; left: 0; border-right: 0; border-bottom: 0; }
+.duel-cursor-tick--tr { top: 0; right: 0; border-left: 0; border-bottom: 0; }
+.duel-cursor-tick--bl { bottom: 0; left: 0; border-right: 0; border-top: 0; }
+.duel-cursor-tick--br { bottom: 0; right: 0; border-left: 0; border-top: 0; }
+
+/* VITALS ON THE BOARD.
+   These live in the roster rail now. On a piece they are a detail you ask for
+   by pointing at it, so twelve pairs of two-pixel bars are not competing with
+   the board at all times. */
+.duel-piece-vitals {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--g-fast);
+}
+
+.duel-board-cell:hover .duel-piece-vitals,
+.duel-board-cell:focus-within .duel-piece-vitals,
+.duel-piece--selected .duel-piece-vitals,
+.duel-piece--referenced .duel-piece-vitals {
+  opacity: 1;
+}
+
+/* FLAGS.
+   A flag standing on the floor, and a flag being carried. The third state the
+   old code drew (guarding) had been commented out of the render long enough to
+   count as dead, and three meanings from one rotated icon was already one too
+   many. */
 .duel-flag {
   z-index: 410;
   position: absolute;
@@ -366,83 +383,36 @@
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.9));
 }
 
+/* Carrying the enemy flag wins the game outright, so a carrier is the loudest
+   piece on the board: a pennant plus a ring around its base in the flag colour. */
 .duel-flag-carried {
-  z-index: 410;
+  z-index: 610;
   position: absolute;
-  opacity: 0.9;
-  height: 60%;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 6px rgba(0, 0, 0, 0.6));
+  top: -18%;
+  right: -14%;
+  height: 58%;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.95));
 }
 
-/* -------------------------------------------------------------------------
-   BENCH RAILS
-   ------------------------------------------------------------------------- */
-
-/* The pieces not yet placed, in a recessed rail above and below the tray. Was
-   a glowing glass pill in the player's colour. */
-.duel-unset-piece-row {
-  padding: 0;
-  justify-content: space-evenly;
-  align-items: center;
-  margin: auto !important;
-  background: var(--g-hull-lo);
-  border: var(--g-hairline) solid var(--g-seam);
-  box-shadow: var(--g-recess);
-}
-
-.duel-unset-piece-wrapper {
-  padding: clamp(1px, 1%, 5px) !important;
-  height: 100%;
-  width: 100%;
-}
-
-.xalian-duel-selected-cell {
-  border: 3px solid var(--g-lamp-amber);
-  border-radius: var(--g-radius);
-}
-
-.xalian-cell-selected {
-  border: 3px solid var(--g-lamp-amber);
+.duel-piece--carrying .duel-piece-base {
+  border-color: var(--duel-flag, var(--g-brass));
+  box-shadow:
+    0 3px 6px rgba(0, 0, 0, 0.9),
+    inset 0 1px 0 rgba(255, 244, 214, 0.18),
+    0 0 10px color-mix(in srgb, var(--duel-flag, var(--g-brass)) 55%, transparent);
 }
 
 /* -------------------------------------------------------------------------
    DETAIL PANELS
    ------------------------------------------------------------------------- */
 
-.duel-selection-details-box {
-  width: 96%;
-  margin: auto;
-}
-
-.duel-xalian-bench {
-  height: 10%;
-  max-height: 75px;
-}
-
-.duel-xalian-details-box {
-  max-width: 400px;
-  margin: auto;
-  padding: var(--g-4);
-  background: var(--g-hull);
-  border: var(--g-hairline) solid var(--g-seam);
-  border-radius: var(--g-radius-panel);
-  box-shadow: var(--g-relief), var(--g-drop);
-}
-
-.duel-xalian-details-image {
-  height: auto;
-  width: 80%;
-  max-width: 100px;
-}
-
-/* the vitals are a small gauge set into the token base, not a pair of bars
-   laid across the square */
+/* the hover gauge, sat on the token base */
 .duel-state-chart-wrapper-position {
   position: absolute;
-  bottom: 7%;
+  bottom: 5%;
   left: 50%;
   transform: translateX(-50%);
-  width: 52%;
+  width: 58%;
 }
 
 .duel-state-chart-wrapper-position > div > div > svg {
@@ -460,11 +430,6 @@
 
 /* The instruments for the turn, on a panel bolted along the bottom of the
    console. Was a black gradient bar with bootstrap buttons on it. */
-.duel-status-bar-wrapper {
-  pointer-events: none;
-  width: 100%;
-}
-
 .duel-status-strip {
   margin: 0 auto;
   max-width: 460px;
@@ -719,42 +684,6 @@
   margin: 0;
 }
 
-/* -------------------------------------------------------------------------
-   THE SELECTED PIECE
-   ------------------------------------------------------------------------- */
-
-.duel-vitals-legend {
-  display: block;
-  width: 100%;
-  font-family: var(--g-font-stencil);
-  font-size: var(--g-size-micro);
-  letter-spacing: var(--g-track-label);
-  text-transform: uppercase;
-  color: var(--g-ink-low);
-  text-align: right;
-}
-
-/* the five duel stats, on one rail */
-.duel-stat-plates {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--g-3);
-  padding-top: var(--g-3);
-  padding-bottom: var(--g-6);
-}
-
-/* what this element is strong and weak against, in its own recessed well */
-.duel-effectiveness-panel {
-  display: flex;
-  margin-top: var(--g-6);
-  padding: var(--g-4);
-  background: var(--g-hull-lo);
-  border: var(--g-hairline) solid var(--g-seam);
-  border-radius: var(--g-radius);
-  box-shadow: var(--g-recess);
-}
-
 /* the column legends over the effectiveness discs */
 .duel-effect-column-label {
   display: block;
@@ -776,4 +705,504 @@
 .duel-modal-footer {
   border-top: var(--g-hairline) solid var(--g-seam);
   padding: var(--g-4) var(--g-5);
+}
+
+
+/* -------------------------------------------------------------------------
+   THE STAGE
+   A rail on each side, the arena between them. The benches used to sit above
+   and below the board, which meant the board slid down the page the first time
+   anything died. Nothing here moves once the match starts.
+   ------------------------------------------------------------------------- */
+
+.duel-viewport {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* the status strip is fixed to the bottom, so the stage reserves its height
+     rather than letting the board's last rank slide underneath it */
+  padding-bottom: 150px;
+}
+
+.duel-stage-shell {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--g-3);
+  padding: var(--g-3) var(--g-4) 0;
+  width: 100%;
+}
+
+.duel-stage-header {
+  flex: 0 0 auto;
+  text-align: center;
+}
+
+/* Whose turn it is. This was previously implied only by an edge glow on a
+   bench, which is not something a player can actually read. */
+.duel-turn-banner {
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-lead);
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.duel-turn-banner--yours { color: var(--g-lamp-amber); }
+.duel-turn-banner--theirs { color: var(--g-ink-low); }
+
+.duel-stage {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: var(--g-4);
+}
+
+.duel-stage-board {
+  flex: 0 0 auto;
+  align-self: center;
+  display: flex;
+  justify-content: center;
+}
+
+/* Inside the stage the wrapper's auto margins fight the flex centring, and its
+   percentage padding resolves against a width derived from the wrapper itself -
+   so the padding fell outside the parent's measured box and pushed the
+   right-hand rail under the board. Both are pinned here. */
+.duel-stage-board .duel-board-wrapper {
+  margin: 0;
+  padding: 16px;
+}
+
+/* Below the breakpoint the rails lie down above and below the board and give
+   their width back to it. */
+.duel-stage--stacked {
+  flex-direction: column;
+  align-items: center;
+  gap: var(--g-2);
+  overflow-y: auto;
+}
+
+/* the opponent reads above the board, you read below it */
+.duel-stage--stacked .duel-roster-rail--left { order: 1; }
+.duel-stage--stacked .duel-stage-board { order: 2; }
+.duel-stage--stacked .duel-roster-rail--right { order: 3; }
+
+/* -------------------------------------------------------------------------
+   THE ROSTER RAIL
+   ------------------------------------------------------------------------- */
+
+.duel-roster-rail {
+  flex: 0 0 auto;
+  width: 270px;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--g-hull);
+  border: var(--g-hairline) solid var(--g-seam);
+  border-radius: var(--g-radius-panel);
+  box-shadow: var(--g-relief), var(--g-drop);
+  overflow: hidden;
+}
+
+/* the side to move carries an edge light along the rail, in its own colour */
+.duel-roster-rail--active {
+  border-color: color-mix(in srgb, var(--duel-team) 45%, var(--g-seam));
+  box-shadow:
+    var(--g-relief),
+    var(--g-drop),
+    inset 0 0 18px color-mix(in srgb, var(--duel-team) 18%, transparent);
+}
+
+.duel-roster-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--g-2);
+  padding: var(--g-3) var(--g-4);
+  border-bottom: var(--g-hairline) solid var(--g-seam);
+  background: var(--g-hull-lo);
+}
+
+.duel-roster-title {
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-micro);
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-ink-mid);
+}
+
+/* how the match is going, which nothing used to say */
+.duel-roster-count {
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-small);
+  font-variant-numeric: tabular-nums;
+  color: var(--g-ink);
+}
+
+.duel-roster-count-of { color: var(--g-ink-low); }
+
+.duel-roster-entries {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--g-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--g-2);
+}
+
+/* one slot, held for the whole match so nothing reshuffles under the cursor */
+.duel-roster-entry {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  align-items: start;
+  gap: var(--g-3);
+  width: 100%;
+  padding: var(--g-2);
+  text-align: left;
+  background: var(--g-hull-lo);
+  border: var(--g-hairline) solid var(--g-seam);
+  border-left: 2px solid var(--duel-team);
+  border-radius: var(--g-radius);
+  box-shadow: var(--g-recess);
+  transition: background var(--g-fast), border-color var(--g-fast), opacity var(--g-fast);
+}
+
+.duel-roster-entry:hover,
+.duel-roster-entry:focus-visible {
+  background: var(--g-hull);
+  outline: none;
+}
+
+.duel-roster-entry--selected {
+  background: var(--g-hull);
+  border-color: var(--g-lamp-amber);
+  border-left-color: var(--g-lamp-amber);
+}
+
+.duel-roster-entry--referenced {
+  border-color: var(--g-ink-low);
+}
+
+/* the enemy rail marks what your selection can reach, so the matchup can be
+   read off the board entirely */
+.duel-roster-entry--targetable {
+  border-color: var(--g-hazard);
+}
+
+.duel-roster-entry--carrying {
+  border-color: var(--g-lamp-amber);
+  box-shadow: var(--g-recess), 0 0 10px rgba(255, 176, 55, 0.28);
+}
+
+/* still in the box during setup */
+.duel-roster-entry--unset {
+  opacity: 0.75;
+  border-left-style: dashed;
+}
+
+/* out of the match: the slot stays put, struck through */
+.duel-roster-entry--down {
+  opacity: 0.4;
+  border-left-color: var(--g-seam);
+}
+
+.duel-roster-entry--down .duel-roster-portrait-art {
+  filter: grayscale(1);
+}
+
+.duel-roster-entry--down .duel-roster-name {
+  text-decoration: line-through;
+}
+
+.duel-roster-portrait {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  width: 34px;
+}
+
+.duel-roster-portrait-art {
+  height: 100%;
+  width: 100%;
+}
+
+.duel-roster-flag {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  height: 15px;
+  fill: var(--g-lamp-amber);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.95));
+}
+
+.duel-roster-body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.duel-roster-ident {
+  display: flex;
+  align-items: baseline;
+  gap: var(--g-2);
+  min-width: 0;
+}
+
+.duel-roster-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-small);
+  font-weight: 500;
+  letter-spacing: var(--g-track-tight);
+  text-transform: uppercase;
+  color: var(--g-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.duel-roster-tag {
+  flex: 0 0 auto;
+  font-family: var(--g-font-mono);
+  font-size: 9px;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-ink-low);
+}
+
+.duel-roster-tag--place { color: var(--g-lamp-amber); }
+.duel-roster-tag--down { color: var(--g-lamp-red); }
+
+.duel-roster-tag--verdict {
+  padding: 0 3px;
+  border-radius: var(--g-radius-sm);
+  border: 1px solid var(--g-hazard);
+  color: var(--g-hazard);
+}
+
+.duel-roster-verdict--super,
+.duel-roster-verdict--strong {
+  border-color: var(--g-lamp-amber);
+  color: var(--g-lamp-amber);
+}
+
+.duel-roster-verdict--weak,
+.duel-roster-verdict--immune {
+  border-color: var(--g-ink-low);
+  color: var(--g-ink-low);
+}
+
+.duel-roster-meters {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+/* Vitals with room to be read: a name, a bulb strip and the actual figure.
+   On the board these were thirty pixels of two-pixel bar and could not have
+   carried a number at all. */
+.duel-roster-meter-row {
+  display: grid;
+  grid-template-columns: 22px 1fr 18px;
+  align-items: center;
+  gap: var(--g-2);
+}
+
+.duel-roster-meter-label {
+  font-family: var(--g-font-stencil);
+  font-size: 9px;
+  letter-spacing: var(--g-track-label);
+  color: var(--g-ink-low);
+}
+
+.duel-roster-meter {
+  position: relative;
+  height: 6px;
+  border-radius: 1px;
+  background: var(--g-seam);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
+}
+
+.duel-roster-meter-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--duel-meter) 0 4px,
+    transparent 4px 6px
+  );
+  transition: width var(--g-move);
+}
+
+.duel-roster-meter-value {
+  font-family: var(--g-font-mono);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--g-ink-mid);
+}
+
+/* -------------------------------------------------------------------------
+   THE RAILS, LYING DOWN
+   Under 1100px the rails become strips and each slot collapses to a portrait
+   with its health under it. The names go: at this size the artwork identifies
+   a piece faster than four truncated letters would.
+   ------------------------------------------------------------------------- */
+
+.duel-stage--stacked .duel-roster-rail {
+  width: 100%;
+  max-width: 560px;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--g-2);
+  padding: var(--g-2);
+}
+
+.duel-stage--stacked .duel-roster-header {
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  padding: 0 var(--g-2) 0 0;
+  border-bottom: 0;
+  border-right: var(--g-hairline) solid var(--g-seam);
+  background: none;
+}
+
+.duel-stage--stacked .duel-roster-entries {
+  flex-direction: row;
+  justify-content: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0;
+  scrollbar-width: none;
+}
+
+.duel-stage--stacked .duel-roster-entries::-webkit-scrollbar {
+  display: none;
+}
+
+.duel-stage--stacked .duel-roster-entry {
+  grid-template-columns: 1fr;
+  justify-items: center;
+  gap: 2px;
+  width: 46px;
+  flex: 0 0 auto;
+  padding: 3px;
+  border-left: var(--g-hairline) solid var(--g-seam);
+  border-top: 2px solid var(--duel-team);
+}
+
+.duel-stage--stacked .duel-roster-entry--selected { border-top-color: var(--g-lamp-amber); }
+.duel-stage--stacked .duel-roster-entry--targetable { border-color: var(--g-hazard); }
+.duel-stage--stacked .duel-roster-entry--unset { border-top-style: dashed; }
+
+.duel-stage--stacked .duel-roster-name,
+.duel-stage--stacked .duel-roster-meter-label,
+.duel-stage--stacked .duel-roster-meter-value {
+  display: none;
+}
+
+.duel-stage--stacked .duel-roster-meter-row {
+  grid-template-columns: 1fr;
+}
+
+.duel-stage--stacked .duel-roster-ident {
+  justify-content: center;
+}
+
+.duel-stage--stacked .duel-roster-body {
+  width: 100%;
+}
+
+
+/* The deeper reading on a piece, docked in its own slot. This was an offcanvas
+   sheet that opened centred over the board, so asking what a piece was cost you
+   sight of the thing you were asking about. */
+.duel-roster-entry--expanded {
+  background: var(--g-hull);
+}
+
+.duel-roster-detail {
+  margin-top: var(--g-2);
+  padding-top: var(--g-2);
+  border-top: var(--g-hairline) solid var(--g-seam);
+  display: flex;
+  flex-direction: column;
+  gap: var(--g-3);
+}
+
+.duel-roster-detail-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px var(--g-3);
+  margin: 0;
+}
+
+.duel-roster-stat {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--g-2);
+}
+
+.duel-roster-stat-label {
+  font-family: var(--g-font-stencil);
+  font-size: 9px;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-ink-low);
+  margin: 0;
+}
+
+.duel-roster-stat-value {
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-small);
+  font-variant-numeric: tabular-nums;
+  color: var(--g-ink);
+  margin: 0;
+}
+
+.duel-roster-detail-matchups {
+  display: flex;
+  gap: var(--g-2);
+  padding: var(--g-2);
+  background: var(--g-hull-lo);
+  border: var(--g-hairline) solid var(--g-seam);
+  border-radius: var(--g-radius-sm);
+  box-shadow: var(--g-recess);
+}
+
+.duel-roster-detail-matchups .xalian-species-badge,
+.duel-roster-detail-matchups svg {
+  max-width: 22px;
+  max-height: 22px;
+}
+
+/* the expansion is a detail, not a mode: it never appears in the lying-down
+   rails, where there is no room for it */
+.duel-stage--stacked .duel-roster-detail {
+  display: none;
 }
