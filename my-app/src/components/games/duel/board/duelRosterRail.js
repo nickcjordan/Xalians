@@ -32,13 +32,16 @@ class DuelRosterRail extends React.Component {
 	/** a segmented bulb meter, the same construction the rest of the system uses */
 	renderMeter(value, max, colour, label) {
 		let pct = max > 0 ? Math.max(0, Math.min(100, (value / max) * 100)) : 0;
+		// damage is fractional, so health is too. A readout saying 0.5999 is not
+		// a readout; round it to something a player can act on.
+		let shown = Math.round(value * 10) / 10;
 		return (
 			<div className="duel-roster-meter-row">
 				<span className="duel-roster-meter-label">{label}</span>
 				<span className="duel-roster-meter" style={{ '--duel-meter': colour }}>
 					<span className="duel-roster-meter-fill" style={{ width: `${pct}%` }} />
 				</span>
-				<span className="duel-roster-meter-value">{value}</span>
+				<span className="duel-roster-meter-value">{shown}</span>
 			</div>
 		);
 	}

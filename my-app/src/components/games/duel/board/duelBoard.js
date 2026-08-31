@@ -15,7 +15,8 @@ import species from '../../../../json/species.json';
 import { Hub } from "aws-amplify";
 import DuelBoardCell from './duelBoardCell';
 import DuelRosterRail from './duelRosterRail';
-import { verdictFor } from './attackableMoveBadge';
+import DuelMoveRegion from './duelMoveRegion';
+import DuelTargetLayer, { verdictFor } from './duelTargetLayer';
 import AttackActionModal from './attackActionModal';
 import AttackMoveChooserModal from './attackMoveChooserModal';
 import HowToPlayModal from '../howToPlayModal';
@@ -460,12 +461,13 @@ class DuelBoard extends React.Component {
 	buildTargeting = (selectedId, attackableIndices, boardState) => {
 		let attackableIds = new Set();
 		let targetVerdicts = {};
+		let targets = [];
 		let details = boardState.currentTurnDetails;
 		if (!selectedId || !details || details.hasAttacked) {
-			return { attackableIds, targetVerdicts };
+			return { attackableIds, targetVerdicts, targets };
 		}
 		let attacker = duelUtil.getXalianFromId(selectedId, boardState);
-		if (!attacker) return { attackableIds, targetVerdicts };
+		if (!attacker) return { attackableIds, targetVerdicts, targets };
 
 		(attackableIndices || []).forEach(index => {
 			let occupantId = boardState.cells[index];
@@ -473,16 +475,19 @@ class DuelBoard extends React.Component {
 			if (duelUtil.xaliansAreOnSameTeam(selectedId, occupantId, boardState)) return;
 			attackableIds.add(occupantId);
 			let defender = duelUtil.getXalianFromId(occupantId, boardState);
+			let verdict = verdictFor(1);
 			try {
 				let result = duelCalculator.calculateAttackResult(attacker, defender, boardState, this.props.ctx, true);
 				let effectiveness = (result && result.typeEffectiveness != null) ? result.typeEffectiveness : 1;
-				targetVerdicts[occupantId] = verdictFor(effectiveness);
+				verdict = verdictFor(effectiveness);
 			} catch (err) {
 				// a damage preview is a courtesy; never let one stop the board rendering
 				console.error('duel: could not preview matchup', err);
 			}
+			targetVerdicts[occupantId] = verdict;
+			targets.push({ index: index, verdict: verdict });
 		});
-		return { attackableIds, targetVerdicts };
+		return { attackableIds, targetVerdicts, targets };
 	}
 
 	// called in setup when a piece is selected to be placed
@@ -702,7 +707,14 @@ class DuelBoard extends React.Component {
 		let foeColor = foeIndex === 0 ? duelConstants.PLAYER_ONE_COLOR : duelConstants.PLAYER_TWO_COLOR;
 		let isOwnTurn = parseInt(this.props.ctx.currentPlayer) === ownIndex;
 
-		let { attackableIds, targetVerdicts } = this.buildTargeting(selectedId, selectedXalianAttackableIndices, boardState);
+		let { attackableIds, targetVerdicts, targets } = this.buildTargeting(selectedId, selectedXalianAttackableIndices, boardState);
+
+		// the square each region's owner is standing on, so the shape can close
+		// around it instead of being punched through the middle
+		let selectedIndex = selectedId ? duelUtil.getIndexOfXalian(selectedId, boardState) : null;
+		let referencedIndex = referencedId ? duelUtil.getIndexOfXalian(referencedId, boardState) : null;
+		let gridSize = cellSize * gameConstants.BOARD_COLUMN_SIZE;
+		let regionsSettled = this.props.isActive && !this.isReplayingAnimations();
 
 		let foeTitle = this.props.G.hasBot && foeIndex === 1 ? 'Bot Squad' : 'Their Squad';
 
@@ -791,9 +803,33 @@ class DuelBoard extends React.Component {
 										<div className='duel-board-wrapper' >
 											<div className='duel-board-wrapper-background' />
 											<div className='duel-board-wrapper-background-overlay' />
-											<table id="board" style={{ display: 'flex', justifyContent: 'center' }}>
-												<tbody >{tbody}</tbody>
-											</table>
+											<div className="duel-board-grid">
+												<table id="board" style={{ display: 'flex', justifyContent: 'center' }}>
+													<tbody >{tbody}</tbody>
+												</table>
+												{regionsSettled &&
+													<DuelMoveRegion
+														variant="referenced"
+														indices={referencedXalianMovableIndices}
+														originIndex={referencedIndex}
+														columns={gameConstants.BOARD_COLUMN_SIZE}
+														size={gridSize} />
+												}
+												{regionsSettled &&
+													<DuelMoveRegion
+														indices={selectedXalianMovableIndices}
+														originIndex={selectedIndex}
+														columns={gameConstants.BOARD_COLUMN_SIZE}
+														size={gridSize} />
+												}
+												{regionsSettled &&
+													<DuelTargetLayer
+														targets={targets}
+														originIndex={selectedIndex}
+														columns={gameConstants.BOARD_COLUMN_SIZE}
+														size={gridSize} />
+												}
+											</div>
 										</div>
 									</div>
 

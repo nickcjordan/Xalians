@@ -11,7 +11,6 @@ import * as duelConstants from '../../../../gameplay/duel/duelGameConstants';
 import { ReactComponent as DuelFlagIcon } from '../../../../svg/games/duel/duel_flag_icon.svg';
 import species from '../../../../json/species.json';
 import XalianTypeSymbolBadge from './xalianTypeSymbolBadge';
-import AttackableMoveBadge from './attackableMoveBadge';
 
 
 import gsap from 'gsap';
@@ -324,16 +323,6 @@ class DuelBoardCell extends React.Component {
 		let animationsAreComplete = animationProgress == 1 || animationProgress == 0;
 		let settled = (this.props.isActive && animationsAreComplete);
 
-		let movable = this.props.selectedXalianMovableIndices || [];
-		let isMovable = settled && movable.includes(this.props.cellIndex);
-
-		// A square the *referenced* piece (one you are inspecting rather than
-		// commanding) could reach. This used to be a second, dimmer copy of the
-		// same lamp, which read as "some of these are faded and I cannot tell
-		// why". It is now a plain outline: a different mark, not a weaker one.
-		let referenced = this.props.referencedXalianMovableIndices || [];
-		let isReferenceMovable = settled && !isMovable && referenced.includes(this.props.cellIndex);
-
 		let cellSizeWithUnits = `${this.props.cellSize}px`;
 		let sty = { border: 0, position: 'relative', width: cellSizeWithUnits, height: cellSizeWithUnits, lineHeight: cellSizeWithUnits, textAlign: 'center' };
 		let grid = duelCalculator.buildGrid();
@@ -358,21 +347,13 @@ class DuelBoardCell extends React.Component {
 			<div className='duel-unoccupied-cell duel-board-cell' id={`cell-${this.props.cellIndex}`} style={sty} onClick={() => this.props.handleEmptyCellSelection(this.props.cellIndex, this.props.boardState)}>
 				{process.env.NODE_ENV !== 'production' && <h6 style={{ position: 'absolute', color: '#9e9e9e2c' }} >{this.props.cellIndex}</h6>}
 
-				{/* WHERE YOU MAY GO.
-				    Every square used to carry a pip whose only job was to become a
-				    lamp later, so the board's resting state was already speckled with
-				    sixty-four marks and the lit state had to out-shout its own
-				    siblings. Now the floor is bare until a piece is selected, and
-				    then the reachable squares light as one region: a warm wash with
-				    an edge drawn only where the region actually ends. */}
-				{isMovable &&
-					<div className={this.buildRegionClasses('duel-move-region', movable)} />
-				}
-				{isReferenceMovable &&
-					<div className={this.buildRegionClasses('duel-move-region duel-move-region--referenced', referenced)} />
-				}
+				{/* WHERE YOU MAY GO is drawn once for the whole reachable area, as a
+				    single traced outline laid over the grid (see duelMoveRegion.js),
+				    not per square. A cell cannot round a concave corner: that corner
+				    is drawn by two different cells meeting at right angles and
+				    neither can shorten itself to make room for the curve.
 
-				{/* Attack range no longer paints empty floor. You cannot strike an
+				    Attack range no longer paints empty floor. You cannot strike an
 				    empty square, so hatching one was telling you about a decision you
 				    are not being asked to make, on the squares that were already the
 				    most crowded. Reach is now shown only on the enemies it can
@@ -383,36 +364,6 @@ class DuelBoardCell extends React.Component {
 			</div>
 			</React.Fragment>);
 	}
-
-	/**
-	 * Edge classes for a cell inside a highlighted region.
-	 *
-	 * A region reads as one shape only if its border is drawn around the outside
-	 * of the whole thing rather than around each square in it, so a cell draws an
-	 * edge only on the sides where its neighbour is not also in the set.
-	 */
-	buildRegionClasses = (base, indices) => {
-		let i = this.props.cellIndex;
-		let size = duelConstants.BOARD_COLUMN_SIZE;
-		let inSet = (n) => indices.includes(n);
-
-		let classes = [base];
-		if (i % size === 0 || !inSet(i - 1)) classes.push('duel-region-edge-left');
-		if (i % size === size - 1 || !inSet(i + 1)) classes.push('duel-region-edge-right');
-		if (i < size || !inSet(i - size)) classes.push('duel-region-edge-top');
-		if (i >= size * (size - 1) || !inSet(i + size)) classes.push('duel-region-edge-bottom');
-		return classes.join(' ');
-	}
-
-	// getReferencedXalian = () => {
-	// 	return this.props.referencedXalianId ? duelUtil.getXalianFromIdAndXalians(this.props.referencedXalianId, this.props.G.xalians) : null;
-	// }
-
-	// isReferencedXalianCell = () => {
-	// 	let referencedXalian = this.props.referencedXalianId ? duelUtil.getXalianFromIdAndXalians(this.props.referencedXalianId, this.props.G.xalians) : null;
-	// 	let referencedXalianIndex = (this.props.referencedXalianId && referencedXalian) ? duelUtil.getIndexOfXalian(this.props.referencedXalianId, this.props.boardState) : null;
-	// 	return (referencedXalianIndex != null && referencedXalianIndex == this.props.cellIndex);
-	// }
 
 	buildOccupiedCell = () => {
 
@@ -500,9 +451,6 @@ class DuelBoardCell extends React.Component {
 					{/* WHO IS ACTING is drawn by the piece's own plinth lighting up
 					    (see .duel-piece--selected in duel.css) rather than by
 					    brackets stamped over the creature. */}
-
-					{/* WHAT YOU MAY STRIKE - a strike zone painted on the floor */}
-					<AttackableMoveBadge zIndex={'605'} isTargetable={isTargetable} attacker={selectedXalian} defender={cellXalian} {...this.props} />
 
 					{/* TYPE SYMBOL */}
 					<XalianTypeSymbolBadge size={this.props.cellSize/2.5} type={cellXalian.elementType.toLowerCase()} />

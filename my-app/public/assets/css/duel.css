@@ -127,63 +127,65 @@
 }
 
 /* WHERE YOU MAY GO.
-   Sixty-four resting pips and two opacity-separated copies of every mark are
-   gone. A reachable square is a warm wash in the floor, and the border is drawn
-   only on the sides where the region actually ends, so ten squares read as one
-   shape you can walk into rather than ten things to count. */
-.duel-move-region {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 6;
-  background: rgba(255, 176, 55, 0.045);
-  box-shadow: inset 0 0 14px rgba(255, 176, 55, 0.05);
+   One traced outline over the whole reachable area rather than a border per
+   square. Built per cell it could round its convex corners and nothing else: a
+   concave corner is drawn by two different cells meeting at right angles, and
+   neither can shorten itself to leave room for a curve, so the arms of a cross
+   ended soft while the joints between them stayed sharp. */
+.duel-board-grid {
+  position: relative;
+  width: fit-content;
 }
 
-/* the centre mark, so a single detached square still reads as a destination */
-.duel-move-region::after {
-  content: '';
+/* The table carried two pixels of border-spacing, so the squares were not
+   actually contiguous and the grid measured fourteen pixels wider than eight
+   cells. Nothing wanted that gap - the scoring in the floor is drawn inside the
+   cells - and an overlay cannot align to a grid whose geometry is a lie. */
+#board,
+#board tbody,
+#board tr,
+#board td {
+  border-collapse: collapse;
+  border-spacing: 0;
+  padding: 0;
+  border: 0;
+}
+
+.duel-move-layer {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 14%;
-  height: 14%;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  background: var(--g-lamp-amber);
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 6;
+  overflow: visible;
+}
+
+.duel-move-shape {
+  fill: rgba(255, 176, 55, 0.055);
+  stroke: rgba(255, 176, 55, 0.42);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+/* the mark on each square you may actually land on */
+.duel-move-pip {
+  fill: var(--g-lamp-amber);
   opacity: 0.7;
 }
 
-.duel-region-edge-top { border-top: 1px solid rgba(255, 176, 55, 0.38); }
-.duel-region-edge-bottom { border-bottom: 1px solid rgba(255, 176, 55, 0.38); }
-.duel-region-edge-left { border-left: 1px solid rgba(255, 176, 55, 0.38); }
-.duel-region-edge-right { border-right: 1px solid rgba(255, 176, 55, 0.38); }
-
-/* Round a corner only where the region actually turns one: both of the edges
-   meeting there have to be drawn. Concave corners, where the region folds back
-   on itself, stay square - rounding those would pull the outline away from the
-   squares it is describing. */
-.duel-move-region.duel-region-edge-top.duel-region-edge-left { border-top-left-radius: 10px; }
-.duel-move-region.duel-region-edge-top.duel-region-edge-right { border-top-right-radius: 10px; }
-.duel-move-region.duel-region-edge-bottom.duel-region-edge-left { border-bottom-left-radius: 10px; }
-.duel-move-region.duel-region-edge-bottom.duel-region-edge-right { border-bottom-right-radius: 10px; }
-
-/* Where a piece you are only inspecting could go. This used to be the same
-   lamp at lower opacity, which reads as "dimmer for reasons unknown". An
-   outline with no fill is a different statement, not a weaker one. */
-.duel-move-region--referenced {
-  background: none;
-  box-shadow: none;
+/* Where a piece you are only inspecting could go. An outline with no fill is a
+   different statement, not a weaker one - the old version was the same mark at
+   lower opacity, which only read as "dimmer for reasons unknown". */
+.duel-move-layer--referenced .duel-move-shape {
+  fill: none;
+  stroke: rgba(221, 212, 189, 0.26);
+  stroke-dasharray: 4 4;
 }
 
-.duel-move-region--referenced::after {
-  display: none;
+.duel-move-layer--referenced .duel-move-pip {
+  fill: var(--g-ink-mid);
+  opacity: 0.35;
 }
-
-.duel-move-region--referenced.duel-region-edge-top { border-top-color: rgba(221, 212, 189, 0.28); }
-.duel-move-region--referenced.duel-region-edge-bottom { border-bottom-color: rgba(221, 212, 189, 0.28); }
-.duel-move-region--referenced.duel-region-edge-left { border-left-color: rgba(221, 212, 189, 0.28); }
-.duel-move-region--referenced.duel-region-edge-right { border-right-color: rgba(221, 212, 189, 0.28); }
 
 .duel-cell-style-covered {
   pointer-events: none;
@@ -289,62 +291,72 @@
    ------------------------------------------------------------------------- */
 
 /* WHAT YOU MAY STRIKE.
-   Painted on the arena floor rather than drawn over the creature: an ellipse
-   concentric with the piece's own plinth, in the same perspective, sitting
-   beneath it so the creature stands inside a marked strike zone. A ring around
-   the body was screen-space UI stamped on a world-space object, which is why it
-   read as a sticker no matter what the ring was made of. */
-.duel-target-zone {
+   Reach is a relationship between two pieces, so the mark is one too: a firing
+   solution struck across the floor from the attacker, and the target's own tile
+   marked out with registration ticks in the grid's own geometry. Every earlier
+   attempt decorated the target instead - icons on its face, a ring round its
+   body, an ellipse round its plinth - and decoration of one object can never
+   say anything about a pair of them. A ring concentric with a piece's base is
+   just a second base. */
+.duel-target-layer {
   position: absolute;
-  /* concentric with .duel-piece-base, which spans 3%-23% from the bottom */
-  bottom: -3%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 98%;
-  height: 32%;
-  border-radius: 50%;
-  /* under the plinth (100) and the creature (101), over the floor */
-  z-index: 99;
+  top: 0;
+  left: 0;
   pointer-events: none;
-  border: 2px solid color-mix(in srgb, var(--g-hazard) 80%, transparent);
-  background: radial-gradient(
-    ellipse at 50% 50%,
-    color-mix(in srgb, var(--g-hazard) 22%, transparent) 0%,
-    color-mix(in srgb, var(--g-hazard) 7%, transparent) 62%,
-    transparent 100%
-  );
+  z-index: 7;
+  overflow: visible;
 }
 
-/* The matchup, as one figure riding the edge of the painted zone. Only drawn
-   when it is worth saying: a neutral trade is the default. */
-.duel-target-verdict {
-  position: absolute;
-  bottom: 1%;
-  right: -6%;
-  z-index: 103;
-  padding: 0 3px;
+/* Movement is permission and a target is a warning, so they are different
+   channels rather than two weights of one. Amber marks the ground you may take;
+   the warning lamp marks what you may strike. Hazard gold sits too close to the
+   movement amber to carry this - the two marks overlap constantly, and at a
+   glance they were the same colour. */
+.duel-solution {
+  stroke: var(--g-lamp-red);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+  opacity: 0.8;
+}
+
+/* the target's square, lifted just enough to separate it from the floor */
+.duel-target-wash {
+  fill: var(--g-lamp-red);
+  opacity: 0.07;
+}
+
+.duel-target-ticks {
+  fill: none;
+  stroke: var(--g-lamp-red);
+  stroke-width: 2.5;
+  stroke-linecap: square;
+  opacity: 0.85;
+}
+
+.duel-target-figure {
   font-family: var(--g-font-mono);
-  font-size: 10px;
-  line-height: 1.4;
+  font-size: 0.19px;
   font-variant-numeric: tabular-nums;
-  border-radius: var(--g-radius-sm);
-  background: var(--g-seam);
-  border: 1px solid var(--g-hazard);
-  color: var(--g-hazard);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  fill: var(--g-lamp-red);
 }
 
-.duel-target-verdict--super,
-.duel-target-verdict--strong {
-  border-color: var(--g-lamp-amber);
-  color: var(--g-lamp-amber);
-}
+/* One hue, three intensities. A matchup worth spending your single attack on
+   is drawn at full strength; one that is not recedes to unlit metal, so a bad
+   trade reads as "not this one" without having to be decoded. */
+.duel-target-tile--super .duel-target-ticks,
+.duel-target-tile--strong .duel-target-ticks { opacity: 1; stroke-width: 3; }
 
-.duel-target-verdict--weak,
-.duel-target-verdict--immune {
-  border-color: var(--g-ink-low);
-  color: var(--g-ink-low);
-}
+.duel-target-tile--super .duel-target-wash,
+.duel-target-tile--strong .duel-target-wash { opacity: 0.11; }
+
+.duel-target-tile--weak .duel-target-ticks,
+.duel-target-tile--immune .duel-target-ticks { stroke: var(--g-ink-low); stroke-width: 2; opacity: 0.7; }
+
+.duel-target-tile--weak .duel-target-figure,
+.duel-target-tile--immune .duel-target-figure { fill: var(--g-ink-low); }
+
+.duel-target-tile--weak .duel-target-wash,
+.duel-target-tile--immune .duel-target-wash { fill: var(--g-ink-low); opacity: 0.03; }
 
 /* WHO IS ACTING.
    The piece's own plinth is energised: its rim takes the side's colour and
@@ -900,6 +912,7 @@
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: var(--g-2);
   display: flex;
   flex-direction: column;
@@ -1228,12 +1241,19 @@
 
 .duel-roster-detail-matchups {
   display: flex;
+  flex-wrap: wrap;
+  min-width: 0;
   gap: var(--g-2);
   padding: var(--g-2);
   background: var(--g-hull-lo);
   border: var(--g-hairline) solid var(--g-seam);
   border-radius: var(--g-radius-sm);
   box-shadow: var(--g-recess);
+}
+
+.duel-roster-detail-matchups > * {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .duel-roster-detail-matchups .xalian-species-badge,
