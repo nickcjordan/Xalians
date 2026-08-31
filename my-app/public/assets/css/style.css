@@ -2761,8 +2761,20 @@ section {
   margin-bottom: var(--g-9);
 }
 
+/* A dictionary sets in columns. One column of definitions capped at a readable
+   measure left ~430px of the panel empty on a wide screen; two columns use the
+   width the way a printed glossary would. */
 .glossary-list {
   margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(520px, 1fr));
+  column-gap: var(--g-5);
+}
+
+/* the rule under each entry is the row divider, so it should not run past the
+   last row of a column */
+.glossary-list .g-record:last-child {
+  border-bottom: 0;
 }
 
 .glossary-result-count {
@@ -2875,14 +2887,20 @@ section {
   padding: var(--g-6) var(--g-5) var(--g-7);
 }
 
-/* long-form prose: measure, leading and paragraph spacing that suit reading a
-   planet's history rather than a UI string */
+/* Long-form prose: leading and paragraph spacing that suit reading a planet's
+   history rather than a UI string. The measure is set by the width of the
+   dialog itself (below) - capping the paragraph inside a wide dialog just
+   leaves a dead column down one side of the page. */
 .themed-modal .modal-body p {
   font-family: var(--g-font-ui);
   font-size: var(--g-size-body);
   line-height: 1.75;
-  max-width: var(--g-measure);
   margin: 0 0 var(--g-5) 0;
+}
+
+/* a page of prose, sized so a line lands near the readable measure */
+.themed-modal .modal-dialog {
+  max-width: 760px;
 }
 
 .themed-modal .modal-body p:last-child {
@@ -3604,8 +3622,7 @@ input, textarea {
   box-shadow: var(--g-relief), var(--g-drop);
   align-items: center;
   justify-content: center;
-  /* the board sits on the page rail like every other block */
-  margin: 0 0 var(--g-8) 0 !important;
+  margin: 0 auto var(--g-8) auto !important;
   padding: var(--g-4) !important;
   width: fit-content !important;
   max-width: 100%;
@@ -3665,19 +3682,20 @@ input, textarea {
 .training-grounds-subtitle {
   font-family: var(--g-font-ui);
   color: var(--g-ink-mid);
-  /* the header, its note and the game selector all sit on the page's one rail */
-  text-align: left;
   margin: var(--g-2) 0 0 0;
 }
 
 .training-game-switcher {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   margin-bottom: var(--g-6);
 }
 
 .training-shell {
   padding-bottom: var(--g-8);
+  /* the board is a square sized to the viewport, so the whole page is a
+     centred composition rather than a left-rail layout */
+  text-align: center;
 }
 
 /*--------------------------------------------------------------
@@ -4587,10 +4605,14 @@ input, textarea {
 
 .duel-setup-shell {
   padding-bottom: var(--g-9);
+  /* The setup form is a single object of a fixed, comfortable width. Narrowing
+     the shell (rather than the panel inside it) means the header and the panel
+     move together and share a left edge - instead of a 720px panel stranded
+     against the left of a 1600px page. */
+  max-width: 880px;
 }
 
 .duel-setup-panel {
-  max-width: 720px;
   padding: var(--g-6);
 }
 
@@ -4696,16 +4718,21 @@ input, textarea {
 
 .account-notice {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
   gap: var(--g-5);
   padding: var(--g-7) var(--g-6);
-  max-width: 560px;
   text-align: left;
 }
 
+/* .g-empty draws a dashed placeholder box, which is right for "no records in
+   this list" but reads as a drop zone around a single line of status text */
 .account-notice-text {
   margin: 0;
+  padding: 0;
+  border: 0;
+  text-align: left;
 }
 
 /* an anchor styled as a key still has to sit on its baseline like one */

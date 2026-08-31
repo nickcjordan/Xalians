@@ -93,6 +93,15 @@ These live in `style.css` rather than `system.css`, because they are arrangement
 Spec grids run **two key/value pairs per row** on wide viewports and collapse to one under 1200px. That is what stops six short specs from leaving half a card empty.
 
 
+## Page width
+
+A page is one of two things, and never a mix:
+
+- **A full-width layout on the left rail** — catalogues, records, lists. Content spans `.g-shell` and starts at the same left edge as the navbar wordmark. If a block inside it has a natural maximum (prose at `--g-measure`), the *layout* fills the width and the block sits within it; do not leave a dead column down one side. The glossary sets two columns on wide screens for exactly this reason.
+- **A centred document sized to its content** — a form, a game board, anything that is one object. Narrow the **shell**, not the panel inside it, so the header and the content move together and share a left edge.
+
+The failure mode to watch for: a 720px panel pinned to the left of a 1600px page with half the viewport empty beside it. That reads as broken, not as deliberate. Judge this by looking at the page at 1600px wide, not by measuring that the edges line up.
+
 ## Rules for new work
 
 1. **No raw hex.** If you are typing `#`, you want an existing token or you are adding one. Add it to *both* sides and to `PAIRINGS` in the test.
