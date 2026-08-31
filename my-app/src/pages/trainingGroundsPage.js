@@ -1,10 +1,5 @@
 import React from 'react';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
 import XalianNavbar from '../components/navbar';
-import ListGroup from 'react-bootstrap/ListGroup';
 import MatchCardGamePage from './games/matchCardGamePage';
 import PhysicsGamePage from './games/physicsGamePage';
 import GameContainer from '../components/games/elements/gameContainer';
@@ -38,38 +33,40 @@ class TrainingGroundsPage extends React.Component {
 
         return <React.Fragment>
 
-            <Container fluid className="content-background-container">
+            <div className="g-console">
                 <XalianNavbar></XalianNavbar>
 
-                    <Row className="">
-                        <Col style={{ textAlign: 'center' }} >
-                            <header className="page-header">
-                                <h1 className="g-title">Training Grounds</h1>
-                                <p className="training-grounds-subtitle">Warm-up games while you wait for a duel.</p>
-                            </header>
+                <div className="g-shell page-shell training-shell">
+                    <header className="page-header">
+                        <p className="g-kicker">Simulation Deck</p>
+                        <h1 className="g-title">Training Grounds</h1>
+                        <p className="training-grounds-subtitle">Warm-up games while you wait for a duel.</p>
+                    </header>
 
-                            {/* was a single unlabelled bootstrap-blue "switch" button that
-                                cycled games without saying which one you were on */}
-                            <div className="training-game-switcher">
-                                {this.state.games.map((game, index) => (
-                                    <Button
-                                        key={game.name}
-                                        variant={this.state.selectedGameIndex === index ? 'xalianGreen' : 'xalianGray'}
-                                        onClick={() => this.selectGame(index)}
-                                        aria-pressed={this.state.selectedGameIndex === index}
-                                    >
-                                        {game.name}
-                                    </Button>
-                                ))}
-                            </div>
+                    {/* was a single unlabelled bootstrap-blue "switch" button that
+                        cycled games without saying which one you were on */}
+                    <div className="training-game-switcher">
+                        <div className="g-segmented" role="group" aria-label="Training game">
+                            {this.state.games.map((game, index) => (
+                                <button
+                                    type="button"
+                                    className="g-segment"
+                                    key={game.name}
+                                    onClick={() => this.selectGame(index)}
+                                    aria-pressed={this.state.selectedGameIndex === index}
+                                >
+                                    {game.name}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
 
-                            <GameContainer>
-                                {this.state.selectedGame}
-                            </GameContainer>
-                        </Col>
-                    </Row>
+                    <GameContainer>
+                        {this.state.selectedGame}
+                    </GameContainer>
+                </div>
 
-            </Container>
+            </div>
         </React.Fragment>
 
 

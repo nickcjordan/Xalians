@@ -1,19 +1,13 @@
 import React from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import XalianNavbar from '../components/navbar';
-import ListGroup from 'react-bootstrap/ListGroup';
-import Image from 'react-bootstrap/Image';
-import Table from 'react-bootstrap/Table';
-import PlanetTable from '../components/planetTable';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import species from '../json/species.json';
 import XalianImage from '../components/xalianImage';
 import XalianSpeciesRowView from '../components/views/xalianSpeciesRowView';
-import XalianSpeciesBadge from '../components/xalianSpeciesBadge';
 import XalianSpeciesSizeComparisonView from '../components/views/xalianSpeciesSizeComparisonView';
 import SplashGalaxyBackground from '../components/views/splashGalaxyBackground';
 import * as svgUtil from '../utils/svgUtil';
@@ -98,27 +92,26 @@ class SpeciesPage extends React.Component {
     //     return list;
     // }
 
+    // A catalogue tile: the portrait mounted in a housing with the designation
+    // stencilled on a plate beneath it. Previously a bare coloured square
+    // floating on the starfield with loose text under it, which was the one
+    // place on the site where a specimen had no housing at all.
     buildSpeciesIcon(x) {
+        let type = x.type.toLowerCase();
         return (
-			<Col key={`species-icon-${x.id}`} md={2} sm={3} xs={6} className="species-col">
-				<a href={'/species/' + x.id}>
-					<XalianImage colored bordered speciesName={x.name} primaryType={x.type} moreClasses="xalian-image-grid" />
-					<Row style={{ width: '100%', margin: '0px', padding: '0px' }}>
-						<Col xs={5} style={{ margin: 'auto', padding: '0px', paddingRight: '5px', textAlign: 'right' }}>
-							{svgUtil.getSpeciesTypeSymbol(x.type, true, 25)}
-						</Col>
-						<Col xs={7} style={{ padding: '0px', height: '100%', margin: 'auto' }}>
-							<h6 className="condensed-row" style={{ textAlign: 'left', margin: 'auto', height: '100%', width: '100%' }}>
-								#{x.id}
-							</h6>
-						</Col>
-					</Row>
-					<h5 className="condensed-row species-name-title" style={{ textAlign: 'center' }}>
-						{x.name}
-					</h5>
-				</a>
-			</Col>
-		);
+            <a className={`species-tile g-el-${type}`} key={`species-icon-${x.id}`} href={'/species/' + x.id}>
+                <span className="species-tile-plate">
+                    <XalianImage colored speciesName={x.name} primaryType={x.type} moreClasses="species-tile-img" />
+                </span>
+                <span className="species-tile-legend">
+                    <span className="species-tile-name">{x.name}</span>
+                    <span className="species-tile-meta">
+                        {svgUtil.getSpeciesTypeSymbol(x.type, true, 18)}
+                        <span className="species-tile-id">#{x.id}</span>
+                    </span>
+                </span>
+            </a>
+        );
     }
 
     buildStatRow(x) {
@@ -137,23 +130,23 @@ class SpeciesPage extends React.Component {
                 <SplashGalaxyBackground direction={this.state.backgroundAnimationStarDirection} speed={this.state.backgroundAnimationStarSpeed}>
             {/* <Container fluid className="content-background-container"> */}
 
-                <Container className="">
-                    <Row className="">
-
-                        <Col className="template-col-wrapper ">
-                            <h1 className="g-title">Discovered Species</h1>
+                <div className="g-shell page-shell">
+                            <header className="page-header">
+                                <p className="g-kicker">Xalian Registry</p>
+                                <h1 className="g-title">Discovered Species</h1>
+                            </header>
 
                             {species &&
                                 <Tabs defaultActiveKey="grid" id="tabbs" className="species-tab-group g-tabs">
                                     <Tab eventKey="grid" title="Grid" className="species-tab">
-                                        <Row>
+                                        <div className="species-grid">
                                             {this.state.gridList}
-                                        </Row>
+                                        </div>
                                     </Tab>
                                     <Tab eventKey="stat-row" title="Stats" className="">
-                                        <Row>
+                                        <div className="species-stat-rows">
                                             {this.state.statRowList}
-                                        </Row>
+                                        </div>
                                     </Tab>
                                     <Tab eventKey="size-comparison" title="Size Comparison" className="">
                                             {this.state.size &&
@@ -166,11 +159,7 @@ class SpeciesPage extends React.Component {
                                 </Tabs>
                             }
 
-                        </Col>
-
-                    </Row>
-
-                </Container>
+                </div>
             {/* </Container> */}
             </SplashGalaxyBackground>
         </React.Fragment>

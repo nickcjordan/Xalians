@@ -654,6 +654,15 @@
 
 .g-btn--danger:hover:not(:disabled) { --btn-face: #94332d; }
 
+/* A square key carrying a glyph instead of a legend. */
+.g-btn--icon {
+	padding: 0;
+	width: 36px;
+	height: 36px;
+	font-size: var(--g-size-body);
+	line-height: 1;
+}
+
 /* Unpowered, not faded: the key is still moulded there, the legend is dead. */
 .g-btn:disabled {
 	--btn-face: var(--g-hull-lo);
@@ -1037,8 +1046,14 @@
 	font-size: var(--g-size-lead);
 	text-transform: uppercase;
 	letter-spacing: var(--g-track-label);
-	color: var(--g-el);
+	/* a printed term on the hull, not machine output: it does not emit. Records
+	   inside an element-keyed container still retune, via .g-el-* below. */
+	color: var(--g-ink);
 	margin: 0;
+}
+
+[class*='g-el-'] .g-record-term {
+	color: var(--g-el);
 }
 
 .g-record-body {
@@ -1214,6 +1229,9 @@
 	border-radius: var(--g-radius) !important;
 	padding: var(--g-1) var(--g-4) !important;
 	box-shadow: var(--g-relief), 0 3px 0 var(--g-seam) !important;
+	/* just above the collapse breakpoint the bar is tight and these were
+	   breaking "SIGN IN" across two lines */
+	white-space: nowrap;
 }
 
 .xalian-navbar .navbar-auth-button-wrapper .btn:hover {
@@ -1245,6 +1263,11 @@
    ------------------------------------------------------------------------- */
 
 .g-tabs.nav-tabs {
+	/* the rail is the bank the keys are set into, so it ends where they do
+	   rather than running as an empty bar to the far edge of the page */
+	display: inline-flex;
+	width: auto;
+	max-width: 100%;
 	border-bottom: var(--g-hairline) solid var(--g-rule);
 	gap: 3px;
 	padding: 3px 3px 0;
@@ -1282,4 +1305,104 @@
 .g-tabs.nav-tabs .nav-link:focus-visible {
 	outline: 2px solid var(--g-phosphor);
 	outline-offset: -3px;
+}
+
+/* On a phone the bank wrapped onto a second row and left a ragged empty block
+   of rail beside it. A key bank on a machine does not wrap - it runs off the
+   edge and you slide it. */
+@media (max-width: 575px) {
+	.g-tabs.nav-tabs {
+		flex-wrap: nowrap;
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+
+	.g-tabs.nav-tabs::-webkit-scrollbar { display: none; }
+
+	.g-tabs.nav-tabs .nav-link {
+		white-space: nowrap;
+		padding: var(--g-2) var(--g-4);
+	}
+}
+
+/* The meter's name column is fixed at 8.5rem, which on a phone leaves the
+   strip itself barely 100px. */
+@media (max-width: 575px) {
+	.g-meter-row {
+		grid-template-columns: 6.5rem 1fr 4rem;
+		gap: var(--g-2);
+	}
+}
+
+/* A slider is a track with a thumb you can grip: recessed channel, moulded
+   knob, no gradients. */
+.g-range {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 100%;
+	height: 14px;
+	background: transparent;
+	cursor: pointer;
+}
+
+.g-range::-webkit-slider-runnable-track {
+	height: 8px;
+	background: var(--g-seam);
+	border-radius: 2px;
+	box-shadow: var(--g-recess);
+}
+
+.g-range::-moz-range-track {
+	height: 8px;
+	background: var(--g-seam);
+	border-radius: 2px;
+	box-shadow: var(--g-recess);
+}
+
+.g-range::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 14px;
+	height: 20px;
+	margin-top: -6px;
+	background: var(--g-hull-hi);
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: 2px;
+	box-shadow: var(--g-relief), 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.g-range::-moz-range-thumb {
+	width: 14px;
+	height: 20px;
+	background: var(--g-hull-hi);
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: 2px;
+	box-shadow: var(--g-relief), 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.g-range:focus-visible {
+	outline: 2px solid var(--g-phosphor);
+	outline-offset: 4px;
+}
+
+/* The nav sits on the same rail as page content. */
+.xalian-navbar .navbar-shell {
+	max-width: 1320px;
+	margin: 0 auto;
+	padding-left: var(--g-5);
+	padding-right: var(--g-5);
+}
+
+/* bootstrap pads the brand, which pushed the wordmark 30px off the rail every
+   page title sits on */
+.xalian-navbar .navbar-brand {
+	padding-left: 0;
+	padding-right: var(--g-5);
+}
+
+/* The sticky nav measures against the window while page content measures
+   against the scroll area, so the two rails were 5px apart on any page tall
+   enough to scroll. Reserving the gutter makes both measure the same box. */
+html {
+	scrollbar-gutter: stable;
 }

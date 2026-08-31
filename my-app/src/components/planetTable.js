@@ -70,36 +70,44 @@ class PlanetTable extends React.Component {
       <React.Fragment>
         {/* the corner flash keys the card to its element; the badge below
             already names it, so the panel does not repeat it with data-tag */}
-        <Container className={`g-panel g-panel--tagged g-el-${type} planet-panel`}>
+        <div className={`g-panel g-panel--tagged g-el-${type} planet-panel`}>
           <div className="planet-record">
+
+            {/* the heading spans the full width so the name and the story key
+                use the horizontal room instead of leaving the right half empty */}
+            <header className="planet-record-head">
+              <div className="planet-record-ident">
+                <p className="g-kicker">Survey Record</p>
+                <h2 className="g-h2 planet-record-name">{this.props.planet.name}</h2>
+              </div>
+              <div className="planet-record-actions">
+                <XalianSpeciesBadge type={type} />
+                {hasHistory && (
+                  <button type="button" className="g-btn planet-story-btn" onClick={this.toggleShowHistory}>
+                    <i className="bi bi-book" /> Read the story
+                  </button>
+                )}
+              </div>
+            </header>
 
             <div className="planet-record-plate">
               <div className="planet-plate">
                 <img className="planet-plate-img" src={this.props.planet.image} alt="" />
               </div>
-              {/* the globe is a locator pinned to the plate, not a second hero image */}
-              <img className="planet-globe" src={this.props.planet.planetImage} alt="" />
+              {/* the globe is a locator, mounted in its own darkened porthole so
+                  it reads against the bright plate behind it rather than
+                  dissolving into it */}
+              <span className="planet-globe-mount">
+                <img className="planet-globe" src={this.props.planet.planetImage} alt="" />
+              </span>
             </div>
 
-            <div className="planet-record-body">
-              <p className="g-kicker">Survey Record</p>
-              <h2 className="g-h2 planet-record-name">{this.props.planet.name}</h2>
-
-              <XalianSpeciesBadge type={type} />
-
-              <dl className="g-spec planet-spec">
-                {this.buildSpecs()}
-              </dl>
-
-              {hasHistory && (
-                <button type="button" className="g-btn planet-story-btn" onClick={this.toggleShowHistory}>
-                  <i className="bi bi-book" /> Read the story
-                </button>
-              )}
-            </div>
+            <dl className="g-spec planet-spec">
+              {this.buildSpecs()}
+            </dl>
 
           </div>
-        </Container>
+        </div>
 
         {this.props.planet.history &&
           <TextReaderModal

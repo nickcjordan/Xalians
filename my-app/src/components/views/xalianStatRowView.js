@@ -1,22 +1,17 @@
-import React, { PureComponent, lazy } from 'react';
-import { LabelList, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import ListGroup from 'react-bootstrap/ListGroup';
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Table from 'react-bootstrap/Table';
+import React from 'react';
 import XalianImage from '../xalianImage';
+import XalianSpeciesBadge from '../xalianSpeciesBadge';
 import XalianMoveSet from '../xalianMoveSet';
-import * as valueTranslator from '../../utils/valueTranslator';
-import XalianInfoBox from '../xalianInfoBox';
-
 import XalianStatChart from '../xalianStatChart';
-// const XalianStatChart = lazy(() => import('../xalianStatChart'));
 
-
+/**
+ * One owned Xalian as a record strip: the account page's row.
+ *
+ * Was four bootstrap columns floating on the starfield, with the delete button
+ * nested two Cols deep inside the name column. Same document as the species
+ * strip, with the generated stat allocation and move set as its readouts.
+ */
 class XalianStatRowView extends React.Component {
-	state = {};
 
 	callAccountPageCallback = () => {
 		this.props.accountPageCallback(this.props.xalian);
@@ -24,33 +19,50 @@ class XalianStatRowView extends React.Component {
 
 	render() {
 		let x = this.props.xalian.attributes;
+		let type = x.elements.primaryType.toLowerCase();
 
 		return (
-			<div className="xalian-stat-row-view-wrapper vertically-center-contents stackable-margin">
-				<Row>
-					<Col className="vertically-center-contents centered-view" xs={6} lg={3}>
-						{this.props.accountPage && (
-							<Col className="vertically-center-contents" lg={1}>
-								<Button className="delete-button" variant="danger" onClick={this.callAccountPageCallback}>
-									<i class="bi bi-trash"></i>
-								</Button>
-							</Col>
-						)}
-						<Col className="vertically-center-contents" lg={true}>
-							<XalianInfoBox xalian={x} />
-						</Col>
-					</Col>
-					<Col className="vertically-center-contents" xs={6} lg={2}>
-						<XalianImage colored shadowed speciesName={x.species.name} primaryType={x.elements.primaryType} secondaryType={x.elements.secondaryType} moreClasses="xalian-image-in-row" />
-					</Col>
-					<Col className="vertically-center-contents" lg={4}>
-						<XalianStatChart axisLabelColor={'white'} includeLabel labelFontSize={'8pt'} barSize={20} stats={x.stats} abbreviatedNames moreClasses="condensed-chart-div" />
-					</Col>
-					<Col className="vertically-center-contents" lg={true}>
-						<XalianMoveSet moves={x.moves}></XalianMoveSet>
-					</Col>
-				</Row>
-			</div>
+			<article className={`g-panel record-strip record-strip--wide g-el-${type}`}>
+				<div className="record-strip-plate">
+					<XalianImage
+						colored
+						speciesName={x.species.name}
+						primaryType={x.elements.primaryType}
+						secondaryType={x.elements.secondaryType}
+						moreClasses="record-strip-img" />
+				</div>
+
+				<div className="record-strip-ident">
+					<h3 className="record-strip-name">{x.species.name}</h3>
+					<XalianSpeciesBadge type={type} />
+					<XalianSpeciesBadge type={x.elements.secondaryType.toLowerCase()} />
+
+					{this.props.accountPage &&
+						<button
+							type="button"
+							className="g-btn g-btn--danger g-btn--icon record-strip-delete"
+							title="Remove from your faction"
+							aria-label={`Remove ${x.species.name} from your faction`}
+							onClick={this.callAccountPageCallback}>
+							<i className="bi bi-trash" />
+						</button>
+					}
+				</div>
+
+				<div className="record-strip-readout">
+					<XalianStatChart
+						includeLabel
+						labelFontSize={'8pt'}
+						barSize={16}
+						stats={x.stats}
+						abbreviatedNames
+						moreClasses="record-strip-chart" />
+				</div>
+
+				<div className="record-strip-readout">
+					<XalianMoveSet moves={x.moves} />
+				</div>
+			</article>
 		);
 	}
 }

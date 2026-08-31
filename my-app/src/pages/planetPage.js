@@ -42,17 +42,13 @@ class PlanetPage extends React.Component {
             <Container fluid className="home-background">
             <SplashGalaxyBackground direction={'bottom-left'} speed={0.2}>
 
-                <Container className="content-container" >
-                    <Row >
-
-                        <Col className="template-col-wrapper">
-                            <h1 className="g-title">Discovered Planets</h1>
-                            {this.buildPlanets()}
-                        </Col>
-
-                    </Row>
-
-                </Container>
+                <div className="g-shell page-shell">
+                    <header className="page-header">
+                        <p className="g-kicker">Planetary Survey</p>
+                        <h1 className="g-title">Discovered Planets</h1>
+                    </header>
+                    {this.buildPlanets()}
+                </div>
                 </SplashGalaxyBackground>
             </Container>
         </React.Fragment>
