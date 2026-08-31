@@ -262,7 +262,7 @@ class DuelPlaygroundPage extends React.Component {
 		const states = [
 			{ caption: 'At rest', note: 'Your side.', piece: { team: 'own' } },
 			{ caption: 'At rest', note: 'Theirs.', piece: { team: 'foe' } },
-			{ caption: 'Commanded', note: 'The square is live: a bar of light runs a circuit of its edge, the way the console\'s own working bar tracks its recess. Movement catches the eye far sooner than weight does, so the edge itself can stay one pixel thin.', piece: { team: 'own', selected: true } },
+			{ caption: 'Commanded', note: 'The console has acquired this specimen. Four brackets fly in from outside and lock on, then hold with a slow breath. They never join up, so there is no box - the corners imply the square and the creature stands in open space.', piece: { team: 'own', selected: true } },
 			{ caption: 'Inspected', note: 'Outlined rather than lit. Inspecting is a question, not a command, so it does not spend a fill.', piece: { team: 'foe', referenced: true } },
 			{ caption: 'In reach', note: 'Nothing is drawn on the creature - the bracket is on the square, containing it. It needs an attacker to be a study of anything, because reach is a relationship. See section 05.', piece: { team: 'foe', targetable: true }, withTarget: true },
 			{ caption: 'Carrying', note: 'The win condition, so it gets the loudest thing the floor has: the square goes hazard-striped in the flag\'s colour. Being the tile rather than the creature, it stacks with being commanded.', piece: { team: 'own', carrying: true, flagTeam: 'foe' } },

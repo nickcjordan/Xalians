@@ -418,76 +418,66 @@
 .duel-target-tile--weak .duel-target-wash,
 .duel-target-tile--immune .duel-target-wash { fill: var(--g-ink-low); opacity: 0.05; }
 
-/* WHO IS ACTING.
-   The piece's own plinth is energised: its rim takes the side's colour and
-   throws light onto the square it is standing on. Corner brackets were the same
-   mistake as the target ring - camera-space furniture stapled to a world-space
-   object - and they had the extra problem of being the target's shape in a
-   different colour. Changing the object beats drawing on top of it. */
-/* The plate the commanded piece stands on is powered: the disc goes from
-   gunmetal to the side's colour and is lit from inside rather than ringed.
-   A creature standing on a lit plate is a physical situation; a creature with a
-   coloured halo is a UI convention drawn over a world-space object, which is the
-   mistake this whole design keeps having to unlearn. */
-/* COMMANDED - the square is live.
-   A static outline had to be heavy to be noticed, and heavy is exactly what a
-   board carrying twelve pieces cannot afford. Motion is cheaper: the eye is
-   drawn by movement long before it is drawn by weight, so the edge can be thin.
+/* COMMANDED.
+   Not a box. Two earlier passes drew a square around the creature and then tried
+   to make the square less objectionable - thinner, then with its edge animated -
+   but the objection was the square. A rectangle enclosing a creature says
+   "container", and nothing about being the piece under your hand is containment.
 
-   Not a pulse. A slow breathing glow on an 8x8 grid reads as the board being
-   alive rather than as one square being chosen, and this board already animates
-   during move replay. This follows the console's own idiom instead - the same
-   one .g-working-bar uses - where something travels a fixed track at machine
-   tempo: a single bar of light completes a circuit of the tile's edge, the way a
-   scanner sweeps a plate. */
+   The console has acquired this specimen. Four corner brackets fly in from
+   outside and lock on, the way an instrument acquires a target, then hold with a
+   slow breath so the mark stays alive without moving enough to distract. The
+   brackets never join, so there is no outline - the corners imply the square and
+   the creature stands in open space. */
 .duel-piece--selected .duel-piece-base {
-  border-color: color-mix(in srgb, var(--duel-team) 70%, transparent);
-  border-width: 1px;
-  background:
-    linear-gradient(0deg,
-      color-mix(in srgb, var(--duel-team) 14%, transparent) 0%,
-      transparent 70%),
-    radial-gradient(ellipse at 50% 92%, rgba(0, 0, 0, 0.55) 0%, transparent 62%);
-  box-shadow: inset 0 0 10px color-mix(in srgb, var(--duel-team) 22%, transparent);
-  overflow: hidden;
+  border: 0;
+  background: radial-gradient(ellipse at 50% 92%, rgba(0, 0, 0, 0.55) 0%, transparent 62%);
+  box-shadow: none;
 }
 
-/* The travelling bar.
-   The rotating gradient is bigger than the tile so its lit wedge sweeps a
-   constant arc, but the edge band has to belong to the TILE, not to the wedge.
-   So the mask lives on this element at the tile's own size, with the oversized
-   gradient painted inside it: inset 0 makes the two share geometry, and the
-   conic is scaled up by transform instead of by width. */
+/* Four corners, painted as eight gradient arms on one element. Two
+   pseudo-elements can only honestly draw two corners; the box-shadow trick meant
+   to fake the other two drew filled squares rather than brackets. As a
+   background every corner has the same construction and there is one thing to
+   animate. */
 .duel-piece--selected .duel-piece-base::before {
   content: '';
   position: absolute;
-  inset: 0;
-  border-radius: 2px;
-  padding: 2px;
-  box-sizing: border-box;
-  background: conic-gradient(
-    from 0deg at 50% 50%,
-    transparent 0deg,
-    transparent 250deg,
-    color-mix(in srgb, var(--duel-team) 25%, transparent) 305deg,
-    color-mix(in srgb, var(--duel-team) 100%, white) 352deg,
-    color-mix(in srgb, var(--duel-team) 100%, white) 360deg);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-  animation: duel-scan 1.9s linear infinite;
+  inset: -2px;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--duel-team), var(--duel-team)) 0 0 / 30% 2px no-repeat,
+    linear-gradient(var(--duel-team), var(--duel-team)) 0 0 / 2px 30% no-repeat,
+    linear-gradient(var(--duel-team), var(--duel-team)) 100% 0 / 30% 2px no-repeat,
+    linear-gradient(var(--duel-team), var(--duel-team)) 100% 0 / 2px 30% no-repeat,
+    linear-gradient(var(--duel-team), var(--duel-team)) 0 100% / 30% 2px no-repeat,
+    linear-gradient(var(--duel-team), var(--duel-team)) 0 100% / 2px 30% no-repeat,
+    linear-gradient(var(--duel-team), var(--duel-team)) 100% 100% / 30% 2px no-repeat,
+    linear-gradient(var(--duel-team), var(--duel-team)) 100% 100% / 2px 30% no-repeat;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--duel-team) 65%, transparent));
+  animation:
+    duel-acquire 260ms cubic-bezier(0.16, 0.84, 0.36, 1) both,
+    duel-hold 2.6s ease-in-out 260ms infinite;
 }
 
-@keyframes duel-scan {
-  to { transform: rotate(1turn); }
+/* fly in from outside and lock on */
+@keyframes duel-acquire {
+  from { opacity: 0; transform: scale(1.75); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* the held breath - a few percent, slowly, so it reads as alive rather than as
+   something demanding to be watched */
+@keyframes duel-hold {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.06); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* the whole point was to avoid weight, so with motion off the edge simply
-     lights evenly rather than reverting to the heavy outline */
   .duel-piece--selected .duel-piece-base::before {
     animation: none;
-    background: color-mix(in srgb, var(--duel-team) 85%, white);
+    opacity: 1;
+    transform: none;
   }
 }
 
