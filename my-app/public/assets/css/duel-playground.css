@@ -1,0 +1,272 @@
+/*--------------------------------------------------------------
+# Duel affordance reference (/duel/reference)
+#
+# Page scaffolding only. Every mark on this page is drawn by the
+# duel's own components against duel.css - if a rule here changed
+# how a board looks, the page would be lying about the game.
+--------------------------------------------------------------*/
+
+.dp-page {
+  padding-bottom: var(--g-9);
+}
+
+.dp-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--g-5);
+  align-items: center;
+  margin-top: var(--g-5);
+  padding: var(--g-3) var(--g-4);
+}
+
+.dp-control {
+  display: flex;
+  align-items: center;
+  gap: var(--g-3);
+  margin: 0;
+}
+
+.dp-control-value {
+  font-size: var(--g-size-micro);
+  color: var(--g-ink-mid);
+  min-width: 44px;
+}
+
+/* --------------------------------------------------------- section furniture */
+
+.dp-subhead {
+  margin: var(--g-6) 0 var(--g-4) 0;
+  max-width: var(--g-measure);
+}
+
+.dp-subhead-title {
+  margin: 0 0 var(--g-2) 0;
+}
+
+.dp-subhead-note {
+  margin: 0;
+  color: var(--g-ink-mid);
+}
+
+/* Specimens run in a wrapping row rather than a fixed grid: they are different
+   widths on purpose (a 3-square study beside a full 8x8 board), and forcing
+   them into equal columns would pad the small ones into looking important. */
+.dp-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--g-5);
+  align-items: flex-start;
+  margin-bottom: var(--g-5);
+}
+
+.dp-row--stack {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.dp-row--rails {
+  align-items: stretch;
+}
+
+/* ------------------------------------------------------------------ specimen */
+
+/* Sized by the board it holds - an 8x8 scenario is legitimately twice the width
+   of a 3-square study. The figure must never be capped below its board: the
+   board is not a flex child of it and does not shrink to match, so a max-width
+   here does not narrow the board, it just lets it overlap the next specimen. */
+.duel-specimen {
+  margin: 0;
+  width: fit-content;
+}
+
+/* The tray's own auto margins are for centring it in a match. Here it is one
+   item in a row. */
+.duel-specimen .duel-specimen-wrapper {
+  margin: 0;
+  padding: 10px;
+}
+
+/* The grid is laid out in CSS rather than in a table, so eight cells measure
+   exactly eight cells. The match board used to carry two pixels of border
+   spacing, which put the traced overlays fourteen pixels out of register. */
+.duel-specimen-cells {
+  display: grid;
+  position: relative;
+  z-index: 2;
+}
+
+.duel-specimen-cell {
+  position: relative;
+  text-align: center;
+}
+
+/* The caption is the one part allowed to set the figure's width, and only for
+   boards narrower than it. Capped so a long note on a 3-square study does not
+   open a gap in the row wide enough to read as a missing specimen. */
+.duel-specimen-caption {
+  display: block;
+  margin-top: var(--g-3);
+  width: 260px;
+  max-width: 100%;
+}
+
+.duel-specimen--wide .duel-specimen-caption {
+  width: auto;
+}
+
+.duel-specimen-name {
+  display: block;
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-micro);
+  text-transform: uppercase;
+  letter-spacing: var(--g-track-label);
+  color: var(--g-hazard);
+}
+
+.duel-specimen-note {
+  display: block;
+  margin-top: var(--g-1);
+  font-family: var(--g-font-body);
+  font-size: var(--g-size-small);
+  line-height: 1.45;
+  color: var(--g-ink-mid);
+}
+
+.dp-caption {
+  margin: 0 0 var(--g-2) 0;
+  max-width: 320px;
+}
+
+/* ------------------------------------------------------------------ channels */
+
+.dp-channels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--g-4);
+  margin-bottom: var(--g-6);
+}
+
+.dp-channel {
+  padding: var(--g-4);
+}
+
+/* the hue itself, stated before anything is said about it */
+.dp-channel-swatch {
+  display: block;
+  height: 8px;
+  margin-bottom: var(--g-3);
+  border-radius: 1px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.dp-channel-name {
+  margin: 0;
+}
+
+.dp-channel-means {
+  margin: var(--g-1) 0 var(--g-3) 0;
+  font-family: var(--g-font-display);
+  font-size: var(--g-size-h3);
+  text-transform: uppercase;
+  letter-spacing: var(--g-track-tight);
+  color: var(--g-ink-high);
+}
+
+.dp-channel-body {
+  margin: 0;
+  color: var(--g-ink-mid);
+  font-size: var(--g-size-small);
+}
+
+/* ------------------------------------------------------------------ elements */
+
+.dp-elements {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--g-4);
+  padding: var(--g-4);
+}
+
+.dp-element {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--g-2);
+  min-width: 66px;
+}
+
+.dp-element-name {
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-micro);
+  text-transform: uppercase;
+  letter-spacing: var(--g-track-label);
+  color: var(--g-ink-mid);
+}
+
+/* ---------------------------------------------------------------------- rail */
+
+/* In a match a rail is a full-height column beside the board. Here four of them
+   stand side by side, so they are capped and allowed to scroll internally. */
+.dp-rail-case {
+  width: 270px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Setup slots carry no meters, so that rail is shorter than the others and its
+   caption floated a hundred pixels above theirs. The rails share a height so the
+   notes below them read as one row. */
+.dp-rail-case .duel-roster-rail {
+  flex: 1;
+}
+
+.dp-rail-case .duel-roster-rail {
+  height: auto;
+  max-height: 460px;
+}
+
+/* --------------------------------------------------------------- instruments */
+
+.dp-instrument {
+  width: 100%;
+  max-width: 620px;
+}
+
+/* In a match the strip is docked to the foot of the viewport, which is where
+   its fixed width and side margins come from. Undocked onto the page those
+   become an indent and a 460px column, so they are unset rather than inherited
+   into a layout they were never written for. */
+.dp-status-strip {
+  position: static;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  transform: none;
+}
+
+.dp-instrument .duel-turn-banner,
+.dp-instrument .duel-winner-text {
+  margin: 0 0 var(--g-2) 0;
+}
+
+/* ------------------------------------------------------------------ verdicts */
+
+/* One panel per verdict. Set as a wrapping row of headings they ran together
+   into a single sentence - five separate readings reading as one line of prose
+   is the opposite of what a reference sheet is for. */
+.dp-verdicts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--g-4);
+}
+
+.dp-verdict {
+  padding: var(--g-3) var(--g-4);
+}
+
+.dp-verdict-line {
+  margin: var(--g-2) 0 0 0;
+}

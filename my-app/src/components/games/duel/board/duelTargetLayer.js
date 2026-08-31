@@ -28,9 +28,19 @@ export function verdictFor(effectiveness) {
 
 /** how far the solution stops short of each piece, so it runs floor to floor */
 const CLEARANCE = 0.44;
-/** registration ticks: how far in from the tile edge, and how long */
+
+/**
+ * The bracket is drawn on the lower part of the tile rather than around all of
+ * it. A creature's art rises about a quarter of a square above the ground it is
+ * standing on - its footprint is the token base near the tile's bottom edge, not
+ * the tile's outline - so a bracket squared up on the full tile put its top two
+ * corners behind the creature's head, and a mark floating behind a creature does
+ * not read as ground. Sitting low and wide it reads as the patch of floor the
+ * thing is standing on, which is what it is.
+ */
 const TICK_INSET = 0.085;
-const TICK_LENGTH = 0.3;
+const TICK_TOP = 0.42;
+const TICK_LENGTH = 0.26;
 
 class DuelTargetLayer extends React.Component {
 
@@ -69,21 +79,29 @@ class DuelTargetLayer extends React.Component {
 		const r = Math.floor(targetIndex / columns);
 		const i = TICK_INSET;
 		const L = TICK_LENGTH;
+		// the floor patch: the full width of the tile, but only its lower half
+		const x0 = c + i;
+		const x1 = c + 1 - i;
+		const y0 = r + TICK_TOP;
+		const y1 = r + 1 - i;
+		const V = Math.min(L, (y1 - y0) / 2.2);
 		const ticks = [
-			`M ${c + i} ${r + i + L} L ${c + i} ${r + i} L ${c + i + L} ${r + i}`,
-			`M ${c + 1 - i - L} ${r + i} L ${c + 1 - i} ${r + i} L ${c + 1 - i} ${r + i + L}`,
-			`M ${c + i} ${r + 1 - i - L} L ${c + i} ${r + 1 - i} L ${c + i + L} ${r + 1 - i}`,
-			`M ${c + 1 - i - L} ${r + 1 - i} L ${c + 1 - i} ${r + 1 - i} L ${c + 1 - i} ${r + 1 - i - L}`,
+			`M ${x0} ${y0 + V} L ${x0} ${y0} L ${x0 + L} ${y0}`,
+			`M ${x1 - L} ${y0} L ${x1} ${y0} L ${x1} ${y0 + V}`,
+			`M ${x0} ${y1 - V} L ${x0} ${y1} L ${x0 + L} ${y1}`,
+			`M ${x1 - L} ${y1} L ${x1} ${y1} L ${x1} ${y1 - V}`,
 		].join(' ');
 
 		return (
 			<g key={`tile-${targetIndex}`} className={`duel-target-tile duel-target-tile--${verdict.key}`}>
-				<rect className="duel-target-wash" x={c} y={r} width={1} height={1} />
+				<rect className="duel-target-wash" x={x0} y={y0} width={x1 - x0} height={y1 - y0} />
 				<path className="duel-target-ticks" d={ticks} vectorEffect="non-scaling-stroke" />
-				{/* the multiplier, stencilled on the tile - only when it is worth
-				    saying, because a neutral trade is the default */}
+				{/* The multiplier, stencilled beside the patch - only when it is
+				    worth saying, because a neutral trade is the default. It rides
+				    the bracket's top right because a piece's element disc sits at
+				    its bottom left, and the two were colliding. */}
 				{verdict.key !== 'even' &&
-					<text className="duel-target-figure" x={c + 0.5} y={r + 1 - i - 0.07} textAnchor="middle">
+					<text className="duel-target-figure" x={x1 - 0.03} y={y0 - 0.09} textAnchor="end">
 						{verdict.label}
 					</text>
 				}

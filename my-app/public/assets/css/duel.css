@@ -333,11 +333,19 @@
   opacity: 0.85;
 }
 
+/* The figure is set in viewBox units - one unit is one square - so it scales
+   with the board rather than needing a size per breakpoint. At 0.19 it came out
+   around eleven pixels on a full board, which is below the size this typeface
+   stays legible at over a textured floor. */
 .duel-target-figure {
   font-family: var(--g-font-mono);
-  font-size: 0.19px;
+  font-size: 0.26px;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
   fill: var(--g-lamp-red);
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.85);
+  stroke-width: 0.05px;
 }
 
 /* One hue, three intensities. A matchup worth spending your single attack on
@@ -350,13 +358,13 @@
 .duel-target-tile--strong .duel-target-wash { opacity: 0.11; }
 
 .duel-target-tile--weak .duel-target-ticks,
-.duel-target-tile--immune .duel-target-ticks { stroke: var(--g-ink-low); stroke-width: 2; opacity: 0.7; }
+.duel-target-tile--immune .duel-target-ticks { stroke: var(--g-ink-mid); stroke-width: 2; opacity: 0.85; }
 
 .duel-target-tile--weak .duel-target-figure,
-.duel-target-tile--immune .duel-target-figure { fill: var(--g-ink-low); }
+.duel-target-tile--immune .duel-target-figure { fill: var(--g-ink-mid); }
 
 .duel-target-tile--weak .duel-target-wash,
-.duel-target-tile--immune .duel-target-wash { fill: var(--g-ink-low); opacity: 0.03; }
+.duel-target-tile--immune .duel-target-wash { fill: var(--g-ink-low); opacity: 0.05; }
 
 /* WHO IS ACTING.
    The piece's own plinth is energised: its rim takes the side's colour and
@@ -1059,10 +1067,13 @@
   color: var(--g-lamp-amber);
 }
 
+/* Matches the board's own weak/immune ink. Dead ink still has to be read - at
+   ink-low over the rail's dark slot the multiplier was invisible, which turned
+   "this trade is bad" into "there is nothing here". */
 .duel-roster-verdict--weak,
 .duel-roster-verdict--immune {
-  border-color: var(--g-ink-low);
-  color: var(--g-ink-low);
+  border-color: var(--g-ink-mid);
+  color: var(--g-ink-mid);
 }
 
 .duel-roster-meters {

@@ -17,6 +17,7 @@ import gsap from 'gsap';
 import Draggable from 'gsap/Draggable';
 import Flip from 'gsap/Flip';
 import XalianPieceStateChart from './xalianPieceStateChart';
+import DuelPieceToken, { pieceShadowFilter } from './duelPieceToken';
 gsap.registerPlugin(Draggable, Flip);
 
 class DuelBoardCell extends React.Component {
@@ -406,12 +407,6 @@ class DuelBoardCell extends React.Component {
 		let isCarrying = isPlayerHoldingFlag || isOpponentHoldingFlag;
 		let carriedFlagColor = isPlayerHoldingFlag ? duelConstants.PLAYER_ONE_COLOR : duelConstants.PLAYER_TWO_COLOR;
 
-		let pieceClasses = ['duel-piece', 'duel-' + cellXalian.xalianId + '-piece'];
-		if (isSelectedXalian) pieceClasses.push('duel-piece--selected');
-		if (isReferencedXalian && !isSelectedXalian) pieceClasses.push('duel-piece--referenced');
-		if (isTargetable) pieceClasses.push('duel-piece--targetable');
-		if (isCarrying) pieceClasses.push('duel-piece--carrying');
-
 		return (<React.Fragment>
 			<div className='' style={{width: `${this.props.cellSize}px`, height: `${this.props.cellSize}px`, lineHeight: `${this.props.cellSize}px`, position: 'absolute'}} >
 				{connectors}
@@ -426,65 +421,27 @@ class DuelBoardCell extends React.Component {
 							speciesName={cellXalian.species.name}
 							primaryType={cellXalian.elementType}
 							fill={'black'}
-							filter={this.buildDropShadowFilter(teamColor)}
+							filter={pieceShadowFilter(teamColor, this.props.cellSize)}
 							moreClasses="duel-piece-xalian-icon"
 							/>
 				</div>
 
-				<div id={'duel-' + cellXalian.xalianId + '-piece'} className={pieceClasses.join(' ')} style={{ position: 'absolute', height: '100%', width: '100%', zIndex: 200 + parseInt(this.props.cellIndex), '--duel-team': teamColor, '--duel-flag': carriedFlagColor }}>
-
-					{/* XALIAN IMAGE */}
-					<XalianImage className='animate-state'
-						padding={'0px'}
-						speciesName={cellXalian.species.name}
-						primaryType={cellXalian.elementType}
-						fill={'black'}
-						filter={this.buildDropShadowFilter(teamColor)}
-						moreClasses="duel-piece-xalian-icon"
-					/>
-
-					{/* TOKEN BASE - the creature stands on a machined disc rimmed in its
-					    team's colour, so a piece reads as an object on the floor rather
-					    than as artwork printed onto the square */}
-					<span className="duel-piece-base" />
-
-					{/* WHO IS ACTING is drawn by the piece's own plinth lighting up
-					    (see .duel-piece--selected in duel.css) rather than by
-					    brackets stamped over the creature. */}
-
-					{/* TYPE SYMBOL */}
-					<XalianTypeSymbolBadge size={this.props.cellSize/2.5} type={cellXalian.elementType.toLowerCase()} />
-
-					{/* VITALS - these live in the roster rail now, where they have room
-					    to be read. On the board they surface only when you point at a
-					    piece, so twelve of them are not competing with the board at all
-					    times. */}
-					<span className="duel-piece-vitals">
-						<XalianPieceStateChart xalianState={cellXalian.state} />
-					</span>
-
-					{/* CARRYING THE FLAG */}
-					{isCarrying &&
-						<DuelFlagIcon className="duel-flag-carried" style={{ fill: carriedFlagColor }} />
-					}
-				</div>
+				<DuelPieceToken
+					id={'duel-' + cellXalian.xalianId + '-piece'}
+					xalian={cellXalian}
+					cellSize={this.props.cellSize}
+					teamColor={teamColor}
+					flagColor={carriedFlagColor}
+					selected={isSelectedXalian}
+					referenced={isReferencedXalian}
+					targetable={isTargetable}
+					carrying={isCarrying}
+					zIndex={200 + parseInt(this.props.cellIndex)} />
 
 			</div>
 			</React.Fragment>
 		);
 	}
-
-	// A tight rim in the team's colour plus a shadow cast onto the floor. The
-	// old three-layer halo bloomed a sixth of a cell in every direction, which
-	// washed out the creature it was supposed to identify and lit the arena
-	// floor around it.
-	buildDropShadowFilter = (teamColor) => {
-        return `${this.dropShadow(1, gsap.utils.interpolate(teamColor, "white", 0.25))} ${this.dropShadow(this.props.cellSize / 26, gsap.utils.interpolate(teamColor, "black", 0.25))} ${this.dropShadow(this.props.cellSize / 14, 'rgba(0, 0, 0, 0.85)', 0, this.props.cellSize / 22)}`;
-    }
-
-    dropShadow = (blur, color, x = 0, y = 0) => {
-        return `drop-shadow(${x}px ${y}px ${blur}px ${color})`;
-    }
 
 	buildConnectorsForOccupiedCell = (index) => {
 		var cellConnectors = [];
