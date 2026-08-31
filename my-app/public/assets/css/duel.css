@@ -429,21 +429,66 @@
    A creature standing on a lit plate is a physical situation; a creature with a
    coloured halo is a UI convention drawn over a world-space object, which is the
    mistake this whole design keeps having to unlearn. */
+/* COMMANDED - the square is live.
+   A static outline had to be heavy to be noticed, and heavy is exactly what a
+   board carrying twelve pieces cannot afford. Motion is cheaper: the eye is
+   drawn by movement long before it is drawn by weight, so the edge can be thin.
+
+   Not a pulse. A slow breathing glow on an 8x8 grid reads as the board being
+   alive rather than as one square being chosen, and this board already animates
+   during move replay. This follows the console's own idiom instead - the same
+   one .g-working-bar uses - where something travels a fixed track at machine
+   tempo: a single bar of light completes a circuit of the tile's edge, the way a
+   scanner sweeps a plate. */
 .duel-piece--selected .duel-piece-base {
-  border-color: color-mix(in srgb, var(--duel-team) 90%, white);
-  border-width: 2px;
+  border-color: color-mix(in srgb, var(--duel-team) 70%, transparent);
+  border-width: 1px;
   background:
-    linear-gradient(160deg, rgba(255, 244, 214, 0.09) 0%, transparent 45%),
-    radial-gradient(ellipse at 50% 110%,
-      color-mix(in srgb, var(--duel-team) 55%, transparent) 0%,
-      color-mix(in srgb, var(--duel-team) 18%, transparent) 55%,
-      transparent 80%),
     linear-gradient(0deg,
-      color-mix(in srgb, var(--duel-team) 22%, transparent) 0%,
-      color-mix(in srgb, var(--duel-team) 6%, transparent) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 244, 214, 0.18),
-    0 0 14px color-mix(in srgb, var(--duel-team) 70%, transparent);
+      color-mix(in srgb, var(--duel-team) 14%, transparent) 0%,
+      transparent 70%),
+    radial-gradient(ellipse at 50% 92%, rgba(0, 0, 0, 0.55) 0%, transparent 62%);
+  box-shadow: inset 0 0 10px color-mix(in srgb, var(--duel-team) 22%, transparent);
+  overflow: hidden;
+}
+
+/* The travelling bar.
+   The rotating gradient is bigger than the tile so its lit wedge sweeps a
+   constant arc, but the edge band has to belong to the TILE, not to the wedge.
+   So the mask lives on this element at the tile's own size, with the oversized
+   gradient painted inside it: inset 0 makes the two share geometry, and the
+   conic is scaled up by transform instead of by width. */
+.duel-piece--selected .duel-piece-base::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 2px;
+  padding: 2px;
+  box-sizing: border-box;
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    transparent 0deg,
+    transparent 250deg,
+    color-mix(in srgb, var(--duel-team) 25%, transparent) 305deg,
+    color-mix(in srgb, var(--duel-team) 100%, white) 352deg,
+    color-mix(in srgb, var(--duel-team) 100%, white) 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  animation: duel-scan 1.9s linear infinite;
+}
+
+@keyframes duel-scan {
+  to { transform: rotate(1turn); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* the whole point was to avoid weight, so with motion off the edge simply
+     lights evenly rather than reverting to the heavy outline */
+  .duel-piece--selected .duel-piece-base::before {
+    animation: none;
+    background: color-mix(in srgb, var(--duel-team) 85%, white);
+  }
 }
 
 /* The pool of light the energised plinth casts on the floor.
