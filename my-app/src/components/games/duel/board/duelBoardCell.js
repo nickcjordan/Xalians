@@ -377,20 +377,7 @@ class DuelBoardCell extends React.Component {
 		let isSelectedXalian = this.props.selectedXalianId && this.props.selectedXalianId === cellXalian.xalianId;
 		let isReferencedXalian = this.props.referencedXalianId && this.props.referencedXalianId === cellXalian.xalianId;
 
-		let selectedXalian = duelUtil.getXalianFromIdAndXalians(this.props.selectedXalianId, this.props.G.xalians);
 		let teamColor = this.props.boardState.playerStates[0].activeXalianIds.includes(xalianId) ? duelConstants.PLAYER_ONE_COLOR : duelConstants.PLAYER_TWO_COLOR;
-
-		let isEnemy = duelUtil.isPlayersTurn(this.props.ctx) && !duelUtil.isPlayerPiece(xalianId, this.props.boardState)
-		|| duelUtil.isOpponentsTurn(this.props.ctx) && !duelUtil.isOpponentPiece(xalianId, this.props.boardState);
-
-		// one attack per team per turn, so once it is spent nothing on the board
-		// should still be advertising itself as a target
-		let isTargetable = settled
-			&& isEnemy
-			&& !!selectedXalian
-			&& this.props.selectedXalianAttackableIndices
-			&& this.props.selectedXalianAttackableIndices.includes(this.props.cellIndex)
-			&& !this.props.boardState.currentTurnDetails.hasAttacked;
 
 		let connectors = this.buildConnectorsForOccupiedCell(this.props.cellIndex);
 
@@ -434,7 +421,6 @@ class DuelBoardCell extends React.Component {
 					flagColor={carriedFlagColor}
 					selected={isSelectedXalian}
 					referenced={isReferencedXalian}
-					targetable={isTargetable}
 					carrying={isCarrying}
 					zIndex={200 + parseInt(this.props.cellIndex)} />
 

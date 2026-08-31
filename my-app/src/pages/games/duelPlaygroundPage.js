@@ -52,6 +52,7 @@ class DuelPlaygroundPage extends React.Component {
 		squad: null,
 		showChooser: false,
 		expandedXalianId: null,
+		viewport: typeof window !== 'undefined' ? window.innerWidth : 1600,
 	};
 
 	componentDidMount() {
@@ -60,6 +61,27 @@ class DuelPlaygroundPage extends React.Component {
 		let samples = retrievalUtil.getMockXalianList() || [];
 		let squad = samples.slice(0, 12).map(duelPieceBuilder.buildDuelPiece);
 		this.setState({ squad });
+		window.addEventListener('resize', this.handleResize);
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener('resize', this.handleResize);
+	}
+
+	handleResize = () => this.setState({ viewport: window.innerWidth });
+
+	/**
+	 * The cell size a board of this many columns can actually have here.
+	 *
+	 * The slider sets an intent, not a result: an 8x8 at the default 62px is 408
+	 * pixels of board inside a 390 pixel phone, which put the whole page into
+	 * horizontal scroll. Every specimen is clamped to the width its column really
+	 * has, so the slider stays a preference and the layout stays honest.
+	 */
+	cellFor(columns) {
+		const GUTTER = 96;      // page padding plus the tray's own frame
+		const avail = Math.max(160, this.state.viewport - GUTTER);
+		return Math.max(22, Math.min(this.state.cellSize, Math.floor(avail / columns)));
 	}
 
 	/** a piece with its vitals set where we want them, without touching the source */
@@ -98,7 +120,7 @@ class DuelPlaygroundPage extends React.Component {
 	/* ------------------------------------------------------------- 01 channels */
 
 	renderChannels(section) {
-		const size = this.state.cellSize;
+		const size = this.cellFor(5);
 		const channels = [
 			{
 				name: 'Amber', means: 'Ground you may take',
@@ -152,7 +174,7 @@ class DuelPlaygroundPage extends React.Component {
 	/* ---------------------------------------------------------------- 02 floor */
 
 	renderFloor(section) {
-		const size = this.state.cellSize;
+		const size = this.cellFor(5);
 		return (
 			<section className="sg-section" id={section.id}>
 				{this.renderSectionHead(section, 'The tray, the floor and the two objects that sit on it before any creature does. The floor is generated in CSS - it used to be a JPG hotlinked from somebody\'s blog, which made a stranger\'s server a production dependency of the game.')}
@@ -179,7 +201,7 @@ class DuelPlaygroundPage extends React.Component {
 	/* ------------------------------------------------------------- 03 movement */
 
 	renderMovement(section) {
-		const size = this.state.cellSize;
+		const size = this.cellFor(5);
 		const cases = [
 			{
 				caption: 'One square', note: 'A piece with distance 1.',
@@ -236,13 +258,13 @@ class DuelPlaygroundPage extends React.Component {
 	/* --------------------------------------------------------------- 04 pieces */
 
 	renderPieces(section) {
-		const size = this.state.cellSize;
+		const size = this.cellFor(3);
 		const states = [
 			{ caption: 'At rest', note: 'Your side.', piece: { team: 'own' } },
 			{ caption: 'At rest', note: 'Theirs.', piece: { team: 'foe' } },
 			{ caption: 'Commanded', note: 'The rim is energised and casts a pool of team colour on the floor.', piece: { team: 'own', selected: true } },
 			{ caption: 'Inspected', note: 'Lit, but in no side\'s colour, because nothing is being commanded.', piece: { team: 'foe', referenced: true } },
-			{ caption: 'In reach', note: 'The mark for this lives on the floor, not on the creature. See section 05.', piece: { team: 'foe', targetable: true } },
+			{ caption: 'In reach', note: 'Nothing is drawn on the creature at all - the whole mark lives on the floor, which is why this study needs an attacker to be a study of anything. See section 05.', piece: { team: 'foe', targetable: true }, withTarget: true },
 			{ caption: 'Carrying', note: 'The win condition, so it is the loudest thing a piece can wear: a pennant plus a ring in the flag\'s colour.', piece: { team: 'own', carrying: true, flagTeam: 'foe' } },
 		];
 
@@ -254,7 +276,14 @@ class DuelPlaygroundPage extends React.Component {
 					{states.map((s, i) => (
 						<DuelSpecimenBoard key={i} columns={3} cellSize={size}
 							caption={s.caption} note={s.note}
-							pieces={[{ index: 4, xalian: this.at(i), ...s.piece }]} />
+							pieces={s.withTarget
+								? [
+									{ index: 4, xalian: this.at(i), ...s.piece },
+									{ index: 6, xalian: this.at(i + 1), team: 'own', selected: true },
+								]
+								: [{ index: 4, xalian: this.at(i), ...s.piece }]}
+							originIndex={s.withTarget ? 6 : undefined}
+							targets={s.withTarget ? [{ index: 4, verdict: verdictFor(1.5) }] : undefined} />
 					))}
 				</div>
 
@@ -283,7 +312,7 @@ class DuelPlaygroundPage extends React.Component {
 	/* ------------------------------------------------------------ 05 targeting */
 
 	renderTargeting(section) {
-		const size = this.state.cellSize;
+		const size = this.cellFor(5);
 
 		return (
 			<section className="sg-section" id={section.id}>
@@ -532,7 +561,7 @@ class DuelPlaygroundPage extends React.Component {
 	/* ------------------------------------------------------------ 09 scenarios */
 
 	renderScenarios(section) {
-		const size = Math.round(this.state.cellSize * 0.78);
+		const size = Math.round(this.cellFor(8) * 0.78);
 
 		return (
 			<section className="sg-section" id={section.id}>

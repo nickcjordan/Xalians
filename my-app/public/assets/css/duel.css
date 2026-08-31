@@ -374,24 +374,42 @@
    different colour. Changing the object beats drawing on top of it. */
 .duel-piece--selected .duel-piece-base {
   border-color: var(--duel-team, var(--g-brass));
+  border-width: 2px;
+  /* the disc itself takes the side's colour rather than staying gunmetal, so
+     the commanded piece is legible as an object and not just as a rim */
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(255, 244, 214, 0.2) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 55%,
+      color-mix(in srgb, var(--duel-team) 42%, var(--g-hull-hi)) 0%,
+      color-mix(in srgb, var(--duel-team) 26%, var(--g-hull)) 48%,
+      var(--g-seam) 100%);
+  opacity: 1;
   box-shadow:
     0 3px 6px rgba(0, 0, 0, 0.9),
-    inset 0 1px 0 rgba(255, 244, 214, 0.25),
-    0 0 12px color-mix(in srgb, var(--duel-team) 70%, transparent);
+    inset 0 1px 0 rgba(255, 244, 214, 0.3),
+    0 0 14px color-mix(in srgb, var(--duel-team) 85%, transparent);
 }
 
-/* the pool of light the energised plinth casts on the floor */
+/* The pool of light the energised plinth casts on the floor.
+   This was drawn at z-index 98, underneath the token base at 100 - and the base
+   is a 95%-opaque disc sitting on exactly the spot the glow was centred on, so
+   the light was painted behind the only thing it could have lit and the selected
+   piece read as at rest. It spills wider than the disc now (the disc is 70% of
+   the square, the pool is 96%) so what shows is the floor around the plinth
+   rather than the plinth itself, and it sits above the base so that ring of
+   floor is actually lit. */
 .duel-piece--selected::after {
   content: '';
   position: absolute;
   inset: 0;
-  z-index: 98;
+  z-index: 102;
   pointer-events: none;
   background: radial-gradient(
-    ellipse 60% 25% at 50% 88%,
-    color-mix(in srgb, var(--duel-team) 34%, transparent) 0%,
-    color-mix(in srgb, var(--duel-team) 10%, transparent) 55%,
-    transparent 78%
+    ellipse 60% 20% at 50% 88%,
+    color-mix(in srgb, var(--duel-team) 85%, transparent) 0%,
+    color-mix(in srgb, var(--duel-team) 45%, transparent) 38%,
+    color-mix(in srgb, var(--duel-team) 14%, transparent) 68%,
+    transparent 100%
   );
 }
 
@@ -401,12 +419,13 @@
   content: '';
   position: absolute;
   inset: 0;
-  z-index: 98;
+  z-index: 102;
   pointer-events: none;
   background: radial-gradient(
-    ellipse 55% 22% at 50% 88%,
-    rgba(221, 212, 189, 0.16) 0%,
-    transparent 72%
+    ellipse 44% 13% at 50% 88%,
+    rgba(221, 212, 189, 0.34) 0%,
+    rgba(221, 212, 189, 0.14) 45%,
+    transparent 100%
   );
 }
 

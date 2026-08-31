@@ -27,16 +27,19 @@ export function pieceShadowFilter(teamColor, cellSize) {
 class DuelPieceToken extends React.Component {
 
 	render() {
+		// `targetable` is deliberately not a class on the piece. Being in reach is
+		// a relationship between two pieces, so it is drawn on the floor between
+		// them by duelTargetLayer - there is nothing to put on the creature, and a
+		// class that styles nothing only invites someone to style it.
 		const {
 			xalian, cellSize, teamColor, flagColor,
-			selected, referenced, targetable, carrying,
+			selected, referenced, carrying,
 			id, zIndex, moreClasses,
 		} = this.props;
 
 		let classes = ['duel-piece', `duel-${xalian.xalianId}-piece`];
 		if (selected) classes.push('duel-piece--selected');
 		if (referenced && !selected) classes.push('duel-piece--referenced');
-		if (targetable) classes.push('duel-piece--targetable');
 		if (carrying) classes.push('duel-piece--carrying');
 		if (moreClasses) classes.push(moreClasses);
 

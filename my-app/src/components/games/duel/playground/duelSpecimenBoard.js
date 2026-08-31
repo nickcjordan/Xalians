@@ -86,7 +86,6 @@ class DuelSpecimenBoard extends React.Component {
 							flagColor={this.teamColour(piece.flagTeam || (piece.team === 'own' ? 'foe' : 'own'))}
 							selected={piece.selected}
 							referenced={piece.referenced}
-							targetable={piece.targetable}
 							carrying={piece.carrying}
 							zIndex={200 + index} />
 					}
