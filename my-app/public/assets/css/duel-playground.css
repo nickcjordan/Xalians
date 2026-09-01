@@ -305,6 +305,44 @@
   height: 100%;
 }
 
+/* The live board gives the art a team-coloured rim light and a cast shadow,
+   which is how a figure reads as standing on a floor. Printed onto a token none
+   of that applies - a coin's artwork does not glow or throw a shadow onto the
+   coin - and on the team coin the rim light was cyan on cyan. Flat ink is what
+   printing looks like.
+
+   Scoped to the flat treatments rather than applied to all four and then undone
+   for the standee: the filter is set inline by the component, so neither
+   `revert` (which rolls back to the user-agent value) nor `unset` can win
+   against an !important override. The only way to keep it is to never cancel
+   it. */
+.dp-token-milled .duel-piece-xalian-icon svg,
+.dp-token-coin .duel-piece-xalian-icon svg,
+.dp-token-element .duel-piece-xalian-icon svg {
+  filter: none !important;
+}
+
+/* The element badge was sized and placed for a creature standing in an open
+   square: at 25px on a 52px token it covered half the face. On a token it is a
+   maker's mark stamped at the edge, not a second object. */
+.dp-token-milled .duel-type-badge,
+.dp-token-coin .duel-type-badge,
+.dp-token-element .duel-type-badge {
+  width: 34% !important;
+  height: 34% !important;
+  min-width: 0 !important;
+  left: auto;
+  right: 2%;
+  bottom: 2%;
+  top: auto;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.dp-token-study .duel-type-badge svg {
+  width: 74%;
+  height: 74%;
+}
+
 /* ---- 1. MILLED DISC - a machined counter, brass rim, art stamped into it.
    The house style: the same milled metal as every other control on the site. */
 .dp-token-milled .duel-piece-base {
@@ -380,6 +418,9 @@
 
 .dp-token-element .duel-piece-xalian-icon svg { fill: rgba(0, 0, 0, 0.85) !important; }
 
+/* The standee is the one study where the creature really is a figure standing
+   on a floor, so it keeps the rim light, the cast shadow and the badge where the
+   live board puts them. */
 /* ---- 4. STANDEE - the miniature, done deliberately. A side-on figure on an
    elliptical base, with the base flattened as if seen from a high angle and the
    figure standing off the back of it. */
@@ -408,4 +449,69 @@
   flex-wrap: wrap;
   gap: var(--g-5);
   margin-bottom: var(--g-5);
+}
+
+
+/* SELECTION ON A ROUND TOKEN.
+   The live board marks the commanded piece with four corner brackets, which
+   assume a square. Around a disc they read as a box floating wide of the token -
+   the corners have nothing to sit on. A round token wants a round mark, so the
+   disc studies swap the brackets for a ring that shares the token's own edge.
+   The standee keeps the brackets: its footprint really is a square of floor. */
+.dp-token-milled .duel-piece--selected .duel-piece-base::before,
+.dp-token-coin .duel-piece--selected .duel-piece-base::before {
+  inset: -4px;
+  border-radius: 50%;
+  background: none;
+  border: 2px solid var(--duel-team);
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--duel-team) 70%, transparent));
+}
+
+/* The hexagon takes a hexagonal ring, and the standee's base a ring of its own.
+   Both are drawn on the PIECE rather than on the tile: the chip sets its own
+   clip-path to cut a hexagon, and clip-path clips an element's pseudo-elements
+   too, so a ring inset outside the tile was being cut away entirely. Nothing
+   about that is visible in the computed styles - width, opacity and animation
+   all read correctly on a mark that cannot be seen - which is why it survived a
+   check that only looked at properties. */
+.dp-token-element .duel-piece--selected .duel-piece-base::before,
+.dp-token-standee .duel-piece--selected .duel-piece-base::before {
+  content: none;
+}
+
+.dp-token-element .duel-piece--selected::after,
+.dp-token-standee .duel-piece--selected::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  z-index: 100;
+  animation:
+    duel-acquire 260ms cubic-bezier(0.16, 0.84, 0.36, 1) both,
+    duel-hold 2.6s ease-in-out 260ms infinite;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--duel-team) 70%, transparent));
+}
+
+/* the chip's frame: a hexagon with a hexagon cut out of it */
+.dp-token-element .duel-piece--selected::after {
+  inset: 3%;
+  background: var(--duel-team);
+  clip-path: polygon(
+    25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%,
+    4% 50%, 27% 91%, 73% 91%, 96% 50%, 73% 9%, 27% 9%, 4% 50%, 0% 50%);
+}
+
+/* the standee's base: an ellipse round the footprint, not the figure */
+.dp-token-standee .duel-piece--selected::after {
+  left: 8%;
+  right: 8%;
+  bottom: 3%;
+  height: 22%;
+  border-radius: 50%;
+  border: 2px solid var(--duel-team);
+}
+
+/* the round tokens keep their ring on the tile - no clip-path to fight */
+.dp-token-milled .duel-piece--selected .duel-piece-base::before,
+.dp-token-coin .duel-piece--selected .duel-piece-base::before {
+  z-index: 100;
 }
