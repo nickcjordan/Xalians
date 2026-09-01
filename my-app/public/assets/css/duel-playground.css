@@ -288,16 +288,20 @@
 --------------------------------------------------------------*/
 
 /* Shared: every study repositions the art, so neutralise the live rule first.
-   The art is also clipped to the token's own face. Species silhouettes are wider
-   than they are tall in several cases, and unclipped they spill across
-   neighbouring squares - at which point the token stops reading as an object and
-   goes back to being a sticker with a disc behind it. */
+
+   The art is NOT clipped. An earlier version set overflow:hidden here to stop
+   wide silhouettes spilling into neighbouring squares, and that destroyed the
+   creatures: the art is scaled to fill a square while the token face is a
+   circle, so everything reaching into the corners - antlers, wings, tails - was
+   sliced off at the rim. Checked against the standee, which draws the art
+   uncropped, four of six species had lost a defining feature. The art is sized
+   to fit inside the face instead. A token whose artwork is missing its wings is
+   not a smaller problem than one that overlaps its neighbour. */
 .dp-token-study .duel-piece-xalian-icon {
   left: 50%;
   bottom: auto;
   top: 50%;
   transform: translate(-50%, -50%);
-  overflow: hidden;
 }
 
 .dp-token-study .duel-piece-xalian-icon svg {
@@ -344,17 +348,21 @@
 /* The element badge was sized and placed for a creature standing in an open
    square: at 25px on a 52px token it covered half the face. On a token it is a
    maker's mark stamped at the edge, not a second object. */
+/* The badge sits OUTSIDE the token face, clear of the artwork. Placed on the
+   face it overlapped the creature on every token - a disc of solid colour laid
+   across the thing the token exists to show. The square has room around a round
+   face; the corner of the cell is dead space the badge can have. */
 .dp-token-milled .duel-type-badge,
 .dp-token-coin .duel-type-badge,
 .dp-token-element .duel-type-badge {
-  width: 34% !important;
-  height: 34% !important;
+  width: 26% !important;
+  height: 26% !important;
   min-width: 0 !important;
   left: auto;
-  right: 2%;
-  bottom: 2%;
+  right: 0;
+  bottom: 0;
   top: auto;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
 }
 
 .dp-token-study .duel-type-badge svg {
@@ -378,8 +386,10 @@
 }
 
 .dp-token-milled .duel-piece-xalian-icon {
-  width: 62%;
-  height: 62%;
+  /* A square inscribed in a circle has side d/sqrt(2), so art that keeps its
+     corners can be at most ~71% of the face. The face is 84% of the cell. */
+  width: 50%;
+  height: 50%;
 }
 
 /* ---- 2. TEAM COIN - the disc itself is the side's colour, art knocked out
@@ -399,8 +409,8 @@
 }
 
 .dp-token-coin .duel-piece-xalian-icon {
-  width: 60%;
-  height: 60%;
+  width: 50%;
+  height: 50%;
   filter: none !important;
 }
 
@@ -431,8 +441,9 @@
 }
 
 .dp-token-element .duel-piece-xalian-icon {
-  width: 58%;
-  height: 58%;
+  /* the hexagon is narrower than a circle at top and bottom, so a touch less */
+  width: 52%;
+  height: 52%;
 }
 
 .dp-token-element .duel-piece-xalian-icon svg { fill: rgba(0, 0, 0, 0.85) !important; }
