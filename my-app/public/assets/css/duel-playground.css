@@ -426,10 +426,14 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
 }
 
-/* the cast shadow a standing figure throws - added at the svg so it stacks
-   with the team rim light set inline on the wrapper */
+/* The glow filter is set INLINE ON THE SVG by the component, so any svg
+   filter rule without !important silently loses to it. This rebuilds the rim
+   light in CSS terms and adds the cast shadow, as one declaration. */
 .dp-token-standee .duel-piece-xalian-icon svg {
-  filter: drop-shadow(0 7px 6px rgba(0, 0, 0, 0.5));
+  filter:
+    drop-shadow(0 0 1px color-mix(in srgb, var(--duel-team) 75%, white))
+    drop-shadow(0 0 2px color-mix(in srgb, var(--duel-team) 75%, black))
+    drop-shadow(0 7px 6px rgba(0, 0, 0, 0.5)) !important;
 }
 
 /* selection rings the FOOTPRINT, not the figure */
@@ -508,10 +512,14 @@
   height: 74%;
 }
 
-/* softer than the standee's: this shadow falls mostly on the base's own top
-   face, and at full strength it blacked the face out */
+/* Rim light rebuilt in CSS (the inline svg filter wins without !important)
+   plus a cast shadow softer than the standee's: this one falls mostly on the
+   base's own top face, and at full strength it blacked the face out. */
 .dp-token-plinth .duel-piece-xalian-icon svg {
-  filter: drop-shadow(0 5px 4px rgba(0, 0, 0, 0.38));
+  filter:
+    drop-shadow(0 0 1px color-mix(in srgb, var(--duel-team) 75%, white))
+    drop-shadow(0 0 2px color-mix(in srgb, var(--duel-team) 75%, black))
+    drop-shadow(0 5px 4px rgba(0, 0, 0, 0.38)) !important;
 }
 
 /* the nameplate: the element badge set into the plinth's front edge */
@@ -598,17 +606,26 @@
   pointer-events: none;
 }
 
+/* A die-cut sticker backing: a SOLID band of the team colour around the ink
+   (two compounding 4-direction passes, so it grows evenly, hard-edged - no
+   blur anywhere), then a fine dark edge around the band, then the cast
+   shadow. !important because the component sets its glow inline on the svg;
+   without it this whole variant silently renders as the plinth. */
 .dp-token-outline .duel-piece-xalian-icon svg {
   filter:
+    drop-shadow(2px 0 0 var(--duel-team))
+    drop-shadow(-2px 0 0 var(--duel-team))
+    drop-shadow(0 2px 0 var(--duel-team))
+    drop-shadow(0 -2px 0 var(--duel-team))
     drop-shadow(1px 0 0 var(--duel-team))
     drop-shadow(-1px 0 0 var(--duel-team))
     drop-shadow(0 1px 0 var(--duel-team))
     drop-shadow(0 -1px 0 var(--duel-team))
-    drop-shadow(2px 0 0 color-mix(in srgb, var(--duel-team) 28%, #12120e))
-    drop-shadow(-2px 0 0 color-mix(in srgb, var(--duel-team) 28%, #12120e))
-    drop-shadow(0 2px 0 color-mix(in srgb, var(--duel-team) 28%, #12120e))
-    drop-shadow(0 -2px 0 color-mix(in srgb, var(--duel-team) 28%, #12120e))
-    drop-shadow(0 4px 3px rgba(0, 0, 0, 0.45));
+    drop-shadow(1px 0 0 color-mix(in srgb, var(--duel-team) 40%, black))
+    drop-shadow(-1px 0 0 color-mix(in srgb, var(--duel-team) 40%, black))
+    drop-shadow(0 1px 0 color-mix(in srgb, var(--duel-team) 40%, black))
+    drop-shadow(0 -1px 0 color-mix(in srgb, var(--duel-team) 40%, black))
+    drop-shadow(0 4px 3px rgba(0, 0, 0, 0.45)) !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
