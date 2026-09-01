@@ -504,20 +504,18 @@
   top: 40%;
   height: 22%;
   border-radius: 50%;
-  border: 1px solid #0d0d0a;
-  /* The face has to be light enough to exist. Hull-on-seam read as nothing on
-     a near-black floor - all that showed was the painted wall, a ring at the
-     figure's feet. A top face seen from a high angle catches the overhead
-     light: distinctly lighter than the floor, brightest at the back where the
-     light hits, a lit lip along the top edge, and the face rolling into
-     shadow as it turns down toward the front wall. */
+  /* NO outline. A border ran a hairline between the face and its own side
+     wall, which cut the disc into two stacked ovals; on a real puck the
+     face's edge IS the top of the wall, so the joint is drawn with shading
+     only - the face rolls into shadow where it turns down. */
+  border: 0;
   background:
     radial-gradient(ellipse at 50% 42%, rgba(255, 244, 214, 0.28) 0%, transparent 68%),
     radial-gradient(ellipse at 50% 50%, #4a4a3c 0%, #38382e 60%, #262620 100%);
   box-shadow:
     0 11px 10px rgba(0, 0, 0, 0.6),
     inset 0 1px 0 rgba(255, 244, 214, 0.28),
-    inset 0 -2px 4px rgba(0, 0, 0, 0.28);
+    inset 0 -3px 4px rgba(0, 0, 0, 0.5);
 }
 
 /* The side wall, knurled. A flat stripe of paint read as a decal; a real
@@ -530,20 +528,25 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  transform: translateY(6px);
+  transform: translateY(5px);
   /* The wall is the crescent between the face ellipse and the same ellipse
      shifted down. Two constructions failed on the bench: a negative z-index
      cannot paint behind the parent's own background (backgrounds paint
      first), and a straight-edged clip left a flat ribbon floating under the
      curved face. The mask cuts the face's own ellipse out of the shifted
      copy, so the wall's top edge follows the curve it belongs to. */
-  -webkit-mask: radial-gradient(50% 50% at 50% calc(50% - 6px), transparent 97%, black 99%);
-  mask: radial-gradient(50% 50% at 50% calc(50% - 6px), transparent 97%, black 99%);
-  /* finer and quieter than the first pass: 1px ridges and a narrower value
-     range - the 2px/2px high-contrast version read as awning stripes */
-  background: repeating-linear-gradient(90deg,
-    color-mix(in srgb, var(--duel-team) 46%, #0d0d0b) 0 1px,
-    color-mix(in srgb, var(--duel-team) 27%, #0a0a08) 1px 3px);
+  -webkit-mask: radial-gradient(50% 50% at 50% calc(50% - 5px), transparent 97%, black 99%);
+  mask: radial-gradient(50% 50% at 50% calc(50% - 5px), transparent 97%, black 99%);
+  /* Ridges alone read as striped fabric - a flat pattern has no curvature.
+     Two shading layers over them turn the band into a surface: darker
+     toward both ends where the cylinder curves away, and darker toward the
+     bottom edge where it turns under. */
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.6) 0%, transparent 25% 75%, rgba(0, 0, 0, 0.6) 100%),
+    linear-gradient(180deg, rgba(255, 244, 214, 0.08) 0%, transparent 35%, rgba(0, 0, 0, 0.4) 100%),
+    repeating-linear-gradient(90deg,
+      color-mix(in srgb, var(--duel-team) 46%, #0d0d0b) 0 1px,
+      color-mix(in srgb, var(--duel-team) 27%, #0a0a08) 1px 3px);
 }
 
 /* feet at the BACK edge of the base, not its centre - planted centrally the
