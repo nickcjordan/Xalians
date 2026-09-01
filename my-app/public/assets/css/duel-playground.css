@@ -538,28 +538,26 @@
 .dp-token-outline .duel-piece-base::after {
   content: '';
   position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  transform: translateY(5px);
-  /* The wall is the crescent between the face ellipse and the same ellipse
-     shifted down. Two constructions failed on the bench: a negative z-index
-     cannot paint behind the parent's own background (backgrounds paint
-     first), and a straight-edged clip left a flat ribbon floating under the
-     curved face. The mask cuts the face's own ellipse out of the shifted
-     copy, so the wall's top edge follows the curve it belongs to. */
-  -webkit-mask: radial-gradient(50% 50% at 50% calc(50% - 5px), transparent 97%, black 99%);
-  mask: radial-gradient(50% 50% at 50% calc(50% - 5px), transparent 97%, black 99%);
-  /* Plain painted metal. Stripes here made the whole thing a poker chip -
-     the machining lives on the face now - so the wall is one coat of team
-     paint with the shading that makes a cylinder read as turned: darker
-     toward both ends where it curves away, darker toward the bottom edge
-     where it turns under. */
-  /* One material. The wall's top edge starts in the face's own outer tone
-     and rolls down into the team paint - a hard colour change at the joint,
-     a dark line on the face and a catch-light on the wall were three
-     discontinuities in the same place, and together they cut the disc into
-     two hovering wafers. Light also does not catch the top of a surface
-     that faces AWAY from it. */
+  /* THE SIDE OF A CYLINDER, with actual sides. Every earlier construction
+     derived the wall from 'the face's ellipse shifted down', whose visible
+     remainder is a crescent that pinches to NOTHING at the left and right -
+     so there were no vertical edges connecting face to underside, and the
+     disc read as two 2D wafers hovering apart. A cylinder's silhouette is
+     the face ellipse joined to the bottom ellipse by vertical tangents at
+     the widest points: this box runs from the face's midline down to 6px
+     below it, its straight left and right edges ARE those tangents, and
+     its bottom corners curve as the bottom half of the underside ellipse. */
+  top: 50%;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  border-radius: 0 0 50% 50% / 0 0 52% 52%;
+  /* the face's own ellipse cut out of the band, so the band starts exactly
+     where the face turns under */
+  -webkit-mask: radial-gradient(ellipse 50% 52% at 50% 0%, transparent 96%, black 99%);
+  mask: radial-gradient(ellipse 50% 52% at 50% 0%, transparent 96%, black 99%);
+  /* one material: the top of the wall is the face's outer tone rolling
+     down into the team paint, darker at the ends where it curves away */
   background:
     linear-gradient(90deg, rgba(0, 0, 0, 0.6) 0%, transparent 25% 75%, rgba(0, 0, 0, 0.6) 100%),
     linear-gradient(180deg, #2b2b23 0%, rgba(43, 43, 35, 0) 60%),
