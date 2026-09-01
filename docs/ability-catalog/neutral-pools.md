@@ -151,15 +151,15 @@ Focus Beam, Focused Beam, Piercing Ray, Piercing Lance, Energy Lance, Needle Ray
 ## 8. HURL
 
 **Neutral pool** (single words):
-Throw, Toss, Pitch, Fling, Lob, Cast, Heave, Hurl, Launch, Volley, Barrage, Salvo, Fusillade, Payload, Catapult, Trebuchet, Ballista, Mangonel, Onager, Sling, Javelin, Dart, Bolt, Shaft, Chunk, Mass, Load
+Throw, Toss, Pitch, Fling, Lob, Cast, Heave, Hurl, Launch, Volley, Barrage, Salvo, Fusillade, Payload, Sling, Javelin, Dart, Bolt, Shaft, Chunk, Mass, Load
 
 **Neutral pool** (two-word compositions):
-Boulder Toss, Mass Hurl, Debris Barrage, Rubble Hail, Rock Volley (careful: "Rock" here is a material descriptor, not the Rock element per se — held for auditor; see note below), Stone Salvo (same caution — held), Shard Barrage, Splinter Volley, Chunk Toss, Wreckage Hurl, Payload Launch, Projectile Volley, Catapult Shot, Trebuchet Strike, Ballista Bolt, Sling Shot, Sling Strike, Heave Toss, Overhand Hurl, Full Heave, Skyward Fling, Arcing Hurl, Arcing Toss, Falling Barrage, Descending Hail, Weighted Toss, Rain of Debris (3 words — cut, see below), Hail of Fragments (3 words — cut), Barrage Volley, Salvo Cast, Fling Assault, Launch Strike, Loosed Volley, Unleashed Barrage, Siege Toss, Siege Volley, Mangonel Shot, Onager Shot, Javelin Cast, Bolt Throw, Spear Cast, Wreckage Volley, Fragment Barrage, Plummeting Mass, Heavy Fling, Skybound Toss, Overhead Hurl, Downward Barrage, Peppering Volley, Pelting Hail, Battering Hail, Full Salvo, Concentrated Barrage, Scatter Hurl
+Mass Hurl, Debris Barrage, Shard Barrage, Splinter Volley, Chunk Toss, Wreckage Hurl, Payload Launch, Projectile Volley, Sling Shot, Sling Strike, Heave Toss, Overhand Hurl, Full Heave, Skyward Fling, Arcing Hurl, Arcing Toss, Falling Barrage, Descending Hail, Weighted Toss, Rain of Debris (3 words — cut, see below), Hail of Fragments (3 words — cut), Barrage Volley, Salvo Cast, Fling Assault, Launch Strike, Loosed Volley, Unleashed Barrage, Siege Toss, Siege Volley, Javelin Cast, Bolt Throw, Spear Cast, Wreckage Volley, Fragment Barrage, Plummeting Mass, Heavy Fling, Skybound Toss, Overhead Hurl, Downward Barrage, Peppering Volley, Pelting Hail, Battering Hail, Full Salvo, Concentrated Barrage, Scatter Hurl
 
 **Disposition notes / flags:**
-- Sling, Catapult, Trebuchet, Ballista, Mangonel, Onager are pre-gunpowder siege engines — explicitly permitted by the brief's boundary notes; kept as instrument-neutral action words describing the *mechanism*, not a material.
+- Siege-engine names (Catapult, Trebuchet, Ballista, Mangonel, Onager) CUT 2026-09-01 under the real-weapons rule (Torpedo precedent: named military machines). Sling kept (generic).
 - **Cut (word-count violation):** Rain of Debris, Hail of Fragments — 3 words with preposition; excluded per hard rule.
-- **Flagged, held for auditor (material vs. element ambiguity):** "Rock Volley," "Stone Salvo," "Boulder Toss" name a generic *thrown mass* (any element's Xalian could plausibly hurl a chunk of matter), but "Rock"/"Stone"/"Boulder" as words risk reading as the Rock element specifically. Kept in the pool provisionally per the harvest's own framing (listed there as neutral, describing the hurled-mass concept broadly) but flagged here for the central auditor's final call — this is exactly the kind of word-vs-definition tension the brief instructs to note rather than silently resolve.
+- **RESOLVED by Nick 2026-09-01 (material-word ruling):** words defined by a material are RESERVED to that material's element, not neutral. Removed from pools and flagged to their consolidations: Boulder Toss, Rubble Hail, Rock Volley, Stone Salvo → ROCK; Steel Trap, Iron Grip, Iron Guard → METAL. Also cut under the real-weapons rule (Torpedo precedent, siege engines are named military machines): Catapult Shot, Trebuchet Strike, Ballista Bolt, Mangonel Shot, Onager Shot. Generic ancient weapon nouns (spear, lance, sling) stay. Original flag text follows for the record: "Rock Volley," "Stone Salvo," "Boulder Toss" name a generic *thrown mass* (any element's Xalian could plausibly hurl a chunk of matter), but "Rock"/"Stone"/"Boulder" as words risk reading as the Rock element specifically. Kept in the pool provisionally per the harvest's own framing (listed there as neutral, describing the hurled-mass concept broadly) but flagged here for the central auditor's final call — this is exactly the kind of word-vs-definition tension the brief instructs to note rather than silently resolve.
 - **Cut (modern-leaning per harvest's own flag):** Shrapnel Toss, Enfilade Volley — harvest flags these as modern/obscure-leaning; not pooled.
 - **Cut (gunpowder/modern-military exclusions, per harvest §5 and hard rule):** Round, Ordnance, Artillery, Bombard, Cannonade, Grapeshot, Buckshot, Scattergun, Fragmentation, Shot Put, Divot, Strike Zone — all excluded as real-weapon/modern-military/modern-sport terms.
 - **Flagged out (leans element):** Fireball Hurl/Ember Toss/Cinder Barrage/Magma Lob/Molten Hurl/Lava Volley (Fire), Ice Boulder Toss/Frost Shard Volley/Icicle Hail/Hailstone Barrage/Sleet Volley (Ice), Water Globe Hurl/Wave Hurl/Coral Shard Toss (Water — Coral also Earth-flora-adjacent), Sand Clod Toss/Grit Hurl (Sand), Root Hurl/Seed Pod Volley/Thorn Barrage/Bark Shard Toss (Plant), Bone Toss/Wraith Hurl/Spectral Debris (Ghost), Psychic Boulder Toss/Telekinetic Hurl/Mind-Flung Debris (Psychic), Scrap Volley/Shrapnel Barrage/Gear Toss/Ore Chunk Hurl (Metal), Sludge Lob/Corrosive Clod Toss (Chemical), Cloud Shard Toss/Storm Debris Barrage (Air), Lightning Bolt Hurl/Charged Shard Volley (Electric), Light Shard Volley/Radiant Fragment Hail (Light), Shadow Mass Hurl/Dark Boulder Toss (Dark).
@@ -239,7 +239,7 @@ Lingering Veil, Shrouding Field, Settling Haze, Standing Mist, Pervading Field, 
 Ward, Aegis, Bulwark, Bastion, Rampart, Barrier, Barricade, Shield, Buckler, Redoubt, Stronghold, Sanctuary, Refuge, Haven, Vigil, Safeguard, Custody, Wardship, Fortify, Fortification, Reinforce, Reinforcement, Brace, Bracing, Buttress, Panoply, Cover, Deflect, Deflection, Parry, Rebuff, Repel, Repulse, Absorb, Absorption, Withstand, Endure, Bolster, Blessing, Benediction, Grace, Providence, Sanctify, Consecration, Immunity, Resistance, Insulate, Insulation, Cushion, Buffer, Screen, Veil, Shroud, Mantle, Entrench, Garrison
 
 **Neutral pool** (two-word compositions):
-Guardian Stance, Guard Wall, Sentinel Stance, Sentinel Guard, Vigilant Ward, Endurance Stance, Sanctuary Ward, Stand Fast, Hold Fast, Hold the Line (3 words — cut, see below), Last Stand, Iron Guard, Unbroken Guard, Unyielding Ward, Watchful Ward, Guardian's Grace (possessive — cut per hard rule, see below), Aegis Ward
+Guardian Stance, Guard Wall, Sentinel Stance, Sentinel Guard, Vigilant Ward, Endurance Stance, Sanctuary Ward, Stand Fast, Hold Fast, Hold the Line (3 words — cut, see below), Last Stand, Unbroken Guard, Unyielding Ward, Watchful Ward, Guardian's Grace (possessive — cut per hard rule, see below), Aegis Ward
 
 **Disposition notes / flags:**
 - Per Nick's pilot ruling (recorded in the SNARE/CRUSH/MEND harvest): religious-register words are IN — Blessing, Benediction, Grace, Providence, Sanctify, Consecration all confirmed neutral and pooled, consistent with that ruling and the brief's own explicit allowance ("religious/ritual register IS allowed").
@@ -287,12 +287,12 @@ Dread Aura, Terror Wave, Menacing Glare, Intimidating Roar, Chilling Presence, W
 Snare, Trap, Net, Noose (careful — see flag below), Tether, Leash, Fetter, Shackle, Yoke, Bond, Coil (instrument-flag: serpentine/tendril), Loop, Restraint, Grip, Grasp, Hold, Clutch, Clasp, Ensnare, Entangle, Grapple, Bind, Deadlock
 
 **Neutral pool** (two-word compositions):
-Dead Weight, Iron Grip, Tangle Trap, Snare Trap, Binding Hold, Anchor Point, Drag Down, Pull Under, Net Trap, Snap Trap, Steel Trap (careful: "Steel" risks reading Metal — held for auditor, see note), Deadfall, Mire Trap, Bog Down, Pin Down, Hold Fast, Grip Lock, Reeling Pull, Sinking Grip, No Escape
+Dead Weight, Tangle Trap, Snare Trap, Binding Hold, Anchor Point, Drag Down, Pull Under, Net Trap, Snap Trap, Deadfall, Mire Trap, Bog Down, Pin Down, Hold Fast, Grip Lock, Reeling Pull, Sinking Grip, No Escape
 
 **Disposition notes / flags:**
 - The orchestrator's own pilot audit already caught and removed the two worst leakage cases before this pass: "Undertow" and "Gravity Well" were originally mis-listed as neutral by the SNARE sub-agent; both are correctly excluded here (Undertow → Water, Gravity Well → Dark).
 - **Held for auditor (instrument-heavy names, per the pilot's own flags):** Root Hold (flags itself as implying roots/Plant), Web Trap (flags itself as implying spinneret/specific anatomy), Stranglehold (flags itself as neck-specific anatomy), Coil Bind (flags itself as serpentine-specific anatomy) — all four are explicitly self-flagged in the source harvest as anatomy/element-adjacent; held out of the confirmed count above pending auditor judgment, though listed here since the source material treats them as provisional keepers.
-- **Held for auditor (material-vs-element ambiguity, same class of tension as HURL's "Rock Volley"):** Steel Trap — "steel" is a manufactured-metal word; likely reads Metal-leaning despite being common English idiom for "a very effective trap." Flagged rather than confirmed.
+- RESOLVED 2026-09-01: Steel Trap reserved to METAL per the material-word ruling (see HURL section).
 - **Cut (real weapon adjacent / hard rule):** Noose — carries strong real-world capital-punishment/lynching connotation beyond generic restraint; while technically not a "weapon" in the military sense, it fails the "nothing weird or inappropriate" tone check on its own. Held out of the confirmed pool, listed above only as a raw harvest term, not promoted to a name.
 - **Cut (idiom/word-count, per orchestrator's own flags):** Full Nelson (self-flagged wrestling-idiom borrow), Weight of the World (idiom, 4 words), Squeeze Play (idiom, sports-adjacent — also this belongs more to CRUSH by definition, not SNARE).
 - **Cut (real weapon/tool references, other-domain):** Grappling Hook, Harpoon, Gaff, Manacle, Irons, Chains, Pillory, Stocks, Bola, Lariat, Catchpole — these read as manufactured implements (weapon/tool-adjacent) rather than an action-word the creature itself performs; held out of the clean neutral pool. (Grapple and Bind, the verb forms, are kept as they describe the action, not the object.)
@@ -300,7 +300,7 @@ Dead Weight, Iron Grip, Tangle Trap, Snare Trap, Binding Hold, Anchor Point, Dra
 - **Cut (adhesive/sticky-substance words, lean Chemical/Plant):** Birdlime, Flypaper, Tar Pit — these name a specific sticky substance rather than the restraining action itself; better suited to element-specific columns (Chemical/Plant) than the neutral pool.
 - Note: the SNARE harvest's own richness assessment calls "drag" word-poor and "pure-slow" the poorest sub-concept of the whole 16-action set (borrows vocabulary from bind/weigh-down rather than having its own distinct words) — Drag Down, Pull Under, Bog Down, Reeling Pull, Sinking Grip above represent the best available neutral coverage for that weak sub-concept; no stronger candidates exist in the source material.
 
-**Count: 23 single-word + 20 two-word = 43 pooled names (plus 5 held-for-auditor: Root Hold, Web Trap, Stranglehold, Coil Bind, Steel Trap).**
+**Count: 23 single-word + 20 two-word = 43 pooled names (plus held-for-auditor: Root Hold, Web Trap, Stranglehold, Coil Bind; Steel Trap resolved to METAL 2026-09-01).**
 
 ---
 
@@ -310,7 +310,7 @@ Dead Weight, Iron Grip, Tangle Trap, Snare Trap, Binding Hold, Anchor Point, Dra
 Vise (instrument-flag: pincers/jaws), Press, Clamp, Crusher, Grinder, Millstone, Pestle, Anvil, Tongs, Constriction, Coil (instrument-flag: serpentine), Grip, Clutch, Clasp, Compaction, Landslide (careful — held, see below), Rockslide (held), Avalanche (held), Collapse, Sinkhole, Boulder (held), Rubble, Wreckage, Ruin, Crush, Grind, Compress, Compact, Squeeze, Constrict, Clamp, Clench, Grip, Clasp, Clutch, Strangle, Throttle, Choke, Smother, Squash, Smash, Mash, Pulverize, Pulp, Flatten, Crumple, Mill, Pound, Tamp, Ram, Wring, Bind, Coil, Wrap, Envelop, Buckle
 
 **Neutral pool** (two-word compositions):
-Crushing Grip, Vise Grip (instrument: pincers/jaws), Iron Grip, Crush Hold, Grinding Press, Compression Wave, Death Grip (careful — "Death" idiom-adjacent but well-worn plain English, kept; flag for auditor comfort check), Pulverizing Blow, Crushing Weight, Pressure Lock, Wringing Hold, Vise Lock (instrument: pincers/jaws), Clamp Down (instrument: jaws/pincers), Grindstone, Collapsing Grip, Flattening Blow, Millgrind, Anvil Press, Mortar Crush, Pestle Strike
+Crushing Grip, Vise Grip (instrument: pincers/jaws), Crush Hold, Grinding Press, Compression Wave, Death Grip (careful — "Death" idiom-adjacent but well-worn plain English, kept; flag for auditor comfort check), Pulverizing Blow, Crushing Weight, Pressure Lock, Wringing Hold, Vise Lock (instrument: pincers/jaws), Clamp Down (instrument: jaws/pincers), Grindstone, Collapsing Grip, Flattening Blow, Millgrind, Anvil Press, Mortar Crush, Pestle Strike
 
 **Disposition notes / flags:**
 - Vise Grip, Vise Lock, Clamp Down — all self-flagged by the source harvest as implying pincers/jaws; kept with instrument tags per the registry rather than cut, consistent with the brief's "use anatomy-evoking ones sparingly" (not "never").
@@ -362,13 +362,13 @@ Mending Aura, Restorative Pulse, Second Wind (retained per Nick's explicit pilot
 | 5 | Drain | 27 | 73 | 100 | Vital/Essence/Life/Strength Theft (crime-register) |
 | 6 | Ambush | 37 | 45 | 82 | Predatory Lunge, Shadow Approach |
 | 7 | Beam | 34 | 36 | 70 | Prick Ray |
-| 8 | Hurl | 27 | 39 | 66 | Rock Volley, Stone Salvo (material/element ambiguity) |
+| 8 | Hurl | 27 | 39 | 66 | resolved 2026-09-01: material words to ROCK |
 | 9 | Spray | 32 | 53 | 85 | Breath-prefixed cluster (instrument-specific) |
 | 10 | Burst | 28 | 34 | 62 | Radiant Burst/Pulse, Bloom, Cataclysmic Burst |
 | 11 | Cloud | 40 | 25 | 65 | Fallout Field (internal source contradiction) |
 | 12 | Ward | 56 | 17 | 73 | Carapace Guard, Cloak |
 | 13 | Terrorize | 34 | 56 | 90 | Fraying Nerves |
-| 14 | Snare | 23 | 20 | 43 | Root Hold, Web Trap, Stranglehold, Coil Bind, Steel Trap |
+| 14 | Snare | 23 | 20 | 43 | Root Hold, Web Trap, Stranglehold, Coil Bind (Steel Trap resolved to METAL) |
 | 15 | Crush | 34 | 19 | 53 | Landslide, Rockslide, Avalanche, Boulder (material/element ambiguity) |
 | 16 | Mend | 62 | 10 | 72 | Overhaul, Retrofit, Anoint, Reanimate/Resuscitate |
 

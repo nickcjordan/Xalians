@@ -1,0 +1,288 @@
+- | CRUSH | Vacuum Crush :: D — redundant with Vacuum Collapse, "Vacuum Crush" adds no distinct image once I
+- | CRUSH | Vacuum Compress :: D — redundant with Vacuum Squeeze/Constrict, near-tautology against Vacuum's own
+- | CRUSH | Vacuum Compact :: D — redundant, same reasoning as Compress
+- | CRUSH | Vacuum Clasp :: D — redundant with Vacuum Grip/Clutch, a third near-identical holding-verb compo
+- | CRUSH | Vacuum Crumple :: D — crumple implies a rigid object buckling under external force; closer to Vacu
+- | CRUSH | Vacuum Press :: D — redundant, "Vacuum Press" duplicates the Squeeze/Constrict register already 
+- | CRUSH | Vacuum Vise :: D — redundant with the harvest-native Air Vise (a different air noun already own
+- | CRUSH | Pressure Squeeze :: D — redundant with Pressure Compress/Constrict
+- | CRUSH | Pressure Constrict :: D — redundant, same register already covered
+- | CRUSH | Pressure Clench :: D — redundant with Pressure Clamp/Grip
+- | CRUSH | Pressure Clasp :: D — redundant with Pressure Grip
+- | CRUSH | Pressure Clutch :: D — redundant
+- | CRUSH | Pressure Smother :: D — smother implies covering; pressure's register is compressing, a related but 
+- | CRUSH | Pressure Flatten :: D — flatten implies a single blow; pressure's register is sustained squeeze, red
+- | CRUSH | Pressure Crumple :: D — redundant with Pressure Buckle-adjacent register, no distinct compound surfa
+- | CRUSH | Pressure Press :: D — redundant with Pressure Crush, near-tautology (see rejections)
+- | CRUSH | Pressure Implode :: D — implode reads better with the more literal Vacuum, redundant
+- | CRUSH | Pressure Collapse :: D — redundant, Pressure's own collapse-adjacent register already covered by Void
+- | CRUSH | Pressure Weight :: D — weight better belongs to Gale/Downdraft/Atmosphere/Sky, redundant if compose
+- | CRUSH | Gale Compress :: D — redundant with Gale Weight/Press
+- | CRUSH | Gale Compact :: D — redundant
+- | CRUSH | Gale Squeeze :: D — redundant with Gale Grip
+- | CRUSH | Gale Clench :: D — redundant with Gale Grip
+- | CRUSH | Gale Clasp :: D — redundant
+- | CRUSH | Gale Clutch :: D — redundant
+- | CRUSH | Gale Mash :: D — no swinging mass, redundant with the kept Gale Buckle's structural-failure r
+- | CRUSH | Gale Flatten :: D — flatten implies a downward crushing blow; a gale's honest force-image is pus
+- | CRUSH | Gale Ram :: D — Downdraft Ram already owns the ramming register for a more vertically-forcef
+- | CRUSH | Gale Collapse :: D — collapse better fits Void/Chasm's open-sky register, redundant if composed f
+- | CRUSH | Squall Crush :: D — redundant with Squall Press, near-tautology
+- | CRUSH | Squall Compress :: D — redundant with Squall Press
+- | CRUSH | Squall Compact :: D — redundant
+- | CRUSH | Squall Clench :: D — redundant with Squall Grip
+- | CRUSH | Squall Clasp :: D — redundant
+- | CRUSH | Squall Clutch :: D — redundant
+- | CRUSH | Squall Collapse :: D — collapse better fits Void/Chasm, redundant
+- | CRUSH | Downdraft Compress :: D — redundant with Downdraft Press/Weight
+- | CRUSH | Downdraft Compact :: D — redundant
+- | CRUSH | Downdraft Clasp :: D — redundant
+- | CRUSH | Downdraft Clutch :: D — redundant
+- | CRUSH | Downdraft Crumple :: D — crumple better fits a structure failing under Downdraft Weight, redundant
+- | CRUSH | Vortex Crush :: D — redundant with Vortex Vise/Grip, "Vortex Crush" adds nothing distinct
+- | CRUSH | Vortex Compress :: D — redundant with Vortex Coil's inward-spiral register
+- | CRUSH | Vortex Compact :: D — redundant
+- | CRUSH | Vortex Squeeze :: D — redundant with Vortex Constrict
+- | CRUSH | Vortex Clasp :: D — redundant with Vortex Grip
+- | CRUSH | Vortex Clutch :: D — redundant
+- | CRUSH | Vortex Strangle :: D — strangle implies a throat-cord; Vortex Coil already honestly covers the serp
+- | CRUSH | Vortex Throttle :: D — same, redundant with Vortex Coil
+- | CRUSH | Vortex Crumple :: D — crumple better fits a static-structure failure under Vortex Vise's grip, red
+- | CRUSH | Vortex Press :: D — redundant, no distinct Press compound surfaced
+- | CRUSH | Cyclone Crush :: D — redundant with Cyclone Grip/Vise
+- | CRUSH | Cyclone Compress :: D — redundant
+- | CRUSH | Cyclone Compact :: D — redundant
+- | CRUSH | Cyclone Squeeze :: D — redundant with Cyclone Grip
+- | CRUSH | Cyclone Constrict :: D — redundant with Vortex Coil's ownership of the coiling register; Cyclone Coil
+- | CRUSH | Cyclone Clasp :: D — redundant
+- | CRUSH | Cyclone Clutch :: D — redundant
+- | CRUSH | Cyclone Crumple :: D — redundant with Vortex's ownership of the structural-failure-under-grip regis
+- | CRUSH | Cyclone Press :: D — redundant
+- | CRUSH | Cyclone Buckle :: D — redundant with Gale/Squall's buckle-ownership
+- | CRUSH | Cyclone Collapse :: D — redundant with Vortex's non-collapsing reasoning
+- | CRUSH | Cyclone Coil :: D — redundant with Vortex Coil
+- | CRUSH | Atmosphere Crush :: D — redundant with Atmosphere Press/Weight
+- | CRUSH | Atmosphere Compress :: D — redundant
+- | CRUSH | Atmosphere Compact :: D — redundant
+- | CRUSH | Atmosphere Grip :: D — atmosphere doesn't grip, it presses via its own weight; redundant with Atmos
+- | CRUSH | Atmosphere Clasp :: D — redundant
+- | CRUSH | Atmosphere Clutch :: D — redundant
+- | CRUSH | Atmosphere Smother :: D — smother is close to Atmosphere Press's register but implies covering from ou
+- | CRUSH | Atmosphere Crumple :: D — crumple better fits a smaller-scale structure, redundant
+- | CRUSH | Sky Crush :: D — sky alone is too vast/abstract a subject for "crush," redundant with Sky Wei
+- | CRUSH | Sky Compress :: D — redundant
+- | CRUSH | Sky Compact :: D — redundant
+- | CRUSH | Sky Clasp :: D — redundant
+- | CRUSH | Sky Clutch :: D — redundant
+- | CRUSH | Sky Press :: D — redundant with Atmosphere Press, near-duplicate of the same register for a m
+- | CRUSH | Void Crush :: D — redundant with Void Collapse
+- | CRUSH | Void Compress :: D — redundant
+- | CRUSH | Void Compact :: D — redundant
+- | CRUSH | Void Grip :: D — void doesn't grip, it's an absence a structure falls into; redundant with Vo
+- | CRUSH | Void Clasp :: D — redundant
+- | CRUSH | Void Clutch :: D — redundant
+- | CRUSH | Void Crumple :: D — crumple is close but Collapse is the more honest and already-kept compound f
+- | CRUSH | Void Implode :: D — implode is honestly Vacuum's register; Void Implode considered but redundant
+- | CRUSH | Chasm Crush :: D — redundant with Chasm Collapse
+- | CRUSH | Chasm Compress :: D — redundant
+- | CRUSH | Chasm Compact :: D — redundant
+- | CRUSH | Chasm Grip :: D — a chasm doesn't grip, it's a gap something falls into; redundant with Chasm 
+- | CRUSH | Chasm Clasp :: D — redundant
+- | CRUSH | Chasm Clutch :: D — redundant
+- | CRUSH | Whirlwind Crush :: D — redundant with Whirlwind Grip
+- | CRUSH | Whirlwind Compress :: D — redundant
+- | CRUSH | Whirlwind Compact :: D — redundant
+- | CRUSH | Whirlwind Squeeze :: D — redundant with Whirlwind Grip
+- | CRUSH | Whirlwind Constrict :: D — redundant with Vortex Coil's ownership of the coiling register
+- | CRUSH | Whirlwind Clasp :: D — redundant
+- | CRUSH | Whirlwind Clutch :: D — redundant
+- | CRUSH | Whirlwind Crumple :: D — redundant with Vortex's ownership
+- | CRUSH | Whirlwind Press :: D — redundant
+- | CRUSH | Whirlwind Buckle :: D — redundant with Gale/Squall's buckle-ownership
+- | CRUSH | Whirlwind Collapse :: D — redundant with Vortex's non-collapsing reasoning
+- | CRUSH | Whirlwind Vise :: D — redundant with Vortex Vise's ownership of the same rotational-grip register 
+- | CRUSH | Whirlwind Coil :: D — redundant with Vortex Coil
+- | CRUSH | Blast Crush :: D — redundant with Blast Ram/Pound
+- | CRUSH | Blast Compress :: D — redundant
+- | CRUSH | Blast Compact :: D — redundant
+- | CRUSH | Blast Clasp :: D — redundant
+- | CRUSH | Blast Clutch :: D — redundant
+- | CRUSH | Blast Smash :: D — smash is close to Blast's register but Ram/Pound already honestly cover the 
+- | CRUSH | Blast Flatten :: D — flatten is close but redundant with the already-kept Pound/Ram compounds
+- | CRUSH | Blast Crumple :: D — crumple is close but redundant
+- | CRUSH | Blast Buckle :: D — no distinct buckle compound, though a structure could buckle under a blast, 
+- | CRUSH | Blast Collapse :: D — no distinct collapse compound, redundant with Void/Chasm's ownership
+- | CRUSH | Buffet Crush :: D — redundant with Buffet Pound
+- | CRUSH | Buffet Compress :: D — redundant
+- | CRUSH | Buffet Compact :: D — redundant
+- | CRUSH | Buffet Clasp :: D — redundant
+- | CRUSH | Buffet Clutch :: D — redundant
+- | CRUSH | Buffet Flatten :: D — flatten implies a single blow; buffet's repeated-impact register is already 
+- | CRUSH | Buffet Crumple :: D — crumple is possible but redundant with Pound's ownership
+- | CRUSH | Windmill Clasp :: D — redundant
+- | CRUSH | Windmill Clutch :: D — redundant
+- | CRUSH | Wing Clamp :: D — wings could clamp shut in a broad sense, redundant with Wing Vise's ownershi
+- | CRUSH | Wing Grip :: D — redundant with Wing Vise's ownership of the gripping-closure register
+- | CRUSH | Wing Clasp :: D — redundant
+- | CRUSH | Wing Clutch :: D — redundant
+- | CRUSH | Wing Press :: D — redundant with Wing Vise/Clench
+- | CRUSH | Talon Crush :: D — redundant with Talon Grip
+- | CRUSH | Talon Clamp :: D — talons could be read as clamping, redundant with Talon Grip's ownership
+- | CRUSH | Talon Clasp :: D — redundant
+- | CRUSH | Talon Clutch :: D — redundant
+- | CRUSH | Talon Press :: D — redundant with Talon Grip
+- | CRUSH | Talon Vise :: D — redundant, Talon Grip already the anatomy-tag [talons] register, "Talon Vise
+- | CRUSH | Beak Crush :: D — redundant with Beak Clamp
+- | CRUSH | Beak Squeeze :: D — a beak's honest mechanism is clamping shut, not squeezing; redundant with Be
+- | CRUSH | Beak Clench :: D — redundant with Beak Clamp
+- | CRUSH | Beak Grip :: D — redundant
+- | CRUSH | Beak Clasp :: D — redundant
+- | CRUSH | Beak Clutch :: D — redundant
+- | CRUSH | Beak Press :: D — redundant with Beak Clamp
+- | CRUSH | Beak Vise :: D — redundant, Beak Clamp already the anatomy-tag register
+- | CRUSH | Pinion Crush :: D — redundant with Pinion Clench
+- | CRUSH | Pinion Squeeze :: D — a pinion's (wingtip feathers') honest mechanism is closing/clenching around 
+- | CRUSH | Pinion Clamp :: D — pinions could clamp in a broad sense, redundant with Pinion Clench's ownersh
+- | CRUSH | Pinion Grip :: D — redundant with Pinion Clench
+- | CRUSH | Pinion Clasp :: D — redundant
+- | CRUSH | Pinion Clutch :: D — redundant
+- | CRUSH | Pinion Smother :: D — smother is close but Pinion Clench already owns the closing-register honestl
+- | CRUSH | Pinion Press :: D — redundant with Pinion Clench
+- | CRUSH | Pinion Vise :: D — redundant, Pinion Clench already the anatomy-tag register
+- | WARD | Wind Bulwark :: D — no distinct Wind Bulwark compound, redundant with Gale Bulwark's ownership o
+- | WARD | Wind Redoubt :: D — cut D, redundant with Wind Bastion
+- | WARD | Wind Stronghold :: D — no distinct compound, redundant with Wind Bastion
+- | WARD | Wind Sanctuary :: D — no distinct Sanctuary compound for bare Wind, redundant with Sky Sanctuary's
+- | WARD | Wind Refuge :: D — no distinct compound, redundant with Sky Refuge
+- | WARD | Wind Haven :: D — no distinct compound, redundant with Sky Haven/Zephyr Haven
+- | WARD | Wind Cover :: D — no distinct Cover compound, redundant with Sky Cover/Cloud Cover's ownership
+- | WARD | Wind Endure :: D — cut D, redundant with Wind Withstand
+- | WARD | Wind Bolster :: D — no honest Bolster compound, abstract support-verb redundant against the conc
+- | WARD | Wind Cushion :: D — no distinct Wind Cushion compound, redundant with Pressure Cushion/Air Cushi
+- | WARD | Wind Curtain :: D — no distinct Wind Curtain compound, redundant with Sky Curtain/Vapor Curtain'
+- | WARD | Gale Ward :: D — redundant with Wind Ward
+- | WARD | Gale Bastion :: D — no distinct compound, redundant with Sky/Wind Bastion
+- | WARD | Gale Barrier :: D — no distinct compound, redundant with Wind Barrier
+- | WARD | Gale Shield :: D — no distinct compound, redundant with Wind Shield
+- | WARD | Gale Brace :: D — no distinct Gale Brace compound, redundant with Wind Brace
+- | WARD | Gale Parry :: D — no distinct compound, redundant with Wind Parry
+- | WARD | Gale Absorb :: D — no distinct compound, redundant with Wind Absorb
+- | WARD | Gale Withstand :: D — cut D, see rejections (redundant with Wind Withstand)
+- | WARD | Gale Cushion :: D — no distinct compound, redundant with Pressure Cushion
+- | WARD | Gale Buffer :: D — no distinct compound, redundant with Wind Buffer
+- | WARD | Gale Veil :: D — no distinct compound, redundant with Wind Veil
+- | WARD | Gale Shroud :: D — no distinct compound, redundant with Wind Shroud
+- | WARD | Gale Mantle :: D — no distinct compound, redundant with Wind Mantle
+- | WARD | Squall Ward :: D — redundant with Wind Ward, though Squall Ward itself is separately kept below
+- | WARD | Squall Barrier :: D — no distinct compound, redundant with Wind Barrier
+- | WARD | Squall Deflect :: D — no distinct compound, redundant with Wind/Gale Deflect
+- | WARD | Gust Ward :: D — redundant with Wind Ward
+- | WARD | Gust Withstand :: D — no distinct compound, redundant with Wind Withstand
+- | WARD | Gust Veil :: D — no distinct compound, redundant with Wind Veil
+- | WARD | Vortex Ward :: D — no distinct compound, redundant with Wind Ward
+- | WARD | Downdraft Shield :: D — no distinct compound, redundant with Wind Shield
+- | WARD | Cyclone Ward :: D — redundant with Wind Ward
+- | WARD | Sky Ward :: D — redundant with Wind Ward, though Sky Ward is separately kept below as a dist
+- | WARD | Sky Barrier :: D — no distinct compound, redundant with Wind Barrier
+- | WARD | Sky Stronghold :: D — cut D, see rejections (redundant with Sky Bastion)
+- | WARD | Sky Deflect :: D — no distinct compound, redundant with Wind Deflect
+- | WARD | Sky Repel :: D — no distinct compound, redundant with Wind Repel
+- | WARD | Sky Absorb :: D — no distinct compound, redundant with Wind Absorb
+- | WARD | Sky Screen :: D — no distinct compound, redundant with Wind Veil
+- | WARD | Sky Mantle :: D — no distinct compound, redundant with Wind Wall
+- | WARD | Cloud Refuge :: D — no distinct compound, redundant with Sky Refuge
+- | WARD | Cloud Shroud :: D — no distinct compound, redundant with Wind/Haze Shroud
+- | WARD | Zephyr Ward :: D — no distinct compound, redundant with Wind Ward
+- | WARD | Mist Shroud :: D — no distinct compound, redundant with Wind Shroud
+- | WARD | Haze Veil :: D — no distinct compound, redundant with Mist Veil
+- | WARD | Vapor Shroud :: D — no distinct compound, redundant with Haze Shroud
+- | WARD | Wing Cover :: D — no distinct compound, redundant with Wing Guard's ownership
+- | WARD | Feather Shield :: D — a single feather is too small/insubstantial for a full shield reading, redun
+- | WARD | Feather Cover :: D — no distinct compound, redundant with Feather Screen's ownership
+- | WARD | Feather Veil :: D — no distinct compound, redundant with Feather Screen
+- | WARD | Plumage Shield :: D — no distinct compound, redundant with Plumage Guard's ownership
+- | MEND | Wind Cleanse :: D — no compound surfaced, "cleanse" implies washing away contaminant, a water-ho
+- | MEND | Wind Remedy :: D — remedy is abstract/clinical, redundant against the more concrete Heal/Restor
+- | MEND | Wind Cure :: D — cure is abstract/clinical, redundant
+- | MEND | Wind Rejuvenate :: D — cut D, see rejections (redundant with Wind Refresh/Revive)
+- | MEND | Wind Console :: D — cut D, see rejections (formal/stiff, redundant with Wind Comfort)
+- | MEND | Breeze Heal :: D — no compound surfaced, redundant with Wind Heal
+- | MEND | Breeze Restore :: D — no distinct compound, redundant with Wind Restore
+- | MEND | Breeze Recover :: D — no distinct compound, redundant with Wind Recover
+- | MEND | Breeze Revive :: D — no distinct compound, redundant with Wind Revive
+- | MEND | Breeze Replenish :: D — no distinct compound, redundant with Wind Replenish
+- | MEND | Breeze Rally :: D — no distinct compound, redundant with Wind/Sky Rally
+- | MEND | Breeze Solace :: D — no distinct compound, redundant with Wind Solace
+- | MEND | Breeze Reprieve :: D — no distinct compound, redundant with Wind Reprieve
+- | MEND | Zephyr Heal :: D — no distinct compound, redundant with Wind Heal
+- | MEND | Zephyr Restore :: D — no distinct compound, redundant with Wind Restore
+- | MEND | Zephyr Renew :: D — no distinct compound, redundant with Breeze Renew
+- | MEND | Zephyr Refresh :: D — no distinct compound, redundant with Wind/Breeze Refresh
+- | MEND | Zephyr Calm :: D — no distinct compound, redundant with Wind/Breeze Calm
+- | MEND | Zephyr Solace :: D — no distinct compound, though "Zephyr Solace" is plausible, held redundant ag
+- | MEND | Zephyr Respite :: D — no distinct compound, redundant with Breeze Respite
+- | MEND | Sky Renew :: D — no distinct compound, redundant with Wind Renew
+- | MEND | Sky Soothe :: D — no distinct compound, redundant with Wind/Breeze Soothe
+- | MEND | Sky Revive :: D — no distinct compound, redundant with Wind Revive
+- | MEND | Sky Refresh :: D — no distinct compound, redundant with Wind/Breeze Refresh
+- | MEND | Sky Replenish :: D — no distinct compound, redundant with Wind Replenish
+- | MEND | Sky Comfort :: D — no distinct compound, redundant with Wind/Breeze/Zephyr Comfort
+- | MEND | Sky Calm :: D — no distinct compound, redundant with Wind/Breeze Calm
+- | MEND | Sky Ease :: D — no distinct compound, redundant with Wind/Breeze/Zephyr Ease
+- | MEND | Sky Respite :: D — no distinct compound, redundant with Wind/Breeze Respite
+- | MEND | Fresh Heal :: D — "Fresh Heal" reads as an awkward adjective-stacking, redundant with the alre
+- | MEND | Breath Heal :: D — "Breath Heal" redundant with Breath Renew already kept
+- | MEND | Breath Refresh :: D — no distinct compound, redundant with Fresh Breath's ownership of the refresh
+- | MEND | Clear/Clearing Heal :: D — "Clear Heal" redundant with Clear Wind/Clearing Wind already kept as the hon
+- | TERRORIZE | Gale Horror :: D — redundant, Gale Dread/Terror already carry this register more idiomatically
+- | TERRORIZE | Gale Fright :: D — "fright" is a lighter, sudden-startle register, undersells a gale's sustaine
+- | TERRORIZE | Gale Chill :: D — no distinct compound, redundant with Depth-adjacent Chill register not nativ
+- | TERRORIZE | Gale Intimidate :: D — cut D, see rejections (abstract, redundant)
+- | TERRORIZE | Gale Unnerve :: D — cut D, see rejections (abstract, redundant)
+- | TERRORIZE | Gale Daunt :: D — cut D, see rejections (abstract, redundant)
+- | TERRORIZE | Gale Aura :: D — cut D, see rejections (redundant with Sky Aura)
+- | TERRORIZE | Gale Hiss :: D — no distinct compound, redundant with Wind/Gust Hiss's ownership
+- | TERRORIZE | Gust Terror :: D — no distinct compound, redundant with Gale Terror's ownership
+- | TERRORIZE | Gust Horror :: D — same redundancy reasoning
+- | TERRORIZE | Gust Menace :: D — no distinct compound, redundant with Gale/Wind Menace
+- | TERRORIZE | Gust Presence :: D — no distinct compound, redundant with Gale/Sky Presence
+- | TERRORIZE | Gust Intimidate :: D — no distinct compound, abstract/redundant
+- | TERRORIZE | Gust Loom :: D — no distinct compound, redundant with Sky/Gale Loom
+- | TERRORIZE | Gust Aura :: D — no distinct compound, redundant with Sky Aura
+- | TERRORIZE | Gust Shudder :: D — no distinct compound, redundant with Gale Shudder
+- | TERRORIZE | Gust Howl :: D — no distinct compound, redundant with Gale Howl
+- | TERRORIZE | Gust Wail :: D — no distinct compound, redundant with Gale Wail
+- | TERRORIZE | Squall Terror :: D — no distinct compound, redundant with Gale Terror
+- | TERRORIZE | Squall Menace :: D — no distinct compound, redundant with Gale/Wind Menace
+- | TERRORIZE | Squall Presence :: D — no distinct compound, redundant with Gale/Sky Presence
+- | TERRORIZE | Squall Roar :: D — no distinct compound, redundant with Gale/Gust Roar
+- | TERRORIZE | Squall Loom :: D — no distinct compound, redundant with Sky/Gale Loom
+- | TERRORIZE | Squall Shudder :: D — no distinct compound, redundant with Gale Shudder
+- | TERRORIZE | Squall Shriek :: D — no distinct compound, redundant with Gale/Gust Shriek
+- | TERRORIZE | Squall Howl :: D — no distinct compound, redundant with Gale Howl
+- | TERRORIZE | Squall Wail :: D — no distinct compound, redundant with Gale Wail
+- | TERRORIZE | Squall Hiss :: D — no distinct compound, redundant with Wind/Gust Hiss
+- | TERRORIZE | Wind Dread :: D — no distinct compound, redundant with Gale/Gust/Squall Dread's ownership of t
+- | TERRORIZE | Wind Presence :: D — no distinct compound, redundant with Sky/Gale Presence
+- | TERRORIZE | Wind Roar :: D — no distinct compound, redundant with Gale/Gust Roar's ownership of the deepe
+- | TERRORIZE | Wind Intimidate :: D — cut D, see rejections (abstract, redundant)
+- | TERRORIZE | Wind Loom :: D — no distinct compound, redundant with Sky/Gale Loom
+- | TERRORIZE | Wind Aura :: D — cut X, see rejections (redundant with Sky Aura)
+- | TERRORIZE | Wind Shudder :: D — cut D, see rejections (redundant with Gale Shudder)
+- | TERRORIZE | Wind Wail :: D — no distinct compound, redundant with Sky Wail's harvest-native ownership
+- | TERRORIZE | Sky Dread :: D — no distinct compound, redundant with Gale/Gust/Squall Dread
+- | TERRORIZE | Sky Menace :: D — no distinct compound, redundant with Wind/Gale Menace
+- | TERRORIZE | Sky Roar :: D — sky has no vocal organ, redundant with Gale/Gust Roar's ownership
+- | TERRORIZE | Sky Howl :: D — no vocal organ, redundant with Sky Wail's harvest-native ownership
+- | TERRORIZE | Void Dread :: D — no distinct compound, redundant with Gale/Gust/Squall Dread
+- | TERRORIZE | Void Presence :: D — no distinct compound, redundant with Sky Presence
+- | TERRORIZE | Void Aura :: D — no distinct compound, redundant with Sky Aura
+- | TERRORIZE | Whirlwind Dread :: D — no distinct compound, redundant with Whirlwind Dread already kept (harvest-n
+- | TERRORIZE | Whirlwind Menace :: D — no distinct compound, redundant with Wind/Gale Menace
+- | TERRORIZE | Whirlwind Loom :: D — no distinct compound, redundant with Sky/Gale Loom
+- | TERRORIZE | Whirlwind Shriek :: D — no distinct compound, redundant with Gale/Gust/Wind Shriek
+- | TERRORIZE | Whirlwind Howl :: D — no distinct compound, redundant with Gale Howl
+- | TERRORIZE | Whirlwind Wail :: D — no distinct compound, redundant with Sky/Gale Wail
+- | TERRORIZE | Storm Presence :: D — cut D, see rejections (Storm Presence, Electric-boundary redundant)
+- | TERRORIZE | Storm Roar :: D — no distinct compound, redundant with Gale/Gust Roar
+- | TERRORIZE | Storm Loom :: D — cut D, see rejections (Storm Loom, Electric-boundary redundant)
