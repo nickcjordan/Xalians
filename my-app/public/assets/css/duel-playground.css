@@ -476,14 +476,21 @@
   top: 40%;
   height: 22%;
   border-radius: 50%;
-  border: 1px solid rgba(0, 0, 0, 0.7);
+  border: 1px solid #0d0d0a;
+  /* The face has to be light enough to exist. Hull-on-seam read as nothing on
+     a near-black floor - all that showed was the painted wall, a ring at the
+     figure's feet. A top face seen from a high angle catches the overhead
+     light: distinctly lighter than the floor, brightest at the back where the
+     light hits, a lit lip along the top edge, and the face rolling into
+     shadow as it turns down toward the front wall. */
   background:
-    radial-gradient(ellipse at 50% 28%, rgba(255, 244, 214, 0.10) 0%, transparent 60%),
-    radial-gradient(ellipse at 50% 60%, var(--g-hull-hi) 0%, var(--g-seam) 100%);
+    radial-gradient(ellipse at 50% 42%, rgba(255, 244, 214, 0.28) 0%, transparent 68%),
+    radial-gradient(ellipse at 50% 50%, #4a4a3c 0%, #38382e 60%, #262620 100%);
   box-shadow:
     0 5px 0 color-mix(in srgb, var(--duel-team) 45%, #0d0d0b),
     0 11px 10px rgba(0, 0, 0, 0.6),
-    inset 0 1px 0 rgba(255, 244, 214, 0.12);
+    inset 0 1px 0 rgba(255, 244, 214, 0.28),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.28);
 }
 
 /* feet at the BACK edge of the base, not its centre - planted centrally the
@@ -499,8 +506,10 @@
   height: 74%;
 }
 
+/* softer than the standee's: this shadow falls mostly on the base's own top
+   face, and at full strength it blacked the face out */
 .dp-token-plinth .duel-piece-xalian-icon svg {
-  filter: drop-shadow(0 6px 5px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 5px 4px rgba(0, 0, 0, 0.38));
 }
 
 /* the nameplate: the element badge set into the plinth's front edge */
