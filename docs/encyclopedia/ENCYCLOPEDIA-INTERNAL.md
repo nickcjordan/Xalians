@@ -1,0 +1,56 @@
+# Encyclopedia Xalia: Internal Companion
+
+This file is the private half of the Encyclopedia. It never ships in the public bundle. It holds the working canon that constrains what the public entries may say, the editorial rules for writing new entries, and the source precedence for resolving conflicts. The public half is `encyclopedia.json` in this folder.
+
+## What the Encyclopedia is
+
+The Encyclopedia (masthead: **Encyclopedia Xalia**) is the single public canon reference for the world of Xalia, ratified 2026-09-01. The legacy glossary (`lambda/src/json/glossary.json`) merges into it; its definitions are carried verbatim as the canonical prose. The Encyclopedia adds structure the glossary never had: categories, cross-references, and element tags on planet entries. Species entries are deliberately absent; they arrive during species migration (the `migrate-species` skill), one per migrated species, so that every species entry is written against its final ratified record rather than legacy stub text.
+
+## Source precedence
+
+1. `lambda/src/json/planets.json` histories and `glossary.json` definitions are the source of truth for published lore. If the Encyclopedia contradicts them, the Encyclopedia is wrong.
+2. `.claude/skills/lore-voice/references/canon.md` is the fast-scan continuity sheet and carries the ratified internal constraints listed below.
+3. `docs/LORE_SOURCE_MAP.md` governs the pre-repo Evernote material (canon vs. superseded vs. never-canon).
+4. The creature-system design doc (`docs/design/xalian-creature-system-redesign.md`) governs everything mechanical (records, registries, generation). Mechanics never leak into Encyclopedia prose.
+
+## Working canon that constrains public entries
+
+These are ratified constraints. Public entries must be consistent with them but must never announce them.
+
+- **Xalians are sexless.** No mates, offspring, parents, breeding, or gendered pronouns. Every Xalian is printed by a Generator; that scarcity is the premise of the setting. Kinship-flavored bonds (packs, guardianship, twin mints from one Scrambler Token) are fine; biological lineage is not.
+- **No Xalian speaks a language.** Comprehension without speech was an engineering requirement of a labor force. Depict communication as calls, signals, light patterns, or telepathic feeling. Never dialogue. Do not state the rule publicly; let it show in how creatures are written.
+- **Lifespan is wear-out, not aging.** An engineered chassis has a service life. Mineral and metal bodies outlast flesh; non-corporeal Xalians do not wear out. Internal working canon only; not yet surfaced publicly.
+- **The Nightcap telomere passage is about Vallerii citizens,** not Xalians. Who the players canonically are is an open question with no ratified answer; commit public lore to neither reading.
+- **Reality-breaking powers do not exist.** No teleportation, no true invisibility, no puppeting of another's body, no time reversal, no creating life (only Generators create life), no permanent transformation. Bounded look-alikes are allowed; one-off exceptions exist only as hand-authored signature abilities.
+- **No spellcasting.** What reads as magic decomposes into channels and emitters (mind, gaze, voice, breath, secretion, swarm, aura, light-organs, vents).
+- **Scrambler Tokens are physical chips.** Never digital assets. No NFT, crypto, blockchain, minting, or wallet framing anywhere in public prose; the generation vocabulary is generate*, never mint*.
+- **The genome chirality marker** (`levo | dextro | achiral`) is registry data, not lore. If an entry ever needs to gesture at it, the implementation docs explain the word; the Encyclopedia does not map it to gender or anything else.
+
+## The unresolved thread: never resolve
+
+Phantiri's moon-weapon, Deepwater Black on Endessa, and Veridium's worldship origin all point at one ancient cosmic-horror presence predating the Phantiri. APEX itself avoided Phantiri. New entries may add hints, pressure, and fresh unexplained artifacts to this thread. No entry may ever explain it, name it, or confirm that the three hints share one source.
+
+## Open threads safe to develop in new entries
+
+The Luminax dark-side rebellion; the Zolto network-building underground; Kozrak's agents fomenting a pretext to invade Poseidas; the Magmuth blood feuds; Veridium's black-market arms trade and the consciousness-upload rumors; possible APEX code fragments in Veridium's robots; the Krystian prisoners who served APEX; Floria's pre-End-Wars ancients; Stonera's captive labor; Endessa's leviathan glitches and uncovered ruins; Telypso's psychic sorrow; the Grimedite watch on the rim.
+
+## Editorial rules for new entries
+
+- Invoke the `lore-voice` skill before writing any entry prose. The glossary-entry register applies: one or two sentences, encyclopedic and definitional, leading with the category noun, no flourish, no ellipsis, cross-referencing other canon terms by name.
+- The horror of this universe is economic. An entry about an atrocity names the incentive behind it.
+- Hedge the deep past (rumor has it, records were sealed, it is believed). Mysteries stay open.
+- No modern idiom, no game mechanics in prose, no hopeful resolution.
+- Nuclear-age military register is out of voice (Nick's ruling, 2026-09-01, via the ability catalog: Nuclear Winter and Fallout were cut on these grounds). The Vallerii idiom is industrial and corporate, not Cold War.
+- American English. No em-dashes.
+- New entries append to `encyclopedia.json` with the same schema; definitions written for the Encyclopedia are canonical from the moment Nick ratifies them and should be back-ported to `glossary.json` only if the app still reads it.
+
+## Relationship to the shipped bundle
+
+`encyclopedia.json` is the public structured file. When the site grows an Encyclopedia page, the file moves into (or is copied into) `lambda/src/json/` and flows to the frontend through the existing `copy-json` step, at which point `glossary.json` is superseded and the glossary page reads from the Encyclopedia. Until that flip, `glossary.json` remains untouched and the app is unaffected. This companion file stays out of the bundle permanently.
+
+## Maintenance
+
+- One entry per concept, keyed by kebab-case title. Keys are append-only once shipped; corrections edit the definition, never the key.
+- `related` links are mechanical: a key appears in `related` only if that entry's title appears in the definition text. No thematic linking.
+- Species entries are added at species migration with category `xalians`, one per species, definition written fresh in the modern species register (appositive body description, engineered purpose, present-day curdling).
+- The compendium generator (`scripts/buildCanonCompendium.js`) remains the tool for the long-form aggregate document; the Encyclopedia is the structured reference, not a replacement for the planet histories.
