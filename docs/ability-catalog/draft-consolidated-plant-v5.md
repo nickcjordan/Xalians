@@ -86,7 +86,7 @@ Thicket Ambush, Bramble Ambush, Undergrowth Ambush, Thorn Ambush, Vine Ambush, R
 
 ---
 
-## BEAM (24 names — deliberately thin; do not pad)
+## BEAM (25 names — deliberately thin; do not pad)
 
 Pollen Ray, Spore Ray, Thorn Lance, Root Lance, Spine Lance, Vine Lance, Bramble Lance, Thorn Spear, Root Spear, Thorn Needle, Spine Needle, Bramble Skewer, Thorn Skewer, Root Skewer, Vine Thread, Tendril Thread, Root Pierce, Thorn Pierce, Vine Pierce, Bramble Pierce, Thorn Impale, Root Impale, Bramble Impale, Root Bore, Tendril Bore.
 
