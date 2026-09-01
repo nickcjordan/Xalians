@@ -527,7 +527,7 @@
   box-shadow:
     0 11px 10px rgba(0, 0, 0, 0.6),
     inset 0 1px 0 rgba(255, 244, 214, 0.28),
-    inset 0 -3px 4px rgba(0, 0, 0, 0.5);
+    inset 0 -1px 2px rgba(0, 0, 0, 0.22);
 }
 
 /* The side wall, knurled. A flat stripe of paint read as a decal; a real
@@ -554,10 +554,18 @@
      paint with the shading that makes a cylinder read as turned: darker
      toward both ends where it curves away, darker toward the bottom edge
      where it turns under. */
+  /* One material. The wall's top edge starts in the face's own outer tone
+     and rolls down into the team paint - a hard colour change at the joint,
+     a dark line on the face and a catch-light on the wall were three
+     discontinuities in the same place, and together they cut the disc into
+     two hovering wafers. Light also does not catch the top of a surface
+     that faces AWAY from it. */
   background:
     linear-gradient(90deg, rgba(0, 0, 0, 0.6) 0%, transparent 25% 75%, rgba(0, 0, 0, 0.6) 100%),
-    linear-gradient(180deg, rgba(255, 244, 214, 0.10) 0%, transparent 35%, rgba(0, 0, 0, 0.4) 100%),
-    color-mix(in srgb, var(--duel-team) 40%, #0d0d0b);
+    linear-gradient(180deg, #2b2b23 0%, rgba(43, 43, 35, 0) 60%),
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--duel-team) 42%, #0d0d0b) 0%,
+      color-mix(in srgb, var(--duel-team) 28%, #090907) 100%);
 }
 
 /* feet at the BACK edge of the base, not its centre - planted centrally the
