@@ -217,14 +217,14 @@ Outburst (dup, kept above), Sudden Burst, Radiant Burst (careful: "Radiant" lean
 ## 11. CLOUD
 
 **Neutral pool** (single words):
-Miasma, Pall, Shroud, Veil, Haze, Mist, Fog, Fume, Vapor, Effluvium, Exhalation, Emanation, Murk, Gloom, Nimbus, Aura, Penumbra, Cloud, Overcast, Canopy, Blanket, Curtain, Screen, Scrim, Billow, Plume, Wreath, Drift, Residue, Film, Cloak, Mantle, Zone, Field, Domain, Presence, Fallout, Wake, Trail, Envelope, Sheath
+Miasma, Pall, Shroud, Veil, Haze, Mist, Fog, Fume, Vapor, Effluvium, Exhalation, Emanation, Murk, Gloom, Nimbus, Aura, Penumbra, Cloud, Overcast, Canopy, Blanket, Curtain, Screen, Scrim, Billow, Plume, Wreath, Drift, Residue, Film, Cloak, Mantle, Zone, Field, Domain, Presence, Wake, Trail, Envelope, Sheath
 
 **Neutral pool** (two-word compositions):
-Lingering Veil, Shrouding Field, Settling Haze, Standing Mist, Pervading Field, Persistent Pall, Enveloping Field, Drifting Veil, Suffusing Field, Ambient Shroud, Thickening Haze, Residual Field, Cloaking Veil, Hanging Murk, Spreading Gloom, Coalescing Mist, Encroaching Haze, Wreathing Veil, Blanketing Field, Choking Veil, Obscuring Field, Presence Field, Trailing Wake, Fallout Field, Steeping Haze
+Lingering Veil, Shrouding Field, Settling Haze, Standing Mist, Pervading Field, Persistent Pall, Enveloping Field, Drifting Veil, Suffusing Field, Ambient Shroud, Thickening Haze, Residual Field, Cloaking Veil, Hanging Murk, Spreading Gloom, Coalescing Mist, Encroaching Haze, Wreathing Veil, Blanketing Field, Choking Veil, Obscuring Field, Presence Field, Trailing Wake, Steeping Haze
 
 **Disposition notes / flags:**
 - "Domain of Gloom" — harvest calls this "borderline abstract, kept neutral," but it is 3 words; cut here per the hard 1-2 word rule despite the harvest's own framing. Not pooled.
-- Fallout Field — harvest itself notes this "leans chemical/radiological" in the element-leaning section while also listing it as neutral in §3; flagging the internal tension per the brief's instruction rather than silently resolving — held as pooled but flagged for auditor's final call given the harvest's own contradiction.
+- Fallout Field — CUT (Nick ruling 2026-09-01: nuclear/radiological modern-military register, Nuclear Winter precedent).
 - Nimbus, Aura, Corona-adjacent words risk drifting toward Light/Psychic/Ghost specifically (auras and nimbuses are common in those elements' vocabularies) — kept here as bare neutral nouns since "aura" and "nimbus" are also generically used across many contexts, but flagged for auditor cross-check against those elements' own pools for duplication risk.
 - **Flagged out (leans element):** Smoldering Pall/Smoke Shroud/Ash Veil/Smoldering Haze/Cinder Fog/Ember Wreath (Fire); Toxic Miasma/Noxious Fume/Fetid Reek/Acrid Fume/Corrosive Haze (Chemical); Standing Fog/Fog Bank/Rime Mist/Frost Veil/Drifting Mist (Water/Ice); Spectral Shroud/Wraith Veil/Grave Pall/Haunting Miasma/Dreadful Gloom (Ghost); Suffusing Presence/Pervading Aura/Domain of Dread (Psychic, also terrorize-adjacent); Pollen Haze/Spore Cloud/Bloom Miasma (Plant); Drifting Haze/Windborne Fume (Air); Luminous Nimbus/Radiant Aura (Light); Umbral Pall/Shadow Shroud/Encroaching Murk (Dark).
 - **Cut (not real words, per harvest's own note):** "Cere-cloth-like Shroud-work," "Vaporcloud," "Aura-field," "Miasmatize" — all self-flagged by the harvest as not real standalone words; excluded.

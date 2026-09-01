@@ -50,3 +50,5 @@ First full ice consolidation. Pipeline per the `consolidate-element` skill under
 
 - Disposition evidence: composed-ice-v5-a/b/c/d.md matrices; draft-consolidated-ice-v5.md restoration ledger and undercount table.
 - Neutral pools supplement every cell at draw time.
+
+Ruling (Nick, 2026-09-01): Nuclear Winter stays CUT from terrorize — nuclear-age modern-military register has no place in Xalia (the Vallerii idiom is industrial/corporate, not Cold War). The same ruling cuts Fallout (chemical) and Fallout Field (neutral cloud pool).
