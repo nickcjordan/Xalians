@@ -305,6 +305,25 @@
   height: 100%;
 }
 
+/* The art sits low in the token, with clear space above it and its feet almost
+   touching the rim.
+
+   Not an alignment bug: the bounding box is centred exactly (measured, delta
+   0,0) and the source SVGs are centred in their own viewBoxes to within 0.4%.
+   The imbalance is in the drawing - these are standing creatures, so mass
+   gathers at the feet while the space above the head is empty. A box that
+   contains such a figure is centred; the figure inside it reads low.
+
+   On a square of floor that is correct, because the creature is standing on the
+   floor. Printed on a token there is no floor, so it just looks badly placed.
+   The art is lifted by a small fraction of the token to put its visual mass on
+   the centre rather than its bounding box. */
+.dp-token-milled .duel-piece-xalian-icon,
+.dp-token-coin .duel-piece-xalian-icon,
+.dp-token-element .duel-piece-xalian-icon {
+  top: 46%;
+}
+
 /* The live board gives the art a team-coloured rim light and a cast shadow,
    which is how a figure reads as standing on a floor. Printed onto a token none
    of that applies - a coin's artwork does not glow or throw a shadow onto the
