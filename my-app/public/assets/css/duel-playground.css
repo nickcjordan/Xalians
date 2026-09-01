@@ -545,18 +545,38 @@
     drop-shadow(0 5px 4px rgba(0, 0, 0, 0.38)) !important;
 }
 
-/* the nameplate: the element badge set into the plinth's front edge */
+/* THE NAMEPLATE. The stock badge is a circle button - an element-coloured
+   disc with a glyph sized for a much larger context. At a fifth of a cell
+   the glyph is unreadable noise and the disc just sits ON the base like a
+   sticker. The element's LEGIBLE signal at this size is its hue (the 14
+   hues are fixed identity), so the badge becomes a slim enamel capsule
+   set into the base's front wall - where a miniature wears its nameplate -
+   and the glyph is dropped entirely. */
 .dp-token-plinth .duel-type-badge,
 .dp-token-outline .duel-type-badge {
-  width: 21% !important;
-  height: 21% !important;
+  width: 30% !important;
+  height: 8% !important;
   min-width: 0 !important;
   left: 50%;
   right: auto;
   top: auto;
   bottom: 30%;
   transform: translateX(-50%);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.75);
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--duel-element, var(--g-bone)) 75%, white) 0%,
+    var(--duel-element, var(--g-bone)) 45%,
+    color-mix(in srgb, var(--duel-element, var(--g-bone)) 65%, black) 100%) !important;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.85),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3) !important;
+  filter: none !important;
+}
+
+.dp-token-plinth .duel-type-badge svg,
+.dp-token-outline .duel-type-badge svg {
+  display: none;
 }
 
 .dp-token-plinth .duel-piece--selected .duel-piece-base::before,
@@ -622,11 +642,23 @@
   height: 11%;
   border-radius: 50%;
   background: radial-gradient(ellipse at 50% 50%,
-    color-mix(in srgb, var(--duel-team) 48%, #10100d) 0%,
-    color-mix(in srgb, var(--duel-team) 36%, #10100d) 55%,
+    var(--dp-band) 0%,
+    color-mix(in srgb, var(--duel-team) 38%, #10100d) 55%,
     transparent 76%);
   z-index: 100;
   pointer-events: none;
+}
+
+/* The band is PAINT, not light. Full-strength team colour is what this
+   design system uses for things that emit - lamps, glows, the selection
+   brackets - so a solid band of it read as a neon tube bent around the
+   creature, and it was brighter than the silhouette it outlined, which
+   made the border the subject. The band is the team hue knocked down to
+   pigment - deliberately close to the paint on the base's side wall, so
+   figure outline and base rim read as one paint job. Selection stays
+   full-strength, and against the painted band it now visibly LIGHTS UP. */
+.dp-token-outline .duel-piece {
+  --dp-band: color-mix(in srgb, var(--duel-team) 58%, #16140f);
 }
 
 /* A die-cut sticker band. Axis-aligned offsets alone give a lumpy band with
@@ -640,14 +672,14 @@
    plinth. */
 .dp-token-outline .duel-piece-xalian-icon svg {
   filter:
-    drop-shadow(1px 0 0 var(--duel-team))
-    drop-shadow(-1px 0 0 var(--duel-team))
-    drop-shadow(0 1px 0 var(--duel-team))
-    drop-shadow(0 -1px 0 var(--duel-team))
-    drop-shadow(0.7px 0.7px 0 var(--duel-team))
-    drop-shadow(-0.7px 0.7px 0 var(--duel-team))
-    drop-shadow(0.7px -0.7px 0 var(--duel-team))
-    drop-shadow(-0.7px -0.7px 0 var(--duel-team))
+    drop-shadow(1px 0 0 var(--dp-band))
+    drop-shadow(-1px 0 0 var(--dp-band))
+    drop-shadow(0 1px 0 var(--dp-band))
+    drop-shadow(0 -1px 0 var(--dp-band))
+    drop-shadow(0.7px 0.7px 0 var(--dp-band))
+    drop-shadow(-0.7px 0.7px 0 var(--dp-band))
+    drop-shadow(0.7px -0.7px 0 var(--dp-band))
+    drop-shadow(-0.7px -0.7px 0 var(--dp-band))
     drop-shadow(1px 0 0 color-mix(in srgb, var(--duel-team) 35%, black))
     drop-shadow(-1px 0 0 color-mix(in srgb, var(--duel-team) 35%, black))
     drop-shadow(0 1px 0 color-mix(in srgb, var(--duel-team) 35%, black))

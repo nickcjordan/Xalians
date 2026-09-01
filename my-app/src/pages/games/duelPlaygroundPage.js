@@ -646,7 +646,7 @@ class DuelPlaygroundPage extends React.Component {
 			},
 			{
 				v: 'outline', name: 'Plinth, outlined',
-				note: 'The plinth with the glow swapped for print: a solid die-cut band of the team colour around the silhouette, edged in a darker line - the sticker treatment. The band follows the creature down into its feet, where it pools on the disc and welds figure to base as one object. No light on the piece at all.',
+				note: 'The plinth with the glow swapped for paint: a die-cut band of the team hue knocked down to pigment - the same paint as the base wall, so outline and rim read as one paint job - edged in a darker line. The band follows the creature down into its feet and pools on the disc. No light on the piece at all, which is why the selection brackets visibly light up.',
 			},
 		];
 
