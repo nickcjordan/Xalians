@@ -529,18 +529,28 @@
   content: none;
 }
 
+/* SELECTION marks the TILE, not the base. A ring around the disc was an
+   ellipse laid on an ellipse - it blended into the base and hid the thing it
+   was pointing at. The board already has a selection mark that frames a
+   square of floor: the corner brackets. The miniature occupies a square, so
+   the brackets fly in and lock onto it, under the figure and clear of the
+   disc, and selection means the same thing here as everywhere else. */
 .dp-token-plinth .duel-piece--selected::after {
   content: '';
   position: absolute;
-  left: 9%;
-  right: 9%;
-  top: 36%;
-  height: 30%;
-  border-radius: 50%;
-  border: 2px solid var(--duel-team);
+  inset: 1px;
   pointer-events: none;
   z-index: 100;
-  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--duel-team) 70%, transparent));
+  background:
+    linear-gradient(var(--duel-team), var(--duel-team)) 0 0 / 30% 2px no-repeat,
+    linear-gradient(var(--duel-team), var(--duel-team)) 0 0 / 2px 30% no-repeat,
+    linear-gradient(var(--duel-team), var(--duel-team)) 100% 0 / 30% 2px no-repeat,
+    linear-gradient(var(--duel-team), var(--duel-team)) 100% 0 / 2px 30% no-repeat,
+    linear-gradient(var(--duel-team), var(--duel-team)) 0 100% / 30% 2px no-repeat,
+    linear-gradient(var(--duel-team), var(--duel-team)) 0 100% / 2px 30% no-repeat,
+    linear-gradient(var(--duel-team), var(--duel-team)) 100% 100% / 30% 2px no-repeat,
+    linear-gradient(var(--duel-team), var(--duel-team)) 100% 100% / 2px 30% no-repeat;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--duel-team) 65%, transparent));
   animation:
     duel-acquire 260ms cubic-bezier(0.16, 0.84, 0.36, 1) both,
     duel-hold 2.6s ease-in-out 260ms infinite;
