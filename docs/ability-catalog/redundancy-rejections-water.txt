@@ -1,0 +1,714 @@
+- | STRIKE | Tidal Blow :: D (Tidal Blow — flat, register mismatch with the plain family; not comic/gibberish, but Ti
+- | STRIKE | Tidal Slam :: D (Tide Slam already covers this image under the noun form; Tidal Slam is a redundant adje
+- | STRIKE | Tidal Buffet :: D (tidal doesn't sustain a beating gust the way a single wave does; redundant with Tide/Wa
+- | STRIKE | Tidal Charge :: D (adjective form redundant with Current Charge, already kept in shove)
+- | STRIKE | Tidal Bash :: D (redundant with Torrent Bash, already kept)
+- | STRIKE | Tidal Clout :: D (redundant with Torrent Clout, already kept)
+- | STRIKE | Tidal Clobber :: D (redundant with Brine Wallop; tidal doesn't add distinct meaning)
+- | STRIKE | Tidal Knock :: D (redundant with Current Knock)
+- | STRIKE | Tidal Rap :: D (redundant with Torrent Rap)
+- | STRIKE | Tidal Crash :: D (redundant with Tidal Smash, already the crash-register entry)
+- | STRIKE | Tide Bash :: D (redundant with Torrent Bash)
+- | STRIKE | Tide Clout :: D (redundant with Torrent Clout)
+- | STRIKE | Tide Clobber :: D (redundant with Brine Wallop)
+- | STRIKE | Brine Clobber :: D (redundant/weak against Brine Wallop)
+- | STRIKE | Brine Knock :: D (redundant with Current Knock)
+- | STRIKE | Brine Rap :: D (redundant with Torrent Rap)
+- | STRIKE | Brine Barge :: D (redundant with Current Barge)
+- | STRIKE | Torrent Slam :: D (redundant, weak against Torrent Bash/Ram)
+- | STRIKE | Torrent Buffet :: D (redundant with Tide/Surf Buffet)
+- | STRIKE | Torrent Charge :: D (redundant with Current Charge)
+- | STRIKE | Torrent Clobber :: D (redundant/weak)
+- | STRIKE | Torrent Knock :: D (redundant with Current Knock)
+- | STRIKE | Torrent Crash :: D (redundant with Cascade Crash)
+- | STRIKE | Torrent Barge :: D (redundant with Current Barge)
+- | STRIKE | Current Buffet :: D (redundant with Tide/Surf Buffet)
+- | STRIKE | Current Bash :: D (weak/redundant)
+- | STRIKE | Current Clobber :: D (redundant/weak)
+- | STRIKE | Cascade Slam :: D (redundant with Wave Slam)
+- | STRIKE | Cascade Bash :: D (weak/redundant with Torrent Bash)
+- | STRIKE | Cascade Clobber :: D (redundant/weak)
+- | STRIKE | Cascade Knock :: D (redundant with Current Knock)
+- | STRIKE | Cascade Rap :: D (redundant with Torrent Rap)
+- | STRIKE | Cascade Barge :: D (redundant with Current Barge)
+- | STRIKE | Whitecap Buffet :: D (redundant with Tide/Surf Buffet)
+- | STRIKE | Whitecap Clobber :: D (redundant/weak)
+- | STRIKE | Whitecap Knock :: D (redundant with Current Knock)
+- | STRIKE | Whitecap Rap :: D (redundant with Torrent Rap)
+- | STRIKE | Surf Bash :: D (weak/redundant)
+- | STRIKE | Surf Clobber :: D (redundant/weak)
+- | STRIKE | Surf Knock :: D (redundant)
+- | STRIKE | Surf Rap :: D (redundant)
+- | STRIKE | Deluge Buffet :: D (redundant with Tide/Surf Buffet)
+- | STRIKE | Deluge Bash :: D (weak/redundant)
+- | STRIKE | Deluge Clobber :: D (redundant)
+- | STRIKE | Deluge Knock :: D (redundant)
+- | STRIKE | Deluge Rap :: D (redundant)
+- | STRIKE | Deluge Crash :: D (redundant with Flood Strike register)
+- | STRIKE | Flood Slam :: D (redundant with Deluge Slam)
+- | STRIKE | Flood Buffet :: D (redundant)
+- | STRIKE | Flood Clobber :: D (redundant)
+- | STRIKE | Flood Knock :: D (redundant)
+- | STRIKE | Flood Rap :: D (redundant)
+- | STRIKE | Flood Crash :: D (redundant with Whitecap/Wave Crash)
+- | STRIKE | Rapids Slam :: D (redundant with Wave/Torrent Slam)
+- | STRIKE | Rapids Buffet :: D (redundant)
+- | STRIKE | Rapids Bash :: D (weak/redundant)
+- | STRIKE | Rapids Clobber :: D (redundant)
+- | STRIKE | Rapids Knock :: D (redundant)
+- | STRIKE | Rapids Rap :: D (redundant)
+- | STRIKE | Breaker Slam :: D (redundant)
+- | STRIKE | Breaker Buffet :: D (redundant)
+- | STRIKE | Breaker Clobber :: D (redundant)
+- | STRIKE | Breaker Knock :: D (redundant)
+- | STRIKE | Breaker Rap :: D (redundant)
+- | STRIKE | Breaker Crash :: D (redundant with Whitecap Crash)
+- | STRIKE | Surge Buffet :: D (redundant)
+- | STRIKE | Surge Clobber :: D (redundant)
+- | STRIKE | Surge Knock :: D (redundant)
+- | STRIKE | Surge Rap :: D (redundant)
+- | STRIKE | Surge Crash :: D (redundant with Wave/Cascade Crash)
+- | STRIKE | Surge Barge :: D (redundant with Current Barge)
+- | STRIKE | Wave Bash :: D (weak/redundant)
+- | STRIKE | Wave Clobber :: D (redundant)
+- | STRIKE | Wave Knock :: D (redundant)
+- | STRIKE | Wave Rap :: D (redundant)
+- | STRIKE | Wave Barge :: D (redundant with Current Barge)
+- | STRIKE | Cataract Smash :: D (redundant with Cataract Crash)
+- | STRIKE | Cataract Slam :: D (redundant)
+- | STRIKE | Cataract Buffet :: D (redundant)
+- | STRIKE | Cataract Clobber :: D (redundant)
+- | STRIKE | Cataract Knock :: D (redundant)
+- | STRIKE | Cataract Rap :: D (redundant)
+- | STRIKE | Confluence Buffet :: D (redundant)
+- | STRIKE | Confluence Clobber :: D (redundant)
+- | STRIKE | Confluence Knock :: D (redundant)
+- | STRIKE | Confluence Rap :: D (redundant)
+- | STRIKE | Confluence Crash :: D (redundant with Wave Crash)
+- | STRIKE | Headwater Slam :: D (redundant)
+- | STRIKE | Headwater Buffet :: D (redundant)
+- | STRIKE | Headwater Clobber :: D (redundant)
+- | STRIKE | Headwater Knock :: D (redundant)
+- | STRIKE | Headwater Rap :: D (redundant)
+- | STRIKE | Headwater Crash :: D (redundant)
+- | STRIKE | Headwater Barge :: D (redundant with Current Barge)
+- | LASH | Tidal Sweep :: D (Tidal Sweep — redundant with Tide Sweep, held out)
+- | LASH | Tidal Arc :: D (redundant with Tide Arc)
+- | LASH | Tidal Crack :: D (redundant with Tide Crack)
+- | LASH | Tidal Snap :: D (redundant with Wave Snap)
+- | LASH | Tidal Cleave :: D (redundant with Wave Cleave cut — tidal doesn't divide cleanly either)
+- | LASH | Tide Swipe :: D (redundant with Surf Swipe)
+- | LASH | Tide Snap :: D (redundant with Wave Snap)
+- | LASH | Brine Sweep :: D (redundant with Torrent Sweep)
+- | LASH | Brine Arc :: D (redundant with Tide Arc)
+- | LASH | Brine Snap :: D (redundant with Wave Snap)
+- | LASH | Brine Fan :: D (redundant with Spray Fan)
+- | LASH | Torrent Swipe :: D (redundant with Surf Swipe)
+- | LASH | Torrent Arc :: D (redundant with Tide Arc)
+- | LASH | Torrent Snap :: D (redundant with Wave Snap)
+- | LASH | Torrent Flail :: D (redundant with Torrent Thrash)
+- | LASH | Current Sweep :: D (redundant with Torrent Sweep)
+- | LASH | Current Swipe :: D (redundant with Surf Swipe)
+- | LASH | Current Arc :: D (redundant with Tide Arc)
+- | LASH | Current Snap :: D (redundant with Wave Snap)
+- | LASH | Cascade Swipe :: D (redundant with Surf Swipe)
+- | LASH | Cascade Arc :: D (redundant with Tide Arc)
+- | LASH | Cascade Snap :: D (redundant with Wave Snap)
+- | LASH | Whitecap Sweep :: D (redundant with Surf Sweep-class already covered by Tide/Cascade)
+- | LASH | Whitecap Swipe :: D (redundant with Surf Swipe)
+- | LASH | Whitecap Arc :: D (redundant with Tide Arc)
+- | LASH | Whitecap Snap :: D (redundant with Wave Snap)
+- | LASH | Surf Sweep :: D (redundant with Torrent Sweep)
+- | LASH | Surf Arc :: D (redundant with Tide Arc)
+- | LASH | Surf Snap :: D (redundant with Wave Snap)
+- | LASH | Surf Fan :: D (redundant with Spray Fan)
+- | LASH | Swell Swipe :: D (redundant with Surf Swipe)
+- | LASH | Swell Arc :: D (redundant with Tide Arc)
+- | LASH | Wave Swipe :: D (redundant with Surf Swipe)
+- | LASH | Wave Crack :: D (redundant with Tide Crack)
+- | LASH | Wave Fan :: D (redundant with Spray Fan)
+- | LASH | Billow Sweep :: D (redundant with Cascade Sweep)
+- | LASH | Billow Swipe :: D (redundant with Surf Swipe)
+- | LASH | Billow Arc :: D (redundant with Tide Arc)
+- | LASH | Billow Snap :: D (redundant with Wave Snap)
+- | LASH | Billow Fan :: D (billow can fan out broadly — but "Billow Fan" is redundant/weak against Spray Fan alrea
+- | LASH | Ripple Sweep :: D (redundant with Tide Sweep)
+- | LASH | Ripple Arc :: D (redundant with Tide Arc)
+- | LASH | Eddy Sweep :: D (redundant with Tide Sweep)
+- | LASH | Eddy Swipe :: D (redundant with Surf Swipe)
+- | LASH | Eddy Arc :: D (redundant with Tide Arc)
+- | LASH | Eddy Snap :: D (redundant with Wave Snap)
+- | LASH | Undulating Sweep :: D (redundant with Tide Sweep)
+- | LASH | Undulating Swipe :: D (redundant with Surf Swipe)
+- | LASH | Undulating Arc :: D (redundant with Wave Arc)
+- | LASH | Spray Sweep :: D (redundant with Torrent Sweep)
+- | LASH | Spray Swipe :: D (redundant with Surf Swipe)
+- | LASH | Spray Snap :: D (redundant with Wave Snap)
+- | LASH | Foam Sweep :: D (redundant with existing Sweep entries)
+- | LASH | Foam Swipe :: D (redundant with Surf Swipe)
+- | LASH | Froth Sweep :: D (redundant)
+- | LASH | Froth Swipe :: D (redundant)
+- | RAKE | Tide Rip :: D (redundant with Current Rip)
+- | RAKE | Tide Shred :: D (redundant with Wave Shred)
+- | RAKE | Tide Slash :: D (redundant with Brine Slash)
+- | RAKE | Tide Gash :: D (redundant with Torrent Gash)
+- | RAKE | Tide Flurry :: D (redundant with Tide Frenzy)
+- | RAKE | Tide Volley :: D (redundant with Tide Frenzy register)
+- | RAKE | Tide Shear :: D (redundant with Current Shear)
+- | RAKE | Current Rend :: D (redundant with Tide Rend)
+- | RAKE | Current Shred :: D (redundant with Wave Shred)
+- | RAKE | Current Slash :: D (redundant with Brine Slash)
+- | RAKE | Current Gash :: D (redundant with Torrent Gash)
+- | RAKE | Current Flurry :: D (redundant with existing Frenzy entries)
+- | RAKE | Current Frenzy :: D (redundant with Tide Frenzy register)
+- | RAKE | Current Volley :: D (redundant)
+- | RAKE | Rapids Rend :: D (redundant with Tide Rend)
+- | RAKE | Rapids Rip :: D (redundant with Current Rip)
+- | RAKE | Rapids Shred :: D (redundant with Wave Shred)
+- | RAKE | Rapids Slash :: D (redundant with Brine Slash)
+- | RAKE | Rapids Gash :: D (redundant with Torrent Gash)
+- | RAKE | Rapids Frenzy :: D (redundant)
+- | RAKE | Rapids Volley :: D (redundant)
+- | RAKE | Rapids Shear :: D (redundant with Current Shear)
+- | RAKE | Torrent Rend :: D (redundant with Tide Rend)
+- | RAKE | Torrent Rip :: D (redundant with Current Rip)
+- | RAKE | Torrent Shred :: D (redundant with Wave Shred)
+- | RAKE | Torrent Slash :: D (redundant with Brine Slash)
+- | RAKE | Torrent Flurry :: D (redundant)
+- | RAKE | Torrent Frenzy :: D (redundant)
+- | RAKE | Torrent Volley :: D (redundant)
+- | RAKE | Torrent Shear :: D (redundant with Current Shear)
+- | RAKE | Wave Rend :: D (redundant with Tide Rend)
+- | RAKE | Wave Rip :: D (redundant with Current Rip)
+- | RAKE | Wave Slash :: D (redundant with Brine Slash)
+- | RAKE | Wave Gash :: D (redundant with Torrent Gash)
+- | RAKE | Wave Frenzy :: D (redundant with Wave Flurry)
+- | RAKE | Wave Volley :: D (redundant)
+- | RAKE | Wave Shear :: D (redundant with Current Shear)
+- | RAKE | Surf Rend :: D (redundant with Tide Rend)
+- | RAKE | Surf Rip :: D (redundant with Current Rip)
+- | RAKE | Surf Shred :: D (redundant with Wave Shred)
+- | RAKE | Surf Slash :: D (redundant with Brine Slash)
+- | RAKE | Surf Gash :: D (redundant with Torrent Gash)
+- | RAKE | Surf Flurry :: D (redundant with Wave Flurry)
+- | RAKE | Surf Frenzy :: D (redundant)
+- | RAKE | Surf Volley :: D (redundant)
+- | RAKE | Surf Shear :: D (redundant with Current Shear)
+- | RAKE | Brine Rend :: D (redundant with Tide Rend)
+- | RAKE | Brine Rip :: D (redundant with Current Rip)
+- | RAKE | Brine Shred :: D (redundant with Wave Shred)
+- | RAKE | Brine Gash :: D (redundant with Torrent Gash)
+- | RAKE | Brine Flurry :: D (redundant)
+- | RAKE | Brine Frenzy :: D (redundant)
+- | RAKE | Brine Volley :: D (redundant)
+- | RAKE | Spray Rend :: D (redundant with Tide Rend)
+- | RAKE | Spray Rip :: D (redundant with Current Rip)
+- | RAKE | Spray Shred :: D (redundant with Wave Shred)
+- | RAKE | Spray Slash :: D (redundant with Brine Slash)
+- | RAKE | Spray Gash :: D (redundant with Torrent Gash)
+- | RAKE | Spray Flurry :: D (redundant with Tide Frenzy register)
+- | RAKE | Spray Barrage :: D (spray is a diffuse scatter already, "barrage" is redundant/T with spray's own definitio
+- | RAKE | Spray Volley :: D (redundant, near-tautology with spray's own scatter-definition)
+- | RAKE | Spray Shear :: D (redundant with Current Shear)
+- | RAKE | Deluge Rake :: D (redundant with Tide Rake register)
+- | RAKE | Deluge Rend :: D (redundant with Tide Rend)
+- | RAKE | Deluge Rip :: D (redundant with Current Rip)
+- | RAKE | Deluge Slash :: D (redundant with Brine Slash)
+- | RAKE | Deluge Gash :: D (redundant with Torrent Gash)
+- | RAKE | Deluge Flurry :: D (redundant)
+- | RAKE | Deluge Frenzy :: D (redundant)
+- | RAKE | Deluge Volley :: D (redundant)
+- | RAKE | Deluge Shear :: D (redundant with Current Shear)
+- | RAKE | Flood Rake :: D (redundant with Tide Rake register)
+- | RAKE | Flood Rend :: D (redundant with Tide Rend)
+- | RAKE | Flood Rip :: D (redundant with Current Rip)
+- | RAKE | Flood Shred :: D (redundant with Deluge Shred)
+- | RAKE | Flood Slash :: D (redundant with Brine Slash)
+- | RAKE | Flood Gash :: D (redundant with Torrent Gash)
+- | RAKE | Flood Frenzy :: D (redundant with Flood Frenzy)
+- | RAKE | Flood Volley :: D (redundant)
+- | RAKE | Flood Shear :: D (redundant with Current Shear)
+- | RAKE | Cascade Rake :: D (redundant with Wave Rake register)
+- | RAKE | Cascade Rend :: D (redundant with Tide Rend)
+- | RAKE | Cascade Shred :: D (redundant with Wave Shred)
+- | RAKE | Cascade Slash :: D (redundant with Brine Slash)
+- | RAKE | Cascade Gash :: D (redundant with Torrent Gash)
+- | RAKE | Cascade Flurry :: D (redundant with Wave Flurry)
+- | RAKE | Cascade Frenzy :: D (redundant)
+- | RAKE | Cascade Volley :: D (redundant)
+- | RAKE | Cascade Shear :: D (redundant with Current Shear)
+- | RAKE | Surge Rake :: D (redundant with Tide Rake register)
+- | RAKE | Surge Rend :: D (redundant with Tide Rend)
+- | RAKE | Surge Rip :: D (redundant with Current Rip)
+- | RAKE | Surge Shred :: D (redundant with Wave Shred)
+- | RAKE | Surge Slash :: D (redundant with Brine Slash)
+- | RAKE | Surge Gash :: D (redundant with Torrent Gash)
+- | RAKE | Surge Flurry :: D (redundant)
+- | RAKE | Surge Frenzy :: D (redundant)
+- | RAKE | Surge Volley :: D (redundant)
+- | RAKE | Surge Shear :: D (redundant with Current Shear)
+- | SHOVE | Tidal Thrust :: D (redundant with Tide Thrust)
+- | SHOVE | Tidal Ram :: D (redundant with Wave/Torrent Ram in strike, X-adjacent)
+- | SHOVE | Tidal Charge :: D (redundant with Current Charge)
+- | SHOVE | Tidal Slam :: D (redundant with strike-cell Tidal Smash, X)
+- | SHOVE | Tidal Bash :: D (redundant with Torrent Bash, strike-cell)
+- | SHOVE | Tidal Buffet :: D (redundant with Brine Buffet)
+- | SHOVE | Tidal Jolt :: D (redundant with Tide Jolt)
+- | SHOVE | Tidal Jostle :: D (redundant with Wave Jostle)
+- | SHOVE | Tidal Barge :: D (redundant with Torrent/Rapids Barge)
+- | SHOVE | Tidal Stagger :: D (redundant with Wave Stagger)
+- | SHOVE | Tidal Buckle :: D (redundant with Current Buckle)
+- | SHOVE | Tidal Heave :: D (redundant with Tide Heave)
+- | SHOVE | Tidal Bowl Over :: D (redundant with Tidal Knockdown register)
+- | SHOVE | Tide Push :: D (redundant with Tidal Shove)
+- | SHOVE | Tide Ram :: D (redundant with Wave/Tide Ram, strike-cell)
+- | SHOVE | Tide Charge :: D (redundant with Current Charge)
+- | SHOVE | Tide Slam :: D (redundant with strike-cell entries)
+- | SHOVE | Tide Bash :: D (redundant with Torrent Bash)
+- | SHOVE | Tide Buffet :: D (redundant with Brine Buffet)
+- | SHOVE | Tide Jostle :: D (redundant with Wave Jostle)
+- | SHOVE | Tide Barge :: D (redundant with Torrent/Rapids Barge)
+- | SHOVE | Tide Stagger :: D (redundant with Wave Stagger)
+- | SHOVE | Tide Buckle :: D (redundant with Current Buckle)
+- | SHOVE | Tide Bowl Over :: D (redundant with Tide Topple register)
+- | SHOVE | Brine Push :: D (redundant with Tidal Shove)
+- | SHOVE | Brine Thrust :: D (redundant with Tide Thrust)
+- | SHOVE | Brine Charge :: D (redundant with Current Charge)
+- | SHOVE | Brine Slam :: D (redundant with strike-cell entries)
+- | SHOVE | Brine Bash :: D (redundant with Torrent Bash)
+- | SHOVE | Brine Jolt :: D (redundant with Tide Jolt)
+- | SHOVE | Brine Jostle :: D (redundant with Wave Jostle)
+- | SHOVE | Brine Barge :: D (redundant with Torrent/Rapids Barge)
+- | SHOVE | Brine Stagger :: D (redundant with Wave Stagger)
+- | SHOVE | Brine Buckle :: D (redundant with Current Buckle)
+- | SHOVE | Brine Knock Down :: D (redundant with Tidal Knockdown register)
+- | SHOVE | Brine Bowl Over :: D (redundant)
+- | SHOVE | Current Thrust :: D (redundant with Tide Thrust)
+- | SHOVE | Current Ram :: D (redundant with Torrent Ram, strike-cell)
+- | SHOVE | Current Slam :: D (redundant with strike-cell entries)
+- | SHOVE | Current Bash :: D (redundant with Torrent Bash)
+- | SHOVE | Current Buffet :: D (redundant with Brine Buffet)
+- | SHOVE | Current Jolt :: D (redundant with Tide Jolt)
+- | SHOVE | Current Jostle :: D (redundant with Wave Jostle)
+- | SHOVE | Current Topple :: D (redundant with Tide Topple)
+- | SHOVE | Current Stagger :: D (redundant with Wave Stagger)
+- | SHOVE | Current Knock Down :: D (redundant with Tidal Knockdown register)
+- | SHOVE | Current Bowl Over :: D (redundant)
+- | SHOVE | Torrent Thrust :: D (redundant with Tide Thrust)
+- | SHOVE | Torrent Ram :: D (redundant with Torrent Ram, strike-cell, X)
+- | SHOVE | Torrent Charge :: D (redundant with Current Charge)
+- | SHOVE | Torrent Slam :: D (redundant with strike-cell entries)
+- | SHOVE | Torrent Bash :: D (redundant with Torrent Bash, strike-cell, X)
+- | SHOVE | Torrent Buffet :: D (redundant with Brine Buffet)
+- | SHOVE | Torrent Jolt :: D (redundant with Tide Jolt)
+- | SHOVE | Torrent Jostle :: D (redundant with Wave Jostle)
+- | SHOVE | Torrent Topple :: D (redundant with Tide Topple)
+- | SHOVE | Torrent Stagger :: D (redundant with Wave Stagger)
+- | SHOVE | Torrent Buckle :: D (redundant with Current Buckle)
+- | SHOVE | Torrent Knock Down :: D (redundant with Tidal Knockdown register)
+- | SHOVE | Torrent Bowl Over :: D (redundant)
+- | SHOVE | Rapids Push :: D (redundant with Torrent Push)
+- | SHOVE | Rapids Thrust :: D (redundant with Tide Thrust)
+- | SHOVE | Rapids Ram :: D (redundant with Torrent Ram)
+- | SHOVE | Rapids Charge :: D (redundant with Current Charge)
+- | SHOVE | Rapids Slam :: D (redundant with strike-cell entries)
+- | SHOVE | Rapids Bash :: D (redundant with Torrent Bash)
+- | SHOVE | Rapids Buffet :: D (redundant with Brine Buffet)
+- | SHOVE | Rapids Jolt :: D (redundant with Tide Jolt)
+- | SHOVE | Rapids Jostle :: D (redundant with Wave Jostle)
+- | SHOVE | Rapids Topple :: D (redundant with Tide Topple)
+- | SHOVE | Rapids Stagger :: D (redundant with Wave Stagger)
+- | SHOVE | Rapids Buckle :: D (redundant with Current Buckle)
+- | SHOVE | Rapids Knock Down :: D (redundant)
+- | SHOVE | Rapids Bowl Over :: D (redundant)
+- | SHOVE | Deluge Thrust :: D (redundant with Tide Thrust)
+- | SHOVE | Deluge Slam :: D (redundant with strike-cell entries)
+- | SHOVE | Deluge Bash :: D (redundant with Torrent Bash)
+- | SHOVE | Deluge Buffet :: D (redundant with Brine Buffet)
+- | SHOVE | Deluge Jolt :: D (redundant with Tide Jolt)
+- | SHOVE | Deluge Jostle :: D (redundant with Wave Jostle)
+- | SHOVE | Deluge Barge :: D (redundant with Torrent Barge)
+- | SHOVE | Deluge Topple :: D (redundant with Tide Topple)
+- | SHOVE | Deluge Stagger :: D (redundant with Wave Stagger)
+- | SHOVE | Deluge Buckle :: D (redundant with Current Buckle)
+- | SHOVE | Deluge Knock Down :: D (redundant)
+- | SHOVE | Deluge Bowl Over :: D (redundant)
+- | SHOVE | Flood Thrust :: D (redundant with Tide Thrust)
+- | SHOVE | Flood Slam :: D (redundant with strike-cell entries)
+- | SHOVE | Flood Bash :: D (redundant with Torrent Bash)
+- | SHOVE | Flood Buffet :: D (redundant with Brine Buffet)
+- | SHOVE | Flood Jolt :: D (redundant with Tide Jolt)
+- | SHOVE | Flood Jostle :: D (redundant with Wave Jostle)
+- | SHOVE | Flood Barge :: D (redundant with Torrent Barge)
+- | SHOVE | Flood Topple :: D (redundant with Tide Topple)
+- | SHOVE | Flood Stagger :: D (redundant with Wave Stagger)
+- | SHOVE | Flood Buckle :: D (redundant with Current Buckle)
+- | SHOVE | Flood Knock Down :: D (redundant)
+- | SHOVE | Flood Bowl Over :: D (redundant)
+- | SHOVE | Billow Thrust :: D (redundant with Tide Thrust)
+- | SHOVE | Billow Charge :: D (redundant with Current Charge)
+- | SHOVE | Billow Slam :: D (redundant with strike-cell entries)
+- | SHOVE | Billow Bash :: D (redundant with Torrent Bash)
+- | SHOVE | Billow Buffet :: D (redundant with Brine Buffet)
+- | SHOVE | Billow Jolt :: D (redundant with Tide Jolt)
+- | SHOVE | Billow Jostle :: D (redundant with Wave Jostle)
+- | SHOVE | Billow Barge :: D (redundant with Torrent Barge)
+- | SHOVE | Billow Topple :: D (redundant with Tide Topple)
+- | SHOVE | Billow Stagger :: D (redundant with Wave Stagger)
+- | SHOVE | Billow Buckle :: D (redundant with Current Buckle)
+- | SHOVE | Billow Knock Down :: D (redundant)
+- | SHOVE | Billow Bowl Over :: D (redundant)
+- | SHOVE | Breaker Thrust :: D (redundant with Tide Thrust)
+- | SHOVE | Breaker Ram :: D (redundant with strike-cell Whitecap/Breaker entries)
+- | SHOVE | Breaker Charge :: D (redundant with Current Charge)
+- | SHOVE | Breaker Slam :: D (redundant with strike-cell entries)
+- | SHOVE | Breaker Bash :: D (redundant with Torrent Bash)
+- | SHOVE | Breaker Buffet :: D (redundant with Brine Buffet)
+- | SHOVE | Breaker Jolt :: D (redundant with Tide Jolt)
+- | SHOVE | Breaker Jostle :: D (redundant with Wave Jostle)
+- | SHOVE | Breaker Barge :: D (redundant with Torrent Barge)
+- | SHOVE | Breaker Topple :: D (redundant with Tide Topple)
+- | SHOVE | Breaker Stagger :: D (redundant with Wave Stagger)
+- | SHOVE | Breaker Buckle :: D (redundant with Current Buckle)
+- | SHOVE | Breaker Knock Down :: D (redundant)
+- | SHOVE | Breaker Bowl Over :: D (redundant)
+- | SHOVE | Surge Thrust :: D (redundant with Tide Thrust)
+- | SHOVE | Surge Charge :: D (redundant with Current Charge; also cross-listed strike-cell Surge Charge, X)
+- | SHOVE | Surge Slam :: D (redundant with strike-cell Surge Slam, X)
+- | SHOVE | Surge Bash :: D (redundant with Torrent Bash)
+- | SHOVE | Surge Buffet :: D (redundant with Brine Buffet)
+- | SHOVE | Surge Jolt :: D (redundant with Tide Jolt)
+- | SHOVE | Surge Jostle :: D (redundant with Wave Jostle)
+- | SHOVE | Surge Topple :: D (redundant with Tide Topple)
+- | SHOVE | Surge Stagger :: D (redundant with Wave Stagger)
+- | SHOVE | Surge Buckle :: D (redundant with Current Buckle)
+- | SHOVE | Surge Knock Down :: D (redundant)
+- | SHOVE | Surge Bowl Over :: D (redundant)
+- | SHOVE | Wave Thrust :: D (redundant with Tide Thrust)
+- | SHOVE | Wave Ram :: D (redundant with strike-cell Wave Ram, X)
+- | SHOVE | Wave Charge :: D (redundant with strike-cell Wave Charge, X)
+- | SHOVE | Wave Slam :: D (redundant with strike-cell Wave Slam, X)
+- | SHOVE | Wave Bash :: D (redundant with Torrent Bash)
+- | SHOVE | Wave Buffet :: D (redundant with strike-cell Wave Buffet, X)
+- | SHOVE | Wave Jolt :: D (redundant with Tide Jolt)
+- | SHOVE | Wave Barge :: D (redundant with Torrent Barge)
+- | SHOVE | Wave Topple :: D (redundant with Tide Topple)
+- | SHOVE | Wave Buckle :: D (redundant with Current Buckle)
+- | SHOVE | Wave Knock Down :: D (redundant)
+- | SHOVE | Wave Bowl Over :: D (redundant)
+- | SHOVE | Cascade Push :: D (redundant with Torrent Push)
+- | SHOVE | Cascade Thrust :: D (redundant with Tide Thrust)
+- | SHOVE | Cascade Slam :: D (redundant with strike-cell Cascade Crash, X)
+- | SHOVE | Cascade Bash :: D (redundant with Torrent Bash)
+- | SHOVE | Cascade Buffet :: D (redundant with Brine Buffet)
+- | SHOVE | Cascade Jolt :: D (redundant with Tide Jolt)
+- | SHOVE | Cascade Jostle :: D (redundant with Wave Jostle)
+- | SHOVE | Cascade Barge :: D (redundant with Torrent Barge)
+- | SHOVE | Cascade Stagger :: D (redundant with Wave Stagger)
+- | SHOVE | Cascade Buckle :: D (redundant with Current Buckle)
+- | SHOVE | Cascade Knock Down :: D (redundant)
+- | SHOVE | Cascade Bowl Over :: D (redundant)
+- | SHOVE | Whitecap Push :: D (redundant with Tidal Shove)
+- | SHOVE | Whitecap Thrust :: D (redundant with Tide Thrust)
+- | SHOVE | Whitecap Slam :: D (redundant with strike-cell Whitecap Crash, X)
+- | SHOVE | Whitecap Bash :: D (redundant with Torrent Bash)
+- | SHOVE | Whitecap Buffet :: D (redundant with Brine Buffet)
+- | SHOVE | Whitecap Jolt :: D (redundant with Tide Jolt)
+- | SHOVE | Whitecap Jostle :: D (redundant with Wave Jostle)
+- | SHOVE | Whitecap Barge :: D (redundant with Torrent Barge)
+- | SHOVE | Whitecap Topple :: D (redundant with Tide Topple)
+- | SHOVE | Whitecap Stagger :: D (redundant with Wave Stagger)
+- | SHOVE | Whitecap Buckle :: D (redundant with Current Buckle)
+- | SHOVE | Whitecap Knock Down :: D (redundant)
+- | SHOVE | Whitecap Bowl Over :: D (redundant)
+- | SHOVE | Riptide Push :: D (redundant with Riptide Shove, the primary honest partner already kept)
+- | SHOVE | Riptide Thrust :: D (redundant with Riptide Shove register)
+- | SHOVE | Riptide Slam :: D (redundant)
+- | SHOVE | Riptide Bash :: D (redundant)
+- | SHOVE | Riptide Buffet :: D (redundant)
+- | SHOVE | Riptide Jolt :: D (redundant with Tide Jolt)
+- | SHOVE | Riptide Jostle :: D (redundant with Wave Jostle)
+- | SHOVE | Riptide Barge :: D (redundant with Torrent Barge)
+- | SHOVE | Riptide Topple :: D (redundant with Tide Topple)
+- | SHOVE | Riptide Stagger :: D (redundant with Wave Stagger)
+- | SHOVE | Riptide Buckle :: D (redundant with Current Buckle)
+- | SHOVE | Riptide Knock Down :: D (redundant)
+- | SHOVE | Riptide Bowl Over :: D (redundant)
+- | SPRAY | Tide Discharge :: X — Torrent Discharge already covers this concept; "Tide Discharge" redundant
+- | SPRAY | Tide Barrage :: X — near-dup of Brine Barrage; redundant
+- | SPRAY | Tide Plume :: X — Brine Plume already covers this; Tide Plume redundant
+- | SPRAY | Tide Fountain :: X — Spray Fountain/Fountain Spray already cover this register; redundant
+- | SPRAY | Tide Effusion :: X — Brine Effusion already covers this; redundant
+- | SPRAY | Tide Shower :: X — redundant with Geyser Spray's shower-adjacent reading, no distinguishing feature
+- | SPRAY | Brine Wash :: X — Tide Wash/Cascade Wash cover the wash concept; Brine Wash redundant
+- | SPRAY | Torrent Spray :: X — Torrent Discharge is the kept form; bare "Torrent Spray" redundant with it
+- | SPRAY | Torrent Plume :: X — Geyser Plume/Brine Plume cover the plume register; Torrent Plume redundant
+- | SPRAY | Wave Jet :: X — Brine Jet/Tide Jet cover the jet register; Wave Jet redundant, no distinguishing featu
+- | SPRAY | Mist Plume :: D — mist could plume, but "Mist Cloud" (cloud cell) already covers mist's lingering rise m
+- | SPRAY | Mist Cone :: D — same, mist doesn't cone-shape cleanly, redundant against Mist Cloud — X
+- | SPRAY | Mist Arc :: D — mist has no defined edge to arc; redundant against cloud-cell Mist Veil — X
+- | SPRAY | Mist Sheet :: D — mist has no defined sheet-shape; redundant against cloud-cell Mist Shroud — X
+- | SPRAY | Foam Wash :: D — Foam Slick cut above (D); Foam Wash redundant against Tide Wash — X
+- | SPRAY | Flume Sluice :: D — a flume IS a channel, "sluice" (a gate on a channel) is X-redundant with the flume con
+- | SPRAY | Deluge Spray :: X — Deluge Wash is the kept spray-cell form; bare "Deluge Spray" redundant
+- | BURST | Tidal/Tide Blast :: X — near-dup of Wave/Torrent Burst, redundant
+- | BURST | Tidal/Tide Eruption :: X — Geyser Eruption covers the eruption register; Tide Eruption redundant
+- | BURST | Tidal/Tide Outburst :: X — redundant against Tidal Burst
+- | BURST | Tidal/Tide Concussion :: X — redundant, near-dup of Shockwave
+- | BURST | Brine Eruption :: X — Geyser Eruption/Spring Eruption cover this register; Brine Eruption redundant
+- | BURST | Brine Outburst :: X — redundant against Brine Blast/Brine Rupture
+- | BURST | Brine Shockwave :: X — Tide Shockwave covers this register; Brine Shockwave redundant
+- | BURST | Brine Concussion :: X — redundant
+- | BURST | Brine Pulse :: X — Tide Pulse/Current Pulse cover the pulse register; Brine Pulse redundant
+- | BURST | Brine Ripple :: X — Tide Ripple/Current Ripple cover this; redundant
+- | BURST | Wave Blast :: X — redundant against Wave Burst
+- | BURST | Wave Eruption :: X — Geyser Eruption covers this; Wave Eruption redundant
+- | BURST | Wave Outburst :: X — redundant
+- | BURST | Wave Rupture :: X — Tide Rupture covers this register; Wave Rupture redundant
+- | BURST | Wave Shockwave :: X — Tide Shockwave covers this; redundant
+- | BURST | Wave Concussion :: X — redundant
+- | BURST | Surge Blast :: X — redundant
+- | BURST | Surge Eruption :: X — Geyser Eruption; redundant
+- | BURST | Surge Outburst :: X — redundant
+- | BURST | Surge Rupture :: X — Tide Rupture; redundant
+- | BURST | Surge Shockwave :: X — Tide Shockwave; redundant
+- | BURST | Surge Concussion :: X — redundant
+- | BURST | Surge Ripple :: X — redundant against Current Ripple/Tide Ripple
+- | BURST | Torrent Blast :: X — Torrent Outburst, cut above, redundant against Torrent Burst
+- | BURST | Torrent Eruption :: X — Geyser Eruption covers this; Torrent Eruption redundant
+- | BURST | Flood Blast :: X — redundant
+- | BURST | Flood Eruption :: X — Geyser Eruption; redundant
+- | BURST | Flood Outburst :: X — redundant
+- | BURST | Downpour Blast :: X — redundant
+- | BURST | Downpour Eruption :: X — redundant
+- | BURST | Downpour Outburst :: X — redundant
+- | BURST | Fountain Blast :: X — redundant
+- | BURST | Fountain Eruption :: X — redundant against Spring/Geyser Eruption
+- | BURST | Fountain Outburst :: X — redundant
+- | BURST | Geyser Blast :: X — redundant
+- | BURST | Geyser Outburst :: X — redundant
+- | BURST | Geyser Rupture :: X — Geyser Eruption covers this register; Geyser Rupture redundant
+- | BURST | Geyser Shockwave :: X — Tide Shockwave covers the shockwave register generically; Geyser Shockwave redundant, 
+- | BURST | Geyser Concussion :: X — redundant
+- | BURST | Geyser Overflow :: X — Geyser Upheaval, cut above, redundant against Geyser Eruption
+- | BURST | Geyser Upheaval :: X — cut above, redundant
+- | BURST | Geyser Pulse :: X — Geyser Vent covers a related register; Geyser Pulse would be redundant against Current
+- | BURST | Geyser Ripple :: X — redundant against Current/Tide Ripple
+- | BURST | Deluge Blast :: X — redundant
+- | BURST | Deluge Eruption :: X — redundant against Geyser/Spring Eruption
+- | BURST | Deluge Outburst :: X — redundant
+- | BURST | Reservoir Blast :: X — redundant against Reservoir Burst
+- | BURST | Reservoir Outburst :: X — redundant
+- | BURST | Reservoir Vent :: D — Reservoir Vent Burst, cut above, word-count violation as harvested; "Reservoir Vent" a
+- | CLOUD | Mist Haze :: D — Mist Haze is redundant/tautological with Mist itself, both describe the same diffuse-a
+- | CLOUD | Mist Murk :: X — Brine Murk already covers the murk register; Mist Murk redundant
+- | CLOUD | Mist Blanket :: X — Mist Cloud already covers the all-covering reading; Mist Blanket redundant
+- | CLOUD | Mist Curtain :: X — Water Curtain already ratified in WARD cell (v4); Mist Curtain would either duplicate 
+- | CLOUD | Mist Mantle :: D — mantle implies a draped structural layer; mist has no such anatomy, redundant against 
+- | CLOUD | Mist Trail :: D — trail implies a lingering line/path; redundant against the already-kept standing/linge
+- | CLOUD | Brine Shroud :: D — Brine Shroud is redundant against Mist Shroud with no distinguishing feature — X
+- | CLOUD | Brine Veil :: D — Brine Veil redundant against Mist Veil — X
+- | CLOUD | Brine Field :: D — Brine Field redundant against Mist Field/Brine Zone — X
+- | CLOUD | Sea Shroud :: D — Sea Shroud redundant against Mist Shroud — X
+- | CLOUD | Sea Veil :: D — Sea Veil redundant against Mist Veil — X
+- | CLOUD | Sea Haze :: D — Sea Haze redundant against Brine Haze — X
+- | CLOUD | Sea Blanket :: D — blanket redundant
+- | CLOUD | Sea Billow :: D — Sea Billow redundant against Mist Billow — X
+- | CLOUD | Sea Plume :: D — Sea Plume redundant against Mist Plume — X
+- | CLOUD | Sea Drift :: D — Sea Drift redundant against Mist Drift — X
+- | CLOUD | Sea Zone :: D — Sea Zone redundant against Brine Zone — X
+- | CLOUD | Sea Field :: D — Sea Field redundant against Mist Field — X
+- | CLOUD | Tide/Tidal Shroud :: D — Tide Shroud redundant against Mist Shroud — X
+- | CLOUD | Tide/Tidal Veil :: D — Tide Veil redundant against Mist Veil — X
+- | CLOUD | Tide/Tidal Haze :: D — Tide Haze redundant against Brine Haze — X
+- | CLOUD | Tide/Tidal Murk :: D — Tide Murk redundant against Brine Murk — X
+- | CLOUD | Tide/Tidal Blanket :: D — blanket redundant
+- | CLOUD | Tide/Tidal Billow :: D — Tide Billow redundant against Mist Billow — X
+- | CLOUD | Tide/Tidal Plume :: D — Tide Plume redundant against Mist Plume — X
+- | CLOUD | Tide/Tidal Drift :: D — Tide Drift redundant against Mist Drift — X
+- | CLOUD | Tide/Tidal Zone :: D — Tide Zone redundant — X
+- | CLOUD | Tide/Tidal Field :: D — Tide Field redundant — X
+- | CLOUD | Fog Shroud :: D — Fog Shroud redundant against Mist Shroud — X
+- | CLOUD | Fog Murk :: D — Fog Murk redundant against Brine Murk — X
+- | CLOUD | Fog Blanket :: D — blanket redundant
+- | CLOUD | Fog Billow :: D — Fog Billow redundant against Mist Billow — X
+- | CLOUD | Fog Plume :: D — Fog Plume redundant against Mist Plume — X
+- | CLOUD | Fog Drift :: D — Fog Drift redundant against Mist Drift — X
+- | CLOUD | Fog Zone :: D — Fog Zone redundant — X
+- | CLOUD | Fog Field :: D — Fog Field redundant — X
+- | SNARE | Tide/Tidal Bond :: X — Tide Bond, cut above, redundant against Tidal Tether/Undertow Bind
+- | SNARE | Tide/Tidal Loop :: X — Tide Loop, cut above, redundant against the rotational Whirlpool/Maelstrom family
+- | SNARE | Tide/Tidal Clasp :: X — Tide Clench, cut above, redundant against Tide Clutch
+- | SNARE | Tide/Tidal Seize :: X — Undertow Seize, cut above (this row: Tide Seize equally redundant against the establis
+- | SNARE | Tide/Tidal Pull :: D — pull is Undertow/Riptide's domain per the drag rule; "Tide Pull" reads as a weaker, le
+- | SNARE | Tide/Tidal Bind :: X — Undertow Bind covers this register; Tide Bind redundant
+- | SNARE | Tide/Tidal Reel :: X — Tide Reel, cut above, redundant against Undertow/Riptide Pull family
+- | SNARE | Tide/Tidal Haul :: X — redundant, same reasoning
+- | SNARE | Tide/Tidal Tow :: X — Tide Tow, cut above, redundant
+- | SNARE | Current Trap :: X — Current Trap, cut above, redundant against Tide Trap
+- | SNARE | Current Bond :: X — redundant against Current Tether
+- | SNARE | Current Loop :: X — redundant against rotational family
+- | SNARE | Current Clutch :: X — Current Clench redundant against Current Grip/Grasp — X
+- | SNARE | Current Clasp :: X — Current Clasp, cut above, redundant against Current Grasp
+- | SNARE | Current Seize :: X — redundant against grip/grasp family
+- | SNARE | Current Bind :: X — redundant against Undertow Bind
+- | SNARE | Current Haul :: X — redundant against Undertow/Riptide Pull
+- | SNARE | Current Tow :: X — redundant
+- | SNARE | Current Wrench :: D — Current Wrench, already the strike-cell Current Jolt-adjacent family reads better ther
+- | SNARE | Current Hinder :: X — Current Restraint, cut above, flat redundant restatement — treating Hinder the same wa
+- | SNARE | Riptide Trap :: X — Riptide Trap, cut above, redundant
+- | SNARE | Riptide Loop :: X — loop redundant against rotational family
+- | SNARE | Riptide Bind :: D — bind implies a wrapped/looped hold, better fits Undertow's already-kept Undertow Bind;
+- | SNARE | Riptide Reel :: D — Riptide Haul, cut above, redundant against Riptide Pull/Drag
+- | SNARE | Riptide Haul :: X — redundant
+- | SNARE | Riptide Tow :: X — Riptide Tow, redundant
+- | SNARE | Undertow Trap :: X — Undertow Trap, cut above, redundant
+- | SNARE | Undertow Loop :: X — loop redundant
+- | SNARE | Undertow Reel :: D — Undertow Seize/Reel, cut above, redundant against Pull/Drag/Bind family
+- | SNARE | Undertow Haul :: X — redundant
+- | SNARE | Undertow Tow :: X — redundant
+- | SNARE | Undertow Wrench :: X — Undertow Wrench, redundant against strike-cell Tide Wrench by extension
+- | SNARE | Whirlpool Trap :: X — Whirlpool Trap, cut above, redundant
+- | SNARE | Whirlpool Loop :: D — Whirlpool Loop would be the most literally honest of any row here (a whirlpool IS loop
+- | SNARE | Whirlpool Clutch :: X — Whirlpool Clasp/Clench, cut above, redundant
+- | SNARE | Whirlpool Clasp :: X — Whirlpool Clasp, cut above, redundant
+- | SNARE | Whirlpool Seize :: X — redundant against Grip/Grasp
+- | SNARE | Whirlpool Bind :: D — bind redundant against Grip/Grasp
+- | SNARE | Whirlpool Reel :: D — reel redundant/mismatch
+- | SNARE | Maelstrom Snare :: X — Maelstrom Snare redundant against Maelstrom Grip (already the ratified single placemen
+- | SNARE | Maelstrom Trap :: X — Maelstrom Trap, cut above, redundant
+- | SNARE | Maelstrom Bond :: D — bond redundant against Grip
+- | SNARE | Maelstrom Loop :: D — loop redundant against Grip's rotational reading
+- | SNARE | Maelstrom Grasp :: X — Maelstrom Grasp redundant against Maelstrom Grip, no distinguishing feature
+- | SNARE | Maelstrom Clutch :: X — redundant
+- | SNARE | Maelstrom Clasp :: X — redundant
+- | SNARE | Maelstrom Seize :: X — redundant
+- | SNARE | Maelstrom Bind :: D — bind redundant against Grip
+- | SNARE | Brine Snare :: X — Brine Snare redundant against the already-established Tide/Current/Undertow/Riptide/Wh
+- | SNARE | Brine Trap :: X — Brine Trap, redundant
+- | SNARE | Brine Tether :: D — Brine Tether redundant against Tidal/Current Tether
+- | SNARE | Brine Bond :: D — bond redundant
+- | SNARE | Brine Loop :: D — loop redundant
+- | SNARE | Brine Grip :: D — Brine Grip redundant against Tide/Current Grip, no distinguishing feature — X
+- | SNARE | Brine Clutch :: D — Brine Clutch redundant against Tide Clutch — X
+- | SNARE | Brine Clasp :: D — Brine Clasp redundant — X
+- | SNARE | Brine Seize :: D — seize redundant
+- | SNARE | Brine Pull :: D — pull redundant against the drag-rule family, brine itself isn't a drag-word
+- | SNARE | Brine Bind :: D — bind redundant
+- | SNARE | Eddy Snare :: X — Eddy Snare redundant against the established Snare family; Eddy itself is the ratified
+- | SNARE | Eddy Trap :: X — Eddy Trap, redundant
+- | SNARE | Eddy Tether :: D — Eddy Tether mismatch/redundant
+- | SNARE | Eddy Loop :: D — Eddy Loop is the most literally honest of the loop-family (an eddy IS a small loop-sha
+- | SNARE | Eddy Grip :: D — Eddy Grip redundant against the established Grip family, no distinguishing feature
+- | SNARE | Eddy Grasp :: D — Eddy Grasp redundant
+- | SNARE | Eddy Clutch :: D — Eddy Clutch redundant
+- | SNARE | Eddy Clasp :: D — Eddy Clasp redundant
+- | SNARE | Eddy Seize :: D — seize redundant
+- | SNARE | Eddy Bind :: D — bind redundant
+- | CRUSH | Abyssal Squeeze :: D — abyssal names the location the pressure occurs in, not the compressing force itself; "
+- | CRUSH | Abyssal Constrict :: D — same reasoning, redundant with Abyssal Crush
+- | CRUSH | Abyssal Smother :: D — "smother" implies covering/suffocating, a distinct action from crushing pressure; redu
+- | CRUSH | Abyssal Weight :: D — weight belongs to Depth/Torrent, redundant here
+- | CRUSH | Depth Squeeze :: D — redundant with Depth Press
+- | CRUSH | Depth Constrict :: D — redundant
+- | CRUSH | Hydrostatic Press :: D — redundant with Hydrostatic Crush, no distinct "press" reading beyond what Crush alread
+- | CRUSH | Submersion Press :: D — redundant with the kept Crush compound
+- | CRUSH | Flood Press :: D — redundant
+- | CRUSH | Deluge Press :: D — redundant
+- | CRUSH | Saturation Press :: D — redundant
+- | CRUSH | Torrent Crush :: D — torrent is fast/kinetic, "Crush" alone reads redundant against Torrent Weight already 
+- | CRUSH | Torrent Squeeze :: D — Torrent Squeeze reads weak next to Torrent Weight; cut as redundant near-duplicate
+- | CRUSH | Tide Crush :: D — redundant with Tide Press
+- | WARD | Tidal/Tide Stronghold :: D — redundant with Tide Bastion/Redoubt, stronghold reads as an unnecessary third near-dup
+- | WARD | Tidal/Tide Refuge :: D — redundant with Depth Refuge (kept), not separately composed for Tide
+- | WARD | Tidal/Tide Haven :: D — redundant with Lagoon Haven (kept)
+- | WARD | Tidal/Tide Fortify :: D — redundant, fortify is covered by the Bastion/Redoubt family
+- | WARD | Tidal/Tide Reinforce :: D — redundant with Surge Bulwark's reinforcement sense
+- | WARD | Tidal/Tide Repel :: D — repel is covered honestly by Current Repel (kept); Tide Repel redundant
+- | WARD | Tidal/Tide Withstand :: D — withstand is an abstract endurance verb, weaker/redundant against the concrete Tide Wa
+- | WARD | Tidal/Tide Bolster :: D — bolster is a support-verb, redundant against the Bastion/Redoubt family
+- | WARD | Tidal/Tide Buffer :: D — buffer covered honestly by Current Buffer (kept); Tide Buffer redundant
+- | WARD | Tidal/Tide Veil :: D — redundant with Brine Veil (kept)
+- | WARD | Tidal/Tide Shroud :: D — redundant with Brine Shroud (kept)
+- | WARD | Tidal/Tide Curtain :: D — redundant with Water Curtain (kept, ratified)
+- | WARD | Current Ward :: D — redundant with Tide Ward
+- | WARD | Current Bulwark :: D — redundant
+- | WARD | Current Reinforce :: D — redundant with Surge Bulwark's reinforcement sense
+- | WARD | Brine Screen :: D — redundant with Tide Screen
+- | WARD | Reef Ward :: D — no compound composed in the base cell; re-tested here — "Reef Ward" reads flat/redunda
+- | MEND | Tide Purify :: D — redundant, Purifying Spring/Rain already carry this register; "Tide Purify" flat next 
+- | MEND | Tide Renew :: D — redundant with Renewal Spring; no distinct Tide compound
+- | MEND | Tide Soothe :: D — covered by Soothing Current (kept); Tide Soothe redundant
+- | MEND | Tide Nourish :: D — redundant with Nourishing Spring
+- | MEND | Tide Tonic :: D — redundant with Tonic Rain/Brine Tonic
+- | MEND | Tide Remedy :: D — "remedy" is abstract/clinical, redundant against the far more concrete Elixir/Tonic/Ba
+- | MEND | Tide Rejuvenate :: D — redundant with Rejuvenating Spring
+- | MEND | Tide Refresh :: D — no distinct compound, redundant with Restorative Tide
+- | MEND | Tide Console :: D — "console" is a formal, slightly stiff verb; redundant against Tide Comfort/Tide Solace
+- | MEND | Tide Ease :: D — redundant with Spring Ease
+- | MEND | Tide Respite :: D — redundant with Tide Respite
+- | MEND | Rain Renew :: D — redundant, no distinct compound beyond Renewal Spring
+- | MEND | Rain Recover :: D — redundant with Recovery Tide
+- | MEND | Rain Nourish :: D — redundant with Nourishing Spring
+- | MEND | Rain Balm :: D — redundant with Balm Tide
+- | MEND | Rain Elixir :: D — redundant with Tide Elixir
+- | MEND | Rain Rejuvenate :: D — redundant
+- | MEND | Rain Refresh :: D — redundant
+- | MEND | Rain Replenish :: D — redundant with Tide Replenish
+- | MEND | Rain Rally :: D — redundant with Tide Rally
+- | MEND | Rain Comfort :: D — redundant with Tide Comfort
+- | MEND | Rain Console :: D — redundant
+- | MEND | Rain Calm :: D — redundant
+- | MEND | Rain Ease :: D — redundant
+- | MEND | Rain Solace :: D — redundant with Tide Respite
+- | MEND | Spring Heal :: D — redundant with Healing Tide/Rain
+- | MEND | Spring Restore :: D — redundant with Restorative Tide/Rain
+- | MEND | Spring Soothe :: D — redundant with Soothing Current
+- | MEND | Spring Recover :: D — redundant
+- | MEND | Spring Revive :: D — redundant with Reviving Rain
+- | MEND | Spring Balm :: D — redundant
+- | MEND | Spring Tonic :: D — redundant
+- | MEND | Spring Elixir :: D — redundant
+- | MEND | Spring Refresh :: D — redundant
+- | MEND | Spring Replenish :: D — redundant
+- | MEND | Spring Rally :: D — redundant with Tide Rally/Current Rally
+- | MEND | Spring Console :: D — redundant
+- | MEND | Spring Calm :: D — redundant
+- | MEND | Spring Assuage :: D — redundant
+- | MEND | Spring Solace :: D — redundant with Tide Respite
+- | MEND | Spring Respite :: D — redundant with Rain Reprieve
+- | MEND | Current Heal :: D — redundant
+- | MEND | Current Restore :: D — redundant with Renewing Current's register
+- | MEND | Current Recover :: D — redundant
+- | MEND | Current Comfort :: D — redundant
+- | MEND | Wave Cleanse :: D — redundant
+- | MEND | Wave Restore :: D — redundant
+- | MEND | Wave Soothe :: D — redundant
+- | MEND | Brine Heal :: D — redundant
+- | MEND | Wellspring Heal :: D — see cell note, Wellspring stands bare as the mend-side ratified keep; "Wellspring Heal
+- | TERRORIZE | Abyssal Terror :: D — redundant, Abyssal Dread already carries this register more idiomatically
+- | TERRORIZE | Abyssal Horror :: D — same, "horror" reads redundant/weaker than Dread
+- | TERRORIZE | Abyssal Chill :: D — covered honestly by Depth Chill/Current Chill (kept); Abyssal Chill redundant
+- | TERRORIZE | Abyssal Intimidate :: D — "intimidate" is an abstract verb, redundant against the far more concrete Abyssal Pres
+- | TERRORIZE | Abyssal Unnerve :: D — same, abstract and redundant
+- | TERRORIZE | Abyssal Stare :: D — "stare" is covered by the anatomy-tagged Abyssal Glare, which is the stronger, already
+- | TERRORIZE | Abyssal Aura :: D — aura is covered honestly by Abyssal Presence (kept), redundant
+- | TERRORIZE | Abyssal Wither :: D — wither is drain/terrorize-adjacent but reads better with Current (kept below); Abyssal
+- | TERRORIZE | Abyssal Shudder :: D — see Tide Shudder (kept); Abyssal Shudder redundant
+- | TERRORIZE | Abyssal Shriek :: D — shriek/howl/wail/growl/snarl/hiss are all mouth/vocal-cord-specific sounds; "Abyssal" 
+- | TERRORIZE | Depth Terror :: D — redundant
+- | TERRORIZE | Depth Horror :: D — redundant
+- | TERRORIZE | Depth Menace :: D — redundant with Abyssal Menace
+- | TERRORIZE | Depth Presence :: D — redundant with Abyssal Presence
+- | TERRORIZE | Depth Glare :: D — redundant with Abyssal Glare
+- | TERRORIZE | Depth Roar :: D — redundant with Abyssal Roar
+- | TERRORIZE | Trench Horror :: D — redundant with Trench Terror
+- | TERRORIZE | Trench Menace :: D — redundant with Abyssal Menace
+- | TERRORIZE | Trench Presence :: D — no distinct compound, redundant
+- | TERRORIZE | Trench Chill :: D — redundant with Depth Chill
+- | TERRORIZE | Maelstrom Terror :: D — redundant
+- | TERRORIZE | Maelstrom Horror :: D — redundant
+- | TERRORIZE | Maelstrom Menace :: D — redundant with Abyssal Menace
+- | TERRORIZE | Maelstrom Roar :: D — "Maelstrom Roar" plausible but redundant against the already-kept, more anatomically-g
+- | TERRORIZE | Current Dread :: D — see cell rejection, Undertow Dread's reasoning extends partway here but Current itself
+- | TERRORIZE | Tide Chill :: D — Tide Chill redundant with Depth Chill/Current Chill already kept
