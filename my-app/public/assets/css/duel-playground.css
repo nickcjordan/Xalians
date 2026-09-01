@@ -469,7 +469,8 @@
    same hull metal as the arena furniture and the team lives as PAINT on the
    side wall, which is where a tabletop miniature actually wears its army
    colour, not as light. */
-.dp-token-plinth .duel-piece-base {
+.dp-token-plinth .duel-piece-base,
+.dp-token-outline .duel-piece-base {
   left: 13%;
   right: 13%;
   inset-block: auto;
@@ -497,7 +498,8 @@
    figure covered the whole disc and the plinth read as a shadow. Standing off
    the back leaves the front half and its nameplate in view, which is how a
    miniature on a base actually presents from a high angle. */
-.dp-token-plinth .duel-piece-xalian-icon {
+.dp-token-plinth .duel-piece-xalian-icon,
+.dp-token-outline .duel-piece-xalian-icon {
   left: 50%;
   top: auto;
   bottom: 54%;
@@ -513,7 +515,8 @@
 }
 
 /* the nameplate: the element badge set into the plinth's front edge */
-.dp-token-plinth .duel-type-badge {
+.dp-token-plinth .duel-type-badge,
+.dp-token-outline .duel-type-badge {
   width: 21% !important;
   height: 21% !important;
   min-width: 0 !important;
@@ -525,7 +528,8 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
 }
 
-.dp-token-plinth .duel-piece--selected .duel-piece-base::before {
+.dp-token-plinth .duel-piece--selected .duel-piece-base::before,
+.dp-token-outline .duel-piece--selected .duel-piece-base::before {
   content: none;
 }
 
@@ -535,10 +539,15 @@
    square of floor: the corner brackets. The miniature occupies a square, so
    the brackets fly in and lock onto it, under the figure and clear of the
    disc, and selection means the same thing here as everywhere else. */
-.dp-token-plinth .duel-piece--selected::after {
+.dp-token-plinth .duel-piece--selected::after,
+.dp-token-outline .duel-piece--selected::after {
   content: '';
   position: absolute;
-  inset: 1px;
+  /* Framed on the MINIATURE, not the tile. The composition is shifted up -
+     base on the pip, figure rising above it - so brackets flush with the
+     cell read as sitting low and to one side of the piece. The frame is
+     lifted to centre on the figure-plus-base mass instead. */
+  inset: -22% 1% 24% 1%;
   pointer-events: none;
   z-index: 100;
   background:
@@ -556,10 +565,57 @@
     duel-hold 2.6s ease-in-out 260ms infinite;
 }
 
+/* ====================================================================
+   4. OUTLINED - the plinth with the glow swapped for print. Instead of
+   light behind the figure, the silhouette gets a sticker treatment: a
+   thin line of the team colour hugging the ink, around a wider blob of
+   the same colour sunk nearly to dark - an offset outline following the
+   creature down into its feet, where it lands on the disc and welds the
+   figure to the base as one object. No light anywhere on the piece.
+   ==================================================================== */
+.dp-token-outline .duel-piece-xalian-icon {
+  /* the team rim-light is set inline by the component; nothing weaker than
+     !important can remove it */
+  filter: none !important;
+}
+
+/* where the outline meets the base it pools: a puddle of the same dark team
+   hue on the disc's top face, under the feet, so the line running down the
+   figure lands in something and the two read as one cast object */
+.dp-token-outline .duel-piece::before {
+  content: '';
+  position: absolute;
+  left: 27%;
+  right: 27%;
+  top: 42%;
+  height: 13%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 50%,
+    color-mix(in srgb, var(--duel-team) 34%, #12120e) 0%,
+    color-mix(in srgb, var(--duel-team) 28%, #12120e) 60%,
+    transparent 78%);
+  z-index: 100;
+  pointer-events: none;
+}
+
+.dp-token-outline .duel-piece-xalian-icon svg {
+  filter:
+    drop-shadow(1px 0 0 var(--duel-team))
+    drop-shadow(-1px 0 0 var(--duel-team))
+    drop-shadow(0 1px 0 var(--duel-team))
+    drop-shadow(0 -1px 0 var(--duel-team))
+    drop-shadow(2px 0 0 color-mix(in srgb, var(--duel-team) 28%, #12120e))
+    drop-shadow(-2px 0 0 color-mix(in srgb, var(--duel-team) 28%, #12120e))
+    drop-shadow(0 2px 0 color-mix(in srgb, var(--duel-team) 28%, #12120e))
+    drop-shadow(0 -2px 0 color-mix(in srgb, var(--duel-team) 28%, #12120e))
+    drop-shadow(0 4px 3px rgba(0, 0, 0, 0.45));
+}
+
 @media (prefers-reduced-motion: reduce) {
   .dp-token-enamel .duel-piece--selected::after,
   .dp-token-standee .duel-piece--selected::after,
-  .dp-token-plinth .duel-piece--selected::after {
+  .dp-token-plinth .duel-piece--selected::after,
+.dp-token-outline .duel-piece--selected::after {
     animation: none;
   }
 }
