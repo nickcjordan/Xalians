@@ -509,7 +509,19 @@
      face's edge IS the top of the wall, so the joint is drawn with shading
      only - the face rolls into shadow where it turns down. */
   border: 0;
+  /* The texture belongs on the FACE, not the edge. Striped edges made it a
+     poker chip; a checkers piece carries its machining as concentric rings
+     turned into the top face near the rim, so three grooves are cut there -
+     each a dark ring with a hairline of catch-light under it. */
   background:
+    radial-gradient(ellipse at 50% 50%,
+      transparent 55%,
+      rgba(0, 0, 0, 0.4) 56%, rgba(0, 0, 0, 0.4) 58%, rgba(255, 244, 214, 0.10) 59%,
+      transparent 60% 66%,
+      rgba(0, 0, 0, 0.4) 67%, rgba(0, 0, 0, 0.4) 69%, rgba(255, 244, 214, 0.10) 70%,
+      transparent 71% 77%,
+      rgba(0, 0, 0, 0.4) 78%, rgba(0, 0, 0, 0.4) 80%, rgba(255, 244, 214, 0.10) 81%,
+      transparent 82%),
     radial-gradient(ellipse at 50% 42%, rgba(255, 244, 214, 0.28) 0%, transparent 68%),
     radial-gradient(ellipse at 50% 50%, #4a4a3c 0%, #38382e 60%, #262620 100%);
   box-shadow:
@@ -537,16 +549,15 @@
      copy, so the wall's top edge follows the curve it belongs to. */
   -webkit-mask: radial-gradient(50% 50% at 50% calc(50% - 5px), transparent 97%, black 99%);
   mask: radial-gradient(50% 50% at 50% calc(50% - 5px), transparent 97%, black 99%);
-  /* Ridges alone read as striped fabric - a flat pattern has no curvature.
-     Two shading layers over them turn the band into a surface: darker
-     toward both ends where the cylinder curves away, and darker toward the
-     bottom edge where it turns under. */
+  /* Plain painted metal. Stripes here made the whole thing a poker chip -
+     the machining lives on the face now - so the wall is one coat of team
+     paint with the shading that makes a cylinder read as turned: darker
+     toward both ends where it curves away, darker toward the bottom edge
+     where it turns under. */
   background:
     linear-gradient(90deg, rgba(0, 0, 0, 0.6) 0%, transparent 25% 75%, rgba(0, 0, 0, 0.6) 100%),
-    linear-gradient(180deg, rgba(255, 244, 214, 0.08) 0%, transparent 35%, rgba(0, 0, 0, 0.4) 100%),
-    repeating-linear-gradient(90deg,
-      color-mix(in srgb, var(--duel-team) 46%, #0d0d0b) 0 1px,
-      color-mix(in srgb, var(--duel-team) 27%, #0a0a08) 1px 3px);
+    linear-gradient(180deg, rgba(255, 244, 214, 0.10) 0%, transparent 35%, rgba(0, 0, 0, 0.4) 100%),
+    color-mix(in srgb, var(--duel-team) 40%, #0d0d0b);
 }
 
 /* feet at the BACK edge of the base, not its centre - planted centrally the
