@@ -633,16 +633,16 @@ class DuelPlaygroundPage extends React.Component {
 
 		const studies = [
 			{
-				v: 'milled', name: 'Milled disc',
-				note: 'A machined counter in the house style - brass rim, hull face, art stamped into it. The most conservative option: it is the same milled metal as every other control on the site, so it needs no new vocabulary. Team colour has to live somewhere else, which is a real cost.',
+				v: 'puck', name: 'Gunmetal puck',
+				note: 'A machined counter in the hull metal, with the side worn as a rim ring. The quietest option: the creature keeps its canonical glow, the face is the same material as every panel on the site, and identity is one fine line of colour.',
 			},
 			{
-				v: 'coin', name: 'Team coin',
-				note: 'The disc is the team colour and the creature is knocked out of it. The loudest identity of the four - you can read the whole balance of power at a glance without looking at a single creature. Costs you the element hue on the token face.',
+				v: 'enamel', name: 'Enamel coin',
+				note: 'The face is the team colour laid as deep enamel - sunk most of the way to black so the glowing creature stands out of it instead of fighting it. Brass rim like a minted piece. Louder identity than the puck without becoming a poster.',
 			},
 			{
-				v: 'element', name: 'Element chip',
-				note: 'A hexagonal chip in the element colour of the creature, with the team as a rim. Puts the thing you actually plan around - the type matchup - into the body of the token. Fourteen hues on the board at once is the risk.',
+				v: 'inlay', name: 'Element inlay',
+				note: 'Dark face, team rim, and the element laid into the face as a thin enamel channel inside the rim. Both facts you plan around live on the token - whose piece and what type - with the corner badge naming the type exactly.',
 			},
 			{
 				v: 'standee', name: 'Standee',

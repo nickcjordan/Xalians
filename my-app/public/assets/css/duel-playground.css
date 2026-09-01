@@ -275,88 +275,84 @@
 /*--------------------------------------------------------------
 # TOKEN STUDIES
 #
-# Candidate treatments for what a piece physically IS on the
-# board. Scoped to .dp-token-<name> so each specimen renders its
+# Section 10 of the reference page: candidate answers to "what is
+# a piece, physically?". Each study renders the same squad in its
 # own variant against the real board, and none of them touch the
 # live game until one is chosen.
 #
-# The tension being resolved: the board is drawn in plan, but
-# every species SVG is a side-on silhouette of a standing animal.
-# A flat token carrying the creature as printed artwork makes
-# that side-on art correct rather than a compromise - it is a
-# picture on a thing, not a thing.
+# STRUCTURE. The first pass built every token by restyling
+# .duel-piece-base, and every fix leaked: on the live board that
+# element IS the square of floor - full bleed, carrying the tile
+# states - so a chip cut out of it always had the rest of the
+# square showing round its edges. A token and the floor it sits
+# on are two objects, so the studies hide the floor plate
+# entirely and draw the token body on the piece root's ::before,
+# which is clean cell-sized space with the team and element
+# variables already on it and no clip-path anywhere in sight.
+#
+# LOOK. The second lesson of the first pass: flat ink is wrong
+# here. Stamping the art in black onto a coloured face threw away
+# the one thing the creatures already do well - the black
+# silhouette with the team rim light - and traded it for
+# fourteen loud discs. Every face below is dark, the glow filter
+# stays on, and colour lives in the rim and the face TINT, not
+# as a poster behind the art.
 --------------------------------------------------------------*/
 
-/* Shared: every study repositions the art, so neutralise the live rule first.
+/* The three flat studies. The standee is excluded: it is the control that
+   keeps the live board's standing figure, so it must not be restyled. */
 
-   The art is NOT clipped. An earlier version set overflow:hidden here to stop
-   wide silhouettes spilling into neighbouring squares, and that destroyed the
-   creatures: the art is scaled to fill a square while the token face is a
-   circle, so everything reaching into the corners - antlers, wings, tails - was
-   sliced off at the rim. Checked against the standee, which draws the art
-   uncropped, four of six species had lost a defining feature. The art is sized
-   to fit inside the face instead. A token whose artwork is missing its wings is
-   not a smaller problem than one that overlaps its neighbour. */
-.dp-token-study .duel-piece-xalian-icon {
-  left: 50%;
-  bottom: auto;
-  top: 50%;
-  transform: translate(-50%, -50%);
-}
-
+/* The svg inside the art box is display:inline, so it sits on the text
+   baseline of the cell's own 62px line box and is shoved a dozen pixels below
+   the box that is supposed to contain it. Every creature hung out of the
+   bottom of its token while the box measured perfectly placed - the box was;
+   the svg inside it was not. */
 .dp-token-study .duel-piece-xalian-icon svg {
+  display: block;
   width: 100%;
   height: 100%;
 }
 
-/* The art sits low in the token, with clear space above it and its feet almost
-   touching the rim.
-
-   Not an alignment bug: the bounding box is centred exactly (measured, delta
-   0,0) and the source SVGs are centred in their own viewBoxes to within 0.4%.
-   The imbalance is in the drawing - these are standing creatures, so mass
-   gathers at the feet while the space above the head is empty. A box that
-   contains such a figure is centred; the figure inside it reads low.
-
-   On a square of floor that is correct, because the creature is standing on the
-   floor. Printed on a token there is no floor, so it just looks badly placed.
-   The art is lifted by a small fraction of the token to put its visual mass on
-   the centre rather than its bounding box. */
-.dp-token-milled .duel-piece-xalian-icon,
-.dp-token-coin .duel-piece-xalian-icon,
-.dp-token-element .duel-piece-xalian-icon {
-  top: 46%;
+/* the floor plate is the board's object, not the token's - gone entirely */
+.dp-token-puck .duel-piece-base,
+.dp-token-enamel .duel-piece-base,
+.dp-token-inlay .duel-piece-base {
+  display: none;
 }
 
-/* The live board gives the art a team-coloured rim light and a cast shadow,
-   which is how a figure reads as standing on a floor. Printed onto a token none
-   of that applies - a coin's artwork does not glow or throw a shadow onto the
-   coin - and on the team coin the rim light was cyan on cyan. Flat ink is what
-   printing looks like.
+/* THE ART. Centred in a square box, sized to the square inscribed in the
+   face's circle (face diameter 90% of the cell, so the largest square that
+   keeps its corners is 90/sqrt(2) = 63%). Wide features - antlers, wings,
+   tails - reach the corners of the art box, so this is the size at which
+   nothing is amputated at the rim.
 
-   Scoped to the flat treatments rather than applied to all four and then undone
-   for the standee: the filter is set inline by the component, so neither
-   `revert` (which rolls back to the user-agent value) nor `unset` can win
-   against an !important override. The only way to keep it is to never cancel
-   it. */
-.dp-token-milled .duel-piece-xalian-icon svg,
-.dp-token-coin .duel-piece-xalian-icon svg,
-.dp-token-element .duel-piece-xalian-icon svg {
-  filter: none !important;
+   Lifted to 47% rather than centred: standing creatures carry their mass at
+   the feet, so a box centred by arithmetic reads low by eye.
+
+   The glow filter is KEPT. On a dark face a black silhouette without its rim
+   light is a hole, and the rim light is also the creature's canonical look. */
+.dp-token-puck .duel-piece-xalian-icon,
+.dp-token-enamel .duel-piece-xalian-icon,
+.dp-token-inlay .duel-piece-xalian-icon {
+  left: 50%;
+  bottom: auto;
+  top: 47%;
+  transform: translate(-50%, -50%);
+  /* 62% is the inscribed square for a CENTRED box; the 3% lift pushes a 62%
+     box's bottom corners just past the rim, so it is sized for the box it is,
+     not the box it would be at dead centre */
+  width: 60%;
+  height: 60%;
 }
 
-/* The element badge was sized and placed for a creature standing in an open
-   square: at 25px on a 52px token it covered half the face. On a token it is a
-   maker's mark stamped at the edge, not a second object. */
-/* The badge sits OUTSIDE the token face, clear of the artwork. Placed on the
-   face it overlapped the creature on every token - a disc of solid colour laid
-   across the thing the token exists to show. The square has room around a round
-   face; the corner of the cell is dead space the badge can have. */
-.dp-token-milled .duel-type-badge,
-.dp-token-coin .duel-type-badge,
-.dp-token-element .duel-type-badge {
-  width: 26% !important;
-  height: 26% !important;
+/* THE BADGE. In the corner of the cell, outside the face - on the face it
+   overlapped the creature on every token. Sized down from the live board's
+   cellSize/2.5, which was set for a creature standing in an open square. */
+.dp-token-puck .duel-type-badge,
+.dp-token-enamel .duel-type-badge,
+.dp-token-inlay .duel-type-badge {
+  width: 27% !important;
+  height: 27% !important;
   min-width: 0 !important;
   left: auto;
   right: 0;
@@ -365,95 +361,72 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
 }
 
-.dp-token-study .duel-type-badge svg {
-  width: 74%;
-  height: 74%;
+/* THE BODY - one circle on the piece root, under the art (z 99 vs 101). */
+.dp-token-puck .duel-piece::before,
+.dp-token-enamel .duel-piece::before,
+.dp-token-inlay .duel-piece::before {
+  content: '';
+  position: absolute;
+  inset: 5%;
+  border-radius: 50%;
+  z-index: 99;
+  pointer-events: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.85);
 }
 
-/* ---- 1. MILLED DISC - a machined counter, brass rim, art stamped into it.
-   The house style: the same milled metal as every other control on the site. */
-.dp-token-milled .duel-piece-base {
-  inset: 8%;
-  border-radius: 50%;
+/* ---- 1. PUCK - a machined gunmetal counter with the side's colour as a rim
+   ring. The quietest of the three: the face is the same hull metal as every
+   panel on the site, identity is a fine line, and the creature keeps its
+   canonical look. */
+.dp-token-puck .duel-piece::before {
+  border: 2px solid color-mix(in srgb, var(--duel-team) 85%, black);
+  background:
+    radial-gradient(circle at 50% 30%, rgba(255, 244, 214, 0.10) 0%, transparent 55%),
+    radial-gradient(circle at 50% 60%, #23231f 0%, #171714 70%, #101010 100%);
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.85),
+    inset 0 1px 0 rgba(255, 244, 214, 0.10),
+    inset 0 0 0 3px rgba(0, 0, 0, 0.6);
+}
+
+/* ---- 2. ENAMEL - the face itself is the side's colour, laid as deep enamel:
+   the team hue sunk most of the way to black, so it reads as a dark
+   team-tinted coin the glowing creature stands out of, not a flat poster
+   behind it. Brass rim, like a minted piece. */
+.dp-token-enamel .duel-piece::before {
   border: 2px solid var(--g-brass-dark);
   background:
-    radial-gradient(circle at 50% 28%, rgba(255, 244, 214, 0.16) 0%, transparent 55%),
-    radial-gradient(circle at 50% 55%, var(--g-hull-hi) 0%, var(--g-hull) 55%, var(--g-seam) 100%);
+    radial-gradient(circle at 50% 28%, color-mix(in srgb, var(--duel-team) 30%, transparent) 0%, transparent 60%),
+    radial-gradient(circle at 50% 60%,
+      color-mix(in srgb, var(--duel-team) 38%, #101010) 0%,
+      color-mix(in srgb, var(--duel-team) 22%, #0c0c0c) 75%,
+      #0a0a0a 100%);
   box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.85),
-    inset 0 1px 0 rgba(255, 244, 214, 0.22),
-    inset 0 -2px 4px rgba(0, 0, 0, 0.5);
+    0 2px 5px rgba(0, 0, 0, 0.85),
+    inset 0 1px 0 color-mix(in srgb, var(--duel-team) 40%, transparent);
 }
 
-.dp-token-milled .duel-piece-xalian-icon {
-  /* A square inscribed in a circle has side d/sqrt(2), so art that keeps its
-     corners can be at most ~71% of the face. The face is 84% of the cell. */
-  width: 50%;
-  height: 50%;
-}
-
-/* ---- 2. TEAM COIN - the disc itself is the side's colour, art knocked out
-   of it. Reads instantly at a glance; the loudest identity of the four. */
-.dp-token-coin .duel-piece-base {
-  inset: 8%;
-  border-radius: 50%;
-  border: 2px solid color-mix(in srgb, var(--duel-team) 70%, black);
+/* ---- 3. INLAY - dark face, team rim, and the creature's element laid into
+   the face as a thin enamel channel just inside the rim. Both of the things
+   you plan around are on the token: whose piece (rim) and what type (ring),
+   with the badge in the cell corner naming the type exactly. */
+.dp-token-inlay .duel-piece::before {
+  border: 2px solid color-mix(in srgb, var(--duel-team) 85%, black);
   background:
-    radial-gradient(circle at 50% 26%,
-      color-mix(in srgb, var(--duel-team) 55%, white) 0%,
-      color-mix(in srgb, var(--duel-team) 85%, black) 60%,
-      color-mix(in srgb, var(--duel-team) 60%, black) 100%);
+    radial-gradient(circle closest-side at 50% 50%, transparent 76%,
+      color-mix(in srgb, var(--duel-element, var(--g-bone)) 85%, black) 78%,
+      color-mix(in srgb, var(--duel-element, var(--g-bone)) 85%, black) 88%,
+      transparent 90%),
+    radial-gradient(circle at 50% 30%, rgba(255, 244, 214, 0.08) 0%, transparent 55%),
+    radial-gradient(circle at 50% 60%, #201f1c 0%, #141412 70%, #0e0e0e 100%);
   box-shadow:
-    0 2px 5px rgba(0, 0, 0, 0.9),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    0 2px 5px rgba(0, 0, 0, 0.85),
+    inset 0 1px 0 rgba(255, 244, 214, 0.08);
 }
 
-.dp-token-coin .duel-piece-xalian-icon {
-  width: 50%;
-  height: 50%;
-  filter: none !important;
-}
-
-.dp-token-coin .duel-piece-xalian-icon svg { fill: rgba(0, 0, 0, 0.82) !important; }
-
-/* ---- 3. ELEMENT PLATE - a hexagonal chip in the creature's ELEMENT colour,
-   with the team as a rim. Puts the thing you actually plan around (type
-   matchup) into the token's own body. */
-.dp-token-element .duel-piece-base {
-  inset: 7%;
-  border-radius: 4px;
-  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
-  border: 0;
-  background:
-    linear-gradient(160deg, rgba(255, 244, 214, 0.14) 0%, transparent 45%),
-    var(--duel-element, var(--g-hull));
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.9);
-}
-
-/* The team rim, drawn as a border inside the chip rather than as a larger shape
-   behind it. Behind it, the rim was most of what you saw - a 3px halo on a 60px
-   chip is a lot of colour - and the element hue it was supposed to frame read as
-   the frame instead. */
-.dp-token-element .duel-piece-base {
-  box-shadow:
-    0 2px 5px rgba(0, 0, 0, 0.9),
-    inset 0 0 0 3px color-mix(in srgb, var(--duel-team) 90%, black);
-}
-
-.dp-token-element .duel-piece-xalian-icon {
-  /* the hexagon is narrower than a circle at top and bottom, so a touch less */
-  width: 52%;
-  height: 52%;
-}
-
-.dp-token-element .duel-piece-xalian-icon svg { fill: rgba(0, 0, 0, 0.85) !important; }
-
-/* The standee is the one study where the creature really is a figure standing
-   on a floor, so it keeps the rim light, the cast shadow and the badge where the
-   live board puts them. */
-/* ---- 4. STANDEE - the miniature, done deliberately. A side-on figure on an
-   elliptical base, with the base flattened as if seen from a high angle and the
-   figure standing off the back of it. */
+/* ---- 4. STANDEE - the control. The live board's standing figure, kept as it
+   is except that its base is drawn as the elliptical footprint a figure seen
+   from a high angle would have, instead of the full square. */
 .dp-token-standee .duel-piece-base {
   inset: auto 12% 6% 12%;
   height: 18%;
@@ -466,11 +439,63 @@
 }
 
 .dp-token-standee .duel-piece-xalian-icon {
-  top: auto;
+  left: 50%;
   bottom: 12%;
+  top: auto;
   transform: translateX(-50%);
   width: 84%;
   height: 84%;
+}
+
+/* SELECTION. The live board's corner brackets assume a square of floor; the
+   floor plate they are drawn on is hidden here, so the flat studies get their
+   own mark: a ring concentric with the token, sharing its acquire-and-hold
+   animation. One shape, drawn just off the token's own edge. */
+.dp-token-puck .duel-piece--selected::after,
+.dp-token-enamel .duel-piece--selected::after,
+.dp-token-inlay .duel-piece--selected::after {
+  content: '';
+  position: absolute;
+  inset: 1%;
+  border-radius: 50%;
+  border: 2px solid var(--duel-team);
+  pointer-events: none;
+  z-index: 100;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--duel-team) 70%, transparent));
+  animation:
+    duel-acquire 260ms cubic-bezier(0.16, 0.84, 0.36, 1) both,
+    duel-hold 2.6s ease-in-out 260ms infinite;
+}
+
+/* the standee keeps a mark on its footprint, not its figure */
+.dp-token-standee .duel-piece--selected .duel-piece-base::before {
+  content: none;
+}
+
+.dp-token-standee .duel-piece--selected::after {
+  content: '';
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 3%;
+  height: 22%;
+  border-radius: 50%;
+  border: 2px solid var(--duel-team);
+  pointer-events: none;
+  z-index: 100;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--duel-team) 70%, transparent));
+  animation:
+    duel-acquire 260ms cubic-bezier(0.16, 0.84, 0.36, 1) both,
+    duel-hold 2.6s ease-in-out 260ms infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dp-token-puck .duel-piece--selected::after,
+  .dp-token-enamel .duel-piece--selected::after,
+  .dp-token-inlay .duel-piece--selected::after,
+  .dp-token-standee .duel-piece--selected::after {
+    animation: none;
+  }
 }
 
 /* the study grid */
@@ -479,69 +504,4 @@
   flex-wrap: wrap;
   gap: var(--g-5);
   margin-bottom: var(--g-5);
-}
-
-
-/* SELECTION ON A ROUND TOKEN.
-   The live board marks the commanded piece with four corner brackets, which
-   assume a square. Around a disc they read as a box floating wide of the token -
-   the corners have nothing to sit on. A round token wants a round mark, so the
-   disc studies swap the brackets for a ring that shares the token's own edge.
-   The standee keeps the brackets: its footprint really is a square of floor. */
-.dp-token-milled .duel-piece--selected .duel-piece-base::before,
-.dp-token-coin .duel-piece--selected .duel-piece-base::before {
-  inset: -4px;
-  border-radius: 50%;
-  background: none;
-  border: 2px solid var(--duel-team);
-  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--duel-team) 70%, transparent));
-}
-
-/* The hexagon takes a hexagonal ring, and the standee's base a ring of its own.
-   Both are drawn on the PIECE rather than on the tile: the chip sets its own
-   clip-path to cut a hexagon, and clip-path clips an element's pseudo-elements
-   too, so a ring inset outside the tile was being cut away entirely. Nothing
-   about that is visible in the computed styles - width, opacity and animation
-   all read correctly on a mark that cannot be seen - which is why it survived a
-   check that only looked at properties. */
-.dp-token-element .duel-piece--selected .duel-piece-base::before,
-.dp-token-standee .duel-piece--selected .duel-piece-base::before {
-  content: none;
-}
-
-.dp-token-element .duel-piece--selected::after,
-.dp-token-standee .duel-piece--selected::after {
-  content: '';
-  position: absolute;
-  pointer-events: none;
-  z-index: 100;
-  animation:
-    duel-acquire 260ms cubic-bezier(0.16, 0.84, 0.36, 1) both,
-    duel-hold 2.6s ease-in-out 260ms infinite;
-  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--duel-team) 70%, transparent));
-}
-
-/* the chip's frame: a hexagon with a hexagon cut out of it */
-.dp-token-element .duel-piece--selected::after {
-  inset: 3%;
-  background: var(--duel-team);
-  clip-path: polygon(
-    25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%,
-    4% 50%, 27% 91%, 73% 91%, 96% 50%, 73% 9%, 27% 9%, 4% 50%, 0% 50%);
-}
-
-/* the standee's base: an ellipse round the footprint, not the figure */
-.dp-token-standee .duel-piece--selected::after {
-  left: 8%;
-  right: 8%;
-  bottom: 3%;
-  height: 22%;
-  border-radius: 50%;
-  border: 2px solid var(--duel-team);
-}
-
-/* the round tokens keep their ring on the tile - no clip-path to fight */
-.dp-token-milled .duel-piece--selected .duel-piece-base::before,
-.dp-token-coin .duel-piece--selected .duel-piece-base::before {
-  z-index: 100;
 }
