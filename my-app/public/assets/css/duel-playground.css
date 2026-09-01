@@ -509,11 +509,16 @@
      face's edge IS the top of the wall, so the joint is drawn with shading
      only - the face rolls into shadow where it turns down. */
   border: 0;
-  /* A clean turned face - the knurling lives on the edge, where a checkers
-     piece actually wears it. */
+  /* A clean turned face in the SAME material as the edge. A neutral face
+     over a coloured edge was a poker chip's colour distribution; a checkers
+     piece is dyed through, so the face is the team paint lit from above and
+     the edge is the same paint in shadow. */
   background:
-    radial-gradient(ellipse at 50% 42%, rgba(255, 244, 214, 0.28) 0%, transparent 68%),
-    radial-gradient(ellipse at 50% 50%, #4a4a3c 0%, #3c3c31 65%, #2e2e26 100%);
+    radial-gradient(ellipse at 50% 42%, rgba(255, 244, 214, 0.25) 0%, transparent 68%),
+    radial-gradient(ellipse at 50% 50%,
+      color-mix(in srgb, var(--duel-team) 40%, #4a4a3c) 0%,
+      color-mix(in srgb, var(--duel-team) 36%, #34342b) 65%,
+      color-mix(in srgb, var(--duel-team) 30%, #23231d) 100%);
   box-shadow:
     0 11px 10px rgba(0, 0, 0, 0.6),
     inset 0 1px 0 rgba(255, 244, 214, 0.28),
@@ -555,7 +560,7 @@
      shading compresses them into shadow at the ends. */
   background:
     linear-gradient(90deg, rgba(0, 0, 0, 0.6) 0%, transparent 25% 75%, rgba(0, 0, 0, 0.6) 100%),
-    linear-gradient(180deg, #2b2b23 0%, rgba(43, 43, 35, 0) 60%),
+    linear-gradient(180deg, color-mix(in srgb, var(--duel-team) 30%, #23231d) 0%, transparent 60%),
     repeating-linear-gradient(90deg,
       rgba(255, 244, 214, 0.14) 0 1px,
       rgba(0, 0, 0, 0) 1px 2px,
