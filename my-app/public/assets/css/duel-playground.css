@@ -382,6 +382,29 @@
     duel-hold 2.6s ease-in-out 260ms infinite;
 }
 
+/* FEET ON THE BASE, FOR EVERY SPECIES. The species SVGs have different
+   aspect ratios, and preserveAspectRatio letterboxes them into the square
+   art box - a wide species' ink floats vertically centred with air below
+   its feet, so its figure (and the outlined variant's band) hung above the
+   disc it was supposed to stand on. The tabletop variants therefore size
+   the svg by its own intrinsic ratio (width fixed, height auto) and anchor
+   it to the bottom of the box: the ink's feet ARE the box bottom, tall
+   species simply rise higher, and every creature touches its base. */
+.dp-token-standee .duel-piece-xalian-icon,
+.dp-token-plinth .duel-piece-xalian-icon,
+.dp-token-outline .duel-piece-xalian-icon {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.dp-token-standee .duel-piece-xalian-icon svg,
+.dp-token-plinth .duel-piece-xalian-icon svg,
+.dp-token-outline .duel-piece-xalian-icon svg {
+  width: 100%;
+  height: auto;
+}
+
 /* ====================================================================
    2. STANDEE - the original tabletop take, adjusted: the base sits ON
    the pip the piece occupies instead of at the bottom of the square,
@@ -593,39 +616,43 @@
 .dp-token-outline .duel-piece::before {
   content: '';
   position: absolute;
-  left: 27%;
-  right: 27%;
-  top: 42%;
-  height: 13%;
+  left: 30%;
+  right: 30%;
+  top: 43%;
+  height: 11%;
   border-radius: 50%;
   background: radial-gradient(ellipse at 50% 50%,
-    color-mix(in srgb, var(--duel-team) 34%, #12120e) 0%,
-    color-mix(in srgb, var(--duel-team) 28%, #12120e) 60%,
-    transparent 78%);
+    color-mix(in srgb, var(--duel-team) 48%, #10100d) 0%,
+    color-mix(in srgb, var(--duel-team) 36%, #10100d) 55%,
+    transparent 76%);
   z-index: 100;
   pointer-events: none;
 }
 
-/* A die-cut sticker backing: a SOLID band of the team colour around the ink
-   (two compounding 4-direction passes, so it grows evenly, hard-edged - no
-   blur anywhere), then a fine dark edge around the band, then the cast
-   shadow. !important because the component sets its glow inline on the svg;
-   without it this whole variant silently renders as the plinth. */
+/* A die-cut sticker band. Axis-aligned offsets alone give a lumpy band with
+   notched diagonals, so the first pass runs in EIGHT directions (the 0.7px
+   pair is 1px at 45 degrees) for a smooth contour, and one 4-direction pass
+   grows it to ~2px. Any thicker and the band swallowed the silhouette - at
+   4px the bat swarm fused into a single slab and every creature read as a
+   logo. Then a fine dark edge so the band ends in a line instead of a stop,
+   then the cast shadow. !important because the component sets its glow
+   inline on the svg; without it this whole variant silently renders as the
+   plinth. */
 .dp-token-outline .duel-piece-xalian-icon svg {
   filter:
-    drop-shadow(2px 0 0 var(--duel-team))
-    drop-shadow(-2px 0 0 var(--duel-team))
-    drop-shadow(0 2px 0 var(--duel-team))
-    drop-shadow(0 -2px 0 var(--duel-team))
     drop-shadow(1px 0 0 var(--duel-team))
     drop-shadow(-1px 0 0 var(--duel-team))
     drop-shadow(0 1px 0 var(--duel-team))
     drop-shadow(0 -1px 0 var(--duel-team))
-    drop-shadow(1px 0 0 color-mix(in srgb, var(--duel-team) 40%, black))
-    drop-shadow(-1px 0 0 color-mix(in srgb, var(--duel-team) 40%, black))
-    drop-shadow(0 1px 0 color-mix(in srgb, var(--duel-team) 40%, black))
-    drop-shadow(0 -1px 0 color-mix(in srgb, var(--duel-team) 40%, black))
-    drop-shadow(0 4px 3px rgba(0, 0, 0, 0.45)) !important;
+    drop-shadow(0.7px 0.7px 0 var(--duel-team))
+    drop-shadow(-0.7px 0.7px 0 var(--duel-team))
+    drop-shadow(0.7px -0.7px 0 var(--duel-team))
+    drop-shadow(-0.7px -0.7px 0 var(--duel-team))
+    drop-shadow(1px 0 0 color-mix(in srgb, var(--duel-team) 35%, black))
+    drop-shadow(-1px 0 0 color-mix(in srgb, var(--duel-team) 35%, black))
+    drop-shadow(0 1px 0 color-mix(in srgb, var(--duel-team) 35%, black))
+    drop-shadow(0 -1px 0 color-mix(in srgb, var(--duel-team) 35%, black))
+    drop-shadow(0 4px 3px rgba(0, 0, 0, 0.5)) !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
