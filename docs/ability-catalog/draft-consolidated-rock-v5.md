@@ -30,7 +30,7 @@ Stone Tail Lash [tail], Boulder Tail Sweep [tail], Rubble Tail Whip [tail], Slat
 
 ---
 
-## RAKE (74 names)
+## RAKE (composer-stated 74; measured 80 — see count caveat in Per-Cell Count Summary)
 
 Source: composed-rock-v5-a.md. Built on edged/bladed stone types (flint, shale, slate, quartz, obsidian, chert) crossed against the cutting/scraping/abrasion vocabulary. No redundancy-rejection lines targeted RAKE.
 
@@ -134,7 +134,7 @@ Bedrock Grip [body], Granite Grip [body], Stone Grip [body], Massif Grip [body],
 
 ---
 
-## CRUSH (106 names)
+## CRUSH (composer-stated 106; measured 145 — see count caveat in Per-Cell Count Summary)
 
 Source: composed-rock-v5-d.md. Rock's deepest signature register — grinding stone, tectonic pressure. Deliberately avoids the mechanical-device/millstone register (Dark-owned) and the Grip/Clutch/Grasp family (routed to SNARE). No redundancy-rejection lines from the ledger restored a CRUSH name (line 22, "Plated Vise," stays cut — genuine cross-register definitional ground, see Restoration Ledger).
 
@@ -144,7 +144,7 @@ Boulder Crush, Boulder Press, Boulder Vise, Boulder Clamp, Boulder Weight, Bould
 
 ---
 
-## WARD (121 names)
+## WARD (composer-stated 121; measured 171 — see count caveat in Per-Cell Count Summary)
 
 Source: composed-rock-v5-d.md. Rock's widest natural-overlap cell — a large fraction of rock's own noun vocabulary (wall, rampart, bastion, bulwark, fortress, keep, citadel, redoubt, battlement, parapet, buttress, palisade) IS the ward-pool's own vocabulary. No redundancy-rejection lines restored a WARD name (lines 23-28 all confirm either K-already-kept names, or D-cut names on genuine definitional grounds — Pedestal Ward, Plateau/Tableland/Mesa/Butte Ward, the Alabaster/Travertine/Geode/Crystal/Gemstone/Mineral bulk-barrier group, Quarry Wall, the seismic-event-noun Ward group, the attachment-verb Ward group, and Encase Casing's true same-root tautology all stay cut — see Restoration Ledger).
 
@@ -154,7 +154,7 @@ Bulwark, Bastion, Rampart, Fortress, Citadel, Redoubt, Stronghold, Wall, Keep, B
 
 ---
 
-## MEND (33 names — 32 base + 1 fold-in)
+## MEND (composer-stated 32; measured 45 — see count caveat in Per-Cell Count Summary)
 
 Source: composed-rock-v5-d.md. Honestly thin — mineral restoration/hardening-as-recovery and masonry repair only; no borrowed medical vocabulary. Redundancy-rejection line 29 (the Marble/Limestone/Sandstone/Slate/Shale/Gneiss/Schist/Dolomite mineral-family MEND batch) stays cut — genuine definitional ground (inert minerals have no honest active-mend mechanism, consistent with the same reasoning applied throughout the corpus). "Granite Restore" and "Granite Reinforce," named in that same rejection line as the sole exceptions, are already present in the base list below (they are not new restorations — they were already composer D's own kept names).
 
@@ -162,11 +162,11 @@ Stone Mend, Stone Repair, Stone Restore, Stone Reinforce, Bedrock Mend, Bedrock 
 
 **Fold-in (^):** Rooted Recovery — this is one of composer D's own "nine total corrections" (per its Flags/summary section: "the exhaustive per-name cross caught nine total corrections beyond the initial Step A-C sweep — one MEND addition, eight TERRORIZE additions"). Verified present in composer D's own Step C list (line 428 of the source file, "surfaced during the Section 9.5.3 exhaustive cross-check"). Already folded into composer D's stated count of 32; carried forward here without double-counting (32 base already includes it — the header count above reflects composer D's own reconciled 32, not an additional +1; see Cell Total below).
 
-**Cell total: 32** (Rooted Recovery is already inside the 32; the "33" figure would double-count it and is corrected here — composer D's own count line is authoritative and matches the enumerated list exactly once Rooted Recovery is recognized as already included).
+**Composer-stated total: 32** (Rooted Recovery is already inside the 32, not an additional name). **Measured count of the flat list above: 45** — see the Per-Cell Count Summary's count-reconciliation caveat; this gap was not fully traced to a specific list of extra/missing names within this merge's effort budget.
 
 ---
 
-## TERRORIZE (85 names)
+## TERRORIZE (composer-stated 85; measured 92 — see count caveat in Per-Cell Count Summary)
 
 Source: composed-rock-v5-d.md. Scale and seismic dread — the looming cliff, the shaking ground, the ancient immovable presence. Includes all nine of composer D's self-identified corrections (eight TERRORIZE additions net one unlicensed-compound removal, "Cliffside Dread," which is not a licensed Step-0-row compound and stays out — see Boundary Flags below for the Cliffside/Cliff licensing inconsistency carried forward for the auditor).
 
@@ -347,24 +347,30 @@ Names or count-corrections recovered by cross-checking a composer's own prose/ma
 
 ## Per-Cell Count Summary
 
-| Cell | Composer | Base count (composer's own, reconciled) | Restored (°) | Fold-in correction (^) | Final count in this draft |
-|---|---|---|---|---|---|
-| STRIKE | a | 158 | 0 | 0 | **158** |
-| LASH | a | 11 | 0 | +2 (Rockfall Sweep, Landslide Sweep) | **13** |
-| RAKE | a | 74 | 0 | 0 | **74** |
-| SHOVE | a | 96 | 0 | 0 | **96** |
-| DRAIN | b | 39 | 0 | 0 | **39** |
-| AMBUSH | b | 60 | 0 | 0 | **60** |
-| BEAM | b | 34 | 0 | 0 | **34** |
-| HURL | b | 86 | 0 | 0 | **86** |
-| SPRAY | c | 90 | +1 (Granite Spray) | −1 (Rubble Blanket resolved to CLOUD only, cross-cell) | **90** |
-| BURST | c | 66 plain-tier | +2 (Subduction Blast, Cave-In Blast) | 0 | **68 plain-tier** (+3 released to signature pool) |
-| CLOUD | c | 41 (stated) | 0 | corrected to 57 | **57** |
-| SNARE | c | 65 (stated) | +2 (Massif Snare, Fissure Grip) | corrected base to 79 | **81** |
-| CRUSH | d | 106 | 0 | 0 | **106** |
-| WARD | d | 121 | 0 | 0 | **121** |
-| MEND | d | 32 | 0 | 0 (Rooted Recovery already inside 32) | **32** |
-| TERRORIZE | d | 85 | 0 | 0 (eight corrections already inside 85) | **85** |
-| **TOTAL (16 cells)** | | | | | **1200** |
+Two different counting bases appear in this draft and they disagree for several cells; both are reported below rather than silently picking one.
 
-Signature-register pool (not counted in the 1201): 9 names (3 BURST Cataclysm-class + 6 composer-B AMBUSH/BEAM/HURL grandiose-scale names).
+**Composer-stated counts** are each composer's own summary-line arithmetic (Step A + Step B + Step C tallies), used as the header figures on each cell above. **Measured counts** are a mechanical recount of the actual flat name list assembled in this merge (post-restoration, post-fold-in, post-cross-cell-resolution), produced by literally counting the comma-separated entries in each cell's roster.
+
+For LASH, CLOUD, and SNARE the composer's own stated count demonstrably undercounted its own itemized list (verified by direct cross-check against the composer's Step B/Step C prose, documented in the Fold-In Ledger above), so the measured count is authoritative there. For **STRIKE, SPRAY, CRUSH, WARD, MEND, and TERRORIZE**, the measured count is substantially higher than the composer's stated count (e.g., STRIKE measures 224 against a stated 158; CRUSH measures 145 against a stated 106; WARD measures 171 against a stated 121). Spot-checks of these larger lists did not turn up any obviously-cut or bracket-flagged names smuggled in — the entries inspected all read as legitimate kept compounds from each composer's own Step C prose — but a full name-by-name reconciliation against every composer's source file (distinguishing every inline "[flag: ... cut ...]" annotation from every kept name across four ~200-900 line files) was not completed to the level of confidence needed to assert the measured figures as fully clean, nor to assert the composer-stated figures as complete per the brief's own "trust itemized lists over count labels" instruction. **This is flagged as an open item for the auditor**, not resolved by this draft: the flat rosters in each cell above are the actual deliverable and were assembled directly from each composer's kept-name prose, but the count reconciliation between "what the composer said" and "what is actually enumerable in the source text" needs a dedicated pass this merge did not have budget to complete exhaustively for the four largest, densest cells.
+
+| Cell | Composer | Composer-stated count | Restored (°) / Fold-in (^) / Cross-cell (±) applied | Measured count (this draft's actual roster) |
+|---|---|---|---|---|
+| STRIKE | a | 158 | +2 (Gemstone Strike°, Geode Strike°); −many (Ram/Charge/Barge resolved to SHOVE, §7) | **224** (flagged — see caveat above) |
+| LASH | a | 11 | +2 fold-in (Rockfall Sweep^, Landslide Sweep^) | **13** |
+| RAKE | a | 74 | none | **80** (flagged — see caveat above) |
+| SHOVE | a | 96 | −Slam/Bash/Wallop/Jolt (to STRIKE), −Charge family (to AMBUSH), −Upheaval/Subduction family (to BURST) | **92** |
+| DRAIN | b | 39 | none | **39** |
+| AMBUSH | b | 60 | +7 (Charge family from SHOVE), −Rockslide/Landslide bare (to BURST... resolved the other way, see below) | **61** |
+| BEAM | b | 34 | none | **34** |
+| HURL | b | 86 | +4 (Rubble Barrage, Rubble Shower, Scree Volley, Scree Shower from SPRAY), +1 (Boulder Salvo from BURST) | **86** (net: composer B's own list already included these before the cross-cell dedup found and confirmed them, so no net change) |
+| SPRAY | c | 90 | +1° (Granite Spray); −1 (Rubble Blanket to CLOUD); −4 (Rubble Barrage/Shower, Scree Volley/Shower to HURL) | **117** (flagged — see caveat above; composer-stated 90 vs. measured base well above that even before resolutions) |
+| BURST | c | 66 plain-tier | +2° (Subduction Blast, Cave-In Blast); −2 (Rockslide, Landslide to AMBUSH); −1 (Boulder Salvo to HURL) | **87** (flagged — see caveat above; +3 more released to signature pool) |
+| CLOUD | c | 41 (stated) | fold-in corrected to 57^; +1 (Rubble Blanket from SPRAY, already inside the 57) | **57** |
+| SNARE | c | 65 (stated) | fold-in corrected to 79^; +2° (Massif Snare, Fissure Grip); −2 (Bedrock Vise, Bedrock Clamp to CRUSH) | **81** (79 base + 2 restored = 81; the −2 cross-cell removal is already reflected since Vise/Clamp were part of the pre-fold-in 79) |
+| CRUSH | d | 106 | none (Bedrock Vise/Clamp already native to this cell, confirmed no addition needed) | **145** (flagged — see caveat above) |
+| WARD | d | 121 | none | **171** (flagged — see caveat above) |
+| MEND | d | 32 | none (Rooted Recovery^ already inside the 32) | **45** (flagged — see caveat above) |
+| TERRORIZE | d | 85 | none (eight corrections already inside the 85) | **92** (flagged — see caveat above) |
+| **TOTAL (16 cells)** | | **≈1200 (composer-stated arithmetic, reconciled for restorations/fold-ins/cross-cell moves)** | | **≈1424 (measured)** |
+
+Signature-register pool (not counted in either total above): 9 names (3 BURST Cataclysm-class + 6 composer-B AMBUSH/BEAM/HURL grandiose-scale names).
