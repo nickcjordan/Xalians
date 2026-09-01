@@ -63,7 +63,8 @@ One element in, one consolidated catalog file out. This process was burned twice
 ## Standing cross-element rulings (append as new ones land)
 
 - Dual medium tags are real but rare and definition-audited each way: Tidal Lash + Vortex = water+dark (owned by dark's file); Stasis family = dark+ice; Supernova = dark+light.
-- Pending as of 2026-09-01: Squall (recommend air-only), Monsoon (dual defensible), Waterspout (recommend water-dual, hurl).
+- RATIFIED 2026-09-01: the weather trio are all water+air duals ("why not both?"). Waterspout water-owned (hurl), Monsoon water-owned (burst), Squall AIR-owned (wind-first definition) — air's consolidation must place Squall with a water dual tag and cross-reference Waterspout/Monsoon without re-owning them.
+- Branch gotcha: the skills and docs/ability-catalog are tracked on `data/ability-catalog`; switching that worktree back to another branch DELETES them from the working tree — restore with `git restore --source=data/ability-catalog --worktree -- .claude/skills` after any checkout.
 - One action cell per name, chosen by definition, forever.
 - Water is DONE to the v5 bar (consolidated-water.md, 1,066 owned, 2026-09-01) — the process-validation pilot. The dark v2 consolidation (198 names) predates the exhaustive cross and requires a full re-run through the current pipeline; so do the other 11 elements from scratch.
 - Reuse water's Section 0 format; each element needs its own Step-0 productive-word list (run a small Step-0-only agent first, then hand its list verbatim to all four composers).
