@@ -463,23 +463,27 @@
    badge is a medallion set into the front of the plinth, where a
    miniature wears its nameplate, instead of floating in the square.
    ==================================================================== */
+/* Sized against the widest species, not the average one: at 56% wide the
+   blob-shaped creatures overhung the disc on both sides. And it is matte -
+   a base is a physical object the figure stands on, so the top face is the
+   same hull metal as the arena furniture and the team lives as PAINT on the
+   side wall, which is where a tabletop miniature actually wears its army
+   colour, not as light. */
 .dp-token-plinth .duel-piece-base {
-  left: 22%;
-  right: 22%;
+  left: 13%;
+  right: 13%;
   inset-block: auto;
-  top: 41%;
-  height: 18%;
+  top: 40%;
+  height: 22%;
   border-radius: 50%;
-  border: 1px solid color-mix(in srgb, var(--duel-team) 55%, black);
+  border: 1px solid rgba(0, 0, 0, 0.7);
   background:
-    radial-gradient(ellipse at 50% 28%, rgba(255, 244, 214, 0.14) 0%, transparent 60%),
-    radial-gradient(ellipse at 50% 60%,
-      color-mix(in srgb, var(--duel-team) 42%, #121210) 0%,
-      color-mix(in srgb, var(--duel-team) 24%, #0d0d0b) 100%);
+    radial-gradient(ellipse at 50% 28%, rgba(255, 244, 214, 0.10) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 60%, var(--g-hull-hi) 0%, var(--g-seam) 100%);
   box-shadow:
-    0 4px 0 color-mix(in srgb, var(--duel-team) 16%, #070707),
-    0 9px 9px rgba(0, 0, 0, 0.65),
-    inset 0 1px 0 color-mix(in srgb, var(--duel-team) 40%, transparent);
+    0 5px 0 color-mix(in srgb, var(--duel-team) 45%, #0d0d0b),
+    0 11px 10px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 244, 214, 0.12);
 }
 
 /* feet at the BACK edge of the base, not its centre - planted centrally the
@@ -519,10 +523,10 @@
 .dp-token-plinth .duel-piece--selected::after {
   content: '';
   position: absolute;
-  left: 16%;
-  right: 16%;
-  top: 37%;
-  height: 26%;
+  left: 9%;
+  right: 9%;
+  top: 36%;
+  height: 30%;
   border-radius: 50%;
   border: 2px solid var(--duel-team);
   pointer-events: none;
