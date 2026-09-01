@@ -661,6 +661,19 @@ class DuelPlaygroundPage extends React.Component {
 					))}
 				</div>
 
+				{this.renderSubhead('On the bench', 'One piece, magnified. This is the REAL 62px cell blown up, not a larger rendering - every pixel here is a pixel the board ships, so a flaw visible on the bench is a flaw on the board and a fix that works here works there. Craft is judged at this magnification; whether it still reads is judged in the studies above and the crowd below.')}
+				<div className="dp-bench">
+					{['plinth', 'outline'].map(v => (
+						<DuelSpecimenBoard key={v} columns={2} cellSize={62}
+							variant={v}
+							caption={v === 'plinth' ? 'Plinth, magnified' : 'Outlined, magnified'}
+							pieces={[
+								{ index: 2, xalian: this.at(0), team: 'own' },
+								{ index: 3, xalian: this.at(3), team: 'foe' },
+							]} />
+					))}
+				</div>
+
 				{this.renderSubhead('In a crowd', 'A treatment that reads in a four-piece study can still fail on a full board, which is where these actually have to work.')}
 				<div className="dp-token-row">
 					{studies.map(st => (

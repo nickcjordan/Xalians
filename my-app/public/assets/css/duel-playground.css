@@ -531,14 +531,19 @@
   inset: 0;
   border-radius: 50%;
   transform: translateY(6px);
-  /* Clipped to the lip. A negative z-index cannot put a pseudo-element
-     behind its parent's own background (backgrounds paint first), so the
-     shifted ellipse painted its stripes across the whole face; only the
-     6px of it that protrudes below the face is the wall. */
-  clip-path: inset(calc(100% - 7px) -2px -3px -2px);
+  /* The wall is the crescent between the face ellipse and the same ellipse
+     shifted down. Two constructions failed on the bench: a negative z-index
+     cannot paint behind the parent's own background (backgrounds paint
+     first), and a straight-edged clip left a flat ribbon floating under the
+     curved face. The mask cuts the face's own ellipse out of the shifted
+     copy, so the wall's top edge follows the curve it belongs to. */
+  -webkit-mask: radial-gradient(50% 50% at 50% calc(50% - 6px), transparent 97%, black 99%);
+  mask: radial-gradient(50% 50% at 50% calc(50% - 6px), transparent 97%, black 99%);
+  /* finer and quieter than the first pass: 1px ridges and a narrower value
+     range - the 2px/2px high-contrast version read as awning stripes */
   background: repeating-linear-gradient(90deg,
-    color-mix(in srgb, var(--duel-team) 48%, #0d0d0b) 0 2px,
-    color-mix(in srgb, var(--duel-team) 24%, #0a0a08) 2px 4px);
+    color-mix(in srgb, var(--duel-team) 46%, #0d0d0b) 0 1px,
+    color-mix(in srgb, var(--duel-team) 27%, #0a0a08) 1px 3px);
 }
 
 /* feet at the BACK edge of the base, not its centre - planted centrally the
@@ -576,15 +581,15 @@
    where there is room for it - detail panels and dialogs. */
 .dp-token-plinth .duel-type-badge,
 .dp-token-outline .duel-type-badge {
-  width: 26% !important;
-  height: 9% !important;
+  width: 24% !important;
+  height: 7% !important;
   min-width: 0 !important;
   left: 50%;
   right: auto;
   top: auto;
-  bottom: 28%;
+  bottom: 30%;
   transform: translateX(-50%);
-  border-radius: 2px;
+  border-radius: 1px;
   border: 0;
   background: linear-gradient(180deg,
     color-mix(in srgb, var(--duel-element, var(--g-bone)) 78%, black) 0%,
@@ -723,4 +728,18 @@
   flex-wrap: wrap;
   gap: var(--g-5);
   margin-bottom: var(--g-5);
+}
+
+/* THE BENCH - one piece under the loupe. The wrapper is zoomed, not
+   re-rendered: these are the board's actual 62px-cell pixels magnified, so
+   what is judged here is what ships. The caption stays outside the zoom. */
+.dp-bench {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--g-5);
+  margin-bottom: var(--g-5);
+}
+
+.dp-bench .duel-specimen-wrapper {
+  zoom: 3.4;
 }
