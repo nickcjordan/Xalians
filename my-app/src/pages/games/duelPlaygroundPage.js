@@ -633,20 +633,16 @@ class DuelPlaygroundPage extends React.Component {
 
 		const studies = [
 			{
-				v: 'puck', name: 'Gunmetal puck',
-				note: 'A machined counter in the hull metal, with the side worn as a rim ring. The quietest option: the creature keeps its canonical glow, the face is the same material as every panel on the site, and identity is one fine line of colour.',
-			},
-			{
 				v: 'enamel', name: 'Enamel coin',
-				note: 'The face is the team colour laid as deep enamel - sunk most of the way to black so the glowing creature stands out of it instead of fighting it. Brass rim like a minted piece. Louder identity than the puck without becoming a poster.',
-			},
-			{
-				v: 'inlay', name: 'Element inlay',
-				note: 'Dark face, team rim, and the element laid into the face as a thin enamel channel inside the rim. Both facts you plan around live on the token - whose piece and what type - with the corner badge naming the type exactly.',
+				note: 'The flat direction, refined. The face is the team colour laid as deep enamel - sunk most of the way to black so the glowing creature stands out of it instead of fighting it - with a brass rim like a minted piece. Won its round against the gunmetal puck on face contrast.',
 			},
 			{
 				v: 'standee', name: 'Standee',
-				note: 'The miniature, done deliberately: a side-on figure standing off the back of a flattened base, as if seen from a high angle rather than straight down. This is the original intent made consistent - the figure and its base agree about where the camera is.',
+				note: 'The original tabletop take, adjusted: the base ellipse now sits on the pip the piece occupies instead of at the bottom of the square, the feet are planted at its centre, and both the figure and the base cast a shadow onto the floor. The figure rising out of its square is the point - a miniature is taller than the space it stands in.',
+			},
+			{
+				v: 'plinth', name: 'Plinth',
+				note: 'The tabletop concept rebuilt from scratch: a real miniature base - a chunky disc with visible thickness, its top face painted in the team colour, centred on the pip - with the figure standing on it and the element badge set into the front like a nameplate.',
 			},
 		];
 
