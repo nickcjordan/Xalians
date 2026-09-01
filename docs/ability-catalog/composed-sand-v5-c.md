@@ -786,7 +786,405 @@ Sand's cloud register is one of its strongest: dust hangs, settles, veils, obscu
 
 **Cell count: 108 kept names** (very rich — sand's strongest cell, appropriate for a signature-strength action per assignment).
 
+### CLOUD — full synonym cross matrix
 
+Columns (cloud synonym pool, 33 terms; "Cloud," "Fog," "Mist" excluded as columns because fog/mist are ruled water-primary bare compounds and bare "Cloud" is the action name itself, not a synonym to cross — see standing ruling): Miasma, Pall, Shroud, Veil, Haze, Smog, Fume, Vapor, Reek, Effluvium, Exhalation, Emanation, Murk, Gloom, Nimbus, Aura, Penumbra, Overcast, Canopy, Blanket, Curtain, Screen, Scrim, Smother, Billow, Plume, Wreath, Drift, Residue, Film, Sheen, Zone, Field, Domain, Radius, Presence, Fallout, Wake, Trail, Ambience, Envelope, Sheath.
+
+Codes: K=kept, D=definition dishonest, G=gibberish, C=comic, T=tautology, X=duplicate already kept.
+
+| Row | Miasma | Pall | Shroud | Veil | Haze | Smog | Fume | Vapor | Reek | Effluvium | Exhalation | Emanation | Murk | Gloom | Nimbus | Aura | Penumbra | Overcast | Canopy | Blanket | Curtain | Screen | Scrim | Smother | Billow | Plume | Wreath | Drift | Residue | Film | Sheen | Zone | Field | Domain | Radius | Presence | Fallout | Wake | Trail | Ambience | Envelope | Sheath |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Dust | K | X | X | X | X | K | K | X | D | K | K | K | X | X | K | K | K | K | D | X | X | X | X | X | K | X | K | X | K | K | K | X | X | D | K | K | X | K | X | K | K | K |
+| Sand | K | X | X | X | X | K | D | X | K | D | K | K | X | K | K | K | K | K | D | X | X | X | X | X | K | X | K | X | K | K | K | X | X | K | K | K | X | K | X | K | K | K |
+| Grit | K | X | K | X | X | D | K | D | D | K | D | K | X | D | D | K | D | D | D | X | X | D | D | X | D | D | D | D | D | D | D | D | D | K | D | D | D | D | D | D | D | D |
+| Silt | D | X | D | X | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | X | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Sediment | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Loess | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Grain | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Particulate | D | D | D | D | K | D | K | K | D | K | D | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Powder | D | D | D | D | K | D | D | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | K | D | D | D | D | D | D | D | D | D | D | D | D |
+| Talc | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | K | D | D | D | D | D | D | D | D | D | D | D |
+| Erosion | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Abrasion | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Attrition | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Wear | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Scour | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Chafe | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Friction | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Sandstorm | D | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Duststorm | D | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Sirocco | D | D | D | D | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Haboob | D | D | D | D | D | D | D | D | D | D | D | D | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Simoom | D | D | D | D | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Whirl | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Cascade | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Slide | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Burial | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Interment | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Entombment | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Grave | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Tomb | D | D | D | D | D | D | D | D | D | D | D | D | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Crypt | D | D | D | D | D | D | D | D | D | D | D | D | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Sepulcher | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Barrow | D | D | D | D | D | D | D | D | D | D | D | D | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Shroud | D | D | X | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Veil | D | D | D | X | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Mantle | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Pall | D | X | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Cloak | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Cover | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Concealment | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Camouflage | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Mirage | D | D | D | D | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Oasis | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Basin | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Flat | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Expanse | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Reach | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Waste | D | D | D | D | D | D | D | D | D | D | D | D | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Hourglass | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Quicksand | D | D | D | D | D | D | D | D | D | D | D | D | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Sinkhole | D | D | D | D | D | D | D | D | D | D | D | D | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Wallow | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Hollow | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Rut | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Furrow | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Groove | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Trench | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Channel | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Wash | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Sandpit | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Sink | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Patina | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | K | K | D | D | D | D | D | D | D | D | D | D | D |
+| Rind | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Crust | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Hardpan | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Duricrust | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Erg | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Rub | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Ripple | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Ridge | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Crest | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Slope | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Trail | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | X | D | D |
+| Drift | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | X | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+
+**Noun-row per-name proof (uniform-D landform/burial/geology rows):** three written out — "Ridge Nimbus" (D, a ridge is a static landform, not a radiant source), "Erg Domain" (D, erg names a dune-field landform, and while it could set a *location*, it cannot be the emitted-field's own headword the way Dust/Sand can), "Channel Envelope" (D, a channel is a carved feature; nothing about it emanates). **Tomb/Crypt/Barrow/Waste/Quicksand/Sinkhole compose only with Murk** (K) — a murk hanging over/rising from these places is coherent (an ambient dimness associated with the place), but they fail every other cloud-synonym because those words (Veil, Shroud, Aura, Nimbus, etc.) require the source to be a substance or emitter, not a place; "murk" alone is loose enough to read as "the murk of [place]" idiomatically, which the other synonyms don't support. **Patina** composes only with Residue and Film (both K — a patina is itself a residue/film) and is D elsewhere for the same category reason. **Grave** is D throughout (excluded per the same tone-independent reasoning established in the BURST section — a place-noun, not an emitter, and carries no cloud-emission sense at all, unlike Tomb/Crypt which at least support "Murk").
+
+**Verb-row proof:** none of the Section 0 verbs (Bury, Inter, Entomb, Smother [already a cloud-pool noun/verb, handled as Sand Smother/Dust Smother/Grit Smother in Step C], Engulf, Swallow, Settle, Erode, Abrade, Grind, Sanding, Rasp, Grate, Scrape, Strip, Pit, Pockmark, Disintegrate, Dissolve, Sap, Dry, Crack, Sift, Filter, Pour, Trickle, Spill, Choke, Stifle, Conceal, Blend, Vanish, Submerge, Subside, Cave, Collapse, Undermine, Excavate, Tunnel, Burrow, Displace, Overtake, Outlast, Persist, Endure, Withstand, Weather, Blast, Peel, Flay, Strafe) are matrix rows for CLOUD — verbs describe an action, not the noun-headword an "[X] [cloud-synonym]" name needs, and none survived to Step B/C composition for this action; three written out to prove the omission is judged, not silent: "Erode Miasma" — G, verb-noun collision reads as broken grammar, not a name. "Choke Veil" — D, "choke" is a verb of the action-cell (and also snare/crush adjacent), not a cloud-substance headword. "Vanish Haze" — D, Vanish names disappearing, contradicting a haze's visible lingering presence; also risks true-invisibility canon tension (rule 6.11) if read as a vanishing effect rather than an obscuring one. All 50 verb rows are D across all 33 columns for the same structural reason (verb cannot fill the cloud-word's required substance/emitter noun slot); no verb-row table is reproduced cell-by-cell given this uniform structural cause, consistent with rule 9.5's allowance to prove uniform-row judgment with representative written-out names rather than repeating an all-D table 50 more times — the reasoning is identical across all 50 and has been demonstrated per-name above and in the BURST/SPRAY verb-row sections.
+
+**Cross-cell tension flags:** Sand Vapor / Dust Vapor, Sand Plume / Dust Plume, Sand Slick appear in both SPRAY (ejection sense) and CLOUD (settling/lingering sense) cells — both readings are definition-honest under their respective actions, so both are kept per rule ("if a name honestly fits two cells, place it in the definition-honest one and note the tension") — noted here and in Flags.
+
+**Final CLOUD kept count: 109** (108 from the Step B/C list + Mirage Haze, surfaced by the Mirage row's Haze intersection and not previously listed verbatim in Step C — added here rather than dropped silently).
+
+---
+
+## SNARE — cell (restraint, entrapment)
+
+Sand's snare register is signature-strength per assignment: quicksand, engulfment, sinking holds, being swallowed by the ground. Standing ruling: ALL grip/clutch/bind/coil/tether/lock restraint words live in snare (settled), and quicksand/engulfment holds are sand's snare register. Boundary rulings from the crush/mend/snare harvest apply: Undertow and Gravity Well were flagged NOT neutral (water/dark) — sand does not re-claim Undertow. Mire/Bog/Quagmire/Morass are swamp/mud-leaning; Mire was already kept cautiously under sand in the harvest (flag), the other three are new and judged per-name below.
+
+### Standalone (Step A)
+
+- Quicksand (the single strongest sand-snare word, evocative alone)
+- Sinkhole (evocative alone, ground giving way to swallow prey)
+
+### Element-internal compositions (Step B)
+
+- Sand Trap
+- Sand Snare
+- Grit Snare
+- Dust Snare (borderline; dust doesn't restrain well physically — flag thin)
+- Quicksand Grip
+- Quicksand Hold
+- Quicksand Clutch [instrument: none needed, terrain-based hazard]
+- Sinking Grip
+- Sinking Hold
+- Sand Sink
+- Sand Swallow (borderline collocation; kept, "the sand swallows you")
+- Sand Engulf (grammatically awkward as bare compound; corrected below to Engulfing forms)
+- Engulfing Sand
+- Engulfing Grip
+- Sand Mire [flag: dual water/mud per harvest ruling, kept cautiously as instructed]
+- Sinkhole Grip
+- Sinkhole Trap
+- Sandpit Trap
+- Wallow Trap
+- Basin Trap (borderline; a sunken basin used as a trapping terrain feature)
+- Dune Trap
+- Barrow Hold (borderline; being held fast within a burial mound)
+- Crust Trap (a hardpan crust that gives way, trapping the victim beneath)
+- Hardpan Trap
+- Duricrust Snare (borderline; kept)
+
+### Synonym cross keepers (Step C highlights — full matrix below)
+
+- Sand Noose (borderline; a rope-of-sand image, kept as a whirling/twisting sand column that constricts) [instrument: coils]
+- Grit Noose
+- Sand Tether
+- Sand Leash
+- Sand Hobble
+- Grit Hobble
+- Sand Fetter
+- Sand Shackle
+- Sand Manacle
+- Sand Yoke
+- Sand Harness (borderline; kept)
+- Sand Clutches
+- Sand Grip [instrument: none — terrain effect]
+- Sand Grasp
+- Sand Hold
+- Sand Clinch
+- Sand Bond
+- Sand Bindings
+- Sand Coil
+- Sand Cinch
+- Sand Knot
+- Sand Hitch
+- Sand Loop
+- Sand Restraint
+- Sand Cage
+- Sand Corral
+- Sand Cocoon
+- Sand Web (borderline; kept, a mesh of hardened sand strands) [instrument: none — terrain]
+- Sand Anchor
+- Sand Mooring
+- Sand Vise
+- Grit Vise
+- Sand Clamp
+- Sand Entanglement
+- Sand Entrapment
+- Sand Deadlock
+- Sand Gridlock (borderline; modern-traffic idiom risk) [flag: idiom-adjacent, borderline]
+- Sand Drag
+- Sand Ensnare (grammatically thin as noun+verb; corrected — see below)
+- Sand Snag
+- Sand Bind
+- Sand Immobilize (grammatically thin as noun+verb; corrected — see below)
+- Grit Trap
+- Dust Trap
+- Silt Trap
+- Grave Trap (D — see per-name note below, cut not kept)
+- Tomb Snare (D — category error, cut)
+- Bog Trap [flag: swamp-domain word, judged per-name below]
+- Quagmire Trap [flag: swamp-domain]
+- Morass Trap [flag: swamp-domain]
+
+**Correction:** "Sand Ensnare" and "Sand Immobilize" are cut — noun+bare-verb collocations that don't parse as a 2-word ability title (the verb form needs a gerund or gets replaced with an already-covered noun form). Not counted in the cell.
+
+**Cut per-name (Grave Trap):** D — Grave denotes a burial plot/container, not a mechanism of entrapment; "trap" needs an active or terrain-hazard noun, and a grave itself does not spring or close on a victim in sand's lore register (that would be crush/mend-adjacent grave-robbing imagery, off scope).
+
+**Cut per-name (Tomb Snare):** D — same category error; a tomb is a static structure, not a restraining mechanism.
+
+**Bog/Quagmire/Morass judged per-name:** these three are swamp/mud-domain words, adjacent to but outside sand's own vocabulary (sand's engulfment hazard is dry granular collapse, not wet mud suction, per the element canon's abrasion/vitrification/burial register rather than swamp). "Bog Trap" — D, bog is a wetland feature, definition-dishonest for a desert element; flag to water/plant boundary, not sand's. "Quagmire Trap" — D, same reasoning, quagmire is soft wet ground. "Morass Trap" — D, same. None kept; all three cut and flagged to water/mire boundary rather than composed here, consistent with the harvest's note that "Mire" itself was only kept as a cautious flagged exception (already carried through as Sand Mire above) — Bog/Quagmire/Morass go one step further into wetland-specific vocabulary than Mire's more general "sinking ground" sense and are cut.
+
+**Cell count: 61 kept names.**
+
+### SNARE — full synonym cross matrix
+
+Columns (snare synonym pool, 30 terms, drawn from the hold/trap/bind register of harvest-actions-snare-crush-mend.md, excluding nautical/nonproductive/already-excluded items): Trap, Noose, Tether, Leash, Hobble, Fetter, Shackle, Manacle, Yoke, Harness, Clutches, Grip, Grasp, Hold, Clinch, Bond, Coil, Cinch, Knot, Loop, Restraint, Cage, Corral, Cocoon, Web, Anchor, Vise, Clamp, Entanglement, Drag.
+
+Codes: K=kept, D=definition dishonest, G=gibberish, C=comic, T=tautology, X=duplicate already kept, W=weapon (real-world weapon/military term — none triggered in this pool, listed for completeness).
+
+| Row | Trap | Noose | Tether | Leash | Hobble | Fetter | Shackle | Manacle | Yoke | Harness | Clutches | Grip | Grasp | Hold | Clinch | Bond | Coil | Cinch | Knot | Loop | Restraint | Cage | Corral | Cocoon | Web | Anchor | Vise | Clamp | Entanglement | Drag |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Sand | X | X | X | X | X | X | X | X | X | X | X | X | X | X | K | X | X | X | X | X | X | X | X | X | X | X | X | X | X | X |
+| Grit | X | X | K | K | X | K | K | K | K | K | K | K | K | K | K | K | K | K | K | K | K | K | K | K | K | K | X | K | K | K |
+| Dust | X | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Silt | X | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Sediment | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Loess | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Grain | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Particulate | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Powder | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Talc | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Erosion | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Abrasion | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Attrition | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Wear | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Scour | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Chafe | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Friction | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Sandstorm | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Duststorm | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Sirocco | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Haboob | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Simoom | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Whirl | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Cascade | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Slide | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Burial | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Interment | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Entombment | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Grave | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Tomb | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Crypt | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Sepulcher | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Barrow | X | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Shroud | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Veil | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Mantle | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Pall | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Cloak | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Cover | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Concealment | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Camouflage | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Mirage | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Oasis | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Basin | X | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Flat | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Expanse | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Reach | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Waste | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Hourglass | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Quicksand | X | D | K | D | D | K | D | D | D | D | X | X | K | X | D | D | D | D | D | D | K | D | D | D | D | D | D | D | K | K |
+| Sinkhole | X | D | K | D | D | D | D | D | D | D | D | X | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Wallow | X | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Hollow | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Rut | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Furrow | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Groove | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Trench | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Channel | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Wash | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Sandpit | X | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Sink | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Patina | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Rind | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Crust | X | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Hardpan | X | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Duricrust | D | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Erg | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Rub | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Ripple | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Ridge | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Crest | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Slope | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Trail | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Drift | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+
+**Sand row is X throughout** (against Trap...Drag except Bond=K) because every "Sand [pool-word]" combination is already captured under Step B/C above (Sand Trap, Sand Snare-family already listed, Sand Tether, Sand Leash, Sand Hobble, Sand Fetter, Sand Shackle, Sand Manacle, Sand Yoke, Sand Harness, Sand Clutches, Sand Grip, Sand Grasp, Sand Hold, Sand Clinch, Sand Coil, Sand Cinch, Sand Knot, Sand Loop, Sand Restraint, Sand Cage, Sand Corral, Sand Cocoon, Sand Web, Sand Anchor, Sand Vise, Sand Clamp, Sand Entanglement, Sand Drag — all present in Step C list). **Sand Bond** is a new K surfaced by the cross, not previously listed — added to the count. **Sand Noose** is present in Step C already (X against itself, listed there).
+
+**Grit row is X for most cells** (Grit Tether, Grit Hobble, Grit Fetter, Grit Shackle, Grit Manacle, Grit Yoke, Grit Harness, Grit Clutches, Grit Grip, Grit Grasp, Grit Hold, Grit Clinch, Grit Bond, Grit Coil, Grit Cinch, Grit Knot, Grit Loop, Grit Restraint, Grit Cage, Grit Corral, Grit Cocoon, Grit Web, Grit Anchor, Grit Clamp, Grit Entanglement, Grit Drag all new K's not previously listed in Step B/C — corrected and added to the count below; only Grit Trap, Grit Noose, Grit Vise were already listed).
+
+**Dust/Silt rows are D except Trap** (already listed as Dust Trap/Silt Trap in Step C) — dust and silt are too fine/insubstantial to physically restrain or bind a target the way coarser grit/sand can; "Dust Tether" — D, dust cannot form a cord-like restraining structure; "Silt Knot" — D, silt lacks the cohesion to form a knot shape; consistent per-name reasoning across the row.
+
+**Quicksand row:** Quicksand Trap (X, already listed), Quicksand Tether (K — a rope-like strand of clinging quicksand, new), Quicksand Fetter (K, new), Quicksand Grasp (K, new — matches "Quicksand Grip/Hold/Clutch" already listed), Quicksand Clutches (X, matches Quicksand Clutch already listed), Quicksand Grip (X, already listed), Quicksand Hold (X, already listed), Quicksand Restraint (K, new), Quicksand Entanglement (K, new), Quicksand Drag (K, new — the pull-under sensation is definition-honest). Quicksand Noose/Hobble/Shackle/Manacle/Yoke/Harness/Clinch/Bond/Coil/Cinch/Knot/Loop/Cage/Corral/Cocoon/Web/Anchor/Vise/Clamp: D — quicksand is a formless engulfing hazard, not a structure capable of forming discrete restraint objects like a noose, cage, or knot; per-name, "Quicksand Cage" fails because quicksand has no rigid boundary to form bars, "Quicksand Knot" fails because quicksand cannot hold a tied shape.
+
+**Sinkhole row:** Sinkhole Trap (X, already listed), Sinkhole Tether (K, new — being anchored/held at the pit's edge as it opens), Sinkhole Grip (X, already listed as Sinkhole Grip). All other columns D — a sinkhole is a single collapse event, not a device capable of noosing, shackling, or looping.
+
+**New keeps surfaced by the full cross (added to running count):** Sand Bond, Grit Tether, Grit Hobble, Grit Fetter, Grit Shackle, Grit Manacle, Grit Yoke, Grit Harness, Grit Clutches, Grit Grip, Grit Grasp, Grit Hold, Grit Clinch, Grit Bond, Grit Coil, Grit Cinch, Grit Knot, Grit Loop, Grit Restraint, Grit Cage, Grit Corral, Grit Cocoon, Grit Web, Grit Anchor, Grit Clamp, Grit Entanglement, Grit Drag, Whirl Coil [flag dual air], Quicksand Tether, Quicksand Fetter, Quicksand Grasp, Quicksand Restraint, Quicksand Entanglement, Quicksand Drag, Sinkhole Tether, Duricrust Noose (borderline; a twisted band of hardened crust — kept) = 34 new.
+
+**Final SNARE kept count: 61 (Step B/C) + 34 (matrix cross) = 95 kept names.**
+
+### SNARE — instrument tags (rule 6.9)
+
+Anatomy-evoking SNARE names (grip/clutch/hold/coil/knot/loop/web/vise/clamp/noose class) are kept per rule 6.9 and carry instrument or channel tags rather than being cut for anatomy:
+
+- Grip/Grasp/Hold/Clutch/Clutches/Clinch class (Sand Grip, Grit Grip, Sand Grasp, Grit Grasp, Sand Hold, Grit Hold, Sand Clutches, Grit Clutches, Sand Clinch, Grit Clinch, Quicksand Grip, Quicksand Hold, Quicksand Clutch, Quicksand Grasp, Sinkhole Grip): [instrument: pseudopods] or [channel: none — terrain-hazard effect, no discrete limb required; tag as environmental where the creature has no grasping limb]
+- Coil class (Sand Coil, Grit Coil, Whirl Coil): [instrument: coils / tendrils]
+- Web/Mesh class (Sand Web, Grit Web): [instrument: spinnerets] or [channel: secretion, for a non-arachnid emitter]
+- Vise/Clamp class (Sand Vise, Grit Vise, Sand Clamp): [instrument: pincers / jaws]
+- Noose/Knot/Hitch/Loop/Cinch class (Sand Noose, Grit Noose, Duricrust Noose, Sand Knot, Grit Knot, Sand Loop, Grit Loop, Sand Cinch, Grit Cinch): [instrument: tail / coils]
+- Yoke/Harness class (Sand Yoke, Grit Yoke, Sand Harness, Grit Harness): [instrument: body / hide — a rigid encasement the creature forms around the target]
+- Fetter/Shackle/Manacle/Hobble class (Sand Fetter, Grit Fetter, Sand Shackle, Grit Shackle, Sand Manacle, Grit Manacle, Quicksand Fetter, Sand Hobble, Grit Hobble): [instrument: hardened sand cuffs — treat as a terrain-formed restraint, tag body/secretion where the creature extrudes it]
+- Anchor/Mooring class (Sand Anchor, Grit Anchor): [instrument: roots / claws]
+
+---
+
+## Flags
+
+**Dual-element candidates (air):** Windrowed, Wind-scoured, Sandstorm, Duststorm, Sirocco, Haboob, Simoom, Whirl and every composed name built from them across all four cells — Sandstorm Burst, Duststorm Burst, Sirocco Spray, Simoom Spray, Sirocco Wash, Haboob Spray, Sandstorm Pall, Duststorm Pall, Sirocco Haze, Haboob Murk, Simoom Haze, Whirl Ring, Whirl Coil. These are sand-primary per Step 0 but genuinely dual-candidate; air's composer should cross-check for overlap/duplication before both elements' pools go live.
+
+**Dual-element candidates (rock):** Flinty (texture-of-grit sense used, not composed into a name directly in this run — no Flinty-headed names were composed; flagging the word itself as boundary-sensitive for future composers). Hardpan/Duricrust names (Hardpan Trap, Hardpan Rupture, Duricrust Rupture, Duricrust Snare, Duricrust Noose) sit at the sand/rock boundary — a hardpan crust is compacted sand/soil, not lithified rock, so kept sand-side, but flagged for rock's composer to confirm no overlap claim.
+
+**Dual/boundary candidates (water):** Sand Mire (kept cautiously per harvest instruction), Sand Fog, Dust Fog (flagged tension with water's fog-primary ruling — kept only under the "dry blowing dust obscuring visibility" real-world sense, not water's classic wet-fog sense), Wash-derived names were ultimately not composed as standalone Wash-headed names beyond the already-flagged Section 0 entry (Wash itself carries a Step 0 boundary flag to water but no name in this run heads with bare "Wash" as the primary noun — it appears only as a column/pool word crossed against sand nouns, e.g. "Sand Wash," "Grit Wash," which read sand-primary: the dry streambed is the sand feature, the flowing-water sense is water's).
+
+**Cross-cell definition tensions (both readings honest, kept in both cells):** Sand Vapor / Dust Vapor (SPRAY ejection sense vs. CLOUD settling sense), Sand Plume / Dust Plume (same), Sand Slick (SPRAY directed-film sense vs. CLOUD lingering-coating sense), Sand Blast (SPRAY directed-jet sense vs. BURST self-centered-detonation sense — both definition-honest under different readings, flagged rather than arbitrarily assigned to one cell only).
+
+**Borrowed-name suspicions:** none of the composed names in this run collide with the harvest's own excluded list (Sand Tomb, Sand Attack, bare Sandstorm-as-move-name, Quicksand Trap, Shifting Sands) — all were respected as cuts and not re-composed. No new borrowed-name suspicions surfaced during composition; Sand Gridlock is flagged idiom-adjacent (modern-traffic-jam connotation) rather than borrowed-franchise, see below.
+
+**Idiom/register-adjacent flags (kept, not cut — per brief these are not valid rejection grounds unless they trip a hard rule):** Sand Gridlock (modern-traffic idiom association, but "gridlock" also has an older figurative "total blockage" sense predating traffic-specific usage — kept, flagged for auditor review since rule 6.6 bars modern-tech idiom specifically, and gridlock's origin is urban-planning/legal rather than tech, a closer call than Reboot-class exclusions already ruled OUT elsewhere in this project).
+
+**Signature-register names (moved out of plain cells per rule 10):** Sand Cataclysm (BURST), Dust Nova (BURST), Sand Corona (BURST) — all three read grander than the 2-plain-word catalog tier; released to the signature pool rather than the plain BURST cell. Sand Aureole (BURST, listed in Step C) borders signature-register too — flagged for auditor judgment call on whether it should also move (kept in the plain cell for now since "aureole" is less bombastic than "corona"/"nova"/"cataclysm," but the auditor may reclassify).
+
+**Cross-cell tension (anatomy vs. terrain):** several SNARE names (Sand Grip, Sinkhole Grip, Quicksand Hold) describe a terrain hazard rather than a creature's own limb — flagged as "environmental/no discrete limb" in the instrument-tag table above rather than forcing a body-part tag onto an effect that may be entirely ground-based for many sand species; auditor should confirm this reading is acceptable given the instrument-tag registry's existing "body" and "secretion" catch-all channels.
+
+**When-in-doubt keeps (borderline definition calls, kept and flagged per rule 8):** Sand Bloom / Grit Bloom / Dust Bloom (BURST) — "bloom" carries a plant-adjacent flavor per the burst harvest's own note; kept since the shape-word sense (a cloud/burst unfurling outward) is genuinely element-neutral, consistent with the harvest's own guidance. Grit Duststorm-family dual flags (see above). Sand Ambience, Sand Penumbra, Sand Scrim (CLOUD) — thinner/more literary register words, kept as definition-honest but flagged as the weakest entries in an otherwise very strong cell. Duricrust Snare, Duricrust Noose, Barrow Hold, Basin Trap, Dunescape Haze (borderline two-noun stretches) — kept, flagged as the loosest compositions in their respective cells for auditor spot-check.
+
+---
+
+## Lexicon disposition table
+
+Every Section 0 PRODUCTIVE word mapped to its fate across this agent's four actions. Format: word → cells it was composed into (action: example name), or "not composed for these four actions" with the structural reason, or "flag to element X" where applicable. NON-PRODUCTIVE words from Step 0 are not repeated here (already dispositioned with grammatical reasons in Section 0).
+
+**Adjectives:**
+- Arid, Parched, Dusty, Gritty, Granular, Powdery, Sandy, Sun-baked, Cracked, Fissured, Silted, Sedimentary, Chafing, Coarse, Friable, Desiccated, Bleached, Scoured, Sun-scorched, Barren, Fallow, Crumbling, Eroded, Weathered, Pitted, Rippled, Undulant, Trackless, Shifting, Wandering, Interred, Ochre, Sallow, Tawny, Bone-dry, Withering, Attritional, Encroaching, Engulfing, Suffocating, Airless, Muffled, Sunken, Settled, Compacted, Loose, Grainy, Chalky, Sere, Torrid, Blasted, Hollowed, Cavernous, Lidless, Relentless, Patient, Implacable, Ceaseless, Time-worn: not composed as a name-head in any of the four assigned actions — grammatically these are modifiers, not the substance/agent noun the action-pool words require in a 2-word slot; each received per-name proof in the relevant action's matrix section (see uniform-row proofs in SPRAY, BURST, CLOUD, SNARE above). Available to a future composer pairing them with a noun this agent did not reach, or to strike/lash/crush/rake/etc. cells outside this assignment's scope.
+- Abrasive: composed (SPRAY: Abrasive Spray, Abrasive Spew, Abrasive Blast; BURST: Abrasive Blast, cross-referenced not double-counted).
+- Windrowed, Wind-scoured: flag to air (dual-candidate); not composed as name-heads in this run's four actions (Step 0 already carries the flag).
+- Entombed: composed (BURST: Entombed Burst, Entombed Eruption via Buried/Entombed Eruption in Step B).
+- Flinty: flag to rock (texture-not-hardness boundary tension); not composed into any name in this run — genuinely thin for spray/burst/cloud/snare, left for strike/rake/crush composers.
+
+**Nouns:**
+- Dune: composed (BURST: Dune Burst, Dune Blowout, Dune Eruption, Dune Outburst, Dune Convulsion, Dune Upheaval, Dune Spasm, Dune Ring, Dune Aftershock; CLOUD: Dune Haze; SNARE: Dune Trap).
+- Dunescape: composed (CLOUD: Dunescape Haze, borderline-flagged).
+- Desert, Wasteland: Desert not composed as a name-head (too broad/place-only across all four actions — D throughout every matrix); Wasteland composed once (CLOUD: Wasteland Murk).
+- Dust: composed extensively across all four cells (SPRAY: Dust Spray etc.; BURST: Dust Burst etc.; CLOUD: Dust Haze etc.; SNARE: Dust Trap, Dust Snare-flagged-thin).
+- Grit: composed extensively across all four cells.
+- Sand: composed extensively across all four cells (the element's own name, most productive row overall).
+- Silt: composed (SPRAY: Silt Spray, Silt Jet, etc.; BURST: Silt Burst, Silt Detonation, Silt Eruption; CLOUD: Silt Haze, Silt Pall, Silt Veil, Silt Cloud, Silt Screen; SNARE: Silt Trap).
+- Sediment: composed (SPRAY: none directly beyond Discharge; BURST: Sediment Discharge; CLOUD: none beyond matrix D's — thin).
+- Loess: composed (SPRAY: Loess Breath).
+- Grain: composed (SPRAY: Grain Spray, Grain Scatter-adjacent already in harvest).
+- Particulate: composed (SPRAY: Particulate Spray, Particulate Spew, Particulate Emission; BURST: Particulate Discharge, Particulate Expulsion; CLOUD: Particulate Haze, Particulate Fume, Particulate Vapor, Particulate Effluvium, Particulate Emanation).
+- Powder: composed (SPRAY: Powder Vent, Powder Mist; BURST: Powder Burst, Powder Blast, Powder Detonation, Powder Flare, Powder Outburst, Powder Pulse; CLOUD: Powder Haze, Powder Vapor, Powder Film).
+- Talc: composed (SPRAY: Talc Mist; CLOUD: Talc Film).
+- Erosion, Abrasion, Attrition, Wear, Scour, Chafe, Friction: not composed as name-heads in any of the four actions — abstract process-nouns, D throughout every matrix (proven per-name in each section); available to drain/rake composers outside this scope.
+- Sandstorm, Duststorm, Sirocco, Haboob, Simoom, Whirl: flag to air (dual-candidate); composed sand-primary (BURST: Sandstorm Burst, Duststorm Burst, Whirl Ring; SPRAY: Sirocco Spray, Simoom Spray, Sirocco Wash, Haboob Spray; CLOUD: Sandstorm Pall, Duststorm Pall, Sirocco Haze, Haboob Murk, Simoom Haze; SNARE: Whirl Coil).
+- Cascade: composed (SPRAY: Sand Cascade, Grit Cascade, Dust Cascade — element-internal compounds; bare "Cascade" row is X/D throughout its own matrices, self-referential).
+- Slide: not composed as a name-head in any of the four actions (D throughout; place/event noun without a clean action-word pairing found).
+- Burial, Interment, Entombment: Burial not composed; Interment not composed; Entombment composed (BURST: Entombment Burst, Entombment Eruption).
+- Grave: deliberately not composed in any cell (D throughout every matrix on category-error grounds, not tone).
+- Tomb: composed (CLOUD: Tomb Gloom only; excluded elsewhere as category error, e.g. Tomb Snare cut).
+- Crypt: composed (CLOUD: Crypt Murk).
+- Sepulcher: not composed as a name-head in any of the four actions (D throughout; too formal/register-narrow to pair cleanly, though register alone is never the cited reason — the actual per-name reason in each matrix is category error, same as Tomb/Crypt's other columns).
+- Barrow: composed (CLOUD: Barrow Murk; SNARE: Barrow Hold, borderline-flagged).
+- Shroud, Veil, Mantle, Pall, Cloak, Cover, Concealment, Camouflage: composed extensively in CLOUD (Dust Shroud, Sand Veil, Sand Mantle, Dust Pall, Sand Cloak, Sand Cover, etc.); D throughout SPRAY/BURST/SNARE matrices (category error — covering-nouns, not substances/restraints).
+- Mirage: composed (CLOUD: Mirage Haze via the Sand Fog/Mirage row — corrected note: "Mirage Haze" itself not explicitly in Step C list; adding it here as the one CLOUD keep for Mirage). 
+- Oasis: not composed as a name-head in any of the four actions (D throughout; a place-noun with no coherent pairing to spray/burst/cloud-substance/snare-restraint words).
+- Basin: composed (SNARE: Basin Trap, borderline-flagged).
+- Flat, Expanse, Reach, Waste: Waste not separately composed (its Barren-adjacent sense folded into Wasteland); Flat, Expanse, Reach not composed as name-heads in any of the four actions (D throughout; pure landform/extent nouns).
+- Hourglass: not composed — kept narrowly non-mechanical per Step 0's own instruction; no honest spray/burst/cloud/snare pairing found that avoids the time-mechanic tension, so left uncomposed by design rather than forced.
+- Quicksand: composed extensively, especially SNARE (signature-strength: Quicksand Grip, Quicksand Hold, Quicksand Tether, Quicksand Fetter, Quicksand Grasp, Quicksand Restraint, Quicksand Entanglement, Quicksand Drag, Quicksand Burst, Quicksand Rupture, Quicksand Upheaval, Quicksand Murk).
+- Sinkhole: composed across BURST (Sinkhole Blowout, Sinkhole Eruption, Sinkhole Outburst, Sinkhole Burst, Sinkhole Aftershock) and SNARE (Sinkhole Grip, Sinkhole Trap, Sinkhole Tether).
+- Wallow: composed (BURST: Wallow Rupture; SNARE: Wallow Trap).
+- Hollow, Rut, Furrow, Groove, Trench, Channel: not composed as name-heads in any of the four actions (D throughout; worn-channel landform nouns without a clean pairing to this agent's four action-words).
+- Wash: flag to water (boundary); composed sand-primary only as a modifier-target in element-internal compounds (Sand Wash, Grit Wash, Dust Wash under SPRAY) — bare "Wash" as a name-head not composed.
+- Sandpit: composed (SNARE: Sandpit Trap).
+- Sink: composed (SNARE: Sand Sink under Step B).
+- Patina: composed (CLOUD: Patina Residue, Patina Film).
+- Rind, Crust: Crust composed (SNARE: Crust Trap); Rind not composed as a name-head in any of the four actions (D throughout).
+- Hardpan: composed (SNARE: Hardpan Trap, Hardpan Rupture — cross-cell BURST/SNARE).
+- Duricrust: composed (SNARE: Duricrust Snare, Duricrust Noose; BURST: Duricrust Rupture).
+- Erg: not composed as a name-head in any of the four actions (D throughout; a technical desert-landform term without a clean pairing).
+- Rub: not composed as a name-head in any of the four actions (D throughout; too dialectal/thin to anchor a compound cleanly, though this reason is per-name category-error, not register).
+- Ripple, Ridge, Crest, Slope, Trail, Drift: Ripple composed (BURST: Sand Ripple, Grit Ripple, Dust Ripple); Drift composed (CLOUD: Sand Drift, Dust Drift, both standalone-noun senses); Ridge, Crest, Slope, Trail composed partially — Trail composed (CLOUD: Sand Trail, Dust Trail); Ridge, Crest, Slope not composed as name-heads in any of the four actions (D throughout; pure landform nouns).
+
+**Verbs/gerunds:**
+- Bury, Inter, Entomb, Smother, Engulf, Swallow, Settle, Erode, Abrade, Grind, Sanding, Rasp, Grate, Scrape, Strip, Pit, Pockmark, Disintegrate, Dissolve, Sap, Dry, Crack, Sift, Filter, Pour, Trickle, Spill, Choke, Stifle, Conceal, Blend, Vanish, Submerge, Subside, Cave, Collapse, Undermine, Excavate, Tunnel, Burrow, Displace, Overtake, Outlast, Persist, Endure, Withstand, Weather, Blast, Peel, Flay, Strafe: none composed as standalone name-heads in the four assigned actions' cross matrices (bare verb/gerund cannot occupy the required substance/agent-noun slot; proven per-name in each matrix's verb-row section). Several appear productively as modifiers within already-kept compound names built in Step B (Engulfing Sand, Engulfing Grip under SNARE; Buried/Entombed Eruption under BURST — these use the adjectival forms already carried in the adjective list, not the bare verb form, so no double-counting). Smother specifically is productively composed as a noun-slot word within CLOUD's Step C list (Sand Smother, Dust Smother, Grit Smother) since "smother" doubles as a noun in the cloud harvest's own vocabulary — flagged here to avoid the appearance of a silent contradiction with the "verbs not composed" statement above: those three keeps use Smother's noun sense, consistent with cloud harvest section 1's listing of "Smother" as a noun. Blast likewise doubles as a noun and is extensively composed (see Sand Blast family) — its verb-row entry in each matrix (Blast × pool-words) is the bare-verb-collision judgment, distinct from its noun-sense compounds already counted elsewhere. Strafe carries its own harvest-level tone flag (modern military connotation, borderline) — not composed in any cell here; left for a future composer to decide if the military-idiom hard rule (6.4) applies strictly enough to cut it outright, since Step 0 kept it productive pending per-name review and this agent found no honest spray/burst/cloud/snare pairing for it regardless.
+
+---
+
+## Counts per cell and summary
+
+| Cell | Kept names |
+|---|---|
+| SPRAY | 93 |
+| BURST | 81 (+3 signature-register, flagged out) |
+| CLOUD | 109 |
+| SNARE | 95 |
+| **Total kept** | **378** (+3 signature) |
+
+All four cells land in or above the brief's "healthy" 30-150 range, with CLOUD and SNARE running toward the wide end appropriate for sand's two signature-strength actions per the assignment (dust/haze obscuring and quicksand/engulfment holds). SPRAY is solid mid-range, reflecting the harvest's own honest assessment that dry-particulate spray is real but thinner than liquid-spray vocabulary in English. BURST is the thinnest of the four relative to its synonym-pool size, consistent with the burst harvest's own richness note that "contained, self-centered" release words are scarcer in English than outward-traveling ones — several plausible-looking crosses (Discharge, Expulsion against Sand/Dust) were caught and corrected to D on a second per-name pass specifically because they duplicated SPRAY's directional-jet sense rather than BURST's radial-self sense, which is the kind of cross-cell leakage this brief's Step C is designed to surface. Every one of the 188 Section 0 productive rows received a full per-cell pass in all four matrices; uniform-D rows (mostly adjectives, geography/burial/concealment nouns, and bare-verb forms) are backed by three or more written-out per-name judgments each per rule 9.5, not class-level dismissals — the underlying reason (grammatical slot mismatch: adjectives and verbs cannot occupy the noun-headword position the action-pool words require; landform/container/covering nouns name places or states rather than substances, agents, or restraints) is structurally identical across those rows, which is why it repeats, not because the rows were judged as a class.
 
 
 

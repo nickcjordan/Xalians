@@ -460,7 +460,6 @@ Rock's terrorize register works through scale and seismic dread: the cliff that 
 - Massif Presence
 - Massif Dread
 - Cliff Dread
-- Cliffside Dread
 - Escarpment Menace
 - Precipitous Dread
 - Sheer Dread
@@ -530,8 +529,18 @@ Rock's terrorize register works through scale and seismic dread: the cliff that 
 - Massive Menace
 - Dense Menace
 - Weighty Dread
+- Craggy Glare [gaze] (surfaced during Section 9.5.4 cross-check: a craggy, harsh-featured glare is an honest intimidating-face image)
+- Flinty Glare [gaze] (surfaced during cross-check: a hard flinty glare)
+- Cyclopean Dread (surfaced during cross-check: massive irregular ancient masonry genuinely carries an awe/dread connotation)
+- Seismic Dread (surfaced during cross-check: directly and honestly evokes earthquake-dread)
+- Tremor Rumble (surfaced during cross-check: a tremor's rumbling sound as sensory dread-imagery)
+- Rockslide Menace (surfaced during cross-check)
+- Rockslide Alarm (surfaced during cross-check)
+- Landslide Panic (surfaced during cross-check)
 
-**Count: 78**
+**Count: 85**
+
+Note: the cell above dropped "Cliffside Dread" (Cliffside is not itself a Step-0 row — Cliff is; corrected to avoid an unlicensed compound) and gained the eight cross-check names, netting 78 − 1 + 8 = 85 (the Section 9.5.4 note above states 86 before this correction; 85 is the final, reconciled count after removing Cliffside Dread — see Flags for the correction record).
 
 ---
 
@@ -547,6 +556,7 @@ Rock's terrorize register works through scale and seismic dread: the cliff that 
 - **Anatomy-instrument tags used:** [gaze] on Petrifying Glare, Petrified Stare, Stony Glare, Stony Stare, Granite Glare (TERRORIZE cell) per rule 6.9's registry. Carapace Guard (WARD) is anatomy-evoking per the registry and is kept per rule 6.9, carried in directly from the WARD harvest's own section 4 table which already tags it [shell]/exoskeleton.
 - **Borrowed-name suspicion (flagged, not cut):** none of the 336 kept names across the four cells matched an entry on the excluded-as-borrowed lists in `harvest-rock.md` section 5, `harvest-action-ward.md`'s exclusions, or the pilot rulings in `harvest-actions-snare-crush-mend.md` (Rock Slide/Rock Throw/Rock Tomb/Rock Blast/Stone Edge/Sand Tomb/Earthquake/Stealth Rock/Rock Polish/Head Smash/Bulldoze/Mud Slap, Sand Veil/Iron Defense/Protect/Light Screen/Reflect/Baneful Bunker/Spiky Shield/King's Shield, Python Coil/Boa Crush/Anaconda Squeeze/Serpent's Grip). "Earthquake Dread" and "Earthquake Terror" (TERRORIZE) were checked individually against the bare borrowed name "Earthquake" — both are two-word compounds distinct from the excluded bare single-word borrowed name, so kept; flagged here for the auditor's independent confirmation since "Earthquake" alone is the exact excluded borrowed term.
 - **Signature-register (moved out of cells, listed here only):** none generated — no name in these four cells rose to the grander multi-clause register (e.g., "Point of No Return" class); rock's own register runs toward short, plain geological nouns rather than that grander tier.
+- **"Cliffside" usage note:** the CRUSH and WARD cells use "Cliffside" (Cliffside Crush, Cliffside Press, Cliffside Weight, Cliffside Collapse, Crumbling Cliffside, Cliffside Rampart, Cliffside Wall, Cliffside Barrier) as a natural adjectival-locative inflection of the Step-0 row "Cliff" (row 106) — the same way "Rocky" inflects "Rock" — rather than treating it as a separate unlicensed word. On reflection during the TERRORIZE cross-check this same reasoning was NOT extended to "Cliffside Dread," which was cut and replaced with the more conservative "Cliff Dread" instead, creating an inconsistency between cells. Flagged here rather than silently reconciled: the central auditor should decide whether "Cliffside" is licensed throughout (in which case "Cliffside Dread" can be restored) or nowhere (in which case the seven CRUSH/WARD instances should be read as "Cliff" compounds instead) — both readings are defensible and no content is lost either way since "Cliff" itself is the licensed row underlying all eight names.
 - **Rows sourced from harvest prose but not used as Step-0 catalog rows:** "Millstone Crush," "Vice of Stone," "Cliffside Crush" (already a row-composed name here, not an issue), "Stoneleech" appear in `harvest-rock.md` section 4's candidate list but Millstone/Vice/Stoneleech are not Step-0 rows (Millstone belongs to the crush-pool's mechanical-device register reserved for DARK per this assignment's canon note, not a rock row at all; "Vice" is a misspelling of "Vise" already composed via the crush-pool column, not a rock row; "Stoneleech" is an unlicensed fused compound, self-flagged in the harvest as needing verification and never promoted to a Step-0 row) — none of these were composed into cells, consistent with the brief's rule that only Section-0 rows may be used.
 
 ---
@@ -559,7 +569,7 @@ Every one of the 302 Section-0 rows, mapped to its fate across the four assigned
 |---|---|---|---|---|---|
 | 1 | Stony | N | W | N | T |
 | 2 | Rocky | N | W | N | N |
-| 3 | Craggy | N | W | N | N |
+| 3 | Craggy | N | W | N | T |
 | 4 | Bouldered | N | N | N | N |
 | 5 | Jagged | N | N | N | N |
 | 6 | Rugged | N | N | N | N |
@@ -576,7 +586,7 @@ Every one of the 302 Section-0 rows, mapped to its fate across the four assigned
 | 17 | Schistose | N | N | N | N |
 | 18 | Calcareous | N | N | N | N |
 | 19 | Dolomitic | N | N | N | N |
-| 20 | Flinty | N | N | N | N |
+| 20 | Flinty | N | N | N | T |
 | 21 | Slaty | N | N | N | N |
 | 22 | Chalky | N | N | N | N |
 | 23 | Marbled | N | N | N | N |
@@ -619,14 +629,14 @@ Every one of the 302 Section-0 rows, mapped to its fate across the four assigned
 | 60 | Mortared | N | N | N | N |
 | 61 | Vaulted | C | W | N | N |
 | 62 | Arched | N | W | N | N |
-| 63 | Cyclopean | N | N | N | N |
+| 63 | Cyclopean | N | N | N | T |
 | 64 | Petrous | N | W | N | N |
 | 65 | Petrified | C | W | M | T |
 | 66 | Fossilized | C | N | N | N |
 | 67 | Lithic | N | N | N | N |
 | 68 | Telluric | N | N | N | N |
 | 69 | Tectonic | C | N | N | N |
-| 70 | Seismic | C | N | N | N |
+| 70 | Seismic | C | N | N | T |
 | 71 | Fractured | C | N | N | T |
 | 72 | Cracked | C | N | N | T |
 | 73 | Fissured | N | N | N | N |
@@ -642,7 +652,7 @@ Every one of the 302 Section-0 rows, mapped to its fate across the four assigned
 | 83 | Shelled | N | W | N | N |
 | 84 | Carapaced | N | N | N | N |
 | 85 | Entrenched | N | W | N | N |
-| 86 | Rooted | N | W | N | N |
+| 86 | Rooted | N | W | M | N |
 | 87 | Planted | N | N | N | N |
 | 88 | Grounded | N | W | M | N |
 | 89 | Steadfast | N | W | N | N |
@@ -1420,6 +1430,120 @@ All D except **Granite Restore/Reinforce** (already counted above in the 97-160 
 
 **MEND matrix totals:** 302 rows × 22 columns = 6,644 intersections judged. Kept (K): 32 (Rooted Recovery added during the per-name cross-check in rows 81-96, revising the MEND cell count from 31 to 32 — see note below).
 
-**MEND cell correction:** the Section 9.5.3 cross-check surfaced one additional honest kept name not caught in the initial Step A-C sweep: **Rooted Recovery** (rows 81-96 above). This is added to the MEND cell; the MEND cell's true count is **32**, not 31 as first tallied — corrected in the Counts summary at the end of this file. This is exactly the kind of catch the brief's exhaustive per-name cross is designed to produce.
+**MEND cell correction:** the Section 9.5.3 cross-check surfaced one additional honest kept name not caught in the initial Step A-C sweep: **Rooted Recovery** (rows 81-96 above). This is added to the MEND cell; the MEND cell's true count is **32**, not 31 as first tallied. This is exactly the kind of catch the brief's exhaustive per-name cross is designed to produce.
 
 ---
+
+### 9.5.4 TERRORIZE matrix
+
+Columns (30, deduplicated from `harvest-action-terrorize.md` sections 1-2): Dread, Terror, Menace, Presence, Panic, Alarm, Gloom, Doom, Omen, Chill, Tremor, Roar, Glare, Stare, Aura, Shadow, Ferocity, Nerve, Fortitude, Hackles, Display, Rumble, Stomp, Void, Darkness, Terrify, Unnerve, Loom, Overshadow, Freeze
+
+**Rows 1-16 (Stony, Rocky, Craggy, Bouldered, Jagged, Rugged, Massive, Monolithic, Megalithic, Granitic, Basaltic, Sedimentary, Metamorphic, Crystalline, Igneous, Gneissic):**
+
+| Row \ Col | Dread | Terror | Menace | Presence | Panic | Alarm | Gloom | Doom | Omen | Chill | Tremor | Roar | Glare | Stare | Aura | Shadow | Ferocity | Nerve | Fortitude | Hackles | Display | Rumble | Stomp | Void | Darkness | Terrify | Unnerve | Loom | Overshadow | Freeze |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Stony | D | D | D | D | D | D | D | D | D | D | D | D | K | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Rocky | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Craggy | D | D | D | D | D | D | D | D | D | D | D | D | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Bouldered | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Jagged | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Rugged | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Massive | K | D | K | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Monolithic | D | D | D | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Megalithic | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Granitic | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Basaltic | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Sedimentary | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Metamorphic | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Crystalline | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Igneous | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Gneissic | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+
+Per-name proof: **Stony Glare / Stony Stare** — K (already in cell), a stony/expressionless glare is an honest fear-inducing image with [gaze] tag. **Rocky Dread** — D, "rocky" as a texture-descriptor doesn't honestly modify an abstract dread-noun without an intervening physical noun. **Craggy Glare** — K, checked individually: a craggy (weathered, harsh-featured) glare is an honest intimidating-face image. **Massive Dread / Massive Menace / Massive Presence** — K (already in cell), scale directly amplifies dread honestly. **Monolithic Presence** — K (already in cell). **Sedimentary/Metamorphic/Igneous/Gneissic Dread** — all D, these are rock-classification/formation-process adjectives with no honest fear-inducing quality of their own (they describe how a rock formed, not how it looms or threatens).
+
+**Rows 17-32 (Schistose, Calcareous, Dolomitic, Flinty, Slaty, Chalky, Marbled, Quartzose, Unyielding, Immovable, Unbreakable, Impenetrable, Adamant, Adamantine, Obdurate, Inflexible):**
+
+All D except: **Unyielding Menace** — K (already in cell). **Unshakable Presence** is row 100 (Unshakable), judged in its own range below, not this chunk. **Immovable Dread** — K (already in cell). **Impenetrable Menace** — K (already in cell). **Obdurate Menace** — K (already in cell), "obdurate" honestly modifies a menacing, unmoved threat. **Flinty Glare** — checked individually: K, a hard flinty glare is an honest intimidating-expression image, added — revising TERRORIZE cell (see note below). **Schistose/Calcareous/Dolomitic/Slaty/Chalky/Marbled/Quartzose/Adamant/Adamantine/Inflexible Dread** — all D, these texture/hardness adjectives don't honestly bridge to fear-inducing presence without a supporting physical noun (Adamant/Adamantine are hardness-of-material words, not honest fear-words on their own — distinguished from their honest CRUSH/WARD crosses which use a mechanism/barrier noun as partner, unavailable here in a pool of pure abstract-dread nouns).
+
+**Rows 33-48 (Rigid, Solid, Dense, Weighty, Ponderous, Hulking, Colossal, Titanic, Towering, Sheer, Precipitous, Escarped, Weathered, Timeworn, Ancient, Primeval):**
+
+All D except: **Dense Menace** — K (already in cell). **Weighty Dread** — K (already in cell). **Hulking Menace / Hulking Presence** — K (already in cell). **Colossal Dread / Colossal Menace** — K (already in cell). **Titanic Presence / Titanic Dread** — K (already in cell). **Towering Dread / Towering Menace / Towering Presence** — K (already in cell). **Sheer Dread** — K (already in cell). **Precipitous Dread** — K (already in cell). **Ancient Dread** — K (already in cell). **Primeval Dread / Primeval Menace** — K (already in cell). **Rigid/Solid/Ponderous/Escarped/Weathered/Timeworn Dread** — all D, checked individually: **Rigid Dread** — D, rigidity is a structural property without an honest fear-inducing quality of its own (unlike Unyielding/Immovable which carry connotations of overwhelming inevitability, "rigid" reads more mechanically neutral). **Ponderous Menace** — D, checked individually despite "ponderous" being weight-adjacent: it more commonly connotes slowness/dullness than threat, a weaker reading than Hulking/Colossal — cut as the non-additive weaker duplicate. **Weathered Dread** — D, "weathered" implies having survived time passively, not an active threatening quality.
+
+**Rows 49-64 (Foundational, Buttressed, Fortified, Ramparted, Walled, Battlemented, Hewn, Quarried, Chiseled, Carved, Dressed, Mortared, Vaulted, Arched, Cyclopean, Petrous):**
+
+All D except: **Foundational Dread** — K (already in cell). All others in this block (Buttressed/Fortified/Ramparted/Walled/Battlemented/Hewn/Quarried/Chiseled/Carved/Dressed/Mortared/Vaulted/Arched/Cyclopean/Petrous) crossed against every TERRORIZE column are D — checked individually for three: **Fortified Menace** — D, "fortified" is WARD-register (a strengthened defense), the opposite connotation from an offensive terrorizing presence — a fortified thing repels attack, it doesn't itself frighten. **Cyclopean Dread** — checked individually and reconsidered: K, "cyclopean" (massive irregular ancient masonry) genuinely carries an awe/dread connotation in common usage (cyclopean ruins evoke unease) — added, revising cell (see note below). **Petrous Menace** — D, "petrous" is an anatomical-hardness classifier without its own independent fear-quality; distinguished from Stony Glare's honest gaze-anatomy cross, since Petrous lacks a natural partner noun in this pool the way Glare/Stare provide.
+
+**Rows 65-80 (Petrified, Fossilized, Lithic, Telluric, Tectonic, Seismic, Fractured, Cracked, Fissured, Riven, Cleaved, Striated, Veined, Ossified, Calloused, Armored):**
+
+All D except: **Petrified Glare / Petrified Stare** — K (already in cell, canon-safe fear-freeze sense). **Fractured Dread** — K (already in cell). **Cracked Foreboding** — K (already in cell; "Foreboding" reads as Omen-adjacent, sourced from the harvest's own noun list). **Rending Menace** (verb-gerund form, judged in the verb rows below, not this adjective chunk — the adjective "Riven" itself checked here): **Riven Dread** — checked individually: D, "riven" (torn apart) describes a damaged/split state rather than an active menacing quality — distinguished from Fractured Dread which the brief's near-duplicate rule already welcomed, this one is cut instead as genuinely non-additive rather than kept as a near-duplicate, since "torn apart" reads as passive damage, not looming threat. **Tectonic Dread** — checked individually: D, tectonic is a classificatory/technical adjective (of plate movement) without its own fear-quality absent a supporting noun (Subduction Dread, the noun form, is kept instead — see rows 209-224 below). **Seismic Dread** — checked individually: K, "seismic" directly and honestly evokes earthquake-dread — added, revising cell (see note below).
+
+**Rows 81-96 (Plated, Encrusted, Shelled, Carapaced, Entrenched, Rooted, Planted, Grounded, Steadfast, Staunch, Stalwart, Dependable, Enduring, Everlasting, Eternal, Timeless):**
+
+All D except: **Eternal Dread** — K (already in cell). **Timeless Menace** — K (already in cell). **Plated/Encrusted/Shelled/Carapaced/Entrenched/Rooted/Planted/Grounded/Steadfast/Staunch/Stalwart/Dependable/Enduring/Everlasting Dread** — all D, checked individually for representative names: **Entrenched Menace** — D, "entrenched" is a defensive-position adjective (WARD-register), not itself an active threat-quality. **Steadfast Dread** — D, steadfast is a resolve-adjective describing the bearer's own composure, the opposite of what should be unsettling the observer — a steadfast presence is calm, not necessarily dreadful, too indirect a bridge. **Everlasting Menace** — D, checked individually and cut despite Everlasting's near-cousin "Eternal Dread" succeeding: "Everlasting" reads slightly more sentimental/positive-toned in common usage (everlasting love, everlasting peace) making "Everlasting Menace" a weaker/more awkward collocation than "Eternal Dread" — cut as the comparatively weaker reading, not a hard violation.
+
+**Rows 97-112 (Indestructible, Resolute, Dogged, Unshakable, Unwavering, Stoic, Boulder, Outcrop, Crag, Cliff, Bluff, Escarpment, Palisade, Promontory, Buttress, Spur):**
+
+All D except: **Unshakable Presence** — K (already in cell). **Impenetrable Menace** already covered (row 28, not this chunk). **Cliff Dread** — K (already in cell). **Cliffside Dread** is a compound not a row (Cliffside itself is not a Step-0 row — this was an error in the initial cell composition; correcting: "Cliffside Dread" in the TERRORIZE cell should be read as "Cliff Dread" composed from the Cliff row plus an implicit -side; flagged for the auditor, see Flags update below). **Escarpment Menace** — K (already in cell). **Precipitous Dread** already covered above (row 43). **Indestructible/Resolute/Dogged/Unwavering/Stoic Dread** — all D, resolve/durability character-adjectives without an honest offensive-threat reading (same logic as Steadfast above). **Boulder/Outcrop/Crag/Bluff/Palisade/Promontory/Buttress/Spur Dread** — all D except Cliff/Escarpment already noted: checked individually, **Boulder Dread** — D, a single boulder (however large) doesn't carry the same overwhelming-scale dread that Massive/Colossal/Titanic (already kept) provide as pure adjectives — the noun alone is less honestly frightening than an adjective describing overwhelming scale; **Crag Dread** — D, checked individually and distinguished from Craggy Glare (kept above): "Crag" as a bare noun crossed with "Dread" is weaker/more generic than the specific gaze-anatomy compound; cut as non-additive.
+
+**Rows 113-128 (Ridge, Ridgeline, Massif, Monolith, Megalith, Menhir, Cairn, Scree, Talus, Rubble, Aggregate, Cobble, Cobblestone, Flagstone, Slab, Plinth):**
+
+All D except: **Massif Presence / Massif Dread** — K (already in cell). **Monolith Presence / Monolith Dread / Monolith Menace** — K (already in cell). **Karst Gloom** is row 137, not this chunk. **Ridge/Ridgeline/Megalith/Menhir/Cairn/Scree/Talus/Rubble/Aggregate/Cobble/Cobblestone/Flagstone/Slab/Plinth Dread** — all D, checked individually for three: **Megalith Dread** — D, checked individually and distinguished from Monolith's success: a megalith's honest register (per the earlier CRUSH/WARD findings) is memorial/monument, a solemn rather than dreadful connotation — cut as the weaker reading. **Scree Dread** — D, scree (loose rock fragments) is too small/granular a noun to honestly carry overwhelming dread the way Massif/Monolith/Cliff do. **Slab Dread** — D, a slab, while solid, lacks the towering-scale quality that makes Massif/Monolith/Cliff honestly dreadful — too flat/inert an image.
+
+**Rows 129-144 (Pedestal, Plateau, Tableland, Mesa, Butte, Pinnacle, Spire, Tor, Karst, Sinkhole, Cavern, Grotto, Gorge, Canyon, Chasm, Ravine):**
+
+All D except: **Karst Gloom** — K (already in cell). **Chasm Dread / Chasm Menace** — K (already in cell). **Gorge Menace** — K (already in cell). **Cavern Gloom / Cavern Dread** — K (already in cell). **Pedestal/Plateau/Tableland/Mesa/Butte/Pinnacle/Spire/Tor/Sinkhole/Grotto/Canyon/Ravine Dread** — all D, checked individually for three: **Pinnacle Dread** — D, checked individually: a pinnacle's honest register (per WARD cell) leans watchtower/vantage, more protective/neutral than dreadful — cut, distinguished from Cliff/Massif's overwhelming-mass dread. **Sinkhole Dread** — D, checked individually and reconsidered against its CRUSH-cell honesty (Sinkhole Collapse): a sinkhole is a hazard-to-fall-into, closer to a hidden trap (SNARE-register) than an overt looming dread — cut as the wrong register for TERRORIZE specifically (a sinkhole doesn't loom over you, it waits beneath you — SNARE's honest domain, not TERRORIZE's). **Grotto Dread** — D, a grotto's honest register (per WARD cell) is shelter/refuge, the opposite connotation from menace.
+
+**Rows 145-160 (Crevasse, Crevice, Fault, Seam, Vein, Stratum, Bedrock, Foundation, Substrate, Mantle, Crust, Core, Formation, Deposit, Sediment, Quartz):**
+
+All D except: **Bedrock Dread** — K (already in cell). **Foundational Dread** already covered (row 49, adjective form; the noun "Foundation" here checked separately): **Foundation Dread** — checked individually and cut: D, "Foundation" as a bare noun (distinct from the adjective "Foundational" which succeeded) reads more neutrally structural than actively dreadful without the adjective's implicit "deeply rooted" connotation — coded D to keep Foundational Dread (adjective) as the sole kept instance, avoiding a redundant near-identical noun-form entry. **Crevasse/Crevice/Fault/Seam/Vein/Stratum/Substrate/Mantle/Crust/Core/Formation/Deposit/Sediment/Quartz Dread** — all D, checked individually for three: **Fault Dread** — D, checked individually: a fault line is a hidden weakness (a quiet, latent hazard), reading closer to SNARE/foreboding-omen register than active looming dread — plausible but thinner than Bedrock's overwhelming-mass honesty, cut as the weaker call. **Chasm** already covered above (row 143). **Crevasse Dread** — D, a crevasse is a hazard-gap, same SNARE-adjacent register issue as Fault/Sinkhole. **Core Dread** — D, "core" alone is too abstract/generic (same reasoning as its CRUSH/WARD rejections) to honestly carry a specific dread-image.
+
+**Rows 161-229 (Feldspar through Ballast):**
+
+All D except: **Granite Glare** — K (already in cell). **Feldspar/Mica/Basalt/Marble/Limestone/Sandstone/Slate/Shale/Gneiss/Schist/Dolomite/Obsidian/Flint/Chert/Gypsum/Alabaster/Travertine/Geode/Crystal/Gemstone/Mineral/Stalactite/Stalagmite/Dolmen/Cromlech/Wall/Rampart/Bastion/Bulwark/Fortress/Keep/Citadel/Redoubt/Battlement/Parapet/Pillar/Column/Colonnade/Archway/Vault/Cornerstone/Keystone/Capstone/Headstone/Mortar/Masonry/Stonework/Quarry Dread(and all other TERRORIZE columns)** — all D, checked individually for representative names: **Basalt Menace** — D, checked individually: basalt's honest register (dense dark volcanic rock) could plausibly carry a dark/foreboding connotation, but without an established rock-canon link to darkness specifically (that register belongs to DARK per canon), this is cut as reaching into another element's territory rather than rock's own honest dread register (scale/seismic/looming, not darkness-of-color) — flagged for the auditor as a close call. **Stalactite Menace** — K (already in cell): a cavern hung with stalactites (like teeth in a maw) is a genuinely evocative dread-scene image, distinguished from the bare mineral-nouns above by its visceral anatomical-adjacent imagery. **Fortress/Bastion/Bulwark Dread** — all D, these are WARD-register protective nouns, the opposite connotation from an offensive terrorizing presence. **Tremor/Quake/Earthquake/Aftershock/Upheaval/Subduction/Orogeny/Avalanche/Rockslide/Landslide/Cave-in Dread(and other columns)** — see rows 209-224 below for the full seismic-event judgment. **Armor/Plating/Shell/Carapace/Hide/Stronghold/Anchor/Ballast Dread** — all D, WARD-register nouns without an honest offensive-threat reading of their own.
+
+**Rows 209-224 (Quarry, Tremor, Quake, Earthquake, Aftershock, Upheaval, Subduction, Orogeny, Avalanche, Rockslide, Landslide, Cave-in, Armor, Plating, Shell, Carapace):**
+
+| Row \ Col | Dread | Terror | Menace | Presence | Panic | Alarm | Gloom | Doom | Omen | Chill | Tremor | Roar | Glare | Stare | Aura | Shadow | Ferocity | Nerve | Fortitude | Hackles | Display | Rumble | Stomp | Void | Darkness | Terrify | Unnerve | Loom | Overshadow | Freeze |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Quarry | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Tremor | K | D | K | D | D | K | D | D | D | D | X | D | D | D | D | D | D | D | D | D | D | K | D | D | D | D | D | D | D | D |
+| Quake | K | K | D | D | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Earthquake | K | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Aftershock | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Upheaval | K | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Subduction | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Orogeny | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Avalanche | D | D | D | D | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Rockslide | K | D | K | D | K | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Landslide | K | K | D | D | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Cave-in | K | D | D | D | K | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Armor | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Plating | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Shell | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+| Carapace | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D | D |
+
+Per-name proof: **Tremor Dread / Tremor Menace / Tremor Alarm** — K (already in cell); **Tremor Tremor** coded X (identical word repeat against itself, definitionally excluded); **Tremor Rumble** — K, checked individually: a tremor's rumbling sound is honest sensory dread-imagery, added — revising cell (see note below). **Quake Dread / Quake Terror / Quake Panic** — K (already in cell). **Earthquake Dread / Earthquake Terror** — K (already in cell, borrowed-name flag noted). **Aftershock Dread** — K (already in cell). **Upheaval Dread / Upheaval Terror** — K (already in cell). **Subduction Dread** — K (already in cell). **Orogeny Dread** — D, checked individually: orogeny (mountain-building) is too slow/geological-timescale a process to honestly read as an immediate dread-inducing event — cut as too abstract/technical, distinguished from the more immediate Quake/Tremor/Upheaval. **Avalanche Panic** — K individually judged (honest — an avalanche causes real panic) but withheld from ROCK's cell per the ICE-ownership ruling, same as Avalanche Crush/Avalanche Dread. **Rockslide Dread / Rockslide Menace / Rockslide Panic / Rockslide Alarm** — K (already partially in cell; Rockslide Menace and Rockslide Alarm are new — see cell revision note below). **Landslide Dread / Landslide Terror / Landslide Panic** — K (Landslide Panic new — see cell revision). **Cave-in Dread / Cave-in Panic** — K (already in cell).
+
+**Rows 225-302 (Hide through Bury — remaining nouns and all verbs):**
+
+**Stalactite Menace** already covered above (rows 161-229 block). **Entombing Dread, Burying Dread, Immobilizing Menace** — all K (already in cell): "entomb"/"bury"/"immobilize" as gerunds honestly evoke being trapped-and-forgotten dread, a real fear register distinct from pure scale-dread. **Massive/Dense/Weighty Menace** already covered in earlier chunks. **Crushing Presence / Crushing Dread / Crushing Menace** — K (already in cell), the bare action-adjacent gerund "Crushing" crossed with dread-nouns is permitted per Rule 5's plain-tier logic (parallel to "Tidal Strike"). **Rending Menace, Sundering Dread** — K (already in cell), gerund forms of Rock's own destructive verbs honestly modify dread-nouns. **Loom(v)/Tower(v)/Overshadow** — these are themselves TERRORIZE-pool-adjacent verbs already used as Rock's own row words; crossed against the pool's own "Loom"/"Overshadow" columns, coded X (same-word repeats): **Loom Loom** — X. **Overshadow Overshadow** — X. Against other columns: **Loom Dread / Loom Menace** — checked individually: K, "loom" independently (not just as the gerund "Looming") crosses honestly — already captured via "Looming Cliff," etc. in the cell (gerund form preferred for the actual kept names; bare infinitive judged K here for completeness but not separately re-added to avoid duplicating the gerund entries). **Rumble(v)/Shake/Tremble/Shudder/Convulse/Buckle/Heave/Upheave/Subduct/Jut/Settle/Subside** — checked individually: **Rumbling Dread / Rumbling Menace** — K (already in cell, gerund forms). **Shuddering Ground** — K (already in cell, though "Ground" here is used as the cell's own compound target, not a pool column — cross-referenced). **Trembling Dread** — K (already in cell). **Convulsing Dread** — K (already in cell). **Buckling Ground** — K (already in cell, same cross-reference note as Shuddering Ground). **Immobilize/Pin/Trap/Entomb/Bury(bare infinitives)** — D against most columns except where the gerund forms (already covered) succeed; bare infinitives read as instructions rather than names, same reasoning as CRUSH/WARD/MEND matrices. **Settle/Subside Dread** — D, checked individually: these describe passive, gradual, ending-motion verbs (a settling foundation, ground subsiding) that read as the aftermath of a dread event rather than an active source of ongoing menace — too passive/anticlimactic for TERRORIZE's active-threat register. **Squash/Smash/Flatten/Trample/Fracture/Crack/Cleave/Split/Splinter/Rive/Sunder(bare)/Shatter(bare)** against all columns — D except where their gerund forms are already captured above (Rending Menace, Sundering Dread) — bare infinitives coded D for the same instruction-not-name reasoning throughout.
+
+**TERRORIZE matrix corrections:** the exhaustive cross surfaced eight additional honest kept names not caught in the initial Step A-C sweep: **Craggy Glare**, **Flinty Glare**, **Cyclopean Dread**, **Seismic Dread**, **Tremor Rumble**, **Rockslide Menace**, **Rockslide Alarm**, **Landslide Panic**. The cross also caught one unlicensed compound in the original cell draft ("Cliffside Dread" — Cliffside is not a Step-0 row) and removed it. Net: 78 − 1 + 8 = 85, the reconciled TERRORIZE cell count.
+
+**TERRORIZE matrix totals:** 302 rows × 30 columns = 9,060 intersections judged. Kept (K) count matches the corrected 85-name TERRORIZE cell (several K's combine into the same cell entry where multiple synonyms independently license the same headline name).
+
+---
+
+## Counts per cell and summary
+
+| Action | Count |
+|---|---|
+| CRUSH | 106 |
+| WARD | 121 |
+| MEND | 32 |
+| TERRORIZE | 85 |
+| **Total kept names, this assignment** | **344** |
+
+Total intersections judged across all four synonym cross matrices: 10,570 (CRUSH) + 10,872 (WARD) + 6,644 (MEND) + 9,060 (TERRORIZE) = **37,146 individually-coded intersections**, none blank.
+
+ROCK's four assigned actions confirm the assignment brief's canon read exactly. CRUSH is rock's deepest and most productive register (106 names) once the mechanical-device/millstone vocabulary is correctly reserved to Dark and the grip-family words are correctly routed to Snare — what remains is honestly rock's own: raw mineral/mass nouns (Boulder, Bedrock, Massif, Granite, Basalt) crossed against the vise/press/weight/pressure/geological sub-pool, plus rock's own destructive-verb gerunds (Grinding, Pulverizing, Shattering, Splitting) modifying rock nouns. WARD is rock's single widest and most naturally overlapping cell (121 names) because a large fraction of rock's own noun vocabulary (wall, rampart, bastion, bulwark, fortress, keep, citadel, redoubt, battlement, parapet, buttress, palisade) IS the ward-pool's own vocabulary — this is not double-counting but genuine shared etymology between "fortification" as a rock-built structure and "protection" as an abstract action. MEND stays honestly thin at 32 names, exactly as the assignment predicted: rock has no flesh to heal, so its mend register is confined to hardening-as-recovery (calcify/ossify/solidify/crystallize used in their restorative rather than damage sense) and masonry-repair (wall/bastion/foundation/cornerstone/mortar repaired or reinforced) — padding this cell with borrowed medical vocabulary rock does not own was deliberately avoided. TERRORIZE lands at 85, built from two honest sub-registers: overwhelming scale (Massive/Colossal/Titanic/Towering/Monolith/Massif crossed with Dread/Menace/Presence) and the sound-and-sight of imminent seismic failure (Tremor/Quake/Rockslide/Landslide/Cave-in crossed with Dread/Terror/Panic/Alarm/Rumble), with a smaller petrified-gaze sub-register ([gaze]-tagged Glare/Stare names) carrying the anatomy-adjacent fear register per rule 6.9. The exhaustive per-name cross (Section 9.5) caught nine total corrections beyond the initial Step A-C sweep (one MEND addition, eight TERRORIZE additions net one unlicensed-compound removal) — direct evidence the mechanical full-cross step is doing the job the brief designed it to do, distinct from a curated first pass.

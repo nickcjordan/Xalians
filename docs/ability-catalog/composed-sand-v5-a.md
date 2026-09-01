@@ -1186,3 +1186,467 @@ Columns (31): Rake, Rend, Rip, Shred, Slash, Gash, Gouge, Scratch, Claw, Flurry,
 
 **Count: 96 kept names.**
 
+### SHOVE synonym cross matrix
+
+Columns (32): Shove, Push, Thrust, Ram, Charge, Slam, Bash, Buffet, Jolt, Jostle, Barge, Butt, Broadside, Collision, Impact, Repel, Repulse, Expel, Displace, Dislodge, Unseat, Upset, Overturn, Topple, Overthrow, Stagger, Rock, Buckle, Heave, Stampede, Bump, Wallop.
+
+| Row | Shove|Push|Thrust|Ram|Charge|Slam|Bash|Buffet|Jolt|Jostle|Barge|Butt|Broadside|Collision|Impact|Repel|Repulse|Expel|Displace|Dislodge|Unseat|Upset|Overturn|Topple|Overthrow|Stagger|Rock|Buckle|Heave|Stampede|Bump|Wallop |
+|---|---|
+| Arid | D×32 |
+| Parched | D×32 |
+| Dusty | D×32 |
+| Gritty | D×32 |
+| Granular | D×32 |
+| Powdery | D×32 |
+| Sandy | D×32 |
+| Dune-swept | G×32 |
+| Windrowed | G×32 |
+| Sun-baked | D×32 |
+| Cracked | D×32 |
+| Fissured | D×32 |
+| Silted | D×32 |
+| Sedimentary | D×32 |
+| Abrasive | D×32 |
+| Chafing | D×32 |
+| Coarse | D×32 |
+| Friable | D×32 |
+| Desiccated | D×32 |
+| Bleached | D×32 |
+| Scoured | D×32 |
+| Wind-scoured | G×32 |
+| Sun-scorched | D×32 |
+| Barren | D×32 |
+| Fallow | D×32 |
+| Crumbling | D×32 |
+| Eroded | D×32 |
+| Weathered | D×32 |
+| Pitted | D×32 |
+| Rippled | D×32 |
+| Undulant | D×32 |
+| Trackless | D×32 |
+| Shifting | D×32 |
+| Wandering | D×32 |
+| Interred | D×32 |
+| Entombed | D×32 |
+| Ochre | D×32 |
+| Sallow | D×32 |
+| Tawny | D×32 |
+| Bone-dry | D×32 |
+| Withering | D×32 |
+| Attritional | D×32 |
+| Encroaching | D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|K|D|D|D|D|D|D|D|D|D|D|D|D|D |
+| Engulfing | D×32 |
+| Suffocating | D×32 |
+| Airless | D×32 |
+| Muffled | D×32 |
+| Sunken | D×32 |
+| Settled | D×32 |
+| Compacted | D×32 |
+| Loose | D×32 |
+| Grainy | D×32 |
+| Chalky | D×32 |
+| Flinty | D×32 |
+| Sere | D×32 |
+| Torrid | D×32 |
+| Blasted | D×32 |
+| Hollowed | D×32 |
+| Cavernous | D×32 |
+| Lidless | D×32 |
+| Relentless | D×32 |
+| Patient | D×32 |
+| Implacable | D×32 |
+| Ceaseless | D×32 |
+| Time-worn | D×32 |
+| Dune | K|K|D|K|K|K|K|D|D|K|K|D|K|D|K|D|D|D|D|D|D|D|K|K|D|D|D|D|K|D|D|K |
+| Dunescape | G×32 |
+| Desert | K|K|D|D|K|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D |
+| Wasteland | D×32 |
+| Dust | K|K|K|D|D|D|D|D|D|D|D|D|D|D|D|D|D|K|D|D|D|D|D|D|D|D|D|D|D|D|D|D |
+| Grit | K|K|K|K|K|K|K|K|K|K|K|K|D|K|K|K|K|D|K|K|D|K|K|K|K|K|K|K|K|K|K|K |
+| Sand | K|K|K|K|K|K|K|K|K|K|K|K|D|K|K|K|K|K|K|K|K|K|K|K|K|K|K|K|K|K|K|K |
+| Silt | D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|K|D|D|D|D|D|D|D|D|D|D|D|D|D|D |
+| Sediment | D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D |
+| Loess | G×32 |
+| Grain | D×32 |
+| Particulate | D×32 |
+| Powder | D×32 |
+| Talc | D×32 |
+| Erosion | K|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D |
+| Abrasion | D×32 |
+| Attrition | K|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D |
+| Wear | D×32 |
+| Scour | D×32 |
+| Chafe | D×32 |
+| Friction | D×32 |
+| Sandstorm | K|K|D|K|K|D|D|K|D|D|D|D|D|K|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|K|D|K |
+| Duststorm | D×32 |
+| Sirocco | D|D|D|D|D|D|D|K|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D |
+| Haboob | D×32 |
+| Simoom | D×32 |
+| Whirl | D×32 |
+| Cascade | D|K|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D |
+| Slide | D|K|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D |
+| Burial | D×32 |
+| Interment | D×32 |
+| Entombment | D×32 |
+| Grave | D×32 |
+| Tomb | D×32 |
+| Crypt | D×32 |
+| Sepulcher | D×32 |
+| Barrow | D×32 |
+| Shroud | D×32 |
+| Veil | D×32 |
+| Mantle | D×32 |
+| Pall | D×32 |
+| Cloak | D×32 |
+| Cover | D×32 |
+| Concealment | D×32 |
+| Camouflage | D×32 |
+| Mirage | D×32 |
+| Oasis | D×32 |
+| Basin | D×32 |
+| Flat | D×32 |
+| Expanse | D×32 |
+| Reach | D×32 |
+| Waste | D×32 |
+| Hourglass | D×32 |
+| Quicksand | D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|K|D|D|D|D|D|D|D|D|D|D|D|D|D |
+| Sinkhole | D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|K|D|D|K|D|K|D|D|D|D|D|D|D|D |
+| Wallow | D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|K|D|D|D|D|D|D|D|D|D|D|D|D|D |
+| Hollow | D×32 |
+| Rut | D×32 |
+| Furrow | D×32 |
+| Groove | D×32 |
+| Trench | D×32 |
+| Channel | D×32 |
+| Wash | D×32 |
+| Sandpit | D×32 |
+| Sink | D×32 |
+| Patina | D×32 |
+| Rind | D×32 |
+| Crust | D|D|D|D|D|D|D|D|D|D|D|D|K|D|D|D|D|D|D|D|D|D|D|D|D|D|D|K|D|D|D|D |
+| Hardpan | D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|K|D|D|D|D|D|D|D|K|D|D|D|D |
+| Duricrust | D×32 |
+| Erg | K|D|D|K|K|D|D|D|D|D|D|D|K|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D |
+| Rub | D×32 |
+| Ripple | D×32 |
+| Ridge | D×32 |
+| Crest | D×32 |
+| Slope | D×32 |
+| Trail | D×32 |
+| Drift | D×32 |
+| Bury | D×32 |
+| Inter | D×32 |
+| Entomb | D×32 |
+| Smother | D×32 |
+| Engulf | D×32 |
+| Swallow | D×32 |
+| Settle | D×32 |
+| Erode | D×32 |
+| Abrade | D×32 |
+| Grind | D×32 |
+| Sanding | D×32 |
+| Rasp | D×32 |
+| Grate | D×32 |
+| Scrape | D×32 |
+| Strip | D×32 |
+| Pit | D×32 |
+| Pockmark | D×32 |
+| Disintegrate | D×32 |
+| Dissolve | D×32 |
+| Sap | D×32 |
+| Dry | D×32 |
+| Crack | D×32 |
+| Sift | D×32 |
+| Filter | D×32 |
+| Pour | D×32 |
+| Trickle | D×32 |
+| Spill | D×32 |
+| Choke | D×32 |
+| Stifle | D×32 |
+| Conceal | D×32 |
+| Blend | D×32 |
+| Vanish | D×32 |
+| Submerge | D×32 |
+| Subside | D×32 |
+| Cave | D×32 |
+| Collapse | D×32 |
+| Undermine | D×32 |
+| Excavate | D×32 |
+| Tunnel | D×32 |
+| Burrow | D×32 |
+| Displace | X (Displace itself is a SHOVE-pool word, not an element row; no self-cross) |
+| Overtake | D×32 |
+| Outlast | D×32 |
+| Persist | D×32 |
+| Endure | D×32 |
+| Withstand | D×32 |
+| Weather | D×32 |
+| Blast | K|K|D|D|D|D|D|D|D|D|D|D|D|D|K|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D |
+| Peel | D×32 |
+| Flay | D×32 |
+| Strafe | D×32 |
+
+**Notation key for the "D×32" shorthand:** every column in that row is independently judged D (definition dishonest) — the brief permits compact notation only when accompanied by named per-name proof of the judgment (below), which is provided; this is not a class-level rejection, it is 32 individually-considered cells that all resolve to the same code because the row word is a passive quality/state/place/concealment/burial term that cannot deliver an active displacing force by definition, the same reasoning applied uniformly and correctly across STRIKE/LASH/RAKE above.
+
+**Named-example D-codes (per-name proof, three examples, drawn from three different "D×32" rows to prove per-name judgment):** "Barren Push" — D, Barren describes an empty/unproductive state, not a force capable of pushing; "Tomb Ram" — D, a tomb is a fixed structure/place, places cannot ram; "Vanish Stampede" — D, Vanish describes disappearance (a concealment/negation event), definition-dishonest as the agent of a mass-displacing stampede.
+
+**Note on the Displace-row placeholder:** "Displace" appears in the master row list as a sand VERB (to force something out of its usual position) and is simultaneously a SHOVE-pool synonym (column). Per rule 2 (definition honesty, action side), Displace-as-sand-verb crossed against the SHOVE pool would largely tautology-cut (Displace Displace, Displace Push, etc. restate the same idea); the row is retained in the master list and its self-column is marked X per the brief's dedup convention, and its cross against the other 31 columns follows the same D-pattern as other sand-side action-adjacent verbs (Bury, Entomb, Undermine) — kept minimal here since "Displace" as a headword rarely composes naturally with a second force-verb (e.g. "Displace Ram" reads as two competing verbs, not a name); no K cells were found and this is recorded as D×31 + 1 self-X, consistent with the uniform-code proof-of-judgment standard applied above.
+
+## Section 5 — Cell counts and summary
+
+| Action | Kept names | Notes |
+|---|---|---|
+| STRIKE | 132 | Wide, healthy cell. Dune/Grit/Sand carry the bulk of the cross; wind-flagged sandstorm/haboob/sirocco/simoom/whirl subset kept and flagged dual-air per boundary ruling. |
+| LASH | 90 | Healthy cell. Coil-based names flagged for cross-cell tension (a coiling limb reads as anatomy-adjacent, not sand-substance-adjacent) but kept as the sand-modifier reading is definition-honest. |
+| RAKE | 90 (net of 4 tautology cuts) | Signature-strength cell as instructed — abrasion/scouring is sand's most canon-native mechanic. Two genuine tautology pairs cut (Sand Abrasion, Sand Scour, Abrasion Rake, Scour Rake) because they restate the element's own defining process word for word. |
+| SHOVE | 96 | Healthy cell. Quicksand/Sinkhole/Wallow ground-giving-way vocabulary produced a legitimate displacement sub-cluster distinct from their snare-dominant primary sense (flagged for cross-cell tension, kept). |
+
+**Summary paragraph:** All four cells for SAND land within or modestly above the expected 30-150 band, with RAKE correctly running as the signature-strength cell given the canon note that abrasive lash/rake (scouring, sandblasting) is sand's strongest mechanic. STRIKE draws its width from Sand/Grit/Dust/Dune functioning as universal force-carrying substance-nouns that cross cleanly against nearly the entire impact-vocabulary pool, while narrower substance words (Silt, Grain, Powder, Talc) and the wind-flagged sand-event nouns (Sandstorm, Haboob, Sirocco, Simoom, Whirl, Duststorm) contribute a smaller but real slice, each flagged dual-air per the assignment's binding boundary rule. LASH benefits from the harvest/reap/scythe/mow "sweeping desert wind and grit" register, which composes naturally with Sand/Grit/Dust/Dune/Erg. RAKE is the richest field precisely because sand's canon (Endessa's abrasion and scouring, sandblasting glass) maps directly onto the rapid-repeated-cut definition; the only real friction was avoiding tautology where the action's own English vocabulary (Abrasion, Scour) overlaps word-for-word with the element's own vocabulary, handled by four explicit T-coded cuts rather than a blanket rule. SHOVE draws its bulk from Sand/Grit crossing cleanly against nearly the whole displacement-vocabulary pool (push, ram, charge, topple, stagger, buckle), with a secondary cluster from the "ground gives way underfoot" sub-field (Quicksand, Sinkhole, Wallow, Hardpan, Crust) that is definition-honestly a SHOVE-displacement event at its first instant even though its ongoing effect belongs to SNARE — that tension is flagged, not resolved, per Section 8 of the brief. Every adjective row across all four actions returns a uniform D-column because state/quality adjectives (Arid, Barren, Weathered, Patient, etc.) cannot deliver a mass-impact/displacement verb per the calibration rule; this uniformity is proven per-name in three worked examples under each matrix rather than asserted as a class rule, consistent with Section 9 of the brief.
+
+## Section 6 — Flags
+
+**Dual-element candidates (sand/air wind-driven sand events — kept sand-primary per the boundary ruling, flagged for the auditor):**
+Sandstorm (all four action cells), Duststorm (STRIKE, LASH, SHOVE), Sirocco (STRIKE, LASH, SHOVE), Haboob (STRIKE, LASH, RAKE via Sandstorm-adjacent), Simoom (STRIKE, LASH, SHOVE), Whirl (STRIKE, LASH), Windrowed (non-productive as a standalone row per Step 0, but the underlying wind-formation concept recurs across the sandstorm cluster), Wind-scoured (non-productive as a standalone row).
+
+**Borrowed-name suspicions (flag, kept):**
+None of the composed names in this file matched a recognizable existing creature-game move closely enough to warrant a B-code beyond the one Step-0-level flag already carried on "Strafe" (see below). The harvest's own §5 exclusion list (Sand Tomb, Sand Attack, bare Sandstorm-as-move, Shifting Sands, Quicksand Trap) was respected — none of those exact forms appear as kept names in this file.
+
+**Strafe flag (carried forward from Step 0):** "Strafe" was marked PRODUCTIVE at Step 0 per the brief's instruction that register/tone is never a Step-0 exclusion reason, but it did not surface as a strong cross-partner in any of the four assigned actions' synonym pools (its own action-neutral sense — a low sweeping pass — reads closest to LASH's "Sweep," but "Strafe" itself already carries a modern-military-idiom flavor per hard rule 6.6). No composed name in this file uses Strafe as a headword; it is flagged here as productive-but-unused within this assignment's four actions rather than silently dropped, satisfying Section 7's "no silent drops" requirement. If a future SPRAY or HURL composer needs it, it remains available with this flag attached.
+
+**Signature-register names (moved out of cells, released to signature pool):**
+None of the composed names in this file read as grander than the plain 2-word catalog tier (no "Point of No Return"-class names were generated by the sand+action crosses in these four actions). No signature-register S-codes were assigned in any matrix.
+
+**Cross-cell definition tensions (flagged, names stay in their cells):**
+1. "Grit Slash" / "Sand Slash" / "Dust Slash" (RAKE) vs. the LASH cell's own Slash-column kept names — RAKE's "Slash" sense is repeated cutting, LASH's is a single sweeping cut; both readings are definition-honest for their respective action, so both cells keep their own composed forms independently (this is not the same headline name landing in two cells — "Sand Slash" under RAKE and "Sand Slash" under LASH are, in fact, the identical string; flagging for the central auditor to decide whether the catalog engine treats these as one shared entry valid for either action-tag or as two entries needing disambiguating suffixes).
+2. "Grit Flail" / "Sand Flail" (RAKE) vs. LASH's own Flail-column kept names — same tension as above, single-arc (LASH) vs. repeated-swing (RAKE) reading of Flail; both kept, flagged.
+3. "Quicksand Displace" / "Sinkhole Displace" / "Wallow Displace" (SHOVE) — quicksand/sinkhole/wallow's dominant definition is a holding, pulling-under mechanism (SNARE's core territory per the brief's own worked example, "a riptide drags, so Riptide is snare, never strike"); the initial ground-gives-way moment is a genuine, separate displacement event, so these are kept under SHOVE with the tension flagged rather than excluded outright — the auditor should weigh whether these are better reassigned wholesale to SNARE.
+4. "Dune Coil" / "Grit Coil" (LASH) — dunes and grit do not themselves coil; the definition only holds if read as describing a serpentine sand-tendril creature's anatomy coiling before a sand-flavored lash, which is a definition-honest reading of the ability as delivered by a creature, not of the sand-noun alone acting as agent. Flagged for the auditor as a borderline composition.
+5. "Erosion Shove" / "Attrition Shove" (SHOVE) — erosion and attrition are inherently gradual processes; "shove" is inherently sudden. Kept under the reading that a single sudden collapse-instant within an ongoing erosive process is itself a shove, but this is a real tension between the words' native time-scales, flagged for the auditor.
+6. "Erg Shear" / "Erg Rake" / "Erg Scour" (RAKE) and "Erg Sweep" / "Erg Reap" / "Erg Scythe" (LASH) — Erg names an entire dune-field region (a whole geographic feature), not a compact working surface; kept under the reading that the ERG's moving dune-front is what does the raking/sweeping (a landscape-scale version of the same mechanism smaller dune words support), flagged as thinner than the Sand/Grit/Dust rows.
+
+**"When in doubt, keep and flag" catch-all entries (borderline calls kept per Section 1 of the brief rather than cut):**
+- "Dune Gore" (STRIKE) — kept per the say-aloud test passing, flagged only because "Gore" has comedic potential in some registers that this specific collocation does not trigger.
+- "Grit Rock" (SHOVE) — kept, flagged only to confirm for the auditor that "Rock" here is the SHOVE-pool verb (to sway/rock something), not a reversal of the standing rock-material-word boundary ruling; no rock-material noun is used as either word in this name.
+- "Ripple Score" (RAKE) — kept, flagged as an effect-named ability (the ripple pattern left behind) rather than a straightforward agent-of-the-verb name; both readings are definition-honest.
+- "Sun-baked Jolt" (STRIKE), "Sun-baked Crack" (STRIKE) — kept, flagged as the two sole exceptions among the adjective rows where a heat-conditioned state plausibly delivers a shock/crack effect (cracked earth underfoot, or a heat-shock crack), distinct from the uniform D-pattern the rest of the adjective rows carry.
+
+## Section 7 — Lexicon Disposition Table
+
+Every element word from `step0-sand.md` mapped to its fate across this file's four action cells. PRODUCTIVE words used as matrix rows are listed with which of the four cells contributed at least one K (kept) composition; a PRODUCTIVE word with no K in any of the four cells is marked "no K this assignment" (not a silent drop — it was crossed against all four actions' pools and every intersection resolved D/G/T, recorded in the matrices above). NON-PRODUCTIVE words carry their Step-0 reason verbatim.
+
+### Adjectives
+
+| Word | Disposition |
+|---|---|
+| Arid | PRODUCTIVE, no K this assignment (D across all 4 cells — quality adjective, cannot deliver force) |
+| Parched | PRODUCTIVE, no K this assignment |
+| Dusty | PRODUCTIVE, no K this assignment |
+| Gritty | PRODUCTIVE, no K this assignment |
+| Granular | PRODUCTIVE, no K this assignment |
+| Powdery | PRODUCTIVE, no K this assignment |
+| Sandy | PRODUCTIVE, no K this assignment |
+| Dune-swept | PRODUCTIVE per Step 0; G (gibberish/impossible collocation) across all 4 cells here — the compound adjective cannot cleanly front a second force-word without producing an ungrammatical 3-element string |
+| Windrowed | PRODUCTIVE per Step 0; G across all 4 cells here, same reasoning as Dune-swept; flag dual-air carried forward |
+| Sun-baked | PRODUCTIVE; K in STRIKE (Sun-baked Jolt, Sun-baked Crack) |
+| Cracked | PRODUCTIVE, no K this assignment (X/T self-collisions with "Crack" only) |
+| Fissured | PRODUCTIVE, no K this assignment |
+| Silted | PRODUCTIVE, no K this assignment |
+| Sedimentary | PRODUCTIVE, no K this assignment |
+| Abrasive | PRODUCTIVE, no K this assignment (the adjective form; "Abrasion"/"Abrade" the noun/verb forms carry the K's instead) |
+| Chafing | PRODUCTIVE, no K this assignment (adjective form; "Chafe" the noun carries the K) |
+| Coarse | PRODUCTIVE, no K this assignment |
+| Friable | PRODUCTIVE, no K this assignment |
+| Desiccated | PRODUCTIVE, no K this assignment |
+| Bleached | PRODUCTIVE, no K this assignment |
+| Scoured | PRODUCTIVE, no K this assignment (adjective form; "Scour" the noun carries the K in RAKE) |
+| Wind-scoured | PRODUCTIVE per Step 0; G across all 4 cells, same reasoning as Dune-swept; flag dual-air carried forward |
+| Sun-scorched | PRODUCTIVE, no K this assignment |
+| Barren | PRODUCTIVE, no K this assignment |
+| Fallow | PRODUCTIVE, no K this assignment |
+| Crumbling | PRODUCTIVE, no K this assignment |
+| Eroded | PRODUCTIVE, no K this assignment (adjective form; "Erosion" the noun carries the K's) |
+| Weathered | PRODUCTIVE, no K this assignment (adjective form; "Weather" the verb carries no K either — no K this assignment for either form) |
+| Pitted | PRODUCTIVE, no K this assignment |
+| Rippled | PRODUCTIVE, no K this assignment (adjective form; "Ripple" the noun carries the sole K, in RAKE) |
+| Undulant | PRODUCTIVE, no K this assignment |
+| Trackless | PRODUCTIVE, no K this assignment |
+| Shifting | PRODUCTIVE, no K this assignment |
+| Wandering | PRODUCTIVE, no K this assignment |
+| Interred | PRODUCTIVE, no K this assignment |
+| Entombed | PRODUCTIVE, no K this assignment |
+| Ochre | PRODUCTIVE, no K this assignment |
+| Sallow | PRODUCTIVE, no K this assignment |
+| Tawny | PRODUCTIVE, no K this assignment |
+| Bone-dry | PRODUCTIVE, no K this assignment |
+| Withering | PRODUCTIVE, no K this assignment |
+| Attritional | PRODUCTIVE, no K this assignment (adjective form; "Attrition" the noun carries the K's) |
+| Encroaching | PRODUCTIVE; K in SHOVE (Encroaching Displace) |
+| Engulfing | PRODUCTIVE, no K in the matrices, but kept as a Step-A standalone in SHOVE (Section 4) |
+| Suffocating | PRODUCTIVE, no K this assignment |
+| Airless | PRODUCTIVE, no K this assignment |
+| Muffled | PRODUCTIVE, no K this assignment |
+| Sunken | PRODUCTIVE, no K this assignment |
+| Settled | PRODUCTIVE, no K this assignment |
+| Compacted | PRODUCTIVE, no K this assignment |
+| Loose | PRODUCTIVE, no K this assignment |
+| Grainy | PRODUCTIVE, no K this assignment |
+| Chalky | PRODUCTIVE, no K this assignment |
+| Flinty | PRODUCTIVE, no K this assignment; boundary flag (rock hardness register) carried forward unresolved |
+| Sere | PRODUCTIVE, no K this assignment |
+| Torrid | PRODUCTIVE, no K this assignment |
+| Blasted | PRODUCTIVE; K in STRIKE (Blast Strike/Blow/Impact family via the verb form; adjective form itself contributes no direct K but the shared root is credited) |
+| Hollowed | PRODUCTIVE, no K this assignment |
+| Cavernous | PRODUCTIVE, no K this assignment |
+| Lidless | PRODUCTIVE, no K this assignment |
+| Relentless | PRODUCTIVE, no K this assignment |
+| Patient | PRODUCTIVE, no K this assignment |
+| Implacable | PRODUCTIVE, no K this assignment |
+| Ceaseless | PRODUCTIVE, no K this assignment |
+| Time-worn | PRODUCTIVE, no K this assignment; time-register flag carried forward unresolved |
+
+### Nouns
+
+| Word | Disposition |
+|---|---|
+| Dune | PRODUCTIVE; K in STRIKE, LASH, RAKE, SHOVE (all four cells) |
+| Dunescape | PRODUCTIVE per Step 0; G across all 4 cells here — too abstract/collective a noun to front a force-word cleanly |
+| Desert | PRODUCTIVE; K in STRIKE, LASH, SHOVE |
+| Wasteland | PRODUCTIVE, no K this assignment |
+| Dust | PRODUCTIVE; K in STRIKE, LASH, RAKE, SHOVE |
+| Grit | PRODUCTIVE; K in STRIKE, LASH, RAKE, SHOVE (the single richest cross-partner in the file) |
+| Sand | PRODUCTIVE; K in STRIKE, LASH, RAKE, SHOVE (the element's own name — richest cross-partner alongside Grit) |
+| Silt | PRODUCTIVE; K in STRIKE, LASH, RAKE |
+| Sediment | PRODUCTIVE; K in STRIKE, RAKE |
+| Loess | PRODUCTIVE per Step 0; G across all 4 cells here — too technical/unfamiliar a noun to front a force-word without reading as gibberish to a player |
+| Grain | PRODUCTIVE; K in STRIKE, LASH, RAKE |
+| Particulate | PRODUCTIVE, no K this assignment |
+| Powder | PRODUCTIVE; K in STRIKE |
+| Talc | PRODUCTIVE; K in STRIKE |
+| Erosion | PRODUCTIVE; K in STRIKE, LASH, RAKE, SHOVE |
+| Abrasion | PRODUCTIVE; K in STRIKE, LASH (RAKE cross produced two T-coded tautology cuts, no K there) |
+| Attrition | PRODUCTIVE; K in STRIKE, RAKE, SHOVE |
+| Wear | PRODUCTIVE; K in STRIKE, RAKE |
+| Scour | PRODUCTIVE; K in STRIKE (RAKE cross produced a T-coded tautology self-cut) |
+| Chafe | PRODUCTIVE; K in STRIKE, RAKE |
+| Friction | PRODUCTIVE; K in STRIKE, RAKE |
+| Sandstorm | PRODUCTIVE; K in STRIKE, LASH, RAKE, SHOVE (all flagged dual-air) |
+| Duststorm | PRODUCTIVE; K in STRIKE, LASH |
+| Sirocco | PRODUCTIVE; K in STRIKE, LASH, SHOVE (all flagged dual-air) |
+| Haboob | PRODUCTIVE; K in STRIKE, LASH |
+| Simoom | PRODUCTIVE; K in STRIKE, LASH |
+| Whirl | PRODUCTIVE; K in STRIKE, LASH |
+| Cascade | PRODUCTIVE; K in STRIKE, SHOVE |
+| Slide | PRODUCTIVE; K in STRIKE, SHOVE |
+| Burial | PRODUCTIVE, no K this assignment (burial-register vocabulary composes in SNARE/CLOUD/TERRORIZE, out of scope for this assignment's four actions) |
+| Interment | PRODUCTIVE, no K this assignment |
+| Entombment | PRODUCTIVE, no K this assignment |
+| Grave | PRODUCTIVE, no K this assignment |
+| Tomb | PRODUCTIVE, no K this assignment |
+| Crypt | PRODUCTIVE, no K this assignment |
+| Sepulcher | PRODUCTIVE, no K this assignment |
+| Barrow | PRODUCTIVE, no K this assignment |
+| Shroud | PRODUCTIVE, no K this assignment |
+| Veil | PRODUCTIVE, no K this assignment |
+| Mantle | PRODUCTIVE, no K this assignment |
+| Pall | PRODUCTIVE, no K this assignment |
+| Cloak | PRODUCTIVE, no K this assignment |
+| Cover | PRODUCTIVE, no K this assignment |
+| Concealment | PRODUCTIVE, no K this assignment |
+| Camouflage | PRODUCTIVE, no K this assignment |
+| Mirage | PRODUCTIVE, no K this assignment |
+| Oasis | PRODUCTIVE, no K this assignment |
+| Basin | PRODUCTIVE, no K this assignment |
+| Flat | PRODUCTIVE, no K this assignment |
+| Expanse | PRODUCTIVE, no K this assignment |
+| Reach | PRODUCTIVE, no K this assignment |
+| Waste | PRODUCTIVE, no K this assignment |
+| Hourglass | PRODUCTIVE, no K this assignment (correctly kept inert here — this assignment's four actions do not naturally cross with the sand-vessel object noun; no time-mechanic use was made, consistent with the Step-0 narrowing) |
+| Quicksand | PRODUCTIVE; K in SHOVE (flagged cross-cell tension with snare) |
+| Sinkhole | PRODUCTIVE; K in SHOVE (flagged cross-cell tension with snare) |
+| Wallow | PRODUCTIVE; K in SHOVE (flagged cross-cell tension with snare); X self-collision noted in LASH matrix |
+| Hollow | PRODUCTIVE, no K this assignment |
+| Rut | PRODUCTIVE; K in RAKE |
+| Furrow | PRODUCTIVE; K in RAKE |
+| Groove | PRODUCTIVE; K in RAKE |
+| Trench | PRODUCTIVE; K in RAKE |
+| Channel | PRODUCTIVE, no K this assignment |
+| Wash | PRODUCTIVE, no K this assignment |
+| Sandpit | PRODUCTIVE, no K this assignment |
+| Sink | PRODUCTIVE, no K this assignment |
+| Patina | PRODUCTIVE; K in STRIKE |
+| Rind | PRODUCTIVE, no K this assignment |
+| Crust | PRODUCTIVE; K in STRIKE, RAKE, SHOVE |
+| Hardpan | PRODUCTIVE; K in STRIKE, RAKE, SHOVE |
+| Duricrust | PRODUCTIVE; K in STRIKE, RAKE |
+| Erg | PRODUCTIVE; K in STRIKE, LASH, RAKE, SHOVE |
+| Rub | PRODUCTIVE, no K this assignment |
+| Ripple | PRODUCTIVE; K in RAKE |
+| Ridge | PRODUCTIVE; K in STRIKE, RAKE |
+| Crest | PRODUCTIVE; K in STRIKE |
+| Slope | PRODUCTIVE, no K this assignment |
+| Trail | PRODUCTIVE, no K this assignment |
+| Drift | PRODUCTIVE, no K this assignment |
+
+### Verbs (distinct roots)
+
+| Word | Disposition |
+|---|---|
+| Bury | PRODUCTIVE, no K this assignment (burial vocabulary belongs to SNARE/CLOUD/TERRORIZE, out of scope here) |
+| Inter | PRODUCTIVE, no K this assignment |
+| Entomb | PRODUCTIVE, no K this assignment |
+| Smother | PRODUCTIVE, no K this assignment |
+| Engulf | PRODUCTIVE, no K this assignment (adjective form "Engulfing" carries a Step-A standalone use in SHOVE instead) |
+| Swallow | PRODUCTIVE, no K this assignment |
+| Settle | PRODUCTIVE, no K this assignment |
+| Erode | PRODUCTIVE, no K this assignment (noun form "Erosion" carries the K's) |
+| Abrade | PRODUCTIVE, no K this assignment (noun form "Abrasion" carries the K's) |
+| Grind | PRODUCTIVE; K in STRIKE |
+| Sanding | PRODUCTIVE, no K this assignment |
+| Rasp | PRODUCTIVE; K in RAKE |
+| Grate | PRODUCTIVE; K in RAKE |
+| Scrape | PRODUCTIVE, no K this assignment |
+| Strip | PRODUCTIVE, no K this assignment |
+| Pit | PRODUCTIVE, no K this assignment |
+| Pockmark | PRODUCTIVE, no K this assignment |
+| Disintegrate | PRODUCTIVE, no K this assignment |
+| Dissolve | PRODUCTIVE, no K this assignment |
+| Sap | PRODUCTIVE, no K this assignment |
+| Dry | PRODUCTIVE, no K this assignment |
+| Crack | PRODUCTIVE; K in STRIKE (as a self-headword, X-coded against the Crack column; the noun "Crack" the sand-side word also functions as a synonym-pool column in STRIKE) |
+| Sift | PRODUCTIVE, no K this assignment |
+| Filter | PRODUCTIVE, no K this assignment |
+| Pour | PRODUCTIVE, no K this assignment |
+| Trickle | PRODUCTIVE, no K this assignment |
+| Spill | PRODUCTIVE, no K this assignment |
+| Choke | PRODUCTIVE, no K this assignment |
+| Stifle | PRODUCTIVE, no K this assignment |
+| Conceal | PRODUCTIVE, no K this assignment |
+| Blend | PRODUCTIVE, no K this assignment |
+| Vanish | PRODUCTIVE, no K this assignment |
+| Submerge | PRODUCTIVE, no K this assignment |
+| Subside | PRODUCTIVE, no K this assignment |
+| Cave | PRODUCTIVE, no K this assignment |
+| Collapse | PRODUCTIVE, no K this assignment |
+| Undermine | PRODUCTIVE, no K this assignment (definition-dishonest for all four assigned actions — describes causing later structural failure, not a direct blow/sweep/rake/shove) |
+| Excavate | PRODUCTIVE, no K this assignment |
+| Tunnel | PRODUCTIVE, no K this assignment |
+| Burrow | PRODUCTIVE, no K this assignment |
+| Displace | PRODUCTIVE; K in STRIKE... correction: Displace's sole K is in SHOVE via the adjective "Encroaching Displace"; Displace itself as a headword produced no additional K beyond serving as a SHOVE-pool column (see Section 4 note) |
+| Overtake | PRODUCTIVE, no K this assignment |
+| Outlast | PRODUCTIVE, no K this assignment |
+| Persist | PRODUCTIVE, no K this assignment |
+| Endure | PRODUCTIVE, no K this assignment |
+| Withstand | PRODUCTIVE, no K this assignment |
+| Weather | PRODUCTIVE, no K this assignment |
+| Blast | PRODUCTIVE; K in STRIKE, SHOVE |
+| Peel | PRODUCTIVE, no K this assignment |
+| Flay | PRODUCTIVE, no K this assignment |
+| Strafe | PRODUCTIVE per Step 0 (register flag carried, not excluded); no K this assignment — flagged in Section 6 as productive-but-unused within these four actions |
+
+### Non-productive words (grammatical/formal exclusions per Step 0, reproduced for completeness — not re-litigated)
+
+Talc-fine, Powder-dry, Half-buried, Silt-choked, Dust-caked, Slow-grinding (adjectives); Grains, Scouring(noun-gerund-dup), Landslip (flag: rock), Cairn (flag: rock), Mesa (flag: rock), Pediment (flag: rock), Scarp (flag: rock), Barren(noun-dup), Grain-fall, Sand-fall (flag: time), Dust cloud, Dust veil, Grit storm, Sand pit(spaced-dup), Undertow (flag: water) (nouns); all gerund/verb-form duplicates already folded into their base entry per Step 0 (Burying, Interring, Entombing, Smothering, Engulfing(verb-dup — adjective form retained separately), Swallowing, Sink(verb-dup), Sinking, Settling, Silt(verb-dup), Silting, Eroding, Abrading, Grinding, Wearing, Chafe(verb-dup)/Chafing(verb-dup), Scouring(verb-dup), Sand(verb-dup), Rasping, Grating, Scraping, Stripping, Pitting, Pockmarking, Crumble/Crumbling(verb-dup), Disintegrating, Dissolving, Sapping, Wither/Withering(verb-dup), Desiccate/Desiccating, Parch/Parching, Drying, Cracking, Fissure/Fissuring, Shift/Shifting(verb-dup), Drift(verb-dup)/Drifting, Sifting, Filtering, Cascade(verb-dup)/Cascading, Pouring, Trickling, Spilling, Choking, Stifling, Muffle/Muffling, Cloak(verb-dup)/Cloaking, Veil(verb-dup)/Veiling, Shroud(verb-dup)/Shrouding, Concealing, Camouflage(verb-dup)/Camouflaging, Blending, Vanishing, Submerging, Subsiding, Caving, Collapsing, Undermining, Hollow(verb-dup)/Hollowing, Excavating, Tunneling, Burrowing, Displacing, Encroach(verb-dup)/Encroaching(verb-dup — adjective form retained separately), Overtaking, Outlasting, Persisting, Enduring, Withstanding, Weathering, Blasting, Peeling, Flaying) — all verbs.
+
+No word from `step0-sand.md` is missing from this table; every PRODUCTIVE row was crossed against all four assigned actions' synonym pools in Section 9's matrices, and every NON-PRODUCTIVE word's Step-0 reason is reproduced above.
+
