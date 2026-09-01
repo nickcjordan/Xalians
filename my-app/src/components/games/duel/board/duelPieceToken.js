@@ -32,7 +32,7 @@ class DuelPieceToken extends React.Component {
 		// them by duelTargetLayer - there is nothing to put on the creature, and a
 		// class that styles nothing only invites someone to style it.
 		const {
-			xalian, cellSize, teamColor, flagColor,
+			xalian, cellSize, teamColor, flagColor, elementColor,
 			selected, referenced, carrying,
 			id, zIndex, moreClasses,
 		} = this.props;
@@ -52,6 +52,7 @@ class DuelPieceToken extends React.Component {
 					zIndex: zIndex == null ? 200 : zIndex,
 					'--duel-team': teamColor,
 					'--duel-flag': flagColor || teamColor,
+					'--duel-element': elementColor,
 				}}>
 
 				<XalianImage className='animate-state'

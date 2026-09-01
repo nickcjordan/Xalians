@@ -270,3 +270,142 @@
 .dp-verdict-line {
   margin: var(--g-2) 0 0 0;
 }
+
+
+/*--------------------------------------------------------------
+# TOKEN STUDIES
+#
+# Candidate treatments for what a piece physically IS on the
+# board. Scoped to .dp-token-<name> so each specimen renders its
+# own variant against the real board, and none of them touch the
+# live game until one is chosen.
+#
+# The tension being resolved: the board is drawn in plan, but
+# every species SVG is a side-on silhouette of a standing animal.
+# A flat token carrying the creature as printed artwork makes
+# that side-on art correct rather than a compromise - it is a
+# picture on a thing, not a thing.
+--------------------------------------------------------------*/
+
+/* Shared: every study repositions the art, so neutralise the live rule first.
+   The art is also clipped to the token's own face. Species silhouettes are wider
+   than they are tall in several cases, and unclipped they spill across
+   neighbouring squares - at which point the token stops reading as an object and
+   goes back to being a sticker with a disc behind it. */
+.dp-token-study .duel-piece-xalian-icon {
+  left: 50%;
+  bottom: auto;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+}
+
+.dp-token-study .duel-piece-xalian-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ---- 1. MILLED DISC - a machined counter, brass rim, art stamped into it.
+   The house style: the same milled metal as every other control on the site. */
+.dp-token-milled .duel-piece-base {
+  inset: 8%;
+  border-radius: 50%;
+  border: 2px solid var(--g-brass-dark);
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255, 244, 214, 0.16) 0%, transparent 55%),
+    radial-gradient(circle at 50% 55%, var(--g-hull-hi) 0%, var(--g-hull) 55%, var(--g-seam) 100%);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.85),
+    inset 0 1px 0 rgba(255, 244, 214, 0.22),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.dp-token-milled .duel-piece-xalian-icon {
+  width: 62%;
+  height: 62%;
+}
+
+/* ---- 2. TEAM COIN - the disc itself is the side's colour, art knocked out
+   of it. Reads instantly at a glance; the loudest identity of the four. */
+.dp-token-coin .duel-piece-base {
+  inset: 8%;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--duel-team) 70%, black);
+  background:
+    radial-gradient(circle at 50% 26%,
+      color-mix(in srgb, var(--duel-team) 55%, white) 0%,
+      color-mix(in srgb, var(--duel-team) 85%, black) 60%,
+      color-mix(in srgb, var(--duel-team) 60%, black) 100%);
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.9),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.dp-token-coin .duel-piece-xalian-icon {
+  width: 60%;
+  height: 60%;
+  filter: none !important;
+}
+
+.dp-token-coin .duel-piece-xalian-icon svg { fill: rgba(0, 0, 0, 0.82) !important; }
+
+/* ---- 3. ELEMENT PLATE - a hexagonal chip in the creature's ELEMENT colour,
+   with the team as a rim. Puts the thing you actually plan around (type
+   matchup) into the token's own body. */
+.dp-token-element .duel-piece-base {
+  inset: 7%;
+  border-radius: 4px;
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  border: 0;
+  background:
+    linear-gradient(160deg, rgba(255, 244, 214, 0.14) 0%, transparent 45%),
+    var(--duel-element, var(--g-hull));
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.9);
+}
+
+/* The team rim, drawn as a border inside the chip rather than as a larger shape
+   behind it. Behind it, the rim was most of what you saw - a 3px halo on a 60px
+   chip is a lot of colour - and the element hue it was supposed to frame read as
+   the frame instead. */
+.dp-token-element .duel-piece-base {
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.9),
+    inset 0 0 0 3px color-mix(in srgb, var(--duel-team) 90%, black);
+}
+
+.dp-token-element .duel-piece-xalian-icon {
+  width: 58%;
+  height: 58%;
+}
+
+.dp-token-element .duel-piece-xalian-icon svg { fill: rgba(0, 0, 0, 0.85) !important; }
+
+/* ---- 4. STANDEE - the miniature, done deliberately. A side-on figure on an
+   elliptical base, with the base flattened as if seen from a high angle and the
+   figure standing off the back of it. */
+.dp-token-standee .duel-piece-base {
+  inset: auto 12% 6% 12%;
+  height: 18%;
+  border-radius: 50%;
+  border: 1px solid var(--g-brass-dark);
+  background:
+    radial-gradient(ellipse at 50% 25%, rgba(255, 244, 214, 0.18) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 60%, var(--g-hull-hi) 0%, var(--g-seam) 100%);
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.9);
+}
+
+.dp-token-standee .duel-piece-xalian-icon {
+  top: auto;
+  bottom: 12%;
+  transform: translateX(-50%);
+  width: 84%;
+  height: 84%;
+}
+
+/* the study grid */
+.dp-token-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--g-5);
+  margin-bottom: var(--g-5);
+}

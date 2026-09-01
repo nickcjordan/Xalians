@@ -4,6 +4,7 @@ import DuelMoveRegion from '../board/duelMoveRegion';
 import DuelTargetLayer from '../board/duelTargetLayer';
 import { ReactComponent as DuelFlagIcon } from '../../../../svg/games/duel/duel_flag_icon.svg';
 import * as duelConstants from '../../../../gameplay/duel/duelGameConstants';
+import tokens from '../../../../constants/designTokens';
 
 /**
  * A board fragment, described rather than played.
@@ -80,6 +81,7 @@ class DuelSpecimenBoard extends React.Component {
 					}
 					{piece &&
 						<DuelPieceToken
+							elementColor={tokens.themeColors[(piece.xalian.elementType || '').toLowerCase()]}
 							xalian={piece.xalian}
 							cellSize={cellSize}
 							teamColor={this.teamColour(piece.team)}
@@ -99,13 +101,13 @@ class DuelSpecimenBoard extends React.Component {
 	}
 
 	render() {
-		const { columns, cellSize, move, referencedMove, targets, originIndex, caption, note } = this.props;
+		const { columns, cellSize, move, referencedMove, targets, originIndex, caption, note, variant } = this.props;
 		const grid = columns * cellSize;
 		const cells = [];
 		for (let i = 0; i < columns * columns; i++) cells.push(this.renderCell(i));
 
 		return (
-			<figure className={`duel-specimen ${columns >= 6 ? 'duel-specimen--wide' : ''}`}>
+			<figure className={`duel-specimen ${columns >= 6 ? 'duel-specimen--wide' : ''} ${variant ? `dp-token-study dp-token-${variant}` : ''}`}>
 				<div className="duel-board-wrapper duel-specimen-wrapper">
 					<div className="duel-board-wrapper-background" />
 					<div className="duel-board-wrapper-background-overlay" />

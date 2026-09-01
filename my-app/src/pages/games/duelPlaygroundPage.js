@@ -40,6 +40,7 @@ const SECTIONS = [
 	{ id: 'instruments', index: '07', name: 'Instruments' },
 	{ id: 'dialogs', index: '08', name: 'Dialogs' },
 	{ id: 'scenarios', index: '09', name: 'Scenarios' },
+	{ id: 'tokens', index: '10', name: 'Token Studies' },
 ];
 
 /** the five readings the type matrix can produce, in the order they get worse */
@@ -613,6 +614,72 @@ class DuelPlaygroundPage extends React.Component {
 		);
 	}
 
+	/* -------------------------------------------------------- 10 token studies */
+
+	renderTokens(section) {
+		const size = this.cellFor(5);
+		const big = Math.round(this.cellFor(8) * 0.8);
+
+		// the same position in every study, so the only variable is the treatment
+		const squad = (v) => ({
+			variant: v,
+			pieces: [
+				{ index: 6, xalian: this.at(0), team: 'own' },
+				{ index: 12, xalian: this.at(1), team: 'own', selected: true },
+				{ index: 8, xalian: this.at(2), team: 'foe' },
+				{ index: 18, xalian: this.at(3), team: 'foe' },
+			],
+		});
+
+		const studies = [
+			{
+				v: 'milled', name: 'Milled disc',
+				note: 'A machined counter in the house style - brass rim, hull face, art stamped into it. The most conservative option: it is the same milled metal as every other control on the site, so it needs no new vocabulary. Team colour has to live somewhere else, which is a real cost.',
+			},
+			{
+				v: 'coin', name: 'Team coin',
+				note: 'The disc is the team colour and the creature is knocked out of it. The loudest identity of the four - you can read the whole balance of power at a glance without looking at a single creature. Costs you the element hue on the token face.',
+			},
+			{
+				v: 'element', name: 'Element chip',
+				note: 'A hexagonal chip in the element colour of the creature, with the team as a rim. Puts the thing you actually plan around - the type matchup - into the body of the token. Fourteen hues on the board at once is the risk.',
+			},
+			{
+				v: 'standee', name: 'Standee',
+				note: 'The miniature, done deliberately: a side-on figure standing off the back of a flattened base, as if seen from a high angle rather than straight down. This is the original intent made consistent - the figure and its base agree about where the camera is.',
+			},
+		];
+
+		return (
+			<section className="sg-section" id={section.id}>
+				{this.renderSectionHead(section, 'What a piece physically is. The board is drawn in plan, but every species SVG is a side-on silhouette of a standing animal - so a flat token carrying the creature as printed artwork makes that art correct rather than a compromise: it becomes a picture on a thing rather than a thing. The standee takes the opposite position and commits to the figure. Each study renders the same four pieces, so the treatment is the only variable.')}
+
+				<div className="dp-token-row">
+					{studies.map(st => (
+						<DuelSpecimenBoard key={st.v} columns={5} cellSize={size}
+							caption={st.name} note={st.note} {...squad(st.v)} />
+					))}
+				</div>
+
+				{this.renderSubhead('In a crowd', 'A treatment that reads in a four-piece study can still fail on a full board, which is where these actually have to work.')}
+				<div className="dp-token-row">
+					{studies.map(st => (
+						<DuelSpecimenBoard key={st.v} columns={8} cellSize={big}
+							variant={st.v}
+							caption={st.name}
+							flags={[{ index: 11, team: 'own' }, { index: 52, team: 'foe' }]}
+							pieces={[
+								...[57, 58, 59, 60, 61].map((index, i) => ({ index, xalian: this.at(i), team: 'own' })),
+								...[2, 3, 4, 5, 6].map((index, i) => ({ index, xalian: this.at(i + 5), team: 'foe' })),
+								{ index: 35, xalian: this.at(2), team: 'own', selected: true },
+								{ index: 27, xalian: this.at(7), team: 'foe' },
+							]} />
+					))}
+				</div>
+			</section>
+		);
+	}
+
 	/* ----------------------------------------------------------------- render */
 
 	render() {
@@ -675,6 +742,7 @@ class DuelPlaygroundPage extends React.Component {
 					{this.renderInstruments(SECTIONS[6])}
 					{this.renderDialogs(SECTIONS[7])}
 					{this.renderScenarios(SECTIONS[8])}
+					{this.renderTokens(SECTIONS[9])}
 
 				</div>
 			</div>
