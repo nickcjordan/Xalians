@@ -511,19 +511,24 @@
   border: 0;
   /* The texture belongs on the FACE, not the edge. Striped edges made it a
      poker chip; a checkers piece carries its machining as concentric rings
-     turned into the top face near the rim, so three grooves are cut there -
-     each a dark ring with a hairline of catch-light under it. */
+     turned into the top face near the rim: four ridges, each a cut shadow
+     with a catch-light beside it. The first pass drew them at 0.4 black
+     over a face already nearly black at its rim, which erased them - so
+     the cuts are deeper, the lights brighter, and the face's outer zone
+     stays light enough to be cut into. */
   background:
     radial-gradient(ellipse at 50% 50%,
-      transparent 55%,
-      rgba(0, 0, 0, 0.4) 56%, rgba(0, 0, 0, 0.4) 58%, rgba(255, 244, 214, 0.10) 59%,
-      transparent 60% 66%,
-      rgba(0, 0, 0, 0.4) 67%, rgba(0, 0, 0, 0.4) 69%, rgba(255, 244, 214, 0.10) 70%,
-      transparent 71% 77%,
-      rgba(0, 0, 0, 0.4) 78%, rgba(0, 0, 0, 0.4) 80%, rgba(255, 244, 214, 0.10) 81%,
-      transparent 82%),
+      transparent 50%,
+      rgba(0, 0, 0, 0.55) 51%, rgba(0, 0, 0, 0.55) 53%, rgba(255, 244, 214, 0.30) 54%, rgba(255, 244, 214, 0.30) 55%,
+      transparent 56% 60%,
+      rgba(0, 0, 0, 0.55) 61%, rgba(0, 0, 0, 0.55) 63%, rgba(255, 244, 214, 0.30) 64%, rgba(255, 244, 214, 0.30) 65%,
+      transparent 66% 70%,
+      rgba(0, 0, 0, 0.55) 71%, rgba(0, 0, 0, 0.55) 73%, rgba(255, 244, 214, 0.30) 74%, rgba(255, 244, 214, 0.30) 75%,
+      transparent 76% 80%,
+      rgba(0, 0, 0, 0.55) 81%, rgba(0, 0, 0, 0.55) 83%, rgba(255, 244, 214, 0.30) 84%, rgba(255, 244, 214, 0.30) 85%,
+      transparent 86%),
     radial-gradient(ellipse at 50% 42%, rgba(255, 244, 214, 0.28) 0%, transparent 68%),
-    radial-gradient(ellipse at 50% 50%, #4a4a3c 0%, #38382e 60%, #262620 100%);
+    radial-gradient(ellipse at 50% 50%, #4a4a3c 0%, #3c3c31 65%, #2e2e26 100%);
   box-shadow:
     0 11px 10px rgba(0, 0, 0, 0.6),
     inset 0 1px 0 rgba(255, 244, 214, 0.28),
