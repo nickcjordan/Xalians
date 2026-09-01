@@ -565,46 +565,39 @@
     drop-shadow(0 5px 4px rgba(0, 0, 0, 0.38)) !important;
 }
 
-/* THE NAMEPLATE. The stock badge is a circle button - an element-coloured
-   disc with a glyph sized for a much larger context. At a fifth of a cell
-   the glyph is unreadable noise and the disc just sits ON the base like a
-   sticker. The element's LEGIBLE signal at this size is its hue (the 14
-   hues are fixed identity), so the badge becomes a slim enamel capsule
-   set into the base's front wall - where a miniature wears its nameplate -
-   and the glyph is dropped entirely. */
+/* THE ELEMENT IS PAINT ON THE WALL, NOT A PLAQUE. Two failed attempts
+   taught the shape of this: a glossy capsule read as an unlit indicator -
+   an object that looks like it should hold text or light up - and a glyph
+   stamped into it was a smudge at board size, because no symbol survives
+   at a tenth of a 62px cell. So there is no object and no symbol. The
+   element is a smooth section of enamel painted onto the knurled wall
+   itself, flush with the ridges: material, not interface. Its hue is the
+   information (the 14 element hues are fixed identity); the glyph lives
+   where there is room for it - detail panels and dialogs. */
 .dp-token-plinth .duel-type-badge,
 .dp-token-outline .duel-type-badge {
-  width: 32% !important;
-  height: 10% !important;
+  width: 26% !important;
+  height: 9% !important;
   min-width: 0 !important;
   left: 50%;
   right: auto;
   top: auto;
-  bottom: 30%;
+  bottom: 28%;
   transform: translateX(-50%);
-  border-radius: 999px;
-  border: 1px solid rgba(0, 0, 0, 0.75);
+  border-radius: 2px;
+  border: 0;
   background: linear-gradient(180deg,
-    color-mix(in srgb, var(--duel-element, var(--g-bone)) 75%, white) 0%,
-    var(--duel-element, var(--g-bone)) 45%,
-    color-mix(in srgb, var(--duel-element, var(--g-bone)) 65%, black) 100%) !important;
+    color-mix(in srgb, var(--duel-element, var(--g-bone)) 78%, black) 0%,
+    color-mix(in srgb, var(--duel-element, var(--g-bone)) 62%, black) 100%) !important;
   box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.85),
-    inset 0 1px 1px rgba(255, 255, 255, 0.3) !important;
+    inset 0 1px 0 rgba(0, 0, 0, 0.5),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.4) !important;
   filter: none !important;
 }
 
-/* The stamp. An empty pill read as an indicator of nothing, so the element
-   glyph comes back - struck into the enamel as a dark maker's mark. At
-   board size it reads as a mark on the plate rather than as a symbol; lean
-   in close (or open a detail panel) and it resolves. */
 .dp-token-plinth .duel-type-badge svg,
 .dp-token-outline .duel-type-badge svg {
-  display: block;
-  width: auto !important;
-  height: 82% !important;
-  margin: auto !important;
-  opacity: 0.7;
+  display: none;
 }
 
 .dp-token-plinth .duel-piece--selected .duel-piece-base::before,
