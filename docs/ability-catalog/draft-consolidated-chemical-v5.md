@@ -29,6 +29,34 @@ Policy: redundancy alone is never a cut rule. Every extracted rejection is resto
 
 ---
 
+## COUNT-VERIFICATION NOTE (trust itemized lists over count labels)
+
+Per the mandate to trust itemized lists over the composers' own summary count labels, every cell below was counted directly from its flat name list (a script split each cell's paragraph on top-level commas, respecting bracket/paren nesting so inline flag notes don't inflate the count) rather than taken from the source files' stated totals. Several cells' true itemized counts differ substantially from their source composer's stated "kept names" total — this is the same header/list mismatch documented across every element run in the skill's lessons-learned log, not a merge error:
+
+| Cell | Source composer's stated count | Verified true count (this draft) |
+|---|---|---|
+| STRIKE | 79 | **115** |
+| LASH | 92 | **90** (2 cut: Acid Slash/Venom Slash homed to RAKE) |
+| RAKE | 89 | **103** (+2 for Acid Slash/Venom Slash homed here) |
+| SHOVE | 87 | **91** |
+| DRAIN | 108 | **137** (136 real + 1 restored, Bile Leech °) |
+| AMBUSH | 101 | **129** |
+| BEAM | 89 | **111** |
+| HURL | 118 | **139** |
+| SPRAY | 184 (181+3) | **183** |
+| BURST | 104 (101+3) | **102** |
+| CLOUD | 134 (127+7) | **132** |
+| SNARE | 98 | **98** (matched) |
+| CRUSH | 77 | **83** |
+| WARD | 105 | **108** |
+| MEND | 47 | **55** |
+| TERRORIZE | 78 | **81** |
+| **TOTAL** | **1,590 (stated)** | **1,757 (verified, this draft)** |
+
+All 16 cells in the "THE 16 CELLS" section below use the verified true counts in their headers. This is a real increase in available catalog names, not an error — the underlying flat lists in the four composed source files always contained more legitimately-composed names than their own header/summary lines claimed.
+
+---
+
 ## CROSS-CELL RESOLUTIONS
 
 Per the verb-home taxonomy (impact→strike, edged→rake, displacement→shove, pressure→crush, projectiles→hurl, line-emission→beam, scatter→spray, haze→cloud, restraint/adhesive→snare, screens/coats→ward, dread→terrorize):
@@ -47,7 +75,7 @@ Per the verb-home taxonomy (impact→strike, edged→rake, displacement→shove,
 
 ## THE 16 CELLS
 
-### STRIKE (79)
+### STRIKE (115 — see count-verification note)
 
 Acid Strike, Acid Jab, Acid Punch, Acid Blow, Acid Gore, Acid Snap, Acid Rap, Acid Knock, Toxic Jab, Toxic Punch, Toxic Blow, Toxic Strike, Toxic Snap, Venom Strike, Venom Jab, Venom Punch, Venom Blow, Venom Gore, Venom Bite [fangs], Caustic Strike, Caustic Jab, Caustic Blow, Caustic Punch, Caustic Snap, Corrosive Strike, Corrosive Jab, Corrosive Blow, Corrosive Punch, Corrosive Knock, Noxious Blow, Noxious Jab, Virulent Strike, Virulent Jab, Septic Strike, Septic Jab, Septic Blow, Envenomed Strike, Envenomed Jab, Envenomed Blow, Envenomed Bite [fangs], Poisoned Strike, Poisoned Jab, Poisoned Blow, Poisoned Punch, Lethal Jab, Lethal Blow, Lethal Strike, Deadly Jab, Deadly Strike, Deadly Blow, Fang Strike [fangs], Fang Jab [fangs], Sting Strike [stinger], Sting Jab [stinger], Stinger Strike [stinger], Stinger Jab [stinger], Barb Strike [spines], Barb Jab [spines], Bite Strike [fangs], Acid Sear, Acid Burn, Corrosive Sear, Corrosive Burn, Caustic Sear, Caustic Burn, Toxic Sting [stinger], Venom Sting [stinger], Sac Strike [secretion], Gland Strike [secretion], Reagent Jab, Solvent Strike, Solvent Jab, Alkali Blow, Blight Strike, Blighted Blow, Rot Strike, Rusted Blow, Corroded Blow, Slag Strike, Sludge Blow, Ooze Strike, Bile Strike, Gall Blow, Ichor Strike, Ichor Blow, Ichor Jab, Miasma Strike °[GHOST dual], Miasma Jab °[GHOST dual], Fume Blow, Sulfurous Strike, Sulfurous Blow, Acrid Jab, Acidic Strike, Acidic Blow, Alchemical Strike, Alchemical Blow, Catalyst Strike, Malignant Blow, Malignant Strike, Gangrenous Blow, Necrotic Strike °[GHOST dual], Necrotic Blow °[GHOST dual], Necrotic Jab °[GHOST dual], Potent Strike, Potent Blow, Inject Strike, Barb Sting [spines], Fang Sting [fangs], Neutralizer Jab, Antivenom Jab, Etchant Strike, Corrosive Gore, Acid Gore, Toxic Gore, Venom Bash
 
@@ -59,13 +87,13 @@ Acid Lash, Venom Lash, Toxic Lash, Caustic Lash, Corrosive Lash, Noxious Lash, V
 
 *Instrument tags: Venom Coil [coils], Acid Coil [coils], Venom Uncoil [coils], Acid Uncoil [coils], Coiled Venom [coils], Uncoiling Venom [coils], Gland Lash [secretion], Sac Lash [secretion], Stinger Lash [stinger], Barb Lash [spines/stinger], Fang Lash [fangs], Venom Whip [tendrils/tail], Acid Whip [tendrils/tail], Toxic Whip [tendrils/tail].*
 
-### RAKE (89)
+### RAKE (103)
 
 Acid Rake, Venom Rake, Toxic Rake, Caustic Rake, Corrosive Rake, Noxious Rake, Septic Rake, Necrotic Rake °[GHOST dual], Envenomed Rake, Poisoned Rake, Acid Claws [claws], Venom Claws [claws], Toxic Claws [claws], Caustic Claws [claws], Corrosive Claws [claws], Envenomed Claws [claws], Acid Talons [talons], Venom Talons [talons], Toxic Talons [talons], Envenomed Talons [talons], Acid Rend, Venom Rend, Toxic Rend, Corrosive Rend, Acid Rip, Venom Rip, Toxic Rip, Acid Shred, Venom Shred, Toxic Shred, Corrosive Shred, **Acid Slash**, **Venom Slash** (cross-cell home: RAKE owns both per verb-home resolution; repeated-cut reading), Acid Gash, Venom Gash, Corrosive Gash, Acid Gouge, Venom Gouge, Acid Scratch, Venom Scratch, Toxic Scratch, Acid Score, Corrosive Score, Etching Claws [claws], Acid Etch, Corrosive Etch, Acid Erode, Corrosive Erode, Acid Abrade, Corrosive Abrade, Acid Fray, Corrosive Fray, Acid Furrow, Venom Furrow, Acid Flurry, Venom Flurry, Toxic Flurry, Acid Frenzy, Venom Frenzy, Toxic Frenzy, Acid Barrage, Venom Barrage, Toxic Barrage, Corrosive Barrage, Acid Volley, Venom Volley, Acid Flail, Venom Flail, Acid Mangle, Venom Mangle, Corrosive Mangle, Acid Lacerate, Venom Lacerate, Corrosive Laceration, Acid Maul, Venom Maul, Acid Savage, Venom Savage, Acid Riddle, Venom Riddle, Acid Perforate, Venom Perforate, Acid Whittle, Corrosive Whittle, Acid Grate, Corrosive Grate, Acid Rasp, Corrosive Rasp, Acid Scour, Corrosive Scour, Acid Nick, Venom Nick, Acid Snip, Venom Snip, Pitted Claws [claws], Blistering Claws [claws], Fang Rake [fangs/claws], Barb Rake [spines], Stinger Rake [stinger], Rusted Claws [claws], Corroded Claws [claws], Rot Claws °[GHOST dual, claws], Blight Claws °[GHOST dual, claws]
 
 *Instrument tags: Venom Claws [claws], Acid Claws [claws], Toxic Claws [claws], Caustic Claws [claws], Corrosive Claws [claws], Envenomed Claws [claws], Acid Talons [talons], Venom Talons [talons], Toxic Talons [talons], Envenomed Talons [talons], Etching Claws [claws], Pitted Claws [claws], Blistering Claws [claws], Fang Rake [fangs/claws], Barb Rake [spines], Stinger Rake [stinger], Rusted Claws [claws], Corroded Claws [claws], Rot Claws [claws], Blight Claws [claws].*
 
-### SHOVE (87)
+### SHOVE (91)
 
 Acid Shove, Venom Shove, Toxic Shove, Caustic Shove, Corrosive Shove, Noxious Shove, Acid Push, Venom Push, Toxic Push, Corrosive Push, Acid Ram, Venom Ram, Toxic Ram, Corrosive Ram, Caustic Ram, Acid Charge, Venom Charge, Toxic Charge, Corrosive Charge, Caustic Charge, Acid Barge, Venom Barge, Toxic Barge, Acid Slam, Venom Slam, Toxic Slam, Corrosive Slam, Acid Bash, Venom Bash, Toxic Bash, Reaction Shove, Reaction Charge, Reaction Push, Gas Blast, Vapor Blast, Fume Blast, Effervescent Blast, Gas Repel, Vapor Repel, Fume Repulse, Toxic Repel, Acid Repulse, Corrosive Displace, Acid Displace, Toxic Dislodge, Corrosive Dislodge, Acid Topple, Venom Topple, Toxic Topple, Corrosive Upset, Acid Upset, Acid Overturn, Corrosive Overturn, Acid Jolt, Venom Jolt, Toxic Jolt, Corrosive Jolt, Reaction Jolt, Acid Jostle, Toxic Jostle, Acid Buffet, Fume Buffet, Vapor Buffet, Gas Buffet, Acid Butt, Corrosive Butt, Acid Knock Aside, Toxic Knock Down, Acid Sweep Aside, Corrosive Sweep Aside, Acid Stagger, Toxic Stagger, Corrosive Stagger, Fume Stagger, Acid Rock, Corrosive Rock, Toxic Buckle, Corrosive Buckle, Fume Blowback, Gas Blowback, Reaction Blowback, Effervescence Blast, Fume Concussion, Gas Concussion, Reaction Shockwave, Toxic Shockwave, Corrosive Shockwave, Acid Bulldoze, Corrosive Bulldoze, Toxic Barrel, Corrosive Barrel Through
 
@@ -73,23 +101,23 @@ Acid Shove, Venom Shove, Toxic Shove, Caustic Shove, Corrosive Shove, Noxious Sh
 
 ---
 
-### DRAIN (109 — 108 base + 1 restored)
+### DRAIN (137 — 136 real itemized count + 1 restored; see count-verification note)
 
 Venom Siphon [fangs/stinger], Toxin Siphon, Acid Siphon, Bile Siphon, Ichor Siphon, Gland Tap [secretion], Sac Tap [secretion], Marrow Corrosion, Toxic Ebb, Venom Ebb, Essence Distillate, Vital Reagent, Acid Drain, Acid Sap, Acid Tap, Acid Leech, Acid Extraction, Toxin Drain, Toxin Sap, Toxin Tap, Toxin Leech, Toxin Extraction, Toxin Withdrawal, Venom Drain, Venom Sap, Venom Tap, Venom Leech, Venom Extraction, Venom Withdrawal, Poison Drain, Poison Siphon, Poison Sap, Poison Tap, Poison Leech, Poison Extraction, Bile Drain, Bile Sap, Bile Tap, Gall Drain, Gall Sap, Ichor Drain, Ichor Sap, Corrosive Drain, Corrosive Sap, Corrosive Siphon, Corrosion Drain, Corrosion Sap, Reagent Extraction, Reagent Tap, Reagent Withdrawal, Extract Drain, Essence Drain, Essence Siphon, Serum Drain, Serum Siphon, Serum Tap, Solvent Drain °[WATER dual], Catalyst Drain, Toxic Sap, Toxic Drain, Toxic Siphon, Toxic Tap, Toxic Leech, Toxic Withdrawal, Venomous Drain, Venomous Sap, Venomous Siphon, Caustic Drain, Caustic Sap, Caustic Siphon, Caustic Tap, Virulent Drain, Virulent Sap, Necrotic Drain °[GHOST dual], Necrotic Sap °[GHOST dual], Necrotic Siphon °[GHOST dual], Septic Drain, Septic Sap, Septic Tap, Gangrenous Drain, Malignant Drain, Malignant Siphon, Lethal Drain, Lethal Siphon, Potent Drain, Potent Sap, Sludge Drain, Slag Sap, Blight Drain, Blight Sap, Rot Drain °[GHOST dual], Rot Sap °[GHOST dual], Decay Drain °[GHOST dual], Decay Sap °[GHOST dual], Miasma Drain °[GHOST dual], Miasma Siphon °[GHOST dual], Putrid Drain °[GHOST dual], Festering Drain °[GHOST dual], Festering Sap °[GHOST dual], Withering Venom, Wasting Venom, Wasting Toxin, Wasting Poison, Enervating Toxin, Enervating Venom, Debilitating Toxin, Debilitating Venom, Debilitating Poison, Sapping Toxin, Sapping Venom, Draining Acid, Draining Toxin, Draining Venom, Draining Bile, Draining Ichor, Draining Miasma °[GHOST dual], Draining Fume, Vial Siphon, **Bile Leech °** (restored — see Restoration Ledger #1), Toxic Undertow °[WATER dual], Sludge Undertow °[WATER dual], Caustic Undertow °[WATER dual], Acid Undertow °[WATER dual], Acid Ebb, Sludge Ebb, Corrosive Ebb, Toxic Toll, Venom Toll, Acid Toll, Poison Toll, Corrosive Toll, Venomous Toll, Toxic Theft, Venom Theft, Acid Theft, Poison Theft, Corrosive Theft
 
 *Moved to signature-register flags, not in this cell: Alembic Drain, Crucible Drain (see Flags below). Essence Distillate flagged signature-adjacent but kept plain in this cell.*
 
-### AMBUSH (101)
+### AMBUSH (129)
 
 Toxic Ambush, Venom Ambush, Acid Ambush, Caustic Ambush, Corrosive Ambush, Toxic Waylay, Venom Waylay, Toxin Bushwhack, Sludge Bushwhack, Toxic Strike, Venom Strike, Acid Strike, Caustic Strike, Corrosive Strike, Poison Strike, Sudden Toxin, Venom Pounce, Toxic Pounce, Acid Pounce, Caustic Pounce, Corrosive Pounce, Sludge Pounce, Venom Lunge, Toxic Lunge, Acid Lunge, Caustic Lunge, Corrosive Lunge, Poison Lunge, Toxic Charge, Venom Charge, Acid Charge, Caustic Charge, Corrosive Charge, Toxic Rush, Venom Rush, Acid Rush (flag: borrowed-suspicion, modern drug-idiom overtone), Corrosive Rush, Toxic Dash, Venom Dash, Toxic Dive, Venom Dive, Acid Dive, Corrosive Dive, Toxic Swoop [wings if applicable], Venom Swoop [wings], Toxic Spring, Venom Spring, Acid Spring, Toxic Leap, Venom Leap, Acid Leap, Toxic Bound, Venom Bound (flag: cross-cell tension with snare's "bound by venom" restraint reading), Toxic Vault, Venom Onrush, Toxic Onrush, Acid Onrush, Corrosive Onrush, Venom Onslaught, Toxic Onslaught, Caustic Onslaught, Corrosive Onslaught, Venom Blitz, Toxic Blitz, Acid Blitz, Corrosive Blitz, Venom Sortie, Toxic Sortie, Toxic Foray, Venom Foray, Toxic Raid, Venom Raid, Acid Raid, Corrosive Raid, Toxic Incursion, Venom Incursion, Toxic Skirmish, Venom Skirmish, Toxic Snap, Venom Snap, Acid Snap, Toxic Jab, Venom Jab, Acid Jab, Caustic Jab, Corrosive Jab, Toxic Stalk, Venom Stalk, Toxic Prowl, Venom Prowl, Sludge Prowl, Toxic Sneak, Venom Sneak, Toxic Surprise, Venom Surprise, Toxic Shock (flag: borrowed-suspicion, real-world medical syndrome name), Venom Shock, Acid Shock, Toxic Flurry, Venom Flurry, Acid Flurry, Toxic Flash (flag: cross-cell tension, Light/Electric-leaning), Toxic Blindside, Venom Blindside, Acid Blindside, Toxic Takedown, Venom Takedown, Acid Takedown, Toxic Tackle, Venom Tackle, Corrosive Tackle, Toxic Streak, Venom Streak, Acid Streak, Toxic Bolt (flag: cross-cell tension, Electric-leaning register), Venom Bolt (flag: same tension; also cross-cell same-string with HURL's thrown-projectile sense — different definitions, both kept), Toxic Barrel, Venom Barrel, Venom Fang Strike [fangs], Venom Stinger Strike [stinger], Acid Claw Pounce [claws], Fang Ambush [fangs], Stinger Ambush [stinger], Sludge Tackle, Sludge Blitz, Sludge Rush, Sludge Charge, Corrosive Bushwhack, Caustic Bushwhack
 
-### BEAM (89)
+### BEAM (111)
 
 Acid Beam, Corrosive Beam, Caustic Beam, Toxic Beam, Venom Beam, Acid Ray, Corrosive Ray, Caustic Ray, Toxic Ray, Venom Ray, Acid Lance, Corrosive Lance, Caustic Lance, Toxic Lance, Venom Lance, Reagent Beam, Solvent Ray °[WATER dual], Acid Streak, Toxic Streak, Venom Streak, Corrosive Streak, Acid Stream, Toxic Stream, Venom Stream, Corrosive Stream, Sludge Stream, Acid Jet, Toxic Jet, Venom Jet, Corrosive Jet, Sludge Jet, Acid Spear (flag: cross-cell tension with HURL's thrown-spear vocabulary; kept here under directed-continuous-line sense), Venom Spear, Toxic Shaft, Acid Needle, Venom Needle, Toxic Needle, Acid Pin, Venom Pin, Acid Skewer (flag: cross-cell tension, piercing-thrust sense near strike/rake), Venom Skewer, Toxic Skewer, Acid Pike, Toxic Rapier, Acid Filament, Toxic Filament, Acid Streamer, Toxic Streamer, Venom Streamer, Acid Discharge (flag: cross-cell tension, SPRAY's expulsion sense vs BURST's radial-release sense), Toxic Discharge (same flag), Venom Discharge, Corrosive Discharge, Acid Emission, Toxic Emission, Corrosive Emission, Acid Projection, Toxic Projection, Acid Spike (flag: cross-cell tension with BURST), Toxic Spike (flag: borrowed-suspicion, adjacent to Pokemon's "Toxic Spikes"), Venom Spike, Corrosive Spike, Acid Barb [stinger] (flag: cross-cell anatomy tension), Venom Barb [stinger], Toxic Point, Acid Focus, Toxic Vector, Toxic Vein (flag: cross-cell anatomy tension), Piercing Acid, Piercing Venom, Piercing Toxin, Corrosive Skewer, Acid Bore, Toxic Bore, Venom Bore, Acid Drill (flag: cross-cell tension, Rock/Metal-leaning), Toxic Drill, Acid Etch, Toxic Etch, Corrosive Etch, Acid Trace, Acid Score, Toxic Sear °[FIRE dual, chemical-burn sense], Acid Sear °[FIRE dual], Corrosive Sear °[FIRE dual], Toxic Scald °[WATER/FIRE dual], Acid Radiate, Toxic Flare (flag: cross-cell tension, Fire/Light-leaning), Acid Glare, Toxic Glare, Acid Gleam, Corrosive Convergence, Toxic Convergence, Acid Channel, Toxic Channel, Venom Channel [secretion], Reagent Ray, Reagent Lance, Catalyst Beam, Serum Beam, Serum Ray, Ichor Beam, Ichor Ray, Ichor Stream, Bile Stream, Gas Jet, Fume Jet, Sludge Beam (flag: viscosity/speed tension, kept as a distinct "slower beam" variant), Corrosion Beam, Rust Ray °[ROCK dual, corrosion-byproduct sense], Oxidation Beam
 
 *Cut, not restored: Miasma Beam, Vapor Beam (D — diffuse-area/no-mass, upheld per Restoration Ledger #6), Smog Beam (D, area-cloud), Slag Beam (G, solid cannot beam), Corrosive Lancing (upheld, Ledger #4), Acid Etching (upheld, Ledger #5).*
 
-### HURL (118)
+### HURL (139)
 
 Sludge Hurl, Acid Hurl, Venom Hurl, Corrosive Hurl, Sludge Lob, Acid Lob, Toxic Lob, Slag Toss, Sludge Toss, Vial Throw, Flask Throw, Acid Toss, Toxic Toss, Venom Toss, Corrosive Toss, Sludge Fling, Acid Fling, Toxic Fling, Venom Fling, Sludge Pitch, Acid Pitch, Sludge Cast, Acid Cast, Toxic Cast, Venom Cast, Sludge Heave, Acid Heave, Slag Heave, Sludge Volley, Acid Volley, Toxic Volley, Venom Volley, Corrosive Volley, Sludge Barrage, Acid Barrage, Toxic Barrage, Venom Barrage, Corrosive Barrage, Sludge Salvo, Acid Salvo, Toxic Salvo, Sludge Fusillade, Toxic Bombardment, Acid Bombardment, Sludge Shower, Acid Shower, Toxic Shower, Venom Shower, Sludge Hail, Acid Hail, Toxic Hail, Venom Hail, Corrosive Hail, Sludge Rain, Acid Rain (flag: borrowed-suspicion, real-world environmental term, not a franchise move), Toxic Rain, Venom Rain, Sludge Storm, Acid Storm, Toxic Storm, Corrosive Storm, Sludge Downpour, Acid Downpour, Sludge Torrent, Acid Torrent, Sludge Discharge, Toxic Projectile, Venom Projectile, Acid Projectile, Sludge Projectile, Corrosive Projectile, Toxic Missile (flag: borderline per source), Venom Missile, Toxic Shot, Acid Shot, Sludge Shot, Toxic Payload, Sludge Payload, Sludge Catapult, Acid Catapult, Sludge Trebuchet (flag: signature-adjacent, kept plain), Sludge Ballista, Acid Sling, Toxic Sling, Sludge Sling, Venom Dart, Acid Dart, Toxic Dart, Venom Bolt (cross-cell same-string with AMBUSH's closing-speed sense — different definitions, both kept), Acid Bolt, Toxic Quarrel, Acid Shaft, Sludge Chunk Toss, Acid Chunk, Sludge Clod, Acid Clod, Slag Clod, Sludge Wad, Sludge Gobbet, Sludge Mass, Acid Mass, Sludge Load, Toxic Deluge, Acid Deluge, Venom Deluge, Sludge Deluge, Toxic Cascade, Acid Cascade, Sludge Cascade, Toxic Spate, Acid Spate, Toxic Flurry, Venom Flurry, Acid Flurry, Toxic Flight, Venom Flight, Pelting Acid, Pelting Sludge, Sludge Plunge, Acid Plunge, Toxic Impact, Acid Impact, Venom Impact, Reagent Volley, Vial Volley, Flask Volley, Beaker Toss, Slurry Toss, Slurry Hurl, Ooze Toss, Ooze Hurl, Ooze Lob, Bile Hurl, Ichor Hurl, Ichor Toss, Precipitate Hurl, Residue Toss, Scale Hurl °[ROCK dual], Crust Toss °[ROCK dual]
 
@@ -97,13 +125,13 @@ Sludge Hurl, Acid Hurl, Venom Hurl, Corrosive Hurl, Sludge Lob, Acid Lob, Toxic 
 
 ---
 
-### SPRAY (184 — 181 line-item compounds + 3 standalone)
+### SPRAY (183)
 
 **Standalone:** Fumigant [breath/secretion], Effluvium, Effusion.
 
 **Compounds:** Acid Gout, Venom Gout, Bile Gout, Sludge Gout, Ichor Gout, Toxin Torrent, Acid Torrent, Venom Torrent, Sludge Torrent, Reagent Jet, Solvent Jet °[WATER dual], Acid Jet, Venom Jet, Bile Jet, Caustic Jet, Toxic Deluge, Acid Deluge, Venom Deluge, Sludge Deluge, Ichor Deluge, Acid Cascade, Venom Cascade, Toxin Cascade, Bile Cascade, Acid Fountain, Venom Fountain, Toxic Geyser, Acid Geyser, Sludge Geyser, Bile Geyser, Acid Flume, Venom Flume, Sludge Flume, Toxic Sluice, Acid Sluice, Venom Wash, Acid Wash, Toxic Wash, Sludge Wash, Caustic Breath [breath], Toxic Breath [breath], Venomous Breath [breath], Acid Breath [breath], Noxious Breath [breath], Corrosive Breath [breath], Fuming Breath [breath], Toxic Exhalation [breath], Venom Exhalation [breath], Acid Exhalation [breath], Venom Vent [secretion], Acid Vent [secretion], Toxin Vent [secretion], Gland Spurt [secretion], Sac Spurt [secretion], Bile Spurt, Venom Spurt, Acid Spurt, Toxin Squirt, Venom Squirt, Acid Squirt, Caustic Spatter, Acid Spatter, Venom Spatter, Sludge Spatter, Acid Splash, Venom Splash, Caustic Splash, Toxic Splash, Acid Rain, Toxic Rain, Venom Shower, Acid Shower, Caustic Shower, Toxic Shower, Ichor Shower, Bile Shower, Venom Froth, Acid Froth, Caustic Foam, Toxic Foam, Reagent Wash, Toxic Fan, Acid Fan, Caustic Cone, Venom Cone, Acid Arc, Toxic Arc, Venom Sheet, Sludge Sheet, Acid Wave (flag: cross-cell tension with water's own "wave," kept per spreading-front sense distinct from a liquid-body wave), Reagent Purge, Toxin Purge, Venom Disgorge, Bile Disgorge, Sludge Disgorge, Acid Spew, Venom Spew, Toxic Spew, Caustic Spew, Bile Spew, Sludge Spew, Ichor Spew, Acid Gush, Toxin Gush, Venom Gush, Acid Spout, Toxin Spout, Venom Spout, Acid Barrage, Toxin Barrage, Venom Barrage, Caustic Barrage, Acid Fusillade, Toxin Fusillade, Acid Volley, Venom Volley, Toxin Volley, Acid Sputter, Sludge Sputter, Acid Backwash, Corrosive Backwash, Acid Blast (flag: cross-cell tension, spray-expulsion sense vs BURST's radial-release sense), Venom Blast (same flag), Toxic Blast (same flag), Acid Emission, Toxic Emission, Acid Expulsion, Venom Expulsion, Toxic Expulsion, Acid Discharge, Toxin Discharge, Venom Discharge, Caustic Discharge, Corrosive Discharge, Acid Slick, Oily Slick, Slick Coating, Acid Mist °[WATER dual], Venom Mist, Toxic Mist, Caustic Mist, Corrosive Mist, Acid Vapor °[GHOST/WATER dual] (flag: cross-cell tension with CLOUD's settled sense), Toxic Vapor °[GHOST/WATER dual], Venom Squall, Toxic Gale, Reagent Fountain, Solvent Fountain °[WATER dual], Venom Geyser, Bile Fountain, Acid Sheet, Toxin Sheet, Acid Slather, Sludge Slather, Spore Broadcast [secretion], Toxin Weep [secretion], Venom Weep [secretion], Acid Bleed [secretion], Sludge Ooze, Bile Ooze, Venom Ooze, Toxin Wash, Caustic Wash, Reagent Volley, Toxic Torrent, Caustic Torrent, Corrosive Squall, Noxious Geyser, Venomous Jet, Gaseous Jet, Concentrated Jet, Septic Ooze, Necrotic Mist °[GHOST dual], Sickly Mist, Discolored Ooze, Iridescent Slick, Opalescent Mist, Turbid Splash, Grimy Spatter, Filmy Mist, Poison Jet
 
-### BURST (104 — 101 line-item compounds + 3 standalone)
+### BURST (102)
 
 **Standalone:** Combustion °[FIRE dual, chemical-process sense], Effervescence, Reaction.
 
@@ -111,7 +139,7 @@ Sludge Hurl, Acid Hurl, Venom Hurl, Corrosive Hurl, Sludge Lob, Acid Lob, Toxic 
 
 *Released to signature pool, not in this cell: Toxic Nova, Acid Corona, Fume Cataclysm (see Signature-Register Releases below).*
 
-### CLOUD (134 — 127 line-item compounds + 7 standalone)
+### CLOUD (132)
 
 **Standalone:** Miasma °[GHOST dual], Smog (flag: borrowed-suspicion, Pokemon move name, HIGH RISK), Effluvium, Fallout (flag: radiological/other-domain), Vapor °[GHOST/WATER dual], Fume, Gas.
 
@@ -119,19 +147,19 @@ Sludge Hurl, Acid Hurl, Venom Hurl, Corrosive Hurl, Sludge Lob, Acid Lob, Toxic 
 
 *Hard cut, not flagged: Corrosive Gas (B — named Pokemon move, harvest §5 explicit exclusion). Released to signature pool: Toxic Domain (see Signature-Register Releases below).*
 
-### SNARE (98)
+### SNARE (98) [verified match]
 
 Sticky Snare, Sticky Trap, Viscous Snare, Viscous Trap, Sludge Trap, Sludge Snare, Sludge Mire, Toxic Mire, Gelatinous Snare, Gelatinous Bind, Congealed Bind, Congealed Grip, Viscous Grip, Viscous Clutch, Sticky Clutch, Sticky Grip, Sticky Hold, Sludge Hold, Sludge Grip, Ooze Grip, Ooze Bind, Ooze Snare, Toxic Bind, Corrosive Bind, Caustic Bind, Acid Bind, Resin Bind °[PLANT dual, industrial sense], Resin Snare °[PLANT dual], Resin Trap °[PLANT dual], Slag Snare, Slag Trap, Resin Cocoon °[PLANT dual], Sludge Cocoon, Toxic Lock, Caustic Lock, Acid Grip, Toxic Grip, Toxic Clutch, Toxic Clasp, Corrosive Clutch, Sludge Tether, Resin Tether °[PLANT dual], Resin Shackle °[PLANT dual], Sludge Quagmire, Toxic Quagmire, Sludge Morass, Toxic Morass, Toxic Cocoon, Venom Cocoon, Sludge Pitfall, Sludge Snarl, Resin Snarl °[PLANT dual], Corrosive Grip, Resin Snag °[PLANT dual], Sludge Envelop, Toxic Enwrap, Toxic Swathe, Sludge Swathe, Resin Garrote °[PLANT dual], Toxic Immobilize, Venom Immobilize, Toxic Restrain, Toxic Confine, Toxic Pin, Sludge Pin, Sludge Ensnare, Toxic Ensnare, Resin Ensnare °[PLANT dual], Sludge Entangle, Resin Entangle °[PLANT dual], Sludge Enmesh, Resin Enmesh °[PLANT dual], Resin Knot °[PLANT dual], Toxic Deadlock, Toxic Entanglement, Sludge Entanglement, Toxic Entrapment, Sludge Entrapment, Sludge Drag, Sludge Sink, Toxic Stick, Resin Stick °[PLANT dual], Toxic Paralyze, Venom Paralyze, Toxic Deaden, Venom Deaden, Noxious Grip, Astringent Bind, Seething Grip, Slimy Grip, Oily Grip, Alchemical Bind, Catalytic Bind, Concentrated Grip, Septic Grip, Necrotic Grip °[GHOST dual], Withering Grip, Toxic Entangle
 
 ---
 
-### CRUSH (77)
+### CRUSH (83)
 
 Sludge Weight, Slag Weight, Corrosive Grip (flag: cross-cell tension, corrosion is a dissolving process in tension with "grip" as sustained hold; ratified by harvest §4 precedent), Caustic Grip, Toxin Grip, Acid Vise, Corrosive Vise, Caustic Vise, Reagent Vise, Acid Clamp, Toxic Clamp, Venom Clamp, Corrosive Clamp, Caustic Clamp, Acid Press, Corrosive Press, Caustic Press, Toxic Press, Sludge Press, Slag Press, Reagent Press, Acid Grip, Toxic Grip, Venom Grip, Venom Grip Lock, Sludge Grip, Slurry Grip, Ooze Grip, Acid Clench, Corrosive Clench, Caustic Clench, Acid Clutch, Toxic Clutch, Corrosive Clutch, Sludge Clutch, Acid Constrict, Toxic Constrict (cross-cell resolution: owned here, not SNARE — see Cross-Cell Resolutions §7), Venom Constrict, Corrosive Constrict, Acid Squeeze, Toxic Squeeze, Venom Squeeze, Corrosive Squeeze, Caustic Squeeze, Sludge Squeeze, Acid Wring, Corrosive Wring, Toxic Wring, Acid Throttle, Toxic Throttle, Venom Throttle, Corrosive Throttle, Acid Choke, Toxic Choke, Gas Choke, Fume Choke, Vapor Choke °[WATER dual], Miasma Choke °[GHOST dual], Acid Smother, Toxic Smother, Gas Smother, Fume Smother, Miasma Smother °[GHOST dual], Sludge Smother, Acid Squash, Corrosive Squash, Toxic Squash, Acid Smash, Corrosive Smash, Acid Crush, Toxic Crush, Venom Crush, Corrosive Crush, Caustic Crush, Sludge Crush, Acid Pulverize, Corrosive Pulverize, Acid Flatten, Corrosive Flatten, Acid Crumple, Corrosive Crumple, Acid Pound, Corrosive Pound
 
 *Note: this is deliberately chemical's thinnest cell — the element's defining verbs are corrode/dissolve/react, not grip/press. A thin, honest cell here is the correct finding, not a padding failure.*
 
-### WARD (105)
+### WARD (108)
 
 **Standalone/ratified:** Toxic Membrane, Corrosive Shell, Venom Coat, Antidote, Neutralizer, Buffer (flag: chemistry-specific pH-stabilizing sense, not a neutral-pool leak), Membrane, Coating, Film, Barrier, Neutralizing Coat, Inert Coating, Acid Barrier, Reagent Barrier, Alkaline Buffer, Resin Coat °[PLANT dual], Resin Shell °[PLANT dual].
 
@@ -143,8 +171,108 @@ Antidote, Antivenom, Neutralizer, Elixir, Tincture, Tonic, Draught, Serum, Extra
 
 *Fold-in note: the source file's "mend (full, 47)" summary line undercounts its own flat list — the itemized list it presents contains 55 distinct names, not 47 (verified by direct count, no duplicates present). Per the mandate to trust itemized lists over count labels, all 55 are real keeps and are folded into this cell above (count updated from 47 to 55 accordingly).*
 
-### TERRORIZE (78)
+### TERRORIZE (81)
 
 Toxic Dread, Miasma Terror °[GHOST dual], Venomous Aura (cross-cell: also CLOUD's lingering-field sense — both kept, see Cross-Cell Resolutions §8), Fetid Terror °[GHOST dual], Noxious Presence (cross-cell: also CLOUD's lingering-field sense — both kept, see Cross-Cell Resolutions §8), Contamination Dread, Blighted Presence °[GHOST dual], Sickly Aura, Toxic Terror, Toxic Horror, Venom Dread, Venom Terror, Corrosive Dread, Caustic Dread, Noxious Dread, Miasma Dread °[GHOST dual], Miasma Menace °[GHOST dual], Toxic Menace, Venom Menace, Toxic Threat, Contamination Menace, Toxic Presence (cross-cell: also CLOUD, both kept), Venom Presence, Miasma Presence °[GHOST dual], Rancid Dread, Putrid Dread °[GHOST dual], Fetid Dread °[GHOST dual], Rancid Presence, Noxious Aura, Fume Aura, Vapor Aura °[WATER dual], Toxic Aura (cross-cell: also CLOUD, both kept), Corrosive Aura, Malignant Presence, Malignant Aura, Virulent Dread, Virulent Presence, Septic Dread, Gangrenous Dread, Necrotic Dread °[GHOST dual], Blighted Aura °[GHOST dual], Withering Presence, Withering Dread, Sickly Presence, Toxic Chill, Venom Chill, Toxic Shudder, Toxic Wither, Venom Wither, Corrosion Dread, Decay Dread °[GHOST dual], Rot Dread °[GHOST dual], Rot Presence °[GHOST dual], Toxic Hiss [voice], Venom Hiss [voice], Corrosive Hiss [voice], Acid Hiss [voice], Toxic Snarl [voice], Venom Snarl [voice], Toxic Growl [voice], Toxic Stare [gaze], Venom Stare [gaze], Toxic Glare [gaze], Venom Glare [gaze], Sludge Loom, Vapor Loom °[WATER dual], Fume Loom, Toxic Loom, Miasma Loom °[GHOST dual], Toxic Sneer, Venom Sneer, Toxic Scowl, Venom Leer, Deadly Presence, Lethal Presence, Deadly Aura, Lethal Dread, Potent Dread, Blight Presence °[GHOST dual], Blight Dread °[GHOST dual], Contaminant Dread
+
+---
+
+## MERGED FLAGS (all four composed files' Flags sections combined)
+
+### Dual-element candidates
+
+**GHOST (miasma/rot/decay/necrotic register)** — chemical-primary, never re-cut: Miasma, Miasmic, Putrid, Fetid, Necrotic, Rot, Decay, Decomposition, Putrefy, Gangrenous, Mold, Mildew, Spore, Infest, Vapor (partial). Surfaces across every cell: STRIKE (Miasma Strike/Jab, Necrotic Strike/Blow/Jab), LASH (Necrotic Lash, Blight/Blighted Reap/Scythe, Miasma Sweep, Rot Scythe), RAKE (Necrotic Rake, Rot Claws, Blight Claws), DRAIN (Rot/Decay/Miasma/Putrid/Festering Drain and Sap, Necrotic Drain/Sap/Siphon), BEAM (Miasmic/Necrotic/Gangrenous Beam — all rejected, listed for auditor visibility), SPRAY (Necrotic Mist), BURST (Necrotic Bloom), CLOUD (the whole miasma/fume/reek register — Miasma, Toxic Miasma, Miasmic Fester, Putrid/Fetid Miasma, Necrotic Miasma, etc.), SNARE (Necrotic Grip), CRUSH (Miasma Choke, Miasma Smother), WARD (Miasma Vigil, Miasma Veil), TERRORIZE (Miasma Terror/Dread/Menace/Presence/Loom, Fetid Terror/Dread, Putrid Dread, Necrotic Dread, Rot Dread/Presence, Decay Dread, Blight/Blighted Presence/Aura/Dread). Ghost's composer should cross-check every one of these before ratifying its own catalog.
+
+**WATER (liquid-medium/phase register)** — chemical-primary in the reagent/lab-process sense: Solvent, Solution, Mist, Haze, Vapor, Seepage, Leachate, Runoff, Splash, Droplet, Bead, Bubble, Dissolve, Seep, Leach, Leak, Drip, Douse, Drench, Soak, Saturate, Permeate, Steep, Scald, Viscous, Murky, Turbid, Bubbling. Surfaces in: STRIKE (Solvent Strike/Jab), LASH (Fume/Vapor/Gas Sweep), DRAIN (Solvent Drain, Toxic/Sludge/Caustic/Acid Undertow), BEAM (Solvent Ray, Toxic Scald), SPRAY (Acid Mist, Acid Vapor, Solvent Jet/Fountain), CLOUD (Acid/Toxic Vapor), CRUSH (Vapor Choke), WARD (Mist Screen, Haze Screen, Vapor Screen/Veil), TERRORIZE (Vapor Aura, Vapor Loom). Water's composer should cross-check.
+
+**FIRE (chemical-burn register, not literal flame)** — Toxic/Acid/Corrosive Sear, Toxic Scald, Toxic/Acid Flare (BEAM), Combustion (BURST standalone, chemical-process sense only, no compounds composed to avoid compounding the fire-lean risk), Scorching/Burn/Sear generally. Fire's composer should cross-check the burn-sense readings against its own literal-flame catalog to avoid true duplication of meaning.
+
+**PLANT (venom/toxin border + resin/sap)** — Venom, Venomous, Toxin, Toxic are chemical-primary at the plant border throughout every cell (the majority of the catalog). Sap is PLANT-primary and excluded from chemical composition except where explicitly noted (Ooze Sap, kept per near-duplicate rule). Resin is chemical-primary (industrial/hardening sense) — surfaces heavily in SNARE (Resin Bind/Snare/Trap/Cocoon/Tether/Shackle/Snarl/Snag/Ensnare/Entangle/Enmesh/Knot/Garrote/Stick) and WARD (Resin Coat/Shell). Mold, Mildew, Spore, Infest, Wilt are plant-dual; none surfaced a kept compound outside the ghost-leaning register above.
+
+**ROCK (mineral/corrosion-byproduct register)** — Rust Ray (BEAM), Scale Hurl, Crust Toss (HURL) — scoped to corrosion-byproduct sense, not literal mineral/geological sense. Scale, Crust generally flagged for rock's auditor awareness even where no kept compound surfaced (CRUSH/WARD/MEND/TERRORIZE).
+
+### Borrowed-name suspicions (kept-and-flagged for the auditor — not resolved here)
+
+- **Acid Rain** (HURL, SPRAY) — real-world environmental-science term, not a franchise move; kept per the borrowed-name rule (franchise moves only).
+- **Toxic Shock** (AMBUSH) — recognizable real-world medical syndrome (Toxic Shock Syndrome); flagged prominently, kept.
+- **Toxic Spike** (BEAM) — adjacent to Pokemon's "Toxic Spikes" (plural/hazard-tile move); the singular non-hazard usage here is a different collocation; kept, flagged prominently for designer review.
+- **Acid Rush** (AMBUSH) — possible modern drug-culture idiom overtone ("adrenaline rush" register bleed); kept.
+- **Toxic Missile / Venom Missile** (HURL) — flagged per the harvest source's own borderline caution on "Missile"; kept, not an exact franchise-move match.
+- **Smog** (CLOUD, standalone) — Pokemon has a move literally named "Smog." Kept per the flag-don't-resolve instruction but flagged **HIGH RISK**; recommend the central auditor review for a hard cut.
+- Acid Spray, Venom Drench, Sludge Bomb, Sludge Wave, Poison Sting, Toxic (standalone), Cross Poison, Gunk Shot, Toxic Spikes — pre-flagged in `harvest-chemical.md` §5 as borrowed. Confirmed absent as exact-string collocations from all 16 cells above (composers deliberately used adjacent-but-distinct pattern words, e.g. Acid Torrent/Acid Gout/Acid Jet instead of "Acid Spray").
+
+### Hard cuts applied (not flags — these never entered any cell)
+
+- **Corrosive Gas** (CLOUD) — RATIFIED Pokemon move name, hard cut per `harvest-chemical.md` §5's explicit exclusion list. Never restore (per this task's restoration policy clause 6).
+- **Poison** (TERRORIZE, bare standalone) — franchise-adjacent, cut; the compounds (Toxic Dread, Venom Dread, etc.) carry the concept forward.
+- **Chemical Explosion** (BURST) — real-world hazmat/incident-report register, borrowed-name-adjacent, cut.
+- **Toxic Ordnance / Toxic Artillery** (HURL) — modern-military register, cut per the harvest's own standing caution.
+
+### Cross-cell definition tensions (both readings honest, kept in both homes, flagged rather than resolved)
+
+- **Discharge cluster** (Toxic/Acid/Corrosive/Caustic Discharge) — SPRAY's expelled-jet sense vs. BURST's radial-release-of-charge sense.
+- **Blast cluster** (Acid/Venom/Toxic/Caustic/Corrosive/Reactive Blast) — SPRAY's expulsion sense vs. BURST's violent-outward-force sense.
+- **Vent cluster** (Acid/Toxic Vent) — SPRAY's expulsion-outlet sense vs. BURST's pressure-release-event sense.
+- **Acid Vapor / Toxic Vapor** — SPRAY's ejected-jet sense vs. CLOUD's settled/lingering sense.
+- **Noxious Presence / Venomous Aura / Toxic Presence / Toxic Aura** — CLOUD's lingering-field sense vs. TERRORIZE's dread/fear sense; kept in both, not re-owned (Cross-Cell Resolutions §8).
+- **Acid Slash / Venom Slash** — resolved to RAKE only (Cross-Cell Resolutions §1); the LASH/RAKE tension composer A flagged is now settled, not left open.
+- **Venom Bolt** — AMBUSH's closing-speed dash sense vs. HURL's thrown-projectile sense; same string, genuinely different definitions, kept in both.
+- **Acid Spear / Acid Shaft / Acid Skewer** (BEAM) — tension with HURL's own thrown-spear vocabulary; kept in BEAM under the directed-continuous-line definition; no literal string collision with HURL's actual kept list.
+- **Toxic Constrict** — resolved to CRUSH only, not SNARE (Cross-Cell Resolutions §7).
+- **Corrosive Sheath** (CLOUD) — tension with SNARE's tight-hold register; kept in CLOUD as the lingering-coating sense.
+- **Corrosive Grip / Caustic Grip** (CRUSH) — corrosion is fundamentally a dissolving process, in tension with "grip" as a sustained mechanical hold; kept per the source harvest's own ratifying precedent, flagged for auditor awareness of the stretch.
+- **Buffer** (WARD, standalone) — also a generic WARD-action-harvest word; kept as chemical-specific because chemistry defines "buffer" precisely as a pH-stabilizing solution, not a neutral-pool leak.
+
+### Anatomy-instrument-tagged names (kept, never cut for being anatomical — per rule 6.9)
+
+Tags used throughout: **[fangs]**, **[stinger]**, **[spines]**, **[claws]**, **[talons]**, **[secretion]**, **[breath]**, **[tendrils/tail]**, **[coils]**, **[voice]**, **[gaze]**, **[wings if applicable]**. Concentrated in STRIKE, LASH, RAKE (delivery-anatomy: fang/sting/stinger/barb/claw/talon), SPRAY/BURST (breath/secretion: Gland Spurt, Sac Spurt, Gland Rupture, Sac Rupture, Spore Broadcast), and TERRORIZE (voice/gaze: Hiss, Snarl, Growl, Stare, Glare). SNARE's substance-adhesion register (sticky/viscous/resin/sludge) did not require anatomy tags — no grip/claw/jaw-implying name survived to KEEP there.
+
+### "When in doubt, keep and flag" saves (kept despite imperfect fit, per the brief's Section 1 instruction)
+
+Vital Reagent, Essence Distillate, Catalyst Drain (DRAIN); Toxic Vector, Acid Focus, Toxic Point, Acid Radiate (BEAM); Precipitate Hurl, Sludge Wad, Sludge Gobbet, Bile Hurl, Beaker Toss (HURL); Venom Barrel, Toxic Barrel, Toxic Surprise, Venom Sneak (AMBUSH); Acid Squall/Venom Squall, Toxic Gale, Corrosive Squall (SPRAY — borderline air-domain overlap in the pattern word, not the substance word); Sludge Pitfall, Corrosive Sheath, Resin Stick (SNARE/CLOUD); Buffer (WARD).
+
+---
+
+## SIGNATURE-REGISTER RELEASES (grander-than-catalog names — released, never dropped)
+
+These names read grander than the plain 2-word catalog tier and are released to the signature-name pool rather than placed in any action cell or cut outright:
+
+- **Toxic Nova** (BURST) — astronomical-register cluster, explicitly reserved per the burst harvest.
+- **Acid Corona** (BURST) — corona/aureole cluster, signature-register per the burst harvest's astronomical-register note.
+- **Fume Cataclysm** (BURST) — "Cataclysm" explicitly "use sparingly, very strong" per the burst harvest.
+- **Toxic Domain** (CLOUD) — "Domain" reads grander/more totalizing than the plain 2-word tier per the cloud harvest's own register note.
+- **Alembic Drain** (DRAIN) — grand alchemical-apparatus name.
+- **Crucible Drain** (DRAIN) — same register class as Alembic Drain.
+- **Essence Distillate** (DRAIN) — flagged signature-adjacent in the source composer's own standalone section; kept plain in the DRAIN cell above per that composer's final call, but noted here for designer visibility as a borderline case that could be moved to the signature pool on review.
+
+No signature-register candidates surfaced in STRIKE, LASH, RAKE, SHOVE, AMBUSH, SPRAY, SNARE, CRUSH, WARD, MEND, or TERRORIZE — chemical's industrial/laboratory/biological-toxin registers stayed within the 2-plain-word catalog tier in those cells throughout.
+
+---
+
+## FINAL COUNTS
+
+| Cell | Count |
+|---|---|
+| STRIKE | 115 |
+| LASH | 90 |
+| RAKE | 103 |
+| SHOVE | 91 |
+| DRAIN | 137 |
+| AMBUSH | 129 |
+| BEAM | 111 |
+| HURL | 139 |
+| SPRAY | 183 |
+| BURST | 102 |
+| CLOUD | 132 |
+| SNARE | 98 |
+| CRUSH | 83 |
+| WARD | 108 |
+| MEND | 55 |
+| TERRORIZE | 81 |
+| **TOTAL** | **1,757** |
+
+Plus 7 names released to the signature-register pool (not counted in the 1,757: Toxic Nova, Acid Corona, Fume Cataclysm, Toxic Domain, Alembic Drain, Crucible Drain, Essence Distillate — the last kept plain in DRAIN's count above but cross-noted here).
+
+One name restored via the redundancy-rejections sweep (Bile Leech °, DRAIN). Two names relocated via cross-cell resolution (Acid Slash, Venom Slash: LASH → RAKE). All 16 cells land within or above the brief's healthy range (30-150, wider allowed for signature-strength cells); none fell into the many-hundreds/thousands failure zone that would indicate a keep-everything flooding failure.
 
 ---

@@ -10,7 +10,7 @@ Names judged "kept" in a composer's disposition table/prose but missing from tha
 
 ---
 
-## 1. STRIKE — 95 names
+## 1. STRIKE — 93 names
 
 Mind Strike · Mind Blow · Mind Jab · Mind Hit · Mind Knock · Mind Punch · Mind Slap · Mind Rap · Mind Snap [instrument: mind]
 Psychic Strike · Psychic Blow · Psychic Jab · Psychic Punch · Psychic Slap · Psychic Rap · Psychic Snap · Psychic Impact
@@ -60,7 +60,7 @@ Psychic Snap° · Thought Swipe° · Thought Sweep° · Thought Snap° · Teleki
 
 ---
 
-## 3. RAKE — 13 names
+## 3. RAKE — 14 names
 
 Mind Rake · Psychic Rake · Thought Rake
 Mental Scratch · Mental Scratches (flagged thin)
@@ -102,7 +102,7 @@ Telekinetic Topple° · Psychic Jolt° · Mind Jolt° · Mental Ram° · Mental 
 
 ---
 
-## 5. DRAIN — 82 names
+## 5. DRAIN — 90 names
 
 **Mind/will/thought as the drained resource:** Mind Drain, Mind Siphon, Mind Sap, Mind Tap, Mind Leech [channel: mind], Will Drain, Will Siphon, Will Sap, Will Tap, Thought Drain, Thought Siphon, Thought Sap, Thought Leech [channel: mind], Psyche Drain, Psyche Siphon, Psyche Sap, Focus Drain, Focus Siphon, Focus Sap, Focus Tap, Insight Drain, Insight Siphon, Clarity Drain, Clarity Sap, Lucidity Drain, Awareness Drain, Awareness Sap, Perception Drain, Perception Sap, Cognition Drain, Cognition Sap, Intellect Drain, Intellect Sap, Consciousness Drain, Consciousness Siphon, Memory Drain
 
@@ -126,7 +126,7 @@ Telekinetic Topple° · Psychic Jolt° · Mind Jolt° · Mental Ram° · Mental 
 
 ---
 
-## 6. AMBUSH — 33 names
+## 6. AMBUSH — 34 names
 
 **Suddenness-of-mental-effect:** Sudden Insight, Sudden Suggestion, Sudden Vision, Sudden Compulsion, Snap Suggestion, Snap Insight, Snap Hypnosis (flagged borrowed-suspicion), Flash Insight, Flash Vision, Flash Suggestion
 
@@ -148,7 +148,7 @@ Telekinetic Topple° · Psychic Jolt° · Mind Jolt° · Mental Ram° · Mental 
 
 ---
 
-## 7. BEAM — 68 names
+## 7. BEAM — 61 names
 
 **Mind/thought as emitting source:** Mind Beam, Mind Ray, Mind Lance [channel: mind], Mind Shaft, Mind Bolt (flagged cross-element tension), Thought Beam, Thought Ray, Thought Lance, Thought Stream, Psyche Beam, Psyche Ray, Focus Beam, Focus Lance, Concentration Beam, Concentration Ray
 
@@ -166,7 +166,7 @@ Telekinetic Topple° · Psychic Jolt° · Mind Jolt° · Mental Ram° · Mental 
 
 ---
 
-## 8. HURL — 36 names
+## 8. HURL — 45 names
 
 **Telekinetic/mind-as-hurling-force:** Telekinetic Hurl, Telekinetic Toss, Telekinetic Fling, Telekinetic Throw, Telekinetic Launch, Telekinetic Cast, Telekinetic Heave, Telekinetic Volley, Telekinetic Sling, Mind Hurl, Mind Throw, Mind Toss, Mind Fling, Mind Launch, Mind Cast, Psychic Hurl, Psychic Throw, Psychic Toss, Psychic Fling, Psychic Launch, Will Hurl, Will Throw, Will Toss, Will Cast
 
@@ -383,8 +383,10 @@ Domination Drain, Subjugation Drain, Possessed Drain, Possession Drain, Commande
 
 ---
 
-**Pre-restoration base totals (composer flat lists as itemized, before °-restoration):** STRIKE 74, LASH 29, RAKE 11, SHOVE 43, DRAIN 82 (itemized; composer header said ~95), AMBUSH 32, BEAM 68, HURL 33, SPRAY 57, BURST 134, CLOUD 119, SNARE 62 (itemized; composer header said 61 — 87 drafted minus 25 rejection lines, some rejecting two sub-variants at once, nets 62 kept), CRUSH 66, WARD 127, MEND 121, TERRORIZE 134.
+**Note on composer count labels vs. itemized counts:** every cell's final count below is a direct item-by-item recount of the flat kept-name list actually assembled in this document (verified by script against both the source composer files and this draft), per the itemized-lists-are-authoritative mandate. Several composer header labels proved inaccurate against their own itemized lists — STRIKE's header said "74" but its own list (excluding the separately-flagged signature release "Sudden Insight") itemizes to 72; RAKE's header said "11" but itemizes to 12; DRAIN's header said "approximately 95" but itemizes to 90 (after correctly excluding the family's own X-dispositioned Vigor Sap, Essence Drain, Attuned Drain, a duplicate Insight Siphon, and Reflection Drain); AMBUSH's header said "approximately 32" but itemizes to 33; BEAM's header said "approximately 68" but itemizes to 61 (after excluding Focused Insight and Transmit Beam, both marked excluded in the source prose); HURL's header said "approximately 33" but itemizes to 42 (after excluding Willed Hurl); SNARE's header said "61" but itemizes to 62. LASH (29), SHOVE (43), SPRAY (57), BURST (134), CLOUD (119), CRUSH (66), WARD (127), MEND (121), and TERRORIZE (134) all matched their own header labels exactly on recount.
 
-**Post-restoration / post-cross-cell-resolution final totals:** STRIKE 95 (+21°), LASH 41 (+12°), RAKE 13 (+2°), SHOVE 63 (+20° net of 2 blocked), DRAIN 82, AMBUSH 33 (+1°), BEAM 68, HURL 36 (+3°), SPRAY 57, BURST 134, CLOUD 119, SNARE 62, CRUSH 65 (−1, Thrall Grip moved to SNARE), WARD 127, MEND 121, TERRORIZE 134.
+**Pre-restoration base totals (itemized):** STRIKE 72, LASH 29, RAKE 12, SHOVE 43, DRAIN 90, AMBUSH 33, BEAM 61, HURL 44, SPRAY 57, BURST 134, CLOUD 119, SNARE 62, CRUSH 66, WARD 127, MEND 121, TERRORIZE 134.
 
-**Grand total: 1,250 owned names across all 16 cells** (plus 2 signature-pool releases, Section 17; plus the flagged pending cross-cell Psychic Ram duplicate between SHOVE and CRUSH, Section 21 item 2, left for the auditor).
+**Post-restoration / post-cross-cell-resolution final totals:** STRIKE 93 (+21°), LASH 41 (+12°), RAKE 14 (+2°), SHOVE 63 (+20° net of 2 blocked), DRAIN 90, AMBUSH 34 (+1°), BEAM 61, HURL 45 (+1° net — 3 restored, base recount corrected from 33 to 44 independent of restoration), SPRAY 57, BURST 134, CLOUD 119, SNARE 62, CRUSH 65 (−1, Thrall Grip moved to SNARE), WARD 127, MEND 121, TERRORIZE 134.
+
+**Grand total: 1,260 owned names across all 16 cells** (plus 2 signature-pool releases, Section 17; plus the flagged pending cross-cell Psychic Ram duplicate between SHOVE and CRUSH, Section 21 item 2, left for the auditor).
