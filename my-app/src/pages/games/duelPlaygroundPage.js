@@ -642,7 +642,7 @@ class DuelPlaygroundPage extends React.Component {
 			},
 			{
 				v: 'plinth', name: 'Plinth',
-				note: 'The tabletop concept rebuilt from scratch: a real miniature base - a chunky matte disc with visible thickness, sized against the widest species, its side wall painted in the team colour the way a miniature wears its army colours - with the figure standing off its back edge and the element badge set into the front like a nameplate.',
+				note: 'The tabletop concept rebuilt from scratch: a real miniature base - a chunky matte disc with visible thickness, sized against the widest species, its side wall painted in the team colour the way a miniature wears its army colours, its edge knurled the way a checkers piece is - with the figure standing off its back edge. The element deliberately has no mark on the token; it lives in panels with room for it.',
 			},
 			{
 				v: 'outline', name: 'Plinth, outlined',
