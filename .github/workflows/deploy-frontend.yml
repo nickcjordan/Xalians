@@ -43,9 +43,6 @@ jobs:
         run: yarn copy-json && yarn copy-js
 
       - name: Build
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider
-          CI: "false"
         run: yarn build
 
       - name: Configure AWS credentials (OIDC)
