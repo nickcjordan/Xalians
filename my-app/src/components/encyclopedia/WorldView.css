@@ -26,6 +26,23 @@
 	margin-top: var(--g-3);
 }
 
+.enc-world-history-layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 20rem);
+	gap: var(--g-6);
+	align-items: start;
+}
+
+@media (max-width: 1000px) {
+	.enc-world-history-layout {
+		grid-template-columns: minmax(0, 1fr);
+	}
+	.enc-world-chapter-index {
+		order: -1;
+		position: static;
+	}
+}
+
 .enc-world-history {
 	list-style: none;
 	margin: 0;
@@ -33,6 +50,56 @@
 	display: flex;
 	flex-direction: column;
 	gap: var(--g-6);
+	min-width: 0;
+}
+
+.enc-world-chapter-index {
+	position: sticky;
+	top: var(--g-8);
+	padding: 0 0 var(--g-2);
+	min-width: 0;
+}
+
+.enc-world-chapter-index-list {
+	list-style: none;
+	margin: 0;
+	padding: 0 var(--g-2) var(--g-2);
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-1);
+}
+
+.enc-world-chapter-index-row {
+	display: flex;
+	align-items: baseline;
+	flex-wrap: wrap;
+	gap: var(--g-2);
+	padding: var(--g-2);
+	border-radius: 2px;
+	text-decoration: none;
+	color: var(--g-ink);
+}
+
+.enc-world-chapter-index-row:hover,
+.enc-world-chapter-index-row:focus-visible {
+	color: var(--g-brass);
+	background: var(--g-seam);
+}
+
+.enc-world-chapter-index-num {
+	color: var(--g-ink-low);
+	font-size: var(--g-size-tiny);
+	flex: none;
+}
+
+.enc-world-chapter-index-era {
+	font-size: var(--g-size-micro);
+	flex: none;
+}
+
+.enc-world-chapter-index-snippet {
+	font-size: var(--g-size-small);
+	color: var(--g-ink-mid);
 }
 
 .enc-world-chapter {

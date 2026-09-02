@@ -32,12 +32,23 @@ export default function ReadingRoom() {
 			</p>
 
 			<div className="enc-room-columns">
-				<section className="g-panel g-panel--bolted enc-room-map-panel">
-					<header className="g-panel-head">
-						<h2 className="g-h2">Galaxy of Xalia</h2>
-					</header>
-					<GalaxyMap />
-				</section>
+				<div className="enc-room-left">
+					<section className="g-panel g-panel--bolted enc-room-map-panel">
+						<header className="g-panel-head">
+							<h2 className="g-h2">Galaxy of Xalia</h2>
+						</header>
+						<GalaxyMap />
+					</section>
+
+					<div className="enc-grid enc-room-strip">
+						{TILES.map((tile) => (
+							<Link key={tile.to} to={tile.to} className="g-tile">
+								<span className="g-tile-name">{tile.label}</span>
+								<p className="g-tile-meta">{tile.count()}</p>
+							</Link>
+						))}
+					</div>
+				</div>
 
 				<section className="g-panel enc-room-story">
 					<header className="g-panel-head">
@@ -55,15 +66,6 @@ export default function ReadingRoom() {
 						</div>
 					))}
 				</section>
-			</div>
-
-			<div className="enc-grid enc-room-strip">
-				{TILES.map((tile) => (
-					<Link key={tile.to} to={tile.to} className="g-tile">
-						<span className="g-tile-name">{tile.label}</span>
-						<p className="g-tile-meta">{tile.count()}</p>
-					</Link>
-				))}
 			</div>
 		</div>
 	);

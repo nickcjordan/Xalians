@@ -39,8 +39,8 @@ export default function Worlds() {
                         </div>
                         <div className="g-tile-meta enc-worlds-sub">
                             <span className="g-chip">{world.element}</span>
-                            <span className="g-tile-id enc-worlds-terrain">{world.physical.terrainLabel}</span>
                         </div>
+                        <span className="g-tile-id enc-worlds-terrain">{world.physical.terrainLabel}</span>
                     </Link>
                 ))}
             </div>

@@ -22,7 +22,7 @@ Nick's steers that shape this design: species detail is built on the creature te
 | 8 | Search is client-side over the whole corpus (under 400 KB of JSON) using MiniSearch; no backend. | 90%: corpus size measured; MiniSearch is dependency-free and works with React 17. | `wc -c` of the JSON files; MiniSearch README |
 | 9 | Auto-linking of entry titles in prose is deterministic and mechanical (longest title first, whole-word, first occurrence per paragraph), consistent with the encyclopedia's rule that `related` links are mechanical, never thematic. | 85% | `docs/encyclopedia/README.md` "Rules of the road" |
 | 10 | The galaxy map is an inline SVG whose positions come from canon (Telypso at the core, Grimedes and Zolton on the rim, Stonera in Cybele, Phantiri in Wraithix) and is otherwise arranged for legibility; it is a locator, not a star chart. Planet GIFs are the fallback and the detail-page globe. | 70%: Nick wants to see it and may prefer the GIFs. | Nick, 2026-09-02; `planets.json` histories |
-| 11 | New page-level CSS goes in `public/assets/css/encyclopedia.css` (like `duel.css`), prefixed `.enc-`, using only `--g-*` tokens; no new hex. | 95% | `docs/DESIGN_SYSTEM.md` "Rules for new work" |
+| 11 | Shared page CSS goes in `public/assets/css/encyclopedia.css` (shell, search, prose, layout helpers); each section component imports its own `<Component>.css` beside it so parallel agents never edit one file. All prefixed `.enc-`, only `--g-*` tokens, no new hex. | 95% | `docs/DESIGN_SYSTEM.md` "Rules for new work"; build day 2026-09-02 |
 | 12 | React Router v5 nested routes under one lazy page; no router upgrade. | 95% | `my-app/src/App.js` |
 | 13 | The work happens on `feat/encyclopedia`, branched from `data/ability-catalog` (which contains master), in the worktree `C:/dev/src/xalians-encyclopedia`, because the encyclopedia and chronicle data live on the catalog branch. | 90% | `git merge-base` check, 2026-09-02 |
 
@@ -54,7 +54,7 @@ Navigation: the navbar gains an "Encyclopedia" link between Home and Species. Th
 | `planetRecords.json` | committed as-is | `[{ key, name, element, images: { landscape, planet }, physical: { terrainLabel, sizeVsEarth, radiusKm, gravityVsEarth, temperatureC: { low, high } }, report: { unit, protocol, cycle, terrain, mobility, fauna, hazards, outputPriorities }, history: [string] }]` | untracked today |
 | `species.json` | unchanged | legacy 29 | exists |
 | `speciesRecords.json` | `scripts/bundleLore.js` gathers `docs/species-templates/<key>.json` for keys listed in a manifest of ratified species, plus each `<key>.encyclopedia.json` entry | `{ version, records: [template], entries: [encyclopedia entry] }` | new |
-| `registries.json` | `scripts/extractRegistries.js`, generated from the ratified definition text in the migrate-species skill, hand-checked once | `{ attributes, archetypes, traits, physiology: { corporeality, composition, bodyPlan, covering, diet, communication, media, lifespan, chirality }, capabilities, senses, anatomy, instruments, actions }`, each an array of `{ key, name, nature }` | new |
+| `registries.json` | transcribed once by an agent from the ratified definition text in the migrate-species skill (`docs/species-templates/registries.json`), copied by `bundleLore.js`; sight, hearing, smell added as graded senses | `{ attributes, archetypes (with favors), traits, elements, physiology: { corporeality, composition, bodyPlan, covering, diet, communication, media, lifespan, chirality, descriptionStatus }, capabilities, senses, anatomy, channels, actions, instrumentActions }`, each an array of `{ key, name, nature }` | new |
 
 `scripts/bundleLore.js` is idempotent and run by hand after lore changes, like `buildCanonCompendium.js`. The frontend never imports from `docs/`.
 
@@ -72,6 +72,7 @@ my-app/src/lore/                    data layer, no React, fully unit-tested
   chronicle.js                      EraView: events, paragraphs by world
   search.js                         MiniSearch index over entries, worlds, species, paragraphs
   linkify.js                        prose -> segments with entry links
+  routeFor.js                       the one route convention (re-exported)
   __tests__/                        vitest: integrity + behavior
 
 my-app/src/components/encyclopedia/ UI, one file per section plus shared parts

@@ -10,7 +10,7 @@
 
 .enc-room-columns {
 	display: grid;
-	grid-template-columns: minmax(0, 55%) minmax(0, 1fr);
+	grid-template-columns: minmax(0, 58%) minmax(0, 1fr);
 	gap: var(--g-6);
 	align-items: start;
 }
@@ -19,10 +19,29 @@
 	.enc-room-columns {
 		grid-template-columns: minmax(0, 1fr);
 	}
+	.enc-room-left {
+		display: contents;
+	}
+	.enc-room-map-panel {
+		order: 1;
+	}
+	.enc-room-story {
+		order: 2;
+	}
+	.enc-room-strip {
+		order: 3;
+	}
+}
+
+.enc-room-left {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-6);
 }
 
 .enc-room-map-panel {
 	padding: var(--g-4);
+	align-self: stretch;
 }
 
 .enc-room-story {
@@ -40,5 +59,9 @@
 }
 
 .enc-room-strip {
-	margin-top: var(--g-8);
+	margin-top: 0;
+}
+
+.enc-room-strip {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
 }

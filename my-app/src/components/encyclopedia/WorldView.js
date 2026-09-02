@@ -125,29 +125,57 @@ export default function WorldView() {
                 <div className="enc-section-head">
                     <h2 className="g-h2">History</h2>
                 </div>
-                <ol className="enc-world-history">
-                    {world.chapters.map((chapter, i) => {
-                        const eraKey = chapterEraTag(chapter);
-                        const label = chapterEraLabel(chapter, eraKey ? eraNameByKey.get(eraKey) : null);
-                        return (
-                            <li key={chapter.index} id={`chapter-${chapter.index}`} className="enc-world-chapter">
-                                <div className="enc-world-chapter-head">
-                                    <span className="g-mono enc-world-chapter-num">
-                                        CH. {String(i + 1).padStart(2, '0')}
-                                    </span>
-                                    {eraKey ? (
-                                        <Link to={lore.routeFor('era', eraKey)} className="g-chip g-chip--outline">
-                                            {label}
-                                        </Link>
-                                    ) : (
-                                        <span className="g-chip g-chip--outline">{label}</span>
-                                    )}
-                                </div>
-                                <Prose text={chapter.text} />
-                            </li>
-                        );
-                    })}
-                </ol>
+                <div className="enc-world-history-layout">
+                    <ol className="enc-world-history">
+                        {world.chapters.map((chapter, i) => {
+                            const eraKey = chapterEraTag(chapter);
+                            const label = chapterEraLabel(chapter, eraKey ? eraNameByKey.get(eraKey) : null);
+                            return (
+                                <li key={chapter.index} id={`chapter-${chapter.index}`} className="enc-world-chapter">
+                                    <div className="enc-world-chapter-head">
+                                        <span className="g-mono enc-world-chapter-num">
+                                            CH. {String(i + 1).padStart(2, '0')}
+                                        </span>
+                                        {eraKey ? (
+                                            <Link to={lore.routeFor('era', eraKey)} className="g-chip g-chip--outline">
+                                                {label}
+                                            </Link>
+                                        ) : (
+                                            <span className="g-chip g-chip--outline">{label}</span>
+                                        )}
+                                    </div>
+                                    <Prose text={chapter.text} />
+                                </li>
+                            );
+                        })}
+                    </ol>
+
+                    <nav className="g-panel g-panel--recessed enc-world-chapter-index" aria-label="Chapters">
+                        <header className="g-panel-head">
+                            <h3 className="g-h3">Chapters</h3>
+                        </header>
+                        <ol className="enc-world-chapter-index-list">
+                            {world.chapters.map((chapter, i) => {
+                                const eraKey = chapterEraTag(chapter);
+                                const label = chapterEraLabel(chapter, eraKey ? eraNameByKey.get(eraKey) : null);
+                                const words = chapter.text.trim().split(/\s+/).slice(0, 8).join(' ');
+                                return (
+                                    <li key={chapter.index}>
+                                        <a href={`#chapter-${chapter.index}`} className="enc-world-chapter-index-row">
+                                            <span className="g-mono enc-world-chapter-index-num">
+                                                CH. {String(i + 1).padStart(2, '0')}
+                                            </span>
+                                            <span className="g-chip g-chip--outline enc-world-chapter-index-era">
+                                                {label}
+                                            </span>
+                                            <span className="enc-world-chapter-index-snippet">{words}&hellip;</span>
+                                        </a>
+                                    </li>
+                                );
+                            })}
+                        </ol>
+                    </nav>
+                </div>
             </section>
 
             {world.nativeSpecies.length > 0 && (

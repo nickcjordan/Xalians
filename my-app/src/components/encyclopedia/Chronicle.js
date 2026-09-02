@@ -19,6 +19,7 @@ export default function Chronicle() {
             <ol className="enc-chronicle-rail">
                 {eras.map((era, i) => {
                     const worldCount = era.worlds.length;
+                    const firmEvents = era.events.filter((ev) => ev.firmness === 'firm').slice(0, 5);
                     return (
                         <li key={era.key} className="enc-chronicle-station">
                             <span className="enc-chronicle-dot" aria-hidden="true" />
@@ -32,6 +33,32 @@ export default function Chronicle() {
                                     {era.events.length} event{era.events.length === 1 ? '' : 's'} &middot; {worldCount}{' '}
                                     world{worldCount === 1 ? '' : 's'} with chapters
                                 </p>
+                            </div>
+                            <div className="enc-chronicle-station-side">
+                                {firmEvents.length > 0 && (
+                                    <ul className="g-mono enc-chronicle-firm-events">
+                                        {firmEvents.map((ev) => (
+                                            <li key={ev.key}>
+                                                <Link to={lore.routeFor('era', era.key)} className="g-link">
+                                                    {ev.title}
+                                                </Link>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                                {era.worlds.length > 0 && (
+                                    <div className="enc-chips enc-chronicle-world-chips">
+                                        {era.worlds.map(({ planet }) => (
+                                            <Link
+                                                key={planet.key}
+                                                to={lore.routeFor('world', planet.key)}
+                                                className={`g-chip g-chip--outline g-el-${planet.element}`}
+                                            >
+                                                {planet.name}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         </li>
                     );

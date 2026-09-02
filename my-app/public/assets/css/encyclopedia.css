@@ -42,6 +42,12 @@
 
 .enc-console { overflow-x: hidden; }
 
+/* Bootstrap paints bare anchors blue; inside the archive a link is either a
+   printed term (.g-link, element-coloured) or a whole tile/record (inherits). */
+.enc-console a:not(.g-link):not(.g-btn):not(.g-segment):not(.nav-link) { color: inherit; }
+.enc-console a.g-tile, .enc-console .g-tile a, .enc-console a.g-record-term { text-decoration: none; }
+.enc-console a.g-tile:hover .g-tile-name, .enc-console a.g-record-term:hover { color: var(--g-ink); }
+
 @media (max-width: 700px) {
 	.enc-masthead { gap: var(--g-4); }
 	.enc-masthead-text { flex: 1 1 100%; overflow-wrap: anywhere; }

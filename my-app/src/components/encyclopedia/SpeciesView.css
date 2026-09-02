@@ -1,3 +1,9 @@
+.enc-species .g-meter-value {
+	min-width: 6ch;
+	white-space: nowrap;
+	text-align: right;
+}
+
 .enc-species-plate {
 	display: flex;
 	flex-direction: column;

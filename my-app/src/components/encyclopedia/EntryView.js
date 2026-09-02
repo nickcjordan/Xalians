@@ -29,6 +29,22 @@ export default function EntryView() {
     const hasCrossRefs = related.length > 0 || appearances.length > 0;
     const scopeClass = entry.element ? `g-el-${entry.element}` : '';
 
+    // Group appearances by (kind, key): one row per world or species, each
+    // excerpt on its own line, so a world with many hits is one row, not
+    // one near-identical row per paragraph.
+    const groupedAppearances = [];
+    const groupIndexByKey = new Map();
+    for (const app of appearances) {
+        const groupKey = `${app.kind}:${app.key}`;
+        let group = groupIndexByKey.get(groupKey);
+        if (group === undefined) {
+            group = groupedAppearances.length;
+            groupIndexByKey.set(groupKey, group);
+            groupedAppearances.push({ kind: app.kind, key: app.key, name: app.name, hits: [] });
+        }
+        groupedAppearances[group].hits.push(app);
+    }
+
     return (
         <div className={`enc-entry ${scopeClass}`}>
             <Link to="/encyclopedia/index" className="enc-back">&laquo; Back to Index</Link>
@@ -68,20 +84,36 @@ export default function EntryView() {
                             <h2 className="g-h2">Appears In</h2>
                         </div>
                         <div className="enc-entry-appearances">
-                            {appearances.map((app, i) => {
-                                const route = lore.routeFor(app.kind, app.key);
-                                const hash = app.kind === 'world' && typeof app.paragraph === 'number'
-                                    ? `#chapter-${app.paragraph}`
-                                    : '';
+                            {groupedAppearances.map((group) => {
+                                const route = lore.routeFor(group.kind, group.key);
                                 return (
-                                    <div key={`${app.kind}:${app.key}:${i}`} className="enc-entry-appearance">
+                                    <div key={`${group.kind}:${group.key}`} className="enc-entry-appearance">
                                         <div className="enc-chips">
-                                            <span className="g-chip g-chip--outline">{APPEARANCE_KIND_LABEL[app.kind] || app.kind}</span>
-                                            <Link to={`${route}${hash}`} className="g-record-term enc-entry-appearance-name">
-                                                {app.name}
+                                            <span className="g-chip g-chip--outline">{APPEARANCE_KIND_LABEL[group.kind] || group.kind}</span>
+                                            <Link to={route} className="g-record-term enc-entry-appearance-name">
+                                                {group.name}
                                             </Link>
                                         </div>
-                                        <p className="g-body">{app.excerpt}</p>
+                                        <ul className="enc-entry-appearance-hits">
+                                            {group.hits.map((hit, i) => {
+                                                const hash = group.kind === 'world' && typeof hit.paragraph === 'number'
+                                                    ? `#chapter-${hit.paragraph}`
+                                                    : '';
+                                                return (
+                                                    <li key={i} className="enc-entry-appearance-hit">
+                                                        {hash && (
+                                                            <Link
+                                                                to={`${route}${hash}`}
+                                                                className="g-mono enc-entry-appearance-chapter"
+                                                            >
+                                                                CH. {String(hit.paragraph + 1).padStart(2, '0')}
+                                                            </Link>
+                                                        )}
+                                                        <p className="g-body enc-entry-appearance-excerpt">{hit.excerpt}</p>
+                                                    </li>
+                                                );
+                                            })}
+                                        </ul>
                                     </div>
                                 );
                             })}
