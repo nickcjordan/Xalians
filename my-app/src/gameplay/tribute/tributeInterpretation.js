@@ -8,22 +8,10 @@
 	lenses over the creature record; nothing here is ever written back to a record.
 */
 
-// Plain static JSON import: CRA's babel-jest and webpack both support this natively (see
-// the precedent at my-app/src/gameplay/duel/duelPieceBuilder.js), and it keeps this core
-// engine file free of any Node-only API (no `createRequire`/`import.meta`), which matters
-// because this file must also survive a future webpack production build.
-//
-// Plain `node <file>.js` cannot load a bare JSON import at all (Node's native ESM loader
-// demands an `with { type: 'json' }` import attribute, and that attribute syntax is NOT
-// understood by babel-jest's parser - confirmed while building this: adding it broke Jest
-// with "Support for the experimental syntax 'moduleAttributes' isn't currently enabled").
-// So this file stays plain ESM for Jest/webpack's sake, and devtools/runNode.cjs (the only
-// thing that runs this package under plain `node`, for devtools/tributeSimulator.js) makes
-// `node` work instead: it transpiles every file in this package on the fly with the same
-// Babel preset CRA/Jest already use (`babel-preset-react-app`) via a CommonJS
-// `require.extensions` hook, so this static import (and every other ESM import/export in
-// this package) resolves exactly the same way under Jest, webpack, and plain `node`. See
-// devtools/runNode.cjs's header comment for the full explanation.
+// Plain static JSON import: Vite (and Vitest) handle this natively and it keeps this core
+// engine file free of any Node-only API. Plain `node` cannot load a bare JSON import, so
+// devtools/runNode.cjs bundles this package with esbuild before running a devtools
+// script such as the simulator. See its header comment.
 import rawTypeEffectivenessMatrix from '../../json/typeEffectivenessMatrix.json';
 
 // Row a range class grants. Support grants no row by itself (see design doc's table);
