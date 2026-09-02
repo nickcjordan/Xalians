@@ -9,6 +9,9 @@ Per-species decisions that a migration agent cannot derive from the sources alon
 - 2026-09-02: the species artwork (`art/<key>.png`, rendered from `my-app/src/svg/species/`) is source material equal to the description; parts visible in the art are sourced, not authored.
 - 2026-09-02: conjured familiars are projections, not life. A central mind may conjure a swarm of hologram-like or ghost-like familiars that phase away when destroyed; this is not summoning or creating life. The `swarm` channel covers such a familiar swarm regardless of the creature's own body plan.
 
+- 2026-09-02: trait model. Every pool trait is rolled independently at its own percent (1 to 100); 100 means every individual; no count, minimum, or cap; `guaranteed` and `rolledCount` retired. Exclusion partners: the generator rolls the higher percent first and skips the partner if it lands; never both at 100. A planet-wide sentence may justify an environmental adaptation trait (nocturnal, resistant) at or near 100, never a behavioral one.
+- 2026-09-02: catalog tags. A name carries instrument tags only when the name itself names or implies a part (Wraith Claws stays gated to claws); a name that names no part carries no tag and is drawable by any instrument that can perform the action. The 63 ghost rake names tagged claws without naming a part were untagged.
+
 ## Graviclaw
 
 - 2026-09-01: signature is Point of No Return, pincers / snare / dark (the pull past the horizon into the claws, not the crushing close). Recorded in `consolidated-dark.md` line 52.

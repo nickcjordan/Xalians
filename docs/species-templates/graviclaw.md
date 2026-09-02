@@ -155,3 +155,5 @@ ok   md.quotes                      30 of 30 distinct quotations found verbatim 
 ## Orchestrator amendments
 
 - 2026-09-02: `hide` removed from anatomy and instruments under Nick's one-surface-key ruling: the shell is the armored aspect and `hide` states that the body has no armored aspect, so a chitin-shelled crustacean declares `shell` alone. The "immovable wall of chitin" sentence is already carried by `shell`, `body`, and the guaranteed `anchored` trait. Instruments are now `pincers`, `shell`.
+
+- 2026-09-02, trait model change (Nick): traits are now independent per-trait percents with no count. Converted by the orchestrator from {"guaranteed":["armored","anchored"],"rolledCount":[0,1],"pool":{"stealthy":5,"perceptive":3,"solitary":3,"menacing":2,"nocturnal":2,"telekinetic":1}} to {"armored":100,"anchored":100,"stealthy":60,"solitary":45,"perceptive":30,"menacing":30,"telekinetic":6}. armored and anchored are body-demanded; stealthy carries the lurking sentence; solitary is argued from absence; perceptive and menacing were the weakest calls and sit low; telekinetic is the rare pull-at-a-distance reading. Expected count 2.71.

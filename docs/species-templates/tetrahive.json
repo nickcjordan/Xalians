@@ -147,18 +147,13 @@
     ]
   },
   "traits": {
-    "guaranteed": [],
-    "rolledCount": [
-      1,
-      2
-    ],
     "pool": {
-      "nocturnal": 5,
-      "mind-sealed": 4,
-      "slippery": 3,
-      "perceptive": 2,
-      "menacing": 2,
-      "solitary": 1
+      "nocturnal": 95,
+      "slippery": 45,
+      "mind-sealed": 35,
+      "perceptive": 20,
+      "menacing": 20,
+      "solitary": 10
     }
   },
   "instruments": [

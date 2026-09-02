@@ -306,34 +306,28 @@ if (T) {
     else warn('affinityOdds.override', 'affinityOdds overrides the 75/25 baseline; the walkthrough must carry the lore reason');
   }
 
-  // traits
+  // traits: independent per-trait percents (ratified 2026-09-02)
   const TR = T.traits || {};
   if (!T.traits) fail('traits', 'traits block missing');
-  const g = Array.isArray(TR.guaranteed) ? TR.guaranteed : (fail('traits.guaranteed', 'traits.guaranteed must be an array'), []);
-  checkEnumArray('traits.guaranteed', g, TRAITS, 'traits.guaranteed');
-  const pool = TR.pool && typeof TR.pool === 'object' ? TR.pool : (fail('traits.pool', 'traits.pool must be an object of trait: weight'), {});
+  for (const k of ['guaranteed', 'rolledCount']) if (has(TR, k)) fail('traits.legacy', 'traits.' + k + ' is retired (2026-09-02): write body-demanded traits as pool entries at 100 and drop the count');
+  const pool = TR.pool && typeof TR.pool === 'object' ? TR.pool : (fail('traits.pool', 'traits.pool must be an object of trait: percent'), {});
   for (const [k, v] of Object.entries(pool)) {
     if (!TRAITS.includes(k)) fail('traits.pool.key', 'unknown trait "' + k + '"' + (FORBIDDEN_TRAIT_KEYS.includes(k) ? ' (retired draft key)' : ''));
-    if (!(Number.isInteger(v) && v > 0)) fail('traits.pool.weight', 'pool weight for ' + k + ' must be a positive integer');
-    if (g.includes(k)) fail('traits.pool.dup', 'trait "' + k + '" is both guaranteed and in the pool');
+    if (!(Number.isInteger(v) && v >= 1 && v <= 100)) fail('traits.pool.percent', 'percent for ' + k + ' must be an integer 1 to 100 (omit the trait instead of writing 0)');
   }
-  const rc = TR.rolledCount;
-  if (!isBand(rc, 0, 3)) fail('traits.rolledCount', 'rolledCount must be [lo, hi] with 0 <= lo <= hi <= 3');
-  else {
-    if (g.length + rc[1] > 3) fail('traits.total.max', 'guaranteed (' + g.length + ') + rolledCount max (' + rc[1] + ') exceeds 3');
-    if (g.length + rc[0] < 1) fail('traits.total.min', 'guaranteed + rolledCount min is below 1');
-    if (rc[1] > 0 && Object.keys(pool).length === 0) fail('traits.pool.empty', 'rolledCount allows rolls but the pool is empty');
-    if (rc[1] === 0 && Object.keys(pool).length > 0) warn('traits.pool.unused', 'pool has entries but rolledCount max is 0');
+  const g = Object.keys(pool).filter(k => pool[k] === 100);
+  const expected = Object.values(pool).filter(Number.isFinite).reduce((x, y) => x + y, 0) / 100;
+  if (Object.keys(pool).length === 0) warn('traits.pool.empty', 'no traits in the pool; confirm the body and the environment demand nothing');
+  if (expected > 3.5) warn('traits.expected', 'expected trait count ' + expected.toFixed(2) + ' is above 3.5; confirm the species is meant to carry that many');
+  for (const [x, y] of TRAIT_EXCLUSIONS) {
+    if (pool[x] === 100 && pool[y] === 100) fail('traits.exclusion', x + ' and ' + y + ' are exclusion partners and cannot both be at 100');
+    else if (has(pool, x) && has(pool, y) && pool[x] === pool[y]) warn('traits.exclusion.tie', x + ' and ' + y + ' have equal percents; the generator rolls the higher first, so break the tie deliberately');
   }
-  for (const [a, b] of TRAIT_EXCLUSIONS) {
-    const all = [...g, ...Object.keys(pool)];
-    if (all.includes(a) && all.includes(b)) fail('traits.exclusion', a + ' and ' + b + ' cannot co-occur across guaranteed and pool');
-  }
-  if (P.corporeality === 'non-corporeal' && !g.includes('phasing')) fail('traits.phasing', 'non-corporeal bodies must guarantee phasing');
-  if (anatomyOk && (P.anatomy.includes('shell') || P.covering === 'plating' || P.covering === 'chitin') && !g.includes('armored')) warn('traits.armored', 'shell, plating, or chitin present but armored is not guaranteed; justify in the walkthrough');
+  if (P.corporeality === 'non-corporeal' && pool.phasing !== 100) fail('traits.phasing', 'non-corporeal bodies carry phasing at 100');
+  if (anatomyOk && (P.anatomy.includes('shell') || P.covering === 'plating' || P.covering === 'chitin') && pool.armored !== 100) warn('traits.armored', 'shell, plating, or chitin present but armored is not at 100; justify in the walkthrough');
   if (isBand(C.manipulation) && C.manipulation[1] > 40) {
     const grasp = anatomyOk && P.anatomy.some(k => GRASPING.includes(k));
-    if (!grasp && !g.includes('telekinetic')) fail('manipulation.means', 'manipulation upper bound ' + C.manipulation[1] + ' above 40 without grasping anatomy or guaranteed telekinetic');
+    if (!grasp && !g.includes('telekinetic')) fail('manipulation.means', 'manipulation upper bound ' + C.manipulation[1] + ' above 40 without grasping anatomy or telekinetic at 100');
   }
 
   // instruments
@@ -500,7 +494,7 @@ if (key) {
     const snapshot = T ? {
       anatomy: P.anatomy, instruments: T.instruments, communication: P.communication,
       temperatureC: P.environmentalTolerance && P.environmentalTolerance.temperatureC, special: P.senses && P.senses.special,
-      lifespan: P.lifespan, size: P.size, traits: T.traits, archetypes: T.archetypeWeights,
+      lifespan: P.lifespan, size: P.size, traits: T.traits && T.traits.pool, archetypes: T.archetypeWeights,
       signature: { name: SG.name, instrument: SG.instrument, action: SG.action, medium: SG.medium, intensity: SG.intensity },
     } : null;
     const entry = { ts: new Date().toISOString(), key, fails: out.filter(o => o[0] === 'FAIL').map(o => ({ code: o[1], msg: o[2] })), warns: out.filter(o => o[0] === 'WARN').map(o => ({ code: o[1], msg: o[2] })), overridden, note, snapshot };

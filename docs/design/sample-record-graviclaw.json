@@ -1,0 +1,109 @@
+{
+  "id": "xal_01J8QK4R7MZ3VXNB2C9D1E5F6G",
+  "species": "graviclaw",
+  "provenance": {
+    "seed": "7f3a9c41e8b2d05f6a1c93e7d4b8f210",
+    "generatorVersion": "1.0.0",
+    "schemaVersion": "1.0.0",
+    "generatedAt": "2026-09-14T18:22:07Z",
+    "origin": "grimedes",
+    "serial": 213
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": { "primary": "flesh" },
+    "bodyPlan": "multiped",
+    "anatomy": ["pincers", "walking-legs"],
+    "covering": "chitin",
+    "heightCm": 198,
+    "weightKg": 372,
+    "lifespan": "enduring",
+    "genome": { "chirality": "dextro" },
+    "diet": "carnivore",
+    "communication": ["vibration"],
+    "breathes": ["gas", "liquid"],
+    "environmentalTolerance": {
+      "ambientMedia": ["gas", "liquid"],
+      "temperatureC": { "min": -15, "max": 20 }
+    },
+    "capabilities": {
+      "flight": 0,
+      "swim": 52,
+      "burrow": 31,
+      "climb": 18,
+      "sprint": 12,
+      "leap": 4,
+      "manipulation": 44
+    },
+    "senses": {
+      "sight": 55,
+      "hearing": 28,
+      "smell": 47,
+      "special": ["tremorsense"]
+    }
+  },
+  "archetype": { "key": "stalwart", "favors": ["resilience", "willpower"] },
+  "attributes": {
+    "strength": 74,
+    "vitality": 61,
+    "endurance": 65,
+    "agility": 14,
+    "reflex": 38,
+    "intelligence": 42,
+    "willpower": 78,
+    "instinct": 71,
+    "charisma": 19,
+    "resilience": 93
+  },
+  "element": {
+    "primary": "dark",
+    "affinities": { "dark": 100, "ghost": 44 }
+  },
+  "traits": {
+    "guaranteed": ["armored", "anchored"],
+    "rolled": ["stealthy"]
+  },
+  "temperament": {
+    "boldness": 81,
+    "curiosity": 48,
+    "energy": 25,
+    "aggression": 66,
+    "sociability": 22
+  },
+  "appearance": { "finish": "gleam" },
+  "abilities": [
+    {
+      "name": "Point of No Return",
+      "signature": true,
+      "instrument": "pincers",
+      "action": "snare",
+      "medium": "dark",
+      "intensity": 74,
+      "description": "Collapses gravitational waves into a point inside its open claw, dragging prey toward the closing pincer."
+    },
+    {
+      "name": "Wraith Vise",
+      "signature": false,
+      "instrument": "pincers",
+      "action": "crush",
+      "medium": "ghost",
+      "intensity": 48
+    },
+    {
+      "name": "Null Grasp",
+      "signature": false,
+      "instrument": "mind",
+      "action": "snare",
+      "medium": "dark",
+      "intensity": 33
+    },
+    {
+      "name": "Event Horizon",
+      "signature": false,
+      "instrument": "pincers",
+      "action": "ward",
+      "medium": "dark",
+      "intensity": 41
+    }
+  ]
+}

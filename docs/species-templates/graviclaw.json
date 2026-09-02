@@ -152,21 +152,14 @@
     ]
   },
   "traits": {
-    "guaranteed": [
-      "armored",
-      "anchored"
-    ],
-    "rolledCount": [
-      0,
-      1
-    ],
     "pool": {
-      "stealthy": 5,
-      "perceptive": 3,
-      "solitary": 3,
-      "menacing": 2,
-      "nocturnal": 2,
-      "telekinetic": 1
+      "armored": 100,
+      "anchored": 100,
+      "stealthy": 60,
+      "solitary": 45,
+      "perceptive": 30,
+      "menacing": 30,
+      "telekinetic": 6
     }
   },
   "instruments": [
