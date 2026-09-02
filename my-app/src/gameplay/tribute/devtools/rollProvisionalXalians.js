@@ -10,6 +10,7 @@
 */
 
 import { PROVISIONAL_SPECIES } from './provisionalSpecies.js';
+import rawSites from '../../../json/sites.json';
 import { createRngState, nextRandom } from '../tributeRules.js';
 
 const ARCHETYPE_KEYS = [
@@ -24,6 +25,39 @@ const ELEMENTS = [
 ];
 
 const NEUTRAL_BAND = [30, 70];
+
+/*
+	Environmental tolerance is rolled from the creature's home world: the band that
+	covers every site there, widened by a random margin, and the media found there. So a
+	creature is never strained at home, is comfortable on worlds like its own, and is
+	strained (or, where it cannot breathe the medium, severely strained) on the extreme
+	ones. Before this every roll tolerated -10 to 40 C in gas, which strained nine sends
+	in ten and made the whole mechanic noise.
+*/
+function rollTolerance(rng, origin) {
+	const planetName = origin.charAt(0).toUpperCase() + origin.slice(1);
+	const homeSites = rawSites[planetName] || [];
+	let min = Infinity;
+	let max = -Infinity;
+	const media = new Set();
+	homeSites.forEach((site) => {
+		min = Math.min(min, site.environment.temperatureC.min);
+		max = Math.max(max, site.environment.temperatureC.max);
+		media.add(site.environment.medium);
+	});
+	if (homeSites.length === 0) {
+		min = -10;
+		max = 40;
+		media.add('gas');
+	}
+	min -= rng.range(0, 30);
+	max += rng.range(0, 30);
+	if (rng.float() < 0.25) {
+		media.add(rng.pick(['gas', 'liquid']));
+	}
+	return { ambientMedia: [...media], temperatureC: { min, max } };
+}
+
 
 function makeRng(seed) {
 	let state = createRngState(seed);
@@ -130,6 +164,7 @@ export function rollXalians(count, seed) {
 		const attributes = rollAttributes(rng, template.attributeBands);
 		const element = rollElement(rng, template.element);
 		const archetypeKey = rng.pick(ARCHETYPE_KEYS);
+		const tolerance = rollTolerance(rng, template.origin);
 
 		const abilities = [buildSignature(template, serial), ...rollAbilities(rng, template)];
 
@@ -156,11 +191,8 @@ export function rollXalians(count, seed) {
 				genome: { chirality: rng.float() < 0.5 ? 'levo' : 'dextro' },
 				diet: 'omnivore',
 				communication: ['vibration'],
-				breathes: ['gas'],
-				environmentalTolerance: {
-					ambientMedia: ['gas'],
-					temperatureC: { min: -10, max: 40 },
-				},
+				breathes: tolerance.ambientMedia,
+				environmentalTolerance: tolerance,
 				capabilities: {
 					flight: 0, swim: 0, burrow: 0, climb: 0, sprint: 0, leap: 0, manipulation: 0,
 				},

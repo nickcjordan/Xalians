@@ -180,6 +180,7 @@ export function createMatch({ rosterA, rosterB, worlds, seed }) {
 		hidden: {}, // record id -> boolean, sent hidden this round and not yet revealed
 		orders: { A: {}, B: {} }, // record id -> action name or 'hold', private until commit
 		committed: { A: false, B: false },
+		vanguardRelocated: { A: false, B: false }, // per-world: has this handler used its one relocate?
 		phase: 'deploy',
 		starter,
 		turn: starter,
@@ -358,7 +359,9 @@ export function pass(state, handler) {
 	if (p.passed) {
 		return null;
 	}
-	const nextPlayers = { ...state.players, [handler]: { ...p, passed: true } };
+	// the first to pass this world is recorded for the end-of-match tiebreak
+	const firstPasser = !state.players[otherPlayer(handler)].passed;
+	const nextPlayers = { ...state.players, [handler]: { ...p, passed: true, firstPasser } };
 	let nextState = { ...state, players: nextPlayers };
 
 	const bothPassed = nextState.players.A.passed && nextState.players.B.passed;
@@ -366,6 +369,85 @@ export function pass(state, handler) {
 		return { ...nextState, phase: 'orders', turn: null };
 	}
 	return advanceDeployTurnAfterPass(nextState, handler);
+}
+
+/*
+	relocateVanguard(state, handler, siteId)
+
+	"The vanguard falls back": once per world, during Deploy, on their own turn and
+	before they have passed, the round's starter may relocate the FIRST creature they
+	sent this world to a different site on the same world. Does NOT consume the turn —
+	the handler still sends or passes afterward on that same turn. The creature keeps its
+	sentIndex and hidden flag; hold/strain/everything else is recomputed for the new site
+	at resolution as usual, since nothing is stored on the entry beyond siteId.
+
+	Illegal if: the handler is not this world's starter, phase is not deploy, it is not
+	their turn, they have passed, they have already relocated this world, the first-sent
+	creature is no longer on the board (guarded defensively; it cannot actually leave the
+	board during deploy), or the target site is the one it already stands on.
+*/
+export function relocateVanguard(state, handler, siteId) {
+	if (state.starter !== handler) {
+		return null;
+	}
+	if (!isPlayersDeployTurn(state, handler)) {
+		return null;
+	}
+	const p = state.players[handler];
+	if (p.passed) {
+		return null;
+	}
+	if (state.vanguardRelocated[handler]) {
+		return null;
+	}
+	const world = currentWorld(state);
+	const site = siteById(world, siteId);
+	if (!site) {
+		return null;
+	}
+
+	// "the first creature they sent this world" — the board only ever holds creatures
+	// sent on the CURRENT world (judge() gives every world a fresh empty board), so this
+	// is simply the handler's own board entry with the lowest sentIndex.
+	const ownEntries = boardEntriesFor(state, handler);
+	if (ownEntries.length === 0) {
+		return null; // defensive: cannot happen during deploy (send() puts it there first)
+	}
+	const vanguard = ownEntries.reduce((earliest, e) => (!earliest || e.sentIndex < earliest.sentIndex ? e : earliest), null);
+	if (vanguard.siteId === siteId) {
+		return null;
+	}
+
+	const relocated = { ...vanguard, siteId };
+	const nextBoard = {
+		...state.board,
+		[vanguard.siteId]: {
+			...state.board[vanguard.siteId],
+			[handler]: state.board[vanguard.siteId][handler].filter((e) => e.recordId !== vanguard.recordId),
+		},
+	};
+	nextBoard[siteId] = {
+		...nextBoard[siteId],
+		[handler]: [...nextBoard[siteId][handler], relocated],
+	};
+
+	const nextVanguardRelocated = { ...state.vanguardRelocated, [handler]: true };
+	const nextResolutionLog = [...state.resolutionLog, {
+		type: 'vanguard-relocate',
+		recordId: relocated.recordId,
+		handler,
+		fromSite: vanguard.siteId,
+		toSite: siteId,
+		hidden: relocated.hidden,
+	}];
+
+	// turn is deliberately NOT advanced: the handler still sends or passes on this turn
+	return {
+		...state,
+		board: nextBoard,
+		vanguardRelocated: nextVanguardRelocated,
+		resolutionLog: nextResolutionLog,
+	};
 }
 
 function advanceDeployTurn(state, actingPlayer) {
@@ -959,6 +1041,9 @@ function performAct(state, entry, action) {
 		const everyone = entriesSnapshot.filter((e) => e.siteId === targetSiteId && e.recordId !== entry.recordId);
 		everyone.forEach((victim) => {
 			applyStrikeToTarget(state, entry, act, victim);
+			// one event per creature caught in the area, so narration and the simulator
+			// see each stagger and rout; the summary event below closes the act
+			logEvent(state, { recordId: entry.recordId, action, target: victim.recordId, outcome: state._lastStrikeOutcome, areaHit: true });
 		});
 		logEvent(state, { recordId: entry.recordId, action, site: targetSiteId, outcome: 'area-struck', hitCount: everyone.length });
 		return;
@@ -1175,6 +1260,7 @@ function judge(state) {
 		hidden: {},
 		orders: { A: {}, B: {} },
 		committed: { A: false, B: false },
+		vanguardRelocated: { A: false, B: false },
 		players: {
 			A: { ...s.players.A, passed: false, firstPasser: false },
 			B: { ...s.players.B, passed: false, firstPasser: false },
@@ -1254,6 +1340,34 @@ export function getPublicState(state, handler) {
 		return count;
 	};
 
+	// canRelocateVanguard: only the world's starter ever has the option, so this is
+	// false outright for the non-starter side (per handler, not just "self").
+	function canRelocate(who) {
+		if (state.starter !== who) {
+			return false;
+		}
+		if (state.phase !== 'deploy') {
+			return false;
+		}
+		if (state.vanguardRelocated[who]) {
+			return false;
+		}
+		return !state.players[who].passed;
+	}
+
+	// the handler's own vanguard (first-sent creature this world), own side only — the
+	// opponent's identity stays hidden even when it happens to be a hidden send, since
+	// "which creature is their vanguard" is exactly the kind of identity getPublicState
+	// otherwise withholds for the opponent.
+	function ownVanguardRecordId(who) {
+		const entries = boardEntriesFor(state, who);
+		if (entries.length === 0) {
+			return null;
+		}
+		const earliest = entries.reduce((e1, e2) => (!e1 || e2.sentIndex < e1.sentIndex ? e2 : e1), null);
+		return earliest ? earliest.recordId : null;
+	}
+
 	function viewOf(who, isSelf) {
 		const p = state.players[who];
 		const base = {
@@ -1265,9 +1379,16 @@ export function getPublicState(state, handler) {
 			passed: p.passed,
 			sitesWon: p.sitesWon,
 			hiddenSentThisRound: hiddenCountThisRound(who),
+			canRelocateVanguard: canRelocate(who),
 		};
 		if (isSelf) {
-			return { ...base, roster: p.roster, orders: state.orders[who], committed: state.committed[who] };
+			return {
+				...base,
+				roster: p.roster,
+				orders: state.orders[who],
+				committed: state.committed[who],
+				vanguardRecordId: ownVanguardRecordId(who),
+			};
 		}
 		return { ...base, committed: state.committed[who] };
 	}

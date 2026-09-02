@@ -1,5 +1,5 @@
 import {
-	createMatch, send, pass, order, commitOrders, getPublicState,
+	createMatch, send, pass, order, commitOrders, getPublicState, relocateVanguard,
 	ExpeditionRuleError, hasLegalSend, prepareEntry, currentWorld, findEntry, currentHoldOf,
 } from '../expeditionRules.js';
 import { ROSTER_SIZE, SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH } from '../expeditionInterpretation.js';
@@ -664,5 +664,219 @@ describe('public state hiding', () => {
 		const state = freshMatch('seed-hide-test');
 		const view = getPublicState(state, 'A');
 		expect(view.seed).toBeUndefined();
+	});
+});
+
+describe('relocateVanguard: the vanguard falls back', () => {
+	// Sends the starter's vanguard, then brings the turn back to the starter (the
+	// opponent passes) so relocate — legal only "on their own turn" — is actually
+	// available for the main-path tests. A dedicated test below covers the
+	// "not their turn" illegal case using the state right after the first send instead.
+	function firstSendState(seed = 'vanguard-seed') {
+		let state = freshMatch(seed);
+		const world = currentWorld(state);
+		const starter = state.starter;
+		const other = starter === 'A' ? 'B' : 'A';
+		state = send(state, starter, state.players[starter].roster[0].id, world.sites[0].id);
+		if (state.phase === 'deploy' && state.turn === other) {
+			state = pass(state, other);
+		}
+		return { state, starter, other, world };
+	}
+
+	test('the starter may relocate the first creature they sent this world to a different site', () => {
+		const { state, starter, world } = firstSendState();
+		const vanguardId = state.board[world.sites[0].id][starter][0].recordId;
+		const next = relocateVanguard(state, starter, world.sites[1].id);
+		expect(next).not.toBeNull();
+		expect(next.board[world.sites[0].id][starter].length).toBe(0);
+		expect(next.board[world.sites[1].id][starter].some((e) => e.recordId === vanguardId)).toBe(true);
+		expect(next.vanguardRelocated[starter]).toBe(true);
+	});
+
+	test('does not consume the turn: the handler still sends or passes on the same turn afterward', () => {
+		const { state, starter, world } = firstSendState();
+		const turnBefore = state.turn;
+		expect(turnBefore).toBe(starter); // relocate is only legal on the starter's own turn
+		const relocated = relocateVanguard(state, starter, world.sites[1].id);
+		expect(relocated).not.toBeNull();
+		// the turn marker is untouched by relocate itself...
+		expect(relocated.turn).toBe(turnBefore);
+		expect(relocated.phase).toBe('deploy');
+		expect(relocated.players[starter].passed).toBe(false);
+		// ...and the handler can still legally send afterward, on the very same turn (a
+		// send that had already "used up" the turn would be rejected as out-of-turn)
+		const secondRecordId = relocated.players[starter].roster[0].id;
+		const afterSend = send(relocated, starter, secondRecordId, world.sites[2].id);
+		expect(afterSend).not.toBeNull();
+		expect(afterSend.board[world.sites[2].id][starter].some((e) => e.recordId === secondRecordId)).toBe(true);
+	});
+
+	test('the relocated creature keeps its sentIndex and hidden flag', () => {
+		const stealthyRoster = makeRoster('S', (i) => (i === 0 ? { traits: { guaranteed: [], rolled: ['stealthy'] } } : {}));
+		let state = createMatch({ rosterA: stealthyRoster, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'vanguard-hidden-seed' });
+		const starter = state.starter;
+		const world = currentWorld(state);
+		if (starter !== 'A') {
+			return;
+		}
+		state = send(state, 'A', stealthyRoster[0].id, world.sites[0].id, true);
+		const before = state.board[world.sites[0].id].A[0];
+		expect(before.hidden).toBe(true);
+		const next = relocateVanguard(state, 'A', world.sites[1].id);
+		expect(next).not.toBeNull();
+		const after = next.board[world.sites[1].id].A[0];
+		expect(after.recordId).toBe(before.recordId);
+		expect(after.sentIndex).toBe(before.sentIndex);
+		expect(after.hidden).toBe(true);
+	});
+
+	test('hold is recomputed for the new site at resolution (strain changes if the site does)', () => {
+		const strainableRecord = makeRecord('strain-vanguard', {
+			physiology: {
+				breathes: ['liquid'],
+				environmentalTolerance: { ambientMedia: ['liquid'], temperatureC: { min: -50, max: 200 } },
+			},
+		});
+		const worlds = [makeWorld('Magmuth', 'fire', [
+			{ environment: { medium: 'liquid', temperatureC: { min: -50, max: 200 } } },
+			{ environment: { medium: 'gas', temperatureC: { min: -50, max: 200 } } },
+			{},
+		]), ...makeWorlds(4)];
+		const rosterA = makeRoster('A').map((r, i) => (i === 0 ? { ...strainableRecord, id: 'A_0' } : r));
+		let state = createMatch({ rosterA, rosterB: makeRoster('B'), worlds, seed: 'vanguard-strain-seed' });
+		const starter = state.starter;
+		const world = currentWorld(state);
+		if (starter !== 'A') {
+			return;
+		}
+		state = send(state, 'A', 'A_0', world.sites[0].id);
+		const holdBefore = currentHoldOf(state, state.board[world.sites[0].id].A[0]);
+		const next = relocateVanguard(state, 'A', world.sites[1].id);
+		expect(next).not.toBeNull();
+		const holdAfter = currentHoldOf(next, next.board[world.sites[1].id].A[0]);
+		expect(holdAfter).toBeLessThan(holdBefore);
+	});
+
+	test('illegal when the handler is not this world’s starter', () => {
+		const { state, other, world } = firstSendState();
+		expect(relocateVanguard(state, other, world.sites[1].id)).toBeNull();
+	});
+
+	test('illegal: phase is not deploy', () => {
+		let state = freshMatch('vanguard-phase-seed');
+		const world = currentWorld(state);
+		const starter = state.starter;
+		const other = starter === 'A' ? 'B' : 'A';
+		state = send(state, starter, state.players[starter].roster[0].id, world.sites[0].id);
+		state = send(state, other, state.players[other].roster[0].id, world.sites[0].id);
+		state = pass(state, state.turn);
+		state = pass(state, state.turn);
+		expect(state.phase).toBe('orders');
+		expect(relocateVanguard(state, starter, world.sites[1].id)).toBeNull();
+	});
+
+	test('illegal: it is not their turn', () => {
+		// right after the starter's first send, the turn has passed to the opponent (the
+		// starter has not gotten a turn back yet), so relocate must be illegal here
+		let state = freshMatch('vanguard-not-turn-seed');
+		const world = currentWorld(state);
+		const starter = state.starter;
+		const other = starter === 'A' ? 'B' : 'A';
+		state = send(state, starter, state.players[starter].roster[0].id, world.sites[0].id);
+		expect(state.turn).toBe(other);
+		expect(relocateVanguard(state, starter, world.sites[1].id)).toBeNull();
+	});
+
+	test('illegal: the handler has passed', () => {
+		let state = freshMatch('vanguard-passed-seed');
+		const world = currentWorld(state);
+		const starter = state.starter;
+		const other = starter === 'A' ? 'B' : 'A';
+		state = send(state, starter, state.players[starter].roster[0].id, world.sites[0].id);
+		state = pass(state, other);
+		expect(state.turn === starter || state.phase !== 'deploy').toBe(true);
+		if (state.phase !== 'deploy') {
+			return;
+		}
+		state = pass(state, starter);
+		expect(state.players[starter].passed).toBe(true);
+		if (state.phase === 'deploy') {
+			expect(relocateVanguard(state, starter, world.sites[1].id)).toBeNull();
+		}
+	});
+
+	test('illegal: already relocated once this world', () => {
+		const { state, starter, world } = firstSendState();
+		const once = relocateVanguard(state, starter, world.sites[1].id);
+		expect(once).not.toBeNull();
+		expect(relocateVanguard(once, starter, world.sites[2].id)).toBeNull();
+	});
+
+	test('illegal: the target site is the one the vanguard already stands on', () => {
+		const { state, starter, world } = firstSendState();
+		expect(relocateVanguard(state, starter, world.sites[0].id)).toBeNull();
+	});
+
+	test('illegal: a nonexistent site id', () => {
+		const { state, starter } = firstSendState();
+		expect(relocateVanguard(state, starter, 'not-a-real-site')).toBeNull();
+	});
+
+	test('resets per world: a new world clears vanguardRelocated for both sides', () => {
+		// build the round from scratch (not firstSendState, which already burns the
+		// opponent's turn via a permanent pass) so both sides still have live turns left
+		let state = freshMatch('vanguard-reset-seed');
+		const world = currentWorld(state);
+		const starter = state.starter;
+		const other = starter === 'A' ? 'B' : 'A';
+		state = send(state, starter, state.players[starter].roster[0].id, world.sites[0].id);
+		state = send(state, other, state.players[other].roster[0].id, world.sites[0].id);
+		expect(state.turn).toBe(starter);
+		const relocated = relocateVanguard(state, starter, world.sites[1].id);
+		expect(relocated).not.toBeNull();
+		expect(relocated.vanguardRelocated[starter]).toBe(true);
+		let next = pass(relocated, starter);
+		next = pass(next, next.turn);
+		expect(next.phase).toBe('orders');
+		next = commitOrders(next, 'A');
+		next = commitOrders(next, 'B');
+		if (next.phase === 'deploy') {
+			expect(next.vanguardRelocated.A).toBe(false);
+			expect(next.vanguardRelocated.B).toBe(false);
+		}
+	});
+
+	test('public state: canRelocateVanguard is true for the starter, false for the other side, and false after use', () => {
+		const { state, starter, other, world } = firstSendState('vanguard-public-seed');
+		const viewStarter = getPublicState(state, starter);
+		const viewOther = getPublicState(state, other);
+		expect(viewStarter.players[starter].canRelocateVanguard).toBe(true);
+		expect(viewOther.players[starter].canRelocateVanguard).toBe(true);
+		expect(viewStarter.players[other].canRelocateVanguard).toBe(false);
+
+		const relocated = relocateVanguard(state, starter, world.sites[1].id);
+		const viewAfter = getPublicState(relocated, starter);
+		expect(viewAfter.players[starter].canRelocateVanguard).toBe(false);
+	});
+
+	test('public state: own side sees its vanguardRecordId; opponent identity of the vanguard stays hidden', () => {
+		const { state, starter, other, world } = firstSendState('vanguard-identity-seed');
+		const vanguardId = state.board[world.sites[0].id][starter][0].recordId;
+		const viewSelf = getPublicState(state, starter);
+		expect(viewSelf.players[starter].vanguardRecordId).toBe(vanguardId);
+		const viewOpponent = getPublicState(state, other);
+		expect(viewOpponent.players[starter].vanguardRecordId).toBeUndefined();
+	});
+
+	test('event is recorded in the log for narration', () => {
+		const { state, starter, world } = firstSendState('vanguard-log-seed');
+		const next = relocateVanguard(state, starter, world.sites[1].id);
+		expect(next).not.toBeNull();
+		const ev = next.resolutionLog.find((e) => e.type === 'vanguard-relocate');
+		expect(ev).toBeTruthy();
+		expect(ev.handler).toBe(starter);
+		expect(ev.fromSite).toBe(world.sites[0].id);
+		expect(ev.toSite).toBe(world.sites[1].id);
 	});
 });

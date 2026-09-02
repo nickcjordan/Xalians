@@ -142,7 +142,36 @@ export const PROVISIONAL_SPECIES = [
 		attributeBands: bands({ intelligence: [65, 90], instinct: [55, 80], willpower: [45, 70], strength: [10, 25] }),
 		signature: { name: 'Asylum Chorus', instrument: 'mind', action: 'mend', description: "Harmonizes a wound the way Telypso's Generator harmonizes its screaming patients." },
 	},
+	// --- the three elements the first pool lacked (chemical, light, sand) ---
+	{
+		key: 'carbideleech',
+		element: 'chemical',
+		origin: 'drainov',
+		instruments: ['vents', 'body'],
+		actionPool: ['cloud', 'drain', 'spray'],
+		attributeBands: bands({ vitality: [55, 80], intelligence: [50, 75], resilience: [45, 70], charisma: [5, 20] }),
+		signature: { name: 'Carbide Bloom', instrument: 'vents', action: 'cloud', description: 'Exhales a pocket of the meltdown that killed Drainov.' },
+	},
+	{
+		key: 'prismshrike',
+		element: 'light',
+		origin: 'luminax',
+		instruments: ['gaze', 'body'],
+		actionPool: ['beam', 'hurl', 'ward'],
+		attributeBands: bands({ reflex: [65, 90], agility: [55, 80], intelligence: [45, 70], vitality: [15, 35] }),
+		signature: { name: 'ION Flare', instrument: 'gaze', action: 'beam', description: 'A misfire of the Stellaris cannon, focused through a living lens.' },
+	},
+	{
+		key: 'duneleviathan',
+		element: 'sand',
+		origin: 'endessa',
+		instruments: ['jaws', 'body'],
+		attributeBands: bands({ strength: [60, 85], vitality: [65, 90], agility: [10, 30], curiosity: [30, 70] }),
+		actionPool: ['crush', 'snare', 'terrorize'],
+		signature: { name: 'Deepwater Surfacing', instrument: 'body', action: 'terrorize', description: 'Breaches from under the sand the way the glitching Generator dreams it once breached water.' },
+	},
 ];
+
 
 export function getProvisionalSpecies(key) {
 	return PROVISIONAL_SPECIES.find((s) => s.key === key) || null;
