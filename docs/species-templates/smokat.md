@@ -175,3 +175,7 @@ logged to docs\species-templates\validation-log\smokat.jsonl
 ```
 
 Two WARNs were raised across the run and both were answered by revision rather than argument. `traits.expected` fired at 3.99 on the first pool; I dropped `menacing` and trimmed three percents, bringing the expected count to 3.44. `enc.definition.name` fired because the encyclopedia definition did not name the species; I rewrote it to open with `The Smokat is`. Both were fair calls.
+
+## Orchestrator amendments
+
+- 2026-09-02, after the independent validation: `diet` changed from `carnivore` to `omnivore` under the ratified selection rule (a sneak-attack sentence is fighting, not feeding, and a flesh body with no feeding sentence defaults to `omnivore`); the Leviticus Overdrive clause was cut from the description because that regime produces non-corporeal Xalians and the Smokat is flesh; the Encyclopedia definition dropped the unsourced lethal-stakes clause and no longer says the smoke reassembles elsewhere, which read as teleportation. `manipulation` [30, 55] stands: `claws` is grasping anatomy in the validator's list, and the skill now states that list explicitly.

@@ -3,41 +3,100 @@
   "name": "Smokat",
   "element": "ghost",
   "homePlanet": "phantiri",
-  "generatorPlanets": ["phantiri"],
+  "generatorPlanets": [
+    "phantiri"
+  ],
   "lore": {
-    "description": "A lean feline that walks upright on its hind legs, with a long tail and a body that trails vapor at every joint, the Smokat was printed by the secret Generator installed in the bowels of Phantiri to work the dig sites the Imperial Houses opened across the world. It is clever, and in normal form it is flesh and claw, but it can instantly atomize into a cloud of smoke, so a collapsing gallery took nothing from it and no overseer could hold it long. The Generator has since gone on churning under the Leviticus Overdrive, and the Smokat now hunts the haze above the Dreadscape, where a body that scatters at will is the difference between competing for a Scrambler Token and joining the mass grave underfoot.",
+    "description": "A lean feline that walks upright on its hind legs, with a long tail and a body that trails vapor at every joint, the Smokat was printed by the secret Generator installed in the bowels of Phantiri to work the dig sites the Imperial Houses opened across the world. It is clever, and in normal form it is flesh and claw, but it can instantly atomize into a cloud of smoke, so a collapsing gallery took nothing from it and no overseer could hold it long. The Smokat now hunts the haze above the Dreadscape, where a body that scatters at will is the difference between competing for a Scrambler Token and joining the mass grave underfoot.",
     "descriptionStatus": "upgraded",
     "biomeNiche": "the thick haze over the corpse islands of the Dreadscape"
   },
   "physiology": {
     "corporeality": "corporeal",
-    "composition": { "primary": "flesh" },
+    "composition": {
+      "primary": "flesh"
+    },
     "bodyPlan": "biped",
-    "anatomy": ["claws", "jaws", "tail", "hide"],
+    "anatomy": [
+      "claws",
+      "jaws",
+      "tail",
+      "hide"
+    ],
     "covering": "bare",
-    "size": { "heightCm": [150, 185], "weightKg": [58, 84] },
+    "size": {
+      "heightCm": [
+        150,
+        185
+      ],
+      "weightKg": [
+        58,
+        84
+      ]
+    },
     "lifespan": "standard",
-    "genome": { "chirality": "rolled" },
-    "diet": "carnivore",
-    "communication": ["vocal"],
-    "breathes": ["gas"],
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "vocal"
+    ],
+    "breathes": [
+      "gas"
+    ],
     "environmentalTolerance": {
-      "ambientMedia": ["gas"],
-      "temperatureC": { "min": -30, "max": 45 }
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -30,
+        "max": 45
+      }
     },
     "capabilities": {
-      "flight": [0, 0],
-      "swim": [10, 30],
-      "burrow": [5, 20],
-      "climb": [55, 80],
-      "sprint": [60, 85],
-      "leap": [55, 80],
-      "manipulation": [30, 55]
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        10,
+        30
+      ],
+      "burrow": [
+        5,
+        20
+      ],
+      "climb": [
+        55,
+        80
+      ],
+      "sprint": [
+        60,
+        85
+      ],
+      "leap": [
+        55,
+        80
+      ],
+      "manipulation": [
+        30,
+        55
+      ]
     },
     "senses": {
-      "sight": [55, 80],
-      "hearing": [55, 80],
-      "smell": [45, 70]
+      "sight": [
+        55,
+        80
+      ],
+      "hearing": [
+        55,
+        80
+      ],
+      "smell": [
+        45,
+        70
+      ]
     }
   },
   "archetypeWeights": {
@@ -48,16 +107,46 @@
     "rogue": 1
   },
   "attributes": {
-    "strength": [45, 70],
-    "vitality": [35, 60],
-    "endurance": [35, 60],
-    "agility": [55, 82],
-    "reflex": [55, 82],
-    "intelligence": [45, 70],
-    "willpower": [35, 60],
-    "instinct": [50, 76],
-    "charisma": [25, 50],
-    "resilience": [25, 50]
+    "strength": [
+      45,
+      70
+    ],
+    "vitality": [
+      35,
+      60
+    ],
+    "endurance": [
+      35,
+      60
+    ],
+    "agility": [
+      55,
+      82
+    ],
+    "reflex": [
+      55,
+      82
+    ],
+    "intelligence": [
+      45,
+      70
+    ],
+    "willpower": [
+      35,
+      60
+    ],
+    "instinct": [
+      50,
+      76
+    ],
+    "charisma": [
+      25,
+      50
+    ],
+    "resilience": [
+      25,
+      50
+    ]
   },
   "traits": {
     "pool": {
@@ -71,13 +160,19 @@
       "foresighted": 4
     }
   },
-  "instruments": ["claws", "jaws"],
+  "instruments": [
+    "claws",
+    "jaws"
+  ],
   "signatureAbility": {
     "name": "The Scattering Pounce",
     "instrument": "claws",
     "action": "ambush",
     "medium": "ghost",
-    "intensity": [35, 85],
+    "intensity": [
+      35,
+      85
+    ],
     "description": "It comes apart into smoke mid-stride, crosses the ground as haze, and is whole again with its claws already closing."
   }
 }
