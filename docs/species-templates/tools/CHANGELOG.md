@@ -15,3 +15,4 @@ One dated line per change, written by the orchestrator after a denial review. Ea
 - 2026-09-02: trait pool must list all 24 keys at 0 to 100 (`traits.pool.missing`); WARN when no trait sits strictly between 0 and 100.
 - 2026-09-02: reverted the all-24-keys requirement the same day; absence means 0, percents are 1 to 100, `traits.pool.missing` removed.
 - 2026-09-02: the quotation check now accepts verbatim text from the planet data block and the species height and weight strings (Smokat run flagged the gap via its Script denials section).
+- 2026-09-02: quotation extraction pairs quote marks strictly in order; a short quotation no longer shifts the pairing onto the gap after it (Tizzie run flagged it via --note).

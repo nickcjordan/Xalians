@@ -440,8 +440,9 @@ if (MD) {
     for (const line of MD.split(/\r?\n/)) {
       if (/^\s*```/.test(line)) { inFence = !inFence; continue; }
       if (inFence || /^(FAIL|WARN|ok)\s+[a-z.]+\s/.test(line)) continue;   // pasted validator output and code blocks are not quotations
-      const re = /"([^"]{12,})"/g; let m;
-      while ((m = re.exec(line))) quotes.push(m[1]);
+      // pair quote marks strictly in order so a short quotation never shifts the pairing onto the gap after it
+      const parts = line.split('"');
+      for (let i = 1; i < parts.length; i += 2) if (parts[i].length >= 12) quotes.push(parts[i]);
       const bq = line.match(/^>\s*"?(.{12,}?)"?\s*$/);
       if (bq) quotes.push(bq[1]);
     }
