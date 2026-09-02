@@ -3,41 +3,97 @@
   "name": "Tetrahive",
   "element": "dark",
   "homePlanet": "grimedes",
-  "generatorPlanets": ["grimedes"],
+  "generatorPlanets": [
+    "grimedes"
+  ],
   "lore": {
-    "description": "A single creature distributed across a cloud of small flying bodies, each one little more than a set of teeth, all of them held together and directed by one mind. The Generator on Grimedes was funded to produce test subjects rather than a labor force, and a body that could be divided, counted, and reassembled was ideal for measuring what the black hole was doing to living matter. What the observatories bred instead was a predator that never presents a target. In the present day the Tetrahive scatters over the stalky undergrowth of the flats, thins to nothing when struck, and closes again as one unit on whatever it has decided is prey, which is the sort of watchman the rim keeps now.",
+    "description": "A cloud of small flying bodies, each little more than a mouth of teeth like a piranha's, the Tetrahive is one creature distributed across many, every unit held to a single mind. The Xalians of Grimedes were built as test subjects rather than a labor force, and the Vallerii, convinced the black hole lay behind the planet's strange occurrences, insisted on studying its effects on the Xalian population. A body that could be divided and counted suited that work, and the Generator, believed to have been funded by ECHELON, obliged. Today the Tetrahive hunts over the thick, stalky undergrowth of the flats, attacking and defending as one unit, and takes its place among the Grimedites who watch the endless black for the return of APEX.",
     "descriptionStatus": "upgraded",
     "biomeNiche": "hunts above the thick, stalky undergrowth of Grimedes' unlit flats"
   },
   "physiology": {
     "corporeality": "corporeal",
-    "composition": { "primary": "flesh" },
+    "composition": {
+      "primary": "flesh"
+    },
     "bodyPlan": "swarm",
-    "anatomy": ["jaws", "wings", "body"],
+    "anatomy": [
+      "jaws",
+      "wings",
+      "body"
+    ],
     "covering": "bare",
-    "size": { "heightCm": [55, 95], "weightKg": [7, 16] },
+    "size": {
+      "heightCm": [
+        55,
+        95
+      ],
+      "weightKg": [
+        7,
+        16
+      ]
+    },
     "lifespan": "short",
-    "genome": { "chirality": "rolled" },
+    "genome": {
+      "chirality": "rolled"
+    },
     "diet": "carnivore",
     "communication": [],
-    "breathes": ["gas"],
+    "breathes": [
+      "gas"
+    ],
     "environmentalTolerance": {
-      "ambientMedia": ["gas"],
-      "temperatureC": { "min": -6, "max": 34 }
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -6,
+        "max": 34
+      }
     },
     "capabilities": {
-      "flight": [55, 80],
-      "swim": [0, 10],
-      "burrow": [0, 5],
-      "climb": [10, 30],
-      "sprint": [20, 40],
-      "leap": [10, 25],
-      "manipulation": [10, 25]
+      "flight": [
+        55,
+        80
+      ],
+      "swim": [
+        0,
+        10
+      ],
+      "burrow": [
+        0,
+        5
+      ],
+      "climb": [
+        10,
+        30
+      ],
+      "sprint": [
+        20,
+        40
+      ],
+      "leap": [
+        10,
+        25
+      ],
+      "manipulation": [
+        10,
+        25
+      ]
     },
     "senses": {
-      "sight": [30, 55],
-      "hearing": [40, 65],
-      "smell": [35, 60]
+      "sight": [
+        30,
+        55
+      ],
+      "hearing": [
+        40,
+        65
+      ],
+      "smell": [
+        35,
+        60
+      ]
     }
   },
   "archetypeWeights": {
@@ -47,20 +103,55 @@
     "runner": 1
   },
   "attributes": {
-    "strength": [15, 35],
-    "vitality": [25, 45],
-    "endurance": [35, 55],
-    "agility": [60, 85],
-    "reflex": [55, 80],
-    "intelligence": [35, 55],
-    "willpower": [45, 70],
-    "instinct": [50, 75],
-    "charisma": [10, 30],
-    "resilience": [15, 35]
+    "strength": [
+      15,
+      35
+    ],
+    "vitality": [
+      25,
+      45
+    ],
+    "endurance": [
+      35,
+      55
+    ],
+    "agility": [
+      60,
+      85
+    ],
+    "reflex": [
+      55,
+      80
+    ],
+    "intelligence": [
+      35,
+      55
+    ],
+    "willpower": [
+      45,
+      70
+    ],
+    "instinct": [
+      50,
+      75
+    ],
+    "charisma": [
+      10,
+      30
+    ],
+    "resilience": [
+      15,
+      35
+    ]
   },
   "traits": {
-    "guaranteed": ["slippery"],
-    "rolledCount": [1, 2],
+    "guaranteed": [
+      "slippery"
+    ],
+    "rolledCount": [
+      1,
+      2
+    ],
     "pool": {
       "pack-bonded": 5,
       "protective": 3,
@@ -68,13 +159,19 @@
       "stealthy": 1
     }
   },
-  "instruments": ["swarm", "jaws"],
+  "instruments": [
+    "swarm",
+    "jaws"
+  ],
   "signatureAbility": {
     "name": "Convocation of Teeth",
     "instrument": "swarm",
     "action": "rake",
     "medium": "dark",
-    "intensity": [40, 80],
+    "intensity": [
+      40,
+      80
+    ],
     "description": "The scattered bodies fall in from every side at once and strip the target as a single closing mouth."
   }
 }

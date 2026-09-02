@@ -171,3 +171,23 @@ Final run, `node docs/species-templates/tools/validate-template.js tetrahive`:
 0 FAIL, 0 WARN (structurally clean; every WARN must be answered in the walkthrough)
 logged to docs\species-templates\validation-log\tetrahive.jsonl
 ```
+
+## Orchestrator amendments
+
+- 2026-09-02: the independent validator found three clauses of the upgraded description that the sources do not support: 'the observatories bred' (the Generator, not the observatories, produced the Xalians), 'thins to nothing when struck' (no sentence describes behavior under damage; this had also leaked into the Encyclopedia entry), and 'never presents a target' (a tactical claim stated as fact). The description and the Encyclopedia definition were rewritten by the orchestrator. The clause table above is superseded by this one.
+
+Rewritten description (125 words), clause by clause:
+
+| Clause | Status | Source |
+|---|---|---|
+| a cloud of small flying bodies, each little more than a mouth of teeth like a piranha's | SUPPORTED | species: "a swarm of small flying familiars with teeth like piranhas" |
+| one creature distributed across many, every unit held to a single mind | SUPPORTED (reframed, see open question) | species: "It controls the swarm with its mind" |
+| built as test subjects rather than a labor force | SUPPORTED | planet: "not intended to serve as a labor force, but as a population of test subjects for experimentation" |
+| the Vallerii, convinced the black hole lay behind the planet's strange occurrences, insisted on studying its effects on the Xalian population | SUPPORTED | planet: "The Vallerii were quick to point the finger to Grimedes' black hole, and insisted on studying its effects on the Xalian population" |
+| a body that could be divided and counted suited that work | INFERRED connective, no new fact | |
+| the Generator, believed to have been funded by ECHELON, obliged | SUPPORTED, hedged as the source hedges | planet: "the top secret Xalian Generator deployed on Grimedes was believed to have been funded by ECHELON" |
+| hunts over the thick, stalky undergrowth of the flats | SUPPORTED | planet: "What was once nothing but cold, flat rock came to be covered in a layer of thick, stalky undergrowth" |
+| attacking and defending as one unit | SUPPORTED | species: "attacking or defending as one unit" |
+| takes its place among the Grimedites who watch the endless black for the return of APEX | SUPPORTED | planet: "the Grimedites stand at the edge of the galaxy, trusted or perhaps condemned to watch the endless black and guard against APEX's inevitable return" |
+
+Encyclopedia definition rewritten to the same facts with the damage clause removed.
