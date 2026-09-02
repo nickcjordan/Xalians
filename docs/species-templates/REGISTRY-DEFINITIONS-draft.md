@@ -1,6 +1,6 @@
-# Registry definitions (draft v2 for Nick's sign-off, 2026-09-02)
+# Registry definitions (draft v3 for Nick's sign-off, 2026-09-02)
 
-Every enum an agent can assign in a species template, with a definition per value and the selection rule an agent needs when a body fits more than one. Values are the ratified sets (design doc, second ring 2026-08-30, communication re-ratified 2026-09-01, anatomy 2026-09-01, trait model 2026-09-02); no value is added, dropped, or renamed here. What is new is the definitions and the selection rules. Once ratified this text replaces section 5.5 of the migrate-species skill; the 34 anatomy keys and 7 channels stay in section 5.6 and are only cross-referenced here. A blind validation pass ran on v1 (23 of 29 species split); v2 answers every finding and is re-validated before Nick sees it.
+Every enum an agent can assign in a species template, with a definition per value and the selection rule an agent needs when a body fits more than one. Values are the ratified sets (design doc, second ring 2026-08-30, communication re-ratified 2026-09-01, anatomy 2026-09-01, trait model 2026-09-02); no value is added, dropped, or renamed here. What is new is the definitions and the selection rules. Once ratified this text replaces section 5.5 of the migrate-species skill; the 34 anatomy keys and 7 channels stay in section 5.6 and are only cross-referenced here.
 
 Rules that apply to every enum:
 
@@ -27,7 +27,7 @@ What the body is made of at rest.
 - `energy`: a body of light, plasma, charge, or heat with no matter to speak of.
 - `spectral`: a body of the ghost register: present, visible, and acting, but made of neither matter nor energy that instruments can name.
 
-Secondary rule: declare a secondary only when a second substance forms a structural part of the resting body (a limb, a casing, horns, a core), never for a coating, an emission, a weapon it makes, or a transient state. A rocky exoskeleton over slime is `slime` primary, `mineral` secondary; crystal horns on a furred body are `flesh` primary, `mineral` secondary; a body that can become smoke is `flesh` alone.
+Secondary rule: declare a secondary only when a second substance forms a structural part of the resting body (a limb, a casing, horns, a core, or a skeleton), never for a coating, an emission, a weapon it makes, or a transient state. Composition is not bound by the anatomy block's external-parts rule: an internal structural substance the description names, such as metal bones, counts. A rocky exoskeleton over slime is `slime` primary, `mineral` secondary; crystal horns on a furred body are `flesh` primary, `mineral` secondary; a body that can become smoke is `flesh` alone.
 
 Disambiguation: a chitin crab is `flesh` (chitin is its covering); a stone golem is `mineral`; a fog creature that is fog at rest is `gas`; a ghost is `spectral`; a rooted mass of living roots is `plant`.
 
@@ -42,10 +42,10 @@ How the creature presents in the field and moves through it at rest. The plan is
 - `avian`: a winged body whose primary movement is flight and which lands or perches between flights; bird, bat, or insect alike, but only when the description or art shows flight as the way it moves, not merely that it has wings.
 - `piscine`: a body built for movement through liquid: finned, streamlined, or jet-driven; may leave the water but is defined by it.
 - `amorphous`: a body without a fixed outline that flows, spreads, or reforms as it moves.
-- `swarm`: the creature presents as many bodies acting as one, whether the units are its own flesh, split-off pieces, or conjured projections held by a central mind (Nick, 2026-09-02: a creature whose whole way of fighting is a cloud of units is a swarm even when a single central body exists; that body's parts still go in anatomy).
+- `swarm`: the creature presents as many bodies acting as one, whether the units are its own flesh, split-off pieces, or conjured projections held by a central mind. A species is `swarm` only when the units are what acts: the source shows the creature fighting, defending, or working through the many. A species that merely travels or lives in groups, each member acting for itself, takes the plan of one member. When a single central body exists, its parts still go in anatomy.
 - `floating`: a body that hangs, drifts, or glides in its medium with no wings and no fins, held up by gas, field, or the ghost register. Speed and direction do not matter; the absence of wings and fins does. A fast wingless flier is `floating`.
 
-Selection rule: choose the plan by how the body is borne at rest (legs, undulation, fins, wings, drift, many units). A rooted body that never moves has no key in the ratified nine; see the open question at the end.
+Selection rule: choose the plan by how the body is borne at rest (legs, undulation, fins, wings, drift, many units). The plan is the stance at rest, not the stance in the pose: when the description names the number of legs the creature stands on, that number decides, and a rearing, crouching, or leaping pose in the art does not override it; when the description is silent, the art's resting stance decides, and a creature drawn on all fours is `quadruped` even if it can rise. When a body could read as more than one plan, apply the keys in this order and take the first that fits: `swarm`, `floating`, `piscine`, `avian`, `amorphous`, `serpentine`, `multiped`, `quadruped`, `biped`. A body whose outline is fixed is never `amorphous` however soft it is; a body with more than four bearing parts, roots and tendrils included, is `multiped` before it is `serpentine`. A body that moves through ground rather than over it takes the plan its bearing parts give it and carries the movement in the `burrow` capability; there is no rooted or sessile plan, because living inside ground is the ratified `burrow` capability.
 
 Disambiguation: a bat that hunts on the wing is `avian`; a winged humanoid that crouches and walks is `biped`; a jellyfish is `floating`; a bird-shaped creature that flies is `avian` whatever its element; a bat-like controller whose fight is its conjured cloud is `swarm`.
 
@@ -58,12 +58,12 @@ The outer surface of the resting body. Distinct from composition (what the body 
 - `scales`: overlapping plates of skin or horn, reptile or fish style, flexible as a whole.
 - `chitin`: a hard exoskeleton or carapace grown by the body. Carries `armored` at 100 and the `shell` anatomy key unless the walkthrough argues otherwise; the script warns when it does not.
 - `hide`: thick, leathery, or rugged skin with no armored aspect. Pairs with the `hide` anatomy key and never with `shell`.
-- `plating`: rigid plates that are not grown chitin: stone, metal, bone, or crystal armor integrated into the body. Same `armored` and `shell` expectation as `chitin`. A mineral or metal body whose surface is the body itself takes `plating`.
-- `crystal`: a surface of crystal growth or facets covering the body. Carries `armored` at 100 when the crystal encloses the body; crystal that grows as horns, spines, or an emitter on another surface is anatomy (`spines`, `horns`, `core`), and the covering is whatever surrounds it.
-- `mist`: a surface of vapor, smoke, or haze with no firm boundary.
-- `bare`: smooth unprotected skin, membrane, or surface; the default for slime, gas, energy, and spectral bodies, and for a smooth-skinned flesh body with no hair, scale, or armor.
+- `plating`: rigid plates that are not grown chitin: stone, metal, bone, or crystal armor integrated into the body. Same `armored` and `shell` expectation as `chitin`.
+- `crystal`: a surface of crystal growth or facets covering the body. Same `armored` and `shell` expectation as `chitin` and `plating`; the script warns when it does not hold. Crystal that grows as horns, spines, or an emitter on another surface is anatomy (`spines`, `horns`, `core`), and the covering is whatever surrounds it.
+- `mist`: a surface of vapor, smoke, or haze with no firm boundary. A `gas` composition takes `mist`.
+- `bare`: smooth unprotected skin, membrane, or surface; the default for slime, energy, and spectral bodies, and for a flesh body with no stated surface and no hair, scale, or armor.
 
-Selection rule: name the surface that covers most of the resting body. A hard casing over a soft body is the casing (`chitin` or `plating`). A partial second surface (feathers on a scaled body, a barbed tail on a furred body, metal on the limbs of a flesh body) does not change the value; the part goes in anatomy. Armor a creature forms on demand is an ability, not a covering.
+Selection rule: name the surface that covers the trunk of the resting body. A rigid casing grown or worn over any body is `chitin` when the body grows it as an exoskeleton and `plating` otherwise, whatever the body underneath is made of; a mineral or metal body whose surface is the body itself is `plating`. A partial second surface (feathers on a scaled body, a barbed tail on a furred body, metal on the limbs of a flesh body) does not change the value; the part goes in anatomy and the covering is what covers the trunk. Between `hide` and `bare`, take `hide` only when a source sentence or the art shows a thick, leathery, wrinkled, or rugged surface, or when a flesh body is heavy enough that thin skin is implausible (roughly above 150 kg); otherwise take `bare` and list the field under Authored fields. Armor a creature forms on demand is an ability, not a covering.
 
 ## diet (6)
 
@@ -74,7 +74,7 @@ Selection rule: name the surface that covers most of the resting body. A hard ca
 - `energy-feeder`: feeds on a non-food energy the description names it taking in: heat, charge, radiation, gravity, minds.
 - `none`: does not feed at all, stated or implied by a body with no way to take anything in (spectral and energy bodies; a mineral body the description never shows feeding).
 
-Selection rule: a creature the source shows hunting, biting, or taking prey is `carnivore`; one it shows grazing or eating plants is `herbivore`; one shown drawing in an energy is `energy-feeder`. When the sources say nothing about feeding, take `omnivore` for a flesh body, `none` for a spectral or energy body, and `energy-feeder` only if the description says the creature absorbs or stores an energy; list the field under Authored fields. A creature that stores energy it also eats food with is not an energy-feeder.
+Selection rule: the word prey, or a sentence showing the creature consuming, dissolving, paralyzing to consume, or draining a victim, is evidence of feeding and settles `carnivore`; a sentence that shows only fighting, guarding, or harassing an opponent is not evidence of feeding. Grazing or eating plants settles `herbivore`. A body that takes in light as a plant does, through its surface rather than an organ, is `photosynthetic`, which requires a `plant` composition or a source sentence naming light as its food; anything else it is shown drawing in, including light taken through an organ or a core, is `energy-feeder`. A creature that stores or channels an energy but is not shown feeding on it is not an energy-feeder. When the sources say nothing about feeding, take `omnivore` for a flesh body, `photosynthetic` for a plant body, `none` for a spectral, energy, or mineral body, and list the field under Authored fields.
 
 ## communication (array of up to 5; empty means mute)
 
@@ -110,9 +110,9 @@ Senses beyond sight, hearing, and smell. Each must be supported by a source sent
 Bands of a working life. Apply the cuts in order: composition first, then mass and metabolic intensity, then home-world harshness.
 
 1. Spectral and energy bodies are `ageless` (still killable).
-2. Mineral and metal bodies are `enduring`; a mineral or metal secondary on a flesh body does not change the band.
-3. Flesh, plant, slime, and gas bodies: under about 20 kg and metabolically intense (fliers, sprinters, swarms) are `fleeting` when the source shows a disposable or seasonal life, otherwise `short`; between about 20 and 200 kg are `standard`; above about 200 kg, or cold, slow, or armored at any mass, are `long`.
-4. Harshness moves a flesh body one band down only when the description says the environment shortens its life.
+2. Mineral and metal bodies are `enduring`; a mineral or metal secondary on a flesh body does not change the band. This band is not moved by harshness.
+3. Flesh, plant, slime, and gas bodies: under about 20 kg are `fleeting` when the body is metabolically intense (fliers, sprinters, swarms) and the source shows a disposable or seasonal life, and `short` otherwise; between about 20 and 200 kg are `standard`; above about 200 kg, or cold, slow, or armored at any mass, are `long`.
+4. Harshness moves a flesh, plant, slime, or gas body one band down only when the description says the environment shortens its life.
 
 - `fleeting`: a season to a few years.
 - `short`: a few years to a decade.
@@ -176,6 +176,6 @@ A sustained-normal-activity band in Celsius. It must lie inside the home planet'
 
 Anything not in these lists. The validator script fails any other value, and compound keys (`quadruped-avian`, `walking-legs`) are not values.
 
-## Open question for Nick
+## Note on rooted bodies
 
-The nine body plans have no key for a rooted, sessile body. Xylum (Floria) is a mass of living roots that lives underground and moves little or not at all; `multiped` requires limbs that bear and shift it, `amorphous` requires no fixed outline, `serpentine` requires undulation. Options: add a tenth value `sessile` (a rooted or fixed body that does not travel; movement, if any, is by growth), or rule that a rooted body borne on its roots is `multiped`. Recommendation: add `sessile`, because a plant-world creature line is expected to have more than one rooted species, and forcing them into `multiped` would make the plan lie about how the creature is met in the field.
+Xylum (Floria), a mass of living roots that lives mostly underground, is `multiped` (borne on more than four root-limbs) with a high `burrow` band. A `sessile` body plan was considered and declined on 2026-09-02: the ratified design already gives Xylum burrow movement, no other species among the 29 is rooted, and registry vocabularies are versioned and additive, so the value can be added later if a truly fixed species is authored.

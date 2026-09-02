@@ -325,7 +325,7 @@ if (T) {
     else if (has(pool, x) && has(pool, y) && pool[x] === pool[y]) warn('traits.exclusion.tie', x + ' and ' + y + ' have equal authored percents; the generator rolls the higher TILTED percent first, so after tilts one will lead, but say in the walkthrough which you intend');
   }
   if (P.corporeality === 'non-corporeal' && pool.phasing !== 100) fail('traits.phasing', 'non-corporeal bodies carry phasing at 100');
-  if (anatomyOk && (P.anatomy.includes('shell') || P.covering === 'plating' || P.covering === 'chitin') && pool.armored !== 100) warn('traits.armored', 'shell, plating, or chitin present but armored is not at 100; justify in the walkthrough');
+  if (anatomyOk && (P.anatomy.includes('shell') || ['plating', 'chitin', 'crystal'].includes(P.covering)) && pool.armored !== 100) warn('traits.armored', 'shell, plating, chitin, or crystal present but armored is not at 100; justify in the walkthrough');
   if (isBand(C.manipulation) && C.manipulation[1] > 40) {
     const grasp = anatomyOk && P.anatomy.some(k => GRASPING.includes(k));
     if (!grasp && !g.includes('telekinetic')) fail('manipulation.means', 'manipulation upper bound ' + C.manipulation[1] + ' above 40 without grasping anatomy or telekinetic at 100');
