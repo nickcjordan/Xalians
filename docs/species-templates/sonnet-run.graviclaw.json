@@ -1,0 +1,55 @@
+{
+  "key": "graviclaw",
+  "name": "Graviclaw",
+  "element": "dark",
+  "homePlanet": "Grimedes",
+  "generatorPlanets": ["Grimedes"],
+  "lore": {
+    "description": "With the black-shelled body of a crab and an upright torso, the centaur-like crustacean known as the Graviclaw lurks just beneath the foggy wetlands of Grimedes, using its bizarre control over the intensification of gravitational waves to generate miniature black holes in the water and draw its helpless prey right into its clutches. Graviclaws can strengthen the gravitational pull of their massive claws in order to snap them shut with a force many times heavier than their implied mass, severing through even the hardest of materials with crushing pressure. When facing larger foes, the Graviclaw can use its powers to root itself to the ground, becoming an immovable wall of chitin.",
+    "descriptionStatus": "source",
+    "biomeNiche": "ambush predator of the foggy wetlands"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": { "primary": "flesh", "secondary": "mineral" },
+    "bodyPlan": "multiped",
+    "anatomy": ["claws"],
+    "covering": "chitin",
+    "size": { "heightCm": [175, 210], "weightKg": [190, 240] },
+    "lifespan": "long",
+    "genome": { "chirality": "rolled" },
+    "diet": "carnivore",
+    "communication": [],
+    "breathes": ["gas", "liquid"],
+    "environmentalTolerance": { "ambientMedia": ["gas", "liquid"], "temperatureC": { "min": -5, "max": 15 } },
+    "capabilities": { "flight": [0, 0], "swim": [40, 65], "burrow": [10, 30], "climb": [0, 10], "sprint": [10, 25], "leap": [0, 10], "manipulation": [45, 70] },
+    "senses": { "sight": [20, 40], "hearing": [30, 50], "smell": [40, 60], "special": ["void-sense"] }
+  },
+  "archetypeWeights": { "juggernaut": 5, "bulwark": 4, "stalwart": 2 },
+  "attributes": {
+    "strength": [70, 95],
+    "vitality": [45, 65],
+    "endurance": [40, 60],
+    "agility": [10, 25],
+    "reflex": [25, 40],
+    "intelligence": [20, 35],
+    "willpower": [35, 55],
+    "instinct": [45, 65],
+    "charisma": [10, 25],
+    "resilience": [70, 92]
+  },
+  "traits": {
+    "guaranteed": ["armored", "anchored"],
+    "rolledCount": [0, 1],
+    "pool": { "menacing": 5, "stealthy": 3, "perceptive": 2 }
+  },
+  "instruments": ["claws", "aura"],
+  "signatureAbility": {
+    "name": "Mireheart Horizon",
+    "instrument": "aura",
+    "action": "snare",
+    "medium": "dark",
+    "intensity": [55, 90],
+    "description": "The Graviclaw thickens the gravity around itself into a well beneath the wetland's surface, and whatever wades too close is drawn down into its clutches before it ever sees the claws waiting there."
+  }
+}
