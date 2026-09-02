@@ -17,3 +17,4 @@ One dated line per change, written by the orchestrator after a denial review. Ea
 - 2026-09-02: the quotation check now accepts verbatim text from the planet data block and the species height and weight strings (Smokat run flagged the gap via its Script denials section).
 - 2026-09-02: quotation extraction pairs quote marks strictly in order; a short quotation no longer shifts the pairing onto the gap after it (Tizzie run flagged it via --note).
 - 2026-09-02: conduits: validates `conduits` (subset of instruments, element in cover, WARN for the validator agent to confirm the source), and the signature matrix WARN now reads the physical row plus the medium row for a declared conduit, and says when declaring a conduit would resolve it.
+- 2026-09-02: MEDIUM_ACTIONS table ratified by Nick as drafted; no code change.

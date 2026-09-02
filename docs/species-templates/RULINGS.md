@@ -4,6 +4,7 @@ Per-species decisions that a migration agent cannot derive from the sources alon
 
 ## General
 
+- 2026-09-02: levers, not stone. Every ruling here is a tuned setting, reopened by a concrete case met while building, never by taste; agents report the case and the smallest fix in the moment, Nick decides. Full statement in the repo `CLAUDE.md`.
 - 2026-09-02: one surface key. `shell` is the armored aspect; `hide` means the body has no armored aspect; a species never declares both. Enforced by the script (`anatomy.surface`).
 
 - 2026-09-02: the species artwork (`art/<key>.png`, rendered from `my-app/src/svg/species/`) is source material equal to the description; parts visible in the art are sourced, not authored.
@@ -31,3 +32,4 @@ Per-species decisions that a migration agent cannot derive from the sources alon
 ## Conduits
 
 - 2026-09-02: mechanism ratified (two gates: medium matches and the part is a declared, sourced conduit); the 14-row medium action table is a draft pending sign-off. Applied: Graviclaw pincers/dark; Hypnopet crest/psychic; Figzy mind and fists/psychic; Tizzie gaze/psychic; Tetrahive, Smokat, Ectoghoul none.
+- 2026-09-02: the 14-row medium action table ratified as drafted (skill section 5.7a).
