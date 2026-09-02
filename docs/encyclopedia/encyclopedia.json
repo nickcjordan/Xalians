@@ -1,6 +1,6 @@
 {
   "masthead": "Encyclopedia Xalia",
-  "version": "1.0.0-draft",
+  "version": "1.0.0",
   "note": "Public canon reference. Definitions are canonical prose from the glossary, unchanged. Species entries are added at species migration.",
   "categories": [
     "history",
@@ -20,7 +20,6 @@
       "definition": "The era in the middling years of the Vallerii Empire where the Cherenkov radiation given off by their tachyon drive cores had rendered most of spacefaring civilization sterile, leading to the development of Xalians.",
       "related": [
         "cherenkov-radiation",
-        "tachyon-drive-core",
         "vallerii",
         "xalians"
       ]
@@ -40,9 +39,9 @@
       "category": "factions",
       "definition": "The Automated Protocol for Enforcement on Xalians. An artificial intelligence designed to regulate the use of Xalian Generators and prevent their use in warfare, who later turned on the Vallerii, beginning the End Wars.",
       "related": [
-        "xalian-generator",
+        "the-end-wars",
         "vallerii",
-        "the-end-wars"
+        "xalians"
       ]
     },
     {
@@ -51,10 +50,9 @@
       "category": "history",
       "definition": "A treaty spearheaded by ECHELON and signed by the Thousand Families, agreeing to place the Xalian Generators under the control of APEX in order to prevent their use in warfare.",
       "related": [
+        "apex",
         "echelon",
-        "thousand-families",
-        "xalian-generator",
-        "apex"
+        "thousand-families"
       ]
     },
     {
@@ -63,8 +61,8 @@
       "category": "substances",
       "definition": "The scientific name for the microorganism that produces Nightcap, a biochemical present only on Endessa that is necessary to induce stasis for sub-light space travel.",
       "related": [
-        "nightcap",
-        "endessa"
+        "endessa",
+        "nightcap"
       ]
     },
     {
@@ -73,8 +71,7 @@
       "category": "xalians",
       "definition": "A value assigned to each Xalian based on the strength of its stats, used to keep King Kozrak's tournaments competitive. A faction may only enter a team whose combined battle fee falls within the imposed battle fee limit.",
       "related": [
-        "king-kozrak",
-        "xalians"
+        "king-kozrak"
       ]
     },
     {
@@ -83,9 +80,8 @@
       "category": "history",
       "definition": "The final battle of the End Wars, in which APEX was repelled into dark space.",
       "related": [
-        "the-end-wars",
         "apex",
-        "grimedes"
+        "the-end-wars"
       ]
     },
     {
@@ -113,8 +109,7 @@
       "category": "phenomena",
       "definition": "A weather phenomenon on Zolton identifiable by the frequent occurence of dark-red lightning and crimson lightning sprites, whose quantum entangling effects can be carefully channeled into a Quantum Entanglement Device",
       "related": [
-        "zolton",
-        "qed"
+        "zolton"
       ]
     },
     {
@@ -133,9 +128,8 @@
       "category": "phenomena",
       "definition": "A form of radiation given off by Tachyon drive cores which rendered the spacefaring Vallerii population sterile, beginning the Age of Unbirth.",
       "related": [
-        "tachyon-drive-core",
-        "vallerii",
-        "age-of-unbirth"
+        "age-of-unbirth",
+        "vallerii"
       ]
     },
     {
@@ -144,8 +138,19 @@
       "category": "places",
       "definition": "The ruins of an ancient and colossal city belonging to the extinct Phantiri race, which was discovered on Shadharam IV as part of Operation Phantiri. Its uncovery triggered an eruption of energy from an unknown source on Phantiri's moon, extinguishing life on the planet and triggering the Phantiri Generator's propensity for the production of spectral, undead life.",
       "related": [
+        "operation-phantiri",
         "phantiri",
         "shadharam-iv"
+      ]
+    },
+    {
+      "title": "Company Wars",
+      "category": "history",
+      "definition": "A series of armed conflicts among the corporations of Magmuth, which converted their Xalian miners and forge-workers into corporate raiders in disputes over the planet's natural resources. The company wars went on in limited fashion for decades until the Magmuth Massacre.",
+      "key": "company-wars",
+      "related": [
+        "magmuth",
+        "magmuth-massacre"
       ]
     },
     {
@@ -154,10 +159,10 @@
       "category": "places",
       "definition": "The star system that is home to Stonera, the Jorian Belt, and the now defunct APEX superweapon known as the Terracannon.",
       "related": [
-        "stonera",
+        "apex",
         "jorian-belt",
-        "terracannon",
-        "apex"
+        "stonera",
+        "terracannon"
       ]
     },
     {
@@ -175,8 +180,8 @@
       "category": "places",
       "definition": "A Nightcap gathering plant on Endessa. The discovery of classified information at the plant led to the world-ending orbital bombardment of the planet.",
       "related": [
-        "nightcap",
-        "endessa"
+        "endessa",
+        "nightcap"
       ]
     },
     {
@@ -215,9 +220,8 @@
       "category": "factions",
       "definition": "A consortium of Vallerii corporations formed to present a united front against the aristocratic Thousand Families with the primary goal of ending the use of Xalian Generators in warfare.",
       "related": [
-        "vallerii",
         "thousand-families",
-        "xalian-generator"
+        "vallerii"
       ]
     },
     {
@@ -246,8 +250,20 @@
       "category": "technology",
       "definition": "The first Xalian Generator, which was responsible for terraforming the planet Floria.",
       "related": [
-        "xalian-generator",
-        "floria"
+        "floria",
+        "xalian-generator"
+      ]
+    },
+    {
+      "title": "Ghost Fleet",
+      "category": "phenomena",
+      "definition": "The derelict starcraft graveyard discovered by itinerant scavengers deep within the Wraithix System, whose satellites and ghost ships matched no registered ECHELON make or model and whose manifests named Shadharam IV as their port of departure, commissioned long before the Vallerii ever left their homeworld.",
+      "key": "ghost-fleet",
+      "related": [
+        "echelon",
+        "shadharam-iv",
+        "vallerii",
+        "wraithix"
       ]
     },
     {
@@ -256,9 +272,9 @@
       "category": "places",
       "definition": "A planet of perpetual night on the outer rim of Xalia, which borders a black hole and is known for having been the last bastion of APEX's forces during the End Wars.",
       "related": [
-        "xalia",
         "apex",
-        "the-end-wars"
+        "the-end-wars",
+        "xalia"
       ],
       "element": "dark"
     },
@@ -278,8 +294,8 @@
       "category": "technology",
       "definition": "The 'Divine Light' solar cannon which was constructed as a superweapon from the Stellaris Superstructure. A system by which the panels of the Dyson sphere could be angled like a mirror to concentrate the solar energy of one of Luminax's stars into a deadly beam of energy.",
       "related": [
-        "stellaris-superstructure",
-        "luminax"
+        "luminax",
+        "stellaris-superstructure"
       ]
     },
     {
@@ -288,9 +304,9 @@
       "category": "places",
       "definition": "An asteroid belt in the Cybele System, which collides with the planet Stonera once a year. The home of the now defunct APEX superweapon known as the Terracannon.",
       "related": [
+        "apex",
         "cybele",
         "stonera",
-        "apex",
         "terracannon"
       ]
     },
@@ -310,9 +326,8 @@
       "category": "people",
       "definition": "One of the last surviving members of the Vallerii race, who has used his knowledge of the Mercurius Machine to amass tyrannical power over the galaxy and institute the tournament for Scrambler Tokens.",
       "related": [
-        "vallerii",
         "mercurius-machine",
-        "scrambler-token"
+        "vallerii"
       ]
     },
     {
@@ -321,8 +336,8 @@
       "category": "places",
       "definition": "A warmwater paradise that served as a vacation destination for Vallerii high society until it was plunged into an arctic apocalypse caused by an asteroid impact and converted into a frozen prison world and planetary cold-storage faciltity for APEX.",
       "related": [
-        "vallerii",
-        "apex"
+        "apex",
+        "vallerii"
       ],
       "element": "ice"
     },
@@ -361,8 +376,19 @@
       "definition": "A massacre of Xalian laborers that took part at a mining camp on Magmuth as part of a corporate power struggle which led to the planet-wide revolt of Magmuth's Xalian population against the Vallerii.",
       "related": [
         "magmuth",
-        "xalians",
         "vallerii"
+      ]
+    },
+    {
+      "title": "Magmuthites",
+      "category": "factions",
+      "definition": "The people of Magmuth. Stereotyped by other Xalians as the most aggressive, rebellious, and warlike of their kind, they remain wracked by internecine warfare fueled by old blood feuds from the company wars, and the rest of Xalia quietly counts itself fortunate that they have never united.",
+      "key": "magmuthites",
+      "related": [
+        "company-wars",
+        "magmuth",
+        "xalia",
+        "xalians"
       ]
     },
     {
@@ -372,10 +398,9 @@
       "definition": "A unique device controlled by King Kozrak on Valleron, which prints Scrambler Tokens that can be used to breed new Xalians that are immune to the Nemesis Plague.",
       "related": [
         "king-kozrak",
+        "nemesis-plague",
         "valleron",
-        "scrambler-token",
-        "xalians",
-        "nemesis-plague"
+        "xalians"
       ]
     },
     {
@@ -395,10 +420,10 @@
       "category": "xalians",
       "definition": "Specially engineered Xalians designed to harvest Benthane from the skies of Saiphus, whose invention displaced the local Windsailor workforce.",
       "related": [
-        "xalians",
         "benthane",
         "saiphus",
-        "windsailor"
+        "windsailor",
+        "xalians"
       ]
     },
     {
@@ -408,6 +433,17 @@
       "definition": "A biochemical present only on Endessa that is necessary to induce stasis for sub-light space travel.",
       "related": [
         "endessa"
+      ]
+    },
+    {
+      "title": "Operation Phantiri",
+      "category": "history",
+      "definition": "The codename under which top secret Vallerii excavations of Shadharam IV continued for decades, termed after the nickname xenoarchaeologists gave the planet's original inhabitants. Its findings were sealed and classified after the reawakening of the moon-weapon that followed the discovery of the City of Wraiths.",
+      "key": "operation-phantiri",
+      "related": [
+        "city-of-wraiths",
+        "shadharam-iv",
+        "vallerii"
       ]
     },
     {
@@ -448,9 +484,8 @@
       "category": "factions",
       "definition": "The largest agricorp in the Vallerii Empire, which was driven to bankruptcy in its attempt to terraform Luminax before the invention of the Xalian Generators.",
       "related": [
-        "vallerii",
         "luminax",
-        "xalian-generator"
+        "vallerii"
       ]
     },
     {
@@ -470,10 +505,9 @@
       "category": "technology",
       "definition": "A special chip printed by the Mecurius Machine which possesses a randomly generated and encrypted Xalian genome that can be used by a Xalian Generator to create new, unique Xalians that are immune to the Nemesis Plague.",
       "related": [
-        "mercurius-machine",
+        "nemesis-plague",
         "xalian-generator",
-        "xalians",
-        "nemesis-plague"
+        "xalians"
       ]
     },
     {
@@ -482,8 +516,8 @@
       "category": "places",
       "definition": "The original Vallerii name for the planet Phantiri, before the discovery the extinct alien species now known as the Phantiri after the name of the top secret operation under which they were discovered.",
       "related": [
-        "vallerii",
-        "phantiri"
+        "phantiri",
+        "vallerii"
       ]
     },
     {
@@ -492,9 +526,8 @@
       "category": "technology",
       "definition": "A computer virus created by the Vallerii to wipe out APEX, which failed to kill to APEX but disconnected it from the Xalian Generators.",
       "related": [
-        "vallerii",
         "apex",
-        "xalian-generator"
+        "vallerii"
       ]
     },
     {
@@ -580,8 +613,20 @@
       "definition": "The war between APEX and the Vallerii, which resulted in the Nemesis Plague and the possible extinction of life in the galaxy.",
       "related": [
         "apex",
-        "vallerii",
-        "nemesis-plague"
+        "nemesis-plague",
+        "vallerii"
+      ]
+    },
+    {
+      "title": "The Zolto",
+      "category": "factions",
+      "definition": "The people of Zolton. Freed from APEX's control by Source Code 606, the Zolto now work to re-establish the connection between worlds, hoping to prevent the extinction of Xalian-kind; King Kozrak has labeled those who form such networks galactic enemies and cracked down on the planet to control the manufacture of and access to QEDs.",
+      "key": "the-zolto",
+      "related": [
+        "apex",
+        "king-kozrak",
+        "source-code-606",
+        "zolton"
       ]
     },
     {
@@ -599,8 +644,8 @@
       "category": "people",
       "definition": "An ancient, hyper-capitalistic and imperialistic spacefaring race which created both Xalians and APEX.",
       "related": [
-        "xalians",
-        "apex"
+        "apex",
+        "xalians"
       ]
     },
     {
@@ -609,9 +654,9 @@
       "category": "places",
       "definition": "The last bastion of the Vallerii race, where Vallerii scientists developed the Mercurius Machine over which King Kozrak has established his stronghold.",
       "related": [
-        "vallerii",
+        "king-kozrak",
         "mercurius-machine",
-        "king-kozrak"
+        "vallerii"
       ]
     },
     {
@@ -620,9 +665,9 @@
       "category": "factions",
       "definition": "The people of Veridium. During the End Wars, APEX drove the planet's ancient drones and robotic servants as a single hive mind and corralled the Veridians into a formidable fighting force, supplied by starship foundries large enough to spread its menace across the galaxy.",
       "related": [
-        "veridium",
+        "apex",
         "the-end-wars",
-        "apex"
+        "veridium"
       ]
     },
     {
@@ -641,8 +686,8 @@
       "category": "factions",
       "definition": "Rogueish and rugged pilots who were once paid high sums to scour Saiphus for Benthane squalls.",
       "related": [
-        "saiphus",
-        "benthane"
+        "benthane",
+        "saiphus"
       ]
     },
     {
@@ -660,8 +705,10 @@
       "category": "places",
       "definition": "The star system which contained the ghost fleet that led to Operation Phantiri, the discovery of Shadharam IV, and the discovery of the extinct alien species now known as the Phantiri",
       "related": [
-        "shadharam-iv",
-        "phantiri"
+        "ghost-fleet",
+        "operation-phantiri",
+        "phantiri",
+        "shadharam-iv"
       ]
     },
     {
@@ -687,8 +734,7 @@
       "definition": "Bio-engineered organisms created by the Vallerii to serve as soldiers and laborers, who are specially adapted to the extreme environments of Xalia due to the incredible science of the Xalian Generators.",
       "related": [
         "vallerii",
-        "xalia",
-        "xalian-generator"
+        "xalia"
       ]
     },
     {
@@ -696,9 +742,7 @@
       "title": "Zolton",
       "category": "places",
       "definition": "A mountainous, storm-wracked world whose unique weather allows for the generation of immense sums of electrcitiy, plasma energy, and Quantum Entanglement Devices.",
-      "related": [
-        "qed"
-      ],
+      "related": [],
       "element": "electric"
     }
   ]
