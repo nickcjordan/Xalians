@@ -171,6 +171,10 @@
     "mind",
     "fists"
   ],
+  "conduits": {
+    "mind": "psychic",
+    "fists": "psychic"
+  },
   "signatureAbility": {
     "name": "Small Hands of the Psychosphere",
     "instrument": "mind",

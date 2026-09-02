@@ -76,6 +76,7 @@ const ALLOWED = {
   breath: ['spray', 'cloud', 'burst', 'beam'], secretion: ['spray', 'cloud', 'burst', 'drain', 'snare', 'ward', 'mend'], swarm: ['cloud', 'strike', 'drain', 'snare', 'rake', 'terrorize'],
   aura: ['ward', 'cloud', 'terrorize', 'drain', 'mend'],
 };
+const MEDIUM_ACTIONS = {"fire":["strike","beam","spray","burst","cloud","hurl","lash"],"water":["spray","burst","cloud","snare","shove","mend","lash"],"dark":["snare","crush","shove","drain","burst","ward","terrorize"],"light":["beam","burst","ward","mend","terrorize","spray"],"plant":["snare","ward","mend","lash","cloud","spray"],"electric":["beam","burst","lash","strike","snare","spray"],"ghost":["terrorize","drain","cloud","snare","ward"],"rock":["ward","crush","hurl","burst","shove","strike"],"chemical":["spray","cloud","burst","drain","snare"],"air":["shove","burst","cloud","hurl","lash","ward"],"psychic":["burst","snare","terrorize","ward","mend","drain","shove","hurl"],"ice":["snare","ward","spray","burst","crush","mend"],"metal":["strike","ward","hurl","beam","crush","rake"],"sand":["cloud","spray","drain","snare","burst","rake"]};
 const FORBIDDEN_TRAIT_KEYS = ['healer', 'guardian', 'pack-hunter', 'lone-stalker', 'charger', 'venomous', 'ambusher', 'mesmeric', 'keen-sensed', 'iron-willed', 'enduring', 'colossal', 'linked', 'conduit', 'skittish'];
 
 // ---------- reporting ----------
@@ -360,6 +361,21 @@ if (T) {
     if (/'s\b|s'\s/.test(SG.name)) fail('signature.name.possessive', 'signature name is possessive');
     if (/[^\x20-\x7E]/.test(SG.name)) fail('signature.name.ascii', 'signature name has non-ASCII characters');
   }
+  // conduits (5.7a): instruments the sources show channeling an element
+  const CD = has(T, 'conduits') ? T.conduits : {};
+  if (has(T, 'conduits')) {
+    if (!CD || typeof CD !== 'object' || Array.isArray(CD)) fail('conduits', 'conduits must be an object of instrument: element');
+    else {
+      if (Object.keys(CD).length === 0) fail('conduits.empty', 'conduits is optional; omit it rather than leaving it empty');
+      for (const [inst, el] of Object.entries(CD)) {
+        if (!I.includes(inst)) fail('conduits.instrument', 'conduit "' + inst + '" is not one of the species instruments');
+        if (!MEDIUM_ACTIONS[el]) fail('conduits.element', 'conduit element "' + el + '" is not an element');
+        else if (elementOk && ![T.element, ...ELEMENTS[T.element].secondaries].includes(el)) fail('conduits.cover', 'conduit element "' + el + '" for ' + inst + ' is neither the primary nor an on-graph secondary');
+        warn('conduits.source', 'conduit ' + inst + ' for ' + el + ': the validator agent must confirm the sentence or art showing the element leaving through this part');
+      }
+    }
+  }
+  const allowedFor = (inst, medium) => (ALLOWED[inst] || []).concat(CD[inst] === medium ? MEDIUM_ACTIONS[medium] : []);
   const sigInstOk = typeof SG.instrument === 'string' && (ANATOMY.includes(SG.instrument) || CHANNELS.includes(SG.instrument));
   if (!sigInstOk) fail('signature.instrument', 'signature instrument "' + SG.instrument + '" is not registry vocabulary');
   else {
@@ -367,7 +383,7 @@ if (T) {
     if (!I.includes(SG.instrument)) warn('signature.instrument.list', 'signature instrument "' + SG.instrument + '" is not in the species instrument list (allowed by rule 4; justify)');
   }
   const sigActOk = checkEnum('signature.action', SG.action, ACTIONS, 'signature action');
-  if (sigInstOk && sigActOk && !ALLOWED[SG.instrument].includes(SG.action)) warn('signature.action.matrix', 'signature action "' + SG.action + '" is outside the allowed set for ' + SG.instrument + ' [' + ALLOWED[SG.instrument].join(', ') + '] (allowed by rule 4; justify)');
+  if (sigInstOk && sigActOk && typeof SG.medium === 'string' && !allowedFor(SG.instrument, SG.medium).includes(SG.action)) warn('signature.action.matrix', 'signature action "' + SG.action + '" is outside the physical row for ' + SG.instrument + ' [' + ALLOWED[SG.instrument].join(', ') + ']' + (MEDIUM_ACTIONS[SG.medium] && MEDIUM_ACTIONS[SG.medium].includes(SG.action) ? ' but inside the ' + SG.medium + ' medium row: declare ' + SG.instrument + ' as a ' + SG.medium + ' conduit if the sources show it' : ' and outside the ' + SG.medium + ' medium row (rule 4 exception; justify)'));
   if (checkEnum('signature.medium', SG.medium, Object.keys(ELEMENTS), 'signature medium') && elementOk) {
     const cover = [T.element, ...ELEMENTS[T.element].secondaries];
     if (!cover.includes(SG.medium)) fail('signature.medium.cover', 'signature medium "' + SG.medium + '" is neither the primary nor an on-graph secondary of ' + T.element + ' [' + cover.join(', ') + ']');

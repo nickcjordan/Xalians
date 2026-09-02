@@ -27,3 +27,7 @@ Per-species decisions that a migration agent cannot derive from the sources alon
 - 2026-09-02: `docs/species-templates/REGISTRY-DEFINITIONS.md` ratified after five blind passes; `sessile` declined; Xylum is `multiped` with burrow movement; Tetrahive `bodyPlan` is `swarm`.
 - 2026-09-02 (trait model, second ruling): the template pool lists only traits above 0 and absence means 0 (amended the same day: the registry is additive, so exhaustive lists would go stale); the generated individual stores only the keys that landed; percents are read back from the template pinned by generatorVersion.
 - 2026-09-02: no dramatic sign-off in species prose; the last sentence states a plain present-tense fact (skill v2.10, lore-voice skill).
+
+## Conduits
+
+- 2026-09-02: mechanism ratified (two gates: medium matches and the part is a declared, sourced conduit); the 14-row medium action table is a draft pending sign-off. Applied: Graviclaw pincers/dark; Hypnopet crest/psychic; Figzy mind and fists/psychic; Tizzie gaze/psychic; Tetrahive, Smokat, Ectoghoul none.

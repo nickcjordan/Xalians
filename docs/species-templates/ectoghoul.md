@@ -239,3 +239,4 @@ Both WARN lines are answered in the `## Script denials` section above under 'Ans
 
 - 2026-09-02, after the independent validation: the scouting purpose clause was cut from the description (the planet history assigns no job to this species; the Generator's intent is stated planet-wide, and that part is kept). `jaws` removed from instruments and kept in anatomy: the grin is drawn, but no source shows a bite, and both named acts route through voice and secretion. `communication` reduced to `vocal`: the grin is the species' shape, not a signal aimed at a watcher. The signature description no longer joins the cackle to wall-passing, which were two separate source clauses; it now says the cackle reaches its target wherever it goes, which is the source's own phrasing.
 - 2026-09-02, voice (Nick): the signature description's dramatic second clause was cut.
+- 2026-09-02, conduits (Nick): reviewed; no instrument is shown channeling an element, so no conduits are declared.

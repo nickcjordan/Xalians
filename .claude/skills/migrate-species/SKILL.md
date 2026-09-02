@@ -5,7 +5,7 @@ description: Migrate one Xalian species from its legacy species.json entry to a 
 
 # Migrate Species (Stage 3): self-contained runbook
 
-One species in, one ratified species template out, plus its Encyclopedia entry. This file is deliberately complete: every registry and rule you need is inlined below. Do not go looking for the design doc or catalog rules; if something here conflicts with an older document, this file wins (it was consolidated from the ratified design doc, the anatomy registry, the ability catalog rulings, and Nick's process rulings on 2026-09-01; v2.2 after the two Graviclaw test runs; v2.3 adds the validator script; v2.4 adds the denial log, overrides, and the orchestrator's denial review; v2.5 adds the one-surface-key rule; v2.6 adds the species artwork as a source and the conjured-familiar rule; v2.7 replaces the count-and-draw trait model with independent per-trait percents; v2.8 carries the ratified registry definitions in section 5.5; v2.9 rules that an unlisted trait has a 0 chance, so pools list only traits above 0; v2.10 bans the dramatic sign-off). The single exception is source canon: the species description in `species.json` and the planet history in `planets.json` are the facts you derive from, and this file never overrides them.
+One species in, one ratified species template out, plus its Encyclopedia entry. This file is deliberately complete: every registry and rule you need is inlined below. Do not go looking for the design doc or catalog rules; if something here conflicts with an older document, this file wins (it was consolidated from the ratified design doc, the anatomy registry, the ability catalog rulings, and Nick's process rulings on 2026-09-01; v2.2 after the two Graviclaw test runs; v2.3 adds the validator script; v2.4 adds the denial log, overrides, and the orchestrator's denial review; v2.5 adds the one-surface-key rule; v2.6 adds the species artwork as a source and the conjured-familiar rule; v2.7 replaces the count-and-draw trait model with independent per-trait percents; v2.8 carries the ratified registry definitions in section 5.5; v2.9 rules that an unlisted trait has a 0 chance, so pools list only traits above 0; v2.10 bans the dramatic sign-off; v2.11 adds conduits). The single exception is source canon: the species description in `species.json` and the planet history in `planets.json` are the facts you derive from, and this file never overrides them.
 
 ## 0. Operating rules (read first)
 
@@ -84,6 +84,7 @@ Write `docs/species-templates/<key>.json` in exactly this shape. Every field lis
     "pool": { "traitKey": percent, ... }        // only traits with a chance above 0, each an integer 1 to 100, rolled independently; 100 = every individual; a trait not listed has a 0 chance
   },
   "instruments": ["..."],                   // 1 to 3; physical ones must appear in anatomy; channels must satisfy their predicate
+  "conduits": { "<instrument>": "<element>" },   // OPTIONAL; instruments the sources show channeling an element (section 5.7a); omit when none
   "signatureAbility": {
     "name": "...",                          // grander register, exempt from the 2-word limit, collision-checked against the full catalog
     "instrument": "...", "action": "...", "medium": "...",
@@ -405,6 +406,31 @@ Actions: `strike, lash, crush, rake, shove, drain, ambush, beam, hurl, spray, bu
 | swarm | cloud, strike, drain, snare, rake, terrorize |
 | aura | ward, cloud, terrorize, drain, mend |
 
+### 5.7a Conduits: what the medium can do through a part (mechanism ratified by Nick 2026-09-02; the table below is a draft pending his sign-off)
+
+The table in 5.7 answers one question: what can this part do physically. It never learns about element power. A second question is answered here: what can the element do when it is channeled through a part. A species may declare some of its instruments as **conduits** for an element (`"conduits": { "<instrument>": "<element>" }`, optional, usually empty or one entry). The predicate is strict and sourced: the description or the art shows the element's power leaving the body through that part (a horn that pulses with color to hypnotize, hands that project force, claws whose gravity deepens). Being of an element never makes a part a conduit; the part must be shown doing it. The element must be the species' primary or an on-graph secondary.
+
+Rule: for an ability whose medium is X, an instrument's allowed actions are its 5.7 row, plus the medium row for X below if and only if the instrument is declared a conduit for X. For any other medium the instrument has only its 5.7 row. Channels (`mind`, `gaze`, `voice`, `breath`, `secretion`, `swarm`, `aura`) may be conduits like any other instrument. Names for a conduit ability come from the medium's catalog cell for that action.
+
+| Medium | Actions the element can take through a conduit |
+|---|---|
+| fire | strike, beam, spray, burst, cloud, hurl, lash |
+| water | spray, burst, cloud, snare, shove, mend, lash |
+| dark | snare, crush, shove, drain, burst, ward, terrorize |
+| light | beam, burst, ward, mend, terrorize, spray |
+| plant | snare, ward, mend, lash, cloud, spray |
+| electric | beam, burst, lash, strike, snare, spray |
+| ghost | terrorize, drain, cloud, snare, ward |
+| rock | ward, crush, hurl, burst, shove, strike |
+| chemical | spray, cloud, burst, drain, snare |
+| air | shove, burst, cloud, hurl, lash, ward |
+| psychic | burst, snare, terrorize, ward, mend, drain, shove, hurl |
+| ice | snare, ward, spray, burst, crush, mend |
+| metal | strike, ward, hurl, beam, crush, rake |
+| sand | cloud, spray, drain, snare, burst, rake |
+
+Signature rule 4 still allows a signature outside the matrix, but a signature that a conduit would explain must declare the conduit instead of taking the exception; the script warns when a signature action is outside both the physical row and any declared conduit row.
+
 ### 5.8 Abilities, the catalog, and signatures
 
 - At generation an individual gets the species signature plus 2 or 3 rolled abilities: instrument from the species list, action from that instrument's allowed set, medium from primary or rolled secondary, intensity 1 to 100, name drawn from the catalog cell (element x action) or the neutral pool for that action. The template never lists rolled abilities; it declares instruments and the signature.
@@ -422,7 +448,7 @@ Temperament is five stored axes (boldness, curiosity, energy, aggression, sociab
 2. **Description status.** If the description is already in the full species register (body appositive, engineered purpose, present-day turn, 60 to 140 words), keep it verbatim with `descriptionStatus: "source"`. If it is a two-sentence stub, write the upgraded description per section 3 using only facts from the stub and the planet history, mark `"upgraded"`, and list in the walkthrough every added clause with its source sentence.
 3. **Buried-auto-trait pass.** From the body facts, list every trait the body DEMANDS (these go in the pool at 100). Then list traits the environment demands (at or near 100) and traits the description or art merely suggests (at a justified percent).
 4. **Physiology.** Fill every field in section 4. Anatomy from the 34 keys, justified part by part from the description; if the description names no clean part, author the minimum honest set and say so. Size bands as realistic absolutes. Lifespan from the wear rubric. Environmental fields from the planet's `data` block and history plus the body. Capabilities and senses as bands with one-line reasons. Any field with no supporting source sentence takes its minimum honest value (`[]` for communication, no `special` sense, the fewest anatomy keys the body demands) and is listed in the walkthrough's Authored fields section; the JSON carries no provenance, so that section is the only record of which values are guesses.
-5. **Instruments.** 1 to 3. Each physical instrument must be in anatomy; each channel must satisfy its predicate. Prefer the parts the description actually uses to fight or work.
+5. **Instruments.** 1 to 3. Each physical instrument must be in anatomy; each channel must satisfy its predicate. Prefer the parts the description actually uses to fight or work. Then declare `conduits` (section 5.7a) only for instruments the description or art shows channeling an element, and quote the sentence.
 6. **Archetype weights.** A weighted subset of the 16 that matches how the body and description read.
 7. **Attribute bands.** All ten, 0 to 100, with intelligence never in true-human range; use the legacy `statRatings` only as a relative gauge.
 8. **Element.** Primary from `type`; secondaries are whatever the graph allows for the home planet (you do not pick one; you may override odds only with a lore reason).

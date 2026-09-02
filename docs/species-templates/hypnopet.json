@@ -171,6 +171,9 @@
     "crest",
     "mind"
   ],
+  "conduits": {
+    "crest": "psychic"
+  },
   "signatureAbility": {
     "name": "Psychedelic Reverie",
     "instrument": "crest",

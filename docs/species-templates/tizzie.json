@@ -170,6 +170,9 @@
     "gaze",
     "mind"
   ],
+  "conduits": {
+    "gaze": "psychic"
+  },
   "signatureAbility": {
     "name": "Spiral of Perfect Attention",
     "instrument": "gaze",

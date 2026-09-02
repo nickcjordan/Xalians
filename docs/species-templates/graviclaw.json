@@ -166,6 +166,9 @@
     "pincers",
     "shell"
   ],
+  "conduits": {
+    "pincers": "dark"
+  },
   "signatureAbility": {
     "name": "Point of No Return",
     "instrument": "pincers",
