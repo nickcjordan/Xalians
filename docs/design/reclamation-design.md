@@ -1,6 +1,6 @@
-# Tribute: the expedition game (second design, replaces the row game)
+# Reclamation (second design of the game spoke formerly called Tribute)
 
-Status: baseline agreed with Nick 2026-09-02 after two full brainstorming passes. Supersedes the first-attempt row-based ruleset (playable at `/tribute` on `feat/tribute-prototype`, kept as a reference implementation of the engine skeleton) and every earlier Tribute document. The working name is still Tribute; it was chosen for a game about presenting a roster to a court, and it may not survive a game about expeditions. Renaming is an open item.
+Status: baseline agreed with Nick 2026-09-02 after two full brainstorming passes; named Reclamation the same day. Supersedes the first-attempt row-based ruleset (still playable at `/tribute` on `feat/tribute-prototype` as a reference implementation of the engine skeleton) and every earlier Tribute document. The engine for this design lives in `my-app/src/gameplay/expedition/` (a match is an expedition; the game is Reclamation).
 
 ## What changed and why
 
@@ -25,6 +25,7 @@ This design starts from the other end. The creature record says what a Xalian is
 | 3 | A round is Deploy, Orders, Resolve, Judge, with simultaneous secret orders | 95% (Nick proposed the two-phase split; simultaneous orders was my addition, accepted) | Conversation 2026-09-02 |
 | 4 | Resolution is deterministic; chance is a possible later layer | 95% (explicit ruling) | Conversation 2026-09-02 |
 | 5 | Creatures choose their own targets by nature; the handler chooses creature, site, and act | 95% (explicit ruling, with Nick's own reasoning) | Conversation 2026-09-02 |
+| 15 | The trailing handler moves first on the next world, instead of pure alternation | 70% (my change after simulation showed a persistent first-mover disadvantage; Nick approved alternation and has not yet seen this variant) | Simulator runs 2026-09-02, seeds 7, 99, 2024 |
 | 6 | Combat outcomes are qualitative (shrugged, staggered, routed) from one comparison of magnitude against hold, not hit points | 85% (Nick asked for something smarter than one-hit breaking without Pokemon-style duels; this is my answer, approved in principle) | Conversation 2026-09-02 |
 | 7 | No site capacity; spread versus stack is the player's bet | 95% (Nick's argument, accepted) | Conversation 2026-09-02 |
 | 8 | Incompatibility with a world strains a creature rather than excluding it | 90% (Nick: no outright exclusion, a status instead) | Conversation 2026-09-02 |
@@ -36,6 +37,8 @@ This design starts from the other end. The creature record says what a Xalian is
 | 14 | Sites per world are new lore to author, three per planet, drawn from places the planet histories already name | 85% (14 x 3 = 42 site records; the histories name most of them) | `lambda/src/json/planets.json` |
 
 ## Fiction
+
+The name says the why: the worlds were lost to war and plague, and the creatures are taking them back, site by site. The Charter is the Court's acknowledgment of what an expedition has already reclaimed.
 
 The worlds are wreckage with value left in them: the Algael beds of Poseidas, the Benthane fields of Saiphus, the QED nodes of Zolton, the catacombs of Krystos, the ruins under Endessa's sand. Kozrak grants Charters over such sites, and with them Token allotments, and he awards them by contest, because a galaxy competing for his favor is a galaxy not organizing against him. You are a handler for a faction, fielding creatures you own. Your opponent is a rival handler: a Syndicate broker, a Zolto envoy, a Windsailor crew, an heir of the Thousand Families, the Court's own champion. A match is an expedition across three worlds, and the prize is the Charter. Whether that Charter is one prize among many in a wider tournament is left to the tournament lore, which is expected to hold several contests of which this is one. (Proposed canon, not yet written into the lore files; the ingredients are all canon.)
 
@@ -62,7 +65,7 @@ Everything a creature is on the table is derived from its record; nothing is sto
 
 ## The round: Deploy, Orders, Resolve, Judge
 
-1. **Deploy.** Handlers alternate; the round's starter alternates each round and there is no Court Favor. On your turn send one creature from your roster to one of the three sites, face up, or pass. Pass is permanent for the round. A stealthy creature may be sent **hidden**: the opponent sees that you sent a creature this turn, but not which creature or to which site, until orders are revealed. Any number of creatures may stand at a site. Deploy ends when both have passed.
+1. **Deploy.** Handlers alternate. The first world's starter is random; on each later world the handler holding fewer sites moves first, and if they hold the same number the starter alternates. There is no Court Favor. Moving first is the weaker seat (the other side deploys with more information), so the seat goes to whoever is behind; pure alternation left the round-one starter winning 37 to 44 percent of simulated matches. On your turn send one creature from your roster to one of the three sites, face up, or pass. Pass is permanent for the round. A stealthy creature may be sent **hidden**: the opponent sees that you sent a creature this turn, but not which creature or to which site, until orders are revealed. Any number of creatures may stand at a site. Deploy ends when both have passed.
 2. **Orders.** Both handlers, at the same time and in secret, assign each of their deployed creatures one of its acts, or Hold (no act). A creature not given an order performs its favored act (the one its archetype prefers). Orders are revealed together.
 3. **Resolve.** Ambush acts resolve first, in initiative order among themselves. Then wards. Then everything else in initiative order, strained creatures last. Each act targets by the creature's conduct given the board at the moment it acts. Outcomes are applied immediately, so a routed creature never gets to act and a staggered one hits for less if its magnitude depends on its own condition (it does not; only hold is halved by stagger).
 4. **Judge.** Each site goes to the side with the greater surviving hold there, staggered hold counted at half. A tie reverts the site to the Court. Winners' banners are placed. Creatures at a won site stay to hold the claim; creatures at a lost or tied site withdraw. Either way they are out of the expedition. The next world is revealed.
@@ -123,7 +126,7 @@ Kept as a later layer. The intended shape: each handler registers two, each boun
 
 ## The bot
 
-Public information only. Deploy: an allocation scorer that values each candidate (creature, site) by its hold there, the site's current margin, and the reserve value of the creature, with the spread-versus-stack tension expressed as a preference for the site where the marginal hold most changes who is winning; pass when every remaining creature would be strained or when the sites it can still swing are not worth the roster. Orders: for each creature, pick the act with the best expected outcome against the visible board using the same resolution rules, since conduct makes targets predictable; ward the site the opponent's projection can most profit from. Match states (must-hold, can-yield) as before, with the site count replacing round wins. The first-design bot's pass economy carries over in spirit.
+Public information only. Deploy is an allocation across three sites with a roster that must last three worlds, so the bot thinks in two currencies. Every (creature, site) pair is scored: flipping a site from losing or tied to winning is worth a fixed prize, less the hold spent (so a cheap flip beats an expensive one); adding hold to a site already winning is worth a smaller amount scaled by how much of the lead it adds; each own creature already at a site discounts sending another there, which is the spread bias; severe strain costs extra; and every hidden enemy send is treated as unseen hold at every site. The bot passes when it holds a majority with its even share of remaining sends spent and the opponent has already passed (never while the opponent can still answer), when it is over its share for this world with no flip on offer, or when the best candidate is not worth a creature. On the last world, or when the opponent could clinch, it spends freely. Orders: per creature, the act with the best expected outcome against the visible board using the same stagger and rout thresholds, area acts valued as enemy outcomes minus ally outcomes at the best site, wards valued by the threats present. All weights are exported constants.
 
 ## Interface principles (from the usability pass)
 
@@ -144,3 +147,11 @@ The table must always show whose turn it is, what a click will do, and what just
 2. Engine: world and site model, hold and strain, the four-phase round, the sixteen acts, conduct, judging, the match. Pure state machine with tests, as before.
 3. Bot and simulator; tune.
 4. Table UI on the Duel's creature representation: roster, world with three sites, orders panel with preview, resolution playback.
+
+## First numbers (bot vs bot, 2026-09-02)
+
+The simulator (`my-app/src/gameplay/expedition/devtools/expeditionSimulator.js`, run through the esbuild runner) plays random twelve-creature rosters from the provisional roller against the real site data, 300 matches per seed.
+
+1. The first bot never passed until it was out of creatures and stacked everything on one site, so 82 percent of sites went to the Court on ties. That was the bot, not the rules; the allocation and pass economy above replaced it.
+2. With the current bot, across seeds 7, 99 and 2024: about four sites won per side per match, 11 to 12 percent of sites reverting to the Court, one to two creatures per site at most, ten creatures sent per match, around four routs and one to two staggers per match, hidden sends on about a tenth of turns, and nearly every match going to the third world.
+3. The round-one starter won 37 to 44 percent under pure alternation. The trailing-handler-moves-first rule and a bot that no longer passes into an open opponent bring it to 41 to 45 percent. The remaining gap is the last-word advantage of deploying second and is the first thing human play should weigh in on.
