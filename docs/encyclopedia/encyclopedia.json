@@ -98,7 +98,7 @@
       "key": "black-lightning",
       "title": "Black Lightning",
       "category": "phenomena",
-      "definition": "A weather phenomenon on Zolton in which superintensive lightning generates a low-yield nuclear fusion reaction, generating a fatal neturon burst that releases deadly radiation into the atomsphere.",
+      "definition": "A weather phenomenon on Zolton in which superintensive lightning generates a low-yield nuclear fusion reaction, generating a fatal neutron burst that releases deadly radiation into the atmosphere.",
       "related": [
         "zolton"
       ]
@@ -107,7 +107,7 @@
       "key": "bloodstorm",
       "title": "Bloodstorm",
       "category": "phenomena",
-      "definition": "A weather phenomenon on Zolton identifiable by the frequent occurence of dark-red lightning and crimson lightning sprites, whose quantum entangling effects can be carefully channeled into a Quantum Entanglement Device",
+      "definition": "A weather phenomenon on Zolton identifiable by the frequent occurrence of dark-red lightning and crimson lightning sprites, whose quantum entangling effects can be carefully channeled into a Quantum Entanglement Device",
       "related": [
         "zolton"
       ]
@@ -116,7 +116,7 @@
       "key": "carbide-1",
       "title": "Carbide-1",
       "category": "technology",
-      "definition": "A factoryscape on Drainov which underwent a plant-wide melt down, setting of a chain reaction which led to the world-ending Drainov Disaster.",
+      "definition": "A factoryscape on Drainov which underwent a plant-wide melt down, setting off a chain reaction which led to the world-ending Drainov Disaster.",
       "related": [
         "drainov",
         "drainov-disaster"
@@ -136,7 +136,7 @@
       "key": "city-of-wraiths",
       "title": "City of Wraiths",
       "category": "places",
-      "definition": "The ruins of an ancient and colossal city belonging to the extinct Phantiri race, which was discovered on Shadharam IV as part of Operation Phantiri. Its uncovery triggered an eruption of energy from an unknown source on Phantiri's moon, extinguishing life on the planet and triggering the Phantiri Generator's propensity for the production of spectral, undead life.",
+      "definition": "The ruins of an ancient and colossal city belonging to the extinct Phantiri race, which was discovered on Shadharam IV as part of Operation Phantiri. Its uncovering triggered an eruption of energy from an unknown source on Phantiri's moon, extinguishing life on the planet and triggering the Phantiri Generator's propensity for the production of spectral, undead life.",
       "related": [
         "operation-phantiri",
         "phantiri",
@@ -238,7 +238,7 @@
       "key": "floria",
       "title": "Floria",
       "category": "places",
-      "definition": "An inhospitable world of apocalyptic weather patterns which has since been terraformed into a a vibrant forest planet by the first Xalian Generator.",
+      "definition": "An inhospitable world of apocalyptic weather patterns which has since been terraformed into a vibrant forest planet by the first Xalian Generator.",
       "related": [
         "xalian-generator"
       ],
@@ -334,7 +334,7 @@
       "key": "krystos",
       "title": "Krystos",
       "category": "places",
-      "definition": "A warmwater paradise that served as a vacation destination for Vallerii high society until it was plunged into an arctic apocalypse caused by an asteroid impact and converted into a frozen prison world and planetary cold-storage faciltity for APEX.",
+      "definition": "A warmwater paradise that served as a vacation destination for Vallerii high society until it was plunged into an arctic apocalypse caused by an asteroid impact and converted into a frozen prison world and planetary cold-storage facility for APEX.",
       "related": [
         "apex",
         "vallerii"
@@ -355,7 +355,7 @@
       "key": "luminax",
       "title": "Luminax",
       "category": "places",
-      "definition": "A planet with binary stars that is subject to immense radiation, therfore serving as the solar energy capital of Xalia.",
+      "definition": "A planet with binary stars that is subject to immense radiation, therefore serving as the solar energy capital of Xalia.",
       "related": [
         "xalia"
       ],
@@ -450,7 +450,7 @@
       "key": "phantiri",
       "title": "Phantiri",
       "category": "places",
-      "definition": "A tomb world whose lifeforms are under constant assault from an unknown energy source emanating from its orbtial moon and whose Xalian Generator has responded by creating Xalians of a spectral, undead nature. Alternatively, the name of the extinct ancient alien species who once inhabited the planet and the top secret operation which uncovered their remains.",
+      "definition": "A tomb world whose lifeforms are under constant assault from an unknown energy source emanating from its orbital moon and whose Xalian Generator has responded by creating Xalians of a spectral, undead nature. Alternatively, the name of the extinct ancient alien species who once inhabited the planet and the top secret operation which uncovered their remains.",
       "related": [
         "xalian-generator",
         "xalians"
@@ -461,7 +461,7 @@
       "key": "poseidas",
       "title": "Poseidas",
       "category": "places",
-      "definition": "An ocean world that is subject to toxic algae blooms, torrential hurricans, and immense tsunamies. The only known source of Algael in Xalia.",
+      "definition": "An ocean world that is subject to toxic algae blooms, torrential hurricanes, and immense tsunamis. The only known source of Algael in Xalia.",
       "related": [
         "algael",
         "xalia"
@@ -503,7 +503,7 @@
       "key": "scrambler-token",
       "title": "Scrambler Token",
       "category": "technology",
-      "definition": "A special chip printed by the Mecurius Machine which possesses a randomly generated and encrypted Xalian genome that can be used by a Xalian Generator to create new, unique Xalians that are immune to the Nemesis Plague.",
+      "definition": "A special chip printed by the Mercurius Machine which possesses a randomly generated and encrypted Xalian genome that can be used by a Xalian Generator to create new, unique Xalians that are immune to the Nemesis Plague.",
       "related": [
         "nemesis-plague",
         "xalian-generator",
@@ -579,7 +579,7 @@
       "key": "telypso",
       "title": "Telypso",
       "category": "places",
-      "definition": "A psychedelic world at the center of Xalia used by the Vallerii as a planetary asylum and beleived to be the origin of all life in the galaxy. The planet disobeys the laws of physics and is believed to contain a sort of psychosphere or planetary consciousness that drives its inhabitants mad.",
+      "definition": "A psychedelic world at the center of Xalia used by the Vallerii as a planetary asylum and believed to be the origin of all life in the galaxy. The planet disobeys the laws of physics and is believed to contain a sort of psychosphere or planetary consciousness that drives its inhabitants mad.",
       "related": [
         "vallerii",
         "xalia"
@@ -674,7 +674,7 @@
       "key": "veridium",
       "title": "Veridium",
       "category": "places",
-      "definition": "A metallic world filled with dilapidated drones and believed to be a superstructure or worldship leftover from a now extinct alien race, , which served as the lynchpin of Vallerii industry and technological advancement throughout galactic history.",
+      "definition": "A metallic world filled with dilapidated drones and believed to be a superstructure or worldship leftover from a now extinct alien race, which served as the lynchpin of Vallerii industry and technological advancement throughout galactic history.",
       "related": [
         "vallerii"
       ],
@@ -741,7 +741,7 @@
       "key": "zolton",
       "title": "Zolton",
       "category": "places",
-      "definition": "A mountainous, storm-wracked world whose unique weather allows for the generation of immense sums of electrcitiy, plasma energy, and Quantum Entanglement Devices.",
+      "definition": "A mountainous, storm-wracked world whose unique weather allows for the generation of immense sums of electricity, plasma energy, and Quantum Entanglement Devices.",
       "related": [],
       "element": "electric"
     }
