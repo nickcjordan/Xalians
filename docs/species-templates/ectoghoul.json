@@ -15,7 +15,7 @@
     "bodyPlan": "floating",
     "anatomy": ["jaws", "tail", "body"],
     "covering": "mist",
-    "size": { "heightCm": [80, 105], "weightKg": [0, 1] },
+    "size": { "heightCm": [80, 105], "weightKg": [0.1, 0.5] },
     "lifespan": "ageless",
     "genome": { "chirality": "achiral" },
     "diet": "none",
