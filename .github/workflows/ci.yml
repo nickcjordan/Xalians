@@ -27,15 +27,7 @@ jobs:
         run: yarn copy-json && yarn copy-js
 
       - name: Test
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider
-          CI: "true"
-        run: yarn test --watchAll=false --passWithNoTests
+        run: yarn test --run --passWithNoTests
 
       - name: Build
-        # legacy provider: the lockfile's webpack toolchain uses md4 hashing,
-        # which OpenSSL 3 (Node 17+) removed
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider
-          CI: "false" # CRA treats warnings as errors when CI=true; this codebase has known benign warnings
         run: yarn build
