@@ -1,0 +1,59 @@
+/* WorldView section. Prefix: .enc-world- */
+
+.enc-world-plate {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-4);
+}
+
+.enc-world-mount {
+	padding: var(--g-4);
+}
+
+.enc-world-globe {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	border-radius: 50%;
+}
+
+.enc-world-spec {
+	padding: 0 var(--g-1);
+}
+
+.enc-world-report-block {
+	margin-top: var(--g-3);
+}
+
+.enc-world-history {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-6);
+}
+
+.enc-world-chapter {
+	scroll-margin-top: var(--g-9);
+}
+
+.enc-world-chapter-head {
+	display: flex;
+	align-items: baseline;
+	gap: var(--g-3);
+	margin-bottom: var(--g-2);
+}
+
+.enc-world-chapter-num {
+	color: var(--g-ink-low);
+}
+
+.enc-world-species-art {
+	padding: var(--g-2);
+}
+
+.enc-world-entries {
+	padding: var(--g-2) var(--g-4);
+}

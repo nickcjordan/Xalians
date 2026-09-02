@@ -102,10 +102,20 @@ function buildPhysiology(physiology) {
 				: undefined,
 		};
 	}
-	// Fields not backed by a flat registry pass through as-is.
-	for (const key of ['size', 'genome', 'environmentalTolerance']) {
-		if (physiology[key] !== undefined) result[key] = physiology[key];
+	// Nested fields whose leaves are registry keys: resolve the leaves, keep the shape.
+	const media = registries.physiology.media;
+	if (physiology.breathes) result.breathes = physiology.breathes.map((key) => resolveRegistry(media, key));
+	if (physiology.environmentalTolerance) {
+		const tol = physiology.environmentalTolerance;
+		result.environmentalTolerance = {
+			ambientMedia: (tol.ambientMedia || []).map((key) => resolveRegistry(media, key)),
+			temperatureC: tol.temperatureC,
+		};
 	}
+	if (physiology.genome) {
+		result.genome = { chirality: resolveRegistry(registries.physiology.chirality, physiology.genome.chirality) };
+	}
+	if (physiology.size !== undefined) result.size = physiology.size;
 	return result;
 }
 

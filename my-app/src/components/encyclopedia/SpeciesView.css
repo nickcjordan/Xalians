@@ -1,0 +1,79 @@
+.enc-species-plate {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-4);
+}
+
+.enc-species-portrait {
+	width: 100%;
+	height: 100%;
+}
+
+.enc-species-dim {
+	display: block;
+	color: var(--g-ink-low);
+	font-size: var(--g-size-micro);
+	margin-top: var(--g-1);
+}
+
+.enc-species-body {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-4);
+}
+
+.enc-species-niche {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-1);
+}
+
+.enc-species-entry {
+	padding: var(--g-4);
+}
+
+.enc-species-chip-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--g-2);
+	padding: var(--g-4);
+}
+
+.enc-species-chip-row .g-chip {
+	gap: var(--g-2);
+}
+
+.enc-species-dim-inline {
+	color: var(--g-ink-low);
+}
+
+.enc-species-archetypes {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+	margin: 0;
+	padding: var(--g-4) var(--g-4) var(--g-4) var(--g-6);
+}
+
+.enc-species-archetypes li {
+	display: flex;
+	align-items: baseline;
+	gap: var(--g-3);
+	flex-wrap: wrap;
+}
+
+.enc-species-archetype-name {
+	font-family: var(--g-font-stencil);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	font-size: var(--g-size-small);
+	color: var(--g-ink);
+}
+
+.enc-species-signature p {
+	margin: 0 0 var(--g-2);
+}
+
+.enc-species-signature p:last-child {
+	margin-bottom: 0;
+}

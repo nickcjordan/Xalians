@@ -40,6 +40,17 @@
 
 .enc-body { min-height: 40vh; }
 
+.enc-console { overflow-x: hidden; }
+
+@media (max-width: 700px) {
+	.enc-masthead { gap: var(--g-4); }
+	.enc-masthead-text { flex: 1 1 100%; overflow-wrap: anywhere; }
+	.enc-title { font-size: var(--g-size-h2); }
+	.enc-search { flex: 1 1 100%; min-width: 0; }
+	.enc-sections { display: flex; width: 100%; }
+	.enc-sections .g-segment { flex: 1 1 auto; text-align: center; padding-left: var(--g-2); padding-right: var(--g-2); }
+}
+
 /* ---- search ------------------------------------------------------------ */
 
 .enc-search {

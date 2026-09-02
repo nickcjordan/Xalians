@@ -1,0 +1,24 @@
+/* EntryView section. Prefix: .enc-entry- */
+
+.enc-entry {
+	max-width: var(--g-measure);
+	margin: 0 auto;
+}
+
+.enc-entry-doc { width: 100%; }
+
+.enc-entry-related { padding: var(--g-2) var(--g-4); }
+
+.enc-entry-appearances {
+	display: grid;
+	gap: var(--g-4);
+}
+
+.enc-entry-appearance {
+	padding: var(--g-4);
+	border-bottom: var(--g-hairline) solid var(--g-rule-faint);
+}
+
+.enc-entry-appearance:last-child { border-bottom: none; }
+
+.enc-entry-appearance-name { font-size: var(--g-size-body); }
