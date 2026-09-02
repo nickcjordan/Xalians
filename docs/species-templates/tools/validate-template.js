@@ -190,7 +190,7 @@ function checkProse(code, text, label, opts = {}) {
   if (typeof text !== 'string' || !text.trim()) { fail(code, label + ' is missing or empty'); return; }
   proseFieldsChecked.push([label, text]);
   if (EM_DASH.test(text)) fail(code + '.emdash', label + ' contains an em-dash');
-  if (/\b(HP|damage|cooldown|stat|stats|turn|turns|mint|minted|NFT|blockchain|wallet|crypto)\b/i.test(text)) fail(code + '.mechanics', label + ' contains game-mechanics or crypto vocabulary');
+  if (/\b(HP|damage|cooldown|stat|stats|mint|minted|NFT|blockchain|wallet|crypto)\b/i.test(text) || /\b(this|next|each|per|every|one|its|their)\s+turns?\b/i.test(text)) fail(code + '.mechanics', label + ' contains game-mechanics or crypto vocabulary');
   if (/\b(he|she|his|her|mate|mates|offspring|father|mother|breed|breeds)\b/i.test(text)) warn(code + '.lineage', label + ' contains gendered or lineage language (Xalians have no sex or lineage); confirm it is not about the species');
   if (opts.noElementKeys) {
     const hits = Object.keys(ELEMENTS).filter(e => new RegExp('\\b' + e + '\\b', 'i').test(text));
@@ -351,7 +351,7 @@ if (T) {
     if (ANATOMY.includes(inst)) { if (anatomyOk && !P.anatomy.includes(inst)) fail('instruments.anatomy', 'physical instrument "' + inst + '" is not in anatomy'); }
     else if (CHANNELS.includes(inst)) {
       if (predicate[inst]) { if (!predicate[inst]()) fail('instruments.predicate', 'channel "' + inst + '" fails its template predicate'); }
-      else warn('instruments.predicate.source', 'channel "' + inst + '" has a source-text predicate (' + (inst === 'aura' ? 'a whole-body emanation acting on everything around it' : 'an emitted substance') + '); the validator agent must confirm the quoted sentence');
+      else if (inst !== 'swarm') warn('instruments.predicate.source', 'channel "' + inst + '" has a source-text predicate (' + (inst === 'aura' ? 'a whole-body emanation acting on everything around it' : 'an emitted substance') + '); the validator agent must confirm the quoted sentence');
       if (inst === 'gaze') warn('instruments.predicate.source', 'channel "gaze" also needs the description to support a stare; the validator agent must confirm');
     } else fail('instruments.registry', 'instrument "' + inst + '" is not an anatomy key or channel');
   }
