@@ -1,0 +1,187 @@
+{
+  "key": "yetimoth",
+  "name": "Yetimoth",
+  "element": "ice",
+  "homePlanet": "krystos",
+  "generatorPlanets": [
+    "krystos"
+  ],
+  "lore": {
+    "description": "Hulking, white-furred apes with the heads of mammoths and tusks made of pure ice, the Yetimoths formed the rank and file of Krystos' prisonguards in ancient times.  If their enormous size and strength was not enough to keep prisoners in line, they could also form thick sheets of ice from thin air, covering themselves in a near-impenetrable armor, blocking off escape routes in walls of frost, or encapsulating their opponents until they could lumber over close enough to pummel them into submission with their meaty, ice-gauntleted fists.",
+    "descriptionStatus": "source",
+    "biomeNiche": "the high-security prison complexes of the frozen tundra"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": {
+      "primary": "flesh",
+      "secondary": "mineral"
+    },
+    "bodyPlan": "biped",
+    "anatomy": [
+      "tusks",
+      "trunk",
+      "fists",
+      "hide"
+    ],
+    "covering": "fur",
+    "size": {
+      "heightCm": [
+        205,
+        255
+      ],
+      "weightKg": [
+        330,
+        470
+      ]
+    },
+    "lifespan": "long",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "vocal",
+      "display"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -122,
+        "max": -10
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        10,
+        25
+      ],
+      "burrow": [
+        15,
+        30
+      ],
+      "climb": [
+        20,
+        35
+      ],
+      "sprint": [
+        20,
+        35
+      ],
+      "leap": [
+        15,
+        30
+      ],
+      "manipulation": [
+        45,
+        65
+      ]
+    },
+    "senses": {
+      "sight": [
+        40,
+        60
+      ],
+      "hearing": [
+        55,
+        75
+      ],
+      "smell": [
+        55,
+        75
+      ]
+    }
+  },
+  "archetypeWeights": {
+    "juggernaut": 5,
+    "bulwark": 4,
+    "vanguard": 3,
+    "stalwart": 2,
+    "survivor": 1
+  },
+  "attributes": {
+    "strength": [
+      72,
+      92
+    ],
+    "vitality": [
+      65,
+      85
+    ],
+    "endurance": [
+      60,
+      80
+    ],
+    "agility": [
+      12,
+      30
+    ],
+    "reflex": [
+      15,
+      35
+    ],
+    "intelligence": [
+      30,
+      50
+    ],
+    "willpower": [
+      55,
+      75
+    ],
+    "instinct": [
+      40,
+      60
+    ],
+    "charisma": [
+      35,
+      55
+    ],
+    "resilience": [
+      70,
+      90
+    ]
+  },
+  "traits": {
+    "pool": {
+      "armored": 85,
+      "resistant": 80,
+      "menacing": 55,
+      "anchored": 45,
+      "pack-bonded": 45,
+      "protective": 25,
+      "perceptive": 20,
+      "ramming": 20,
+      "mind-sealed": 15,
+      "solitary": 12
+    }
+  },
+  "instruments": [
+    "fists",
+    "tusks",
+    "hide"
+  ],
+  "conduits": {
+    "hide": "ice",
+    "fists": "ice"
+  },
+  "signatureAbility": {
+    "name": "Mantle of Unyielding Winter",
+    "instrument": "hide",
+    "action": "ward",
+    "medium": "ice",
+    "intensity": [
+      45,
+      85
+    ],
+    "description": "The Yetimoth draws thick sheets of frost out of nothing and layers them over its own pelt until the blows of its opponents stop reaching it."
+  }
+}
