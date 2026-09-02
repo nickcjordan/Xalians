@@ -1,7 +1,7 @@
 /*
 	Expedition — interpretation tables.
 
-	Owned by this game, not the creature registry, per docs/design/tribute-design.md
+	Owned by this game, not the creature registry, per docs/design/reclamation-design.md
 	("The game bends to the creatures, never the reverse... What the game needs to know
 	is registry fact, usable by any game"). These tables are read-only lenses over the
 	creature record; nothing here is ever written back to a record.

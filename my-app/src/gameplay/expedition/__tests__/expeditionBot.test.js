@@ -3,7 +3,7 @@ import { chooseSend, chooseOrders } from '../expeditionBot.js';
 import { ROSTER_SIZE, SENDABLE } from '../expeditionInterpretation.js';
 
 /*
-	Coverage for docs/design/tribute-design.md's "The bot" section: public information
+	Coverage for docs/design/reclamation-design.md's "The bot" section: public information
 	only, legal actions, and a full deterministic bot-vs-bot match completing.
 */
 

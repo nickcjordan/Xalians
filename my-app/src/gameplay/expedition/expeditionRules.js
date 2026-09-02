@@ -1,7 +1,7 @@
 /*
 	Expedition — the pure rules state machine.
 
-	Framework-free per docs/design/tribute-design.md step 2 ("Engine: world and site
+	Framework-free per docs/design/reclamation-design.md step 2 ("Engine: world and site
 	model, hold and strain, the four-phase round, the sixteen acts, conduct, judging, the
 	match. Pure state machine with tests, as before."). Every action function takes a
 	state and returns a NEW state, or null on illegal input — the same contract the first

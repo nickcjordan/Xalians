@@ -1,7 +1,7 @@
 /*
 	Expedition — the creature on the table.
 
-	Per docs/design/tribute-design.md ("The creature on the table"): everything a
+	Per docs/design/reclamation-design.md ("The creature on the table"): everything a
 	creature is on the table is derived from its record; nothing is stored on the record.
 	`prepare(record, site, world, sentIndex)` builds that derived view once per creature
 	per site, and `magnitudeAgainst(actor, act, target)` computes an act's magnitude

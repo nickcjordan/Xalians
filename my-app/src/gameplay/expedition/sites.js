@@ -1,7 +1,7 @@
 /*
 	Expedition — world and site data access.
 
-	Per docs/design/tribute-design.md ("The world and its sites"): each world has an
+	Per docs/design/reclamation-design.md ("The world and its sites"): each world has an
 	element and three sites, each with its own environment (medium, temperature band).
 	Canonical data lives at lambda/src/json/sites.json, copied to my-app/src/json/sites.json
 	by the copy-json build step, authored in the lore voice and validated against the

@@ -5,7 +5,7 @@ import {
 } from '../creatureOnTable.js';
 
 /*
-	Coverage for "The creature on the table" section of docs/design/tribute-design.md:
+	Coverage for "The creature on the table" section of docs/design/reclamation-design.md:
 	hold, world matchup, home ground, strain, initiative, act magnitudes, conduct.
 */
 

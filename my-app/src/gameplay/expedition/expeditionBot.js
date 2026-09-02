@@ -1,7 +1,7 @@
 /*
 	Expedition — the bot.
 
-	Per docs/design/tribute-design.md's "The bot" section: public information only.
+	Per docs/design/reclamation-design.md's "The bot" section: public information only.
 	Deploy is an allocation problem across three sites with a roster that has to last
 	three worlds, so the bot thinks in two currencies: sites it can flip or secure on this
 	world, and sends it must keep for the worlds still to come. Orders pick, per creature,

@@ -6,7 +6,7 @@ import { ROSTER_SIZE, SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH } from '../exp
 
 /*
 	Rules-engine coverage for Expedition's match/round/turn flow, per
-	docs/design/tribute-design.md's "The round: Deploy, Orders, Resolve, Judge",
+	docs/design/reclamation-design.md's "The round: Deploy, Orders, Resolve, Judge",
 	"The acts", "Conduct", "Roster economy", and match-end sections.
 */
 
