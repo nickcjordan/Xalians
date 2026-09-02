@@ -29,4 +29,5 @@ Categories: `history`, `factions`, `people`, `places`, `technology`, `substances
 - Keys are append-only once shipped. Corrections edit definitions, never keys.
 - `related` links are mechanical (title appears in definition text), never thematic.
 - Species entries are absent by design; they arrive one at a time during species migration, written against each species' final ratified record.
-- The app still reads `lambda/src/json/glossary.json`; nothing here changes the site until the Encyclopedia page lands and the bundle flips. See the internal companion for the flip plan.
+- The bundle shipped on 2026-09-02: `node scripts/bundleLore.js` copies this file (with `chronicle.json`, `registries.json`, and the ratified species records) into `lambda/src/json/`, and the `/encyclopedia` page reads it through `my-app/src/lore/`. Run the bundler and `yarn copy-json` after every change here. `glossary.json` is now a legacy mirror read only by the old `/glossary` page; this file wins on conflict.
+- `chronicle.json` beside this file is the undated timeline (eras, events with verbatim anchors, era tags per history paragraph); its rulings live in `docs/design/xalian-chronicle.md`.
