@@ -7,7 +7,7 @@
     "grimedes"
   ],
   "lore": {
-    "description": "A small winged thing with a long whipping tail, the Tetrahive fights by conjuring a swarm of little flying familiars with teeth like piranhas, holding every one of them in its mind and moving them as a single unit to attack or defend. It was generated on Grimedes not to serve as a labor force but as a test subject, and its swarm belongs to the same body of research that yielded organisms able to manipulate shadows to create copies of sentient life, work carried out in laboratories that rumor holds were black sites for ECHELON. It hunts the thick, stalky undergrowth of a world cloaked in perpetual night, and the newest generation of its kind now stands at the edge of the galaxy and watches the endless black.",
+    "description": "A small winged thing with a long whipping tail, the Tetrahive fights by conjuring a swarm of little flying familiars with teeth like piranhas, holding every one of them in its mind and moving them as a single unit to attack or defend. It was generated on Grimedes not to serve as a labor force but as a test subject, one product of the experiments the Vallerii ran on the Xalian population in laboratories that rumor holds were black sites for ECHELON. It hunts the thick, stalky undergrowth of a world cloaked in perpetual night, and the newest generation of its kind now stands at the edge of the galaxy and watches the endless black.",
     "descriptionStatus": "upgraded",
     "biomeNiche": "the thick stalky undergrowth of the flat, lightless plains of Grimedes"
   },
@@ -21,7 +21,6 @@
       "wings",
       "claws",
       "tail",
-      "fangs",
       "body"
     ],
     "covering": "hide",
@@ -40,9 +39,7 @@
       "chirality": "rolled"
     },
     "diet": "carnivore",
-    "communication": [
-      "telepathic"
-    ],
+    "communication": [],
     "breathes": [
       "gas"
     ],
@@ -97,9 +94,6 @@
       "smell": [
         25,
         45
-      ],
-      "special": [
-        "psychic"
       ]
     }
   },
@@ -162,7 +156,6 @@
       "nocturnal": 5,
       "mind-sealed": 4,
       "slippery": 3,
-      "stealthy": 3,
       "perceptive": 2,
       "menacing": 2,
       "solitary": 1
@@ -170,7 +163,6 @@
   },
   "instruments": [
     "swarm",
-    "mind",
     "claws"
   ],
   "signatureAbility": {
