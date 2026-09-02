@@ -14,7 +14,6 @@ Sources read in full: the `Graviclaw` entry in `species.json` and the entire `Gr
 |---|---|---|
 | `pincers` | species: "Graviclaws can strengthen the gravitational pull of their massive claws in order to snap them shut". The registry ruling in this skill is that a crab claw that snaps shut is `pincers`, never `claws`, whatever word the description uses. The body is explicitly "the black-shelled body of a crab", so the snapping claws are pincers. | species |
 | `shell` | species: "the black-shelled body of a crab". A rigid enclosing casing is the registry definition of `shell`. | species |
-| `hide` | species: "becoming an immovable wall of chitin" describes the whole body surface used defensively, which is the registry sense of `hide`. | species |
 | `body` | species: "an immovable wall of chitin" is whole-body mass presented as an obstacle; `body` is the universal fallback and is carried so the rolled-ability layer has the general-purpose key. | species |
 
 No other anatomy key has a source sentence. There are no jaws, spines, tail, or antennae in either source, so none are declared.
@@ -55,11 +54,10 @@ No other anatomy key has a source sentence. There are no jaws, spines, tail, or 
 
 ### Instruments
 
-`pincers`, `shell`, `hide`. All three are in anatomy.
+`pincers`, `shell`. Both are in anatomy. (`hide` was declared as a third instrument in the original run and removed by the orchestrator; see Orchestrator amendments.)
 
 - `pincers`: species: "Graviclaws can strengthen the gravitational pull of their massive claws in order to snap them shut with a force many times heavier than their implied mass, severing through even the hardest of materials with crushing pressure." This is the part it fights with.
 - `shell`: species: "the black-shelled body of a crab", the casing it presents when it stops moving.
-- `hide`: species: "becoming an immovable wall of chitin", the body surface used defensively against "larger foes".
 
 No channel is declared. `mind` was considered and rejected: the element is not psychic, the special sense is `void-sense` rather than `psychic`, and `telekinetic` is a pool roll rather than guaranteed, so the predicate fails. `aura` was also rejected: the gravitational pull is a targeted effect that terminates in the claws, not an emanation acting on everything around the body, and control language alone never satisfies the aura predicate.
 
@@ -120,7 +118,7 @@ Values with no supporting source sentence, recorded here because the JSON carrie
 For each declared instrument crossed with its allowed actions, over the primary `dark` and each on-graph secondary (`ghost`, `psychic`, `ice`), counting the element cell plus the action neutral pool and respecting instrument tags:
 
 - `pincers` (strike, crush, snare, shove, ward, hurl): the smallest element-cell contributions across all four media are dark hurl at 44 untagged names and ghost crush at 8 untagged plus 9 pincer-tagged. Every combination clears 6 comfortably once the neutral pools (54 to 100 names each) are added.
-- `shell` and `hide` (ward, shove, crush): the smallest is ghost crush again at 17 drawable, and dark ward at 98. All clear.
+- `shell` (ward, shove, crush): the smallest is ghost crush again at 17 drawable, and dark ward at 98. All clear.
 - Neutral pools consulted: strike 87, shove 83, crush 53, snare 43, ward 72, hurl 66.
 
 No thin combos found. Nothing was padded.
@@ -153,3 +151,7 @@ ok   signature.collision            no catalog collision for 'Point of No Return
 ok   signature.reserved             signature name matches the reserved ledger entry at consolidated-dark.md:52
 ok   md.quotes                      30 of 30 distinct quotations found verbatim in the sources
 ```
+
+## Orchestrator amendments
+
+- 2026-09-02: `hide` removed from anatomy and instruments under Nick's one-surface-key ruling: the shell is the armored aspect and `hide` states that the body has no armored aspect, so a chitin-shelled crustacean declares `shell` alone. The "immovable wall of chitin" sentence is already carried by `shell`, `body`, and the guaranteed `anchored` trait. Instruments are now `pincers`, `shell`.

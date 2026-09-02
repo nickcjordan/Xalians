@@ -240,6 +240,8 @@ if (T) {
   checkEnum('bodyPlan', P.bodyPlan, ENUMS.bodyPlan, 'bodyPlan');
   const anatomyOk = checkEnumArray('anatomy', P.anatomy, ANATOMY, 'anatomy', false);
   checkEnum('covering', P.covering, ENUMS.covering, 'covering');
+  if (anatomyOk && P.anatomy.includes('shell') && P.anatomy.includes('hide')) fail('anatomy.surface', 'anatomy declares both shell and hide; a species has one surface key, and shell is the armored aspect while hide states there is no armored aspect (ruling 2026-09-02)');
+  if (anatomyOk && P.anatomy.includes('hide') && ['chitin', 'plating', 'crystal'].includes(P.covering)) warn('anatomy.surface.covering', 'hide declared with an armored covering (' + P.covering + '); hide means an unarmored surface, so this is probably shell');
   if (!P.size || !Array.isArray(P.size.heightCm) || !Array.isArray(P.size.weightKg)) fail('size', 'size.heightCm and size.weightKg must be [lo, hi] arrays');
   else {
     const h = P.size.heightCm, w = P.size.weightKg;
