@@ -11,3 +11,4 @@ One dated line per change, written by the orchestrator after a denial review. Ea
 - 2026-09-02: trait model re-ratified as independent per-trait percents. Script now fails `guaranteed`/`rolledCount` as legacy, requires integer percents 1 to 100, fails both exclusion partners at 100, warns on a tie, warns when the expected trait count exceeds 3.5, and derives body-demanded checks (phasing, armored, telekinetic for manipulation) from entries at 100.
 - 2026-09-02: after the trait-model audit, expected trait count now subtracts the exclusion-pair overlap, and the tie warning says the generator orders partners by tilted percent.
 - 2026-09-02: `crystal` covering joins the armored-at-100 WARN so the script matches the registry definitions (blind v2 finding F1).
+- 2026-09-02: `flight.means` accepts a swarm body plan (blind v3 finding 1).

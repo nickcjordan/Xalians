@@ -282,7 +282,7 @@ if (T) {
   if (has(S, 'special') && Array.isArray(S.special) && S.special.length === 0) fail('senses.special.empty', 'senses.special is optional; omit it rather than leaving it empty');
   if (P.corporeality === 'non-corporeal' && P.composition && !['spectral', 'energy', 'gas'].includes(P.composition.primary)) warn('corporeality.composition', 'non-corporeal body with composition ' + P.composition.primary);
   if (P.bodyPlan === 'avian' && isBand(C.flight) && C.flight[1] === 0) warn('flight.avian', 'avian body plan with zero flight');
-  if (isBand(C.flight) && C.flight[1] > 0 && anatomyOk && !P.anatomy.includes('wings') && P.bodyPlan !== 'floating' && P.corporeality !== 'non-corporeal') warn('flight.means', 'flight above 0 with no wings, floating body plan, or non-corporeal body; justify the means in the walkthrough');
+  if (isBand(C.flight) && C.flight[1] > 0 && anatomyOk && !P.anatomy.includes('wings') && P.bodyPlan !== 'floating' && P.bodyPlan !== 'swarm' && P.corporeality !== 'non-corporeal') warn('flight.means', 'flight above 0 with no wings, floating body plan, or non-corporeal body; justify the means in the walkthrough');
 
   // archetypes
   const AW = T.archetypeWeights || {};
