@@ -1,16 +1,54 @@
 /* =========================================================================
    READING ROOM — the /encyclopedia landing. Contract: docs/design/
-   xalian-encyclopedia-page.md section 5 "Reading room".
+   xalian-encyclopedia-ux-pass.md item 1 "Galaxy map as instrument".
    ========================================================================= */
 
 .enc-room-preface {
 	max-width: var(--g-measure);
+	margin-bottom: var(--g-6);
+}
+
+/* ---- First Survey call to action -------------------------------------- */
+
+.enc-room-tour {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: var(--g-2) var(--g-4);
+	padding: var(--g-4) var(--g-5);
+	margin-bottom: var(--g-6);
+}
+
+.enc-room-tour-kicker {
+	flex-basis: 100%;
+}
+
+.enc-room-tour-title {
+	margin: 0;
+}
+
+.enc-room-tour-meta {
+	margin: 0;
+	color: var(--g-ink-mid);
+	flex: 1 1 auto;
+}
+
+.enc-room-tour .g-btn {
+	flex: none;
+}
+
+/* ---- galaxy map hero ---------------------------------------------------- */
+
+.enc-room-map-panel {
+	padding: var(--g-4);
 	margin-bottom: var(--g-7);
 }
 
+/* ---- below the fold: story + tiles -------------------------------------- */
+
 .enc-room-columns {
 	display: grid;
-	grid-template-columns: minmax(0, 58%) minmax(0, 1fr);
+	grid-template-columns: minmax(0, 60%) minmax(0, 1fr);
 	gap: var(--g-6);
 	align-items: start;
 }
@@ -19,29 +57,6 @@
 	.enc-room-columns {
 		grid-template-columns: minmax(0, 1fr);
 	}
-	.enc-room-left {
-		display: contents;
-	}
-	.enc-room-map-panel {
-		order: 1;
-	}
-	.enc-room-story {
-		order: 2;
-	}
-	.enc-room-strip {
-		order: 3;
-	}
-}
-
-.enc-room-left {
-	display: flex;
-	flex-direction: column;
-	gap: var(--g-6);
-}
-
-.enc-room-map-panel {
-	padding: var(--g-4);
-	align-self: stretch;
 }
 
 .enc-room-story {
@@ -60,8 +75,5 @@
 
 .enc-room-strip {
 	margin-top: 0;
-}
-
-.enc-room-strip {
 	grid-template-columns: repeat(2, minmax(0, 1fr));
 }

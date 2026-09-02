@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import * as lore from '../../lore';
 import Prose from './Prose';
+import { useVisit } from './trail';
 import './EntryView.css';
 
 const APPEARANCE_KIND_LABEL = { world: 'World', species: 'Species' };
@@ -14,6 +15,9 @@ const APPEARANCE_KIND_LABEL = { world: 'World', species: 'Species' };
 export default function EntryView() {
     const { key } = useParams();
     const entry = lore.getEntry(key);
+    const wasRead = useVisit(entry
+        ? { kind: 'entry', key, name: entry.title, element: entry.element }
+        : { kind: null, key: null });
 
     if (!entry) {
         return (
@@ -56,6 +60,7 @@ export default function EntryView() {
                         <span className="g-chip">{entry.category}</span>
                         {entry.element && <span className="g-chip">{entry.element}</span>}
                     </div>
+                    {wasRead && <p className="g-mono enc-entry-reviewed">reviewed</p>}
                 </header>
 
                 <Prose text={entry.definition} except={key} />

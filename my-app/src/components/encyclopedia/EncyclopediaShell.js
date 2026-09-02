@@ -1,10 +1,12 @@
 import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useHistory } from 'react-router-dom';
 import * as lore from '../../lore';
 import LoreSearch from './LoreSearch';
+import TrailStrip from './TrailStrip';
 
 const SECTIONS = [
     { to: '/encyclopedia', label: 'Reading Room', exact: true },
+    { to: '/encyclopedia/tour', label: 'First Survey' },
     { to: '/encyclopedia/chronicle', label: 'Chronicle' },
     { to: '/encyclopedia/worlds', label: 'Worlds' },
     { to: '/encyclopedia/species', label: 'Bestiary' },
@@ -19,6 +21,13 @@ const SECTIONS = [
 export default function EncyclopediaShell({ children }) {
     const masthead = lore.getMasthead();
     const location = useLocation();
+    const history = useHistory();
+
+    function pullRecord() {
+        const record = lore.getRandomRecord();
+        history.push(lore.routeFor(record.kind, record.key));
+    }
+
     return (
         <div className="g-shell page-shell enc-shell">
             <header className="enc-masthead">
@@ -27,7 +36,12 @@ export default function EncyclopediaShell({ children }) {
                     <h1 className="g-title enc-title">{masthead.title}</h1>
                     <p className="g-mono enc-version">canon rev. {masthead.version}</p>
                 </div>
-                <LoreSearch key={location.pathname} />
+                <div className="enc-masthead-tools">
+                    <LoreSearch key={location.pathname} />
+                    <button type="button" className="g-btn enc-btn-small enc-pull-record" onClick={pullRecord}>
+                        Pull a record
+                    </button>
+                </div>
             </header>
             <nav className="g-segmented enc-sections" aria-label="Encyclopedia sections">
                 {SECTIONS.map((s) => {
@@ -40,6 +54,7 @@ export default function EncyclopediaShell({ children }) {
                 })}
             </nav>
             <div className="enc-body">{children}</div>
+            <TrailStrip />
         </div>
     );
 }

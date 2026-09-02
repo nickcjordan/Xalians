@@ -1,0 +1,43 @@
+/* Trail strip: "Trace" rail beneath the outlet. Contract: docs/design/
+   xalian-encyclopedia-ux-pass.md "Trail". Only .g-* parts and --g-* tokens. */
+
+.enc-trail {
+	margin-top: var(--g-7);
+	padding: var(--g-4) var(--g-5);
+}
+
+.enc-trail-kicker {
+	margin: 0 0 var(--g-3);
+}
+
+.enc-trail-chips {
+	display: flex;
+	align-items: center;
+	gap: var(--g-3);
+	flex-wrap: wrap;
+}
+
+.enc-trail-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--g-2);
+	text-decoration: none;
+}
+
+.enc-trail-chip-kind {
+	font-size: var(--g-size-tiny);
+	opacity: 0.75;
+}
+
+.enc-trail-chip-name {
+	font-family: var(--g-font-stencil);
+}
+
+.enc-trail-clear {
+	margin-left: auto;
+}
+
+@media (max-width: 700px) {
+	.enc-trail-chips { gap: var(--g-2); }
+	.enc-trail-clear { margin-left: 0; }
+}

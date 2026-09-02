@@ -105,6 +105,52 @@
 	font-size: 9px;
 }
 
+/* Era footprint: worlds outside the selected era's chronicle footprint dim
+   to a low-opacity disc with no ring; their label stays at full size (it
+   only hides at compact sizes, handled in WorldMark). */
+.enc-map-world--dim .enc-map-world-disc {
+	opacity: 0.28;
+}
+
+.enc-map-world--dim .enc-map-world-label {
+	fill: var(--g-ink-low);
+}
+
+.enc-map-world--dim:hover .enc-map-world-disc,
+.enc-map-world--dim:focus-visible .enc-map-world-disc {
+	opacity: 0.5;
+}
+
+/* ---- event pins: small brass marks stacked around a lit world's disc --- */
+
+.enc-map-pin {
+	cursor: pointer;
+	outline: none;
+}
+
+.enc-map-pin-head {
+	fill: var(--g-brass-light);
+	stroke: var(--g-void);
+	stroke-width: 1;
+	transition: r var(--g-snap);
+}
+
+.enc-map-pin-stem {
+	stroke: var(--g-brass);
+	stroke-width: 1;
+}
+
+.enc-map-pin:hover .enc-map-pin-head,
+.enc-map-pin:focus-visible .enc-map-pin-head {
+	r: 5.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.enc-map-pin-head {
+		transition: none;
+	}
+}
+
 /* Same shrink, keyed to the viewport, so labels stay legible even when a
    caller renders the map without passing the compact prop explicitly. */
 @media (max-width: 600px) {
@@ -155,4 +201,19 @@
 
 .enc-map-card .g-chip {
 	margin-top: var(--g-2);
+}
+
+.enc-map-card-species {
+	display: block;
+	margin-top: var(--g-1);
+	font-size: var(--g-size-tiny);
+	color: var(--g-ink-low);
+}
+
+.enc-map-card--event {
+	width: 200px;
+}
+
+.enc-map-card-kicker {
+	display: block;
 }

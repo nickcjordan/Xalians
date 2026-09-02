@@ -14,6 +14,7 @@ export default function LoreSearch() {
     const [open, setOpen] = useState(false);
     const history = useHistory();
     const box = useRef(null);
+    const inputRef = useRef(null);
 
     useEffect(() => {
         function onDocClick(e) {
@@ -22,6 +23,30 @@ export default function LoreSearch() {
         document.addEventListener('mousedown', onDocClick);
         return () => document.removeEventListener('mousedown', onDocClick);
     }, []);
+
+    useEffect(() => {
+        function isTypingTarget(el) {
+            if (!el) return false;
+            const tag = el.tagName;
+            return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable;
+        }
+        function onKeyDown(e) {
+            if (e.key === '/' && !isTypingTarget(document.activeElement)) {
+                e.preventDefault();
+                if (inputRef.current) inputRef.current.focus();
+            }
+        }
+        document.addEventListener('keydown', onKeyDown);
+        return () => document.removeEventListener('keydown', onKeyDown);
+    }, []);
+
+    function onKeyDownInput(e) {
+        if (e.key === 'Escape') {
+            setQuery('');
+            setOpen(false);
+            if (inputRef.current) inputRef.current.blur();
+        }
+    }
 
     const trimmed = query.trim();
     const hits = trimmed.length >= 2 ? lore.search(trimmed, { limit: 18 }) : [];
@@ -39,6 +64,7 @@ export default function LoreSearch() {
     return (
         <form className="enc-search" role="search" onSubmit={submit} ref={box}>
             <input
+                ref={inputRef}
                 className="g-input enc-search-input"
                 type="search"
                 placeholder="SEARCH THE ARCHIVE"
@@ -46,8 +72,10 @@ export default function LoreSearch() {
                 value={query}
                 onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
                 onFocus={() => setOpen(true)}
+                onKeyDown={onKeyDownInput}
                 autoComplete="off"
             />
+            <span className="g-chip g-chip--outline enc-search-hint g-mono" aria-hidden="true">/</span>
             {open && trimmed.length >= 2 && (
                 <div className="g-screen enc-search-screen" role="listbox" aria-label="Search results">
                     {groups.length === 0 && <p className="g-screen-line g-screen-line--dim">NO RECORD MATCHES “{trimmed.toUpperCase()}”</p>}

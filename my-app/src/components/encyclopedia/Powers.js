@@ -21,11 +21,25 @@ function EntryRecord({ entry }) {
  * "Powers and peoples".
  */
 export default function Powers() {
-    const { factions, people, peoples } = lore.getPowers();
+    const { factions, vallerii, peoples } = lore.getPowers();
 
     return (
         <div className="enc-powers">
             <section className="enc-section enc-powers-first">
+                <div className="enc-section-head">
+                    <h2 className="g-h2">The Vallerii</h2>
+                    <span className="enc-count">{vallerii.length} record{vallerii.length === 1 ? '' : 's'}</span>
+                </div>
+                {vallerii.length === 0 ? (
+                    <p className="g-empty">No record on file.</p>
+                ) : (
+                    <div className="g-panel g-panel--recessed enc-powers-panel">
+                        {vallerii.map((entry) => <EntryRecord key={entry.key} entry={entry} />)}
+                    </div>
+                )}
+            </section>
+
+            <section className="enc-section">
                 <div className="enc-section-head">
                     <h2 className="g-h2">Factions</h2>
                     <span className="enc-count">{factions.length} record{factions.length === 1 ? '' : 's'}</span>
@@ -35,20 +49,6 @@ export default function Powers() {
                 ) : (
                     <div className="g-panel g-panel--recessed enc-powers-panel">
                         {factions.map((entry) => <EntryRecord key={entry.key} entry={entry} />)}
-                    </div>
-                )}
-            </section>
-
-            <section className="enc-section">
-                <div className="enc-section-head">
-                    <h2 className="g-h2">People</h2>
-                    <span className="enc-count">{people.length} record{people.length === 1 ? '' : 's'}</span>
-                </div>
-                {people.length === 0 ? (
-                    <p className="g-empty">No record on file.</p>
-                ) : (
-                    <div className="g-panel g-panel--recessed enc-powers-panel">
-                        {people.map((entry) => <EntryRecord key={entry.key} entry={entry} />)}
                     </div>
                 )}
             </section>

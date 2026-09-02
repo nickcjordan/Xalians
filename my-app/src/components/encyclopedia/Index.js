@@ -2,7 +2,36 @@ import React, { useMemo, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import * as lore from '../../lore';
 import Prose from './Prose';
+import { useReadMark } from './trail';
 import './Index.css';
+
+const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
+function initialOf(title) {
+    const c = (title || '').trim().charAt(0).toUpperCase();
+    return ALPHABET.includes(c) ? c : '#';
+}
+
+function IndexRecord({ entry }) {
+    const read = useReadMark('entry', entry.key);
+    return (
+        <div id={`index-${entry.key}`} className={`g-record ${entry.element ? `g-el-${entry.element}` : ''}`}>
+            <div>
+                <Link to={lore.routeFor('entry', entry.key)} className="g-record-term">
+                    {entry.title}
+                </Link>
+                <div className="enc-index-chips-row">
+                    <span className="g-chip">{entry.category}</span>
+                    {entry.element && <span className="g-chip">{entry.element}</span>}
+                    {read && (
+                        <span className="g-lamp enc-index-read-lamp" title="Reviewed">reviewed</span>
+                    )}
+                </div>
+            </div>
+            <Prose text={entry.definition} except={entry.key} className="g-record-body" />
+        </div>
+    );
+}
 
 /**
  * Index: every entry, searchable, filterable by category, alphabetical.
@@ -32,8 +61,24 @@ export default function Index() {
         return [...list].sort((a, b) => a.title.localeCompare(b.title));
     }, [trimmed, category]);
 
+    const liveLetters = useMemo(() => {
+        const set = new Set();
+        entries.forEach((e) => set.add(initialOf(e.title)));
+        return set;
+    }, [entries]);
+
+    const scrollToLetter = (letter) => {
+        const entry = entries.find((e) => initialOf(e.title) === letter);
+        if (!entry) return;
+        const el = document.getElementById(`index-${entry.key}`);
+        if (el && el.scrollIntoView) el.scrollIntoView({ block: 'start' });
+    };
+
+    let lastInitial = null;
+
     return (
         <div className="enc-index">
+            <div className="enc-index-controls-sticky">
             <div className="enc-index-controls">
                 <input
                     className="g-input enc-index-search"
@@ -66,6 +111,25 @@ export default function Index() {
                 </div>
             </div>
 
+            <div className="g-segmented enc-index-alphabet" role="group" aria-label="Jump to letter">
+                {ALPHABET.map((letter) => {
+                    const live = liveLetters.has(letter);
+                    return (
+                        <button
+                            key={letter}
+                            type="button"
+                            className="g-segment enc-index-alphabet-key"
+                            disabled={!live}
+                            aria-disabled={!live}
+                            onClick={() => scrollToLetter(letter)}
+                        >
+                            {letter}
+                        </button>
+                    );
+                })}
+            </div>
+            </div>
+
             <p className="enc-count">{entries.length} record{entries.length === 1 ? '' : 's'}</p>
 
             {entries.length === 0 ? (
@@ -73,20 +137,19 @@ export default function Index() {
             ) : (
                 <div className="g-panel g-panel--recessed enc-index-panel">
                     <div className="enc-index-list">
-                        {entries.map((entry) => (
-                            <div key={entry.key} className={`g-record ${entry.element ? `g-el-${entry.element}` : ''}`}>
-                                <div>
-                                    <Link to={lore.routeFor('entry', entry.key)} className="g-record-term">
-                                        {entry.title}
-                                    </Link>
-                                    <div className="enc-index-chips-row">
-                                        <span className="g-chip">{entry.category}</span>
-                                        {entry.element && <span className="g-chip">{entry.element}</span>}
-                                    </div>
-                                </div>
-                                <Prose text={entry.definition} except={entry.key} className="g-record-body" />
-                            </div>
-                        ))}
+                        {entries.map((entry) => {
+                            const initial = initialOf(entry.title);
+                            const showHeading = initial !== lastInitial;
+                            lastInitial = initial;
+                            return (
+                                <React.Fragment key={entry.key}>
+                                    {showHeading && (
+                                        <p className="enc-index-letter-heading" aria-hidden="true">{initial}</p>
+                                    )}
+                                    <IndexRecord entry={entry} />
+                                </React.Fragment>
+                            );
+                        })}
                     </div>
                 </div>
             )}

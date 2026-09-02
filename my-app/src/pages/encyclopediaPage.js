@@ -12,6 +12,7 @@ import SpeciesView from '../components/encyclopedia/SpeciesView';
 import Powers from '../components/encyclopedia/Powers';
 import Index from '../components/encyclopedia/Index';
 import EntryView from '../components/encyclopedia/EntryView';
+import Tour from '../components/encyclopedia/Tour';
 
 /**
  * ENCYCLOPEDIA XALIA — the Generator's archive.
@@ -37,6 +38,8 @@ export default function EncyclopediaPage() {
                     <Route exact path={`${path}/powers`}><Powers /></Route>
                     <Route exact path={`${path}/index`}><Index /></Route>
                     <Route exact path={`${path}/index/:key`}><EntryView /></Route>
+                    <Route exact path={`${path}/tour`}><Tour /></Route>
+                    <Route exact path={`${path}/tour/:beat`}><Tour /></Route>
                     <Route><p className="g-empty">No record at this address.</p></Route>
                 </Switch>
             </EncyclopediaShell>

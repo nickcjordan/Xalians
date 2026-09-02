@@ -7,6 +7,14 @@
 
 .enc-entry-doc { width: 100%; }
 
+.enc-entry-reviewed {
+	margin: 0;
+	font-size: var(--g-size-tiny);
+	color: var(--g-ink-low);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+}
+
 .enc-entry-related { padding: var(--g-2) var(--g-4); }
 
 .enc-entry-appearances {

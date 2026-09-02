@@ -75,10 +75,31 @@
 	font-size: var(--g-size-small);
 }
 
-.enc-chronicle-world-chips {
+.enc-chronicle-footprint {
 	display: flex;
-	flex-wrap: wrap;
-	gap: var(--g-2);
+	flex-wrap: nowrap;
+	gap: 3px;
+}
+
+.enc-chronicle-footprint-cell {
+	display: block;
+	width: 14px;
+	height: 14px;
+	border-radius: 2px;
+	background: var(--g-el);
+	box-shadow: var(--g-relief);
+	transition: transform var(--g-snap);
+}
+
+.enc-chronicle-footprint-cell.is-dim {
+	background: var(--g-hull-lo);
+	box-shadow: var(--g-recess);
+	opacity: 0.5;
+}
+
+.enc-chronicle-footprint-cell:hover,
+.enc-chronicle-footprint-cell:focus-visible {
+	transform: scale(1.25);
 }
 
 .enc-chronicle-name {

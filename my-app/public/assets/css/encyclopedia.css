@@ -42,6 +42,44 @@
 
 .enc-console { overflow-x: hidden; }
 
+/* A small key, shorter than the default .g-btn, used where legend space
+   is tight (masthead tools, trail clear). */
+.enc-btn-small {
+	padding: var(--g-2) var(--g-4);
+	font-size: var(--g-size-small);
+}
+
+/* A key with no bakelite face, just a hairline: for a secondary action
+   that should not compete with the primary one beside it. */
+.g-btn--ghost {
+	--btn-face: transparent;
+	--btn-ink: var(--g-ink-mid);
+	--btn-edge: var(--g-seam);
+	box-shadow: none;
+}
+
+.g-btn--ghost:hover:not(:disabled) {
+	--btn-face: transparent;
+	--btn-ink: var(--g-ink);
+}
+
+.g-btn--ghost:active:not(:disabled) {
+	transform: none;
+	box-shadow: none;
+}
+
+.enc-masthead-tools {
+	display: flex;
+	align-items: center;
+	gap: var(--g-3);
+	flex-wrap: wrap;
+}
+
+@media (max-width: 700px) {
+	.enc-masthead-tools { flex: 1 1 100%; width: 100%; }
+	.enc-pull-record { flex: 1 1 auto; }
+}
+
 /* Bootstrap paints bare anchors blue; inside the archive a link is either a
    printed term (.g-link, element-coloured) or a whole tile/record (inherits). */
 .enc-console a:not(.g-link):not(.g-btn):not(.g-segment):not(.nav-link) { color: inherit; }
@@ -56,6 +94,19 @@
 	.enc-sections { display: flex; width: 100%; }
 	.enc-sections .g-segment { flex: 1 1 auto; text-align: center; padding-left: var(--g-2); padding-right: var(--g-2); }
 }
+
+/* ---- masthead search hint ---------------------------------------------- */
+
+.enc-search-hint {
+	position: absolute;
+	top: calc(50% - 10px);
+	right: var(--g-3);
+	pointer-events: none;
+	padding: 0 6px;
+	font-size: var(--g-size-tiny);
+}
+
+.enc-search-input { padding-right: var(--g-6); }
 
 /* ---- search ------------------------------------------------------------ */
 

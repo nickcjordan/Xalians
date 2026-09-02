@@ -1,3 +1,11 @@
+.enc-species-reviewed {
+	margin: 0;
+	font-size: var(--g-size-tiny);
+	color: var(--g-ink-low);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+}
+
 .enc-species .g-meter-value {
 	min-width: 6ch;
 	white-space: nowrap;

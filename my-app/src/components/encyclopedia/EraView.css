@@ -1,6 +1,111 @@
-/* EraView: one era's events and world-by-world chapters. Contract: docs/design/xalian-encyclopedia-page.md */
+/* EraView: one era's events and reading modes, beside a sticky era rail.
+   Contract: docs/design/xalian-encyclopedia-ux-pass.md "Era reading mode". */
 
 .enc-era { max-width: 100%; }
+
+.enc-era-layout {
+	display: grid;
+	grid-template-columns: 260px minmax(0, 1fr);
+	gap: var(--g-6);
+	align-items: start;
+}
+
+.enc-era-rail {
+	position: sticky;
+	top: var(--g-5);
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-5);
+	max-height: calc(100vh - var(--g-8));
+	overflow-y: auto;
+	padding-bottom: var(--g-3);
+}
+
+.enc-era-rail-stations {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.enc-era-rail-station {
+	display: flex;
+	align-items: baseline;
+	gap: var(--g-3);
+	padding: var(--g-2) 0;
+	text-decoration: none;
+	color: var(--g-ink-mid);
+	border-left: 2px solid transparent;
+	padding-left: var(--g-3);
+}
+
+.enc-era-rail-station:hover,
+.enc-era-rail-station:focus-visible {
+	color: var(--g-ink);
+}
+
+.enc-era-rail-station[aria-current='true'] {
+	color: var(--g-ink);
+	border-left-color: var(--g-hazard);
+}
+
+.enc-era-rail-index {
+	font-size: var(--g-size-tiny);
+	color: var(--g-ink-low);
+	flex: none;
+}
+
+.enc-era-rail-station[aria-current='true'] .enc-era-rail-index {
+	color: var(--g-hazard);
+}
+
+.enc-era-rail-name {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+}
+
+.enc-era-rail-footprint {
+	padding-top: var(--g-4);
+	border-top: var(--g-hairline) solid var(--g-rule-faint);
+}
+
+.enc-era-rail-kicker {
+	margin: 0 0 var(--g-3);
+}
+
+.enc-era-rail-chips {
+	gap: var(--g-2);
+}
+
+.enc-era-rail-chip {
+	border: 0;
+	cursor: pointer;
+	font: inherit;
+}
+
+.enc-era-rail-chip[aria-pressed='true'] {
+	box-shadow: var(--g-relief), 0 0 0 2px var(--g-el);
+}
+
+.enc-era-main { min-width: 0; }
+
+@media (max-width: 900px) {
+	.enc-era-layout {
+		display: block;
+	}
+
+	.enc-era-rail {
+		position: static;
+		max-height: none;
+		overflow-y: visible;
+		margin-bottom: var(--g-6);
+	}
+}
+
+/* ---- events ------------------------------------------------------------ */
 
 .enc-era-event-list {
 	display: flex;
@@ -8,18 +113,50 @@
 	gap: var(--g-4);
 }
 
+.enc-era-event-card { padding: 0; }
+
+.enc-era-event-head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: var(--g-3);
+	width: 100%;
+	padding: var(--g-5);
+	background: transparent;
+	border: 0;
+	text-align: left;
+	cursor: pointer;
+	font: inherit;
+	color: inherit;
+}
+
+.enc-era-event-head:hover,
+.enc-era-event-head:focus-visible {
+	background: var(--g-bevel-light);
+}
+
+.enc-era-event-title {
+	margin: 0;
+}
+
+.enc-era-contemp-titles {
+	color: var(--g-ink-mid);
+	font-size: var(--g-size-small);
+}
+
+.enc-era-event-chips {
+	margin: 0;
+}
+
+.enc-era-event-body {
+	padding: 0 var(--g-5) var(--g-5);
+}
+
 .enc-era-event + .enc-era-event {
 	margin-top: var(--g-5);
 	padding-top: var(--g-5);
 	border-top: var(--g-hairline) solid var(--g-rule-faint);
-}
-
-.enc-era-event-title {
-	margin: 0 0 var(--g-2);
-}
-
-.enc-era-event-chips {
-	margin-bottom: var(--g-2);
 }
 
 .enc-era-event-entry {
@@ -46,6 +183,13 @@
 	overflow-wrap: break-word;
 }
 
+/* ---- reading modes ------------------------------------------------------ */
+
+.enc-era-reading .enc-section-head {
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+
 .enc-era-world-list {
 	display: flex;
 	flex-direction: column;
@@ -64,6 +208,13 @@
 	margin: 0 0 var(--g-1);
 	color: var(--g-ink-low);
 	font-size: var(--g-size-small);
+	display: flex;
+	align-items: center;
+	gap: var(--g-2);
+}
+
+.enc-era-chapter-lamp {
+	width: 0;
 }
 
 .enc-era-chapter-also {
@@ -71,6 +222,60 @@
 	color: var(--g-ink-low);
 	font-size: var(--g-size-tiny);
 }
+
+.enc-era-story {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+}
+
+.enc-era-story-head {
+	margin: var(--g-5) 0 var(--g-2);
+}
+
+.enc-era-story-row:first-child .enc-era-story-head {
+	margin-top: 0;
+}
+
+.enc-era-story-para {
+	display: grid;
+	grid-template-columns: auto auto minmax(0, 1fr);
+	align-items: baseline;
+	gap: var(--g-3);
+	padding: var(--g-3) 0;
+}
+
+.enc-era-story-chip {
+	text-decoration: none;
+}
+
+.enc-era-story-chapter {
+	color: var(--g-ink-low);
+	font-size: var(--g-size-small);
+	display: flex;
+	align-items: center;
+	gap: var(--g-2);
+	white-space: nowrap;
+}
+
+.enc-era-story-text {
+	margin: 0;
+	grid-column: 1 / -1;
+}
+
+@media (max-width: 700px) {
+	.enc-era-story-para {
+		grid-template-columns: auto minmax(0, 1fr);
+		grid-template-areas:
+			'chip chapter'
+			'text text';
+	}
+	.enc-era-story-chip { grid-area: chip; }
+	.enc-era-story-chapter { grid-area: chapter; }
+	.enc-era-story-text { grid-area: text; }
+}
+
+/* ---- nav ----------------------------------------------------------------- */
 
 .enc-era-nav {
 	display: flex;

@@ -107,7 +107,7 @@ const PEOPLES = [
 // Demonym entry keys that render only under Xalian Peoples, never under
 // Factions, even though they are still categorized 'factions' in
 // encyclopedia.json (append-only categories; the page regroups them).
-const PEOPLES_ENTRY_KEYS = new Set(['magmuthites', 'the-zolto', 'veridians']);
+const PEOPLES_ENTRY_KEYS = new Set(PEOPLES.map((p) => p.entryKey));
 
 // The Vallerii, rendered under their own "The Vallerii" section.
 const VALLERII_KEYS = ['vallerii', 'king-kozrak'];
