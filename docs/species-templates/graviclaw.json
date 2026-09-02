@@ -1,0 +1,84 @@
+{
+  "key": "graviclaw",
+  "name": "Graviclaw",
+  "element": "dark",
+  "homePlanet": "grimedes",
+  "generatorPlanets": ["grimedes"],
+  "lore": {
+    "description": "With the black-shelled body of a crab and an upright torso, the centaur-like crustacean known as the Graviclaw lurks just beneath the foggy wetlands of Grimedes, using its bizarre control over the intensification of gravitational waves to generate miniature black holes in the water and draw its helpless prey right into its clutches. Graviclaws can strengthen the gravitational pull of their massive claws in order to snap them shut with a force many times heavier than their implied mass, severing through even the hardest of materials with crushing pressure. When facing larger foes, the Graviclaw can use its powers to root itself to the ground, becoming an immovable wall of chitin.",
+    "descriptionStatus": "source",
+    "biomeNiche": "submerged ambusher in the foggy wetlands beneath Grimedes' thick, stalky undergrowth"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": { "primary": "flesh", "secondary": "mineral" },
+    "bodyPlan": "multiped",
+    "anatomy": ["pincers", "shell", "hide", "body"],
+    "covering": "chitin",
+    "size": { "heightCm": [165, 215], "weightKg": [180, 260] },
+    "lifespan": "long",
+    "genome": { "chirality": "rolled" },
+    "diet": "carnivore",
+    "communication": [],
+    "breathes": ["gas", "liquid"],
+    "environmentalTolerance": {
+      "ambientMedia": ["gas", "liquid"],
+      "temperatureC": { "min": -6, "max": 34 }
+    },
+    "capabilities": {
+      "flight": [0, 0],
+      "swim": [45, 70],
+      "burrow": [50, 75],
+      "climb": [5, 20],
+      "sprint": [15, 35],
+      "leap": [5, 20],
+      "manipulation": [45, 70]
+    },
+    "senses": {
+      "sight": [20, 45],
+      "hearing": [30, 55],
+      "smell": [35, 60],
+      "special": ["void-sense"]
+    }
+  },
+  "archetypeWeights": {
+    "juggernaut": 5,
+    "bulwark": 4,
+    "predator": 3,
+    "vanguard": 2,
+    "stalwart": 1
+  },
+  "attributes": {
+    "strength": [70, 95],
+    "vitality": [55, 80],
+    "endurance": [50, 75],
+    "agility": [10, 30],
+    "reflex": [25, 50],
+    "intelligence": [25, 50],
+    "willpower": [45, 70],
+    "instinct": [55, 80],
+    "charisma": [15, 40],
+    "resilience": [70, 95]
+  },
+  "traits": {
+    "guaranteed": ["armored", "anchored"],
+    "rolledCount": [0, 1],
+    "pool": {
+      "stealthy": 5,
+      "perceptive": 3,
+      "solitary": 3,
+      "menacing": 2,
+      "nocturnal": 2,
+      "telekinetic": 1
+    }
+  },
+  "instruments": ["pincers", "shell", "hide"],
+  "signatureAbility": {
+    "name": "Point of No Return",
+    "instrument": "pincers",
+    "action": "snare",
+    "medium": "dark",
+    "intensity": [55, 85],
+    "description": "It opens a claw beneath the water and collapses the gravitational waves inside it until nothing within reach can swim away from the closing grip."
+  }
+}

@@ -401,7 +401,10 @@ if (MD) {
     const skillText = fs.existsSync(skillPath) ? fold(fs.readFileSync(skillPath, 'utf8')) : '';
     const own = [T && T.lore && T.lore.description, T && T.signatureAbility && T.signatureAbility.description, ENC && ENC.definition].filter(Boolean).map(fold).join(' \n ');
     const quotes = [];
+    let inFence = false;
     for (const line of MD.split(/\r?\n/)) {
+      if (/^\s*```/.test(line)) { inFence = !inFence; continue; }
+      if (inFence || /^(FAIL|WARN|ok)\s+[a-z.]+\s/.test(line)) continue;   // pasted validator output and code blocks are not quotations
       const re = /"([^"]{12,})"/g; let m;
       while ((m = re.exec(line))) quotes.push(m[1]);
       const bq = line.match(/^>\s*"?(.{12,}?)"?\s*$/);
