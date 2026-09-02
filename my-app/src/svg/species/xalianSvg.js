@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import SVG, { Props as SVGProps } from 'react-inlinesvg';
+import SVG from 'react-inlinesvg';
 
 import { ReactComponent as XylumSVG } from './xylum.svg';
 import { ReactComponent as DromeusSVG } from './dromeus.svg';
