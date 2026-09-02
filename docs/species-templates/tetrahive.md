@@ -193,3 +193,4 @@ logged to docs\species-templates\validation-log\tetrahive.jsonl
 - 2026-09-02, correction after the trait-model audit: the conversion note above says the rest kept their relative order; in fact `stealthy` had already been removed in the earlier amendment and `slippery` (45) now sits above `mind-sealed` (35) because a creature whose body is mostly conjured units is hard to hold, which the run's own reasoning supported. The pool as converted is authoritative.
 - 2026-09-02, registry definitions ratified: `bodyPlan` changed from `avian` to `swarm` (a species whose units are what acts is `swarm`; the central body's wings, claws, and tail stay in anatomy).
 - 2026-09-02, exhaustive pool (Nick): every trait key is now listed; keys absent from the earlier pool are 0 (the species never carries them). The earlier percents are unchanged.
+- 2026-09-02, absence means 0 (Nick): the zero entries are removed again; the pool lists only traits the species can carry.

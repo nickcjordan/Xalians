@@ -25,4 +25,4 @@ Per-species decisions that a migration agent cannot derive from the sources alon
 ## Registry definitions
 
 - 2026-09-02: `docs/species-templates/REGISTRY-DEFINITIONS.md` ratified after five blind passes; `sessile` declined; Xylum is `multiped` with burrow movement; Tetrahive `bodyPlan` is `swarm`.
-- 2026-09-02 (trait model, second ruling): the template pool is exhaustive, all 24 traits at 0 to 100; the generated individual stores only the keys that landed; percents are read back from the template pinned by generatorVersion.
+- 2026-09-02 (trait model, second ruling): the template pool lists only traits above 0 and absence means 0 (amended the same day: the registry is additive, so exhaustive lists would go stale); the generated individual stores only the keys that landed; percents are read back from the template pinned by generatorVersion.

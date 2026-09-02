@@ -313,17 +313,16 @@ if (T) {
   const pool = TR.pool && typeof TR.pool === 'object' ? TR.pool : (fail('traits.pool', 'traits.pool must be an object of trait: percent'), {});
   for (const [k, v] of Object.entries(pool)) {
     if (!TRAITS.includes(k)) fail('traits.pool.key', 'unknown trait "' + k + '"' + (FORBIDDEN_TRAIT_KEYS.includes(k) ? ' (retired draft key)' : ''));
-    if (!(Number.isInteger(v) && v >= 0 && v <= 100)) fail('traits.pool.percent', 'percent for ' + k + ' must be an integer 0 to 100');
+    if (!(Number.isInteger(v) && v >= 1 && v <= 100)) fail('traits.pool.percent', 'percent for ' + k + ' must be an integer 1 to 100 (leave a trait out instead of writing 0; absence means 0)');
   }
-  for (const k of TRAITS) if (!has(pool, k)) fail('traits.pool.missing', 'traits.pool must list every trait key; missing ' + k + ' (write 0 when the species never carries it)');
-  if (!Object.values(pool).some(v => Number.isInteger(v) && v > 0 && v < 100)) warn('traits.pool.variance', 'no trait sits strictly between 0 and 100, so every individual of this species carries the same traits; confirm that is intended');
+  if (!Object.values(pool).some(v => Number.isInteger(v) && v > 0 && v < 100)) warn('traits.pool.variance', 'no listed trait sits below 100, so every individual of this species carries the same traits; confirm that is intended');
   const g = Object.keys(pool).filter(k => pool[k] === 100);
   let expected = Object.values(pool).filter(Number.isFinite).reduce((x, y) => x + y, 0) / 100;
   for (const [x, y] of TRAIT_EXCLUSIONS) if (has(pool, x) && has(pool, y)) { const hi = Math.max(pool[x], pool[y]), lo = Math.min(pool[x], pool[y]); expected -= (lo / 100) * (hi / 100); }
   if (expected > 3.5) warn('traits.expected', 'expected trait count ' + expected.toFixed(2) + ' is above 3.5; confirm the species is meant to carry that many');
   for (const [x, y] of TRAIT_EXCLUSIONS) {
     if (pool[x] === 100 && pool[y] === 100) fail('traits.exclusion', x + ' and ' + y + ' are exclusion partners and cannot both be at 100');
-    else if (pool[x] > 0 && pool[y] > 0 && pool[x] === pool[y]) warn('traits.exclusion.tie', x + ' and ' + y + ' have equal authored percents; the generator rolls the higher TILTED percent first, so after tilts one will lead, but say in the walkthrough which you intend');
+    else if (has(pool, x) && has(pool, y) && pool[x] === pool[y]) warn('traits.exclusion.tie', x + ' and ' + y + ' have equal authored percents; the generator rolls the higher TILTED percent first, so after tilts one will lead, but say in the walkthrough which you intend');
   }
   if (P.corporeality === 'non-corporeal' && pool.phasing !== 100) fail('traits.phasing', 'non-corporeal bodies carry phasing at 100');
   if (anatomyOk && (P.anatomy.includes('shell') || ['plating', 'chitin', 'crystal'].includes(P.covering)) && pool.armored !== 100) warn('traits.armored', 'shell, plating, chitin, or crystal present but armored is not at 100; justify in the walkthrough');
