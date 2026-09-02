@@ -3,41 +3,99 @@
   "name": "Ectoghoul",
   "element": "ghost",
   "homePlanet": "phantiri",
-  "generatorPlanets": ["phantiri"],
+  "generatorPlanets": [
+    "phantiri"
+  ],
   "lore": {
-    "description": "A spectral green mist that gathers into the vague impression of a grinning skull trailing a ghost-like tail for a body, the Ectoghoul was among the first forms the Phantiri Generator produced once the Leviticus Overdrive taught it to make life the moon-weapon could not read as living. It was set to scout the corpse islands of the Dreadscape, a body the killing signal ignores drifting where organic laborers dropped dead on the spot. Nothing now issues it orders. It zips across the tarry oceans and splayed forests of the mass grave, passing through surfaces, disappearing and re-appearing at will, and amuses itself instead by terrorizing other Xalians, announcing every arrival with a cackle and answering any challenge with a blast of gooey ectoplasm.",
+    "description": "A spectral green mist that gathers into the vague impression of a grinning skull trailing a ghost-like tail for a body, the Ectoghoul was among the forms the Phantiri Generator produced once the Leviticus Overdrive taught it to make life the moon-weapon could not read as living, a body the killing signal ignores, drifting where organic laborers dropped dead on the spot. Nothing now issues it orders. It zips across the tarry oceans and splayed forests of the mass grave, passing through surfaces, disappearing and re-appearing at will, and amuses itself instead by terrorizing other Xalians, announcing every arrival with a cackle and answering any challenge with a blast of gooey ectoplasm.",
     "descriptionStatus": "upgraded",
     "biomeNiche": "drifting scavenger of the Dreadscape corpse islands and tarry oceans"
   },
   "physiology": {
     "corporeality": "non-corporeal",
-    "composition": { "primary": "spectral" },
+    "composition": {
+      "primary": "spectral"
+    },
     "bodyPlan": "floating",
-    "anatomy": ["jaws", "tail", "body"],
+    "anatomy": [
+      "jaws",
+      "tail",
+      "body"
+    ],
     "covering": "mist",
-    "size": { "heightCm": [80, 105], "weightKg": [0.1, 0.5] },
+    "size": {
+      "heightCm": [
+        80,
+        105
+      ],
+      "weightKg": [
+        0.1,
+        0.5
+      ]
+    },
     "lifespan": "ageless",
-    "genome": { "chirality": "achiral" },
+    "genome": {
+      "chirality": "achiral"
+    },
     "diet": "none",
-    "communication": ["vocal", "display"],
+    "communication": [
+      "vocal"
+    ],
     "breathes": [],
     "environmentalTolerance": {
-      "ambientMedia": ["gas", "liquid", "vacuum"],
-      "temperatureC": { "min": -58, "max": 53 }
+      "ambientMedia": [
+        "gas",
+        "liquid",
+        "vacuum"
+      ],
+      "temperatureC": {
+        "min": -58,
+        "max": 53
+      }
     },
     "capabilities": {
-      "flight": [55, 80],
-      "swim": [20, 40],
-      "burrow": [10, 25],
-      "climb": [0, 0],
-      "sprint": [0, 0],
-      "leap": [0, 0],
-      "manipulation": [5, 20]
+      "flight": [
+        55,
+        80
+      ],
+      "swim": [
+        20,
+        40
+      ],
+      "burrow": [
+        10,
+        25
+      ],
+      "climb": [
+        0,
+        0
+      ],
+      "sprint": [
+        0,
+        0
+      ],
+      "leap": [
+        0,
+        0
+      ],
+      "manipulation": [
+        5,
+        20
+      ]
     },
     "senses": {
-      "sight": [50, 75],
-      "hearing": [45, 70],
-      "smell": [0, 10]
+      "sight": [
+        50,
+        75
+      ],
+      "hearing": [
+        45,
+        70
+      ],
+      "smell": [
+        0,
+        10
+      ]
     }
   },
   "archetypeWeights": {
@@ -48,16 +106,46 @@
     "seeker": 1
   },
   "attributes": {
-    "strength": [8, 25],
-    "vitality": [20, 40],
-    "endurance": [35, 60],
-    "agility": [60, 88],
-    "reflex": [55, 82],
-    "intelligence": [30, 52],
-    "willpower": [35, 60],
-    "instinct": [45, 70],
-    "charisma": [40, 68],
-    "resilience": [15, 35]
+    "strength": [
+      8,
+      25
+    ],
+    "vitality": [
+      20,
+      40
+    ],
+    "endurance": [
+      35,
+      60
+    ],
+    "agility": [
+      60,
+      88
+    ],
+    "reflex": [
+      55,
+      82
+    ],
+    "intelligence": [
+      30,
+      52
+    ],
+    "willpower": [
+      35,
+      60
+    ],
+    "instinct": [
+      45,
+      70
+    ],
+    "charisma": [
+      40,
+      68
+    ],
+    "resilience": [
+      15,
+      35
+    ]
   },
   "traits": {
     "pool": {
@@ -75,13 +163,19 @@
       "foresighted": 4
     }
   },
-  "instruments": ["voice", "secretion", "jaws"],
+  "instruments": [
+    "voice",
+    "secretion"
+  ],
   "signatureAbility": {
     "name": "Rictus of the Dreadscape",
     "instrument": "voice",
     "action": "terrorize",
     "medium": "ghost",
-    "intensity": [45, 85],
-    "description": "The mist tightens into a grinning skull and lets out a cackle that follows its target through walls, so that whatever is hunted hears the joke it has become long after the Ectoghoul has gone."
+    "intensity": [
+      45,
+      85
+    ],
+    "description": "The mist tightens into a grinning skull and lets out a cackle that reaches its target wherever it goes, so that whatever is hunted hears the joke it has become long after the Ectoghoul has gone."
   }
 }

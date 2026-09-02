@@ -234,3 +234,7 @@ WARN instruments.predicate.source   channel "secretion" has a source-text predic
 ```
 
 Both WARN lines are answered in the `## Script denials` section above under 'Answers to every WARN'.
+
+## Orchestrator amendments
+
+- 2026-09-02, after the independent validation: the scouting purpose clause was cut from the description (the planet history assigns no job to this species; the Generator's intent is stated planet-wide, and that part is kept). `jaws` removed from instruments and kept in anatomy: the grin is drawn, but no source shows a bite, and both named acts route through voice and secretion. `communication` reduced to `vocal`: the grin is the species' shape, not a signal aimed at a watcher. The signature description no longer joins the cackle to wall-passing, which were two separate source clauses; it now says the cackle reaches its target wherever it goes, which is the source's own phrasing.
