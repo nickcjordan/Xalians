@@ -194,3 +194,4 @@ logged to docs\species-templates\validation-log\tetrahive.jsonl
 - 2026-09-02, registry definitions ratified: `bodyPlan` changed from `avian` to `swarm` (a species whose units are what acts is `swarm`; the central body's wings, claws, and tail stay in anatomy).
 - 2026-09-02, exhaustive pool (Nick): every trait key is now listed; keys absent from the earlier pool are 0 (the species never carries them). The earlier percents are unchanged.
 - 2026-09-02, absence means 0 (Nick): the zero entries are removed again; the pool lists only traits the species can carry.
+- 2026-09-02, voice: signature description trimmed (into the black removed).
