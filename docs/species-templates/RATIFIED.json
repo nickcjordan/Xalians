@@ -1,0 +1,5 @@
+{
+  "version": "0.1.0",
+  "note": "Species whose templates Nick has ratified. Only these are bundled into lambda/src/json/speciesRecords.json by scripts/bundleLore.js; *-run.* files and unratified drafts never ship.",
+  "species": ["graviclaw", "tetrahive"]
+}
