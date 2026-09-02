@@ -428,7 +428,7 @@ if (MD) {
   if (!/authored fields/i.test(MD)) fail('md.authored', 'walkthrough has no "Authored fields" section (list every value with no source sentence, or state "none")');
   if (!/thin[- ]combo/i.test(MD)) warn('md.thincombo', 'walkthrough has no thin-combo findings section');
   if (species && planet) {
-    const corpus = fold([species.description, ...(planet.history || [])].join(' \n '));
+    const corpus = fold([species.description, ...(planet.history || []), ...Object.values(planet.data || {}), species.height, species.weight].join(' \n '));
     // Convention (SKILL.md section 6, step 14): double quotes are reserved for verbatim source
     // quotations; anything else in the walkthrough uses single quotes or backticks. Pairing is
     // reset per line so one stray quote cannot mis-pair the rest of the document.
