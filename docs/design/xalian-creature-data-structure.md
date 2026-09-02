@@ -64,7 +64,7 @@ Six layers in generation order, most-permanent first. Worked example (Graviclaw,
   },
 
   "traits": {
-    "armored": 100, "anchored": 100, "stealthy": 60   // PROPOSED 2026-09-02 (pending Nick): landed traits with the percent each was rolled at; traits are rolled independently, there is no count (re-ratified 2026-09-02)
+    "keys": ["armored", "anchored", "stealthy"]   // RATIFIED 2026-09-02: the traits that landed; each was rolled independently at the percent in the species template (all 24 traits, 0 to 100) pinned by generatorVersion
   },
 
   "temperament": {                                  // 5 axes 0–100, rolled LAST, tilted by the rolled body (body-first causality); games derive BEHAVIOR from these, never power

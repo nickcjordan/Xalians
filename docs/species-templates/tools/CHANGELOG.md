@@ -12,3 +12,4 @@ One dated line per change, written by the orchestrator after a denial review. Ea
 - 2026-09-02: after the trait-model audit, expected trait count now subtracts the exclusion-pair overlap, and the tie warning says the generator orders partners by tilted percent.
 - 2026-09-02: `crystal` covering joins the armored-at-100 WARN so the script matches the registry definitions (blind v2 finding F1).
 - 2026-09-02: `flight.means` accepts a swarm body plan (blind v3 finding 1).
+- 2026-09-02: trait pool must list all 24 keys at 0 to 100 (`traits.pool.missing`); WARN when no trait sits strictly between 0 and 100.

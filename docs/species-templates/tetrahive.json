@@ -148,12 +148,30 @@
   },
   "traits": {
     "pool": {
-      "nocturnal": 95,
-      "slippery": 45,
-      "mind-sealed": 35,
-      "perceptive": 20,
+      "healing": 0,
+      "protective": 0,
+      "regenerative": 0,
+      "armored": 0,
+      "anchored": 0,
+      "phasing": 0,
+      "resistant": 0,
+      "ramming": 0,
+      "toxic": 0,
+      "volatile": 0,
+      "reflective": 0,
       "menacing": 20,
-      "solitary": 10
+      "hypnotic": 0,
+      "perceptive": 20,
+      "foresighted": 0,
+      "mind-sealed": 35,
+      "pack-bonded": 0,
+      "solitary": 10,
+      "stealthy": 0,
+      "nocturnal": 95,
+      "inspiring": 0,
+      "slippery": 45,
+      "luminous": 0,
+      "telekinetic": 0
     }
   },
   "instruments": [
