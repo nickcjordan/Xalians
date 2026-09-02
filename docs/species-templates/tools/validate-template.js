@@ -86,11 +86,13 @@ const ok = (code, msg) => out.push(['ok', code, msg]);
 
 // ---------- args ----------
 const argv = process.argv.slice(2);
-let key = null, jsonPath = null, mdPath = null, encPath = null;
+let key = null, jsonPath = null, mdPath = null, encPath = null, note = null, review = false;
 for (let i = 0; i < argv.length; i++) {
   if (argv[i] === '--json') jsonPath = argv[++i];
   else if (argv[i] === '--md') mdPath = argv[++i];
   else if (argv[i] === '--enc') encPath = argv[++i];
+  else if (argv[i] === '--note') note = argv[++i];
+  else if (argv[i] === '--review') review = true;
   else key = argv[i];
 }
 if (key) {
@@ -98,7 +100,43 @@ if (key) {
   mdPath = mdPath || path.join(TEMPLATES, key + '.md');
   encPath = encPath || path.join(TEMPLATES, key + '.encyclopedia.json');
 }
-if (!jsonPath) { console.error('usage: validate-template.js <key> | --json p --md p --enc p'); process.exit(2); }
+const LOG_DIR = path.join(TEMPLATES, 'validation-log');
+const OVERRIDE_DIR = path.join(TEMPLATES, 'overrides');
+const logPath = key ? path.join(LOG_DIR, key + '.jsonl') : null;
+
+// ---------- review mode: what did the script deny across every run for this key? ----------
+if (review) {
+  if (!key) { console.error('usage: validate-template.js --review <key>'); process.exit(2); }
+  if (!fs.existsSync(logPath)) { console.log('no validation log for ' + key); process.exit(0); }
+  const runs = fs.readFileSync(logPath, 'utf8').split(/\r?\n/).filter(Boolean).map(l => JSON.parse(l));
+  const last = runs[runs.length - 1];
+  console.log('validation log for ' + key + ': ' + runs.length + ' run(s), ' + runs[0].ts + ' to ' + last.ts);
+  const denied = new Map();
+  runs.forEach((r, i) => {
+    for (const f of r.fails) {
+      const id = f.code + ' | ' + f.msg;
+      if (!denied.has(id)) denied.set(id, { code: f.code, msg: f.msg, runs: [], snapshot: r.snapshot });
+      denied.get(id).runs.push(i + 1);
+    }
+  });
+  if (!denied.size) console.log('\nno FAIL was ever raised for this key');
+  else {
+    console.log('\nEvery FAIL ever raised (review each: false positive to override or fix in the script, or a legitimate denial):');
+    for (const d of denied.values()) {
+      const stillOpen = last.fails.some(f => f.code === d.code && f.msg === d.msg);
+      console.log('\n- ' + d.code + '  runs ' + d.runs.join(',') + (stillOpen ? '  STILL FAILING' : '  resolved by run ' + (Math.max(...d.runs) + 1)));
+      console.log('  ' + d.msg);
+      console.log('  value at the time: ' + JSON.stringify(d.snapshot));
+    }
+  }
+  const notes = runs.map((r, i) => r.note ? '  run ' + (i + 1) + ': ' + r.note : null).filter(Boolean);
+  if (notes.length) console.log('\nAgent notes:\n' + notes.join('\n'));
+  const overridden = runs.flatMap(r => r.overridden || []);
+  if (overridden.length) console.log('\nOverrides applied: ' + JSON.stringify([...new Set(overridden.map(o => o.code))]));
+  console.log('\nFinal run: ' + last.fails.length + ' FAIL, ' + last.warns.length + ' WARN' + (last.warns.length ? '\n' + last.warns.map(w => '  WARN ' + w.code + ' ' + w.msg).join('\n') : ''));
+  process.exit(0);
+}
+if (!jsonPath) { console.error('usage: validate-template.js <key> [--note "what changed"] | --json p --md p --enc p | --review <key>'); process.exit(2); }
 
 function readJson(p, label) {
   if (!p || !fs.existsSync(p)) { fail('file.missing', label + ' not found: ' + p); return null; }
@@ -427,8 +465,45 @@ if (MD) {
   }
 }
 
+// ---------- overrides (written only by the orchestrator, never by a migration agent) ----------
+// docs/species-templates/overrides/<key>.json = [{ "code": "...", "match": "substring of the message", "reason": "...", "by": "...", "date": "YYYY-MM-DD" }]
+const overridden = [];
+if (key && fs.existsSync(path.join(OVERRIDE_DIR, key + '.json'))) {
+  let ov = [];
+  try { ov = JSON.parse(fs.readFileSync(path.join(OVERRIDE_DIR, key + '.json'), 'utf8')); } catch (e) { fail('override.parse', 'overrides file is not valid JSON: ' + e.message); }
+  for (const o of out) {
+    if (o[0] !== 'FAIL') continue;
+    const hit = ov.find(r => r.code === o[1] && (!r.match || o[2].includes(r.match)));
+    if (hit) { o[0] = 'OVER'; o[2] += '   [overridden by ' + (hit.by || 'orchestrator') + ' ' + (hit.date || '') + ': ' + hit.reason + ']'; overridden.push({ code: o[1], reason: hit.reason }); }
+  }
+}
+
+// ---------- denial record: if any earlier run of this key failed, the walkthrough must say what was denied and what changed ----------
+if (key && MD && fs.existsSync(logPath)) {
+  const priorFails = fs.readFileSync(logPath, 'utf8').split(/\r?\n/).filter(Boolean).some(l => { try { return JSON.parse(l).fails.length > 0; } catch (e) { return false; } });
+  if (priorFails && !/script denials/i.test(MD)) fail('md.denials', 'an earlier run failed, so the walkthrough needs a "## Script denials" section: for each FAIL, the original value, the script message, what you changed it to, and whether you think the original was better');
+}
+
 // ---------- report ----------
 const fails = out.filter(o => o[0] === 'FAIL').length, warns = out.filter(o => o[0] === 'WARN').length;
 for (const [lvl, code, msg] of out) if (lvl !== 'ok' || process.env.VERBOSE) console.log(lvl.padEnd(4) + ' ' + code.padEnd(30) + ' ' + msg);
-console.log('\n' + fails + ' FAIL, ' + warns + ' WARN' + (fails ? '' : ' (structurally clean; every WARN must be answered in the walkthrough)'));
+console.log('\n' + fails + ' FAIL, ' + warns + ' WARN' + (overridden.length ? ', ' + overridden.length + ' overridden' : '') + (fails ? '' : ' (structurally clean; every WARN must be answered in the walkthrough)'));
+
+// ---------- log every run so the orchestrator can review what was denied ----------
+if (key) {
+  try {
+    fs.mkdirSync(LOG_DIR, { recursive: true });
+    const P = (T && T.physiology) || {};
+    const SG = (T && T.signatureAbility) || {};
+    const snapshot = T ? {
+      anatomy: P.anatomy, instruments: T.instruments, communication: P.communication,
+      temperatureC: P.environmentalTolerance && P.environmentalTolerance.temperatureC, special: P.senses && P.senses.special,
+      lifespan: P.lifespan, size: P.size, traits: T.traits, archetypes: T.archetypeWeights,
+      signature: { name: SG.name, instrument: SG.instrument, action: SG.action, medium: SG.medium, intensity: SG.intensity },
+    } : null;
+    const entry = { ts: new Date().toISOString(), key, fails: out.filter(o => o[0] === 'FAIL').map(o => ({ code: o[1], msg: o[2] })), warns: out.filter(o => o[0] === 'WARN').map(o => ({ code: o[1], msg: o[2] })), overridden, note, snapshot };
+    fs.appendFileSync(logPath, JSON.stringify(entry) + '\n');
+    console.log('logged to ' + path.relative(ROOT, logPath) + (fails ? ' (record each FAIL you change in the walkthrough\'s "## Script denials" section; if you think the script is wrong, say so there and in a --note, never work around it)' : ''));
+  } catch (e) { console.log('could not write the validation log: ' + e.message); }
+}
 process.exit(fails ? 1 : 0);

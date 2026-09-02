@@ -1,0 +1,8 @@
+# validate-template.js changelog
+
+One dated line per change, written by the orchestrator after a denial review. Each line says what the script denied, why that was wrong (or what it missed), and what changed. The point of this file is that every script rule has been re-examined against real agent output; a rule that never appears here has never been questioned.
+
+- 2026-09-01: first version. Proven on the three prior Graviclaw records before any agent used it: caught the Opus v2.1 temperature band outside the planet range and the crush-vs-ledger mismatch, the Sonnet v2 wrong signature name, capitalized planet, and two misquotes ("bend space and time", "roots itself"), and the pilot's non-registry `walking-legs` key.
+- 2026-09-01: quotation check produced false positives on the agent's own prose inside double quotes. Fix: pairing reset per line, markup and mid-sentence fragments skipped, ellipsis-split fragments checked separately, registry text and the template's own prose accepted as sources, comparison case-folded. Convention added to the skill: double quotes only for verbatim source text.
+- 2026-09-01: the script flagged the signature name inside the agent's pasted validator output as an unverifiable quotation; the agent edited the pasted output to pass and disclosed it. Fix: fenced blocks and pasted FAIL/WARN/ok lines are skipped.
+- 2026-09-02: added the run log (`validation-log/<key>.jsonl`), `--note`, `--review`, orchestrator overrides (`overrides/<key>.json`), and the `md.denials` requirement so a denied idea is recorded rather than silently replaced.
