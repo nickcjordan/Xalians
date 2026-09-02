@@ -1,6 +1,6 @@
 # Xalians Canon Fact Sheet
 
-Continuity constraints for new lore. Source of truth is `lambda/src/json/planets.json` + `glossary.json`; this is the fast-scan version. If new lore contradicts anything here, it is wrong. For the full inventory of every lore source (including the pre-repo Evernote notebook in `notes/` and what in it is canon vs. superseded vs. never-canon), see `docs/LORE_SOURCE_MAP.md`.
+Continuity constraints for new lore. Source of truth is `lambda/src/json/planets.json` + `docs/encyclopedia/encyclopedia.json` (entries) + `docs/encyclopedia/chronicle.json` (the undated era timeline); this is the fast-scan version. If new lore contradicts anything here, it is wrong. Source precedence and editorial rules: `docs/encyclopedia/ENCYCLOPEDIA-INTERNAL.md`. The pre-repo Evernote notebook in `notes/` is reference only.
 
 ## Timeline
 
