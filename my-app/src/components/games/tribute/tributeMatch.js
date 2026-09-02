@@ -1,5 +1,5 @@
 import React from 'react';
-import TributeBoard from './tributeBoard';
+import TributeBoard, { rowTotal } from './tributeBoard';
 import TributeCard from './tributeCard';
 import {
 	mulligan, playCreature, playDecree, pass, getPublicState, createRngState, COURT_FAVOR,
@@ -9,16 +9,23 @@ import { ROW, DECREES, capitalizeElement } from '../../../gameplay/tribute/tribu
 import { decreeContribution } from '../../../gameplay/tribute/decreeCalculator';
 
 const BOT_DELAY_MS = 700;
-const LOG_CAP = 40;
+const LOG_CAP = 60;
 const ROWS = [ROW.CLOSE, ROW.MID, ROW.FAR];
 const ROW_LABEL = { [ROW.CLOSE]: 'Close', [ROW.MID]: 'Mid', [ROW.FAR]: 'Far' };
-// mirrors tributeRules.js's private COURT_FAVOR constant for this component's live score
-// readout (the engine exports COURT_FAVOR too; imported below rather than re-declared).
+const COURT = 'the Court';
+
+function decreeName(element) {
+	const found = DECREES.find((d) => d.element === element);
+	return found ? found.name : element;
+}
 
 /*
-	TributeMatch owns the engine state in React state, per the brief: the engine is a pure
-	state-in/state-out machine, so the component's job is only to hold `state`, translate
-	human clicks into engine calls, and drive the bot on a timer. Human is seat 'A', bot 'B'.
+	TributeMatch owns the engine state in React state: the engine is a pure state-in /
+	state-out machine, so this component only holds `match`, turns clicks into engine
+	calls, and drives the bot on a timer. Human is seat 'A', the Court (the bot) is 'B'.
+
+	The one rule for the interface: the player must always be able to tell whose move it
+	is, what a click will do, and what just happened, without scrolling.
 */
 class TributeMatch extends React.Component {
 	constructor(props) {
@@ -26,17 +33,17 @@ class TributeMatch extends React.Component {
 		this.state = {
 			match: props.initialMatch,
 			log: [],
+			mulliganSelection: [],
 			selectedCardId: null,
 			selectedDecree: null,
 			notice: null,
 		};
 		this.botRng = createRngState(`${props.seed}-bot`);
 		this.botTimer = null;
+		this.noticeTimer = null;
 	}
 
 	componentDidMount() {
-		// the bot never mulligans away cards (design brief: "bot mulligans nothing") - apply
-		// its empty mulligan as soon as it is legal, in whatever order the engine allows
 		this.applyBotMulliganIfDue();
 		this.scheduleBotIfDue();
 	}
@@ -57,11 +64,55 @@ class TributeMatch extends React.Component {
 		}
 	}
 
+	// ---- shared helpers ----
+
 	appendLog = (line) => {
-		this.setState((prev) => ({
-			log: [...prev.log, line].slice(-LOG_CAP),
-		}));
+		this.setState((prev) => ({ log: [...prev.log, line].slice(-LOG_CAP) }));
 	};
+
+	showNotice = (text) => {
+		this.setState({ notice: text });
+		if (this.noticeTimer) {
+			clearTimeout(this.noticeTimer);
+		}
+		this.noticeTimer = setTimeout(() => this.setState({ notice: null }), 2600);
+	};
+
+	isYourMove() {
+		const { match } = this.state;
+		return match.phase === 'play' && match.turn === 'A';
+	}
+
+	totalFor(seat, matchState = this.state.match) {
+		let total = 0;
+		ROWS.forEach((row) => {
+			const decree = matchState.activeDecrees[row];
+			total += rowTotal(matchState.board[row][seat], row, decree ? decree.element : null);
+		});
+		if (matchState.starter === seat) {
+			total += COURT_FAVOR;
+		}
+		return total;
+	}
+
+	// a round result or match result becomes a log line the moment it appears
+	logTransitions = (prevMatch, nextMatch) => {
+		if (nextMatch.lastRoundResult && nextMatch.lastRoundResult !== prevMatch.lastRoundResult) {
+			const r = nextMatch.lastRoundResult;
+			const who = r.winner === 'A' ? 'you' : COURT;
+			this.appendLog(`Round ${r.round} goes to ${who}, ${r.scores.A} to ${r.scores.B}${r.tie ? ' (tie broken)' : ''}.`);
+		}
+		if (nextMatch.phase === 'matchEnd' && prevMatch.phase !== 'matchEnd') {
+			this.appendLog(nextMatch.winner === 'A' ? 'You win the match.' : `${capitalizeFirst(COURT)} wins the match.`);
+		}
+	};
+
+	commit = (prevMatch, nextMatch) => {
+		this.logTransitions(prevMatch, nextMatch);
+		this.setState({ match: nextMatch, selectedCardId: null, selectedDecree: null });
+	};
+
+	// ---- the bot ----
 
 	applyBotMulliganIfDue = () => {
 		const { match } = this.state;
@@ -89,78 +140,62 @@ class TributeMatch extends React.Component {
 		if (match.phase !== 'play' || match.turn !== 'B') {
 			return;
 		}
-		const publicState = getPublicState(match, 'B');
 		const hand = match.players.B.hand;
-		const { action, nextRngState } = chooseAction(publicState, hand, 'B', this.botRng);
+		const { action, nextRngState } = chooseAction(getPublicState(match, 'B'), hand, 'B', this.botRng);
 		this.botRng = nextRngState;
 
 		let next = null;
 		if (action.type === 'playCreature') {
 			next = playCreature(match, 'B', action.cardId, action.row);
-			if (next) {
-				const card = hand.find((c) => c.id === action.cardId);
-				const value = card ? card.powerByRow[action.row] : '?';
-				this.appendLog(`Court plays ${card ? card.name : action.cardId} to ${ROW_LABEL[action.row]} for ${value}`);
+			const card = hand.find((c) => c.id === action.cardId);
+			if (next && card) {
+				const decree = match.activeDecrees[action.row];
+				const worth = decreeContribution(card.powerByRow[action.row], decree ? decree.element : null, card.element);
+				this.appendLog(`${capitalizeFirst(COURT)} plays ${card.name} to ${ROW_LABEL[action.row]} for ${worth}.`);
 			}
 		} else if (action.type === 'playDecree') {
 			next = playDecree(match, 'B', action.element, action.row);
 			if (next) {
-				const decree = DECREES.find((d) => d.element === action.element);
-				this.appendLog(`Court declares ${decree ? decree.name : action.element} over ${ROW_LABEL[action.row]}`);
+				this.appendLog(`${capitalizeFirst(COURT)} declares ${decreeName(action.element)} over ${ROW_LABEL[action.row]}.`);
 			}
 		} else {
 			next = pass(match, 'B');
 			if (next) {
-				this.appendLog(`Court passes: ${this.humanizePassReason(action.reason)}`);
+				this.appendLog(`${capitalizeFirst(COURT)} passes${this.passReasonSuffix(action.reason)}.`);
 			}
 		}
 
 		if (!next) {
-			// the engine should never refuse a bot-chosen action; surface it rather than
-			// silently stalling, and fall back to a pass so the match keeps moving
+			// the engine should never refuse a bot action; say so rather than stall
 			// eslint-disable-next-line no-console
 			console.error('Tribute bot produced an illegal action', action);
-			this.appendLog(`Court hesitates and passes (bot returned an illegal action: ${action.type})`);
+			this.appendLog(`${capitalizeFirst(COURT)} hesitates and passes.`);
 			next = pass(match, 'B');
 		}
-
 		if (next) {
-			this.afterRoundOrMatchLog(match, next);
-			this.setState({ match: next });
+			this.commit(match, next);
 		}
 	};
 
-	humanizePassReason = (reason) => {
+	passReasonSuffix = (reason) => {
 		const words = {
-			'winning-after-opp-pass': 'yielding the round, already ahead',
-			'cannot-catch-up': 'the hand cannot catch up',
-			'yield-after-opp-pass': 'yielding the round; not worth the cards',
-			'unbeatable': 'the lead cannot be caught',
-			'ahead-parity': 'holding a comfortable lead',
-			'yield': 'yielding the round',
-			'bluff': 'holding back',
-			'no-legal-action': 'nothing left to play',
+			'winning-after-opp-pass': ', holding its lead',
+			'cannot-catch-up': ', unable to catch up',
+			'yield-after-opp-pass': ', conceding the round to save cards',
+			'unbeatable': ', out of reach',
+			'ahead-parity': ', content with its lead',
+			'yield': ', conceding the round to save cards',
+			'bluff': '',
+			'no-legal-action': ', with nothing left to play',
 		};
-		return words[reason] || reason || 'passing';
+		return words[reason] || '';
 	};
 
-	afterRoundOrMatchLog = (prevMatch, nextMatch) => {
-		if (nextMatch.lastRoundResult && nextMatch.lastRoundResult !== prevMatch.lastRoundResult) {
-			const r = nextMatch.lastRoundResult;
-			const winnerLabel = r.winner === 'A' ? 'you' : "the court's champion";
-			this.appendLog(`Round ${r.round} to ${winnerLabel}, ${r.scores.A} to ${r.scores.B}`);
-		}
-		if (nextMatch.phase === 'matchEnd' && prevMatch.phase !== 'matchEnd') {
-			const winnerLabel = nextMatch.winner === 'A' ? 'You win the match' : 'The court wins the match';
-			this.appendLog(`${winnerLabel}.`);
-		}
-	};
-
-	// ---- mulligan (human) ----
+	// ---- mulligan ----
 
 	toggleMulliganCard = (cardId) => {
 		this.setState((prev) => {
-			const already = prev.mulliganSelection || [];
+			const already = prev.mulliganSelection;
 			if (already.includes(cardId)) {
 				return { mulliganSelection: already.filter((id) => id !== cardId) };
 			}
@@ -172,26 +207,22 @@ class TributeMatch extends React.Component {
 	};
 
 	commitMulligan = () => {
-		const { match } = this.state;
-		const selection = this.state.mulliganSelection || [];
-		const next = mulligan(match, 'A', selection);
+		const { match, mulliganSelection } = this.state;
+		const next = mulligan(match, 'A', mulliganSelection);
 		if (next) {
-			this.appendLog(selection.length > 0 ? `You redraw ${selection.length} card${selection.length > 1 ? 's' : ''}` : 'You keep your hand');
+			const n = mulliganSelection.length;
+			this.appendLog(n > 0 ? `You send back ${n} card${n > 1 ? 's' : ''} and draw ${n}.` : 'You keep your hand.');
 			this.setState({ match: next, mulliganSelection: [] });
 		}
 	};
 
-	// ---- play (human) ----
-
-	showNotice = (text) => {
-		this.setState({ notice: text });
-		if (this.noticeTimer) {
-			clearTimeout(this.noticeTimer);
-		}
-		this.noticeTimer = setTimeout(() => this.setState({ notice: null }), 2400);
-	};
+	// ---- human play ----
 
 	selectCard = (cardId) => {
+		if (!this.isYourMove()) {
+			this.showNotice(`${capitalizeFirst(COURT)} is still moving.`);
+			return;
+		}
 		this.setState((prev) => ({
 			selectedCardId: prev.selectedCardId === cardId ? null : cardId,
 			selectedDecree: null,
@@ -199,6 +230,10 @@ class TributeMatch extends React.Component {
 	};
 
 	selectDecree = (element) => {
+		if (!this.isYourMove()) {
+			this.showNotice(`${capitalizeFirst(COURT)} is still moving.`);
+			return;
+		}
 		this.setState((prev) => ({
 			selectedDecree: prev.selectedDecree === element ? null : element,
 			selectedCardId: null,
@@ -207,82 +242,140 @@ class TributeMatch extends React.Component {
 
 	handleRowClick = (row, side) => {
 		const { match, selectedCardId, selectedDecree } = this.state;
-		if (match.phase !== 'play' || match.turn !== 'A') {
-			return;
-		}
-		if (selectedCardId && side === 'B') {
-			this.showNotice('Your creatures stand on your side of the court.');
+		if (!this.isYourMove()) {
+			this.showNotice(`${capitalizeFirst(COURT)} is still moving.`);
 			return;
 		}
 		if (selectedCardId) {
 			const card = match.players.A.hand.find((c) => c.id === selectedCardId);
-			if (!card || !card.eligibleRows.includes(row)) {
-				this.showNotice('That row is not eligible for this card.');
+			if (!card) {
+				return;
+			}
+			if (side === 'B') {
+				this.showNotice('Your creatures stand on your side of the court.');
+				return;
+			}
+			if (!card.eligibleRows.includes(row)) {
+				this.showNotice(`${card.name} cannot fight at ${ROW_LABEL[row]} range.`);
 				return;
 			}
 			const next = playCreature(match, 'A', selectedCardId, row);
 			if (!next) {
-				this.showNotice('Not your turn, or that placement is illegal.');
+				this.showNotice('That placement is not allowed right now.');
 				return;
 			}
-			this.appendLog(`You play ${card.name} to ${ROW_LABEL[row]} for ${card.powerByRow[row]}`);
-			this.afterRoundOrMatchLog(match, next);
-			this.setState({ match: next, selectedCardId: null, selectedDecree: null });
+			const decree = match.activeDecrees[row];
+			const worth = decreeContribution(card.powerByRow[row], decree ? decree.element : null, card.element);
+			this.appendLog(`You play ${card.name} to ${ROW_LABEL[row]} for ${worth}.`);
+			this.commit(match, next);
 			return;
 		}
 		if (selectedDecree) {
-			const decree = DECREES.find((d) => d.element === selectedDecree);
 			const next = playDecree(match, 'A', selectedDecree, row);
 			if (!next) {
-				this.showNotice('That decree cannot be played (already used, or not your turn).');
+				this.showNotice('That Decree cannot be declared right now.');
 				return;
 			}
-			this.appendLog(`You declare ${decree ? decree.name : selectedDecree} over ${ROW_LABEL[row]}`);
-			this.afterRoundOrMatchLog(match, next);
-			this.setState({ match: next, selectedCardId: null, selectedDecree: null });
+			this.appendLog(`You declare ${decreeName(selectedDecree)} over ${ROW_LABEL[row]}.`);
+			this.commit(match, next);
+			return;
 		}
+		this.showNotice('Pick a creature or a Decree first.');
 	};
 
 	handlePass = () => {
 		const { match } = this.state;
-		const next = pass(match, 'A');
-		if (!next) {
-			this.showNotice('Not your turn.');
+		if (!this.isYourMove()) {
+			this.showNotice(`${capitalizeFirst(COURT)} is still moving.`);
 			return;
 		}
-		this.appendLog('You pass');
-		this.afterRoundOrMatchLog(match, next);
-		this.setState({ match: next, selectedCardId: null, selectedDecree: null });
+		const next = pass(match, 'A');
+		if (!next) {
+			return;
+		}
+		this.appendLog('You pass for the round.');
+		this.commit(match, next);
 	};
 
-	renderMulligan() {
-		const { match } = this.state;
-		const selection = this.state.mulliganSelection || [];
-		if (match.mulliganTurn !== 'A' || match.players.A.mulliganUsed) {
-			return (
-				<div className="g-panel tribute-mulligan-panel">
-					<p className="g-body">Waiting on the court to present its own hand.</p>
-				</div>
-			);
+	// which rows light up for the current selection, and the total each would show after
+	// the play (both sides for a Decree, your side only for a creature)
+	targets() {
+		const { match, selectedCardId, selectedDecree } = this.state;
+		const targets = {};
+		if (selectedCardId) {
+			const card = match.players.A.hand.find((c) => c.id === selectedCardId);
+			if (card) {
+				card.eligibleRows.forEach((row) => {
+					const decree = match.activeDecrees[row];
+					const decreeElement = decree ? decree.element : null;
+					const total = rowTotal(match.board[row].A.concat([card]), row, decreeElement);
+					targets[row] = { A: { total } };
+				});
+			}
+		} else if (selectedDecree) {
+			ROWS.forEach((row) => {
+				targets[row] = {
+					A: { total: rowTotal(match.board[row].A, row, selectedDecree) },
+					B: { total: rowTotal(match.board[row].B, row, selectedDecree) },
+				};
+			});
 		}
+		return targets;
+	}
+
+	// ---- rendering ----
+
+	turnText() {
+		const { match } = this.state;
+		if (match.phase === 'mulligan') {
+			return 'Presenting hands';
+		}
+		if (match.phase === 'matchEnd') {
+			return 'Match over';
+		}
+		return match.turn === 'A' ? 'Your move' : `${capitalizeFirst(COURT)} is moving`;
+	}
+
+	renderSideBlock(seat) {
+		const { match } = this.state;
+		const p = match.players[seat];
+		const isYou = seat === 'A';
+		const handCount = p.hand.length;
+		const live = match.phase === 'play' && match.turn === seat;
 		return (
-			<div className="g-panel tribute-mulligan-panel">
-				<p className="g-kicker">Mulligan</p>
-				<p className="g-body">Choose up to two cards to send back before the court convenes. Click a card to mark it for redraw.</p>
-				<div className="tribute-hand-row">
-					{match.players.A.hand.map((card) => (
-						<TributeCard
-							key={card.id}
-							card={card}
-							selected={selection.includes(card.id)}
-							onClick={() => this.toggleMulliganCard(card.id)}
-						/>
-					))}
+			<div className={`tribute-side ${isYou ? 'tribute-side--you' : 'tribute-side--court'}${live ? ' tribute-side--live' : ''}`}>
+				<div className="tribute-side-name">{isYou ? 'You' : capitalizeFirst(COURT)}</div>
+				<div className="g-screen tribute-side-screen">
+					<span className="g-readout-unit">{match.phase === 'matchEnd' ? 'Final round' : 'Round score'}</span>
+					<span className="g-readout">{match.phase === 'matchEnd' && match.lastRoundResult ? match.lastRoundResult.scores[seat] : this.totalFor(seat)}</span>
+					<span className="g-screen-line--dim">
+						{match.starter === seat && match.phase !== 'matchEnd' ? `+${COURT_FAVOR} Court Favor` : ' '}
+					</span>
 				</div>
-				<div className="tribute-mulligan-actions">
-					<button type="button" className="g-btn g-btn--primary" onClick={this.commitMulligan}>
-						{selection.length > 0 ? `Redraw ${selection.length}` : 'Keep hand'}
-					</button>
+				<div className="tribute-side-facts">
+					<span className="tribute-fact">
+						<span className="tribute-status-label">Rounds won</span>
+						<span className="tribute-status-lamps">
+							{[0, 1].map((i) => (
+								<span key={i} className={`g-lamp ${i < p.roundWins ? 'g-lamp--amber' : 'g-lamp--off'}`} />
+							))}
+						</span>
+					</span>
+					<span className="tribute-fact">
+						<span className="tribute-status-label">In hand</span>
+						<span className="tribute-status-value">{handCount}</span>
+					</span>
+					<span className="tribute-fact">
+						<span className="tribute-status-label">Decrees</span>
+						<span className="tribute-fact-chips">
+							{p.decrees.map((el) => (
+								<span key={el} className={`g-chip g-el-${el} ${p.decreesUsed[el] ? 'tribute-decree-chip--used' : ''}`} title={`${decreeName(el)}${p.decreesUsed[el] ? ' (spent)' : ''}`}>
+									{capitalizeElement(el)}
+								</span>
+							))}
+						</span>
+					</span>
+					{p.passed && match.phase === 'play' && <span className="g-chip g-chip--outline tribute-passed-chip">Passed</span>}
 				</div>
 			</div>
 		);
@@ -290,200 +383,176 @@ class TributeMatch extends React.Component {
 
 	renderStatusStrip() {
 		const { match } = this.state;
-		const a = match.players.A;
-		const b = match.players.B;
 		return (
 			<div className="g-panel tribute-status-strip">
-				<div className="tribute-status-block">
+				{this.renderSideBlock('A')}
+				<div className="tribute-centre">
 					<span className="tribute-status-label">Round</span>
-					<span className="tribute-status-value">{match.round} of 3</span>
-				</div>
-
-				<div className="tribute-status-block">
-					<span className="tribute-status-label">{this.turnLabel()}</span>
-					<span className="tribute-status-lamps">
-						<span className={`g-lamp ${match.phase === 'play' && match.turn === 'A' ? 'g-lamp--amber' : 'g-lamp--off'}`} />
+					<span className="tribute-status-value">{match.phase === 'matchEnd' ? 'Over' : `${match.round} of 3`}</span>
+					<span className={`tribute-turn${this.isYourMove() ? ' tribute-turn--yours' : ''}`}>
+						<span className={`g-lamp ${this.isYourMove() ? 'g-lamp--amber' : 'g-lamp--off'}`} />
+						<span className="tribute-turn-text">{this.turnText()}</span>
 					</span>
 				</div>
+				{this.renderSideBlock('B')}
+			</div>
+		);
+	}
 
-				<div className="tribute-status-block">
-					<span className="tribute-status-label">Your Wins</span>
-					<span className="tribute-status-lamps">
-						{[0, 1].map((i) => (
-							<span key={i} className={`g-lamp ${i < a.roundWins ? 'g-lamp--amber' : 'g-lamp--off'}`} />
-						))}
-					</span>
+	renderMulligan() {
+		const { match, mulliganSelection } = this.state;
+		if (match.mulliganTurn !== 'A' || match.players.A.mulliganUsed) {
+			return (
+				<div className="g-panel tribute-mulligan-panel">
+					<p className="g-body">Waiting on the court to present its hand.</p>
 				</div>
-				<div className="g-screen tribute-status-screen">
-					<span className="g-readout">{this.totalFor('A')}</span>
-					{match.starter === 'A' && <span className="g-screen-line--dim">Court Favor +{COURT_FAVOR}</span>}
-					{a.passed && <span className="g-chip g-chip--outline">Passed</span>}
-					<span className="g-screen-line--dim">{a.hand.length} in hand</span>
-				</div>
-
-				<div className="tribute-status-block">
-					<span className="tribute-status-label">Court Wins</span>
-					<span className="tribute-status-lamps">
-						{[0, 1].map((i) => (
-							<span key={i} className={`g-lamp ${i < b.roundWins ? 'g-lamp--amber' : 'g-lamp--off'}`} />
-						))}
-					</span>
-				</div>
-				<div className="g-screen tribute-status-screen">
-					<span className="g-readout">{this.totalFor('B')}</span>
-					{match.starter === 'B' && <span className="g-screen-line--dim">Court Favor +{COURT_FAVOR}</span>}
-					{b.passed && <span className="g-chip g-chip--outline">Passed</span>}
-					<span className="g-screen-line--dim">{b.handCount != null ? b.handCount : b.hand.length} in hand</span>
-				</div>
-
-				<div className="tribute-status-decrees">
-					<span className="tribute-status-label">Your Decrees</span>
-					{a.decrees.map((el) => (
-						<span key={el} className={`g-chip g-el-${el} ${a.decreesUsed[el] ? 'tribute-decree-chip--used' : ''}`}>
-							{capitalizeElement(el)}
-						</span>
+			);
+		}
+		const n = mulliganSelection.length;
+		return (
+			<div className="g-panel tribute-mulligan-panel">
+				<p className="g-kicker">Your hand for the whole match</p>
+				<p className="g-body">
+					These ten cards are all you get for all three rounds. You may send up to two back for fresh draws
+					from your remaining two cards. Click a card to mark it, then confirm.
+				</p>
+				<div className="tribute-hand-row">
+					{match.players.A.hand.map((card) => (
+						<TributeCard
+							key={card.id}
+							card={card}
+							selected={mulliganSelection.includes(card.id)}
+							onClick={() => this.toggleMulliganCard(card.id)}
+							title={mulliganSelection.includes(card.id) ? 'Marked to send back. Click again to keep it.' : 'Click to send this card back.'}
+						/>
 					))}
-					<span className="tribute-status-label">Court Decrees</span>
-					{b.decrees.map((el) => (
-						<span key={el} className={`g-chip g-el-${el} ${b.decreesUsed[el] ? 'tribute-decree-chip--used' : ''}`}>
-							{capitalizeElement(el)}
-						</span>
-					))}
+				</div>
+				<div className="tribute-mulligan-actions">
+					<button type="button" className="g-btn g-btn--primary" onClick={this.commitMulligan}>
+						{n > 0 ? `Send back ${n} and begin` : 'Keep this hand and begin'}
+					</button>
+					{n > 0 && <span className="g-body tribute-hint">{n === 2 ? 'Two marked, the most you may send back.' : 'One marked.'}</span>}
 				</div>
 			</div>
 		);
 	}
 
-	turnLabel() {
-		const { match } = this.state;
-		if (match.phase === 'mulligan') {
-			return 'Presenting';
-		}
-		if (match.phase === 'matchEnd') {
-			return 'Adjourned';
-		}
-		return match.turn === 'A' ? 'Your move' : "Court's move";
-	}
-
-	// live score readout - mirrors tributeRules.js's rowTotalForPlayer/totalScoreForPlayer
-	// (both private to that module) using the same exported decreeContribution math, so the
-	// running total always matches what round resolution will compute.
-	totalFor(seat) {
-		const { match } = this.state;
-		let total = 0;
-		ROWS.forEach((row) => {
-			const decree = match.activeDecrees[row];
-			const cards = match.board[row][seat];
-			cards.forEach((card) => {
-				const printed = card.powerByRow[row];
-				total += decreeContribution(printed, decree ? decree.element : null, card.element);
-			});
-		});
-		if (match.starter === seat) {
-			total += COURT_FAVOR;
-		}
-		return total;
-	}
-
-	renderRoundResultNotice() {
+	renderRoundBanner() {
 		const { match } = this.state;
 		const r = match.lastRoundResult;
+		if (match.phase === 'matchEnd') {
+			const won = match.winner === 'A';
+			return (
+				<div className={`g-notice ${won ? 'g-notice--ok' : 'g-notice--alert'} tribute-banner`}>
+					<span>
+						{won ? 'You win the match.' : `${capitalizeFirst(COURT)} wins the match.`}
+						{r ? ` The last round went ${r.scores.A} to ${r.scores.B}.` : ''}
+					</span>
+					<button type="button" className="g-btn" onClick={this.props.onPresentAgain}>Present again</button>
+				</div>
+			);
+		}
 		if (!r) {
 			return null;
 		}
-		if (match.phase === 'matchEnd') {
-			return null; // matchEnd gets its own notice below
-		}
-		const winnerLabel = r.winner === 'A' ? 'you' : "the court's champion";
-		const tieNote = r.tie ? ' (tie broken by cards remaining / first pass / starter order)' : '';
+		const won = r.winner === 'A';
 		return (
-			<div className={`g-notice ${r.winner === 'A' ? 'g-notice--ok' : 'g-notice--alert'}`}>
-				Round {r.round} to {winnerLabel}, {r.scores.A} to {r.scores.B}{tieNote}
+			<div className={`g-notice ${won ? 'g-notice--ok' : 'g-notice--alert'} tribute-banner`}>
+				Round {r.round} went to {won ? 'you' : COURT}, {r.scores.A} to {r.scores.B}
+				{r.tie ? ' (a tie, settled by cards in hand, then who passed first, then who moved second)' : ''}.
+				{' '}Round {match.round}: {match.starter === 'A' ? 'you move first' : `${COURT} moves first`}.
 			</div>
 		);
 	}
 
-	renderMatchEnd() {
-		const { match } = this.state;
-		return (
-			<div className={`g-notice ${match.winner === 'A' ? 'g-notice--ok' : 'g-notice--alert'}`}>
-				<p>{match.winner === 'A' ? 'You win the match.' : "The court's champion wins the match."}</p>
-				<button type="button" className="g-btn" onClick={this.props.onPresentAgain}>Present again</button>
-			</div>
-		);
+	hintText() {
+		const { match, selectedCardId, selectedDecree } = this.state;
+		if (match.phase !== 'play') {
+			return null;
+		}
+		if (!this.isYourMove()) {
+			return `${capitalizeFirst(COURT)} is choosing its move.`;
+		}
+		if (selectedCardId) {
+			const card = match.players.A.hand.find((c) => c.id === selectedCardId);
+			return card ? `${card.name} is in hand. Click a lit row on your side to play it, or click the card again to put it back.` : null;
+		}
+		if (selectedDecree) {
+			return `${decreeName(selectedDecree)} is ready. Click any lit row to declare it there. It hits both sides of that range; the totals show what each row becomes.`;
+		}
+		const a = match.players.A;
+		if (a.hand.length === 0) {
+			return 'No creatures left. Declare a Decree or pass.';
+		}
+		return 'Click a creature to play it, a Decree to declare one, or Pass to end your part of the round.';
 	}
 
 	renderHumanControls() {
 		const { match, selectedCardId, selectedDecree } = this.state;
 		const a = match.players.A;
-		const yourTurn = match.phase === 'play' && match.turn === 'A';
-		const selectedCard = selectedCardId ? a.hand.find((c) => c.id === selectedCardId) : null;
+		const yourMove = this.isYourMove();
 
 		return (
-			<div className="tribute-hand-area">
+			<div className={`tribute-hand-area${yourMove ? '' : ' tribute-hand-area--waiting'}`}>
+				<div className="tribute-hand-head">
+					<span className="tribute-status-label">Your hand</span>
+					<span className="g-body tribute-hint">{this.hintText()}</span>
+				</div>
 				<div className="tribute-hand-row">
 					{a.hand.map((card) => (
 						<TributeCard
 							key={card.id}
 							card={card}
 							selected={selectedCardId === card.id}
-							onClick={yourTurn ? () => this.selectCard(card.id) : undefined}
+							onClick={() => this.selectCard(card.id)}
+							title={`Fights at ${card.eligibleRows.map((r) => ROW_LABEL[r]).join(', ')}`}
 						/>
 					))}
+					{a.hand.length === 0 && <span className="tribute-row-empty">your hand is empty</span>}
 				</div>
 				<div className="tribute-hand-controls">
 					{a.decrees.map((el) => {
-						const decree = DECREES.find((d) => d.element === el);
-						const disabled = !yourTurn || a.decreesUsed[el] || a.decreePlayedThisRound;
+						const spent = a.decreesUsed[el];
+						const blockedThisRound = !spent && a.decreePlayedThisRound;
+						const disabled = !yourMove || spent || blockedThisRound;
+						let suffix = '';
+						if (spent) {
+							suffix = ' (spent)';
+						} else if (blockedThisRound) {
+							suffix = ' (next round)';
+						}
 						return (
 							<button
 								key={el}
 								type="button"
-								className={`g-btn g-el-${el} ${selectedDecree === el ? 'tribute-decree-selected' : ''}`}
+								className={`g-btn g-el-${el} tribute-decree-key${selectedDecree === el ? ' tribute-decree-key--selected' : ''}`}
 								disabled={disabled}
 								aria-pressed={selectedDecree === el}
 								onClick={() => this.selectDecree(el)}
+								title={spent ? 'Each Decree can be declared once per match.' : blockedThisRound ? 'One Decree per round.' : `Declare ${decreeName(el)} (${capitalizeElement(el)}) over a row`}
 							>
-								{decree ? decree.name : el} ({capitalizeElement(el)})
+								<span className="tribute-decree-key-el" />
+								{decreeName(el)}{suffix}
 							</button>
 						);
 					})}
-					<button type="button" className="g-btn g-btn--danger" disabled={!yourTurn} onClick={this.handlePass}>
+					<button type="button" className="g-btn g-btn--danger tribute-pass-key" disabled={!yourMove} onClick={this.handlePass} title="End your part of this round. You cannot play again until the next round.">
 						Pass
 					</button>
 				</div>
-				{!yourTurn && match.phase === 'play' && (
-					<p className="g-body tribute-waiting-note">Waiting on the court...</p>
-				)}
-				{selectedCard && (
-					<p className="g-body tribute-waiting-note">Selected {selectedCard.name} - click an eligible row to place it.</p>
-				)}
 			</div>
 		);
 	}
 
-	// which rows light up as legal targets, and on which side: a creature only ever lands
-	// on your own side, a decree covers the facing pair
-	targetRows() {
-		const { match, selectedCardId, selectedDecree } = this.state;
-		if (selectedCardId) {
-			const card = match.players.A.hand.find((c) => c.id === selectedCardId);
-			return { rows: card ? card.eligibleRows : [], sides: ['A'] };
-		}
-		if (selectedDecree) {
-			return { rows: ROWS, sides: ['A', 'B'] };
-		}
-		return { rows: [], sides: [] };
-	}
-
 	render() {
-		const { match, notice } = this.state;
+		const { match, notice, log } = this.state;
+		const playing = match.phase === 'play';
 
 		return (
 			<div className="tribute-match">
 				{this.renderStatusStrip()}
-
-				{notice && <div className="g-notice g-notice--alert tribute-transient-notice">{notice}</div>}
+				{match.phase !== 'mulligan' && this.renderRoundBanner()}
+				{notice && <div className="g-notice g-notice--alert tribute-transient-notice" role="status">{notice}</div>}
 
 				{match.phase === 'mulligan' && this.renderMulligan()}
 
@@ -491,26 +560,27 @@ class TributeMatch extends React.Component {
 					<TributeBoard
 						board={match.board}
 						activeDecrees={match.activeDecrees}
-						botHandCount={match.players.B.handCount != null ? match.players.B.handCount : match.players.B.hand.length}
-						targetRows={this.targetRows().rows}
-						targetSides={this.targetRows().sides}
+						botHandCount={match.players.B.hand.length}
+						targets={playing ? this.targets() : {}}
 						onRowClick={this.handleRowClick}
 					/>
 				)}
 
-				{match.phase === 'play' && this.renderRoundResultNotice()}
-				{match.phase === 'play' && this.renderHumanControls()}
+				{playing && this.renderHumanControls()}
 
-				{match.phase === 'matchEnd' && this.renderMatchEnd()}
-
-				<div className="g-screen tribute-log">
-					{this.state.log.map((line, i) => (
-						<div className="g-screen-line" key={i}>{line}</div>
+				<div className="g-screen tribute-log" aria-label="Match log">
+					{log.length === 0 && <div className="g-screen-line--dim">The court is in session.</div>}
+					{log.slice().reverse().map((line, i) => (
+						<div className={`g-screen-line${i === 0 ? '' : ' g-screen-line--dim'}`} key={`${log.length - i}`}>{line}</div>
 					))}
 				</div>
 			</div>
 		);
 	}
+}
+
+function capitalizeFirst(s) {
+	return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 export default TributeMatch;

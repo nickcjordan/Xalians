@@ -86,10 +86,10 @@ class TributePage extends React.Component {
 			return (
 				<div className="g-console">
 					<XalianNavbar />
-					<div className="g-shell page-shell tribute-shell">
-						<header className="page-header">
-							<p className="g-kicker">Kozrak's Court</p>
-							<h1 className="g-title">Tribute</h1>
+					<div className="g-shell page-shell tribute-shell tribute-shell--match">
+						<header className="tribute-match-masthead">
+							<span className="g-kicker">Kozrak's Court</span>
+							<h1 className="tribute-match-title">Tribute</h1>
 						</header>
 						<TributeMatch initialMatch={match} seed={seed} onPresentAgain={this.presentAgain} />
 					</div>
@@ -108,13 +108,13 @@ class TributePage extends React.Component {
 
 					<div className="g-panel tribute-intro-panel">
 						<div className="g-screen tribute-rules-screen">
-							<div className="g-screen-line">Three rows are ranges - Close, Mid and Far - and a creature fights where its abilities can reach.</div>
-							<div className="g-screen-line">Best of three rounds decides the match; the higher row total wins each round.</div>
-							<div className="g-screen-line">One hand of ten cards has to last you the whole match - there is no redraw between rounds.</div>
-							<div className="g-screen-line">Pass is permanent for the round, so it is a bet as much as a retreat.</div>
-							<div className="g-screen-line">The round's starter holds Court Favor, a standing +{COURT_FAVOR} on their total.</div>
-							<div className="g-screen-line">A Court Decree is a declared condition that hits both sides of one row through the type chart.</div>
-							<div className="g-screen-line--dim">Match seed: {seed}</div>
+							<div className="g-screen-line">You and the Court each field creatures into three rows: Close, Mid and Far. A creature can only stand in a row its abilities reach; its card shows the number it fights for in each row it can use.</div>
+							<div className="g-screen-line">Take turns playing one creature at a time. Rows hold any number of creatures. Your round score is the sum of all three of your rows.</div>
+							<div className="g-screen-line">When you pass you are out for the rest of the round. When both sides have passed, the higher score takes the round. First to two rounds wins the match.</div>
+							<div className="g-screen-line">You draw ten cards for the whole match, with no redraws between rounds. Cards spent winning round one are not there for round three.</div>
+							<div className="g-screen-line">Whoever moves first in a round holds Court Favor, +{COURT_FAVOR} on their score.</div>
+							<div className="g-screen-line">A Court Decree names a condition over one range, on both sides. Every creature there is scaled by how its element fares against the Decree's element. One Decree per round, each once per match.</div>
+							<div className="g-screen-line--dim">Match seed: {seed}. Add ?seed=NUMBER to the address to replay a match.</div>
 						</div>
 
 						<div className="tribute-intro-actions">
