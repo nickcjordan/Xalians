@@ -60,10 +60,11 @@ npm start          # node start.js
 Frontend (from `my-app/`):
 
 ```bash
-npm start          # copies ../lambda/src/json into src/json, then react-scripts start
-npm test           # react-scripts test (jest watch mode); single test: npm test -- -t "name"
-npm run copy-json  # re-sync game data JSON into the frontend without starting the dev server
-npm run build-deploy  # copy-json + build + aws s3 sync build s3://xalians.com
+yarn dev            # copies ../lambda/src/json and src/constants, then vite (dev server on port 3000); yarn start is an alias
+yarn build          # vite build, emits to build/
+yarn test           # vitest in watch mode; yarn test --run for a single run (what CI uses); yarn test -t "name" filters by test name
+yarn copy-json      # re-sync game data JSON into the frontend without starting the dev server
+yarn build-deploy   # copy-json + build + aws s3 sync build s3://xalians.com
 ```
 
 Infrastructure (from repo root):
@@ -73,7 +74,7 @@ npm run publish    # terraform apply -auto-approve
 terraform plan     # preview; main.tf zips ./lambda into generate_xalian_lambda.zip and uploads it
 ```
 
-There is no test suite for the `lambda/` engine — verification is done by running `start.js` and inspecting output. The frontend has tests for the duel rules (`my-app/src/gameplay/duel/__tests__/duelRules.test.js`, run via `yarn test`); CI runs them on every PR. Add to them when changing combat or movement rules.
+There is no test suite for the `lambda/` engine — verification is done by running `start.js` and inspecting output. The frontend has tests for the duel rules (`my-app/src/gameplay/duel/__tests__/duelRules.test.js`), run under Vitest (`yarn test --run`); CI runs them on every PR. Add to them when changing combat or movement rules.
 
 ## Backlog & workflow
 
@@ -128,7 +129,7 @@ Two API Gateway stages exist (`prod`, `test`) mapped to `api.xalians.com` and `t
 
 ### Frontend (`my-app/`)
 
-CRA + React Router v5 (`App.js` is the full route table) + react-bootstrap. Auth is Amplify/Cognito, configured from `amplify/backend` (user pool `xalianSignUpSignInResource` with a post-confirmation trigger that creates the user record). Because the `/db/*` routes are `AWS_IAM`-authorized, `dbApi.js` SigV4-signs every request with `Signer.sign()` using credentials from `Auth.currentCredentials()` — plain `axios` calls to those routes will 403.
+Vite + React Router v5 (`App.js` is the full route table) + react-bootstrap. `vite.config.js` holds the JSX-in-`.js` loader, the CRA-style `ReactComponent` SVG import shim (vite-plugin-svgr), and the CommonJS shim for the `module.exports` files copied from `lambda/`. Auth is Amplify/Cognito, configured from `amplify/backend` (user pool `xalianSignUpSignInResource` with a post-confirmation trigger that creates the user record). Because the `/db/*` routes are `AWS_IAM`-authorized, `dbApi.js` SigV4-signs every request with `Signer.sign()` using credentials from `Auth.currentCredentials()` — plain `axios` calls to those routes will 403.
 
 Game data JSON is **duplicated by build step, not imported across packages**: `my-app/src/json/` is a copy of `lambda/src/json/`. Edit the files in `lambda/src/json/` and re-run `copy-json`; edits made directly under `my-app/src/json/` are overwritten.
 
