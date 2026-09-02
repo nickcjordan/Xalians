@@ -316,12 +316,13 @@ if (T) {
     if (!(Number.isInteger(v) && v >= 1 && v <= 100)) fail('traits.pool.percent', 'percent for ' + k + ' must be an integer 1 to 100 (omit the trait instead of writing 0)');
   }
   const g = Object.keys(pool).filter(k => pool[k] === 100);
-  const expected = Object.values(pool).filter(Number.isFinite).reduce((x, y) => x + y, 0) / 100;
+  let expected = Object.values(pool).filter(Number.isFinite).reduce((x, y) => x + y, 0) / 100;
+  for (const [x, y] of TRAIT_EXCLUSIONS) if (has(pool, x) && has(pool, y)) { const hi = Math.max(pool[x], pool[y]), lo = Math.min(pool[x], pool[y]); expected -= (lo / 100) * (hi / 100); }
   if (Object.keys(pool).length === 0) warn('traits.pool.empty', 'no traits in the pool; confirm the body and the environment demand nothing');
   if (expected > 3.5) warn('traits.expected', 'expected trait count ' + expected.toFixed(2) + ' is above 3.5; confirm the species is meant to carry that many');
   for (const [x, y] of TRAIT_EXCLUSIONS) {
     if (pool[x] === 100 && pool[y] === 100) fail('traits.exclusion', x + ' and ' + y + ' are exclusion partners and cannot both be at 100');
-    else if (has(pool, x) && has(pool, y) && pool[x] === pool[y]) warn('traits.exclusion.tie', x + ' and ' + y + ' have equal percents; the generator rolls the higher first, so break the tie deliberately');
+    else if (has(pool, x) && has(pool, y) && pool[x] === pool[y]) warn('traits.exclusion.tie', x + ' and ' + y + ' have equal authored percents; the generator rolls the higher TILTED percent first, so after tilts one will lead, but say in the walkthrough which you intend');
   }
   if (P.corporeality === 'non-corporeal' && pool.phasing !== 100) fail('traits.phasing', 'non-corporeal bodies carry phasing at 100');
   if (anatomyOk && (P.anatomy.includes('shell') || P.covering === 'plating' || P.covering === 'chitin') && pool.armored !== 100) warn('traits.armored', 'shell, plating, or chitin present but armored is not at 100; justify in the walkthrough');

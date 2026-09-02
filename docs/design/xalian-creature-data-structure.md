@@ -8,7 +8,7 @@ Purpose: a self-contained description of the ratified Xalians creature data syst
 
 **Records are immutable and deterministic.** A creature is generated once from a random 128-bit seed plus a pinned `generatorVersion`, and the full expanded record is stored forever. The same seed + version always reproduces the same creature (verifiable), and new generator versions only affect new generations — existing creatures never change under their owners. Lore framing: seeds are the encrypted genomes inside Scrambler Tokens, printed by the Mercurius Machine and won in arena tournaments; a planet's Xalian Generator expands the token into a living creature. (The project's old NFT framing is dead; this is a conventional registry/API, and the word "mint" is banned — it's "generate.")
 
-**Species are templates; individuals are rolls.** Each species defines fixed facts (anatomy, body plan, lifespan, guaranteed traits, its signature ability, stat/size bands) and every individual rolls within those bands. Every value in a record describes THIS individual, not the species average.
+**Species are templates; individuals are rolls.** Each species defines fixed facts (anatomy, body plan, lifespan, its trait pool with per-trait percents, its signature ability, stat/size bands) and every individual rolls within those bands. Every value in a record describes THIS individual, not the species average.
 
 ## 2. The record
 
@@ -64,8 +64,7 @@ Six layers in generation order, most-permanent first. Worked example (Graviclaw,
   },
 
   "traits": {
-    "guaranteed": ["armored", "anchored"],          // demanded by the body — every member of the species has them
-    "rolled": ["stealthy"]                          // this individual's additional pulls from planet-weighted pools; rares roll MORE, never better
+    "armored": 100, "anchored": 100, "stealthy": 60   // PROPOSED 2026-09-02 (pending Nick): landed traits with the percent each was rolled at; traits are rolled independently, there is no count (re-ratified 2026-09-02)
   },
 
   "temperament": {                                  // 5 axes 0–100, rolled LAST, tilted by the rolled body (body-first causality); games derive BEHAVIOR from these, never power

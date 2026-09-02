@@ -81,7 +81,7 @@ The platform is the creature identity layer. The hub has three first-class verbs
 
 **Reveals are loud [ratified]:** gleam-or-better generations get a ceremonial moment (the Generator stutters, the readout flickers, the reveal lands). Eclipse may trade confetti for gravity; the event itself is the ceremony.
 
-**Emergent rarity [constrained by ratified rails]:** extra trait rolls (rares roll more, never better), unusually high secondary affinities (on-graph only; off-graph does not exist), extreme in-band capability rolls, special senses, and low serials. Surfaced via Codex discovery callouts and a prestige percentile on the creature page, never as a named power tier. Rarity must never be power; the fee prices whatever power exists, and the cards people covet being competitively ordinary is healthy (the Pokemon-card property).
+**Emergent rarity [constrained by ratified rails]:** extra trait rolls (rares roll more, never better) [OPEN 2026-09-02: under the independent-percent trait model, trait COUNT no longer tracks rarity, since counts overlap across the population; the candidate replacement is rarity graded by the inverse of each landed trait's percent; needs Nick's ruling], unusually high secondary affinities (on-graph only; off-graph does not exist), extreme in-band capability rolls, special senses, and low serials. Surfaced via Codex discovery callouts and a prestige percentile on the creature page, never as a named power tier. Rarity must never be power; the fee prices whatever power exists, and the cards people covet being competitively ordinary is healthy (the Pokemon-card property).
 
 ## 6. Considered and declined / deferred
 
