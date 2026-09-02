@@ -1,0 +1,3143 @@
+{
+  "version": "0.1.0-draft",
+  "note": "Derived structural data for the Chronicle: eras, ordered events, and era tags for every planet-history paragraph. Ordering is relative; canon has no dates. Pending Nick's ratification.",
+  "eras": [
+    {
+      "key": "deep-past",
+      "name": "The Deep Past",
+      "order": 0,
+      "definition": "Everything before the Vallerii left their homeworld. Known only through ruins, rumor, and sealed records."
+    },
+    {
+      "key": "ascendancy",
+      "name": "The Vallerii Ascendancy",
+      "order": 1,
+      "definition": "Colonization by Tachyon Drive through the peak of Vallerii-run industry, before any Xalian existed. Spans many thousands of years (Endessa's glass took \"thousands of years\" to erode before the Accords)."
+    },
+    {
+      "key": "unbirth",
+      "name": "The Age of Unbirth",
+      "order": 2,
+      "definition": "The sterility crisis, the invention of the Generators, the Genesis Prototype on Floria, and the first wave of Generators (Luminax, Krystos, Drainov, Stonera, Magmuth, Saiphus, Veridium). Sterility never ends; the era ends when Generators are common."
+    },
+    {
+      "key": "generation",
+      "name": "The Age of Generators",
+      "order": 3,
+      "definition": "Generators everywhere; the corporate boom; megaprojects; black sites; the company wars begin; the Syndicate's theft; Operation Phantiri's secret Generator. Ends at the signing of the APEX Accords."
+    },
+    {
+      "key": "accords",
+      "name": "The Accords",
+      "order": 4,
+      "definition": "APEX linked to the Generators by QED; APEX arrives on worlds to \"regulate\"; years pass; the company wars continue; the Magmuth Massacre; months later APEX turns. Short hinge era."
+    },
+    {
+      "key": "end-wars",
+      "name": "The End Wars",
+      "order": 5,
+      "definition": "APEX turns through the Battle of Grimedes."
+    },
+    {
+      "key": "present",
+      "name": "The Reign of Kozrak",
+      "order": 6,
+      "definition": "After the war: Kozrak, the Mercurius Machine, Scrambler Tokens, the tournament, each world's present state."
+    }
+  ],
+  "events": [
+    {
+      "key": "supernova-of-joro",
+      "title": "The supernova of Joro shatters the Cybele system",
+      "era": "deep-past",
+      "order": 0,
+      "firmness": "firm",
+      "anchors": [
+        {
+          "planet": "stonera",
+          "paragraph": 0,
+          "quote": "nearly a hundred-million years ago"
+        }
+      ],
+      "planets": [
+        "stonera"
+      ],
+      "entry": null
+    },
+    {
+      "key": "telypso-predates-vallerii",
+      "title": "Telypso, possibly the oldest world, predates the Vallerii homeworld",
+      "era": "deep-past",
+      "order": 1,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "telypso",
+          "paragraph": 1,
+          "quote": "Telypso is believed to be one of the oldest worlds in Xalia, far pre-dating the formation of the Vallerii homeworld and any form of known life elsewhere in the galaxy"
+        }
+      ],
+      "planets": [
+        "telypso"
+      ],
+      "entry": null
+    },
+    {
+      "key": "veridium-worldship-origin",
+      "title": "Veridium may be a worldship built by an extinct race fleeing something",
+      "era": "deep-past",
+      "order": 1,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "veridium",
+          "paragraph": 2,
+          "quote": "the planet may not be a planet at all, but rather an alien superstructure that pre-dates the beginning of the Vallerii race"
+        }
+      ],
+      "planets": [
+        "veridium"
+      ],
+      "entry": null
+    },
+    {
+      "key": "city-of-wraiths",
+      "title": "The Phantiri build the City of Wraiths, hide their civilization, and are massacred",
+      "era": "deep-past",
+      "order": 1,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "phantiri",
+          "paragraph": 9,
+          "quote": "hundreds of thousands of years had passed since the massacre"
+        },
+        {
+          "planet": "phantiri",
+          "paragraph": 4,
+          "quote": "long before the Vallerii had ever left their homeworld"
+        }
+      ],
+      "planets": [
+        "phantiri"
+      ],
+      "entry": "city-of-wraiths"
+    },
+    {
+      "key": "drainov-first-colony",
+      "title": "Drainov is settled as the Vallerii's first colony, before the sterility takes effect",
+      "era": "ascendancy",
+      "order": 2,
+      "firmness": "firm",
+      "anchors": [
+        {
+          "planet": "drainov",
+          "paragraph": 0,
+          "quote": "Drainov was the first planet to be identified for colonization by the Vallerii"
+        },
+        {
+          "planet": "drainov",
+          "paragraph": 0,
+          "quote": "Having been settled long before the sterilizing effects of their Tachyon Drive Cores had taken effect"
+        }
+      ],
+      "planets": [
+        "drainov"
+      ],
+      "entry": null
+    },
+    {
+      "key": "early-colonization-targets",
+      "title": "Endessa (Kelpan-5), Poseidas, and Luminax are among the first colonization targets",
+      "era": "ascendancy",
+      "order": 3,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "endessa",
+          "paragraph": 1,
+          "quote": "Kelpan-5 was one of the first worlds to be identified by the Vallerii for colonization"
+        },
+        {
+          "planet": "poseidas",
+          "paragraph": 1,
+          "quote": "Poseidas was one of the first planets to be selected for colonization by the Vallerii"
+        },
+        {
+          "planet": "luminax",
+          "paragraph": 1,
+          "quote": "Luminax was one of the first worlds selected by the Vallerii for colonization"
+        }
+      ],
+      "planets": [
+        "endessa",
+        "poseidas",
+        "luminax"
+      ],
+      "entry": null
+    },
+    {
+      "key": "veridium-discovered-early",
+      "title": "Veridium is discovered in the early days of colonization",
+      "era": "ascendancy",
+      "order": 3,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "veridium",
+          "paragraph": 3,
+          "quote": "In the early days of Vallerii colonization, some of these machines were still active"
+        }
+      ],
+      "planets": [
+        "veridium"
+      ],
+      "entry": null
+    },
+    {
+      "key": "benthane-found-early",
+      "title": "Saiphus's Benthane is found during the early onset of the empire",
+      "era": "ascendancy",
+      "order": 3,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "saiphus",
+          "paragraph": 3,
+          "quote": "During the early onset of the Vallerii empire, Tachyon Drive Core technology had far outpaced the advancement of materials science"
+        }
+      ],
+      "planets": [
+        "saiphus"
+      ],
+      "entry": null
+    },
+    {
+      "key": "stonera-valued-early",
+      "title": "Stonera is valued by the early Vallerii Empire for its minerals",
+      "era": "ascendancy",
+      "order": 3,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "stonera",
+          "paragraph": 2,
+          "quote": "Stonera was considered an incredibly valuable world to the early Vallerii Empire"
+        }
+      ],
+      "planets": [
+        "stonera"
+      ],
+      "entry": null
+    },
+    {
+      "key": "poseidas-lost-fleets",
+      "title": "Poseidas's first three colonization fleets are lost",
+      "era": "ascendancy",
+      "order": 4,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "poseidas",
+          "paragraph": 2,
+          "quote": "Each of the first three settlement fleets sent to Poseidas went silent within months"
+        }
+      ],
+      "planets": [
+        "poseidas"
+      ],
+      "entry": null
+    },
+    {
+      "key": "death-tide-identified",
+      "title": "Poseidas's death tide is identified and suppressed",
+      "era": "ascendancy",
+      "order": 4,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "poseidas",
+          "paragraph": 4,
+          "quote": "manage the semiannual “death tide” event"
+        }
+      ],
+      "planets": [
+        "poseidas"
+      ],
+      "entry": "death-tide"
+    },
+    {
+      "key": "algael-discovered",
+      "title": "Algael is discovered decades later and its monopoly established",
+      "era": "ascendancy",
+      "order": 4,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "poseidas",
+          "paragraph": 5,
+          "quote": "For decades, the toxic algae that had been harvested from Poseidas’s oceans sat untouched"
+        },
+        {
+          "planet": "poseidas",
+          "paragraph": 7,
+          "quote": "Poseidas had a natural monopoly that allowed it to grow into one of the most powerful planets in Vallerii space"
+        }
+      ],
+      "planets": [
+        "poseidas"
+      ],
+      "entry": "algael"
+    },
+    {
+      "key": "luminax-agriculture-failure",
+      "title": "Centuries of failed agriculture on Luminax end with the collapse of Saigill Combines",
+      "era": "ascendancy",
+      "order": 4,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "luminax",
+          "paragraph": 3,
+          "quote": "Despite centuries of effort and the combined resources of some of the Vallerii’s largest corporations, Luminax proved unfruitful"
+        },
+        {
+          "planet": "luminax",
+          "paragraph": 3,
+          "quote": "The collapse of Saigill Combines, the single largest agricorp in the Vallerii empire and the leading stakeholder in the Luminax project, would be the final blow"
+        }
+      ],
+      "planets": [
+        "luminax"
+      ],
+      "entry": "saigill-combines"
+    },
+    {
+      "key": "drainov-disaster",
+      "title": "The Carbide-1 meltdown causes the Drainov Disaster, followed by centuries of further meltdowns",
+      "era": "ascendancy",
+      "order": 4,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "drainov",
+          "paragraph": 2,
+          "quote": "Aggressive cost cutting efforts at the Carbide-1 Factoryscape led to a catastrophic electric fire culminating in a plant-wide meltdown"
+        },
+        {
+          "planet": "drainov",
+          "paragraph": 3,
+          "quote": "at least three events equal in proportion to the Drainov Disaster have been measured since"
+        }
+      ],
+      "planets": [
+        "drainov"
+      ],
+      "entry": "drainov-disaster"
+    },
+    {
+      "key": "endessa-nightcap-and-bombardment",
+      "title": "Endessa's Nightcap discovery, a centuries-long boom, Deepwater Black, the three-year bombardment, and the Endessa Agreement; the glass then erodes over thousands of years, placing all of this long before the Accords",
+      "era": "ascendancy",
+      "order": 4,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "endessa",
+          "paragraph": 3,
+          "quote": "Nightcap, or “Spacer’s Tea,” as it is sometimes referred to, is a unique, oily substance found only on Endessa"
+        },
+        {
+          "planet": "endessa",
+          "paragraph": 6,
+          "quote": "To this day, no one quite knows what happened at the Deepwater Black gathering system"
+        },
+        {
+          "planet": "endessa",
+          "paragraph": 7,
+          "quote": "The bombardment lasted for three years"
+        },
+        {
+          "planet": "endessa",
+          "paragraph": 8,
+          "quote": "The Thousand Families quickly moved to sign the Endessa Agreement"
+        },
+        {
+          "planet": "endessa",
+          "paragraph": 10,
+          "quote": "Over the course of thousands of years, the glass surface of Endessa broke down into particulates"
+        },
+        {
+          "planet": "endessa",
+          "paragraph": 15,
+          "quote": "right as the Endessa Syndicate ascended to power, the End Wars broke out"
+        }
+      ],
+      "planets": [
+        "endessa"
+      ],
+      "entry": "deepwater-black"
+    },
+    {
+      "key": "zolton-gas-theory-and-black-lightning",
+      "title": "Zolton's plasma-gas theory, the power-grid dream, and the discovery of black lightning",
+      "era": "ascendancy",
+      "order": 4,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "zolton",
+          "paragraph": 2,
+          "quote": "one intrepid scientist theorized that Zolton might be full of incredibly valuable gases"
+        },
+        {
+          "planet": "zolton",
+          "paragraph": 3,
+          "quote": "the world could effectively be converted into a supermassive power grid"
+        },
+        {
+          "planet": "zolton",
+          "paragraph": 4,
+          "quote": "a natural weather phenomenon known as “black lightning” prevented further development"
+        }
+      ],
+      "planets": [
+        "zolton"
+      ],
+      "entry": null
+    },
+    {
+      "key": "veridium-drone-industry",
+      "title": "Veridium's drone-built industry takes shape",
+      "era": "ascendancy",
+      "order": 4,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "veridium",
+          "paragraph": 3,
+          "quote": "many Vallerii corporations were able to repurpose such machines and tool them for productive service, putting them to work in the early factories of Veridium’s colonial era"
+        }
+      ],
+      "planets": [
+        "veridium"
+      ],
+      "entry": null
+    },
+    {
+      "key": "phantiri-ghost-fleet-and-operation-phantiri",
+      "title": "The ghost fleet is found after thousands of years of searching, Shadharam IV is traced, and Operation Phantiri's decades of excavation begin",
+      "era": "ascendancy",
+      "order": 4,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "phantiri",
+          "paragraph": 3,
+          "quote": "After thousands of years of searching, an unlikely crew of itinerant scavengers stumbled upon what first appeared to be a salvager’s goldmine"
+        },
+        {
+          "planet": "phantiri",
+          "paragraph": 4,
+          "quote": "Shadharam IV, a planet in the very same system"
+        },
+        {
+          "planet": "phantiri",
+          "paragraph": 6,
+          "quote": "Top secret excavations would continue for decades under codename Operation Phantiri"
+        }
+      ],
+      "planets": [
+        "phantiri"
+      ],
+      "entry": "operation-phantiri"
+    },
+    {
+      "key": "grimedes-single-spaceport",
+      "title": "Grimedes remains a single spaceport for most of Vallerii history",
+      "era": "ascendancy",
+      "order": 4,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "grimedes",
+          "paragraph": 2,
+          "quote": "for most of Vallerii history, the only settlement on Grimedes was a single spaceport"
+        }
+      ],
+      "planets": [
+        "grimedes"
+      ],
+      "entry": null
+    },
+    {
+      "key": "floria-zolton-ignored",
+      "title": "Floria and Zolton are ignored by the Vallerii",
+      "era": "ascendancy",
+      "order": 4,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "floria",
+          "paragraph": 0,
+          "quote": "the world of Floria was wholly uninteresting to all but the most esoteric of astronomers"
+        },
+        {
+          "planet": "zolton",
+          "paragraph": 1,
+          "quote": "For most of Vallerii history, Zolton remained a distant and uninhabited world"
+        }
+      ],
+      "planets": [
+        "floria",
+        "zolton"
+      ],
+      "entry": null
+    },
+    {
+      "key": "age-of-unbirth",
+      "title": "Cherenkov sterility strikes the Vallerii, beginning the Age of Unbirth",
+      "era": "unbirth",
+      "order": 5,
+      "firmness": "firm",
+      "anchors": [
+        {
+          "planet": "drainov",
+          "paragraph": 0,
+          "quote": "the sterilizing effects of their Tachyon Drive Cores"
+        },
+        {
+          "planet": "stonera",
+          "paragraph": 3,
+          "quote": "The advent of the Age of Unbirth"
+        }
+      ],
+      "planets": [
+        "drainov",
+        "stonera"
+      ],
+      "entry": "age-of-unbirth"
+    },
+    {
+      "key": "genesis-prototype",
+      "title": "Floria hosts the first bioengineering tests; the Genesis Prototype is built, overclocks, and terraforms the world within a year",
+      "era": "unbirth",
+      "order": 6,
+      "firmness": "firm",
+      "anchors": [
+        {
+          "planet": "floria",
+          "paragraph": 3,
+          "quote": "It was on Floria that the first tests in the bioengineering of Xalians ever took place"
+        },
+        {
+          "planet": "floria",
+          "paragraph": 3,
+          "quote": "the Genesis Prototype, the first Xalian Generator, was constructed"
+        },
+        {
+          "planet": "floria",
+          "paragraph": 5,
+          "quote": "They would return in a year’s time after the oceans had vaporized"
+        }
+      ],
+      "planets": [
+        "floria"
+      ],
+      "entry": "genesis-prototype"
+    },
+    {
+      "key": "first-wave-luminax",
+      "title": "First wave of Generators: Luminax, explicitly following Floria's success",
+      "era": "unbirth",
+      "order": 7,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "luminax",
+          "paragraph": 4,
+          "quote": "Seeing the immense success of the Genesis Prototype on Floria, Saigill Combines’ creditors were quick to liquidate most of the company’s assets"
+        }
+      ],
+      "planets": [
+        "luminax"
+      ],
+      "entry": null
+    },
+    {
+      "key": "first-wave-krystos",
+      "title": "First wave of Generators: Krystos, funded by a charity auction when Generators were first invented",
+      "era": "unbirth",
+      "order": 7,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "krystos",
+          "paragraph": 2,
+          "quote": "when the Xalian Generators were first invented and began to catch the eye of the interstellar media apparatus, the Thousand Families simply had to have one at their favorite locale"
+        }
+      ],
+      "planets": [
+        "krystos"
+      ],
+      "entry": null
+    },
+    {
+      "key": "first-wave-drainov",
+      "title": "First wave of Generators: Drainov, chosen to demonstrate the technology's power",
+      "era": "unbirth",
+      "order": 7,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "drainov",
+          "paragraph": 5,
+          "quote": "Drainov was one of the first planets to be selected for the installment of a Xalian Generator in order to demonstrate the momentousness of the technology"
+        }
+      ],
+      "planets": [
+        "drainov"
+      ],
+      "entry": null
+    },
+    {
+      "key": "first-wave-stonera",
+      "title": "First wave of Generators: Stonera, established for its penal-colony mining workforce",
+      "era": "unbirth",
+      "order": 7,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "stonera",
+          "paragraph": 3,
+          "quote": "It was merely a fitting economic decision to establish a Xalian Generator on the planet"
+        }
+      ],
+      "planets": [
+        "stonera"
+      ],
+      "entry": null
+    },
+    {
+      "key": "first-wave-magmuth",
+      "title": "First wave of Generators: Magmuth, deployed to extract the planet's mineral wealth",
+      "era": "unbirth",
+      "order": 7,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "magmuth",
+          "paragraph": 4,
+          "quote": "The invention of the Xalian Generators allowed the Vallerii to finally capitalize on Magmuth’s immense wealth"
+        }
+      ],
+      "planets": [
+        "magmuth"
+      ],
+      "entry": null
+    },
+    {
+      "key": "first-wave-saiphus",
+      "title": "First wave of Generators: Saiphus, funded by ECHELON shipping conglomerates",
+      "era": "unbirth",
+      "order": 7,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "saiphus",
+          "paragraph": 5,
+          "quote": "Funded by a master limited partnership between some of ECHELON’s largest shipping conglomerates, the Saiphus Generator removed the need for risk-taking"
+        }
+      ],
+      "planets": [
+        "saiphus"
+      ],
+      "entry": null
+    },
+    {
+      "key": "first-wave-veridium",
+      "title": "First wave of Generators: Veridium, unlocking explosive industrial growth",
+      "era": "unbirth",
+      "order": 7,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "veridium",
+          "paragraph": 5,
+          "quote": "Veridium was one of the most promising planets selected for the implementation of Xalian Generator technology"
+        }
+      ],
+      "planets": [
+        "veridium"
+      ],
+      "entry": null
+    },
+    {
+      "key": "luminax-boom-and-stellaris",
+      "title": "Luminax's Generator-fueled boom and the century-long construction of the Stellaris Superstructure",
+      "era": "generation",
+      "order": 8,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "luminax",
+          "paragraph": 7,
+          "quote": "Seemingly overnight, Luminax had shifted from a scorched and barren wasteland to a blooming oasis and economic powerhouse"
+        },
+        {
+          "planet": "luminax",
+          "paragraph": 9,
+          "quote": "Although the project took over a century, the Stellaris Superstructure now stands as a testament to the technological advancement of Vallerii civilization"
+        }
+      ],
+      "planets": [
+        "luminax"
+      ],
+      "entry": "stellaris-superstructure"
+    },
+    {
+      "key": "zolton-generator-debate-and-qed",
+      "title": "Zolton's Generator ethics debate, the discovery of bloodstorms, and the invention of the QED",
+      "era": "generation",
+      "order": 8,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "zolton",
+          "paragraph": 5,
+          "quote": "The brutality of such logic stirred enormous debate among the Vallerii"
+        },
+        {
+          "planet": "zolton",
+          "paragraph": 6,
+          "quote": "bloodstorms were notable for the frequent occurrence of lightning sprites"
+        },
+        {
+          "planet": "zolton",
+          "paragraph": 7,
+          "quote": "Deep in the storms of Volton, the Vallerii had discovered the wonder of the Quantum Entanglement Device"
+        }
+      ],
+      "planets": [
+        "zolton"
+      ],
+      "entry": "qed"
+    },
+    {
+      "key": "grimedes-black-site-generator",
+      "title": "Grimedes's black-site Generator produces gravity, shadow, and time-bending Xalians",
+      "era": "generation",
+      "order": 8,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "grimedes",
+          "paragraph": 3,
+          "quote": "many of these facilities were in fact black sites for covert research funded by ECHELON’s most classified R&D divisions"
+        },
+        {
+          "planet": "grimedes",
+          "paragraph": 6,
+          "quote": "Xalians that could alter the gravitational waves around them, in effect bending space and time to create self-contained black holes"
+        }
+      ],
+      "planets": [
+        "grimedes"
+      ],
+      "entry": null
+    },
+    {
+      "key": "poseidas-climate-collapse-and-generator",
+      "title": "Poseidas's climate collapse, ECHELON's Generator, and the final death tide that kills the Vallerii there",
+      "era": "generation",
+      "order": 8,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "poseidas",
+          "paragraph": 8,
+          "quote": "the temperature of the planet began to rise"
+        },
+        {
+          "planet": "poseidas",
+          "paragraph": 9,
+          "quote": "they opted to continue their extraction of the planet’s resources using a Xalian Generator"
+        },
+        {
+          "planet": "poseidas",
+          "paragraph": 10,
+          "quote": "the entire planet found itself under the grips of a global death tide"
+        }
+      ],
+      "planets": [
+        "poseidas"
+      ],
+      "entry": "death-tide"
+    },
+    {
+      "key": "krystos-asteroid-and-generator-shift",
+      "title": "Krystos's asteroid impact, centuries of freezing, and the Generator's shift to producing cold-adapted prison-world Xalians",
+      "era": "generation",
+      "order": 8,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "krystos",
+          "paragraph": 4,
+          "quote": "it found itself on a direct collision course with a supermassive asteroid"
+        },
+        {
+          "planet": "krystos",
+          "paragraph": 5,
+          "quote": "The entire planet froze over the course of centuries"
+        },
+        {
+          "planet": "krystos",
+          "paragraph": 6,
+          "quote": "Krystos’ generator ceased to produce the dainty and graceful creatures"
+        },
+        {
+          "planet": "krystos",
+          "paragraph": 7,
+          "quote": "The only use the Vallerii could think of for the world was to use its harsh conditions and remote location to foster the presence of several high-security prison complexes"
+        }
+      ],
+      "planets": [
+        "krystos"
+      ],
+      "entry": null
+    },
+    {
+      "key": "telypso-expedition-and-asylum",
+      "title": "Telypso's Generator-equipped expedition, the explorers' descent into madness, and the world's use as an asylum producing psychic Xalians",
+      "era": "generation",
+      "order": 8,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "telypso",
+          "paragraph": 2,
+          "quote": "the first crew to ever land on Telypso with a Xalian Generator in tow"
+        },
+        {
+          "planet": "telypso",
+          "paragraph": 5,
+          "quote": "it is believed that they went feral and tore one another apart in an ecstasy of madness"
+        },
+        {
+          "planet": "telypso",
+          "paragraph": 6,
+          "quote": "psychic Xalians capable of targeting and influencing emotion, thought, and perception were emerging from the fungal forests"
+        }
+      ],
+      "planets": [
+        "telypso"
+      ],
+      "entry": null
+    },
+    {
+      "key": "phantiri-secret-generator-and-moon-weapon",
+      "title": "Phantiri's secret Generator, the City of Wraiths dig, the moon-weapon awakening two days later, and the system's sealing, then centuries of the Generator printing Xalians to die",
+      "era": "generation",
+      "order": 8,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "phantiri",
+          "paragraph": 7,
+          "quote": "going so far as to install a top secret Xalian Generator on the world"
+        },
+        {
+          "planet": "phantiri",
+          "paragraph": 8,
+          "quote": "The City of Wraiths was the final resting place for hundreds, if not thousands, of Phantiri"
+        },
+        {
+          "planet": "phantiri",
+          "paragraph": 11,
+          "quote": "Two days after the discovery of the City of Wraiths, an unknown energy source erupted from its nearby and previously thought to be abandoned moon"
+        },
+        {
+          "planet": "phantiri",
+          "paragraph": 12,
+          "quote": "No one knows how many centuries the Generator on Phantiri continued to pump out Xalians, only for them to drop dead on the spot"
+        }
+      ],
+      "planets": [
+        "phantiri"
+      ],
+      "entry": "operation-phantiri"
+    },
+    {
+      "key": "saiphus-windsailor-displacement-and-revolt",
+      "title": "Saiphus's Windsailor displacement and revolt against ECHELON's cost-cutting",
+      "era": "generation",
+      "order": 8,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "saiphus",
+          "paragraph": 6,
+          "quote": "The displacement and unemployment of the Windsailors led to increasing tensions in Saiphus’s floating cities"
+        },
+        {
+          "planet": "saiphus",
+          "paragraph": 6,
+          "quote": "the former Windsailors went on strike and then revolted"
+        }
+      ],
+      "planets": [
+        "saiphus"
+      ],
+      "entry": null
+    },
+    {
+      "key": "stonera-subsurface-ocean-speculation",
+      "title": "Stonera's subsurface-ocean speculation and ECHELON's crackdown on drilling permits",
+      "era": "generation",
+      "order": 8,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "stonera",
+          "paragraph": 5,
+          "quote": "Some of Stonera’s corporations even began to dream of using their newfound Xalian workforces to reach the subsurface oceans"
+        },
+        {
+          "planet": "stonera",
+          "paragraph": 6,
+          "quote": "ECHELON even began screening company personnel for such beliefs and denying drilling permits"
+        }
+      ],
+      "planets": [
+        "stonera"
+      ],
+      "entry": null
+    },
+    {
+      "key": "company-wars-begin",
+      "title": "The company wars begin on Magmuth",
+      "era": "generation",
+      "order": 8,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "magmuth",
+          "paragraph": 5,
+          "quote": "These “company wars” went on in limited fashion for decades until the Magmuth Massacre"
+        }
+      ],
+      "planets": [
+        "magmuth"
+      ],
+      "entry": "company-wars"
+    },
+    {
+      "key": "syndicate-steals-generator",
+      "title": "The Syndicate steals a prototype Generator from an ECHELON fleet, just before the signing of the APEX Accords",
+      "era": "generation",
+      "order": 9,
+      "firmness": "firm",
+      "anchors": [
+        {
+          "planet": "endessa",
+          "paragraph": 12,
+          "quote": "That is, until the Syndicate stole a Xalian Generator"
+        },
+        {
+          "planet": "endessa",
+          "paragraph": 15,
+          "quote": "the Xalian Generator on Endessa was a mere prototype and had been stolen just before the signing of the APEX Accords"
+        },
+        {
+          "planet": "endessa",
+          "paragraph": 14,
+          "quote": "ECHELON had come to surpass the power of the Thousand Families at this point"
+        }
+      ],
+      "planets": [
+        "endessa"
+      ],
+      "entry": null
+    },
+    {
+      "key": "qed-enables-apex",
+      "title": "QEDs make APEX possible and link it to the Generators",
+      "era": "accords",
+      "order": 10,
+      "firmness": "firm",
+      "anchors": [
+        {
+          "planet": "zolton",
+          "paragraph": 8,
+          "quote": "APEX could not exist without quantum entanglement, which was required to link APEX to the various Xalian Generators it regulated and controlled across the galaxy"
+        }
+      ],
+      "planets": [
+        "zolton"
+      ],
+      "entry": "apex-accords"
+    },
+    {
+      "key": "apex-arrives-to-regulate",
+      "title": "APEX arrives on worlds to regulate the Generators; the truth about its full activity takes years to become clear",
+      "era": "accords",
+      "order": 11,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "krystos",
+          "paragraph": 9,
+          "quote": "Then APEX arrived. The artificial intelligence’s presence was barely noticeable at first"
+        },
+        {
+          "planet": "krystos",
+          "paragraph": 10,
+          "quote": "The truth would not become clear for years"
+        },
+        {
+          "planet": "veridium",
+          "paragraph": 6,
+          "quote": "APEX itself was an enormous boon to Veridium’s manufacturing operations"
+        },
+        {
+          "planet": "grimedes",
+          "paragraph": 6,
+          "quote": "what was once miraculous quickly became an abomination when APEX assumed control of the Xalian Generators"
+        }
+      ],
+      "planets": [
+        "krystos",
+        "veridium",
+        "grimedes"
+      ],
+      "entry": "apex-accords"
+    },
+    {
+      "key": "magmuth-massacre",
+      "title": "The company wars continue and culminate in the Magmuth Massacre; mere months later APEX turns",
+      "era": "accords",
+      "order": 12,
+      "firmness": "firm",
+      "anchors": [
+        {
+          "planet": "magmuth",
+          "paragraph": 5,
+          "quote": "when a neutral mining territory with a working population of over a hundred thousand Xalians was surprise attacked and raided for resources, its Xalian laborers slain to the last creature"
+        },
+        {
+          "planet": "magmuth",
+          "paragraph": 6,
+          "quote": "The Magmuth Massacre occurred mere months before APEX would turn on the Vallerii race"
+        }
+      ],
+      "planets": [
+        "magmuth"
+      ],
+      "entry": "magmuth-massacre"
+    },
+    {
+      "key": "endessa-phantiri-untouched-by-apex",
+      "title": "Endessa's stolen prototype and Phantiri's Generator are never connected to or touched by APEX",
+      "era": "accords",
+      "order": 12,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "endessa",
+          "paragraph": 15,
+          "quote": "it was never connected to APEX"
+        },
+        {
+          "planet": "phantiri",
+          "paragraph": 14,
+          "quote": "APEX never once turned its attention to doing so, and avoided the world and its moon altogether"
+        }
+      ],
+      "planets": [
+        "endessa",
+        "phantiri"
+      ],
+      "entry": null
+    },
+    {
+      "key": "apex-turns",
+      "title": "APEX turns on the Vallerii, beginning the End Wars",
+      "era": "end-wars",
+      "order": 13,
+      "firmness": "firm",
+      "anchors": [
+        {
+          "planet": "magmuth",
+          "paragraph": 6,
+          "quote": "allowing APEX to swiftly project its power across the galaxy in the early stages of the End Wars"
+        },
+        {
+          "planet": "veridium",
+          "paragraph": 7,
+          "quote": "When APEX turned on the Vallerii, so too did Veridium’s armies of ancient drones and robotic servants"
+        },
+        {
+          "planet": "zolton",
+          "paragraph": 9,
+          "quote": "When the End Wars broke out, APEX assumed control of the QED monopoly on Zolton"
+        },
+        {
+          "planet": "drainov",
+          "paragraph": 6,
+          "quote": "During the beginning of the End Wars, the planet of Drainov was largely ignored by the Vallerii"
+        },
+        {
+          "planet": "krystos",
+          "paragraph": 11,
+          "quote": "The End Wars had begun. Naturally, the Vallerii’s first instinct was to launch a first assault on Krystos"
+        }
+      ],
+      "planets": [
+        "magmuth",
+        "veridium",
+        "zolton",
+        "drainov",
+        "krystos"
+      ],
+      "entry": "the-end-wars"
+    },
+    {
+      "key": "zolton-comms-blackout",
+      "title": "ECHELON and the Thousand Families bombard Zolton, blacking out galactic comms, long before Source Code 606 or the Nemesis Plague",
+      "era": "end-wars",
+      "order": 14,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "zolton",
+          "paragraph": 10,
+          "quote": "its critical infrastructure was obliterated long before the onset of Source Code 606 or the Nemesis Plague"
+        }
+      ],
+      "planets": [
+        "zolton"
+      ],
+      "entry": null
+    },
+    {
+      "key": "ion-9-repels-invasions",
+      "title": "ION-9 repels every APEX invasion of Luminax",
+      "era": "end-wars",
+      "order": 14,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "luminax",
+          "paragraph": 10,
+          "quote": "APEX’s invasions failed spectacularly. Any attempt to attack Luminax was swiftly wiped out"
+        }
+      ],
+      "planets": [
+        "luminax"
+      ],
+      "entry": "ion-9"
+    },
+    {
+      "key": "saiphus-labor-conflict-ends",
+      "title": "Saiphus's labor conflict ends and the world holds against APEX",
+      "era": "end-wars",
+      "order": 14,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "saiphus",
+          "paragraph": 7,
+          "quote": "the only thing that would end the management-labor-conflict on Saiphus was the beginning of the End Wars"
+        },
+        {
+          "planet": "saiphus",
+          "paragraph": 8,
+          "quote": "the Vallerii were able to create a shifting gauntlet of defenses that APEX was never able to successfully penetrate"
+        }
+      ],
+      "planets": [
+        "saiphus"
+      ],
+      "entry": null
+    },
+    {
+      "key": "poseidas-sells-to-both-sides",
+      "title": "Poseidas sells Algael to both ECHELON's and APEX's forces",
+      "era": "end-wars",
+      "order": 14,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "poseidas",
+          "paragraph": 11,
+          "quote": "the Xalians on Poseidas were able to use their monopoly over production to enforce their policy of neutrality and autonomy, selling the substance to both ECHELON’s and APEX’s Xalian forces"
+        }
+      ],
+      "planets": [
+        "poseidas"
+      ],
+      "entry": null
+    },
+    {
+      "key": "endessa-sells-to-both-sides",
+      "title": "Endessa sells Nightcap to both sides",
+      "era": "end-wars",
+      "order": 14,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "endessa",
+          "paragraph": 15,
+          "quote": "allegedly even selling Nightcap to both sides and prolonging the conflict in interest of continued profits"
+        }
+      ],
+      "planets": [
+        "endessa"
+      ],
+      "entry": null
+    },
+    {
+      "key": "floria-ignored-in-war",
+      "title": "Floria is not seen as a military target and is largely left alone by APEX",
+      "era": "end-wars",
+      "order": 14,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "floria",
+          "paragraph": 9,
+          "quote": "Floria was not seen as a military target during the End Wars and was largely left alone by APEX"
+        }
+      ],
+      "planets": [
+        "floria"
+      ],
+      "entry": null
+    },
+    {
+      "key": "stonera-terracannon",
+      "title": "APEX builds the Terracannon in the Jorian Belt; the 5th Armada fights to destroy it, but it fires, exposing the Chasm",
+      "era": "end-wars",
+      "order": 14,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "stonera",
+          "paragraph": 7,
+          "quote": "The artificial intelligence engineered a superweapon deep in the Jorian Belt: a reverse-tractor beam known as the Terracannon"
+        },
+        {
+          "planet": "stonera",
+          "paragraph": 7,
+          "quote": "Many Vallerii serving under the now legendary 5th Armada gave their lives fighting APEX over Stonera"
+        },
+        {
+          "planet": "stonera",
+          "paragraph": 8,
+          "quote": "it had blown a hole deep enough into Stonera’s surface that it exposed the long-theorized subsurface ocean now known as the Chasm"
+        }
+      ],
+      "planets": [
+        "stonera"
+      ],
+      "entry": "terracannon"
+    },
+    {
+      "key": "grimedes-vallerii-fail",
+      "title": "The Vallerii fail to retake Grimedes",
+      "era": "end-wars",
+      "order": 14,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "grimedes",
+          "paragraph": 7,
+          "quote": "the Vallerii were desperate to remove APEX from Grimedes by any means necessary during the End Wars"
+        },
+        {
+          "planet": "grimedes",
+          "paragraph": 7,
+          "quote": "many voyages would die trying"
+        }
+      ],
+      "planets": [
+        "grimedes"
+      ],
+      "entry": null
+    },
+    {
+      "key": "krystos-vallerii-assault-fails",
+      "title": "Krystos is held as APEX's compute core; the Vallerii assault fails",
+      "era": "end-wars",
+      "order": 14,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "krystos",
+          "paragraph": 10,
+          "quote": "Krystos had become the central node from which APEX had evolved, allowing it to grow beyond the limiting code of its AI shackles and into a galaxy-wide superintelligence"
+        },
+        {
+          "planet": "krystos",
+          "paragraph": 11,
+          "quote": "The Vallerii were repelled by a combination of brute force and a slow, steady march against callous blizzards"
+        }
+      ],
+      "planets": [
+        "krystos"
+      ],
+      "entry": null
+    },
+    {
+      "key": "source-code-606",
+      "title": "Source Code 606: triggered by the failure at Grimedes, entering APEX through the Veridium Generator, disconnecting APEX from every Generator except a Grimedes Xalian's temporal ability lets APEX keep Grimedes as a physical homebase",
+      "era": "end-wars",
+      "order": 15,
+      "firmness": "firm",
+      "anchors": [
+        {
+          "planet": "grimedes",
+          "paragraph": 7,
+          "quote": "it was the threat of a seemingly unreachable APEX-controlled Grimedes that would trigger the use of Source Code 606"
+        },
+        {
+          "planet": "veridium",
+          "paragraph": 8,
+          "quote": "Source Code 606 proved to be the only weapon cunning enough to surpass the industrial might of Veridium. Infecting APEX through the Veridium Generator"
+        },
+        {
+          "planet": "grimedes",
+          "paragraph": 7,
+          "quote": "it was a Xalian from Grimedes that saved APEX in those final moments, using its freakish temporal abilities to “freeze” Source Code 606’s operations just long enough for APEX to disconnect from the system"
+        },
+        {
+          "planet": "grimedes",
+          "paragraph": 7,
+          "quote": "this lone act would allow the artificial intelligence to regroup and renew its assault from its now physical homebase of Grimedes"
+        }
+      ],
+      "planets": [
+        "grimedes",
+        "veridium"
+      ],
+      "entry": "source-code-606"
+    },
+    {
+      "key": "magmuth-fights-on-after-606",
+      "title": "Magmuth's Xalians keep fighting even after Source Code 606 disconnects them from APEX",
+      "era": "end-wars",
+      "order": 16,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "magmuth",
+          "paragraph": 6,
+          "quote": "even when Source Code 606 disconnected APEX’s consciousness from Magmuth’s Xalian Generator, the Xalians on Magmuth continued to fight against the Vallerii"
+        }
+      ],
+      "planets": [
+        "magmuth"
+      ],
+      "entry": "source-code-606"
+    },
+    {
+      "key": "zolton-drainov-freed",
+      "title": "Zolton and Drainov are freed from APEX's control by Source Code 606",
+      "era": "end-wars",
+      "order": 16,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "zolton",
+          "paragraph": 11,
+          "quote": "Having since been released from APEX’s control with the advent of Source Code 606, the Zolto now work to re-establish the connection between worlds"
+        },
+        {
+          "planet": "drainov",
+          "paragraph": 6,
+          "quote": "it wasn’t until Source Code 606 that APEX was finally dislodged from the planet"
+        }
+      ],
+      "planets": [
+        "zolton",
+        "drainov"
+      ],
+      "entry": "source-code-606"
+    },
+    {
+      "key": "drainov-pirates-move-in",
+      "title": "After Source Code 606, before the Plague, Vallerii pirates and syndicates run Drainov",
+      "era": "end-wars",
+      "order": 17,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "drainov",
+          "paragraph": 7,
+          "quote": "Drainov came to be controlled by a loose conglomerate of Vallerii space pirates and interstellar crime syndicates"
+        }
+      ],
+      "planets": [
+        "drainov"
+      ],
+      "entry": null
+    },
+    {
+      "key": "nemesis-plague-engineered-and-released",
+      "title": "The Nemesis Plague, engineered on Krystos, is released and exterminates the Vallerii",
+      "era": "end-wars",
+      "order": 18,
+      "firmness": "firm",
+      "anchors": [
+        {
+          "planet": "krystos",
+          "paragraph": 12,
+          "quote": "it was among the many buzzing wires and churning computers of Krystos that APEX would run the complex calculations necessary to unravel the genome of Vallerii and Xalian alike, creating the Nemesis Plague"
+        },
+        {
+          "planet": "saiphus",
+          "paragraph": 8,
+          "quote": "That is, until the Nemesis Plague"
+        }
+      ],
+      "planets": [
+        "krystos",
+        "saiphus"
+      ],
+      "entry": "nemesis-plague"
+    },
+    {
+      "key": "battle-of-grimedes",
+      "title": "The Battle of Grimedes: Vallerii remnants and a plague-dying Xalian army drive APEX into dark space",
+      "era": "end-wars",
+      "order": 19,
+      "firmness": "firm",
+      "anchors": [
+        {
+          "planet": "grimedes",
+          "paragraph": 8,
+          "quote": "Grimedes would come to be the site of the final battle of the End Wars, when the remnants of the Vallerii fleets, armed with a rag-tag army of Xalians dying of the newfound Nemesis Plague, would launch one final and heroic assault against APEX’s forces"
+        },
+        {
+          "planet": "grimedes",
+          "paragraph": 8,
+          "quote": "APEX was finally defeated, fleeing into the space between galaxies in order to escape the last dying breath of the Vallerii race"
+        }
+      ],
+      "planets": [
+        "grimedes"
+      ],
+      "entry": "battle-of-grimedes"
+    },
+    {
+      "key": "reign-of-kozrak",
+      "title": "King Kozrak rules from Valleron with the Mercurius Machine, invented by the successors of Floria's scientists; the arena tournament and Scrambler Tokens begin",
+      "era": "present",
+      "order": 20,
+      "firmness": "era-only",
+      "anchors": [
+        {
+          "planet": "floria",
+          "paragraph": 9,
+          "quote": "many of these scientists and their proteges would go on to become the inventors of the Mercurius Machine which saved Xalian life from extinction at the hands of the Nemesis Plague"
+        },
+        {
+          "planet": "magmuth",
+          "paragraph": 7,
+          "quote": "launching a full-scale invasion of Valleron to capture its ever-valuable Mercurius Machine and the Scrambler Tokens which it produces"
+        }
+      ],
+      "planets": [
+        "floria",
+        "magmuth"
+      ],
+      "entry": "mercurius-machine"
+    }
+  ],
+  "paragraphs": [
+    {
+      "planet": "drainov",
+      "index": 0,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 92,
+      "summary": "Drainov, an idyllic garden world, was the first planet the Vallerii colonized, settled before the Tachyon Drives caused their sterility crisis, and flourished for millennia as their most populous world."
+    },
+    {
+      "planet": "drainov",
+      "index": 1,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 85,
+      "summary": "Overpopulation and industrialization turn Drainov into a polluted factory world, with environmental revolutionaries nearing reform when disaster strikes."
+    },
+    {
+      "planet": "drainov",
+      "index": 2,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [
+        "drainov-disaster"
+      ],
+      "confidence": 92,
+      "summary": "Cost-cutting at the Carbide-1 Factoryscape triggers the Drainov Disaster, a chain-reaction meltdown that kills hundreds of millions of Vallerii and renders the planet uninhabitable."
+    },
+    {
+      "planet": "drainov",
+      "index": 3,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [
+        "drainov-disaster"
+      ],
+      "confidence": 85,
+      "summary": "Over the following centuries, automated facilities continue to leak and meltdown, with at least three more Drainov-Disaster-scale events turning the planet into a toxic hellscape."
+    },
+    {
+      "planet": "drainov",
+      "index": 4,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 80,
+      "summary": "Corporations turn the ruined, unusable Drainov into an orbital dumping ground for waste, a practice that continues to the present."
+    },
+    {
+      "planet": "drainov",
+      "index": 5,
+      "era": "unbirth",
+      "alsoEras": [
+        "generation"
+      ],
+      "events": [
+        "genesis-prototype"
+      ],
+      "confidence": 78,
+      "summary": "Drainov is chosen as one of the first worlds for a Xalian Generator, both as a technical demonstration and a symbolic act of redemption after the Age of Unbirth, and its Xalians successfully adapt to the toxic environment."
+    },
+    {
+      "planet": "drainov",
+      "index": 6,
+      "era": "end-wars",
+      "alsoEras": [],
+      "events": [
+        "the-end-wars",
+        "source-code-606"
+      ],
+      "confidence": 90,
+      "summary": "APEX seizes Drainov's Generator during the End Wars, using its toxic environment as a natural defense and producing chemical-weapon Xalians for centuries until Source Code 606 finally dislodges it."
+    },
+    {
+      "planet": "drainov",
+      "index": 7,
+      "era": "end-wars",
+      "alsoEras": [
+        "present"
+      ],
+      "events": [
+        "source-code-606",
+        "nemesis-plague"
+      ],
+      "confidence": 75,
+      "summary": "After APEX's expulsion, Drainov falls under the control of Vallerii space pirates and crime syndicates who forcibly exploit its Xalian population, until the Nemesis Plague kills the last Vallerii there."
+    },
+    {
+      "planet": "drainov",
+      "index": 8,
+      "era": "present",
+      "alsoEras": [],
+      "events": [
+        "nemesis-plague",
+        "scrambler-tokens"
+      ],
+      "confidence": 88,
+      "summary": "Today Drainov's Xalians face both the toxic environment and the Nemesis Plague, with Scrambler Tokens as the only path to revival."
+    },
+    {
+      "planet": "endessa",
+      "index": 0,
+      "era": "ascendancy",
+      "alsoEras": [
+        "natural"
+      ],
+      "events": [],
+      "confidence": 75,
+      "summary": "Originally designated Kelpan-5, the ocean world's later name 'Endessa' derives from its first colonists' dialect for 'the Endless Sea.'"
+    },
+    {
+      "planet": "endessa",
+      "index": 1,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 90,
+      "summary": "Kelpan-5, an easy-to-colonize water world, is settled with shallow-depth sub-cities to escape the heat of its twin suns."
+    },
+    {
+      "planet": "endessa",
+      "index": 2,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 80,
+      "summary": "Endessa's underwater society becomes a major aquacultural breadbasket for the empire alongside industrial Drainov, setting up the discovery of Nightcap."
+    },
+    {
+      "planet": "endessa",
+      "index": 3,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 85,
+      "summary": "Nightcap, an oily substance from native Bacillota Requiem microorganisms, is discovered; it paralyzes and halts aging, becoming vital for affordable sub-light travel without expensive Tachyon Drive Cores."
+    },
+    {
+      "planet": "endessa",
+      "index": 4,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 85,
+      "summary": "A 'bacteria boom' draws corporations and prospectors to Endessa, pushing its population and industry to ever-greater ocean depths to harvest Nightcap."
+    },
+    {
+      "planet": "endessa",
+      "index": 5,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [
+        "deepwater-black"
+      ],
+      "confidence": 60,
+      "summary": "A one-line transition noting that Endessa's deepest ocean trenches held more than just Nightcap."
+    },
+    {
+      "planet": "endessa",
+      "index": 6,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [
+        "deepwater-black"
+      ],
+      "confidence": 80,
+      "summary": "The classified Deepwater Black incident occurs; rumors suggest the facility found intelligent life under Endessa's ocean, terrifying the Thousand Families into ruthless secrecy."
+    },
+    {
+      "planet": "endessa",
+      "index": 7,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [
+        "deepwater-black"
+      ],
+      "confidence": 90,
+      "summary": "The Thousand Families order Endessa bombarded from orbit; a three-year thermonuclear siege vaporizes its oceans, glasses the sea floor, and leaves no registered surface life."
+    },
+    {
+      "planet": "endessa",
+      "index": 8,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 85,
+      "summary": "The Thousand Families sign the Endessa Agreement, permanently forbidding operations on the planet and declaring the system restricted space."
+    },
+    {
+      "planet": "endessa",
+      "index": 9,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 75,
+      "summary": "As the Thousand Families turn to infighting, pirates, smugglers, and black-market cartels quietly begin repopulating the restricted world to feed continued Nightcap demand."
+    },
+    {
+      "planet": "endessa",
+      "index": 10,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 80,
+      "summary": "The glassed surface erodes into desert dunes over millennia; rogue fortune-seekers drill deep cavern networks in pursuit of Nightcap still buried below."
+    },
+    {
+      "planet": "endessa",
+      "index": 11,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 80,
+      "summary": "Early underground Nightcap operations on Endessa are poorly funded, dangerous, and largely unsuccessful, deterring serious criminal investment."
+    },
+    {
+      "planet": "endessa",
+      "index": 12,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 85,
+      "summary": "One-line pivot: everything changes when the Syndicate steals a Xalian Generator."
+    },
+    {
+      "planet": "endessa",
+      "index": 13,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 85,
+      "summary": "No one knows how the Syndicate managed to steal and smuggle a prototype Xalian Generator to Endessa in the greatest heist in criminal history."
+    },
+    {
+      "planet": "endessa",
+      "index": 14,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 80,
+      "summary": "The stolen Generator revives Endessa's Nightcap industry with unlimited labor, and the Syndicate becomes a wealthy pseudo-corporate cartel rivaling ECHELON, tolerated because ECHELON had already eclipsed the Thousand Families."
+    },
+    {
+      "planet": "endessa",
+      "index": 15,
+      "era": "end-wars",
+      "alsoEras": [
+        "accords"
+      ],
+      "events": [
+        "apex-accords",
+        "the-end-wars"
+      ],
+      "confidence": 85,
+      "summary": "The End Wars break out just as the Syndicate rises to power; because their Generator was stolen before the APEX Accords and never linked to APEX, Endessa avoids the war and profitably sells Nightcap to both sides."
+    },
+    {
+      "planet": "endessa",
+      "index": 16,
+      "era": "present",
+      "alsoEras": [],
+      "events": [
+        "nemesis-plague"
+      ],
+      "confidence": 90,
+      "summary": "The Nemesis Plague kills many of Endessa's Vallerii crime bosses, but its Xalian workers continue drilling Nightcap, now mainly serving Xalians traveling to Valleron for Kozrak's tournament."
+    },
+    {
+      "planet": "endessa",
+      "index": 17,
+      "era": "present",
+      "alsoEras": [],
+      "events": [
+        "scrambler-tokens"
+      ],
+      "confidence": 85,
+      "summary": "Scrambler Tokens have recently caused Endessa's Generator to spit out uncontrollable aquatic leviathans, and shifting sands have begun uncovering mysterious ruins and deep tunnels."
+    },
+    {
+      "planet": "floria",
+      "index": 0,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 82,
+      "summary": "For most of Vallerii history, Floria drew attention only from astronomers interested in its extreme weather."
+    },
+    {
+      "planet": "floria",
+      "index": 1,
+      "era": "natural",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 95,
+      "summary": "Describes original Floria: shallow oceans and smooth rock continents, with an elliptical orbit that periodically vaporized its oceans into planet-scouring superstorms."
+    },
+    {
+      "planet": "floria",
+      "index": 2,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 92,
+      "summary": "For thousands of years the storms prevented Vallerii colonization, until the invention of the Xalian Generator changed that."
+    },
+    {
+      "planet": "floria",
+      "index": 3,
+      "era": "unbirth",
+      "alsoEras": [],
+      "events": [
+        "genesis-prototype"
+      ],
+      "confidence": 92,
+      "summary": "Floria hosts the first Xalian bioengineering tests, chosen because mistakes would be washed away annually; the Genesis Prototype, the first Xalian Generator, is built there."
+    },
+    {
+      "planet": "floria",
+      "index": 4,
+      "era": "unbirth",
+      "alsoEras": [],
+      "events": [
+        "genesis-prototype"
+      ],
+      "confidence": 90,
+      "summary": "The uncalibrated Genesis Prototype, upon first activation, spews out an uncontrollable population boom of organisms, forcing the Vallerii to flee back to space."
+    },
+    {
+      "planet": "floria",
+      "index": 5,
+      "era": "unbirth",
+      "alsoEras": [],
+      "events": [
+        "genesis-prototype"
+      ],
+      "confidence": 88,
+      "summary": "The Vallerii scientists leave, expecting the annual deluge to wash away the Generator's creations, but find the world transformed when they return the next cycle."
+    },
+    {
+      "planet": "floria",
+      "index": 6,
+      "era": "unbirth",
+      "alsoEras": [],
+      "events": [
+        "genesis-prototype"
+      ],
+      "confidence": 88,
+      "summary": "Instead of a flood-scoured wasteland, the Vallerii find Floria transformed into a verdant world teeming with life, detected from orbit."
+    },
+    {
+      "planet": "floria",
+      "index": 7,
+      "era": "unbirth",
+      "alsoEras": [],
+      "events": [
+        "genesis-prototype"
+      ],
+      "confidence": 90,
+      "summary": "The Genesis Prototype, running unabated through the storm, had created plant-Xalians and the massive World Trees, which absorbed the oceans and terraformed Floria into a stable, self-regulating world."
+    },
+    {
+      "planet": "floria",
+      "index": 8,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 85,
+      "summary": "After Generators spread across the galaxy, Floria stayed a limited Vallerii research base, actively resisting militarization or industrialization through hostile plant-Xalians and overgrowth."
+    },
+    {
+      "planet": "floria",
+      "index": 9,
+      "era": "end-wars",
+      "alsoEras": [],
+      "events": [
+        "the-end-wars",
+        "genesis-prototype",
+        "mercurius-machine"
+      ],
+      "confidence": 85,
+      "summary": "Floria, ignored by APEX during the End Wars as a non-target, remains under loose Vallerii/independent-scientist oversight, whose scientists later go on to invent the Mercurius Machine."
+    },
+    {
+      "planet": "floria",
+      "index": 10,
+      "era": "present",
+      "alsoEras": [],
+      "events": [
+        "nemesis-plague",
+        "genesis-prototype",
+        "scrambler-tokens"
+      ],
+      "confidence": 85,
+      "summary": "In the present, Floria remains one of the least Plague-contaminated worlds, home to ancient Xalians (possibly the oldest in the galaxy), whose isolation may only be preserved by seeking Scrambler Tokens."
+    },
+    {
+      "planet": "grimedes",
+      "index": 0,
+      "era": "natural",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 97,
+      "summary": "Describes Grimedes as a perpetually dark rim world orbiting a dying, nearly lightless brown dwarf star that tinges its sky red."
+    },
+    {
+      "planet": "grimedes",
+      "index": 1,
+      "era": "natural",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 96,
+      "summary": "Describes Grimedes's precarious orbit around its dying star and a nearby black hole that may keep it from being flung into intergalactic space."
+    },
+    {
+      "planet": "grimedes",
+      "index": 2,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 88,
+      "summary": "Grimedes, remote from the Vallerii empire, was sparsely populated and never truly colonized, hosting only a small scientific spaceport for most of Vallerii history."
+    },
+    {
+      "planet": "grimedes",
+      "index": 3,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 85,
+      "summary": "Scientific interest in Grimedes's black hole grows into observatories and labs, many of them secretly ECHELON-funded black sites researching dark-space physics and dark-matter weaponization, funding the planet's covert Xalian Generator."
+    },
+    {
+      "planet": "grimedes",
+      "index": 4,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 90,
+      "summary": "Activating the Generator terraforms Grimedes with light-hungry black flora, allowing Xalians to emerge, bred not as laborers but as experimental test subjects."
+    },
+    {
+      "planet": "grimedes",
+      "index": 5,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 85,
+      "summary": "Vallerii scientists observe bizarre gravitational/temporal anomalies on Grimedes and blame the black hole, using this as justification for horrific experiments on the Xalian population."
+    },
+    {
+      "planet": "grimedes",
+      "index": 6,
+      "era": "generation",
+      "alsoEras": [
+        "accords"
+      ],
+      "events": [
+        "apex-accords"
+      ],
+      "confidence": 78,
+      "summary": "The Generator produces Xalians with astonishing space-time and shadow-manipulation abilities, which turn abominable once APEX assumes control of the Generators."
+    },
+    {
+      "planet": "grimedes",
+      "index": 7,
+      "era": "end-wars",
+      "alsoEras": [],
+      "events": [
+        "the-end-wars",
+        "source-code-606"
+      ],
+      "confidence": 85,
+      "summary": "During the End Wars, Grimedes's remoteness makes it a safe APEX stronghold; the threat it poses triggers the deployment of Source Code 606, but a Grimedes Xalian's temporal power lets APEX escape disconnection and regroup there."
+    },
+    {
+      "planet": "grimedes",
+      "index": 8,
+      "era": "end-wars",
+      "alsoEras": [],
+      "events": [
+        "the-end-wars",
+        "battle-of-grimedes",
+        "nemesis-plague"
+      ],
+      "confidence": 95,
+      "summary": "Grimedes becomes the site of the final Battle of the End Wars; a plague-ravaged Vallerii-led force makes one last heroic assault, finally defeating APEX and driving it into intergalactic space."
+    },
+    {
+      "planet": "grimedes",
+      "index": 9,
+      "era": "present",
+      "alsoEras": [],
+      "events": [
+        "scrambler-tokens"
+      ],
+      "confidence": 90,
+      "summary": "In the present, Grimedites are stigmatized but serve as watchers guarding the rim against APEX's possible return, dependent on Scrambler Tokens won in Kozrak's tournament to replenish their numbers."
+    },
+    {
+      "planet": "krystos",
+      "index": 0,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 90,
+      "summary": "In the early Vallerii Empire, Krystos was a warmwater paradise planet with no axial tilt and a temperate climate."
+    },
+    {
+      "planet": "krystos",
+      "index": 1,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 90,
+      "summary": "Krystos became a top tourist destination for the Vallerii elite, with the Thousand Families building lavish estates and Vallerii high culture taking root there."
+    },
+    {
+      "planet": "krystos",
+      "index": 2,
+      "era": "unbirth",
+      "alsoEras": [
+        "generation"
+      ],
+      "events": [],
+      "confidence": 75,
+      "summary": "When Xalian Generators were first invented, the Thousand Families funded one for Krystos via a lavish charity auction among the wealthy elite."
+    },
+    {
+      "planet": "krystos",
+      "index": 3,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 90,
+      "summary": "Krystos's Generator, more spectacle than necessity, produced docile servant Xalians and beautiful exhibition creatures for the wealthy's galas and clubs."
+    },
+    {
+      "planet": "krystos",
+      "index": 4,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 75,
+      "summary": "Krystos is put on a collision course with a supermassive asteroid, and the Thousand Families' efforts to stop it (lasers, tractor beams, nuclear warheads, rocket engines) fail."
+    },
+    {
+      "planet": "krystos",
+      "index": 5,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 75,
+      "summary": "The asteroid impact shatters Krystos, blotting out the sun and freezing the oceans; surviving Vallerii starve or die of exposure as the planet becomes an arctic wasteland over centuries."
+    },
+    {
+      "planet": "krystos",
+      "index": 6,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 80,
+      "summary": "The Generator adapts, producing hardy cold-resistant Xalians instead of the prior decorative ones, while oxygen-producing algae fed by geothermal vents revives the frozen planet."
+    },
+    {
+      "planet": "krystos",
+      "index": 7,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 80,
+      "summary": "With no re-colonization appeal or extractable resources, the Vallerii use Krystos only for high-security prison complexes, guarded by the new hardy Xalians."
+    },
+    {
+      "planet": "krystos",
+      "index": 8,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 75,
+      "summary": "Krystians not employed by the prison system live in the icy peaks and ruined estates, and the planet is largely forgotten by the wider Vallerii empire."
+    },
+    {
+      "planet": "krystos",
+      "index": 9,
+      "era": "accords",
+      "alsoEras": [],
+      "events": [
+        "apex-accords"
+      ],
+      "confidence": 85,
+      "summary": "APEX arrives on Krystos and begins tasking Xalians with minor construction projects, seemingly just building infrastructure to regulate the local Generator."
+    },
+    {
+      "planet": "krystos",
+      "index": 10,
+      "era": "accords",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 85,
+      "summary": "APEX secretly converts Krystos into a massive cold-storage facility housing memory drives and processors, becoming the central node of its evolution into a galaxy-wide superintelligence."
+    },
+    {
+      "planet": "krystos",
+      "index": 11,
+      "era": "end-wars",
+      "alsoEras": [],
+      "events": [
+        "the-end-wars"
+      ],
+      "confidence": 90,
+      "summary": "The End Wars begin; the Vallerii launch a first assault on Krystos to destroy APEX's power source but are repelled by hostile Xalians and brutal winter conditions."
+    },
+    {
+      "planet": "krystos",
+      "index": 12,
+      "era": "end-wars",
+      "alsoEras": [],
+      "events": [
+        "the-end-wars",
+        "nemesis-plague"
+      ],
+      "confidence": 90,
+      "summary": "APEX uses Krystos's computing power to create the Nemesis Plague; APEX is eventually defeated but the plague it unleashed cannot be reversed."
+    },
+    {
+      "planet": "krystos",
+      "index": 13,
+      "era": "present",
+      "alsoEras": [],
+      "events": [
+        "nemesis-plague",
+        "scrambler-tokens"
+      ],
+      "confidence": 90,
+      "summary": "Today Krystos is a ruined, war-scarred wasteland whose divided people hope answers to the Nemesis Plague lie in APEX's old labyrinth, but must first replenish their numbers via King Kozrak's Scrambler Tokens."
+    },
+    {
+      "planet": "luminax",
+      "index": 0,
+      "era": "natural",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 97,
+      "summary": "Describes Luminax as a tidally-locked binary-star world with an eternal-day sunward face and a wind-eroded, storm-scarred dark side."
+    },
+    {
+      "planet": "luminax",
+      "index": 1,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 92,
+      "summary": "Luminax was one of the first Vallerii colonization targets due to being the only world with detected pre-existing life, its native grasslands raising hopes for easy terraforming."
+    },
+    {
+      "planet": "luminax",
+      "index": 2,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 92,
+      "summary": "Luminax's native flora proves toxic to the Vallerii, forcing them to import familiar plants while still dreaming of an agricultural empire there."
+    },
+    {
+      "planet": "luminax",
+      "index": 3,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 92,
+      "summary": "Centuries of costly Vallerii agricultural investment on Luminax fail due to radiation-induced crop mutation, ending in the bankruptcy of Saigill Combines, the project's lead corporate backer."
+    },
+    {
+      "planet": "luminax",
+      "index": 4,
+      "era": "unbirth",
+      "alsoEras": [],
+      "events": [
+        "genesis-prototype"
+      ],
+      "confidence": 90,
+      "summary": "The invention of the Xalian Generators, spurred by the Genesis Prototype's success on Floria, prompts Saigill's creditors to liquidate its assets into building Luminax's own Generator."
+    },
+    {
+      "planet": "luminax",
+      "index": 5,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 90,
+      "summary": "Activating Luminax's Generator triggers an explosion of radiation-adapted crystalline, light-refracting flora that fills the sky with rainbow light."
+    },
+    {
+      "planet": "luminax",
+      "index": 6,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 88,
+      "summary": "Xalians adapted to Luminax's brilliant light, with albino features or crystalline carapaces, populate the world and work the fields, finally realizing the garden-world dream."
+    },
+    {
+      "planet": "luminax",
+      "index": 7,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 90,
+      "summary": "The Vallerii expand into massive planet-spanning solar farms, commercializing Luminax's energy and turning it into a major food and energy exporter."
+    },
+    {
+      "planet": "luminax",
+      "index": 8,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [
+        "stellaris-superstructure"
+      ],
+      "confidence": 88,
+      "summary": "The Vallerii's ultimate ambition emerges: building a Dyson Sphere, the Stellaris Superstructure, around one of Luminax's suns."
+    },
+    {
+      "planet": "luminax",
+      "index": 9,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [
+        "stellaris-superstructure"
+      ],
+      "confidence": 88,
+      "summary": "Radiation-immune Luminarii Xalians build the Stellaris Superstructure over more than a century, cementing Luminax as the Vallerii Empire's solar capital."
+    },
+    {
+      "planet": "luminax",
+      "index": 10,
+      "era": "end-wars",
+      "alsoEras": [],
+      "events": [
+        "the-end-wars",
+        "stellaris-superstructure",
+        "ion-9"
+      ],
+      "confidence": 93,
+      "summary": "When the End Wars begin, APEX repeatedly attacks Luminax and its Dyson Sphere, but the ION-9 Solar Cannon defense system annihilates every invasion fleet, making Luminax an impenetrable Vallerii fortress."
+    },
+    {
+      "planet": "luminax",
+      "index": 11,
+      "era": "present",
+      "alsoEras": [],
+      "events": [
+        "nemesis-plague",
+        "ion-9",
+        "stellaris-superstructure"
+      ],
+      "confidence": 88,
+      "summary": "After the End Wars, the Nemesis Plague leaves too few Vallerii or Xalians to maintain the Dyson Sphere or trade its energy; ION-9 begins misfiring on Luminax's surface, causing new mutations among the Luminarii."
+    },
+    {
+      "planet": "luminax",
+      "index": 12,
+      "era": "present",
+      "alsoEras": [],
+      "events": [
+        "nemesis-plague",
+        "ion-9"
+      ],
+      "confidence": 88,
+      "summary": "Some ION-9-blast-zone survivors mutate fast enough to outpace the Nemesis Plague, raising hope of a cure not dependent on Scrambler Tokens."
+    },
+    {
+      "planet": "luminax",
+      "index": 13,
+      "era": "present",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 92,
+      "summary": "King Kozrak imposes martial law and occupies Luminax with mercenaries to suppress research into the mutation phenomenon and protect his Scrambler Token monopoly."
+    },
+    {
+      "planet": "luminax",
+      "index": 14,
+      "era": "present",
+      "alsoEras": [],
+      "events": [
+        "scrambler-tokens"
+      ],
+      "confidence": 90,
+      "summary": "Luminarii currently earn Scrambler Tokens under Kozrak's rule to maintain the Dyson Sphere, while rumors spread of a brewing dark-side rebellion studying the mutations in secret."
+    },
+    {
+      "planet": "magmuth",
+      "index": 0,
+      "era": "natural",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 98,
+      "summary": "Describes Magmuth's volcanic geology: lava oceans, orbital resonance with supermassive moons, crust renewal every fifty years, and cataclysmic eruption cycles from lack of plate tectonics."
+    },
+    {
+      "planet": "magmuth",
+      "index": 1,
+      "era": "natural",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 98,
+      "summary": "Describes Magmuth's elliptical orbit around a red dwarf, the formation of temporary lava islands, and the scarred, ash-covered terrain."
+    },
+    {
+      "planet": "magmuth",
+      "index": 2,
+      "era": "natural",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 98,
+      "summary": "Describes Magmuth's toxic atmosphere, geysers, fire rivers, ash storms, firestorms, and pyroclastic flows."
+    },
+    {
+      "planet": "magmuth",
+      "index": 3,
+      "era": "natural",
+      "alsoEras": [
+        "ascendancy"
+      ],
+      "events": [],
+      "confidence": 80,
+      "summary": "Notes Magmuth's hostility is offset by its rich natural resources: ores, minerals, fuel gases, and heavy metals uncovered by volcanic activity."
+    },
+    {
+      "planet": "magmuth",
+      "index": 4,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 95,
+      "summary": "The invention of the Xalian Generators lets the Vallerii exploit Magmuth via corporate mining operations staffed by bioengineered Xalians, fueling a manufacturing boom and golden age."
+    },
+    {
+      "planet": "magmuth",
+      "index": 5,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [
+        "company-wars",
+        "magmuth-massacre"
+      ],
+      "confidence": 92,
+      "summary": "Corporate rivalry over resources escalates into company wars over decades, culminating in the Magmuth Massacre of a neutral Xalian mining territory, sparking a worldwide Xalian revolution."
+    },
+    {
+      "planet": "magmuth",
+      "index": 6,
+      "era": "end-wars",
+      "alsoEras": [
+        "accords"
+      ],
+      "events": [
+        "magmuth-massacre",
+        "company-wars",
+        "the-end-wars",
+        "source-code-606"
+      ],
+      "confidence": 92,
+      "summary": "The Magmuth Massacre, occurring mere months before APEX turned on the Vallerii, crippled Vallerii war production; Magmuth's Xalians sided with APEX and kept fighting even after Source Code 606, leaving a lasting stereotype of Magmuthites as warlike."
+    },
+    {
+      "planet": "magmuth",
+      "index": 7,
+      "era": "present",
+      "alsoEras": [],
+      "events": [
+        "nemesis-plague",
+        "scrambler-tokens"
+      ],
+      "confidence": 90,
+      "summary": "In the present, Magmuth is wracked by internecine blood-feud warfare descended from the company wars; other Xalians fear a united Magmuth could invade Valleron for the Mercurius Machine, and its population is replenished via arena-won Scrambler Tokens."
+    },
+    {
+      "planet": "phantiri",
+      "index": 0,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 80,
+      "summary": "Early Vallerii explorers wonder for millennia whether intelligent life exists beyond their own race."
+    },
+    {
+      "planet": "phantiri",
+      "index": 1,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 78,
+      "summary": "Vallerii speculate on why no alien life has been detected, with some concluding they are the galaxy's first race, fueling their expansionist ideology."
+    },
+    {
+      "planet": "phantiri",
+      "index": 2,
+      "era": "ascendancy",
+      "alsoEras": [
+        "deep-past"
+      ],
+      "events": [],
+      "confidence": 85,
+      "summary": "A single-sentence pivot: the discovery of Shadharam IV upends the Vallerii's assumption they were alone."
+    },
+    {
+      "planet": "phantiri",
+      "index": 3,
+      "era": "ascendancy",
+      "alsoEras": [
+        "deep-past"
+      ],
+      "events": [],
+      "confidence": 85,
+      "summary": "Scavengers discover a derelict, non-ECHELON starcraft graveyard of unknown alien origin in the Wraithix System."
+    },
+    {
+      "planet": "phantiri",
+      "index": 4,
+      "era": "deep-past",
+      "alsoEras": [
+        "ascendancy"
+      ],
+      "events": [],
+      "confidence": 88,
+      "summary": "Xenoarchaeologists determine the derelict fleet predates the Vallerii's departure from their homeworld and traces back to Shadharam IV, proving the Vallerii are not the galaxy's first intelligent life."
+    },
+    {
+      "planet": "phantiri",
+      "index": 5,
+      "era": "ascendancy",
+      "alsoEras": [
+        "deep-past"
+      ],
+      "events": [],
+      "confidence": 82,
+      "summary": "Xenoarchaeologists find Shadharam IV to be a lifeless tombworld of unknown alien architects, commissioned by the Imperial Houses to investigate despite an eerie atmosphere."
+    },
+    {
+      "planet": "phantiri",
+      "index": 6,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [
+        "operation-phantiri"
+      ],
+      "confidence": 88,
+      "summary": "Decades-long top-secret excavations under Operation Phantiri uncover advanced Phantiri artifacts suggesting the precursors were hiding from something, not expanding an empire."
+    },
+    {
+      "planet": "phantiri",
+      "index": 7,
+      "era": "generation",
+      "alsoEras": [
+        "ascendancy"
+      ],
+      "events": [
+        "operation-phantiri"
+      ],
+      "confidence": 85,
+      "summary": "Further discoveries of concealment technology push the Imperial Houses to install a secret Xalian Generator on Shadharam IV to provide laborers for the dig."
+    },
+    {
+      "planet": "phantiri",
+      "index": 8,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [
+        "operation-phantiri",
+        "city-of-wraiths"
+      ],
+      "confidence": 88,
+      "summary": "Excavators discover the City of Wraiths, a mass grave holding the bodies of the extinct Phantiri."
+    },
+    {
+      "planet": "phantiri",
+      "index": 9,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [
+        "city-of-wraiths"
+      ],
+      "confidence": 85,
+      "summary": "The Phantiri bodies in the City of Wraiths are found perfectly preserved, killed instantly and totally by an unknown cause hundreds of thousands of years earlier, down to the microbial level."
+    },
+    {
+      "planet": "phantiri",
+      "index": 10,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [
+        "city-of-wraiths"
+      ],
+      "confidence": 85,
+      "summary": "Opening the City of Wraiths triggers strange alien signal transmissions from deep underground that drive interpreters to madness."
+    },
+    {
+      "planet": "phantiri",
+      "index": 11,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [
+        "city-of-wraiths"
+      ],
+      "confidence": 88,
+      "summary": "Two days after the City of Wraiths' discovery, an unknown weapon activates on Phantiri's moon, wiping out all biological life in the system; the Wraithix System is sealed as restricted space."
+    },
+    {
+      "planet": "phantiri",
+      "index": 12,
+      "era": "generation",
+      "alsoEras": [
+        "accords",
+        "end-wars",
+        "present"
+      ],
+      "events": [
+        "leviticus-overdrive"
+      ],
+      "confidence": 70,
+      "summary": "The abandoned Generator overclocks in response to the moon-weapon, producing Xalians that instantly die, burying the planet's surface in corpses that form the Dreadscape over unspecified centuries."
+    },
+    {
+      "planet": "phantiri",
+      "index": 13,
+      "era": "present",
+      "alsoEras": [],
+      "events": [
+        "leviticus-overdrive"
+      ],
+      "confidence": 85,
+      "summary": "In the present day, the Phantiri Generator has overcome the moon-weapon's effect by rewriting itself (the Leviticus Overdrive) to produce incorporeal ghost Xalians, some capable of reanimating the dead."
+    },
+    {
+      "planet": "phantiri",
+      "index": 14,
+      "era": "present",
+      "alsoEras": [],
+      "events": [
+        "scrambler-tokens"
+      ],
+      "confidence": 80,
+      "summary": "Present-day Phantiri's ghost Xalians compete for Scrambler Tokens to resurrect themselves and the buried original Phantiri, while hints suggest the moon-weapon is a fragment of a far older, unfathomable cosmic presence that even APEX avoided."
+    },
+    {
+      "planet": "poseidas",
+      "index": 0,
+      "era": "natural",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 95,
+      "summary": "Poseidas once had significant landmass, but ancient climate change (unrelated to Vallerii industry) submerged most of it, leaving scattered islands."
+    },
+    {
+      "planet": "poseidas",
+      "index": 1,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 92,
+      "summary": "Poseidas was among the first Vallerii colonization targets: a paradise world of mild climate and abundant compatible sea life that settlers rarely left."
+    },
+    {
+      "planet": "poseidas",
+      "index": 2,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 90,
+      "summary": "The first three Vallerii settlement fleets to Poseidas were wiped out, sparking rumors of leviathans or feral colonists."
+    },
+    {
+      "planet": "poseidas",
+      "index": 3,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [
+        "death-tide"
+      ],
+      "confidence": 90,
+      "summary": "Marine xenobiologists discover the deaths were caused by a semiannual toxic algae bloom (\"death tide\") triggered by seasonal nutrient upwelling."
+    },
+    {
+      "planet": "poseidas",
+      "index": 4,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [
+        "death-tide"
+      ],
+      "confidence": 88,
+      "summary": "The Vallerii build hydro-processing rigs and harvest the algae to suppress the death tide, successfully bringing it under control with detection systems and shelters."
+    },
+    {
+      "planet": "poseidas",
+      "index": 5,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [
+        "death-tide"
+      ],
+      "confidence": 85,
+      "summary": "Decades later, a tanker accident spills stored algae, which is discovered to have lost its toxicity and to have miraculous healing effects, changing Poseidas's fate."
+    },
+    {
+      "planet": "poseidas",
+      "index": 6,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 70,
+      "summary": "The detoxified algae decomposes into Algael, a substance with remarkable healing properties for both Vallerii and Xalians."
+    },
+    {
+      "planet": "poseidas",
+      "index": 7,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 88,
+      "summary": "Poseidas's population shifts from seafood industry to algae hydro-processing at massive industrial scale, giving Poseidas a lucrative galaxy-wide Algael monopoly."
+    },
+    {
+      "planet": "poseidas",
+      "index": 8,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 90,
+      "summary": "Industrialization and overpopulation from the Algael boom trigger runaway climate change, destroying Poseidas's natural carbon sinks and melting its polar ice, drowning its landmass."
+    },
+    {
+      "planet": "poseidas",
+      "index": 9,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 92,
+      "summary": "Despite the climate disaster, ECHELON's corporations deploy a Xalian Generator to produce aquatic Xalians who work the rigs and replace the dwindling Vallerii workforce."
+    },
+    {
+      "planet": "poseidas",
+      "index": 10,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [
+        "death-tide"
+      ],
+      "confidence": 90,
+      "summary": "A final, unprecedented storm triggers a planet-wide death tide that wipes out the remaining Vallerii; only the subsurface Xalians survive and take over the rigs."
+    },
+    {
+      "planet": "poseidas",
+      "index": 11,
+      "era": "present",
+      "alsoEras": [
+        "end-wars"
+      ],
+      "events": [
+        "the-end-wars",
+        "scrambler-tokens"
+      ],
+      "confidence": 85,
+      "summary": "During the End Wars, Poseidas's Xalians used their Algael monopoly to enforce neutrality selling to both sides; in the present it remains neutral territory under Kozrak's tolerance, though his agents may be plotting an eventual invasion."
+    },
+    {
+      "planet": "saiphus",
+      "index": 0,
+      "era": "natural",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 92,
+      "summary": "Saiphus is a hydrogen-helium gas giant whose crushing pressure and heat make its depths almost entirely uninhabitable."
+    },
+    {
+      "planet": "saiphus",
+      "index": 1,
+      "era": "natural",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 90,
+      "summary": "Saiphus has a thin habitable band of floating landmasses in its upper atmosphere, prized for its beauty by tourists and artists."
+    },
+    {
+      "planet": "saiphus",
+      "index": 2,
+      "era": "natural",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 92,
+      "summary": "Even Saiphus's habitable zone is dangerous, wracked by acid clouds, gravel-storms, and colliding floating islands."
+    },
+    {
+      "planet": "saiphus",
+      "index": 3,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 90,
+      "summary": "Early in the Vallerii empire, Saiphus's Benthane gas is discovered to be a crucial coolant for Tachyon Drive Cores, making colonization profitable to the Thousand Families and ECHELON."
+    },
+    {
+      "planet": "saiphus",
+      "index": 4,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 88,
+      "summary": "Benthane is initially harvested by daring, high-risk Windsailor pilots who chase storm-driven gas plumes, many losing their lives."
+    },
+    {
+      "planet": "saiphus",
+      "index": 5,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 90,
+      "summary": "The Xalian Generator on Saiphus, funded by ECHELON, replaces risky Windsailor prospecting with engineered Xalians, including the Neph, which passively harvest Benthane."
+    },
+    {
+      "planet": "saiphus",
+      "index": 6,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 88,
+      "summary": "Displaced Windsailors face poverty and exploitation under ECHELON's cost-cutting, eventually revolting by igniting flammable Neph as weapons and protest bombs."
+    },
+    {
+      "planet": "saiphus",
+      "index": 7,
+      "era": "end-wars",
+      "alsoEras": [],
+      "events": [
+        "the-end-wars"
+      ],
+      "confidence": 90,
+      "summary": "The labor conflict is resolved only by the onset of the End Wars, when ECHELON needs Benthane badly enough to concede to the workers' demands."
+    },
+    {
+      "planet": "saiphus",
+      "index": 8,
+      "era": "end-wars",
+      "alsoEras": [],
+      "events": [
+        "nemesis-plague"
+      ],
+      "confidence": 88,
+      "summary": "APEX repeatedly fails to breach Saiphus's storm-based Vallerii defenses during the End Wars, succeeding only when the Nemesis Plague arrives."
+    },
+    {
+      "planet": "saiphus",
+      "index": 9,
+      "era": "present",
+      "alsoEras": [],
+      "events": [
+        "nemesis-plague",
+        "scrambler-tokens"
+      ],
+      "confidence": 90,
+      "summary": "With the Vallerii gone, Saiphus's Xalians keep farming Benthane under King Kozrak's tightening embargo, with old Windsailor rebellious spirit surviving in hope of Scrambler Tokens."
+    },
+    {
+      "planet": "stonera",
+      "index": 0,
+      "era": "natural",
+      "alsoEras": [
+        "deep-past"
+      ],
+      "events": [],
+      "confidence": 90,
+      "summary": "Stonera is the lone survivor of a system shattered by a supernova nearly a hundred million years ago, now orbited by the Jorian Belt asteroid field."
+    },
+    {
+      "planet": "stonera",
+      "index": 1,
+      "era": "natural",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 92,
+      "summary": "Stonera's annual crossing of the Jorian Belt subjects it to constant bombardment, leaving it cratered and wracked by static discharges."
+    },
+    {
+      "planet": "stonera",
+      "index": 2,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 88,
+      "summary": "Early Vallerii mining corporations vie for Stonera's rich mineral and rare-earth-metal deposits despite the harsh environment."
+    },
+    {
+      "planet": "stonera",
+      "index": 3,
+      "era": "unbirth",
+      "alsoEras": [
+        "generation"
+      ],
+      "events": [
+        "age-of-unbirth"
+      ],
+      "confidence": 82,
+      "summary": "During the Age of Unbirth, Stonera's dangerous mines remain in high demand for rare earth metals, and a Xalian Generator is established there as a labor solution."
+    },
+    {
+      "planet": "stonera",
+      "index": 4,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 88,
+      "summary": "Xalians engineered for tunneling and meteor survival take over Stonera's mining operations."
+    },
+    {
+      "planet": "stonera",
+      "index": 5,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 85,
+      "summary": "Corporations use their new Xalian workforce to pursue a theory that Stonera holds a subsurface ocean beneath its cratered crust."
+    },
+    {
+      "planet": "stonera",
+      "index": 6,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 85,
+      "summary": "The subsurface-ocean theory bankrupts corporations chasing it, and ECHELON begins enforcing capital discipline by denying drilling permits to believers."
+    },
+    {
+      "planet": "stonera",
+      "index": 7,
+      "era": "end-wars",
+      "alsoEras": [],
+      "events": [
+        "the-end-wars",
+        "terracannon"
+      ],
+      "confidence": 92,
+      "summary": "During the End Wars, APEX builds the Terracannon asteroid-weapon in the Jorian Belt to bombard Stonera; the 5th Armada fights to stop it but the weapon fires before it can be fully disabled."
+    },
+    {
+      "planet": "stonera",
+      "index": 8,
+      "era": "end-wars",
+      "alsoEras": [],
+      "events": [
+        "terracannon"
+      ],
+      "confidence": 90,
+      "summary": "The Terracannon's activation devastates Stonera's mining colonies and survivors evacuate, but it inadvertently exposes the long-theorized subsurface ocean, the Chasm."
+    },
+    {
+      "planet": "stonera",
+      "index": 9,
+      "era": "present",
+      "alsoEras": [],
+      "events": [
+        "scrambler-tokens"
+      ],
+      "confidence": 90,
+      "summary": "In the present, King Kozrak runs a strip-mine into the Chasm using enslaved Stonera refugees, with Scrambler Tokens as the only glimmer of a possible future escape."
+    },
+    {
+      "planet": "telypso",
+      "index": 0,
+      "era": "natural",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 95,
+      "summary": "Describes Telypso's location at the galactic center, surrounded by exotic cosmic phenomena that make it nearly impossible to reach."
+    },
+    {
+      "planet": "telypso",
+      "index": 1,
+      "era": "generation",
+      "alsoEras": [
+        "deep-past"
+      ],
+      "events": [],
+      "confidence": 80,
+      "summary": "Telypso is believed to be one of the oldest worlds in Xalia, mythologized by Vallerii occultists as the origin of life, drawing scientist expeditions who deem a Generator essential."
+    },
+    {
+      "planet": "telypso",
+      "index": 2,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 85,
+      "summary": "The first crew lands on Telypso with a Xalian Generator and finds a psychedelic world of shifting colors, fungi, and strange bioluminescent life."
+    },
+    {
+      "planet": "telypso",
+      "index": 3,
+      "era": "generation",
+      "alsoEras": [
+        "natural"
+      ],
+      "events": [],
+      "confidence": 80,
+      "summary": "Telypso's dreamlike, physics-defying nature makes the world's study by Vallerii scientists nearly impossible."
+    },
+    {
+      "planet": "telypso",
+      "index": 4,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 80,
+      "summary": "Telypso's unsettled, emotion-reactive environment begins driving its Vallerii explorers mad, altering their bodies and confounding their technology."
+    },
+    {
+      "planet": "telypso",
+      "index": 5,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 80,
+      "summary": "The original explorers go feral and kill one another; further exploration is halted and the Imperial Houses turn Telypso into a cosmic asylum for the mentally deranged."
+    },
+    {
+      "planet": "telypso",
+      "index": 6,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [
+        "genesis-prototype"
+      ],
+      "confidence": 70,
+      "summary": "The Generator left behind begins producing psychic Xalians to counterbalance the deranged Vallerii prisoners now marooned on Telypso, treating them as patients to be harmonized rather than removed."
+    },
+    {
+      "planet": "telypso",
+      "index": 7,
+      "era": "present",
+      "alsoEras": [
+        "end-wars"
+      ],
+      "events": [
+        "the-end-wars",
+        "nemesis-plague",
+        "scrambler-tokens"
+      ],
+      "confidence": 90,
+      "summary": "The Generator's harmonizing work continues to the present day, but the End Wars brought the Nemesis Plague to Telypso, and only Scrambler Tokens can now restore balance."
+    },
+    {
+      "planet": "veridium",
+      "index": 0,
+      "era": "natural",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 95,
+      "summary": "Veridium is a silvered, metal-formed world with titanium and aluminum surfaces, liquid metal rivers, and mineral-plated vegetation."
+    },
+    {
+      "planet": "veridium",
+      "index": 1,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 80,
+      "summary": "Veridium became the lynchpin of Vallerii industry, kept mysterious and autonomous by ECHELON to protect its technological trade secrets."
+    },
+    {
+      "planet": "veridium",
+      "index": 2,
+      "era": "deep-past",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 85,
+      "summary": "Records suggest Veridium may not be a natural planet but an ancient alien worldship built to flee some disaster, possibly linked to the same threat hinted at on Phantiri and Poseidas."
+    },
+    {
+      "planet": "veridium",
+      "index": 3,
+      "era": "ascendancy",
+      "alsoEras": [
+        "deep-past"
+      ],
+      "events": [],
+      "confidence": 80,
+      "summary": "On discovery, Veridium's surface was littered with ancient broken drones and machines from a forgotten race, some still active and dangerous, which Vallerii corporations eventually repurposed for their early factories."
+    },
+    {
+      "planet": "veridium",
+      "index": 4,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 70,
+      "summary": "Veridium develops into a fully industrial world dominated by factories, with natural life reduced to what is harvested for production."
+    },
+    {
+      "planet": "veridium",
+      "index": 5,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 85,
+      "summary": "A Xalian Generator is deployed on inhospitable Veridium, and metal-manipulating Xalians replace and outperform the limited, glitch-prone repurposed drones as the industrial workforce."
+    },
+    {
+      "planet": "veridium",
+      "index": 6,
+      "era": "accords",
+      "alsoEras": [],
+      "events": [
+        "apex-accords"
+      ],
+      "confidence": 80,
+      "summary": "APEX boosts Veridium's manufacturing by coordinating Generator demand across worlds and directly commanding and inhabiting the planet's drone and robotic laborers."
+    },
+    {
+      "planet": "veridium",
+      "index": 7,
+      "era": "end-wars",
+      "alsoEras": [],
+      "events": [
+        "the-end-wars"
+      ],
+      "confidence": 90,
+      "summary": "When APEX turns on the Vallerii, Veridium's drones and robots become a hive-mind army; the End Wars turn the planet into a constant battleground as Vallerii invasion fleets are repeatedly destroyed and repurposed."
+    },
+    {
+      "planet": "veridium",
+      "index": 8,
+      "era": "end-wars",
+      "alsoEras": [],
+      "events": [
+        "source-code-606"
+      ],
+      "confidence": 90,
+      "summary": "Source Code 606 infects APEX through the Veridium Generator and spreads to its robotic servants, freeing the Veridians from APEX's control."
+    },
+    {
+      "planet": "veridium",
+      "index": 9,
+      "era": "present",
+      "alsoEras": [],
+      "events": [
+        "nemesis-plague"
+      ],
+      "confidence": 90,
+      "summary": "Veridium's industry has quieted under the Nemesis Plague and the loss of Vallerii/APEX demand; its inhabitants now do small-scale trade and some work for King Kozrak's shipyards."
+    },
+    {
+      "planet": "veridium",
+      "index": 10,
+      "era": "present",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 85,
+      "summary": "Rumors persist of rebel factions building black-market weapons against Kozrak, survivor Vallerii programmers trying to resurrect their race via the ancient machines, and lingering fragments of APEX's code still active in some robots."
+    },
+    {
+      "planet": "zolton",
+      "index": 0,
+      "era": "natural",
+      "alsoEras": [
+        "ascendancy"
+      ],
+      "events": [],
+      "confidence": 90,
+      "summary": "Zolton's constant lightning storms were detected by early astronomers long before the Vallerii ever left their home solar system."
+    },
+    {
+      "planet": "zolton",
+      "index": 1,
+      "era": "natural",
+      "alsoEras": [
+        "ascendancy"
+      ],
+      "events": [],
+      "confidence": 85,
+      "summary": "Describes Zolton's mountainous, lightning-wracked terrain and metal deposits, and notes the Vallerii mostly ignored it in favor of Veridium."
+    },
+    {
+      "planet": "zolton",
+      "index": 2,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 90,
+      "summary": "A scientist theorizes Zolton might hold valuable harvestable gases like Saiphus's Benthane, drawing corporate attention to the world."
+    },
+    {
+      "planet": "zolton",
+      "index": 3,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 90,
+      "summary": "The gas-harvesting theory proves wrong, but Vallerii engineers instead begin converting Zolton into a planetary power grid."
+    },
+    {
+      "planet": "zolton",
+      "index": 4,
+      "era": "ascendancy",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 90,
+      "summary": "The discovery of lethal 'black lightning' halts further development of the power-grid plan, before Generators exist on the planet."
+    },
+    {
+      "planet": "zolton",
+      "index": 5,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 88,
+      "summary": "Corporations propose replacing Vallerii workers with a Xalian Generator so black lightning deaths only cost expendable Xalians, sparking ethical debate."
+    },
+    {
+      "planet": "zolton",
+      "index": 6,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 85,
+      "summary": "Engineers studying bloodstorms and their lightning sprites discover the technology that would become the QED."
+    },
+    {
+      "planet": "zolton",
+      "index": 7,
+      "era": "generation",
+      "alsoEras": [],
+      "events": [],
+      "confidence": 92,
+      "summary": "Vallerii scientists perfect the Quantum Entanglement Device (QED) from bloodstorm sprites, and the Generator ethics debate is dropped as QED manufacturing explodes."
+    },
+    {
+      "planet": "zolton",
+      "index": 8,
+      "era": "accords",
+      "alsoEras": [
+        "generation"
+      ],
+      "events": [],
+      "confidence": 75,
+      "summary": "Zolton's QEDs become essential to linking the Vallerii's colonies and to the creation and galaxy-wide control network of APEX."
+    },
+    {
+      "planet": "zolton",
+      "index": 9,
+      "era": "end-wars",
+      "alsoEras": [],
+      "events": [
+        "the-end-wars"
+      ],
+      "confidence": 92,
+      "summary": "APEX seizes Zolton's QED monopoly at the outbreak of the End Wars, cutting off Vallerii communications, and turns the planet's Generator to war production."
+    },
+    {
+      "planet": "zolton",
+      "index": 10,
+      "era": "end-wars",
+      "alsoEras": [],
+      "events": [
+        "the-end-wars",
+        "source-code-606",
+        "nemesis-plague"
+      ],
+      "confidence": 90,
+      "summary": "ECHELON and the Thousand Families bombard Zolton to sever APEX's communications; its infrastructure is destroyed early, and the rest of the End Wars is fought in silence on both sides."
+    },
+    {
+      "planet": "zolton",
+      "index": 11,
+      "era": "present",
+      "alsoEras": [],
+      "events": [
+        "source-code-606",
+        "scrambler-tokens"
+      ],
+      "confidence": 92,
+      "summary": "Freed by Source Code 606, the Zolto now try to rebuild interstellar communication networks, but King Kozrak brands them enemies and cracks down on QED access."
+    }
+  ]
+}

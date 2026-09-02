@@ -1,6 +1,6 @@
-# Registry definitions (draft v6 for Nick's sign-off, 2026-09-02)
+# Registry definitions (ratified by Nick 2026-09-02)
 
-Every enum an agent can assign in a species template, with a definition per value and the selection rule an agent needs when a body fits more than one. Values are the ratified sets (design doc, second ring 2026-08-30, communication re-ratified 2026-09-01, anatomy 2026-09-01, trait model 2026-09-02); no value is added, dropped, or renamed here. What is new is the definitions and the selection rules. Once ratified this text replaces section 5.5 of the migrate-species skill; the 34 anatomy keys and 7 channels stay in section 5.6 and are only cross-referenced here.
+Every enum an agent can assign in a species template, with a definition per value and the selection rule an agent needs when a body fits more than one. Values are the ratified sets (design doc, second ring 2026-08-30, communication re-ratified 2026-09-01, anatomy 2026-09-01, trait model 2026-09-02); no value is added, dropped, or renamed here. What is new is the definitions and the selection rules. This text is section 5.5 of the migrate-species skill verbatim; the 34 anatomy keys and 7 channels stay in section 5.6 and are only cross-referenced here. Five blind validation passes preceded ratification (reports: registry-definitions-validation*.md).
 
 Rules that apply to every enum:
 

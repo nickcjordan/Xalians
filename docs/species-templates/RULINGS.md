@@ -21,3 +21,7 @@ Per-species decisions that a migration agent cannot derive from the sources alon
 ## Tetrahive
 
 - 2026-09-02: a central bat-like creature with a mind that conjures a swarm of ghost-like familiars (the art shows one large winged body with clawed hands, a long curled tail, pointed ears, and eyes, surrounded by many small bat familiars). The familiars are projections that phase away. It has wings. Body plan: Nick, later the same day: a creature whose whole way of fighting is a cloud of units reads as swarm rather than avian, so bodyPlan is swarm and the central body's wings, claws and tail stay in anatomy (applied when the registry definitions are ratified).
+
+## Registry definitions
+
+- 2026-09-02: `docs/species-templates/REGISTRY-DEFINITIONS.md` ratified after five blind passes; `sessile` declined; Xylum is `multiped` with burrow movement; Tetrahive `bodyPlan` is `swarm`.
