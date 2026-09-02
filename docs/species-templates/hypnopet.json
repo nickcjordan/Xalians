@@ -16,11 +16,11 @@
     "composition": {
       "primary": "flesh"
     },
-    "bodyPlan": "biped",
+    "bodyPlan": "quadruped",
     "anatomy": [
       "crest",
-      "claws",
-      "hide"
+      "hide",
+      "body"
     ],
     "covering": "fur",
     "size": {
@@ -37,7 +37,7 @@
     "genome": {
       "chirality": "rolled"
     },
-    "diet": "herbivore",
+    "diet": "omnivore",
     "communication": [
       "telepathic",
       "display",
@@ -157,7 +157,7 @@
       "healing": 100,
       "hypnotic": 100,
       "protective": 70,
-      "inspiring": 55,
+      "inspiring": 25,
       "luminous": 60,
       "perceptive": 45,
       "mind-sealed": 30,
@@ -169,8 +169,7 @@
   },
   "instruments": [
     "crest",
-    "mind",
-    "claws"
+    "mind"
   ],
   "signatureAbility": {
     "name": "Psychedelic Reverie",
