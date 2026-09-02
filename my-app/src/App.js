@@ -57,6 +57,7 @@ const TrainingGroundsPage = lazy(() => import('./pages/trainingGroundsPage'));
 const DuelPage = lazy(() => import('./pages/games/duelPage'));
 const DuelStartPage = lazy(() => import('./pages/games/duelStartPage'));
 const DuelPlaygroundPage = lazy(() => import('./pages/games/duelPlaygroundPage'));
+const EncyclopediaPage = lazy(() => import('./pages/encyclopediaPage'));
 
 
 class App extends React.Component {
@@ -83,6 +84,7 @@ class App extends React.Component {
                 />
               <Route exact path="/planets"><PlanetPage /></Route>
               <Route exact path="/glossary"><GlossaryPage /></Route>
+              <Route path="/encyclopedia"><EncyclopediaPage /></Route>
               {/* the design system reference - unlinked from the navbar, it is a
                   developer tool rather than a page for players */}
               <Route exact path="/styleguide"><StyleGuidePage /></Route>

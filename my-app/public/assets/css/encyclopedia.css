@@ -1,0 +1,226 @@
+/* =========================================================================
+   ENCYCLOPEDIA XALIA — page-level compositions for /encyclopedia.
+   Built only from system.css parts and --g-* tokens. No raw colour here.
+   Shared rules first (shell, search, prose, hover card, layout helpers);
+   each section owns a block below, prefixed .enc-<section>-.
+   Contract: docs/design/xalian-encyclopedia-page.md
+   ========================================================================= */
+
+/* ---- shell ------------------------------------------------------------- */
+
+.enc-masthead {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: var(--g-6);
+	flex-wrap: wrap;
+	margin-bottom: var(--g-5);
+}
+
+.enc-masthead-text { min-width: 0; }
+
+.enc-title { margin: var(--g-1) 0 0; }
+
+.enc-version {
+	margin: var(--g-2) 0 0;
+	font-size: var(--g-size-tiny);
+	color: var(--g-ink-low);
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+}
+
+.enc-sections {
+	margin-bottom: var(--g-7);
+	flex-wrap: wrap;
+}
+
+.enc-sections .g-segment {
+	text-decoration: none;
+}
+
+.enc-body { min-height: 40vh; }
+
+/* ---- search ------------------------------------------------------------ */
+
+.enc-search {
+	position: relative;
+	flex: 0 1 420px;
+	min-width: 240px;
+	margin: 0;
+}
+
+.enc-search-input { width: 100%; }
+
+.enc-search-screen {
+	position: absolute;
+	top: calc(100% + var(--g-2));
+	right: 0;
+	left: 0;
+	z-index: var(--g-layer-nav);
+	max-height: 60vh;
+	overflow-y: auto;
+	padding: var(--g-3) var(--g-4);
+}
+
+.enc-search-group + .enc-search-group { margin-top: var(--g-3); }
+
+.enc-search-hit {
+	display: block;
+	text-decoration: none;
+	color: inherit;
+	padding: var(--g-1) 0;
+}
+
+.enc-search-hit:hover,
+.enc-search-hit:focus-visible {
+	background: var(--g-phosphor-a20);
+	outline: none;
+}
+
+.enc-search-hit-title { font-weight: 600; }
+
+.enc-search-hit-snippet {
+	opacity: 0.75;
+	font-size: var(--g-size-tiny);
+}
+
+/* ---- prose and terms --------------------------------------------------- */
+
+.enc-prose { max-width: var(--g-measure); }
+
+.enc-term { font-weight: 500; }
+
+.enc-hover { position: relative; }
+
+.enc-hover-card {
+	position: absolute;
+	left: 0;
+	top: calc(100% + var(--g-2));
+	z-index: var(--g-layer-nav);
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-1);
+	width: 320px;
+	max-width: 80vw;
+	padding: var(--g-3) var(--g-4);
+	font-size: var(--g-size-small);
+	line-height: 1.45;
+	text-align: left;
+	pointer-events: none;
+}
+
+.enc-hover-cat { margin: 0; }
+
+.enc-hover-title {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-h3);
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+	color: var(--g-ink);
+}
+
+.enc-hover-def { color: var(--g-ink-mid); }
+
+/* ---- shared layout helpers -------------------------------------------- */
+
+/* A catalogue: full-width grid of tiles on the left rail. */
+.enc-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+	gap: var(--g-4);
+}
+
+/* A record: plate on the left, printed data beside it. */
+.enc-record {
+	display: grid;
+	grid-template-columns: minmax(240px, 360px) minmax(0, 1fr);
+	gap: var(--g-6);
+	align-items: start;
+}
+
+@media (max-width: 900px) {
+	.enc-record { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* The designation strip across the top of a record. */
+.enc-designation {
+	display: flex;
+	align-items: baseline;
+	gap: var(--g-4);
+	flex-wrap: wrap;
+	margin-bottom: var(--g-5);
+}
+
+.enc-designation .g-title { margin: 0; }
+
+.enc-chips {
+	display: flex;
+	gap: var(--g-2);
+	flex-wrap: wrap;
+}
+
+.enc-section { margin-top: var(--g-7); }
+
+.enc-section-head {
+	display: flex;
+	align-items: baseline;
+	gap: var(--g-3);
+	margin-bottom: var(--g-4);
+}
+
+.enc-section-head .g-h2 { margin: 0; }
+
+.enc-count {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-small);
+	color: var(--g-ink-low);
+	font-variant-numeric: tabular-nums;
+}
+
+.enc-filters {
+	display: flex;
+	gap: var(--g-4);
+	flex-wrap: wrap;
+	align-items: center;
+	margin-bottom: var(--g-5);
+}
+
+.enc-back {
+	display: inline-block;
+	margin-bottom: var(--g-4);
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+	color: var(--g-ink-mid);
+	text-decoration: none;
+}
+
+.enc-back:hover { color: var(--g-ink); }
+
+/* Anchor quotes and machine output print in mono. */
+.enc-quote {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-small);
+	font-variant-numeric: tabular-nums;
+}
+
+/* ---- reading room ------------------------------------------------------ */
+
+/* ---- galaxy map -------------------------------------------------------- */
+
+/* ---- chronicle --------------------------------------------------------- */
+
+/* ---- worlds ------------------------------------------------------------ */
+
+/* ---- bestiary ---------------------------------------------------------- */
+
+/* ---- powers ------------------------------------------------------------ */
+
+/* ---- index ------------------------------------------------------------- */
+
+/* ---- reduced motion ---------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+	.enc-console * { transition: none !important; animation: none !important; }
+}
