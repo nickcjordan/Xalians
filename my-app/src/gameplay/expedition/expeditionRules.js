@@ -1039,13 +1039,13 @@ function performAct(state, entry, action) {
 			return;
 		}
 		const everyone = entriesSnapshot.filter((e) => e.siteId === targetSiteId && e.recordId !== entry.recordId);
+		// the summary event opens the act, then one event per creature caught in the
+		// area, so narration and the simulator see each stagger and rout in order
+		logEvent(state, { recordId: entry.recordId, action, site: targetSiteId, outcome: 'area-struck', hitCount: everyone.length });
 		everyone.forEach((victim) => {
 			applyStrikeToTarget(state, entry, act, victim);
-			// one event per creature caught in the area, so narration and the simulator
-			// see each stagger and rout; the summary event below closes the act
 			logEvent(state, { recordId: entry.recordId, action, target: victim.recordId, outcome: state._lastStrikeOutcome, areaHit: true });
 		});
-		logEvent(state, { recordId: entry.recordId, action, site: targetSiteId, outcome: 'area-struck', hitCount: everyone.length });
 		return;
 	}
 
