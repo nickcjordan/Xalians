@@ -344,9 +344,9 @@ if (T) {
     mind: () => T.element === 'psychic' || (Array.isArray(S.special) && S.special.includes('psychic')) || g.includes('telekinetic') || g.includes('hypnotic'),
     voice: () => Array.isArray(P.communication) && P.communication.includes('vocal'),
     breath: () => Array.isArray(P.breathes) && P.breathes.length > 0,
-    swarm: () => P.bodyPlan === 'swarm',
     gaze: () => isBand(S.sight) && S.sight[1] > 0,
   };
+  if (I.includes('swarm') && P.bodyPlan !== 'swarm') warn('instruments.predicate.source', 'channel "swarm" with a non-swarm body plan means a conjured familiar swarm; the validator agent must confirm the description or art shows one');
   for (const inst of I) {
     if (ANATOMY.includes(inst)) { if (anatomyOk && !P.anatomy.includes(inst)) fail('instruments.anatomy', 'physical instrument "' + inst + '" is not in anatomy'); }
     else if (CHANNELS.includes(inst)) {
