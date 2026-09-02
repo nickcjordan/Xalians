@@ -1,6 +1,6 @@
 {
   "version": "0.1.0-draft",
-  "note": "Derived structural data for the Chronicle: eras, ordered events, and era tags for every planet-history paragraph. Ordering is relative; canon has no dates. Pending Nick's ratification.",
+  "note": "Derived structural data for the Chronicle: eras, ordered events, and era tags for every planet-history paragraph. Ordering is relative; canon has no dates, and the Chronicle stays undated by ruling (Nick, 2026-09-02). Rulings and their basis: docs/design/xalian-chronicle.md.",
   "eras": [
     {
       "key": "deep-past",
