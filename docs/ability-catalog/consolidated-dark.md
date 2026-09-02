@@ -49,7 +49,7 @@ Supersedes v2 (198 names, single-composer class-rejection run). Pipeline per the
 - **Stasis family extension:** the new mend keeps Stasis Heal/Mend/Restore carry (dual: ice) by the ratified Stasis-family ruling.
 - **Kept with a note:** bare Abyss compounds (Abyss Dread, Abyss Terror) stay dark — the standing water ruling covers the ABYSSAL adjective family (ocean-floor sense); the bare noun abyss is dark's void chasm.
 - **Settled duals verified intact, dark-owned:** Stasis / Stasis Snare / Stasis Ward (dual: ice), Supernova (dual: light), Vortex / Vortex Lash / Tidal Lash (dual: water). Tidal Snare and newer Tidal-family names remain water-owned cross-references.
-- **Ratified cuts verified still cut:** Gravity Anchor, Anchor Snare, bare Chrono, time-reversal implications, Dense Wallop, Singularity Fling, Warp Tangle, Void Rake, Gravity Rake, Leaden Blow, Void Torrent, Void Ebb, Abyssal Presence, Void Miasma, Entropy Murk, Gravity Haze, Nova standalone, Void Bastion, Warp Deflect, Time Rally, Inertial Recovery, Gravity Settle. Point of No Return remains signature-register (Graviclaw's signature).
+- **Ratified cuts verified still cut:** Gravity Anchor, Anchor Snare, bare Chrono, time-reversal implications, Dense Wallop, Singularity Fling, Warp Tangle, Void Rake, Gravity Rake, Leaden Blow, Void Torrent, Void Ebb, Abyssal Presence, Void Miasma, Entropy Murk, Gravity Haze, Nova standalone, Void Bastion, Warp Deflect, Time Rally, Inertial Recovery, Gravity Settle. Point of No Return remains signature-register (Graviclaw's signature; ratified 2026-09-01: pincers / snare / dark).
 
 ## Notes
 
