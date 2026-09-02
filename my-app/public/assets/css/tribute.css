@@ -1,0 +1,383 @@
+/**
+ * TRIBUTE — page-specific layout for /tribute.
+ *
+ * Every colour here comes from a --g-* token (structural) or --g-el (element in
+ * scope on a tagged container) - no raw hex, per docs/DESIGN_SYSTEM.md rule 1. The
+ * board is one centred document sized to its content (rule: "Page width"), so the
+ * shell is narrowed rather than the panels inside it.
+ */
+
+.tribute-shell {
+	max-width: 1100px;
+	padding-bottom: var(--g-9);
+}
+
+/* -------------------------------------------------------------------------
+   START SCREEN
+   ------------------------------------------------------------------------- */
+
+.tribute-intro-panel {
+	padding: var(--g-6);
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-5);
+}
+
+.tribute-rules-screen {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+}
+
+.tribute-intro-actions {
+	display: flex;
+	justify-content: flex-start;
+}
+
+/* -------------------------------------------------------------------------
+   MATCH SHELL
+   ------------------------------------------------------------------------- */
+
+.tribute-match {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-5);
+}
+
+/* -------------------------------------------------------------------------
+   STATUS STRIP
+   ------------------------------------------------------------------------- */
+
+.tribute-status-strip {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--g-5);
+	padding: var(--g-4) var(--g-5);
+}
+
+.tribute-status-block {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-1);
+	align-items: center;
+}
+
+.tribute-status-label {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-tiny);
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+	color: var(--g-ink-mid);
+}
+
+.tribute-status-value {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-lead);
+	color: var(--g-ink);
+}
+
+.tribute-status-lamps {
+	display: flex;
+	gap: var(--g-2);
+}
+
+.tribute-status-screen {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--g-1);
+	padding: var(--g-3) var(--g-4);
+	min-width: 96px;
+}
+
+.tribute-status-decrees {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--g-2);
+	margin-left: auto;
+}
+
+.tribute-decree-chip--used {
+	text-decoration: line-through;
+	opacity: 0.55;
+}
+
+/* -------------------------------------------------------------------------
+   NOTICES
+   ------------------------------------------------------------------------- */
+
+.tribute-transient-notice,
+.tribute-waiting-note {
+	margin: 0;
+}
+
+/* -------------------------------------------------------------------------
+   MULLIGAN
+   ------------------------------------------------------------------------- */
+
+.tribute-mulligan-panel {
+	padding: var(--g-5);
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-4);
+}
+
+.tribute-mulligan-actions {
+	display: flex;
+	justify-content: flex-start;
+}
+
+/* -------------------------------------------------------------------------
+   BOARD
+   ------------------------------------------------------------------------- */
+
+.tribute-board {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+}
+
+.tribute-board-bot-hand {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--g-2);
+	padding: 0 var(--g-2) var(--g-2);
+}
+
+.tribute-row {
+	display: grid;
+	grid-template-columns: 100px 1fr 56px;
+	align-items: center;
+	gap: var(--g-3);
+	padding: var(--g-3) var(--g-4);
+	transition: border-color 120ms steps(2);
+}
+
+.tribute-row-label {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+	color: var(--g-ink-mid);
+}
+
+.tribute-row-cards {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--g-2);
+	min-height: 40px;
+}
+
+.tribute-row-empty {
+	font-family: var(--g-font-mono);
+	color: var(--g-ink-low);
+}
+
+.tribute-row-total {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-lead);
+	color: var(--g-ink);
+	text-align: right;
+}
+
+.tribute-row-decree-chip {
+	margin-left: var(--g-2);
+}
+
+/* a decreed row gets a coloured edge in the decree's element - the hazard-style
+   "target" edge stays reserved for legal-target highlighting below */
+.tribute-row--decreed {
+	border-left: 3px solid var(--g-el);
+}
+
+/* a row that is a legal target for the selected card/decree: a visible hazard
+   edge, never a glow on the panel itself (rule 2) */
+.tribute-row--target {
+	cursor: pointer;
+	border-color: var(--g-hazard);
+	border-width: var(--g-hairline);
+	box-shadow: inset 0 0 0 1px var(--g-hazard);
+}
+
+/* -------------------------------------------------------------------------
+   HAND + CONTROLS
+   ------------------------------------------------------------------------- */
+
+.tribute-hand-area {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-4);
+}
+
+.tribute-hand-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--g-3);
+}
+
+.tribute-hand-controls {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--g-3);
+	align-items: center;
+}
+
+.tribute-decree-selected {
+	transform: translateY(1px);
+	box-shadow: inset 0 0 0 1px var(--g-el);
+}
+
+/* -------------------------------------------------------------------------
+   CARD FACE
+   ------------------------------------------------------------------------- */
+
+.tribute-card {
+	text-align: left;
+	cursor: pointer;
+	font-family: inherit;
+}
+
+.tribute-card--full {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+	padding: var(--g-3);
+	width: 156px;
+	/* the element band: painted along the top edge, where a dossier carries its stamp */
+	border-top: 4px solid var(--g-el);
+}
+
+.tribute-card--selected {
+	transform: translateY(-6px);
+	box-shadow: 0 6px 0 var(--g-seam);
+}
+
+.tribute-card-name {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	color: var(--g-ink);
+	letter-spacing: 0.02em;
+}
+
+.tribute-card-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--g-1);
+}
+
+.tribute-card-archetype {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-tiny);
+	color: var(--g-ink-mid);
+	text-transform: uppercase;
+}
+
+.tribute-card-cells {
+	display: flex;
+	justify-content: space-between;
+	gap: var(--g-2);
+	margin-top: var(--g-1);
+}
+
+.tribute-card-cell-group {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2px;
+}
+
+.tribute-card-cell-label {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-low);
+	letter-spacing: var(--g-track-label);
+}
+
+.tribute-card-cell {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-body);
+	color: var(--g-ink);
+	font-variant-numeric: tabular-nums;
+}
+
+.tribute-card-cell--ineligible {
+	color: var(--g-ink-low);
+}
+
+/* -------------------------------------------------------------------------
+   COMPACT CARD (on the board)
+   ------------------------------------------------------------------------- */
+
+.tribute-card--compact {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--g-2);
+	padding: var(--g-1) var(--g-2);
+	cursor: default;
+	border-left: 4px solid var(--g-el);
+}
+
+.tribute-card-compact-name {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-tiny);
+	color: var(--g-ink);
+	white-space: nowrap;
+}
+
+.tribute-card-compact-value {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-small);
+	color: var(--g-el);
+	font-variant-numeric: tabular-nums;
+}
+
+.tribute-card--back {
+	display: inline-block;
+	width: 28px;
+	height: 40px;
+	border-radius: var(--g-radius);
+	background: repeating-linear-gradient(
+		45deg,
+		var(--g-hull-hi),
+		var(--g-hull-hi) 4px,
+		var(--g-hull) 4px,
+		var(--g-hull) 8px
+	);
+	border: var(--g-hairline) solid var(--g-seam);
+	box-shadow: inset 0 1px 0 var(--g-bevel-light);
+}
+
+/* -------------------------------------------------------------------------
+   LOG
+   ------------------------------------------------------------------------- */
+
+.tribute-log {
+	max-height: 220px;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+/* -------------------------------------------------------------------------
+   RESPONSIVE
+   ------------------------------------------------------------------------- */
+
+@media (max-width: 720px) {
+	.tribute-row {
+		grid-template-columns: 72px 1fr 40px;
+		gap: var(--g-2);
+	}
+
+	.tribute-card--full {
+		width: 132px;
+	}
+
+	.tribute-status-decrees {
+		margin-left: 0;
+		width: 100%;
+	}
+}
