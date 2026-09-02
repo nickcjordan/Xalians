@@ -81,12 +81,12 @@
 }
 
 .enc-era-rail-chip {
-	border: 0;
 	cursor: pointer;
 	font: inherit;
 }
 
 .enc-era-rail-chip[aria-pressed='true'] {
+	border: var(--g-hairline) solid transparent;
 	box-shadow: var(--g-relief), 0 0 0 2px var(--g-el);
 }
 

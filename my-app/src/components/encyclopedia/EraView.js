@@ -99,7 +99,7 @@ function ContemporaneousCard({ group, expanded, onToggle, cardRef, registerAncho
                                         <Link
                                             key={planet.key}
                                             to={lore.routeFor('world', planet.key)}
-                                            className={`g-chip g-el-${planet.element}`}
+                                            className={`g-chip g-chip--outline g-el-${planet.element}`}
                                         >
                                             {planet.name}
                                         </Link>
@@ -375,7 +375,7 @@ function EraRail({ eras, era, worldFilter, onFilter }) {
                         <button
                             type="button"
                             key={row.world.key}
-                            className={`g-chip g-el-${row.world.element} enc-era-rail-chip`}
+                            className={`g-chip ${worldFilter === row.world.key ? '' : 'g-chip--outline'} g-el-${row.world.element} enc-era-rail-chip`}
                             aria-pressed={worldFilter === row.world.key}
                             onClick={() => onFilter(row.world.key)}
                         >

@@ -80,6 +80,10 @@
 		flex-wrap: nowrap;
 		overflow-x: auto;
 		-webkit-overflow-scrolling: touch;
+		/* Trailing fade tells a touch reader the rail continues off-screen. */
+		-webkit-mask-image: linear-gradient(to right, var(--g-ink) 0, var(--g-ink) calc(100% - 40px), transparent 100%);
+		mask-image: linear-gradient(to right, var(--g-ink) 0, var(--g-ink) calc(100% - 40px), transparent 100%);
+		padding-right: var(--g-6);
 	}
 	.enc-scrub-station {
 		flex: 0 0 auto;

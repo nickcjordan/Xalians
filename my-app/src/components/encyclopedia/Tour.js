@@ -11,8 +11,8 @@ function Station({ beat, isCurrent }) {
 	return (
 		<Link
 			to={lore.routeFor('tour', beat.key)}
-			className={`enc-tour-station g-lamp ${isCurrent ? 'enc-tour-station--current' : ''} ${
-				visited && !isCurrent ? 'enc-tour-station--visited' : ''
+			className={`enc-tour-station g-lamp ${
+				isCurrent ? 'enc-tour-station--current' : visited ? 'g-lamp--amber enc-tour-station--visited' : 'g-lamp--off'
 			}`}
 			aria-current={isCurrent ? 'step' : undefined}
 		>
