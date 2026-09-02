@@ -1,0 +1,122 @@
+- | LASH | Cold Verdict pattern across the 25 LASH columns :: D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D — no kept lash names beyond th
+- | RAKE | Cold / Chill / Chilled / Chilling / Frostbitten / Sub-Zero / Boreal / Adamant / Petrous / Ancient / Fractured / Compacted / Sting / Bite / Snap / Bitter / Raw / Searing / Withering / Deadening / Stunning / Paralytic Verdict pattern across the 30 RAKE columns :: D across all 30 columns for every row (none of these produced an honest, non-red
+- | SPRAY | Ice Shower :: X — Hail/Sleet Shower already cover this register; Ice Shower redundant
+- | SPRAY | Ice Arc :: X — Sleet Arc already covers this register; redundant
+- | SPRAY | Frost Shower :: X — redundant against Hail/Sleet Shower
+- | SPRAY | Frost Fan :: X — Ice Fan already covers this; redundant
+- | SPRAY | Frost Cone :: X — Ice Cone already covers this; redundant
+- | SPRAY | Frost Arc :: X — Sleet Arc already covers this
+- | SPRAY | Rime Jet :: X — Ice Jet/Frost Jet already cover this; redundant
+- | SPRAY | Rime Discharge :: X — Ice Discharge already covers this; redundant
+- | SPRAY | Rime Shower :: X — redundant against Hail/Sleet Shower
+- | SPRAY | Rime Fan :: X — redundant against Ice Fan
+- | SPRAY | Rime Cone :: X — redundant against Ice Cone
+- | SPRAY | Rime Arc :: X — redundant against Sleet Arc
+- | SPRAY | Snow Discharge :: X — Ice Discharge already covers this generically; redundant
+- | SPRAY | Snow Breath :: D — snow has no honest breath-weapon reading distinct from the already-kept Ice/
+- | SPRAY | Snow Shower :: X — redundant against Hail/Sleet Shower
+- | SPRAY | Snow Fan :: X — redundant against Ice Fan
+- | SPRAY | Snow Cone :: X — redundant against Ice Cone
+- | SPRAY | Snow Arc :: X — redundant against Sleet Arc
+- | SPRAY | Sleet Discharge :: X — redundant against Ice Discharge
+- | SPRAY | Sleet Barrage :: X — Sleet Barrage tested and cut X against Ice Barrage; redundant
+- | SPRAY | Sleet Cone :: X — Ice Cone already covers this; redundant
+- | SPRAY | Hail Jet :: X — Ice Jet/Frost Jet already cover this; redundant
+- | SPRAY | Hail Discharge :: X — redundant against Ice Discharge
+- | SPRAY | Hail Breath :: D — hail has no honest breath-weapon reading distinct from the already-kept fami
+- | SPRAY | Hail Fan :: X — Sleet Fan already covers this register; redundant
+- | SPRAY | Hail Cone :: X — Ice Cone already covers this; redundant
+- | SPRAY | Hail Arc :: X — Sleet Arc already covers this; redundant
+- | SPRAY | Graupel Jet :: X — redundant against Ice Jet/Frost Jet
+- | SPRAY | Graupel Discharge :: X — redundant against Ice Discharge
+- | SPRAY | Graupel Barrage :: X — redundant against Ice/Hail Barrage
+- | SPRAY | Graupel Breath :: X — redundant against the already-kept breath family
+- | SPRAY | Graupel Fan :: X — redundant against Ice/Sleet Fan
+- | SPRAY | Graupel Cone :: X — redundant against Ice Cone
+- | SPRAY | Graupel Arc :: X — redundant against Sleet Arc
+- | BURST | Frost Eruption :: X — Ice Eruption already covers this; redundant
+- | BURST | Frost Outburst :: X — redundant against Ice Outburst
+- | BURST | Frost Shockwave :: X — redundant against Ice Shockwave
+- | BURST | Frost Pulse :: X — redundant against Chill Pulse
+- | BURST | Rime Blast :: X — near-dup of Ice/Frost Blast; redundant
+- | BURST | Rime Eruption :: X — redundant against Ice Eruption
+- | BURST | Rime Outburst :: X — redundant against Ice Outburst
+- | BURST | Rime Rupture :: X — Rime Rupture tested and cut X against Frost Rupture; redundant
+- | BURST | Rime Shockwave :: X — redundant against Ice Shockwave
+- | BURST | Rime Pulse :: X — redundant against Chill Pulse
+- | BURST | Rime Ring :: X — redundant against Ice/Frost Ring, no distinguishing feature specific to rime
+- | BURST | Snow Blast :: X — redundant against Ice/Frost Blast
+- | BURST | Snow Eruption :: X — redundant against Ice Eruption
+- | BURST | Snow Outburst :: X — redundant against Ice Outburst
+- | BURST | Snow Rupture :: X — redundant against Frost Rupture
+- | BURST | Snow Shockwave :: X — redundant against Ice Shockwave
+- | BURST | Snow Pulse :: X — redundant against Chill Pulse
+- | BURST | Snow Ring :: X — redundant against Ice/Frost Ring
+- | BURST | Glacial Blast :: X — redundant
+- | BURST | Glacial Outburst :: X — redundant
+- | BURST | Glacial Rupture :: X — Glacial Rupture would be redundant against Frost/Ice Rupture
+- | BURST | Glacial Shockwave :: X — redundant against Ice Shockwave
+- | BURST | Glacial Pulse :: X — redundant against Chill Pulse
+- | BURST | Glacial Ring :: X — redundant against Ice/Frost Ring
+- | CLOUD | Rime Blanket :: X — Ice/Snow/Frost Blanket family already covers this; Rime Blanket held redunda
+- | CLOUD | Rime Drift :: X — Snow Drift already covers this territory more honestly (rime is a thin stati
+- | CLOUD | Rime Zone :: X — Chill Zone already covers the zone-register; Rime Zone would be redundant
+- | CLOUD | Frost Drift :: X — Snow Drift already covers this
+- | CLOUD | Frost Zone :: X — redundant against Chill Zone
+- | CLOUD | Snow Plume :: D — snow doesn't loft into a rising column the way smoke does; the honest loftin
+- | CLOUD | Snow Zone :: X — redundant against Chill Zone
+- | CLOUD | Ice Zone :: X — redundant against Chill Zone
+- | SNARE | Ice Bind :: X — Rime Bind already covers this generically; Ice Bind redundant
+- | SNARE | Ice Vise :: X — Frost Vise already covers this per harvest §4; Ice Vise redundant
+- | SNARE | Ice Anchor :: X — Permafrost Anchor is the surviving distinct form; Ice Anchor redundant
+- | SNARE | Ice Lock :: X — Glacial Lock already covers this; Ice Lock redundant
+- | SNARE | Ice Hold :: X — Ice Grip/Ice Cage already cover the generic "hold" concept; "Ice Hold" redun
+- | SNARE | Ice Halt :: X — redundant against Ice Arresting
+- | SNARE | Ice Delay :: X — redundant against the established family, flat abstract restatement
+- | SNARE | Frost Fetter :: X — redundant against Ice Fetter
+- | SNARE | Frost Shackle :: X — redundant against Ice Shackle
+- | SNARE | Frost Bind :: X — redundant against Rime Bind
+- | SNARE | Frost Cage :: X — redundant against Ice Cage
+- | SNARE | Frost Clutch :: X — redundant against Ice Clutch
+- | SNARE | Frost Clench :: X — redundant against Ice Clench/Rime Clench
+- | SNARE | Frost Clamp :: X — redundant against Ice Clamp
+- | SNARE | Frost Anchor :: X — redundant against Permafrost Anchor
+- | SNARE | Frost Lock :: X — redundant against Glacial Lock
+- | SNARE | Frost Hold :: X — redundant against Ice/Frost Grip
+- | SNARE | Frost Immobilize :: X — redundant against Ice Immobilizing
+- | SNARE | Frost Paralyze :: X — redundant against Ice Paralyzing
+- | SNARE | Frost Arrest :: X — redundant against Ice Arresting
+- | SNARE | Frost Halt :: X — redundant
+- | SNARE | Frost Delay :: X — redundant
+- | SNARE | Glacial Trap :: X — redundant against Ice Trap/Frost Trap
+- | SNARE | Glacial Tether :: X — redundant against Ice/Frost Tether
+- | SNARE | Glacial Fetter :: D — Glacial Fetter tested above and cut X against Ice Fetter; redundant
+- | SNARE | Glacial Shackle :: X — redundant
+- | SNARE | Glacial Bind :: X — redundant against Rime Bind
+- | SNARE | Glacial Cage :: X — redundant against Ice Cage
+- | SNARE | Glacial Grasp :: X — redundant against Ice/Frost Grasp
+- | SNARE | Glacial Clutch :: X — redundant
+- | SNARE | Glacial Clench :: X — redundant
+- | SNARE | Glacial Vise :: X — redundant against Frost Vise
+- | SNARE | Glacial Clamp :: X — redundant against Ice Clamp
+- | SNARE | Glacial Anchor :: X — redundant against Permafrost Anchor
+- | SNARE | Glacial Hold :: X — redundant
+- | SNARE | Glacial Entomb :: X — redundant against Ice/Frost Entombing
+- | SNARE | Glacial Immobilize :: X — redundant
+- | SNARE | Glacial Paralyze :: X — redundant
+- | SNARE | Glacial Arrest :: X — redundant
+- | SNARE | Glacial Halt :: X — redundant
+- | SNARE | Glacial Delay :: X — redundant
+- | SNARE | Permafrost Trap :: X — redundant against Ice/Frost Trap
+- | SNARE | Permafrost Tether :: X — redundant against Ice/Frost Tether
+- | SNARE | Permafrost Bind :: D — Permafrost's own bind-adjacent reading is already the honestly-kept Permafro
+- | SNARE | Permafrost Cage :: X — redundant against Ice Cage
+- | SNARE | Permafrost Grasp :: X — redundant against Ice/Frost/Glacial Grip/Grasp family
+- | SNARE | Permafrost Clutch :: X — redundant
+- | SNARE | Permafrost Clench :: X — redundant
+- | SNARE | Permafrost Vise :: X — redundant against Frost Vise
+- | SNARE | Permafrost Clamp :: X — redundant against Ice Clamp
+- | SNARE | Permafrost Hold :: X — redundant
+- | SNARE | Permafrost Halt :: X — redundant
+- | SNARE | Permafrost Delay :: X — redundant, flat
+- | SNARE | Permafrost Fasten :: X — Permafrost Fastening would be redundant against Ice/Frost Fastening, no dist

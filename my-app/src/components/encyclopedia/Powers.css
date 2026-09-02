@@ -1,0 +1,17 @@
+/* Powers and Peoples section. Prefix: .enc-powers- */
+
+.enc-powers-first { margin-top: 0; }
+
+.enc-powers-panel { padding: var(--g-2) var(--g-4); }
+
+.enc-powers-panel .g-record:last-child { border-bottom: none; }
+
+.enc-powers-world-chip {
+	margin-top: var(--g-2);
+	text-decoration: none;
+}
+
+.enc-powers-no-entry {
+	color: var(--g-ink-low);
+	margin: 0;
+}

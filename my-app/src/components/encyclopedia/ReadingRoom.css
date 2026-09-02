@@ -1,0 +1,67 @@
+/* =========================================================================
+   READING ROOM — the /encyclopedia landing. Contract: docs/design/
+   xalian-encyclopedia-page.md section 5 "Reading room".
+   ========================================================================= */
+
+.enc-room-preface {
+	max-width: var(--g-measure);
+	margin-bottom: var(--g-7);
+}
+
+.enc-room-columns {
+	display: grid;
+	grid-template-columns: minmax(0, 58%) minmax(0, 1fr);
+	gap: var(--g-6);
+	align-items: start;
+}
+
+@media (max-width: 900px) {
+	.enc-room-columns {
+		grid-template-columns: minmax(0, 1fr);
+	}
+	.enc-room-left {
+		display: contents;
+	}
+	.enc-room-map-panel {
+		order: 1;
+	}
+	.enc-room-story {
+		order: 2;
+	}
+	.enc-room-strip {
+		order: 3;
+	}
+}
+
+.enc-room-left {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-6);
+}
+
+.enc-room-map-panel {
+	padding: var(--g-4);
+	align-self: stretch;
+}
+
+.enc-room-story {
+	padding: var(--g-4);
+}
+
+.enc-room-story .g-record:last-child {
+	border-bottom: none;
+}
+
+.enc-room-index {
+	font-family: var(--g-font-mono);
+	color: var(--g-ink-low);
+	margin-right: var(--g-2);
+}
+
+.enc-room-strip {
+	margin-top: 0;
+}
+
+.enc-room-strip {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}

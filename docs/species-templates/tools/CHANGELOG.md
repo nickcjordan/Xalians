@@ -1,0 +1,15 @@
+# validate-template.js changelog
+
+One dated line per change, written by the orchestrator after a denial review. Each line says what the script denied, why that was wrong (or what it missed), and what changed. The point of this file is that every script rule has been re-examined against real agent output; a rule that never appears here has never been questioned.
+
+- 2026-09-01: first version. Proven on the three prior Graviclaw records before any agent used it: caught the Opus v2.1 temperature band outside the planet range and the crush-vs-ledger mismatch, the Sonnet v2 wrong signature name, capitalized planet, and two misquotes ("bend space and time", "roots itself"), and the pilot's non-registry `walking-legs` key.
+- 2026-09-01: quotation check produced false positives on the agent's own prose inside double quotes. Fix: pairing reset per line, markup and mid-sentence fragments skipped, ellipsis-split fragments checked separately, registry text and the template's own prose accepted as sources, comparison case-folded. Convention added to the skill: double quotes only for verbatim source text.
+- 2026-09-01: the script flagged the signature name inside the agent's pasted validator output as an unverifiable quotation; the agent edited the pasted output to pass and disclosed it. Fix: fenced blocks and pasted FAIL/WARN/ok lines are skipped.
+- 2026-09-02: added the run log (`validation-log/<key>.jsonl`), `--note`, `--review`, orchestrator overrides (`overrides/<key>.json`), and the `md.denials` requirement so a denied idea is recorded rather than silently replaced.
+- 2026-09-02: both Opus Graviclaw runs declared `hide` beside `shell` for one carapace; the script had no rule and the registry wording invited it. Added `anatomy.surface` FAIL (shell and hide never co-occur) and a WARN for hide with an armored covering, per Nick's ruling that hide means unarmored.
+- 2026-09-02: the swarm channel predicate required `bodyPlan: swarm`, which would have denied the Tetrahive's conjured familiar swarm once the art was read. Now a WARN for the validator agent to confirm instead of a FAIL.
+- 2026-09-02: trait model re-ratified as independent per-trait percents. Script now fails `guaranteed`/`rolledCount` as legacy, requires integer percents 1 to 100, fails both exclusion partners at 100, warns on a tie, warns when the expected trait count exceeds 3.5, and derives body-demanded checks (phasing, armored, telekinetic for manipulation) from entries at 100.
+- 2026-09-02: after the trait-model audit, expected trait count now subtracts the exclusion-pair overlap, and the tie warning says the generator orders partners by tilted percent.
+- 2026-09-02: `crystal` covering joins the armored-at-100 WARN so the script matches the registry definitions (blind v2 finding F1).
+- 2026-09-02: `flight.means` accepts a swarm body plan (blind v3 finding 1).
+- 2026-09-02: trait pool must list all 24 keys at 0 to 100 (`traits.pool.missing`); WARN when no trait sits strictly between 0 and 100.

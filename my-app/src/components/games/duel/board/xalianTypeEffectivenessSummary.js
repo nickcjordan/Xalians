@@ -47,35 +47,35 @@ class XalianTypeEffectivenessSummary extends React.Component {
 				
 					<Col className="" xs={true}>
 						<Stack>
-                            <h5 style={{color:'darkgray'}} >2X</h5>
+                            <span className="duel-effect-column-label">2X</span>
                             {superEffectTypes}
 						</Stack>
 					</Col>
 
                     <Col className="" xs={true}>
 						<Stack>
-                            <h5 style={{color:'darkgray'}} >Great</h5>
+                            <span className="duel-effect-column-label">Great</span>
                             {highEffectTypes}
 						</Stack>
 					</Col>
  
                     {/* <Col className="" xs={true}>
 						<Stack>
-                        <h5 style={{color:'darkgray'}} >Normal</h5>
+                        <span className="duel-effect-column-label">Normal</span>
                             {mediumEffectTypes}
 						</Stack>
 					</Col>  */}
 
                     <Col className="" xs={true}>
 						<Stack>
-                            <h5 style={{color:'darkgray'}} >Low</h5>
+                            <span className="duel-effect-column-label">Low</span>
                             {lowEffectTypes}
 						</Stack>
 					</Col>
 
                     <Col className="" xs={true}>
 						<Stack>
-                            <h5 style={{color:'darkgray'}} >Immune</h5>
+                            <span className="duel-effect-column-label">Immune</span>
                             {noEffectTypes}
 						</Stack>
 					</Col>

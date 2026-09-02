@@ -1,0 +1,130 @@
+/* Chronicle: the era rail. Contract: docs/design/xalian-encyclopedia-page.md */
+
+.enc-chronicle { max-width: 100%; }
+
+.enc-chronicle-preface {
+	margin-bottom: var(--g-7);
+}
+
+.enc-chronicle-rail {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	position: relative;
+}
+
+/* the single left-hand rule the stations sit on */
+.enc-chronicle-rail::before {
+	content: '';
+	position: absolute;
+	top: var(--g-2);
+	bottom: var(--g-2);
+	left: 5px;
+	width: var(--g-hairline);
+	background: var(--g-rule);
+}
+
+.enc-chronicle-station {
+	position: relative;
+	display: grid;
+	grid-template-columns: 1.5rem auto minmax(0, var(--g-measure)) minmax(0, 1fr);
+	align-items: start;
+	gap: var(--g-4);
+	padding: var(--g-5) 0;
+	border-bottom: var(--g-hairline) solid var(--g-rule-faint);
+}
+
+.enc-chronicle-station:last-child { border-bottom: none; }
+
+.enc-chronicle-dot {
+	justify-self: center;
+	margin-top: 0.4em;
+	width: 11px;
+	height: 11px;
+	border-radius: 50%;
+	background: var(--g-hull-lo);
+	border: 2px solid var(--g-brass);
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+	position: relative;
+	z-index: 1;
+}
+
+.enc-chronicle-index {
+	color: var(--g-ink-low);
+	font-size: var(--g-size-small);
+	padding-top: 0.15em;
+}
+
+.enc-chronicle-station-body { min-width: 0; }
+
+.enc-chronicle-station-side {
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-3);
+	padding-top: calc(var(--g-size-h3) + var(--g-2));
+}
+
+.enc-chronicle-firm-events {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-1);
+	font-size: var(--g-size-small);
+}
+
+.enc-chronicle-world-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--g-2);
+}
+
+.enc-chronicle-name {
+	display: block;
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-h3);
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+	text-decoration: none;
+	color: var(--g-ink);
+	margin-bottom: var(--g-2);
+}
+
+.enc-chronicle-name:hover,
+.enc-chronicle-name:focus-visible { color: var(--g-brass); }
+
+.enc-chronicle-def {
+	max-width: var(--g-measure);
+	margin-bottom: var(--g-2);
+}
+
+@media (max-width: 900px) {
+	.enc-chronicle-station {
+		grid-template-columns: 1.5rem auto 1fr;
+		grid-template-areas:
+			'dot idx body'
+			'side side side';
+	}
+	.enc-chronicle-station-body { grid-area: body; }
+	.enc-chronicle-station-side {
+		grid-area: side;
+		padding-top: 0;
+		margin-top: var(--g-3);
+	}
+}
+
+@media (max-width: 560px) {
+	.enc-chronicle-station {
+		grid-template-columns: 1.25rem auto;
+		grid-template-areas:
+			'dot idx'
+			'body body'
+			'side side';
+	}
+	.enc-chronicle-dot { grid-area: dot; }
+	.enc-chronicle-index { grid-area: idx; }
+	.enc-chronicle-station-body { grid-area: body; margin-top: var(--g-2); }
+	.enc-chronicle-station-side { grid-area: side; }
+}

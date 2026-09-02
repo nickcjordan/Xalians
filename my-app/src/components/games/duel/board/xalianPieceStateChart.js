@@ -1,54 +1,57 @@
 import React from 'react';
-import { Row, Col } from 'react-bootstrap';
-import textFit from '../../../../utils/textFit';
-import * as styleUtil from '../../../../utils/styleUtil';
-import * as svgUtil from '../../../../utils/svgUtil';
-import { PieChart, Pie, Sector, Cell, ResponsiveContainer } from 'recharts';
 import * as gameConstants from '../../../../gameplay/duel/duelGameConstants';
-import gsap from 'gsap';
-import { ink } from '../../../../constants/designTokens';
+import { lamp, brass, stat } from '../../../../constants/designTokens';
 
-const COLORS = ['#0088FE', '#00000000'];
-const STROKES = ['black', '#00000000'];
+/**
+ * A piece's vitals, as a small plate that surfaces when you point at it.
+ *
+ * These were two full-width bars two pixels tall, sitting under the token. At a
+ * 48px cell that is a one-pixel line: enough to say "there is a meter here" and
+ * not enough to say anything about a number, which is the entire job. Worse,
+ * they were the same width as the square, so twelve of them tiled the board with
+ * horizontal rules.
+ *
+ * It is now a readout - the figure first, because the figure is what you act on,
+ * with a short track beside it for the at-a-glance shape. It floats above the
+ * creature on hover rather than hiding beneath it.
+ */
 class XalianPieceStateChart extends React.Component {
 
-    buildBackgroundGradient = (color) => {
-        let darkerColor = gsap.utils.interpolate(color, "black", 0.5);
-        return `linear-gradient(0deg, ${darkerColor} 0%, ${color} 50%, ${darkerColor} 100%)`;
+    healthColour(pct) {
+        if (pct > 50) return stat.stamina;
+        if (pct > 25) return lamp.amber;
+        return lamp.red;
     }
 
     render() {
-        var classes = this.props.classes || 'duel-state-chart-wrapper-position';
-        var wrapperClasses = this.props.wrapperClasses || 'duel-status-bar-wrapper';
-        var spacing = this.props.spacing || '0px';
-        var barHeight = this.props.barHeight || '2px';
-
         let xalianState = this.props.xalianState;
 
-        var healthBarPercentage = (xalianState.health / gameConstants.MAX_HEALTH_POINTS) * 100;
-        healthBarPercentage = healthBarPercentage < 5 ? 5 : healthBarPercentage;
-        let healthBarColor = healthBarPercentage > 50 ? 'green' : healthBarPercentage > 25 ? 'orange' : 'red';
-        let healthBarLighterColor = healthBarPercentage > 50 ? '#00cc00' : healthBarPercentage > 25 ? '#ffbf00' : '#ff0000';
+        let health = xalianState.health;
+        let stamina = xalianState.stamina;
+        let healthPct = Math.max(0, Math.min(100, (health / gameConstants.MAX_HEALTH_POINTS) * 100));
+        let staminaPct = Math.max(0, Math.min(100, (stamina / gameConstants.MAX_STAMINA_POINTS) * 100));
 
-        var staminaBarPercentage = (xalianState.stamina / gameConstants.MAX_STAMINA_POINTS) * 100;
-        staminaBarPercentage = staminaBarPercentage < 5 ? 5 : staminaBarPercentage;
+        // damage is fractional, so health is too - round it to something a
+        // player can act on rather than printing 5.9999
+        let shownHealth = Math.round(health * 10) / 10;
 
-        var style = {
-            height: barHeight, 
-            pointerEvents: 'none',
-            marginTop: '2px',
-            marginBottom: '2px'
-        }
-        
         return (
-            <div className={classes} style={{ height: 'auto', minWidth: '25px', pointerEvents: 'none', width: '100%', zIndex: '104' }}>
-                <div className={wrapperClasses} style={{display: 'flex', flexDirection: 'column', filter: `drop-shadow(0px 0px 2px ${ink.invert})` }}>
-                    <div style={{ width: '100%', height: '100%', filter: `drop-shadow(0px 0px 1px ${ink.invert}) drop-shadow(0px 0px 2px ${ink.invert})`, border: `1px outset ${healthBarColor}`, borderRadius: '4px'}}>
-                        <div style={{ ...style, width: `${healthBarPercentage}%`, background: this.buildBackgroundGradient(healthBarLighterColor), pointerEvents: 'none', boxShadow: `0px 0px 1px 1px ${healthBarColor}`, borderRadius: '4px' }} />
-                    </div>
-                    <div style={{ width: '100%', height: '100%', filter: `drop-shadow(0px 0px 1px ${ink.invert}) drop-shadow(0px 0px 2px ${ink.invert})`, border: `1px outset #4d4bc2`, borderRadius: '4px', marginTop: spacing}}>
-                        <div style={{ ...style, width: `${staminaBarPercentage}%`, background: this.buildBackgroundGradient('#6d8ed9'), pointerEvents: 'none', boxShadow: `0px 0px 1px 1px #4d4bc2`, borderRadius: '4px' }}  />
-                    </div>
+            <div className="duel-vitals-plate">
+                <div className="duel-vitals-row">
+                    <span className="duel-vitals-figure">{shownHealth}</span>
+                    <span className="duel-vitals-track">
+                        <span
+                            className="duel-vitals-fill"
+                            style={{ width: `${healthPct}%`, background: this.healthColour(healthPct) }} />
+                    </span>
+                </div>
+                <div className="duel-vitals-row duel-vitals-row--stamina">
+                    <span className="duel-vitals-figure">{stamina}</span>
+                    <span className="duel-vitals-track">
+                        <span
+                            className="duel-vitals-fill"
+                            style={{ width: `${staminaPct}%`, background: brass.base }} />
+                    </span>
                 </div>
             </div>
         );

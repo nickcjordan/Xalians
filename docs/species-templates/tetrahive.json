@@ -1,0 +1,192 @@
+{
+  "key": "tetrahive",
+  "name": "Tetrahive",
+  "element": "dark",
+  "homePlanet": "grimedes",
+  "generatorPlanets": [
+    "grimedes"
+  ],
+  "lore": {
+    "description": "A small winged thing with a long whipping tail, the Tetrahive fights by conjuring a swarm of little flying familiars with teeth like piranhas, holding every one of them in its mind and moving them as a single unit to attack or defend. It was generated on Grimedes not to serve as a labor force but as a test subject, one product of the experiments the Vallerii ran on the Xalian population in laboratories that rumor holds were black sites for ECHELON. It hunts the thick, stalky undergrowth of a world cloaked in perpetual night, and the newest generation of its kind now stands at the edge of the galaxy and watches the endless black.",
+    "descriptionStatus": "upgraded",
+    "biomeNiche": "the thick stalky undergrowth of the flat, lightless plains of Grimedes"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "swarm",
+    "anatomy": [
+      "wings",
+      "claws",
+      "tail",
+      "body"
+    ],
+    "covering": "hide",
+    "size": {
+      "heightCm": [
+        60,
+        90
+      ],
+      "weightKg": [
+        8,
+        16
+      ]
+    },
+    "lifespan": "short",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "carnivore",
+    "communication": [],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -6,
+        "max": 34
+      }
+    },
+    "capabilities": {
+      "flight": [
+        60,
+        85
+      ],
+      "swim": [
+        0,
+        10
+      ],
+      "burrow": [
+        0,
+        5
+      ],
+      "climb": [
+        35,
+        60
+      ],
+      "sprint": [
+        15,
+        35
+      ],
+      "leap": [
+        40,
+        65
+      ],
+      "manipulation": [
+        20,
+        40
+      ]
+    },
+    "senses": {
+      "sight": [
+        30,
+        55
+      ],
+      "hearing": [
+        60,
+        85
+      ],
+      "smell": [
+        25,
+        45
+      ]
+    }
+  },
+  "archetypeWeights": {
+    "skirmisher": 5,
+    "sage": 4,
+    "prowler": 3,
+    "seeker": 2,
+    "sovereign": 1
+  },
+  "attributes": {
+    "strength": [
+      15,
+      35
+    ],
+    "vitality": [
+      25,
+      45
+    ],
+    "endurance": [
+      30,
+      55
+    ],
+    "agility": [
+      55,
+      80
+    ],
+    "reflex": [
+      50,
+      75
+    ],
+    "intelligence": [
+      45,
+      70
+    ],
+    "willpower": [
+      60,
+      85
+    ],
+    "instinct": [
+      40,
+      65
+    ],
+    "charisma": [
+      25,
+      50
+    ],
+    "resilience": [
+      20,
+      40
+    ]
+  },
+  "traits": {
+    "pool": {
+      "healing": 0,
+      "protective": 0,
+      "regenerative": 0,
+      "armored": 0,
+      "anchored": 0,
+      "phasing": 0,
+      "resistant": 0,
+      "ramming": 0,
+      "toxic": 0,
+      "volatile": 0,
+      "reflective": 0,
+      "menacing": 20,
+      "hypnotic": 0,
+      "perceptive": 20,
+      "foresighted": 0,
+      "mind-sealed": 35,
+      "pack-bonded": 0,
+      "solitary": 10,
+      "stealthy": 0,
+      "nocturnal": 95,
+      "inspiring": 0,
+      "slippery": 45,
+      "luminous": 0,
+      "telekinetic": 0
+    }
+  },
+  "instruments": [
+    "swarm",
+    "claws"
+  ],
+  "signatureAbility": {
+    "name": "Unbidden Legion",
+    "instrument": "swarm",
+    "action": "cloud",
+    "medium": "dark",
+    "intensity": [
+      30,
+      80
+    ],
+    "description": "It calls up a wheeling cloud of small toothed familiars and sets them on a single target as one mind, and a familiar that is broken simply thins away into the black."
+  }
+}

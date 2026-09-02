@@ -1,24 +1,28 @@
 import React from 'react';
 import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Stack from 'react-bootstrap/Stack';
 import XalianTypeSymbolBadge from './xalianTypeSymbolBadge';
 import * as duelCalculator from '../../../../gameplay/duel/duelCalculator';
-import { hull } from '../../../../constants/designTokens';
+import { ink, lamp, stat } from '../../../../constants/designTokens';
 
+/**
+ * Choosing which move to strike with.
+ *
+ * Was a stack of translucent white outline-light buttons. It is now a firing
+ * selector: each move is a recessed row on the housing with its element plate
+ * on the left, its designation printed beside it and its projected damage in
+ * machine type down the right.
+ */
 class AttackMoveChooserModal extends React.Component {
 
     getEffectivenessHint = (typeEffectiveness) => {
         if (typeEffectiveness === 0) {
-            return { text: 'no effect', color: 'red' };
+            return { text: 'No effect', color: lamp.red };
         } else if (typeEffectiveness < 1) {
-            return { text: 'not very effective', color: 'gray' };
+            return { text: 'Not very effective', color: ink.low };
         } else if (typeEffectiveness === 1) {
-            return { text: 'effective', color: 'white' };
+            return { text: 'Effective', color: ink.mid };
         } else {
-            return { text: 'super effective', color: '#3ddc5b' };
+            return { text: 'Super effective', color: stat.stamina };
         }
     }
 
@@ -30,54 +34,36 @@ class AttackMoveChooserModal extends React.Component {
         return { damage: Math.round(damage * 10) / 10, hint: hint };
     }
 
-    renderMoveRow = (move, index) => {
+    /** one selector row; `move` is null for the unarmed basic attack */
+    renderOption = (move, key, index) => {
         let preview = this.buildDamagePreview(move);
         return (
-            <Button
-                key={`duel-attack-move-choice-${index}`}
-                variant="outline-light"
-                onClick={() => this.props.onSelect(index)}
-                style={{ width: '100%', margin: '5px 0', padding: '10px', textAlign: 'left', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}
-            >
-                <Row style={{ alignItems: 'center' }}>
-                    <Col xs={2} style={{ display: 'flex', justifyContent: 'center' }}>
-                        {move.type &&
-                            <XalianTypeSymbolBadge size={28} type={move.type} classes='type-badge' />
-                        }
-                    </Col>
-                    <Col xs={5}>
-                        <div style={{ color: 'white', fontWeight: 'bold' }}>{move.name}</div>
-                        <div style={{ color: 'darkgray', fontSize: '0.8em' }}>Rating: {move.rating}</div>
-                    </Col>
-                    <Col xs={5} style={{ textAlign: 'right' }}>
-                        <div style={{ color: 'white' }}>~{preview.damage} dmg</div>
-                        <div style={{ color: preview.hint.color, fontSize: '0.8em' }}>{preview.hint.text}</div>
-                    </Col>
-                </Row>
-            </Button>
-        );
-    }
+            <button
+                type="button"
+                key={key}
+                className="duel-move-option"
+                onClick={() => this.props.onSelect(index)}>
 
-    renderBasicAttackRow = () => {
-        let preview = this.buildDamagePreview(null);
-        return (
-            <Button
-                key='duel-attack-move-choice-basic'
-                variant="outline-light"
-                onClick={() => this.props.onSelect(null)}
-                style={{ width: '100%', margin: '5px 0', padding: '10px', textAlign: 'left', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}
-            >
-                <Row style={{ alignItems: 'center' }}>
-                    <Col xs={2} />
-                    <Col xs={5}>
-                        <div style={{ color: 'white', fontWeight: 'bold' }}>Basic Attack</div>
-                    </Col>
-                    <Col xs={5} style={{ textAlign: 'right' }}>
-                        <div style={{ color: 'white' }}>~{preview.damage} dmg</div>
-                        <div style={{ color: preview.hint.color, fontSize: '0.8em' }}>{preview.hint.text}</div>
-                    </Col>
-                </Row>
-            </Button>
+                <span className="duel-move-plate">
+                    {move && move.type &&
+                        <XalianTypeSymbolBadge size={26} type={move.type} classes='type-badge' />
+                    }
+                </span>
+
+                <span className="duel-move-ident">
+                    <span className="duel-move-name">{move ? move.name : 'Basic Attack'}</span>
+                    <span className="duel-move-rating">
+                        {move ? `Rating ${move.rating}` : 'Unarmed strike'}
+                    </span>
+                </span>
+
+                <span className="duel-move-readout">
+                    <span className="duel-move-damage">{preview.damage}</span>
+                    <span className="duel-move-effect" style={{ color: preview.hint.color }}>
+                        {preview.hint.text}
+                    </span>
+                </span>
+            </button>
         );
     }
 
@@ -90,27 +76,23 @@ class AttackMoveChooserModal extends React.Component {
             <Modal
                 show={this.props.show}
                 onHide={this.props.onCancel}
-                size="sm"
                 centered
-                className="themed-modal dark-themed-modal"
+                className="themed-modal dark-themed-modal duel-modal"
             >
-                <Modal.Header closeButton closeVariant="white" style={{ borderBottom: '1px solid #444' }}>
-                    <Modal.Title style={{ color: 'white', fontSize: '1.1em' }}>
-                        {this.props.attacker.species.name} attacks {this.props.defender.species.name}
+                <Modal.Header closeButton closeVariant="white">
+                    <Modal.Title>
+                        {this.props.attacker.species.name} <span className="duel-modal-title-joiner">strikes</span> {this.props.defender.species.name}
                     </Modal.Title>
                 </Modal.Header>
-                <Modal.Body style={{ backgroundColor: hull.base }}>
-                    <Stack gap={1}>
-                        {moves.map((move, index) => this.renderMoveRow(move, index))}
-                        {this.renderBasicAttackRow()}
-                    </Stack>
-                    <Button
-                        variant="secondary"
-                        onClick={this.props.onCancel}
-                        style={{ width: '100%', marginTop: '10px' }}
-                    >
-                        Cancel
-                    </Button>
+                <Modal.Body>
+                    <p className="duel-move-legend">Firing solutions</p>
+                    <div className="duel-move-list">
+                        {moves.map((move, index) => this.renderOption(move, `duel-attack-move-choice-${index}`, index))}
+                        {this.renderOption(null, 'duel-attack-move-choice-basic', null)}
+                    </div>
+                    <div className="duel-move-cancel-row">
+                        <button type="button" className="g-btn" onClick={this.props.onCancel}>Cancel</button>
+                    </div>
                 </Modal.Body>
             </Modal>
         );
