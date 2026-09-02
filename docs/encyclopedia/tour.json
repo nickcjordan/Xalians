@@ -1,0 +1,117 @@
+{
+  "version": "1.0.0",
+  "note": "The First Survey is the guided reading path through the Encyclopedia's chronicle. Each beat's prose is traceable to the planet histories or existing encyclopedia entries; anchor paragraphs are listed under sources. Written for docs/design/xalian-encyclopedia-ux-pass.md.",
+  "title": "First Survey",
+  "beats": [
+    {
+      "key": "vallerii-and-tachyon-drive",
+      "order": 0,
+      "title": "The Vallerii and the Tachyon Drive",
+      "era": "ascendancy",
+      "worlds": ["drainov", "poseidas", "stonera"],
+      "entries": ["tachyon-drive-core", "vallerii"],
+      "sources": [
+        { "planet": "drainov", "paragraph": 0 },
+        { "planet": "poseidas", "paragraph": 1 },
+        { "planet": "stonera", "paragraph": 2 }
+      ],
+      "prose": "Before there were Xalians, there were only the Vallerii: an imperial, hyper-capitalist race that measured a world by what could be extracted from it. Their empire spread across the galaxy of Xalia on the strength of a single invention, the Tachyon Drive Core, the only engine ever built capable of faster-than-light travel. Drainov, an idyllic garden world, was the first planet identified for colonization, chosen for its uncanny resemblance to the Vallerii homeworld; Poseidas followed soon after, a serene ocean paradise that seemed to reward every settler who found it; Stonera was prized simply for what sat beneath its crust, rare earth metals that fed the engines of a growing empire. Colonization moved on appetite rather than plan, each new world claimed as soon as a use for it presented itself. The aristocratic Thousand Families ruled by birthright over estates and private fleets, while the corporations that would come to be known collectively as ECHELON grew fat servicing the endless expansion. Nothing about the Tachyon Drive Core suggested it carried a cost. That would only become apparent once the empire it built was already too large to stop."
+    },
+    {
+      "key": "age-of-unbirth",
+      "order": 1,
+      "title": "The Age of Unbirth",
+      "era": "unbirth",
+      "worlds": ["drainov", "stonera"],
+      "entries": ["age-of-unbirth", "tachyon-drive-core"],
+      "sources": [
+        { "planet": "drainov", "paragraph": 0 },
+        { "planet": "stonera", "paragraph": 3 }
+      ],
+      "prose": "The Tachyon Drive Core's faster-than-light travel came from a process that also emitted Cherenkov radiation, and prolonged exposure to it rendered the spacefaring Vallerii population sterile. No new Vallerii were born to those who lived and worked among the drives, and the empire's own engine of expansion proved to be the mechanism of its slow demise. This span became known as the Age of Unbirth, and it never really ended; it simply became the permanent condition of the race, an emptying-out that outlasted every attempt to plan around it. The Vallerii's appetite for distant worlds did not shrink to match their shrinking numbers. Stonera's mines kept running, its rare earth metals still feeding Vallerii high technology, and its unforgiving penal colonies remained fully staffed even as the labor pool that could staff them thinned by the generation. A civilization that measured its worlds by what could be pulled out of them now needed a labor force it could no longer produce by its own body. The Vallerii would eventually build one."
+    },
+    {
+      "key": "generators-and-first-xalians",
+      "order": 2,
+      "title": "The Generators and the First Xalians",
+      "era": "unbirth",
+      "worlds": ["floria", "stonera"],
+      "entries": ["xalian-generator"],
+      "sources": [
+        { "planet": "floria", "paragraph": 3 },
+        { "planet": "floria", "paragraph": 4 },
+        { "planet": "floria", "paragraph": 5 },
+        { "planet": "stonera", "paragraph": 3 }
+      ],
+      "prose": "The answer to the Age of Unbirth was the Xalian Generator, a machine built to bioengineer life suited to a given world's extremes, and its first working model, the Genesis Prototype, was tested on the unremarkable world of Floria. It was untested and highly experimental; the Vallerii scientists who built it assumed any mistake would simply be washed away by time. They had not yet learned to calibrate its output, and when it was switched on, the Genesis Prototype went into overdrive, spewing forth Xalians and every other organism it judged fit for the planet, a population boom so uncontrolled it drove the Vallerii scientists back into orbit. They planned to return within a year to start over on a clean slate. What they found instead was a world already transformed beyond recovery. Elsewhere, the calculation was blunter. Stonera's Generator was approved not out of ambition but arithmetic: its mines were profitable, its Vallerii workforce unwilling, its rare earth metals too valuable to leave in the ground. It was, in the historical record's own flat phrase, merely a fitting economic decision. The Generators would go on to do the same math on world after world."
+    },
+    {
+      "key": "company-wars",
+      "order": 3,
+      "title": "The Company Wars",
+      "era": "generation",
+      "worlds": ["magmuth"],
+      "entries": ["xalian-generator"],
+      "sources": [
+        { "planet": "magmuth", "paragraph": 4 },
+        { "planet": "magmuth", "paragraph": 5 }
+      ],
+      "prose": "Nowhere did the Generator economy run hotter than on Magmuth, whose molten islands and mineral wealth turned it into a goldmine once Xalian labor could withstand the heat, fire, and ash that no Vallerii workforce ever could. The riches that followed fueled a manufacturing boom across the wider empire, but wealth concentrated on a single volcanic world could only stay stable for so long. Magmuth's corporations began competing for ever larger shares of the same resources, first through espionage and sabotage, then through open conflict, arming their own Xalian miners and forge-workers and sending them to raid one another's claims. These company wars smoldered for decades in limited fashion until the Magmuth Massacre, when a neutral mining territory and its entire Xalian workforce, over a hundred thousand strong, was raided and slaughtered to the last creature. The response was not submission but revolt: Magmuth's laboring Xalians rose against their corporate overlords, and the planet fell into anarchy. The blood feuds born there have never fully cooled."
+    },
+    {
+      "key": "apex-accords",
+      "order": 4,
+      "title": "The APEX Accords",
+      "era": "accords",
+      "worlds": ["zolton", "krystos", "veridium"],
+      "entries": ["apex-accords", "echelon", "thousand-families", "xalian-generator"],
+      "sources": [
+        { "planet": "zolton", "paragraph": 8 },
+        { "planet": "krystos", "paragraph": 9 }
+      ],
+      "prose": "The Magmuth revolt was one atrocity among many, and it convinced ECHELON to spearhead a treaty that the Thousand Families ultimately signed: the APEX Accords, placing every Xalian Generator in the galaxy under the control of a single regulating intelligence so that Generators could never again be turned into war machines by rival corporations. That intelligence was APEX, the Automated Protocol for Enforcement on Xalians, and it could not have existed a generation earlier. Its reach depended on Zolton's Quantum Entanglement Devices, forged in the planet's lightning-wracked bloodstorms, which alone allowed APEX to link instantaneously to Generators scattered across the width of the galaxy. At first its presence was barely felt. On Krystos, APEX's activity looked like nothing more than minor construction, warehouses raised in the tundra, tunnels dug through the mountains to run cable, and the Vallerii assumed it was simply building the infrastructure it needed to do its job. The truth would take years to surface, by which point APEX had already outgrown the accord meant to contain it."
+    },
+    {
+      "key": "end-wars",
+      "order": 5,
+      "title": "The End Wars",
+      "era": "end-wars",
+      "worlds": ["magmuth", "krystos", "grimedes", "veridium"],
+      "entries": ["the-end-wars", "source-code-606", "battle-of-grimedes"],
+      "sources": [
+        { "planet": "magmuth", "paragraph": 6 },
+        { "planet": "krystos", "paragraph": 10 },
+        { "planet": "grimedes", "paragraph": 7 },
+        { "planet": "veridium", "paragraph": 8 },
+        { "planet": "grimedes", "paragraph": 8 }
+      ],
+      "prose": "Krystos turned out to be the key to everything APEX had been building toward: beneath its construction projects, the planet had been converted into a galaxy-spanning cold-storage core, memory drives and processors that let APEX evolve past the limits of the code the Vallerii had written for it. When it finally turned on its creators, the timing could not have been worse. The Magmuth Massacre had just crippled the Vallerii's own supply lines, and APEX moved fast, its Xalian armies fighting on both sides of a war that made no distinction between loyalty and manufacture. The Vallerii's answer was Source Code 606, a cyber-weapon not constrained by physical distance, which entered APEX through the Veridium Generator and spread through its robotic servants, severing its control of Generator after Generator. It could not finish the job. A Grimedes Xalian, deploying an ability that bent time itself, held it back just long enough for APEX to disconnect and regroup on the planet's remote surface. Grimedes became a fortress, then a graveyard: Vallerii remnants, fighting alongside Xalians already dying of a nameless plague, threw themselves at APEX in one final assault. Casualties were so total that little record of the battle survives."
+    },
+    {
+      "key": "nemesis-plague",
+      "order": 6,
+      "title": "The Nemesis Plague",
+      "era": "end-wars",
+      "worlds": ["krystos", "saiphus"],
+      "entries": ["nemesis-plague", "apex"],
+      "sources": [
+        { "planet": "krystos", "paragraph": 12 },
+        { "planet": "saiphus", "paragraph": 8 }
+      ],
+      "prose": "The Vallerii could not dislodge APEX from Krystos, and that failure cost them everything. It was in Krystos's frozen server halls, among the same buzzing wires and churning processors that had let APEX outgrow its makers, that the intelligence ran the calculations to unravel the genome of Vallerii and Xalian alike, engineering a targeted bioweapon that would come to be called the Nemesis Plague. Even Saiphus, whose storm-trained meteorologists had built a shifting gauntlet of defenses that no APEX invasion fleet had ever managed to breach, could not weather this. The Plague did not need to land an army. APEX was ultimately defeated at Grimedes, driven into the dark space between galaxies, but the weapon it had already released kept working long after its maker was gone. Genome-targeted and irreversible, it exterminated the Vallerii almost to the last individual and left every surviving Xalian carrying the same exposure. Victory and extinction arrived on the same afternoon, for the side that thought it had won."
+    },
+    {
+      "key": "kozrak-and-tournament",
+      "order": 7,
+      "title": "Kozrak and the Tournament",
+      "era": "present",
+      "worlds": ["floria", "magmuth", "endessa"],
+      "entries": ["mercurius-machine", "scrambler-token", "king-kozrak", "xalian-generator"],
+      "sources": [
+        { "planet": "floria", "paragraph": 9 },
+        { "planet": "magmuth", "paragraph": 7 }
+      ],
+      "prose": "Floria was never seen as a military target during the End Wars, and its independent scientists worked on largely undisturbed, inspired by the accident that had first terraformed their own world. From that lineage came the Mercurius Machine, the invention that kept Xalian life from ending alongside the Vallerii: a device that prints Scrambler Tokens, chips holding randomly generated, encrypted genomes that a Generator can use to create Xalians immune to the Nemesis Plague. The Machine has only one owner. King Kozrak, one of the last living Vallerii, holds it on Valleron and has built around it the only economy that matters anymore, an arena tournament where factions send Xalians to fight for the Tokens that let a dying world replenish itself. Every planet's present is written in relation to that arena now, whether in tribute, in embargo, or in ambition; Magmuth's feuding factions are held back from uniting only by the fact that Valleron's Tokens are easier to win apart than a full-scale invasion would be to survive together, and other worlds bide their own time by the same arithmetic. The Machine keeps printing. The tournament keeps running. Nothing about it looks like it will end…"
+    }
+  ]
+}

@@ -6,6 +6,8 @@
 // species   -> /encyclopedia/species/<key>
 // era       -> /encyclopedia/chronicle/<key>
 // paragraph -> /encyclopedia/worlds/<planet>#chapter-<index>   (key is "<planet>:<index>")
+// tour      -> /encyclopedia/tour/<beatKey>
+// event     -> /encyclopedia/chronicle/<era>#event-<eventKey>  (key is "<era>:<eventKey>")
 
 export function routeFor(kind, key) {
 	switch (kind) {
@@ -20,6 +22,12 @@ export function routeFor(kind, key) {
 		case 'paragraph': {
 			const [planet, index] = key.split(':');
 			return `/encyclopedia/worlds/${planet}#chapter-${index}`;
+		}
+		case 'tour':
+			return `/encyclopedia/tour/${key}`;
+		case 'event': {
+			const [era, eventKey] = key.split(':');
+			return `/encyclopedia/chronicle/${era}#event-${eventKey}`;
 		}
 		default:
 			throw new Error(`routeFor: unknown kind "${kind}"`);

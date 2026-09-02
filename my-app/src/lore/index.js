@@ -8,7 +8,11 @@ export { getWorlds, getWorld } from './worlds';
 
 export { getSpeciesList, getSpecies } from './species';
 
-export { getEras, getEra, getOverview } from './chronicle';
+export { getEras, getEra, getOverview, getEraFootprint, getEraStory, getWorldTimeline } from './chronicle';
+
+export { getTour } from './tour';
+
+export { getRandomRecord } from './random';
 
 export { search } from './search';
 

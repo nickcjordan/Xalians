@@ -24,6 +24,13 @@ write('encyclopedia.json', read(path.join(docs, 'encyclopedia', 'encyclopedia.js
 write('chronicle.json', read(path.join(docs, 'encyclopedia', 'chronicle.json')));
 write('registries.json', read(path.join(docs, 'species-templates', 'registries.json')));
 
+const tourPath = path.join(docs, 'encyclopedia', 'tour.json');
+if (fs.existsSync(tourPath)) {
+  write('tour.json', read(tourPath));
+} else {
+  console.log('skipped tour.json: docs/encyclopedia/tour.json not written yet');
+}
+
 const templates = path.join(docs, 'species-templates');
 const ratified = read(path.join(templates, 'RATIFIED.json'));
 const records = [];

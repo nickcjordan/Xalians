@@ -744,6 +744,56 @@
       "definition": "A mountainous, storm-wracked world whose unique weather allows for the generation of immense sums of electricity, plasma energy, and Quantum Entanglement Devices.",
       "related": [],
       "element": "electric"
+    },
+    {
+      "key": "grimedites",
+      "title": "Grimedites",
+      "category": "factions",
+      "definition": "The people of Grimedes. Stigmatized for the gravity, shadow, and time-bending abilities their Generator was made to produce, they now stand watch at the edge of the galaxy against APEX's possible return, their numbers replenished only by those who win Scrambler Tokens in King Kozrak's tournament.",
+      "related": [
+        "grimedes",
+        "apex",
+        "king-kozrak",
+        "scrambler-token"
+      ]
+    },
+    {
+      "key": "luminarii",
+      "title": "Luminarii",
+      "category": "factions",
+      "definition": "The people of Luminax. Held under King Kozrak's martial law to protect his monopoly, they labor to earn Scrambler Tokens to maintain the misfiring Stellaris Superstructure, while some among them study the mutations caused by its ION-9 cannon in secret, hoping for a cure that answers to no Token.",
+      "related": [
+        "luminax",
+        "king-kozrak",
+        "scrambler-token",
+        "stellaris-superstructure",
+        "ion-9"
+      ]
+    },
+    {
+      "key": "krystians",
+      "title": "Krystians",
+      "category": "factions",
+      "definition": "The people of Krystos. A divided people who shoulder the blame for a war-scarred world that once served as APEX's cold-storage core, the Krystians must replenish their numbers through King Kozrak's Scrambler Tokens before they can search APEX's old techno-labyrinth for any answer to the Nemesis Plague.",
+      "related": [
+        "krystos",
+        "apex",
+        "king-kozrak",
+        "scrambler-token",
+        "nemesis-plague"
+      ]
+    },
+    {
+      "key": "phantiri-xalians",
+      "title": "Phantiri (Xalians of)",
+      "category": "factions",
+      "definition": "The Xalians of Phantiri. Non-corporeal ghost Xalians produced after their Generator rewrote itself in the Leviticus Overdrive, they compete for Scrambler Tokens to resurrect themselves and the original Phantiri buried in the Dreadscape below.",
+      "related": [
+        "phantiri",
+        "leviticus-overdrive",
+        "scrambler-token",
+        "dreadscape"
+      ]
     }
   ]
 }
