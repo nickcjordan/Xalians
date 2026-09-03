@@ -138,6 +138,10 @@ Public information only. Deploy is an allocation across three sites with a roste
 
 The table must always show whose turn it is, what a click will do, and what just happened, without scrolling. Every number on the table is the live value the rules will use. Every invalid action says why. A player can inspect any creature, theirs or the enemy's, and read its conduct line and thresholds. Resolution is narrated and animated in initiative order; the log stays.
 
+### Two views of the same table (Nick, 2026-09-03)
+
+The table has a simple mode and an advanced mode over the same engine and state, switchable at any moment from the masthead and remembered per browser; simple is the default. The rule for simple mode is to remove decisions, not to hide panels: each deploy turn shows one recommended move (the bot's own choice for the handler's seat, run without its randomizer) as a button with the reason in one sentence built from the engine's numbers, and marks the recommended creature and site on the table; the player may still pick any creature and any site. Orders becomes "each of your creatures acts by nature" with the preview sentences and a Go button, the full orders panel one tap away. The rail (log, dossier) is gone unless a dossier is open; the last two lines of the record ride under the status strip. Hidden sends, the fall-back button and the pass button's small print live in advanced mode; the recommended move carries them when the bot would use them. Advanced mode is the whole table as before.
+
 ## Open items
 
 - The name. Tribute was named for the row game's fiction.

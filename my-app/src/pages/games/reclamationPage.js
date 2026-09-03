@@ -6,6 +6,44 @@ import { createMatch } from '../../gameplay/expedition/expeditionRules';
 import { getWorlds } from '../../gameplay/expedition/sites';
 import { ROSTER_SIZE, SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH } from '../../gameplay/expedition/expeditionInterpretation';
 
+const MODE_KEY = 'reclamation.mode';
+
+function readMode() {
+	try {
+		const stored = window.localStorage.getItem(MODE_KEY);
+		return stored === 'advanced' ? 'advanced' : 'simple';
+	} catch (e) {
+		return 'simple';
+	}
+}
+
+function storeMode(mode) {
+	try {
+		window.localStorage.setItem(MODE_KEY, mode);
+	} catch (e) {
+		// storage may be unavailable; the choice then lasts for the page
+	}
+}
+
+function ModeSwitch({ mode, onChange, compact }) {
+	return (
+		<div className={`g-segmented rec-mode${compact ? ' rec-mode--compact' : ''}`} role="group" aria-label="Table mode" data-mode-switch>
+			{['simple', 'advanced'].map((m) => (
+				<button
+					key={m}
+					type="button"
+					className="g-segment"
+					aria-pressed={mode === m}
+					onClick={() => onChange(m)}
+					data-mode={m}
+				>
+					{m === 'simple' ? 'Simple' : 'Advanced'}
+				</button>
+			))}
+		</div>
+	);
+}
+
 function seedFromQueryOrDefault() {
 	const params = new URLSearchParams(window.location.search);
 	const fromQuery = params.get('seed');
@@ -20,6 +58,12 @@ class ReclamationPage extends React.Component {
 		seed: seedFromQueryOrDefault(),
 		match: null,
 		matchKey: 0,
+		mode: readMode(),
+	};
+
+	setMode = (mode) => {
+		storeMode(mode);
+		this.setState({ mode });
 	};
 
 	startMatch = () => {
@@ -37,7 +81,7 @@ class ReclamationPage extends React.Component {
 	};
 
 	render() {
-		const { match, seed, matchKey } = this.state;
+		const { match, seed, matchKey, mode } = this.state;
 
 		if (match) {
 			return (
@@ -47,12 +91,14 @@ class ReclamationPage extends React.Component {
 						<header className="rec-masthead">
 							<span className="g-kicker">Kozrak's Charter</span>
 							<h1 className="rec-masthead-title">Reclamation</h1>
+							<ModeSwitch mode={mode} onChange={this.setMode} compact />
 							<span className="g-mono rec-masthead-seed">seed {seed}</span>
 						</header>
 						<ReclamationMatch
 							key={matchKey}
 							initialMatch={match}
 							seed={seed}
+							mode={mode}
 							onNewExpedition={this.newExpedition}
 						/>
 					</div>
@@ -113,9 +159,17 @@ class ReclamationPage extends React.Component {
 							</ul>
 
 							<div className="rec-intro-actions">
-								<button type="button" className="g-btn g-btn--primary" onClick={this.startMatch}>
-									Mount the expedition
-								</button>
+							<div className="rec-intro-mode">
+								<ModeSwitch mode={mode} onChange={this.setMode} />
+								<span className="rec-intro-mode-text">
+									{mode === 'simple'
+										? 'Simple: one recommended move each turn, orders by nature, go. Switch any time.'
+										: 'Advanced: every order, every number, hidden sends, the log and the dossiers.'}
+								</span>
+							</div>
+							<button type="button" className="g-btn g-btn--primary" onClick={this.startMatch}>
+								Mount the expedition
+							</button>
 								<span className="rec-intro-seed g-mono">Add ?seed={seed} to the address to replay this expedition.</span>
 							</div>
 						</aside>

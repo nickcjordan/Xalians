@@ -39,6 +39,7 @@ function ReclamationFigure({
 	facing,
 	selected,
 	armed,
+	recommended,
 	dimmed,
 	acting,
 	hit,
@@ -71,6 +72,9 @@ function ReclamationFigure({
 	}
 	if (armed) {
 		classes.push('rec-figure--armed');
+	}
+	if (recommended) {
+		classes.push('rec-figure--recommended');
 	}
 	if (dimmed) {
 		classes.push('rec-figure--dimmed');

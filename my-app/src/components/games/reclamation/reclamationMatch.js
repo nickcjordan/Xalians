@@ -16,6 +16,7 @@ import {
 	narrateSend, narratePass, narrateJudge, narrateMatchEnd,
 } from './reclamationNarration';
 import { orderPreview, flattenBoard, prepareWithCompanions, siteHoldTotal } from './reclamationPreview';
+import { recommendSend } from './reclamationAdvice';
 
 function capitalize(sentence) {
 	return sentence ? sentence.charAt(0).toUpperCase() + sentence.slice(1) : sentence;
@@ -39,6 +40,14 @@ const THEM = 'B';
 	Interface rule, from the design doc: the table must always show whose turn it is,
 	what a click will do, and what just happened, without scrolling; every number is the
 	live value the rules will use; every invalid action says why.
+
+	Two views of the same match (Nick, 2026-09-03). `props.mode` is 'simple' or
+	'advanced'. Simple mode removes decisions rather than hiding panels: each deploy turn
+	offers one recommended move with its reason (the player may still pick any creature
+	and site), Orders becomes "your creatures act by nature, go" with the full orders
+	panel one tap away, and the rail (log, dossier) is gone except when a dossier is
+	open; the last two lines of the record ride under the status strip instead.
+	Advanced mode is the whole table. The engine and the state are the same in both.
 */
 class ReclamationMatch extends React.Component {
 	constructor(props) {
@@ -59,6 +68,7 @@ class ReclamationMatch extends React.Component {
 			judgedSnapshot: null,
 			judged: false,
 			hoverRow: null, // the preview line under the pointer, to light its creatures
+			ordersOpen: false, // simple mode: the full orders panel, opened on request
 		};
 		this.botRngState = createRngState(`${props.seed}-bot`);
 		this.botTimer = null;
@@ -480,6 +490,50 @@ class ReclamationMatch extends React.Component {
 	};
 
 	// ------------------------------------------------------------------
+	// simple mode: the recommended move
+	// ------------------------------------------------------------------
+	isSimple() {
+		return this.props.mode !== 'advanced';
+	}
+
+	recommendation(view) {
+		if (!this.isSimple() || view.phase !== 'deploy' || this.state.playback || this.state.judged) {
+			return null;
+		}
+		return recommendSend(view, view.players[YOU].roster, YOU);
+	}
+
+	acceptRecommendation = () => {
+		const view = this.view();
+		const rec = this.recommendation(view);
+		if (!rec || rec.type === 'wait') {
+			return;
+		}
+		if (rec.type === 'pass') {
+			this.handlePass();
+			return;
+		}
+		if (rec.type === 'relocate') {
+			this.setState({ relocating: true, armedRecordId: null }, () => this.handleSiteClick(rec.siteId));
+			return;
+		}
+		const { match } = this.state;
+		const record = match.players[YOU].roster.find((r) => r.id === rec.recordId);
+		const next = send(match, YOU, rec.recordId, rec.siteId, rec.hidden);
+		if (!next || !record) {
+			this.notice('That send is not allowed right now.');
+			return;
+		}
+		this.appendLog(narrateSend({
+			you: true,
+			actorName: speciesLabel(record),
+			siteName: this.siteName(match, rec.siteId),
+			hidden: rec.hidden,
+		}));
+		this.setState({ match: next, armedRecordId: null, sendHidden: false, relocating: false }, this.afterEngineStep);
+	};
+
+	// ------------------------------------------------------------------
 	// orders
 	// ------------------------------------------------------------------
 	setOrder = (recordId, actName) => {
@@ -814,8 +868,11 @@ class ReclamationMatch extends React.Component {
 			return 'The Court has ruled. Reveal the next world when you are ready.';
 		}
 		if (view.phase === 'orders') {
-			return view.players[YOU].committed
-				? 'Your orders are sealed.'
+			if (view.players[YOU].committed) {
+				return 'Your orders are sealed.';
+			}
+			return this.isSimple()
+				? 'Your creatures act by nature. Go, or change an order first.'
 				: 'Choose an act for each of your creatures, then give orders.';
 		}
 		if (view.turn !== YOU) {
@@ -830,6 +887,9 @@ class ReclamationMatch extends React.Component {
 		}
 		if (view.players[YOU].passed) {
 			return 'You have passed. Waiting on the rival.';
+		}
+		if (this.isSimple()) {
+			return 'Take the recommended move, or pick a creature and a site yourself.';
 		}
 		return 'Pick a creature from your roster, then pick the site to send it to. Or pass.';
 	}
@@ -915,6 +975,35 @@ class ReclamationMatch extends React.Component {
 		);
 	}
 
+	renderAdvice(view) {
+		const rec = this.recommendation(view);
+		if (!rec) {
+			return null;
+		}
+		if (rec.type === 'wait') {
+			return (
+				<div className="rec-advice rec-advice--waiting" data-advice="wait">
+					<span className="g-kicker">Recommended</span>
+					<span className="rec-advice-label">Waiting on the rival</span>
+				</div>
+			);
+		}
+		return (
+			<div className={`rec-advice rec-advice--${rec.type}`} data-advice={rec.type}>
+				<span className="g-kicker">Recommended</span>
+				<button type="button" className="g-btn g-btn--primary rec-advice-btn" onClick={this.acceptRecommendation} data-accept-advice>
+					{rec.label}
+				</button>
+				<p className="rec-advice-why g-body">{rec.reason}</p>
+				{rec.type !== 'pass' && (
+					<button type="button" className="g-btn rec-advice-pass" onClick={this.handlePass} data-pass title="Pass is permanent for this world.">
+						Pass instead
+					</button>
+				)}
+			</div>
+		);
+	}
+
 	renderDeployControls(view) {
 		const me = view.players[YOU];
 		const them = view.players[THEM];
@@ -993,6 +1082,13 @@ class ReclamationMatch extends React.Component {
 	render() {
 		const view = this.view();
 		const { notice, playback, verdicts, judged, inspect } = this.state;
+		const simple = this.isSimple();
+		const rec = this.recommendation(view);
+		const recommendedRecordId = rec && rec.type === 'send' && !this.state.armedRecordId ? rec.recordId : null;
+		const recommendedSiteId = rec && (rec.type === 'send' || rec.type === 'relocate') && !this.state.armedRecordId ? rec.siteId : null;
+		// simple mode has no rail, except for an open dossier or the full orders panel
+		const ordersPanelOpen = view.phase === 'orders' && !playback && (!simple || (this.state.ordersOpen && !view.players[YOU].committed));
+		const showRail = !simple || !!inspect || ordersPanelOpen;
 		const holds = this.holdsForBoard(view);
 		const totals = this.totalsForBoard(view);
 		const ghosts = this.ghostsForArmed(view);
@@ -1032,12 +1128,20 @@ class ReclamationMatch extends React.Component {
 		}
 
 		return (
-			<div className="rec-match">
+			<div className={`rec-match${simple ? ' rec-match--simple' : ' rec-match--advanced'}`}>
 				{this.renderStatusStrip(view)}
+
+				{simple && this.state.log.length > 0 && (
+					<div className="rec-ticker g-screen" data-ticker aria-live="polite">
+						{this.state.log.slice(-2).map((line, i) => (
+							<span className={`g-screen-line${i === this.state.log.slice(-2).length - 1 ? '' : ' g-screen-line--dim'}`} key={`${this.state.log.length}-${i}`}>{line}</span>
+						))}
+					</div>
+				)}
 
 				{notice && <div className="g-notice g-notice--alert rec-notice" role="status" data-notice>{notice}</div>}
 
-				<div className="rec-body">
+				<div className={`rec-body${showRail ? '' : ' rec-body--wide'}`}>
 					<div className="rec-table">
 						<ReclamationWorld
 							world={view.world}
@@ -1052,6 +1156,7 @@ class ReclamationMatch extends React.Component {
 							relocating={this.state.relocating}
 							vanguardRecordId={me.vanguardRecordId}
 							clickable={clickable}
+							recommendedSiteId={recommendedSiteId}
 							holdingIds={holdingIds}
 							hiddenEnemyCount={deploying || ordering ? (them.hiddenSentThisRound || 0) : 0}
 							badges={badges}
@@ -1061,22 +1166,25 @@ class ReclamationMatch extends React.Component {
 						/>
 
 						{deploying && (
-							<div className="rec-deploy-bar">
+							<div className={`rec-deploy-bar${simple ? ' rec-deploy-bar--simple' : ''}`}>
+								{simple && this.renderAdvice(view)}
 								<ReclamationRoster
 									roster={me.roster}
 									you={YOU}
 									armedRecordId={this.state.armedRecordId}
+									recommendedRecordId={recommendedRecordId}
 									onArm={this.armRecord}
 									onInspect={(record) => this.inspectRecord(record, null)}
 									sendsLeft={Math.max(0, SENDABLE - me.sentCount)}
 									disabled={view.turn !== YOU || me.passed}
 									yourTurn={view.turn === YOU && !me.passed}
+									simple={simple}
 								/>
-								{this.renderDeployControls(view)}
+								{!simple && this.renderDeployControls(view)}
 							</div>
 						)}
 
-						{ordering && (
+						{ordering && !simple && (
 							<div className="rec-orders-bar" data-orders-bar>
 								<span className="rec-orders-bar-text">
 									{me.committed
@@ -1089,27 +1197,56 @@ class ReclamationMatch extends React.Component {
 							</div>
 						)}
 
-						{playback && (
-							<div className="rec-resolving">
-								<span className="g-label">Resolving in initiative order, {playback.index} of {playback.events.length}</span>
-								<button type="button" className="g-btn rec-skip-btn" onClick={this.skipPlayback} data-skip>Skip</button>
+						{ordering && simple && (
+							<div className="rec-orders-bar rec-orders-bar--simple" data-orders-bar>
+								<div className="rec-orders-plan">
+									<span className="g-kicker">Orders</span>
+									<span className="rec-orders-bar-text">
+										{me.committed
+											? 'Your orders are sealed. The rival is giving its own.'
+											: units.length === 0
+												? 'You have nothing on this world. The rival acts alone.'
+												: this.state.ordersOpen
+													? 'Choose acts in the panel, then go.'
+													: 'Each of your creatures acts by nature:'}
+									</span>
+									{!me.committed && units.length > 0 && !this.state.ordersOpen && (
+										<ul className="rec-orders-plan-list">
+											{preview.filter((row) => row.isYours).map((row) => (
+												<li
+													key={row.unit.recordId}
+													className={row.ordered ? 'rec-orders-plan-item rec-orders-plan-item--ordered' : 'rec-orders-plan-item'}
+													onMouseEnter={() => this.setState({ hoverRow: row })}
+													onMouseLeave={() => this.setState({ hoverRow: null })}
+												>
+													{row.sentence}
+												</li>
+											))}
+										</ul>
+									)}
+								</div>
+								<div className="rec-orders-plan-actions">
+									<button type="button" className="g-btn g-btn--primary rec-go-btn" onClick={this.commitOrders} disabled={me.committed} data-give-orders>
+										{me.committed ? 'Orders given' : 'Go'}
+									</button>
+									{!me.committed && units.length > 0 && (
+										<button
+											type="button"
+											className={`g-btn rec-change-orders${this.state.ordersOpen ? ' rec-change-orders--open' : ''}`}
+											onClick={() => this.setState((prev) => ({ ordersOpen: !prev.ordersOpen }))}
+											data-change-orders
+										>
+											{this.state.ordersOpen ? 'Close orders' : 'Change orders'}
+										</button>
+									)}
+								</div>
 							</div>
 						)}
-
-						{judged && view.phase !== 'matchEnd' && (
-							<div className="rec-judge-bar">
-								<span className="g-label">The Court has ruled on {this.state.judgedWorld || 'the world'}.</span>
-								<button type="button" className="g-btn g-btn--primary" onClick={this.nextWorld} data-next-world>
-									Next world: {view.nextWorld ? view.nextWorld.planet : view.world.planet}
-								</button>
-							</div>
-						)}
-
-						{view.phase === 'matchEnd' && this.renderVerdictPanel(view)}
 					</div>
 
+					{showRail && (
 					<div className="rec-rail">
-						{ordering && (
+						{ordersPanelOpen && (
 							<ReclamationOrders
 								units={units}
 								orders={me.orders}
@@ -1130,8 +1267,9 @@ class ReclamationMatch extends React.Component {
 								onClose={() => this.setState({ inspect: null })}
 							/>
 						)}
-						<ReclamationLog lines={this.state.log} />
+						{!simple && <ReclamationLog lines={this.state.log} />}
 					</div>
+					)}
 				</div>
 			</div>
 		);
