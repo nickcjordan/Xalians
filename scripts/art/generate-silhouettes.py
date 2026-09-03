@@ -23,6 +23,13 @@ STYLE = (
     'side or three-quarter view, irregular organic contour, white negative-space incisions marking the eye, '
     'limb joints and body segments, flat ink, no other objects'
 )
+# Bolder variant after Nick's read of run 3 (correct black and white, not vector-like enough): mass over line.
+STYLES = {
+    'ink': STYLE,
+    'bold': ('flat black vector silhouette of one creature on plain white, whole body visible with margin, side or '
+             'three-quarter view, bold heavy simplified masses, thick smooth contour, a few thin white cut lines marking the eye '
+             'and body segments, die-cut sticker, stencil, solid fill, no other objects'),
+}
 NEGATIVE = (
     'cropped, cut off, duplicate creature, several creatures, pattern, spiral, ornament, frame, border, '
     'textured background, ground, terrain, shadow, gradient, halftone, hatching, engraving, text, watermark, '
@@ -31,7 +38,7 @@ NEGATIVE = (
 
 # Compact spatial briefs per species: counts, placement, shape. Fallback is the anatomy list alone.
 BODY = {
-    'frackworm': 'a colossal worm, one long thick body of many ring segments tapering to a blunt tail, the head is a conical ringed drill point, no legs, no eyes',
+    'frackworm': 'a colossal worm whose head is a conical ringed drill point, one long thick body of many ring segments tapering to a blunt tail, no legs, no eyes, no face',
 }
 
 
@@ -65,6 +72,9 @@ def main():
     ap.add_argument('--size', type=int, default=896)
     ap.add_argument('--ref', default='', help='comma-separated species keys whose art PNGs are IP-Adapter style references')
     ap.add_argument('--ip-scale', type=float, default=0.6)
+    ap.add_argument('--ip-blocks', choices=['all', 'style', 'style-layout'], default='all',
+                    help='which attention blocks the adapter feeds: all, style only (up block 0), or style plus layout (down block 2)')
+    ap.add_argument('--style', choices=sorted(STYLES), default='ink')
     ap.add_argument('--tag', default='run')
     args = ap.parse_args()
     if args.n < 1: raise SystemExit('--n must be at least 1')
@@ -72,7 +82,7 @@ def main():
 
     rec_path = ROOT / 'docs' / 'species-templates' / f'{args.key}.json'
     rec = json.loads(rec_path.read_text(encoding='utf-8'))
-    prompt = f'{body_phrase(args.key, rec)}; {STYLE}'
+    prompt = f'{body_phrase(args.key, rec)}; {STYLES[args.style]}'
     out = OUT_ROOT / args.key / args.tag
     out.mkdir(parents=True, exist_ok=True)
     refs = [k for k in args.ref.split(',') if k]
@@ -92,13 +102,19 @@ def main():
         encoder = CLIPVisionModelWithProjection.from_pretrained('h94/IP-Adapter', subfolder='models/image_encoder', torch_dtype=torch.float16)
         pipe.image_encoder = encoder
         pipe.load_ip_adapter('h94/IP-Adapter', subfolder='sdxl_models', weight_name='ip-adapter_sdxl_vit-h.safetensors')
-        pipe.set_ip_adapter_scale(args.ip_scale)
+        if args.ip_blocks == 'style':
+            scale = {'up': {'block_0': [0.0, args.ip_scale, 0.0]}}
+        elif args.ip_blocks == 'style-layout':
+            scale = {'down': {'block_2': [0.0, args.ip_scale]}, 'up': {'block_0': [0.0, args.ip_scale, 0.0]}}
+        else:
+            scale = args.ip_scale
+        pipe.set_ip_adapter_scale(scale)
         # one adapter, several reference images: diffusers wants a list per adapter, so a list of one list
         ip_kwargs['ip_adapter_image'] = [[Image.open(p).convert('RGB') for p in ref_paths]]
     pipe.enable_model_cpu_offload()
 
     manifest = {'key': args.key, 'tag': args.tag, 'model': 'stabilityai/stable-diffusion-xl-base-1.0', 'vae': 'madebyollin/sdxl-vae-fp16-fix',
-                'ip_adapter': 'h94/IP-Adapter sdxl_models/ip-adapter_sdxl_vit-h.safetensors' if refs else None, 'ip_scale': args.ip_scale if refs else None,
+                'ip_adapter': 'h94/IP-Adapter sdxl_models/ip-adapter_sdxl_vit-h.safetensors' if refs else None, 'ip_scale': args.ip_scale if refs else None, 'ip_blocks': args.ip_blocks if refs else None, 'style': args.style,
                 'refs': [str(p) for p in ref_paths], 'record': str(rec_path), 'record_sha': sha256(rec_path),
                 'prompt': prompt, 'negative': NEGATIVE, 'steps': args.steps, 'guidance': args.guidance, 'size': args.size,
                 'scheduler': type(pipe.scheduler).__name__, 'versions': versions(), 'candidates': []}
