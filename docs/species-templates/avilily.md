@@ -127,3 +127,4 @@ WARN conduits.source                conduit secretion for plant: the validator a
 ## Orchestrator amendments
 
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: `conduits` removed: the saliva is a sedative and no sentence shows plant power leaving through it; `snare` is already in the secretion row, so the signature is unchanged. Encyclopedia restores the source's own words 'swarms' and 'most sacred parts'. `lifespan` set to `fleeting` as the ratified rubric reads (a flier under 20 kg shown living in numbers); the run's `short` and its proposed narrowing of that clause are raised to Nick as a lever. `communication` keeps `display` and `chemical`: both signals are broadcast, not aimed. Art matched the run's reading.
+- 2026-09-02, lifespan (Nick): the fleeting clause now covers swarm and conjured-unit bodies only (skill v2.18); `lifespan` set to `short`, was `fleeting`.

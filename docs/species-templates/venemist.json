@@ -1,0 +1,82 @@
+{
+  "key": "venemist",
+  "name": "Venemist",
+  "element": "chemical",
+  "homePlanet": "drainov",
+  "generatorPlanets": ["drainov"],
+  "lore": {
+    "description": "A shaggy four-legged hunter with a spray tube seated in its gaping jaws, the Venemist carries only two teeth and cannot bite down on anything it wants to eat. The toxic mist it expels from that tube dissolves prey where it stands, a solvent gut turned outward, and the Generator that shaped it on Drainov was built to fill a world of acid swamps and industrial waste with life that could feed there at all. Since the criminal syndicates took the abandoned factories, the Venemist has been driven through the refineries and processing plants of that grid, where the same spray strips corrosion and residue as readily as it strips flesh.",
+    "descriptionStatus": "upgraded",
+    "biomeNiche": "acid swamps and the derelict chemical plants of Drainov's factoryscape"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": { "primary": "flesh" },
+    "bodyPlan": "quadruped",
+    "anatomy": ["jaws", "fangs", "vents", "tail", "hide"],
+    "covering": "fur",
+    "size": { "heightCm": [95, 120], "weightKg": [42, 62] },
+    "lifespan": "standard",
+    "genome": { "chirality": "rolled" },
+    "diet": "carnivore",
+    "communication": ["vocal", "chemical"],
+    "breathes": ["gas"],
+    "environmentalTolerance": {
+      "ambientMedia": ["gas", "liquid"],
+      "temperatureC": { "min": -10, "max": 43 }
+    },
+    "capabilities": {
+      "flight": [0, 0],
+      "swim": [25, 45],
+      "burrow": [0, 10],
+      "climb": [15, 35],
+      "sprint": [45, 70],
+      "leap": [35, 55],
+      "manipulation": [10, 25]
+    },
+    "senses": {
+      "sight": [40, 60],
+      "hearing": [55, 80],
+      "smell": [60, 85]
+    }
+  },
+  "archetypeWeights": {
+    "predator": 46,
+    "survivor": 24,
+    "prowler": 18,
+    "berserker": 12
+  },
+  "attributes": {
+    "strength": [30, 50],
+    "vitality": [40, 62],
+    "endurance": [62, 88],
+    "agility": [45, 68],
+    "reflex": [45, 68],
+    "intelligence": [25, 45],
+    "willpower": [35, 58],
+    "instinct": [55, 80],
+    "charisma": [20, 40],
+    "resilience": [40, 62]
+  },
+  "traits": {
+    "pool": {
+      "toxic": 100,
+      "resistant": 95,
+      "stealthy": 40,
+      "perceptive": 35,
+      "solitary": 30,
+      "pack-bonded": 20,
+      "volatile": 12
+    }
+  },
+  "instruments": ["vents", "jaws", "fangs"],
+  "conduits": { "vents": "chemical" },
+  "signatureAbility": {
+    "name": "Dissolution Veil",
+    "instrument": "vents",
+    "action": "spray",
+    "medium": "chemical",
+    "intensity": [30, 75],
+    "description": "The Venemist opens its jaws and drives a fanning mist through the tube seated in them, and what the mist settles on begins to come apart."
+  }
+}
