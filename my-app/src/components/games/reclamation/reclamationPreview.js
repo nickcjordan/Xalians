@@ -354,15 +354,33 @@ export function previewSentence({ unit, action, act, actClass, target, magnitude
 		return `${who} would ${action}, but finds ${clause} nowhere ${where}.`;
 	}
 	const targetHold = formatHold(livingHold(target, publicState));
-	const forN = typeof magnitude === 'number' ? ` for ${magnitude}` : '';
+	// the orders panel prints the act's own magnitude; against this target the matchup
+	// may scale it, so say both or the two numbers look like a contradiction
+	const base = act && typeof act.magnitude === 'number' ? act.magnitude : null;
+	const scaled = typeof magnitude === 'number' && base !== null && base !== magnitude ? ` (${base} before the matchup)` : '';
+	const forN = typeof magnitude === 'number' ? ` for ${magnitude}${scaled}` : '';
 	// an area act does not choose a creature, it chooses the site with the most standing
 	// on it and catches both sides there (expeditionRules.pickAreaTargetSite), so the
 	// sentence has to name the site rather than a target.
 	if (AREA_ACTIONS.includes(action)) {
 		const siteName = pickAreaSitePreview(publicState, unit);
-		return siteName
-			? `${who} ${actVerbPhrase(action)} ${siteName}, catching everything standing there, both sides, for ${magnitude}.`
-			: `${who} would ${action}, but there is nothing on the world to catch.`;
+		if (!siteName) {
+			return `${who} would ${action}, but there is nothing on the world to catch.`;
+		}
+		// name your own creatures in the blast: the cost of an area act is the thing a
+		// handler most needs to see before giving the order
+		const site = publicState.world.sites.find((s) => s.name === siteName);
+		const opponent = OTHER[unit.seat];
+		const enemies = (publicState.board[site.id][opponent] || []).filter((e) => e.record).length;
+		const allies = (publicState.board[site.id][unit.seat] || [])
+			.filter((e) => e.record && e.record.id !== unit.record.id)
+			.map((e) => speciesLabel(e.record));
+		const enemyClause = `${enemies} enem${enemies === 1 ? 'y' : 'ies'}`;
+		const allyClause = allies.length > 0 ? ` and your own ${allies.join(', ')}` : '';
+		// magnitude scales per creature caught, so the area sentence gives the act's own
+		// number rather than one victim's
+		const baseMag = act && typeof act.magnitude === 'number' ? act.magnitude : magnitude;
+		return `${who} ${actVerbPhrase(action)} ${siteName}, catching ${enemyClause}${allyClause}, at magnitude ${baseMag} before each matchup.`;
 	}
 	return `${who} ${actVerbPhrase(action)} ${clause} ${where}: ${speciesLabel(target.record)}, hold ${targetHold}${forN}.`;
 }

@@ -211,13 +211,13 @@ export function narrateMatchEnd(ctx = {}) {
 		? 'clinched at five sites'
 		: reason === 'tiebreak'
 			? 'settled on the tiebreak'
-			: 'the third world exhausted';
+			: 'after the third world';
 	const sites = (n) => `${n} site${n === 1 ? '' : 's'}`;
 	if (winner === you) {
-		return `You take the Charter, ${sites(sitesYou)} to ${sitesThem}, with ${why}.`;
+		return `You take the Charter, ${sites(sitesYou)} to ${sitesThem}, ${why}.`;
 	}
 	if (winner) {
-		return `The rival takes the Charter, ${sites(sitesThem)} to ${sitesYou}, with ${why}.`;
+		return `The rival takes the Charter, ${sites(sitesThem)} to ${sitesYou}, ${why}.`;
 	}
 	return `The expedition ends level, ${sitesYou} to ${sitesThem}.`;
 }

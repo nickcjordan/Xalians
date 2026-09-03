@@ -8,7 +8,7 @@ function ReclamationLog({ lines }) {
 	return (
 		<div className="g-screen rec-log" aria-label="Expedition log">
 			<div className="g-readout-unit">Log</div>
-			{lines.length === 0 && <div className="g-screen-line--dim">The expedition has not begun.</div>}
+			{lines.length === 0 && <div className="g-screen-line--dim">Nothing has happened yet. The first send opens the record.</div>}
 			{lines.slice().reverse().map((line, i) => (
 				<div className={`g-screen-line${i === 0 ? '' : ' g-screen-line--dim'}`} key={`${lines.length - i}`}>{line}</div>
 			))}

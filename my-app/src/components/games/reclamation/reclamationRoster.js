@@ -1,5 +1,6 @@
 import React from 'react';
 import ReclamationFigure, { ReclamationSilhouette } from './reclamationFigure';
+import { baseHold } from '../../../gameplay/expedition/creatureOnTable';
 
 /*
 	ReclamationRoster — the strip of figures waiting to be sent, plus the rival's hidden
@@ -32,6 +33,7 @@ function ReclamationRoster({
 						you={you}
 						facing="up"
 						size="small"
+						hold={baseHold(record)}
 						armed={armedRecordId === record.id}
 						dimmed={disabled}
 						onClick={(e) => {
