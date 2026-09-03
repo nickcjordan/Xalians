@@ -40,3 +40,4 @@ Per-species decisions that a migration agent cannot derive from the sources alon
 ## Magmuth and Floria batch (pending Nick)
 
 - 2026-09-02: Dromeus, Imprit, Xylum, Kosanos, Avilily migrated, validated, amended; presented with three lever questions (partial-surface covering, small-flier lifespan clause, forelimb-work body plan clause) and rulings on composition-from-element (never), Kosanos trunk plus blades, Xylum height as visible crown.
+- 2026-09-02: Dromeus, Imprit, Xylum, Kosanos, Avilily ratified as presented, with the orchestrator rulings (Kosanos flesh and omnivore; Imprit no tail conduit, fists, fangs, luminous 100; Avilily no conduit; Xylum height as visible crown; Kosanos trunk plus blades). Covering rule amended: a named partial surface is the covering when nothing else is named or shown; Dromeus is `feathers`.
