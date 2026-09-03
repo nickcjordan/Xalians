@@ -45,6 +45,7 @@ function ReclamationFigure({
 	hit,
 	hover,
 	flash,
+	arrive,
 	label,
 	badge,
 	onClick,
@@ -87,6 +88,9 @@ function ReclamationFigure({
 	}
 	if (hover) {
 		classes.push('rec-figure--hover');
+	}
+	if (arrive) {
+		classes.push('rec-figure--arrive');
 	}
 	if (element) {
 		classes.push(`g-el-${element}`);

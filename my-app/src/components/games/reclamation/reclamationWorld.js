@@ -76,14 +76,16 @@ function ReclamationWorld({
 	hiddenEnemyCount,
 	badges,
 	highlights,
+	arrival,
 }) {
 	const opponent = you === 'A' ? 'B' : 'A';
 	const hl = highlights || {};
+	const arrivedIds = arrival ? arrival.ids : [];
 
 	return (
 		<div className={`rec-world g-el-${world.element}`}>
 			{hiddenEnemyCount > 0 && (
-				<div className="rec-hidden-banner" data-hidden-banner>
+				<div className="rec-hidden-banner rec-rise" data-hidden-banner>
 					<ReclamationSilhouette count={hiddenEnemyCount} />
 					<span className="rec-hidden-banner-text">
 						The rival has {hiddenEnemyCount === 1 ? 'a creature' : `${hiddenEnemyCount} creatures`} hidden somewhere on this world. It is revealed when orders are.
@@ -91,7 +93,7 @@ function ReclamationWorld({
 				</div>
 			)}
 			<div className="rec-sites">
-				{world.sites.map((site) => {
+				{world.sites.map((site, siteIndex) => {
 					const theirs = (board[site.id][opponent] || []).filter((e) => e.record);
 					const mine = (board[site.id][you] || []).filter((e) => e.record);
 					const totalMine = totals[site.id] ? totals[site.id][you] : 0;
@@ -101,7 +103,11 @@ function ReclamationWorld({
 					const ghost = ghosts && ghosts[site.id];
 					const verdict = verdicts && verdicts[site.id];
 
-					const classes = ['g-panel', 'rec-site', `rec-site--${margin.who}`];
+					const classes = ['g-panel', 'rec-site', 'rec-site--enter', `rec-site--${margin.who}`];
+					// the site something just landed on pulses in the colour of who sent it
+					if (arrival && arrival.siteId === site.id) {
+						classes.push(arrival.seat === you ? 'rec-site--landed-mine' : 'rec-site--landed-theirs');
+					}
 					if (empty) {
 						classes.push('rec-site--empty');
 					}
@@ -138,6 +144,7 @@ function ReclamationWorld({
 						hit: hl.hit === entry.recordId,
 						hover: hl.hover === entry.recordId,
 						flash: hl.hit === entry.recordId ? hl.flash : undefined,
+						arrive: arrivedIds.includes(entry.recordId),
 						badge: badges ? badges[entry.recordId] : undefined,
 						onClick: (e) => {
 							e.stopPropagation();
@@ -151,6 +158,7 @@ function ReclamationWorld({
 							className={classes.join(' ')}
 							key={site.id}
 							data-site-id={site.id}
+							style={{ '--rec-i': siteIndex }}
 							onClick={clickable ? () => onSiteClick(site.id) : undefined}
 							role={clickable ? 'button' : undefined}
 							tabIndex={clickable ? 0 : undefined}
@@ -169,11 +177,12 @@ function ReclamationWorld({
 
 							{!empty && (
 								<div className={`rec-site-margin rec-site-margin--${margin.who}`} data-site-margin={site.id}>
-									<span className="rec-site-margin-text">{margin.text}</span>
+									{/* keyed on their values so a change remounts the number and it ticks */}
+									<span className="rec-site-margin-text rec-tick" key={margin.text}>{margin.text}</span>
 									<span className={`rec-site-margin-totals g-mono${totalMine > 0 && totalTheirs > 0 ? '' : ' rec-site-margin-totals--quiet'}`}>
-										<span data-total-seat={opponent} data-site-total={site.id}>{formatHold(totalTheirs)}</span>
+										<span className="rec-tick" data-total-seat={opponent} data-site-total={site.id} key={`t-${formatHold(totalTheirs)}`}>{formatHold(totalTheirs)}</span>
 										<span className="rec-site-margin-vs">rival · you</span>
-										<span data-total-seat={you} data-site-total={site.id}>{formatHold(totalMine)}</span>
+										<span className="rec-tick" data-total-seat={you} data-site-total={site.id} key={`m-${formatHold(totalMine)}`}>{formatHold(totalMine)}</span>
 									</span>
 								</div>
 							)}
@@ -198,7 +207,7 @@ function ReclamationWorld({
 									)}
 									{!ghost && relocating && <span className="rec-ghost rec-ghost--relocate">fall back here</span>}
 									{!ghost && !relocating && verdict && (
-										<span className={`rec-stamp rec-stamp--${verdict.who}`}>{verdict.text}</span>
+										<span className={`rec-stamp rec-stamp--${verdict.who} rec-stamp--down`}>{verdict.text}</span>
 									)}
 									{!ghost && !relocating && !verdict && empty && (
 										<span className="rec-site-unclaimed">unclaimed</span>

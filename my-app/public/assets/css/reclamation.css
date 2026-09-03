@@ -2104,3 +2104,241 @@
 	.rec-mode--compact { margin-left: auto; }
 	.rec-ticker { display: none; }
 }
+
+/* -------------------------------------------------------------------------
+   MOTION — every change on the table is told twice (Nick, 2026-09-03)
+
+   A figure that simply appears reads as nothing having happened. So a figure that
+   lands drops onto its site, the site takes a brief tint in the sender's colour, a
+   callout over the sites says what happened in a sentence, and the numbers that
+   changed tick. None of it glows: motion is position, tint and opacity only, and
+   all of it is off under prefers-reduced-motion.
+   ------------------------------------------------------------------------- */
+
+.rec-table { position: relative; }
+
+/* the callout: the sentence, on its own row above the sites so it covers nothing,
+   in the colour of who did it. The row keeps its height while empty so the table
+   does not jump. */
+.rec-callout-row {
+	flex: 0 0 auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 38px;
+	margin-bottom: calc(-1 * var(--g-2));
+}
+
+.rec-callout {
+	--rec-beat-ms: 1400ms;
+	display: inline-flex;
+	align-items: baseline;
+	gap: var(--g-3);
+	max-width: min(92%, 640px);
+	padding: var(--g-2) var(--g-4);
+	background: var(--g-hull-hi);
+	border: var(--g-hairline) solid var(--g-seam);
+	border-left: 4px solid var(--g-ink-low);
+	border-radius: var(--g-radius);
+	box-shadow: var(--g-relief);
+	pointer-events: none;
+	animation: rec-callout var(--rec-beat-ms) cubic-bezier(0.3, 0, 0.2, 1) both;
+}
+
+.rec-callout--you { border-left-color: var(--g-hazard); }
+.rec-callout--rival { border-left-color: var(--g-lamp-red); }
+.rec-callout--judge { border-left-color: var(--g-brass-light); }
+.rec-callout--world { border-left-color: var(--g-el); }
+
+.rec-callout-kicker {
+	flex: 0 0 auto;
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	color: var(--g-ink-low);
+}
+
+.rec-callout--you .rec-callout-kicker { color: var(--g-hazard); }
+.rec-callout--rival .rec-callout-kicker { color: var(--g-lamp-red); }
+.rec-callout--judge .rec-callout-kicker { color: var(--g-brass-light); }
+
+.rec-callout-text {
+	font-family: var(--g-font-body);
+	font-size: var(--g-size-small);
+	line-height: 1.35;
+	color: var(--g-ink);
+}
+
+@keyframes rec-callout {
+	0% { opacity: 0; transform: translateY(-8px) scale(0.97); }
+	10% { opacity: 1; transform: translateY(0) scale(1); }
+	84% { opacity: 1; transform: translateY(0) scale(1); }
+	100% { opacity: 0; transform: translateY(-4px) scale(0.99); }
+}
+
+@media (max-width: 640px) {
+	.rec-callout-row { min-height: 30px; }
+	.rec-callout { flex-direction: column; gap: 0; align-items: flex-start; max-width: 100%; }
+}
+
+/* a figure landing: the rival's drops in from above, yours rises from below */
+.rec-figure--arrive { animation: rec-land-up 520ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
+.rec-figure--arrive.rec-figure--down { animation-name: rec-land-down; }
+
+@keyframes rec-land-up {
+	0% { opacity: 0; transform: translateY(18px) scale(0.92); }
+	60% { opacity: 1; transform: translateY(-3px) scale(1.03); }
+	100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes rec-land-down {
+	0% { opacity: 0; transform: translateY(-18px) scale(0.92); }
+	60% { opacity: 1; transform: translateY(3px) scale(1.03); }
+	100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* the site it landed on takes the sender's tint for a beat, then lets it go */
+.rec-site--landed-mine { animation: rec-landed-mine 1300ms ease-out both; }
+.rec-site--landed-theirs { animation: rec-landed-theirs 1300ms ease-out both; }
+
+@keyframes rec-landed-mine {
+	0% { background: color-mix(in srgb, var(--g-hazard) 22%, var(--g-hull)); box-shadow: var(--g-relief), 0 0 0 2px var(--g-hazard); }
+	100% { background: var(--g-hull); box-shadow: var(--g-relief), 0 0 0 0 transparent; }
+}
+
+@keyframes rec-landed-theirs {
+	0% { background: color-mix(in srgb, var(--g-lamp-red) 20%, var(--g-hull)); box-shadow: var(--g-relief), 0 0 0 2px var(--g-lamp-red); }
+	100% { background: var(--g-hull); box-shadow: var(--g-relief), 0 0 0 0 transparent; }
+}
+
+/* a number that changed: brightens, then settles */
+.rec-tick { animation: rec-tick 900ms ease-out both; }
+
+@keyframes rec-tick {
+	0% { opacity: 0.2; transform: translateY(4px); }
+	35% { opacity: 1; transform: translateY(0); color: var(--g-ink); }
+	100% { opacity: 1; }
+}
+
+/* the turn readout: the new text slides in; while the rival thinks, its dots walk */
+.rec-turn-text--in { display: inline-block; animation: rec-turn-in 420ms cubic-bezier(0.3, 0, 0.2, 1) both; }
+
+@keyframes rec-turn-in {
+	from { opacity: 0; transform: translateY(-6px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+.rec-turn--yours .rec-turn-text--in { animation: rec-turn-yours 700ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
+
+@keyframes rec-turn-yours {
+	0% { opacity: 0; transform: translateY(-6px) scale(0.96); }
+	55% { opacity: 1; transform: translateY(0) scale(1.08); }
+	100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.rec-turn--deciding .rec-turn-text::after {
+	content: '\2026';
+	display: inline-block;
+	width: 1.2em;
+	text-align: left;
+	animation: rec-dots 1200ms steps(3, end) infinite;
+}
+
+@keyframes rec-dots {
+	0% { clip-path: inset(0 100% 0 0); }
+	100% { clip-path: inset(0 -0.2em 0 0); }
+}
+
+/* a pip that lights pops; the ticker's newest line slides up into place */
+.rec-pip--lit { animation: rec-pip-pop 520ms cubic-bezier(0.2, 0.9, 0.3, 1.3) both; }
+
+@keyframes rec-pip-pop {
+	0% { transform: scale(0.4); }
+	60% { transform: scale(1.3); }
+	100% { transform: scale(1); }
+}
+
+.rec-ticker-line--in { animation: rec-rise 380ms ease-out both; }
+
+/* panels that change with the phase rise in rather than snapping */
+.rec-rise { animation: rec-rise 380ms cubic-bezier(0.3, 0, 0.2, 1) both; }
+
+@keyframes rec-rise {
+	from { opacity: 0; transform: translateY(8px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+/* a new world: its three sites deal out left to right */
+.rec-site--enter { animation: rec-site-enter 460ms cubic-bezier(0.3, 0, 0.2, 1) both; animation-delay: calc(var(--rec-i, 0) * 110ms); }
+
+/* a landing tint replaces the entrance once the site is on the table */
+.rec-site--enter.rec-site--landed-mine { animation: rec-landed-mine 1300ms ease-out both; animation-delay: 0ms; }
+.rec-site--enter.rec-site--landed-theirs { animation: rec-landed-theirs 1300ms ease-out both; animation-delay: 0ms; }
+
+@keyframes rec-site-enter {
+	from { opacity: 0; transform: translateY(12px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+/* the Court's stamp comes down, one site after another */
+.rec-stamp--down {
+	animation: rec-stamp-down 480ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+	animation-delay: calc(var(--rec-i, 0) * 180ms);
+}
+
+@keyframes rec-stamp-down {
+	0% { opacity: 0; transform: rotate(-3deg) scale(2.2); }
+	70% { opacity: 1; transform: rotate(-3deg) scale(0.94); }
+	100% { opacity: 1; transform: rotate(-3deg) scale(1); }
+}
+
+/* resolution: the acting figure lunges toward the far rank; the one it lands on jolts */
+.rec-figure--acting { animation: rec-lunge-up 460ms cubic-bezier(0.3, 0, 0.2, 1) both; }
+.rec-figure--acting.rec-figure--down { animation-name: rec-lunge-down; }
+
+@keyframes rec-lunge-up {
+	0% { transform: translateY(0); }
+	40% { transform: translateY(-10px); }
+	100% { transform: translateY(0); }
+}
+
+@keyframes rec-lunge-down {
+	0% { transform: translateY(0); }
+	40% { transform: translateY(10px); }
+	100% { transform: translateY(0); }
+}
+
+.rec-figure--hit { animation: rec-jolt 420ms ease-out both; animation-delay: 160ms; }
+
+@keyframes rec-jolt {
+	0% { transform: translateX(0); }
+	25% { transform: translateX(-4px) rotate(-2deg); }
+	50% { transform: translateX(4px) rotate(2deg); }
+	75% { transform: translateX(-2px); }
+	100% { transform: translateX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.rec-callout,
+	.rec-figure--arrive,
+	.rec-site--landed-mine,
+	.rec-site--landed-theirs,
+	.rec-site--enter.rec-site--landed-mine,
+	.rec-site--enter.rec-site--landed-theirs,
+	.rec-tick,
+	.rec-turn-text--in,
+	.rec-turn--deciding .rec-turn-text::after,
+	.rec-pip--lit,
+	.rec-ticker-line--in,
+	.rec-rise,
+	.rec-site--enter,
+	.rec-stamp--down,
+	.rec-figure--acting,
+	.rec-figure--hit,
+	.rec-figure--routed {
+		animation: none;
+	}
+	.rec-figure--routed { opacity: 0; }
+}
