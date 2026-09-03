@@ -1,0 +1,184 @@
+{
+  "key": "imprit",
+  "name": "Imprit",
+  "element": "fire",
+  "homePlanet": "magmuth",
+  "generatorPlanets": [
+    "magmuth"
+  ],
+  "lore": {
+    "description": "Imprits are demonic looking creatures, resembling flaming, horned monkeys backed by long tails with scythe-like tips. Imprits possess fire-retardant fur that protects their bodies from the flammable oils they secrete, allowing them to survive despite being in a state of constant immolation.  They are remarkably intelligent among other Xalians, having been designed in ancient times as natural tinkerers and let loose into the various lightless mining shafts of Magmuth, where they were left to their own devices to fix and maintain the often makeshift mining equipment sent deep into the earth by the Vallerii. Today, they are known for being entirely erratic, likely driven mad by the isolation of the deep tunnels in which they tinkered and toiled. When released from their claustrophobic confines and set loose on the surface, Imprits take ecstatic pleasure from using their tails to swing through the air from place to place and setting fires where they least belong.",
+    "descriptionStatus": "source",
+    "biomeNiche": "the lightless mining shafts sunk under Magmuth's obsidian islands"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "biped",
+    "anatomy": [
+      "horns",
+      "fangs",
+      "tail",
+      "fists",
+      "hide"
+    ],
+    "covering": "fur",
+    "size": {
+      "heightCm": [
+        72,
+        98
+      ],
+      "weightKg": [
+        30,
+        48
+      ]
+    },
+    "lifespan": "standard",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "vocal",
+      "display"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": 65,
+        "max": 300
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        0,
+        12
+      ],
+      "burrow": [
+        10,
+        30
+      ],
+      "climb": [
+        78,
+        95
+      ],
+      "sprint": [
+        52,
+        72
+      ],
+      "leap": [
+        70,
+        90
+      ],
+      "manipulation": [
+        74,
+        92
+      ]
+    },
+    "senses": {
+      "sight": [
+        52,
+        72
+      ],
+      "hearing": [
+        60,
+        80
+      ],
+      "smell": [
+        35,
+        55
+      ]
+    }
+  },
+  "archetypeWeights": {
+    "prowler": 34,
+    "seeker": 26,
+    "skirmisher": 22,
+    "rogue": 18
+  },
+  "attributes": {
+    "strength": [
+      28,
+      46
+    ],
+    "vitality": [
+      34,
+      52
+    ],
+    "endurance": [
+      40,
+      60
+    ],
+    "agility": [
+      66,
+      86
+    ],
+    "reflex": [
+      64,
+      84
+    ],
+    "intelligence": [
+      62,
+      80
+    ],
+    "willpower": [
+      22,
+      44
+    ],
+    "instinct": [
+      50,
+      70
+    ],
+    "charisma": [
+      30,
+      52
+    ],
+    "resilience": [
+      36,
+      54
+    ]
+  },
+  "traits": {
+    "pool": {
+      "resistant": 100,
+      "volatile": 85,
+      "slippery": 72,
+      "nocturnal": 66,
+      "solitary": 45,
+      "luminous": 100,
+      "menacing": 25,
+      "toxic": 12,
+      "perceptive": 10
+    }
+  },
+  "instruments": [
+    "tail",
+    "fists",
+    "secretion"
+  ],
+  "conduits": {
+    "secretion": "fire"
+  },
+  "signatureAbility": {
+    "name": "Ecstasy of the Deep Shafts",
+    "instrument": "secretion",
+    "action": "cloud",
+    "medium": "fire",
+    "intensity": [
+      35,
+      82
+    ],
+    "description": "The Imprit wrings its flammable oils out across everything within reach and lets its own burning body set them alight."
+  }
+}

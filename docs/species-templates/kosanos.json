@@ -1,0 +1,183 @@
+{
+  "key": "kosanos",
+  "name": "Kosanos",
+  "element": "plant",
+  "homePlanet": "floria",
+  "generatorPlanets": [
+    "floria"
+  ],
+  "lore": {
+    "description": "A heavy four-legged creature whose long ribbed trunk arches back over its shoulders and ends in a broad sweeping blade, the Kosanos is thought to have been designed to clear the thick brush of Floria, a world on which the Vallerii kept small settlements, research labs, and exploration parties and no more. It is a simple yet powerful creature. It works the underforests below the World Trees, felling standing growth in slow arcs of the blade.",
+    "descriptionStatus": "upgraded",
+    "biomeNiche": "the dense underforests and marshy wetlands beneath the World Tree canopies"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "quadruped",
+    "anatomy": [
+      "trunk",
+      "blades",
+      "jaws",
+      "tail",
+      "hide"
+    ],
+    "covering": "hide",
+    "size": {
+      "heightCm": [
+        210,
+        265
+      ],
+      "weightKg": [
+        320,
+        430
+      ]
+    },
+    "lifespan": "long",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "vibration"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": 2,
+        "max": 36
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        15,
+        30
+      ],
+      "burrow": [
+        0,
+        5
+      ],
+      "climb": [
+        0,
+        10
+      ],
+      "sprint": [
+        20,
+        38
+      ],
+      "leap": [
+        5,
+        15
+      ],
+      "manipulation": [
+        45,
+        65
+      ]
+    },
+    "senses": {
+      "sight": [
+        45,
+        65
+      ],
+      "hearing": [
+        40,
+        60
+      ],
+      "smell": [
+        50,
+        70
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    }
+  },
+  "archetypeWeights": {
+    "juggernaut": 40,
+    "survivor": 25,
+    "bulwark": 20,
+    "berserker": 15
+  },
+  "attributes": {
+    "strength": [
+      70,
+      90
+    ],
+    "vitality": [
+      62,
+      82
+    ],
+    "endurance": [
+      65,
+      85
+    ],
+    "agility": [
+      12,
+      28
+    ],
+    "reflex": [
+      18,
+      34
+    ],
+    "intelligence": [
+      20,
+      36
+    ],
+    "willpower": [
+      40,
+      60
+    ],
+    "instinct": [
+      42,
+      62
+    ],
+    "charisma": [
+      15,
+      30
+    ],
+    "resilience": [
+      58,
+      78
+    ]
+  },
+  "traits": {
+    "pool": {
+      "anchored": 55,
+      "ramming": 45,
+      "protective": 30,
+      "regenerative": 25,
+      "resistant": 40,
+      "solitary": 60,
+      "pack-bonded": 20,
+      "menacing": 25,
+      "healing": 10
+    }
+  },
+  "instruments": [
+    "blades",
+    "trunk",
+    "jaws"
+  ],
+  "signatureAbility": {
+    "name": "Understory Reaping",
+    "instrument": "blades",
+    "action": "rake",
+    "medium": "plant",
+    "intensity": [
+      45,
+      80
+    ],
+    "description": "The Kosanos swings its trunk in a long low arc and opens a lane through everything standing in it."
+  }
+}

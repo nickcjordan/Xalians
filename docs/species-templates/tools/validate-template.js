@@ -456,9 +456,11 @@ if (MD) {
     const own = [T && T.lore && T.lore.description, T && T.signatureAbility && T.signatureAbility.description, ENC && ENC.definition].filter(Boolean).map(fold).join(' \n ');
     const quotes = [];
     let inFence = false;
+    let inDenials = false;
     for (const line of MD.split(/\r?\n/)) {
       if (/^\s*```/.test(line)) { inFence = !inFence; continue; }
-      if (inFence || /^(FAIL|WARN|ok)\s+[a-z.]+\s/.test(line)) continue;   // pasted validator output and code blocks are not quotations
+      if (/^#{1,6}\s/.test(line)) inDenials = /script denials/i.test(line);   // the denials section restates text the script rejected; it is never a quotation claim
+      if (inFence || inDenials || /^(FAIL|WARN|ok)\s+[a-z.]+\s/.test(line)) continue;   // pasted validator output and code blocks are not quotations
       // pair quote marks strictly in order so a short quotation never shifts the pairing onto the gap after it
       const parts = line.split('"');
       for (let i = 1; i < parts.length; i += 2) if (parts[i].length >= 12) quotes.push(parts[i]);

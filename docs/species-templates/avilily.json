@@ -1,0 +1,180 @@
+{
+  "key": "avilily",
+  "name": "Avilily",
+  "element": "plant",
+  "homePlanet": "floria",
+  "generatorPlanets": [
+    "floria"
+  ],
+  "lore": {
+    "description": "Carnivorous little green birds with bright, floral plumage, Avililies flit between Floria’s trees, camouflaging into the planet’s many flowery meadows as they travel. Their beaks resemble the closed pedals of a flower but when they open their mouths that 'flower' blooms. They attract insects with their sweet, syrupy smelling saliva and vibrant floral display, but their saliva contains a powerful sedative which paralyzes anything that it comes in contact with. In ancient times, Avililies were used by Vallerii scientists and explorers to trap insects, serving as mobile bug repellent on Florian ventures. Today, the sedative properties of their saliva have been enhanced for a far-more dangerous galaxy, and swarms of flittering Avilies protect the most sacred parts of Floria’s jungles, paralyzing and consuming all who dare to threaten the pristineness of their forests.",
+    "descriptionStatus": "source",
+    "biomeNiche": "flowering meadows and jungle canopy of the Florian underforests"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "avian",
+    "anatomy": [
+      "beak",
+      "wings",
+      "talons",
+      "crest",
+      "tail"
+    ],
+    "covering": "feathers",
+    "size": {
+      "heightCm": [
+        40,
+        56
+      ],
+      "weightKg": [
+        6,
+        10
+      ]
+    },
+    "lifespan": "fleeting",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "carnivore",
+    "communication": [
+      "display",
+      "chemical"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": 4,
+        "max": 38
+      }
+    },
+    "capabilities": {
+      "flight": [
+        70,
+        88
+      ],
+      "swim": [
+        0,
+        10
+      ],
+      "burrow": [
+        0,
+        0
+      ],
+      "climb": [
+        20,
+        35
+      ],
+      "sprint": [
+        15,
+        30
+      ],
+      "leap": [
+        35,
+        50
+      ],
+      "manipulation": [
+        20,
+        35
+      ]
+    },
+    "senses": {
+      "sight": [
+        65,
+        85
+      ],
+      "hearing": [
+        45,
+        60
+      ],
+      "smell": [
+        50,
+        70
+      ]
+    }
+  },
+  "archetypeWeights": {
+    "skirmisher": 45,
+    "prowler": 25,
+    "predator": 20,
+    "runner": 10
+  },
+  "attributes": {
+    "strength": [
+      10,
+      28
+    ],
+    "vitality": [
+      20,
+      38
+    ],
+    "endurance": [
+      30,
+      48
+    ],
+    "agility": [
+      62,
+      85
+    ],
+    "reflex": [
+      58,
+      80
+    ],
+    "intelligence": [
+      22,
+      40
+    ],
+    "willpower": [
+      25,
+      45
+    ],
+    "instinct": [
+      50,
+      70
+    ],
+    "charisma": [
+      30,
+      55
+    ],
+    "resilience": [
+      12,
+      30
+    ]
+  },
+  "traits": {
+    "pool": {
+      "stealthy": 80,
+      "pack-bonded": 70,
+      "toxic": 95,
+      "perceptive": 45,
+      "protective": 35,
+      "slippery": 40,
+      "hypnotic": 15,
+      "inspiring": 10
+    }
+  },
+  "instruments": [
+    "beak",
+    "secretion",
+    "talons"
+  ],
+  "signatureAbility": {
+    "name": "Blossoming Ambuscade",
+    "instrument": "secretion",
+    "action": "snare",
+    "medium": "plant",
+    "intensity": [
+      35,
+      70
+    ],
+    "description": "The Avilily opens its beak into a false bloom and coats what comes to feed in a syrup that stops it where it stands."
+  }
+}
