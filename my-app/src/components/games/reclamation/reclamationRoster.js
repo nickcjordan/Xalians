@@ -1,11 +1,11 @@
 import React from 'react';
-import ReclamationFigure, { ReclamationSilhouette } from './reclamationFigure';
+import ReclamationFigure from './reclamationFigure';
 import { baseHold } from '../../../gameplay/expedition/creatureOnTable';
 
 /*
-	ReclamationRoster — the strip of figures waiting to be sent, plus the rival's hidden
-	sends drawn as silhouettes (they are on the table, but the handler is not told where,
-	so the only honest place to show them is the rail).
+	ReclamationRoster — the strip of figures waiting to be sent. Each shows its base
+	hold and element so the twelve can be compared at a glance; the hold it would have
+	at each site appears on the sites themselves once it is armed.
 */
 function ReclamationRoster({
 	roster,
@@ -14,14 +14,17 @@ function ReclamationRoster({
 	onArm,
 	onInspect,
 	sendsLeft,
-	hiddenEnemyCount,
 	disabled,
+	yourTurn,
 }) {
 	return (
 		<div className="rec-roster">
 			<header className="rec-roster-head">
 				<span className="g-label">Your roster</span>
-				<span className="g-mono rec-roster-count">{roster.length} in hand · {sendsLeft} sends left</span>
+				<span className="g-mono rec-roster-count">{roster.length} in hand · {sendsLeft} sends left this expedition</span>
+				<span className="g-mono rec-roster-help">
+					{yourTurn ? 'click one to arm it · shift-click to read its dossier' : 'shift-click to read a dossier'}
+				</span>
 			</header>
 			<div className="rec-roster-strip">
 				{roster.map((record) => (
@@ -49,12 +52,6 @@ function ReclamationRoster({
 				))}
 				{roster.length === 0 && <span className="rec-rank-empty">your roster is empty</span>}
 			</div>
-			{hiddenEnemyCount > 0 && (
-				<div className="rec-roster-hidden">
-					<span className="g-label">Rival, hidden</span>
-					<ReclamationSilhouette count={hiddenEnemyCount} />
-				</div>
-			)}
 		</div>
 	);
 }

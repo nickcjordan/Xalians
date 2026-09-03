@@ -104,6 +104,7 @@ class ReclamationPage extends React.Component {
 							<div className="g-screen-line">In Orders you assign each of your creatures an act, in secret. A creature you leave alone performs the act its archetype favors. You choose the creature, the site and the act; the creature chooses its own target, by its conduct.</div>
 							<div className="g-screen-line">At the Judge each site goes to the side with the greater surviving hold. A tie reverts the site to the Court. Creatures at a won site stay to hold the claim; the rest withdraw. Either way they are out of the expedition.</div>
 							<div className="g-screen-line">You bring {ROSTER_SIZE} creatures and may send {SENDABLE}. The two you never send are your reserve, chosen as you go.</div>
+							<div className="g-screen-line">Two small rules. The side that moves first on a world may, once, fall its first creature back to another site without spending a turn. And a stealthy creature may be sent hidden: the rival learns that you sent something, not what or where.</div>
 							<div className="g-screen-line--dim">Match seed: {seed}. Add ?seed=NUMBER to the address to replay an expedition.</div>
 						</div>
 

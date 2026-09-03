@@ -4,11 +4,17 @@ import { speciesLabel } from './reclamationNarration';
 /*
 	ReclamationOrders — the Orders phase panel.
 
-	Every one of your creatures on the table gets an act selector (its acts by name with
-	magnitude, plus Hold). The archetype's favored act is preselected and marked "by
-	nature", exactly as the engine treats an unordered creature. Beside it, the resolution
-	preview: the initiative order of every visible creature and, for each of yours, the
-	target its conduct would pick right now, in words.
+	Every one of your creatures on the table gets a row of act chips (each act by name
+	with its magnitude and class, plus Hold). The archetype's favored act starts chosen
+	and is marked "by nature", exactly as the engine treats an unordered creature. The
+	chips are radio buttons, so the chosen act is visible without opening anything.
+
+	Beneath it, the resolution preview: the initiative order of every visible creature
+	and, for each of yours, the target its conduct would pick right now, in words.
+	Hovering a preview line lights the creatures it names on the table.
+
+	The "Give orders" button is the one action of the phase, so it is pinned at the top
+	of the panel where it cannot scroll away.
 */
 function ReclamationOrders({
 	units,
@@ -17,27 +23,39 @@ function ReclamationOrders({
 	onOrder,
 	onCommit,
 	committed,
-	you,
 	panelRef,
+	onHoverPreview,
 }) {
+	const ordered = units.filter((u) => orders && orders[u.recordId]).length;
 	return (
 		<div className="rec-orders" ref={panelRef} tabIndex={-1} aria-label="Orders">
 			<div className="rec-orders-list">
 				<header className="rec-orders-head">
-					<span className="g-label">Orders</span>
-					<span className="g-mono rec-orders-hint">
-						{committed ? 'Orders sealed. Waiting on the rival.' : 'Choose an act for each creature, then give orders.'}
-					</span>
+					<div>
+						<span className="g-label">Orders</span>
+						<span className="g-mono rec-orders-hint">
+							{committed
+								? 'Orders sealed. Waiting on the rival.'
+								: `${ordered} of ${units.length} chosen; the rest act by nature.`}
+						</span>
+					</div>
+					<button
+						type="button"
+						className="g-btn g-btn--primary rec-commit-btn"
+						onClick={onCommit}
+						disabled={committed}
+						data-commit-orders
+					>
+						{committed ? 'Orders given' : 'Give orders'}
+					</button>
 				</header>
 				{units.map((unit) => {
 					const favored = unit.prepared.favoredAct.action;
 					const chosen = (orders && orders[unit.recordId]) || favored;
 					// A creature can carry two abilities with the SAME action (the roller happily
 					// gives one creature two `drain` acts), and the engine's order() takes an
-					// action name, not an ability. Two options with the same value would collide
-					// as React keys and make the second unpickable, so identical actions are
-					// merged into one option naming both abilities, and the option's value stays
-					// the action name the engine expects.
+					// action name, not an ability. Identical actions are merged into one chip
+					// naming both abilities; the chip's value stays the action name.
 					const byAction = new Map();
 					unit.prepared.acts.forEach((a) => {
 						const existing = byAction.get(a.action);
@@ -45,55 +63,62 @@ function ReclamationOrders({
 							existing.names.push(a.name);
 							existing.magnitude = Math.max(existing.magnitude, a.magnitude);
 						} else {
-							byAction.set(a.action, { action: a.action, names: [a.name], magnitude: a.magnitude });
+							byAction.set(a.action, { action: a.action, names: [a.name], magnitude: a.magnitude, cls: a.class });
 						}
 					});
 					const options = [
 						...[...byAction.values()].map((a) => ({
 							value: a.action,
-							label: `${a.names.join(' / ')} — ${a.action}, magnitude ${a.magnitude}`,
+							act: a.action,
+							name: a.names.join(' / '),
+							magnitude: a.magnitude,
+							cls: a.cls,
 						})),
-						{ value: 'hold', label: 'Hold — keep full hold' },
+						{ value: 'hold', act: 'hold', name: 'Hold', magnitude: null, cls: 'keeps full hold' },
 					];
 					return (
-						<div className={`rec-order-row g-el-${unit.record.element.primary}`} key={unit.recordId}>
+						<div className={`rec-order-row g-el-${unit.record.element.primary}`} key={unit.recordId} data-order-row={unit.recordId}>
 							<div className="rec-order-who">
 								<span className="rec-order-name">{speciesLabel(unit.record)}</span>
-								<span className="rec-order-site g-mono">{unit.site.name}</span>
+								<span className="rec-order-site g-mono">{unit.site.name} · hold {unit.prepared.hold.toFixed(1).replace(/\.0$/, '')}</span>
 							</div>
-							<select
-								className="g-select rec-order-select"
-								value={chosen}
-								disabled={committed}
-								data-order-for={unit.recordId}
-								onChange={(e) => onOrder(unit.recordId, e.target.value)}
-							>
-								{options.map((o) => (
-									<option value={o.value} key={o.value}>
-										{o.label}{o.value === favored ? ' (by nature)' : ''}
-									</option>
-								))}
-							</select>
+							<div className="rec-order-chips" role="radiogroup" aria-label={`Act for ${speciesLabel(unit.record)}`}>
+								{options.map((o) => {
+									const isChosen = o.value === chosen;
+									return (
+										<button
+											type="button"
+											role="radio"
+											aria-checked={isChosen}
+											className={`rec-act-chip${isChosen ? ' rec-act-chip--chosen' : ''}`}
+											key={o.value}
+											disabled={committed}
+											data-order-for={unit.recordId}
+											data-act={o.value}
+											onClick={() => onOrder(unit.recordId, o.value)}
+											title={o.name}
+										>
+											<span className="rec-act-chip-act">{o.act}</span>
+											{o.magnitude !== null && <span className="rec-act-chip-mag">{o.magnitude}</span>}
+											<span className="rec-act-chip-sub">{o.value === favored ? 'by nature' : o.cls}</span>
+										</button>
+									);
+								})}
+							</div>
 						</div>
 					);
 				})}
 				{units.length === 0 && <p className="g-body rec-rank-empty">You sent nothing to this world.</p>}
-				<button
-					type="button"
-					className="g-btn g-btn--primary rec-commit-btn"
-					onClick={onCommit}
-					disabled={committed}
-				>
-					{committed ? 'Orders given' : 'Give orders'}
-				</button>
 			</div>
 
 			<div className="g-screen rec-preview" aria-label="Resolution preview">
-				<div className="g-readout-unit">Resolution preview · initiative order</div>
+				<div className="g-readout-unit">What will happen, in initiative order</div>
 				{preview.map((row, i) => (
 					<div
-						className={`g-screen-line${row.isYours ? '' : ' g-screen-line--dim'}`}
+						className={`g-screen-line rec-preview-line${row.isYours ? '' : ' g-screen-line--dim'}`}
 						key={`${row.unit.recordId}-${i}`}
+						onMouseEnter={onHoverPreview ? () => onHoverPreview(row) : undefined}
+						onMouseLeave={onHoverPreview ? () => onHoverPreview(null) : undefined}
 					>
 						{i + 1}. {row.isYours ? row.sentence : `${speciesLabel(row.unit.record)} (rival) acts here, orders unknown.`}
 					</div>
