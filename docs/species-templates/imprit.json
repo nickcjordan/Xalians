@@ -16,7 +16,7 @@
     "composition": {
       "primary": "flesh"
     },
-    "bodyPlan": "biped",
+    "bodyPlan": "quadruped",
     "anatomy": [
       "horns",
       "fangs",

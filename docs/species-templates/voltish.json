@@ -3,42 +3,104 @@
   "name": "Voltish",
   "element": "electric",
   "homePlanet": "zolton",
-  "generatorPlanets": ["zolton"],
+  "generatorPlanets": [
+    "zolton"
+  ],
   "lore": {
-    "description": "A long-limbed, shaggy quadruped whose bones and claws are drawn in a tough conductive alloy, the Voltish was generated on Zolton to work a world where organic labor was expendable and inorganic matter was not. It stores electrical energy from its surroundings and releases the shock into enemies, a body built to stand in the path of a current rather than flee it. Zolton's canyons carry visible rivers of electricity over the crust, and the Voltish crosses that ground on foot, drawing off what the crust carries. APEX geared the Zolton Generator into a war machine and turned such bodies on its enemies. Kozrak's crackdown has since put the same creature between his patrols and the Zolto rebuilding the network.",
+    "description": "A long-limbed, shaggy creature whose bones and claws are made from a tough, conductive metal alloy, the Voltish was generated on Zolton, where black lightning did no harm to inorganic matter and the Generator could simply replenish any loss of labor. Zolton's canyons carry visible rivers of electricity that surge like wire currents over the crust. The Voltish stores electrical energy from its surroundings and releases the shock into enemies.",
     "descriptionStatus": "upgraded",
     "biomeNiche": "the deep canyons and metallic peaks of Zolton, where ground-borne lightning surges over the crust"
   },
   "physiology": {
     "corporeality": "corporeal",
-    "composition": { "primary": "flesh", "secondary": "metal" },
+    "composition": {
+      "primary": "flesh",
+      "secondary": "metal"
+    },
     "bodyPlan": "quadruped",
-    "anatomy": ["claws", "jaws", "crest", "tail", "hide"],
+    "anatomy": [
+      "claws",
+      "jaws",
+      "tail",
+      "hide"
+    ],
     "covering": "fur",
-    "size": { "heightCm": [190, 235], "weightKg": [105, 145] },
+    "size": {
+      "heightCm": [
+        190,
+        235
+      ],
+      "weightKg": [
+        105,
+        145
+      ]
+    },
     "lifespan": "standard",
-    "genome": { "chirality": "rolled" },
+    "genome": {
+      "chirality": "rolled"
+    },
     "diet": "energy-feeder",
-    "communication": ["vocal", "display"],
-    "breathes": ["gas"],
+    "communication": [
+      "vocal"
+    ],
+    "breathes": [
+      "gas"
+    ],
     "environmentalTolerance": {
-      "ambientMedia": ["gas"],
-      "temperatureC": { "min": -60, "max": 45 }
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -60,
+        "max": 45
+      }
     },
     "capabilities": {
-      "flight": 0,
-      "swim": [10, 25],
-      "burrow": [5, 15],
-      "climb": [40, 60],
-      "sprint": [50, 70],
-      "leap": [40, 60],
-      "manipulation": [30, 50]
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        10,
+        25
+      ],
+      "burrow": [
+        5,
+        15
+      ],
+      "climb": [
+        40,
+        60
+      ],
+      "sprint": [
+        50,
+        70
+      ],
+      "leap": [
+        40,
+        60
+      ],
+      "manipulation": [
+        40,
+        60
+      ]
     },
     "senses": {
-      "sight": [45, 65],
-      "hearing": [50, 70],
-      "smell": [40, 60],
-      "special": ["electroreception"]
+      "sight": [
+        45,
+        65
+      ],
+      "hearing": [
+        50,
+        70
+      ],
+      "smell": [
+        40,
+        60
+      ],
+      "special": [
+        "electroreception"
+      ]
     }
   },
   "archetypeWeights": {
@@ -48,16 +110,46 @@
     "prowler": 15
   },
   "attributes": {
-    "strength": [55, 75],
-    "vitality": [50, 70],
-    "endurance": [70, 90],
-    "agility": [40, 60],
-    "reflex": [45, 65],
-    "intelligence": [25, 45],
-    "willpower": [45, 65],
-    "instinct": [50, 70],
-    "charisma": [30, 50],
-    "resilience": [55, 75]
+    "strength": [
+      55,
+      75
+    ],
+    "vitality": [
+      50,
+      70
+    ],
+    "endurance": [
+      70,
+      90
+    ],
+    "agility": [
+      40,
+      60
+    ],
+    "reflex": [
+      45,
+      65
+    ],
+    "intelligence": [
+      25,
+      45
+    ],
+    "willpower": [
+      45,
+      65
+    ],
+    "instinct": [
+      50,
+      70
+    ],
+    "charisma": [
+      30,
+      50
+    ],
+    "resilience": [
+      55,
+      75
+    ]
   },
   "traits": {
     "pool": {
@@ -72,14 +164,23 @@
       "armored": 10
     }
   },
-  "instruments": ["claws", "jaws", "crest"],
-  "conduits": { "claws": "electric" },
+  "instruments": [
+    "claws",
+    "jaws",
+    "tail"
+  ],
+  "conduits": {
+    "claws": "electric"
+  },
   "signatureAbility": {
     "name": "Stormbank Discharge",
     "instrument": "claws",
-    "action": "beam",
+    "action": "strike",
     "medium": "electric",
-    "intensity": [30, 85],
-    "description": "The Voltish empties everything its body has taken in from the ground and the air, driving the stored charge out through its alloy claws and into whatever stands in front of it."
+    "intensity": [
+      30,
+      85
+    ],
+    "description": "The Voltish drives the charge it has stored from its surroundings through its alloy claws into whatever they touch."
   }
 }

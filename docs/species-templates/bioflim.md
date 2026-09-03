@@ -158,3 +158,7 @@ WARN conduits.source                conduit secretion for chemical: the validato
 0 FAIL, 3 WARN (structurally clean; every WARN must be answered in the walkthrough)
 logged to docs\species-templatesalidation-logioflim.jsonl
 ```
+
+## Orchestrator amendments
+
+- 2026-09-02, after the independent validation and the orchestrator's own look at the art: 'after the Vallerii were driven off' contradicted canon (the syndicates are Vallerii pirates; the planet was evacuated, not cleared), the factory job was a planet-wide sentence applied to this species, and the valuation clause and the Encyclopedia's 'lesser body' close were flourishes; all rewritten to the planet-level facts. `conduits` removed: no sentence shows the acid leaving the body; the slime regenerating a shell is a surface process, and `ward` is already in the secretion row, so the signature stands. Art matched the run's reading (one eye, no limbs, dripping surface with no plating drawn; plating is text-sourced). The covering enum stays material-free, as the run recommended. Description now 85 words.

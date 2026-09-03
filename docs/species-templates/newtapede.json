@@ -3,42 +3,106 @@
   "name": "Newtapede",
   "element": "water",
   "homePlanet": "poseidas",
-  "generatorPlanets": ["poseidas"],
+  "generatorPlanets": [
+    "poseidas"
+  ],
   "lore": {
-    "description": "A sixteen legged amphibious creature with a long, segmented body, the Newtapede was generated on Poseidas to work the hydro-processing rigs as the rising, acidifying ocean closed over the last of the planet's land. Its slender frame and webbed feet let it trawl for algae in open water and haul itself across a rig deck without pause, and it was built to breathe the seas the Vallerii had spoiled. It survived the global death tide that killed its masters. Today it works the deep-cities the Xalians of Poseidas built beneath the storms, where the only Algael in the galaxy is gathered and processed, and it fights in the water rather than on the deck.",
+    "description": "A sixteen legged amphibious creature with a long, segmented body, the Newtapede was generated on Poseidas among the aquatic, water-breathing Xalians capable of surviving in its rising and acidifying oceans. While adapted to land, its slender frame and webbed feet make it a formidable opponent in water. The rigs of Poseidas were built deeper and deeper beneath the ocean to avoid the storms, and the Newtapede lives in the water around them.",
     "descriptionStatus": "upgraded",
     "biomeNiche": "a swimmer and rig hand of the deep-city waters, at home in an acidifying global ocean"
   },
   "physiology": {
     "corporeality": "corporeal",
-    "composition": { "primary": "flesh" },
+    "composition": {
+      "primary": "flesh"
+    },
     "bodyPlan": "multiped",
-    "anatomy": ["claws", "jaws", "hide", "antennae", "body"],
+    "anatomy": [
+      "antennae",
+      "coils",
+      "hide",
+      "body"
+    ],
     "covering": "bare",
-    "size": { "heightCm": [170, 230], "weightKg": [70, 115] },
+    "size": {
+      "heightCm": [
+        170,
+        230
+      ],
+      "weightKg": [
+        70,
+        115
+      ]
+    },
     "lifespan": "standard",
-    "genome": { "chirality": "rolled" },
+    "genome": {
+      "chirality": "rolled"
+    },
     "diet": "omnivore",
-    "communication": ["vibration", "display"],
-    "breathes": ["gas", "liquid"],
+    "communication": [
+      "vibration",
+      "display"
+    ],
+    "breathes": [
+      "gas",
+      "liquid"
+    ],
     "environmentalTolerance": {
-      "ambientMedia": ["gas", "liquid"],
-      "temperatureC": { "min": 5, "max": 40 }
+      "ambientMedia": [
+        "gas",
+        "liquid"
+      ],
+      "temperatureC": {
+        "min": 5,
+        "max": 40
+      }
     },
     "capabilities": {
-      "flight": 0,
-      "swim": [70, 92],
-      "burrow": [5, 20],
-      "climb": [45, 70],
-      "sprint": [30, 50],
-      "leap": [10, 25],
-      "manipulation": [30, 55]
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        70,
+        92
+      ],
+      "burrow": [
+        5,
+        20
+      ],
+      "climb": [
+        45,
+        70
+      ],
+      "sprint": [
+        30,
+        50
+      ],
+      "leap": [
+        10,
+        25
+      ],
+      "manipulation": [
+        30,
+        55
+      ]
     },
     "senses": {
-      "sight": [55, 80],
-      "hearing": [25, 45],
-      "smell": [30, 55],
-      "special": ["tremorsense"]
+      "sight": [
+        55,
+        80
+      ],
+      "hearing": [
+        25,
+        45
+      ],
+      "smell": [
+        30,
+        55
+      ],
+      "special": [
+        "tremorsense"
+      ]
     }
   },
   "archetypeWeights": {
@@ -48,16 +112,46 @@
     "prowler": 10
   },
   "attributes": {
-    "strength": [25, 45],
-    "vitality": [35, 55],
-    "endurance": [55, 80],
-    "agility": [55, 80],
-    "reflex": [45, 70],
-    "intelligence": [25, 45],
-    "willpower": [30, 50],
-    "instinct": [45, 65],
-    "charisma": [15, 35],
-    "resilience": [15, 35]
+    "strength": [
+      25,
+      45
+    ],
+    "vitality": [
+      35,
+      55
+    ],
+    "endurance": [
+      55,
+      80
+    ],
+    "agility": [
+      55,
+      80
+    ],
+    "reflex": [
+      45,
+      70
+    ],
+    "intelligence": [
+      25,
+      45
+    ],
+    "willpower": [
+      30,
+      50
+    ],
+    "instinct": [
+      45,
+      65
+    ],
+    "charisma": [
+      15,
+      35
+    ],
+    "resilience": [
+      15,
+      35
+    ]
   },
   "traits": {
     "pool": {
@@ -70,13 +164,19 @@
       "protective": 10
     }
   },
-  "instruments": ["claws", "jaws", "body"],
+  "instruments": [
+    "coils",
+    "body"
+  ],
   "signatureAbility": {
     "name": "Sixteenfold Undertow",
-    "instrument": "claws",
+    "instrument": "coils",
     "action": "snare",
     "medium": "water",
-    "intensity": [30, 70],
-    "description": "The Newtapede folds its whole segmented length around a swimmer and holds it under with every leg at once."
+    "intensity": [
+      30,
+      70
+    ],
+    "description": "The Newtapede wraps its whole segmented length around a swimmer and holds it under."
   }
 }
