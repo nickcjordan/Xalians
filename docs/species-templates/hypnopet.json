@@ -104,11 +104,10 @@
     }
   },
   "archetypeWeights": {
-    "sage": 33,
-    "sovereign": 27,
-    "seeker": 20,
-    "virtuoso": 13,
-    "runner": 7
+    "sovereign": 38,
+    "sage": 30,
+    "virtuoso": 22,
+    "seeker": 10
   },
   "attributes": {
     "strength": [

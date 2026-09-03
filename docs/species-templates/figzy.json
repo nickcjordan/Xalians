@@ -104,11 +104,10 @@
     }
   },
   "archetypeWeights": {
-    "sage": 36,
-    "seeker": 22,
-    "skirmisher": 21,
-    "virtuoso": 14,
-    "prowler": 7
+    "sage": 50,
+    "seeker": 20,
+    "virtuoso": 15,
+    "skirmisher": 15
   },
   "attributes": {
     "strength": [
