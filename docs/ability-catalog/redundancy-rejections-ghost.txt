@@ -1,0 +1,18 @@
+d | CRUSH | PROSE :: lurk: Grip K ("Lurking Grip" — adjective form already covers this; bare verb form G), judged G for bare verb.
+d | CRUSH | PROSE :: creep: Grip K (adjective "Creeping Grip" covers this; bare verb G).
+d | CRUSH | PROSE :: freeze: Grip K ("Freeze Grip" — awkward tense collision with "Frozen Grip"; judged G for the bare present-tense verb form, though the adjective "frigid" already covers this sense in the kept cell), mechanical D.
+d | CRUSH | PROSE :: smother: Embrace K (kept, Smothering Embrace), mechanical D otherwise — "Smother Crush" T (near-tautological doubling of the suffocation sense with a separate crush verb, cut as redundant collocation reading as repetitio
+d | WARD | PROSE :: incorporeal: all D — the word means "without body," which is thematically apt for ghost generally but definitionally undercuts every physical-ward noun ("Incorporeal Shield" D, "Incorporeal Bastion" D, "Incorporeal Armor
+d | WARD | PROSE :: shrouded: Ward G (past-participle adjective fronting is awkward — "Shrouded Ward" G, better as the noun "Shroud Ward" which is kept), Barrier K ("Shrouded Barrier" — kept in cell), Veil G (tautological doubling, T actual
+d | WARD | PROSE :: haunt: Ward G (bare noun "haunt" fronting most nouns is awkward — "Haunt Ward" G — the adjective forms haunted/haunting are the natural fronts and are already covered), most columns G for the bare-noun form.
+d | WARD | PROSE :: haunt: Ward K (via "Haunted"/"Haunting" adjective forms already covered), bare-verb form G elsewhere.
+d | MEND | PROSE :: mourning: Solace-adjacent already covered via "mournful" adjective; bare noun "Mourning Comfort" G, awkward fronting; "Mourning" as first word mostly G.
+d | MEND | PROSE :: mourn: Comfort K ("Mourning Comfort" — already covered via adjective form; bare verb "Mourn Comfort" G, awkward), judged G for the bare-verb-fronting form specifically.
+d | MEND | PROSE :: echo: Peace K (via noun form "Echo's Peace," already covered), bare verb "Echo Comfort" G.
+d | TERRORIZE | PROSE :: spectral: Dread K, Terror K, Horror K (all kept), Fright D (awkward fronting, "Spectral Fright" reads oddly vs "Sudden Fright" which is kept — judged G for this specific pairing though fright itself is used elsewhere), F
+d | TERRORIZE | PROSE :: ghostly: parallels spectral closely — Dread K, Terror K, Horror K, Fright K (kept), Presence K (kept), Aura D (not selected in cell, "Ghostly Aura" reads slightly redundant given "ghostly" already implies an aura-like qu
+d | TERRORIZE | PROSE :: mourning: mostly D/G in bare-noun-fronting form (adjective "mournful" already covers this cleanly and is kept extensively) — "Mourning Dread" G.
+d | TERRORIZE | PROSE :: **Verbs/gerunds × TERRORIZE pool** (65 root rows; representative judgments — many terrorize-pool entries ARE verbs, so verb+verb compounds are mostly G per the catalog's noun-phrase convention; the productive value here 
+d | TERRORIZE | PROSE :: haunt: Presence K (via "Haunting Presence," adjective/gerund form, already covered), bare-root form mostly G in further verb-fronting.
+d | TERRORIZE | PROSE :: drift: Presence K ("Drifting Presence," adjective/gerund form already covered above), bare-root mostly G.
+d | TERRORIZE | PROSE :: unnerve: all D (unnerve is itself a terrorize-pool verb; "Unnerve" fronting other terrorize-pool words like "Unnerve Dread" reads as redundant-verb-noun pairing that doesn't fit the noun-phrase convention) — G throughout

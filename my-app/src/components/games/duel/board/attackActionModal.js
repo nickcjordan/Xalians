@@ -6,7 +6,6 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import FloatingLabel from 'react-bootstrap/FloatingLabel'
 import Spinner from 'react-bootstrap/Spinner'
-import { Hub } from 'aws-amplify';
 import fitty from 'fitty';
 
 import { gsap } from 'gsap';
@@ -22,6 +21,7 @@ import XalianTypeSymbolBadge from './xalianTypeSymbolBadge';
 import * as duelValueTranslator from '../../../../gameplay/duel/duelValueTranslator';
 import * as duelConstants from '../../../../gameplay/duel/duelGameConstants';
 import XalianImage from '../../../xalianImage';
+import { lamp, stat } from '../../../../constants/designTokens';
 gsap.registerPlugin(ScrollTrigger, TextPlugin, EasePack, ScrollToPlugin, DrawSVGPlugin, ScrambleTextPlugin, ExpoScaleEase, MorphSVGPlugin);
 
 class AttackActionModal extends React.Component {
@@ -114,8 +114,10 @@ class AttackActionModal extends React.Component {
 
 
             modalTl.fromTo('#duel-attack-action-attacker-health-bar-wrapper, #duel-attack-action-defender-health-bar-wrapper', {autoAlpha: 0}, {autoAlpha: 1, duration: 0.15}, "<");
-            modalTl.to('#duel-attack-action-defender-health-bar', {width: `${defenderHealthDelta.end.percent}%`, backgroundColor: defenderHealthDelta.end.color, boxShadow: `0px 0px ${defenderDropShadowBlur}px ${defenderDropShadowBlur}px ${defenderHealthDelta.end.color}`, duration: 0.5});
-            modalTl.to('#duel-attack-action-attacker-health-bar', {width: `${attackerHealthDelta.end.percent}%`, backgroundColor: attackerHealthDelta.end.color, boxShadow: `0px 0px ${attackerDropShadowBlur}px ${attackerDropShadowBlur}px ${attackerHealthDelta.end.color}`, duration: 0.5}, "<");
+            // the bars drain in colour and length only — the bloom they used to
+            // carry was the one thing in the system lighting up outside a screen
+            modalTl.to('#duel-attack-action-defender-health-bar', {width: `${defenderHealthDelta.end.percent}%`, backgroundColor: defenderHealthDelta.end.color, duration: 0.5});
+            modalTl.to('#duel-attack-action-attacker-health-bar', {width: `${attackerHealthDelta.end.percent}%`, backgroundColor: attackerHealthDelta.end.color, duration: 0.5}, "<");
             modalTl.fromTo('#duel-attack-action-attacker-result-damage, #duel-attack-action-defender-result-damage', {autoAlpha: 0}, {autoAlpha: 1, duration: 0.5}, "<");
             if (defenderDropShadowBlur == 0) {
                 modalTl.to(defenderElem, {opacity: 0.25, duration: 0.25});
@@ -163,12 +165,19 @@ class AttackActionModal extends React.Component {
         tl.to(elem, {yPercent: 0, ease: "bounce.out", duration: 0.25}, ">");
     }
 
+    healthColour(pct) {
+        if (pct > 50) return stat.stamina;
+        if (pct > 25) return lamp.amber;
+        return lamp.red;
+    }
+
     buildXalianHealthDelta = (startingHealth, damage = 0) => {
             let endingHealth = Math.max(0, startingHealth - damage);
             let startingHealthPercentage = gsap.utils.normalize(0, 10, startingHealth)*100;
             let endingHealthPercentage = gsap.utils.normalize(0, 10, endingHealth)*100;
-            let barColorStart = startingHealthPercentage > 50 ? 'green' : startingHealthPercentage > 25 ? 'orange' : 'red';
-            let barColorEnd = endingHealthPercentage > 50 ? 'green' : endingHealthPercentage > 25 ? 'orange' : 'red';
+            // the same three readings as the piece's own vitals strip
+            let barColorStart = this.healthColour(startingHealthPercentage);
+            let barColorEnd = this.healthColour(endingHealthPercentage);
             return {
                 start: {
                     health: startingHealth,
@@ -184,7 +193,9 @@ class AttackActionModal extends React.Component {
     }
 
     buildDropShadowFilter = (teamColor) => {
-        return `${this.dropShadow(this.props.cellSize / 50, gsap.utils.interpolate(teamColor, "white", 0.75))} ${this.dropShadow(this.props.cellSize / 25, gsap.utils.interpolate(teamColor, "white", 0.5))} ${this.dropShadow(this.props.cellSize / 6, teamColor)}`;
+        // a rim in the team's colour and a cast shadow beneath, matching the
+        // board — the old triple halo washed the creature art out entirely
+        return `${this.dropShadow(1, gsap.utils.interpolate(teamColor, "white", 0.25))} ${this.dropShadow(this.props.cellSize / 26, gsap.utils.interpolate(teamColor, "black", 0.25))} ${this.dropShadow(this.props.cellSize / 14, 'rgba(0, 0, 0, 0.85)', 0, this.props.cellSize / 22)}`;
     }
 
     dropShadow = (blur, color, x = 0, y = 0) => {
@@ -192,14 +203,11 @@ class AttackActionModal extends React.Component {
     }
     
     render() {
-
-        
-
-        document.body.click(function (event) {
-            if (!document.getElementById(event.target).closest('#openModal').length && !document.getElementById(event.target).is('#openModal')) {
-                this.closeModal();
-            }
-        })
+        // Was: document.body.click(fn) on every render. HTMLElement.click() takes
+        // no handler, so the callback was dropped and the call simply dispatched
+        // a synthetic click on <body> each time this rendered. Dismissal is
+        // already handled by the backdrop below and by the animation's own
+        // timeout, so nothing replaces it.
 
         let effectivenessScore = this.props.result && this.props.result.typeEffectiveness ? this.props.result.typeEffectiveness : 0;
         let effectivenessText = duelValueTranslator.effectivenessScoreToTextConversational(effectivenessScore);
@@ -217,14 +225,16 @@ class AttackActionModal extends React.Component {
                     show={this.props.show} onHide={this.props.onHide}
                     size="sm"
                     centered
-                    className={this.props.light ? "themed-modal light-themed-modal" : "themed-modal dark-themed-modal"}
+                    className={this.props.light ? "themed-modal light-themed-modal duel-modal" : "themed-modal dark-themed-modal duel-modal duel-action-modal"}
                 >
                     <Modal.Body>
-                         <div style={{ width: '90%', margin: 'auto', padding: '5px 0 5px 0', fontStyle: 'italic' }} >
-                            <h2 className='fit-text' style={{ color: 'white' }} >{this.props.attacker.species.name} attacks {this.props.defender.species.name}!</h2>
+                         {/* the engagement, called out the way the console labels
+                             anything else: stencilled, upper case, no italics */}
+                         <div className="duel-action-heading">
+                            <h2 className='fit-text duel-action-title'>{this.props.attacker.species.name} attacks {this.props.defender.species.name}</h2>
                          </div>
-                         <div style={{ width: '90%', margin: 'auto', padding: '10px 0 5px 0' }} >
-                            <h2 className='fit-text' id='duel-attack-action-effectiveness-text' style={{ color: 'white' }}>{effectivenessText}</h2>
+                         <div className="duel-action-heading">
+                            <h2 className='fit-text duel-action-effect' id='duel-attack-action-effectiveness-text'>{effectivenessText}</h2>
                          </div>
 
                                 
@@ -274,13 +284,13 @@ class AttackActionModal extends React.Component {
                         </Row>
                         <Row style={{ display: 'flex', justifyContent: 'center', alignContent: 'center', alignItems: 'center', padding: '5px 20px 5px 20px' }}>
                             <Col >
-                                <div id='duel-attack-action-attacker-health-bar-wrapper' style={{ width: '100%', height: '2px', marginTop: '10%', opacity: 0 }}>
-                                    <div id='duel-attack-action-attacker-health-bar' style={{ width: `${attackerHealthDelta.start.percent}%`, backgroundColor: attackerHealthDelta.start.color, pointerEvents: 'none', boxShadow: `0px 0px 4px 4px ${attackerHealthDelta.start.color}`, height: '100%' }} />
+                                <div id='duel-attack-action-attacker-health-bar-wrapper' className="duel-action-vitals" style={{ opacity: 0 }}>
+                                    <div id='duel-attack-action-attacker-health-bar' style={{ width: `${attackerHealthDelta.start.percent}%`, backgroundColor: attackerHealthDelta.start.color, pointerEvents: 'none', height: '100%' }} />
                                 </div>
                             </Col>
                             <Col >
-                                <div id='duel-attack-action-defender-health-bar-wrapper' style={{ width: '100%', height: '2px', marginTop: '10%', opacity: 0 }}>
-                                    <div id='duel-attack-action-defender-health-bar' style={{ width: `${defenderHealthDelta.start.percent}%`, backgroundColor: defenderHealthDelta.start.color, pointerEvents: 'none', boxShadow: `0px 0px 4px 4px ${defenderHealthDelta.start.color}`, height: '100%' }} />
+                                <div id='duel-attack-action-defender-health-bar-wrapper' className="duel-action-vitals" style={{ opacity: 0 }}>
+                                    <div id='duel-attack-action-defender-health-bar' style={{ width: `${defenderHealthDelta.start.percent}%`, backgroundColor: defenderHealthDelta.start.color, pointerEvents: 'none', height: '100%' }} />
                                 </div>
                             </Col>
                         </Row>
@@ -290,7 +300,7 @@ class AttackActionModal extends React.Component {
                             <Col xs={6}>
                                 {this.props.result.reactionDamage && (parseInt(this.props.result.reactionDamage) > 0) ?
                                     <div id='duel-attack-action-attacker-result-damage' style={{ width: '100%', margin: 'auto', marginTop: '10px' }}>
-                                        <h4 style={{ opacity: 0.75, color: 'red', textAlign: 'center', fontWeight: 'bolder' }}>-{this.props.result.reactionDamage}</h4>
+                                        <p className="duel-action-damage">-{this.props.result.reactionDamage}</p>
                                     </div>
                                     : null
                                 }
@@ -299,7 +309,7 @@ class AttackActionModal extends React.Component {
                             <Col xs={6}>
                                 {this.props.result.damage && (this.props.result.damage > 0) &&
                                     <div id='duel-attack-action-defender-result-damage' style={{ width: '100%', margin: 'auto', marginTop: '10px' }}>
-                                        <h4 style={{ opacity: 0.75, color: 'red', textAlign: 'center', fontWeight: 'bolder' }}>-{this.props.result.damage}</h4>
+                                        <p className="duel-action-damage">-{this.props.result.damage}</p>
                                     </div>
                                 }
                             </Col>

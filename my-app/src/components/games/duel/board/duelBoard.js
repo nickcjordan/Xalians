@@ -5,27 +5,21 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import Navbar from 'react-bootstrap/Navbar';
-import Offcanvas from 'react-bootstrap/Offcanvas';
 import Stack from 'react-bootstrap/Stack';
 import PropTypes from 'prop-types';
 import * as gameConstants from '../../../../gameplay/duel/duelGameConstants';
-import XalianImage from '../../../xalianImage';
 import * as duelUtil from '../../../../utils/duelUtil';
 import * as duelCalculator from '../../../../gameplay/duel/duelCalculator';
 import * as duelConstants from '../../../../gameplay/duel/duelGameConstants';
-import { ReactComponent as AttackIcon } from '../../../../svg/games/duel/duel_attack_icon.svg';
-import { ReactComponent as DuelFlagIcon } from '../../../../svg/games/duel/duel_flag_icon.svg';
 import species from '../../../../json/species.json';
 import { Hub } from "aws-amplify";
-import XalianTypeSymbolBadge from './xalianTypeSymbolBadge';
-import DuelXalianSuggestionDetails from './duelXalianSelectionDetails';
-import XalianDuelStatBadge from './xalianDuelStatBadge';
 import DuelBoardCell from './duelBoardCell';
+import DuelRosterRail from './duelRosterRail';
+import DuelMoveRegion from './duelMoveRegion';
+import DuelTargetLayer, { verdictFor } from './duelTargetLayer';
 import AttackActionModal from './attackActionModal';
 import AttackMoveChooserModal from './attackMoveChooserModal';
 import HowToPlayModal from '../howToPlayModal';
-import { useSelector, useDispatch } from 'react-redux'
-import { addAnimationToQueue } from '../../../../store/duelAnimationQueueSlice';
 import { AnimationHub } from '../../../../store/AnimationHub';
 import * as boardStateManager from '../../../../gameplay/duel/boardStateManager';
 import * as boardUtil from '../../../../gameplay/duel/utils/boardUtil';
@@ -42,7 +36,6 @@ import MotionPathPlugin from 'gsap/MotionPathPlugin';
 import constants from '../../../../constants/constants';
 import * as alertUtil from '../../../../utils/alertUtil';
 import FadeAlert from '../../../fadeAlert';
-import { ink } from '../../../../constants/designTokens';
 gsap.registerPlugin(Flip, MotionPathPlugin, Draggable);
 
 
@@ -73,9 +66,24 @@ class DuelBoard extends React.Component {
 		window.removeEventListener('resize', this.updateSize);
 	}
 
+	// A rail on each side is real furniture, so the board is sized against what
+	// is actually left over. Below the breakpoint the rails lie down above and
+	// below the board instead and give their width back.
+	static RAIL_WIDTH = 270;
+	static RAIL_BREAKPOINT = 1100;
+
+	hasSideRails = () => {
+		return typeof window !== 'undefined' && window.innerWidth >= DuelBoard.RAIL_BREAKPOINT;
+	}
+
 	updateSize = () => {
 		if (window && window.innerWidth) {
-			this.setState(boardUtil.buildBoardSizeState(window.innerWidth, window.innerHeight * 0.5));
+			let railAllowance = this.hasSideRails() ? (2 * DuelBoard.RAIL_WIDTH) : 0;
+			let w = Math.max(240, window.innerWidth - railAllowance - 48);
+			// the status strip and the header legend are the only other things
+			// competing for vertical space now that the benches are gone
+			let h = Math.max(240, window.innerHeight - (this.hasSideRails() ? 300 : 400));
+			this.setState(boardUtil.buildBoardSizeState(w, h));
 		}
 	};
 	
@@ -405,6 +413,83 @@ class DuelBoard extends React.Component {
 
 
 
+	/**
+	 * Pressing a slot in a roster rail.
+	 *
+	 * The rail is the setup tray as well as the status readout, so this has to
+	 * cover both: an unplaced piece is picked up for placing, a standing piece
+	 * is selected exactly as if it had been pressed on the board, and anything
+	 * else is merely inspected.
+	 */
+	handleRosterSelection = (xalian, meta) => {
+		let boardState = this.getStartingBoardState();
+		if (meta.isUnset) {
+			this.handleInitialPieceSelection(xalian, boardState);
+			return;
+		}
+		if (meta.isDown) {
+			this.setReferencedXalianId(xalian.xalianId);
+			return;
+		}
+		let index = duelUtil.getIndexOfXalian(xalian.xalianId, boardState);
+		if (index != null && index >= 0) {
+			this.selectPiece(xalian, index, boardState);
+		} else {
+			this.setReferencedXalianId(xalian.xalianId);
+		}
+	};
+
+	/** every piece a side owns, in G's declaration order so slots never move */
+	buildRoster = (playerIndex, boardState) => {
+		let playerState = boardState.playerStates[playerIndex];
+		if (!playerState || !this.props.G.xalians) return [];
+		let owned = new Set(
+			(playerState.activeXalianIds || [])
+				.concat(playerState.unsetXalianIds || [])
+				.concat(playerState.inactiveXalianIds || [])
+		);
+		return this.props.G.xalians
+			.filter(x => owned.has(x.xalianId))
+			.map(x => duelUtil.getXalianFromIdAndXalians(x.xalianId, boardState.xalians) || x);
+	}
+
+	/**
+	 * Which enemies the selection can actually strike, and how each matchup
+	 * reads. Computed once here rather than per cell so the board and both
+	 * rails agree, and so a preview that throws can never take the board down.
+	 */
+	buildTargeting = (selectedId, attackableIndices, boardState) => {
+		let attackableIds = new Set();
+		let targetVerdicts = {};
+		let targets = [];
+		let details = boardState.currentTurnDetails;
+		if (!selectedId || !details || details.hasAttacked) {
+			return { attackableIds, targetVerdicts, targets };
+		}
+		let attacker = duelUtil.getXalianFromId(selectedId, boardState);
+		if (!attacker) return { attackableIds, targetVerdicts, targets };
+
+		(attackableIndices || []).forEach(index => {
+			let occupantId = boardState.cells[index];
+			if (!occupantId) return;
+			if (duelUtil.xaliansAreOnSameTeam(selectedId, occupantId, boardState)) return;
+			attackableIds.add(occupantId);
+			let defender = duelUtil.getXalianFromId(occupantId, boardState);
+			let verdict = verdictFor(1);
+			try {
+				let result = duelCalculator.calculateAttackResult(attacker, defender, boardState, this.props.ctx, true);
+				let effectiveness = (result && result.typeEffectiveness != null) ? result.typeEffectiveness : 1;
+				verdict = verdictFor(effectiveness);
+			} catch (err) {
+				// a damage preview is a courtesy; never let one stop the board rendering
+				console.error('duel: could not preview matchup', err);
+			}
+			targetVerdicts[occupantId] = verdict;
+			targets.push({ index: index, verdict: verdict });
+		});
+		return { attackableIds, targetVerdicts, targets };
+	}
+
 	// called in setup when a piece is selected to be placed
 	handleInitialPieceSelection = (xalian, boardState) => {
 		if (this.getSelectedXalianId() && this.getSelectedXalianId() === xalian.xalianId) {
@@ -491,25 +576,6 @@ class DuelBoard extends React.Component {
 
 	
 	
-	buildInitialSpeciesIcon(x, boardState, isOut = false) {
-		let isSelected = this.getSelectedXalianId() && this.getSelectedXalianId() === x.xalianId;
-		let opac = isOut ? 0.25 : 1;
-		let cellSizeText = this.determineCellSizeText();
-
-		return (
-				<Col key={x.xalianId} style={{ maxWidth: cellSizeText, maxHeight: cellSizeText, opacity: opac }} className='duel-unset-piece-wrapper' onClick={() => this.handleInitialPieceSelection(x, boardState)}>
-					<XalianImage padding='2%' colored rounded shadowed selected={isSelected} speciesName={x.species.name} primaryType={x.elementType} moreClasses="duel-xalian-unselected" />
-						{/* <div style={{ padding: '0px', height: '100%', width: '100%', margin: 'auto' }}>
-							<h6 className="fit-xalian-name-text" style={{ textAlign: 'center', margin: 'auto', height: '100%', width: '100%', color: 'white', opacity: 0.5 }}>
-								{x.species.name}
-							</h6>
-						</div> */}
-				</Col>
-		);
-	}
-
-	
-
 	// the board deliberately RENDERS a historical snapshot while animations replay
 	// (see getStartingBoardState). Actions must never be derived from that snapshot —
 	// the rules layer validates against live G and would reject stale-derived paths.
@@ -539,22 +605,31 @@ class DuelBoard extends React.Component {
 		// the DEBUG button dumps raw game state - dev builds only, never for players
 		if (process.env.NODE_ENV !== 'production') {
 			userActionButtons.push(
-				<Col key="duel-action-debug" style={{ display: 'flex', justifyContent: 'center' }}>
-					<Button variant='xalianGray' onClick={ this.doDebugAction } style={{ margin: 'auto', marginBottom: '10px', marginTop: '10px' }} >DEBUG</Button>
-				</Col>
+				<button type="button" key="duel-action-debug" className="g-btn" onClick={this.doDebugAction}>Debug</button>
 			)
 		}
 
 		userActionButtons.push(
-			<Col key="duel-action-how-to-play" xs="auto" style={{ display: 'flex', justifyContent: 'center' }}>
-				<Button variant='xalianGray' title='How to play' aria-label='How to play' onClick={() => this.setState({ showHowToPlay: true })} style={{ margin: 'auto', marginBottom: '10px', marginTop: '10px' }} ><i className="bi bi-question-lg" /></Button>
-			</Col>
+			<button
+				type="button"
+				key="duel-action-how-to-play"
+				className="g-btn g-btn--icon"
+				title="How to play"
+				aria-label="How to play"
+				onClick={() => this.setState({ showHowToPlay: true })}>
+				<i className="bi bi-question-lg" />
+			</button>
 		)
 
 		userActionButtons.push(
-			<Col key="duel-action-end-turn" style={{ display: 'flex', justifyContent: 'center' }}>
-				<Button variant='xalianGray' disabled={!showEndTurnButton} onClick={this.endPlayerTurn} style={{ margin: 'auto', marginBottom: '10px', marginTop: '10px' }} >End turn</Button>
-			</Col>
+			<button
+				type="button"
+				key="duel-action-end-turn"
+				className="g-btn g-btn--primary"
+				disabled={!showEndTurnButton}
+				onClick={this.endPlayerTurn}>
+				End Turn
+			</button>
 		)
 
 		
@@ -621,37 +696,51 @@ class DuelBoard extends React.Component {
 			tbody.push(<tr key={i}>{cells}</tr>);
 		}
 
-		var cols = this.buildTeamList(boardState.playerStates[0].unsetXalianIds, boardState);
-		var outCols = this.buildTeamList(boardState.playerStates[0].inactiveXalianIds, boardState);
-		var opponentCols = this.buildTeamList(boardState.playerStates[1].unsetXalianIds, boardState);
-		var opponentOutCols = this.buildTeamList(boardState.playerStates[1].inactiveXalianIds, boardState);
+		// The two rosters. Which one is "yours" follows the client you are looking
+		// through, so the hot-seat second view is not reading the first player's
+		// squad as its own.
+		let ownIndex = parseInt(this.props.playerID) === 1 ? 1 : 0;
+		let foeIndex = ownIndex === 0 ? 1 : 0;
+		let ownRoster = this.buildRoster(ownIndex, boardState);
+		let foeRoster = this.buildRoster(foeIndex, boardState);
+		let ownColor = ownIndex === 0 ? duelConstants.PLAYER_ONE_COLOR : duelConstants.PLAYER_TWO_COLOR;
+		let foeColor = foeIndex === 0 ? duelConstants.PLAYER_ONE_COLOR : duelConstants.PLAYER_TWO_COLOR;
+		let isOwnTurn = parseInt(this.props.ctx.currentPlayer) === ownIndex;
 
-		let isPlayersTurn = parseInt(this.props.ctx.currentPlayer) == 0;
-		let glowIfCurrentTurnPlayer = isPlayersTurn ? `0px 0px 5px 5px ${ink.base}` : 'none';
-		let glowIfCurrentTurnOpponent = !isPlayersTurn ? `0px 0px 5px 5px ${ink.base}` : 'none';
+		let { attackableIds, targetVerdicts, targets } = this.buildTargeting(selectedId, selectedXalianAttackableIndices, boardState);
+
+		// the square each region's owner is standing on, so the shape can close
+		// around it instead of being punched through the middle
+		let selectedIndex = selectedId ? duelUtil.getIndexOfXalian(selectedId, boardState) : null;
+		let referencedIndex = referencedId ? duelUtil.getIndexOfXalian(referencedId, boardState) : null;
+		let gridSize = cellSize * gameConstants.BOARD_COLUMN_SIZE;
+		let regionsSettled = this.props.isActive && !this.isReplayingAnimations();
+
+		let foeTitle = this.props.G.hasBot && foeIndex === 1 ? 'Bot Squad' : 'Their Squad';
 
 		let selectedXalian = duelUtil.getXalianFromId(selectedId, boardState);
 		// let referencedXalian = duelUtil.getXalianFromId(this.state.referencedXalianId, boardState);
 		let referencedXalianId = this.getReferencedXalianId();
 		let referencedXalian = duelUtil.getXalianFromId(referencedXalianId, boardState);
-		let xalianDetailsToShow = selectedXalian || referencedXalian;
+		// pressing an already-selected piece opens its deeper reading, docked in
+		// its own roster slot rather than floated over the board
+		let expandedXalianId = this.state.showXalianDetails
+			? (selectedId || referencedXalianId)
+			: null;
 		
 		let userActionButtons = this.buildUserActionButtons(boardState);
 
-		let duelPieceBoxStyle = { borderRadius: `${this.determineCellSize() / 2}px`, width: `${this.getBoardSize() * 0.85}px`, height: this.determineCellSize() };
-		let p1Opacity = this.props.playerID === '0' && this.props.isActive ? 0.35 : 0.9; 
-		let p2Opacity = this.props.playerID === '1' && this.props.isActive ? 0.35 : 0.9; 
-		let playerOnePiecesBoxStyle = { boxShadow: `inset 0px 0px ${this.determineCellSize() / 2}px ${gsap.utils.interpolate(duelConstants.PLAYER_TWO_COLOR, duelConstants.PLAYER_TWO_COLOR_NO_ALPHA, p2Opacity)}`, ...duelPieceBoxStyle };
-		let playerTwoPiecesBoxStyle = { boxShadow: `inset 0px 0px ${this.determineCellSize() / 2}px ${gsap.utils.interpolate(duelConstants.PLAYER_ONE_COLOR, duelConstants.PLAYER_ONE_COLOR_NO_ALPHA, p1Opacity)}`, ...duelPieceBoxStyle };
+		// which client you are looking through. Only worth saying in a hot seat
+		// game, where the two views really are different people - against a bot it
+		// was a permanent "Player View" caption over the turn banner.
+		let viewText = this.props.G.hasBot ? null : (this.props.playerID === '0' ? 'First Player' : 'Second Player');
+		let turnDetails = (this.props.ctx.phase === 'play' && boardState.currentTurnDetails) ? boardState.currentTurnDetails : null;
 
-		let viewText = this.props.G.hasBot ? (this.props.playerID === '0' ? 'Player View' : 'Bot View') : (this.props.playerID === '0' ? 'First Player' : 'Second Player');
-		let turnSummaryText = (this.props.ctx.phase === 'play' && boardState.currentTurnDetails) ? (`Moves: ${boardState.currentTurnDetails.remainingSpacesToMove}` + (boardState.currentTurnDetails.hasAttacked ? '' : ' + Attack')) : '';
-
-		var backGroundClientColor = this.props.playerID === '0' ? duelConstants.PLAYER_ONE_COLOR : duelConstants.PLAYER_TWO_COLOR;
-		let backGroundClientColorNoAlpha = this.props.playerID === '0' ? duelConstants.PLAYER_ONE_COLOR_NO_ALPHA : duelConstants.PLAYER_TWO_COLOR_NO_ALPHA;
-		backGroundClientColor = gsap.utils.interpolate(backGroundClientColor, backGroundClientColorNoAlpha, 0.75);
-		let backgroundClientColorDirection = this.props.playerID === '0' ? 180 : 0;
-		let backgroundForClient = `linear-gradient(${backgroundClientColorDirection}deg, ${backGroundClientColorNoAlpha} 20%, ${backGroundClientColor} 100%)` 
+		let clientColor = this.props.playerID === '0' ? duelConstants.PLAYER_ONE_COLOR : duelConstants.PLAYER_TWO_COLOR;
+		// which end of the room you are sitting at: a low glow along your own
+		// edge, not a wash over the whole page
+		let clientEdge = this.props.playerID === '0' ? '115%' : '-15%';
+		let backgroundForClient = `radial-gradient(60% 32% at 50% ${clientEdge}, ${clientColor}22 0%, ${clientColor}00 100%)` 
 		
 
 		
@@ -662,133 +751,183 @@ class DuelBoard extends React.Component {
 						this.setXalianIds(null, null);
 					}}/>
 
-					{/* <Container fluid style={{ width: '100%', padding: '0px', margin: '0px', position: 'fixed', minHeight: '100vh', width: '100vw', overflowY: 'hidden'}}> */}
-					<Container fluid style={{ width: '100%', padding: '0px', margin: '0px', position: 'fixed', minHeight: '90vh', width: '100vw', overflowY: 'hidden'}}>
-						{/* <Stack className='' style={{ width: '100%', padding: '0px', margin: 'auto', position: 'relative' }}> */}
+					<div className="duel-viewport">
 
-							{/* INFO BOX */}
+							{/* The stage: a rail on each side, the arena between them. This
+							    was a stack of absolutely-positioned rows that put the benches
+							    above and below the board, so the board moved down the page the
+							    moment anything died. Nothing here shifts once the match starts. */}
+							<div className="duel-stage-shell">
 
-							<Container style={{ display: 'flex', position: 'absolute', top: '10%', left: '50%', height: 'auto', width: '100%', transform: 'translate(-50%, -100%)' }}>
-							{/* <Container style={{ height: '100px', display: 'flex'}}> */}
-								
-								{this.state.winnerText &&
-									<h1 style={{ margin: 'auto', textAlign: 'center' }} >{this.state.winnerText}</h1>
-								}
-								{!this.state.winnerText &&
-									<div style={{width: '100%', padding: '0px', margin: '0px', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
-										{/* <h4 style={{ margin: 'auto', textAlign: 'center', marginBottom: '25px', color: 'darkgray', opacity: isCurrentLogIndex ? 1 : 0.25 }}>[{this.state.logIndex}] {turnSummaryText}</h4> */}
-										<h4 style={{ margin: 'auto', textAlign: 'center' , opacity: isCurrentLogIndex ? 1 : 0.25 }}>{viewText}</h4>
-									</div>
-								}
-								{/* return {
-									hasAttacked: hasAttacked,
-									hasMoved: hasMoved,
-									remainingSpacesToMove: remainingSpacesToMove,
-									moves: moves,
-									isComplete: isComplete,
-									actions: actions
-								} */}
-							</Container>
-							<div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'absolute', top: '50%', left: '50%', height: 'auto', width: '100%', transform: 'translate(-50%, -50%)' }}>
-
-
-								<Container fluid style={{ width: '100%', padding: '0px', margin: '0px' }}>
-									
-									<Row className='duel-unset-piece-row' style={playerOnePiecesBoxStyle}>{opponentCols}{opponentOutCols}</Row>
-									
-									<div className='duel-board-wrapper' >
-										<div className='duel-board-wrapper-background' />
-										<div className='duel-board-wrapper-background-overlay' />
-										<table id="board" style={{ display: 'flex', justifyContent: 'center' }}>
-											<tbody >{tbody}</tbody>
-										</table>
-									</div>
-									
-									<Row className='duel-unset-piece-row' style={playerTwoPiecesBoxStyle}>{cols}{outCols}</Row>
-									
-									{this.state.attackAnimationData &&
-										<AttackActionModal
-											show={this.state.showActionModal}
-											onHide={this.onAttackActionComplete}
-											attacker={this.state.attackAnimationData.attacker}
-											defender={this.state.attackAnimationData.defender}
-											result={this.state.attackAnimationData.result}
-											attackerColor={this.state.attackAnimationData.attackerColor}
-											defenderColor={this.state.attackAnimationData.defenderColor}
-											cellSize={this.determineCellSize()}
-											attackerStartRect={this.state.attackAnimationData.attackerStartRect}
-											defenderStartRect={this.state.attackAnimationData.defenderStartRect}
-											animationTl={this.state.animationTl}
-										/>
+								<header className="duel-stage-header">
+									{this.state.winnerText &&
+										<h1 className="duel-winner-text">{this.state.winnerText}</h1>
 									}
-
-									<FadeAlert />
-
-								<HowToPlayModal show={this.state.showHowToPlay} onHide={this.onHideHowToPlay} />
-
-									{this.state.pendingAttack &&
-										<AttackMoveChooserModal
-											show={!!this.state.pendingAttack}
-											attacker={duelUtil.getXalianFromId(this.state.pendingAttack.attackerId, this.getLiveBoardState())}
-											defender={duelUtil.getXalianFromId(this.state.pendingAttack.defenderId, this.getLiveBoardState())}
-											G={this.props.G}
-											ctx={this.props.ctx}
-											onSelect={(moveIndex) => {
-												let pendingAttack = this.state.pendingAttack;
-												this.props.moves.doAttack(pendingAttack.path, moveIndex != null ? { moveIndex } : undefined);
-												this.setState({ pendingAttack: null });
-											}}
-											onCancel={() => {
-												this.setState({ pendingAttack: null });
-											}}
-										/>
+									{!this.state.winnerText &&
+										<>
+											{viewText &&
+												<p className="duel-view-label" style={{ opacity: isCurrentLogIndex ? 1 : 0.25 }}>{viewText}</p>
+											}
+											{/* whose turn it is was previously only implied by an edge
+											    glow on a bench, which is not something you can read */}
+											<p className={`duel-turn-banner ${isOwnTurn ? 'duel-turn-banner--yours' : 'duel-turn-banner--theirs'}`}>
+												{this.props.ctx.phase === 'setup'
+													? (isOwnTurn ? 'Place your squad' : 'Opponent placing')
+													: (isOwnTurn ? 'Your turn' : 'Opponent’s turn')}
+											</p>
+										</>
 									}
+								</header>
 
-								</Container>
+								<div className={`duel-stage ${this.hasSideRails() ? 'duel-stage--rails' : 'duel-stage--stacked'}`}>
 
+									<DuelRosterRail
+									side="left"
+									title={foeTitle}
+									xalians={foeRoster}
+									teamColor={foeColor}
+									isOwn={false}
+									isTurn={!isOwnTurn}
+									boardState={boardState}
+									ctx={this.props.ctx}
+									phase={this.props.ctx.phase}
+									selectedXalianId={selectedId}
+									referencedXalianId={referencedId}
+									attackableIds={attackableIds}
+									targetVerdicts={targetVerdicts}
+									expandedXalianId={expandedXalianId}
+									onSelect={this.handleRosterSelection}
+								/>
 
+									<div className="duel-stage-board">
+										<div className='duel-board-wrapper' >
+											<div className='duel-board-wrapper-background' />
+											<div className='duel-board-wrapper-background-overlay' />
+											<div className="duel-board-grid">
+												<table id="board" style={{ display: 'flex', justifyContent: 'center' }}>
+													<tbody >{tbody}</tbody>
+												</table>
+												{regionsSettled &&
+													<DuelMoveRegion
+														variant="referenced"
+														indices={referencedXalianMovableIndices}
+														originIndex={referencedIndex}
+														columns={gameConstants.BOARD_COLUMN_SIZE}
+														size={gridSize} />
+												}
+												{regionsSettled &&
+													<DuelMoveRegion
+														indices={selectedXalianMovableIndices}
+														originIndex={selectedIndex}
+														columns={gameConstants.BOARD_COLUMN_SIZE}
+														size={gridSize} />
+												}
+												{regionsSettled &&
+													<DuelTargetLayer
+														targets={targets}
+														originIndex={selectedIndex}
+														columns={gameConstants.BOARD_COLUMN_SIZE}
+														size={gridSize} />
+												}
+											</div>
+										</div>
+									</div>
+
+									<DuelRosterRail
+									side="right"
+									title={"Your Squad"}
+									xalians={ownRoster}
+									teamColor={ownColor}
+									isOwn={true}
+									isTurn={isOwnTurn}
+									boardState={boardState}
+									ctx={this.props.ctx}
+									phase={this.props.ctx.phase}
+									selectedXalianId={selectedId}
+									referencedXalianId={referencedId}
+									attackableIds={attackableIds}
+									targetVerdicts={targetVerdicts}
+									expandedXalianId={expandedXalianId}
+									onSelect={this.handleRosterSelection}
+								/>
+
+								</div>
 							</div>
 
-							{(xalianDetailsToShow && this.state.showXalianDetails) &&
-							<>
-								<div style={{width: '100%', height: '100%'}} onClick={() => {
-									this.setState({ showXalianDetails: false });
-								 }} />
-								<Offcanvas scroll backdrop={true} placement="top" 
-									show={xalianDetailsToShow} 
-									onHide={this.onHideXalianDetails} 
-									style={{backgroundColor: '#00000000', border: '0', maxWidth: '90vw', marginLeft: 'auto', marginRight: 'auto', height: 'fit-content'}} 
-									>
-									<Offcanvas.Body style={{padding: '0px', margin: '0px'}}>
-										<DuelXalianSuggestionDetails xalian={xalianDetailsToShow} />
-									</Offcanvas.Body>
-								</Offcanvas>
-							</>
-									// <Container fluid='sm' style={{ maxWidth: '400px', position: }}>
-									// 	<DuelXalianSuggestionDetails xalian={xalianDetailsToShow} />
-									// </Container>
+							{this.state.attackAnimationData &&
+								<AttackActionModal
+									show={this.state.showActionModal}
+									onHide={this.onAttackActionComplete}
+									attacker={this.state.attackAnimationData.attacker}
+									defender={this.state.attackAnimationData.defender}
+									result={this.state.attackAnimationData.result}
+									attackerColor={this.state.attackAnimationData.attackerColor}
+									defenderColor={this.state.attackAnimationData.defenderColor}
+									cellSize={this.determineCellSize()}
+									attackerStartRect={this.state.attackAnimationData.attackerStartRect}
+									defenderStartRect={this.state.attackAnimationData.defenderStartRect}
+									animationTl={this.state.animationTl}
+								/>
 							}
 
+							<FadeAlert />
 
+							<HowToPlayModal show={this.state.showHowToPlay} onHide={this.onHideHowToPlay} />
+
+							{this.state.pendingAttack &&
+								<AttackMoveChooserModal
+									show={!!this.state.pendingAttack}
+									attacker={duelUtil.getXalianFromId(this.state.pendingAttack.attackerId, this.getLiveBoardState())}
+									defender={duelUtil.getXalianFromId(this.state.pendingAttack.defenderId, this.getLiveBoardState())}
+									G={this.props.G}
+									ctx={this.props.ctx}
+									onSelect={(moveIndex) => {
+										let pendingAttack = this.state.pendingAttack;
+										this.props.moves.doAttack(pendingAttack.path, moveIndex != null ? { moveIndex } : undefined);
+										this.setState({ pendingAttack: null });
+									}}
+									onCancel={() => {
+										this.setState({ pendingAttack: null });
+									}}
+								/>
+							}
 
 						{/* </Stack> */}
-							<div className="fixed-bottom" style={{ 
-								margin: 'auto',
-								maxWidth: '400px',
-									borderRadius: '10px',
-									background: 'linear-gradient(0deg, rgba(0,0,0,1) 15%, rgba(0,0,0,0.8099614845938375) 89%, rgba(0,0,0,0.6138830532212884) 94%, rgba(0,0,0,0) 100%)' 
-								}}>
-								<h4 style={{ margin: 'auto', textAlign: 'center', paddingTop: '5px', color: 'darkgray', opacity: isCurrentLogIndex ? 1 : 0.25 }}>{!isCurrentLogIndex ? 'NEEDS UPDATE' : null}[{this.state.logIndex}] {turnSummaryText}</h4>
-								<Row >
+							{/* the turn's instruments, on a panel bolted along the bottom of
+							    the console rather than a black gradient bar */}
+							<div className="fixed-bottom duel-status-strip" style={{ opacity: isCurrentLogIndex ? 1 : 0.4 }}>
+								{!isCurrentLogIndex &&
+									<p className="duel-status-stale">Replaying — showing turn {this.state.logIndex}</p>
+								}
+								{turnDetails &&
+									<div className="duel-status-readouts">
+										{/* "Movement 3" never said three of what, nor that the pool is
+										    shared across the whole squad rather than per piece */}
+										<span className="duel-readout">
+											<span className="duel-readout-label">Squad moves</span>
+											<span className="duel-readout-value">
+												{turnDetails.remainingSpacesToMove}
+												<span className="duel-readout-unit">sq</span>
+											</span>
+										</span>
+										<span className="duel-readout">
+											<span className="duel-readout-label">Attack</span>
+											<span className={`duel-readout-value ${turnDetails.hasAttacked ? 'duel-readout-value--spent' : 'duel-readout-value--held'}`}>
+												{turnDetails.hasAttacked ? 'Spent' : 'Ready'}
+											</span>
+										</span>
+									</div>
+								}
+								<div className="duel-status-actions">
 									{userActionButtons}
-								</Row>
+								</div>
 							</div>
 							{this.state.debugText && 
 								<div className="fixed-top" style={{ width: '100%', height: '90vh', backgroundColor: '#0000007a' }}>
 									<pre style={{ width: '100%', height: '100%', color: 'white' }}>{this.state.debugText}</pre>
 								</div>
 							}
-					</Container>
+					</div>
 				</div>
 						
 			);
@@ -809,20 +948,6 @@ class DuelBoard extends React.Component {
 	onHideXalianDetails = () => {
 		this.setState({ showXalianDetails: false });
 	}
-
-	buildTeamList = (list, boardState) => {
-		let cols = [];
-		if (list && this.props.G) {
-			list.forEach((id) => {
-				let x = this.props.G.xalians.filter((x) => x.xalianId === id)[0];
-				if (x) {
-					cols.push(this.buildInitialSpeciesIcon(x, boardState));
-				}
-			});
-		}
-		return cols;
-	}
-
 
 	endPlayerTurn = () => {
 		this.props.moves.endTurn();

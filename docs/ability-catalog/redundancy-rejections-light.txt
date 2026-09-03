@@ -1,0 +1,4 @@
+v | 4.1 | radiance Undertow :: D — written out: "Radiance Undertow" judged K actually (kept in cell as Radiance
+v | 4.2 | flash Bolt :: D — "Flash Bolt": judged D — near-tautology, flash and bolt both independently m
+v | 4.3 | piercing Skewer/Pike :: D — "Piercing Skewer": written out, judged T — near-tautology, piercing and skew
+v | 4.3 | photon Beam :: D — "Photon Beam": written out, judged T — near-tautology/redundant, a photon IS

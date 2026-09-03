@@ -1,0 +1,120 @@
+a | STRIKE | PROSE :: Columns (STRIKE synonym pool, merged verb/noun near-duplicates): Blow, Strike, Impact, Smash, Slam, Crack, Whack, Thump, Thud, Bash, Clout, Wallop, Clobber, Belt, Sock, Punch, Jab, Cuff, Slap, Chop, Knock, Rap, Crash, Co
+a | STRIKE | PROSE :: **Thorn** — K: Strike, Crack, Jab, Gore, Headbutt, Jolt, Jar, Snap, Backhand, Forehand, Downstrike. D: Blow (too small/light for the generic weight "blow" implies), Impact (too clinical for one fine point), Smash (a poin
+a | STRIKE | PROSE :: **Bramble** — K: Strike, Smash, Slam, Crack, Bash, Wallop, Clobber, Crash, Collision, Ram, Charge, Barge, Trample, Hammer Blow, Sledge Blow, Crunch, Backhand, Forehand. D: Blow (too diffuse alone for the plain generic te
+a | STRIKE | PROSE :: - Vine Whiplash — X, this is the neutral pool's own compound (whiplash is a synonym-pool word, not a fresh element+action composition); the honest plant-owned equivalent is already Vine Lash. Rejected X (redundant with t
+a | LASH | PROSE :: **Runner** — K: Lash, Scythe, Reap. D (remaining 22): a runner (spreading stem) is honest as a whip-length lashing instrument (already covered) but the rest fail for scale/rigidity reasons parallel to Tendril's row; thre
+a | LASH | PROSE :: **Bramblewood** — K: Lash, Thrash, Wallop, Windmill. D (remaining 21): a dense whip-mass of thorned wood is honest for heavy swinging sweeps but too dense/heavy for quick motions (Flick, Snap, Crack all D — too much mass
+c | SPRAY | Pollen Discharge :: X — Sap Discharge covers the discharge register for a plant-fluid substance; a dry-particulate "Poll
+c | SPRAY | Pollen Shower :: X — Seed Shower already covers the shower register; Pollen Shower redundant, no distinguishing featu
+c | SPRAY | Pollen Mist :: X — Spore Mist already covers the mist-pattern reading for a fine particulate; Pollen Mist redundant
+c | SPRAY | Pollen Vapor :: X — vapor implies a gaseous/fine-suspended form already covered by Pollen Mist/Spore Mist's fine-par
+c | SPRAY | Spore Discharge :: X — Sap Discharge covers the discharge register for fluid substances; Spore Discharge is a weaker/re
+c | SPRAY | Spore Shower :: X — Seed Shower covers the shower register; redundant
+c | SPRAY | Spore Vapor :: X — redundant against Spore Mist's already-kept fine-particulate reading
+c | SPRAY | Seed Discharge :: X — Sap Discharge covers the discharge register for fluids; Seed Discharge redundant/weaker
+c | SPRAY | Seed Barrage :: X — Pollen Barrage/Spore Barrage cover the sustained-outpouring register; Seed Barrage redundant, se
+c | SPRAY | Seed Effusion :: X — Pollen Effusion/Spore Effusion cover the gradual-pour register; Seed Effusion redundant, weaker 
+c | SPRAY | Sap Spray :: X — Sap Spray reads as a weaker/redundant restatement of the already-kept Sap Discharge/Sap Effusion
+c | SPRAY | Sap Vent :: X — Sap Weep [secretion] already covers the organic release-point register more honestly than a mech
+c | SPRAY | Resin Vent :: X — same reasoning as Sap Vent, redundant against Resin Weep [secretion]
+c | SPRAY | Bloom Jet :: X — Pollen Jet already covers the honest jet-pattern reading for a bloom's release; Bloom Jet redund
+c | SPRAY | Bloom Discharge :: X — Pollen Discharge/Sap Discharge cover this register; Bloom Discharge redundant, vaguer restatemen
+c | SPRAY | Bloom Volley :: X — Pollen Volley/Spore Volley cover this; Bloom Volley redundant, vaguer
+c | SPRAY | Bloom Barrage :: X — Pollen Barrage/Spore Barrage cover this; redundant
+c | SPRAY | Bloom Plume :: X — Pollen Plume/Spore Plume cover this; Bloom Plume redundant, vaguer
+c | SPRAY | Bloom Effusion :: X — Pollen Effusion/Spore Effusion cover this; redundant
+c | SPRAY | Bloom Breath :: X — Pollen Breath/Spore Breath cover this; Bloom Breath redundant, vaguer (the substance name is the
+c | SPRAY | Bloom Rain :: X — Pollen Rain/Spore Rain cover this; redundant
+c | SPRAY | Bloom Shower :: X — Seed Shower covers this; redundant
+c | SPRAY | Bloom Fan :: X — Pollen Fan/Spore Fan cover this; redundant
+c | SPRAY | Bloom Cone :: X — Pollen Cone/Spore Cone cover this; redundant
+c | SPRAY | Bloom Arc :: X — Pollen Arc/Spore Arc cover this; redundant
+c | SPRAY | Bloom Mist :: X — Spore Mist covers this; redundant
+c | SPRAY | Bloom Vent :: X — Pollen Vent/Spore Vent cover this; redundant
+c | SPRAY | Bur/Burr Discharge :: D — discharge is vague enough to be legal but redundant against the already-established Pollen/Sap D
+c | SPRAY | Bur/Burr Barrage :: X — Bur Volley already covers the multi-object-scatter register; Bur Barrage redundant, no distingui
+c | BURST | Bloom Outburst :: X — near-dup of Bloomburst/Bloom Blast; redundant
+c | BURST | Bloom Overflow :: X — cut above as X against Bloom Discharge; redundant restatement
+c | BURST | Pod/Seedpod Outburst :: X — near-dup of Seedpod/Pod Blast; redundant
+c | BURST | Pod/Seedpod Vent :: X — Pod Vent, redundant against Pollen Vent/Spore Vent's already-established organic-vent register
+c | BURST | Root Outburst :: X — near-dup of Root Burst; redundant
+c | BURST | Root Pulse :: X — cut above as X against Bloom Pulse; redundant
+c | BURST | Root Vent :: X — cut above, redundant against Pollen/Spore Vent
+c | BURST | Bramble Outburst :: X — near-dup of Bramble Burst; redundant
+c | BURST | Thorn Blast :: X — near-dup of Thornburst; redundant
+c | BURST | Thorn Eruption :: X — cut above as X against Thornburst; redundant
+c | BURST | Thorn Outburst :: X — near-dup; redundant
+c | BURST | Thorn Rupture :: X — cut above as X against Thornburst; redundant
+c | BURST | Sap Outburst :: X — near-dup of Sap Blowout; redundant
+c | BURST | Sap Vent :: X — Sap Weep [secretion] already covers this organic release-point register (spray-cell); redundant 
+c | BURST | Husk Blowout :: D — a husk splitting is closer to a rupture than a blowout's pressure-release-at-a-weak-seam mechani
+c | BURST | Husk Outburst :: X — near-dup of Husk Rupture; redundant
+c | BURST | Seed Burst :: X — near-dup of Seedpod/Pod Burst; redundant, the pod is the bursting structure, the seed is the rel
+c | BURST | Seed Blast :: X — near-dup of Pod Blast; redundant
+c | BURST | Seed Discharge :: X — a seed's discharge is already covered by Pod Discharge; redundant
+c | BURST | Seed Outburst :: X — near-dup; redundant
+c | BURST | Seed Rupture :: X — near-dup of Pod Rupture/Husk Rupture; redundant
+c | BURST | Bur/Burr Blast :: X — near-dup of Bur Burst; redundant
+c | BURST | Bur/Burr Eruption :: X — near-dup of Bur Burst; redundant
+c | BURST | Bur/Burr Outburst :: X — near-dup; redundant
+c | BURST | Bur/Burr Rupture :: X — near-dup of Bur Burst; redundant restatement, the burst image already covers the rupture-adjacen
+c | CLOUD | Pollen Miasma :: X — Bloom Miasma covers the chemical-boundary miasma register generically; Pollen Miasma redundant, 
+c | CLOUD | Pollen Field :: X — Spore Field already covers the bounded-area register for the finer/heavier particulate; Pollen F
+c | CLOUD | Spore Canopy :: X — Pollen Canopy already covers this overhead-cover image; Spore Canopy redundant, no distinguishin
+c | CLOUD | Spore Blanket :: X — Pollen Blanket covers this; redundant
+c | CLOUD | Spore Zone :: X — Pollen Zone already covers the bounded-area register; Spore Zone redundant against the surviving
+c | CLOUD | Bloom Pall :: X — Spore Pall already covers the heavier-covering register; Bloom Pall redundant, no distinguishing
+c | CLOUD | Bloom Veil :: X — Pollen Veil already covers the thin-drift register for a bloom's own pollen release; Bloom Veil 
+c | CLOUD | Bloom Haze :: X — Pollen Haze covers this; redundant
+c | CLOUD | Bloom Murk :: X — Spore Murk covers the heavier-darkness register; Bloom Murk redundant
+c | CLOUD | Bloom Canopy :: X — Pollen Canopy covers this; Bloom Canopy redundant, vaguer
+c | CLOUD | Bloom Blanket :: X — Pollen Blanket covers this; redundant
+c | CLOUD | Bloom Billow :: X — Pollen Billow/Spore Billow cover this; Bloom Billow redundant, vaguer
+c | CLOUD | Bloom Wreath :: X — Pollen Wreath/Spore Wreath cover this; redundant, vaguer
+c | CLOUD | Bloom Drift :: X — Pollen Drift/Spore Drift cover this; redundant
+c | CLOUD | Bloom Zone :: X — Pollen Zone covers this; Bloom Zone redundant, vaguer
+c | CLOUD | Bloom Field :: X — Spore Field covers this; Bloom Field redundant, vaguer
+c | CLOUD | PROSE :: 1. **Moss Miasma** — not composed: moss does release spores, but the resulting airborne effect is identical in kind to the already-kept Spore Cloud/Spore Miasma with no moss-specific distinguishing feature (no honest rea
+c | CLOUD | PROSE :: 2. **Fern Haze** — not composed: same reasoning, redundant against Pollen Haze/Spore Cloud family with no fern-specific distinguishing feature. X.
+c | CLOUD | PROSE :: 3. **Lichen Drift** — not composed: same reasoning, redundant against Spore Drift with no lichen-specific distinguishing feature (lichen doesn't disperse in a way meaningfully different from the generic spore-drift image
+c | CLOUD | PROSE :: 4. **Moss Veil** — not composed: same reasoning, redundant against Pollen Veil/Spore Veil. X.
+c | CLOUD | PROSE :: 5. **Lichen Billow** — not composed: same reasoning, redundant against Pollen Billow/Spore Billow. X.
+c | SNARE | Vine Leash :: X — Vine Leash, cut above, redundant against Vine Tether
+c | SNARE | Vine Cage :: X — Bramble Cage already covers the rigid-enclosure image more honestly (brambles are stiffer/thorni
+c | SNARE | Vine Clutch :: X — Vine Clutch, cut above, redundant against Vine Grip
+c | SNARE | Vine Clasp :: X — a clasp implies a small fastening mechanism; redundant against the already-established Vine Bond
+c | SNARE | Vine Seize :: X — seize redundant against Vine Grip/Grasp family
+c | SNARE | Vine Reel :: X — Vine Reel, cut above, redundant against Vine Pull/Drag
+c | SNARE | Vine Haul :: X — haul redundant against Vine Pull/Drag, no distinguishing feature
+c | SNARE | Vine Tow :: X — tow redundant against Vine Pull/Drag
+c | SNARE | Vine Wrench :: X — Vine Wrench, cut above, redundant against Pull/Drag family
+c | SNARE | Root Trap :: X — Root Trap, cut above, redundant against Root Snare/Cage
+c | SNARE | Root Leash :: X — Tide Leash-style weaker restatement; Root Leash redundant against Root Tether, held out
+c | SNARE | Root Hobble :: X — Root Hobble, cut above, redundant against Vine Hobble; roots don't wrap around legs the way a fl
+c | SNARE | Root Bond :: X — Root Bond, cut above, redundant against Vine Bond/Root Tether family
+c | SNARE | Root Cord :: X — Root Cord, cut above, redundant against Vine Cord
+c | SNARE | Root Loop :: X — a root doesn't naturally loop the way a vine can; redundant/weaker against Vine Loop
+c | SNARE | Root Web :: X — Root Web, cut above, redundant against Vine Web, roots don't tangle overhead the way vines do
+c | SNARE | Root Clasp :: X — clasp redundant against Root Grip/Grasp/Clutch family
+c | SNARE | Root Seize :: X — seize redundant against the same family
+c | SNARE | Root Reel :: X — reel redundant against Root Pull/Drag
+c | SNARE | Root Haul :: X — haul redundant against Root Drag
+c | SNARE | Root Tow :: X — tow redundant against Root Pull/Drag
+c | SNARE | Root Wrench :: D — wrench mismatch, redundant/weak against Pull/Drag
+c | SNARE | Bramble Trap :: X — Bramble Trap, cut above, redundant against Bramble Snare/Cage
+c | SNARE | Bramble Cocoon :: D — cut above (Bramble Cocoon), redundant against Vine Cocoon's more honest full-wrap flexibility, t
+c | SNARE | Bramble Grasp :: X — Bramble Grasp redundant against Bramble Grip; no distinguishing feature
+c | SNARE | Bramble Clutch :: X — Bramble Clasp, cut above, redundant against Bramble Grip
+c | SNARE | Bramble Seize :: X — seize redundant against Bramble Grip
+c | SNARE | Bramble Snag :: D — Bramble Snag, cut above, redundant against Thorn Snag; the thorn is the honest snagging point, n
+c | SNARE | Bramble Hinder :: D — a bramble mass hindering passage is arguably its most honest snare-adjacent quality, but this is
+c | SNARE | Thorn Trap :: X — Thorn Trap, cut above, redundant against Thorn Snare
+c | SNARE | Thorn Grip :: D — a thorn's honest hold is via piercing and snagging (already covered by Thorn Snag), not a broad 
+c | SNARE | Rhizome Trap :: X — Rhizome Trap, redundant against Rhizome Snare
+c | SNARE | Rhizome Tether :: D — a rhizome tethers by spreading and anchoring, already the more honest Rhizome Snare covers this;
+c | SNARE | Rhizome Bond :: D — a rhizome bonds by spreading and gripping, already covered by Rhizome Snare; redundant — X
+c | SNARE | Rhizome Web :: X — cut above as D for the net-mismatch reasoning, and redundant against Vine Web's overhead-tanglin
+c | SNARE | Rhizome Grip :: D — a rhizome's honest hold is a below-ground grip at the foot, already covered by Rhizome Snare; "R
+c | SNARE | Rhizome Grasp :: X — same reasoning, redundant against Rhizome Snare
+c | SNARE | Rhizome Anchor :: X — Root Anchor already covers the below-ground anchoring register more generically; Rhizome Anchor 
+c | SNARE | PROSE :: This run composed plant's SPRAY, BURST, CLOUD, and SNARE cells from a cold start (no prior composed-plant-v4.md exists), building directly from step0-plant.md's productive-word list against the full synonym pools in harv

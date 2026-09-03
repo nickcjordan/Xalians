@@ -1,0 +1,744 @@
+/*--------------------------------------------------------------
+# Duel affordance reference (/duel/reference)
+#
+# Page scaffolding only. Every mark on this page is drawn by the
+# duel's own components against duel.css - if a rule here changed
+# how a board looks, the page would be lying about the game.
+--------------------------------------------------------------*/
+
+.dp-page {
+  padding-bottom: var(--g-9);
+}
+
+.dp-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--g-5);
+  align-items: center;
+  margin-top: var(--g-5);
+  padding: var(--g-3) var(--g-4);
+}
+
+.dp-control {
+  display: flex;
+  align-items: center;
+  gap: var(--g-3);
+  margin: 0;
+}
+
+.dp-control-value {
+  font-size: var(--g-size-micro);
+  color: var(--g-ink-mid);
+  min-width: 44px;
+}
+
+/* --------------------------------------------------------- section furniture */
+
+.dp-subhead {
+  margin: var(--g-6) 0 var(--g-4) 0;
+  max-width: var(--g-measure);
+}
+
+.dp-subhead-title {
+  margin: 0 0 var(--g-2) 0;
+}
+
+.dp-subhead-note {
+  margin: 0;
+  color: var(--g-ink-mid);
+}
+
+/* Specimens run in a wrapping row rather than a fixed grid: they are different
+   widths on purpose (a 3-square study beside a full 8x8 board), and forcing
+   them into equal columns would pad the small ones into looking important. */
+.dp-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--g-5);
+  align-items: flex-start;
+  margin-bottom: var(--g-5);
+}
+
+.dp-row--stack {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.dp-row--rails {
+  align-items: stretch;
+}
+
+/* ------------------------------------------------------------------ specimen */
+
+/* Sized by the board it holds - an 8x8 scenario is legitimately twice the width
+   of a 3-square study. The figure must never be capped below its board: the
+   board is not a flex child of it and does not shrink to match, so a max-width
+   here does not narrow the board, it just lets it overlap the next specimen. */
+.duel-specimen {
+  margin: 0;
+  width: fit-content;
+}
+
+/* The tray's own auto margins are for centring it in a match. Here it is one
+   item in a row. */
+.duel-specimen .duel-specimen-wrapper {
+  margin: 0;
+  padding: 10px;
+}
+
+/* The grid is laid out in CSS rather than in a table, so eight cells measure
+   exactly eight cells. The match board used to carry two pixels of border
+   spacing, which put the traced overlays fourteen pixels out of register. */
+.duel-specimen-cells {
+  display: grid;
+  position: relative;
+  z-index: 2;
+}
+
+.duel-specimen-cell {
+  position: relative;
+  text-align: center;
+}
+
+/* The caption is the one part allowed to set the figure's width, and only for
+   boards narrower than it. Capped so a long note on a 3-square study does not
+   open a gap in the row wide enough to read as a missing specimen. */
+.duel-specimen-caption {
+  display: block;
+  margin-top: var(--g-3);
+  width: 260px;
+  max-width: 100%;
+}
+
+.duel-specimen--wide .duel-specimen-caption {
+  width: auto;
+}
+
+.duel-specimen-name {
+  display: block;
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-micro);
+  text-transform: uppercase;
+  letter-spacing: var(--g-track-label);
+  color: var(--g-hazard);
+}
+
+.duel-specimen-note {
+  display: block;
+  margin-top: var(--g-1);
+  font-family: var(--g-font-body);
+  font-size: var(--g-size-small);
+  line-height: 1.45;
+  color: var(--g-ink-mid);
+}
+
+.dp-caption {
+  margin: 0 0 var(--g-2) 0;
+  max-width: 320px;
+}
+
+/* ------------------------------------------------------------------ channels */
+
+.dp-channels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--g-4);
+  margin-bottom: var(--g-6);
+}
+
+.dp-channel {
+  padding: var(--g-4);
+}
+
+/* the hue itself, stated before anything is said about it */
+.dp-channel-swatch {
+  display: block;
+  height: 8px;
+  margin-bottom: var(--g-3);
+  border-radius: 1px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.dp-channel-name {
+  margin: 0;
+}
+
+.dp-channel-means {
+  margin: var(--g-1) 0 var(--g-3) 0;
+  font-family: var(--g-font-display);
+  font-size: var(--g-size-h3);
+  text-transform: uppercase;
+  letter-spacing: var(--g-track-tight);
+  color: var(--g-ink-high);
+}
+
+.dp-channel-body {
+  margin: 0;
+  color: var(--g-ink-mid);
+  font-size: var(--g-size-small);
+}
+
+/* ------------------------------------------------------------------ elements */
+
+.dp-elements {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--g-4);
+  padding: var(--g-4);
+}
+
+.dp-element {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--g-2);
+  min-width: 66px;
+}
+
+.dp-element-name {
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-micro);
+  text-transform: uppercase;
+  letter-spacing: var(--g-track-label);
+  color: var(--g-ink-mid);
+}
+
+/* ---------------------------------------------------------------------- rail */
+
+/* In a match a rail is a full-height column beside the board. Here four of them
+   stand side by side, so they are capped and allowed to scroll internally. */
+.dp-rail-case {
+  width: 270px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Setup slots carry no meters, so that rail is shorter than the others and its
+   caption floated a hundred pixels above theirs. The rails share a height so the
+   notes below them read as one row. */
+.dp-rail-case .duel-roster-rail {
+  flex: 1;
+}
+
+.dp-rail-case .duel-roster-rail {
+  height: auto;
+  max-height: 460px;
+}
+
+/* --------------------------------------------------------------- instruments */
+
+.dp-instrument {
+  width: 100%;
+  max-width: 620px;
+}
+
+/* In a match the strip is docked to the foot of the viewport, which is where
+   its fixed width and side margins come from. Undocked onto the page those
+   become an indent and a 460px column, so they are unset rather than inherited
+   into a layout they were never written for. */
+.dp-status-strip {
+  position: static;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  transform: none;
+}
+
+.dp-instrument .duel-turn-banner,
+.dp-instrument .duel-winner-text {
+  margin: 0 0 var(--g-2) 0;
+}
+
+/* ------------------------------------------------------------------ verdicts */
+
+/* One panel per verdict. Set as a wrapping row of headings they ran together
+   into a single sentence - five separate readings reading as one line of prose
+   is the opposite of what a reference sheet is for. */
+.dp-verdicts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--g-4);
+}
+
+.dp-verdict {
+  padding: var(--g-3) var(--g-4);
+}
+
+.dp-verdict-line {
+  margin: var(--g-2) 0 0 0;
+}
+
+
+/*--------------------------------------------------------------
+# TOKEN STUDIES
+#
+# Section 10 of the reference page: candidate answers to "what is
+# a piece, physically?". Each study renders the same squad in its
+# own variant against the real board, and none of them touch the
+# live game until one is chosen.
+#
+# Survivors of the first cut. The gunmetal puck lost to the coin
+# on face contrast; the element inlay died because its two
+# coloured rings competed instead of composing. What remains is
+# one flat direction (the enamel coin) and two takes on the
+# tabletop direction: the original standee adjusted onto its
+# pip, and a second standee built from scratch around a real
+# miniature plinth.
+#
+# STRUCTURE. The token body is drawn on the piece root's own
+# ::before - NOT on .duel-piece-base, which on the live board is
+# the square of floor carrying the tile states; cutting a token
+# out of it left the rest of the square showing round the edges.
+# The standees are the exception: their base really is a thing
+# on the floor, so the floor plate is theirs to reshape.
+--------------------------------------------------------------*/
+
+/* The svg inside the art box is display:inline, so it sits on the text
+   baseline of the cell's own 62px line box and is shoved a dozen pixels below
+   the box that is supposed to contain it. Every creature hung out of the
+   bottom of its token while the box measured perfectly placed - the box was;
+   the svg inside it was not. */
+.dp-token-study .duel-piece-xalian-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ====================================================================
+   1. ENAMEL COIN - the flat direction.
+   ==================================================================== */
+
+/* the floor plate is the board's object, not the token's - gone entirely */
+.dp-token-enamel .duel-piece-base {
+  display: none;
+}
+
+/* THE ART. Centred in a square box sized so that, with its 3% lift (standing
+   creatures carry their mass at the feet, so a box centred by arithmetic
+   reads low by eye), all four corners stay inside the face circle. The glow
+   filter is KEPT - on a dark face a black silhouette without its rim light is
+   a hole, and the rim light is the creature's canonical look. */
+.dp-token-enamel .duel-piece-xalian-icon {
+  left: 50%;
+  bottom: auto;
+  top: 47%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  height: 60%;
+}
+
+/* THE BADGE. In the corner of the cell, outside the face - on the face it
+   overlapped the creature on every token. */
+.dp-token-enamel .duel-type-badge {
+  width: 27% !important;
+  height: 27% !important;
+  min-width: 0 !important;
+  left: auto;
+  right: 0;
+  bottom: 0;
+  top: auto;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
+}
+
+/* THE BODY. The face is the team colour laid as deep enamel: the hue sunk
+   most of the way to black, so it reads as a dark team-tinted coin the
+   glowing creature stands out of, not a flat poster behind it. Brass rim,
+   like a minted piece. */
+.dp-token-enamel .duel-piece::before {
+  content: '';
+  position: absolute;
+  inset: 5%;
+  border-radius: 50%;
+  z-index: 99;
+  pointer-events: none;
+  border: 2px solid var(--g-brass-dark);
+  background:
+    radial-gradient(circle at 50% 28%, color-mix(in srgb, var(--duel-team) 34%, transparent) 0%, transparent 60%),
+    radial-gradient(circle at 50% 60%,
+      color-mix(in srgb, var(--duel-team) 44%, #101010) 0%,
+      color-mix(in srgb, var(--duel-team) 26%, #0c0c0c) 75%,
+      #0a0a0a 100%);
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.85),
+    inset 0 1px 0 color-mix(in srgb, var(--duel-team) 45%, transparent);
+}
+
+/* selection: a ring concentric with the coin, sharing the board's
+   acquire-and-hold animation */
+.dp-token-enamel .duel-piece--selected::after {
+  content: '';
+  position: absolute;
+  inset: 1%;
+  border-radius: 50%;
+  border: 2px solid var(--duel-team);
+  pointer-events: none;
+  z-index: 100;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--duel-team) 70%, transparent));
+  animation:
+    duel-acquire 260ms cubic-bezier(0.16, 0.84, 0.36, 1) both,
+    duel-hold 2.6s ease-in-out 260ms infinite;
+}
+
+/* FEET ON THE BASE, FOR EVERY SPECIES. The species SVGs have different
+   aspect ratios, and preserveAspectRatio letterboxes them into the square
+   art box - a wide species' ink floats vertically centred with air below
+   its feet, so its figure (and the outlined variant's band) hung above the
+   disc it was supposed to stand on. The tabletop variants therefore size
+   the svg by its own intrinsic ratio (width fixed, height auto) and anchor
+   it to the bottom of the box: the ink's feet ARE the box bottom, tall
+   species simply rise higher, and every creature touches its base. */
+.dp-token-standee .duel-piece-xalian-icon,
+.dp-token-plinth .duel-piece-xalian-icon,
+.dp-token-outline .duel-piece-xalian-icon {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.dp-token-standee .duel-piece-xalian-icon svg,
+.dp-token-plinth .duel-piece-xalian-icon svg,
+.dp-token-outline .duel-piece-xalian-icon svg {
+  width: 100%;
+  height: auto;
+}
+
+/* ====================================================================
+   2. STANDEE - the original tabletop take, adjusted: the base sits ON
+   the pip the piece occupies instead of at the bottom of the square,
+   and both the figure and the base now cast a shadow onto the floor.
+   The figure rises out of the top of its square, which is the point:
+   a miniature is taller than the space it stands in.
+   ==================================================================== */
+.dp-token-standee .duel-piece-base {
+  left: 12%;
+  right: 12%;
+  inset-block: auto;
+  top: 41%;
+  height: 18%;
+  border-radius: 50%;
+  border: 1px solid var(--g-brass-dark);
+  background:
+    radial-gradient(ellipse at 50% 25%, rgba(255, 244, 214, 0.18) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 60%, var(--g-hull-hi) 0%, var(--g-seam) 100%);
+  box-shadow: 0 6px 9px rgba(0, 0, 0, 0.7);
+}
+
+/* feet planted at the centre of the base ellipse, not floating past it */
+.dp-token-standee .duel-piece-xalian-icon {
+  left: 50%;
+  top: auto;
+  bottom: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 80%;
+}
+
+/* the badge rides the base. At the live position (bottom corner of the cell)
+   it was left floating on empty floor once the figure moved up to the pip. */
+.dp-token-standee .duel-type-badge {
+  width: 24% !important;
+  height: 24% !important;
+  min-width: 0 !important;
+  left: auto;
+  right: 4%;
+  top: auto;
+  bottom: 28%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
+}
+
+/* The glow filter is set INLINE ON THE SVG by the component, so any svg
+   filter rule without !important silently loses to it. This rebuilds the rim
+   light in CSS terms and adds the cast shadow, as one declaration. */
+.dp-token-standee .duel-piece-xalian-icon svg {
+  filter:
+    drop-shadow(0 0 1px color-mix(in srgb, var(--duel-team) 75%, white))
+    drop-shadow(0 0 2px color-mix(in srgb, var(--duel-team) 75%, black))
+    drop-shadow(0 7px 6px rgba(0, 0, 0, 0.5)) !important;
+}
+
+/* selection rings the FOOTPRINT, not the figure */
+.dp-token-standee .duel-piece--selected .duel-piece-base::before {
+  content: none;
+}
+
+.dp-token-standee .duel-piece--selected::after {
+  content: '';
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 38%;
+  height: 24%;
+  border-radius: 50%;
+  border: 2px solid var(--duel-team);
+  pointer-events: none;
+  z-index: 100;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--duel-team) 70%, transparent));
+  animation:
+    duel-acquire 260ms cubic-bezier(0.16, 0.84, 0.36, 1) both,
+    duel-hold 2.6s ease-in-out 260ms infinite;
+}
+
+/* ====================================================================
+   3. PLINTH - the tabletop concept rebuilt from scratch rather than
+   inherited. A real miniature base: a chunky disc with visible
+   thickness, its top face painted in the side's enamel, centred on the
+   pip. The figure stands ON it - feet at the middle of the top face -
+   and throws its shadow across the base onto the floor. The element
+   badge is a medallion set into the front of the plinth, where a
+   miniature wears its nameplate, instead of floating in the square.
+   ==================================================================== */
+/* Sized against the widest species, not the average one: at 56% wide the
+   blob-shaped creatures overhung the disc on both sides. And it is matte -
+   a base is a physical object the figure stands on, so the top face is the
+   same hull metal as the arena furniture and the team lives as PAINT on the
+   side wall, which is where a tabletop miniature actually wears its army
+   colour, not as light. */
+.dp-token-plinth .duel-piece-base,
+.dp-token-outline .duel-piece-base {
+  left: 13%;
+  right: 13%;
+  inset-block: auto;
+  top: 40%;
+  height: 22%;
+  border-radius: 50%;
+  /* NO outline. A border ran a hairline between the face and its own side
+     wall, which cut the disc into two stacked ovals; on a real puck the
+     face's edge IS the top of the wall, so the joint is drawn with shading
+     only - the face rolls into shadow where it turns down. */
+  border: 0;
+  /* A clean turned face in the SAME material as the edge. A neutral face
+     over a coloured edge was a poker chip's colour distribution; a checkers
+     piece is dyed through, so the face is the team paint lit from above and
+     the edge is the same paint in shadow. */
+  background:
+    radial-gradient(ellipse at 50% 42%, rgba(255, 244, 214, 0.25) 0%, transparent 68%),
+    radial-gradient(ellipse at 50% 50%,
+      color-mix(in srgb, var(--duel-team) 40%, #4a4a3c) 0%,
+      color-mix(in srgb, var(--duel-team) 36%, #34342b) 65%,
+      color-mix(in srgb, var(--duel-team) 30%, #23231d) 100%);
+  box-shadow:
+    0 11px 10px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 244, 214, 0.28),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.22);
+}
+
+/* The side wall, knurled. A flat stripe of paint read as a decal; a real
+   base has a machined edge, so the wall is fine vertical ridges - the team
+   paint alternating with its own shadow - drawn as the base's own ellipse
+   shifted down so only the bottom lip shows. */
+.dp-token-plinth .duel-piece-base::after,
+.dp-token-outline .duel-piece-base::after {
+  content: '';
+  position: absolute;
+  /* THE SIDE OF A CYLINDER, with actual sides. Every earlier construction
+     derived the wall from 'the face's ellipse shifted down', whose visible
+     remainder is a crescent that pinches to NOTHING at the left and right -
+     so there were no vertical edges connecting face to underside, and the
+     disc read as two 2D wafers hovering apart. A cylinder's silhouette is
+     the face ellipse joined to the bottom ellipse by vertical tangents at
+     the widest points: this box runs from the face's midline down to 6px
+     below it, its straight left and right edges ARE those tangents, and
+     its bottom corners curve as the bottom half of the underside ellipse. */
+  top: 50%;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  border-radius: 0 0 50% 50% / 0 0 52% 52%;
+  /* the face's own ellipse cut out of the band, so the band starts exactly
+     where the face turns under */
+  -webkit-mask: radial-gradient(ellipse 50% 52% at 50% 0%, transparent 96%, black 99%);
+  mask: radial-gradient(ellipse 50% 52% at 50% 0%, transparent 96%, black 99%);
+  /* one material: the top of the wall is the face's outer tone rolling
+     down into the team paint, darker at the ends where it curves away */
+  /* KNURLING, done as relief. The first attempt alternated two hues, which
+     is a poker chip's printed stripes; machined knurling is one material
+     whose ridges read through light - so each ridge is a 1px catch-light
+     and a 1px cut shadow over the same team paint, and the curvature
+     shading compresses them into shadow at the ends. */
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.6) 0%, transparent 25% 75%, rgba(0, 0, 0, 0.6) 100%),
+    linear-gradient(180deg, color-mix(in srgb, var(--duel-team) 30%, #23231d) 0%, transparent 60%),
+    repeating-linear-gradient(90deg,
+      rgba(255, 244, 214, 0.14) 0 1px,
+      rgba(0, 0, 0, 0) 1px 2px,
+      rgba(0, 0, 0, 0.38) 2px 3px,
+      rgba(0, 0, 0, 0) 3px 4px),
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--duel-team) 42%, #0d0d0b) 0%,
+      color-mix(in srgb, var(--duel-team) 28%, #090907) 100%);
+}
+
+/* feet at the BACK edge of the base, not its centre - planted centrally the
+   figure covered the whole disc and the plinth read as a shadow. Standing off
+   the back leaves the front half and its nameplate in view, which is how a
+   miniature on a base actually presents from a high angle. */
+.dp-token-plinth .duel-piece-xalian-icon,
+.dp-token-outline .duel-piece-xalian-icon {
+  left: 50%;
+  top: auto;
+  bottom: 54%;
+  transform: translateX(-50%);
+  width: 74%;
+  height: 74%;
+}
+
+/* Rim light rebuilt in CSS (the inline svg filter wins without !important)
+   plus a cast shadow softer than the standee's: this one falls mostly on the
+   base's own top face, and at full strength it blacked the face out. */
+.dp-token-plinth .duel-piece-xalian-icon svg {
+  filter:
+    drop-shadow(0 0 1px color-mix(in srgb, var(--duel-team) 75%, white))
+    drop-shadow(0 0 2px color-mix(in srgb, var(--duel-team) 75%, black))
+    drop-shadow(0 5px 4px rgba(0, 0, 0, 0.38)) !important;
+}
+
+/* No element indicator on the token. Three attempts (glyph button, stamped
+   plaque, enamel section) all read as either noise or an empty pill; the
+   element belongs to surfaces with room for it - detail panels, dialogs,
+   the roster rail. */
+.dp-token-plinth .duel-type-badge,
+.dp-token-outline .duel-type-badge {
+  display: none !important;
+}
+
+.dp-token-plinth .duel-piece--selected .duel-piece-base::before,
+.dp-token-outline .duel-piece--selected .duel-piece-base::before {
+  content: none;
+}
+
+/* SELECTION marks the TILE, not the base. A ring around the disc was an
+   ellipse laid on an ellipse - it blended into the base and hid the thing it
+   was pointing at. The board already has a selection mark that frames a
+   square of floor: the corner brackets. The miniature occupies a square, so
+   the brackets fly in and lock onto it, under the figure and clear of the
+   disc, and selection means the same thing here as everywhere else. */
+.dp-token-plinth .duel-piece--selected::after,
+.dp-token-outline .duel-piece--selected::after {
+  content: '';
+  position: absolute;
+  /* Framed on the MINIATURE, not the tile. The composition is shifted up -
+     base on the pip, figure rising above it - so brackets flush with the
+     cell read as sitting low and to one side of the piece. The frame is
+     lifted to centre on the figure-plus-base mass instead. */
+  inset: -22% 1% 24% 1%;
+  pointer-events: none;
+  z-index: 100;
+  background:
+    linear-gradient(var(--duel-team), var(--duel-team)) 0 0 / 30% 2px no-repeat,
+    linear-gradient(var(--duel-team), var(--duel-team)) 0 0 / 2px 30% no-repeat,
+    linear-gradient(var(--duel-team), var(--duel-team)) 100% 0 / 30% 2px no-repeat,
+    linear-gradient(var(--duel-team), var(--duel-team)) 100% 0 / 2px 30% no-repeat,
+    linear-gradient(var(--duel-team), var(--duel-team)) 0 100% / 30% 2px no-repeat,
+    linear-gradient(var(--duel-team), var(--duel-team)) 0 100% / 2px 30% no-repeat,
+    linear-gradient(var(--duel-team), var(--duel-team)) 100% 100% / 30% 2px no-repeat,
+    linear-gradient(var(--duel-team), var(--duel-team)) 100% 100% / 2px 30% no-repeat;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--duel-team) 65%, transparent));
+  animation:
+    duel-acquire 260ms cubic-bezier(0.16, 0.84, 0.36, 1) both,
+    duel-hold 2.6s ease-in-out 260ms infinite;
+}
+
+/* ====================================================================
+   4. OUTLINED - the plinth with the glow swapped for print. Instead of
+   light behind the figure, the silhouette gets a sticker treatment: a
+   thin line of the team colour hugging the ink, around a wider blob of
+   the same colour sunk nearly to dark - an offset outline following the
+   creature down into its feet, where it lands on the disc and welds the
+   figure to the base as one object. No light anywhere on the piece.
+   ==================================================================== */
+.dp-token-outline .duel-piece-xalian-icon {
+  /* the team rim-light is set inline by the component; nothing weaker than
+     !important can remove it */
+  filter: none !important;
+}
+
+/* where the outline meets the base it pools: a puddle of the same dark team
+   hue on the disc's top face, under the feet, so the line running down the
+   figure lands in something and the two read as one cast object */
+.dp-token-outline .duel-piece::before {
+  content: '';
+  position: absolute;
+  left: 30%;
+  right: 30%;
+  top: 43%;
+  height: 11%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 50%,
+    var(--dp-band) 0%,
+    color-mix(in srgb, var(--duel-team) 38%, #10100d) 55%,
+    transparent 76%);
+  z-index: 100;
+  pointer-events: none;
+}
+
+/* The band is PAINT, not light. Full-strength team colour is what this
+   design system uses for things that emit - lamps, glows, the selection
+   brackets - so a solid band of it read as a neon tube bent around the
+   creature, and it was brighter than the silhouette it outlined, which
+   made the border the subject. The band is the team hue knocked down to
+   pigment - deliberately close to the paint on the base's side wall, so
+   figure outline and base rim read as one paint job. Selection stays
+   full-strength, and against the painted band it now visibly LIGHTS UP. */
+.dp-token-outline .duel-piece {
+  --dp-band: color-mix(in srgb, var(--duel-team) 58%, #16140f);
+}
+
+/* A die-cut sticker band. Axis-aligned offsets alone give a lumpy band with
+   notched diagonals, so the first pass runs in EIGHT directions (the 0.7px
+   pair is 1px at 45 degrees) for a smooth contour, and one 4-direction pass
+   grows it to ~2px. Any thicker and the band swallowed the silhouette - at
+   4px the bat swarm fused into a single slab and every creature read as a
+   logo. Then a fine dark edge so the band ends in a line instead of a stop,
+   then the cast shadow. !important because the component sets its glow
+   inline on the svg; without it this whole variant silently renders as the
+   plinth. */
+.dp-token-outline .duel-piece-xalian-icon svg {
+  filter:
+    drop-shadow(1px 0 0 var(--dp-band))
+    drop-shadow(-1px 0 0 var(--dp-band))
+    drop-shadow(0 1px 0 var(--dp-band))
+    drop-shadow(0 -1px 0 var(--dp-band))
+    drop-shadow(0.7px 0.7px 0 var(--dp-band))
+    drop-shadow(-0.7px 0.7px 0 var(--dp-band))
+    drop-shadow(0.7px -0.7px 0 var(--dp-band))
+    drop-shadow(-0.7px -0.7px 0 var(--dp-band))
+    drop-shadow(1px 0 0 color-mix(in srgb, var(--duel-team) 35%, black))
+    drop-shadow(-1px 0 0 color-mix(in srgb, var(--duel-team) 35%, black))
+    drop-shadow(0 1px 0 color-mix(in srgb, var(--duel-team) 35%, black))
+    drop-shadow(0 -1px 0 color-mix(in srgb, var(--duel-team) 35%, black))
+    drop-shadow(0 4px 3px rgba(0, 0, 0, 0.5)) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dp-token-enamel .duel-piece--selected::after,
+  .dp-token-standee .duel-piece--selected::after,
+  .dp-token-plinth .duel-piece--selected::after,
+.dp-token-outline .duel-piece--selected::after {
+    animation: none;
+  }
+}
+
+/* the study grid */
+.dp-token-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--g-5);
+  margin-bottom: var(--g-5);
+}
+
+/* THE BENCH - one piece under the loupe. The wrapper is zoomed, not
+   re-rendered: these are the board's actual 62px-cell pixels magnified, so
+   what is judged here is what ships. The caption stays outside the zoom. */
+.dp-bench {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--g-5);
+  margin-bottom: var(--g-5);
+}
+
+.dp-bench .duel-specimen-wrapper {
+  zoom: 3.4;
+}

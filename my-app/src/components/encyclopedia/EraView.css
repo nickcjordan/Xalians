@@ -1,0 +1,84 @@
+/* EraView: one era's events and world-by-world chapters. Contract: docs/design/xalian-encyclopedia-page.md */
+
+.enc-era { max-width: 100%; }
+
+.enc-era-event-list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-4);
+}
+
+.enc-era-event + .enc-era-event {
+	margin-top: var(--g-5);
+	padding-top: var(--g-5);
+	border-top: var(--g-hairline) solid var(--g-rule-faint);
+}
+
+.enc-era-event-title {
+	margin: 0 0 var(--g-2);
+}
+
+.enc-era-event-chips {
+	margin-bottom: var(--g-2);
+}
+
+.enc-era-event-entry {
+	display: inline-block;
+	margin-bottom: var(--g-3);
+}
+
+.enc-era-event-screen { margin-top: var(--g-3); }
+
+.enc-era-anchor + .enc-era-anchor { margin-top: var(--g-3); }
+
+.enc-era-anchor-link {
+	display: inline-block;
+	text-decoration: none;
+}
+
+.enc-era-anchor-link:hover,
+.enc-era-anchor-link:focus-visible {
+	text-decoration: underline;
+}
+
+.enc-era-anchor-text {
+	white-space: normal;
+	overflow-wrap: break-word;
+}
+
+.enc-era-world-list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-5);
+}
+
+.enc-era-world-panel { max-width: 100%; }
+
+.enc-era-chapter + .enc-era-chapter {
+	margin-top: var(--g-4);
+	padding-top: var(--g-4);
+	border-top: var(--g-hairline) solid var(--g-rule-faint);
+}
+
+.enc-era-chapter-label {
+	margin: 0 0 var(--g-1);
+	color: var(--g-ink-low);
+	font-size: var(--g-size-small);
+}
+
+.enc-era-chapter-also {
+	margin: var(--g-1) 0 0;
+	color: var(--g-ink-low);
+	font-size: var(--g-size-tiny);
+}
+
+.enc-era-nav {
+	display: flex;
+	justify-content: space-between;
+	gap: var(--g-4);
+	margin-top: var(--g-8);
+}
+
+.enc-era-nav-btn {
+	text-decoration: none;
+}

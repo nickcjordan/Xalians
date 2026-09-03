@@ -1,0 +1,60 @@
+a | 7.1 | Psychic Knock :: D(Psychic Knock — D for STRIKE row; "Knock" reads more honestly as a light rap, kept instead at Rap/
+a | 7.1 | Focus / Focused Impact :: D(Focus Impact — G, redundant abstraction stack)
+a | 7.1 | Focus / Focused Knock :: D(Focus Knock — D, weaker than the kept Jab/Blow, redundant near-duplicate not separately promoted)
+a | 7.1 | Cerebral Impact :: D(Cerebral Impact — G, over-clinical redundant stack)
+a | 7.1 | Cerebral Punch :: D(Cerebral Punch — D, redundant near-duplicate of kept Cerebral Jab, not separately promoted)
+a | 7.1 | Cerebral Knock :: D(Cerebral Knock — D, redundant, not separately promoted)
+a | 7.1 | Astral Impact :: D(Astral Impact — G, redundant)
+a | 7.1 | Astral Knock :: D(Astral Knock — D, redundant, not separately promoted)
+a | 7.1 | Will Impact :: D(Will Impact — G, redundant abstraction)
+a | 7.1 | Will Punch :: D(Will Punch — D, redundant of kept Will Jab, not separately promoted)
+a | 7.1 | Will Knock :: D(Will Knock — D, redundant)
+a | 7.1 | Command Impact :: D(Command Impact — G, redundant)
+a | 7.1 | Aura Impact :: D(Aura Impact — G, redundant)
+a | 7.1 | Aura Punch :: D(Aura Punch — D, redundant, not separately promoted beyond kept Strike)
+a | 7.1 | Aura Jab :: D(Aura Jab — D, redundant, not separately promoted)
+a | 7.1 | Spark Impact :: D(Spark Impact — G, redundant)
+a | 7.1 | Spark Punch :: D(Spark Punch — D, redundant, not separately promoted)
+a | 7.1 | Spark Jab :: D(Spark Jab — D, redundant, not separately promoted)
+a | 7.1 | Hypnotic Punch :: D(Hypnotic Punch — D, redundant of kept Jab, not separately promoted)
+a | 7.2 | Psychic Snap :: D(Psychic Snap — D, redundant of kept Mind Snap concept, not separately promoted to avoid pure paddi
+a | 7.2 | Thought Swipe :: D(Thought Swipe — D, weaker than Mind/Psychic Swipe, redundant near-duplicate not separately promote
+a | 7.2 | Thought Sweep :: D(Thought Sweep — D, redundant near-duplicate)
+a | 7.2 | Thought Snap :: D(Thought Snap — D, redundant)
+a | 7.2 | Telekinetic Snap :: D(Telekinetic Snap — D, redundant of Mind Snap concept)
+a | 7.2 | Will Swipe :: D(Will Swipe — D, redundant, not separately promoted)
+a | 7.2 | Will Sweep :: D(Will Sweep — D, redundant, not separately promoted)
+a | 7.2 | Astral Swipe :: D(Astral Swipe — D, redundant, not promoted)
+a | 7.2 | Astral Sweep :: D(Astral Sweep — D, redundant, not promoted)
+a | 7.2 | Aura Swipe :: D(Aura Swipe — D, redundant of Aura Sweep, not separately promoted)
+a | 7.2 | Mesmeric / Hypnotic Whip :: D(Mesmeric Whip / Hypnotic Whip — D, redundant of kept Lash forms, not separately promoted to avoid 
+a | 7.3 | Psychic Scratch :: D(Psychic Scratch — D, redundant of kept Mind Scratch concept, not separately promoted)
+a | 7.3 | Thought Scratch :: D(Thought Scratch — D, redundant)
+a | 7.3 | Static Rend :: D(all remaining columns — D/G; Static Rend — G, static has no tearing mass; Static Shred — D, weaker
+a | 7.3 | PROSE :: **Uniform-D representative rows (RAKE):** **Foresight** (Foresight Rake — D, a knowledge-state has no clawing mechanism; Foresight Shred — D, same; Foresight Claw — D, anatomy mismatch entirely). **Empathy** (Empathy Gas
+a | 7.4 | Telekinetic Topple :: D(Telekinetic Topple — D, weaker than the kept Charge/Ram, redundant near-duplicate not separately p
+a | 7.4 | Psychic Jolt :: D(Psychic Jolt — D, redundant of kept Telekinetic Jolt concept, not separately promoted)
+a | 7.4 | Mind Ram :: D(Mind Ram — D, redundant of kept Telekinetic/Psychic Ram, weaker instrument fit since "mind" alone 
+a | 7.4 | Mind Jolt :: D(Mind Jolt — D, redundant)
+a | 7.4 | Mind Repel :: D(Mind Repel — D, redundant of kept Telekinetic/Psychic Repel, weaker fit, not separately promoted)
+a | 7.4 | Mental Ram :: D(Mental Ram — D, redundant, not separately promoted)
+a | 7.4 | Mental Charge :: D(Mental Charge — D, redundant, not separately promoted)
+a | 7.4 | Mental Repulse :: D(Mental Repulse — D, redundant of kept Mental Repulsion, not separately promoted)
+a | 7.4 | Thought Thrust :: D(Thought Thrust — D, redundant of kept Mental/Telekinetic/Psychic Thrust, weaker instrument, not se
+a | 7.4 | Thought Ram :: D(Thought Ram — D, redundant)
+a | 7.4 | Thought Charge :: D(Thought Charge — D, redundant)
+a | 7.4 | Thought Repel :: D(Thought Repel — D, redundant)
+a | 7.4 | Thought Repulse :: D(Thought Repulse — D, redundant)
+a | 7.4 | Will Thrust :: D(Will Thrust — D, redundant, not separately promoted)
+a | 7.4 | Will Repel :: D(Will Repel — D, redundant)
+a | 7.4 | Will Repulse :: D(Will Repulse — D, redundant)
+a | 7.4 | Focus Thrust :: D(Focus Thrust — D, redundant, not separately promoted)
+a | 7.4 | Focus Repel :: D(Focus Repel — D, redundant)
+a | 7.4 | Focus Repulse :: D(Focus Repulse — D, redundant)
+a | 7.4 | Aura Thrust :: D(Aura Thrust — D, redundant, not separately promoted)
+a | 7.4 | Aura Repel :: D(Aura Repel — D, redundant of kept Telekinetic/Psychic Repel, not separately promoted)
+a | 7.4 | Aura Repulse :: D(Aura Repulse — D, redundant)
+b | AMBUSH | Prescient G5 blindside/intercept/tackle :: D — "Prescient Intercept" is redundant-to-tautological with interception's own foreknowing sense; D
+b | AMBUSH | Precognitive G4 ambush/stalk/lurk :: D — "Precognitive Ambush" is a near-duplicate of Prescient Ambush; scored X (same concept already ke
+b | HURL | Telekinetic G5 project/eject/discharge :: D — "Telekinetic Project" is awkward verb-stacking, redundant with "Telekinetic" already implying pr
+b | HURL | Projection G1 throw/toss/fling/hurl :: D — "Projection Hurl/Throw" redundant-awkward, excluded

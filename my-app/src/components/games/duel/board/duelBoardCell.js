@@ -3,29 +3,21 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import PropTypes from 'prop-types';
-import * as gameConstants from '../../../../gameplay/duel/duelGameConstants';
 import XalianImage from '../../../xalianImage';
 import * as duelUtil from '../../../../utils/duelUtil';
 import * as duelCalculator from '../../../../gameplay/duel/duelCalculator';
 import * as boardStateManager from '../../../../gameplay/duel/boardStateManager';
 import * as duelConstants from '../../../../gameplay/duel/duelGameConstants';
 import { ReactComponent as DuelFlagIcon } from '../../../../svg/games/duel/duel_flag_icon.svg';
-import { ReactComponent as AttackRangePatternSVG } from '../../../../svg/patterns/hideout.svg';
 import species from '../../../../json/species.json';
-import { Hub } from "aws-amplify";
 import XalianTypeSymbolBadge from './xalianTypeSymbolBadge';
-import DuelXalianSuggestionDetails from './duelXalianSelectionDetails';
-import XalianDuelStatBadge from './xalianDuelStatBadge';
-import AttackableMoveBadge from './attackableMoveBadge';
-import * as svgUtil from '../../../../utils/svgUtil';
-import { ReactComponent as AttackIcon } from '../../../../svg/games/duel/duel_attack_icon.svg';
 
 
 import gsap from 'gsap';
 import Draggable from 'gsap/Draggable';
 import Flip from 'gsap/Flip';
 import XalianPieceStateChart from './xalianPieceStateChart';
+import DuelPieceToken, { pieceShadowFilter } from './duelPieceToken';
 gsap.registerPlugin(Draggable, Flip);
 
 class DuelBoardCell extends React.Component {
@@ -330,15 +322,7 @@ class DuelBoardCell extends React.Component {
 	buildUnoccupiedCell() {
 		let animationProgress = this.props.animationTl ? this.props.animationTl.totalProgress() : 0;
 		let animationsAreComplete = animationProgress == 1 || animationProgress == 0;
-		let isMovableBySelectedXalian = (this.props.isActive && animationsAreComplete) && this.props.selectedXalianMovableIndices && this.props.selectedXalianMovableIndices.includes(this.props.cellIndex);
-		let isAttackableBySelectedXalian = (this.props.isActive && animationsAreComplete) && this.props.selectedXalianId && this.props.selectedXalianAttackableIndices && this.props.selectedXalianAttackableIndices.includes(this.props.cellIndex);
-		let isAttackIndicatorVisible = (this.props.isActive && animationsAreComplete) && (isAttackableBySelectedXalian && !this.props.boardState.currentTurnDetails.hasAttacked);
-		// let attackIndicatorVisibilityClass = isAttackIndicatorVisible ? '' : 'invisible-attack-indicator';
-		let attackIndicatorVisibility = isAttackIndicatorVisible ? 1 : 0;
-		
-		let isMovableByReferencedXalian = (this.props.isActive && animationsAreComplete) && this.props.referencedXalianMovableIndices && this.props.referencedXalianMovableIndices.includes(this.props.cellIndex);
-		// let isMovableByReferencedXalian = isMovableBySelectedXalian && !duelUtil.isCurrentTurnsXalian(this.props.selectedXalianId, this.props.boardState, this.props.ctx);
-		let isAttackableByReferencedXalian = (this.props.isActive && animationsAreComplete) && this.props.referencedXalianAttackableIndices && this.props.referencedXalianAttackableIndices.includes(this.props.cellIndex);
+		let settled = (this.props.isActive && animationsAreComplete);
 
 		let cellSizeWithUnits = `${this.props.cellSize}px`;
 		let sty = { border: 0, position: 'relative', width: cellSizeWithUnits, height: cellSizeWithUnits, lineHeight: cellSizeWithUnits, textAlign: 'center' };
@@ -346,204 +330,104 @@ class DuelBoardCell extends React.Component {
 		let shouldConnectCellLeft = this.shouldConnectToEmptyCellLeft(grid, this.props.cellIndex);
 		let shouldConnectCellTop = this.shouldConnectToEmptyCellTop(grid, this.props.cellIndex);
 
-
 		let isPlayerFlagIndex = duelUtil.getPlayerFlagIndex(this.props.boardState) == this.props.cellIndex;
 		let isOpponentFlagIndex = duelUtil.getOpponentFlagIndex(this.props.boardState) == this.props.cellIndex;
 		let flagIfPresent = isPlayerFlagIndex && isOpponentFlagIndex ?  <><DuelFlagIcon className="duel-flag" style={{ fill: duelConstants.PLAYER_ONE_COLOR }} /><DuelFlagIcon className="duel-flag" style={{ fill: duelConstants.PLAYER_TWO_COLOR }} /></> :
-		isPlayerFlagIndex ? <DuelFlagIcon className="duel-flag" style={{ fill: duelConstants.PLAYER_ONE_COLOR }} /> : 
+		isPlayerFlagIndex ? <DuelFlagIcon className="duel-flag" style={{ fill: duelConstants.PLAYER_ONE_COLOR }} /> :
 		isOpponentFlagIndex ? <DuelFlagIcon className="duel-flag" style={{ fill: duelConstants.PLAYER_TWO_COLOR }} /> : null;
 
-		let classForCellDot = 	(!isMovableBySelectedXalian && !isMovableByReferencedXalian) ? "duel-board-cell-dot duel-board-cell-dot-dark" :
-								(isMovableByReferencedXalian && !isMovableBySelectedXalian) ? "duel-board-cell-dot duel-board-cell-dot-light-faded fade-out-animation-on-move" :
-								isMovableBySelectedXalian ? "duel-board-cell-dot duel-board-cell-dot-light fade-out-animation-on-move" : '';
 		return (<React.Fragment>
 			{/* BOX FOR CELL CONNECTORS */}
 			<div className='' style={{width: cellSizeWithUnits, height: cellSizeWithUnits, lineHeight: cellSizeWithUnits, position: 'absolute'}} >
-				<div className="duel-board-cell-connector unoccupied-cell-connector" style={{ opacity: shouldConnectCellLeft ? 0.1 : 0, width: cellSizeWithUnits, height: '5px', top: '50%', left: '0' }} />
-				<div className="duel-board-cell-connector unoccupied-cell-connector" style={{ opacity: shouldConnectCellTop ? 0.1 : 0, width: '5px', height: cellSizeWithUnits, top: '0', left: '50%' }} />
+				{/* the scoring in the floor. Strength lives on the class, so an
+				    empty cell's lines match an occupied cell's - overriding the
+				    opacity here made the lattice break around every piece. */}
+				<div className="duel-board-cell-connector unoccupied-cell-connector" style={{ display: shouldConnectCellLeft ? 'block' : 'none', width: cellSizeWithUnits, height: '2px', top: '50%', left: '0' }} />
+				<div className="duel-board-cell-connector unoccupied-cell-connector" style={{ display: shouldConnectCellTop ? 'block' : 'none', width: '2px', height: cellSizeWithUnits, top: '0', left: '50%' }} />
 			</div>
 			<div className='duel-unoccupied-cell duel-board-cell' id={`cell-${this.props.cellIndex}`} style={sty} onClick={() => this.props.handleEmptyCellSelection(this.props.cellIndex, this.props.boardState)}>
 				{process.env.NODE_ENV !== 'production' && <h6 style={{ position: 'absolute', color: '#9e9e9e2c' }} >{this.props.cellIndex}</h6>}
 
-				{/* ATTACK INDICATOR */}
-				{/* <div className='duel-cell-style-covered attack-pattern-background attack-pattern-background-selected fade-out-animation-on-move' style={{ visibility: isAttackIndicatorVisible ? 'visible' : 'hidden', backgroundColor: '#9700002c', height: cellSizeWithUnits, width: cellSizeWithUnits, transformOrigin: 'center', transform: 'rotate(90deg)', backgroundImage: svgUtil.getStripedBackgroundImage('#ff0000', 0.5) }} ></div> */}
-				{isAttackableBySelectedXalian && 
-					<div className='duel-cell-style-covered attack-pattern-background attack-pattern-background-selected fade-out-animation-on-move' style={{opacity: attackIndicatorVisibility, height: cellSizeWithUnits, width: cellSizeWithUnits, backgroundImage: svgUtil.getStripedBackgroundImage('#ff0000', 0.5) }} ></div>
-				}
-				{/* <div className={'duel-cell-style-covered attack-pattern-background attack-pattern-background-selected ' + attackIndicatorVisibilityClass} style={{backgroundColor: '#9700002c', height: cellSizeWithUnits, width: cellSizeWithUnits, transformOrigin: 'center', transform: 'rotate(90deg)', backgroundImage: svgUtil.getStripedBackgroundImage('#ff0000', 0.5) }} ></div> */}
-				
-				{/* REFERENCED XALIAN ATTACK INDICATOR */}
-				{isAttackableByReferencedXalian &&
-					<div className='duel-cell-style-covered attack-pattern-background attack-pattern-background-referenced fade-out-animation-on-move' style={{opacity: attackIndicatorVisibility, height: cellSizeWithUnits, width: cellSizeWithUnits, backgroundImage: svgUtil.getStripedBackgroundImage('#c05c5c', 0.25) }} ></div>
-				}
+				{/* WHERE YOU MAY GO is drawn once for the whole reachable area, as a
+				    single traced outline laid over the grid (see duelMoveRegion.js),
+				    not per square. A cell cannot round a concave corner: that corner
+				    is drawn by two different cells meeting at right angles and
+				    neither can shorten itself to make room for the curve.
 
-
-				
-
-
-					<div className={classForCellDot} />
+				    Attack range no longer paints empty floor. You cannot strike an
+				    empty square, so hatching one was telling you about a decision you
+				    are not being asked to make, on the squares that were already the
+				    most crowded. Reach is now shown only on the enemies it can
+				    actually reach - see the reticle in buildOccupiedCell. */}
 
 				{flagIfPresent}
-
-				{/* {attackAnimation} */}
 
 			</div>
 			</React.Fragment>);
 	}
 
-	// getReferencedXalian = () => {
-	// 	return this.props.referencedXalianId ? duelUtil.getXalianFromIdAndXalians(this.props.referencedXalianId, this.props.G.xalians) : null;
-	// }
-
-	// isReferencedXalianCell = () => {
-	// 	let referencedXalian = this.props.referencedXalianId ? duelUtil.getXalianFromIdAndXalians(this.props.referencedXalianId, this.props.G.xalians) : null;
-	// 	let referencedXalianIndex = (this.props.referencedXalianId && referencedXalian) ? duelUtil.getIndexOfXalian(this.props.referencedXalianId, this.props.boardState) : null;
-	// 	return (referencedXalianIndex != null && referencedXalianIndex == this.props.cellIndex);
-	// }
-
 	buildOccupiedCell = () => {
 
 		let animationProgress = this.props.animationTl ? this.props.animationTl.totalProgress() : 0;
 		let animationsAreComplete = animationProgress == 1 || animationProgress == 0;
+		let settled = (this.props.isActive && animationsAreComplete);
 
 		let xalianId = this.props.boardState.cells[this.props.cellIndex];
 		let cellXalian = duelUtil.getXalianFromIdAndXalians(xalianId, this.props.boardState.xalians);
 		let isSelectedXalian = this.props.selectedXalianId && this.props.selectedXalianId === cellXalian.xalianId;
-		
-		let isAttackableBySelectedXalian = this.props.isActive && this.props.selectedXalianAttackableIndices && this.props.selectedXalianAttackableIndices.includes(this.props.cellIndex);
-		let isAttackIndicatorVisible = (isAttackableBySelectedXalian && !this.props.boardState.currentTurnDetails.hasAttacked);
+		let isReferencedXalian = this.props.referencedXalianId && this.props.referencedXalianId === cellXalian.xalianId;
 
-		let selectedXalian = duelUtil.getXalianFromIdAndXalians(this.props.selectedXalianId, this.props.G.xalians);
 		let teamColor = this.props.boardState.playerStates[0].activeXalianIds.includes(xalianId) ? duelConstants.PLAYER_ONE_COLOR : duelConstants.PLAYER_TWO_COLOR;
 
-		let isEnemy = duelUtil.isPlayersTurn(this.props.ctx) && !duelUtil.isPlayerPiece(xalianId, this.props.boardState)
-		|| duelUtil.isOpponentsTurn(this.props.ctx) && !duelUtil.isOpponentPiece(xalianId, this.props.boardState);
-
-		let attackable = this.props.selectedXalianAttackableIndices && this.props.selectedXalianAttackableIndices.includes(this.props.cellIndex) && !this.props.boardState.currentTurnDetails.hasAttacked;
-
-		
 		let connectors = this.buildConnectorsForOccupiedCell(this.props.cellIndex);
 
 		let isPlayerFlagIndex = duelUtil.getPlayerFlagIndex(this.props.boardState) == this.props.cellIndex;
 		let isOpponentFlagIndex = duelUtil.getOpponentFlagIndex(this.props.boardState) == this.props.cellIndex;
 
-
-		/*
-
-				TO DO:
-
-					fix this so that if you are both guarding your flag and carrying target flag, they both show 
-
-
-		*/
-
-		let playerHoldingFlagElem = <DuelFlagIcon className="duel-flag-carried" style={{ fill: duelConstants.PLAYER_ONE_COLOR, transform: 'rotate(60deg)', bottom: '40%', right: '-30%'  }} /> ;
-		let opponentHoldingFlagElem = <DuelFlagIcon className="duel-flag-carried" style={{ fill: duelConstants.PLAYER_TWO_COLOR, transform: 'rotate(60deg)', bottom: '40%', right: '-30%' }} />;
-		let playerGuardingFlagElem = <DuelFlagIcon className="duel-flag" style={{ fill: duelConstants.PLAYER_TWO_COLOR, transform: 'rotate(-60deg) scaleX(-1)', top: '20%', left: '-20%' }} /> ;
-		// let playerGuardingFlagElem = <DuelFlagIcon className="duel-flag" style={{ fill: duelConstants.PLAYER_TWO_COLOR, transform: 'rotate(60deg)', bottom: '40%', right: '-30%' }} /> ;
-		// let opponentGuardingFlagElem = <DuelFlagIcon className="duel-flag" style={{ fill: duelConstants.PLAYER_ONE_COLOR, transform: 'rotate(60deg)', bottom: '40%', right: '-30%' }} /> ;
-		let opponentGuardingFlagElem = <DuelFlagIcon className="duel-flag" style={{ fill: duelConstants.PLAYER_ONE_COLOR, transform: 'rotate(-60deg) scaleX(-1)', top: '20%', left: '-20%' }} /> ;
-		
+		// Carrying a flag is the win condition, so it gets the loudest mark a piece
+		// can wear: a pennant on the token and a ring around its base in the flag's
+		// colour. The old "guarding" icon is gone - it had been commented out of
+		// the render for long enough to count as dead, and three states drawn with
+		// one rotated icon was already one too many.
 		let isPlayerHoldingFlag = (isPlayerFlagIndex && duelUtil.isPlayerPiece(xalianId, this.props.boardState));
-		let isPlayerGuardingFlag = (isOpponentFlagIndex && duelUtil.isPlayerPiece(xalianId, this.props.boardState));
 		let isOpponentHoldingFlag = (isOpponentFlagIndex && duelUtil.isOpponentPiece(xalianId, this.props.boardState));
-		let isOpponentGuardingFlag = (isPlayerFlagIndex && duelUtil.isOpponentPiece(xalianId, this.props.boardState));
-		
-		// let flagsIfPresent = [];
-		// if (isPlayerHoldingFlag) { flagsIfPresent.push(playerHoldingFlagElem); }
-		// if (isOpponentHoldingFlag) { flagsIfPresent.push(opponentHoldingFlagElem); }
-		// if (isOpponentGuardingFlag) { flagsIfPresent.push(opponentGuardingFlagElem); }
-		// if (isPlayerGuardingFlag) { flagsIfPresent.push(playerGuardingFlagElem); }
-
+		let isCarrying = isPlayerHoldingFlag || isOpponentHoldingFlag;
+		let carriedFlagColor = isPlayerHoldingFlag ? duelConstants.PLAYER_ONE_COLOR : duelConstants.PLAYER_TWO_COLOR;
 
 		return (<React.Fragment>
 			<div className='' style={{width: `${this.props.cellSize}px`, height: `${this.props.cellSize}px`, lineHeight: `${this.props.cellSize}px`, position: 'absolute'}} >
 				{connectors}
 			</div>
 
-			
-		
-			{/* //  <div id={`cell-${this.props.cellIndex}`} style={{ position: 'relative', width: `${this.props.cellSize}px`, height: `${this.props.cellSize}px`, lineHeight: `${this.props.cellSize}px`, textAlign: 'center' }} >  */}
 			<div className='duel-board-cell' id={`cell-${this.props.cellIndex}`} style={{ position: 'relative', width: `${this.props.cellSize}px`, height: `${this.props.cellSize}px`, lineHeight: `${this.props.cellSize}px`, textAlign: 'center' }} onClick={() => this.props.handleActivePieceSelection(cellXalian, this.props.cellIndex, this.props.boardState)}>
 
-				{/* CELL DOT */}
-				<div className="duel-board-cell-dot duel-board-cell-dot-dark" />
-
-				{/* ATTACK INDICATOR */}
-				{/* {isAttackIndicatorVisible && */}
-				{(this.props.isActive && animationsAreComplete) &&
-
-					<div className='duel-cell-style-covered attack-pattern-background fade-out-animation-on-move' style={{ opacity: isAttackIndicatorVisible ? 1 : 0, backgroundColor: '#9700002c', height: `${this.props.cellSize}px`, width: `${this.props.cellSize}px`, transformOrigin: 'center', transform: 'rotate(90deg)', backgroundImage: svgUtil.getStripedBackgroundImage('#ff0000', 0.5) }} ></div>
-				}
-				
 				{/* GHOST IMAGE WHEN DRAGGING */}
-
 				<div id={"ghost-xalian-on-drag-" + cellXalian.xalianId} className="duel-piece-ghost" style={{ opacity: 0, position: 'absolute', height: '100%', width: '100%' }}>
-					<XalianImage className='animate-state' 
-							padding={'0px'} 
-							speciesName={cellXalian.species.name} 
-							primaryType={cellXalian.elementType} 
-							fill={'black'} 
-							filter={this.buildDropShadowFilter(teamColor)} 
-							moreClasses="duel-piece-xalian-icon" 
+					<XalianImage className='animate-state'
+							padding={'0px'}
+							speciesName={cellXalian.species.name}
+							primaryType={cellXalian.elementType}
+							fill={'black'}
+							filter={pieceShadowFilter(teamColor, this.props.cellSize)}
+							moreClasses="duel-piece-xalian-icon"
 							/>
 				</div>
-				
-				<div id={'duel-' + cellXalian.xalianId + '-piece'} className={'duel-' + cellXalian.xalianId + '-piece duel-piece'} style={{ position: 'absolute', height: '100%', width: '100%', zIndex: 200 + parseInt(this.props.cellIndex) }}>
 
-					{/* XALIAN IMAGE */}
-						<XalianImage className='animate-state' 
-							padding={'0px'} 
-							speciesName={cellXalian.species.name} 
-							primaryType={cellXalian.elementType} 
-							fill={'black'} 
-							filter={this.buildDropShadowFilter(teamColor)} 
-							moreClasses="duel-piece-xalian-icon" 
-						/>
-				
+				<DuelPieceToken
+					id={'duel-' + cellXalian.xalianId + '-piece'}
+					xalian={cellXalian}
+					cellSize={this.props.cellSize}
+					teamColor={teamColor}
+					flagColor={carriedFlagColor}
+					selected={isSelectedXalian}
+					referenced={isReferencedXalian}
+					carrying={isCarrying}
+					zIndex={200 + parseInt(this.props.cellIndex)} />
 
-
-					{/* UNDERGLOW */}
-					{/* <div style={{ zIndex: '1', background: `radial-gradient(circle, ${teamColor} 0%, ${teamColor + '00'} 100%)`, position: 'absolute', width: '100%', height: '10%', 
-						bottom: '20%', left: '0', opacity: 1, pointerEvents: 'none', filter: `drop-shadow(0px 0px 10px ${teamColor})` }} 
-					/> */}
-
-						{/* ATTACK BADGE */}
-					{/* { (isEnemy && !this.props.boardState.currentTurnDetails.hasAttacked) && */}
-					<AttackableMoveBadge zIndex={'605'} isEnemy={isEnemy} attacker={selectedXalian} defender={cellXalian} {...this.props} />
-					<AttackIcon className="duel-attack-cell-icon" style={{ fill: 'rgb(255, 0, 0)', pointerEvents: 'none', opacity: attackable ? 1 : 0 }} />
-					{/* } */}
-
-
-
-					{/* TYPE SYMBOL */}
-					<XalianTypeSymbolBadge size={this.props.cellSize/2.5} type={cellXalian.elementType.toLowerCase()} />
-
-					{/* HEALTH AND STAMINA BARS */}
-					<XalianPieceStateChart xalianState={cellXalian.state}/>
-
-					{/* FLAGS IF PRESENT AND HOLDING */}
-					{isPlayerHoldingFlag && playerHoldingFlagElem}
-					{isOpponentHoldingFlag && opponentHoldingFlagElem}
-				</div>
-
-				
-				{/* FLAGS IF PRESENT AND NOT HOLDING */}
-				{isPlayerGuardingFlag && playerGuardingFlagElem}
-				{isOpponentGuardingFlag && opponentGuardingFlagElem}
-				
 			</div>
 			</React.Fragment>
 		);
 	}
-
-	buildDropShadowFilter = (teamColor) => {
-        return `${this.dropShadow(this.props.cellSize / 50, gsap.utils.interpolate(teamColor, "white", 0.75))} ${this.dropShadow(this.props.cellSize / 25, gsap.utils.interpolate(teamColor, "white", 0.5))} ${this.dropShadow(this.props.cellSize / 6, teamColor)}`;
-    }
-
-    dropShadow = (blur, color, x = 0, y = 0) => {
-        return `drop-shadow(${x}px ${y}px ${blur}px ${color})`;
-    }
 
 	buildConnectorsForOccupiedCell = (index) => {
 		var cellConnectors = [];
@@ -560,23 +444,23 @@ class DuelBoardCell extends React.Component {
 
 		if (leftIndex != undefined && !this.cellIsOccupied(leftIndex)) {
 			cellConnectors.push(
-				<div key={`connector-${index}-left`} className="duel-board-cell-connector occupied-connector" style={{ width: '100%', height: '5px', top: '50%', left: '0' }} />
+				<div key={`connector-${index}-left`} className="duel-board-cell-connector occupied-connector" style={{ width: '100%', height: '2px', top: '50%', left: '0' }} />
 			)
 		}
 		if (topIndex != undefined && !this.cellIsOccupied(topIndex)) {
 			cellConnectors.push(
-				<div key={`connector-${index}-top`} className="duel-board-cell-connector occupied-connector" style={{ width: '5px', height: '100%', top: '0', left: '50%' }} />
+				<div key={`connector-${index}-top`} className="duel-board-cell-connector occupied-connector" style={{ width: '2px', height: '100%', top: '0', left: '50%' }} />
 			)
 		}
 
 		if (rightIndex != undefined && !this.cellIsOccupied(rightIndex)) {
 			cellConnectors.push(
-				<div key={`connector-${index}-right`} className="duel-board-cell-connector occupied-connector" style={{ width: '100%', height: '5px', top: '50%', left: '100%' }} />
+				<div key={`connector-${index}-right`} className="duel-board-cell-connector occupied-connector" style={{ width: '100%', height: '2px', top: '50%', left: '100%' }} />
 			)
 		}
 		if (bottomIndex != undefined && !this.cellIsOccupied(bottomIndex)) {
 			cellConnectors.push(
-				<div key={`connector-${index}-bottom`} className="duel-board-cell-connector occupied-connector" style={{ width: '5px', height: '100%', top: '100%', left: '50%' }} />
+				<div key={`connector-${index}-bottom`} className="duel-board-cell-connector occupied-connector" style={{ width: '2px', height: '100%', top: '100%', left: '50%' }} />
 			)
 		}
 

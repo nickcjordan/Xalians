@@ -1,0 +1,8 @@
+b | DRAIN | Bile Leech :: D (Bile Leech — G, redundant register clash)
+b | DRAIN | Ooze Sap :: D (Ooze Sap — T-adjacent, ooze and sap near-synonyms; reconsidered K, near-duplicate rule says keep)
+b | DRAIN | Extract Siphon :: D (redundant self-pairing) X
+b | AMBUSH | PROSE :: - Corrosive Lancing — awkward gerund; REJECTED (G, "Lancing" needs to follow the noun as verb not adjective-noun pair cleanly) — reconsidered: "Corrosive Lance" already kept above; gerund form redundant, excluded as X
+b | AMBUSH | PROSE :: - Acid Etching — redundant with Acid Etch, X
+b | BEAM | PROSE :: Remaining rows (all D/G, three examples written out): **Miasmic** (Miasmic Beam — D, same diffuse-area reasoning as Miasma), **Necrotic** (Necrotic Beam — G, necrosis is a tissue-state outcome, not an emitted line-substa
+b | BEAM | PROSE :: - Venom Bolt (X — near-duplicate string check against ambush cell's "Venom Bolt"; ambush cell used "Venom Bolt" for closing-speed dash sense, this is the thrown-projectile sense — DIFFERENT definition, same string. Per b
+b | HURL | PROSE :: Remaining rows (all D/G, three written out): **Vapor** (Vapor Hurl — D, vapor cannot be a thrown mass, definition dishonest — it disperses, has no throwable form), **Miasma** (Miasma Barrage — D, same diffuse-substance r
