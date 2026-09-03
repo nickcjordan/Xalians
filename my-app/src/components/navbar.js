@@ -107,9 +107,6 @@ class XalianNavbar extends React.Component {
 										{/* <Nav.Link href="/community">Xalian Community</Nav.Link> */}
 										{/* <Nav.Link href="/project">Learn More</Nav.Link> */}
 										<Nav.Link href="/encyclopedia">Encyclopedia</Nav.Link>
-										<Nav.Link href="/species">Species</Nav.Link>
-										<Nav.Link href="/planets">Planets</Nav.Link>
-										<Nav.Link href="/glossary">Glossary</Nav.Link>
 										<Nav.Link href="/duel">Duel</Nav.Link>
 										<Nav.Link href="/tribute">Tribute</Nav.Link>
 										<Nav.Link href="/reclamation">Reclamation</Nav.Link>
