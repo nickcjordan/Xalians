@@ -49,8 +49,8 @@
         "vacuum"
       ],
       "temperatureC": {
-        "min": -58,
-        "max": 53
+        "min": -50,
+        "max": 20
       }
     },
     "capabilities": {

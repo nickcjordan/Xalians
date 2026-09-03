@@ -170,3 +170,4 @@ The single remaining WARN is answered in the Script denials section above and in
 ## Orchestrator amendments
 
 - 2026-09-02, after the independent validation (PASS) and the orchestrator's own look at the art (single floating bell, eight tubular tentacles with open ends, two eyes): no value changed. Weight band kept at 30 to 90 kg on the sourced buoyancy; lifespan `standard` follows the rubric, and the rubric note about floating bodies is carried to the rulings file.
+- 2026-09-02, planet rebuild: `temperatureC` re-banded from [-60, 45] to [-30, 45] (intersection) against the rebuilt planet record's habitable band [-30, 45] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 1.79.

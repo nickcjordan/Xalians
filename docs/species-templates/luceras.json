@@ -48,7 +48,7 @@
         "gas"
       ],
       "temperatureC": {
-        "min": -34,
+        "min": -30,
         "max": 42
       }
     },

@@ -55,7 +55,7 @@
       ],
       "temperatureC": {
         "min": 65,
-        "max": 240
+        "max": 105
       }
     },
     "capabilities": {

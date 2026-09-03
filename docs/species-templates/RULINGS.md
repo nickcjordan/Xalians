@@ -45,3 +45,31 @@ Per-species decisions that a migration agent cannot derive from the sources alon
 - 2026-09-02: body plan selection amended: a description naming forelimb work overrides the art only when no forelimb bears weight in the art; a hand-user drawn on all fours is `quadruped`. Imprit is `quadruped`.
 - 2026-09-02: `vents` covers an oral discharge organ (Venemist); a flesh animal body with the `hide` anatomy key and no surface named takes the `hide` covering (Kosanos, Hippochamp). Drainov, Poseidas, Zolton batch: Bioflim, Venemist, Newtapede, Hippochamp, Voltish migrated, validated, amended; presented to Nick.
 - 2026-09-02: Luminax, Saiphus, Veridium batch: Crystorn, Chromocat, Luceras, Neph, Foromeer migrated, validated, amended. Rulings: Crystorn crown is `core`; Chromocat teleport is apparent speed and its signature is rake; Luceras head growth is an ear; Foromeer has no metal composition secondary and takes the armored lifespan adjustment; Neph weight band stays low (rubric note: a floating body under-masses its size; no change made).
+
+## Planet rebuild (2026-09-02)
+
+- Planet source is now `planetRecords.json` (history unchanged; `physical.derived.gravityEarth`; `environment.habitableBandC` / `meanC` / `extremeC`; `report.terrain.features`) with `planetStatus.json` as political context. Species temperature bands validate against the habitable band, never the extremes. The 24 records migrated before the rebuild were re-banded by intersection (or to the full habitable band where the old sub-band barely overlapped); size bands were authored around legacy figures as relative gauges and were not re-derived, though several planets changed gravity materially (Saiphus 0.36 to 1.79 g, Poseidas 1.7 to 0.73 g, Krystos 1.2 to 0.54 g, Stonera 0.74 to 0.53 g, Magmuth 1.25 to 1.53 g).
+  - graviclaw: [-6, 34] -> [-60, 5] (full habitable band (the old sub-band barely overlapped it))
+  - tetrahive: [-6, 34] -> [-60, 5] (full habitable band (the old sub-band barely overlapped it))
+  - smokat: [-30, 45] -> [-30, 20] (intersection)
+  - ectoghoul: [-58, 53] -> [-50, 20] (intersection)
+  - tizzie: unchanged [12, 42] inside [5, 50]
+  - figzy: unchanged [12, 44] inside [5, 50]
+  - hypnopet: unchanged [12, 40] inside [5, 50]
+  - akinza: [-95, -10] -> [-60, -10] (intersection)
+  - yetimoth: [-122, -10] -> [-60, -10] (intersection)
+  - dromeus: [65, 240] -> [65, 105] (intersection)
+  - imprit: [65, 300] -> [65, 105] (intersection)
+  - xylum: unchanged [-4, 34] inside [-5, 45]
+  - kosanos: unchanged [2, 36] inside [-5, 45]
+  - avilily: unchanged [4, 38] inside [-5, 45]
+  - bioflim: [-10, 43] -> [0, 43] (intersection)
+  - venemist: [-10, 43] -> [0, 43] (intersection)
+  - newtapede: unchanged [5, 40] inside [-2, 40]
+  - hippochamp: [5, 52] -> [5, 40] (intersection)
+  - voltish: [-60, 45] -> [-55, 35] (intersection)
+  - crystorn: [30, 95] -> [30, 70] (intersection)
+  - chromocat: [25, 95] -> [25, 70] (intersection)
+  - luceras: [-34, 42] -> [-30, 42] (intersection)
+  - neph: [-60, 45] -> [-30, 45] (intersection)
+  - foromeer: [-12, 36] -> [-10, 36] (intersection)

@@ -52,7 +52,7 @@
       ],
       "temperatureC": {
         "min": 30,
-        "max": 95
+        "max": 70
       }
     },
     "capabilities": {

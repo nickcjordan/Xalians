@@ -48,8 +48,8 @@
         "gas"
       ],
       "temperatureC": {
-        "min": -6,
-        "max": 34
+        "min": -60,
+        "max": 5
       }
     },
     "capabilities": {

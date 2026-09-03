@@ -20,3 +20,4 @@ One dated line per change, written by the orchestrator after a denial review. Ea
 - 2026-09-02: MEDIUM_ACTIONS table ratified by Nick as drafted; no code change.
 - 2026-09-02: archetypeWeights are percents summing to exactly 100 (Nick): FAIL `archetypeWeights.sum` when they do not, integer 1 to 100 each, WARN `archetypeWeights.rare` below 5.
 - 2026-09-02: `md.quote` skips the `## Script denials` section (Dromeus, Imprit and Kosanos runs each re-tripped it by restating a denied span or a --note string there).
+- 2026-09-02: planet source repointed to `planetRecords.json` (history verbatim as before; `physical.derived.gravityEarth`; `environment.habitableBandC`) with `planetStatus.json` strings in the quotation corpus; temperature check is now `temperature.habitable` FAIL against the habitable band, never the planetary extremes; legacy `planets.json` data-block values stay in the quotation corpus for records validated before the rebuild.

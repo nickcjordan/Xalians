@@ -157,12 +157,28 @@ let species = null, planet = null;
   const dir = SOURCE_DIRS.find(d => fs.existsSync(path.join(d, 'species.json')));
   if (!dir) { fail('source.missing', 'species.json not found in ' + SOURCE_DIRS.join(' or ')); return; }
   const speciesAll = JSON.parse(fs.readFileSync(path.join(dir, 'species.json'), 'utf8'));
-  const planetsAll = JSON.parse(fs.readFileSync(path.join(dir, 'planets.json'), 'utf8'));
+  // planetRecords.json is the planet source (rebuilt 2026-09-02): history prose, physical.derived.gravityEarth, environment.habitableBandC.
+  // planets.json is legacy; its data-block values stay in the quotation corpus only so records validated before the rebuild keep passing.
+  const recPath = path.join(dir, 'planetRecords.json');
+  const legacyPath = path.join(dir, 'planets.json');
+  const recordsAll = fs.existsSync(recPath) ? JSON.parse(fs.readFileSync(recPath, 'utf8')) : null;
+  const legacyAll = fs.existsSync(legacyPath) ? JSON.parse(fs.readFileSync(legacyPath, 'utf8')) : [];
+  const statusPath = path.join(dir, 'planetStatus.json');
+  const statusAll = fs.existsSync(statusPath) ? JSON.parse(fs.readFileSync(statusPath, 'utf8')) : [];
   const name = T && (T.name || T.key);
   species = speciesAll.find(s => name && s.name.toLowerCase() === String(name).toLowerCase());
   if (!species) { fail('source.species', 'no species.json entry matches name/key "' + name + '"'); return; }
-  planet = planetsAll.find(p => p.name.toLowerCase() === species.planet.toLowerCase());
-  if (!planet) fail('source.planet', 'no planets.json entry for ' + species.planet);
+  const pname = species.planet.toLowerCase();
+  const rec = recordsAll ? recordsAll.find(p => p.name.toLowerCase() === pname) : null;
+  const legacy = legacyAll.find(p => p.name.toLowerCase() === pname);
+  const status = (Array.isArray(statusAll) ? statusAll : Object.values(statusAll)).find(s => s.planet === pname);
+  if (rec) {
+    const strings = [];
+    const walk = v => { if (typeof v === 'string') strings.push(v); else if (Array.isArray(v)) v.forEach(walk); else if (v && typeof v === 'object') Object.values(v).forEach(walk); };
+    walk(rec.report); walk(rec.biosphere); walk(rec.physical); walk(rec.environment); if (status) walk(status);
+    planet = { name: rec.name, key: rec.key, history: rec.history || [], environment: rec.environment || null, gravityEarth: rec.physical && rec.physical.derived && rec.physical.derived.gravityEarth, corpusExtra: strings.concat([String(rec.physical && rec.physical.derived && rec.physical.derived.gravityEarth)]), data: legacy ? legacy.data : {} };
+  } else if (legacy) { planet = legacy; warn('source.planet.legacy', 'planetRecords.json not found; validating against legacy planets.json'); }
+  if (!planet) fail('source.planet', 'no planet record for ' + species.planet);
 })();
 
 // ---------- helpers ----------
@@ -264,12 +280,17 @@ if (T) {
   if (Array.isArray(P.breathes) && Array.isArray(ET.ambientMedia) && !P.breathes.every(b => ET.ambientMedia.includes(b))) fail('breathes.subset', 'breathes must be a subset of ambientMedia');
   const TC = ET.temperatureC;
   if (!TC || typeof TC.min !== 'number' || typeof TC.max !== 'number' || TC.min > TC.max) fail('temperature', 'temperatureC must be { min, max } in Celsius with min <= max');
-  else if (planet && planet.data) {
+  else if (planet && planet.environment && planet.environment.habitableBandC) {
+    // 2026-09-02: species tolerances validate against the habitable band (where life persists), never the planetary extremes.
+    const hb = planet.environment.habitableBandC;
+    if (TC.min < hb.min || TC.max > hb.max) fail('temperature.habitable', 'temperatureC [' + TC.min + ', ' + TC.max + '] extends outside the ' + planet.name + ' habitable band [' + hb.min + ', ' + hb.max + '] C (planetRecords.json environment.habitableBandC; the extremes ' + JSON.stringify(planet.environment.extremeC) + ' are not survivable); narrow it');
+    else ok('temperature.habitable', 'temperatureC [' + TC.min + ', ' + TC.max + '] lies inside ' + planet.name + ' habitable band [' + hb.min + ', ' + hb.max + '] C');
+  } else if (planet && planet.data) {
     const lo = parseFloat(String(planet.data['Temperature Low'] || '').replace(/[^-\d.]/g, ' ').trim().split(/\s+/)[0]);
     const hi = parseFloat(String(planet.data['Temperature High'] || '').replace(/[^-\d.]/g, ' ').trim().split(/\s+/)[0]);
     if (Number.isFinite(lo) && Number.isFinite(hi)) {
-      if (TC.min < lo || TC.max > hi) fail('temperature.planet', 'temperatureC [' + TC.min + ', ' + TC.max + '] extends outside the ' + planet.name + ' data block range [' + lo + ', ' + hi + '] C; a wider band needs a quoted source sentence and a WARN-level override, otherwise narrow it');
-      else ok('temperature.planet', 'temperatureC [' + TC.min + ', ' + TC.max + '] lies inside ' + planet.name + ' range [' + lo + ', ' + hi + '] C');
+      if (TC.min < lo || TC.max > hi) fail('temperature.planet', 'temperatureC [' + TC.min + ', ' + TC.max + '] extends outside the ' + planet.name + ' legacy data block range [' + lo + ', ' + hi + '] C');
+      else warn('temperature.planet', 'validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable');
     } else warn('temperature.planet', 'could not parse the planet data block temperatures');
   }
   const C = P.capabilities || {};
@@ -447,7 +468,7 @@ if (MD) {
   if (!/authored fields/i.test(MD)) fail('md.authored', 'walkthrough has no "Authored fields" section (list every value with no source sentence, or state "none")');
   if (!/thin[- ]combo/i.test(MD)) warn('md.thincombo', 'walkthrough has no thin-combo findings section');
   if (species && planet) {
-    const corpus = fold([species.description, ...(planet.history || []), ...Object.values(planet.data || {}), species.height, species.weight].join(' \n '));
+    const corpus = fold([species.description, ...(planet.history || []), ...(planet.corpusExtra || []), ...Object.keys(planet.data || {}), ...Object.values(planet.data || {}), species.height, species.weight].join(' \n '));
     // Convention (SKILL.md section 6, step 14): double quotes are reserved for verbatim source
     // quotations; anything else in the walkthrough uses single quotes or backticks. Pairing is
     // reset per line so one stray quote cannot mis-pair the rest of the document.

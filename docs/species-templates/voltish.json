@@ -51,8 +51,8 @@
         "gas"
       ],
       "temperatureC": {
-        "min": -60,
-        "max": 45
+        "min": -55,
+        "max": 35
       }
     },
     "capabilities": {

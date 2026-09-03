@@ -50,7 +50,7 @@
         "gas"
       ],
       "temperatureC": {
-        "min": -12,
+        "min": -10,
         "max": 36
       }
     },
