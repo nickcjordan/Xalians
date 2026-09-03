@@ -168,13 +168,13 @@
   ],
   "signatureAbility": {
     "name": "Wildcatter Auger",
-    "instrument": "pincers",
-    "action": "crush",
+    "instrument": "tail",
+    "action": "strike",
     "medium": "sand",
     "intensity": [
       30,
       80
     ],
-    "description": "The Drilltail runs a shaft beneath its quarry, comes up under it, and closes its scissor-like pincers on it."
+    "description": "The Drilltail runs a shaft beneath its quarry and comes up under it drill first."
   }
 }

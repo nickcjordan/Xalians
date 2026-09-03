@@ -6,7 +6,7 @@ The artwork is a flat black silhouette, front-facing, of a single body. Rising f
 
 ## Description status
 
-Legacy text is a single-sentence stub, `The gems growing out of this creature's head transmit powerful light energy, don't be deceived by its calm temperment.` That is far below the 60 to 140 word register, so `descriptionStatus` is `upgraded`.
+Legacy text is a single-sentence stub, `The gems growing out of this creature's head transmit powerful light energy, don't be deceived by its calm temperament.` That is far below the 60 to 140 word register, so `descriptionStatus` is `upgraded`.
 
 Upgraded-description clauses and their sources:
 
@@ -14,7 +14,7 @@ Upgraded-description clauses and their sources:
 - `carries a pair of faceted gem growths on its head that transmit powerful light energy`: species: "The gems growing out of this creature's head transmit powerful light energy"; art: two faceted crystal forms on the crown.
 - `It was generated for the fields of Luminax, where Xalians grown with prismatic crystal took the brilliance of the twin suns and worked the oases of translucent, alabaster flora that the planet's Generator raised.`: planet: "Similar Xalians soon began to populate the world, some taking on albino features or growing prismatic carapaces of crystal-like scales and shells in order to survive in the brilliant light of the planet as they worked the fields to finally turn the ancient dream of cultivating Luminax's potential as a garden world into a reality." and planet: "Oases of uniquely translucent and alabaster white flora covered the surface of the planet". Note the planet sentence is about Luminax Xalians as a class, and the upgraded text is phrased that way (`where Xalians grown with prismatic crystal`), not as a fact whose subject is the Crystorn.
 - `Its crown does what the crystalline leaves around it do, refracting the harmful lengths of the spectrum away and holding only what it can use.`: planet: "Strange, crystalline leaves formed across the world's vegetation, their prism-like structure refracting the intense light of Luminax's suns to reflect back harmful wave lengths and capturing only the valuable pieces of the light spectrum needed for photosynthesis within their chloroplasts." The comparison is stated as a comparison to the flora, not asserted as a measured fact about the creature's biology; the shared subject is the faceted crystal the species canonically has.
-- `Its temperament is calm, and the calm is deceiving.`: species: "don't be deceived by its calm temperment".
+- `Its temperament is calm, and the calm is deceiving.`: species: "don't be deceived by its calm temperament".
 - `Where the misfiring panels of the Stellaris Superstructure burn new blast zones into the surface, the Crystorn sits in the residual radiation and gathers it.`: planet: "ION-9 has begun to haphazardly shift the panels of the Solar Cannon, resulting in misfirings toward Luminax's surface to devastating effect" and planet: "But a strange occurrence has been noted among some of those Xalians who have survived in the sun-scorched blast zones left behind by ION-9." The clause `and gathers it` is the species-level energy-feeder call (below), not a planet claim.
 
 No jobs, schedules, scenes, feeding times, causal Vallerii claims, or present-day institutional roles beyond what the two sources above state. Word count is inside the 60 to 140 band.
@@ -65,7 +65,7 @@ Legacy `statRatings` used only as a relative gauge: `specialAttackRating: high` 
 - `endurance [58, 82]`: planet: survival in the blast-zone radiation is an endurance reading for Luminax Xalians as a class.
 - `agility [12, 32]`, `reflex [20, 42]`: legacy gauge `speedRating: low`; art shows a heavy, settled body.
 - `intelligence [45, 68]`: mid-high but nowhere near true-human, per the canon cap. Justified by the calm, composed presentation of the art and the species sentence; not pushed higher because no source shows problem-solving.
-- `willpower [62, 88]`: the highest band, from species: "don't be deceived by its calm temperment", a composure the sentence treats as its defining characteristic.
+- `willpower [62, 88]`: the highest band, from species: "don't be deceived by its calm temperament", a composure the sentence treats as its defining characteristic.
 - `instinct [40, 62]`: no source shows hunting or ambush.
 - `charisma [35, 60]`: the crown is conspicuous but no source shows it commanding anything.
 - `resilience [58, 80]`: mass plus planet: Luminax Xalians as a class are "well adapted to the immense radiation present on their planet."
@@ -81,7 +81,7 @@ Expected trait count: (100 + 96 + 55 + 34 + 24 + 22 + 12 + 4) / 100 = 3.47. No e
 - `luminous: 100`: body-demanded. Species: "The gems growing out of this creature's head transmit powerful light energy." A body that emits light shed from its own crown is luminous in every individual.
 - `resistant: 96`: environment-demanded. Planet: "Being well adapted to the immense radiation present on their planet, Xalians from Luminax were a natural choice of labor for the design of the Stellaris Superstructure." Planet-wide sentences may justify an environmental adaptation; the 4 percent gap is Generator variance, and it keeps at least one entry below 100 alongside the rest of the pool.
 - `reflective: 55`: species and planet together: the crown is faceted crystal (art) and planet: the crystalline leaves of Luminax work by "refracting the intense light of Luminax's suns to reflect back harmful wave lengths". This is the closest registry trait to a prism that turns energy back, and it is a body reading, not a behavior. Held at 55, well below 100, because the planet sentence is about the flora and not about this creature; a faceted crown makes reflection plausible in a majority of individuals, not universal.
-- `mind-sealed: 34`: species: "don't be deceived by its calm temperment" is the one sentence about its inner state, and `mind-sealed` is the registry trait for a mind nothing sways. Kept under half because a calm temperament is weaker evidence than an unbreakable one.
+- `mind-sealed: 34`: species: "don't be deceived by its calm temperament" is the one sentence about its inner state, and `mind-sealed` is the registry trait for a mind nothing sways. Kept under half because a calm temperament is weaker evidence than an unbreakable one.
 - `protective: 24`: art: the seated, still, open-handed posture of a heavy body reads as a guard rather than a hunter, and no source shows it attacking. Held low as a body-and-art inference only.
 - `anchored: 22`: art: a 300 to 420 kg body sitting with legs folded and a low center of mass. Low percent because no source states it cannot be moved.
 - `menacing: 12`: species: the "don't be deceived" warning frames it as more dangerous than it appears. Low because the warning is about deception, not about presence eroding courage.
@@ -91,7 +91,7 @@ Traits considered and deliberately left out: `armored` (the art shows no plating
 
 ## Signature ability
 
-Lore-defining act, quoted: "The gems growing out of this creature's head transmit powerful light energy, don't be deceived by its calm temperment."
+Lore-defining act, quoted: "The gems growing out of this creature's head transmit powerful light energy, don't be deceived by its calm temperament."
 
 - Instrument `core`: the effect terminates on the target as energy leaving the gems; the gems are the part, and `core` is their registry key.
 - Action `beam`: the registry defines `beam` as "a focused projected line of energy or matter". A faceted crystal that transmits light energy focuses rather than sprays; `beam` is in the physical `core` row and in the light conduit row.
@@ -160,3 +160,4 @@ logged to docsspecies-templatesalidation-logcrystorn.jsonl
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: 'browser' (no feeding sentence, and it contradicted the energy-feeder diet), the crown refracting like the crystalline leaves (the flora's mechanism, not the creature's), 'sits in the residual radiation and gathers it' (invented behavior and a flourish) and the class-to-species 'generated for the fields' were rewritten; the description now keeps Luminax Xalians as the subject of the planet sentences. `senses.special` heat-sense removed (no source). `vacuum` removed from ambientMedia: the astronauts sentence establishes radiation immunity for Luminarii as a class, not vacuum for a furred body. `core` kept for the gem crown (the source defines the gems by transmission, and core is the emitter key). Art matched the run's reading (seated cross-legged, hands free with digits, faceted crystals, shaggy all over). Description now 112 words.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [30, 95] to [30, 70] (intersection) against the rebuilt planet record's habitable band [10, 70] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 0.92.
 - 2026-09-02, art correction from Nick (the artist): the head growths are two crystal horns. `core` replaced by `horns` in anatomy, instruments and the conduit; the signature (beam, light) stays legal through the horns light conduit (beam is in the light medium row). Prose now says crystal horns.
+- 2026-09-02, spelling (Nick): misspellings in the source description were corrected upstream in species.json (temperment, closed pedals of a flower, flittering Avilies, levatating, Terragoygles as applicable) and the carried text and quotations updated to match; misspellings are never carried into a record.
