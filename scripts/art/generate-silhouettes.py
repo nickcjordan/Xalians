@@ -29,17 +29,26 @@ STYLES = {
     'bold': ('flat black vector silhouette of one creature on plain white, whole body visible with margin, side or '
              'three-quarter view, bold heavy simplified masses, thick smooth contour, a few thin white cut lines marking the eye '
              'and body segments, die-cut sticker, stencil, solid fill, no other objects'),
+    # Compact style (runs 7 on): short enough to share one 77-token prompt with the body brief in both encoders.
+    # 'die-cut sticker' and 'stencil' (run 4 to 6) brought grey backdrops and glows; dropped.
+    'compact': ('flat black vector silhouette on pure white background, solid fill, thick smooth contour, '
+                'a few thin white cut lines, no other objects'),
 }
 NEGATIVE = (
     'cropped, cut off, duplicate creature, several creatures, pattern, spiral, ornament, frame, border, '
-    'textured background, ground, terrain, shadow, gradient, halftone, hatching, engraving, text, watermark, '
+    'grey background, glow, vignette, ground, shadow, gradient, halftone, hatching, engraving, text, watermark, '
     'photo, 3d render, disconnected fragments'
 )
+# Per-species negative additions (what the model keeps adding that the creature does not have).
+BODY_NEG = {
+    'frackworm': 'legs, arms, paws, claws, fur, face, human',
+    'thirstaserp': 'legs, arms, paws, claws, fur, human',
+}
 
 # Compact spatial briefs per species: counts, placement, shape. Fallback is the anatomy list alone.
 BODY = {
     'thirstaserp': 'a hooded cobra-like serpent, one coiled body of thick loops, flared frilled hood, open jaws with two long fangs, a rattle at the tail tip, no legs',
-    'frackworm': 'a colossal worm whose head is a conical ringed drill point, one long thick body of many ring segments tapering to a blunt tail, no legs, no eyes, no face',
+    'frackworm': 'a colossal worm whose head is a pointed screw auger drill bit with spiral threads, one long thick body of many ring segments tapering to a blunt tail, no legs, no eyes, no face',
 }
 
 
@@ -85,11 +94,20 @@ def main():
     rec = json.loads(rec_path.read_text(encoding='utf-8'))
     # SDXL has two text encoders, each capped at 77 CLIP tokens. Body brief goes to encoder 1 (prompt),
     # style brief to encoder 2 (prompt_2); both are checked so nothing is silently truncated (runs 3 and 4 were).
-    prompt, prompt_2 = body_phrase(args.key, rec), STYLES[args.style]
+    # Runs 4 to 6 put the body brief only in encoder 1 and lost the anatomy (the control came out as quadrupeds), so
+    # the body brief now goes to both encoders. With a compact style both fit one prompt; with a long style the body
+    # goes to both and the style only to encoder 2. Every string is checked against the 77-token limit.
+    body, style = body_phrase(args.key, rec), STYLES[args.style]
+    negative = NEGATIVE + (', ' + BODY_NEG[args.key] if args.key in BODY_NEG else '')
     from transformers import CLIPTokenizer
     tok = CLIPTokenizer.from_pretrained('stabilityai/stable-diffusion-xl-base-1.0', subfolder='tokenizer')
-    for name, text in (('prompt', prompt), ('prompt_2', prompt_2), ('negative', NEGATIVE)):
-        n = len(tok(text)['input_ids'])
+    count = lambda t: len(tok(t)['input_ids'])
+    if count(f'{body}; {style}') <= 77:
+        prompt = prompt_2 = f'{body}; {style}'
+    else:
+        prompt, prompt_2 = body, f'{body}; {style}'
+    for name, text in (('prompt', prompt), ('prompt_2', prompt_2), ('negative', negative)):
+        n = count(text)
         if n > 77: raise SystemExit(f'{name} is {n} CLIP tokens, limit 77: {text}')
         print(f'{name}: {n} tokens')
     out = OUT_ROOT / args.key / args.tag
@@ -125,7 +143,7 @@ def main():
     manifest = {'key': args.key, 'tag': args.tag, 'model': 'stabilityai/stable-diffusion-xl-base-1.0', 'vae': 'madebyollin/sdxl-vae-fp16-fix',
                 'ip_adapter': 'h94/IP-Adapter sdxl_models/ip-adapter_sdxl_vit-h.safetensors' if refs else None, 'ip_scale': args.ip_scale if refs else None, 'ip_blocks': args.ip_blocks if refs else None, 'style': args.style,
                 'refs': [str(p) for p in ref_paths], 'record': str(rec_path), 'record_sha': sha256(rec_path),
-                'prompt': prompt, 'prompt_2': prompt_2, 'negative': NEGATIVE, 'steps': args.steps, 'guidance': args.guidance, 'size': args.size,
+                'prompt': prompt, 'prompt_2': prompt_2, 'negative': negative, 'steps': args.steps, 'guidance': args.guidance, 'size': args.size,
                 'scheduler': type(pipe.scheduler).__name__, 'versions': versions(), 'candidates': []}
     mpath = out / 'manifest.json'
     t0 = time.time()
@@ -133,7 +151,7 @@ def main():
         seed = args.seed + i
         g = torch.Generator('cpu').manual_seed(seed)      # CPU generator for cross-machine reproducibility
         t1 = time.time()
-        img = pipe(prompt=prompt, prompt_2=prompt_2, negative_prompt=NEGATIVE, negative_prompt_2=NEGATIVE, num_inference_steps=args.steps, guidance_scale=args.guidance,
+        img = pipe(prompt=prompt, prompt_2=prompt_2, negative_prompt=negative, negative_prompt_2=negative, num_inference_steps=args.steps, guidance_scale=args.guidance,
                    width=args.size, height=args.size, generator=g, **ip_kwargs).images[0]
         p = out / f'{args.key}-{seed}.png'
         img.save(p)
