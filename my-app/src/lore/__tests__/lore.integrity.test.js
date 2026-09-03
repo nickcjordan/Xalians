@@ -135,3 +135,14 @@ describe('lore integrity', () => {
 		}
 	});
 });
+
+describe('entry index integrity', () => {
+	it('has no duplicate entry keys after merging species records', () => {
+		const keys = getEntries().map((e) => e.key);
+		expect(new Set(keys).size).toBe(keys.length);
+	});
+	it('every ratified species has a template-backed species view', () => {
+		const pending = getSpeciesList().filter((s) => s.source !== 'template').map((s) => s.key);
+		expect(pending).toEqual([]);
+	});
+});

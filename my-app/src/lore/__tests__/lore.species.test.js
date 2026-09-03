@@ -12,15 +12,13 @@ describe('SpeciesView', () => {
 		expect(view.legacy).toBeUndefined();
 	});
 
-	it('builds a legacy view for an unmigrated species', () => {
+	it('every species now resolves to its ratified template (no legacy views remain)', () => {
 		const view = getSpecies('xylum');
 		expect(view).toBeDefined();
-		expect(view.source).toBe('legacy');
+		expect(view.source).toBe('template');
 		expect(view.portrait.svgName).toBe('xylum');
-		expect(view.legacy).toBeDefined();
-		expect(view.legacy.traits).toHaveProperty('attackRange');
-		expect(view.legacy.traits).toHaveProperty('canFly');
-		expect(view.record).toBeUndefined();
+		expect(view.record).toBeDefined();
+		expect(view.legacy).toBeUndefined();
 	});
 
 	it('drops zero-percent traits and sorts the rest by percent desc', () => {

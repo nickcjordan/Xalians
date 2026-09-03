@@ -1,5 +1,35 @@
 {
-  "version": "0.1.0",
-  "note": "Species whose templates Nick has ratified. Only these are bundled into lambda/src/json/speciesRecords.json by scripts/bundleLore.js; *-run.* files and unratified drafts never ship.",
-  "species": ["graviclaw", "tetrahive"]
+  "version": "1.0.0",
+  "note": "Species whose templates Nick has ratified (all 29 as of 2026-09-03, PR #73). Only these are bundled into lambda/src/json/speciesRecords.json by scripts/bundleLore.js; *-run.* files and unratified drafts never ship. A new species is added here only after ratification.",
+  "species": [
+    "akinza",
+    "avilily",
+    "bioflim",
+    "chromocat",
+    "codazzo",
+    "crystorn",
+    "drilltail",
+    "dromeus",
+    "ectoghoul",
+    "figzy",
+    "foromeer",
+    "graviclaw",
+    "hippochamp",
+    "hypnopet",
+    "imprit",
+    "kosanos",
+    "luceras",
+    "neph",
+    "newtapede",
+    "scalatto",
+    "smokat",
+    "terragoyle",
+    "tetrahive",
+    "thirstaserp",
+    "tizzie",
+    "venemist",
+    "voltish",
+    "xylum",
+    "yetimoth"
+  ]
 }
