@@ -93,8 +93,8 @@ def main():
         pipe.image_encoder = encoder
         pipe.load_ip_adapter('h94/IP-Adapter', subfolder='sdxl_models', weight_name='ip-adapter_sdxl_vit-h.safetensors')
         pipe.set_ip_adapter_scale(args.ip_scale)
-        ip_kwargs['ip_adapter_image'] = [Image.open(p).convert('RGB') for p in ref_paths]
-        if len(ip_kwargs['ip_adapter_image']) == 1: ip_kwargs['ip_adapter_image'] = ip_kwargs['ip_adapter_image'][0]
+        # one adapter, several reference images: diffusers wants a list per adapter, so a list of one list
+        ip_kwargs['ip_adapter_image'] = [[Image.open(p).convert('RGB') for p in ref_paths]]
     pipe.enable_model_cpu_offload()
 
     manifest = {'key': args.key, 'tag': args.tag, 'model': 'stabilityai/stable-diffusion-xl-base-1.0', 'vae': 'madebyollin/sdxl-vae-fp16-fix',
