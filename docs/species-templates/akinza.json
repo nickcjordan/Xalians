@@ -100,10 +100,10 @@
     }
   },
   "archetypeWeights": {
-    "prowler": 5,
-    "skirmisher": 4,
-    "predator": 3,
-    "runner": 1
+    "prowler": 38,
+    "skirmisher": 31,
+    "predator": 23,
+    "runner": 8
   },
   "attributes": {
     "strength": [

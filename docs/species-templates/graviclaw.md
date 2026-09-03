@@ -160,3 +160,4 @@ ok   md.quotes                      30 of 30 distinct quotations found verbatim 
 - 2026-09-02, exhaustive pool (Nick): every trait key is now listed; keys absent from the earlier pool are 0 (the species never carries them). The earlier percents are unchanged.
 - 2026-09-02, absence means 0 (Nick): the zero entries are removed again; the pool lists only traits the species can carry.
 - 2026-09-02, conduits (Nick): `conduits` {"pincers":"dark"}. pincers conduct dark: "Graviclaws can strengthen the gravitational pull of their massive claws".
+- 2026-09-02, archetype scale (Nick): `archetypeWeights` converted from relative 1 to 5 weights to percents summing to 100 by largest remainder, order preserved: juggernaut 33, bulwark 27, predator 20, vanguard 13, stalwart 7 (was juggernaut 5, bulwark 4, predator 3, vanguard 2, stalwart 1).

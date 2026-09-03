@@ -103,11 +103,11 @@
     }
   },
   "archetypeWeights": {
-    "juggernaut": 5,
-    "bulwark": 4,
-    "predator": 3,
-    "vanguard": 2,
-    "stalwart": 1
+    "juggernaut": 33,
+    "bulwark": 27,
+    "predator": 20,
+    "vanguard": 13,
+    "stalwart": 7
   },
   "attributes": {
     "strength": [

@@ -98,11 +98,11 @@
     }
   },
   "archetypeWeights": {
-    "skirmisher": 5,
-    "sage": 4,
-    "prowler": 3,
-    "seeker": 2,
-    "sovereign": 1
+    "skirmisher": 33,
+    "sage": 27,
+    "prowler": 20,
+    "seeker": 13,
+    "sovereign": 7
   },
   "attributes": {
     "strength": [

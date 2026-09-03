@@ -290,8 +290,11 @@ if (T) {
   if (!T.archetypeWeights || Object.keys(AW).length === 0) fail('archetypeWeights', 'archetypeWeights must be a non-empty subset of the 16');
   for (const [k, v] of Object.entries(AW)) {
     if (!ARCHETYPES.includes(k)) fail('archetypeWeights.key', 'unknown archetype "' + k + '"');
-    if (!(Number.isInteger(v) && v > 0)) fail('archetypeWeights.weight', 'archetype weight for ' + k + ' must be a positive integer');
+    if (!(Number.isInteger(v) && v >= 1 && v <= 100)) fail('archetypeWeights.weight', 'archetype percent for ' + k + ' must be an integer 1 to 100');
+    else if (v < 5) warn('archetypeWeights.rare', 'archetype ' + k + ' at ' + v + '% will almost never land; confirm it is meant to be that rare or drop it');
   }
+  const awSum = Object.values(AW).reduce((a, b) => a + (Number.isInteger(b) ? b : 0), 0);
+  if (Object.keys(AW).length > 0 && awSum !== 100) fail('archetypeWeights.sum', 'archetype percents sum to ' + awSum + '; they must sum to exactly 100 (one archetype is rolled per creature)');
 
   // attributes
   const A = T.attributes || {};

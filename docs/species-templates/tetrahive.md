@@ -196,3 +196,4 @@ logged to docs\species-templates\validation-log\tetrahive.jsonl
 - 2026-09-02, absence means 0 (Nick): the zero entries are removed again; the pool lists only traits the species can carry.
 - 2026-09-02, voice: signature description trimmed (into the black removed).
 - 2026-09-02, conduits (Nick): reviewed; no instrument is shown channeling an element, so no conduits are declared.
+- 2026-09-02, archetype scale (Nick): `archetypeWeights` converted from relative 1 to 5 weights to percents summing to 100 by largest remainder, order preserved: skirmisher 33, sage 27, prowler 20, seeker 13, sovereign 7 (was skirmisher 5, sage 4, prowler 3, seeker 2, sovereign 1).
