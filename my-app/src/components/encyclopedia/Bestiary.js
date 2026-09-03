@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import * as lore from '../../lore';
 import XalianImage from '../xalianImage';
@@ -49,9 +49,20 @@ export default function Bestiary() {
     const [world, setWorld] = useState('all');
     const [sort, setSort] = useState('name');
     const [ratifiedOnly, setRatifiedOnly] = useState(false);
+    const elementRowRef = useRef(null);
 
     const worlds = lore.getWorlds();
     const species = lore.getSpeciesList();
+
+    // Keep the pressed element segment in view when the row scrolls on phones.
+    useEffect(() => {
+        const row = elementRowRef.current;
+        if (!row) return;
+        const pressed = row.querySelector('[aria-pressed="true"]');
+        if (pressed && pressed.scrollIntoView) {
+            pressed.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        }
+    }, [element]);
 
     const list = useMemo(() => {
         let filtered = species;
@@ -78,7 +89,7 @@ export default function Bestiary() {
             </div>
 
             <div className="enc-filters">
-                <div className="g-segmented" role="group" aria-label="Filter by element">
+                <div className="g-segmented enc-scrollrow" role="group" aria-label="Filter by element" ref={elementRowRef}>
                     <button type="button" className="g-segment" aria-pressed={element === 'all'} onClick={() => setElement('all')}>
                         All
                     </button>
@@ -107,7 +118,7 @@ export default function Bestiary() {
                     ))}
                 </select>
 
-                <div className="g-segmented" role="group" aria-label="Sort by">
+                <div className="g-segmented enc-scrollrow" role="group" aria-label="Sort by">
                     <button type="button" className="g-segment" aria-pressed={sort === 'name'} onClick={() => setSort('name')}>
                         Name
                     </button>

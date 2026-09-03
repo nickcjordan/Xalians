@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import * as lore from '../../lore';
 import './GalaxyMap.css';
+
+// Telypso sits at the drawn center of the galaxy (POSITIONS.telypso above);
+// on phones the map scrolls wider than the viewport, so the wrapper opens
+// centered on it rather than pinned to the left edge.
+const CENTER_WORLD_KEY = 'telypso';
 
 /**
  * Hand-authored positions honoring canon: Telypso at the exact center;
@@ -73,6 +78,7 @@ function WorldEventPin({ world, events, eraKey, onHover, onLeave }) {
 			onFocus={(e) => onHover(events, e)}
 			onBlur={onLeave}
 		>
+			<circle className="enc-map-pin-hit" r={22} />
 			<circle className="enc-map-pin-head" r={9} />
 			<circle className="enc-map-pin-ring" r={9} />
 			{events.length > 1 && (
@@ -116,6 +122,7 @@ function WorldMark({ world, compact, lit, dimLabel, era, onHover, onLeave }) {
 			onFocus={(e) => onHover(world, e)}
 			onBlur={onLeave}
 		>
+			<circle className="enc-map-world-hit" r={30} />
 			<circle className="enc-map-world-disc" r={11} />
 			{lit !== false && <circle className="enc-map-world-ring" r={11} />}
 			{!(dimLabel && lit === false) && (
@@ -143,6 +150,18 @@ export default function GalaxyMap({ era = null, showEvents = true, compact = fal
 	const worlds = lore.getWorlds();
 	const footprint = era ? lore.getEraFootprint(era) : null;
 	const [hoverState, setHoverState] = useState(null);
+	const scrollRef = useRef(null);
+
+	// Phones scroll the map rather than shrink it; open centered on Telypso,
+	// the drawn center of the galaxy, instead of the scrolled-left default.
+	useEffect(() => {
+		const wrap = scrollRef.current;
+		if (!wrap) return;
+		const center = POSITIONS[CENTER_WORLD_KEY];
+		if (!center || wrap.scrollWidth <= wrap.clientWidth) return;
+		const targetLeft = (center.x / 1000) * wrap.scrollWidth - wrap.clientWidth / 2;
+		wrap.scrollLeft = Math.max(0, targetLeft);
+	}, []);
 
 	const footprintByWorld = footprint
 		? new Map(footprint.worlds.map((row) => [row.world.key, row]))
@@ -180,70 +199,73 @@ export default function GalaxyMap({ era = null, showEvents = true, compact = fal
 
 	return (
 		<div className={`enc-map ${compact ? 'enc-map--compact' : ''}`}>
-			<svg
-				className="enc-map-svg"
-				viewBox="0 0 1000 700"
-				role="img"
-				aria-label="Galaxy map of Xalia, showing the fourteen worlds"
-			>
-				<rect className="enc-map-void" x={0} y={0} width={1000} height={700} />
+			<p className="g-mono enc-map-pan-hint">Drag to pan the galaxy.</p>
+			<div className="enc-map-scroll" ref={scrollRef}>
+				<svg
+					className="enc-map-svg"
+					viewBox="0 0 1000 700"
+					role="img"
+					aria-label="Galaxy map of Xalia, showing the fourteen worlds"
+				>
+					<rect className="enc-map-void" x={0} y={0} width={1000} height={700} />
 
-				{/* Faint concentric guides suggesting the disc of the galaxy. */}
-				<ellipse className="enc-map-guide" cx={500} cy={350} rx={460} ry={300} />
-				<ellipse className="enc-map-guide" cx={500} cy={350} rx={320} ry={210} />
-				<ellipse className="enc-map-guide" cx={500} cy={350} rx={180} ry={120} />
+					{/* Faint concentric guides suggesting the disc of the galaxy. */}
+					<ellipse className="enc-map-guide" cx={500} cy={350} rx={460} ry={300} />
+					<ellipse className="enc-map-guide" cx={500} cy={350} rx={320} ry={210} />
+					<ellipse className="enc-map-guide" cx={500} cy={350} rx={180} ry={120} />
 
-				{/* Cybele: the belt Stonera crosses annually. */}
-				<ellipse
-					className="enc-map-belt"
-					cx={230}
-					cy={430}
-					rx={130}
-					ry={70}
-					transform="rotate(-18 230 430)"
-				/>
-				<text className="enc-map-belt-label" x={205} y={370}>
-					Cybele
-				</text>
+					{/* Cybele: the belt Stonera crosses annually. */}
+					<ellipse
+						className="enc-map-belt"
+						cx={230}
+						cy={430}
+						rx={130}
+						ry={70}
+						transform="rotate(-18 230 430)"
+					/>
+					<text className="enc-map-belt-label" x={205} y={370}>
+						Cybele
+					</text>
 
-				{/* Wraithix: Phantiri's own system, with its moon. */}
-				<text className="enc-map-system-label" x={75} y={130}>
-					Wraithix
-				</text>
-				<circle className="enc-map-moon" cx={WRAITHIX_MOON.x} cy={WRAITHIX_MOON.y} r={3} />
+					{/* Wraithix: Phantiri's own system, with its moon. */}
+					<text className="enc-map-system-label" x={75} y={130}>
+						Wraithix
+					</text>
+					<circle className="enc-map-moon" cx={WRAITHIX_MOON.x} cy={WRAITHIX_MOON.y} r={3} />
 
-				{/* The black hole beside Grimedes. */}
-				<circle className="enc-map-hole-core" cx={BLACK_HOLE.x} cy={BLACK_HOLE.y} r={9} />
-				<circle className="enc-map-hole-ring" cx={BLACK_HOLE.x} cy={BLACK_HOLE.y} r={13} />
+					{/* The black hole beside Grimedes. */}
+					<circle className="enc-map-hole-core" cx={BLACK_HOLE.x} cy={BLACK_HOLE.y} r={9} />
+					<circle className="enc-map-hole-ring" cx={BLACK_HOLE.x} cy={BLACK_HOLE.y} r={13} />
 
-				{worlds.map((world) => {
-					const row = footprintByWorld ? footprintByWorld.get(world.key) : null;
-					const lit = footprint ? Boolean(row && (row.chapterCount > 0 || row.events.length > 0)) : true;
-					return (
-						<WorldMark
+					{worlds.map((world) => {
+						const row = footprintByWorld ? footprintByWorld.get(world.key) : null;
+						const lit = footprint ? Boolean(row && (row.chapterCount > 0 || row.events.length > 0)) : true;
+						return (
+							<WorldMark
+								key={world.key}
+								world={world}
+								compact={compact}
+								lit={footprint ? lit : true}
+								dimLabel={compact}
+								era={era}
+								onHover={(w, e) => onHoverWorld(w, footprint ? lit : true, e)}
+								onLeave={onLeave}
+							/>
+						);
+					})}
+
+					{worldPins.map(({ world, events }) => (
+						<WorldEventPin
 							key={world.key}
 							world={world}
-							compact={compact}
-							lit={footprint ? lit : true}
-							dimLabel={compact}
-							era={era}
-							onHover={(w, e) => onHoverWorld(w, footprint ? lit : true, e)}
+							events={events}
+							eraKey={era}
+							onHover={(evs, e) => onHoverEvents(world, evs, e)}
 							onLeave={onLeave}
 						/>
-					);
-				})}
-
-				{worldPins.map(({ world, events }) => (
-					<WorldEventPin
-						key={world.key}
-						world={world}
-						events={events}
-						eraKey={era}
-						onHover={(evs, e) => onHoverEvents(world, evs, e)}
-						onLeave={onLeave}
-					/>
-				))}
-			</svg>
+					))}
+				</svg>
+			</div>
 
 			{hoverState && hoverState.kind === 'world' && (
 				<div
@@ -272,6 +294,24 @@ export default function GalaxyMap({ era = null, showEvents = true, compact = fal
 					))}
 				</div>
 			)}
+
+			<div className="enc-map-chips enc-scrollrow">
+				{worlds.map((world) => {
+					const row = footprintByWorld ? footprintByWorld.get(world.key) : null;
+					const lit = footprint ? Boolean(row && (row.chapterCount > 0 || row.events.length > 0)) : true;
+					const route =
+						era && lit ? `${lore.routeFor('era', era)}?world=${world.key}` : lore.routeFor('world', world.key);
+					return (
+						<Link
+							key={world.key}
+							to={route}
+							className={`g-chip ${lit ? '' : 'g-chip--outline'} g-el-${world.element}`}
+						>
+							{world.name}
+						</Link>
+					);
+				})}
+			</div>
 		</div>
 	);
 }

@@ -90,12 +90,62 @@
 .enc-console a.g-tile:hover .g-tile-name, .enc-console a.g-record-term:hover { color: var(--g-ink); }
 
 @media (max-width: 700px) {
-	.enc-masthead { gap: var(--g-4); }
+	/* Tiny type stays legible at arm's length on a phone. Same token,
+	   larger phone-only value; system.css keeps the desktop rem value. */
+	.enc-console { --g-size-tiny: 0.8125rem; --g-size-micro: 0.75rem; }
+
+	/* Masthead: kicker and version line are the two lines the fold cannot
+	   afford. Title drops to h2. Search and Pull share one row so the
+	   whole masthead clears under 140px before the section bank starts. */
+	.enc-masthead { gap: var(--g-2); margin-bottom: var(--g-3); align-items: center; }
 	.enc-masthead-text { flex: 1 1 100%; overflow-wrap: anywhere; }
-	.enc-title { font-size: var(--g-size-h2); }
-	.enc-search { flex: 1 1 100%; min-width: 0; }
-	.enc-sections { display: flex; width: 100%; }
-	.enc-sections .g-segment { flex: 1 1 auto; text-align: center; padding-left: var(--g-2); padding-right: var(--g-2); }
+	.enc-masthead .g-kicker { display: none; }
+	.enc-title { margin-top: 0; font-size: var(--g-size-h2); }
+	.enc-version { display: none; }
+	.enc-masthead-tools { flex: 1 1 100%; width: 100%; flex-wrap: nowrap; gap: var(--g-2); }
+	.enc-search { flex: 1 1 auto; min-width: 0; }
+	.enc-pull-record { flex: 0 0 auto; }
+	.enc-btn-label-full { display: none; }
+	.enc-btn-label-short { display: inline; }
+
+	/* Section bank: one scrollable row instead of the three-row block, so
+	   it and the start of page content both land in the first viewport. */
+	.enc-sections {
+		display: flex;
+		flex-wrap: nowrap;
+		width: 100%;
+		margin-bottom: var(--g-4);
+	}
+	.enc-sections .g-segment {
+		flex: 0 0 auto;
+		text-align: center;
+		padding-left: var(--g-3);
+		padding-right: var(--g-3);
+	}
+
+	/* Tap targets: every console chip/back-link/segment key clears the
+	   32px touch minimum without changing desktop sizing. */
+	.enc-console a.g-chip,
+	.enc-console button.g-chip {
+		min-height: 32px;
+		display: inline-flex;
+		align-items: center;
+	}
+	.enc-console .enc-back {
+		padding: var(--g-2) 0;
+		min-height: 32px;
+		display: inline-flex;
+		align-items: center;
+	}
+	.enc-console .g-segment {
+		min-height: 40px;
+		display: inline-flex;
+		align-items: center;
+	}
+}
+
+@media not all and (max-width: 700px) {
+	.enc-btn-label-short { display: none; }
 }
 
 /* ---- masthead search hint ---------------------------------------------- */
@@ -275,6 +325,36 @@
 	font-family: var(--g-font-mono);
 	font-size: var(--g-size-small);
 	font-variant-numeric: tabular-nums;
+}
+
+/* One horizontal, scrollable row: filters, scrubber stations, index chips,
+   the section bank, the trail. Works on a flex row already (.g-segmented,
+   a plain flex row) — it only adds the scroll/snap/fade behavior, scoped to
+   phone widths so wider layouts keep whatever wrap/grid they already use.
+   Children must set flex: 0 0 auto themselves (already true of
+   .g-segment/.g-chip; the rule below covers plain children too). */
+@media (max-width: 700px) {
+	/* .enc-console prefix: component stylesheets load after this file and
+	   several rails set flex-wrap: wrap at equal specificity. */
+	.enc-console .enc-scrollrow {
+		display: flex;
+		flex-wrap: nowrap;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: none;
+		-ms-overflow-style: none;
+		/* Trailing fade tells a touch reader the row continues off-screen;
+		   padding-right clears the fade so the last item is fully legible. */
+		-webkit-mask-image: linear-gradient(to right, var(--g-ink) 0, var(--g-ink) calc(100% - 40px), transparent 100%);
+		mask-image: linear-gradient(to right, var(--g-ink) 0, var(--g-ink) calc(100% - 40px), transparent 100%);
+		padding-right: var(--g-6);
+	}
+
+	.enc-console .enc-scrollrow::-webkit-scrollbar { display: none; }
+
+	.enc-console .enc-scrollrow > * {
+		flex: 0 0 auto;
+	}
 }
 
 /* ---- reading room ------------------------------------------------------ */

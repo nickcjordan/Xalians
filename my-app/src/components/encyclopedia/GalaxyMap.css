@@ -9,10 +9,53 @@
 	position: relative;
 }
 
+.enc-map-scroll {
+	width: 100%;
+}
+
 .enc-map-svg {
 	display: block;
 	width: 100%;
 	height: auto;
+}
+
+/* Phones: the map does not shrink below legibility, it pans instead. The
+   wrapper scrolls; the outer .enc-map stays the width of the panel so the
+   hover cards (positioned from getBoundingClientRect, viewport-relative)
+   keep anchoring correctly against it. */
+.enc-map-pan-hint {
+	display: none;
+	margin: 0 0 var(--g-2);
+	color: var(--g-ink-low);
+	font-size: var(--g-size-tiny);
+}
+
+.enc-map-chips {
+	display: none;
+	gap: var(--g-2);
+	margin-top: var(--g-4);
+}
+
+@media (max-width: 700px) {
+	.enc-map-pan-hint {
+		display: block;
+	}
+
+	.enc-map-scroll {
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		-webkit-mask-image: linear-gradient(to right, var(--g-ink) 0, var(--g-ink) calc(100% - 40px), transparent 100%);
+		mask-image: linear-gradient(to right, var(--g-ink) 0, var(--g-ink) calc(100% - 40px), transparent 100%);
+		padding-right: var(--g-6);
+	}
+
+	.enc-map-svg {
+		min-width: 640px;
+	}
+
+	.enc-map-chips {
+		display: flex;
+	}
 }
 
 .enc-map-void {
@@ -66,6 +109,15 @@
 .enc-map-world {
 	cursor: pointer;
 	outline: none;
+}
+
+/* Invisible hit area, larger than the drawn disc, so the world stays a real
+   tap target at phone widths without inflating the visible mark. Drawn
+   first so the disc and ring paint over it undisturbed. */
+.enc-map-world-hit {
+	fill: transparent;
+	stroke: none;
+	pointer-events: all;
 }
 
 .enc-map-world-disc {
@@ -127,6 +179,14 @@
 .enc-map-pin {
 	cursor: pointer;
 	outline: none;
+}
+
+/* Same invisible-hit-area treatment as the world discs, sized to the pin's
+   larger touch requirement (the drawn mark is smaller than a world disc). */
+.enc-map-pin-hit {
+	fill: transparent;
+	stroke: none;
+	pointer-events: all;
 }
 
 .enc-map-pin-head {

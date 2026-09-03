@@ -49,23 +49,21 @@ export default function TrailStrip() {
 	if (!trail.length) return null;
 	const visible = isPhone ? trail.slice(0, PHONE_CHIP_LIMIT) : trail;
 	return (
-		<div className="enc-trail">
+		<div className="enc-trail enc-trail-row enc-scrollrow">
 			<p className="g-kicker enc-trail-kicker">Trace</p>
-			<div className="enc-trail-chips">
-				{visible.map((visit) => (
-					<Link
-						key={`${visit.kind}:${visit.key}`}
-						to={routeForVisit(visit)}
-						className={`g-chip g-chip--outline enc-trail-chip${visit.element ? ` g-el-${visit.element}` : ''}`}
-					>
-						<span className="g-mono enc-trail-chip-kind">{KIND_GLYPH[visit.kind] || visit.kind.toUpperCase()}</span>
-						<span className="enc-trail-chip-name">{visit.name}</span>
-					</Link>
-				))}
-				<button type="button" className="g-btn g-btn--ghost enc-btn-small enc-trail-clear" onClick={clear}>
-					Clear
-				</button>
-			</div>
+			{visible.map((visit) => (
+				<Link
+					key={`${visit.kind}:${visit.key}`}
+					to={routeForVisit(visit)}
+					className={`g-chip g-chip--outline enc-trail-chip${visit.element ? ` g-el-${visit.element}` : ''}`}
+				>
+					<span className="g-mono enc-trail-chip-kind">{KIND_GLYPH[visit.kind] || visit.kind.toUpperCase()}</span>
+					<span className="enc-trail-chip-name">{visit.name}</span>
+				</Link>
+			))}
+			<button type="button" className="g-btn g-btn--ghost enc-btn-small enc-trail-clear" onClick={clear}>
+				Clear
+			</button>
 		</div>
 	);
 }

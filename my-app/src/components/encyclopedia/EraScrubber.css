@@ -73,25 +73,10 @@
 	color: var(--g-ink-low);
 }
 
-@media (max-width: 600px) {
-	.enc-scrub-rail {
-		flex-wrap: wrap;
-	}
-	.enc-scrub-station {
-		flex: 1 1 auto;
-	}
-}
-
-@media (max-width: 390px) {
-	.enc-scrub-rail {
-		flex-wrap: nowrap;
-		overflow-x: auto;
-		-webkit-overflow-scrolling: touch;
-		/* Trailing fade tells a touch reader the rail continues off-screen. */
-		-webkit-mask-image: linear-gradient(to right, var(--g-ink) 0, var(--g-ink) calc(100% - 40px), transparent 100%);
-		mask-image: linear-gradient(to right, var(--g-ink) 0, var(--g-ink) calc(100% - 40px), transparent 100%);
-		padding-right: var(--g-6);
-	}
+/* .enc-scrollrow (encyclopedia.css) supplies the horizontal scroll, hidden
+   scrollbar, nowrap, and trailing fade at max-width 700px; do not duplicate
+   here, only the station's own flex-basis for that row. */
+@media (max-width: 700px) {
 	.enc-scrub-station {
 		flex: 0 0 auto;
 	}

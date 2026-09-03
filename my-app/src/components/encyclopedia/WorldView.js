@@ -1,10 +1,28 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import * as lore from '../../lore';
 import Prose from './Prose';
 import XalianImage from '../xalianImage';
 import { useVisit, useReadMark, markRead } from './trail';
 import './WorldView.css';
+
+const PHONE_QUERY = '(max-width: 700px)';
+
+function useIsPhone() {
+    const [isPhone, setIsPhone] = useState(() => (
+        typeof window !== 'undefined' && window.matchMedia ? window.matchMedia(PHONE_QUERY).matches : false
+    ));
+    useEffect(() => {
+        if (typeof window === 'undefined' || !window.matchMedia) return undefined;
+        const mql = window.matchMedia(PHONE_QUERY);
+        const onChange = () => setIsPhone(mql.matches);
+        mql.addEventListener ? mql.addEventListener('change', onChange) : mql.addListener(onChange);
+        return () => {
+            mql.removeEventListener ? mql.removeEventListener('change', onChange) : mql.removeListener(onChange);
+        };
+    }, []);
+    return isPhone;
+}
 
 // The physical plate is a small display-set so fields can change in one
 // place while the planet data block is mid-redesign (per contract).
@@ -82,6 +100,7 @@ function ChapterRailRow({ chapter, index, world, label, onFallbackRead }) {
 export default function WorldView() {
     const { key } = useParams();
     const world = lore.getWorld(key);
+    const isPhone = useIsPhone();
 
     useVisit(
         world
@@ -306,28 +325,53 @@ export default function WorldView() {
                         })}
                     </ol>
 
-                    <nav className="g-panel g-panel--recessed enc-world-chapter-index" aria-label="Chapters">
-                        <header className="g-panel-head">
-                            <h3 className="g-h3">Chapters</h3>
-                        </header>
-                        <ol className="enc-world-chapter-index-list">
-                            {world.chapters.map((chapter, i) => {
-                                const eraKey = chapterEraTag(chapter);
-                                const label = chapterEraLabel(chapter, eraKey ? eraNameByKey.get(eraKey) : null);
-                                return (
-                                    <li key={chapter.index}>
-                                        <ChapterRailRow
-                                            chapter={chapter}
-                                            index={i}
-                                            world={world}
-                                            label={label}
-                                            onFallbackRead={handleFallbackRead(chapter.index)}
-                                        />
-                                    </li>
-                                );
-                            })}
-                        </ol>
-                    </nav>
+                    {isPhone ? (
+                        <details className="g-panel g-panel--recessed enc-world-chapter-index" aria-label="Chapters">
+                            <summary className="g-panel-head enc-world-chapter-index-summary">
+                                <h3 className="g-h3">Chapters ({world.chapters.length})</h3>
+                            </summary>
+                            <ol className="enc-world-chapter-index-list">
+                                {world.chapters.map((chapter, i) => {
+                                    const eraKey = chapterEraTag(chapter);
+                                    const label = chapterEraLabel(chapter, eraKey ? eraNameByKey.get(eraKey) : null);
+                                    return (
+                                        <li key={chapter.index}>
+                                            <ChapterRailRow
+                                                chapter={chapter}
+                                                index={i}
+                                                world={world}
+                                                label={label}
+                                                onFallbackRead={handleFallbackRead(chapter.index)}
+                                            />
+                                        </li>
+                                    );
+                                })}
+                            </ol>
+                        </details>
+                    ) : (
+                        <nav className="g-panel g-panel--recessed enc-world-chapter-index" aria-label="Chapters">
+                            <header className="g-panel-head">
+                                <h3 className="g-h3">Chapters</h3>
+                            </header>
+                            <ol className="enc-world-chapter-index-list">
+                                {world.chapters.map((chapter, i) => {
+                                    const eraKey = chapterEraTag(chapter);
+                                    const label = chapterEraLabel(chapter, eraKey ? eraNameByKey.get(eraKey) : null);
+                                    return (
+                                        <li key={chapter.index}>
+                                            <ChapterRailRow
+                                                chapter={chapter}
+                                                index={i}
+                                                world={world}
+                                                label={label}
+                                                onFallbackRead={handleFallbackRead(chapter.index)}
+                                            />
+                                        </li>
+                                    );
+                                })}
+                            </ol>
+                        </nav>
+                    )}
                 </div>
             </section>
         </article>

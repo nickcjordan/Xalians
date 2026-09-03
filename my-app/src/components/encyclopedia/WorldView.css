@@ -220,3 +220,24 @@ a.enc-world-chronicle-station:focus-visible {
 .enc-world-entries {
 	padding: var(--g-2) var(--g-4);
 }
+
+@media (max-width: 700px) {
+	.enc-world-chapter-index {
+		position: static;
+		top: auto;
+	}
+
+	.enc-world-chapter-index-summary {
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+	}
+
+	.enc-world-chapter-index-summary .g-h3 {
+		margin: 0;
+	}
+
+	.enc-world-chapter-index[open] .enc-world-chapter-index-summary {
+		margin-bottom: var(--g-2);
+	}
+}
