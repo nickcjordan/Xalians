@@ -90,29 +90,62 @@ class ReclamationPage extends React.Component {
 		return (
 			<div className="g-console rec-console rec-console--intro">
 				<XalianNavbar />
-				<div className="g-shell page-shell rec-shell">
-					<header className="page-header">
-						<p className="g-kicker">Kozrak's Charter</p>
-						<h1 className="g-title">Reclamation</h1>
+				<div className="g-shell rec-shell rec-shell--intro">
+					<header className="rec-masthead">
+						<span className="g-kicker">Kozrak's Charter</span>
+						<h1 className="rec-masthead-title">Reclamation</h1>
+						<span className="g-mono rec-masthead-seed">seed {seed}</span>
 					</header>
 
 					<div className="g-panel rec-intro-panel">
 						<div className="g-screen rec-rules-screen">
-							<div className="g-screen-line">The worlds were lost to war and plague. An expedition takes them back, site by site, and the Court's Charter is the acknowledgment of what you already hold.</div>
-							<div className="g-screen-line">A match crosses {WORLDS_PER_MATCH} worlds. Each world opens {3} sites. Hold {SITES_TO_CLINCH} sites and the Charter is clinched.</div>
-							<div className="g-screen-line">Each world runs Deploy, Orders, Resolve, Judge. In Deploy you alternate sending one creature to one site, or passing. Passing is permanent for that world.</div>
-							<div className="g-screen-line">In Orders you assign each of your creatures an act, in secret. A creature you leave alone performs the act its archetype favors. You choose the creature, the site and the act; the creature chooses its own target, by its conduct.</div>
-							<div className="g-screen-line">At the Judge each site goes to the side with the greater surviving hold. A tie reverts the site to the Court. Creatures at a won site stay to hold the claim; the rest withdraw. Either way they are out of the expedition.</div>
-							<div className="g-screen-line">You bring {ROSTER_SIZE} creatures and may send {SENDABLE}. The two you never send are your reserve, chosen as you go.</div>
-							<div className="g-screen-line">Two small rules. The side that moves first on a world may, once, fall its first creature back to another site without spending a turn. And a stealthy creature may be sent hidden: the rival learns that you sent something, not what or where.</div>
-							<div className="g-screen-line--dim">Match seed: {seed}. Add ?seed=NUMBER to the address to replay an expedition.</div>
+							<div className="g-screen-line">The worlds were lost to war and plague. An expedition takes them back, site by site. The Court's Charter is the acknowledgment of what you already hold.</div>
+							<div className="g-screen-line">A match crosses {WORLDS_PER_MATCH} worlds of {3} sites each. Hold {SITES_TO_CLINCH} sites and the Charter is clinched. Every world runs four phases.</div>
+							<dl className="rec-rules-phases">
+								<dt className="g-screen-line">Deploy</dt>
+								<dd className="g-screen-line">You and the rival alternate sending one creature to one site, or passing. A pass is permanent for that world.</dd>
+								<dt className="g-screen-line">Orders</dt>
+								<dd className="g-screen-line">Give each creature an act, in secret. Left alone, it performs the act its archetype favors. You choose the creature, the site and the act; the creature chooses its own target, by its conduct.</dd>
+								<dt className="g-screen-line">Resolve</dt>
+								<dd className="g-screen-line">The acts play out, and each creature's hold on its site is struck down, warded or kept.</dd>
+								<dt className="g-screen-line">Judge</dt>
+								<dd className="g-screen-line">Each site goes to the side with the greater surviving hold. A tie reverts it to the Court. Creatures at a won site stay to hold the claim; the rest withdraw. Either way they are out of the expedition.</dd>
+							</dl>
 						</div>
 
-						<div className="rec-intro-actions">
-							<button type="button" className="g-btn g-btn--primary" onClick={this.startMatch}>
-								Mount the expedition
-							</button>
-						</div>
+						<aside className="rec-intro-charter">
+							<div className="rec-charter-figures">
+								<div className="rec-charter-figure">
+									<span className="rec-charter-number g-mono">{WORLDS_PER_MATCH}</span>
+									<span className="rec-charter-label">worlds</span>
+								</div>
+								<div className="rec-charter-figure">
+									<span className="rec-charter-number g-mono">{WORLDS_PER_MATCH * 3}</span>
+									<span className="rec-charter-label">sites</span>
+								</div>
+								<div className="rec-charter-figure rec-charter-figure--key">
+									<span className="rec-charter-number g-mono">{SITES_TO_CLINCH}</span>
+									<span className="rec-charter-label">to clinch</span>
+								</div>
+								<div className="rec-charter-figure">
+									<span className="rec-charter-number g-mono">{ROSTER_SIZE}<span className="rec-charter-sub">/{SENDABLE}</span></span>
+									<span className="rec-charter-label">bring / send</span>
+								</div>
+							</div>
+
+							<ul className="rec-charter-rules">
+								<li><strong>Reserve.</strong> The {ROSTER_SIZE - SENDABLE} creatures you never send are your reserve, chosen as you go.</li>
+								<li><strong>Fall back.</strong> The side that moves first on a world may, once, move its first creature to another site without spending a turn.</li>
+								<li><strong>Hidden.</strong> A stealthy creature may be sent hidden. The rival learns that you sent something, not what or where.</li>
+							</ul>
+
+							<div className="rec-intro-actions">
+								<button type="button" className="g-btn g-btn--primary" onClick={this.startMatch}>
+									Mount the expedition
+								</button>
+								<span className="rec-intro-seed g-mono">Add ?seed={seed} to the address to replay this expedition.</span>
+							</div>
+						</aside>
 					</div>
 				</div>
 			</div>
