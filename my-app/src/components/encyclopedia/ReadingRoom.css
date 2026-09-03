@@ -67,10 +67,49 @@
 	border-bottom: none;
 }
 
+/* Left rule (matte, not a glow) marking the row of the era currently
+   selected in the galaxy map / scrubber above. */
+.enc-room-story-row {
+	border-left: 3px solid transparent;
+	padding-left: calc(var(--g-4) - 3px);
+	transition: border-color var(--g-snap), background var(--g-snap);
+}
+
+.enc-room-story-row--lit {
+	border-left-color: var(--g-brass-light);
+	background: rgba(255, 244, 214, 0.03);
+}
+
 .enc-room-index {
+	display: inline-flex;
 	font-family: var(--g-font-mono);
 	color: var(--g-ink-low);
 	margin-right: var(--g-2);
+	padding: 0;
+	background: none;
+	border: 0;
+	cursor: pointer;
+	transition: color var(--g-snap);
+}
+
+.enc-room-index:hover,
+.enc-room-index:focus-visible {
+	color: var(--g-brass-light);
+}
+
+.enc-room-index[aria-pressed='true'] {
+	color: var(--g-brass-light);
+}
+
+.enc-room-index:focus-visible {
+	outline: 2px solid var(--g-phosphor);
+	outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.enc-room-story-row {
+		transition: none;
+	}
 }
 
 .enc-room-strip {

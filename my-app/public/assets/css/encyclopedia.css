@@ -140,7 +140,8 @@
 }
 
 .enc-search-hit:hover,
-.enc-search-hit:focus-visible {
+.enc-search-hit:focus-visible,
+.enc-search-hit--active {
 	background: var(--g-phosphor-a20);
 	outline: none;
 }

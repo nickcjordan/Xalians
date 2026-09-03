@@ -121,7 +121,8 @@
 	opacity: 0.5;
 }
 
-/* ---- event pins: small brass marks stacked around a lit world's disc --- */
+/* ---- event pins: brass-ringed markers, one per world with events -------
+   Static: no motion beyond the shared hover/focus stroke brighten below. */
 
 .enc-map-pin {
 	cursor: pointer;
@@ -129,26 +130,34 @@
 }
 
 .enc-map-pin-head {
-	fill: var(--g-brass-light);
-	stroke: var(--g-void);
-	stroke-width: 1;
-	transition: r var(--g-snap);
+	fill: var(--g-void);
+	stroke: var(--g-brass);
+	stroke-width: 1.5;
 }
 
-.enc-map-pin-stem {
-	stroke: var(--g-brass);
+.enc-map-pin-ring {
+	fill: none;
+	stroke: var(--g-brass-light);
 	stroke-width: 1;
+	opacity: 0.55;
 }
 
 .enc-map-pin:hover .enc-map-pin-head,
 .enc-map-pin:focus-visible .enc-map-pin-head {
-	r: 5.5;
+	stroke: var(--g-brass-light);
+	stroke-width: 2;
 }
 
-@media (prefers-reduced-motion: reduce) {
-	.enc-map-pin-head {
-		transition: none;
-	}
+.enc-map-pin:hover .enc-map-pin-ring,
+.enc-map-pin:focus-visible .enc-map-pin-ring {
+	opacity: 1;
+}
+
+.enc-map-pin-count {
+	font-size: 9px;
+	font-weight: 600;
+	fill: var(--g-brass-light);
+	text-anchor: middle;
 }
 
 /* Same shrink, keyed to the viewport, so labels stay legible even when a
@@ -216,4 +225,16 @@
 
 .enc-map-card-kicker {
 	display: block;
+}
+
+.enc-map-card-action {
+	display: block;
+	margin-top: var(--g-2);
+	font-size: var(--g-size-tiny);
+	color: var(--g-brass-light);
+}
+
+.enc-map-card-event-title {
+	display: block;
+	margin-top: var(--g-1);
 }

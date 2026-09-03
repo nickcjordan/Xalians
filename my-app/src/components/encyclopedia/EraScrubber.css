@@ -66,6 +66,13 @@
 	color: var(--g-ink-mid);
 }
 
+.enc-scrub-legend {
+	margin: var(--g-2) 0 0;
+	max-width: var(--g-measure);
+	font-size: var(--g-size-tiny);
+	color: var(--g-ink-low);
+}
+
 @media (max-width: 600px) {
 	.enc-scrub-rail {
 		flex-wrap: wrap;

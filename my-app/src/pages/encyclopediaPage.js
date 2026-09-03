@@ -1,5 +1,5 @@
-import React from 'react';
-import { Switch, Route, useRouteMatch } from 'react-router-dom';
+import React, { useEffect, useRef } from 'react';
+import { Switch, Route, useRouteMatch, useLocation } from 'react-router-dom';
 import XalianNavbar from '../components/navbar';
 import EncyclopediaShell from '../components/encyclopedia/EncyclopediaShell';
 import ReadingRoom from '../components/encyclopedia/ReadingRoom';
@@ -23,6 +23,43 @@ import Tour from '../components/encyclopedia/Tour';
  */
 export default function EncyclopediaPage() {
     const { path } = useRouteMatch();
+    const location = useLocation();
+    const prevPathname = useRef(location.pathname);
+
+    // React Router v5 does not reset scroll on navigation. Reset to the top
+    // on a route change (a different pathname), unless the new location
+    // carries a hash: then let the target element's scrollIntoView win.
+    // A search-only change (same pathname, different query string) leaves
+    // scroll position alone.
+    useEffect(() => {
+        const pathnameChanged = prevPathname.current !== location.pathname;
+        prevPathname.current = location.pathname;
+        if (!pathnameChanged) return;
+
+        // Bootstrap reboot sets `scroll-behavior: smooth` on :root (unless
+        // the visitor prefers reduced motion). Suspending it via inline
+        // style only takes effect once the browser has recalculated style,
+        // so force a reflow before scrolling or the smooth animation still
+        // plays from whatever it last cascaded from.
+        const root = document.documentElement;
+        const previousScrollBehavior = root.style.scrollBehavior;
+        root.style.scrollBehavior = 'auto';
+        // eslint-disable-next-line no-unused-expressions
+        root.offsetHeight;
+
+        if (location.hash) {
+            const id = location.hash.slice(1);
+            const target = document.getElementById(id);
+            if (target) {
+                target.scrollIntoView({ block: 'start' });
+                root.style.scrollBehavior = previousScrollBehavior;
+                return;
+            }
+        }
+        window.scrollTo(0, 0);
+        root.style.scrollBehavior = previousScrollBehavior;
+    }, [location.pathname, location.hash]);
+
     return (
         <div className="g-console enc-console">
             <XalianNavbar />
