@@ -694,29 +694,5 @@
       "canFly": false,
       "attackRange": "low"
     }
-  },
-  {
-    "name": "Frackworm",
-    "id": "00030",
-    "type": "Sand",
-    "planet": "Endessa",
-    "height": "472 in / 1200 cm",
-    "weight": "6614 lbs / 3000 kg",
-    "description": "A colossal segmented worm with a ringed, drill-like head and a body that holds a slurry of sand under pressure, the Frackworm was generated on Endessa by the Syndicate's stolen prototype Generator to work the Nightcap wells. It bores down through the glass particulate of the dunes to the old ocean-floor substrate and forces its slurry into the seams at pressure until the rock fractures and the Nightcap pools drain toward the well. Wildcatters who could afford one opened a well in days that a crew of Drilltails took a season to reach, and the Nightcap Barons fielded them by the dozen. Today the Frackworms still work the cavern networks beneath the dunes, fracturing the substrate for the Xalians who kept drilling after the Barons died.",
-    "statRatings": {
-      "healthRating": "high",
-      "standardAttackRating": "high",
-      "specialAttackRating": "",
-      "standardDefenseRating": "medium",
-      "specialDefenseRating": "",
-      "speedRating": "low",
-      "evasionRating": "low",
-      "staminaRating": "high",
-      "recoveryRating": ""
-    },
-    "traits": {
-      "canFly": false,
-      "attackRange": "low"
-    }
   }
 ]
