@@ -38,14 +38,15 @@ NEGATIVE = (
 
 # Compact spatial briefs per species: counts, placement, shape. Fallback is the anatomy list alone.
 BODY = {
+    'thirstaserp': 'a hooded cobra-like serpent, one coiled body of thick loops, flared frilled hood, open jaws with two long fangs, a rattle at the tail tip, no legs',
     'frackworm': 'a colossal worm whose head is a conical ringed drill point, one long thick body of many ring segments tapering to a blunt tail, no legs, no eyes, no face',
 }
 
 
 def body_phrase(key: str, record: dict) -> str:
-    base = BODY.get(key) or f"a {record['physiology']['bodyPlan']} creature"
+    if key in BODY: return BODY[key]
     parts = ', '.join(record['physiology']['anatomy'])
-    return f'{base}; body parts: {parts}'
+    return f"a {record['physiology']['bodyPlan']} creature with {parts}"
 
 
 def versions():
@@ -82,7 +83,15 @@ def main():
 
     rec_path = ROOT / 'docs' / 'species-templates' / f'{args.key}.json'
     rec = json.loads(rec_path.read_text(encoding='utf-8'))
-    prompt = f'{body_phrase(args.key, rec)}; {STYLES[args.style]}'
+    # SDXL has two text encoders, each capped at 77 CLIP tokens. Body brief goes to encoder 1 (prompt),
+    # style brief to encoder 2 (prompt_2); both are checked so nothing is silently truncated (runs 3 and 4 were).
+    prompt, prompt_2 = body_phrase(args.key, rec), STYLES[args.style]
+    from transformers import CLIPTokenizer
+    tok = CLIPTokenizer.from_pretrained('stabilityai/stable-diffusion-xl-base-1.0', subfolder='tokenizer')
+    for name, text in (('prompt', prompt), ('prompt_2', prompt_2), ('negative', NEGATIVE)):
+        n = len(tok(text)['input_ids'])
+        if n > 77: raise SystemExit(f'{name} is {n} CLIP tokens, limit 77: {text}')
+        print(f'{name}: {n} tokens')
     out = OUT_ROOT / args.key / args.tag
     out.mkdir(parents=True, exist_ok=True)
     refs = [k for k in args.ref.split(',') if k]
@@ -116,7 +125,7 @@ def main():
     manifest = {'key': args.key, 'tag': args.tag, 'model': 'stabilityai/stable-diffusion-xl-base-1.0', 'vae': 'madebyollin/sdxl-vae-fp16-fix',
                 'ip_adapter': 'h94/IP-Adapter sdxl_models/ip-adapter_sdxl_vit-h.safetensors' if refs else None, 'ip_scale': args.ip_scale if refs else None, 'ip_blocks': args.ip_blocks if refs else None, 'style': args.style,
                 'refs': [str(p) for p in ref_paths], 'record': str(rec_path), 'record_sha': sha256(rec_path),
-                'prompt': prompt, 'negative': NEGATIVE, 'steps': args.steps, 'guidance': args.guidance, 'size': args.size,
+                'prompt': prompt, 'prompt_2': prompt_2, 'negative': NEGATIVE, 'steps': args.steps, 'guidance': args.guidance, 'size': args.size,
                 'scheduler': type(pipe.scheduler).__name__, 'versions': versions(), 'candidates': []}
     mpath = out / 'manifest.json'
     t0 = time.time()
@@ -124,7 +133,7 @@ def main():
         seed = args.seed + i
         g = torch.Generator('cpu').manual_seed(seed)      # CPU generator for cross-machine reproducibility
         t1 = time.time()
-        img = pipe(prompt=prompt, negative_prompt=NEGATIVE, num_inference_steps=args.steps, guidance_scale=args.guidance,
+        img = pipe(prompt=prompt, prompt_2=prompt_2, negative_prompt=NEGATIVE, negative_prompt_2=NEGATIVE, num_inference_steps=args.steps, guidance_scale=args.guidance,
                    width=args.size, height=args.size, generator=g, **ip_kwargs).images[0]
         p = out / f'{args.key}-{seed}.png'
         img.save(p)
