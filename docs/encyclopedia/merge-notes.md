@@ -95,5 +95,3 @@ Merged the 29 migrated species Encyclopedia entries from `docs/species-templates
 None of the task's example gap terms (algael, benthane, nightcap, genesis-prototype, stellaris-superstructure, source-code-606, the-chasm, apex, echelon, king-kozrak, nemesis-plague) turned out to be genuinely unresolved; every one that is actually named in a species definition (algael, benthane, king-kozrak, the-chasm) already had an entry and was linked normally. The rest are simply not mentioned by any of the 29 definitions' prose, so no link was expected for them.
 
 **Validation:** `encyclopedia.json` parses as JSON; entry count is 100; all keys are unique; entries remain sorted alphabetically by `key` (the file's existing convention, confirmed against the pre-merge 72-entry file, not by category or insertion order); every `related` key across all 100 entries resolves to an existing key in the file.
-
-- 2026-09-02: frackworm added (related: endessa, nightcap, drilltail as available); drilltail now links to frackworm.
