@@ -3,6 +3,7 @@ import XalianImage from '../xalianImage';
 import XalianSpeciesBadge from '../xalianSpeciesBadge';
 import XalianMoveSet from '../xalianMoveSet';
 import XalianStatChart from '../xalianStatChart';
+import EncyclopediaLink from '../encyclopediaLink';
 
 /**
  * One owned Xalian as a record strip: the account page's row.
@@ -33,7 +34,9 @@ class XalianStatRowView extends React.Component {
 				</div>
 
 				<div className="record-strip-ident">
-					<h3 className="record-strip-name">{x.species.name}</h3>
+					<h3 className="record-strip-name">
+						<EncyclopediaLink kind="species" name={x.species.name} variant="inline" />
+					</h3>
 					<XalianSpeciesBadge type={type} />
 					<XalianSpeciesBadge type={x.elements.secondaryType.toLowerCase()} />
 

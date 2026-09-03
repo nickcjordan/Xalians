@@ -15,6 +15,10 @@ function buildDocuments() {
 			kind: 'entry',
 			key: entry.key,
 			title: entry.title,
+			// Aliases are indexed in their own lower-weighted field so a search for
+			// "Kozrak" or "the Vallerii Empire" still finds the entry, but a title
+			// match still outranks an alias-only match (see the `boost` below).
+			aliases: (entry.aliases || []).join(' '),
 			text: entry.definition,
 			route: routeFor('entry', entry.key),
 		});
@@ -90,10 +94,10 @@ const documents = buildDocuments();
 const documentsById = new Map(documents.map((d) => [d.id, d]));
 
 const miniSearch = new MiniSearch({
-	fields: ['title', 'text'],
+	fields: ['title', 'text', 'aliases'],
 	storeFields: ['kind', 'key', 'title', 'text', 'route'],
 	searchOptions: {
-		boost: { title: 3 },
+		boost: { title: 3, aliases: 2, text: 1 },
 		prefix: true,
 		fuzzy: 0.2,
 	},
@@ -125,7 +129,7 @@ function buildSnippet(text, query, radius = 70) {
 
 export function search(query, { limit = 20 } = {}) {
 	if (!query || !query.trim()) return [];
-	const rawResults = miniSearch.search(query, { boost: { title: 3 }, prefix: true, fuzzy: 0.2 });
+	const rawResults = miniSearch.search(query, { boost: { title: 3, aliases: 2, text: 1 }, prefix: true, fuzzy: 0.2 });
 	return rawResults.slice(0, limit).map((result) => {
 		const doc = documentsById.get(result.id);
 		return {

@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import * as lore from '../../lore';
 import Prose from './Prose';
 import XalianImage from '../xalianImage';
+import Connections from './Connections';
 import { useVisit, useReadMark, markRead } from './trail';
 import './WorldView.css';
 
@@ -285,6 +286,8 @@ export default function WorldView() {
                             </div>
                         </section>
                     )}
+
+                    <Connections kind="world" recordKey={world.key} limit={12} />
                 </div>
             </div>
 

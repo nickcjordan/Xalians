@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import * as lore from '../../lore';
 import Prose from './Prose';
+import Connections from './Connections';
 import { useVisit } from './trail';
 import './EntryView.css';
 
@@ -119,6 +120,8 @@ export default function EntryView() {
                                 </div>
                             </section>
                         )}
+
+                        <Connections kind="entry" recordKey={key} limit={12} />
 
                         {appearances.length > 0 && (
                             <section className="enc-section">

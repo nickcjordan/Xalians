@@ -56,12 +56,12 @@ Navigation: the navbar gains an "Encyclopedia" link between Home and Duel. The o
 | `chronicle.json` | same script | `{ version, note, eras: [{ key, name, order, definition }], events: [{ key, title, era, order, firmness, anchors: [{ planet, paragraph, quote }], planets, entry }], paragraphs: [{ planet, index, era, alsoEras, events, confidence, summary }] }` | exists in docs |
 | `planetRecords.json` | committed as-is | `[{ key, name, element, images: { landscape, planet }, physical: { terrainLabel, sizeVsEarth, radiusKm, gravityVsEarth, temperatureC: { low, high } }, report: { unit, protocol, cycle, terrain, mobility, fauna, hazards, outputPriorities }, history: [string] }]` | untracked today |
 | `species.json` | unchanged | legacy 29 | exists |
-| `speciesRecords.json` | `scripts/bundleLore.js` gathers `docs/species-templates/<key>.json` for keys listed in a manifest of ratified species, plus each `<key>.encyclopedia.json` entry | `{ version, records: [template], entries: [encyclopedia entry] }` | new |
+| `speciesRecords.json` | `scripts/bundleLore.js` gathers `docs/species-templates/<key>.json` for keys listed in a manifest of ratified species | `{ version, note, records: [template] }` | new |
 | `registries.json` | transcribed once by an agent from the ratified definition text in the migrate-species skill (`docs/species-templates/registries.json`), copied by `bundleLore.js`; sight, hearing, smell added as graded senses | `{ attributes, archetypes (with favors), traits, elements, physiology: { corporeality, composition, bodyPlan, covering, diet, communication, media, lifespan, chirality, descriptionStatus }, capabilities, senses, anatomy, channels, actions, instrumentActions }`, each an array of `{ key, name, nature }` | new |
 
 `scripts/bundleLore.js` is idempotent and run by hand after lore changes, like `buildCanonCompendium.js`. The frontend never imports from `docs/`.
 
-Species encyclopedia entries from `speciesRecords.json` are merged into the index at load time under category `xalians`; they are not written into `encyclopedia.json` until the flip.
+Per Nick's ruling on 2026-09-03 (one source location per kind of data), species encyclopedia entries are not derived from `speciesRecords.json` at all: they live only in `docs/encyclopedia/encyclopedia.json` under category `xalians`, written straight into `entries` during migration, and are bundled verbatim like every other entry. `speciesRecords.json` carries only the mechanical template records.
 
 ## 3. Module layout (one folder per agent)
 

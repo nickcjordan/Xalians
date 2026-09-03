@@ -3,8 +3,9 @@
 //
 //   encyclopedia.json    <- docs/encyclopedia/encyclopedia.json (verbatim)
 //   chronicle.json       <- docs/encyclopedia/chronicle.json (verbatim)
-//   speciesRecords.json  <- docs/species-templates/<key>.json + <key>.encyclopedia.json
-//                           for every key in docs/species-templates/RATIFIED.json
+//   speciesRecords.json  <- docs/species-templates/<key>.json for every key in
+//                           docs/species-templates/RATIFIED.json (encyclopedia entries for
+//                           species live only in docs/encyclopedia/encyclopedia.json)
 //
 // Idempotent. Run by hand after any lore change:  node scripts/bundleLore.js
 // Design contract: docs/design/xalian-encyclopedia-page.md section 2.
@@ -34,13 +35,10 @@ if (fs.existsSync(tourPath)) {
 const templates = path.join(docs, 'species-templates');
 const ratified = read(path.join(templates, 'RATIFIED.json'));
 const records = [];
-const entries = [];
 for (const key of ratified.species) {
   const record = read(path.join(templates, `${key}.json`));
   if (record.key !== key) throw new Error(`template ${key}.json carries key ${record.key}`);
   records.push(record);
-  const entryPath = path.join(templates, `${key}.encyclopedia.json`);
-  if (fs.existsSync(entryPath)) entries.push(read(entryPath));
 }
-write('speciesRecords.json', { version: ratified.version, note: ratified.note, records, entries });
-console.log(`${records.length} species records, ${entries.length} species entries`);
+write('speciesRecords.json', { version: ratified.version, note: ratified.note, records });
+console.log(`${records.length} species records`);

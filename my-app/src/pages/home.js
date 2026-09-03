@@ -15,6 +15,8 @@ import XalianStatRatingChart from '../components/xalianStatRatingChart';
 import XalianInfoBox from '../components/xalianInfoBox';
 // import spaceshipComputerScreenTitlePanel from '../svg/animations/spaceship_computer_screen_title_panel.svg';
 import XaliansLogoDnaAnimated from '../components/animations/xaliansLogoDnaAnimated.js'
+import { Link } from 'react-router-dom';
+import './home.encyclopedia.css';
 
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -239,7 +241,27 @@ class Home extends React.Component {
 							</div>
 						</section>
 
-
+						<section id="encyclopedia-section" className="g-shell home-encyclopedia-section">
+							<div className="g-panel home-encyclopedia-panel">
+								<p className="g-kicker">Archive Access</p>
+								<h2 className="g-h2">Encyclopedia Xalia</h2>
+								<p className="home-encyclopedia-body">
+									Every world, species, and event the Generator has on file is catalogued in one archive.
+									Open a record to read what is known before the tournament asks you to bet on it.
+								</p>
+								<div className="home-encyclopedia-tiles">
+									<Link to="/encyclopedia/tour" className="g-tile home-encyclopedia-tile">
+										<span className="g-tile-name">Begin the First Survey</span>
+									</Link>
+									<Link to="/encyclopedia/chronicle" className="g-tile home-encyclopedia-tile">
+										<span className="g-tile-name">Read the Chronicle</span>
+									</Link>
+									<Link to="/encyclopedia/species" className="g-tile home-encyclopedia-tile">
+										<span className="g-tile-name">Open the Bestiary</span>
+									</Link>
+								</div>
+							</div>
+						</section>
 
 						<section id="story-section" >
 							<Container id="background-story-subsection" style={{ marginBottom: '50px' }}>

@@ -5,6 +5,7 @@ import EncyclopediaShell from '../components/encyclopedia/EncyclopediaShell';
 import ReadingRoom from '../components/encyclopedia/ReadingRoom';
 import Chronicle from '../components/encyclopedia/Chronicle';
 import EraView from '../components/encyclopedia/EraView';
+import Reader from '../components/encyclopedia/Reader';
 import Worlds from '../components/encyclopedia/Worlds';
 import WorldView from '../components/encyclopedia/WorldView';
 import Bestiary from '../components/encyclopedia/Bestiary';
@@ -73,6 +74,8 @@ export default function EncyclopediaPage() {
                     <Route exact path={`${path}`}><ReadingRoom /></Route>
                     <Route exact path={`${path}/chronicle`}><Chronicle /></Route>
                     <Route exact path={`${path}/chronicle/:era`}><EraView /></Route>
+                    <Route exact path={`${path}/read`}><Reader /></Route>
+                    <Route exact path={`${path}/read/:era`}><Reader /></Route>
                     <Route exact path={`${path}/worlds`}><Worlds /></Route>
                     <Route exact path={`${path}/worlds/:key`}><WorldView /></Route>
                     <Route exact path={`${path}/species`}><Bestiary /></Route>

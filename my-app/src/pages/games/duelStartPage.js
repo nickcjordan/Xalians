@@ -13,6 +13,7 @@ import * as duelPieceBuilder from '../../gameplay/duel/duelPieceBuilder';
 import DuelPage from './duelPage';
 import HowToPlayModal from '../../components/games/duel/howToPlayModal';
 import LocalDuelStorage from '../../store/LocalStorage';
+import EncyclopediaLink from '../../components/encyclopediaLink';
 
 class DuelStartPage extends React.Component {
 
@@ -134,7 +135,12 @@ class DuelStartPage extends React.Component {
                                                 <XalianImage colored speciesName={x.species.name} primaryType={x.elements.primaryType} moreClasses="species-tile-img" />
                                             </span>
                                             <span className="species-tile-legend">
-                                                <span className="species-tile-name">{x.species.name}</span>
+                                                <span className="species-tile-name">
+                                                    {x.species.name}
+                                                    <span onClick={(e) => e.stopPropagation()}>
+                                                        <EncyclopediaLink kind="species" name={x.species.name} variant="icon" />
+                                                    </span>
+                                                </span>
                                                 <span className="species-tile-meta">
                                                     <span className="species-tile-id">#{x.xalianId.split('-').pop().substring(0, 8)}</span>
                                                 </span>
