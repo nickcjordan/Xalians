@@ -38,21 +38,28 @@ def main():
     ap.add_argument('--steps', type=int, default=8)
     ap.add_argument('--size', type=int, default=1024)
     ap.add_argument('--tag', default='zimage')
+    ap.add_argument('--lora', default='', help='path to a LoRA .safetensors to load on the transformer')
+    ap.add_argument('--lora-scale', type=float, default=1.0)
+    ap.add_argument('--trigger', default='', help='word prepended to the prompt when a LoRA is loaded, e.g. xalsil')
     args = ap.parse_args()
 
     rec_path = sil.ROOT / 'docs' / 'species-templates' / f'{args.key}.json'
     rec = json.loads(rec_path.read_text(encoding='utf-8'))
     body = BODY.get(args.key) or sil.body_phrase(args.key, rec)
     prompt = f'{body} {STYLE}'
+    if args.lora and args.trigger: prompt = f'{args.trigger} silhouette. {prompt}'
     out = sil.OUT_ROOT / args.key / args.tag
     out.mkdir(parents=True, exist_ok=True)
 
     import torch
     from diffusers import ZImagePipeline
     pipe = ZImagePipeline.from_pretrained(MODEL, torch_dtype=torch.bfloat16)
+    if args.lora:
+        pipe.load_lora_weights(args.lora, adapter_name='xalsil')
+        pipe.set_adapters(['xalsil'], adapter_weights=[args.lora_scale])
     pipe.enable_model_cpu_offload()
 
-    manifest = {'key': args.key, 'tag': args.tag, 'model': MODEL, 'quant': 'bitsandbytes 4-bit (pre-quantized)',
+    manifest = {'key': args.key, 'tag': args.tag, 'model': MODEL, 'quant': 'bitsandbytes 4-bit (pre-quantized)', 'lora': args.lora or None, 'lora_scale': args.lora_scale if args.lora else None,
                 'record': str(rec_path), 'record_sha': sil.sha256(rec_path), 'prompt': prompt, 'steps': args.steps,
                 'guidance': 0.0, 'size': args.size, 'scheduler': type(pipe.scheduler).__name__, 'versions': sil.versions(),
                 'candidates': []}
