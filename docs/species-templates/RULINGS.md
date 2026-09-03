@@ -73,3 +73,4 @@ Per-species decisions that a migration agent cannot derive from the sources alon
   - luceras: [-34, 42] -> [-30, 42] (intersection)
   - neph: [-60, 45] -> [-30, 45] (intersection)
   - foromeer: [-12, 36] -> [-10, 36] (intersection)
+- 2026-09-02: Stonera and Endessa batch: Codazzo, Terragoyle, Scalatto, Thirstaserp, Drilltail migrated, validated, amended; roster complete (29 of 29). Rulings: Terragoyle stone is a held object, not composition; carried source descriptions may have unambiguous misspellings corrected with a note (species.json to be fixed upstream); the armored-covering lifespan adjustment is applied as written (Foromeer, Scalatto, Drilltail are `long`); Drilltail signature is pincers / crush. Notes carried, no change made: a resting perch read as a gait (Terragoyle), the armored clause on small disposable chitin bodies (Drilltail), the rock `burst` cell being unreachable for spined species, and `communication` having no unknown value.

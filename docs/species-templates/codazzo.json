@@ -1,0 +1,181 @@
+{
+  "key": "codazzo",
+  "name": "Codazzo",
+  "element": "rock",
+  "homePlanet": "stonera",
+  "generatorPlanets": [
+    "stonera"
+  ],
+  "lore": {
+    "description": "A lean, upright digger whose raised tail carries a fan of banded explosive barbs, the Codazzo was generated on Stonera, a world that crosses the Jorian Belt each year under a planetwide bombardment of asteroids and meteors, where the Generator produced Xalians that could quickly dig their way to safety. When spooked it digs its body underground and exposes only that tail. If provoked it will not hesitate to fire off a few projectiles, and its regenerative power quickly grows more.",
+    "descriptionStatus": "upgraded",
+    "biomeNiche": "tunneler in the fissured rock and craters of Stonera"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "biped",
+    "anatomy": [
+      "claws",
+      "tail",
+      "spines",
+      "hide"
+    ],
+    "covering": "fur",
+    "size": {
+      "heightCm": [
+        58,
+        82
+      ],
+      "weightKg": [
+        18,
+        32
+      ]
+    },
+    "lifespan": "standard",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "vibration"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -20,
+        "max": 25
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        5,
+        20
+      ],
+      "burrow": [
+        70,
+        92
+      ],
+      "climb": [
+        30,
+        50
+      ],
+      "sprint": [
+        35,
+        55
+      ],
+      "leap": [
+        25,
+        45
+      ],
+      "manipulation": [
+        35,
+        55
+      ]
+    },
+    "senses": {
+      "sight": [
+        30,
+        50
+      ],
+      "hearing": [
+        45,
+        65
+      ],
+      "smell": [
+        40,
+        60
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    }
+  },
+  "archetypeWeights": {
+    "prowler": 40,
+    "survivor": 25,
+    "skirmisher": 20,
+    "predator": 15
+  },
+  "attributes": {
+    "strength": [
+      30,
+      50
+    ],
+    "vitality": [
+      40,
+      60
+    ],
+    "endurance": [
+      45,
+      68
+    ],
+    "agility": [
+      45,
+      65
+    ],
+    "reflex": [
+      50,
+      72
+    ],
+    "intelligence": [
+      25,
+      42
+    ],
+    "willpower": [
+      30,
+      50
+    ],
+    "instinct": [
+      55,
+      78
+    ],
+    "charisma": [
+      15,
+      35
+    ],
+    "resilience": [
+      35,
+      55
+    ]
+  },
+  "traits": {
+    "pool": {
+      "regenerative": 100,
+      "volatile": 85,
+      "stealthy": 70,
+      "resistant": 55,
+      "perceptive": 40,
+      "slippery": 30,
+      "solitary": 25,
+      "menacing": 10
+    }
+  },
+  "instruments": [
+    "spines",
+    "tail",
+    "claws"
+  ],
+  "signatureAbility": {
+    "name": "Buried Quiver",
+    "instrument": "spines",
+    "action": "hurl",
+    "medium": "rock",
+    "intensity": [
+      30,
+      78
+    ],
+    "description": "The Codazzo sinks its body into the ground until only the tail stands clear, then fires barbs at whatever comes near and grows them back."
+  }
+}

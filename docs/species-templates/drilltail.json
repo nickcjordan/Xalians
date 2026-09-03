@@ -1,0 +1,180 @@
+{
+  "key": "drilltail",
+  "name": "Drilltail",
+  "element": "sand",
+  "homePlanet": "endessa",
+  "generatorPlanets": [
+    "endessa"
+  ],
+  "lore": {
+    "description": "A dog-sized, scorpion-like creature whose arched tail ends in a small stinger-like drill, the Drilltail was originally used by wildcatters on Endessa who lacked the funding to employ larger drilling Xalians like the Frackworm. It uses its drill to quickly tunnel through the earth, darting in and out of the surface as it hunts for prey to ambush with its sharp, scissor-like claws. Endessa's wildcatters drilled haphazard wells through large cavern networks beneath the dunes, and the Drilltail still tunnels there.",
+    "descriptionStatus": "upgraded",
+    "biomeNiche": "the packed sand and deep cavern networks of Endessa's Nightcap wells"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "multiped",
+    "anatomy": [
+      "pincers",
+      "tail",
+      "jaws",
+      "shell",
+      "claws"
+    ],
+    "covering": "chitin",
+    "size": {
+      "heightCm": [
+        55,
+        85
+      ],
+      "weightKg": [
+        22,
+        40
+      ]
+    },
+    "lifespan": "long",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "carnivore",
+    "communication": [
+      "vibration"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -5,
+        "max": 52
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        5,
+        18
+      ],
+      "burrow": [
+        80,
+        95
+      ],
+      "climb": [
+        35,
+        55
+      ],
+      "sprint": [
+        52,
+        72
+      ],
+      "leap": [
+        18,
+        34
+      ],
+      "manipulation": [
+        45,
+        65
+      ]
+    },
+    "senses": {
+      "sight": [
+        35,
+        55
+      ],
+      "hearing": [
+        42,
+        60
+      ],
+      "smell": [
+        46,
+        64
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    }
+  },
+  "archetypeWeights": {
+    "prowler": 40,
+    "predator": 30,
+    "skirmisher": 20,
+    "survivor": 10
+  },
+  "attributes": {
+    "strength": [
+      35,
+      58
+    ],
+    "vitality": [
+      30,
+      50
+    ],
+    "endurance": [
+      45,
+      68
+    ],
+    "agility": [
+      52,
+      76
+    ],
+    "reflex": [
+      55,
+      80
+    ],
+    "intelligence": [
+      20,
+      38
+    ],
+    "willpower": [
+      25,
+      45
+    ],
+    "instinct": [
+      58,
+      84
+    ],
+    "charisma": [
+      12,
+      30
+    ],
+    "resilience": [
+      45,
+      68
+    ]
+  },
+  "traits": {
+    "pool": {
+      "armored": 100,
+      "stealthy": 80,
+      "resistant": 60,
+      "perceptive": 45,
+      "pack-bonded": 15,
+      "slippery": 25,
+      "toxic": 5
+    }
+  },
+  "instruments": [
+    "tail",
+    "pincers"
+  ],
+  "signatureAbility": {
+    "name": "Wildcatter Auger",
+    "instrument": "pincers",
+    "action": "crush",
+    "medium": "sand",
+    "intensity": [
+      30,
+      80
+    ],
+    "description": "The Drilltail runs a shaft beneath its quarry, comes up under it, and closes its scissor-like pincers on it."
+  }
+}

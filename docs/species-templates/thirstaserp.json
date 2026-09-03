@@ -1,0 +1,183 @@
+{
+  "key": "thirstaserp",
+  "name": "Thirstaserp",
+  "element": "sand",
+  "homePlanet": "endessa",
+  "generatorPlanets": [
+    "endessa"
+  ],
+  "lore": {
+    "description": "A large, cobra-like serpent with a broad flaring hood and a rattling tail, the Thirstaserp hides beneath the sand of Endessa, a world whose oceans were vaporized and whose surface is now desert. It emits a subsonic vibration from the rattles on its tail that can lure and mesmerize opponents long enough for it to draw near and attack with a unique venom that drains the victim's water when bitten, causing the victim to suffer and die from extreme dehydration.",
+    "descriptionStatus": "upgraded",
+    "biomeNiche": "buried in the rolling dunes of Endessa"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "serpentine",
+    "anatomy": [
+      "jaws",
+      "fangs",
+      "tail",
+      "rattle"
+    ],
+    "covering": "scales",
+    "size": {
+      "heightCm": [
+        190,
+        250
+      ],
+      "weightKg": [
+        95,
+        145
+      ]
+    },
+    "lifespan": "standard",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "carnivore",
+    "communication": [
+      "vibration"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": 10,
+        "max": 55
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        10,
+        25
+      ],
+      "burrow": [
+        60,
+        85
+      ],
+      "climb": [
+        10,
+        25
+      ],
+      "sprint": [
+        35,
+        55
+      ],
+      "leap": [
+        40,
+        60
+      ],
+      "manipulation": [
+        5,
+        20
+      ]
+    },
+    "senses": {
+      "sight": [
+        40,
+        60
+      ],
+      "hearing": [
+        30,
+        50
+      ],
+      "smell": [
+        55,
+        75
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    }
+  },
+  "archetypeWeights": {
+    "predator": 50,
+    "prowler": 25,
+    "skirmisher": 15,
+    "survivor": 10
+  },
+  "attributes": {
+    "strength": [
+      45,
+      65
+    ],
+    "vitality": [
+      40,
+      60
+    ],
+    "endurance": [
+      45,
+      65
+    ],
+    "agility": [
+      50,
+      70
+    ],
+    "reflex": [
+      60,
+      80
+    ],
+    "intelligence": [
+      20,
+      35
+    ],
+    "willpower": [
+      35,
+      55
+    ],
+    "instinct": [
+      65,
+      85
+    ],
+    "charisma": [
+      30,
+      50
+    ],
+    "resilience": [
+      35,
+      55
+    ]
+  },
+  "traits": {
+    "pool": {
+      "toxic": 100,
+      "stealthy": 90,
+      "hypnotic": 70,
+      "resistant": 60,
+      "solitary": 55,
+      "perceptive": 40,
+      "slippery": 30,
+      "nocturnal": 25,
+      "menacing": 20,
+      "pack-bonded": 10
+    }
+  },
+  "instruments": [
+    "jaws",
+    "rattle",
+    "secretion"
+  ],
+  "signatureAbility": {
+    "name": "Thirst of the Endless Sea",
+    "instrument": "jaws",
+    "action": "drain",
+    "medium": "sand",
+    "intensity": [
+      55,
+      85
+    ],
+    "description": "It buries its fangs and drains the water out of what it has bitten."
+  }
+}

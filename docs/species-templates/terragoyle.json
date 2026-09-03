@@ -1,0 +1,183 @@
+{
+  "key": "terragoyle",
+  "name": "Terragoyle",
+  "element": "rock",
+  "homePlanet": "stonera",
+  "generatorPlanets": [
+    "stonera"
+  ],
+  "lore": {
+    "description": "Resembling horned and vaguely humanoid bats with elongated tails tipped with a levatating ball of stone, Terragoygles can be found lining the edges of the Chasm. They were originally used to airlift debris out of Stonera's strip mines with their levitational tails, but now stand guard over the perimeter in a statue-like state, hibernating to conserve their energy until a threat is detected. When awoken, Terragoyles rise high into the sky, using their tails to levitate boulders and fling them like great flying catapults across the Chasm beneath them or to carpet bomb intruders with strafing runs of gravel and rock as they soar overhead.",
+    "descriptionStatus": "source",
+    "biomeNiche": "the rim of the Chasm strip-mine, perched over a hollow of liquid metal"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "quadruped",
+    "anatomy": [
+      "horns",
+      "wings",
+      "tail",
+      "hide"
+    ],
+    "covering": "hide",
+    "size": {
+      "heightCm": [
+        150,
+        185
+      ],
+      "weightKg": [
+        300,
+        430
+      ]
+    },
+    "lifespan": "long",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "vocal",
+      "display"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -45,
+        "max": 25
+      }
+    },
+    "capabilities": {
+      "flight": [
+        60,
+        85
+      ],
+      "swim": [
+        0,
+        10
+      ],
+      "burrow": [
+        5,
+        20
+      ],
+      "climb": [
+        45,
+        70
+      ],
+      "sprint": [
+        20,
+        40
+      ],
+      "leap": [
+        35,
+        60
+      ],
+      "manipulation": [
+        45,
+        70
+      ]
+    },
+    "senses": {
+      "sight": [
+        55,
+        80
+      ],
+      "hearing": [
+        60,
+        85
+      ],
+      "smell": [
+        20,
+        40
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    }
+  },
+  "archetypeWeights": {
+    "bulwark": 45,
+    "stalwart": 25,
+    "juggernaut": 20,
+    "predator": 10
+  },
+  "attributes": {
+    "strength": [
+      60,
+      80
+    ],
+    "vitality": [
+      62,
+      82
+    ],
+    "endurance": [
+      55,
+      78
+    ],
+    "agility": [
+      20,
+      40
+    ],
+    "reflex": [
+      25,
+      45
+    ],
+    "intelligence": [
+      25,
+      45
+    ],
+    "willpower": [
+      55,
+      78
+    ],
+    "instinct": [
+      45,
+      68
+    ],
+    "charisma": [
+      20,
+      40
+    ],
+    "resilience": [
+      70,
+      90
+    ]
+  },
+  "traits": {
+    "pool": {
+      "anchored": 100,
+      "telekinetic": 100,
+      "menacing": 60,
+      "perceptive": 55,
+      "resistant": 50,
+      "solitary": 35
+    }
+  },
+  "instruments": [
+    "tail",
+    "wings",
+    "horns"
+  ],
+  "conduits": {
+    "tail": "rock"
+  },
+  "signatureAbility": {
+    "name": "Perimeter of Standing Stones",
+    "instrument": "tail",
+    "action": "hurl",
+    "medium": "rock",
+    "intensity": [
+      45,
+      85
+    ],
+    "description": "It wakes from its statue-like state, rises above the Chasm, and drops the boulders its tail holds aloft onto what crossed the rim."
+  }
+}
