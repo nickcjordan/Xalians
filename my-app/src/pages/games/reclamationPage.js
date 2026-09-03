@@ -1,12 +1,10 @@
 import React from 'react';
 import XalianNavbar from '../../components/navbar';
 import ReclamationMatch from '../../components/games/reclamation/reclamationMatch';
-import { rollExpeditionXalians } from '../../gameplay/expedition/devtools/rollExpeditionXalians';
-import { createMatch, createRngState, nextRandom } from '../../gameplay/expedition/expeditionRules';
+import { buildRosters } from '../../gameplay/expedition/roster';
+import { createMatch } from '../../gameplay/expedition/expeditionRules';
 import { getWorlds } from '../../gameplay/expedition/sites';
 import { ROSTER_SIZE, SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH } from '../../gameplay/expedition/expeditionInterpretation';
-
-const POOL_SIZE = 60;
 
 function seedFromQueryOrDefault() {
 	const params = new URLSearchParams(window.location.search);
@@ -15,31 +13,6 @@ function seedFromQueryOrDefault() {
 		return fromQuery;
 	}
 	return Date.now() % 100000;
-}
-
-// Fisher-Yates over the engine's own deterministic PRNG, so the same seed always deals
-// the same two rosters — the /tribute page builds its decks the same way.
-function shuffleWithRng(array, rngState) {
-	const result = array.slice();
-	let state = rngState;
-	for (let i = result.length - 1; i > 0; i--) {
-		const { value, nextState } = nextRandom(state);
-		state = nextState;
-		const j = Math.floor(value * (i + 1));
-		const tmp = result[i];
-		result[i] = result[j];
-		result[j] = tmp;
-	}
-	return { array: result, nextState: state };
-}
-
-function buildRosters(seed) {
-	const pool = rollExpeditionXalians(POOL_SIZE, seed);
-	const { array: shuffled } = shuffleWithRng(pool, createRngState(`${seed}-rosterbuild`));
-	return {
-		rosterA: shuffled.slice(0, ROSTER_SIZE),
-		rosterB: shuffled.slice(ROSTER_SIZE, ROSTER_SIZE * 2),
-	};
 }
 
 class ReclamationPage extends React.Component {
@@ -134,7 +107,7 @@ class ReclamationPage extends React.Component {
 							</div>
 
 							<ul className="rec-charter-rules">
-								<li><strong>Reserve.</strong> The {ROSTER_SIZE - SENDABLE} creatures you never send are your reserve, chosen as you go.</li>
+								<li><strong>Roster.</strong> Your {ROSTER_SIZE} are generated from the Encyclopedia's species, dealt by the seed. The {ROSTER_SIZE - SENDABLE} you never send are your reserve, chosen as you go.</li>
 								<li><strong>Fall back.</strong> The side that moves first on a world may, once, move its first creature to another site without spending a turn.</li>
 								<li><strong>Hidden.</strong> A stealthy creature may be sent hidden. The rival learns that you sent something, not what or where.</li>
 							</ul>

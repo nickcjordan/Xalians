@@ -1,12 +1,14 @@
 import React from 'react';
 import { speciesLabel, formatHold } from './reclamationNarration';
+import XalianSVG from '../../../svg/species/xalianSvg';
+import { getSpeciesTemplate } from '../../../gameplay/generator/index.js';
 
 /*
 	ReclamationFigure — one creature standing on the table.
 
-	No artwork exists for the provisional species, so the figure is what a wargame figure
-	would be if the machine shop made it: the species name stencilled on a small steel
-	plate, standing on a painted disc plinth. The side's paint is the disc (bone/olive for
+	The figure is what a wargame figure would be if the machine shop made it: the species
+	silhouette (the Encyclopedia's own species art) and its name stencilled on a small
+	steel plate, standing on a painted disc plinth. The side's paint is the disc (bone/olive for
 	the handler, gunmetal for the rival), the element is a medallion on the front of the
 	disc with its name beside it, and the creature's live hold is stamped at the disc's
 	foot in tabular mono, large, because hold is the number the whole game is counted in.
@@ -87,6 +89,8 @@ function ReclamationFigure({
 	}
 
 	const name = record ? speciesLabel(record) : (label || 'Unknown');
+	// the species silhouette from the Encyclopedia's own art, when the record is a real species
+	const portrait = record && record.species && getSpeciesTemplate(record.species) && !hidden ? record.species : null;
 	const tags = [];
 	if (isHome) {
 		tags.push({ key: 'home', text: 'home' });
@@ -116,6 +120,11 @@ function ReclamationFigure({
 		>
 			{flash && <span className={`rec-figure-flash rec-figure-flash--${flash.kind}`}>{flash.text}</span>}
 			<span className="rec-figure-plate">
+				{portrait && (
+					<span className="rec-figure-portrait" aria-hidden="true">
+						<XalianSVG name={portrait} className="rec-figure-portrait-svg" />
+					</span>
+				)}
 				<span className="rec-figure-name">{name}</span>
 				{badge && <span className="rec-figure-badge">{badge}</span>}
 			</span>

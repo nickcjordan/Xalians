@@ -5,6 +5,8 @@
 //   chronicle.json       <- docs/encyclopedia/chronicle.json (verbatim)
 //   speciesRecords.json  <- docs/species-templates/<key>.json + <key>.encyclopedia.json
 //                           for every key in docs/species-templates/RATIFIED.json
+//   abilityCatalog.json  <- docs/ability-catalog/consolidated-<element>.md + neutral-pools.md
+//                           (via scripts/bundleAbilityCatalog.js)
 //
 // Idempotent. Run by hand after any lore change:  node scripts/bundleLore.js
 // Design contract: docs/design/xalian-encyclopedia-page.md section 2.
@@ -44,3 +46,5 @@ for (const key of ratified.species) {
 }
 write('speciesRecords.json', { version: ratified.version, note: ratified.note, records, entries });
 console.log(`${records.length} species records, ${entries.length} species entries`);
+
+require('./bundleAbilityCatalog.js').main();

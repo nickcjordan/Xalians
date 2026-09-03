@@ -6,6 +6,16 @@ import {
 } from '../../../gameplay/expedition/expeditionInterpretation';
 import { conductSentence } from './reclamationPreview';
 import { speciesLabel, formatHold } from './reclamationNarration';
+import XalianImage from '../../xalianImage';
+import {
+	speciesFacts, archetypeLabel, traitName, traitNature, actionName, instrumentName,
+	elementName, sizeLine, toleranceLine, breathesLine, coveringName, bodyPlanName,
+} from './reclamationVocabulary';
+import { TRAIT } from '../../../gameplay/expedition/expeditionInterpretation';
+
+// the traits this game reads (design doc, "Conduct"); every other trait is shown but marked
+// as not yet read by the table
+const READ_TRAITS = new Set(Object.values(TRAIT));
 
 /*
 	ReclamationInspect — the dossier panel. Opens for any figure, yours or the rival's,
@@ -59,19 +69,38 @@ function ReclamationInspect({ record, site, world, onClose }) {
 	const prepared = prepare(record, target, world, 0);
 	const el = record.element.primary;
 	const armored = prepared.armored;
+	const facts = speciesFacts(record);
+	const traits = prepared.traitKeywords;
+	const secondary = Object.keys(record.element.affinities || {}).find((k) => k !== el);
+	const signature = (record.abilities || []).find((a) => a.signature);
+	const finish = record.appearance && record.appearance.finish && record.appearance.finish !== 'standard' ? record.appearance.finish : null;
 
 	return (
 		<aside className={`g-panel rec-inspect g-el-${el}`} aria-label="Creature dossier">
 			<header className="rec-inspect-head">
-				<div>
+				{facts && (
+					<div className="rec-inspect-portrait">
+						<XalianImage colored speciesName={record.species} primaryType={el} unPadded moreClasses="rec-inspect-portrait-image" />
+					</div>
+				)}
+				<div className="rec-inspect-title">
 					<h3 className="rec-inspect-name">{speciesLabel(record)}</h3>
+					<p className="rec-inspect-sub">
+						{archetypeLabel(record.archetype)}
+					</p>
 					<p className="rec-inspect-sub g-mono">
-						{record.archetype.key} · {el}
-						{record.provenance && record.provenance.origin ? ` · of ${record.provenance.origin}` : ''}
+						{elementName(el).toLowerCase()}
+						{secondary ? ` (${elementName(secondary).toLowerCase()} ${record.element.affinities[secondary]})` : ''}
+						{facts && facts.homePlanetName ? ` · of ${facts.homePlanetName}` : (record.provenance && record.provenance.origin ? ` · of ${record.provenance.origin}` : '')}
+						{finish ? ` · ${finish} finish` : ''}
 					</p>
 				</div>
 				<button type="button" className="g-btn g-btn--icon rec-inspect-close" onClick={onClose} aria-label="Close dossier">x</button>
 			</header>
+
+			{facts && facts.biomeNiche && (
+				<p className="g-body rec-inspect-niche">{facts.biomeNiche.charAt(0).toUpperCase() + facts.biomeNiche.slice(1)}.</p>
+			)}
 
 			<p className="g-label rec-inspect-context">
 				Read at {target.name}{site ? '' : ' (not yet sent; shown at the first site)'}
@@ -96,14 +125,15 @@ function ReclamationInspect({ record, site, world, onClose }) {
 				<span className="g-label">Acts</span>
 				<table className="g-data rec-inspect-acts">
 					<thead>
-						<tr><th>Name</th><th>Act</th><th>Class</th><th>Magnitude</th></tr>
+						<tr><th>Name</th><th>Act</th><th>By</th><th>Medium</th><th>Magnitude</th></tr>
 					</thead>
 					<tbody>
 						{prepared.acts.map((a) => (
-							<tr key={a.name} className={a.action === prepared.favoredAct.action ? 'rec-act-favored' : ''}>
+							<tr key={a.name} className={a.action === prepared.favoredAct.action ? 'rec-act-favored' : ''} title={a.class ? `${a.class} act` : undefined}>
 								<td>{a.name}{a.signature ? ' *' : ''}</td>
-								<td>{a.action}</td>
-								<td>{a.class}</td>
+								<td>{actionName(a.action).toLowerCase()}</td>
+								<td>{instrumentName(a.instrument).toLowerCase()}</td>
+								<td>{a.medium ? elementName(a.medium).toLowerCase() : ''}</td>
 								<td>{a.magnitude}</td>
 							</tr>
 						))}
@@ -112,6 +142,11 @@ function ReclamationInspect({ record, site, world, onClose }) {
 				<p className="g-body rec-inspect-note">
 					By nature it performs {prepared.favoredAct.name || 'Hold'} when given no order. A starred act is its signature.
 				</p>
+				{signature && signature.description && (
+					<p className="g-body rec-inspect-signature">
+						<span className="rec-inspect-signature-name">{signature.name}.</span> {signature.description}
+					</p>
+				)}
 			</div>
 
 			<div className="rec-inspect-section">
@@ -121,10 +156,28 @@ function ReclamationInspect({ record, site, world, onClose }) {
 
 			<div className="rec-inspect-section">
 				<span className="g-label">Traits</span>
+				{traits.length > 0 ? (
+					<ul className="rec-inspect-traits">
+						{traits.map((key) => (
+							<li key={key} className={READ_TRAITS.has(key) ? 'rec-inspect-trait rec-inspect-trait--read' : 'rec-inspect-trait'} title={READ_TRAITS.has(key) ? 'The table reads this trait' : 'Recorded; the table does not read it yet'}>
+								<span className="rec-inspect-trait-name">{traitName(key)}</span>
+								<span className="rec-inspect-trait-nature">{traitNature(key)}</span>
+							</li>
+						))}
+					</ul>
+				) : <p className="g-body">no traits landed</p>}
+			</div>
+
+			<div className="rec-inspect-section">
+				<span className="g-label">Body</span>
 				<p className="g-body">
-					{prepared.traitKeywords.length > 0
-						? prepared.traitKeywords.join(', ')
-						: 'no keyword traits'}
+					{[
+						bodyPlanName(record.physiology && record.physiology.bodyPlan).toLowerCase(),
+						record.physiology && record.physiology.covering ? `in ${coveringName(record.physiology.covering).toLowerCase()}` : '',
+						sizeLine(record.physiology),
+					].filter(Boolean).join(', ')}.
+					{' '}{breathesLine(record.physiology).charAt(0).toUpperCase() + breathesLine(record.physiology).slice(1)}; at ease {toleranceLine(record.physiology)}.
+					{' '}Here: {target.environment.medium}, {target.environment.temperatureC.min} to {target.environment.temperatureC.max} C.
 				</p>
 			</div>
 
@@ -132,6 +185,13 @@ function ReclamationInspect({ record, site, world, onClose }) {
 				<span className="g-label">Temperament</span>
 				<p className="g-body">{temperamentWords(record.temperament || {})}.</p>
 			</div>
+
+			{facts && facts.description && (
+				<details className="rec-inspect-section rec-inspect-record">
+					<summary className="g-label">From the Encyclopedia</summary>
+					<p className="g-body">{facts.description}</p>
+				</details>
+			)}
 		</aside>
 	);
 }
