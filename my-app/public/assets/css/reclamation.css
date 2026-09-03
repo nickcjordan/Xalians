@@ -1546,3 +1546,49 @@
 	.rec-roster { width: 100%; min-width: 0; }
 	.rec-roster-strip { width: 100%; }
 }
+
+/* -------------------------------------------------------------------------
+   QUIET WHEN EMPTY. A site with nothing on it prints nothing but its name and
+   its weather; the field is open ground with one faint word on it. The totals
+   under a margin band show only when both sides are present, since a lone
+   number is already in the sentence above them.
+   ------------------------------------------------------------------------- */
+
+.rec-site--empty .rec-site-field {
+	justify-content: center;
+}
+
+.rec-site-midline--empty {
+	border: 0;
+	margin: 0;
+	flex: 1 1 auto;
+}
+
+.rec-site-unclaimed {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	color: color-mix(in srgb, var(--g-ink-low) 55%, transparent);
+}
+
+.rec-site--empty .rec-ghost-value { font-size: var(--g-size-lead); }
+
+/* kept in the DOM for the verification harness, out of sight for the reader */
+.rec-site-margin { position: relative; }
+.rec-site-margin-totals--quiet {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	white-space: nowrap;
+}
+
+/* a one-sided site keeps its ground line but no "nobody here" text */
+.rec-rank:empty { min-height: var(--g-4); }
+
+@media (max-width: 760px) {
+	.rec-site--empty .rec-site-field { min-height: 28px; }
+	.rec-site-midline--empty { min-height: 0; }
+}

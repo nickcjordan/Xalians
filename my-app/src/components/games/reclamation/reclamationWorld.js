@@ -15,6 +15,11 @@ import { formatHold } from './reclamationNarration';
 	When a creature is armed, every site says what sending it there would do ("you would
 	lead by 2.1", "still behind by 1.3") so the choice of site is legible before the click.
 
+	An empty site is quiet: name and weather, open ground, one faint word. It speaks only
+	when there is something to say: the send invitation while a creature is armed, the
+	fall-back target, or the Court's stamp. A one-sided site says who holds it and skips
+	the totals, since the one number is already in the sentence.
+
 	Every hold shown is passed in already computed by the engine's prepare(): this
 	component derives nothing except differences between numbers it was given.
 */
@@ -32,12 +37,12 @@ function environmentLine(site) {
 function marginText(mine, theirs) {
 	const diff = mine - theirs;
 	if (Math.abs(diff) < 0.05) {
-		return { who: 'level', text: mine === 0 && theirs === 0 ? 'nothing here yet' : 'level, to the Court' };
+		return { who: 'level', text: 'level, to the Court' };
 	}
 	if (diff > 0) {
-		return { who: 'mine', text: `you lead by ${formatHold(diff)}` };
+		return { who: 'mine', text: theirs === 0 ? `you hold it, ${formatHold(mine)}, unopposed` : `you lead by ${formatHold(diff)}` };
 	}
-	return { who: 'theirs', text: `rival leads by ${formatHold(-diff)}` };
+	return { who: 'theirs', text: mine === 0 ? `rival holds it, ${formatHold(theirs)}, unopposed` : `rival leads by ${formatHold(-diff)}` };
 }
 
 function ghostText(ghost, mine, theirs) {
@@ -90,11 +95,15 @@ function ReclamationWorld({
 					const mine = (board[site.id][you] || []).filter((e) => e.record);
 					const totalMine = totals[site.id] ? totals[site.id][you] : 0;
 					const totalTheirs = totals[site.id] ? totals[site.id][opponent] : 0;
-					const margin = marginText(totalMine, totalTheirs);
+					const empty = theirs.length === 0 && mine.length === 0;
+					const margin = empty ? { who: 'empty', text: '' } : marginText(totalMine, totalTheirs);
 					const ghost = ghosts && ghosts[site.id];
 					const verdict = verdicts && verdicts[site.id];
 
 					const classes = ['g-panel', 'rec-site', `rec-site--${margin.who}`];
+					if (empty) {
+						classes.push('rec-site--empty');
+					}
 					if (clickable) {
 						classes.push('rec-site--clickable');
 					}
@@ -152,22 +161,25 @@ function ReclamationWorld({
 								<p className="rec-site-env g-mono">{environmentLine(site)}</p>
 							</header>
 
-							<div className={`rec-site-margin rec-site-margin--${margin.who}`} data-site-margin={site.id}>
-								<span className="rec-site-margin-text">{margin.text}</span>
-								<span className="rec-site-margin-totals g-mono">
-									<span data-total-seat={opponent} data-site-total={site.id}>{formatHold(totalTheirs)}</span>
-									<span className="rec-site-margin-vs">rival · you</span>
-									<span data-total-seat={you} data-site-total={site.id}>{formatHold(totalMine)}</span>
-								</span>
-							</div>
+							{!empty && (
+								<div className={`rec-site-margin rec-site-margin--${margin.who}`} data-site-margin={site.id}>
+									<span className="rec-site-margin-text">{margin.text}</span>
+									<span className={`rec-site-margin-totals g-mono${totalMine > 0 && totalTheirs > 0 ? '' : ' rec-site-margin-totals--quiet'}`}>
+										<span data-total-seat={opponent} data-site-total={site.id}>{formatHold(totalTheirs)}</span>
+										<span className="rec-site-margin-vs">rival · you</span>
+										<span data-total-seat={you} data-site-total={site.id}>{formatHold(totalMine)}</span>
+									</span>
+								</div>
+							)}
 
 							<div className="rec-site-field">
-								<div className="rec-rank rec-rank--theirs">
-									{theirs.map((entry) => <ReclamationFigure {...figureProps(entry, opponent, 'down')} />)}
-									{theirs.length === 0 && <span className="rec-rank-empty">no rival creatures</span>}
-								</div>
+								{!empty && (
+									<div className="rec-rank rec-rank--theirs">
+										{theirs.map((entry) => <ReclamationFigure {...figureProps(entry, opponent, 'down')} />)}
+									</div>
+								)}
 
-								<div className="rec-site-midline">
+								<div className={`rec-site-midline${empty ? ' rec-site-midline--empty' : ''}`}>
 									{ghost && (
 										<span className="rec-ghost">
 											<span className="rec-ghost-cta">send here</span>
@@ -182,12 +194,16 @@ function ReclamationWorld({
 									{!ghost && !relocating && verdict && (
 										<span className={`rec-stamp rec-stamp--${verdict.who}`}>{verdict.text}</span>
 									)}
+									{!ghost && !relocating && !verdict && empty && (
+										<span className="rec-site-unclaimed">unclaimed</span>
+									)}
 								</div>
 
-								<div className="rec-rank rec-rank--mine">
-									{mine.map((entry) => <ReclamationFigure {...figureProps(entry, you, 'up')} />)}
-									{mine.length === 0 && <span className="rec-rank-empty">no creatures sent here</span>}
-								</div>
+								{!empty && (
+									<div className="rec-rank rec-rank--mine">
+										{mine.map((entry) => <ReclamationFigure {...figureProps(entry, you, 'up')} />)}
+									</div>
+								)}
 							</div>
 						</section>
 					);
