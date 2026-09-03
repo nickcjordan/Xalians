@@ -1406,3 +1406,143 @@
 	.rec-figure-element { display: none; }
 	.rec-hidden-banner-text { font-size: var(--g-size-micro); }
 }
+
+/* =========================================================================
+   PHONES — the table becomes a column. The page may scroll here (the one-screen
+   rule is for desks); what must not scroll away is the thing you act with, so the
+   deploy bar, the orders bar and the judge bar stick to the bottom of the screen.
+   ========================================================================= */
+
+@media (max-width: 760px) {
+	.rec-console { height: auto; min-height: 100vh; }
+	.rec-shell--match { gap: var(--g-2); }
+	.rec-masthead-seed { display: none; }
+	.rec-masthead-title { font-size: var(--g-size-lead); }
+	.rec-match { min-height: auto; gap: var(--g-2); }
+
+	.rec-status {
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-rows: auto;
+		gap: var(--g-1);
+		padding: var(--g-2);
+	}
+	.rec-status-world { gap: var(--g-2); }
+	.rec-status-planet { font-size: var(--g-size-lead); }
+	.rec-status-next { display: none; }
+	.rec-status-score { grid-column: 1; justify-content: flex-start; gap: var(--g-3); }
+	.rec-score-of { display: none; }
+	.rec-status-turn { grid-column: 1; grid-row: auto; justify-content: space-between; flex-direction: row; }
+	.rec-status-hint { font-size: var(--g-size-tiny); padding-top: var(--g-1); }
+
+	.rec-body {
+		display: flex;
+		flex-direction: column;
+		gap: var(--g-2);
+	}
+	.rec-table { gap: var(--g-2); }
+	.rec-rail { overflow: visible; }
+
+	.rec-sites {
+		grid-template-columns: minmax(0, 1fr);
+		gap: var(--g-2);
+	}
+	.rec-site { padding: var(--g-2); gap: var(--g-1); }
+	.rec-site-name { white-space: normal; overflow: visible; }
+	.rec-site-field { flex: 0 0 auto; }
+	.rec-rank { flex: 0 0 auto; min-height: 0; overflow: visible; padding: var(--g-1) 0; }
+	.rec-rank-empty { align-self: flex-start; }
+	.rec-site-midline { min-height: 0; margin: 2px 0; }
+	.rec-site-margin { padding: var(--g-1) var(--g-2); }
+	.rec-site-margin-text { font-size: var(--g-size-micro); }
+
+	.rec-figure { min-width: 60px; }
+	.rec-figure--small { min-width: 56px; }
+	.rec-figure-plinth { width: 30px; height: 9px; }
+	.rec-figure-hold { font-size: var(--g-size-tiny); }
+	.rec-figure-name { font-size: 0.5625rem; letter-spacing: 0.02em; }
+
+	/* the acting surfaces stick to the bottom of the screen */
+	.rec-deploy-bar,
+	.rec-orders-bar,
+	.rec-judge-bar,
+	.rec-resolving {
+		position: sticky;
+		bottom: 0;
+		z-index: 5;
+		box-shadow: 0 -6px 12px rgba(0, 0, 0, 0.45);
+	}
+	.rec-deploy-bar {
+		flex-direction: column;
+		gap: var(--g-1);
+		padding: var(--g-1) var(--g-2);
+		background: var(--g-hull);
+	}
+	.rec-roster-head { gap: var(--g-2); }
+	.rec-roster-count { font-size: 0.5625rem; }
+	.rec-deploy-controls {
+		flex: 0 0 auto;
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: var(--g-1);
+	}
+	.rec-deploy-controls .g-btn { flex: 1 1 auto; padding: var(--g-1) var(--g-2); font-size: var(--g-size-micro); }
+	.rec-deploy-note { flex-basis: 100%; }
+	.rec-orders-bar { flex-wrap: wrap; padding: var(--g-2); }
+	.rec-orders-bar-text { font-size: var(--g-size-micro); }
+	.rec-orders-bar .g-btn { flex: 1 1 auto; }
+	.rec-judge-bar, .rec-resolving { padding: var(--g-2); }
+
+	.rec-orders { flex: 0 0 auto; overflow: visible; }
+	.rec-orders-list { flex: 0 0 auto; max-height: none; overflow: visible; min-height: 0; }
+	.rec-orders-head { position: static; }
+	.rec-preview { flex: 0 0 auto; max-height: 220px; }
+	.rec-log { flex: 0 0 auto; max-height: 220px; min-height: 120px; }
+
+	/* the dossier rides up as a sheet so it can be read from anywhere on the column */
+	.rec-inspect {
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		max-height: 72vh;
+		z-index: 20;
+		border-radius: var(--g-radius-panel) var(--g-radius-panel) 0 0;
+		box-shadow: 0 -10px 24px rgba(0, 0, 0, 0.6);
+	}
+
+	.rec-verdict { padding: var(--g-3); }
+	.rec-verdict-title { font-size: var(--g-size-lead); }
+	.rec-hidden-banner .rec-figure { display: none; }
+}
+
+/* the roster's read affordance: shift-click has no touch equivalent, so every roster
+   figure carries a small "read" tab that opens the dossier on any device */
+.rec-roster-item { position: relative; display: inline-flex; flex-direction: column; align-items: center; }
+.rec-figure-read {
+	font-family: var(--g-font-mono);
+	font-size: 0.5625rem;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-low);
+	background: none;
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: 2px;
+	padding: 0 var(--g-1);
+	cursor: pointer;
+	margin-top: 2px;
+}
+.rec-figure-read:hover { color: var(--g-ink); border-color: var(--g-ink-low); }
+
+@media (max-width: 760px) {
+	/* sticky bars need no clipping ancestor between them and the scroller */
+	.rec-console, .rec-shell--match, .rec-body, .rec-table { overflow: visible; }
+	.rec-world, .rec-sites { flex: 0 0 auto; }
+	.rec-orders-head .rec-commit-btn { display: none; }
+}
+
+@media (max-width: 760px) {
+	/* the roster must be as wide as the bar, not as wide as twelve figures */
+	.rec-deploy-bar { align-items: stretch; }
+	.rec-roster { width: 100%; min-width: 0; }
+	.rec-roster-strip { width: 100%; }
+}

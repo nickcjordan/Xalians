@@ -23,13 +23,13 @@ function ReclamationRoster({
 				<span className="g-label">Your roster</span>
 				<span className="g-mono rec-roster-count">{roster.length} in hand · {sendsLeft} sends left this expedition</span>
 				<span className="g-mono rec-roster-help">
-					{yourTurn ? 'click one to arm it · shift-click to read its dossier' : 'shift-click to read a dossier'}
+					{yourTurn ? 'tap one to arm it · read opens its dossier' : 'read opens a dossier'}
 				</span>
 			</header>
 			<div className="rec-roster-strip">
 				{roster.map((record) => (
+					<span className="rec-roster-item" key={record.id}>
 					<ReclamationFigure
-						key={record.id}
 						record={record}
 						element={record.element.primary}
 						seat={you}
@@ -49,6 +49,16 @@ function ReclamationRoster({
 						}}
 						title={armedRecordId === record.id ? 'Armed. Click a site to send it, or Escape to disarm.' : 'Click to arm this creature. Shift-click to inspect it.'}
 					/>
+					<button
+						type="button"
+						className="rec-figure-read"
+						onClick={(e) => { e.stopPropagation(); onInspect(record); }}
+						title="Read this creature's dossier"
+						data-read={record.id}
+					>
+						read
+					</button>
+					</span>
 				))}
 				{roster.length === 0 && <span className="rec-rank-empty">your roster is empty</span>}
 			</div>

@@ -826,12 +826,12 @@ class ReclamationMatch extends React.Component {
 		}
 		if (armedRecordId) {
 			const record = view.players[YOU].roster.find((r) => r.id === armedRecordId);
-			return `${speciesLabel(record)} is armed. Click a site to send it there, or press Escape to put it back.`;
+			return `${speciesLabel(record)} is armed. Click a site to send it there, or click it again to put it back.`;
 		}
 		if (view.players[YOU].passed) {
 			return 'You have passed. Waiting on the rival.';
 		}
-		return 'Click a creature in your roster to arm it, then click a site. Or pass.';
+		return 'Pick a creature from your roster, then pick the site to send it to. Or pass.';
 	}
 
 	turnText(view) {
