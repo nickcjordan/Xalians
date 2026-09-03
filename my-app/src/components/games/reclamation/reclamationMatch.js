@@ -58,6 +58,7 @@ class ReclamationMatch extends React.Component {
 			judgedWorld: null,
 			judgedSnapshot: null,
 			judged: false,
+			hoverRow: null, // the preview line under the pointer, to light its creatures
 		};
 		this.botRngState = createRngState(`${props.seed}-bot`);
 		this.botTimer = null;
@@ -607,8 +608,10 @@ class ReclamationMatch extends React.Component {
 		}
 		const event = playback.events[playback.index];
 		this.narrateEvent(event, playback);
-		this.setState((prev) => ({ playback: { ...prev.playback, index: prev.playback.index + 1 } }));
-		this.playbackTimer = setTimeout(this.stepPlayback, RESOLUTION_STEP_MS);
+		this.setState((prev) => ({ playback: { ...prev.playback, index: prev.playback.index + 1, current: event } }));
+		// dev hook: window.__reclamationStepMs slows playback so it can be watched or captured
+		const stepMs = (typeof window !== 'undefined' && window.__reclamationStepMs) || RESOLUTION_STEP_MS;
+		this.playbackTimer = setTimeout(this.stepPlayback, stepMs);
 	};
 
 	skipPlayback = () => {
@@ -842,7 +845,7 @@ class ReclamationMatch extends React.Component {
 			return 'Expedition over';
 		}
 		if (view.phase === 'orders') {
-			return 'Orders';
+			return view.players[YOU].committed ? 'Orders sealed' : 'Your orders';
 		}
 		if (view.turn === YOU) {
 			return 'Your move';
@@ -853,88 +856,105 @@ class ReclamationMatch extends React.Component {
 	renderStatusStrip(view) {
 		const you = view.players[YOU];
 		const them = view.players[THEM];
-		const yourTurn = view.turn === YOU && view.phase === 'deploy' && !this.state.playback && !this.state.judged;
+		const yourTurn = ((view.turn === YOU && view.phase === 'deploy') || (view.phase === 'orders' && !view.players[YOU].committed)) && !this.state.playback && !this.state.judged;
+		const waiting = view.turn === THEM && view.phase === 'deploy' && !this.state.playback && !this.state.judged;
 		const phaseLabel = this.state.playback ? 'Resolve'
 			: view.phase === 'matchEnd' ? 'Charter'
 				: this.state.judged ? 'Judge'
 					: view.phase === 'orders' ? 'Orders' : 'Deploy';
+		const pips = (n) => Array.from({ length: SITES_TO_CLINCH }).map((_, i) => (
+			<span className={`rec-pip${i < n ? ' rec-pip--lit' : ''}`} key={i} />
+		));
+		const worldDots = Array.from({ length: WORLDS_PER_MATCH }).map((_, i) => (
+			<span className={`rec-world-dot${i === view.worldIndex ? ' rec-world-dot--now' : i < view.worldIndex ? ' rec-world-dot--done' : ''}`} key={i} />
+		));
 		return (
 			<div className={`g-panel rec-status g-el-${view.world.element}`}>
 				<div className="rec-status-world">
-					<span className="g-kicker">World {view.worldIndex + 1} of {WORLDS_PER_MATCH}</span>
+					<span className="rec-world-dots" title={`World ${view.worldIndex + 1} of ${WORLDS_PER_MATCH}`}>{worldDots}</span>
 					<h2 className="rec-status-planet">{view.world.planet}</h2>
 					<span className="g-chip rec-status-element">{view.world.element}</span>
+					<span className="rec-status-next g-mono">
+						{view.nextWorld ? `then ${view.nextWorld.planet}` : 'the last world'}
+					</span>
 				</div>
 
-				<div className="rec-status-score">
+				<div className="rec-status-score" title={`First to ${SITES_TO_CLINCH} sites takes the Charter`}>
 					<span className="rec-score rec-score--mine">
-						<span className="rec-score-label">You hold</span>
+						<span className="rec-score-label">You</span>
+						<span className="rec-pips">{pips(you.sitesWon)}</span>
 						<span className="rec-score-value" data-sites-a>{you.sitesWon}</span>
 					</span>
-					<span className="rec-score-of">of {SITES_TO_CLINCH} to clinch</span>
 					<span className="rec-score rec-score--theirs">
-						<span className="rec-score-label">Rival holds</span>
+						<span className="rec-score-label">Rival</span>
+						<span className="rec-pips">{pips(them.sitesWon)}</span>
 						<span className="rec-score-value" data-sites-b>{them.sitesWon}</span>
 					</span>
+					<span className="rec-score-of">{SITES_TO_CLINCH} sites clinch</span>
 				</div>
 
 				<div className="rec-status-turn">
 					<span className="rec-status-phase">{phaseLabel}</span>
-					<span className={`rec-turn${yourTurn ? ' rec-turn--yours' : ''}`}>
-						<span className={`g-lamp ${yourTurn ? 'g-lamp--amber' : 'g-lamp--off'}`} />
+					<span className={`rec-turn${yourTurn ? ' rec-turn--yours' : ''}${waiting ? ' rec-turn--waiting' : ''}`}>
+						<span className={`g-lamp ${yourTurn ? 'g-lamp--amber' : waiting ? 'g-lamp--red' : 'g-lamp--off'}`} />
 						<span className="rec-turn-text" data-turn-text>{this.turnText(view)}</span>
-					</span>
-					<span className="rec-status-next g-mono">
-						{view.nextWorld ? `Next world: ${view.nextWorld.planet}` : 'The last world'}
 					</span>
 				</div>
 
-				<p className="rec-status-hint g-body" data-hint>{this.whatAClickDoes(view)}</p>
+				<p className={`rec-status-hint g-body${yourTurn ? ' rec-status-hint--yours' : ''}`} data-hint>{this.whatAClickDoes(view)}</p>
 			</div>
 		);
 	}
 
 	renderDeployControls(view) {
 		const me = view.players[YOU];
+		const them = view.players[THEM];
 		const armed = this.state.armedRecordId
 			? me.roster.find((r) => r.id === this.state.armedRecordId)
 			: null;
 		const armedStealthy = armed
 			&& [...(armed.traits.guaranteed || []), ...(armed.traits.rolled || [])].includes('stealthy');
 		const yourTurn = view.turn === YOU && view.phase === 'deploy' && !this.state.playback;
+		const vanguard = me.canRelocateVanguard && me.vanguardRecordId
+			? this.findRecordOnBoard(this.state.match, me.vanguardRecordId)
+			: null;
 
 		return (
 			<div className="rec-deploy-controls">
 				{armedStealthy && (
-					<label className="g-check rec-hidden-toggle">
+					<label className="g-check rec-hidden-toggle" title="A stealthy creature may be sent hidden: the rival learns that you sent something, not what or where, until orders are revealed.">
 						<input type="checkbox" checked={this.state.sendHidden} onChange={this.toggleHidden} data-hidden-toggle />
 						<span className="g-check-box" />
 						<span>Send hidden</span>
 					</label>
 				)}
-				{me.canRelocateVanguard && me.vanguardRecordId && (
+				{them.passed && !me.passed && (
+					<span className="rec-deploy-note rec-deploy-note--open">The rival has passed. Nothing you send now can be answered.</span>
+				)}
+				{vanguard && (
 					<button
 						type="button"
 						className={`g-btn rec-fallback-btn${this.state.relocating ? ' rec-fallback-btn--active' : ''}`}
 						onClick={this.beginRelocate}
 						disabled={!yourTurn}
 						data-fallback
-						title="Your vanguard was placed with no information. Once per world it may fall back to another site, without spending your turn."
+						title="You placed your first creature knowing nothing. Once per world it may fall back to another site, without spending your turn."
 					>
-						Fall back
+						{this.state.relocating ? 'Choose a site' : `Fall back ${speciesLabel(vanguard)}`}
+						<span className="rec-btn-sub">free move, once this world</span>
 					</button>
 				)}
 				<button
 					type="button"
-					className="g-btn g-btn--danger rec-pass-btn"
+					className="g-btn rec-pass-btn"
 					onClick={this.handlePass}
 					disabled={!yourTurn}
 					data-pass
 					title="Pass is permanent for this world."
 				>
-					Pass
+					Pass for this world
+					<span className="rec-btn-sub">permanent, ends your deploy here</span>
 				</button>
-				<span className="rec-pass-warning g-mono">Pass is permanent for this world.</span>
 			</div>
 		);
 	}
@@ -980,6 +1000,28 @@ class ReclamationMatch extends React.Component {
 		const preview = ordering ? orderPreview(view, me.orders, YOU) : [];
 		const holdingIds = [...me.holding, ...them.holding];
 
+		// during Orders every one of your figures wears the act it will perform
+		const badges = {};
+		if (ordering) {
+			units.forEach((u) => {
+				const chosen = (me.orders && me.orders[u.recordId]) || u.prepared.favoredAct.action;
+				const act = u.prepared.acts.find((a) => a.action === chosen);
+				badges[u.recordId] = chosen === 'hold' ? 'hold' : `${chosen}${act ? ` ${act.magnitude}` : ''}`;
+			});
+		}
+		// what to light on the table: the preview line under the pointer, or the event
+		// being narrated during resolution
+		const highlights = {};
+		if (this.state.hoverRow) {
+			highlights.hover = this.state.hoverRow.target ? this.state.hoverRow.target.recordId : null;
+			highlights.acting = this.state.hoverRow.unit.recordId;
+		}
+		if (playback && playback.current && classifyEvent(playback.current) === 'act') {
+			highlights.acting = playback.current.recordId;
+			highlights.hit = playback.current.target || null;
+			highlights.flash = flashFor(playback.current.outcome);
+		}
+
 		return (
 			<div className="rec-match">
 				{this.renderStatusStrip(view)}
@@ -999,8 +1041,12 @@ class ReclamationMatch extends React.Component {
 							verdicts={verdicts}
 							armedRecordId={this.state.armedRecordId}
 							relocating={this.state.relocating}
+							vanguardRecordId={me.vanguardRecordId}
 							clickable={clickable}
 							holdingIds={holdingIds}
+							hiddenEnemyCount={deploying || ordering ? (them.hiddenSentThisRound || 0) : 0}
+							badges={badges}
+							highlights={highlights}
 							onSiteClick={this.handleSiteClick}
 							onFigureClick={(entry, seat, site) => this.inspectRecord(entry.record, site)}
 						/>
@@ -1014,16 +1060,29 @@ class ReclamationMatch extends React.Component {
 									onArm={this.armRecord}
 									onInspect={(record) => this.inspectRecord(record, null)}
 									sendsLeft={Math.max(0, SENDABLE - me.sentCount)}
-									hiddenEnemyCount={them.hiddenSentThisRound || 0}
 									disabled={view.turn !== YOU || me.passed}
+									yourTurn={view.turn === YOU && !me.passed}
 								/>
 								{this.renderDeployControls(view)}
 							</div>
 						)}
 
+						{ordering && (
+							<div className="rec-orders-bar" data-orders-bar>
+								<span className="rec-orders-bar-text">
+									{me.committed
+										? 'Your orders are sealed. The rival is giving its own.'
+										: 'Deploy is over. Every creature on the table has an act by nature; change any in the panel, then give orders.'}
+								</span>
+								<button type="button" className="g-btn g-btn--primary" onClick={this.commitOrders} disabled={me.committed} data-give-orders>
+									{me.committed ? 'Orders given' : 'Give orders'}
+								</button>
+							</div>
+						)}
+
 						{playback && (
 							<div className="rec-resolving">
-								<span className="g-label">Resolving, {playback.index} of {playback.events.length}</span>
+								<span className="g-label">Resolving in initiative order, {playback.index} of {playback.events.length}</span>
 								<button type="button" className="g-btn rec-skip-btn" onClick={this.skipPlayback} data-skip>Skip</button>
 							</div>
 						)}
@@ -1051,6 +1110,7 @@ class ReclamationMatch extends React.Component {
 								committed={me.committed}
 								you={YOU}
 								panelRef={this.ordersPanel}
+								onHoverPreview={(row) => this.setState({ hoverRow: row })}
 							/>
 						)}
 						{inspect && (
@@ -1067,6 +1127,25 @@ class ReclamationMatch extends React.Component {
 			</div>
 		);
 	}
+}
+
+// the word that pops over a creature as an act lands on it during playback
+function flashFor(outcome) {
+	const map = {
+		routed: { kind: 'rout', text: 'routed' },
+		staggered: { kind: 'stagger', text: 'staggered' },
+		shrugged: { kind: 'shrug', text: 'shrugged' },
+		shoved: { kind: 'shrug', text: 'shoved' },
+		snared: { kind: 'stagger', text: 'snared' },
+		terrorized: { kind: 'rout', text: 'withdraws' },
+		'warded-absorbed': { kind: 'ward', text: 'warded' },
+		'warded-ally': { kind: 'ward', text: 'warded' },
+		'warded-self': { kind: 'ward', text: 'warded' },
+		mended: { kind: 'ward', text: 'mended' },
+		'anchored-immune': { kind: 'shrug', text: 'anchored' },
+		'snared-immune': { kind: 'shrug', text: 'held fast' },
+	};
+	return map[outcome] || null;
 }
 
 // "1 site" reads better than "1 sites" on the verdict panel and in the log.

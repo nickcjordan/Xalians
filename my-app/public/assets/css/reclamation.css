@@ -699,10 +699,10 @@
 	flex-direction: column;
 	gap: var(--g-2);
 	min-height: 0;
-	/* the orders panel is the working surface during Orders: it takes two thirds of the
-	   rail and the log takes what is left, both scrolling internally rather than pushing
-	   the page taller */
-	flex: 2 1 0;
+	/* the orders panel is the working surface during Orders: it takes three quarters of
+	   the rail and the log takes what is left, both scrolling internally rather than
+	   pushing the page taller */
+	flex: 3 1 0;
 	overflow: hidden;
 }
 
@@ -966,4 +966,443 @@
 
 	.rec-orders-list { padding: var(--g-2); }
 	.rec-log { padding: var(--g-1) var(--g-2); }
+}
+
+/* =========================================================================
+   UX PASS — emphasis, affordances, and what-is-happening
+   ========================================================================= */
+
+/* --- status strip: score as pip tracks, the turn as the loudest thing --- */
+
+.rec-world-dots {
+	display: inline-flex;
+	gap: 4px;
+	align-items: center;
+}
+
+.rec-world-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	border: var(--g-hairline) solid var(--g-ink-low);
+	background: transparent;
+}
+
+.rec-world-dot--done { background: var(--g-ink-low); }
+.rec-world-dot--now { background: var(--g-el); border-color: var(--g-el); }
+
+.rec-score {
+	flex-direction: row;
+	align-items: center;
+	gap: var(--g-2);
+}
+
+.rec-pips {
+	display: inline-flex;
+	gap: 3px;
+}
+
+.rec-pip {
+	width: 14px;
+	height: 14px;
+	border-radius: 2px;
+	border: var(--g-hairline) solid var(--g-seam);
+	background: var(--g-hull-lo);
+	box-shadow: var(--g-recess);
+}
+
+.rec-score--mine .rec-pip--lit { background: var(--g-hazard); border-color: var(--g-hazard); box-shadow: none; }
+.rec-score--theirs .rec-pip--lit { background: var(--g-lamp-red); border-color: var(--g-lamp-red); box-shadow: none; }
+
+.rec-score-value { font-size: var(--g-size-lead); }
+
+.rec-turn--yours .rec-turn-text {
+	color: var(--g-hazard);
+	font-weight: 600;
+}
+
+.rec-turn--waiting .rec-turn-text { color: var(--g-ink-mid); }
+
+.rec-status-hint {
+	font-size: var(--g-size-body);
+	color: var(--g-ink);
+}
+
+.rec-status-hint--yours {
+	color: var(--g-ink);
+	padding-left: var(--g-3);
+	border-left: 3px solid var(--g-hazard);
+}
+
+/* --- sites: the margin band is the biggest number on the site --- */
+
+.rec-site-margin {
+	flex: 0 0 auto;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1px;
+	padding: var(--g-2);
+	background: var(--g-hull-lo);
+	border-radius: var(--g-radius);
+	box-shadow: var(--g-recess);
+	border-left: 3px solid var(--g-seam);
+}
+
+.rec-site-margin-text {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-low);
+}
+
+.rec-site-margin--mine { border-left-color: var(--g-hazard); }
+.rec-site-margin--mine .rec-site-margin-text { color: var(--g-hazard); }
+.rec-site-margin--theirs { border-left-color: var(--g-lamp-red); }
+.rec-site-margin--theirs .rec-site-margin-text { color: var(--g-lamp-red); }
+
+.rec-site-margin-totals {
+	display: inline-flex;
+	gap: var(--g-2);
+	font-size: var(--g-size-micro);
+	font-variant-numeric: tabular-nums;
+	color: var(--g-ink-mid);
+}
+
+.rec-site-margin-vs {
+	color: var(--g-ink-low);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	font-size: 0.5625rem;
+}
+
+/* a site you are winning, losing, or that is level: a quiet tint on the panel edge */
+.rec-site--mine { border-top: 3px solid color-mix(in srgb, var(--g-hazard) 60%, var(--g-seam)); }
+.rec-site--theirs { border-top: 3px solid color-mix(in srgb, var(--g-lamp-red) 50%, var(--g-seam)); }
+
+/* a site waiting for the armed creature: an obvious target, not a hairline */
+.rec-site--targeted {
+	border-color: var(--g-hazard);
+	box-shadow: var(--g-relief), 0 0 0 1px color-mix(in srgb, var(--g-hazard) 45%, transparent);
+	cursor: pointer;
+}
+
+.rec-site--targeted:hover { background: color-mix(in srgb, var(--g-hazard) 6%, var(--g-hull)); }
+
+.rec-site-midline { min-height: 30px; }
+
+.rec-ghost {
+	flex-wrap: wrap;
+	justify-content: center;
+	row-gap: 2px;
+}
+
+.rec-ghost-cta {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	color: var(--g-hazard);
+	padding: 1px var(--g-2);
+	border: var(--g-hairline) solid var(--g-hazard);
+	border-radius: 2px;
+}
+
+.rec-ghost-value { font-size: var(--g-size-body); color: var(--g-ink); }
+
+.rec-ghost-outcome {
+	flex-basis: 100%;
+	text-align: center;
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-mid);
+}
+
+/* --- the hidden rival creature: a banner over the world, not a roster orphan --- */
+
+.rec-world {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+}
+
+.rec-sites {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: var(--g-3);
+	flex: 1 1 auto;
+	min-height: 0;
+}
+
+.rec-hidden-banner {
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+	gap: var(--g-3);
+	padding: var(--g-1) var(--g-3);
+	background: var(--g-hull-lo);
+	border-radius: var(--g-radius);
+	box-shadow: var(--g-recess);
+	border-left: 3px solid var(--g-lamp-red);
+}
+
+.rec-hidden-banner .rec-figure { zoom: 0.7; }
+
+.rec-hidden-banner-text {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-tiny);
+	color: var(--g-ink);
+}
+
+/* --- figures: hold is big, the element is named, states are labelled --- */
+
+.rec-figure-hold { font-size: var(--g-size-small); }
+
+.rec-figure-element {
+	font-family: var(--g-font-stencil);
+	font-size: 0.5625rem;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-el);
+	margin-left: var(--g-1);
+}
+
+.rec-figure-foot {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 2px;
+}
+
+.rec-figure-badge {
+	display: block;
+	font-family: var(--g-font-mono);
+	font-size: 0.5625rem;
+	color: var(--g-brass-light);
+	text-transform: lowercase;
+	letter-spacing: 0;
+}
+
+.rec-tag--staggered { color: var(--g-lamp-red); }
+.rec-tag--hidden { color: var(--g-ink-mid); }
+
+.rec-figure--armed .rec-figure-plate,
+.rec-figure--selected .rec-figure-plate {
+	outline: 2px solid var(--g-hazard);
+	outline-offset: 1px;
+}
+
+.rec-figure--armed { transform: translateY(-4px); }
+
+/* the creature acting, and the creature it lands on */
+.rec-figure { position: relative; }
+
+.rec-figure--acting .rec-figure-plate {
+	outline: 2px solid var(--g-brass-light);
+	outline-offset: 1px;
+}
+
+.rec-figure--hover .rec-figure-plate,
+.rec-figure--hit .rec-figure-plate {
+	outline: 2px dashed var(--g-lamp-red);
+	outline-offset: 1px;
+}
+
+.rec-figure-flash {
+	position: absolute;
+	top: -14px;
+	left: 50%;
+	transform: translateX(-50%);
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-tiny);
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	padding: 0 var(--g-2);
+	border-radius: 2px;
+	background: var(--g-hull-lo);
+	color: var(--g-ink);
+	white-space: nowrap;
+	animation: rec-flash 600ms ease-out both;
+	z-index: 2;
+}
+
+.rec-figure-flash--rout { color: var(--g-lamp-red); }
+.rec-figure-flash--stagger { color: var(--g-hazard); }
+.rec-figure-flash--shrug { color: var(--g-ink-mid); }
+.rec-figure-flash--ward { color: var(--g-brass-light); }
+
+@keyframes rec-flash {
+	from { opacity: 0; transform: translateX(-50%) translateY(6px); }
+	to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* --- deploy controls: send is the action, pass is a choice, not a siren --- */
+
+.rec-roster-head { flex-wrap: wrap; }
+
+.rec-roster-help {
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-low);
+	margin-left: auto;
+}
+
+.rec-deploy-controls { flex: 0 0 250px; min-width: 0; }
+.rec-deploy-controls .g-btn { text-align: left; }
+
+.rec-btn-sub {
+	display: block;
+	font-family: var(--g-font-mono);
+	font-size: 0.5625rem;
+	text-transform: none;
+	letter-spacing: 0;
+	opacity: 0.75;
+	margin-top: 1px;
+}
+
+.rec-pass-btn { --btn-face: var(--g-hull-lo); }
+
+.rec-deploy-note {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-mid);
+	padding: var(--g-1) var(--g-2);
+	border-left: 3px solid var(--g-seam);
+}
+
+.rec-deploy-note--open { border-left-color: var(--g-hazard); color: var(--g-ink); }
+
+/* --- orders: chips, the button that cannot scroll away, the bar on the table --- */
+
+.rec-orders-head {
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--g-2);
+	position: sticky;
+	top: 0;
+	background: var(--g-hull);
+	z-index: 1;
+	padding-bottom: var(--g-2);
+	border-bottom: var(--g-hairline) solid var(--g-rule-faint);
+}
+
+.rec-orders-head > div {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.rec-commit-btn { margin-top: 0; }
+
+.rec-order-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--g-1);
+}
+
+.rec-act-chip {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0;
+	padding: 2px var(--g-2);
+	min-width: 64px;
+	background: var(--g-hull-lo);
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: 2px;
+	color: var(--g-ink-mid);
+	cursor: pointer;
+	font: inherit;
+	text-align: left;
+	transition: border-color var(--g-move), color var(--g-move);
+}
+
+.rec-act-chip:hover:not(:disabled) { border-color: var(--g-ink-low); color: var(--g-ink); }
+
+.rec-act-chip--chosen {
+	border-color: var(--g-hazard);
+	color: var(--g-ink);
+	box-shadow: inset 0 0 0 1px var(--g-hazard);
+}
+
+.rec-act-chip:disabled { cursor: default; opacity: 0.6; }
+
+.rec-act-chip-act {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-tiny);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+}
+
+.rec-act-chip-mag {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-small);
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	color: var(--g-el);
+}
+
+.rec-act-chip-sub {
+	font-family: var(--g-font-mono);
+	font-size: 0.5625rem;
+	color: var(--g-ink-low);
+}
+
+.rec-act-chip--chosen .rec-act-chip-sub { color: var(--g-brass-light); }
+
+.rec-preview-line { cursor: default; }
+.rec-preview-line:hover { color: var(--g-screen-ink-hi, inherit); text-decoration: underline; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); }
+
+.rec-orders-bar {
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--g-3);
+	padding: var(--g-2) var(--g-4);
+	background: var(--g-hull-lo);
+	border-radius: var(--g-radius);
+	box-shadow: var(--g-recess);
+	border-left: 3px solid var(--g-hazard);
+}
+
+.rec-orders-bar-text {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-tiny);
+	color: var(--g-ink);
+}
+
+@media (max-width: 1200px) {
+	.rec-sites { gap: var(--g-2); }
+	.rec-site-margin-text { font-size: var(--g-size-micro); }
+	.rec-deploy-controls { min-width: 170px; }
+	.rec-status-hint { font-size: var(--g-size-small); }
+	.rec-act-chip { min-width: 52px; }
+}
+
+/* style.css (the old template) forces `section h3` and `section p` to 1.5em / 1.25em
+   with !important below 1024px, which is exactly the width the site headings must stay
+   small at; matched on specificity and importance rather than restyled */
+@media (max-width: 1200px) {
+	.rec-site h3.rec-site-name { font-size: var(--g-size-micro) !important; }
+	.rec-site p.rec-site-env { font-size: 0.5625rem !important; }
+}
+
+/* at 1024 the roster must not eat the sites: one scrolling row, terse controls */
+@media (max-width: 1200px) {
+	.rec-roster-strip {
+		flex-wrap: nowrap;
+		overflow-x: auto;
+		padding-bottom: var(--g-1);
+	}
+	.rec-roster-help { display: none; }
+	.rec-btn-sub { display: none; }
+	.rec-deploy-controls { flex: 0 0 150px; }
+	.rec-deploy-controls .g-btn { padding: var(--g-2); font-size: var(--g-size-tiny); }
+	.rec-figure-element { display: none; }
+	.rec-hidden-banner-text { font-size: var(--g-size-micro); }
 }
