@@ -7,6 +7,7 @@ import planetRecordsData from '../json/planetRecords.json';
 import speciesData from '../json/species.json';
 import speciesRecordsData from '../json/speciesRecords.json';
 import registriesData from '../json/registries.json';
+import tourData from '../json/tour.json';
 
 // ---- entries -------------------------------------------------------------
 
@@ -92,6 +93,7 @@ export {
 	speciesData,
 	speciesRecordsData,
 	registriesData,
+	tourData,
 	allEntries,
 	entriesByKey,
 	planetsInOrder,

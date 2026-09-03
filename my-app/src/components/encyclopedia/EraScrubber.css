@@ -1,0 +1,91 @@
+/* =========================================================================
+   ERA SCRUBBER — station rail under the galaxy map.
+   Contract: docs/design/xalian-encyclopedia-ux-pass.md item 1.
+   Matte, static: a bank of selector keys, not a slider. No new colour, no
+   motion beyond the shared hover/focus snap already defined for .g-segment.
+   ========================================================================= */
+
+.enc-scrub {
+	margin-top: var(--g-5);
+}
+
+.enc-scrub-rail {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 3px;
+	padding: 3px;
+	background: var(--g-seam);
+	border-radius: var(--g-radius);
+	box-shadow: var(--g-recess);
+}
+
+.enc-scrub-station {
+	display: inline-flex;
+	align-items: baseline;
+	gap: var(--g-2);
+	flex: 1 1 0;
+	white-space: nowrap;
+	padding: var(--g-2) var(--g-3);
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-mid);
+	background: var(--g-hull);
+	border: 0;
+	border-radius: 2px;
+	box-shadow: var(--g-relief);
+	cursor: pointer;
+	transition: background var(--g-snap), color var(--g-snap);
+}
+
+.enc-scrub-station:hover:not([aria-pressed='true']) {
+	background: var(--g-hull-hi);
+	color: var(--g-ink);
+}
+
+.enc-scrub-station[aria-pressed='true'] {
+	color: var(--g-ink-invert);
+	background: var(--g-hazard);
+}
+
+.enc-scrub-station:focus-visible {
+	outline: 2px solid var(--g-phosphor);
+	outline-offset: -3px;
+}
+
+.enc-scrub-order {
+	font-size: var(--g-size-tiny);
+	opacity: 0.75;
+}
+
+.enc-scrub-definition {
+	margin: var(--g-3) 0 0;
+	max-width: var(--g-measure);
+	color: var(--g-ink-mid);
+}
+
+@media (max-width: 600px) {
+	.enc-scrub-rail {
+		flex-wrap: wrap;
+	}
+	.enc-scrub-station {
+		flex: 1 1 auto;
+	}
+}
+
+@media (max-width: 390px) {
+	.enc-scrub-rail {
+		flex-wrap: nowrap;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		/* Trailing fade tells a touch reader the rail continues off-screen. */
+		-webkit-mask-image: linear-gradient(to right, var(--g-ink) 0, var(--g-ink) calc(100% - 40px), transparent 100%);
+		mask-image: linear-gradient(to right, var(--g-ink) 0, var(--g-ink) calc(100% - 40px), transparent 100%);
+		padding-right: var(--g-6);
+	}
+	.enc-scrub-station {
+		flex: 0 0 auto;
+	}
+}

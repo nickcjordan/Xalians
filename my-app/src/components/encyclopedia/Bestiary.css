@@ -20,7 +20,23 @@
 	text-transform: uppercase;
 }
 
-.enc-bestiary-lamp {
+.enc-bestiary-lamps {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--g-3);
 	padding: var(--g-1) var(--g-1) 0;
+}
+
+.enc-bestiary-lamp {
+	padding: 0;
 	font-size: var(--g-size-micro);
+}
+
+.enc-bestiary-read-lamp::before {
+	width: 6px;
+	height: 6px;
+}
+
+.enc-bestiary-ratified-toggle {
+	white-space: nowrap;
 }

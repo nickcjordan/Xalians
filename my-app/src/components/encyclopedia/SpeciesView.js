@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import * as lore from '../../lore';
 import Prose from './Prose';
 import XalianImage from '../xalianImage';
+import { useVisit } from './trail';
 import './SpeciesView.css';
 
 function bandText(band) {
@@ -233,6 +234,9 @@ function LegacySections({ view }) {
 export default function SpeciesView() {
     const { key } = useParams();
     const view = lore.getSpecies(key);
+    const wasRead = useVisit(view
+        ? { kind: 'species', key, name: view.name, element: view.element }
+        : { kind: null, key: null });
 
     if (!view) {
         return (
@@ -261,6 +265,7 @@ export default function SpeciesView() {
                 <span className={`g-lamp ${isTemplate ? '' : 'g-lamp--off'}`}>
                     {isTemplate ? 'Record ratified' : 'Record pending migration'}
                 </span>
+                {wasRead && <p className="g-mono enc-species-reviewed">reviewed</p>}
             </header>
 
             <div className="enc-record">

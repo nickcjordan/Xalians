@@ -18,6 +18,7 @@ The Xalians canon was written by one human hand with an unusually consistent voi
    - Species: `lambda/src/json/species.json`
    - Encyclopedia entries: `docs/encyclopedia/encyclopedia.json` — `{key, title, category, definition, related, element?}`; the editorial rules are in `docs/encyclopedia/ENCYCLOPEDIA-INTERNAL.md`. (`lambda/src/json/glossary.json` is a legacy mirror; do not add to it.)
    - The Chronicle: `docs/encyclopedia/chronicle.json` and `docs/design/xalian-chronicle.md` — the undated era timeline; place any new event or paragraph in an era and never invent a date.
+   - The First Survey: `docs/encyclopedia/tour.json` — eight beats of derived prose (historian register, 120 to 200 words) that restate the histories; every claim must trace to a `sources` paragraph. It is not a canon source; when the histories change, the beats follow.
    - Elements and their move vocabularies: `lambda/src/json/elements.json`
    - Public-facing summary voice: `my-app/src/pages/home.js` (~lines 250–310)
    Read them with `node -e` rather than dumping raw JSON, e.g.

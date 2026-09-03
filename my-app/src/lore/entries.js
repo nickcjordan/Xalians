@@ -90,26 +90,35 @@ export function getAppearances(key) {
 }
 
 // Demonyms for getPowers().peoples, ratified in the Chronicle doc (§4 of the
-// contract). Only Magmuthites, The Zolto, and Veridians have encyclopedia
-// entries; the rest carry only their world. No demonym is invented for the
-// other seven worlds.
+// UX-pass contract). Every one of the seven now has an entryKey; the four
+// new entries (grimedites, luminarii, krystians, phantiri-xalians) are being
+// written by another agent concurrently, so lookups must tolerate a missing
+// entry (entry comes back undefined, never throws).
 const PEOPLES = [
 	{ name: 'Magmuthites', planet: 'magmuth', entryKey: 'magmuthites' },
-	{ name: 'Grimedites', planet: 'grimedes', entryKey: null },
-	{ name: 'Luminarii', planet: 'luminax', entryKey: null },
+	{ name: 'Grimedites', planet: 'grimedes', entryKey: 'grimedites' },
+	{ name: 'Luminarii', planet: 'luminax', entryKey: 'luminarii' },
 	{ name: 'Zolto', planet: 'zolton', entryKey: 'the-zolto' },
-	{ name: 'Krystians', planet: 'krystos', entryKey: null },
+	{ name: 'Krystians', planet: 'krystos', entryKey: 'krystians' },
 	{ name: 'Veridians', planet: 'veridium', entryKey: 'veridians' },
-	{ name: 'Phantiri', planet: 'phantiri', entryKey: null },
+	{ name: 'Phantiri', planet: 'phantiri', entryKey: 'phantiri-xalians' },
 ];
 
+// Demonym entry keys that render only under Xalian Peoples, never under
+// Factions, even though they are still categorized 'factions' in
+// encyclopedia.json (append-only categories; the page regroups them).
+const PEOPLES_ENTRY_KEYS = new Set(PEOPLES.map((p) => p.entryKey));
+
+// The Vallerii, rendered under their own "The Vallerii" section.
+const VALLERII_KEYS = ['vallerii', 'king-kozrak'];
+
 export function getPowers() {
-	const factions = getEntries({ category: 'factions' });
-	const people = getEntries({ category: 'people' });
+	const factions = getEntries({ category: 'factions' }).filter((e) => !PEOPLES_ENTRY_KEYS.has(e.key));
+	const vallerii = VALLERII_KEYS.map((key) => entriesByKey.get(key)).filter(Boolean);
 	const peoples = PEOPLES.map(({ name, planet, entryKey }) => ({
 		name,
 		planet: getWorld(planet),
 		entry: entryKey ? entriesByKey.get(entryKey) : undefined,
 	}));
-	return { factions, people, peoples };
+	return { factions, vallerii, peoples };
 }

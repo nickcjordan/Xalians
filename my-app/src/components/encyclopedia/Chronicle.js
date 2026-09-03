@@ -6,8 +6,30 @@ import './Chronicle.css';
 /**
  * Chronicle: the seven eras on a vertical rail. Canon carries no dates, so
  * the rail is order, not time: a single left-hand rule with a brass-ringed
- * station per era.
+ * station per era. Each station's footprint strip is a 14-cell readout, one
+ * cell per world in planet order, lit when the world is in the era.
  */
+function FootprintStrip({ eraKey }) {
+    const footprint = lore.getEraFootprint(eraKey);
+    return (
+        <div className="enc-chronicle-footprint" role="list" aria-label="Worlds in this era">
+            {footprint.worlds.map((row) => {
+                const lit = row.chapterCount > 0 || row.events.length > 0;
+                return (
+                    <Link
+                        key={row.world.key}
+                        to={lore.routeFor('world', row.world.key)}
+                        role="listitem"
+                        className={`enc-chronicle-footprint-cell g-el-${row.world.element} ${lit ? 'is-lit' : 'is-dim'}`}
+                        title={row.world.name}
+                        aria-label={`${row.world.name}${lit ? '' : ', not in this era'}`}
+                    />
+                );
+            })}
+        </div>
+    );
+}
+
 export default function Chronicle() {
     const eras = lore.getEras();
     return (
@@ -39,26 +61,14 @@ export default function Chronicle() {
                                     <ul className="g-mono enc-chronicle-firm-events">
                                         {firmEvents.map((ev) => (
                                             <li key={ev.key}>
-                                                <Link to={lore.routeFor('era', era.key)} className="g-link">
+                                                <Link to={lore.routeFor('event', `${era.key}:${ev.key}`)} className="g-link">
                                                     {ev.title}
                                                 </Link>
                                             </li>
                                         ))}
                                     </ul>
                                 )}
-                                {era.worlds.length > 0 && (
-                                    <div className="enc-chips enc-chronicle-world-chips">
-                                        {era.worlds.map(({ planet }) => (
-                                            <Link
-                                                key={planet.key}
-                                                to={lore.routeFor('world', planet.key)}
-                                                className={`g-chip g-chip--outline g-el-${planet.element}`}
-                                            >
-                                                {planet.name}
-                                            </Link>
-                                        ))}
-                                    </div>
-                                )}
+                                <FootprintStrip eraKey={era.key} />
                             </div>
                         </li>
                     );

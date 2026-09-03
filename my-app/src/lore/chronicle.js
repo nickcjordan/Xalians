@@ -69,3 +69,90 @@ export function getEra(key) {
 export function getOverview() {
 	return eraViewsInOrder.map((era) => ({ era, blurb: era.definition }));
 }
+
+// getEraFootprint: every world in planet order, including worlds with zero
+// chapters and zero events, so callers can dim them. A world is "in" the
+// era when chapterCount > 0 or events.length > 0.
+export function getEraFootprint(eraKey) {
+	const era = getEra(eraKey);
+	const worlds = planetsInOrder.map((planet) => {
+		const planetView = getWorld(planet.key);
+		const chapterCount = chaptersForEra(planetView, eraKey).length;
+		const events = era
+			? era.events
+					.filter((event) => event.planets.some((p) => p.key === planet.key))
+					.map((event) => ({ key: event.key, title: event.title, firmness: event.firmness }))
+			: [];
+		return { world: planetView, chapterCount, events };
+	});
+	return { era, worlds };
+}
+
+// getEraStory: paragraphs in the era, ordered by the order value of the
+// first event of this era they are tagged with, then planet order, then
+// paragraph index. Paragraphs with no event in this era trail after,
+// ordered by planet order then index. eventTitle is that first event's
+// title, or null.
+export function getEraStory(eraKey) {
+	const era = getEra(eraKey);
+	if (!era) return [];
+
+	const eventOrderByKey = new Map(era.events.map((e) => [e.key, e]));
+
+	const rows = [];
+	planetsInOrder.forEach((planet, planetIndex) => {
+		const planetView = getWorld(planet.key);
+		const chapters = chaptersForEra(planetView, eraKey);
+		for (const chapter of chapters) {
+			// Find the first (lowest-order) event tagged on this chapter that
+			// belongs to this era.
+			let firstEvent;
+			for (const eventKey of chapter.events) {
+				const event = eventOrderByKey.get(eventKey);
+				if (event && (!firstEvent || event.order < firstEvent.order)) {
+					firstEvent = event;
+				}
+			}
+			rows.push({
+				world: planetView,
+				index: chapter.index,
+				text: chapter.text,
+				events: chapter.events.map((k) => eventOrderByKey.get(k)).filter(Boolean),
+				eventTitle: firstEvent ? firstEvent.title : null,
+				_eventOrder: firstEvent ? firstEvent.order : null,
+				_planetIndex: planetIndex,
+			});
+		}
+	});
+
+	rows.sort((a, b) => {
+		const aHasEvent = a._eventOrder !== null;
+		const bHasEvent = b._eventOrder !== null;
+		if (aHasEvent && bHasEvent) {
+			if (a._eventOrder !== b._eventOrder) return a._eventOrder - b._eventOrder;
+		} else if (aHasEvent !== bHasEvent) {
+			// Tagged-with-event rows come before untagged rows.
+			return aHasEvent ? -1 : 1;
+		}
+		if (a._planetIndex !== b._planetIndex) return a._planetIndex - b._planetIndex;
+		return a.index - b.index;
+	});
+
+	return rows.map(({ _eventOrder, _planetIndex, ...row }) => row);
+}
+
+// getWorldTimeline: all seven eras in order, with the chapter indices and
+// events belonging to the world in each era. Empty arrays where the world
+// is absent from that era.
+export function getWorldTimeline(worldKey) {
+	const planetView = getWorld(worldKey);
+	return eraViewsInOrder.map((era) => {
+		const chapters = planetView ? chaptersForEra(planetView, era.key) : [];
+		const events = planetView ? era.events.filter((event) => event.planets.some((p) => p.key === worldKey)) : [];
+		return {
+			era,
+			chapters: chapters.map((c) => c.index),
+			events,
+		};
+	});
+}

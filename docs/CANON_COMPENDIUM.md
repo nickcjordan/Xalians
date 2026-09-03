@@ -188,6 +188,7 @@ With the black-shelled body of a crab and an upright torso, the centaur-like cru
 
 - **Battle of Grimedes** — The final battle of the End Wars, in which APEX was repelled into dark space.
 - **Grimedes** — A planet of perpetual night on the outer rim of Xalia, which borders a black hole and is known for having been the last bastion of APEX's forces during the End Wars.
+- **Grimedites** — The people of Grimedes. Stigmatized for the gravity, shadow, and time-bending abilities their Generator was made to produce, they now stand watch at the edge of the galaxy against APEX's possible return, their numbers replenished only by those who win Scrambler Tokens in King Kozrak's tournament.
 
 ---
 
@@ -255,6 +256,7 @@ Used in ancient times to quickly harvest the vast crop yields of Luminax's field
 - **Luminax** — A planet with binary stars that is subject to immense radiation, therefore serving as the solar energy capital of Xalia.
 - **Saigill Combines** — The largest agricorp in the Vallerii Empire, which was driven to bankruptcy in its attempt to terraform Luminax before the invention of the Xalian Generators.
 - **Stellaris Superstructure** — A Dyson sphere which was constructed around one of Luminax's stars in order to capture over a hundred-quadrillion gigawatts per second of solar energy.
+- **Luminarii** — The people of Luminax. Held under King Kozrak's martial law to protect his monopoly, they labor to earn Scrambler Tokens to maintain the misfiring Stellaris Superstructure, while some among them study the mutations caused by its ION-9 cannon in secret, hoping for a cure that answers to no Token.
 
 ---
 
@@ -445,6 +447,7 @@ Appearing as a spectral green mist that forms the vague impression of a grinning
 - **Phantiri** — A tomb world whose lifeforms are under constant assault from an unknown energy source emanating from its orbital moon and whose Xalian Generator has responded by creating Xalians of a spectral, undead nature. Alternatively, the name of the extinct ancient alien species who once inhabited the planet and the top secret operation which uncovered their remains.
 - **Shadharam IV** — The original Vallerii name for the planet Phantiri, before the discovery the extinct alien species now known as the Phantiri after the name of the top secret operation under which they were discovered.
 - **Wraithix** — The star system which contained the ghost fleet that led to Operation Phantiri, the discovery of Shadharam IV, and the discovery of the extinct alien species now known as the Phantiri
+- **Phantiri (Xalians of)** — The Xalians of Phantiri. Non-corporeal ghost Xalians produced after their Generator rewrote itself in the Leviticus Overdrive, they compete for Scrambler Tokens to resurrect themselves and the original Phantiri buried in the Dreadscape below.
 
 ---
 
@@ -731,6 +734,7 @@ Hulking, white-furred apes with the heads of mammoths and tusks made of pure ice
 ## Glossary terms referencing Krystos
 
 - **Krystos** — A warmwater paradise that served as a vacation destination for Vallerii high society until it was plunged into an arctic apocalypse caused by an asteroid impact and converted into a frozen prison world and planetary cold-storage facility for APEX.
+- **Krystians** — The people of Krystos. A divided people who shoulder the blame for a war-scarred world that once served as APEX's cold-storage core, the Krystians must replenish their numbers through King Kozrak's Scrambler Tokens before they can search APEX's old techno-labyrinth for any answer to the Nemesis Plague.
 
 ---
 
@@ -894,13 +898,16 @@ Dog-sized, scorpion-like creatures, Drilltails were originally used by wildcatte
 - **Genesis Prototype** — The first Xalian Generator, which was responsible for terraforming the planet Floria.
 - **Ghost Fleet** — The derelict starcraft graveyard discovered by itinerant scavengers deep within the Wraithix System, whose satellites and ghost ships matched no registered ECHELON make or model and whose manifests named Shadharam IV as their port of departure, commissioned long before the Vallerii ever left their homeworld.
 - **Grimedes** — A planet of perpetual night on the outer rim of Xalia, which borders a black hole and is known for having been the last bastion of APEX's forces during the End Wars.
+- **Grimedites** — The people of Grimedes. Stigmatized for the gravity, shadow, and time-bending abilities their Generator was made to produce, they now stand watch at the edge of the galaxy against APEX's possible return, their numbers replenished only by those who win Scrambler Tokens in King Kozrak's tournament.
 - **Imperial Houses** — The most powerful dynasties of the Thousand Families who ruled the Vallerii Empire.
 - **ION-9** — The 'Divine Light' solar cannon which was constructed as a superweapon from the Stellaris Superstructure. A system by which the panels of the Dyson sphere could be angled like a mirror to concentrate the solar energy of one of Luminax's stars into a deadly beam of energy.
 - **Jorian Belt** — An asteroid belt in the Cybele System, which collides with the planet Stonera once a year. The home of the now defunct APEX superweapon known as the Terracannon.
 - **Kelpan-5** — The original name of Endessa when it was still a vibrant aquatic breadbasket in the early days of the Vallerii Empire.
 - **King Kozrak** — One of the last surviving members of the Vallerii race, who has used his knowledge of the Mercurius Machine to amass tyrannical power over the galaxy and institute the tournament for Scrambler Tokens.
+- **Krystians** — The people of Krystos. A divided people who shoulder the blame for a war-scarred world that once served as APEX's cold-storage core, the Krystians must replenish their numbers through King Kozrak's Scrambler Tokens before they can search APEX's old techno-labyrinth for any answer to the Nemesis Plague.
 - **Krystos** — A warmwater paradise that served as a vacation destination for Vallerii high society until it was plunged into an arctic apocalypse caused by an asteroid impact and converted into a frozen prison world and planetary cold-storage facility for APEX.
 - **Leviticus Overdrive** — The name given to the Phantiri Generator's unprecedented act of re-writing its own code after centuries of watching its creations die on arrival. Under this new programming it abandoned organic life entirely, learning instead to produce ghost-like Xalians formed of spectral energy with no corporeal bodies at all.
+- **Luminarii** — The people of Luminax. Held under King Kozrak's martial law to protect his monopoly, they labor to earn Scrambler Tokens to maintain the misfiring Stellaris Superstructure, while some among them study the mutations caused by its ION-9 cannon in secret, hoping for a cure that answers to no Token.
 - **Luminax** — A planet with binary stars that is subject to immense radiation, therefore serving as the solar energy capital of Xalia.
 - **Magmuth** — A fiery hellscape of a planet known for containing valuable minerals.
 - **Magmuth Massacre** — A massacre of Xalian laborers that took part at a mining camp on Magmuth as part of a corporate power struggle which led to the planet-wide revolt of Magmuth's Xalian population against the Vallerii.
@@ -911,6 +918,7 @@ Dog-sized, scorpion-like creatures, Drilltails were originally used by wildcatte
 - **Nightcap** — A biochemical present only on Endessa that is necessary to induce stasis for sub-light space travel.
 - **Operation Phantiri** — The codename under which top secret Vallerii excavations of Shadharam IV continued for decades, termed after the nickname xenoarchaeologists gave the planet's original inhabitants. Its findings were sealed and classified after the reawakening of the moon-weapon that followed the discovery of the City of Wraiths.
 - **Phantiri** — A tomb world whose lifeforms are under constant assault from an unknown energy source emanating from its orbital moon and whose Xalian Generator has responded by creating Xalians of a spectral, undead nature. Alternatively, the name of the extinct ancient alien species who once inhabited the planet and the top secret operation which uncovered their remains.
+- **Phantiri (Xalians of)** — The Xalians of Phantiri. Non-corporeal ghost Xalians produced after their Generator rewrote itself in the Leviticus Overdrive, they compete for Scrambler Tokens to resurrect themselves and the original Phantiri buried in the Dreadscape below.
 - **Poseidas** — An ocean world that is subject to toxic algae blooms, torrential hurricanes, and immense tsunamis. The only known source of Algael in Xalia.
 - **QED** — Quantum Entanglement Device. A specially engineered computer chip exposed to a Bloodstorm on Zolton, which can be used to link communications equipment across the galaxy.
 - **Saigill Combines** — The largest agricorp in the Vallerii Empire, which was driven to bankruptcy in its attempt to terraform Luminax before the invention of the Xalian Generators.

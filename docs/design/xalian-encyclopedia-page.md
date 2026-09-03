@@ -28,11 +28,14 @@ Nick's steers that shape this design: species detail is built on the creature te
 
 ## 1. Information architecture and routes
 
+> September 2026: `xalian-encyclopedia-ux-pass.md` extends this contract (galaxy map era scrubber and event pins, the First Survey tour, era reading modes, the world chronicle rail, trail and read marks, and the data-layer additions `getEraFootprint`, `getEraStory`, `getWorldTimeline`, `getTour`, `getRandomRecord`, the regrouped `getPowers`, and the `tour` and `event` route kinds). Where the two disagree, the UX pass wins.
+
 The page is the archive of a Xalian Generator: the machine's own records of the galaxy it serves. Masthead: Encyclopedia Xalia. One persistent search field on every screen.
 
 | Route | Section | What it shows |
 |---|---|---|
 | `/encyclopedia` | Reading room | The galaxy map, the story of Xalia in the seven eras (one paragraph each, linking into the Chronicle), and entry points to every section. |
+| `/encyclopedia/tour` and `/encyclopedia/tour/:beat` | First Survey | The guided tour: eight beats from `tour.json`, each with the era map, historian-voice prose, and the records consulted. Added by the UX pass (`xalian-encyclopedia-ux-pass.md`). |
 | `/encyclopedia/chronicle` | Chronicle | The seven eras on a vertical rail. Landing shows every era collapsed with its name, definition, and event count. |
 | `/encyclopedia/chronicle/:era` | Era | The era's galaxy narrative is not stored (the Chronicle doc's prose is a review draft, not shipped canon); the page shows the era definition, the ordered events with their anchor quotes and the worlds involved, and the world-by-world history paragraphs tagged to the era, filterable by world. |
 | `/encyclopedia/worlds` | Worlds | Fourteen survey tiles keyed by element, sorted as in `planetRecords.json`. |

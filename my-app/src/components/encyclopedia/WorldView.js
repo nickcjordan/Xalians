@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import * as lore from '../../lore';
 import Prose from './Prose';
 import XalianImage from '../xalianImage';
+import { useVisit, useReadMark, markRead } from './trail';
 import './WorldView.css';
 
 // The physical plate is a small display-set so fields can change in one
@@ -26,14 +27,95 @@ function chapterEraLabel(chapter, eraLabel) {
     return eraLabel || chapter.era;
 }
 
+/** One station on the "In the Chronicle" rail: lit and linked when the world has chapters or events in this era. */
+function ChronicleStation({ row }) {
+    const count = row.chapters.length;
+    const lit = count > 0 || row.events.length > 0;
+    const titleAttr = row.events.length > 0 ? row.events.map((e) => e.title).join(', ') : undefined;
+
+    if (!lit) {
+        return (
+            <span className="enc-world-chronicle-station enc-world-chronicle-station--dim" aria-hidden="true">
+                <span className="enc-world-chronicle-station-name">{row.era.name}</span>
+            </span>
+        );
+    }
+
+    return (
+        <Link
+            to={lore.routeFor('era', row.era.key)}
+            className="enc-world-chronicle-station"
+            title={titleAttr}
+        >
+            <span className="enc-world-chronicle-station-name">{row.era.name}</span>
+            {count > 0 && <span className="g-mono enc-world-chronicle-station-count">{count} ch</span>}
+        </Link>
+    );
+}
+
+/** One row in the sticky chapter rail. Reads its own read mark and reports clicks as a fallback read trigger. */
+function ChapterRailRow({ chapter, index, world, label, onFallbackRead }) {
+    const read = useReadMark('chapter', `${world.key}:${chapter.index}`);
+    const words = chapter.text.trim().split(/\s+/).slice(0, 8).join(' ');
+
+    return (
+        <a
+            href={`#chapter-${chapter.index}`}
+            className="enc-world-chapter-index-row"
+            onClick={onFallbackRead}
+        >
+            <span className={`g-lamp enc-world-chapter-index-lamp ${read ? '' : 'g-lamp--off'}`} aria-hidden="true" />
+            <span className="g-mono enc-world-chapter-index-num">
+                CH. {String(index + 1).padStart(2, '0')}
+            </span>
+            <span className="g-chip g-chip--outline enc-world-chapter-index-era">{label}</span>
+            <span className="enc-world-chapter-index-snippet">{words}&hellip;</span>
+        </a>
+    );
+}
+
 /**
  * WorldView: the survey record for one world -- plate, environmental report,
  * history chapters, native fauna, and entries naming the world.
- * Contract: docs/design/xalian-encyclopedia-page.md §5 "Worlds and world".
+ * Contract: docs/design/xalian-encyclopedia-ux-pass.md item 4 "World record reshaped".
  */
 export default function WorldView() {
     const { key } = useParams();
     const world = lore.getWorld(key);
+
+    useVisit(
+        world
+            ? { kind: 'world', key: world.key, name: world.name, element: world.element }
+            : { kind: null, key: null }
+    );
+
+    const hasIntersectionObserver = typeof window !== 'undefined' && 'IntersectionObserver' in window;
+    const chapterRefs = useRef([]);
+
+    useEffect(() => {
+        if (!world || !hasIntersectionObserver) return undefined;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+                        const chapterIndex = entry.target.getAttribute('data-chapter-index');
+                        if (chapterIndex != null) {
+                            markRead('chapter', `${world.key}:${chapterIndex}`);
+                        }
+                    }
+                });
+            },
+            { threshold: [0.5] }
+        );
+
+        chapterRefs.current.forEach((el) => {
+            if (el) observer.observe(el);
+        });
+
+        return () => observer.disconnect();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [world && world.key, hasIntersectionObserver]);
 
     if (!world) {
         return (
@@ -46,7 +128,14 @@ export default function WorldView() {
 
     const eras = lore.getEras();
     const eraNameByKey = new Map(eras.map((e) => [e.key, e.name]));
+    const timeline = lore.getWorldTimeline(world.key);
     const { physical, report } = world;
+
+    const handleFallbackRead = (chapterIndex) => () => {
+        if (!hasIntersectionObserver) {
+            markRead('chapter', `${world.key}:${chapterIndex}`);
+        }
+    };
 
     return (
         <article className={`enc-world g-el-${world.element}`}>
@@ -59,6 +148,15 @@ export default function WorldView() {
                     <span className="g-chip g-chip--outline">Survey Record</span>
                 </div>
             </header>
+
+            <nav className="enc-world-chronicle" aria-label="In the Chronicle">
+                <span className="enc-world-chronicle-label g-mono">In the Chronicle</span>
+                <div className="enc-world-chronicle-rail">
+                    {timeline.map((row) => (
+                        <ChronicleStation key={row.era.key} row={row} />
+                    ))}
+                </div>
+            </nav>
 
             <div className="enc-record">
                 <div className="enc-world-plate">
@@ -81,43 +179,93 @@ export default function WorldView() {
                     </div>
                 </div>
 
-                <div className="g-screen enc-world-report">
-                    <p className="g-screen-line">UNIT &nbsp;{report.unit}</p>
-                    <p className="g-screen-line">PROTOCOL &nbsp;{report.protocol}</p>
-                    <p className="g-screen-line g-screen-line--dim">CYCLE &nbsp;{report.cycle}</p>
+                <div className="enc-world-record-col">
+                    <div className="g-screen enc-world-report">
+                        <p className="g-screen-line">UNIT &nbsp;{report.unit}</p>
+                        <p className="g-screen-line">PROTOCOL &nbsp;{report.protocol}</p>
+                        <p className="g-screen-line g-screen-line--dim">CYCLE &nbsp;{report.cycle}</p>
 
-                    <p className="g-screen-line enc-world-report-block">
-                        TERRAIN &nbsp;{report.terrain.features.join(' / ')}
-                    </p>
-                    {report.terrain.notes && (
-                        <p className="g-screen-line g-screen-line--dim">{report.terrain.notes}</p>
+                        <p className="g-screen-line enc-world-report-block">
+                            TERRAIN &nbsp;{report.terrain.features.join(' / ')}
+                        </p>
+                        {report.terrain.notes && (
+                            <p className="g-screen-line g-screen-line--dim">{report.terrain.notes}</p>
+                        )}
+
+                        <p className="g-screen-line enc-world-report-block">MOBILITY</p>
+                        {MOBILITY_ORDER.filter((k) => report.mobility[k]).map((k) => {
+                            const m = report.mobility[k];
+                            return (
+                                <p key={k} className="g-screen-line">
+                                    {k.toUpperCase()} &nbsp;{m.rating.toUpperCase()}
+                                    {m.note && <span className="g-screen-line--dim"> &mdash; {m.note}</span>}
+                                </p>
+                            );
+                        })}
+
+                        <p className="g-screen-line enc-world-report-block">FAUNA</p>
+                        {report.fauna.observations.map((obs, i) => (
+                            <p key={i} className="g-screen-line">{obs}</p>
+                        ))}
+
+                        <p className="g-screen-line enc-world-report-block">
+                            HAZARDS &nbsp;{report.hazards.join(' / ')}
+                        </p>
+
+                        <p className="g-screen-line enc-world-report-block">
+                            OUTPUT PRIORITIES &nbsp;{report.outputPriorities.join(' / ')}
+                        </p>
+
+                        <p className="g-screen-line g-screen-line--dim enc-world-report-block">RECEIPT UNCONFIRMED_</p>
+                    </div>
+
+                    {world.nativeSpecies.length > 0 && (
+                        <section className="enc-world-record-section">
+                            <div className="enc-section-head enc-world-record-section-head">
+                                <h2 className="g-h3">Native Fauna</h2>
+                                <span className="enc-count">{world.nativeSpecies.length} species</span>
+                            </div>
+                            <div className="enc-grid enc-world-fauna-grid">
+                                {world.nativeSpecies.map((s) => (
+                                    <Link
+                                        key={s.key}
+                                        to={lore.routeFor('species', s.key)}
+                                        className={`g-tile g-el-${s.element} enc-world-species-tile enc-world-species-tile--compact`}
+                                    >
+                                        <div className="g-tile-art enc-world-species-art">
+                                            <XalianImage
+                                                colored
+                                                speciesName={s.name}
+                                                primaryType={s.element}
+                                                moreClasses="species-tile-img"
+                                            />
+                                        </div>
+                                        <div className="g-tile-meta">
+                                            <span className="g-tile-name">{s.name}</span>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        </section>
                     )}
 
-                    <p className="g-screen-line enc-world-report-block">MOBILITY</p>
-                    {MOBILITY_ORDER.filter((k) => report.mobility[k]).map((k) => {
-                        const m = report.mobility[k];
-                        return (
-                            <p key={k} className="g-screen-line">
-                                {k.toUpperCase()} &nbsp;{m.rating.toUpperCase()}
-                                {m.note && <span className="g-screen-line--dim"> &mdash; {m.note}</span>}
-                            </p>
-                        );
-                    })}
-
-                    <p className="g-screen-line enc-world-report-block">FAUNA</p>
-                    {report.fauna.observations.map((obs, i) => (
-                        <p key={i} className="g-screen-line">{obs}</p>
-                    ))}
-
-                    <p className="g-screen-line enc-world-report-block">
-                        HAZARDS &nbsp;{report.hazards.join(' / ')}
-                    </p>
-
-                    <p className="g-screen-line enc-world-report-block">
-                        OUTPUT PRIORITIES &nbsp;{report.outputPriorities.join(' / ')}
-                    </p>
-
-                    <p className="g-screen-line g-screen-line--dim enc-world-report-block">RECEIPT UNCONFIRMED_</p>
+                    {world.entries.length > 0 && (
+                        <section className="enc-world-record-section">
+                            <div className="enc-section-head enc-world-record-section-head">
+                                <h2 className="g-h3">Entries Naming This World</h2>
+                            </div>
+                            <div className="g-panel g-panel--recessed enc-world-entries">
+                                {world.entries.map((entry) => (
+                                    <div key={entry.key} className={`g-record ${entry.element ? `g-el-${entry.element}` : ''}`}>
+                                        <Link to={lore.routeFor('entry', entry.key)} className="g-record-term">
+                                            {entry.title}
+                                        </Link>
+                                        <Prose text={entry.definition} className="g-record-body" />
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
                 </div>
             </div>
 
@@ -131,7 +279,15 @@ export default function WorldView() {
                             const eraKey = chapterEraTag(chapter);
                             const label = chapterEraLabel(chapter, eraKey ? eraNameByKey.get(eraKey) : null);
                             return (
-                                <li key={chapter.index} id={`chapter-${chapter.index}`} className="enc-world-chapter">
+                                <li
+                                    key={chapter.index}
+                                    id={`chapter-${chapter.index}`}
+                                    data-chapter-index={chapter.index}
+                                    ref={(el) => {
+                                        chapterRefs.current[i] = el;
+                                    }}
+                                    className="enc-world-chapter"
+                                >
                                     <div className="enc-world-chapter-head">
                                         <span className="g-mono enc-world-chapter-num">
                                             CH. {String(i + 1).padStart(2, '0')}
@@ -158,18 +314,15 @@ export default function WorldView() {
                             {world.chapters.map((chapter, i) => {
                                 const eraKey = chapterEraTag(chapter);
                                 const label = chapterEraLabel(chapter, eraKey ? eraNameByKey.get(eraKey) : null);
-                                const words = chapter.text.trim().split(/\s+/).slice(0, 8).join(' ');
                                 return (
                                     <li key={chapter.index}>
-                                        <a href={`#chapter-${chapter.index}`} className="enc-world-chapter-index-row">
-                                            <span className="g-mono enc-world-chapter-index-num">
-                                                CH. {String(i + 1).padStart(2, '0')}
-                                            </span>
-                                            <span className="g-chip g-chip--outline enc-world-chapter-index-era">
-                                                {label}
-                                            </span>
-                                            <span className="enc-world-chapter-index-snippet">{words}&hellip;</span>
-                                        </a>
+                                        <ChapterRailRow
+                                            chapter={chapter}
+                                            index={i}
+                                            world={world}
+                                            label={label}
+                                            onFallbackRead={handleFallbackRead(chapter.index)}
+                                        />
                                     </li>
                                 );
                             })}
@@ -177,54 +330,6 @@ export default function WorldView() {
                     </nav>
                 </div>
             </section>
-
-            {world.nativeSpecies.length > 0 && (
-                <section className="enc-section">
-                    <div className="enc-section-head">
-                        <h2 className="g-h2">Native Fauna</h2>
-                        <span className="enc-count">{world.nativeSpecies.length} species</span>
-                    </div>
-                    <div className="enc-grid">
-                        {world.nativeSpecies.map((s) => (
-                            <Link
-                                key={s.key}
-                                to={lore.routeFor('species', s.key)}
-                                className={`g-tile g-el-${s.element} enc-world-species-tile`}
-                            >
-                                <div className="g-tile-art enc-world-species-art">
-                                    <XalianImage
-                                        colored
-                                        speciesName={s.name}
-                                        primaryType={s.element}
-                                        moreClasses="species-tile-img"
-                                    />
-                                </div>
-                                <div className="g-tile-meta">
-                                    <span className="g-tile-name">{s.name}</span>
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
-                </section>
-            )}
-
-            {world.entries.length > 0 && (
-                <section className="enc-section">
-                    <div className="enc-section-head">
-                        <h2 className="g-h2">Entries Naming This World</h2>
-                    </div>
-                    <div className="g-panel g-panel--recessed enc-world-entries">
-                        {world.entries.map((entry) => (
-                            <div key={entry.key} className={`g-record ${entry.element ? `g-el-${entry.element}` : ''}`}>
-                                <Link to={lore.routeFor('entry', entry.key)} className="g-record-term">
-                                    {entry.title}
-                                </Link>
-                                <Prose text={entry.definition} className="g-record-body" />
-                            </div>
-                        ))}
-                    </div>
-                </section>
-            )}
         </article>
     );
 }
