@@ -1892,3 +1892,215 @@
 @media (max-width: 760px) {
 	.rec-status-terrain { display: none; }
 }
+
+/* -------------------------------------------------------------------------
+   SIMPLE MODE. One recommended move, orders by nature, no rail. The same table,
+   with fewer things asking for attention.
+   ------------------------------------------------------------------------- */
+
+.rec-mode { flex: 0 0 auto; }
+
+.rec-mode .g-segment {
+	padding: 2px var(--g-3);
+	font-size: var(--g-size-micro);
+}
+
+.rec-mode--compact { margin-left: var(--g-3); }
+
+.rec-intro-mode {
+	display: flex;
+	align-items: center;
+	gap: var(--g-3);
+	flex-wrap: wrap;
+}
+
+.rec-intro-mode-text {
+	flex: 1 1 200px;
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-mid);
+	line-height: 1.4;
+}
+
+/* the whole table when the rail is away */
+.rec-body--wide { grid-template-columns: minmax(0, 1fr); }
+
+/* what just happened, in the machine's own voice, two lines under the strip */
+.rec-ticker {
+	flex: 0 0 auto;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: var(--g-2) var(--g-3);
+}
+
+.rec-ticker .g-screen-line {
+	font-size: var(--g-size-micro);
+	line-height: 1.4;
+}
+
+/* the recommended move */
+.rec-deploy-bar--simple {
+	display: grid;
+	grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+	align-items: stretch;
+}
+
+.rec-advice {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+	padding: var(--g-3);
+	border-right: var(--g-hairline) solid var(--g-rule);
+}
+
+.rec-advice .g-kicker { margin: 0; }
+
+.rec-advice-label {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-low);
+}
+
+.rec-advice-btn {
+	justify-content: center;
+	text-align: center;
+	white-space: normal;
+	line-height: 1.25;
+}
+
+.rec-advice-why {
+	font-size: var(--g-size-tiny) !important;
+	color: var(--g-ink-mid);
+	margin: 0 !important;
+	line-height: 1.45;
+}
+
+.rec-advice-pass {
+	align-self: flex-start;
+	font-size: var(--g-size-micro);
+	padding: 2px var(--g-3);
+}
+
+.rec-advice--waiting { justify-content: center; }
+
+/* the recommended creature and site */
+.rec-figure--recommended .rec-figure-plate {
+	outline: 2px solid var(--g-brass-light);
+	outline-offset: 1px;
+}
+
+.rec-figure--recommended { transform: translateY(-3px); }
+
+.rec-site--recommended {
+	border-color: var(--g-brass-light);
+	box-shadow: var(--g-relief), 0 0 0 1px color-mix(in srgb, var(--g-brass-light) 40%, transparent);
+}
+
+.rec-site-recommend {
+	position: absolute;
+	top: var(--g-2);
+	right: var(--g-2);
+	font-family: var(--g-font-stencil);
+	font-size: 0.5625rem;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	color: var(--g-brass-light);
+	border: var(--g-hairline) solid currentColor;
+	border-radius: 2px;
+	padding: 0 4px;
+}
+
+.rec-site { position: relative; }
+
+/* orders by nature */
+.rec-orders-bar--simple {
+	align-items: flex-start;
+	gap: var(--g-4);
+}
+
+.rec-orders-plan {
+	flex: 1 1 auto;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-1);
+}
+
+.rec-orders-plan .g-kicker { margin: 0; }
+
+.rec-orders-plan-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.rec-orders-plan-item {
+	font-size: var(--g-size-tiny);
+	line-height: 1.4;
+	color: var(--g-ink);
+	padding-left: var(--g-3);
+	position: relative;
+	cursor: default;
+}
+
+.rec-orders-plan-item::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 0.55em;
+	width: 6px;
+	height: 2px;
+	background: var(--g-el);
+}
+
+.rec-orders-plan-item--ordered { color: var(--g-brass-light); }
+
+.rec-orders-plan-actions {
+	flex: 0 0 auto;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+	align-items: stretch;
+}
+
+.rec-go-btn {
+	min-width: 140px;
+	justify-content: center;
+	font-size: var(--g-size-body);
+}
+
+.rec-change-orders {
+	font-size: var(--g-size-micro);
+	justify-content: center;
+}
+
+/* the full orders panel opens in the rail, as in advanced mode; the bar stays */
+.rec-match--simple .rec-orders { flex: 1 1 0; min-height: 0; }
+
+
+@media (max-width: 760px) {
+	.rec-deploy-bar--simple { display: flex; flex-direction: column; }
+	.rec-advice {
+		border-right: 0;
+		border-bottom: var(--g-hairline) solid var(--g-rule);
+		padding: var(--g-2);
+		gap: var(--g-1);
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: center;
+	}
+	.rec-advice .g-kicker { grid-column: 1 / -1; }
+	.rec-advice-btn { grid-column: 1 / -1; font-size: var(--g-size-small); padding: var(--g-2) var(--g-3); }
+	.rec-advice-why { font-size: var(--g-size-micro) !important; }
+	.rec-advice-pass { align-self: center; }
+	.rec-orders-bar--simple { flex-direction: column; align-items: stretch; }
+	.rec-orders-plan-actions { flex-direction: row; }
+	.rec-go-btn { flex: 1 1 auto; }
+	.rec-mode--compact { margin-left: auto; }
+	.rec-ticker { display: none; }
+}

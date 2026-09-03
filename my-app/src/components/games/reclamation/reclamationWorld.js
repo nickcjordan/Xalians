@@ -71,6 +71,7 @@ function ReclamationWorld({
 	onSiteClick,
 	onFigureClick,
 	clickable,
+	recommendedSiteId,
 	holdingIds,
 	hiddenEnemyCount,
 	badges,
@@ -112,6 +113,10 @@ function ReclamationWorld({
 					}
 					if (verdict) {
 						classes.push(`rec-site--verdict-${verdict.who}`);
+					}
+					const recommended = recommendedSiteId === site.id;
+					if (recommended) {
+						classes.push('rec-site--recommended');
 					}
 
 					const figureProps = (entry, seat, facing) => ({
@@ -159,6 +164,7 @@ function ReclamationWorld({
 							<header className="rec-site-head">
 								<h3 className="rec-site-name">{site.name}</h3>
 								<p className="rec-site-env g-mono">{environmentLine(site)}</p>
+								{recommended && <span className="rec-site-recommend" data-recommended-site>recommended</span>}
 							</header>
 
 							{!empty && (

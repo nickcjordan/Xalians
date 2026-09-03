@@ -11,11 +11,13 @@ function ReclamationRoster({
 	roster,
 	you,
 	armedRecordId,
+	recommendedRecordId,
 	onArm,
 	onInspect,
 	sendsLeft,
 	disabled,
 	yourTurn,
+	simple,
 }) {
 	return (
 		<div className="rec-roster">
@@ -23,7 +25,9 @@ function ReclamationRoster({
 				<span className="g-label">Your roster</span>
 				<span className="g-mono rec-roster-count">{roster.length} in hand · {sendsLeft} sends left this expedition</span>
 				<span className="g-mono rec-roster-help">
-					{yourTurn ? 'tap one to arm it · read opens its dossier' : 'read opens a dossier'}
+					{simple
+						? (yourTurn ? 'or tap one, then a site · read opens its dossier' : 'read opens a dossier')
+						: (yourTurn ? 'tap one to arm it · read opens its dossier' : 'read opens a dossier')}
 				</span>
 			</header>
 			<div className="rec-roster-strip">
@@ -38,6 +42,7 @@ function ReclamationRoster({
 						size="small"
 						hold={baseHold(record)}
 						armed={armedRecordId === record.id}
+						recommended={recommendedRecordId === record.id}
 						dimmed={disabled}
 						onClick={(e) => {
 							e.stopPropagation();
