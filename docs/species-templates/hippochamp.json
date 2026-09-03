@@ -1,0 +1,186 @@
+{
+  "key": "hippochamp",
+  "name": "Hippochamp",
+  "element": "water",
+  "homePlanet": "poseidas",
+  "generatorPlanets": [
+    "poseidas"
+  ],
+  "lore": {
+    "description": "A four-legged creature resembling a seahorse, crested and spined along its neck and back, with a long trunk-like snout and a tightly curled tail. Hippochamps were designed as emergency response crews for the electrical and chemical fires that occur on Poseidas's hydro-processing rigs, and as a means of defense against pirates seeking to steal valuable Algael. The snout serves as a high-pressure water cannon that maintains a steady stream, hosing down fires and threats alike. It patrols the hydro-processing fleets, rig upon rig in interlocking nets of floating industrial zones trawling a global ocean for algae.",
+    "descriptionStatus": "upgraded",
+    "biomeNiche": "the interlocking floating industrial zones of Poseidas's hydro-processing fleets"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "quadruped",
+    "anatomy": [
+      "trunk",
+      "hooves",
+      "tail",
+      "crest",
+      "spines",
+      "hide"
+    ],
+    "covering": "hide",
+    "size": {
+      "heightCm": [
+        115,
+        145
+      ],
+      "weightKg": [
+        120,
+        165
+      ]
+    },
+    "lifespan": "standard",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "vocal",
+      "display"
+    ],
+    "breathes": [
+      "gas",
+      "liquid"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas",
+        "liquid"
+      ],
+      "temperatureC": {
+        "min": 5,
+        "max": 40
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        55,
+        75
+      ],
+      "burrow": [
+        0,
+        0
+      ],
+      "climb": [
+        10,
+        25
+      ],
+      "sprint": [
+        40,
+        60
+      ],
+      "leap": [
+        25,
+        45
+      ],
+      "manipulation": [
+        30,
+        50
+      ]
+    },
+    "senses": {
+      "sight": [
+        45,
+        65
+      ],
+      "hearing": [
+        40,
+        60
+      ],
+      "smell": [
+        35,
+        55
+      ]
+    }
+  },
+  "archetypeWeights": {
+    "survivor": 40,
+    "bulwark": 25,
+    "vanguard": 20,
+    "runner": 15
+  },
+  "attributes": {
+    "strength": [
+      45,
+      65
+    ],
+    "vitality": [
+      50,
+      70
+    ],
+    "endurance": [
+      65,
+      88
+    ],
+    "agility": [
+      40,
+      60
+    ],
+    "reflex": [
+      45,
+      65
+    ],
+    "intelligence": [
+      35,
+      55
+    ],
+    "willpower": [
+      50,
+      70
+    ],
+    "instinct": [
+      45,
+      65
+    ],
+    "charisma": [
+      30,
+      50
+    ],
+    "resilience": [
+      45,
+      65
+    ]
+  },
+  "traits": {
+    "pool": {
+      "protective": 85,
+      "resistant": 70,
+      "healing": 35,
+      "pack-bonded": 60,
+      "perceptive": 30,
+      "anchored": 20,
+      "menacing": 12,
+      "inspiring": 15
+    }
+  },
+  "instruments": [
+    "trunk",
+    "hooves",
+    "tail"
+  ],
+  "conduits": {
+    "trunk": "water"
+  },
+  "signatureAbility": {
+    "name": "Hydrostatic Lance",
+    "instrument": "trunk",
+    "action": "spray",
+    "medium": "water",
+    "intensity": [
+      35,
+      80
+    ],
+    "description": "The long snout holds one unbroken high-pressure stream on a fire or a threat for as long as the pressure lasts."
+  }
+}

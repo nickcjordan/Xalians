@@ -1,0 +1,182 @@
+{
+  "key": "scalatto",
+  "name": "Scalatto",
+  "element": "sand",
+  "homePlanet": "endessa",
+  "generatorPlanets": [
+    "endessa"
+  ],
+  "lore": {
+    "description": "A plated biped shielded by a scaly exoskeleton, banded from neck to tail, the Scalatto can roll into a ball to protect itself. It was generated on Endessa, where a prototype Xalian Generator stolen from an ECHELON fleet supplies the Xalians that drill Nightcap beneath the dunes, and it lives in the sand and the cavern networks of that world.",
+    "descriptionStatus": "upgraded",
+    "biomeNiche": "the dunes and cavern networks of Endessa"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "biped",
+    "anatomy": [
+      "shell",
+      "claws",
+      "tail",
+      "body"
+    ],
+    "covering": "chitin",
+    "size": {
+      "heightCm": [
+        95,
+        125
+      ],
+      "weightKg": [
+        58,
+        84
+      ]
+    },
+    "lifespan": "long",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "vibration"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -10,
+        "max": 48
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        5,
+        20
+      ],
+      "burrow": [
+        35,
+        60
+      ],
+      "climb": [
+        15,
+        35
+      ],
+      "sprint": [
+        40,
+        70
+      ],
+      "leap": [
+        15,
+        35
+      ],
+      "manipulation": [
+        30,
+        55
+      ]
+    },
+    "senses": {
+      "sight": [
+        30,
+        55
+      ],
+      "hearing": [
+        40,
+        65
+      ],
+      "smell": [
+        35,
+        60
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    }
+  },
+  "archetypeWeights": {
+    "bulwark": 46,
+    "juggernaut": 24,
+    "survivor": 18,
+    "stalwart": 12
+  },
+  "attributes": {
+    "strength": [
+      45,
+      70
+    ],
+    "vitality": [
+      50,
+      75
+    ],
+    "endurance": [
+      50,
+      75
+    ],
+    "agility": [
+      25,
+      50
+    ],
+    "reflex": [
+      30,
+      55
+    ],
+    "intelligence": [
+      20,
+      45
+    ],
+    "willpower": [
+      40,
+      65
+    ],
+    "instinct": [
+      40,
+      65
+    ],
+    "charisma": [
+      15,
+      40
+    ],
+    "resilience": [
+      70,
+      95
+    ]
+  },
+  "traits": {
+    "pool": {
+      "armored": 100,
+      "resistant": 70,
+      "ramming": 55,
+      "solitary": 35,
+      "anchored": 30,
+      "protective": 25,
+      "menacing": 15,
+      "perceptive": 12,
+      "regenerative": 8
+    }
+  },
+  "instruments": [
+    "shell",
+    "claws",
+    "tail"
+  ],
+  "signatureAbility": {
+    "name": "Duricrust Rolling Guard",
+    "instrument": "shell",
+    "action": "ward",
+    "medium": "sand",
+    "intensity": [
+      30,
+      80
+    ],
+    "description": "It draws its limbs beneath the banded plates and closes into a ball, and what strikes the shell is turned aside."
+  }
+}

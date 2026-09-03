@@ -4,6 +4,7 @@ Per-species decisions that a migration agent cannot derive from the sources alon
 
 ## General
 
+- 2026-09-02: levers, not stone. Every ruling here is a tuned setting, reopened by a concrete case met while building, never by taste; agents report the case and the smallest fix in the moment, Nick decides. Full statement in the repo `CLAUDE.md`.
 - 2026-09-02: one surface key. `shell` is the armored aspect; `hide` means the body has no armored aspect; a species never declares both. Enforced by the script (`anatomy.surface`).
 
 - 2026-09-02: the species artwork (`art/<key>.png`, rendered from `my-app/src/svg/species/`) is source material equal to the description; parts visible in the art are sourced, not authored.
@@ -25,4 +26,53 @@ Per-species decisions that a migration agent cannot derive from the sources alon
 ## Registry definitions
 
 - 2026-09-02: `docs/species-templates/REGISTRY-DEFINITIONS.md` ratified after five blind passes; `sessile` declined; Xylum is `multiped` with burrow movement; Tetrahive `bodyPlan` is `swarm`.
-- 2026-09-02 (trait model, second ruling): the template pool is exhaustive, all 24 traits at 0 to 100; the generated individual stores only the keys that landed; percents are read back from the template pinned by generatorVersion.
+- 2026-09-02 (trait model, second ruling): the template pool lists only traits above 0 and absence means 0 (amended the same day: the registry is additive, so exhaustive lists would go stale); the generated individual stores only the keys that landed; percents are read back from the template pinned by generatorVersion.
+- 2026-09-02: no dramatic sign-off in species prose; the last sentence states a plain present-tense fact (skill v2.10, lore-voice skill).
+
+## Conduits
+
+- 2026-09-02: mechanism ratified (two gates: medium matches and the part is a declared, sourced conduit); the 14-row medium action table is a draft pending sign-off. Applied: Graviclaw pincers/dark; Hypnopet crest/psychic; Figzy mind and fists/psychic; Tizzie gaze/psychic; Tetrahive, Smokat, Ectoghoul none.
+- 2026-09-02: the 14-row medium action table ratified as drafted (skill section 5.7a).
+- 2026-09-02: archetype weights are integer percents summing to exactly 100 (one roll per creature); the 1 to 5 relative scale is retired. Nine records converted: graviclaw: juggernaut 33, bulwark 27, predator 20, vanguard 13, stalwart 7; tetrahive: skirmisher 33, sage 27, prowler 20, seeker 13, sovereign 7; smokat: prowler 33, predator 27, skirmisher 20, seeker 13, rogue 7; ectoghoul: prowler 33, skirmisher 27, rogue 20, predator 13, seeker 7; tizzie: virtuoso 36, prowler 22, skirmisher 21, sage 14, rogue 7; figzy: sage 36, seeker 22, skirmisher 21, virtuoso 14, prowler 7; hypnopet: sage 33, sovereign 27, seeker 20, virtuoso 13, runner 7; akinza: prowler 38, skirmisher 31, predator 23, runner 8; yetimoth: juggernaut 33, bulwark 27, vanguard 20, stalwart 13, survivor 7.
+- 2026-09-02: Akinza and Yetimoth ratified as presented (Krystos complete).
+- 2026-09-02: archetype rows re-authored per species to break the shared 5-4-3-2-1 ladder (Nick): graviclaw: juggernaut 45, bulwark 25, predator 20, stalwart 10; tetrahive: sage 42, skirmisher 24, sovereign 18, seeker 16; smokat: prowler 40, skirmisher 30, predator 22, rogue 8; ectoghoul: prowler 35, rogue 30, skirmisher 20, predator 15; tizzie: virtuoso 40, sovereign 25, prowler 15, skirmisher 12, sage 8; figzy: sage 50, seeker 20, virtuoso 15, skirmisher 15; hypnopet: sovereign 38, sage 30, virtuoso 22, seeker 10; akinza: prowler 45, skirmisher 30, predator 25; yetimoth: juggernaut 36, bulwark 34, stalwart 18, vanguard 12.
+
+## Magmuth and Floria batch (pending Nick)
+
+- 2026-09-02: Dromeus, Imprit, Xylum, Kosanos, Avilily migrated, validated, amended; presented with three lever questions (partial-surface covering, small-flier lifespan clause, forelimb-work body plan clause) and rulings on composition-from-element (never), Kosanos trunk plus blades, Xylum height as visible crown.
+- 2026-09-02: Dromeus, Imprit, Xylum, Kosanos, Avilily ratified as presented, with the orchestrator rulings (Kosanos flesh and omnivore; Imprit no tail conduit, fists, fangs, luminous 100; Avilily no conduit; Xylum height as visible crown; Kosanos trunk plus blades). Covering rule amended: a named partial surface is the covering when nothing else is named or shown; Dromeus is `feathers`.
+- 2026-09-02: lifespan rubric cut 3 narrowed: `fleeting` under 20 kg only for swarm and conjured-unit bodies; a small flier that gathers in numbers is `short`. Avilily is `short`.
+- 2026-09-02: body plan selection amended: a description naming forelimb work overrides the art only when no forelimb bears weight in the art; a hand-user drawn on all fours is `quadruped`. Imprit is `quadruped`.
+- 2026-09-02: `vents` covers an oral discharge organ (Venemist); a flesh animal body with the `hide` anatomy key and no surface named takes the `hide` covering (Kosanos, Hippochamp). Drainov, Poseidas, Zolton batch: Bioflim, Venemist, Newtapede, Hippochamp, Voltish migrated, validated, amended; presented to Nick.
+- 2026-09-02: Luminax, Saiphus, Veridium batch: Crystorn, Chromocat, Luceras, Neph, Foromeer migrated, validated, amended. Rulings: Crystorn crown is `core`; Chromocat teleport is apparent speed and its signature is rake; Luceras head growth is an ear; Foromeer has no metal composition secondary and takes the armored lifespan adjustment; Neph weight band stays low (rubric note: a floating body under-masses its size; no change made).
+
+## Planet rebuild (2026-09-02)
+
+- Planet source is now `planetRecords.json` (history unchanged; `physical.derived.gravityEarth`; `environment.habitableBandC` / `meanC` / `extremeC`; `report.terrain.features`) with `planetStatus.json` as political context. Species temperature bands validate against the habitable band, never the extremes. The 24 records migrated before the rebuild were re-banded by intersection (or to the full habitable band where the old sub-band barely overlapped); size bands were authored around legacy figures as relative gauges and were not re-derived, though several planets changed gravity materially (Saiphus 0.36 to 1.79 g, Poseidas 1.7 to 0.73 g, Krystos 1.2 to 0.54 g, Stonera 0.74 to 0.53 g, Magmuth 1.25 to 1.53 g).
+  - graviclaw: [-6, 34] -> [-60, 5] (full habitable band (the old sub-band barely overlapped it))
+  - tetrahive: [-6, 34] -> [-60, 5] (full habitable band (the old sub-band barely overlapped it))
+  - smokat: [-30, 45] -> [-30, 20] (intersection)
+  - ectoghoul: [-58, 53] -> [-50, 20] (intersection)
+  - tizzie: unchanged [12, 42] inside [5, 50]
+  - figzy: unchanged [12, 44] inside [5, 50]
+  - hypnopet: unchanged [12, 40] inside [5, 50]
+  - akinza: [-95, -10] -> [-60, -10] (intersection)
+  - yetimoth: [-122, -10] -> [-60, -10] (intersection)
+  - dromeus: [65, 240] -> [65, 105] (intersection)
+  - imprit: [65, 300] -> [65, 105] (intersection)
+  - xylum: unchanged [-4, 34] inside [-5, 45]
+  - kosanos: unchanged [2, 36] inside [-5, 45]
+  - avilily: unchanged [4, 38] inside [-5, 45]
+  - bioflim: [-10, 43] -> [0, 43] (intersection)
+  - venemist: [-10, 43] -> [0, 43] (intersection)
+  - newtapede: unchanged [5, 40] inside [-2, 40]
+  - hippochamp: [5, 52] -> [5, 40] (intersection)
+  - voltish: [-60, 45] -> [-55, 35] (intersection)
+  - crystorn: [30, 95] -> [30, 70] (intersection)
+  - chromocat: [25, 95] -> [25, 70] (intersection)
+  - luceras: [-34, 42] -> [-30, 42] (intersection)
+  - neph: [-60, 45] -> [-30, 45] (intersection)
+  - foromeer: [-12, 36] -> [-10, 36] (intersection)
+- 2026-09-02: Stonera and Endessa batch: Codazzo, Terragoyle, Scalatto, Thirstaserp, Drilltail migrated, validated, amended; roster complete (29 of 29). Rulings: Terragoyle stone is a held object, not composition; carried source descriptions may have unambiguous misspellings corrected with a note (species.json to be fixed upstream); the armored-covering lifespan adjustment is applied as written (Foromeer, Scalatto, Drilltail are `long`); Drilltail signature is pincers / crush. Notes carried, no change made: a resting perch read as a gait (Terragoyle), the armored clause on small disposable chitin bodies (Drilltail), the rock `burst` cell being unreachable for spined species, and `communication` having no unknown value.
+- 2026-09-02: art corrections from Nick: Crystorn has two crystal horns (`horns`, light conduit); Luceras has two curved ram horns (`horns`, signature horns / shove); Foromeer has antennae on its head and its drills are its hands (`spurs`, signature spurs / strike).
+- 2026-09-02 (Nick): misspellings are never carried into a record; species.json corrected upstream (Crystorn temperament, Avilily petals and Avililies, Terragoyle levitating and Terragoyles). Drilltail signature is the drill tail (tail / strike), not the pincers.

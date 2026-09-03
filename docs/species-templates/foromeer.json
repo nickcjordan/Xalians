@@ -1,0 +1,179 @@
+{
+  "key": "foromeer",
+  "name": "Foromeer",
+  "element": "metal",
+  "homePlanet": "veridium",
+  "generatorPlanets": [
+    "veridium"
+  ],
+  "lore": {
+    "description": "A tall upright creature whose hands are long drill-like horns and whose head carries two thin antennae, the Foromeer has a metallic exoskeleton on its limbs and is thought to once have been used for mineral excavation on Veridium, a world of dull, metallic crust with veins of heavy metals striking their way deep into it. Its powerful horns can break through the strongest of material. Since Source Code 606 released the Veridians from the oversight of their robotic masters, the demand for Veridium's factories has troughed, and the planet's Xalians tinker with salvaged drones, robots, and machines.",
+    "descriptionStatus": "upgraded",
+    "biomeNiche": "the ore-filled soil and heavy-metal veins of Veridium's mineral crust"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "biped",
+    "anatomy": [
+      "spurs",
+      "antennae",
+      "shell",
+      "body"
+    ],
+    "covering": "plating",
+    "size": {
+      "heightCm": [
+        180,
+        215
+      ],
+      "weightKg": [
+        82,
+        112
+      ]
+    },
+    "lifespan": "long",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "vibration"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -10,
+        "max": 36
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        0,
+        10
+      ],
+      "burrow": [
+        45,
+        75
+      ],
+      "climb": [
+        15,
+        35
+      ],
+      "sprint": [
+        25,
+        45
+      ],
+      "leap": [
+        15,
+        35
+      ],
+      "manipulation": [
+        10,
+        25
+      ]
+    },
+    "senses": {
+      "sight": [
+        30,
+        55
+      ],
+      "hearing": [
+        20,
+        40
+      ],
+      "smell": [
+        15,
+        35
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    }
+  },
+  "archetypeWeights": {
+    "berserker": 40,
+    "juggernaut": 30,
+    "survivor": 20,
+    "vanguard": 10
+  },
+  "attributes": {
+    "strength": [
+      55,
+      78
+    ],
+    "vitality": [
+      42,
+      62
+    ],
+    "endurance": [
+      58,
+      80
+    ],
+    "agility": [
+      28,
+      48
+    ],
+    "reflex": [
+      25,
+      45
+    ],
+    "intelligence": [
+      22,
+      42
+    ],
+    "willpower": [
+      40,
+      62
+    ],
+    "instinct": [
+      35,
+      55
+    ],
+    "charisma": [
+      15,
+      32
+    ],
+    "resilience": [
+      52,
+      74
+    ]
+  },
+  "traits": {
+    "pool": {
+      "armored": 100,
+      "regenerative": 85,
+      "resistant": 55,
+      "ramming": 45,
+      "anchored": 25,
+      "perceptive": 20,
+      "solitary": 15
+    }
+  },
+  "instruments": [
+    "spurs",
+    "shell"
+  ],
+  "signatureAbility": {
+    "name": "Vein Breaker",
+    "instrument": "spurs",
+    "action": "strike",
+    "medium": "metal",
+    "intensity": [
+      45,
+      85
+    ],
+    "description": "The Foromeer sets its drill hands against whatever stands in front of it and bores through."
+  }
+}

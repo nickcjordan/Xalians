@@ -13,3 +13,11 @@ One dated line per change, written by the orchestrator after a denial review. Ea
 - 2026-09-02: `crystal` covering joins the armored-at-100 WARN so the script matches the registry definitions (blind v2 finding F1).
 - 2026-09-02: `flight.means` accepts a swarm body plan (blind v3 finding 1).
 - 2026-09-02: trait pool must list all 24 keys at 0 to 100 (`traits.pool.missing`); WARN when no trait sits strictly between 0 and 100.
+- 2026-09-02: reverted the all-24-keys requirement the same day; absence means 0, percents are 1 to 100, `traits.pool.missing` removed.
+- 2026-09-02: the quotation check now accepts verbatim text from the planet data block and the species height and weight strings (Smokat run flagged the gap via its Script denials section).
+- 2026-09-02: quotation extraction pairs quote marks strictly in order; a short quotation no longer shifts the pairing onto the gap after it (Tizzie run flagged it via --note).
+- 2026-09-02: conduits: validates `conduits` (subset of instruments, element in cover, WARN for the validator agent to confirm the source), and the signature matrix WARN now reads the physical row plus the medium row for a declared conduit, and says when declaring a conduit would resolve it.
+- 2026-09-02: MEDIUM_ACTIONS table ratified by Nick as drafted; no code change.
+- 2026-09-02: archetypeWeights are percents summing to exactly 100 (Nick): FAIL `archetypeWeights.sum` when they do not, integer 1 to 100 each, WARN `archetypeWeights.rare` below 5.
+- 2026-09-02: `md.quote` skips the `## Script denials` section (Dromeus, Imprit and Kosanos runs each re-tripped it by restating a denied span or a --note string there).
+- 2026-09-02: planet source repointed to `planetRecords.json` (history verbatim as before; `physical.derived.gravityEarth`; `environment.habitableBandC`) with `planetStatus.json` strings in the quotation corpus; temperature check is now `temperature.habitable` FAIL against the habitable band, never the planetary extremes; legacy `planets.json` data-block values stay in the quotation corpus for records validated before the rebuild.

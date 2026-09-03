@@ -76,6 +76,7 @@ const ALLOWED = {
   breath: ['spray', 'cloud', 'burst', 'beam'], secretion: ['spray', 'cloud', 'burst', 'drain', 'snare', 'ward', 'mend'], swarm: ['cloud', 'strike', 'drain', 'snare', 'rake', 'terrorize'],
   aura: ['ward', 'cloud', 'terrorize', 'drain', 'mend'],
 };
+const MEDIUM_ACTIONS = {"fire":["strike","beam","spray","burst","cloud","hurl","lash"],"water":["spray","burst","cloud","snare","shove","mend","lash"],"dark":["snare","crush","shove","drain","burst","ward","terrorize"],"light":["beam","burst","ward","mend","terrorize","spray"],"plant":["snare","ward","mend","lash","cloud","spray"],"electric":["beam","burst","lash","strike","snare","spray"],"ghost":["terrorize","drain","cloud","snare","ward"],"rock":["ward","crush","hurl","burst","shove","strike"],"chemical":["spray","cloud","burst","drain","snare"],"air":["shove","burst","cloud","hurl","lash","ward"],"psychic":["burst","snare","terrorize","ward","mend","drain","shove","hurl"],"ice":["snare","ward","spray","burst","crush","mend"],"metal":["strike","ward","hurl","beam","crush","rake"],"sand":["cloud","spray","drain","snare","burst","rake"]};
 const FORBIDDEN_TRAIT_KEYS = ['healer', 'guardian', 'pack-hunter', 'lone-stalker', 'charger', 'venomous', 'ambusher', 'mesmeric', 'keen-sensed', 'iron-willed', 'enduring', 'colossal', 'linked', 'conduit', 'skittish'];
 
 // ---------- reporting ----------
@@ -156,12 +157,28 @@ let species = null, planet = null;
   const dir = SOURCE_DIRS.find(d => fs.existsSync(path.join(d, 'species.json')));
   if (!dir) { fail('source.missing', 'species.json not found in ' + SOURCE_DIRS.join(' or ')); return; }
   const speciesAll = JSON.parse(fs.readFileSync(path.join(dir, 'species.json'), 'utf8'));
-  const planetsAll = JSON.parse(fs.readFileSync(path.join(dir, 'planets.json'), 'utf8'));
+  // planetRecords.json is the planet source (rebuilt 2026-09-02): history prose, physical.derived.gravityEarth, environment.habitableBandC.
+  // planets.json is legacy; its data-block values stay in the quotation corpus only so records validated before the rebuild keep passing.
+  const recPath = path.join(dir, 'planetRecords.json');
+  const legacyPath = path.join(dir, 'planets.json');
+  const recordsAll = fs.existsSync(recPath) ? JSON.parse(fs.readFileSync(recPath, 'utf8')) : null;
+  const legacyAll = fs.existsSync(legacyPath) ? JSON.parse(fs.readFileSync(legacyPath, 'utf8')) : [];
+  const statusPath = path.join(dir, 'planetStatus.json');
+  const statusAll = fs.existsSync(statusPath) ? JSON.parse(fs.readFileSync(statusPath, 'utf8')) : [];
   const name = T && (T.name || T.key);
   species = speciesAll.find(s => name && s.name.toLowerCase() === String(name).toLowerCase());
   if (!species) { fail('source.species', 'no species.json entry matches name/key "' + name + '"'); return; }
-  planet = planetsAll.find(p => p.name.toLowerCase() === species.planet.toLowerCase());
-  if (!planet) fail('source.planet', 'no planets.json entry for ' + species.planet);
+  const pname = species.planet.toLowerCase();
+  const rec = recordsAll ? recordsAll.find(p => p.name.toLowerCase() === pname) : null;
+  const legacy = legacyAll.find(p => p.name.toLowerCase() === pname);
+  const status = (Array.isArray(statusAll) ? statusAll : Object.values(statusAll)).find(s => s.planet === pname);
+  if (rec) {
+    const strings = [];
+    const walk = v => { if (typeof v === 'string') strings.push(v); else if (Array.isArray(v)) v.forEach(walk); else if (v && typeof v === 'object') Object.values(v).forEach(walk); };
+    walk(rec.report); walk(rec.biosphere); walk(rec.physical); walk(rec.environment); if (status) walk(status);
+    planet = { name: rec.name, key: rec.key, history: rec.history || [], environment: rec.environment || null, gravityEarth: rec.physical && rec.physical.derived && rec.physical.derived.gravityEarth, corpusExtra: strings.concat([String(rec.physical && rec.physical.derived && rec.physical.derived.gravityEarth)]), data: legacy ? legacy.data : {} };
+  } else if (legacy) { planet = legacy; warn('source.planet.legacy', 'planetRecords.json not found; validating against legacy planets.json'); }
+  if (!planet) fail('source.planet', 'no planet record for ' + species.planet);
 })();
 
 // ---------- helpers ----------
@@ -263,12 +280,17 @@ if (T) {
   if (Array.isArray(P.breathes) && Array.isArray(ET.ambientMedia) && !P.breathes.every(b => ET.ambientMedia.includes(b))) fail('breathes.subset', 'breathes must be a subset of ambientMedia');
   const TC = ET.temperatureC;
   if (!TC || typeof TC.min !== 'number' || typeof TC.max !== 'number' || TC.min > TC.max) fail('temperature', 'temperatureC must be { min, max } in Celsius with min <= max');
-  else if (planet && planet.data) {
+  else if (planet && planet.environment && planet.environment.habitableBandC) {
+    // 2026-09-02: species tolerances validate against the habitable band (where life persists), never the planetary extremes.
+    const hb = planet.environment.habitableBandC;
+    if (TC.min < hb.min || TC.max > hb.max) fail('temperature.habitable', 'temperatureC [' + TC.min + ', ' + TC.max + '] extends outside the ' + planet.name + ' habitable band [' + hb.min + ', ' + hb.max + '] C (planetRecords.json environment.habitableBandC; the extremes ' + JSON.stringify(planet.environment.extremeC) + ' are not survivable); narrow it');
+    else ok('temperature.habitable', 'temperatureC [' + TC.min + ', ' + TC.max + '] lies inside ' + planet.name + ' habitable band [' + hb.min + ', ' + hb.max + '] C');
+  } else if (planet && planet.data) {
     const lo = parseFloat(String(planet.data['Temperature Low'] || '').replace(/[^-\d.]/g, ' ').trim().split(/\s+/)[0]);
     const hi = parseFloat(String(planet.data['Temperature High'] || '').replace(/[^-\d.]/g, ' ').trim().split(/\s+/)[0]);
     if (Number.isFinite(lo) && Number.isFinite(hi)) {
-      if (TC.min < lo || TC.max > hi) fail('temperature.planet', 'temperatureC [' + TC.min + ', ' + TC.max + '] extends outside the ' + planet.name + ' data block range [' + lo + ', ' + hi + '] C; a wider band needs a quoted source sentence and a WARN-level override, otherwise narrow it');
-      else ok('temperature.planet', 'temperatureC [' + TC.min + ', ' + TC.max + '] lies inside ' + planet.name + ' range [' + lo + ', ' + hi + '] C');
+      if (TC.min < lo || TC.max > hi) fail('temperature.planet', 'temperatureC [' + TC.min + ', ' + TC.max + '] extends outside the ' + planet.name + ' legacy data block range [' + lo + ', ' + hi + '] C');
+      else warn('temperature.planet', 'validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable');
     } else warn('temperature.planet', 'could not parse the planet data block temperatures');
   }
   const C = P.capabilities || {};
@@ -289,8 +311,11 @@ if (T) {
   if (!T.archetypeWeights || Object.keys(AW).length === 0) fail('archetypeWeights', 'archetypeWeights must be a non-empty subset of the 16');
   for (const [k, v] of Object.entries(AW)) {
     if (!ARCHETYPES.includes(k)) fail('archetypeWeights.key', 'unknown archetype "' + k + '"');
-    if (!(Number.isInteger(v) && v > 0)) fail('archetypeWeights.weight', 'archetype weight for ' + k + ' must be a positive integer');
+    if (!(Number.isInteger(v) && v >= 1 && v <= 100)) fail('archetypeWeights.weight', 'archetype percent for ' + k + ' must be an integer 1 to 100');
+    else if (v < 5) warn('archetypeWeights.rare', 'archetype ' + k + ' at ' + v + '% will almost never land; confirm it is meant to be that rare or drop it');
   }
+  const awSum = Object.values(AW).reduce((a, b) => a + (Number.isInteger(b) ? b : 0), 0);
+  if (Object.keys(AW).length > 0 && awSum !== 100) fail('archetypeWeights.sum', 'archetype percents sum to ' + awSum + '; they must sum to exactly 100 (one archetype is rolled per creature)');
 
   // attributes
   const A = T.attributes || {};
@@ -313,17 +338,16 @@ if (T) {
   const pool = TR.pool && typeof TR.pool === 'object' ? TR.pool : (fail('traits.pool', 'traits.pool must be an object of trait: percent'), {});
   for (const [k, v] of Object.entries(pool)) {
     if (!TRAITS.includes(k)) fail('traits.pool.key', 'unknown trait "' + k + '"' + (FORBIDDEN_TRAIT_KEYS.includes(k) ? ' (retired draft key)' : ''));
-    if (!(Number.isInteger(v) && v >= 0 && v <= 100)) fail('traits.pool.percent', 'percent for ' + k + ' must be an integer 0 to 100');
+    if (!(Number.isInteger(v) && v >= 1 && v <= 100)) fail('traits.pool.percent', 'percent for ' + k + ' must be an integer 1 to 100 (leave a trait out instead of writing 0; absence means 0)');
   }
-  for (const k of TRAITS) if (!has(pool, k)) fail('traits.pool.missing', 'traits.pool must list every trait key; missing ' + k + ' (write 0 when the species never carries it)');
-  if (!Object.values(pool).some(v => Number.isInteger(v) && v > 0 && v < 100)) warn('traits.pool.variance', 'no trait sits strictly between 0 and 100, so every individual of this species carries the same traits; confirm that is intended');
+  if (!Object.values(pool).some(v => Number.isInteger(v) && v > 0 && v < 100)) warn('traits.pool.variance', 'no listed trait sits below 100, so every individual of this species carries the same traits; confirm that is intended');
   const g = Object.keys(pool).filter(k => pool[k] === 100);
   let expected = Object.values(pool).filter(Number.isFinite).reduce((x, y) => x + y, 0) / 100;
   for (const [x, y] of TRAIT_EXCLUSIONS) if (has(pool, x) && has(pool, y)) { const hi = Math.max(pool[x], pool[y]), lo = Math.min(pool[x], pool[y]); expected -= (lo / 100) * (hi / 100); }
   if (expected > 3.5) warn('traits.expected', 'expected trait count ' + expected.toFixed(2) + ' is above 3.5; confirm the species is meant to carry that many');
   for (const [x, y] of TRAIT_EXCLUSIONS) {
     if (pool[x] === 100 && pool[y] === 100) fail('traits.exclusion', x + ' and ' + y + ' are exclusion partners and cannot both be at 100');
-    else if (pool[x] > 0 && pool[y] > 0 && pool[x] === pool[y]) warn('traits.exclusion.tie', x + ' and ' + y + ' have equal authored percents; the generator rolls the higher TILTED percent first, so after tilts one will lead, but say in the walkthrough which you intend');
+    else if (has(pool, x) && has(pool, y) && pool[x] === pool[y]) warn('traits.exclusion.tie', x + ' and ' + y + ' have equal authored percents; the generator rolls the higher TILTED percent first, so after tilts one will lead, but say in the walkthrough which you intend');
   }
   if (P.corporeality === 'non-corporeal' && pool.phasing !== 100) fail('traits.phasing', 'non-corporeal bodies carry phasing at 100');
   if (anatomyOk && (P.anatomy.includes('shell') || ['plating', 'chitin', 'crystal'].includes(P.covering)) && pool.armored !== 100) warn('traits.armored', 'shell, plating, chitin, or crystal present but armored is not at 100; justify in the walkthrough');
@@ -361,6 +385,21 @@ if (T) {
     if (/'s\b|s'\s/.test(SG.name)) fail('signature.name.possessive', 'signature name is possessive');
     if (/[^\x20-\x7E]/.test(SG.name)) fail('signature.name.ascii', 'signature name has non-ASCII characters');
   }
+  // conduits (5.7a): instruments the sources show channeling an element
+  const CD = has(T, 'conduits') ? T.conduits : {};
+  if (has(T, 'conduits')) {
+    if (!CD || typeof CD !== 'object' || Array.isArray(CD)) fail('conduits', 'conduits must be an object of instrument: element');
+    else {
+      if (Object.keys(CD).length === 0) fail('conduits.empty', 'conduits is optional; omit it rather than leaving it empty');
+      for (const [inst, el] of Object.entries(CD)) {
+        if (!I.includes(inst)) fail('conduits.instrument', 'conduit "' + inst + '" is not one of the species instruments');
+        if (!MEDIUM_ACTIONS[el]) fail('conduits.element', 'conduit element "' + el + '" is not an element');
+        else if (elementOk && ![T.element, ...ELEMENTS[T.element].secondaries].includes(el)) fail('conduits.cover', 'conduit element "' + el + '" for ' + inst + ' is neither the primary nor an on-graph secondary');
+        warn('conduits.source', 'conduit ' + inst + ' for ' + el + ': the validator agent must confirm the sentence or art showing the element leaving through this part');
+      }
+    }
+  }
+  const allowedFor = (inst, medium) => (ALLOWED[inst] || []).concat(CD[inst] === medium ? MEDIUM_ACTIONS[medium] : []);
   const sigInstOk = typeof SG.instrument === 'string' && (ANATOMY.includes(SG.instrument) || CHANNELS.includes(SG.instrument));
   if (!sigInstOk) fail('signature.instrument', 'signature instrument "' + SG.instrument + '" is not registry vocabulary');
   else {
@@ -368,7 +407,7 @@ if (T) {
     if (!I.includes(SG.instrument)) warn('signature.instrument.list', 'signature instrument "' + SG.instrument + '" is not in the species instrument list (allowed by rule 4; justify)');
   }
   const sigActOk = checkEnum('signature.action', SG.action, ACTIONS, 'signature action');
-  if (sigInstOk && sigActOk && !ALLOWED[SG.instrument].includes(SG.action)) warn('signature.action.matrix', 'signature action "' + SG.action + '" is outside the allowed set for ' + SG.instrument + ' [' + ALLOWED[SG.instrument].join(', ') + '] (allowed by rule 4; justify)');
+  if (sigInstOk && sigActOk && typeof SG.medium === 'string' && !allowedFor(SG.instrument, SG.medium).includes(SG.action)) warn('signature.action.matrix', 'signature action "' + SG.action + '" is outside the physical row for ' + SG.instrument + ' [' + ALLOWED[SG.instrument].join(', ') + ']' + (MEDIUM_ACTIONS[SG.medium] && MEDIUM_ACTIONS[SG.medium].includes(SG.action) ? ' but inside the ' + SG.medium + ' medium row: declare ' + SG.instrument + ' as a ' + SG.medium + ' conduit if the sources show it' : ' and outside the ' + SG.medium + ' medium row (rule 4 exception; justify)'));
   if (checkEnum('signature.medium', SG.medium, Object.keys(ELEMENTS), 'signature medium') && elementOk) {
     const cover = [T.element, ...ELEMENTS[T.element].secondaries];
     if (!cover.includes(SG.medium)) fail('signature.medium.cover', 'signature medium "' + SG.medium + '" is neither the primary nor an on-graph secondary of ' + T.element + ' [' + cover.join(', ') + ']');
@@ -429,7 +468,7 @@ if (MD) {
   if (!/authored fields/i.test(MD)) fail('md.authored', 'walkthrough has no "Authored fields" section (list every value with no source sentence, or state "none")');
   if (!/thin[- ]combo/i.test(MD)) warn('md.thincombo', 'walkthrough has no thin-combo findings section');
   if (species && planet) {
-    const corpus = fold([species.description, ...(planet.history || [])].join(' \n '));
+    const corpus = fold([species.description, ...(planet.history || []), ...(planet.corpusExtra || []), ...Object.keys(planet.data || {}), ...Object.values(planet.data || {}), species.height, species.weight].join(' \n '));
     // Convention (SKILL.md section 6, step 14): double quotes are reserved for verbatim source
     // quotations; anything else in the walkthrough uses single quotes or backticks. Pairing is
     // reset per line so one stray quote cannot mis-pair the rest of the document.
@@ -438,11 +477,14 @@ if (MD) {
     const own = [T && T.lore && T.lore.description, T && T.signatureAbility && T.signatureAbility.description, ENC && ENC.definition].filter(Boolean).map(fold).join(' \n ');
     const quotes = [];
     let inFence = false;
+    let inDenials = false;
     for (const line of MD.split(/\r?\n/)) {
       if (/^\s*```/.test(line)) { inFence = !inFence; continue; }
-      if (inFence || /^(FAIL|WARN|ok)\s+[a-z.]+\s/.test(line)) continue;   // pasted validator output and code blocks are not quotations
-      const re = /"([^"]{12,})"/g; let m;
-      while ((m = re.exec(line))) quotes.push(m[1]);
+      if (/^#{1,6}\s/.test(line)) inDenials = /script denials/i.test(line);   // the denials section restates text the script rejected; it is never a quotation claim
+      if (inFence || inDenials || /^(FAIL|WARN|ok)\s+[a-z.]+\s/.test(line)) continue;   // pasted validator output and code blocks are not quotations
+      // pair quote marks strictly in order so a short quotation never shifts the pairing onto the gap after it
+      const parts = line.split('"');
+      for (let i = 1; i < parts.length; i += 2) if (parts[i].length >= 12) quotes.push(parts[i]);
       const bq = line.match(/^>\s*"?(.{12,}?)"?\s*$/);
       if (bq) quotes.push(bq[1]);
     }

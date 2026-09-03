@@ -1,0 +1,177 @@
+{
+  "key": "akinza",
+  "name": "Akinza",
+  "element": "ice",
+  "homePlanet": "krystos",
+  "generatorPlanets": [
+    "krystos"
+  ],
+  "lore": {
+    "description": "A lean upright creature with enormous fringed ears, slit eyes that gather what little light the sky still gives, and a spread of long plumed tail fronds, the Akinza was generated on Krystos after the impact, when the blotted sky ended the dainty and graceful stock and the Generator turned to lifeforms capable of surviving in the harsh, frozen tundra. It belongs to the feral stock that remained in the arctic wastelands outside the high-security prison complexes, where such creatures proved as useful for deterring escape as the guards inside. The Akinza moves through open snow without sound or track and sneaks through the night with ease.",
+    "descriptionStatus": "upgraded",
+    "biomeNiche": "the arctic wastelands outside the prison complexes, worked at night"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "biped",
+    "anatomy": [
+      "claws",
+      "jaws",
+      "tail",
+      "hide"
+    ],
+    "covering": "fur",
+    "size": {
+      "heightCm": [
+        130,
+        165
+      ],
+      "weightKg": [
+        48,
+        74
+      ]
+    },
+    "lifespan": "standard",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "display"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -60,
+        "max": -10
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        5,
+        20
+      ],
+      "burrow": [
+        10,
+        30
+      ],
+      "climb": [
+        45,
+        70
+      ],
+      "sprint": [
+        65,
+        88
+      ],
+      "leap": [
+        55,
+        80
+      ],
+      "manipulation": [
+        30,
+        55
+      ]
+    },
+    "senses": {
+      "sight": [
+        70,
+        95
+      ],
+      "hearing": [
+        65,
+        90
+      ],
+      "smell": [
+        35,
+        60
+      ]
+    }
+  },
+  "archetypeWeights": {
+    "prowler": 45,
+    "skirmisher": 30,
+    "predator": 25
+  },
+  "attributes": {
+    "strength": [
+      30,
+      55
+    ],
+    "vitality": [
+      30,
+      52
+    ],
+    "endurance": [
+      40,
+      65
+    ],
+    "agility": [
+      62,
+      90
+    ],
+    "reflex": [
+      60,
+      88
+    ],
+    "intelligence": [
+      35,
+      60
+    ],
+    "willpower": [
+      30,
+      55
+    ],
+    "instinct": [
+      58,
+      85
+    ],
+    "charisma": [
+      15,
+      40
+    ],
+    "resilience": [
+      25,
+      48
+    ]
+  },
+  "traits": {
+    "pool": {
+      "stealthy": 100,
+      "nocturnal": 96,
+      "solitary": 55,
+      "perceptive": 40,
+      "slippery": 30,
+      "resistant": 20,
+      "pack-bonded": 12,
+      "menacing": 8,
+      "foresighted": 4
+    }
+  },
+  "instruments": [
+    "claws",
+    "jaws"
+  ],
+  "signatureAbility": {
+    "name": "Silence of the Long Night",
+    "instrument": "claws",
+    "action": "ambush",
+    "medium": "ice",
+    "intensity": [
+      30,
+      80
+    ],
+    "description": "The Akinza crosses open snow without sound or track and is on its target before it has been seen."
+  }
+}

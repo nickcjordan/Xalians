@@ -1,0 +1,177 @@
+{
+  "key": "bioflim",
+  "name": "Bioflim",
+  "element": "chemical",
+  "homePlanet": "drainov",
+  "generatorPlanets": [
+    "drainov"
+  ],
+  "lore": {
+    "description": "An acid slime organism protected by a thick rocky exoskeleton, the Bioflim was bioengineered by Drainov's Xalian Generator for a world of bubbling acid swamps and steaming corrosive rain. Its slime continually regenerates the outer shell, which is the whole of its defense. Drainov is now held by a loose conglomerate of Vallerii space pirates and interstellar crime syndicates, and its Xalians work the once-abandoned factories, refineries, and chemical plants. The Bioflim stands in the acid of that world and regenerates whatever the acid takes.",
+    "descriptionStatus": "upgraded",
+    "biomeNiche": "the acid swamps and reopened chemical plants of Drainov"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": {
+      "primary": "slime"
+    },
+    "bodyPlan": "amorphous",
+    "anatomy": [
+      "shell",
+      "pseudopods",
+      "body"
+    ],
+    "covering": "plating",
+    "size": {
+      "heightCm": [
+        180,
+        250
+      ],
+      "weightKg": [
+        320,
+        500
+      ]
+    },
+    "lifespan": "long",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [],
+    "breathes": [],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas",
+        "liquid"
+      ],
+      "temperatureC": {
+        "min": 0,
+        "max": 43
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        30,
+        50
+      ],
+      "burrow": [
+        10,
+        25
+      ],
+      "climb": [
+        5,
+        20
+      ],
+      "sprint": [
+        3,
+        15
+      ],
+      "leap": [
+        0,
+        5
+      ],
+      "manipulation": [
+        20,
+        40
+      ]
+    },
+    "senses": {
+      "sight": [
+        20,
+        40
+      ],
+      "hearing": [
+        10,
+        30
+      ],
+      "smell": [
+        45,
+        70
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    }
+  },
+  "archetypeWeights": {
+    "bulwark": 50,
+    "juggernaut": 25,
+    "stalwart": 15,
+    "survivor": 10
+  },
+  "attributes": {
+    "strength": [
+      45,
+      65
+    ],
+    "vitality": [
+      60,
+      80
+    ],
+    "endurance": [
+      55,
+      75
+    ],
+    "agility": [
+      5,
+      20
+    ],
+    "reflex": [
+      10,
+      25
+    ],
+    "intelligence": [
+      15,
+      35
+    ],
+    "willpower": [
+      40,
+      60
+    ],
+    "instinct": [
+      30,
+      50
+    ],
+    "charisma": [
+      5,
+      20
+    ],
+    "resilience": [
+      75,
+      95
+    ]
+  },
+  "traits": {
+    "pool": {
+      "armored": 100,
+      "resistant": 100,
+      "regenerative": 90,
+      "toxic": 70,
+      "anchored": 45,
+      "protective": 25,
+      "slippery": 12,
+      "solitary": 10
+    }
+  },
+  "instruments": [
+    "shell",
+    "secretion",
+    "pseudopods"
+  ],
+  "signatureAbility": {
+    "name": "Everforming Carapace",
+    "instrument": "secretion",
+    "action": "ward",
+    "medium": "chemical",
+    "intensity": [
+      40,
+      85
+    ],
+    "description": "The slime beneath floods over the broken plates and hardens into new shell faster than the acid can take it away."
+  }
+}

@@ -1,0 +1,187 @@
+{
+  "key": "tizzie",
+  "name": "Tizzie",
+  "element": "psychic",
+  "homePlanet": "telypso",
+  "generatorPlanets": [
+    "telypso"
+  ],
+  "lore": {
+    "description": "A small shaggy climber that hangs from the branches by long-fingered hands, with outsized ears, spiral-patterned eyes that fill half its face, and a long tail tipped in a flat whorled disc, the Tizzie was generated on Telypso to counterbalance the psychic energies of the deranged Vallerii the Imperial Houses marooned there. It works the way its Generator intended: the tail disc turns and draws attention to the eyes, eye contact opens the way, and the treatment proceeds from inside the patient's mind rather than through the body. Since the Nemesis Plague reached the sanctuaries and turned the creatures of Telypso against one another, Tizzies work the same hold on each other in the fungal forests.",
+    "descriptionStatus": "upgraded",
+    "biomeNiche": "the bioluminescent fungal forests and dense flora of Telypso"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "biped",
+    "anatomy": [
+      "tail",
+      "lure",
+      "fists",
+      "hide"
+    ],
+    "covering": "fur",
+    "size": {
+      "heightCm": [
+        80,
+        95
+      ],
+      "weightKg": [
+        10,
+        16
+      ]
+    },
+    "lifespan": "short",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "display",
+      "telepathic"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": 12,
+        "max": 42
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        10,
+        25
+      ],
+      "burrow": [
+        5,
+        20
+      ],
+      "climb": [
+        65,
+        90
+      ],
+      "sprint": [
+        55,
+        80
+      ],
+      "leap": [
+        40,
+        65
+      ],
+      "manipulation": [
+        35,
+        60
+      ]
+    },
+    "senses": {
+      "sight": [
+        70,
+        92
+      ],
+      "hearing": [
+        65,
+        88
+      ],
+      "smell": [
+        30,
+        55
+      ],
+      "special": [
+        "psychic"
+      ]
+    }
+  },
+  "archetypeWeights": {
+    "virtuoso": 40,
+    "sovereign": 25,
+    "prowler": 15,
+    "skirmisher": 12,
+    "sage": 8
+  },
+  "attributes": {
+    "strength": [
+      10,
+      28
+    ],
+    "vitality": [
+      20,
+      40
+    ],
+    "endurance": [
+      25,
+      45
+    ],
+    "agility": [
+      55,
+      82
+    ],
+    "reflex": [
+      50,
+      75
+    ],
+    "intelligence": [
+      45,
+      68
+    ],
+    "willpower": [
+      50,
+      78
+    ],
+    "instinct": [
+      45,
+      70
+    ],
+    "charisma": [
+      55,
+      85
+    ],
+    "resilience": [
+      15,
+      35
+    ]
+  },
+  "traits": {
+    "pool": {
+      "hypnotic": 100,
+      "perceptive": 55,
+      "stealthy": 40,
+      "slippery": 45,
+      "menacing": 20,
+      "solitary": 30,
+      "mind-sealed": 15,
+      "foresighted": 6,
+      "telekinetic": 4
+    }
+  },
+  "instruments": [
+    "lure",
+    "gaze",
+    "mind"
+  ],
+  "conduits": {
+    "gaze": "psychic"
+  },
+  "signatureAbility": {
+    "name": "Spiral of Perfect Attention",
+    "instrument": "gaze",
+    "action": "snare",
+    "medium": "psychic",
+    "intensity": [
+      35,
+      80
+    ],
+    "description": "It turns the disc of its tail until the eyes are the only thing worth looking at, and whatever meets them stops where it stands."
+  }
+}

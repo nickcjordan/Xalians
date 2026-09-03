@@ -1,0 +1,188 @@
+{
+  "key": "figzy",
+  "name": "Figzy",
+  "element": "psychic",
+  "homePlanet": "telypso",
+  "generatorPlanets": [
+    "telypso"
+  ],
+  "lore": {
+    "description": "A small antlered creature with outsized ears, wide eyes and a shaggy coat, the Figzy carries in its raised hands more force than its stature admits. The Telypso Generator built it to counterbalance the unstable auras of the Vallerii marooned planetside, treating the prisoners as patients rather than removing them, and the Figzy was one of the small psychic bodies that emerged from the fungal forests to steady what the deranged left behind. It is deceptively smart and goes docile with anything it has come to trust. The Nemesis Plague now turns the creatures of Telypso against one another, and a Figzy that trusts no one raises its hands against its own kind.",
+    "descriptionStatus": "upgraded",
+    "biomeNiche": "the fungal forests and bioluminescent jungles of Telypso"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "biped",
+    "anatomy": [
+      "antlers",
+      "fists",
+      "hide",
+      "body"
+    ],
+    "covering": "fur",
+    "size": {
+      "heightCm": [
+        95,
+        125
+      ],
+      "weightKg": [
+        34,
+        52
+      ]
+    },
+    "lifespan": "standard",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "telepathic",
+      "display"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": 12,
+        "max": 44
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        10,
+        30
+      ],
+      "burrow": [
+        0,
+        10
+      ],
+      "climb": [
+        35,
+        60
+      ],
+      "sprint": [
+        55,
+        80
+      ],
+      "leap": [
+        40,
+        65
+      ],
+      "manipulation": [
+        45,
+        70
+      ]
+    },
+    "senses": {
+      "sight": [
+        55,
+        80
+      ],
+      "hearing": [
+        65,
+        90
+      ],
+      "smell": [
+        30,
+        55
+      ],
+      "special": [
+        "psychic"
+      ]
+    }
+  },
+  "archetypeWeights": {
+    "sage": 50,
+    "seeker": 20,
+    "virtuoso": 15,
+    "skirmisher": 15
+  },
+  "attributes": {
+    "strength": [
+      12,
+      32
+    ],
+    "vitality": [
+      25,
+      48
+    ],
+    "endurance": [
+      30,
+      55
+    ],
+    "agility": [
+      55,
+      82
+    ],
+    "reflex": [
+      50,
+      78
+    ],
+    "intelligence": [
+      58,
+      84
+    ],
+    "willpower": [
+      55,
+      80
+    ],
+    "instinct": [
+      45,
+      70
+    ],
+    "charisma": [
+      40,
+      68
+    ],
+    "resilience": [
+      18,
+      40
+    ]
+  },
+  "traits": {
+    "pool": {
+      "perceptive": 70,
+      "hypnotic": 45,
+      "telekinetic": 35,
+      "protective": 35,
+      "healing": 30,
+      "mind-sealed": 25,
+      "slippery": 25,
+      "inspiring": 20,
+      "stealthy": 20,
+      "pack-bonded": 20,
+      "foresighted": 8
+    }
+  },
+  "instruments": [
+    "mind",
+    "fists"
+  ],
+  "conduits": {
+    "mind": "psychic",
+    "fists": "psychic"
+  },
+  "signatureAbility": {
+    "name": "Small Hands of the Psychosphere",
+    "instrument": "mind",
+    "action": "burst",
+    "medium": "psychic",
+    "intensity": [
+      35,
+      85
+    ],
+    "description": "The Figzy raises both hands and the force it has been holding back leaves them all at once."
+  }
+}

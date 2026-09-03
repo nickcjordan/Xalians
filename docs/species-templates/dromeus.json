@@ -1,0 +1,181 @@
+{
+  "key": "dromeus",
+  "name": "Dromeus",
+  "element": "fire",
+  "homePlanet": "magmuth",
+  "generatorPlanets": [
+    "magmuth"
+  ],
+  "lore": {
+    "description": "A partially feathered ground bird with lizard features, built long in the leg and narrow in the skull, the Dromeus was designed by Magmuth's corporations for the transient mineral islands, fast enough to cross a cooling lava flow before it opened underfoot. It is extremely quick and carries razor sharp teeth. At speed it spreads its wings and takes flight for a few seconds, launching into the air to sink its teeth into its prey. It still runs the ash fields of Magmuth, where the blood feuds of the company wars have never ended.",
+    "descriptionStatus": "upgraded",
+    "biomeNiche": "the ash fields and hardened lava flows of Magmuth's transient islands"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "biped",
+    "anatomy": [
+      "jaws",
+      "fangs",
+      "claws",
+      "talons",
+      "wings",
+      "tail",
+      "hide"
+    ],
+    "covering": "feathers",
+    "size": {
+      "heightCm": [
+        88,
+        112
+      ],
+      "weightKg": [
+        38,
+        56
+      ]
+    },
+    "lifespan": "standard",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "carnivore",
+    "communication": [
+      "vocal",
+      "display"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": 65,
+        "max": 105
+      }
+    },
+    "capabilities": {
+      "flight": [
+        15,
+        35
+      ],
+      "swim": [
+        0,
+        10
+      ],
+      "burrow": [
+        0,
+        0
+      ],
+      "climb": [
+        25,
+        45
+      ],
+      "sprint": [
+        80,
+        98
+      ],
+      "leap": [
+        58,
+        82
+      ],
+      "manipulation": [
+        20,
+        38
+      ]
+    },
+    "senses": {
+      "sight": [
+        70,
+        90
+      ],
+      "hearing": [
+        50,
+        70
+      ],
+      "smell": [
+        45,
+        65
+      ]
+    }
+  },
+  "archetypeWeights": {
+    "runner": 45,
+    "predator": 30,
+    "skirmisher": 25
+  },
+  "attributes": {
+    "strength": [
+      38,
+      58
+    ],
+    "vitality": [
+      35,
+      55
+    ],
+    "endurance": [
+      55,
+      78
+    ],
+    "agility": [
+      72,
+      94
+    ],
+    "reflex": [
+      66,
+      88
+    ],
+    "intelligence": [
+      22,
+      40
+    ],
+    "willpower": [
+      30,
+      50
+    ],
+    "instinct": [
+      62,
+      84
+    ],
+    "charisma": [
+      25,
+      45
+    ],
+    "resilience": [
+      28,
+      46
+    ]
+  },
+  "traits": {
+    "pool": {
+      "resistant": 92,
+      "ramming": 60,
+      "pack-bonded": 55,
+      "perceptive": 40,
+      "stealthy": 20,
+      "menacing": 15,
+      "slippery": 30,
+      "solitary": 12
+    }
+  },
+  "instruments": [
+    "fangs",
+    "claws",
+    "wings"
+  ],
+  "signatureAbility": {
+    "name": "Ashfall Stoop",
+    "instrument": "fangs",
+    "action": "ambush",
+    "medium": "fire",
+    "intensity": [
+      45,
+      80
+    ],
+    "description": "The Dromeus runs its target down, spreads its wings for the few seconds it can stay aloft, and closes the last of the distance with its teeth."
+  }
+}

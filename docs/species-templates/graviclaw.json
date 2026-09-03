@@ -50,8 +50,8 @@
         "liquid"
       ],
       "temperatureC": {
-        "min": -6,
-        "max": 34
+        "min": -60,
+        "max": 5
       }
     },
     "capabilities": {
@@ -103,11 +103,10 @@
     }
   },
   "archetypeWeights": {
-    "juggernaut": 5,
-    "bulwark": 4,
-    "predator": 3,
-    "vanguard": 2,
-    "stalwart": 1
+    "juggernaut": 45,
+    "bulwark": 25,
+    "predator": 20,
+    "stalwart": 10
   },
   "attributes": {
     "strength": [
@@ -153,29 +152,12 @@
   },
   "traits": {
     "pool": {
-      "healing": 0,
-      "protective": 0,
-      "regenerative": 0,
       "armored": 100,
       "anchored": 100,
-      "phasing": 0,
-      "resistant": 0,
-      "ramming": 0,
-      "toxic": 0,
-      "volatile": 0,
-      "reflective": 0,
       "menacing": 30,
-      "hypnotic": 0,
       "perceptive": 30,
-      "foresighted": 0,
-      "mind-sealed": 0,
-      "pack-bonded": 0,
       "solitary": 45,
       "stealthy": 60,
-      "nocturnal": 0,
-      "inspiring": 0,
-      "slippery": 0,
-      "luminous": 0,
       "telekinetic": 6
     }
   },
@@ -183,6 +165,9 @@
     "pincers",
     "shell"
   ],
+  "conduits": {
+    "pincers": "dark"
+  },
   "signatureAbility": {
     "name": "Point of No Return",
     "instrument": "pincers",

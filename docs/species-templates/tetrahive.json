@@ -48,8 +48,8 @@
         "gas"
       ],
       "temperatureC": {
-        "min": -6,
-        "max": 34
+        "min": -60,
+        "max": 5
       }
     },
     "capabilities": {
@@ -98,11 +98,10 @@
     }
   },
   "archetypeWeights": {
-    "skirmisher": 5,
-    "sage": 4,
-    "prowler": 3,
-    "seeker": 2,
-    "sovereign": 1
+    "sage": 42,
+    "skirmisher": 24,
+    "sovereign": 18,
+    "seeker": 16
   },
   "attributes": {
     "strength": [
@@ -148,30 +147,12 @@
   },
   "traits": {
     "pool": {
-      "healing": 0,
-      "protective": 0,
-      "regenerative": 0,
-      "armored": 0,
-      "anchored": 0,
-      "phasing": 0,
-      "resistant": 0,
-      "ramming": 0,
-      "toxic": 0,
-      "volatile": 0,
-      "reflective": 0,
       "menacing": 20,
-      "hypnotic": 0,
       "perceptive": 20,
-      "foresighted": 0,
       "mind-sealed": 35,
-      "pack-bonded": 0,
       "solitary": 10,
-      "stealthy": 0,
       "nocturnal": 95,
-      "inspiring": 0,
-      "slippery": 45,
-      "luminous": 0,
-      "telekinetic": 0
+      "slippery": 45
     }
   },
   "instruments": [
@@ -187,6 +168,6 @@
       30,
       80
     ],
-    "description": "It calls up a wheeling cloud of small toothed familiars and sets them on a single target as one mind, and a familiar that is broken simply thins away into the black."
+    "description": "It calls up a wheeling cloud of small toothed familiars and sets them on a single target as one mind, and a familiar that is broken thins away."
   }
 }

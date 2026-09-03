@@ -1,0 +1,181 @@
+{
+  "key": "xylum",
+  "name": "Xylum",
+  "element": "plant",
+  "homePlanet": "floria",
+  "generatorPlanets": [
+    "floria"
+  ],
+  "lore": {
+    "description": "A giant organism of thick, intertwined roots that act as tentacles, the Xylum keeps the greater part of itself buried and shows only the crown of its mass above the soil of the underforests. It lives mostly underground, as this is where it absorbs its power, and its limbs carry rows of short serrations along the last of their length. Some say the oldest Xalians of Floria were born from the first seeds of the Genesis Prototype. Vallerii activity on the planet never grew past small settlements, research labs, and exploration parties, and the Xylum remains in the ground beneath the World Trees.",
+    "descriptionStatus": "upgraded",
+    "biomeNiche": "the buried soil layer of the underforests, beneath the canopies of the World Trees"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": {
+      "primary": "plant"
+    },
+    "bodyPlan": "multiped",
+    "anatomy": [
+      "roots",
+      "tendrils",
+      "spines",
+      "body"
+    ],
+    "covering": "bare",
+    "size": {
+      "heightCm": [
+        240,
+        400
+      ],
+      "weightKg": [
+        180,
+        320
+      ]
+    },
+    "lifespan": "long",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "energy-feeder",
+    "communication": [
+      "vibration"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas",
+        "liquid"
+      ],
+      "temperatureC": {
+        "min": -4,
+        "max": 34
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        5,
+        20
+      ],
+      "burrow": [
+        70,
+        92
+      ],
+      "climb": [
+        10,
+        30
+      ],
+      "sprint": [
+        5,
+        20
+      ],
+      "leap": [
+        0,
+        10
+      ],
+      "manipulation": [
+        45,
+        70
+      ]
+    },
+    "senses": {
+      "sight": [
+        0,
+        15
+      ],
+      "hearing": [
+        20,
+        40
+      ],
+      "smell": [
+        30,
+        55
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    }
+  },
+  "archetypeWeights": {
+    "bulwark": 46,
+    "survivor": 24,
+    "stalwart": 18,
+    "seeker": 12
+  },
+  "attributes": {
+    "strength": [
+      55,
+      80
+    ],
+    "vitality": [
+      60,
+      85
+    ],
+    "endurance": [
+      55,
+      80
+    ],
+    "agility": [
+      8,
+      25
+    ],
+    "reflex": [
+      15,
+      35
+    ],
+    "intelligence": [
+      20,
+      45
+    ],
+    "willpower": [
+      45,
+      70
+    ],
+    "instinct": [
+      40,
+      65
+    ],
+    "charisma": [
+      10,
+      30
+    ],
+    "resilience": [
+      50,
+      75
+    ]
+  },
+  "traits": {
+    "pool": {
+      "anchored": 100,
+      "regenerative": 72,
+      "healing": 25,
+      "protective": 25,
+      "solitary": 60,
+      "perceptive": 15,
+      "menacing": 12,
+      "resistant": 35
+    }
+  },
+  "instruments": [
+    "roots",
+    "tendrils"
+  ],
+  "signatureAbility": {
+    "name": "Deeproot Reclamation",
+    "instrument": "roots",
+    "action": "drain",
+    "medium": "plant",
+    "intensity": [
+      35,
+      80
+    ],
+    "description": "Xylum sinks its buried limbs deeper and draws the ground's stored power up through them, taking with it whatever stands rooted or pinned in the soil above."
+  }
+}

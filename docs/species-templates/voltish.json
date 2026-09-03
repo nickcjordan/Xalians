@@ -1,0 +1,186 @@
+{
+  "key": "voltish",
+  "name": "Voltish",
+  "element": "electric",
+  "homePlanet": "zolton",
+  "generatorPlanets": [
+    "zolton"
+  ],
+  "lore": {
+    "description": "A long-limbed, shaggy creature whose bones and claws are made from a tough, conductive metal alloy, the Voltish was generated on Zolton, where black lightning did no harm to inorganic matter and the Generator could simply replenish any loss of labor. Zolton's canyons carry visible rivers of electricity that surge like wire currents over the crust. The Voltish stores electrical energy from its surroundings and releases the shock into enemies.",
+    "descriptionStatus": "upgraded",
+    "biomeNiche": "the deep canyons and metallic peaks of Zolton, where ground-borne lightning surges over the crust"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": {
+      "primary": "flesh",
+      "secondary": "metal"
+    },
+    "bodyPlan": "quadruped",
+    "anatomy": [
+      "claws",
+      "jaws",
+      "tail",
+      "hide"
+    ],
+    "covering": "fur",
+    "size": {
+      "heightCm": [
+        190,
+        235
+      ],
+      "weightKg": [
+        105,
+        145
+      ]
+    },
+    "lifespan": "standard",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "energy-feeder",
+    "communication": [
+      "vocal"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -55,
+        "max": 35
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        10,
+        25
+      ],
+      "burrow": [
+        5,
+        15
+      ],
+      "climb": [
+        40,
+        60
+      ],
+      "sprint": [
+        50,
+        70
+      ],
+      "leap": [
+        40,
+        60
+      ],
+      "manipulation": [
+        40,
+        60
+      ]
+    },
+    "senses": {
+      "sight": [
+        45,
+        65
+      ],
+      "hearing": [
+        50,
+        70
+      ],
+      "smell": [
+        40,
+        60
+      ],
+      "special": [
+        "electroreception"
+      ]
+    }
+  },
+  "archetypeWeights": {
+    "juggernaut": 40,
+    "stalwart": 25,
+    "predator": 20,
+    "prowler": 15
+  },
+  "attributes": {
+    "strength": [
+      55,
+      75
+    ],
+    "vitality": [
+      50,
+      70
+    ],
+    "endurance": [
+      70,
+      90
+    ],
+    "agility": [
+      40,
+      60
+    ],
+    "reflex": [
+      45,
+      65
+    ],
+    "intelligence": [
+      25,
+      45
+    ],
+    "willpower": [
+      45,
+      65
+    ],
+    "instinct": [
+      50,
+      70
+    ],
+    "charisma": [
+      30,
+      50
+    ],
+    "resilience": [
+      55,
+      75
+    ]
+  },
+  "traits": {
+    "pool": {
+      "resistant": 90,
+      "volatile": 75,
+      "menacing": 45,
+      "perceptive": 35,
+      "solitary": 30,
+      "pack-bonded": 25,
+      "luminous": 20,
+      "reflective": 15,
+      "armored": 10
+    }
+  },
+  "instruments": [
+    "claws",
+    "jaws",
+    "tail"
+  ],
+  "conduits": {
+    "claws": "electric"
+  },
+  "signatureAbility": {
+    "name": "Stormbank Discharge",
+    "instrument": "claws",
+    "action": "strike",
+    "medium": "electric",
+    "intensity": [
+      30,
+      85
+    ],
+    "description": "The Voltish drives the charge it has stored from its surroundings through its alloy claws into whatever they touch."
+  }
+}

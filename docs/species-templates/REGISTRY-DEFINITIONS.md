@@ -142,7 +142,7 @@ Outcome-based: how well the creature does the thing, not how. 0 means it cannot.
 - `climb`: movement up surfaces steeper than it can walk.
 - `sprint`: short-burst ground speed.
 - `leap`: distance or height cleared in one bound.
-- `manipulation`: handling objects; an upper bound above 40 needs grasping anatomy or `telekinetic` at 100.
+- `manipulation`: handling objects; an upper bound above 40 needs grasping anatomy (`claws`, `talons`, `fists`, `pincers`, `tendrils`, `pseudopods`, `trunk`, `tail`, `coils`) or `telekinetic` at 100.
 
 ## actions (16; the verb of an ability)
 
