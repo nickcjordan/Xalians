@@ -84,10 +84,9 @@ These live in `style.css` rather than `system.css`, because they are arrangement
 
 | Class | What it is | Used by |
 |---|---|---|
-| `.planet-record` | A planetary survey record. The rendered globe is a locator in a brass-ringed porthole pinned to the landscape plate — it needs that dark socket, or a green globe vanishes into green vegetation. | `/planets` |
-| `.specimen-record` (`.specimen-head`, `-body`, `-plate`, `-data`, `-readouts`) | A creature record. | `/generator`, `/species/:id` |
+| `.specimen-record` (`.specimen-head`, `-body`, `-plate`, `-data`, `-readouts`) | A creature record. | `/generator` |
 | `.record-strip` (`--wide`) | The compact form: plate, identity block, one or two readouts on a single row. | species stats list, `/account` |
-| `.species-tile` | A catalogue tile — portrait in a housing with a stencilled name plate under it. | `/species`, duel squad picker |
+| `.species-tile` | A catalogue tile — portrait in a housing with a stencilled name plate under it. | duel squad picker |
 | `.game-curtain` | Covers a game board until the round starts. It covers the *whole* board rather than floating over a corner of it, so nothing is obscured mid-play. | training games |
 | `.enc-*` | The Encyclopedia Xalia compositions: shell, search screen, prose with linked terms and hover cards, and the layout helpers (`.enc-grid`, `.enc-record`, `.enc-designation`, `.enc-section`) live in `public/assets/css/encyclopedia.css`; each section (reading room and galaxy map, chronicle, worlds, bestiary, powers, index) keeps its own `.enc-<section>-*` rules in a CSS file beside its component under `src/components/encyclopedia/`. Same document shape as the records above, built from `.g-*` parts only. | `/encyclopedia` |
 

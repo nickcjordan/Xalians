@@ -2750,38 +2750,6 @@ section {
 }
 
 
-/* 
-*******************
-**    Glossary   **
-******************* 
-*/
-
-.glossary-wrapper {
-  padding: var(--g-2) var(--g-2) var(--g-3);
-  margin-bottom: var(--g-9);
-}
-
-/* A dictionary sets in columns. One column of definitions capped at a readable
-   measure left ~430px of the panel empty on a wide screen; two columns use the
-   width the way a printed glossary would. */
-.glossary-list {
-  margin: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(520px, 1fr));
-  column-gap: var(--g-5);
-}
-
-/* the rule under each entry is the row divider, so it should not run past the
-   last row of a column */
-.glossary-list .g-record:last-child {
-  border-bottom: 0;
-}
-
-.glossary-result-count {
-  text-align: left;
-  margin: var(--g-2) 0 var(--g-6) 0;
-}
-
 /* a definition is prose: cap it so it does not run 140 characters wide on a
    large monitor */
 .g-record-body {
@@ -2819,14 +2787,7 @@ section {
   margin-top: var(--g-3);
 }
 
-/* HAPPENS WHEN SCREEN GOES TO SMALL OR XSMALL I THINK */
-@media (max-width: 575px) {
-  .glossary-title {
-    text-align: left;
-  }
-}
-
-/* 
+/*
 *******************
 **   Generator   **
 ******************* 
@@ -3450,74 +3411,7 @@ input, textarea {
 
 
 
-/* 
--------------------------------------------
-|   SPECIES SIZE COMPARE
--------------------------------------------
-*/
-
-
-
-.species-compare-image-wrapper {
-  /* margin: auto; */
-  justify-content: center;
-  margin: auto;
-  height: 100%;
-  width: 100%;
-}
-
-.species-compare-box {
-  height: 100% !important;
-  width: 100%;
-  overflow-x: scroll;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: flex-start;
-  align-items: flex-end;
-  align-content: flex-start;
-  padding: 0px !important;
-  margin: 0px !important;
-  background-color: #cccccc;
-}
-
-.species-compare-whole-wrapper {
-  margin-left: 0px !important;
-  margin-right: 0px !important;
-  margin-top: 10px !important;
-  /* padding: 10px; */
-  justify-content: center;
-  text-align: center;
-  /* width: 100% !important; */
-  /* min-width: 100px; */
-}
-
-.species-compare-xalian-image {
-  margin: 10px;
-}
-
-.fit {
-  display: inline-block;
-  white-space: nowrap;
-}
-
-.species-compare-text-row-wrapper {
-  background-color: #0d0d0d;
-  width: 100%;
-  /* height: 100%; */
-}
-
-.species-compare-species-name {
-  padding-bottom: 10px;
-  padding-top: 5px;
-}
-
-.species-compare-text {
-  color: white;
-}
-
-
-/* 
+/*
 -------------------------------------------
 |   GAMES
 -------------------------------------------
@@ -4008,183 +3902,6 @@ input, textarea {
 
 
 
-/* Planetary survey record ------------------------------------------------- */
-
-.planet-panel {
-  margin-bottom: var(--g-6);
-  /* the extra top padding clears the painted corner flash, which is 40px deep */
-  padding: var(--g-7) var(--g-6) var(--g-6);
-}
-
-@media (max-width: 575px) {
-  .planet-panel {
-    padding: var(--g-7) var(--g-4) var(--g-5);
-  }
-}
-
-/* Heading across the top, then plate and specs beneath it. The earlier
-   two-column version left the whole right half of a wide card empty, because
-   six short spec pairs cannot fill 900px on their own. */
-.planet-record {
-  display: grid;
-  grid-template-columns: minmax(200px, 260px) 1fr;
-  grid-template-areas:
-    "head  head"
-    "plate specs";
-  column-gap: var(--g-7);
-  row-gap: var(--g-6);
-  align-items: stretch;
-}
-
-.planet-record-head {
-  grid-area: head;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--g-4);
-  padding-bottom: var(--g-4);
-  border-bottom: var(--g-hairline) solid var(--g-seam);
-}
-
-.planet-record-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--g-4);
-}
-
-.planet-record-plate {
-  grid-area: plate;
-}
-
-.planet-spec {
-  grid-area: specs;
-}
-
-/* the photographic plate: the world itself, mounted in a brass bezel */
-.planet-record-plate {
-  position: relative;
-}
-
-
-.planet-plate {
-  padding: 6px;
-  background: linear-gradient(160deg, var(--g-hull-hi), var(--g-hull));
-  border: 2px solid var(--g-brass-dark);
-  border-radius: var(--g-radius-housing);
-  box-shadow: var(--g-relief), var(--g-drop);
-}
-
-.planet-plate-img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: var(--g-radius);
-  box-shadow: var(--g-recess);
-}
-
-/* The globe is a locator sitting over the corner of the plate. On its own it
-   was a green render on green vegetation and vanished; mounting it in a
-   darkened, brass-ringed porthole gives it a hard edge and its own ground. */
-.planet-globe-mount {
-  position: absolute;
-  left: calc(-1 * var(--g-5));
-  bottom: calc(-1 * var(--g-5));
-  display: grid;
-  place-items: center;
-  width: 44%;
-  max-width: 118px;
-  aspect-ratio: 1;
-  padding: 7px;
-  border: 2px solid var(--g-brass-dark);
-  border-radius: 50%;
-  background: radial-gradient(circle at 50% 40%, var(--g-hull-lo) 0%, #000 78%);
-  box-shadow:
-    0 10px 22px rgba(0, 0, 0, 0.95),
-    inset 0 2px 6px rgba(0, 0, 0, 0.9),
-    inset 0 -1px 0 var(--g-bevel-light);
-}
-
-.planet-globe {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.9));
-}
-
-.planet-record-name {
-  margin: var(--g-1) 0 0 0;
-}
-
-.planet-spec {
-  margin: 0;
-  /* two key/value pairs per row on a wide card, so six specs occupy the width
-     rather than stacking in a narrow strip beside the plate */
-  grid-template-columns: minmax(5.5rem, 8rem) minmax(0, 1fr) minmax(5.5rem, 8rem) minmax(0, 1fr);
-  gap: var(--g-3) var(--g-5);
-  /* the spec rows distribute over the height of the plate beside them, the way
-     a printed form fills its box - otherwise the right half of the card ends
-     in a band of dead space */
-  align-content: space-between;
-}
-
-.planet-spec dd {
-  margin: 0;
-}
-
-.planet-story-btn {
-  margin-top: 0;
-  white-space: nowrap;
-}
-
-@media (max-width: 575px) {
-  /* the badge and the key stop fitting on one line; give them a row each so
-     neither has to wrap mid-word */
-  .planet-record-actions {
-    width: 100%;
-    flex-wrap: wrap;
-    gap: var(--g-3);
-  }
-
-  .planet-story-btn {
-    white-space: normal;
-  }
-}
-
-/* below ~1100px the four-column spec grid squeezes the values, so fall back to
-   a single key/value pair per row */
-@media (max-width: 1199px) {
-  .planet-spec {
-    grid-template-columns: minmax(5.5rem, 9rem) minmax(0, 1fr);
-  }
-}
-
-@media (max-width: 767px) {
-  .planet-record {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "head"
-      "plate"
-      "specs";
-    row-gap: var(--g-6);
-  }
-
-  .planet-record-plate {
-    max-width: 320px;
-  }
-
-  /* the porthole tucks under the plate rather than hanging off the card: at
-     this width the panel edge is only a few pixels further out */
-  .planet-globe-mount {
-    left: calc(-1 * var(--g-2));
-    bottom: calc(-1 * var(--g-3));
-    width: 30%;
-    max-width: 92px;
-  }
-}
-
-
 /* the training page composes its own header, so it needs the same clearance
    under the sticky console header that .template-col-wrapper provides */
 .page-header {
@@ -4193,37 +3910,8 @@ input, textarea {
 
 /* trailing margin on the last paragraph makes a panel look bottom-heavy */
 .story-splash-section .story-text:last-child,
-.g-panel > p:last-child,
-.planet-panel .planet-table {
+.g-panel > p:last-child {
   margin-bottom: 0;
-}
-
-/* the badge centres itself by default (it sits alone in a column elsewhere);
-   in the record header it sits inline beside the story key */
-.planet-record-actions .xalian-species-badge {
-  margin: 0;
-}
-
-@media (max-width: 575px) {
-  /* a 9rem label column leaves the values almost no room on a phone */
-  .planet-spec {
-    grid-template-columns: 1fr;
-    gap: 0 0;
-  }
-
-  /* the header's two halves stop fitting side by side */
-  .planet-record-head {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .planet-spec .g-spec-key {
-    margin-top: var(--g-3);
-  }
-
-  .planet-spec .g-spec-val {
-    margin-bottom: 0;
-  }
 }
 
 

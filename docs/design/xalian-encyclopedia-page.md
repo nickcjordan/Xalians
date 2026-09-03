@@ -46,7 +46,7 @@ The page is the archive of a Xalian Generator: the machine's own records of the 
 | `/encyclopedia/index` | Index | All entries, search, category chips, alphabetical. |
 | `/encyclopedia/index/:key` | Entry | One entry: definition, category, element chip if any, related entries, and "appears in" (every world history paragraph and species description that names it). |
 
-Navigation: the navbar gains an "Encyclopedia" link between Home and Species. The old links stay until the swap.
+Navigation: the navbar gains an "Encyclopedia" link between Home and Duel. The old Species/Planets/Glossary links were removed and their routes redirected into the Encyclopedia (2026-09-03).
 
 ## 2. Data bundle (files in `lambda/src/json/`)
 

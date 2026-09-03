@@ -1,12 +1,9 @@
 import './App.css';
 import Home from './pages/home';
+import species from './json/species.json';
 // import ProjectPage from './pages/projectPage';
 // import FAQPage from './pages/faqPage';
-// import PlanetPage from './pages/planetPage';
-// import SpeciesPage from './pages/speciesPage';
-// import SpeciesDetailPage from './pages/speciesDetailPage';
 // import DesignerPage from './pages/designerPage';
-// import GlossaryPage from './pages/glossaryPage';
 // import GeneratorPage from './pages/generatorPage';
 // import UserAccountPage from './pages/userAccountPage';
 // import UserDetailsPage from './pages/userDetailsPage';
@@ -32,6 +29,7 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
+  Redirect,
   Link
 } from "react-router-dom";
 
@@ -43,10 +41,6 @@ import store from './store/store';
 
 
 // const Home = lazy(() => import('./pages/home'));
-const PlanetPage = lazy(() => import('./pages/planetPage'));
-const SpeciesPage = lazy(() => import('./pages/speciesPage'));
-const SpeciesDetailPage = lazy(() => import('./pages/speciesDetailPage'));
-const GlossaryPage = lazy(() => import('./pages/glossaryPage'));
 const StyleGuidePage = lazy(() => import('./pages/styleGuidePage'));
 const GeneratorPage = lazy(() => import('./pages/generatorPage'));
 const UserAccountPage = lazy(() => import('./pages/userAccountPage'));
@@ -62,8 +56,25 @@ const DuelPlaygroundPage = lazy(() => import('./pages/games/duelPlaygroundPage')
 const EncyclopediaPage = lazy(() => import('./pages/encyclopediaPage'));
 
 
+// The legacy species detail route accepted either a zero-padded numeric id
+// (e.g. "00001") or, per SpeciesDetailPage's own comment, a shorter numeric
+// string it pads itself. The encyclopedia's species key is the lowercase
+// species name instead, so this redirect resolves the incoming id against
+// species.json and hands the result to the new route. An id that matches
+// nothing lands on the Bestiary grid rather than a broken page.
+function RedirectSpecies({ match }) {
+  let inboundId = match.params.id ? match.params.id.toString() : '';
+  if (inboundId && inboundId.length < 5 && /^\d+$/.test(inboundId)) {
+    inboundId = inboundId.padStart(5, '0');
+  }
+  let xal = species.find((x) =>
+    x.id === inboundId || x.name.toLowerCase() === match.params.id.toLowerCase()
+  );
+  return <Redirect to={xal ? `/encyclopedia/species/${xal.name.toLowerCase()}` : '/encyclopedia/species'} />;
+}
+
 class App extends React.Component {
-  
+
   render() {
     Amplify.configure(awsconfig);
 
@@ -77,15 +88,14 @@ class App extends React.Component {
             <Switch>
               <Route exact path="/"><Home /></Route>
               <Route exact path="/generator"><GeneratorPage /></Route>
-              <Route exact path="/species"><SpeciesPage /></Route>
-                <Route exact path="/species/:id"
-                  render={({ match }) => <SpeciesDetailPage id={match.params.id} />}
-                />
+              {/* legacy lore pages retired in favor of the Encyclopedia (docs/design/xalian-encyclopedia-page.md) */}
+              <Route exact path="/species"><Redirect to="/encyclopedia/species" /></Route>
+                <Route exact path="/species/:id" component={RedirectSpecies} />
                 <Route exact path="/user/:id"
                   render={({ match }) => <UserDetailsPage id={match.params.id} />}
                 />
-              <Route exact path="/planets"><PlanetPage /></Route>
-              <Route exact path="/glossary"><GlossaryPage /></Route>
+              <Route exact path="/planets"><Redirect to="/encyclopedia/worlds" /></Route>
+              <Route exact path="/glossary"><Redirect to="/encyclopedia/index" /></Route>
               <Route path="/encyclopedia"><EncyclopediaPage /></Route>
               {/* the design system reference - unlinked from the navbar, it is a
                   developer tool rather than a page for players */}
