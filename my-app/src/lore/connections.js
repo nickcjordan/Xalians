@@ -145,11 +145,21 @@ function findSubjectMention(text, subject) {
 	return best;
 }
 
+// documentFrequency: how many text units mention each subject, across the
+// whole corpus -- used to weight raw co-occurrence count by specificity
+// (a subject mentioned everywhere, e.g. Vallerii or Xalians, contributes
+// less to a connection's rank than one mentioned narrowly).
+const documentFrequency = new Map();
+
 for (const unit of textUnits) {
 	const present = [];
 	for (const subject of subjects) {
 		const mention = findSubjectMention(unit.text, subject);
 		if (mention) present.push({ subject, mention });
+	}
+	for (const { subject } of present) {
+		const id = subjectId(subject);
+		documentFrequency.set(id, (documentFrequency.get(id) || 0) + 1);
 	}
 	if (present.length < 2) continue;
 	for (const a of present) {
@@ -162,23 +172,39 @@ for (const unit of textUnits) {
 	}
 }
 
+const totalUnits = textUnits.length;
+
+// Specificity score: count * log(totalUnits / documentFrequency). A subject
+// mentioned in most text units (Vallerii, Xalians, Xalia, Xalian Generator)
+// has documentFrequency close to totalUnits, so its log term collapses
+// toward zero and it naturally falls to the bottom of the ranking without
+// needing a hard exclusion list.
+function specificityScore(subject, count) {
+	const df = documentFrequency.get(subjectId(subject)) || 1;
+	return count * Math.log(totalUnits / df);
+}
+
 export function getConnections(kind, key, { limit = 12 } = {}) {
 	const forSubject = cooccurrence.get(`${kind}:${key}`);
 	if (!forSubject) return [];
 
-	const rows = [...forSubject.values()].filter(({ subject }) => !isGenericEntry(subject));
+	const rows = [...forSubject.values()]
+		.filter(({ subject }) => !isGenericEntry(subject))
+		.map((row) => ({ ...row, score: specificityScore(row.subject, row.count) }));
 
 	rows.sort((a, b) => {
+		if (b.score !== a.score) return b.score - a.score;
 		if (b.count !== a.count) return b.count - a.count;
 		return a.subject.name.localeCompare(b.subject.name);
 	});
 
-	return rows.slice(0, limit).map(({ subject, count, sample }) => ({
+	return rows.slice(0, limit).map(({ subject, count, score, sample }) => ({
 		kind: subject.kind,
 		key: subject.key,
 		name: subject.name,
 		element: subject.element,
 		count,
+		score,
 		sample,
 	}));
 }

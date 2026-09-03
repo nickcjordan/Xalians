@@ -5,6 +5,10 @@
 import { erasInOrder } from './loaders';
 import { getEra, getEraStory } from './chronicle';
 
+// Groups rows into sections by consecutive eventTitle, merging any run of
+// adjacent sections that share the same head (including null) into one --
+// so a head never appears twice in a row, and a lone null-head section can
+// be told apart, downstream, from a part that has real named sections too.
 function buildSections(rows) {
 	const sections = [];
 	for (const row of rows) {

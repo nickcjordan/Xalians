@@ -34,15 +34,34 @@ describe('getConnections', () => {
 		expect(rows.length).toBeLessThanOrEqual(2);
 	});
 
-	it('rows are sorted by count desc then name', () => {
+	it('rows are sorted by score desc, then count desc, then name', () => {
 		const rows = getConnections('world', 'magmuth');
 		for (let i = 1; i < rows.length; i++) {
 			const prev = rows[i - 1];
 			const cur = rows[i];
 			expect(
-				prev.count > cur.count || (prev.count === cur.count && prev.name.localeCompare(cur.name) <= 0)
+				prev.score > cur.score ||
+					(prev.score === cur.score &&
+						(prev.count > cur.count || (prev.count === cur.count && prev.name.localeCompare(cur.name) <= 0)))
 			).toBe(true);
 		}
+	});
+
+	it('ranks by specificity, not raw count: galaxy-wide records fall out of the top of the ranking', () => {
+		const rows = getConnections('world', 'magmuth');
+		expect(rows.length).toBeGreaterThan(0);
+		for (const row of rows) {
+			expect(typeof row.score).toBe('number');
+		}
+		const topThreeKeys = rows.slice(0, 3).map((r) => r.key);
+		expect(topThreeKeys).not.toContain('xalians');
+		expect(topThreeKeys).not.toContain('vallerii');
+
+		const massacreIndex = rows.findIndex((r) => r.key === 'magmuth-massacre');
+		const valleriiIndex = rows.findIndex((r) => r.key === 'vallerii');
+		expect(massacreIndex).toBeGreaterThanOrEqual(0);
+		expect(valleriiIndex).toBeGreaterThanOrEqual(0);
+		expect(massacreIndex).toBeLessThan(valleriiIndex);
 	});
 
 	it('returns [] for an unknown subject', () => {

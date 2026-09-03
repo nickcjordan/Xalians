@@ -57,10 +57,10 @@ function ReaderParagraph({ world, index, text, onVisible }) {
     );
 }
 
-function ReaderSection({ section }) {
+function ReaderSection({ section, showHead }) {
     return (
         <section className="enc-reader-section">
-            <p className="g-kicker enc-reader-section-head">{section.head || 'Elsewhere in the era'}</p>
+            {showHead && <p className="g-kicker enc-reader-section-head">{section.head || 'Elsewhere in the era'}</p>}
             {section.paragraphs.map((p) => (
                 <ReaderParagraph
                     key={`${p.world.key}:${p.index}`}
@@ -187,7 +187,11 @@ export default function Reader() {
                     <p className="g-body enc-prose enc-reader-def">{part.era.definition}</p>
 
                     {part.sections.map((section, i) => (
-                        <ReaderSection key={`${part.era.key}-${i}`} section={section} />
+                        <ReaderSection
+                            key={`${part.era.key}-${i}`}
+                            section={section}
+                            showHead={!(part.sections.length === 1 && section.head === null)}
+                        />
                     ))}
 
                     <div className="enc-reader-nav">

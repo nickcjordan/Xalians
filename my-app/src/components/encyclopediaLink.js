@@ -21,9 +21,10 @@ function EncyclopediaLink({ kind, name, variant = 'inline', keyOverride, classNa
 	let newTabProps = newTab ? { target: '_blank', rel: 'noopener' } : {};
 
 	if (variant === 'chip') {
+		const chipLabel = kind === 'species' ? 'Species record' : kind === 'world' ? 'World record' : 'Archive entry';
 		return (
 			<Link to={to} className={`g-chip g-chip--outline enc-link enc-link--chip ${className}`} aria-label={label} {...newTabProps}>
-				Archive record
+				{chipLabel}
 			</Link>
 		);
 	}
