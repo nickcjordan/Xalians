@@ -20,7 +20,9 @@ function buildDocuments() {
 		});
 	}
 
-	function flattenWords(value) {
+	const planetNames = new Map(planetsInOrder.map((p) => [p.key, p.name]));
+
+function flattenWords(value) {
 	if (value == null) return '';
 	if (typeof value === 'string') return value;
 	if (Array.isArray(value)) return value.map(flattenWords).join(' ');
@@ -64,7 +66,7 @@ function buildDocuments() {
 			id: `paragraph:${key}`,
 			kind: 'paragraph',
 			key,
-			title: `${paragraph.planet} ${paragraph.index}`,
+			title: `${planetNames.get(paragraph.planet) || paragraph.planet}, Ch. ${String(paragraph.index).padStart(2, '0')}`,
 			text: [paragraph.summary, paragraph.planet].join(' '),
 			route: routeFor('paragraph', key),
 		});

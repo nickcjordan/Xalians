@@ -24,7 +24,9 @@ import Tour from '../components/encyclopedia/Tour';
 export default function EncyclopediaPage() {
     const { path } = useRouteMatch();
     const location = useLocation();
-    const prevPathname = useRef(location.pathname);
+    // null until the first effect runs, so a cold load with a hash still
+    // scrolls to its anchor (a bookmark or a shared chapter link).
+    const prevPathname = useRef(null);
 
     // React Router v5 does not reset scroll on navigation. Reset to the top
     // on a route change (a different pathname), unless the new location
@@ -32,9 +34,12 @@ export default function EncyclopediaPage() {
     // A search-only change (same pathname, different query string) leaves
     // scroll position alone.
     useEffect(() => {
+        const firstRun = prevPathname.current === null;
         const pathnameChanged = prevPathname.current !== location.pathname;
         prevPathname.current = location.pathname;
         if (!pathnameChanged) return;
+        // On a cold load without a hash the browser is already at the top.
+        if (firstRun && !location.hash) return;
 
         // Bootstrap reboot sets `scroll-behavior: smooth` on :root (unless
         // the visitor prefers reduced motion). Suspending it via inline

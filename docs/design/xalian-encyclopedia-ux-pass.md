@@ -67,3 +67,9 @@ Everything from the first contract still binds: `.g-*` parts only, `--g-*` token
 - `yarn test --run` green, including new lore tests.
 - Playwright-core render of every route at 1600 and 390 (`scratchpad/pw/check.js` pattern: `isMobile`, `pageerror` capture, `scrollWidth === innerWidth`).
 - A separate critic pass (no code) scores each of the six items against this document and the design system before the PR opens.
+
+## Round 2 (2026-09-03, PR after #62)
+
+Nick merged round 1 unread and asked for another pass plus a lore validation gate. Shipped: scroll restoration on route change (hash targets honored on cold loads); the Trace strip moved under the section bank as a thin line; search keyboard navigation (arrow keys, Enter, Escape, combobox aria); scrubber numbering 01 to 07, event pins as brass rings with counts, a legend line, lit worlds linking into the era page filtered by world, the Story of Xalia list tied to the scrubber; the era page reads and writes `?world=`, narrows events to the filtered world, and has Expand all; Chronicle footprint cells link into eras; entry pages carry "In the Chronicle" (events by `entry` key or by title, via `getEventsForEntry`) and use the record grid with a sticky definition; species readouts sit in a two-column dossier; world search snippets read as prose and paragraph hits are titled "World, Ch. nn". `.enc-console` uses `overflow-x: clip`, not `hidden`, because `hidden` silently disables every sticky rail inside it.
+
+Lore gate: `.claude/skills/lore-factcheck/SKILL.md` (independent claim-by-claim check) and `my-app/src/lore/__tests__/lore.tour.test.js` (structural validator). The first independent check of the round-1 tour found nine unsupported claims (superlatives, invented causation, an unstated timeframe, one phrase against the Unbirth ruling); all were rewritten to the source. The four peoples entries passed; one place name was made precise (City of Wraiths beneath the Dreadscape).

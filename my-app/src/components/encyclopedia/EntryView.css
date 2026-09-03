@@ -6,6 +6,11 @@
 
 .enc-entry-plate { min-width: 0; }
 
+/* The definition stays beside the rails while a long entry scrolls. */
+@media (min-width: 901px) {
+	.enc-entry-plate { position: sticky; top: var(--g-8); }
+}
+
 .enc-entry-rails {
 	display: flex;
 	flex-direction: column;
