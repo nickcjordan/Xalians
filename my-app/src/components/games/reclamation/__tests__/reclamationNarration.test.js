@@ -143,16 +143,16 @@ describe('narrateJudge', () => {
 describe('narrateMatchEnd', () => {
 	it('names the reason a clinch ended it', () => {
 		expect(narrateMatchEnd({ winner: 'A', you: 'A', sitesYou: 5, sitesThem: 2, reason: 'clinched' }))
-			.toBe('You take the Charter, 5 sites to 2, with clinched at five sites.');
+			.toBe('You take the Charter, 5 sites to 2, clinched at five sites.');
 	});
 
 	it('says "1 site", not "1 sites"', () => {
 		expect(narrateMatchEnd({ winner: 'A', you: 'A', sitesYou: 1, sitesThem: 0, reason: 'worlds-exhausted' }))
-			.toBe('You take the Charter, 1 site to 0, with the third world exhausted.');
+			.toBe('You take the Charter, 1 site to 0, after the third world.');
 	});
 
 	it('names the loss', () => {
 		expect(narrateMatchEnd({ winner: 'B', you: 'A', sitesYou: 3, sitesThem: 4, reason: 'worlds-exhausted' }))
-			.toBe('The rival takes the Charter, 4 sites to 3, with the third world exhausted.');
+			.toBe('The rival takes the Charter, 4 sites to 3, after the third world.');
 	});
 });

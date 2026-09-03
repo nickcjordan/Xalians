@@ -181,7 +181,7 @@ describe('area acts', () => {
 			magnitude: 8,
 			publicState: view,
 		});
-		expect(sentence).toContain('catching everything standing there, both sides');
+		expect(sentence).toMatch(/catching [0-9]+ enem(y|ies)/);
 		expect(sentence).toContain(view.world.sites[0].name);
 		expect(sentence).not.toMatch(/undefined/);
 	});

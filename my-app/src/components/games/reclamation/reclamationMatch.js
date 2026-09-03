@@ -946,7 +946,7 @@ class ReclamationMatch extends React.Component {
 			? 'clinched at five sites'
 			: view.players[YOU].sitesWon === view.players[THEM].sitesWon
 				? 'level on sites and settled on the tiebreak'
-				: 'the third world exhausted';
+				: 'after the third world';
 		return (
 			<div className={`g-panel rec-verdict ${won ? 'rec-verdict--won' : 'rec-verdict--lost'}`} data-verdict>
 				<span className="g-kicker">The Charter</span>
