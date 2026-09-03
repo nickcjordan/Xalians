@@ -787,12 +787,13 @@
       "key": "phantiri-xalians",
       "title": "Phantiri (Xalians of)",
       "category": "factions",
-      "definition": "The Xalians of Phantiri. Non-corporeal ghost Xalians produced after their Generator rewrote itself in the Leviticus Overdrive, they compete for Scrambler Tokens to resurrect themselves and the original Phantiri buried in the Dreadscape below.",
+      "definition": "The Xalians of Phantiri. Non-corporeal ghost Xalians produced after their Generator rewrote itself in the Leviticus Overdrive, they compete for Scrambler Tokens to resurrect themselves and the original Phantiri buried in the City of Wraiths beneath the Dreadscape.",
       "related": [
         "phantiri",
         "leviticus-overdrive",
         "scrambler-token",
-        "dreadscape"
+        "dreadscape",
+        "city-of-wraiths"
       ]
     }
   ]

@@ -134,8 +134,12 @@ function ContemporaneousCard({ group, expanded, onToggle, cardRef, registerAncho
     );
 }
 
-function EventsSection({ era, hashEventKey }) {
-    const groups = useMemo(() => groupEvents(era.events), [era]);
+function EventsSection({ era, hashEventKey, worldFilter, onClearFilter }) {
+    const allGroups = useMemo(() => groupEvents(era.events), [era]);
+    const groups = useMemo(() => {
+        if (worldFilter === 'all') return allGroups;
+        return allGroups.filter((g) => g.events.some((ev) => ev.planets.some((p) => p.key === worldFilter)));
+    }, [allGroups, worldFilter]);
 
     // The first firm event is open by default; a hash match opens and
     // scrolls to its card on mount, whether it is a firm event or one of a
@@ -151,10 +155,15 @@ function EventsSection({ era, hashEventKey }) {
         }
         return open;
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [era]);
+    }, [era, worldFilter]);
 
     const [openGroups, setOpenGroups] = useState(initialOpen);
     const cardRefs = useRef({});
+
+    useEffect(() => {
+        setOpenGroups(initialOpen);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [era, worldFilter]);
 
     useEffect(() => {
         if (!hashEventKey) return;
@@ -174,16 +183,45 @@ function EventsSection({ era, hashEventKey }) {
         });
     };
 
+    const expandAll = () => {
+        setOpenGroups(new Set(groups.map((_, i) => i)));
+    };
+
+    const collapseAll = () => {
+        setOpenGroups(new Set());
+    };
+
+    const allExpanded = groups.length > 0 && openGroups.size === groups.length;
+
     const registerAnchor = (key) => (node) => {
         cardRefs.current[key] = node;
     };
+
+    const filterWorld = worldFilter !== 'all' ? era.worlds.find((g) => g.planet.key === worldFilter) : null;
 
     return (
         <section className="enc-section">
             <div className="enc-section-head">
                 <h2 className="g-h2">Events</h2>
-                <span className="enc-count">{era.events.length}</span>
+                <span className="enc-count">{groups.length}</span>
+                <button
+                    type="button"
+                    className="g-btn enc-era-event-toggle-all"
+                    onClick={allExpanded ? collapseAll : expandAll}
+                    disabled={groups.length === 0}
+                >
+                    {allExpanded ? 'Collapse all' : 'Expand all'}
+                </button>
             </div>
+            {filterWorld && (
+                <p className="g-mono enc-era-event-filter-line">
+                    {groups.length} of {allGroups.length} events name {filterWorld.planet.name}
+                    {' '}
+                    <button type="button" className="g-link enc-era-event-filter-clear" onClick={onClearFilter}>
+                        Show all
+                    </button>
+                </p>
+            )}
             <div className="enc-era-event-list">
                 {groups.map((group, i) =>
                     group.kind === 'firm' ? (
@@ -360,6 +398,10 @@ function EraRail({ eras, era, worldFilter, onFilter }) {
                     </li>
                 ))}
             </ol>
+            <p className="g-mono enc-era-rail-summary">
+                {era.events.length} event{era.events.length === 1 ? '' : 's'}, {litWorlds.length} world
+                {litWorlds.length === 1 ? '' : 's'}
+            </p>
             <div className="enc-era-rail-footprint">
                 <p className="g-kicker enc-era-rail-kicker">Worlds in this era</p>
                 <div className="enc-chips enc-era-rail-chips">
@@ -390,16 +432,41 @@ function EraRail({ eras, era, worldFilter, onFilter }) {
 
 export default function EraView() {
     const { era: eraKey } = useParams();
+    const history = useHistory();
     const location = useLocation();
     const era = lore.getEra(eraKey);
     const eras = lore.getEras();
-    const [worldFilter, setWorldFilter] = useState('all');
 
-    useVisit({ kind: 'era', key: eraKey, name: era ? era.name : eraKey });
+    // The world filter is presented in the query string (?world=<key>) so the
+    // galaxy map, and any other page, can link straight to a filtered era.
+    // An unknown key is ignored (falls back to 'all').
+    const initialWorldFromQuery = useMemo(() => {
+        const params = new URLSearchParams(location.search);
+        const key = params.get('world');
+        if (key && lore.getWorld(key)) return key;
+        return 'all';
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const [worldFilter, setWorldFilterState] = useState(initialWorldFromQuery);
+
+    const setWorldFilter = (next) => {
+        setWorldFilterState(next);
+        const params = new URLSearchParams(location.search);
+        if (next === 'all') params.delete('world');
+        else params.set('world', next);
+        const search = params.toString();
+        history.replace({ pathname: location.pathname, search: search ? `?${search}` : '' });
+    };
 
     useEffect(() => {
-        setWorldFilter('all');
+        const params = new URLSearchParams(location.search);
+        const key = params.get('world');
+        setWorldFilterState(key && lore.getWorld(key) ? key : 'all');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [eraKey]);
+
+    useVisit({ kind: 'era', key: eraKey, name: era ? era.name : eraKey });
 
     if (!era) {
         return (
@@ -430,7 +497,12 @@ export default function EraView() {
                 </div>
                 <p className="g-body enc-prose">{era.definition}</p>
 
-                <EventsSection era={era} hashEventKey={hashEventKey} />
+                <EventsSection
+                    era={era}
+                    hashEventKey={hashEventKey}
+                    worldFilter={worldFilter}
+                    onClearFilter={() => setWorldFilter('all')}
+                />
                 <ReadingModeSection era={era} worldFilter={worldFilter} />
 
                 <div className="enc-era-nav">

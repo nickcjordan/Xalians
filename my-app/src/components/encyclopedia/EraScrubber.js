@@ -17,6 +17,18 @@ export default function EraScrubber({ era, onChange }) {
 	const active = activeIndex >= 0 ? stations[activeIndex] : stations[0];
 	const definition = active.key === null ? preface : active.definition;
 
+	// When an era is selected, spell out what the map is showing: which
+	// worlds light and which carry fixed events, with the counts for each.
+	const footprint = active.key !== null ? lore.getEraFootprint(active.key) : null;
+	const litCount = footprint
+		? footprint.worlds.filter((row) => row.chapterCount > 0 || row.events.length > 0).length
+		: 0;
+	const eventCount = footprint
+		? new Set(
+				footprint.worlds.flatMap((row) => row.events.filter((e) => e.firmness === 'firm').map((e) => e.key))
+			).size
+		: 0;
+
 	// Keep the lit station in view when the rail scrolls horizontally at
 	// narrow widths, without scrolling the page itself.
 	useEffect(() => {
@@ -64,12 +76,20 @@ export default function EraScrubber({ era, onChange }) {
 						aria-pressed={i === activeIndex}
 						onClick={() => onChange(s.key)}
 					>
-						{s.order !== null && <span className="enc-scrub-order g-mono">{s.order}</span>}
+						{s.order !== null && (
+							<span className="enc-scrub-order g-mono">{String(s.order + 1).padStart(2, '0')}</span>
+						)}
 						<span className="enc-scrub-name">{s.name}</span>
 					</button>
 				))}
 			</div>
 			<p className="g-body enc-scrub-definition">{definition}</p>
+			{footprint && (
+				<p className="g-mono enc-scrub-legend">
+					Lit: worlds with chapters in this era. Pins: events fixed to a world. ({litCount} worlds,{' '}
+					{eventCount} events)
+				</p>
+			)}
 		</div>
 	);
 }

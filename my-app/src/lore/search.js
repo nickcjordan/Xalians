@@ -20,16 +20,28 @@ function buildDocuments() {
 		});
 	}
 
+	const planetNames = new Map(planetsInOrder.map((p) => [p.key, p.name]));
+
+function flattenWords(value) {
+	if (value == null) return '';
+	if (typeof value === 'string') return value;
+	if (Array.isArray(value)) return value.map(flattenWords).join(' ');
+	if (typeof value === 'object') return Object.values(value).map(flattenWords).join(' ');
+	return String(value);
+}
+
 	for (const planet of planetsInOrder) {
 		docs.push({
 			id: `world:${planet.key}`,
 			kind: 'world',
 			key: planet.key,
 			title: planet.name,
+			// History first so snippets read as prose; the report's values are
+			// flattened to words (never JSON) and indexed after it.
 			text: [
-				planet.physical && planet.physical.terrainLabel,
-				planet.report && JSON.stringify(planet.report),
 				planet.history.join(' '),
+				planet.physical && planet.physical.terrainLabel,
+				planet.report && flattenWords(planet.report),
 			]
 				.filter(Boolean)
 				.join(' '),
@@ -54,7 +66,7 @@ function buildDocuments() {
 			id: `paragraph:${key}`,
 			kind: 'paragraph',
 			key,
-			title: `${paragraph.planet} ${paragraph.index}`,
+			title: `${planetNames.get(paragraph.planet) || paragraph.planet}, Ch. ${String(paragraph.index).padStart(2, '0')}`,
 			text: [paragraph.summary, paragraph.planet].join(' '),
 			route: routeFor('paragraph', key),
 		});

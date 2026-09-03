@@ -40,7 +40,10 @@
 
 .enc-body { min-height: 40vh; }
 
-.enc-console { overflow-x: hidden; }
+/* clip, not hidden: hidden makes the console a scroll container and every
+   position: sticky rail inside it (era rail, chapter rail, entry plate)
+   silently stops sticking. clip only paints nothing past the edge. */
+.enc-console { overflow-x: clip; }
 
 /* A small key, shorter than the default .g-btn, used where legend space
    is tight (masthead tools, trail clear). */
@@ -140,7 +143,8 @@
 }
 
 .enc-search-hit:hover,
-.enc-search-hit:focus-visible {
+.enc-search-hit:focus-visible,
+.enc-search-hit--active {
 	background: var(--g-phosphor-a20);
 	outline: none;
 }

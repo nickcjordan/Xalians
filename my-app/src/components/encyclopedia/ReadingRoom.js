@@ -76,9 +76,19 @@ export default function ReadingRoom() {
 						<h2 className="g-h2">The Story of Xalia</h2>
 					</header>
 					{overview.map(({ era: eraView, blurb }, i) => (
-						<div className="g-record" key={eraView.key}>
+						<div
+							className={`g-record enc-room-story-row ${era === eraView.key ? 'enc-room-story-row--lit' : ''}`}
+							key={eraView.key}
+						>
 							<h3 className="g-record-term">
-								<span className="enc-room-index g-mono">{i + 1}</span>
+								<button
+									type="button"
+									className="enc-room-index g-mono"
+									aria-pressed={era === eraView.key}
+									onClick={() => setEra(eraView.key)}
+								>
+									{String(i + 1).padStart(2, '0')}
+								</button>
 								<Link to={lore.routeFor('era', eraView.key)} className="g-link">
 									{eraView.name}
 								</Link>

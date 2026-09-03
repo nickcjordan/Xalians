@@ -67,6 +67,12 @@
 	text-transform: uppercase;
 }
 
+.enc-era-rail-summary {
+	margin: 0;
+	color: var(--g-ink-low);
+	font-size: var(--g-size-tiny);
+}
+
 .enc-era-rail-footprint {
 	padding-top: var(--g-4);
 	border-top: var(--g-hairline) solid var(--g-rule-faint);
@@ -106,6 +112,32 @@
 }
 
 /* ---- events ------------------------------------------------------------ */
+
+.enc-era-event-toggle-all {
+	margin-left: auto;
+	padding: var(--g-1) var(--g-3);
+	font-size: var(--g-size-tiny);
+}
+
+.enc-era-event-filter-line {
+	margin: calc(var(--g-4) * -1) 0 var(--g-4);
+	color: var(--g-ink-low);
+}
+
+.enc-era-event-filter-clear {
+	background: transparent;
+	border: 0;
+	padding: 0;
+	font: inherit;
+	color: var(--g-el, var(--g-brass));
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+.enc-era-event-filter-clear:hover,
+.enc-era-event-filter-clear:focus-visible {
+	color: var(--g-ink);
+}
 
 .enc-era-event-list {
 	display: flex;

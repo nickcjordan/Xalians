@@ -1,8 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import * as lore from '../../lore';
 import { useTrail } from './trail';
 import './TrailStrip.css';
+
+const PHONE_QUERY = '(max-width: 700px)';
+const PHONE_CHIP_LIMIT = 5;
+
+function useIsPhone() {
+	const [isPhone, setIsPhone] = useState(() => (
+		typeof window !== 'undefined' && window.matchMedia ? window.matchMedia(PHONE_QUERY).matches : false
+	));
+	useEffect(() => {
+		if (typeof window === 'undefined' || !window.matchMedia) return undefined;
+		const mql = window.matchMedia(PHONE_QUERY);
+		const onChange = () => setIsPhone(mql.matches);
+		mql.addEventListener ? mql.addEventListener('change', onChange) : mql.addListener(onChange);
+		return () => {
+			mql.removeEventListener ? mql.removeEventListener('change', onChange) : mql.removeListener(onChange);
+		};
+	}, []);
+	return isPhone;
+}
 
 const KIND_GLYPH = {
 	entry: 'ENTRY',
@@ -26,12 +45,14 @@ function routeForVisit(visit) {
  */
 export default function TrailStrip() {
 	const [trail, clear] = useTrail();
+	const isPhone = useIsPhone();
 	if (!trail.length) return null;
+	const visible = isPhone ? trail.slice(0, PHONE_CHIP_LIMIT) : trail;
 	return (
-		<div className="g-panel g-panel--recessed enc-trail">
+		<div className="enc-trail">
 			<p className="g-kicker enc-trail-kicker">Trace</p>
 			<div className="enc-trail-chips">
-				{trail.map((visit) => (
+				{visible.map((visit) => (
 					<Link
 						key={`${visit.kind}:${visit.key}`}
 						to={routeForVisit(visit)}

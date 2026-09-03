@@ -112,94 +112,98 @@ function TemplateSections({ view }) {
     const record = view.record;
     return (
         <>
-            <section className="enc-section">
-                <div className="enc-section-head">
-                    <h2 className="g-h2">Capabilities</h2>
-                </div>
-                <div className="g-panel g-panel--recessed">
-                    {record.capabilities.map((c) => meterRow(c.key, c.name, c.band))}
-                </div>
-            </section>
-
-            <section className="enc-section">
-                <div className="enc-section-head">
-                    <h2 className="g-h2">Senses</h2>
-                </div>
-                <div className="g-panel g-panel--recessed">
-                    {record.senses.graded.map((s) => meterRow(s.key, s.name, s.band))}
-                    {record.senses.special.length > 0 && (
-                        <div className="enc-species-chip-row">
-                            {record.senses.special.map((s) => (
-                                <span key={s.key} className="g-chip" title={s.nature}>{s.name}</span>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </section>
-
-            <section className="enc-section">
-                <div className="enc-section-head">
-                    <h2 className="g-h2">Attributes</h2>
-                </div>
-                <div className="g-panel g-panel--recessed">
-                    {record.attributes.map((a) => meterRow(a.key, a.name, a.band))}
-                </div>
-            </section>
-
-            <section className="enc-section">
-                <div className="enc-section-head">
-                    <h2 className="g-h2">Traits</h2>
-                </div>
-                <div className="enc-species-chip-row">
-                    {record.traits.map((t) => (
-                        <span key={t.key} className="g-chip" title={t.nature}>
-                            {t.name} <span className="g-mono">{t.percent}</span>
-                        </span>
-                    ))}
-                </div>
-            </section>
-
-            <section className="enc-section">
-                <div className="enc-section-head">
-                    <h2 className="g-h2">Archetypes</h2>
-                </div>
-                <ol className="g-panel g-panel--recessed enc-species-archetypes">
-                    {record.archetypes.map((a) => (
-                        <li key={a.key}>
-                            <span className="enc-species-archetype-name">{a.name}</span>
-                            <span className="g-mono">{a.weight}</span>
-                            <span className="g-body enc-species-dim">{a.nature}</span>
-                        </li>
-                    ))}
-                </ol>
-            </section>
-
-            <section className="enc-section">
-                <div className="enc-section-head">
-                    <h2 className="g-h2">Instruments</h2>
-                </div>
-                <div className="enc-species-chip-row">
-                    {record.instruments.map((i) => (
-                        <span key={i.key} className="g-chip">{i.name}</span>
-                    ))}
-                </div>
-            </section>
-
-            {record.signature && (
+            <div className="enc-record enc-species-dossier">
                 <section className="enc-section">
                     <div className="enc-section-head">
-                        <h2 className="g-h2">Signature</h2>
+                        <h2 className="g-h2">Capabilities</h2>
                     </div>
-                    <div className="g-screen enc-species-signature">
-                        <p className="g-mono">{record.signature.name}</p>
-                        <p className="g-mono">
-                            INSTRUMENT {record.signature.instrument} / ACTION {record.signature.action} / MEDIUM {record.signature.medium}
-                        </p>
-                        <p className="g-mono">INTENSITY {bandText(record.signature.intensity)}</p>
-                        <p className="g-mono">{record.signature.description}</p>
+                    <div className="g-panel g-panel--recessed">
+                        {record.capabilities.map((c) => meterRow(c.key, c.name, c.band))}
                     </div>
                 </section>
-            )}
+
+                <section className="enc-section">
+                    <div className="enc-section-head">
+                        <h2 className="g-h2">Senses</h2>
+                    </div>
+                    <div className="g-panel g-panel--recessed">
+                        {record.senses.graded.map((s) => meterRow(s.key, s.name, s.band))}
+                        {record.senses.special.length > 0 && (
+                            <div className="enc-species-chip-row">
+                                {record.senses.special.map((s) => (
+                                    <span key={s.key} className="g-chip" title={s.nature}>{s.name}</span>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </section>
+            </div>
+
+            <div className="enc-record enc-species-dossier">
+                <section className="enc-section">
+                    <div className="enc-section-head">
+                        <h2 className="g-h2">Attributes</h2>
+                    </div>
+                    <div className="g-panel g-panel--recessed">
+                        {record.attributes.map((a) => meterRow(a.key, a.name, a.band))}
+                    </div>
+                </section>
+
+                <section className="enc-section">
+                    <div className="enc-section-head">
+                        <h2 className="g-h2">Traits</h2>
+                    </div>
+                    <div className="enc-species-chip-row">
+                        {record.traits.map((t) => (
+                            <span key={t.key} className="g-chip" title={t.nature}>
+                                {t.name} <span className="g-mono">{t.percent}</span>
+                            </span>
+                        ))}
+                    </div>
+
+                    <div className="enc-section-head enc-species-archetypes-head">
+                        <h2 className="g-h2">Archetypes</h2>
+                    </div>
+                    <ol className="g-panel g-panel--recessed enc-species-archetypes">
+                        {record.archetypes.map((a) => (
+                            <li key={a.key}>
+                                <span className="enc-species-archetype-name">{a.name}</span>
+                                <span className="g-mono">{a.weight}</span>
+                                <span className="g-body enc-species-dim">{a.nature}</span>
+                            </li>
+                        ))}
+                    </ol>
+                </section>
+            </div>
+
+            <div className="enc-record enc-species-dossier">
+                <section className="enc-section">
+                    <div className="enc-section-head">
+                        <h2 className="g-h2">Instruments</h2>
+                    </div>
+                    <div className="enc-species-chip-row">
+                        {record.instruments.map((i) => (
+                            <span key={i.key} className="g-chip">{i.name}</span>
+                        ))}
+                    </div>
+                </section>
+
+                {record.signature && (
+                    <section className="enc-section">
+                        <div className="enc-section-head">
+                            <h2 className="g-h2">Signature</h2>
+                        </div>
+                        <div className="g-screen enc-species-signature">
+                            <p className="g-mono">{record.signature.name}</p>
+                            <p className="g-mono">
+                                INSTRUMENT {record.signature.instrument} / ACTION {record.signature.action} / MEDIUM {record.signature.medium}
+                            </p>
+                            <p className="g-mono">INTENSITY {bandText(record.signature.intensity)}</p>
+                            <p className="g-mono">{record.signature.description}</p>
+                        </div>
+                    </section>
+                )}
+            </div>
         </>
     );
 }

@@ -12,6 +12,22 @@
 	text-align: right;
 }
 
+/* Dossier pairs: two readout panels side by side at desktop, matching the
+   .enc-record proportions but with equal columns since both sides carry
+   the same kind of content (unlike the plate/prose record above). */
+.enc-species-dossier {
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	margin-top: var(--g-7);
+}
+
+.enc-species-dossier .enc-section { margin-top: 0; }
+
+.enc-species-archetypes-head { margin-top: var(--g-4); }
+
+@media (max-width: 900px) {
+	.enc-species-dossier { grid-template-columns: minmax(0, 1fr); }
+}
+
 .enc-species-plate {
 	display: flex;
 	flex-direction: column;

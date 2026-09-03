@@ -30,6 +30,8 @@ export default function EntryView() {
 
     const related = lore.getRelated(key);
     const appearances = lore.getAppearances(key);
+    const chronicle = lore.getEventsForEntry(key);
+    const era = entry.category === 'history' ? lore.getEraForEntry(key) : null;
     const hasCrossRefs = related.length > 0 || appearances.length > 0;
     const scopeClass = entry.element ? `g-el-${entry.element}` : '';
 
@@ -59,76 +61,131 @@ export default function EntryView() {
                     <div className="enc-chips">
                         <span className="g-chip">{entry.category}</span>
                         {entry.element && <span className="g-chip">{entry.element}</span>}
+                        {era && (
+                            <Link to={lore.routeFor('era', era.key)} className={`g-chip g-chip--outline enc-entry-era-chip`}>
+                                {era.name}
+                            </Link>
+                        )}
                     </div>
                     {wasRead && <p className="g-mono enc-entry-reviewed">reviewed</p>}
                 </header>
 
-                <Prose text={entry.definition} except={key} />
+                <div className="enc-record">
+                    <div className="enc-entry-plate">
+                        <Prose text={entry.definition} except={key} />
+                    </div>
 
-                {related.length > 0 && (
-                    <section className="enc-section">
-                        <div className="enc-section-head">
-                            <h2 className="g-h2">Related</h2>
-                        </div>
-                        <div className="g-panel g-panel--recessed enc-entry-related">
-                            {related.map((rel) => (
-                                <div key={rel.key} className={`g-record ${rel.element ? `g-el-${rel.element}` : ''}`}>
-                                    <Link to={lore.routeFor('entry', rel.key)} className="g-record-term">
-                                        {rel.title}
-                                    </Link>
-                                    <Prose text={rel.definition} except={rel.key} className="g-record-body" />
+                    <div className="enc-entry-rails">
+                        {chronicle.length > 0 && (
+                            <section className="enc-section enc-entry-chronicle">
+                                <div className="enc-section-head">
+                                    <h2 className="g-h2">In the Chronicle</h2>
                                 </div>
-                            ))}
-                        </div>
-                    </section>
-                )}
-
-                {appearances.length > 0 && (
-                    <section className="enc-section">
-                        <div className="enc-section-head">
-                            <h2 className="g-h2">Appears In</h2>
-                        </div>
-                        <div className="enc-entry-appearances">
-                            {groupedAppearances.map((group) => {
-                                const route = lore.routeFor(group.kind, group.key);
-                                return (
-                                    <div key={`${group.kind}:${group.key}`} className="enc-entry-appearance">
-                                        <div className="enc-chips">
-                                            <span className="g-chip g-chip--outline">{APPEARANCE_KIND_LABEL[group.kind] || group.kind}</span>
-                                            <Link to={route} className="g-record-term enc-entry-appearance-name">
-                                                {group.name}
-                                            </Link>
+                                <div className="g-panel g-panel--recessed enc-entry-chronicle-rows">
+                                    {chronicle.map((row) => (
+                                        <div key={`${row.era.key}:${row.event.key}`} className="enc-entry-chronicle-row">
+                                            <div className="enc-chips">
+                                                <Link
+                                                    to={lore.routeFor('era', row.era.key)}
+                                                    className="g-chip g-chip--outline enc-entry-chronicle-era"
+                                                >
+                                                    {row.era.name}
+                                                </Link>
+                                                <Link
+                                                    to={lore.routeFor('event', `${row.era.key}:${row.event.key}`)}
+                                                    className="g-record-term enc-entry-chronicle-event"
+                                                >
+                                                    {row.event.title}
+                                                </Link>
+                                                {row.inferred && (
+                                                    <span className="g-mono enc-entry-chronicle-inferred">by title</span>
+                                                )}
+                                            </div>
+                                            {row.event.planets.length > 0 && (
+                                                <div className="enc-chips enc-entry-chronicle-worlds">
+                                                    {row.event.planets.map((planet) => (
+                                                        <Link
+                                                            key={planet.key}
+                                                            to={lore.routeFor('world', planet.key)}
+                                                            className={`g-chip g-chip--outline g-el-${planet.element}`}
+                                                        >
+                                                            {planet.name}
+                                                        </Link>
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
-                                        <ul className="enc-entry-appearance-hits">
-                                            {group.hits.map((hit, i) => {
-                                                const hash = group.kind === 'world' && typeof hit.paragraph === 'number'
-                                                    ? `#chapter-${hit.paragraph}`
-                                                    : '';
-                                                return (
-                                                    <li key={i} className="enc-entry-appearance-hit">
-                                                        {hash && (
-                                                            <Link
-                                                                to={`${route}${hash}`}
-                                                                className="g-mono enc-entry-appearance-chapter"
-                                                            >
-                                                                CH. {String(hit.paragraph + 1).padStart(2, '0')}
-                                                            </Link>
-                                                        )}
-                                                        <p className="g-body enc-entry-appearance-excerpt">{hit.excerpt}</p>
-                                                    </li>
-                                                );
-                                            })}
-                                        </ul>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </section>
-                )}
+                                    ))}
+                                </div>
+                            </section>
+                        )}
 
-                {!hasCrossRefs && (
-                    <p className="g-empty">No cross-references on file.</p>
-                )}
+                        {appearances.length > 0 && (
+                            <section className="enc-section">
+                                <div className="enc-section-head">
+                                    <h2 className="g-h2">Appears In</h2>
+                                </div>
+                                <div className="enc-entry-appearances">
+                                    {groupedAppearances.map((group) => {
+                                        const route = lore.routeFor(group.kind, group.key);
+                                        return (
+                                            <div key={`${group.kind}:${group.key}`} className="enc-entry-appearance">
+                                                <div className="enc-chips">
+                                                    <span className="g-chip g-chip--outline">{APPEARANCE_KIND_LABEL[group.kind] || group.kind}</span>
+                                                    <Link to={route} className="g-record-term enc-entry-appearance-name">
+                                                        {group.name}
+                                                    </Link>
+                                                </div>
+                                                <ul className="enc-entry-appearance-hits">
+                                                    {group.hits.map((hit, i) => {
+                                                        const hash = group.kind === 'world' && typeof hit.paragraph === 'number'
+                                                            ? `#chapter-${hit.paragraph}`
+                                                            : '';
+                                                        return (
+                                                            <li key={i} className="enc-entry-appearance-hit">
+                                                                {hash && (
+                                                                    <Link
+                                                                        to={`${route}${hash}`}
+                                                                        className="g-mono enc-entry-appearance-chapter"
+                                                                    >
+                                                                        CH. {String(hit.paragraph + 1).padStart(2, '0')}
+                                                                    </Link>
+                                                                )}
+                                                                <p className="g-body enc-entry-appearance-excerpt">{hit.excerpt}</p>
+                                                            </li>
+                                                        );
+                                                    })}
+                                                </ul>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </section>
+                        )}
+
+                        {related.length > 0 && (
+                            <section className="enc-section">
+                                <div className="enc-section-head">
+                                    <h2 className="g-h2">Related</h2>
+                                </div>
+                                <div className="g-panel g-panel--recessed enc-entry-related">
+                                    {related.map((rel) => (
+                                        <div key={rel.key} className={`g-record ${rel.element ? `g-el-${rel.element}` : ''}`}>
+                                            <Link to={lore.routeFor('entry', rel.key)} className="g-record-term">
+                                                {rel.title}
+                                            </Link>
+                                            <Prose text={rel.definition} except={rel.key} className="g-record-body" />
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+
+                        {!hasCrossRefs && chronicle.length === 0 && (
+                            <p className="g-empty">No cross-references on file.</p>
+                        )}
+                    </div>
+                </div>
             </article>
         </div>
     );

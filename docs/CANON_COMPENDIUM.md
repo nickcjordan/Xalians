@@ -447,7 +447,7 @@ Appearing as a spectral green mist that forms the vague impression of a grinning
 - **Phantiri** — A tomb world whose lifeforms are under constant assault from an unknown energy source emanating from its orbital moon and whose Xalian Generator has responded by creating Xalians of a spectral, undead nature. Alternatively, the name of the extinct ancient alien species who once inhabited the planet and the top secret operation which uncovered their remains.
 - **Shadharam IV** — The original Vallerii name for the planet Phantiri, before the discovery the extinct alien species now known as the Phantiri after the name of the top secret operation under which they were discovered.
 - **Wraithix** — The star system which contained the ghost fleet that led to Operation Phantiri, the discovery of Shadharam IV, and the discovery of the extinct alien species now known as the Phantiri
-- **Phantiri (Xalians of)** — The Xalians of Phantiri. Non-corporeal ghost Xalians produced after their Generator rewrote itself in the Leviticus Overdrive, they compete for Scrambler Tokens to resurrect themselves and the original Phantiri buried in the Dreadscape below.
+- **Phantiri (Xalians of)** — The Xalians of Phantiri. Non-corporeal ghost Xalians produced after their Generator rewrote itself in the Leviticus Overdrive, they compete for Scrambler Tokens to resurrect themselves and the original Phantiri buried in the City of Wraiths beneath the Dreadscape.
 
 ---
 
@@ -918,7 +918,7 @@ Dog-sized, scorpion-like creatures, Drilltails were originally used by wildcatte
 - **Nightcap** — A biochemical present only on Endessa that is necessary to induce stasis for sub-light space travel.
 - **Operation Phantiri** — The codename under which top secret Vallerii excavations of Shadharam IV continued for decades, termed after the nickname xenoarchaeologists gave the planet's original inhabitants. Its findings were sealed and classified after the reawakening of the moon-weapon that followed the discovery of the City of Wraiths.
 - **Phantiri** — A tomb world whose lifeforms are under constant assault from an unknown energy source emanating from its orbital moon and whose Xalian Generator has responded by creating Xalians of a spectral, undead nature. Alternatively, the name of the extinct ancient alien species who once inhabited the planet and the top secret operation which uncovered their remains.
-- **Phantiri (Xalians of)** — The Xalians of Phantiri. Non-corporeal ghost Xalians produced after their Generator rewrote itself in the Leviticus Overdrive, they compete for Scrambler Tokens to resurrect themselves and the original Phantiri buried in the Dreadscape below.
+- **Phantiri (Xalians of)** — The Xalians of Phantiri. Non-corporeal ghost Xalians produced after their Generator rewrote itself in the Leviticus Overdrive, they compete for Scrambler Tokens to resurrect themselves and the original Phantiri buried in the City of Wraiths beneath the Dreadscape.
 - **Poseidas** — An ocean world that is subject to toxic algae blooms, torrential hurricanes, and immense tsunamis. The only known source of Algael in Xalia.
 - **QED** — Quantum Entanglement Device. A specially engineered computer chip exposed to a Bloodstorm on Zolton, which can be used to link communications equipment across the galaxy.
 - **Saigill Combines** — The largest agricorp in the Vallerii Empire, which was driven to bankruptcy in its attempt to terraform Luminax before the invention of the Xalian Generators.

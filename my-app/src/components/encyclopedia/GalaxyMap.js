@@ -31,20 +31,20 @@ const POSITIONS = {
 const BLACK_HOLE = { x: 945, y: 90 };
 const WRAITHIX_MOON = { x: 155, y: 210 };
 
-// Offsets (from the world's own center) for stacking pins around a disc
-// when more than one firm event anchors to the same world.
-const PIN_OFFSETS = [
-	{ x: 15, y: -15 },
-	{ x: -17, y: -13 },
-	{ x: 17, y: 13 },
-	{ x: -15, y: 15 },
-];
+// One marker per world carrying events, offset up and to the side of the
+// disc so it never overlaps the world label printed below the disc.
+const PIN_OFFSET = { x: 16, y: -16 };
 
-function EventPin({ world, event, index, onHover, onLeave }) {
+function WorldEventPin({ world, events, eraKey, onHover, onLeave }) {
 	const history = useHistory();
 	const pos = POSITIONS[world.key];
-	const offset = PIN_OFFSETS[index % PIN_OFFSETS.length];
-	const route = lore.routeFor('event', `${event.eraKey}:${event.key}`);
+	// A single firm event routes straight to its own chronicle anchor; more
+	// than one routes to the era, filtered to this world, so the reader can
+	// see all of them together.
+	const route =
+		events.length === 1
+			? lore.routeFor('event', `${eraKey}:${events[0].key}`)
+			: `${lore.routeFor('era', eraKey)}?world=${world.key}`;
 
 	const go = () => history.push(route);
 	const onKeyDown = (e) => {
@@ -54,31 +54,45 @@ function EventPin({ world, event, index, onHover, onLeave }) {
 		}
 	};
 
+	const label =
+		events.length === 1
+			? `Event at ${world.name}: ${events[0].title}`
+			: `${events.length} events at ${world.name}`;
+
 	return (
 		<g
 			className="enc-map-pin"
-			transform={`translate(${pos.x + offset.x}, ${pos.y + offset.y})`}
+			transform={`translate(${pos.x + PIN_OFFSET.x}, ${pos.y + PIN_OFFSET.y})`}
 			role="link"
 			tabIndex={0}
-			aria-label={`Event: ${event.title}`}
+			aria-label={label}
 			onClick={go}
 			onKeyDown={onKeyDown}
-			onMouseEnter={(e) => onHover(event, e)}
+			onMouseEnter={(e) => onHover(events, e)}
 			onMouseLeave={onLeave}
-			onFocus={(e) => onHover(event, e)}
+			onFocus={(e) => onHover(events, e)}
 			onBlur={onLeave}
 		>
-			<circle className="enc-map-pin-head" r={4} />
-			<line className="enc-map-pin-stem" x1={0} y1={0} x2={0} y2={5} />
+			<circle className="enc-map-pin-head" r={9} />
+			<circle className="enc-map-pin-ring" r={9} />
+			{events.length > 1 && (
+				<text className="enc-map-pin-count g-mono" y={3}>
+					{events.length}
+				</text>
+			)}
 		</g>
 	);
 }
 
-function WorldMark({ world, compact, lit, dimLabel, onHover, onLeave }) {
+function WorldMark({ world, compact, lit, dimLabel, era, onHover, onLeave }) {
 	const history = useHistory();
 	const pos = POSITIONS[world.key];
 	if (!pos) return null;
-	const route = lore.routeFor('world', world.key);
+	// With an era selected and this world lit in it, the record worth opening
+	// is that era's page filtered to this world; otherwise, or when the world
+	// is dimmed (has no footprint in the era), fall back to its survey record.
+	const route =
+		era && lit !== false ? `${lore.routeFor('era', era)}?world=${world.key}` : lore.routeFor('world', world.key);
 
 	const go = () => history.push(route);
 	const onKeyDown = (e) => {
@@ -134,37 +148,33 @@ export default function GalaxyMap({ era = null, showEvents = true, compact = fal
 		? new Map(footprint.worlds.map((row) => [row.world.key, row]))
 		: null;
 
-	// One entry per event, pinned to the first world it anchors to.
-	const eventPins = [];
+	// One marker per world, carrying every firm event anchored there.
+	const worldPins = [];
 	if (footprint && showEvents) {
-		const seen = new Set();
 		for (const row of footprint.worlds) {
-			for (const event of row.events) {
-				if (event.firmness !== 'firm' || seen.has(event.key)) continue;
-				seen.add(event.key);
-				eventPins.push({ world: row.world, event: { ...event, eraKey: era } });
+			const firmEvents = row.events.filter((event) => event.firmness === 'firm');
+			if (firmEvents.length > 0) {
+				worldPins.push({ world: row.world, events: firmEvents });
 			}
 		}
 	}
-	// Stack index per world so multiple pins on one disc do not overlap.
-	const pinIndexByWorld = new Map();
 
-	const onHoverWorld = (world, e) => {
+	const onHoverWorld = (world, lit, e) => {
 		const svg = e.currentTarget.ownerSVGElement;
 		const rect = svg.getBoundingClientRect();
 		const pos = POSITIONS[world.key];
 		const left = rect.left + (pos.x / 1000) * rect.width;
 		const top = rect.top + (pos.y / 700) * rect.height;
 		const row = footprintByWorld ? footprintByWorld.get(world.key) : null;
-		setHoverState({ kind: 'world', world, row, left, top });
+		setHoverState({ kind: 'world', world, row, lit, left, top });
 	};
-	const onHoverEvent = (event, e) => {
+	const onHoverEvents = (world, events, e) => {
 		const svg = e.currentTarget.ownerSVGElement;
 		const rect = svg.getBoundingClientRect();
-		const pos = POSITIONS[event.__worldKey];
-		const left = rect.left + (pos.x / 1000) * rect.width;
-		const top = rect.top + (pos.y / 700) * rect.height;
-		setHoverState({ kind: 'event', event, left, top });
+		const pos = POSITIONS[world.key];
+		const left = rect.left + ((pos.x + PIN_OFFSET.x) / 1000) * rect.width;
+		const top = rect.top + ((pos.y + PIN_OFFSET.y) / 700) * rect.height;
+		setHoverState({ kind: 'events', world, events, left, top });
 	};
 	const onLeave = () => setHoverState(null);
 
@@ -216,26 +226,23 @@ export default function GalaxyMap({ era = null, showEvents = true, compact = fal
 							compact={compact}
 							lit={footprint ? lit : true}
 							dimLabel={compact}
-							onHover={onHoverWorld}
+							era={era}
+							onHover={(w, e) => onHoverWorld(w, footprint ? lit : true, e)}
 							onLeave={onLeave}
 						/>
 					);
 				})}
 
-				{eventPins.map(({ world, event }) => {
-					const index = pinIndexByWorld.get(world.key) || 0;
-					pinIndexByWorld.set(world.key, index + 1);
-					return (
-						<EventPin
-							key={event.key}
-							world={world}
-							event={{ ...event, __worldKey: world.key }}
-							index={index}
-							onHover={onHoverEvent}
-							onLeave={onLeave}
-						/>
-					);
-				})}
+				{worldPins.map(({ world, events }) => (
+					<WorldEventPin
+						key={world.key}
+						world={world}
+						events={events}
+						eraKey={era}
+						onHover={(evs, e) => onHoverEvents(world, evs, e)}
+						onLeave={onLeave}
+					/>
+				))}
 			</svg>
 
 			{hoverState && hoverState.kind === 'world' && (
@@ -247,13 +254,22 @@ export default function GalaxyMap({ era = null, showEvents = true, compact = fal
 					<span className="g-chip">{hoverState.world.element}</span>
 					<span className="enc-map-card-terrain">{hoverState.world.physical && hoverState.world.physical.terrainLabel}</span>
 					<span className="enc-map-card-species">{hoverState.world.nativeSpecies.length} native species</span>
+					<span className="enc-map-card-action g-mono">
+						{era && hoverState.lit !== false ? 'Read in this era' : 'Open survey record'}
+					</span>
 				</div>
 			)}
 
-			{hoverState && hoverState.kind === 'event' && (
+			{hoverState && hoverState.kind === 'events' && (
 				<div className="g-panel g-panel--raised enc-map-card enc-map-card--event" style={{ left: hoverState.left, top: hoverState.top - 18 }}>
-					<span className="g-kicker enc-map-card-kicker">Event</span>
-					<span className="enc-map-card-name">{hoverState.event.title}</span>
+					<span className="g-kicker enc-map-card-kicker">
+						{hoverState.events.length > 1 ? `${hoverState.events.length} events` : 'Event'}
+					</span>
+					{hoverState.events.map((event) => (
+						<span className="enc-map-card-name enc-map-card-event-title" key={event.key}>
+							{event.title}
+						</span>
+					))}
 				</div>
 			)}
 		</div>

@@ -15,14 +15,28 @@ function FootprintStrip({ eraKey }) {
         <div className="enc-chronicle-footprint" role="list" aria-label="Worlds in this era">
             {footprint.worlds.map((row) => {
                 const lit = row.chapterCount > 0 || row.events.length > 0;
+                // The strip is an era instrument: a lit cell goes to this era
+                // filtered to that world, not to the world's own record. Dim
+                // cells are not links (nothing to filter to).
+                if (!lit) {
+                    return (
+                        <span
+                            key={row.world.key}
+                            role="listitem"
+                            className={`enc-chronicle-footprint-cell g-el-${row.world.element} is-dim`}
+                            title={row.world.name}
+                            aria-label={`${row.world.name}, not in this era`}
+                        />
+                    );
+                }
                 return (
                     <Link
                         key={row.world.key}
-                        to={lore.routeFor('world', row.world.key)}
+                        to={`${lore.routeFor('era', eraKey)}?world=${row.world.key}`}
                         role="listitem"
-                        className={`enc-chronicle-footprint-cell g-el-${row.world.element} ${lit ? 'is-lit' : 'is-dim'}`}
+                        className={`enc-chronicle-footprint-cell g-el-${row.world.element} is-lit`}
                         title={row.world.name}
-                        aria-label={`${row.world.name}${lit ? '' : ', not in this era'}`}
+                        aria-label={row.world.name}
                     />
                 );
             })}

@@ -141,6 +141,54 @@ export function getEraStory(eraKey) {
 	return rows.map(({ _eventOrder, _planetIndex, ...row }) => row);
 }
 
+// Whole-word, case-insensitive test for `title` inside `text`.
+function findWholeWord(text, title) {
+	const escaped = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+	const re = new RegExp(`\\b${escaped}\\b`, 'i');
+	return re.test(text);
+}
+
+// getEventsForEntry: every chronicle event whose `entry` equals entryKey,
+// plus (for events with no `entry` of their own) events whose title contains
+// the entry's title as a whole word -- those are marked inferred: true.
+// Returned in era order then event order. [] for unknown keys.
+export function getEventsForEntry(entryKey) {
+	const entry = getEntry(entryKey);
+	if (!entry) return [];
+
+	const direct = eventsInOrder.filter((e) => e.entry === entryKey);
+	const inferred = eventsInOrder.filter((e) => !e.entry && findWholeWord(e.title, entry.title));
+
+	const rows = [
+		...direct.map((event) => ({ event: buildEventView(event), inferred: false, _order: event })),
+		...inferred.map((event) => ({ event: buildEventView(event), inferred: true, _order: event })),
+	];
+
+	const eraOrderByKey = new Map(erasInOrder.map((e) => [e.key, e.order]));
+	rows.sort((a, b) => {
+		const eraA = eraOrderByKey.get(a._order.era) ?? Infinity;
+		const eraB = eraOrderByKey.get(b._order.era) ?? Infinity;
+		if (eraA !== eraB) return eraA - eraB;
+		return a._order.order - b._order.order;
+	});
+
+	return rows.map(({ event, inferred: isInferred, _order }) => ({
+		event,
+		era: getEra(_order.era),
+		inferred: isInferred,
+	}));
+}
+
+// getEraForEntry: for category 'history' entries, the era of their first
+// (lowest era-order then event-order) event. null otherwise / unknown.
+export function getEraForEntry(entryKey) {
+	const entry = getEntry(entryKey);
+	if (!entry || entry.category !== 'history') return null;
+	const rows = getEventsForEntry(entryKey);
+	if (rows.length === 0) return null;
+	return rows[0].era || null;
+}
+
 // getWorldTimeline: all seven eras in order, with the chapter indices and
 // events belonging to the world in each era. Empty arrays where the world
 // is absent from that era.

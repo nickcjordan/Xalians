@@ -8,7 +8,16 @@ export { getWorlds, getWorld } from './worlds';
 
 export { getSpeciesList, getSpecies } from './species';
 
-export { getEras, getEra, getOverview, getEraFootprint, getEraStory, getWorldTimeline } from './chronicle';
+export {
+	getEras,
+	getEra,
+	getOverview,
+	getEraFootprint,
+	getEraStory,
+	getWorldTimeline,
+	getEventsForEntry,
+	getEraForEntry,
+} from './chronicle';
 
 export { getTour } from './tour';
 

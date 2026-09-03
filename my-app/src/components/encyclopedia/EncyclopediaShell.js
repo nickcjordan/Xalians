@@ -53,8 +53,8 @@ export default function EncyclopediaShell({ children }) {
                     );
                 })}
             </nav>
-            <div className="enc-body">{children}</div>
             <TrailStrip />
+            <div className="enc-body">{children}</div>
         </div>
     );
 }
