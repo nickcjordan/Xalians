@@ -1,0 +1,119 @@
+/* Index section. Prefix: .enc-index- */
+
+.enc-index-controls {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--g-4);
+	align-items: center;
+	margin-bottom: var(--g-4);
+}
+
+.enc-index-search { flex: 1 1 16rem; min-width: 12rem; }
+
+.enc-index-chips { flex-wrap: wrap; }
+
+.enc-index-chips-row {
+	display: flex;
+	gap: var(--g-2);
+	margin-top: var(--g-2);
+	flex-wrap: wrap;
+}
+
+.enc-index-panel { padding: var(--g-2) var(--g-4); }
+
+.enc-index-list {
+	display: grid;
+	grid-template-columns: 1fr;
+	column-gap: var(--g-6);
+}
+
+@media (min-width: 900px) {
+	.enc-index-list {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+.enc-index-list .g-record:last-child { border-bottom: none; }
+
+.enc-index-letter-heading {
+	grid-column: 1 / -1;
+	margin: var(--g-4) 0 0;
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+	color: var(--g-ink-low);
+	border-bottom: var(--g-hairline) solid var(--g-rule-faint);
+	padding-bottom: var(--g-1);
+}
+
+.enc-index-list > *:first-child.enc-index-letter-heading { margin-top: 0; }
+
+.enc-index-alphabet {
+	flex-wrap: wrap;
+	margin-bottom: var(--g-4);
+}
+
+.enc-index-alphabet-key {
+	padding: var(--g-1) var(--g-2);
+	min-width: 2rem;
+	text-align: center;
+}
+
+.enc-index-alphabet-key:disabled {
+	opacity: 0.35;
+	cursor: default;
+}
+
+.enc-index-alphabet-key:disabled:hover {
+	background: var(--g-hull);
+	color: var(--g-ink-mid);
+}
+
+.enc-index-read-lamp {
+	font-size: var(--g-size-micro);
+	gap: var(--g-1);
+}
+
+.enc-index-read-lamp::before {
+	width: 6px;
+	height: 6px;
+}
+
+@media (min-width: 900px) {
+	.enc-index-controls-sticky {
+		position: sticky;
+		top: var(--g-6);
+		z-index: 2;
+		background: var(--g-hull);
+		padding-top: var(--g-2);
+		padding-bottom: var(--g-2);
+	}
+}
+
+@media (max-width: 700px) {
+	.enc-index-chips.enc-scrollrow {
+		display: flex;
+		flex-wrap: nowrap;
+		width: 100%;
+		max-width: 100%;
+	}
+
+	.enc-index-alphabet.enc-scrollrow {
+		display: flex;
+		flex-wrap: nowrap;
+		width: 100%;
+		max-width: 100%;
+	}
+
+	.enc-index-alphabet-key {
+		flex: 0 0 36px;
+		width: 36px;
+		height: 36px;
+		min-width: 36px;
+		padding: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+}

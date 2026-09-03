@@ -1,0 +1,123 @@
+/* =========================================================================
+   TOUR — /encyclopedia/tour, the First Survey guided reading path.
+   Contract: docs/design/xalian-encyclopedia-ux-pass.md, item 2.
+   ========================================================================= */
+
+.enc-tour-beat { margin-top: var(--g-2); }
+
+/* ---- progress rail ------------------------------------------------------ */
+
+.enc-tour-rail {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--g-4);
+	align-items: center;
+	margin-bottom: var(--g-5);
+	padding-bottom: var(--g-4);
+	border-bottom: var(--g-hairline) solid var(--g-rule);
+}
+
+.enc-tour-station {
+	text-decoration: none;
+	padding: var(--g-1) 0;
+	color: var(--g-ink-low);
+}
+
+.enc-tour-station:hover,
+.enc-tour-station:focus-visible {
+	color: var(--g-ink-mid);
+	outline: none;
+}
+
+.enc-tour-station-index {
+	font-variant-numeric: tabular-nums;
+}
+
+
+.enc-tour-station--current { color: var(--g-ink); }
+
+
+/* ---- kicker and title ---------------------------------------------------- */
+
+.enc-tour-kicker { margin-bottom: var(--g-2); }
+
+.enc-tour-title { margin: 0 0 var(--g-5); }
+
+/* ---- record: map left, prose right --------------------------------------- */
+
+.enc-tour-record { margin-bottom: var(--g-6); }
+
+.enc-tour-map-panel {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-3);
+}
+
+.enc-tour-era-link {
+	align-self: flex-start;
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+}
+
+.enc-tour-prose-col {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-5);
+	min-width: 0;
+}
+
+.enc-tour-prose { max-width: none; }
+
+.enc-tour-consulted {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+}
+
+/* ---- bottom navigation ---------------------------------------------------- */
+
+.enc-tour-nav {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--g-4);
+	flex-wrap: wrap;
+	padding-top: var(--g-5);
+	border-top: var(--g-hairline) solid var(--g-rule);
+}
+
+.enc-tour-nav-btn {
+	text-decoration: none;
+	max-width: 46%;
+	white-space: normal;
+	text-align: center;
+}
+
+.enc-tour-finish {
+	display: flex;
+	gap: var(--g-3);
+	flex-wrap: wrap;
+	margin-left: auto;
+}
+
+/* ---- phone: single column, map above prose, rail wraps -------------------- */
+
+@media (max-width: 700px) {
+	.enc-tour-rail { gap: var(--g-3); row-gap: var(--g-4); }
+
+	.enc-tour-station {
+		min-height: 32px;
+		min-width: 32px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.enc-tour-nav { flex-direction: column; align-items: stretch; }
+
+	.enc-tour-nav-btn { max-width: none; }
+
+	.enc-tour-finish { margin-left: 0; flex-direction: column; }
+}

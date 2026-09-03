@@ -2,7 +2,7 @@ name: Deploy backend
 
 on:
   push:
-    branches: [master]
+    branches: [main]
     paths:
       - "lambda/**"
       - "main.tf"
@@ -13,7 +13,7 @@ on:
   # no paths filter on PRs: "Terraform plan" is a required status check for
   # auto-merge, so it must run (and pass) on every PR
   pull_request:
-    branches: [master]
+    branches: [main]
   workflow_dispatch:
 
 permissions:

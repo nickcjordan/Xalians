@@ -1,0 +1,411 @@
+{
+  "version": "0.1.0",
+  "note": "Species whose templates Nick has ratified. Only these are bundled into lambda/src/json/speciesRecords.json by scripts/bundleLore.js; *-run.* files and unratified drafts never ship.",
+  "records": [
+    {
+      "key": "graviclaw",
+      "name": "Graviclaw",
+      "element": "dark",
+      "homePlanet": "grimedes",
+      "generatorPlanets": [
+        "grimedes"
+      ],
+      "lore": {
+        "description": "With the black-shelled body of a crab and an upright torso, the centaur-like crustacean known as the Graviclaw lurks just beneath the foggy wetlands of Grimedes, using its bizarre control over the intensification of gravitational waves to generate miniature black holes in the water and draw its helpless prey right into its clutches. Graviclaws can strengthen the gravitational pull of their massive claws in order to snap them shut with a force many times heavier than their implied mass, severing through even the hardest of materials with crushing pressure. When facing larger foes, the Graviclaw can use its powers to root itself to the ground, becoming an immovable wall of chitin.",
+        "descriptionStatus": "source",
+        "biomeNiche": "submerged ambusher in the foggy wetlands beneath Grimedes' thick, stalky undergrowth"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh",
+          "secondary": "mineral"
+        },
+        "bodyPlan": "multiped",
+        "anatomy": [
+          "pincers",
+          "shell",
+          "body"
+        ],
+        "covering": "chitin",
+        "size": {
+          "heightCm": [
+            165,
+            215
+          ],
+          "weightKg": [
+            180,
+            260
+          ]
+        },
+        "lifespan": "long",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "carnivore",
+        "communication": [],
+        "breathes": [
+          "gas",
+          "liquid"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas",
+            "liquid"
+          ],
+          "temperatureC": {
+            "min": -6,
+            "max": 34
+          }
+        },
+        "capabilities": {
+          "flight": [
+            0,
+            0
+          ],
+          "swim": [
+            45,
+            70
+          ],
+          "burrow": [
+            50,
+            75
+          ],
+          "climb": [
+            5,
+            20
+          ],
+          "sprint": [
+            15,
+            35
+          ],
+          "leap": [
+            5,
+            20
+          ],
+          "manipulation": [
+            45,
+            70
+          ]
+        },
+        "senses": {
+          "sight": [
+            20,
+            45
+          ],
+          "hearing": [
+            30,
+            55
+          ],
+          "smell": [
+            35,
+            60
+          ],
+          "special": [
+            "void-sense"
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "juggernaut": 5,
+        "bulwark": 4,
+        "predator": 3,
+        "vanguard": 2,
+        "stalwart": 1
+      },
+      "attributes": {
+        "strength": [
+          70,
+          95
+        ],
+        "vitality": [
+          55,
+          80
+        ],
+        "endurance": [
+          50,
+          75
+        ],
+        "agility": [
+          10,
+          30
+        ],
+        "reflex": [
+          25,
+          50
+        ],
+        "intelligence": [
+          25,
+          50
+        ],
+        "willpower": [
+          45,
+          70
+        ],
+        "instinct": [
+          55,
+          80
+        ],
+        "charisma": [
+          15,
+          40
+        ],
+        "resilience": [
+          70,
+          95
+        ]
+      },
+      "traits": {
+        "pool": {
+          "healing": 0,
+          "protective": 0,
+          "regenerative": 0,
+          "armored": 100,
+          "anchored": 100,
+          "phasing": 0,
+          "resistant": 0,
+          "ramming": 0,
+          "toxic": 0,
+          "volatile": 0,
+          "reflective": 0,
+          "menacing": 30,
+          "hypnotic": 0,
+          "perceptive": 30,
+          "foresighted": 0,
+          "mind-sealed": 0,
+          "pack-bonded": 0,
+          "solitary": 45,
+          "stealthy": 60,
+          "nocturnal": 0,
+          "inspiring": 0,
+          "slippery": 0,
+          "luminous": 0,
+          "telekinetic": 6
+        }
+      },
+      "instruments": [
+        "pincers",
+        "shell"
+      ],
+      "signatureAbility": {
+        "name": "Point of No Return",
+        "instrument": "pincers",
+        "action": "snare",
+        "medium": "dark",
+        "intensity": [
+          55,
+          85
+        ],
+        "description": "It opens a claw beneath the water and collapses the gravitational waves inside it until nothing within reach can swim away from the closing grip."
+      }
+    },
+    {
+      "key": "tetrahive",
+      "name": "Tetrahive",
+      "element": "dark",
+      "homePlanet": "grimedes",
+      "generatorPlanets": [
+        "grimedes"
+      ],
+      "lore": {
+        "description": "A small winged thing with a long whipping tail, the Tetrahive fights by conjuring a swarm of little flying familiars with teeth like piranhas, holding every one of them in its mind and moving them as a single unit to attack or defend. It was generated on Grimedes not to serve as a labor force but as a test subject, one product of the experiments the Vallerii ran on the Xalian population in laboratories that rumor holds were black sites for ECHELON. It hunts the thick, stalky undergrowth of a world cloaked in perpetual night, and the newest generation of its kind now stands at the edge of the galaxy and watches the endless black.",
+        "descriptionStatus": "upgraded",
+        "biomeNiche": "the thick stalky undergrowth of the flat, lightless plains of Grimedes"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh"
+        },
+        "bodyPlan": "swarm",
+        "anatomy": [
+          "wings",
+          "claws",
+          "tail",
+          "body"
+        ],
+        "covering": "hide",
+        "size": {
+          "heightCm": [
+            60,
+            90
+          ],
+          "weightKg": [
+            8,
+            16
+          ]
+        },
+        "lifespan": "short",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "carnivore",
+        "communication": [],
+        "breathes": [
+          "gas"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas"
+          ],
+          "temperatureC": {
+            "min": -6,
+            "max": 34
+          }
+        },
+        "capabilities": {
+          "flight": [
+            60,
+            85
+          ],
+          "swim": [
+            0,
+            10
+          ],
+          "burrow": [
+            0,
+            5
+          ],
+          "climb": [
+            35,
+            60
+          ],
+          "sprint": [
+            15,
+            35
+          ],
+          "leap": [
+            40,
+            65
+          ],
+          "manipulation": [
+            20,
+            40
+          ]
+        },
+        "senses": {
+          "sight": [
+            30,
+            55
+          ],
+          "hearing": [
+            60,
+            85
+          ],
+          "smell": [
+            25,
+            45
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "skirmisher": 5,
+        "sage": 4,
+        "prowler": 3,
+        "seeker": 2,
+        "sovereign": 1
+      },
+      "attributes": {
+        "strength": [
+          15,
+          35
+        ],
+        "vitality": [
+          25,
+          45
+        ],
+        "endurance": [
+          30,
+          55
+        ],
+        "agility": [
+          55,
+          80
+        ],
+        "reflex": [
+          50,
+          75
+        ],
+        "intelligence": [
+          45,
+          70
+        ],
+        "willpower": [
+          60,
+          85
+        ],
+        "instinct": [
+          40,
+          65
+        ],
+        "charisma": [
+          25,
+          50
+        ],
+        "resilience": [
+          20,
+          40
+        ]
+      },
+      "traits": {
+        "pool": {
+          "healing": 0,
+          "protective": 0,
+          "regenerative": 0,
+          "armored": 0,
+          "anchored": 0,
+          "phasing": 0,
+          "resistant": 0,
+          "ramming": 0,
+          "toxic": 0,
+          "volatile": 0,
+          "reflective": 0,
+          "menacing": 20,
+          "hypnotic": 0,
+          "perceptive": 20,
+          "foresighted": 0,
+          "mind-sealed": 35,
+          "pack-bonded": 0,
+          "solitary": 10,
+          "stealthy": 0,
+          "nocturnal": 95,
+          "inspiring": 0,
+          "slippery": 45,
+          "luminous": 0,
+          "telekinetic": 0
+        }
+      },
+      "instruments": [
+        "swarm",
+        "claws"
+      ],
+      "signatureAbility": {
+        "name": "Unbidden Legion",
+        "instrument": "swarm",
+        "action": "cloud",
+        "medium": "dark",
+        "intensity": [
+          30,
+          80
+        ],
+        "description": "It calls up a wheeling cloud of small toothed familiars and sets them on a single target as one mind, and a familiar that is broken simply thins away into the black."
+      }
+    }
+  ],
+  "entries": [
+    {
+      "key": "graviclaw",
+      "title": "Graviclaw",
+      "category": "xalians",
+      "definition": "The Graviclaw is a black-shelled crustacean Xalian of Grimedes, centaur-like in build, which lurks beneath the planet's foggy wetlands and intensifies gravitational waves to open miniature black holes in the water. It draws prey into its massive claws, which snap shut with a force far heavier than their size implies, and it can root itself to the ground as an immovable wall of chitin.",
+      "related": []
+    },
+    {
+      "key": "tetrahive",
+      "title": "Tetrahive",
+      "category": "xalians",
+      "definition": "The Tetrahive is a small winged Xalian of Grimedes with a long whipping tail that fights by conjuring a swarm of little flying familiars with teeth like piranhas, holding every one of them in its mind and moving them as a single unit to attack or defend. It was generated as a test subject rather than a laborer, and hunts the planet's thick, stalky undergrowth in perpetual night.",
+      "related": []
+    }
+  ]
+}

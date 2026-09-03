@@ -1,0 +1,112 @@
+/* EntryView section. Prefix: .enc-entry- */
+
+.enc-entry { width: 100%; }
+
+.enc-entry-doc { width: 100%; }
+
+.enc-entry-plate { min-width: 0; }
+
+/* The definition stays beside the rails while a long entry scrolls. */
+@media (min-width: 901px) {
+	.enc-entry-plate { position: sticky; top: var(--g-8); }
+}
+
+.enc-entry-rails {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-7);
+	min-width: 0;
+}
+
+.enc-entry-rails .enc-section { margin-top: 0; }
+
+.enc-entry-era-chip { text-decoration: none; }
+
+.enc-entry-chronicle-rows {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-4);
+	padding: var(--g-4);
+}
+
+.enc-entry-chronicle-row {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+	padding-bottom: var(--g-4);
+	border-bottom: var(--g-hairline) solid var(--g-rule-faint);
+}
+
+.enc-entry-chronicle-row:last-child {
+	padding-bottom: 0;
+	border-bottom: none;
+}
+
+.enc-entry-chronicle-era { text-decoration: none; }
+
+.enc-entry-chronicle-event { font-size: var(--g-size-body); }
+
+.enc-entry-chronicle-inferred {
+	font-size: var(--g-size-tiny);
+	color: var(--g-ink-low);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+}
+
+.enc-entry-chronicle-worlds { margin-left: var(--g-1); }
+
+.enc-entry-reviewed {
+	margin: 0;
+	font-size: var(--g-size-tiny);
+	color: var(--g-ink-low);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+}
+
+.enc-entry-related { padding: var(--g-2) var(--g-4); }
+
+.enc-entry-appearances {
+	display: grid;
+	gap: var(--g-4);
+}
+
+.enc-entry-appearance {
+	padding: var(--g-4);
+	border-bottom: var(--g-hairline) solid var(--g-rule-faint);
+}
+
+.enc-entry-appearance:last-child { border-bottom: none; }
+
+.enc-entry-appearance-name { font-size: var(--g-size-body); }
+
+.enc-entry-appearance-hits {
+	list-style: none;
+	margin: var(--g-2) 0 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+}
+
+.enc-entry-appearance-hit {
+	display: flex;
+	align-items: baseline;
+	gap: var(--g-3);
+}
+
+.enc-entry-appearance-chapter {
+	flex: none;
+	color: var(--g-ink-low);
+	font-size: var(--g-size-tiny);
+	text-decoration: none;
+}
+
+.enc-entry-appearance-chapter:hover,
+.enc-entry-appearance-chapter:focus-visible {
+	color: var(--g-brass);
+}
+
+.enc-entry-appearance-excerpt {
+	margin: 0;
+	min-width: 0;
+}

@@ -1,0 +1,1598 @@
+/**
+ * RECLAMATION — page layout for /reclamation.
+ *
+ * Every colour comes from a --g-* token or from --g-el (the element in scope on a keyed
+ * container), per docs/DESIGN_SYSTEM.md rule 1: no raw hex. Panels are matte; only
+ * .g-screen glows. Depth is bevel and shadow, never a colour halo.
+ *
+ * The whole table is one screen: status strip, three sites, the roster strip, and a rail
+ * carrying orders and the log. It must not scroll at 1440x900 and must stay usable at
+ * 1024 wide, so the shell is a fixed-height grid and only the rail's inner panels ever
+ * scroll internally.
+ */
+
+.rec-console {
+	overflow: hidden;
+	/* the navbar is a fixed-height band above the shell; the table takes the rest of the
+	   viewport exactly, so the page itself never scrolls */
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+.rec-shell {
+	max-width: 1400px;
+}
+
+.rec-shell--match {
+	/* the shell's width is fixed, not fit to content: a judged board without the
+	   roster strip must not narrow the whole table */
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-3);
+	flex: 1 1 auto;
+	min-height: 0;
+	padding: var(--g-3) var(--g-4) var(--g-4);
+	overflow: hidden;
+}
+
+.rec-masthead {
+	display: flex;
+	align-items: baseline;
+	gap: var(--g-4);
+	flex: 0 0 auto;
+}
+
+.rec-masthead .g-kicker { margin: 0; }
+
+.rec-masthead-title {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-lead);
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+	color: var(--g-ink);
+	margin: 0;
+}
+
+.rec-masthead-seed {
+	margin-left: auto;
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-low);
+}
+
+/* -------------------------------------------------------------------------
+   START SCREEN
+   ------------------------------------------------------------------------- */
+
+.rec-intro-panel {
+	padding: var(--g-6);
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-5);
+}
+
+.rec-rules-screen {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-3);
+}
+
+.rec-rules-screen .g-screen-line { max-width: var(--g-measure); }
+
+/* -------------------------------------------------------------------------
+   MATCH SHELL
+   ------------------------------------------------------------------------- */
+
+.rec-match {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-3);
+	flex: 1 1 auto;
+	min-height: 0;
+}
+
+.rec-body {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+	gap: var(--g-3);
+	flex: 1 1 auto;
+	min-height: 0;
+}
+
+.rec-table {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-3);
+	min-height: 0;
+	min-width: 0;
+}
+
+.rec-rail {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-3);
+	min-height: 0;
+	overflow: hidden;
+}
+
+/* -------------------------------------------------------------------------
+   STATUS STRIP
+   ------------------------------------------------------------------------- */
+
+.rec-status {
+	flex: 0 0 auto;
+	display: grid;
+	grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr) minmax(0, 1.1fr);
+	grid-template-rows: auto auto;
+	align-items: center;
+	gap: var(--g-2) var(--g-4);
+	padding: var(--g-3) var(--g-4);
+}
+
+.rec-status-world {
+	display: flex;
+	align-items: baseline;
+	gap: var(--g-3);
+	flex-wrap: wrap;
+}
+
+.rec-status-world .g-kicker { margin: 0; }
+
+.rec-status-planet {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-h3);
+	font-weight: 600;
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+	color: var(--g-el);
+	margin: 0;
+}
+
+.rec-status-element { font-size: var(--g-size-micro); }
+
+.rec-status-score {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--g-4);
+}
+
+.rec-score {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	line-height: 1.1;
+}
+
+.rec-score-label {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-low);
+}
+
+.rec-score-value {
+	font-family: var(--g-font-mono);
+	font-variant-numeric: tabular-nums;
+	font-size: var(--g-size-h3);
+	font-weight: 600;
+	color: var(--g-ink);
+}
+
+.rec-score--mine .rec-score-value { color: var(--g-hazard); }
+.rec-score--theirs .rec-score-value { color: var(--g-ink-mid); }
+
+.rec-score-of {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-low);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+}
+
+.rec-status-turn {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: var(--g-3);
+	flex-wrap: wrap;
+}
+
+.rec-status-phase {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-tiny);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	color: var(--g-brass-light);
+	padding: 2px var(--g-2);
+	border: var(--g-hairline) solid var(--g-brass-dark);
+	border-radius: 2px;
+}
+
+.rec-turn {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--g-2);
+}
+
+.rec-turn-text {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-mid);
+}
+
+.rec-turn--yours .rec-turn-text { color: var(--g-ink); }
+
+.rec-status-next {
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-low);
+}
+
+.rec-status-hint {
+	grid-column: 1 / -1;
+	margin: 0;
+	font-size: var(--g-size-small);
+	color: var(--g-ink-mid);
+	border-top: var(--g-hairline) solid var(--g-rule-faint);
+	padding-top: var(--g-2);
+}
+
+.rec-notice {
+	flex: 0 0 auto;
+}
+
+/* -------------------------------------------------------------------------
+   THE WORLD: THREE SITES
+   ------------------------------------------------------------------------- */
+
+.rec-world {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: var(--g-3);
+	flex: 1 1 auto;
+	min-height: 0;
+}
+
+.rec-site {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+	padding: var(--g-3);
+	min-height: 0;
+	min-width: 0;
+	transition: border-color var(--g-move);
+}
+
+.rec-site--clickable { cursor: pointer; }
+
+.rec-site--targeted:hover,
+.rec-site--targeted {
+	border-color: color-mix(in srgb, var(--g-el) 60%, var(--g-seam));
+}
+
+.rec-site-head { flex: 0 0 auto; }
+
+.rec-site-name {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink);
+	margin: 0;
+}
+
+.rec-site-env {
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-low);
+	margin: 0;
+	text-transform: lowercase;
+}
+
+.rec-site-tally {
+	flex: 0 0 auto;
+	display: flex;
+	justify-content: space-between;
+	gap: var(--g-2);
+	padding: var(--g-1) var(--g-2);
+	background: var(--g-hull-lo);
+	border-radius: var(--g-radius);
+	box-shadow: var(--g-recess);
+}
+
+.rec-tally {
+	display: inline-flex;
+	align-items: baseline;
+	gap: var(--g-2);
+	opacity: 0.6;
+}
+
+.rec-tally--leading { opacity: 1; }
+
+.rec-tally-label {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-low);
+}
+
+.rec-tally-value {
+	font-family: var(--g-font-mono);
+	font-variant-numeric: tabular-nums;
+	font-size: var(--g-size-small);
+	font-weight: 600;
+	color: var(--g-ink-mid);
+}
+
+.rec-tally--leading .rec-tally-value { color: var(--g-hazard); }
+
+.rec-site-field {
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+}
+
+.rec-rank {
+	flex: 1 1 50%;
+	display: flex;
+	flex-wrap: wrap;
+	align-content: flex-start;
+	gap: var(--g-2);
+	min-height: 0;
+	overflow: hidden;
+}
+
+.rec-rank--theirs { align-content: flex-start; }
+.rec-rank--mine { align-content: flex-end; }
+
+.rec-rank-empty {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-low);
+	font-style: italic;
+	align-self: center;
+}
+
+.rec-site-midline {
+	flex: 0 0 auto;
+	min-height: 22px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-top: var(--g-hairline) dashed var(--g-rule);
+	border-bottom: var(--g-hairline) dashed var(--g-rule);
+	margin: var(--g-1) 0;
+}
+
+.rec-ghost {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--g-2);
+}
+
+.rec-ghost-value {
+	font-family: var(--g-font-mono);
+	font-variant-numeric: tabular-nums;
+	font-size: var(--g-size-small);
+	font-weight: 600;
+	color: color-mix(in srgb, var(--g-el) 78%, transparent);
+}
+
+.rec-ghost--relocate {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-hazard);
+}
+
+/* the Judge's stamped verdict */
+.rec-stamp {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-tiny);
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	padding: 1px var(--g-2);
+	border: 2px solid currentColor;
+	border-radius: 2px;
+	transform: rotate(-3deg);
+	color: var(--g-ink-mid);
+}
+
+.rec-stamp--yours { color: var(--g-hazard); }
+.rec-stamp--theirs { color: var(--g-lamp-red); }
+.rec-stamp--court { color: var(--g-ink-low); }
+
+.rec-site--verdict-yours { border-color: color-mix(in srgb, var(--g-hazard) 55%, var(--g-seam)); }
+.rec-site--verdict-theirs { border-color: color-mix(in srgb, var(--g-lamp-red) 45%, var(--g-seam)); }
+
+/* -------------------------------------------------------------------------
+   THE FIGURE — a stencilled plate on a painted disc plinth
+   ------------------------------------------------------------------------- */
+
+.rec-figure {
+	--paint: var(--g-hull-hi);
+	--paint-edge: var(--g-bone, var(--g-ink-mid));
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1px;
+	padding: 2px;
+	/* wide enough for a plate, but the plate grows to fit the longest species name
+	   rather than breaking a name across two lines, which read as two creatures */
+	min-width: 96px;
+	width: auto;
+	background: none;
+	border: none;
+	cursor: pointer;
+	font: inherit;
+	text-align: center;
+	transition: transform var(--g-move), opacity var(--g-move);
+}
+
+.rec-figure--down { flex-direction: column-reverse; }
+
+.rec-figure--mine { --paint: color-mix(in srgb, var(--g-ink) 22%, var(--g-hull-hi)); }
+.rec-figure--theirs { --paint: color-mix(in srgb, var(--g-ink-low) 40%, var(--g-hull-lo)); }
+
+.rec-figure-plate {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	min-height: 26px;
+	padding: 2px var(--g-1);
+	background: var(--paint);
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: 2px;
+	box-shadow: var(--g-relief);
+	transition: transform var(--g-move);
+}
+
+.rec-figure-name {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	font-weight: 600;
+	line-height: 1.1;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	color: var(--g-ink);
+	white-space: nowrap;
+}
+
+.rec-figure--theirs .rec-figure-name { color: var(--g-ink-mid); }
+
+.rec-figure-badge {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-low);
+}
+
+/* the disc, seen at a shallow angle */
+.rec-figure-plinth {
+	position: relative;
+	width: 44px;
+	height: 13px;
+	background: radial-gradient(ellipse at 50% 30%, var(--paint), color-mix(in srgb, var(--paint) 60%, var(--g-void)));
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: 50%;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.55), var(--g-relief);
+}
+
+.rec-figure-medallion {
+	position: absolute;
+	left: 50%;
+	bottom: -3px;
+	transform: translateX(-50%);
+	width: 12px;
+	height: 6px;
+	background: var(--g-el);
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: 2px;
+	box-shadow: var(--g-relief);
+}
+
+.rec-figure-foot {
+	display: flex;
+	align-items: baseline;
+	gap: var(--g-1);
+	min-height: 14px;
+}
+
+.rec-figure-hold {
+	font-family: var(--g-font-mono);
+	font-variant-numeric: tabular-nums;
+	font-size: var(--g-size-micro);
+	font-weight: 600;
+	color: var(--g-ink);
+}
+
+.rec-figure--theirs .rec-figure-hold { color: var(--g-ink-mid); }
+
+.rec-figure-hold--struck {
+	text-decoration: line-through;
+	color: var(--g-ink-low);
+	font-weight: 400;
+}
+
+.rec-figure-hold--ghost { color: color-mix(in srgb, var(--g-el) 70%, transparent); }
+
+.rec-figure-tags {
+	display: flex;
+	gap: 2px;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.rec-tag {
+	font-family: var(--g-font-stencil);
+	font-size: 0.5625rem;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	padding: 0 3px;
+	border-radius: 2px;
+	border: var(--g-hairline) solid currentColor;
+}
+
+.rec-tag--home { color: var(--g-brass-light); }
+.rec-tag--strain { color: var(--g-hazard); }
+.rec-tag--severe { color: var(--g-lamp-red); }
+
+/* states */
+.rec-figure--staggered .rec-figure-plate { transform: rotate(-7deg) translateY(2px); }
+
+.rec-figure--routed {
+	animation: rec-fall 420ms ease-in forwards;
+	pointer-events: none;
+}
+
+@keyframes rec-fall {
+	to { transform: translateY(16px) rotate(-18deg); opacity: 0; }
+}
+
+.rec-figure--hidden .rec-figure-plate {
+	border-style: dashed;
+	border-color: var(--g-brass);
+	background: transparent;
+}
+
+.rec-figure--selected .rec-figure-plate,
+.rec-figure--armed .rec-figure-plate {
+	border-color: var(--g-hazard);
+	box-shadow: var(--g-relief), 0 0 0 1px var(--g-hazard);
+}
+
+.rec-figure--dimmed { opacity: 0.45; }
+
+.rec-figure--small { min-width: 88px; }
+.rec-figure--small .rec-figure-plinth { width: 38px; height: 11px; }
+
+.rec-figure:hover:not(.rec-figure--routed) { transform: translateY(-2px); }
+
+.rec-figure--silhouette {
+	cursor: default;
+	opacity: 0.7;
+}
+
+.rec-figure--silhouette .rec-figure-plate {
+	border-style: dashed;
+	background: transparent;
+}
+
+.rec-figure--silhouette .rec-figure-name {
+	font-style: italic;
+	color: var(--g-ink-low);
+	text-transform: none;
+	letter-spacing: 0;
+}
+
+.rec-silhouettes { display: flex; gap: var(--g-2); }
+
+/* -------------------------------------------------------------------------
+   ROSTER STRIP AND DEPLOY CONTROLS
+   ------------------------------------------------------------------------- */
+
+.rec-deploy-bar {
+	flex: 0 0 auto;
+	display: flex;
+	align-items: flex-start;
+	gap: var(--g-4);
+	padding: var(--g-2) var(--g-3);
+	background: var(--g-hull);
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: var(--g-radius-panel);
+	box-shadow: var(--g-relief);
+}
+
+.rec-roster {
+	flex: 1 1 auto;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-1);
+}
+
+.rec-roster-head {
+	display: flex;
+	align-items: baseline;
+	gap: var(--g-3);
+}
+
+.rec-roster-head .g-label { margin: 0; }
+
+.rec-roster-count {
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-low);
+}
+
+.rec-roster-strip {
+	display: flex;
+	gap: var(--g-2);
+	flex-wrap: wrap;
+	align-items: flex-end;
+}
+
+.rec-roster-hidden {
+	display: flex;
+	align-items: center;
+	gap: var(--g-2);
+	margin-top: var(--g-2);
+}
+
+.rec-deploy-controls {
+	flex: 0 0 auto;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: var(--g-2);
+	min-width: 170px;
+}
+
+.rec-pass-warning {
+	font-size: 0.5625rem;
+	color: var(--g-ink-low);
+	text-align: center;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+}
+
+.rec-fallback-btn--active { --btn-face: var(--g-brass-dark); }
+
+.rec-hidden-toggle { font-size: var(--g-size-tiny); }
+
+/* -------------------------------------------------------------------------
+   RESOLUTION AND JUDGE BARS
+   ------------------------------------------------------------------------- */
+
+.rec-resolving,
+.rec-judge-bar {
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--g-3);
+	padding: var(--g-2) var(--g-4);
+	background: var(--g-hull-lo);
+	border-radius: var(--g-radius);
+	box-shadow: var(--g-recess);
+}
+
+.rec-resolving .g-label,
+.rec-judge-bar .g-label { margin: 0; }
+
+/* -------------------------------------------------------------------------
+   ORDERS PANEL AND PREVIEW
+   ------------------------------------------------------------------------- */
+
+.rec-orders {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+	min-height: 0;
+	/* the orders panel is the working surface during Orders: it takes three quarters of
+	   the rail and the log takes what is left, both scrolling internally rather than
+	   pushing the page taller */
+	flex: 3 1 0;
+	overflow: hidden;
+}
+
+.rec-orders-list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+	padding: var(--g-3);
+	background: var(--g-hull);
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: var(--g-radius-panel);
+	box-shadow: var(--g-relief);
+	overflow-y: auto;
+	/* the selectors are the thing being operated; give them the larger share and let the
+	   preview beneath take the rest */
+	flex: 3 1 0;
+	min-height: 120px;
+}
+
+.rec-orders-head {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.rec-orders-head .g-label { margin: 0; }
+
+.rec-orders-hint {
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-low);
+}
+
+.rec-order-row {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 2px;
+	padding-bottom: var(--g-2);
+	border-bottom: var(--g-hairline) solid var(--g-rule-faint);
+}
+
+.rec-order-who {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--g-2);
+}
+
+.rec-order-name {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-tiny);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-el);
+}
+
+.rec-order-site {
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-low);
+}
+
+.rec-order-select {
+	width: 100%;
+	font-size: var(--g-size-micro);
+	padding: 2px var(--g-2);
+}
+
+.rec-commit-btn { margin-top: var(--g-1); }
+
+.rec-preview {
+	flex: 2 1 0;
+	min-height: 96px;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+/* -------------------------------------------------------------------------
+   THE DOSSIER
+   ------------------------------------------------------------------------- */
+
+.rec-inspect {
+	flex: 2 1 0;
+	min-height: 0;
+	overflow-y: auto;
+	padding: var(--g-3);
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+}
+
+.rec-inspect-head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: var(--g-2);
+}
+
+.rec-inspect-name {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-el);
+	margin: 0;
+}
+
+.rec-inspect-sub {
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-low);
+	margin: 0;
+	text-transform: capitalize;
+}
+
+.rec-inspect-close { padding: 0 var(--g-2); }
+
+.rec-inspect-context {
+	margin: 0;
+	font-size: var(--g-size-micro);
+}
+
+.rec-inspect-spec {
+	grid-template-columns: minmax(6rem, auto) 1fr;
+	gap: 2px var(--g-3);
+}
+
+.rec-inspect-spec .g-spec-key,
+.rec-inspect-spec .g-spec-val { font-size: var(--g-size-micro); }
+
+.rec-inspect-section {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	border-top: var(--g-hairline) solid var(--g-rule-faint);
+	padding-top: var(--g-2);
+}
+
+.rec-inspect-section .g-label { margin: 0; }
+
+.rec-inspect-section .g-body { font-size: var(--g-size-tiny); margin: 0; }
+
+.rec-inspect-acts td,
+.rec-inspect-acts th { padding: 1px var(--g-2) 1px 0; font-size: 0.625rem; }
+
+.rec-act-favored td { color: var(--g-brass-light); }
+
+.rec-inspect-note {
+	font-size: var(--g-size-micro) !important;
+	color: var(--g-ink-low);
+}
+
+/* -------------------------------------------------------------------------
+   THE LOG
+   ------------------------------------------------------------------------- */
+
+.rec-log {
+	flex: 1 1 0;
+	min-height: 96px;
+	/* .g-screen's scanline overlay is an absolutely-positioned ::after pinned to the
+	   element box, so the scrolling has to happen on an inner track rather than on the
+	   screen itself, or the lines run past the glass */
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	padding: var(--g-2) var(--g-3);
+	overflow-y: auto;
+	overscroll-behavior: contain;
+}
+
+.rec-log > *,
+.rec-preview > * {
+	flex: 0 0 auto;
+}
+
+/* -------------------------------------------------------------------------
+   MATCH END
+   ------------------------------------------------------------------------- */
+
+.rec-verdict {
+	flex: 0 0 auto;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--g-2);
+	padding: var(--g-4);
+	border-left: 4px solid var(--g-ink-low);
+}
+
+.rec-verdict--won { border-left-color: var(--g-hazard); }
+.rec-verdict--lost { border-left-color: var(--g-lamp-red); }
+
+.rec-verdict .g-kicker { margin: 0; }
+
+.rec-verdict-title {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-h3);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink);
+	margin: 0;
+}
+
+.rec-verdict-body { margin: 0; font-size: var(--g-size-small); }
+
+/* -------------------------------------------------------------------------
+   NARROWER VIEWPORTS — 1024 wide must still work
+   ------------------------------------------------------------------------- */
+
+@media (max-width: 1200px) {
+	.rec-body {
+		grid-template-columns: minmax(0, 1fr) minmax(230px, 270px);
+		gap: var(--g-2);
+	}
+
+	.rec-world { gap: var(--g-2); }
+
+	.rec-site { padding: var(--g-2); }
+
+	/* the site heading has to stay one line each, or three sites eat the whole panel */
+	.rec-site-name {
+		font-size: var(--g-size-micro);
+		letter-spacing: 0.04em;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.rec-site-env {
+		font-size: 0.5625rem;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.rec-tally-label { font-size: 0.5625rem; }
+	.rec-tally-value { font-size: var(--g-size-micro); }
+
+	.rec-figure { min-width: 66px; }
+	.rec-figure--small { min-width: 62px; }
+	.rec-figure-plinth { width: 32px; height: 10px; }
+	.rec-figure-name { font-size: 0.5625rem; }
+	.rec-tag { font-size: 0.5rem; }
+
+	.rec-status {
+		grid-template-columns: minmax(0, 1fr) minmax(0, auto);
+		gap: var(--g-1) var(--g-3);
+		padding: var(--g-2) var(--g-3);
+	}
+
+	.rec-status-planet { font-size: var(--g-size-lead); }
+	.rec-status-score { grid-column: 1; justify-content: flex-start; gap: var(--g-3); }
+	.rec-status-turn { grid-column: 2; grid-row: 1 / 3; align-items: flex-end; flex-direction: column; gap: var(--g-1); }
+	.rec-status-hint { font-size: var(--g-size-tiny); }
+
+	.rec-deploy-bar { gap: var(--g-2); padding: var(--g-2); }
+	.rec-deploy-controls { min-width: 130px; }
+	.rec-pass-btn { padding: var(--g-2) var(--g-3); }
+
+	.rec-orders-list { padding: var(--g-2); }
+	.rec-log { padding: var(--g-1) var(--g-2); }
+}
+
+/* =========================================================================
+   UX PASS — emphasis, affordances, and what-is-happening
+   ========================================================================= */
+
+/* --- status strip: score as pip tracks, the turn as the loudest thing --- */
+
+.rec-world-dots {
+	display: inline-flex;
+	gap: 4px;
+	align-items: center;
+}
+
+.rec-world-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	border: var(--g-hairline) solid var(--g-ink-low);
+	background: transparent;
+}
+
+.rec-world-dot--done { background: var(--g-ink-low); }
+.rec-world-dot--now { background: var(--g-el); border-color: var(--g-el); }
+
+.rec-score {
+	flex-direction: row;
+	align-items: center;
+	gap: var(--g-2);
+}
+
+.rec-pips {
+	display: inline-flex;
+	gap: 3px;
+}
+
+.rec-pip {
+	width: 14px;
+	height: 14px;
+	border-radius: 2px;
+	border: var(--g-hairline) solid var(--g-seam);
+	background: var(--g-hull-lo);
+	box-shadow: var(--g-recess);
+}
+
+.rec-score--mine .rec-pip--lit { background: var(--g-hazard); border-color: var(--g-hazard); box-shadow: none; }
+.rec-score--theirs .rec-pip--lit { background: var(--g-lamp-red); border-color: var(--g-lamp-red); box-shadow: none; }
+
+.rec-score-value { font-size: var(--g-size-lead); }
+
+.rec-turn--yours .rec-turn-text {
+	color: var(--g-hazard);
+	font-weight: 600;
+}
+
+.rec-turn--waiting .rec-turn-text { color: var(--g-ink-mid); }
+
+.rec-status-hint {
+	font-size: var(--g-size-body);
+	color: var(--g-ink);
+}
+
+.rec-status-hint--yours {
+	color: var(--g-ink);
+	padding-left: var(--g-3);
+	border-left: 3px solid var(--g-hazard);
+}
+
+/* --- sites: the margin band is the biggest number on the site --- */
+
+.rec-site-margin {
+	flex: 0 0 auto;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1px;
+	padding: var(--g-2);
+	background: var(--g-hull-lo);
+	border-radius: var(--g-radius);
+	box-shadow: var(--g-recess);
+	border-left: 3px solid var(--g-seam);
+}
+
+.rec-site-margin-text {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-low);
+}
+
+.rec-site-margin--mine { border-left-color: var(--g-hazard); }
+.rec-site-margin--mine .rec-site-margin-text { color: var(--g-hazard); }
+.rec-site-margin--theirs { border-left-color: var(--g-lamp-red); }
+.rec-site-margin--theirs .rec-site-margin-text { color: var(--g-lamp-red); }
+
+.rec-site-margin-totals {
+	display: inline-flex;
+	gap: var(--g-2);
+	font-size: var(--g-size-micro);
+	font-variant-numeric: tabular-nums;
+	color: var(--g-ink-mid);
+}
+
+.rec-site-margin-vs {
+	color: var(--g-ink-low);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	font-size: 0.5625rem;
+}
+
+/* a site you are winning, losing, or that is level: a quiet tint on the panel edge */
+.rec-site--mine { border-top: 3px solid color-mix(in srgb, var(--g-hazard) 60%, var(--g-seam)); }
+.rec-site--theirs { border-top: 3px solid color-mix(in srgb, var(--g-lamp-red) 50%, var(--g-seam)); }
+
+/* a site waiting for the armed creature: an obvious target, not a hairline */
+.rec-site--targeted {
+	border-color: var(--g-hazard);
+	box-shadow: var(--g-relief), 0 0 0 1px color-mix(in srgb, var(--g-hazard) 45%, transparent);
+	cursor: pointer;
+}
+
+.rec-site--targeted:hover { background: color-mix(in srgb, var(--g-hazard) 6%, var(--g-hull)); }
+
+.rec-site-midline { min-height: 30px; }
+
+.rec-ghost {
+	flex-wrap: wrap;
+	justify-content: center;
+	row-gap: 2px;
+}
+
+.rec-ghost-cta {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	color: var(--g-hazard);
+	padding: 1px var(--g-2);
+	border: var(--g-hairline) solid var(--g-hazard);
+	border-radius: 2px;
+}
+
+.rec-ghost-value { font-size: var(--g-size-body); color: var(--g-ink); }
+
+.rec-ghost-outcome {
+	flex-basis: 100%;
+	text-align: center;
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-mid);
+}
+
+/* --- the hidden rival creature: a banner over the world, not a roster orphan --- */
+
+.rec-world {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+}
+
+.rec-sites {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: var(--g-3);
+	flex: 1 1 auto;
+	min-height: 0;
+}
+
+.rec-hidden-banner {
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+	gap: var(--g-3);
+	padding: var(--g-1) var(--g-3);
+	background: var(--g-hull-lo);
+	border-radius: var(--g-radius);
+	box-shadow: var(--g-recess);
+	border-left: 3px solid var(--g-lamp-red);
+}
+
+.rec-hidden-banner .rec-figure { zoom: 0.7; }
+
+.rec-hidden-banner-text {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-tiny);
+	color: var(--g-ink);
+}
+
+/* --- figures: hold is big, the element is named, states are labelled --- */
+
+.rec-figure-hold { font-size: var(--g-size-small); }
+
+.rec-figure-element {
+	font-family: var(--g-font-stencil);
+	font-size: 0.5625rem;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-el);
+	margin-left: var(--g-1);
+}
+
+.rec-figure-foot {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 2px;
+}
+
+.rec-figure-badge {
+	display: block;
+	font-family: var(--g-font-mono);
+	font-size: 0.5625rem;
+	color: var(--g-brass-light);
+	text-transform: lowercase;
+	letter-spacing: 0;
+}
+
+.rec-tag--staggered { color: var(--g-lamp-red); }
+.rec-tag--hidden { color: var(--g-ink-mid); }
+
+.rec-figure--armed .rec-figure-plate,
+.rec-figure--selected .rec-figure-plate {
+	outline: 2px solid var(--g-hazard);
+	outline-offset: 1px;
+}
+
+.rec-figure--armed { transform: translateY(-4px); }
+
+/* the creature acting, and the creature it lands on */
+.rec-figure { position: relative; }
+
+.rec-figure--acting .rec-figure-plate {
+	outline: 2px solid var(--g-brass-light);
+	outline-offset: 1px;
+}
+
+.rec-figure--hover .rec-figure-plate,
+.rec-figure--hit .rec-figure-plate {
+	outline: 2px dashed var(--g-lamp-red);
+	outline-offset: 1px;
+}
+
+.rec-figure-flash {
+	position: absolute;
+	top: -14px;
+	left: 50%;
+	transform: translateX(-50%);
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-tiny);
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	padding: 0 var(--g-2);
+	border-radius: 2px;
+	background: var(--g-hull-lo);
+	color: var(--g-ink);
+	white-space: nowrap;
+	animation: rec-flash 600ms ease-out both;
+	z-index: 2;
+}
+
+.rec-figure-flash--rout { color: var(--g-lamp-red); }
+.rec-figure-flash--stagger { color: var(--g-hazard); }
+.rec-figure-flash--shrug { color: var(--g-ink-mid); }
+.rec-figure-flash--ward { color: var(--g-brass-light); }
+
+@keyframes rec-flash {
+	from { opacity: 0; transform: translateX(-50%) translateY(6px); }
+	to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* --- deploy controls: send is the action, pass is a choice, not a siren --- */
+
+.rec-roster-head { flex-wrap: wrap; }
+
+.rec-roster-help {
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-low);
+	margin-left: auto;
+}
+
+.rec-deploy-controls { flex: 0 0 250px; min-width: 0; }
+.rec-deploy-controls .g-btn { text-align: left; }
+
+.rec-btn-sub {
+	display: block;
+	font-family: var(--g-font-mono);
+	font-size: 0.5625rem;
+	text-transform: none;
+	letter-spacing: 0;
+	opacity: 0.75;
+	margin-top: 1px;
+}
+
+.rec-pass-btn { --btn-face: var(--g-hull-lo); }
+
+.rec-deploy-note {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-mid);
+	padding: var(--g-1) var(--g-2);
+	border-left: 3px solid var(--g-seam);
+}
+
+.rec-deploy-note--open { border-left-color: var(--g-hazard); color: var(--g-ink); }
+
+/* --- orders: chips, the button that cannot scroll away, the bar on the table --- */
+
+.rec-orders-head {
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--g-2);
+	position: sticky;
+	top: 0;
+	background: var(--g-hull);
+	z-index: 1;
+	padding-bottom: var(--g-2);
+	border-bottom: var(--g-hairline) solid var(--g-rule-faint);
+}
+
+.rec-orders-head > div {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.rec-commit-btn { margin-top: 0; }
+
+.rec-order-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--g-1);
+}
+
+.rec-act-chip {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0;
+	padding: 2px var(--g-2);
+	min-width: 64px;
+	background: var(--g-hull-lo);
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: 2px;
+	color: var(--g-ink-mid);
+	cursor: pointer;
+	font: inherit;
+	text-align: left;
+	transition: border-color var(--g-move), color var(--g-move);
+}
+
+.rec-act-chip:hover:not(:disabled) { border-color: var(--g-ink-low); color: var(--g-ink); }
+
+.rec-act-chip--chosen {
+	border-color: var(--g-hazard);
+	color: var(--g-ink);
+	box-shadow: inset 0 0 0 1px var(--g-hazard);
+}
+
+.rec-act-chip:disabled { cursor: default; opacity: 0.6; }
+
+.rec-act-chip-act {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-tiny);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+}
+
+.rec-act-chip-mag {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-small);
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	color: var(--g-el);
+}
+
+.rec-act-chip-sub {
+	font-family: var(--g-font-mono);
+	font-size: 0.5625rem;
+	color: var(--g-ink-low);
+}
+
+.rec-act-chip--chosen .rec-act-chip-sub { color: var(--g-brass-light); }
+
+.rec-preview-line { cursor: default; }
+.rec-preview-line:hover { color: var(--g-screen-ink-hi, inherit); text-decoration: underline; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); }
+
+.rec-orders-bar {
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--g-3);
+	padding: var(--g-2) var(--g-4);
+	background: var(--g-hull-lo);
+	border-radius: var(--g-radius);
+	box-shadow: var(--g-recess);
+	border-left: 3px solid var(--g-hazard);
+}
+
+.rec-orders-bar-text {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-tiny);
+	color: var(--g-ink);
+}
+
+@media (max-width: 1200px) {
+	.rec-sites { gap: var(--g-2); }
+	.rec-site-margin-text { font-size: var(--g-size-micro); }
+	.rec-deploy-controls { min-width: 170px; }
+	.rec-status-hint { font-size: var(--g-size-small); }
+	.rec-act-chip { min-width: 52px; }
+}
+
+/* style.css (the old template) forces `section h3` and `section p` to 1.5em / 1.25em
+   with !important below 1024px, which is exactly the width the site headings must stay
+   small at; matched on specificity and importance rather than restyled */
+@media (max-width: 1200px) {
+	.rec-site h3.rec-site-name { font-size: var(--g-size-micro) !important; }
+	.rec-site p.rec-site-env { font-size: 0.5625rem !important; }
+}
+
+/* at 1024 the roster must not eat the sites: one scrolling row, terse controls */
+@media (max-width: 1200px) {
+	.rec-roster-strip {
+		flex-wrap: nowrap;
+		overflow-x: auto;
+		padding-bottom: var(--g-1);
+	}
+	.rec-roster-help { display: none; }
+	.rec-btn-sub { display: none; }
+	.rec-deploy-controls { flex: 0 0 150px; }
+	.rec-deploy-controls .g-btn { padding: var(--g-2); font-size: var(--g-size-tiny); }
+	.rec-figure-element { display: none; }
+	.rec-hidden-banner-text { font-size: var(--g-size-micro); }
+}
+
+/* =========================================================================
+   PHONES — the table becomes a column. The page may scroll here (the one-screen
+   rule is for desks); what must not scroll away is the thing you act with, so the
+   deploy bar, the orders bar and the judge bar stick to the bottom of the screen.
+   ========================================================================= */
+
+@media (max-width: 760px) {
+	.rec-console { height: auto; min-height: 100vh; }
+	.rec-shell--match { gap: var(--g-2); }
+	.rec-masthead-seed { display: none; }
+	.rec-masthead-title { font-size: var(--g-size-lead); }
+	.rec-match { min-height: auto; gap: var(--g-2); }
+
+	.rec-status {
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-rows: auto;
+		gap: var(--g-1);
+		padding: var(--g-2);
+	}
+	.rec-status-world { gap: var(--g-2); }
+	.rec-status-planet { font-size: var(--g-size-lead); }
+	.rec-status-next { display: none; }
+	.rec-status-score { grid-column: 1; justify-content: flex-start; gap: var(--g-3); }
+	.rec-score-of { display: none; }
+	.rec-status-turn { grid-column: 1; grid-row: auto; justify-content: space-between; flex-direction: row; }
+	.rec-status-hint { font-size: var(--g-size-tiny); padding-top: var(--g-1); }
+
+	.rec-body {
+		display: flex;
+		flex-direction: column;
+		gap: var(--g-2);
+	}
+	.rec-table { gap: var(--g-2); }
+	.rec-rail { overflow: visible; }
+
+	.rec-sites {
+		grid-template-columns: minmax(0, 1fr);
+		gap: var(--g-2);
+	}
+	.rec-site { padding: var(--g-2); gap: var(--g-1); }
+	.rec-site-name { white-space: normal; overflow: visible; }
+	.rec-site-field { flex: 0 0 auto; }
+	.rec-rank { flex: 0 0 auto; min-height: 0; overflow: visible; padding: var(--g-1) 0; }
+	.rec-rank-empty { align-self: flex-start; }
+	.rec-site-midline { min-height: 0; margin: 2px 0; }
+	.rec-site-margin { padding: var(--g-1) var(--g-2); }
+	.rec-site-margin-text { font-size: var(--g-size-micro); }
+
+	.rec-figure { min-width: 60px; }
+	.rec-figure--small { min-width: 56px; }
+	.rec-figure-plinth { width: 30px; height: 9px; }
+	.rec-figure-hold { font-size: var(--g-size-tiny); }
+	.rec-figure-name { font-size: 0.5625rem; letter-spacing: 0.02em; }
+
+	/* the acting surfaces stick to the bottom of the screen */
+	.rec-deploy-bar,
+	.rec-orders-bar,
+	.rec-judge-bar,
+	.rec-resolving {
+		position: sticky;
+		bottom: 0;
+		z-index: 5;
+		box-shadow: 0 -6px 12px rgba(0, 0, 0, 0.45);
+	}
+	.rec-deploy-bar {
+		flex-direction: column;
+		gap: var(--g-1);
+		padding: var(--g-1) var(--g-2);
+		background: var(--g-hull);
+	}
+	.rec-roster-head { gap: var(--g-2); }
+	.rec-roster-count { font-size: 0.5625rem; }
+	.rec-deploy-controls {
+		flex: 0 0 auto;
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: var(--g-1);
+	}
+	.rec-deploy-controls .g-btn { flex: 1 1 auto; padding: var(--g-1) var(--g-2); font-size: var(--g-size-micro); }
+	.rec-deploy-note { flex-basis: 100%; }
+	.rec-orders-bar { flex-wrap: wrap; padding: var(--g-2); }
+	.rec-orders-bar-text { font-size: var(--g-size-micro); }
+	.rec-orders-bar .g-btn { flex: 1 1 auto; }
+	.rec-judge-bar, .rec-resolving { padding: var(--g-2); }
+
+	.rec-orders { flex: 0 0 auto; overflow: visible; }
+	.rec-orders-list { flex: 0 0 auto; max-height: none; overflow: visible; min-height: 0; }
+	.rec-orders-head { position: static; }
+	.rec-preview { flex: 0 0 auto; max-height: 220px; }
+	.rec-log { flex: 0 0 auto; max-height: 220px; min-height: 120px; }
+
+	/* the dossier rides up as a sheet so it can be read from anywhere on the column */
+	.rec-inspect {
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		max-height: 72vh;
+		z-index: 20;
+		border-radius: var(--g-radius-panel) var(--g-radius-panel) 0 0;
+		box-shadow: 0 -10px 24px rgba(0, 0, 0, 0.6);
+	}
+
+	.rec-verdict { padding: var(--g-3); }
+	.rec-verdict-title { font-size: var(--g-size-lead); }
+	.rec-hidden-banner .rec-figure { display: none; }
+}
+
+/* the roster's read affordance: shift-click has no touch equivalent, so every roster
+   figure carries a small "read" tab that opens the dossier on any device */
+.rec-roster-item { position: relative; display: inline-flex; flex-direction: column; align-items: center; }
+.rec-figure-read {
+	font-family: var(--g-font-mono);
+	font-size: 0.5625rem;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-low);
+	background: none;
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: 2px;
+	padding: 0 var(--g-1);
+	cursor: pointer;
+	margin-top: 2px;
+}
+.rec-figure-read:hover { color: var(--g-ink); border-color: var(--g-ink-low); }
+
+@media (max-width: 760px) {
+	/* sticky bars need no clipping ancestor between them and the scroller */
+	.rec-console, .rec-shell--match, .rec-body, .rec-table { overflow: visible; }
+	.rec-world, .rec-sites { flex: 0 0 auto; }
+	.rec-orders-head .rec-commit-btn { display: none; }
+}
+
+@media (max-width: 760px) {
+	/* the roster must be as wide as the bar, not as wide as twelve figures */
+	.rec-deploy-bar { align-items: stretch; }
+	.rec-roster { width: 100%; min-width: 0; }
+	.rec-roster-strip { width: 100%; }
+}
+
+/* -------------------------------------------------------------------------
+   QUIET WHEN EMPTY. A site with nothing on it prints nothing but its name and
+   its weather; the field is open ground with one faint word on it. The totals
+   under a margin band show only when both sides are present, since a lone
+   number is already in the sentence above them.
+   ------------------------------------------------------------------------- */
+
+.rec-site--empty .rec-site-field {
+	justify-content: center;
+}
+
+.rec-site-midline--empty {
+	border: 0;
+	margin: 0;
+	flex: 1 1 auto;
+}
+
+.rec-site-unclaimed {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	color: color-mix(in srgb, var(--g-ink-low) 55%, transparent);
+}
+
+.rec-site--empty .rec-ghost-value { font-size: var(--g-size-lead); }
+
+/* kept in the DOM for the verification harness, out of sight for the reader */
+.rec-site-margin { position: relative; }
+.rec-site-margin-totals--quiet {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	white-space: nowrap;
+}
+
+/* a one-sided site keeps its ground line but no "nobody here" text */
+.rec-rank:empty { min-height: var(--g-4); }
+
+@media (max-width: 760px) {
+	.rec-site--empty .rec-site-field { min-height: 28px; }
+	.rec-site-midline--empty { min-height: 0; }
+}
+
+/* the deploy buttons stack their legend over their small print */
+.rec-deploy-controls .g-btn { display: flex; flex-direction: column; align-items: flex-start; gap: 0; line-height: 1.15; }
+@media (max-width: 760px) { .rec-deploy-controls .g-btn { align-items: center; } }

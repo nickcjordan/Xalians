@@ -1,0 +1,128 @@
+/* =========================================================================
+   READING ROOM — the /encyclopedia landing. Contract: docs/design/
+   xalian-encyclopedia-ux-pass.md item 1 "Galaxy map as instrument".
+   ========================================================================= */
+
+.enc-room-preface {
+	max-width: var(--g-measure);
+	margin-bottom: var(--g-6);
+}
+
+/* ---- First Survey call to action -------------------------------------- */
+
+.enc-room-tour {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: var(--g-2) var(--g-4);
+	padding: var(--g-4) var(--g-5);
+	margin-bottom: var(--g-6);
+}
+
+.enc-room-tour-kicker {
+	flex-basis: 100%;
+}
+
+.enc-room-tour-title {
+	margin: 0;
+}
+
+.enc-room-tour-meta {
+	margin: 0;
+	color: var(--g-ink-mid);
+	flex: 1 1 auto;
+}
+
+.enc-room-tour .g-btn {
+	flex: none;
+}
+
+/* ---- galaxy map hero ---------------------------------------------------- */
+
+.enc-room-map-panel {
+	padding: var(--g-4);
+	margin-bottom: var(--g-7);
+}
+
+/* ---- below the fold: story + tiles -------------------------------------- */
+
+.enc-room-columns {
+	display: grid;
+	grid-template-columns: minmax(0, 60%) minmax(0, 1fr);
+	gap: var(--g-6);
+	align-items: start;
+}
+
+@media (max-width: 900px) {
+	.enc-room-columns {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+.enc-room-story {
+	padding: var(--g-4);
+}
+
+.enc-room-story .g-record:last-child {
+	border-bottom: none;
+}
+
+/* Left rule (matte, not a glow) marking the row of the era currently
+   selected in the galaxy map / scrubber above. */
+.enc-room-story-row {
+	border-left: 3px solid transparent;
+	padding-left: calc(var(--g-4) - 3px);
+	transition: border-color var(--g-snap), background var(--g-snap);
+}
+
+.enc-room-story-row--lit {
+	border-left-color: var(--g-brass-light);
+	background: rgba(255, 244, 214, 0.03);
+}
+
+.enc-room-index {
+	display: inline-flex;
+	font-family: var(--g-font-mono);
+	color: var(--g-ink-low);
+	margin-right: var(--g-2);
+	padding: 0;
+	background: none;
+	border: 0;
+	cursor: pointer;
+	transition: color var(--g-snap);
+}
+
+.enc-room-index:hover,
+.enc-room-index:focus-visible {
+	color: var(--g-brass-light);
+}
+
+.enc-room-index[aria-pressed='true'] {
+	color: var(--g-brass-light);
+}
+
+.enc-room-index:focus-visible {
+	outline: 2px solid var(--g-phosphor);
+	outline-offset: 2px;
+}
+
+/* Phones: keep the index number a real tap target without growing it on
+   desktop, where it reads as an inline label beside the era name. */
+@media (max-width: 700px) {
+	.enc-room-index {
+		min-width: 32px;
+		min-height: 32px;
+		justify-content: center;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.enc-room-story-row {
+		transition: none;
+	}
+}
+
+.enc-room-strip {
+	margin-top: 0;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}

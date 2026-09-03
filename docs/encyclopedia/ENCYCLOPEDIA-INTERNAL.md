@@ -8,9 +8,9 @@ The Encyclopedia (masthead: **Encyclopedia Xalia**) is the single public canon r
 
 ## Source precedence
 
-1. `lambda/src/json/planets.json` histories and `glossary.json` definitions are the source of truth for published lore. If the Encyclopedia contradicts them, the Encyclopedia is wrong.
+1. `lambda/src/json/planets.json` histories and `docs/encyclopedia/encyclopedia.json` definitions are the source of truth for published lore (since 2026-09-02; `glossary.json` is a legacy mirror read only by the old glossary page and loses on conflict). If an entry contradicts a history, the history wins. `docs/encyclopedia/chronicle.json` and `docs/design/xalian-chronicle.md` govern where anything sits in time; the timeline is undated by ruling.
 2. `.claude/skills/lore-voice/references/canon.md` is the fast-scan continuity sheet and carries the ratified internal constraints listed below.
-3. `docs/LORE_SOURCE_MAP.md` governs the pre-repo Evernote material (canon vs. superseded vs. never-canon).
+3. The pre-repo Evernote material in `notes/` is reference only; nothing in it is canon unless it also appears in the histories or the entries.
 4. The creature-system design doc (`docs/design/xalian-creature-system-redesign.md`) governs everything mechanical (records, registries, generation). Mechanics never leak into Encyclopedia prose.
 
 ## Working canon that constrains public entries
@@ -42,11 +42,11 @@ The Luminax dark-side rebellion; the Zolto network-building underground; Kozrak'
 - No modern idiom, no game mechanics in prose, no hopeful resolution.
 - Nuclear-age military register is out of voice (Nick's ruling, 2026-09-01, via the ability catalog: Nuclear Winter and Fallout were cut on these grounds). The Vallerii idiom is industrial and corporate, not Cold War.
 - American English. No em-dashes.
-- New entries append to `encyclopedia.json` with the same schema; definitions written for the Encyclopedia are canonical from the moment Nick ratifies them and should be back-ported to `glossary.json` only if the app still reads it.
+- New entries append to `encyclopedia.json` with the same schema; definitions written for the Encyclopedia are canonical from the moment Nick ratifies them. After any change run `node scripts/bundleLore.js` and `yarn copy-json`. Back-port to `glossary.json` only spelling fixes, since the old glossary page still reads it.
 
 ## Relationship to the shipped bundle
 
-`encyclopedia.json` is the public structured file. When the site grows an Encyclopedia page, the file moves into (or is copied into) `lambda/src/json/` and flows to the frontend through the existing `copy-json` step, at which point `glossary.json` is superseded and the glossary page reads from the Encyclopedia. Until that flip, `glossary.json` remains untouched and the app is unaffected. This companion file stays out of the bundle permanently.
+`encyclopedia.json` is the public structured file. The flip happened on 2026-09-02: `scripts/bundleLore.js` copies it, `chronicle.json`, `docs/species-templates/registries.json`, and the species records listed in `docs/species-templates/RATIFIED.json` (as `speciesRecords.json`) into `lambda/src/json/`, and `copy-json` mirrors them into the frontend, where `my-app/src/lore/` is the only reader and the `/encyclopedia` page renders them (contract: `docs/design/xalian-encyclopedia-page.md`). Species entries from the records are merged into the index at load time under `xalians`; they are not written into this file. `tour.json` (the First Survey) is bundled the same way; it is derived prose, outranked by the histories and by this file's entries, and is edited only with Nick's sign-off. The demonym entries (`magmuthites`, `grimedites`, `luminarii`, `the-zolto`, `krystians`, `veridians`, `phantiri-xalians`) stay in category `factions` (append-only) and the Powers page regroups them under Xalian Peoples. The old `/glossary`, `/planets`, and `/species` pages remain until Nick retires them. This companion file stays out of the bundle permanently.
 
 ## Maintenance
 

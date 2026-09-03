@@ -1,0 +1,300 @@
+/* =========================================================================
+   GALAXY MAP — inline SVG locator for the fourteen worlds of Xalia.
+   Contract: docs/design/xalian-encyclopedia-page.md section 5 "Galaxy map".
+   Only --g-* tokens; colour on world discs comes from --g-el via CSS, never
+   inline fill in the JSX.
+   ========================================================================= */
+
+.enc-map {
+	position: relative;
+}
+
+.enc-map-scroll {
+	width: 100%;
+}
+
+.enc-map-svg {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+/* Phones: the map does not shrink below legibility, it pans instead. The
+   wrapper scrolls; the outer .enc-map stays the width of the panel so the
+   hover cards (positioned from getBoundingClientRect, viewport-relative)
+   keep anchoring correctly against it. */
+.enc-map-pan-hint {
+	display: none;
+	margin: 0 0 var(--g-2);
+	color: var(--g-ink-low);
+	font-size: var(--g-size-tiny);
+}
+
+.enc-map-chips {
+	display: none;
+	gap: var(--g-2);
+	margin-top: var(--g-4);
+}
+
+@media (max-width: 700px) {
+	.enc-map-pan-hint {
+		display: block;
+	}
+
+	.enc-map-scroll {
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		-webkit-mask-image: linear-gradient(to right, var(--g-ink) 0, var(--g-ink) calc(100% - 40px), transparent 100%);
+		mask-image: linear-gradient(to right, var(--g-ink) 0, var(--g-ink) calc(100% - 40px), transparent 100%);
+		padding-right: var(--g-6);
+	}
+
+	.enc-map-svg {
+		min-width: 640px;
+	}
+
+	.enc-map-chips {
+		display: flex;
+	}
+}
+
+.enc-map-void {
+	fill: var(--g-void);
+}
+
+.enc-map-guide {
+	fill: none;
+	stroke: var(--g-rule-faint);
+	stroke-width: 1;
+}
+
+.enc-map-belt {
+	fill: none;
+	stroke: var(--g-ink-low);
+	stroke-width: 1;
+	stroke-dasharray: 3 5;
+	opacity: 0.6;
+}
+
+.enc-map-belt-label,
+.enc-map-system-label {
+	font-family: var(--g-font-stencil);
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	fill: var(--g-ink-low);
+}
+
+.enc-map-hole-ring {
+	fill: none;
+	stroke: var(--g-brass-light);
+	stroke-width: 1;
+	opacity: 0.85;
+}
+
+.enc-map-hole-core {
+	fill: var(--g-void);
+	stroke: var(--g-seam);
+	stroke-width: 1;
+}
+
+.enc-map-moon {
+	fill: var(--g-ink-low);
+	opacity: 0.8;
+}
+
+/* World group: disc + brass ring + label. Colour comes entirely from the
+   scoped --g-el custom property set by the g-el-<element> class. */
+.enc-map-world {
+	cursor: pointer;
+	outline: none;
+}
+
+/* Invisible hit area, larger than the drawn disc, so the world stays a real
+   tap target at phone widths without inflating the visible mark. Drawn
+   first so the disc and ring paint over it undisturbed. */
+.enc-map-world-hit {
+	fill: transparent;
+	stroke: none;
+	pointer-events: all;
+}
+
+.enc-map-world-disc {
+	fill: var(--g-el);
+	transition: r var(--g-snap);
+}
+
+.enc-map-world-ring {
+	fill: none;
+	stroke: var(--g-brass);
+	stroke-width: 1.5;
+	transition: stroke var(--g-snap), stroke-width var(--g-snap);
+}
+
+.enc-map-world:hover .enc-map-world-ring,
+.enc-map-world:focus-visible .enc-map-world-ring {
+	stroke: var(--g-brass-light);
+	stroke-width: 2.5;
+}
+
+.enc-map-world:hover .enc-map-world-disc,
+.enc-map-world:focus-visible .enc-map-world-disc {
+	r: 15;
+}
+
+.enc-map-world-label {
+	font-family: var(--g-font-stencil);
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	fill: var(--g-ink);
+	text-anchor: middle;
+}
+
+.enc-map.enc-map--compact .enc-map-world-label {
+	font-size: 9px;
+}
+
+/* Era footprint: worlds outside the selected era's chronicle footprint dim
+   to a low-opacity disc with no ring; their label stays at full size (it
+   only hides at compact sizes, handled in WorldMark). */
+.enc-map-world--dim .enc-map-world-disc {
+	opacity: 0.28;
+}
+
+.enc-map-world--dim .enc-map-world-label {
+	fill: var(--g-ink-low);
+}
+
+.enc-map-world--dim:hover .enc-map-world-disc,
+.enc-map-world--dim:focus-visible .enc-map-world-disc {
+	opacity: 0.5;
+}
+
+/* ---- event pins: brass-ringed markers, one per world with events -------
+   Static: no motion beyond the shared hover/focus stroke brighten below. */
+
+.enc-map-pin {
+	cursor: pointer;
+	outline: none;
+}
+
+/* Same invisible-hit-area treatment as the world discs, sized to the pin's
+   larger touch requirement (the drawn mark is smaller than a world disc). */
+.enc-map-pin-hit {
+	fill: transparent;
+	stroke: none;
+	pointer-events: all;
+}
+
+.enc-map-pin-head {
+	fill: var(--g-void);
+	stroke: var(--g-brass);
+	stroke-width: 1.5;
+}
+
+.enc-map-pin-ring {
+	fill: none;
+	stroke: var(--g-brass-light);
+	stroke-width: 1;
+	opacity: 0.55;
+}
+
+.enc-map-pin:hover .enc-map-pin-head,
+.enc-map-pin:focus-visible .enc-map-pin-head {
+	stroke: var(--g-brass-light);
+	stroke-width: 2;
+}
+
+.enc-map-pin:hover .enc-map-pin-ring,
+.enc-map-pin:focus-visible .enc-map-pin-ring {
+	opacity: 1;
+}
+
+.enc-map-pin-count {
+	font-size: 9px;
+	font-weight: 600;
+	fill: var(--g-brass-light);
+	text-anchor: middle;
+}
+
+/* Same shrink, keyed to the viewport, so labels stay legible even when a
+   caller renders the map without passing the compact prop explicitly. */
+@media (max-width: 600px) {
+	.enc-map-world-label {
+		font-size: 9px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.enc-map-world-disc,
+	.enc-map-world-ring {
+		transition: none;
+	}
+	.enc-map-world:hover .enc-map-world-disc,
+	.enc-map-world:focus-visible .enc-map-world-disc {
+		r: 11;
+	}
+}
+
+/* ---- hover card, positioned over the map in HTML, not in the SVG ------- */
+
+.enc-map-card {
+	position: absolute;
+	z-index: var(--g-layer-nav);
+	width: 220px;
+	max-width: 60vw;
+	padding: var(--g-3) var(--g-4);
+	pointer-events: none;
+	transform: translate(-50%, -100%);
+}
+
+.enc-map-card-name {
+	display: block;
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-lead);
+	font-weight: 600;
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+	color: var(--g-ink);
+}
+
+.enc-map-card-terrain {
+	display: block;
+	margin-top: var(--g-1);
+	font-size: var(--g-size-tiny);
+	color: var(--g-ink-mid);
+}
+
+.enc-map-card .g-chip {
+	margin-top: var(--g-2);
+}
+
+.enc-map-card-species {
+	display: block;
+	margin-top: var(--g-1);
+	font-size: var(--g-size-tiny);
+	color: var(--g-ink-low);
+}
+
+.enc-map-card--event {
+	width: 200px;
+}
+
+.enc-map-card-kicker {
+	display: block;
+}
+
+.enc-map-card-action {
+	display: block;
+	margin-top: var(--g-2);
+	font-size: var(--g-size-tiny);
+	color: var(--g-brass-light);
+}
+
+.enc-map-card-event-title {
+	display: block;
+	margin-top: var(--g-1);
+}

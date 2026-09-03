@@ -1,0 +1,1318 @@
+{
+  "version": "1.0.0",
+  "note": "Registry vocabularies: key, display name, one-line nature. Transcribed from the ratified definitions in the migrate-species skill (sections 5.1 to 5.7). Games and the Encyclopedia read display names and natures from here; the skill text remains the source.",
+  "attributes": [
+    {
+      "key": "strength",
+      "name": "Strength",
+      "nature": "Physical force."
+    },
+    {
+      "key": "vitality",
+      "name": "Vitality",
+      "nature": "Life force."
+    },
+    {
+      "key": "endurance",
+      "name": "Endurance",
+      "nature": "Sustained output."
+    },
+    {
+      "key": "agility",
+      "name": "Agility",
+      "nature": "Speed and maneuvering."
+    },
+    {
+      "key": "reflex",
+      "name": "Reflex",
+      "nature": "Reaction time."
+    },
+    {
+      "key": "intelligence",
+      "name": "Intelligence",
+      "nature": "Brain power; never true-human range."
+    },
+    {
+      "key": "willpower",
+      "name": "Willpower",
+      "nature": "Mental fortitude."
+    },
+    {
+      "key": "instinct",
+      "name": "Instinct",
+      "nature": "Perception and gut sense."
+    },
+    {
+      "key": "charisma",
+      "name": "Charisma",
+      "nature": "Presence, not eloquence."
+    },
+    {
+      "key": "resilience",
+      "name": "Resilience",
+      "nature": "Physical toughness."
+    }
+  ],
+  "archetypes": [
+    {
+      "key": "vanguard",
+      "name": "Vanguard",
+      "nature": "Shaped by strength and vitality.",
+      "favors": [
+        "strength",
+        "vitality"
+      ]
+    },
+    {
+      "key": "juggernaut",
+      "name": "Juggernaut",
+      "nature": "Shaped by strength and resilience.",
+      "favors": [
+        "strength",
+        "resilience"
+      ]
+    },
+    {
+      "key": "berserker",
+      "name": "Berserker",
+      "nature": "Shaped by strength and endurance.",
+      "favors": [
+        "strength",
+        "endurance"
+      ]
+    },
+    {
+      "key": "bulwark",
+      "name": "Bulwark",
+      "nature": "Shaped by vitality and resilience.",
+      "favors": [
+        "vitality",
+        "resilience"
+      ]
+    },
+    {
+      "key": "survivor",
+      "name": "Survivor",
+      "nature": "Shaped by vitality and endurance.",
+      "favors": [
+        "vitality",
+        "endurance"
+      ]
+    },
+    {
+      "key": "stalwart",
+      "name": "Stalwart",
+      "nature": "Shaped by resilience and willpower.",
+      "favors": [
+        "resilience",
+        "willpower"
+      ]
+    },
+    {
+      "key": "skirmisher",
+      "name": "Skirmisher",
+      "nature": "Shaped by agility and reflex.",
+      "favors": [
+        "agility",
+        "reflex"
+      ]
+    },
+    {
+      "key": "runner",
+      "name": "Runner",
+      "nature": "Shaped by agility and endurance.",
+      "favors": [
+        "agility",
+        "endurance"
+      ]
+    },
+    {
+      "key": "prowler",
+      "name": "Prowler",
+      "nature": "Shaped by agility and instinct.",
+      "favors": [
+        "agility",
+        "instinct"
+      ]
+    },
+    {
+      "key": "predator",
+      "name": "Predator",
+      "nature": "Shaped by instinct and reflex.",
+      "favors": [
+        "instinct",
+        "reflex"
+      ]
+    },
+    {
+      "key": "seeker",
+      "name": "Seeker",
+      "nature": "Shaped by instinct and intelligence.",
+      "favors": [
+        "instinct",
+        "intelligence"
+      ]
+    },
+    {
+      "key": "sage",
+      "name": "Sage",
+      "nature": "Shaped by intelligence and willpower.",
+      "favors": [
+        "intelligence",
+        "willpower"
+      ]
+    },
+    {
+      "key": "virtuoso",
+      "name": "Virtuoso",
+      "nature": "Shaped by intelligence and charisma.",
+      "favors": [
+        "intelligence",
+        "charisma"
+      ]
+    },
+    {
+      "key": "sovereign",
+      "name": "Sovereign",
+      "nature": "Shaped by charisma and willpower.",
+      "favors": [
+        "charisma",
+        "willpower"
+      ]
+    },
+    {
+      "key": "rogue",
+      "name": "Rogue",
+      "nature": "Shaped by charisma and reflex.",
+      "favors": [
+        "charisma",
+        "reflex"
+      ]
+    },
+    {
+      "key": "balanced",
+      "name": "Balanced",
+      "nature": "Favors nothing.",
+      "favors": []
+    }
+  ],
+  "traits": [
+    {
+      "key": "healing",
+      "name": "Healing",
+      "nature": "Restores others; element colors how; flavor never restricts targets."
+    },
+    {
+      "key": "protective",
+      "name": "Protective",
+      "nature": "Instinct to shield and protect others."
+    },
+    {
+      "key": "regenerative",
+      "name": "Regenerative",
+      "nature": "Rapid self-repair, organic or mechanical."
+    },
+    {
+      "key": "armored",
+      "name": "Armored",
+      "nature": "Natural plating, shell, or integrated chassis."
+    },
+    {
+      "key": "anchored",
+      "name": "Anchored",
+      "nature": "Cannot be moved against its will."
+    },
+    {
+      "key": "phasing",
+      "name": "Phasing",
+      "nature": "Some physical interactions pass through it; auto-granted to non-corporeal bodies, rare roll on corporeal ones."
+    },
+    {
+      "key": "resistant",
+      "name": "Resistant",
+      "nature": "Shrugs off contamination: toxins, disease, radiation, corrosion, hostile atmospheres (bodily only)."
+    },
+    {
+      "key": "ramming",
+      "name": "Ramming",
+      "nature": "A living ram; blows land far harder with movement behind them."
+    },
+    {
+      "key": "toxic",
+      "name": "Toxic",
+      "nature": "Natural weapons deliver debilitating agents; element colors which."
+    },
+    {
+      "key": "volatile",
+      "name": "Volatile",
+      "nature": "Hazardous to strike; reacts when hit, element-colored."
+    },
+    {
+      "key": "reflective",
+      "name": "Reflective",
+      "nature": "Energy directed at it returns to its source."
+    },
+    {
+      "key": "menacing",
+      "name": "Menacing",
+      "nature": "Its presence erodes courage."
+    },
+    {
+      "key": "hypnotic",
+      "name": "Hypnotic",
+      "nature": "Entrances and holds attention, dulling the will to act (caps there)."
+    },
+    {
+      "key": "perceptive",
+      "name": "Perceptive",
+      "nature": "Perceives what hides; the counter to stealthy."
+    },
+    {
+      "key": "foresighted",
+      "name": "Foresighted",
+      "nature": "Reads moments before they happen."
+    },
+    {
+      "key": "mind-sealed",
+      "name": "Mind Sealed",
+      "nature": "Nothing enters, sways, or breaks its mind; counters hypnotic and menacing."
+    },
+    {
+      "key": "pack-bonded",
+      "name": "Pack Bonded",
+      "nature": "Stronger coordinating with others (excludes solitary)."
+    },
+    {
+      "key": "solitary",
+      "name": "Solitary",
+      "nature": "Stronger operating alone (excludes pack-bonded)."
+    },
+    {
+      "key": "stealthy",
+      "name": "Stealthy",
+      "nature": "Moves unseen and unheard until it acts."
+    },
+    {
+      "key": "nocturnal",
+      "name": "Nocturnal",
+      "nature": "Night-adapted senses and habits."
+    },
+    {
+      "key": "inspiring",
+      "name": "Inspiring",
+      "nature": "Its presence bolsters allies."
+    },
+    {
+      "key": "slippery",
+      "name": "Slippery",
+      "nature": "Cannot be held: escapes grabs, pins, traps, snares."
+    },
+    {
+      "key": "luminous",
+      "name": "Luminous",
+      "nature": "Its body sheds light; strips darkness and shadow concealment nearby."
+    },
+    {
+      "key": "telekinetic",
+      "name": "Telekinetic",
+      "nature": "Moves things without touching them; levitation is constant, flinging is the derived ability."
+    }
+  ],
+  "elements": [
+    {
+      "key": "fire",
+      "name": "Fire",
+      "nature": "Heat and relentless aggression."
+    },
+    {
+      "key": "water",
+      "name": "Water",
+      "nature": "Flow and restoration."
+    },
+    {
+      "key": "dark",
+      "name": "Dark",
+      "nature": "Gravity, void, and time (never spooky)."
+    },
+    {
+      "key": "light",
+      "name": "Light",
+      "nature": "Radiance and precision energy."
+    },
+    {
+      "key": "plant",
+      "name": "Plant",
+      "nature": "Growth and territory."
+    },
+    {
+      "key": "electric",
+      "name": "Electric",
+      "nature": "Storm and surge, chain and link."
+    },
+    {
+      "key": "ghost",
+      "name": "Ghost",
+      "nature": "Incorporeality and dread."
+    },
+    {
+      "key": "rock",
+      "name": "Rock",
+      "nature": "Permanence and immovability."
+    },
+    {
+      "key": "chemical",
+      "name": "Chemical",
+      "nature": "Reaction and corrosion."
+    },
+    {
+      "key": "air",
+      "name": "Air",
+      "nature": "Wind and freedom."
+    },
+    {
+      "key": "psychic",
+      "name": "Psychic",
+      "nature": "Mind and perception."
+    },
+    {
+      "key": "ice",
+      "name": "Ice",
+      "nature": "Stasis and preservation."
+    },
+    {
+      "key": "metal",
+      "name": "Metal",
+      "nature": "Machinery and precision."
+    },
+    {
+      "key": "sand",
+      "name": "Sand",
+      "nature": "Erosion and attrition."
+    }
+  ],
+  "physiology": {
+    "corporeality": [
+      {
+        "key": "corporeal",
+        "name": "Corporeal",
+        "nature": "Has a physical body that occupies space and can be touched, struck, and held."
+      },
+      {
+        "key": "non-corporeal",
+        "name": "Non Corporeal",
+        "nature": "Has no persistent physical body; matter passes through it and it through matter."
+      }
+    ],
+    "composition": [
+      {
+        "key": "flesh",
+        "name": "Flesh",
+        "nature": "Living animal tissue, muscle and organ, whatever covers it."
+      },
+      {
+        "key": "plant",
+        "name": "Plant",
+        "nature": "Living vegetable tissue: wood, fiber, stem, leaf, root."
+      },
+      {
+        "key": "mineral",
+        "name": "Mineral",
+        "nature": "Stone, crystal, sand, or glass held together as a body."
+      },
+      {
+        "key": "metal",
+        "name": "Metal",
+        "nature": "Metallic body, whether grown, forged, or assembled."
+      },
+      {
+        "key": "slime",
+        "name": "Slime",
+        "nature": "Viscous or gelatinous mass with no fixed internal structure."
+      },
+      {
+        "key": "gas",
+        "name": "Gas",
+        "nature": "A body of vapor, smoke, or cloud that holds a shape at rest."
+      },
+      {
+        "key": "energy",
+        "name": "Energy",
+        "nature": "A body of light, plasma, charge, or heat with no matter to speak of."
+      },
+      {
+        "key": "spectral",
+        "name": "Spectral",
+        "nature": "A body of the ghost register: present, visible, and acting, but made of neither matter nor energy that instruments can name."
+      }
+    ],
+    "bodyPlan": [
+      {
+        "key": "biped",
+        "name": "Biped",
+        "nature": "Stands and moves on two legs; forelimbs, if any, are free for other work."
+      },
+      {
+        "key": "quadruped",
+        "name": "Quadruped",
+        "nature": "Stands and moves on four limbs."
+      },
+      {
+        "key": "multiped",
+        "name": "Multiped",
+        "nature": "Stands and moves on more than four limbs, or on a limb arrangement that no other key names."
+      },
+      {
+        "key": "serpentine",
+        "name": "Serpentine",
+        "nature": "A long body that moves by undulation, with no limbs or with limbs too small to bear it."
+      },
+      {
+        "key": "avian",
+        "name": "Avian",
+        "nature": "A winged body whose primary movement is flight and which lands or perches between flights."
+      },
+      {
+        "key": "piscine",
+        "name": "Piscine",
+        "nature": "A body built for movement through liquid: finned, streamlined, or jet-driven."
+      },
+      {
+        "key": "amorphous",
+        "name": "Amorphous",
+        "nature": "A body without a fixed outline that flows, spreads, or reforms as it moves."
+      },
+      {
+        "key": "swarm",
+        "name": "Swarm",
+        "nature": "The creature presents as many bodies acting as one, whether the units are its own flesh, split-off pieces, or conjured projections held by a central mind."
+      },
+      {
+        "key": "floating",
+        "name": "Floating",
+        "nature": "A body that hangs, drifts, or glides in its medium with no wings and no fins, held up by gas, field, or the ghost register."
+      }
+    ],
+    "covering": [
+      {
+        "key": "fur",
+        "name": "Fur",
+        "nature": "Hair or pelt."
+      },
+      {
+        "key": "feathers",
+        "name": "Feathers",
+        "nature": "Feathers, down, or plumes."
+      },
+      {
+        "key": "scales",
+        "name": "Scales",
+        "nature": "Overlapping plates of skin or horn, reptile or fish style, flexible as a whole."
+      },
+      {
+        "key": "chitin",
+        "name": "Chitin",
+        "nature": "A hard exoskeleton or carapace grown by the body."
+      },
+      {
+        "key": "hide",
+        "name": "Hide",
+        "nature": "Thick, leathery, or rugged skin with no armored aspect."
+      },
+      {
+        "key": "plating",
+        "name": "Plating",
+        "nature": "Rigid plates that are not grown chitin: stone, metal, bone, or crystal armor integrated into the body."
+      },
+      {
+        "key": "crystal",
+        "name": "Crystal",
+        "nature": "A surface of crystal growth or facets covering the body."
+      },
+      {
+        "key": "mist",
+        "name": "Mist",
+        "nature": "A surface of vapor, smoke, or haze with no firm boundary."
+      },
+      {
+        "key": "bare",
+        "name": "Bare",
+        "nature": "Smooth unprotected skin, membrane, or surface; the default for any body, of any composition, whose surface neither source names."
+      }
+    ],
+    "diet": [
+      {
+        "key": "carnivore",
+        "name": "Carnivore",
+        "nature": "Eats other creatures."
+      },
+      {
+        "key": "herbivore",
+        "name": "Herbivore",
+        "nature": "Eats plant matter."
+      },
+      {
+        "key": "omnivore",
+        "name": "Omnivore",
+        "nature": "Eats both."
+      },
+      {
+        "key": "photosynthetic",
+        "name": "Photosynthetic",
+        "nature": "Feeds on light directly."
+      },
+      {
+        "key": "energy-feeder",
+        "name": "Energy Feeder",
+        "nature": "Feeds on a non-food energy the description names it taking in: heat, charge, radiation, gravity, minds."
+      },
+      {
+        "key": "none",
+        "name": "None",
+        "nature": "Does not feed at all, stated or implied by a body with no way to take anything in."
+      }
+    ],
+    "communication": [
+      {
+        "key": "vocal",
+        "name": "Vocal",
+        "nature": "Calls, cries, roars, songs, hisses; any sound the body makes to signal."
+      },
+      {
+        "key": "vibration",
+        "name": "Vibration",
+        "nature": "Signals by tremor, drumming, or percussion through ground, water, or air."
+      },
+      {
+        "key": "display",
+        "name": "Display",
+        "nature": "Signals to others by posture, color, light pattern, or gesture."
+      },
+      {
+        "key": "chemical",
+        "name": "Chemical",
+        "nature": "Signals by scent or secreted substance."
+      },
+      {
+        "key": "telepathic",
+        "name": "Telepathic",
+        "nature": "Signals by direct impression on another mind; feeling and image, never words."
+      }
+    ],
+    "media": [
+      {
+        "key": "gas",
+        "name": "Gas",
+        "nature": "Atmosphere of any chemistry."
+      },
+      {
+        "key": "liquid",
+        "name": "Liquid",
+        "nature": "Water or another liquid of any chemistry."
+      },
+      {
+        "key": "vacuum",
+        "name": "Vacuum",
+        "nature": "The absence of medium."
+      }
+    ],
+    "lifespan": [
+      {
+        "key": "fleeting",
+        "name": "Fleeting",
+        "nature": "A season to a few years."
+      },
+      {
+        "key": "short",
+        "name": "Short",
+        "nature": "A few years to a decade."
+      },
+      {
+        "key": "standard",
+        "name": "Standard",
+        "nature": "Decades."
+      },
+      {
+        "key": "long",
+        "name": "Long",
+        "nature": "Many decades to a century or more."
+      },
+      {
+        "key": "enduring",
+        "name": "Enduring",
+        "nature": "Centuries."
+      },
+      {
+        "key": "ageless",
+        "name": "Ageless",
+        "nature": "Does not wear out."
+      }
+    ],
+    "chirality": [
+      {
+        "key": "rolled",
+        "name": "Rolled",
+        "nature": "Each individual rolls levo or dextro at 50/50; the default."
+      },
+      {
+        "key": "achiral",
+        "name": "Achiral",
+        "nature": "The species has no handedness to roll; declared only when the body has no chiral chemistry."
+      }
+    ],
+    "descriptionStatus": [
+      {
+        "key": "source",
+        "name": "Source",
+        "nature": "The species.json description is carried verbatim because it is already in the full register."
+      },
+      {
+        "key": "upgraded",
+        "name": "Upgraded",
+        "nature": "The description was rewritten from a stub using only the stub, the art, and the planet history."
+      }
+    ]
+  },
+  "capabilities": [
+    {
+      "key": "flight",
+      "name": "Flight",
+      "nature": "Sustained movement through air under its own power."
+    },
+    {
+      "key": "swim",
+      "name": "Swim",
+      "nature": "Movement through liquid."
+    },
+    {
+      "key": "burrow",
+      "name": "Burrow",
+      "nature": "Movement through solid ground, sand, or rubble."
+    },
+    {
+      "key": "climb",
+      "name": "Climb",
+      "nature": "Movement up surfaces steeper than it can walk."
+    },
+    {
+      "key": "sprint",
+      "name": "Sprint",
+      "nature": "Short-burst ground speed."
+    },
+    {
+      "key": "leap",
+      "name": "Leap",
+      "nature": "Distance or height cleared in one bound."
+    },
+    {
+      "key": "manipulation",
+      "name": "Manipulation",
+      "nature": "Handling objects; an upper bound above 40 needs grasping anatomy or telekinetic at 100."
+    }
+  ],
+  "senses": [
+    {
+      "key": "sight",
+      "name": "Sight",
+      "nature": "Graded vision; how well the creature sees."
+    },
+    {
+      "key": "hearing",
+      "name": "Hearing",
+      "nature": "Graded hearing; how well the creature hears."
+    },
+    {
+      "key": "smell",
+      "name": "Smell",
+      "nature": "Graded smell; how well the creature scents."
+    },
+    {
+      "key": "echolocation",
+      "name": "Echolocation",
+      "nature": "Locates by emitted sound and its return.",
+      "special": true
+    },
+    {
+      "key": "tremorsense",
+      "name": "Tremorsense",
+      "nature": "Reads vibration through ground or water to locate what moves.",
+      "special": true
+    },
+    {
+      "key": "electroreception",
+      "name": "Electroreception",
+      "nature": "Senses electric fields and living charge.",
+      "special": true
+    },
+    {
+      "key": "psychic",
+      "name": "Psychic",
+      "nature": "Senses minds, feelings, and intent directly.",
+      "special": true
+    },
+    {
+      "key": "heat-sense",
+      "name": "Heat Sense",
+      "nature": "Senses infrared and body heat.",
+      "special": true
+    },
+    {
+      "key": "void-sense",
+      "name": "Void Sense",
+      "nature": "Senses gravity, mass, and the structure of space; the dark register's sense.",
+      "special": true
+    }
+  ],
+  "anatomy": [
+    {
+      "key": "jaws",
+      "name": "Jaws",
+      "nature": "Full biting mechanism incl. mandibles."
+    },
+    {
+      "key": "fangs",
+      "name": "Fangs",
+      "nature": "Piercing or venom teeth."
+    },
+    {
+      "key": "beak",
+      "name": "Beak",
+      "nature": "Head and mouth instrument."
+    },
+    {
+      "key": "tusks",
+      "name": "Tusks",
+      "nature": "External goring teeth."
+    },
+    {
+      "key": "horns",
+      "name": "Horns",
+      "nature": "Permanent cranial spikes incl. drill-horns."
+    },
+    {
+      "key": "antlers",
+      "name": "Antlers",
+      "nature": "Branched rack."
+    },
+    {
+      "key": "trunk",
+      "name": "Trunk",
+      "nature": "Muscular flexible snout."
+    },
+    {
+      "key": "tongue",
+      "name": "Tongue",
+      "nature": "Projectile, sticky, or lashing."
+    },
+    {
+      "key": "crest",
+      "name": "Crest",
+      "nature": "Emissive or display head-growth."
+    },
+    {
+      "key": "lure",
+      "name": "Lure",
+      "nature": "Dangled bait appendage."
+    },
+    {
+      "key": "claws",
+      "name": "Claws",
+      "nature": "Hooking or raking digits."
+    },
+    {
+      "key": "talons",
+      "name": "Talons",
+      "nature": "Raptorial grip-and-pierce."
+    },
+    {
+      "key": "fists",
+      "name": "Fists",
+      "nature": "Blunt striking hands."
+    },
+    {
+      "key": "hooves",
+      "name": "Hooves",
+      "nature": "Limb instrument."
+    },
+    {
+      "key": "pincers",
+      "name": "Pincers",
+      "nature": "Opposing grip; a crab's, scorpion's, or lobster's claws that snap shut are pincers, never claws, whatever word the description uses."
+    },
+    {
+      "key": "blades",
+      "name": "Blades",
+      "nature": "Limb ending in a cutting edge."
+    },
+    {
+      "key": "spurs",
+      "name": "Spurs",
+      "nature": "Limb spikes."
+    },
+    {
+      "key": "wings",
+      "name": "Wings",
+      "nature": "Strike, gust, shroud as well as flight."
+    },
+    {
+      "key": "tail",
+      "name": "Tail",
+      "nature": "Tail and trunk-body instrument."
+    },
+    {
+      "key": "stinger",
+      "name": "Stinger",
+      "nature": "Venom-injecting spike."
+    },
+    {
+      "key": "rattle",
+      "name": "Rattle",
+      "nature": "Sound-warning tail organ."
+    },
+    {
+      "key": "coils",
+      "name": "Coils",
+      "nature": "Serpentine wrap-and-crush body."
+    },
+    {
+      "key": "hide",
+      "name": "Hide",
+      "nature": "An unarmored body surface used defensively: bare, leathery, furred, or scaled skin; declaring hide states that the body has no armored aspect."
+    },
+    {
+      "key": "shell",
+      "name": "Shell",
+      "nature": "The armored aspect: a rigid enclosing casing, exoskeleton, carapace, or integrated plating."
+    },
+    {
+      "key": "spines",
+      "name": "Spines",
+      "nature": "Rigid projections: quills, barbs, thorns, crystal growths."
+    },
+    {
+      "key": "tendrils",
+      "name": "Tendrils",
+      "nature": "Tentacles, vines, streamers."
+    },
+    {
+      "key": "roots",
+      "name": "Roots",
+      "nature": "Ground-anchored gripping or erupting structures."
+    },
+    {
+      "key": "pseudopods",
+      "name": "Pseudopods",
+      "nature": "Temporary limbs coalesced from a formless body."
+    },
+    {
+      "key": "spinnerets",
+      "name": "Spinnerets",
+      "nature": "Emission structure."
+    },
+    {
+      "key": "light-organs",
+      "name": "Light Organs",
+      "nature": "Emission structure."
+    },
+    {
+      "key": "vents",
+      "name": "Vents",
+      "nature": "Pressurized discharge openings."
+    },
+    {
+      "key": "core",
+      "name": "Core",
+      "nature": "Exposed radiant or crystal focal mass."
+    },
+    {
+      "key": "antennae",
+      "name": "Antennae",
+      "nature": "Sensory-dual instrument."
+    },
+    {
+      "key": "body",
+      "name": "Body",
+      "nature": "Whole-body mass as instrument; universal fallback."
+    }
+  ],
+  "channels": [
+    {
+      "key": "mind",
+      "name": "Mind",
+      "nature": "Psychic element, a psychic special sense, or telekinetic/hypnotic at 100 in the trait pool."
+    },
+    {
+      "key": "gaze",
+      "name": "Gaze",
+      "nature": "Sight band above 0, plus the description supports a stare."
+    },
+    {
+      "key": "voice",
+      "name": "Voice",
+      "nature": "Vocal in communication."
+    },
+    {
+      "key": "breath",
+      "name": "Breath",
+      "nature": "Breathes non-empty."
+    },
+    {
+      "key": "secretion",
+      "name": "Secretion",
+      "nature": "Description supports an emitted substance."
+    },
+    {
+      "key": "swarm",
+      "name": "Swarm",
+      "nature": "BodyPlan: swarm, or the description and art show a conjured familiar swarm held by the creature's mind."
+    },
+    {
+      "key": "aura",
+      "name": "Aura",
+      "nature": "The description describes an emanation from the body as a whole that acts on everything around it, such as a presence, a field, a chill, or a glow."
+    }
+  ],
+  "actions": [
+    {
+      "key": "strike",
+      "name": "Strike",
+      "nature": "A single direct blow or thrust that lands with impact."
+    },
+    {
+      "key": "lash",
+      "name": "Lash",
+      "nature": "A sweeping or whipping blow from a flexible part or a swept limb."
+    },
+    {
+      "key": "crush",
+      "name": "Crush",
+      "nature": "Pressure applied and held: squeezing, clamping, compressing."
+    },
+    {
+      "key": "rake",
+      "name": "Rake",
+      "nature": "A cutting or tearing pass that opens the target."
+    },
+    {
+      "key": "shove",
+      "name": "Shove",
+      "nature": "Force that moves the target rather than wounds it: pushes, rams, throws off balance."
+    },
+    {
+      "key": "drain",
+      "name": "Drain",
+      "nature": "Takes something from the target and keeps it: vitality, heat, charge, will."
+    },
+    {
+      "key": "ambush",
+      "name": "Ambush",
+      "nature": "A burst of closing speed that ends in a hit."
+    },
+    {
+      "key": "beam",
+      "name": "Beam",
+      "nature": "A focused projected line of energy or matter."
+    },
+    {
+      "key": "hurl",
+      "name": "Hurl",
+      "nature": "A thrown or launched solid that travels to the target."
+    },
+    {
+      "key": "spray",
+      "name": "Spray",
+      "nature": "A projected stream or shower of matter over an area or line."
+    },
+    {
+      "key": "burst",
+      "name": "Burst",
+      "nature": "An outward release from the body that hits everything close at once."
+    },
+    {
+      "key": "cloud",
+      "name": "Cloud",
+      "nature": "A lingering volume of matter or effect that occupies space."
+    },
+    {
+      "key": "snare",
+      "name": "Snare",
+      "nature": "Holds, binds, pulls, or pins the target in place."
+    },
+    {
+      "key": "ward",
+      "name": "Ward",
+      "nature": "Protects the user or an ally: shields, deflects, braces."
+    },
+    {
+      "key": "mend",
+      "name": "Mend",
+      "nature": "Restores the user or an ally."
+    },
+    {
+      "key": "terrorize",
+      "name": "Terrorize",
+      "nature": "Acts on the target's courage or will rather than its body."
+    }
+  ],
+  "instrumentActions": {
+    "jaws": [
+      "strike",
+      "crush",
+      "rake",
+      "drain",
+      "snare"
+    ],
+    "fangs": [
+      "strike",
+      "drain",
+      "ambush"
+    ],
+    "beak": [
+      "strike",
+      "crush",
+      "rake",
+      "drain",
+      "ambush"
+    ],
+    "tusks": [
+      "strike",
+      "shove",
+      "rake",
+      "crush",
+      "terrorize"
+    ],
+    "horns": [
+      "strike",
+      "shove",
+      "crush",
+      "ward",
+      "terrorize"
+    ],
+    "antlers": [
+      "strike",
+      "shove",
+      "snare",
+      "terrorize"
+    ],
+    "trunk": [
+      "lash",
+      "snare",
+      "shove",
+      "spray",
+      "strike"
+    ],
+    "tongue": [
+      "lash",
+      "snare",
+      "strike",
+      "drain"
+    ],
+    "crest": [
+      "beam",
+      "burst",
+      "terrorize",
+      "ward"
+    ],
+    "lure": [
+      "ambush",
+      "beam",
+      "snare"
+    ],
+    "claws": [
+      "strike",
+      "rake",
+      "crush",
+      "shove",
+      "ambush"
+    ],
+    "talons": [
+      "strike",
+      "rake",
+      "crush",
+      "snare"
+    ],
+    "fists": [
+      "strike",
+      "crush",
+      "shove"
+    ],
+    "hooves": [
+      "strike",
+      "crush",
+      "shove"
+    ],
+    "pincers": [
+      "strike",
+      "crush",
+      "snare",
+      "shove",
+      "ward",
+      "hurl"
+    ],
+    "blades": [
+      "strike",
+      "rake",
+      "lash"
+    ],
+    "spurs": [
+      "strike",
+      "rake",
+      "ambush"
+    ],
+    "wings": [
+      "strike",
+      "lash",
+      "shove",
+      "hurl",
+      "ward"
+    ],
+    "tail": [
+      "strike",
+      "lash",
+      "crush",
+      "shove",
+      "snare",
+      "hurl"
+    ],
+    "stinger": [
+      "strike",
+      "drain",
+      "ambush",
+      "terrorize"
+    ],
+    "rattle": [
+      "ward",
+      "terrorize"
+    ],
+    "coils": [
+      "crush",
+      "snare",
+      "shove",
+      "ward"
+    ],
+    "hide": [
+      "ward",
+      "shove"
+    ],
+    "shell": [
+      "ward",
+      "shove",
+      "crush"
+    ],
+    "spines": [
+      "strike",
+      "rake",
+      "ward",
+      "hurl",
+      "burst"
+    ],
+    "tendrils": [
+      "lash",
+      "snare",
+      "crush",
+      "drain",
+      "shove",
+      "strike"
+    ],
+    "roots": [
+      "snare",
+      "strike",
+      "shove",
+      "drain",
+      "ward"
+    ],
+    "pseudopods": [
+      "strike",
+      "crush",
+      "shove",
+      "snare",
+      "lash",
+      "drain"
+    ],
+    "spinnerets": [
+      "snare",
+      "ward",
+      "hurl"
+    ],
+    "light-organs": [
+      "beam",
+      "burst",
+      "ward",
+      "terrorize",
+      "mend"
+    ],
+    "vents": [
+      "spray",
+      "cloud",
+      "burst",
+      "ward"
+    ],
+    "core": [
+      "beam",
+      "burst",
+      "ward"
+    ],
+    "antennae": [
+      "lash",
+      "snare"
+    ],
+    "body": [
+      "strike",
+      "crush",
+      "shove",
+      "ward",
+      "burst",
+      "terrorize"
+    ],
+    "mind": [
+      "snare",
+      "shove",
+      "hurl",
+      "crush",
+      "drain",
+      "ward",
+      "terrorize",
+      "mend"
+    ],
+    "gaze": [
+      "terrorize",
+      "snare",
+      "drain",
+      "beam"
+    ],
+    "voice": [
+      "terrorize",
+      "ward",
+      "burst"
+    ],
+    "breath": [
+      "spray",
+      "cloud",
+      "burst",
+      "beam"
+    ],
+    "secretion": [
+      "spray",
+      "cloud",
+      "burst",
+      "drain",
+      "snare",
+      "ward",
+      "mend"
+    ],
+    "swarm": [
+      "cloud",
+      "strike",
+      "drain",
+      "snare",
+      "rake",
+      "terrorize"
+    ],
+    "aura": [
+      "ward",
+      "cloud",
+      "terrorize",
+      "drain",
+      "mend"
+    ]
+  }
+}

@@ -19,7 +19,7 @@ What this requires of every agent working in this repo:
 - **Change the setting, not the record.** Adjustments land in the source of truth for that lever: registry definitions in `docs/species-templates/REGISTRY-DEFINITIONS.md`, per-species rulings in `docs/species-templates/RULINGS.md`, script behaviour in `docs/species-templates/tools/CHANGELOG.md`, system design in `docs/design/xalian-creature-system-redesign.md`, and the migrate-species skill where agents read the rule. Then the affected species records are re-run or amended with a dated note, never hand-patched in silence.
 - **Everything is versioned.** Template percents and vocabularies are pinned by `generatorVersion`; a lever can move without invalidating minted creatures. Do not let "it would break existing records" stop a report.
 
-## Lore & world canon (summary — full text in `lambda/src/json/planets.json` + `glossary.json`)
+## Lore & world canon (summary — full text in `lambda/src/json/planets.json`; entries in `docs/encyclopedia/encyclopedia.json`; timeline in `docs/encyclopedia/chronicle.json`)
 
 This summary exists so the lore JSON does not need to be re-read for design discussions. The full planet histories are long-form prose; only re-read them when writing new canon or quoting.
 
@@ -45,6 +45,16 @@ This summary exists so the lore JSON does not need to be re-read for design disc
 A recurring cross-planet thread: Phantiri's moon-weapon, Deepwater Black on Endessa/Poseidas, and Veridium's worldship origin all hint at one **ancient cosmic-horror presence** predating the Phantiri — the built-in hook for a future story arc beyond APEX.
 
 **Creatures:** 29 canon species in `species.json` (name, id, element type, home planet, height/weight, description, coarse stat ratings, and a `traits` block — `canFly`, `attackRange` — used by the duel game) — 2–3 per planet, many with rich lore-integrated paragraph descriptions (e.g. Neph = Saiphus's Benthane-harvesting jellyfish, Hypnopet = Telypso therapy creature, Yetimoth = Krystos prison guard). The glossary has 63 terms. `elements.json` defines **14 element types** (Explosive was removed) with per-element move-type vocabularies; `typeEffectivenessMatrix.json` is a complete 14×14 matrix (multipliers 0 / 0.5 / 1 / 1.5 / 2). Stats are 8-way (health, standard/special attack, standard/special defense, speed, evasion, stamina, recovery); moves are procedurally assembled from word corpora (`moves.json`, `qualifiers.json`) filtered by element.
+
+## Encyclopedia Xalia (the lore system, Sept 2026)
+
+The lore now has one structured home and one page. **Sources of truth:** `lambda/src/json/planets.json` (the 14 histories), `docs/encyclopedia/encyclopedia.json` (every canon concept as an entry: key, title, category, definition, mechanical `related` links, element tag on planets), `docs/encyclopedia/chronicle.json` (the undated timeline: 7 eras, ordered events with verbatim source anchors, an era tag on every history paragraph; rulings in `docs/design/xalian-chronicle.md`), `docs/species-templates/<key>.json` plus `<key>.encyclopedia.json` (ratified species records and their entries; `RATIFIED.json` lists which ship), and `docs/species-templates/registries.json` (display name and one-line nature for every registry key). `docs/encyclopedia/ENCYCLOPEDIA-INTERNAL.md` holds the editorial rules, source precedence, and the never-resolve constraints; read it before writing any entry. `glossary.json` is a legacy mirror read only by the old `/glossary` page; `encyclopedia.json` wins on conflict.
+
+**Bundling:** `node scripts/bundleLore.js` (repo root) copies the encyclopedia, chronicle, registries, and ratified species records into `lambda/src/json/` (`speciesRecords.json` is generated); `yarn copy-json` then mirrors them into the frontend. Run both after any lore, template, or registry change. The compendium (`node scripts/buildCanonCompendium.js`) is the long-form reading copy, not a source.
+
+**The page:** `/encyclopedia` (reading room with the galaxy map and its era scrubber, First Survey guided tour, Chronicle with era reading modes, Worlds, Bestiary, Powers and Peoples, Index with search; a per-browser Trace strip and read marks live in `components/encyclopedia/trail.js`, localStorage only). Contracts: `docs/design/xalian-encyclopedia-page.md` (the first build) and `docs/design/xalian-encyclopedia-ux-pass.md` (the Sept 2026 UX pass: map scrubber, tour, era story mode, world rail, trail; it wins where the two disagree). Data layer `my-app/src/lore/` (React-free, tested; UI never imports JSON), UI `my-app/src/components/encyclopedia/` (one component and one CSS file per section), shell CSS `public/assets/css/encyclopedia.css`. Species pages render the ratified template when one exists and the legacy stub otherwise, so migration and the page never block each other. The old `/glossary`, `/planets`, `/species` pages still exist and will be retired once Nick says swap.
+
+**Adding lore:** new entries append to `encyclopedia.json` (lore-voice register, Nick's sign-off, keys append-only); new history paragraphs need an era tag in `chronicle.json`; a newly ratified species goes into `RATIFIED.json`; any new registry key needs a `registries.json` row or the species page prints the raw key. `docs/encyclopedia/tour.json` is the First Survey: eight beats of derived prose in the historian's voice that restate the histories and never add facts; keep every beat traceable through its `sources`. **Nick does not fact-check lore (ruling 2026-09-03):** every lore text passes the `lore-factcheck` skill (independent claim-by-claim check against the histories plus the structural validator `my-app/src/lore/__tests__/lore.tour.test.js`) before it is committed, and the report to Nick says what was checked and changed. Then bundle and copy.
 
 ## Duel game (the CTF tactics prototype)
 
@@ -94,7 +104,7 @@ There is no test suite for the `lambda/` engine — verification is done by runn
 - File out-of-scope findings as issues immediately (labels: one of `P1`/`P2`/`P3` + type + area); don't park them in chat or docs.
 - Reference tickets from PRs with `Fixes #N` so merges auto-close them.
 - "Work the backlog" means P1s first; `question`-labeled issues need Nick's answer before implementation.
-- CI/CD is fully automated: PRs run frontend build + terraform plan (both required checks on `master`); merging auto-deploys frontend (S3+CloudFront) and backend (terraform apply). Auto-merge on green is enabled — open the PR, run `gh pr merge <n> --auto --merge`, done. Never run `aws s3 sync` or `terraform apply` manually unless CI is broken.
+- CI/CD is fully automated: PRs run frontend build + terraform plan (both required checks on `main`); merging auto-deploys frontend (S3+CloudFront) and backend (terraform apply). Auto-merge on green is enabled — open the PR, run `gh pr merge <n> --auto --merge`, done. Never run `aws s3 sync` or `terraform apply` manually unless CI is broken.
 - `docs/AUDIT_FINDINGS.md` is a historical record of the 2026-08-29 audit; its open items were migrated to issues.
 
 ## Architecture
@@ -142,7 +152,7 @@ Two API Gateway stages exist (`prod`, `test`) mapped to `api.xalians.com` and `t
 
 Vite + React Router v5 (`App.js` is the full route table) + react-bootstrap. `vite.config.js` holds the JSX-in-`.js` loader, the CRA-style `ReactComponent` SVG import shim (vite-plugin-svgr), and the CommonJS shim for the `module.exports` files copied from `lambda/`. Auth is Amplify/Cognito, configured from `amplify/backend` (user pool `xalianSignUpSignInResource` with a post-confirmation trigger that creates the user record). Because the `/db/*` routes are `AWS_IAM`-authorized, `dbApi.js` SigV4-signs every request with `Signer.sign()` using credentials from `Auth.currentCredentials()` — plain `axios` calls to those routes will 403.
 
-Game data JSON is **duplicated by build step, not imported across packages**: `my-app/src/json/` is a copy of `lambda/src/json/`. Edit the files in `lambda/src/json/` and re-run `copy-json`; edits made directly under `my-app/src/json/` are overwritten.
+Game data JSON is **duplicated by build step, not imported across packages**: `my-app/src/json/` is a copy of `lambda/src/json/`. Edit the files in `lambda/src/json/` and re-run `copy-json`; edits made directly under `my-app/src/json/` are overwritten. The encyclopedia, chronicle, registries, and species records are generated into `lambda/src/json/` by `node scripts/bundleLore.js` from `docs/`, so edit those under `docs/` and bundle first.
 
 `utils/valueTranslator.js` and `constants/constants.js` (element → theme color map) drive the element-themed styling used throughout charts and SVG rendering.
 

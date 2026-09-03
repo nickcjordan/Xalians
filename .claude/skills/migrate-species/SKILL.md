@@ -469,6 +469,7 @@ Temperament is five stored axes (boldness, curiosity, energy, aggression, sociab
 - `C:\dev\src\xalians-catalog\docs\species-templates\<key>.md` (the walkthrough with quotes, thin-combo findings, open questions)
 - `C:\dev\src\xalians-catalog\docs\species-templates\<key>.encyclopedia.json` (the entry)
 - Report per-field summary and every open question in your final message.
+- **After Nick ratifies** (orchestrator, not the migration agent): add the key to `docs/species-templates/RATIFIED.json`, run `node scripts/bundleLore.js` from the repo root and `yarn copy-json` from `my-app/`, and confirm the species page at `/encyclopedia/species/<key>` renders the template (the page resolves every registry key through `docs/species-templates/registries.json`; a key missing there prints raw, so add its row first). Unratified templates never ship: the bundler reads only the manifest.
 
 ## 8. Species needing authored anatomy
 
@@ -489,5 +490,6 @@ Present inline, never link-only: the full template JSON, then the walkthrough's 
 ## 11. Relationship to the other skills
 
 - `lore-voice`: section 3 is its species and glossary registers, inlined; invoke it only if you need the full exemplar corpus.
+- The Encyclopedia page (`docs/design/xalian-encyclopedia-page.md`): the consumer of every template. Its data layer (`my-app/src/lore/species.js`) builds a SpeciesView from the template shape in section 4, so a template field renamed here must be renamed there.
 - `consolidate-element`: produced the catalog files this skill reads; never modify catalog files during migration.
 - `blind-audit`: the context-free record trio runs on schema changes and, at Nick's call, on one representative record per planet batch, not per species.

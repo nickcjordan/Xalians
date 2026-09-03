@@ -1,0 +1,54 @@
+/* Trail strip: "Trace" instrument line directly under the section bank.
+   Contract: docs/design/xalian-encyclopedia-ux-pass.md "Trail". A single
+   compact row, not a panel: kicker inline at the left, chips after it,
+   Clear at the right. Only .g-* parts and --g-* tokens. */
+
+.enc-trail {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: var(--g-2);
+	margin-bottom: var(--g-5);
+	padding-bottom: var(--g-2);
+	border-bottom: 1px solid var(--g-seam);
+}
+
+.enc-trail-kicker {
+	margin: 0;
+	flex: 0 0 auto;
+}
+
+.enc-trail-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--g-2);
+	text-decoration: none;
+}
+
+.enc-trail-chip-kind {
+	font-size: var(--g-size-tiny);
+	opacity: 0.75;
+}
+
+.enc-trail-chip-name {
+	font-family: var(--g-font-stencil);
+}
+
+.enc-trail-clear {
+	margin-left: auto;
+}
+
+/* Below 700px the strip is one non-wrapping, scrollable row: the kicker is
+   the first fixed item, chips are compact (kind glyph hidden, name only),
+   Clear sits at the end of the row. Total height stays under 44px. */
+@media (max-width: 700px) {
+	.enc-trail-row {
+		flex-wrap: nowrap;
+		gap: var(--g-2);
+		margin-bottom: var(--g-4);
+		padding-bottom: var(--g-2);
+	}
+	.enc-trail-kicker { padding-top: 2px; }
+	.enc-trail-chip-kind { display: none; }
+	.enc-trail-clear { margin-left: 0; }
+}

@@ -1,0 +1,243 @@
+/* WorldView section. Prefix: .enc-world- */
+
+.enc-world-chronicle {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: var(--g-3) var(--g-4);
+	margin-top: var(--g-3);
+	margin-bottom: var(--g-6);
+}
+
+.enc-world-chronicle-label {
+	font-size: var(--g-size-tiny);
+	color: var(--g-ink-low);
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+	flex: none;
+}
+
+.enc-world-chronicle-rail {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--g-2);
+	min-width: 0;
+}
+
+.enc-world-chronicle-station {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 2px;
+	padding: var(--g-2) var(--g-3);
+	border: 1px solid var(--g-seam);
+	border-radius: 2px;
+	text-decoration: none;
+	color: var(--g-ink);
+	background: var(--g-hull-lo);
+}
+
+a.enc-world-chronicle-station:hover,
+a.enc-world-chronicle-station:focus-visible {
+	color: var(--g-brass);
+	border-color: var(--g-brass);
+}
+
+.enc-world-chronicle-station--dim {
+	color: var(--g-ink-low);
+	opacity: 0.55;
+	border-color: transparent;
+	cursor: default;
+}
+
+.enc-world-chronicle-station-name {
+	font-size: var(--g-size-tiny);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	white-space: nowrap;
+}
+
+.enc-world-chronicle-station-count {
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-mid);
+}
+
+.enc-world-plate {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-4);
+}
+
+.enc-world-mount {
+	padding: var(--g-4);
+}
+
+.enc-world-globe {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	border-radius: 50%;
+}
+
+.enc-world-spec {
+	padding: 0 var(--g-1);
+}
+
+.enc-world-report-block {
+	margin-top: var(--g-3);
+}
+
+.enc-world-record-col {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-6);
+	min-width: 0;
+}
+
+.enc-world-record-section {
+	min-width: 0;
+}
+
+.enc-world-record-section-head {
+	margin-bottom: var(--g-3);
+}
+
+.enc-world-fauna-grid {
+	grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+	gap: var(--g-3);
+}
+
+.enc-world-species-tile--compact .enc-world-species-art {
+	padding: var(--g-1);
+}
+
+.enc-world-history-layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 20rem);
+	gap: var(--g-6);
+	align-items: start;
+}
+
+@media (max-width: 1000px) {
+	.enc-world-history-layout {
+		grid-template-columns: minmax(0, 1fr);
+	}
+	.enc-world-chapter-index {
+		order: -1;
+		position: static;
+	}
+}
+
+.enc-world-history {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-6);
+	min-width: 0;
+}
+
+.enc-world-chapter-index {
+	position: sticky;
+	top: var(--g-8);
+	padding: 0 0 var(--g-2);
+	min-width: 0;
+}
+
+.enc-world-chapter-index-list {
+	list-style: none;
+	margin: 0;
+	padding: 0 var(--g-2) var(--g-2);
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-1);
+}
+
+.enc-world-chapter-index-row {
+	display: flex;
+	align-items: baseline;
+	flex-wrap: wrap;
+	gap: var(--g-2);
+	padding: var(--g-2);
+	border-radius: 2px;
+	text-decoration: none;
+	color: var(--g-ink);
+}
+
+.enc-world-chapter-index-lamp {
+	flex: none;
+	align-self: center;
+}
+
+.enc-world-chapter-index-lamp::before {
+	width: 6px;
+	height: 6px;
+}
+
+.enc-world-chapter-index-row:hover,
+.enc-world-chapter-index-row:focus-visible {
+	color: var(--g-brass);
+	background: var(--g-seam);
+}
+
+.enc-world-chapter-index-num {
+	color: var(--g-ink-low);
+	font-size: var(--g-size-tiny);
+	flex: none;
+}
+
+.enc-world-chapter-index-era {
+	font-size: var(--g-size-micro);
+	flex: none;
+}
+
+.enc-world-chapter-index-snippet {
+	font-size: var(--g-size-small);
+	color: var(--g-ink-mid);
+}
+
+.enc-world-chapter {
+	scroll-margin-top: var(--g-9);
+}
+
+.enc-world-chapter-head {
+	display: flex;
+	align-items: baseline;
+	gap: var(--g-3);
+	margin-bottom: var(--g-2);
+}
+
+.enc-world-chapter-num {
+	color: var(--g-ink-low);
+}
+
+.enc-world-species-art {
+	padding: var(--g-2);
+}
+
+.enc-world-entries {
+	padding: var(--g-2) var(--g-4);
+}
+
+@media (max-width: 700px) {
+	.enc-world-chapter-index {
+		position: static;
+		top: auto;
+	}
+
+	.enc-world-chapter-index-summary {
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+	}
+
+	.enc-world-chapter-index-summary .g-h3 {
+		margin: 0;
+	}
+
+	.enc-world-chapter-index[open] .enc-world-chapter-index-summary {
+		margin-bottom: var(--g-2);
+	}
+}

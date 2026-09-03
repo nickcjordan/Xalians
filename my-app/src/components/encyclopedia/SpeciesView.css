@@ -1,0 +1,109 @@
+.enc-species-reviewed {
+	margin: 0;
+	font-size: var(--g-size-tiny);
+	color: var(--g-ink-low);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+}
+
+.enc-species .g-meter-value {
+	min-width: 6ch;
+	white-space: nowrap;
+	text-align: right;
+}
+
+/* Dossier pairs: two readout panels side by side at desktop, matching the
+   .enc-record proportions but with equal columns since both sides carry
+   the same kind of content (unlike the plate/prose record above). */
+.enc-species-dossier {
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	margin-top: var(--g-7);
+}
+
+.enc-species-dossier .enc-section { margin-top: 0; }
+
+.enc-species-archetypes-head { margin-top: var(--g-4); }
+
+@media (max-width: 900px) {
+	.enc-species-dossier { grid-template-columns: minmax(0, 1fr); }
+}
+
+.enc-species-plate {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-4);
+}
+
+.enc-species-portrait {
+	width: 100%;
+	height: 100%;
+}
+
+.enc-species-dim {
+	display: block;
+	color: var(--g-ink-low);
+	font-size: var(--g-size-micro);
+	margin-top: var(--g-1);
+}
+
+.enc-species-body {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-4);
+}
+
+.enc-species-niche {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-1);
+}
+
+.enc-species-entry {
+	padding: var(--g-4);
+}
+
+.enc-species-chip-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--g-2);
+	padding: var(--g-4);
+}
+
+.enc-species-chip-row .g-chip {
+	gap: var(--g-2);
+}
+
+.enc-species-dim-inline {
+	color: var(--g-ink-low);
+}
+
+.enc-species-archetypes {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+	margin: 0;
+	padding: var(--g-4) var(--g-4) var(--g-4) var(--g-6);
+}
+
+.enc-species-archetypes li {
+	display: flex;
+	align-items: baseline;
+	gap: var(--g-3);
+	flex-wrap: wrap;
+}
+
+.enc-species-archetype-name {
+	font-family: var(--g-font-stencil);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	font-size: var(--g-size-small);
+	color: var(--g-ink);
+}
+
+.enc-species-signature p {
+	margin: 0 0 var(--g-2);
+}
+
+.enc-species-signature p:last-child {
+	margin-bottom: 0;
+}

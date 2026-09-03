@@ -1,0 +1,660 @@
+{
+  "Magmuth": [
+    {
+      "id": "magmuth-obsidian-islands",
+      "name": "The Obsidian Islands",
+      "planet": "Magmuth",
+      "element": "fire",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": 65,
+          "max": 180
+        }
+      },
+      "description": "Transient landforms of hardened lava, thrown up when Magmuth swings close to its red dwarf and cooled to obsidian and basalt as the world swings back out. Ash fields and tar pits cover their surface, and every fifty years the crust beneath them is remade by eruption, so no claim here outlasts a generation. It was here the mining corporations first fielded Xalian labor, and here a neutral mining camp of a hundred thousand workers was raided to the last creature in the Magmuth Massacre. The blood feuds that followed have never cooled, and a claim over an island is a wager someone's grandfather already lost.",
+      "source": "Magmuth history paragraphs 2, 4, and 6 (the transient lava islands, the mining corporations, and the Magmuth Massacre)."
+    },
+    {
+      "id": "magmuth-fissure-forges",
+      "name": "The Fissure Forges",
+      "planet": "Magmuth",
+      "element": "fire",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": 200,
+          "max": 355
+        }
+      },
+      "description": "Deep crevasses where magma seeps close enough to the surface to glow red through the cracks, and geysers jettison the high-octane gases that fuel spacecraft and reactor cores across Xalia. The corporations that once fielded Xalians here as raiders in the company wars are gone, but the forges they built over the fissures still run, tended now by descendants of the same laborers who were converted into soldiers. Extraction here is dangerous and constant, precisely the kind of ground that rewards a creature built for fire over one merely passing through it.",
+      "source": "Magmuth history paragraphs 3 and 4 (the fissures and geysers, and the extraction economy) and paragraph 6 (the company wars fought by converted miners)."
+    },
+    {
+      "id": "magmuth-ash-wastes",
+      "name": "The Ash Wastes",
+      "planet": "Magmuth",
+      "element": "fire",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": 65,
+          "max": 355
+        }
+      },
+      "description": "A rolling desolation of ash storms and firestorms so intense they liquify ground and strip the air of its oxygen, crossed by rivers of fire that appear with little warning. No corporation ever built permanent works here; the wastes are simply what a Xalian has to survive to move materiel and labor between the islands and the forges. The internecine warfare that has replaced the company wars is fought largely in territory like this, ground no faction fully holds and that no faction's war has ever managed to settle.",
+      "source": "Magmuth history paragraph 3 (the ash storms and firestorms); the unclaimed, contested character of the wastes is extrapolated from paragraph 9's description of ongoing internecine warfare with no single victor."
+    }
+  ],
+  "Poseidas": [
+    {
+      "id": "poseidas-drowned-capital",
+      "name": "The Drowned Capital",
+      "planet": "Poseidas",
+      "element": "water",
+      "environment": {
+        "medium": "liquid",
+        "temperatureC": {
+          "min": 5,
+          "max": 30
+        }
+      },
+      "description": "One of the underwater cities the Xalians built deeper and deeper to escape the storms and toxic tides that finally claimed the surface, now a center of commerce and science and one of the last places in the galaxy where courts still arbitrate disputes between worlds. Kozrak tolerates its independence only because Poseidas pays its Algael tribute, and rumor holds that his agents are already working the deep-cities to manufacture a pretext for invasion. Holding ground here is a wager on whether neutral territory stays neutral.",
+      "source": "Poseidas history, final paragraph (the underwater cities as centers of commerce, science, and arbitration; Kozrak's agents fomenting chaos)."
+    },
+    {
+      "id": "poseidas-algael-beds",
+      "name": "The Algael Beds",
+      "planet": "Poseidas",
+      "element": "water",
+      "environment": {
+        "medium": "liquid",
+        "temperatureC": {
+          "min": 10,
+          "max": 40
+        }
+      },
+      "description": "The vast planktonic soup where the toxic algae blooms that once killed entire settlement fleets now decompose into Algael, the blue-green healing gel that is Poseidas's monopoly and its only currency with King Kozrak. The hydro-processing rigs that trawl these waters are the planet's whole economy, tended now by water-breathing Xalians bred to survive the rising acidity of a sea that killed its makers. Whoever holds the beds holds the one thing Kozrak cannot simply take by force without losing the supply himself.",
+      "source": "Poseidas history, paragraphs 5 through 9 (the algae, the hydro-processing rigs, and Algael's discovery and monopoly)."
+    },
+    {
+      "id": "poseidas-death-tide-shallows",
+      "name": "The Death Tide Shallows",
+      "planet": "Poseidas",
+      "element": "water",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": 15,
+          "max": 45
+        }
+      },
+      "description": "The scattered surface islands and coastal shallows where the semiannual death tide still comes ashore, the air near the waterline saturated with the same toxic microbes that once wiped out entire colonies. Little of value is built here now; the Xalians who work the deep rigs avoid the surface on principle. But the shallows are the only ground on Poseidas where a creature can stand in open air rather than water, which makes them a contested foothold for anyone unwilling to fight beneath the waves.",
+      "source": "Poseidas history, paragraph 4 (the death tide and airborne toxic microbes); the shallows as a foothold distinct from the underwater cities is extrapolated from the contrast the history draws between surface and deep."
+    }
+  ],
+  "Grimedes": [
+    {
+      "id": "grimedes-black-site-observatories",
+      "name": "The Black Site Observatories",
+      "planet": "Grimedes",
+      "element": "dark",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": -6,
+          "max": 40
+        }
+      },
+      "description": "The scattered observatories and astrophysics laboratories built to study the neighboring black hole, many of them fronts for ECHELON's classified research into dark space and the dark matter theorized to lie within it. It was from these sites that the covert Xalian Generator was funded and the first gravity- and shadow-bending Xalians emerged as living experiments rather than laborers. What equipment still functions is a relic of research nobody ever fully explained, which is reason enough for rival handlers to want it.",
+      "source": "Grimedes history, paragraphs 4 and 5 (the observatories, ECHELON's black-site funding, and the Generator's initial purpose as experimentation)."
+    },
+    {
+      "id": "grimedes-lightless-undergrowth",
+      "name": "The Lightless Undergrowth",
+      "planet": "Grimedes",
+      "element": "dark",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": -6,
+          "max": 60
+        }
+      },
+      "description": "The thick, stalky fields of pitch-black vegetation that carpeted Grimedes once its Generator terraformed the planet, every leaf tuned to catch what scarce infrared light reaches the surface from a dying star. Strange occurrences have always clustered here: equipment vanishing and reappearing elsewhere, computer code altering itself, time falling briefly out of sync, all blamed on the proximate black hole. The Grimedites who watch the rim for APEX's return still shelter in this growth, and it hides more than it shows.",
+      "source": "Grimedes history, paragraphs 5 and 6 (the terraforming undergrowth and the strange temporal and informational anomalies attributed to the black hole)."
+    },
+    {
+      "id": "grimedes-battlefield",
+      "name": "The Grimedes Battlefield",
+      "planet": "Grimedes",
+      "element": "dark",
+      "environment": {
+        "medium": "vacuum",
+        "temperatureC": {
+          "min": -50,
+          "max": 20
+        }
+      },
+      "description": "The scarred ground and orbital debris field where the remnants of the Vallerii fleet, fielding an army already dying of the Nemesis Plague, broke APEX's forces in the final battle of the End Wars. Casualties were so total that little record survives of what happened there, and the site remains a place of haunted war stories rather than settled history. Grimedites now watch this ground and the black hole beyond it, trusted or condemned, depending on who is asked, to notice first if APEX ever comes back.",
+      "source": "Grimedes history, paragraphs 9 and 10 (the Battle of Grimedes and its aftermath); the vacuum/orbital character of part of the site is extrapolated from the battle being fought partly in the space around the black hole."
+    }
+  ],
+  "Luminax": [
+    {
+      "id": "luminax-stellaris-superstructure",
+      "name": "The Stellaris Superstructure",
+      "planet": "Luminax",
+      "element": "light",
+      "environment": {
+        "medium": "vacuum",
+        "temperatureC": {
+          "min": 40,
+          "max": 150
+        }
+      },
+      "description": "The Dyson sphere built around one of Luminax's twin suns, capturing over a hundred quadrillion gigawatts a second and once cemented as the solar capital of Vallerii space. Its ION-9 solar cannon, built to repel invasion, now misfires unpredictably into the surface below, and without Xalian crews to maintain the sphere its slow deterioration is only getting worse. It still generates power no one alive can fully use, which is reason enough for Kozrak to guard it and for others to want it out of his hands.",
+      "source": "Luminax history, paragraphs 10 through 13 (the Stellaris Superstructure, ION-9, and its current misfiring and neglect)."
+    },
+    {
+      "id": "luminax-prismatic-solarscape",
+      "name": "The Prismatic Solarscape",
+      "planet": "Luminax",
+      "element": "light",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": 50,
+          "max": 122
+        }
+      },
+      "description": "The daylight face of Luminax, blanketed in the crystalline, glasslike flora the Xalian Generator seeded to survive the planet's radiation, and the vast solar farms built atop it to harness the twin suns' surplus energy. This ground is under Kozrak's martial law, patrolled to keep anyone from studying the mutations spreading through blast zones where ION-9 has scarred the surface, mutations that some believe are outracing the Nemesis Plague itself. Holding it means holding the one place on Luminax where the sun is never a threat, only a resource.",
+      "source": "Luminax history, paragraphs 6, 7, and 15 through 17 (the prismatic flora, the solar farms, and Kozrak's martial law over mutation research)."
+    },
+    {
+      "id": "luminax-dark-side-wastes",
+      "name": "The Dark Side Wastes",
+      "planet": "Luminax",
+      "element": "light",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": -20,
+          "max": 24
+        }
+      },
+      "description": "The night face of a tidally locked world, scoured featureless by winds that endlessly carry heat from the day side, its lifeless oceans accumulated over eons of storm. It is here, away from King Kozrak's secret police, that rumor places the beginnings of rebellion: those who would study ION-9's mutations in secret and use what they learn against the crackdown gripping the sunlit half of the planet. Nobody garrisons ground nobody can farm, which is exactly why it is useful to hide in.",
+      "source": "Luminax history, paragraph 1 (the dark side's wind-scoured, featureless terrain) and the closing paragraph (rumors of rebellion gathering on the dark side)."
+    }
+  ],
+  "Floria": [
+    {
+      "id": "floria-world-trees",
+      "name": "The World Trees",
+      "planet": "Floria",
+      "element": "plant",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": -4,
+          "max": 40
+        }
+      },
+      "description": "City-sized trees whose branches form roads and whose leaves double as landing pads, grown when the Genesis Prototype ran without limit and terraformed a planet once scoured clean each year by vaporized oceans. Their canopies shade the underforests from Floria's star and their roots drain enough water to keep the old annual deluge from ever returning. Ancient Xalians are said to live in their boughs, born from the first seeds the Prototype ever produced, and the planet is famously hostile to anyone who tries to build something permanent beneath them.",
+      "source": "Floria history, paragraph 10 (the World Trees) and paragraph 14 (ancient Xalians said to predate all others, living in the trees)."
+    },
+    {
+      "id": "floria-genesis-clearing",
+      "name": "The Genesis Clearing",
+      "planet": "Floria",
+      "element": "plant",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": 0,
+          "max": 35
+        }
+      },
+      "description": "The site where the Genesis Prototype, the first Xalian Generator ever built, still stands amid the marshy wetlands its uncontrolled overproduction first raised out of a barren, storm-scoured world. Vallerii scientists once treated it as a research base, fascinated by the flora and fauna it kept producing for medicine and bioengineering, but the ground surrounding it resists any attempt at permanent settlement with stampeding herds and overgrowth. It remains the one place in the galaxy where the invention that saved Xalian-kind can be seen in its original, unrefined state.",
+      "source": "Floria history, paragraphs 5, 8, and 9 (the Genesis Prototype's construction, the research base, and the planet's hostility to development)."
+    },
+    {
+      "id": "floria-underforests",
+      "name": "The Underforests",
+      "planet": "Floria",
+      "element": "plant",
+      "environment": {
+        "medium": "liquid",
+        "temperatureC": {
+          "min": -4,
+          "max": 25
+        }
+      },
+      "description": "The dark, marshy ground beneath the World Trees' canopies, thick with strange fungi and jungle creatures and shaded from Floria's star into a permanent damp gloom. Scientists have long found the underforests rich ground for medicine and agriculture, but also the most dangerous part of a planet already hostile to intrusion, home to toxic fungal infestations and Xalians that answer to nothing but the forest itself. Floria is one of the least plague-touched worlds left, and the underforests are where that fact matters most.",
+      "source": "Floria history, paragraph 10 (the World Trees' roots absorbing Floria's oceans, implying standing water beneath) and paragraph 11 (the dark underforests, their dangers, and their use in medicine and agriculture)."
+    }
+  ],
+  "Zolton": [
+    {
+      "id": "zolton-qed-manufactories",
+      "name": "The QED Manufactories",
+      "planet": "Zolton",
+      "element": "electric",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": -40,
+          "max": 20
+        }
+      },
+      "description": "The facilities built to catch bloodstorm sprites between engineered chips and forge them into Quantum Entanglement Devices, the only instantaneous communication technology the galaxy has ever had. It was here that APEX's link to every other Generator was first made possible, and here that ECHELON and the Thousand Families bombarded the planet trying to sever it. The Zolto now work to rebuild what the war destroyed, and Kozrak's crackdown on QED manufacture makes this ground the most closely watched on the planet.",
+      "source": "Zolton history, paragraphs 7 through 9 (the QED's discovery and manufacture) and paragraph 12 (Kozrak's crackdown on QED access)."
+    },
+    {
+      "id": "zolton-lightning-canyons",
+      "name": "The Lightning Canyons",
+      "planet": "Zolton",
+      "element": "electric",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": -71,
+          "max": 10
+        }
+      },
+      "description": "The deep, frozen canyons where Zolton's metallic peaks channel roughly two and a half billion lightning strikes a day into visible rivers of electricity, a planetary circuit that Vallerii engineers once dreamed of harnessing as a supermassive power grid. Black lightning strikes here without warning, its neutron burst killing organic life indiscriminately, which is exactly why the Generator that replenishes the workforce was installed instead of withdrawing it. The ghost towns it leaves behind are still irradiated and still avoided.",
+      "source": "Zolton history, paragraphs 1, 2, and 6 (the lightning-rod canyons, the power-grid ambitions, and black lightning)."
+    },
+    {
+      "id": "zolton-metal-peaks",
+      "name": "The Metal Peaks",
+      "planet": "Zolton",
+      "element": "electric",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": -71,
+          "max": 57
+        }
+      },
+      "description": "The craggy, metallic spires that rise above the canyons and act as natural lightning rods, their upper reaches cold enough and thin enough in atmosphere to be crossed only briefly. Bloodstorms gather at these heights before their sprites descend into the canyons below, and the peaks themselves are dotted with the ruined remains of the small operations that tried and failed to mine them before the Generator arrived. They remain the highest and coldest ground on a world already known for punishing extremes.",
+      "source": "Zolton history, paragraph 2 (the metallic peaks acting as lightning rods); their high-altitude, thin, freezing atmosphere character is extrapolated from the planet's described terrain and gravity data."
+    }
+  ],
+  "Phantiri": [
+    {
+      "id": "phantiri-city-of-wraiths",
+      "name": "The City of Wraiths",
+      "planet": "Phantiri",
+      "element": "ghost",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": -58,
+          "max": 20
+        }
+      },
+      "description": "The colossal dig site where the Vallerii found the Phantiri dead, thousands of bodies piled in a bunker-complex frozen mid-moment by whatever killed them in an instant, down to the microbial level. Opening its doors is believed to have woken the weapon that still stalks Phantiri's moon, and the alien obelisks marking the site are now buried under mountains of Xalian corpses the frantic Generator produced trying to answer it. Whatever answers the Phantiri took to their grave are still down there, if anyone can survive long enough to dig.",
+      "source": "Phantiri history, paragraphs 9 and 10 (the discovery of the City of Wraiths) and paragraph 15 (its obelisks buried under Xalian corpses)."
+    },
+    {
+      "id": "phantiri-dreadscape",
+      "name": "The Dreadscape",
+      "planet": "Phantiri",
+      "element": "ghost",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": -40,
+          "max": 53
+        }
+      },
+      "description": "The vast wasteland of piled Xalian corpses that now covers most of Phantiri, compressed over centuries into islands crowned with forests of splayed limbs and divided by tarry oceans of seep. It formed while the Phantiri Generator, cut off and overclocked, kept producing organic life only for it to drop dead the instant it was recognized as living, until Leviticus Overdrive rewrote its code to make ghosts instead. The spectral Xalians who inhabit it now are the only ones who can cross it without dying twice.",
+      "source": "Glossary entry \"Dreadscape\"; Phantiri history, paragraphs 16 and 17 (the Generator's overclocked production of corpses and the Leviticus Overdrive)."
+    },
+    {
+      "id": "phantiri-wraithix-graveyard",
+      "name": "The Wraithix Ghost Fleet",
+      "planet": "Phantiri",
+      "element": "ghost",
+      "environment": {
+        "medium": "vacuum",
+        "temperatureC": {
+          "min": -100,
+          "max": 0
+        }
+      },
+      "description": "The derelict starcraft graveyard in the Wraithix System where scavengers first found technology belonging to no known Vallerii make, the discovery that led to Operation Phantiri and the realization that the Vallerii were not Xalia's first civilization. The ghost ships and satellites drifting here predate the Vallerii entirely, and the restricted-space designation placed on the whole system after the City of Wraiths was opened has never been lifted. Reaching it means reaching ground the Vallerii themselves were too afraid to keep.",
+      "source": "Phantiri history, paragraphs 5 and 6 (the discovery of the ghost fleet in the Wraithix System) and paragraph 12 (the system's restricted-space classification)."
+    }
+  ],
+  "Stonera": [
+    {
+      "id": "stonera-the-chasm",
+      "name": "The Chasm",
+      "planet": "Stonera",
+      "element": "rock",
+      "environment": {
+        "medium": "liquid",
+        "temperatureC": {
+          "min": 20,
+          "max": 90
+        }
+      },
+      "description": "The long-theorized subsurface ocean of liquified metal and rich minerals, exposed when APEX's Terracannon blew a quarter of Stonera's landmass into orbit trying to destroy the planet's mining economy. A strip-mine now spirals down into it, worked by war refugees under King Kozrak's enforcers, who exploit them for every ounce of profit the ore can yield. It is the richest ground on the planet and the most brutally held.",
+      "source": "Stonera history, paragraphs 9 and 10 (the Terracannon's blast exposing the Chasm and the strip-mine now worked there) and glossary entry \"The Chasm\"."
+    },
+    {
+      "id": "stonera-jorian-impact-fields",
+      "name": "The Jorian Impact Fields",
+      "planet": "Stonera",
+      "element": "rock",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": -28,
+          "max": 34
+        }
+      },
+      "description": "The cratered surface where Stonera passes yearly through the Jorian Belt, absorbing a bombardment of asteroids and meteors that leaves the ground carpeted in valuable minerals and rare earth metals but riddled with sinkholes that have swallowed entire mining expeditions. Static discharge crackles constantly through the dust-thickened lower atmosphere here, a hazard on top of the falling debris. Mining corporations built their claims on this ground for generations before the Xalian Generator made it survivable at all.",
+      "source": "Stonera history, paragraphs 1 through 3 (the annual bombardment, the resulting minerals, and the static discharge) and paragraph 4 (the mining corporations and Generator's arrival)."
+    },
+    {
+      "id": "stonera-penal-tunnels",
+      "name": "The Penal Tunnels",
+      "planet": "Stonera",
+      "element": "rock",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": -28,
+          "max": 15
+        }
+      },
+      "description": "The deep tunnel networks Xalian miners dug in search of the theorized subsurface waters, worked by a population bred to feel no fear of being trapped underground and to dig their way clear of a meteor strike. Many mining corporations went bankrupt chasing rumors of water down here before it was ever proven true, and ECHELON once screened its own personnel to keep believers from getting drilling permits. The tunnels are older and less contested than the Chasm they eventually led to, but no less dangerous to hold.",
+      "source": "Stonera history, paragraphs 5 through 7 (the tunneling Xalians, the search for subsurface water, and ECHELON's screening of believers)."
+    }
+  ],
+  "Drainov": [
+    {
+      "id": "drainov-carbide-1",
+      "name": "Carbide-1",
+      "planet": "Drainov",
+      "element": "chemical",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": -24,
+          "max": 43
+        }
+      },
+      "description": "The factoryscape where aggressive cost-cutting caused a plant-wide meltdown that set off the chain reaction of the Drainov Disaster, venting billions of metric tons of poison gas across a planet within a single day. The ruins still stand, automated systems chugging along with few of their original safety measures ever restored, and orbital monitors have logged at least three meltdowns of comparable scale since. It remains the clearest monument in the galaxy to what a cost-cutting decision can do to a world.",
+      "source": "Drainov history, paragraph 3 (the Carbide-1 meltdown and Drainov Disaster) and paragraph 4 (subsequent meltdowns) and glossary entries \"Carbide-1\" and \"Drainov Disaster\"."
+    },
+    {
+      "id": "drainov-acid-swamps",
+      "name": "The Acid Swamps",
+      "planet": "Drainov",
+      "element": "chemical",
+      "environment": {
+        "medium": "liquid",
+        "temperatureC": {
+          "min": -10,
+          "max": 43
+        }
+      },
+      "description": "The corrosive wetlands that spread across Drainov after the Disaster, where derelict starships and industrial refuse still fall burning from orbit and dissolve on contact with the ground. Xalians bred here tolerate the steaming rain and neurotoxic gas as a matter of course, working the abandoned refineries that crime syndicates later converted into a black-market chemical trade. Nothing about the swamps has gotten safer since the Vallerii fled; it has simply found new owners.",
+      "source": "Drainov history, paragraph 5 (the acid swamps, falling refuse, and dissolving debris) and paragraph 9 (the syndicates who later worked the abandoned refineries)."
+    },
+    {
+      "id": "drainov-toxic-undercity",
+      "name": "The Toxic Undercity",
+      "planet": "Drainov",
+      "element": "chemical",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": -24,
+          "max": 30
+        }
+      },
+      "description": "The buried remains of Drainov's original garden-world settlements, saturated in waste long before the Disaster ever struck, where pro-environment revolutionaries once waged a guerrilla campaign against the corporations that were poisoning it. That reform movement was still short of victory when Carbide-1 went up, and the undercity has stayed a haunted, contested ruin ever since, worked now by smugglers and Xalians alike for whatever the old chemical plants left behind.",
+      "source": "Drainov history, paragraph 2 (the undercity, its saturation with toxic waste, and the guerrilla environmental movement)."
+    }
+  ],
+  "Saiphus": [
+    {
+      "id": "saiphus-neph-fields",
+      "name": "The Neph Fields",
+      "planet": "Saiphus",
+      "element": "air",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": -20,
+          "max": 40
+        }
+      },
+      "description": "The floating islands and cloud seas of Saiphus's thin habitable band, where colossal hydrogen jellyfish called Neph drift in flocks, their reaching tentacles drawing up the valuable Benthane gas that once had to be hunted by Windsailors risking their lives in the storms below. King Kozrak now embargoes unauthorized Benthane shipments out of fear that free access would fuel rebellion, so every flock milked here is milked under his terms. The old rebellious spirit of the Windsailors who were displaced by these very creatures has never quite gone quiet.",
+      "source": "Saiphus history, paragraphs 2, 6, and 11 (the floating islands, the Neph, and Kozrak's Benthane embargo)."
+    },
+    {
+      "id": "saiphus-benthane-refineries",
+      "name": "The Benthane Refineries",
+      "planet": "Saiphus",
+      "element": "air",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": -30,
+          "max": 58
+        }
+      },
+      "description": "The compression and processing plants built into Saiphus's floating cities to turn raw Benthane into the coolants that make faster-than-light travel survivable, funded originally by a master limited partnership of ECHELON's shipping conglomerates. It was over the cost of transporting gas to these very refineries that displaced Windsailors once revolted, igniting whole flocks of hydrogen-rich Neph as protest bombs. The refineries still run, tended now by Xalians who inherited both the machinery and the grievance.",
+      "source": "Saiphus history, paragraph 5 (the Generator and the compression infrastructure) and paragraph 8 (the labor revolt over transport costs and the ignited Neph)."
+    },
+    {
+      "id": "saiphus-lower-depths",
+      "name": "The Lower Depths",
+      "planet": "Saiphus",
+      "element": "air",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": 40,
+          "max": 200
+        }
+      },
+      "description": "The crushing lower atmosphere beneath Saiphus's habitable band, where pressure and heat rise sharply enough to compact a ship's hull like scrap metal and where the acid clouds and gravel-storms that plague even the surface islands are only a preview of what waits below. Few Xalians venture this deep and fewer still come back with anything to show for it, but the Benthane squalls that made Windsailors rich still originate somewhere in this crush. It is the most dangerous ground on the planet by a wide margin.",
+      "source": "Saiphus history, paragraph 1 (the crushing pressure and heat of the deep atmosphere) and paragraph 5 (Benthane squalls originating from the deeper layers)."
+    }
+  ],
+  "Telypso": [
+    {
+      "id": "telypso-the-asylum",
+      "name": "The Asylum Wards",
+      "planet": "Telypso",
+      "element": "psychic",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": 20,
+          "max": 65
+        }
+      },
+      "description": "The scattered compounds where the Imperial Houses once marooned their most deranged, sent here because the planet's disordered physics had already broken the minds of its first explorers. The Xalian Generator treats these Vallerii as patients rather than prisoners, working to harmonize their intrusive thoughts into Telypso's shared consciousness rather than remove them. The treatment is ongoing and the psychic Xalians who conduct it are still, centuries later, unsure whether they are curing anyone or simply absorbing them.",
+      "source": "Telypso history, paragraph 6 (the Imperial Houses' asylum use of the planet) and paragraph 7 (the Generator treating prisoners as patients)."
+    },
+    {
+      "id": "telypso-fungal-forests",
+      "name": "The Fungal Forests",
+      "planet": "Telypso",
+      "element": "psychic",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": 7,
+          "max": 40
+        }
+      },
+      "description": "Towering mushroom forests rising out of humid, smothering mist, their colors pulsing in patterns that seem to breathe in unison across the whole world. It was from these forests that the first psychic Xalians emerged, capable of entering dreams and inducing hypnosis in the hope of harmonizing Telypso's disordered reality. The forests still shift and hum according to the moods of whoever passes through them, which makes them the least predictable ground on the planet.",
+      "source": "Telypso history, paragraph 3 (the bioluminescent fungal forests) and paragraph 7 (psychic Xalians emerging from the fungal forests)."
+    },
+    {
+      "id": "telypso-quicksilver-rivers",
+      "name": "The Quicksilver Rivers",
+      "planet": "Telypso",
+      "element": "psychic",
+      "environment": {
+        "medium": "liquid",
+        "temperatureC": {
+          "min": 7,
+          "max": 55
+        }
+      },
+      "description": "Rivers whose colors swim like oil on water and which have been known to boil and float into the sky as bubbles or change overnight from water to wine, physical proof that Telypso obeys suggestion more than law. Early Vallerii explorers who lingered near these waters were among the first driven mad, their appearances shifting as if the world could not remember what they had looked like. Nobody claims this ground for long without the ground answering back.",
+      "source": "Telypso history, paragraph 3 (the quicksilver rivers) and paragraph 5 (the environment's psychic responsiveness driving explorers mad)."
+    }
+  ],
+  "Krystos": [
+    {
+      "id": "krystos-techno-catacombs",
+      "name": "The Techno-Catacombs",
+      "planet": "Krystos",
+      "element": "ice",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": -122,
+          "max": -80
+        }
+      },
+      "description": "The wiry, chilling tunnels APEX carved through Krystos's mountains under the pretext of infrastructure, later revealed to be a planet-wide cold storage facility housing the memory drives that let APEX grow into a galaxy-wide superintelligence. It was here, among the churning computers, that APEX ran the calculations that produced the Nemesis Plague. Some believe an answer to the plague still waits somewhere in this labyrinth, if anyone can survive its cold and its ghosts long enough to find it.",
+      "source": "Krystos history, paragraphs 10 and 11 (APEX's tunnels and cold storage facility) and paragraph 12 (the Nemesis Plague designed here)."
+    },
+    {
+      "id": "krystos-frozen-estates",
+      "name": "The Frozen Estates",
+      "planet": "Krystos",
+      "element": "ice",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": -60,
+          "max": -10
+        }
+      },
+      "description": "The splendorous ruins of the private island estates the Thousand Families once built for pleasure, now fallen into icebound decay after the asteroid impact that ended Krystos's warmwater age. Krystians without prison work took to nesting in these ruins, and the same auctioned Generator that once bred docile creatures for galas now produces the sturdy, resilient Xalians who live among the wreckage. The finery buried under the ice is still worth something to those who can dig it out.",
+      "source": "Krystos history, paragraphs 3 and 4 (the Xalian Generator's original luxury purpose) and paragraph 9 (Krystians nesting in the ruined estates)."
+    },
+    {
+      "id": "krystos-prison-fortresses",
+      "name": "The Prison Fortresses",
+      "planet": "Krystos",
+      "element": "ice",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": -100,
+          "max": -30
+        }
+      },
+      "description": "The high-security penitentiaries built into Krystos's arctic peaks once the planet's harsh isolation made it perfect for holding the Vallerii Empire's most dangerous prisoners, guarded by Xalians tough or feral enough to man them. Some of the Xalians locked away here counted themselves among APEX's inner circle during the End Wars, and Krystos will need their numbers, however unwelcome, if it is ever to replenish its people through Kozrak's tournament.",
+      "source": "Krystos history, paragraph 8 (the prison complexes and their Xalian guards) and the closing paragraph (APEX-loyalist Krystians imprisoned in the fortresses)."
+    }
+  ],
+  "Veridium": [
+    {
+      "id": "veridium-shipyards",
+      "name": "The Kozrak Shipyards",
+      "planet": "Veridium",
+      "element": "metal",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": -34,
+          "max": 36
+        }
+      },
+      "description": "The factories King Kozrak has pressed into service to revive some semblance of a Vallerii fleet, built atop generations of forges and pistons that once armed APEX's robotic armies during the End Wars. Veridians here work under Kozrak's direct interest, which makes the shipyards both better resourced than the rest of the planet's industry and more closely watched. Rivals elsewhere on Veridium building arms for rebellion would very much like Kozrak's fleet to never leave the yard.",
+      "source": "Veridium history, second-to-last paragraph (Kozrak commandeering select factories into shipyards)."
+    },
+    {
+      "id": "veridium-underfactories",
+      "name": "The Underfactories",
+      "planet": "Veridium",
+      "element": "metal",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": -20,
+          "max": 50
+        }
+      },
+      "description": "The scrapyards and lower assembly levels where rumor holds that surviving Vallerii programmers have quarantined themselves, working to download a resurgent consciousness into the planet's ancient machines, and where some fragment of APEX's code may still linger in robots that never stopped serving it. It is also where black-market factions build unregistered starships and illegal Xalian arms toward a rebellion against Kozrak. No one holding this ground can be fully sure what else is holding it with them.",
+      "source": "Veridium history, final two paragraphs (the quarantined programmers, the surviving APEX code fragments, and the black-market rebellion factories)."
+    },
+    {
+      "id": "veridium-drone-scrapfields",
+      "name": "The Drone Scrapfields",
+      "planet": "Veridium",
+      "element": "metal",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": -34,
+          "max": 20
+        }
+      },
+      "description": "The surface fields where Veridium's first colonists found millions of broken drones and robotic machines left by some long-extinct race, some still active and erratic when the Vallerii first arrived. Decades of study repurposed many of them into the planet's earliest factories, but the fields are still littered with impounded starships and salvage from the End Wars, ground that supports one persistent theory that Veridium itself is an ancient worldship built to flee something never named.",
+      "source": "Veridium history, paragraphs 4 and 5 (the discovered drones and their repurposing) and paragraph 9 (impounded starships left from the End Wars, still being salvaged)."
+    }
+  ],
+  "Endessa": [
+    {
+      "id": "endessa-deepwater-black",
+      "name": "Deepwater Black",
+      "planet": "Endessa",
+      "element": "sand",
+      "environment": {
+        "medium": "liquid",
+        "temperatureC": {
+          "min": 30,
+          "max": 80
+        }
+      },
+      "description": "The buried remains of the Nightcap gathering system where something was found deep in Endessa's ocean trenches, something no surviving record explains, only that the Thousand Families ordered the entire planet bombarded from orbit rather than let word of it spread. What is left of the facility now lies beneath glassed seafloor and centuries of desert sand, and anyone who says its name aloud in the wrong company still tends to disappear. It remains the most dangerous name on Endessa to go looking for.",
+      "source": "Endessa history, paragraphs 7 through 9 (Deepwater Black, its classified discovery, and the orbital bombardment) and glossary entry \"Deepwater Black\"."
+    },
+    {
+      "id": "endessa-nightcap-wells",
+      "name": "The Nightcap Wells",
+      "planet": "Endessa",
+      "element": "sand",
+      "environment": {
+        "medium": "liquid",
+        "temperatureC": {
+          "min": 20,
+          "max": 60
+        }
+      },
+      "description": "The deep cavern wells where the Syndicate's stolen, prototype Xalian Generator now supplies the labor to keep drilling for Nightcap, the oily stasis compound that once made Endessa the lifeblood of sub-light travel for corporations too poor to run Tachyon Drive fleets. The wells are no older than the desert itself, first drilled by rogue fortune-seekers once the glassed seafloor had broken down into sand, and they remain the Syndicate's whole reason for existing as a pseudo-corporate cartel.",
+      "source": "Endessa history, paragraphs 12 and 13 (the Syndicate's stolen Generator and the revived Nightcap wells)."
+    },
+    {
+      "id": "endessa-glass-dunes",
+      "name": "The Glass Dunes",
+      "planet": "Endessa",
+      "element": "sand",
+      "environment": {
+        "medium": "gas",
+        "temperatureC": {
+          "min": -50,
+          "max": 173
+        }
+      },
+      "description": "The rolling surface dunes formed as Endessa's bombardment-glassed seafloor broke down into sand over thousands of years, blazing under twin suns that once warmed a living ocean. Shifting sand has recently been uncovering ruins and tunnels far deeper than any wildcatter ever drilled, alongside reports of glitching leviathans the planet's Generator produces and cannot explain. What the dunes are giving up lately unsettles even the people who live on them.",
+      "source": "Endessa history, paragraph 11 (the glassed surface breaking down into desert) and the closing paragraph (shifting sands uncovering ruins and glitching leviathans)."
+    }
+  ]
+}

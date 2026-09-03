@@ -16,12 +16,14 @@ The Xalians canon was written by one human hand with an unusually consistent voi
 2. **Read the actual source for whatever you're extending.** Do not write a Magmuth creature without reading Magmuth's history. The fastest complete read is `docs/CANON_COMPENDIUM.md` — the whole canon in one generated document, where each planet's chapter already gathers its history, its species' descriptions, its Generator environmental report, and related glossary terms (species entries often carry planet lore found nowhere else). Regenerate it after lore edits: `node scripts/buildCanonCompendium.js`. The raw JSON remains the source of truth:
    - Planet histories: `lambda/src/json/planets.json` — each planet is `{name, image, planetImage, data, history}` where `history` is an array of paragraph strings.
    - Species: `lambda/src/json/species.json`
-   - Glossary: `lambda/src/json/glossary.json` — `{word, definition}`
+   - Encyclopedia entries: `docs/encyclopedia/encyclopedia.json` — `{key, title, category, definition, related, element?}`; the editorial rules are in `docs/encyclopedia/ENCYCLOPEDIA-INTERNAL.md`. (`lambda/src/json/glossary.json` is a legacy mirror; do not add to it.)
+   - The Chronicle: `docs/encyclopedia/chronicle.json` and `docs/design/xalian-chronicle.md` — the undated era timeline; place any new event or paragraph in an era and never invent a date.
+   - The First Survey: `docs/encyclopedia/tour.json` — eight beats of derived prose (historian register, 120 to 200 words) that restate the histories; every claim must trace to a `sources` paragraph. It is not a canon source; when the histories change, the beats follow.
    - Elements and their move vocabularies: `lambda/src/json/elements.json`
    - Public-facing summary voice: `my-app/src/pages/home.js` (~lines 250–310)
    Read them with `node -e` rather than dumping raw JSON, e.g.
    `node -e "const p=require('./lambda/src/json/planets.json'); const m=p.find(x=>x.name==='Magmuth'); m.history.forEach(h=>console.log(h+'\n'))"`
-3. **Never edit `my-app/src/json/`** — it is a build-time copy. Edit `lambda/src/json/` and run `npm run copy-json` from `my-app/`.
+3. **Never edit `my-app/src/json/`** — it is a build-time copy. Edit the sources (`lambda/src/json/` for histories and species, `docs/encyclopedia/` for entries and the chronicle), then run `node scripts/bundleLore.js` from the repo root and `npm run copy-json` from `my-app/`.
 
 ## The voice in one paragraph
 

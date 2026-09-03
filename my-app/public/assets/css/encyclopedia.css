@@ -1,0 +1,378 @@
+/* =========================================================================
+   ENCYCLOPEDIA XALIA — page-level compositions for /encyclopedia.
+   Built only from system.css parts and --g-* tokens. No raw colour here.
+   Shared rules first (shell, search, prose, hover card, layout helpers);
+   each section owns a block below, prefixed .enc-<section>-.
+   Contract: docs/design/xalian-encyclopedia-page.md
+   ========================================================================= */
+
+/* ---- shell ------------------------------------------------------------- */
+
+.enc-masthead {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: var(--g-6);
+	flex-wrap: wrap;
+	margin-bottom: var(--g-5);
+}
+
+.enc-masthead-text { min-width: 0; }
+
+.enc-title { margin: var(--g-1) 0 0; }
+
+.enc-version {
+	margin: var(--g-2) 0 0;
+	font-size: var(--g-size-tiny);
+	color: var(--g-ink-low);
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+}
+
+.enc-sections {
+	margin-bottom: var(--g-7);
+	flex-wrap: wrap;
+}
+
+.enc-sections .g-segment {
+	text-decoration: none;
+}
+
+.enc-body { min-height: 40vh; }
+
+/* clip, not hidden: hidden makes the console a scroll container and every
+   position: sticky rail inside it (era rail, chapter rail, entry plate)
+   silently stops sticking. clip only paints nothing past the edge. */
+.enc-console { overflow-x: clip; }
+
+/* A small key, shorter than the default .g-btn, used where legend space
+   is tight (masthead tools, trail clear). */
+.enc-btn-small {
+	padding: var(--g-2) var(--g-4);
+	font-size: var(--g-size-small);
+}
+
+/* A key with no bakelite face, just a hairline: for a secondary action
+   that should not compete with the primary one beside it. */
+.g-btn--ghost {
+	--btn-face: transparent;
+	--btn-ink: var(--g-ink-mid);
+	--btn-edge: var(--g-seam);
+	box-shadow: none;
+}
+
+.g-btn--ghost:hover:not(:disabled) {
+	--btn-face: transparent;
+	--btn-ink: var(--g-ink);
+}
+
+.g-btn--ghost:active:not(:disabled) {
+	transform: none;
+	box-shadow: none;
+}
+
+.enc-masthead-tools {
+	display: flex;
+	align-items: center;
+	gap: var(--g-3);
+	flex-wrap: wrap;
+}
+
+@media (max-width: 700px) {
+	.enc-masthead-tools { flex: 1 1 100%; width: 100%; }
+	.enc-pull-record { flex: 1 1 auto; }
+}
+
+/* Bootstrap paints bare anchors blue; inside the archive a link is either a
+   printed term (.g-link, element-coloured) or a whole tile/record (inherits). */
+.enc-console a:not(.g-link):not(.g-btn):not(.g-segment):not(.nav-link) { color: inherit; }
+.enc-console a.g-tile, .enc-console .g-tile a, .enc-console a.g-record-term { text-decoration: none; }
+.enc-console a.g-tile:hover .g-tile-name, .enc-console a.g-record-term:hover { color: var(--g-ink); }
+
+@media (max-width: 700px) {
+	/* Tiny type stays legible at arm's length on a phone. Same token,
+	   larger phone-only value; system.css keeps the desktop rem value. */
+	.enc-console { --g-size-tiny: 0.8125rem; --g-size-micro: 0.75rem; }
+
+	/* Masthead: kicker and version line are the two lines the fold cannot
+	   afford. Title drops to h2. Search and Pull share one row so the
+	   whole masthead clears under 140px before the section bank starts. */
+	.enc-masthead { gap: var(--g-2); margin-bottom: var(--g-3); align-items: center; }
+	.enc-masthead-text { flex: 1 1 100%; overflow-wrap: anywhere; }
+	.enc-masthead .g-kicker { display: none; }
+	.enc-title { margin-top: 0; font-size: var(--g-size-h2); }
+	.enc-version { display: none; }
+	.enc-masthead-tools { flex: 1 1 100%; width: 100%; flex-wrap: nowrap; gap: var(--g-2); }
+	.enc-search { flex: 1 1 auto; min-width: 0; }
+	.enc-pull-record { flex: 0 0 auto; }
+	.enc-btn-label-full { display: none; }
+	.enc-btn-label-short { display: inline; }
+
+	/* Section bank: one scrollable row instead of the three-row block, so
+	   it and the start of page content both land in the first viewport. */
+	.enc-sections {
+		display: flex;
+		flex-wrap: nowrap;
+		width: 100%;
+		margin-bottom: var(--g-4);
+	}
+	.enc-sections .g-segment {
+		flex: 0 0 auto;
+		text-align: center;
+		padding-left: var(--g-3);
+		padding-right: var(--g-3);
+	}
+
+	/* Tap targets: every console chip/back-link/segment key clears the
+	   32px touch minimum without changing desktop sizing. */
+	.enc-console a.g-chip,
+	.enc-console button.g-chip {
+		min-height: 32px;
+		display: inline-flex;
+		align-items: center;
+	}
+	.enc-console .enc-back {
+		padding: var(--g-2) 0;
+		min-height: 32px;
+		display: inline-flex;
+		align-items: center;
+	}
+	.enc-console .g-segment {
+		min-height: 40px;
+		display: inline-flex;
+		align-items: center;
+	}
+}
+
+@media not all and (max-width: 700px) {
+	.enc-btn-label-short { display: none; }
+}
+
+/* ---- masthead search hint ---------------------------------------------- */
+
+.enc-search-hint {
+	position: absolute;
+	top: calc(50% - 10px);
+	right: var(--g-3);
+	pointer-events: none;
+	padding: 0 6px;
+	font-size: var(--g-size-tiny);
+}
+
+.enc-search-input { padding-right: var(--g-6); }
+
+/* ---- search ------------------------------------------------------------ */
+
+.enc-search {
+	position: relative;
+	flex: 0 1 420px;
+	min-width: 240px;
+	margin: 0;
+}
+
+.enc-search-input { width: 100%; }
+
+.enc-search-screen {
+	position: absolute;
+	top: calc(100% + var(--g-2));
+	right: 0;
+	left: 0;
+	z-index: var(--g-layer-nav);
+	max-height: 60vh;
+	overflow-y: auto;
+	padding: var(--g-3) var(--g-4);
+}
+
+.enc-search-group + .enc-search-group { margin-top: var(--g-3); }
+
+.enc-search-hit {
+	display: block;
+	text-decoration: none;
+	color: inherit;
+	padding: var(--g-1) 0;
+}
+
+.enc-search-hit:hover,
+.enc-search-hit:focus-visible,
+.enc-search-hit--active {
+	background: var(--g-phosphor-a20);
+	outline: none;
+}
+
+.enc-search-hit-title { font-weight: 600; }
+
+.enc-search-hit-snippet {
+	opacity: 0.75;
+	font-size: var(--g-size-tiny);
+}
+
+/* ---- prose and terms --------------------------------------------------- */
+
+.enc-prose { max-width: var(--g-measure); }
+
+.enc-term { font-weight: 500; }
+
+.enc-hover { position: relative; }
+
+.enc-hover-card {
+	position: absolute;
+	left: 0;
+	top: calc(100% + var(--g-2));
+	z-index: var(--g-layer-nav);
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-1);
+	width: 320px;
+	max-width: 80vw;
+	padding: var(--g-3) var(--g-4);
+	font-size: var(--g-size-small);
+	line-height: 1.45;
+	text-align: left;
+	pointer-events: none;
+}
+
+.enc-hover-cat { margin: 0; }
+
+.enc-hover-title {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-h3);
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+	color: var(--g-ink);
+}
+
+.enc-hover-def { color: var(--g-ink-mid); }
+
+/* ---- shared layout helpers -------------------------------------------- */
+
+/* A catalogue: full-width grid of tiles on the left rail. */
+.enc-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+	gap: var(--g-4);
+}
+
+/* A record: plate on the left, printed data beside it. */
+.enc-record {
+	display: grid;
+	grid-template-columns: minmax(240px, 360px) minmax(0, 1fr);
+	gap: var(--g-6);
+	align-items: start;
+}
+
+@media (max-width: 900px) {
+	.enc-record { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* The designation strip across the top of a record. */
+.enc-designation {
+	display: flex;
+	align-items: baseline;
+	gap: var(--g-4);
+	flex-wrap: wrap;
+	margin-bottom: var(--g-5);
+}
+
+.enc-designation .g-title { margin: 0; }
+
+.enc-chips {
+	display: flex;
+	gap: var(--g-2);
+	flex-wrap: wrap;
+}
+
+.enc-section { margin-top: var(--g-7); }
+
+.enc-section-head {
+	display: flex;
+	align-items: baseline;
+	gap: var(--g-3);
+	margin-bottom: var(--g-4);
+}
+
+.enc-section-head .g-h2 { margin: 0; }
+
+.enc-count {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-small);
+	color: var(--g-ink-low);
+	font-variant-numeric: tabular-nums;
+}
+
+.enc-filters {
+	display: flex;
+	gap: var(--g-4);
+	flex-wrap: wrap;
+	align-items: center;
+	margin-bottom: var(--g-5);
+}
+
+.enc-back {
+	display: inline-block;
+	margin-bottom: var(--g-4);
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+	color: var(--g-ink-mid);
+	text-decoration: none;
+}
+
+.enc-back:hover { color: var(--g-ink); }
+
+/* Anchor quotes and machine output print in mono. */
+.enc-quote {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-small);
+	font-variant-numeric: tabular-nums;
+}
+
+/* One horizontal, scrollable row: filters, scrubber stations, index chips,
+   the section bank, the trail. Works on a flex row already (.g-segmented,
+   a plain flex row) — it only adds the scroll/snap/fade behavior, scoped to
+   phone widths so wider layouts keep whatever wrap/grid they already use.
+   Children must set flex: 0 0 auto themselves (already true of
+   .g-segment/.g-chip; the rule below covers plain children too). */
+@media (max-width: 700px) {
+	/* .enc-console prefix: component stylesheets load after this file and
+	   several rails set flex-wrap: wrap at equal specificity. */
+	.enc-console .enc-scrollrow {
+		display: flex;
+		flex-wrap: nowrap;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: none;
+		-ms-overflow-style: none;
+		/* Trailing fade tells a touch reader the row continues off-screen;
+		   padding-right clears the fade so the last item is fully legible. */
+		-webkit-mask-image: linear-gradient(to right, var(--g-ink) 0, var(--g-ink) calc(100% - 40px), transparent 100%);
+		mask-image: linear-gradient(to right, var(--g-ink) 0, var(--g-ink) calc(100% - 40px), transparent 100%);
+		padding-right: var(--g-6);
+	}
+
+	.enc-console .enc-scrollrow::-webkit-scrollbar { display: none; }
+
+	.enc-console .enc-scrollrow > * {
+		flex: 0 0 auto;
+	}
+}
+
+/* ---- reading room ------------------------------------------------------ */
+
+/* ---- galaxy map -------------------------------------------------------- */
+
+/* ---- chronicle --------------------------------------------------------- */
+
+/* ---- worlds ------------------------------------------------------------ */
+
+/* ---- bestiary ---------------------------------------------------------- */
+
+/* ---- powers ------------------------------------------------------------ */
+
+/* ---- index ------------------------------------------------------------- */
+
+/* ---- reduced motion ---------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+	.enc-console * { transition: none !important; animation: none !important; }
+}
