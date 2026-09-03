@@ -68,7 +68,7 @@ class ReclamationPage extends React.Component {
 
 		if (match) {
 			return (
-				<div className="g-console rec-console">
+				<div className="g-console rec-console rec-console--match">
 					<XalianNavbar />
 					<div className="g-shell rec-shell rec-shell--match">
 						<header className="rec-masthead">
@@ -88,7 +88,7 @@ class ReclamationPage extends React.Component {
 		}
 
 		return (
-			<div className="g-console rec-console">
+			<div className="g-console rec-console rec-console--intro">
 				<XalianNavbar />
 				<div className="g-shell page-shell rec-shell">
 					<header className="page-header">

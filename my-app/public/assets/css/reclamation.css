@@ -11,13 +11,21 @@
  * scroll internally.
  */
 
-.rec-console {
+/* only the match is locked to one screen; the intro is an ordinary page that scrolls
+   to its button on any screen */
+.rec-console--match {
 	overflow: hidden;
 	/* the navbar is a fixed-height band above the shell; the table takes the rest of the
 	   viewport exactly, so the page itself never scrolls */
 	height: 100vh;
 	display: flex;
 	flex-direction: column;
+}
+
+.rec-console--intro {
+	height: auto;
+	min-height: 100vh;
+	overflow: visible;
 }
 
 .rec-shell {
@@ -1414,7 +1422,7 @@
    ========================================================================= */
 
 @media (max-width: 760px) {
-	.rec-console { height: auto; min-height: 100vh; }
+	.rec-console--match { height: auto; min-height: 100vh; }
 	.rec-shell--match { gap: var(--g-2); }
 	.rec-masthead-seed { display: none; }
 	.rec-masthead-title { font-size: var(--g-size-lead); }
@@ -1535,7 +1543,7 @@
 
 @media (max-width: 760px) {
 	/* sticky bars need no clipping ancestor between them and the scroller */
-	.rec-console, .rec-shell--match, .rec-body, .rec-table { overflow: visible; }
+	.rec-console--match, .rec-shell--match, .rec-body, .rec-table { overflow: visible; }
 	.rec-world, .rec-sites { flex: 0 0 auto; }
 	.rec-orders-head .rec-commit-btn { display: none; }
 }
@@ -1596,3 +1604,33 @@
 /* the deploy buttons stack their legend over their small print */
 .rec-deploy-controls .g-btn { display: flex; flex-direction: column; align-items: flex-start; gap: 0; line-height: 1.15; }
 @media (max-width: 760px) { .rec-deploy-controls .g-btn { align-items: center; } }
+
+
+/* -------------------------------------------------------------------------
+   SHORT DESKTOP VIEWPORTS. A laptop with the browser chrome showing leaves 650 to 800
+   pixels. Locking the table to that height crushes the sites and hides the roster, so
+   below 820px tall the one-screen rule yields: the page scrolls, the sites keep a
+   working height, and the action bars stick to the bottom as they do on a phone.
+   ------------------------------------------------------------------------- */
+@media (min-width: 761px) and (max-height: 820px) {
+	.rec-console--match { height: auto; min-height: 100vh; overflow: visible; }
+	.rec-shell--match, .rec-body, .rec-table, .rec-rail { overflow: visible; min-height: 0; }
+	.rec-match { min-height: 0; }
+	.rec-sites { min-height: 380px; }
+	/* the rail has no bounded height here, so its panels size to their content instead
+	   of sharing a height: the orders panel first, then the preview, then the log */
+	.rec-rail { max-height: none; }
+	.rec-orders { flex: 0 0 auto; overflow: visible; }
+	.rec-orders-list { flex: 0 0 auto; max-height: 420px; overflow-y: auto; }
+	.rec-preview { flex: 0 0 auto; max-height: 240px; }
+	.rec-log { flex: 1 1 auto; min-height: 240px; max-height: 420px; }
+	.rec-inspect { flex: 0 0 auto; max-height: 480px; }
+	.rec-deploy-bar, .rec-orders-bar, .rec-judge-bar, .rec-resolving {
+		position: sticky;
+		bottom: 0;
+		z-index: 5;
+		box-shadow: 0 -6px 12px rgba(0, 0, 0, 0.45);
+		background: var(--g-hull);
+	}
+	.rec-roster-strip { flex-wrap: nowrap; overflow-x: auto; padding-bottom: var(--g-1); }
+}
