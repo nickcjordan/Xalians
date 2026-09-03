@@ -1,7 +1,1995 @@
 {
-  "version": "0.1.0",
-  "note": "Species whose templates Nick has ratified. Only these are bundled into lambda/src/json/speciesRecords.json by scripts/bundleLore.js; *-run.* files and unratified drafts never ship.",
+  "version": "1.0.0",
+  "note": "Species whose templates Nick has ratified (all 29 as of 2026-09-03, PR #73). Only these are bundled into lambda/src/json/speciesRecords.json by scripts/bundleLore.js; *-run.* files and unratified drafts never ship. A new species is added here only after ratification.",
   "records": [
+    {
+      "key": "akinza",
+      "name": "Akinza",
+      "element": "ice",
+      "homePlanet": "krystos",
+      "generatorPlanets": [
+        "krystos"
+      ],
+      "lore": {
+        "description": "A lean upright creature with enormous fringed ears, slit eyes that gather what little light the sky still gives, and a spread of long plumed tail fronds, the Akinza was generated on Krystos after the impact, when the blotted sky ended the dainty and graceful stock and the Generator turned to lifeforms capable of surviving in the harsh, frozen tundra. It belongs to the feral stock that remained in the arctic wastelands outside the high-security prison complexes, where such creatures proved as useful for deterring escape as the guards inside. The Akinza moves through open snow without sound or track and sneaks through the night with ease.",
+        "descriptionStatus": "upgraded",
+        "biomeNiche": "the arctic wastelands outside the prison complexes, worked at night"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh"
+        },
+        "bodyPlan": "biped",
+        "anatomy": [
+          "claws",
+          "jaws",
+          "tail",
+          "hide"
+        ],
+        "covering": "fur",
+        "size": {
+          "heightCm": [
+            130,
+            165
+          ],
+          "weightKg": [
+            48,
+            74
+          ]
+        },
+        "lifespan": "standard",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "omnivore",
+        "communication": [
+          "display"
+        ],
+        "breathes": [
+          "gas"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas"
+          ],
+          "temperatureC": {
+            "min": -60,
+            "max": -10
+          }
+        },
+        "capabilities": {
+          "flight": [
+            0,
+            0
+          ],
+          "swim": [
+            5,
+            20
+          ],
+          "burrow": [
+            10,
+            30
+          ],
+          "climb": [
+            45,
+            70
+          ],
+          "sprint": [
+            65,
+            88
+          ],
+          "leap": [
+            55,
+            80
+          ],
+          "manipulation": [
+            30,
+            55
+          ]
+        },
+        "senses": {
+          "sight": [
+            70,
+            95
+          ],
+          "hearing": [
+            65,
+            90
+          ],
+          "smell": [
+            35,
+            60
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "prowler": 45,
+        "skirmisher": 30,
+        "predator": 25
+      },
+      "attributes": {
+        "strength": [
+          30,
+          55
+        ],
+        "vitality": [
+          30,
+          52
+        ],
+        "endurance": [
+          40,
+          65
+        ],
+        "agility": [
+          62,
+          90
+        ],
+        "reflex": [
+          60,
+          88
+        ],
+        "intelligence": [
+          35,
+          60
+        ],
+        "willpower": [
+          30,
+          55
+        ],
+        "instinct": [
+          58,
+          85
+        ],
+        "charisma": [
+          15,
+          40
+        ],
+        "resilience": [
+          25,
+          48
+        ]
+      },
+      "traits": {
+        "pool": {
+          "stealthy": 100,
+          "nocturnal": 96,
+          "solitary": 55,
+          "perceptive": 40,
+          "slippery": 30,
+          "resistant": 20,
+          "pack-bonded": 12,
+          "menacing": 8,
+          "foresighted": 4
+        }
+      },
+      "instruments": [
+        "claws",
+        "jaws"
+      ],
+      "signatureAbility": {
+        "name": "Silence of the Long Night",
+        "instrument": "claws",
+        "action": "ambush",
+        "medium": "ice",
+        "intensity": [
+          30,
+          80
+        ],
+        "description": "The Akinza crosses open snow without sound or track and is on its target before it has been seen."
+      }
+    },
+    {
+      "key": "avilily",
+      "name": "Avilily",
+      "element": "plant",
+      "homePlanet": "floria",
+      "generatorPlanets": [
+        "floria"
+      ],
+      "lore": {
+        "description": "Carnivorous little green birds with bright, floral plumage, Avililies flit between Floria’s trees, camouflaging into the planet’s many flowery meadows as they travel. Their beaks resemble the closed petals of a flower but when they open their mouths that 'flower' blooms. They attract insects with their sweet, syrupy smelling saliva and vibrant floral display, but their saliva contains a powerful sedative which paralyzes anything that it comes in contact with. In ancient times, Avililies were used by Vallerii scientists and explorers to trap insects, serving as mobile bug repellent on Florian ventures. Today, the sedative properties of their saliva have been enhanced for a far-more dangerous galaxy, and swarms of flittering Avililies protect the most sacred parts of Floria’s jungles, paralyzing and consuming all who dare to threaten the pristineness of their forests.",
+        "descriptionStatus": "source",
+        "biomeNiche": "flowering meadows and jungle canopy of the Florian underforests"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh"
+        },
+        "bodyPlan": "avian",
+        "anatomy": [
+          "beak",
+          "wings",
+          "talons",
+          "crest",
+          "tail"
+        ],
+        "covering": "feathers",
+        "size": {
+          "heightCm": [
+            40,
+            56
+          ],
+          "weightKg": [
+            6,
+            10
+          ]
+        },
+        "lifespan": "short",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "carnivore",
+        "communication": [
+          "display",
+          "chemical"
+        ],
+        "breathes": [
+          "gas"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas"
+          ],
+          "temperatureC": {
+            "min": 4,
+            "max": 38
+          }
+        },
+        "capabilities": {
+          "flight": [
+            70,
+            88
+          ],
+          "swim": [
+            0,
+            10
+          ],
+          "burrow": [
+            0,
+            0
+          ],
+          "climb": [
+            20,
+            35
+          ],
+          "sprint": [
+            15,
+            30
+          ],
+          "leap": [
+            35,
+            50
+          ],
+          "manipulation": [
+            20,
+            35
+          ]
+        },
+        "senses": {
+          "sight": [
+            65,
+            85
+          ],
+          "hearing": [
+            45,
+            60
+          ],
+          "smell": [
+            50,
+            70
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "skirmisher": 45,
+        "prowler": 25,
+        "predator": 20,
+        "runner": 10
+      },
+      "attributes": {
+        "strength": [
+          10,
+          28
+        ],
+        "vitality": [
+          20,
+          38
+        ],
+        "endurance": [
+          30,
+          48
+        ],
+        "agility": [
+          62,
+          85
+        ],
+        "reflex": [
+          58,
+          80
+        ],
+        "intelligence": [
+          22,
+          40
+        ],
+        "willpower": [
+          25,
+          45
+        ],
+        "instinct": [
+          50,
+          70
+        ],
+        "charisma": [
+          30,
+          55
+        ],
+        "resilience": [
+          12,
+          30
+        ]
+      },
+      "traits": {
+        "pool": {
+          "stealthy": 80,
+          "pack-bonded": 70,
+          "toxic": 95,
+          "perceptive": 45,
+          "protective": 35,
+          "slippery": 40,
+          "hypnotic": 15,
+          "inspiring": 10
+        }
+      },
+      "instruments": [
+        "beak",
+        "secretion",
+        "talons"
+      ],
+      "signatureAbility": {
+        "name": "Blossoming Ambuscade",
+        "instrument": "secretion",
+        "action": "snare",
+        "medium": "plant",
+        "intensity": [
+          35,
+          70
+        ],
+        "description": "The Avilily opens its beak into a false bloom and coats what comes to feed in a syrup that stops it where it stands."
+      }
+    },
+    {
+      "key": "bioflim",
+      "name": "Bioflim",
+      "element": "chemical",
+      "homePlanet": "drainov",
+      "generatorPlanets": [
+        "drainov"
+      ],
+      "lore": {
+        "description": "An acid slime organism protected by a thick rocky exoskeleton, the Bioflim was bioengineered by Drainov's Xalian Generator for a world of bubbling acid swamps and steaming corrosive rain. Its slime continually regenerates the outer shell, which is the whole of its defense. Drainov is now held by a loose conglomerate of Vallerii space pirates and interstellar crime syndicates, and its Xalians work the once-abandoned factories, refineries, and chemical plants. The Bioflim stands in the acid of that world and regenerates whatever the acid takes.",
+        "descriptionStatus": "upgraded",
+        "biomeNiche": "the acid swamps and reopened chemical plants of Drainov"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "slime"
+        },
+        "bodyPlan": "amorphous",
+        "anatomy": [
+          "shell",
+          "pseudopods",
+          "body"
+        ],
+        "covering": "plating",
+        "size": {
+          "heightCm": [
+            180,
+            250
+          ],
+          "weightKg": [
+            320,
+            500
+          ]
+        },
+        "lifespan": "long",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "omnivore",
+        "communication": [],
+        "breathes": [],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas",
+            "liquid"
+          ],
+          "temperatureC": {
+            "min": 0,
+            "max": 43
+          }
+        },
+        "capabilities": {
+          "flight": [
+            0,
+            0
+          ],
+          "swim": [
+            30,
+            50
+          ],
+          "burrow": [
+            10,
+            25
+          ],
+          "climb": [
+            5,
+            20
+          ],
+          "sprint": [
+            3,
+            15
+          ],
+          "leap": [
+            0,
+            5
+          ],
+          "manipulation": [
+            20,
+            40
+          ]
+        },
+        "senses": {
+          "sight": [
+            20,
+            40
+          ],
+          "hearing": [
+            10,
+            30
+          ],
+          "smell": [
+            45,
+            70
+          ],
+          "special": [
+            "tremorsense"
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "bulwark": 50,
+        "juggernaut": 25,
+        "stalwart": 15,
+        "survivor": 10
+      },
+      "attributes": {
+        "strength": [
+          45,
+          65
+        ],
+        "vitality": [
+          60,
+          80
+        ],
+        "endurance": [
+          55,
+          75
+        ],
+        "agility": [
+          5,
+          20
+        ],
+        "reflex": [
+          10,
+          25
+        ],
+        "intelligence": [
+          15,
+          35
+        ],
+        "willpower": [
+          40,
+          60
+        ],
+        "instinct": [
+          30,
+          50
+        ],
+        "charisma": [
+          5,
+          20
+        ],
+        "resilience": [
+          75,
+          95
+        ]
+      },
+      "traits": {
+        "pool": {
+          "armored": 100,
+          "resistant": 100,
+          "regenerative": 90,
+          "toxic": 70,
+          "anchored": 45,
+          "protective": 25,
+          "slippery": 12,
+          "solitary": 10
+        }
+      },
+      "instruments": [
+        "shell",
+        "secretion",
+        "pseudopods"
+      ],
+      "signatureAbility": {
+        "name": "Everforming Carapace",
+        "instrument": "secretion",
+        "action": "ward",
+        "medium": "chemical",
+        "intensity": [
+          40,
+          85
+        ],
+        "description": "The slime beneath floods over the broken plates and hardens into new shell faster than the acid can take it away."
+      }
+    },
+    {
+      "key": "chromocat",
+      "name": "Chromocat",
+      "element": "light",
+      "homePlanet": "luminax",
+      "generatorPlanets": [
+        "luminax"
+      ],
+      "lore": {
+        "description": "Used in ancient times to quickly harvest the vast crop yields of Luminax's fields, the large, albino feline known as the Chromocat possesses two sickle-shaped blades infused with pure ionized radiation that extend backwards from its front paws. These 'energy swords' allowed them to cut through grains with minimal effort, and their ability to enter a photonic-state and leap through fields at the speed of light meant they could comb through and harvest entire fields in record time. Today, their wicked speed and ionic blades allow them to seemingly 'teleport' around the battlefield, harassing their opponents by barraging them with rapid cuts in a slice-and-dice pattern so swift that reaction becomes nearly impossible.",
+        "descriptionStatus": "source",
+        "biomeNiche": "the cultivated fields of Luminax's sunward face"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh"
+        },
+        "bodyPlan": "quadruped",
+        "anatomy": [
+          "blades",
+          "claws",
+          "jaws",
+          "fangs",
+          "tail",
+          "hide"
+        ],
+        "covering": "fur",
+        "size": {
+          "heightCm": [
+            80,
+            105
+          ],
+          "weightKg": [
+            60,
+            90
+          ]
+        },
+        "lifespan": "standard",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "omnivore",
+        "communication": [
+          "vocal",
+          "display"
+        ],
+        "breathes": [
+          "gas"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas"
+          ],
+          "temperatureC": {
+            "min": 25,
+            "max": 70
+          }
+        },
+        "capabilities": {
+          "flight": [
+            0,
+            0
+          ],
+          "swim": [
+            10,
+            30
+          ],
+          "burrow": [
+            0,
+            5
+          ],
+          "climb": [
+            45,
+            70
+          ],
+          "sprint": [
+            80,
+            98
+          ],
+          "leap": [
+            70,
+            92
+          ],
+          "manipulation": [
+            20,
+            45
+          ]
+        },
+        "senses": {
+          "sight": [
+            70,
+            92
+          ],
+          "hearing": [
+            55,
+            80
+          ],
+          "smell": [
+            45,
+            70
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "skirmisher": 52,
+        "prowler": 24,
+        "predator": 18,
+        "runner": 6
+      },
+      "attributes": {
+        "strength": [
+          40,
+          62
+        ],
+        "vitality": [
+          35,
+          58
+        ],
+        "endurance": [
+          40,
+          65
+        ],
+        "agility": [
+          78,
+          97
+        ],
+        "reflex": [
+          74,
+          95
+        ],
+        "intelligence": [
+          30,
+          52
+        ],
+        "willpower": [
+          35,
+          58
+        ],
+        "instinct": [
+          58,
+          80
+        ],
+        "charisma": [
+          30,
+          55
+        ],
+        "resilience": [
+          22,
+          42
+        ]
+      },
+      "traits": {
+        "pool": {
+          "luminous": 100,
+          "resistant": 90,
+          "slippery": 55,
+          "stealthy": 28,
+          "solitary": 30,
+          "perceptive": 20,
+          "pack-bonded": 15,
+          "volatile": 8,
+          "foresighted": 5
+        }
+      },
+      "instruments": [
+        "blades",
+        "claws"
+      ],
+      "conduits": {
+        "blades": "light"
+      },
+      "signatureAbility": {
+        "name": "Harvest at the Speed of Light",
+        "instrument": "blades",
+        "action": "rake",
+        "medium": "light",
+        "intensity": [
+          45,
+          88
+        ],
+        "description": "The Chromocat crosses the ground to its target in its photonic state and opens it with a barrage of rapid cuts from its ionized sickles."
+      }
+    },
+    {
+      "key": "codazzo",
+      "name": "Codazzo",
+      "element": "rock",
+      "homePlanet": "stonera",
+      "generatorPlanets": [
+        "stonera"
+      ],
+      "lore": {
+        "description": "A lean, upright digger whose raised tail carries a fan of banded explosive barbs, the Codazzo was generated on Stonera, a world that crosses the Jorian Belt each year under a planetwide bombardment of asteroids and meteors, where the Generator produced Xalians that could quickly dig their way to safety. When spooked it digs its body underground and exposes only that tail. If provoked it will not hesitate to fire off a few projectiles, and its regenerative power quickly grows more.",
+        "descriptionStatus": "upgraded",
+        "biomeNiche": "tunneler in the fissured rock and craters of Stonera"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh"
+        },
+        "bodyPlan": "biped",
+        "anatomy": [
+          "claws",
+          "tail",
+          "spines",
+          "hide"
+        ],
+        "covering": "fur",
+        "size": {
+          "heightCm": [
+            58,
+            82
+          ],
+          "weightKg": [
+            18,
+            32
+          ]
+        },
+        "lifespan": "standard",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "omnivore",
+        "communication": [
+          "vibration"
+        ],
+        "breathes": [
+          "gas"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas"
+          ],
+          "temperatureC": {
+            "min": -20,
+            "max": 25
+          }
+        },
+        "capabilities": {
+          "flight": [
+            0,
+            0
+          ],
+          "swim": [
+            5,
+            20
+          ],
+          "burrow": [
+            70,
+            92
+          ],
+          "climb": [
+            30,
+            50
+          ],
+          "sprint": [
+            35,
+            55
+          ],
+          "leap": [
+            25,
+            45
+          ],
+          "manipulation": [
+            35,
+            55
+          ]
+        },
+        "senses": {
+          "sight": [
+            30,
+            50
+          ],
+          "hearing": [
+            45,
+            65
+          ],
+          "smell": [
+            40,
+            60
+          ],
+          "special": [
+            "tremorsense"
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "prowler": 40,
+        "survivor": 25,
+        "skirmisher": 20,
+        "predator": 15
+      },
+      "attributes": {
+        "strength": [
+          30,
+          50
+        ],
+        "vitality": [
+          40,
+          60
+        ],
+        "endurance": [
+          45,
+          68
+        ],
+        "agility": [
+          45,
+          65
+        ],
+        "reflex": [
+          50,
+          72
+        ],
+        "intelligence": [
+          25,
+          42
+        ],
+        "willpower": [
+          30,
+          50
+        ],
+        "instinct": [
+          55,
+          78
+        ],
+        "charisma": [
+          15,
+          35
+        ],
+        "resilience": [
+          35,
+          55
+        ]
+      },
+      "traits": {
+        "pool": {
+          "regenerative": 100,
+          "volatile": 85,
+          "stealthy": 70,
+          "resistant": 55,
+          "perceptive": 40,
+          "slippery": 30,
+          "solitary": 25,
+          "menacing": 10
+        }
+      },
+      "instruments": [
+        "spines",
+        "tail",
+        "claws"
+      ],
+      "signatureAbility": {
+        "name": "Buried Quiver",
+        "instrument": "spines",
+        "action": "hurl",
+        "medium": "rock",
+        "intensity": [
+          30,
+          78
+        ],
+        "description": "The Codazzo sinks its body into the ground until only the tail stands clear, then fires barbs at whatever comes near and grows them back."
+      }
+    },
+    {
+      "key": "crystorn",
+      "name": "Crystorn",
+      "element": "light",
+      "homePlanet": "luminax",
+      "generatorPlanets": [
+        "luminax"
+      ],
+      "lore": {
+        "description": "A heavy, long-haired Xalian that sits upright on folded legs, the Crystorn carries a pair of crystal horns on its head that transmit powerful light energy. It was generated on Luminax, where the Xalians grown for the world took on albino features or prismatic crystal to survive the brilliant light of its twin suns as they worked the fields and the oases of translucent, alabaster flora. Its temperament is calm, and the calm is deceiving. Where the misfiring panels of the Stellaris Superstructure have left sun-scorched blast zones on the surface, some of the Xalians of Luminax have survived in the residual radiation, and the Crystorn is among the world's survivors.",
+        "descriptionStatus": "upgraded",
+        "biomeNiche": "the sunward oases of translucent, crystalline-leaved flora on Luminax"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh",
+          "secondary": "mineral"
+        },
+        "bodyPlan": "biped",
+        "anatomy": [
+          "horns",
+          "fists",
+          "hide"
+        ],
+        "covering": "fur",
+        "size": {
+          "heightCm": [
+            160,
+            195
+          ],
+          "weightKg": [
+            300,
+            420
+          ]
+        },
+        "lifespan": "long",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "energy-feeder",
+        "communication": [
+          "display",
+          "vocal"
+        ],
+        "breathes": [
+          "gas"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas"
+          ],
+          "temperatureC": {
+            "min": 30,
+            "max": 70
+          }
+        },
+        "capabilities": {
+          "flight": [
+            0,
+            0
+          ],
+          "swim": [
+            5,
+            20
+          ],
+          "burrow": [
+            0,
+            0
+          ],
+          "climb": [
+            10,
+            25
+          ],
+          "sprint": [
+            10,
+            30
+          ],
+          "leap": [
+            10,
+            25
+          ],
+          "manipulation": [
+            45,
+            70
+          ]
+        },
+        "senses": {
+          "sight": [
+            70,
+            92
+          ],
+          "hearing": [
+            45,
+            70
+          ],
+          "smell": [
+            40,
+            65
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "sage": 46,
+        "bulwark": 24,
+        "stalwart": 18,
+        "survivor": 12
+      },
+      "attributes": {
+        "strength": [
+          55,
+          78
+        ],
+        "vitality": [
+          60,
+          85
+        ],
+        "endurance": [
+          58,
+          82
+        ],
+        "agility": [
+          12,
+          32
+        ],
+        "reflex": [
+          20,
+          42
+        ],
+        "intelligence": [
+          45,
+          68
+        ],
+        "willpower": [
+          62,
+          88
+        ],
+        "instinct": [
+          40,
+          62
+        ],
+        "charisma": [
+          35,
+          60
+        ],
+        "resilience": [
+          58,
+          80
+        ]
+      },
+      "traits": {
+        "pool": {
+          "luminous": 100,
+          "resistant": 96,
+          "reflective": 55,
+          "mind-sealed": 34,
+          "protective": 24,
+          "anchored": 22,
+          "menacing": 12,
+          "foresighted": 4
+        }
+      },
+      "instruments": [
+        "horns",
+        "fists"
+      ],
+      "conduits": {
+        "horns": "light"
+      },
+      "signatureAbility": {
+        "name": "Coronet of the Twin Suns",
+        "instrument": "horns",
+        "action": "beam",
+        "medium": "light",
+        "intensity": [
+          55,
+          92
+        ],
+        "description": "The Crystorn holds still until its crystal horns release the light they carry in one narrow line."
+      }
+    },
+    {
+      "key": "drilltail",
+      "name": "Drilltail",
+      "element": "sand",
+      "homePlanet": "endessa",
+      "generatorPlanets": [
+        "endessa"
+      ],
+      "lore": {
+        "description": "A dog-sized, scorpion-like creature whose arched tail ends in a small stinger-like drill, the Drilltail was originally used by wildcatters on Endessa who lacked the funding to employ larger drilling Xalians like the Frackworm. It uses its drill to quickly tunnel through the earth, darting in and out of the surface as it hunts for prey to ambush with its sharp, scissor-like claws. Endessa's wildcatters drilled haphazard wells through large cavern networks beneath the dunes, and the Drilltail still tunnels there.",
+        "descriptionStatus": "upgraded",
+        "biomeNiche": "the packed sand and deep cavern networks of Endessa's Nightcap wells"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh"
+        },
+        "bodyPlan": "multiped",
+        "anatomy": [
+          "pincers",
+          "tail",
+          "jaws",
+          "shell",
+          "claws"
+        ],
+        "covering": "chitin",
+        "size": {
+          "heightCm": [
+            55,
+            85
+          ],
+          "weightKg": [
+            22,
+            40
+          ]
+        },
+        "lifespan": "long",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "carnivore",
+        "communication": [
+          "vibration"
+        ],
+        "breathes": [
+          "gas"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas"
+          ],
+          "temperatureC": {
+            "min": -5,
+            "max": 52
+          }
+        },
+        "capabilities": {
+          "flight": [
+            0,
+            0
+          ],
+          "swim": [
+            5,
+            18
+          ],
+          "burrow": [
+            80,
+            95
+          ],
+          "climb": [
+            35,
+            55
+          ],
+          "sprint": [
+            52,
+            72
+          ],
+          "leap": [
+            18,
+            34
+          ],
+          "manipulation": [
+            45,
+            65
+          ]
+        },
+        "senses": {
+          "sight": [
+            35,
+            55
+          ],
+          "hearing": [
+            42,
+            60
+          ],
+          "smell": [
+            46,
+            64
+          ],
+          "special": [
+            "tremorsense"
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "prowler": 40,
+        "predator": 30,
+        "skirmisher": 20,
+        "survivor": 10
+      },
+      "attributes": {
+        "strength": [
+          35,
+          58
+        ],
+        "vitality": [
+          30,
+          50
+        ],
+        "endurance": [
+          45,
+          68
+        ],
+        "agility": [
+          52,
+          76
+        ],
+        "reflex": [
+          55,
+          80
+        ],
+        "intelligence": [
+          20,
+          38
+        ],
+        "willpower": [
+          25,
+          45
+        ],
+        "instinct": [
+          58,
+          84
+        ],
+        "charisma": [
+          12,
+          30
+        ],
+        "resilience": [
+          45,
+          68
+        ]
+      },
+      "traits": {
+        "pool": {
+          "armored": 100,
+          "stealthy": 80,
+          "resistant": 60,
+          "perceptive": 45,
+          "pack-bonded": 15,
+          "slippery": 25,
+          "toxic": 5
+        }
+      },
+      "instruments": [
+        "tail",
+        "pincers"
+      ],
+      "signatureAbility": {
+        "name": "Wildcatter Auger",
+        "instrument": "tail",
+        "action": "strike",
+        "medium": "sand",
+        "intensity": [
+          30,
+          80
+        ],
+        "description": "The Drilltail runs a shaft beneath its quarry and comes up under it drill first."
+      }
+    },
+    {
+      "key": "dromeus",
+      "name": "Dromeus",
+      "element": "fire",
+      "homePlanet": "magmuth",
+      "generatorPlanets": [
+        "magmuth"
+      ],
+      "lore": {
+        "description": "A partially feathered ground bird with lizard features, built long in the leg and narrow in the skull, the Dromeus was designed by Magmuth's corporations for the transient mineral islands, fast enough to cross a cooling lava flow before it opened underfoot. It is extremely quick and carries razor sharp teeth. At speed it spreads its wings and takes flight for a few seconds, launching into the air to sink its teeth into its prey. It still runs the ash fields of Magmuth, where the blood feuds of the company wars have never ended.",
+        "descriptionStatus": "upgraded",
+        "biomeNiche": "the ash fields and hardened lava flows of Magmuth's transient islands"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh"
+        },
+        "bodyPlan": "biped",
+        "anatomy": [
+          "jaws",
+          "fangs",
+          "claws",
+          "talons",
+          "wings",
+          "tail",
+          "hide"
+        ],
+        "covering": "feathers",
+        "size": {
+          "heightCm": [
+            88,
+            112
+          ],
+          "weightKg": [
+            38,
+            56
+          ]
+        },
+        "lifespan": "standard",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "carnivore",
+        "communication": [
+          "vocal",
+          "display"
+        ],
+        "breathes": [
+          "gas"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas"
+          ],
+          "temperatureC": {
+            "min": 65,
+            "max": 105
+          }
+        },
+        "capabilities": {
+          "flight": [
+            15,
+            35
+          ],
+          "swim": [
+            0,
+            10
+          ],
+          "burrow": [
+            0,
+            0
+          ],
+          "climb": [
+            25,
+            45
+          ],
+          "sprint": [
+            80,
+            98
+          ],
+          "leap": [
+            58,
+            82
+          ],
+          "manipulation": [
+            20,
+            38
+          ]
+        },
+        "senses": {
+          "sight": [
+            70,
+            90
+          ],
+          "hearing": [
+            50,
+            70
+          ],
+          "smell": [
+            45,
+            65
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "runner": 45,
+        "predator": 30,
+        "skirmisher": 25
+      },
+      "attributes": {
+        "strength": [
+          38,
+          58
+        ],
+        "vitality": [
+          35,
+          55
+        ],
+        "endurance": [
+          55,
+          78
+        ],
+        "agility": [
+          72,
+          94
+        ],
+        "reflex": [
+          66,
+          88
+        ],
+        "intelligence": [
+          22,
+          40
+        ],
+        "willpower": [
+          30,
+          50
+        ],
+        "instinct": [
+          62,
+          84
+        ],
+        "charisma": [
+          25,
+          45
+        ],
+        "resilience": [
+          28,
+          46
+        ]
+      },
+      "traits": {
+        "pool": {
+          "resistant": 92,
+          "ramming": 60,
+          "pack-bonded": 55,
+          "perceptive": 40,
+          "stealthy": 20,
+          "menacing": 15,
+          "slippery": 30,
+          "solitary": 12
+        }
+      },
+      "instruments": [
+        "fangs",
+        "claws",
+        "wings"
+      ],
+      "signatureAbility": {
+        "name": "Ashfall Stoop",
+        "instrument": "fangs",
+        "action": "ambush",
+        "medium": "fire",
+        "intensity": [
+          45,
+          80
+        ],
+        "description": "The Dromeus runs its target down, spreads its wings for the few seconds it can stay aloft, and closes the last of the distance with its teeth."
+      }
+    },
+    {
+      "key": "ectoghoul",
+      "name": "Ectoghoul",
+      "element": "ghost",
+      "homePlanet": "phantiri",
+      "generatorPlanets": [
+        "phantiri"
+      ],
+      "lore": {
+        "description": "A spectral green mist that gathers into the vague impression of a grinning skull trailing a ghost-like tail for a body, the Ectoghoul was among the forms the Phantiri Generator produced once the Leviticus Overdrive taught it to make life the moon-weapon could not read as living, a body the killing signal ignores, drifting where organic laborers dropped dead on the spot. Nothing now issues it orders. It zips across the tarry oceans and splayed forests of the mass grave, passing through surfaces, disappearing and re-appearing at will, and amuses itself instead by terrorizing other Xalians, announcing every arrival with a cackle and answering any challenge with a blast of gooey ectoplasm.",
+        "descriptionStatus": "upgraded",
+        "biomeNiche": "drifting scavenger of the Dreadscape corpse islands and tarry oceans"
+      },
+      "physiology": {
+        "corporeality": "non-corporeal",
+        "composition": {
+          "primary": "spectral"
+        },
+        "bodyPlan": "floating",
+        "anatomy": [
+          "jaws",
+          "tail",
+          "body"
+        ],
+        "covering": "mist",
+        "size": {
+          "heightCm": [
+            80,
+            105
+          ],
+          "weightKg": [
+            0.1,
+            0.5
+          ]
+        },
+        "lifespan": "ageless",
+        "genome": {
+          "chirality": "achiral"
+        },
+        "diet": "none",
+        "communication": [
+          "vocal"
+        ],
+        "breathes": [],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas",
+            "liquid",
+            "vacuum"
+          ],
+          "temperatureC": {
+            "min": -50,
+            "max": 20
+          }
+        },
+        "capabilities": {
+          "flight": [
+            55,
+            80
+          ],
+          "swim": [
+            20,
+            40
+          ],
+          "burrow": [
+            10,
+            25
+          ],
+          "climb": [
+            0,
+            0
+          ],
+          "sprint": [
+            0,
+            0
+          ],
+          "leap": [
+            0,
+            0
+          ],
+          "manipulation": [
+            5,
+            20
+          ]
+        },
+        "senses": {
+          "sight": [
+            50,
+            75
+          ],
+          "hearing": [
+            45,
+            70
+          ],
+          "smell": [
+            0,
+            10
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "prowler": 35,
+        "rogue": 30,
+        "skirmisher": 20,
+        "predator": 15
+      },
+      "attributes": {
+        "strength": [
+          8,
+          25
+        ],
+        "vitality": [
+          20,
+          40
+        ],
+        "endurance": [
+          35,
+          60
+        ],
+        "agility": [
+          60,
+          88
+        ],
+        "reflex": [
+          55,
+          82
+        ],
+        "intelligence": [
+          30,
+          52
+        ],
+        "willpower": [
+          35,
+          60
+        ],
+        "instinct": [
+          45,
+          70
+        ],
+        "charisma": [
+          40,
+          68
+        ],
+        "resilience": [
+          15,
+          35
+        ]
+      },
+      "traits": {
+        "pool": {
+          "phasing": 100,
+          "menacing": 85,
+          "stealthy": 60,
+          "slippery": 55,
+          "nocturnal": 40,
+          "toxic": 30,
+          "solitary": 25,
+          "perceptive": 20,
+          "resistant": 15,
+          "luminous": 12,
+          "hypnotic": 8,
+          "foresighted": 4
+        }
+      },
+      "instruments": [
+        "voice",
+        "secretion"
+      ],
+      "signatureAbility": {
+        "name": "Rictus of the Dreadscape",
+        "instrument": "voice",
+        "action": "terrorize",
+        "medium": "ghost",
+        "intensity": [
+          45,
+          85
+        ],
+        "description": "The mist tightens into a grinning skull and lets out a cackle that reaches its target wherever it goes."
+      }
+    },
+    {
+      "key": "figzy",
+      "name": "Figzy",
+      "element": "psychic",
+      "homePlanet": "telypso",
+      "generatorPlanets": [
+        "telypso"
+      ],
+      "lore": {
+        "description": "A small antlered creature with outsized ears, wide eyes and a shaggy coat, the Figzy carries in its raised hands more force than its stature admits. The Telypso Generator built it to counterbalance the unstable auras of the Vallerii marooned planetside, treating the prisoners as patients rather than removing them, and the Figzy was one of the small psychic bodies that emerged from the fungal forests to steady what the deranged left behind. It is deceptively smart and goes docile with anything it has come to trust. The Nemesis Plague now turns the creatures of Telypso against one another, and a Figzy that trusts no one raises its hands against its own kind.",
+        "descriptionStatus": "upgraded",
+        "biomeNiche": "the fungal forests and bioluminescent jungles of Telypso"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh"
+        },
+        "bodyPlan": "biped",
+        "anatomy": [
+          "antlers",
+          "fists",
+          "hide",
+          "body"
+        ],
+        "covering": "fur",
+        "size": {
+          "heightCm": [
+            95,
+            125
+          ],
+          "weightKg": [
+            34,
+            52
+          ]
+        },
+        "lifespan": "standard",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "omnivore",
+        "communication": [
+          "telepathic",
+          "display"
+        ],
+        "breathes": [
+          "gas"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas"
+          ],
+          "temperatureC": {
+            "min": 12,
+            "max": 44
+          }
+        },
+        "capabilities": {
+          "flight": [
+            0,
+            0
+          ],
+          "swim": [
+            10,
+            30
+          ],
+          "burrow": [
+            0,
+            10
+          ],
+          "climb": [
+            35,
+            60
+          ],
+          "sprint": [
+            55,
+            80
+          ],
+          "leap": [
+            40,
+            65
+          ],
+          "manipulation": [
+            45,
+            70
+          ]
+        },
+        "senses": {
+          "sight": [
+            55,
+            80
+          ],
+          "hearing": [
+            65,
+            90
+          ],
+          "smell": [
+            30,
+            55
+          ],
+          "special": [
+            "psychic"
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "sage": 50,
+        "seeker": 20,
+        "virtuoso": 15,
+        "skirmisher": 15
+      },
+      "attributes": {
+        "strength": [
+          12,
+          32
+        ],
+        "vitality": [
+          25,
+          48
+        ],
+        "endurance": [
+          30,
+          55
+        ],
+        "agility": [
+          55,
+          82
+        ],
+        "reflex": [
+          50,
+          78
+        ],
+        "intelligence": [
+          58,
+          84
+        ],
+        "willpower": [
+          55,
+          80
+        ],
+        "instinct": [
+          45,
+          70
+        ],
+        "charisma": [
+          40,
+          68
+        ],
+        "resilience": [
+          18,
+          40
+        ]
+      },
+      "traits": {
+        "pool": {
+          "perceptive": 70,
+          "hypnotic": 45,
+          "telekinetic": 35,
+          "protective": 35,
+          "healing": 30,
+          "mind-sealed": 25,
+          "slippery": 25,
+          "inspiring": 20,
+          "stealthy": 20,
+          "pack-bonded": 20,
+          "foresighted": 8
+        }
+      },
+      "instruments": [
+        "mind",
+        "fists"
+      ],
+      "conduits": {
+        "mind": "psychic",
+        "fists": "psychic"
+      },
+      "signatureAbility": {
+        "name": "Small Hands of the Psychosphere",
+        "instrument": "mind",
+        "action": "burst",
+        "medium": "psychic",
+        "intensity": [
+          35,
+          85
+        ],
+        "description": "The Figzy raises both hands and the force it has been holding back leaves them all at once."
+      }
+    },
+    {
+      "key": "foromeer",
+      "name": "Foromeer",
+      "element": "metal",
+      "homePlanet": "veridium",
+      "generatorPlanets": [
+        "veridium"
+      ],
+      "lore": {
+        "description": "A tall upright creature whose hands are long drill-like horns and whose head carries two thin antennae, the Foromeer has a metallic exoskeleton on its limbs and is thought to once have been used for mineral excavation on Veridium, a world of dull, metallic crust with veins of heavy metals striking their way deep into it. Its powerful horns can break through the strongest of material. Since Source Code 606 released the Veridians from the oversight of their robotic masters, the demand for Veridium's factories has troughed, and the planet's Xalians tinker with salvaged drones, robots, and machines.",
+        "descriptionStatus": "upgraded",
+        "biomeNiche": "the ore-filled soil and heavy-metal veins of Veridium's mineral crust"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh"
+        },
+        "bodyPlan": "biped",
+        "anatomy": [
+          "spurs",
+          "antennae",
+          "shell",
+          "body"
+        ],
+        "covering": "plating",
+        "size": {
+          "heightCm": [
+            180,
+            215
+          ],
+          "weightKg": [
+            82,
+            112
+          ]
+        },
+        "lifespan": "long",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "omnivore",
+        "communication": [
+          "vibration"
+        ],
+        "breathes": [
+          "gas"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas"
+          ],
+          "temperatureC": {
+            "min": -10,
+            "max": 36
+          }
+        },
+        "capabilities": {
+          "flight": [
+            0,
+            0
+          ],
+          "swim": [
+            0,
+            10
+          ],
+          "burrow": [
+            45,
+            75
+          ],
+          "climb": [
+            15,
+            35
+          ],
+          "sprint": [
+            25,
+            45
+          ],
+          "leap": [
+            15,
+            35
+          ],
+          "manipulation": [
+            10,
+            25
+          ]
+        },
+        "senses": {
+          "sight": [
+            30,
+            55
+          ],
+          "hearing": [
+            20,
+            40
+          ],
+          "smell": [
+            15,
+            35
+          ],
+          "special": [
+            "tremorsense"
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "berserker": 40,
+        "juggernaut": 30,
+        "survivor": 20,
+        "vanguard": 10
+      },
+      "attributes": {
+        "strength": [
+          55,
+          78
+        ],
+        "vitality": [
+          42,
+          62
+        ],
+        "endurance": [
+          58,
+          80
+        ],
+        "agility": [
+          28,
+          48
+        ],
+        "reflex": [
+          25,
+          45
+        ],
+        "intelligence": [
+          22,
+          42
+        ],
+        "willpower": [
+          40,
+          62
+        ],
+        "instinct": [
+          35,
+          55
+        ],
+        "charisma": [
+          15,
+          32
+        ],
+        "resilience": [
+          52,
+          74
+        ]
+      },
+      "traits": {
+        "pool": {
+          "armored": 100,
+          "regenerative": 85,
+          "resistant": 55,
+          "ramming": 45,
+          "anchored": 25,
+          "perceptive": 20,
+          "solitary": 15
+        }
+      },
+      "instruments": [
+        "spurs",
+        "shell"
+      ],
+      "signatureAbility": {
+        "name": "Vein Breaker",
+        "instrument": "spurs",
+        "action": "strike",
+        "medium": "metal",
+        "intensity": [
+          45,
+          85
+        ],
+        "description": "The Foromeer sets its drill hands against whatever stands in front of it and bores through."
+      }
+    },
     {
       "key": "graviclaw",
       "name": "Graviclaw",
@@ -54,8 +2042,8 @@
             "liquid"
           ],
           "temperatureC": {
-            "min": -6,
-            "max": 34
+            "min": -60,
+            "max": 5
           }
         },
         "capabilities": {
@@ -107,11 +2095,10 @@
         }
       },
       "archetypeWeights": {
-        "juggernaut": 5,
-        "bulwark": 4,
-        "predator": 3,
-        "vanguard": 2,
-        "stalwart": 1
+        "juggernaut": 45,
+        "bulwark": 25,
+        "predator": 20,
+        "stalwart": 10
       },
       "attributes": {
         "strength": [
@@ -157,29 +2144,12 @@
       },
       "traits": {
         "pool": {
-          "healing": 0,
-          "protective": 0,
-          "regenerative": 0,
           "armored": 100,
           "anchored": 100,
-          "phasing": 0,
-          "resistant": 0,
-          "ramming": 0,
-          "toxic": 0,
-          "volatile": 0,
-          "reflective": 0,
           "menacing": 30,
-          "hypnotic": 0,
           "perceptive": 30,
-          "foresighted": 0,
-          "mind-sealed": 0,
-          "pack-bonded": 0,
           "solitary": 45,
           "stealthy": 60,
-          "nocturnal": 0,
-          "inspiring": 0,
-          "slippery": 0,
-          "luminous": 0,
           "telekinetic": 6
         }
       },
@@ -187,6 +2157,9 @@
         "pincers",
         "shell"
       ],
+      "conduits": {
+        "pincers": "dark"
+      },
       "signatureAbility": {
         "name": "Point of No Return",
         "instrument": "pincers",
@@ -197,6 +2170,1821 @@
           85
         ],
         "description": "It opens a claw beneath the water and collapses the gravitational waves inside it until nothing within reach can swim away from the closing grip."
+      }
+    },
+    {
+      "key": "hippochamp",
+      "name": "Hippochamp",
+      "element": "water",
+      "homePlanet": "poseidas",
+      "generatorPlanets": [
+        "poseidas"
+      ],
+      "lore": {
+        "description": "A four-legged creature resembling a seahorse, crested and spined along its neck and back, with a long trunk-like snout and a tightly curled tail. Hippochamps were designed as emergency response crews for the electrical and chemical fires that occur on Poseidas's hydro-processing rigs, and as a means of defense against pirates seeking to steal valuable Algael. The snout serves as a high-pressure water cannon that maintains a steady stream, hosing down fires and threats alike. It patrols the hydro-processing fleets, rig upon rig in interlocking nets of floating industrial zones trawling a global ocean for algae.",
+        "descriptionStatus": "upgraded",
+        "biomeNiche": "the interlocking floating industrial zones of Poseidas's hydro-processing fleets"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh"
+        },
+        "bodyPlan": "quadruped",
+        "anatomy": [
+          "trunk",
+          "hooves",
+          "tail",
+          "crest",
+          "spines",
+          "hide"
+        ],
+        "covering": "hide",
+        "size": {
+          "heightCm": [
+            115,
+            145
+          ],
+          "weightKg": [
+            120,
+            165
+          ]
+        },
+        "lifespan": "standard",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "omnivore",
+        "communication": [
+          "vocal",
+          "display"
+        ],
+        "breathes": [
+          "gas",
+          "liquid"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas",
+            "liquid"
+          ],
+          "temperatureC": {
+            "min": 5,
+            "max": 40
+          }
+        },
+        "capabilities": {
+          "flight": [
+            0,
+            0
+          ],
+          "swim": [
+            55,
+            75
+          ],
+          "burrow": [
+            0,
+            0
+          ],
+          "climb": [
+            10,
+            25
+          ],
+          "sprint": [
+            40,
+            60
+          ],
+          "leap": [
+            25,
+            45
+          ],
+          "manipulation": [
+            30,
+            50
+          ]
+        },
+        "senses": {
+          "sight": [
+            45,
+            65
+          ],
+          "hearing": [
+            40,
+            60
+          ],
+          "smell": [
+            35,
+            55
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "survivor": 40,
+        "bulwark": 25,
+        "vanguard": 20,
+        "runner": 15
+      },
+      "attributes": {
+        "strength": [
+          45,
+          65
+        ],
+        "vitality": [
+          50,
+          70
+        ],
+        "endurance": [
+          65,
+          88
+        ],
+        "agility": [
+          40,
+          60
+        ],
+        "reflex": [
+          45,
+          65
+        ],
+        "intelligence": [
+          35,
+          55
+        ],
+        "willpower": [
+          50,
+          70
+        ],
+        "instinct": [
+          45,
+          65
+        ],
+        "charisma": [
+          30,
+          50
+        ],
+        "resilience": [
+          45,
+          65
+        ]
+      },
+      "traits": {
+        "pool": {
+          "protective": 85,
+          "resistant": 70,
+          "healing": 35,
+          "pack-bonded": 60,
+          "perceptive": 30,
+          "anchored": 20,
+          "menacing": 12,
+          "inspiring": 15
+        }
+      },
+      "instruments": [
+        "trunk",
+        "hooves",
+        "tail"
+      ],
+      "conduits": {
+        "trunk": "water"
+      },
+      "signatureAbility": {
+        "name": "Hydrostatic Lance",
+        "instrument": "trunk",
+        "action": "spray",
+        "medium": "water",
+        "intensity": [
+          35,
+          80
+        ],
+        "description": "The long snout holds one unbroken high-pressure stream on a fire or a threat for as long as the pressure lasts."
+      }
+    },
+    {
+      "key": "hypnopet",
+      "name": "Hypnopet",
+      "element": "psychic",
+      "homePlanet": "telypso",
+      "generatorPlanets": [
+        "telypso"
+      ],
+      "lore": {
+        "description": "Hypnopets resemble glowing, golden-furred bunny rabbits with a single color-changing unicorn horn atop their heads. They were created by the Telypso Generator as service animals and therapists for the insane Vallerii imprisoned on the world, where their natural empathic healing abilities served to balance and treat patients. When their horn begins to pulse and swirl with psychedelic color, it hypnotizes others and locks them in a trance, which was useful for sedating patients when they entered into dangerous bouts of mania. With the Nemesis Plague reducing the patient population of Telypso, many Hypnopets have taken to the stars as healers, though some have been forced into service by King Kozrak, who uses their hypnotic abilities as crowd control on rebellious worlds.",
+        "descriptionStatus": "source",
+        "biomeNiche": "the bioluminescent fungal forests and mist-smothered jungles of Telypso, working among the world's marooned Vallerii patients"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh"
+        },
+        "bodyPlan": "quadruped",
+        "anatomy": [
+          "crest",
+          "hide",
+          "body"
+        ],
+        "covering": "fur",
+        "size": {
+          "heightCm": [
+            30,
+            42
+          ],
+          "weightKg": [
+            9,
+            16
+          ]
+        },
+        "lifespan": "short",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "omnivore",
+        "communication": [
+          "telepathic",
+          "display",
+          "vocal"
+        ],
+        "breathes": [
+          "gas"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas"
+          ],
+          "temperatureC": {
+            "min": 12,
+            "max": 40
+          }
+        },
+        "capabilities": {
+          "flight": [
+            0,
+            0
+          ],
+          "swim": [
+            10,
+            25
+          ],
+          "burrow": [
+            25,
+            45
+          ],
+          "climb": [
+            10,
+            25
+          ],
+          "sprint": [
+            45,
+            65
+          ],
+          "leap": [
+            55,
+            75
+          ],
+          "manipulation": [
+            20,
+            38
+          ]
+        },
+        "senses": {
+          "sight": [
+            55,
+            75
+          ],
+          "hearing": [
+            70,
+            90
+          ],
+          "smell": [
+            45,
+            65
+          ],
+          "special": [
+            "psychic"
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "sovereign": 38,
+        "sage": 30,
+        "virtuoso": 22,
+        "seeker": 10
+      },
+      "attributes": {
+        "strength": [
+          8,
+          24
+        ],
+        "vitality": [
+          25,
+          45
+        ],
+        "endurance": [
+          30,
+          50
+        ],
+        "agility": [
+          45,
+          68
+        ],
+        "reflex": [
+          40,
+          62
+        ],
+        "intelligence": [
+          55,
+          78
+        ],
+        "willpower": [
+          60,
+          85
+        ],
+        "instinct": [
+          50,
+          72
+        ],
+        "charisma": [
+          60,
+          88
+        ],
+        "resilience": [
+          15,
+          32
+        ]
+      },
+      "traits": {
+        "pool": {
+          "healing": 100,
+          "hypnotic": 100,
+          "protective": 70,
+          "inspiring": 25,
+          "luminous": 60,
+          "perceptive": 45,
+          "mind-sealed": 30,
+          "slippery": 35,
+          "pack-bonded": 25,
+          "telekinetic": 5,
+          "foresighted": 5
+        }
+      },
+      "instruments": [
+        "crest",
+        "mind"
+      ],
+      "conduits": {
+        "crest": "psychic"
+      },
+      "signatureAbility": {
+        "name": "Psychedelic Reverie",
+        "instrument": "crest",
+        "action": "snare",
+        "medium": "psychic",
+        "intensity": [
+          35,
+          70
+        ],
+        "description": "Its horn pulses and swirls through shifting color until whatever watches it stops moving and stands quiet in the trance."
+      }
+    },
+    {
+      "key": "imprit",
+      "name": "Imprit",
+      "element": "fire",
+      "homePlanet": "magmuth",
+      "generatorPlanets": [
+        "magmuth"
+      ],
+      "lore": {
+        "description": "Imprits are demonic looking creatures, resembling flaming, horned monkeys backed by long tails with scythe-like tips. Imprits possess fire-retardant fur that protects their bodies from the flammable oils they secrete, allowing them to survive despite being in a state of constant immolation.  They are remarkably intelligent among other Xalians, having been designed in ancient times as natural tinkerers and let loose into the various lightless mining shafts of Magmuth, where they were left to their own devices to fix and maintain the often makeshift mining equipment sent deep into the earth by the Vallerii. Today, they are known for being entirely erratic, likely driven mad by the isolation of the deep tunnels in which they tinkered and toiled. When released from their claustrophobic confines and set loose on the surface, Imprits take ecstatic pleasure from using their tails to swing through the air from place to place and setting fires where they least belong.",
+        "descriptionStatus": "source",
+        "biomeNiche": "the lightless mining shafts sunk under Magmuth's obsidian islands"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh"
+        },
+        "bodyPlan": "quadruped",
+        "anatomy": [
+          "horns",
+          "fangs",
+          "tail",
+          "fists",
+          "hide"
+        ],
+        "covering": "fur",
+        "size": {
+          "heightCm": [
+            72,
+            98
+          ],
+          "weightKg": [
+            30,
+            48
+          ]
+        },
+        "lifespan": "standard",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "omnivore",
+        "communication": [
+          "vocal",
+          "display"
+        ],
+        "breathes": [
+          "gas"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas"
+          ],
+          "temperatureC": {
+            "min": 65,
+            "max": 105
+          }
+        },
+        "capabilities": {
+          "flight": [
+            0,
+            0
+          ],
+          "swim": [
+            0,
+            12
+          ],
+          "burrow": [
+            10,
+            30
+          ],
+          "climb": [
+            78,
+            95
+          ],
+          "sprint": [
+            52,
+            72
+          ],
+          "leap": [
+            70,
+            90
+          ],
+          "manipulation": [
+            74,
+            92
+          ]
+        },
+        "senses": {
+          "sight": [
+            52,
+            72
+          ],
+          "hearing": [
+            60,
+            80
+          ],
+          "smell": [
+            35,
+            55
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "prowler": 34,
+        "seeker": 26,
+        "skirmisher": 22,
+        "rogue": 18
+      },
+      "attributes": {
+        "strength": [
+          28,
+          46
+        ],
+        "vitality": [
+          34,
+          52
+        ],
+        "endurance": [
+          40,
+          60
+        ],
+        "agility": [
+          66,
+          86
+        ],
+        "reflex": [
+          64,
+          84
+        ],
+        "intelligence": [
+          62,
+          80
+        ],
+        "willpower": [
+          22,
+          44
+        ],
+        "instinct": [
+          50,
+          70
+        ],
+        "charisma": [
+          30,
+          52
+        ],
+        "resilience": [
+          36,
+          54
+        ]
+      },
+      "traits": {
+        "pool": {
+          "resistant": 100,
+          "volatile": 85,
+          "slippery": 72,
+          "nocturnal": 66,
+          "solitary": 45,
+          "luminous": 100,
+          "menacing": 25,
+          "toxic": 12,
+          "perceptive": 10
+        }
+      },
+      "instruments": [
+        "tail",
+        "fists",
+        "secretion"
+      ],
+      "conduits": {
+        "secretion": "fire"
+      },
+      "signatureAbility": {
+        "name": "Ecstasy of the Deep Shafts",
+        "instrument": "secretion",
+        "action": "cloud",
+        "medium": "fire",
+        "intensity": [
+          35,
+          82
+        ],
+        "description": "The Imprit wrings its flammable oils out across everything within reach and lets its own burning body set them alight."
+      }
+    },
+    {
+      "key": "kosanos",
+      "name": "Kosanos",
+      "element": "plant",
+      "homePlanet": "floria",
+      "generatorPlanets": [
+        "floria"
+      ],
+      "lore": {
+        "description": "A heavy four-legged creature whose long ribbed trunk arches back over its shoulders and ends in a broad sweeping blade, the Kosanos is thought to have been designed to clear the thick brush of Floria, a world on which the Vallerii kept small settlements, research labs, and exploration parties and no more. It is a simple yet powerful creature. It works the underforests below the World Trees, felling standing growth in slow arcs of the blade.",
+        "descriptionStatus": "upgraded",
+        "biomeNiche": "the dense underforests and marshy wetlands beneath the World Tree canopies"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh"
+        },
+        "bodyPlan": "quadruped",
+        "anatomy": [
+          "trunk",
+          "blades",
+          "jaws",
+          "tail",
+          "hide"
+        ],
+        "covering": "hide",
+        "size": {
+          "heightCm": [
+            210,
+            265
+          ],
+          "weightKg": [
+            320,
+            430
+          ]
+        },
+        "lifespan": "long",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "omnivore",
+        "communication": [
+          "vibration"
+        ],
+        "breathes": [
+          "gas"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas"
+          ],
+          "temperatureC": {
+            "min": 2,
+            "max": 36
+          }
+        },
+        "capabilities": {
+          "flight": [
+            0,
+            0
+          ],
+          "swim": [
+            15,
+            30
+          ],
+          "burrow": [
+            0,
+            5
+          ],
+          "climb": [
+            0,
+            10
+          ],
+          "sprint": [
+            20,
+            38
+          ],
+          "leap": [
+            5,
+            15
+          ],
+          "manipulation": [
+            45,
+            65
+          ]
+        },
+        "senses": {
+          "sight": [
+            45,
+            65
+          ],
+          "hearing": [
+            40,
+            60
+          ],
+          "smell": [
+            50,
+            70
+          ],
+          "special": [
+            "tremorsense"
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "juggernaut": 40,
+        "survivor": 25,
+        "bulwark": 20,
+        "berserker": 15
+      },
+      "attributes": {
+        "strength": [
+          70,
+          90
+        ],
+        "vitality": [
+          62,
+          82
+        ],
+        "endurance": [
+          65,
+          85
+        ],
+        "agility": [
+          12,
+          28
+        ],
+        "reflex": [
+          18,
+          34
+        ],
+        "intelligence": [
+          20,
+          36
+        ],
+        "willpower": [
+          40,
+          60
+        ],
+        "instinct": [
+          42,
+          62
+        ],
+        "charisma": [
+          15,
+          30
+        ],
+        "resilience": [
+          58,
+          78
+        ]
+      },
+      "traits": {
+        "pool": {
+          "anchored": 55,
+          "ramming": 45,
+          "protective": 30,
+          "regenerative": 25,
+          "resistant": 40,
+          "solitary": 60,
+          "pack-bonded": 20,
+          "menacing": 25,
+          "healing": 10
+        }
+      },
+      "instruments": [
+        "blades",
+        "trunk",
+        "jaws"
+      ],
+      "signatureAbility": {
+        "name": "Understory Reaping",
+        "instrument": "blades",
+        "action": "rake",
+        "medium": "plant",
+        "intensity": [
+          45,
+          80
+        ],
+        "description": "The Kosanos swings its trunk in a long low arc and opens a lane through everything standing in it."
+      }
+    },
+    {
+      "key": "luceras",
+      "name": "Luceras",
+      "element": "air",
+      "homePlanet": "saiphus",
+      "generatorPlanets": [
+        "saiphus"
+      ],
+      "lore": {
+        "description": "A long-eared bounding animal of the floating islands of Saiphus, slight in the body and hugely muscled in the hind legs, with two curved horns swept back along its skull like a battering ram and a long plumed tail. The Saiphus Generator created the great leaping animals that bounded between islands as if gravity held no sway over them, on a world whose habitable surface is broken into buoyant chunks separated by a sea of clouds and dense fog. The Luceras can jump so high that at times it seems as if it is flying. Once up in the air, it comes missiling down on its enemy like a battering ram.",
+        "descriptionStatus": "upgraded",
+        "biomeNiche": "the gaps between the floating islands of Saiphus's upper-atmosphere life band"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh"
+        },
+        "bodyPlan": "quadruped",
+        "anatomy": [
+          "horns",
+          "tail",
+          "body"
+        ],
+        "covering": "fur",
+        "size": {
+          "heightCm": [
+            48,
+            66
+          ],
+          "weightKg": [
+            9,
+            17
+          ]
+        },
+        "lifespan": "short",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "omnivore",
+        "communication": [
+          "vocal"
+        ],
+        "breathes": [
+          "gas"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas"
+          ],
+          "temperatureC": {
+            "min": -30,
+            "max": 42
+          }
+        },
+        "capabilities": {
+          "flight": [
+            0,
+            0
+          ],
+          "swim": [
+            5,
+            20
+          ],
+          "burrow": [
+            10,
+            30
+          ],
+          "climb": [
+            35,
+            55
+          ],
+          "sprint": [
+            60,
+            82
+          ],
+          "leap": [
+            82,
+            97
+          ],
+          "manipulation": [
+            15,
+            35
+          ]
+        },
+        "senses": {
+          "sight": [
+            55,
+            75
+          ],
+          "hearing": [
+            70,
+            90
+          ],
+          "smell": [
+            40,
+            60
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "skirmisher": 40,
+        "runner": 27,
+        "prowler": 18,
+        "vanguard": 15
+      },
+      "attributes": {
+        "strength": [
+          38,
+          58
+        ],
+        "vitality": [
+          30,
+          50
+        ],
+        "endurance": [
+          45,
+          65
+        ],
+        "agility": [
+          70,
+          90
+        ],
+        "reflex": [
+          65,
+          85
+        ],
+        "intelligence": [
+          25,
+          45
+        ],
+        "willpower": [
+          35,
+          55
+        ],
+        "instinct": [
+          55,
+          75
+        ],
+        "charisma": [
+          30,
+          50
+        ],
+        "resilience": [
+          28,
+          48
+        ]
+      },
+      "traits": {
+        "pool": {
+          "ramming": 100,
+          "slippery": 70,
+          "resistant": 55,
+          "perceptive": 40,
+          "pack-bonded": 30,
+          "stealthy": 20,
+          "solitary": 15
+        }
+      },
+      "instruments": [
+        "horns",
+        "body"
+      ],
+      "signatureAbility": {
+        "name": "The Long Fall of Saiphus",
+        "instrument": "horns",
+        "action": "shove",
+        "medium": "air",
+        "intensity": [
+          45,
+          90
+        ],
+        "description": "The Luceras leaps until it seems to fly, then comes missiling down horns first on its enemy like a battering ram."
+      }
+    },
+    {
+      "key": "neph",
+      "name": "Neph",
+      "element": "air",
+      "homePlanet": "saiphus",
+      "generatorPlanets": [
+        "saiphus"
+      ],
+      "lore": {
+        "description": "Colossal hydrogen jellyfish that travel in free-floating herds across Saiphus's lower atmosphere, the Neph are instrumental to the Benthane industry. These domesticated creatures roam the clouds in flocks, grazing off of the biochemicals and atmospheric plankton contained in the gas-liquid slush of Saiphus's deeper atmosphere using long, trailing tentacles that vacuum up valuable Benthane along with their food. When threatened, these same tentacles can be used to pull in opponents with considerable suction or to jettison air at high pressure. Neph can also forcibly expel jets of Benthane gas, which is typically used a coolant for starship engines, from their tentacles in order to blast their enemies with freezing air. Finally, being composed almost entirely hydrogen means that the Neph can also spray their enemies with bouts of flammable gas.",
+        "descriptionStatus": "source",
+        "biomeNiche": "the cloud layers of Saiphus's lower atmosphere, where Benthane plumes rise"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh"
+        },
+        "bodyPlan": "floating",
+        "anatomy": [
+          "tendrils",
+          "vents"
+        ],
+        "covering": "bare",
+        "size": {
+          "heightCm": [
+            380,
+            620
+          ],
+          "weightKg": [
+            30,
+            90
+          ]
+        },
+        "lifespan": "standard",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "herbivore",
+        "communication": [
+          "chemical"
+        ],
+        "breathes": [
+          "gas"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas"
+          ],
+          "temperatureC": {
+            "min": -30,
+            "max": 45
+          }
+        },
+        "capabilities": {
+          "flight": [
+            55,
+            75
+          ],
+          "swim": [
+            10,
+            25
+          ],
+          "burrow": [
+            0,
+            0
+          ],
+          "climb": [
+            0,
+            0
+          ],
+          "sprint": [
+            5,
+            15
+          ],
+          "leap": [
+            0,
+            0
+          ],
+          "manipulation": [
+            40,
+            65
+          ]
+        },
+        "senses": {
+          "sight": [
+            25,
+            45
+          ],
+          "hearing": [
+            20,
+            40
+          ],
+          "smell": [
+            55,
+            80
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "survivor": 45,
+        "bulwark": 25,
+        "sage": 20,
+        "seeker": 10
+      },
+      "attributes": {
+        "strength": [
+          30,
+          55
+        ],
+        "vitality": [
+          55,
+          80
+        ],
+        "endurance": [
+          55,
+          80
+        ],
+        "agility": [
+          10,
+          30
+        ],
+        "reflex": [
+          10,
+          30
+        ],
+        "intelligence": [
+          10,
+          25
+        ],
+        "willpower": [
+          25,
+          45
+        ],
+        "instinct": [
+          35,
+          60
+        ],
+        "charisma": [
+          20,
+          40
+        ],
+        "resilience": [
+          15,
+          35
+        ]
+      },
+      "traits": {
+        "pool": {
+          "pack-bonded": 90,
+          "volatile": 100,
+          "slippery": 70,
+          "resistant": 45,
+          "protective": 30,
+          "menacing": 5
+        }
+      },
+      "instruments": [
+        "tendrils",
+        "vents"
+      ],
+      "conduits": {
+        "vents": "air"
+      },
+      "signatureAbility": {
+        "name": "Benthane Coldwind",
+        "instrument": "vents",
+        "action": "spray",
+        "medium": "ice",
+        "intensity": [
+          35,
+          80
+        ],
+        "description": "The Neph forces the coolant gas banked in its tentacles out through their open ends, washing everything before it in a freezing white plume."
+      }
+    },
+    {
+      "key": "newtapede",
+      "name": "Newtapede",
+      "element": "water",
+      "homePlanet": "poseidas",
+      "generatorPlanets": [
+        "poseidas"
+      ],
+      "lore": {
+        "description": "A sixteen legged amphibious creature with a long, segmented body, the Newtapede was generated on Poseidas among the aquatic, water-breathing Xalians capable of surviving in its rising and acidifying oceans. While adapted to land, its slender frame and webbed feet make it a formidable opponent in water. The rigs of Poseidas were built deeper and deeper beneath the ocean to avoid the storms, and the Newtapede lives in the water around them.",
+        "descriptionStatus": "upgraded",
+        "biomeNiche": "a swimmer and rig hand of the deep-city waters, at home in an acidifying global ocean"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh"
+        },
+        "bodyPlan": "multiped",
+        "anatomy": [
+          "antennae",
+          "coils",
+          "hide",
+          "body"
+        ],
+        "covering": "bare",
+        "size": {
+          "heightCm": [
+            170,
+            230
+          ],
+          "weightKg": [
+            70,
+            115
+          ]
+        },
+        "lifespan": "standard",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "omnivore",
+        "communication": [
+          "vibration",
+          "display"
+        ],
+        "breathes": [
+          "gas",
+          "liquid"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas",
+            "liquid"
+          ],
+          "temperatureC": {
+            "min": 5,
+            "max": 40
+          }
+        },
+        "capabilities": {
+          "flight": [
+            0,
+            0
+          ],
+          "swim": [
+            70,
+            92
+          ],
+          "burrow": [
+            5,
+            20
+          ],
+          "climb": [
+            45,
+            70
+          ],
+          "sprint": [
+            30,
+            50
+          ],
+          "leap": [
+            10,
+            25
+          ],
+          "manipulation": [
+            30,
+            55
+          ]
+        },
+        "senses": {
+          "sight": [
+            55,
+            80
+          ],
+          "hearing": [
+            25,
+            45
+          ],
+          "smell": [
+            30,
+            55
+          ],
+          "special": [
+            "tremorsense"
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "runner": 40,
+        "skirmisher": 30,
+        "survivor": 20,
+        "prowler": 10
+      },
+      "attributes": {
+        "strength": [
+          25,
+          45
+        ],
+        "vitality": [
+          35,
+          55
+        ],
+        "endurance": [
+          55,
+          80
+        ],
+        "agility": [
+          55,
+          80
+        ],
+        "reflex": [
+          45,
+          70
+        ],
+        "intelligence": [
+          25,
+          45
+        ],
+        "willpower": [
+          30,
+          50
+        ],
+        "instinct": [
+          45,
+          65
+        ],
+        "charisma": [
+          15,
+          35
+        ],
+        "resilience": [
+          15,
+          35
+        ]
+      },
+      "traits": {
+        "pool": {
+          "resistant": 90,
+          "slippery": 65,
+          "regenerative": 35,
+          "pack-bonded": 30,
+          "perceptive": 25,
+          "stealthy": 15,
+          "protective": 10
+        }
+      },
+      "instruments": [
+        "coils",
+        "body"
+      ],
+      "signatureAbility": {
+        "name": "Sixteenfold Undertow",
+        "instrument": "coils",
+        "action": "snare",
+        "medium": "water",
+        "intensity": [
+          30,
+          70
+        ],
+        "description": "The Newtapede wraps its whole segmented length around a swimmer and holds it under."
+      }
+    },
+    {
+      "key": "scalatto",
+      "name": "Scalatto",
+      "element": "sand",
+      "homePlanet": "endessa",
+      "generatorPlanets": [
+        "endessa"
+      ],
+      "lore": {
+        "description": "A plated biped shielded by a scaly exoskeleton, banded from neck to tail, the Scalatto can roll into a ball to protect itself. It was generated on Endessa, where a prototype Xalian Generator stolen from an ECHELON fleet supplies the Xalians that drill Nightcap beneath the dunes, and it lives in the sand and the cavern networks of that world.",
+        "descriptionStatus": "upgraded",
+        "biomeNiche": "the dunes and cavern networks of Endessa"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh"
+        },
+        "bodyPlan": "biped",
+        "anatomy": [
+          "shell",
+          "claws",
+          "tail",
+          "body"
+        ],
+        "covering": "chitin",
+        "size": {
+          "heightCm": [
+            95,
+            125
+          ],
+          "weightKg": [
+            58,
+            84
+          ]
+        },
+        "lifespan": "long",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "omnivore",
+        "communication": [
+          "vibration"
+        ],
+        "breathes": [
+          "gas"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas"
+          ],
+          "temperatureC": {
+            "min": -10,
+            "max": 48
+          }
+        },
+        "capabilities": {
+          "flight": [
+            0,
+            0
+          ],
+          "swim": [
+            5,
+            20
+          ],
+          "burrow": [
+            35,
+            60
+          ],
+          "climb": [
+            15,
+            35
+          ],
+          "sprint": [
+            40,
+            70
+          ],
+          "leap": [
+            15,
+            35
+          ],
+          "manipulation": [
+            30,
+            55
+          ]
+        },
+        "senses": {
+          "sight": [
+            30,
+            55
+          ],
+          "hearing": [
+            40,
+            65
+          ],
+          "smell": [
+            35,
+            60
+          ],
+          "special": [
+            "tremorsense"
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "bulwark": 46,
+        "juggernaut": 24,
+        "survivor": 18,
+        "stalwart": 12
+      },
+      "attributes": {
+        "strength": [
+          45,
+          70
+        ],
+        "vitality": [
+          50,
+          75
+        ],
+        "endurance": [
+          50,
+          75
+        ],
+        "agility": [
+          25,
+          50
+        ],
+        "reflex": [
+          30,
+          55
+        ],
+        "intelligence": [
+          20,
+          45
+        ],
+        "willpower": [
+          40,
+          65
+        ],
+        "instinct": [
+          40,
+          65
+        ],
+        "charisma": [
+          15,
+          40
+        ],
+        "resilience": [
+          70,
+          95
+        ]
+      },
+      "traits": {
+        "pool": {
+          "armored": 100,
+          "resistant": 70,
+          "ramming": 55,
+          "solitary": 35,
+          "anchored": 30,
+          "protective": 25,
+          "menacing": 15,
+          "perceptive": 12,
+          "regenerative": 8
+        }
+      },
+      "instruments": [
+        "shell",
+        "claws",
+        "tail"
+      ],
+      "signatureAbility": {
+        "name": "Duricrust Rolling Guard",
+        "instrument": "shell",
+        "action": "ward",
+        "medium": "sand",
+        "intensity": [
+          30,
+          80
+        ],
+        "description": "It draws its limbs beneath the banded plates and closes into a ball, and what strikes the shell is turned aside."
+      }
+    },
+    {
+      "key": "smokat",
+      "name": "Smokat",
+      "element": "ghost",
+      "homePlanet": "phantiri",
+      "generatorPlanets": [
+        "phantiri"
+      ],
+      "lore": {
+        "description": "A lean feline that walks upright on its hind legs, with a long tail and a body that trails vapor at every joint, the Smokat was printed by the secret Generator installed in the bowels of Phantiri to work the dig sites the Imperial Houses opened across the world. It is clever, and in normal form it is flesh and claw, but it can instantly atomize into a cloud of smoke and gather itself again. The Smokat now hunts the haze above the Dreadscape, and uses the same trick for quick evasion and sneak attacks.",
+        "descriptionStatus": "upgraded",
+        "biomeNiche": "the thick haze over the corpse islands of the Dreadscape"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh"
+        },
+        "bodyPlan": "biped",
+        "anatomy": [
+          "claws",
+          "jaws",
+          "tail",
+          "hide"
+        ],
+        "covering": "hide",
+        "size": {
+          "heightCm": [
+            150,
+            185
+          ],
+          "weightKg": [
+            58,
+            84
+          ]
+        },
+        "lifespan": "standard",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "omnivore",
+        "communication": [
+          "vocal"
+        ],
+        "breathes": [
+          "gas"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas"
+          ],
+          "temperatureC": {
+            "min": -30,
+            "max": 20
+          }
+        },
+        "capabilities": {
+          "flight": [
+            0,
+            0
+          ],
+          "swim": [
+            10,
+            30
+          ],
+          "burrow": [
+            5,
+            20
+          ],
+          "climb": [
+            55,
+            80
+          ],
+          "sprint": [
+            60,
+            85
+          ],
+          "leap": [
+            55,
+            80
+          ],
+          "manipulation": [
+            30,
+            55
+          ]
+        },
+        "senses": {
+          "sight": [
+            55,
+            80
+          ],
+          "hearing": [
+            55,
+            80
+          ],
+          "smell": [
+            45,
+            70
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "prowler": 40,
+        "skirmisher": 30,
+        "predator": 22,
+        "rogue": 8
+      },
+      "attributes": {
+        "strength": [
+          45,
+          70
+        ],
+        "vitality": [
+          35,
+          60
+        ],
+        "endurance": [
+          35,
+          60
+        ],
+        "agility": [
+          55,
+          82
+        ],
+        "reflex": [
+          55,
+          82
+        ],
+        "intelligence": [
+          45,
+          70
+        ],
+        "willpower": [
+          35,
+          60
+        ],
+        "instinct": [
+          50,
+          76
+        ],
+        "charisma": [
+          25,
+          50
+        ],
+        "resilience": [
+          25,
+          50
+        ]
+      },
+      "traits": {
+        "pool": {
+          "stealthy": 100,
+          "slippery": 85,
+          "phasing": 20,
+          "nocturnal": 55,
+          "solitary": 45,
+          "perceptive": 20,
+          "resistant": 15,
+          "foresighted": 4
+        }
+      },
+      "instruments": [
+        "claws",
+        "jaws"
+      ],
+      "signatureAbility": {
+        "name": "The Scattering Pounce",
+        "instrument": "claws",
+        "action": "ambush",
+        "medium": "ghost",
+        "intensity": [
+          35,
+          85
+        ],
+        "description": "It comes apart into smoke mid-stride, crosses the ground as haze, and is whole again with its claws already closing."
+      }
+    },
+    {
+      "key": "terragoyle",
+      "name": "Terragoyle",
+      "element": "rock",
+      "homePlanet": "stonera",
+      "generatorPlanets": [
+        "stonera"
+      ],
+      "lore": {
+        "description": "Resembling horned and vaguely humanoid bats with elongated tails tipped with a levitating ball of stone, Terragoyles can be found lining the edges of the Chasm. They were originally used to airlift debris out of Stonera's strip mines with their levitational tails, but now stand guard over the perimeter in a statue-like state, hibernating to conserve their energy until a threat is detected. When awoken, Terragoyles rise high into the sky, using their tails to levitate boulders and fling them like great flying catapults across the Chasm beneath them or to carpet bomb intruders with strafing runs of gravel and rock as they soar overhead.",
+        "descriptionStatus": "source",
+        "biomeNiche": "the rim of the Chasm strip-mine, perched over a hollow of liquid metal"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh"
+        },
+        "bodyPlan": "quadruped",
+        "anatomy": [
+          "horns",
+          "wings",
+          "tail",
+          "hide"
+        ],
+        "covering": "hide",
+        "size": {
+          "heightCm": [
+            150,
+            185
+          ],
+          "weightKg": [
+            300,
+            430
+          ]
+        },
+        "lifespan": "long",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "omnivore",
+        "communication": [
+          "vocal",
+          "display"
+        ],
+        "breathes": [
+          "gas"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas"
+          ],
+          "temperatureC": {
+            "min": -45,
+            "max": 25
+          }
+        },
+        "capabilities": {
+          "flight": [
+            60,
+            85
+          ],
+          "swim": [
+            0,
+            10
+          ],
+          "burrow": [
+            5,
+            20
+          ],
+          "climb": [
+            45,
+            70
+          ],
+          "sprint": [
+            20,
+            40
+          ],
+          "leap": [
+            35,
+            60
+          ],
+          "manipulation": [
+            45,
+            70
+          ]
+        },
+        "senses": {
+          "sight": [
+            55,
+            80
+          ],
+          "hearing": [
+            60,
+            85
+          ],
+          "smell": [
+            20,
+            40
+          ],
+          "special": [
+            "tremorsense"
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "bulwark": 45,
+        "stalwart": 25,
+        "juggernaut": 20,
+        "predator": 10
+      },
+      "attributes": {
+        "strength": [
+          60,
+          80
+        ],
+        "vitality": [
+          62,
+          82
+        ],
+        "endurance": [
+          55,
+          78
+        ],
+        "agility": [
+          20,
+          40
+        ],
+        "reflex": [
+          25,
+          45
+        ],
+        "intelligence": [
+          25,
+          45
+        ],
+        "willpower": [
+          55,
+          78
+        ],
+        "instinct": [
+          45,
+          68
+        ],
+        "charisma": [
+          20,
+          40
+        ],
+        "resilience": [
+          70,
+          90
+        ]
+      },
+      "traits": {
+        "pool": {
+          "anchored": 100,
+          "telekinetic": 100,
+          "menacing": 60,
+          "perceptive": 55,
+          "resistant": 50,
+          "solitary": 35
+        }
+      },
+      "instruments": [
+        "tail",
+        "wings",
+        "horns"
+      ],
+      "conduits": {
+        "tail": "rock"
+      },
+      "signatureAbility": {
+        "name": "Perimeter of Standing Stones",
+        "instrument": "tail",
+        "action": "hurl",
+        "medium": "rock",
+        "intensity": [
+          45,
+          85
+        ],
+        "description": "It wakes from its statue-like state, rises above the Chasm, and drops the boulders its tail holds aloft onto what crossed the rim."
       }
     },
     {
@@ -249,8 +4037,8 @@
             "gas"
           ],
           "temperatureC": {
-            "min": -6,
-            "max": 34
+            "min": -60,
+            "max": 5
           }
         },
         "capabilities": {
@@ -299,11 +4087,10 @@
         }
       },
       "archetypeWeights": {
-        "skirmisher": 5,
-        "sage": 4,
-        "prowler": 3,
-        "seeker": 2,
-        "sovereign": 1
+        "sage": 42,
+        "skirmisher": 24,
+        "sovereign": 18,
+        "seeker": 16
       },
       "attributes": {
         "strength": [
@@ -349,30 +4136,12 @@
       },
       "traits": {
         "pool": {
-          "healing": 0,
-          "protective": 0,
-          "regenerative": 0,
-          "armored": 0,
-          "anchored": 0,
-          "phasing": 0,
-          "resistant": 0,
-          "ramming": 0,
-          "toxic": 0,
-          "volatile": 0,
-          "reflective": 0,
           "menacing": 20,
-          "hypnotic": 0,
           "perceptive": 20,
-          "foresighted": 0,
           "mind-sealed": 35,
-          "pack-bonded": 0,
           "solitary": 10,
-          "stealthy": 0,
           "nocturnal": 95,
-          "inspiring": 0,
-          "slippery": 45,
-          "luminous": 0,
-          "telekinetic": 0
+          "slippery": 45
         }
       },
       "instruments": [
@@ -388,11 +4157,1193 @@
           30,
           80
         ],
-        "description": "It calls up a wheeling cloud of small toothed familiars and sets them on a single target as one mind, and a familiar that is broken simply thins away into the black."
+        "description": "It calls up a wheeling cloud of small toothed familiars and sets them on a single target as one mind, and a familiar that is broken thins away."
+      }
+    },
+    {
+      "key": "thirstaserp",
+      "name": "Thirstaserp",
+      "element": "sand",
+      "homePlanet": "endessa",
+      "generatorPlanets": [
+        "endessa"
+      ],
+      "lore": {
+        "description": "A large, cobra-like serpent with a broad flaring hood and a rattling tail, the Thirstaserp hides beneath the sand of Endessa, a world whose oceans were vaporized and whose surface is now desert. It emits a subsonic vibration from the rattles on its tail that can lure and mesmerize opponents long enough for it to draw near and attack with a unique venom that drains the victim's water when bitten, causing the victim to suffer and die from extreme dehydration.",
+        "descriptionStatus": "upgraded",
+        "biomeNiche": "buried in the rolling dunes of Endessa"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh"
+        },
+        "bodyPlan": "serpentine",
+        "anatomy": [
+          "jaws",
+          "fangs",
+          "tail",
+          "rattle"
+        ],
+        "covering": "scales",
+        "size": {
+          "heightCm": [
+            190,
+            250
+          ],
+          "weightKg": [
+            95,
+            145
+          ]
+        },
+        "lifespan": "standard",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "carnivore",
+        "communication": [
+          "vibration"
+        ],
+        "breathes": [
+          "gas"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas"
+          ],
+          "temperatureC": {
+            "min": 10,
+            "max": 55
+          }
+        },
+        "capabilities": {
+          "flight": [
+            0,
+            0
+          ],
+          "swim": [
+            10,
+            25
+          ],
+          "burrow": [
+            60,
+            85
+          ],
+          "climb": [
+            10,
+            25
+          ],
+          "sprint": [
+            35,
+            55
+          ],
+          "leap": [
+            40,
+            60
+          ],
+          "manipulation": [
+            5,
+            20
+          ]
+        },
+        "senses": {
+          "sight": [
+            40,
+            60
+          ],
+          "hearing": [
+            30,
+            50
+          ],
+          "smell": [
+            55,
+            75
+          ],
+          "special": [
+            "tremorsense"
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "predator": 50,
+        "prowler": 25,
+        "skirmisher": 15,
+        "survivor": 10
+      },
+      "attributes": {
+        "strength": [
+          45,
+          65
+        ],
+        "vitality": [
+          40,
+          60
+        ],
+        "endurance": [
+          45,
+          65
+        ],
+        "agility": [
+          50,
+          70
+        ],
+        "reflex": [
+          60,
+          80
+        ],
+        "intelligence": [
+          20,
+          35
+        ],
+        "willpower": [
+          35,
+          55
+        ],
+        "instinct": [
+          65,
+          85
+        ],
+        "charisma": [
+          30,
+          50
+        ],
+        "resilience": [
+          35,
+          55
+        ]
+      },
+      "traits": {
+        "pool": {
+          "toxic": 100,
+          "stealthy": 90,
+          "hypnotic": 70,
+          "resistant": 60,
+          "solitary": 55,
+          "perceptive": 40,
+          "slippery": 30,
+          "nocturnal": 25,
+          "menacing": 20,
+          "pack-bonded": 10
+        }
+      },
+      "instruments": [
+        "jaws",
+        "rattle",
+        "secretion"
+      ],
+      "signatureAbility": {
+        "name": "Thirst of the Endless Sea",
+        "instrument": "jaws",
+        "action": "drain",
+        "medium": "sand",
+        "intensity": [
+          55,
+          85
+        ],
+        "description": "It buries its fangs and drains the water out of what it has bitten."
+      }
+    },
+    {
+      "key": "tizzie",
+      "name": "Tizzie",
+      "element": "psychic",
+      "homePlanet": "telypso",
+      "generatorPlanets": [
+        "telypso"
+      ],
+      "lore": {
+        "description": "A small shaggy climber that hangs from the branches by long-fingered hands, with outsized ears, spiral-patterned eyes that fill half its face, and a long tail tipped in a flat whorled disc, the Tizzie was generated on Telypso to counterbalance the psychic energies of the deranged Vallerii the Imperial Houses marooned there. It works the way its Generator intended: the tail disc turns and draws attention to the eyes, eye contact opens the way, and the treatment proceeds from inside the patient's mind rather than through the body. Since the Nemesis Plague reached the sanctuaries and turned the creatures of Telypso against one another, Tizzies work the same hold on each other in the fungal forests.",
+        "descriptionStatus": "upgraded",
+        "biomeNiche": "the bioluminescent fungal forests and dense flora of Telypso"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh"
+        },
+        "bodyPlan": "biped",
+        "anatomy": [
+          "tail",
+          "lure",
+          "fists",
+          "hide"
+        ],
+        "covering": "fur",
+        "size": {
+          "heightCm": [
+            80,
+            95
+          ],
+          "weightKg": [
+            10,
+            16
+          ]
+        },
+        "lifespan": "short",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "omnivore",
+        "communication": [
+          "display",
+          "telepathic"
+        ],
+        "breathes": [
+          "gas"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas"
+          ],
+          "temperatureC": {
+            "min": 12,
+            "max": 42
+          }
+        },
+        "capabilities": {
+          "flight": [
+            0,
+            0
+          ],
+          "swim": [
+            10,
+            25
+          ],
+          "burrow": [
+            5,
+            20
+          ],
+          "climb": [
+            65,
+            90
+          ],
+          "sprint": [
+            55,
+            80
+          ],
+          "leap": [
+            40,
+            65
+          ],
+          "manipulation": [
+            35,
+            60
+          ]
+        },
+        "senses": {
+          "sight": [
+            70,
+            92
+          ],
+          "hearing": [
+            65,
+            88
+          ],
+          "smell": [
+            30,
+            55
+          ],
+          "special": [
+            "psychic"
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "virtuoso": 40,
+        "sovereign": 25,
+        "prowler": 15,
+        "skirmisher": 12,
+        "sage": 8
+      },
+      "attributes": {
+        "strength": [
+          10,
+          28
+        ],
+        "vitality": [
+          20,
+          40
+        ],
+        "endurance": [
+          25,
+          45
+        ],
+        "agility": [
+          55,
+          82
+        ],
+        "reflex": [
+          50,
+          75
+        ],
+        "intelligence": [
+          45,
+          68
+        ],
+        "willpower": [
+          50,
+          78
+        ],
+        "instinct": [
+          45,
+          70
+        ],
+        "charisma": [
+          55,
+          85
+        ],
+        "resilience": [
+          15,
+          35
+        ]
+      },
+      "traits": {
+        "pool": {
+          "hypnotic": 100,
+          "perceptive": 55,
+          "stealthy": 40,
+          "slippery": 45,
+          "menacing": 20,
+          "solitary": 30,
+          "mind-sealed": 15,
+          "foresighted": 6,
+          "telekinetic": 4
+        }
+      },
+      "instruments": [
+        "lure",
+        "gaze",
+        "mind"
+      ],
+      "conduits": {
+        "gaze": "psychic"
+      },
+      "signatureAbility": {
+        "name": "Spiral of Perfect Attention",
+        "instrument": "gaze",
+        "action": "snare",
+        "medium": "psychic",
+        "intensity": [
+          35,
+          80
+        ],
+        "description": "It turns the disc of its tail until the eyes are the only thing worth looking at, and whatever meets them stops where it stands."
+      }
+    },
+    {
+      "key": "venemist",
+      "name": "Venemist",
+      "element": "chemical",
+      "homePlanet": "drainov",
+      "generatorPlanets": [
+        "drainov"
+      ],
+      "lore": {
+        "description": "A shaggy four-legged hunter with a spray tube seated in its gaping jaws, the Venemist carries only two teeth and cannot bite down on anything it wants to eat. The toxic mist it expels from that tube helps to dissolve its prey, and the Generator that shaped it on Drainov was built to fill a world of acid swamps and industrial waste with life capable of surviving there at all.",
+        "descriptionStatus": "upgraded",
+        "biomeNiche": "acid swamps and the derelict chemical plants of Drainov's factoryscape"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh"
+        },
+        "bodyPlan": "quadruped",
+        "anatomy": [
+          "jaws",
+          "fangs",
+          "vents",
+          "tail",
+          "hide"
+        ],
+        "covering": "fur",
+        "size": {
+          "heightCm": [
+            95,
+            120
+          ],
+          "weightKg": [
+            42,
+            62
+          ]
+        },
+        "lifespan": "standard",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "carnivore",
+        "communication": [
+          "vocal"
+        ],
+        "breathes": [
+          "gas"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas",
+            "liquid"
+          ],
+          "temperatureC": {
+            "min": 0,
+            "max": 43
+          }
+        },
+        "capabilities": {
+          "flight": [
+            0,
+            0
+          ],
+          "swim": [
+            25,
+            45
+          ],
+          "burrow": [
+            0,
+            10
+          ],
+          "climb": [
+            15,
+            35
+          ],
+          "sprint": [
+            45,
+            70
+          ],
+          "leap": [
+            35,
+            55
+          ],
+          "manipulation": [
+            10,
+            25
+          ]
+        },
+        "senses": {
+          "sight": [
+            40,
+            60
+          ],
+          "hearing": [
+            55,
+            80
+          ],
+          "smell": [
+            60,
+            85
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "predator": 46,
+        "survivor": 24,
+        "prowler": 18,
+        "berserker": 12
+      },
+      "attributes": {
+        "strength": [
+          30,
+          50
+        ],
+        "vitality": [
+          40,
+          62
+        ],
+        "endurance": [
+          62,
+          88
+        ],
+        "agility": [
+          45,
+          68
+        ],
+        "reflex": [
+          45,
+          68
+        ],
+        "intelligence": [
+          25,
+          45
+        ],
+        "willpower": [
+          35,
+          58
+        ],
+        "instinct": [
+          55,
+          80
+        ],
+        "charisma": [
+          20,
+          40
+        ],
+        "resilience": [
+          40,
+          62
+        ]
+      },
+      "traits": {
+        "pool": {
+          "toxic": 100,
+          "resistant": 95,
+          "stealthy": 40,
+          "perceptive": 35,
+          "solitary": 30,
+          "pack-bonded": 20,
+          "volatile": 12
+        }
+      },
+      "instruments": [
+        "vents",
+        "jaws",
+        "fangs"
+      ],
+      "conduits": {
+        "vents": "chemical"
+      },
+      "signatureAbility": {
+        "name": "Dissolution Veil",
+        "instrument": "vents",
+        "action": "spray",
+        "medium": "chemical",
+        "intensity": [
+          30,
+          75
+        ],
+        "description": "The Venemist opens its jaws and drives a fanning mist through the tube seated in them, and what the mist settles on begins to come apart."
+      }
+    },
+    {
+      "key": "voltish",
+      "name": "Voltish",
+      "element": "electric",
+      "homePlanet": "zolton",
+      "generatorPlanets": [
+        "zolton"
+      ],
+      "lore": {
+        "description": "A long-limbed, shaggy creature whose bones and claws are made from a tough, conductive metal alloy, the Voltish was generated on Zolton, where black lightning did no harm to inorganic matter and the Generator could simply replenish any loss of labor. Zolton's canyons carry visible rivers of electricity that surge like wire currents over the crust. The Voltish stores electrical energy from its surroundings and releases the shock into enemies.",
+        "descriptionStatus": "upgraded",
+        "biomeNiche": "the deep canyons and metallic peaks of Zolton, where ground-borne lightning surges over the crust"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh",
+          "secondary": "metal"
+        },
+        "bodyPlan": "quadruped",
+        "anatomy": [
+          "claws",
+          "jaws",
+          "tail",
+          "hide"
+        ],
+        "covering": "fur",
+        "size": {
+          "heightCm": [
+            190,
+            235
+          ],
+          "weightKg": [
+            105,
+            145
+          ]
+        },
+        "lifespan": "standard",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "energy-feeder",
+        "communication": [
+          "vocal"
+        ],
+        "breathes": [
+          "gas"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas"
+          ],
+          "temperatureC": {
+            "min": -55,
+            "max": 35
+          }
+        },
+        "capabilities": {
+          "flight": [
+            0,
+            0
+          ],
+          "swim": [
+            10,
+            25
+          ],
+          "burrow": [
+            5,
+            15
+          ],
+          "climb": [
+            40,
+            60
+          ],
+          "sprint": [
+            50,
+            70
+          ],
+          "leap": [
+            40,
+            60
+          ],
+          "manipulation": [
+            40,
+            60
+          ]
+        },
+        "senses": {
+          "sight": [
+            45,
+            65
+          ],
+          "hearing": [
+            50,
+            70
+          ],
+          "smell": [
+            40,
+            60
+          ],
+          "special": [
+            "electroreception"
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "juggernaut": 40,
+        "stalwart": 25,
+        "predator": 20,
+        "prowler": 15
+      },
+      "attributes": {
+        "strength": [
+          55,
+          75
+        ],
+        "vitality": [
+          50,
+          70
+        ],
+        "endurance": [
+          70,
+          90
+        ],
+        "agility": [
+          40,
+          60
+        ],
+        "reflex": [
+          45,
+          65
+        ],
+        "intelligence": [
+          25,
+          45
+        ],
+        "willpower": [
+          45,
+          65
+        ],
+        "instinct": [
+          50,
+          70
+        ],
+        "charisma": [
+          30,
+          50
+        ],
+        "resilience": [
+          55,
+          75
+        ]
+      },
+      "traits": {
+        "pool": {
+          "resistant": 90,
+          "volatile": 75,
+          "menacing": 45,
+          "perceptive": 35,
+          "solitary": 30,
+          "pack-bonded": 25,
+          "luminous": 20,
+          "reflective": 15,
+          "armored": 10
+        }
+      },
+      "instruments": [
+        "claws",
+        "jaws",
+        "tail"
+      ],
+      "conduits": {
+        "claws": "electric"
+      },
+      "signatureAbility": {
+        "name": "Stormbank Discharge",
+        "instrument": "claws",
+        "action": "strike",
+        "medium": "electric",
+        "intensity": [
+          30,
+          85
+        ],
+        "description": "The Voltish drives the charge it has stored from its surroundings through its alloy claws into whatever they touch."
+      }
+    },
+    {
+      "key": "xylum",
+      "name": "Xylum",
+      "element": "plant",
+      "homePlanet": "floria",
+      "generatorPlanets": [
+        "floria"
+      ],
+      "lore": {
+        "description": "A giant organism of thick, intertwined roots that act as tentacles, the Xylum keeps the greater part of itself buried and shows only the crown of its mass above the soil of the underforests. It lives mostly underground, as this is where it absorbs its power, and its limbs carry rows of short serrations along the last of their length. Some say the oldest Xalians of Floria were born from the first seeds of the Genesis Prototype. Vallerii activity on the planet never grew past small settlements, research labs, and exploration parties, and the Xylum remains in the ground beneath the World Trees.",
+        "descriptionStatus": "upgraded",
+        "biomeNiche": "the buried soil layer of the underforests, beneath the canopies of the World Trees"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "plant"
+        },
+        "bodyPlan": "multiped",
+        "anatomy": [
+          "roots",
+          "tendrils",
+          "spines",
+          "body"
+        ],
+        "covering": "bare",
+        "size": {
+          "heightCm": [
+            240,
+            400
+          ],
+          "weightKg": [
+            180,
+            320
+          ]
+        },
+        "lifespan": "long",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "energy-feeder",
+        "communication": [
+          "vibration"
+        ],
+        "breathes": [
+          "gas"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas",
+            "liquid"
+          ],
+          "temperatureC": {
+            "min": -4,
+            "max": 34
+          }
+        },
+        "capabilities": {
+          "flight": [
+            0,
+            0
+          ],
+          "swim": [
+            5,
+            20
+          ],
+          "burrow": [
+            70,
+            92
+          ],
+          "climb": [
+            10,
+            30
+          ],
+          "sprint": [
+            5,
+            20
+          ],
+          "leap": [
+            0,
+            10
+          ],
+          "manipulation": [
+            45,
+            70
+          ]
+        },
+        "senses": {
+          "sight": [
+            0,
+            15
+          ],
+          "hearing": [
+            20,
+            40
+          ],
+          "smell": [
+            30,
+            55
+          ],
+          "special": [
+            "tremorsense"
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "bulwark": 46,
+        "survivor": 24,
+        "stalwart": 18,
+        "seeker": 12
+      },
+      "attributes": {
+        "strength": [
+          55,
+          80
+        ],
+        "vitality": [
+          60,
+          85
+        ],
+        "endurance": [
+          55,
+          80
+        ],
+        "agility": [
+          8,
+          25
+        ],
+        "reflex": [
+          15,
+          35
+        ],
+        "intelligence": [
+          20,
+          45
+        ],
+        "willpower": [
+          45,
+          70
+        ],
+        "instinct": [
+          40,
+          65
+        ],
+        "charisma": [
+          10,
+          30
+        ],
+        "resilience": [
+          50,
+          75
+        ]
+      },
+      "traits": {
+        "pool": {
+          "anchored": 100,
+          "regenerative": 72,
+          "healing": 25,
+          "protective": 25,
+          "solitary": 60,
+          "perceptive": 15,
+          "menacing": 12,
+          "resistant": 35
+        }
+      },
+      "instruments": [
+        "roots",
+        "tendrils"
+      ],
+      "signatureAbility": {
+        "name": "Deeproot Reclamation",
+        "instrument": "roots",
+        "action": "drain",
+        "medium": "plant",
+        "intensity": [
+          35,
+          80
+        ],
+        "description": "Xylum sinks its buried limbs deeper and draws the ground's stored power up through them, taking with it whatever stands rooted or pinned in the soil above."
+      }
+    },
+    {
+      "key": "yetimoth",
+      "name": "Yetimoth",
+      "element": "ice",
+      "homePlanet": "krystos",
+      "generatorPlanets": [
+        "krystos"
+      ],
+      "lore": {
+        "description": "Hulking, white-furred apes with the heads of mammoths and tusks made of pure ice, the Yetimoths formed the rank and file of Krystos' prisonguards in ancient times.  If their enormous size and strength was not enough to keep prisoners in line, they could also form thick sheets of ice from thin air, covering themselves in a near-impenetrable armor, blocking off escape routes in walls of frost, or encapsulating their opponents until they could lumber over close enough to pummel them into submission with their meaty, ice-gauntleted fists.",
+        "descriptionStatus": "source",
+        "biomeNiche": "the high-security prison complexes of the frozen tundra"
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "flesh",
+          "secondary": "mineral"
+        },
+        "bodyPlan": "biped",
+        "anatomy": [
+          "tusks",
+          "trunk",
+          "fists",
+          "hide"
+        ],
+        "covering": "fur",
+        "size": {
+          "heightCm": [
+            205,
+            255
+          ],
+          "weightKg": [
+            330,
+            470
+          ]
+        },
+        "lifespan": "long",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "omnivore",
+        "communication": [
+          "vocal",
+          "display"
+        ],
+        "breathes": [
+          "gas"
+        ],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas"
+          ],
+          "temperatureC": {
+            "min": -60,
+            "max": -10
+          }
+        },
+        "capabilities": {
+          "flight": [
+            0,
+            0
+          ],
+          "swim": [
+            10,
+            25
+          ],
+          "burrow": [
+            15,
+            30
+          ],
+          "climb": [
+            20,
+            35
+          ],
+          "sprint": [
+            20,
+            35
+          ],
+          "leap": [
+            15,
+            30
+          ],
+          "manipulation": [
+            45,
+            65
+          ]
+        },
+        "senses": {
+          "sight": [
+            40,
+            60
+          ],
+          "hearing": [
+            55,
+            75
+          ],
+          "smell": [
+            55,
+            75
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "juggernaut": 36,
+        "bulwark": 34,
+        "stalwart": 18,
+        "vanguard": 12
+      },
+      "attributes": {
+        "strength": [
+          72,
+          92
+        ],
+        "vitality": [
+          65,
+          85
+        ],
+        "endurance": [
+          60,
+          80
+        ],
+        "agility": [
+          12,
+          30
+        ],
+        "reflex": [
+          15,
+          35
+        ],
+        "intelligence": [
+          30,
+          50
+        ],
+        "willpower": [
+          55,
+          75
+        ],
+        "instinct": [
+          40,
+          60
+        ],
+        "charisma": [
+          35,
+          55
+        ],
+        "resilience": [
+          70,
+          90
+        ]
+      },
+      "traits": {
+        "pool": {
+          "armored": 85,
+          "resistant": 80,
+          "menacing": 55,
+          "anchored": 45,
+          "pack-bonded": 45,
+          "protective": 25,
+          "perceptive": 20,
+          "ramming": 20,
+          "mind-sealed": 15,
+          "solitary": 12
+        }
+      },
+      "instruments": [
+        "fists",
+        "tusks",
+        "hide"
+      ],
+      "conduits": {
+        "hide": "ice",
+        "fists": "ice"
+      },
+      "signatureAbility": {
+        "name": "Mantle of Unyielding Winter",
+        "instrument": "hide",
+        "action": "ward",
+        "medium": "ice",
+        "intensity": [
+          45,
+          85
+        ],
+        "description": "The Yetimoth draws thick sheets of frost out of nothing and layers them over its own pelt until the blows of its opponents stop reaching it."
       }
     }
   ],
   "entries": [
+    {
+      "key": "akinza",
+      "title": "Akinza",
+      "category": "xalians",
+      "definition": "The Akinza is an upright nocturnal Xalian of Krystos, generated after the impact winter, with outsized fringed ears, light-gathering eyes, and a spread of plumed tail fronds. It belongs to the feral stock of the arctic wastelands outside the planet's prison complexes and moves through open snow without sound or track.",
+      "related": []
+    },
+    {
+      "key": "avilily",
+      "title": "Avilily",
+      "category": "xalians",
+      "definition": "The Avilily is a small carnivorous bird of Floria whose beak opens into a false flower, luring insects with sweet sedative saliva that paralyzes whatever it touches. Once carried by Vallerii explorers as living insect control, Avililies now gather in swarms that guard the most sacred parts of Floria's jungles.",
+      "related": []
+    },
+    {
+      "key": "bioflim",
+      "title": "Bioflim",
+      "category": "xalians",
+      "definition": "The Bioflim is a slime-bodied Xalian of Drainov sheathed in a thick rocky exoskeleton that its own slime continually regenerates. It is built for the planet's acid swamps and corrosive rain.",
+      "related": []
+    },
+    {
+      "key": "chromocat",
+      "title": "Chromocat",
+      "category": "xalians",
+      "definition": "The Chromocat is a large albino feline of Luminax, generated to harvest the planet's crop fields with a pair of sickle-shaped blades of ionized radiation that extend backwards from its front paws. It can enter a photonic state and cross ground at the speed of light, and it now turns that speed and those blades on opponents in rapid cuts.",
+      "related": []
+    },
+    {
+      "key": "codazzo",
+      "title": "Codazzo",
+      "category": "xalians",
+      "definition": "The Codazzo is an upright burrowing Xalian of Stonera whose raised tail carries a fan of explosive barbs. Startled, it digs its body underground and leaves only the tail above the surface, firing barbs at anything that provokes it and regrowing them.",
+      "related": []
+    },
+    {
+      "key": "crystorn",
+      "title": "Crystorn",
+      "category": "xalians",
+      "definition": "The Crystorn is a heavy, long-haired Xalian of Luminax that sits upright on folded legs and carries a pair of crystal horns on its head, which transmit powerful light energy. It was generated among the crystal-bearing Xalians that worked the planet's fields and oases of translucent flora.",
+      "related": []
+    },
+    {
+      "key": "drilltail",
+      "title": "Drilltail",
+      "category": "xalians",
+      "definition": "The Drilltail is a dog-sized, scorpion-like Xalian of Endessa, once used by wildcatters who could not afford larger drilling Xalians like the Frackworm. It tunnels through the earth with the drill at the end of its tail and ambushes prey with its scissor-like claws.",
+      "related": []
+    },
+    {
+      "key": "dromeus",
+      "title": "Dromeus",
+      "category": "xalians",
+      "definition": "The Dromeus is a running ground bird of Magmuth, partially feathered and lizard featured, generated by the planet's mining corporations for the transient mineral islands. It runs down what it eats and spreads its wings for a few seconds of flight to finish the strike with its teeth.",
+      "related": []
+    },
+    {
+      "key": "ectoghoul",
+      "title": "Ectoghoul",
+      "category": "xalians",
+      "definition": "The Ectoghoul is a drifting phantom of Phantiri, formed of green mist gathered into a grinning skull above a trailing tail, that passes through solid surfaces and vanishes and returns at will. It ranges the Dreadscape harassing other Xalians with its cackle and with blasts of gooey ectoplasm.",
+      "related": []
+    },
+    {
+      "key": "figzy",
+      "title": "Figzy",
+      "category": "xalians",
+      "definition": "The Figzy is a small antlered Xalian generated on Telypso to counterbalance the unstable auras of the Vallerii prisoners marooned in the planet's fungal forests. It is deceptively smart, docile toward what it trusts, and projects force from its raised hands.",
+      "related": []
+    },
+    {
+      "key": "foromeer",
+      "title": "Foromeer",
+      "category": "xalians",
+      "definition": "The Foromeer is an upright two-legged Xalian of Veridium whose hands are long drill-like horns, able to break through the strongest of material. It carries a metallic exoskeleton on its limbs and is thought to once have been used for mineral excavation.",
+      "related": []
+    },
     {
       "key": "graviclaw",
       "title": "Graviclaw",
@@ -401,10 +5352,122 @@
       "related": []
     },
     {
+      "key": "hippochamp",
+      "title": "Hippochamp",
+      "category": "xalians",
+      "definition": "The Hippochamp is a four-legged, seahorse-shaped Xalian of Poseidas whose long snout works as a high-pressure water cannon. It was designed to answer the electrical and chemical fires that occur on the hydro-processing rigs and to defend the rigs' Algael against pirates.",
+      "related": []
+    },
+    {
+      "key": "hypnopet",
+      "title": "Hypnopet",
+      "category": "xalians",
+      "definition": "The Hypnopet is a small, golden-furred creature of Telypso bearing a single color-changing horn, generated by the Telypso Generator as a service animal and therapist for the deranged Vallerii imprisoned on that world. Its horn pulses through shifting color to lock a subject in a trance, a sedative once used on patients in bouts of mania and now used by King Kozrak for crowd control on rebellious worlds.",
+      "related": []
+    },
+    {
+      "key": "imprit",
+      "title": "Imprit",
+      "category": "xalians",
+      "definition": "The Imprit is a small horned Xalian of Magmuth, furred against the flammable oils it secretes and so burning continuously, designed by the Vallerii as a tinkerer and released into the mining shafts to repair the equipment sent down into the planet. Freed onto the surface it swings by its scythe-tipped tail and sets fires where they do not belong.",
+      "related": []
+    },
+    {
+      "key": "kosanos",
+      "title": "Kosanos",
+      "category": "xalians",
+      "definition": "The Kosanos is a heavy four-legged Xalian of Floria with a broad blade at the end of its trunk, thought to have been designed to clear the planet's thick brush. It fells standing growth in the underforests below the World Trees.",
+      "related": []
+    },
+    {
+      "key": "luceras",
+      "title": "Luceras",
+      "category": "xalians",
+      "definition": "The Luceras is a small long-eared, curve-horned leaping animal of Saiphus, one of the great leaping animals that bound between the planet's floating islands. It jumps so high that at times it seems as if it is flying, and comes down on what it strikes like a battering ram.",
+      "related": []
+    },
+    {
+      "key": "neph",
+      "title": "Neph",
+      "category": "xalians",
+      "definition": "The Neph is a colossal hydrogen jellyfish of Saiphus, drifting in flocks through the lower atmosphere and drawing Benthane and atmospheric plankton up through long trailing tentacles. Generated for the Benthane industry, it is shepherded and milked for the coolant gas that keeps Tachyon Drive Cores from superheating.",
+      "related": []
+    },
+    {
+      "key": "newtapede",
+      "title": "Newtapede",
+      "category": "xalians",
+      "definition": "The Newtapede is a sixteen legged amphibious Xalian of Poseidas, long and segmented, with a slender frame and webbed feet that make it a formidable opponent in water. It lives among the water-breathing Xalians of the planet's rigs.",
+      "related": []
+    },
+    {
+      "key": "scalatto",
+      "title": "Scalatto",
+      "category": "xalians",
+      "definition": "The Scalatto is a plated two-legged Xalian of Endessa shielded by a scaly exoskeleton that lets it roll into a ball to protect itself. It lives in the sand and cavern networks of its homeworld.",
+      "related": []
+    },
+    {
+      "key": "smokat",
+      "title": "Smokat",
+      "category": "xalians",
+      "definition": "The Smokat is a clever upright feline generated on Phantiri to work the dig sites the Imperial Houses opened there, able to atomize into a cloud of smoke at will and gather itself again. It now hunts the haze above the Dreadscape.",
+      "related": []
+    },
+    {
+      "key": "terragoyle",
+      "title": "Terragoyle",
+      "category": "xalians",
+      "definition": "The Terragoyle is a horned, winged sentry of Stonera that lines the edges of the Chasm, holding a stone aloft at the tip of its tail. Generated to airlift debris from the strip mines, it now hibernates in a statue-like state along the perimeter and, when roused, rises above the Chasm to fling boulders and rake intruders with falling gravel.",
+      "related": []
+    },
+    {
       "key": "tetrahive",
       "title": "Tetrahive",
       "category": "xalians",
       "definition": "The Tetrahive is a small winged Xalian of Grimedes with a long whipping tail that fights by conjuring a swarm of little flying familiars with teeth like piranhas, holding every one of them in its mind and moving them as a single unit to attack or defend. It was generated as a test subject rather than a laborer, and hunts the planet's thick, stalky undergrowth in perpetual night.",
+      "related": []
+    },
+    {
+      "key": "thirstaserp",
+      "title": "Thirstaserp",
+      "category": "xalians",
+      "definition": "The Thirstaserp is a large hooded serpent of Endessa that lies buried in the dunes and draws opponents in with a subsonic vibration from the rattles on its tail. Its bite carries a venom that drains the water from what it bites, killing by extreme dehydration on a world whose oceans were vaporized by the Thousand Families.",
+      "related": []
+    },
+    {
+      "key": "tizzie",
+      "title": "Tizzie",
+      "category": "xalians",
+      "definition": "The Tizzie is a small furred Xalian of Telypso that hangs from the branches by its hands, distinguished by a long tail tipped in a flat spiral disc and by spiral-patterned eyes that fill much of its face. It waves the disc to win a subject's attention, and once eye contact is made it works on that subject from inside its mind rather than through its body.",
+      "related": []
+    },
+    {
+      "key": "venemist",
+      "title": "Venemist",
+      "category": "xalians",
+      "definition": "The Venemist is a shaggy four-legged hunter of Drainov that expels a dissolving mist from a tube seated in its jaws. Carrying only two teeth, it takes its food by breaking it down outside the body rather than by biting.",
+      "related": []
+    },
+    {
+      "key": "voltish",
+      "title": "Voltish",
+      "category": "xalians",
+      "definition": "The Voltish is a shaggy, long-limbed Xalian of Zolton whose bones and claws are a tough conductive alloy. It takes in electrical energy from its surroundings and releases the shock into its enemies.",
+      "related": []
+    },
+    {
+      "key": "xylum",
+      "title": "Xylum",
+      "category": "xalians",
+      "definition": "The Xylum is a giant rooted organism of the Floria underforests, a mass of thick intertwined limbs that act as tentacles. It lives mostly underground, where it absorbs its power.",
+      "related": []
+    },
+    {
+      "key": "yetimoth",
+      "title": "Yetimoth",
+      "category": "xalians",
+      "definition": "The Yetimoth is a hulking, white-furred ape of Krystos with the head of a mammoth and a pair of frozen tusks, generated to serve as the rank and file of the planet's high-security prison complexes. It conjures thick sheets of frost from nothing to armor itself, wall off escape routes, and encase what it means to reach, then closes and pummels with its heavy fists.",
       "related": []
     }
   ]

@@ -14,7 +14,13 @@ import tourData from '../json/tour.json';
 // Species encyclopedia entries (speciesRecords.entries) are merged into the
 // index at load time under category 'xalians' per §2 of the contract; they
 // are not written back into encyclopedia.json until the flip.
-const allEntries = [...encyclopediaData.entries, ...speciesRecordsData.entries];
+// encyclopedia.json carries the species entries since the Stage 3 merge, so a
+// record's entry is added only when the index does not already have its key.
+const encyclopediaKeys = new Set(encyclopediaData.entries.map((e) => e.key));
+const allEntries = [
+	...encyclopediaData.entries,
+	...speciesRecordsData.entries.filter((e) => !encyclopediaKeys.has(e.key)),
+];
 
 const entriesByKey = new Map(allEntries.map((e) => [e.key, e]));
 

@@ -4,7 +4,7 @@ This file is the private half of the Encyclopedia. It never ships in the public 
 
 ## What the Encyclopedia is
 
-The Encyclopedia (masthead: **Encyclopedia Xalia**) is the single public canon reference for the world of Xalia, ratified 2026-09-01. The legacy glossary (`lambda/src/json/glossary.json`) merges into it; its definitions are carried verbatim as the canonical prose. The Encyclopedia adds structure the glossary never had: categories, cross-references, and element tags on planet entries. Species entries are deliberately absent; they arrive during species migration (the `migrate-species` skill), one per migrated species, so that every species entry is written against its final ratified record rather than legacy stub text.
+The Encyclopedia (masthead: **Encyclopedia Xalia**) is the single public canon reference for the world of Xalia, ratified 2026-09-01. The legacy glossary (`lambda/src/json/glossary.json`) merges into it; its definitions are carried verbatim as the canonical prose. The Encyclopedia adds structure the glossary never had: categories, cross-references, and element tags on planet entries. Species entries (category `xalians`) were written during species migration (the `migrate-species` skill), one per ratified record, and merged into this file with the Stage 3 merge (PR #73); the bundler still carries each record's copy, and the loader keeps this file's copy when both exist.
 
 ## Source precedence
 
