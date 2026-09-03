@@ -70,23 +70,141 @@
 }
 
 /* -------------------------------------------------------------------------
-   START SCREEN
+   START SCREEN. One screen on a desktop: a compact masthead, then a panel split
+   between the briefing on the CRT and a charter card of the numbers, the small
+   rules and the button. Nothing here needs to scroll on a laptop.
    ------------------------------------------------------------------------- */
 
-.rec-intro-panel {
-	padding: var(--g-6);
+.rec-shell--intro {
+	width: 100%;
 	display: flex;
 	flex-direction: column;
-	gap: var(--g-5);
+	gap: var(--g-3);
+	padding: var(--g-3) var(--g-4) var(--g-4);
+}
+
+.rec-intro-panel {
+	padding: var(--g-4);
+	display: grid;
+	grid-template-columns: minmax(0, 3fr) minmax(300px, 2fr);
+	gap: var(--g-4);
+	align-items: stretch;
 }
 
 .rec-rules-screen {
 	display: flex;
 	flex-direction: column;
 	gap: var(--g-3);
+	min-width: 0;
 }
 
-.rec-rules-screen .g-screen-line { max-width: var(--g-measure); }
+.rec-rules-screen .g-screen-line { max-width: none; }
+
+.rec-rules-phases {
+	display: grid;
+	grid-template-columns: max-content minmax(0, 1fr);
+	column-gap: var(--g-3);
+	row-gap: var(--g-2);
+	margin: var(--g-1) 0 0;
+	padding-top: var(--g-3);
+	border-top: 1px solid var(--g-phosphor-dim);
+}
+
+.rec-rules-phases dt {
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+}
+
+.rec-rules-phases dd { margin: 0; }
+
+.rec-intro-charter {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-4);
+	min-width: 0;
+}
+
+.rec-charter-figures {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: var(--g-2);
+}
+
+.rec-charter-figure {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--g-1);
+	padding: var(--g-3) var(--g-2);
+	border: 1px solid var(--g-rule);
+	background: var(--g-hull-lo);
+}
+
+.rec-charter-figure--key { border-color: var(--g-brass); }
+
+.rec-charter-number {
+	font-size: var(--g-size-h3);
+	font-weight: 600;
+	line-height: 1;
+	color: var(--g-ink);
+}
+
+.rec-charter-figure--key .rec-charter-number { color: var(--g-brass); }
+
+.rec-charter-sub {
+	font-size: var(--g-size-small);
+	color: var(--g-ink-low);
+}
+
+.rec-charter-label {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	color: var(--g-ink-low);
+	white-space: nowrap;
+}
+
+.rec-charter-rules {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+	font-size: var(--g-size-small);
+	line-height: 1.5;
+	color: var(--g-ink-mid);
+}
+
+.rec-charter-rules strong {
+	font-family: var(--g-font-stencil);
+	font-weight: 600;
+	font-size: var(--g-size-micro);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	color: var(--g-ink);
+	margin-right: var(--g-1);
+}
+
+.rec-intro-actions {
+	margin-top: auto;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+}
+
+.rec-intro-actions .g-btn { align-self: stretch; justify-content: center; }
+
+.rec-intro-seed {
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-low);
+}
+
+@media (max-width: 900px) {
+	.rec-intro-panel { grid-template-columns: minmax(0, 1fr); }
+	.rec-charter-figures { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 
 /* -------------------------------------------------------------------------
    MATCH SHELL
