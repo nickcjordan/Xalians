@@ -7,7 +7,7 @@
     "luminax"
   ],
   "lore": {
-    "description": "A heavy, long-haired Xalian that sits upright on folded legs, the Crystorn carries a pair of faceted gem growths on its head that transmit powerful light energy. It was generated on Luminax, where the Xalians grown for the world took on albino features or prismatic crystal to survive the brilliant light of its twin suns as they worked the fields and the oases of translucent, alabaster flora. Its temperament is calm, and the calm is deceiving. Where the misfiring panels of the Stellaris Superstructure have left sun-scorched blast zones on the surface, some of the Xalians of Luminax have survived in the residual radiation, and the Crystorn is among the world's survivors.",
+    "description": "A heavy, long-haired Xalian that sits upright on folded legs, the Crystorn carries a pair of crystal horns on its head that transmit powerful light energy. It was generated on Luminax, where the Xalians grown for the world took on albino features or prismatic crystal to survive the brilliant light of its twin suns as they worked the fields and the oases of translucent, alabaster flora. Its temperament is calm, and the calm is deceiving. Where the misfiring panels of the Stellaris Superstructure have left sun-scorched blast zones on the surface, some of the Xalians of Luminax have survived in the residual radiation, and the Crystorn is among the world's survivors.",
     "descriptionStatus": "upgraded",
     "biomeNiche": "the sunward oases of translucent, crystalline-leaved flora on Luminax"
   },
@@ -19,7 +19,7 @@
     },
     "bodyPlan": "biped",
     "anatomy": [
-      "core",
+      "horns",
       "fists",
       "hide"
     ],
@@ -161,21 +161,21 @@
     }
   },
   "instruments": [
-    "core",
+    "horns",
     "fists"
   ],
   "conduits": {
-    "core": "light"
+    "horns": "light"
   },
   "signatureAbility": {
     "name": "Coronet of the Twin Suns",
-    "instrument": "core",
+    "instrument": "horns",
     "action": "beam",
     "medium": "light",
     "intensity": [
       55,
       92
     ],
-    "description": "The Crystorn holds still, its crown gathering the light of both suns until the gems release it in one narrow line."
+    "description": "The Crystorn holds still until its crystal horns release the light they carry in one narrow line."
   }
 }

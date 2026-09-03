@@ -7,7 +7,7 @@
     "saiphus"
   ],
   "lore": {
-    "description": "A long-eared bounding animal of the floating islands of Saiphus, slight in the body and hugely muscled in the hind legs, with one ear swept back along its skull and a long plumed tail. The Saiphus Generator created the great leaping animals that bounded between islands as if gravity held no sway over them, on a world whose habitable surface is broken into buoyant chunks separated by a sea of clouds and dense fog. The Luceras can jump so high that at times it seems as if it is flying. Once up in the air, it comes missiling down on its enemy like a battering ram.",
+    "description": "A long-eared bounding animal of the floating islands of Saiphus, slight in the body and hugely muscled in the hind legs, with two curved horns swept back along its skull like a battering ram and a long plumed tail. The Saiphus Generator created the great leaping animals that bounded between islands as if gravity held no sway over them, on a world whose habitable surface is broken into buoyant chunks separated by a sea of clouds and dense fog. The Luceras can jump so high that at times it seems as if it is flying. Once up in the air, it comes missiling down on its enemy like a battering ram.",
     "descriptionStatus": "upgraded",
     "biomeNiche": "the gaps between the floating islands of Saiphus's upper-atmosphere life band"
   },
@@ -18,6 +18,7 @@
     },
     "bodyPlan": "quadruped",
     "anatomy": [
+      "horns",
       "tail",
       "body"
     ],
@@ -157,17 +158,18 @@
     }
   },
   "instruments": [
+    "horns",
     "body"
   ],
   "signatureAbility": {
     "name": "The Long Fall of Saiphus",
-    "instrument": "body",
+    "instrument": "horns",
     "action": "shove",
     "medium": "air",
     "intensity": [
       45,
       90
     ],
-    "description": "The Luceras leaps until it seems to fly, then comes missiling down on its enemy with its whole body."
+    "description": "The Luceras leaps until it seems to fly, then comes missiling down horns first on its enemy like a battering ram."
   }
 }
