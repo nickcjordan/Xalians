@@ -1,0 +1,173 @@
+{
+  "key": "luceras",
+  "name": "Luceras",
+  "element": "air",
+  "homePlanet": "saiphus",
+  "generatorPlanets": [
+    "saiphus"
+  ],
+  "lore": {
+    "description": "A long-eared bounding animal of the floating islands of Saiphus, slight in the body and hugely muscled in the hind legs, with one ear swept back along its skull and a long plumed tail. The Saiphus Generator created the great leaping animals that bounded between islands as if gravity held no sway over them, on a world whose habitable surface is broken into buoyant chunks separated by a sea of clouds and dense fog. The Luceras can jump so high that at times it seems as if it is flying. Once up in the air, it comes missiling down on its enemy like a battering ram.",
+    "descriptionStatus": "upgraded",
+    "biomeNiche": "the gaps between the floating islands of Saiphus's upper-atmosphere life band"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "quadruped",
+    "anatomy": [
+      "tail",
+      "body"
+    ],
+    "covering": "fur",
+    "size": {
+      "heightCm": [
+        48,
+        66
+      ],
+      "weightKg": [
+        9,
+        17
+      ]
+    },
+    "lifespan": "short",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "vocal"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -34,
+        "max": 42
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        5,
+        20
+      ],
+      "burrow": [
+        10,
+        30
+      ],
+      "climb": [
+        35,
+        55
+      ],
+      "sprint": [
+        60,
+        82
+      ],
+      "leap": [
+        82,
+        97
+      ],
+      "manipulation": [
+        15,
+        35
+      ]
+    },
+    "senses": {
+      "sight": [
+        55,
+        75
+      ],
+      "hearing": [
+        70,
+        90
+      ],
+      "smell": [
+        40,
+        60
+      ]
+    }
+  },
+  "archetypeWeights": {
+    "skirmisher": 40,
+    "runner": 27,
+    "prowler": 18,
+    "vanguard": 15
+  },
+  "attributes": {
+    "strength": [
+      38,
+      58
+    ],
+    "vitality": [
+      30,
+      50
+    ],
+    "endurance": [
+      45,
+      65
+    ],
+    "agility": [
+      70,
+      90
+    ],
+    "reflex": [
+      65,
+      85
+    ],
+    "intelligence": [
+      25,
+      45
+    ],
+    "willpower": [
+      35,
+      55
+    ],
+    "instinct": [
+      55,
+      75
+    ],
+    "charisma": [
+      30,
+      50
+    ],
+    "resilience": [
+      28,
+      48
+    ]
+  },
+  "traits": {
+    "pool": {
+      "ramming": 100,
+      "slippery": 70,
+      "resistant": 55,
+      "perceptive": 40,
+      "pack-bonded": 30,
+      "stealthy": 20,
+      "solitary": 15
+    }
+  },
+  "instruments": [
+    "body"
+  ],
+  "signatureAbility": {
+    "name": "The Long Fall of Saiphus",
+    "instrument": "body",
+    "action": "shove",
+    "medium": "air",
+    "intensity": [
+      45,
+      90
+    ],
+    "description": "The Luceras leaps until it seems to fly, then comes missiling down on its enemy with its whole body."
+  }
+}

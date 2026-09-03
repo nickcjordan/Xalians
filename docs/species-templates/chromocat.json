@@ -1,0 +1,184 @@
+{
+  "key": "chromocat",
+  "name": "Chromocat",
+  "element": "light",
+  "homePlanet": "luminax",
+  "generatorPlanets": [
+    "luminax"
+  ],
+  "lore": {
+    "description": "Used in ancient times to quickly harvest the vast crop yields of Luminax's fields, the large, albino feline known as the Chromocat possesses two sickle-shaped blades infused with pure ionized radiation that extend backwards from its front paws. These 'energy swords' allowed them to cut through grains with minimal effort, and their ability to enter a photonic-state and leap through fields at the speed of light meant they could comb through and harvest entire fields in record time. Today, their wicked speed and ionic blades allow them to seemingly 'teleport' around the battlefield, harassing their opponents by barraging them with rapid cuts in a slice-and-dice pattern so swift that reaction becomes nearly impossible.",
+    "descriptionStatus": "source",
+    "biomeNiche": "the cultivated fields of Luminax's sunward face"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "quadruped",
+    "anatomy": [
+      "blades",
+      "claws",
+      "jaws",
+      "fangs",
+      "tail",
+      "hide"
+    ],
+    "covering": "fur",
+    "size": {
+      "heightCm": [
+        80,
+        105
+      ],
+      "weightKg": [
+        60,
+        90
+      ]
+    },
+    "lifespan": "standard",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "vocal",
+      "display"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": 25,
+        "max": 95
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        10,
+        30
+      ],
+      "burrow": [
+        0,
+        5
+      ],
+      "climb": [
+        45,
+        70
+      ],
+      "sprint": [
+        80,
+        98
+      ],
+      "leap": [
+        70,
+        92
+      ],
+      "manipulation": [
+        20,
+        45
+      ]
+    },
+    "senses": {
+      "sight": [
+        70,
+        92
+      ],
+      "hearing": [
+        55,
+        80
+      ],
+      "smell": [
+        45,
+        70
+      ]
+    }
+  },
+  "archetypeWeights": {
+    "skirmisher": 52,
+    "prowler": 24,
+    "predator": 18,
+    "runner": 6
+  },
+  "attributes": {
+    "strength": [
+      40,
+      62
+    ],
+    "vitality": [
+      35,
+      58
+    ],
+    "endurance": [
+      40,
+      65
+    ],
+    "agility": [
+      78,
+      97
+    ],
+    "reflex": [
+      74,
+      95
+    ],
+    "intelligence": [
+      30,
+      52
+    ],
+    "willpower": [
+      35,
+      58
+    ],
+    "instinct": [
+      58,
+      80
+    ],
+    "charisma": [
+      30,
+      55
+    ],
+    "resilience": [
+      22,
+      42
+    ]
+  },
+  "traits": {
+    "pool": {
+      "luminous": 100,
+      "resistant": 90,
+      "slippery": 55,
+      "stealthy": 28,
+      "solitary": 30,
+      "perceptive": 20,
+      "pack-bonded": 15,
+      "volatile": 8,
+      "foresighted": 5
+    }
+  },
+  "instruments": [
+    "blades",
+    "claws"
+  ],
+  "conduits": {
+    "blades": "light"
+  },
+  "signatureAbility": {
+    "name": "Harvest at the Speed of Light",
+    "instrument": "blades",
+    "action": "rake",
+    "medium": "light",
+    "intensity": [
+      45,
+      88
+    ],
+    "description": "The Chromocat crosses the ground to its target in its photonic state and opens it with a barrage of rapid cuts from its ionized sickles."
+  }
+}

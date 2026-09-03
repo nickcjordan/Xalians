@@ -1,0 +1,176 @@
+{
+  "key": "neph",
+  "name": "Neph",
+  "element": "air",
+  "homePlanet": "saiphus",
+  "generatorPlanets": [
+    "saiphus"
+  ],
+  "lore": {
+    "description": "Colossal hydrogen jellyfish that travel in free-floating herds across Saiphus's lower atmosphere, the Neph are instrumental to the Benthane industry. These domesticated creatures roam the clouds in flocks, grazing off of the biochemicals and atmospheric plankton contained in the gas-liquid slush of Saiphus's deeper atmosphere using long, trailing tentacles that vacuum up valuable Benthane along with their food. When threatened, these same tentacles can be used to pull in opponents with considerable suction or to jettison air at high pressure. Neph can also forcibly expel jets of Benthane gas, which is typically used a coolant for starship engines, from their tentacles in order to blast their enemies with freezing air. Finally, being composed almost entirely hydrogen means that the Neph can also spray their enemies with bouts of flammable gas.",
+    "descriptionStatus": "source",
+    "biomeNiche": "the cloud layers of Saiphus's lower atmosphere, where Benthane plumes rise"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "floating",
+    "anatomy": [
+      "tendrils",
+      "vents"
+    ],
+    "covering": "bare",
+    "size": {
+      "heightCm": [
+        380,
+        620
+      ],
+      "weightKg": [
+        30,
+        90
+      ]
+    },
+    "lifespan": "standard",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "herbivore",
+    "communication": [
+      "chemical"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -60,
+        "max": 45
+      }
+    },
+    "capabilities": {
+      "flight": [
+        55,
+        75
+      ],
+      "swim": [
+        10,
+        25
+      ],
+      "burrow": [
+        0,
+        0
+      ],
+      "climb": [
+        0,
+        0
+      ],
+      "sprint": [
+        5,
+        15
+      ],
+      "leap": [
+        0,
+        0
+      ],
+      "manipulation": [
+        40,
+        65
+      ]
+    },
+    "senses": {
+      "sight": [
+        25,
+        45
+      ],
+      "hearing": [
+        20,
+        40
+      ],
+      "smell": [
+        55,
+        80
+      ]
+    }
+  },
+  "archetypeWeights": {
+    "survivor": 45,
+    "bulwark": 25,
+    "sage": 20,
+    "seeker": 10
+  },
+  "attributes": {
+    "strength": [
+      30,
+      55
+    ],
+    "vitality": [
+      55,
+      80
+    ],
+    "endurance": [
+      55,
+      80
+    ],
+    "agility": [
+      10,
+      30
+    ],
+    "reflex": [
+      10,
+      30
+    ],
+    "intelligence": [
+      10,
+      25
+    ],
+    "willpower": [
+      25,
+      45
+    ],
+    "instinct": [
+      35,
+      60
+    ],
+    "charisma": [
+      20,
+      40
+    ],
+    "resilience": [
+      15,
+      35
+    ]
+  },
+  "traits": {
+    "pool": {
+      "pack-bonded": 90,
+      "volatile": 100,
+      "slippery": 70,
+      "resistant": 45,
+      "protective": 30,
+      "menacing": 5
+    }
+  },
+  "instruments": [
+    "tendrils",
+    "vents"
+  ],
+  "conduits": {
+    "vents": "air"
+  },
+  "signatureAbility": {
+    "name": "Benthane Coldwind",
+    "instrument": "vents",
+    "action": "spray",
+    "medium": "ice",
+    "intensity": [
+      35,
+      80
+    ],
+    "description": "The Neph forces the coolant gas banked in its tentacles out through their open ends, washing everything before it in a freezing white plume."
+  }
+}

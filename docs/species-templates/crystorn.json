@@ -1,0 +1,181 @@
+{
+  "key": "crystorn",
+  "name": "Crystorn",
+  "element": "light",
+  "homePlanet": "luminax",
+  "generatorPlanets": [
+    "luminax"
+  ],
+  "lore": {
+    "description": "A heavy, long-haired Xalian that sits upright on folded legs, the Crystorn carries a pair of faceted gem growths on its head that transmit powerful light energy. It was generated on Luminax, where the Xalians grown for the world took on albino features or prismatic crystal to survive the brilliant light of its twin suns as they worked the fields and the oases of translucent, alabaster flora. Its temperament is calm, and the calm is deceiving. Where the misfiring panels of the Stellaris Superstructure have left sun-scorched blast zones on the surface, some of the Xalians of Luminax have survived in the residual radiation, and the Crystorn is among the world's survivors.",
+    "descriptionStatus": "upgraded",
+    "biomeNiche": "the sunward oases of translucent, crystalline-leaved flora on Luminax"
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": {
+      "primary": "flesh",
+      "secondary": "mineral"
+    },
+    "bodyPlan": "biped",
+    "anatomy": [
+      "core",
+      "fists",
+      "hide"
+    ],
+    "covering": "fur",
+    "size": {
+      "heightCm": [
+        160,
+        195
+      ],
+      "weightKg": [
+        300,
+        420
+      ]
+    },
+    "lifespan": "long",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "energy-feeder",
+    "communication": [
+      "display",
+      "vocal"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": 30,
+        "max": 95
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        5,
+        20
+      ],
+      "burrow": [
+        0,
+        0
+      ],
+      "climb": [
+        10,
+        25
+      ],
+      "sprint": [
+        10,
+        30
+      ],
+      "leap": [
+        10,
+        25
+      ],
+      "manipulation": [
+        45,
+        70
+      ]
+    },
+    "senses": {
+      "sight": [
+        70,
+        92
+      ],
+      "hearing": [
+        45,
+        70
+      ],
+      "smell": [
+        40,
+        65
+      ]
+    }
+  },
+  "archetypeWeights": {
+    "sage": 46,
+    "bulwark": 24,
+    "stalwart": 18,
+    "survivor": 12
+  },
+  "attributes": {
+    "strength": [
+      55,
+      78
+    ],
+    "vitality": [
+      60,
+      85
+    ],
+    "endurance": [
+      58,
+      82
+    ],
+    "agility": [
+      12,
+      32
+    ],
+    "reflex": [
+      20,
+      42
+    ],
+    "intelligence": [
+      45,
+      68
+    ],
+    "willpower": [
+      62,
+      88
+    ],
+    "instinct": [
+      40,
+      62
+    ],
+    "charisma": [
+      35,
+      60
+    ],
+    "resilience": [
+      58,
+      80
+    ]
+  },
+  "traits": {
+    "pool": {
+      "luminous": 100,
+      "resistant": 96,
+      "reflective": 55,
+      "mind-sealed": 34,
+      "protective": 24,
+      "anchored": 22,
+      "menacing": 12,
+      "foresighted": 4
+    }
+  },
+  "instruments": [
+    "core",
+    "fists"
+  ],
+  "conduits": {
+    "core": "light"
+  },
+  "signatureAbility": {
+    "name": "Coronet of the Twin Suns",
+    "instrument": "core",
+    "action": "beam",
+    "medium": "light",
+    "intensity": [
+      55,
+      92
+    ],
+    "description": "The Crystorn holds still, its crown gathering the light of both suns until the gems release it in one narrow line."
+  }
+}
