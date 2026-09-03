@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { createMatch, send, getPublicState } from '../../../../gameplay/expedition/expeditionRules';
 import { getWorlds } from '../../../../gameplay/expedition/sites';
-import { rollExpeditionXalians } from '../../../../gameplay/expedition/devtools/rollExpeditionXalians';
+import { buildExpeditionPool } from '../../../../gameplay/expedition/roster';
 import { ROSTER_SIZE } from '../../../../gameplay/expedition/expeditionInterpretation';
 import {
 	orderPreview, flattenBoard, siteHoldTotal, conductSentence, conductClause, previewSentence,
@@ -12,7 +12,7 @@ import { prepare } from '../../../../gameplay/expedition/creatureOnTable';
 const SEED = 'preview-test';
 
 function buildMatch() {
-	const pool = rollExpeditionXalians(ROSTER_SIZE * 2, SEED);
+	const pool = buildExpeditionPool(SEED, ROSTER_SIZE * 2);
 	return createMatch({
 		rosterA: pool.slice(0, ROSTER_SIZE),
 		rosterB: pool.slice(ROSTER_SIZE, ROSTER_SIZE * 2),
@@ -116,7 +116,7 @@ describe('orderPreview', () => {
 
 describe('conduct wording', () => {
 	it('prints one sentence covering both the attacking and the supporting choice', () => {
-		const pool = rollExpeditionXalians(1, 'conduct-test');
+		const pool = buildExpeditionPool('conduct-test', 1);
 		const world = getWorlds()[0];
 		const prepared = prepare(pool[0], world.sites[0], world, 0);
 		const sentence = conductSentence(prepared);
@@ -146,7 +146,7 @@ describe('conduct wording', () => {
 
 describe('previewSentence', () => {
 	it('says so plainly when nothing is in reach', () => {
-		const pool = rollExpeditionXalians(1, 'reach-test');
+		const pool = buildExpeditionPool('reach-test', 1);
 		const world = getWorlds()[0];
 		const site = world.sites[0];
 		const prepared = prepare(pool[0], site, world, 0);
@@ -205,7 +205,7 @@ describe('duplicate actions on one creature', () => {
 		duplicate. This test pins the fact the panel relies on.
 	*/
 	it('the engine resolves an ordered action to the first ability carrying it', () => {
-		const pool = rollExpeditionXalians(40, 'dupe-action');
+		const pool = buildExpeditionPool('dupe-action', 40);
 		const world = getWorlds()[0];
 		const withDupes = pool.find((r) => {
 			const actions = (r.abilities || []).map((a) => a.action);

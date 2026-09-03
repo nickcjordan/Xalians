@@ -1752,3 +1752,143 @@
 	}
 	.rec-roster-strip { flex-wrap: nowrap; overflow-x: auto; padding-bottom: var(--g-1); }
 }
+
+/* -------------------------------------------------------------------------
+   REAL CREATURES. The figure carries the species silhouette from the Encyclopedia's
+   art; the dossier opens on a portrait and quotes the record.
+   ------------------------------------------------------------------------- */
+
+.rec-figure-plate {
+	flex-direction: row;
+	gap: var(--g-1);
+}
+
+.rec-figure-portrait {
+	flex: 0 0 auto;
+	width: 18px;
+	height: 18px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	background: color-mix(in srgb, var(--g-el) 22%, var(--g-hull-lo));
+	border: var(--g-hairline) solid color-mix(in srgb, var(--g-el) 55%, var(--g-seam));
+	overflow: hidden;
+}
+
+.rec-figure-portrait-svg {
+	width: 14px;
+	height: 14px;
+	display: block;
+}
+
+/* a stencil: every path in the element's colour */
+.rec-figure-portrait-svg,
+.rec-figure-portrait-svg * {
+	fill: var(--g-el) !important;
+	stroke: none !important;
+}
+
+.rec-figure--theirs .rec-figure-portrait-svg,
+.rec-figure--theirs .rec-figure-portrait-svg * {
+	fill: color-mix(in srgb, var(--g-el) 70%, var(--g-ink-low)) !important;
+}
+
+.rec-figure--small .rec-figure-portrait { width: 16px; height: 16px; }
+.rec-figure--small .rec-figure-portrait-svg { width: 12px; height: 12px; }
+
+.rec-figure-badge { margin-left: var(--g-1); }
+
+.rec-inspect-head { align-items: center; }
+
+.rec-inspect-portrait {
+	flex: 0 0 auto;
+	width: 56px;
+	height: 56px;
+	border-radius: var(--g-radius);
+	overflow: hidden;
+	box-shadow: var(--g-recess);
+	border: var(--g-hairline) solid var(--g-seam);
+}
+
+.rec-inspect-portrait .xalian-image-wrapper {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+}
+
+.rec-inspect-title { flex: 1 1 auto; min-width: 0; }
+
+.rec-inspect-sub { text-transform: none; }
+
+.rec-inspect-niche {
+	font-size: var(--g-size-tiny) !important;
+	color: var(--g-ink-mid);
+	margin: 0 !important;
+	font-style: italic;
+}
+
+.rec-inspect-traits {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.rec-inspect-trait {
+	display: grid;
+	grid-template-columns: minmax(6rem, auto) 1fr;
+	gap: var(--g-2);
+	font-size: var(--g-size-micro);
+	line-height: 1.35;
+}
+
+.rec-inspect-trait-name {
+	font-family: var(--g-font-stencil);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-low);
+}
+
+.rec-inspect-trait--read .rec-inspect-trait-name { color: var(--g-brass-light); }
+
+.rec-inspect-trait-nature { color: var(--g-ink-mid); }
+
+.rec-inspect-signature {
+	font-size: var(--g-size-micro) !important;
+	color: var(--g-ink-mid);
+}
+
+.rec-inspect-signature-name {
+	font-family: var(--g-font-stencil);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-el);
+}
+
+.rec-inspect-record summary {
+	cursor: pointer;
+	list-style: none;
+}
+
+.rec-inspect-record summary::-webkit-details-marker { display: none; }
+
+.rec-inspect-record summary::after {
+	content: ' +';
+	color: var(--g-ink-low);
+}
+
+.rec-inspect-record[open] summary::after { content: ' -'; }
+
+.rec-inspect-record .g-body { margin-top: var(--g-2) !important; }
+
+.rec-status-terrain {
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-low);
+}
+
+@media (max-width: 760px) {
+	.rec-status-terrain { display: none; }
+}

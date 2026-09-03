@@ -46,7 +46,7 @@ import {
 import { ROSTER_SIZE, SITES_PER_WORLD, ACT_CLASS_BY_ACTION, SENDABLE } from '../expeditionInterpretation.js';
 import { chooseSend, chooseOrders } from '../expeditionBot.js';
 import { prepare, magnitudeAgainst, baseHold, initiativeOf, strainLevel } from '../creatureOnTable.js';
-import { rollExpeditionXalians } from './rollExpeditionXalians.js';
+import { buildExpeditionPool } from '../roster.js';
 import { getWorlds } from '../sites.js';
 import fs from 'node:fs';
 
@@ -1140,7 +1140,7 @@ function printReport(report) {
 export function runSimulation(args = {}) {
 	const opts = { matches: 300, seed: 7, mirror: false, random: null, ...args };
 	const rng = makeRng(opts.seed);
-	const pool = rollExpeditionXalians(80, opts.seed);
+	const pool = buildExpeditionPool(opts.seed, 87);
 
 	const matchResults = [];
 	for (let i = 0; i < opts.matches; i++) {
@@ -1156,7 +1156,7 @@ export function runSimulation(args = {}) {
 export function runSimulationRaw(args = {}) {
 	const opts = { matches: 300, seed: 7, mirror: false, random: null, ...args };
 	const rng = makeRng(opts.seed);
-	const pool = rollExpeditionXalians(80, opts.seed);
+	const pool = buildExpeditionPool(opts.seed, 87);
 	const matchResults = [];
 	for (let i = 0; i < opts.matches; i++) {
 		const matchSeed = `${opts.seed}-match-${i}`;

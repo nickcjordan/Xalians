@@ -874,6 +874,15 @@ class ReclamationMatch extends React.Component {
 					<span className="rec-world-dots" title={`World ${view.worldIndex + 1} of ${WORLDS_PER_MATCH}`}>{worldDots}</span>
 					<h2 className="rec-status-planet">{view.world.planet}</h2>
 					<span className="g-chip rec-status-element">{view.world.element}</span>
+					{view.world.terrain && (
+						<span
+							className="rec-status-terrain g-mono"
+							title={view.world.hazards && view.world.hazards.length > 0 ? `Hazards: ${view.world.hazards.join(', ')}` : undefined}
+						>
+							{view.world.terrain}
+							{view.world.temperatureC ? ` · ${view.world.temperatureC.low} to ${view.world.temperatureC.high} C` : ''}
+						</span>
+					)}
 					<span className="rec-status-next g-mono">
 						{view.nextWorld ? `then ${view.nextWorld.planet}` : 'the last world'}
 					</span>

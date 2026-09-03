@@ -12,7 +12,7 @@
 	itself, per the task's own guidance: the engine should not know where data lives.
 */
 
-import { prepare, magnitudeAgainst, holdAtSite, targetMatchupMultiplier } from './creatureOnTable.js';
+import { prepare, magnitudeAgainst, holdAtSite, targetMatchupMultiplier, traitKeywordsOf } from './creatureOnTable.js';
 import {
 	ROSTER_SIZE,
 	SENDABLE,
@@ -312,8 +312,7 @@ export function send(state, handler, recordId, siteId, hidden = false) {
 		return null;
 	}
 	if (hidden) {
-		const traits = (record.traits && [...(record.traits.guaranteed || []), ...(record.traits.rolled || [])]) || [];
-		if (!traits.includes('stealthy')) {
+		if (!traitKeywordsOf(record).includes('stealthy')) {
 			return null;
 		}
 	}
@@ -1395,7 +1394,9 @@ export function getPublicState(state, handler) {
 
 	return {
 		worldIndex: state.worldIndex,
-		world: { planet: world.planet, element: world.element, sites: world.sites },
+		// the whole world entry travels to the view: sites plus the planet facts sites.js
+		// attaches (terrain, band, hazards) so the table can show the real world
+		world: { ...world },
 		nextWorld: state.worldIndex + 1 < state.worlds.length ? {
 			planet: state.worlds[state.worldIndex + 1].planet,
 			element: state.worlds[state.worldIndex + 1].element,

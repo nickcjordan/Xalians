@@ -1,3 +1,5 @@
+import { speciesDisplayName, getSpeciesTemplate } from '../../../gameplay/generator/index.js';
+
 /*
 	Reclamation — plain-sentence narration of the engine's resolution log.
 
@@ -19,8 +21,13 @@
 // `species` and an id, so the table calls a creature by its species. Where two creatures
 // of the same species are on the table at once the caller supplies a disambiguator.
 export function speciesLabel(record) {
+	// the ratified species name from the template (speciesRecords.json); a record that
+	// carries no known species falls back to a capitalized form of what it has
 	if (!record) {
 		return 'a creature';
+	}
+	if (record.species && getSpeciesTemplate(record.species)) {
+		return speciesDisplayName(record.species);
 	}
 	const raw = record.name || record.species || record.id || 'creature';
 	return String(raw)
