@@ -40,3 +40,20 @@
 .enc-bestiary-ratified-toggle {
 	white-space: nowrap;
 }
+
+@media (max-width: 700px) {
+	.enc-filters {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.enc-filters .g-segmented.enc-scrollrow {
+		display: flex;
+		width: 100%;
+		max-width: 100%;
+	}
+
+	.enc-filters .g-segment {
+		white-space: nowrap;
+	}
+}

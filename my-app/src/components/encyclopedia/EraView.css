@@ -111,6 +111,22 @@
 	}
 }
 
+@media (max-width: 700px) {
+	.enc-era-rail-chips {
+		gap: var(--g-3);
+	}
+
+	.enc-era-rail-chip {
+		min-height: 32px;
+		display: inline-flex;
+		align-items: center;
+	}
+
+	.enc-era-rail-station {
+		min-height: 32px;
+	}
+}
+
 /* ---- events ------------------------------------------------------------ */
 
 .enc-era-event-toggle-all {

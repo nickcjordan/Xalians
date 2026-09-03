@@ -149,3 +149,16 @@
 	.enc-chronicle-station-body { grid-area: body; margin-top: var(--g-2); }
 	.enc-chronicle-station-side { grid-area: side; }
 }
+
+@media (max-width: 700px) {
+	.enc-chronicle-footprint {
+		width: 100%;
+		gap: 3px;
+	}
+
+	.enc-chronicle-footprint-cell {
+		flex: 1 1 0;
+		width: auto;
+		height: 24px;
+	}
+}

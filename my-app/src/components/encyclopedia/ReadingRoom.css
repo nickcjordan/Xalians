@@ -106,6 +106,16 @@
 	outline-offset: 2px;
 }
 
+/* Phones: keep the index number a real tap target without growing it on
+   desktop, where it reads as an inline label beside the era name. */
+@media (max-width: 700px) {
+	.enc-room-index {
+		min-width: 32px;
+		min-height: 32px;
+		justify-content: center;
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
 	.enc-room-story-row {
 		transition: none;

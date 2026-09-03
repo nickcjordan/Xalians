@@ -90,3 +90,30 @@
 		padding-bottom: var(--g-2);
 	}
 }
+
+@media (max-width: 700px) {
+	.enc-index-chips.enc-scrollrow {
+		display: flex;
+		flex-wrap: nowrap;
+		width: 100%;
+		max-width: 100%;
+	}
+
+	.enc-index-alphabet.enc-scrollrow {
+		display: flex;
+		flex-wrap: nowrap;
+		width: 100%;
+		max-width: 100%;
+	}
+
+	.enc-index-alphabet-key {
+		flex: 0 0 36px;
+		width: 36px;
+		height: 36px;
+		min-width: 36px;
+		padding: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+}

@@ -88,7 +88,7 @@ export default function Index() {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                 />
-                <div className="g-segmented enc-index-chips" aria-label="Filter by category">
+                <div className="g-segmented enc-index-chips enc-scrollrow" aria-label="Filter by category">
                     <button
                         type="button"
                         className="g-segment"
@@ -111,7 +111,7 @@ export default function Index() {
                 </div>
             </div>
 
-            <div className="g-segmented enc-index-alphabet" role="group" aria-label="Jump to letter">
+            <div className="g-segmented enc-index-alphabet enc-scrollrow" role="group" aria-label="Jump to letter">
                 {ALPHABET.map((letter) => {
                     const live = liveLetters.has(letter);
                     return (

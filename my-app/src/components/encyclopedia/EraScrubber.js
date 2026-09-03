@@ -37,7 +37,7 @@ export default function EraScrubber({ era, onChange }) {
 		const buttons = rail.querySelectorAll('.enc-scrub-station');
 		const btn = buttons[Math.max(activeIndex, 0)];
 		if (btn && btn.scrollIntoView) {
-			btn.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+			btn.scrollIntoView({ block: 'nearest', inline: 'center' });
 		}
 	}, [activeIndex]);
 
@@ -62,7 +62,7 @@ export default function EraScrubber({ era, onChange }) {
 	return (
 		<div className="enc-scrub">
 			<div
-				className="enc-scrub-rail"
+				className="enc-scrub-rail enc-scrollrow"
 				ref={railRef}
 				role="group"
 				aria-label="Filter the map by era"

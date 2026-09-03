@@ -105,7 +105,15 @@
 /* ---- phone: single column, map above prose, rail wraps -------------------- */
 
 @media (max-width: 700px) {
-	.enc-tour-rail { gap: var(--g-3); }
+	.enc-tour-rail { gap: var(--g-3); row-gap: var(--g-4); }
+
+	.enc-tour-station {
+		min-height: 32px;
+		min-width: 32px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
 
 	.enc-tour-nav { flex-direction: column; align-items: stretch; }
 

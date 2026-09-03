@@ -1,0 +1,21 @@
+/* Back-to-top key: phone only, fixed bottom right, matte and static.
+   Contract: UX-BRIEF.md. Only .g-btn parts and --g-* tokens. */
+
+.enc-back-to-top {
+	display: none;
+}
+
+@media (max-width: 700px) {
+	.enc-back-to-top {
+		display: inline-flex;
+		position: fixed;
+		right: var(--g-4);
+		bottom: var(--g-4);
+		z-index: var(--g-layer-nav);
+		width: 44px;
+		height: 44px;
+		padding: 0;
+		font-size: var(--g-size-h3);
+		line-height: 1;
+	}
+}
