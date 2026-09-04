@@ -83,6 +83,13 @@
 	--g-hazard: #d9a410;
 	--g-hazard-dark: #6d5108;
 
+	/* --- sides ------------------------------------------------------------
+	   The two seats at any table, as the Duel paints them: your pieces rimmed
+	   in cyan, the rival's in brass. Shared by every game so a side reads the
+	   same way everywhere. */
+	--g-team-one: #3bbedf;
+	--g-team-two: #c39738;
+
 	/* --- element energy ---------------------------------------------------
 	   Unchanged, and the fixed point of the whole system: fire is red because
 	   fire is red. The hull went colourless so these own every saturated pixel. */

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReclamationWorld from './reclamationWorld';
-import ReclamationRoster from './reclamationRoster';
+import ReclamationDeploy from './reclamationDeploy';
 import ReclamationOrders from './reclamationOrders';
 import ReclamationInspect from './reclamationInspect';
 import ReclamationLog from './reclamationLog';
@@ -83,7 +83,11 @@ class ReclamationMatch extends React.Component {
 			ordersOpen: false, // simple mode: the full orders panel, opened on request
 			beat: null, // { id, seat, kind, text, short } the callout being shown
 			arrival: null, // { id, ids, siteId, seat } figures that just landed
+			hoverRecordId: null, // the roster slot under the pointer: previewed on every site
+			hoverSiteId: null, // the site row under the pointer in the deploy panel
 		};
+		// your twelve in slot order, held for the whole expedition so the roster never reshuffles
+		this.squad = props.initialMatch.players[YOU].roster.slice();
 		this.botRngState = createRngState(`${props.seed}-bot`);
 		this.botTimer = null;
 		this.noticeTimer = null;
@@ -550,7 +554,7 @@ class ReclamationMatch extends React.Component {
 			return;
 		}
 		this.tellSend(match, next, record, siteId, sendHidden);
-		this.setState({ match: next, armedRecordId: null, sendHidden: false }, this.afterEngineStep);
+		this.setState({ match: next, armedRecordId: null, sendHidden: false, hoverSiteId: null, hoverRecordId: null }, this.afterEngineStep);
 	};
 
 	// your own send, told the same way as the rival's: log line, arrival, callout
@@ -622,36 +626,11 @@ class ReclamationMatch extends React.Component {
 	}
 
 	recommendation(view) {
-		if (!this.isSimple() || view.phase !== 'deploy' || this.state.playback || this.state.judged) {
+		if (view.phase !== 'deploy' || this.state.playback || this.state.judged) {
 			return null;
 		}
 		return recommendSend(view, view.players[YOU].roster, YOU);
 	}
-
-	acceptRecommendation = () => {
-		const view = this.view();
-		const rec = this.recommendation(view);
-		if (!rec || rec.type === 'wait') {
-			return;
-		}
-		if (rec.type === 'pass') {
-			this.handlePass();
-			return;
-		}
-		if (rec.type === 'relocate') {
-			this.setState({ relocating: true, armedRecordId: null }, () => this.handleSiteClick(rec.siteId));
-			return;
-		}
-		const { match } = this.state;
-		const record = match.players[YOU].roster.find((r) => r.id === rec.recordId);
-		const next = send(match, YOU, rec.recordId, rec.siteId, rec.hidden);
-		if (!next || !record) {
-			this.notice('That send is not allowed right now.');
-			return;
-		}
-		this.tellSend(match, next, record, rec.siteId, rec.hidden);
-		this.setState({ match: next, armedRecordId: null, sendHidden: false, relocating: false }, this.afterEngineStep);
-	};
 
 	// ------------------------------------------------------------------
 	// orders
@@ -977,12 +956,15 @@ class ReclamationMatch extends React.Component {
 		return totals;
 	}
 
+	// what the armed creature (or, before one is armed, the slot under the pointer)
+	// would hold at every site
 	ghostsForArmed(view) {
-		const { armedRecordId } = this.state;
-		if (!armedRecordId) {
+		const { armedRecordId, hoverRecordId } = this.state;
+		const id = armedRecordId || hoverRecordId;
+		if (!id || view.phase !== 'deploy' || view.turn !== YOU) {
 			return null;
 		}
-		const record = view.players[YOU].roster.find((r) => r.id === armedRecordId);
+		const record = view.players[YOU].roster.find((r) => r.id === id);
 		if (!record) {
 			return null;
 		}
@@ -993,6 +975,7 @@ class ReclamationMatch extends React.Component {
 				hold: prepared.hold,
 				strainLevel: prepared.strainLevel,
 				isHome: prepared.isHome,
+				preview: !armedRecordId,
 			};
 		});
 		return ghosts;
@@ -1028,15 +1011,12 @@ class ReclamationMatch extends React.Component {
 		}
 		if (armedRecordId) {
 			const record = view.players[YOU].roster.find((r) => r.id === armedRecordId);
-			return `${speciesLabel(record)} is armed. Click a site to send it there, or click it again to put it back.`;
+			return `${speciesLabel(record)} is chosen. Press a site to send it there, or Change to pick another.`;
 		}
 		if (view.players[YOU].passed) {
 			return 'You have passed. Waiting on the rival.';
 		}
-		if (this.isSimple()) {
-			return 'Take the recommended move, or pick a creature and a site yourself.';
-		}
-		return 'Pick a creature from your roster, then pick the site to send it to. Or pass.';
+		return 'Choose a creature from your squad, then the site to send it to. Or pass.';
 	}
 
 	// a rival beat holds the turn readout on what the rival just did, so "Your move" lands
@@ -1138,35 +1118,6 @@ class ReclamationMatch extends React.Component {
 		);
 	}
 
-	renderAdvice(view) {
-		const rec = this.recommendation(view);
-		if (!rec) {
-			return null;
-		}
-		if (rec.type === 'wait' || this.rivalBeat()) {
-			return (
-				<div className="rec-advice rec-advice--waiting" data-advice="wait">
-					<span className="g-kicker">Recommended</span>
-					<span className="rec-advice-label">{rec.type === 'wait' ? 'Waiting on the rival' : 'The rival has moved'}</span>
-				</div>
-			);
-		}
-		return (
-			<div className={`rec-advice rec-advice--${rec.type} rec-rise`} data-advice={rec.type} key={rec.label}>
-				<span className="g-kicker">Recommended</span>
-				<button type="button" className="g-btn g-btn--primary rec-advice-btn" onClick={this.acceptRecommendation} data-accept-advice>
-					{rec.label}
-				</button>
-				<p className="rec-advice-why g-body">{rec.reason}</p>
-				{rec.type !== 'pass' && (
-					<button type="button" className="g-btn rec-advice-pass" onClick={this.handlePass} data-pass title="Pass is permanent for this world.">
-						Pass instead
-					</button>
-				)}
-			</div>
-		);
-	}
-
 	// the callout: one sentence over the sites saying what just happened, in the colour
 	// of whoever did it. Keyed on the beat so each one plays its own entrance and exit.
 	renderCallout() {
@@ -1189,59 +1140,6 @@ class ReclamationMatch extends React.Component {
 					<span className="rec-callout-kicker">{kicker}</span>
 					<span className="rec-callout-text">{beat.text}</span>
 				</div>
-			</div>
-		);
-	}
-
-	renderDeployControls(view) {
-		const me = view.players[YOU];
-		const them = view.players[THEM];
-		const armed = this.state.armedRecordId
-			? me.roster.find((r) => r.id === this.state.armedRecordId)
-			: null;
-		const armedStealthy = armed
-			&& [...(armed.traits.guaranteed || []), ...(armed.traits.rolled || [])].includes('stealthy');
-		const yourTurn = view.turn === YOU && view.phase === 'deploy' && !this.state.playback;
-		const vanguard = me.canRelocateVanguard && me.vanguardRecordId
-			? this.findRecordOnBoard(this.state.match, me.vanguardRecordId)
-			: null;
-
-		return (
-			<div className="rec-deploy-controls">
-				{armedStealthy && (
-					<label className="g-check rec-hidden-toggle" title="A stealthy creature may be sent hidden: the rival learns that you sent something, not what or where, until orders are revealed.">
-						<input type="checkbox" checked={this.state.sendHidden} onChange={this.toggleHidden} data-hidden-toggle />
-						<span className="g-check-box" />
-						<span>Send hidden</span>
-					</label>
-				)}
-				{them.passed && !me.passed && (
-					<span className="rec-deploy-note rec-deploy-note--open">The rival has passed. Nothing you send now can be answered.</span>
-				)}
-				{vanguard && (
-					<button
-						type="button"
-						className={`g-btn rec-fallback-btn${this.state.relocating ? ' rec-fallback-btn--active' : ''}`}
-						onClick={this.beginRelocate}
-						disabled={!yourTurn}
-						data-fallback
-						title="You placed your first creature knowing nothing. Once per world it may fall back to another site, without spending your turn."
-					>
-						{this.state.relocating ? 'Choose a site' : `Fall back ${speciesLabel(vanguard)}`}
-						<span className="rec-btn-sub">free move, once this world</span>
-					</button>
-				)}
-				<button
-					type="button"
-					className="g-btn rec-pass-btn"
-					onClick={this.handlePass}
-					disabled={!yourTurn}
-					data-pass
-					title="Pass is permanent for this world."
-				>
-					Pass for this world
-					<span className="rec-btn-sub">permanent, ends your deploy here</span>
-				</button>
 			</div>
 		);
 	}
@@ -1273,11 +1171,16 @@ class ReclamationMatch extends React.Component {
 		const { notice, playback, verdicts, judged, inspect } = this.state;
 		const simple = this.isSimple();
 		const rec = this.recommendation(view);
-		const recommendedRecordId = rec && rec.type === 'send' && !this.state.armedRecordId ? rec.recordId : null;
-		const recommendedSiteId = rec && (rec.type === 'send' || rec.type === 'relocate') && !this.state.armedRecordId ? rec.siteId : null;
-		// simple mode has no rail, except for an open dossier or the full orders panel
+		// the suggested site is marked once its creature is the chosen one
+		const recommendedSiteId = rec && rec.type === 'send' && this.state.armedRecordId === rec.recordId ? rec.siteId
+			: rec && rec.type === 'relocate' && this.state.relocating ? rec.siteId : null;
+		// simple mode has no rail, except during deploy (the deploy panel lives there), for
+		// an open dossier, or for the full orders panel
 		const ordersPanelOpen = view.phase === 'orders' && !playback && (!simple || (this.state.ordersOpen && !view.players[YOU].committed));
-		const showRail = !simple || !!inspect || ordersPanelOpen;
+		const deployPanelOpen = view.phase === 'deploy' && !playback && !judged;
+		// simple mode's orders: the plan by nature, in the rail, with the full panel one tap away
+		const planPanelOpen = view.phase === 'orders' && !playback && simple && !this.state.ordersOpen;
+		const showRail = !simple || !!inspect || ordersPanelOpen || deployPanelOpen || planPanelOpen;
 		const holds = this.holdsForBoard(view);
 		const totals = this.totalsForBoard(view);
 		const ghosts = this.ghostsForArmed(view);
@@ -1353,28 +1256,10 @@ class ReclamationMatch extends React.Component {
 							hiddenEnemyCount={deploying || ordering ? (them.hiddenSentThisRound || 0) : 0}
 							badges={badges}
 							highlights={highlights}
+							hoverSiteId={this.state.hoverSiteId}
 							onSiteClick={this.handleSiteClick}
 							onFigureClick={(entry, seat, site) => this.inspectRecord(entry.record, site)}
 						/>
-
-						{deploying && (
-							<div className={`rec-deploy-bar rec-rise${simple ? ' rec-deploy-bar--simple' : ''}`}>
-								{simple && this.renderAdvice(view)}
-								<ReclamationRoster
-									roster={me.roster}
-									you={YOU}
-									armedRecordId={this.state.armedRecordId}
-									recommendedRecordId={recommendedRecordId}
-									onArm={this.armRecord}
-									onInspect={(record) => this.inspectRecord(record, null)}
-									sendsLeft={Math.max(0, SENDABLE - me.sentCount)}
-									disabled={view.turn !== YOU || me.passed}
-									yourTurn={view.turn === YOU && !me.passed}
-									simple={simple}
-								/>
-								{!simple && this.renderDeployControls(view)}
-							</div>
-						)}
 
 						{ordering && !simple && (
 							<div className="rec-orders-bar rec-rise" data-orders-bar>
@@ -1389,55 +1274,80 @@ class ReclamationMatch extends React.Component {
 							</div>
 						)}
 
-						{ordering && simple && (
-							<div className="rec-orders-bar rec-orders-bar--simple rec-rise" data-orders-bar>
-								<div className="rec-orders-plan">
-									<span className="g-kicker">Orders</span>
-									<span className="rec-orders-bar-text">
-										{me.committed
-											? 'Your orders are sealed. The rival is giving its own.'
-											: units.length === 0
-												? 'You have nothing on this world. The rival acts alone.'
-												: this.state.ordersOpen
-													? 'Choose acts in the panel, then go.'
-													: 'Each of your creatures acts by nature:'}
-									</span>
-									{!me.committed && units.length > 0 && !this.state.ordersOpen && (
-										<ul className="rec-orders-plan-list">
-											{preview.filter((row) => row.isYours).map((row) => (
-												<li
-													key={row.unit.recordId}
-													className={row.ordered ? 'rec-orders-plan-item rec-orders-plan-item--ordered' : 'rec-orders-plan-item'}
-													onMouseEnter={() => this.setState({ hoverRow: row })}
-													onMouseLeave={() => this.setState({ hoverRow: null })}
-												>
-													{row.sentence}
-												</li>
-											))}
-										</ul>
-									)}
-								</div>
-								<div className="rec-orders-plan-actions">
-									<button type="button" className="g-btn g-btn--primary rec-go-btn" onClick={this.commitOrders} disabled={me.committed} data-give-orders>
-										{me.committed ? 'Orders given' : 'Go'}
-									</button>
-									{!me.committed && units.length > 0 && (
-										<button
-											type="button"
-											className={`g-btn rec-change-orders${this.state.ordersOpen ? ' rec-change-orders--open' : ''}`}
-											onClick={() => this.setState((prev) => ({ ordersOpen: !prev.ordersOpen }))}
-											data-change-orders
-										>
-											{this.state.ordersOpen ? 'Close orders' : 'Change orders'}
-										</button>
-									)}
-								</div>
-							</div>
-						)}
 					</div>
 
 					{showRail && (
 					<div className="rec-rail">
+						{deployPanelOpen && !inspect && (
+							<ReclamationDeploy
+								view={view}
+								you={YOU}
+								squad={this.squad}
+								mode={simple ? 'simple' : 'advanced'}
+								armedRecordId={this.state.armedRecordId}
+								recommendation={rec}
+								sendHidden={this.state.sendHidden}
+								relocating={this.state.relocating}
+								vanguard={me.canRelocateVanguard && me.vanguardRecordId ? this.findRecordOnBoard(this.state.match, me.vanguardRecordId) : null}
+								hoverSiteId={this.state.hoverSiteId}
+								onArm={this.armRecord}
+								onDisarm={() => this.setState({ armedRecordId: null, sendHidden: false })}
+								onInspect={(record) => this.inspectRecord(record, null)}
+								onHoverRecord={(id) => this.setState({ hoverRecordId: id })}
+								onHoverSite={(id) => this.setState({ hoverSiteId: id })}
+								onSend={this.handleSiteClick}
+								onToggleHidden={this.toggleHidden}
+								onPass={this.handlePass}
+								onBeginRelocate={this.beginRelocate}
+								rivalBeat={this.rivalBeat()}
+							/>
+						)}
+						{planPanelOpen && !inspect && (
+							<aside className="g-panel rec-deploy rec-plan rec-rise" data-orders-bar aria-label="Orders">
+								<header className="rec-deploy-head">
+									<span className="g-kicker">Orders</span>
+									<div className="rec-deploy-title">
+										<h3 className="rec-deploy-heading">{me.committed ? 'Orders sealed' : 'By nature'}</h3>
+										<p className="rec-deploy-lead g-body">
+											{me.committed
+												? 'Your orders are sealed. The rival is giving its own.'
+												: units.length === 0
+													? 'You have nothing on this world. The rival acts alone.'
+													: 'Each of your creatures acts by nature. Go, or change an order first.'}
+										</p>
+									</div>
+								</header>
+								{!me.committed && units.length > 0 && (
+									<ul className="rec-orders-plan-list rec-plan-list">
+										{preview.filter((row) => row.isYours).map((row) => (
+											<li
+												key={row.unit.recordId}
+												className={row.ordered ? 'rec-orders-plan-item rec-orders-plan-item--ordered' : 'rec-orders-plan-item'}
+												onMouseEnter={() => this.setState({ hoverRow: row })}
+												onMouseLeave={() => this.setState({ hoverRow: null })}
+											>
+												{row.sentence}
+											</li>
+										))}
+									</ul>
+								)}
+								<footer className="rec-deploy-foot rec-plan-foot">
+									<button type="button" className="g-btn g-btn--primary rec-go-btn" onClick={this.commitOrders} disabled={me.committed} data-give-orders>
+										{me.committed ? 'Orders given' : 'Go'}
+									</button>
+									{!me.committed && units.length > 0 && (
+										<button type="button" className="g-btn rec-change-orders" onClick={() => this.setState({ ordersOpen: true })} data-change-orders>
+											Change orders
+										</button>
+									)}
+								</footer>
+							</aside>
+						)}
+						{ordersPanelOpen && simple && (
+							<button type="button" className="g-btn rec-plan-back" onClick={() => this.setState({ ordersOpen: false })} data-change-orders>
+								Back to the plan
+							</button>
+						)}
 						{ordersPanelOpen && (
 							<ReclamationOrders
 								units={units}
