@@ -2,7 +2,6 @@ import React from 'react';
 import ReclamationRoster, { siteHoldsFor } from './reclamationRoster';
 import XalianImage from '../../xalianImage';
 import { speciesLabel, formatHold } from './reclamationNarration';
-import { siteHoldTotal } from './reclamationPreview';
 import { baseHold, prepare } from '../../../gameplay/expedition/creatureOnTable';
 import { SENDABLE } from '../../../gameplay/expedition/expeditionInterpretation';
 import { elementName, archetypeLabel } from './reclamationVocabulary';
@@ -18,34 +17,16 @@ import { elementName, archetypeLabel } from './reclamationVocabulary';
 	     would hold at every site of this world (the best marked, strain named), so the
 	     comparison is made on the list, not by clicking through it. Pointing at a slot
 	     previews it on every site.
-	  2. Choose a site. The rail becomes the chosen creature's card and one row per site
-	     saying what sending it there does to the margin ("you would lead by 2.1"); the
-	     sites on the table say the same. Press a row or a site to send.
+	  2. Choose a site. The rail becomes the chosen creature's card with its three site
+	     chips, now pressable; the sites themselves show the send and how the balance
+	     would shift (Nick, second pass: the sites are not repeated as rows here).
 
 	The bot's own pick is still marked, quietly, as "suggested" on a slot and a site.
 	Pass, fall back and hidden sends live in the footer; simple mode shows hidden and
 	fall back only when the suggestion would use them, advanced always.
 
-	Every number is the engine's: siteHoldsFor() runs prepare() per site and the margin
-	lines read siteHoldTotal().
+	Every number is the engine's: siteHoldsFor() runs prepare() per site.
 */
-function marginAfter(view, you, siteId, hold) {
-	const opponent = you === 'A' ? 'B' : 'A';
-	const mine = siteHoldTotal(view, siteId, you) + hold;
-	const theirs = siteHoldTotal(view, siteId, opponent);
-	const diff = mine - theirs;
-	if (theirs === 0) {
-		return { who: 'mine', text: mine === hold ? 'claims it, unopposed' : `holds it unopposed, ${formatHold(mine)}` };
-	}
-	if (Math.abs(diff) < 0.05) {
-		return { who: 'level', text: 'would be level' };
-	}
-	if (diff > 0) {
-		return { who: 'mine', text: `you would lead by ${formatHold(diff)}` };
-	}
-	return { who: 'theirs', text: `still behind by ${formatHold(-diff)}` };
-}
-
 function Stepper({ step }) {
 	const steps = [
 		{ n: 1, label: 'Creature' },
@@ -117,7 +98,7 @@ function ReclamationDeploy({
 		lead = 'Press a site to move your vanguard there. This does not spend your turn.';
 	} else if (step === 2) {
 		heading = 'Choose a site';
-		lead = `Where does ${speciesLabel(armed)} go? Each row says what the margin becomes.`;
+		lead = `Where does ${speciesLabel(armed)} go?`;
 	} else {
 		heading = 'Choose a creature';
 		lead = sendsLeft === 0
@@ -151,40 +132,30 @@ function ReclamationDeploy({
 						<button type="button" className="g-btn rec-chosen-change" onClick={onDisarm} data-change-creature>Change</button>
 					</div>
 
-					<ul className="rec-site-rows">
-						{holds.map((h) => {
-							const after = marginAfter(view, you, h.site.id, h.hold);
-							const suggested = suggestedSiteId === h.site.id;
-							return (
-								<li key={h.site.id}>
-									<button
-										type="button"
-										className={`rec-site-row rec-site-row--${after.who}${suggested ? ' rec-site-row--suggested' : ''}${hoverSiteId === h.site.id ? ' rec-site-row--hover' : ''} rec-site-row--${h.strainLevel}`}
-										onClick={() => onSend(h.site.id)}
-										onMouseEnter={() => onHoverSite && onHoverSite(h.site.id)}
-										onMouseLeave={() => onHoverSite && onHoverSite(null)}
-										data-send-site={h.site.id}
-									>
-										<span className="rec-site-row-index">{h.index + 1}</span>
-										<span className="rec-site-row-body">
-											<span className="rec-site-row-name">{h.site.name}</span>
-											<span className="rec-site-row-after">{after.text}</span>
-											<span className="rec-site-row-marks">
-												{h.isHome && <span className="rec-tag rec-tag--home">home</span>}
-												{h.strainLevel === 'strained' && <span className="rec-tag rec-tag--strain">strained</span>}
-												{h.strainLevel === 'severe' && <span className="rec-tag rec-tag--severe">severe</span>}
-												{suggested && <span className="rec-tag rec-tag--suggested">suggested</span>}
-											</span>
-										</span>
-										<span className="rec-site-row-hold">
-											<span className="rec-site-row-hold-value">{formatHold(h.hold)}</span>
-											<span className="rec-site-row-hold-label">hold</span>
-										</span>
-									</button>
-								</li>
-							);
-						})}
-					</ul>
+					<p className="rec-deploy-lead g-body rec-chosen-cue">
+						Press a site on the table. Each one shows what {speciesLabel(armed)} would hold there and how the balance would shift.
+					</p>
+					<span className="rec-slot-sites rec-chosen-sites" aria-label="Hold at each site of this world">
+						{holds.map((h) => (
+							<button
+								type="button"
+								key={h.site.id}
+								className={`rec-slot-site rec-chosen-site${suggestedSiteId === h.site.id ? ' rec-slot-site--suggested' : ''}${hoverSiteId === h.site.id ? ' rec-slot-site--hover' : ''} rec-slot-site--${h.strainLevel}${h.isHome ? ' rec-slot-site--home' : ''}`}
+								onClick={() => onSend(h.site.id)}
+								onMouseEnter={() => onHoverSite && onHoverSite(h.site.id)}
+								onMouseLeave={() => onHoverSite && onHoverSite(null)}
+								title={`Send to ${h.site.name}`}
+								data-send-site={h.site.id}
+							>
+								<span className="rec-slot-site-index">{h.index + 1}</span>
+								<span className="rec-slot-site-hold">{formatHold(h.hold)}</span>
+								{h.isHome && <span className="rec-slot-site-mark rec-slot-site-mark--home">home</span>}
+								{h.strainLevel === 'strained' && <span className="rec-slot-site-mark rec-slot-site-mark--strain">strain</span>}
+								{h.strainLevel === 'severe' && <span className="rec-slot-site-mark rec-slot-site-mark--severe">severe</span>}
+								{suggestedSiteId === h.site.id && <span className="rec-slot-site-mark rec-slot-site-mark--suggested">suggested</span>}
+							</button>
+						))}
+					</span>
 
 					{showHidden && (
 						<label className="g-check rec-hidden-toggle" title="A stealthy creature may be sent hidden: the rival learns that you sent something, not what or where, until orders are revealed.">

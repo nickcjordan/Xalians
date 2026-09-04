@@ -184,24 +184,45 @@ function ReclamationWorld({
 								{recommended && <span className="rec-site-recommend" data-recommended-site>recommended</span>}
 							</header>
 
-							{!empty && (
-								<div className={`rec-site-margin rec-site-margin--${margin.who}`} data-site-margin={site.id}>
-									{/* keyed on their values so a change remounts the number and it ticks */}
-									<span className="rec-site-margin-text rec-tick" key={margin.text}>{margin.text}</span>
-									<span className={`rec-site-margin-totals g-mono${totalMine > 0 && totalTheirs > 0 ? '' : ' rec-site-margin-totals--quiet'}`}>
-										<span className="rec-tick" data-total-seat={opponent} data-site-total={site.id} key={`t-${formatHold(totalTheirs)}`}>{formatHold(totalTheirs)}</span>
-										<span className="rec-site-margin-vs">rival · you</span>
-										<span className="rec-tick" data-total-seat={you} data-site-total={site.id} key={`m-${formatHold(totalMine)}`}>{formatHold(totalMine)}</span>
-									</span>
-								</div>
-							)}
+							{/* the balance: one bar, the rival's hold pushing in from the left in brass,
+							    yours from the right in cyan, meeting where the site stands. A previewed
+							    send extends your end as a hatched ghost, so what the send would shift is
+							    seen before it is made. */}
+							{(() => {
+								const ghostHold = ghost ? ghost.hold : 0;
+								const span = Math.max(totalMine + totalTheirs + ghostHold, 0.0001);
+								const pct = (v) => `${Math.round((v / span) * 1000) / 10}%`;
+								const afterText = ghost ? ghostText(ghost, totalMine, totalTheirs) : null;
+								const quiet = empty && !ghost;
+								return (
+									<div className={`rec-balance rec-balance--${margin.who}${quiet ? ' rec-balance--quiet' : ''}${ghost ? ' rec-balance--preview' : ''}`} data-site-margin={site.id}>
+										<span className="rec-balance-end rec-balance-end--theirs">
+											<span className="rec-balance-side">rival</span>
+											<span className="rec-balance-total rec-tick" data-total-seat={opponent} data-site-total={site.id} key={`t-${formatHold(totalTheirs)}`}>{formatHold(totalTheirs)}</span>
+										</span>
+										<span className="rec-balance-track" aria-hidden="true">
+											{totalTheirs > 0 && <span className="rec-balance-fill rec-balance-fill--theirs" style={{ width: pct(totalTheirs) }} />}
+											{ghost && <span className="rec-balance-fill rec-balance-fill--ghost" style={{ width: pct(ghostHold) }} />}
+											{totalMine > 0 && <span className="rec-balance-fill rec-balance-fill--mine" style={{ width: pct(totalMine) }} />}
+										</span>
+										<span className="rec-balance-end rec-balance-end--mine">
+											<span className="rec-balance-total rec-tick" data-total-seat={you} data-site-total={site.id} key={`m-${formatHold(totalMine)}`}>{formatHold(totalMine)}</span>
+											{ghost && <span className="rec-balance-plus">+{formatHold(ghostHold)}</span>}
+											<span className="rec-balance-side">you</span>
+										</span>
+										<span className={`rec-site-margin-text rec-tick${ghost ? ' rec-site-margin-text--preview' : ''}`} key={afterText || margin.text || 'open'}>
+											{afterText || margin.text || 'unclaimed'}
+										</span>
+									</div>
+								);
+							})()}
 
 							{/* the ground: the rival's rank on the far edge, yours on the near one, each
 							    edge painted in its side's colour and labelled, so whose creature stands
 							    where is read from the floor before the figures are */}
 							<div className={`rec-site-field rec-site-floor${empty ? ' rec-site-field--empty' : ''}`}>
 								<div className="rec-rank rec-rank--theirs" data-rank="theirs">
-									<span className="rec-rank-edge rec-rank-edge--theirs" aria-hidden="true">rival</span>
+									<span className="rec-rank-edge rec-rank-edge--theirs" aria-hidden="true">rival{totalTheirs > 0 ? ` · ${formatHold(totalTheirs)}` : ''}</span>
 									{theirs.map((entry) => <ReclamationFigure {...figureProps(entry, opponent, 'down')} />)}
 									{theirs.length === 0 && <span className="rec-rank-open">no one</span>}
 								</div>
@@ -214,7 +235,7 @@ function ReclamationWorld({
 											{ghost.isHome && <span className="rec-tag rec-tag--home">home</span>}
 											{ghost.strainLevel === 'strained' && <span className="rec-tag rec-tag--strain">strained</span>}
 											{ghost.strainLevel === 'severe' && <span className="rec-tag rec-tag--severe">severe</span>}
-											<span className="rec-ghost-outcome">{ghostText(ghost, totalMine, totalTheirs)}</span>
+
 										</span>
 									)}
 									{!ghost && relocating && <span className="rec-ghost rec-ghost--relocate">fall back here</span>}
@@ -229,7 +250,7 @@ function ReclamationWorld({
 								<div className="rec-rank rec-rank--mine" data-rank="mine">
 									{mine.map((entry) => <ReclamationFigure {...figureProps(entry, you, 'up')} />)}
 									{mine.length === 0 && <span className="rec-rank-open">no one</span>}
-									<span className="rec-rank-edge rec-rank-edge--mine" aria-hidden="true">you</span>
+									<span className="rec-rank-edge rec-rank-edge--mine" aria-hidden="true">you{totalMine > 0 ? ` · ${formatHold(totalMine)}` : ''}</span>
 								</div>
 							</div>
 						</section>
