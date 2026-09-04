@@ -1,14 +1,20 @@
-// Turns prose into segments with entry links. Matches entry titles (plus
-// species names from speciesRecords entries) longest-first, whole-word,
-// case-insensitive, one link per distinct title per call. Titles that are
-// substrings of longer titles never double-link.
+// Turns prose into segments with entry links. Matches entry titles and
+// aliases (species entries included, since they live in encyclopedia.json
+// too) longest-first, whole-word, case-insensitive, one link per distinct
+// title/alias per call. Titles and aliases that are substrings of longer
+// ones never double-link (e.g. "Vallerii Empire" claims its match before
+// "Vallerii" can eat part of it).
 
 import { allEntries } from './loaders';
 
-// Longest-first so "Operation Phantiri" claims its match before "Phantiri"
-// gets a chance to eat part of it.
-const titlesLongestFirst = [...allEntries]
-	.map((e) => ({ key: e.key, title: e.title }))
+// Every linkable string (title, then each alias) paired with the entry key it
+// resolves to, longest-first so a longer alias or title claims its match
+// before a shorter one (title or alias) can eat part of it.
+const titlesLongestFirst = allEntries
+	.flatMap((e) => [
+		{ key: e.key, title: e.title },
+		...(e.aliases || []).map((alias) => ({ key: e.key, title: alias })),
+	])
 	.sort((a, b) => b.title.length - a.title.length);
 
 function escapeRegExp(text) {

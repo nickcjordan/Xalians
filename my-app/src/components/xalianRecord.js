@@ -4,6 +4,7 @@ import Modal from 'react-bootstrap/Modal';
 import XalianSpeciesBadge from './xalianSpeciesBadge';
 import XalianImage from './xalianImage';
 import XalianAttributeChart from './xalianAttributeChart';
+import EncyclopediaLink from './encyclopediaLink';
 
 /**
  * A specimen record: the creature equivalent of the planetary survey record.
@@ -32,6 +33,7 @@ class XalianRecord extends React.Component {
 				description: xalian.species.description,
 				primaryType: xalian.elements.primaryType,
 				secondaryType: xalian.elements.secondaryType,
+				planet: xalian.species.planet,
 			};
 		}
 		let species = this.props.species;
@@ -42,6 +44,7 @@ class XalianRecord extends React.Component {
 				description: species.description,
 				primaryType: species.type,
 				secondaryType: null,
+				planet: species.planet,
 			};
 		}
 		return null;
@@ -62,7 +65,13 @@ class XalianRecord extends React.Component {
 					<header className="specimen-head">
 						<div className="specimen-ident">
 							<p className="g-kicker">{this.props.kicker || 'Specimen Record'}</p>
-							<h1 className="g-h2 specimen-name">{subject.name}</h1>
+							<h1 className="g-h2 specimen-name">
+								{subject.name}
+								<EncyclopediaLink kind="species" name={subject.name} variant="chip" />
+								{subject.planet &&
+									<EncyclopediaLink kind="world" name={subject.planet} variant="chip" />
+								}
+							</h1>
 						</div>
 						<div className="specimen-head-meta">
 							{!this.props.hideId && subject.id &&

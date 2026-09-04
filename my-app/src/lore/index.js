@@ -28,3 +28,7 @@ export { search } from './search';
 export { linkify } from './linkify';
 
 export { routeFor } from './routeFor';
+
+export { getConnections } from './connections';
+
+export { getReader, getReaderPart } from './reader';

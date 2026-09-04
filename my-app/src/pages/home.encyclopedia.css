@@ -1,0 +1,29 @@
+/* Home page's pointer out to the Encyclopedia -- matte, no glow, one panel
+   sitting in the page flow the same way the rest of the g-* system does. */
+
+.home-encyclopedia-section {
+	padding-top: var(--g-6);
+	padding-bottom: var(--g-6);
+}
+
+.home-encyclopedia-panel {
+	max-width: 56rem;
+	margin: 0 auto;
+}
+
+.home-encyclopedia-body {
+	max-width: 60ch;
+	margin: var(--g-3) 0 var(--g-5);
+	color: var(--g-ink-low);
+}
+
+.home-encyclopedia-tiles {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: var(--g-3);
+}
+
+.home-encyclopedia-tile {
+	text-align: center;
+	padding: var(--g-4);
+}

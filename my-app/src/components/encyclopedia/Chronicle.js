@@ -52,6 +52,9 @@ export default function Chronicle() {
                 Canon carries no dates. The eras below are ordered; within an era, events are ordered only where a
                 source phrase fixes them.
             </p>
+            <Link to="/encyclopedia/read" className="g-btn enc-chronicle-read-btn">
+                Read the Chronicle through
+            </Link>
             <ol className="enc-chronicle-rail">
                 {eras.map((era, i) => {
                     const worldCount = era.worlds.length;

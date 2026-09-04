@@ -5,6 +5,7 @@ import * as duelUtil from '../../../../utils/duelUtil';
 import * as gameConstants from '../../../../gameplay/duel/duelGameConstants';
 import XalianTypeEffectivenessSummary from './xalianTypeEffectivenessSummary';
 import { lamp, stat, brass } from '../../../../constants/designTokens';
+import EncyclopediaLink from '../../../encyclopediaLink';
 
 /**
  * A side's whole squad, as a rail beside the board.
@@ -136,7 +137,9 @@ class DuelRosterRail extends React.Component {
 
 				<span className="duel-roster-body">
 					<span className="duel-roster-ident">
-						<span className="duel-roster-name">{xalian.species.name}</span>
+						<span className="duel-roster-name" onClick={(e) => e.stopPropagation()}>
+							<EncyclopediaLink kind="species" name={xalian.species.name} variant="inline" newTab />
+						</span>
 						{isDown && <span className="duel-roster-tag duel-roster-tag--down">Down</span>}
 						{isPlaceable && <span className="duel-roster-tag duel-roster-tag--place">Place</span>}
 						{isUnset && !isPlaceable && <span className="duel-roster-tag">Unplaced</span>}

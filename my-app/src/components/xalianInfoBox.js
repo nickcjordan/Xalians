@@ -3,6 +3,7 @@ import Stack from 'react-bootstrap/Stack';
 import Col from 'react-bootstrap/Col';
 import XalianSpeciesBadge from './xalianSpeciesBadge';
 import Modal from 'react-bootstrap/Modal';
+import EncyclopediaLink from './encyclopediaLink';
 
 class XalianInfoBox extends React.Component {
 
@@ -16,7 +17,9 @@ class XalianInfoBox extends React.Component {
 				{this.props.xalian && (
 					<Col className="vertically-center-contents xalian-info-box">
 						<Stack>
-							<h1 className="species-detail-name ">{this.props.xalian.species.name}</h1>
+							<h1 className="species-detail-name ">
+								<EncyclopediaLink kind="species" name={this.props.xalian.species.name} variant="inline" />
+							</h1>
 							{!this.props.hideId && 
 								<h4 className="species-detail-id">#{this.props.xalian.speciesId}</h4>
 							}
@@ -35,7 +38,9 @@ class XalianInfoBox extends React.Component {
 				{this.props.species && (
 					<Col className="vertically-center-contents xalian-info-box">
 						<Stack>
-							<h1 className="species-detail-name ">{this.props.species.name}</h1>
+							<h1 className="species-detail-name ">
+								<EncyclopediaLink kind="species" name={this.props.species.name} variant="inline" />
+							</h1>
 							{!this.props.hideId && 
 								<h4 className="species-detail-id">#{this.props.species.id}</h4>
 							}

@@ -11,18 +11,64 @@ import tourData from '../json/tour.json';
 
 // ---- entries -------------------------------------------------------------
 
-// Species encyclopedia entries (speciesRecords.entries) are merged into the
-// index at load time under category 'xalians' per §2 of the contract; they
-// are not written back into encyclopedia.json until the flip.
-// encyclopedia.json carries the species entries since the Stage 3 merge, so a
-// record's entry is added only when the index does not already have its key.
-const encyclopediaKeys = new Set(encyclopediaData.entries.map((e) => e.key));
-const allEntries = [
-	...encyclopediaData.entries,
-	...speciesRecordsData.entries.filter((e) => !encyclopediaKeys.has(e.key)),
-];
+// encyclopedia.json is the single source for every entry, species included
+// (category 'xalians'); speciesRecords.json carries only the mechanical
+// species template records, not encyclopedia entries.
+const allEntries = encyclopediaData.entries;
 
 const entriesByKey = new Map(allEntries.map((e) => [e.key, e]));
+
+// ---- aliases ---------------------------------------------------------------
+// An entry may carry an optional `aliases: string[]` -- alternate proper names
+// that unambiguously refer to it (e.g. "Kozrak" for the "King Kozrak" entry).
+// aliasToKey maps every alias, lowercased, to the entry key it resolves to.
+// Built here (not lazily) so a bad data file fails fast at import time rather
+// than surfacing as a silent mis-link somewhere downstream.
+function buildAliasMap(entries) {
+	const map = new Map();
+	for (const entry of entries) {
+		for (const alias of entry.aliases || []) {
+			map.set(alias.toLowerCase(), entry.key);
+		}
+	}
+	return map;
+}
+
+// Asserts that no alias collides with any entry title, any other alias, or
+// any world/species/era name. A collision means an alias is ambiguous -- it
+// could plausibly resolve to more than one record -- which is exactly what
+// aliases must never be. Throws with a clear, actionable message rather than
+// silently mis-linking prose. Exported so a fixture-driven test can exercise
+// it without depending on the shape of the real data.
+function assertNoAliasCollisions({ entries, planets, species, eras }) {
+	// name (lowercased) -> a human-readable label for the first place it was seen
+	const seen = new Map();
+	const addName = (name, label) => {
+		if (name == null) return;
+		const lower = name.toLowerCase();
+		if (!seen.has(lower)) seen.set(lower, label);
+	};
+
+	for (const entry of entries) addName(entry.title, `entry "${entry.title}" (${entry.key}) title`);
+	for (const planet of planets || []) addName(planet.name, `world "${planet.name}"`);
+	for (const item of species || []) addName(item.name, `species "${item.name}"`);
+	for (const era of eras || []) addName(era.name, `era "${era.name}"`);
+
+	for (const entry of entries) {
+		for (const alias of entry.aliases || []) {
+			const lower = alias.toLowerCase();
+			const existing = seen.get(lower);
+			if (existing) {
+				throw new Error(
+					`Encyclopedia alias collision: "${alias}" on entry "${entry.title}" (${entry.key}) ` +
+						`is already claimed by ${existing}. Aliases must unambiguously name a single record -- ` +
+						`remove or rename the alias in docs/encyclopedia/encyclopedia.json.`
+				);
+			}
+			seen.set(lower, `entry "${entry.title}" (${entry.key}) alias "${alias}"`);
+		}
+	}
+}
 
 // ---- planets ---------------------------------------------------------------
 
@@ -92,6 +138,16 @@ const chronicleParagraphsByPlanetIndex = new Map(
 	chronicleData.paragraphs.map((p) => [`${p.planet}:${p.index}`, p])
 );
 
+// Validate aliases against the full name surface now that every source list
+// (entries, worlds, species, eras) is loaded, then build the lookup map.
+assertNoAliasCollisions({
+	entries: allEntries,
+	planets: planetsInOrder,
+	species: legacySpeciesList,
+	eras: erasInOrder,
+});
+const aliasToKey = buildAliasMap(allEntries);
+
 export {
 	encyclopediaData,
 	chronicleData,
@@ -102,6 +158,8 @@ export {
 	tourData,
 	allEntries,
 	entriesByKey,
+	aliasToKey,
+	assertNoAliasCollisions,
 	planetsInOrder,
 	planetsByKey,
 	legacySpeciesList,

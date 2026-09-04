@@ -153,6 +153,18 @@ export default function Index() {
                     </div>
                 </div>
             )}
+
+            <div className="g-record enc-index-archive-note">
+                <p className="g-record-term">The whole archive as one document</p>
+                <p className="g-record-body">
+                    Every world, species, and entry in one file, generated for machines and offline reading.{' '}
+                    <a href="/lore/xalia.md" target="_blank" rel="noopener">Markdown</a>
+                    {' · '}
+                    <a href="/lore/xalia.html" target="_blank" rel="noopener">HTML</a>
+                    {' · '}
+                    <a href="/lore/xalia.json" target="_blank" rel="noopener">JSON</a>
+                </p>
+            </div>
         </div>
     );
 }

@@ -1,0 +1,34 @@
+/* EncyclopediaLink -- the one component that points out to the archive from
+   the rest of the site. Matte, no glow, reads the element in scope. */
+
+.enc-link--chip {
+	margin-left: var(--g-3);
+	vertical-align: middle;
+}
+
+.enc-link--icon {
+	display: inline-flex;
+	align-items: center;
+	margin-left: var(--g-2);
+	vertical-align: middle;
+	text-decoration: none;
+}
+
+.enc-link-icon-tab {
+	display: inline-block;
+	padding: 1px var(--g-2);
+	font-family: var(--g-font-stencil);
+	font-size: 0.6rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-low);
+	background: var(--g-hull);
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: 2px;
+}
+
+.enc-link--icon:hover .enc-link-icon-tab {
+	color: var(--g-el);
+	border-color: color-mix(in srgb, var(--g-el) 55%, transparent);
+}

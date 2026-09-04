@@ -11,6 +11,10 @@
 # production
 /build
 
+# generated Codex (node scripts/buildCodex.js), never committed
+/public/lore/
+/public/llms.txt
+
 # misc
 .DS_Store
 .env.local

@@ -1,0 +1,224 @@
+/* Reader: "Read the Chronicle" -- the whole timeline as one continuous book.
+   The one place in the archive where the page is a book, not a console.
+   Contract: docs/design/xalian-encyclopedia-ux-pass.md "Read the Chronicle". */
+
+.enc-reader { max-width: 100%; }
+
+.enc-reader-layout {
+	display: grid;
+	grid-template-columns: 220px minmax(0, 1fr);
+	gap: var(--g-6);
+	align-items: start;
+}
+
+.enc-reader-rail {
+	position: sticky;
+	top: var(--g-5);
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-4);
+	max-height: calc(100vh - var(--g-8));
+	overflow-y: auto;
+	padding-bottom: var(--g-3);
+}
+
+.enc-reader-rail-stations {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.enc-reader-rail-station {
+	display: flex;
+	align-items: baseline;
+	gap: var(--g-3);
+	padding: var(--g-2) 0;
+	padding-left: var(--g-3);
+	text-decoration: none;
+	color: var(--g-ink-mid);
+	border-left: 2px solid transparent;
+}
+
+.enc-reader-rail-station:hover,
+.enc-reader-rail-station:focus-visible {
+	color: var(--g-ink);
+}
+
+.enc-reader-rail-station[aria-current='true'] {
+	color: var(--g-ink);
+	border-left-color: var(--g-hazard);
+}
+
+.enc-reader-rail-index {
+	font-size: var(--g-size-tiny);
+	color: var(--g-ink-low);
+	flex: none;
+}
+
+.enc-reader-rail-station[aria-current='true'] .enc-reader-rail-index {
+	color: var(--g-hazard);
+}
+
+.enc-reader-rail-name {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+}
+
+.enc-reader-rail-progress {
+	margin: 0;
+	padding-top: var(--g-4);
+	border-top: var(--g-hairline) solid var(--g-rule-faint);
+	color: var(--g-ink-low);
+	font-size: var(--g-size-tiny);
+	line-height: 1.6;
+}
+
+.enc-reader-main {
+	min-width: 0;
+	max-width: var(--g-measure);
+	margin: 0 auto;
+}
+
+.enc-reader-foreword {
+	margin: 0 0 var(--g-5);
+	color: var(--g-ink-low);
+}
+
+.enc-reader-kicker { margin-bottom: var(--g-2); }
+
+.enc-reader-title { margin-bottom: var(--g-3); }
+
+.enc-reader-def { margin-bottom: var(--g-7); }
+
+.enc-reader-section + .enc-reader-section {
+	margin-top: var(--g-7);
+}
+
+.enc-reader-section-head {
+	margin-bottom: var(--g-3);
+}
+
+.enc-reader-para {
+	display: grid;
+	grid-template-columns: 8rem minmax(0, 1fr);
+	gap: var(--g-4);
+	align-items: start;
+}
+
+.enc-reader-para + .enc-reader-para {
+	margin-top: var(--g-4);
+	padding-top: var(--g-4);
+	border-top: var(--g-hairline) solid var(--g-rule-faint);
+}
+
+.enc-reader-note {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--g-1);
+	padding-top: 0.15em;
+}
+
+.enc-reader-note-chip {
+	text-decoration: none;
+	max-width: 100%;
+}
+
+.enc-reader-note-chapter {
+	color: var(--g-ink-low);
+	font-size: var(--g-size-tiny);
+}
+
+.enc-reader-note-lamp {
+	width: 10px;
+	padding: 0;
+}
+
+.enc-reader-para-text {
+	margin: 0;
+}
+
+.enc-reader-nav {
+	display: flex;
+	justify-content: space-between;
+	gap: var(--g-4);
+	margin-top: var(--g-8);
+}
+
+.enc-reader-nav-btn {
+	text-decoration: none;
+}
+
+.enc-reader-end {
+	margin-top: var(--g-7);
+	padding-top: var(--g-5);
+	border-top: var(--g-hairline) solid var(--g-rule-faint);
+	text-align: center;
+}
+
+.enc-reader-end-links {
+	display: flex;
+	justify-content: center;
+	gap: var(--g-4);
+	margin-top: var(--g-4);
+}
+
+@media (max-width: 900px) {
+	.enc-reader-layout {
+		display: block;
+	}
+
+	.enc-reader-rail {
+		position: static;
+		max-height: none;
+		overflow-y: visible;
+		margin-bottom: var(--g-6);
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--g-3);
+	}
+
+	.enc-reader-rail-stations {
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: var(--g-2) var(--g-4);
+	}
+
+	.enc-reader-rail-station {
+		padding: var(--g-1) 0;
+		border-left: none;
+		border-bottom: 2px solid transparent;
+	}
+
+	.enc-reader-rail-station[aria-current='true'] {
+		border-left-color: transparent;
+		border-bottom-color: var(--g-hazard);
+	}
+
+	.enc-reader-rail-progress {
+		padding-top: 0;
+		border-top: none;
+		margin-left: auto;
+	}
+
+	.enc-reader-main {
+		max-width: 100%;
+	}
+}
+
+@media (max-width: 700px) {
+	.enc-reader-para {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.enc-reader-note {
+		flex-direction: row;
+		align-items: center;
+		gap: var(--g-3);
+	}
+}

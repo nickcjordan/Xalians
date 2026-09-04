@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import * as lore from '../../lore';
 import Prose from './Prose';
 import XalianImage from '../xalianImage';
+import Connections from './Connections';
 import { useVisit } from './trail';
 import './SpeciesView.css';
 
@@ -302,6 +303,8 @@ export default function SpeciesView() {
                     )}
                 </div>
             </div>
+
+            <Connections kind="species" recordKey={key} limit={12} />
 
             {isTemplate ? <TemplateSections view={view} /> : <LegacySections view={view} />}
         </article>
