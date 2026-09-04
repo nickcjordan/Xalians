@@ -1,6 +1,6 @@
 import React from 'react';
 import ReclamationWorld from './reclamationWorld';
-import ReclamationDeploy from './reclamationDeploy';
+import ReclamationBench from './reclamationBench';
 import ReclamationOrders from './reclamationOrders';
 import ReclamationInspect from './reclamationInspect';
 import ReclamationLog from './reclamationLog';
@@ -1030,12 +1030,12 @@ class ReclamationMatch extends React.Component {
 		}
 		if (armedRecordId) {
 			const record = view.players[YOU].roster.find((r) => r.id === armedRecordId);
-			return `${speciesLabel(record)} is chosen. Press a world to send it there, or Change to pick another.`;
+			return `${speciesLabel(record)} is lifted. Press a world to send it there, or press it again to set it down.`;
 		}
 		if (view.players[YOU].passed) {
 			return 'You have passed. Waiting on the rival.';
 		}
-		return 'Choose a creature from your squad, then the world to send it to. Or pass.';
+		return 'Lift a creature from the bench, then press a world. Or pass.';
 	}
 
 	// a rival beat holds the turn readout on what the rival just did, so "Your move" lands
@@ -1194,7 +1194,8 @@ class ReclamationMatch extends React.Component {
 		const deployPanelOpen = view.phase === 'deploy' && !playback && !judged;
 		// simple mode's orders: the plan by nature, in the rail, with the full panel one tap away
 		const planPanelOpen = view.phase === 'orders' && !playback && simple && !this.state.ordersOpen;
-		const showRail = !simple || !!inspect || ordersPanelOpen || deployPanelOpen || planPanelOpen;
+		// the deploy turn lives on the bench under the worlds, not in the rail
+		const showRail = !simple || !!inspect || ordersPanelOpen || planPanelOpen;
 		const holds = this.holdsForBoard(view);
 		const totals = this.totalsForBoard(view);
 		const ghosts = this.ghostsForArmed(view);
@@ -1271,9 +1272,31 @@ class ReclamationMatch extends React.Component {
 							badges={badges}
 							highlights={highlights}
 							hoverSiteId={this.state.hoverSiteId}
+							advanced={!simple}
 							onSiteClick={this.handleSiteClick}
 							onFigureClick={(entry, seat, site) => this.inspectRecord(entry.record, site)}
 						/>
+
+						{deployPanelOpen && (
+							<ReclamationBench
+								view={view}
+								you={YOU}
+								squad={this.squad}
+								mode={simple ? 'simple' : 'advanced'}
+								armedRecordId={this.state.armedRecordId}
+								recommendation={rec}
+								sendHidden={this.state.sendHidden}
+								relocating={this.state.relocating}
+								vanguard={me.canRelocateVanguard && me.vanguardRecordId ? this.findRecordOnBoard(this.state.match, me.vanguardRecordId) : null}
+								onArm={this.armRecord}
+								onInspect={(record) => this.inspectRecord(record, null)}
+								onHoverRecord={(id) => this.setState({ hoverRecordId: id })}
+								onToggleHidden={this.toggleHidden}
+								onPass={this.handlePass}
+								onBeginRelocate={this.beginRelocate}
+								rivalBeat={this.rivalBeat()}
+							/>
+						)}
 
 						{ordering && !simple && (
 							<div className="rec-orders-bar rec-rise" data-orders-bar>
@@ -1292,30 +1315,6 @@ class ReclamationMatch extends React.Component {
 
 					{showRail && (
 					<div className="rec-rail">
-						{deployPanelOpen && !inspect && (
-							<ReclamationDeploy
-								view={view}
-								you={YOU}
-								squad={this.squad}
-								mode={simple ? 'simple' : 'advanced'}
-								armedRecordId={this.state.armedRecordId}
-								recommendation={rec}
-								sendHidden={this.state.sendHidden}
-								relocating={this.state.relocating}
-								vanguard={me.canRelocateVanguard && me.vanguardRecordId ? this.findRecordOnBoard(this.state.match, me.vanguardRecordId) : null}
-								hoverSiteId={this.state.hoverSiteId}
-								onArm={this.armRecord}
-								onDisarm={() => this.setState({ armedRecordId: null, sendHidden: false })}
-								onInspect={(record) => this.inspectRecord(record, null)}
-								onHoverRecord={(id) => this.setState({ hoverRecordId: id })}
-								onHoverSite={(id) => this.setState({ hoverSiteId: id })}
-								onSend={this.handleSiteClick}
-								onToggleHidden={this.toggleHidden}
-								onPass={this.handlePass}
-								onBeginRelocate={this.beginRelocate}
-								rivalBeat={this.rivalBeat()}
-							/>
-						)}
 						{planPanelOpen && !inspect && (
 							<aside className="g-panel rec-deploy rec-plan rec-rise" data-orders-bar aria-label="Orders">
 								<header className="rec-deploy-head">

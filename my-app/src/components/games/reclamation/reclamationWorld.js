@@ -150,6 +150,7 @@ function ReclamationWorld({
 	arrival,
 	hoverSiteId,
 	previewRecordId,
+	advanced,
 }) {
 	const opponent = you === 'A' ? 'B' : 'A';
 	const hl = highlights || {};
@@ -251,7 +252,8 @@ function ReclamationWorld({
 								<span className="rec-site-index" aria-hidden="true">{siteIndex + 1}</span>
 								<h3 className="rec-site-name">{site.world.planet}</h3>
 								<span className="rec-site-place" title={site.description || undefined}>{site.name}</span>
-								<EnvironmentScale site={site} ghost={ghost} />
+								{/* simple mode shows the scale only while a creature is previewed; its room is kept so the card never jumps */}
+								<span className={`rec-env-slot${advanced || ghost ? '' : ' rec-env-slot--quiet'}`}><EnvironmentScale site={site} ghost={ghost} /></span>
 								{recommended && <span className="rec-site-recommend" data-recommended-site>recommended</span>}
 							</header>
 
@@ -265,8 +267,11 @@ function ReclamationWorld({
 								const pct = (v) => `${Math.round((v / span) * 1000) / 10}%`;
 								const afterText = ghost ? ghostText(ghost, totalMine, totalTheirs) : null;
 								const quiet = empty && !ghost;
+								// an empty world is quiet: the balance shows with the first send or a preview,
+								// but its room is kept so the card never jumps under the pointer
+								const hiddenBar = quiet && !verdict;
 								return (
-									<div className={`rec-balance rec-balance--${margin.who}${quiet ? ' rec-balance--quiet' : ''}${ghost ? ' rec-balance--preview' : ''}`} data-site-margin={site.id}>
+									<div className={`rec-balance rec-balance--${margin.who}${quiet ? ' rec-balance--quiet' : ''}${hiddenBar ? ' rec-balance--hidden' : ''}${ghost ? ' rec-balance--preview' : ''}`} data-site-margin={site.id}>
 										<span className="rec-balance-end rec-balance-end--theirs">
 											<span className="rec-balance-side">rival</span>
 											<span className="rec-balance-total rec-tick" data-total-seat={opponent} data-site-total={site.id} key={`t-${formatHold(totalTheirs)}`}>{formatHold(totalTheirs)}</span>
@@ -302,7 +307,7 @@ function ReclamationWorld({
 									{ghost && (
 										<span className="rec-ghost">
 											<span className="rec-ghost-cta">{ghost.preview ? 'would hold' : 'send here'}</span>
-											<HoldMeter hold={ghost.hold} unstrained={ghost.unstrained} isHome={ghost.isHome} strainLevel={ghost.strainLevel} mine />
+											<HoldMeter hold={ghost.hold} unstrained={ghost.unstrained} isHome={ghost.isHome} strainLevel={ghost.strainLevel} size="full" />
 											<span className="rec-ghost-value">{formatHold(ghost.hold)}</span>
 
 										</span>
