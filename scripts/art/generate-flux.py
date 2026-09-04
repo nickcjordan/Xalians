@@ -26,7 +26,8 @@ def main():
     ap.add_argument('--steps', type=int, default=4)
     ap.add_argument('--size', type=int, default=1024)
     ap.add_argument('--vary-pose', action='store_true', help='cycle the shared pose list per seed')
-    ap.add_argument('--brief', default='body', choices=['body', 'showcase'], help='showcase = one fixed prompt from showcase.json via brief.py')
+    ap.add_argument('--brief', default='body', choices=['body', 'showcase', 'concept'], help='showcase = one fixed prompt from showcase.json via brief.py')
+    ap.add_argument('--reading', default='A', help='concept.json reading key when --brief concept')
     ap.add_argument('--tag', default='flux')
     args = ap.parse_args()
 
@@ -34,8 +35,9 @@ def main():
     rec = json.loads(rec_path.read_text(encoding='utf-8'))
     body = zi.BODY.get(args.key) or sil.body_phrase(args.key, rec)
     if args.brief == 'showcase': body, _ = br.build(args.key)
+    if args.brief == 'concept': body = br.concept_build(args.key, args.reading)
     # Style first for schnell: T5 is capped at max_sequence_length tokens and the showcase brief is long, so a trailing style clause was cut in run 40 and 41.
-    prompt = f'{zi.STYLE} {body}' if args.brief == 'showcase' else f'{body} {zi.STYLE}'
+    prompt = f'{zi.STYLE} {body}' if args.brief in ('showcase', 'concept') else f'{body} {zi.STYLE}'
     prompts = [f'{body} {pose} {zi.STYLE}' for pose in zi.POSES] if args.vary_pose else [prompt]
     out = sil.OUT_ROOT / args.key / args.tag
     out.mkdir(parents=True, exist_ok=True)

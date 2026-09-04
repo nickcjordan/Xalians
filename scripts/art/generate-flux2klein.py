@@ -27,12 +27,13 @@ def main():
     ap.add_argument('--guidance', type=float, default=1.0)
     ap.add_argument('--size', type=int, default=1024)
     ap.add_argument('--vary-pose', action='store_true', help='cycle the shared pose list per seed')
-    ap.add_argument('--brief', default='body', choices=['body', 'showcase'], help='showcase = one fixed prompt from showcase.json via brief.py')
+    ap.add_argument('--brief', default='body', choices=['body', 'showcase', 'concept'], help='showcase = one fixed prompt from showcase.json via brief.py')
     ap.add_argument('--pose', default='', help='named pose variant from showcase.json poses')
     ap.add_argument('--ref-note', default='', help='replaces the generic reference preamble, e.g. to name what each reference contributes')
     ap.add_argument('--prompt-from', default='', help='manifest.json of an earlier run: reuse its exact prompt (refs still given with --refs) so a seed can be regenerated at another size')
     ap.add_argument('--refs', default='', help='comma-separated species keys whose hand-drawn art is passed as reference images (klein multi-reference)')
     ap.add_argument('--ref-size', type=int, default=768)
+    ap.add_argument('--reading', default='A', help='concept.json reading key when --brief concept')
     ap.add_argument('--tag', default='klein')
     args = ap.parse_args()
 
@@ -40,6 +41,7 @@ def main():
     rec = json.loads(rec_path.read_text(encoding='utf-8'))
     body = zi.BODY.get(args.key) or sil.body_phrase(args.key, rec)
     if args.brief == 'showcase': body, _ = br.build(args.key, args.pose or None)
+    if args.brief == 'concept': body = br.concept_build(args.key, args.reading)
     prompt = f'{body} {zi.STYLE}'
     prompts = [f'{body} {pose} {zi.STYLE}' for pose in zi.POSES] if args.vary_pose else [prompt]
     refs = []

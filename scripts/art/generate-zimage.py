@@ -12,6 +12,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 spec = importlib.util.spec_from_file_location('sil', HERE / 'generate-silhouettes.py')
 sil = importlib.util.module_from_spec(spec); spec.loader.exec_module(sil)
+_bs = importlib.util.spec_from_file_location('brief', HERE / 'brief.py'); br = importlib.util.module_from_spec(_bs); _bs.loader.exec_module(br)
 
 MODEL = 'unsloth/Z-Image-Turbo-unsloth-bnb-4bit'
 
@@ -47,6 +48,8 @@ def main():
     ap.add_argument('--seed', type=int, default=1000)
     ap.add_argument('--steps', type=int, default=8)
     ap.add_argument('--size', type=int, default=1024)
+    ap.add_argument('--brief', default='body', choices=['body', 'concept'])
+    ap.add_argument('--reading', default='A')
     ap.add_argument('--tag', default='zimage')
     ap.add_argument('--lora', default='', help='path to a LoRA .safetensors to load on the transformer')
     ap.add_argument('--lora-scale', type=float, default=1.0)
@@ -56,6 +59,7 @@ def main():
     rec_path = sil.ROOT / 'docs' / 'species-templates' / f'{args.key}.json'
     rec = json.loads(rec_path.read_text(encoding='utf-8'))
     body = BODY.get(args.key) or sil.body_phrase(args.key, rec)
+    if args.brief == 'concept': body = br.concept_build(args.key, args.reading)
     prompt = f'{body} {STYLE}'
     if args.lora and args.trigger: prompt = f'{args.trigger} silhouette. {prompt}'
     out = sil.OUT_ROOT / args.key / args.tag

@@ -12,6 +12,17 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
 SHOWCASE = json.loads((HERE / 'showcase.json').read_text(encoding='utf-8'))
+CONCEPT = json.loads((HERE / 'concept.json').read_text(encoding='utf-8'))
+
+
+def concept_build(key, reading):
+    """Short brief from concept.json; refuses if a banned machine noun slipped in."""
+    text = CONCEPT[key]['readings'][reading]
+    low = text.lower()
+    bad = [w for w in CONCEPT['banned'] if w in low.split() or f' {w}s' in low or f' {w} ' in low]
+    if bad: raise SystemExit(f'{key} reading {reading}: banned words {bad}')
+    return text
+
 
 CONSISTENCY = ('Every part of the body that is in view must match this description exactly; a part may be hidden '
                'by the pose but must never be drawn differently or replaced with something else.')
