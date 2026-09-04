@@ -1,7 +1,8 @@
 import React from 'react';
 import XalianImage from '../../xalianImage';
 import { speciesLabel, formatHold } from './reclamationNarration';
-import { prepare, baseHold } from '../../../gameplay/expedition/creatureOnTable';
+import { prepare, baseHold, strainMultiplierFor } from '../../../gameplay/expedition/creatureOnTable';
+import { HoldMeter } from './reclamationFigure';
 import { elementName } from './reclamationVocabulary';
 
 /*
@@ -43,16 +44,15 @@ export function siteHoldsFor(record, view, you) {
 	const sentCount = view.players[you].sentCount || 0;
 	return view.world.sites.map((site, index) => {
 		const p = prepare(record, site, view.world, sentCount);
-		return { site, index, hold: p.hold, strainLevel: p.strainLevel, isHome: p.isHome };
+		return { site, index, hold: p.hold, strainLevel: p.strainLevel, isHome: p.isHome, unstrained: p.hold / strainMultiplierFor(p.strainLevel) };
 	});
 }
 
-function HoldMeter({ value, label }) {
-	const pct = Math.max(0, Math.min(100, (value / HOLD_METER_MAX) * 100));
+function BaseHoldRow({ value }) {
 	return (
 		<span className="rec-slot-meter-row">
-			<span className="rec-slot-meter-label">{label || 'hold'}</span>
-			<span className="rec-slot-meter"><span className="rec-slot-meter-fill" style={{ width: `${pct}%` }} /></span>
+			<span className="rec-slot-meter-label">hold</span>
+			<HoldMeter hold={value} mine />
 			<span className="rec-slot-meter-value">{formatHold(value)}</span>
 		</span>
 	);
@@ -109,7 +109,7 @@ export function RosterSlot({
 						{inHand && suggested && <span className="rec-slot-tag rec-slot-tag--suggested">suggested</span>}
 						{inHand && stealthy && <span className="rec-slot-tag rec-slot-tag--stealthy" title="Can be sent hidden">stealthy</span>}
 					</span>
-					<HoldMeter value={baseHold(record)} />
+					<BaseHoldRow value={baseHold(record)} />
 					{inHand && holds && (
 						<span className="rec-slot-sites" aria-label="Hold at each site of this world">
 							{holds.map((h) => (
@@ -119,10 +119,8 @@ export function RosterSlot({
 									title={`${h.site.name}: holds ${formatHold(h.hold)}${h.isHome ? ', home ground' : ''}${h.strainLevel !== 'none' ? `, ${h.strainLevel}` : ''}`}
 								>
 									<span className="rec-slot-site-index">{h.index + 1}</span>
+									<HoldMeter hold={h.hold} unstrained={h.unstrained} isHome={h.isHome} strainLevel={h.strainLevel} mine small />
 									<span className="rec-slot-site-hold">{formatHold(h.hold)}</span>
-									{h.isHome && <span className="rec-slot-site-mark rec-slot-site-mark--home">home</span>}
-									{h.strainLevel === 'strained' && <span className="rec-slot-site-mark rec-slot-site-mark--strain">strain</span>}
-									{h.strainLevel === 'severe' && <span className="rec-slot-site-mark rec-slot-site-mark--severe">severe</span>}
 								</span>
 							))}
 						</span>

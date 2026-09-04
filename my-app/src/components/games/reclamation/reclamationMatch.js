@@ -9,7 +9,7 @@ import {
 	createRngState, nextRandom,
 } from '../../../gameplay/expedition/expeditionRules';
 import { chooseSend, chooseOrders } from '../../../gameplay/expedition/expeditionBot';
-import { prepare, magnitudeAgainst } from '../../../gameplay/expedition/creatureOnTable';
+import { prepare, magnitudeAgainst, strainMultiplierFor } from '../../../gameplay/expedition/creatureOnTable';
 import { SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH } from '../../../gameplay/expedition/expeditionInterpretation';
 import {
 	speciesLabel, formatHold, classifyEvent, narrateAct, narrateRelocate,
@@ -941,6 +941,10 @@ class ReclamationMatch extends React.Component {
 						hold: staggered ? prepared.hold * 0.5 : prepared.hold,
 						strainLevel: prepared.strainLevel,
 						isHome: prepared.isHome,
+						// the hold it would have here unstrained: the meter draws the difference
+						// as what the environment took
+						unstrained: prepared.hold / strainMultiplierFor(prepared.strainLevel),
+						baseHold: prepared.baseHold,
 					};
 				});
 			});
@@ -971,11 +975,19 @@ class ReclamationMatch extends React.Component {
 		const ghosts = {};
 		view.world.sites.forEach((site) => {
 			const prepared = prepare(record, site, view.world, view.players[YOU].sentCount);
+			const tolerance = (record.physiology && record.physiology.environmentalTolerance) || {};
 			ghosts[site.id] = {
 				hold: prepared.hold,
 				strainLevel: prepared.strainLevel,
 				isHome: prepared.isHome,
 				preview: !armedRecordId,
+				unstrained: prepared.hold / strainMultiplierFor(prepared.strainLevel),
+				// the creature's own band and media, drawn over the site's on the environment scale
+				tolerance: {
+					temperatureC: tolerance.temperatureC || null,
+					ambientMedia: tolerance.ambientMedia || [],
+					breathes: (record.physiology && record.physiology.breathes) || [],
+				},
 			};
 		});
 		return ghosts;

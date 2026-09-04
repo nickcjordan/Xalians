@@ -1,6 +1,7 @@
 import React from 'react';
 import ReclamationRoster, { siteHoldsFor } from './reclamationRoster';
 import XalianImage from '../../xalianImage';
+import { HoldMeter } from './reclamationFigure';
 import { speciesLabel, formatHold } from './reclamationNarration';
 import { baseHold, prepare } from '../../../gameplay/expedition/creatureOnTable';
 import { SENDABLE } from '../../../gameplay/expedition/expeditionInterpretation';
@@ -114,9 +115,20 @@ function ReclamationDeploy({
 					<h3 className="rec-deploy-heading" key={heading}>{heading}</h3>
 					<p className="rec-deploy-lead g-body">{lead}</p>
 				</div>
-				<span className="rec-deploy-count g-mono">
-					{(me.roster || []).length} in hand · {sendsLeft} send{sendsLeft === 1 ? '' : 's'} left
+				<span className="rec-deploy-count" title={`${me.sentCount || 0} of ${SENDABLE} sends spent this expedition; ${(me.roster || []).length} in hand`}>
+					<span className="rec-sends" aria-hidden="true">
+						{Array.from({ length: SENDABLE }).map((_, i) => (
+							<span className={`rec-send-pip${i < (me.sentCount || 0) ? ' rec-send-pip--spent' : ''}`} key={i} />
+						))}
+					</span>
+					<span className="g-mono rec-sends-text">{sendsLeft} send{sendsLeft === 1 ? '' : 's'} left</span>
 				</span>
+				{step === 1 && (
+					<span className="rec-hold-legend" title="Hold is how firmly a creature keeps a site: acts strike at it, and the Court gives the site to the side that still holds more.">
+						<HoldMeter hold={12} unstrained={16} strainLevel="strained" mine small />
+						<span className="rec-hold-legend-text">hold, and what a site would take from it</span>
+					</span>
+				)}
 			</header>
 
 			{step === 2 && armed && (
@@ -148,10 +160,8 @@ function ReclamationDeploy({
 								data-send-site={h.site.id}
 							>
 								<span className="rec-slot-site-index">{h.index + 1}</span>
+								<HoldMeter hold={h.hold} unstrained={h.unstrained} isHome={h.isHome} strainLevel={h.strainLevel} mine small />
 								<span className="rec-slot-site-hold">{formatHold(h.hold)}</span>
-								{h.isHome && <span className="rec-slot-site-mark rec-slot-site-mark--home">home</span>}
-								{h.strainLevel === 'strained' && <span className="rec-slot-site-mark rec-slot-site-mark--strain">strain</span>}
-								{h.strainLevel === 'severe' && <span className="rec-slot-site-mark rec-slot-site-mark--severe">severe</span>}
 								{suggestedSiteId === h.site.id && <span className="rec-slot-site-mark rec-slot-site-mark--suggested">suggested</span>}
 							</button>
 						))}

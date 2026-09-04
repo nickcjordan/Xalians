@@ -28,6 +28,32 @@ import { team } from '../../../constants/designTokens';
 	- badge: a small tag on the plate (the act ordered, during Orders)
 */
 export const FIGURE_SIZE = 56;
+export const HOLD_SCALE = 24; // base hold runs 0-20; home ground can lift it to 30, clamped
+
+/*
+	HoldMeter: hold as a bulb strip on the Duel's meter construction, in the side's
+	colour. What the environment took is drawn as a hatched hazard segment beyond the
+	filled part (the creature would have held that much here unstrained); what a stagger
+	took is a struck red segment; home ground shows as a brass cap on the filled part.
+*/
+export function HoldMeter({ hold, unstrained, printedHold, isHome, strainLevel, staggered, mine, small }) {
+	const pct = (v) => `${Math.max(0, Math.min(100, (v / HOLD_SCALE) * 100))}%`;
+	const lostToStrain = typeof unstrained === 'number' && unstrained > hold ? unstrained - hold : 0;
+	const lostToStagger = staggered && typeof printedHold === 'number' && printedHold > hold ? printedHold - hold : 0;
+	const title = [
+		`hold ${formatHold(hold)}`,
+		lostToStrain > 0 ? `${strainLevel === 'severe' ? 'severe strain' : 'strain'} took ${formatHold(lostToStrain)}` : null,
+		lostToStagger > 0 ? `staggered, half of ${formatHold(printedHold)}` : null,
+		isHome ? 'home ground' : null,
+	].filter(Boolean).join(', ');
+	return (
+		<span className={`rec-hold${mine ? ' rec-hold--mine' : ' rec-hold--theirs'}${small ? ' rec-hold--small' : ''}${isHome ? ' rec-hold--home' : ''}`} title={title} aria-label={title}>
+			<span className="rec-hold-fill" style={{ width: pct(hold) }} />
+			{lostToStagger > 0 && <span className="rec-hold-lost rec-hold-lost--stagger" style={{ left: pct(hold), width: pct(lostToStagger) }} />}
+			{lostToStrain > 0 && <span className={`rec-hold-lost rec-hold-lost--${strainLevel}`} style={{ left: pct(hold + lostToStagger), width: pct(lostToStrain) }} />}
+		</span>
+	);
+}
 
 function ReclamationFigure({
 	record,
@@ -41,6 +67,8 @@ function ReclamationFigure({
 	hidden,
 	strainLevel,
 	isHome,
+	unstrainedHold,
+	baseHold,
 	facing,
 	selected,
 	armed,
@@ -81,11 +109,8 @@ function ReclamationFigure({
 
 	const name = record ? speciesLabel(record) : (label || 'Unknown');
 	const portrait = record && record.species && getSpeciesTemplate(record.species) ? record.species : null;
+	// the meter says home, strain and stagger; only hidden still needs a word
 	const tags = [];
-	if (isHome) tags.push({ key: 'home', text: 'home' });
-	if (strainLevel === 'strained') tags.push({ key: 'strain', text: 'strained' });
-	if (strainLevel === 'severe') tags.push({ key: 'severe', text: 'severe strain' });
-	if (staggered) tags.push({ key: 'staggered', text: 'staggered' });
 	if (hidden) tags.push({ key: 'hidden', text: 'hidden' });
 
 	return (
@@ -121,8 +146,16 @@ function ReclamationFigure({
 				{badge && <span className="rec-figure-badge">{badge}</span>}
 			</span>
 			<span className="rec-figure-foot">
-				{staggered && typeof printedHold === 'number' && (
-					<span className="rec-figure-hold rec-figure-hold--struck">{formatHold(printedHold)}</span>
+				{typeof hold === 'number' && (
+					<HoldMeter
+						hold={hold}
+						unstrained={unstrainedHold}
+						printedHold={printedHold}
+						isHome={isHome}
+						strainLevel={strainLevel}
+						staggered={staggered}
+						mine={mine}
+					/>
 				)}
 				{typeof hold === 'number' && <span className="rec-figure-hold">{formatHold(hold)}</span>}
 			</span>
