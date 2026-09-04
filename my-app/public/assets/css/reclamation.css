@@ -3613,19 +3613,23 @@
 .rec-gauge-tick { stroke: var(--g-ink-low); stroke-width: 1; }
 .rec-gauge-tick--major { stroke: var(--g-ink); stroke-width: 1.8; }
 .rec-gauge-tick--over { stroke: var(--g-brass-light); }
-.rec-gauge--chip .rec-gauge-tick { stroke-width: 2; }
-.rec-gauge--chip .rec-gauge-tick--major { stroke-width: 3; }
+.rec-gauge--chip .rec-gauge-tick,
+.rec-gauge--full .rec-gauge-tick { stroke-width: 2; }
+.rec-gauge--chip .rec-gauge-tick--major,
+.rec-gauge--full .rec-gauge-tick--major { stroke-width: 3; }
+.rec-gauge--full .rec-gauge-needle { stroke-width: 3; }
 
 .rec-gauge-numeral {
 	font-family: var(--g-font-mono);
-	font-size: 9px;
+	font-size: 12px;
+	font-weight: 500;
 	fill: var(--g-ink);
 }
 .rec-gauge-numeral--over { fill: var(--g-brass-light); }
 
 .rec-gauge-legend {
 	font-family: var(--g-font-stencil);
-	font-size: 7px;
+	font-size: 8px;
 	letter-spacing: 1.5px;
 	fill: var(--g-ink-low);
 }
@@ -3883,6 +3887,11 @@
 .rec-env-slot { display: contents; }
 .rec-env-slot--quiet .rec-env { visibility: hidden; }
 
-/* the front line keeps room for the full gauge, so a preview never shifts the ground */
-.rec-site-floor .rec-site-midline { min-height: 64px; }
-.rec-gauge--full { width: 56px; height: 56px; }
+/* the front line keeps room for the large gauge, so a preview never shifts the ground */
+.rec-site-floor .rec-site-midline { min-height: 104px; }
+.rec-gauge--full { width: 48px; height: 48px; }
+.rec-ghost .rec-ghost-value { font-size: var(--g-size-h3); }
+@media (max-width: 760px) {
+	.rec-gauge--large { width: 84px; height: 84px; }
+	.rec-site-floor .rec-site-midline { min-height: 92px; }
+}

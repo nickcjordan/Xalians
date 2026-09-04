@@ -41,8 +41,8 @@ export const HOLD_PRINTED_MAX = 20;
 	tail that points down at zero and climbs past the top. What the site's environment
 	takes is a dim second needle at the unstrained reading with a hazard arc between
 	the two (red when severe); a stagger is a red arc from the halved reading back to
-	the printed one. At chip size the face carries ticks only and the needle is heavier;
-	numerals print at full size and above, where they can be read (Nick).
+	the printed one. Chip and full sizes carry ticks only, with a heavier needle;
+	numerals print on the large face only, where they can be read (Nick, twice).
 
 	Props: hold, unstrained, printedHold, isHome, strainLevel, staggered, small (chip
 	size) or size: 'chip' | 'full' | 'large'. `mine` is accepted and ignored: the face
@@ -77,6 +77,8 @@ const GAUGE_NUMERALS = [0, 10, 20, 30];
 export function HoldMeter({ hold, unstrained, printedHold, isHome, strainLevel, staggered, small, size }) {
 	const sz = size || (small ? 'chip' : 'full');
 	const chip = sz === 'chip';
+	// numerals only where they can be read: the large face on the front line (Nick)
+	const numerals = sz === 'large';
 	const lostToStrain = typeof unstrained === 'number' && unstrained > hold ? unstrained - hold : 0;
 	const lostToStagger = staggered && typeof printedHold === 'number' && printedHold > hold ? printedHold - hold : 0;
 	const title = [
@@ -91,7 +93,7 @@ export function HoldMeter({ hold, unstrained, printedHold, isHome, strainLevel, 
 	const ghost = lostToStrain > 0 ? gaugePoint(unstrained, R - 12) : null;
 	const severe = strainLevel === 'severe';
 	const ticks = [];
-	for (let t = 0; t <= HOLD_SCALE; t += chip ? 5 : 2.5) {
+	for (let t = 0; t <= HOLD_SCALE; t += numerals ? 2.5 : 5) {
 		const major = t % 10 === 0;
 		const mid = t % 5 === 0;
 		const a = gaugePoint(t, R - 7);
@@ -109,11 +111,11 @@ export function HoldMeter({ hold, unstrained, printedHold, isHome, strainLevel, 
 				{lostToStagger > 0 && <path className="rec-gauge-lost rec-gauge-lost--stagger" d={gaugeArc(hold, printedHold, R - 7)} />}
 				{lostToStrain > 0 && lostToStagger === 0 && <path className={`rec-gauge-lost${severe ? ' rec-gauge-lost--severe' : ''}`} d={gaugeArc(hold, unstrained, R - 7)} />}
 				{ticks}
-				{!chip && GAUGE_NUMERALS.map((t) => {
+				{numerals && GAUGE_NUMERALS.map((t) => {
 					const q = gaugePoint(t, R - 25);
 					return <text key={t} className={`rec-gauge-numeral${t > HOLD_PRINTED_MAX ? ' rec-gauge-numeral--over' : ''}`} x={q.x.toFixed(2)} y={(q.y + 3.5).toFixed(2)} textAnchor="middle">{t}</text>;
 				})}
-				{!chip && <text className="rec-gauge-legend" x="50" y="80" textAnchor="middle">HOLD</text>}
+				{numerals && <text className="rec-gauge-legend" x="50" y="80" textAnchor="middle">HOLD</text>}
 				{ghost && <line className="rec-gauge-needle rec-gauge-needle--ghost" x1="50" y1="50" x2={ghost.x.toFixed(2)} y2={ghost.y.toFixed(2)} />}
 				<line className="rec-gauge-needle" x1={tail.x.toFixed(2)} y1={tail.y.toFixed(2)} x2={needle.x.toFixed(2)} y2={needle.y.toFixed(2)} />
 				<circle className="rec-gauge-hub" cx="50" cy="50" r={chip ? 5 : 4.5} />
