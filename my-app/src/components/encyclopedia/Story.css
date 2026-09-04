@@ -1,0 +1,368 @@
+/* Story: "The Story of Xalia" -- the archive told as one book. Contents page
+   (part teasers) and part pages (narrator beats, then the records, then the
+   fixed points), sharing this stylesheet. Reuses the reading-measure body
+   and sticky rail patterns the old Reader/Tour/EraView established.
+   Contract: docs/design/xalian-encyclopedia-story-pass.md "The shape after
+   the pass" and "Story section, room and shell (agent A2)". */
+
+.enc-story { max-width: 100%; }
+
+/* ---- contents page ------------------------------------------------------ */
+
+.enc-story-contents .enc-story-def {
+	margin-bottom: var(--g-7);
+}
+
+.enc-contents-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.enc-contents-row { padding: var(--g-5) 0; }
+
+.enc-contents-term {
+	display: flex;
+	align-items: baseline;
+	gap: var(--g-3);
+}
+
+.enc-contents-index {
+	color: var(--g-ink-low);
+	font-size: var(--g-size-small);
+}
+
+.enc-contents-teaser {
+	max-width: var(--g-measure);
+}
+
+.enc-contents-meta {
+	margin: var(--g-2) 0 0;
+	color: var(--g-ink-low);
+	font-size: var(--g-size-tiny);
+}
+
+/* ---- part page layout: sticky rail + main column ------------------------- */
+
+.enc-story-layout {
+	display: grid;
+	grid-template-columns: 220px minmax(0, 1fr);
+	gap: var(--g-6);
+	align-items: start;
+}
+
+.enc-story-rail {
+	position: sticky;
+	top: var(--g-5);
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-4);
+	max-height: calc(100vh - var(--g-8));
+	overflow-y: auto;
+	padding-bottom: var(--g-3);
+}
+
+.enc-story-rail-stations {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.enc-story-rail-station {
+	display: flex;
+	align-items: baseline;
+	gap: var(--g-3);
+	padding: var(--g-2) 0;
+	padding-left: var(--g-3);
+	text-decoration: none;
+	color: var(--g-ink-mid);
+	border-left: 2px solid transparent;
+}
+
+.enc-story-rail-station:hover,
+.enc-story-rail-station:focus-visible {
+	color: var(--g-ink);
+}
+
+.enc-story-rail-station[aria-current='true'] {
+	color: var(--g-ink);
+	border-left-color: var(--g-hazard);
+}
+
+.enc-story-rail-index {
+	font-size: var(--g-size-tiny);
+	color: var(--g-ink-low);
+	flex: none;
+}
+
+.enc-story-rail-station[aria-current='true'] .enc-story-rail-index {
+	color: var(--g-hazard);
+}
+
+.enc-story-rail-name {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+}
+
+.enc-story-rail-block {
+	padding-top: var(--g-4);
+	border-top: var(--g-hairline) solid var(--g-rule-faint);
+}
+
+.enc-story-rail-kicker {
+	margin: 0 0 var(--g-3);
+}
+
+.enc-story-rail-jumps {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+	font-size: var(--g-size-small);
+}
+
+.enc-story-rail-progress {
+	margin: 0;
+	padding-top: var(--g-4);
+	border-top: var(--g-hairline) solid var(--g-rule-faint);
+	color: var(--g-ink-low);
+	font-size: var(--g-size-tiny);
+	line-height: 1.6;
+}
+
+/* Phone rail: a <details> fold at the top of the part, same pattern
+   WorldView uses for its chapter index. */
+.enc-story-rail--phone {
+	position: static;
+	max-height: none;
+	overflow-y: visible;
+	margin-bottom: var(--g-6);
+	padding: 0;
+}
+
+.enc-story-rail-summary {
+	cursor: pointer;
+}
+
+.enc-story-rail--phone .enc-story-rail-stations,
+.enc-story-rail--phone .enc-story-rail-block {
+	padding: 0 var(--g-5) var(--g-5);
+}
+
+.enc-story-rail--phone .enc-story-rail-progress {
+	margin: 0 var(--g-5) var(--g-4);
+	padding-top: 0;
+	border-top: none;
+}
+
+/* ---- main column: reading measure ---------------------------------------- */
+
+.enc-story-main {
+	min-width: 0;
+	max-width: var(--g-measure);
+	margin: 0 auto;
+}
+
+.enc-story-kicker { margin-bottom: var(--g-2); }
+
+.enc-story-title { margin-bottom: var(--g-3); }
+
+.enc-story-def { margin-bottom: var(--g-7); }
+
+/* ---- narrator beats -------------------------------------------------------- */
+
+.enc-story-beat {
+	margin-bottom: var(--g-8);
+	padding-bottom: var(--g-7);
+	border-bottom: var(--g-hairline) solid var(--g-rule);
+}
+
+.enc-story-beat-kicker { margin-bottom: var(--g-2); }
+
+.enc-story-beat-title { margin: 0 0 var(--g-4); }
+
+.enc-story-beat-prose { max-width: none; margin-bottom: var(--g-5); }
+
+.enc-story-consulted {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+}
+
+.enc-story-rule {
+	border: none;
+	border-top: var(--g-hairline) solid var(--g-rule);
+	margin: 0 0 var(--g-5);
+}
+
+.enc-story-records-kicker {
+	margin: 0 0 var(--g-6);
+}
+
+/* ---- records: paragraphs (from the retired Reader) ------------------------ */
+
+.enc-story-section + .enc-story-section {
+	margin-top: var(--g-7);
+}
+
+.enc-story-section-head {
+	margin-bottom: var(--g-3);
+}
+
+.enc-story-para {
+	display: grid;
+	grid-template-columns: 8rem minmax(0, 1fr);
+	gap: var(--g-4);
+	align-items: start;
+}
+
+.enc-story-para + .enc-story-para {
+	margin-top: var(--g-4);
+	padding-top: var(--g-4);
+	border-top: var(--g-hairline) solid var(--g-rule-faint);
+}
+
+.enc-story-note {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--g-1);
+	padding-top: 0.15em;
+}
+
+.enc-story-note-chip {
+	text-decoration: none;
+	max-width: 100%;
+}
+
+.enc-story-note-chapter {
+	color: var(--g-ink-low);
+	font-size: var(--g-size-tiny);
+}
+
+.enc-story-note-lamp {
+	width: 10px;
+	padding: 0;
+}
+
+.enc-story-para-text {
+	margin: 0;
+}
+
+/* ---- fixed points: events (simplified from the retired EraView) ----------- */
+
+.enc-story-fixed {
+	margin-top: var(--g-8);
+}
+
+.enc-story-event-list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-4);
+}
+
+.enc-story-event-card { padding: var(--g-5); }
+
+.enc-story-event-head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: var(--g-3);
+}
+
+.enc-story-event-title { margin: 0; }
+
+.enc-story-event-chips { margin: 0; }
+
+.enc-story-event + .enc-story-event {
+	margin-top: var(--g-5);
+	padding-top: var(--g-5);
+	border-top: var(--g-hairline) solid var(--g-rule-faint);
+}
+
+.enc-story-event-entry {
+	display: inline-block;
+	margin: var(--g-3) 0;
+}
+
+.enc-story-event-screen { margin-top: var(--g-3); }
+
+.enc-story-anchor + .enc-story-anchor { margin-top: var(--g-3); }
+
+.enc-story-anchor-link {
+	display: inline-block;
+	text-decoration: none;
+}
+
+.enc-story-anchor-link:hover,
+.enc-story-anchor-link:focus-visible {
+	text-decoration: underline;
+}
+
+.enc-story-anchor-text {
+	white-space: normal;
+	overflow-wrap: break-word;
+}
+
+/* ---- nav and end ----------------------------------------------------------- */
+
+.enc-story-nav {
+	display: flex;
+	justify-content: space-between;
+	gap: var(--g-4);
+	margin-top: var(--g-8);
+}
+
+.enc-story-nav-btn {
+	text-decoration: none;
+}
+
+.enc-story-end {
+	margin-top: var(--g-7);
+	padding-top: var(--g-5);
+	border-top: var(--g-hairline) solid var(--g-rule-faint);
+	text-align: center;
+}
+
+.enc-story-end-links {
+	display: flex;
+	justify-content: center;
+	gap: var(--g-4);
+	margin-top: var(--g-4);
+}
+
+/* ---- phone: single column, rail collapses to a <details> ------------------ */
+
+@media (max-width: 900px) {
+	.enc-story-layout {
+		display: block;
+	}
+
+	.enc-story-main {
+		max-width: 100%;
+	}
+}
+
+@media (max-width: 700px) {
+	.enc-story-para {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.enc-story-note {
+		flex-direction: row;
+		align-items: center;
+		gap: var(--g-3);
+	}
+
+	.enc-story-nav {
+		flex-direction: column;
+		align-items: stretch;
+	}
+}

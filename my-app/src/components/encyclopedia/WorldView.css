@@ -68,6 +68,13 @@ a.enc-world-chronicle-station:focus-visible {
 	gap: var(--g-4);
 }
 
+.enc-world-lede {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-3);
+	margin-bottom: var(--g-5);
+}
+
 .enc-world-mount {
 	padding: var(--g-4);
 }

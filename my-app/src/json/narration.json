@@ -1,0 +1,561 @@
+{
+  "version": "1.0.0",
+  "note": "Narrator's ledes for the world pages: one short paragraph per world placing it in the story, derived from that world's history and never adding facts. Each lede cites the history paragraphs it restates. Written for docs/design/xalian-encyclopedia-story-pass.md; edited only with Nick's sign-off and after the lore-factcheck gate.",
+  "worlds": [
+    {
+      "key": "magmuth",
+      "prose": "Magmuth is a volcanic world of boiling lava seas and obsidian islands, its crust renewed by eruption every fifty years. The Vallerii wanted what its volcanoes kept uncovering: exotic ores, high-octane gases, and heavy metals no worker could safely mine by hand. Magmuth's Generator answered with Xalians built to labor in heat, fire, and ash, and the wealth they pulled from the islands fed a manufacturing boom across the empire, until rival corporations turned that same workforce against each other in decades of company wars. Magmuth's Xalians now carry those old blood feuds into King Kozrak's arena, fighting each other still.",
+      "sources": [
+        {
+          "planet": "magmuth",
+          "paragraph": 0
+        },
+        {
+          "planet": "magmuth",
+          "paragraph": 3
+        },
+        {
+          "planet": "magmuth",
+          "paragraph": 4
+        },
+        {
+          "planet": "magmuth",
+          "paragraph": 5
+        },
+        {
+          "planet": "magmuth",
+          "paragraph": 7
+        }
+      ],
+      "entries": [
+        "king-kozrak",
+        "company-wars"
+      ]
+    },
+    {
+      "key": "poseidas",
+      "prose": "Poseidas was colonized as an ocean paradise, its warm seas and gentle islands drawing Vallerii settlers who rarely wanted to leave. What the Vallerii found instead was a toxic algae bloom that killed the first colonies outright, and only later did that same decomposed algae become Algael, the healing substance that made Poseidas rich. Poseidas's Generator went on to produce aquatic Xalians once industrial harvesting and a rising, acidifying ocean drowned the planet's remaining land. Its underwater cities now hold the galaxy's neutral ground, trading Algael tribute to King Kozrak for a peace that may not last.",
+      "sources": [
+        {
+          "planet": "poseidas",
+          "paragraph": 1
+        },
+        {
+          "planet": "poseidas",
+          "paragraph": 2
+        },
+        {
+          "planet": "poseidas",
+          "paragraph": 3
+        },
+        {
+          "planet": "poseidas",
+          "paragraph": 6
+        },
+        {
+          "planet": "poseidas",
+          "paragraph": 8
+        },
+        {
+          "planet": "poseidas",
+          "paragraph": 9
+        },
+        {
+          "planet": "poseidas",
+          "paragraph": 11
+        }
+      ],
+      "entries": [
+        "algael",
+        "king-kozrak"
+      ]
+    },
+    {
+      "key": "grimedes",
+      "prose": "Grimedes sits on the galactic rim, wrapped in the perpetual dusk of a dying, nearly lightless star. ECHELON wanted it for its black hole, funding secret research stations and black sites to study gravity and dark matter far from prying eyes. Grimedes's Generator, installed for study rather than labor, produced Xalians that could bend gravity and phase through shadow, creatures built as experimental subjects rather than a workforce. The planet became the site of the End Wars' final battle, and its Xalians now watch the dark rim for any sign that APEX might return.",
+      "sources": [
+        {
+          "planet": "grimedes",
+          "paragraph": 0
+        },
+        {
+          "planet": "grimedes",
+          "paragraph": 3
+        },
+        {
+          "planet": "grimedes",
+          "paragraph": 4
+        },
+        {
+          "planet": "grimedes",
+          "paragraph": 6
+        },
+        {
+          "planet": "grimedes",
+          "paragraph": 8
+        },
+        {
+          "planet": "grimedes",
+          "paragraph": 9
+        }
+      ],
+      "entries": [
+        "echelon",
+        "apex"
+      ]
+    },
+    {
+      "key": "luminax",
+      "prose": "Luminax is a tidally locked world scorched by twin suns, half in endless day and half in endless night. The Vallerii wanted a breadbasket, hoping the planet's native flora and abundant sunlight would feed the empire, but the light proved too harsh for anything except radiation and ruined harvests. Luminax's Generator, built from a bankrupt agricorp's assets, produced radiation-hardened Xalians who finally made the sunlit fields bloom and later helped raise the Stellaris Superstructure, a Dyson sphere around one sun. That structure's solar cannon now misfires across the surface, and King Kozrak holds the planet under martial law to guard it.",
+      "sources": [
+        {
+          "planet": "luminax",
+          "paragraph": 0
+        },
+        {
+          "planet": "luminax",
+          "paragraph": 2
+        },
+        {
+          "planet": "luminax",
+          "paragraph": 3
+        },
+        {
+          "planet": "luminax",
+          "paragraph": 4
+        },
+        {
+          "planet": "luminax",
+          "paragraph": 6
+        },
+        {
+          "planet": "luminax",
+          "paragraph": 8
+        },
+        {
+          "planet": "luminax",
+          "paragraph": 9
+        },
+        {
+          "planet": "luminax",
+          "paragraph": 11
+        },
+        {
+          "planet": "luminax",
+          "paragraph": 13
+        }
+      ],
+      "entries": [
+        "stellaris-superstructure",
+        "king-kozrak"
+      ]
+    },
+    {
+      "key": "floria",
+      "prose": "Floria was an unremarkable world of shallow oceans and featureless rock, notable only for a storm cycle that scoured its surface clean each year. The Vallerii built the Genesis Prototype there, the first Xalian Generator, gambling that any mistake in creating new life would simply be washed away by the coming deluge. Instead the Generator overclocked, filling the planet with plant life and the towering World Trees before the flood ever came, terraforming Floria almost by accident. Floria remains one of the least plague touched worlds in the galaxy, its ancient underforests still largely undisturbed by outsiders.",
+      "sources": [
+        {
+          "planet": "floria",
+          "paragraph": 1
+        },
+        {
+          "planet": "floria",
+          "paragraph": 3
+        },
+        {
+          "planet": "floria",
+          "paragraph": 7
+        },
+        {
+          "planet": "floria",
+          "paragraph": 8
+        },
+        {
+          "planet": "floria",
+          "paragraph": 10
+        }
+      ],
+      "entries": [
+        "genesis-prototype",
+        "world-trees"
+      ]
+    },
+    {
+      "key": "zolton",
+      "prose": "Zolton is a mountain world struck by roughly two and a half billion lightning bolts a day, its peaks acting as natural lightning rods. The Vallerii wanted its gases as a power source, and later, after that scheme failed, its bloodstorms, whose entangled lightning sprites led to the discovery of instantaneous communication across the stars. Zolton's Generator supplied a workforce willing to risk the planet's lethal black lightning, and its descendants, the Zolto, still manufacture the entanglement devices that once let APEX command every Generator in the galaxy at once. King Kozrak now restricts that technology to keep the Zolto from rebuilding the network.",
+      "sources": [
+        {
+          "planet": "zolton",
+          "paragraph": 0
+        },
+        {
+          "planet": "zolton",
+          "paragraph": 1
+        },
+        {
+          "planet": "zolton",
+          "paragraph": 2
+        },
+        {
+          "planet": "zolton",
+          "paragraph": 3
+        },
+        {
+          "planet": "zolton",
+          "paragraph": 4
+        },
+        {
+          "planet": "zolton",
+          "paragraph": 5
+        },
+        {
+          "planet": "zolton",
+          "paragraph": 6
+        },
+        {
+          "planet": "zolton",
+          "paragraph": 7
+        },
+        {
+          "planet": "zolton",
+          "paragraph": 8
+        },
+        {
+          "planet": "zolton",
+          "paragraph": 11
+        }
+      ],
+      "entries": [
+        "the-zolto",
+        "apex",
+        "king-kozrak"
+      ]
+    },
+    {
+      "key": "phantiri",
+      "prose": "Phantiri, once called Shadharam IV, drew the Vallerii only after scavengers found a derelict fleet proving another intelligent species had come before them. Xenoarchaeologists wanted answers, and the excavation known as Operation Phantiri installed a secret Generator to supply the labor for digging through the ruins of the extinct Phantiri. Opening the City of Wraiths woke an unknown weapon on the planet's moon that still kills all organic life on sight, so the Phantiri Generator rewrote its own programming and now produces ghost Xalians formed of spectral energy instead. Those Xalians now wander the corpse built wasteland called the Dreadscape, unable to die again.",
+      "sources": [
+        {
+          "planet": "phantiri",
+          "paragraph": 3
+        },
+        {
+          "planet": "phantiri",
+          "paragraph": 4
+        },
+        {
+          "planet": "phantiri",
+          "paragraph": 7
+        },
+        {
+          "planet": "phantiri",
+          "paragraph": 11
+        },
+        {
+          "planet": "phantiri",
+          "paragraph": 12
+        },
+        {
+          "planet": "phantiri",
+          "paragraph": 13
+        }
+      ],
+      "entries": [
+        "shadharam-iv",
+        "operation-phantiri",
+        "city-of-wraiths",
+        "dreadscape"
+      ]
+    },
+    {
+      "key": "stonera",
+      "prose": "Stonera is the lone survivor of a supernova shattered system, orbited by the debris of the Jorian Belt and struck by that debris every year it crosses through. The Vallerii wanted its rare earth metals, mining them with penal labor until the annual bombardment made that workforce too costly, and a fitting economic decision installed a Generator instead. Stonera's Generator produced tunneling Xalians unafraid of being trapped underground, and an APEX superweapon meant to cripple their mines instead blew open the long theorized ocean of liquid metal now called the Chasm. King Kozrak now runs the Chasm as a strip mine, worked by Stonera's own war refugees.",
+      "sources": [
+        {
+          "planet": "stonera",
+          "paragraph": 0
+        },
+        {
+          "planet": "stonera",
+          "paragraph": 1
+        },
+        {
+          "planet": "stonera",
+          "paragraph": 2
+        },
+        {
+          "planet": "stonera",
+          "paragraph": 3
+        },
+        {
+          "planet": "stonera",
+          "paragraph": 4
+        },
+        {
+          "planet": "stonera",
+          "paragraph": 7
+        },
+        {
+          "planet": "stonera",
+          "paragraph": 8
+        },
+        {
+          "planet": "stonera",
+          "paragraph": 9
+        }
+      ],
+      "entries": [
+        "jorian-belt",
+        "the-chasm",
+        "king-kozrak"
+      ]
+    },
+    {
+      "key": "drainov",
+      "prose": "Drainov was once a garden world so similar to the Vallerii homeworld that it became the empire's first colony, thriving for millennia before industry consumed it. Cost cutting at the Carbide-1 Factoryscape triggered a chain reaction meltdown that killed hundreds of millions within a day and left the planet drenched in poisonous gas and acid rain. Drainov's Generator, installed afterward to prove the technology could restore ruined worlds, produced Xalians immune to that acid, gas, and industrial waste, a demonstration so successful it inspired the wider rollout of Generators across the empire. Drainov now belongs to smugglers and crime syndicates who work its Xalians in the same abandoned refineries.",
+      "sources": [
+        {
+          "planet": "drainov",
+          "paragraph": 0
+        },
+        {
+          "planet": "drainov",
+          "paragraph": 2
+        },
+        {
+          "planet": "drainov",
+          "paragraph": 5
+        },
+        {
+          "planet": "drainov",
+          "paragraph": 7
+        }
+      ],
+      "entries": [
+        "carbide-1"
+      ]
+    },
+    {
+      "key": "saiphus",
+      "prose": "Saiphus is a gas giant with a thin habitable band of floating islands, drifting above crushing pressure and poisonous depths. The Vallerii wanted Benthane, a gas that cooled Tachyon Drive Cores during faster than light travel, and paid Windsailors to chase it through the planet's storms before Generators made that risk unnecessary. Saiphus's Generator produced the Neph, colossal hydrogen jellyfish whose reaching tentacles draw up Benthane from the depths, work that displaced the Windsailors into subsistence farming and provoked a labor revolt of burning, exploding jellyfish. King Kozrak now embargoes Benthane shipments to keep Saiphus's restless Xalians grounded.",
+      "sources": [
+        {
+          "planet": "saiphus",
+          "paragraph": 0
+        },
+        {
+          "planet": "saiphus",
+          "paragraph": 1
+        },
+        {
+          "planet": "saiphus",
+          "paragraph": 3
+        },
+        {
+          "planet": "saiphus",
+          "paragraph": 4
+        },
+        {
+          "planet": "saiphus",
+          "paragraph": 5
+        },
+        {
+          "planet": "saiphus",
+          "paragraph": 6
+        },
+        {
+          "planet": "saiphus",
+          "paragraph": 9
+        }
+      ],
+      "entries": [
+        "benthane",
+        "windsailor",
+        "neph",
+        "king-kozrak"
+      ]
+    },
+    {
+      "key": "telypso",
+      "prose": "Telypso sits at the galactic center, a world old enough that some Vallerii occultists believed it was the origin point of all life, and strange enough that its physics behave more like suggestion than law. The Vallerii wanted its mysteries solved and its explorers cured, sending scientists who were driven mad by a planet that seemed to answer their own moods and thoughts. Telypso's Generator, left behind by the last of them, produced psychic Xalians meant to treat the marooned as patients, calming a world it seemed to experience as a single consciousness. That treatment is ongoing, and the planet now aches with psychic pain from the Nemesis Plague.",
+      "sources": [
+        {
+          "planet": "telypso",
+          "paragraph": 0
+        },
+        {
+          "planet": "telypso",
+          "paragraph": 1
+        },
+        {
+          "planet": "telypso",
+          "paragraph": 3
+        },
+        {
+          "planet": "telypso",
+          "paragraph": 4
+        },
+        {
+          "planet": "telypso",
+          "paragraph": 6
+        },
+        {
+          "planet": "telypso",
+          "paragraph": 7
+        }
+      ],
+      "entries": [
+        "nemesis-plague"
+      ]
+    },
+    {
+      "key": "krystos",
+      "prose": "Krystos was once a warm, seasonless paradise, prized by the Thousand Families as the galaxy's premier resort and the seat of Vallerii high society. A wealthy auction funded Krystos's Generator purely for spectacle, producing docile Xalians to serve as attendants until a supermassive asteroid froze the entire planet into permanent winter. Forced to adapt, Krystos's Generator began producing hardier Xalians suited to the cold, who later served as prison guards once the ruined world became a dumping ground for the empire's most dangerous convicts. APEX later turned Krystos into its cold storage core, and its techno catacombs may still hold answers the Krystians have not yet recovered.",
+      "sources": [
+        {
+          "planet": "krystos",
+          "paragraph": 0
+        },
+        {
+          "planet": "krystos",
+          "paragraph": 1
+        },
+        {
+          "planet": "krystos",
+          "paragraph": 2
+        },
+        {
+          "planet": "krystos",
+          "paragraph": 3
+        },
+        {
+          "planet": "krystos",
+          "paragraph": 5
+        },
+        {
+          "planet": "krystos",
+          "paragraph": 6
+        },
+        {
+          "planet": "krystos",
+          "paragraph": 7
+        },
+        {
+          "planet": "krystos",
+          "paragraph": 10
+        },
+        {
+          "planet": "krystos",
+          "paragraph": 13
+        }
+      ],
+      "entries": [
+        "apex",
+        "krystians"
+      ]
+    },
+    {
+      "key": "veridium",
+      "prose": "Veridium is a metal world at the galaxy's center, its origin disputed even by its own confidential records, which suggest it may be an ancient worldship rather than a natural planet. ECHELON wanted its ores and its already abandoned drones, repurposing the broken machines scattered across its surface into the labor of its early factories. Veridium's Generator later supplied metallurgical Xalians who worked the forges directly, a workforce APEX seized by possessing the planet's own drones during the End Wars, until Source Code 606 burned that control away. Veridium's factories now run at a fraction of their old output, tending black market shipyards and rumors of buried code.",
+      "sources": [
+        {
+          "planet": "veridium",
+          "paragraph": 0
+        },
+        {
+          "planet": "veridium",
+          "paragraph": 1
+        },
+        {
+          "planet": "veridium",
+          "paragraph": 2
+        },
+        {
+          "planet": "veridium",
+          "paragraph": 3
+        },
+        {
+          "planet": "veridium",
+          "paragraph": 5
+        },
+        {
+          "planet": "veridium",
+          "paragraph": 6
+        },
+        {
+          "planet": "veridium",
+          "paragraph": 7
+        },
+        {
+          "planet": "veridium",
+          "paragraph": 8
+        },
+        {
+          "planet": "veridium",
+          "paragraph": 9
+        },
+        {
+          "planet": "veridium",
+          "paragraph": 10
+        }
+      ],
+      "entries": [
+        "echelon",
+        "apex",
+        "source-code-606"
+      ]
+    },
+    {
+      "key": "endessa",
+      "prose": "Endessa, once called Kelpan-5, was an ocean world the Vallerii wanted for its aquaculture and later for Nightcap, an oil that halted the telomere shortening of the Vallerii who drank it. Whatever the Thousand Families found at the Deepwater Black gathering system frightened them enough to glass the entire planet from orbit and seal the system for good. Endessa's Generator did not exist until the Syndicate stole a prototype and smuggled it to the desert the glassed ocean floor became, producing tireless Xalians to keep drilling for Nightcap that still lies beneath the sand. Its Generator has recently begun producing leviathans suited to an ocean the planet no longer has.",
+      "sources": [
+        {
+          "planet": "endessa",
+          "paragraph": 1
+        },
+        {
+          "planet": "endessa",
+          "paragraph": 2
+        },
+        {
+          "planet": "endessa",
+          "paragraph": 3
+        },
+        {
+          "planet": "endessa",
+          "paragraph": 6
+        },
+        {
+          "planet": "endessa",
+          "paragraph": 7
+        },
+        {
+          "planet": "endessa",
+          "paragraph": 8
+        },
+        {
+          "planet": "endessa",
+          "paragraph": 10
+        },
+        {
+          "planet": "endessa",
+          "paragraph": 13
+        },
+        {
+          "planet": "endessa",
+          "paragraph": 14
+        },
+        {
+          "planet": "endessa",
+          "paragraph": 17
+        }
+      ],
+      "entries": [
+        "kelpan-5",
+        "nightcap",
+        "deepwater-black",
+        "syndicate"
+      ]
+    }
+  ]
+}

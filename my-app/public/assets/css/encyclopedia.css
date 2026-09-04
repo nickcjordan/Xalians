@@ -29,6 +29,15 @@
 	text-transform: uppercase;
 }
 
+/* Compact masthead: every route except the Reading Room. The kicker and
+   version line step aside so the record starts sooner; the title steps down
+   one size. Phones already hide the kicker and version at full size, so this
+   mainly affects desktop/tablet. */
+.enc-masthead--compact .g-kicker { display: none; }
+.enc-masthead--compact .enc-version { display: none; }
+.enc-masthead--compact .enc-title { margin-top: 0; font-size: var(--g-size-h2); }
+.enc-masthead--compact { margin-bottom: var(--g-4); }
+
 .enc-sections {
 	margin-bottom: var(--g-7);
 	flex-wrap: wrap;
@@ -121,6 +130,12 @@
 		text-align: center;
 		padding-left: var(--g-3);
 		padding-right: var(--g-3);
+	}
+	/* The row scrolls; fade its trailing edge so the stations past the fold
+	   read as more row, not as the end of it. */
+	.enc-sections {
+		-webkit-mask-image: linear-gradient(to right, black 82%, transparent 100%);
+		mask-image: linear-gradient(to right, black 82%, transparent 100%);
 	}
 
 	/* Tap targets: every console chip/back-link/segment key clears the
@@ -355,6 +370,68 @@
 	.enc-console .enc-scrollrow > * {
 		flex: 0 0 auto;
 	}
+}
+
+/* ---- fold: a closed-by-default panel of secondary record data ---------
+   <details class="g-panel enc-fold"><summary class="enc-fold-summary">.
+   Matte, same bevel as any other panel; the only thing that changes on open
+   is the chevron rotating and the body appearing below the rule -- no glow,
+   nothing lights up. Used by World (Cross references, Generator survey),
+   Species (Generator template, Cross references) and Entry (Cross
+   references). Keyboard reachable and toggleable by nature of <details>. */
+
+.enc-fold { padding: 0; overflow: hidden; }
+
+.enc-fold-summary {
+	display: flex;
+	align-items: center;
+	gap: var(--g-3);
+	list-style: none;
+	cursor: pointer;
+	padding: var(--g-4) var(--g-5);
+	user-select: none;
+}
+
+.enc-fold-summary::-webkit-details-marker { display: none; }
+.enc-fold-summary::marker { content: ''; }
+
+.enc-fold-summary:hover,
+.enc-fold-summary:focus-visible { color: var(--g-brass); }
+
+.enc-fold-label { color: inherit; }
+
+.enc-fold-count {
+	color: var(--g-ink-low);
+	font-size: var(--g-size-small);
+}
+
+.enc-fold-chevron {
+	margin-left: auto;
+	flex: none;
+	width: 9px;
+	height: 9px;
+	border-right: var(--g-hairline) solid var(--g-ink-mid);
+	border-bottom: var(--g-hairline) solid var(--g-ink-mid);
+	transform: rotate(-45deg);
+	transition: transform var(--g-snap);
+}
+
+.enc-fold[open] > .enc-fold-summary .enc-fold-chevron { transform: rotate(45deg); }
+
+.enc-fold-body {
+	padding: 0 var(--g-5) var(--g-5);
+	border-top: var(--g-hairline) solid var(--g-rule);
+}
+
+.enc-fold-body > .enc-section:first-child { margin-top: var(--g-5); }
+
+.enc-fold + .enc-fold { margin-top: var(--g-4); }
+
+/* ---- continue-the-story foot: one .g-record line on World/Species/Entry */
+
+.enc-continue {
+	margin-top: var(--g-7);
+	padding: var(--g-4) var(--g-5);
 }
 
 /* ---- reading room ------------------------------------------------------ */

@@ -156,6 +156,7 @@ function build() {
 	const encyclopedia = J('docs', 'encyclopedia', 'encyclopedia.json');
 	const chronicle = J('docs', 'encyclopedia', 'chronicle.json');
 	const tour = J('docs', 'encyclopedia', 'tour.json');
+	const narration = J('docs', 'encyclopedia', 'narration.json');
 	const ratified = J('docs', 'species-templates', 'RATIFIED.json');
 	const registriesData = J('docs', 'species-templates', 'registries.json');
 	const planetRecords = J('lambda', 'src', 'json', 'planetRecords.json');
@@ -170,6 +171,7 @@ function build() {
 		encyclopedia.version,
 		chronicle.version,
 		tour.version,
+		narration.version,
 		ratified.version,
 		registriesData.version,
 	].join('+');
@@ -287,6 +289,8 @@ function build() {
 
 	// ---- 5. The Worlds ----
 
+	const ledesByWorldKey = new Map((narration.worlds || []).map((lede) => [lede.key, lede.prose]));
+
 	const worldsSection = planetRecords.map((planet) => {
 		const chapters = planet.history.map((text, index) => {
 			const tag = paragraphsByPlanetIndex.get(`${planet.key}:${index}`);
@@ -317,6 +321,7 @@ function build() {
 
 		return {
 			planet,
+			lede: ledesByWorldKey.get(planet.key) || null,
 			chapters,
 			nativeSpeciesNames,
 			ownEntry,
@@ -490,6 +495,7 @@ function build() {
 			`**Element:** ${cap(p.element)} · **Terrain:** ${p.physical.terrainLabel} · **Size:** ${p.physical.sizeVsEarth}x Earth · **Radius:** ${p.physical.radiusKm.toLocaleString('en-US')} km · **Gravity:** ${p.physical.gravityVsEarth}x Earth · **Temperature:** ${p.physical.temperatureC.low} to ${p.physical.temperatureC.high} °C`,
 			''
 		);
+		if (w.lede) md.push(w.lede, '');
 		md.push(reportBlock(p.report), '');
 		md.push(`#### History of ${p.name}`, '');
 		for (const chapter of w.chapters) {
@@ -606,6 +612,7 @@ function build() {
 		h.push(
 			`<p><strong>Element:</strong> ${esc(cap(p.element))} · <strong>Terrain:</strong> ${esc(p.physical.terrainLabel)} · <strong>Size:</strong> ${esc(p.physical.sizeVsEarth)}x Earth · <strong>Radius:</strong> ${esc(p.physical.radiusKm.toLocaleString('en-US'))} km · <strong>Gravity:</strong> ${esc(p.physical.gravityVsEarth)}x Earth · <strong>Temperature:</strong> ${esc(p.physical.temperatureC.low)} to ${esc(p.physical.temperatureC.high)} °C</p>`
 		);
+		if (w.lede) h.push(`<p>${esc(w.lede)}</p>`);
 		h.push(`<blockquote>${esc(p.report.unit)} report</blockquote>`);
 		h.push(`<h4>History of ${esc(p.name)}</h4>`);
 		for (const chapter of w.chapters) {
@@ -696,6 +703,7 @@ function build() {
 			encyclopedia: encyclopedia.version,
 			chronicle: chronicle.version,
 			tour: tour.version,
+			narration: narration.version,
 			ratified: ratified.version,
 			registries: registriesData.version,
 		},

@@ -250,11 +250,11 @@ class Home extends React.Component {
 									Open a record to read what is known before the tournament asks you to bet on it.
 								</p>
 								<div className="home-encyclopedia-tiles">
-									<Link to="/encyclopedia/tour" className="g-tile home-encyclopedia-tile">
-										<span className="g-tile-name">Begin the First Survey</span>
+									<Link to="/encyclopedia/story" className="g-tile home-encyclopedia-tile">
+										<span className="g-tile-name">Begin the Story</span>
 									</Link>
-									<Link to="/encyclopedia/chronicle" className="g-tile home-encyclopedia-tile">
-										<span className="g-tile-name">Read the Chronicle</span>
+									<Link to="/encyclopedia/worlds" className="g-tile home-encyclopedia-tile">
+										<span className="g-tile-name">Survey the Worlds</span>
 									</Link>
 									<Link to="/encyclopedia/species" className="g-tile home-encyclopedia-tile">
 										<span className="g-tile-name">Open the Bestiary</span>

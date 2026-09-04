@@ -236,13 +236,23 @@ describe('getPowers', () => {
 });
 
 describe('routeFor new kinds', () => {
-	it('tour', () => {
-		expect(routeFor('tour', 'the-vallerii')).toBe('/encyclopedia/tour/the-vallerii');
+	it('tour resolves through the beat\'s era (story pass: routes moved under /encyclopedia/story)', () => {
+		expect(routeFor('tour', 'vallerii-and-tachyon-drive')).toBe(
+			'/encyclopedia/story/ascendancy#beat-vallerii-and-tachyon-drive'
+		);
 	});
 
-	it('event', () => {
+	it('event (story pass: routes moved under /encyclopedia/story)', () => {
 		expect(routeFor('event', 'end-wars:battle-of-grimedes')).toBe(
-			'/encyclopedia/chronicle/end-wars#event-battle-of-grimedes'
+			'/encyclopedia/story/end-wars#event-battle-of-grimedes'
 		);
+	});
+
+	it('era (story pass: routes moved under /encyclopedia/story)', () => {
+		expect(routeFor('era', 'end-wars')).toBe('/encyclopedia/story/end-wars');
+	});
+
+	it('story', () => {
+		expect(routeFor('story')).toBe('/encyclopedia/story');
 	});
 });

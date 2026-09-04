@@ -5,7 +5,7 @@ import Prose from './Prose';
 import XalianImage from '../xalianImage';
 import Connections from './Connections';
 import Pronunciation from './Pronunciation';
-import { useVisit, useReadMark, markRead } from './trail';
+import { useVisit, useReadMark, markRead, useResume } from './trail';
 import './WorldView.css';
 
 const PHONE_QUERY = '(max-width: 700px)';
@@ -94,10 +94,65 @@ function ChapterRailRow({ chapter, index, world, label, onFallbackRead }) {
     );
 }
 
+/** The narrator's short lede placing the world in the story, with its Records consulted chips. Renders nothing when the writer has not reached this world yet. */
+function WorldLede({ world }) {
+    const lede = lore.getWorldLede(world.key);
+    if (!lede) return null;
+    return (
+        <div className="enc-world-lede">
+            <p className="g-body enc-prose enc-tour-prose">{lede.prose}</p>
+            {(lede.sources.length > 0 || lede.entries.length > 0) && (
+                <div className="enc-tour-consulted">
+                    <p className="g-kicker">Records consulted</p>
+                    <div className="enc-chips">
+                        {lede.entries.map((entry) => (
+                            <Link key={entry.key} to={lore.routeFor('entry', entry.key)} className="g-chip g-chip--outline">
+                                {entry.title}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
+/** "Continue the story" foot: one .g-record line pointing at the reader's furthest part, or Part 1 when nothing is stored. */
+function ContinueTheStory() {
+    const resume = useResume();
+    const eras = lore.getEras();
+    const era = resume ? lore.getEra(resume.eraKey) : null;
+    const target = era || eras[0];
+    if (!target) return null;
+    return (
+        <div className="g-record enc-continue">
+            <span className="g-record-term">Continue the story</span>
+            <Link to={lore.routeFor('era', target.key)} className="g-record-body g-link">
+                Part {target.order + 1}, {target.name}
+            </Link>
+        </div>
+    );
+}
+
+/** A closed-by-default panel of secondary record data. */
+function Fold({ label, count, children }) {
+    return (
+        <details className="g-panel enc-fold">
+            <summary className="enc-fold-summary">
+                <span className="g-kicker enc-fold-label">{label}</span>
+                {typeof count === 'number' && <span className="g-mono enc-fold-count">{count}</span>}
+                <span className="enc-fold-chevron" aria-hidden="true" />
+            </summary>
+            <div className="enc-fold-body">{children}</div>
+        </details>
+    );
+}
+
 /**
- * WorldView: the survey record for one world -- plate, environmental report,
- * history chapters, native fauna, and entries naming the world.
- * Contract: docs/design/xalian-encyclopedia-ux-pass.md item 4 "World record reshaped".
+ * WorldView: the survey record for one world -- plate, narrator's lede,
+ * history chapters, native fauna, entries naming the world, then the
+ * environmental report and Connections behind closed folds.
+ * Contract: docs/design/xalian-encyclopedia-story-pass.md "Record pages".
  */
 export default function WorldView() {
     const { key } = useParams();
@@ -158,27 +213,11 @@ export default function WorldView() {
         }
     };
 
+    const connectionsCount = lore.getConnections('world', world.key, { limit: 12 }).length;
+
     return (
         <article className={`enc-world g-el-${world.element}`}>
             <Link to="/encyclopedia/worlds" className="enc-back">&laquo; Back to Worlds</Link>
-
-            <header className="enc-designation">
-                <h1 className="g-title">{world.name}</h1>
-                <Pronunciation pronunciation={(lore.getEntry(world.key) || {}).pronunciation} />
-                <div className="enc-chips">
-                    <span className="g-chip">{world.element}</span>
-                    <span className="g-chip g-chip--outline">Survey Record</span>
-                </div>
-            </header>
-
-            <nav className="enc-world-chronicle" aria-label="In the Chronicle">
-                <span className="enc-world-chronicle-label g-mono">In the Chronicle</span>
-                <div className="enc-world-chronicle-rail">
-                    {timeline.map((row) => (
-                        <ChronicleStation key={row.era.key} row={row} />
-                    ))}
-                </div>
-            </nav>
 
             <div className="enc-record">
                 <div className="enc-world-plate">
@@ -202,44 +241,112 @@ export default function WorldView() {
                 </div>
 
                 <div className="enc-world-record-col">
-                    <div className="g-screen enc-world-report">
-                        <p className="g-screen-line">UNIT &nbsp;{report.unit}</p>
-                        <p className="g-screen-line">PROTOCOL &nbsp;{report.protocol}</p>
-                        <p className="g-screen-line g-screen-line--dim">CYCLE &nbsp;{report.cycle}</p>
+                    <header className="enc-designation">
+                        <h1 className="g-title">{world.name}</h1>
+                        <Pronunciation pronunciation={(lore.getEntry(world.key) || {}).pronunciation} />
+                        <div className="enc-chips">
+                            <span className="g-chip">{world.element}</span>
+                            <span className="g-chip g-chip--outline">Survey Record</span>
+                        </div>
+                    </header>
 
-                        <p className="g-screen-line enc-world-report-block">
-                            TERRAIN &nbsp;{report.terrain.features.join(' / ')}
-                        </p>
-                        {report.terrain.notes && (
-                            <p className="g-screen-line g-screen-line--dim">{report.terrain.notes}</p>
-                        )}
+                    <WorldLede world={world} />
 
-                        <p className="g-screen-line enc-world-report-block">MOBILITY</p>
-                        {MOBILITY_ORDER.filter((k) => report.mobility[k]).map((k) => {
-                            const m = report.mobility[k];
-                            return (
-                                <p key={k} className="g-screen-line">
-                                    {k.toUpperCase()} &nbsp;{m.rating.toUpperCase()}
-                                    {m.note && <span className="g-screen-line--dim"> &mdash; {m.note}</span>}
-                                </p>
-                            );
-                        })}
+                    <nav className="enc-world-chronicle" aria-label="In the story">
+                        <span className="enc-world-chronicle-label g-mono">In the story</span>
+                        <div className="enc-world-chronicle-rail">
+                            {timeline.map((row) => (
+                                <ChronicleStation key={row.era.key} row={row} />
+                            ))}
+                        </div>
+                    </nav>
 
-                        <p className="g-screen-line enc-world-report-block">FAUNA</p>
-                        {report.fauna.observations.map((obs, i) => (
-                            <p key={i} className="g-screen-line">{obs}</p>
-                        ))}
+                    <section className="enc-section enc-world-record-section">
+                        <div className="enc-section-head">
+                            <h2 className="g-h2">History</h2>
+                        </div>
+                        <div className="enc-world-history-layout">
+                            <ol className="enc-world-history">
+                                {world.chapters.map((chapter, i) => {
+                                    const eraKey = chapterEraTag(chapter);
+                                    const label = chapterEraLabel(chapter, eraKey ? eraNameByKey.get(eraKey) : null);
+                                    return (
+                                        <li
+                                            key={chapter.index}
+                                            id={`chapter-${chapter.index}`}
+                                            data-chapter-index={chapter.index}
+                                            ref={(el) => {
+                                                chapterRefs.current[i] = el;
+                                            }}
+                                            className="enc-world-chapter"
+                                        >
+                                            <div className="enc-world-chapter-head">
+                                                <span className="g-mono enc-world-chapter-num">
+                                                    CH. {String(i + 1).padStart(2, '0')}
+                                                </span>
+                                                {eraKey ? (
+                                                    <Link to={lore.routeFor('era', eraKey)} className="g-chip g-chip--outline">
+                                                        {label}
+                                                    </Link>
+                                                ) : (
+                                                    <span className="g-chip g-chip--outline">{label}</span>
+                                                )}
+                                            </div>
+                                            <Prose text={chapter.text} />
+                                        </li>
+                                    );
+                                })}
+                            </ol>
 
-                        <p className="g-screen-line enc-world-report-block">
-                            HAZARDS &nbsp;{report.hazards.join(' / ')}
-                        </p>
-
-                        <p className="g-screen-line enc-world-report-block">
-                            OUTPUT PRIORITIES &nbsp;{report.outputPriorities.join(' / ')}
-                        </p>
-
-                        <p className="g-screen-line g-screen-line--dim enc-world-report-block">RECEIPT UNCONFIRMED_</p>
-                    </div>
+                            {isPhone ? (
+                                <details className="g-panel g-panel--recessed enc-world-chapter-index" aria-label="Chapters">
+                                    <summary className="g-panel-head enc-world-chapter-index-summary">
+                                        <h3 className="g-h3">Chapters ({world.chapters.length})</h3>
+                                    </summary>
+                                    <ol className="enc-world-chapter-index-list">
+                                        {world.chapters.map((chapter, i) => {
+                                            const eraKey = chapterEraTag(chapter);
+                                            const label = chapterEraLabel(chapter, eraKey ? eraNameByKey.get(eraKey) : null);
+                                            return (
+                                                <li key={chapter.index}>
+                                                    <ChapterRailRow
+                                                        chapter={chapter}
+                                                        index={i}
+                                                        world={world}
+                                                        label={label}
+                                                        onFallbackRead={handleFallbackRead(chapter.index)}
+                                                    />
+                                                </li>
+                                            );
+                                        })}
+                                    </ol>
+                                </details>
+                            ) : (
+                                <nav className="g-panel g-panel--recessed enc-world-chapter-index" aria-label="Chapters">
+                                    <header className="g-panel-head">
+                                        <h3 className="g-h3">Chapters</h3>
+                                    </header>
+                                    <ol className="enc-world-chapter-index-list">
+                                        {world.chapters.map((chapter, i) => {
+                                            const eraKey = chapterEraTag(chapter);
+                                            const label = chapterEraLabel(chapter, eraKey ? eraNameByKey.get(eraKey) : null);
+                                            return (
+                                                <li key={chapter.index}>
+                                                    <ChapterRailRow
+                                                        chapter={chapter}
+                                                        index={i}
+                                                        world={world}
+                                                        label={label}
+                                                        onFallbackRead={handleFallbackRead(chapter.index)}
+                                                    />
+                                                </li>
+                                            );
+                                        })}
+                                    </ol>
+                                </nav>
+                            )}
+                        </div>
+                    </section>
 
                     {world.nativeSpecies.length > 0 && (
                         <section className="enc-world-record-section">
@@ -289,96 +396,54 @@ export default function WorldView() {
                         </section>
                     )}
 
-                    <Connections kind="world" recordKey={world.key} limit={12} />
+                    <ContinueTheStory />
+
+                    <Fold label="Cross references" count={connectionsCount}>
+                        <Connections kind="world" recordKey={world.key} limit={12} />
+                    </Fold>
+
+                    <Fold label="Generator survey">
+                        <div className="g-screen enc-world-report">
+                            <p className="g-screen-line">UNIT &nbsp;{report.unit}</p>
+                            <p className="g-screen-line">PROTOCOL &nbsp;{report.protocol}</p>
+                            <p className="g-screen-line g-screen-line--dim">CYCLE &nbsp;{report.cycle}</p>
+
+                            <p className="g-screen-line enc-world-report-block">
+                                TERRAIN &nbsp;{report.terrain.features.join(' / ')}
+                            </p>
+                            {report.terrain.notes && (
+                                <p className="g-screen-line g-screen-line--dim">{report.terrain.notes}</p>
+                            )}
+
+                            <p className="g-screen-line enc-world-report-block">MOBILITY</p>
+                            {MOBILITY_ORDER.filter((k) => report.mobility[k]).map((k) => {
+                                const m = report.mobility[k];
+                                return (
+                                    <p key={k} className="g-screen-line">
+                                        {k.toUpperCase()} &nbsp;{m.rating.toUpperCase()}
+                                        {m.note && <span className="g-screen-line--dim"> &mdash; {m.note}</span>}
+                                    </p>
+                                );
+                            })}
+
+                            <p className="g-screen-line enc-world-report-block">FAUNA</p>
+                            {report.fauna.observations.map((obs, i) => (
+                                <p key={i} className="g-screen-line">{obs}</p>
+                            ))}
+
+                            <p className="g-screen-line enc-world-report-block">
+                                HAZARDS &nbsp;{report.hazards.join(' / ')}
+                            </p>
+
+                            <p className="g-screen-line enc-world-report-block">
+                                OUTPUT PRIORITIES &nbsp;{report.outputPriorities.join(' / ')}
+                            </p>
+
+                            <p className="g-screen-line g-screen-line--dim enc-world-report-block">RECEIPT UNCONFIRMED_</p>
+                        </div>
+                    </Fold>
                 </div>
             </div>
-
-            <section className="enc-section">
-                <div className="enc-section-head">
-                    <h2 className="g-h2">History</h2>
-                </div>
-                <div className="enc-world-history-layout">
-                    <ol className="enc-world-history">
-                        {world.chapters.map((chapter, i) => {
-                            const eraKey = chapterEraTag(chapter);
-                            const label = chapterEraLabel(chapter, eraKey ? eraNameByKey.get(eraKey) : null);
-                            return (
-                                <li
-                                    key={chapter.index}
-                                    id={`chapter-${chapter.index}`}
-                                    data-chapter-index={chapter.index}
-                                    ref={(el) => {
-                                        chapterRefs.current[i] = el;
-                                    }}
-                                    className="enc-world-chapter"
-                                >
-                                    <div className="enc-world-chapter-head">
-                                        <span className="g-mono enc-world-chapter-num">
-                                            CH. {String(i + 1).padStart(2, '0')}
-                                        </span>
-                                        {eraKey ? (
-                                            <Link to={lore.routeFor('era', eraKey)} className="g-chip g-chip--outline">
-                                                {label}
-                                            </Link>
-                                        ) : (
-                                            <span className="g-chip g-chip--outline">{label}</span>
-                                        )}
-                                    </div>
-                                    <Prose text={chapter.text} />
-                                </li>
-                            );
-                        })}
-                    </ol>
-
-                    {isPhone ? (
-                        <details className="g-panel g-panel--recessed enc-world-chapter-index" aria-label="Chapters">
-                            <summary className="g-panel-head enc-world-chapter-index-summary">
-                                <h3 className="g-h3">Chapters ({world.chapters.length})</h3>
-                            </summary>
-                            <ol className="enc-world-chapter-index-list">
-                                {world.chapters.map((chapter, i) => {
-                                    const eraKey = chapterEraTag(chapter);
-                                    const label = chapterEraLabel(chapter, eraKey ? eraNameByKey.get(eraKey) : null);
-                                    return (
-                                        <li key={chapter.index}>
-                                            <ChapterRailRow
-                                                chapter={chapter}
-                                                index={i}
-                                                world={world}
-                                                label={label}
-                                                onFallbackRead={handleFallbackRead(chapter.index)}
-                                            />
-                                        </li>
-                                    );
-                                })}
-                            </ol>
-                        </details>
-                    ) : (
-                        <nav className="g-panel g-panel--recessed enc-world-chapter-index" aria-label="Chapters">
-                            <header className="g-panel-head">
-                                <h3 className="g-h3">Chapters</h3>
-                            </header>
-                            <ol className="enc-world-chapter-index-list">
-                                {world.chapters.map((chapter, i) => {
-                                    const eraKey = chapterEraTag(chapter);
-                                    const label = chapterEraLabel(chapter, eraKey ? eraNameByKey.get(eraKey) : null);
-                                    return (
-                                        <li key={chapter.index}>
-                                            <ChapterRailRow
-                                                chapter={chapter}
-                                                index={i}
-                                                world={world}
-                                                label={label}
-                                                onFallbackRead={handleFallbackRead(chapter.index)}
-                                            />
-                                        </li>
-                                    );
-                                })}
-                            </ol>
-                        </nav>
-                    )}
-                </div>
-            </section>
         </article>
     );
 }

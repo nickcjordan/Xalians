@@ -3,6 +3,8 @@ import { Link, useLocation } from 'react-router-dom';
 import * as lore from '../../lore';
 import GalaxyMap from './GalaxyMap';
 import EraScrubber from './EraScrubber';
+import StoryContents from './StoryContents';
+import { useResume } from './trail';
 import './ReadingRoom.css';
 
 const TILES = [
@@ -25,15 +27,49 @@ function useQueryEra() {
 	return params.get('era');
 }
 
+/** Begin or Resume: opens Part 1, or the reader's furthest-along part when one is remembered. */
+function BeginOrResumeCard({ story }) {
+	const resume = useResume();
+	const resumedPart = resume ? lore.getStoryPart(resume.eraKey) : null;
+
+	if (resumedPart) {
+		return (
+			<section className="g-panel g-panel--raised enc-room-begin">
+				<span className="g-kicker enc-room-begin-kicker">Continue reading</span>
+				<h2 className="g-h2 enc-room-begin-title">{story.title}</h2>
+				<p className="g-body enc-room-begin-meta">
+					Part {resumedPart.order} of {story.parts.length}, {resumedPart.era.name}
+				</p>
+				<Link to={lore.routeFor('era', resumedPart.era.key)} className="g-btn g-btn--primary">
+					Resume Part {resumedPart.order}, {resumedPart.era.name}
+				</Link>
+			</section>
+		);
+	}
+
+	const firstPart = story.parts[0];
+	return (
+		<section className="g-panel g-panel--raised enc-room-begin">
+			<span className="g-kicker enc-room-begin-kicker">Begin here</span>
+			<h2 className="g-h2 enc-room-begin-title">{story.title}</h2>
+			<p className="g-body enc-room-begin-meta">{story.parts.length} parts, one per era.</p>
+			<Link to={lore.routeFor('era', firstPart.era.key)} className="g-btn g-btn--primary">
+				Begin Part 1, {firstPart.era.name}
+			</Link>
+		</section>
+	);
+}
+
 /**
- * The reading room: the galaxy map (with its era scrubber) as the full-width
- * hero, a "First Survey" call to action above it, and the Story of Xalia
- * beside the archive's entry-point tiles below. `?era=<key>` on the route
- * seeds the selected era for deep links; kept intentionally.
+ * The reading room: the front matter for the archive. Intro paragraph, the
+ * Begin or Resume card, the galaxy map with its era scrubber, Contents (the
+ * seven parts of The Story), then the reference shelf. `?era=<key>` on the
+ * route seeds the selected era for deep links; kept intentionally.
+ * Contract: docs/design/xalian-encyclopedia-story-pass.md "The shape after
+ * the pass".
  */
 export default function ReadingRoom() {
-	const overview = lore.getOverview();
-	const tour = lore.getTour();
+	const story = lore.getStory();
 	const queryEra = useQueryEra();
 	const [era, setEra] = useState(() => (queryEra ? queryEra : null));
 
@@ -41,26 +77,16 @@ export default function ReadingRoom() {
 		if (queryEra) setEra(queryEra);
 	}, [queryEra]);
 
-	const firstBeat = tour.beats.length > 0 ? tour.beats[0] : null;
-
 	return (
 		<div>
 			<p className="g-body enc-room-preface">
-				This archive holds every record the Generator has on the galaxy it serves: the worlds, the fauna printed for them, the powers that ordered the printing, and the sequence of events that left the galaxy as it is. Records are relative in time; no date survives. Begin anywhere.
+				Every record the Generator holds on the galaxy it serves is here: the worlds, the fauna printed for
+				them, the powers that ordered the printing, and the sequence of events that left Xalia as it is.
+				Nothing is dated. The archive knows only what came before what. Read it as one story from the first
+				part, or open any record and follow it back into the story.
 			</p>
 
-			{tour.beats.length > 0 && (
-				<section className="g-panel g-panel--raised enc-room-tour">
-					<span className="g-kicker enc-room-tour-kicker">Begin here</span>
-					<h2 className="g-h2 enc-room-tour-title">{tour.title}</h2>
-					<p className="g-body enc-room-tour-meta">{tour.beats.length} beats through the history of Xalia.</p>
-					{firstBeat && (
-						<Link to={lore.routeFor('tour', firstBeat.key)} className="g-btn g-btn--primary">
-							Start the survey
-						</Link>
-					)}
-				</section>
-			)}
+			<BeginOrResumeCard story={story} />
 
 			<section className="g-panel g-panel--bolted enc-room-map-panel">
 				<header className="g-panel-head">
@@ -70,42 +96,20 @@ export default function ReadingRoom() {
 				<EraScrubber era={era} onChange={setEra} />
 			</section>
 
-			<div className="enc-room-columns">
-				<section className="g-panel enc-room-story">
-					<header className="g-panel-head">
-						<h2 className="g-h2">The Story of Xalia</h2>
-					</header>
-					{overview.map(({ era: eraView, blurb }, i) => (
-						<div
-							className={`g-record enc-room-story-row ${era === eraView.key ? 'enc-room-story-row--lit' : ''}`}
-							key={eraView.key}
-						>
-							<h3 className="g-record-term">
-								<button
-									type="button"
-									className="enc-room-index g-mono"
-									aria-pressed={era === eraView.key}
-									onClick={() => setEra(eraView.key)}
-								>
-									{String(i + 1).padStart(2, '0')}
-								</button>
-								<Link to={lore.routeFor('era', eraView.key)} className="g-link">
-									{eraView.name}
-								</Link>
-							</h3>
-							<p className="g-record-body">{blurb}</p>
-						</div>
-					))}
-				</section>
+			<section className="g-panel enc-room-contents">
+				<header className="g-panel-head">
+					<h2 className="g-h2">Contents</h2>
+				</header>
+				<StoryContents story={story} />
+			</section>
 
-				<div className="enc-grid enc-room-strip">
-					{TILES.map((tile) => (
-						<Link key={tile.to} to={tile.to} className="g-tile">
-							<span className="g-tile-name">{tile.label}</span>
-							<p className="g-tile-meta">{tile.count()}</p>
-						</Link>
-					))}
-				</div>
+			<div className="enc-grid enc-room-strip">
+				{TILES.map((tile) => (
+					<Link key={tile.to} to={tile.to} className="g-tile">
+						<span className="g-tile-name">{tile.label}</span>
+						<p className="g-tile-meta">{tile.count()}</p>
+					</Link>
+				))}
 			</div>
 		</div>
 	);

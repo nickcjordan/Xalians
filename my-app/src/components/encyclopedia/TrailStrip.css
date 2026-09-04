@@ -1,16 +1,18 @@
-/* Trail strip: "Trace" instrument line directly under the section bank.
-   Contract: docs/design/xalian-encyclopedia-ux-pass.md "Trail". A single
-   compact row, not a panel: kicker inline at the left, chips after it,
-   Clear at the right. Only .g-* parts and --g-* tokens. */
+/* Trail strip: "Trace" instrument line at the foot of the page, after the
+   body. Contract: docs/design/xalian-encyclopedia-story-pass.md "Story
+   section, room and shell (agent A2)" (moved from under the section bank,
+   per the story pass, item 7). A single compact row, not a panel: kicker
+   inline at the left, chips after it, Clear at the right. Only .g-* parts
+   and --g-* tokens. */
 
 .enc-trail {
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
 	gap: var(--g-2);
-	margin-bottom: var(--g-5);
-	padding-bottom: var(--g-2);
-	border-bottom: 1px solid var(--g-seam);
+	margin-top: var(--g-6);
+	padding-top: var(--g-3);
+	border-top: 1px solid var(--g-seam);
 }
 
 .enc-trail-kicker {
@@ -45,8 +47,8 @@
 	.enc-trail-row {
 		flex-wrap: nowrap;
 		gap: var(--g-2);
-		margin-bottom: var(--g-4);
-		padding-bottom: var(--g-2);
+		margin-top: var(--g-4);
+		padding-top: var(--g-2);
 	}
 	.enc-trail-kicker { padding-top: 2px; }
 	.enc-trail-chip-kind { display: none; }

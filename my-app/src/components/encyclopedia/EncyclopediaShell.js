@@ -7,9 +7,7 @@ import BackToTop from './BackToTop';
 
 const SECTIONS = [
     { to: '/encyclopedia', label: 'Reading Room', exact: true },
-    { to: '/encyclopedia/tour', label: 'First Survey' },
-    { to: '/encyclopedia/chronicle', label: 'Chronicle' },
-    { to: '/encyclopedia/read', label: 'Read' },
+    { to: '/encyclopedia/story', label: 'The Story' },
     { to: '/encyclopedia/worlds', label: 'Worlds' },
     { to: '/encyclopedia/species', label: 'Bestiary' },
     { to: '/encyclopedia/powers', label: 'Powers' },
@@ -36,6 +34,11 @@ export default function EncyclopediaShell({ children }) {
         return hit ? hit.to : null;
     })();
 
+    // The masthead compresses to its compact form (kicker and version
+    // hidden, title one step smaller) on every route except the Reading
+    // Room itself, where the front matter deserves the full frame.
+    const isRoom = location.pathname.replace(/\/+$/, '') === '/encyclopedia';
+
     // Keep the active station in view when the bank scrolls horizontally at
     // phone widths, without scrolling the page itself.
     useEffect(() => {
@@ -49,7 +52,7 @@ export default function EncyclopediaShell({ children }) {
 
     return (
         <div className="g-shell page-shell enc-shell">
-            <header className="enc-masthead">
+            <header className={`enc-masthead ${isRoom ? '' : 'enc-masthead--compact'}`}>
                 <div className="enc-masthead-text">
                     <p className="g-kicker">Xalian Generator / Archive</p>
                     <h1 className="g-title enc-title">{masthead.title}</h1>
@@ -73,8 +76,8 @@ export default function EncyclopediaShell({ children }) {
                     );
                 })}
             </nav>
-            <TrailStrip />
             <div className="enc-body">{children}</div>
+            <TrailStrip />
             <BackToTop />
         </div>
     );

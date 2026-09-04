@@ -189,6 +189,49 @@ export function getEraForEntry(entryKey) {
 	return rows[0].era || null;
 }
 
+// getEntryStory: the entry's whole reading through the Chronicle, era by
+// era in era order -- events from getEventsForEntry filtered to that era,
+// and excerpts (the era-story paragraphs, in getEraStory order) that name
+// the entry by title or alias, whole word, case-insensitive (the same match
+// getAppearances uses for history paragraphs, extended to aliases). Only
+// eras with at least one event or excerpt are included. [] for unknown keys.
+export function getEntryStory(entryKey) {
+	const entry = getEntry(entryKey);
+	if (!entry) return [];
+
+	const names = [entry.title, ...(entry.aliases || [])];
+	const eventsByEraKey = new Map();
+	for (const { event, era, inferred } of getEventsForEntry(entryKey)) {
+		if (!era) continue;
+		// A title match that states the entry's absence ("never touched by
+		// APEX", "not seen ... by APEX") is not part of the entry's story.
+		if (inferred && /(never|not|no)/i.test(event.title)) continue;
+		if (!eventsByEraKey.has(era.key)) eventsByEraKey.set(era.key, []);
+		eventsByEraKey.get(era.key).push({ event, inferred });
+	}
+
+	const result = [];
+	// A paragraph tagged with a second era (alsoEras) would otherwise read
+	// twice on the entry page; it belongs to the first era it appears in.
+	const seen = new Set();
+	for (const eraStub of erasInOrder) {
+		const era = getEra(eraStub.key);
+		const events = eventsByEraKey.get(era.key) || [];
+		const excerpts = getEraStory(era.key)
+			.filter((row) => names.some((name) => findWholeWord(row.text, name)))
+			.filter((row) => {
+				const id = `${row.world.key}:${row.index}`;
+				if (seen.has(id)) return false;
+				seen.add(id);
+				return true;
+			})
+			.map((row) => ({ world: row.world, index: row.index, text: row.text }));
+		if (events.length === 0 && excerpts.length === 0) continue;
+		result.push({ era, events, excerpts });
+	}
+	return result;
+}
+
 // getWorldTimeline: all seven eras in order, with the chapter indices and
 // events belonging to the world in each era. Empty arrays where the world
 // is absent from that era.

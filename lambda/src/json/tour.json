@@ -4,8 +4,56 @@
   "title": "First Survey",
   "beats": [
     {
-      "key": "vallerii-and-tachyon-drive",
+      "key": "before-the-vallerii",
       "order": 0,
+      "title": "Before the Vallerii",
+      "era": "deep-past",
+      "worlds": [
+        "phantiri",
+        "stonera",
+        "telypso",
+        "veridium"
+      ],
+      "entries": [
+        "stonera",
+        "telypso",
+        "veridium",
+        "jorian-belt",
+        "shadharam-iv",
+        "wraithix",
+        "cybele"
+      ],
+      "sources": [
+        {
+          "planet": "phantiri",
+          "paragraph": 3
+        },
+        {
+          "planet": "phantiri",
+          "paragraph": 4
+        },
+        {
+          "planet": "stonera",
+          "paragraph": 0
+        },
+        {
+          "planet": "telypso",
+          "paragraph": 1
+        },
+        {
+          "planet": "veridium",
+          "paragraph": 2
+        },
+        {
+          "planet": "veridium",
+          "paragraph": 3
+        }
+      ],
+      "prose": "Before the Vallerii ever left their homeworld, the galaxy of Xalia already had a history, and almost none of it survives except as wreckage. In the Cybele System, a supernova tore apart an entire family of planets nearly a hundred million years ago, leaving Stonera alone in orbit and ringed by the Jorian Belt, a graveyard of seven shattered worlds. At the galactic center, Telypso is believed to be older still, old enough that certain Vallerii occultists once claimed their own species had descended from it, or that the strange world was the origin point of all life in Xalia. Veridium's own origin is disputed even in its own records: confidential surveys suggest it may not be a planet at all but a worldship, built by some long extinct race to flee an untold disaster, its surface once littered with the broken machines of whoever built it. And in the Wraithix System, scavengers would eventually find a derelict fleet, unlike anything in any Vallerii shipyard, its manifests naming a world of departure the Vallerii had not yet named themselves: Shadharam IV. Four worlds, four separate puzzles, and only rumor and sealed record to connect any of them to the empire that came after. What was here before is still mostly a matter of theory."
+    },
+    {
+      "key": "vallerii-and-tachyon-drive",
+      "order": 1,
       "title": "The Vallerii and the Tachyon Drive",
       "era": "ascendancy",
       "worlds": [
@@ -35,7 +83,7 @@
     },
     {
       "key": "age-of-unbirth",
-      "order": 1,
+      "order": 2,
       "title": "The Age of Unbirth",
       "era": "unbirth",
       "worlds": [
@@ -60,7 +108,7 @@
     },
     {
       "key": "generators-and-first-xalians",
-      "order": 2,
+      "order": 3,
       "title": "The Generators and the First Xalians",
       "era": "unbirth",
       "worlds": [
@@ -92,7 +140,7 @@
     },
     {
       "key": "company-wars",
-      "order": 3,
+      "order": 4,
       "title": "The Company Wars",
       "era": "generation",
       "worlds": [
@@ -116,7 +164,7 @@
     },
     {
       "key": "apex-accords",
-      "order": 4,
+      "order": 5,
       "title": "The APEX Accords",
       "era": "accords",
       "worlds": [
@@ -144,7 +192,7 @@
     },
     {
       "key": "end-wars",
-      "order": 5,
+      "order": 6,
       "title": "The End Wars",
       "era": "end-wars",
       "worlds": [
@@ -193,7 +241,7 @@
     },
     {
       "key": "nemesis-plague",
-      "order": 6,
+      "order": 7,
       "title": "The Nemesis Plague",
       "era": "end-wars",
       "worlds": [
@@ -218,7 +266,7 @@
     },
     {
       "key": "kozrak-and-tournament",
-      "order": 7,
+      "order": 8,
       "title": "Kozrak and the Tournament",
       "era": "present",
       "worlds": [
@@ -242,7 +290,7 @@
           "paragraph": 7
         }
       ],
-      "prose": "Floria was never seen as a military target during the End Wars, and its independent scientists worked on largely undisturbed, inspired by the accident that had first terraformed their own world. From that lineage came the Mercurius Machine, the invention that kept Xalian life from ending alongside the Vallerii: a device that prints Scrambler Tokens, chips holding randomly generated, encrypted genomes that a Generator can use to create Xalians immune to the Nemesis Plague. The Machine has only one owner. King Kozrak, one of the last living Vallerii, holds it on Valleron and has built around it the only economy that matters anymore, an arena tournament where factions send Xalians to fight for the Tokens that let a dying world replenish itself. Every planet's present is written in relation to that arena now, whether in tribute, in embargo, or in ambition; Magmuth's feuding factions would turn on Valleron itself if they ever united, and the rest of the galaxy quietly counts itself fortunate that they have not; other worlds bide their time by their own arithmetic. The Machine keeps printing. The tournament keeps running. Nothing about it looks like it will end…"
+      "prose": "Floria was never seen as a military target during the End Wars, and its independent scientists worked on largely undisturbed, inspired by the accident that had first terraformed their own world. From that lineage came the Mercurius Machine, the invention that kept Xalian life from ending alongside the Vallerii: a device that prints Scrambler Tokens, chips holding randomly generated, encrypted genomes that a Generator can use to create Xalians immune to the Nemesis Plague. The Machine has only one owner. King Kozrak, one of the last living Vallerii, holds it on Valleron and has built around it the only economy that matters anymore, an arena tournament where factions send Xalians to fight for the Tokens that let a dying world replenish itself. Every planet's present is written in relation to that arena now, whether in tribute, in embargo, or in ambition; Magmuth's feuding factions would turn on Valleron itself if they ever united, and the rest of the galaxy quietly counts itself fortunate that they have not; other worlds bide their time by their own arithmetic. The Machine keeps printing. The tournament keeps running. Nothing about it looks like it will end."
     }
   ]
 }
