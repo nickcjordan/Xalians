@@ -15,7 +15,7 @@ Per-species decisions that a migration agent cannot derive from the sources alon
 
 ## Frackworm
 
-- 2026-09-04: covering `chitin`, anatomy `jaws, vents, shell, body, eyes`, `armored` 100. A worm that bores through rock and glass sand wears grown overlapping armor plates, not hide. Eyes are tiny stalked bead eyes like a crab's or a clam's; sight stays 0 to 15. Art brief: the signature is the sand slurry blasting from the vent ring behind the head; the drill head is a blunt ringed cone with a small maw, never a mouth full of teeth. Applies the relatable-first principle in docs/design/xalian-creature-system-redesign.md section 1.
+- 2026-09-04: covering `chitin`, anatomy `jaws, vents, shell, body, eyes`, `armored` 100. A worm that bores through rock and glass sand wears grown overlapping armor plates, not hide. Eyes are tiny pinpoint dots on the collar behind the drill, no stalks (2026-09-04 later ruling: stalk eyes read goofy); sight stays 0 to 15. Art brief: the signature is the sand slurry blasting from the vent ring behind the head; the drill head is a blunt ringed cone with a small maw, never a mouth full of teeth. Applies the relatable-first principle in docs/design/xalian-creature-system-redesign.md section 1.
 
 ## Graviclaw
 
