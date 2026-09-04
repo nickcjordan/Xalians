@@ -740,40 +740,11 @@
 	box-shadow: var(--g-relief);
 }
 
-.rec-roster {
-	flex: 1 1 auto;
-	min-width: 0;
-	display: flex;
-	flex-direction: column;
-	gap: var(--g-1);
-}
 
-.rec-roster-head {
-	display: flex;
-	align-items: baseline;
-	gap: var(--g-3);
-}
 
-.rec-roster-head .g-label { margin: 0; }
 
-.rec-roster-count {
-	font-size: var(--g-size-micro);
-	color: var(--g-ink-low);
-}
 
-.rec-roster-strip {
-	display: flex;
-	gap: var(--g-2);
-	flex-wrap: wrap;
-	align-items: flex-end;
-}
 
-.rec-roster-hidden {
-	display: flex;
-	align-items: center;
-	gap: var(--g-2);
-	margin-top: var(--g-2);
-}
 
 .rec-deploy-controls {
 	flex: 0 0 auto;
@@ -1367,13 +1338,7 @@
 
 /* --- deploy controls: send is the action, pass is a choice, not a siren --- */
 
-.rec-roster-head { flex-wrap: wrap; }
 
-.rec-roster-help {
-	font-size: var(--g-size-micro);
-	color: var(--g-ink-low);
-	margin-left: auto;
-}
 
 .rec-deploy-controls { flex: 0 0 250px; min-width: 0; }
 .rec-deploy-controls .g-btn { text-align: left; }
@@ -1520,12 +1485,6 @@
 
 /* at 1024 the roster must not eat the sites: one scrolling row, terse controls */
 @media (max-width: 1200px) {
-	.rec-roster-strip {
-		flex-wrap: nowrap;
-		overflow-x: auto;
-		padding-bottom: var(--g-1);
-	}
-	.rec-roster-help { display: none; }
 	.rec-btn-sub { display: none; }
 	.rec-deploy-controls { flex: 0 0 150px; }
 	.rec-deploy-controls .g-btn { padding: var(--g-2); font-size: var(--g-size-tiny); }
@@ -1603,8 +1562,6 @@
 		padding: var(--g-1) var(--g-2);
 		background: var(--g-hull);
 	}
-	.rec-roster-head { gap: var(--g-2); }
-	.rec-roster-count { font-size: 0.5625rem; }
 	.rec-deploy-controls {
 		flex: 0 0 auto;
 		flex-direction: row;
@@ -1643,7 +1600,6 @@
 
 /* the roster's read affordance: shift-click has no touch equivalent, so every roster
    figure carries a small "read" tab that opens the dossier on any device */
-.rec-roster-item { position: relative; display: inline-flex; flex-direction: column; align-items: center; }
 .rec-figure-read {
 	font-family: var(--g-font-mono);
 	font-size: 0.5625rem;
@@ -1669,8 +1625,6 @@
 @media (max-width: 760px) {
 	/* the roster must be as wide as the bar, not as wide as twelve figures */
 	.rec-deploy-bar { align-items: stretch; }
-	.rec-roster { width: 100%; min-width: 0; }
-	.rec-roster-strip { width: 100%; }
 }
 
 /* -------------------------------------------------------------------------
@@ -1750,7 +1704,6 @@
 		box-shadow: 0 -6px 12px rgba(0, 0, 0, 0.45);
 		background: var(--g-hull);
 	}
-	.rec-roster-strip { flex-wrap: nowrap; overflow-x: auto; padding-bottom: var(--g-1); }
 }
 
 /* -------------------------------------------------------------------------
@@ -2665,683 +2618,6 @@
 .rec-site--targeted:hover { background: color-mix(in srgb, var(--rec-you) 6%, var(--g-hull)); }
 .rec-ghost-cta { color: var(--rec-you); }
 
-/* --- the deploy panel: choose a creature, choose a site -------------------- */
-
-.rec-deploy {
-	flex: 1 1 0;
-	min-height: 0;
-	display: flex;
-	flex-direction: column;
-	padding: 0;
-	overflow: hidden;
-}
-
-.rec-deploy-head {
-	flex: 0 0 auto;
-	display: flex;
-	flex-direction: column;
-	gap: var(--g-2);
-	padding: var(--g-3) var(--g-3) var(--g-2);
-	background: var(--g-hull-lo);
-	border-bottom: var(--g-hairline) solid var(--g-seam);
-}
-
-.rec-steps {
-	display: flex;
-	gap: var(--g-1);
-	list-style: none;
-	margin: 0;
-	padding: 0;
-}
-
-.rec-step {
-	flex: 1 1 0;
-	display: inline-flex;
-	align-items: center;
-	gap: var(--g-2);
-	padding: 2px var(--g-2);
-	font-family: var(--g-font-stencil);
-	font-size: var(--g-size-micro);
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
-	color: var(--g-ink-low);
-	background: var(--g-hull);
-	border: var(--g-hairline) solid var(--g-seam);
-	border-radius: 2px;
-	transition: border-color var(--g-move), color var(--g-move), background var(--g-move);
-}
-
-.rec-step-n {
-	width: 15px;
-	height: 15px;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	font-family: var(--g-font-mono);
-	font-size: 0.5625rem;
-	border: 1px solid currentColor;
-	border-radius: 50%;
-}
-
-.rec-step--now {
-	color: var(--g-ink);
-	border-color: var(--rec-you);
-	background: color-mix(in srgb, var(--rec-you) 14%, var(--g-hull));
-}
-
-.rec-step--now .rec-step-n { background: var(--rec-you); border-color: var(--rec-you); color: var(--g-void); }
-.rec-step--done { color: var(--g-ink-mid); border-color: color-mix(in srgb, var(--rec-you) 40%, var(--g-seam)); }
-
-.rec-deploy-title { display: flex; flex-direction: column; gap: 2px; }
-
-.rec-deploy-heading {
-	margin: 0;
-	font-family: var(--g-font-stencil);
-	font-size: var(--g-size-lead);
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
-	color: var(--g-ink);
-	animation: rec-turn-in 380ms cubic-bezier(0.3, 0, 0.2, 1) both;
-}
-
-.rec-deploy-lead {
-	margin: 0 !important;
-	font-size: var(--g-size-micro) !important;
-	line-height: 1.4;
-	color: var(--g-ink-mid);
-}
-
-.rec-deploy-count { font-size: var(--g-size-micro); color: var(--g-ink-low); }
-
-.rec-deploy-foot {
-	flex: 0 0 auto;
-	display: flex;
-	flex-wrap: wrap;
-	gap: var(--g-2);
-	padding: var(--g-2) var(--g-3);
-	border-top: var(--g-hairline) solid var(--g-seam);
-	background: var(--g-hull-lo);
-}
-
-.rec-deploy-foot .g-btn { flex: 1 1 auto; justify-content: center; text-align: center; font-size: var(--g-size-micro); }
-.rec-pass-btn--suggested { border-color: var(--g-brass-light); }
-.rec-deploy-foot .rec-btn-sub { display: block; font-size: 0.5625rem; color: var(--g-ink-low); white-space: normal; }
-
-/* --- the roster: fixed slots, the Duel's rail ------------------------------ */
-
-.rec-roster {
-	flex: 1 1 auto;
-	min-height: 0;
-	overflow-y: auto;
-	overflow-x: hidden;
-	display: block;
-	gap: 0;
-}
-
-.rec-roster-entries {
-	display: flex;
-	flex-direction: column;
-	gap: var(--g-2);
-	padding: var(--g-2);
-}
-
-.rec-slot {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) auto;
-	align-items: start;
-	background: var(--g-hull-lo);
-	border: var(--g-hairline) solid var(--g-seam);
-	border-left: 2px solid var(--rec-you);
-	border-radius: var(--g-radius);
-	box-shadow: var(--g-recess);
-	transition: background var(--g-move), border-color var(--g-move), opacity var(--g-move);
-}
-
-.rec-slot:hover,
-.rec-slot:focus-within { background: var(--g-hull); }
-
-.rec-slot-main {
-	display: grid;
-	grid-template-columns: 40px minmax(0, 1fr);
-	gap: var(--g-3);
-	align-items: start;
-	width: 100%;
-	padding: var(--g-2);
-	background: none;
-	border: 0;
-	text-align: left;
-	font: inherit;
-	color: inherit;
-	cursor: pointer;
-}
-
-.rec-slot-main:disabled { cursor: default; }
-.rec-slot-main:focus-visible { outline: 2px solid var(--rec-you); outline-offset: -2px; border-radius: var(--g-radius); }
-
-.rec-slot--armed {
-	border-color: var(--rec-you);
-	background: color-mix(in srgb, var(--rec-you) 10%, var(--g-hull));
-}
-
-.rec-slot--suggested { border-color: color-mix(in srgb, var(--g-brass-light) 60%, var(--g-seam)); }
-
-.rec-slot--sent,
-.rec-slot--holding,
-.rec-slot--routed,
-.rec-slot--away { opacity: 0.5; border-left-color: var(--g-seam); }
-
-.rec-slot--holding { border-left-color: var(--g-brass); }
-.rec-slot--routed .rec-slot-name { text-decoration: line-through; }
-.rec-slot--sent .rec-slot-portrait-art,
-.rec-slot--holding .rec-slot-portrait-art,
-.rec-slot--routed .rec-slot-portrait-art { filter: grayscale(1); }
-.rec-slot--disabled { opacity: 0.6; }
-.rec-slot--disabled .rec-slot-main { cursor: default; }
-
-.rec-slot-portrait {
-	width: 40px;
-	height: 40px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.rec-slot-portrait-art {
-	width: 100%;
-	height: 100%;
-	filter: drop-shadow(0 0 1.5px var(--g-el)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.9));
-}
-
-.rec-slot-body { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
-
-.rec-slot-ident {
-	display: flex;
-	align-items: baseline;
-	gap: var(--g-2);
-	flex-wrap: wrap;
-	min-width: 0;
-}
-
-.rec-slot-name {
-	font-family: var(--g-font-stencil);
-	font-size: var(--g-size-small);
-	font-weight: 500;
-	letter-spacing: var(--g-track-tight);
-	text-transform: uppercase;
-	color: var(--g-ink);
-}
-
-.rec-slot-element {
-	font-family: var(--g-font-mono);
-	font-size: 0.5625rem;
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
-	color: var(--g-el);
-}
-
-.rec-slot-tag {
-	font-family: var(--g-font-mono);
-	font-size: 0.5625rem;
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
-	color: var(--g-ink-low);
-}
-
-.rec-slot-tag--sent { color: var(--g-ink-mid); }
-.rec-slot-tag--holding { color: var(--g-brass-light); }
-.rec-slot-tag--routed { color: var(--g-lamp-red); }
-.rec-slot-tag--suggested,
-.rec-slot-tag--stealthy {
-	padding: 0 3px;
-	border: 1px solid currentColor;
-	border-radius: 2px;
-}
-.rec-slot-tag--suggested { color: var(--g-brass-light); }
-
-.rec-slot-meter-row {
-	display: grid;
-	grid-template-columns: 26px minmax(0, 1fr) 30px;
-	align-items: center;
-	gap: var(--g-2);
-}
-
-.rec-slot-meter-label {
-	font-family: var(--g-font-stencil);
-	font-size: 0.5625rem;
-	letter-spacing: var(--g-track-label);
-	text-transform: uppercase;
-	color: var(--g-ink-low);
-}
-
-.rec-slot-meter {
-	position: relative;
-	height: 6px;
-	border-radius: 1px;
-	background: var(--g-seam);
-	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9);
-	overflow: hidden;
-}
-
-.rec-slot-meter-fill {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	background-image: repeating-linear-gradient(90deg, var(--rec-you) 0 3px, transparent 3px 4px);
-	transition: width var(--g-move);
-}
-
-.rec-slot-meter-value {
-	font-family: var(--g-font-mono);
-	font-size: var(--g-size-micro);
-	font-weight: 600;
-	font-variant-numeric: tabular-nums;
-	text-align: right;
-	color: var(--g-ink);
-}
-
-/* one chip per site of this world */
-.rec-slot-sites { display: flex; gap: var(--g-1); }
-
-.rec-slot-site {
-	flex: 1 1 0;
-	min-width: 0;
-	display: inline-flex;
-	align-items: baseline;
-	gap: 3px;
-	padding: 1px var(--g-1);
-	font-family: var(--g-font-mono);
-	font-size: 0.625rem;
-	font-variant-numeric: tabular-nums;
-	background: var(--g-hull);
-	border: var(--g-hairline) solid var(--g-seam);
-	border-radius: 2px;
-	white-space: nowrap;
-	overflow: hidden;
-}
-
-.rec-slot-site-index { color: var(--g-ink-low); font-size: 0.5625rem; }
-.rec-slot-site-hold { color: var(--g-ink); font-weight: 600; }
-.rec-slot-site--best { border-color: var(--rec-you); }
-.rec-slot-site--best .rec-slot-site-hold { color: var(--rec-you); }
-.rec-slot-site--severe .rec-slot-site-hold { color: var(--g-ink-low); }
-.rec-slot-site-mark { font-size: 0.5rem; text-transform: uppercase; letter-spacing: 0.04em; }
-.rec-slot-site-mark--home { color: var(--g-brass-light); }
-.rec-slot-site-mark--strain { color: var(--g-hazard); }
-.rec-slot-site-mark--severe { color: var(--g-lamp-red); }
-
-.rec-slot-read {
-	align-self: start;
-	margin: var(--g-2) var(--g-2) 0 0;
-	font-family: var(--g-font-mono);
-	font-size: 0.5625rem;
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
-	color: var(--g-ink-low);
-	background: none;
-	border: var(--g-hairline) solid var(--g-seam);
-	border-radius: 2px;
-	padding: 0 var(--g-1);
-	cursor: pointer;
-}
-
-.rec-slot-read:hover { color: var(--g-ink); border-color: var(--g-ink-low); }
-
-/* --- step two: the chosen creature and the sites as rows ------------------ */
-
-.rec-deploy-choice {
-	flex: 1 1 auto;
-	min-height: 0;
-	display: flex;
-	flex-direction: column;
-	overflow: hidden;
-}
-
-.rec-chosen {
-	flex: 0 0 auto;
-	display: grid;
-	grid-template-columns: 52px minmax(0, 1fr) auto;
-	gap: var(--g-3);
-	align-items: center;
-	margin: var(--g-2) var(--g-2) 0;
-	padding: var(--g-2);
-	background: var(--g-hull-lo);
-	border: var(--g-hairline) solid var(--g-seam);
-	border-left: 3px solid var(--rec-you);
-	border-radius: var(--g-radius);
-	box-shadow: var(--g-recess);
-}
-
-.rec-chosen-portrait { width: 52px; height: 52px; display: flex; }
-.rec-chosen-art { width: 100%; height: 100%; filter: drop-shadow(0 0 2px var(--rec-you)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.9)); }
-.rec-chosen-body { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.rec-chosen-name {
-	font-family: var(--g-font-stencil);
-	font-size: var(--g-size-lead);
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
-	color: var(--g-ink);
-}
-.rec-chosen-sub { font-size: var(--g-size-micro); color: var(--g-ink-mid); }
-.rec-chosen-change { font-size: var(--g-size-micro); padding: 2px var(--g-3); }
-
-.rec-site-rows {
-	flex: 1 1 auto;
-	min-height: 0;
-	overflow-y: auto;
-	list-style: none;
-	margin: 0;
-	padding: var(--g-2);
-	display: flex;
-	flex-direction: column;
-	gap: var(--g-2);
-}
-
-.rec-site-row {
-	width: 100%;
-	display: grid;
-	grid-template-columns: 22px minmax(0, 1fr) auto;
-	gap: var(--g-3);
-	align-items: center;
-	padding: var(--g-2) var(--g-3);
-	background: var(--g-hull-lo);
-	border: var(--g-hairline) solid var(--g-seam);
-	border-left: 3px solid var(--g-seam);
-	border-radius: var(--g-radius);
-	box-shadow: var(--g-recess);
-	text-align: left;
-	font: inherit;
-	color: inherit;
-	cursor: pointer;
-	transition: background var(--g-move), border-color var(--g-move);
-}
-
-.rec-site-row:hover,
-.rec-site-row:focus-visible,
-.rec-site-row--hover { background: var(--g-hull); border-color: var(--rec-you); outline: none; }
-.rec-site-row--mine { border-left-color: var(--rec-you); }
-.rec-site-row--theirs { border-left-color: var(--rec-rival); }
-.rec-site-row--level { border-left-color: var(--g-ink-low); }
-.rec-site-row--suggested { border-color: color-mix(in srgb, var(--g-brass-light) 60%, var(--g-seam)); }
-
-.rec-site-row-index {
-	width: 18px;
-	height: 18px;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	font-family: var(--g-font-mono);
-	font-size: var(--g-size-micro);
-	font-weight: 600;
-	color: var(--g-brass-light);
-	border: var(--g-hairline) solid var(--g-brass-dark);
-	border-radius: 2px;
-}
-
-.rec-site-row-body { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.rec-site-row-name {
-	font-family: var(--g-font-stencil);
-	font-size: var(--g-size-small);
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
-	color: var(--g-ink);
-}
-.rec-site-row-after { font-size: var(--g-size-micro); color: var(--g-ink-mid); }
-.rec-site-row--mine .rec-site-row-after { color: var(--rec-you); }
-.rec-site-row--theirs .rec-site-row-after { color: var(--rec-rival); }
-.rec-site-row-marks { display: flex; gap: var(--g-1); flex-wrap: wrap; }
-.rec-site-row-marks:empty { display: none; }
-.rec-site-row-hold { display: flex; flex-direction: column; align-items: flex-end; }
-.rec-site-row-hold-value {
-	font-family: var(--g-font-mono);
-	font-size: var(--g-size-lead);
-	font-weight: 600;
-	font-variant-numeric: tabular-nums;
-	color: var(--g-ink);
-}
-.rec-site-row--severe .rec-site-row-hold-value { color: var(--g-ink-low); }
-.rec-site-row-hold-label {
-	font-family: var(--g-font-stencil);
-	font-size: 0.5625rem;
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
-	color: var(--g-ink-low);
-}
-
-.rec-tag--suggested { color: var(--g-brass-light); }
-
-.rec-deploy .rec-hidden-toggle { flex: 0 0 auto; padding: 0 var(--g-3) var(--g-2); }
-
-/* the rail carries the deploy panel now, in both modes */
-.rec-match--simple .rec-rail { min-height: 0; }
-.rec-body--wide { grid-template-columns: minmax(0, 1fr); }
-
-@media (max-width: 760px) {
-	.rec-deploy { max-height: none; }
-	.rec-roster { max-height: 440px; }
-	.rec-site-rows { max-height: none; overflow: visible; }
-	.rec-piece-stage { --rec-piece: 44px; }
-	.rec-site-floor .rec-rank { gap: var(--g-2); padding: var(--g-2); }
-	.rec-site-floor .rec-rank--theirs { padding-top: calc(var(--g-2) + 8px); }
-	.rec-site-floor .rec-rank--mine { padding-bottom: calc(var(--g-2) + 8px); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.rec-deploy-heading { animation: none; }
-}
-
-/* the deploy panel shares the rail with the log in advanced mode: the panel takes the
-   room, the log keeps a readable strip */
-.rec-match--advanced .rec-rail .rec-deploy,
-.rec-match--advanced .rec-rail .rec-plan { flex: 1 1 auto; min-height: 0; }
-.rec-match--advanced .rec-rail .rec-log { flex: 0 6 150px; min-height: 72px; }
-.rec-deploy-choice { flex: 1 1 auto; min-height: 0; overflow: hidden; }
-.rec-site-rows { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
-
-/* simple mode's orders plan, in the rail */
-.rec-plan-list {
-	flex: 1 1 auto;
-	min-height: 0;
-	overflow-y: auto;
-	margin: 0;
-	padding: var(--g-2) var(--g-3);
-}
-.rec-plan-foot { flex-direction: column; }
-.rec-plan-foot .rec-go-btn { font-size: var(--g-size-body); }
-.rec-plan-back { flex: 0 0 auto; font-size: var(--g-size-micro); }
-
-@media (max-width: 760px) {
-	/* the rail has no bounded height here, so the panels size to their content */
-	.rec-deploy, .rec-plan { flex: 0 0 auto; overflow: visible; }
-	.rec-roster { max-height: 440px; }
-	.rec-plan-list { max-height: 300px; }
-	.rec-site-floor { overflow: visible; }
-}
-
-/* -------------------------------------------------------------------------
-   TWO SIDES OF ONE SITE (Nick, 2026-09-04, second pass)
-
-   The site is one place, so it stays one card, but its two halves are two
-   grounds: the rival's half is hatched in brass and yours is scored in cyan, each
-   edge is a painted band that names the side and carries the side's own total,
-   and the front line between them is a double rule. Above the floor the old
-   margin band is a balance: one bar, the rival's hold pushing in from the left and
-   yours from the right, meeting where the site stands. A previewed send extends
-   your end as a hatched ghost with its number, so what a send would shift is seen
-   on the site itself, which is why the deploy panel no longer repeats the sites as
-   rows.
-   ------------------------------------------------------------------------- */
-
-.rec-site-floor .rec-rank--theirs {
-	border-top: 4px solid var(--rec-rival);
-	background:
-		repeating-linear-gradient(-45deg, color-mix(in srgb, var(--rec-rival) 14%, transparent) 0 2px, transparent 2px 9px),
-		linear-gradient(180deg, color-mix(in srgb, var(--rec-rival) 20%, transparent), color-mix(in srgb, var(--rec-rival) 5%, transparent) 70%, transparent);
-}
-
-.rec-site-floor .rec-rank--mine {
-	border-bottom: 4px solid var(--rec-you);
-	background:
-		repeating-linear-gradient(0deg, color-mix(in srgb, var(--rec-you) 10%, transparent) 0 1px, transparent 1px 8px),
-		linear-gradient(0deg, color-mix(in srgb, var(--rec-you) 20%, transparent), color-mix(in srgb, var(--rec-you) 5%, transparent) 70%, transparent);
-}
-
-.rec-rank-edge {
-	left: 0;
-	padding: 1px var(--g-2);
-	font-size: var(--g-size-micro);
-	letter-spacing: var(--g-track-label);
-	color: var(--g-void);
-	border-radius: 0 0 3px 0;
-}
-
-.rec-rank-edge--theirs { top: 0; background: var(--rec-rival); }
-.rec-rank-edge--mine { bottom: 0; background: var(--rec-you); border-radius: 0 3px 0 0; }
-
-.rec-site-floor .rec-rank--theirs { padding-top: calc(var(--g-3) + 14px); }
-.rec-site-floor .rec-rank--mine { padding-bottom: calc(var(--g-3) + 14px); }
-
-/* the front line */
-.rec-site-floor .rec-site-midline {
-	min-height: 28px;
-	border-top: 3px double color-mix(in srgb, var(--rec-rival) 55%, var(--g-ink-low));
-	border-bottom: 3px double color-mix(in srgb, var(--rec-you) 55%, var(--g-ink-low));
-	background: rgba(0, 0, 0, 0.35);
-}
-
-.rec-site-field--empty .rec-site-midline { border: 0; }
-
-/* --- the balance ----------------------------------------------------------- */
-
-.rec-balance {
-	flex: 0 0 auto;
-	display: grid;
-	grid-template-columns: auto minmax(0, 1fr) auto;
-	grid-template-rows: auto auto;
-	column-gap: var(--g-2);
-	row-gap: 2px;
-	align-items: center;
-	padding: var(--g-2);
-	background: var(--g-hull-lo);
-	border-radius: var(--g-radius);
-	box-shadow: var(--g-recess);
-}
-
-.rec-balance-end {
-	display: inline-flex;
-	align-items: baseline;
-	gap: var(--g-1);
-	font-family: var(--g-font-mono);
-	font-variant-numeric: tabular-nums;
-	min-width: 0;
-}
-
-.rec-balance-end--theirs { color: var(--rec-rival); }
-.rec-balance-end--mine { color: var(--rec-you); justify-content: flex-end; }
-
-.rec-balance-side {
-	font-family: var(--g-font-stencil);
-	font-size: 0.5625rem;
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
-	opacity: 0.8;
-}
-
-.rec-balance-total {
-	font-size: var(--g-size-small);
-	font-weight: 600;
-}
-
-.rec-balance-plus {
-	font-size: var(--g-size-micro);
-	color: var(--rec-you);
-	opacity: 0.8;
-}
-
-.rec-balance-track {
-	position: relative;
-	display: flex;
-	height: 8px;
-	border-radius: 1px;
-	background: var(--g-seam);
-	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9);
-	overflow: hidden;
-}
-
-.rec-balance-fill {
-	display: block;
-	height: 100%;
-	transition: width 420ms cubic-bezier(0.3, 0, 0.2, 1);
-}
-
-.rec-balance-fill--theirs {
-	background-image: repeating-linear-gradient(90deg, var(--rec-rival) 0 3px, transparent 3px 4px);
-}
-
-.rec-balance-fill--mine {
-	margin-left: auto;
-	background-image: repeating-linear-gradient(90deg, var(--rec-you) 0 3px, transparent 3px 4px);
-}
-
-.rec-balance-fill--ghost {
-	margin-left: auto;
-	background-image: repeating-linear-gradient(-45deg, var(--rec-you) 0 2px, transparent 2px 5px);
-	opacity: 0.75;
-}
-
-.rec-balance-fill--ghost + .rec-balance-fill--mine { margin-left: 0; }
-
-.rec-balance .rec-site-margin-text {
-	grid-column: 1 / -1;
-	text-align: center;
-	font-size: var(--g-size-micro);
-	color: var(--g-ink-low);
-}
-
-.rec-balance--mine .rec-site-margin-text { color: var(--rec-you); }
-.rec-balance--theirs .rec-site-margin-text { color: var(--rec-rival); }
-.rec-balance--level .rec-site-margin-text { color: var(--g-ink-mid); }
-.rec-balance--preview .rec-site-margin-text { color: var(--rec-you); }
-.rec-balance--quiet { opacity: 0.55; }
-.rec-balance--quiet .rec-balance-total { color: var(--g-ink-low); }
-
-/* the send affordance on the front line, when a creature is chosen */
-.rec-site-floor .rec-ghost { gap: var(--g-2); }
-.rec-ghost-cta {
-	font-family: var(--g-font-stencil);
-	font-size: var(--g-size-micro);
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-wide);
-	padding: 2px var(--g-3);
-	border: 1px solid var(--rec-you);
-	border-radius: 2px;
-	color: var(--g-void);
-	background: var(--rec-you);
-}
-
-.rec-site--targeted .rec-ghost-cta { animation: rec-turn-in 300ms ease-out both; }
-
-/* step two in the panel: the chosen creature, a cue, and three chips that are the
-   same chips as in its slot, now pressable */
-.rec-chosen-cue { padding: var(--g-2) var(--g-3) 0; }
-.rec-chosen-sites { padding: var(--g-2) var(--g-3); }
-.rec-chosen-site {
-	cursor: pointer;
-	padding: var(--g-2) var(--g-2);
-	font-size: var(--g-size-small);
-	font-family: var(--g-font-mono);
-	color: inherit;
-	justify-content: center;
-	gap: var(--g-2);
-	transition: border-color var(--g-move), background var(--g-move);
-}
-.rec-chosen-site:hover,
-.rec-chosen-site:focus-visible,
-.rec-slot-site--hover { border-color: var(--rec-you); background: color-mix(in srgb, var(--rec-you) 12%, var(--g-hull)); outline: none; }
-.rec-slot-site--suggested { border-color: color-mix(in srgb, var(--g-brass-light) 70%, var(--g-seam)); }
-.rec-slot-site-mark--suggested { color: var(--g-brass-light); }
-.rec-chosen-site .rec-slot-site-index { font-size: var(--g-size-micro); }
-
 /* -------------------------------------------------------------------------
    NUMBERS AS PICTURES (Nick, 2026-09-04, third pass)
 
@@ -3360,16 +2636,6 @@
 
 
 
-/* on the figure: the strip runs the width of the stage under the plate, the number beside */
-.rec-piece .rec-figure-foot {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) auto;
-	align-items: center;
-	gap: var(--g-1);
-	width: 100%;
-	min-width: var(--rec-piece, 56px);
-	padding: 0 2px;
-}
 
 .rec-piece .rec-figure-hold { font-size: var(--g-size-micro); }
 
@@ -3377,17 +2643,7 @@
 
 /* in a slot: meter row uses the same strip */
 
-/* per-site chips: index, a small strip, the number */
-.rec-slot-site {
-	display: grid;
-	grid-template-columns: auto minmax(0, 1fr) auto;
-	align-items: center;
-	gap: 4px;
-	padding: 2px var(--g-1);
-}
 
-.rec-chosen-site { grid-template-columns: auto minmax(0, 1fr) auto; }
-.rec-chosen-site .rec-slot-site-mark--suggested { grid-column: 1 / -1; text-align: center; }
 
 /* --- the environment scale --------------------------------------------- */
 
@@ -3478,34 +2734,6 @@
 .rec-send-pip--spent { background: var(--g-hull-lo); box-shadow: var(--g-recess); }
 .rec-sends-text { font-size: var(--g-size-micro); color: var(--g-ink-low); }
 
-.rec-hold-legend {
-	display: grid;
-	grid-template-columns: 56px minmax(0, 1fr);
-	align-items: center;
-	gap: var(--g-2);
-	font-size: 0.5625rem;
-	color: var(--g-ink-low);
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
-	font-family: var(--g-font-stencil);
-}
-
-/* simple mode: one hold on this world per slot, three only when the sites differ */
-.rec-slot-here,
-.rec-chosen-here {
-	display: grid;
-	grid-template-columns: 44px minmax(0, 1fr) 30px;
-	align-items: center;
-	gap: var(--g-2);
-}
-.rec-chosen-here { padding: var(--g-2) var(--g-3) 0; }
-.rec-chosen-here-note {
-	grid-column: 1 / -1;
-	font-family: var(--g-font-mono);
-	font-size: 0.5625rem;
-	color: var(--g-ink-low);
-}
-.rec-chosen-sites--hidden { display: none; }
 
 /* -------------------------------------------------------------------------
    THE FRAME (Nick, 2026-09-04): a round is three worlds side by side, each at one of
@@ -3548,26 +2776,9 @@
 .rec-site-head .rec-site-recommend { grid-column: 2; }
 
 /* the chips read their world's element too */
-.rec-slot-site .rec-slot-site-index { color: var(--g-el); }
-.rec-slot-site--best .rec-slot-site-index { color: var(--g-el); }
 
 /* a chip: the world's name on top (numbered to match the table), the dial and the
    reading beneath */
-.rec-slot-site-world {
-	grid-column: 1 / -1;
-	display: inline-flex;
-	align-items: center;
-	gap: 4px;
-	font-family: var(--g-font-stencil);
-	font-size: 0.5625rem;
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
-	color: var(--g-el);
-	text-align: left;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
 
 
 @media (max-width: 760px) {
@@ -3576,113 +2787,327 @@
 }
 
 /* -------------------------------------------------------------------------
-   THE PRESSURE GAUGE AND THE BENCH (Nick, 2026-09-04, sixth pass)
+   ONE LANGUAGE (Nick, 2026-09-04, seventh pass)
 
-   Hold is read off a pressure gauge on a fixed scale: a round brass bezel, a dark
-   face under glass, 270 degrees printed 0 to 20 with the over-range to 30 hatched in
-   brass, a needle from the bottom. Chip size carries ticks only; numerals print at
-   full size where they can be read. The squad stands on a bench under the worlds,
-   a plinth per creature with three lamps for the three worlds; the reading itself
-   is shown once, on the world, when a creature is pointed at or lifted.
+   The table is the Court's frame: a console in the Generator's own fittings, the
+   same ones the Duel and the encyclopedia use. Panels are matte steel; only the
+   CRT and the lamps emit; the fourteen element hues are the only saturated paint;
+   legends are stencilled and output is monospaced. Everything below replaces the
+   passes it superseded (the strips, the balance bar, the hatched grounds, the brass
+   dial): three trays for the three worlds, the squad on a rail lying down, and hold
+   read off the system's bulb meter, lit in the world's element.
    ------------------------------------------------------------------------- */
 
-.rec-gauge {
-	display: inline-block;
-	line-height: 0;
+/* --- the meter: one bulb per point, banks of five, brass past twenty ---------- */
+
+.rec-meter {
+	display: inline-flex;
+	flex-direction: column;
+	gap: 2px;
 	vertical-align: middle;
 	flex: 0 0 auto;
+	--bulb-w: 4px;
+	--bulb-h: 10px;
+	--bulb-gap: 2px;
+	--bank-gap: 4px;
 }
 
-.rec-gauge--chip { width: 34px; height: 34px; }
-.rec-gauge--full { width: 64px; height: 64px; }
-.rec-gauge--large { width: 96px; height: 96px; }
+.rec-meter--chip { --bulb-w: 2px; --bulb-h: 6px; --bulb-gap: 1px; --bank-gap: 2px; }
+.rec-meter--large { --bulb-w: 5px; --bulb-h: 13px; --bulb-gap: 1px; --bank-gap: 4px; }
 
-.rec-gauge-face { width: 100%; height: 100%; overflow: visible; }
+.rec-meter-bulbs {
+	display: inline-flex;
+	align-items: stretch;
+	gap: var(--bulb-gap);
+	padding: 2px 3px;
+	background: var(--g-seam);
+	border-radius: 2px;
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9), inset 0 -1px 0 rgba(255, 244, 214, 0.04);
+}
 
-.rec-gauge-bezel-dark { fill: var(--g-brass-dark); }
-.rec-gauge-bezel { fill: var(--g-brass); }
-.rec-gauge-glass { fill: var(--g-hull-lo); stroke: var(--g-seam); stroke-width: 1; }
+.rec-bulb {
+	display: block;
+	width: var(--bulb-w);
+	height: var(--bulb-h);
+	border-radius: 1px;
+	background: var(--g-lamp-off);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.6);
+}
 
-.rec-gauge-range { fill: none; stroke: var(--g-ink-mid); stroke-width: 1.5; }
-.rec-gauge-over { fill: none; stroke: var(--g-brass); stroke-width: 5; stroke-dasharray: 2 2; opacity: 0.9; }
+/* a seam between banks of five */
+.rec-bulb:nth-child(5n):not(:last-child) { margin-right: var(--bank-gap); }
 
-.rec-gauge-lost { fill: none; stroke: var(--g-hazard); stroke-width: 5; stroke-dasharray: 1.5 1.5; opacity: 0.9; }
-.rec-gauge-lost--severe { stroke: var(--g-lamp-red); }
-.rec-gauge-lost--stagger { stroke: var(--g-lamp-red); stroke-dasharray: none; opacity: 0.75; }
+.rec-bulb--lit {
+	background: var(--g-el);
+	box-shadow: 0 0 3px color-mix(in srgb, var(--g-el) 55%, transparent), inset 0 -1px 1px rgba(0, 0, 0, 0.35);
+}
 
-.rec-gauge-tick { stroke: var(--g-ink-low); stroke-width: 1; }
-.rec-gauge-tick--major { stroke: var(--g-ink); stroke-width: 1.8; }
-.rec-gauge-tick--over { stroke: var(--g-brass-light); }
-.rec-gauge--chip .rec-gauge-tick,
-.rec-gauge--full .rec-gauge-tick { stroke-width: 2; }
-.rec-gauge--chip .rec-gauge-tick--major,
-.rec-gauge--full .rec-gauge-tick--major { stroke-width: 3; }
-.rec-gauge--full .rec-gauge-needle { stroke-width: 3; }
+/* what the site takes: bulbs that would be lit unstrained, shown dim */
+.rec-bulb--dim { background: color-mix(in srgb, var(--g-hazard) 45%, var(--g-lamp-off)); }
+.rec-bulb--dim-severe { background: color-mix(in srgb, var(--g-lamp-red) 45%, var(--g-lamp-off)); }
 
-.rec-gauge-numeral {
+/* what a stagger took: struck red */
+.rec-bulb--struck { background: var(--g-lamp-red); opacity: 0.75; }
+
+/* home ground: the brass bank past twenty */
+.rec-bulb--over { border: 1px solid var(--g-brass-dark); background: var(--g-lamp-off); }
+.rec-bulb--over.rec-bulb--lit { background: var(--g-brass-light); border-color: var(--g-brass); box-shadow: 0 0 3px color-mix(in srgb, var(--g-brass-light) 55%, transparent); }
+
+/* the printed scale under the large strip */
+.rec-meter-scale {
+	display: flex;
+	justify-content: space-between;
+	padding: 0 3px;
 	font-family: var(--g-font-mono);
-	font-size: 12px;
-	font-weight: 500;
-	fill: var(--g-ink);
+	font-size: 0.5625rem;
+	line-height: 1;
+	color: var(--g-ink-low);
+	width: calc(20 * var(--bulb-w) + 19 * var(--bulb-gap) + 3 * var(--bank-gap) + 6px);
 }
-.rec-gauge-numeral--over { fill: var(--g-brass-light); }
+.rec-meter-scale i { font-style: normal; }
 
-.rec-gauge-legend {
-	font-family: var(--g-font-stencil);
-	font-size: 8px;
-	letter-spacing: 1.5px;
-	fill: var(--g-ink-low);
+/* where it sits */
+.rec-piece .rec-figure-foot {
+	display: grid;
+	grid-template-columns: auto auto;
+	justify-content: center;
+	align-items: center;
+	gap: var(--g-1);
+	width: 100%;
+	padding: 0 2px;
 }
+.rec-piece .rec-figure-hold { color: var(--g-ink); font-size: var(--g-size-micro); }
+.rec-figure--theirs.rec-piece .rec-figure-hold { color: var(--g-ink-mid); }
 
-.rec-gauge-needle {
-	stroke: var(--g-ink);
-	stroke-width: 2.2;
-	stroke-linecap: round;
-	transition: x1 var(--g-move), y1 var(--g-move), x2 var(--g-move), y2 var(--g-move);
-}
-.rec-gauge--chip .rec-gauge-needle { stroke-width: 4; }
-.rec-gauge-needle--ghost { stroke: var(--g-ink-mid); stroke-width: 1.3; stroke-dasharray: 2 2; }
-.rec-gauge--chip .rec-gauge-needle--ghost { stroke-width: 2.5; }
-.rec-gauge--home .rec-gauge-needle { stroke: var(--g-brass-light); }
-
-.rec-gauge-hub { fill: var(--g-hull-hi); stroke: var(--g-brass); stroke-width: 1.2; }
-
-/* the glass: a soft catch of light, top left, and a shade toward the rim */
-.rec-gauge-shine {
-	fill: none;
-	stroke: rgba(255, 244, 214, 0.08);
-	stroke-width: 6;
-	pointer-events: none;
+.rec-ghost { display: inline-flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: var(--g-2) var(--g-3); max-width: 100%; }
+.rec-ghost .rec-ghost-value {
+	font-family: var(--g-font-mono);
+	font-variant-numeric: tabular-nums;
+	font-size: var(--g-size-h3);
+	color: var(--g-ink);
 }
 
-/* where the gauge sits */
-.rec-piece .rec-figure-foot { grid-template-columns: auto minmax(0, 1fr); justify-items: start; align-items: center; }
-.rec-ghost { align-items: center; gap: var(--g-3); }
-.rec-ghost .rec-ghost-value { font-size: var(--g-size-lead); }
 .rec-slot-meter-row { grid-template-columns: 26px auto minmax(0, 1fr); align-items: center; }
 
-/* --- the bench ------------------------------------------------------------ */
+.rec-hold-legend { grid-template-columns: auto minmax(0, 1fr); }
+
+/* --- the tray: one world, machined into the console ------------------------- */
+
+.rec-site.g-panel {
+	padding: var(--g-3);
+	background: linear-gradient(160deg, var(--g-hull-hi), var(--g-hull));
+	border: 2px solid var(--g-brass-dark);
+	border-radius: var(--g-radius-housing, 6px);
+	box-shadow: var(--g-relief), var(--g-drop);
+	background-image:
+		radial-gradient(circle at 10px 10px, rgba(0, 0, 0, 0.6) 1.5px, var(--g-brass-dark) 2.4px, var(--g-bevel-light) 3px, transparent 3.6px),
+		radial-gradient(circle at calc(100% - 10px) 10px, rgba(0, 0, 0, 0.6) 1.5px, var(--g-brass-dark) 2.4px, var(--g-bevel-light) 3px, transparent 3.6px),
+		radial-gradient(circle at 10px calc(100% - 10px), rgba(0, 0, 0, 0.6) 1.5px, var(--g-brass-dark) 2.4px, var(--g-bevel-light) 3px, transparent 3.6px),
+		radial-gradient(circle at calc(100% - 10px) calc(100% - 10px), rgba(0, 0, 0, 0.6) 1.5px, var(--g-brass-dark) 2.4px, var(--g-bevel-light) 3px, transparent 3.6px),
+		linear-gradient(160deg, var(--g-hull-hi), var(--g-hull));
+}
+
+/* the side to move, the target, the verdict: the tray's rim, never its floor */
+.rec-site--targeted { border-color: color-mix(in srgb, var(--rec-you) 55%, var(--g-brass-dark)); }
+.rec-site--targeted:hover { background-color: var(--g-hull); }
+.rec-site--hover { border-color: var(--rec-you); }
+.rec-site--verdict-yours { border-color: var(--rec-you); }
+.rec-site--verdict-theirs { border-color: var(--rec-rival); }
+.rec-site--mine, .rec-site--theirs, .rec-site--level, .rec-site--empty { border-top-color: var(--g-brass-dark); }
+
+.rec-site-head { padding: 0 var(--g-1); }
+
+/* the floor: dark stone, dust and scouring, deep toward the walls */
+.rec-site-floor {
+	background-color: var(--g-void);
+	background-image:
+		repeating-linear-gradient(58deg, rgba(255, 244, 214, 0.014) 0 1px, transparent 1px 23px),
+		repeating-linear-gradient(-31deg, rgba(0, 0, 0, 0.16) 0 1px, transparent 1px 31px),
+		radial-gradient(ellipse at 28% 22%, rgba(176, 141, 63, 0.05) 0%, transparent 55%),
+		radial-gradient(ellipse at 74% 76%, rgba(176, 141, 63, 0.035) 0%, transparent 50%),
+		radial-gradient(circle at 50% 45%, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.6) 100%);
+	box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.9), inset 0 -1px 0 var(--g-bevel-light);
+	border-radius: var(--g-radius);
+	min-height: 170px;
+}
+
+/* the two ranks: plain floor with a painted edge line and a tab, nothing hatched */
+.rec-site-floor .rec-rank--theirs {
+	border-top: 2px solid color-mix(in srgb, var(--rec-rival) 80%, var(--g-seam));
+	background: linear-gradient(180deg, color-mix(in srgb, var(--rec-rival) 9%, transparent), transparent 45%);
+	padding-top: calc(var(--g-3) + 14px);
+}
+
+.rec-site-floor .rec-rank--mine {
+	border-bottom: 2px solid color-mix(in srgb, var(--rec-you) 80%, var(--g-seam));
+	background: linear-gradient(0deg, color-mix(in srgb, var(--rec-you) 9%, transparent), transparent 45%);
+	padding-bottom: calc(var(--g-3) + 14px);
+}
+
+.rec-rank-edge {
+	left: 0;
+	padding: 1px var(--g-2);
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+	color: var(--g-void);
+	border-radius: 0 0 3px 0;
+}
+.rec-rank-edge--theirs { top: 0; background: var(--rec-rival); }
+.rec-rank-edge--mine { bottom: 0; background: var(--rec-you); border-radius: 0 3px 0 0; }
+
+/* the front line: one machined seam */
+.rec-site-floor .rec-site-midline {
+	min-height: 72px;
+	border-top: 1px solid var(--g-brass-dark);
+	border-bottom: 1px solid var(--g-brass-dark);
+	background: rgba(0, 0, 0, 0.3);
+}
+.rec-site-field--empty .rec-site-midline { border: 0; }
+
+.rec-ghost-cta {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	padding: 2px var(--g-3);
+	border: 1px solid var(--rec-you);
+	border-radius: 2px;
+	color: var(--g-void);
+	background: var(--rec-you);
+}
+.rec-site--targeted .rec-ghost-cta { animation: rec-turn-in 300ms ease-out both; }
+
+/* --- the tally: two readouts and a sentence, under the world's name ---------- */
+
+.rec-tally {
+	flex: 0 0 auto;
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	align-items: baseline;
+	gap: var(--g-3);
+	padding: var(--g-1) var(--g-2);
+	border-top: var(--g-hairline) solid var(--g-seam);
+	border-bottom: var(--g-hairline) solid var(--g-seam);
+}
+
+.rec-tally--hidden { visibility: hidden; }
+
+.rec-tally-side {
+	display: inline-flex;
+	align-items: baseline;
+	gap: var(--g-1);
+	font-family: var(--g-font-mono);
+	font-variant-numeric: tabular-nums;
+	color: var(--g-ink-mid);
+}
+
+.rec-tally-label {
+	font-family: var(--g-font-stencil);
+	font-size: 0.5625rem;
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+	color: var(--g-ink-low);
+}
+
+.rec-tally-value { font-size: var(--g-size-small); font-weight: 600; }
+.rec-tally--theirs .rec-tally-side--theirs .rec-tally-value { color: var(--rec-rival); }
+.rec-tally--mine .rec-tally-side--mine .rec-tally-value { color: var(--rec-you); }
+.rec-tally--preview .rec-tally-side--mine .rec-tally-value { color: var(--rec-you); }
+.rec-tally-plus { font-size: var(--g-size-micro); color: var(--rec-you); }
+
+.rec-tally-text {
+	text-align: center;
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+	color: var(--g-ink-low);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.rec-tally--mine .rec-tally-text { color: var(--rec-you); }
+.rec-tally--theirs .rec-tally-text { color: var(--rec-rival); }
+.rec-tally--level .rec-tally-text { color: var(--g-ink-mid); }
+.rec-tally--preview .rec-tally-text { color: var(--rec-you); }
+
+/* --- the status strip: outline chips for the worlds, a lamp for the turn --------- */
+
+.rec-status-worlds { display: inline-flex; flex-wrap: wrap; gap: var(--g-1); }
+.rec-status-worlds .rec-status-element { font-size: var(--g-size-micro); padding: 1px var(--g-2); }
+.rec-status .rec-status-planet { color: var(--g-ink); }
+.rec-status .rec-world-dot--now { background: var(--g-lamp-amber); border-color: var(--g-lamp-amber); box-shadow: 0 0 6px var(--g-lamp-amber); }
+
+.rec-site-head { grid-template-rows: auto auto auto; }
+.rec-site-head .rec-site-index { grid-row: 1 / 4; color: var(--g-el); border-color: color-mix(in srgb, var(--g-el) 60%, var(--g-brass-dark)); }
+.rec-site .rec-site-name { color: var(--g-el); }
+
+.rec-site-place {
+	grid-column: 2;
+	font-family: var(--g-font-mono);
+	font-size: 0.5625rem;
+	letter-spacing: 0.02em;
+	color: var(--g-ink-low);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.rec-site-head .rec-site-recommend { grid-column: 2; }
+
+/* quiet parts keep their room so a preview never shifts the card under the pointer */
+.rec-env-slot { display: contents; }
+.rec-env-slot--quiet .rec-env { visibility: hidden; }
+
+/* --- the bench: the Duel's roster rail, lying down --------------------------------- */
 
 .rec-bench {
 	flex: 0 0 auto;
 	display: flex;
 	flex-direction: column;
-	gap: var(--g-2);
-	padding: var(--g-3) var(--g-4);
+	background: var(--g-hull);
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: var(--g-radius-panel, var(--g-radius));
+	box-shadow: var(--g-relief), var(--g-drop);
+	overflow: hidden;
+}
+
+/* the side to move carries an edge light along the rail, in its own colour */
+.rec-bench--active {
+	border-color: color-mix(in srgb, var(--rec-you) 45%, var(--g-seam));
+	box-shadow: var(--g-relief), var(--g-drop), inset 0 0 18px color-mix(in srgb, var(--rec-you) 14%, transparent);
 }
 
 .rec-bench-head {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) auto auto;
+	grid-template-columns: auto minmax(0, 1fr) auto auto;
 	align-items: center;
-	gap: var(--g-2) var(--g-4);
+	gap: var(--g-2) var(--g-5);
+	padding: var(--g-2) var(--g-4);
+	border-bottom: var(--g-hairline) solid var(--g-seam);
+	background: var(--g-hull-lo);
 }
 
-.rec-bench-title { min-width: 0; }
+.rec-bench-title { display: inline-flex; align-items: baseline; gap: var(--g-2); }
+
+.rec-bench-kicker {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	font-weight: 600;
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+	color: var(--g-ink-mid);
+}
+
+.rec-bench-count { font-size: var(--g-size-small); font-variant-numeric: tabular-nums; color: var(--g-ink); }
+.rec-bench-count-of { color: var(--g-ink-low); }
+
+.rec-bench-say { min-width: 0; }
 
 .rec-bench-heading {
 	font-family: var(--g-font-stencil);
-	font-size: var(--g-size-lead);
+	font-size: var(--g-size-small);
 	font-weight: 600;
 	letter-spacing: var(--g-track-label);
 	text-transform: uppercase;
@@ -3690,25 +3115,24 @@
 	color: var(--g-ink);
 	animation: rec-turn-in 300ms ease-out both;
 }
+.rec-bench--active .rec-bench-heading { color: var(--rec-you); }
 
-.rec-bench-lead {
-	margin: 0;
-	font-size: var(--g-size-small);
-	color: var(--g-ink-mid);
-}
+.rec-bench-lead { margin: 0; font-size: var(--g-size-micro); color: var(--g-ink-mid); }
 
 .rec-bench-actions { display: inline-flex; gap: var(--g-2); align-items: center; }
+.rec-bench-actions .g-btn { font-size: var(--g-size-micro); }
 
 .rec-plinths {
 	display: grid;
 	grid-auto-flow: column;
 	grid-auto-columns: minmax(84px, 1fr);
 	gap: var(--g-2);
+	padding: var(--g-2);
 	overflow-x: auto;
-	padding-bottom: 2px;
 	scrollbar-width: thin;
 }
 
+/* one slot, held for the whole match so nothing reshuffles under the cursor */
 .rec-plinth {
 	position: relative;
 	display: flex;
@@ -3716,10 +3140,9 @@
 	min-width: 0;
 	background: var(--g-hull-lo);
 	border: var(--g-hairline) solid var(--g-seam);
-	border-bottom: 2px solid var(--rec-you);
 	border-radius: var(--g-radius);
 	box-shadow: var(--g-recess);
-	transition: background var(--g-move), border-color var(--g-move), transform var(--g-move), opacity var(--g-move);
+	transition: background var(--g-move), border-color var(--g-move), opacity var(--g-move);
 }
 
 .rec-plinth:hover,
@@ -3740,7 +3163,6 @@
 	min-width: 0;
 	width: 100%;
 }
-
 .rec-plinth-main:disabled { cursor: default; }
 .rec-plinth-main:focus-visible { outline: 1px solid var(--rec-you); outline-offset: -1px; }
 
@@ -3763,12 +3185,7 @@
 	background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.7), transparent 70%);
 }
 
-.rec-plinth-art {
-	position: relative;
-	width: 44px;
-	height: 44px;
-	transition: transform var(--g-move);
-}
+.rec-plinth-art { position: relative; width: 44px; height: 44px; transition: transform var(--g-move); }
 
 .rec-plinth-name {
 	font-family: var(--g-font-stencil);
@@ -3782,21 +3199,20 @@
 	white-space: nowrap;
 }
 
-/* the three lamps: one per world in the frame, in the world's element */
-.rec-lamps { display: inline-flex; gap: 5px; padding: 2px 0; }
+/* the three lamps: bulbs behind coloured plastic, one per world in the frame */
+.rec-lamps { display: inline-flex; gap: 6px; padding: 3px 0; }
 
 .rec-lamp {
-	width: 12px;
-	height: 12px;
+	width: 10px;
+	height: 10px;
 	border-radius: 50%;
-	border: var(--g-hairline) solid color-mix(in srgb, var(--g-el) 50%, var(--g-seam));
-	background: color-mix(in srgb, var(--g-el) 10%, var(--g-hull-lo));
-	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8);
+	background: var(--g-lamp-off);
+	box-shadow: inset 0 -2px 2px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(0, 0, 0, 0.6);
+	border: 1px solid var(--g-seam);
 	transition: background var(--g-move), box-shadow var(--g-move);
 }
-
-.rec-lamp--1 { background: color-mix(in srgb, var(--g-el) 45%, var(--g-hull-lo)); }
-.rec-lamp--2 { background: var(--g-el); box-shadow: 0 0 5px color-mix(in srgb, var(--g-el) 70%, transparent); }
+.rec-lamp--1 { background: color-mix(in srgb, var(--g-el) 40%, var(--g-lamp-off)); }
+.rec-lamp--2 { background: var(--g-el); box-shadow: 0 0 8px var(--g-el), inset 0 -2px 2px rgba(0, 0, 0, 0.45); }
 .rec-lamp--home { outline: 1px solid var(--g-brass-light); outline-offset: 1px; }
 
 .rec-plinth-tag,
@@ -3804,13 +3220,11 @@
 	font-family: var(--g-font-mono);
 	font-size: 0.5625rem;
 	text-transform: uppercase;
-	letter-spacing: 0.04em;
+	letter-spacing: var(--g-track-label);
 	color: var(--g-ink-low);
 }
-
 .rec-plinth-marks { display: inline-flex; gap: 4px; }
-.rec-plinth-mark { padding: 0 3px; border: 1px solid currentColor; border-radius: 2px; }
-.rec-plinth-mark--suggested { color: var(--g-brass-light); }
+.rec-plinth-mark--suggested { color: var(--g-lamp-amber); }
 .rec-plinth-tag--sent { color: var(--g-ink-mid); }
 .rec-plinth-tag--routed { color: var(--g-lamp-red); }
 
@@ -3829,19 +3243,14 @@
 }
 .rec-plinth-read:hover { color: var(--g-ink); }
 
-/* states */
 .rec-plinth--sent .rec-plinth-art,
 .rec-plinth--holding .rec-plinth-art,
 .rec-plinth--routed .rec-plinth-art,
-.rec-plinth--away .rec-plinth-art { filter: grayscale(1); opacity: 0.55; }
-.rec-plinth--sent,
-.rec-plinth--holding,
-.rec-plinth--routed,
-.rec-plinth--away { border-bottom-color: var(--g-seam); }
-.rec-plinth--disabled { opacity: 0.6; }
-.rec-plinth--suggested { border-color: color-mix(in srgb, var(--g-brass-light) 60%, var(--g-seam)); }
+.rec-plinth--away .rec-plinth-art { filter: grayscale(1); opacity: 0.5; }
+.rec-plinth--disabled { opacity: 0.7; }
+.rec-plinth--suggested { border-color: color-mix(in srgb, var(--g-lamp-amber) 60%, var(--g-seam)); }
 
-/* lifted: the figure rises and the plinth takes the Duel's corner brackets */
+/* lifted: the figure rises and the slot takes the Duel's corner brackets */
 .rec-plinth--armed { background: var(--g-hull); border-color: var(--rec-you); }
 .rec-plinth--armed .rec-plinth-art { transform: translateY(-6px); }
 .rec-plinth--armed .rec-plinth-base { opacity: 0.4; }
@@ -3857,41 +3266,32 @@
 .rec-plinth--armed::before { top: -2px; left: -2px; border-right: 0; border-bottom: 0; }
 .rec-plinth--armed::after { bottom: -2px; right: -2px; border-left: 0; border-top: 0; }
 
+/* the page scrolls when the bench needs the room; the worlds keep a floor */
+.rec-console--match { height: auto; min-height: 100vh; overflow: visible; }
+.rec-shell--match, .rec-match, .rec-body, .rec-table { overflow: visible; }
+.rec-sites { min-height: 340px; }
+.rec-world, .rec-sites { flex: 0 0 auto; }
+
 @media (max-width: 1100px) {
 	.rec-plinths { grid-auto-columns: minmax(76px, 1fr); }
 }
 
 @media (max-width: 760px) {
-	.rec-bench { padding: var(--g-2) var(--g-3); }
 	.rec-bench-head { grid-template-columns: minmax(0, 1fr); }
 	.rec-bench-actions { flex-wrap: wrap; }
 	.rec-plinths { grid-auto-columns: 84px; }
-	.rec-gauge--full { width: 52px; height: 52px; }
+	.rec-status-next { display: none; }
+	.rec-site-place { display: none; }
+	.rec-meter--large { --bulb-w: 5px; --bulb-h: 12px; }
+	.rec-site-floor .rec-site-midline { min-height: 64px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.rec-gauge-needle, .rec-plinth, .rec-plinth-art { transition: none; }
+	.rec-plinth, .rec-plinth-art, .rec-lamp, .rec-bulb { transition: none; }
 	.rec-bench-heading { animation: none; }
 }
 
-/* the bench takes height from the worlds, so the worlds keep a floor and the page
-   scrolls rather than the figures hiding inside a shrunken ground */
-.rec-console--match { height: auto; min-height: 100vh; overflow: visible; }
-.rec-shell--match, .rec-match, .rec-body, .rec-table { overflow: visible; }
-.rec-sites { min-height: 340px; }
-.rec-site-floor { min-height: 170px; }
-.rec-world, .rec-sites { flex: 0 0 auto; }
-
-/* quiet parts keep their room so a preview never shifts the card under the pointer */
-.rec-balance--hidden { visibility: hidden; }
-.rec-env-slot { display: contents; }
-.rec-env-slot--quiet .rec-env { visibility: hidden; }
-
-/* the front line keeps room for the large gauge, so a preview never shifts the ground */
-.rec-site-floor .rec-site-midline { min-height: 104px; }
-.rec-gauge--full { width: 48px; height: 48px; }
-.rec-ghost .rec-ghost-value { font-size: var(--g-size-h3); }
-@media (max-width: 760px) {
-	.rec-gauge--large { width: 84px; height: 84px; }
-	.rec-site-floor .rec-site-midline { min-height: 92px; }
-}
+/* the preview on the front line is laid over the seam, out of the flow, so pointing
+   at a creature never changes the tray's height by a pixel */
+.rec-site-floor .rec-site-midline { position: relative; }
+.rec-site-floor .rec-ghost { position: absolute; inset: 0; padding: var(--g-1) var(--g-2); }

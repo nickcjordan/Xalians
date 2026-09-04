@@ -1095,7 +1095,7 @@ class ReclamationMatch extends React.Component {
 					<h2 className="rec-status-planet">Round {view.frameIndex + 1}</h2>
 					<span className="rec-status-worlds" aria-label="The worlds loaded in the frame">
 						{view.frame.sites.map((site) => (
-							<span className={`g-chip rec-status-element g-el-${site.world.element}`} key={site.id} title={`${site.world.planet}, at ${site.name}`}>{site.world.planet}</span>
+							<span className={`g-chip g-chip--outline rec-status-element g-el-${site.world.element}`} key={site.id} title={`${site.world.planet}, at ${site.name}`}>{site.world.planet}</span>
 						))}
 					</span>
 					<span className="rec-status-next g-mono">

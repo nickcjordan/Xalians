@@ -62,7 +62,7 @@ function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspec
 				aria-pressed={armed}
 				disabled={!inHand}
 				title={title}
-				data-arm={inHand ? record.id : undefined}
+				data-arm={inHand && !disabled ? record.id : undefined}
 			>
 				<span className="rec-plinth-stage" aria-hidden="true">
 					<span className="rec-plinth-base" />
@@ -157,9 +157,13 @@ function ReclamationBench({
 	}
 
 	return (
-		<section className={`g-panel rec-bench rec-bench--step-${step}`} aria-label="Your squad" data-deploy-step={step}>
+		<section className={`rec-bench rec-bench--step-${step}${yourTurn && !me.passed ? ' rec-bench--active' : ''}`} aria-label="Your squad" data-deploy-step={step}>
 			<header className="rec-bench-head">
-				<div className="rec-bench-title">
+				<span className="rec-bench-title">
+					<span className="rec-bench-kicker">Your squad</span>
+					<span className="rec-bench-count g-mono">{(me.roster || []).length}<span className="rec-bench-count-of">/{squad.length}</span></span>
+				</span>
+				<div className="rec-bench-say">
 					<h3 className="rec-bench-heading" key={heading}>{heading}</h3>
 					<p className="rec-bench-lead g-body">{lead}</p>
 				</div>
