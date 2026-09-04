@@ -4,6 +4,7 @@ import * as lore from '../../lore';
 import Prose from './Prose';
 import XalianImage from '../xalianImage';
 import Connections from './Connections';
+import Pronunciation from './Pronunciation';
 import { useVisit } from './trail';
 import './SpeciesView.css';
 
@@ -261,6 +262,7 @@ export default function SpeciesView() {
 
             <header className="enc-designation">
                 <h1 className="g-title">{view.name}</h1>
+                <Pronunciation pronunciation={(lore.getEntry(view.key) || {}).pronunciation} />
                 <div className="enc-chips">
                     <span className="g-chip">{view.element}</span>
                     <Link to={lore.routeFor('world', view.homePlanet)} className={`g-chip g-el-${view.element}`}>

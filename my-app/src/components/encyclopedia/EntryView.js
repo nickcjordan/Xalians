@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import * as lore from '../../lore';
 import Prose from './Prose';
 import Connections from './Connections';
+import Pronunciation from './Pronunciation';
 import { useVisit } from './trail';
 import './EntryView.css';
 
@@ -59,6 +60,7 @@ export default function EntryView() {
             <article className="enc-entry-doc">
                 <header className="enc-designation">
                     <h1 className="g-title">{entry.title}</h1>
+                    <Pronunciation pronunciation={entry.pronunciation} />
                     <div className="enc-chips">
                         <span className="g-chip">{entry.category}</span>
                         {entry.element && <span className="g-chip">{entry.element}</span>}

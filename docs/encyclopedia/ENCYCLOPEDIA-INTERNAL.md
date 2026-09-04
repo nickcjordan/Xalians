@@ -44,6 +44,22 @@ The Luminax dark-side rebellion; the Zolto network-building underground; Kozrak'
 - American English. No em-dashes.
 - New entries append to `encyclopedia.json` with the same schema; definitions written for the Encyclopedia are canonical from the moment Nick ratifies them. After any change run `node scripts/bundleLore.js` and `yarn copy-json`. `glossary.json` no longer has a reader; it is kept only until the lambda side stops shipping it, so there is no need to back-port fixes to it.
 
+## Pronunciation (ratified 2026-09-04)
+
+Coined names carry an optional `pronunciation` object on their entry: `{ "respelling": "fan-TEER-ee", "ipa": "fænˈtɪəri" }`. The respelling is what the site prints, under the designation in mono, on entry, species and world records alike (`my-app/src/components/encyclopedia/Pronunciation.js`); the IPA rides along in the data for anything that wants it later (an audio pass, a screen reader) and is exposed only as the element's title attribute.
+
+Nick's rulings:
+
+- **The Vallerii sound Roman.** Names the Vallerii coined take a classical Latin reading: Vallerii is val-LEH-ree-eye, Grimedes is gri-MEE-deez, Poseidas is po-SY-das, Mercurius is mer-KOO-ree-us, Luminarii is loo-mih-NAH-ree-eye. This is a fact about the Empire's language, so it applies to anything they named.
+- **The classical rule stops at Vallerii coinages and does not reach creature names.** A Xalian is not a Vallerii artifact, so Luceras is loo-SEH-rus with the soft English c, not the classical hard k, despite the Latin root. Apply the plain English reading to species names.
+- **Transparent names carry no pronunciation at all.** Death Tide, Drilltail, World Trees and the like are left unmarked rather than respelled to no purpose; an absent field means "reads as written." 18 entries are deliberately unmarked.
+- **Real-world names take their real readings.** Cybele (the Phrygian goddess) is SIB-uh-lee and Bacillota Requiem is scientific Latin, bah-sih-LOH-tuh REK-wee-em. Neither is an invention, so neither is ours to respell freely.
+- **Algael is AL-gale**, hard g, keeping the algae etymology the definition states audible to a reader meeting the word cold.
+- **Xalia is ZAY-lee-uh and Xalians is ZAY-lee-unz.**
+- Saigill (SAY-gill) is a default rather than a ruling; Nick did not recognize the word, and nothing in the lore anchors it. Revisit if it ever matters.
+
+A name that appears in more than one entry is pronounced identically in each (Phantiri the world, Operation Phantiri, and the Phantiri Xalians all read fan-TEER-ee). `my-app/src/lore/__tests__/lore.pronunciation.test.js` asserts that, the ratified readings above, and that the respelling actually paints under the title.
+
 ## Relationship to the shipped bundle
 
 `encyclopedia.json` is the public structured file. The flip happened on 2026-09-02: `scripts/bundleLore.js` copies it, `chronicle.json`, `docs/species-templates/registries.json`, and the species records listed in `docs/species-templates/RATIFIED.json` (as `speciesRecords.json`, mechanical template fields only) into `lambda/src/json/`, and `copy-json` mirrors them into the frontend, where `my-app/src/lore/` is the only reader and the `/encyclopedia` page renders them (contract: `docs/design/xalian-encyclopedia-page.md`). Per Nick's ruling on 2026-09-03 (one source location per kind of data), species encyclopedia entries live only in `encyclopedia.json` under category `xalians`, written straight into `entries` during migration; `speciesRecords.json` carries no entries at all, and there is no per-species side file. `tour.json` (the First Survey) is bundled the same way; it is derived prose, outranked by the histories and by this file's entries, and is edited only with Nick's sign-off. The demonym entries (`magmuthites`, `grimedites`, `luminarii`, `the-zolto`, `krystians`, `veridians`, `phantiri-xalians`) stay in category `factions` (append-only) and the Powers page regroups them under Xalian Peoples. The old `/glossary`, `/planets`, and `/species` pages were retired (2026-09-03); their routes now redirect into the Encyclopedia. This companion file stays out of the bundle permanently.

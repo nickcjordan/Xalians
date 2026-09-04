@@ -1,0 +1,8 @@
+/* the respelled reading, printed under the designation like a reference work.
+   Machine output, so mono and slightly recessed from the title above it. */
+.enc-pronunciation {
+	margin: 0.15rem 0 0;
+	color: var(--g-ink-mid);
+	font-size: 0.85rem;
+	letter-spacing: 0.04em;
+}
