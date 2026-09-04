@@ -13,6 +13,10 @@ Per-species decisions that a migration agent cannot derive from the sources alon
 - 2026-09-02: trait model. Every pool trait is rolled independently at its own percent (1 to 100); 100 means every individual; no count, minimum, or cap; `guaranteed` and `rolledCount` retired. Exclusion partners: the generator rolls the higher percent first and skips the partner if it lands; never both at 100. A planet-wide sentence may justify an environmental adaptation trait (nocturnal, resistant) at or near 100, never a behavioral one.
 - 2026-09-02: catalog tags. A name carries instrument tags only when the name itself names or implies a part (Wraith Claws stays gated to claws); a name that names no part carries no tag and is drawable by any instrument that can perform the action. The 63 ghost rake names tagged claws without naming a part were untagged.
 
+## Frackworm
+
+- 2026-09-04: covering `chitin`, anatomy `jaws, vents, shell, body, eyes`, `armored` 100. A worm that bores through rock and glass sand wears grown overlapping armor plates, not hide. Eyes are tiny stalked bead eyes like a crab's or a clam's; sight stays 0 to 15. Art brief: the signature is the sand slurry blasting from the vent ring behind the head; the drill head is a blunt ringed cone with a small maw, never a mouth full of teeth. Applies the relatable-first principle in docs/design/xalian-creature-system-redesign.md section 1.
+
 ## Graviclaw
 
 - 2026-09-01: signature is Point of No Return, pincers / snare / dark (the pull past the horizon into the claws, not the crushing close). Recorded in `consolidated-dark.md` line 52.

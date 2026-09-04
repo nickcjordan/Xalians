@@ -20,10 +20,11 @@
     "anatomy": [
       "jaws",
       "vents",
-      "hide",
-      "body"
+      "shell",
+      "body",
+      "eyes"
     ],
-    "covering": "hide",
+    "covering": "chitin",
     "size": {
       "heightCm": [
         900,
@@ -159,7 +160,8 @@
       "perceptive": 30,
       "menacing": 25,
       "pack-bonded": 20,
-      "toxic": 12
+      "toxic": 12,
+      "armored": 100
     }
   },
   "instruments": [
@@ -180,5 +182,12 @@
       85
     ],
     "description": "The Frackworm sets its ringed head against a seam of the old ocean-floor substrate and drives its pressurized slurry in until the substrate fractures and the Nightcap runs."
-  }
+  },
+  "amendments": [
+    {
+      "date": "2026-09-04",
+      "by": "Nick",
+      "note": "Covering hide -> chitin (grown overlapping armor plates: a soft hide would be torn apart boring through rock and glass sand); anatomy hide -> shell per the one-surface rule; armored 100 per the chitin rule; eyes added, tiny stalked bead eyes like a crab's or a clam's, near blind (sight unchanged), so the creature has a face to meet. Ruling in docs/species-templates/RULINGS.md."
+    }
+  ]
 }

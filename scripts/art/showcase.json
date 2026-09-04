@@ -20,28 +20,30 @@
     "pose": "Side view: the front third rears up on the left with the hood flared and the jaws open toward the right, the body lies in two coils beneath it, and the tail rises on the right of the frame with the rattle held up at the height of the head."
   },
   "frackworm": {
-    "identity": "A colossal segmented burrowing worm, as long as a building is tall, with a thick armored hide and no legs, arms, fins, eyes or face.",
+    "identity": "A colossal segmented burrowing worm, as long as a building is tall, with no legs, arms or fins. Every body segment is a hard armored plate that overlaps the next like the segments of a pill bug, so the whole body is a chain of interlocking armor rings.",
     "signature": [
       {
-        "anatomy": "jaws",
-        "cue": "the whole front end is a drill bit: a pointed cone made of stacked spiral screw threads, ridge after ridge winding around the cone to the point, and the point is split into three wedge jaws that gape open"
+        "anatomy": "vents",
+        "cue": "its signature is the sand slurry it pumps: a ring of thick vent nozzles around the neck just behind the head is blasting wet sand slurry outward in heavy streams and clumps, the streams as bold as the body itself, with sand and gravel scattering around them"
       },
       {
-        "anatomy": "vents",
-        "cue": "a ring of narrow slot-shaped pressure nozzles around the neck just behind the drill cone, each nozzle blasting a short fan of sand in straight lines; there are no round holes, no eyes and no face anywhere on the body"
+        "anatomy": "jaws",
+        "cue": "the front end is a blunt ringed drill head, a rounded cone of stacked armor rings with a small central maw of short jaws, closed or barely open, not a mouth full of teeth"
       }
     ],
     "visible": {
-      "body": "a long thick tube of many ring segments, tapering to a blunt tail, thicker than a tree trunk relative to its length",
-      "hide": "heavy plated hide marked by the ring segments"
+      "eyes": "two tiny bead eyes on short stalks near the top of the head, like a crab's or a clam's, small but clearly present so the creature has a face to meet",
+      "body": "the long plated body of many overlapping armor segments, tapering to a blunt tail",
+      "shell": "the hard overlapping plates of the segments, each edge marked by a thin white cut line"
     },
     "hidden": {},
-    "pose": "Side view: the worm drives upward at a steep angle from the lower right toward the upper left, the drill head at the upper left with its jaws open, the vents spraying sand along the neck, the body curving back down toward the lower right, a few shattered rock chips flying around the head.",
+    "pose": "Side view: the worm drives upward at a steep angle from the lower right toward the upper left, the drill head at the upper left, the vent ring behind it blasting slurry streams to both sides, the plated body curving back down toward the lower right.",
     "poses": {
       "foreground-head": "Composition with strong depth: the drill head is huge in the foreground at the upper left, filling nearly half the frame, its jaws open toward the viewer and its screw threads and nozzles drawn large and clear. The body recedes behind it into the distance, each ring segment smaller than the one before, curving away in a long hook to a small blunt tail at the lower right. The head is the focus; the body is the background.",
       "depth-two-thirds": "Perspective composition. The drill head is closest to the viewer and takes up about two thirds of the artwork: it sits large at the upper left with its jaws open toward the viewer and its screw threads and nozzles clearly readable. Behind the head the body recedes into the distance in perspective: each ring segment is drawn smaller than the one in front of it, so the body shrinks as it snakes away and ends in a small tail far behind. The whole creature is one continuous shape, still a flat black silhouette on white, with no ground, no horizon and no shading; the diminishing segment sizes alone show that this worm is enormous and long.",
       "depth-long-body": "Perspective composition. The drill head is closest to the viewer and takes up about two thirds of the artwork: it sits large at the upper left with its jaws open toward the viewer and its screw threads and nozzles clearly readable. Behind the head a very long body of at least twenty ring segments snakes away into the distance in an S-curve, in perspective: each ring segment is drawn smaller than the one in front of it, so the body shrinks steadily as it recedes and ends in a tiny blunt tail far behind, near the lower right. One continuous flat black silhouette on white, no ground, no horizon, no shading; the diminishing segments alone show that this worm is enormous and long.",
-      "depth-long-body-jaws": "Perspective composition. The drill head is closest to the viewer and takes up about two thirds of the artwork: it sits large at the upper left with its jaws open toward the viewer and its screw threads and nozzles clearly readable. Behind the head a very long body of at least twenty ring segments snakes away into the distance in an S-curve, in perspective: each ring segment is drawn smaller than the one in front of it, so the body shrinks steadily as it recedes and ends in a tiny blunt tail far behind, near the lower right. One continuous flat black silhouette on white, no ground, no horizon, no shading; the diminishing segments alone show that this worm is enormous and long. The drill head ends in exactly three broad wedge-shaped jaws that gape open, like the reference; it has no crown of spikes and no more than three points."
+      "depth-long-body-jaws": "Perspective composition. The drill head is closest to the viewer and takes up about two thirds of the artwork: it sits large at the upper left with its jaws open toward the viewer and its screw threads and nozzles clearly readable. Behind the head a very long body of at least twenty ring segments snakes away into the distance in an S-curve, in perspective: each ring segment is drawn smaller than the one in front of it, so the body shrinks steadily as it recedes and ends in a tiny blunt tail far behind, near the lower right. One continuous flat black silhouette on white, no ground, no horizon, no shading; the diminishing segments alone show that this worm is enormous and long. The drill head ends in exactly three broad wedge-shaped jaws that gape open, like the reference; it has no crown of spikes and no more than three points.",
+      "depth-slurry": "Perspective composition. The head and the vent ring are closest to the viewer and take up about two thirds of the artwork at the upper left, the slurry streams blasting from the vents drawn large; behind them the plated body recedes into the distance in perspective, each armor segment drawn smaller than the one in front of it, snaking away to a small blunt tail near the lower right. One continuous flat black silhouette on white, no ground, no horizon, no shading."
     }
   }
 }
