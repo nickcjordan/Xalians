@@ -36,9 +36,10 @@
     "os": false
   },
   "scripts": {
-    "dev": "npm run copy-js && npm run copy-json && vite",
+    "codex": "node ../scripts/buildCodex.js",
+    "dev": "npm run copy-js && npm run copy-json && npm run codex && vite",
     "start": "npm run dev",
-    "build": "vite build",
+    "build": "npm run codex && vite build",
     "preview": "vite preview",
     "build-deploy": "npm run copy-js && npm run copy-json && npm run build && aws s3 sync build s3://xalians.com --delete",
     "deploy": "aws s3 sync build s3://xalians.com --delete",
