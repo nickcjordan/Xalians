@@ -1,0 +1,91 @@
+/* Connections section. Prefix: .enc-conn- */
+
+.enc-conn-list {
+	list-style: none;
+	margin: 0;
+	padding: var(--g-2) var(--g-4);
+	display: flex;
+	flex-direction: column;
+}
+
+.enc-conn-row {
+	padding: var(--g-3) 0;
+	border-bottom: var(--g-hairline) solid var(--g-rule-faint);
+}
+
+.enc-conn-row:last-child { border-bottom: none; }
+
+.enc-conn-row-details { width: 100%; }
+
+.enc-conn-row-summary {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: var(--g-3);
+	list-style: none;
+}
+
+summary.enc-conn-row-summary { cursor: pointer; }
+
+summary.enc-conn-row-summary::-webkit-details-marker { display: none; }
+summary.enc-conn-row-summary::marker { content: ''; }
+
+.enc-conn-name { font-size: var(--g-size-body); }
+
+.enc-conn-element { text-decoration: none; }
+
+.enc-conn-tally {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+	margin-left: auto;
+}
+
+.enc-conn-tally-dot {
+	gap: 0;
+	padding: 0;
+}
+
+.enc-conn-tally-dot::before {
+	width: 6px;
+	height: 6px;
+	box-shadow: 0 0 4px var(--g-phosphor), inset 0 -1px 1px rgba(0, 0, 0, 0.45);
+}
+
+.enc-conn-tally-num {
+	margin-left: var(--g-2);
+	font-size: var(--g-size-tiny);
+	color: var(--g-ink-low);
+}
+
+.enc-conn-sample {
+	margin: var(--g-2) 0 0;
+	padding-left: 0;
+	color: var(--g-ink-mid);
+}
+
+.enc-conn-sample-label {
+	color: var(--g-ink-low);
+	text-decoration: none;
+}
+
+.enc-conn-sample-label:hover,
+.enc-conn-sample-label:focus-visible {
+	color: var(--g-brass);
+}
+
+.enc-conn-sample-excerpt { color: var(--g-ink-mid); }
+
+.enc-conn-mark {
+	background: var(--g-rule);
+	color: inherit;
+	padding: 0 2px;
+	border-radius: 2px;
+}
+
+/* Phone: rows collapse to name plus count; the sample sits behind a tap on
+   the summary (native details/summary disclosure, rendered only at this
+   width -- see Connections.js useIsPhone). */
+@media (max-width: 700px) {
+	.enc-conn-sample { padding-top: var(--g-1); }
+}

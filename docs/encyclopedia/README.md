@@ -17,7 +17,8 @@ The single public canon reference for the world of Xalia. Ratified 2026-09-01: t
   "category": "technology",
   "definition": "…verbatim canonical prose…",
   "related": ["mercurius-machine", "king-kozrak"],
-  "element": "(planet entries only)"
+  "element": "(planet entries only)",
+  "aliases": "(optional string[]) -- other proper names that unambiguously mean this entry, e.g. [\"Kozrak\"]"
 }
 ```
 
@@ -28,7 +29,8 @@ Categories: `history`, `factions`, `people`, `places`, `technology`, `substances
 - Definitions are canonical prose. Structural edits (categories, links) are free; prose edits go through the lore-voice process and Nick's sign-off.
 - Keys are append-only once shipped. Corrections edit definitions, never keys.
 - `related` links are mechanical (title appears in definition text), never thematic.
-- Species entries are absent by design; they arrive one at a time during species migration, written against each species' final ratified record.
+- `aliases` link, index, and count toward connections exactly like the title, and must never be ambiguous (an alias that could name more than one record is rejected by a load-time assertion in `my-app/src/lore/loaders.js`).
+- Species entries live here too, category `xalians`: the migrate-species skill appends one directly into `entries` for each species as it is ratified, written against that species' final ratified record. There is no side file per species; `docs/species-templates/<key>.json` holds only the mechanical template, never an encyclopedia entry.
 - The bundle shipped on 2026-09-02: `node scripts/bundleLore.js` copies this file (with `chronicle.json`, `registries.json`, and the ratified species records) into `lambda/src/json/`, and the `/encyclopedia` page reads it through `my-app/src/lore/`. Run the bundler and `yarn copy-json` after every change here. `glossary.json` is now a legacy mirror kept only until the lambda side stops shipping it; nothing reads it any more, and this file wins on conflict.
 - `tour.json` beside this file is the First Survey: eight beats of derived prose in the historian's voice, each with `sources` (planet and paragraph) so every sentence can be checked against the histories. It restates canon and never adds to it; the bundler copies it beside the chronicle.
 - `chronicle.json` beside this file is the undated timeline (eras, events with verbatim anchors, era tags per history paragraph); its rulings live in `docs/design/xalian-chronicle.md`.

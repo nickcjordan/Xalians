@@ -9,7 +9,11 @@
  *
  * Usage (from the worktree root, C:\dev\src\xalians-catalog):
  *   node docs/species-templates/tools/validate-template.js <key>
- *   node docs/species-templates/tools/validate-template.js --json path.json --md path.md --enc path.encyclopedia.json
+ *   node docs/species-templates/tools/validate-template.js --json path.json --md path.md [--enc path.encyclopedia.json]
+ *
+ * The encyclopedia entry defaults to the entry keyed <key> inside
+ * docs/encyclopedia/encyclopedia.json (species entries live only there now);
+ * pass --enc to check a standalone draft file instead.
  *
  * Exit code 0 when there are no FAIL lines. WARN lines never fail the run but each one
  * must be answered in the walkthrough.
@@ -21,6 +25,7 @@ const ROOT = path.resolve(__dirname, '..', '..', '..');
 const TEMPLATES = path.join(ROOT, 'docs', 'species-templates');
 const CATALOG = path.join(ROOT, 'docs', 'ability-catalog');
 const SOURCE_DIRS = ['C:/dev/src/Xalians/lambda/src/json', path.join(ROOT, 'lambda', 'src', 'json')];
+const ENCYCLOPEDIA_PATH = path.join(ROOT, 'docs', 'encyclopedia', 'encyclopedia.json');
 
 // ---------- registries (mirror of SKILL.md sections 5.1 to 5.7; keep in sync) ----------
 const ATTRIBUTES = ['strength', 'vitality', 'endurance', 'agility', 'reflex', 'intelligence', 'willpower', 'instinct', 'charisma', 'resilience'];
@@ -99,7 +104,6 @@ for (let i = 0; i < argv.length; i++) {
 if (key) {
   jsonPath = jsonPath || path.join(TEMPLATES, key + '.json');
   mdPath = mdPath || path.join(TEMPLATES, key + '.md');
-  encPath = encPath || path.join(TEMPLATES, key + '.encyclopedia.json');
 }
 const LOG_DIR = path.join(TEMPLATES, 'validation-log');
 const OVERRIDE_DIR = path.join(TEMPLATES, 'overrides');
@@ -149,7 +153,19 @@ function readText(p, label) {
 }
 const T = readJson(jsonPath, 'template');
 const MD = readText(mdPath, 'walkthrough');
-const ENC = readJson(encPath, 'encyclopedia entry');
+
+// Encyclopedia entry: --enc points at a standalone draft file (used for a
+// pre-merge review); otherwise look up the entry keyed <key> (or T.key)
+// inside docs/encyclopedia/encyclopedia.json, the single source for entries.
+function readEncyclopediaEntry(explicitPath, lookupKey) {
+  if (explicitPath) return readJson(explicitPath, 'encyclopedia entry');
+  const enc = readJson(ENCYCLOPEDIA_PATH, 'encyclopedia.json');
+  if (!enc) return null;
+  const found = Array.isArray(enc.entries) && enc.entries.find(e => e.key === lookupKey);
+  if (!found) { fail('enc.missing', 'no entry with key "' + lookupKey + '" in docs/encyclopedia/encyclopedia.json'); return null; }
+  return found;
+}
+const ENC = readEncyclopediaEntry(encPath, key || (T && T.key));
 
 // ---------- sources ----------
 let species = null, planet = null;
@@ -452,7 +468,9 @@ if (ENC && T) {
   if (ENC.key !== T.key) fail('enc.key', 'encyclopedia key must equal the template key');
   if (ENC.title !== T.name) fail('enc.title', 'encyclopedia title must equal the species name');
   if (ENC.category !== 'xalians') fail('enc.category', 'encyclopedia category must be "xalians"');
-  if (!Array.isArray(ENC.related) || ENC.related.length) fail('enc.related', 'encyclopedia related must be [] (the orchestrator computes links)');
+  if (!Array.isArray(ENC.related)) fail('enc.related', 'encyclopedia related must be an array');
+  else if (!encPath && ENC.related.length === 0) warn('enc.related.empty', 'encyclopedia related is empty; confirm the orchestrator has computed related links for this entry');
+  else if (encPath && ENC.related.length) fail('enc.related', 'encyclopedia related must be [] on a pre-merge draft (the orchestrator computes links)');
   checkProse('enc.definition', ENC.definition, 'encyclopedia definition', { noElementKeys: true });
   if (typeof ENC.definition === 'string') {
     const sentences = ENC.definition.split(/(?<=[.!?])\s+/).filter(Boolean).length;

@@ -9,6 +9,7 @@ const SECTIONS = [
     { to: '/encyclopedia', label: 'Reading Room', exact: true },
     { to: '/encyclopedia/tour', label: 'First Survey' },
     { to: '/encyclopedia/chronicle', label: 'Chronicle' },
+    { to: '/encyclopedia/read', label: 'Read' },
     { to: '/encyclopedia/worlds', label: 'Worlds' },
     { to: '/encyclopedia/species', label: 'Bestiary' },
     { to: '/encyclopedia/powers', label: 'Powers' },

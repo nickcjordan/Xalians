@@ -72,6 +72,9 @@
       "related": [
         "floria",
         "vallerii"
+      ],
+      "aliases": [
+        "Avililies"
       ]
     },
     {
@@ -158,6 +161,9 @@
       "related": [
         "age-of-unbirth",
         "vallerii"
+      ],
+      "aliases": [
+        "Cherenkov"
       ]
     },
     {
@@ -219,6 +225,9 @@
         "jorian-belt",
         "stonera",
         "terracannon"
+      ],
+      "aliases": [
+        "Cybele System"
       ]
     },
     {
@@ -473,6 +482,9 @@
       "related": [
         "mercurius-machine",
         "vallerii"
+      ],
+      "aliases": [
+        "Kozrak"
       ]
     },
     {
@@ -648,6 +660,10 @@
       "related": [
         "bloodstorm",
         "zolton"
+      ],
+      "aliases": [
+        "Quantum Entanglement Device",
+        "Quantum Entanglement Devices"
       ]
     },
     {
@@ -738,6 +754,9 @@
       "definition": "A Dyson sphere which was constructed around one of Luminax's stars in order to capture over a hundred-quadrillion gigawatts per second of solar energy.",
       "related": [
         "luminax"
+      ],
+      "aliases": [
+        "Dyson Sphere"
       ]
     },
     {
@@ -756,6 +775,9 @@
       "related": [
         "endessa",
         "nightcap"
+      ],
+      "aliases": [
+        "Endessa Syndicate"
       ]
     },
     {
@@ -786,6 +808,9 @@
       "related": [
         "apex",
         "jorian-belt"
+      ],
+      "aliases": [
+        "APEX Terracannon"
       ]
     },
     {
@@ -826,6 +851,10 @@
         "apex",
         "nemesis-plague",
         "vallerii"
+      ],
+      "aliases": [
+        "End War",
+        "End Wars"
       ]
     },
     {
@@ -876,6 +905,9 @@
       "related": [
         "apex",
         "xalians"
+      ],
+      "aliases": [
+        "Vallerii Empire"
       ]
     },
     {
@@ -957,6 +989,9 @@
         "operation-phantiri",
         "phantiri",
         "shadharam-iv"
+      ],
+      "aliases": [
+        "Wraithix System"
       ]
     },
     {
@@ -973,7 +1008,20 @@
       "title": "Xalian Generator",
       "category": "technology",
       "definition": "Sophisticated machines invented to generate new life on inhospitable worlds.",
-      "related": []
+      "related": [],
+      "aliases": [
+        "Generator",
+        "Generators",
+        "Xalian Generators",
+        "Phantiri Generator",
+        "Telypso Generator",
+        "Saiphus Generator",
+        "Drainov Xalian Generator",
+        "Veridium Generator",
+        "Krystos Xalian Generator",
+        "Magmuth Xalian Generator",
+        "Zolton Generator"
+      ]
     },
     {
       "key": "xalians",
