@@ -70,30 +70,58 @@ export function targetMatchupMultiplier(actorRecord, targetRecord) {
 // physiology / strain
 // ---------------------------------------------------------------------------
 
-function hasAnyTraitKeyword(record, keyword) {
-	const traits = (record && record.traits) || {};
-	const guaranteed = Array.isArray(traits.guaranteed) ? traits.guaranteed : [];
-	const rolled = Array.isArray(traits.rolled) ? traits.rolled : [];
-	return guaranteed.includes(keyword) || rolled.includes(keyword);
-}
-
+/*
+	Trait keys of a record. The ratified record stores the keys that landed as a flat
+	array (`traits: ["armored", "stealthy"]`, docs/design/xalian-creature-system-redesign.md
+	section 2). Older provisional records used `{ guaranteed, rolled }` and the handoff
+	reference sketches `{ keys }`; all three read the same here so no consumer breaks on
+	the shape.
+*/
 export function traitKeywordsOf(record) {
-	const traits = (record && record.traits) || {};
+	const traits = record && record.traits;
+	if (Array.isArray(traits)) {
+		return [...new Set(traits)];
+	}
+	if (!traits || typeof traits !== 'object') {
+		return [];
+	}
+	if (Array.isArray(traits.keys)) {
+		return [...new Set(traits.keys)];
+	}
 	const guaranteed = Array.isArray(traits.guaranteed) ? traits.guaranteed : [];
 	const rolled = Array.isArray(traits.rolled) ? traits.rolled : [];
 	return [...new Set([...guaranteed, ...rolled])];
 }
 
+function hasAnyTraitKeyword(record, keyword) {
+	return traitKeywordsOf(record).includes(keyword);
+}
+
+// A site band is "covered" when the creature's band contains it; the rule below grades
+// the shortfall when it is not. Both are levers (see STRAIN_* in expeditionInterpretation).
+export const STRAIN_OVERLAP_COMFORT = 0.5; // share of the site band the creature must cover to be comfortable
+export const STRAIN_GAP_SEVERE_C = 30; // a gap wider than this between the two bands is severe
+
 /*
 	strainLevel(record, site, world) -> 'none' | 'strained' | 'severe'
 
-	Per the design doc: a creature outside a site's temperature band or medium is
-	strained. A creature that cannot breathe the site's medium at all is severely
-	strained. Nocturnal creatures are never strained on Grimedes; luminous creatures are
-	never strained on Luminax's dark side (the provisional site table has no explicit
-	"dark side" flag, so this treats any Luminax site as eligible for the luminous
-	exemption — the doc's "Luminax's dark side" reduces to "on Luminax" until the real
-	site data distinguishes bright/dark sides).
+	Per the design doc: a creature outside a site's environment is strained; one that
+	cannot breathe the site's medium at all is severely strained. With the real species
+	records (tolerance bands of 30 to 60 C on worlds 100 C apart) the binary reading of
+	"outside" strained four sends in five and stopped meaning anything, so the temperature
+	test is graded by how far off the creature is (2026-09-03, recorded in
+	docs/design/reclamation-design.md):
+
+	- none:     the creature's band covers the site band, or overlaps at least half of it
+	- strained: the bands overlap less than that, or miss each other by up to
+	            STRAIN_GAP_SEVERE_C, or the site's medium is outside what the body
+	            tolerates around it
+	- severe:   the bands miss by more than STRAIN_GAP_SEVERE_C (a fire creature on an ice
+	            world), or the creature cannot breathe the site's medium
+
+	Nocturnal creatures are never strained on Grimedes; luminous creatures are never
+	strained on Luminax (the site table has no dark-side flag yet, so the doc's "Luminax's
+	dark side" reads as "on Luminax" until it does).
 */
 export function strainLevel(record, site, world) {
 	const physiology = (record && record.physiology) || {};
@@ -124,9 +152,23 @@ export function strainLevel(record, site, world) {
 	const max = typeof tempBand.max === 'number' ? tempBand.max : Infinity;
 	const siteMin = typeof siteTemp.min === 'number' ? siteTemp.min : min;
 	const siteMax = typeof siteTemp.max === 'number' ? siteTemp.max : max;
-	const temperatureOk = siteMin >= min && siteMax <= max;
 
-	if (!toleratesMedium || !temperatureOk) {
+	let temperature = 'none';
+	if (!(siteMin >= min && siteMax <= max)) {
+		const overlap = Math.min(max, siteMax) - Math.max(min, siteMin);
+		if (overlap > 0) {
+			const siteSpan = Math.max(1, siteMax - siteMin);
+			temperature = overlap / siteSpan >= STRAIN_OVERLAP_COMFORT ? 'none' : 'strained';
+		} else {
+			const gap = -overlap;
+			temperature = gap > STRAIN_GAP_SEVERE_C ? 'severe' : 'strained';
+		}
+	}
+
+	if (temperature === 'severe') {
+		return 'severe';
+	}
+	if (!toleratesMedium || temperature === 'strained') {
 		return 'strained';
 	}
 	return 'none';

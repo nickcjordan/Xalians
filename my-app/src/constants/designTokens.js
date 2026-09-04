@@ -57,6 +57,12 @@ const lamp = {
 	off: '#3d3a30',
 };
 
+/** The two seats at any table: your side cyan, the rival's brass, as the Duel paints them. */
+const team = {
+	one: '#3bbedf',
+	two: '#c39738',
+};
+
 const hazard = {
 	base: '#d9a410',
 	dark: '#6d5108',
@@ -104,6 +110,7 @@ module.exports = {
 	ink,
 	phosphor,
 	lamp,
+	team,
 	hazard,
 	stat,
 	statPoints,

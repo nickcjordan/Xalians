@@ -1,6 +1,6 @@
 import React from 'react';
 import ReclamationWorld from './reclamationWorld';
-import ReclamationRoster from './reclamationRoster';
+import ReclamationDeploy from './reclamationDeploy';
 import ReclamationOrders from './reclamationOrders';
 import ReclamationInspect from './reclamationInspect';
 import ReclamationLog from './reclamationLog';
@@ -16,13 +16,26 @@ import {
 	narrateSend, narratePass, narrateJudge, narrateMatchEnd,
 } from './reclamationNarration';
 import { orderPreview, flattenBoard, prepareWithCompanions, siteHoldTotal } from './reclamationPreview';
+import { recommendSend } from './reclamationAdvice';
 
 function capitalize(sentence) {
 	return sentence ? sentence.charAt(0).toUpperCase() + sentence.slice(1) : sentence;
 }
 
-const BOT_DELAY_MS = 750;
-const RESOLUTION_STEP_MS = 600;
+/*
+	Motion (Nick, 2026-09-03): a change on the table that just appears reads as nothing
+	having happened, so every engine step is told twice. The figures that arrived wear an
+	arrival animation and their site pulses (`arrival`, cleared after ARRIVE_MS), and a
+	callout over the sites says what happened in a sentence (`beat`, one at a time from a
+	queue, each shown for BEAT_MS). While a rival beat is showing, the turn lamp keeps
+	the rival's colour and the turn text says what it did, so "Your move" arrives as its
+	own change after the rival's, not at the same instant. The bot's delay is longer than
+	the human's beat so the table settles before the rival is seen deciding.
+*/
+const BOT_DELAY_MS = 1900;
+const BEAT_MS = 1400;
+const ARRIVE_MS = 1300;
+const RESOLUTION_STEP_MS = 700;
 const LOG_CAP = 120;
 const YOU = 'A';
 const THEM = 'B';
@@ -39,6 +52,14 @@ const THEM = 'B';
 	Interface rule, from the design doc: the table must always show whose turn it is,
 	what a click will do, and what just happened, without scrolling; every number is the
 	live value the rules will use; every invalid action says why.
+
+	Two views of the same match (Nick, 2026-09-03). `props.mode` is 'simple' or
+	'advanced'. Simple mode removes decisions rather than hiding panels: each deploy turn
+	offers one recommended move with its reason (the player may still pick any creature
+	and site), Orders becomes "your creatures act by nature, go" with the full orders
+	panel one tap away, and the rail (log, dossier) is gone except when a dossier is
+	open; the last two lines of the record ride under the status strip instead.
+	Advanced mode is the whole table. The engine and the state are the same in both.
 */
 class ReclamationMatch extends React.Component {
 	constructor(props) {
@@ -59,11 +80,22 @@ class ReclamationMatch extends React.Component {
 			judgedSnapshot: null,
 			judged: false,
 			hoverRow: null, // the preview line under the pointer, to light its creatures
+			ordersOpen: false, // simple mode: the full orders panel, opened on request
+			beat: null, // { id, seat, kind, text, short } the callout being shown
+			arrival: null, // { id, ids, siteId, seat } figures that just landed
+			hoverRecordId: null, // the roster slot under the pointer: previewed on every site
+			hoverSiteId: null, // the site row under the pointer in the deploy panel
 		};
+		// your twelve in slot order, held for the whole expedition so the roster never reshuffles
+		this.squad = props.initialMatch.players[YOU].roster.slice();
 		this.botRngState = createRngState(`${props.seed}-bot`);
 		this.botTimer = null;
 		this.noticeTimer = null;
 		this.playbackTimer = null;
+		this.beatTimer = null;
+		this.arrivalTimer = null;
+		this.beatQueue = [];
+		this.beatSeq = 0;
 		this.ordersPanel = React.createRef();
 		this.lastLoggedEventCount = 0;
 	}
@@ -86,7 +118,7 @@ class ReclamationMatch extends React.Component {
 
 	componentWillUnmount() {
 		document.removeEventListener('keydown', this.handleKeyDown);
-		[this.botTimer, this.noticeTimer, this.playbackTimer].forEach((t) => t && clearTimeout(t));
+		[this.botTimer, this.noticeTimer, this.playbackTimer, this.beatTimer, this.arrivalTimer].forEach((t) => t && clearTimeout(t));
 		if (typeof window !== 'undefined') {
 			delete window.__reclamationDebug;
 		}
@@ -229,6 +261,65 @@ class ReclamationMatch extends React.Component {
 		this.setState((prev) => ({ log: [...prev.log, ...lines].slice(-LOG_CAP) }));
 	};
 
+	// ------------------------------------------------------------------
+	// motion: beats (the callout) and arrivals (figures landing)
+	// ------------------------------------------------------------------
+	beat = (spec) => {
+		this.beatQueue.push(spec);
+		this.pumpBeats();
+	};
+
+	pumpBeats = () => {
+		if (this.beatTimer || this.beatQueue.length === 0) {
+			return;
+		}
+		const spec = this.beatQueue.shift();
+		this.beatSeq += 1;
+		this.setState({ beat: { ...spec, id: this.beatSeq } });
+		const ms = (typeof window !== 'undefined' && window.__reclamationBeatMs) || BEAT_MS;
+		this.beatTimer = setTimeout(() => {
+			this.beatTimer = null;
+			this.setState({ beat: null }, this.pumpBeats);
+		}, ms);
+	};
+
+	// a phase change cuts whatever beat is showing so its callout does not outlive the phase
+	cutBeats = () => {
+		this.beatQueue = [];
+		if (this.beatTimer) {
+			clearTimeout(this.beatTimer);
+			this.beatTimer = null;
+		}
+		this.setState({ beat: null });
+	};
+
+	arrive = (ids, siteId, seat) => {
+		if (this.arrivalTimer) {
+			clearTimeout(this.arrivalTimer);
+		}
+		this.setState({ arrival: { id: this.beatSeq + 1, ids, siteId, seat } });
+		this.arrivalTimer = setTimeout(() => {
+			this.arrivalTimer = null;
+			this.setState({ arrival: null });
+		}, ARRIVE_MS);
+	};
+
+	// the phase the engine moved to, told as a beat of its own after the move that caused it
+	beatPhaseChange = (before, after) => {
+		if (before.phase === 'deploy' && after.phase === 'orders') {
+			const yours = after.worlds[after.worldIndex].sites
+				.reduce((n, site) => n + after.board[site.id][YOU].length, 0);
+			this.beat({
+				kind: 'orders',
+				seat: null,
+				short: 'Your orders',
+				text: yours === 0
+					? 'Deploy is over. You have nothing on this world, so the rival acts alone.'
+					: 'Deploy is over. Your creatures are waiting for orders.',
+			});
+		}
+	};
+
 	notice = (text) => {
 		this.setState({ notice: text });
 		if (this.noticeTimer) {
@@ -282,7 +373,10 @@ class ReclamationMatch extends React.Component {
 			return;
 		}
 		const rngLike = { float: this.botRng };
+		const before = match;
 		const lines = [];
+		const arrivals = [];
+		let fellBack = null;
 
 		let publicState = getPublicState(match, THEM);
 		let action = chooseSend(publicState, match.players[THEM].roster, THEM, rngLike);
@@ -295,6 +389,8 @@ class ReclamationMatch extends React.Component {
 				const from = this.siteName(match, ev.fromSite);
 				const to = this.siteName(match, ev.toSite);
 				lines.push(`The rival's vanguard falls back from ${from} to ${to}.`);
+				fellBack = { from, to, recordId: ev.recordId, siteId: ev.toSite };
+				arrivals.push(ev.recordId);
 				match = relocated;
 				publicState = getPublicState(match, THEM);
 				action = chooseSend(publicState, match.players[THEM].roster, THEM, rngLike);
@@ -302,18 +398,40 @@ class ReclamationMatch extends React.Component {
 		}
 
 		let next = null;
+		let beat = null;
 		if (action.type === 'send') {
 			const record = match.players[THEM].roster.find((r) => r.id === action.recordId);
 			next = send(match, THEM, action.recordId, action.siteId, action.hidden);
 			if (next) {
-				lines.push(action.hidden
+				const sentence = action.hidden
 					? 'The rival sends something, hidden.'
-					: `The rival sends ${speciesLabel(record)} to ${this.siteName(match, action.siteId)}.`);
+					: `The rival sends ${speciesLabel(record)} to ${this.siteName(match, action.siteId)}.`;
+				lines.push(sentence);
+				if (!action.hidden) {
+					arrivals.push(action.recordId);
+				}
+				beat = {
+					kind: action.hidden ? 'rival-hidden' : 'rival-send',
+					seat: THEM,
+					short: 'The rival sent',
+					siteId: action.hidden ? null : action.siteId,
+					text: fellBack
+						? `The rival's vanguard falls back to ${fellBack.to}, and ${sentence.charAt(0).toLowerCase()}${sentence.slice(1)}`
+						: sentence,
+				};
 			}
 		} else {
 			next = pass(match, THEM);
 			if (next) {
 				lines.push('The rival passes for this world.');
+				beat = {
+					kind: 'rival-pass',
+					seat: THEM,
+					short: 'The rival passed',
+					text: fellBack
+						? `The rival's vanguard falls back to ${fellBack.to}, and the rival passes for this world.`
+						: 'The rival passes for this world. Nothing you send now can be answered.',
+				};
 			}
 		}
 
@@ -323,9 +441,15 @@ class ReclamationMatch extends React.Component {
 			console.error('Reclamation bot produced an illegal action', action);
 			next = pass(match, THEM);
 			lines.push('The rival hesitates and passes.');
+			beat = { kind: 'rival-pass', seat: THEM, short: 'The rival passed', text: 'The rival hesitates and passes.' };
 		}
 
 		this.appendLogLines(lines);
+		if (arrivals.length > 0) {
+			this.arrive(arrivals, (fellBack && !beat.siteId) ? fellBack.siteId : beat.siteId, THEM);
+		}
+		this.beat(beat);
+		this.beatPhaseChange(before, next);
 		this.setState({ match: next }, this.afterEngineStep);
 	};
 
@@ -396,11 +520,14 @@ class ReclamationMatch extends React.Component {
 			}
 			const ev = next.resolutionLog[next.resolutionLog.length - 1];
 			const record = this.findRecordOnBoard(match, ev.recordId);
-			this.appendLog(narrateRelocate(ev, {
+			const line = narrateRelocate(ev, {
 				actorName: record ? speciesLabel(record) : 'Your vanguard',
 				fromSiteName: this.siteName(match, ev.fromSite),
 				toSiteName: this.siteName(match, ev.toSite),
-			}));
+			});
+			this.appendLog(line);
+			this.arrive([ev.recordId], ev.toSite, YOU);
+			this.beat({ kind: 'your-relocate', seat: YOU, short: 'Fell back', text: line });
 			this.setState({ match: next, relocating: false }, this.afterEngineStep);
 			return;
 		}
@@ -426,13 +553,22 @@ class ReclamationMatch extends React.Component {
 			}
 			return;
 		}
-		this.appendLog(narrateSend({
+		this.tellSend(match, next, record, siteId, sendHidden);
+		this.setState({ match: next, armedRecordId: null, sendHidden: false, hoverSiteId: null, hoverRecordId: null }, this.afterEngineStep);
+	};
+
+	// your own send, told the same way as the rival's: log line, arrival, callout
+	tellSend = (match, next, record, siteId, hidden) => {
+		const line = narrateSend({
 			you: true,
 			actorName: speciesLabel(record),
 			siteName: this.siteName(match, siteId),
-			hidden: sendHidden,
-		}));
-		this.setState({ match: next, armedRecordId: null, sendHidden: false }, this.afterEngineStep);
+			hidden,
+		});
+		this.appendLog(line);
+		this.arrive([record.id], siteId, YOU);
+		this.beat({ kind: 'your-send', seat: YOU, short: 'Sent', siteId, text: line });
+		this.beatPhaseChange(match, next);
 	};
 
 	findRecordOnBoard = (match, recordId) => {
@@ -461,7 +597,10 @@ class ReclamationMatch extends React.Component {
 			this.notice('You cannot pass right now.');
 			return;
 		}
-		this.appendLog(narratePass({ you: true }));
+		const line = narratePass({ you: true });
+		this.appendLog(line);
+		this.beat({ kind: 'your-pass', seat: YOU, short: 'Passed', text: line });
+		this.beatPhaseChange(match, next);
 		this.setState({ match: next, armedRecordId: null, relocating: false }, this.afterEngineStep);
 	};
 
@@ -478,6 +617,20 @@ class ReclamationMatch extends React.Component {
 		this.setState({ relocating: true, armedRecordId: null });
 		this.notice('Click another site to fall the vanguard back. This does not spend your turn.');
 	};
+
+	// ------------------------------------------------------------------
+	// simple mode: the recommended move
+	// ------------------------------------------------------------------
+	isSimple() {
+		return this.props.mode !== 'advanced';
+	}
+
+	recommendation(view) {
+		if (view.phase !== 'deploy' || this.state.playback || this.state.judged) {
+			return null;
+		}
+		return recommendSend(view, view.players[YOU].roster, YOU);
+	}
 
 	// ------------------------------------------------------------------
 	// orders
@@ -540,6 +693,8 @@ class ReclamationMatch extends React.Component {
 
 		const newEvents = next.resolutionLog.slice(beforeLogLength);
 		this.appendLog('Orders are revealed.');
+		this.cutBeats();
+		this.beat({ kind: 'resolve', seat: null, short: 'Resolving', text: 'Orders are revealed. Each creature acts in turn, fastest first.' });
 		this.setState({
 			match: next,
 			playback: {
@@ -715,6 +870,21 @@ class ReclamationMatch extends React.Component {
 			judgedSnapshot: match.phase === 'matchEnd' ? judgedSnapshot : judgedSnapshot,
 		});
 
+		if (verdicts) {
+			const tally = { yours: 0, theirs: 0, court: 0 };
+			Object.keys(verdicts).forEach((siteId) => { tally[verdicts[siteId].who] += 1; });
+			const parts = [];
+			if (tally.yours) parts.push(`${plural(tally.yours, 'site')} yours`);
+			if (tally.theirs) parts.push(`${plural(tally.theirs, 'site')} the rival's`);
+			if (tally.court) parts.push(`${plural(tally.court, 'site')} to the Court`);
+			this.beat({
+				kind: 'judge',
+				seat: null,
+				short: 'The Court rules',
+				text: `The Court rules on ${playback.world.planet}: ${parts.join(', ')}.`,
+			});
+		}
+
 		if (match.phase === 'matchEnd') {
 			const view = getPublicState(match, YOU);
 			// ENGINE GAP: matchEndReason is only 'clinched' or 'worlds-exhausted'; the engine
@@ -733,7 +903,15 @@ class ReclamationMatch extends React.Component {
 	nextWorld = () => {
 		this.setState({ verdicts: null, judged: false, judgedWorld: null, judgedSnapshot: null }, () => {
 			const { match } = this.state;
-			this.appendLog(`The expedition moves on to ${match.worlds[match.worldIndex].planet}.`);
+			const planet = match.worlds[match.worldIndex].planet;
+			this.appendLog(`The expedition moves on to ${planet}.`);
+			this.cutBeats();
+			this.beat({
+				kind: 'world',
+				seat: null,
+				short: `${planet}`,
+				text: `The expedition moves on to ${planet}. ${match.turn === YOU ? 'You start this world.' : 'The rival starts this world.'}`,
+			});
 			this.scheduleBotIfDue();
 		});
 	};
@@ -778,12 +956,15 @@ class ReclamationMatch extends React.Component {
 		return totals;
 	}
 
+	// what the armed creature (or, before one is armed, the slot under the pointer)
+	// would hold at every site
 	ghostsForArmed(view) {
-		const { armedRecordId } = this.state;
-		if (!armedRecordId) {
+		const { armedRecordId, hoverRecordId } = this.state;
+		const id = armedRecordId || hoverRecordId;
+		if (!id || view.phase !== 'deploy' || view.turn !== YOU) {
 			return null;
 		}
-		const record = view.players[YOU].roster.find((r) => r.id === armedRecordId);
+		const record = view.players[YOU].roster.find((r) => r.id === id);
 		if (!record) {
 			return null;
 		}
@@ -794,6 +975,7 @@ class ReclamationMatch extends React.Component {
 				hold: prepared.hold,
 				strainLevel: prepared.strainLevel,
 				isHome: prepared.isHome,
+				preview: !armedRecordId,
 			};
 		});
 		return ghosts;
@@ -814,8 +996,11 @@ class ReclamationMatch extends React.Component {
 			return 'The Court has ruled. Reveal the next world when you are ready.';
 		}
 		if (view.phase === 'orders') {
-			return view.players[YOU].committed
-				? 'Your orders are sealed.'
+			if (view.players[YOU].committed) {
+				return 'Your orders are sealed.';
+			}
+			return this.isSimple()
+				? 'Your creatures act by nature. Go, or change an order first.'
 				: 'Choose an act for each of your creatures, then give orders.';
 		}
 		if (view.turn !== YOU) {
@@ -826,17 +1011,28 @@ class ReclamationMatch extends React.Component {
 		}
 		if (armedRecordId) {
 			const record = view.players[YOU].roster.find((r) => r.id === armedRecordId);
-			return `${speciesLabel(record)} is armed. Click a site to send it there, or click it again to put it back.`;
+			return `${speciesLabel(record)} is chosen. Press a site to send it there, or Change to pick another.`;
 		}
 		if (view.players[YOU].passed) {
 			return 'You have passed. Waiting on the rival.';
 		}
-		return 'Pick a creature from your roster, then pick the site to send it to. Or pass.';
+		return 'Choose a creature from your squad, then the site to send it to. Or pass.';
+	}
+
+	// a rival beat holds the turn readout on what the rival just did, so "Your move" lands
+	// after it as its own change
+	rivalBeat() {
+		const { beat } = this.state;
+		return beat && beat.seat === THEM ? beat : null;
 	}
 
 	turnText(view) {
 		if (this.state.playback) {
 			return 'Resolving';
+		}
+		const rivalBeat = this.rivalBeat();
+		if (rivalBeat && view.phase === 'deploy' && !this.state.judged) {
+			return rivalBeat.short;
 		}
 		if (this.state.judged && view.phase !== 'matchEnd') {
 			return 'The Court has ruled';
@@ -856,14 +1052,19 @@ class ReclamationMatch extends React.Component {
 	renderStatusStrip(view) {
 		const you = view.players[YOU];
 		const them = view.players[THEM];
-		const yourTurn = ((view.turn === YOU && view.phase === 'deploy') || (view.phase === 'orders' && !view.players[YOU].committed)) && !this.state.playback && !this.state.judged;
-		const waiting = view.turn === THEM && view.phase === 'deploy' && !this.state.playback && !this.state.judged;
+		const rivalBeat = !!this.rivalBeat() && view.phase === 'deploy' && !this.state.judged;
+		const yourTurn = ((view.turn === YOU && view.phase === 'deploy') || (view.phase === 'orders' && !view.players[YOU].committed)) && !this.state.playback && !this.state.judged && !rivalBeat;
+		const waiting = (view.turn === THEM || rivalBeat) && view.phase === 'deploy' && !this.state.playback && !this.state.judged;
+		const deciding = waiting && !rivalBeat;
+		const turnLabel = this.turnText(view);
+		const lampKind = yourTurn ? 'amber' : waiting ? 'red' : 'off';
 		const phaseLabel = this.state.playback ? 'Resolve'
 			: view.phase === 'matchEnd' ? 'Charter'
 				: this.state.judged ? 'Judge'
 					: view.phase === 'orders' ? 'Orders' : 'Deploy';
+		// a pip is keyed on whether it is lit, so lighting one remounts it and it pops
 		const pips = (n) => Array.from({ length: SITES_TO_CLINCH }).map((_, i) => (
-			<span className={`rec-pip${i < n ? ' rec-pip--lit' : ''}`} key={i} />
+			<span className={`rec-pip${i < n ? ' rec-pip--lit' : ''}`} key={`${i}-${i < n ? 'lit' : 'dark'}`} />
 		));
 		const worldDots = Array.from({ length: WORLDS_PER_MATCH }).map((_, i) => (
 			<span className={`rec-world-dot${i === view.worldIndex ? ' rec-world-dot--now' : i < view.worldIndex ? ' rec-world-dot--done' : ''}`} key={i} />
@@ -874,6 +1075,15 @@ class ReclamationMatch extends React.Component {
 					<span className="rec-world-dots" title={`World ${view.worldIndex + 1} of ${WORLDS_PER_MATCH}`}>{worldDots}</span>
 					<h2 className="rec-status-planet">{view.world.planet}</h2>
 					<span className="g-chip rec-status-element">{view.world.element}</span>
+					{view.world.terrain && (
+						<span
+							className="rec-status-terrain g-mono"
+							title={view.world.hazards && view.world.hazards.length > 0 ? `Hazards: ${view.world.hazards.join(', ')}` : undefined}
+						>
+							{view.world.terrain}
+							{view.world.temperatureC ? ` · ${view.world.temperatureC.low} to ${view.world.temperatureC.high} C` : ''}
+						</span>
+					)}
 					<span className="rec-status-next g-mono">
 						{view.nextWorld ? `then ${view.nextWorld.planet}` : 'the last world'}
 					</span>
@@ -883,78 +1093,53 @@ class ReclamationMatch extends React.Component {
 					<span className="rec-score rec-score--mine">
 						<span className="rec-score-label">You</span>
 						<span className="rec-pips">{pips(you.sitesWon)}</span>
-						<span className="rec-score-value" data-sites-a>{you.sitesWon}</span>
+						<span className="rec-score-value rec-tick" data-sites-a key={you.sitesWon}>{you.sitesWon}</span>
 					</span>
 					<span className="rec-score rec-score--theirs">
 						<span className="rec-score-label">Rival</span>
 						<span className="rec-pips">{pips(them.sitesWon)}</span>
-						<span className="rec-score-value" data-sites-b>{them.sitesWon}</span>
+						<span className="rec-score-value rec-tick" data-sites-b key={them.sitesWon}>{them.sitesWon}</span>
 					</span>
 					<span className="rec-score-of">{SITES_TO_CLINCH} sites clinch</span>
 				</div>
 
 				<div className="rec-status-turn">
 					<span className="rec-status-phase">{phaseLabel}</span>
-					<span className={`rec-turn${yourTurn ? ' rec-turn--yours' : ''}${waiting ? ' rec-turn--waiting' : ''}`}>
-						<span className={`g-lamp ${yourTurn ? 'g-lamp--amber' : waiting ? 'g-lamp--red' : 'g-lamp--off'}`} />
-						<span className="rec-turn-text" data-turn-text>{this.turnText(view)}</span>
+					<span className={`rec-turn${yourTurn ? ' rec-turn--yours' : ''}${waiting ? ' rec-turn--waiting' : ''}${deciding ? ' rec-turn--deciding' : ''}`}>
+						<span className={`g-lamp g-lamp--${lampKind}`} key={lampKind} />
+						<span className="rec-turn-text rec-turn-text--in" data-turn-text key={turnLabel}>{turnLabel}</span>
 					</span>
 				</div>
 
-				<p className={`rec-status-hint g-body${yourTurn ? ' rec-status-hint--yours' : ''}`} data-hint>{this.whatAClickDoes(view)}</p>
+				<p className={`rec-status-hint g-body${yourTurn ? ' rec-status-hint--yours' : ''}`} data-hint>
+					{rivalBeat ? this.rivalBeat().text : this.whatAClickDoes(view)}
+				</p>
 			</div>
 		);
 	}
 
-	renderDeployControls(view) {
-		const me = view.players[YOU];
-		const them = view.players[THEM];
-		const armed = this.state.armedRecordId
-			? me.roster.find((r) => r.id === this.state.armedRecordId)
-			: null;
-		const armedStealthy = armed
-			&& [...(armed.traits.guaranteed || []), ...(armed.traits.rolled || [])].includes('stealthy');
-		const yourTurn = view.turn === YOU && view.phase === 'deploy' && !this.state.playback;
-		const vanguard = me.canRelocateVanguard && me.vanguardRecordId
-			? this.findRecordOnBoard(this.state.match, me.vanguardRecordId)
-			: null;
-
+	// the callout: one sentence over the sites saying what just happened, in the colour
+	// of whoever did it. Keyed on the beat so each one plays its own entrance and exit.
+	renderCallout() {
+		const { beat } = this.state;
+		if (!beat) {
+			return <div className="rec-callout-row" data-callout-row />;
+		}
+		const who = beat.seat === YOU ? 'you' : beat.seat === THEM ? 'rival' : 'table';
+		const kicker = beat.seat === YOU ? 'You' : beat.seat === THEM ? 'The rival' : beat.kind === 'judge' ? 'The Court' : 'The table';
+		const ms = (typeof window !== 'undefined' && window.__reclamationBeatMs) || BEAT_MS;
 		return (
-			<div className="rec-deploy-controls">
-				{armedStealthy && (
-					<label className="g-check rec-hidden-toggle" title="A stealthy creature may be sent hidden: the rival learns that you sent something, not what or where, until orders are revealed.">
-						<input type="checkbox" checked={this.state.sendHidden} onChange={this.toggleHidden} data-hidden-toggle />
-						<span className="g-check-box" />
-						<span>Send hidden</span>
-					</label>
-				)}
-				{them.passed && !me.passed && (
-					<span className="rec-deploy-note rec-deploy-note--open">The rival has passed. Nothing you send now can be answered.</span>
-				)}
-				{vanguard && (
-					<button
-						type="button"
-						className={`g-btn rec-fallback-btn${this.state.relocating ? ' rec-fallback-btn--active' : ''}`}
-						onClick={this.beginRelocate}
-						disabled={!yourTurn}
-						data-fallback
-						title="You placed your first creature knowing nothing. Once per world it may fall back to another site, without spending your turn."
-					>
-						{this.state.relocating ? 'Choose a site' : `Fall back ${speciesLabel(vanguard)}`}
-						<span className="rec-btn-sub">free move, once this world</span>
-					</button>
-				)}
-				<button
-					type="button"
-					className="g-btn rec-pass-btn"
-					onClick={this.handlePass}
-					disabled={!yourTurn}
-					data-pass
-					title="Pass is permanent for this world."
+			<div className="rec-callout-row" data-callout-row>
+				<div
+					className={`rec-callout rec-callout--${who} rec-callout--${beat.kind}`}
+					key={beat.id}
+					style={{ '--rec-beat-ms': `${ms}ms` }}
+					data-callout={beat.kind}
+					role="status"
 				>
-					Pass for this world
-					<span className="rec-btn-sub">permanent, ends your deploy here</span>
-				</button>
+					<span className="rec-callout-kicker">{kicker}</span>
+					<span className="rec-callout-text">{beat.text}</span>
+				</div>
 			</div>
 		);
 	}
@@ -968,7 +1153,7 @@ class ReclamationMatch extends React.Component {
 				? 'level on sites and settled on the tiebreak'
 				: 'after the third world';
 		return (
-			<div className={`g-panel rec-verdict ${won ? 'rec-verdict--won' : 'rec-verdict--lost'}`} data-verdict>
+			<div className={`g-panel rec-verdict rec-rise ${won ? 'rec-verdict--won' : 'rec-verdict--lost'}`} data-verdict>
 				<span className="g-kicker">The Charter</span>
 				<h2 className="rec-verdict-title">{won ? 'The Charter is yours.' : 'The rival takes the Charter.'}</h2>
 				<p className="g-body rec-verdict-body">
@@ -984,6 +1169,18 @@ class ReclamationMatch extends React.Component {
 	render() {
 		const view = this.view();
 		const { notice, playback, verdicts, judged, inspect } = this.state;
+		const simple = this.isSimple();
+		const rec = this.recommendation(view);
+		// the suggested site is marked once its creature is the chosen one
+		const recommendedSiteId = rec && rec.type === 'send' && this.state.armedRecordId === rec.recordId ? rec.siteId
+			: rec && rec.type === 'relocate' && this.state.relocating ? rec.siteId : null;
+		// simple mode has no rail, except during deploy (the deploy panel lives there), for
+		// an open dossier, or for the full orders panel
+		const ordersPanelOpen = view.phase === 'orders' && !playback && (!simple || (this.state.ordersOpen && !view.players[YOU].committed));
+		const deployPanelOpen = view.phase === 'deploy' && !playback && !judged;
+		// simple mode's orders: the plan by nature, in the rail, with the full panel one tap away
+		const planPanelOpen = view.phase === 'orders' && !playback && simple && !this.state.ordersOpen;
+		const showRail = !simple || !!inspect || ordersPanelOpen || deployPanelOpen || planPanelOpen;
 		const holds = this.holdsForBoard(view);
 		const totals = this.totalsForBoard(view);
 		const ghosts = this.ghostsForArmed(view);
@@ -1023,14 +1220,25 @@ class ReclamationMatch extends React.Component {
 		}
 
 		return (
-			<div className="rec-match">
+			<div className={`rec-match${simple ? ' rec-match--simple' : ' rec-match--advanced'}`}>
 				{this.renderStatusStrip(view)}
+
+				{simple && this.state.log.length > 0 && (
+					<div className="rec-ticker g-screen" data-ticker aria-live="polite">
+						{this.state.log.slice(-2).map((line, i) => (
+							<span className={`g-screen-line${i === this.state.log.slice(-2).length - 1 ? ' rec-ticker-line--in' : ' g-screen-line--dim'}`} key={`${this.state.log.length}-${i}`}>{line}</span>
+						))}
+					</div>
+				)}
 
 				{notice && <div className="g-notice g-notice--alert rec-notice" role="status" data-notice>{notice}</div>}
 
-				<div className="rec-body">
+				<div className={`rec-body${showRail ? '' : ' rec-body--wide'}`}>
 					<div className="rec-table">
+						{this.renderCallout()}
 						<ReclamationWorld
+							key={view.world.planet}
+							arrival={this.state.arrival}
 							world={view.world}
 							board={view.board}
 							you={YOU}
@@ -1043,32 +1251,18 @@ class ReclamationMatch extends React.Component {
 							relocating={this.state.relocating}
 							vanguardRecordId={me.vanguardRecordId}
 							clickable={clickable}
+							recommendedSiteId={recommendedSiteId}
 							holdingIds={holdingIds}
 							hiddenEnemyCount={deploying || ordering ? (them.hiddenSentThisRound || 0) : 0}
 							badges={badges}
 							highlights={highlights}
+							hoverSiteId={this.state.hoverSiteId}
 							onSiteClick={this.handleSiteClick}
 							onFigureClick={(entry, seat, site) => this.inspectRecord(entry.record, site)}
 						/>
 
-						{deploying && (
-							<div className="rec-deploy-bar">
-								<ReclamationRoster
-									roster={me.roster}
-									you={YOU}
-									armedRecordId={this.state.armedRecordId}
-									onArm={this.armRecord}
-									onInspect={(record) => this.inspectRecord(record, null)}
-									sendsLeft={Math.max(0, SENDABLE - me.sentCount)}
-									disabled={view.turn !== YOU || me.passed}
-									yourTurn={view.turn === YOU && !me.passed}
-								/>
-								{this.renderDeployControls(view)}
-							</div>
-						)}
-
-						{ordering && (
-							<div className="rec-orders-bar" data-orders-bar>
+						{ordering && !simple && (
+							<div className="rec-orders-bar rec-rise" data-orders-bar>
 								<span className="rec-orders-bar-text">
 									{me.committed
 										? 'Your orders are sealed. The rival is giving its own.'
@@ -1080,27 +1274,81 @@ class ReclamationMatch extends React.Component {
 							</div>
 						)}
 
-						{playback && (
-							<div className="rec-resolving">
-								<span className="g-label">Resolving in initiative order, {playback.index} of {playback.events.length}</span>
-								<button type="button" className="g-btn rec-skip-btn" onClick={this.skipPlayback} data-skip>Skip</button>
-							</div>
-						)}
-
-						{judged && view.phase !== 'matchEnd' && (
-							<div className="rec-judge-bar">
-								<span className="g-label">The Court has ruled on {this.state.judgedWorld || 'the world'}.</span>
-								<button type="button" className="g-btn g-btn--primary" onClick={this.nextWorld} data-next-world>
-									Next world: {view.nextWorld ? view.nextWorld.planet : view.world.planet}
-								</button>
-							</div>
-						)}
-
-						{view.phase === 'matchEnd' && this.renderVerdictPanel(view)}
 					</div>
 
+					{showRail && (
 					<div className="rec-rail">
-						{ordering && (
+						{deployPanelOpen && !inspect && (
+							<ReclamationDeploy
+								view={view}
+								you={YOU}
+								squad={this.squad}
+								mode={simple ? 'simple' : 'advanced'}
+								armedRecordId={this.state.armedRecordId}
+								recommendation={rec}
+								sendHidden={this.state.sendHidden}
+								relocating={this.state.relocating}
+								vanguard={me.canRelocateVanguard && me.vanguardRecordId ? this.findRecordOnBoard(this.state.match, me.vanguardRecordId) : null}
+								hoverSiteId={this.state.hoverSiteId}
+								onArm={this.armRecord}
+								onDisarm={() => this.setState({ armedRecordId: null, sendHidden: false })}
+								onInspect={(record) => this.inspectRecord(record, null)}
+								onHoverRecord={(id) => this.setState({ hoverRecordId: id })}
+								onHoverSite={(id) => this.setState({ hoverSiteId: id })}
+								onSend={this.handleSiteClick}
+								onToggleHidden={this.toggleHidden}
+								onPass={this.handlePass}
+								onBeginRelocate={this.beginRelocate}
+								rivalBeat={this.rivalBeat()}
+							/>
+						)}
+						{planPanelOpen && !inspect && (
+							<aside className="g-panel rec-deploy rec-plan rec-rise" data-orders-bar aria-label="Orders">
+								<header className="rec-deploy-head">
+									<span className="g-kicker">Orders</span>
+									<div className="rec-deploy-title">
+										<h3 className="rec-deploy-heading">{me.committed ? 'Orders sealed' : 'By nature'}</h3>
+										<p className="rec-deploy-lead g-body">
+											{me.committed
+												? 'Your orders are sealed. The rival is giving its own.'
+												: units.length === 0
+													? 'You have nothing on this world. The rival acts alone.'
+													: 'Each of your creatures acts by nature. Go, or change an order first.'}
+										</p>
+									</div>
+								</header>
+								{!me.committed && units.length > 0 && (
+									<ul className="rec-orders-plan-list rec-plan-list">
+										{preview.filter((row) => row.isYours).map((row) => (
+											<li
+												key={row.unit.recordId}
+												className={row.ordered ? 'rec-orders-plan-item rec-orders-plan-item--ordered' : 'rec-orders-plan-item'}
+												onMouseEnter={() => this.setState({ hoverRow: row })}
+												onMouseLeave={() => this.setState({ hoverRow: null })}
+											>
+												{row.sentence}
+											</li>
+										))}
+									</ul>
+								)}
+								<footer className="rec-deploy-foot rec-plan-foot">
+									<button type="button" className="g-btn g-btn--primary rec-go-btn" onClick={this.commitOrders} disabled={me.committed} data-give-orders>
+										{me.committed ? 'Orders given' : 'Go'}
+									</button>
+									{!me.committed && units.length > 0 && (
+										<button type="button" className="g-btn rec-change-orders" onClick={() => this.setState({ ordersOpen: true })} data-change-orders>
+											Change orders
+										</button>
+									)}
+								</footer>
+							</aside>
+						)}
+						{ordersPanelOpen && simple && (
+							<button type="button" className="g-btn rec-plan-back" onClick={() => this.setState({ ordersOpen: false })} data-change-orders>
+								Back to the plan
+							</button>
+						)}
+						{ordersPanelOpen && (
 							<ReclamationOrders
 								units={units}
 								orders={me.orders}
@@ -1121,8 +1369,9 @@ class ReclamationMatch extends React.Component {
 								onClose={() => this.setState({ inspect: null })}
 							/>
 						)}
-						<ReclamationLog lines={this.state.log} />
+						{!simple && <ReclamationLog lines={this.state.log} />}
 					</div>
+					)}
 				</div>
 			</div>
 		);

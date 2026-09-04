@@ -1752,3 +1752,1592 @@
 	}
 	.rec-roster-strip { flex-wrap: nowrap; overflow-x: auto; padding-bottom: var(--g-1); }
 }
+
+/* -------------------------------------------------------------------------
+   REAL CREATURES. The figure carries the species silhouette from the Encyclopedia's
+   art; the dossier opens on a portrait and quotes the record.
+   ------------------------------------------------------------------------- */
+
+.rec-figure-plate {
+	flex-direction: row;
+	gap: var(--g-1);
+}
+
+.rec-figure-portrait {
+	flex: 0 0 auto;
+	width: 18px;
+	height: 18px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	background: color-mix(in srgb, var(--g-el) 22%, var(--g-hull-lo));
+	border: var(--g-hairline) solid color-mix(in srgb, var(--g-el) 55%, var(--g-seam));
+	overflow: hidden;
+}
+
+.rec-figure-portrait-svg {
+	width: 14px;
+	height: 14px;
+	display: block;
+}
+
+/* a stencil: every path in the element's colour */
+.rec-figure-portrait-svg,
+.rec-figure-portrait-svg * {
+	fill: var(--g-el) !important;
+	stroke: none !important;
+}
+
+.rec-figure--theirs .rec-figure-portrait-svg,
+.rec-figure--theirs .rec-figure-portrait-svg * {
+	fill: color-mix(in srgb, var(--g-el) 70%, var(--g-ink-low)) !important;
+}
+
+.rec-figure--small .rec-figure-portrait { width: 16px; height: 16px; }
+.rec-figure--small .rec-figure-portrait-svg { width: 12px; height: 12px; }
+
+.rec-figure-badge { margin-left: var(--g-1); }
+
+.rec-inspect-head { align-items: center; }
+
+.rec-inspect-portrait {
+	flex: 0 0 auto;
+	width: 56px;
+	height: 56px;
+	border-radius: var(--g-radius);
+	overflow: hidden;
+	box-shadow: var(--g-recess);
+	border: var(--g-hairline) solid var(--g-seam);
+}
+
+.rec-inspect-portrait .xalian-image-wrapper {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+}
+
+.rec-inspect-title { flex: 1 1 auto; min-width: 0; }
+
+.rec-inspect-sub { text-transform: none; }
+
+.rec-inspect-niche {
+	font-size: var(--g-size-tiny) !important;
+	color: var(--g-ink-mid);
+	margin: 0 !important;
+	font-style: italic;
+}
+
+.rec-inspect-traits {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.rec-inspect-trait {
+	display: grid;
+	grid-template-columns: minmax(6rem, auto) 1fr;
+	gap: var(--g-2);
+	font-size: var(--g-size-micro);
+	line-height: 1.35;
+}
+
+.rec-inspect-trait-name {
+	font-family: var(--g-font-stencil);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-low);
+}
+
+.rec-inspect-trait--read .rec-inspect-trait-name { color: var(--g-brass-light); }
+
+.rec-inspect-trait-nature { color: var(--g-ink-mid); }
+
+.rec-inspect-signature {
+	font-size: var(--g-size-micro) !important;
+	color: var(--g-ink-mid);
+}
+
+.rec-inspect-signature-name {
+	font-family: var(--g-font-stencil);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-el);
+}
+
+.rec-inspect-record summary {
+	cursor: pointer;
+	list-style: none;
+}
+
+.rec-inspect-record summary::-webkit-details-marker { display: none; }
+
+.rec-inspect-record summary::after {
+	content: ' +';
+	color: var(--g-ink-low);
+}
+
+.rec-inspect-record[open] summary::after { content: ' -'; }
+
+.rec-inspect-record .g-body { margin-top: var(--g-2) !important; }
+
+.rec-status-terrain {
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-low);
+}
+
+@media (max-width: 760px) {
+	.rec-status-terrain { display: none; }
+}
+
+/* -------------------------------------------------------------------------
+   SIMPLE MODE. One recommended move, orders by nature, no rail. The same table,
+   with fewer things asking for attention.
+   ------------------------------------------------------------------------- */
+
+.rec-mode { flex: 0 0 auto; }
+
+.rec-mode .g-segment {
+	padding: 2px var(--g-3);
+	font-size: var(--g-size-micro);
+}
+
+.rec-mode--compact { margin-left: var(--g-3); }
+
+.rec-intro-mode {
+	display: flex;
+	align-items: center;
+	gap: var(--g-3);
+	flex-wrap: wrap;
+}
+
+.rec-intro-mode-text {
+	flex: 1 1 200px;
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-mid);
+	line-height: 1.4;
+}
+
+/* the whole table when the rail is away */
+.rec-body--wide { grid-template-columns: minmax(0, 1fr); }
+
+/* what just happened, in the machine's own voice, two lines under the strip */
+.rec-ticker {
+	flex: 0 0 auto;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: var(--g-2) var(--g-3);
+}
+
+.rec-ticker .g-screen-line {
+	font-size: var(--g-size-micro);
+	line-height: 1.4;
+}
+
+/* the recommended move */
+.rec-deploy-bar--simple {
+	display: grid;
+	grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+	align-items: stretch;
+}
+
+.rec-advice {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+	padding: var(--g-3);
+	border-right: var(--g-hairline) solid var(--g-rule);
+}
+
+.rec-advice .g-kicker { margin: 0; }
+
+.rec-advice-label {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-low);
+}
+
+.rec-advice-btn {
+	justify-content: center;
+	text-align: center;
+	white-space: normal;
+	line-height: 1.25;
+}
+
+.rec-advice-why {
+	font-size: var(--g-size-tiny) !important;
+	color: var(--g-ink-mid);
+	margin: 0 !important;
+	line-height: 1.45;
+}
+
+.rec-advice-pass {
+	align-self: flex-start;
+	font-size: var(--g-size-micro);
+	padding: 2px var(--g-3);
+}
+
+.rec-advice--waiting { justify-content: center; }
+
+/* the recommended creature and site */
+.rec-figure--recommended .rec-figure-plate {
+	outline: 2px solid var(--g-brass-light);
+	outline-offset: 1px;
+}
+
+.rec-figure--recommended { transform: translateY(-3px); }
+
+.rec-site--recommended {
+	border-color: var(--g-brass-light);
+	box-shadow: var(--g-relief), 0 0 0 1px color-mix(in srgb, var(--g-brass-light) 40%, transparent);
+}
+
+.rec-site-recommend {
+	position: absolute;
+	top: var(--g-2);
+	right: var(--g-2);
+	font-family: var(--g-font-stencil);
+	font-size: 0.5625rem;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	color: var(--g-brass-light);
+	border: var(--g-hairline) solid currentColor;
+	border-radius: 2px;
+	padding: 0 4px;
+}
+
+.rec-site { position: relative; }
+
+/* orders by nature */
+.rec-orders-bar--simple {
+	align-items: flex-start;
+	gap: var(--g-4);
+}
+
+.rec-orders-plan {
+	flex: 1 1 auto;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-1);
+}
+
+.rec-orders-plan .g-kicker { margin: 0; }
+
+.rec-orders-plan-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.rec-orders-plan-item {
+	font-size: var(--g-size-tiny);
+	line-height: 1.4;
+	color: var(--g-ink);
+	padding-left: var(--g-3);
+	position: relative;
+	cursor: default;
+}
+
+.rec-orders-plan-item::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 0.55em;
+	width: 6px;
+	height: 2px;
+	background: var(--g-el);
+}
+
+.rec-orders-plan-item--ordered { color: var(--g-brass-light); }
+
+.rec-orders-plan-actions {
+	flex: 0 0 auto;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+	align-items: stretch;
+}
+
+.rec-go-btn {
+	min-width: 140px;
+	justify-content: center;
+	font-size: var(--g-size-body);
+}
+
+.rec-change-orders {
+	font-size: var(--g-size-micro);
+	justify-content: center;
+}
+
+/* the full orders panel opens in the rail, as in advanced mode; the bar stays */
+.rec-match--simple .rec-orders { flex: 1 1 0; min-height: 0; }
+
+
+@media (max-width: 760px) {
+	.rec-deploy-bar--simple { display: flex; flex-direction: column; }
+	.rec-advice {
+		border-right: 0;
+		border-bottom: var(--g-hairline) solid var(--g-rule);
+		padding: var(--g-2);
+		gap: var(--g-1);
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: center;
+	}
+	.rec-advice .g-kicker { grid-column: 1 / -1; }
+	.rec-advice-btn { grid-column: 1 / -1; font-size: var(--g-size-small); padding: var(--g-2) var(--g-3); }
+	.rec-advice-why { font-size: var(--g-size-micro) !important; }
+	.rec-advice-pass { align-self: center; }
+	.rec-orders-bar--simple { flex-direction: column; align-items: stretch; }
+	.rec-orders-plan-actions { flex-direction: row; }
+	.rec-go-btn { flex: 1 1 auto; }
+	.rec-mode--compact { margin-left: auto; }
+	.rec-ticker { display: none; }
+}
+
+/* -------------------------------------------------------------------------
+   MOTION — every change on the table is told twice (Nick, 2026-09-03)
+
+   A figure that simply appears reads as nothing having happened. So a figure that
+   lands drops onto its site, the site takes a brief tint in the sender's colour, a
+   callout over the sites says what happened in a sentence, and the numbers that
+   changed tick. None of it glows: motion is position, tint and opacity only, and
+   all of it is off under prefers-reduced-motion.
+   ------------------------------------------------------------------------- */
+
+.rec-table { position: relative; }
+
+/* the callout: the sentence, on its own row above the sites so it covers nothing,
+   in the colour of who did it. The row keeps its height while empty so the table
+   does not jump. */
+.rec-callout-row {
+	flex: 0 0 auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 38px;
+	margin-bottom: calc(-1 * var(--g-2));
+}
+
+.rec-callout {
+	--rec-beat-ms: 1400ms;
+	display: inline-flex;
+	align-items: baseline;
+	gap: var(--g-3);
+	max-width: min(92%, 640px);
+	padding: var(--g-2) var(--g-4);
+	background: var(--g-hull-hi);
+	border: var(--g-hairline) solid var(--g-seam);
+	border-left: 4px solid var(--g-ink-low);
+	border-radius: var(--g-radius);
+	box-shadow: var(--g-relief);
+	pointer-events: none;
+	animation: rec-callout var(--rec-beat-ms) cubic-bezier(0.3, 0, 0.2, 1) both;
+}
+
+.rec-callout--you { border-left-color: var(--g-hazard); }
+.rec-callout--rival { border-left-color: var(--g-lamp-red); }
+.rec-callout--judge { border-left-color: var(--g-brass-light); }
+.rec-callout--world { border-left-color: var(--g-el); }
+
+.rec-callout-kicker {
+	flex: 0 0 auto;
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	color: var(--g-ink-low);
+}
+
+.rec-callout--you .rec-callout-kicker { color: var(--g-hazard); }
+.rec-callout--rival .rec-callout-kicker { color: var(--g-lamp-red); }
+.rec-callout--judge .rec-callout-kicker { color: var(--g-brass-light); }
+
+.rec-callout-text {
+	font-family: var(--g-font-body);
+	font-size: var(--g-size-small);
+	line-height: 1.35;
+	color: var(--g-ink);
+}
+
+@keyframes rec-callout {
+	0% { opacity: 0; transform: translateY(-8px) scale(0.97); }
+	10% { opacity: 1; transform: translateY(0) scale(1); }
+	84% { opacity: 1; transform: translateY(0) scale(1); }
+	100% { opacity: 0; transform: translateY(-4px) scale(0.99); }
+}
+
+@media (max-width: 640px) {
+	.rec-callout-row { min-height: 30px; }
+	.rec-callout { flex-direction: column; gap: 0; align-items: flex-start; max-width: 100%; }
+}
+
+/* a figure landing: the rival's drops in from above, yours rises from below */
+.rec-figure--arrive { animation: rec-land-up 520ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
+.rec-figure--arrive.rec-figure--down { animation-name: rec-land-down; }
+
+@keyframes rec-land-up {
+	0% { opacity: 0; transform: translateY(18px) scale(0.92); }
+	60% { opacity: 1; transform: translateY(-3px) scale(1.03); }
+	100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes rec-land-down {
+	0% { opacity: 0; transform: translateY(-18px) scale(0.92); }
+	60% { opacity: 1; transform: translateY(3px) scale(1.03); }
+	100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* the site it landed on takes the sender's tint for a beat, then lets it go */
+.rec-site--landed-mine { animation: rec-landed-mine 1300ms ease-out both; }
+.rec-site--landed-theirs { animation: rec-landed-theirs 1300ms ease-out both; }
+
+@keyframes rec-landed-mine {
+	0% { background: color-mix(in srgb, var(--g-hazard) 22%, var(--g-hull)); box-shadow: var(--g-relief), 0 0 0 2px var(--g-hazard); }
+	100% { background: var(--g-hull); box-shadow: var(--g-relief), 0 0 0 0 transparent; }
+}
+
+@keyframes rec-landed-theirs {
+	0% { background: color-mix(in srgb, var(--g-lamp-red) 20%, var(--g-hull)); box-shadow: var(--g-relief), 0 0 0 2px var(--g-lamp-red); }
+	100% { background: var(--g-hull); box-shadow: var(--g-relief), 0 0 0 0 transparent; }
+}
+
+/* a number that changed: brightens, then settles */
+.rec-tick { animation: rec-tick 900ms ease-out both; }
+
+@keyframes rec-tick {
+	0% { opacity: 0.2; transform: translateY(4px); }
+	35% { opacity: 1; transform: translateY(0); color: var(--g-ink); }
+	100% { opacity: 1; }
+}
+
+/* the turn readout: the new text slides in; while the rival thinks, its dots walk */
+.rec-turn-text--in { display: inline-block; animation: rec-turn-in 420ms cubic-bezier(0.3, 0, 0.2, 1) both; }
+
+@keyframes rec-turn-in {
+	from { opacity: 0; transform: translateY(-6px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+.rec-turn--yours .rec-turn-text--in { animation: rec-turn-yours 700ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
+
+@keyframes rec-turn-yours {
+	0% { opacity: 0; transform: translateY(-6px) scale(0.96); }
+	55% { opacity: 1; transform: translateY(0) scale(1.08); }
+	100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.rec-turn--deciding .rec-turn-text::after {
+	content: '\2026';
+	display: inline-block;
+	width: 1.2em;
+	text-align: left;
+	animation: rec-dots 1200ms steps(3, end) infinite;
+}
+
+@keyframes rec-dots {
+	0% { clip-path: inset(0 100% 0 0); }
+	100% { clip-path: inset(0 -0.2em 0 0); }
+}
+
+/* a pip that lights pops; the ticker's newest line slides up into place */
+.rec-pip--lit { animation: rec-pip-pop 520ms cubic-bezier(0.2, 0.9, 0.3, 1.3) both; }
+
+@keyframes rec-pip-pop {
+	0% { transform: scale(0.4); }
+	60% { transform: scale(1.3); }
+	100% { transform: scale(1); }
+}
+
+.rec-ticker-line--in { animation: rec-rise 380ms ease-out both; }
+
+/* panels that change with the phase rise in rather than snapping */
+.rec-rise { animation: rec-rise 380ms cubic-bezier(0.3, 0, 0.2, 1) both; }
+
+@keyframes rec-rise {
+	from { opacity: 0; transform: translateY(8px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+/* a new world: its three sites deal out left to right */
+.rec-site--enter { animation: rec-site-enter 460ms cubic-bezier(0.3, 0, 0.2, 1) both; animation-delay: calc(var(--rec-i, 0) * 110ms); }
+
+/* a landing tint replaces the entrance once the site is on the table */
+.rec-site--enter.rec-site--landed-mine { animation: rec-landed-mine 1300ms ease-out both; animation-delay: 0ms; }
+.rec-site--enter.rec-site--landed-theirs { animation: rec-landed-theirs 1300ms ease-out both; animation-delay: 0ms; }
+
+@keyframes rec-site-enter {
+	from { opacity: 0; transform: translateY(12px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+/* the Court's stamp comes down, one site after another */
+.rec-stamp--down {
+	animation: rec-stamp-down 480ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+	animation-delay: calc(var(--rec-i, 0) * 180ms);
+}
+
+@keyframes rec-stamp-down {
+	0% { opacity: 0; transform: rotate(-3deg) scale(2.2); }
+	70% { opacity: 1; transform: rotate(-3deg) scale(0.94); }
+	100% { opacity: 1; transform: rotate(-3deg) scale(1); }
+}
+
+/* resolution: the acting figure lunges toward the far rank; the one it lands on jolts */
+.rec-figure--acting { animation: rec-lunge-up 460ms cubic-bezier(0.3, 0, 0.2, 1) both; }
+.rec-figure--acting.rec-figure--down { animation-name: rec-lunge-down; }
+
+@keyframes rec-lunge-up {
+	0% { transform: translateY(0); }
+	40% { transform: translateY(-10px); }
+	100% { transform: translateY(0); }
+}
+
+@keyframes rec-lunge-down {
+	0% { transform: translateY(0); }
+	40% { transform: translateY(10px); }
+	100% { transform: translateY(0); }
+}
+
+.rec-figure--hit { animation: rec-jolt 420ms ease-out both; animation-delay: 160ms; }
+
+@keyframes rec-jolt {
+	0% { transform: translateX(0); }
+	25% { transform: translateX(-4px) rotate(-2deg); }
+	50% { transform: translateX(4px) rotate(2deg); }
+	75% { transform: translateX(-2px); }
+	100% { transform: translateX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.rec-callout,
+	.rec-figure--arrive,
+	.rec-site--landed-mine,
+	.rec-site--landed-theirs,
+	.rec-site--enter.rec-site--landed-mine,
+	.rec-site--enter.rec-site--landed-theirs,
+	.rec-tick,
+	.rec-turn-text--in,
+	.rec-turn--deciding .rec-turn-text::after,
+	.rec-pip--lit,
+	.rec-ticker-line--in,
+	.rec-rise,
+	.rec-site--enter,
+	.rec-stamp--down,
+	.rec-figure--acting,
+	.rec-figure--hit,
+	.rec-figure--routed {
+		animation: none;
+	}
+	.rec-figure--routed { opacity: 0; }
+}
+
+/* -------------------------------------------------------------------------
+   THE TABLE, REDRAWN WITH THE DUEL'S PARTS (Nick, 2026-09-04)
+
+   Three complaints: the roster was a fresh design of its own, the recommended
+   move held the player's hand, and a site was circles in a square with no way to
+   tell whose creature stood where. So the figure is now the Duel's piece (the
+   species silhouette rimmed in its side's colour, the element disc at its foot),
+   the roster is the Duel's rail (fixed slots, portrait, name, a bulb-strip
+   meter), the deploy turn is a two-step choice in the rail, and every site is a
+   floor with the rival's rank on the far edge and yours on the near one, each edge
+   painted and labelled in its side's colour.
+
+   Sides: you are cyan and the rival is brass, the two paints the Duel uses, so a
+   side reads the same way in every game on the site.
+   ------------------------------------------------------------------------- */
+
+.rec-match {
+	--rec-you: var(--g-team-one);
+	--rec-rival: var(--g-team-two);
+}
+
+/* --- the two sides, everywhere they are named ------------------------------ */
+
+.rec-score--mine .rec-pip--lit { background: var(--rec-you); border-color: var(--rec-you); }
+.rec-score--theirs .rec-pip--lit { background: var(--rec-rival); border-color: var(--rec-rival); }
+.rec-score--mine .rec-score-value { color: var(--rec-you); }
+.rec-score--theirs .rec-score-value { color: var(--rec-rival); }
+
+.rec-turn--yours .rec-turn-text { color: var(--rec-you); }
+.rec-status-hint--yours { border-left-color: var(--rec-you); }
+
+.rec-site-margin--mine { border-left-color: var(--rec-you); }
+.rec-site-margin--mine .rec-site-margin-text { color: var(--rec-you); }
+.rec-site-margin--theirs { border-left-color: var(--rec-rival); }
+.rec-site-margin--theirs .rec-site-margin-text { color: var(--rec-rival); }
+
+.rec-site--mine { border-top-color: color-mix(in srgb, var(--rec-you) 60%, var(--g-seam)); }
+.rec-site--theirs { border-top-color: color-mix(in srgb, var(--rec-rival) 60%, var(--g-seam)); }
+
+.rec-stamp--yours { color: var(--rec-you); }
+.rec-stamp--theirs { color: var(--rec-rival); }
+.rec-site--verdict-yours { border-color: color-mix(in srgb, var(--rec-you) 55%, var(--g-seam)); }
+.rec-site--verdict-theirs { border-color: color-mix(in srgb, var(--rec-rival) 55%, var(--g-seam)); }
+
+.rec-callout--you { border-left-color: var(--rec-you); }
+.rec-callout--rival { border-left-color: var(--rec-rival); }
+.rec-callout--you .rec-callout-kicker { color: var(--rec-you); }
+.rec-callout--rival .rec-callout-kicker { color: var(--rec-rival); }
+
+@keyframes rec-landed-mine {
+	0% { background: color-mix(in srgb, var(--rec-you) 22%, var(--g-hull)); box-shadow: var(--g-relief), 0 0 0 2px var(--rec-you); }
+	100% { background: var(--g-hull); box-shadow: var(--g-relief), 0 0 0 0 transparent; }
+}
+
+@keyframes rec-landed-theirs {
+	0% { background: color-mix(in srgb, var(--rec-rival) 22%, var(--g-hull)); box-shadow: var(--g-relief), 0 0 0 2px var(--rec-rival); }
+	100% { background: var(--g-hull); box-shadow: var(--g-relief), 0 0 0 0 transparent; }
+}
+
+.rec-verdict--won { border-color: var(--rec-you); }
+.rec-verdict--lost { border-color: var(--rec-rival); }
+
+/* --- the piece ------------------------------------------------------------- */
+
+.rec-figure.rec-piece {
+	min-width: 0;
+	width: auto;
+	gap: 1px;
+	padding: 2px;
+}
+
+.rec-piece-stage {
+	position: relative;
+	display: block;
+	width: var(--rec-piece, 56px);
+	height: var(--rec-piece, 56px);
+}
+
+/* the contact shadow the creature casts on the floor */
+.rec-piece-base {
+	position: absolute;
+	inset: 0;
+	border-radius: 3px;
+	background: radial-gradient(ellipse at 50% 92%, rgba(0, 0, 0, 0.6) 0%, transparent 62%);
+	pointer-events: none;
+}
+
+.rec-piece-art {
+	position: absolute;
+	left: 5%;
+	bottom: 2%;
+	width: 90%;
+	height: 90%;
+	padding: 0 !important;
+	aspect-ratio: 1;
+}
+
+.rec-piece-art .xalian-image { padding: 0; }
+
+/* the rival's creatures face down the table toward yours */
+.rec-figure--down .rec-piece-art { transform: scaleX(-1); }
+
+.rec-piece-disc {
+	position: absolute;
+	left: -6%;
+	bottom: 0;
+	border-radius: 50%;
+	border: 1px solid var(--g-seam);
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), inset 0 1px 0 var(--g-bevel-light);
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.rec-piece-unknown {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-lead);
+	color: var(--g-ink-low);
+	border: var(--g-hairline) dashed color-mix(in srgb, var(--rec-team, var(--g-ink-low)) 60%, transparent);
+	border-radius: 3px;
+}
+
+.rec-piece .rec-figure-plate {
+	min-height: 18px;
+	padding: 1px var(--g-2);
+	border-bottom: 2px solid var(--rec-team);
+}
+
+.rec-piece .rec-figure-foot { min-height: 0; }
+
+.rec-piece .rec-figure-hold {
+	font-size: var(--g-size-small);
+	color: var(--rec-team);
+}
+
+.rec-figure--theirs.rec-piece .rec-figure-hold { color: var(--rec-team); }
+
+/* chosen: the Duel's four corner brackets, in the side's colour */
+.rec-figure--selected .rec-piece-stage::before,
+.rec-figure--armed .rec-piece-stage::before {
+	content: '';
+	position: absolute;
+	inset: -3px;
+	pointer-events: none;
+	background:
+		linear-gradient(var(--rec-team), var(--rec-team)) 0 0 / 30% 2px no-repeat,
+		linear-gradient(var(--rec-team), var(--rec-team)) 0 0 / 2px 30% no-repeat,
+		linear-gradient(var(--rec-team), var(--rec-team)) 100% 0 / 30% 2px no-repeat,
+		linear-gradient(var(--rec-team), var(--rec-team)) 100% 0 / 2px 30% no-repeat,
+		linear-gradient(var(--rec-team), var(--rec-team)) 0 100% / 30% 2px no-repeat,
+		linear-gradient(var(--rec-team), var(--rec-team)) 0 100% / 2px 30% no-repeat,
+		linear-gradient(var(--rec-team), var(--rec-team)) 100% 100% / 30% 2px no-repeat,
+		linear-gradient(var(--rec-team), var(--rec-team)) 100% 100% / 2px 30% no-repeat;
+}
+
+.rec-figure--selected .rec-figure-plate,
+.rec-figure--armed .rec-figure-plate {
+	border-color: var(--rec-team);
+	box-shadow: var(--g-relief);
+}
+
+.rec-figure--hidden .rec-piece-art { opacity: 0.55; }
+
+.rec-figure--acting .rec-piece-stage::before {
+	content: '';
+	position: absolute;
+	inset: -3px;
+	border: 2px solid var(--g-brass-light);
+	border-radius: 4px;
+	pointer-events: none;
+}
+
+.rec-figure--acting .rec-figure-plate,
+.rec-figure--hover .rec-figure-plate,
+.rec-figure--hit .rec-figure-plate { outline: none; }
+
+.rec-figure--hit .rec-piece-stage::before,
+.rec-figure--hover .rec-piece-stage::before {
+	content: '';
+	position: absolute;
+	inset: -3px;
+	border: 2px dashed var(--g-lamp-red);
+	border-radius: 4px;
+	pointer-events: none;
+}
+
+.rec-figure--recommended .rec-figure-plate { outline: none; border-color: var(--g-brass-light); }
+.rec-figure--recommended { transform: none; }
+
+.rec-figure--silhouette .rec-piece-stage { opacity: 0.7; }
+
+/* --- the site floor -------------------------------------------------------- */
+
+.rec-site-head {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	column-gap: var(--g-2);
+	align-items: baseline;
+}
+
+.rec-site-index {
+	grid-row: 1 / 3;
+	align-self: start;
+	width: 18px;
+	height: 18px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-micro);
+	font-weight: 600;
+	color: var(--g-brass-light);
+	border: var(--g-hairline) solid var(--g-brass-dark);
+	border-radius: 2px;
+	background: var(--g-hull-lo);
+}
+
+.rec-site-floor {
+	position: relative;
+	border-radius: var(--g-radius);
+	background-color: var(--g-void);
+	background-image:
+		repeating-linear-gradient(58deg, rgba(255, 244, 214, 0.014) 0 1px, transparent 1px 23px),
+		repeating-linear-gradient(-31deg, rgba(0, 0, 0, 0.16) 0 1px, transparent 1px 31px),
+		radial-gradient(ellipse at 28% 22%, rgba(176, 141, 63, 0.06) 0%, transparent 55%),
+		radial-gradient(ellipse at 74% 76%, rgba(176, 141, 63, 0.04) 0%, transparent 50%);
+	box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.85), inset 0 -1px 0 var(--g-bevel-light);
+	overflow: hidden;
+}
+
+/* a rank is as tall as the creatures standing in it (never less than a strip of open
+   ground), so a crowded rank never spills over the midline; a site fuller than its
+   panel scrolls inside the floor */
+.rec-site-floor { overflow-y: auto; overflow-x: hidden; }
+
+.rec-site-floor .rec-rank {
+	position: relative;
+	flex: 1 0 auto;
+	min-height: 44px;
+	justify-content: center;
+	align-items: flex-end;
+	align-content: flex-end;
+	gap: var(--g-3);
+	padding: var(--g-3) var(--g-3);
+	overflow: visible;
+}
+
+.rec-site-floor .rec-rank--theirs { align-content: flex-start; }
+
+.rec-site-floor .rec-rank--theirs {
+	align-items: flex-start;
+	padding-top: calc(var(--g-3) + 8px);
+	border-top: 3px solid var(--rec-rival);
+	background: linear-gradient(180deg, color-mix(in srgb, var(--rec-rival) 16%, transparent), transparent 75%);
+}
+
+.rec-site-floor .rec-rank--mine {
+	padding-bottom: calc(var(--g-3) + 8px);
+	border-bottom: 3px solid var(--rec-you);
+	background: linear-gradient(0deg, color-mix(in srgb, var(--rec-you) 16%, transparent), transparent 75%);
+}
+
+.rec-rank-edge {
+	position: absolute;
+	left: var(--g-2);
+	font-family: var(--g-font-stencil);
+	font-size: 0.5625rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	pointer-events: none;
+}
+
+.rec-rank-edge--theirs { top: 2px; color: var(--rec-rival); }
+.rec-rank-edge--mine { bottom: 2px; color: var(--rec-you); }
+
+.rec-rank-open {
+	align-self: center;
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-micro);
+	font-style: italic;
+	color: color-mix(in srgb, var(--g-ink-low) 60%, transparent);
+}
+
+.rec-site-floor .rec-site-midline {
+	margin: 0;
+	min-height: 26px;
+	border-top: var(--g-hairline) dashed color-mix(in srgb, var(--g-ink-low) 55%, transparent);
+	border-bottom: var(--g-hairline) dashed color-mix(in srgb, var(--g-ink-low) 55%, transparent);
+	background: rgba(0, 0, 0, 0.28);
+}
+
+.rec-site-field--empty .rec-rank { flex: 0 0 auto; min-height: 40px; }
+.rec-site-field--empty .rec-site-midline { flex: 1 1 auto; border: 0; }
+.rec-site-field--empty .rec-site-midline--empty { margin: 0; }
+.rec-site--empty .rec-site-field { justify-content: stretch; }
+
+.rec-site-floor .rec-ghost {
+	flex-wrap: wrap;
+	justify-content: center;
+	padding: var(--g-1) var(--g-2);
+}
+
+.rec-site--hover {
+	border-color: var(--rec-you);
+	box-shadow: var(--g-relief), 0 0 0 1px color-mix(in srgb, var(--rec-you) 55%, transparent);
+}
+
+.rec-site--targeted {
+	border-color: color-mix(in srgb, var(--rec-you) 70%, var(--g-seam));
+	box-shadow: var(--g-relief), 0 0 0 1px color-mix(in srgb, var(--rec-you) 35%, transparent);
+}
+
+.rec-site--targeted:hover { background: color-mix(in srgb, var(--rec-you) 6%, var(--g-hull)); }
+.rec-ghost-cta { color: var(--rec-you); }
+
+/* --- the deploy panel: choose a creature, choose a site -------------------- */
+
+.rec-deploy {
+	flex: 1 1 0;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	padding: 0;
+	overflow: hidden;
+}
+
+.rec-deploy-head {
+	flex: 0 0 auto;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+	padding: var(--g-3) var(--g-3) var(--g-2);
+	background: var(--g-hull-lo);
+	border-bottom: var(--g-hairline) solid var(--g-seam);
+}
+
+.rec-steps {
+	display: flex;
+	gap: var(--g-1);
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.rec-step {
+	flex: 1 1 0;
+	display: inline-flex;
+	align-items: center;
+	gap: var(--g-2);
+	padding: 2px var(--g-2);
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-low);
+	background: var(--g-hull);
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: 2px;
+	transition: border-color var(--g-move), color var(--g-move), background var(--g-move);
+}
+
+.rec-step-n {
+	width: 15px;
+	height: 15px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-family: var(--g-font-mono);
+	font-size: 0.5625rem;
+	border: 1px solid currentColor;
+	border-radius: 50%;
+}
+
+.rec-step--now {
+	color: var(--g-ink);
+	border-color: var(--rec-you);
+	background: color-mix(in srgb, var(--rec-you) 14%, var(--g-hull));
+}
+
+.rec-step--now .rec-step-n { background: var(--rec-you); border-color: var(--rec-you); color: var(--g-void); }
+.rec-step--done { color: var(--g-ink-mid); border-color: color-mix(in srgb, var(--rec-you) 40%, var(--g-seam)); }
+
+.rec-deploy-title { display: flex; flex-direction: column; gap: 2px; }
+
+.rec-deploy-heading {
+	margin: 0;
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-lead);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink);
+	animation: rec-turn-in 380ms cubic-bezier(0.3, 0, 0.2, 1) both;
+}
+
+.rec-deploy-lead {
+	margin: 0 !important;
+	font-size: var(--g-size-micro) !important;
+	line-height: 1.4;
+	color: var(--g-ink-mid);
+}
+
+.rec-deploy-count { font-size: var(--g-size-micro); color: var(--g-ink-low); }
+
+.rec-deploy-foot {
+	flex: 0 0 auto;
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--g-2);
+	padding: var(--g-2) var(--g-3);
+	border-top: var(--g-hairline) solid var(--g-seam);
+	background: var(--g-hull-lo);
+}
+
+.rec-deploy-foot .g-btn { flex: 1 1 auto; justify-content: center; text-align: center; font-size: var(--g-size-micro); }
+.rec-pass-btn--suggested { border-color: var(--g-brass-light); }
+.rec-deploy-foot .rec-btn-sub { display: block; font-size: 0.5625rem; color: var(--g-ink-low); white-space: normal; }
+
+/* --- the roster: fixed slots, the Duel's rail ------------------------------ */
+
+.rec-roster {
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow-y: auto;
+	overflow-x: hidden;
+	display: block;
+	gap: 0;
+}
+
+.rec-roster-entries {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+	padding: var(--g-2);
+}
+
+.rec-slot {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: start;
+	background: var(--g-hull-lo);
+	border: var(--g-hairline) solid var(--g-seam);
+	border-left: 2px solid var(--rec-you);
+	border-radius: var(--g-radius);
+	box-shadow: var(--g-recess);
+	transition: background var(--g-move), border-color var(--g-move), opacity var(--g-move);
+}
+
+.rec-slot:hover,
+.rec-slot:focus-within { background: var(--g-hull); }
+
+.rec-slot-main {
+	display: grid;
+	grid-template-columns: 40px minmax(0, 1fr);
+	gap: var(--g-3);
+	align-items: start;
+	width: 100%;
+	padding: var(--g-2);
+	background: none;
+	border: 0;
+	text-align: left;
+	font: inherit;
+	color: inherit;
+	cursor: pointer;
+}
+
+.rec-slot-main:disabled { cursor: default; }
+.rec-slot-main:focus-visible { outline: 2px solid var(--rec-you); outline-offset: -2px; border-radius: var(--g-radius); }
+
+.rec-slot--armed {
+	border-color: var(--rec-you);
+	background: color-mix(in srgb, var(--rec-you) 10%, var(--g-hull));
+}
+
+.rec-slot--suggested { border-color: color-mix(in srgb, var(--g-brass-light) 60%, var(--g-seam)); }
+
+.rec-slot--sent,
+.rec-slot--holding,
+.rec-slot--routed,
+.rec-slot--away { opacity: 0.5; border-left-color: var(--g-seam); }
+
+.rec-slot--holding { border-left-color: var(--g-brass); }
+.rec-slot--routed .rec-slot-name { text-decoration: line-through; }
+.rec-slot--sent .rec-slot-portrait-art,
+.rec-slot--holding .rec-slot-portrait-art,
+.rec-slot--routed .rec-slot-portrait-art { filter: grayscale(1); }
+.rec-slot--disabled { opacity: 0.6; }
+.rec-slot--disabled .rec-slot-main { cursor: default; }
+
+.rec-slot-portrait {
+	width: 40px;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.rec-slot-portrait-art {
+	width: 100%;
+	height: 100%;
+	filter: drop-shadow(0 0 1.5px var(--g-el)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.9));
+}
+
+.rec-slot-body { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+
+.rec-slot-ident {
+	display: flex;
+	align-items: baseline;
+	gap: var(--g-2);
+	flex-wrap: wrap;
+	min-width: 0;
+}
+
+.rec-slot-name {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	font-weight: 500;
+	letter-spacing: var(--g-track-tight);
+	text-transform: uppercase;
+	color: var(--g-ink);
+}
+
+.rec-slot-element {
+	font-family: var(--g-font-mono);
+	font-size: 0.5625rem;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-el);
+}
+
+.rec-slot-tag {
+	font-family: var(--g-font-mono);
+	font-size: 0.5625rem;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-low);
+}
+
+.rec-slot-tag--sent { color: var(--g-ink-mid); }
+.rec-slot-tag--holding { color: var(--g-brass-light); }
+.rec-slot-tag--routed { color: var(--g-lamp-red); }
+.rec-slot-tag--suggested,
+.rec-slot-tag--stealthy {
+	padding: 0 3px;
+	border: 1px solid currentColor;
+	border-radius: 2px;
+}
+.rec-slot-tag--suggested { color: var(--g-brass-light); }
+
+.rec-slot-meter-row {
+	display: grid;
+	grid-template-columns: 26px minmax(0, 1fr) 30px;
+	align-items: center;
+	gap: var(--g-2);
+}
+
+.rec-slot-meter-label {
+	font-family: var(--g-font-stencil);
+	font-size: 0.5625rem;
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+	color: var(--g-ink-low);
+}
+
+.rec-slot-meter {
+	position: relative;
+	height: 6px;
+	border-radius: 1px;
+	background: var(--g-seam);
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9);
+	overflow: hidden;
+}
+
+.rec-slot-meter-fill {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	background-image: repeating-linear-gradient(90deg, var(--rec-you) 0 3px, transparent 3px 4px);
+	transition: width var(--g-move);
+}
+
+.rec-slot-meter-value {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-micro);
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	text-align: right;
+	color: var(--g-ink);
+}
+
+/* one chip per site of this world */
+.rec-slot-sites { display: flex; gap: var(--g-1); }
+
+.rec-slot-site {
+	flex: 1 1 0;
+	min-width: 0;
+	display: inline-flex;
+	align-items: baseline;
+	gap: 3px;
+	padding: 1px var(--g-1);
+	font-family: var(--g-font-mono);
+	font-size: 0.625rem;
+	font-variant-numeric: tabular-nums;
+	background: var(--g-hull);
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: 2px;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.rec-slot-site-index { color: var(--g-ink-low); font-size: 0.5625rem; }
+.rec-slot-site-hold { color: var(--g-ink); font-weight: 600; }
+.rec-slot-site--best { border-color: var(--rec-you); }
+.rec-slot-site--best .rec-slot-site-hold { color: var(--rec-you); }
+.rec-slot-site--severe .rec-slot-site-hold { color: var(--g-ink-low); }
+.rec-slot-site-mark { font-size: 0.5rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.rec-slot-site-mark--home { color: var(--g-brass-light); }
+.rec-slot-site-mark--strain { color: var(--g-hazard); }
+.rec-slot-site-mark--severe { color: var(--g-lamp-red); }
+
+.rec-slot-read {
+	align-self: start;
+	margin: var(--g-2) var(--g-2) 0 0;
+	font-family: var(--g-font-mono);
+	font-size: 0.5625rem;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-low);
+	background: none;
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: 2px;
+	padding: 0 var(--g-1);
+	cursor: pointer;
+}
+
+.rec-slot-read:hover { color: var(--g-ink); border-color: var(--g-ink-low); }
+
+/* --- step two: the chosen creature and the sites as rows ------------------ */
+
+.rec-deploy-choice {
+	flex: 1 1 auto;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.rec-chosen {
+	flex: 0 0 auto;
+	display: grid;
+	grid-template-columns: 52px minmax(0, 1fr) auto;
+	gap: var(--g-3);
+	align-items: center;
+	margin: var(--g-2) var(--g-2) 0;
+	padding: var(--g-2);
+	background: var(--g-hull-lo);
+	border: var(--g-hairline) solid var(--g-seam);
+	border-left: 3px solid var(--rec-you);
+	border-radius: var(--g-radius);
+	box-shadow: var(--g-recess);
+}
+
+.rec-chosen-portrait { width: 52px; height: 52px; display: flex; }
+.rec-chosen-art { width: 100%; height: 100%; filter: drop-shadow(0 0 2px var(--rec-you)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.9)); }
+.rec-chosen-body { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.rec-chosen-name {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-lead);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink);
+}
+.rec-chosen-sub { font-size: var(--g-size-micro); color: var(--g-ink-mid); }
+.rec-chosen-change { font-size: var(--g-size-micro); padding: 2px var(--g-3); }
+
+.rec-site-rows {
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow-y: auto;
+	list-style: none;
+	margin: 0;
+	padding: var(--g-2);
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+}
+
+.rec-site-row {
+	width: 100%;
+	display: grid;
+	grid-template-columns: 22px minmax(0, 1fr) auto;
+	gap: var(--g-3);
+	align-items: center;
+	padding: var(--g-2) var(--g-3);
+	background: var(--g-hull-lo);
+	border: var(--g-hairline) solid var(--g-seam);
+	border-left: 3px solid var(--g-seam);
+	border-radius: var(--g-radius);
+	box-shadow: var(--g-recess);
+	text-align: left;
+	font: inherit;
+	color: inherit;
+	cursor: pointer;
+	transition: background var(--g-move), border-color var(--g-move);
+}
+
+.rec-site-row:hover,
+.rec-site-row:focus-visible,
+.rec-site-row--hover { background: var(--g-hull); border-color: var(--rec-you); outline: none; }
+.rec-site-row--mine { border-left-color: var(--rec-you); }
+.rec-site-row--theirs { border-left-color: var(--rec-rival); }
+.rec-site-row--level { border-left-color: var(--g-ink-low); }
+.rec-site-row--suggested { border-color: color-mix(in srgb, var(--g-brass-light) 60%, var(--g-seam)); }
+
+.rec-site-row-index {
+	width: 18px;
+	height: 18px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-micro);
+	font-weight: 600;
+	color: var(--g-brass-light);
+	border: var(--g-hairline) solid var(--g-brass-dark);
+	border-radius: 2px;
+}
+
+.rec-site-row-body { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.rec-site-row-name {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink);
+}
+.rec-site-row-after { font-size: var(--g-size-micro); color: var(--g-ink-mid); }
+.rec-site-row--mine .rec-site-row-after { color: var(--rec-you); }
+.rec-site-row--theirs .rec-site-row-after { color: var(--rec-rival); }
+.rec-site-row-marks { display: flex; gap: var(--g-1); flex-wrap: wrap; }
+.rec-site-row-marks:empty { display: none; }
+.rec-site-row-hold { display: flex; flex-direction: column; align-items: flex-end; }
+.rec-site-row-hold-value {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-lead);
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	color: var(--g-ink);
+}
+.rec-site-row--severe .rec-site-row-hold-value { color: var(--g-ink-low); }
+.rec-site-row-hold-label {
+	font-family: var(--g-font-stencil);
+	font-size: 0.5625rem;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-low);
+}
+
+.rec-tag--suggested { color: var(--g-brass-light); }
+
+.rec-deploy .rec-hidden-toggle { flex: 0 0 auto; padding: 0 var(--g-3) var(--g-2); }
+
+/* the rail carries the deploy panel now, in both modes */
+.rec-match--simple .rec-rail { min-height: 0; }
+.rec-body--wide { grid-template-columns: minmax(0, 1fr); }
+
+@media (max-width: 760px) {
+	.rec-deploy { max-height: none; }
+	.rec-roster { max-height: 440px; }
+	.rec-site-rows { max-height: none; overflow: visible; }
+	.rec-piece-stage { --rec-piece: 44px; }
+	.rec-site-floor .rec-rank { gap: var(--g-2); padding: var(--g-2); }
+	.rec-site-floor .rec-rank--theirs { padding-top: calc(var(--g-2) + 8px); }
+	.rec-site-floor .rec-rank--mine { padding-bottom: calc(var(--g-2) + 8px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.rec-deploy-heading { animation: none; }
+}
+
+/* the deploy panel shares the rail with the log in advanced mode: the panel takes the
+   room, the log keeps a readable strip */
+.rec-match--advanced .rec-rail .rec-deploy,
+.rec-match--advanced .rec-rail .rec-plan { flex: 1 1 auto; min-height: 0; }
+.rec-match--advanced .rec-rail .rec-log { flex: 0 6 150px; min-height: 72px; }
+.rec-deploy-choice { flex: 1 1 auto; min-height: 0; overflow: hidden; }
+.rec-site-rows { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+
+/* simple mode's orders plan, in the rail */
+.rec-plan-list {
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow-y: auto;
+	margin: 0;
+	padding: var(--g-2) var(--g-3);
+}
+.rec-plan-foot { flex-direction: column; }
+.rec-plan-foot .rec-go-btn { font-size: var(--g-size-body); }
+.rec-plan-back { flex: 0 0 auto; font-size: var(--g-size-micro); }
+
+@media (max-width: 760px) {
+	/* the rail has no bounded height here, so the panels size to their content */
+	.rec-deploy, .rec-plan { flex: 0 0 auto; overflow: visible; }
+	.rec-roster { max-height: 440px; }
+	.rec-plan-list { max-height: 300px; }
+	.rec-site-floor { overflow: visible; }
+}
+
+/* -------------------------------------------------------------------------
+   TWO SIDES OF ONE SITE (Nick, 2026-09-04, second pass)
+
+   The site is one place, so it stays one card, but its two halves are two
+   grounds: the rival's half is hatched in brass and yours is scored in cyan, each
+   edge is a painted band that names the side and carries the side's own total,
+   and the front line between them is a double rule. Above the floor the old
+   margin band is a balance: one bar, the rival's hold pushing in from the left and
+   yours from the right, meeting where the site stands. A previewed send extends
+   your end as a hatched ghost with its number, so what a send would shift is seen
+   on the site itself, which is why the deploy panel no longer repeats the sites as
+   rows.
+   ------------------------------------------------------------------------- */
+
+.rec-site-floor .rec-rank--theirs {
+	border-top: 4px solid var(--rec-rival);
+	background:
+		repeating-linear-gradient(-45deg, color-mix(in srgb, var(--rec-rival) 14%, transparent) 0 2px, transparent 2px 9px),
+		linear-gradient(180deg, color-mix(in srgb, var(--rec-rival) 20%, transparent), color-mix(in srgb, var(--rec-rival) 5%, transparent) 70%, transparent);
+}
+
+.rec-site-floor .rec-rank--mine {
+	border-bottom: 4px solid var(--rec-you);
+	background:
+		repeating-linear-gradient(0deg, color-mix(in srgb, var(--rec-you) 10%, transparent) 0 1px, transparent 1px 8px),
+		linear-gradient(0deg, color-mix(in srgb, var(--rec-you) 20%, transparent), color-mix(in srgb, var(--rec-you) 5%, transparent) 70%, transparent);
+}
+
+.rec-rank-edge {
+	left: 0;
+	padding: 1px var(--g-2);
+	font-size: var(--g-size-micro);
+	letter-spacing: var(--g-track-label);
+	color: var(--g-void);
+	border-radius: 0 0 3px 0;
+}
+
+.rec-rank-edge--theirs { top: 0; background: var(--rec-rival); }
+.rec-rank-edge--mine { bottom: 0; background: var(--rec-you); border-radius: 0 3px 0 0; }
+
+.rec-site-floor .rec-rank--theirs { padding-top: calc(var(--g-3) + 14px); }
+.rec-site-floor .rec-rank--mine { padding-bottom: calc(var(--g-3) + 14px); }
+
+/* the front line */
+.rec-site-floor .rec-site-midline {
+	min-height: 28px;
+	border-top: 3px double color-mix(in srgb, var(--rec-rival) 55%, var(--g-ink-low));
+	border-bottom: 3px double color-mix(in srgb, var(--rec-you) 55%, var(--g-ink-low));
+	background: rgba(0, 0, 0, 0.35);
+}
+
+.rec-site-field--empty .rec-site-midline { border: 0; }
+
+/* --- the balance ----------------------------------------------------------- */
+
+.rec-balance {
+	flex: 0 0 auto;
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	grid-template-rows: auto auto;
+	column-gap: var(--g-2);
+	row-gap: 2px;
+	align-items: center;
+	padding: var(--g-2);
+	background: var(--g-hull-lo);
+	border-radius: var(--g-radius);
+	box-shadow: var(--g-recess);
+}
+
+.rec-balance-end {
+	display: inline-flex;
+	align-items: baseline;
+	gap: var(--g-1);
+	font-family: var(--g-font-mono);
+	font-variant-numeric: tabular-nums;
+	min-width: 0;
+}
+
+.rec-balance-end--theirs { color: var(--rec-rival); }
+.rec-balance-end--mine { color: var(--rec-you); justify-content: flex-end; }
+
+.rec-balance-side {
+	font-family: var(--g-font-stencil);
+	font-size: 0.5625rem;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	opacity: 0.8;
+}
+
+.rec-balance-total {
+	font-size: var(--g-size-small);
+	font-weight: 600;
+}
+
+.rec-balance-plus {
+	font-size: var(--g-size-micro);
+	color: var(--rec-you);
+	opacity: 0.8;
+}
+
+.rec-balance-track {
+	position: relative;
+	display: flex;
+	height: 8px;
+	border-radius: 1px;
+	background: var(--g-seam);
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9);
+	overflow: hidden;
+}
+
+.rec-balance-fill {
+	display: block;
+	height: 100%;
+	transition: width 420ms cubic-bezier(0.3, 0, 0.2, 1);
+}
+
+.rec-balance-fill--theirs {
+	background-image: repeating-linear-gradient(90deg, var(--rec-rival) 0 3px, transparent 3px 4px);
+}
+
+.rec-balance-fill--mine {
+	margin-left: auto;
+	background-image: repeating-linear-gradient(90deg, var(--rec-you) 0 3px, transparent 3px 4px);
+}
+
+.rec-balance-fill--ghost {
+	margin-left: auto;
+	background-image: repeating-linear-gradient(-45deg, var(--rec-you) 0 2px, transparent 2px 5px);
+	opacity: 0.75;
+}
+
+.rec-balance-fill--ghost + .rec-balance-fill--mine { margin-left: 0; }
+
+.rec-balance .rec-site-margin-text {
+	grid-column: 1 / -1;
+	text-align: center;
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-low);
+}
+
+.rec-balance--mine .rec-site-margin-text { color: var(--rec-you); }
+.rec-balance--theirs .rec-site-margin-text { color: var(--rec-rival); }
+.rec-balance--level .rec-site-margin-text { color: var(--g-ink-mid); }
+.rec-balance--preview .rec-site-margin-text { color: var(--rec-you); }
+.rec-balance--quiet { opacity: 0.55; }
+.rec-balance--quiet .rec-balance-total { color: var(--g-ink-low); }
+
+/* the send affordance on the front line, when a creature is chosen */
+.rec-site-floor .rec-ghost { gap: var(--g-2); }
+.rec-ghost-cta {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	padding: 2px var(--g-3);
+	border: 1px solid var(--rec-you);
+	border-radius: 2px;
+	color: var(--g-void);
+	background: var(--rec-you);
+}
+
+.rec-site--targeted .rec-ghost-cta { animation: rec-turn-in 300ms ease-out both; }
+
+/* step two in the panel: the chosen creature, a cue, and three chips that are the
+   same chips as in its slot, now pressable */
+.rec-chosen-cue { padding: var(--g-2) var(--g-3) 0; }
+.rec-chosen-sites { padding: var(--g-2) var(--g-3); }
+.rec-chosen-site {
+	cursor: pointer;
+	padding: var(--g-2) var(--g-2);
+	font-size: var(--g-size-small);
+	font-family: var(--g-font-mono);
+	color: inherit;
+	justify-content: center;
+	gap: var(--g-2);
+	transition: border-color var(--g-move), background var(--g-move);
+}
+.rec-chosen-site:hover,
+.rec-chosen-site:focus-visible,
+.rec-slot-site--hover { border-color: var(--rec-you); background: color-mix(in srgb, var(--rec-you) 12%, var(--g-hull)); outline: none; }
+.rec-slot-site--suggested { border-color: color-mix(in srgb, var(--g-brass-light) 70%, var(--g-seam)); }
+.rec-slot-site-mark--suggested { color: var(--g-brass-light); }
+.rec-chosen-site .rec-slot-site-index { font-size: var(--g-size-micro); }

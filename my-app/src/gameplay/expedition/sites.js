@@ -16,6 +16,28 @@
 */
 
 import rawSites from '../../json/sites.json';
+import planetRecords from '../../json/planetRecords.json';
+
+const PLANETS_BY_NAME = new Map((Array.isArray(planetRecords) ? planetRecords : []).map((p) => [p.name, p]));
+
+// The planet record behind a world: terrain, physical band, hazards, the Generator
+// report. Everything the table shows about a world beyond its sites comes from here.
+function planetFacts(planetName) {
+	const p = PLANETS_BY_NAME.get(planetName);
+	if (!p) {
+		return {};
+	}
+	const report = p.report || {};
+	return {
+		planetKey: p.key,
+		terrain: p.physical ? p.physical.terrainLabel : undefined,
+		temperatureC: p.physical ? p.physical.temperatureC : undefined,
+		gravityVsEarth: p.physical ? p.physical.gravityVsEarth : undefined,
+		hazards: Array.isArray(report.hazards) ? report.hazards : [],
+		terrainFeatures: report.terrain && Array.isArray(report.terrain.features) ? report.terrain.features : [],
+		images: p.images,
+	};
+}
 
 // Converts the { [PlanetName]: [site, site, site] } shape into the flat per-world array
 // the engine consumes: [{ planet, element, sites: [site, site, site] }].
@@ -36,6 +58,7 @@ export function normalizeSitesJson(raw) {
 			planet: planetName,
 			element: siteList[0].element,
 			sites: siteList,
+			...planetFacts(planetName),
 		};
 	});
 	if (worlds.some((w) => w === null)) {
@@ -47,7 +70,9 @@ export function normalizeSitesJson(raw) {
 const WORLDS = normalizeSitesJson(rawSites);
 
 /*
-	getWorlds() -> [{ planet, element, sites: [site, site, site] }, ...14 worlds]
+	getWorlds() -> [{ planet, element, sites: [site, site, site], planetKey, terrain,
+	temperatureC, gravityVsEarth, hazards, terrainFeatures, images }, ...14 worlds]
+	The planet facts come from planetRecords.json (the encyclopedia's planet source).
 */
 export function getWorlds() {
 	return WORLDS;

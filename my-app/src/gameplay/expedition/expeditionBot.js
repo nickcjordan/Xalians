@@ -11,7 +11,7 @@
 	opponent's roster contents or hidden creatures' identity or site.
 */
 
-import { prepare } from './creatureOnTable.js';
+import { prepare, traitKeywordsOf } from './creatureOnTable.js';
 import { getActClass, ACT_CLASS, SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH } from './expeditionInterpretation.js';
 
 // --- tunables ----------------------------------------------------------------------
@@ -60,10 +60,7 @@ function siteMargin(publicState, siteId, seat) {
 }
 
 function traitsOf(record) {
-	if (!record.traits) {
-		return [];
-	}
-	return [...(record.traits.guaranteed || []), ...(record.traits.rolled || [])];
+	return traitKeywordsOf(record);
 }
 
 // --- the vanguard falls back ---------------------------------------------------------

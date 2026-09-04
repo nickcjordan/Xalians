@@ -1,12 +1,48 @@
 import React from 'react';
 import XalianNavbar from '../../components/navbar';
 import ReclamationMatch from '../../components/games/reclamation/reclamationMatch';
-import { rollExpeditionXalians } from '../../gameplay/expedition/devtools/rollExpeditionXalians';
-import { createMatch, createRngState, nextRandom } from '../../gameplay/expedition/expeditionRules';
+import { buildRosters } from '../../gameplay/expedition/roster';
+import { createMatch } from '../../gameplay/expedition/expeditionRules';
 import { getWorlds } from '../../gameplay/expedition/sites';
 import { ROSTER_SIZE, SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH } from '../../gameplay/expedition/expeditionInterpretation';
 
-const POOL_SIZE = 60;
+const MODE_KEY = 'reclamation.mode';
+
+function readMode() {
+	try {
+		const stored = window.localStorage.getItem(MODE_KEY);
+		return stored === 'advanced' ? 'advanced' : 'simple';
+	} catch (e) {
+		return 'simple';
+	}
+}
+
+function storeMode(mode) {
+	try {
+		window.localStorage.setItem(MODE_KEY, mode);
+	} catch (e) {
+		// storage may be unavailable; the choice then lasts for the page
+	}
+}
+
+function ModeSwitch({ mode, onChange, compact }) {
+	return (
+		<div className={`g-segmented rec-mode${compact ? ' rec-mode--compact' : ''}`} role="group" aria-label="Table mode" data-mode-switch>
+			{['simple', 'advanced'].map((m) => (
+				<button
+					key={m}
+					type="button"
+					className="g-segment"
+					aria-pressed={mode === m}
+					onClick={() => onChange(m)}
+					data-mode={m}
+				>
+					{m === 'simple' ? 'Simple' : 'Advanced'}
+				</button>
+			))}
+		</div>
+	);
+}
 
 function seedFromQueryOrDefault() {
 	const params = new URLSearchParams(window.location.search);
@@ -17,36 +53,17 @@ function seedFromQueryOrDefault() {
 	return Date.now() % 100000;
 }
 
-// Fisher-Yates over the engine's own deterministic PRNG, so the same seed always deals
-// the same two rosters — the /tribute page builds its decks the same way.
-function shuffleWithRng(array, rngState) {
-	const result = array.slice();
-	let state = rngState;
-	for (let i = result.length - 1; i > 0; i--) {
-		const { value, nextState } = nextRandom(state);
-		state = nextState;
-		const j = Math.floor(value * (i + 1));
-		const tmp = result[i];
-		result[i] = result[j];
-		result[j] = tmp;
-	}
-	return { array: result, nextState: state };
-}
-
-function buildRosters(seed) {
-	const pool = rollExpeditionXalians(POOL_SIZE, seed);
-	const { array: shuffled } = shuffleWithRng(pool, createRngState(`${seed}-rosterbuild`));
-	return {
-		rosterA: shuffled.slice(0, ROSTER_SIZE),
-		rosterB: shuffled.slice(ROSTER_SIZE, ROSTER_SIZE * 2),
-	};
-}
-
 class ReclamationPage extends React.Component {
 	state = {
 		seed: seedFromQueryOrDefault(),
 		match: null,
 		matchKey: 0,
+		mode: readMode(),
+	};
+
+	setMode = (mode) => {
+		storeMode(mode);
+		this.setState({ mode });
 	};
 
 	startMatch = () => {
@@ -64,7 +81,7 @@ class ReclamationPage extends React.Component {
 	};
 
 	render() {
-		const { match, seed, matchKey } = this.state;
+		const { match, seed, matchKey, mode } = this.state;
 
 		if (match) {
 			return (
@@ -74,12 +91,14 @@ class ReclamationPage extends React.Component {
 						<header className="rec-masthead">
 							<span className="g-kicker">Kozrak's Charter</span>
 							<h1 className="rec-masthead-title">Reclamation</h1>
+							<ModeSwitch mode={mode} onChange={this.setMode} compact />
 							<span className="g-mono rec-masthead-seed">seed {seed}</span>
 						</header>
 						<ReclamationMatch
 							key={matchKey}
 							initialMatch={match}
 							seed={seed}
+							mode={mode}
 							onNewExpedition={this.newExpedition}
 						/>
 					</div>
@@ -134,15 +153,23 @@ class ReclamationPage extends React.Component {
 							</div>
 
 							<ul className="rec-charter-rules">
-								<li><strong>Reserve.</strong> The {ROSTER_SIZE - SENDABLE} creatures you never send are your reserve, chosen as you go.</li>
+								<li><strong>Roster.</strong> Your {ROSTER_SIZE} are generated from the Encyclopedia's species, dealt by the seed. The {ROSTER_SIZE - SENDABLE} you never send are your reserve, chosen as you go.</li>
 								<li><strong>Fall back.</strong> The side that moves first on a world may, once, move its first creature to another site without spending a turn.</li>
 								<li><strong>Hidden.</strong> A stealthy creature may be sent hidden. The rival learns that you sent something, not what or where.</li>
 							</ul>
 
 							<div className="rec-intro-actions">
-								<button type="button" className="g-btn g-btn--primary" onClick={this.startMatch}>
-									Mount the expedition
-								</button>
+							<div className="rec-intro-mode">
+								<ModeSwitch mode={mode} onChange={this.setMode} />
+								<span className="rec-intro-mode-text">
+									{mode === 'simple'
+										? 'Simple: one recommended move each turn, orders by nature, go. Switch any time.'
+										: 'Advanced: every order, every number, hidden sends, the log and the dossiers.'}
+								</span>
+							</div>
+							<button type="button" className="g-btn g-btn--primary" onClick={this.startMatch}>
+								Mount the expedition
+							</button>
 								<span className="rec-intro-seed g-mono">Add ?seed={seed} to the address to replay this expedition.</span>
 							</div>
 						</aside>
