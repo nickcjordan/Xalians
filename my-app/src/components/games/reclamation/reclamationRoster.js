@@ -48,6 +48,26 @@ export function siteHoldsFor(record, view, you) {
 	});
 }
 
+// the three sites agree on a creature's hold more often than not; when they do, one
+// strip says it and three would only repeat it (Nick, 2026-09-04)
+export function holdsAgree(holds) {
+	if (!holds || holds.length === 0) {
+		return true;
+	}
+	const first = holds[0];
+	return holds.every((h) => Math.abs(h.hold - first.hold) < 0.05 && h.strainLevel === first.strainLevel && h.isHome === first.isHome);
+}
+
+function HoldHere({ h, label }) {
+	return (
+		<span className="rec-slot-here" title={`Holds ${formatHold(h.hold)} on this world${h.strainLevel !== 'none' ? `; the sites take ${formatHold(h.unstrained - h.hold)} of it` : ''}${h.isHome ? '; home ground' : ''}`}>
+			<span className="rec-slot-meter-label">{label || 'hold here'}</span>
+			<HoldMeter hold={h.hold} unstrained={h.unstrained} isHome={h.isHome} strainLevel={h.strainLevel} mine />
+			<span className="rec-slot-meter-value">{formatHold(h.hold)}</span>
+		</span>
+	);
+}
+
 function BaseHoldRow({ value }) {
 	return (
 		<span className="rec-slot-meter-row">
@@ -71,6 +91,7 @@ export function RosterSlot({
 	onInspect,
 	onHover,
 	compact,
+	simple,
 }) {
 	const el = record.element.primary;
 	const classes = ['rec-slot', `rec-slot--${slot.state}`, `g-el-${el}`];
@@ -109,8 +130,9 @@ export function RosterSlot({
 						{inHand && suggested && <span className="rec-slot-tag rec-slot-tag--suggested">suggested</span>}
 						{inHand && stealthy && <span className="rec-slot-tag rec-slot-tag--stealthy" title="Can be sent hidden">stealthy</span>}
 					</span>
-					<BaseHoldRow value={baseHold(record)} />
-					{inHand && holds && (
+					{(!simple || !inHand || !holds) && <BaseHoldRow value={baseHold(record)} />}
+					{simple && inHand && holds && holdsAgree(holds) && <HoldHere h={holds[0]} />}
+					{inHand && holds && (!simple || !holdsAgree(holds)) && (
 						<span className="rec-slot-sites" aria-label="Hold at each site of this world">
 							{holds.map((h) => (
 								<span
@@ -151,6 +173,7 @@ function ReclamationRoster({
 	onHover,
 	disabled,
 	compact,
+	simple,
 }) {
 	const inHand = (view.players[you].roster || []).length;
 	return (
@@ -173,6 +196,7 @@ function ReclamationRoster({
 							onInspect={onInspect}
 							onHover={onHover}
 							compact={compact}
+							simple={simple}
 						/>
 					);
 				})}

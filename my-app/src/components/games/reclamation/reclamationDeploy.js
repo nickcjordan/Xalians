@@ -1,5 +1,5 @@
 import React from 'react';
-import ReclamationRoster, { siteHoldsFor } from './reclamationRoster';
+import ReclamationRoster, { siteHoldsFor, holdsAgree } from './reclamationRoster';
 import XalianImage from '../../xalianImage';
 import { HoldMeter } from './reclamationFigure';
 import { speciesLabel, formatHold } from './reclamationNarration';
@@ -104,7 +104,9 @@ function ReclamationDeploy({
 		heading = 'Choose a creature';
 		lead = sendsLeft === 0
 			? `You have sent all ${SENDABLE} this expedition allows. The rest are your reserve.`
-			: 'Each slot shows what the creature would hold at every site of this world.';
+			: advanced
+				? 'Each slot shows what the creature would hold at every site of this world.'
+				: 'Each slot shows how firmly the creature would hold a site on this world.';
 	}
 
 	return (
@@ -126,7 +128,7 @@ function ReclamationDeploy({
 				{step === 1 && (
 					<span className="rec-hold-legend" title="Hold is how firmly a creature keeps a site: acts strike at it, and the Court gives the site to the side that still holds more.">
 						<HoldMeter hold={12} unstrained={16} strainLevel="strained" mine small />
-						<span className="rec-hold-legend-text">hold, and what a site would take from it</span>
+						<span className="rec-hold-legend-text">the strip is hold; the hatched tail is what the site takes</span>
 					</span>
 				)}
 			</header>
@@ -139,7 +141,7 @@ function ReclamationDeploy({
 						</span>
 						<span className="rec-chosen-body">
 							<span className="rec-chosen-name">{speciesLabel(armed)}</span>
-							<span className="rec-chosen-sub g-mono">{elementName(armed.element.primary).toLowerCase()} · {archetypeLabel(armed.archetype).toLowerCase()} · base hold {formatHold(baseHold(armed))}</span>
+							<span className="rec-chosen-sub g-mono">{elementName(armed.element.primary).toLowerCase()} · {archetypeLabel(armed.archetype).toLowerCase()}{advanced ? ` · base hold ${formatHold(baseHold(armed))}` : ''}</span>
 						</span>
 						<button type="button" className="g-btn rec-chosen-change" onClick={onDisarm} data-change-creature>Change</button>
 					</div>
@@ -147,7 +149,15 @@ function ReclamationDeploy({
 					<p className="rec-deploy-lead g-body rec-chosen-cue">
 						Press a site on the table. Each one shows what {speciesLabel(armed)} would hold there and how the balance would shift.
 					</p>
-					<span className="rec-slot-sites rec-chosen-sites" aria-label="Hold at each site of this world">
+					{!advanced && holdsAgree(holds) && (
+						<span className="rec-chosen-here">
+							<span className="rec-slot-meter-label">hold here</span>
+							<HoldMeter hold={holds[0].hold} unstrained={holds[0].unstrained} isHome={holds[0].isHome} strainLevel={holds[0].strainLevel} mine />
+							<span className="rec-slot-meter-value">{formatHold(holds[0].hold)}</span>
+							<span className="rec-chosen-here-note">the same at every site of this world</span>
+						</span>
+					)}
+					<span className={`rec-slot-sites rec-chosen-sites${!advanced && holdsAgree(holds) ? ' rec-chosen-sites--hidden' : ''}`} aria-label="Hold at each site of this world">
 						{holds.map((h) => (
 							<button
 								type="button"
@@ -188,6 +198,7 @@ function ReclamationDeploy({
 					onInspect={onInspect}
 					onHover={onHoverRecord}
 					disabled={!yourTurn || me.passed || sendsLeft === 0}
+					simple={!advanced}
 				/>
 			)}
 

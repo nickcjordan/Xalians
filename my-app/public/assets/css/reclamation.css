@@ -3526,3 +3526,20 @@
 	letter-spacing: var(--g-track-label);
 	font-family: var(--g-font-stencil);
 }
+
+/* simple mode: one hold on this world per slot, three only when the sites differ */
+.rec-slot-here,
+.rec-chosen-here {
+	display: grid;
+	grid-template-columns: 44px minmax(0, 1fr) 30px;
+	align-items: center;
+	gap: var(--g-2);
+}
+.rec-chosen-here { padding: var(--g-2) var(--g-3) 0; }
+.rec-chosen-here-note {
+	grid-column: 1 / -1;
+	font-family: var(--g-font-mono);
+	font-size: 0.5625rem;
+	color: var(--g-ink-low);
+}
+.rec-chosen-sites--hidden { display: none; }
