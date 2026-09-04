@@ -140,8 +140,8 @@ export function RosterSlot({
 									className={`rec-slot-site g-el-${h.site.world.element}${best && best.site.id === h.site.id && holds.length > 1 ? ' rec-slot-site--best' : ''} rec-slot-site--${h.strainLevel}${h.isHome ? ' rec-slot-site--home' : ''}`}
 									title={`${h.site.world.planet}, at ${h.site.name}: holds ${formatHold(h.hold)}${h.isHome ? ', home ground' : ''}${h.strainLevel !== 'none' ? `, ${h.strainLevel}` : ''}`}
 								>
-									<span className="rec-slot-site-index">{h.index + 1}</span>
-									<HoldMeter hold={h.hold} unstrained={h.unstrained} isHome={h.isHome} strainLevel={h.strainLevel} mine small />
+									<span className="rec-slot-site-world"><span className="rec-slot-site-index">{h.index + 1}</span>{h.site.world.planet}{h.isHome ? ' · home' : ''}</span>
+									<HoldMeter hold={h.hold} unstrained={h.unstrained} isHome={h.isHome} strainLevel={h.strainLevel} small />
 									<span className="rec-slot-site-hold">{formatHold(h.hold)}</span>
 								</span>
 							))}
