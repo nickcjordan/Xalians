@@ -4,6 +4,7 @@ import * as lore from '../../lore';
 import Prose from './Prose';
 import XalianImage from '../xalianImage';
 import Connections from './Connections';
+import Pronunciation from './Pronunciation';
 import { useVisit, useReadMark, markRead } from './trail';
 import './WorldView.css';
 
@@ -163,6 +164,7 @@ export default function WorldView() {
 
             <header className="enc-designation">
                 <h1 className="g-title">{world.name}</h1>
+                <Pronunciation pronunciation={(lore.getEntry(world.key) || {}).pronunciation} />
                 <div className="enc-chips">
                     <span className="g-chip">{world.element}</span>
                     <span className="g-chip g-chip--outline">Survey Record</span>

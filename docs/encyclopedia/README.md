@@ -18,7 +18,8 @@ The single public canon reference for the world of Xalia. Ratified 2026-09-01: t
   "definition": "…verbatim canonical prose…",
   "related": ["mercurius-machine", "king-kozrak"],
   "element": "(planet entries only)",
-  "aliases": "(optional string[]) -- other proper names that unambiguously mean this entry, e.g. [\"Kozrak\"]"
+  "aliases": "(optional string[]) -- other proper names that unambiguously mean this entry, e.g. [\"Kozrak\"]",
+  "pronunciation": "(optional) { respelling, ipa } -- coined names only; absent means the name reads as written"
 }
 ```
 
