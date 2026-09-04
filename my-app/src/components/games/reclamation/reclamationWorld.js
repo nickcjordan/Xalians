@@ -307,7 +307,7 @@ function ReclamationWorld({
 									{ghost && (
 										<span className="rec-ghost">
 											<span className="rec-ghost-cta">{ghost.preview ? 'would hold' : 'send here'}</span>
-											<HoldMeter hold={ghost.hold} unstrained={ghost.unstrained} isHome={ghost.isHome} strainLevel={ghost.strainLevel} size="full" />
+											<HoldMeter hold={ghost.hold} unstrained={ghost.unstrained} isHome={ghost.isHome} strainLevel={ghost.strainLevel} size="large" />
 											<span className="rec-ghost-value">{formatHold(ghost.hold)}</span>
 
 										</span>
