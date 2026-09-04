@@ -24,7 +24,7 @@ const path = require('path');
 const ROOT = path.join(__dirname, '..');
 const J = (...parts) => JSON.parse(fs.readFileSync(path.join(ROOT, ...parts), 'utf8'));
 
-const SITE = 'https://xalians.com';
+const SITE = 'https://www.xalians.com';
 const URLS = {
 	md: `${SITE}/lore/xalia.md`,
 	txt: `${SITE}/lore/xalia.txt`,
