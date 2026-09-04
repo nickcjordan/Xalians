@@ -61,7 +61,7 @@ def main():
         a = np.array(g)
         t = otsu(a) if args.thr == 'auto' else int(args.thr)
         bw = a < t
-        svg, n = trace_svg(bw, args.speck * args.upscale * args.upscale, args.alphamax, args.opttolerance)
+        svg, n = trace_svg(~bw, args.speck * args.upscale * args.upscale, args.alphamax, args.opttolerance)  # potracer treats False as foreground
         (out / f'{p.stem}.svg').write_text(svg, encoding='utf-8')
         bw_img = Image.fromarray((~bw * 255).astype('uint8'))
         bw_img.save(out / f'{p.stem}-bw.png')
