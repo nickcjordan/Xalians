@@ -3576,104 +3576,313 @@
 }
 
 /* -------------------------------------------------------------------------
-   THE HOLD DIAL (Nick, 2026-09-04, fifth pass)
+   THE PRESSURE GAUGE AND THE BENCH (Nick, 2026-09-04, sixth pass)
 
-   Hold is read off an instrument: a half-round face printed 0 to 20 with a brass
-   over-range sector to 30 for home ground, a bone needle, a dim second needle for
-   what the site's environment takes. The face is neutral so the dial says only the
-   quantity; the side is the ground and the world is the rim of the chip around it.
-   The scale is fixed everywhere the dial appears.
+   Hold is read off a pressure gauge on a fixed scale: a round brass bezel, a dark
+   face under glass, 270 degrees printed 0 to 20 with the over-range to 30 hatched in
+   brass, a needle from the bottom. Chip size carries ticks only; numerals print at
+   full size where they can be read. The squad stands on a bench under the worlds,
+   a plinth per creature with three lamps for the three worlds; the reading itself
+   is shown once, on the world, when a creature is pointed at or lifted.
    ------------------------------------------------------------------------- */
 
 .rec-gauge {
 	display: inline-block;
-	width: 48px;
-	height: 30px;
 	line-height: 0;
 	vertical-align: middle;
 	flex: 0 0 auto;
 }
 
-.rec-gauge--small { width: 38px; height: 24px; }
+.rec-gauge--chip { width: 34px; height: 34px; }
+.rec-gauge--full { width: 64px; height: 64px; }
+.rec-gauge--large { width: 96px; height: 96px; }
 
 .rec-gauge-face { width: 100%; height: 100%; overflow: visible; }
 
-.rec-gauge-bezel {
-	fill: var(--g-void);
-	stroke: var(--g-brass-dark);
-	stroke-width: 1;
-}
+.rec-gauge-bezel-dark { fill: var(--g-brass-dark); }
+.rec-gauge-bezel { fill: var(--g-brass); }
+.rec-gauge-glass { fill: var(--g-hull-lo); stroke: var(--g-seam); stroke-width: 1; }
 
-.rec-gauge-range {
-	fill: none;
-	stroke: color-mix(in srgb, var(--g-ink-low) 70%, transparent);
-	stroke-width: 1.5;
-}
+.rec-gauge-range { fill: none; stroke: var(--g-ink-mid); stroke-width: 1.5; }
+.rec-gauge-over { fill: none; stroke: var(--g-brass); stroke-width: 5; stroke-dasharray: 2 2; opacity: 0.9; }
 
-.rec-gauge-over {
-	fill: none;
-	stroke: color-mix(in srgb, var(--g-brass) 70%, transparent);
-	stroke-width: 1.5;
-}
-
-.rec-gauge-lost {
-	fill: none;
-	stroke: var(--g-hazard);
-	stroke-width: 3;
-	stroke-dasharray: 1.5 1.5;
-	opacity: 0.9;
-}
-
+.rec-gauge-lost { fill: none; stroke: var(--g-hazard); stroke-width: 5; stroke-dasharray: 1.5 1.5; opacity: 0.9; }
 .rec-gauge-lost--severe { stroke: var(--g-lamp-red); }
-.rec-gauge-lost--stagger { stroke: var(--g-lamp-red); stroke-dasharray: none; opacity: 0.7; }
+.rec-gauge-lost--stagger { stroke: var(--g-lamp-red); stroke-dasharray: none; opacity: 0.75; }
 
-.rec-gauge-tick {
-	stroke: var(--g-ink-low);
-	stroke-width: 1;
+.rec-gauge-tick { stroke: var(--g-ink-low); stroke-width: 1; }
+.rec-gauge-tick--major { stroke: var(--g-ink); stroke-width: 1.8; }
+.rec-gauge-tick--over { stroke: var(--g-brass-light); }
+.rec-gauge--chip .rec-gauge-tick { stroke-width: 2; }
+.rec-gauge--chip .rec-gauge-tick--major { stroke-width: 3; }
+
+.rec-gauge-numeral {
+	font-family: var(--g-font-mono);
+	font-size: 9px;
+	fill: var(--g-ink);
 }
+.rec-gauge-numeral--over { fill: var(--g-brass-light); }
 
-.rec-gauge-tick--major { stroke: var(--g-ink-mid); stroke-width: 1.25; }
-.rec-gauge-tick--over { stroke: var(--g-brass); }
+.rec-gauge-legend {
+	font-family: var(--g-font-stencil);
+	font-size: 7px;
+	letter-spacing: 1.5px;
+	fill: var(--g-ink-low);
+}
 
 .rec-gauge-needle {
 	stroke: var(--g-ink);
-	stroke-width: 1.75;
+	stroke-width: 2.2;
 	stroke-linecap: round;
-	transition: x2 var(--g-move), y2 var(--g-move);
+	transition: x1 var(--g-move), y1 var(--g-move), x2 var(--g-move), y2 var(--g-move);
 }
-
-.rec-gauge-needle--ghost {
-	stroke: var(--g-ink-low);
-	stroke-width: 1.25;
-	stroke-dasharray: 1.5 1.5;
-}
-
+.rec-gauge--chip .rec-gauge-needle { stroke-width: 4; }
+.rec-gauge-needle--ghost { stroke: var(--g-ink-mid); stroke-width: 1.3; stroke-dasharray: 2 2; }
+.rec-gauge--chip .rec-gauge-needle--ghost { stroke-width: 2.5; }
 .rec-gauge--home .rec-gauge-needle { stroke: var(--g-brass-light); }
 
-.rec-gauge-hub {
-	fill: var(--g-hull-hi);
-	stroke: var(--g-brass);
-	stroke-width: 0.75;
+.rec-gauge-hub { fill: var(--g-hull-hi); stroke: var(--g-brass); stroke-width: 1.2; }
+
+/* the glass: a soft catch of light, top left, and a shade toward the rim */
+.rec-gauge-shine {
+	fill: none;
+	stroke: rgba(255, 244, 214, 0.08);
+	stroke-width: 6;
+	pointer-events: none;
 }
 
-/* where the dial sits: chips, the chosen card, the figure foot, the front line */
-.rec-slot-site,
-.rec-chosen-site {
-	grid-template-columns: auto minmax(0, 1fr);
-	grid-template-rows: auto auto;
-	align-items: center;
-	justify-items: start;
-	row-gap: 2px;
+/* where the gauge sits */
+.rec-piece .rec-figure-foot { grid-template-columns: auto minmax(0, 1fr); justify-items: start; align-items: center; }
+.rec-ghost { align-items: center; gap: var(--g-3); }
+.rec-ghost .rec-ghost-value { font-size: var(--g-size-lead); }
+.rec-slot-meter-row { grid-template-columns: 26px auto minmax(0, 1fr); align-items: center; }
+
+/* --- the bench ------------------------------------------------------------ */
+
+.rec-bench {
+	flex: 0 0 auto;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+	padding: var(--g-3) var(--g-4);
 }
-.rec-slot-site-hold { text-align: right; justify-self: end; font-size: var(--g-size-small); }
-.rec-gauge--small { width: 42px; height: 26px; }
-.rec-slot-here,
-.rec-chosen-here { grid-template-columns: 44px auto minmax(0, 1fr); }
-.rec-slot-meter-row { align-items: center; }
-.rec-piece .rec-figure-foot { grid-template-columns: auto minmax(0, 1fr); justify-items: start; }
-.rec-ghost { align-items: center; }
-.rec-hold-legend { grid-template-columns: auto minmax(0, 1fr); }
+
+.rec-bench-head {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto auto;
+	align-items: center;
+	gap: var(--g-2) var(--g-4);
+}
+
+.rec-bench-title { min-width: 0; }
+
+.rec-bench-heading {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-lead);
+	font-weight: 600;
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+	margin: 0;
+	color: var(--g-ink);
+	animation: rec-turn-in 300ms ease-out both;
+}
+
+.rec-bench-lead {
+	margin: 0;
+	font-size: var(--g-size-small);
+	color: var(--g-ink-mid);
+}
+
+.rec-bench-actions { display: inline-flex; gap: var(--g-2); align-items: center; }
+
+.rec-plinths {
+	display: grid;
+	grid-auto-flow: column;
+	grid-auto-columns: minmax(84px, 1fr);
+	gap: var(--g-2);
+	overflow-x: auto;
+	padding-bottom: 2px;
+	scrollbar-width: thin;
+}
+
+.rec-plinth {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	background: var(--g-hull-lo);
+	border: var(--g-hairline) solid var(--g-seam);
+	border-bottom: 2px solid var(--rec-you);
+	border-radius: var(--g-radius);
+	box-shadow: var(--g-recess);
+	transition: background var(--g-move), border-color var(--g-move), transform var(--g-move), opacity var(--g-move);
+}
+
+.rec-plinth:hover,
+.rec-plinth:focus-within { background: var(--g-hull); }
+
+.rec-plinth-main {
+	appearance: none;
+	background: none;
+	border: 0;
+	padding: var(--g-2) var(--g-1) var(--g-1);
+	color: inherit;
+	font: inherit;
+	cursor: pointer;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 3px;
+	min-width: 0;
+	width: 100%;
+}
+
+.rec-plinth-main:disabled { cursor: default; }
+.rec-plinth-main:focus-visible { outline: 1px solid var(--rec-you); outline-offset: -1px; }
+
+.rec-plinth-stage {
+	position: relative;
+	width: 48px;
+	height: 44px;
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+}
+
+.rec-plinth-base {
+	position: absolute;
+	left: 4px;
+	right: 4px;
+	bottom: 0;
+	height: 8px;
+	border-radius: 50%;
+	background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.7), transparent 70%);
+}
+
+.rec-plinth-art {
+	position: relative;
+	width: 44px;
+	height: 44px;
+	transition: transform var(--g-move);
+}
+
+.rec-plinth-name {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+	color: var(--g-ink);
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* the three lamps: one per world in the frame, in the world's element */
+.rec-lamps { display: inline-flex; gap: 5px; padding: 2px 0; }
+
+.rec-lamp {
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+	border: var(--g-hairline) solid color-mix(in srgb, var(--g-el) 50%, var(--g-seam));
+	background: color-mix(in srgb, var(--g-el) 10%, var(--g-hull-lo));
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8);
+	transition: background var(--g-move), box-shadow var(--g-move);
+}
+
+.rec-lamp--1 { background: color-mix(in srgb, var(--g-el) 45%, var(--g-hull-lo)); }
+.rec-lamp--2 { background: var(--g-el); box-shadow: 0 0 5px color-mix(in srgb, var(--g-el) 70%, transparent); }
+.rec-lamp--home { outline: 1px solid var(--g-brass-light); outline-offset: 1px; }
+
+.rec-plinth-tag,
+.rec-plinth-mark {
+	font-family: var(--g-font-mono);
+	font-size: 0.5625rem;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--g-ink-low);
+}
+
+.rec-plinth-marks { display: inline-flex; gap: 4px; }
+.rec-plinth-mark { padding: 0 3px; border: 1px solid currentColor; border-radius: 2px; }
+.rec-plinth-mark--suggested { color: var(--g-brass-light); }
+.rec-plinth-tag--sent { color: var(--g-ink-mid); }
+.rec-plinth-tag--routed { color: var(--g-lamp-red); }
+
+.rec-plinth-read {
+	appearance: none;
+	background: none;
+	border: 0;
+	border-top: var(--g-hairline) solid var(--g-seam);
+	padding: 2px;
+	font-family: var(--g-font-mono);
+	font-size: 0.5625rem;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--g-ink-low);
+	cursor: pointer;
+}
+.rec-plinth-read:hover { color: var(--g-ink); }
+
+/* states */
+.rec-plinth--sent .rec-plinth-art,
+.rec-plinth--holding .rec-plinth-art,
+.rec-plinth--routed .rec-plinth-art,
+.rec-plinth--away .rec-plinth-art { filter: grayscale(1); opacity: 0.55; }
+.rec-plinth--sent,
+.rec-plinth--holding,
+.rec-plinth--routed,
+.rec-plinth--away { border-bottom-color: var(--g-seam); }
+.rec-plinth--disabled { opacity: 0.6; }
+.rec-plinth--suggested { border-color: color-mix(in srgb, var(--g-brass-light) 60%, var(--g-seam)); }
+
+/* lifted: the figure rises and the plinth takes the Duel's corner brackets */
+.rec-plinth--armed { background: var(--g-hull); border-color: var(--rec-you); }
+.rec-plinth--armed .rec-plinth-art { transform: translateY(-6px); }
+.rec-plinth--armed .rec-plinth-base { opacity: 0.4; }
+.rec-plinth--armed::before,
+.rec-plinth--armed::after {
+	content: '';
+	position: absolute;
+	width: 8px;
+	height: 8px;
+	border: 2px solid var(--rec-you);
+	pointer-events: none;
+}
+.rec-plinth--armed::before { top: -2px; left: -2px; border-right: 0; border-bottom: 0; }
+.rec-plinth--armed::after { bottom: -2px; right: -2px; border-left: 0; border-top: 0; }
+
+@media (max-width: 1100px) {
+	.rec-plinths { grid-auto-columns: minmax(76px, 1fr); }
+}
+
+@media (max-width: 760px) {
+	.rec-bench { padding: var(--g-2) var(--g-3); }
+	.rec-bench-head { grid-template-columns: minmax(0, 1fr); }
+	.rec-bench-actions { flex-wrap: wrap; }
+	.rec-plinths { grid-auto-columns: 84px; }
+	.rec-gauge--full { width: 52px; height: 52px; }
+}
 
 @media (prefers-reduced-motion: reduce) {
-	.rec-gauge-needle { transition: none; }
+	.rec-gauge-needle, .rec-plinth, .rec-plinth-art { transition: none; }
+	.rec-bench-heading { animation: none; }
 }
+
+/* the bench takes height from the worlds, so the worlds keep a floor and the page
+   scrolls rather than the figures hiding inside a shrunken ground */
+.rec-console--match { height: auto; min-height: 100vh; overflow: visible; }
+.rec-shell--match, .rec-match, .rec-body, .rec-table { overflow: visible; }
+.rec-sites { min-height: 340px; }
+.rec-site-floor { min-height: 170px; }
+.rec-world, .rec-sites { flex: 0 0 auto; }
+
+/* quiet parts keep their room so a preview never shifts the card under the pointer */
+.rec-balance--hidden { visibility: hidden; }
+.rec-env-slot { display: contents; }
+.rec-env-slot--quiet .rec-env { visibility: hidden; }
+
+/* the front line keeps room for the full gauge, so a preview never shifts the ground */
+.rec-site-floor .rec-site-midline { min-height: 64px; }
+.rec-gauge--full { width: 56px; height: 56px; }

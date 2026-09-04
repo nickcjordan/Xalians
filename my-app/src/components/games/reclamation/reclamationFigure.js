@@ -28,38 +28,36 @@ import { team } from '../../../constants/designTokens';
 	- badge: a small tag on the plate (the act ordered, during Orders)
 */
 export const FIGURE_SIZE = 56;
-// The dial's printed range. Base hold runs 0 to 20; the sector past 20 is home ground,
+// The gauge's printed range. Base hold runs 0 to 20; the sector past 20 is home ground,
 // where a native can carry up to 30. The scale is fixed so a reading always means the
 // same thing (Nick, 2026-09-04: "a consistent scale so we always know what the max is").
 export const HOLD_SCALE = 30;
 export const HOLD_PRINTED_MAX = 20;
 
 /*
-	HoldMeter: hold as an instrument dial. A half-round face printed 0 to 20 with the
-	brass over-range sector to 30 for home ground, a bone needle at the reading, and
-	the number beneath it. What the site's environment takes is a second, dim needle at
-	the unstrained reading with a hazard arc between the two (red when severe); a stagger
-	is a red arc from the halved reading back to the printed one. The face is neutral
-	on purpose: the side is said by the ground the figure stands on and the world by
-	the chip's rim, so the dial carries only the quantity.
+	HoldMeter: hold as a pressure gauge (Nick, 2026-09-04: a real instrument, kept
+	legible). A round brass bezel, a dark face under glass, a 270 degree scale printed
+	0 to 20 with the over-range to 30 hatched in brass, a needle with a counterweight
+	tail that points down at zero and climbs past the top. What the site's environment
+	takes is a dim second needle at the unstrained reading with a hazard arc between
+	the two (red when severe); a stagger is a red arc from the halved reading back to
+	the printed one. At chip size the face carries ticks only and the needle is heavier;
+	numerals print at full size and above, where they can be read (Nick).
 
-	Props are unchanged from the strip it replaces: hold, unstrained, printedHold,
-	isHome, strainLevel, staggered, small. `mine` is accepted and ignored.
+	Props: hold, unstrained, printedHold, isHome, strainLevel, staggered, small (chip
+	size) or size: 'chip' | 'full' | 'large'. `mine` is accepted and ignored: the face
+	is neutral and the side is said by the ground.
 */
-const GAUGE_W = 48;
-const GAUGE_H = 30;
-const GAUGE_CX = 24;
-const GAUGE_CY = 26;
-const GAUGE_R = 19;
+const GAUGE_SWEEP = 270;
 
 function gaugeAngle(value) {
-	const v = Math.max(0, Math.min(HOLD_SCALE, value));
-	return Math.PI - (v / HOLD_SCALE) * Math.PI;
+	const t = Math.max(0, Math.min(HOLD_SCALE, value)) / HOLD_SCALE;
+	return ((225 - GAUGE_SWEEP * t) * Math.PI) / 180;
 }
 
 function gaugePoint(value, radius) {
 	const a = gaugeAngle(value);
-	return { x: GAUGE_CX + radius * Math.cos(a), y: GAUGE_CY - radius * Math.sin(a) };
+	return { x: 50 + radius * Math.cos(a), y: 50 - radius * Math.sin(a) };
 }
 
 function gaugeArc(from, to, radius) {
@@ -70,12 +68,15 @@ function gaugeArc(from, to, radius) {
 	}
 	const p1 = gaugePoint(lo, radius);
 	const p2 = gaugePoint(hi, radius);
-	return `M ${p1.x.toFixed(2)} ${p1.y.toFixed(2)} A ${radius} ${radius} 0 0 1 ${p2.x.toFixed(2)} ${p2.y.toFixed(2)}`;
+	const large = ((hi - lo) / HOLD_SCALE) * GAUGE_SWEEP > 180 ? 1 : 0;
+	return `M ${p1.x.toFixed(2)} ${p1.y.toFixed(2)} A ${radius} ${radius} 0 ${large} 1 ${p2.x.toFixed(2)} ${p2.y.toFixed(2)}`;
 }
 
-const GAUGE_TICKS = [0, 5, 10, 15, 20, 25, 30];
+const GAUGE_NUMERALS = [0, 10, 20, 30];
 
-export function HoldMeter({ hold, unstrained, printedHold, isHome, strainLevel, staggered, small }) {
+export function HoldMeter({ hold, unstrained, printedHold, isHome, strainLevel, staggered, small, size }) {
+	const sz = size || (small ? 'chip' : 'full');
+	const chip = sz === 'chip';
 	const lostToStrain = typeof unstrained === 'number' && unstrained > hold ? unstrained - hold : 0;
 	const lostToStagger = staggered && typeof printedHold === 'number' && printedHold > hold ? printedHold - hold : 0;
 	const title = [
@@ -84,33 +85,39 @@ export function HoldMeter({ hold, unstrained, printedHold, isHome, strainLevel, 
 		lostToStagger > 0 ? `staggered, half of ${formatHold(printedHold)}` : null,
 		isHome ? 'home ground, past 20' : null,
 	].filter(Boolean).join(', ');
-	const needle = gaugePoint(hold, GAUGE_R - 3);
-	const ghost = lostToStrain > 0 ? gaugePoint(unstrained, GAUGE_R - 3) : null;
+	const R = 44;
+	const needle = gaugePoint(hold, R - (chip ? 9 : 11));
+	const tail = gaugePoint(hold + HOLD_SCALE / 2, chip ? 7 : 9);
+	const ghost = lostToStrain > 0 ? gaugePoint(unstrained, R - 12) : null;
 	const severe = strainLevel === 'severe';
+	const ticks = [];
+	for (let t = 0; t <= HOLD_SCALE; t += chip ? 5 : 2.5) {
+		const major = t % 10 === 0;
+		const mid = t % 5 === 0;
+		const a = gaugePoint(t, R - 7);
+		const b = gaugePoint(t, R - (major ? 15 : mid ? 12 : 10));
+		ticks.push(<line key={t} className={`rec-gauge-tick${major ? ' rec-gauge-tick--major' : ''}${t > HOLD_PRINTED_MAX ? ' rec-gauge-tick--over' : ''}`} x1={a.x.toFixed(2)} y1={a.y.toFixed(2)} x2={b.x.toFixed(2)} y2={b.y.toFixed(2)} />);
+	}
 	return (
-		<span className={`rec-gauge${small ? ' rec-gauge--small' : ''}${isHome ? ' rec-gauge--home' : ''}`} title={title} aria-label={title} role="img">
-			<svg className="rec-gauge-face" viewBox={`0 0 ${GAUGE_W} ${GAUGE_H}`} aria-hidden="true">
-				{/* the face */}
-				<path className="rec-gauge-bezel" d={`${gaugeArc(0, HOLD_SCALE, GAUGE_R + 1)} L ${GAUGE_CX + GAUGE_R + 1} ${GAUGE_CY} Z`} />
-				{/* the printed range, and the over-range sector for home ground */}
-				<path className="rec-gauge-range" d={gaugeArc(0, HOLD_PRINTED_MAX, GAUGE_R - 1)} />
-				<path className="rec-gauge-over" d={gaugeArc(HOLD_PRINTED_MAX, HOLD_SCALE, GAUGE_R - 1)} />
-				{/* what strain took: an arc from the reading out to what it would have been */}
-				{lostToStrain > 0 && <path className={`rec-gauge-lost${severe ? ' rec-gauge-lost--severe' : ''}`} d={gaugeArc(hold, unstrained, GAUGE_R - 1)} />}
-				{/* what a stagger took */}
-				{lostToStagger > 0 && <path className="rec-gauge-lost rec-gauge-lost--stagger" d={gaugeArc(hold, printedHold, GAUGE_R - 1)} />}
-				{/* ticks: majors at 0, 10, 20, 30; minors between */}
-				{GAUGE_TICKS.map((t) => {
-					const major = t % 10 === 0;
-					const a = gaugePoint(t, GAUGE_R - 1);
-					const b = gaugePoint(t, GAUGE_R - (major ? 5 : 3));
-					return <line key={t} className={`rec-gauge-tick${major ? ' rec-gauge-tick--major' : ''}${t > HOLD_PRINTED_MAX ? ' rec-gauge-tick--over' : ''}`} x1={a.x.toFixed(2)} y1={a.y.toFixed(2)} x2={b.x.toFixed(2)} y2={b.y.toFixed(2)} />;
+		<span className={`rec-gauge rec-gauge--${sz}${isHome ? ' rec-gauge--home' : ''}`} title={title} aria-label={title} role="img">
+			<svg className="rec-gauge-face" viewBox="0 0 100 100" aria-hidden="true">
+				<circle className="rec-gauge-bezel-dark" cx="50" cy="50" r={R + 4} />
+				<circle className="rec-gauge-bezel" cx="50" cy="50" r={R + 2} />
+				<circle className="rec-gauge-glass" cx="50" cy="50" r={R - 1} />
+				<path className="rec-gauge-range" d={gaugeArc(0, HOLD_PRINTED_MAX, R - 7)} />
+				<path className="rec-gauge-over" d={gaugeArc(HOLD_PRINTED_MAX, HOLD_SCALE, R - 7)} />
+				{lostToStagger > 0 && <path className="rec-gauge-lost rec-gauge-lost--stagger" d={gaugeArc(hold, printedHold, R - 7)} />}
+				{lostToStrain > 0 && lostToStagger === 0 && <path className={`rec-gauge-lost${severe ? ' rec-gauge-lost--severe' : ''}`} d={gaugeArc(hold, unstrained, R - 7)} />}
+				{ticks}
+				{!chip && GAUGE_NUMERALS.map((t) => {
+					const q = gaugePoint(t, R - 25);
+					return <text key={t} className={`rec-gauge-numeral${t > HOLD_PRINTED_MAX ? ' rec-gauge-numeral--over' : ''}`} x={q.x.toFixed(2)} y={(q.y + 3.5).toFixed(2)} textAnchor="middle">{t}</text>;
 				})}
-				{/* the unstrained reading, dim */}
-				{ghost && <line className="rec-gauge-needle rec-gauge-needle--ghost" x1={GAUGE_CX} y1={GAUGE_CY} x2={ghost.x.toFixed(2)} y2={ghost.y.toFixed(2)} />}
-				{/* the reading */}
-				<line className="rec-gauge-needle" x1={GAUGE_CX} y1={GAUGE_CY} x2={needle.x.toFixed(2)} y2={needle.y.toFixed(2)} />
-				<circle className="rec-gauge-hub" cx={GAUGE_CX} cy={GAUGE_CY} r="2" />
+				{!chip && <text className="rec-gauge-legend" x="50" y="80" textAnchor="middle">HOLD</text>}
+				{ghost && <line className="rec-gauge-needle rec-gauge-needle--ghost" x1="50" y1="50" x2={ghost.x.toFixed(2)} y2={ghost.y.toFixed(2)} />}
+				<line className="rec-gauge-needle" x1={tail.x.toFixed(2)} y1={tail.y.toFixed(2)} x2={needle.x.toFixed(2)} y2={needle.y.toFixed(2)} />
+				<circle className="rec-gauge-hub" cx="50" cy="50" r={chip ? 5 : 4.5} />
+				<circle className="rec-gauge-shine" cx="50" cy="50" r={R - 1} />
 			</svg>
 		</span>
 	);
@@ -215,6 +222,7 @@ function ReclamationFigure({
 						isHome={isHome}
 						strainLevel={strainLevel}
 						staggered={staggered}
+						size="chip"
 						mine={mine}
 					/>
 				)}
