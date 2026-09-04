@@ -108,7 +108,7 @@ function ReclamationOrders({
 						</div>
 					);
 				})}
-				{units.length === 0 && <p className="g-body rec-rank-empty">You sent nothing to this world.</p>}
+				{units.length === 0 && <p className="g-body rec-rank-empty">You sent nothing this round.</p>}
 			</div>
 
 			<div className="g-screen rec-preview" aria-label="Resolution preview">
@@ -123,7 +123,7 @@ function ReclamationOrders({
 						{i + 1}. {row.isYours ? row.sentence : `${speciesLabel(row.unit.record)} (rival) acts here, orders unknown.`}
 					</div>
 				))}
-				{preview.length === 0 && <div className="g-screen-line--dim">Nothing stands on this world.</div>}
+				{preview.length === 0 && <div className="g-screen-line--dim">Nothing stands in the frame.</div>}
 			</div>
 		</div>
 	);

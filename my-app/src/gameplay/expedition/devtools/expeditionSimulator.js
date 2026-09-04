@@ -43,7 +43,9 @@ import {
 	createMatch, send, pass, order, commitOrders, relocateVanguard, getPublicState,
 	createRngState, nextRandom,
 } from '../expeditionRules.js';
-import { ROSTER_SIZE, SITES_PER_WORLD, ACT_CLASS_BY_ACTION, SENDABLE } from '../expeditionInterpretation.js';
+import {
+	ROSTER_SIZE, SITES_PER_WORLD, ACT_CLASS_BY_ACTION, SENDABLE, FRAMES_PER_MATCH, WORLDS_PER_FRAME,
+} from '../expeditionInterpretation.js';
 import { chooseSend, chooseOrders } from '../expeditionBot.js';
 import { prepare, magnitudeAgainst, baseHold, initiativeOf, strainLevel } from '../creatureOnTable.js';
 import { buildExpeditionPool } from '../roster.js';
@@ -163,8 +165,8 @@ function randomChooseSend(publicState, ownRoster, handler, rng) {
 	if (me.passed) {
 		return { type: 'pass', reason: 'already-passed' };
 	}
-	const world = publicState.world;
-	const anyOnBoard = world.sites.some((s) => (publicState.board[s.id][handler] || []).length > 0);
+	const frame = publicState.frame;
+	const anyOnBoard = frame.sites.some((s) => (publicState.board[s.id][handler] || []).length > 0);
 	const remainingSends = Math.min(SENDABLE - me.sentCount, ownRoster.length);
 	if (remainingSends <= 0) {
 		return { type: 'pass', reason: 'no-sendable-creatures' };
@@ -174,7 +176,7 @@ function randomChooseSend(publicState, ownRoster, handler, rng) {
 	}
 	const candidates = [];
 	ownRoster.forEach((record) => {
-		world.sites.forEach((site) => {
+		frame.sites.forEach((site) => {
 			candidates.push({ record, site });
 		});
 	});
@@ -186,9 +188,9 @@ function randomChooseSend(publicState, ownRoster, handler, rng) {
 }
 
 function randomChooseOrders(publicState, handler, rng) {
-	const world = publicState.world;
+	const frame = publicState.frame;
 	const orders = {};
-	world.sites.forEach((site) => {
+	frame.sites.forEach((site) => {
 		(publicState.board[site.id][handler] || []).forEach((entry) => {
 			if (!entry.record) {
 				return;
@@ -205,29 +207,29 @@ function randomChooseOrders(publicState, handler, rng) {
 // the simulator plays both sides and is allowed full information for measurement)
 // ---------------------------------------------------------------------------
 
-function siteMarginRaw(state, world, siteId) {
-	const holdA = (state.board[siteId].A || []).reduce((sum, e) => sum + entryHold(state, world, siteId, e), 0);
-	const holdB = (state.board[siteId].B || []).reduce((sum, e) => sum + entryHold(state, world, siteId, e), 0);
+function siteMarginRaw(state, frame, siteId) {
+	const holdA = (state.board[siteId].A || []).reduce((sum, e) => sum + entryHold(state, frame, siteId, e), 0);
+	const holdB = (state.board[siteId].B || []).reduce((sum, e) => sum + entryHold(state, frame, siteId, e), 0);
 	return holdA - holdB;
 }
 
-function entryHold(state, world, siteId, entry) {
-	const site = world.sites.find((s) => s.id === siteId);
-	return prepare(entry.record, site, world, entry.sentIndex).hold;
+function entryHold(state, frame, siteId, entry) {
+	const site = frame.sites.find((s) => s.id === siteId);
+	return prepare(entry.record, site, site.world, entry.sentIndex).hold;
 }
 
-function deployEndSnapshot(state, world) {
+function deployEndSnapshot(state, frame) {
 	// per-site margin (A-hold minus B-hold) and per-side counts, taken right at the
 	// moment Deploy ends (before Resolve/Judge) - this is "the leader after Deploy" used
 	// for the "resolve mattered" and relocation-flip stats.
 	const bySite = {};
-	world.sites.forEach((site) => {
+	frame.sites.forEach((site) => {
 		const a = state.board[site.id].A || [];
 		const b = state.board[site.id].B || [];
 		bySite[site.id] = {
 			countA: a.length,
 			countB: b.length,
-			marginAfterDeploy: siteMarginRaw(state, world, site.id),
+			marginAfterDeploy: siteMarginRaw(state, frame, site.id),
 		};
 	});
 	return bySite;
@@ -291,9 +293,9 @@ function runOneMatch(matchSeed, pool, rng, options) {
 		guard++;
 
 		if (state.phase === 'deploy') {
-			const worldIndex = state.worldIndex;
-			const world = state.worlds[worldIndex];
-			const worldStarter = state.starter;
+			const frameIndex = state.frameIndex;
+			const frame = state.frames[frameIndex];
+			const frameStarter = state.starter;
 			// records sent this round, keyed by recordId, so we can attach the site's
 			// judged outcome to each send once Judge runs
 			const sentThisRound = {};
@@ -310,8 +312,8 @@ function runOneMatch(matchSeed, pool, rng, options) {
 				let action = chooseSendFor(handler, publicState, ownRoster);
 
 				if (action.type === 'relocate') {
-					const fromSiteId = boardSiteOf(state, world, handler, publicState.players[handler].vanguardRecordId);
-					const marginBefore = fromSiteId ? siteMarginRaw(state, world, fromSiteId) : 0;
+					const fromSiteId = boardSiteOf(state, frame, handler, publicState.players[handler].vanguardRecordId);
+					const marginBefore = fromSiteId ? siteMarginRaw(state, frame, fromSiteId) : 0;
 					const wasLosingBefore = handler === 'A' ? marginBefore < 0 : marginBefore > 0;
 
 					const relocated = relocateVanguard(state, handler, action.siteId);
@@ -323,7 +325,7 @@ function runOneMatch(matchSeed, pool, rng, options) {
 					vanguardRelocationsThisMatch++;
 					decisions++;
 
-					const marginAfter = siteMarginRaw(state, world, action.siteId);
+					const marginAfter = siteMarginRaw(state, frame, action.siteId);
 					const isWinningAfter = handler === 'A' ? marginAfter > 0 : marginAfter < 0;
 					relocationRecords.push({ handler, wasLosingBefore, isWinningAfter, flippedToWinning: wasLosingBefore && isWinningAfter });
 
@@ -336,16 +338,16 @@ function runOneMatch(matchSeed, pool, rng, options) {
 					nextState = send(state, handler, action.recordId, action.siteId, action.hidden);
 					if (nextState) {
 						const record = state.players[handler].roster.find((r) => r.id === action.recordId);
-						const site = world.sites.find((s) => s.id === action.siteId);
+						const site = frame.sites.find((s) => s.id === action.siteId);
 						sentThisRound[action.recordId] = {
 							recordId: action.recordId,
 							record,
 							side: handler,
-							worldIndex,
+							frameIndex,
 							site: action.siteId,
 							hidden: !!action.hidden,
-							strainLevel: strainLevel(record, site, world),
-							homeGround: !!(record.provenance && record.provenance.origin && String(record.provenance.origin).toLowerCase() === String(world.planet).toLowerCase()),
+							strainLevel: strainLevel(record, site, site.world),
+							homeGround: !!(record.provenance && record.provenance.origin && String(record.provenance.origin).toLowerCase() === String(site.world.planet).toLowerCase()),
 						};
 					}
 				} else {
@@ -364,7 +366,7 @@ function runOneMatch(matchSeed, pool, rng, options) {
 
 			// deploy-end snapshot: per-site counts/margin BEFORE resolve/judge, used for
 			// "resolve mattered" and the stack-vs-spread section
-			const deployEnd = deployEndSnapshot(state, world);
+			const deployEnd = deployEndSnapshot(state, frame);
 
 			if (state.phase === 'orders') {
 				['A', 'B'].forEach((handler) => {
@@ -379,7 +381,7 @@ function runOneMatch(matchSeed, pool, rng, options) {
 					});
 				});
 
-				const worldIndexBeforeCommit = state.worldIndex;
+				const frameIndexBeforeCommit = state.frameIndex;
 				const resolutionLogLengthBefore = state.resolutionLog.length;
 
 				let next = commitOrders(state, 'A');
@@ -414,7 +416,8 @@ function runOneMatch(matchSeed, pool, rng, options) {
 						const targetRecord = targetInfo ? targetInfo.record : null;
 						if (targetRecord) {
 							const actorSite = sentInfo.site;
-							const prepared = prepare(actorRecord, world.sites.find((s) => s.id === actorSite), world, 0);
+							const site = frame.sites.find((s) => s.id === actorSite);
+							const prepared = prepare(actorRecord, site, site.world, 0);
 							const act = prepared.acts.find((a) => a.action === ev.action);
 							if (act) {
 								magnitude = magnitudeAgainst(actorRecord, act, targetRecord);
@@ -422,7 +425,7 @@ function runOneMatch(matchSeed, pool, rng, options) {
 						}
 					}
 					actRecords.push({
-						worldIndex: worldIndexBeforeCommit,
+						frameIndex: frameIndexBeforeCommit,
 						action: ev.action || null,
 						class: ev.action ? (ACT_CLASS_BY_ACTION[ev.action] || null) : null,
 						side: actorSide,
@@ -444,10 +447,12 @@ function runOneMatch(matchSeed, pool, rng, options) {
 						const uncontested = (before.countA > 0) !== (before.countB > 0) && (before.countA > 0 || before.countB > 0);
 						const empty = before.countA === 0 && before.countB === 0;
 						const margin = Math.abs(result.holdA - result.holdB);
+						const site = frame.sites.find((s) => s.id === siteId);
 						siteRecords.push({
-							worldIndex: worldIndexBeforeCommit,
-							worldStarter,
+							frameIndex: frameIndexBeforeCommit,
+							frameStarter,
 							siteId,
+							planet: site ? site.world.planet : null,
 							winner: result.winner,
 							tie: result.winner === null,
 							countA: before.countA,
@@ -475,7 +480,7 @@ function runOneMatch(matchSeed, pool, rng, options) {
 						});
 					});
 
-					if (worldIndexBeforeCommit === 0) {
+					if (frameIndexBeforeCommit === 0) {
 						sitesWonAfterWorld1 = { A: state.players.A.sitesWon, B: state.players.B.sitesWon };
 					}
 				}
@@ -507,11 +512,11 @@ function runOneMatch(matchSeed, pool, rng, options) {
 
 // helper used only inside the relocate branch above, to find which site a handler's
 // vanguard currently stands at from the raw (non-public) state
-function boardSiteOf(state, world, handler, recordId) {
+function boardSiteOf(state, frame, handler, recordId) {
 	if (!recordId) {
 		return null;
 	}
-	for (const site of world.sites) {
+	for (const site of frame.sites) {
 		if ((state.board[site.id][handler] || []).some((e) => e.recordId === recordId)) {
 			return site.id;
 		}
@@ -534,17 +539,17 @@ function summarize(matchResults, args, pool) {
 
 	// -------------------- 1. seat fairness --------------------
 	const starterWins = completedMatches.filter((m) => m.finalState.winner === m.roundOneStarter).length;
-	const perWorldStarterSiteWins = {};
-	const perWorldStarterSiteTotals = {};
+	const perFrameStarterSiteWins = {};
+	const perFrameStarterSiteTotals = {};
 	allSites.forEach((s) => {
-		perWorldStarterSiteTotals[s.worldIndex] = (perWorldStarterSiteTotals[s.worldIndex] || 0) + 1;
-		if (s.winner === s.worldStarter) {
-			perWorldStarterSiteWins[s.worldIndex] = (perWorldStarterSiteWins[s.worldIndex] || 0) + 1;
+		perFrameStarterSiteTotals[s.frameIndex] = (perFrameStarterSiteTotals[s.frameIndex] || 0) + 1;
+		if (s.winner === s.frameStarter) {
+			perFrameStarterSiteWins[s.frameIndex] = (perFrameStarterSiteWins[s.frameIndex] || 0) + 1;
 		}
 	});
 	const perWorldStarterSiteWinRate = {};
-	Object.keys(perWorldStarterSiteTotals).forEach((w) => {
-		perWorldStarterSiteWinRate[w] = rate(perWorldStarterSiteWins[w] || 0, perWorldStarterSiteTotals[w]);
+	Object.keys(perFrameStarterSiteTotals).forEach((w) => {
+		perWorldStarterSiteWinRate[w] = rate(perFrameStarterSiteWins[w] || 0, perFrameStarterSiteTotals[w]);
 	});
 
 	// "whoever deployed last (final pass) in the final world" wins the match how often
@@ -585,7 +590,7 @@ function summarize(matchResults, args, pool) {
 	const worldsPlayedCounts = {};
 	const endReasonCounts = {};
 	completedMatches.forEach((m) => {
-		const n = m.finalState.worldIndex + 1;
+		const n = m.finalState.frameIndex + 1;
 		worldsPlayedCounts[n] = (worldsPlayedCounts[n] || 0) + 1;
 		const reason = m.finalState.matchEndReason || 'unknown';
 		endReasonCounts[reason] = (endReasonCounts[reason] || 0) + 1;
@@ -623,8 +628,8 @@ function summarize(matchResults, args, pool) {
 
 	const perWorldPosition = {};
 	[0, 1, 2].forEach((w) => {
-		const sitesAtW = allSites.filter((s) => s.worldIndex === w);
-		const sendsAtW = allSends.filter((s) => s.worldIndex === w);
+		const sitesAtW = allSites.filter((s) => s.frameIndex === w);
+		const sendsAtW = allSends.filter((s) => s.frameIndex === w);
 		perWorldPosition[w] = {
 			sends: sendsAtW.length,
 			tieRate: rate(sitesAtW.filter((s) => s.tie).length, sitesAtW.length),
@@ -651,8 +656,8 @@ function summarize(matchResults, args, pool) {
 	const sentPerWorldPositionPerSide = {};
 	[0, 1, 2].forEach((w) => {
 		sentPerWorldPositionPerSide[w] = {
-			A: allSends.filter((s) => s.worldIndex === w && s.side === 'A').length,
-			B: allSends.filter((s) => s.worldIndex === w && s.side === 'B').length,
+			A: allSends.filter((s) => s.frameIndex === w && s.side === 'A').length,
+			B: allSends.filter((s) => s.frameIndex === w && s.side === 'B').length,
 		};
 	});
 	const unsentAtEnd = {
@@ -703,7 +708,7 @@ function summarize(matchResults, args, pool) {
 	// per-send actedThisRound flag captured for every sent creature.
 	const sendByRecordId = {};
 	allSends.forEach((s) => {
-		sendByRecordId[`${s.worldIndex}:${s.recordId}`] = s;
+		sendByRecordId[`${s.frameIndex}:${s.recordId}`] = s;
 	});
 
 	const strainBuckets = { none: [], strained: [], severe: [] };
@@ -925,30 +930,37 @@ function summarize(matchResults, args, pool) {
 	};
 
 	// -------------------- 7. worlds --------------------
+	// a match draws 9 distinct worlds, one per site on the table across its 3 frames; every
+	// site on m.finalState.frames carries its own world (site.world), so "which worlds this
+	// match drew" is read straight off the frames rather than a flat worlds list.
 	const byPlanet = {};
 	completedMatches.forEach((m) => {
-		m.finalState.worlds.forEach((w) => {
-			byPlanet[w.planet] = byPlanet[w.planet] || { drawn: 0 };
-			byPlanet[w.planet].drawn++;
+		m.finalState.frames.forEach((frame) => {
+			frame.sites.forEach((site) => {
+				const planet = site.world.planet;
+				byPlanet[planet] = byPlanet[planet] || { drawn: 0 };
+				byPlanet[planet].drawn++;
+			});
 		});
 	});
-	// planet-level tie rate / routs-per-site / home-element presence, computed by walking
-	// each match's own worlds array (small: <=3 per match) alongside its siteRecords
+	// planet-level tie rate / routs-per-site / home-element presence: siteRecords already
+	// carry the planet each site's world was (attached in runOneMatch), so no need to
+	// cross-reference finalState.frames again here.
 	const planetSiteRecords = {};
 	completedMatches.forEach((m) => {
 		m.siteRecords.forEach((s) => {
-			const planet = m.finalState.worlds[s.worldIndex] ? m.finalState.worlds[s.worldIndex].planet : null;
-			if (!planet) {
+			if (!s.planet) {
 				return;
 			}
-			planetSiteRecords[planet] = planetSiteRecords[planet] || [];
-			planetSiteRecords[planet].push(s);
+			planetSiteRecords[s.planet] = planetSiteRecords[s.planet] || [];
+			planetSiteRecords[s.planet].push(s);
 		});
 	});
 	const planetSendRecords = {};
 	completedMatches.forEach((m) => {
 		m.sendRecords.forEach((s) => {
-			const planet = m.finalState.worlds[s.worldIndex] ? m.finalState.worlds[s.worldIndex].planet : null;
+			const site = m.finalState.frames[s.frameIndex] && m.finalState.frames[s.frameIndex].sites.find((st) => st.id === s.site);
+			const planet = site ? site.world.planet : null;
 			if (!planet) {
 				return;
 			}

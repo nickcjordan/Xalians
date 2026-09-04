@@ -14,21 +14,21 @@ import { siteHoldTotal } from './reclamationPreview';
 */
 
 const PASS_REASONS = {
-	'holding-majority': 'You lead at two sites and the rival has passed. Save the rest of your roster for the worlds to come.',
-	'saving-the-roster': 'You have spent your share of creatures on this world. Keep the rest for what comes next.',
-	'nothing-to-gain': 'Nothing you could send would change who holds a site here.',
+	'holding-majority': 'You lead on two worlds and the rival has passed. Save the rest of your roster for the frames to come.',
+	'saving-the-roster': 'You have spent your share of creatures this round. Keep the rest for what comes next.',
+	'nothing-to-gain': 'Nothing you could send would change who holds a world in this frame.',
 	'no-sendable-creatures': 'You have nothing left to send.',
-	'already-passed': 'You have passed for this world.',
+	'already-passed': 'You have passed for this round.',
 	'no-candidates': 'There is nothing to send.',
 };
 
 function siteOf(view, siteId) {
-	return view.world.sites.find((s) => s.id === siteId);
+	return view.frame.sites.find((s) => s.id === siteId);
 }
 
 function sendReason(view, record, site, you) {
 	const opponent = you === 'A' ? 'B' : 'A';
-	const prepared = prepare(record, site, view.world, view.players[you].sentCount);
+	const prepared = prepare(record, site, site.world, view.players[you].sentCount);
 	const mine = siteHoldTotal(view, site.id, you);
 	const theirs = siteHoldTotal(view, site.id, opponent);
 	const margin = mine - theirs;
@@ -99,7 +99,7 @@ export function recommendSend(view, roster, you) {
 	}
 	return {
 		type: 'pass',
-		label: 'Pass for this world',
+		label: 'Pass this round',
 		reason: PASS_REASONS[choice.reason] || 'Passing is the better move here.',
 	};
 }

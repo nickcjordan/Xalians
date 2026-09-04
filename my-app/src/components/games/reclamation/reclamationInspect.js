@@ -22,7 +22,7 @@ const READ_TRAITS = new Set(Object.values(TRAIT));
 	on the table or in the roster.
 
 	Every number here comes from the engine's own prepare() for the site in question (or
-	the world's first site, when the creature is still in the roster and has no site
+	the frame's first site, when the creature is still in the roster and has no site
 	yet), so what the panel says is what the rules will use.
 */
 function multiplierLines(record, prepared, site, world) {
@@ -61,11 +61,12 @@ function temperamentWords(temperament) {
 	return words.length > 0 ? words.join(', ') : 'even-tempered throughout';
 }
 
-function ReclamationInspect({ record, site, world, onClose }) {
+function ReclamationInspect({ record, site, frame, onClose }) {
 	if (!record) {
 		return null;
 	}
-	const target = site || world.sites[0];
+	const target = site || frame.sites[0];
+	const world = target.world;
 	const prepared = prepare(record, target, world, 0);
 	const el = record.element.primary;
 	const armored = prepared.armored;
@@ -103,7 +104,7 @@ function ReclamationInspect({ record, site, world, onClose }) {
 			)}
 
 			<p className="g-label rec-inspect-context">
-				Read at {target.name}{site ? '' : ' (not yet sent; shown at the first site)'}
+				Read on {world.planet}, at {target.name}{site ? '' : ' (not yet sent; shown for the first world in the frame)'}
 			</p>
 
 			<div className="g-spec rec-inspect-spec">

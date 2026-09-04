@@ -12,7 +12,7 @@ import { elementName } from './reclamationVocabulary';
 	order, so nothing reshuffles under the cursor: in hand, then sent (with the site it
 	stands at), then holding a won site on an earlier world, or routed out of the
 	expedition. A slot carries the species portrait, the name, a hold meter on the
-	Duel's bulb-strip construction, and one chip per site of this world saying what
+	Duel's bulb-strip construction, and one chip per world of the frame saying what
 	the creature would hold there, with the best site marked and strain named, so the
 	twelve can be compared without arming each in turn (Nick, 2026-09-04).
 
@@ -25,7 +25,7 @@ export function slotStateOf(record, view, you) {
 	if ((me.roster || []).some((r) => r.id === record.id)) {
 		return { state: 'hand' };
 	}
-	for (const site of view.world.sites) {
+	for (const site of view.frame.sites) {
 		const entry = (view.board[site.id][you] || []).find((e) => e.recordId === record.id);
 		if (entry) {
 			return { state: 'sent', site };
@@ -42,8 +42,8 @@ export function slotStateOf(record, view, you) {
 
 export function siteHoldsFor(record, view, you) {
 	const sentCount = view.players[you].sentCount || 0;
-	return view.world.sites.map((site, index) => {
-		const p = prepare(record, site, view.world, sentCount);
+	return view.frame.sites.map((site, index) => {
+		const p = prepare(record, site, site.world, sentCount);
 		return { site, index, hold: p.hold, strainLevel: p.strainLevel, isHome: p.isHome, unstrained: p.hold / strainMultiplierFor(p.strainLevel) };
 	});
 }
@@ -60,8 +60,8 @@ export function holdsAgree(holds) {
 
 function HoldHere({ h, label }) {
 	return (
-		<span className="rec-slot-here" title={`Holds ${formatHold(h.hold)} on this world${h.strainLevel !== 'none' ? `; the sites take ${formatHold(h.unstrained - h.hold)} of it` : ''}${h.isHome ? '; home ground' : ''}`}>
-			<span className="rec-slot-meter-label">{label || 'hold here'}</span>
+		<span className="rec-slot-here" title={`Holds ${formatHold(h.hold)} on every world of the frame${h.strainLevel !== 'none' ? `; the sites take ${formatHold(h.unstrained - h.hold)} of it` : ''}${h.isHome ? '; home ground' : ''}`}>
+			<span className="rec-slot-meter-label">{label || 'hold'}</span>
 			<HoldMeter hold={h.hold} unstrained={h.unstrained} isHome={h.isHome} strainLevel={h.strainLevel} mine />
 			<span className="rec-slot-meter-value">{formatHold(h.hold)}</span>
 		</span>
@@ -113,7 +113,7 @@ export function RosterSlot({
 				onBlur={() => onHover && onHover(null)}
 				aria-pressed={armed}
 				disabled={!inHand}
-				title={inHand ? (armed ? 'Chosen. Pick a site next, or press again to put it back.' : 'Choose this creature') : undefined}
+				title={inHand ? (armed ? 'Chosen. Pick a world next, or press again to put it back.' : 'Choose this creature') : undefined}
 				data-arm={inHand ? record.id : undefined}
 			>
 				<span className="rec-slot-portrait" aria-hidden="true">
@@ -124,7 +124,7 @@ export function RosterSlot({
 						<span className="rec-slot-name">{speciesLabel(record)}</span>
 						<span className="rec-slot-element">{elementName(el).toLowerCase()}</span>
 						{slot.state === 'sent' && <span className="rec-slot-tag rec-slot-tag--sent">sent · {slot.site.name}</span>}
-						{slot.state === 'holding' && <span className="rec-slot-tag rec-slot-tag--holding">holding a site</span>}
+						{slot.state === 'holding' && <span className="rec-slot-tag rec-slot-tag--holding">holding a world</span>}
 						{slot.state === 'routed' && <span className="rec-slot-tag rec-slot-tag--routed">routed</span>}
 						{slot.state === 'away' && <span className="rec-slot-tag">away</span>}
 						{inHand && suggested && <span className="rec-slot-tag rec-slot-tag--suggested">suggested</span>}
@@ -133,12 +133,12 @@ export function RosterSlot({
 					{(!simple || !inHand || !holds) && <BaseHoldRow value={baseHold(record)} />}
 					{simple && inHand && holds && holdsAgree(holds) && <HoldHere h={holds[0]} />}
 					{inHand && holds && (!simple || !holdsAgree(holds)) && (
-						<span className="rec-slot-sites" aria-label="Hold at each site of this world">
+						<span className="rec-slot-sites" aria-label="Hold on each world of the frame">
 							{holds.map((h) => (
 								<span
 									key={h.site.id}
-									className={`rec-slot-site${best && best.site.id === h.site.id && holds.length > 1 ? ' rec-slot-site--best' : ''} rec-slot-site--${h.strainLevel}${h.isHome ? ' rec-slot-site--home' : ''}`}
-									title={`${h.site.name}: holds ${formatHold(h.hold)}${h.isHome ? ', home ground' : ''}${h.strainLevel !== 'none' ? `, ${h.strainLevel}` : ''}`}
+									className={`rec-slot-site g-el-${h.site.world.element}${best && best.site.id === h.site.id && holds.length > 1 ? ' rec-slot-site--best' : ''} rec-slot-site--${h.strainLevel}${h.isHome ? ' rec-slot-site--home' : ''}`}
+									title={`${h.site.world.planet}, at ${h.site.name}: holds ${formatHold(h.hold)}${h.isHome ? ', home ground' : ''}${h.strainLevel !== 'none' ? `, ${h.strainLevel}` : ''}`}
 								>
 									<span className="rec-slot-site-index">{h.index + 1}</span>
 									<HoldMeter hold={h.hold} unstrained={h.unstrained} isHome={h.isHome} strainLevel={h.strainLevel} mine small />
@@ -190,7 +190,7 @@ function ReclamationRoster({
 							you={you}
 							armed={armedRecordId === record.id}
 							suggested={recommendedRecordId === record.id}
-							stealthy={prepare(record, view.world.sites[0], view.world, 0).stealthy}
+							stealthy={prepare(record, view.frame.sites[0], null, 0).stealthy}
 							disabled={disabled}
 							onArm={onArm}
 							onInspect={onInspect}

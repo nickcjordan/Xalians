@@ -3,7 +3,7 @@ import ReclamationFigure, { ReclamationSilhouette, HoldMeter } from './reclamati
 import { formatHold } from './reclamationNarration';
 
 /*
-	ReclamationWorld — the current world's three sites, side by side.
+	ReclamationWorld — the frame: three worlds side by side, each at one of its sites.
 
 	Each site is a matte panel headed by the site's name and its environment line. The
 	handler's creatures stand below the midline facing up; the rival's stand above it
@@ -128,7 +128,7 @@ function ghostText(ghost, mine, theirs) {
 }
 
 function ReclamationWorld({
-	world,
+	frame,
 	board,
 	you,
 	holds,
@@ -156,17 +156,17 @@ function ReclamationWorld({
 	const arrivedIds = arrival ? arrival.ids : [];
 
 	return (
-		<div className={`rec-world g-el-${world.element}`}>
+		<div className="rec-world">
 			{hiddenEnemyCount > 0 && (
 				<div className="rec-hidden-banner rec-rise" data-hidden-banner>
 					<ReclamationSilhouette count={hiddenEnemyCount} />
 					<span className="rec-hidden-banner-text">
-						The rival has {hiddenEnemyCount === 1 ? 'a creature' : `${hiddenEnemyCount} creatures`} hidden somewhere on this world. It is revealed when orders are.
+						The rival has {hiddenEnemyCount === 1 ? 'a creature' : `${hiddenEnemyCount} creatures`} hidden somewhere in the frame. It is revealed when orders are.
 					</span>
 				</div>
 			)}
 			<div className="rec-sites">
-				{world.sites.map((site, siteIndex) => {
+				{frame.sites.map((site, siteIndex) => {
 					const theirs = (board[site.id][opponent] || []).filter((e) => e.record);
 					const mine = (board[site.id][you] || []).filter((e) => e.record);
 					const totalMine = totals[site.id] ? totals[site.id][you] : 0;
@@ -176,7 +176,7 @@ function ReclamationWorld({
 					const ghost = ghosts && ghosts[site.id];
 					const verdict = verdicts && verdicts[site.id];
 
-					const classes = ['g-panel', 'rec-site', 'rec-site--enter', `rec-site--${margin.who}`];
+					const classes = ['g-panel', 'rec-site', 'rec-site--enter', `rec-site--${margin.who}`, `g-el-${site.world.element}`];
 					// the site something just landed on pulses in the colour of who sent it
 					if (arrival && arrival.siteId === site.id) {
 						classes.push(arrival.seat === you ? 'rec-site--landed-mine' : 'rec-site--landed-theirs');
@@ -249,7 +249,8 @@ function ReclamationWorld({
 						>
 							<header className="rec-site-head">
 								<span className="rec-site-index" aria-hidden="true">{siteIndex + 1}</span>
-								<h3 className="rec-site-name">{site.name}</h3>
+								<h3 className="rec-site-name">{site.world.planet}</h3>
+								<span className="rec-site-place" title={site.description || undefined}>{site.name}</span>
 								<EnvironmentScale site={site} ghost={ghost} />
 								{recommended && <span className="rec-site-recommend" data-recommended-site>recommended</span>}
 							</header>

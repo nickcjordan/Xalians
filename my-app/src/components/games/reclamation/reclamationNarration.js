@@ -183,7 +183,7 @@ export function narrateSend(ctx = {}) {
 }
 
 export function narratePass(ctx = {}) {
-	return ctx.you ? 'You pass. You are out of this world’s deploy.' : 'The rival passes for this world.';
+	return ctx.you ? 'You pass. You are out of this round’s deploy.' : 'The rival passes for this round.';
 }
 
 /*
@@ -215,11 +215,11 @@ export function narrateJudge(event, ctx = {}) {
 export function narrateMatchEnd(ctx = {}) {
 	const { winner, you, sitesYou, sitesThem, reason } = ctx;
 	const why = reason === 'clinched'
-		? 'clinched at five sites'
+		? 'clinched at five worlds'
 		: reason === 'tiebreak'
 			? 'settled on the tiebreak'
-			: 'after the third world';
-	const sites = (n) => `${n} site${n === 1 ? '' : 's'}`;
+			: 'after the third frame';
+	const sites = (n) => `${n} world${n === 1 ? '' : 's'}`;
 	if (winner === you) {
 		return `You take the Charter, ${sites(sitesYou)} to ${sitesThem}, ${why}.`;
 	}

@@ -10,6 +10,14 @@
 
 	The engine takes `worlds` as an input to createMatch rather than importing sites.js
 	itself, per the task's own guidance: the engine should not know where data lives.
+
+	Since "The Proving" (docs/design/reclamation-design.md, 2026-09-04) a round is a
+	FRAME: the Court's simulator loads WORLDS_PER_FRAME worlds side by side, each at one
+	of its authored sites, chosen by the seed. A site on the table therefore carries its
+	own `world` ({ planet, element, planet facts }), and every hold is computed against
+	the site's world, never against a round-wide one. The engine keeps calling the
+	contested unit a "site": it is one place on one world, and there are three of them
+	in every frame.
 */
 
 import { prepare, magnitudeAgainst, holdAtSite, targetMatchupMultiplier, traitKeywordsOf } from './creatureOnTable.js';
@@ -17,7 +25,8 @@ import {
 	ROSTER_SIZE,
 	SENDABLE,
 	WORLDS_PER_MATCH,
-	SITES_PER_WORLD,
+	FRAMES_PER_MATCH,
+	WORLDS_PER_FRAME,
 	SITES_TO_CLINCH,
 	STAGGER_FRACTION,
 	ROUT_FRACTION,
@@ -114,29 +123,61 @@ function validateWorldsInput(worlds) {
 		throw new ExpeditionRuleError('INVALID_WORLDS', `worlds must be an array of at least ${WORLDS_PER_MATCH} world entries`);
 	}
 	worlds.forEach((w, i) => {
-		if (!w || !Array.isArray(w.sites) || w.sites.length !== SITES_PER_WORLD) {
-			throw new ExpeditionRuleError('INVALID_WORLD_SITES', `world[${i}] must have exactly ${SITES_PER_WORLD} sites`);
+		if (!w || !Array.isArray(w.sites) || w.sites.length === 0) {
+			throw new ExpeditionRuleError('INVALID_WORLD_SITES', `world[${i}] must have at least one site`);
 		}
 	});
 }
 
-function emptyBoardForWorld(world) {
+function emptyBoardForFrame(frame) {
 	const board = {};
-	world.sites.forEach((site) => {
+	frame.sites.forEach((site) => {
 		board[site.id] = { A: [], B: [] };
 	});
 	return board;
 }
 
+// the world as a site carries it: everything the world entry says except its site list
+function worldFacts(world) {
+	const { sites, ...facts } = world;
+	return facts;
+}
+
+/*
+	drawFrames(worlds, rngState) -> { frames, nextState }
+
+	Shuffles the input worlds, takes WORLDS_PER_MATCH of them (no world repeats within a
+	match), and deals them into FRAMES_PER_MATCH frames of WORLDS_PER_FRAME. For each
+	world one of its authored sites is drawn, so the same nine worlds never make the same
+	table twice: a frame is { index, sites: [site with .world] }, and a site on the table
+	is the authored site plus the facts of the world it belongs to.
+*/
+function drawFrames(worlds, rngState) {
+	let state = rngState;
+	const { array: shuffledWorlds, nextState: afterShuffle } = shuffle(worlds, state);
+	state = afterShuffle;
+	const drawn = shuffledWorlds.slice(0, WORLDS_PER_MATCH);
+	const frames = [];
+	for (let f = 0; f < FRAMES_PER_MATCH; f++) {
+		const sites = [];
+		for (let w = 0; w < WORLDS_PER_FRAME; w++) {
+			const world = drawn[f * WORLDS_PER_FRAME + w];
+			const { value: siteIndex, nextState } = nextInt(state, world.sites.length);
+			state = nextState;
+			sites.push({ ...world.sites[siteIndex], world: worldFacts(world) });
+		}
+		frames.push({ index: f, sites });
+	}
+	return { frames, nextState: state };
+}
+
 /*
 	createMatch({rosterA, rosterB, worlds, seed}) -> initial match state, phase 'deploy'
-	on world 1.
+	on frame 1.
 
-	Draws WORLDS_PER_MATCH distinct worlds (no repeats) from the input `worlds` list,
-	picks a random starter, per the design doc's "Each round opens one world, drawn from
-	the fourteen with no repeats within a match" and "there is no Court Favor" (so the
-	only thing decided randomly here is the world order and who starts round 1 — the
-	starter then simply alternates each round).
+	Draws the frames (see drawFrames) and picks a random starter; "there is no Court
+	Favor", so the only things decided randomly here are which worlds, at which sites, in
+	which order, and who starts round 1.
 */
 export function createMatch({ rosterA, rosterB, worlds, seed }) {
 	validateRosterInput(rosterA, 'rosterA');
@@ -145,9 +186,8 @@ export function createMatch({ rosterA, rosterB, worlds, seed }) {
 
 	let rngState = createRngState(seed);
 
-	const { array: shuffledWorlds, nextState: afterShuffle } = shuffle(worlds, rngState);
-	rngState = afterShuffle;
-	const matchWorlds = shuffledWorlds.slice(0, WORLDS_PER_MATCH);
+	const { frames, nextState: afterFrames } = drawFrames(worlds, rngState);
+	rngState = afterFrames;
 
 	const { value: starterRoll, nextState: afterStarter } = nextInt(rngState, 2);
 	rngState = afterStarter;
@@ -156,7 +196,7 @@ export function createMatch({ rosterA, rosterB, worlds, seed }) {
 	const playerState = (roster) => ({
 		roster: roster.slice(), // records never sent; shrinks as records are sent
 		sentCount: 0,
-		holding: [], // record ids currently holding a won site (stay on their world)
+		holding: [], // record ids currently holding a won site (stay in that world's model)
 		routed: [], // record ids routed out of the expedition (returned to owner post-match)
 		withdrawn: [], // record ids withdrawn from lost/tied sites (out of the expedition)
 		passed: false,
@@ -164,15 +204,13 @@ export function createMatch({ rosterA, rosterB, worlds, seed }) {
 		sitesWon: 0,
 	});
 
-	const world = matchWorlds[0];
-
 	return {
 		seed,
 		rngState,
-		worlds: matchWorlds,
-		worldIndex: 0,
+		frames,
+		frameIndex: 0,
 		players: { A: playerState(rosterA), B: playerState(rosterB) },
-		board: emptyBoardForWorld(world),
+		board: emptyBoardForFrame(frames[0]),
 		staggered: {}, // record id -> boolean, valid only within the current round
 		wardedBy: {}, // record id (target) -> record id (warder), valid only within the current round
 		snared: {}, // record id -> boolean, valid only within the current round
@@ -180,7 +218,7 @@ export function createMatch({ rosterA, rosterB, worlds, seed }) {
 		hidden: {}, // record id -> boolean, sent hidden this round and not yet revealed
 		orders: { A: {}, B: {} }, // record id -> action name or 'hold', private until commit
 		committed: { A: false, B: false },
-		vanguardRelocated: { A: false, B: false }, // per-world: has this handler used its one relocate?
+		vanguardRelocated: { A: false, B: false }, // per-frame: has this handler used its one relocate?
 		phase: 'deploy',
 		starter,
 		turn: starter,
@@ -194,19 +232,19 @@ export function createMatch({ rosterA, rosterB, worlds, seed }) {
 // board helpers
 // ---------------------------------------------------------------------------
 
-function currentWorld(state) {
-	return state.worlds[state.worldIndex];
+function currentFrame(state) {
+	return state.frames[state.frameIndex];
 }
 
-function siteById(world, siteId) {
-	return world.sites.find((s) => s.id === siteId) || null;
+function siteById(frame, siteId) {
+	return frame.sites.find((s) => s.id === siteId) || null;
 }
 
 // every creature-on-board entry across all sites for one player
 function boardEntriesFor(state, player) {
-	const world = currentWorld(state);
+	const frame = currentFrame(state);
 	const entries = [];
-	world.sites.forEach((site) => {
+	frame.sites.forEach((site) => {
 		state.board[site.id][player].forEach((entry) => entries.push(entry));
 	});
 	return entries;
@@ -217,8 +255,8 @@ function allBoardEntries(state) {
 }
 
 function findEntry(state, recordId) {
-	const world = currentWorld(state);
-	for (const site of world.sites) {
+	const frame = currentFrame(state);
+	for (const site of frame.sites) {
 		for (const player of ['A', 'B']) {
 			const found = state.board[site.id][player].find((e) => e.recordId === recordId);
 			if (found) {
@@ -242,11 +280,11 @@ function siteCompanions(state, site, player, excludingRecordId) {
 	return entries;
 }
 
-function computeHoldForEntry(state, entry, site, world) {
+function computeHoldForEntry(state, entry, site) {
 	const companions = siteCompanions(state, site, entry.player, entry.recordId);
 	const kin = companions.filter((c) => c.record.species === entry.record.species).length;
 	const allies = companions.length;
-	const { value } = holdAtSite(entry.record, site, world, {
+	const { value } = holdAtSite(entry.record, site, site.world, {
 		packBondedKinAtSite: kin,
 		solitaryAlliesAtSite: allies,
 	});
@@ -306,8 +344,8 @@ export function send(state, handler, recordId, siteId, hidden = false) {
 	if (!record) {
 		return null;
 	}
-	const world = currentWorld(state);
-	const site = siteById(world, siteId);
+	const frame = currentFrame(state);
+	const site = siteById(frame, siteId);
 	if (!site) {
 		return null;
 	}
@@ -375,7 +413,7 @@ export function pass(state, handler) {
 
 	"The vanguard falls back": once per world, during Deploy, on their own turn and
 	before they have passed, the round's starter may relocate the FIRST creature they
-	sent this world to a different site on the same world. Does NOT consume the turn —
+	sent this frame to a different site of the same frame. Does NOT consume the turn —
 	the handler still sends or passes afterward on that same turn. The creature keeps its
 	sentIndex and hidden flag; hold/strain/everything else is recomputed for the new site
 	at resolution as usual, since nothing is stored on the entry beyond siteId.
@@ -399,14 +437,14 @@ export function relocateVanguard(state, handler, siteId) {
 	if (state.vanguardRelocated[handler]) {
 		return null;
 	}
-	const world = currentWorld(state);
-	const site = siteById(world, siteId);
+	const frame = currentFrame(state);
+	const site = siteById(frame, siteId);
 	if (!site) {
 		return null;
 	}
 
 	// "the first creature they sent this world" — the board only ever holds creatures
-	// sent on the CURRENT world (judge() gives every world a fresh empty board), so this
+	// sent on the CURRENT world (judge() gives every frame a fresh empty board), so this
 	// is simply the handler's own board entry with the lowest sentIndex.
 	const ownEntries = boardEntriesFor(state, handler);
 	if (ownEntries.length === 0) {
@@ -567,7 +605,7 @@ function enemiesInReach(state, entry, actClass, entriesSnapshot) {
 		// projection does)
 		return entriesSnapshot.filter((e) => e.player === opponent && e.siteId === entry.siteId && isAlive(e));
 	}
-	// projection: any site on the world
+	// projection: any site in the frame
 	return entriesSnapshot.filter((e) => e.player === opponent && isAlive(e));
 }
 
@@ -576,9 +614,9 @@ function alliesOf(entry, entriesSnapshot) {
 }
 
 function currentHoldOf(state, e) {
-	const world = currentWorld(state);
-	const site = siteById(world, e.siteId);
-	return computeHoldForEntry(state, e, site, world);
+	const frame = currentFrame(state);
+	const site = siteById(frame, e.siteId);
+	return computeHoldForEntry(state, e, site);
 }
 
 function magnitudeOfBestAct(state, entry) {
@@ -770,12 +808,12 @@ function pickSupportTarget(state, entry, conduct, entriesSnapshot) {
 // ---------------------------------------------------------------------------
 
 function prepareEntry(state, entry) {
-	const world = currentWorld(state);
-	const site = siteById(world, entry.siteId);
+	const frame = currentFrame(state);
+	const site = siteById(frame, entry.siteId);
 	const companions = siteCompanions(state, site, entry.player, entry.recordId);
 	const kin = companions.filter((c) => c.record.species === entry.record.species).length;
 	const allies = companions.length;
-	return prepare(entry.record, site, world, entry.sentIndex, {
+	return prepare(entry.record, site, site.world, entry.sentIndex, {
 		packBondedKinAtSite: kin,
 		solitaryAlliesAtSite: allies,
 	});
@@ -829,7 +867,6 @@ function logEvent(state, event) {
 }
 
 function moveEntryToSite(state, entry, newSiteId) {
-	const world = currentWorld(state);
 	state.board[entry.siteId][entry.player] = state.board[entry.siteId][entry.player].filter(
 		(e) => e.recordId !== entry.recordId,
 	);
@@ -838,14 +875,16 @@ function moveEntryToSite(state, entry, newSiteId) {
 }
 
 // "shove moves the target to a neighboring site... toward the site with fewer of the
-// shover's allies, else index+1 wrapping." Sites are ordered 0..2 on the world; for
-// SITES_PER_WORLD=3 the two neighbors (index-1, index+1, both wrapping) are always
+// shover's allies, else index+1 wrapping." Sites are ordered 0..2 in the frame (since the
+// Proving, the frame's neighbors are other worlds' models: the frame reassigns the
+// shoved creature, and its hold is recomputed against where it lands); for
+// WORLDS_PER_FRAME=3 the two neighbors (index-1, index+1, both wrapping) are always
 // distinct from the source site and from each other, so there are always exactly two
 // candidates to choose between.
-function neighborSiteId(world, fromSiteId, entry, entriesSnapshot) {
-	const idx = world.sites.findIndex((s) => s.id === fromSiteId);
-	const n = world.sites.length;
-	const candidateIds = [world.sites[(idx - 1 + n) % n].id, world.sites[(idx + 1) % n].id];
+function neighborSiteId(frame, fromSiteId, entry, entriesSnapshot) {
+	const idx = frame.sites.findIndex((s) => s.id === fromSiteId);
+	const n = frame.sites.length;
+	const candidateIds = [frame.sites[(idx - 1 + n) % n].id, frame.sites[(idx + 1) % n].id];
 
 	// prefer the site with fewer of the shover's own allies present
 	const shoverAllies = (siteId) => entriesSnapshot.filter((e) => e.player === entry.player && e.siteId === siteId).length;
@@ -854,7 +893,7 @@ function neighborSiteId(world, fromSiteId, entry, entriesSnapshot) {
 		return counts[0].count < counts[1].count ? counts[0].id : counts[1].id;
 	}
 	// else index+1 wrapping
-	return world.sites[(idx + 1) % n].id;
+	return frame.sites[(idx + 1) % n].id;
 }
 
 /*
@@ -914,7 +953,7 @@ function findLiveEntry(state, recordId) {
 }
 
 function performAct(state, entry, action) {
-	const world = currentWorld(state);
+	const frame = currentFrame(state);
 	const entriesSnapshot = allBoardEntries(state).filter((e) => !e.routed);
 	const prepared = prepareEntry(state, entry);
 	const conduct = prepared.conduct;
@@ -1025,7 +1064,7 @@ function performAct(state, entry, action) {
 			return;
 		}
 		const liveTarget = findLiveEntry(state, target.recordId);
-		const newSiteId = neighborSiteId(world, liveTarget.siteId, liveTarget, entriesSnapshot);
+		const newSiteId = neighborSiteId(frame, liveTarget.siteId, liveTarget, entriesSnapshot);
 		moveEntryToSite(state, liveTarget, newSiteId);
 		logEvent(state, { recordId: entry.recordId, action, target: target.recordId, outcome: 'shoved', toSite: newSiteId });
 		return;
@@ -1069,7 +1108,7 @@ function performAct(state, entry, action) {
 
 function pickAreaTargetSite(state, entry, act, entriesSnapshot) {
 	const opponent = otherPlayer(entry.player);
-	const world = currentWorld(state);
+	const frame = currentFrame(state);
 	const enemySites = new Set(entriesSnapshot.filter((e) => e.player === opponent).map((e) => e.siteId));
 	if (enemySites.size === 0) {
 		return null;
@@ -1078,7 +1117,7 @@ function pickAreaTargetSite(state, entry, act, entriesSnapshot) {
 	// spray/cloud as answering
 	let best = null;
 	let bestCount = -1;
-	world.sites.forEach((site) => {
+	frame.sites.forEach((site) => {
 		if (!enemySites.has(site.id)) {
 			return;
 		}
@@ -1191,7 +1230,7 @@ function withdrawEntryToRoster(state, entry, reason) {
 // ---------------------------------------------------------------------------
 
 function judge(state) {
-	const world = currentWorld(state);
+	const frame = currentFrame(state);
 	let s = { ...state, players: { ...state.players }, board: cloneBoard(state.board) };
 
 	// resilient recovers from stagger at Judge, before hold is counted
@@ -1203,7 +1242,7 @@ function judge(state) {
 	});
 
 	const siteResults = {};
-	world.sites.forEach((site) => {
+	frame.sites.forEach((site) => {
 		const holdA = s.board[site.id].A.reduce((sum, e) => sum + currentHoldOf(s, e), 0);
 		const holdB = s.board[site.id].B.reduce((sum, e) => sum + currentHoldOf(s, e), 0);
 		let winner = null;
@@ -1217,7 +1256,7 @@ function judge(state) {
 
 	['A', 'B'].forEach((player) => {
 		const opponent = otherPlayer(player);
-		world.sites.forEach((site) => {
+		frame.sites.forEach((site) => {
 			const result = siteResults[site.id];
 			const entries = s.board[site.id][player];
 			if (result.winner === player) {
@@ -1229,30 +1268,30 @@ function judge(state) {
 		});
 	});
 
-	const bannerLog = { round: state.worldIndex, siteResults };
+	const bannerLog = { round: state.frameIndex, siteResults };
 	s.resolutionLog = [...s.resolutionLog, { type: 'judge', ...bannerLog }];
 
 	const sitesWonA = s.players.A.sitesWon;
 	const sitesWonB = s.players.B.sitesWon;
 
 	const clinched = sitesWonA >= SITES_TO_CLINCH || sitesWonB >= SITES_TO_CLINCH;
-	const worldsExhausted = s.worldIndex >= WORLDS_PER_MATCH - 1;
+	const framesExhausted = s.frameIndex >= FRAMES_PER_MATCH - 1;
 
-	if (clinched || worldsExhausted) {
+	if (clinched || framesExhausted) {
 		const winner = decideMatchWinner(s);
-		return { ...s, phase: 'matchEnd', winner, turn: null, matchEndReason: clinched ? 'clinched' : 'worlds-exhausted' };
+		return { ...s, phase: 'matchEnd', winner, turn: null, matchEndReason: clinched ? 'clinched' : 'frames-exhausted' };
 	}
 
-	const nextWorldIndex = s.worldIndex + 1;
-	const nextWorld = s.worlds[nextWorldIndex];
-	// the side holding fewer sites moves first on the next world (moving first is the
+	const nextFrameIndex = s.frameIndex + 1;
+	const nextFrame = s.frames[nextFrameIndex];
+	// the side holding fewer worlds moves first in the next frame (moving first is the
 	// weaker seat, since the other side deploys with more information); equal: alternate
 	const nextStarter = sitesWonA !== sitesWonB ? (sitesWonA < sitesWonB ? 'A' : 'B') : otherPlayer(s.starter);
 
 	return {
 		...s,
-		worldIndex: nextWorldIndex,
-		board: emptyBoardForWorld(nextWorld),
+		frameIndex: nextFrameIndex,
+		board: emptyBoardForFrame(nextFrame),
 		staggered: {},
 		wardedBy: {},
 		snared: {},
@@ -1306,7 +1345,7 @@ function decideMatchWinner(state) {
 */
 export function getPublicState(state, handler) {
 	const opponent = otherPlayer(handler);
-	const world = currentWorld(state);
+	const frame = currentFrame(state);
 
 	function sanitizeBoardSite(siteId) {
 		const view = { A: [], B: [] };
@@ -1327,7 +1366,7 @@ export function getPublicState(state, handler) {
 	}
 
 	const board = {};
-	world.sites.forEach((site) => {
+	frame.sites.forEach((site) => {
 		board[site.id] = sanitizeBoardSite(site.id);
 	});
 
@@ -1393,14 +1432,15 @@ export function getPublicState(state, handler) {
 	}
 
 	return {
-		worldIndex: state.worldIndex,
-		// the whole world entry travels to the view: sites plus the planet facts sites.js
-		// attaches (terrain, band, hazards) so the table can show the real world
-		world: { ...world },
-		nextWorld: state.worldIndex + 1 < state.worlds.length ? {
-			planet: state.worlds[state.worldIndex + 1].planet,
-			element: state.worlds[state.worldIndex + 1].element,
-		} : null,
+		frameIndex: state.frameIndex,
+		// the whole frame travels to the view: three sites, each carrying its world's
+		// facts (planet, element, terrain, band, hazards) so the table can show the real
+		// worlds side by side
+		frame: { ...frame },
+		// the next frame is revealed as its worlds and sites, so passing early is informed
+		nextFrame: state.frameIndex + 1 < state.frames.length
+			? state.frames[state.frameIndex + 1].sites.map((site) => ({ planet: site.world.planet, element: site.world.element, siteId: site.id, siteName: site.name }))
+			: null,
 		phase: state.phase,
 		turn: state.turn,
 		starter: state.starter,
@@ -1419,4 +1459,4 @@ export function getPublicState(state, handler) {
 	};
 }
 
-export { prepareEntry, currentWorld, siteById, allBoardEntries, boardEntriesFor, findEntry, currentHoldOf };
+export { prepareEntry, currentFrame, siteById, allBoardEntries, boardEntriesFor, findEntry, currentHoldOf };

@@ -12,7 +12,7 @@
 */
 
 import { prepare, traitKeywordsOf } from './creatureOnTable.js';
-import { getActClass, ACT_CLASS, SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH } from './expeditionInterpretation.js';
+import { getActClass, ACT_CLASS, SENDABLE, SITES_TO_CLINCH, FRAMES_PER_MATCH } from './expeditionInterpretation.js';
 
 // --- tunables ----------------------------------------------------------------------
 
@@ -37,7 +37,7 @@ function otherSeat(seat) {
 }
 
 function siteFromPublic(publicState, siteId) {
-	return publicState.world.sites.find((s) => s.id === siteId);
+	return publicState.frame.sites.find((s) => s.id === siteId);
 }
 
 function visibleEntries(publicState, siteId, seat) {
@@ -45,7 +45,7 @@ function visibleEntries(publicState, siteId, seat) {
 }
 
 function holdOf(publicState, siteId, entry) {
-	return prepare(entry.record, siteFromPublic(publicState, siteId), publicState.world, entry.sentIndex).hold;
+	return prepare(entry.record, siteFromPublic(publicState, siteId), null, entry.sentIndex).hold;
 }
 
 function siteHoldTotal(publicState, siteId, seat) {
@@ -76,10 +76,10 @@ function evaluateVanguardRelocation(publicState, handler, margins) {
 	if (!me.canRelocateVanguard || !me.vanguardRecordId) {
 		return null;
 	}
-	const world = publicState.world;
+	const frame = publicState.frame;
 	let fromSiteId = null;
 	let vanguardEntry = null;
-	world.sites.forEach((site) => {
+	frame.sites.forEach((site) => {
 		const found = (publicState.board[site.id][handler] || []).find((e) => e.recordId === me.vanguardRecordId);
 		if (found) {
 			fromSiteId = site.id;
@@ -90,7 +90,7 @@ function evaluateVanguardRelocation(publicState, handler, margins) {
 		return null; // defensive: should always be visible to its own handler
 	}
 
-	const fromHold = prepare(vanguardEntry.record, siteFromPublic(publicState, fromSiteId), world, vanguardEntry.sentIndex).hold;
+	const fromHold = prepare(vanguardEntry.record, siteFromPublic(publicState, fromSiteId), null, vanguardEntry.sentIndex).hold;
 	const fromMargin = margins[fromSiteId];
 	// value of STAYING put, in the same units evaluateSend/candidates use below: a site
 	// currently flippable/securable is worth losing if the vanguard leaves, so "staying"
@@ -98,11 +98,11 @@ function evaluateVanguardRelocation(publicState, handler, margins) {
 	const stayValue = fromMargin <= 0 ? (fromHold > -fromMargin ? FLIP_VALUE : (2 * fromHold) / (1 - fromMargin)) : SECURE_VALUE * (fromHold / fromMargin);
 
 	let best = null;
-	world.sites.forEach((site) => {
+	frame.sites.forEach((site) => {
 		if (site.id === fromSiteId) {
 			return;
 		}
-		const prepared = prepare(vanguardEntry.record, site, world, vanguardEntry.sentIndex);
+		const prepared = prepare(vanguardEntry.record, site, null, vanguardEntry.sentIndex);
 		const h = prepared.hold;
 		const m = margins[site.id];
 		// margin at the destination as it would be AFTER arriving (m does not yet include
@@ -144,9 +144,9 @@ export function chooseSend(publicState, ownRoster, handler, rng) {
 		return { type: 'pass', reason: 'already-passed' };
 	}
 
-	const world = publicState.world;
+	const frame = publicState.frame;
 	const relocateMargins = {};
-	world.sites.forEach((s) => {
+	frame.sites.forEach((s) => {
 		relocateMargins[s.id] = siteMargin(publicState, s.id, handler);
 	});
 	const relocation = evaluateVanguardRelocation(publicState, handler, relocateMargins);
@@ -159,24 +159,24 @@ export function chooseSend(publicState, ownRoster, handler, rng) {
 		return { type: 'pass', reason: 'no-sendable-creatures' };
 	}
 
-	const worldsAfterThis = WORLDS_PER_MATCH - 1 - publicState.worldIndex;
+	const framesAfterThis = FRAMES_PER_MATCH - 1 - publicState.frameIndex;
 	const margins = relocateMargins;
-	const sitesWinning = world.sites.filter((s) => margins[s.id] > 0).length;
-	const sitesLosing = world.sites.filter((s) => margins[s.id] < 0).length;
+	const sitesWinning = frame.sites.filter((s) => margins[s.id] > 0).length;
+	const sitesLosing = frame.sites.filter((s) => margins[s.id] < 0).length;
 	// spend freely on the last world, or when the sites the opponent is winning right
 	// now would clinch the match for them (their potential to clinch is not enough: after
 	// a 2-1 first world almost anyone could, and treating that as an emergency emptied
 	// the roster on world two and left world three uncontested)
-	const mustHold = worldsAfterThis === 0 || opp.sitesWon + sitesLosing >= SITES_TO_CLINCH;
+	const mustHold = framesAfterThis === 0 || opp.sitesWon + sitesLosing >= SITES_TO_CLINCH;
 
-	const myOnBoard = world.sites.reduce((n, s) => n + (publicState.board[s.id][handler] || []).length, 0);
-	const evenShare = Math.floor((remainingSends + myOnBoard) / (worldsAfterThis + 1));
+	const myOnBoard = frame.sites.reduce((n, s) => n + (publicState.board[s.id][handler] || []).length, 0);
+	const evenShare = Math.floor((remainingSends + myOnBoard) / (framesAfterThis + 1));
 
 	// score every (creature, site)
 	const candidates = [];
 	ownRoster.forEach((record) => {
-		world.sites.forEach((site) => {
-			const prepared = prepare(record, site, world, me.sentCount);
+		frame.sites.forEach((site) => {
+			const prepared = prepare(record, site, null, me.sentCount);
 			const h = prepared.hold;
 			const m = margins[site.id];
 			const stacked = (publicState.board[site.id][handler] || []).length;
@@ -242,8 +242,8 @@ function strikeValue(magnitude, hold) {
 	board, from public information only.
 */
 function estimateActionValue(publicState, record, site, sentIndex, action, handler) {
-	const world = publicState.world;
-	const prepared = prepare(record, site, world, sentIndex);
+	const frame = publicState.frame;
+	const prepared = prepare(record, site, null, sentIndex);
 	const act = prepared.acts.find((a) => a.action === action);
 	if (action === 'hold' || !act) {
 		return 0;
@@ -257,7 +257,7 @@ function estimateActionValue(publicState, record, site, sentIndex, action, handl
 	if (act.class === 'support') {
 		if (action === 'ward') {
 			const threatHere = enemiesAt(site.id).length;
-			const projectionThreat = world.sites.some((s) => enemiesAt(s.id).some((e) => (e.record.abilities || []).some((a) => getActClass(a.action) === ACT_CLASS.PROJECTION)));
+			const projectionThreat = frame.sites.some((s) => enemiesAt(s.id).some((e) => (e.record.abilities || []).some((a) => getActClass(a.action) === ACT_CLASS.PROJECTION)));
 			return threatHere > 0 || projectionThreat ? 1 : 0.25;
 		}
 		if (action === 'mend') {
@@ -273,7 +273,7 @@ function estimateActionValue(publicState, record, site, sentIndex, action, handl
 	// area acts: everything at one site, both sides
 	if (action === 'burst' || action === 'spray' || action === 'cloud') {
 		let bestSiteValue = 0;
-		world.sites.forEach((s) => {
+		frame.sites.forEach((s) => {
 			const gain = enemiesAt(s.id).reduce((sum, e) => sum + strikeValue(act.magnitude, holdOf(publicState, s.id, e)), 0);
 			const loss = alliesAt(s.id).reduce((sum, e) => sum + strikeValue(act.magnitude, holdOf(publicState, s.id, e)), 0);
 			bestSiteValue = Math.max(bestSiteValue, gain - loss);
@@ -282,7 +282,7 @@ function estimateActionValue(publicState, record, site, sentIndex, action, handl
 	}
 
 	// single-target acts: best target in reach
-	const reachSites = cls === ACT_CLASS.PROJECTION ? world.sites.map((s) => s.id) : [site.id];
+	const reachSites = cls === ACT_CLASS.PROJECTION ? frame.sites.map((s) => s.id) : [site.id];
 	let best = 0;
 	reachSites.forEach((siteId) => {
 		enemiesAt(siteId).forEach((e) => {
@@ -296,9 +296,9 @@ function estimateActionValue(publicState, record, site, sentIndex, action, handl
 	chooseOrders(publicState, handler) -> { [creatureId]: actName }
 */
 export function chooseOrders(publicState, handler) {
-	const world = publicState.world;
+	const frame = publicState.frame;
 	const orders = {};
-	world.sites.forEach((site) => {
+	frame.sites.forEach((site) => {
 		visibleEntries(publicState, site.id, handler).forEach((entry) => {
 			const record = entry.record;
 			const actions = ['hold', ...(record.abilities || []).map((a) => a.action)];
