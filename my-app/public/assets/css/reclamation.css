@@ -3341,3 +3341,188 @@
 .rec-slot-site--suggested { border-color: color-mix(in srgb, var(--g-brass-light) 70%, var(--g-seam)); }
 .rec-slot-site-mark--suggested { color: var(--g-brass-light); }
 .rec-chosen-site .rec-slot-site-index { font-size: var(--g-size-micro); }
+
+/* -------------------------------------------------------------------------
+   NUMBERS AS PICTURES (Nick, 2026-09-04, third pass)
+
+   Hold is a bulb strip in the side's colour on every figure, slot chip and front
+   line: what the environment took is a hatched hazard segment past the filled
+   part, a stagger is a struck red segment, home ground a brass cap. Each site's
+   environment is a temperature scale shared by all sites with the site's band on
+   it and a glyph for the medium; a previewed creature lays its own band over the
+   site's, so strain is seen as two bands missing each other. Sends left are pips.
+   ------------------------------------------------------------------------- */
+
+.rec-hold {
+	position: relative;
+	display: inline-block;
+	width: 100%;
+	height: 6px;
+	border-radius: 1px;
+	background: var(--g-seam);
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9);
+	overflow: hidden;
+	vertical-align: middle;
+}
+
+.rec-hold--small { height: 5px; }
+
+.rec-hold-fill {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	background-image: repeating-linear-gradient(90deg, var(--rec-team, var(--rec-you)) 0 3px, transparent 3px 4px);
+	transition: width var(--g-move);
+}
+
+.rec-hold--mine { --rec-team: var(--rec-you); }
+.rec-hold--theirs { --rec-team: var(--rec-rival); }
+
+/* the brass cap: the last few bulbs of a home-ground hold */
+.rec-hold--home .rec-hold-fill {
+	box-shadow: inset -6px 0 0 var(--g-brass-light);
+}
+
+.rec-hold-lost {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	opacity: 0.85;
+}
+
+.rec-hold-lost--strained { background-image: repeating-linear-gradient(-45deg, var(--g-hazard) 0 1.5px, transparent 1.5px 4px); }
+.rec-hold-lost--severe { background-image: repeating-linear-gradient(-45deg, var(--g-lamp-red) 0 1.5px, transparent 1.5px 4px); }
+.rec-hold-lost--stagger { background-image: repeating-linear-gradient(90deg, var(--g-lamp-red) 0 3px, transparent 3px 4px); opacity: 0.55; }
+
+/* on the figure: the strip runs the width of the stage under the plate, the number beside */
+.rec-piece .rec-figure-foot {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: center;
+	gap: var(--g-1);
+	width: 100%;
+	min-width: var(--rec-piece, 56px);
+	padding: 0 2px;
+}
+
+.rec-piece .rec-figure-hold { font-size: var(--g-size-micro); }
+
+/* on the front line */
+.rec-ghost .rec-hold { width: 64px; }
+
+/* in a slot: meter row uses the same strip */
+.rec-slot-meter-row .rec-hold { height: 6px; }
+
+/* per-site chips: index, a small strip, the number */
+.rec-slot-site {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 4px;
+	padding: 2px var(--g-1);
+}
+
+.rec-chosen-site { grid-template-columns: auto minmax(0, 1fr) auto; }
+.rec-chosen-site .rec-slot-site-mark--suggested { grid-column: 1 / -1; text-align: center; }
+
+/* --- the environment scale --------------------------------------------- */
+
+.rec-env {
+	grid-column: 2;
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	align-items: center;
+	gap: var(--g-2);
+	min-width: 0;
+}
+
+.rec-env-medium {
+	width: 16px;
+	height: 16px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: 50%;
+	background: var(--g-hull-lo);
+	color: var(--g-ink-mid);
+}
+
+.rec-medium-glyph { width: 11px; height: 11px; fill: currentColor; stroke: currentColor; }
+.rec-env-medium--strained { color: var(--g-hazard); border-color: var(--g-hazard); }
+.rec-env-medium--cannot { color: var(--g-lamp-red); border-color: var(--g-lamp-red); }
+.rec-env-medium--ok { color: var(--rec-you); }
+
+.rec-env-scale {
+	position: relative;
+	display: block;
+	height: 8px;
+	border-radius: 1px;
+	background: linear-gradient(90deg, color-mix(in srgb, var(--g-el-ice) 35%, var(--g-seam)), var(--g-seam) 45%, color-mix(in srgb, var(--g-el-fire) 35%, var(--g-seam)));
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9);
+	overflow: hidden;
+}
+
+.rec-env-zero {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 1px;
+	background: color-mix(in srgb, var(--g-ink-low) 70%, transparent);
+}
+
+.rec-env-band {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	border-radius: 1px;
+}
+
+.rec-env-band--site { background: color-mix(in srgb, var(--g-ink) 70%, transparent); }
+
+.rec-env-band--creature {
+	top: 1px;
+	bottom: 1px;
+	background: repeating-linear-gradient(90deg, var(--rec-you) 0 2px, transparent 2px 3px);
+	box-shadow: 0 0 0 1px var(--rec-you);
+	transition: left var(--g-move), width var(--g-move);
+}
+
+.rec-env--strained .rec-env-band--creature { background: repeating-linear-gradient(90deg, var(--g-hazard) 0 2px, transparent 2px 3px); box-shadow: 0 0 0 1px var(--g-hazard); }
+.rec-env--severe .rec-env-band--creature { background: repeating-linear-gradient(90deg, var(--g-lamp-red) 0 2px, transparent 2px 3px); box-shadow: 0 0 0 1px var(--g-lamp-red); }
+
+.rec-env-readout {
+	font-size: 0.5625rem;
+	color: var(--g-ink-low);
+	white-space: nowrap;
+}
+
+/* --- sends as pips, and the hold legend in the deploy head ------------------- */
+
+.rec-deploy-count { display: inline-flex; align-items: center; gap: var(--g-2); }
+
+.rec-sends { display: inline-flex; gap: 2px; }
+
+.rec-send-pip {
+	width: 9px;
+	height: 9px;
+	border-radius: 1px;
+	border: var(--g-hairline) solid var(--g-seam);
+	background: var(--rec-you);
+}
+
+.rec-send-pip--spent { background: var(--g-hull-lo); box-shadow: var(--g-recess); }
+.rec-sends-text { font-size: var(--g-size-micro); color: var(--g-ink-low); }
+
+.rec-hold-legend {
+	display: grid;
+	grid-template-columns: 56px minmax(0, 1fr);
+	align-items: center;
+	gap: var(--g-2);
+	font-size: 0.5625rem;
+	color: var(--g-ink-low);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	font-family: var(--g-font-stencil);
+}

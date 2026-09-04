@@ -120,6 +120,7 @@ class ReclamationPage extends React.Component {
 						<div className="g-screen rec-rules-screen">
 							<div className="g-screen-line">The worlds were lost to war and plague. An expedition takes them back, site by site. The Court's Charter is the acknowledgment of what you already hold.</div>
 							<div className="g-screen-line">A match crosses {WORLDS_PER_MATCH} worlds of {3} sites each. Hold {SITES_TO_CLINCH} sites and the Charter is clinched. Every world runs four phases.</div>
+							<div className="g-screen-line">Every creature has a <strong>hold</strong>: how firmly it keeps a site. The Generators built each for one world, so on the wrong world, or at a site its body cannot bear, it holds less. Acts strike at hold. When the fighting stops, the Court gives each site to the side that still holds more of it.</div>
 							<dl className="rec-rules-phases">
 								<dt className="g-screen-line">Deploy</dt>
 								<dd className="g-screen-line">You and the rival alternate sending one creature to one site, or passing. A pass is permanent for that world.</dd>
@@ -163,7 +164,7 @@ class ReclamationPage extends React.Component {
 								<ModeSwitch mode={mode} onChange={this.setMode} />
 								<span className="rec-intro-mode-text">
 									{mode === 'simple'
-										? 'Simple: one recommended move each turn, orders by nature, go. Switch any time.'
+										? 'Simple: choose a creature, then a site, with the suggested move marked; orders by nature, go. Switch any time.'
 										: 'Advanced: every order, every number, hidden sends, the log and the dossiers.'}
 								</span>
 							</div>

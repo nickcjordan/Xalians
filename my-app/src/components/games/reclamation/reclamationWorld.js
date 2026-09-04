@@ -1,5 +1,5 @@
 import React from 'react';
-import ReclamationFigure, { ReclamationSilhouette } from './reclamationFigure';
+import ReclamationFigure, { ReclamationSilhouette, HoldMeter } from './reclamationFigure';
 import { formatHold } from './reclamationNarration';
 
 /*
@@ -24,14 +24,82 @@ import { formatHold } from './reclamationNarration';
 	component derives nothing except differences between numbers it was given.
 */
 
-function environmentLine(site) {
+/*
+	The environment as a picture: one temperature scale shared by every site (the coldest
+	and hottest bands any site in the table has), with the site's band drawn on it, and
+	the medium as a glyph. While a creature is previewed its own tolerance band is drawn
+	over the site's, so strain is seen as the two bands missing each other rather than
+	read as a word.
+*/
+export const SCALE_MIN_C = -110;
+export const SCALE_MAX_C = 130;
+
+function pctOnScale(c) {
+	const clamped = Math.max(SCALE_MIN_C, Math.min(SCALE_MAX_C, c));
+	return ((clamped - SCALE_MIN_C) / (SCALE_MAX_C - SCALE_MIN_C)) * 100;
+}
+
+function MediumGlyph({ medium }) {
+	const m = String(medium || '').toLowerCase();
+	if (m === 'liquid') {
+		return (
+			<svg className="rec-medium-glyph" viewBox="0 0 12 12" aria-hidden="true">
+				<path d="M6 1.2 C6 1.2 2.4 5.6 2.4 7.8 A3.6 3.6 0 0 0 9.6 7.8 C9.6 5.6 6 1.2 6 1.2 Z" />
+			</svg>
+		);
+	}
+	if (m === 'vacuum') {
+		return (
+			<svg className="rec-medium-glyph" viewBox="0 0 12 12" aria-hidden="true">
+				<circle cx="6" cy="6" r="3.6" fill="none" strokeWidth="1.4" />
+				<circle cx="6" cy="6" r="0.9" />
+			</svg>
+		);
+	}
+	if (m === 'solid') {
+		return (
+			<svg className="rec-medium-glyph" viewBox="0 0 12 12" aria-hidden="true">
+				<path d="M1.5 10.5 L4.5 3.5 L7 7.5 L8.5 5 L10.5 10.5 Z" />
+			</svg>
+		);
+	}
+	// gas: three drifting strokes
+	return (
+		<svg className="rec-medium-glyph" viewBox="0 0 12 12" aria-hidden="true">
+			<path d="M1.5 3.2 C3 2 4.5 4.4 6 3.2 S9 2 10.5 3.2 M1.5 6.2 C3 5 4.5 7.4 6 6.2 S9 5 10.5 6.2 M1.5 9.2 C3 8 4.5 10.4 6 9.2 S9 8 10.5 9.2" fill="none" strokeWidth="1.2" strokeLinecap="round" />
+		</svg>
+	);
+}
+
+export function EnvironmentScale({ site, ghost }) {
 	const env = (site && site.environment) || {};
-	const medium = env.medium ? String(env.medium) : 'unknown medium';
 	const t = env.temperatureC || {};
-	const band = typeof t.min === 'number' && typeof t.max === 'number'
-		? `${t.min} to ${t.max} C`
-		: 'unrecorded band';
-	return `${medium} · ${band}`;
+	const hasBand = typeof t.min === 'number' && typeof t.max === 'number';
+	const tol = ghost && ghost.tolerance;
+	const own = tol && tol.temperatureC && typeof tol.temperatureC.min === 'number' ? tol.temperatureC : null;
+	const mediumOk = !tol ? null
+		: (tol.breathes.length > 0 && env.medium && !tol.breathes.includes(env.medium)) ? 'cannot'
+			: (env.medium && !tol.ambientMedia.includes(env.medium)) ? 'strained' : 'ok';
+	const medium = env.medium ? String(env.medium) : 'unknown';
+	const bandText = hasBand ? `${t.min} to ${t.max} C` : 'unrecorded band';
+	const ownText = own ? `; the creature tolerates ${own.min} to ${own.max} C` : '';
+	return (
+		<div className={`rec-env${ghost ? ` rec-env--${ghost.strainLevel}` : ''}`} title={`${medium}, ${bandText}${ownText}`}>
+			<span className={`rec-env-medium rec-env-medium--${medium}${mediumOk ? ` rec-env-medium--${mediumOk}` : ''}`} aria-label={`${medium} medium`}>
+				<MediumGlyph medium={medium} />
+			</span>
+			<span className="rec-env-scale" aria-hidden="true">
+				<span className="rec-env-zero" style={{ left: `${pctOnScale(0)}%` }} />
+				{hasBand && (
+					<span className="rec-env-band rec-env-band--site" style={{ left: `${pctOnScale(t.min)}%`, width: `${pctOnScale(t.max) - pctOnScale(t.min)}%` }} />
+				)}
+				{own && (
+					<span className="rec-env-band rec-env-band--creature" style={{ left: `${pctOnScale(own.min)}%`, width: `${Math.max(0.8, pctOnScale(own.max) - pctOnScale(own.min))}%` }} />
+				)}
+			</span>
+			<span className="rec-env-readout g-mono">{hasBand ? `${t.min} to ${t.max} C` : 'no band'}</span>
+		</div>
+	);
 }
 
 function marginText(mine, theirs) {
@@ -146,6 +214,8 @@ function ReclamationWorld({
 						staggered: !!(staggered && staggered[entry.recordId]),
 						strainLevel: holds[entry.recordId] ? holds[entry.recordId].strainLevel : undefined,
 						isHome: holds[entry.recordId] ? holds[entry.recordId].isHome : false,
+						unstrainedHold: holds[entry.recordId] ? holds[entry.recordId].unstrained : undefined,
+						baseHold: holds[entry.recordId] ? holds[entry.recordId].baseHold : undefined,
 						selected: armedRecordId === entry.recordId || (relocating && vanguardRecordId === entry.recordId),
 						dimmed: holdingIds && holdingIds.includes(entry.recordId),
 						acting: hl.acting === entry.recordId,
@@ -180,7 +250,7 @@ function ReclamationWorld({
 							<header className="rec-site-head">
 								<span className="rec-site-index" aria-hidden="true">{siteIndex + 1}</span>
 								<h3 className="rec-site-name">{site.name}</h3>
-								<p className="rec-site-env g-mono">{environmentLine(site)}</p>
+								<EnvironmentScale site={site} ghost={ghost} />
 								{recommended && <span className="rec-site-recommend" data-recommended-site>recommended</span>}
 							</header>
 
@@ -231,10 +301,8 @@ function ReclamationWorld({
 									{ghost && (
 										<span className="rec-ghost">
 											<span className="rec-ghost-cta">{ghost.preview ? 'would hold' : 'send here'}</span>
+											<HoldMeter hold={ghost.hold} unstrained={ghost.unstrained} isHome={ghost.isHome} strainLevel={ghost.strainLevel} mine />
 											<span className="rec-ghost-value">{formatHold(ghost.hold)}</span>
-											{ghost.isHome && <span className="rec-tag rec-tag--home">home</span>}
-											{ghost.strainLevel === 'strained' && <span className="rec-tag rec-tag--strain">strained</span>}
-											{ghost.strainLevel === 'severe' && <span className="rec-tag rec-tag--severe">severe</span>}
 
 										</span>
 									)}
