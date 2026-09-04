@@ -91,6 +91,20 @@
 	}
 }
 
+.enc-index-archive-note {
+	margin-top: var(--g-6);
+}
+
+.enc-index-archive-note a {
+	color: var(--g-ink);
+	text-decoration: underline;
+}
+
+.enc-index-archive-note a:hover,
+.enc-index-archive-note a:focus-visible {
+	color: var(--g-brass-light);
+}
+
 @media (max-width: 700px) {
 	.enc-index-chips.enc-scrollrow {
 		display: flex;

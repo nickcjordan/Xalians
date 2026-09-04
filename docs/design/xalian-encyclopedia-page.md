@@ -59,7 +59,7 @@ Navigation: the navbar gains an "Encyclopedia" link between Home and Duel. The o
 | `speciesRecords.json` | `scripts/bundleLore.js` gathers `docs/species-templates/<key>.json` for keys listed in a manifest of ratified species | `{ version, note, records: [template] }` | new |
 | `registries.json` | transcribed once by an agent from the ratified definition text in the migrate-species skill (`docs/species-templates/registries.json`), copied by `bundleLore.js`; sight, hearing, smell added as graded senses | `{ attributes, archetypes (with favors), traits, elements, physiology: { corporeality, composition, bodyPlan, covering, diet, communication, media, lifespan, chirality, descriptionStatus }, capabilities, senses, anatomy, channels, actions, instrumentActions }`, each an array of `{ key, name, nature }` | new |
 
-`scripts/bundleLore.js` is idempotent and run by hand after lore changes, like `buildCanonCompendium.js`. The frontend never imports from `docs/`.
+`scripts/bundleLore.js` is idempotent and run by hand after lore changes, like `buildCodex.js`. The frontend never imports from `docs/`.
 
 Per Nick's ruling on 2026-09-03 (one source location per kind of data), species encyclopedia entries are not derived from `speciesRecords.json` at all: they live only in `docs/encyclopedia/encyclopedia.json` under category `xalians`, written straight into `entries` during migration, and are bundled verbatim like every other entry. `speciesRecords.json` carries only the mechanical template records.
 
