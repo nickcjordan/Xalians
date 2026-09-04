@@ -30,7 +30,7 @@ def coverage(rec, sc):
     return rows, extra
 
 
-def build(key):
+def build(key, pose=None):
     rec = json.loads((ROOT / 'docs' / 'species-templates' / f'{key}.json').read_text(encoding='utf-8'))
     sc = SHOWCASE[key]
     rows, extra = coverage(rec, sc)
@@ -44,11 +44,12 @@ def build(key):
              f'Its two signature features, which must be unmistakable in this image, are the {sig_names}: {sigs}.']
     if vis: parts.append(f'Also in view: {vis}.')
     if sc['hidden']: parts.append('Hidden by the pose: ' + '; '.join(sc['hidden'].values()) + '.')
-    parts += [CONSISTENCY, sc['pose']]
+    pose_text = sc.get('poses', {})[pose] if pose else sc['pose']
+    parts += [CONSISTENCY, pose_text]
     return ' '.join(parts), rows
 
 
 if __name__ == '__main__':
-    prompt, rows = build(sys.argv[1])
+    prompt, rows = build(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else None)
     print(prompt); print()
     for a, s in rows: print(f'  {a:10} {s}')

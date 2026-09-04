@@ -28,6 +28,8 @@ def main():
     ap.add_argument('--size', type=int, default=1024)
     ap.add_argument('--vary-pose', action='store_true', help='cycle the shared pose list per seed')
     ap.add_argument('--brief', default='body', choices=['body', 'showcase'], help='showcase = one fixed prompt from showcase.json via brief.py')
+    ap.add_argument('--pose', default='', help='named pose variant from showcase.json poses')
+    ap.add_argument('--ref-note', default='', help='replaces the generic reference preamble, e.g. to name what each reference contributes')
     ap.add_argument('--refs', default='', help='comma-separated species keys whose hand-drawn art is passed as reference images (klein multi-reference)')
     ap.add_argument('--ref-size', type=int, default=768)
     ap.add_argument('--tag', default='klein')
@@ -36,18 +38,20 @@ def main():
     rec_path = sil.ROOT / 'docs' / 'species-templates' / f'{args.key}.json'
     rec = json.loads(rec_path.read_text(encoding='utf-8'))
     body = zi.BODY.get(args.key) or sil.body_phrase(args.key, rec)
-    if args.brief == 'showcase': body, _ = br.build(args.key)
+    if args.brief == 'showcase': body, _ = br.build(args.key, args.pose or None)
     prompt = f'{body} {zi.STYLE}'
     prompts = [f'{body} {pose} {zi.STYLE}' for pose in zi.POSES] if args.vary_pose else [prompt]
     refs = []
     if args.refs:
         from PIL import Image
         for k in args.refs.split(','):
-            im = Image.open(sil.ART_DIR / f'{k}.png').convert('RGB')
+            src = Path(k) if k.endswith('.png') else sil.ART_DIR / f'{k}.png'
+            im = Image.open(src).convert('RGB')
             im.thumbnail((args.ref_size, args.ref_size)); refs.append(im)
         n = len(refs)
-        prompt = (f'The {n} reference images are finished silhouettes from one artist and one set of creatures. Draw a new creature '
-                  f'in exactly that drawing style and line treatment, not one of the referenced creatures. {prompt}')
+        note = args.ref_note or (f'The {n} reference images are finished silhouettes from one artist and one set of creatures. Draw a new creature '
+                                 f'in exactly that drawing style and line treatment, not one of the referenced creatures.')
+        prompt = f'{note} {prompt}'
         prompts = [prompt]
     out = sil.OUT_ROOT / args.key / args.tag
     out.mkdir(parents=True, exist_ok=True)
@@ -67,7 +71,7 @@ def main():
     manifest = {'key': args.key, 'tag': args.tag, 'model': MODEL, 'quant': 'bitsandbytes nf4 on load (transformer and text encoder)',
                 'record': str(rec_path), 'record_sha': sil.sha256(rec_path), 'brief': args.brief, 'prompt': prompt, 'steps': args.steps,
                 'guidance': args.guidance, 'size': args.size, 'scheduler': type(pipe.scheduler).__name__, 'versions': sil.versions(),
-                'refs': args.refs, 'candidates': []}
+                'refs': args.refs, 'ref_note': args.ref_note, 'pose': args.pose, 'candidates': []}
     mpath = out / 'manifest.json'
     t0 = time.time()
     for i in range(args.n):

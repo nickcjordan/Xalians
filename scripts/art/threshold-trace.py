@@ -27,9 +27,9 @@ def otsu(a):
     return thr
 
 
-def trace_svg(bw, speck):
+def trace_svg(bw, speck, alphamax=1.0, opttolerance=0.2):
     bmp = potrace.Bitmap(bw)
-    path = bmp.trace(turdsize=speck, alphamax=1.0, opttolerance=0.2)
+    path = bmp.trace(turdsize=speck, alphamax=alphamax, opttolerance=opttolerance)
     h, w = bw.shape; d = []
     for curve in path:
         s = curve.start_point; d.append(f'M{s.x:.1f} {s.y:.1f}')
@@ -45,16 +45,23 @@ def main():
     ap.add_argument('run_dir')
     ap.add_argument('--thr', default='auto')
     ap.add_argument('--speck', type=int, default=60, help='drop black or white islands smaller than this many pixels')
+    ap.add_argument('--upscale', type=int, default=1, help='Lanczos upscale factor applied to the grey image before thresholding; keeps thin cut lines open')
+    ap.add_argument('--alphamax', type=float, default=1.0, help='potrace corner threshold; lower keeps sharper corners (0.0 = all corners, 1.334 = all curves)')
+    ap.add_argument('--opttolerance', type=float, default=0.2, help='potrace curve optimization tolerance; lower = more faithful, more nodes')
+    ap.add_argument('--only', default='', help='comma-separated tile stems to process, e.g. frackworm-50000')
     args = ap.parse_args()
     run = Path(args.run_dir); out = run / 'trace'; out.mkdir(exist_ok=True)
     man = json.loads((run / 'manifest.json').read_text(encoding='utf-8'))
     tiles = [Path(c['file']) for c in man['candidates']]
+    if args.only: tiles = [p for p in tiles if p.stem in args.only.split(',')]
     raws, bws, report = [], [], []
     for p in tiles:
-        a = np.array(Image.open(p).convert('L'))
+        g = Image.open(p).convert('L')
+        if args.upscale > 1: g = g.resize((g.width * args.upscale, g.height * args.upscale), Image.LANCZOS)
+        a = np.array(g)
         t = otsu(a) if args.thr == 'auto' else int(args.thr)
         bw = a < t
-        svg, n = trace_svg(bw, args.speck)
+        svg, n = trace_svg(bw, args.speck * args.upscale * args.upscale, args.alphamax, args.opttolerance)
         (out / f'{p.stem}.svg').write_text(svg, encoding='utf-8')
         bw_img = Image.fromarray((~bw * 255).astype('uint8'))
         bw_img.save(out / f'{p.stem}-bw.png')

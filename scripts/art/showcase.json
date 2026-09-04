@@ -36,6 +36,9 @@
       "hide": "heavy plated hide marked by the ring segments"
     },
     "hidden": {},
-    "pose": "Side view: the worm drives upward at a steep angle from the lower right toward the upper left, the drill head at the upper left with its jaws open, the vents spraying sand along the neck, the body curving back down toward the lower right, a few shattered rock chips flying around the head."
+    "pose": "Side view: the worm drives upward at a steep angle from the lower right toward the upper left, the drill head at the upper left with its jaws open, the vents spraying sand along the neck, the body curving back down toward the lower right, a few shattered rock chips flying around the head.",
+    "poses": {
+      "foreground-head": "Composition with strong depth: the drill head is huge in the foreground at the upper left, filling nearly half the frame, its jaws open toward the viewer and its screw threads and nozzles drawn large and clear. The body recedes behind it into the distance, each ring segment smaller than the one before, curving away in a long hook to a small blunt tail at the lower right. The head is the focus; the body is the background."
+    }
   }
 }
