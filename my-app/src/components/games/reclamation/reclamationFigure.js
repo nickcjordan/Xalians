@@ -28,57 +28,36 @@ import { team } from '../../../constants/designTokens';
 	- badge: a small tag on the plate (the act ordered, during Orders)
 */
 export const FIGURE_SIZE = 56;
-// The gauge's printed range. Base hold runs 0 to 20; the sector past 20 is home ground,
-// where a native can carry up to 30. The scale is fixed so a reading always means the
-// same thing (Nick, 2026-09-04: "a consistent scale so we always know what the max is").
+// The meter's printed range. Base hold runs 0 to 20; the bulbs past 20 are home
+// ground, where a native can carry up to 30. The scale is fixed so a reading always
+// means the same thing (Nick, 2026-09-04).
 export const HOLD_SCALE = 30;
 export const HOLD_PRINTED_MAX = 20;
 
 /*
-	HoldMeter: hold as a pressure gauge (Nick, 2026-09-04: a real instrument, kept
-	legible). A round brass bezel, a dark face under glass, a 270 degree scale printed
-	0 to 20 with the over-range to 30 hatched in brass, a needle with a counterweight
-	tail that points down at zero and climbs past the top. What the site's environment
-	takes is a dim second needle at the unstrained reading with a hazard arc between
-	the two (red when severe); a stagger is a red arc from the halved reading back to
-	the printed one. Chip and full sizes carry ticks only, with a heavier needle;
-	numerals print on the large face only, where they can be read (Nick, twice).
+	HoldMeter: hold as the system's own instrument, the segmented bulb strip the Duel's
+	rail carries for vitals (Nick, 2026-09-04, seventh pass: theme the table as one
+	thing; the brass dial was a different object from everything around it and its
+	needle could not be read at a glance). One bulb per point, twenty in four banks of
+	five with a seam between banks so the count is read without counting, and a brass
+	bank of ten beyond for home ground that appears only when a native stands there.
+	Bulbs light in the element in scope, which on the table is the world's, so hold on
+	Zolton reads electric and hold on Telypso reads psychic. What the site's environment
+	takes is the dim bulbs past the lit ones (the bulbs that would be lit unstrained);
+	a stagger is the struck red bulbs from the halved reading back to the printed one.
+	The number prints beside the strip in mono. `scale` adds the printed 0, 10, 20
+	under the strip on the large size.
 
-	Props: hold, unstrained, printedHold, isHome, strainLevel, staggered, small (chip
-	size) or size: 'chip' | 'full' | 'large'. `mine` is accepted and ignored: the face
-	is neutral and the side is said by the ground.
+	Props: hold, unstrained, printedHold, isHome, strainLevel, staggered, size ('chip'
+	| 'full' | 'large'), scale. `small` and `mine` are accepted for old call sites.
 */
-const GAUGE_SWEEP = 270;
-
-function gaugeAngle(value) {
-	const t = Math.max(0, Math.min(HOLD_SCALE, value)) / HOLD_SCALE;
-	return ((225 - GAUGE_SWEEP * t) * Math.PI) / 180;
-}
-
-function gaugePoint(value, radius) {
-	const a = gaugeAngle(value);
-	return { x: 50 + radius * Math.cos(a), y: 50 - radius * Math.sin(a) };
-}
-
-function gaugeArc(from, to, radius) {
-	const lo = Math.min(from, to);
-	const hi = Math.max(from, to);
-	if (hi - lo < 0.01) {
-		return '';
-	}
-	const p1 = gaugePoint(lo, radius);
-	const p2 = gaugePoint(hi, radius);
-	const large = ((hi - lo) / HOLD_SCALE) * GAUGE_SWEEP > 180 ? 1 : 0;
-	return `M ${p1.x.toFixed(2)} ${p1.y.toFixed(2)} A ${radius} ${radius} 0 ${large} 1 ${p2.x.toFixed(2)} ${p2.y.toFixed(2)}`;
-}
-
-const GAUGE_NUMERALS = [0, 10, 20, 30];
-
-export function HoldMeter({ hold, unstrained, printedHold, isHome, strainLevel, staggered, small, size }) {
+export function HoldMeter({ hold, unstrained, printedHold, isHome, strainLevel, staggered, small, size, scale }) {
 	const sz = size || (small ? 'chip' : 'full');
-	const chip = sz === 'chip';
-	// numerals only where they can be read: the large face on the front line (Nick)
-	const numerals = sz === 'large';
+	const lit = Math.max(0, Math.min(HOLD_SCALE, Math.round(hold)));
+	const struckTo = staggered && typeof printedHold === 'number' && printedHold > hold ? Math.min(HOLD_SCALE, Math.round(printedHold)) : lit;
+	const dimTo = typeof unstrained === 'number' && unstrained > hold ? Math.min(HOLD_SCALE, Math.round(unstrained)) : struckTo;
+	const reach = Math.max(lit, struckTo, dimTo);
+	const count = isHome || reach > HOLD_PRINTED_MAX ? HOLD_SCALE : HOLD_PRINTED_MAX;
 	const lostToStrain = typeof unstrained === 'number' && unstrained > hold ? unstrained - hold : 0;
 	const lostToStagger = staggered && typeof printedHold === 'number' && printedHold > hold ? printedHold - hold : 0;
 	const title = [
@@ -87,40 +66,22 @@ export function HoldMeter({ hold, unstrained, printedHold, isHome, strainLevel, 
 		lostToStagger > 0 ? `staggered, half of ${formatHold(printedHold)}` : null,
 		isHome ? 'home ground, past 20' : null,
 	].filter(Boolean).join(', ');
-	const R = 44;
-	const needle = gaugePoint(hold, R - (chip ? 9 : 11));
-	const tail = gaugePoint(hold + HOLD_SCALE / 2, chip ? 7 : 9);
-	const ghost = lostToStrain > 0 ? gaugePoint(unstrained, R - 12) : null;
-	const severe = strainLevel === 'severe';
-	const ticks = [];
-	for (let t = 0; t <= HOLD_SCALE; t += numerals ? 2.5 : 5) {
-		const major = t % 10 === 0;
-		const mid = t % 5 === 0;
-		const a = gaugePoint(t, R - 7);
-		const b = gaugePoint(t, R - (major ? 15 : mid ? 12 : 10));
-		ticks.push(<line key={t} className={`rec-gauge-tick${major ? ' rec-gauge-tick--major' : ''}${t > HOLD_PRINTED_MAX ? ' rec-gauge-tick--over' : ''}`} x1={a.x.toFixed(2)} y1={a.y.toFixed(2)} x2={b.x.toFixed(2)} y2={b.y.toFixed(2)} />);
+	const bulbs = [];
+	for (let i = 1; i <= count; i++) {
+		let state = 'off';
+		if (i <= lit) state = 'lit';
+		else if (i <= struckTo) state = 'struck';
+		else if (i <= dimTo) state = strainLevel === 'severe' ? 'dim-severe' : 'dim';
+		bulbs.push(<i key={i} className={`rec-bulb rec-bulb--${state}${i > HOLD_PRINTED_MAX ? ' rec-bulb--over' : ''}`} />);
 	}
 	return (
-		<span className={`rec-gauge rec-gauge--${sz}${isHome ? ' rec-gauge--home' : ''}`} title={title} aria-label={title} role="img">
-			<svg className="rec-gauge-face" viewBox="0 0 100 100" aria-hidden="true">
-				<circle className="rec-gauge-bezel-dark" cx="50" cy="50" r={R + 4} />
-				<circle className="rec-gauge-bezel" cx="50" cy="50" r={R + 2} />
-				<circle className="rec-gauge-glass" cx="50" cy="50" r={R - 1} />
-				<path className="rec-gauge-range" d={gaugeArc(0, HOLD_PRINTED_MAX, R - 7)} />
-				<path className="rec-gauge-over" d={gaugeArc(HOLD_PRINTED_MAX, HOLD_SCALE, R - 7)} />
-				{lostToStagger > 0 && <path className="rec-gauge-lost rec-gauge-lost--stagger" d={gaugeArc(hold, printedHold, R - 7)} />}
-				{lostToStrain > 0 && lostToStagger === 0 && <path className={`rec-gauge-lost${severe ? ' rec-gauge-lost--severe' : ''}`} d={gaugeArc(hold, unstrained, R - 7)} />}
-				{ticks}
-				{numerals && GAUGE_NUMERALS.map((t) => {
-					const q = gaugePoint(t, R - 25);
-					return <text key={t} className={`rec-gauge-numeral${t > HOLD_PRINTED_MAX ? ' rec-gauge-numeral--over' : ''}`} x={q.x.toFixed(2)} y={(q.y + 3.5).toFixed(2)} textAnchor="middle">{t}</text>;
-				})}
-				{numerals && <text className="rec-gauge-legend" x="50" y="80" textAnchor="middle">HOLD</text>}
-				{ghost && <line className="rec-gauge-needle rec-gauge-needle--ghost" x1="50" y1="50" x2={ghost.x.toFixed(2)} y2={ghost.y.toFixed(2)} />}
-				<line className="rec-gauge-needle" x1={tail.x.toFixed(2)} y1={tail.y.toFixed(2)} x2={needle.x.toFixed(2)} y2={needle.y.toFixed(2)} />
-				<circle className="rec-gauge-hub" cx="50" cy="50" r={chip ? 5 : 4.5} />
-				<circle className="rec-gauge-shine" cx="50" cy="50" r={R - 1} />
-			</svg>
+		<span className={`rec-meter rec-meter--${sz}${isHome ? ' rec-meter--home' : ''}`} title={title} aria-label={title} role="img">
+			<span className="rec-meter-bulbs">{bulbs}</span>
+			{scale && (
+				<span className="rec-meter-scale" aria-hidden="true">
+					<i>0</i><i>5</i><i>10</i><i>15</i><i>20</i>
+				</span>
+			)}
 		</span>
 	);
 }

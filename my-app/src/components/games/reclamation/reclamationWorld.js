@@ -257,37 +257,27 @@ function ReclamationWorld({
 								{recommended && <span className="rec-site-recommend" data-recommended-site>recommended</span>}
 							</header>
 
-							{/* the balance: one bar, the rival's hold pushing in from the left in brass,
-							    yours from the right in cyan, meeting where the site stands. A previewed
-							    send extends your end as a hatched ghost, so what the send would shift is
-							    seen before it is made. */}
+							{/* the tally: the two sides' totals as printed readouts, the leading side's in
+							    its colour, and one sentence between them. A previewed send prints its
+							    own figure after yours. An empty world keeps the room and shows nothing. */}
 							{(() => {
 								const ghostHold = ghost ? ghost.hold : 0;
-								const span = Math.max(totalMine + totalTheirs + ghostHold, 0.0001);
-								const pct = (v) => `${Math.round((v / span) * 1000) / 10}%`;
 								const afterText = ghost ? ghostText(ghost, totalMine, totalTheirs) : null;
 								const quiet = empty && !ghost;
-								// an empty world is quiet: the balance shows with the first send or a preview,
-								// but its room is kept so the card never jumps under the pointer
 								const hiddenBar = quiet && !verdict;
 								return (
-									<div className={`rec-balance rec-balance--${margin.who}${quiet ? ' rec-balance--quiet' : ''}${hiddenBar ? ' rec-balance--hidden' : ''}${ghost ? ' rec-balance--preview' : ''}`} data-site-margin={site.id}>
-										<span className="rec-balance-end rec-balance-end--theirs">
-											<span className="rec-balance-side">rival</span>
-											<span className="rec-balance-total rec-tick" data-total-seat={opponent} data-site-total={site.id} key={`t-${formatHold(totalTheirs)}`}>{formatHold(totalTheirs)}</span>
+									<div className={`rec-tally rec-tally--${margin.who}${hiddenBar ? ' rec-tally--hidden' : ''}${ghost ? ' rec-tally--preview' : ''}`} data-site-margin={site.id}>
+										<span className="rec-tally-side rec-tally-side--theirs">
+											<span className="rec-tally-label">rival</span>
+											<span className="rec-tally-value rec-tick" data-total-seat={opponent} data-site-total={site.id} key={`t-${formatHold(totalTheirs)}`}>{formatHold(totalTheirs)}</span>
 										</span>
-										<span className="rec-balance-track" aria-hidden="true">
-											{totalTheirs > 0 && <span className="rec-balance-fill rec-balance-fill--theirs" style={{ width: pct(totalTheirs) }} />}
-											{ghost && <span className="rec-balance-fill rec-balance-fill--ghost" style={{ width: pct(ghostHold) }} />}
-											{totalMine > 0 && <span className="rec-balance-fill rec-balance-fill--mine" style={{ width: pct(totalMine) }} />}
-										</span>
-										<span className="rec-balance-end rec-balance-end--mine">
-											<span className="rec-balance-total rec-tick" data-total-seat={you} data-site-total={site.id} key={`m-${formatHold(totalMine)}`}>{formatHold(totalMine)}</span>
-											{ghost && <span className="rec-balance-plus">+{formatHold(ghostHold)}</span>}
-											<span className="rec-balance-side">you</span>
-										</span>
-										<span className={`rec-site-margin-text rec-tick${ghost ? ' rec-site-margin-text--preview' : ''}`} key={afterText || margin.text || 'open'}>
+										<span className={`rec-tally-text rec-tick${ghost ? ' rec-tally-text--preview' : ''}`} key={afterText || margin.text || 'open'}>
 											{afterText || margin.text || 'unclaimed'}
+										</span>
+										<span className="rec-tally-side rec-tally-side--mine">
+											<span className="rec-tally-value rec-tick" data-total-seat={you} data-site-total={site.id} key={`m-${formatHold(totalMine)}`}>{formatHold(totalMine)}</span>
+											{ghost && <span className="rec-tally-plus">+{formatHold(ghostHold)}</span>}
+											<span className="rec-tally-label">you</span>
 										</span>
 									</div>
 								);
@@ -298,7 +288,7 @@ function ReclamationWorld({
 							    where is read from the floor before the figures are */}
 							<div className={`rec-site-field rec-site-floor${empty ? ' rec-site-field--empty' : ''}`}>
 								<div className="rec-rank rec-rank--theirs" data-rank="theirs">
-									<span className="rec-rank-edge rec-rank-edge--theirs" aria-hidden="true">rival{totalTheirs > 0 ? ` · ${formatHold(totalTheirs)}` : ''}</span>
+									<span className="rec-rank-edge rec-rank-edge--theirs" aria-hidden="true">rival</span>
 									{theirs.map((entry) => <ReclamationFigure {...figureProps(entry, opponent, 'down')} />)}
 									{theirs.length === 0 && <span className="rec-rank-open">no one</span>}
 								</div>
@@ -307,7 +297,7 @@ function ReclamationWorld({
 									{ghost && (
 										<span className="rec-ghost">
 											<span className="rec-ghost-cta">{ghost.preview ? 'would hold' : 'send here'}</span>
-											<HoldMeter hold={ghost.hold} unstrained={ghost.unstrained} isHome={ghost.isHome} strainLevel={ghost.strainLevel} size="large" />
+											<HoldMeter hold={ghost.hold} unstrained={ghost.unstrained} isHome={ghost.isHome} strainLevel={ghost.strainLevel} size="large" scale />
 											<span className="rec-ghost-value">{formatHold(ghost.hold)}</span>
 
 										</span>
@@ -324,7 +314,7 @@ function ReclamationWorld({
 								<div className="rec-rank rec-rank--mine" data-rank="mine">
 									{mine.map((entry) => <ReclamationFigure {...figureProps(entry, you, 'up')} />)}
 									{mine.length === 0 && <span className="rec-rank-open">no one</span>}
-									<span className="rec-rank-edge rec-rank-edge--mine" aria-hidden="true">you{totalMine > 0 ? ` · ${formatHold(totalMine)}` : ''}</span>
+									<span className="rec-rank-edge rec-rank-edge--mine" aria-hidden="true">you</span>
 								</div>
 							</div>
 						</section>
