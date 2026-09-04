@@ -20,6 +20,16 @@ STYLE = ('Rendered as a flat solid black vector silhouette on a pure white backg
          'a smooth thick contour, and a few thin white cut lines inside the black shape to mark the eye and the body '
          'segments. No grey, no shading, no gradients, no texture, no ground line, no background objects, no text.')
 
+# Pose and view variants, cycled per seed when --vary-pose is set, so a sheet does not repeat one composition.
+POSES = [
+    'Seen from the side, the whole body stretched out in a long S-curve, the front end leading to the left.',
+    'Rearing up: the front third lifted high off the ground, the rest of the body coiled beneath it.',
+    'Bursting upward out of the ground at a steep angle, the front end at the top of the frame.',
+    'Three-quarter view from slightly above, the body curled in a loose open spiral.',
+    'Seen from the side at a low angle, the front end thrust straight at the viewer at the right of the frame.',
+    'Arched like a bridge, both ends on the ground, the middle of the body raised.',
+]
+
 # Prose briefs; the model reads sentences, so say what the body is and is not.
 BODY = {
     'frackworm': ('A colossal burrowing worm. Its whole front end is a pointed drill: a cone of stacked spiral rings that '

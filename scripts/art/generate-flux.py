@@ -25,6 +25,7 @@ def main():
     ap.add_argument('--seed', type=int, default=1000)
     ap.add_argument('--steps', type=int, default=4)
     ap.add_argument('--size', type=int, default=1024)
+    ap.add_argument('--vary-pose', action='store_true', help='cycle the shared pose list per seed')
     ap.add_argument('--tag', default='flux')
     args = ap.parse_args()
 
@@ -32,6 +33,7 @@ def main():
     rec = json.loads(rec_path.read_text(encoding='utf-8'))
     body = zi.BODY.get(args.key) or sil.body_phrase(args.key, rec)
     prompt = f'{body} {zi.STYLE}'
+    prompts = [f'{body} {pose} {zi.STYLE}' for pose in zi.POSES] if args.vary_pose else [prompt]
     out = sil.OUT_ROOT / args.key / args.tag
     out.mkdir(parents=True, exist_ok=True)
 
@@ -50,12 +52,13 @@ def main():
         seed = args.seed + i
         g = torch.Generator('cpu').manual_seed(seed)
         t1 = time.time()
-        img = pipe(prompt=prompt, num_inference_steps=args.steps, guidance_scale=0.0, width=args.size, height=args.size,
+        prompt_i = prompts[i % len(prompts)]
+        img = pipe(prompt=prompt_i, num_inference_steps=args.steps, guidance_scale=0.0, width=args.size, height=args.size,
                    max_sequence_length=256, generator=g).images[0]
         p = out / f'{args.key}-{seed}.png'
         img.save(p)
         mem = {'max_allocated_mb': round(torch.cuda.max_memory_allocated() / 2**20), 'max_reserved_mb': round(torch.cuda.max_memory_reserved() / 2**20)}
-        manifest['candidates'].append({'seed': seed, 'file': str(p), 'sha': sil.sha256(p), 'seconds': round(time.time() - t1, 1), **mem})
+        manifest['candidates'].append({'seed': seed, 'prompt': prompt_i, 'file': str(p), 'sha': sil.sha256(p), 'seconds': round(time.time() - t1, 1), **mem})
         mpath.write_text(json.dumps(manifest, indent=2), encoding='utf-8')
         print(f'[{i+1}/{args.n}] seed {seed} {round(time.time()-t1)}s peak {mem["max_allocated_mb"]} MB -> {p.name}', flush=True)
     ref = sil.ART_DIR / f'{args.key}.png'
