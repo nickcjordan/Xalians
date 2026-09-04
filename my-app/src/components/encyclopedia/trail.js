@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 const TRAIL_KEY = 'enc.trail.v1';
 const READ_KEY = 'enc.read.v1';
+const STORY_POSITION_KEY = 'enc.story.v1';
 const TRAIL_LIMIT = 8;
 const EVENT = 'enc-trail-change';
 
@@ -112,4 +113,30 @@ export function useReadMark(kind, key) {
 		setRead(isRead(kind, key));
 	}, [kind, key, version]);
 	return read;
+}
+
+// ---- story position (resume) ------------------------------------------
+// Remembers the reader's furthest-along part of The Story, per browser.
+// Same guards as the rest of this file: a blocked or empty store behaves
+// exactly like no position has ever been recorded.
+
+export function recordStoryPosition(eraKey) {
+	if (!eraKey) return;
+	save(STORY_POSITION_KEY, { eraKey, at: Date.now() });
+}
+
+export function getResume() {
+	const stored = load(STORY_POSITION_KEY, null);
+	if (!stored || !stored.eraKey) return null;
+	return { eraKey: stored.eraKey };
+}
+
+/** Re-renders when the story position changes (including in another tab). */
+export function useResume() {
+	const version = useStorageVersion();
+	const [resume, setResume] = useState(getResume);
+	useEffect(() => {
+		setResume(getResume());
+	}, [version]);
+	return resume;
 }

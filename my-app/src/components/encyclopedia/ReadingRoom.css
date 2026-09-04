@@ -1,6 +1,7 @@
 /* =========================================================================
-   READING ROOM — the /encyclopedia landing. Contract: docs/design/
-   xalian-encyclopedia-ux-pass.md item 1 "Galaxy map as instrument".
+   READING ROOM — the /encyclopedia landing, the archive's front matter.
+   Contract: docs/design/xalian-encyclopedia-story-pass.md "The shape after
+   the pass".
    ========================================================================= */
 
 .enc-room-preface {
@@ -8,9 +9,9 @@
 	margin-bottom: var(--g-6);
 }
 
-/* ---- First Survey call to action -------------------------------------- */
+/* ---- begin / resume card ------------------------------------------------- */
 
-.enc-room-tour {
+.enc-room-begin {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: baseline;
@@ -19,21 +20,21 @@
 	margin-bottom: var(--g-6);
 }
 
-.enc-room-tour-kicker {
+.enc-room-begin-kicker {
 	flex-basis: 100%;
 }
 
-.enc-room-tour-title {
+.enc-room-begin-title {
 	margin: 0;
 }
 
-.enc-room-tour-meta {
+.enc-room-begin-meta {
 	margin: 0;
 	color: var(--g-ink-mid);
 	flex: 1 1 auto;
 }
 
-.enc-room-tour .g-btn {
+.enc-room-begin .g-btn {
 	flex: none;
 }
 
@@ -44,85 +45,22 @@
 	margin-bottom: var(--g-7);
 }
 
-/* ---- below the fold: story + tiles -------------------------------------- */
+/* ---- contents ------------------------------------------------------------- */
 
-.enc-room-columns {
-	display: grid;
-	grid-template-columns: minmax(0, 60%) minmax(0, 1fr);
-	gap: var(--g-6);
-	align-items: start;
-}
-
-@media (max-width: 900px) {
-	.enc-room-columns {
-		grid-template-columns: minmax(0, 1fr);
-	}
-}
-
-.enc-room-story {
+.enc-room-contents {
 	padding: var(--g-4);
+	margin-bottom: var(--g-7);
 }
 
-.enc-room-story .g-record:last-child {
-	border-bottom: none;
-}
-
-/* Left rule (matte, not a glow) marking the row of the era currently
-   selected in the galaxy map / scrubber above. */
-.enc-room-story-row {
-	border-left: 3px solid transparent;
-	padding-left: calc(var(--g-4) - 3px);
-	transition: border-color var(--g-snap), background var(--g-snap);
-}
-
-.enc-room-story-row--lit {
-	border-left-color: var(--g-brass-light);
-	background: rgba(255, 244, 214, 0.03);
-}
-
-.enc-room-index {
-	display: inline-flex;
-	font-family: var(--g-font-mono);
-	color: var(--g-ink-low);
-	margin-right: var(--g-2);
-	padding: 0;
-	background: none;
-	border: 0;
-	cursor: pointer;
-	transition: color var(--g-snap);
-}
-
-.enc-room-index:hover,
-.enc-room-index:focus-visible {
-	color: var(--g-brass-light);
-}
-
-.enc-room-index[aria-pressed='true'] {
-	color: var(--g-brass-light);
-}
-
-.enc-room-index:focus-visible {
-	outline: 2px solid var(--g-phosphor);
-	outline-offset: 2px;
-}
-
-/* Phones: keep the index number a real tap target without growing it on
-   desktop, where it reads as an inline label beside the era name. */
-@media (max-width: 700px) {
-	.enc-room-index {
-		min-width: 32px;
-		min-height: 32px;
-		justify-content: center;
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.enc-room-story-row {
-		transition: none;
-	}
-}
+/* ---- reference shelf ------------------------------------------------------- */
 
 .enc-room-strip {
 	margin-top: 0;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 900px) {
+	.enc-room-strip {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
 }

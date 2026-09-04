@@ -31,6 +31,13 @@ describe('tour.json structural validation', () => {
 		expect(beats.length).toBeGreaterThan(0);
 	});
 
+	// At least 8 beats now (the original First Survey); the story pass adds a
+	// Deep Past beat, bringing the count to 9 -- Fable tightens this to an
+	// exact count at integration once the writer's beat has landed.
+	it('has at least 8 beats', () => {
+		expect(beats.length).toBe(9);
+	});
+
 	it('every beat has a key, title, and prose', () => {
 		for (const beat of beats) {
 			expect(beat.key, 'key').toBeTruthy();
@@ -39,13 +46,11 @@ describe('tour.json structural validation', () => {
 		}
 	});
 
-	it('order values are 0..7, unique, and contiguous', () => {
+	it('order values are 0..N-1, unique, and contiguous', () => {
 		const orders = beats.map((b) => b.order);
 		const sorted = [...orders].sort((a, b) => a - b);
 		expect(new Set(orders).size, 'orders must be unique').toBe(orders.length);
 		expect(sorted).toEqual(Array.from({ length: beats.length }, (_, i) => i));
-		// Contract specifies exactly 0..7 (8 beats).
-		expect(sorted).toEqual([0, 1, 2, 3, 4, 5, 6, 7]);
 	});
 
 	it('every beat has a real era key', () => {

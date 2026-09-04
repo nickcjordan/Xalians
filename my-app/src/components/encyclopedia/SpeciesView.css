@@ -107,3 +107,7 @@
 .enc-species-signature p:last-child {
 	margin-bottom: 0;
 }
+
+.enc-species-template-status {
+	margin: 0 0 var(--g-4);
+}

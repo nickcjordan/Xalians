@@ -5,7 +5,7 @@ import Prose from './Prose';
 import XalianImage from '../xalianImage';
 import Connections from './Connections';
 import Pronunciation from './Pronunciation';
-import { useVisit } from './trail';
+import { useVisit, useResume } from './trail';
 import './SpeciesView.css';
 
 function bandText(band) {
@@ -42,7 +42,38 @@ function meterRow(key, name, band, maxBand) {
     );
 }
 
-function TemplatePlate({ view }) {
+/** "Continue the story" foot: one .g-record line pointing at the reader's furthest part, or Part 1 when nothing is stored. */
+function ContinueTheStory() {
+    const resume = useResume();
+    const eras = lore.getEras();
+    const era = resume ? lore.getEra(resume.eraKey) : null;
+    const target = era || eras[0];
+    if (!target) return null;
+    return (
+        <div className="g-record enc-continue">
+            <span className="g-record-term">Continue the story</span>
+            <Link to={lore.routeFor('era', target.key)} className="g-record-body g-link">
+                Part {target.order + 1}, {target.name}
+            </Link>
+        </div>
+    );
+}
+
+/** A closed-by-default panel of secondary record data. */
+function Fold({ label, count, children }) {
+    return (
+        <details className="g-panel enc-fold">
+            <summary className="enc-fold-summary">
+                <span className="g-kicker enc-fold-label">{label}</span>
+                {typeof count === 'number' && <span className="g-mono enc-fold-count">{count}</span>}
+                <span className="enc-fold-chevron" aria-hidden="true" />
+            </summary>
+            <div className="enc-fold-body">{children}</div>
+        </details>
+    );
+}
+
+function TemplatePhysiology({ view }) {
     const p = view.record.physiology;
     const composition = [p.composition.primary.name, p.composition.secondary ? p.composition.secondary.name : null]
         .filter(Boolean)
@@ -94,7 +125,7 @@ function TemplatePlate({ view }) {
     );
 }
 
-function LegacyPlate({ view }) {
+function LegacyPhysiology({ view }) {
     const legacy = view.legacy;
     return (
         <div className="g-spec">
@@ -110,8 +141,26 @@ function LegacyPlate({ view }) {
     );
 }
 
-function TemplateSections({ view }) {
-    const record = view.record;
+function Signature({ signature }) {
+    if (!signature) return null;
+    return (
+        <section className="enc-section">
+            <div className="enc-section-head">
+                <h2 className="g-h2">Signature</h2>
+            </div>
+            <div className="g-screen enc-species-signature">
+                <p className="g-mono">{signature.name}</p>
+                <p className="g-mono">
+                    INSTRUMENT {signature.instrument} / ACTION {signature.action} / MEDIUM {signature.medium}
+                </p>
+                <p className="g-mono">INTENSITY {bandText(signature.intensity)}</p>
+                <p className="g-mono">{signature.description}</p>
+            </div>
+        </section>
+    );
+}
+
+function GeneratorTemplate({ record }) {
     return (
         <>
             <div className="enc-record enc-species-dossier">
@@ -189,28 +238,12 @@ function TemplateSections({ view }) {
                         ))}
                     </div>
                 </section>
-
-                {record.signature && (
-                    <section className="enc-section">
-                        <div className="enc-section-head">
-                            <h2 className="g-h2">Signature</h2>
-                        </div>
-                        <div className="g-screen enc-species-signature">
-                            <p className="g-mono">{record.signature.name}</p>
-                            <p className="g-mono">
-                                INSTRUMENT {record.signature.instrument} / ACTION {record.signature.action} / MEDIUM {record.signature.medium}
-                            </p>
-                            <p className="g-mono">INTENSITY {bandText(record.signature.intensity)}</p>
-                            <p className="g-mono">{record.signature.description}</p>
-                        </div>
-                    </section>
-                )}
             </div>
         </>
     );
 }
 
-function LegacySections({ view }) {
+function LegacyRatings({ view }) {
     const ratings = Object.entries(view.legacy.statRatings || {}).filter(([, v]) => v);
     return (
         <section className="enc-section">
@@ -255,6 +288,7 @@ export default function SpeciesView() {
 
     const isTemplate = view.source === 'template';
     const worldName = view.planet ? view.planet.name : view.homePlanet;
+    const connectionsCount = lore.getConnections('species', key, { limit: 12 }).length;
 
     return (
         <article className={`enc-species g-el-${view.element}`}>
@@ -269,9 +303,6 @@ export default function SpeciesView() {
                         {worldName}
                     </Link>
                 </div>
-                <span className={`g-lamp ${isTemplate ? '' : 'g-lamp--off'}`}>
-                    {isTemplate ? 'Record ratified' : 'Record pending migration'}
-                </span>
                 {wasRead && <p className="g-mono enc-species-reviewed">reviewed</p>}
             </header>
 
@@ -282,7 +313,6 @@ export default function SpeciesView() {
                             <XalianImage colored speciesName={view.name} primaryType={view.element} moreClasses="enc-species-portrait" />
                         </div>
                     </div>
-                    {isTemplate ? <TemplatePlate view={view} /> : <LegacyPlate view={view} />}
                 </div>
 
                 <div className="enc-species-body">
@@ -295,20 +325,32 @@ export default function SpeciesView() {
                         </div>
                     )}
 
-                    {view.entry && (
-                        <div className="g-panel g-panel--recessed enc-species-entry">
-                            <div className="g-panel-head">
-                                <span className="g-label">Encyclopedia entry</span>
-                            </div>
-                            <Prose text={view.entry.definition} except={view.entry.key} />
-                        </div>
-                    )}
                 </div>
             </div>
 
-            <Connections kind="species" recordKey={key} limit={12} />
+            {isTemplate && <Signature signature={view.record.signature} />}
 
-            {isTemplate ? <TemplateSections view={view} /> : <LegacySections view={view} />}
+            <section className="enc-section">
+                <div className="enc-section-head">
+                    <h2 className="g-h2">Physiology</h2>
+                </div>
+                {isTemplate ? <TemplatePhysiology view={view} /> : <LegacyPhysiology view={view} />}
+            </section>
+
+            <ContinueTheStory />
+
+            <Fold label="Generator template">
+                <p className="g-mono enc-species-template-status">
+                    <span className={`g-lamp ${isTemplate ? '' : 'g-lamp--off'}`}>
+                        {isTemplate ? 'Record ratified' : 'Record pending migration'}
+                    </span>
+                </p>
+                {isTemplate ? <GeneratorTemplate record={view.record} /> : <LegacyRatings view={view} />}
+            </Fold>
+
+            <Fold label="Cross references" count={connectionsCount}>
+                <Connections kind="species" recordKey={key} limit={12} />
+            </Fold>
         </article>
     );
 }

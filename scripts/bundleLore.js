@@ -8,6 +8,8 @@
 //                           species live only in docs/encyclopedia/encyclopedia.json)
 //   abilityCatalog.json  <- docs/ability-catalog/consolidated-<element>.md + neutral-pools.md
 //                           (via scripts/bundleAbilityCatalog.js)
+//   tour.json            <- docs/encyclopedia/tour.json, when it exists
+//   narration.json        <- docs/encyclopedia/narration.json, when it exists
 //
 // Idempotent. Run by hand after any lore change:  node scripts/bundleLore.js
 // Design contract: docs/design/xalian-encyclopedia-page.md section 2.
@@ -32,6 +34,13 @@ if (fs.existsSync(tourPath)) {
   write('tour.json', read(tourPath));
 } else {
   console.log('skipped tour.json: docs/encyclopedia/tour.json not written yet');
+}
+
+const narrationPath = path.join(docs, 'encyclopedia', 'narration.json');
+if (fs.existsSync(narrationPath)) {
+  write('narration.json', read(narrationPath));
+} else {
+  console.log('skipped narration.json: docs/encyclopedia/narration.json not written yet');
 }
 
 const templates = path.join(docs, 'species-templates');

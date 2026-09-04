@@ -17,9 +17,14 @@ export {
 	getWorldTimeline,
 	getEventsForEntry,
 	getEraForEntry,
+	getEntryStory,
 } from './chronicle';
 
 export { getTour } from './tour';
+
+export { getStory, getStoryPart, getEraForBeat } from './story';
+
+export { getWorldLede } from './narration';
 
 export { getRandomRecord } from './random';
 

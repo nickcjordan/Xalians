@@ -1,11 +1,10 @@
 import React, { useEffect, useRef } from 'react';
-import { Switch, Route, useRouteMatch, useLocation } from 'react-router-dom';
+import { Switch, Route, Redirect, useRouteMatch, useLocation, useParams } from 'react-router-dom';
+import * as lore from '../lore';
 import XalianNavbar from '../components/navbar';
 import EncyclopediaShell from '../components/encyclopedia/EncyclopediaShell';
 import ReadingRoom from '../components/encyclopedia/ReadingRoom';
-import Chronicle from '../components/encyclopedia/Chronicle';
-import EraView from '../components/encyclopedia/EraView';
-import Reader from '../components/encyclopedia/Reader';
+import Story from '../components/encyclopedia/Story';
 import Worlds from '../components/encyclopedia/Worlds';
 import WorldView from '../components/encyclopedia/WorldView';
 import Bestiary from '../components/encyclopedia/Bestiary';
@@ -13,14 +12,40 @@ import SpeciesView from '../components/encyclopedia/SpeciesView';
 import Powers from '../components/encyclopedia/Powers';
 import Index from '../components/encyclopedia/Index';
 import EntryView from '../components/encyclopedia/EntryView';
-import Tour from '../components/encyclopedia/Tour';
+
+/**
+ * Retired-route redirects: First Survey, Chronicle and Read collapsed into
+ * one section, The Story (docs/design/xalian-encyclopedia-story-pass.md).
+ * Each preserves the incoming hash (a chronicle event anchor, a read-part
+ * anchor) onto the story address it now resolves to.
+ */
+function RedirectToEra() {
+    const { era } = useParams();
+    const location = useLocation();
+    return <Redirect to={{ pathname: lore.routeFor('era', era), hash: location.hash }} />;
+}
+
+function RedirectToStory() {
+    const location = useLocation();
+    return <Redirect to={{ pathname: lore.routeFor('story'), hash: location.hash }} />;
+}
+
+function RedirectTourBeat() {
+    const { beat } = useParams();
+    const to = lore.getEraForBeat(beat) ? lore.routeFor('tour', beat) : lore.routeFor('story');
+    return <Redirect to={to} />;
+}
+
+function RedirectTour() {
+    return <Redirect to={lore.routeFor('story')} />;
+}
 
 /**
  * ENCYCLOPEDIA XALIA — the Generator's archive.
  *
  * Route shell only. Every section is its own component under
  * components/encyclopedia/, and every one of them reads data through
- * src/lore (never the JSON). Contract: docs/design/xalian-encyclopedia-page.md
+ * src/lore (never the JSON). Contract: docs/design/xalian-encyclopedia-story-pass.md
  */
 export default function EncyclopediaPage() {
     const { path } = useRouteMatch();
@@ -107,10 +132,8 @@ export default function EncyclopediaPage() {
             <EncyclopediaShell>
                 <Switch>
                     <Route exact path={`${path}`}><ReadingRoom /></Route>
-                    <Route exact path={`${path}/chronicle`}><Chronicle /></Route>
-                    <Route exact path={`${path}/chronicle/:era`}><EraView /></Route>
-                    <Route exact path={`${path}/read`}><Reader /></Route>
-                    <Route exact path={`${path}/read/:era`}><Reader /></Route>
+                    <Route exact path={`${path}/story`}><Story /></Route>
+                    <Route exact path={`${path}/story/:era`}><Story /></Route>
                     <Route exact path={`${path}/worlds`}><Worlds /></Route>
                     <Route exact path={`${path}/worlds/:key`}><WorldView /></Route>
                     <Route exact path={`${path}/species`}><Bestiary /></Route>
@@ -118,8 +141,14 @@ export default function EncyclopediaPage() {
                     <Route exact path={`${path}/powers`}><Powers /></Route>
                     <Route exact path={`${path}/index`}><Index /></Route>
                     <Route exact path={`${path}/index/:key`}><EntryView /></Route>
-                    <Route exact path={`${path}/tour`}><Tour /></Route>
-                    <Route exact path={`${path}/tour/:beat`}><Tour /></Route>
+                    {/* Retired routes: First Survey, Chronicle and Read collapsed into
+                        The Story (docs/design/xalian-encyclopedia-story-pass.md). */}
+                    <Route exact path={`${path}/tour`}><RedirectTour /></Route>
+                    <Route exact path={`${path}/tour/:beat`}><RedirectTourBeat /></Route>
+                    <Route exact path={`${path}/chronicle`}><RedirectToStory /></Route>
+                    <Route exact path={`${path}/chronicle/:era`}><RedirectToEra /></Route>
+                    <Route exact path={`${path}/read`}><RedirectToStory /></Route>
+                    <Route exact path={`${path}/read/:era`}><RedirectToEra /></Route>
                     <Route><p className="g-empty">No record at this address.</p></Route>
                 </Switch>
             </EncyclopediaShell>
