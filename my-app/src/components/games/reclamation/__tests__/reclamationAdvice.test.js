@@ -21,7 +21,7 @@ describe('recommendSend', () => {
 		const rec = recommendSend(view, match.players[you].roster, you);
 		expect(rec.type).toBe('send');
 		expect(match.players[you].roster.some((r) => r.id === rec.recordId)).toBe(true);
-		expect(view.world.sites.some((s) => s.id === rec.siteId)).toBe(true);
+		expect(view.frame.sites.some((s) => s.id === rec.siteId)).toBe(true);
 		expect(rec.label).toMatch(/^Send .+ to /);
 		expect(rec.reason).toMatch(/holds [0-9.]+ at .+, which nobody has claimed yet\./);
 	});
@@ -66,7 +66,7 @@ describe('recommendSend', () => {
 			if (rec.type === 'pass') {
 				sawPass = true;
 				expect(rec.reason.length).toBeGreaterThan(10);
-				expect(rec.label).toBe('Pass for this world');
+				expect(rec.label).toBe('Pass this round');
 				match = pass(match, seat);
 			} else if (rec.type === 'send') {
 				match = send(match, seat, rec.recordId, rec.siteId, rec.hidden);

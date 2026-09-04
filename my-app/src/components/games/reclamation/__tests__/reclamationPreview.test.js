@@ -26,7 +26,7 @@ function deployOneEach(match) {
 	let state = match;
 	for (let i = 0; i < 2; i++) {
 		const handler = state.turn;
-		const site = state.worlds[state.worldIndex].sites[0];
+		const site = state.frames[state.frameIndex].sites[0];
 		const record = state.players[handler].roster[0];
 		state = send(state, handler, record.id, site.id, false);
 		expect(state).not.toBeNull();
@@ -41,7 +41,7 @@ describe('flattenBoard and siteHoldTotal', () => {
 		const units = flattenBoard(view);
 		expect(units.length).toBe(2);
 		units.forEach((u) => {
-			const engineHold = prepare(u.record, u.site, view.world, u.sentIndex).hold;
+			const engineHold = prepare(u.record, u.site, view.frame, u.sentIndex).hold;
 			expect(u.prepared.hold).toBeCloseTo(engineHold, 10);
 		});
 	});
@@ -49,13 +49,13 @@ describe('flattenBoard and siteHoldTotal', () => {
 	it('site totals are the sum of the holds present, so the Judge comparison is visible', () => {
 		const state = deployOneEach(buildMatch());
 		const view = getPublicState(state, 'A');
-		const site = view.world.sites[0];
+		const site = view.frame.sites[0];
 		const totalA = siteHoldTotal(view, site.id, 'A');
 		const manualA = view.board[site.id].A.reduce(
-			(sum, e) => sum + prepare(e.record, site, view.world, e.sentIndex).hold, 0,
+			(sum, e) => sum + prepare(e.record, site, view.frame, e.sentIndex).hold, 0,
 		);
 		expect(totalA).toBeCloseTo(manualA, 10);
-		expect(siteHoldTotal(view, view.world.sites[2].id, 'A')).toBe(0);
+		expect(siteHoldTotal(view, view.frame.sites[2].id, 'A')).toBe(0);
 	});
 });
 
@@ -104,7 +104,7 @@ describe('orderPreview', () => {
 	it('names the site the preview is read at for a contact act', () => {
 		const state = deployOneEach(buildMatch());
 		const view = getPublicState(state, 'A');
-		const site = view.world.sites[0];
+		const site = view.frame.sites[0];
 		const rows = orderPreview(view, {}, 'A').filter((r) => r.isYours);
 		rows.forEach((r) => {
 			if (r.actClass === 'contact' || r.actClass === 'reach') {
@@ -182,7 +182,7 @@ describe('area acts', () => {
 			publicState: view,
 		});
 		expect(sentence).toMatch(/catching [0-9]+ enem(y|ies)/);
-		expect(sentence).toContain(view.world.sites[0].name);
+		expect(sentence).toContain(view.frame.sites[0].name);
 		expect(sentence).not.toMatch(/undefined/);
 	});
 
@@ -190,7 +190,7 @@ describe('area acts', () => {
 		const state = deployOneEach(buildMatch());
 		const view = getPublicState(state, 'A');
 		const mine = flattenBoard(view).find((u) => u.seat === 'A');
-		expect(pickAreaSitePreview(view, mine)).toBe(view.world.sites[0].name);
+		expect(pickAreaSitePreview(view, mine)).toBe(view.frame.sites[0].name);
 	});
 });
 

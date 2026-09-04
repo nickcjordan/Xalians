@@ -3543,3 +3543,75 @@
 	color: var(--g-ink-low);
 }
 .rec-chosen-sites--hidden { display: none; }
+
+/* -------------------------------------------------------------------------
+   THE FRAME (Nick, 2026-09-04): a round is three worlds side by side, each at one of
+   its sites. Every site card is tinted by its own world's element, headed by the
+   planet with the site beneath it; the status strip names the round and lists the
+   worlds as element chips; the hold strip is notched at 10 and 20 so the scale reads.
+   ------------------------------------------------------------------------- */
+
+.rec-status-worlds {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: var(--g-1);
+}
+
+.rec-status-worlds .rec-status-element {
+	color: var(--g-el);
+	background: color-mix(in srgb, var(--g-el) 14%, var(--g-hull-lo));
+	border: var(--g-hairline) solid color-mix(in srgb, var(--g-el) 60%, var(--g-seam));
+	box-shadow: none;
+}
+
+.rec-status .rec-status-planet { color: var(--g-brass-light); }
+.rec-status .rec-world-dot--now { background: var(--g-brass-light); border-color: var(--g-brass-light); }
+
+.rec-site-head { grid-template-rows: auto auto auto; }
+.rec-site-head .rec-site-index { grid-row: 1 / 4; color: var(--g-el); border-color: color-mix(in srgb, var(--g-el) 60%, var(--g-brass-dark)); }
+.rec-site .rec-site-name { color: var(--g-el); }
+
+.rec-site-place {
+	grid-column: 2;
+	font-family: var(--g-font-mono);
+	font-size: 0.5625rem;
+	letter-spacing: 0.02em;
+	color: var(--g-ink-low);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.rec-site-head .rec-site-recommend { grid-column: 2; }
+
+/* the chips read their world's element too */
+.rec-slot-site .rec-slot-site-index { color: var(--g-el); }
+.rec-slot-site--best .rec-slot-site-index { color: var(--g-el); }
+
+.rec-chosen-site { grid-template-rows: auto auto; }
+.rec-chosen-site-world {
+	grid-column: 1 / -1;
+	font-family: var(--g-font-stencil);
+	font-size: 0.5625rem;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-el);
+	text-align: left;
+}
+
+/* notches on the hold strip: 10 and 20 on the frame's scale; past the last notch is
+   home ground */
+.rec-hold-notch {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 1px;
+	background: color-mix(in srgb, var(--g-ink-low) 55%, transparent);
+	pointer-events: none;
+}
+.rec-hold-notch--top { background: color-mix(in srgb, var(--g-brass-light) 80%, transparent); }
+
+@media (max-width: 760px) {
+	.rec-status-next { display: none; }
+	.rec-site-place { display: none; }
+}

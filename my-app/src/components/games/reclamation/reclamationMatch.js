@@ -10,7 +10,7 @@ import {
 } from '../../../gameplay/expedition/expeditionRules';
 import { chooseSend, chooseOrders } from '../../../gameplay/expedition/expeditionBot';
 import { prepare, magnitudeAgainst, strainMultiplierFor } from '../../../gameplay/expedition/creatureOnTable';
-import { SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH } from '../../../gameplay/expedition/expeditionInterpretation';
+import { SENDABLE, SITES_TO_CLINCH, FRAMES_PER_MATCH } from '../../../gameplay/expedition/expeditionInterpretation';
 import {
 	speciesLabel, formatHold, classifyEvent, narrateAct, narrateRelocate,
 	narrateSend, narratePass, narrateJudge, narrateMatchEnd,
@@ -37,6 +37,12 @@ const BEAT_MS = 1400;
 const ARRIVE_MS = 1300;
 const RESOLUTION_STEP_MS = 700;
 const LOG_CAP = 120;
+// "Zolton, Krystos and Saiphus": the frame's worlds as a sentence fragment
+function frameWorldNames(frame) {
+	const names = frame.sites.map((site) => site.world.planet);
+	return names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names.join('');
+}
+
 const YOU = 'A';
 const THEM = 'B';
 
@@ -76,7 +82,7 @@ class ReclamationMatch extends React.Component {
 			playback: null, // { events, index, snapshotBoard, staggeredAt }
 			pendingAfterPlayback: null,
 			verdicts: null,
-			judgedWorld: null,
+			judgedFrame: null,
 			judgedSnapshot: null,
 			judged: false,
 			hoverRow: null, // the preview line under the pointer, to light its creatures
@@ -134,7 +140,7 @@ class ReclamationMatch extends React.Component {
 		}
 		const view = this.view();
 		const holds = {};
-		view.world.sites.forEach((site) => {
+		view.frame.sites.forEach((site) => {
 			['A', 'B'].forEach((seat) => {
 				(view.board[site.id][seat] || []).forEach((e) => {
 					if (!e.record) {
@@ -155,14 +161,14 @@ class ReclamationMatch extends React.Component {
 			});
 		});
 		const siteTotals = {};
-		view.world.sites.forEach((site) => {
+		view.frame.sites.forEach((site) => {
 			siteTotals[site.id] = { A: siteHoldTotal(view, site.id, 'A'), B: siteHoldTotal(view, site.id, 'B') };
 		});
 		window.__reclamationDebug = {
 			phase: view.phase,
 			turn: view.turn,
-			worldIndex: view.worldIndex,
-			world: view.world.planet,
+			frameIndex: view.frameIndex,
+			worlds: view.frame.sites.map((site) => site.world.planet),
 			you: YOU,
 			holds,
 			siteTotals,
@@ -229,10 +235,10 @@ class ReclamationMatch extends React.Component {
 		}
 		const board = {};
 		const displaced = [];
-		base.world.sites.forEach((site) => {
+		base.frame.sites.forEach((site) => {
 			board[site.id] = { A: [], B: [] };
 		});
-		base.world.sites.forEach((site) => {
+		base.frame.sites.forEach((site) => {
 			['A', 'B'].forEach((seat) => {
 				(base.board[site.id][seat] || []).forEach((entry) => {
 					if (routed.has(entry.recordId)) {
@@ -307,14 +313,14 @@ class ReclamationMatch extends React.Component {
 	// the phase the engine moved to, told as a beat of its own after the move that caused it
 	beatPhaseChange = (before, after) => {
 		if (before.phase === 'deploy' && after.phase === 'orders') {
-			const yours = after.worlds[after.worldIndex].sites
+			const yours = after.frames[after.frameIndex].sites
 				.reduce((n, site) => n + after.board[site.id][YOU].length, 0);
 			this.beat({
 				kind: 'orders',
 				seat: null,
 				short: 'Your orders',
 				text: yours === 0
-					? 'Deploy is over. You have nothing on this world, so the rival acts alone.'
+					? 'Deploy is over. You have nothing in the frame, so the rival acts alone.'
 					: 'Deploy is over. Your creatures are waiting for orders.',
 			});
 		}
@@ -423,14 +429,14 @@ class ReclamationMatch extends React.Component {
 		} else {
 			next = pass(match, THEM);
 			if (next) {
-				lines.push('The rival passes for this world.');
+				lines.push('The rival passes for this round.');
 				beat = {
 					kind: 'rival-pass',
 					seat: THEM,
 					short: 'The rival passed',
 					text: fellBack
-						? `The rival's vanguard falls back to ${fellBack.to}, and the rival passes for this world.`
-						: 'The rival passes for this world. Nothing you send now can be answered.',
+						? `The rival's vanguard falls back to ${fellBack.to}, and the rival passes for this round.`
+						: 'The rival passes for this round. Nothing you send now can be answered.',
 				};
 			}
 		}
@@ -454,8 +460,8 @@ class ReclamationMatch extends React.Component {
 	};
 
 	siteName = (match, siteId) => {
-		const world = match.worlds[match.worldIndex];
-		const site = world.sites.find((s) => s.id === siteId);
+		const frame = match.frames[match.frameIndex];
+		const site = frame.sites.find((s) => s.id === siteId);
 		return site ? site.name : siteId;
 	};
 
@@ -480,11 +486,11 @@ class ReclamationMatch extends React.Component {
 		}
 		const { match } = this.state;
 		if (match.phase !== 'deploy') {
-			this.notice('Deploy is over for this world. There is nothing left to send.');
+			this.notice('Deploy is over for this round. There is nothing left to send.');
 			return;
 		}
 		if (match.players[YOU].passed) {
-			this.notice('You have passed. Passing is permanent for this world.');
+			this.notice('You have passed. Passing is permanent for this round.');
 			return;
 		}
 		if (match.turn !== YOU) {
@@ -515,7 +521,7 @@ class ReclamationMatch extends React.Component {
 		if (relocating) {
 			const next = relocateVanguard(match, YOU, siteId);
 			if (!next) {
-				this.notice('Your vanguard cannot fall back there. It must be a different site, and only once per world.');
+				this.notice('Your vanguard cannot fall back there. It must be a different world, and only once per round.');
 				return;
 			}
 			const ev = next.resolutionLog[next.resolutionLog.length - 1];
@@ -536,7 +542,7 @@ class ReclamationMatch extends React.Component {
 			return;
 		}
 		if (match.phase !== 'deploy') {
-			this.notice('Deploy is over for this world.');
+			this.notice('Deploy is over for this round.');
 			return;
 		}
 		if (match.turn !== YOU) {
@@ -572,8 +578,8 @@ class ReclamationMatch extends React.Component {
 	};
 
 	findRecordOnBoard = (match, recordId) => {
-		const world = match.worlds[match.worldIndex];
-		for (const site of world.sites) {
+		const frame = match.frames[match.frameIndex];
+		for (const site of frame.sites) {
 			for (const seat of ['A', 'B']) {
 				const found = match.board[site.id][seat].find((e) => e.recordId === recordId);
 				if (found) {
@@ -588,7 +594,7 @@ class ReclamationMatch extends React.Component {
 		const { match } = this.state;
 		if (!this.isYourDeployTurn()) {
 			this.notice(match.players[YOU].passed
-				? 'You have already passed. Passing is permanent for this world.'
+				? 'You have already passed. Passing is permanent for this round.'
 				: 'It is not your turn to pass.');
 			return;
 		}
@@ -607,7 +613,7 @@ class ReclamationMatch extends React.Component {
 	beginRelocate = () => {
 		const view = this.view();
 		if (!view.players[YOU].canRelocateVanguard) {
-			this.notice('Only this world’s starter may fall back, once, before passing.');
+			this.notice('Only this round’s starter may fall back, once, before passing.');
 			return;
 		}
 		if (!view.players[YOU].vanguardRecordId) {
@@ -638,7 +644,7 @@ class ReclamationMatch extends React.Component {
 	setOrder = (recordId, actName) => {
 		const { match } = this.state;
 		if (match.committed[YOU]) {
-			this.notice('Your orders are already sealed for this world.');
+			this.notice('Your orders are already sealed for this round.');
 			return;
 		}
 		const next = order(match, YOU, recordId, actName);
@@ -671,7 +677,7 @@ class ReclamationMatch extends React.Component {
 		});
 
 		const beforeLogLength = match.resolutionLog.length;
-		const worldBefore = match.worlds[match.worldIndex];
+		const frameBefore = match.frames[match.frameIndex];
 		const boardBefore = this.snapshotBoard(match);
 		// the whole public view as it stands with orders locked but nothing resolved: the
 		// board the playback draws (see view()). Hidden creatures are revealed at the start
@@ -700,7 +706,7 @@ class ReclamationMatch extends React.Component {
 			playback: {
 				events: newEvents,
 				index: 0,
-				world: worldBefore,
+				frame: frameBefore,
 				boardBefore,
 				frozenView,
 				sitesWonBefore,
@@ -729,8 +735,8 @@ class ReclamationMatch extends React.Component {
 		});
 		// hidden rival creatures are invisible in the handler's own view; fall back to the
 		// raw board for narration once resolution has revealed them.
-		const world = match.worlds[match.worldIndex];
-		world.sites.forEach((site) => {
+		const frame = match.frames[match.frameIndex];
+		frame.sites.forEach((site) => {
 			['A', 'B'].forEach((seat) => {
 				match.board[site.id][seat].forEach((e) => {
 					if (index[e.recordId]) {
@@ -740,7 +746,7 @@ class ReclamationMatch extends React.Component {
 						record: e.record,
 						siteName: site.name,
 						siteId: site.id,
-						hold: prepare(e.record, site, world, e.sentIndex).hold,
+						hold: prepare(e.record, site, site.world, e.sentIndex).hold,
 						seat,
 					};
 				});
@@ -792,7 +798,7 @@ class ReclamationMatch extends React.Component {
 		}
 		if (kind === 'judge') {
 			const siteNames = {};
-			playback.world.sites.forEach((s) => { siteNames[s.id] = s.name; });
+			playback.frame.sites.forEach((s) => { siteNames[s.id] = `${s.world.planet} (${s.name})`; });
 			this.appendLogLines(narrateJudge(event, { siteNames, you: YOU }));
 			return;
 		}
@@ -801,7 +807,7 @@ class ReclamationMatch extends React.Component {
 		}
 		const actor = snap[event.recordId];
 		const target = event.target ? snap[event.target] : null;
-		const site = event.site ? playback.world.sites.find((s) => s.id === event.site) : null;
+		const site = event.site ? playback.frame.sites.find((s) => s.id === event.site) : null;
 		// names carry their side: the provisional pool repeats species, so "Stonebrawler
 		// is crushed by Stonebrawler" needs "your" and "the rival's" to be readable
 		const sided = (u) => (u.seat === YOU ? `your ${speciesLabel(u.record)}` : `the rival's ${speciesLabel(u.record)}`);
@@ -821,12 +827,12 @@ class ReclamationMatch extends React.Component {
 		if (!actor || !target || !event.action) {
 			return undefined;
 		}
-		const world = this.state.playback ? this.state.playback.world : null;
-		if (!world) {
+		const frame = this.state.playback ? this.state.playback.frame : null;
+		if (!frame) {
 			return undefined;
 		}
-		const site = world.sites.find((s) => s.id === actor.siteId);
-		const prepared = prepare(actor.record, site, world, 0);
+		const site = frame.sites.find((s) => s.id === actor.siteId);
+		const prepared = prepare(actor.record, site, site.world, 0);
 		const act = prepared.acts.find((a) => a.action === event.action);
 		if (!act) {
 			return undefined;
@@ -859,14 +865,14 @@ class ReclamationMatch extends React.Component {
 			players: live.players,
 			phase: match.phase,
 			turn: null,
-			nextWorld: match.phase === 'matchEnd' ? null : { planet: match.worlds[match.worldIndex].planet },
+			nextFrame: match.phase === 'matchEnd' ? null : live.frame.sites.map((site) => ({ planet: site.world.planet, element: site.world.element, siteId: site.id, siteName: site.name })),
 			winner: match.winner,
 		};
 		this.setState({
 			playback: null,
 			verdicts,
 			judged: true,
-			judgedWorld: playback.world.planet,
+			judgedFrame: playback.frame.index,
 			judgedSnapshot: match.phase === 'matchEnd' ? judgedSnapshot : judgedSnapshot,
 		});
 
@@ -874,43 +880,44 @@ class ReclamationMatch extends React.Component {
 			const tally = { yours: 0, theirs: 0, court: 0 };
 			Object.keys(verdicts).forEach((siteId) => { tally[verdicts[siteId].who] += 1; });
 			const parts = [];
-			if (tally.yours) parts.push(`${plural(tally.yours, 'site')} yours`);
-			if (tally.theirs) parts.push(`${plural(tally.theirs, 'site')} the rival's`);
-			if (tally.court) parts.push(`${plural(tally.court, 'site')} to the Court`);
+			if (tally.yours) parts.push(`${plural(tally.yours, 'world')} yours`);
+			if (tally.theirs) parts.push(`${plural(tally.theirs, 'world')} the rival's`);
+			if (tally.court) parts.push(`${plural(tally.court, 'world')} to the Court`);
 			this.beat({
 				kind: 'judge',
 				seat: null,
 				short: 'The Court rules',
-				text: `The Court rules on ${playback.world.planet}: ${parts.join(', ')}.`,
+				text: `The Court reads the frame: ${parts.join(', ')}.`,
 			});
 		}
 
 		if (match.phase === 'matchEnd') {
 			const view = getPublicState(match, YOU);
-			// ENGINE GAP: matchEndReason is only 'clinched' or 'worlds-exhausted'; the engine
+			// ENGINE GAP: matchEndReason is only 'clinched' or 'frames-exhausted'; the engine
 			// does not say when decideMatchWinner fell through to the tiebreak. Level sites
 			// at the end is exactly that case, so the narration names it, matching the
 			// verdict panel.
 			const sitesYou = view.players[YOU].sitesWon;
 			const sitesThem = view.players[THEM].sitesWon;
-			const reason = match.matchEndReason === 'worlds-exhausted' && sitesYou === sitesThem
+			const reason = match.matchEndReason === 'frames-exhausted' && sitesYou === sitesThem
 				? 'tiebreak'
 				: match.matchEndReason;
 			this.appendLog(narrateMatchEnd({ winner: match.winner, you: YOU, sitesYou, sitesThem, reason }));
 		}
 	};
 
-	nextWorld = () => {
-		this.setState({ verdicts: null, judged: false, judgedWorld: null, judgedSnapshot: null }, () => {
+	nextFrame = () => {
+		this.setState({ verdicts: null, judged: false, judgedFrame: null, judgedSnapshot: null }, () => {
 			const { match } = this.state;
-			const planet = match.worlds[match.worldIndex].planet;
-			this.appendLog(`The expedition moves on to ${planet}.`);
+			const frame = match.frames[match.frameIndex];
+			const names = frameWorldNames(frame);
+			this.appendLog(`The frame loads ${names}.`);
 			this.cutBeats();
 			this.beat({
 				kind: 'world',
 				seat: null,
-				short: `${planet}`,
-				text: `The expedition moves on to ${planet}. ${match.turn === YOU ? 'You start this world.' : 'The rival starts this world.'}`,
+				short: `Round ${frame.index + 1}`,
+				text: `The frame loads ${names}. ${match.turn === YOU ? 'You send first this round.' : 'The rival sends first this round.'}`,
 			});
 			this.scheduleBotIfDue();
 		});
@@ -928,7 +935,7 @@ class ReclamationMatch extends React.Component {
 	// ------------------------------------------------------------------
 	holdsForBoard(view) {
 		const holds = {};
-		view.world.sites.forEach((site) => {
+		view.frame.sites.forEach((site) => {
 			['A', 'B'].forEach((seat) => {
 				(view.board[site.id][seat] || []).forEach((e) => {
 					if (!e.record) {
@@ -954,7 +961,7 @@ class ReclamationMatch extends React.Component {
 
 	totalsForBoard(view) {
 		const totals = {};
-		view.world.sites.forEach((site) => {
+		view.frame.sites.forEach((site) => {
 			totals[site.id] = { A: siteHoldTotal(view, site.id, 'A'), B: siteHoldTotal(view, site.id, 'B') };
 		});
 		return totals;
@@ -973,8 +980,8 @@ class ReclamationMatch extends React.Component {
 			return null;
 		}
 		const ghosts = {};
-		view.world.sites.forEach((site) => {
-			const prepared = prepare(record, site, view.world, view.players[YOU].sentCount);
+		view.frame.sites.forEach((site) => {
+			const prepared = prepare(record, site, site.world, view.players[YOU].sentCount);
 			const tolerance = (record.physiology && record.physiology.environmentalTolerance) || {};
 			ghosts[site.id] = {
 				hold: prepared.hold,
@@ -1005,7 +1012,7 @@ class ReclamationMatch extends React.Component {
 			return 'The expedition is over. Start a new one to play again.';
 		}
 		if (this.state.judged) {
-			return 'The Court has ruled. Reveal the next world when you are ready.';
+			return 'The Court has ruled. Load the next frame when you are ready.';
 		}
 		if (view.phase === 'orders') {
 			if (view.players[YOU].committed) {
@@ -1023,12 +1030,12 @@ class ReclamationMatch extends React.Component {
 		}
 		if (armedRecordId) {
 			const record = view.players[YOU].roster.find((r) => r.id === armedRecordId);
-			return `${speciesLabel(record)} is chosen. Press a site to send it there, or Change to pick another.`;
+			return `${speciesLabel(record)} is chosen. Press a world to send it there, or Change to pick another.`;
 		}
 		if (view.players[YOU].passed) {
 			return 'You have passed. Waiting on the rival.';
 		}
-		return 'Choose a creature from your squad, then the site to send it to. Or pass.';
+		return 'Choose a creature from your squad, then the world to send it to. Or pass.';
 	}
 
 	// a rival beat holds the turn readout on what the rival just did, so "Your move" lands
@@ -1078,26 +1085,21 @@ class ReclamationMatch extends React.Component {
 		const pips = (n) => Array.from({ length: SITES_TO_CLINCH }).map((_, i) => (
 			<span className={`rec-pip${i < n ? ' rec-pip--lit' : ''}`} key={`${i}-${i < n ? 'lit' : 'dark'}`} />
 		));
-		const worldDots = Array.from({ length: WORLDS_PER_MATCH }).map((_, i) => (
-			<span className={`rec-world-dot${i === view.worldIndex ? ' rec-world-dot--now' : i < view.worldIndex ? ' rec-world-dot--done' : ''}`} key={i} />
+		const frameDots = Array.from({ length: FRAMES_PER_MATCH }).map((_, i) => (
+			<span className={`rec-world-dot${i === view.frameIndex ? ' rec-world-dot--now' : i < view.frameIndex ? ' rec-world-dot--done' : ''}`} key={i} />
 		));
 		return (
-			<div className={`g-panel rec-status g-el-${view.world.element}`}>
+			<div className="g-panel rec-status">
 				<div className="rec-status-world">
-					<span className="rec-world-dots" title={`World ${view.worldIndex + 1} of ${WORLDS_PER_MATCH}`}>{worldDots}</span>
-					<h2 className="rec-status-planet">{view.world.planet}</h2>
-					<span className="g-chip rec-status-element">{view.world.element}</span>
-					{view.world.terrain && (
-						<span
-							className="rec-status-terrain g-mono"
-							title={view.world.hazards && view.world.hazards.length > 0 ? `Hazards: ${view.world.hazards.join(', ')}` : undefined}
-						>
-							{view.world.terrain}
-							{view.world.temperatureC ? ` · ${view.world.temperatureC.low} to ${view.world.temperatureC.high} C` : ''}
-						</span>
-					)}
+					<span className="rec-world-dots" title={`Round ${view.frameIndex + 1} of ${FRAMES_PER_MATCH}`}>{frameDots}</span>
+					<h2 className="rec-status-planet">Round {view.frameIndex + 1}</h2>
+					<span className="rec-status-worlds" aria-label="The worlds loaded in the frame">
+						{view.frame.sites.map((site) => (
+							<span className={`g-chip rec-status-element g-el-${site.world.element}`} key={site.id} title={`${site.world.planet}, at ${site.name}`}>{site.world.planet}</span>
+						))}
+					</span>
 					<span className="rec-status-next g-mono">
-						{view.nextWorld ? `then ${view.nextWorld.planet}` : 'the last world'}
+						{view.nextFrame ? `then ${view.nextFrame.map((w) => w.planet).join(', ')}` : 'the last frame'}
 					</span>
 				</div>
 
@@ -1112,7 +1114,7 @@ class ReclamationMatch extends React.Component {
 						<span className="rec-pips">{pips(them.sitesWon)}</span>
 						<span className="rec-score-value rec-tick" data-sites-b key={them.sitesWon}>{them.sitesWon}</span>
 					</span>
-					<span className="rec-score-of">{SITES_TO_CLINCH} sites clinch</span>
+					<span className="rec-score-of">{SITES_TO_CLINCH} worlds clinch</span>
 				</div>
 
 				<div className="rec-status-turn">
@@ -1160,16 +1162,16 @@ class ReclamationMatch extends React.Component {
 		const won = this.state.match.winner === YOU;
 		const reason = this.state.match.matchEndReason;
 		const why = reason === 'clinched'
-			? 'clinched at five sites'
+			? 'clinched at five worlds'
 			: view.players[YOU].sitesWon === view.players[THEM].sitesWon
-				? 'level on sites and settled on the tiebreak'
-				: 'after the third world';
+				? 'level on worlds and settled on the tiebreak'
+				: 'after the third frame';
 		return (
 			<div className={`g-panel rec-verdict rec-rise ${won ? 'rec-verdict--won' : 'rec-verdict--lost'}`} data-verdict>
 				<span className="g-kicker">The Charter</span>
 				<h2 className="rec-verdict-title">{won ? 'The Charter is yours.' : 'The rival takes the Charter.'}</h2>
 				<p className="g-body rec-verdict-body">
-					{plural(view.players[YOU].sitesWon, 'site')} to {view.players[THEM].sitesWon}, with {why}.
+					{plural(view.players[YOU].sitesWon, 'world')} to {view.players[THEM].sitesWon}, with {why}.
 				</p>
 				<button type="button" className="g-btn g-btn--primary" onClick={this.props.onNewExpedition} data-new-expedition>
 					New expedition
@@ -1249,9 +1251,9 @@ class ReclamationMatch extends React.Component {
 					<div className="rec-table">
 						{this.renderCallout()}
 						<ReclamationWorld
-							key={view.world.planet}
+							key={view.frame.index}
 							arrival={this.state.arrival}
-							world={view.world}
+							frame={view.frame}
 							board={view.board}
 							you={YOU}
 							holds={holds}
@@ -1324,7 +1326,7 @@ class ReclamationMatch extends React.Component {
 											{me.committed
 												? 'Your orders are sealed. The rival is giving its own.'
 												: units.length === 0
-													? 'You have nothing on this world. The rival acts alone.'
+													? 'You have nothing in the frame. The rival acts alone.'
 													: 'Each of your creatures acts by nature. Go, or change an order first.'}
 										</p>
 									</div>
@@ -1377,7 +1379,7 @@ class ReclamationMatch extends React.Component {
 							<ReclamationInspect
 								record={inspect.record}
 								site={inspect.site}
-								world={view.world}
+								frame={view.frame}
 								onClose={() => this.setState({ inspect: null })}
 							/>
 						)}

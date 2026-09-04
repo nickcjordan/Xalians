@@ -4,7 +4,7 @@ import ReclamationMatch from '../../components/games/reclamation/reclamationMatc
 import { buildRosters } from '../../gameplay/expedition/roster';
 import { createMatch } from '../../gameplay/expedition/expeditionRules';
 import { getWorlds } from '../../gameplay/expedition/sites';
-import { ROSTER_SIZE, SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH } from '../../gameplay/expedition/expeditionInterpretation';
+import { ROSTER_SIZE, SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH, FRAMES_PER_MATCH, WORLDS_PER_FRAME } from '../../gameplay/expedition/expeditionInterpretation';
 
 const MODE_KEY = 'reclamation.mode';
 
@@ -118,30 +118,30 @@ class ReclamationPage extends React.Component {
 
 					<div className="g-panel rec-intro-panel">
 						<div className="g-screen rec-rules-screen">
-							<div className="g-screen-line">The worlds were lost to war and plague. An expedition takes them back, site by site. The Court's Charter is the acknowledgment of what you already hold.</div>
-							<div className="g-screen-line">A match crosses {WORLDS_PER_MATCH} worlds of {3} sites each. Hold {SITES_TO_CLINCH} sites and the Charter is clinched. Every world runs four phases.</div>
-							<div className="g-screen-line">Every creature has a <strong>hold</strong>: how firmly it keeps a site. The Generators built each for one world, so on the wrong world, or at a site its body cannot bear, it holds less. Acts strike at hold. When the fighting stops, the Court gives each site to the side that still holds more of it.</div>
+							<div className="g-screen-line">The worlds were lost to war and plague, and no expedition goes in blind. Before Kozrak grants a Charter over a world, the claim is proved on the Court's <strong>frame</strong>: the Generators' own models of the fourteen worlds, run on Poseidas without the Generators. Only the fighting is simulated. The Charter, and the Tokens that come with it, are real.</div>
+							<div className="g-screen-line">A Proving runs {FRAMES_PER_MATCH} rounds. Each round the frame loads {WORLDS_PER_FRAME} worlds side by side, every one at a different site of its surface, and no world is loaded twice. Hold {SITES_TO_CLINCH} of the {WORLDS_PER_MATCH} and the Charter is clinched.</div>
+							<div className="g-screen-line">Every creature has a <strong>hold</strong>: how firmly it keeps a world, read by the frame on a scale of 0 to 20. The Generators built each for one world, so on the wrong world, or at a site its body cannot bear, it holds less; on its own world it holds half again. Acts strike at hold. When the fighting stops, the Court reads the frame and gives each world to the side that still holds more of it.</div>
 							<dl className="rec-rules-phases">
 								<dt className="g-screen-line">Deploy</dt>
-								<dd className="g-screen-line">You and the rival alternate sending one creature to one site, or passing. A pass is permanent for that world.</dd>
+								<dd className="g-screen-line">You and the rival alternate sending one creature into one of the three worlds, or passing. A pass is permanent for that round.</dd>
 								<dt className="g-screen-line">Orders</dt>
-								<dd className="g-screen-line">Give each creature an act, in secret. Left alone, it performs the act its archetype favors. You choose the creature, the site and the act; the creature chooses its own target, by its conduct.</dd>
+								<dd className="g-screen-line">Give each creature an act, in secret. Left alone, it performs the act its archetype favors. You choose the creature, the world and the act; the creature chooses its own target, by its conduct.</dd>
 								<dt className="g-screen-line">Resolve</dt>
-								<dd className="g-screen-line">The acts play out, and each creature's hold on its site is struck down, warded or kept.</dd>
+								<dd className="g-screen-line">The acts play out, and each creature's hold on its world is struck down, warded or kept.</dd>
 								<dt className="g-screen-line">Judge</dt>
-								<dd className="g-screen-line">Each site goes to the side with the greater surviving hold. A tie reverts it to the Court. Creatures at a won site stay to hold the claim; the rest withdraw. Either way they are out of the expedition.</dd>
+								<dd className="g-screen-line">Each world goes to the side with the greater surviving hold. A tie reverts it to the Court. Creatures on a won world stay in its model to hold the claim; the rest withdraw. Either way they are out of the Proving.</dd>
 							</dl>
 						</div>
 
 						<aside className="rec-intro-charter">
 							<div className="rec-charter-figures">
 								<div className="rec-charter-figure">
-									<span className="rec-charter-number g-mono">{WORLDS_PER_MATCH}</span>
-									<span className="rec-charter-label">worlds</span>
+									<span className="rec-charter-number g-mono">{FRAMES_PER_MATCH}</span>
+									<span className="rec-charter-label">rounds</span>
 								</div>
 								<div className="rec-charter-figure">
-									<span className="rec-charter-number g-mono">{WORLDS_PER_MATCH * 3}</span>
-									<span className="rec-charter-label">sites</span>
+									<span className="rec-charter-number g-mono">{WORLDS_PER_MATCH}</span>
+									<span className="rec-charter-label">worlds</span>
 								</div>
 								<div className="rec-charter-figure rec-charter-figure--key">
 									<span className="rec-charter-number g-mono">{SITES_TO_CLINCH}</span>
@@ -155,7 +155,7 @@ class ReclamationPage extends React.Component {
 
 							<ul className="rec-charter-rules">
 								<li><strong>Roster.</strong> Your {ROSTER_SIZE} are generated from the Encyclopedia's species, dealt by the seed. The {ROSTER_SIZE - SENDABLE} you never send are your reserve, chosen as you go.</li>
-								<li><strong>Fall back.</strong> The side that moves first on a world may, once, move its first creature to another site without spending a turn.</li>
+								<li><strong>Fall back.</strong> The side that sends first in a round may, once, move its first creature to another world in the frame without spending a turn.</li>
 								<li><strong>Hidden.</strong> A stealthy creature may be sent hidden. The rival learns that you sent something, not what or where.</li>
 							</ul>
 
@@ -164,14 +164,14 @@ class ReclamationPage extends React.Component {
 								<ModeSwitch mode={mode} onChange={this.setMode} />
 								<span className="rec-intro-mode-text">
 									{mode === 'simple'
-										? 'Simple: choose a creature, then a site, with the suggested move marked; orders by nature, go. Switch any time.'
+										? 'Simple: choose a creature, then a world, with the suggested move marked; orders by nature, go. Switch any time.'
 										: 'Advanced: every order, every number, hidden sends, the log and the dossiers.'}
 								</span>
 							</div>
 							<button type="button" className="g-btn g-btn--primary" onClick={this.startMatch}>
-								Mount the expedition
+								Enter the frame
 							</button>
-								<span className="rec-intro-seed g-mono">Add ?seed={seed} to the address to replay this expedition.</span>
+								<span className="rec-intro-seed g-mono">Add ?seed={seed} to the address to replay this Proving.</span>
 							</div>
 						</aside>
 					</div>

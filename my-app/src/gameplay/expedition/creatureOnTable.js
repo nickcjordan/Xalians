@@ -123,7 +123,14 @@ export const STRAIN_GAP_SEVERE_C = 30; // a gap wider than this between the two 
 	strained on Luminax (the site table has no dark-side flag yet, so the doc's "Luminax's
 	dark side" reads as "on Luminax" until it does).
 */
-export function strainLevel(record, site, world) {
+// Since the frame (2026-09-04) a site carries its own world, so callers may pass the
+// frame, or nothing, as `world`; the site's world wins whenever it is there.
+export function worldOfSite(site, world) {
+	return site && site.world ? site.world : world;
+}
+
+export function strainLevel(record, site, worldArg) {
+	const world = worldOfSite(site, worldArg);
 	const physiology = (record && record.physiology) || {};
 	const tolerance = physiology.environmentalTolerance || {};
 	const breathes = Array.isArray(physiology.breathes) ? physiology.breathes : [];
@@ -207,7 +214,8 @@ export function baseHold(record) {
 	knows who else stands at the site) fold in the trait bonuses/penalties; they default to
 	0 so this function is usable standalone (e.g. by tests and the card-inspection panel).
 */
-export function holdAtSite(record, site, world, opts = {}) {
+export function holdAtSite(record, site, worldArg, opts = {}) {
+	const world = worldOfSite(site, worldArg);
 	const base = baseHold(record);
 	const matchup = worldMatchupMultiplier(record, world && world.element);
 	const origin = record && record.provenance && record.provenance.origin;
@@ -389,7 +397,8 @@ export function conductOf(record) {
 	`opts` may carry { packBondedKinAtSite, solitaryAlliesAtSite } for the trait hold
 	adjustments (the rules engine recomputes these whenever the board at a site changes).
 */
-export function prepare(record, site, world, sentIndex, opts = {}) {
+export function prepare(record, site, worldArg, sentIndex, opts = {}) {
+	const world = worldOfSite(site, worldArg);
 	const level = strainLevel(record, site, world);
 	const strainMult = strainMultiplierFor(level);
 	const { value: hold, isHome, matchup } = holdAtSite(record, site, world, opts);

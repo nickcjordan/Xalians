@@ -15,10 +15,10 @@ import { elementName, archetypeLabel } from './reclamationVocabulary';
 	a wizard whose view changes with the step:
 
 	  1. Choose a creature. The rail is your squad, each slot saying what that creature
-	     would hold at every site of this world (the best marked, strain named), so the
+	     would hold on every world of the frame (the best marked, strain named), so the
 	     comparison is made on the list, not by clicking through it. Pointing at a slot
 	     previews it on every site.
-	  2. Choose a site. The rail becomes the chosen creature's card with its three site
+	  2. Choose a world. The rail becomes the chosen creature's card with its three world
 	     chips, now pressable; the sites themselves show the send and how the balance
 	     would shift (Nick, second pass: the sites are not repeated as rows here).
 
@@ -31,7 +31,7 @@ import { elementName, archetypeLabel } from './reclamationVocabulary';
 function Stepper({ step }) {
 	const steps = [
 		{ n: 1, label: 'Creature' },
-		{ n: 2, label: 'Site' },
+		{ n: 2, label: 'World' },
 		{ n: 3, label: 'Send' },
 	];
 	return (
@@ -82,7 +82,7 @@ function ReclamationDeploy({
 	const suggestedRecordId = rec && !armed ? rec.recordId : null;
 	const suggestedSiteId = rec && armed && rec.recordId === armed.id ? rec.siteId : null;
 	const holds = armed ? siteHoldsFor(armed, view, you) : null;
-	const armedStealthy = !!(armed && prepare(armed, view.world.sites[0], view.world, 0).stealthy);
+	const armedStealthy = !!(armed && prepare(armed, view.frame.sites[0], null, 0).stealthy);
 	const showHidden = armedStealthy && (advanced || (rec && rec.hidden));
 	const showFallback = !!vanguard && (advanced || (recommendation && recommendation.type === 'relocate'));
 
@@ -93,20 +93,20 @@ function ReclamationDeploy({
 		lead = rivalBeat ? rivalBeat.text : 'Your squad waits. When the rival has sent or passed, the move is yours.';
 	} else if (me.passed) {
 		heading = 'You have passed';
-		lead = 'Passing is permanent for this world. The rival finishes its deploy alone.';
+		lead = 'Passing is permanent for this round. The rival finishes its deploy alone.';
 	} else if (relocating) {
 		heading = 'Fall back';
-		lead = 'Press a site to move your vanguard there. This does not spend your turn.';
+		lead = 'Press a world to move your vanguard there. This does not spend your turn.';
 	} else if (step === 2) {
-		heading = 'Choose a site';
+		heading = 'Choose a world';
 		lead = `Where does ${speciesLabel(armed)} go?`;
 	} else {
 		heading = 'Choose a creature';
 		lead = sendsLeft === 0
 			? `You have sent all ${SENDABLE} this expedition allows. The rest are your reserve.`
 			: advanced
-				? 'Each slot shows what the creature would hold at every site of this world.'
-				: 'Each slot shows how firmly the creature would hold a site on this world.';
+				? 'Each slot shows what the creature would hold on every world of the frame.'
+				: 'Each slot shows how firmly the creature would hold each world in the frame.';
 	}
 
 	return (
@@ -126,9 +126,9 @@ function ReclamationDeploy({
 					<span className="g-mono rec-sends-text">{sendsLeft} send{sendsLeft === 1 ? '' : 's'} left</span>
 				</span>
 				{step === 1 && (
-					<span className="rec-hold-legend" title="Hold is how firmly a creature keeps a site: acts strike at it, and the Court gives the site to the side that still holds more.">
+					<span className="rec-hold-legend" title="Hold is how firmly a creature keeps a world: acts strike at it, and the Court gives the world to the side that still holds more. The frame reads hold on a 0 to 20 scale, notched at 10 and 20; home ground can carry a creature past the last notch. The hatched tail is what the site's environment takes.">
 						<HoldMeter hold={12} unstrained={16} strainLevel="strained" mine small />
-						<span className="rec-hold-legend-text">the strip is hold; the hatched tail is what the site takes</span>
+						<span className="rec-hold-legend-text">hold, notched at 10 and 20; hatched is what the site takes</span>
 					</span>
 				)}
 			</header>
@@ -147,28 +147,29 @@ function ReclamationDeploy({
 					</div>
 
 					<p className="rec-deploy-lead g-body rec-chosen-cue">
-						Press a site on the table. Each one shows what {speciesLabel(armed)} would hold there and how the balance would shift.
+						Press a world on the table. Each one shows what {speciesLabel(armed)} would hold there and how the balance would shift.
 					</p>
 					{!advanced && holdsAgree(holds) && (
 						<span className="rec-chosen-here">
-							<span className="rec-slot-meter-label">hold here</span>
+							<span className="rec-slot-meter-label">hold</span>
 							<HoldMeter hold={holds[0].hold} unstrained={holds[0].unstrained} isHome={holds[0].isHome} strainLevel={holds[0].strainLevel} mine />
 							<span className="rec-slot-meter-value">{formatHold(holds[0].hold)}</span>
-							<span className="rec-chosen-here-note">the same at every site of this world</span>
+							<span className="rec-chosen-here-note">the same on every world of the frame</span>
 						</span>
 					)}
-					<span className={`rec-slot-sites rec-chosen-sites${!advanced && holdsAgree(holds) ? ' rec-chosen-sites--hidden' : ''}`} aria-label="Hold at each site of this world">
+					<span className={`rec-slot-sites rec-chosen-sites${!advanced && holdsAgree(holds) ? ' rec-chosen-sites--hidden' : ''}`} aria-label="Hold on each world of the frame">
 						{holds.map((h) => (
 							<button
 								type="button"
 								key={h.site.id}
-								className={`rec-slot-site rec-chosen-site${suggestedSiteId === h.site.id ? ' rec-slot-site--suggested' : ''}${hoverSiteId === h.site.id ? ' rec-slot-site--hover' : ''} rec-slot-site--${h.strainLevel}${h.isHome ? ' rec-slot-site--home' : ''}`}
+								className={`rec-slot-site rec-chosen-site g-el-${h.site.world.element}${suggestedSiteId === h.site.id ? ' rec-slot-site--suggested' : ''}${hoverSiteId === h.site.id ? ' rec-slot-site--hover' : ''} rec-slot-site--${h.strainLevel}${h.isHome ? ' rec-slot-site--home' : ''}`}
 								onClick={() => onSend(h.site.id)}
 								onMouseEnter={() => onHoverSite && onHoverSite(h.site.id)}
 								onMouseLeave={() => onHoverSite && onHoverSite(null)}
-								title={`Send to ${h.site.name}`}
+								title={`Send to ${h.site.world.planet}, at ${h.site.name}`}
 								data-send-site={h.site.id}
 							>
+								<span className="rec-chosen-site-world">{h.site.world.planet}{h.isHome ? ' · home' : ''}</span>
 								<span className="rec-slot-site-index">{h.index + 1}</span>
 								<HoldMeter hold={h.hold} unstrained={h.unstrained} isHome={h.isHome} strainLevel={h.strainLevel} mine small />
 								<span className="rec-slot-site-hold">{formatHold(h.hold)}</span>
@@ -210,9 +211,9 @@ function ReclamationDeploy({
 							className={`g-btn rec-fallback-btn${relocating ? ' rec-fallback-btn--active' : ''}`}
 							onClick={onBeginRelocate}
 							data-fallback
-							title="You placed your first creature knowing nothing. Once per world it may fall back to another site, without spending your turn."
+							title="You placed your first creature knowing nothing. Once per round it may fall back to another world in the frame, without spending your turn."
 						>
-							{relocating ? 'Choose a site' : `Fall back ${speciesLabel(vanguard)}`}
+							{relocating ? 'Choose a world' : `Fall back ${speciesLabel(vanguard)}`}
 						</button>
 					)}
 					<button
@@ -220,9 +221,9 @@ function ReclamationDeploy({
 						className={`g-btn rec-pass-btn${recommendation && recommendation.type === 'pass' ? ' rec-pass-btn--suggested' : ''}`}
 						onClick={onPass}
 						data-pass
-						title="Pass is permanent for this world."
+						title="Pass is permanent for this round."
 					>
-						Pass for this world
+						Pass this round
 						{recommendation && recommendation.type === 'pass' && <span className="rec-btn-sub">suggested: {recommendation.reason}</span>}
 					</button>
 				</footer>

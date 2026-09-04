@@ -41,20 +41,27 @@ This design starts from the other end. The creature record says what a Xalian is
 | 12 | Decrees are parked until the core is settled; they will bind to the world in contest | 80% (parked, not rejected) | Conversation 2026-09-02 |
 | 13 | The numeric formulas below (hold, magnitude, initiative, strain, thresholds) are first guesses to be tuned by simulation, exactly as Court Favor was | 70% (untested) | This document |
 | 14 | Sites per world are new lore to author, three per planet, drawn from places the planet histories already name | 85% (14 x 3 = 42 site records; the histories name most of them) | `lambda/src/json/planets.json` |
+| 22 | The Proving: the match is run on the Court of Arbitration's frame, a simulator built from the Generators' own environment models and linked over the QED network; a round loads three worlds side by side, each at one of its sites, nine distinct worlds per match; the unit the Court awards is a world. This supersedes assumption 1 | 90% (Nick proposed the simulator and chose the Court over Kozrak as its keeper, 2026-09-04; the site-per-world draw is his "keep the sites for variety") | Conversation 2026-09-04; `expeditionRules.drawFrames` |
+| 23 | Shove and the vanguard's fall-back cross worlds: a neighbor in the frame is another world's model, and the frame reassigns the creature there, hold recomputed | 60% (the mechanical rule survived the pivot unchanged; whether being shoved from Zolton into Krystos reads as sense or as a glitch is untested with players) | `expeditionRules.neighborSiteId`, `relocateVanguard` |
+| 24 | Hold is shown on a fixed 0 to 20 scale with notches at 10 and 20 and room past the last notch for home ground; the number stays beside the strip because the balance bars and the Court's tally use the same units | 70% (Nick asked what the scale was; a labeled fixed scale was the smallest fix, and the frame lore makes a fixed instrument scale natural) | `reclamationFigure.HoldMeter`, `reclamation.css` `.rec-hold-notch` |
 
-## Fiction
+## Fiction: the Proving (Nick, 2026-09-04)
 
-The name says the why: the worlds were lost to war and plague, and the creatures are taking them back, site by site. The Charter is the Court's acknowledgment of what an expedition has already reclaimed.
+The name says the why: the worlds were lost to war and plague, and the creatures are taking them back. The Charter is the Court's acknowledgment of a claim that has been proved.
 
-The worlds are wreckage with value left in them: the Algael beds of Poseidas, the Benthane fields of Saiphus, the QED nodes of Zolton, the catacombs of Krystos, the ruins under Endessa's sand. Kozrak grants Charters over such sites, and with them Token allotments, and he awards them by contest, because a galaxy competing for his favor is a galaxy not organizing against him. You are a handler for a faction, fielding creatures you own. Your opponent is a rival handler: a Syndicate broker, a Zolto envoy, a Windsailor crew, an heir of the Thousand Families, the Court's own champion. A match is an expedition across three worlds, and the prize is the Charter. Whether that Charter is one prize among many in a wider tournament is left to the tournament lore, which is expected to hold several contests of which this is one. (Proposed canon, not yet written into the lore files; the ingredients are all canon.)
+The worlds are wreckage with value left in them: the Algael beds of Poseidas, the Benthane fields of Saiphus, the QED nodes of Zolton, the catacombs of Krystos, the ruins under Endessa's sand. Kozrak grants Charters over such worlds, and with them Token allotments, and he awards them by contest, because a galaxy competing for his favor is a galaxy not organizing against him. But the worlds are plague-hot, embargoed, or actively lethal, and expeditions that go in blind do not come back; Kozrak will not spend Scrambler Tokens on a faction whose creatures would die on arrival. So a claim is settled by proof before anyone ships out.
+
+A Generator builds creatures fitted to one world, and to do that it must hold a model of that world: temperature, medium, chemistry, gravity. Every Generator is a planetary simulator with a creature factory bolted on. The Court of Arbitration on Poseidas, the galaxy's neutral ground, holds the environment models of all fourteen Generators, recovered or licensed one world at a time, and runs them on a **frame** without the factories, linked over the Zolto's QED network so a handler on Saiphus and a broker on Drainov can contest the same worlds in the same hour. A match is a **Proving**. A handler loads a roster into the frame. The frame loads three worlds, each at one site of its surface, chosen by the frame, so the same worlds never make the same table twice. Each side sends creatures into the worlds' models, and the frame reports how firmly each one holds there against the environment and against the rival's creatures. When the sends stop, the Court reads the frame and grants the Charter for each world to the side that holds more of it. Nothing dies in the frame; the roster comes home whole, and the platform history records what the frame said of each creature. The Charter carries the Token allotment and Kozrak's leave to go. That is the reward, and it is real. Only the fighting is simulated.
+
+You are a handler for a faction, fielding creatures you own. Your opponent is a rival handler connected over QED: a Syndicate broker, a Zolto envoy, a Windsailor crew, an heir of the Thousand Families, the Court's own champion. Against the machine, the opponent is a Court proctor running a house roster. The models are Vallerii-era and imperfect, and the Court's line is that the frame is authoritative; that line is the in-world voice for anything the frame does that a world would not (a creature shoved out of one world's model and into the next), for Endessa's stolen prototype behaving strangely, and for a future hook where the frame reports something in a world that should not be there. (Proposed canon, not yet written into the lore files; the ingredients are all canon. The first fiction, one world per round with an expedition crossing three worlds, is superseded; its sites survive as the places the frame loads.)
 
 ## The table
 
-No cards. The player holds a **roster** of creatures waiting to be sent and sees a **world** with three **sites**. A creature standing at a site is drawn the way the Duel draws it, the same being on the same plinth, so a Xalian looks like itself in every game. Inspecting a creature opens its dossier: hold per site, initiative, its acts with magnitudes, its conduct line, its strain on this world. The dossier is a panel you open, not a face you stare at.
+No cards. The player holds a **roster** of creatures waiting to be sent and sees the **frame**: three **worlds** side by side, each loaded at one of its sites. A creature standing in a world is drawn the way the Duel draws it, the same being on the same plinth, so a Xalian looks like itself in every game. Inspecting a creature opens its dossier: hold per world, initiative, its acts with magnitudes, its conduct line, its strain at the loaded site. The dossier is a panel you open, not a face you stare at.
 
-## The world and its sites
+## The frame, its worlds and their sites
 
-Each round opens one world, drawn from the fourteen with no repeats within a match; the next world is revealed at the end of the current round so that passing early is an informed choice. A world has an element and three sites. Each site has its own environment (medium, temperature band) so a world has texture: Krystos's catacombs are enclosed and colder than its surface; Poseidas has a drowned city, a reef, and an Algael bed. Sites are lore to author, three per planet, from the places the histories already name (the Chasm, the City of Wraiths, the Dreadscape, the Stellaris Superstructure, the World Trees, Deepwater Black, the Ghost Fleet).
+Each round the frame loads three worlds, drawn from the fourteen with no world repeated within a match (nine of the fourteen per Proving); the next frame is revealed at the end of the current round, worlds and sites, so that passing early is an informed choice. A world has an element and a home-ground bonus for its natives; hold is computed against the world of the site a creature stands at, never against a round-wide value. Every world carries three authored sites, each with its own environment (medium, temperature band), and the frame loads one of them, chosen by the seed, so the same three worlds make a different table on the next Proving: Krystos at its catacombs is enclosed and colder than Krystos at its surface; Poseidas may load as a drowned city, a reef, or an Algael bed. Sites are lore already authored, three per planet, from the places the histories name (the Chasm, the City of Wraiths, the Dreadscape, the Stellaris Superstructure, the World Trees, Deepwater Black, the Ghost Fleet). In the engine the contested unit is still called a site: it is one place on one world, and there are three of them in every frame.
 
 ## The creature on the table
 
@@ -76,7 +83,7 @@ Everything a creature is on the table is derived from its record; nothing is sto
 3. **Resolve.** Ambush acts resolve first, in initiative order among themselves. Then wards. Then everything else in initiative order, strained creatures last. Each act targets by the creature's conduct given the board at the moment it acts. Outcomes are applied immediately, so a routed creature never gets to act and a staggered one hits for less if its magnitude depends on its own condition (it does not; only hold is halved by stagger).
 4. **Judge.** Each site goes to the side with the greater surviving hold there, staggered hold counted at half. A tie reverts the site to the Court. Winners' banners are placed. Creatures at a won site stay to hold the claim; creatures at a lost or tied site withdraw. Either way they are out of the expedition. The next world is revealed.
 
-The match ends when a handler holds five sites, or after the third world; more sites held wins the Charter. Equal sites held: the handler with more creatures still unsent wins; then the one who passed first in the final round; then the non-starter of the final round.
+The match ends when a handler holds five worlds, or after the third frame; more worlds held wins the Charter. Equal worlds held: the handler with more creatures still unsent wins; then the one who passed first in the final round; then the non-starter of the final round. (Written for one world of three sites per round; since the Proving, read "site" in the round text as "one of the frame's three worlds, at its loaded site": the phases, the fall-back, the pass, hidden sends and the judging are unchanged.)
 
 ## The acts
 
@@ -84,7 +91,7 @@ Sixteen actions, grouped by what they touch. Magnitudes are as above; "the targe
 
 **Contact (touches the site the creature stands at):**
 - **strike, crush, rake, lash:** compare magnitude to the target's current hold. Below half: shrugged, nothing happens. At least half but below the full hold: **staggered**, the target's hold is halved for the rest of the round; a staggered target hit again at half or more of its current hold is routed. At least the full hold: **routed**, driven off the site and out of the expedition.
-- **shove:** moves the target to a neighboring site on the same world instead of harming it, where its hold is recomputed against that site's environment. Anchored creatures cannot be shoved.
+- **shove:** moves the target to a neighboring site in the frame instead of harming it, where its hold is recomputed against that site's world and environment. Since the Proving a neighbor is another world's model; the frame reassigns the creature (assumption 23). Anchored creatures cannot be shoved.
 
 **Reach (touches the site with a condition):**
 - **snare:** the target cannot be moved, mended, or warded for the rest of the round, and if it has not yet acted this resolution it loses its act.
@@ -158,8 +165,10 @@ Open after this pass: sites with many creatures scroll inside their floor (ten a
 
 ## Open items
 
-- The name. Tribute was named for the row game's fiction.
-- Sites: authoring three per world with environments, from the planet histories.
+- The name. Tribute was named for the row game's fiction. "The Proving" is the fiction's name for a match; whether the game itself takes it is open.
+- The Proving lore is proposed canon only: the Court's frame, the recovered Generator models, the QED link and the proctor need entries in the glossary and a paragraph in the Poseidas history before they ship in the encyclopedia.
+- Sites: authored, three per world; since the Proving only one per world is loaded per round, so the other two are variety across Provings rather than texture within one.
+- Shove across worlds (assumption 23) is untested with players.
 - The generator exists (0.1.0) and the table plays real creatures. Open: strain still falls on 57 percent of sends (assumption 19 is a lever); sand creatures win 70 percent of their sites and psychic and fire creatures under 48; the round-one starter wins 45 percent (600 matches, seed 11); traits the table does not read yet (perceptive against hidden sends, slippery against snare, mind-sealed against terrorize, inspiring, healing, regenerative, toxic, volatile, reflective, ramming, hypnotic, foresighted, telekinetic, phasing) are shown in the dossier as recorded but unread.
 - Decrees, as parked above.
 - Tuning: every formula above is a first guess. The simulator gets rebuilt for the new round and the same batch statistics (starter advantage, sites per round, rout rate, act usage, pass behavior) drive the numbers.
@@ -170,7 +179,7 @@ Open after this pass: sites with many creatures scroll inside their floor (ten a
 1. Sites data for the fourteen worlds (lore authoring, can start now).
 2. Engine: world and site model, hold and strain, the four-phase round, the sixteen acts, conduct, judging, the match. Pure state machine with tests, as before.
 3. Bot and simulator; tune.
-4. Table UI on the Duel's creature representation: roster, world with three sites, orders panel with preview, resolution playback.
+4. Table UI on the Duel's creature representation: roster, the frame's three worlds, orders panel with preview, resolution playback.
 
 ## First numbers (bot vs bot, 2026-09-02)
 

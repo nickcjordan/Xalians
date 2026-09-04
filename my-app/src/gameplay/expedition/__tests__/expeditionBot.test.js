@@ -53,9 +53,11 @@ function makeWorld(planet, element) {
 	};
 }
 
-function makeWorlds(count = 5) {
-	const planets = ['Magmuth', 'Poseidas', 'Grimedes', 'Luminax', 'Floria'];
-	const elements = ['fire', 'water', 'dark', 'light', 'plant'];
+function makeWorlds(count = 9) {
+	const planets = [
+		'Magmuth', 'Poseidas', 'Grimedes', 'Luminax', 'Floria', 'Zolton', 'Phantiri', 'Stonera', 'Drainov',
+	];
+	const elements = ['fire', 'water', 'dark', 'light', 'plant', 'electric', 'ghost', 'rock', 'chemical'];
 	const worlds = [];
 	for (let i = 0; i < count; i++) {
 		worlds.push(makeWorld(planets[i % planets.length], elements[i % elements.length]));
@@ -96,7 +98,7 @@ describe('chooseSend', () => {
 		const action = chooseSend(publicState, state.players[handler].roster, handler, makeRng(2));
 		if (action.type === 'send') {
 			expect(state.players[handler].roster.some((r) => r.id === action.recordId)).toBe(true);
-			expect(publicState.world.sites.some((s) => s.id === action.siteId)).toBe(true);
+			expect(publicState.frame.sites.some((s) => s.id === action.siteId)).toBe(true);
 			const applied = send(state, handler, action.recordId, action.siteId, action.hidden);
 			expect(applied).not.toBeNull();
 		}
@@ -128,11 +130,11 @@ describe('chooseSend', () => {
 describe('chooseOrders', () => {
 	test('only orders the handler\'s own deployed creatures with legal actions', () => {
 		let state = createMatch({ rosterA: makeRoster('A'), rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'bot-orders-seed' });
-		const world = state.worlds[0];
+		const frame = state.frames[0];
 		const starter = state.starter;
 		const other = starter === 'A' ? 'B' : 'A';
-		state = send(state, starter, state.players[starter].roster[0].id, world.sites[0].id);
-		state = send(state, other, state.players[other].roster[0].id, world.sites[0].id);
+		state = send(state, starter, state.players[starter].roster[0].id, frame.sites[0].id);
+		state = send(state, other, state.players[other].roster[0].id, frame.sites[0].id);
 		state = pass(state, state.turn);
 		state = pass(state, state.turn);
 
@@ -150,7 +152,7 @@ describe('full bot-vs-bot match', () => {
 	test('completes deterministically with only legal actions and no errors', () => {
 		const rosterA = makeRoster('A', (i) => (i % 3 === 0 ? { traits: { guaranteed: [], rolled: ['stealthy'] } } : {}));
 		const rosterB = makeRoster('B', (i) => (i % 4 === 0 ? { traits: { guaranteed: [], rolled: ['armored'] } } : {}));
-		let state = createMatch({ rosterA, rosterB, worlds: makeWorlds(3), seed: 'bot-full-match-seed' });
+		let state = createMatch({ rosterA, rosterB, worlds: makeWorlds(), seed: 'bot-full-match-seed' });
 
 		let botRng = makeRng('bot-full-match-seed-bot');
 		let guard = 0;
@@ -198,7 +200,7 @@ describe('full bot-vs-bot match', () => {
 		function playOut(seed) {
 			const rosterA = makeRoster('A');
 			const rosterB = makeRoster('B');
-			let state = createMatch({ rosterA, rosterB, worlds: makeWorlds(3), seed });
+			let state = createMatch({ rosterA, rosterB, worlds: makeWorlds(), seed });
 			let botRng = makeRng(`${seed}-bot`);
 			let guard = 0;
 			while (state.phase !== 'matchEnd' && guard < 5000) {

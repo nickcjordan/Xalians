@@ -1,8 +1,10 @@
 import {
 	createMatch, send, pass, order, commitOrders, getPublicState, relocateVanguard,
-	ExpeditionRuleError, hasLegalSend, prepareEntry, currentWorld, findEntry, currentHoldOf,
+	ExpeditionRuleError, hasLegalSend, prepareEntry, currentFrame, findEntry, currentHoldOf,
 } from '../expeditionRules.js';
-import { ROSTER_SIZE, SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH } from '../expeditionInterpretation.js';
+import {
+	ROSTER_SIZE, SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH, FRAMES_PER_MATCH, WORLDS_PER_FRAME,
+} from '../expeditionInterpretation.js';
 
 /*
 	Rules-engine coverage for Expedition's match/round/turn flow, per
@@ -57,9 +59,15 @@ function makeWorld(planet, element, siteOverrides = [{}, {}, {}]) {
 	};
 }
 
-function makeWorlds(count = 5) {
-	const planets = ['Magmuth', 'Poseidas', 'Grimedes', 'Luminax', 'Floria'];
-	const elements = ['fire', 'water', 'dark', 'light', 'plant'];
+function makeWorlds(count = WORLDS_PER_MATCH) {
+	const planets = [
+		'Magmuth', 'Poseidas', 'Grimedes', 'Luminax', 'Floria', 'Zolton', 'Phantiri', 'Stonera', 'Drainov',
+		'Saiphus', 'Telypso', 'Krystos', 'Veridium', 'Endessa',
+	];
+	const elements = [
+		'fire', 'water', 'dark', 'light', 'plant', 'electric', 'ghost', 'rock', 'chemical',
+		'air', 'psychic', 'ice', 'metal', 'sand',
+	];
 	const worlds = [];
 	for (let i = 0; i < count; i++) {
 		worlds.push(makeWorld(planets[i % planets.length], elements[i % elements.length]));
@@ -69,6 +77,13 @@ function makeWorlds(count = 5) {
 
 function freshMatch(seed = 'test-seed', worlds = makeWorlds()) {
 	return createMatch({ rosterA: makeRoster('A'), rosterB: makeRoster('B'), worlds, seed });
+}
+
+// the frame's three sites come from three different worlds; find the one whose site
+// carries the given planet, since tests can no longer assume a fixed index for "the
+// world we set up"
+function siteOfPlanet(frame, planet) {
+	return frame.sites.find((s) => s.world && s.world.planet === planet);
 }
 
 describe('createMatch validation', () => {
@@ -85,14 +100,19 @@ describe('createMatch validation', () => {
 		expect(() => createMatch({ rosterA: roster, rosterB: makeRoster('B'), worlds, seed: 1 })).toThrow(/duplicate/);
 	});
 
-	test('rejects fewer than 3 worlds', () => {
+	test('rejects fewer than 9 worlds', () => {
 		expect(() => createMatch({ rosterA: makeRoster('A'), rosterB: makeRoster('B'), worlds: makeWorlds(1), seed: 1 })).toThrow(ExpeditionRuleError);
 	});
 
-	test('draws exactly 3 distinct worlds with no repeats', () => {
+	test('draws exactly 9 distinct worlds into 3 frames of 3, with no repeats', () => {
 		const state = freshMatch();
-		const planetNames = state.worlds.map((w) => w.planet);
-		expect(state.worlds.length).toBe(WORLDS_PER_MATCH);
+		expect(state.frames.length).toBe(FRAMES_PER_MATCH);
+		const planetNames = [];
+		state.frames.forEach((frame) => {
+			expect(frame.sites.length).toBe(WORLDS_PER_FRAME);
+			frame.sites.forEach((site) => planetNames.push(site.world.planet));
+		});
+		expect(planetNames.length).toBe(WORLDS_PER_MATCH);
 		expect(new Set(planetNames).size).toBe(WORLDS_PER_MATCH);
 	});
 
@@ -100,13 +120,14 @@ describe('createMatch validation', () => {
 		const s1 = freshMatch('same-seed');
 		const s2 = freshMatch('same-seed');
 		expect(s1.starter).toBe(s2.starter);
-		expect(s1.worlds.map((w) => w.planet)).toEqual(s2.worlds.map((w) => w.planet));
+		const planetsOf = (s) => s.frames.map((f) => f.sites.map((site) => site.world.planet));
+		expect(planetsOf(s1)).toEqual(planetsOf(s2));
 	});
 
-	test('starts in deploy phase on world 1 with a random starter', () => {
+	test('starts in deploy phase on frame 1 with a random starter', () => {
 		const state = freshMatch();
 		expect(state.phase).toBe('deploy');
-		expect(state.worldIndex).toBe(0);
+		expect(state.frameIndex).toBe(0);
 		expect(['A', 'B']).toContain(state.starter);
 		expect(state.turn).toBe(state.starter);
 	});
@@ -116,30 +137,30 @@ describe('Deploy phase: send/pass/alternation', () => {
 	test('send moves a record from roster to the board and alternates turn', () => {
 		const state = freshMatch();
 		const starter = state.starter;
-		const world = currentWorld(state);
+		const frame = currentFrame(state);
 		const recordId = state.players[starter].roster[0].id;
-		const next = send(state, starter, recordId, world.sites[0].id);
+		const next = send(state, starter, recordId, frame.sites[0].id);
 		expect(next).not.toBeNull();
 		expect(next.players[starter].roster.some((r) => r.id === recordId)).toBe(false);
-		expect(next.board[world.sites[0].id][starter].some((e) => e.recordId === recordId)).toBe(true);
+		expect(next.board[frame.sites[0].id][starter].some((e) => e.recordId === recordId)).toBe(true);
 		expect(next.turn).toBe(starter === 'A' ? 'B' : 'A');
 	});
 
 	test('rejects a send out of turn', () => {
 		const state = freshMatch();
 		const nonStarter = state.starter === 'A' ? 'B' : 'A';
-		const world = currentWorld(state);
+		const frame = currentFrame(state);
 		const recordId = state.players[nonStarter].roster[0].id;
-		expect(send(state, nonStarter, recordId, world.sites[0].id)).toBeNull();
+		expect(send(state, nonStarter, recordId, frame.sites[0].id)).toBeNull();
 	});
 
 	test('rejects sending a record not in your roster', () => {
 		const state = freshMatch();
 		const starter = state.starter;
-		const world = currentWorld(state);
+		const frame = currentFrame(state);
 		const otherPlayer = starter === 'A' ? 'B' : 'A';
 		const foreignId = state.players[otherPlayer].roster[0].id;
-		expect(send(state, starter, foreignId, world.sites[0].id)).toBeNull();
+		expect(send(state, starter, foreignId, frame.sites[0].id)).toBeNull();
 	});
 
 	test('rejects sending to a nonexistent site', () => {
@@ -153,8 +174,8 @@ describe('Deploy phase: send/pass/alternation', () => {
 		let state = freshMatch();
 		const starter = state.starter;
 		const other = starter === 'A' ? 'B' : 'A';
-		const world = currentWorld(state);
-		const siteId = world.sites[0].id;
+		const frame = currentFrame(state);
+		const siteId = frame.sites[0].id;
 		state = send(state, starter, state.players[starter].roster[0].id, siteId);
 		state = send(state, other, state.players[other].roster[0].id, siteId);
 		state = send(state, starter, state.players[starter].roster[0].id, siteId);
@@ -167,7 +188,7 @@ describe('Deploy phase: send/pass/alternation', () => {
 		const starter = state.starter;
 		state = pass(state, starter);
 		expect(state.players[starter].passed).toBe(true);
-		expect(send(state, starter, state.players[starter].roster[0].id, currentWorld(state).sites[0].id)).toBeNull();
+		expect(send(state, starter, state.players[starter].roster[0].id, currentFrame(state).sites[0].id)).toBeNull();
 	});
 
 	test('deploy ends and moves to orders when both have passed', () => {
@@ -183,14 +204,14 @@ describe('Deploy phase: send/pass/alternation', () => {
 		// deplete side A's SENDABLE budget by always sending as A when it is A's turn and
 		// passing outright when it is B's turn, so A alone reaches the SENDABLE cap
 		let state = freshMatch('sendable-limit-seed');
-		const world = currentWorld(state);
+		const frame = currentFrame(state);
 		let sentByA = 0;
 		let guard = 0;
 		while (sentByA < SENDABLE && state.phase === 'deploy' && guard < 100) {
 			guard++;
 			if (state.turn === 'A') {
 				const recordId = state.players.A.roster[0].id;
-				state = send(state, 'A', recordId, world.sites[0].id);
+				state = send(state, 'A', recordId, frame.sites[0].id);
 				sentByA++;
 			} else {
 				state = pass(state, 'B');
@@ -208,17 +229,17 @@ describe('Deploy phase: send/pass/alternation', () => {
 	test('hidden send is only legal for a stealthy creature', () => {
 		let state = freshMatch('stealth-seed');
 		const starter = state.starter;
-		const world = currentWorld(state);
+		const frame = currentFrame(state);
 		const nonStealthId = state.players[starter].roster[0].id;
-		expect(send(state, starter, nonStealthId, world.sites[0].id, true)).toBeNull();
+		expect(send(state, starter, nonStealthId, frame.sites[0].id, true)).toBeNull();
 
 		const stealthyRoster = makeRoster('S', () => ({ traits: { guaranteed: [], rolled: ['stealthy'] } }));
 		const stealthState = createMatch({ rosterA: stealthyRoster, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'stealth-seed-2' });
 		const stealthStarter = stealthState.starter;
 		if (stealthStarter === 'A') {
-			const next = send(stealthState, 'A', stealthyRoster[0].id, currentWorld(stealthState).sites[0].id, true);
+			const next = send(stealthState, 'A', stealthyRoster[0].id, currentFrame(stealthState).sites[0].id, true);
 			expect(next).not.toBeNull();
-			expect(next.board[currentWorld(stealthState).sites[0].id].A[0].hidden).toBe(true);
+			expect(next.board[currentFrame(stealthState).sites[0].id].A[0].hidden).toBe(true);
 		}
 	});
 
@@ -226,7 +247,7 @@ describe('Deploy phase: send/pass/alternation', () => {
 		// exhaust one side's SENDABLE budget manually, then the auto-pass should trigger
 		// on their next turn without an explicit pass() call
 		let state = freshMatch('auto-pass-seed');
-		const world = currentWorld(state);
+		const frame = currentFrame(state);
 		let turnsUsed = 0;
 		while (state.phase === 'deploy' && turnsUsed < SENDABLE * 2) {
 			const handler = state.turn;
@@ -240,7 +261,7 @@ describe('Deploy phase: send/pass/alternation', () => {
 			if (roster.length === 0) {
 				break;
 			}
-			state = send(state, handler, roster[0].id, world.sites[0].id);
+			state = send(state, handler, roster[0].id, frame.sites[0].id);
 			turnsUsed++;
 		}
 		// after 10 sends by one side, that side is auto-passed on its next opportunity
@@ -253,11 +274,11 @@ describe('Orders phase', () => {
 		let state = freshMatch(seed);
 		const starter = state.starter;
 		const other = starter === 'A' ? 'B' : 'A';
-		const world = currentWorld(state);
+		const frame = currentFrame(state);
 		const recordIdA = state.players[starter].roster[0].id;
-		state = send(state, starter, recordIdA, world.sites[0].id);
+		state = send(state, starter, recordIdA, frame.sites[0].id);
 		const recordIdB = state.players[other].roster[0].id;
-		state = send(state, other, recordIdB, world.sites[0].id);
+		state = send(state, other, recordIdB, frame.sites[0].id);
 		state = pass(state, state.turn);
 		state = pass(state, state.turn);
 		expect(state.phase).toBe('orders');
@@ -323,12 +344,12 @@ describe('resolution order', () => {
 		const rosterA = makeRoster('A').map((r, i) => (i === 0 ? { ...ambusher, id: 'A_0' } : r));
 		const rosterB = makeRoster('B').map((r, i) => (i === 0 ? { ...fast, id: 'B_0' } : r));
 		let state = createMatch({ rosterA, rosterB, worlds, seed: 'ambush-order-seed' });
-		const world = currentWorld(state);
+		const frame = currentFrame(state);
 		const starter = state.starter;
 		const other = starter === 'A' ? 'B' : 'A';
 
-		state = send(state, starter, state.players[starter].roster[0].id, world.sites[0].id);
-		state = send(state, other, state.players[other].roster[0].id, world.sites[0].id);
+		state = send(state, starter, state.players[starter].roster[0].id, frame.sites[0].id);
+		state = send(state, other, state.players[other].roster[0].id, frame.sites[0].id);
 		state = pass(state, state.turn);
 		state = pass(state, state.turn);
 
@@ -356,15 +377,22 @@ describe('resolution order', () => {
 			physiology: { breathes: ['gas'], environmentalTolerance: { ambientMedia: ['gas'], temperatureC: { min: -50, max: 200 } } },
 		});
 
-		const worlds = [makeWorld('Magmuth', 'fire', [{ environment: { medium: 'gas', temperatureC: { min: -50, max: 200 } } }, {}, {}]), ...makeWorlds(4)];
+		// only Magmuth is authored with a single (gas) site, so its site draw is
+		// deterministic; the other 8 worlds fill out the match and never interfere since
+		// this test only cares about the site the two creatures are actually sent to.
+		// Since a frame draws 3 different worlds, Magmuth lands in whichever frame the
+		// shuffle gives it (the "strain-order-seed" puts it in frame 1, the current one).
+		const worlds = [makeWorld('Magmuth', 'fire', [{ environment: { medium: 'gas', temperatureC: { min: -50, max: 200 } } }]), ...makeWorlds(8)];
 		const rosterA = makeRoster('A').map((r, i) => (i === 0 ? { ...strainedFast, id: 'A_0' } : r));
 		const rosterB = makeRoster('B').map((r, i) => (i === 0 ? { ...slow, id: 'B_0' } : r));
 		let state = createMatch({ rosterA, rosterB, worlds, seed: 'strain-order-seed' });
-		const world = currentWorld(state);
+		const frame = currentFrame(state);
+		const site = siteOfPlanet(frame, 'Magmuth');
+		expect(site).toBeTruthy();
 		const starter = state.starter;
 		const other = starter === 'A' ? 'B' : 'A';
-		state = send(state, starter, state.players[starter].roster[0].id, world.sites[0].id);
-		state = send(state, other, state.players[other].roster[0].id, world.sites[0].id);
+		state = send(state, starter, state.players[starter].roster[0].id, site.id);
+		state = send(state, other, state.players[other].roster[0].id, site.id);
 		state = pass(state, state.turn);
 		state = pass(state, state.turn);
 		state = order(state, 'A', 'A_0', 'strike');
@@ -387,14 +415,14 @@ describe('resolution order', () => {
 		const worlds = makeWorlds();
 		const rosterA = makeRoster('A').map((r, i) => (i === 0 ? { ...equalA, id: 'A_0' } : (i === 1 ? { ...equalA, id: 'A_1' } : r)));
 		let state = createMatch({ rosterA, rosterB: makeRoster('B').map((r, i) => (i === 0 ? { ...equalB, id: 'B_0' } : r)), worlds, seed: 'tie-seed' });
-		const world = currentWorld(state);
+		const frame = currentFrame(state);
 		const starter = state.starter;
 		const other = starter === 'A' ? 'B' : 'A';
 
 		if (starter === 'A') {
-			state = send(state, 'A', 'A_0', world.sites[0].id);
-			state = send(state, 'B', 'B_0', world.sites[0].id);
-			state = send(state, 'A', 'A_1', world.sites[0].id);
+			state = send(state, 'A', 'A_0', frame.sites[0].id);
+			state = send(state, 'B', 'B_0', frame.sites[0].id);
+			state = send(state, 'A', 'A_1', frame.sites[0].id);
 			state = pass(state, state.turn);
 			state = pass(state, state.turn);
 			state = order(state, 'A', 'A_0', 'strike');
@@ -415,9 +443,9 @@ describe('acts: worked examples', () => {
 		const rosterA = makeRoster('A').map((r, i) => (i === 0 ? { ...recordA, id: 'A_0' } : r));
 		const rosterB = makeRoster('B').map((r, i) => (i === 0 ? { ...recordB, id: 'B_0' } : r));
 		let state = createMatch({ rosterA, rosterB, worlds, seed });
-		const world = currentWorld(state);
-		state = send(state, state.turn, state.turn === 'A' ? 'A_0' : 'B_0', world.sites[0].id);
-		state = send(state, state.turn, state.turn === 'A' ? 'A_0' : 'B_0', world.sites[0].id);
+		const frame = currentFrame(state);
+		state = send(state, state.turn, state.turn === 'A' ? 'A_0' : 'B_0', frame.sites[0].id);
+		state = send(state, state.turn, state.turn === 'A' ? 'A_0' : 'B_0', frame.sites[0].id);
 		state = pass(state, state.turn);
 		state = pass(state, state.turn);
 		return state;
@@ -483,20 +511,20 @@ describe('acts: worked examples', () => {
 		const rosterA = makeRoster('A').map((r, i) => (i === 0 ? { ...frail, id: 'A_0' } : (i === 1 ? { ...warder, id: 'A_1' } : r)));
 		const rosterB = makeRoster('B').map((r, i) => (i === 0 ? { ...striker, id: 'B_0' } : r));
 		let state = createMatch({ rosterA, rosterB, worlds, seed: 'ward-seed' });
-		const world = currentWorld(state);
+		const frame = currentFrame(state);
 		// A needs both its creatures (frail, then warder) on the board; B needs its
 		// striker sent once. Turns strictly alternate, so B sends its one creature on its
 		// first turn then passes (deploy's pass is permanent for the round, which is fine
 		// here since B has nothing else to send), letting A use both of its turns.
 		if (state.turn === 'B') {
-			state = send(state, 'B', 'B_0', world.sites[0].id);
-			state = send(state, 'A', 'A_0', world.sites[0].id);
+			state = send(state, 'B', 'B_0', frame.sites[0].id);
+			state = send(state, 'A', 'A_0', frame.sites[0].id);
 			state = pass(state, 'B');
-			state = send(state, 'A', 'A_1', world.sites[0].id);
+			state = send(state, 'A', 'A_1', frame.sites[0].id);
 		} else {
-			state = send(state, 'A', 'A_0', world.sites[0].id);
-			state = send(state, 'B', 'B_0', world.sites[0].id);
-			state = send(state, 'A', 'A_1', world.sites[0].id);
+			state = send(state, 'A', 'A_0', frame.sites[0].id);
+			state = send(state, 'B', 'B_0', frame.sites[0].id);
+			state = send(state, 'A', 'A_1', frame.sites[0].id);
 			state = pass(state, 'B');
 		}
 		state = pass(state, state.turn);
@@ -532,9 +560,9 @@ describe('acts: worked examples', () => {
 describe('judging and match end', () => {
 	function autoResolveOneRound(state) {
 		let s = state;
-		const world = currentWorld(s);
-		s = send(s, s.turn, s.players[s.turn].roster[0].id, world.sites[0].id);
-		s = send(s, s.turn, s.players[s.turn].roster[0].id, world.sites[0].id);
+		const frame = currentFrame(s);
+		s = send(s, s.turn, s.players[s.turn].roster[0].id, frame.sites[0].id);
+		s = send(s, s.turn, s.players[s.turn].roster[0].id, frame.sites[0].id);
 		s = pass(s, s.turn);
 		s = pass(s, s.turn);
 		s = commitOrders(s, 'A');
@@ -549,9 +577,9 @@ describe('judging and match end', () => {
 		const rosterA = makeRoster('A').map((r, i) => (i === 0 ? { ...equalA, id: 'A_0' } : r));
 		const rosterB = makeRoster('B').map((r, i) => (i === 0 ? { ...equalB, id: 'B_0' } : r));
 		let state = createMatch({ rosterA, rosterB, worlds, seed: 'court-tie-seed' });
-		const world = currentWorld(state);
-		state = send(state, state.turn, state.turn === 'A' ? 'A_0' : 'B_0', world.sites[0].id);
-		state = send(state, state.turn, state.turn === 'A' ? 'A_0' : 'B_0', world.sites[0].id);
+		const frame = currentFrame(state);
+		state = send(state, state.turn, state.turn === 'A' ? 'A_0' : 'B_0', frame.sites[0].id);
+		state = send(state, state.turn, state.turn === 'A' ? 'A_0' : 'B_0', frame.sites[0].id);
 		state = pass(state, state.turn);
 		state = pass(state, state.turn);
 		state = commitOrders(state, 'A');
@@ -569,8 +597,8 @@ describe('judging and match end', () => {
 		expect(totalTracked('A') + totalTracked('B')).toBeGreaterThan(0);
 	});
 
-	test('match ends after the third world if nobody clinches 5 sites first', () => {
-		let state = freshMatch('three-world-seed', makeWorlds(3));
+	test('match ends after the third frame if nobody clinches 5 sites first', () => {
+		let state = freshMatch('three-world-seed', makeWorlds());
 		let guard = 0;
 		while (state.phase !== 'matchEnd' && guard < 50) {
 			guard++;
@@ -584,7 +612,7 @@ describe('judging and match end', () => {
 		// force a lopsided match: A always overwhelmingly stronger
 		const strongA = () => makeRecord('sA', { attributes: { strength: 99, vitality: 99, endurance: 99, agility: 99, reflex: 99, intelligence: 99, willpower: 99, instinct: 99, charisma: 99, resilience: 99 } });
 		const weakB = () => makeRecord('wB', { attributes: { strength: 1, vitality: 1, endurance: 1, agility: 1, reflex: 1, intelligence: 1, willpower: 1, instinct: 1, charisma: 1, resilience: 1 } });
-		const worlds = makeWorlds(3);
+		const worlds = makeWorlds();
 		const rosterA = makeRoster('A', () => strongA());
 		const rosterB = makeRoster('B', () => weakB());
 		let state = createMatch({ rosterA, rosterB, worlds, seed: 'clinch-seed' });
@@ -604,7 +632,7 @@ describe('judging and match end', () => {
 		// can't force this deterministically without deep control of resolution, so this
 		// exercises the decision function's contract indirectly via a full-length match and
 		// asserts the invariant holds whenever sites are tied at match end
-		let state = freshMatch('tiebreak-seed', makeWorlds(3));
+		let state = freshMatch('tiebreak-seed', makeWorlds());
 		let guard = 0;
 		while (state.phase !== 'matchEnd' && guard < 50) {
 			guard++;
@@ -635,9 +663,9 @@ describe('public state hiding', () => {
 		let state = freshMatch('public-orders-seed');
 		const starter = state.starter;
 		const other = starter === 'A' ? 'B' : 'A';
-		const world = currentWorld(state);
-		state = send(state, starter, state.players[starter].roster[0].id, world.sites[0].id);
-		state = send(state, other, state.players[other].roster[0].id, world.sites[0].id);
+		const frame = currentFrame(state);
+		state = send(state, starter, state.players[starter].roster[0].id, frame.sites[0].id);
+		state = send(state, other, state.players[other].roster[0].id, frame.sites[0].id);
 		state = pass(state, state.turn);
 		state = pass(state, state.turn);
 		const view = getPublicState(state, starter);
@@ -651,13 +679,13 @@ describe('public state hiding', () => {
 		if (state.starter !== 'A') {
 			return; // only exercise when A (stealthy roster) starts, deterministic per seed
 		}
-		const world = currentWorld(state);
-		state = send(state, 'A', stealthyRoster[0].id, world.sites[0].id, true);
+		const frame = currentFrame(state);
+		state = send(state, 'A', stealthyRoster[0].id, frame.sites[0].id, true);
 		const viewForB = getPublicState(state, 'B');
-		expect(viewForB.board[world.sites[0].id].A.length).toBe(0);
+		expect(viewForB.board[frame.sites[0].id].A.length).toBe(0);
 		expect(viewForB.players.A.hiddenSentThisRound).toBe(1);
 		const viewForA = getPublicState(state, 'A');
-		expect(viewForA.board[world.sites[0].id].A.length).toBe(1);
+		expect(viewForA.board[frame.sites[0].id].A.length).toBe(1);
 	});
 
 	test('never exposes the seed', () => {
@@ -674,31 +702,31 @@ describe('relocateVanguard: the vanguard falls back', () => {
 	// "not their turn" illegal case using the state right after the first send instead.
 	function firstSendState(seed = 'vanguard-seed') {
 		let state = freshMatch(seed);
-		const world = currentWorld(state);
+		const frame = currentFrame(state);
 		const starter = state.starter;
 		const other = starter === 'A' ? 'B' : 'A';
-		state = send(state, starter, state.players[starter].roster[0].id, world.sites[0].id);
+		state = send(state, starter, state.players[starter].roster[0].id, frame.sites[0].id);
 		if (state.phase === 'deploy' && state.turn === other) {
 			state = pass(state, other);
 		}
-		return { state, starter, other, world };
+		return { state, starter, other, frame };
 	}
 
 	test('the starter may relocate the first creature they sent this world to a different site', () => {
-		const { state, starter, world } = firstSendState();
-		const vanguardId = state.board[world.sites[0].id][starter][0].recordId;
-		const next = relocateVanguard(state, starter, world.sites[1].id);
+		const { state, starter, frame } = firstSendState();
+		const vanguardId = state.board[frame.sites[0].id][starter][0].recordId;
+		const next = relocateVanguard(state, starter, frame.sites[1].id);
 		expect(next).not.toBeNull();
-		expect(next.board[world.sites[0].id][starter].length).toBe(0);
-		expect(next.board[world.sites[1].id][starter].some((e) => e.recordId === vanguardId)).toBe(true);
+		expect(next.board[frame.sites[0].id][starter].length).toBe(0);
+		expect(next.board[frame.sites[1].id][starter].some((e) => e.recordId === vanguardId)).toBe(true);
 		expect(next.vanguardRelocated[starter]).toBe(true);
 	});
 
 	test('does not consume the turn: the handler still sends or passes on the same turn afterward', () => {
-		const { state, starter, world } = firstSendState();
+		const { state, starter, frame } = firstSendState();
 		const turnBefore = state.turn;
 		expect(turnBefore).toBe(starter); // relocate is only legal on the starter's own turn
-		const relocated = relocateVanguard(state, starter, world.sites[1].id);
+		const relocated = relocateVanguard(state, starter, frame.sites[1].id);
 		expect(relocated).not.toBeNull();
 		// the turn marker is untouched by relocate itself...
 		expect(relocated.turn).toBe(turnBefore);
@@ -707,25 +735,30 @@ describe('relocateVanguard: the vanguard falls back', () => {
 		// ...and the handler can still legally send afterward, on the very same turn (a
 		// send that had already "used up" the turn would be rejected as out-of-turn)
 		const secondRecordId = relocated.players[starter].roster[0].id;
-		const afterSend = send(relocated, starter, secondRecordId, world.sites[2].id);
+		const afterSend = send(relocated, starter, secondRecordId, frame.sites[2].id);
 		expect(afterSend).not.toBeNull();
-		expect(afterSend.board[world.sites[2].id][starter].some((e) => e.recordId === secondRecordId)).toBe(true);
+		expect(afterSend.board[frame.sites[2].id][starter].some((e) => e.recordId === secondRecordId)).toBe(true);
 	});
 
 	test('the relocated creature keeps its sentIndex and hidden flag', () => {
 		const stealthyRoster = makeRoster('S', (i) => (i === 0 ? { traits: { guaranteed: [], rolled: ['stealthy'] } } : {}));
 		let state = createMatch({ rosterA: stealthyRoster, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'vanguard-hidden-seed' });
 		const starter = state.starter;
-		const world = currentWorld(state);
+		const frame = currentFrame(state);
 		if (starter !== 'A') {
 			return;
 		}
-		state = send(state, 'A', stealthyRoster[0].id, world.sites[0].id, true);
-		const before = state.board[world.sites[0].id].A[0];
+		state = send(state, 'A', stealthyRoster[0].id, frame.sites[0].id, true);
+		// relocate is only legal on the starter's own turn, so bring the turn back to A by
+		// having B pass, same as firstSendState does
+		if (state.phase === 'deploy' && state.turn === 'B') {
+			state = pass(state, 'B');
+		}
+		const before = state.board[frame.sites[0].id].A[0];
 		expect(before.hidden).toBe(true);
-		const next = relocateVanguard(state, 'A', world.sites[1].id);
+		const next = relocateVanguard(state, 'A', frame.sites[1].id);
 		expect(next).not.toBeNull();
-		const after = next.board[world.sites[1].id].A[0];
+		const after = next.board[frame.sites[1].id].A[0];
 		expect(after.recordId).toBe(before.recordId);
 		expect(after.sentIndex).toBe(before.sentIndex);
 		expect(after.hidden).toBe(true);
@@ -738,62 +771,68 @@ describe('relocateVanguard: the vanguard falls back', () => {
 				environmentalTolerance: { ambientMedia: ['liquid'], temperatureC: { min: -50, max: 200 } },
 			},
 		});
-		const worlds = [makeWorld('Magmuth', 'fire', [
-			{ environment: { medium: 'liquid', temperatureC: { min: -50, max: 200 } } },
-			{ environment: { medium: 'gas', temperatureC: { min: -50, max: 200 } } },
-			{},
-		]), ...makeWorlds(4)];
+		// Magmuth has one authored site here (liquid medium, deterministic draw); the
+		// vanguard relocates to a site of a DIFFERENT world in the same frame, so that
+		// world is given a single gas-medium site to make the "after" hold deterministic
+		// too.
+		const worlds = [
+			makeWorld('Magmuth', 'fire', [{ environment: { medium: 'liquid', temperatureC: { min: -50, max: 200 } } }]),
+			makeWorld('Poseidas', 'water', [{ environment: { medium: 'gas', temperatureC: { min: -50, max: 200 } } }]),
+			...makeWorlds(7),
+		];
 		const rosterA = makeRoster('A').map((r, i) => (i === 0 ? { ...strainableRecord, id: 'A_0' } : r));
 		let state = createMatch({ rosterA, rosterB: makeRoster('B'), worlds, seed: 'vanguard-strain-seed' });
 		const starter = state.starter;
-		const world = currentWorld(state);
-		if (starter !== 'A') {
-			return;
+		const frame = currentFrame(state);
+		const fromSite = siteOfPlanet(frame, 'Magmuth');
+		const toSite = siteOfPlanet(frame, 'Poseidas');
+		if (starter !== 'A' || !fromSite || !toSite) {
+			return; // only exercise when both authored worlds land in frame 1 with A starting
 		}
-		state = send(state, 'A', 'A_0', world.sites[0].id);
-		const holdBefore = currentHoldOf(state, state.board[world.sites[0].id].A[0]);
-		const next = relocateVanguard(state, 'A', world.sites[1].id);
+		state = send(state, 'A', 'A_0', fromSite.id);
+		const holdBefore = currentHoldOf(state, state.board[fromSite.id].A[0]);
+		const next = relocateVanguard(state, 'A', toSite.id);
 		expect(next).not.toBeNull();
-		const holdAfter = currentHoldOf(next, next.board[world.sites[1].id].A[0]);
+		const holdAfter = currentHoldOf(next, next.board[toSite.id].A[0]);
 		expect(holdAfter).toBeLessThan(holdBefore);
 	});
 
 	test('illegal when the handler is not this world’s starter', () => {
-		const { state, other, world } = firstSendState();
-		expect(relocateVanguard(state, other, world.sites[1].id)).toBeNull();
+		const { state, other, frame } = firstSendState();
+		expect(relocateVanguard(state, other, frame.sites[1].id)).toBeNull();
 	});
 
 	test('illegal: phase is not deploy', () => {
 		let state = freshMatch('vanguard-phase-seed');
-		const world = currentWorld(state);
+		const frame = currentFrame(state);
 		const starter = state.starter;
 		const other = starter === 'A' ? 'B' : 'A';
-		state = send(state, starter, state.players[starter].roster[0].id, world.sites[0].id);
-		state = send(state, other, state.players[other].roster[0].id, world.sites[0].id);
+		state = send(state, starter, state.players[starter].roster[0].id, frame.sites[0].id);
+		state = send(state, other, state.players[other].roster[0].id, frame.sites[0].id);
 		state = pass(state, state.turn);
 		state = pass(state, state.turn);
 		expect(state.phase).toBe('orders');
-		expect(relocateVanguard(state, starter, world.sites[1].id)).toBeNull();
+		expect(relocateVanguard(state, starter, frame.sites[1].id)).toBeNull();
 	});
 
 	test('illegal: it is not their turn', () => {
 		// right after the starter's first send, the turn has passed to the opponent (the
 		// starter has not gotten a turn back yet), so relocate must be illegal here
 		let state = freshMatch('vanguard-not-turn-seed');
-		const world = currentWorld(state);
+		const frame = currentFrame(state);
 		const starter = state.starter;
 		const other = starter === 'A' ? 'B' : 'A';
-		state = send(state, starter, state.players[starter].roster[0].id, world.sites[0].id);
+		state = send(state, starter, state.players[starter].roster[0].id, frame.sites[0].id);
 		expect(state.turn).toBe(other);
-		expect(relocateVanguard(state, starter, world.sites[1].id)).toBeNull();
+		expect(relocateVanguard(state, starter, frame.sites[1].id)).toBeNull();
 	});
 
 	test('illegal: the handler has passed', () => {
 		let state = freshMatch('vanguard-passed-seed');
-		const world = currentWorld(state);
+		const frame = currentFrame(state);
 		const starter = state.starter;
 		const other = starter === 'A' ? 'B' : 'A';
-		state = send(state, starter, state.players[starter].roster[0].id, world.sites[0].id);
+		state = send(state, starter, state.players[starter].roster[0].id, frame.sites[0].id);
 		state = pass(state, other);
 		expect(state.turn === starter || state.phase !== 'deploy').toBe(true);
 		if (state.phase !== 'deploy') {
@@ -802,20 +841,20 @@ describe('relocateVanguard: the vanguard falls back', () => {
 		state = pass(state, starter);
 		expect(state.players[starter].passed).toBe(true);
 		if (state.phase === 'deploy') {
-			expect(relocateVanguard(state, starter, world.sites[1].id)).toBeNull();
+			expect(relocateVanguard(state, starter, frame.sites[1].id)).toBeNull();
 		}
 	});
 
 	test('illegal: already relocated once this world', () => {
-		const { state, starter, world } = firstSendState();
-		const once = relocateVanguard(state, starter, world.sites[1].id);
+		const { state, starter, frame } = firstSendState();
+		const once = relocateVanguard(state, starter, frame.sites[1].id);
 		expect(once).not.toBeNull();
-		expect(relocateVanguard(once, starter, world.sites[2].id)).toBeNull();
+		expect(relocateVanguard(once, starter, frame.sites[2].id)).toBeNull();
 	});
 
 	test('illegal: the target site is the one the vanguard already stands on', () => {
-		const { state, starter, world } = firstSendState();
-		expect(relocateVanguard(state, starter, world.sites[0].id)).toBeNull();
+		const { state, starter, frame } = firstSendState();
+		expect(relocateVanguard(state, starter, frame.sites[0].id)).toBeNull();
 	});
 
 	test('illegal: a nonexistent site id', () => {
@@ -827,13 +866,13 @@ describe('relocateVanguard: the vanguard falls back', () => {
 		// build the round from scratch (not firstSendState, which already burns the
 		// opponent's turn via a permanent pass) so both sides still have live turns left
 		let state = freshMatch('vanguard-reset-seed');
-		const world = currentWorld(state);
+		const frame = currentFrame(state);
 		const starter = state.starter;
 		const other = starter === 'A' ? 'B' : 'A';
-		state = send(state, starter, state.players[starter].roster[0].id, world.sites[0].id);
-		state = send(state, other, state.players[other].roster[0].id, world.sites[0].id);
+		state = send(state, starter, state.players[starter].roster[0].id, frame.sites[0].id);
+		state = send(state, other, state.players[other].roster[0].id, frame.sites[0].id);
 		expect(state.turn).toBe(starter);
-		const relocated = relocateVanguard(state, starter, world.sites[1].id);
+		const relocated = relocateVanguard(state, starter, frame.sites[1].id);
 		expect(relocated).not.toBeNull();
 		expect(relocated.vanguardRelocated[starter]).toBe(true);
 		let next = pass(relocated, starter);
@@ -848,21 +887,21 @@ describe('relocateVanguard: the vanguard falls back', () => {
 	});
 
 	test('public state: canRelocateVanguard is true for the starter, false for the other side, and false after use', () => {
-		const { state, starter, other, world } = firstSendState('vanguard-public-seed');
+		const { state, starter, other, frame } = firstSendState('vanguard-public-seed');
 		const viewStarter = getPublicState(state, starter);
 		const viewOther = getPublicState(state, other);
 		expect(viewStarter.players[starter].canRelocateVanguard).toBe(true);
 		expect(viewOther.players[starter].canRelocateVanguard).toBe(true);
 		expect(viewStarter.players[other].canRelocateVanguard).toBe(false);
 
-		const relocated = relocateVanguard(state, starter, world.sites[1].id);
+		const relocated = relocateVanguard(state, starter, frame.sites[1].id);
 		const viewAfter = getPublicState(relocated, starter);
 		expect(viewAfter.players[starter].canRelocateVanguard).toBe(false);
 	});
 
 	test('public state: own side sees its vanguardRecordId; opponent identity of the vanguard stays hidden', () => {
-		const { state, starter, other, world } = firstSendState('vanguard-identity-seed');
-		const vanguardId = state.board[world.sites[0].id][starter][0].recordId;
+		const { state, starter, other, frame } = firstSendState('vanguard-identity-seed');
+		const vanguardId = state.board[frame.sites[0].id][starter][0].recordId;
 		const viewSelf = getPublicState(state, starter);
 		expect(viewSelf.players[starter].vanguardRecordId).toBe(vanguardId);
 		const viewOpponent = getPublicState(state, other);
@@ -870,13 +909,13 @@ describe('relocateVanguard: the vanguard falls back', () => {
 	});
 
 	test('event is recorded in the log for narration', () => {
-		const { state, starter, world } = firstSendState('vanguard-log-seed');
-		const next = relocateVanguard(state, starter, world.sites[1].id);
+		const { state, starter, frame } = firstSendState('vanguard-log-seed');
+		const next = relocateVanguard(state, starter, frame.sites[1].id);
 		expect(next).not.toBeNull();
 		const ev = next.resolutionLog.find((e) => e.type === 'vanguard-relocate');
 		expect(ev).toBeTruthy();
 		expect(ev.handler).toBe(starter);
-		expect(ev.fromSite).toBe(world.sites[0].id);
-		expect(ev.toSite).toBe(world.sites[1].id);
+		expect(ev.fromSite).toBe(frame.sites[0].id);
+		expect(ev.toSite).toBe(frame.sites[1].id);
 	});
 });

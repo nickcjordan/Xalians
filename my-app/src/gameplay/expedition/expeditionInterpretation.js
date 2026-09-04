@@ -38,11 +38,18 @@ export const ROUT_FRACTION = 1.0;
 export const ARMORED_STAGGER_FRACTION = 0.75;
 export const ARMORED_ROUT_FRACTION = 1.5;
 
-// Roster economy and match structure.
+// Roster economy and match structure. A match is FRAMES_PER_MATCH rounds; each round
+// the Court's frame loads WORLDS_PER_FRAME worlds side by side, every world at one of its
+// sites, drawn so no world repeats within a match (docs/design/reclamation-design.md,
+// "The Proving", 2026-09-04). SITES_TO_CLINCH counts worlds held: five of the nine.
 export const SITES_TO_CLINCH = 5;
 export const ROSTER_SIZE = 12;
 export const SENDABLE = 10;
-export const WORLDS_PER_MATCH = 3;
+export const FRAMES_PER_MATCH = 3;
+export const WORLDS_PER_FRAME = 3;
+// distinct worlds a match draws from the fourteen
+export const WORLDS_PER_MATCH = FRAMES_PER_MATCH * WORLDS_PER_FRAME;
+// every authored world carries this many sites; the frame loads one of them
 export const SITES_PER_WORLD = 3;
 
 // ---------------------------------------------------------------------------
@@ -71,7 +78,7 @@ export const ACT_CLASS_BY_ACTION = {
 	drain: ACT_CLASS.REACH,
 	ambush: ACT_CLASS.REACH,
 
-	// projection — reaches any site on the world
+	// projection — reaches any site in the frame
 	beam: ACT_CLASS.PROJECTION,
 	hurl: ACT_CLASS.PROJECTION,
 	burst: ACT_CLASS.PROJECTION,

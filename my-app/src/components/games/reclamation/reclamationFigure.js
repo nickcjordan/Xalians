@@ -49,6 +49,8 @@ export function HoldMeter({ hold, unstrained, printedHold, isHome, strainLevel, 
 	return (
 		<span className={`rec-hold${mine ? ' rec-hold--mine' : ' rec-hold--theirs'}${small ? ' rec-hold--small' : ''}${isHome ? ' rec-hold--home' : ''}`} title={title} aria-label={title}>
 			<span className="rec-hold-fill" style={{ width: pct(hold) }} />
+			<span className="rec-hold-notch" style={{ left: pct(10) }} aria-hidden="true" />
+			<span className="rec-hold-notch rec-hold-notch--top" style={{ left: pct(20) }} aria-hidden="true" />
 			{lostToStagger > 0 && <span className="rec-hold-lost rec-hold-lost--stagger" style={{ left: pct(hold), width: pct(lostToStagger) }} />}
 			{lostToStrain > 0 && <span className={`rec-hold-lost rec-hold-lost--${strainLevel}`} style={{ left: pct(hold + lostToStagger), width: pct(lostToStrain) }} />}
 		</span>

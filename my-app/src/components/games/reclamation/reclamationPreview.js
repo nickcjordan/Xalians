@@ -33,7 +33,7 @@ const OTHER = { A: 'B', B: 'A' };
 */
 export function flattenBoard(publicState) {
 	const out = [];
-	publicState.world.sites.forEach((site) => {
+	publicState.frame.sites.forEach((site) => {
 		['A', 'B'].forEach((seat) => {
 			(publicState.board[site.id][seat] || []).forEach((entry) => {
 				if (!entry.record) {
@@ -46,7 +46,7 @@ export function flattenBoard(publicState) {
 					hidden: !!entry.hidden,
 					seat,
 					site,
-					prepared: prepare(entry.record, site, publicState.world, entry.sentIndex),
+					prepared: prepare(entry.record, site, null, entry.sentIndex),
 				});
 			});
 		});
@@ -70,7 +70,7 @@ export function prepareWithCompanions(publicState, record, site, sentIndex, seat
 		(e) => e.record && e.recordId !== excludeRecordId && !e.hidden,
 	);
 	const kin = companions.filter((c) => c.record.species === record.species).length;
-	return prepare(record, site, publicState.world, sentIndex, {
+	return prepare(record, site, null, sentIndex, {
 		packBondedKinAtSite: kin,
 		solitaryAlliesAtSite: companions.length,
 	});
@@ -325,7 +325,7 @@ export function pickAreaSitePreview(publicState, unit) {
 	const opponent = OTHER[unit.seat];
 	let best = null;
 	let bestCount = -1;
-	publicState.world.sites.forEach((site) => {
+	publicState.frame.sites.forEach((site) => {
 		const enemies = (publicState.board[site.id][opponent] || []).filter((e) => e.record).length;
 		if (enemies === 0) {
 			return;
@@ -349,7 +349,7 @@ export function previewSentence({ unit, action, act, actClass, target, magnitude
 		return `${who} holds at ${unit.site.name}, keeping its full hold.`;
 	}
 	const clause = conductClause(unit.prepared.conduct, actClass, action);
-	const where = actClass === ACT_CLASS.PROJECTION ? 'anywhere on the world' : `at ${unit.site.name}`;
+	const where = actClass === ACT_CLASS.PROJECTION ? 'anywhere in the frame' : `at ${unit.site.name}`;
 	if (!target) {
 		return `${who} would ${action}, but finds ${clause} nowhere ${where}.`;
 	}
@@ -365,11 +365,11 @@ export function previewSentence({ unit, action, act, actClass, target, magnitude
 	if (AREA_ACTIONS.includes(action)) {
 		const siteName = pickAreaSitePreview(publicState, unit);
 		if (!siteName) {
-			return `${who} would ${action}, but there is nothing on the world to catch.`;
+			return `${who} would ${action}, but there is nothing in the frame to catch.`;
 		}
 		// name your own creatures in the blast: the cost of an area act is the thing a
 		// handler most needs to see before giving the order
-		const site = publicState.world.sites.find((s) => s.name === siteName);
+		const site = publicState.frame.sites.find((s) => s.name === siteName);
 		const opponent = OTHER[unit.seat];
 		const enemies = (publicState.board[site.id][opponent] || []).filter((e) => e.record).length;
 		const allies = (publicState.board[site.id][unit.seat] || [])
@@ -439,7 +439,7 @@ export function conductSentence(prepared) {
 	the engine's own prepare() with the same companion counts the engine uses.
 */
 export function siteHoldTotal(publicState, siteId, seat) {
-	const site = publicState.world.sites.find((s) => s.id === siteId);
+	const site = publicState.frame.sites.find((s) => s.id === siteId);
 	return (publicState.board[siteId][seat] || [])
 		.filter((e) => e.record)
 		.reduce((sum, e) => {
