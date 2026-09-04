@@ -126,9 +126,9 @@ function ReclamationDeploy({
 					<span className="g-mono rec-sends-text">{sendsLeft} send{sendsLeft === 1 ? '' : 's'} left</span>
 				</span>
 				{step === 1 && (
-					<span className="rec-hold-legend" title="Hold is how firmly a creature keeps a world: acts strike at it, and the Court gives the world to the side that still holds more. The frame reads hold on a 0 to 20 scale, notched at 10 and 20; home ground can carry a creature past the last notch. The hatched tail is what the site's environment takes.">
-						<HoldMeter hold={12} unstrained={16} strainLevel="strained" mine small />
-						<span className="rec-hold-legend-text">hold, notched at 10 and 20; hatched is what the site takes</span>
+					<span className="rec-hold-legend" title="Hold is how firmly a creature keeps a world: acts strike at it, and the Court gives the world to the side that still holds more. The dial reads 0 to 20; the brass sector past 20 is home ground. A dim second needle is what the creature would hold if the site did not strain it.">
+						<HoldMeter hold={12} unstrained={16} strainLevel="strained" small />
+						<span className="rec-hold-legend-text">hold, 0 to 20 on the dial; brass past 20 is home ground; the dim needle is what the site takes</span>
 					</span>
 				)}
 			</header>
@@ -169,9 +169,8 @@ function ReclamationDeploy({
 								title={`Send to ${h.site.world.planet}, at ${h.site.name}`}
 								data-send-site={h.site.id}
 							>
-								<span className="rec-chosen-site-world">{h.site.world.planet}{h.isHome ? ' · home' : ''}</span>
-								<span className="rec-slot-site-index">{h.index + 1}</span>
-								<HoldMeter hold={h.hold} unstrained={h.unstrained} isHome={h.isHome} strainLevel={h.strainLevel} mine small />
+								<span className="rec-slot-site-world"><span className="rec-slot-site-index">{h.index + 1}</span>{h.site.world.planet}{h.isHome ? ' · home' : ''}</span>
+								<HoldMeter hold={h.hold} unstrained={h.unstrained} isHome={h.isHome} strainLevel={h.strainLevel} small />
 								<span className="rec-slot-site-hold">{formatHold(h.hold)}</span>
 								{suggestedSiteId === h.site.id && <span className="rec-slot-site-mark rec-slot-site-mark--suggested">suggested</span>}
 							</button>
