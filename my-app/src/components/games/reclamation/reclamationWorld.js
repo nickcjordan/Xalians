@@ -47,6 +47,9 @@ function marginText(mine, theirs) {
 
 function ghostText(ghost, mine, theirs) {
 	const after = mine + ghost.hold - theirs;
+	if (theirs === 0) {
+		return mine === 0 ? 'claims it, unopposed' : `holds it unopposed, ${formatHold(mine + ghost.hold)}`;
+	}
 	if (Math.abs(after) < 0.05) {
 		return 'would be level';
 	}
@@ -77,6 +80,8 @@ function ReclamationWorld({
 	badges,
 	highlights,
 	arrival,
+	hoverSiteId,
+	previewRecordId,
 }) {
 	const opponent = you === 'A' ? 'B' : 'A';
 	const hl = highlights || {};
@@ -124,6 +129,9 @@ function ReclamationWorld({
 					if (recommended) {
 						classes.push('rec-site--recommended');
 					}
+					if (hoverSiteId === site.id) {
+						classes.push('rec-site--hover');
+					}
 
 					const figureProps = (entry, seat, facing) => ({
 						key: entry.recordId,
@@ -170,6 +178,7 @@ function ReclamationWorld({
 							} : undefined}
 						>
 							<header className="rec-site-head">
+								<span className="rec-site-index" aria-hidden="true">{siteIndex + 1}</span>
 								<h3 className="rec-site-name">{site.name}</h3>
 								<p className="rec-site-env g-mono">{environmentLine(site)}</p>
 								{recommended && <span className="rec-site-recommend" data-recommended-site>recommended</span>}
@@ -187,17 +196,20 @@ function ReclamationWorld({
 								</div>
 							)}
 
-							<div className="rec-site-field">
-								{!empty && (
-									<div className="rec-rank rec-rank--theirs">
-										{theirs.map((entry) => <ReclamationFigure {...figureProps(entry, opponent, 'down')} />)}
-									</div>
-								)}
+							{/* the ground: the rival's rank on the far edge, yours on the near one, each
+							    edge painted in its side's colour and labelled, so whose creature stands
+							    where is read from the floor before the figures are */}
+							<div className={`rec-site-field rec-site-floor${empty ? ' rec-site-field--empty' : ''}`}>
+								<div className="rec-rank rec-rank--theirs" data-rank="theirs">
+									<span className="rec-rank-edge rec-rank-edge--theirs" aria-hidden="true">rival</span>
+									{theirs.map((entry) => <ReclamationFigure {...figureProps(entry, opponent, 'down')} />)}
+									{theirs.length === 0 && <span className="rec-rank-open">no one</span>}
+								</div>
 
 								<div className={`rec-site-midline${empty ? ' rec-site-midline--empty' : ''}`}>
 									{ghost && (
 										<span className="rec-ghost">
-											<span className="rec-ghost-cta">send here</span>
+											<span className="rec-ghost-cta">{ghost.preview ? 'would hold' : 'send here'}</span>
 											<span className="rec-ghost-value">{formatHold(ghost.hold)}</span>
 											{ghost.isHome && <span className="rec-tag rec-tag--home">home</span>}
 											{ghost.strainLevel === 'strained' && <span className="rec-tag rec-tag--strain">strained</span>}
@@ -214,11 +226,11 @@ function ReclamationWorld({
 									)}
 								</div>
 
-								{!empty && (
-									<div className="rec-rank rec-rank--mine">
-										{mine.map((entry) => <ReclamationFigure {...figureProps(entry, you, 'up')} />)}
-									</div>
-								)}
+								<div className="rec-rank rec-rank--mine" data-rank="mine">
+									{mine.map((entry) => <ReclamationFigure {...figureProps(entry, you, 'up')} />)}
+									{mine.length === 0 && <span className="rec-rank-open">no one</span>}
+									<span className="rec-rank-edge rec-rank-edge--mine" aria-hidden="true">you</span>
+								</div>
 							</div>
 						</section>
 					);

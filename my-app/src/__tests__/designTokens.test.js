@@ -39,6 +39,9 @@ const PAIRINGS = [
 	['--g-brass-dark', designTokens.brass.dark],
 	['--g-brass-light', designTokens.brass.light],
 
+	['--g-team-one', designTokens.team.one],
+	['--g-team-two', designTokens.team.two],
+
 	['--g-ink', designTokens.ink.base],
 	['--g-ink-mid', designTokens.ink.mid],
 	['--g-ink-low', designTokens.ink.low],
