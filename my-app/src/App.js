@@ -54,6 +54,7 @@ const TributePage = lazy(() => import('./pages/games/tributePage'));
 const ReclamationPage = lazy(() => import('./pages/games/reclamationPage'));
 const DuelPlaygroundPage = lazy(() => import('./pages/games/duelPlaygroundPage'));
 const EncyclopediaPage = lazy(() => import('./pages/encyclopediaPage'));
+const LongReturnPage = lazy(() => import('./pages/games/longReturnPage'));
 
 
 // The legacy species detail route accepted either a zero-padded numeric id
@@ -106,6 +107,7 @@ class App extends React.Component {
               <Route exact path="/duel"><DuelStartPage/></Route>
               <Route exact path="/tribute"><TributePage/></Route>
               <Route exact path="/reclamation"><ReclamationPage/></Route>
+              <Route exact path="/long-return"><LongReturnPage /></Route>
               <Route exact path="/account"><UserAccountPage /></Route>
               <Route exact path="/train"><TrainingGroundsPage /></Route>
                 <Route exact path="/train/match"><MatchCardGamePage /></Route>
