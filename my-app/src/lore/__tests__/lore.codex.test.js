@@ -173,10 +173,10 @@ describe('Codex builder (scripts/buildCodex.js)', () => {
 	});
 
 	it('llms.txt names all four URLs', () => {
-		expect(llms.includes('https://xalians.com/lore/xalia.md')).toBe(true);
-		expect(llms.includes('https://xalians.com/lore/xalia.txt')).toBe(true);
-		expect(llms.includes('https://xalians.com/lore/xalia.html')).toBe(true);
-		expect(llms.includes('https://xalians.com/lore/xalia.json')).toBe(true);
+		expect(llms.includes('https://www.xalians.com/lore/xalia.md')).toBe(true);
+		expect(llms.includes('https://www.xalians.com/lore/xalia.txt')).toBe(true);
+		expect(llms.includes('https://www.xalians.com/lore/xalia.html')).toBe(true);
+		expect(llms.includes('https://www.xalians.com/lore/xalia.json')).toBe(true);
 	});
 
 	it('build() is deterministic: two calls return identical strings', () => {
