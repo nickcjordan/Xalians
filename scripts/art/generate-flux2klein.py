@@ -28,6 +28,8 @@ def main():
     ap.add_argument('--size', type=int, default=1024)
     ap.add_argument('--vary-pose', action='store_true', help='cycle the shared pose list per seed')
     ap.add_argument('--brief', default='body', choices=['body', 'showcase'], help='showcase = one fixed prompt from showcase.json via brief.py')
+    ap.add_argument('--refs', default='', help='comma-separated species keys whose hand-drawn art is passed as reference images (klein multi-reference)')
+    ap.add_argument('--ref-size', type=int, default=768)
     ap.add_argument('--tag', default='klein')
     args = ap.parse_args()
 
@@ -37,6 +39,16 @@ def main():
     if args.brief == 'showcase': body, _ = br.build(args.key)
     prompt = f'{body} {zi.STYLE}'
     prompts = [f'{body} {pose} {zi.STYLE}' for pose in zi.POSES] if args.vary_pose else [prompt]
+    refs = []
+    if args.refs:
+        from PIL import Image
+        for k in args.refs.split(','):
+            im = Image.open(sil.ART_DIR / f'{k}.png').convert('RGB')
+            im.thumbnail((args.ref_size, args.ref_size)); refs.append(im)
+        n = len(refs)
+        prompt = (f'The {n} reference images are finished silhouettes from one artist and one set of creatures. Draw a new creature '
+                  f'in exactly that drawing style and line treatment, not one of the referenced creatures. {prompt}')
+        prompts = [prompt]
     out = sil.OUT_ROOT / args.key / args.tag
     out.mkdir(parents=True, exist_ok=True)
 
@@ -55,7 +67,7 @@ def main():
     manifest = {'key': args.key, 'tag': args.tag, 'model': MODEL, 'quant': 'bitsandbytes nf4 on load (transformer and text encoder)',
                 'record': str(rec_path), 'record_sha': sil.sha256(rec_path), 'brief': args.brief, 'prompt': prompt, 'steps': args.steps,
                 'guidance': args.guidance, 'size': args.size, 'scheduler': type(pipe.scheduler).__name__, 'versions': sil.versions(),
-                'candidates': []}
+                'refs': args.refs, 'candidates': []}
     mpath = out / 'manifest.json'
     t0 = time.time()
     for i in range(args.n):
@@ -63,7 +75,7 @@ def main():
         g = torch.Generator('cpu').manual_seed(seed)
         t1 = time.time()
         prompt_i = prompts[i % len(prompts)]
-        img = pipe(prompt=prompt_i, num_inference_steps=args.steps, guidance_scale=args.guidance, width=args.size, height=args.size,
+        img = pipe(image=refs or None, prompt=prompt_i, num_inference_steps=args.steps, guidance_scale=args.guidance, width=args.size, height=args.size,
                    generator=g).images[0]
         p = out / f'{args.key}-{seed}.png'
         img.save(p)

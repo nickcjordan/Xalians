@@ -1,7 +1,7 @@
 {
   "_doc": "Per-species showcase layer read by scripts/art/brief.py. `signature` lists the features that must be unmistakable in every image, each with the visual cue that sells it. `pose` is one fixed composition chosen so the signatures are in view. `hidden` names anatomy keys the pose is allowed to conceal. Every key in the record's physiology.anatomy must be either a signature, listed in `visible`, or listed in `hidden`; brief.py refuses to build otherwise.",
   "thirstaserp": {
-    "identity": "A large cobra-like serpent with a broad flaring hood, a thick scaled body and no legs.",
+    "identity": "A large cobra with a thick scaled body and no legs. Its head is the smooth flat wedge of a real cobra, wider than the neck, with small eyes, no brow ridges, no horns, no ear frills, no crest and no spikes; a broad flaring hood spreads behind the head.",
     "signature": [
       {
         "anatomy": "rattle",
@@ -24,11 +24,11 @@
     "signature": [
       {
         "anatomy": "jaws",
-        "cue": "the whole front end is a pointed drill head: a cone of stacked spiral rings that screws into rock, its tip split into three wedge jaws that gape open"
+        "cue": "the whole front end is a drill bit: a pointed cone made of stacked spiral screw threads, ridge after ridge winding around the cone to the point, and the point is split into three wedge jaws that gape open"
       },
       {
         "anatomy": "vents",
-        "cue": "a row of round pressure vents along the ringed neck behind the drill head, each vent blasting a jet of sand and grit in a fan of short straight lines"
+        "cue": "a straight row of four round vent holes along the neck just behind the drill cone, each vent blasting a short fan of sand in straight lines"
       }
     ],
     "visible": {
