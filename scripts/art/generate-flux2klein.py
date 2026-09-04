@@ -30,6 +30,7 @@ def main():
     ap.add_argument('--brief', default='body', choices=['body', 'showcase'], help='showcase = one fixed prompt from showcase.json via brief.py')
     ap.add_argument('--pose', default='', help='named pose variant from showcase.json poses')
     ap.add_argument('--ref-note', default='', help='replaces the generic reference preamble, e.g. to name what each reference contributes')
+    ap.add_argument('--prompt-from', default='', help='manifest.json of an earlier run: reuse its exact prompt (refs still given with --refs) so a seed can be regenerated at another size')
     ap.add_argument('--refs', default='', help='comma-separated species keys whose hand-drawn art is passed as reference images (klein multi-reference)')
     ap.add_argument('--ref-size', type=int, default=768)
     ap.add_argument('--tag', default='klein')
@@ -53,6 +54,8 @@ def main():
                                  f'in exactly that drawing style and line treatment, not one of the referenced creatures.')
         prompt = f'{note} {prompt}'
         prompts = [prompt]
+    if args.prompt_from:
+        prompt = json.loads(Path(args.prompt_from).read_text(encoding='utf-8'))['candidates'][0]['prompt']; prompts = [prompt]
     out = sil.OUT_ROOT / args.key / args.tag
     out.mkdir(parents=True, exist_ok=True)
 
