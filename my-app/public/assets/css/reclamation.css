@@ -3353,47 +3353,12 @@
    site's, so strain is seen as two bands missing each other. Sends left are pips.
    ------------------------------------------------------------------------- */
 
-.rec-hold {
-	position: relative;
-	display: inline-block;
-	width: 100%;
-	height: 6px;
-	border-radius: 1px;
-	background: var(--g-seam);
-	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9);
-	overflow: hidden;
-	vertical-align: middle;
-}
 
-.rec-hold--small { height: 5px; }
 
-.rec-hold-fill {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	background-image: repeating-linear-gradient(90deg, var(--rec-team, var(--rec-you)) 0 3px, transparent 3px 4px);
-	transition: width var(--g-move);
-}
 
-.rec-hold--mine { --rec-team: var(--rec-you); }
-.rec-hold--theirs { --rec-team: var(--rec-rival); }
 
-/* the brass cap: the last few bulbs of a home-ground hold */
-.rec-hold--home .rec-hold-fill {
-	box-shadow: inset -6px 0 0 var(--g-brass-light);
-}
 
-.rec-hold-lost {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	opacity: 0.85;
-}
 
-.rec-hold-lost--strained { background-image: repeating-linear-gradient(-45deg, var(--g-hazard) 0 1.5px, transparent 1.5px 4px); }
-.rec-hold-lost--severe { background-image: repeating-linear-gradient(-45deg, var(--g-lamp-red) 0 1.5px, transparent 1.5px 4px); }
-.rec-hold-lost--stagger { background-image: repeating-linear-gradient(90deg, var(--g-lamp-red) 0 3px, transparent 3px 4px); opacity: 0.55; }
 
 /* on the figure: the strip runs the width of the stage under the plate, the number beside */
 .rec-piece .rec-figure-foot {
@@ -3409,10 +3374,8 @@
 .rec-piece .rec-figure-hold { font-size: var(--g-size-micro); }
 
 /* on the front line */
-.rec-ghost .rec-hold { width: 64px; }
 
 /* in a slot: meter row uses the same strip */
-.rec-slot-meter-row .rec-hold { height: 6px; }
 
 /* per-site chips: index, a small strip, the number */
 .rec-slot-site {
@@ -3588,30 +3551,129 @@
 .rec-slot-site .rec-slot-site-index { color: var(--g-el); }
 .rec-slot-site--best .rec-slot-site-index { color: var(--g-el); }
 
-.rec-chosen-site { grid-template-rows: auto auto; }
-.rec-chosen-site-world {
+/* a chip: the world's name on top (numbered to match the table), the dial and the
+   reading beneath */
+.rec-slot-site-world {
 	grid-column: 1 / -1;
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
 	font-family: var(--g-font-stencil);
 	font-size: 0.5625rem;
 	text-transform: uppercase;
 	letter-spacing: var(--g-track-label);
 	color: var(--g-el);
 	text-align: left;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
-/* notches on the hold strip: 10 and 20 on the frame's scale; past the last notch is
-   home ground */
-.rec-hold-notch {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	width: 1px;
-	background: color-mix(in srgb, var(--g-ink-low) 55%, transparent);
-	pointer-events: none;
-}
-.rec-hold-notch--top { background: color-mix(in srgb, var(--g-brass-light) 80%, transparent); }
 
 @media (max-width: 760px) {
 	.rec-status-next { display: none; }
 	.rec-site-place { display: none; }
+}
+
+/* -------------------------------------------------------------------------
+   THE HOLD DIAL (Nick, 2026-09-04, fifth pass)
+
+   Hold is read off an instrument: a half-round face printed 0 to 20 with a brass
+   over-range sector to 30 for home ground, a bone needle, a dim second needle for
+   what the site's environment takes. The face is neutral so the dial says only the
+   quantity; the side is the ground and the world is the rim of the chip around it.
+   The scale is fixed everywhere the dial appears.
+   ------------------------------------------------------------------------- */
+
+.rec-gauge {
+	display: inline-block;
+	width: 48px;
+	height: 30px;
+	line-height: 0;
+	vertical-align: middle;
+	flex: 0 0 auto;
+}
+
+.rec-gauge--small { width: 38px; height: 24px; }
+
+.rec-gauge-face { width: 100%; height: 100%; overflow: visible; }
+
+.rec-gauge-bezel {
+	fill: var(--g-void);
+	stroke: var(--g-brass-dark);
+	stroke-width: 1;
+}
+
+.rec-gauge-range {
+	fill: none;
+	stroke: color-mix(in srgb, var(--g-ink-low) 70%, transparent);
+	stroke-width: 1.5;
+}
+
+.rec-gauge-over {
+	fill: none;
+	stroke: color-mix(in srgb, var(--g-brass) 70%, transparent);
+	stroke-width: 1.5;
+}
+
+.rec-gauge-lost {
+	fill: none;
+	stroke: var(--g-hazard);
+	stroke-width: 3;
+	stroke-dasharray: 1.5 1.5;
+	opacity: 0.9;
+}
+
+.rec-gauge-lost--severe { stroke: var(--g-lamp-red); }
+.rec-gauge-lost--stagger { stroke: var(--g-lamp-red); stroke-dasharray: none; opacity: 0.7; }
+
+.rec-gauge-tick {
+	stroke: var(--g-ink-low);
+	stroke-width: 1;
+}
+
+.rec-gauge-tick--major { stroke: var(--g-ink-mid); stroke-width: 1.25; }
+.rec-gauge-tick--over { stroke: var(--g-brass); }
+
+.rec-gauge-needle {
+	stroke: var(--g-ink);
+	stroke-width: 1.75;
+	stroke-linecap: round;
+	transition: x2 var(--g-move), y2 var(--g-move);
+}
+
+.rec-gauge-needle--ghost {
+	stroke: var(--g-ink-low);
+	stroke-width: 1.25;
+	stroke-dasharray: 1.5 1.5;
+}
+
+.rec-gauge--home .rec-gauge-needle { stroke: var(--g-brass-light); }
+
+.rec-gauge-hub {
+	fill: var(--g-hull-hi);
+	stroke: var(--g-brass);
+	stroke-width: 0.75;
+}
+
+/* where the dial sits: chips, the chosen card, the figure foot, the front line */
+.rec-slot-site,
+.rec-chosen-site {
+	grid-template-columns: auto minmax(0, 1fr);
+	grid-template-rows: auto auto;
+	align-items: center;
+	justify-items: start;
+	row-gap: 2px;
+}
+.rec-slot-site-hold { text-align: right; justify-self: end; font-size: var(--g-size-small); }
+.rec-gauge--small { width: 42px; height: 26px; }
+.rec-slot-here,
+.rec-chosen-here { grid-template-columns: 44px auto minmax(0, 1fr); }
+.rec-slot-meter-row { align-items: center; }
+.rec-piece .rec-figure-foot { grid-template-columns: auto minmax(0, 1fr); justify-items: start; }
+.rec-ghost { align-items: center; }
+.rec-hold-legend { grid-template-columns: auto minmax(0, 1fr); }
+
+@media (prefers-reduced-motion: reduce) {
+	.rec-gauge-needle { transition: none; }
 }
