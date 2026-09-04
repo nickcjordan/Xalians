@@ -1,0 +1,41 @@
+{
+  "_doc": "Per-species showcase layer read by scripts/art/brief.py. `signature` lists the features that must be unmistakable in every image, each with the visual cue that sells it. `pose` is one fixed composition chosen so the signatures are in view. `hidden` names anatomy keys the pose is allowed to conceal. Every key in the record's physiology.anatomy must be either a signature, listed in `visible`, or listed in `hidden`; brief.py refuses to build otherwise.",
+  "thirstaserp": {
+    "identity": "A large cobra-like serpent with a broad flaring hood, a thick scaled body and no legs.",
+    "signature": [
+      {
+        "anatomy": "rattle",
+        "cue": "the tail is raised high and shaking its rattle: a stack of hollow bead segments at the tip, with three short curved motion lines on either side of it to show the vibration"
+      },
+      {
+        "anatomy": "fangs",
+        "cue": "the jaws are wide open, showing two long curved fangs, each as long as the head is deep, with a drop of venom hanging from one tip"
+      }
+    ],
+    "visible": {
+      "jaws": "the open jaws with the hood flared behind the head",
+      "tail": "the tail curving up out of the coils to the raised rattle"
+    },
+    "hidden": {},
+    "pose": "Side view: the front third rears up on the left with the hood flared and the jaws open toward the right, the body lies in two coils beneath it, and the tail rises on the right of the frame with the rattle held up at the height of the head."
+  },
+  "frackworm": {
+    "identity": "A colossal segmented burrowing worm, as long as a building is tall, with a thick armored hide and no legs, arms, fins, eyes or face.",
+    "signature": [
+      {
+        "anatomy": "jaws",
+        "cue": "the whole front end is a pointed drill head: a cone of stacked spiral rings that screws into rock, its tip split into three wedge jaws that gape open"
+      },
+      {
+        "anatomy": "vents",
+        "cue": "a row of round pressure vents along the ringed neck behind the drill head, each vent blasting a jet of sand and grit in a fan of short straight lines"
+      }
+    ],
+    "visible": {
+      "body": "a long thick tube of many ring segments, tapering to a blunt tail, thicker than a tree trunk relative to its length",
+      "hide": "heavy plated hide marked by the ring segments"
+    },
+    "hidden": {},
+    "pose": "Side view: the worm drives upward at a steep angle from the lower right toward the upper left, the drill head at the upper left with its jaws open, the vents spraying sand along the neck, the body curving back down toward the lower right, a few shattered rock chips flying around the head."
+  }
+}

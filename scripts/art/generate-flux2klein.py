@@ -13,7 +13,7 @@ HERE = Path(__file__).resolve().parent
 def load(name):
     spec = importlib.util.spec_from_file_location(name, HERE / f'{name}.py')
     m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m); return m
-sil, zi = load('generate-silhouettes'), load('generate-zimage')
+sil, zi, br = load('generate-silhouettes'), load('generate-zimage'), load('brief')
 
 MODEL = 'black-forest-labs/FLUX.2-klein-4B'
 
@@ -27,12 +27,14 @@ def main():
     ap.add_argument('--guidance', type=float, default=1.0)
     ap.add_argument('--size', type=int, default=1024)
     ap.add_argument('--vary-pose', action='store_true', help='cycle the shared pose list per seed')
+    ap.add_argument('--brief', default='body', choices=['body', 'showcase'], help='showcase = one fixed prompt from showcase.json via brief.py')
     ap.add_argument('--tag', default='klein')
     args = ap.parse_args()
 
     rec_path = sil.ROOT / 'docs' / 'species-templates' / f'{args.key}.json'
     rec = json.loads(rec_path.read_text(encoding='utf-8'))
     body = zi.BODY.get(args.key) or sil.body_phrase(args.key, rec)
+    if args.brief == 'showcase': body, _ = br.build(args.key)
     prompt = f'{body} {zi.STYLE}'
     prompts = [f'{body} {pose} {zi.STYLE}' for pose in zi.POSES] if args.vary_pose else [prompt]
     out = sil.OUT_ROOT / args.key / args.tag
@@ -51,7 +53,7 @@ def main():
     pipe.enable_model_cpu_offload()
 
     manifest = {'key': args.key, 'tag': args.tag, 'model': MODEL, 'quant': 'bitsandbytes nf4 on load (transformer and text encoder)',
-                'record': str(rec_path), 'record_sha': sil.sha256(rec_path), 'prompt': prompt, 'steps': args.steps,
+                'record': str(rec_path), 'record_sha': sil.sha256(rec_path), 'brief': args.brief, 'prompt': prompt, 'steps': args.steps,
                 'guidance': args.guidance, 'size': args.size, 'scheduler': type(pipe.scheduler).__name__, 'versions': sil.versions(),
                 'candidates': []}
     mpath = out / 'manifest.json'

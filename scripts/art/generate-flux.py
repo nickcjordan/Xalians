@@ -13,7 +13,7 @@ HERE = Path(__file__).resolve().parent
 def load(name):
     spec = importlib.util.spec_from_file_location(name, HERE / f'{name}.py')
     m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m); return m
-sil, zi = load('generate-silhouettes'), load('generate-zimage')
+sil, zi, br = load('generate-silhouettes'), load('generate-zimage'), load('brief')
 
 MODEL = 'magespace/FLUX.1-schnell-bnb-nf4'
 
@@ -26,13 +26,16 @@ def main():
     ap.add_argument('--steps', type=int, default=4)
     ap.add_argument('--size', type=int, default=1024)
     ap.add_argument('--vary-pose', action='store_true', help='cycle the shared pose list per seed')
+    ap.add_argument('--brief', default='body', choices=['body', 'showcase'], help='showcase = one fixed prompt from showcase.json via brief.py')
     ap.add_argument('--tag', default='flux')
     args = ap.parse_args()
 
     rec_path = sil.ROOT / 'docs' / 'species-templates' / f'{args.key}.json'
     rec = json.loads(rec_path.read_text(encoding='utf-8'))
     body = zi.BODY.get(args.key) or sil.body_phrase(args.key, rec)
-    prompt = f'{body} {zi.STYLE}'
+    if args.brief == 'showcase': body, _ = br.build(args.key)
+    # Style first for schnell: T5 is capped at max_sequence_length tokens and the showcase brief is long, so a trailing style clause was cut in run 40 and 41.
+    prompt = f'{zi.STYLE} {body}' if args.brief == 'showcase' else f'{body} {zi.STYLE}'
     prompts = [f'{body} {pose} {zi.STYLE}' for pose in zi.POSES] if args.vary_pose else [prompt]
     out = sil.OUT_ROOT / args.key / args.tag
     out.mkdir(parents=True, exist_ok=True)
@@ -43,7 +46,7 @@ def main():
     pipe.enable_model_cpu_offload()
 
     manifest = {'key': args.key, 'tag': args.tag, 'model': MODEL, 'quant': 'bitsandbytes nf4 (pre-quantized)',
-                'record': str(rec_path), 'record_sha': sil.sha256(rec_path), 'prompt': prompt, 'steps': args.steps,
+                'record': str(rec_path), 'record_sha': sil.sha256(rec_path), 'brief': args.brief, 'prompt': prompt, 'steps': args.steps,
                 'guidance': 0.0, 'size': args.size, 'scheduler': type(pipe.scheduler).__name__, 'versions': sil.versions(),
                 'candidates': []}
     mpath = out / 'manifest.json'
@@ -54,7 +57,7 @@ def main():
         t1 = time.time()
         prompt_i = prompts[i % len(prompts)]
         img = pipe(prompt=prompt_i, num_inference_steps=args.steps, guidance_scale=0.0, width=args.size, height=args.size,
-                   max_sequence_length=256, generator=g).images[0]
+                   max_sequence_length=512, generator=g).images[0]
         p = out / f'{args.key}-{seed}.png'
         img.save(p)
         mem = {'max_allocated_mb': round(torch.cuda.max_memory_allocated() / 2**20), 'max_reserved_mb': round(torch.cuda.max_memory_reserved() / 2**20)}
