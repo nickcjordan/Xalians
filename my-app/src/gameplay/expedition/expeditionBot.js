@@ -1,5 +1,5 @@
 /*
-	Expedition — the bot.
+	Expedition, the bot.
 
 	Per docs/design/reclamation-design.md's "The bot" section: public information only.
 	Deploy is an allocation problem across three sites with a roster that has to last
@@ -9,6 +9,12 @@
 
 	Only ever reads publicState + the bot's OWN roster; getPublicState never exposes the
 	opponent's roster contents or hidden creatures' identity or site.
+
+	Five rival handlers (RIVALS, below) are the same bot with its tunables overridden by a
+	weights set, so the ladder is one engine playing five styles rather than five separate
+	implementations. The Court proctor is the bot exactly as it always was: chooseSend and
+	chooseOrders both take an optional rival argument that defaults to the proctor, so every
+	existing call site keeps working unchanged.
 */
 
 import { prepare, traitKeywordsOf } from './creatureOnTable.js';
@@ -31,9 +37,39 @@ export const HIDDEN_HOLD_GUESS = 4;
 export const MIN_SEND_VALUE = 1.5;
 // sends allowed on a world beyond its even share of what remains, when a flip is on offer
 export const OVERSPEND_ALLOWANCE = 1;
+// the randomizer window in chooseSend: candidates within this much of the best value are
+// treated as near-equal and picked among at random. Larger is more random, so easier.
+export const NEAR_WINDOW = 0.25;
+// scales how often a stealthy creature is sent hidden when the existing rule (canHide &&
+// the send is not obviously safe) would allow it. 1 is the rule as written; a value above
+// 1 also allows hiding on sends the rule would otherwise send openly, up to "always hide a
+// stealthy creature" at 2. See applyHideBias below for the exact math.
+export const HIDE_BIAS = 1;
+// when set, the handler may pass early on frame 1 or 2 while holding a majority even if the
+// opponent has not passed yet, to bait overspend. 0 is the bot as it was (it never gives up
+// the last word while the opponent can still answer).
+export const BAIT_PASS = 0;
 
 function otherSeat(seat) {
 	return seat === 'A' ? 'B' : 'A';
+}
+
+// merges a rival's weights over the module's own tunables, so a caller that never passes a
+// rival gets the exact constants above, and a rival only needs to name the knobs it changes.
+function weightsFor(rival) {
+	const w = (rival && rival.weights) || {};
+	return {
+		flipValue: w.flipValue ?? FLIP_VALUE,
+		secureValue: w.secureValue ?? SECURE_VALUE,
+		stackDiscount: w.stackDiscount ?? STACK_DISCOUNT,
+		holdCost: w.holdCost ?? HOLD_COST,
+		hiddenHoldGuess: w.hiddenHoldGuess ?? HIDDEN_HOLD_GUESS,
+		minSendValue: w.minSendValue ?? MIN_SEND_VALUE,
+		overspendAllowance: w.overspendAllowance ?? OVERSPEND_ALLOWANCE,
+		nearWindow: w.nearWindow ?? NEAR_WINDOW,
+		hideBias: w.hideBias ?? HIDE_BIAS,
+		baitPass: w.baitPass ?? BAIT_PASS,
+	};
 }
 
 function siteFromPublic(publicState, siteId) {
@@ -53,9 +89,9 @@ function siteHoldTotal(publicState, siteId, seat) {
 }
 
 // my visible hold minus theirs, with a haircut for every hidden send they have made
-function siteMargin(publicState, siteId, seat) {
+function siteMargin(publicState, siteId, seat, weights) {
 	const opp = publicState.players[otherSeat(seat)];
-	const unseen = (opp.hiddenSentThisRound || 0) * HIDDEN_HOLD_GUESS;
+	const unseen = (opp.hiddenSentThisRound || 0) * weights.hiddenHoldGuess;
 	return siteHoldTotal(publicState, siteId, seat) - siteHoldTotal(publicState, siteId, otherSeat(seat)) - unseen;
 }
 
@@ -71,7 +107,7 @@ function traitsOf(record) {
 // against the DELTA of moving: what the current site loses versus what the destination
 // gains, since the vanguard's hold at its current site is already counted in that site's
 // margin above (leaving costs exactly what staying was worth there).
-function evaluateVanguardRelocation(publicState, handler, margins) {
+function evaluateVanguardRelocation(publicState, handler, margins, weights) {
 	const me = publicState.players[handler];
 	if (!me.canRelocateVanguard || !me.vanguardRecordId) {
 		return null;
@@ -95,7 +131,7 @@ function evaluateVanguardRelocation(publicState, handler, margins) {
 	// value of STAYING put, in the same units evaluateSend/candidates use below: a site
 	// currently flippable/securable is worth losing if the vanguard leaves, so "staying"
 	// is worth whatever the vanguard is currently contributing to that site's margin.
-	const stayValue = fromMargin <= 0 ? (fromHold > -fromMargin ? FLIP_VALUE : (2 * fromHold) / (1 - fromMargin)) : SECURE_VALUE * (fromHold / fromMargin);
+	const stayValue = fromMargin <= 0 ? (fromHold > -fromMargin ? weights.flipValue : (2 * fromHold) / (1 - fromMargin)) : weights.secureValue * (fromHold / fromMargin);
 
 	let best = null;
 	frame.sites.forEach((site) => {
@@ -110,11 +146,11 @@ function evaluateVanguardRelocation(publicState, handler, margins) {
 		const afterMargin = m + h;
 		let moveValue;
 		if (m <= 0) {
-			moveValue = afterMargin > 0 ? FLIP_VALUE : (2 * h) / (1 - m);
+			moveValue = afterMargin > 0 ? weights.flipValue : (2 * h) / (1 - m);
 		} else {
-			moveValue = SECURE_VALUE * (h / (m + h));
+			moveValue = weights.secureValue * (h / (m + h));
 		}
-		moveValue -= HOLD_COST * h;
+		moveValue -= weights.holdCost * h;
 		if (prepared.strainLevel === 'severe') {
 			moveValue -= 1;
 		}
@@ -132,12 +168,40 @@ function evaluateVanguardRelocation(publicState, handler, margins) {
 	return best;
 }
 
+// applies hideBias to the base hiding rule (canHide && the send is not already safely
+// decisive on visible hold alone). hideBias is a multiplier on top of that rule read as:
+// 0 never hides; 1 (default) is the rule exactly as written; between 0 and 1 scales down
+// how often a qualifying send is actually hidden (a coin flip weighted by the bias); above
+// 1, the excess (hideBias - 1, capped at 1) is the chance of hiding EVEN WHEN the base rule
+// would send openly, so a bias of 2 hides every stealthy send regardless of the board.
+function applyHideBias(baseRuleSaysHide, canHide, hideBias, rng) {
+	if (!canHide) {
+		return false;
+	}
+	// hideBias === 1 is the rule exactly as written, with no randomizer draw at all, so the
+	// default proctor (weights all defaults) consumes rng in the exact same sequence the
+	// bot always has - this keeps "no rival argument" bit-identical to the old behaviour.
+	if (hideBias === 1) {
+		return baseRuleSaysHide;
+	}
+	const roll = rng ? rng.float() : 0;
+	if (baseRuleSaysHide) {
+		return roll < Math.min(1, hideBias);
+	}
+	const excess = Math.max(0, hideBias - 1);
+	return roll < Math.min(1, excess);
+}
+
 /*
-	chooseSend(publicState, ownRoster, handler, rng) ->
+	chooseSend(publicState, ownRoster, handler, rng, rival) ->
 		{ type: 'send', recordId, siteId, hidden } | { type: 'relocate', siteId, reason } |
 		{ type: 'pass', reason }
+
+	rival is optional and defaults to the Court proctor (the bot as it always was); see
+	RIVALS below for the five handlers and rivalById for the lookup with a safe fallback.
 */
-export function chooseSend(publicState, ownRoster, handler, rng) {
+export function chooseSend(publicState, ownRoster, handler, rng, rival) {
+	const weights = weightsFor(rival);
 	const me = publicState.players[handler];
 	const opp = publicState.players[otherSeat(handler)];
 	if (me.passed) {
@@ -147,10 +211,10 @@ export function chooseSend(publicState, ownRoster, handler, rng) {
 	const frame = publicState.frame;
 	const relocateMargins = {};
 	frame.sites.forEach((s) => {
-		relocateMargins[s.id] = siteMargin(publicState, s.id, handler);
+		relocateMargins[s.id] = siteMargin(publicState, s.id, handler, weights);
 	});
-	const relocation = evaluateVanguardRelocation(publicState, handler, relocateMargins);
-	if (relocation && relocation.net > 0 && relocation.moveValue > MIN_SEND_VALUE) {
+	const relocation = evaluateVanguardRelocation(publicState, handler, relocateMargins, weights);
+	if (relocation && relocation.net > 0 && relocation.moveValue > weights.minSendValue) {
 		return { type: 'relocate', siteId: relocation.siteId, reason: 'vanguard-falls-back' };
 	}
 
@@ -182,12 +246,12 @@ export function chooseSend(publicState, ownRoster, handler, rng) {
 			const stacked = (publicState.board[site.id][handler] || []).length;
 			let value;
 			if (m <= 0) {
-				value = h > -m ? FLIP_VALUE : (2 * h) / (1 - m);
+				value = h > -m ? weights.flipValue : (2 * h) / (1 - m);
 			} else {
-				value = SECURE_VALUE * (h / (m + h));
+				value = weights.secureValue * (h / (m + h));
 			}
-			value *= Math.pow(STACK_DISCOUNT, stacked);
-			value -= HOLD_COST * h;
+			value *= Math.pow(weights.stackDiscount, stacked);
+			value -= weights.holdCost * h;
 			if (prepared.strainLevel === 'severe') {
 				value -= 1;
 			}
@@ -200,6 +264,14 @@ export function chooseSend(publicState, ownRoster, handler, rng) {
 	candidates.sort((a, b) => b.value - a.value);
 	const best = candidates[0];
 
+	// baitPass: on frame 1 or 2, once a majority is held with the even share spent, pass
+	// even if the opponent has not passed yet - normally the bot only gives up the last
+	// word once the opponent already has (see holding-majority below). Baiting risks the
+	// opponent overspending into an open board; it is a bluffer's habit, not a safe one.
+	if (weights.baitPass && !mustHold && framesAfterThis > 0 && sitesWinning >= 2 && myOnBoard >= evenShare) {
+		return { type: 'pass', reason: 'baiting-overspend' };
+	}
+
 	if (!mustHold) {
 		// enough of this world: a majority held, the even share spent, and nobody left to
 		// answer (passing while the opponent can still respond hands them the last word)
@@ -207,20 +279,21 @@ export function chooseSend(publicState, ownRoster, handler, rng) {
 			return { type: 'pass', reason: 'holding-majority' };
 		}
 		// over the share for this world unless a flip is on offer
-		if (myOnBoard >= evenShare + OVERSPEND_ALLOWANCE || (myOnBoard >= evenShare && !best.flips)) {
+		if (myOnBoard >= evenShare + weights.overspendAllowance || (myOnBoard >= evenShare && !best.flips)) {
 			return { type: 'pass', reason: 'saving-the-roster' };
 		}
 	}
-	if (best.value < MIN_SEND_VALUE && !(mustHold && best.flips)) {
+	if (best.value < weights.minSendValue && !(mustHold && best.flips)) {
 		return { type: 'pass', reason: 'nothing-to-gain' };
 	}
 
 	// among near-equal candidates, vary the pick so the bot is not perfectly predictable
-	const near = candidates.filter((c) => c.value >= best.value - 0.25);
+	const near = candidates.filter((c) => c.value >= best.value - weights.nearWindow);
 	const pick = near.length > 1 && rng ? near[Math.floor(rng.float() * near.length)] : best;
 
 	const canHide = traitsOf(pick.record).includes('stealthy');
-	const hidden = canHide && Math.abs(pick.margin) < pick.prepared.hold;
+	const baseRuleSaysHide = canHide && Math.abs(pick.margin) < pick.prepared.hold;
+	const hidden = applyHideBias(baseRuleSaysHide, canHide, weights.hideBias, rng);
 
 	return { type: 'send', recordId: pick.record.id, siteId: pick.site.id, hidden };
 }
@@ -295,7 +368,15 @@ function estimateActionValue(publicState, record, site, sentIndex, action, handl
 /*
 	chooseOrders(publicState, handler) -> { [creatureId]: actName }
 */
-export function chooseOrders(publicState, handler) {
+/*
+	chooseOrders(publicState, handler, rival) -> { [creatureId]: actName }
+
+	rival is accepted for symmetry with chooseSend and defaults to the Court proctor, but no
+	rival currently retunes Orders - every weight in RIVALS below is a Deploy-time knob. If a
+	rival ever needs an Orders habit (a bluffer that prefers projection acts, say), it is a
+	new weights key threaded through estimateActionValue the same way chooseSend's are.
+*/
+export function chooseOrders(publicState, handler, rival) {
 	const frame = publicState.frame;
 	const orders = {};
 	frame.sites.forEach((site) => {
@@ -313,4 +394,87 @@ export function chooseOrders(publicState, handler) {
 		});
 	});
 	return orders;
+}
+
+// --- the rivals ------------------------------------------------------------------------
+
+// Five rival handlers, in ladder order: the simulator's measured win rate as side A
+// against the proctor (200 matches, seed 11, 2026-09-05; the 95 percent interval is about
+// plus or minus 7 points), printed on each as `measured.vsProctor` so the intro can say it.
+// The order is re-measured whenever a weight moves; it is never asserted. The proctor is
+// the default rival. Each is the bot's own tunables with
+// a weights override (see weightsFor above for the keys and defaults) plus fiction. Every
+// weight not named here keeps the module's default, so an empty weights object is the
+// proctor exactly. Per docs/design/reclamation-play-enhancements.md "Pass 1: the rivals".
+export const RIVALS = [
+	{
+		id: 'envoy',
+		name: 'Zolto envoy',
+		faction: 'the Zolto',
+		home: 'Zolton',
+		style: 'Rations the roster and waits, refusing to spend past its even share until the frame forces its hand.',
+		measured: { vsProctor: 0.375 },
+		weights: {
+			overspendAllowance: 0,
+			holdCost: 0.4,
+			minSendValue: 3,
+		},
+	},
+	{
+		id: 'heir',
+		name: 'Heir of the Thousand Families',
+		faction: 'the Thousand Families',
+		home: 'Valleron',
+		style: 'Secures a lead and stacks it deeper rather than chase the board, and rarely gambles on the near-equal pick.',
+		measured: { vsProctor: 0.39 },
+		weights: {
+			stackDiscount: 0.95,
+			secureValue: 5,
+			nearWindow: 0.1,
+		},
+	},
+	{
+		id: 'broker',
+		name: 'Syndicate broker',
+		faction: 'the Drainov Syndicate',
+		home: 'Drainov',
+		style: 'Keeps its creatures hidden until the last moment and bets you cannot tell a bluff from a real threat.',
+		measured: { vsProctor: 0.445 },
+		weights: {
+			hideBias: 1.8,
+			hiddenHoldGuess: 2,
+			baitPass: 1,
+		},
+	},
+	{
+		id: 'proctor',
+		name: 'Court proctor',
+		faction: 'the Court of Arbitration',
+		home: 'Poseidas',
+		style: 'Runs the frame by the book, holding what it has and spending only when a world is worth it.',
+		measured: { vsProctor: 0.48 },
+		weights: {},
+	},
+	{
+		id: 'windsailor',
+		name: 'Windsailor crew',
+		faction: 'the Windsailors',
+		home: 'Saiphus',
+		style: 'Piles into every world at once and flips a losing site on the thinnest excuse, roster be damned.',
+		measured: { vsProctor: 0.545 },
+		weights: {
+			flipValue: 14,
+			stackDiscount: 0.4,
+			minSendValue: 0.5,
+			overspendAllowance: 3,
+		},
+	},
+];
+
+export const DEFAULT_RIVAL_ID = 'proctor';
+
+// looks up a rival by id, falling back to the proctor for an unknown or missing id so a
+// caller with a stale or corrupt saved choice always gets a legal, unsurprising opponent.
+export function rivalById(id) {
+	return RIVALS.find((r) => r.id === id) || RIVALS.find((r) => r.id === DEFAULT_RIVAL_ID);
 }

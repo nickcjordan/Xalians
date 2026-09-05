@@ -1243,15 +1243,17 @@ function judge(state) {
 
 	const siteResults = {};
 	frame.sites.forEach((site) => {
-		const holdA = s.board[site.id].A.reduce((sum, e) => sum + currentHoldOf(s, e), 0);
-		const holdB = s.board[site.id].B.reduce((sum, e) => sum + currentHoldOf(s, e), 0);
+		const entriesA = s.board[site.id].A.map((e) => ({ recordId: e.recordId, hold: currentHoldOf(s, e), staggered: !!s.staggered[e.recordId] }));
+		const entriesB = s.board[site.id].B.map((e) => ({ recordId: e.recordId, hold: currentHoldOf(s, e), staggered: !!s.staggered[e.recordId] }));
+		const holdA = entriesA.reduce((sum, e) => sum + e.hold, 0);
+		const holdB = entriesB.reduce((sum, e) => sum + e.hold, 0);
 		let winner = null;
 		if (holdA > holdB) {
 			winner = 'A';
 		} else if (holdB > holdA) {
 			winner = 'B';
 		}
-		siteResults[site.id] = { holdA, holdB, winner };
+		siteResults[site.id] = { holdA, holdB, winner, entries: { A: entriesA, B: entriesB } };
 	});
 
 	['A', 'B'].forEach((player) => {

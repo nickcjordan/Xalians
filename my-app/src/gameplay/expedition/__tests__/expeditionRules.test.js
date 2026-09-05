@@ -590,6 +590,42 @@ describe('judging and match end', () => {
 		expect(siteResult.winner).toBeNull();
 	});
 
+	test('the judge event lists every creature standing at a site, with its counted hold summing to the side totals', () => {
+		const equalA = makeRecord('holdA', { attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 } });
+		const equalB = makeRecord('holdB', { attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 } });
+		const worlds = makeWorlds();
+		const rosterA = makeRoster('A').map((r, i) => (i === 0 || i === 1 ? { ...equalA, id: `A_${i}` } : r));
+		const rosterB = makeRoster('B').map((r, i) => (i === 0 ? { ...equalB, id: 'B_0' } : r));
+		let state = createMatch({ rosterA, rosterB, worlds, seed: 'entries-seed' });
+		const frame = currentFrame(state);
+		const siteId = frame.sites[0].id;
+		// send both of A's marked creatures and B's marked creature to the same site,
+		// whichever order the alternating turn puts them in, then pass out
+		while (state.players.A.sentCount < 2 || state.players.B.sentCount < 1) {
+			const handler = state.turn;
+			const recordId = handler === 'A' ? (state.players.A.sentCount === 0 ? 'A_0' : 'A_1') : 'B_0';
+			state = send(state, handler, recordId, siteId);
+		}
+		state = pass(state, state.turn);
+		state = pass(state, state.turn);
+		state = commitOrders(state, 'A');
+		state = commitOrders(state, 'B');
+		const judgeEvent = state.resolutionLog.find((e) => e.type === 'judge');
+		const siteResult = judgeEvent.siteResults[siteId];
+		expect(siteResult.entries).toBeDefined();
+		expect(Array.isArray(siteResult.entries.A)).toBe(true);
+		expect(Array.isArray(siteResult.entries.B)).toBe(true);
+		siteResult.entries.A.forEach((e) => {
+			expect(e).toHaveProperty('recordId');
+			expect(e).toHaveProperty('hold');
+			expect(e).toHaveProperty('staggered');
+		});
+		const sumA = siteResult.entries.A.reduce((sum, e) => sum + e.hold, 0);
+		const sumB = siteResult.entries.B.reduce((sum, e) => sum + e.hold, 0);
+		expect(sumA).toBeCloseTo(siteResult.holdA, 6);
+		expect(sumB).toBeCloseTo(siteResult.holdB, 6);
+	});
+
 	test('creatures at a won site stay to hold the claim, others withdraw, all are out of the expedition', () => {
 		let state = freshMatch('withdraw-seed');
 		state = autoResolveOneRound(state);

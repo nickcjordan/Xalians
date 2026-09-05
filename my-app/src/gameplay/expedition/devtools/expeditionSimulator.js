@@ -22,6 +22,12 @@
 		                    board, random legal act (or hold) per creature in Orders. Lets
 		                    a designer measure how much of the bot's edge is skill versus
 		                    structural (seat, starter, roster) advantage.
+		--rivalA=<id>       rival handler side A plays (see expeditionBot.js RIVALS);
+		                    defaults to the Court proctor. Unknown ids fall back to the
+		                    proctor via rivalById.
+		--rivalB=<id>       same, for side B. Together these are how a rival's measured
+		                    difficulty against the proctor, and its ladder position, gets
+		                    set - never asserted.
 
 	This is a full designer-facing balance report (see docs/design/reclamation-design.md's
 	"Tuning" open item): seat fairness, match shape, site economy, roster economy, combat,
@@ -46,7 +52,7 @@ import {
 import {
 	ROSTER_SIZE, SITES_PER_WORLD, ACT_CLASS_BY_ACTION, SENDABLE, FRAMES_PER_MATCH, WORLDS_PER_FRAME,
 } from '../expeditionInterpretation.js';
-import { chooseSend, chooseOrders } from '../expeditionBot.js';
+import { chooseSend, chooseOrders, rivalById, DEFAULT_RIVAL_ID } from '../expeditionBot.js';
 import { prepare, magnitudeAgainst, baseHold, initiativeOf, strainLevel } from '../creatureOnTable.js';
 import { buildExpeditionPool } from '../roster.js';
 import { getWorlds } from '../sites.js';
@@ -57,7 +63,10 @@ import fs from 'node:fs';
 // ---------------------------------------------------------------------------
 
 function parseArgs(argv) {
-	const args = { matches: 300, seed: 7, json: null, mirror: false, random: null };
+	const args = {
+		matches: 300, seed: 7, json: null, mirror: false, random: null,
+		rivalA: DEFAULT_RIVAL_ID, rivalB: DEFAULT_RIVAL_ID,
+	};
 	argv.forEach((arg) => {
 		if (arg === '--mirror') {
 			args.mirror = true;
@@ -71,6 +80,8 @@ function parseArgs(argv) {
 				args.json = raw;
 			} else if (key === 'random') {
 				args.random = raw === 'A' || raw === 'B' ? raw : null;
+			} else if (key === 'rivalA' || key === 'rivalB') {
+				args[key] = raw;
 			} else {
 				args[key] = isNaN(Number(raw)) ? raw : Number(raw);
 			}
@@ -241,7 +252,8 @@ function deployEndSnapshot(state, frame) {
 // ---------------------------------------------------------------------------
 
 function runOneMatch(matchSeed, pool, rng, options) {
-	const { mirror, randomSeat } = options;
+	const { mirror, randomSeat, rivals } = options;
+	const rivalFor = { A: rivals && rivals.A, B: rivals && rivals.B };
 
 	const rosterA = buildRandomRoster(pool, rng);
 	const rosterB = mirror ? rosterA.slice() : buildRandomRoster(pool, rng);
@@ -277,13 +289,13 @@ function runOneMatch(matchSeed, pool, rng, options) {
 		if (randomSeat === handler) {
 			return randomChooseSend(publicState, ownRoster, handler, rngLike);
 		}
-		return chooseSend(publicState, ownRoster, handler, rngLike);
+		return chooseSend(publicState, ownRoster, handler, rngLike, rivalFor[handler]);
 	}
 	function chooseOrdersFor(handler, publicState) {
 		if (randomSeat === handler) {
 			return randomChooseOrders(publicState, handler, rngLike);
 		}
-		return chooseOrders(publicState, handler);
+		return chooseOrders(publicState, handler, rivalFor[handler]);
 	}
 
 	let guard = 0;
@@ -528,7 +540,7 @@ function boardSiteOf(state, frame, handler, recordId) {
 // summarize(): the ONE place flat per-match records become the report object.
 // ---------------------------------------------------------------------------
 
-function summarize(matchResults, args, pool) {
+function summarize(matchResults, args, pool, rivals) {
 	const completedMatches = matchResults.filter((m) => !m.error);
 	const errors = matchResults.filter((m) => m.error).map((m, i) => ({ matchIndex: i, error: m.error }));
 
@@ -536,6 +548,13 @@ function summarize(matchResults, args, pool) {
 	const allActs = completedMatches.flatMap((m) => m.actRecords);
 	const allSends = completedMatches.flatMap((m) => m.sendRecords);
 	const allRelocations = completedMatches.flatMap((m) => m.relocationRecords);
+
+	// side A's raw win rate, independent of who started - this is the number that answers
+	// "how does rivalA do against rivalB" (--rivalA/--rivalB), unlike starterWinRate below
+	// which is about the round-one-starter advantage regardless of which rival is seated
+	// where.
+	const aWins = completedMatches.filter((m) => m.finalState.winner === 'A').length;
+	const sideAWinRate = rate(aWins, completedMatches.length);
 
 	// -------------------- 1. seat fairness --------------------
 	const starterWins = completedMatches.filter((m) => m.finalState.winner === m.roundOneStarter).length;
@@ -991,6 +1010,11 @@ function summarize(matchResults, args, pool) {
 			mirror: !!args.mirror,
 			random: args.random || null,
 		},
+		rivals: {
+			A: { id: rivals && rivals.A ? rivals.A.id : DEFAULT_RIVAL_ID, name: rivals && rivals.A ? rivals.A.name : null },
+			B: { id: rivals && rivals.B ? rivals.B.id : DEFAULT_RIVAL_ID, name: rivals && rivals.B ? rivals.B.name : null },
+			sideAWinRate,
+		},
 		seatFairness,
 		matchShape,
 		siteEconomy,
@@ -1013,9 +1037,15 @@ function printHistogram(obj, indent = '  ') {
 }
 
 function printReport(report) {
-	const { meta } = report;
+	const { meta, rivals } = report;
 	console.log('=== Reclamation bot-vs-bot simulation ===');
 	console.log(`matches: ${meta.matches} (completed: ${meta.completedMatches})  seed: ${meta.seed}${meta.mirror ? '  [mirror]' : ''}${meta.random ? `  [random=${meta.random}]` : ''}`);
+	// note --random overrides a side's rival with the uniform random policy at match time
+	// (see chooseSendFor/chooseOrdersFor in runOneMatch); the rival named here is still
+	// whatever --rivalA/--rivalB asked for, since a rival choice and --random are
+	// independent flags and a random side simply never consults its weights
+	const nameFor = (side, rival) => (meta.random === side ? `${rival.name || rival.id} (${rival.id}, overridden by --random)` : `${rival.name || rival.id} (${rival.id})`);
+	console.log(`rivals: A=${nameFor('A', rivals.A)} vs B=${nameFor('B', rivals.B)} - A win rate ${fmtRate(rivals.sideAWinRate)}`);
 
 	console.log('\n--- 1. seat fairness ---');
 	const sf = report.seatFairness;
@@ -1150,29 +1180,31 @@ function printReport(report) {
 // ---------------------------------------------------------------------------
 
 export function runSimulation(args = {}) {
-	const opts = { matches: 300, seed: 7, mirror: false, random: null, ...args };
+	const opts = { matches: 300, seed: 7, mirror: false, random: null, rivalA: DEFAULT_RIVAL_ID, rivalB: DEFAULT_RIVAL_ID, ...args };
 	const rng = makeRng(opts.seed);
 	const pool = buildExpeditionPool(opts.seed, 87);
+	const rivals = { A: rivalById(opts.rivalA), B: rivalById(opts.rivalB) };
 
 	const matchResults = [];
 	for (let i = 0; i < opts.matches; i++) {
 		const matchSeed = `${opts.seed}-match-${i}`;
-		const result = runOneMatch(matchSeed, pool, rng, { mirror: opts.mirror, randomSeat: opts.random });
+		const result = runOneMatch(matchSeed, pool, rng, { mirror: opts.mirror, randomSeat: opts.random, rivals });
 		matchResults.push(result);
 	}
 
-	return summarize(matchResults, opts, pool);
+	return summarize(matchResults, opts, pool, rivals);
 }
 
 // exported for the Vitest coverage test ("--mirror gives identical roster ids")
 export function runSimulationRaw(args = {}) {
-	const opts = { matches: 300, seed: 7, mirror: false, random: null, ...args };
+	const opts = { matches: 300, seed: 7, mirror: false, random: null, rivalA: DEFAULT_RIVAL_ID, rivalB: DEFAULT_RIVAL_ID, ...args };
 	const rng = makeRng(opts.seed);
 	const pool = buildExpeditionPool(opts.seed, 87);
+	const rivals = { A: rivalById(opts.rivalA), B: rivalById(opts.rivalB) };
 	const matchResults = [];
 	for (let i = 0; i < opts.matches; i++) {
 		const matchSeed = `${opts.seed}-match-${i}`;
-		matchResults.push(runOneMatch(matchSeed, pool, rng, { mirror: opts.mirror, randomSeat: opts.random }));
+		matchResults.push(runOneMatch(matchSeed, pool, rng, { mirror: opts.mirror, randomSeat: opts.random, rivals }));
 	}
 	return matchResults;
 }

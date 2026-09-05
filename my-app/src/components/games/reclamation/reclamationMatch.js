@@ -4,11 +4,12 @@ import ReclamationBench from './reclamationBench';
 import ReclamationOrders from './reclamationOrders';
 import ReclamationInspect from './reclamationInspect';
 import ReclamationLog from './reclamationLog';
+import { ReclamationReport, buildMatchReport } from './reclamationReport';
 import {
 	send, pass, relocateVanguard, order, commitOrders, getPublicState,
 	createRngState, nextRandom,
 } from '../../../gameplay/expedition/expeditionRules';
-import { chooseSend, chooseOrders } from '../../../gameplay/expedition/expeditionBot';
+import { chooseSend, chooseOrders, rivalById, DEFAULT_RIVAL_ID } from '../../../gameplay/expedition/expeditionBot';
 import { prepare, magnitudeAgainst, strainMultiplierFor } from '../../../gameplay/expedition/creatureOnTable';
 import { SENDABLE, SITES_TO_CLINCH, FRAMES_PER_MATCH } from '../../../gameplay/expedition/expeditionInterpretation';
 import {
@@ -72,7 +73,7 @@ class ReclamationMatch extends React.Component {
 		super(props);
 		this.state = {
 			match: props.initialMatch,
-			log: [],
+			log: props.initialLog ? props.initialLog.slice() : [],
 			notice: null,
 			armedRecordId: null,
 			sendHidden: false,
@@ -93,8 +94,17 @@ class ReclamationMatch extends React.Component {
 			hoverSiteId: null, // the site row under the pointer in the deploy panel
 		};
 		// your twelve in slot order, held for the whole expedition so the roster never reshuffles
-		this.squad = props.initialMatch.players[YOU].roster.slice();
-		this.botRngState = createRngState(`${props.seed}-bot`);
+		this.squad = props.squad ? props.squad.slice() : props.initialMatch.players[YOU].roster.slice();
+		// the rival handler: a named weight set over the bot (expeditionBot.RIVALS); the
+		// proctor is the bot as it always was
+		this.rival = rivalById(props.rivalId || DEFAULT_RIVAL_ID);
+		// every creature of both squads by id, kept from the start so the report can name
+		// creatures long after they have left the rosters
+		this.recordsById = {};
+		const fullRosters = props.rosters || { A: props.initialMatch.players.A.roster, B: props.initialMatch.players.B.roster };
+		['A', 'B'].forEach((seat) => (fullRosters[seat] || []).forEach((r) => { this.recordsById[r.id] = r; }));
+		this.fullRosters = fullRosters;
+		this.botRngState = typeof props.botRngState === 'number' ? props.botRngState : createRngState(`${props.seed}-bot`);
 		this.botTimer = null;
 		this.noticeTimer = null;
 		this.playbackTimer = null;
@@ -209,8 +219,15 @@ class ReclamationMatch extends React.Component {
 		const staggered = {};
 		const routed = new Set();
 		const movedTo = {};
+		// a hidden creature that ambushes is revealed by its own strike; every other hidden
+		// creature is revealed as orders are
+		const ambushers = new Set(playback.events.filter((e) => e.outcome === 'revealed').map((e) => e.recordId));
+		const revealed = new Set();
 		for (let i = 0; i < playback.index; i++) {
 			const event = playback.events[i];
+			if (event.outcome === 'revealed') {
+				revealed.add(event.recordId);
+			}
 			if (classifyEvent(event) !== 'act') {
 				continue;
 			}
@@ -242,6 +259,9 @@ class ReclamationMatch extends React.Component {
 			['A', 'B'].forEach((seat) => {
 				(base.board[site.id][seat] || []).forEach((entry) => {
 					if (routed.has(entry.recordId)) {
+						return;
+					}
+					if (entry.revealPending && ambushers.has(entry.recordId) && !revealed.has(entry.recordId)) {
 						return;
 					}
 					const dest = movedTo[entry.recordId] || site.id;
@@ -338,6 +358,13 @@ class ReclamationMatch extends React.Component {
 	// keyboard
 	// ------------------------------------------------------------------
 	handleKeyDown = (e) => {
+		if (e.key === ' ' && !/^(INPUT|TEXTAREA|BUTTON)$/.test((document.activeElement || {}).tagName || '')) {
+			if (this.state.playback || this.botTimer) {
+				e.preventDefault();
+				this.hurry();
+			}
+			return;
+		}
 		if (e.key === 'Escape') {
 			if (this.state.armedRecordId || this.state.relocating || this.state.inspect) {
 				this.setState({ armedRecordId: null, relocating: false, inspect: null, sendHidden: false });
@@ -385,7 +412,7 @@ class ReclamationMatch extends React.Component {
 		let fellBack = null;
 
 		let publicState = getPublicState(match, THEM);
-		let action = chooseSend(publicState, match.players[THEM].roster, THEM, rngLike);
+		let action = chooseSend(publicState, match.players[THEM].roster, THEM, rngLike, this.rival);
 
 		// relocate does not consume the turn: apply it, then ask again for the send/pass
 		if (action.type === 'relocate') {
@@ -399,7 +426,7 @@ class ReclamationMatch extends React.Component {
 				arrivals.push(ev.recordId);
 				match = relocated;
 				publicState = getPublicState(match, THEM);
-				action = chooseSend(publicState, match.players[THEM].roster, THEM, rngLike);
+				action = chooseSend(publicState, match.players[THEM].roster, THEM, rngLike, this.rival);
 			}
 		}
 
@@ -469,6 +496,23 @@ class ReclamationMatch extends React.Component {
 	// human gives orders, and the bot's orders are submitted at commit time.
 	afterEngineStep = () => {
 		this.exposeDebug();
+		this.persist();
+	};
+
+	// the page keeps the Proving in the browser so a reload resumes it; told after every
+	// engine step, with everything the table needs to pick up where it stood
+	persist = () => {
+		if (!this.props.onEngineStep) {
+			return;
+		}
+		const { match, log } = this.state;
+		this.props.onEngineStep({
+			match,
+			log,
+			botRngState: this.botRngState,
+			squadIds: this.squad.map((r) => r.id),
+			rosters: this.fullRosters,
+		});
 	};
 
 	// ------------------------------------------------------------------
@@ -498,7 +542,7 @@ class ReclamationMatch extends React.Component {
 			return;
 		}
 		if (match.players[YOU].sentCount >= SENDABLE) {
-			this.notice(`You have sent all ${SENDABLE} creatures this expedition allows. The rest are your reserve.`);
+			this.notice(`You have sent all ${SENDABLE} creatures a Proving allows. The rest are your reserve.`);
 			return;
 		}
 		this.setState((prev) => ({
@@ -668,7 +712,7 @@ class ReclamationMatch extends React.Component {
 
 		// the bot's orders go in first (as the simulator does), then A commits, then B —
 		// committing B is what triggers resolve() and judge() inside the engine.
-		const botOrders = chooseOrders(getPublicState(match, THEM), THEM);
+		const botOrders = chooseOrders(getPublicState(match, THEM), THEM, this.rival);
 		Object.keys(botOrders).forEach((creatureId) => {
 			const next = order(match, THEM, creatureId, botOrders[creatureId]);
 			if (next) {
@@ -684,6 +728,17 @@ class ReclamationMatch extends React.Component {
 		// of resolution by the engine, so this view un-hides our own side's hidden sends
 		// too, matching what the sentences will say.
 		const frozenView = getPublicState(match, YOU);
+		// the rival's hidden sends are filtered out of the public view, but resolution
+		// reveals them (ambushers as they strike, the rest at once), so the frozen board
+		// carries them marked to be revealed by playback; without this a world could go to
+		// the rival while its tray said no one stood there
+		frameBefore.sites.forEach((site) => {
+			match.board[site.id][THEM].forEach((e) => {
+				if (e.hidden && !frozenView.board[site.id][THEM].some((v) => v.recordId === e.recordId)) {
+					frozenView.board[site.id][THEM].push({ recordId: e.recordId, record: e.record, sentIndex: e.sentIndex, hidden: false, revealPending: true });
+				}
+			});
+		});
 		const sitesWonBefore = { A: match.players.A.sitesWon, B: match.players.B.sitesWon };
 
 		let next = commitOrders(match, YOU);
@@ -773,6 +828,21 @@ class ReclamationMatch extends React.Component {
 		// dev hook: window.__reclamationStepMs slows playback so it can be watched or captured
 		const stepMs = (typeof window !== 'undefined' && window.__reclamationStepMs) || RESOLUTION_STEP_MS;
 		this.playbackTimer = setTimeout(this.stepPlayback, stepMs);
+	};
+
+	// the player sets the pace of watching: jump the resolution to the ruling, or the
+	// rival's thinking beat to its move
+	hurry = () => {
+		if (this.state.playback) {
+			this.cutBeats();
+			this.skipPlayback();
+			return;
+		}
+		if (this.botTimer) {
+			clearTimeout(this.botTimer);
+			this.botTimer = null;
+			this.runBotDeployTurn();
+		}
 	};
 
 	skipPlayback = () => {
@@ -873,8 +943,8 @@ class ReclamationMatch extends React.Component {
 			verdicts,
 			judged: true,
 			judgedFrame: playback.frame.index,
-			judgedSnapshot: match.phase === 'matchEnd' ? judgedSnapshot : judgedSnapshot,
-		});
+			judgedSnapshot,
+		}, this.persist);
 
 		if (verdicts) {
 			const tally = { yours: 0, theirs: 0, court: 0 };
@@ -1006,10 +1076,10 @@ class ReclamationMatch extends React.Component {
 	whatAClickDoes(view) {
 		const { armedRecordId, relocating, playback } = this.state;
 		if (playback) {
-			return 'The round is resolving. Skip to jump to the verdict.';
+			return 'The round is resolving. Skip, or press space, to jump to the ruling.';
 		}
 		if (view.phase === 'matchEnd') {
-			return 'The expedition is over. Start a new one to play again.';
+			return 'The Proving is over. The report says how it went; start a new one to play again.';
 		}
 		if (this.state.judged) {
 			return 'The Court has ruled. Load the next frame when you are ready.';
@@ -1023,7 +1093,7 @@ class ReclamationMatch extends React.Component {
 				: 'Choose an act for each of your creatures, then give orders.';
 		}
 		if (view.turn !== YOU) {
-			return 'The rival is deciding.';
+			return 'The rival is deciding. Press space to hurry it.';
 		}
 		if (relocating) {
 			return 'Click a site to fall your vanguard back to it. This does not spend your turn.';
@@ -1057,7 +1127,7 @@ class ReclamationMatch extends React.Component {
 			return 'The Court has ruled';
 		}
 		if (view.phase === 'matchEnd') {
-			return 'Expedition over';
+			return 'The Proving is over';
 		}
 		if (view.phase === 'orders') {
 			return view.players[YOU].committed ? 'Orders sealed' : 'Your orders';
@@ -1123,6 +1193,11 @@ class ReclamationMatch extends React.Component {
 						<span className={`g-lamp g-lamp--${lampKind}`} key={lampKind} />
 						<span className="rec-turn-text rec-turn-text--in" data-turn-text key={turnLabel}>{turnLabel}</span>
 					</span>
+					{this.state.playback && (
+						<button type="button" className="g-btn rec-skip" onClick={this.hurry} data-skip title="Space">
+							Skip to the ruling
+						</button>
+					)}
 				</div>
 
 				<p className={`rec-status-hint g-body${yourTurn ? ' rec-status-hint--yours' : ''}`} data-hint>
@@ -1158,25 +1233,15 @@ class ReclamationMatch extends React.Component {
 		);
 	}
 
-	renderVerdictPanel(view) {
-		const won = this.state.match.winner === YOU;
-		const reason = this.state.match.matchEndReason;
-		const why = reason === 'clinched'
-			? 'clinched at five worlds'
-			: view.players[YOU].sitesWon === view.players[THEM].sitesWon
-				? 'level on worlds and settled on the tiebreak'
-				: 'after the third frame';
+	renderVerdictPanel() {
+		const { match } = this.state;
+		const report = buildMatchReport(match, YOU, this.recordsById);
 		return (
-			<div className={`g-panel rec-verdict rec-rise ${won ? 'rec-verdict--won' : 'rec-verdict--lost'}`} data-verdict>
-				<span className="g-kicker">The Charter</span>
-				<h2 className="rec-verdict-title">{won ? 'The Charter is yours.' : 'The rival takes the Charter.'}</h2>
-				<p className="g-body rec-verdict-body">
-					{plural(view.players[YOU].sitesWon, 'world')} to {view.players[THEM].sitesWon}, with {why}.
-				</p>
-				<button type="button" className="g-btn g-btn--primary" onClick={this.props.onNewExpedition} data-new-expedition>
-					New expedition
-				</button>
-			</div>
+			<ReclamationReport
+				report={report}
+				rivalName={this.rival.name}
+				onNewProving={this.props.onNewProving}
+			/>
 		);
 	}
 
@@ -1297,6 +1362,20 @@ class ReclamationMatch extends React.Component {
 								rivalBeat={this.rivalBeat()}
 							/>
 						)}
+
+						{judged && !playback && view.phase !== 'matchEnd' && (
+							<div className="rec-judge-bar rec-rise" data-judge-bar>
+								<span className="rec-judge-bar-text">
+									The Court has ruled on round {(this.state.judgedFrame || 0) + 1}.
+									{view.nextFrame ? ` The frame loads ${view.nextFrame.map((w) => w.planet).join(', ')} next; ${this.state.match.turn === YOU ? 'you send first' : 'the rival sends first'}.` : ''}
+								</span>
+								<button type="button" className="g-btn g-btn--primary" onClick={this.nextFrame} data-next-frame>
+									Load round {(this.state.judgedFrame || 0) + 2}
+								</button>
+							</div>
+						)}
+
+						{judged && !playback && view.phase === 'matchEnd' && this.renderVerdictPanel()}
 
 						{ordering && !simple && (
 							<div className="rec-orders-bar rec-rise" data-orders-bar>
