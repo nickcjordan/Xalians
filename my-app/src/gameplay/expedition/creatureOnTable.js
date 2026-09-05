@@ -9,7 +9,7 @@
 	actor's strain).
 */
 
-import { conditionMultiplier } from '../tribute/decreeCalculator.js';
+import { conditionMultiplier } from './elementMatchup.js';
 import { typeEffectivenessMultiplier } from './expeditionInterpretation.js';
 import {
 	HOLD_DIVISOR,
@@ -28,11 +28,9 @@ import {
 // ---------------------------------------------------------------------------
 // element helpers — the ratified record shape carries element as { primary, affinities }
 // (affinities always includes the primary at 100, plus at most one graded secondary).
-// conditionMultiplier from the first design's decreeCalculator.js already implements
-// exactly the blend this design's "world matchup" and "magnitude against a target"
-// paragraphs both call for: softened(0 -> 0.25) primary blended with a graded secondary.
-// Reused here with the WORLD's element, or the TARGET's element, playing the role
-// tribute called "decreeElement" (the thing being matched against).
+// conditionMultiplier (elementMatchup.js) is the blend this design's "world matchup" and
+// "magnitude against a target" paragraphs both call for: softened(0 -> 0.25) primary
+// blended with a graded secondary, read against the WORLD's element or the TARGET's.
 // ---------------------------------------------------------------------------
 
 function recordElement(record) {
@@ -49,7 +47,7 @@ export function worldMatchupMultiplier(record, worldElement) {
 // element, blended with the target's secondary affinity")
 export function targetMatchupMultiplier(actorRecord, targetRecord) {
 	const actorPrimary = recordElement(actorRecord).primary;
-	// conditionMultiplier(decreeElement, cardElement) computes matrix[cardElement.primary][decreeElement]
+	// conditionMultiplier(againstElement, creatureElement) computes matrix[creatureElement.primary][againstElement]
 	// blended with cardElement's OWN secondary. Here we want matrix[actorPrimary][x] blended
 	// with the TARGET's secondary, so we build a synthetic "cardElement" whose primary is
 	// the actor's element but whose affinities carry the target's secondary grade, and pass

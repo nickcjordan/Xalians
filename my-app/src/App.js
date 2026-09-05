@@ -50,7 +50,6 @@ const PhysicsGamePage = lazy(() => import('./pages/games/physicsGamePage'));
 const TrainingGroundsPage = lazy(() => import('./pages/trainingGroundsPage'));
 const DuelPage = lazy(() => import('./pages/games/duelPage'));
 const DuelStartPage = lazy(() => import('./pages/games/duelStartPage'));
-const TributePage = lazy(() => import('./pages/games/tributePage'));
 const ReclamationPage = lazy(() => import('./pages/games/reclamationPage'));
 const DuelPlaygroundPage = lazy(() => import('./pages/games/duelPlaygroundPage'));
 const EncyclopediaPage = lazy(() => import('./pages/encyclopediaPage'));
@@ -104,7 +103,6 @@ class App extends React.Component {
                   also deliberately unlinked */}
               <Route exact path="/duel/reference"><DuelPlaygroundPage /></Route>
               <Route exact path="/duel"><DuelStartPage/></Route>
-              <Route exact path="/tribute"><TributePage/></Route>
               <Route exact path="/reclamation"><ReclamationPage/></Route>
               <Route exact path="/account"><UserAccountPage /></Route>
               <Route exact path="/train"><TrainingGroundsPage /></Route>
