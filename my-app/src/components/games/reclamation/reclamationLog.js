@@ -6,7 +6,7 @@ import React from 'react';
 */
 function ReclamationLog({ lines }) {
 	return (
-		<div className="g-screen rec-log" aria-label="Expedition log">
+		<div className="g-screen rec-log" aria-label="Proving log">
 			<div className="g-readout-unit">Log</div>
 			{lines.length === 0 && <div className="g-screen-line--dim">Nothing has happened yet. The first send opens the record.</div>}
 			{lines.slice().reverse().map((line, i) => (

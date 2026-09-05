@@ -3295,3 +3295,235 @@
    at a creature never changes the tray's height by a pixel */
 .rec-site-floor .rec-site-midline { position: relative; }
 .rec-site-floor .rec-ghost { position: absolute; inset: 0; padding: var(--g-1) var(--g-2); }
+
+/* -------------------------------------------------------------------------
+   THE RIVALS (pass 1 of the play enhancements, 2026-09-05)
+   Five handlers over the same bot, chosen on the intro as a row of plates: a rank,
+   a lamp lit on the chosen one, the name stencilled, the faction and home in small
+   caps, one sentence of style, and the record from this browser in mono.
+   ------------------------------------------------------------------------- */
+
+.rec-rivals-panel {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-3);
+	margin-top: var(--g-4);
+}
+
+.rec-rivals-head { display: flex; flex-direction: column; gap: var(--g-1); }
+.rec-rivals-head .g-kicker { margin: 0; }
+
+.rec-rivals-title {
+	margin: 0;
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-h3);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink);
+}
+
+.rec-rivals-lead { margin: 0; max-width: 68ch; color: var(--g-ink-mid); font-size: var(--g-size-small); }
+
+.rec-rivals {
+	display: grid;
+	grid-template-columns: repeat(5, minmax(0, 1fr));
+	gap: var(--g-3);
+}
+
+.rec-rival {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--g-1);
+	padding: var(--g-3);
+	text-align: left;
+	cursor: pointer;
+	color: var(--g-ink-mid);
+	border: 1px solid var(--g-rule);
+	transition: border-color 160ms ease, transform 160ms ease;
+}
+
+.rec-rival:hover { border-color: var(--g-brass-dark); }
+.rec-rival:focus-visible { outline: 2px solid var(--g-hazard); outline-offset: 2px; }
+.rec-rival--chosen { border-color: var(--g-brass); }
+.rec-rival--chosen .rec-rival-name { color: var(--g-brass-light); }
+
+.rec-rival-head { display: flex; align-items: center; justify-content: space-between; align-self: stretch; }
+.rec-rival-rank { font-size: var(--g-size-micro); color: var(--g-ink-low); }
+
+.rec-rival-name {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-lead);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink);
+	line-height: 1.15;
+}
+
+.rec-rival-faction {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	color: var(--g-ink-low);
+}
+
+.rec-rival-style { margin: var(--g-1) 0 0; font-size: var(--g-size-small); line-height: 1.45; color: var(--g-ink-mid); }
+
+.rec-rival-measure {
+	margin-top: auto;
+	padding-top: var(--g-2);
+	font-size: var(--g-size-micro);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-brass-light);
+	border-top: var(--g-hairline) solid var(--g-rule-faint);
+	align-self: stretch;
+}
+
+.rec-rival-record {
+	margin-top: 0;
+	padding-top: var(--g-1);
+	font-size: var(--g-size-micro);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-low);
+	align-self: stretch;
+}
+
+.rec-masthead-rival {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-tiny);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	color: var(--g-ink-low);
+}
+
+/* a Proving left on the frame, offered above the rules */
+.rec-resume {
+	display: flex;
+	align-items: center;
+	gap: var(--g-3);
+	padding: var(--g-2) var(--g-4);
+	margin-bottom: var(--g-3);
+	border-left: 3px solid var(--g-hazard);
+}
+
+.rec-resume-text { flex: 1 1 auto; font-size: var(--g-size-small); color: var(--g-ink); }
+.rec-resume-actions { display: flex; gap: var(--g-2); flex: 0 0 auto; }
+
+/* the pace of watching is the player's: skip the resolution to the ruling */
+.rec-skip { padding: 2px var(--g-2); font-size: var(--g-size-micro); }
+
+.rec-judge-bar-text { font-size: var(--g-size-small); color: var(--g-ink); }
+.rec-judge-bar { margin-top: var(--g-3); border-left: 3px solid var(--g-brass); }
+
+/* the match report at the Charter */
+.rec-report {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-3);
+	margin-top: var(--g-3);
+	padding: var(--g-4);
+	border-left: 3px solid var(--g-brass);
+}
+
+.rec-report--won { border-left-color: var(--rec-you); }
+.rec-report--lost { border-left-color: var(--rec-rival); }
+.rec-report .g-kicker { margin: 0; }
+
+.rec-report-title {
+	margin: 0;
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-h2);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink);
+	line-height: 1.1;
+}
+
+.rec-report-lede { margin: 0; color: var(--g-ink-mid); }
+
+.rec-report-worlds { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--g-3); }
+
+.rec-report-round { display: flex; flex-direction: column; gap: var(--g-2); }
+
+.rec-report-round-title {
+	margin: 0;
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-tiny);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	color: var(--g-ink-low);
+	padding-bottom: var(--g-1);
+	border-bottom: var(--g-hairline) solid var(--g-rule-faint);
+}
+
+
+.rec-report-world {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	gap: var(--g-1) var(--g-2);
+	padding: var(--g-2);
+	background: var(--g-hull-lo);
+	box-shadow: var(--g-recess);
+	border-left: 2px solid var(--g-rule);
+}
+
+.rec-report-world--you { border-left-color: var(--rec-you); }
+.rec-report-world--rival { border-left-color: var(--rec-rival); }
+
+.rec-report-world-head { display: flex; align-items: baseline; gap: var(--g-2); min-width: 0; flex-wrap: wrap; }
+.rec-report-world-site { font-size: var(--g-size-micro); color: var(--g-ink-low); }
+
+.rec-report-world-holds { display: inline-flex; align-items: baseline; gap: var(--g-1); font-family: var(--g-font-mono); font-variant-numeric: tabular-nums; font-size: var(--g-size-small); color: var(--g-ink-low); white-space: nowrap; }
+.rec-report-figure .rec-report-hold--you { color: var(--rec-you); }
+.rec-report-figure .rec-report-hold--rival { color: var(--rec-rival); }
+
+.rec-report-world-who {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	color: var(--g-ink-mid);
+}
+
+.rec-report-world-creatures { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 2px; font-size: var(--g-size-micro); color: var(--g-ink-low); line-height: 1.5; }
+.rec-report-world-side strong { font-family: var(--g-font-stencil); font-weight: 600; text-transform: uppercase; letter-spacing: var(--g-track-wide); margin-right: var(--g-1); }
+.rec-report-world-side--you strong { color: var(--rec-you); }
+.rec-report-world-side--rival strong { color: var(--rec-rival); }
+.rec-report-hold-sep { font-family: var(--g-font-stencil); font-size: var(--g-size-micro); text-transform: uppercase; letter-spacing: var(--g-track-wide); color: var(--g-ink-low); padding: 0 2px; }
+.rec-report-hold { color: var(--g-ink-low); font-weight: 400; }
+.rec-report-hold--winner.rec-report-hold--you { color: var(--rec-you); font-weight: 600; }
+.rec-report-hold--winner.rec-report-hold--rival { color: var(--rec-rival); font-weight: 600; }
+.rec-report-world-creatures strong { font-weight: 600; color: var(--g-ink-mid); }
+
+.rec-report-foot { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--g-2); }
+
+.rec-report-figure {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-1);
+	padding: var(--g-2) var(--g-3);
+	border: 1px solid var(--g-rule);
+	background: var(--g-hull-lo);
+}
+
+.rec-report-figure-value { font-family: var(--g-font-mono); font-variant-numeric: tabular-nums; font-size: var(--g-size-lead); color: var(--g-ink); }
+.rec-report-figure-label { font-family: var(--g-font-stencil); font-size: var(--g-size-micro); text-transform: uppercase; letter-spacing: var(--g-track-wide); color: var(--g-ink-low); }
+
+.rec-report-decisive { margin: 0; color: var(--g-ink); }
+.rec-report-actions { display: flex; gap: var(--g-2); }
+
+@media (max-width: 1100px) {
+	.rec-rivals { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+	.rec-report-worlds { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 760px) {
+	.rec-rivals { grid-template-columns: minmax(0, 1fr); }
+	.rec-resume { flex-wrap: wrap; }
+	.rec-report-foot { grid-template-columns: minmax(0, 1fr); }
+	.rec-masthead-rival { display: none; }
+}
