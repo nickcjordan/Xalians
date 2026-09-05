@@ -3757,3 +3757,114 @@
 	.rec-rival-glyph { font-size: 40px; }
 	.rec-thesis { max-width: 40ch; }
 }
+
+/* -------------------------------------------------------------------------
+   THE FRONT PANEL (Nick, 2026-09-05: "white space with small text")
+   The intro is one panel across the full width: the thesis on top, three modules of
+   equal weight (a round, hold, the Charter) side by side, the fiction folded under.
+   Type steps up: notes are body size, labels tiny not micro, the thesis a heading.
+   ------------------------------------------------------------------------- */
+
+.rec-intro-panel {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	grid-template-areas: 'thesis thesis thesis' 'round hold charter' 'fiction fiction fiction';
+	gap: var(--g-5);
+	padding: var(--g-5);
+	align-items: stretch;
+}
+
+.rec-intro-panel .rec-thesis {
+	grid-area: thesis;
+	max-width: 60ch;
+	font-size: var(--g-size-h2);
+	line-height: 1.2;
+}
+
+.rec-module {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-4);
+	padding: var(--g-4);
+	background: var(--g-hull-lo);
+	border: 1px solid var(--g-rule);
+	box-shadow: var(--g-recess);
+	min-width: 0;
+}
+
+.rec-module--round { grid-area: round; }
+.rec-module--hold { grid-area: hold; }
+.rec-module--charter { grid-area: charter; }
+.rec-intro-panel .rec-fiction { grid-area: fiction; }
+
+.rec-module-title {
+	margin: 0;
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-tiny);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	color: var(--g-brass-light);
+	padding-bottom: var(--g-2);
+	border-bottom: var(--g-hairline) solid var(--g-rule-faint);
+}
+
+.rec-module-lead { margin: 0; font-size: var(--g-size-body); line-height: 1.45; color: var(--g-ink-mid); }
+
+/* the round: four rows, glyph beside the words */
+.rec-intro-panel .rec-phases {
+	grid-template-columns: minmax(0, 1fr);
+	gap: var(--g-3);
+	flex: 1 1 auto;
+}
+
+.rec-intro-panel .rec-phase {
+	flex-direction: row;
+	align-items: center;
+	gap: var(--g-4);
+	padding: var(--g-3) var(--g-4);
+	background: var(--g-hull);
+}
+
+.rec-intro-panel .rec-phase-glyph { font-size: 40px; flex: 0 0 auto; }
+.rec-phase-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.rec-intro-panel .rec-phase-word { font-size: var(--g-size-lead); }
+.rec-phase-index { color: var(--g-ink-low); font-weight: 400; margin-right: var(--g-1); }
+.rec-intro-panel .rec-phase-note { font-size: var(--g-size-body); }
+
+/* hold: the three meters stacked with room */
+.rec-intro-panel .rec-hold-cases { gap: var(--g-4); flex: 1 1 auto; justify-content: space-around; }
+.rec-intro-panel .rec-hold-case { flex-direction: column; align-items: flex-start; gap: var(--g-2); }
+.rec-intro-panel .rec-hold-case .rec-meter--large { --bulb-w: 7px; --bulb-h: 18px; --bulb-gap: 2px; --bank-gap: 6px; }
+.rec-intro-panel .rec-hold-case-note { font-size: var(--g-size-body); color: var(--g-ink); }
+
+/* the Charter: the figures large, the way in underneath */
+.rec-module--charter .rec-charter-figures { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--g-3); }
+.rec-module--charter .rec-charter-figure { padding: var(--g-4) var(--g-3); background: var(--g-hull); }
+.rec-module--charter .rec-charter-number { font-size: var(--g-size-readout); }
+.rec-module--charter .rec-charter-label { font-size: var(--g-size-tiny); }
+.rec-module--charter .rec-intro-actions { margin-top: auto; gap: var(--g-3); }
+.rec-module--charter .rec-intro-mode { display: flex; justify-content: center; }
+.rec-enter { font-size: var(--g-size-lead); padding: var(--g-4) var(--g-5); }
+.rec-module--charter .rec-intro-against { font-size: var(--g-size-small); }
+
+/* the rivals: plates with room and larger type */
+.rec-rivals-panel { margin-top: var(--g-5); gap: var(--g-4); }
+.rec-rival { padding: var(--g-4); gap: var(--g-3); min-height: 200px; }
+.rec-rival-glyph { font-size: 44px; }
+.rec-rival-name { font-size: var(--g-size-h3); }
+.rec-rival-tag { font-size: var(--g-size-body); }
+.rec-rival-ladder .g-lamp { width: 12px; height: 12px; }
+.rec-rivals-title { font-size: var(--g-size-h2); }
+
+@media (max-width: 1100px) {
+	.rec-intro-panel { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: 'thesis thesis' 'round hold' 'charter charter' 'fiction fiction'; }
+}
+
+@media (max-width: 760px) {
+	.rec-intro-panel { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'thesis' 'charter' 'round' 'hold' 'fiction'; padding: var(--g-4); gap: var(--g-4); }
+	.rec-intro-panel .rec-thesis { font-size: var(--g-size-h3); }
+	.rec-intro-panel .rec-phase-glyph { font-size: 32px; }
+	.rec-intro-panel .rec-hold-case .rec-meter--large { --bulb-w: 5px; --bulb-h: 13px; }
+	.rec-rival { min-height: 0; }
+}
