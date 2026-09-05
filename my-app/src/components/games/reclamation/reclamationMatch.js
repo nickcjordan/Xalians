@@ -1184,7 +1184,7 @@ class ReclamationMatch extends React.Component {
 						<span className="rec-pips">{pips(them.sitesWon)}</span>
 						<span className="rec-score-value rec-tick" data-sites-b key={them.sitesWon}>{them.sitesWon}</span>
 					</span>
-					<span className="rec-score-of">{SITES_TO_CLINCH} worlds clinch</span>
+
 				</div>
 
 				<div className="rec-status-turn">

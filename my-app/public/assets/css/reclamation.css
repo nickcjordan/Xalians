@@ -3596,3 +3596,164 @@
 @media (max-width: 760px) {
 	.rec-console--match .rec-meter--large { --bulb-w: 5px; --bulb-h: 12px; }
 }
+
+/* -------------------------------------------------------------------------
+   LESS TEXT (Nick, 2026-09-05: "a lot of text, and a lot of it very small")
+   The intro says the game in one sentence, then shows it: four phase glyphs with a
+   word each, hold as three of the system's own meters, the fiction folded away. Rival
+   plates carry a glyph, a name, a habit and a ladder of lamps. On the bench the read
+   and stealthy marks are glyphs and the lead sentence is gone.
+   ------------------------------------------------------------------------- */
+
+.rec-glyph { width: 1em; height: 1em; display: inline-block; vertical-align: middle; }
+
+.rec-intro-brief {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-4);
+	min-width: 0;
+}
+
+.rec-thesis {
+	margin: 0;
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-h3);
+	line-height: 1.3;
+	letter-spacing: 0.01em;
+	color: var(--g-ink);
+	max-width: 34ch;
+	text-wrap: balance;
+}
+
+.rec-phases {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: var(--g-2);
+}
+
+.rec-phase {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--g-1);
+	padding: var(--g-3);
+	background: var(--g-hull-lo);
+	border: 1px solid var(--g-rule);
+	box-shadow: var(--g-recess);
+	min-width: 0;
+}
+
+.rec-phase-glyph { font-size: 28px; color: var(--g-brass-light); line-height: 1; }
+
+.rec-phase-word {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink);
+}
+
+.rec-phase-note { font-size: var(--g-size-small); color: var(--g-ink-mid); line-height: 1.35; }
+
+.rec-hold-lesson {
+	display: grid;
+	grid-template-columns: max-content minmax(0, 1fr);
+	gap: var(--g-3);
+	align-items: start;
+	padding: var(--g-3);
+	border: 1px solid var(--g-rule);
+	background: var(--g-hull-lo);
+	box-shadow: var(--g-recess);
+}
+
+.rec-hold-lesson-title {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	color: var(--g-brass-light);
+	padding-top: 2px;
+}
+
+.rec-hold-cases {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+}
+
+.rec-hold-case { display: flex; align-items: center; gap: var(--g-3); flex-wrap: wrap; }
+.rec-hold-case-note { font-size: var(--g-size-small); color: var(--g-ink-mid); }
+
+.rec-fiction { border-top: var(--g-hairline) solid var(--g-rule-faint); padding-top: var(--g-2); }
+
+.rec-fiction-summary {
+	cursor: pointer;
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-tiny);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	color: var(--g-ink-low);
+	list-style: none;
+}
+
+.rec-fiction-summary::-webkit-details-marker { display: none; }
+.rec-fiction-summary::before { content: '+'; display: inline-block; width: 1.2em; color: var(--g-brass-light); }
+.rec-fiction[open] .rec-fiction-summary::before { content: '−'; }
+.rec-fiction .rec-rules-screen { margin-top: var(--g-3); }
+
+.rec-intro-against {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-tiny);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	color: var(--g-ink-low);
+	text-align: center;
+}
+
+.rec-rivals-ladder-note {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-tiny);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	color: var(--g-ink-low);
+}
+
+.rec-rival { gap: var(--g-2); }
+.rec-rival-glyph { font-size: 32px; color: var(--g-brass-light); line-height: 1; }
+.rec-rival--chosen .rec-rival-glyph { color: var(--g-hazard); }
+.rec-rival-tag { font-size: var(--g-size-small); color: var(--g-ink-mid); }
+.rec-rival-ladder { display: inline-flex; gap: 5px; margin-top: auto; padding-top: var(--g-2); }
+.rec-rival-ladder .g-lamp { width: 9px; height: 9px; }
+.rec-rival .rec-rival-record { margin-top: 0; padding-top: var(--g-1); border-top: none; font-size: var(--g-size-tiny); color: var(--g-ink-mid); }
+
+.rec-plinth-mark--glyph { font-size: 14px; color: var(--g-ink-low); display: inline-flex; }
+.rec-plinth-read { font-size: 14px; }
+
+@media (max-width: 760px) {
+	.rec-phases { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.rec-hold-lesson { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* the intro takes the wide console's width and type as well */
+.g-shell.rec-shell--intro { max-width: 1880px; }
+@media (min-width: 1700px) {
+	.rec-console--intro {
+		--g-size-micro: 0.8125rem;
+		--g-size-tiny: 0.875rem;
+		--g-size-small: 1rem;
+		--g-size-body: 1.125rem;
+		--g-size-lead: 1.3125rem;
+	}
+	.rec-console--intro .rec-meter { --bulb-w: 5px; --bulb-h: 13px; }
+	.rec-phase-glyph { font-size: 36px; }
+	.rec-rival-glyph { font-size: 40px; }
+	.rec-thesis { max-width: 40ch; }
+}

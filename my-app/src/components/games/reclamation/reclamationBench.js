@@ -1,4 +1,5 @@
 import React from 'react';
+import { InfoGlyph, HiddenGlyph } from './reclamationGlyphs';
 import XalianImage from '../../xalianImage';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
 import { team } from '../../../constants/designTokens';
@@ -88,7 +89,7 @@ function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspec
 				{inHand && (suggested || stealthy) && (
 					<span className="rec-plinth-marks">
 						{suggested && <span className="rec-plinth-mark rec-plinth-mark--suggested">suggested</span>}
-						{stealthy && <span className="rec-plinth-mark" title="Can be sent hidden">stealthy</span>}
+						{stealthy && <span className="rec-plinth-mark rec-plinth-mark--glyph" title="Stealthy: can be sent hidden"><HiddenGlyph /></span>}
 					</span>
 				)}
 			</button>
@@ -97,9 +98,10 @@ function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspec
 				className="rec-plinth-read"
 				onClick={(e) => { e.stopPropagation(); onInspect && onInspect(record); }}
 				title="Read this creature's dossier"
+				aria-label="Read this creature's dossier"
 				data-read={record.id}
 			>
-				read
+				<InfoGlyph />
 			</button>
 		</div>
 	);
@@ -165,7 +167,7 @@ function ReclamationBench({
 				</span>
 				<div className="rec-bench-say">
 					<h3 className="rec-bench-heading" key={heading}>{heading}</h3>
-					<p className="rec-bench-lead g-body">{lead}</p>
+					{sendsLeft === 0 && <p className="rec-bench-lead g-body">{lead}</p>}
 				</div>
 				<span className="rec-deploy-count" title={`${me.sentCount || 0} of ${SENDABLE} sends spent this Proving; ${(me.roster || []).length} in hand`}>
 					<span className="rec-sends" aria-hidden="true">
