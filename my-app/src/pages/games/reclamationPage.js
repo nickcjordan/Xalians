@@ -1,6 +1,8 @@
 import React from 'react';
 import XalianNavbar from '../../components/navbar';
 import ReclamationMatch from '../../components/games/reclamation/reclamationMatch';
+import { HoldMeter } from '../../components/games/reclamation/reclamationFigure';
+import { PhaseGlyph, RivalGlyph } from '../../components/games/reclamation/reclamationGlyphs';
 import { buildRosters } from '../../gameplay/expedition/roster';
 import { createMatch } from '../../gameplay/expedition/expeditionRules';
 import { getWorlds } from '../../gameplay/expedition/sites';
@@ -52,9 +54,9 @@ function ModeSwitch({ mode, onChange, compact }) {
 function recordLine(rivalId) {
 	const { played, won } = recordAgainst(rivalId);
 	if (!played) {
-		return 'not yet met';
+		return null;
 	}
-	return `${won} of ${played} won`;
+	return `${won} to ${played - won}`;
 }
 
 /*
@@ -67,6 +69,8 @@ function RivalPlates({ rivalId, onChange }) {
 		<div className="rec-rivals" role="radiogroup" aria-label="Your rival" data-rivals>
 			{RIVALS.map((rival, i) => {
 				const chosen = rival.id === rivalId;
+				const record = recordLine(rival.id);
+				const mark = Math.round(rival.measured.vsProctor * 100);
 				return (
 					<button
 						key={rival.id}
@@ -76,22 +80,31 @@ function RivalPlates({ rivalId, onChange }) {
 						aria-checked={chosen}
 						onClick={() => onChange(rival.id)}
 						data-rival={rival.id}
+						title={`${rival.name}, ${rival.faction}, ${rival.home}. ${rival.style} Wins ${mark} in 100 against the proctor.`}
 					>
-						<span className="rec-rival-head">
-							<span className="rec-rival-rank g-mono">{i + 1}</span>
-							<span className={`g-lamp ${chosen ? 'g-lamp--amber' : 'g-lamp--off'}`} aria-hidden="true" />
-						</span>
+						<span className="rec-rival-glyph"><RivalGlyph id={rival.id} /></span>
 						<span className="rec-rival-name">{rival.name}</span>
-						<span className="rec-rival-faction">{rival.faction}, {rival.home}</span>
-						<span className="rec-rival-style g-body">{rival.style}</span>
-						<span className="rec-rival-measure g-mono" title="Measured by the simulator against the Court proctor, 200 Provings">{rival.id === DEFAULT_RIVAL_ID ? 'the measure the others are scored against' : `wins ${Math.round(rival.measured.vsProctor * 100)} in 100 against the proctor`}</span>
-						<span className="rec-rival-record g-mono" data-rival-record={rival.id}>you: {recordLine(rival.id)}</span>
+						<span className="rec-rival-tag">{rival.tag}</span>
+						<span className="rec-rival-ladder" aria-label={`Strength ${i + 1} of ${RIVALS.length}`}>
+							{RIVALS.map((_, j) => (
+								<span className={`g-lamp ${j <= i ? 'g-lamp--amber' : 'g-lamp--off'}`} key={j} />
+							))}
+						</span>
+						{record && <span className="rec-rival-record g-mono" data-rival-record={rival.id}>{record}</span>}
 					</button>
 				);
 			})}
 		</div>
 	);
 }
+
+// how a round goes, as four glyphs with a word each
+const PHASES = [
+	{ kind: 'deploy', word: 'Deploy', note: 'send a creature, or pass' },
+	{ kind: 'orders', word: 'Orders', note: 'each creature an act, sealed' },
+	{ kind: 'resolve', word: 'Resolve', note: 'acts strike at hold' },
+	{ kind: 'judge', word: 'Judge', note: 'more hold takes the world' },
+];
 
 function seedFromQueryOrDefault() {
 	const params = new URLSearchParams(window.location.search);
@@ -256,20 +269,44 @@ class ReclamationPage extends React.Component {
 					)}
 
 					<div className="g-panel rec-intro-panel">
-						<div className="g-screen rec-rules-screen">
-							<div className="g-screen-line">The worlds were lost to war and plague, and no expedition goes in blind. Before Kozrak grants a Charter over a world, the claim is proved on the Court's <strong>frame</strong>: the Generators' own models of the fourteen worlds, run on Poseidas without the Generators. Only the fighting is simulated. The Charter, and the Tokens that come with it, are real.</div>
-							<div className="g-screen-line">A Proving runs {FRAMES_PER_MATCH} rounds. Each round the frame loads {WORLDS_PER_FRAME} worlds side by side, every one at a different site of its surface, and no world is loaded twice. Hold {SITES_TO_CLINCH} of the {WORLDS_PER_MATCH} and the Charter is clinched.</div>
-							<div className="g-screen-line">Every creature has a <strong>hold</strong>: how firmly it keeps a world, read by the frame on a scale of 0 to 20. The Generators built each for one world, so on the wrong world, or at a site its body cannot bear, it holds less; on its own world it holds half again. Acts strike at hold. When the fighting stops, the Court reads the frame and gives each world to the side that still holds more of it.</div>
-							<dl className="rec-rules-phases">
-								<dt className="g-screen-line">Deploy</dt>
-								<dd className="g-screen-line">You and the rival alternate sending one creature into one of the three worlds, or passing. A pass is permanent for that round.</dd>
-								<dt className="g-screen-line">Orders</dt>
-								<dd className="g-screen-line">Give each creature an act, in secret. Left alone, it performs the act its archetype favors. You choose the creature, the world and the act; the creature chooses its own target, by its conduct.</dd>
-								<dt className="g-screen-line">Resolve</dt>
-								<dd className="g-screen-line">The acts play out, and each creature's hold on its world is struck down, warded or kept.</dd>
-								<dt className="g-screen-line">Judge</dt>
-								<dd className="g-screen-line">Each world goes to the side with the greater surviving hold. A tie reverts it to the Court. Creatures on a won world stay in its model to hold the claim; the rest withdraw. Either way they are out of the Proving.</dd>
-							</dl>
+						<div className="rec-intro-brief">
+							<p className="rec-thesis">Send your creatures into three worlds a round. Hold more of a world than the rival and it is yours. Five worlds take the Charter.</p>
+
+							<ol className="rec-phases" aria-label="A round">
+								{PHASES.map((phase, i) => (
+									<li className="rec-phase" key={phase.kind}>
+										<span className="rec-phase-glyph"><PhaseGlyph kind={phase.kind} /></span>
+										<span className="rec-phase-word">{i + 1} {phase.word}</span>
+										<span className="rec-phase-note">{phase.note}</span>
+									</li>
+								))}
+							</ol>
+
+							<div className="rec-hold-lesson" aria-label="Hold">
+								<span className="rec-hold-lesson-title">Hold</span>
+								<ul className="rec-hold-cases">
+									<li className="rec-hold-case g-el-water">
+										<HoldMeter hold={18} isHome size="full" scale />
+										<span className="rec-hold-case-note">on its own world</span>
+									</li>
+									<li className="rec-hold-case g-el-rock">
+										<HoldMeter hold={12} size="full" scale />
+										<span className="rec-hold-case-note">on another</span>
+									</li>
+									<li className="rec-hold-case g-el-ice">
+										<HoldMeter hold={5} unstrained={12} strainLevel="severe" size="full" scale />
+										<span className="rec-hold-case-note">where its body strains</span>
+									</li>
+								</ul>
+							</div>
+
+							<details className="rec-fiction">
+								<summary className="rec-fiction-summary">Why the frame</summary>
+								<div className="g-screen rec-rules-screen">
+									<div className="g-screen-line">The worlds were lost to war and plague, and no expedition goes in blind. Before Kozrak grants a Charter over a world, the claim is proved on the Court's <strong>frame</strong>: the Generators' own models of the fourteen worlds, run on Poseidas without the Generators. Only the fighting is simulated. The Charter, and the Tokens that come with it, are real.</div>
+									<div className="g-screen-line">Each round the frame loads three worlds side by side, every one at a different site of its surface, and no world is loaded twice in a Proving. A creature's hold is how firmly it keeps a world, read by the frame on a scale of 0 to 20; the Generators built each for one world, so on its own it holds half again and at a site its body cannot bear it holds less. Creatures on a won world stay in its model to hold the claim; the rest withdraw; either way they are out of the Proving. A pass is permanent for the round. The side that sends first in a round may, once, move its first creature to another world without spending a turn. A stealthy creature may be sent hidden.</div>
+								</div>
+							</details>
 						</div>
 
 						<aside className="rec-intro-charter">
@@ -292,25 +329,14 @@ class ReclamationPage extends React.Component {
 								</div>
 							</div>
 
-							<ul className="rec-charter-rules">
-								<li><strong>Roster.</strong> Your {ROSTER_SIZE} are generated from the Encyclopedia's species, dealt by the seed. The {ROSTER_SIZE - SENDABLE} you never send are your reserve, chosen as you go.</li>
-								<li><strong>Fall back.</strong> The side that sends first in a round may, once, move its first creature to another world in the frame without spending a turn.</li>
-								<li><strong>Hidden.</strong> A stealthy creature may be sent hidden. The rival learns that you sent something, not what or where.</li>
-							</ul>
-
 							<div className="rec-intro-actions">
-							<div className="rec-intro-mode">
-								<ModeSwitch mode={mode} onChange={this.setMode} />
-								<span className="rec-intro-mode-text">
-									{mode === 'simple'
-										? 'Simple: choose a creature, then a world, with the suggested move marked; orders by nature, go. Switch any time.'
-										: 'Advanced: every order, every number, hidden sends, the log and the dossiers.'}
-								</span>
-							</div>
-							<button type="button" className="g-btn g-btn--primary" onClick={this.startMatch} data-enter>
-								Enter the frame against the {rival.name}
-							</button>
-								<span className="rec-intro-seed g-mono">Add ?seed={seed}&rival={rival.id} to the address to replay this Proving.</span>
+								<div className="rec-intro-mode" title={mode === 'simple' ? 'Simple: the suggested move is marked and orders go by nature.' : 'Advanced: every order, every number, hidden sends, the log and the dossiers.'}>
+									<ModeSwitch mode={mode} onChange={this.setMode} />
+								</div>
+								<button type="button" className="g-btn g-btn--primary" onClick={this.startMatch} data-enter>
+									Enter the frame
+								</button>
+								<span className="rec-intro-against">against the {rival.name}</span>
 							</div>
 						</aside>
 					</div>
@@ -319,7 +345,7 @@ class ReclamationPage extends React.Component {
 						<header className="rec-rivals-head">
 							<span className="g-kicker">Connected over QED</span>
 							<h2 className="rec-rivals-title" id="rec-rivals-title">Your rival</h2>
-							<p className="g-body rec-rivals-lead">Five handlers will take the other seat. Each plays the frame its own way, and the ladder is measured, weakest first: the Zolto envoy rations itself out of Charters, the Windsailor crew contests everything and wins more than it should. The record is this browser's.</p>
+							<span className="rec-rivals-ladder-note">weakest to strongest</span>
 						</header>
 						<RivalPlates rivalId={rivalId} onChange={this.setRival} />
 					</section>

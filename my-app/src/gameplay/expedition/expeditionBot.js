@@ -402,13 +402,15 @@ export function chooseOrders(publicState, handler, rival) {
 // against the proctor (200 matches, seed 11, 2026-09-05; the 95 percent interval is about
 // plus or minus 7 points), printed on each as `measured.vsProctor` so the intro can say it.
 // The order is re-measured whenever a weight moves; it is never asserted. The proctor is
-// the default rival. Each is the bot's own tunables with
+// the default rival. `tag` is the two-to-four-word habit printed on the intro plate;
+// `style` is the full sentence, shown on pointing. Each is the bot's own tunables with
 // a weights override (see weightsFor above for the keys and defaults) plus fiction. Every
 // weight not named here keeps the module's default, so an empty weights object is the
 // proctor exactly. Per docs/design/reclamation-play-enhancements.md "Pass 1: the rivals".
 export const RIVALS = [
 	{
 		id: 'envoy',
+		tag: 'Rations the roster',
 		name: 'Zolto envoy',
 		faction: 'the Zolto',
 		home: 'Zolton',
@@ -422,6 +424,7 @@ export const RIVALS = [
 	},
 	{
 		id: 'heir',
+		tag: 'Stacks a lead',
 		name: 'Heir of the Thousand Families',
 		faction: 'the Thousand Families',
 		home: 'Valleron',
@@ -435,6 +438,7 @@ export const RIVALS = [
 	},
 	{
 		id: 'broker',
+		tag: 'Hides and baits',
 		name: 'Syndicate broker',
 		faction: 'the Drainov Syndicate',
 		home: 'Drainov',
@@ -448,6 +452,7 @@ export const RIVALS = [
 	},
 	{
 		id: 'proctor',
+		tag: 'By the book',
 		name: 'Court proctor',
 		faction: 'the Court of Arbitration',
 		home: 'Poseidas',
@@ -457,6 +462,7 @@ export const RIVALS = [
 	},
 	{
 		id: 'windsailor',
+		tag: 'Contests every world',
 		name: 'Windsailor crew',
 		faction: 'the Windsailors',
 		home: 'Saiphus',
