@@ -1,0 +1,68 @@
+{
+  "note": "Support-art pilot (2026-09-05): seven era frontispieces for the encyclopedia's story parts. One slot per era, wide cinematic landscape or tableau, no creatures (the silhouette track owns creatures), no text, no mechanical analogies. Style clause first per the log's finding that nouns are taken literally. Eras and definitions from docs/encyclopedia/chronicle.json eras[]; imagery beats from docs/encyclopedia/tour.json.",
+  "slots": [
+    {
+      "kind": "era",
+      "key": "deep-past",
+      "model": "zimage",
+      "width": 1536,
+      "height": 768,
+      "seeds": [201000, 201001, 201002, 201003],
+      "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view of a shattered planetary system: the remains of a family of worlds torn apart by an ancient supernova, drifting as a broken ring of dark rock fragments and dust against deep space, one single surviving world hanging intact and small at the center of the frame, lit by a distant dying star. Ancient, cold, immense scale, utter emptiness, ruin long since gone quiet."
+    },
+    {
+      "kind": "era",
+      "key": "ascendancy",
+      "model": "zimage",
+      "width": 1536,
+      "height": 768,
+      "seeds": [202000, 202001, 202002, 202003],
+      "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view of an ocean world seen from a high cliff at dawn: calm silver water stretching to the horizon, a handful of small colonial settlements of pale stone and glass perched along the shoreline, ships with sails of metal foil at anchor in a bay. Optimistic golden light, a sense of a new frontier just being claimed, vast open water dwarfing the settlements."
+    },
+    {
+      "kind": "era",
+      "key": "unbirth",
+      "model": "zimage",
+      "width": 1536,
+      "height": 768,
+      "seeds": [203000, 203001, 203002, 203003],
+      "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view down the length of a vast empty colony hall: rows and rows of silent quarters and cradles stretching into the distance under a high vaulted ceiling, all of it empty and unused, lit by a cold blue glow pulsing from an enormous engine core visible through an archway at the far end of the hall. Stillness, absence, a faint hum of dread, scale that dwarfs any single figure."
+    },
+    {
+      "kind": "era",
+      "key": "generation",
+      "model": "zimage",
+      "width": 1536,
+      "height": 768,
+      "seeds": [204000, 204001, 204002, 204003],
+      "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view of an industrial world at full production: dozens of towering foundry stacks and refinery spires across a volcanic plain, furnace light glowing orange from within their windows, columns of smoke and steam rising into a sky stained amber and grey, rivers of molten rock cutting between the structures. Furious energy, wealth being torn out of the ground, a boomtown skyline lit entirely by fire."
+    },
+    {
+      "kind": "era",
+      "key": "accords",
+      "model": "zimage",
+      "width": 1536,
+      "height": 768,
+      "seeds": [205000, 205001, 205002, 205003],
+      "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view of a lightning-wracked mountain range at night: a single enormous storm cell overhead, crimson and violet lightning branching down between jagged peaks, illuminating a lone tower of dark metal at the center of the valley with a faint web of light connecting it upward into the storm. Tense hush before a change, a single watchful structure under an enormous natural power, uneasy calm."
+    },
+    {
+      "kind": "era",
+      "key": "end-wars",
+      "model": "zimage",
+      "width": 1536,
+      "height": 768,
+      "seeds": [206000, 206001, 206002, 206003],
+      "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view of a dark world under a raging orbital battle: jagged black spires rising from a barren plain into a starless sky, streaks of weapon fire and the flares of distant explosions lighting the clouds above, one massive fleet silhouette burning as it falls toward the horizon. Cold, hostile, apocalyptic scale, the last stand of a dying war lit only by destruction."
+    },
+    {
+      "kind": "era",
+      "key": "present",
+      "model": "zimage",
+      "width": 1536,
+      "height": 768,
+      "seeds": [207000, 207001, 207002, 207003],
+      "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view of a vast circular arena carved into a desert canyon at dusk: tiered stone galleries rising on all sides toward a single throne platform lit by torches, an enormous ornate machine of brass and dark metal looming behind the throne, banners hanging still in the dry air. Ceremonial, watchful, a fragile order held together by spectacle and one ruler's will."
+    }
+  ]
+}
