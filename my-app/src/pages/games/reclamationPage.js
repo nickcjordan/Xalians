@@ -269,47 +269,44 @@ class ReclamationPage extends React.Component {
 					)}
 
 					<div className="g-panel rec-intro-panel">
-						<div className="rec-intro-brief">
-							<p className="rec-thesis">Send your creatures into three worlds a round. Hold more of a world than the rival and it is yours. Five worlds take the Charter.</p>
+						<p className="rec-thesis">Send your creatures into three worlds a round. Hold more of a world than the rival and it is yours. Five worlds take the Charter.</p>
 
-							<ol className="rec-phases" aria-label="A round">
+						<section className="rec-module rec-module--round" aria-label="A round">
+							<h2 className="rec-module-title">A round</h2>
+							<ol className="rec-phases">
 								{PHASES.map((phase, i) => (
 									<li className="rec-phase" key={phase.kind}>
 										<span className="rec-phase-glyph"><PhaseGlyph kind={phase.kind} /></span>
-										<span className="rec-phase-word">{i + 1} {phase.word}</span>
-										<span className="rec-phase-note">{phase.note}</span>
+										<span className="rec-phase-text">
+											<span className="rec-phase-word"><span className="rec-phase-index g-mono">{i + 1}</span> {phase.word}</span>
+											<span className="rec-phase-note">{phase.note}</span>
+										</span>
 									</li>
 								))}
 							</ol>
+						</section>
 
-							<div className="rec-hold-lesson" aria-label="Hold">
-								<span className="rec-hold-lesson-title">Hold</span>
-								<ul className="rec-hold-cases">
-									<li className="rec-hold-case g-el-water">
-										<HoldMeter hold={18} isHome size="full" scale />
-										<span className="rec-hold-case-note">on its own world</span>
-									</li>
-									<li className="rec-hold-case g-el-rock">
-										<HoldMeter hold={12} size="full" scale />
-										<span className="rec-hold-case-note">on another</span>
-									</li>
-									<li className="rec-hold-case g-el-ice">
-										<HoldMeter hold={5} unstrained={12} strainLevel="severe" size="full" scale />
-										<span className="rec-hold-case-note">where its body strains</span>
-									</li>
-								</ul>
-							</div>
+						<section className="rec-module rec-module--hold" aria-label="Hold">
+							<h2 className="rec-module-title">Hold</h2>
+							<p className="rec-module-lead">How firmly a creature keeps a world, 0 to 20. The Generators built each for one world.</p>
+							<ul className="rec-hold-cases">
+								<li className="rec-hold-case g-el-water">
+									<HoldMeter hold={18} isHome size="large" scale />
+									<span className="rec-hold-case-note">on its own world, half again</span>
+								</li>
+								<li className="rec-hold-case g-el-rock">
+									<HoldMeter hold={12} size="large" scale />
+									<span className="rec-hold-case-note">on another world</span>
+								</li>
+								<li className="rec-hold-case g-el-ice">
+									<HoldMeter hold={5} unstrained={12} strainLevel="severe" size="large" scale />
+									<span className="rec-hold-case-note">where its body strains, the world takes the rest</span>
+								</li>
+							</ul>
+						</section>
 
-							<details className="rec-fiction">
-								<summary className="rec-fiction-summary">Why the frame</summary>
-								<div className="g-screen rec-rules-screen">
-									<div className="g-screen-line">The worlds were lost to war and plague, and no expedition goes in blind. Before Kozrak grants a Charter over a world, the claim is proved on the Court's <strong>frame</strong>: the Generators' own models of the fourteen worlds, run on Poseidas without the Generators. Only the fighting is simulated. The Charter, and the Tokens that come with it, are real.</div>
-									<div className="g-screen-line">Each round the frame loads three worlds side by side, every one at a different site of its surface, and no world is loaded twice in a Proving. A creature's hold is how firmly it keeps a world, read by the frame on a scale of 0 to 20; the Generators built each for one world, so on its own it holds half again and at a site its body cannot bear it holds less. Creatures on a won world stay in its model to hold the claim; the rest withdraw; either way they are out of the Proving. A pass is permanent for the round. The side that sends first in a round may, once, move its first creature to another world without spending a turn. A stealthy creature may be sent hidden.</div>
-								</div>
-							</details>
-						</div>
-
-						<aside className="rec-intro-charter">
+						<section className="rec-module rec-module--charter" aria-label="The Charter">
+							<h2 className="rec-module-title">The Charter</h2>
 							<div className="rec-charter-figures">
 								<div className="rec-charter-figure">
 									<span className="rec-charter-number g-mono">{FRAMES_PER_MATCH}</span>
@@ -328,17 +325,24 @@ class ReclamationPage extends React.Component {
 									<span className="rec-charter-label">bring / send</span>
 								</div>
 							</div>
-
 							<div className="rec-intro-actions">
 								<div className="rec-intro-mode" title={mode === 'simple' ? 'Simple: the suggested move is marked and orders go by nature.' : 'Advanced: every order, every number, hidden sends, the log and the dossiers.'}>
 									<ModeSwitch mode={mode} onChange={this.setMode} />
 								</div>
-								<button type="button" className="g-btn g-btn--primary" onClick={this.startMatch} data-enter>
+								<button type="button" className="g-btn g-btn--primary rec-enter" onClick={this.startMatch} data-enter>
 									Enter the frame
 								</button>
 								<span className="rec-intro-against">against the {rival.name}</span>
 							</div>
-						</aside>
+						</section>
+
+						<details className="rec-fiction">
+							<summary className="rec-fiction-summary">Why the frame</summary>
+							<div className="g-screen rec-rules-screen">
+								<div className="g-screen-line">The worlds were lost to war and plague, and no expedition goes in blind. Before Kozrak grants a Charter over a world, the claim is proved on the Court's <strong>frame</strong>: the Generators' own models of the fourteen worlds, run on Poseidas without the Generators. Only the fighting is simulated. The Charter, and the Tokens that come with it, are real.</div>
+								<div className="g-screen-line">Each round the frame loads three worlds side by side, every one at a different site of its surface, and no world is loaded twice in a Proving. Creatures on a won world stay in its model to hold the claim; the rest withdraw; either way they are out of the Proving. A pass is permanent for the round. The side that sends first in a round may, once, move its first creature to another world without spending a turn. A stealthy creature may be sent hidden.</div>
+							</div>
+						</details>
 					</div>
 
 					<section className="rec-rivals-panel" aria-labelledby="rec-rivals-title">
