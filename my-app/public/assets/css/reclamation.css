@@ -3527,3 +3527,72 @@
 	.rec-report-foot { grid-template-columns: minmax(0, 1fr); }
 	.rec-masthead-rival { display: none; }
 }
+
+/* -------------------------------------------------------------------------
+   THE WIDE CONSOLE (Nick, 2026-09-05: "too condensed")
+   The site shell stops at 1320px, so on a 2500px monitor the table sat in the middle
+   third of the screen at the type sizes tuned for a laptop. The match console now
+   takes the width it is given, up to 1880px, and everything on it scales with the
+   viewport: one factor, --rec-scale, drives the figures, the plinths, the bulbs, the
+   lamps and the tray heights, and the type tokens are retuned in scope on wide
+   screens the way --g-el retunes colour. Below 1440px nothing changes.
+   ------------------------------------------------------------------------- */
+
+.rec-console--match { --rec-scale: 1; }
+.g-shell.rec-shell--match { max-width: 1880px; }
+
+@media (min-width: 1440px) {
+	/* width and height both have to afford the scale: a 1920 by 1080 screen is wide but
+	   not tall, and the whole console (status, trays, bench) should still fit one screen */
+	.rec-console--match { --rec-scale: clamp(1, min(calc(100vw / 1440px), calc(100vh / 900px)), 1.45); }
+}
+
+/* type, in scope: the small readouts are what read as condensed */
+@media (min-width: 1700px) {
+	.rec-console--match {
+		--g-size-micro: 0.8125rem;
+		--g-size-tiny: 0.875rem;
+		--g-size-small: 1rem;
+		--g-size-body: 1.125rem;
+		--g-size-lead: 1.3125rem;
+	}
+	.rec-shell--match { gap: var(--g-4); padding: var(--g-4) var(--g-5) var(--g-5); }
+	.rec-status { padding: var(--g-4) var(--g-5); gap: var(--g-3) var(--g-5); }
+	.rec-sites { gap: var(--g-4); }
+	.rec-site { padding: var(--g-4); gap: var(--g-3); }
+	.rec-rank { gap: var(--g-3); }
+	.rec-plinths { gap: var(--g-3); padding: var(--g-3); }
+	.rec-body { gap: var(--g-4); }
+	.rec-body:not(.rec-body--wide) { grid-template-columns: minmax(0, 1fr) minmax(340px, 440px); }
+}
+
+@media (min-width: 2200px) {
+	.rec-console--match {
+		--g-size-micro: 0.875rem;
+		--g-size-tiny: 0.9375rem;
+		--g-size-small: 1.0625rem;
+		--g-size-body: 1.1875rem;
+		--g-size-lead: 1.375rem;
+	}
+}
+
+/* the figures on the trays and the plinths on the bench grow with the factor */
+.rec-console--match .rec-piece-stage { --rec-piece: calc(56px * var(--rec-scale)); }
+.rec-console--match .rec-figure { min-width: calc(96px * var(--rec-scale)); }
+.rec-console--match .rec-plinth-art { width: calc(44px * var(--rec-scale)); height: calc(44px * var(--rec-scale)); }
+.rec-console--match .rec-plinths { grid-auto-columns: minmax(calc(84px * var(--rec-scale)), 1fr); }
+.rec-console--match .rec-lamp { width: calc(10px * var(--rec-scale)); height: calc(10px * var(--rec-scale)); }
+
+/* the trays keep their proportion: the ranks and the seam grow with the width */
+.rec-console--match .rec-sites { min-height: calc(340px * var(--rec-scale)); }
+.rec-console--match .rec-site-floor .rec-site-midline { min-height: calc(72px * var(--rec-scale)); }
+.rec-console--match .rec-rank { min-height: calc(96px * var(--rec-scale)); }
+
+/* the bulbs: one step up per size on a wide screen so the meters stay legible */
+.rec-console--match .rec-meter { --bulb-w: calc(4px * var(--rec-scale)); --bulb-h: calc(10px * var(--rec-scale)); }
+.rec-console--match .rec-meter--chip { --bulb-w: calc(2px * var(--rec-scale)); --bulb-h: calc(6px * var(--rec-scale)); }
+.rec-console--match .rec-meter--large { --bulb-w: calc(5px * var(--rec-scale)); --bulb-h: calc(13px * var(--rec-scale)); }
+
+@media (max-width: 760px) {
+	.rec-console--match .rec-meter--large { --bulb-w: 5px; --bulb-h: 12px; }
+}
