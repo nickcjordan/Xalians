@@ -1,6 +1,6 @@
 # Reclamation (second design of the game spoke formerly called Tribute)
 
-Status: baseline agreed with Nick 2026-09-02 after two full brainstorming passes; named Reclamation the same day. Supersedes the first-attempt row-based ruleset (still playable at `/tribute` on `feat/tribute-prototype` as a reference implementation of the engine skeleton) and every earlier Tribute document. The engine for this design lives in `my-app/src/gameplay/expedition/` (a match is an expedition; the game is Reclamation).
+Status: baseline agreed with Nick 2026-09-02 after two full brainstorming passes; named Reclamation the same day. Supersedes the first-attempt row-based ruleset and every earlier Tribute document; the row game's page, engine and stylesheet were removed from the repo on 2026-09-05 at Nick's direction (Reclamation is the redesign of that game, not a second game), and the one helper Reclamation borrowed from it, the element matchup blend, now lives in `expedition/elementMatchup.js`. The engine for this design lives in `my-app/src/gameplay/expedition/` (a match is an expedition; the game is Reclamation).
 
 ## What changed and why
 
