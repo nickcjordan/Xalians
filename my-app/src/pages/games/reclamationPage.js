@@ -3,7 +3,9 @@ import XalianNavbar from '../../components/navbar';
 import ReclamationMatch from '../../components/games/reclamation/reclamationMatch';
 import { HoldMeter } from '../../components/games/reclamation/reclamationFigure';
 import { PhaseGlyph, RivalGlyph } from '../../components/games/reclamation/reclamationGlyphs';
-import { buildRosters } from '../../gameplay/expedition/roster';
+import { buildDraftPools, botDraft, validateKeep } from '../../gameplay/expedition/draft';
+import ReclamationDraft from '../../components/games/reclamation/reclamationDraft';
+import { createSound } from '../../components/games/reclamation/reclamationSound';
 import { createMatch } from '../../gameplay/expedition/expeditionRules';
 import { getWorlds } from '../../gameplay/expedition/sites';
 import { RIVALS, DEFAULT_RIVAL_ID, rivalById } from '../../gameplay/expedition/expeditionBot';
@@ -140,7 +142,43 @@ class ReclamationPage extends React.Component {
 			// what the running table was given when it mounted, so a resume restores the log,
 			// the squad order and the rival's dice as well as the engine state
 			resume: null,
+			// the draft: eighteen dealt, twelve kept, before the frame is entered
+			draft: null,
+			soundOn: false,
 		};
+		// the console's cues, synthesized in code, off until the player turns them on
+		this.sound = createSound({});
+		this.state.soundOn = this.sound.enabled();
+	}
+
+	componentWillUnmount() {
+		this.sound.dispose();
+	}
+
+	toggleSound = () => {
+		this.sound.toggle();
+		const on = this.sound.enabled();
+		if (on) {
+			this.sound.play('lift');
+		}
+		this.setState({ soundOn: on });
+	};
+
+	renderSoundToggle() {
+		const { soundOn } = this.state;
+		return (
+			<button
+				type="button"
+				className={`g-btn rec-sound${soundOn ? ' rec-sound--on' : ''}`}
+				onClick={this.toggleSound}
+				aria-pressed={soundOn}
+				title={soundOn ? 'Console sound is on. Press to mute.' : 'Console sound is off. Press to turn it on.'}
+				data-sound
+			>
+				<span className={`g-lamp ${soundOn ? 'g-lamp--amber' : 'g-lamp--off'}`} aria-hidden="true" />
+				Sound
+			</button>
+		);
 	}
 
 	setMode = (mode) => {
@@ -153,12 +191,39 @@ class ReclamationPage extends React.Component {
 		this.setState({ rivalId });
 	};
 
+	// the draft comes first: eighteen creatures dealt to each side under the seed, the
+	// nine worlds of the Proving shown, and the handler keeps twelve; the rival keeps its
+	// own twelve by its habit
 	begin = (seed) => {
-		const { rivalId } = this.state;
-		const { rosterA, rosterB } = buildRosters(seed);
-		const match = createMatch({ rosterA, rosterB, worlds: getWorlds(), seed });
+		const { poolA, poolB, frames } = buildDraftPools(seed);
 		clearMatch();
-		this.setState((prev) => ({ seed, match, rivalId, resume: null, saved: null, matchKey: prev.matchKey + 1 }));
+		this.setState({ seed, draft: { poolA, poolB, frames, keepIds: [] }, resume: null, saved: null, match: null });
+	};
+
+	toggleKeep = (recordId) => {
+		this.setState((prev) => {
+			const kept = prev.draft.keepIds.includes(recordId)
+				? prev.draft.keepIds.filter((id) => id !== recordId)
+				: prev.draft.keepIds.length < ROSTER_SIZE ? [...prev.draft.keepIds, recordId] : prev.draft.keepIds;
+			return { draft: { ...prev.draft, keepIds: kept } };
+		});
+	};
+
+	keepAll = (ids) => {
+		this.setState((prev) => ({ draft: { ...prev.draft, keepIds: ids.slice(0, ROSTER_SIZE) } }));
+	};
+
+	confirmDraft = () => {
+		const { draft, seed, rivalId } = this.state;
+		if (!draft || !validateKeep(draft.poolA, draft.keepIds)) {
+			return;
+		}
+		const rival = rivalById(rivalId);
+		const rosterA = draft.keepIds.map((id) => draft.poolA.find((r) => r.id === id));
+		const keepB = botDraft(draft.poolB, draft.frames, rival);
+		const rosterB = keepB.map((id) => draft.poolB.find((r) => r.id === id));
+		const match = createMatch({ rosterA, rosterB, worlds: getWorlds(), seed });
+		this.setState((prev) => ({ match, draft: null, matchKey: prev.matchKey + 1 }));
 	};
 
 	startMatch = () => {
@@ -209,8 +274,33 @@ class ReclamationPage extends React.Component {
 	};
 
 	render() {
-		const { match, seed, matchKey, mode, rivalId, saved, resume } = this.state;
+		const { match, seed, matchKey, mode, rivalId, saved, resume, draft } = this.state;
 		const rival = rivalById(rivalId);
+
+		if (draft) {
+			return (
+				<div className="g-console rec-console rec-console--draft">
+					<XalianNavbar />
+					<div className="g-shell rec-shell rec-shell--draft">
+						<header className="rec-masthead">
+							<span className="g-kicker">Kozrak's Charter</span>
+							<h1 className="rec-masthead-title">Reclamation</h1>
+							<span className="rec-masthead-rival" data-masthead-rival>against the {rival.name}</span>
+							<span className="g-mono rec-masthead-seed">seed {seed}</span>
+						</header>
+						<ReclamationDraft
+							pool={draft.poolA}
+							frames={draft.frames}
+							keepIds={draft.keepIds}
+							onToggle={this.toggleKeep}
+							onKeepAll={this.keepAll}
+							onConfirm={this.confirmDraft}
+							rivalName={rival.name}
+						/>
+					</div>
+				</div>
+			);
+		}
 
 		if (match) {
 			const squad = resume && resume.squadIds && resume.rosters
@@ -225,6 +315,7 @@ class ReclamationPage extends React.Component {
 							<h1 className="rec-masthead-title">Reclamation</h1>
 							<ModeSwitch mode={mode} onChange={this.setMode} compact />
 							<span className="rec-masthead-rival" data-masthead-rival>against the {rival.name}</span>
+							{this.renderSoundToggle()}
 							<span className="g-mono rec-masthead-seed">seed {seed}</span>
 						</header>
 						<ReclamationMatch
@@ -239,6 +330,7 @@ class ReclamationPage extends React.Component {
 							mode={mode}
 							onEngineStep={this.onEngineStep}
 							onNewProving={this.newProving}
+							sound={this.sound}
 						/>
 					</div>
 				</div>

@@ -112,6 +112,7 @@ function ReclamationFigure({
 	arrive,
 	label,
 	badge,
+	threat,
 	onClick,
 	size,
 	title,
@@ -133,6 +134,7 @@ function ReclamationFigure({
 	if (recommended) classes.push('rec-figure--recommended');
 	if (dimmed) classes.push('rec-figure--dimmed');
 	if (acting) classes.push('rec-figure--acting');
+	if (threat) classes.push(`rec-figure--threat-${threat.level}`);
 	if (hit) classes.push('rec-figure--hit');
 	if (hover) classes.push('rec-figure--hover');
 	if (arrive) classes.push('rec-figure--arrive');
@@ -175,6 +177,7 @@ function ReclamationFigure({
 			<span className="rec-figure-plate">
 				<span className="rec-figure-name">{name}</span>
 				{badge && <span className="rec-figure-badge">{badge}</span>}
+				{threat && <span className={`rec-figure-threat rec-figure-threat--${threat.level}`} title={threat.text} data-threat={threat.level}>{threat.level}</span>}
 			</span>
 			<span className="rec-figure-foot">
 				{typeof hold === 'number' && (

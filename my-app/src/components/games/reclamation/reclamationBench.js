@@ -5,8 +5,8 @@ import { pieceShadowFilter } from '../duel/board/duelPieceToken';
 import { team } from '../../../constants/designTokens';
 import { slotStateOf, siteHoldsFor } from './reclamationRoster';
 import { speciesLabel, formatHold } from './reclamationNarration';
-import { prepare } from '../../../gameplay/expedition/creatureOnTable';
-import { SENDABLE } from '../../../gameplay/expedition/expeditionInterpretation';
+import { prepare, initiativeOf } from '../../../gameplay/expedition/creatureOnTable';
+import { SENDABLE, RETURNED_SEND_COST } from '../../../gameplay/expedition/expeditionInterpretation';
 
 /*
 	ReclamationBench — the squad on a bench under the three worlds (Nick, 2026-09-04,
@@ -39,6 +39,8 @@ function lampLevel(hold) {
 function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspect, onHover }) {
 	const slot = slotStateOf(record, view, you);
 	const inHand = slot.state === 'hand';
+	// the Loki line: back from a lost world, sendable again at double cost
+	const returned = inHand && ((view.players[you].returned || []).includes(record.id));
 	const holds = inHand ? siteHoldsFor(record, view, you) : null;
 	const stealthy = prepare(record, view.frame.sites[0], null, 0).stealthy;
 	const el = record.element.primary;
@@ -70,6 +72,7 @@ function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspec
 					<XalianImage speciesName={record.species} primaryType={el} padding="0px" fill="black" filter={pieceShadowFilter(team.one, 44)} moreClasses="rec-plinth-art" />
 				</span>
 				<span className="rec-plinth-name">{speciesLabel(record)}</span>
+				<span className="rec-plinth-init g-mono" title="Initiative: the higher acts first when orders resolve">{Math.round(initiativeOf(record))}</span>
 				{inHand && holds && (
 					<span className="rec-lamps" aria-label="Where it holds well">
 						{holds.map((h) => (
@@ -85,6 +88,9 @@ function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspec
 					<span className={`rec-plinth-tag rec-plinth-tag--${slot.state}`}>
 						{slot.state === 'sent' ? slot.site.world.planet : slot.state === 'holding' ? 'holding' : slot.state === 'routed' ? 'routed' : 'away'}
 					</span>
+				)}
+				{inHand && returned && (
+					<span className="rec-plinth-tag rec-plinth-tag--returned" title={`Withdrawn from a lost world and back in hand; its next send costs ${RETURNED_SEND_COST} against the cap`}>returned</span>
 				)}
 				{inHand && (suggested || stealthy) && (
 					<span className="rec-plinth-marks">
@@ -128,7 +134,9 @@ function ReclamationBench({
 	const me = view.players[you];
 	const yourTurn = view.turn === you && view.phase === 'deploy';
 	const advanced = mode === 'advanced';
-	const sendsLeft = Math.max(0, SENDABLE - (me.sentCount || 0));
+	// the round's cap: the sendable ten, plus the trailing seat's bonus send this round
+	const cap = typeof me.sendableCap === 'number' ? me.sendableCap : SENDABLE;
+	const sendsLeft = Math.max(0, cap - (me.sentCount || 0));
 	const armed = armedRecordId ? (me.roster || []).find((r) => r.id === armedRecordId) : null;
 	const step = !yourTurn ? 0 : armed ? 2 : 1;
 	const rec = recommendation && recommendation.type === 'send' ? recommendation : null;
@@ -169,10 +177,10 @@ function ReclamationBench({
 					<h3 className="rec-bench-heading" key={heading}>{heading}</h3>
 					{sendsLeft === 0 && <p className="rec-bench-lead g-body">{lead}</p>}
 				</div>
-				<span className="rec-deploy-count" title={`${me.sentCount || 0} of ${SENDABLE} sends spent this Proving; ${(me.roster || []).length} in hand`}>
+				<span className="rec-deploy-count" title={`${me.sentCount || 0} of ${cap} sends spent this Proving${cap > SENDABLE ? ", one of them the trailing seat's bonus this round" : ''}; ${(me.roster || []).length} in hand`}>
 					<span className="rec-sends" aria-hidden="true">
-						{Array.from({ length: SENDABLE }).map((_, i) => (
-							<span className={`rec-send-pip${i < (me.sentCount || 0) ? ' rec-send-pip--spent' : ''}`} key={i} />
+						{Array.from({ length: cap }).map((_, i) => (
+							<span className={`rec-send-pip${i < (me.sentCount || 0) ? ' rec-send-pip--spent' : ''}${i >= SENDABLE ? ' rec-send-pip--bonus' : ''}`} key={i} />
 						))}
 					</span>
 					<span className="g-mono rec-sends-text">{sendsLeft} send{sendsLeft === 1 ? '' : 's'} left</span>

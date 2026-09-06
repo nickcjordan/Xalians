@@ -178,7 +178,8 @@ function randomChooseSend(publicState, ownRoster, handler, rng) {
 	}
 	const frame = publicState.frame;
 	const anyOnBoard = frame.sites.some((s) => (publicState.board[s.id][handler] || []).length > 0);
-	const remainingSends = Math.min(SENDABLE - me.sentCount, ownRoster.length);
+	const sendableCap = typeof me.sendableCap === 'number' ? me.sendableCap : SENDABLE;
+	const remainingSends = Math.min(sendableCap - me.sentCount, ownRoster.length);
 	if (remainingSends <= 0) {
 		return { type: 'pass', reason: 'no-sendable-creatures' };
 	}
@@ -347,6 +348,9 @@ function runOneMatch(matchSeed, pool, rng, options) {
 
 				let nextState = null;
 				if (action.type === 'send') {
+					// captured BEFORE send(), which clears the flag on the sent record - the
+					// Loki line (docs/design/reclamation-play-enhancements.md "Pass 2 levers")
+					const wasReturned = (state.players[handler].returned || []).includes(action.recordId);
 					nextState = send(state, handler, action.recordId, action.siteId, action.hidden);
 					if (nextState) {
 						const record = state.players[handler].roster.find((r) => r.id === action.recordId);
@@ -360,6 +364,7 @@ function runOneMatch(matchSeed, pool, rng, options) {
 							hidden: !!action.hidden,
 							strainLevel: strainLevel(record, site, site.world),
 							homeGround: !!(record.provenance && record.provenance.origin && String(record.provenance.origin).toLowerCase() === String(site.world.planet).toLowerCase()),
+							returnedSend: wasReturned,
 						};
 					}
 				} else {
@@ -758,6 +763,18 @@ function summarize(matchResults, args, pool, rivals) {
 		siteWinRateVisible: rate(visibleSends.filter((s) => s.won).length, visibleSends.filter((s) => !s.tie).length),
 	};
 
+	// The Loki line (Pass 2 lever, docs/design/reclamation-play-enhancements.md): how often
+	// a returned creature (withdrawn from a LOST world, sent again at RETURNED_SEND_COST)
+	// is actually re-sent, and how it fares versus a normal first send.
+	const returnedSends = allSends.filter((s) => s.returnedSend);
+	const firstSends = allSends.filter((s) => !s.returnedSend);
+	const returnedSendStats = {
+		perMatch: average(completedMatches.map((m) => m.sendRecords.filter((s) => s.returnedSend).length)),
+		rate: rate(returnedSends.length, allSends.length),
+		siteWinRateReturned: rate(returnedSends.filter((s) => s.won).length, returnedSends.filter((s) => !s.tie).length),
+		siteWinRateFirstSend: rate(firstSends.filter((s) => s.won).length, firstSends.filter((s) => !s.tie).length),
+	};
+
 	// stack-vs-spread: creatures per side per site (from send counts already grouped by
 	// site via siteRecords' countA/countB, which reflect deploy-end stacking)
 	const stackHistogram = { A: {}, B: {} };
@@ -788,6 +805,7 @@ function summarize(matchResults, args, pool, rivals) {
 		strainIncidence,
 		homeGround,
 		hiddenSendStats,
+		returnedSendStats,
 		stackVsSpread,
 	};
 
@@ -1114,6 +1132,8 @@ function printReport(report) {
 	console.log(`home ground incidence: ${fmtRate(c.homeGround.incidenceRate)}, site win rate: ${fmtRate(c.homeGround.siteWinRate)}`);
 	console.log(`hidden send rate: ${fmtRate(c.hiddenSendStats.rate)}`);
 	console.log(`  site win rate hidden: ${fmtRate(c.hiddenSendStats.siteWinRateHidden)}, visible: ${fmtRate(c.hiddenSendStats.siteWinRateVisible)}`);
+	console.log(`returned (Loki line) send rate: ${fmtRate(c.returnedSendStats.rate)}, ${c.returnedSendStats.perMatch.toFixed(2)} per match`);
+	console.log(`  site win rate returned: ${fmtRate(c.returnedSendStats.siteWinRateReturned)}, first send: ${fmtRate(c.returnedSendStats.siteWinRateFirstSend)}`);
 	console.log('stack-vs-spread histogram (creatures at one site, A):');
 	printHistogram(c.stackVsSpread.histogram.A);
 	console.log('stack-vs-spread histogram (creatures at one site, B):');

@@ -18,7 +18,7 @@
 */
 
 import { prepare, traitKeywordsOf } from './creatureOnTable.js';
-import { getActClass, ACT_CLASS, SENDABLE, SITES_TO_CLINCH, FRAMES_PER_MATCH } from './expeditionInterpretation.js';
+import { getActClass, ACT_CLASS, SENDABLE, SITES_TO_CLINCH, FRAMES_PER_MATCH, RETURNED_SEND_COST } from './expeditionInterpretation.js';
 
 // --- tunables ----------------------------------------------------------------------
 
@@ -218,7 +218,11 @@ export function chooseSend(publicState, ownRoster, handler, rng, rival) {
 		return { type: 'relocate', siteId: relocation.siteId, reason: 'vanguard-falls-back' };
 	}
 
-	const remainingSends = Math.min(SENDABLE - me.sentCount, ownRoster.length);
+	// me.sendableCap is SENDABLE plus this round's trailing-seat bonus, if any (Pass 2's
+	// roster-economy lever); falls back to the plain SENDABLE constant for any caller that
+	// still hands in a publicState from before the field existed.
+	const sendableCap = typeof me.sendableCap === 'number' ? me.sendableCap : SENDABLE;
+	const remainingSends = Math.min(sendableCap - me.sentCount, ownRoster.length);
 	if (remainingSends <= 0) {
 		return { type: 'pass', reason: 'no-sendable-creatures' };
 	}
@@ -236,9 +240,20 @@ export function chooseSend(publicState, ownRoster, handler, rng, rival) {
 	const myOnBoard = frame.sites.reduce((n, s) => n + (publicState.board[s.id][handler] || []).length, 0);
 	const evenShare = Math.floor((remainingSends + myOnBoard) / (framesAfterThis + 1));
 
+	// the Loki line: a record flagged `returned` (own-side only, from getPublicState) costs
+	// RETURNED_SEND_COST against the round's remaining cap instead of 1 - skip it outright
+	// if the remaining cap cannot afford it, and knock its value down by the cost of the
+	// extra unit spent (same currency holdCost already prices a send in).
+	const returnedIds = new Set(me.returned || []);
+	const capRemaining = sendableCap - me.sentCount;
+
 	// score every (creature, site)
 	const candidates = [];
 	ownRoster.forEach((record) => {
+		const cost = returnedIds.has(record.id) ? RETURNED_SEND_COST : 1;
+		if (cost > capRemaining) {
+			return;
+		}
 		frame.sites.forEach((site) => {
 			const prepared = prepare(record, site, null, me.sentCount);
 			const h = prepared.hold;
@@ -255,7 +270,10 @@ export function chooseSend(publicState, ownRoster, handler, rng, rival) {
 			if (prepared.strainLevel === 'severe') {
 				value -= 1;
 			}
-			candidates.push({ record, site, prepared, margin: m, value, flips: m <= 0 && h > -m });
+			if (cost > 1) {
+				value -= weights.holdCost * h * (cost - 1);
+			}
+			candidates.push({ record, site, prepared, margin: m, value, flips: m <= 0 && h > -m, cost });
 		});
 	});
 	if (candidates.length === 0) {
@@ -292,7 +310,23 @@ export function chooseSend(publicState, ownRoster, handler, rng, rival) {
 	const pick = near.length > 1 && rng ? near[Math.floor(rng.float() * near.length)] : best;
 
 	const canHide = traitsOf(pick.record).includes('stealthy');
-	const baseRuleSaysHide = canHide && Math.abs(pick.margin) < pick.prepared.hold;
+	// the base hide rule (docs/design/reclamation-play-enhancements.md "Pass 2 levers"):
+	// hide when the send flips or contests a world the rival can still answer (the rival
+	// has not passed) AND the creature's hold is at least the site's current margin; send
+	// openly when securing a lead. Margin here is BEFORE this creature lands (candidates
+	// are always scored against the pre-send margin), so almost every real send has
+	// margin <= 0 - the old rule (|margin| < hold) read that as "always hide", which was
+	// the flip condition restated and gave hideBias nothing to act on (pass-1 friction).
+	// The fix judges the site by where the send LEAVES it: resultMargin is this seat's
+	// margin after the creature's own hold is added. A flip or a still-contested site
+	// (resultMargin not comfortably positive, i.e. the rival's remaining hold could still
+	// answer it) hides; a send that leaves the site solidly ahead (resultMargin at least
+	// the creature's own hold beyond breakeven - the rival would need to match this send
+	// again just to get back to even) is "securing a lead" and goes openly.
+	const resultMargin = pick.margin + pick.prepared.hold;
+	const securesALead = resultMargin >= pick.prepared.hold;
+	const rivalCanStillAnswer = !opp.passed;
+	const baseRuleSaysHide = canHide && rivalCanStillAnswer && !securesALead && pick.prepared.hold >= pick.margin;
 	const hidden = applyHideBias(baseRuleSaysHide, canHide, weights.hideBias, rng);
 
 	return { type: 'send', recordId: pick.record.id, siteId: pick.site.id, hidden };

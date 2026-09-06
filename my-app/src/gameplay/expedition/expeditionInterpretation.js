@@ -52,6 +52,23 @@ export const WORLDS_PER_MATCH = FRAMES_PER_MATCH * WORLDS_PER_FRAME;
 // every authored world carries this many sites; the frame loads one of them
 export const SITES_PER_WORLD = 3;
 
+// Trailing-seat compensation, Pass 2's roster-economy lever (docs/design/
+// reclamation-play-enhancements.md "Pass 2 levers"): the side holding fewer worlds after a
+// round gets this many extra sends (SENDABLE + ROSTER_TRAILING_BONUS) for the very next
+// round only, in place of the earlier rule where the trailing seat simply moved first.
+export const ROSTER_TRAILING_BONUS = 1;
+
+// The Loki line, Pass 2's tested-not-shipped-unless-sane lever (docs/design/
+// reclamation-play-enhancements.md "Pass 2 levers"): a creature withdrawn from a LOST world
+// (not a tie) returns to its handler's roster and may be sent again this match, but its
+// next send counts RETURNED_SEND_COST against SENDABLE (and the round's sendable cap)
+// instead of the usual 1, since it is a second deployment of the same creature. A creature
+// on a WON world stays in the frame as always; a routed creature is still out for the
+// match. See expeditionRules.js's judge()/send() for where this is applied, and
+// getPublicState's players[handler].returned for how the bench is told which roster
+// creatures carry the flag.
+export const RETURNED_SEND_COST = 2;
+
 // ---------------------------------------------------------------------------
 // the sixteen acts, grouped by what they touch ("The acts" section of the design doc)
 // ---------------------------------------------------------------------------
