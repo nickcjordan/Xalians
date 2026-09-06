@@ -438,6 +438,59 @@ export function conductSentence(prepared) {
 	siteHoldTotal(publicState, siteId, seat) -> the live sum the Judge will compare, from
 	the engine's own prepare() with the same companion counts the engine uses.
 */
+/*
+	threatsFor(publicState, you) -> { [recordId]: { level: 'rout' | 'stagger', by, act, magnitude } }
+
+	The worst the VISIBLE enemy could do to each of your creatures this round, from public
+	information: every enemy act in reach (contact and reach at the same world, projection
+	and area acts anywhere in the frame), its magnitude against the creature, compared to
+	the creature's living hold with the engine's thresholds. Hidden enemies are unknown
+	and so are not counted; the banner says one is somewhere.
+*/
+export function threatsFor(publicState, you) {
+	const units = flattenBoard(publicState);
+	const threats = {};
+	units.filter((u) => u.seat === you).forEach((unit) => {
+		const hold = livingHold(unit, publicState);
+		let worst = null;
+		units.filter((u) => u.seat !== you && !u.hidden).forEach((enemy) => {
+			enemy.prepared.acts.forEach((act) => {
+				const cls = getActClass(act.action);
+				if (cls === ACT_CLASS.SUPPORT) {
+					return;
+				}
+				const isArea = AREA_ACTIONS.includes(act.action);
+				const inReach = isArea || cls === ACT_CLASS.PROJECTION || enemy.site.id === unit.site.id;
+				if (!inReach || act.action === 'shove') {
+					return;
+				}
+				const magnitude = magnitudeAgainst(enemy.record, act, unit.record);
+				const level = magnitude >= hold * ROUT_FRACTION ? 'rout' : magnitude >= hold * 0.5 ? 'stagger' : null;
+				if (!level) {
+					return;
+				}
+				const rank = level === 'rout' ? 2 : 1;
+				if (!worst || rank > worst.rank || (rank === worst.rank && magnitude > worst.magnitude)) {
+					worst = { level, rank, by: enemy, act, magnitude };
+				}
+			});
+		});
+		if (worst) {
+			threats[unit.recordId] = worst;
+		}
+	});
+	return threats;
+}
+
+// one clause for a threat, for the plan line and the tooltip
+export function threatSentence(threat) {
+	if (!threat) {
+		return '';
+	}
+	const verb = threat.level === 'rout' ? 'could rout it' : 'could stagger it';
+	return `${speciesLabel(threat.by.record)}'s ${threat.act.action} ${threat.act.magnitude} ${verb}`;
+}
+
 export function siteHoldTotal(publicState, siteId, seat) {
 	const site = publicState.frame.sites.find((s) => s.id === siteId);
 	return (publicState.board[siteId][seat] || [])

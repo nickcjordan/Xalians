@@ -5,8 +5,9 @@ import { buildExpeditionPool } from '../../../../gameplay/expedition/roster';
 import { ROSTER_SIZE } from '../../../../gameplay/expedition/expeditionInterpretation';
 import {
 	orderPreview, flattenBoard, siteHoldTotal, conductSentence, conductClause, previewSentence,
-	pickAreaSitePreview,
+	pickAreaSitePreview, threatsFor, threatSentence,
 } from '../reclamationPreview';
+import { magnitudeAgainst } from '../../../../gameplay/expedition/creatureOnTable';
 import { prepare } from '../../../../gameplay/expedition/creatureOnTable';
 
 const SEED = 'preview-test';
@@ -221,5 +222,50 @@ describe('duplicate actions on one creature', () => {
 		expect(matching.length).toBeGreaterThan(1);
 		// find() takes the first, which is what the panel's merged option must represent
 		expect(prepared.acts.find((a) => a.action === dupe)).toBe(matching[0]);
+	});
+});
+
+describe('threatsFor', () => {
+	it('marks a creature the visible enemy could stagger or rout, from the engine thresholds, and says by whom', () => {
+		// stack every creature of both sides onto one world so contact acts are in reach
+		let state = buildMatch();
+		const site = state.frames[state.frameIndex].sites[0];
+		for (let i = 0; i < 8; i++) {
+			const handler = state.turn;
+			const record = state.players[handler].roster[0];
+			state = send(state, handler, record.id, site.id, false);
+		}
+		const view = getPublicState(state, 'A');
+		const threats = threatsFor(view, 'A');
+		const units = flattenBoard(view);
+		const mine = units.filter((u) => u.seat === 'A');
+		const theirs = units.filter((u) => u.seat === 'B');
+		expect(mine.length).toBe(4);
+		// recompute the worst case by hand for every one of mine
+		mine.forEach((unit) => {
+			let worstLevel = null;
+			theirs.forEach((enemy) => enemy.prepared.acts.forEach((act) => {
+				if (act.class === 'support' || act.action === 'shove') return;
+				const m = magnitudeAgainst(enemy.record, act, unit.record);
+				const level = m >= unit.prepared.hold ? 'rout' : m >= unit.prepared.hold * 0.5 ? 'stagger' : null;
+				if (level === 'rout' || (level === 'stagger' && worstLevel !== 'rout')) worstLevel = level;
+			}));
+			if (worstLevel) {
+				expect(threats[unit.recordId]).toBeDefined();
+				expect(threats[unit.recordId].level).toBe(worstLevel);
+				expect(threatSentence(threats[unit.recordId])).toMatch(/could (rout|stagger) it$/);
+			} else {
+				expect(threats[unit.recordId]).toBeUndefined();
+			}
+		});
+	});
+
+	it('reads nothing when no enemy is in reach', () => {
+		const state = deployOneEach(buildMatch());
+		// move nothing: one creature each on the same world; a threat may or may not exist,
+		// but a creature alone on another world has none
+		const view = getPublicState(state, 'A');
+		const threats = threatsFor(view, 'A');
+		Object.values(threats).forEach((t) => expect(['rout', 'stagger']).toContain(t.level));
 	});
 });

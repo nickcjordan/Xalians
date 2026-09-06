@@ -145,6 +145,7 @@ function ReclamationWorld({
 	recommendedSiteId,
 	holdingIds,
 	hiddenEnemyCount,
+	threats,
 	badges,
 	highlights,
 	arrival,
@@ -225,6 +226,7 @@ function ReclamationWorld({
 						flash: hl.hit === entry.recordId ? hl.flash : undefined,
 						arrive: arrivedIds.includes(entry.recordId),
 						badge: badges ? badges[entry.recordId] : undefined,
+						threat: threats && threats[entry.recordId] ? threats[entry.recordId] : undefined,
 						onClick: (e) => {
 							e.stopPropagation();
 							onFigureClick(entry, seat, site);
@@ -271,9 +273,24 @@ function ReclamationWorld({
 											<span className="rec-tally-label">rival</span>
 											<span className="rec-tally-value rec-tick" data-total-seat={opponent} data-site-total={site.id} key={`t-${formatHold(totalTheirs)}`}>{formatHold(totalTheirs)}</span>
 										</span>
-										<span className={`rec-tally-text rec-tick${ghost ? ' rec-tally-text--preview' : ''}`} key={afterText || margin.text || 'open'}>
-											{afterText || margin.text || 'unclaimed'}
-										</span>
+										{(() => {
+											// the balance: the rival's hold pushes in from the left, yours from the
+											// right, a previewed send as a hatched extension of yours; the words are
+											// kept only for the states a bar cannot say (unclaimed, level)
+											const total = totalMine + totalTheirs + ghostHold;
+											const pctTheirs = total > 0 ? (totalTheirs / total) * 100 : 0;
+											const pctMine = total > 0 ? (totalMine / total) * 100 : 0;
+											const pctGhost = total > 0 ? (ghostHold / total) * 100 : 0;
+											const word = total === 0 ? 'unclaimed' : Math.abs(totalMine + ghostHold - totalTheirs) < 0.05 ? 'level' : null;
+											return (
+												<span className={`rec-balance${ghost ? ' rec-balance--preview' : ''}`} title={afterText || margin.text || 'unclaimed'} data-balance={site.id} data-balance-text={afterText || margin.text || 'unclaimed'}>
+													<span className="rec-balance-fill rec-balance-fill--theirs" style={{ width: `${pctTheirs}%` }} />
+													<span className="rec-balance-fill rec-balance-fill--ghost" style={{ width: `${pctGhost}%`, right: `${pctMine}%` }} />
+													<span className="rec-balance-fill rec-balance-fill--mine" style={{ width: `${pctMine}%` }} />
+													{word && <span className="rec-balance-word">{word}</span>}
+												</span>
+											);
+										})()}
 										<span className="rec-tally-side rec-tally-side--mine">
 											<span className="rec-tally-value rec-tick" data-total-seat={you} data-site-total={site.id} key={`m-${formatHold(totalMine)}`}>{formatHold(totalMine)}</span>
 											{ghost && <span className="rec-tally-plus">+{formatHold(ghostHold)}</span>}
@@ -287,7 +304,7 @@ function ReclamationWorld({
 							    edge painted in its side's colour and labelled, so whose creature stands
 							    where is read from the floor before the figures are */}
 							<div className={`rec-site-field rec-site-floor${empty ? ' rec-site-field--empty' : ''}`}>
-								<div className="rec-rank rec-rank--theirs" data-rank="theirs">
+								<div className={`rec-rank rec-rank--theirs${theirs.length > 4 ? ' rec-rank--crowded' : ''}`} data-rank="theirs">
 									<span className="rec-rank-edge rec-rank-edge--theirs" aria-hidden="true">rival</span>
 									{theirs.map((entry) => <ReclamationFigure {...figureProps(entry, opponent, 'down')} />)}
 									{theirs.length === 0 && <span className="rec-rank-open">no one</span>}
@@ -311,7 +328,7 @@ function ReclamationWorld({
 									)}
 								</div>
 
-								<div className="rec-rank rec-rank--mine" data-rank="mine">
+								<div className={`rec-rank rec-rank--mine${mine.length > 4 ? ' rec-rank--crowded' : ''}`} data-rank="mine">
 									{mine.map((entry) => <ReclamationFigure {...figureProps(entry, you, 'up')} />)}
 									{mine.length === 0 && <span className="rec-rank-open">no one</span>}
 									<span className="rec-rank-edge rec-rank-edge--mine" aria-hidden="true">you</span>

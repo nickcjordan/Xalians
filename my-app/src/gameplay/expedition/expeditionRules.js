@@ -24,6 +24,8 @@ import { prepare, magnitudeAgainst, holdAtSite, targetMatchupMultiplier, traitKe
 import {
 	ROSTER_SIZE,
 	SENDABLE,
+	ROSTER_TRAILING_BONUS,
+	RETURNED_SEND_COST,
 	WORLDS_PER_MATCH,
 	FRAMES_PER_MATCH,
 	WORLDS_PER_FRAME,
@@ -199,6 +201,10 @@ export function createMatch({ rosterA, rosterB, worlds, seed }) {
 		holding: [], // record ids currently holding a won site (stay in that world's model)
 		routed: [], // record ids routed out of the expedition (returned to owner post-match)
 		withdrawn: [], // record ids withdrawn from lost/tied sites (out of the expedition)
+		// The Loki line (Pass 2 lever): record ids back in `roster` after being withdrawn
+		// from a LOST (not tied) world, whose NEXT send costs RETURNED_SEND_COST against the
+		// sendable cap instead of 1. Cleared for a record the moment it is sent again.
+		returned: [],
 		passed: false,
 		firstPasser: false,
 		sitesWon: 0,
@@ -219,6 +225,7 @@ export function createMatch({ rosterA, rosterB, worlds, seed }) {
 		orders: { A: {}, B: {} }, // record id -> action name or 'hold', private until commit
 		committed: { A: false, B: false },
 		vanguardRelocated: { A: false, B: false }, // per-frame: has this handler used its one relocate?
+		trailingBonus: { A: 0, B: 0 }, // per-frame: extra sends the trailing seat gets this round only (ROSTER_TRAILING_BONUS)
 		phase: 'deploy',
 		starter,
 		turn: starter,
@@ -297,11 +304,28 @@ function computeHoldForEntry(state, entry, site) {
 // legality: sendable creatures
 // ---------------------------------------------------------------------------
 
-function sendableRoster(playerState) {
-	if (playerState.sentCount >= SENDABLE) {
+// The sendable cap for a round: SENDABLE, plus ROSTER_TRAILING_BONUS for the round
+// immediately after a round this player finished trailing on worlds held (Pass 2's
+// trailing-seat compensation - see judge()'s trailingBonus computation). state.trailingBonus
+// is per-frame and defaults to 0 for both sides on frame 1 and whenever the two sides are
+// level, so a match that never trails plays exactly as it did before this lever shipped.
+function sendableCapFor(state, player) {
+	const bonus = (state.trailingBonus && state.trailingBonus[player]) || 0;
+	return SENDABLE + bonus;
+}
+
+// the send cost for one record: RETURNED_SEND_COST if it is flagged `returned` (the Loki
+// line - a creature back in the roster after its world was lost), 1 otherwise.
+function sendCostFor(playerState, recordId) {
+	return (playerState.returned || []).includes(recordId) ? RETURNED_SEND_COST : 1;
+}
+
+function sendableRoster(playerState, cap) {
+	if (playerState.sentCount >= cap) {
 		return [];
 	}
-	return playerState.roster;
+	const remaining = cap - playerState.sentCount;
+	return playerState.roster.filter((r) => sendCostFor(playerState, r.id) <= remaining);
 }
 
 export function hasLegalSend(state, player) {
@@ -312,7 +336,7 @@ export function hasLegalSend(state, player) {
 	if (p.passed) {
 		return false;
 	}
-	return sendableRoster(p).length > 0;
+	return sendableRoster(p, sendableCapFor(state, player)).length > 0;
 }
 
 // ---------------------------------------------------------------------------
@@ -326,8 +350,10 @@ function isPlayersDeployTurn(state, player) {
 /*
 	send(state, handler, recordId, siteId, hidden=false)
 
-	Only in deploy, only on your turn, only if fewer than SENDABLE sent so far by you,
-	hidden only if the creature is stealthy. Any number of creatures may stand at a site.
+	Only in deploy, only on your turn, only if fewer than the round's sendable cap (SENDABLE,
+	plus ROSTER_TRAILING_BONUS if this player is compensated as this round's trailing seat)
+	sent so far by you, hidden only if the creature is stealthy. Any number of creatures may
+	stand at a site.
 */
 export function send(state, handler, recordId, siteId, hidden = false) {
 	if (!isPlayersDeployTurn(state, handler)) {
@@ -337,11 +363,14 @@ export function send(state, handler, recordId, siteId, hidden = false) {
 	if (p.passed) {
 		return null;
 	}
-	if (p.sentCount >= SENDABLE) {
-		return null;
-	}
 	const record = p.roster.find((r) => r.id === recordId);
 	if (!record) {
+		return null;
+	}
+	// the Loki line: a returned creature's send costs RETURNED_SEND_COST against the cap,
+	// not 1 - illegal if there is not enough of the round's cap left for it.
+	const cost = sendCostFor(p, recordId);
+	if (p.sentCount + cost > sendableCapFor(state, handler)) {
 		return null;
 	}
 	const frame = currentFrame(state);
@@ -367,9 +396,10 @@ export function send(state, handler, recordId, siteId, hidden = false) {
 	};
 
 	const nextRoster = p.roster.filter((r) => r.id !== recordId);
+	const nextReturned = p.returned.filter((id) => id !== recordId);
 	const nextPlayers = {
 		...state.players,
-		[handler]: { ...p, roster: nextRoster, sentCount: p.sentCount + 1 },
+		[handler]: { ...p, roster: nextRoster, returned: nextReturned, sentCount: p.sentCount + cost },
 	};
 
 	const nextBoard = {
@@ -1263,8 +1293,19 @@ function judge(state) {
 			const entries = s.board[site.id][player];
 			if (result.winner === player) {
 				s.players[player] = { ...s.players[player], holding: [...s.players[player].holding, ...entries.map((e) => e.recordId)], sitesWon: s.players[player].sitesWon + 1 };
+			} else if (result.winner === opponent) {
+				// LOST (not tied): the Loki line returns these creatures to the roster,
+				// flagged so their next send costs RETURNED_SEND_COST (see send()).
+				const recordIds = entries.map((e) => e.recordId);
+				const records = entries.map((e) => e.record);
+				s.players[player] = {
+					...s.players[player],
+					withdrawn: [...s.players[player].withdrawn, ...recordIds],
+					roster: [...s.players[player].roster, ...records],
+					returned: [...s.players[player].returned, ...recordIds],
+				};
 			} else {
-				// lost or tied (tie reverts to the Court): withdraw
+				// tied (reverts to the Court): withdraw, no Loki return
 				s.players[player] = { ...s.players[player], withdrawn: [...s.players[player].withdrawn, ...entries.map((e) => e.recordId)] };
 			}
 		});
@@ -1286,9 +1327,16 @@ function judge(state) {
 
 	const nextFrameIndex = s.frameIndex + 1;
 	const nextFrame = s.frames[nextFrameIndex];
-	// the side holding fewer worlds moves first in the next frame (moving first is the
-	// weaker seat, since the other side deploys with more information); equal: alternate
-	const nextStarter = sitesWonA !== sitesWonB ? (sitesWonA < sitesWonB ? 'A' : 'B') : otherPlayer(s.starter);
+	// Trailing-seat compensation (docs/design/reclamation-play-enhancements.md "Pass 2
+	// levers"): the side holding fewer worlds after this round gets ROSTER_TRAILING_BONUS
+	// extra sends for the next round only (see sendableCapFor in board helpers), rather
+	// than the earlier rule of moving first. Starter simply alternates every round now;
+	// equal sites also alternates, same as before.
+	const nextStarter = otherPlayer(s.starter);
+	const trailingBonus = { A: 0, B: 0 };
+	if (sitesWonA !== sitesWonB) {
+		trailingBonus[sitesWonA < sitesWonB ? 'A' : 'B'] = ROSTER_TRAILING_BONUS;
+	}
 
 	return {
 		...s,
@@ -1305,6 +1353,7 @@ function judge(state) {
 			A: { ...s.players.A, passed: false, firstPasser: false },
 			B: { ...s.players.B, passed: false, firstPasser: false },
 		},
+		trailingBonus,
 		phase: 'deploy',
 		starter: nextStarter,
 		turn: nextStarter,
@@ -1420,6 +1469,10 @@ export function getPublicState(state, handler) {
 			sitesWon: p.sitesWon,
 			hiddenSentThisRound: hiddenCountThisRound(who),
 			canRelocateVanguard: canRelocate(who),
+			// SENDABLE plus this round's trailing-seat bonus, if any (Pass 2's roster-economy
+			// lever); sitesWon is already public, so this reveals nothing the opponent
+			// couldn't derive themselves.
+			sendableCap: sendableCapFor(state, who),
 		};
 		if (isSelf) {
 			return {
@@ -1428,6 +1481,11 @@ export function getPublicState(state, handler) {
 				orders: state.orders[who],
 				committed: state.committed[who],
 				vanguardRecordId: ownVanguardRecordId(who),
+				// the Loki line: which of THIS handler's own roster record ids are flagged
+				// "returned" (withdrawn from a lost world, sendable again at
+				// RETURNED_SEND_COST) - own-side only, same as the roster itself, since the
+				// opponent's roster contents stay hidden.
+				returned: p.returned,
 			};
 		}
 		return { ...base, committed: state.committed[who] };

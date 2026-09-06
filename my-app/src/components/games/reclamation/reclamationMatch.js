@@ -16,7 +16,7 @@ import {
 	speciesLabel, formatHold, classifyEvent, narrateAct, narrateRelocate,
 	narrateSend, narratePass, narrateJudge, narrateMatchEnd,
 } from './reclamationNarration';
-import { orderPreview, flattenBoard, prepareWithCompanions, siteHoldTotal } from './reclamationPreview';
+import { orderPreview, flattenBoard, prepareWithCompanions, siteHoldTotal, threatsFor, threatSentence } from './reclamationPreview';
 import { recommendSend } from './reclamationAdvice';
 
 function capitalize(sentence) {
@@ -92,6 +92,7 @@ class ReclamationMatch extends React.Component {
 			arrival: null, // { id, ids, siteId, seat } figures that just landed
 			hoverRecordId: null, // the roster slot under the pointer: previewed on every site
 			hoverSiteId: null, // the site row under the pointer in the deploy panel
+			coached: readCoached(), // the first Proving's three steps, shown once
 		};
 		// your twelve in slot order, held for the whole expedition so the roster never reshuffles
 		this.squad = props.squad ? props.squad.slice() : props.initialMatch.players[YOU].roster.slice();
@@ -354,6 +355,18 @@ class ReclamationMatch extends React.Component {
 		this.noticeTimer = setTimeout(() => this.setState({ notice: null }), 3400);
 	};
 
+	// a cue on the console, if the player has sound on; never throws
+	cue = (name, opts) => {
+		if (this.props.sound) {
+			this.props.sound.play(name, opts);
+		}
+	};
+
+	dismissCoach = () => {
+		writeCoached();
+		this.setState({ coached: true });
+	};
+
 	// ------------------------------------------------------------------
 	// keyboard
 	// ------------------------------------------------------------------
@@ -478,6 +491,7 @@ class ReclamationMatch extends React.Component {
 		}
 
 		this.appendLogLines(lines);
+		this.cue('rival');
 		if (arrivals.length > 0) {
 			this.arrive(arrivals, (fellBack && !beat.siteId) ? fellBack.siteId : beat.siteId, THEM);
 		}
@@ -545,6 +559,9 @@ class ReclamationMatch extends React.Component {
 			this.notice(`You have sent all ${SENDABLE} creatures a Proving allows. The rest are your reserve.`);
 			return;
 		}
+		if (this.state.armedRecordId !== recordId) {
+			this.cue('lift');
+		}
 		this.setState((prev) => ({
 			armedRecordId: prev.armedRecordId === recordId ? null : recordId,
 			sendHidden: false,
@@ -604,6 +621,7 @@ class ReclamationMatch extends React.Component {
 			return;
 		}
 		this.tellSend(match, next, record, siteId, sendHidden);
+		this.cue('send');
 		this.setState({ match: next, armedRecordId: null, sendHidden: false, hoverSiteId: null, hoverRecordId: null }, this.afterEngineStep);
 	};
 
@@ -648,6 +666,7 @@ class ReclamationMatch extends React.Component {
 			return;
 		}
 		const line = narratePass({ you: true });
+		this.cue('pass');
 		this.appendLog(line);
 		this.beat({ kind: 'your-pass', seat: YOU, short: 'Passed', text: line });
 		this.beatPhaseChange(match, next);
@@ -753,6 +772,10 @@ class ReclamationMatch extends React.Component {
 		}
 
 		const newEvents = next.resolutionLog.slice(beforeLogLength);
+		this.cue('seal');
+		if (!this.state.coached) {
+			writeCoached();
+		}
 		this.appendLog('Orders are revealed.');
 		this.cutBeats();
 		this.beat({ kind: 'resolve', seat: null, short: 'Resolving', text: 'Orders are revealed. Each creature acts in turn, fastest first.' });
@@ -824,6 +847,13 @@ class ReclamationMatch extends React.Component {
 		}
 		const event = playback.events[playback.index];
 		this.narrateEvent(event, playback);
+		if (classifyEvent(event) === 'act') {
+			if (event.outcome === 'routed' || event.outcome === 'terrorized') {
+				this.cue('rout');
+			} else if (event.outcome === 'staggered' || event.outcome === 'shrugged') {
+				this.cue('strike', { magnitude: event.outcome === 'staggered' ? 0.8 : 0.3 });
+			}
+		}
 		this.setState((prev) => ({ playback: { ...prev.playback, index: prev.playback.index + 1, current: event } }));
 		// dev hook: window.__reclamationStepMs slows playback so it can be watched or captured
 		const stepMs = (typeof window !== 'undefined' && window.__reclamationStepMs) || RESOLUTION_STEP_MS;
@@ -947,6 +977,7 @@ class ReclamationMatch extends React.Component {
 		}, this.persist);
 
 		if (verdicts) {
+			this.cue(match.phase === 'matchEnd' ? 'charter' : 'stamp');
 			const tally = { yours: 0, theirs: 0, court: 0 };
 			Object.keys(verdicts).forEach((siteId) => { tally[verdicts[siteId].who] += 1; });
 			const parts = [];
@@ -1168,9 +1199,7 @@ class ReclamationMatch extends React.Component {
 							<span className={`g-chip g-chip--outline rec-status-element g-el-${site.world.element}`} key={site.id} title={`${site.world.planet}, at ${site.name}`}>{site.world.planet}</span>
 						))}
 					</span>
-					<span className="rec-status-next g-mono">
-						{view.nextFrame ? `then ${view.nextFrame.map((w) => w.planet).join(', ')}` : 'the last frame'}
-					</span>
+
 				</div>
 
 				<div className="rec-status-score" title={`First to ${SITES_TO_CLINCH} sites takes the Charter`}>
@@ -1275,6 +1304,12 @@ class ReclamationMatch extends React.Component {
 
 		const units = ordering ? flattenBoard(view).filter((u) => u.seat === YOU) : [];
 		const preview = ordering ? orderPreview(view, me.orders, YOU) : [];
+		// the threat read: during Orders each of your figures carries the worst the visible
+		// enemy could do to it, and the plan lines say it
+		const threatMap = ordering ? threatsFor(view, YOU) : {};
+		const threats = {};
+		Object.keys(threatMap).forEach((id) => { threats[id] = { level: threatMap[id].level, text: threatSentence(threatMap[id]) }; });
+		const coaching = this.isSimple() && !this.state.coached && view.frameIndex === 0 && deploying;
 		const holdingIds = [...me.holding, ...them.holding];
 
 		// during Orders every one of your figures wears the act it will perform
@@ -1335,12 +1370,33 @@ class ReclamationMatch extends React.Component {
 							holdingIds={holdingIds}
 							hiddenEnemyCount={deploying || ordering ? (them.hiddenSentThisRound || 0) : 0}
 							badges={badges}
+							threats={threats}
 							highlights={highlights}
 							hoverSiteId={this.state.hoverSiteId}
 							advanced={!simple}
 							onSiteClick={this.handleSiteClick}
 							onFigureClick={(entry, seat, site) => this.inspectRecord(entry.record, site)}
 						/>
+
+						{view.nextFrame && !judged && (
+							<div className="rec-next-plate" data-next-plate>
+								<span className="rec-next-plate-label">Next round</span>
+								{view.nextFrame.map((w) => (
+									<span className={`g-chip g-chip--outline rec-status-element g-el-${w.element}`} key={w.siteId} title={`${w.planet}, at ${w.siteName}`}>{w.planet}</span>
+								))}
+							</div>
+						)}
+
+						{coaching && (
+							<div className="rec-coach rec-rise" data-coach role="note">
+								<ol className="rec-coach-steps">
+									<li className={`rec-coach-step${!this.state.armedRecordId ? ' rec-coach-step--now' : ' rec-coach-step--done'}`}><span className="rec-coach-index g-mono">1</span> Lift a creature from the bench</li>
+									<li className={`rec-coach-step${this.state.armedRecordId ? ' rec-coach-step--now' : ''}`}><span className="rec-coach-index g-mono">2</span> Press a world to send it there</li>
+									<li className="rec-coach-step"><span className="rec-coach-index g-mono">3</span> Or pass, and keep the rest for later rounds</li>
+								</ol>
+								<button type="button" className="g-btn rec-coach-dismiss" onClick={this.dismissCoach} data-coach-dismiss>Got it</button>
+							</div>
+						)}
 
 						{deployPanelOpen && (
 							<ReclamationBench
@@ -1419,6 +1475,9 @@ class ReclamationMatch extends React.Component {
 												onMouseLeave={() => this.setState({ hoverRow: null })}
 											>
 												{row.sentence}
+												{threats[row.unit.recordId] && (
+													<span className={`rec-plan-threat rec-plan-threat--${threats[row.unit.recordId].level}`}> Exposed: {threats[row.unit.recordId].text}.</span>
+												)}
 											</li>
 										))}
 									</ul>
@@ -1467,6 +1526,23 @@ class ReclamationMatch extends React.Component {
 				</div>
 			</div>
 		);
+	}
+}
+
+// the first Proving's coach strip is shown until dismissed or until orders are first given
+const COACH_KEY = 'reclamation.coached';
+function readCoached() {
+	try {
+		return window.localStorage.getItem(COACH_KEY) === 'yes';
+	} catch (e) {
+		return true;
+	}
+}
+function writeCoached() {
+	try {
+		window.localStorage.setItem(COACH_KEY, 'yes');
+	} catch (e) {
+		// nothing to do; the strip returns next time
 	}
 }
 

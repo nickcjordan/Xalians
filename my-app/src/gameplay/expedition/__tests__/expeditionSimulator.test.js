@@ -111,6 +111,12 @@ describe('expeditionSimulator report shape', () => {
 		expect(isRateOrNull(c.homeGround.incidenceRate)).toBe(true);
 		expect(isRateOrNull(c.homeGround.siteWinRate)).toBe(true);
 		expect(isRateOrNull(c.hiddenSendStats.rate)).toBe(true);
+		// the Loki line (Pass 2 lever): returnedSendStats - how often a creature withdrawn
+		// from a lost world is re-sent, and how it fares versus a normal first send
+		expect(isRateOrNull(c.returnedSendStats.rate)).toBe(true);
+		expect(c.returnedSendStats.perMatch).toBeGreaterThanOrEqual(0);
+		expect(isRateOrNull(c.returnedSendStats.siteWinRateReturned)).toBe(true);
+		expect(isRateOrNull(c.returnedSendStats.siteWinRateFirstSend)).toBe(true);
 	});
 
 	test('section 6 (creature balance): per-archetype/element/trait rates valid, top/bottom 5 well-formed', () => {

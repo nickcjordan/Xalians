@@ -456,4 +456,53 @@ describe('rivals', () => {
 
 		expect(envoyFrame1Sends).toBeLessThan(windsailorFrame1Sends);
 	});
+
+	/*
+		Coverage for docs/design/reclamation-play-enhancements.md's "Pass 2 levers", lever 1
+		(the hide rule). The old rule (|margin| < hold) was the flip condition restated: since
+		the bot's own scoring always prefers a flip/contest over securing an already-won site
+		(flipValue >> secureValue), the picked candidate's pre-send margin is <= 0 for nearly
+		every real send, so the old rule read "hide" on almost all of them and hideBias had
+		nothing to act on. The new rule judges the site by where the send LEAVES it
+		(resultMargin = pre-send margin + this creature's hold): a send that leaves the site
+		only just past even, or that the rival can still answer, hides; one that leaves it
+		solidly ahead goes openly. This asserts the broker's hideBias (1.8) actually produces
+		a higher hidden-send rate than the proctor's (1) over a batch of full matches with a
+		mixed stealthy/non-stealthy roster - the behaviour Pass 1 found missing.
+	*/
+	test('behaviour: hideBias measurably moves the hidden-send rate over a batch (the pass-1 friction, fixed)', () => {
+		const broker = rivalById('broker');
+		const proctor = rivalById('proctor');
+		const BATCH = 20;
+		let brokerHidden = 0;
+		let brokerSends = 0;
+		let proctorHidden = 0;
+		let proctorSends = 0;
+
+		function makeStealthyRoster(prefix) {
+			return makeRoster(prefix, (i) => ({
+				traits: { guaranteed: [], rolled: i % 2 === 0 ? ['stealthy'] : [] },
+				attributes: { vitality: 40 + (i % 6) * 10, resilience: 40 + (i % 5) * 10, endurance: 50 + (i % 4) * 8 },
+			}));
+		}
+
+		for (let i = 0; i < BATCH; i++) {
+			const rosterA = makeStealthyRoster('A');
+			const rosterB = makeStealthyRoster('B');
+
+			const brokerMatch = playMatch(rosterA, rosterB, makeWorlds(), `hidebias-broker-${i}`, { A: broker, B: proctor });
+			const brokerActionsA = brokerMatch.actionLog.filter((a) => a.handler === 'A' && a.type === 'send');
+			brokerSends += brokerActionsA.length;
+			brokerHidden += brokerActionsA.filter((a) => a.hidden).length;
+
+			const proctorMatch = playMatch(rosterA, rosterB, makeWorlds(), `hidebias-proctor-${i}`, { A: proctor, B: proctor });
+			const proctorActionsA = proctorMatch.actionLog.filter((a) => a.handler === 'A' && a.type === 'send');
+			proctorSends += proctorActionsA.length;
+			proctorHidden += proctorActionsA.filter((a) => a.hidden).length;
+		}
+
+		const brokerRate = brokerHidden / brokerSends;
+		const proctorRate = proctorHidden / proctorSends;
+		expect(brokerRate).toBeGreaterThan(proctorRate);
+	});
 });
