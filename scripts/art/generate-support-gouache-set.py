@@ -17,6 +17,14 @@ seed is fixed and recorded up front (era order = support.json's slots order: dee
 generation, accords, end-wars, present -- indices 0-6). Writes one PNG per (era, seed), a per-era contact sheet
 of 4 tiles, an overall contact sheet, and a manifest.json, following generate-support.py / generate-silhouettes.py
 conventions (sil.sha256, sil.versions(), incremental manifest writes, CUDA-OOM fallback to 1280x640).
+
+2026-09-06 addition: run 104 found the gouache-set palette clause loses to strong competing colour words inside
+three of the seven era bodies (ascendancy, generation, present) and left a fourth (accords) with an off-palette
+storm; Nick approved a rerun of just those four with their bodies rewritten in support.json to state the locked
+palette directly. Use `--eras ascendancy,generation,accords,present` to target them, and `--seed-base 500000`
+(a new "5xx000" family, distinct from run 104's "4xx000") so no seed collides with a prior run:
+  python scripts/art/generate-support-gouache-set.py --eras ascendancy,generation,accords,present \
+      --seed-base 500000 --tag run105-support-gouache-fix-zimage
 """
 import argparse, importlib.util, json, time
 from pathlib import Path
@@ -42,9 +50,9 @@ GOUACHE_SET_STYLE = ('flat gouache painting, hard-edged shapes, visible brush te
 ERA_ORDER = [s['key'] for s in SUPPORT['slots'] if s['kind'] == 'era']
 
 
-def seed_for(era: str, seed_idx: int) -> int:
+def seed_for(era: str, seed_idx: int, seed_base: int = 400000) -> int:
     era_i = ERA_ORDER.index(era)
-    return 400000 + era_i * 1000 + seed_idx
+    return seed_base + era_i * 1000 + seed_idx
 
 
 def build_prompt(era_prompt: str) -> str:
@@ -78,6 +86,9 @@ def main():
     ap.add_argument('--eras', default='all', help='comma-separated era keys, or "all"')
     ap.add_argument('--steps', type=int, default=8)
     ap.add_argument('--tag', required=True)
+    ap.add_argument('--seed-base', type=int, default=400000,
+                     help='seed family base; run 104 used 400000, a rerun of a subset should use a fresh '
+                          'family (e.g. 500000) so seeds never collide with a prior run')
     args = ap.parse_args()
 
     slots = [s for s in SUPPORT['slots'] if s['kind'] == 'era']
@@ -99,7 +110,7 @@ def main():
         'kind': 'era', 'style': 'gouache-set', 'style_clause': GOUACHE_SET_STYLE, 'tag': args.tag, 'model': MODEL,
         'quant': 'bitsandbytes 4-bit (pre-quantized)', 'steps': args.steps, 'guidance': 0.0,
         'scheduler': type(pipe.scheduler).__name__,
-        'seed_scheme': '400000 + era_index*1000 + seed_index; era_index order ' + str(ERA_ORDER),
+        'seed_scheme': f'{args.seed_base} + era_index*1000 + seed_index; era_index order ' + str(ERA_ORDER),
         'versions': sil.versions(), 'slots': [],
     }
     all_rows = []
@@ -108,7 +119,7 @@ def main():
         key = slot['key']
         width, height = slot['width'], slot['height']
         prompt = build_prompt(slot['prompt'])
-        seeds = [seed_for(key, i) for i in range(SEEDS_PER_ERA)]
+        seeds = [seed_for(key, i, args.seed_base) for i in range(SEEDS_PER_ERA)]
         slot_entry = {'key': key, 'prompt': prompt, 'requested_size': [width, height], 'used_size': None,
                       'fallback_used': False, 'candidates': []}
         for seed in seeds:

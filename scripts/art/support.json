@@ -17,7 +17,7 @@
       "width": 1536,
       "height": 768,
       "seeds": [202000, 202001, 202002, 202003],
-      "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view of an ocean world seen from a high cliff at dawn: calm silver water stretching to the horizon, a handful of small colonial settlements of pale stone and glass perched along the shoreline, ships with sails of metal foil at anchor in a bay. Optimistic golden light, a sense of a new frontier just being claimed, vast open water dwarfing the settlements."
+      "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view of a Vallerii colony: a vast landing field of angular starships under a pale sky, colony halls built of slate stone stretching to the horizon, one bright engine glow as the single accent of colour in the scene. No colour words apply here except grey, slate, bone, black and the one orange engine glow. A new frontier just being claimed, vast scale, orderly rows of hulls and stone dwarfing any single figure."
     },
     {
       "kind": "era",
@@ -35,7 +35,7 @@
       "width": 1536,
       "height": 768,
       "seeds": [204000, 204001, 204002, 204003],
-      "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view of an industrial world at full production: dozens of towering foundry stacks and refinery spires across a volcanic plain, furnace light glowing orange from within their windows, columns of smoke and steam rising into a sky stained amber and grey, rivers of molten rock cutting between the structures. Furious energy, wealth being torn out of the ground, a boomtown skyline lit entirely by fire."
+      "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view of an industrial world at full production: dozens of towering foundry stacks and refinery spires across a volcanic plain, a grey overcast sky above, slate-grey ground below, the stacks themselves black, columns of smoke and steam rising into the overcast, rivers of molten rock cutting between the structures as the single orange accent in the scene. Furious energy, wealth being torn out of the ground, a boomtown skyline of black and slate lit only by the molten channels."
     },
     {
       "kind": "era",
@@ -44,7 +44,7 @@
       "width": 1536,
       "height": 768,
       "seeds": [205000, 205001, 205002, 205003],
-      "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view of a lightning-wracked mountain range at night: a single enormous storm cell overhead, crimson and violet lightning branching down between jagged peaks, illuminating a lone tower of dark metal at the center of the valley with a faint web of light connecting it upward into the storm. Tense hush before a change, a single watchful structure under an enormous natural power, uneasy calm."
+      "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view of a lightning-wracked mountain range at night: a single enormous storm cell overhead, grey and black storm clouds with white lightning branching down between jagged peaks, illuminating a lone tower of dark metal at the center of the valley with a faint web of light connecting it upward into the storm. No magenta, no purple and no red anywhere in the scene. Tense hush before a change, a single watchful structure under an enormous natural power, uneasy calm."
     },
     {
       "kind": "era",
@@ -62,7 +62,7 @@
       "width": 1536,
       "height": 768,
       "seeds": [207000, 207001, 207002, 207003],
-      "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view of a vast circular arena carved into a desert canyon at dusk: tiered stone galleries rising on all sides toward a single throne platform lit by torches, an enormous ornate machine of brass and dark metal looming behind the throne, banners hanging still in the dry air. Ceremonial, watchful, a fragile order held together by spectacle and one ruler's will."
+      "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view of a dark arena at night: tiered stone galleries in near-black and slate rising on all sides, no sand and no sky visible, a single lit floor in orange at the centre as the only accent of colour in the scene, an enormous ornate machine of dark metal looming at the edge of the light. Ceremonial, watchful, a fragile order held together by spectacle and one ruler's will."
     }
   ]
 }
