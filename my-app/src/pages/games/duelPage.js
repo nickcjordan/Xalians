@@ -1,3 +1,4 @@
+// Terminal: panel (baseline). Target: registry. The live board runs inside Kozrak's arena ledger.
 import React from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -230,26 +231,26 @@ class DuelPage extends React.Component {
 				// <React.Fragment>
 					// <Container fluid className="content-background-container" style={{ background: '#1f1f1fff'}}>
 					// <XalianNavbar></XalianNavbar>
-				
+
 
 					// <GameContainer>
-					<>
-					{details.bot && 
+					<div data-terminal="panel">
+					{details.bot &&
 						<>
 						<DuelClient playerID="0" />
 						{/* <DuelClient playerID="1" /> */}
 						</>
-					} 
+					}
 
-					{!details.bot && 
+					{!details.bot &&
 						<>
 						<DuelClient playerID="0" />
 						<DuelClient playerID="1" />
 						</>
 					}
-					</>
+					</div>
 					// </GameContainer>
-					
+
 					// </Container>
 
 				// </React.Fragment>
@@ -257,7 +258,7 @@ class DuelPage extends React.Component {
 		} else {
 			return (
 				<React.Fragment>
-					<Container fluid className="content-background-container">
+					<Container fluid className="content-background-container" data-terminal="panel">
 					<XalianNavbar></XalianNavbar>
 				
 

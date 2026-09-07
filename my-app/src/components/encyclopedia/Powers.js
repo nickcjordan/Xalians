@@ -33,7 +33,7 @@ export default function Powers() {
                 {vallerii.length === 0 ? (
                     <p className="g-empty">No record on file.</p>
                 ) : (
-                    <div className="g-panel g-panel--recessed enc-powers-panel">
+                    <div className="g-paper enc-powers-panel">
                         {vallerii.map((entry) => <EntryRecord key={entry.key} entry={entry} />)}
                     </div>
                 )}
@@ -47,7 +47,7 @@ export default function Powers() {
                 {factions.length === 0 ? (
                     <p className="g-empty">No record on file.</p>
                 ) : (
-                    <div className="g-panel g-panel--recessed enc-powers-panel">
+                    <div className="g-paper enc-powers-panel">
                         {factions.map((entry) => <EntryRecord key={entry.key} entry={entry} />)}
                     </div>
                 )}
@@ -58,7 +58,7 @@ export default function Powers() {
                     <h2 className="g-h2">Xalian Peoples</h2>
                     <span className="enc-count">{peoples.length} record{peoples.length === 1 ? '' : 's'}</span>
                 </div>
-                <div className="g-panel g-panel--recessed enc-powers-panel">
+                <div className="g-paper enc-powers-panel">
                     {peoples.map((p) => (
                         <div key={p.name} className={`g-record ${p.planet ? `g-el-${p.planet.element}` : ''}`}>
                             <div>

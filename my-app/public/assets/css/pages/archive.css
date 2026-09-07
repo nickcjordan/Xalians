@@ -1,0 +1,218 @@
+/* Terminal: archive (docs/DESIGN_SYSTEM.md). Page compositions specific to
+   the encyclopedia (story, worlds, bestiary, powers, index, codex): a
+   reading desk in the Poseidas Deep Archive. Hull is the desk itself (the
+   masthead name plate and the request keys); paper is every record (a
+   catalogue card, a typed page); there is no screen anywhere on this
+   terminal. No colors: every value reads a --g-* token from system.css.
+
+   round1-findings.md S3/S5/S6/S7/S8 landed in system.css: the paper ink
+   remap, the paper-ink-faint contrast fix, --g-photo-filter for archive,
+   the accent-based pressed state, and .g-input--paper. The overrides that
+   used to duplicate those here (aria-pressed color, .g-plate--photo filter,
+   the .g-paper ink block, the hand-rolled search input chrome) are gone;
+   what is left below is composition system.css has no class for. */
+
+/* ---- room: the whole page reads as the desk, not a dark bulkhead with a
+   panel floating in it (round1-findings.md A1) --------------------------- */
+
+[data-terminal='archive'].enc-console {
+	background-color: var(--g-hull-lo);
+	background-image:
+		radial-gradient(70% 42% at 50% 0%, rgba(255, 236, 190, 0.16), transparent 66%),
+		linear-gradient(180deg, var(--g-hull-hi), var(--g-hull-lo) 55%, var(--g-hull-lo));
+}
+
+/* ---- masthead: the archive's name plate on the desk (hull), flush with
+   the desk surface, not a raised box on top of it (round1-findings.md A1) */
+
+.enc-masthead {
+	position: relative;
+	padding-bottom: var(--g-4);
+	border-bottom: var(--g-hairline) solid var(--g-trim-dark);
+}
+
+.enc-masthead::after {
+	/* the drawer-rod hole, echoed once on the desk itself, at the seam
+	   between the name plate and the section keys below it */
+	content: '';
+	position: absolute;
+	left: 50%;
+	bottom: -7px;
+	width: 11px;
+	height: 11px;
+	margin-left: -5.5px;
+	border-radius: 50%;
+	background: var(--g-hull-lo);
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.7), 0 0 0 1px var(--g-seam);
+}
+
+.enc-pull-record {
+	font-family: var(--g-font-legend);
+}
+
+/* ---- search: the one exception, a paper request slip, not a screen ----- */
+
+.enc-search-slip {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-1);
+	max-width: 20rem;
+	transform: none;
+}
+
+/* .enc-search-slip-label is a bare .g-kicker inside .g-paper: system.css's
+   paper ink remap (S3) already sets its color, so nothing to add here. */
+
+/* .g-input--paper (system.css, S8) supplies the transparent stock, dotted
+   underline and typewriter face; this is only the layout the request slip
+   needs on top of it (full width, room for the "/" hint). */
+.enc-search-input {
+	width: 100%;
+	padding: var(--g-1) var(--g-6) var(--g-1) 0;
+	font-size: var(--g-size-small);
+}
+
+.enc-search-hint {
+	color: var(--g-paper-ink-faint);
+}
+
+.enc-search-results {
+	position: absolute;
+	top: calc(100% + var(--g-2));
+	right: 0;
+	left: 0;
+	z-index: var(--g-layer-nav);
+	max-height: 60vh;
+	overflow-y: auto;
+	padding: var(--g-4) var(--g-4) var(--g-3);
+	/* A dropdown reads its rows fastest flat; .g-paper's lie-askew cue (Rule
+	   C) is right for a card at rest, not for a list the eye has to scan. */
+	transform: none;
+}
+
+.enc-search-group-label {
+	margin: 0 0 var(--g-1);
+	font-family: var(--g-font-out);
+	font-size: var(--g-size-micro);
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+	color: var(--g-paper-ink-faint);
+}
+
+.enc-search-empty {
+	margin: 0;
+	color: var(--g-paper-ink-faint);
+}
+
+.enc-search-hit:hover,
+.enc-search-hit:focus-visible,
+.enc-search-hit--active {
+	background: rgba(0, 0, 0, 0.06);
+	outline: none;
+}
+
+/* ---- catalogue grids: worlds, bestiary, native fauna -------------------- */
+
+.enc-card-grid {
+	gap: var(--g-6) var(--g-5);
+}
+
+/* ---- ink and legibility on paper: a few classes with no equivalent in
+   system.css's paper ink remap (S3) ---------------------------------------- */
+
+.enc-hover-title,
+.enc-hover-def,
+.enc-quote,
+.enc-map-card .enc-map-card-name {
+	color: var(--g-paper-ink);
+}
+
+/* A lamp is still the "other lit thing" (design doc, section 1) even sitting
+   on paper (the story's read-mark dot); it just carries paper's dimmer
+   value rather than a hull lamp's. Not covered by S3 (that remap is ink on
+   text, not the lamp component), so it stays here. */
+.g-paper .g-lamp {
+	color: var(--g-paper-ink-faint);
+}
+
+.g-paper .g-lamp::before {
+	background: currentColor;
+	box-shadow: none;
+}
+
+/* ---- reading room: the galaxy map hero is still a hull-mounted frame
+   around a paper chart (a plate bolted to the desk, not a slab -- the map
+   itself already reads paper via .enc-map below). Begin/resume and Contents
+   moved onto paper (round1-findings.md A2) and no longer need this. */
+
+[data-terminal='archive'] .enc-room-map-panel {
+	background: linear-gradient(180deg, var(--g-hull-hi), var(--g-hull-lo));
+}
+
+/* ---- galaxy map: a chart pinned to the desk, not a screen --------------- */
+
+[data-terminal='archive'] .enc-map {
+	padding: var(--g-4);
+	background: var(--g-paper);
+	color: var(--g-paper-ink);
+	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25), 0 8px 16px rgba(0, 0, 0, 0.35);
+	border-radius: 2px;
+}
+
+[data-terminal='archive'] .enc-map-void { fill: var(--g-paper); }
+
+[data-terminal='archive'] .enc-map-guide,
+[data-terminal='archive'] .enc-map-belt {
+	stroke: var(--g-paper-ink-faint);
+}
+
+[data-terminal='archive'] .enc-map-belt-label,
+[data-terminal='archive'] .enc-map-system-label,
+[data-terminal='archive'] .enc-map-world-label {
+	fill: var(--g-paper-ink);
+}
+
+[data-terminal='archive'] .enc-map-world--dim .enc-map-world-label {
+	fill: var(--g-paper-ink-faint);
+}
+
+[data-terminal='archive'] .enc-map-world-ring,
+[data-terminal='archive'] .enc-map-pin-head,
+[data-terminal='archive'] .enc-map-pin-ring {
+	stroke: var(--g-accent);
+}
+
+[data-terminal='archive'] .enc-map-pin-count {
+	fill: var(--g-accent);
+}
+
+[data-terminal='archive'] .enc-map-hole-core {
+	fill: var(--g-paper);
+	stroke: var(--g-paper-ink-faint);
+}
+
+[data-terminal='archive'] .enc-map-moon {
+	fill: var(--g-paper-ink-faint);
+}
+
+[data-terminal='archive'] .enc-map-pan-hint {
+	color: var(--g-paper-ink-faint);
+}
+
+/* the hover card lifted off the chart still reads as paper, not a panel */
+[data-terminal='archive'] .enc-map-card {
+	background: var(--g-paper);
+	color: var(--g-paper-ink);
+	border-radius: 2px;
+	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25), 0 6px 14px rgba(0, 0, 0, 0.4);
+}
+
+[data-terminal='archive'] .enc-map-card-terrain,
+[data-terminal='archive'] .enc-map-card-species {
+	color: var(--g-paper-ink-faint);
+}
+
+[data-terminal='archive'] .enc-map-card-action {
+	color: var(--g-accent);
+}

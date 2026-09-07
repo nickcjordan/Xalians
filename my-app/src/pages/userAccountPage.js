@@ -1,3 +1,5 @@
+// Terminal: relay. A user's Xalians are lines on the relay's own tube: the
+// faction you have patched through to the network.
 import React from 'react';
 import XalianNavbar from '../components/navbar';
 import VerifyRemoveXalianModal from '../components/verifyRemoveXalianModal';
@@ -89,7 +91,7 @@ class UserAccountPage extends React.Component {
 	render() {
 		return (
 			<React.Fragment>
-				<div className="g-console">
+				<div className="g-console" data-terminal="relay">
 					<XalianNavbar></XalianNavbar>
 
 					<div className="g-shell page-shell account-shell">
@@ -103,12 +105,12 @@ class UserAccountPage extends React.Component {
 						{this.state.message &&
 							<div className="g-panel account-notice">
 								<p className="g-empty account-notice-text">{this.state.message}</p>
-								<a className="g-btn g-btn--primary" href="/generator">Generate a Xalian</a>
+								<a className="g-key" href="/generator">Generate a Xalian</a>
 							</div>
 						}
 
 						{this.state.xalianRows && this.state.xalianRows.length > 0 &&
-							<div className="species-stat-rows">{this.state.xalianRows}</div>
+							<div className="g-crt account-tube">{this.state.xalianRows}</div>
 						}
 					</div>
 

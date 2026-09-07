@@ -52,6 +52,8 @@ export default function EncyclopediaShell({ children }) {
 
     return (
         <div className="g-shell page-shell enc-shell">
+            {/* Name plate on the desk (archive.css), not a separate raised slab: the
+                page ground itself is the desk (round1-findings.md A1). */}
             <header className={`enc-masthead ${isRoom ? '' : 'enc-masthead--compact'}`}>
                 <div className="enc-masthead-text">
                     <p className="g-kicker">Xalian Generator / Archive</p>

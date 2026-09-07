@@ -1,33 +1,41 @@
 /* Worlds section. Prefix: .enc-worlds- */
 
-.enc-worlds-tile {
+.enc-worlds-card {
 	display: flex;
 	flex-direction: column;
-	gap: var(--g-1);
+	gap: var(--g-2);
+	text-decoration: none;
+	padding-top: var(--g-6);
 }
 
 .enc-worlds-mount {
-	padding: var(--g-2);
+	width: 72px;
+	height: 72px;
+	margin: 0 auto;
 }
 
 .enc-worlds-globe {
 	display: block;
 	width: 100%;
 	height: 100%;
-	object-fit: contain;
+	object-fit: cover;
 	border-radius: 50%;
 }
 
-.enc-worlds-sub {
-	align-items: center;
+.enc-worlds-card-name {
+	font-family: var(--g-font-paper);
+	font-weight: 400;
+	font-size: var(--g-size-lead);
+	letter-spacing: var(--g-track-label);
+	line-height: 1.2;
+	color: var(--g-paper-ink);
+	text-transform: uppercase;
+	text-align: center;
 }
 
-.enc-worlds-terrain {
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
-	text-transform: none;
-	text-align: left;
-	white-space: normal;
+.enc-worlds-card-terrain {
+	font-family: var(--g-font-paper);
+	font-size: var(--g-size-tiny);
+	color: var(--g-paper-ink-faint);
+	text-align: center;
 }

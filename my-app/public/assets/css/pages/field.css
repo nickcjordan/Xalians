@@ -1,0 +1,226 @@
+/* Terminal: field (docs/DESIGN_SYSTEM.md). Page compositions specific to the
+   Generator, Reclamation and training games go here. No colors: every value
+   reads a --g-* token from system.css. */
+
+/* -------------------------------------------------------------------------
+   THE UNIT ITSELF
+   The suitcase sits centered in the room, not stretched to the viewport —
+   it is a portable field instrument, not a dashboard.
+   ------------------------------------------------------------------------- */
+
+.field-shell {
+	max-width: 1100px;
+	padding-top: var(--g-8);
+	padding-bottom: var(--g-8);
+}
+
+.field-case {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-4);
+}
+
+/* the reconditioning tape, stuck on at a slight angle over the top edge of
+   the case, per the mockup */
+.field-tape {
+	position: absolute;
+	top: calc(var(--g-3) * -1);
+	right: var(--g-6);
+	z-index: 1;
+}
+
+.field-vfd {
+	font-size: var(--g-size-small);
+}
+
+/* -------------------------------------------------------------------------
+   THE SCREEN
+   Holds either the readout mode (while a creature is printing) or the
+   specimen record in full color.
+   ------------------------------------------------------------------------- */
+
+.field-crt {
+	min-height: 420px;
+	align-content: start;
+}
+
+.field-readout {
+	align-self: center;
+	justify-self: stretch;
+	padding: var(--g-4) 0;
+}
+
+.field-readout-section {
+	background: var(--g-hull-lo);
+	border-radius: var(--g-radius);
+	padding: var(--g-4);
+}
+
+.field-stat-chart {
+	height: 260px;
+}
+
+/* CRT prose (record body, move name/description) now reads phosphor tones
+   from the shared .g-crt remap in system.css (S4). No page-local override
+   needed. */
+
+/* -------------------------------------------------------------------------
+   THE RECORD, INSIDE THE SCREEN
+   Two columns on desktop (plate left, data right); stacks on phone.
+   ------------------------------------------------------------------------- */
+
+.g-record-content-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: var(--g-3);
+	padding-bottom: var(--g-3);
+	border-bottom: 1px solid color-mix(in srgb, var(--g-phosphor) 20%, transparent);
+}
+
+.g-record-content-name {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--g-2);
+	flex: 1 1 auto;
+}
+
+.g-record-content-chips {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--g-2);
+}
+
+.g-record-content-body {
+	display: grid;
+	grid-template-columns: minmax(140px, 200px) 1fr;
+	gap: var(--g-5);
+	align-items: start;
+}
+
+.g-record-content-plate {
+	padding: var(--g-2);
+	background: color-mix(in srgb, var(--g-phosphor) 6%, transparent);
+	border-radius: var(--g-radius);
+}
+
+.g-record-content-plate-img {
+	aspect-ratio: 1;
+	width: 100%;
+	margin: 0;
+}
+
+.g-record-content-data {
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-4);
+}
+
+.g-record-content-description {
+	margin: 0;
+	line-height: 1.7;
+	padding-top: var(--g-3);
+	border-top: 1px solid color-mix(in srgb, var(--g-phosphor) 15%, transparent);
+}
+
+.g-record-content-readouts {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+	gap: var(--g-4);
+	margin-top: var(--g-4);
+	padding-top: var(--g-4);
+	border-top: 1px solid color-mix(in srgb, var(--g-phosphor) 15%, transparent);
+}
+
+/* Above 900px the case is wide enough to lay the record out in two columns:
+   plate, specs and description on the left; stat chart and move set on the
+   right, side by side rather than stacked below. */
+@media (min-width: 900px) {
+	.field-crt .g-record-content {
+		display: grid;
+		grid-template-columns: minmax(280px, 440px) 1fr;
+		grid-template-areas: "head head" "body readouts";
+		column-gap: var(--g-6);
+	}
+
+	.field-crt .g-record-content-head { grid-area: head; }
+	.field-crt .g-record-content-body { grid-area: body; }
+
+	.field-crt .g-record-content-readouts {
+		grid-area: readouts;
+		grid-template-columns: 1fr;
+		align-content: start;
+		align-items: start;
+		margin-top: 0;
+		padding-top: 0;
+		padding-left: var(--g-5);
+		border-top: 0;
+		border-left: 1px solid color-mix(in srgb, var(--g-phosphor) 15%, transparent);
+	}
+}
+
+/* -------------------------------------------------------------------------
+   THE KEYS
+   ------------------------------------------------------------------------- */
+
+.g-keybank {
+	justify-content: space-between;
+}
+
+.field-keybank-legend {
+	flex: 1 1 auto;
+}
+
+.field-keybank-btns {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--g-3);
+}
+
+.field-json-key {
+	font-size: var(--g-size-tiny);
+	padding: var(--g-2) var(--g-4);
+}
+
+.field-json {
+	max-height: 60vh;
+	overflow: auto;
+	font-size: var(--g-size-tiny);
+	margin: 0;
+}
+
+/* -------------------------------------------------------------------------
+   MOBILE, 390PX
+   ------------------------------------------------------------------------- */
+
+@media (max-width: 700px) {
+	.field-shell {
+		padding-top: var(--g-5);
+		padding-bottom: var(--g-6);
+	}
+
+	.g-record-content-body {
+		grid-template-columns: 1fr;
+	}
+
+	.g-record-content-plate {
+		max-width: 220px;
+		margin: 0 auto;
+	}
+
+	.g-keybank {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.field-keybank-btns {
+		justify-content: stretch;
+	}
+
+	.field-keybank-btns .g-key {
+		flex: 1 1 auto;
+	}
+}

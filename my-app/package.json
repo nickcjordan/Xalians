@@ -63,6 +63,7 @@
     "@vitejs/plugin-react": "^5.2.0",
     "acorn": "^8.15.0",
     "jsdom": "^26.1.0",
+    "playwright-core": "1.55.1",
     "prettier": "^2.7.1",
     "vite": "^7.3.6",
     "vite-plugin-svgr": "^5.2.0",

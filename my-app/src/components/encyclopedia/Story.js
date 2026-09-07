@@ -50,7 +50,7 @@ function RecordsConsulted({ beat }) {
 function NarratorBeat({ beat, indexInPart, beatCount }) {
 	useVisit({ kind: 'beat', key: beat.key, name: beat.title });
 	return (
-		<div id={`beat-${beat.key}`} className="enc-story-beat">
+		<div id={`beat-${beat.key}`} className="g-paper enc-story-beat">
 			{beatCount > 1 && (
 				<p className="g-kicker enc-story-beat-kicker">
 					Beat {indexInPart + 1} of {beatCount}
@@ -107,7 +107,7 @@ function StoryParagraph({ world, index, text }) {
 			ref={ref}
 			id={`chapter-${world.key}-${index}`}
 			data-story-paragraph="true"
-			className="enc-story-para"
+			className="g-paper enc-story-para"
 		>
 			<MarginNote world={world} index={index} read={read} />
 			<Prose text={text} className="enc-story-para-text" />
@@ -150,16 +150,16 @@ function groupEvents(events) {
 function EventAnchors({ anchors }) {
 	if (anchors.length === 0) return null;
 	return (
-		<div className="g-screen enc-story-event-screen">
+		<div className="g-paper enc-story-event-screen">
 			{anchors.map((anchor, i) => (
 				<div className="enc-story-anchor" key={i}>
 					<Link
 						to={`${lore.routeFor('world', anchor.world.key)}#chapter-${anchor.world.key}-${anchor.index}`}
-						className="g-screen-line g-screen-line--dim enc-story-anchor-link"
+						className="enc-story-anchor-link"
 					>
 						{anchor.world.name} CH. {String(anchor.index).padStart(2, '0')}
 					</Link>
-					<p className="g-screen-line enc-quote enc-story-anchor-text">&ldquo;{anchor.quote}&rdquo;</p>
+					<p className="enc-quote enc-story-anchor-text">&ldquo;{anchor.quote}&rdquo;</p>
 				</div>
 			))}
 		</div>
@@ -168,7 +168,7 @@ function EventAnchors({ anchors }) {
 
 function FixedPointCard({ event }) {
 	return (
-		<div id={`event-${event.key}`} className="g-panel g-panel--raised enc-story-event-card">
+		<div id={`event-${event.key}`} className="g-paper enc-story-event-card">
 			<div className="enc-story-event-head">
 				<span className="g-h3 enc-story-event-title">{event.title}</span>
 				{event.planets.length > 0 && (
@@ -193,7 +193,7 @@ function FixedPointCard({ event }) {
 
 function ContemporaneousCard({ group }) {
 	return (
-		<div className="g-panel g-panel--recessed enc-story-event-card">
+		<div className="g-paper enc-story-event-card">
 			<p className="g-kicker">Contemporaneous, unordered</p>
 			{group.events.map((event) => (
 				<div id={`event-${event.key}`} key={event.key} className="enc-story-event">

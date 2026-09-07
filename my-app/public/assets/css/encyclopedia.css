@@ -187,17 +187,6 @@
 
 .enc-search-input { width: 100%; }
 
-.enc-search-screen {
-	position: absolute;
-	top: calc(100% + var(--g-2));
-	right: 0;
-	left: 0;
-	z-index: var(--g-layer-nav);
-	max-height: 60vh;
-	overflow-y: auto;
-	padding: var(--g-3) var(--g-4);
-}
-
 .enc-search-group + .enc-search-group { margin-top: var(--g-3); }
 
 .enc-search-hit {
@@ -205,13 +194,6 @@
 	text-decoration: none;
 	color: inherit;
 	padding: var(--g-1) 0;
-}
-
-.enc-search-hit:hover,
-.enc-search-hit:focus-visible,
-.enc-search-hit--active {
-	background: var(--g-phosphor-a20);
-	outline: none;
 }
 
 .enc-search-hit-title { font-weight: 600; }

@@ -96,12 +96,13 @@ export default function LoreSearch() {
     }
 
     return (
-        <form className="enc-search" role="search" onSubmit={submit} ref={box}>
+        <form className="enc-search g-paper g-paper--slip enc-search-slip" role="search" onSubmit={submit} ref={box}>
+            <span className="g-kicker enc-search-slip-label">Request slip</span>
             <input
                 ref={inputRef}
-                className="g-input enc-search-input"
+                className="g-input g-input--paper enc-search-input"
                 type="search"
-                placeholder="SEARCH THE ARCHIVE"
+                placeholder="Title, world or term&hellip;"
                 aria-label="Search the encyclopedia"
                 value={query}
                 onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
@@ -114,13 +115,13 @@ export default function LoreSearch() {
                 aria-autocomplete="list"
                 aria-activedescendant={activeIndex >= 0 && flatHits[activeIndex] ? hitId(flatHits[activeIndex]) : undefined}
             />
-            <span className="g-chip g-chip--outline enc-search-hint g-mono" aria-hidden="true">/</span>
+            <span className="enc-search-hint g-mono" aria-hidden="true">/</span>
             {open && trimmed.length >= 2 && (
-                <div id="enc-search-listbox" className="g-screen enc-search-screen" role="listbox" aria-label="Search results">
-                    {groups.length === 0 && <p className="g-screen-line g-screen-line--dim">NO RECORD MATCHES “{trimmed.toUpperCase()}”</p>}
+                <div id="enc-search-listbox" className="g-paper g-paper--card enc-search-results" role="listbox" aria-label="Search results">
+                    {groups.length === 0 && <p className="enc-search-empty">No record matches &ldquo;{trimmed}&rdquo;.</p>}
                     {groups.map((g) => (
                         <div key={g.kind} className="enc-search-group">
-                            <p className="g-screen-line g-screen-line--dim">{KIND_LABEL[g.kind].toUpperCase()}</p>
+                            <p className="enc-search-group-label">{KIND_LABEL[g.kind]}</p>
                             {g.hits.map((h) => {
                                 const index = flatHits.indexOf(h);
                                 const active = index === activeIndex;
@@ -131,7 +132,7 @@ export default function LoreSearch() {
                                         to={h.route}
                                         role="option"
                                         aria-selected={active}
-                                        className={`g-screen-line enc-search-hit${active ? ' enc-search-hit--active' : ''}`}
+                                        className={`enc-search-hit${active ? ' enc-search-hit--active' : ''}`}
                                         onMouseEnter={() => setActiveIndex(index)}
                                         onClick={() => { setOpen(false); setQuery(''); setActiveIndex(-1); }}
                                     >

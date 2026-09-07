@@ -44,6 +44,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
+  <!-- v3 terminals ("one relay, many terminals", docs/DESIGN_SYSTEM.md): one
+       legend/output/paper face per terminal, plus the fonts its furniture
+       uses (Caveat for the archive's pencil note). -->
+  <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Share+Tech+Mono&family=Cinzel:wght@500;700&family=Spectral:ital,wght@0,400;0,600;1,400&family=Chakra+Petch:wght@500;600&family=Space+Mono&family=Special+Elite&family=Caveat:wght@500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+
   <!-- Design tokens - must load first, everything below consumes them -->
   <link href="/assets/css/tokens.css" rel="stylesheet">
   <link href="/assets/css/system.css" rel="stylesheet">
@@ -55,6 +60,15 @@
   <link href="/assets/css/encyclopedia.css" rel="stylesheet">
   <link href="/assets/css/duel-playground.css" rel="stylesheet">
   <link href="/assets/css/typeColors.css" rel="stylesheet">
+
+  <!-- Per-area page compositions (public/assets/css/pages/), loaded after
+       system.css so they can read its tokens. Empty until each area migrates. -->
+  <link href="/assets/css/pages/relay.css" rel="stylesheet">
+  <link href="/assets/css/pages/field.css" rel="stylesheet">
+  <link href="/assets/css/pages/archive.css" rel="stylesheet">
+  <link href="/assets/css/pages/registry.css" rel="stylesheet">
+  <link href="/assets/css/pages/home.css" rel="stylesheet">
+  <link href="/assets/css/pages/styleguide.css" rel="stylesheet">
 
   <!-- PRELOAD IMAGES -->
   <!-- <link rel="preload" as="image" href='assets/img/background/galaxy-splash.png' /> -->

@@ -1,0 +1,668 @@
+<title>Xalia Terminals</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Oswald:wght@500;600&family=Michroma&family=Share+Tech+Mono&family=Cinzel:wght@500;700&family=Spectral:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=Chakra+Petch:wght@500;600&family=Space+Mono&family=Special+Elite&family=Caveat:wght@500&display=swap">
+<style>
+:root{
+  --bg:#14130f; --bg2:#1b1a15; --ink:#d9d2c0; --ink-mid:#9b9483; --ink-low:#6d685c; --rule:rgba(217,210,192,.14);
+  --f-body:'Barlow',system-ui,sans-serif; --f-mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+  --el-psychic:#d39bcb; --el-dark:#57619c;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55}
+.wrap{max-width:1360px;margin:0 auto;padding:40px 28px 80px}
+h1,h2,h3,h4{text-wrap:balance;margin:0}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-mid)}
+h1{font-size:44px;font-weight:600;letter-spacing:-.01em;line-height:1.05;margin:8px 0 18px}
+h2{font-size:28px;font-weight:600;margin:0 0 10px}
+h3{font-size:18px;font-weight:600}
+p{margin:0 0 12px;max-width:68ch}
+.lede{font-size:19px;max-width:70ch}
+.muted{color:var(--ink-mid)}
+section{margin-top:64px;padding-top:28px;border-top:1px solid var(--rule)}
+.two{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:40px;align-items:start}
+@media (max-width:900px){.two{grid-template-columns:1fr}}
+
+.layers{display:grid;gap:10px}
+.layer{border:1px solid var(--rule);padding:14px 16px;background:var(--bg2)}
+.layer b{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:6px;color:var(--ink-mid)}
+.layer span{display:inline-block;font-family:var(--f-mono);font-size:12.5px;border:1px solid var(--rule);padding:2px 8px;margin:3px 4px 3px 0}
+.layer.fixed span{border-color:rgba(217,210,192,.35)}
+
+/* medium rule table */
+.media{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:10px}
+@media (max-width:900px){.media{grid-template-columns:1fr}}
+.medium{border:1px solid var(--rule);padding:14px 16px;background:var(--bg2)}
+.medium b{display:block;font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mid);margin-bottom:6px}
+.medium p{font-size:14px;margin:0 0 6px}
+.medium .ex{font-family:var(--f-mono);font-size:12px;color:var(--ink-mid)}
+
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mid);font-weight:500}
+td.k{font-family:var(--f-mono);font-size:13px;white-space:nowrap}
+.tblwrap{overflow-x:auto}
+
+/* ---- demo layout: description beside the panel ---- */
+.demos{display:grid;gap:44px;margin-top:28px}
+.demo{display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:32px;align-items:start}
+@media (max-width:960px){.demo{grid-template-columns:1fr}}
+.demo .who{font-family:var(--f-mono);font-size:12px;color:var(--ink-mid);letter-spacing:.06em}
+.demo h3{font-size:24px;margin:4px 0 10px}
+.demo p{font-size:15px;margin:0 0 10px}
+.demo dl{margin:14px 0 0;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px;border-top:1px solid var(--rule);padding-top:12px}
+.demo dt{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mid);padding-top:3px}
+.demo dd{margin:0}
+.demo .fix{margin-top:12px;padding:10px 12px;border-left:2px solid var(--ink-low);font-size:14px;background:var(--bg2)}
+.demo .fix b{color:var(--ink)}
+
+/* ---- shared terminal anatomy ---- */
+.term{
+  --hull:#23231a; --hull-hi:#32322a; --hull-lo:#16160f; --face:var(--hull);
+  --pen:#ddd4bd; --pen-mid:#9a9280; --pen-low:#6b665a;
+  --glass:#07120c; --phos:#74ffb0; --phos-dim:rgba(116,255,176,.4);
+  --accent:#d9a410; --accent-ink:#14120c; --trim:#b08d3f;
+  --f-legend:'Oswald',sans-serif; --f-out:'IBM Plex Mono',monospace; --f-text:'Barlow',sans-serif;
+  --legend-case:uppercase; --legend-track:.12em; --radius:2px; --bevel-l:rgba(255,244,214,.11); --bevel-d:rgba(0,0,0,.6);
+  background:var(--hull);color:var(--pen);font-family:var(--f-text);font-size:14px;
+  border-radius:var(--radius);position:relative;overflow:hidden;
+  box-shadow:inset 0 1px 0 var(--bevel-l),inset 0 -1px 0 var(--bevel-d),0 10px 30px rgba(0,0,0,.5);
+  min-height:560px;display:grid;grid-template-rows:auto 1fr;
+}
+.t-head{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--hull-hi);border-bottom:1px solid var(--bevel-d);font-family:var(--f-legend);text-transform:var(--legend-case);letter-spacing:var(--legend-track);font-size:12px}
+.t-head .r{font-family:var(--f-out);text-transform:none;letter-spacing:0;color:var(--pen-mid);font-size:12px}
+.t-body{padding:16px;display:grid;gap:14px;align-content:start;min-width:0}
+.legend{font-family:var(--f-legend);text-transform:var(--legend-case);letter-spacing:var(--legend-track);font-size:11px;color:var(--pen-mid)}
+.name{font-family:var(--f-legend);font-size:30px;line-height:1;text-transform:var(--legend-case);letter-spacing:.02em;color:var(--pen)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.1em;font-size:10.5px;padding:3px 9px;border-radius:var(--radius);color:#111;background:var(--el)}
+.chip.psychic{--el:var(--el-psychic)} .chip.dark{--el:var(--el-dark);color:#eee}
+.row{display:grid;grid-template-columns:120px 1fr;gap:14px;align-items:start}
+.plate{aspect-ratio:1;background:var(--el-psychic);border:3px solid var(--trim);border-radius:var(--radius);display:grid;place-items:center;position:relative;overflow:hidden}
+.plate svg{width:74%;height:74%;fill:#141014}
+.specs{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-size:13px}
+.specs .k{font-family:var(--f-legend);text-transform:var(--legend-case);letter-spacing:var(--legend-track);font-size:10.5px;color:var(--pen-mid);padding-top:2px}
+.specs .v{font-family:var(--f-out);color:var(--pen)}
+.screen{background:var(--glass);color:var(--phos);font-family:var(--f-out);font-size:12.5px;line-height:1.5;padding:12px 14px;border-radius:var(--radius);border:2px solid var(--trim);box-shadow:inset 0 0 24px rgba(0,0,0,.6);position:relative}
+.screen .dim{color:var(--phos-dim)}
+.screen::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px)}
+.meter{display:grid;grid-template-columns:90px 1fr 40px;gap:10px;align-items:center;font-size:12px}
+.meter .k{font-family:var(--f-legend);text-transform:var(--legend-case);letter-spacing:var(--legend-track);font-size:10.5px;color:var(--pen-mid)}
+.meter .track{height:10px;background:var(--hull-lo);border-radius:var(--radius);overflow:hidden;box-shadow:inset 0 1px 2px rgba(0,0,0,.6)}
+.meter .fill{height:100%;background:var(--el-psychic);background-image:repeating-linear-gradient(90deg,transparent 0 6px,rgba(0,0,0,.35) 6px 8px)}
+.meter .n{font-family:var(--f-out);text-align:right;font-variant-numeric:tabular-nums}
+/* meter as printed ink on paper */
+.meter.paper .track{background:transparent;box-shadow:none;border:1px solid currentColor;height:9px;border-radius:0}
+.meter.paper .fill{background:currentColor;background-image:repeating-linear-gradient(90deg,transparent 0 5px,rgba(255,255,255,.55) 5px 6px)}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.btn{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.1em;font-size:11.5px;padding:9px 14px;border-radius:var(--radius);background:var(--hull-hi);color:var(--pen);border:0;box-shadow:inset 0 1px 0 var(--bevel-l),0 2px 0 var(--bevel-d)}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.lamp{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--lamp,#ffb037);box-shadow:0 0 6px var(--lamp,#ffb037);vertical-align:middle;margin-right:6px}
+
+/* a full colour raster CRT that carries the whole record */
+.crt{background:var(--glass);border:2px solid var(--trim);border-radius:var(--radius);padding:14px;position:relative;box-shadow:inset 0 0 40px rgba(0,0,0,.75);display:grid;gap:10px;color:var(--phos)}
+.crt::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px);border-radius:inherit}
+.crt .legend,.crt .specs .k,.crt .meter .k{color:var(--phos-dim);font-family:var(--f-out);letter-spacing:.08em;text-transform:uppercase}
+.crt .name{color:var(--phos);font-family:var(--f-out);letter-spacing:.04em;font-size:24px;text-transform:uppercase}
+.crt .specs .v,.crt .meter .n{color:var(--phos)}
+.crt .plate{border:1px solid var(--phos-dim);filter:saturate(.85) brightness(.95)}
+.crt .plate svg{fill:#0a0a0a}
+.crt .meter .track{background:rgba(255,255,255,.06);box-shadow:none}
+.crt .chip{border-radius:0}
+.crt .stat{font-size:11.5px;color:var(--phos-dim);display:flex;justify-content:space-between;border-top:1px solid rgba(255,255,255,.08);padding-top:8px;font-family:var(--f-out)}
+.crt .stat b{color:var(--phos);font-weight:400}
+
+/* ============ A. Instrument Panel (current) ============ */
+.t-current{background-image:radial-gradient(circle at 12px 12px,var(--trim) 2px,transparent 3px),radial-gradient(circle at calc(100% - 12px) 12px,var(--trim) 2px,transparent 3px);background-repeat:no-repeat}
+
+/* ============ B. Field Terminal ============ */
+.t-field{
+  --hull:#3a3d3e; --hull-hi:#4a4d4d; --hull-lo:#262829; --face:#cfc8b6;
+  --pen:#1e1d19; --pen-mid:#5b584f; --pen-low:#8a857a;
+  --glass:#0f0d0a; --phos:#e9e3d2; --phos-dim:rgba(233,227,210,.5);
+  --vfd:#ffb347; --vfd-glass:#1a1208;
+  --accent:#c8572b; --accent-ink:#f5efe2; --trim:#2b2b28;
+  --f-legend:'Michroma',sans-serif; --f-out:'Share Tech Mono',monospace; --legend-track:.08em; --radius:3px;
+  --bevel-l:rgba(255,255,255,.18); --bevel-d:rgba(0,0,0,.55);
+  background:linear-gradient(180deg,rgba(255,255,255,.04),transparent 30%),radial-gradient(120% 60% at 90% 110%,rgba(0,0,0,.35),transparent 60%),var(--hull);
+}
+.t-field .t-head{background:var(--face);color:var(--pen);font-size:10px}
+.t-field .t-head .r{color:var(--pen-mid)}
+.t-field .t-body{background:var(--face);margin:4px 14px 14px;border-radius:4px;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 0 0 1px rgba(0,0,0,.25),0 3px 0 rgba(0,0,0,.45);
+  background-image:radial-gradient(60px 18px at 88% 4%,rgba(0,0,0,.10),transparent 70%),radial-gradient(120px 40px at 10% 96%,rgba(0,0,0,.12),transparent 70%),linear-gradient(135deg,transparent 0 96%,rgba(0,0,0,.18) 96%);position:relative}
+.t-field .legend{font-size:9.5px}
+.t-field .vfd{background:var(--vfd-glass);color:var(--vfd);font-family:var(--f-out);font-size:12px;padding:6px 10px;border-radius:2px;box-shadow:inset 0 0 12px rgba(0,0,0,.8),0 0 0 2px #59595a;display:flex;justify-content:space-between;letter-spacing:.04em}
+.t-field .vfd .dim{color:rgba(255,179,71,.45)}
+.t-field .crt{border:0;border-radius:6px;box-shadow:inset 0 0 40px rgba(0,0,0,.8),0 0 0 7px #2b2b28,0 0 0 9px #6a6a66,0 4px 0 9px rgba(0,0,0,.35);margin:6px 9px 8px}
+.t-field .crt::before{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:linear-gradient(160deg,rgba(255,255,255,.09),transparent 38%)}
+/* the case: hinge knuckles along the top, four screws holding the face on */
+.t-field .hinge{height:12px;margin:10px 14px 0;background:linear-gradient(180deg,#5a5c5b,#2c2e2e);border-radius:0 0 3px 3px;box-shadow:inset 0 -2px 3px rgba(0,0,0,.6);position:relative}
+.t-field .hinge::before,.t-field .hinge::after{content:"";position:absolute;top:1px;width:26px;height:8px;background:linear-gradient(180deg,#8a8c89,#4a4c4b);border-radius:2px}
+.t-field .hinge::before{left:36px}.t-field .hinge::after{right:36px}
+.t-field .screws{position:absolute;left:9px;top:9px;width:7px;height:7px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#c9c4b4,#6d6a60);box-shadow:0 1px 1px rgba(0,0,0,.6);pointer-events:none}
+.t-field .screws-b{position:absolute;left:9px;bottom:9px;width:7px;height:7px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#c9c4b4,#6d6a60);box-shadow:0 1px 1px rgba(0,0,0,.6);pointer-events:none}
+.t-field .screws-r{position:absolute;right:9px;top:9px;width:7px;height:7px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#c9c4b4,#6d6a60);box-shadow:0 1px 1px rgba(0,0,0,.6);pointer-events:none}
+.t-field .screws-rb{position:absolute;right:9px;bottom:9px;width:7px;height:7px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#c9c4b4,#6d6a60);box-shadow:0 1px 1px rgba(0,0,0,.6);pointer-events:none}
+.t-field .btn{background:#dcd6c6;color:var(--pen);box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 0 rgba(0,0,0,.35)}
+.t-field .btn.primary{background:var(--accent);color:var(--accent-ink)}
+.t-field .tape{position:absolute;right:14px;top:-6px;background:#e9e2cc;color:#2b2a26;font-family:var(--f-out);font-size:10.5px;padding:2px 8px;transform:rotate(-2deg);box-shadow:0 1px 2px rgba(0,0,0,.4);letter-spacing:.04em}
+.t-field .asset{font-family:var(--f-legend);font-size:8.5px;letter-spacing:.1em;color:var(--pen-low);text-transform:uppercase;border-top:1px dashed rgba(0,0,0,.25);padding-top:8px;display:flex;justify-content:space-between}
+.t-field .keys{display:flex;justify-content:space-between;align-items:center}
+.t-field .keys .legend{display:flex;gap:6px;align-items:center}
+.t-field .keys .btns{flex-wrap:nowrap;flex-shrink:0}
+
+/* ============ C. Registry ============ */
+.t-registry{
+  --hull:#0f0c0c; --hull-hi:#1c1515; --hull-lo:#070505; --face:#e6dcc6;
+  --pen:#e9dfc8; --pen-mid:#a89d86; --pen-low:#6e6558;
+  --glass:#120a0a; --phos:#e7c98a; --phos-dim:rgba(231,201,138,.4);
+  --accent:#8f1d1d; --accent-ink:#f3e9d3; --trim:#c9a44a;
+  --f-legend:'Cinzel',serif; --f-out:'Special Elite','IBM Plex Mono',monospace; --legend-track:.16em; --radius:0; --lamp:#e4483c;
+  background:linear-gradient(180deg,#151010,#0c0909);
+}
+.t-registry .t-head{background:linear-gradient(180deg,#221818,#160f0f);border-bottom:1px solid var(--trim);color:var(--trim);font-weight:700;font-size:11px}
+/* the counter: a lacquered surface with a lit top edge and a visible front lip */
+.t-registry .t-body{padding:22px 16px 0;background:linear-gradient(180deg,rgba(255,255,255,.05),transparent 18%),radial-gradient(90% 40% at 50% 0%,rgba(201,164,74,.08),transparent 70%),linear-gradient(180deg,#151010,#0e0a0a);position:relative;grid-template-rows:auto auto auto 1fr}
+.t-registry .lip{height:16px;margin:8px -16px 0;align-self:end;background:linear-gradient(180deg,#0a0707,#050303);border-top:1px solid var(--trim);box-shadow:inset 0 3px 4px rgba(0,0,0,.8)}
+/* the clip that pins the docket to the counter */
+.t-registry .clip{position:absolute;left:50%;top:-9px;transform:translateX(-50%);width:64px;height:18px;border-radius:9px 9px 3px 3px;background:linear-gradient(180deg,#d9d0bd,#8d8577 55%,#5d574d);box-shadow:0 2px 3px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.6);z-index:2}
+.t-registry .clip::after{content:"";position:absolute;left:10px;right:10px;top:7px;height:3px;background:#3a352e;border-radius:2px}
+.t-registry .docket{background:var(--face);color:#1d1710;padding:14px 14px 12px;position:relative;display:grid;gap:8px;transform:rotate(-.6deg);
+  box-shadow:0 1px 0 rgba(255,255,255,.25),0 10px 18px rgba(0,0,0,.7),0 0 0 1px rgba(0,0,0,.4);
+  background-image:linear-gradient(90deg,transparent 0 22px,rgba(143,29,29,.35) 22px 23px,transparent 23px),radial-gradient(80% 60% at 30% 20%,transparent,rgba(120,90,40,.10));}
+.t-registry .docket::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:repeating-linear-gradient(90deg,var(--accent) 0 14px,transparent 14px 20px);opacity:.7}
+.t-registry .docket .hd{font-family:'Cinzel',serif;font-weight:700;font-size:10px;letter-spacing:.16em;color:#6b5f4c;text-transform:uppercase;padding-left:22px;margin-top:4px}
+.t-registry .docket .name{color:#1d1710;font-family:var(--f-out);font-size:22px;text-transform:uppercase;letter-spacing:.06em;padding-left:22px}
+.t-registry .docket .row{padding-left:22px}
+.t-registry .docket .specs .k{color:#6b5f4c;font-family:var(--f-out);letter-spacing:.04em;font-size:10.5px;text-transform:uppercase}
+.t-registry .docket .specs .v{color:#1d1710;border-bottom:1px dotted #8a7a60;font-family:var(--f-out)}
+.t-registry .docket .plate{border:1px solid #1d1710;filter:grayscale(1) contrast(1.15);background:#8a8078}
+.t-registry .docket .chips .chip{background:transparent;border:1.5px solid var(--el);color:#1d1710;font-family:var(--f-out);letter-spacing:.06em;border-radius:0}
+.t-registry .docket .meter{padding-left:22px;color:#1d1710}
+.t-registry .docket .meter .k{color:#6b5f4c;font-family:var(--f-out);letter-spacing:.04em}
+.t-registry .docket .meter .n{color:#1d1710}
+.t-registry .stamp{position:absolute;right:16px;top:16px;border:3px double var(--accent);color:var(--accent);font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.14em;padding:6px 10px;transform:rotate(-8deg);opacity:.85;text-transform:uppercase;text-align:center;line-height:1.2;mix-blend-mode:multiply}
+.t-registry .stamp small{display:block;font-family:var(--f-out);font-size:9px;letter-spacing:.08em;font-weight:400}
+/* the amber readout: glass set into a recessed bezel with two screws */
+.t-registry .bezel{background:linear-gradient(180deg,#070505,#120d0d);padding:6px 26px;border:1px solid #2a1f1f;box-shadow:inset 0 2px 6px rgba(0,0,0,.9),0 1px 0 rgba(201,164,74,.25);position:relative}
+.t-registry .bezel::before,.t-registry .bezel::after{content:"";position:absolute;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#e0c882,#7a5f24);box-shadow:0 1px 1px rgba(0,0,0,.8)}
+.t-registry .bezel::before{left:8px}.t-registry .bezel::after{right:8px}
+.t-registry .ledger{background:var(--glass);color:var(--phos);font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:7px 10px;border:1px solid #3a2c1c;display:flex;justify-content:space-between;letter-spacing:.04em;box-shadow:inset 0 0 14px rgba(0,0,0,.9),inset 0 -8px 12px rgba(231,201,138,.06)}
+.t-registry .ledger b{font-weight:400;color:var(--phos)}
+.t-registry .ledger .dim{color:var(--phos-dim)}
+/* the key bank: a recessed plate the two keys sit in */
+/* the key bank: a brass-edged well cut into the counter, each key a moulded cap in its own socket */
+.t-registry .keybank{display:flex;gap:12px;min-width:0;overflow:hidden;justify-content:flex-end;align-items:center;padding:10px 12px;background:linear-gradient(180deg,#060404,#0c0808);box-shadow:inset 0 3px 6px rgba(0,0,0,.95),inset 0 -1px 0 rgba(201,164,74,.15),0 1px 0 rgba(201,164,74,.3);border:1px solid #2a1f14}
+.t-registry .keybank .wplate{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.14em;white-space:nowrap;color:var(--trim);text-transform:uppercase;margin-right:auto;opacity:.8;padding-left:4px;border-left:1px solid rgba(201,164,74,.35)}
+.t-registry .sock{padding:5px;background:#030202;border-radius:5px;box-shadow:inset 0 2px 3px #000,inset 0 -1px 0 rgba(201,164,74,.25),0 0 0 1px rgba(201,164,74,.35)}
+.t-registry .btn{position:relative;white-space:nowrap;padding:10px 14px 9px;border-radius:3px;border:0;font-weight:700;letter-spacing:.1em;font-size:10.5px;
+  background:linear-gradient(165deg,#3b2d2d 0%,#1f1616 55%,#150e0e 100%);color:#d8b866;
+  text-shadow:0 -1px 0 rgba(0,0,0,.9),0 1px 0 rgba(255,255,255,.06);
+  box-shadow:0 5px 0 #0a0606,0 6px 0 #2a1e12,0 9px 8px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.16),inset 1px 0 0 rgba(255,255,255,.05),inset 0 -3px 0 rgba(0,0,0,.65)}
+.t-registry .btn.primary{background:linear-gradient(165deg,#c94545 0%,#8f1d1d 55%,#5e1010 100%);color:#f6e7c8;
+  box-shadow:0 5px 0 #3a0808,0 6px 0 #2a1e12,0 9px 8px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.3),inset 1px 0 0 rgba(255,255,255,.1),inset 0 -3px 0 rgba(0,0,0,.5)}
+
+/* ============ D. Archive ============ */
+.t-archive{
+  --hull:#e8e3d5; --hull-hi:#f2eee3; --hull-lo:#d8d2c2; --face:#f8f5ec;
+  --pen:#1f2f36; --pen-mid:#5b6b71; --pen-low:#8b979b;
+  --accent:#1f5f6b; --accent-ink:#f3f7f6; --trim:#8fa8ad;
+  --f-legend:'Spectral',serif; --f-out:'IBM Plex Mono',monospace; --f-text:'IBM Plex Sans',sans-serif;
+  --legend-case:none; --legend-track:.02em; --radius:0;
+  --bevel-l:rgba(255,255,255,.8); --bevel-d:rgba(31,47,54,.18); --lamp:#1f5f6b;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);
+  background:linear-gradient(180deg,#ece7da,#e3ddcd);
+}
+/* the desk: a dark sea-slate surface under the pool of a reading lamp */
+.t-archive{--hull:#3a4a4e;--pen:#e6dfcc;--pen-mid:#a9b3b0;--pen-low:#7d8886;--trim:#7d9397;
+  background:radial-gradient(75% 60% at 50% 46%,rgba(255,236,190,.55) 0%,rgba(255,225,170,.18) 40%,transparent 75%),linear-gradient(180deg,#465659,#2e3b3e)}
+.t-archive .t-head{background:#2a3538;border-bottom:1px solid var(--trim);color:#cfd8d4;font-style:italic;font-size:14px;letter-spacing:0;box-shadow:inset 0 -1px 0 rgba(0,0,0,.4)}
+.t-archive .t-head .r{color:var(--pen-mid)}
+.t-archive .t-body{padding:26px 22px 16px}
+/* the card: yellowed stock, foxing, a soft crease, worn corners, a rod hole at the bottom edge */
+.t-archive .card{--ink:#3b3428;--ink-faint:#6f6553;background:#e6d9b6;color:var(--ink);border:0;padding:34px 16px 22px;position:relative;transform:rotate(.8deg);
+  border-radius:2px 3px 2px 4px;
+  box-shadow:0 1px 0 rgba(255,255,255,.4),0 12px 18px rgba(0,0,0,.45),0 0 0 1px rgba(80,60,30,.25);
+  background-image:
+    linear-gradient(0deg,transparent 0 23px,rgba(70,90,100,.20) 23px 24px),
+    radial-gradient(18px 12px at 12% 78%,rgba(120,80,30,.16),transparent 70%),
+    radial-gradient(10px 8px at 86% 30%,rgba(120,80,30,.14),transparent 70%),
+    radial-gradient(26px 16px at 70% 92%,rgba(120,80,30,.12),transparent 70%),
+    radial-gradient(8px 8px at 40% 12%,rgba(120,80,30,.14),transparent 70%),
+    linear-gradient(90deg,rgba(90,70,40,.10),transparent 12%,transparent 88%,rgba(90,70,40,.14)),
+    linear-gradient(180deg,rgba(90,70,40,.12),transparent 10%,transparent 90%,rgba(90,70,40,.18));
+  background-size:100% 24px,100% 100%,100% 100%,100% 100%,100% 100%,100% 100%,100% 100%;background-position:0 10px,0 0,0 0,0 0,0 0,0 0,0 0}
+.t-archive .card::before{content:"";position:absolute;left:0;right:0;top:0;height:22px;background:#e9dcbb;border-bottom:1.5px solid rgba(143,29,29,.28);border-radius:2px 3px 0 0}
+.t-archive .card::after{content:"";position:absolute;left:50%;bottom:6px;width:11px;height:11px;margin-left:-5.5px;border-radius:50%;background:#3a4a4e;box-shadow:inset 0 1px 2px rgba(0,0,0,.7),0 0 0 1px rgba(80,60,30,.35)}
+.t-archive .tabs{position:absolute;top:-1px;right:14px;display:flex;gap:4px}
+.t-archive .tab{font-family:var(--f-out);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px 4px;color:#1a1a1a;background:var(--el);border-radius:0 0 2px 2px;filter:saturate(.7) brightness(.92);box-shadow:inset 0 -6px 8px rgba(120,80,30,.18)}
+.t-archive .tab.psychic{--el:var(--el-psychic)} .t-archive .tab.dark{--el:var(--el-dark);color:#eee}
+.t-archive .acc{position:absolute;top:4px;left:16px;font-family:'Special Elite',var(--f-out);font-size:11px;letter-spacing:.06em;color:var(--ink-faint)}
+.t-archive .card .name{font-family:'Special Elite',var(--f-out);font-weight:400;font-size:24px;letter-spacing:.04em;line-height:24px;color:var(--ink);text-transform:uppercase}
+.t-archive .card i{font-family:var(--f-legend);color:var(--ink-faint);font-size:13.5px;line-height:24px;display:block}
+.t-archive .card .row{margin-top:8px}
+.t-archive .card .plate{border:5px solid #efe6cf;box-shadow:0 1px 3px rgba(0,0,0,.4);filter:sepia(.55) contrast(.92) brightness(.95);transform:rotate(-1.6deg);background:#bda58f}
+.t-archive .card .plate::before,.t-archive .card .plate::after{content:"";position:absolute;width:14px;height:14px;background:#2a241c;z-index:2}
+.t-archive .card .plate::before{left:-5px;top:-5px;clip-path:polygon(0 0,100% 0,0 100%)}
+.t-archive .card .plate::after{right:-5px;bottom:-5px;clip-path:polygon(100% 100%,100% 0,0 100%)}
+.t-archive .card .specs{line-height:24px;gap:0 14px}
+.t-archive .card .specs .k,.t-archive .card .meter .k{font-family:'Special Elite',var(--f-out);text-transform:uppercase;letter-spacing:.06em;font-size:10.5px;line-height:24px;padding:0;color:var(--ink-faint)}
+.t-archive .card .specs .v{line-height:24px;font-family:'Special Elite',var(--f-out);color:var(--ink)}
+.t-archive .card .meter{color:var(--ink);margin-top:6px}
+.t-archive .card .meter .n{color:var(--ink)}
+.t-archive .card .meter.paper .fill{opacity:.8}
+.t-archive .pencil{font-family:'Caveat',cursive;font-size:15px;color:#4a5560;transform:rotate(-3deg);opacity:.85;line-height:1.1;text-align:right;margin:10px 24px 0 0}
+.t-archive .desk{display:grid;gap:10px;margin-top:4px}
+.t-archive .btn{background:linear-gradient(180deg,#e9e2cf,#cfc6ae);border:1px solid #8a8168;color:#243b41;box-shadow:inset 0 1px 0 #fff,0 3px 0 #6f6852,0 4px 4px rgba(0,0,0,.4);font-family:var(--f-text);text-transform:none;letter-spacing:0;font-size:13px;font-weight:500}
+.t-archive .btn.primary{background:linear-gradient(180deg,#2c7280,#1a5560);color:var(--accent-ink);border-color:#123c44;box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 3px 0 #0e3038,0 4px 4px rgba(0,0,0,.4)}
+.t-archive .ref{font-family:var(--f-out);font-size:11px;color:var(--pen-mid);display:flex;justify-content:space-between;border-top:1px solid rgba(255,255,255,.12);padding-top:8px}
+
+/* ============ E. Relay ============ */
+.t-relay{
+  --hull:#0a0c10; --hull-hi:#141821; --hull-lo:#05060a; --face:var(--hull);
+  --pen:#d8dde8; --pen-mid:#7f889a; --pen-low:#4f5766;
+  --glass:#07090d; --phos:#dfe4ea; --phos-dim:rgba(223,228,234,.45);
+  --trace:#e2bd43; --accent:#e0364a; --accent-ink:#fff3f2; --trim:#2b3444;
+  --f-legend:'Chakra Petch',sans-serif; --f-out:'Space Mono',monospace; --legend-track:.14em; --radius:2px;
+  --bevel-l:rgba(120,160,255,.12); --bevel-d:rgba(0,0,0,.8); --lamp:#e2bd43;
+  background:
+    linear-gradient(90deg,transparent 0 47px,rgba(226,189,67,.12) 47px 48px,transparent 48px 100%),
+    linear-gradient(0deg,transparent 0 118px,rgba(226,189,67,.12) 118px 119px,transparent 119px 100%),
+    linear-gradient(0deg,transparent 0 230px,rgba(226,189,67,.09) 230px 231px,transparent 231px 100%),
+    radial-gradient(3px 3px at 48px 119px,#e2bd43 45%,transparent 60%),
+    radial-gradient(3px 3px at 48px 231px,#e2bd43 45%,transparent 60%),
+    var(--hull);
+}
+.t-relay .t-head{background:var(--hull-hi);border-bottom:1px solid var(--trim);color:var(--trace);font-weight:600}
+.t-relay .sig{display:flex;gap:3px;align-items:flex-end;height:14px}
+.t-relay .sig i{display:block;width:5px;background:var(--trace)}
+.t-relay .sig i.off{background:var(--trim)}
+.t-relay .silk{font-family:var(--f-out);font-size:10px;color:var(--trace);letter-spacing:.08em;display:flex;justify-content:space-between;opacity:.85}
+/* the bare board: a drawn PCB sits behind everything; the tube is a framed part bolted to it on standoffs */
+.t-relay{background:#141821}
+.t-relay .t-body{margin:10px;position:relative;padding:26px 30px 18px;height:760px;grid-template-rows:auto auto 1fr;background:#0b0e16;border-radius:4px;box-shadow:0 8px 20px rgba(0,0,0,.6);isolation:isolate}
+.t-relay .pcb{position:absolute;inset:0;width:100%;height:100%;z-index:0;border-radius:3px}
+.t-relay .t-body>*:not(.pcb){position:relative;z-index:1}
+.t-relay .silk{color:#8a93a6;opacity:.9}
+.t-relay .crt{border:0;margin:0;border-radius:10px;background:radial-gradient(120% 100% at 50% 40%,#0b0e14,#04050a);
+  box-shadow:0 0 0 6px #3b4353,0 0 0 8px #1a1f2a,0 0 0 9px #55607a,0 10px 14px 6px rgba(0,0,0,.6),inset 0 0 40px rgba(0,0,0,.8)}
+.t-relay .crt::before{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:linear-gradient(155deg,rgba(255,255,255,.10),transparent 42%)}
+.t-relay .stand{position:absolute;width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#d9dde6,#6a7080 60%,#3a4050);box-shadow:0 1px 2px rgba(0,0,0,.9),0 0 0 2px #1a1f2a;z-index:3}
+.t-relay .stand::before{content:"";position:absolute;left:5px;top:2px;width:2px;height:8px;background:#2a2f3a}
+.t-relay .stand::after{content:"";position:absolute;left:2px;top:5px;width:8px;height:2px;background:#2a2f3a}
+.t-relay .bottom{display:grid;grid-template-columns:1fr auto;align-items:end;align-self:end;gap:10px;padding-bottom:30px}
+.t-relay .header{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.t-relay .ribbon{height:10px;width:86px;background:repeating-linear-gradient(90deg,#b9bec9 0 3px,#6b7280 3px 4px);border-left:4px solid #d43b3b;border-radius:1px;box-shadow:0 2px 3px rgba(0,0,0,.8);margin-right:30px;transform:translateY(-2px)}
+.t-relay .pins{display:flex;gap:3px;padding:3px 4px;background:#0a0c12;border:1px solid #2a3344}
+.t-relay .pins i{display:block;width:3px;height:9px;background:linear-gradient(180deg,#e6e0c8,#9a8f66)}
+.t-relay .btns{margin:0;gap:8px}
+/* keycaps soldered to the board: a cap with a visible side wall and a switch housing under it */
+.t-relay .btn{position:relative;border:0;border-radius:4px;padding:10px 14px 9px;color:#e8ebf2;letter-spacing:.14em;
+  background:linear-gradient(170deg,#3a4256,#252b3a 55%,#1b202c);
+  box-shadow:0 5px 0 #0d1017,0 6px 0 #3a4256,0 8px 6px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.16),inset 0 -2px 0 rgba(0,0,0,.6)}
+.t-relay .btn.primary{background:linear-gradient(170deg,#ef5b6b,#c62a3c 55%,#8f1a28);color:#fff4f2;box-shadow:0 5px 0 #4a0c14,0 6px 0 #3a4256,0 8px 6px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.3),inset 0 -2px 0 rgba(0,0,0,.45)}
+.t-relay .crt .legend,.t-relay .crt .specs .k,.t-relay .crt .meter .k{color:var(--trace);opacity:.8}
+.t-relay .crt .stat b{color:var(--accent)}
+.t-relay .btn{background:var(--hull-hi);border:1px solid var(--trim);box-shadow:none;color:var(--pen)}
+.t-relay .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.t-relay .wire{font-family:var(--f-out);font-size:10.5px;color:var(--pen-mid);display:flex;justify-content:space-between;border-top:1px dashed var(--trim);padding-top:8px}
+.t-relay .wire b{color:var(--accent);font-weight:400}
+
+/* ============ F. Readout ============ */
+.t-readout{
+  --hull:#0b0d0b; --hull-hi:#111411; --hull-lo:#060706;
+  --pen:#e6e4d8; --pen-mid:#8d8f84; --pen-low:#565850;
+  --glass:#0c100d; --phos:#e8e6da; --phos-dim:rgba(232,230,218,.4);
+  --accent:#e8e6da; --accent-ink:#0b0d0b; --trim:#2a2e2a;
+  --f-legend:'IBM Plex Mono',monospace; --f-out:'IBM Plex Mono',monospace; --f-text:'IBM Plex Mono',monospace; --legend-track:.1em; --radius:0;
+  --bevel-l:rgba(255,255,255,.06); --bevel-d:rgba(0,0,0,.9);
+}
+.t-readout .t-head{background:var(--hull);border-bottom:1px solid var(--trim);color:var(--pen-mid);font-size:11px}
+.t-readout .t-body{padding:0}
+.t-readout .big{background:var(--glass);color:var(--phos);font-family:var(--f-out);font-size:13px;line-height:1.6;padding:22px 22px 26px;min-height:480px;position:relative;margin:12px;border-radius:8px;box-shadow:0 0 0 8px #161916,0 0 0 10px #2a2e2a,inset 0 0 60px rgba(0,0,0,.7)}
+.t-readout .big::before{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:linear-gradient(165deg,rgba(255,255,255,.07),transparent 40%)}
+.t-readout .big::after{border-radius:inherit;content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px)}
+.t-readout .big .dim{color:var(--phos-dim)}
+.t-readout .big .hd{font-size:22px;letter-spacing:.06em;margin:6px 0 14px}
+.t-readout .tb{display:grid;grid-template-columns:70px 1fr 40px;gap:10px;align-items:center;margin:4px 0}
+.t-readout .tb .bar{height:9px;background:rgba(255,255,255,.08)}
+.t-readout .tb .bar i{display:block;height:100%;background:var(--phos);background-image:repeating-linear-gradient(90deg,transparent 0 7px,rgba(0,0,0,.5) 7px 9px)}
+.t-readout .tb span:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.t-readout .cursor{display:inline-block;width:9px;height:14px;background:var(--phos);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.t-readout .cursor{animation:none}}
+.t-readout .one{margin-top:16px}
+.t-readout .one .btn{background:transparent;border:1px solid var(--phos);color:var(--phos);box-shadow:none;font-family:var(--f-out);letter-spacing:.12em}
+
+.swatchrow{display:flex;gap:4px;margin-top:4px}
+.swatchrow i{display:block;width:16px;height:16px;border:1px solid rgba(0,0,0,.4)}
+.qs{display:grid;gap:14px;max-width:72ch}
+.qs .q{border-left:2px solid var(--ink-low);padding-left:14px}
+.qs .q b{display:block;margin-bottom:2px}
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">Xalians design direction, working demo, revision 5</div>
+  <h1>One relay, many terminals</h1>
+  <p class="lede">Every panel below shows the same creature record, Hypnopet of Telypso, rendered on a different machine the lore supports. Each one now says exactly what object you are looking at, which parts of it are painted metal, which are paper, and which are a screen. Writing that down exposed one inconsistency shared by five of the six panels and by the live site. It is fixed below.</p>
+
+  <section class="two">
+    <div>
+      <h2>The umbrella concept</h2>
+      <p>The lore already has an object that connects many different machines into one view: the Zolto rebuilding the QED network, the galaxy's only instant link, while Kozrak tries to keep the galaxy in the dark. That is xalians.com. The site shell, the navigation, the sign-in and the account, is <b>a relay</b>. Each area you navigate to is <b>a remote terminal</b> the relay has patched you into. The nav is the one constant object. Everything behind it is allowed to be a different piece of hardware from a different faction and era.</p>
+      <p>In design-system terms there is a <b>core layer</b> nobody may change per area and a <b>material layer</b> each area sets. Element hues sit in the core because fire is red on every planet.</p>
+      <h2 style="margin-top:22px">The medium rule</h2>
+      <p>Describing each terminal as a physical object forced one question: <b>where does variable information live?</b> A hull is painted once at the factory. It can carry the word "INDEX" but it cannot carry "#00015", because the next creature has a different number. The live site prints creature data in monospace directly on the matte hull, and so did five of my six panels. That is the inconsistency. Every terminal has exactly three media, and every piece of content belongs to one of them.</p>
+      <h2 style="margin-top:22px">The anchoring rule</h2>
+      <p>The medium rule says what each thing is. It is not enough to say it; the object has to show how it is attached to the world, or the viewer cannot tell a surface from a screen from empty space. So every object carries the cues of its own physics: paper is clipped, pinned or lying askew, and it ages; a screen sits in a bezel with screws and a curved highlight; keys sit in a recessed bank and have travel; a board has an edge, mounting holes and cables; a counter has a lit top edge and a dark front lip. None of these cues carry information. All of them carry belief.</p>
+    </div>
+    <div class="layers">
+      <div class="layer fixed"><b>Core, shared by every terminal</b>
+        <span>spacing scale</span><span>type scale</span><span>14 element hues</span><span>stat colors</span><span>meter and chip semantics</span><span>contrast floor 4.5:1</span><span>one primary action per screen</span><span>only screens and lamps emit</span><span>motion is mechanical</span><span>tabular numerals</span><span>the medium rule</span>
+      </div>
+      <div class="layer"><b>Material, set per terminal</b>
+        <span>hull and face colors</span><span>ink on the hull</span><span>paper stock and typewriter face</span><span>glass and phosphor</span><span>accent (the committing color)</span><span>trim (bezel, seal, rule)</span><span>legend typeface</span><span>output typeface</span><span>corner radius</span><span>bevel depth</span><span>wear and patina layer</span><span>diegetic furniture: stamps, tape, seals, solder</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="media">
+    <div class="medium"><b>Hull · painted once, matte, never emits</b><p>Fixed legends, key caps, lamps, bezels, asset plates, warning livery. Anything that is identical for every creature and every visitor.</p><div class="ex">"SPECIMEN RECORD", "GENERATE", the ECHELON asset number</div></div>
+    <div class="medium"><b>Paper · printed once, matte, variable, committed</b><p>A record that was produced and will not change: a minted creature's slip, a ledger docket, an archive card. Typewriter or line-printer face. Stamps and colored tabs are how paper carries state and element color. You cannot press paper, so paper never has buttons.</p><div class="ex">the docket, the index card, a printed genome slip</div></div>
+    <div class="medium"><b>Screen · live, variable, the only thing that emits</b><p>Anything that can still change: a record being generated, a link status, a battle in progress, a cursor. Where a terminal has a color raster CRT, the record can live there in full color. Where it has only an amber or green readout, the record must go to paper.</p><div class="ex">the CRT on the field terminal, the ledger line, the relay packet</div></div>
+  </div>
+
+  <section>
+    <h2>Six terminals, one record</h2>
+    <p class="muted">Panel A is the live site today. B through F are the candidates. Under each: what the object is, what is hull, paper and screen, and what I changed once I wrote that down. Faces are Google Fonts stand-ins; Michroma stands in for Eurostile Extended, Special Elite for a typewriter.</p>
+
+    <div class="demos">
+
+      <!-- A -->
+      <div class="demo">
+        <div>
+          <div class="who">A. Baseline, what ships today</div>
+          <h3>Instrument Panel</h3>
+          <p>A slab of olive-enamelled steel bolted into a hangar wall. Brass bezels, bakelite keys, a small green CRT set into a hole in the panel. The design system's own words are "Star Wars by way of Fallout", but the materials are pre-plastic, so it reads as a WWII field radio or a submarine's control room rather than either.</p>
+          <dl>
+            <dt>Hull</dt><dd>Everything you see. Legends are silkscreened; the brass rivets in the corners are real fasteners.</dd>
+            <dt>Paper</dt><dd>None.</dd>
+            <dt>Screen</dt><dd>Only the small green CRT, showing four status lines.</dd>
+          </dl>
+          <div class="fix"><b>Left as is, for comparison.</b> The inconsistency: the creature's name, index, origin, height, mass and both meters are printed on the hull as if silkscreened at the factory. The specimen portrait is a colored tile "behind glass" in a housing, which implies a photograph or a lit panel that nothing else in the design accounts for. On the live site this is how the species page, the generator record and the account page all work today.</div>
+        </div>
+        <div class="term t-current">
+          <div class="t-head"><span>Xalian Generator</span><span class="r">TELYPSO UNIT 04</span></div>
+          <div class="t-body">
+            <div class="legend">Specimen record</div>
+            <div class="name">Hypnopet</div>
+            <div class="chips"><span class="chip psychic">Psychic</span><span class="chip dark">Dark</span></div>
+            <div class="row">
+              <div class="plate"><svg viewBox="0 0 100 100"><circle cx="50" cy="48" r="26"/><circle cx="30" cy="20" r="9"/><circle cx="70" cy="20" r="9"/><rect x="34" y="70" width="32" height="18" rx="6"/></svg></div>
+              <div class="specs"><div class="k">Index</div><div class="v">#00015</div><div class="k">Origin</div><div class="v">Telypso</div><div class="k">Height</div><div class="v">93 in / 236 cm</div><div class="k">Mass</div><div class="v">830 lbs / 376 kg</div></div>
+            </div>
+            <div class="screen">GENERATOR ONLINE<br>SPECIES ACCEPTED . . . HYPNOPET<br><span class="dim">PLAGUE IMMUNITY CONFIRMED</span><br>READY TO PRINT_</div>
+            <div class="meter"><span class="k">Spc Attack</span><div class="track"><div class="fill" style="width:78%"></div></div><span class="n">741</span></div>
+            <div class="meter"><span class="k">Spc Defense</span><div class="track"><div class="fill" style="width:52%"></div></div><span class="n">503</span></div>
+            <div class="btns"><button class="btn primary">Generate</button><button class="btn">Release</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- B -->
+      <div class="demo">
+        <div>
+          <div class="who">B. Salvaged ECHELON-era hardware, my recommendation</div>
+          <h3>Field Terminal</h3>
+          <p>A portable survey unit the size of a suitcase, built by an ECHELON company for its field biologists before the End Wars. It opens like a luggable computer: a gunmetal case, an off-white enamel face with the keys and lamps molded in, and a color raster CRT under dark glass filling most of the face. A one-line amber vacuum-fluorescent strip above the CRT is the unit's own status voice. The company is gone. Whoever has it now has patched it, taped it, and pointed it at a Generator.</p>
+          <p>This is the Alien Nostromo register: cassette futurism with corporate livery, worn in. No 1950s Americana anywhere. Warm and scrappy because of the wear and the amber, not because of the palette.</p>
+          <dl>
+            <dt>Hull</dt><dd>The gunmetal case and enamel face. Fixed legends in an extended-width face, the company name, the asset number, the reconditioning tape, the keys.</dd>
+            <dt>Paper</dt><dd>Only the tape and the asset label. A printed slip could eject from a slot when a creature is minted; not shown.</dd>
+            <dt>Screen</dt><dd>The color CRT carries the whole record: name, element blocks, portrait, specs, meters. The amber strip carries battery, link and job state.</dd>
+          </dl>
+          <div class="fix"><b>Changed.</b> In revision 1 the record was printed on the enamel face and a small amber CRT showed status only, which is the same hull inconsistency as panel A. Moving the record onto a color CRT also answers a question I had dodged: how a monochrome amber screen could show fourteen element colors. It cannot. So the unit has two displays, a color raster for the record and an amber strip for its own voice, which is exactly how period hardware split those jobs. Revision 3 adds the case: hinge knuckles along the top where the lid folds down, four screws holding the enamel face onto the chassis, and a thick dark CRT bezel with a curved-glass highlight so the screen sits inside the face rather than being painted on it.</div>
+        </div>
+        <div class="term t-field">
+          <div class="t-head"><span>Echelon Bioworks · Portable Survey Unit</span><span class="r">PSU-7 / TELYPSO</span></div>
+          <div class="hinge"></div>
+          <div class="t-body">
+            <span class="screws"></span><span class="screws-r"></span><span class="screws-b"></span><span class="screws-rb"></span>
+            <div class="tape">reconditioned · do not return to depot</div>
+            <div class="vfd"><span>PSU-7 &nbsp;BATT 61%</span><span>LINK RELAY/ZOLTON-3 <span class="dim">HELD</span></span></div>
+            <div class="crt">
+              <div class="legend">Specimen record · genome chip read · immune</div>
+              <div class="name">Hypnopet</div>
+              <div class="chips"><span class="chip psychic">Psychic</span><span class="chip dark">Dark</span></div>
+              <div class="row">
+                <div class="plate"><svg viewBox="0 0 100 100"><circle cx="50" cy="48" r="26"/><circle cx="30" cy="20" r="9"/><circle cx="70" cy="20" r="9"/><rect x="34" y="70" width="32" height="18" rx="6"/></svg></div>
+                <div class="specs"><div class="k">Index</div><div class="v">#00015</div><div class="k">Origin</div><div class="v">Telypso</div><div class="k">Height</div><div class="v">93 in / 236 cm</div><div class="k">Mass</div><div class="v">830 lbs / 376 kg</div></div>
+              </div>
+              <div class="meter"><span class="k">Spc Attack</span><div class="track"><div class="fill" style="width:78%"></div></div><span class="n">741</span></div>
+              <div class="meter"><span class="k">Spc Defense</span><div class="track"><div class="fill" style="width:52%"></div></div><span class="n">503</span></div>
+              <div class="stat"><span>READY_</span><span>page <b>1</b>/3</span></div>
+            </div>
+            <div class="keys"><span class="legend"><span class="lamp"></span>Generator link</span><span class="btns" style="margin:0"><button class="btn primary">Generate</button><button class="btn">Release</button></span></div>
+            <div class="asset"><span>Property of Echelon Bioworks</span><span>Asset 0419-PSU · Grimedes depot</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C -->
+      <div class="demo">
+        <div>
+          <div class="who">C. Kozrak's arena bureaucracy</div>
+          <h3>Registry</h3>
+          <p>A clerk's counter at the Valleron arena. You are standing on the public side. The counter is black lacquer trimmed in gold leaf, the regime's colors, with a one-line amber ledger display set into it and two heavy keys. On the counter, clipped into a holder, is your combatant's docket: cream stock, typed on a typewriter, red margin rule, a red stamp when the fee clears. The docket is the record. The counter is the machine that accepts your entry.</p>
+          <p>This is the Empire side of the Star Wars split: cold institutional power expressed as paperwork. Nothing here is friendly, and nothing is broken either. Kozrak's machines work.</p>
+          <dl>
+            <dt>Hull</dt><dd>The lacquer counter, the gold rule, the two keys, the red lamp.</dd>
+            <dt>Paper</dt><dd>The docket carries everything about the combatant: typed name and fields, a black-and-white identification photograph, element marks as inked stamps, stats as printed bars, and the admission stamp.</dd>
+            <dt>Screen</dt><dd>The single amber ledger line: entry number, fee state, bracket. Only the things the clerk's machine is tracking right now.</dd>
+          </dl>
+          <div class="fix"><b>Changed twice.</b> Revision 2 put the record on paper, but the docket floated on black with nothing saying whether the black was a surface, a screen, or nothing. Revision 3 adds the cues a real counter would have: a steel clip pinning the docket down, the docket sitting very slightly askew under it, a lit top edge and a dark front lip on the counter so it reads as a slab with depth, the amber readout recessed into a bezel with two brass screws, and the two keys mounted in a recessed key bank. Revision 4 remakes the keys, which still read as flat digital buttons: each is now a moulded cap with a lit top edge, a dark side wall five pixels deep, and a shadow onto the counter, sitting in its own black socket with a thin brass rim. The red key is red bakelite with cream engraving, the black key is black bakelite with gold engraving, and the well carries the window number in gold.</div>
+        </div>
+        <div class="term t-registry">
+          <div class="t-head"><span>Valleron Arena Registry</span><span class="r">LEDGER IV · WINDOW 2</span></div>
+          <div class="t-body">
+            <div class="docket">
+              <div class="clip"></div>
+              <div class="stamp">Admitted<small>bracket C · fee paid</small></div>
+              <div class="hd">Combatant of record</div>
+              <div class="name">Hypnopet</div>
+              <div class="row">
+                <div class="plate"><svg viewBox="0 0 100 100"><circle cx="50" cy="48" r="26"/><circle cx="30" cy="20" r="9"/><circle cx="70" cy="20" r="9"/><rect x="34" y="70" width="32" height="18" rx="6"/></svg></div>
+                <div>
+                  <div class="specs"><div class="k">Registry no.</div><div class="v">00015-T</div><div class="k">Homeworld</div><div class="v">Telypso</div><div class="k">Sponsor</div><div class="v">unaffiliated</div><div class="k">Bouts</div><div class="v">3 W · 1 L</div></div>
+                  <div class="chips" style="margin-top:8px"><span class="chip psychic">Psychic</span><span class="chip dark">Dark</span></div>
+                </div>
+              </div>
+              <div class="meter paper"><span class="k">Spc Attack</span><div class="track"><div class="fill" style="width:78%"></div></div><span class="n">741</span></div>
+              <div class="meter paper"><span class="k">Spc Defense</span><div class="track"><div class="fill" style="width:52%"></div></div><span class="n">503</span></div>
+            </div>
+            <div class="bezel"><div class="ledger"><span><span class="lamp"></span>ENTRY 2,204 &nbsp;<span class="dim">BRACKET C</span></span><span>FEE <b>2 TOKENS</b> <span class="dim">CLEARED</span></span></div></div>
+            <div class="keybank"><span class="wplate">Window 2</span><span class="sock"><button class="btn primary">Enter the bracket</button></span><span class="sock"><button class="btn">Withdraw</button></span></div>
+            <div class="lip"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- D -->
+      <div class="demo">
+        <div>
+          <div class="who">D. Poseidas, the neutral ground</div>
+          <h3>Archive</h3>
+          <p>A reading desk in the Poseidas Deep Archive, the library of the one faction the lore codes as courts, commerce and science. The room is dim. The desk is dark sea-slate, and the only light is the warm pool of a reading lamp falling on the middle of it. An archivist has pulled a catalogue card from the drawers and set it in that pool: card stock that has yellowed over decades, foxed with brown spots, darker at the edges where a thousand hands have held it, typed on a typewriter whose ink has gone soft, with a pencil cross-reference added later in the archivist's hand. The photographic plate is pasted on with black corner mounts and has gone sepia. The colored tabs on the top edge are the element classification, the way real card catalogues color-coded subjects, and they have faded with the card. The round hole at the bottom edge is where the drawer's rod ran through it. The desk has two enamel keys for requesting the next record.</p>
+          <p>So to answer the question directly: the cards are literal paper cards on a physical desk, not a picture of cards on a screen. There is no screen on this terminal at all. A reading room does not need one, and its absence is what makes the archive feel like a different place from every other machine on the site.</p>
+          <dl>
+            <dt>Hull</dt><dd>The desk surface, the archive's name strip, the two request keys, the revision line printed on the desk edge.</dd>
+            <dt>Paper</dt><dd>The card: accession number, name, one-line summary, pasted plate, typed fields, stats as printed bars, colored classification tabs, the pencil note, the rod hole.</dd>
+            <dt>Screen</dt><dd>None. The archive is the one terminal without a live display.</dd>
+          </dl>
+          <div class="fix"><b>Changed twice.</b> Revision 2 fixed the medium problem but you were right that it read as a hospital index card printed this morning: bright white stock, crisp type, a light clinical ground with no lamp anywhere. Revision 3 ages the card (yellowed stock, foxing, worn edges, faded typewriter ink, sepia plate with corner mounts, a pencil annotation, the rod hole) and turns the room down: a dark slate desk with one warm lamp pool, so the card is the lit thing rather than the whole panel. The desk keys now have real travel. The archive is still the warmest and lightest terminal, but it is lit, not white.</div>
+        </div>
+        <div class="term t-archive">
+          <div class="t-head"><span>Poseidas Deep Archive</span><span class="r">Bestiary · drawer 3</span></div>
+          <div class="t-body">
+            <div class="card">
+              <div class="acc">PDA-0015 · BESTIARY</div>
+              <div class="tabs"><span class="tab psychic">Psychic</span><span class="tab dark">Dark</span></div>
+              <div class="name">Hypnopet</div>
+              <i>Therapy animal of the asylum world. Docile; reads intent.</i>
+              <div class="row">
+                <div class="plate"><svg viewBox="0 0 100 100"><circle cx="50" cy="48" r="26"/><circle cx="30" cy="20" r="9"/><circle cx="70" cy="20" r="9"/><rect x="34" y="70" width="32" height="18" rx="6"/></svg></div>
+                <div class="specs"><div class="k">Origin</div><div class="v">Telypso</div><div class="k">Height</div><div class="v">236 cm</div><div class="k">Mass</div><div class="v">376 kg</div><div class="k">Filed</div><div class="v">tribute yr 41</div></div>
+              </div>
+              <div class="meter paper"><span class="k">Spc Attack</span><div class="track"><div class="fill" style="width:78%"></div></div><span class="n">741</span></div>
+              <div class="meter paper"><span class="k">Spc Defense</span><div class="track"><div class="fill" style="width:52%"></div></div><span class="n">503</span></div>
+              <div class="pencil">cross-ref. Telypso, dr. 9<br>plate refiled yr 38</div>
+            </div>
+            <div class="desk">
+              <div class="btns"><button class="btn primary">Pull the full folio</button><button class="btn">See also: Telypso</button></div>
+              <div class="ref"><span>Arbitration status: neutral specimen</span><span>rev. 3</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- E -->
+      <div class="demo">
+        <div>
+          <div class="who">E. Zolto rebel signal station</div>
+          <h3>Relay</h3>
+          <p>A hand-built relay unit on a bench somewhere on Zolton. There is no proper case, just a sheet-steel cover plate screwed over the electronics, with louvred vents cut low where the warm parts sit. A salvaged color tube in a steel frame is bolted to the plate on four standoffs, one black cable runs from its connector down into the plate beside the keys, and a strip of tape reads "trace 3 cut, do not open." The signal bars in the corner are the QED entanglement to a paired unit on another world. Kozrak's sweeps are why it is on a bench and not in a building.</p>
+          <p>This is the Rebel side of the Star Wars split, and the only terminal that is honestly improvised rather than manufactured. Its accent is the crimson of Zolton's bloodstorms, the lightning that makes entanglement possible.</p>
+          <dl>
+            <dt>Hull</dt><dd>The steel cover plate, its screws and vents, the tube frame and standoffs, the cable, the tape, the keys.</dd>
+            <dt>Paper</dt><dd>None. A rebel relay does not print.</dd>
+            <dt>Screen</dt><dd>The CRT carries the record and the packet state together, because on a relay the record is a packet in transit.</dd>
+          </dl>
+          <div class="fix"><b>Changed.</b> Revision 1 set the creature's name in a display face directly on the board and hung a color plate off it, the hull inconsistency again. Now the board carries only silkscreen and the record lives on the CRT, with the packet header and sweep countdown in the same screen because that is what a relay operator would actually see. Revision 3 tried to make the board a board with an edge line and four faint rings, and it did not work. Revision 4 drew the whole circuit board, chip, capacitors and bodge wire, which read as physical but was too much. Revision 5 puts a sheet-steel cover plate over the electronics: six cross-head screws, louvred vents, a stencilled unit name, one visible cable from the tube to the keys, and a tape label saying what was fixed and not to open it. The tube keeps its frame and standoffs. The improvised feel now comes from the plate and the tape rather than from exposed parts.</div>
+        </div>
+        <div class="term t-relay">
+          <div class="t-head"><span>QED Relay · Zolton-3</span><span class="r"><span class="sig"><i style="height:5px"></i><i style="height:8px"></i><i style="height:11px"></i><i class="off" style="height:14px"></i></span></span></div>
+          <div class="t-body">
+            <svg class="pcb" viewBox="0 0 420 760" preserveAspectRatio="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2a3140"/><stop offset=".5" stop-color="#1c2230"/><stop offset="1" stop-color="#151a26"/></linearGradient>
+                <filter id="cableshadow" x="-10%" y="-40%" width="120%" height="200%"><feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#000" flood-opacity=".8"/></filter>
+              </defs>
+              <!-- the cover plate: sheet steel over the electronics, screwed to the frame -->
+              <rect width="420" height="760" fill="#0b0e16"/>
+              <rect x="6" y="6" width="408" height="748" rx="4" fill="url(#steel)" stroke="#3a4356" stroke-width="1"/>
+              <rect x="7" y="7" width="406" height="1" fill="rgba(255,255,255,.10)"/>
+              <!-- louvred vents low on the plate, where the warm parts are -->
+              <g fill="#05070c">
+                <rect x="40" y="560" width="160" height="4" rx="2"/><rect x="40" y="572" width="160" height="4" rx="2"/><rect x="40" y="584" width="160" height="4" rx="2"/><rect x="40" y="596" width="160" height="4" rx="2"/><rect x="40" y="608" width="160" height="4" rx="2"/><rect x="40" y="620" width="160" height="4" rx="2"/>
+              </g>
+              <g fill="rgba(255,255,255,.06)">
+                <rect x="40" y="564" width="160" height="1"/><rect x="40" y="576" width="160" height="1"/><rect x="40" y="588" width="160" height="1"/><rect x="40" y="600" width="160" height="1"/><rect x="40" y="612" width="160" height="1"/><rect x="40" y="624" width="160" height="1"/>
+              </g>
+              <!-- the one cable that shows: from the tube's connector down into the plate beside the keys -->
+              <path d="M372 452 C 372 520, 300 560, 300 620 C 300 660, 330 670, 330 700" fill="none" stroke="#0d0f14" stroke-width="7" stroke-linecap="round" filter="url(#cableshadow)"/>
+              <path d="M372 452 C 372 520, 300 560, 300 620 C 300 660, 330 670, 330 700" fill="none" stroke="#3a3f4c" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+              <circle cx="330" cy="700" r="7" fill="#05070c" stroke="#4a5266" stroke-width="1.5"/>
+              <!-- stencil and a tape label -->
+              <g fill="#c9a24a" font-family="Chakra Petch, sans-serif" font-size="9" letter-spacing="1.6" opacity=".8">
+                <text x="40" y="540">ZOLTON-3 RELAY</text>
+                <text x="40" y="552" font-size="7" letter-spacing="1.2" fill="#8a8f9c">REV C - HAND-BUILT - KEEP DRY</text>
+              </g>
+              <g transform="rotate(-3 120 660)">
+                <rect x="40" y="648" width="150" height="16" fill="#e9e2cc"/>
+                <text x="48" y="660" fill="#2b2a26" font-family="Space Mono, monospace" font-size="8.5" letter-spacing=".4">TRACE 3 CUT - DO NOT OPEN</text>
+              </g>
+              <!-- cross-head screws holding the plate to the frame -->
+              <g>
+                <circle cx="20" cy="20" r="5.5" fill="#8f97a6"/><path d="M17 20H23M20 17V23" stroke="#2a2f3a" stroke-width="1.2"/>
+                <circle cx="400" cy="20" r="5.5" fill="#8f97a6"/><path d="M397 20H403M400 17V23" stroke="#2a2f3a" stroke-width="1.2"/>
+                <circle cx="20" cy="740" r="5.5" fill="#8f97a6"/><path d="M17 740H23M20 737V743" stroke="#2a2f3a" stroke-width="1.2"/>
+                <circle cx="400" cy="740" r="5.5" fill="#8f97a6"/><path d="M397 740H403M400 737V743" stroke="#2a2f3a" stroke-width="1.2"/>
+                <circle cx="20" cy="380" r="5.5" fill="#8f97a6"/><path d="M17 380H23M20 377V383" stroke="#2a2f3a" stroke-width="1.2"/>
+                <circle cx="400" cy="380" r="5.5" fill="#8f97a6"/><path d="M397 380H403M400 377V383" stroke="#2a2f3a" stroke-width="1.2"/>
+              </g>
+            </svg>
+            <div class="silk"><span>UNIT 3 · PAIR GRIMEDES-1</span><span>cover plate · 6 screws</span></div>
+            <div class="crt">
+              <span class="stand" style="left:-11px;top:-11px"></span><span class="stand" style="right:-11px;top:-11px"></span><span class="stand" style="left:-11px;bottom:-11px"></span><span class="stand" style="right:-11px;bottom:-11px"></span>
+              <div class="legend"><span class="lamp"></span>Entangled · packet 0x2F · pair Grimedes-1</div>
+              <div class="name">Hypnopet</div>
+              <div class="chips"><span class="chip psychic">Psychic</span><span class="chip dark">Dark</span></div>
+              <div class="row">
+                <div class="plate"><svg viewBox="0 0 100 100"><circle cx="50" cy="48" r="26"/><circle cx="30" cy="20" r="9"/><circle cx="70" cy="20" r="9"/><rect x="34" y="70" width="32" height="18" rx="6"/></svg></div>
+                <div class="specs"><div class="k">Index</div><div class="v">#00015</div><div class="k">Origin</div><div class="v">Telypso</div><div class="k">Owner</div><div class="v">njordan</div><div class="k">Last sync</div><div class="v">4 s ago</div></div>
+              </div>
+              <div class="meter"><span class="k">Spc Attack</span><div class="track"><div class="fill" style="width:78%"></div></div><span class="n">741</span></div>
+              <div class="meter"><span class="k">Spc Defense</span><div class="track"><div class="fill" style="width:52%"></div></div><span class="n">503</span></div>
+              <div class="stat"><span>STORM INDEX 7 · HOLD</span><span>KOZRAK SWEEP IN <b>00:41</b></span></div>
+            </div>
+            <div class="bottom">
+              <span></span>
+              <div class="header">
+                <div class="btns"><button class="btn primary">Transmit</button><button class="btn">Re-pair</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- F -->
+      <div class="demo">
+        <div>
+          <div class="who">F. The machine speaks for itself</div>
+          <h3>Readout</h3>
+          <p>Not a terminal you operate. This is what a Generator says when any of the other terminals points at it. Canon treats Generators as autonomous, with their own sensors and their own judgment, so the Readout has no legends, no keys except one to acknowledge, and no color of its own: paper-white text on dark glass, in the machine's monospace voice. It is a mode, not a place. On the field terminal, the CRT switches to this while a creature prints, then hands back.</p>
+          <dl>
+            <dt>Hull</dt><dd>A bare bezel and one key. Whatever terminal is hosting it.</dd>
+            <dt>Paper</dt><dd>None, though the moment it finishes is the moment a slip would print on the host.</dd>
+            <dt>Screen</dt><dd>Everything. Stats as plain bars, no element color until the host terminal takes the record back and shows it in its own register.</dd>
+          </dl>
+          <div class="fix"><b>Changed.</b> Only the bars, which were block characters and did not line up. They are now drawn bars in the same paper-white so the machine's voice stays monochrome. Revision 3 gives the glass a rounded bezel and a curved highlight so it reads as a tube, not a black rectangle.</div>
+        </div>
+        <div class="term t-readout">
+          <div class="t-head"><span>GENESIS-CLASS GENERATOR · TELYPSO</span><span class="r">autonomous</span></div>
+          <div class="t-body">
+            <div class="big">
+              <span class="dim">TOKEN ACCEPTED · GENOME DECRYPTED</span><br>
+              <span class="dim">ENVIRONMENT: TELYPSO · PSYCHIC-REACTIVE</span><br>
+              <div class="hd">HYPNOPET</div>
+              PSYCHIC / DARK &nbsp;&nbsp;INDEX 00015<br>
+              236 CM &nbsp;376 KG<br><br>
+              <div class="tb"><span>SPC ATK</span><div class="bar"><i style="width:78%"></i></div><span>741</span></div>
+              <div class="tb"><span>SPC DEF</span><div class="bar"><i style="width:52%"></i></div><span>503</span></div>
+              <div class="tb"><span>SPEED</span><div class="bar"><i style="width:66%"></i></div><span>651</span></div>
+              <br><span class="dim">PLAGUE IMMUNITY: CONFIRMED</span><br>
+              <span class="dim">SENSORS NOMINAL. STABILITY ACCEPTED.</span><br>
+              PRINTING <span class="cursor"></span>
+              <div class="one"><button class="btn">Acknowledge</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2>Which terminal fits which area</h2>
+    <p class="muted">A starting assignment, all of it overridable. The rule: match the machine to who, in the fiction, would own that part of the experience.</p>
+    <div class="tblwrap"><table>
+      <tr><th>Area of the site</th><th>Terminal</th><th>Why, in the fiction</th><th>Material</th></tr>
+      <tr><td><b>Shell</b>: nav, sign in, account</td><td class="k">Relay</td><td>The connection itself. The Zolto network is the only thing that reaches every other machine.</td><td><div class="swatchrow"><i style="background:#0a0c10"></i><i style="background:#e2bd43"></i><i style="background:#e0364a"></i></div></td></tr>
+      <tr><td><b>Encyclopedia</b>: story, worlds, bestiary, codex</td><td class="k">Archive</td><td>Poseidas is the neutral seat of science and arbitration. Reading is calm; paper under a lamp, not screens; the warmest place on the site.</td><td><div class="swatchrow"><i style="background:#3a4a4e"></i><i style="background:#e6d9b6"></i><i style="background:#1f5f6b"></i></div></td></tr>
+      <tr><td><b>Generator</b></td><td class="k">Field Terminal, with Readout as its print mode</td><td>Salvaged company hardware pointed at a Generator. The CRT goes to the machine's own voice while it prints, then shows the record in color.</td><td><div class="swatchrow"><i style="background:#cfc8b6"></i><i style="background:#3a3d3e"></i><i style="background:#ffb347"></i><i style="background:#c8572b"></i></div></td></tr>
+      <tr><td><b>Duel</b></td><td class="k">Registry</td><td>Kozrak runs the arenas. Setup is a docket at the clerk's window; the board itself can go dark and clinical.</td><td><div class="swatchrow"><i style="background:#0f0c0c"></i><i style="background:#8f1d1d"></i><i style="background:#c9a44a"></i></div></td></tr>
+      <tr><td><b>Reclamation</b></td><td class="k">Field Terminal</td><td>Worlds, sites and deploy orders read like survey work on salvaged gear. Same hardware as the generator, different program.</td><td><div class="swatchrow"><i style="background:#cfc8b6"></i><i style="background:#3a3d3e"></i><i style="background:#ffb347"></i></div></td></tr>
+      <tr><td><b>Training games</b></td><td class="k">Field Terminal, or per game</td><td>Small diagnostic programs. A later game set in the Vallerii golden age could open an aristocratic Krystos register the lore also supports.</td><td><div class="swatchrow"><i style="background:#cfc8b6"></i><i style="background:#3a3d3e"></i></div></td></tr>
+      <tr><td><b>Home</b></td><td class="k">Relay, patching you through</td><td>The one page that shows the network: which terminals are up, where you left off. Today it is still the legacy starfield.</td><td><div class="swatchrow"><i style="background:#0a0c10"></i><i style="background:#e2bd43"></i></div></td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>What I need from you</h2>
+    <div class="qs">
+      <div class="q"><b>Does the medium rule hold?</b>Hull for fixed legends, paper for committed records, screen for live state. It changes the live site more than any color choice would, because today variable data is printed on the hull everywhere.</div>
+      <div class="q"><b>Which panels feel like Xalia to you, and which feel wrong?</b>In your own words. "B but less orange" or "C is too much paperwork" is exactly the right level.</div>
+      <div class="q"><b>How much wear?</b>B carries tape and scuffs. The rest are clean. Wear everywhere fits the used-universe stance but costs legibility and is easy to overdo.</div>
+      <div class="q"><b>Is a screenless, paper-only encyclopedia acceptable?</b>D is the biggest departure from the current site and also the thing that would most separate reading from playing. It is now a lamp-lit card on a dark desk rather than a white page.</div>
+      <div class="q"><b>Does the anchoring rule earn its cost?</b>Clips, screws, bezels and lips are pixels that carry no information. They are what make the medium rule believable, and they are also how a design starts to look overdone.</div>
+    </div>
+  </section>
+</div>

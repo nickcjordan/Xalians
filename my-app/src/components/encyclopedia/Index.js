@@ -135,7 +135,7 @@ export default function Index() {
             {entries.length === 0 ? (
                 <p className="g-empty">No record matches the current filter.</p>
             ) : (
-                <div className="g-panel g-panel--recessed enc-index-panel">
+                <div className="g-paper enc-index-panel">
                     <div className="enc-index-list">
                         {entries.map((entry) => {
                             const initial = initialOf(entry.title);

@@ -53,7 +53,7 @@ export default function StoryContents({ story }) {
 	const readCounts = useReadCounts(story.parts);
 
 	return (
-		<ol className="enc-contents-list">
+		<ol className="g-paper g-paper--card enc-contents-list">
 			{story.parts.map((part, i) => {
 				const total = partParagraphCount(part);
 				const read = readCounts[i] || 0;

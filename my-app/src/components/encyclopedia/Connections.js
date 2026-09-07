@@ -139,7 +139,7 @@ export default function Connections({ kind, recordKey, limit = 12 }) {
                 <h2 className="g-h2">Connections</h2>
                 <span className="enc-count">{rows.length}</span>
             </div>
-            <ul className="g-panel g-panel--recessed enc-conn-list">
+            <ul className="g-paper enc-conn-list">
                 {rows.map((row) => (
                     <ConnectionRow key={`${row.kind}:${row.key}`} row={row} isPhone={isPhone} />
                 ))}

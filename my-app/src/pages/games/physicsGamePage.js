@@ -1,3 +1,4 @@
+// Terminal: panel (baseline). Target: field. Training games are diagnostic programs on the salvaged ECHELON survey unit.
 import React from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -177,7 +178,7 @@ class PhysicsGamePage extends React.Component {
 									{/* was a full-bleed bootstrap-blue button and two default range
 									    inputs laid over the arena; these are the machine's controls,
 									    so they sit on a rail with stencilled legends */}
-									<div className="physics-controls">
+									<div className="physics-controls" data-terminal="panel">
 										<label className="physics-control">
 											<span className="physics-control-label">
 												Rotate <span className="physics-control-value">{this.state.rotateValue}&deg;</span>

@@ -68,8 +68,12 @@ class XalianStatChart extends React.Component {
 					<ResponsiveContainer className="chart-container centered-view">
 						<BarChart data={this.setupData(this.props.stats)} layout="vertical" maxBarSize={this.props.barSize || 35}>
 							<XAxis type="number" hide />
-							{/* <YAxis width={60} type="category" dataKey="statLabel" stroke="#80ffb1" interval={0}/> */}
-							<YAxis width={this.props.abbreviatedNames ? 60 : 60} type="category" dataKey="statLabel" stroke={this.props.axisLabelColor || chart.axis} interval={0} />
+							<YAxis
+								width={this.props.yAxisWidth || (this.props.abbreviatedNames ? 60 : 150)}
+								type="category"
+								dataKey="statLabel"
+								stroke={this.props.axisLabelColor || chart.axis}
+								interval={0} />
 
 							{this.props.includeRange && (
 								<Bar radius={[10, 10, 10, 10]} isAnimationActive={false} dataKey="rangeNumber" fill={chart.rangeTrack}  minPointSize={minBarLength} >

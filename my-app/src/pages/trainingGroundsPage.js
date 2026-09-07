@@ -1,3 +1,4 @@
+// Terminal: panel (baseline). Target: field. Training games are diagnostic programs on the salvaged ECHELON survey unit.
 import React from 'react';
 import XalianNavbar from '../components/navbar';
 import MatchCardGamePage from './games/matchCardGamePage';
@@ -33,7 +34,7 @@ class TrainingGroundsPage extends React.Component {
 
         return <React.Fragment>
 
-            <div className="g-console">
+            <div className="g-console" data-terminal="panel">
                 <XalianNavbar></XalianNavbar>
 
                 <div className="g-shell page-shell training-shell">

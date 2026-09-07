@@ -1,3 +1,5 @@
+// Terminal: registry. Kozrak's arena runs every duel as a paid ledger entry;
+// setup is the docket you fill out at the clerk's counter before the bracket admits you.
 import React from 'react';
 import XalianNavbar from '../../components/navbar';
 import XalianImage from '../../components/xalianImage';
@@ -26,7 +28,7 @@ class DuelStartPage extends React.Component {
 
     // componentDidUpdate(prevProps, prevState) {
         // if (this.state.players && this.state.numberOfPieces && !this.state.gameDetails ) {
-           
+
         // }
     // }
 
@@ -43,6 +45,10 @@ class DuelStartPage extends React.Component {
     }
 
     componentDidMount() {
+        // a stable per-visit ledger entry number, so the docket reads like a
+        // real filed entry rather than a counter that resets on every render
+        this.setState({ entryNumber: 2000 + Math.floor(Math.random() * 900) });
+
         retrievalUtil.getCurrentUserAndXalians()
             .then((user) => {
                 if (user && user.xalians && user.xalians.length > 0) {
@@ -85,6 +91,21 @@ class DuelStartPage extends React.Component {
         this.setGameDetails(squad);
     }
 
+    // the ink bar under a candidate's photo: attack and defense read off the
+    // same stat block the board itself uses, so the docket never invents a number
+    renderInkMeter = (label, statBlock) => {
+        if (!statBlock) return null;
+        let percent = Math.min(100, Math.round((statBlock.points / statBlock.maxPoints) * 100));
+        return (
+            <div className="registry-roster-meter">
+                <span className="g-meter-name">{label}</span>
+                <div className="g-meter g-meter--ink">
+                    <div className="g-meter-track" />
+                    <div className="g-meter-fill" style={{ width: `${percent}%` }} />
+                </div>
+            </div>
+        );
+    }
 
     render() {
         const piecesPerTeamOptions = [
@@ -95,7 +116,6 @@ class DuelStartPage extends React.Component {
             { name: '6', value: 6 },
         ];
 
-
         if (this.state.gameDetails) {
             return (
                 <DuelPage gameDetails={this.state.gameDetails} />
@@ -105,142 +125,219 @@ class DuelStartPage extends React.Component {
             let selectedCount = this.state.selectedXalianIds.length;
             let fillerCount = needed - selectedCount;
             return (
-                <div className="g-console">
+                <div className="g-console" data-terminal="registry">
                     <XalianNavbar />
 
-                    <div className="g-shell page-shell duel-setup-shell">
+                    <div className="g-shell page-shell registry-shell">
                         <header className="page-header">
-                            <p className="g-kicker">Arena Control</p>
-                            <h1 className="g-title">Choose Your Squad</h1>
+                            <p className="g-kicker">Valleron Arena Registry</p>
+                            <h1 className="g-title">Muster the Roster</h1>
                         </header>
 
-                        <div className="g-panel duel-setup-panel">
-                            <div className="duel-setup-head">
-                                <span className="duel-setup-label">Selected</span>
-                                <span className="duel-squad-count">{selectedCount} / {needed}</span>
+                        <div className="g-counter registry-counter">
+                            <div className="registry-roster-head">
+                                <span className="g-legend">Combatants on file</span>
+                                <span className="g-legend registry-roster-count">{selectedCount} / {needed} entered</span>
                             </div>
 
-                            <div className="species-grid duel-squad-grid">
+                            <div className="registry-roster-grid">
                                 {this.state.userXalians.map((x) => {
                                     let selected = this.state.selectedXalianIds.includes(x.xalianId);
-                                    let element = x.elements.primaryType.toLowerCase();
+                                    let primaryType = x.elements.primaryType;
+                                    let secondaryType = x.elements.secondaryType;
+                                    let element = primaryType.toLowerCase();
                                     return (
                                         <button
                                             type="button"
                                             key={`squad-pick-${x.xalianId}`}
                                             aria-pressed={selected}
-                                            className={`species-tile duel-squad-tile g-el-${element}${selected ? ' duel-squad-tile--selected' : ''}`}
+                                            className={`g-paper g-paper--docket registry-roster-card g-el-${element}${selected ? ' registry-roster-card--selected' : ''}`}
                                             onClick={() => this.toggleXalianSelection(x.xalianId)}>
-                                            <span className="species-tile-plate">
-                                                <XalianImage colored speciesName={x.species.name} primaryType={x.elements.primaryType} moreClasses="species-tile-img" />
-                                            </span>
-                                            <span className="species-tile-legend">
-                                                <span className="species-tile-name">
-                                                    {x.species.name}
-                                                    <span onClick={(e) => e.stopPropagation()}>
-                                                        <EncyclopediaLink kind="species" name={x.species.name} variant="icon" />
+                                            {selected &&
+                                                <span className="g-stamp registry-roster-stamp">Entered</span>
+                                            }
+                                            <div className="registry-roster-row">
+                                                <span className="g-plate--photo registry-roster-photo">
+                                                    <XalianImage colored speciesName={x.species.name} primaryType={primaryType} moreClasses="species-tile-img" />
+                                                </span>
+                                                <div className="registry-roster-info">
+                                                    <span className="registry-roster-name">
+                                                        {x.species.name}
+                                                        <span onClick={(e) => e.stopPropagation()}>
+                                                            <EncyclopediaLink kind="species" name={x.species.name} variant="icon" />
+                                                        </span>
                                                     </span>
-                                                </span>
-                                                <span className="species-tile-meta">
-                                                    <span className="species-tile-id">#{x.xalianId.split('-').pop().substring(0, 8)}</span>
-                                                </span>
-                                            </span>
+                                                    <span className="registry-roster-id">No. {x.xalianId.split('-').pop().substring(0, 8)}</span>
+                                                    <div className="registry-roster-chips">
+                                                        <span className="g-chip g-chip--outline">{primaryType}</span>
+                                                        {secondaryType &&
+                                                            <span className="g-chip g-chip--outline">{secondaryType}</span>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {this.renderInkMeter('Attack', x.stats.standardAttackPoints)}
+                                            {this.renderInkMeter('Defense', x.stats.standardDefensePoints)}
                                         </button>
                                     );
                                 })}
                             </div>
 
                             {selectedCount > 0 && fillerCount > 0 &&
-                                <p className="duel-setup-note">
-                                    {fillerCount} remaining squad slot{fillerCount > 1 ? 's' : ''} will be filled randomly
+                                <p className="registry-note">
+                                    {fillerCount} remaining slot{fillerCount > 1 ? 's' : ''} will be filled from the pool at random
                                 </p>
                             }
 
-                            <div className="duel-setup-actions">
-                                <button type="button" className="g-btn" onClick={() => this.setGameDetails()}>Random Squad</button>
-                                <button type="button" className="g-btn g-btn--primary" disabled={selectedCount < 1} onClick={this.startWithSelectedSquad}>Enter Duel</button>
+                            <div className="g-counter-lip" />
+
+                            <div className="g-keybank registry-keybank">
+                                <span className="g-key-socket">
+                                    <button type="button" className="g-key" onClick={() => this.setGameDetails()}>Random Squad</button>
+                                </span>
+                                <span className="g-key-socket">
+                                    <button type="button" className="g-key g-key--primary" disabled={selectedCount < 1} onClick={this.startWithSelectedSquad}>
+                                        Enter Duel
+                                    </button>
+                                </span>
                             </div>
                         </div>
                     </div>
                 </div>
             );
         } else {
+            let playersChosen = this.state.players != null;
+            let teamSizeChosen = this.state.numberOfPieces != null;
+            let complete = playersChosen && teamSizeChosen;
+            let formatLabel = playersChosen ? (this.state.players === 1 ? '1 vs bot' : '2 combatants') : 'pending';
+            let bracketLabel = teamSizeChosen ? `${this.state.numberOfPieces} v ${this.state.numberOfPieces}` : 'pending';
+            let feeTokens = teamSizeChosen ? this.state.numberOfPieces : 'pending';
+
             return (
-                <div className="g-console">
+                <div className="g-console" data-terminal="registry">
                     <XalianNavbar />
 
-                    <div className="g-shell page-shell duel-setup-shell">
+                    <div className="g-shell page-shell registry-shell">
                         <header className="page-header">
-                            <p className="g-kicker">Arena Control</p>
+                            <p className="g-kicker">Valleron Arena Registry</p>
                             <h1 className="g-title">Duel Setup</h1>
                         </header>
 
-                        {/* the match parameters, set on one panel of controls rather
-                            than floating loose on the starfield */}
-                        <div className="g-panel duel-setup-panel">
+                        {/* the clerk's counter: the docket up top carries the typed
+                            terms, the physical keys below fill it in */}
+                        <div className="g-counter registry-counter">
+                            <div className="registry-counter-top">
+                                <div className="g-clip-well">
+                                    <div className="g-paper g-paper--docket registry-docket">
+                                        <div className="g-clip" />
+                                        {complete &&
+                                            <div className="g-stamp registry-stamp">Admitted<small>fee pending</small></div>
+                                        }
+                                        <p className="registry-docket-hd">Terms of entry</p>
+                                        <div className="registry-docket-row">
+                                            <span className="g-spec-key">Format</span>
+                                            <span className="g-paper-field">{formatLabel}</span>
+                                        </div>
+                                        <div className="registry-docket-row">
+                                            <span className="g-spec-key">Bracket</span>
+                                            <span className="g-paper-field">{bracketLabel}</span>
+                                        </div>
+                                        <div className="registry-docket-row">
+                                            <span className="g-spec-key">Start positions</span>
+                                            <span className="g-paper-field">{this.state.randomizeStartingPositions ? 'Randomized' : 'Fixed'}</span>
+                                        </div>
+                                        {process.env.NODE_ENV !== 'production' &&
+                                            <div className="registry-docket-row">
+                                                <span className="g-spec-key">Debug mode</span>
+                                                <span className="g-paper-field">{this.state.debugMode ? 'On' : 'Off'}</span>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
 
-                            <div className="duel-setup-row">
-                                <span className="duel-setup-label">Players</span>
-                                <div className="g-segmented" role="group" aria-label="Players">
-                                    <button type="button" className="g-segment duel-players-segment"
-                                        aria-pressed={this.state.players === 1}
-                                        onClick={() => this.setState({ players: 1 })}>
-                                        <i className="bi bi-person-fill" /> vs <i className="bi bi-robot" />
+                                {/* the questions the clerk asks, answered on physical
+                                    switches — paper cannot hold a control */}
+                                <div className="registry-controls">
+                                    <div className="registry-control">
+                                        <span className="g-legend">Players</span>
+                                        <div className="g-segmented" role="group" aria-label="Players">
+                                            <button type="button" className="g-segment"
+                                                aria-pressed={this.state.players === 1}
+                                                onClick={() => this.setState({ players: 1 })}>
+                                                <i className="bi bi-person-fill" /> vs <i className="bi bi-robot" />
+                                            </button>
+                                            <button type="button" className="g-segment"
+                                                aria-pressed={this.state.players === 2}
+                                                onClick={() => this.setState({ players: 2 })}>
+                                                <i className="bi bi-person-fill" /> vs <i className="bi bi-person-fill" />
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="registry-control">
+                                        <span className="g-legend">Team Size</span>
+                                        <div className="g-segmented" role="group" aria-label="Team size">
+                                            {piecesPerTeamOptions.map((option) => (
+                                                <button type="button" className="g-segment" key={`pieces-${option.value}`}
+                                                    aria-pressed={this.state.numberOfPieces === option.value}
+                                                    onClick={() => this.setState({ numberOfPieces: option.value })}>
+                                                    {option.name}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="registry-control">
+                                        <span className="g-legend">Randomize Start Positions</span>
+                                        <label className="g-check">
+                                            <input
+                                                type="checkbox"
+                                                checked={this.state.randomizeStartingPositions}
+                                                onChange={() => this.setState({ randomizeStartingPositions: !this.state.randomizeStartingPositions })} />
+                                            <span className="g-check-box" />
+                                        </label>
+                                    </div>
+
+                                    {process.env.NODE_ENV !== 'production' &&
+                                        <div className="registry-control">
+                                            <span className="g-legend">Debug Mode</span>
+                                            <label className="g-check">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={this.state.debugMode}
+                                                    onChange={() => this.setState({ debugMode: !this.state.debugMode })} />
+                                                <span className="g-check-box" />
+                                            </label>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <div className="g-counter-lip" />
+
+                            <div className="g-bezel registry-bezel">
+                                <div className="g-ledger">
+                                    <span className="g-lamp g-lamp--amber">
+                                        ENTRY {this.state.entryNumber || 'pending'} <span className="dim">&nbsp;BRACKET {bracketLabel}</span>
+                                    </span>
+                                    <span>FEE <b>{feeTokens} TOKENS</b> <span className="dim">{complete ? 'CLEARED' : 'PENDING'}</span></span>
+                                </div>
+                            </div>
+
+                            <div className="g-keybank registry-keybank">
+                                <span className="registry-window-plate">Window 2</span>
+                                <span className="g-key-socket">
+                                    <button type="button" className="g-key" onClick={() => this.setState({ showHowToPlay: true })}>
+                                        How to Play
                                     </button>
-                                    <button type="button" className="g-segment duel-players-segment"
-                                        aria-pressed={this.state.players === 2}
-                                        onClick={() => this.setState({ players: 2 })}>
-                                        <i className="bi bi-person-fill" /> vs <i className="bi bi-person-fill" />
+                                </span>
+                                <span className="g-key-socket">
+                                    <button type="button" className="g-key g-key--primary"
+                                        disabled={!complete}
+                                        onClick={this.handleStartClicked}>
+                                        Enter the Bracket
                                     </button>
-                                </div>
-                            </div>
-
-                            <div className="duel-setup-row">
-                                <span className="duel-setup-label">Team Size</span>
-                                <div className="g-segmented" role="group" aria-label="Team size">
-                                    {piecesPerTeamOptions.map((option) => (
-                                        <button type="button" className="g-segment" key={`pieces-${option.value}`}
-                                            aria-pressed={this.state.numberOfPieces === option.value}
-                                            onClick={() => this.setState({ numberOfPieces: option.value })}>
-                                            {option.name}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="duel-setup-row">
-                                <span className="duel-setup-label">Randomize Start Positions</span>
-                                <label className="g-check">
-                                    <input
-                                        type="checkbox"
-                                        checked={this.state.randomizeStartingPositions}
-                                        onChange={() => this.setState({ randomizeStartingPositions: !this.state.randomizeStartingPositions })} />
-                                    <span className="g-check-box" />
-                                </label>
-                            </div>
-
-                            {process.env.NODE_ENV !== 'production' &&
-                                <div className="duel-setup-row">
-                                    <span className="duel-setup-label">Debug Mode</span>
-                                    <label className="g-check">
-                                        <input
-                                            type="checkbox"
-                                            checked={this.state.debugMode}
-                                            onChange={() => this.setState({ debugMode: !this.state.debugMode })} />
-                                        <span className="g-check-box" />
-                                    </label>
-                                </div>
-                            }
-
-                            <div className="duel-setup-actions">
-                                <button type="button" className="g-btn" onClick={() => this.setState({ showHowToPlay: true })}>
-                                    How to Play
-                                </button>
-                                <button type="button" className="g-btn g-btn--primary"
-                                    disabled={!this.state.players || !this.state.numberOfPieces}
-                                    onClick={this.handleStartClicked}>
-                                    Start Duel
-                                </button>
+                                </span>
                             </div>
                         </div>
                     </div>

@@ -34,29 +34,35 @@ function BeginOrResumeCard({ story }) {
 
 	if (resumedPart) {
 		return (
-			<section className="g-panel g-panel--raised enc-room-begin">
-				<span className="g-kicker enc-room-begin-kicker">Continue reading</span>
-				<h2 className="g-h2 enc-room-begin-title">{story.title}</h2>
-				<p className="g-body enc-room-begin-meta">
-					Part {resumedPart.order} of {story.parts.length}, {resumedPart.era.name}
-				</p>
-				<Link to={lore.routeFor('era', resumedPart.era.key)} className="g-btn g-btn--primary">
+			<div className="enc-room-begin">
+				<div className="g-paper g-paper--card enc-room-begin-card">
+					<span className="g-kicker enc-room-begin-kicker">Continue reading</span>
+					<h2 className="g-h2 enc-room-begin-title">{story.title}</h2>
+					<p className="g-body enc-room-begin-meta">
+						Part {resumedPart.order} of {story.parts.length}, {resumedPart.era.name}
+					</p>
+				</div>
+				{/* A key on the desk, not a button on paper (medium rule): the CTA
+				    sits beside the card, never inside it. */}
+				<Link to={lore.routeFor('era', resumedPart.era.key)} className="g-key g-key--primary enc-room-begin-key">
 					Resume Part {resumedPart.order}, {resumedPart.era.name}
 				</Link>
-			</section>
+			</div>
 		);
 	}
 
 	const firstPart = story.parts[0];
 	return (
-		<section className="g-panel g-panel--raised enc-room-begin">
-			<span className="g-kicker enc-room-begin-kicker">Begin here</span>
-			<h2 className="g-h2 enc-room-begin-title">{story.title}</h2>
-			<p className="g-body enc-room-begin-meta">{story.parts.length} parts, one per era.</p>
-			<Link to={lore.routeFor('era', firstPart.era.key)} className="g-btn g-btn--primary">
+		<div className="enc-room-begin">
+			<div className="g-paper g-paper--card enc-room-begin-card">
+				<span className="g-kicker enc-room-begin-kicker">Begin here</span>
+				<h2 className="g-h2 enc-room-begin-title">{story.title}</h2>
+				<p className="g-body enc-room-begin-meta">{story.parts.length} parts, one per era.</p>
+			</div>
+			<Link to={lore.routeFor('era', firstPart.era.key)} className="g-key g-key--primary enc-room-begin-key">
 				Begin Part 1, {firstPart.era.name}
 			</Link>
-		</section>
+		</div>
 	);
 }
 
@@ -96,18 +102,19 @@ export default function ReadingRoom() {
 				<EraScrubber era={era} onChange={setEra} />
 			</section>
 
-			<section className="g-panel enc-room-contents">
-				<header className="g-panel-head">
-					<h2 className="g-h2">Contents</h2>
-				</header>
+			<section className="enc-room-contents">
+				<h2 className="g-h2 enc-room-contents-title">Contents</h2>
 				<StoryContents story={story} />
 			</section>
 
-			<div className="enc-grid enc-room-strip">
+			{/* A single typed drawer-label strip, not tiles carrying live counts on
+			    the hull (medium rule, round1-findings.md A3): one paper card, one
+			    typed line per shelf. */}
+			<div className="g-paper g-paper--card enc-room-drawer">
 				{TILES.map((tile) => (
-					<Link key={tile.to} to={tile.to} className="g-tile">
-						<span className="g-tile-name">{tile.label}</span>
-						<p className="g-tile-meta">{tile.count()}</p>
+					<Link key={tile.to} to={tile.to} className="enc-room-drawer-tab">
+						<span className="g-record-term enc-room-drawer-label">{tile.label}</span>
+						<span className="g-record-body enc-room-drawer-count">{tile.count()}</span>
 					</Link>
 				))}
 			</div>

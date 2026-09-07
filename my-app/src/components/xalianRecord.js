@@ -1,6 +1,4 @@
 import React from 'react';
-import Container from 'react-bootstrap/Container';
-import Modal from 'react-bootstrap/Modal';
 import XalianSpeciesBadge from './xalianSpeciesBadge';
 import XalianImage from './xalianImage';
 import XalianAttributeChart from './xalianAttributeChart';
@@ -9,19 +7,18 @@ import EncyclopediaLink from './encyclopediaLink';
 /**
  * A specimen record: the creature equivalent of the planetary survey record.
  *
- * Both the generator and the species pages previously scattered the name, the
- * portrait, the attributes and the description across four loose bootstrap
- * columns floating on the starfield, with no housing around any of it. This
- * puts them on one panel in the same order every record uses — designation
- * across the top, plate on the left, printed data beside it — so a generated
- * Xalian and a catalogued species read as two copies of the same document.
- *
- * `children` are the readouts (stat charts, move sets) that hang below the
- * record proper.
+ * Version 3 of the design system draws the specimen record as content only
+ * (Rule B, the medium rule, docs/DESIGN_SYSTEM.md): name, element chips,
+ * portrait plate, specs and description, plus whatever readouts (stat
+ * charts, move sets) are passed as children. It owns no hull, no housing,
+ * no buttons and no modal — the page decides what medium carries it (a
+ * color CRT on the Field Terminal, a paper card in the Archive, a docket in
+ * the Registry) and, per Rule B, "no buttons inside paper" applies to every
+ * medium a record might sit on, so the caller owns any button that opens a
+ * raw-record view rather than this component rendering one into its own
+ * content.
  */
 class XalianRecord extends React.Component {
-
-	state = { jsonModalShow: false }
 
 	/** the generated shape and the canon species shape name things differently */
 	getSubject() {
@@ -59,81 +56,51 @@ class XalianRecord extends React.Component {
 		let element = subject.primaryType.toLowerCase();
 
 		return (
-			<React.Fragment>
-				<div className={`g-panel g-panel--tagged g-el-${element} specimen-panel`}>
+			<div className={`g-el-${element} g-record-content`}>
 
-					<header className="specimen-head">
-						<div className="specimen-ident">
-							<p className="g-kicker">{this.props.kicker || 'Specimen Record'}</p>
-							<h1 className="g-h2 specimen-name">
-								{subject.name}
-								<EncyclopediaLink kind="species" name={subject.name} variant="chip" />
-								{subject.planet &&
-									<EncyclopediaLink kind="world" name={subject.planet} variant="chip" />
-								}
-							</h1>
-						</div>
-						<div className="specimen-head-meta">
-							{!this.props.hideId && subject.id &&
-								<span className="specimen-id">#{subject.id}</span>
-							}
-							<XalianSpeciesBadge type={element} />
-							{subject.secondaryType &&
-								<XalianSpeciesBadge type={subject.secondaryType.toLowerCase()} />
-							}
-							{this.props.json &&
-								<button
-									type="button"
-									className="g-btn g-btn--icon specimen-json-btn"
-									title="View raw record"
-									aria-label="View raw record"
-									onClick={() => this.setState({ jsonModalShow: true })}>
-									<i className="bi bi-file-earmark-binary" />
-								</button>
-							}
-						</div>
-					</header>
+				<header className="g-record-content-head">
+					<p className="g-legend">{this.props.kicker || 'Specimen Record'}</p>
+					<h1 className="g-record-term g-record-content-name">
+						{subject.name}
+						<EncyclopediaLink kind="species" name={subject.name} variant="chip" />
+						{subject.planet &&
+							<EncyclopediaLink kind="world" name={subject.planet} variant="chip" />
+						}
+					</h1>
+					<div className="g-record-content-chips">
+						<XalianSpeciesBadge type={element} />
+						{subject.secondaryType &&
+							<XalianSpeciesBadge type={subject.secondaryType.toLowerCase()} />
+						}
+					</div>
+				</header>
 
-					<div className="specimen-body">
-						<div className="specimen-plate">
-							<XalianImage
-								colored
-								speciesName={subject.name}
-								primaryType={subject.primaryType}
-								secondaryType={subject.secondaryType}
-								moreClasses="specimen-plate-img" />
-						</div>
-
-						<div className="specimen-data">
-							<XalianAttributeChart xalian={this.props.xalian} species={this.props.species} />
-							{subject.description &&
-								<p className="specimen-description">{subject.description}</p>
-							}
-						</div>
+				<div className="g-record-content-body">
+					<div className="g-record-content-plate">
+						<XalianImage
+							colored
+							speciesName={subject.name}
+							primaryType={subject.primaryType}
+							secondaryType={subject.secondaryType}
+							moreClasses="g-record-content-plate-img" />
 					</div>
 
-					{this.props.children &&
-						<div className="specimen-readouts">{this.props.children}</div>
-					}
-
+					<div className="g-record-content-data">
+						<XalianAttributeChart
+							xalian={this.props.xalian}
+							species={this.props.species}
+							id={!this.props.hideId ? subject.id : null} />
+						{subject.description &&
+							<p className="g-record-body g-record-content-description">{subject.description}</p>
+						}
+					</div>
 				</div>
 
-				{this.props.json &&
-					<Modal
-						show={this.state.jsonModalShow}
-						onHide={() => this.setState({ jsonModalShow: false })}
-						size="lg"
-						centered
-						className="themed-modal dark-themed-modal">
-						<Modal.Header closeButton closeVariant="white">
-							<Modal.Title>{subject.name} Record Data</Modal.Title>
-						</Modal.Header>
-						<Modal.Body>
-							<pre className="g-screen specimen-json">{this.props.json}</pre>
-						</Modal.Body>
-					</Modal>
+				{this.props.children &&
+					<div className="g-record-content-readouts">{this.props.children}</div>
 				}
-			</React.Fragment>
+
+			</div>
 		);
 	}
 }

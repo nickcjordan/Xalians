@@ -1,4 +1,5 @@
 import React from 'react';
+import Modal from 'react-bootstrap/Modal';
 import XalianMoveSet from '../components/xalianMoveSet';
 import XalianRecord from '../components/xalianRecord';
 import XalianNavbar from '../components/navbar';
@@ -6,20 +7,18 @@ import XalianStatChart from '../components/xalianStatChart';
 import * as xalianApi from '../utils/xalianApi';
 import * as dbApi from '../utils/dbApi';
 import * as alertUtil from '../utils/alertUtil';
-import SmokeEffectBackground from '../components/views/smokeEffectBackground';
-import gsap from 'gsap';
 
+// Terminal: field, with readout as its print mode. Salvaged ECHELON survey
+// hardware pointed at a Generator: the CRT hands over to the machine's own
+// voice while a creature prints, then cuts back to the record in color.
 class GeneratorPage extends React.Component {
 	state = {
 		xalian: null,
 		isLoading: true,
+		isGenerating: false,
 		loggedInUser: null,
 		jsonModalShow: false,
 	};
-
-	constructor(props) {
-		super(props);
-	}
 
 	componentDidMount() {
 		this.getXalian();
@@ -30,100 +29,138 @@ class GeneratorPage extends React.Component {
 	};
 
 	render() {
+		let x = this.state.xalian;
+		let element = x ? x.elements.primaryType.toLowerCase() : null;
+		let printing = this.state.isGenerating;
+
 		return (
 			<React.Fragment>
 				<XalianNavbar authAlertCallback={this.setLoggedInUser}></XalianNavbar>
-				<SmokeEffectBackground id="smokeBackgroundCanvasBelow" particleCount={10} />
-				<SmokeEffectBackground id="smokeBackgroundCanvas" />
-				<div className="generator-page-gradient-overlay" />
 
-				{/* The smoke effect covers the whole viewport while the Lambda is
-				    answering, which on a cold start is several seconds of opaque grey
-				    with nothing to say the site is still working. */}
-				{this.state.isGenerating &&
-					<div className="generator-loading-overlay" role="status" aria-live="polite">
-						<div className="generator-loading-text">Generating Xalian...</div>
-						<div className="generator-loading-sub">Running the Xalian Generator</div>
+				<main className="g-console" data-terminal="field">
+					<div className="g-shell field-shell">
+						<section className="g-case field-case">
+							<div className="g-case-hinge" />
+							<span className="g-case-screw g-case-screw--tl" />
+							<span className="g-case-screw g-case-screw--tr" />
+							<span className="g-case-screw g-case-screw--bl" />
+							<span className="g-case-screw g-case-screw--br" />
+
+							<span className="g-tape field-tape">reconditioned &middot; do not return to depot</span>
+
+							<div className="g-vfd field-vfd" role="status" aria-live="polite">
+								<span>PSU-7&nbsp;&nbsp;BATT 61%</span>
+								<span>{printing ? 'LINK RELAY/ZOLTON-3 HELD' : x ? 'GENOME CHIP READ' : 'LINK RELAY/ZOLTON-3 HELD'}</span>
+							</div>
+
+							<div className={`g-crt field-crt${element && !printing ? ` g-el-${element}` : ''}${printing ? ' g-readout-mode' : ''}`}>
+								{printing ? (
+									<div className="g-screen field-readout" id="generator-readout">
+										<p className="g-screen-line">TOKEN ACCEPTED &middot; GENOME DECRYPTED</p>
+										<p className="g-screen-line g-screen-line--dim">ENVIRONMENT: DECRYPTING</p>
+										<p className="g-screen-line">
+											PRINTING<span className="g-cursor" aria-hidden="true" />
+										</p>
+									</div>
+								) : x ? (
+									<div id="generated-xalian-fragment">
+										<XalianRecord kicker="Generator Output" xalian={x}>
+											<section className="field-readout-section">
+												<p className="g-legend">Stat Allocation</p>
+												<XalianStatChart
+													includeLabel
+													labelFontSize={'10pt'}
+													barSize={26}
+													stats={x.stats}
+													moreClasses="field-stat-chart" />
+											</section>
+
+											<section className="field-readout-section">
+												<p className="g-legend">Move Set</p>
+												<XalianMoveSet showDescription moves={x.moves} />
+											</section>
+										</XalianRecord>
+									</div>
+								) : (
+									<div className="g-screen field-readout">
+										<p className="g-screen-line g-screen-line--dim">AWAITING GENOME CHIP</p>
+									</div>
+								)}
+							</div>
+
+							<div className="g-keybank">
+								<span className="g-lamp field-keybank-legend">Generator link</span>
+								<span className="field-keybank-btns">
+									<button
+										type="button"
+										className="g-key g-key--primary"
+										disabled={printing}
+										onClick={this.getXalian}>
+										Generate
+									</button>
+									<button
+										type="button"
+										className="g-key"
+										disabled={!this.state.loggedInUser || !x || printing}
+										onClick={this.saveXalian}>
+										{this.state.loggedInUser ? 'Save to Your Faction' : 'Sign In to Keep'}
+									</button>
+									<button
+										type="button"
+										className="g-key field-json-key"
+										disabled={!x || printing}
+										title="View raw record"
+										aria-label="View raw record"
+										onClick={() => this.setState({ jsonModalShow: true })}>
+										JSON
+									</button>
+								</span>
+							</div>
+
+							<div className="g-asset-plate">
+								<span>Property of Echelon Bioworks</span>
+								<span>Asset 0419-PSU</span>
+							</div>
+						</section>
 					</div>
+				</main>
+
+				{x &&
+					<Modal
+						show={this.state.jsonModalShow}
+						onHide={() => this.setState({ jsonModalShow: false })}
+						size="lg"
+						centered
+						className="themed-modal dark-themed-modal">
+						<Modal.Header closeButton closeVariant="white">
+							<Modal.Title>{x.species.name} Record Data</Modal.Title>
+						</Modal.Header>
+						<Modal.Body>
+							<pre className="g-screen field-json">{JSON.stringify(x, null, 2)}</pre>
+						</Modal.Body>
+					</Modal>
 				}
-				<div className="g-shell generator-shell">
-					{/* the two keys that drive the machine, on their own rail above the
-					    record they produce */}
-					<div className="generator-controls">
-						<button type="button" className="g-btn g-btn--primary" onClick={this.getXalian}>
-							Generate New Xalian
-						</button>
-						<button
-							type="button"
-							className="g-btn"
-							disabled={!this.state.loggedInUser}
-							onClick={this.saveXalian}>
-							{this.state.loggedInUser ? 'Save to Your Faction' : 'Sign In to Keep'}
-						</button>
-					</div>
-
-					{this.state.xalian && (
-						<div id="generated-xalian-fragment">
-							<XalianRecord
-								kicker="Generator Output"
-								xalian={this.state.xalian}
-								json={JSON.stringify(this.state.xalian, null, 2)}>
-
-								<section className="specimen-readout">
-									<p className="g-kicker">Stat Allocation</p>
-									<XalianStatChart
-										includeLabel
-										labelFontSize={'10pt'}
-										barSize={26}
-										stats={this.state.xalian.stats}
-										moreClasses="specimen-chart" />
-								</section>
-
-								<section className="specimen-readout">
-									<p className="g-kicker">Move Set</p>
-									<XalianMoveSet showDescription moves={this.state.xalian.moves} />
-								</section>
-							</XalianRecord>
-						</div>
-					)}
-				</div>
-
-				{/* {this.state.isLoading && <div id="preloader"></div>} */}
 			</React.Fragment>
 		);
 	}
 
 	getXalian = () => {
-		this.setState({ isGenerating: true });
-		// this.setState({ showXalian: false }, () => {
-			// gsap.to('#generated-xalian-div', { opacity: 0, duration: 1, ease: 'power2.in' });
-			gsap.timeline()
-                .to('#generated-xalian-fragment', { opacity: 0, duration: 1, ease: 'power2.in' })
-				.to('#smokeBackgroundCanvas', { opacity: 1, duration: 1, ease: 'power2.out' }, '<')
-				.then(() => {
-					xalianApi.callGenerateXalian().then((x) => {
-						console.log(JSON.stringify(x, null, 2));
-						this.setState(
-							{
-								xalian: x,
-								isLoading: false,
-								isGenerating: false,
-							},
-							() => {
-								// this.setState({ showXalian: true }, () => {
-									gsap.to('#smokeBackgroundCanvas', { opacity: 0, duration: 1, ease: 'power2.in' });
-									gsap.to('#generated-xalian-fragment', { opacity: 1, duration: 0.5, ease: 'power2.out' }, '<');
-								// });
-							}
-						);
-					}).catch(() => {
-						this.setState({ isGenerating: false });
-						alertUtil.sendAlert('Could not generate a Xalian — please try again', null, 'danger');
-						gsap.to('#smokeBackgroundCanvas', { opacity: 0, duration: 1, ease: 'power2.in' });
-						gsap.to('#generated-xalian-fragment', { opacity: 1, duration: 0.5, ease: 'power2.out' }, '<');
-					});
+		// The CRT hands over to the readout mode the instant the request goes
+		// out and hands back the instant it lands: a cut, not a fade (Rule C,
+		// "motion is mechanical").
+		this.setState({ isGenerating: true }, () => {
+			xalianApi.callGenerateXalian().then((x) => {
+				console.log(JSON.stringify(x, null, 2));
+				this.setState({
+					xalian: x,
+					isLoading: false,
+					isGenerating: false,
 				});
-		// });
+			}).catch(() => {
+				this.setState({ isGenerating: false });
+				alertUtil.sendAlert('Could not generate a Xalian — please try again', null, 'danger');
+			});
+		});
 	};
 
 	saveXalian = () => {
@@ -144,27 +181,6 @@ class GeneratorPage extends React.Component {
 				console.log(JSON.stringify(error, null, 2));
 				alertUtil.sendAlert('Could not save your Xalian — please try again', null, 'danger');
 			});
-	};
-
-	test = () => {
-		// dbApi.callGetXalian(this.state.xalian.xalianId).then(x => {
-		//     alert('WOOO!\n\n' + JSON.stringify(x, null, 2));
-		// }).catch(error => {
-		//     alert('AHHH!!!!\n\n' + JSON.stringify(error, null, 2));
-		// });
-
-		// let loggedInUser = this.state.loggedInUser;
-		// dbApi.callGetUser(loggedInUser.userId).then(x => {
-		//     alert('WOOO!\n\n' + JSON.stringify(x, null, 2));
-		// }).catch(error => {
-		//     alert('AHHH!!!!\n\n' + JSON.stringify(error, null, 2));
-		// });
-
-		if (this.state.loggedInUser.username) {
-			alertUtil.sendAlert('Logged in as ' + this.state.loggedInUser.username, 'You have successfully logged in', 'success');
-		} else {
-			alertUtil.sendAlert('No user logged in', null, 'error');
-		}
 	};
 }
 export default GeneratorPage;

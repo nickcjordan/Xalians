@@ -1,3 +1,4 @@
+// Terminal: panel (baseline). Target: registry. Duel Playground is arena affordance reference.
 import React from 'react';
 import XalianNavbar from '../../components/navbar';
 import DuelSpecimenBoard from '../../components/games/duel/playground/duelSpecimenBoard';
@@ -698,7 +699,7 @@ class DuelPlaygroundPage extends React.Component {
 	render() {
 		if (!this.state.squad) {
 			return (
-				<div className="g-console">
+				<div className="g-console" data-terminal="panel">
 					<XalianNavbar />
 					<div className="g-shell sg-page"><p className="g-body">Loading specimens...</p></div>
 				</div>
@@ -706,7 +707,7 @@ class DuelPlaygroundPage extends React.Component {
 		}
 
 		return (
-			<div className="g-console">
+			<div className="g-console" data-terminal="panel">
 				<XalianNavbar />
 
 				<div className="g-shell sg-page dp-page">

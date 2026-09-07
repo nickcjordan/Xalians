@@ -1,27 +1,30 @@
+// Terminal: relay. The navbar is the relay's own control strip: it carries
+// the unit's status (signal bars, the entangled lamp) on every page, so it
+// sets data-terminal="relay" on itself rather than inheriting the page's.
 import React from 'react';
-import ListGroup from 'react-bootstrap/ListGroup';
-import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
-import NavDropdown from 'react-bootstrap/NavDropdown';
-import { Authenticator } from '@aws-amplify/ui-react';
 import AuthButtonGroup from './auth/authButtonGroup';
 import { Hub } from 'aws-amplify';
-import { store } from 'state-pool';
 import FadeAlert from './fadeAlert';
 import * as authUtil from '../utils/authUtil';
 import { Auth } from 'aws-amplify';
-import { gsap } from 'gsap';
+
+const RELAY_LINKS = [
+	{ href: '/', label: 'Home' },
+	{ href: '/encyclopedia', label: 'Encyclopedia' },
+	{ href: '/duel', label: 'Duel' },
+	{ href: '/reclamation', label: 'Reclamation' },
+	{ href: '/long-return', label: 'Expedition' },
+	{ href: '/train', label: 'Training' },
+];
 
 class XalianNavbar extends React.Component {
 	state = {};
 
 	componentDidMount() {
 		var navbar = document.getElementById('navvy');
-
 
 		this.hubListener = (data) => {
 			if (navbar) {
@@ -36,14 +39,18 @@ class XalianNavbar extends React.Component {
 		};
 		Hub.listen('navbar-channel', this.hubListener);
 
-		// var animationTimeline = gsap.timeline({ repeat: 0});
-		// animationTimeline.fromTo("#navvy", {opacity: 0}, {opacity: 1, duration: 2, ease:'sine.in'});
-
 		if (navbar) {
-			var last_scroll_top = 0;
+			var last_scroll_top = window.scrollY;
+			var mountedAt = Date.now();
 			this.scrollListener = function () {
 				let scroll_top = window.scrollY;
-				if (scroll_top > 30) {
+				// Some pages animate their own scroll position on mount (the
+				// encyclopedia's hash-anchored sections do this with a smooth
+				// scrollIntoView, several small events over ~1s). That is not the
+				// user scrolling, so hide-on-scroll is suppressed for a moment
+				// after mount rather than reading the page's own jump as one.
+				let settling = Date.now() - mountedAt < 1500;
+				if (scroll_top > 30 && !settling) {
 					if (scroll_top < last_scroll_top) {
 						navbar.classList.remove('hidden');
 						navbar.classList.add('visible');
@@ -52,7 +59,8 @@ class XalianNavbar extends React.Component {
 						navbar.classList.add('hidden');
 					}
 				} else {
-					// at the top of the page the navbar should always be visible
+					// at the top of the page, or still settling in, the navbar
+					// should always be visible
 					navbar.classList.remove('hidden');
 					navbar.classList.add('visible');
 				}
@@ -85,60 +93,65 @@ class XalianNavbar extends React.Component {
 		this.setState({ loggedInUser: user });
 	};
 
+	isActiveRoute = (href) => {
+		if (typeof window === 'undefined') {
+			return false;
+		}
+		let path = window.location.pathname;
+		if (href === '/') {
+			return path === '/';
+		}
+		return path === href || path.startsWith(href + '/');
+	};
+
 	render() {
 		return (
 			<React.Fragment>
-				{/* <ScrollTrigger start="-200px center" end="200px center" scrub={0.5} markers> */}
-					{/* <Tween from={{ opacity: 0 }} duration={2}> */}
-						<Navbar id="navvy" collapseOnSelect expand="xl" variant="dark" sticky="top" className="xalian-navbar">
-							{/* the bar carries a brand, six links, a CTA and two auth keys, which
-							    together need more than bootstrap's fixed container width - they were
-							    being clipped off the right edge between 1200 and 1400px. Fluid, with
-							    the same gutter the page shell uses, so the bar lines up with the
-							    content beneath it. */}
-							<Container fluid className="navbar-shell">
-								<Navbar.Brand href="/">
-									<img src="/assets/img/logo/xalians_logo_small.png" height="30px" />
-								</Navbar.Brand>
-								<Navbar.Toggle aria-controls="responsive-navbar-nav" />
-								<Navbar.Collapse id="responsive-navbar-nav">
-									<Nav className="me-auto nav-text-shadow">
-										<Nav.Link href="/">Home</Nav.Link>
-										{/* <Nav.Link href="/community">Xalian Community</Nav.Link> */}
-										{/* <Nav.Link href="/project">Learn More</Nav.Link> */}
-										<Nav.Link href="/encyclopedia">Encyclopedia</Nav.Link>
-										<Nav.Link href="/duel">Duel</Nav.Link>
-										<Nav.Link href="/reclamation">Reclamation</Nav.Link>
-										<Nav.Link href="/long-return">Expedition</Nav.Link>
-										<Nav.Link href="/train">Training</Nav.Link>
-										{/* <Nav.Link href="/faq">FAQ</Nav.Link> */}
-										{/* <Nav.Link href="/login">Login</Nav.Link> */}
-										{/* <Nav.Link href="/designer">Designer</Nav.Link> */}
-										{/* <NavDropdown title="Dropdown" id="collasible-nav-dropdown">
-                            <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                            <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-                            <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
-                        </NavDropdown> */}
-									</Nav>
-									<Nav>
-										{/* <Nav.Link className="xalian-generator-button" href="/engine">Try the Xalian Generator</Nav.Link> */}
-										<Nav.Link className="me-auto xalian-generator-navbar-button" href="/generator">
-											{this.state.loggedInUser ? 'Generate a Xalian' : 'Try the Xalian Generator'}
+				<div data-terminal="relay">
+					<Navbar id="navvy" collapseOnSelect expand="xl" variant="dark" sticky="top" className="g-cover-plate relay-navbar">
+						<Container fluid className="relay-navbar-shell">
+							<Navbar.Brand href="/" className="relay-wordmark">
+								<img src="/assets/img/logo/xalians_logo_small.png" height="30px" alt="Xalians" />
+								<span className="g-legend relay-wordmark-text">QED Relay &middot; Zolton-3</span>
+							</Navbar.Brand>
+
+							<div className="relay-status">
+								<span className="relay-signal" aria-hidden="true">
+									<i className="relay-signal-bar" style={{ '--h': '5px' }}></i>
+									<i className="relay-signal-bar" style={{ '--h': '8px' }}></i>
+									<i className="relay-signal-bar" style={{ '--h': '11px' }}></i>
+									<i className="relay-signal-bar relay-signal-bar--off" style={{ '--h': '14px' }}></i>
+								</span>
+								<span className="g-lamp relay-entangled-lamp">Entangled</span>
+							</div>
+
+							<Navbar.Toggle aria-controls="responsive-navbar-nav" className="g-key relay-toggle" />
+							<Navbar.Collapse id="responsive-navbar-nav">
+								<Nav className="relay-links">
+									{RELAY_LINKS.map((link) => (
+										<Nav.Link
+											key={link.href}
+											href={link.href}
+											className={`g-legend relay-link${this.isActiveRoute(link.href) ? ' relay-link--active' : ''}`}>
+											{link.label}
 										</Nav.Link>
-										{/* <Nav.Link eventKey={2} href="#memes">
-                            Dank memes
-                        </Nav.Link> */}
-									</Nav>
-									<Nav>
-										<AuthButtonGroup authAlertCallback={this.handleUserAuthAction}></AuthButtonGroup>
-									</Nav>
-								</Navbar.Collapse>
-							</Container>
-						</Navbar>
-					{/* </Tween> */}
-				{/* </ScrollTrigger> */}
+									))}
+								</Nav>
+								<Nav className="relay-actions">
+									{/* The navbar carries the relay's plain key everywhere; the page
+									    underneath owns the single --primary accent (docs/DESIGN_SYSTEM.md
+									    rule A, "one primary action per screen", round1-findings.md S9). */}
+									<Nav.Link className="g-key relay-key" href="/generator">
+										Generator
+									</Nav.Link>
+								</Nav>
+								<div className="relay-auth">
+									<AuthButtonGroup authAlertCallback={this.handleUserAuthAction}></AuthButtonGroup>
+								</div>
+							</Navbar.Collapse>
+						</Container>
+					</Navbar>
+				</div>
 				<FadeAlert />
 			</React.Fragment>
 		);

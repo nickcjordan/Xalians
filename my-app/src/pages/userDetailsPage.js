@@ -1,3 +1,4 @@
+// Terminal: panel (baseline). Target: relay. A user's record is read over the Zolto relay.
 import React from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -62,7 +63,7 @@ class UserAccountPage extends React.Component {
         return (
             <React.Fragment>
 
-                <Container fluid className="content-background-container">
+                <Container fluid className="content-background-container" data-terminal="panel">
                     <XalianNavbar authAlertCallback={this.setUserInfo}></XalianNavbar>
 
                     <Container className="content-container">

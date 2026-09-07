@@ -40,6 +40,7 @@ function RedirectTour() {
     return <Redirect to={lore.routeFor('story')} />;
 }
 
+// Terminal: archive. Poseidas is the neutral seat of science and arbitration; the encyclopedia is a reading desk in its Deep Archive, paper under a lamp.
 /**
  * ENCYCLOPEDIA XALIA — the Generator's archive.
  *
@@ -127,7 +128,7 @@ export default function EncyclopediaPage() {
     }, [location.pathname, location.hash]);
 
     return (
-        <div className="g-console enc-console">
+        <div className="g-console enc-console" data-terminal="archive">
             <XalianNavbar />
             <EncyclopediaShell>
                 <Switch>
