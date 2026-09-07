@@ -51,6 +51,7 @@ import {
 } from '../expeditionRules.js';
 import {
 	ROSTER_SIZE, SITES_PER_WORLD, ACT_CLASS_BY_ACTION, SENDABLE, FRAMES_PER_MATCH, WORLDS_PER_FRAME,
+	RETURNED_SEND_COST,
 } from '../expeditionInterpretation.js';
 import { chooseSend, chooseOrders, rivalById, DEFAULT_RIVAL_ID } from '../expeditionBot.js';
 import { prepare, magnitudeAgainst, baseHold, initiativeOf, strainLevel } from '../creatureOnTable.js';
@@ -186,12 +187,22 @@ function randomChooseSend(publicState, ownRoster, handler, rng) {
 	if (anyOnBoard && rng.float() < RANDOM_PASS_PROBABILITY) {
 		return { type: 'pass', reason: 'random-pass' };
 	}
+	// a returned record (the Loki line) costs RETURNED_SEND_COST against the round's cap,
+	// so it is only a legal pick while the cap can still afford it
+	const returnedIds = new Set(me.returned || []);
+	const capRemaining = sendableCap - me.sentCount;
 	const candidates = [];
 	ownRoster.forEach((record) => {
+		if ((returnedIds.has(record.id) ? RETURNED_SEND_COST : 1) > capRemaining) {
+			return;
+		}
 		frame.sites.forEach((site) => {
 			candidates.push({ record, site });
 		});
 	});
+	if (candidates.length === 0) {
+		return { type: 'pass', reason: 'no-affordable-candidates' };
+	}
 	const pick = candidates[Math.floor(rng.float() * candidates.length)];
 	const traits = (pick.record.traits && [...(pick.record.traits.guaranteed || []), ...(pick.record.traits.rolled || [])]) || [];
 	const canHide = traits.includes('stealthy');

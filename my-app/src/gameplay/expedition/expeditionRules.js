@@ -99,6 +99,11 @@ export class ExpeditionRuleError extends Error {
 	}
 }
 
+// the match's rules object, defaulted for any state built before the field existed
+function rulesOf(state) {
+	return (state && state.rules) || DEFAULT_RULES;
+}
+
 function otherPlayer(player) {
 	return player === 'A' ? 'B' : 'A';
 }
@@ -181,7 +186,48 @@ function drawFrames(worlds, rngState) {
 	Favor", so the only things decided randomly here are which worlds, at which sites, in
 	which order, and who starts round 1.
 */
-export function createMatch({ rosterA, rosterB, worlds, seed }) {
+// ---------------------------------------------------------------------------
+// the rules object: one ablation switch per lever
+// ---------------------------------------------------------------------------
+
+/*
+	Every entry here is a rule the designer can switch off for one batch, so the
+	simulator can measure what that rule is actually carrying (docs/design/
+	game-validation-principles.md, "Ablation"). DEFAULT_RULES is the game exactly as
+	shipped, so a createMatch call that never mentions `rules` behaves as it always has.
+
+	- hiddenSends: false makes send(..., hidden=true) illegal, the way an illegal
+	  recordId is illegal (send returns null).
+	- lokiLine: false drops the return-to-roster on a LOST world, so a lost world is
+	  withdrawn exactly like a tied one.
+	- trailingBonus: the number of extra sends the trailing seat gets next round; 0
+	  removes the lever without changing any other code path.
+	- initiative: false resolves everything in sent order (sentIndex, the same tiebreak
+	  buildResolutionOrder already falls back to) instead of by initiative.
+	- disabledActs: act names order() rejects outright, so a batch can be run with, say,
+	  no ward or no mend at all.
+*/
+export const DEFAULT_RULES = {
+	hiddenSends: true,
+	lokiLine: true,
+	trailingBonus: ROSTER_TRAILING_BONUS,
+	initiative: true,
+	disabledActs: [],
+};
+
+// merges a caller's partial rules over the defaults, so a batch only names what it moves
+function normalizeRules(rules) {
+	const r = rules || {};
+	return {
+		hiddenSends: r.hiddenSends !== undefined ? !!r.hiddenSends : DEFAULT_RULES.hiddenSends,
+		lokiLine: r.lokiLine !== undefined ? !!r.lokiLine : DEFAULT_RULES.lokiLine,
+		trailingBonus: typeof r.trailingBonus === 'number' ? r.trailingBonus : DEFAULT_RULES.trailingBonus,
+		initiative: r.initiative !== undefined ? !!r.initiative : DEFAULT_RULES.initiative,
+		disabledActs: Array.isArray(r.disabledActs) ? r.disabledActs.slice() : [],
+	};
+}
+
+export function createMatch({ rosterA, rosterB, worlds, seed, rules }) {
 	validateRosterInput(rosterA, 'rosterA');
 	validateRosterInput(rosterB, 'rosterB');
 	validateWorldsInput(worlds);
@@ -213,6 +259,7 @@ export function createMatch({ rosterA, rosterB, worlds, seed }) {
 	return {
 		seed,
 		rngState,
+		rules: normalizeRules(rules),
 		frames,
 		frameIndex: 0,
 		players: { A: playerState(rosterA), B: playerState(rosterB) },
@@ -379,6 +426,11 @@ export function send(state, handler, recordId, siteId, hidden = false) {
 		return null;
 	}
 	if (hidden) {
+		// the hiddenSends ablation makes every hidden send illegal, the same null-return
+		// way a non-stealthy creature's hidden send has always been illegal
+		if (!rulesOf(state).hiddenSends) {
+			return null;
+		}
 		if (!traitKeywordsOf(record).includes('stealthy')) {
 			return null;
 		}
@@ -587,6 +639,11 @@ export function order(state, handler, creatureId, actName) {
 	}
 	const legal = legalActionsForEntry(found.entry);
 	if (!legal.includes(actName)) {
+		return null;
+	}
+	// the disabledActs ablation takes named acts off the table for the whole match;
+	// `hold` is never disablable, since a creature must always have something legal to do
+	if (actName !== 'hold' && rulesOf(state).disabledActs.includes(actName)) {
 		return null;
 	}
 
@@ -875,7 +932,14 @@ function buildResolutionOrder(state, entries) {
 	const ward = withMeta.filter((m) => m.action === 'ward');
 	const rest = withMeta.filter((m) => m.action !== 'ambush' && m.action !== 'ward');
 
+	// the initiative ablation resolves purely in sent order - the tiebreak this
+	// comparator already falls back to - so initiative stops deciding who acts first
+	// without changing anything else about resolution.
+	const useInitiative = rulesOf(state).initiative;
 	function byInitiativeThenSent(a, b) {
+		if (!useInitiative) {
+			return a.entry.sentIndex - b.entry.sentIndex;
+		}
 		if (a.strained !== b.strained) {
 			return a.strained ? 1 : -1;
 		}
@@ -1293,9 +1357,11 @@ function judge(state) {
 			const entries = s.board[site.id][player];
 			if (result.winner === player) {
 				s.players[player] = { ...s.players[player], holding: [...s.players[player].holding, ...entries.map((e) => e.recordId)], sitesWon: s.players[player].sitesWon + 1 };
-			} else if (result.winner === opponent) {
+			} else if (result.winner === opponent && rulesOf(s).lokiLine) {
 				// LOST (not tied): the Loki line returns these creatures to the roster,
-				// flagged so their next send costs RETURNED_SEND_COST (see send()).
+				// flagged so their next send costs RETURNED_SEND_COST (see send()). With
+				// the lokiLine ablation off, a lost world falls through to the tied path
+				// below and simply withdraws, with no return.
 				const recordIds = entries.map((e) => e.recordId);
 				const records = entries.map((e) => e.record);
 				s.players[player] = {
@@ -1333,9 +1399,11 @@ function judge(state) {
 	// than the earlier rule of moving first. Starter simply alternates every round now;
 	// equal sites also alternates, same as before.
 	const nextStarter = otherPlayer(s.starter);
+	// the trailingBonus lever is a number, not a switch: rules.trailingBonus replaces the
+	// ROSTER_TRAILING_BONUS constant, so 0 removes the compensation entirely.
 	const trailingBonus = { A: 0, B: 0 };
 	if (sitesWonA !== sitesWonB) {
-		trailingBonus[sitesWonA < sitesWonB ? 'A' : 'B'] = ROSTER_TRAILING_BONUS;
+		trailingBonus[sitesWonA < sitesWonB ? 'A' : 'B'] = rulesOf(s).trailingBonus;
 	}
 
 	return {
@@ -1493,6 +1561,9 @@ export function getPublicState(state, handler) {
 
 	return {
 		frameIndex: state.frameIndex,
+		// the match's rules object travels to the view: the bot must never propose a
+		// hidden send or a disabled act the engine would reject under an ablation.
+		rules: rulesOf(state),
 		// the whole frame travels to the view: three sites, each carrying its world's
 		// facts (planet, element, terrain, band, hazards) so the table can show the real
 		// worlds side by side

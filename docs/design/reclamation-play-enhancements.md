@@ -91,6 +91,22 @@ Three levers from Pass 1's friction and the digest's area-majority reading (Bloo
 
 Friction met while shipping these: none beyond the hide-rule friction already recorded in Pass 1, which lever 1 above resolves.
 
+## Validation pass (2026-09-07)
+
+Nick asked how to tell whether the game is good short of other people playing it. The answer for every game on the platform is written in `game-validation-principles.md`; this pass built the two kinds it recommends first for Reclamation and ran the first. Tooling: `devtools/expeditionValidation.js` (naive-policy regret, option spread, point of no return, rule ablation, draft dominance; `--md` writes the report; the checked-in run is `reclamation-validation-report.md`, 200 matches per configuration, seed 7, about 16 seconds), the `rules` object on the engine so any lever can be switched off for a batch (assumption 44), and on the table the Proving notes panel on the report (three questions, saved locally with the seed and rival) plus quiet telemetry in `reclamationTelemetry.js` (time per decision by phase and round, previews consulted before a send, when skip is pressed, coach dismissal, draft by hand or auto, sound), exported as JSON from the report. Nothing leaves the browser.
+
+What the first run says:
+
+- **Decisions are real.** No naive policy comes within five points of the proctor: greedy (always the top-scored send, never rationing) wins 0 percent, always-stack 0, never-contest 0.5, random 8, pass-early 20, always-hidden 42 against the proctor's 47.5 mirror. The one to watch is always-hidden at 42: hiding everything costs only five points, so the hidden send's price is low.
+- **Option spread is in the band.** 5.8 near-best sends per deploy decision on average (within 10 percent of the best value), one dominant option on 14.7 percent of turns; round 1 offers 7.1 near-best, round 3 offers 4.8 with a wider gap between first and second. The opening is the loosest decision and the closer the tightest, which is the right shape.
+- **The last round matters.** 40 percent of proctor mirrors are decided (leader never changes again) after round 1, 55 percent only at the final judge; the third round changes the leader in 51.5 percent of matches; comeback rate 33 percent. Against the windsailor only 28.5 percent are decided after round 1 and 63.5 percent turn in round 3, so the most aggressive rival makes the longest matches.
+- **Ablation.** Hidden sends, the Loki line, the trailing bonus and initiative each move something beyond the interval when removed (the trailing bonus is the load-bearing one: without it, decided-after-round-1 rises from 40 to 52.5 percent and comebacks fall from 33 to 21). Ward and mend move nothing. Mend was a bot bug shaped like a dead rule (the bot scored it on observed staggers, which are always empty at order time); the bot now scores it on the threat read (assumption 45) and orders it about once in four matches, but mend still lands about once in 200 because it only clears a stagger that resolved before it. That is a rule lever, recorded in the rulebook's open items. Ward's silence needs a targeted probe.
+- **Draft dead content.** Seven species and two elements (psychic, fire) are kept under 20 percent of the times they are dealt, because the draft rates by hold alone and their holds sit near 4 against 10 to 13 for the always-kept. No species or element is dominant (the highest keeper win rate is 56.5 percent). Recorded as a lever.
+
+Also found and fixed on the way: `runNode.cjs` had been deleted with Tribute (PR #98), so the simulator's documented command had not worked since; it is restored in the expedition devtools folder and `CLAUDE.md` points at it. The simulator's random policy could name a returned creature the cap could not afford and drop the match as an error; it now filters to affordable sends.
+
+Not run yet: kind 2 (comprehension by prediction) and kind 4 (the critic rubric); both are by hand or by agent and are the next pass when Nick wants them.
+
 ## Sources
 
 - Sid Meier, GDC 2012, "Interesting decisions": https://www.gamedeveloper.com/design/gdc-2012-sid-meier-on-how-to-see-games-as-sets-of-interesting-decisions

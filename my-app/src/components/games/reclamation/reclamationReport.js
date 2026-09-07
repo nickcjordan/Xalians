@@ -1,5 +1,6 @@
 import React from 'react';
 import { speciesLabel, formatHold } from './reclamationNarration';
+import { createTelemetry } from './reclamationTelemetry';
 
 /*
 	Reclamation: the match report (docs/design/reclamation-play-enhancements.md, Pass 1,
@@ -341,7 +342,201 @@ function WorldRow({ world, you }) {
 	);
 }
 
-export function ReclamationReport({ report, onNewProving, rivalName }) {
+/*
+	ReclamationProvingNotes — the designer's own-play protocol
+	(docs/design/game-validation-principles.md section 3, "Three questions after every
+	match") as a panel on the report. Optional and does not gate "New Proving": the
+	button above it always works with or without notes saved.
+
+	Storage is injected two ways, whichever is cleanest for the caller: pass a
+	`telemetry` prop (an object made by createTelemetry(), the same one the match
+	already holds) or a `storage` prop (a raw storage-like object, localStorage shape),
+	in which case this component makes its own createTelemetry({ storage }) internally.
+	With neither, it falls back to createTelemetry({}) (real window.localStorage, or a
+	no-op if that throws or is absent) so the panel still renders and "Save notes" still
+	does something sensible rather than crashing. Tests inject `storage` with a fake
+	object (see __tests__/reclamationReport.test.js).
+*/
+function useTelemetryFor(telemetry, storage) {
+	if (telemetry) {
+		return telemetry;
+	}
+	return createTelemetry({ storage });
+}
+
+class ReclamationProvingNotes extends React.Component {
+	constructor(props) {
+		super(props);
+		this.telemetry = useTelemetryFor(props.telemetry, props.storage);
+		const counts = this.readCounts();
+		this.state = {
+			tension: '',
+			obvious: '',
+			earned: 'unsure',
+			saved: false,
+			exported: false,
+			exportText: '',
+			notesCount: counts.notesCount,
+			telemetryCount: counts.telemetryCount,
+		};
+	}
+
+	readCounts = () => {
+		let notesCount = 0;
+		let telemetryCount = 0;
+		try {
+			notesCount = (this.telemetry.loadNotes() || []).length;
+		} catch (err) {
+			notesCount = 0;
+		}
+		try {
+			telemetryCount = (this.telemetry.loadTelemetry() || []).length;
+		} catch (err) {
+			telemetryCount = 0;
+		}
+		return { notesCount, telemetryCount };
+	};
+
+	setTension = (e) => this.setState({ tension: e.target.value });
+
+	setObvious = (e) => this.setState({ obvious: e.target.value });
+
+	setEarned = (value) => this.setState({ earned: value });
+
+	preventEnterSubmit = (e) => {
+		if (e.key === 'Enter') {
+			e.preventDefault();
+		}
+	};
+
+	save = () => {
+		const { seed, rivalId, won } = this.props;
+		const { tension, obvious, earned } = this.state;
+		try {
+			this.telemetry.saveNotes({
+				seed, rivalId, won, tension, obvious, earned,
+			});
+		} catch (err) {
+			// saving is optional; the report and New Proving still work either way
+		}
+		const counts = this.readCounts();
+		this.setState({ saved: true, notesCount: counts.notesCount, telemetryCount: counts.telemetryCount });
+	};
+
+	exportNotes = () => {
+		let text = '';
+		try {
+			text = this.telemetry.exportAll();
+		} catch (err) {
+			text = '';
+		}
+		if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
+			try {
+				navigator.clipboard.writeText(text);
+			} catch (err) {
+				// clipboard may be unavailable (permissions, non-secure context); the
+				// textarea below still lets the export be copied by hand
+			}
+		}
+		this.setState({ exported: true, exportText: text });
+	};
+
+	render() {
+		const {
+			tension, obvious, earned, saved, exported, exportText, notesCount, telemetryCount,
+		} = this.state;
+		return (
+			<div className="g-panel rec-notes" data-notes>
+				<span className="g-kicker">Proving notes</span>
+				<div className="rec-notes-row">
+					<label className="rec-notes-label" htmlFor="rec-notes-tension">Where was the moment of most tension?</label>
+					<input
+						id="rec-notes-tension"
+						type="text"
+						className="g-input rec-notes-input"
+						placeholder="Where was the moment of most tension?"
+						value={tension}
+						onChange={this.setTension}
+						onKeyDown={this.preventEnterSubmit}
+						data-notes-tension
+					/>
+				</div>
+				<div className="rec-notes-row">
+					<label className="rec-notes-label" htmlFor="rec-notes-obvious">Was there a turn where you knew what to do before looking?</label>
+					<input
+						id="rec-notes-obvious"
+						type="text"
+						className="g-input rec-notes-input"
+						placeholder="Was there a turn where you knew what to do before looking?"
+						value={obvious}
+						onChange={this.setObvious}
+						onKeyDown={this.preventEnterSubmit}
+						data-notes-obvious
+					/>
+				</div>
+				<div className="rec-notes-row">
+					<span className="rec-notes-label">Did the result feel earned, or handed to you?</span>
+					<div className="g-segmented rec-notes-earned" role="group" aria-label="Did the result feel earned, or handed to you?">
+						{[
+							{ key: 'earned', label: 'Earned' },
+							{ key: 'handed', label: 'Handed' },
+							{ key: 'unsure', label: 'Unsure' },
+						].map((opt) => (
+							<button
+								key={opt.key}
+								type="button"
+								className="g-segment"
+								aria-pressed={earned === opt.key}
+								onClick={() => this.setEarned(opt.key)}
+								data-notes-earned={opt.key}
+							>
+								{opt.label}
+							</button>
+						))}
+					</div>
+				</div>
+				<div className="rec-notes-actions">
+					<button
+						type="button"
+						className="g-btn g-btn--primary"
+						onClick={this.save}
+						disabled={saved}
+						data-notes-save
+					>
+						{saved ? 'Saved' : 'Save notes'}
+					</button>
+					{saved && (
+						<span className="rec-notes-saved" data-notes-saved-lamp>
+							<span className="g-lamp g-lamp--amber" aria-hidden="true" />
+							Saved
+						</span>
+					)}
+				</div>
+				<div className="rec-notes-export-row">
+					<button type="button" className="g-btn" onClick={this.exportNotes} data-notes-export>
+						Export notes
+					</button>
+					<span className="rec-notes-count g-mono" data-notes-count>
+						{notesCount} {notesCount === 1 ? 'Proving' : 'Provings'} noted, {telemetryCount} recorded
+					</span>
+				</div>
+				{exported && (
+					<textarea
+						className="g-input rec-notes-export"
+						readOnly
+						value={exportText}
+						data-notes-export-text
+						onFocus={(e) => e.target.select()}
+					/>
+				)}
+			</div>
+		);
+	}
+}
+
+export function ReclamationReport({
+	report, onNewProving, rivalName, seed, rivalId, telemetry, storage,
+}) {
 	const rival = rivalName || 'the rival';
 	const rounds = worldsByRound(report.worlds || []);
 	const why = report.reason === 'clinched'
@@ -386,6 +581,14 @@ export function ReclamationReport({ report, onNewProving, rivalName }) {
 					<span className="rec-report-figure-label">{report.champion ? `held ${report.champion.planet || 'a world'} for you` : 'no world held'}</span>
 				</span>
 			</div>
+
+			<ReclamationProvingNotes
+				seed={seed}
+				rivalId={rivalId}
+				won={report.won}
+				telemetry={telemetry}
+				storage={storage}
+			/>
 
 			<button type="button" className="g-btn g-btn--primary" onClick={onNewProving} data-new-proving>
 				New Proving

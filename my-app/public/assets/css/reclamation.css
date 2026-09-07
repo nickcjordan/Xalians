@@ -4119,6 +4119,84 @@
 .rec-plinth-tag--returned { color: var(--g-hazard); }
 .rec-send-pip--bonus { border-color: var(--g-hazard); }
 
+/* ===========================================================================
+   THE NOTES — the Proving notes panel on the report (docs/design/
+   game-validation-principles.md section 3, "the designer's own play, as
+   data"). Three short-answer rows, a save action with a lamp confirmation,
+   and a quiet export row. Sits inside .rec-report so it inherits its width
+   and its won/lost accent; the panel itself only ever adds vertical rhythm.
+   =========================================================================== */
+
+.rec-notes {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-3);
+	padding: var(--g-4);
+	background: var(--g-hull-lo);
+	border-left: 3px solid var(--g-seam);
+	box-shadow: var(--g-recess);
+}
+.rec-notes .g-kicker { margin: 0; }
+
+.rec-notes-row {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+	min-width: 0;
+}
+
+.rec-notes-label {
+	font-size: var(--g-size-small);
+	color: var(--g-ink-mid);
+}
+
+.rec-notes-input { width: 100%; }
+
+.rec-notes-earned { align-self: flex-start; }
+
+.rec-notes-actions {
+	display: flex;
+	align-items: center;
+	gap: var(--g-3);
+}
+
+.rec-notes-saved {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--g-2);
+	font-size: var(--g-size-small);
+	color: var(--g-ink-mid);
+}
+.rec-notes-saved .g-lamp { width: 8px; height: 8px; }
+
+.rec-notes-export-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--g-3);
+	flex-wrap: wrap;
+}
+
+.rec-notes-count {
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-low);
+}
+
+.rec-notes-export {
+	width: 100%;
+	min-height: 120px;
+	resize: vertical;
+	font-size: var(--g-size-micro) !important;
+	white-space: pre;
+	overflow: auto;
+}
+
+@media (max-width: 390px) {
+	.rec-notes { padding: var(--g-3); }
+	.rec-notes-actions { flex-wrap: wrap; }
+	.rec-notes-export-row { flex-direction: column; align-items: stretch; }
+}
+
 @media (max-width: 760px) {
 	.rec-masthead { flex-wrap: wrap; row-gap: var(--g-1); }
 	.rec-console--match .rec-masthead-rival { display: inline; font-size: var(--g-size-micro); }

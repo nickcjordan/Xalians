@@ -17,8 +17,8 @@
 	existing call site keeps working unchanged.
 */
 
-import { prepare, traitKeywordsOf } from './creatureOnTable.js';
-import { getActClass, ACT_CLASS, SENDABLE, SITES_TO_CLINCH, FRAMES_PER_MATCH, RETURNED_SEND_COST } from './expeditionInterpretation.js';
+import { prepare, traitKeywordsOf, magnitudeAgainst } from './creatureOnTable.js';
+import { getActClass, ACT_CLASS, SENDABLE, SITES_TO_CLINCH, FRAMES_PER_MATCH, RETURNED_SEND_COST, STAGGER_FRACTION } from './expeditionInterpretation.js';
 
 // --- tunables ----------------------------------------------------------------------
 
@@ -193,42 +193,38 @@ function applyHideBias(baseRuleSaysHide, canHide, hideBias, rng) {
 }
 
 /*
-	chooseSend(publicState, ownRoster, handler, rng, rival) ->
-		{ type: 'send', recordId, siteId, hidden } | { type: 'relocate', siteId, reason } |
-		{ type: 'pass', reason }
+	scoreSends(publicState, ownRoster, handler, rival) -> {
+		candidates, best, margins, weights, remainingSends, capRemaining, evenShare,
+		framesAfterThis, mustHold, sitesWinning, sitesLosing, myOnBoard, sendableCap,
+	}
 
-	rival is optional and defaults to the Court proctor (the bot as it always was); see
-	RIVALS below for the five handlers and rivalById for the lookup with a safe fallback.
+	The candidate scoring behind chooseSend, exported as a pure function so devtools can
+	read the same shortlist the bot reads (docs/design/game-validation-principles.md's
+	"option spread") and so naive policies can be written against the bot's own numbers
+	rather than a second implementation of them. Consumes no RNG: everything random in
+	chooseSend (the near-equal pick, the hide bias) happens after this returns.
+
+	candidates is sorted best value first; each entry is
+	{ record, site, prepared, margin, value, flips, cost }.
 */
-export function chooseSend(publicState, ownRoster, handler, rng, rival) {
+export function scoreSends(publicState, ownRoster, handler, rival) {
 	const weights = weightsFor(rival);
 	const me = publicState.players[handler];
 	const opp = publicState.players[otherSeat(handler)];
-	if (me.passed) {
-		return { type: 'pass', reason: 'already-passed' };
-	}
-
 	const frame = publicState.frame;
-	const relocateMargins = {};
+
+	const margins = {};
 	frame.sites.forEach((s) => {
-		relocateMargins[s.id] = siteMargin(publicState, s.id, handler, weights);
+		margins[s.id] = siteMargin(publicState, s.id, handler, weights);
 	});
-	const relocation = evaluateVanguardRelocation(publicState, handler, relocateMargins, weights);
-	if (relocation && relocation.net > 0 && relocation.moveValue > weights.minSendValue) {
-		return { type: 'relocate', siteId: relocation.siteId, reason: 'vanguard-falls-back' };
-	}
 
 	// me.sendableCap is SENDABLE plus this round's trailing-seat bonus, if any (Pass 2's
 	// roster-economy lever); falls back to the plain SENDABLE constant for any caller that
 	// still hands in a publicState from before the field existed.
 	const sendableCap = typeof me.sendableCap === 'number' ? me.sendableCap : SENDABLE;
 	const remainingSends = Math.min(sendableCap - me.sentCount, ownRoster.length);
-	if (remainingSends <= 0) {
-		return { type: 'pass', reason: 'no-sendable-creatures' };
-	}
 
 	const framesAfterThis = FRAMES_PER_MATCH - 1 - publicState.frameIndex;
-	const margins = relocateMargins;
 	const sitesWinning = frame.sites.filter((s) => margins[s.id] > 0).length;
 	const sitesLosing = frame.sites.filter((s) => margins[s.id] < 0).length;
 	// spend freely on the last world, or when the sites the opponent is winning right
@@ -276,10 +272,61 @@ export function chooseSend(publicState, ownRoster, handler, rng, rival) {
 			candidates.push({ record, site, prepared, margin: m, value, flips: m <= 0 && h > -m, cost });
 		});
 	});
+	candidates.sort((a, b) => b.value - a.value);
+
+	return {
+		candidates,
+		best: candidates.length > 0 ? candidates[0] : null,
+		margins,
+		weights,
+		sendableCap,
+		remainingSends,
+		capRemaining,
+		framesAfterThis,
+		sitesWinning,
+		sitesLosing,
+		mustHold,
+		myOnBoard,
+		evenShare,
+	};
+}
+
+/*
+	chooseSend(publicState, ownRoster, handler, rng, rival) ->
+		{ type: 'send', recordId, siteId, hidden } | { type: 'relocate', siteId, reason } |
+		{ type: 'pass', reason }
+
+	rival is optional and defaults to the Court proctor (the bot as it always was); see
+	RIVALS below for the five handlers and rivalById for the lookup with a safe fallback.
+	The candidate scoring itself lives in scoreSends above; this function is the policy
+	layer over it (relocation, the pass rules, the near-equal pick, the hide bias).
+*/
+export function chooseSend(publicState, ownRoster, handler, rng, rival) {
+	const weights = weightsFor(rival);
+	const me = publicState.players[handler];
+	const opp = publicState.players[otherSeat(handler)];
+	if (me.passed) {
+		return { type: 'pass', reason: 'already-passed' };
+	}
+
+	const frame = publicState.frame;
+	const relocateMargins = {};
+	frame.sites.forEach((s) => {
+		relocateMargins[s.id] = siteMargin(publicState, s.id, handler, weights);
+	});
+	const relocation = evaluateVanguardRelocation(publicState, handler, relocateMargins, weights);
+	if (relocation && relocation.net > 0 && relocation.moveValue > weights.minSendValue) {
+		return { type: 'relocate', siteId: relocation.siteId, reason: 'vanguard-falls-back' };
+	}
+
+	const scored = scoreSends(publicState, ownRoster, handler, rival);
+	if (scored.remainingSends <= 0) {
+		return { type: 'pass', reason: 'no-sendable-creatures' };
+	}
+	const { candidates, mustHold, sitesWinning, myOnBoard, evenShare, framesAfterThis } = scored;
 	if (candidates.length === 0) {
 		return { type: 'pass', reason: 'no-candidates' };
 	}
-	candidates.sort((a, b) => b.value - a.value);
 	const best = candidates[0];
 
 	// baitPass: on frame 1 or 2, once a majority is held with the even share spent, pass
@@ -323,11 +370,16 @@ export function chooseSend(publicState, ownRoster, handler, rng, rival) {
 	// answer it) hides; a send that leaves the site solidly ahead (resultMargin at least
 	// the creature's own hold beyond breakeven - the rival would need to match this send
 	// again just to get back to even) is "securing a lead" and goes openly.
+	// A rules ablation can turn hidden sends off entirely (publicState.rules.hiddenSends);
+	// the bot must never propose a send the engine would reject, so the flag gates hiding
+	// before the bias is ever consulted.
+	const rulesAllowHiding = !publicState.rules || publicState.rules.hiddenSends !== false;
 	const resultMargin = pick.margin + pick.prepared.hold;
 	const securesALead = resultMargin >= pick.prepared.hold;
 	const rivalCanStillAnswer = !opp.passed;
 	const baseRuleSaysHide = canHide && rivalCanStillAnswer && !securesALead && pick.prepared.hold >= pick.margin;
-	const hidden = applyHideBias(baseRuleSaysHide, canHide, weights.hideBias, rng);
+	const wantsHidden = applyHideBias(baseRuleSaysHide, canHide, weights.hideBias, rng);
+	const hidden = rulesAllowHiding && wantsHidden;
 
 	return { type: 'send', recordId: pick.record.id, siteId: pick.site.id, hidden };
 }
@@ -368,8 +420,30 @@ function estimateActionValue(publicState, record, site, sentIndex, action, handl
 			return threatHere > 0 || projectionThreat ? 1 : 0.25;
 		}
 		if (action === 'mend') {
-			const anyStaggered = alliesAt(site.id).some((e) => publicState.staggered && publicState.staggered[e.recordId]);
-			return anyStaggered ? 2 : 0;
+			// score mend on the staggers the visible enemy COULD deal this round, not on
+			// observed ones: orders are given before resolution, so `staggered` is always
+			// empty at order time and the old rule (any ally already staggered) ordered mend
+			// once in 200 matches (validation pass, 2026-09-07). An ally is threatened when
+			// an enemy at this site, or a projection-capable enemy anywhere in the frame, has
+			// a strike whose magnitude against that ally reaches the stagger fraction of its
+			// current hold.
+			const allies = alliesAt(site.id);
+			const threatened = allies.some((ally) => {
+				const threshold = STAGGER_FRACTION * holdOf(publicState, site.id, ally);
+				return frame.sites.some((s) => enemiesAt(s.id).some((enemy) => {
+					const enemyPrepared = prepare(enemy.record, s, null, enemy.sentIndex);
+					return enemyPrepared.acts.some((enemyAct) => {
+						if (enemyAct.class === 'support') {
+							return false;
+						}
+						if (s.id !== site.id && getActClass(enemyAct.action) !== ACT_CLASS.PROJECTION) {
+							return false;
+						}
+						return magnitudeAgainst(enemy.record, enemyAct, ally.record) >= threshold;
+					});
+				}));
+			});
+			return threatened ? 1.5 : 0;
 		}
 		if (action === 'terrorize') {
 			return enemiesAt(site.id).length > 0 ? 1 + act.magnitude / 10 : 0;
@@ -413,10 +487,13 @@ function estimateActionValue(publicState, record, site, sentIndex, action, handl
 export function chooseOrders(publicState, handler, rival) {
 	const frame = publicState.frame;
 	const orders = {};
+	// a rules ablation can take acts off the table entirely (publicState.rules.disabledActs);
+	// order() rejects them, so the bot must never name one - `hold` is never disablable.
+	const disabled = new Set((publicState.rules && publicState.rules.disabledActs) || []);
 	frame.sites.forEach((site) => {
 		visibleEntries(publicState, site.id, handler).forEach((entry) => {
 			const record = entry.record;
-			const actions = ['hold', ...(record.abilities || []).map((a) => a.action)];
+			const actions = ['hold', ...(record.abilities || []).map((a) => a.action).filter((a) => !disabled.has(a))];
 			let best = { action: 'hold', value: 0 };
 			actions.forEach((action) => {
 				const value = estimateActionValue(publicState, record, site, entry.sentIndex, action, handler);

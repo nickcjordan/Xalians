@@ -13,6 +13,7 @@ import { ROSTER_SIZE, SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH, FRAMES_PER_MA
 import {
 	saveMatch, loadMatch, clearMatch, recordResult, recordAgainst, loadRivalId, saveRivalId,
 } from '../../components/games/reclamation/reclamationStorage';
+import { createTelemetry } from '../../components/games/reclamation/reclamationTelemetry';
 
 const MODE_KEY = 'reclamation.mode';
 
@@ -149,6 +150,12 @@ class ReclamationPage extends React.Component {
 		// the console's cues, synthesized in code, off until the player turns them on
 		this.sound = createSound({});
 		this.state.soundOn = this.sound.enabled();
+		// quiet local instrumentation (docs/design/game-validation-principles.md section 3);
+		// one instance for the page's lifetime, handed to every ReclamationMatch it mounts
+		this.telemetry = createTelemetry({});
+		// whether the draft in progress has used "Pick for me" (auto) at least once; reset
+		// each time a new draft begins, read at confirmDraft to tell beginMatch's draft field
+		this.draftUsedAuto = false;
 	}
 
 	componentWillUnmount() {
@@ -161,6 +168,7 @@ class ReclamationPage extends React.Component {
 		if (on) {
 			this.sound.play('lift');
 		}
+		this.telemetry.soundToggled(on);
 		this.setState({ soundOn: on });
 	};
 
@@ -197,6 +205,7 @@ class ReclamationPage extends React.Component {
 	begin = (seed) => {
 		const { poolA, poolB, frames } = buildDraftPools(seed);
 		clearMatch();
+		this.draftUsedAuto = false;
 		this.setState({ seed, draft: { poolA, poolB, frames, keepIds: [] }, resume: null, saved: null, match: null });
 	};
 
@@ -210,11 +219,12 @@ class ReclamationPage extends React.Component {
 	};
 
 	keepAll = (ids) => {
+		this.draftUsedAuto = true;
 		this.setState((prev) => ({ draft: { ...prev.draft, keepIds: ids.slice(0, ROSTER_SIZE) } }));
 	};
 
 	confirmDraft = () => {
-		const { draft, seed, rivalId } = this.state;
+		const { draft, seed, rivalId, mode } = this.state;
 		if (!draft || !validateKeep(draft.poolA, draft.keepIds)) {
 			return;
 		}
@@ -223,6 +233,9 @@ class ReclamationPage extends React.Component {
 		const keepB = botDraft(draft.poolB, draft.frames, rival);
 		const rosterB = keepB.map((id) => draft.poolB.find((r) => r.id === id));
 		const match = createMatch({ rosterA, rosterB, worlds: getWorlds(), seed });
+		this.telemetry.beginMatch({
+			seed, rivalId, mode, draft: this.draftUsedAuto ? 'auto' : 'manual', resumed: false,
+		});
 		this.setState((prev) => ({ match, draft: null, matchKey: prev.matchKey + 1 }));
 	};
 
@@ -239,6 +252,9 @@ class ReclamationPage extends React.Component {
 		if (!saved) {
 			return;
 		}
+		this.telemetry.beginMatch({
+			seed: saved.seed, rivalId: saved.rivalId || DEFAULT_RIVAL_ID, mode: saved.mode, draft: 'none', resumed: true,
+		});
 		this.setState((prev) => ({
 			seed: saved.seed,
 			rivalId: saved.rivalId || DEFAULT_RIVAL_ID,
@@ -331,6 +347,7 @@ class ReclamationPage extends React.Component {
 							onEngineStep={this.onEngineStep}
 							onNewProving={this.newProving}
 							sound={this.sound}
+						telemetry={this.telemetry}
 						/>
 					</div>
 				</div>
