@@ -126,19 +126,24 @@ Each percent is an independent roll. Expected count is the sum divided by 100, w
 - `phasing` 100. body-demanded. Species: "passing through surfaces"; planet: "with no corporeal bodies to speak of". Non-corporeal bodies carry it at 100 by registry rule.
 - `menacing` 85. species: "emitting a terrifying cackle wherever they go" and "amuse themselves by terrorizing other Xalians". This is the single best-evidenced behavior in the description and it is species-sourced, not planet-sourced. Not 100, because the description says they terrorize by choice and amusement, so an individual that does not unnerve everything nearby is possible.
 - `stealthy` 60. species: "disappearing and re-appearing at will". Vanishing at will is the registry's "moves unseen and unheard until it acts". Held at 60 rather than higher because the same sentence says it announces itself with a cackle "wherever they go", which cuts directly against being unnoticed; the two behaviors are in tension in the source and the percent reflects that.
-- `slippery` 55. species: "passing through surfaces" plus the high legacy evasion gauge. The registry defines it as "cannot be held: escapes grabs, pins, traps, snares", which a body matter passes through plainly does. Not higher because `phasing` at 100 already carries most of that and I did not want to double-count.
-- `nocturnal` 40. the weakest environmental case in the pool. Phantiri `data` gives a terrain of thick haze and the planet history calls it a fog-covered, rocky planet, which is dim rather than dark; the planet history never says Phantiri has perpetual night. So this is a moderate percent, not the 95 to 100 the registry reserves for a world of perpetual night. Environmental, planet-sourced, which the rules permit for `nocturnal`.
-- `toxic` 30. species: "blasts of gooey ectoplasm". Ectoplasm delivered at an opponent may debilitate, but the source calls it "zapping" and never names an effect on the target's body, so this is a minority roll rather than a species fact.
-- `solitary` 25. species: "Ectoghouls zip across the Dreadscape" and "They seem to amuse themselves by terrorizing other Xalians"; the description never shows two of them working together, and the target of the terrorizing is other Xalians rather than a pack around it. Exclusion partner `pack-bonded` is deliberately not listed, so its chance is 0 and no exclusion comparison ever runs.
-- `perceptive` 20. species: it finds and closes on "their opponents" across a landscape. Behavioral, so it rests on the species sentence and not on any planet-wide statement. Low, because nothing shows it finding something hidden.
 - `resistant` 15. planet: "it would appear that it only targets organic, cellular life", so the body is unreadable to the killing signal, and planet: the Dreadscape is "deep, tarry oceans formed from the fluids that eek out from the ever-compressing layers of a planetwide mass grave", which is a contaminated place to live. Environmental and planet-sourced, which the rules permit for `resistant`. Kept low because immunity to the moon-weapon comes from the body having no cells at all rather than from a hardiness trait.
-- `luminous` 12. species: "a spectral green mist". Green is a color the source names, and a self-colored spectral body may well shed that light, but the source never says it glows, so this is a minority roll and not a fact.
-- `hypnotic` 8. species: "emitting a terrifying cackle wherever they go" holds attention, and the grinning skull face in the art is drawn to be looked at. Single digits because the registry caps `hypnotic` at entrancing and the description shows fright, not fascination.
-- `foresighted` 4. rare-band roll. Species: "disappearing and re-appearing at will" reads as being gone before the blow lands. Kept at the registry's rare band of 2 to 8 percent because nothing in either source claims precognition.
 
-Sum: 100 + 85 + 60 + 55 + 40 + 30 + 25 + 20 + 15 + 12 + 8 + 4 = 454. **Expected trait count 4.54.** No exclusion pair is present in the pool (only `solitary`, not `pack-bonded`), so no adjustment applies. At least one entry is strictly between 0 and 100; only `phasing` is at 100.
+Sum: 100 + 85 + 60 + 15 = 260. **Expected trait count 2.60.** No exclusion pair is present in the pool (`solitary` was cut by the evidence bar and `pack-bonded` was never listed), so no adjustment applies. At least one entry is strictly between 0 and 100; only `phasing` is at 100.
 
 Traits the body could plausibly carry that I left out, with reasons: `armored` (no covering or anatomy gives it an armored aspect; covering is `mist`), `anchored` (a drifting body is the opposite), `regenerative` (nothing shows it repairing), `healing` and `protective` and `inspiring` (nothing in the description shows it helping anything; it is explicitly described terrorizing), `ramming` (no mass and no sprint band), `volatile` and `reflective` (nothing shows it reacting when struck), `mind-sealed` (untested in the source), `telekinetic` (no source sentence and no manipulation to justify even the rare band), `pack-bonded` (excluded by the solitary reading above).
+
+#### Cut by the evidence bar (2026-09-07)
+
+| Trait | Former percent | Evidence class that failed |
+|---|---|---|
+| `slippery` | 55 | Restatement of a kept trait plus the legacy stat gauge: the walkthrough grants that `phasing` at 100 already carries most of it. |
+| `nocturnal` | 40 | The planet fact does not carry it: the walkthrough concedes Phantiri is dim rather than dark and that the history never gives it perpetual night. |
+| `toxic` | 30 | No source sentence: no source names an effect of the ectoplasm on a target. |
+| `solitary` | 25 | Argued from absence: the description never shows two of them working together. |
+| `perceptive` | 20 | Body-type plausibility: nothing in either source shows it finding something hidden. |
+| `luminous` | 12 | No source sentence and no art feature: no source says it glows, and green is a named color rather than a light organ. |
+| `hypnotic` | 8 | Restatement of `menacing` from the same cackle sentence, which shows fright rather than fascination. |
+| `foresighted` | 4 | No source sentence: neither source claims precognition. |
 
 ## Step 10. Signature ability
 
@@ -243,3 +248,4 @@ Both WARN lines are answered in the `## Script denials` section above under 'Ans
 - 2026-09-02, archetype scale (Nick): `archetypeWeights` converted from relative 1 to 5 weights to percents summing to 100 by largest remainder, order preserved: prowler 33, skirmisher 27, rogue 20, predator 13, seeker 7 (was prowler 5, skirmisher 4, rogue 3, predator 2, seeker 1).
 - 2026-09-02, archetype rethink (Nick): the converted row kept the old 5-4-3-2-1 ladder shape shared by every record, so the distribution was re-authored on this species alone: prowler 35, rogue 30, skirmisher 20, predator 15 (was prowler 33, skirmisher 27, rogue 20, predator 13, seeker 7). Reasoning: a haunter that terrorizes: rogue (charisma, reflex) raised to a near-equal second because its signature and its menacing 85 are presence, not speed; seeker dropped.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [-58, 53] to [-50, 20] (intersection) against the rebuilt planet record's habitable band [-50, 20] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 0.45.
+- 2026-09-07, trait evidence bar (Nick): cut `slippery`, `nocturnal`, `toxic`, `solitary`, `perceptive`, `luminous`, `hypnotic`, `foresighted`; pool expected count 4.54 to 2.60.

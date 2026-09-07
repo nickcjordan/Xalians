@@ -93,11 +93,19 @@ Anatomy keys considered and rejected: `spines` (the tufted outline and crest fil
 - `resistant: 90` : planet: "black lightning was so intense that it generated low-yield nuclear fusion, generating a fatal neutron burst that released lethal neutron radiation into the atmosphere, effectively randomly killing off all organic life within several kilometers of the strike zone". This is a planet-wide environmental sentence, which the rules permit for an environmental adaptation such as `resistant`. Not 100, because the same sentence says the radiation kills organic life, so resistance is a Generator's answer to the world, not a guarantee.
 - `volatile: 75` : species: "can store electrical energy from its surroundings and release the shock into enemies". A body holding stored charge is hazardous to strike. Not 100, because the description shows deliberate release rather than a reaction to being hit.
 - `menacing: 45` : species: "this daunting creature". The word is in the description, applied to this species, so this is a species sentence and not a planet-wide one. Under half because 'daunting' is an adjective on appearance, not a shown effect on courage.
-- `perceptive: 35` : the `electroreception` special sense, which the registry tilts perceptive up with. Kept at a third because no source sentence shows it finding anything hidden.
-- `solitary: 30` and `pack-bonded: 25` : the exclusion pair, neither at 100 and both under half. Neither source shows the Voltish alone or in numbers, so both stay in the pool at low percents and generation resolves it. This is the honest reading of silence rather than a call I can source.
-- `luminous: 20` : a body storing charge sheds some light. Low, because no source says the body glows.
-- `reflective: 15` : the conductive alloy skeleton and claws. Low, because conducting is not returning.
-- `armored: 10` : the alloy skeleton gives some of the effect without an armored covering; the covering is `fur` and the surface key is `hide`, so this can never be high. At 10 it is Generator variance.
+
+#### Cut by the evidence bar (2026-09-07)
+
+| Trait | Former percent | Evidence class that failed |
+|---|---|---|
+| `perceptive` | 35 | derived from the record's own `electroreception` sense plus a registry tilt; the entry states 'no source sentence shows it finding anything hidden' |
+| `solitary` | 30 | argued from absence, 'the honest reading of silence rather than a call I can source' |
+| `pack-bonded` | 25 | argued from the same silence; the exclusion partner with no sentence either, so both go |
+| `luminous` | 20 | body-type plausibility ('a body storing charge sheds some light'); 'no source says the body glows' |
+| `reflective` | 15 | body-type plausibility from the alloy skeleton; the entry concedes 'conducting is not returning' |
+| `armored` | 10 | body-type plausibility against the record's own `fur` covering and `hide` surface; 'Generator variance' |
+
+Expected trait count after the bar: (90 + 75 + 45) / 100 = 2.10. All three surviving entries sit below 100, which satisfies the model's requirement, and the exclusion pair is gone, so no correction applies. (The pool total before this pass was 3.45 by the arithmetic of the percents; the 3.15 figure in the heading above was a miscount carried in the walkthrough.)
 
 Traits plausible but left out, with reasons: `regenerative` (nothing shows self-repair); `ramming` (the art shows no ramming structure and the sprint band is moderate); `toxic` (no agent named); `anchored` (nothing shows it holding ground against force); `stealthy` (a 200 cm shaggy quadruped that stores charge is the opposite reading, and no source supports it); `nocturnal` (Zolton's history names storms, not darkness, and there is no perpetual-night sentence to lean on); `healing`, `protective`, `inspiring`, `hypnotic`, `mind-sealed`, `foresighted`, `telekinetic`, `phasing`, `slippery` (no source support of any kind).
 
@@ -173,3 +181,4 @@ Both WARNs are answered in the Validator warnings answered section above.
 
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: the validator failed the run on its art reading, and the orchestrator's own look agrees: the tall spiked structure is a raised forelimb ending in five splayed claws reaching into the lightning, not a crest; the creature crouches on one forelimb and two hind legs; the planted feet are clawless pads. `crest` removed from anatomy and instruments (instruments now claws, jaws, tail); `display` communication dropped with it; `manipulation` raised to 40 to 60 on a clawed grasping hand. `bodyPlan` stays `quadruped` under the amended rule (a forelimb bears weight in the art). The signature action changed from `beam` to `strike`: the source says it releases the shock into enemies and names the claws as conductive, which is contact, not a projected bolt; `claws: electric` conduit kept on the conductive-claws sentence plus the art's claws raised into the storm. Description: the 'stand in the path of a current' flourish, the crossing-and-drawing behavior, 'turned such bodies on its enemies' and the Kozrak patrols close were unsourced; rewritten to the source sentence and two planet facts. Two authored clauses that the run had placed in double quotes are noted here as the run's error. Description now 70 words.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [-60, 45] to [-55, 35] (intersection) against the rebuilt planet record's habitable band [-55, 35] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 0.89.
+- 2026-09-07, trait evidence bar (Nick): cut perceptive, solitary, pack-bonded, luminous, reflective, armored; pool expected count 3.45 to 2.10.

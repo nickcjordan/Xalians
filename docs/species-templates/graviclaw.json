@@ -154,9 +154,6 @@
     "pool": {
       "armored": 100,
       "anchored": 100,
-      "menacing": 30,
-      "perceptive": 30,
-      "solitary": 45,
       "stealthy": 60,
       "telekinetic": 6
     }

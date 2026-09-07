@@ -99,18 +99,23 @@ Primary `sand` from the species `type` field, stored at affinity 100. On-graph s
 
 ### Trait pool
 
-Expected count is the sum of the percents divided by 100, adjusted for the exclusion pair: 100 + 90 + 70 + 60 + 40 + 30 + 25 + 20 = 435 for the non-paired entries, plus `solitary` at 55 and `pack-bonded` at 10 times one minus 0.55, which is 4.5, for 494.5, so about 4.9 traits per individual.
+Expected count is the sum of the percents divided by 100; no exclusion pair remains in the pool: 100 + 90 + 70 + 60 + 20 = 340, so 3.40 traits per individual.
 
 - `toxic: 100`. Body-demanded. species: "attack with a unique venom that drains the victim’s water when bitten". The registry's `toxic` is `natural weapons deliver debilitating agents`, which is exactly the bite. Every individual has it.
 - `stealthy: 90`. species: "hides beneath the sand" is a species sentence, not a planet-wide one, and it is the first thing the description says about its behavior. Not 100 because the registry requires at least one entry strictly between 0 and 100 for individuals to differ, and a buried ambusher is the honest place to put the variance rather than on its venom.
 - `hypnotic: 70`. species: "can lure and mesmerize opponents long enough for them to draw near". `hypnotic` is `entrances and holds attention, dulling the will to act`, which is the word mesmerize. Below 100 because the source hedges with "can".
 - `resistant: 60`. Environment-adapted, and the planet-wide sentence is allowed to justify an environmental adaptation. planet: "arid, sweltering heat" on a world whose surface was left by "over half a million megatons of thermonuclear ordnance" and whose sand is broken-down glass. A body generated for that ground shrugs off contamination more often than not. Not near 100, because the harshness described is heat and abrasion rather than the toxins and radiation the trait names.
-- `solitary: 55`. species describes one creature buried alone, luring one opponent, and biting once; there is no group in either the description or the art. Paired against `pack-bonded`, and by the exclusion rule this higher percent rolls first.
-- `perceptive: 40`. Justified from the species and the body, never from the planet: a buried body that knows when an opponent has "draw[n] near" while it cannot see is perceiving what hides, and the `tremorsense` special sense is the mechanism. Held under half because the source states the timing, not the sensing.
-- `slippery: 30`. art shows a limbless, smooth-scaled, looping body with nothing to grab, and species: "hides beneath the sand" gives it somewhere to go. Modest because no source shows it escaping anything.
-- `nocturnal: 25`. planet: "Endessa’s twin suns ... now blazed through a cloudless sky, scorching the earth", which is an environmental case for avoiding the day, and this is an environmental adaptation so the planet-wide sentence is admissible. Kept low rather than near 100 because the same history shows the world's life underground rather than nocturnal, and the creature's own answer to the suns in the source is burial, not night.
 - `menacing: 20`. art shows a flared hood and bared fangs, which is a threat display. Low because the description never says its presence erodes anything; its effect on the will is the lure, which is `hypnotic`.
-- `pack-bonded: 10`. The legacy description is written in the plural, "Thirstaserps emit a subsonic vibration from the rattles on their tails", which is a species-level plural rather than evidence of grouping, so the chance is small but not zero. Exclusion partner of `solitary`; the higher partner rolls first, and neither is at 100.
+
+#### Cut by the evidence bar (2026-09-07)
+
+| Trait | Former percent | Evidence class that failed |
+|---|---|---|
+| `solitary` | 55 | argued from absence; there is no group in either the description or the art |
+| `pack-bonded` | 10 | no source sentence; a species-level plural is not evidence of grouping |
+| `perceptive` | 40 | restatement of the `tremorsense` special sense; the record concedes that the source states the timing, not the sensing |
+| `slippery` | 30 | body-type plausibility (a limbless serpent), and the art shows a banded, ridged body rather than the smooth one the justification names |
+| `nocturnal` | 25 | planet fact stretched past the source's own answer to the suns, which is burial; restatement of the kept `stealthy` |
 
 Traits the body could plausibly carry that were left out, with reasons: `armored` (the covering is `scales`, which the registry defines as flexible and unarmored, and the anatomy carries no `shell`); `ramming` (no source shows it hitting with movement behind it, and its kill is venom); `regenerative` (nothing in either source); `anchored` (a burrower that hides is not a body that cannot be moved); `luminous`, `telekinetic`, `foresighted`, `phasing`, `reflective`, `volatile`, `healing`, `protective`, `inspiring`, `mind-sealed` (no support of any kind in either source). Registry tilts are not re-declared here; they apply at generation.
 
@@ -198,3 +203,4 @@ WARN enc.definition.elementkey      encyclopedia definition uses element key wor
 ## Orchestrator amendments
 
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: the Nightcap-wells job, the wildcatters' tunnels and 'the one thing Endessa no longer has' were invented or flourish; the description now carries the source mechanism and the planet's vaporized oceans. Signature description reduced to the sourced act. `communication` keeps `vibration` (a broadcast the body makes; the lure is carried by the hypnotic trait). Affinity odds stay at the baseline (no lore sentence states a water affinity). `temperatureC` [10, 55] -> [10, 55] inside the habitable band [-10, 55]. Description now 80 words.
+- 2026-09-07, trait evidence bar (Nick): cut `solitary`, `pack-bonded`, `perceptive`, `slippery`, `nocturnal`; pool expected count 4.90 to 3.40.

@@ -153,11 +153,7 @@
       "luminous": 100,
       "resistant": 96,
       "reflective": 55,
-      "mind-sealed": 34,
-      "protective": 24,
-      "anchored": 22,
-      "menacing": 12,
-      "foresighted": 4
+      "mind-sealed": 34
     }
   },
   "instruments": [

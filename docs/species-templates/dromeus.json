@@ -153,13 +153,7 @@
   "traits": {
     "pool": {
       "resistant": 92,
-      "ramming": 60,
-      "pack-bonded": 55,
-      "perceptive": 40,
-      "stealthy": 20,
-      "menacing": 15,
-      "slippery": 30,
-      "solitary": 12
+      "ramming": 60
     }
   },
   "instruments": [

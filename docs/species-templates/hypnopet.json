@@ -156,14 +156,7 @@
       "healing": 100,
       "hypnotic": 100,
       "protective": 70,
-      "inspiring": 25,
-      "luminous": 60,
-      "perceptive": 45,
-      "mind-sealed": 30,
-      "slippery": 35,
-      "pack-bonded": 25,
-      "telekinetic": 5,
-      "foresighted": 5
+      "luminous": 60
     }
   },
   "instruments": [

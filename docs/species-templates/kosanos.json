@@ -154,14 +154,8 @@
   "traits": {
     "pool": {
       "anchored": 55,
-      "ramming": 45,
-      "protective": 30,
-      "regenerative": 25,
       "resistant": 40,
-      "solitary": 60,
-      "pack-bonded": 20,
-      "menacing": 25,
-      "healing": 10
+      "menacing": 25
     }
   },
   "instruments": [

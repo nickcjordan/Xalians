@@ -101,13 +101,18 @@ Primary `ghost`, from `type` in the species entry. Home planet Phantiri. On-grap
 | `stealthy` | 100 | species: "sneak attack"; the defining act, body-demanded |
 | `slippery` | 85 | species: "quick evasion", and a body that "can instantly atomize into a cloud of smoke" cannot be held; a few individuals fall short of it by Generator variance |
 | `nocturnal` | 55 | the planet data block terrain field naming thick haze, plus the Dreadscape wasteland; an environmental adaptation a planet-wide fact may justify, but the haze is dimming rather than true perpetual night, so this is a coin-flip and not near 100 |
-| `solitary` | 45 | species: the stub gives it one creature acting for itself with no group; kept under half because that is an absence of evidence rather than evidence of solitude. `pack-bonded` is not listed, so the exclusion pair never both sits at 100 |
 | `perceptive` | 20 | art: large tufted ears and a drawn eye; a modest species-level chance, not derived from any planet-wide sentence |
 | `resistant` | 15 | planet: "deep, tarry oceans formed from the fluids that eek out from the ever-compressing layers of a planetwide mass grave" is an environmental contamination a species generated there may partly shrug off; environmental only, kept low |
 | `phasing` | 20 | species: "instantly atomize into a cloud of smoke" is the corporeal-body case the registry calls a rare roll; raised above single digits because the atomizing is this species' signature act, but held well below half because the resting body is solid |
-| `foresighted` | 4 | registry rare band, 2 to 8; carried only by the cleverness clause |
 
-Expected trait count: (100 + 85 + 55 + 45 + 20 + 15 + 20 + 4) / 100 = 3.44.
+Expected trait count: (100 + 85 + 55 + 20 + 15 + 20) / 100 = 2.95.
+
+#### Cut by the evidence bar (2026-09-07)
+
+| Trait | Former percent | Evidence class that failed |
+|---|---|---|
+| `solitary` | 45 | argued from absence; the record itself calls it an absence of evidence rather than evidence of solitude |
+| `foresighted` | 4 | no source sentence; a rare-band minimum carried only by the stub word clever |
 
 Traits considered and left out: `menacing` (nothing in either source shows it eroding courage; the snarl in the art is an attack posture, not a presence effect), `luminous` (nothing sheds light), `regenerative` (no source), `armored` (a `bare` covering forbids it), `toxic`, `volatile`, `reflective`, `healing`, `protective`, `inspiring`, `hypnotic`, `mind-sealed`, `telekinetic`, `ramming`, `anchored`, `pack-bonded` (all unsupported).
 
@@ -185,3 +190,4 @@ Two WARNs were raised across the run and both were answered by revision rather t
 - 2026-09-02, archetype rethink (Nick): the converted row kept the old 5-4-3-2-1 ladder shape shared by every record, so the distribution was re-authored on this species alone: prowler 40, skirmisher 30, predator 22, rogue 8 (was prowler 33, predator 27, skirmisher 20, seeker 13, rogue 7). Reasoning: the stealth cat (stealthy 100, slippery 85, an ambush signature) is agility and instinct before anything else; seeker dropped, it has no investigative reading.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [-30, 45] to [-30, 20] (intersection) against the rebuilt planet record's habitable band [-50, 20] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 0.45.
 - 2026-09-02, consistency sweep: covering set to hide (was bare) under the ruling that a flesh animal body carrying the hide anatomy key takes the hide covering; bare is for membranes, slime, plant and mineral surfaces.
+- 2026-09-07, trait evidence bar (Nick): cut `solitary`, `foresighted`; pool expected count 3.44 to 2.95.

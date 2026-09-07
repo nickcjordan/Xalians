@@ -72,15 +72,22 @@ Legacy `statRatings` used as a relative gauge only: specialAttackRating high, sp
 
 ### Trait pool
 
-Expected count is 3.40 traits per individual (`volatile` 1.00 + `pack-bonded` 0.90 + `slippery` 0.70 + `resistant` 0.45 + `protective` 0.30 + `menacing` 0.05). There is no exclusion pair in this pool because `solitary` is not listed, so no exclusion adjustment applies.
+Expected count is 3.40 traits per individual (`volatile` 1.00 + `pack-bonded` 0.90 + `slippery` 0.70 + `resistant` 0.45 + `protective` 0.30 + `menacing` 0.05). There is no exclusion pair in this pool because `solitary` is not listed, so no exclusion adjustment applies. Revised 2026-09-07 by the trait evidence bar: the cut table below lists what was removed, and the surviving pool stands at 3.05 expected traits.
 
 - `volatile` 100: body-demanded. Species, "being composed almost entirely hydrogen means that the Neph can also spray their enemies with bouts of flammable gas", and planet, "entire flocks of Neph, being 95% hydrogen, were being ignited". Every Neph is hazardous to strike. This is a fact of the body, so it is universal.
 - `pack-bonded` 90: species, "travel in free-floating herds" and "roam the clouds in flocks", both about this species by name, not a planet-wide sentence. Not 100 so that Generator variance can produce a solitary drifter. `solitary` is not listed at all, so it has a 0 chance; the two exclusion partners therefore cannot both land.
 - `slippery` 70: planet, "Their amorphous forms allowed them to be swept up and deposited harmlessly by the hurricane-force winds". A body that a hurricane cannot damage by seizing is a body that is hard to hold. This is a sentence about the Neph specifically, not a planet-wide one.
 - `resistant` 45: planet, "Sulfuric acid clouds sweep haphazardly across the sky, choking the life out of anything they happen to touch". An environmental adaptation, which the rules permit a planet-wide sentence to justify. Held well below 100 because the same sentence says the clouds kill anything they touch, so the adaptation is clearly partial.
-- `protective` 30: species, "When threatened, these same tentacles can be used to pull in opponents with considerable suction". A herd animal whose response to threat is to seize the threat rather than flee. Modest percent because the sentence describes self-defense, and shielding others is an inference from the flocking.
-- `menacing` 5: rare. Planet shows Neph used as ordinance, "a cheap form of explosive ordinance to be hurled at the corporate muscle", so a minority of individuals reading as frightening is defensible, but this is a use others put it to rather than a presence it projects, so it stays at the floor.
 - Left out and why: `armored` (no armored covering and no `shell`); `anchored` (a body that the wind carries is the opposite); `regenerative` (no source); `toxic` (its discharges are cold and flammable, not debilitating agents); `reflective`, `hypnotic`, `foresighted`, `telekinetic`, `mind-sealed`, `stealthy`, `healing` (nothing in either source); `nocturnal` (Saiphus is not a night world; the history describes sunrises across the whole sky); `luminous` (the planet history's bioluminescent zooplankton are a different organism, and reading that onto the Neph would be exactly the planet-wide-to-species error the rules forbid); `inspiring`, `ramming`, `phasing`, `perceptive`, `solitary`.
+
+#### Cut by the evidence bar (2026-09-07)
+
+| Trait | Former percent | Evidence class that failed |
+|---|---|---|
+| `protective` | 30 | the cited sentence describes self-defense; shielding others is inferred from the flocking |
+| `menacing` | 5 | a use others put it to, not a presence the sources describe it projecting |
+
+Pool expected count 3.40 to 3.05. No surviving percent was changed.
 
 ### Element
 
@@ -171,3 +178,4 @@ The single remaining WARN is answered in the Script denials section above and in
 
 - 2026-09-02, after the independent validation (PASS) and the orchestrator's own look at the art (single floating bell, eight tubular tentacles with open ends, two eyes): no value changed. Weight band kept at 30 to 90 kg on the sourced buoyancy; lifespan `standard` follows the rubric, and the rubric note about floating bodies is carried to the rulings file.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [-60, 45] to [-30, 45] (intersection) against the rebuilt planet record's habitable band [-30, 45] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 1.79.
+- 2026-09-07, trait evidence bar (Nick): cut protective, menacing; pool expected count 3.40 to 3.05.

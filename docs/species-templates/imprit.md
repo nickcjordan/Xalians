@@ -65,7 +65,7 @@ Legacy statRatings used only as a relative gauge: standard attack low, evasion h
 
 ### Trait pool
 
-Nine entries, expected count 4.55 traits per individual before tilts and before the exclusion rule. There is only one exclusion-eligible entry here, `solitary`, with no partner listed, so the expected count needs no adjustment.
+Nine entries, expected count 4.55 traits per individual before tilts and before the exclusion rule. There is only one exclusion-eligible entry here, `solitary`, with no partner listed, so the expected count needs no adjustment. Revised 2026-09-07 by the trait evidence bar: the cut table below lists what was removed, and the surviving pool stands at 4.93 expected traits.
 
 - `resistant: 100`, body demanded. It survives its own permanent burning and the fur exists to make that survivable. Evidence (species): "Imprits possess fire-retardant fur that protects their bodies from the flammable oils they secrete, allowing them to survive despite being in a state of constant immolation." The planet's toxic atmosphere reinforces it but the species sentence carries it alone.
 - `volatile: 85`, hazardous to strike, element-colored. Anything that hits this creature hits burning fur soaked in flammable oil. Evidence (species): "the flammable oils they secrete". Not 100, because the state of immolation is a description of the body, not a statement that every individual reacts explosively, and the registry requires at least one entry below 100 anyway.
@@ -74,10 +74,17 @@ Nine entries, expected count 4.55 traits per individual before tilts and before 
 - `solitary: 45`. It was left alone in the tunnels for its whole working existence and that isolation is what the description says shaped it. Evidence (species): "where they were left to their own devices" and "driven mad by the isolation of the deep tunnels". `pack-bonded` is deliberately not listed, so it has a zero chance and no exclusion comparison arises.
 - `luminous: 40`. A body in permanent flame sheds light. Evidence (species): "in a state of constant immolation". Not higher, because the registry's `luminous` is a mechanical fact about stripping concealment nearby and a small guttering body is a weak lamp; not lower, because it is genuinely always alight.
 - `menacing: 25`. Evidence (species): "Imprits are demonic looking creatures". This is an appearance sentence, so it supports a modest chance rather than a high one.
-- `toxic: 12`. Its natural weapons are coated in a flammable secretion, which is a debilitating agent delivered on contact. Evidence (species): "the flammable oils they secrete". Kept low because the sources never show the oil harming anything by chemistry rather than by burning.
-- `perceptive: 10`. A low chance, sourced from the species' own darkness work rather than from any planet-wide sentence. Evidence (species): "the various lightless mining shafts of Magmuth". I kept it near the floor because working in the dark is not the same as seeing what hides.
 
 Traits I considered and left out, so their chance is zero: `armored`, since there is no armored aspect anywhere and the covering is fur with the anatomy key `hide`; `regenerative`, no source; `anchored`, the opposite of everything the description shows; `ramming`; `protective`, `healing` and `inspiring`, since nothing shows it acting for others; `mind-sealed`, since the description says its mind broke, which is the reverse; `hypnotic`; `foresighted`; `telekinetic`; `phasing`; `reflective`; `pack-bonded`, excluded in favor of `solitary`; and `stealthy`, because a body in permanent visible flame cannot move unseen and `luminous` is the honest opposite entry.
+
+#### Cut by the evidence bar (2026-09-07)
+
+| Trait | Former percent | Evidence class that failed |
+|---|---|---|
+| `toxic` | 12 | plausibility from the flammable oil; no sentence shows it harming by chemistry |
+| `perceptive` | 10 | a shaft-darkness fact stretched to a sensory trait; the walkthrough concedes working in the dark is not seeing what hides |
+
+Pool expected count 5.15 to 4.93. No surviving percent was changed.
 
 ### Signature ability
 
@@ -158,3 +165,4 @@ WARN signature.description.elementkey signature description uses element key wor
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: `conduits.tail` removed: no flame touches the tail in the render (flames sit on head, crown, neck and shoulders; the tail leaves the unflamed hindquarters), and the whole-body immolation inference would make every part a conduit. `secretion` stays the sole fire conduit. `claws` replaced by `fists` in anatomy and instruments (the art draws fingers, and `fists` is the registry key for hands, as ruled for Figzy and Tizzie); `fangs` added to anatomy from the art's drawn fangs. `luminous` raised from 40 to 100: a body in a state of constant immolation sheds light, which is body-demanded. Signature description ends on the plain fact. `bodyPlan` stays `biped` as the rule reads (a description naming forelimb work settles biped over the art); the monkey case is raised to Nick as a lever.
 - 2026-09-02, body plan (Nick): the forelimb-work clause now yields to art that shows the forelimbs bearing weight (skill v2.19); `bodyPlan` set to `quadruped`, was `biped`.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [65, 300] to [65, 105] (intersection) against the rebuilt planet record's habitable band [40, 105] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 1.53.
+- 2026-09-07, trait evidence bar (Nick): cut toxic, perceptive; pool expected count 5.15 to 4.93.

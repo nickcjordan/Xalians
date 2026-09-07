@@ -73,16 +73,21 @@ Independent percents, one roll each.
 
 - `resistant: 92`: environment-demanded and near universal. planet, "The acrid air is thick with volcanic smoke, staining the sky crimson and lacing the atmosphere with sulfuric ash and pungent, toxic fumes." and planet, "creatures capable of adapting to Magmuth's primeval conditions and bioengineered to survive in a world of heat, fire, lava, and ash." A planet-wide sentence is explicitly allowed to justify `resistant`. Not 100 because nothing in the sources makes it absolute, and the pool needs entries below 100.
 - `ramming: 60`: species, "When running at high speeds, they can spread their wings to temporarily take flight as they launch into the air and sink their teeth into their prey." This is precisely a blow landing far harder with movement behind it, and it is the species' own act, not a planet claim.
-- `pack-bonded: 55`: species uses the plural throughout ("these creatures", "they can spread their wings", "their prey"), which is weak, so this is not near 100. It is the higher of the exclusion pair and is rolled first.
-- `perceptive: 40`: species, "they launch into the air and sink their teeth into their prey" implies tracking a moving target well; supported by the sight band. Held at 40 because the source shows hunting, not detecting what hides.
-- `slippery: 30`: a fast light body that is hard to hold; the registry tilts `slippery` up with agility, and agility is this species' top band. Held at 30 rather than higher so the tilt does the work rather than the author.
-- `stealthy: 20`: low. A pursuit runner is not an ambusher by nature and the registry tilts `stealthy` down with mass only, not up with speed. Some individuals stalk before the run.
-- `menacing: 15`: a wide jaw of "razor sharp teeth" at a charge unsettles some opponents. Low because this is a species that closes rather than intimidates.
-- `solitary: 12`: the lower exclusion partner, for the individual that hunts alone. Neither partner is at 100, as required.
 
-Expected trait count: 0.92 + 0.60 + 0.55 + 0.40 + 0.30 + 0.20 + 0.15, plus `solitary` counted at 0.12 times (1 minus 0.55) = 0.054, which totals about 3.17 traits per individual.
+Expected trait count: 0.92 + 0.60 = 1.52 traits per individual. No exclusion pair remains, since both `pack-bonded` and `solitary` were cut by the evidence bar.
 
 Traits I considered and left out, so they carry a 0 chance: `armored` (no shell, no plating, `covering: bare`); `regenerative` (no source); `nocturnal` (Magmuth is not a night world; planet, "Magmuth orbits a red dwarf star, bringing hellish heat to the world's surface"); `volatile` (nothing in the sources makes it hazardous to strike); `toxic` (teeth are sharp, not envenomed); `luminous` (the art shows no light organs); `foresighted` and `telekinetic` (no source at all, and I decline to sprinkle rares for variety); `healing`, `protective`, `inspiring`, `anchored`, `phasing`, `reflective`, `hypnotic`, `mind-sealed` (each contradicted by or absent from the body and both sources).
+
+#### Cut by the evidence bar (2026-09-07)
+
+| Trait | Former percent | Evidence class that failed |
+|---|---|---|
+| `pack-bonded` | 55 | No source sentence: the plural pronouns in the description are grammar, not a statement about living or hunting in groups. |
+| `perceptive` | 40 | Body-type plausibility plus the legacy sight band; the walkthrough itself says the source shows hunting, not detecting. |
+| `slippery` | 30 | The legacy stat gauge alone: the registry tilt on the agility band, with no sentence. |
+| `stealthy` | 20 | Argued from absence: a pursuit runner is said not to be an ambusher by nature, with no sentence showing it moving unseen. |
+| `menacing` | 15 | Body-type plausibility: the quoted teeth are a body fact, and the claim that they unsettle opponents is inference. |
+| `solitary` | 12 | No source sentence: listed only as the lower half of the exclusion pair. |
 
 ### Signature ability
 
@@ -156,3 +161,4 @@ WARN signature.instrument.list      signature instrument "fangs" is not in the s
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: the courier and outrider role, the 'runner between raiding parties' clause and the Encyclopedia's 'at speed' labor clause were one invented job; cut, keeping the sourced corporate design and the mineral islands. `senses.special` heat-sense removed: the cited sentence describes the terrain, not a sense. Instruments now `fangs`, `claws`, `wings` (jaws swapped for fangs) so the signature sits inside the instrument list. `communication` keeps `vocal` by orchestrator decision (authored, disclosed). `covering` stays `bare` under the rule as ratified; the partial-surface case is raised to Nick as a lever. Art matched the run's reading (one forelimb drawn, none bearing weight; plumes on wing, tail and hip; smooth trunk; no fire). Description now 94 words.
 - 2026-09-02, covering (Nick): `covering` set to `feathers` under the new partial-surface sentence in the covering rule (skill v2.17); was `bare`.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [65, 240] to [65, 105] (intersection) against the rebuilt planet record's habitable band [40, 105] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 1.53.
+- 2026-09-07, trait evidence bar (Nick): cut `pack-bonded`, `perceptive`, `slippery`, `stealthy`, `menacing`, `solitary`; pool expected count 3.17 to 1.52.

@@ -157,11 +157,7 @@
     "pool": {
       "resistant": 90,
       "slippery": 65,
-      "regenerative": 35,
-      "pack-bonded": 30,
-      "perceptive": 25,
-      "stealthy": 15,
-      "protective": 10
+      "perceptive": 25
     }
   },
   "instruments": [

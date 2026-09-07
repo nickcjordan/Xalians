@@ -81,16 +81,21 @@ Nothing agile, clever, social or predatory is listed, because no source shows an
 
 ## Trait pool
 
-Expected trait count: (100 + 100 + 90 + 70 + 45 + 25 + 12 + 10) / 100 = 4.52, and there is no exclusion pair present with both partners, so no adjustment applies. This is above the script's 3.5 comfort threshold and the WARN is answered below.
+Expected trait count: (100 + 100 + 90 + 70 + 45) / 100 = 4.05, and there is no exclusion pair present with both partners, so no adjustment applies. This is above the script's 3.5 comfort threshold and the WARN is answered below; every remaining entry is body-demanded, environment-demanded, or quoted from the species stub, so the 2026-09-07 evidence bar cut nothing further.
 
 - `armored: 100`: body-demanded. Species, "protected by a thick rocky exoskeleton". The registry states a shelled or plated body means armored at 100.
 - `resistant: 100`: environment-demanded and body-demanded together. Species, "An acid slime organism", a body whose own substance is acid; planet, "Drainov's Xalian Generator was able to miraculously bioengineer new forms of life capable of surviving within the planet's hostile wastelands." The registry allows an environmental adaptation to rest on a planet-wide sentence, and resistance to contamination is exactly that.
 - `regenerative: 90`: species, "Its slime can continually regenerate an outer shell". This is as close to body-demanded as a trait gets, but it is written at 90 rather than 100 so at least one high trait varies between individuals and the species is not identical across every print.
 - `toxic: 70`: species, "An acid slime organism". A body made of acid delivers a debilitating agent with contact. Not 100, because the stub frames the acid as what the creature is rather than as a weapon it applies.
 - `anchored: 45`: art, a heavy flat-based mass with no bearing limbs, spread wide on the ground. Substantial but not universal, since a formless body can also be displaced by being pushed off its base.
-- `protective: 25`: species, "allowing for great defense", read as an instinct that can extend to shielding others. A minority reading, hence a low percent.
-- `slippery: 12`: species, "An acid slime organism". A slime body under a casing is hard to hold, but the casing is rigid and works against escape, so this is rare.
-- `solitary: 10`: art shows a single body and no source shows grouping. Low rather than absent, and `pack-bonded` is not listed at all, so there is no exclusion conflict.
+
+#### Cut by the evidence bar (2026-09-07)
+
+| Trait | Former percent | Evidence class that failed |
+|---|---|---|
+| `protective` | 25 | "allowing for great defense" is self-defense; reading it as an instinct to shield others has no sentence and restates the kept `armored` entry |
+| `slippery` | 12 | body-type plausibility from "an acid slime organism"; the walkthrough concedes the rigid casing works against escape |
+| `solitary` | 10 | argued from absence (the art shows one body and no source shows grouping) |
 
 Traits considered and deliberately left out, with reasons: `healing` (no source shows it restoring others), `volatile` (nothing shows a reaction when struck, only a shell that reforms), `reflective`, `menacing`, `hypnotic`, `perceptive`, `foresighted`, `mind-sealed`, `stealthy` (a two-meter dripping mass is the opposite), `nocturnal` (nothing in the Drainov history makes it a night world), `inspiring`, `luminous`, `telekinetic`, `phasing`, `ramming`, `pack-bonded`.
 
@@ -163,3 +168,4 @@ logged to docs\species-templatesalidation-logioflim.jsonl
 
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: 'after the Vallerii were driven off' contradicted canon (the syndicates are Vallerii pirates; the planet was evacuated, not cleared), the factory job was a planet-wide sentence applied to this species, and the valuation clause and the Encyclopedia's 'lesser body' close were flourishes; all rewritten to the planet-level facts. `conduits` removed: no sentence shows the acid leaving the body; the slime regenerating a shell is a surface process, and `ward` is already in the secretion row, so the signature stands. Art matched the run's reading (one eye, no limbs, dripping surface with no plating drawn; plating is text-sourced). The covering enum stays material-free, as the run recommended. Description now 85 words.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [-10, 43] to [0, 43] (intersection) against the rebuilt planet record's habitable band [0, 60] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 0.82.
+- 2026-09-07, trait evidence bar (Nick): cut protective, slippery, solitary; pool expected count 4.52 to 4.05.

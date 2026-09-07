@@ -75,18 +75,25 @@ No clause was added beyond these. No schedule, no invented incident, no causal c
 
 **Attribute bands.** `endurance` highest at 65 to 88: the legacy gauge rates stamina high and species, "can maintain a steady stream" is a sustained-output act. `strength` 45 to 65 and the rest mid-band: the legacy gauge rates standard attack medium and leaves every other rating blank, which is a relative signal of an unremarkable spread. `intelligence` 35 to 55, well below true-human range, for a creature engineered to work a fleet under instruction. `charisma` 30 to 50: nothing in either source gives it presence.
 
-**Trait pool.** Sum of percents is 327, so the expected trait count is about 3.3. There is no exclusion pair in the pool, so no adjustment applies. No trait sits at 100, so every individual differs.
+**Trait pool.** Sum of percents is 327, so the expected trait count is about 3.3. There is no exclusion pair in the pool, so no adjustment applies. No trait sits at 100, so every individual differs. Revised 2026-09-07 by the trait evidence bar: the cut table below lists what was removed, and the surviving pool stands at 2.15 expected traits.
 
 - `protective` 85. species, "Hippochamps were designed as emergency response crews" and "a means of defense against pirates seeking to steal valuable Algael": the instinct to shield others is the engineered purpose itself. Not 100, because the pool needs at least one entry below 100 and Generator variance is the stated reason a purpose-built trait can miss.
 - `resistant` 70. species, "the various electrical and chemical fires that occur on rigs": a body sent into chemical fire shrugs off contamination. This rests on a species sentence, not a planet-wide one.
-- `healing` 35. species, "emergency response crews": an emergency responder restores others, and the element colors how. Held at a minority chance because no source sentence shows it healing anyone.
 - `pack-bonded` 60. species, "emergency response crews" is plural and coordinated by the word itself. `solitary` is not listed and therefore has a 0 chance, so no exclusion pair applies.
-- `perceptive` 30. species, "patrol the various hydro-processing fleets on Poseidas": patrolling is watching for what is not yet visible. A minority chance because patrol is a duty, not a stated sensory gift.
-- `anchored` 20. species, "can maintain a steady stream": a high-pressure jet pushes back, and a hoofed quadruped that holds one is braced. Low, because the sources never say it cannot be moved.
-- `inspiring` 15. species, "emergency response crews": the ones who arrive at the fire. Low, because presence is not described.
-- `menacing` 12. species, "a means of defense against pirates seeking to steal valuable Algael": a deterrent posture. Lowest of the pool because the sources describe it hosing threats, not frightening them.
 
 Traits considered and left out, therefore at 0: `armored` (no armored covering and no `shell`), `regenerative`, `ramming`, `toxic`, `volatile`, `reflective`, `hypnotic`, `mind-sealed`, `foresighted`, `telekinetic`, `stealthy` (a patrol animal that hoses fires is not concealed), `nocturnal` (no source sentence about night on Poseidas), `slippery`, `luminous`, `phasing`, `solitary` (contradicted by the crew reading).
+
+#### Cut by the evidence bar (2026-09-07)
+
+| Trait | Former percent | Evidence class that failed |
+|---|---|---|
+| `healing` | 35 | no source sentence; the cited "emergency response crews" describes firefighting, not healing |
+| `perceptive` | 30 | a duty (patrolling) restated as a sensory gift; no sentence about perception |
+| `anchored` | 20 | body-type plausibility from the recoil of a jet; no source sentence |
+| `inspiring` | 15 | no source sentence; the walkthrough concedes presence is not described |
+| `menacing` | 12 | no source sentence; the sources show it hosing threats, not frightening them |
+
+Pool expected count 3.27 to 2.15. No surviving percent was changed.
 
 **Instruments `trunk`, `hooves`, `tail`.** `trunk` is the fighting and working part by species, "Their long, trunk-like snouts serve as high-pressure water cannons". `hooves` are the four bearing feet in the art and the only striking parts the body has. `tail` is the coiled grasping part in the art. All three are in anatomy.
 
@@ -142,3 +149,4 @@ WARN enc.definition.elementkey      encyclopedia definition uses element key wor
 
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: the signature description was a staged scene (set hooves, lowered snout, a boarder, 'until the deck is clear'); rewritten to the sourced act. 'prehensile' dropped (the art shows a coiled tail gripping nothing); the closing clause inverted the planet's geometry (floating fleets are above the deep-cities) and added 'last' to the death tide; replaced with the history's own description of the fleets. `breathes` and `ambientMedia` keep `liquid`: environment is what a planet-wide sentence may carry ('aquatic, water-breathing Xalians' manning the rigs) and the art is seahorse-derived with a webbed cheek fin; recorded as authored. Covering `hide` kept for a flesh animal body with no surface named (the run's pairing question is answered by the general ruling below). Art matched the run's reading.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [5, 52] to [5, 40] (intersection) against the rebuilt planet record's habitable band [-2, 40] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 0.73.
+- 2026-09-07, trait evidence bar (Nick): cut healing, perceptive, anchored, inspiring, menacing; pool expected count 3.27 to 2.15.

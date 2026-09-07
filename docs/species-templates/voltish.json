@@ -155,13 +155,7 @@
     "pool": {
       "resistant": 90,
       "volatile": 75,
-      "menacing": 45,
-      "perceptive": 35,
-      "solitary": 30,
-      "pack-bonded": 25,
-      "luminous": 20,
-      "reflective": 15,
-      "armored": 10
+      "menacing": 45
     }
   },
   "instruments": [

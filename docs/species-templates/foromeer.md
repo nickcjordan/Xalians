@@ -48,17 +48,22 @@ Four entries, shaped rather than laddered. `berserker` 40, strength and enduranc
 
 Legacy `statRatings` gives only two marks, a medium standard attack and a high recovery, used as a relative gauge and not copied. `strength` 55 to 78 and `endurance` 58 to 80 are the top pair, species: "its powerful horns can break through the strongest of material". `resilience` 52 to 74 for the plated limbs. `vitality` 42 to 62, mid, since the trunk is unplated. `willpower` 40 to 62 for a body built to keep boring. `instinct` 35 to 55 with the tremor read. `agility` 28 to 48 and `reflex` 25 to 45, a heavy plated frame. `intelligence` 22 to 42, well under true-human, an excavation body. `charisma` 15 to 32, nothing in either source presents it.
 
-### Trait pool (expected count 3.45)
+### Trait pool (expected count 2.25)
 
 - `armored` 100: body-demanded. Species: "This creature has a metallic exoskeleton on its limbs", and an armored covering carries the trait at 100.
-- `regenerative` 85: the legacy gauge marks recovery as its one high rating, and the trait registry covers rapid self-repair, organic or mechanical, which is the honest reading of a plated body. Not 100, because the legacy ratings are a relative gauge and not a fixed input.
 - `resistant` 55: environment-demanded, planet: "Despite its immense productive potential, the world was inimical to organic life, making it very difficult for the Vallerii to sustain a local workforce" and planet: "Xalians that paid no mind to the heat of its forges". An environmental adaptation, which a planet-wide sentence may justify.
 - `ramming` 45: species: "its powerful horns can break through the strongest of material" is a body fact about driving a point through mass, and `ramming` is the trait for blows landing harder with movement behind them.
 - `anchored` 25: a boring body braces against what it cuts, and the art shows a wide planted stance. Held low because no sentence states it.
-- `perceptive` 20: a minority tilt of the tremor-reading body. Deliberately low: I will not raise a behavior trait on a planet-wide sentence.
-- `solitary` 15: a minority reading; neither source shows pack or isolation for this species, so `pack-bonded` is left off entirely rather than paired at an invented percent.
 
 Traits considered and left off, with reasons: `menacing` and `inspiring`, neither source presents the body socially; `stealthy`, a plated biped carrying two shafts longer than itself; `toxic` and `volatile`, no agent or reaction named; `healing` and `protective`, no sentence shows it acting on others; `luminous`, `phasing`, `telekinetic`, `foresighted`, `hypnotic`, `mind-sealed`, `reflective`, `slippery`, and `nocturnal`, none supported by either source.
+
+#### Cut by the evidence bar (2026-09-07)
+
+| Trait | Former percent | Evidence class that failed |
+|---|---|---|
+| `regenerative` | 85 | The legacy stat gauge alone: the legacy recovery rating, with no sentence showing the body repairing itself. |
+| `perceptive` | 20 | Body-type plausibility: a minority tilt read off the tremor-sensing body, with no source sentence. |
+| `solitary` | 15 | Argued from absence: neither source shows pack or isolation for this species. |
 
 ### Signature ability
 
@@ -119,3 +124,4 @@ logged to docs\species-templatesalidation-logoromeer.jsonl
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: the validator failed the prose: the source's hedge ('Thought to once be used') had been stripped in both texts, the drone-succession clause made this species the drones' replacement, and the crash-site salvage job was a planet-wide agentless sentence given the Foromeer as its agent; all rewritten, the hedge restored, and the present day reduced to the history's own sentence about Veridians tinkering with salvage. `composition` secondary `metal` removed: no source names a metal part other than the casing ('drill-like' is a shape simile), and the casing is the covering. `antlers` added from the art's two thin forked head growths, which the run described and then dropped. `lifespan` set to `long` as the rubric reads (armored covering adjustment on a 97 kg body); the run's `standard` departed from it. Signature description reduced to the sourced act. Art otherwise matched the run's reading (two plated legs bearing weight, drill shafts held up, plating on limbs only, no tail).
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [-12, 36] to [-10, 36] (intersection) against the rebuilt planet record's habitable band [-10, 80] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 1.55.
 - 2026-09-02, art correction from Nick (the artist): the head growths are antennae, not antlers, and the drills are its hands. `antlers` replaced by `antennae`; the drill hands are keyed `spurs` (limb spikes; `horns` is a cranial key and the registry has no drill key), so instruments are spurs and shell and the signature is spurs / strike. Prose keeps the source phrase "drill-like horns" for the hands and no longer describes head horns.
+- 2026-09-07, trait evidence bar (Nick): cut `regenerative`, `perceptive`, `solitary`; pool expected count 3.45 to 2.25.

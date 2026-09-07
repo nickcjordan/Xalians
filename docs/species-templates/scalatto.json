@@ -154,13 +154,7 @@
     "pool": {
       "armored": 100,
       "resistant": 70,
-      "ramming": 55,
-      "solitary": 35,
-      "anchored": 30,
-      "protective": 25,
-      "menacing": 15,
-      "perceptive": 12,
-      "regenerative": 8
+      "ramming": 55
     }
   },
   "instruments": [

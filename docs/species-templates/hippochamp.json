@@ -156,12 +156,7 @@
     "pool": {
       "protective": 85,
       "resistant": 70,
-      "healing": 35,
-      "pack-bonded": 60,
-      "perceptive": 30,
-      "anchored": 20,
-      "menacing": 12,
-      "inspiring": 15
+      "pack-bonded": 60
     }
   },
   "instruments": [

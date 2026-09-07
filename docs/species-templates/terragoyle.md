@@ -76,15 +76,20 @@ Legacy `statRatings` used only as a relative gauge: `standardDefenseRating: "hig
 
 ### Trait pool
 
-Expected trait count: (100 + 100 + 60 + 55 + 50 + 35) / 100 = 4.0.
+Expected trait count: (100 + 100 + 55 + 50) / 100 = 3.05.
 
 - `anchored: 100`: the body demands it. Species, "now stand guard over the perimeter in a statue-like state", plus the legacy gauge of 380 kg on a 163 cm frame. A thing that holds a perimeter as a statue is not moved against its will.
 - `telekinetic: 100`: the body demands it and the description names the mechanism twice, "elongated tails tipped with a levitating ball of stone" and "using their tails to levitate boulders and fling them like great flying catapults". Levitation is constant here, which is exactly the registry's reading of the trait, and the flinging is the derived ability.
-- `menacing: 60`: species, "or to carpet bomb intruders with strafing runs of gravel and rock as they soar overhead". This is species-specific behavior in the species' own sentence, not a planet-wide claim.
 - `perceptive: 55`: species, "hibernating to conserve their energy until a threat is detected". The counter to stealthy, sourced from this species' own detection sentence.
 - `resistant: 50`: environment-justified from the planet, "the rubbing of these particulates in the atmosphere generates colossal static discharges that crackle pervasively in the lower atmosphere, spelling danger to all who dare to land on the planet's jagged surface", and "A dark, desolate and rocky planet with an incredibly thin atmosphere". A planet-wide sentence may justify an environmental adaptation, and I have kept it at 50 rather than near 100 because the species' own text never claims it.
-- `solitary: 35`: species, "Terragoyles can be found lining the edges of the Chasm" reads as many individuals each holding its own post rather than a coordinating pack, so I list `solitary` low and do not list `pack-bonded` at all. Kept modest because the same sentence could be read as a line of sentries working together, and I did not want a behavior claim heavier than the sentence bears.
-- At least one entry sits strictly between 0 and 100 (four do); the exclusion pair is not both at 100 because `pack-bonded` is not listed.
+- At least one entry sits strictly between 0 and 100 (two do); the exclusion pair is not both at 100 because neither `solitary` nor `pack-bonded` is listed.
+
+#### Cut by the evidence bar (2026-09-07)
+
+| Trait | Former percent | Evidence class that failed |
+|---|---|---|
+| `menacing` | 60 | the quoted sentence describes an attack (the strafing run, which is the signature ability), not a presence that erodes courage; restatement of a kept element |
+| `solitary` | 35 | argued from absence, and the record concedes the same sentence could be read as a line of sentries working together |
 
 Traits I considered and left out, with reasons: `armored`, because the covering is `hide` and the `hide` anatomy key states the body has no armored aspect, and neither source names plating or a carapace, only a posture that looks like statuary; `ramming`, because the described attack is release from height, not a body blow with movement behind it; `nocturnal`, because the planet history gives grey skies rather than perpetual night, "The debris from such collisions have launched enormous swathes of dirt into the air, dying the sky a dusty grey", which is dimness, not a night world; `stealthy`, because a statue on a rim is conspicuous by design; `protective`, because guarding a corporate perimeter is an order it was engineered under, not an instinct to shield others.
 
@@ -158,3 +163,4 @@ Both WARN lines are answered above under Answers to the WARN lines.
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: `composition` secondary `mineral` removed: the art draws the stone floating apart from the tail with a clear gap, an object the tail holds aloft, not a body part. `claws` removed from anatomy: the hands are drawn with rounded digits and the feet with blunt toes; manipulation stays licensed by `tail`. Two unambiguous misspellings in the carried source description corrected ('levitating', 'Terragoyles'), recorded here; the species.json source should be corrected upstream. `bodyPlan` stays `quadruped` under the rule (both hands planted at rest); the run's resting-perch note is carried to the rulings file. `temperatureC` [-45, 25] -> [-45, 25] inside the habitable band [-45, 25].
 - 2026-09-02, correction: the carried description is restored verbatim (a source-status description must match species.json character for character, and the script enforces it); the two misspellings (levitating, Terragoyles) are to be fixed upstream in species.json, after which the record is re-carried.
 - 2026-09-02, spelling (Nick): misspellings in the source description were corrected upstream in species.json (temperment, closed pedals of a flower, flittering Avilies, levatating, Terragoygles as applicable) and the carried text and quotations updated to match; misspellings are never carried into a record.
+- 2026-09-07, trait evidence bar (Nick): cut `menacing`, `solitary`; pool expected count 4.00 to 3.05.

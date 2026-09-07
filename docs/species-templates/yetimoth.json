@@ -155,12 +155,7 @@
       "resistant": 80,
       "menacing": 55,
       "anchored": 45,
-      "pack-bonded": 45,
-      "protective": 25,
-      "perceptive": 20,
-      "ramming": 20,
-      "mind-sealed": 15,
-      "solitary": 12
+      "pack-bonded": 45
     }
   },
   "instruments": [

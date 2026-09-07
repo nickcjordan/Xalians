@@ -150,9 +150,7 @@
       "pack-bonded": 90,
       "volatile": 100,
       "slippery": 70,
-      "resistant": 45,
-      "protective": 30,
-      "menacing": 5
+      "resistant": 45
     }
   },
   "instruments": [

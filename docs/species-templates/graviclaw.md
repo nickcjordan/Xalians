@@ -27,10 +27,17 @@ Every trait below is rolled independently at its own percent (1 to 100); there i
 | `armored` | 100 | species: "the black-shelled body of a crab" and "an immovable wall of chitin". A shelled and chitin-covered body demands it on every individual; this also answers the validator `traits.armored` check by satisfying it rather than overriding it. | species |
 | `anchored` | 100 | species: "the Graviclaw can use its powers to root itself to the ground, becoming an immovable wall of chitin". The registry definition of `anchored` is a body that cannot be moved against its will, which is exactly what the sentence states. This is a body-demanded fact every individual carries, not a rolled option. | species |
 | `stealthy` | 60 | species: "lurks just beneath the foggy wetlands of Grimedes". Lurking submerged until it strikes is the registry sense of moving unseen until it acts. Highest of the non-body-demanded percents because it is the most directly stated behavior. | species |
-| `solitary` | 45 | species: the whole description is written in the singular hunting frame, "draw its helpless prey right into its clutches", with no companion, pack, or cooperative behavior anywhere in the entry. A moderate rather than high percent because absence of evidence is weaker than a positive statement. Excludes `pack-bonded`, which is therefore absent from the pool. | species |
-| `perceptive` | 30 | species: it hunts prey it cannot see through fog and water, since it "lurks just beneath the foggy wetlands" and still manages to "draw its helpless prey right into its clutches". Detection of concealed prey is implied by the hunting method, not by the planet darkness. | species |
-| `menacing` | 30 | species: "an immovable wall of chitin" presented to "larger foes" is a presence meant to break an attacker's resolve. Kept moderate because the sentence is about physical immobility first. | species |
 | `telekinetic` | 6 | species: "using its bizarre control over the intensification of gravitational waves to generate miniature black holes in the water and draw its helpless prey right into its clutches" is moving objects without touching them. Rare percent because the description frames the pull as a hunting mechanism terminating in the claws, not as constant levitation. | species |
+
+#### Cut by the evidence bar (2026-09-07)
+
+| Trait | Former percent | Evidence class that failed |
+|---|---|---|
+| `solitary` | 45 | Argued from absence: the table itself rested it on the singular hunting frame and granted that absence of evidence is the weaker case. |
+| `perceptive` | 30 | Body-type plausibility: detection was implied from the hunting method, with no sentence about finding what is hidden. |
+| `menacing` | 30 | Restatement of the `anchored` sentence: the wall of chitin is physical immobility, and the resolve-breaking reading is inference. |
+
+`pack-bonded` stays absent from the pool: it was excluded by `solitary`, and `solitary` is now cut as well, so neither is rolled.
 
 `nocturnal` was considered (the low-light submerged niche) and cut: the planet-wide perpetual-night sentence cannot carry a species trait percent on its own, and nothing in the species entry adds a species-specific nocturnal fact beyond that planet-wide one.
 
@@ -150,6 +157,10 @@ ok   signature.reserved             signature name matches the reserved ledger e
 ok   md.quotes                      30 of 30 distinct quotations found verbatim in the sources
 ```
 
+## Script denials
+
+1. 2026-09-07, trait evidence bar pass. No record value was denied. The first validator run of the pass raised two `md.quote` FAILs on the new cut table, because its cells quoted the walkthrough's own earlier wording and `md.quote` requires every double-quoted string in the file to appear verbatim in `species.json`, the planet history, or the registry. The cells were rewritten as plain prose with no quotation marks; the substance is unchanged and the original phrasing was not better, it was simply quoted where it should have been paraphrased. Worth recording as a rule friction: a walkthrough cannot cite its own prior reasoning in quotation marks, which is a reasonable rule for source quotes but surprising for a section whose job is to say why an earlier justification failed. Smallest fix if it recurs across the roster: exempt double-quoted text inside a `#### Cut by the evidence bar` table from `md.quote`.
+
 ## Orchestrator amendments
 
 - 2026-09-02: `hide` removed from anatomy and instruments under Nick's one-surface-key ruling: the shell is the armored aspect and `hide` states that the body has no armored aspect, so a chitin-shelled crustacean declares `shell` alone. The "immovable wall of chitin" sentence is already carried by `shell`, `body`, and the guaranteed `anchored` trait. Instruments are now `pincers`, `shell`.
@@ -162,3 +173,4 @@ ok   md.quotes                      30 of 30 distinct quotations found verbatim 
 - 2026-09-02, archetype rethink (Nick): the converted row kept the old 5-4-3-2-1 ladder shape shared by every record, so the distribution was re-authored on this species alone: juggernaut 45, bulwark 25, predator 20, stalwart 10 (was juggernaut 33, bulwark 27, predator 20, vanguard 13, stalwart 7). Reasoning: one dominant identity, the immovable armored crusher (armored and anchored at 100, strength and resilience bands at the top), with the ambush hunter as the real second reading (stealthy 60, the snare from the dark); vanguard dropped as a filler that repeated juggernaut and bulwark.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [-6, 34] to [-60, 5] (full habitable band (the old sub-band barely overlapped it)) against the rebuilt planet record's habitable band [-60, 5] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 0.44.
 - 2026-09-07, hardening pass: the trait section was rewritten under the percent model (no more 'guaranteed'/'rolled pool weights' split); the table now lists the exact percents in `graviclaw.json` and states which trait was cut, rather than appending a note beside stale reasoning.
+- 2026-09-07, trait evidence bar (Nick): cut `solitary`, `perceptive`, `menacing`; pool expected count 3.71 to 2.66.

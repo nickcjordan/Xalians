@@ -152,10 +152,7 @@
       "resistant": 100,
       "regenerative": 90,
       "toxic": 70,
-      "anchored": 45,
-      "protective": 25,
-      "slippery": 12,
-      "solitary": 10
+      "anchored": 45
     }
   },
   "instruments": [

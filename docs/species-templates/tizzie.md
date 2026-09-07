@@ -114,18 +114,24 @@ Primary `psychic` from `species.type` Psychic, stored at affinity 100. On-graph 
 |---|---|---|
 | `hypnotic` | 100 | `species`: "It uses its tail to draw attention to its big, hypnotic eyes." Body-demanded; the eyes are on every individual. Exempt from tilts. |
 | `perceptive` | 55 | `species`: "Once eye contact is made" requires it to find and meet a subject's eyes, a species behavior sentence, not a planet-wide one. Not universal: nothing says it sees through concealment. |
-| `slippery` | 45 | `art:` light, thin-limbed, fur-covered body in a spring; a creature this small that fights at a distance escapes rather than grapples. Partly authored, held under half. |
-| `stealthy` | 40 | `art:` small, low, dark-furred silhouette; a creature whose opening move is getting seen first, so it is not universal, but approach before that move is plausible. Partly authored. |
-| `solitary` | 30 | `species`: the entire described act is one creature working one subject through one pair of eyes; nothing shows cooperation. Its exclusion partner `pack-bonded` is not listed, so no exclusion conflict arises. |
 | `healing` | 25 | `planet`: "the Generator began to treat the prisoners as patients, hoping to cure them and merge them into the mind of the rest of Telypso's psychosphere." This is a Generator-intent sentence about the psychic Xalians it produced, which colors what some individuals of a psychic species can do; kept at a minority percent precisely because it is not a species sentence. |
-| `menacing` | 20 | `species` calls the act an attack, and a subject held by the eyes has cause to fear; minority reading, since the source frames the draw as attention rather than dread. |
-| `mind-sealed` | 15 | a species whose whole function is entering minds plausibly resists the same in return; no source sentence, so held low. Partly authored. |
-| `foresighted` | 6 | rare band per the registry; a mind-reading body on a world where "time seemed to pass at erratic and changing rates" makes the rare roll coherent. Environmental support only, which is why it sits at the rare floor. |
-| `telekinetic` | 4 | rare band; `planet`: "certain fungi seemed to secrete a type of antigravity goo that stuck to whatever it touched, causing it to levitate as if struck by a spell" establishes the register on the world, not in this species. Rare floor. Note the `manipulation` upper bound stays at 38, so the above-40 gate is never engaged. |
 
-Expected trait count: (100 + 55 + 45 + 40 + 30 + 25 + 20 + 15 + 6 + 4) / 100 = 3.40.
 
-At least one entry is strictly between 0 and 100 (nine of them are). No exclusion pair is both at 100; `pack-bonded` is not in the pool at all.
+#### Cut by the evidence bar (2026-09-07)
+
+| Trait | Former percent | Evidence class that failed |
+|---|---|---|
+| `slippery` | 45 | art-derived body-type plausibility, self-described 'Partly authored'; no sentence |
+| `stealthy` | 40 | art-derived body-type plausibility, self-described 'Partly authored'; no sentence |
+| `solitary` | 30 | argued from absence ('nothing shows cooperation') |
+| `menacing` | 20 | restatement of the kept `hypnotic` sentence; 'minority reading' with no fear sentence |
+| `mind-sealed` | 15 | 'no source sentence, so held low. Partly authored.' |
+| `foresighted` | 6 | planet fact stretched to a behavioral trait; 'Environmental support only' |
+| `telekinetic` | 4 | planet fact about the world's fungi, 'not in this species' |
+
+Expected trait count after the bar: (100 + 55) / 100 = 1.55. (The `healing` row above was already removed from `traits.pool` by the 2026-09-02 orchestrator amendment, so the pool total before this pass was 3.15, not the 3.40 printed here.)
+
+At least one entry is strictly between 0 and 100 (`perceptive` at 55). No exclusion pair is both at 100; `pack-bonded` is not in the pool at all.
 
 Plausible traits deliberately left out: `protective` (the harmonizing purpose belongs to the Generator, not to a shielding instinct in this body), `luminous` (the world glows, this creature is not shown to), `nocturnal` (Telypso has an "ultraviolet sun" and no perpetual night), `resistant` (no bodily-contamination sentence), `inspiring` (the presence draws attention, it does not bolster allies; nothing supports it), `pack-bonded` (no cooperation sentence, and listing it against `solitary` with no evidence would be padding).
 
@@ -229,3 +235,4 @@ The single WARN is answered in the Answers to WARN lines section above.
 - 2026-09-02, conduits (Nick): `conduits` {"gaze":"psychic"}. gaze conducts psychic: eye contact is how the hold is worked; the signature (gaze, snare) was already physical and stays so.
 - 2026-09-02, archetype scale (Nick): `archetypeWeights` converted from relative 1 to 5 weights to percents summing to 100 by largest remainder, order preserved: virtuoso 36, prowler 22, skirmisher 21, sage 14, rogue 7 (was virtuoso 5, prowler 3, skirmisher 3, sage 2, rogue 1).
 - 2026-09-02, archetype rethink (Nick): the converted row kept the old 5-4-3-2-1 ladder shape shared by every record, so the distribution was re-authored on this species alone: virtuoso 40, sovereign 25, prowler 15, skirmisher 12, sage 8 (was virtuoso 36, prowler 22, skirmisher 21, sage 14, rogue 7). Reasoning: the hypnotist (hypnotic 100, charisma its top band) is charisma and intelligence, then charisma and will; the hanging climber body keeps a real prowler and skirmisher share; rogue dropped.
+- 2026-09-07, trait evidence bar (Nick): cut slippery, stealthy, solitary, menacing, mind-sealed, foresighted, telekinetic; pool expected count 3.15 to 1.55.

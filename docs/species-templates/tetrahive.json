@@ -147,12 +147,8 @@
   },
   "traits": {
     "pool": {
-      "menacing": 20,
-      "perceptive": 20,
       "mind-sealed": 35,
-      "solitary": 10,
-      "nocturnal": 95,
-      "slippery": 45
+      "nocturnal": 95
     }
   },
   "instruments": [
