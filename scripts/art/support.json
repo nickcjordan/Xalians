@@ -8,7 +8,7 @@
       "width": 1536,
       "height": 768,
       "seeds": [201000, 201001, 201002, 201003],
-      "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view of a shattered planetary system: the remains of a family of worlds torn apart by an ancient supernova, drifting as a broken ring of dark rock fragments and dust against deep space, one single surviving world hanging intact and small at the center of the frame, lit by a distant dying star. Ancient, cold, immense scale, utter emptiness, ruin long since gone quiet."
+      "prompt": "painterly concept art, high contrast, single light source, muted palette. A single round grey planet, whole and unbroken, fills the exact center of the frame; the planet is the largest and brightest object in the picture. A wide broken ring of dark rock chunks and dust orbits around that planet, close in, at every distance from it, forming a visible band that circles the planet on all sides. Far behind the planet and ring, near the top corner of the frame and much smaller than the planet, sits one dim small point of a star, faint and not glowing brightly. The rest of the frame is empty black space. Ancient, cold, immense scale, utter emptiness, ruin long since gone quiet."
     },
     {
       "kind": "era",
@@ -17,7 +17,7 @@
       "width": 1536,
       "height": 768,
       "seeds": [202000, 202001, 202002, 202003],
-      "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view of a Vallerii colony: a vast landing field of angular starships under a pale sky, colony halls built of slate stone stretching to the horizon, one bright engine glow as the single accent of colour in the scene. No colour words apply here except grey, slate, bone, black and the one orange engine glow. A new frontier just being claimed, vast scale, orderly rows of hulls and stone dwarfing any single figure."
+      "prompt": "painterly concept art, high contrast, single light source, muted palette. Rows of tall starships stand upright on a flat landing field, each ship balanced nose up on three landing struts with its tail fins pointed at the ground, the ships as tall as towers and far taller than they are wide, lined up in straight rows like standing poles. Behind the standing ships, low slate-stone colony halls stretch to the horizon, each hall shorter than the ships in front of it. A pale bone-coloured sky sits above the whole scene. One single bright orange glow burns at the base of one ship, the only accent of colour in the picture; grey, slate, bone and black elsewhere. A new frontier just being claimed, vast scale, orderly rows of upright hulls and stone dwarfing any single figure."
     },
     {
       "kind": "era",
@@ -44,7 +44,7 @@
       "width": 1536,
       "height": 768,
       "seeds": [205000, 205001, 205002, 205003],
-      "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view of a lightning-wracked mountain range at night: a single enormous storm cell overhead, grey and black storm clouds with white lightning branching down between jagged peaks, illuminating a lone tower of dark metal at the center of the valley with a faint web of light connecting it upward into the storm. No magenta, no purple and no red anywhere in the scene. Tense hush before a change, a single watchful structure under an enormous natural power, uneasy calm."
+      "prompt": "painterly concept art, high contrast, single light source, muted palette. White lightning branches down at night from a mass of grey and black storm clouds, striking down between jagged black mountain peaks that ring a narrow valley. In the middle of the valley floor stands one tall thin mast, dark grey metal, much taller than it is wide, planted upright like a needle. Several thin bright white threads of light run from the very top of the mast straight upward, climbing into the storm cloud overhead and disappearing into it, so the mast and the cloud are joined by these glowing threads. No magenta, no purple and no red anywhere in the scene. Tense hush before a change, a single watchful structure under an enormous natural power, uneasy calm."
     },
     {
       "kind": "era",
@@ -62,7 +62,7 @@
       "width": 1536,
       "height": 768,
       "seeds": [207000, 207001, 207002, 207003],
-      "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view of a dark arena at night: tiered stone galleries in near-black and slate rising on all sides, no sand and no sky visible, a single lit floor in orange at the centre as the only accent of colour in the scene, an enormous ornate machine of dark metal looming at the edge of the light. Ceremonial, watchful, a fragile order held together by spectacle and one ruler's will."
+      "prompt": "painterly concept art, high contrast, single light source, muted palette. A flat round stone floor sits at the center of the frame, glowing solid orange from within like a heated metal plate, its edge a clean hard circle with no sand, no dust and no spilled liquid anywhere on it. Tiered stone galleries in near-black and slate rise on all sides around the circle, seat after empty seat, empty of any crowd, dark and unlit. No sky is visible; nothing stands on or beside the glowing circle; there is no vehicle, no engine, no boiler, no pipework, no wheels and no machine of any kind anywhere in the picture. Ceremonial, watchful, a fragile order held together by spectacle and one ruler's will."
     }
   ]
 }
