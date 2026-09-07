@@ -233,7 +233,9 @@ describe('generator: pipeline tilts read the body', () => {
 	});
 
 	test('pack-bonded individuals lean sociable; solitary ones lean aloof', () => {
-		const rolls = generateBatch(600, 'social', { generatedAt: FIXED_TIME });
+		// after the 2026-09-07 evidence-bar pass only one species pool still carries solitary
+		// (imprit at 45), so the batch is sized to land a few dozen of them
+		const rolls = generateBatch(2900, 'social', { generatedAt: FIXED_TIME });
 		const pack = rolls.filter((r) => r.traits.includes('pack-bonded'));
 		const lone = rolls.filter((r) => r.traits.includes('solitary'));
 		const mean = (list) => list.reduce((n, r) => n + r.temperament.sociability, 0) / list.length;
