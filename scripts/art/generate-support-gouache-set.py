@@ -95,6 +95,7 @@ def main():
     ap.add_argument('--eras', default='all', help='comma-separated era keys, or "all"')
     ap.add_argument('--steps', type=int, default=8)
     ap.add_argument('--tag', required=True)
+    ap.add_argument('--seeds', type=int, default=SEEDS_PER_ERA, help='seeds per era')
     ap.add_argument('--style', default='gouache-set', choices=sorted(STYLES))
     ap.add_argument('--seed-base', type=int, default=400000,
                      help='seed family base; run 104 used 400000, a rerun of a subset should use a fresh '
@@ -129,7 +130,7 @@ def main():
         key = slot['key']
         width, height = slot['width'], slot['height']
         prompt = build_prompt(slot['prompt'], STYLES[args.style])
-        seeds = [seed_for(key, i, args.seed_base) for i in range(SEEDS_PER_ERA)]
+        seeds = [seed_for(key, i, args.seed_base) for i in range(args.seeds)]
         slot_entry = {'key': key, 'prompt': prompt, 'requested_size': [width, height], 'used_size': None,
                       'fallback_used': False, 'candidates': []}
         for seed in seeds:

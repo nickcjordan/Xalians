@@ -55,7 +55,7 @@
         204002,
         204003
       ],
-      "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view of an industrial world at full production: dozens of towering foundry stacks and refinery spires across a volcanic plain, a grey overcast sky above, slate-grey ground below, the stacks themselves black, columns of smoke and steam rising into the overcast, rivers of molten rock glowing red and gold cutting between the structures. Furious energy, wealth being torn out of the ground, a boomtown skyline of black and slate lit only by the molten channels."
+      "prompt": "painterly concept art, high contrast, single light source, muted palette. One vast refinery complex on a volcanic plain, seen from a raised vantage looking straight down its central axis so that everything sits on one rectangular grid. A single straight channel of molten rock, glowing red and gold, runs from the far horizon down the exact centre of the picture to the bottom edge, held between low stone embankments. On each side of the channel stands one long row of identical tall black smokestacks, evenly spaced, all perfectly vertical and all the same height and design, each with the same banded rings, each pouring the same grey smoke straight up into a flat grey overcast sky. Between the stacks and the channel run long low rectangular refinery halls, all aligned parallel to the channel, with straight pipes running along their roofs in parallel lines. Every structure faces the same way and lines up with its neighbours like a planned industrial estate. Furious energy, wealth being torn out of the ground, a boomtown of black and slate lit by the molten channel."
     },
     {
       "kind": "era",
@@ -83,7 +83,7 @@
         206002,
         206003
       ],
-      "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view of a dark world under a raging orbital battle: jagged black spires rising from a barren plain into a starless sky, streaks of weapon fire and the flares of distant explosions lighting the clouds above, one massive fleet silhouette burning as it falls toward the horizon. Cold, hostile, apocalyptic scale, the last stand of a dying war lit only by destruction."
+      "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view of an alien city at night on a dark world, under a raging orbital battle. Across the plain stands a city built by an intelligent civilisation: tall tapering black towers with narrow slit windows lit pale, high bridges spanning between the towers, landing platforms jutting from their sides, antenna masts on their tops, all clearly built and inhabited. Filling the sky above the city, one enormous warship is crashing: a long armoured hull with a bridge tower on its back, diving nose-first toward the ground like a dropped spear, its bow pointing steeply down at the plain and its stern high in the sky, the whole ship tilted far past level, fire and black smoke streaming upward from its stern, wreckage breaking off, moments from hitting the city. The starless sky behind it is crossed by many thin streaks of weapon fire and lit by the flares of distant explosions. Cold, hostile, apocalyptic scale, the last stand of a dying war lit by destruction."
     },
     {
       "kind": "era",
