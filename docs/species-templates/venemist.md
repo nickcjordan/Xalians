@@ -75,12 +75,20 @@ Primary `chemical`, fixed by the species entry type Chemical. On-graph secondari
 
 - `toxic: 100`: the body demands it. Species: "The toxic mist expelled from a tube in its mouth helps to dissolve its prey." A natural weapon that delivers a debilitating agent is the definition of the trait, and every individual has the tube. Source `species`.
 - `resistant: 95`: environment-demanded, and the registry allows a planet-wide sentence to justify an environmental adaptation. Planet: "The Xalians on Drainov quickly adapted to not only the smog and industrial waste common to the world but also to its bubbling acid swamps, steaming corrosive rain, asphyxiating fumes, slow-drifting clouds of neurotoxic gases, and virulent pathogens." Left at 95 rather than 100 so the pool carries variance and because the species sentence itself does not name resistance. Source `planet`.
-- `stealthy: 40`: a hunter whose weapon is a short-range mist has to get close before it acts. Behavioral, so it rests on the species sentence "dissolve its prey", never on the planet, and it is a partial chance rather than a certainty because neither source shows it hiding. Source `species`.
-- `perceptive: 35`: paired to the hearing and smell bands above; a minority of individuals read what the smog hides. Behavioral, so it is not justified from the planet-wide smog sentence, only from the same predator sentence, and it is held to a minority chance for that reason. Source `species`.
-- `solitary: 30` and `pack-bonded: 20`: neither source says whether the Venemist hunts alone or in numbers. Both partners are in the pool at partial percents so individuals differ, with `solitary` the higher because a creature that dissolves its own prey outside its body has nothing to share a kill with mechanically. Never both at 100; the intended lead is `solitary`. Authored, flagged below.
-- `volatile: 12`: a small minority whose stored solvent reacts when the body is struck. A restatement of the same toxic load, kept in single figures because no source shows it. Authored, flagged below.
 - Considered and left out: `armored` (no armored covering or shell), `regenerative`, `healing`, `protective`, `inspiring`, `menacing`, `hypnotic` (nothing in either source), `nocturnal` (Drainov is smog-blanketed but the history never calls it a night world, so the environment does not demand it), `luminous`, `telekinetic`, `foresighted`, `mind-sealed`, `phasing`, `anchored`, `ramming`, `reflective`, `slippery`.
 - Expected trait count: (100 + 95 + 40 + 35 + 30 + 20 + 12) / 100 = 3.32, less the exclusion correction (0.20 times 0.30 = 0.06) = 3.26.
+
+#### Cut by the evidence bar (2026-09-07)
+
+| Trait | Former percent | Evidence class that failed |
+|---|---|---|
+| `stealthy` | 40 | body-type plausibility (a short-range mist hunter 'has to get close'); the entry itself says 'neither source shows it hiding' |
+| `perceptive` | 35 | derived from the record's own sense bands, 'no source sentence' for finding what hides |
+| `solitary` | 30 | argued from absence ('neither source says whether the Venemist hunts alone or in numbers'); 'Authored' |
+| `pack-bonded` | 20 | argued from the same silence; the exclusion partner with no sentence either, so both go |
+| `volatile` | 12 | 'A restatement of the same toxic load, kept in single figures because no source shows it' |
+
+- Expected trait count after the bar: (100 + 95) / 100 = 1.95. `resistant` at 95 is the entry below 100 the model requires; no exclusion pair remains, so no correction applies.
 
 ## Instruments and conduits
 
@@ -172,3 +180,4 @@ logged to docsspecies-templatesalidation-logenemist.jsonl
 
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: 'a solvent gut turned outward' (metaphor), the syndicate labor sentence (a planet-wide sentence with the Venemist as its subject) and the corrosion-stripping close (invented use and flourish) cut; the description ends on the sourced Generator clause. `communication` reduced to `vocal` (authored): the mist is an aimed ability, not a chemical signal. `vents` kept for the mouth tube; the registry definition is widened below so the key covers an oral discharge organ. Art matched the run's reading (two fangs, tube with spray, shag on the dorsal edge only, forelimbs bearing weight). Description now 70 words.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [-10, 43] to [0, 43] (intersection) against the rebuilt planet record's habitable band [0, 60] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 0.82.
+- 2026-09-07, trait evidence bar (Nick): cut stealthy, perceptive, solitary, pack-bonded, volatile; pool expected count 3.32 to 1.95.

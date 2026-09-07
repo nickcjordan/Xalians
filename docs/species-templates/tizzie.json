@@ -155,14 +155,7 @@
   "traits": {
     "pool": {
       "hypnotic": 100,
-      "perceptive": 55,
-      "stealthy": 40,
-      "slippery": 45,
-      "menacing": 20,
-      "solitary": 30,
-      "mind-sealed": 15,
-      "foresighted": 6,
-      "telekinetic": 4
+      "perceptive": 55
     }
   },
   "instruments": [

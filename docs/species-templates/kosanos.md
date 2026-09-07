@@ -85,18 +85,26 @@ Primary `plant` from the species `type` field, stored at affinity 100. On-graph 
 
 ## Trait pool
 
-Expected trait count: (55 + 45 + 30 + 25 + 40 + 25 + 10) / 100 for the non-exclusion entries, plus `solitary` at 60 and `pack-bonded` at 20 counted as 0.20 times (1 minus 0.60). That is 2.30 + 0.60 + 0.08 = 2.98, so an individual carries about three traits.
+Expected trait count: (55 + 45 + 30 + 25 + 40 + 25 + 10) / 100 for the non-exclusion entries, plus `solitary` at 60 and `pack-bonded` at 20 counted as 0.20 times (1 minus 0.60). That is 2.30 + 0.60 + 0.08 = 2.98, so an individual carries about three traits. Revised 2026-09-07 by the trait evidence bar: the cut table below lists what was removed, and the surviving pool stands at 1.20 expected traits.
 
 - `anchored: 55`: art: four columnar legs under a heavy body, the stance of something that does not get moved. Not 100 because no source states it, and the registry's mass tilt will raise it at generation anyway.
-- `ramming: 45`: species: "this simple yet powerful creature" driving a blade through standing growth is force with the body's movement behind it. Not higher because the sources show the blade cutting, not the body colliding.
-- `protective: 30`: the planet history describes Floria's natives meeting intrusion collectively, but that is a planet-wide sentence and may not carry a behavior weight, so this rests instead on the species' own function: a creature whose work is opening and keeping a path is disposed toward shielding what uses it. Held at a modest 30 for that reason.
-- `regenerative: 25`: a plant body; regrowth is the plant register's own repair. Not written high because no source sentence shows this species healing.
 - `resistant: 40`: planet: "massive infestations of toxic fungi." That is an environmental sentence and the registry expressly allows a planet-wide sentence to justify an environmental adaptation such as `resistant`. A body that works the underforests full time is exposed to it.
-- `solitary: 60` and `pack-bonded: 20`: the art shows one body and the source sentence describes a task one creature performs. Neither is at 100, so the exclusion rule holds; `solitary` is rolled first as the higher percent.
 - `menacing: 25`: art: a broad toothed gape and a blade as long as the body. A real but not defining presence; the sources describe a laborer, not a terror.
-- `healing: 10`: the plant element's mend register applied to a species that clears rather than tends; deliberately low, present only because a plant body can restore.
 
 Traits considered and left out, with reasons: `armored` (the smooth outline and the `hide` call state there is no armored aspect); `toxic` and `volatile` (the toxic fungi are the planet's, not this body's, and no source gives it an agent or a reaction); `stealthy` (a 375 kg body with an overhead blade cannot move unseen, and the registry tilts it down with mass); `perceptive`, `foresighted`, `mind-sealed`, `hypnotic`, `telekinetic`, `luminous`, `reflective`, `phasing`, `slippery`, `inspiring`, `nocturnal` (no source, and Floria is not a dark world; the canopy shades but the history never calls it a night world).
+
+#### Cut by the evidence bar (2026-09-07)
+
+| Trait | Former percent | Evidence class that failed |
+|---|---|---|
+| `solitary` | 60 | argued from absence; one body in the art is not a sentence about living alone |
+| `ramming` | 45 | the quoted fragment does not describe the act; the sources show the blade cutting, not the body colliding |
+| `protective` | 30 | a planet-wide sentence stretched to a behavior, then rested on function plausibility |
+| `regenerative` | 25 | body-type plausibility (a plant body regrows); no source sentence |
+| `pack-bonded` | 20 | argued from absence; no sentence (its exclusion partner solitary is cut as well) |
+| `healing` | 10 | the plant element's mend register alone; no source sentence |
+
+Pool expected count 3.10 to 1.20. No surviving percent was changed.
 
 ## Instruments
 
@@ -164,3 +172,4 @@ logged to docs\species-templates\validation-log\kosanos.jsonl
 ## Orchestrator amendments
 
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: 'browser', 'grazing what it drops', the seasonal reopening, 'on no schedule', 'every path between them was opened by a Kosanos', the survey-party scene and 'Nothing on Floria has asked it to stop' were unsourced behavior, schedule, Vallerii service history and a flourish; cut, and the source's own hedge ('is thought to have been designed') restored in both prose fields. `composition` set to `flesh` (was plant): element never decides composition, the only support was the planet-wide simile 'plant-like Xalians', the history lists Xalians apart from the vegetation, and the art draws an animal with a barrel body, four legs, a tail, an eye and toothed jaws. `diet` falls to the flesh-body silence fallback `omnivore` (was herbivore; no feeding sentence exists). `trunk` and `blades` both kept (limb and its cutting terminus). The run's 'uniform row' teeth reading is inaccurate (the outer teeth are longer); the `jaws` call stands on minimality. Description now 76 words.
+- 2026-09-07, trait evidence bar (Nick): cut solitary, ramming, protective, regenerative, pack-bonded, healing; pool expected count 3.10 to 1.20.

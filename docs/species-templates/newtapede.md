@@ -104,17 +104,23 @@ Legacy `statRatings` used only as a relative gauge: specialDefenseRating low and
 - `charisma [15, 35]`: nothing in either source gives it presence.
 - `resilience [15, 35]`: legacy gauge: specialDefenseRating low, the one explicitly low rating, and the art shows no armored aspect.
 
-### Trait pool (expected count 2.70)
+### Trait pool (expected count 1.80)
 
-Sum of percents is 270, and the exclusion adjustment does not apply because `solitary` is not in the pool, so the expected count is 2.70.
+Sum of percents is 180, and the exclusion adjustment does not apply because `solitary` is not in the pool, so the expected count is 1.80.
 
 - `resistant: 90`: planet: "Soon, aquatic, water-breathing Xalians capable of surviving in its rising and acidifying oceans began to populate the sea" and planet: "Vicious storm winds carried the toxic microbes from pole to pole, wiping out the Vallerii who remained. Only the subsurface Xalians survived". This is an environmental adaptation of the body, which the skill permits a planet-wide sentence to justify; it is not at 100 because the sentence describes Poseidas Xalians as a class rather than this species by name, so a small share of Generator variance is left.
 - `slippery: 65`: species: "its slender frame"; art: a smooth-edged, long, segmented body with no protruding grip points. A body that is both slender and smooth is hard to hold, and it is the trait a water fighter most plainly carries. Below 100 because no source sentence shows it escaping anything.
-- `regenerative: 35`: legacy gauge: recoveryRating is the species' one high rating, and `regenerative` is the registry trait for rapid self-repair. Kept at a minority percent because the legacy ratings are a relative gauge and not a source sentence.
-- `pack-bonded: 30`: planet: "manning ECHELON’s rigs and replacing the dwindling Vallerii population" and planet: "building them deeper and deeper beneath the ocean" describe an environment of collective labor. This is behavior, so a planet-wide sentence cannot carry it to a high percent; 30 is a minority chance, and I flag it under Authored fields as the weakest evidence line in the pool.
 - `perceptive: 25`: art: two very large forward eyes with slit pupils and two long antennae. Art is a source for the body, and the body here is built around sensing; kept low because no sentence shows it finding anything hidden.
-- `stealthy: 15`: art: a low, smooth, tapering body with no bright structure. A minority roll only.
-- `protective: 10`: a minority roll; the species works alongside others on the rigs per the planet history, and `protective` is the smallest honest expression of that. Weakly evidenced and flagged.
+
+#### Cut by the evidence bar (2026-09-07)
+
+| Trait | Former percent | Evidence class that failed |
+|---|---|---|
+| `regenerative` | 35 | legacy stat gauge alone (recoveryRating), no source sentence |
+| `pack-bonded` | 30 | planet fact stretched to a behavioral trait (collective labor on the rigs) |
+| `stealthy` | 15 | body-type plausibility from the silhouette, no sentence and no stealth feature in the art |
+| `protective` | 10 | planet fact stretched to a behavioral trait, flagged in the record as weakly evidenced |
+
 - Deliberately left out: `solitary` (nothing in either source shows it operating alone, and the whole planet register is collective labor), `armored` and `anchored` and `phasing` (the body forbids all three), `luminous` (art: no light organ, no core), `toxic` and `volatile` (no source shows the body carrying or releasing an agent, and the toxic microbes of the death tide are the planet's, not the creature's), `healing` (Algael is the substance that heals on Poseidas, not this creature, and attaching it to the species would be an invented claim), `telekinetic` and `foresighted` and `mind-sealed` and `hypnotic` and `menacing` and `inspiring` and `nocturnal` and `ramming` and `reflective` (no source sentence or art feature supports any of them; the deep ocean is dark, but the history never calls this species night-adapted and the deep-cities are lit centers of commerce).
 
 ### Signature ability
@@ -193,3 +199,4 @@ WARN signature.action.matrix        signature action "snare" is outside the phys
 ## Orchestrator amendments
 
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: the rig job, algae trawling (the source's subject is the rigs), deck hauling, death-tide survival and the deep-cities workplace were all invented for this species; rewritten to the two source sentences and the planet-level facts. `claws` and `jaws` removed from anatomy and instruments: the art draws pad-tipped splayed toes and no mouth at all (the text's 'webbed feet' wins over the art for the feet, and no registry key names a webbed foot). `coils` added (a long segmented body that wraps, the registry's wrap-and-crush body) and the signature moved to coils / snare, inside the physical row, so the rule 4 exception is gone. Encyclopedia's 'faster in the sea than on land' replaced with the source's own combat claim. `regenerative` stays at 35 (legacy ratings are a gauge, not a sentence). Art matched the run's reading.
+- 2026-09-07, trait evidence bar (Nick): cut `regenerative`, `pack-bonded`, `stealthy`, `protective`; pool expected count 2.70 to 1.80.

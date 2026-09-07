@@ -150,13 +150,8 @@
     "pool": {
       "stealthy": 100,
       "nocturnal": 96,
-      "solitary": 55,
       "perceptive": 40,
-      "slippery": 30,
-      "resistant": 20,
-      "pack-bonded": 12,
-      "menacing": 8,
-      "foresighted": 4
+      "resistant": 20
     }
   },
   "instruments": [

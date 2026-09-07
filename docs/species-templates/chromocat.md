@@ -62,16 +62,23 @@ The row is one dominant nature with a short tail, because the description reads 
 
 ### Trait pool
 
-Expected trait count, with the exclusion pair counted as `solitary` at 30 rolling first and `pack-bonded` at 15 times one minus 0.30, which is 10.5: (100 + 90 + 55 + 30 + 28 + 20 + 10.5 + 8 + 5) divided by 100, which is 3.47.
+Expected trait count after the 2026-09-07 evidence bar: (100 + 90 + 55 + 20 + 15) divided by 100, which is 2.80. `solitary` was cut, so the exclusion pair no longer applies and no adjustment is needed. The raw sum before the bar was 3.51 (3.47 with the old exclusion adjustment).
 
 - `luminous: 100`. Body-demanded. species: "two sickle-shaped blades infused with pure ionized radiation" and "their ability to enter a photonic-state": a body that carries radiating blades and turns to light sheds light. Universal, and so exempt from tilts.
 - `resistant: 90`. Environment-demanded, and the rules permit a planet-wide sentence to justify an environmental adaptation. planet: "Being well adapted to the immense radiation present on their planet, Xalians from Luminax were a natural choice of labor for the design of the Stellaris Superstructure." Held below 100 because the same history records that the ION-9 misfires are still mutating the Luminarii, so the adaptation is not absolute.
 - `slippery: 55`. species: "allow them to seemingly 'teleport' around the battlefield" describes a body that cannot be pinned down. Below 100 because the sentence describes movement rather than an established guarantee against grabs, and because individuals should differ.
-- `stealthy: 28`. Art evidence rather than planet evidence: the low crouch with the neck dropped and the head near the ground is a stalking approach. Kept well under half because the fighting style the description names is open harassment, not concealment.
-- `solitary: 30` and `pack-bonded: 15`. The sources point weakly both ways: species uses the plural throughout for the harvest work, "they could comb through and harvest entire fields in record time", which is a body of workers, while the present-day sentence describes a single creature harassing opponents. Both are in the pool, the higher rolls first, and neither is near 100.
+- `pack-bonded: 15`. species uses the plural throughout for the harvest work, "they could comb through and harvest entire fields in record time", which is a body of workers acting together. Kept low because the present-day sentence describes a single creature harassing opponents. Its exclusion partner `solitary` was cut by the evidence bar, so the pair never both roll.
 - `perceptive: 20`. Art: the two large tufted ears and the forward-set eyes. Deliberately not justified from the planet's light or dark hemispheres, since a planet-wide sentence may never justify a behavior.
-- `volatile: 8`. species: "infused with pure ionized radiation" on parts of the body makes striking it occasionally hazardous. Low, because no source shows a reaction to being hit.
-- `foresighted: 5`. Rare band, justified only as far as species: "so swift that reaction becomes nearly impossible" reads as acting ahead of the moment. Single digits per the rarity rule.
+
+#### Cut by the evidence bar (2026-09-07)
+
+| Trait | Former percent | Evidence class that failed |
+|---|---|---|
+| `solitary` | 30 | argued from absence; the only quoted group sentence points the other way, so the exclusion partner with a sentence was kept instead |
+| `stealthy` | 28 | a posture in the art read as a behavior; the walkthrough concedes the described fighting style is open harassment, not concealment |
+| `volatile` | 8 | the quoted radiation is on the blades it strikes with, not a hazard to those who strike it, and the walkthrough concedes no source shows a reaction to being hit |
+| `foresighted` | 5 | the quoted sentence is about opponents being unable to react, not about this creature acting ahead; a rare-band value |
+
 - Considered and left out: `armored`, since there is no armored covering and the body carries the unarmored surface key; `nocturnal`, since the fields this species worked are on the sunward face in eternal daylight, so night adaptation would contradict the source, and the dark side is planet-wide context that could not justify a trait here in any case; `ramming`, since nothing in the sources shows it hitting with its body; `phasing`, since the photonic state is a transient ability state and the registry rule is that a transient state is an ability rather than a change to the body, and treating it as `phasing` would also brush the no-teleportation constraint; `telekinetic`, `healing`, `protective`, `mind-sealed`, `hypnotic`, `menacing`, `inspiring`, `toxic`, `reflective`, `regenerative`, and `anchored`, none of which has support in either source, with `anchored` contradicted outright by the mobility the description is built on.
 
 ### Signature ability
@@ -144,3 +151,4 @@ No run of the script has ever raised a FAIL on this key. The two entries in the 
 
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: signature action changed from `ambush` (outside both the blades row and the light medium row, taken under the rule 4 exception) to `rake`, which is in the blades row: the source's defining act is the barrage of rapid cuts, and the closing speed lives in the agility band and the skirmisher archetype. The 'opening a dozen wounds before the first is felt' clause was a flourish; rewritten. `diet` falls to the fallback `omnivore` (the run departed to carnivore on the art's dentition alone; no feeding sentence). `vacuum` removed from ambientMedia (the planet sentence is about radiation immunity for Luminarii as a class). The 'teleport' reading stands as the run recommended: apparent instantaneous movement from speed, not relocation. Art matched the run's reading.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [25, 95] to [25, 70] (intersection) against the rebuilt planet record's habitable band [10, 70] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 0.92.
+- 2026-09-07, trait evidence bar (Nick): cut solitary, stealthy, volatile, foresighted; pool expected count 3.51 to 2.80.

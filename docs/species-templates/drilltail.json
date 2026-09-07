@@ -155,11 +155,7 @@
     "pool": {
       "armored": 100,
       "stealthy": 80,
-      "resistant": 60,
-      "perceptive": 45,
-      "pack-bonded": 15,
-      "slippery": 25,
-      "toxic": 5
+      "resistant": 60
     }
   },
   "instruments": [

@@ -76,16 +76,21 @@ Primary `light` from species `type: Light`. Secondaries are whatever the graph a
 
 ## Trait pool
 
-Expected trait count: (100 + 96 + 55 + 34 + 24 + 22 + 12 + 4) / 100 = 3.47. No exclusion pair is present, so no adjustment. The first authored pool came out at 3.90 and the script warned above its 3.5 bar; the reduction is recorded under Script denials.
+Expected trait count: (100 + 96 + 55 + 34) / 100 = 2.85. No exclusion pair is present, so no adjustment. The first authored pool came out at 3.90 and the script warned above its 3.5 bar; that reduction is recorded under Script denials, and the 2026-09-07 evidence bar cut four further entries, recorded in the table below.
 
 - `luminous: 100`: body-demanded. Species: "The gems growing out of this creature's head transmit powerful light energy." A body that emits light shed from its own crown is luminous in every individual.
 - `resistant: 96`: environment-demanded. Planet: "Being well adapted to the immense radiation present on their planet, Xalians from Luminax were a natural choice of labor for the design of the Stellaris Superstructure." Planet-wide sentences may justify an environmental adaptation; the 4 percent gap is Generator variance, and it keeps at least one entry below 100 alongside the rest of the pool.
 - `reflective: 55`: species and planet together: the crown is faceted crystal (art) and planet: the crystalline leaves of Luminax work by "refracting the intense light of Luminax's suns to reflect back harmful wave lengths". This is the closest registry trait to a prism that turns energy back, and it is a body reading, not a behavior. Held at 55, well below 100, because the planet sentence is about the flora and not about this creature; a faceted crown makes reflection plausible in a majority of individuals, not universal.
 - `mind-sealed: 34`: species: "don't be deceived by its calm temperament" is the one sentence about its inner state, and `mind-sealed` is the registry trait for a mind nothing sways. Kept under half because a calm temperament is weaker evidence than an unbreakable one.
-- `protective: 24`: art: the seated, still, open-handed posture of a heavy body reads as a guard rather than a hunter, and no source shows it attacking. Held low as a body-and-art inference only.
-- `anchored: 22`: art: a 300 to 420 kg body sitting with legs folded and a low center of mass. Low percent because no source states it cannot be moved.
-- `menacing: 12`: species: the "don't be deceived" warning frames it as more dangerous than it appears. Low because the warning is about deception, not about presence eroding courage.
-- `foresighted: 4`: rare-band roll, in the registry's stated 2 to 8 range, on a still, watchful body.
+
+#### Cut by the evidence bar (2026-09-07)
+
+| Trait | Former percent | Evidence class that failed |
+|---|---|---|
+| `protective` | 24 | art-inferred from a seated, open-handed posture; the walkthrough itself records "no source sentence" |
+| `anchored` | 22 | body-mass plausibility from a seated pose; no source states it cannot be moved, and the walkthrough records "no source sentence" |
+| `menacing` | 12 | the "don't be deceived" clause is about deception, not about presence eroding courage; no sentence describes fear |
+| `foresighted` | 4 | no source sentence; a rare-band roll on a still, watchful body |
 
 Traits considered and deliberately left out: `armored` (the art shows no plating, shell, or carapace, and the species declares `hide`, which the registry says states the body has no armored aspect); `nocturnal` (the species is generated for the sunward face of a tidally locked world in "eternal daylight", the opposite adaptation); `stealthy` and `perceptive` (both are behaviors, and only planet-wide sentences would support them, which the rules forbid); `telekinetic` (nothing in either source shows it moving anything untouched); `pack-bonded` and `solitary` (no source shows it either with others or alone); `healing` (the light element could color a restorative crown, but no sentence in either source shows this creature restoring anything, so it is left off rather than carried at a token percent); `ramming`, `toxic`, `volatile`, `slippery`, `regenerative`, `phasing`, `hypnotic`, `inspiring` (no supporting sentence in either source).
 
@@ -161,3 +166,4 @@ logged to docsspecies-templatesalidation-logcrystorn.jsonl
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [30, 95] to [30, 70] (intersection) against the rebuilt planet record's habitable band [10, 70] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 0.92.
 - 2026-09-02, art correction from Nick (the artist): the head growths are two crystal horns. `core` replaced by `horns` in anatomy, instruments and the conduit; the signature (beam, light) stays legal through the horns light conduit (beam is in the light medium row). Prose now says crystal horns.
 - 2026-09-02, spelling (Nick): misspellings in the source description were corrected upstream in species.json (temperment, closed pedals of a flower, flittering Avilies, levatating, Terragoygles as applicable) and the carried text and quotations updated to match; misspellings are never carried into a record.
+- 2026-09-07, trait evidence bar (Nick): cut protective, anchored, menacing, foresighted; pool expected count 3.47 to 2.85.

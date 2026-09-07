@@ -154,12 +154,6 @@
   "traits": {
     "pool": {
       "anchored": 100,
-      "regenerative": 72,
-      "healing": 25,
-      "protective": 25,
-      "solitary": 60,
-      "perceptive": 15,
-      "menacing": 12,
       "resistant": 35
     }
   },

@@ -155,15 +155,7 @@
     "pool": {
       "perceptive": 70,
       "hypnotic": 45,
-      "telekinetic": 35,
-      "protective": 35,
-      "healing": 30,
-      "mind-sealed": 25,
-      "slippery": 25,
-      "inspiring": 20,
-      "stealthy": 20,
-      "pack-bonded": 20,
-      "foresighted": 8
+      "telekinetic": 35
     }
   },
   "instruments": [

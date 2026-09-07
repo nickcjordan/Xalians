@@ -153,10 +153,8 @@
       "slippery": 85,
       "phasing": 20,
       "nocturnal": 55,
-      "solitary": 45,
       "perceptive": 20,
-      "resistant": 15,
-      "foresighted": 4
+      "resistant": 15
     }
   },
   "instruments": [

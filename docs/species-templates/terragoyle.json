@@ -155,10 +155,8 @@
     "pool": {
       "anchored": 100,
       "telekinetic": 100,
-      "menacing": 60,
       "perceptive": 55,
-      "resistant": 50,
-      "solitary": 35
+      "resistant": 50
     }
   },
   "instruments": [

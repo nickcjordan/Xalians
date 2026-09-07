@@ -83,11 +83,17 @@ Legacy `statRatings` used only as a relative gauge: `specialAttackRating` and `r
 - `volatile: 85`. Hazardous to strike, from "its tail made of explosive barbs" (species). Not 100 because the stub attaches the explosive quality to the barbs it fires rather than declaring the whole body reacts when hit, so Generator variance is allowed.
 - `stealthy: 70`. Not a planet-wide claim: the species own sentence is concealment, "digs its body underground when spooked, exposing only its tail" (species). Held at 70 rather than 100 because the tail is deliberately left showing, which is the opposite of unseen.
 - `resistant: 55`. Environment-demanded and legitimately sourced to a planet-wide sentence per section 5.3, planet, "the rubbing of these particulates in the atmosphere generates colossal static discharges that crackle pervasively in the lower atmosphere, spelling danger to all who dare to land on the planet's jagged surface." Bodily contamination tolerance for a dust-choked, thin-aired world.
-- `perceptive: 40`. Justified from the species own reactive behavior, "This creature digs its body underground when spooked" (species), and the `tremorsense` band, not from the planet.
-- `slippery: 30`. A body that goes into the ground when threatened is hard to hold; a modest chance, from the species sentence.
-- `solitary: 25`. Nothing in the sources shows it working or fighting in numbers, and the described response to threat is individual concealment. Its exclusion partner `pack-bonded` is not listed and therefore has a 0 chance, so the pair is never both at 100.
-- `menacing: 10`. Rare; the exposed barb fan is a warning display, but no source calls it frightening.
-- Expected trait count: (100 + 85 + 70 + 55 + 40 + 30 + 25 + 10) / 100 = 4.15.
+- Expected trait count: (100 + 85 + 70 + 55) / 100 = 3.10, after the 2026-09-07 evidence bar; it was 4.15 before.
+
+#### Cut by the evidence bar (2026-09-07)
+
+| Trait | Former percent | Evidence class that failed |
+|---|---|---|
+| `perceptive` | 40 | the quoted sentence describes the reaction (burying when spooked) rather than acuity, and the rest of the case is the `tremorsense` stat band |
+| `slippery` | 30 | a restatement of the kept `stealthy` sentence; no sentence shows it escaping a hold |
+| `solitary` | 25 | argued from absence: nothing in the sources shows it working or fighting in numbers |
+| `menacing` | 10 | no source sentence; the walkthrough states outright that no source calls it frightening |
+
 - Traits considered and left out, with reasons: `armored` (no rigid covering in the art, and `hide` states the body has no armored aspect); `anchored` (a body that buries itself is not immovable, it is hidden); `toxic` (the barbs are explosive, not envenoming; no source names an agent); `ramming` (nothing shows charging); `nocturnal` (the history calls the sky grey and the world dark but never names a night cycle or night adaptation, so I decline to convert a planet-wide mood sentence into an adaptation); `pack-bonded` (excluded by the solitary reading); `foresighted` and `telekinetic` (no support at all, so not listed rather than given a token percent).
 
 ### Signature ability
@@ -155,3 +161,4 @@ Run history: run 1 was `0 FAIL, 2 WARN` (the trait-count WARN plus the Encyclope
 ## Orchestrator amendments
 
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: the seam-working purpose, the barb-as-charge mining technique, the strip-mine job and the counting enforcers were invented (two of them planet-wide sentences given this species as subject); the description now carries the bombardment and the Generator's digging Xalians as planet facts and ends on the source's own sentences. `temperatureC` [-20, 34] -> [-20, 25] inside the habitable band [-45, 25] (the run read the legacy planet file). Gravity cited in the run (0.74) is now 0.53; no value depended on it. Art matched the run's reading (upright on two legs, hooked claws free, dorsal ridge, tufted coat, a fan of about twelve banded barbs). Description now 81 words.
+- 2026-09-07, trait evidence bar (Nick): cut perceptive, slippery, solitary, menacing; pool expected count 4.15 to 3.10.

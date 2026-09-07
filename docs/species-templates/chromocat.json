@@ -155,12 +155,8 @@
       "luminous": 100,
       "resistant": 90,
       "slippery": 55,
-      "stealthy": 28,
-      "solitary": 30,
       "perceptive": 20,
-      "pack-bonded": 15,
-      "volatile": 8,
-      "foresighted": 5
+      "pack-bonded": 15
     }
   },
   "instruments": [

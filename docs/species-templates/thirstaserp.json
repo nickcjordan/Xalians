@@ -156,12 +156,7 @@
       "stealthy": 90,
       "hypnotic": 70,
       "resistant": 60,
-      "solitary": 55,
-      "perceptive": 40,
-      "slippery": 30,
-      "nocturnal": 25,
-      "menacing": 20,
-      "pack-bonded": 10
+      "menacing": 20
     }
   },
   "instruments": [

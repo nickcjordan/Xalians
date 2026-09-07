@@ -154,11 +154,7 @@
       "stealthy": 80,
       "pack-bonded": 70,
       "toxic": 95,
-      "perceptive": 45,
-      "protective": 35,
-      "slippery": 40,
-      "hypnotic": 15,
-      "inspiring": 10
+      "protective": 35
     }
   },
   "instruments": [

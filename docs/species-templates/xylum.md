@@ -70,13 +70,21 @@ Upgraded-description clauses and their sources:
 
 **Trait pool.** Expected count is (100 + 72 + 25 + 25 + 60 + 15 + 12 + 35) divided by 100, which is 3.44. There is no exclusion pair active in this pool, since `pack-bonded` is not listed, so the figure stands at 3.44. The first authored row summed to 3.82 and the script raised a WARN on it (see Script denials); I trimmed the four weights that rest on no species sentence rather than argue for a heavier creature.
 - `anchored 100` (body-demanded): the registry entry is a body that cannot be moved against its will. A root mass that "lives mostly underground" (species) and is drawn breaking the soil line in the art is exactly that.
-- `regenerative 72`: the one high legacy rating is recovery (species), and a plant body regrows. Not 100 because the stub never states it and the legacy rating is a relative gauge, not a fact.
-- `healing 25`: plant-element restoration through the same sap and growth the body runs on; a real but not universal expression, so under a third.
-- `protective 25`: the ground-holding behavior the planet history attributes to the plant-like Xalians reads as shielding territory and what stands in it, but that is a planet-wide sentence, so it is weighted as a minority tendency rather than a certainty.
-- `solitary 60`: one body, one buried root mass, and no source showing more than one at a time; the art shows a single organism. Not 100 because a species can vary. `pack-bonded` is deliberately not listed, so its chance is 0 and no exclusion pair is active.
-- `perceptive 15`: the tremorsense body could plausibly read what hides, but no species sentence supports it as a behavior and a planet-wide sentence may not justify one, so it stays a low minority weight.
-- `menacing 12`: a large mass that erupts from the ground unsettles, but again no species sentence says so; low weight for the same reason.
 - `resistant 35`: an environmental adaptation the planet may justify. The Floria history names "massive infestations of toxic fungi" (planet) in the same ground layer this species is buried in, so a soil-dwelling body that shrugs off contamination is a fair environmental weight, and environmental adaptation is the one thing a planet-wide sentence may support.
+
+#### Cut by the evidence bar (2026-09-07)
+
+| Trait | Former percent | Evidence class that failed |
+|---|---|---|
+| `regenerative` | 72 | the legacy stat gauge alone ('the one high legacy rating is recovery') plus body-type plausibility; the entry concedes 'the stub never states it and the legacy rating is a relative gauge, not a fact' |
+| `healing` | 25 | body-type plausibility from the plant element; no sentence |
+| `protective` | 25 | a planet-wide sentence stretched to a behavior, which the rule reserves for environmental adaptations |
+| `solitary` | 60 | argued from absence ('no source showing more than one at a time'); a single organism in a portrait silhouette is true of every species art and evidences nothing |
+| `perceptive` | 15 | 'no species sentence supports it as a behavior' |
+| `menacing` | 12 | body-type plausibility ('a large mass that erupts from the ground unsettles'); 'no species sentence says so' |
+
+Expected trait count after the bar: (100 + 35) / 100 = 1.35. `resistant` at 35 is the sub-100 entry the model requires.
+
 - Left out on purpose: `armored` (no armored covering and no `shell` key, so the body does not demand it), `toxic` (the toxic fungi belong to the planet, not to this creature's weapons), `nocturnal` (Floria is not a night world), `stealthy` (a giant mass is the opposite), `luminous`, `reflective`, `volatile`, `ramming`, `hypnotic`, `inspiring`, `slippery`, `mind-sealed`, `phasing`, `foresighted`, `telekinetic`, and `pack-bonded` (see `solitary`). Each is absent, which means a 0 chance.
 
 **instruments `roots`, `tendrils`.** Both are in anatomy. Both are the parts the stub actually shows doing work: "thick, intertwined roots that act as tentacles" (species) is a sentence about reaching and holding with those two things, and the buried limbs are what absorbs its power (species). `spines` is anatomy but not an instrument: the serrations appear in the art only and nothing shows the creature fighting with them. No channels: `mind` fails its predicate, `voice` fails because communication carries no vocal entry, `breath` would pass its bare predicate but nothing shows an expelled substance, and `aura` fails because no source describes an emanation from the body as a whole.
@@ -144,3 +152,4 @@ logged to docs/species-templates/validation-log/xylum.jsonl
 ## Orchestrator amendments
 
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: the Genesis Prototype origin stated as fact, the water-and-mineral feeding, the 'rises where the ground is disturbed' behavior with its causal claim about Vallerii survey parties, and the closing 'belongs to Xylum' flourish were all unsourced; cut, and the origin now carries the history's own hedge without naming the Xylum. Encyclopedia reduced to the stub's facts. The run's art line 'part of the body is below the surface' overstates the render: the base meets the ground line, nothing is drawn below it; no value depended on it. Height band ruled as the visible crown (a recorded height is what a surveyor could see). Description now 103 words.
+- 2026-09-07, trait evidence bar (Nick): cut regenerative, healing, protective, solitary, perceptive, menacing; pool expected count 3.44 to 1.35.

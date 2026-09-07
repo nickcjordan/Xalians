@@ -64,7 +64,7 @@ Every line names its source. `species` = the Yetimoth entry in species.json; `pl
 - charisma `[35,55]` : species: "Hulking". Presence from bulk, not from bearing.
 - resilience `[70,90]` : species: "covering themselves in a near-impenetrable armor" and "If their enormous size and strength was not enough to keep prisoners in line".
 
-### Trait pool (expected count 3.97)
+### Trait pool (expected count 3.97 before the 2026-09-07 evidence bar, 3.10 after)
 
 Arithmetic: the eight non-excluded entries sum to 85 + 80 + 55 + 45 + 25 + 20 + 20 + 15 = 345, giving 3.45. The exclusion pair adds `pack-bonded` at 0.45 plus `solitary` at 0.12 times (1 minus 0.45) = 0.066. Expected count 3.97.
 
@@ -73,11 +73,19 @@ Arithmetic: the eight non-excluded entries sum to 85 + 80 + 55 + 45 + 25 + 20 + 
 - `menacing` 55 : species: "to keep prisoners in line". A guard whose function is deterrence. Species-sourced behavior, not planet-sourced.
 - `anchored` 45 : species: "blocking off escape routes in walls of frost". A body that makes itself the barrier, on a world whose data block gives a gravity of 1.2 times Earth, carried on a 400 kg frame. Not 100: nothing says it cannot be moved, only that it blocks.
 - `pack-bonded` 45 : species: "the Yetimoths formed the rank and file of Krystos' prisonguards in ancient times". Rank and file is a body that works in formation with others. Higher partner of the exclusion pair, so it is rolled first.
-- `protective` 25 : species: "blocking off escape routes in walls of frost". The instinct reads as containment more than as shielding an ally, so the percent is held low.
-- `perceptive` 20 : species: "to keep prisoners in line" and "blocking off escape routes in walls of frost". Watching for an escape is a species-sourced behavior; the percent is modest because no sentence says it finds what hides.
-- `ramming` 20 : species: "until they could lumber over close enough to pummel them into submission". Mass arriving with the blow, but the source's own word is lumber, which argues against a charging body, so this stays low.
-- `mind-sealed` 15 : species: "the Yetimoths formed the rank and file of Krystos' prisonguards in ancient times", a guard engineered not to be talked around by the empire's most dangerous prisoners. A minority trait, not a species fact.
-- `solitary` 12 : planet: "those who were tough enough, or simply feral enough, to remain in the arctic wastelands outside were just as useful for deterring any prisoners from seeking to escape". This describes Krystos's guard stock generally, so it justifies only a minority variant, and it is the lower partner of the exclusion pair.
+
+#### Cut by the evidence bar (2026-09-07)
+
+| Trait | Former percent | Evidence class that failed |
+|---|---|---|
+| `protective` | 25 | a restatement of the kept `anchored` sentence; the entry itself reads the instinct as containment rather than shielding an ally |
+| `perceptive` | 20 | a restatement of the kept `menacing` and `anchored` sentences; 'no sentence says it finds what hides' |
+| `ramming` | 20 | the quoted sentence argues against it ('the source's own word is lumber'), leaving body-mass plausibility |
+| `mind-sealed` | 15 | an inference from the rank-and-file sentence ('engineered not to be talked around'); no sentence on mental resistance |
+| `solitary` | 12 | a planet-wide sentence about Krystos guard stock stretched to this species' behavior, and the exclusion partner without a sentence while `pack-bonded` has one |
+
+Expected trait count after the bar: (85 + 80 + 55 + 45 + 45) / 100 = 3.10, with no exclusion correction, since `solitary` is gone. Every surviving entry is below 100.
+
 - Left out with reason: `inspiring` (dropped in the trim below; the rank-and-file sentence supports a body that holds a formation, not one that lifts the others, so it was the weakest entry in the pool); `healing` and `regenerative` (nothing in either source shows repair); `phasing` (corporeal, no ghost reading); `toxic` and `volatile` (its weapons are blunt and cold, never chemical or reactive); `reflective` (the armor absorbs, it does not return); `hypnotic` (nothing entrancing); `foresighted` and `telekinetic` (both rare and both unsupported: the frost forms on its own body and on the ground around it, never lifted and moved); `stealthy` (a hulking body that lumbers, and the registry tilt is against it); `nocturnal` (the planet history never says Krystos is dark, only cold; the debris blotted the sky but the sources do not describe a night-adapted population); `luminous` (nothing sheds light); `slippery` (the opposite of this body).
 
 Trim note: the pool was first authored at an expected count of 5.14 and the script warned that this was above its 3.5 guideline. The trim dropped `inspiring` and lowered every percent below `armored`. The trim is a real improvement in one respect, since `perceptive`, `ramming`, and `mind-sealed` were each supported by an inference rather than a sentence and deserved to sit lower. It is a mild loss in another: the Yetimoth is a heavily specified species whose description names armor, containment, deterrence, and formation work in four consecutive clauses, and a body that genuinely reads as four or five traits is not a fault. The remaining 3.97 is left above the guideline for that reason and is not trimmed further.
@@ -156,3 +164,4 @@ WARN conduits.source                conduit fists for ice: the validator agent m
 - 2026-09-02, archetype scale (Nick): `archetypeWeights` converted from relative 1 to 5 weights to percents summing to 100 by largest remainder, order preserved: juggernaut 33, bulwark 27, vanguard 20, stalwart 13, survivor 7 (was juggernaut 5, bulwark 4, vanguard 3, stalwart 2, survivor 1).
 - 2026-09-02, archetype rethink (Nick): the converted row kept the old 5-4-3-2-1 ladder shape shared by every record, so the distribution was re-authored on this species alone: juggernaut 36, bulwark 34, stalwart 18, vanguard 12 (was juggernaut 33, bulwark 27, vanguard 20, stalwart 13, survivor 7). Reasoning: strength and resilience at the top with a ward signature: juggernaut and bulwark near-equal (the pummeler and the armored wall are the same body), stalwart for the guard's will; survivor dropped as ladder filler.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [-122, -10] to [-60, -10] (intersection) against the rebuilt planet record's habitable band [-60, 15] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 0.54.
+- 2026-09-07, trait evidence bar (Nick): cut protective, perceptive, ramming, mind-sealed, solitary; pool expected count 3.97 to 3.10.

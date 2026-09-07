@@ -45,16 +45,21 @@ Primary `plant` from the species entry type. On graph secondaries for plant are 
 
 ### Trait pool
 
-Expected count is 3.9 traits, computed as 80 plus 70 plus 95 plus 45 plus 35 plus 40 plus 15 plus 10, which is 390, divided by 100. There is no exclusion pair in the pool, since `solitary` is absent.
+Expected count is 2.8 traits, computed as 95 plus 80 plus 70 plus 35, which is 280, divided by 100. There is no exclusion pair in the pool, since `solitary` is absent. Four entries were cut by the 2026-09-07 evidence bar and are recorded in the table below.
 
 - `toxic: 95`: species, "their saliva contains a powerful sedative which paralyzes anything that it comes in contact with". The body demands it; the species is defined by a debilitating agent delivered by its natural weapon. Not 100, because the description also says the sedative properties "have been enhanced for a far-more dangerous galaxy", which implies variance in how much any one individual carries, and because at least one entry has to sit below 100 anyway.
 - `stealthy: 80`: species, "camouflaging into the planet’s many flowery meadows as they travel". Concealment until it acts is the definition, and this is a species sentence, not a planet-wide one.
 - `pack-bonded: 70`: species, "swarms of flittering Avililies protect the most sacred parts of Floria’s jungles". They act in numbers. Not 100 because the same description also shows individual Avililies carried alone by Vallerii explorers, species, "serving as mobile bug repellent on Florian ventures". `solitary` is not in the pool at all, so no exclusion comparison arises.
-- `perceptive: 45`: species, "They attract insects with their sweet, syrupy smelling saliva". A creature whose living is made by drawing in small prey it must then find and take has to perceive well; the high sight and smell bands tilt this up at generation on their own, so the authored figure stays moderate.
-- `slippery: 40`: art, a small body on long wings with no bulk anywhere, and species, "flittering", a bird that is hard to lay hands on. Kept under half because no sentence shows it escaping a hold.
 - `protective: 35`: species, "swarms of flittering Avililies protect the most sacred parts of Floria’s jungles". The instinct to shield is right there in the verb, but the object is a place rather than another creature, so this is a partial fit at a moderate percent rather than a high one.
-- `hypnotic: 15`: species, "vibrant floral display". A display that holds attention and draws a target in is the low end of entrancing. Kept low because the sources aim the display at insects, not at anything that fights back.
-- `inspiring: 10`: species, "swarms of flittering Avililies", a creature that works in coordinated numbers and lifts the group. Low, because no sentence shows it doing anything for an ally.
+
+#### Cut by the evidence bar (2026-09-07)
+
+| Trait | Former percent | Evidence class that failed |
+|---|---|---|
+| `perceptive` | 45 | no source sentence for the trait; the quoted sentence is about attracting insects, and the case rests on body-type plausibility plus the sight and smell stat bands |
+| `slippery` | 40 | body-type plausibility from the art (a small body on long wings); the walkthrough concedes no sentence shows it escaping a hold |
+| `hypnotic` | 15 | an appearance phrase ("vibrant floral display") stretched to a behavior; no sentence shows it entrancing anything |
+| `inspiring` | 10 | a restatement of the kept `pack-bonded` sentence plus an argument from absence, since no sentence shows it doing anything for an ally |
 
 Traits considered and left out, with reasons: `healing`, no source anywhere; `armored` and `anchored`, the body is unarmored and airborne and both are contradicted; `regenerative`, no source; `phasing`, corporeal with no ghost register; `resistant`, tempting for a creature that manufactures a potent sedative, but the description never says it shrugs off contamination and the only supporting sentence would be a planet-wide one about toxic fungi, which the rules forbid using for a species trait; `ramming`, an eight kilogram bird is not a living ram; `volatile` and `reflective`, no source; `menacing`, the description gives it lethality but never fear; `foresighted` and `telekinetic`, rare traits with no source hook, and I will not spend a rare slot for flavor; `mind-sealed`, no source; `nocturnal`, Floria is not a dark world and no sentence puts this bird in the night; `luminous`, the plumage is bright but bright is color, not emitted light.
 
@@ -129,3 +134,4 @@ WARN conduits.source                conduit secretion for plant: the validator a
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: `conduits` removed: the saliva is a sedative and no sentence shows plant power leaving through it; `snare` is already in the secretion row, so the signature is unchanged. Encyclopedia restores the source's own words 'swarms' and 'most sacred parts'. `lifespan` set to `fleeting` as the ratified rubric reads (a flier under 20 kg shown living in numbers); the run's `short` and its proposed narrowing of that clause are raised to Nick as a lever. `communication` keeps `display` and `chemical`: both signals are broadcast, not aimed. Art matched the run's reading.
 - 2026-09-02, lifespan (Nick): the fleeting clause now covers swarm and conjured-unit bodies only (skill v2.18); `lifespan` set to `short`, was `fleeting`.
 - 2026-09-02, spelling (Nick): misspellings in the source description were corrected upstream in species.json (temperment, closed pedals of a flower, flittering Avilies, levatating, Terragoygles as applicable) and the carried text and quotations updated to match; misspellings are never carried into a record.
+- 2026-09-07, trait evidence bar (Nick): cut perceptive, slippery, hypnotic, inspiring; pool expected count 3.90 to 2.80.

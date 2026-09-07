@@ -474,7 +474,7 @@ if (ENC && T) {
     if (sentences < 1 || sentences > 2) fail('enc.definition.sentences', 'encyclopedia definition should be one or two sentences, has ' + sentences);
     if (!new RegExp('\\b' + T.name + '\\b').test(ENC.definition)) warn('enc.definition.name', 'definition does not name the species');
   }
-  for (const k of Object.keys(ENC)) if (!['key', 'title', 'category', 'definition', 'related', 'pronunciation'].includes(k)) fail('enc.extra', 'unexpected encyclopedia field "' + k + '"');
+  for (const k of Object.keys(ENC)) if (!['key', 'title', 'category', 'definition', 'related', 'pronunciation', 'aliases'].includes(k)) fail('enc.extra', 'unexpected encyclopedia field "' + k + '"');
 }
 
 // ---------- walkthrough ----------

@@ -70,17 +70,22 @@ Not taken: `spines`. The swept strands at the nape read as a mane in a flat silh
 
 **Element and affinity** - primary `sand` at 100 by species `type`. On-graph secondaries for sand are water, rock, and ghost; I do not pick one. No `affinityOdds` override is declared, so the 75/25 baseline is inherited; I considered arguing water upward from the drowned history of the planet and rejected it, because that history belongs to the planet and not to this creature's body.
 
-**Trait pool** (expected count: the percents sum to 350, and `solitary` has no listed partner, so the expected count is 3.50):
+**Trait pool** (expected count: the percents sum to 225, and no exclusion pair is listed, so the expected count is 2.25):
 
 - `armored: 100` - body-demanded. Species: "Shielded by a scaly exoskeleton, this creature can roll into a ball to protect itself." A chitin covering carries armored at 100.
 - `resistant: 70` - environment-demanded but not universal. Planet: "Over the course of thousands of years, the glass surface of Endessa broke down into particulates, turning the planet into an unforgiving desert expanse comprised of vast seas of endless rolling dunes and arid, sweltering heat." A planet-wide sentence is legal support for an environmental adaptation.
 - `ramming: 55` - species: "Shielded by a scaly exoskeleton, this creature can roll into a ball to protect itself." A body that rolls is a body whose blows land with movement behind them; held below 100 because the source names the roll as protection, not as attack.
-- `solitary: 35` - art shows one body with no companion, and nothing in either source shows this creature working or fighting alongside others. Well below 100, and its partner `pack-bonded` is simply not listed (a 0 chance) rather than paired, so the exclusion rule is not strained.
-- `anchored: 30` - a low, heavy, plated body on two planted columnar hindlimbs, from the art. Modest because nothing states it cannot be moved.
-- `protective: 25` - species: "Shielded by a scaly exoskeleton, this creature can roll into a ball to protect itself." The sourced instinct is to protect itself, while `protective` is specifically about shielding others, so this is an extension and sits low.
-- `menacing: 15` - the mass and the plating only; no source gives it a fearsome aspect, so it sits near the floor.
-- `perceptive: 12` - paired with the `tremorsense` special sense; kept low because no source shows it finding anything hidden, and a planet-wide sentence may not justify a behavior.
-- `regenerative: 8` - single digits, ordinary Generator variance on a flesh body with a long service life. Nothing sources it.
+
+#### Cut by the evidence bar (2026-09-07)
+
+| Trait | Former percent | Evidence class that failed |
+|---|---|---|
+| `solitary` | 35 | argued from absence: the record says nothing in either source shows it working or fighting alongside others |
+| `anchored` | 30 | body-type plausibility from the art's stance, with the record conceding that nothing states it cannot be moved |
+| `protective` | 25 | the quoted sentence covers protecting itself, not shielding others; the record calls it an extension |
+| `menacing` | 15 | body-type plausibility from mass and plating, with no source giving it a fearsome aspect |
+| `perceptive` | 12 | restatement of the `tremorsense` special sense; no source shows it finding anything hidden |
+| `regenerative` | 8 | no source of any kind; the record says nothing sources it |
 
 Traits considered and left out (a trait not listed has a 0 chance): `pack-bonded` (nothing shows it in company); `healing`, `inspiring`, `hypnotic`, `mind-sealed`, `foresighted`, `telekinetic`, `luminous`, `phasing`, `reflective`, `volatile`, `toxic`; `stealthy` and `slippery` (a plated body that hides by closing rather than by vanishing or escaping); `nocturnal` (Endessa is a twin-sun desert and no source gives it a night adaptation).
 
@@ -100,7 +105,6 @@ At least one listed trait sits strictly between 0 and 100, and no exclusion pair
 - `capabilities.swim`, `capabilities.climb`, `capabilities.leap`, `capabilities.manipulation` bands - no source sentence; set from the art's body and kept low.
 - `size` bands - derived from the legacy gauge, which the skill rules is not a source.
 - `attributes` bands - all ten; the legacy `statRatings` are a relative gauge only.
-- `traits.pool` percents for `anchored`, `menacing`, `perceptive`, `regenerative` - the traits are reasoned from the body, the percents themselves are authored.
 - `signatureAbility.intensity` band.
 - `lore.description` clause `Rolling carries it down the drilled shafts faster than it can walk them` - an inference from the rolled form and the drilled wells, not a stated fact.
 
@@ -152,3 +156,4 @@ Run three consecutive times with identical results, because an earlier run had r
 ## Orchestrator amendments
 
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: the labor rationale, the Nightcap cavern job, the rolling-down-shafts and shaft-collapse behavior and the 'under the twin suns it curls and waits' close were invented; the description now keeps the stub's one fact and the planet's own Generator sentence. `temperatureC` [-10, 48] -> [-10, 48] inside the habitable band [-10, 55]. Nape strands stay out of anatomy (a silhouette cannot separate a mane from quills). The run's 'validator non-determinism' was the orchestrator changing the script's planet source between its runs, not a script fault. Description now 60 words.
+- 2026-09-07, trait evidence bar (Nick): cut `solitary`, `anchored`, `protective`, `menacing`, `perceptive`, `regenerative`; pool expected count 3.50 to 2.25.

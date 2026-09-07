@@ -114,23 +114,28 @@ Legacy `statRatings` are used only as a relative gauge per operating rule 6: `sp
 - `element: ice`, primary at 100, from the species entry type of Ice; `homePlanet: krystos` from the entry planet. Secondaries are whatever the graph allows for ice (metal, water, dark), rolled per individual; nothing is picked here.
 - `affinityOdds` omitted, so the species inherits the 75/25 baseline. No lore reason to override: nothing in either source shows this creature as unusually mixed or unusually pure.
 
-### Trait pool (raw sum 3.65, expected count 3.58 after the exclusion adjustment)
+### Trait pool (raw sum 2.56, expected count 2.56)
 
 | Trait | Percent | Reason and source |
 |---|---|---|
 | `stealthy` | 100 | The entire species sentence: "incredible stealth and night vision allow it to sneak through the night with ease". Description-demanded, so universal. |
 | `nocturnal` | 96 | Environment-demanded: the sky is permanently dark, "blotting out the sun and all warmth that accompanied it", and the species sentence independently names night. Held below 100 so the pool carries variance. |
-| `solitary` | 55 | The species sentence describes one creature sneaking, with no group; and the planet history separates the wasteland stock from those "manning the many penitentiaries", so the outside role is the ungrouped one. Exclusion partner of `pack-bonded`; this is the higher percent and is the one intended to lead, so the generator rolls it first. |
 | `perceptive` | 40 | Species: "night vision", a sense claim about this species, not a planet-wide one. Not at 100 because the sentence claims a sense, not the specific act of finding what hides, and `perceptive` is the counter to `stealthy` rather than a restatement of it. |
-| `slippery` | 30 | Its purpose is deterring prisoners "seeking to escape", which is a job of not being caught in return; supported by the high legacy `evasionRating` as a relative gauge and the light frame in the art. Held low because no sentence shows it escaping a grip. |
 | `resistant` | 20 | Environmental: the Generator produced "fierce and resilient lifeforms capable of surviving in the harsh, frozen tundra". A planet-wide sentence, which section 5.3 permits for an environmental adaptation only, which is why this is a modest percent and not a guarantee. |
-| `pack-bonded` | 12 | The lower exclusion partner, kept small so most individuals are the lone stalker the sentence describes while a minority coordinate; no source shows the Akinza working in numbers, hence the low figure. |
-| `menacing` | 8 | Its engineered function is "deterring any prisoners from seeking to escape", which is an effect on courage; but that is a planet-wide sentence about the wasteland stock, so it may not carry a behavior weight at strength, and it sits in single digits. |
-| `foresighted` | 4 | Rare-trait band per section 5.3; a stalker that reads a moment early is the plausible rare individual. No source, and flagged under Authored fields. |
+
+#### Cut by the evidence bar (2026-09-07)
+
+| Trait | Former percent | Evidence class that failed |
+|---|---|---|
+| `solitary` | 55 | argued from absence (no group shown in the sentence); its planet quote is about role, not grouping, and its exclusion partner also failed |
+| `slippery` | 30 | legacy stat gauge (`evasionRating`) plus body-type plausibility (light frame); no sentence shows it evading a grip |
+| `pack-bonded` | 12 | argued from absence: the walkthrough states that no source shows the Akinza working in numbers |
+| `menacing` | 8 | planet-wide sentence about the wasteland stock stretched to a behavior trait |
+| `foresighted` | 4 | no source sentence; rare-band value only |
 
 Traits the body could plausibly carry that were left out, with reasons: `armored` (no plating, casing, or spines in the art; the covering is `fur` and the surface key is `hide`), `anchored` (a light runner is the opposite), `phasing` (corporeal, and nothing suggests it), `regenerative` (no source), `healing` and `protective` and `inspiring` (nothing shows it acting for others; the planet history in fact separates this stock from the guards), `ramming` (a light frame that strikes with claws, not mass), `toxic` and `volatile` and `reflective` (no source of any kind), `hypnotic` and `mind-sealed` and `telekinetic` (no mental register anywhere in either source), `luminous` (a creature whose function is not being seen would be actively harmed by it, and nothing in the art glows).
 
-The single trait at 100 is `stealthy`; at least one listed trait sits below 100, and the two exclusion partners are 55 and 12, never both at 100.
+The single trait at 100 is `stealthy`, and three listed traits sit below 100. Both exclusion partners were cut by the 2026-09-07 evidence bar, so neither `solitary` nor `pack-bonded` is in the pool.
 
 ### Instruments
 
@@ -229,3 +234,4 @@ All three WARNs are answered in the Script denials section above.
 - 2026-09-02, archetype scale (Nick): `archetypeWeights` converted from relative 1 to 5 weights to percents summing to 100 by largest remainder, order preserved: prowler 38, skirmisher 31, predator 23, runner 8 (was prowler 5, skirmisher 4, predator 3, runner 1).
 - 2026-09-02, archetype rethink (Nick): the converted row kept the old 5-4-3-2-1 ladder shape shared by every record, so the distribution was re-authored on this species alone: prowler 45, skirmisher 30, predator 25 (was prowler 38, skirmisher 31, predator 23, runner 8). Reasoning: a single-sentence stealth species: three archetypes cover it; runner dropped, endurance is a middle band.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [-95, -10] to [-60, -10] (intersection) against the rebuilt planet record's habitable band [-60, 15] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 0.54.
+- 2026-09-07, trait evidence bar (Nick): cut solitary, slippery, pack-bonded, menacing, foresighted; pool expected count 3.65 to 2.56.

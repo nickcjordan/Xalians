@@ -151,15 +151,7 @@
       "phasing": 100,
       "menacing": 85,
       "stealthy": 60,
-      "slippery": 55,
-      "nocturnal": 40,
-      "toxic": 30,
-      "solitary": 25,
-      "perceptive": 20,
-      "resistant": 15,
-      "luminous": 12,
-      "hypnotic": 8,
-      "foresighted": 4
+      "resistant": 15
     }
   },
   "instruments": [
