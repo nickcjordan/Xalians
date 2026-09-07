@@ -1,6 +1,6 @@
 # Batch report
 
-Generator version: 0.2.0. Seed: `batch-2026-09-07`. N per species: 200. Generated: 2026-09-07T19:37:14.751Z.
+Generator version: 0.2.0. Seed: `batch-2026-09-07`. N per species: 200. Generated: 2026-09-07T20:57:58.496Z.
 
 Every number here is an observation for the tuning session, not a target.
 
@@ -140,7 +140,7 @@ Trait landed rate vs authored percent:
 
 Observed trait count mean: 3.63 (authored expected count: 3.65). Distribution: 0: 0 (0.0%), 1: 1 (0.5%), 2: 30 (15.0%), 3: 62 (31.0%), 4: 66 (33.0%), 5+: 41 (20.5%)
 
-Ability name diversity: 0.57 (707 abilities rolled).
+Ability name diversity: 0.58 (707 abilities rolled).
 
 Size mean: height 147.0 cm (band position 0.49), weight 60.7 kg (band position 0.49).
 
@@ -187,7 +187,7 @@ Trait landed rate vs authored percent:
 
 Observed trait count mean: 3.91 (authored expected count: 3.90). Distribution: 0: 0 (0.0%), 1: 2 (1.0%), 2: 25 (12.5%), 3: 49 (24.5%), 4: 60 (30.0%), 5+: 64 (32.0%)
 
-Ability name diversity: 0.58 (705 abilities rolled).
+Ability name diversity: 0.59 (705 abilities rolled).
 
 Size mean: height 48.0 cm (band position 0.50), weight 8.0 kg (band position 0.50).
 
@@ -329,7 +329,7 @@ Trait landed rate vs authored percent:
 
 Observed trait count mean: 4.13 (authored expected count: 4.15). Distribution: 0: 0 (0.0%), 1: 1 (0.5%), 2: 15 (7.5%), 3: 35 (17.5%), 4: 81 (40.5%), 5+: 68 (34.0%)
 
-Ability name diversity: 0.51 (706 abilities rolled).
+Ability name diversity: 0.53 (706 abilities rolled).
 
 Size mean: height 70.5 cm (band position 0.52), weight 25.2 kg (band position 0.52).
 
@@ -376,7 +376,7 @@ Trait landed rate vs authored percent:
 
 Observed trait count mean: 3.41 (authored expected count: 3.47). Distribution: 0: 0 (0.0%), 1: 2 (1.0%), 2: 40 (20.0%), 3: 72 (36.0%), 4: 55 (27.5%), 5+: 31 (15.5%)
 
-Ability name diversity: 0.53 (695 abilities rolled).
+Ability name diversity: 0.54 (695 abilities rolled).
 
 Size mean: height 176.9 cm (band position 0.48), weight 357.0 kg (band position 0.47).
 
@@ -519,7 +519,7 @@ Trait landed rate vs authored percent:
 
 Observed trait count mean: 4.59 (authored expected count: 4.54). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 10 (5.0%), 3: 25 (12.5%), 4: 52 (26.0%), 5+: 113 (56.5%)
 
-Ability name diversity: 0.52 (694 abilities rolled).
+Ability name diversity: 0.53 (694 abilities rolled).
 
 Size mean: height 92.4 cm (band position 0.49), weight 0.3 kg (band position 0.48).
 
@@ -708,7 +708,7 @@ Trait landed rate vs authored percent:
 
 Observed trait count mean: 3.21 (authored expected count: 3.27). Distribution: 0: 0 (0.0%), 1: 9 (4.5%), 2: 52 (26.0%), 3: 56 (28.0%), 4: 64 (32.0%), 5+: 19 (9.5%)
 
-Ability name diversity: 0.57 (710 abilities rolled).
+Ability name diversity: 0.56 (710 abilities rolled).
 
 Size mean: height 130.0 cm (band position 0.50), weight 143.1 kg (band position 0.51).
 
@@ -806,7 +806,7 @@ Trait landed rate vs authored percent:
 
 Observed trait count mean: 5.12 (authored expected count: 5.15). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 2 (1.0%), 3: 15 (7.5%), 4: 44 (22.0%), 5+: 139 (69.5%)
 
-Ability name diversity: 0.52 (705 abilities rolled).
+Ability name diversity: 0.53 (705 abilities rolled).
 
 Size mean: height 85.8 cm (band position 0.53), weight 39.5 kg (band position 0.53).
 
@@ -854,7 +854,7 @@ Trait landed rate vs authored percent:
 
 Observed trait count mean: 3.02 (authored expected count: 3.10). Distribution: 0: 6 (3.0%), 1: 19 (9.5%), 2: 49 (24.5%), 3: 51 (25.5%), 4: 53 (26.5%), 5+: 22 (11.0%)
 
-Ability name diversity: 0.57 (693 abilities rolled).
+Ability name diversity: 0.56 (693 abilities rolled).
 
 Size mean: height 237.6 cm (band position 0.50), weight 375.1 kg (band position 0.50).
 
@@ -900,7 +900,7 @@ Trait landed rate vs authored percent:
 
 Observed trait count mean: 3.33 (authored expected count: 3.30). Distribution: 0: 0 (0.0%), 1: 9 (4.5%), 2: 32 (16.0%), 3: 74 (37.0%), 4: 59 (29.5%), 5+: 26 (13.0%)
 
-Ability name diversity: 0.52 (689 abilities rolled).
+Ability name diversity: 0.53 (689 abilities rolled).
 
 Size mean: height 56.5 cm (band position 0.47), weight 12.8 kg (band position 0.48).
 
@@ -991,7 +991,7 @@ Trait landed rate vs authored percent:
 
 Observed trait count mean: 2.83 (authored expected count: 2.70). Distribution: 0: 1 (0.5%), 1: 14 (7.0%), 2: 70 (35.0%), 3: 64 (32.0%), 4: 35 (17.5%), 5+: 16 (8.0%)
 
-Ability name diversity: 0.48 (694 abilities rolled).
+Ability name diversity: 0.49 (694 abilities rolled).
 
 Size mean: height 202.8 cm (band position 0.55), weight 95.1 kg (band position 0.56).
 
@@ -1225,7 +1225,7 @@ Trait landed rate vs authored percent:
 
 Observed trait count mean: 4.93 (authored expected count: 5.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 3 (1.5%), 3: 17 (8.5%), 4: 55 (27.5%), 5+: 125 (62.5%)
 
-Ability name diversity: 0.55 (694 abilities rolled).
+Ability name diversity: 0.56 (694 abilities rolled).
 
 Size mean: height 221.3 cm (band position 0.52), weight 121.6 kg (band position 0.53).
 
@@ -1274,7 +1274,7 @@ Trait landed rate vs authored percent:
 
 Observed trait count mean: 3.13 (authored expected count: 3.15). Distribution: 0: 0 (0.0%), 1: 12 (6.0%), 2: 50 (25.0%), 3: 70 (35.0%), 4: 40 (20.0%), 5+: 28 (14.0%)
 
-Ability name diversity: 0.55 (683 abilities rolled).
+Ability name diversity: 0.56 (683 abilities rolled).
 
 Size mean: height 87.6 cm (band position 0.50), weight 13.0 kg (band position 0.50).
 
@@ -1368,7 +1368,7 @@ Trait landed rate vs authored percent:
 
 Observed trait count mean: 3.48 (authored expected count: 3.45). Distribution: 0: 2 (1.0%), 1: 12 (6.0%), 2: 31 (15.5%), 3: 52 (26.0%), 4: 61 (30.5%), 5+: 42 (21.0%)
 
-Ability name diversity: 0.50 (703 abilities rolled).
+Ability name diversity: 0.49 (703 abilities rolled).
 
 Size mean: height 214.2 cm (band position 0.54), weight 126.4 kg (band position 0.54).
 
@@ -1464,6 +1464,6 @@ Trait landed rate vs authored percent:
 
 Observed trait count mean: 4.00 (authored expected count: 4.02). Distribution: 0: 0 (0.0%), 1: 5 (2.5%), 2: 16 (8.0%), 3: 46 (23.0%), 4: 65 (32.5%), 5+: 68 (34.0%)
 
-Ability name diversity: 0.60 (694 abilities rolled).
+Ability name diversity: 0.59 (694 abilities rolled).
 
 Size mean: height 231.4 cm (band position 0.53), weight 405.3 kg (band position 0.54).
