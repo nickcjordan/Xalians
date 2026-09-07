@@ -5,7 +5,7 @@
 // data of its own. Contract: docs/design/xalian-encyclopedia-story-pass.md
 // "Data layer (agent A1)".
 
-import { erasInOrder, planetsInOrder } from './loaders';
+import { erasInOrder, planetsInOrder, platesByEra } from './loaders';
 import { getEra, getEraStory } from './chronicle';
 import { getReaderPart } from './reader';
 import { getTour } from './tour';
@@ -68,6 +68,23 @@ function buildFixedPoints(era) {
 	}));
 }
 
+// plate: the painted frontispiece for this era, already resolved to the src
+// paths the <img> needs -- null when platesData carries no entry for this
+// era (plates.json comes from loaders.js; this module does not read the
+// manifest fields itself beyond what a plate view needs).
+function buildPlate(eraKey) {
+	const plate = platesByEra.get(eraKey);
+	if (!plate) return null;
+	return {
+		src: `/assets/img/lore/eras/${plate.file}`,
+		srcSmall: `/assets/img/lore/eras/${plate.small}`,
+		alt: plate.alt,
+		caption: plate.caption,
+		width: 1536,
+		height: 768,
+	};
+}
+
 function buildPart(era, order, beatsByEra) {
 	const beats = beatsByEra.get(era.key) || [];
 	const readerPart = getReaderPart(era.key);
@@ -84,6 +101,7 @@ function buildPart(era, order, beatsByEra) {
 		paragraphCount,
 		worlds: worldsInEra(era.key),
 		fixedPoints: buildFixedPoints(era),
+		plate: buildPlate(era.key),
 	};
 }
 

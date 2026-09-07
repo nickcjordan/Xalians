@@ -54,6 +54,17 @@ describe('getStory', () => {
 		}
 	});
 
+	it('every part has a plate with src, srcSmall, alt, and caption', () => {
+		for (const part of story.parts) {
+			expect(part.plate, `${part.era.key} plate`).toBeTruthy();
+			expect(typeof part.plate.src, `${part.era.key} plate.src`).toBe('string');
+			expect(typeof part.plate.srcSmall, `${part.era.key} plate.srcSmall`).toBe('string');
+			expect(typeof part.plate.alt, `${part.era.key} plate.alt`).toBe('string');
+			expect(typeof part.plate.caption, `${part.era.key} plate.caption`).toBe('string');
+			expect(part.plate.src.endsWith(`${part.era.key}.jpg`), `${part.era.key} plate.src ends with era key`).toBe(true);
+		}
+	});
+
 	it('every world in a part has at least one chapter tagged into that era', () => {
 		for (const part of story.parts) {
 			const rowKeys = new Set();

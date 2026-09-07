@@ -421,6 +421,21 @@ function StoryPart() {
 				<div className="enc-story-main">
 					<p className="g-kicker enc-story-kicker">Part {part.order} of {story.parts.length}</p>
 					<h1 className="g-title enc-story-title">{part.era.name}</h1>
+					{part.plate && (
+						<figure className="enc-story-plate">
+							<img
+								src={part.plate.src}
+								srcSet={`${part.plate.srcSmall} 768w, ${part.plate.src} 1536w`}
+								sizes="(max-width: 900px) 100vw, 760px"
+								width={1536}
+								height={768}
+								alt={part.plate.alt}
+								loading="eager"
+								decoding="async"
+							/>
+							<figcaption className="g-mono enc-story-plate-caption">{part.plate.caption}</figcaption>
+						</figure>
+					)}
 					<p className="g-body enc-prose enc-story-def">{part.era.definition}</p>
 
 					{part.beats.map((beat, i) => (

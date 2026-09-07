@@ -9,6 +9,7 @@ import speciesRecordsData from '../json/speciesRecords.json';
 import registriesData from '../json/registries.json';
 import tourData from '../json/tour.json';
 import narrationData from '../json/narration.json';
+import platesData from '../json/plates.json';
 
 // ---- entries -------------------------------------------------------------
 
@@ -149,6 +150,12 @@ assertNoAliasCollisions({
 });
 const aliasToKey = buildAliasMap(allEntries);
 
+// ---- plates -----------------------------------------------------------------
+
+// One painted era plate per part of The Story, keyed by era. platesData.json
+// is the source of truth for file names, alt text and captions.
+const platesByEra = new Map((platesData.plates || []).map((p) => [p.era, p]));
+
 export {
 	encyclopediaData,
 	chronicleData,
@@ -158,6 +165,8 @@ export {
 	registriesData,
 	tourData,
 	narrationData,
+	platesData,
+	platesByEra,
 	allEntries,
 	entriesByKey,
 	aliasToKey,
