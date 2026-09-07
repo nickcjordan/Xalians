@@ -4,6 +4,7 @@ import {
 	recordResult, loadHistory, recordAgainst, clearHistory,
 	loadRivalId, saveRivalId,
 } from '../reclamationStorage';
+import { GENERATOR_VERSION } from '../../../../gameplay/generator/constants.js';
 
 /*
 	Coverage for reclamationStorage's contract: every read/write degrades to a safe
@@ -46,8 +47,29 @@ describe('saveMatch / loadMatch / clearMatch', () => {
 
 	it('returns null on a version mismatch', () => {
 		const storage = makeFakeStorage();
-		storage.setItem('reclamation.match.v1', JSON.stringify({ version: 2, payload: { anything: true } }));
+		storage.setItem('reclamation.match.v1', JSON.stringify({ version: 2, generatorVersion: GENERATOR_VERSION, payload: { anything: true } }));
 		expect(loadMatch(storage)).toBeNull();
+	});
+
+	it('returns null on a generator version mismatch', () => {
+		// hardening Decision 8: a save stores seeds, so a new generator would regenerate
+		// different creatures than the saved log names; discard rather than misread
+		const storage = makeFakeStorage();
+		storage.setItem('reclamation.match.v1', JSON.stringify({ version: 1, generatorVersion: '0.0.1-not-this-one', payload: { anything: true } }));
+		expect(loadMatch(storage)).toBeNull();
+	});
+
+	it('discards a save written before the generator version was recorded', () => {
+		const storage = makeFakeStorage();
+		storage.setItem('reclamation.match.v1', JSON.stringify({ version: 1, payload: { anything: true } }));
+		expect(loadMatch(storage)).toBeNull();
+	});
+
+	it('stamps the current generator version onto the save', () => {
+		const storage = makeFakeStorage();
+		saveMatch({ seed: 'abc' }, storage);
+		const wrapper = JSON.parse(storage.getItem('reclamation.match.v1'));
+		expect(wrapper.generatorVersion).toBe(GENERATOR_VERSION);
 	});
 
 	it('returns null on corrupt JSON rather than throwing', () => {

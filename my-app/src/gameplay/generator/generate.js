@@ -33,6 +33,8 @@ import {
 	FINISH_ODDS,
 	ROLLED_ABILITY_COUNT,
 	ROLLED_INTENSITY_BAND,
+	HEFT_BANDS,
+	HEFT_MATCH_WEIGHTS,
 	SECONDARY_MEDIUM_SHARE,
 	CONDUIT_ACTIONS_BY_MEDIUM,
 	TEMPERAMENT_ATTRIBUTE_PULL,
@@ -277,12 +279,22 @@ function allowedActions(registries, template, instrument, medium) {
 	return row;
 }
 
+/*
+	Catalog entry shape (scripts/bundleAbilityCatalog.js): a bare name when the entry is
+	untagged and of ordinary heft, [name, tags] when it is tagged and of ordinary heft,
+	[name, tags, heft] otherwise. Heft is 1 small, 2 ordinary, 3 grand, computed at bundle
+	time; an entry that omits it is heft 2.
+*/
 function entryName(e) {
 	return Array.isArray(e) ? e[0] : e;
 }
 
 function entryAllows(e, instrument) {
-	return !Array.isArray(e) || e[1].includes(instrument);
+	return !Array.isArray(e) || e[1].length === 0 || e[1].includes(instrument);
+}
+
+function entryHeft(e) {
+	return Array.isArray(e) && typeof e[2] === 'number' ? e[2] : 2;
 }
 
 // name candidates: the medium's cell for the action plus the neutral pool, filtered to
@@ -290,8 +302,26 @@ function entryAllows(e, instrument) {
 function nameCandidates(catalog, medium, action, instrument, usedNames) {
 	const cell = (catalog.elements && catalog.elements[medium] && catalog.elements[medium][action]) || [];
 	const neutral = (catalog.neutral && catalog.neutral[action]) || [];
-	const pick = (list) => list.filter((e) => entryAllows(e, instrument) && !usedNames.has(entryName(e).toLowerCase())).map(entryName);
+	const pick = (list) => list.filter((e) => entryAllows(e, instrument) && !usedNames.has(entryName(e).toLowerCase()));
 	return { owned: pick(cell), neutral: pick(neutral) };
+}
+
+// the heft a rolled intensity asks for: a light hit gets a small name, a heavy one gets a
+// grand name (redesign doc 8c, hardening Decision 9)
+function targetHeft(intensity) {
+	if (intensity < HEFT_BANDS[0]) {
+		return 1;
+	}
+	return intensity > HEFT_BANDS[1] ? 3 : 2;
+}
+
+// draw one name from a candidate list, weighted toward the target heft
+function drawName(rng, entries, wanted) {
+	return rng.weighted(entries.map((e) => {
+		const distance = Math.abs(entryHeft(e) - wanted);
+		const weight = HEFT_MATCH_WEIGHTS[Math.min(distance, HEFT_MATCH_WEIGHTS.length - 1)];
+		return [entryName(e), weight];
+	}));
 }
 
 function rollAbilities(rng, template, element, secondary, registries, catalog) {
@@ -328,13 +358,16 @@ function rollAbilities(rng, template, element, secondary, registries, catalog) {
 		const fresh = allowed.filter((a) => !usedActions.has(a));
 		const action = rng.pick(fresh.length > 0 ? fresh : allowed);
 		const { owned, neutral } = nameCandidates(catalog, medium, action, instrument, usedNames);
+		// intensity rolls before the name so the name can be drawn to match it
+		const intensity = rollInBand(rng, ROLLED_INTENSITY_BAND);
+		const wanted = targetHeft(intensity);
 		// owned names carry the element's texture; the neutral pool is the fallback the
 		// catalog notes reserve for thin cells
 		let name;
 		if (owned.length > 0 && (neutral.length === 0 || rng.chance(0.8))) {
-			name = rng.pick(owned);
+			name = drawName(rng, owned, wanted);
 		} else if (neutral.length > 0) {
-			name = rng.pick(neutral);
+			name = drawName(rng, neutral, wanted);
 		} else {
 			continue;
 		}
@@ -346,7 +379,7 @@ function rollAbilities(rng, template, element, secondary, registries, catalog) {
 			instrument,
 			action,
 			medium,
-			intensity: rollInBand(rng, ROLLED_INTENSITY_BAND),
+			intensity,
 		});
 	}
 	return abilities;

@@ -57,3 +57,36 @@ Severity key: **BREAKS** = a ratified rule no longer holds under the new model. 
 4. **Specify the tilt algebra (#15) and the exclusion-ordering rule (#11a) as normative sentences in section 6.** Both are single sentences and both are currently guesswork for the implementer.
 5. **Regenerate `sample-record-graviclaw.json` (#9) once #14 is ruled**, and re-run the blind-record audit against it — the current pilot record now tests a superseded schema.
 6. **Revisit the 3.5 expected-count warning (#16)** with a real target distribution, or delete it; it is the last artifact of the retired cap and it currently encodes a bound the ruling explicitly abolished.
+
+## Dispositions (2026-09-07)
+
+Reasoning for every disposition below lives in `docs/design/xalian-creature-system-hardening.md` (Context, Assumptions and Decisions, and the "Trait-model audit dispositions" section), which this pass carried out. "Applied" means the file text was rewritten in place; "accepted as designed" means no ruling was needed because the text (or the model) is already correct; "no change" means out of scope for this pass, deferred to a later work package, or genuinely unaffected.
+
+| # | Disposition | File touched |
+|---|---|---|
+| 1 | Applied (Decision 1: rarity per trait, by inverse percent, never by count) | `docs/design/xalians-platform-vision-and-economy.md` |
+| 2 | Accepted as designed (the record schema already shows the flat `traits` array; nothing to rewrite) | `docs/design/xalian-creature-system-redesign.md` |
+| 3 | Applied (item 6 rewritten in place under the percent model) | `docs/design/xalian-creature-system-redesign.md` |
+| 4 | Applied (template-format block comment corrected to the ratified percent-pool phrasing) | `docs/design/xalian-creature-system-redesign.md` |
+| 5 | Applied (Graviclaw pilot paragraph now cites the percents actually in `graviclaw.json`) | `docs/design/xalian-creature-system-redesign.md` |
+| 6 | Applied (record shape corrected to the flat array, matching the redesign doc) | `docs/design/xalian-creature-data-structure.md` |
+| 7 | Applied ("planets weight the pools; species declare guaranteed traits" reworded to the planet-fact-justifies-100 / behavioral-traits-never-planet-justified / body-demanded-is-100 rule) | `docs/design/xalian-creature-data-structure.md` |
+| 8 | Accepted as designed (the opening "Species are templates" sentence already read correctly; no "guaranteed traits" wording found) | `docs/design/xalian-creature-data-structure.md` |
+| 9 | No change (sample record regeneration needs generator 0.2.0 and a fixed seed; out of this pass's file list, tracked under WP3) | none |
+| 10 | Accepted as designed (the `mind`/`manipulation.means` predicates in `validate-template.js` already test pool membership "at 100", not the retired `guaranteed` field); skill wording fixed under Decision 6 | `.claude/skills/migrate-species/SKILL.md` |
+| 11 | Applied (Decision 4: exclusion partners ordered by tilted percent, ties by template order, made normative in section 6) | `docs/design/xalian-creature-system-redesign.md` |
+| 12 | Applied (trait section rewritten to argue the percents in `graviclaw.json`; dropped `nocturnal`, which the JSON does not carry) | `docs/species-templates/graviclaw.md` |
+| 13 | Applied (trait section rewritten to match `tetrahive.json` exactly; dropped `stealthy`; corrected the `slippery`/`mind-sealed` order) | `docs/species-templates/tetrahive.md` |
+| 14 | Accepted as designed (the record already stores the flat landed-keys array with no `guaranteed`/`rolled` split; this is what the redesign doc's own ratified corollary in section 1 already states) | `docs/design/xalian-creature-system-redesign.md` |
+| 15 | Applied (Decision 3: tilt formula `1 + TILT_STRENGTH × (p − 0.5) × direction`, `TILT_STRENGTH` = 0.6, made normative in section 6) | `docs/design/xalian-creature-system-redesign.md` |
+| 16 | Applied (Decision 5: the 3.5 expected-count WARN removed; the now-unused `expected` computation removed with it) | `docs/species-templates/tools/validate-template.js`, `docs/species-templates/tools/CHANGELOG.md` |
+| 17 | Accepted as designed (no cap; the batch report showing the observed count distribution is a later work package, WP4) | none |
+| 18 | Applied (Decision 6: skill line 101's "telekinetic is guaranteed" reworded to "at 100 in the pool"; the validator predicates were already correct) | `.claude/skills/migrate-species/SKILL.md` |
+| 19 | Applied (parking-lot line reworded from "trait counts"/"guaranteed∩rolled" to "trait percent distributions"/the exclusion-pair conditional probability) | `docs/design/xalian-creature-system-redesign.md` |
+| 20 | No change (the exclusion-list rule already reads correctly under "percents"; no cross-reference to the ordering rule was added) | none |
+| 21 | Applied ("weights" reworded to "percents"; retired keys `conduit`/`healer`/`venomous`/`guardian` replaced with their current names or dropped) | `docs/design/xalian-creature-system-redesign.md` |
+| 22 | No change (about graded attribute values, not traits; confirmed not an instance of the old framing) | none |
+| 23 | Applied (fixed together with #1 in the assumptions table) | `docs/design/xalians-platform-vision-and-economy.md` |
+| 24 | No change (still implementable; the numeric definition it needs is a later free-lever design task) | none |
+| 25 | No change (ordinary-English use of "trait"; no trait-model dependency) | none |
+| 26 | No change (ability grammar has no trait-count dependency; unaffected) | none |

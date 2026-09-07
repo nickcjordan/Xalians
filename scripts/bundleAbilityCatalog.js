@@ -24,6 +24,13 @@
 //   { version, source, elements: { fire: { strike: [ "Blazing Strike", ["Blazing Punch", ["fists"]] ] } },
 //     neutral: { strike: [ ... same entry shape ... ] }, counts: { ... } }
 //
+// An entry is a bare name when it carries no instrument tags and its heft is 2,
+// [name, tags] when it is tagged and its heft is 2, and [name, tags, heft] otherwise
+// (tags may then be an empty array). Heft is the weight a name carries when spoken: 1 for
+// a small name, 2 for an ordinary one, 3 for a grand one. It is computed here, never
+// authored, per Decision 9 of docs/design/xalian-creature-system-hardening.md, and the
+// generator draws toward the heft that matches an ability's rolled intensity.
+//
 // Idempotent. Run by hand after any catalog change (bundleLore.js calls it too):
 //   node scripts/bundleAbilityCatalog.js
 const fs = require('fs');
@@ -42,8 +49,50 @@ const INSTRUMENTS = new Set([
   'swarm', 'aura',
 ]);
 
+// ---- heft ---------------------------------------------------------------------------
+
+// Grand words: catalog vocabulary that makes a name feel like an event rather than a move.
+// Every word here occurs in the shipped cells (checked against abilityCatalog.json), so
+// the list tags real names and not hypothetical ones. Levers, like everything else.
+const GRAND_WORDS = new Set([
+  'cataclysm', 'cataclysmic', 'annihilation', 'oblivion', 'singularity', 'supernova', 'nova',
+  'eruption', 'bombardment', 'doom', 'ruin', 'tempest', 'maelstrom', 'inferno', 'deluge',
+  'avalanche', 'extinction', 'horizon', 'barrage', 'torrent', 'fusillade', 'onslaught',
+  'detonation', 'firestorm', 'conflagration', 'vortex', 'implosion', 'earthquake',
+  'reckoning', 'immolation', 'requiem', 'abyss', 'finality', 'cyclone',
+]);
+
+// Syllable heuristic: count runs of vowels (y counts as a vowel), then drop one for a
+// silent trailing "e" when that leaves at least one syllable. It over-counts a few names
+// ("Fire" reads as one syllable, scores two) and under-counts a few others, which is
+// acceptable: heft only steers a weighted draw, it is not a contract.
+function syllables(word) {
+  const w = word.toLowerCase().replace(/[^a-z]/g, '');
+  if (!w) return 0;
+  const groups = w.match(/[aeiouy]+/g);
+  let n = groups ? groups.length : 1;
+  if (n > 1 && /[^aeiouy]e$/.test(w)) n -= 1;
+  return Math.max(1, n);
+}
+
+// heft(name) -> 1 small, 2 ordinary, 3 grand.
+//   3 when the name has three or more words, or five or more syllables in total, or
+//     contains a grand word;
+//   1 when it is a single word of at most two syllables;
+//   2 otherwise.
+function heft(name) {
+  const words = String(name).split(/[\s-]+/).filter(Boolean);
+  const total = words.reduce((n, w) => n + syllables(w), 0);
+  const grand = words.some((w) => GRAND_WORDS.has(w.toLowerCase().replace(/[^a-z]/g, '')));
+  if (words.length >= 3 || total >= 5 || grand) return 3;
+  if (words.length === 1 && total <= 2) return 1;
+  return 2;
+}
+
 function entry(name, tags) {
   const known = (tags || []).map((t) => t.trim().toLowerCase()).filter((t) => INSTRUMENTS.has(t));
+  const h = heft(name);
+  if (h !== 2) return [name, known, h];
   return known.length > 0 ? [name, known] : name;
 }
 
@@ -53,6 +102,7 @@ function nameOf(e) {
 
 // ---- element cells -----------------------------------------------------------
 
+const skipped = [];
 function parseCellLine(line) {
   const names = [];
   line.split(' · ').forEach((raw) => {
@@ -60,7 +110,10 @@ function parseCellLine(line) {
     if (!s) return;
     const tagMatch = s.match(/\[([^\]]*)\]/);
     const tags = tagMatch ? tagMatch[1].split(',') : [];
-    s = s.replace(/\[[^\]]*\]/g, '').replace(/\((dual|cross|see)[^)]*\)/gi, '').replace(/\*/g, '').trim();
+    s = s.replace(/\[[^\]]*\]/g, '').replace(/\([^)]*\)/g, '').replace(/\*/g, '').trim();
+    s = s.replace(/\([^)]*$/, '').trim(); // an unclosed note that ran past the separator
+    if (/\)/.test(s)) return; // the tail of a split parenthetical note, never a name
+    if (/\//.test(s)) { skipped.push(s); return; } // slash shorthand for several names; fix in the markdown
     s = s.replace(/\s+/g, ' ');
     if (!s) return;
     names.push(entry(s, tags));
@@ -96,6 +149,7 @@ function parseNeutralItem(raw) {
   let s = raw.trim();
   if (!s) return null;
   if (/\(flag:/i.test(s)) return null; // held out by the file's own disposition
+  if (/\)/.test(s) && !/\(/.test(s)) return null; // the tail of a comma-split note, never a name
   const instMatch = s.match(/\(instrument:\s*([^)]*)\)/i);
   const tags = instMatch ? instMatch[1].split(/[\/,]/) : [];
   s = s.replace(/\([^)]*\)/g, '').replace(/\*/g, '').trim().replace(/\s+/g, ' ');
@@ -149,22 +203,28 @@ function dedupe(list) {
   });
 }
 
+function heftOf(e) {
+  return Array.isArray(e) && e.length > 2 ? e[2] : 2;
+}
+
 function build() {
   const elements = {};
-  const counts = { elements: {}, neutral: {} };
+  const counts = { elements: {}, neutral: {}, heft: { 1: 0, 2: 0, 3: 0 } };
+  const tally = (list) => list.forEach((e) => { counts.heft[heftOf(e)] += 1; });
   ELEMENTS.forEach((el) => {
     const cells = parseElementFile(el);
-    ACTIONS.forEach((a) => { cells[a] = dedupe(cells[a]); });
+    ACTIONS.forEach((a) => { cells[a] = dedupe(cells[a]); tally(cells[a]); });
     elements[el] = cells;
     counts.elements[el] = ACTIONS.reduce((n, a) => n + cells[a].length, 0);
   });
   const neutral = parseNeutralPools();
   ACTIONS.forEach((a) => {
     neutral[a] = dedupe(neutral[a]);
+    tally(neutral[a]);
     counts.neutral[a] = neutral[a].length;
   });
   return {
-    version: '1.0.0',
+    version: '1.1.0',
     source: 'docs/ability-catalog/consolidated-<element>.md (v5 cells) and neutral-pools.md, bundled by scripts/bundleAbilityCatalog.js',
     elements,
     neutral,
@@ -174,11 +234,14 @@ function build() {
 
 function main() {
   const catalog = build();
+  if (skipped.length) console.warn('skipped ' + skipped.length + ' slash-shorthand tokens: ' + skipped.join(' | '));
   const outPath = path.join(outDir, 'abilityCatalog.json');
   fs.writeFileSync(outPath, JSON.stringify(catalog) + '\n');
   const total = Object.values(catalog.counts.elements).reduce((a, b) => a + b, 0);
   const neutralTotal = Object.values(catalog.counts.neutral).reduce((a, b) => a + b, 0);
+  const h = catalog.counts.heft;
   console.log(`wrote abilityCatalog.json: ${total} element names, ${neutralTotal} neutral names, ${Math.round(fs.statSync(outPath).size / 1024)} KB`);
+  console.log(`heft: ${h[1]} small, ${h[2]} ordinary, ${h[3]} grand`);
 }
 
 if (require.main === module) {
