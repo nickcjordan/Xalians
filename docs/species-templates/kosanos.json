@@ -155,7 +155,8 @@
     "pool": {
       "anchored": 55,
       "resistant": 40,
-      "menacing": 25
+      "menacing": 25,
+      "regenerative": 25
     }
   },
   "instruments": [

@@ -45,18 +45,18 @@ Primary `plant` from the species entry type. On graph secondaries for plant are 
 
 ### Trait pool
 
-Expected count is 2.8 traits, computed as 95 plus 80 plus 70 plus 35, which is 280, divided by 100. There is no exclusion pair in the pool, since `solitary` is absent. Four entries were cut by the 2026-09-07 evidence bar and are recorded in the table below.
+Expected count is 3.25 traits, computed as 95 plus 80 plus 70 plus 45 plus 35, which is 325, divided by 100. There is no exclusion pair in the pool, since `solitary` is absent. Three entries remain cut by the 2026-09-07 evidence bar and are recorded in the table below.
 
 - `toxic: 95`: species, "their saliva contains a powerful sedative which paralyzes anything that it comes in contact with". The body demands it; the species is defined by a debilitating agent delivered by its natural weapon. Not 100, because the description also says the sedative properties "have been enhanced for a far-more dangerous galaxy", which implies variance in how much any one individual carries, and because at least one entry has to sit below 100 anyway.
 - `stealthy: 80`: species, "camouflaging into the planet’s many flowery meadows as they travel". Concealment until it acts is the definition, and this is a species sentence, not a planet-wide one.
 - `pack-bonded: 70`: species, "swarms of flittering Avililies protect the most sacred parts of Floria’s jungles". They act in numbers. Not 100 because the same description also shows individual Avililies carried alone by Vallerii explorers, species, "serving as mobile bug repellent on Florian ventures". `solitary` is not in the pool at all, so no exclusion comparison arises.
+- `perceptive: 45`: class 4, ratified fields of the record itself. `physiology.senses` grades sight at 65 to 85 and smell at 50 to 70, and the widened bar admits a graded sense band whose upper bound reaches 60 or more as evidence for this trait. Restored at its former percent because two acute senses on a small hunting bird are a strong tendency rather than a certainty, and the record grades hearing well below the bar.
 - `protective: 35`: species, "swarms of flittering Avililies protect the most sacred parts of Floria’s jungles". The instinct to shield is right there in the verb, but the object is a place rather than another creature, so this is a partial fit at a moderate percent rather than a high one.
 
-#### Cut by the evidence bar (2026-09-07)
+#### Cut by the evidence bar (2026-09-07, iterations one and two)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
-| `perceptive` | 45 | no source sentence for the trait; the quoted sentence is about attracting insects, and the case rests on body-type plausibility plus the sight and smell stat bands |
 | `slippery` | 40 | body-type plausibility from the art (a small body on long wings); the walkthrough concedes no sentence shows it escaping a hold |
 | `hypnotic` | 15 | an appearance phrase ("vibrant floral display") stretched to a behavior; no sentence shows it entrancing anything |
 | `inspiring` | 10 | a restatement of the kept `pack-bonded` sentence plus an argument from absence, since no sentence shows it doing anything for an ally |
@@ -135,3 +135,4 @@ WARN conduits.source                conduit secretion for plant: the validator a
 - 2026-09-02, lifespan (Nick): the fleeting clause now covers swarm and conjured-unit bodies only (skill v2.18); `lifespan` set to `short`, was `fleeting`.
 - 2026-09-02, spelling (Nick): misspellings in the source description were corrected upstream in species.json (temperment, closed pedals of a flower, flittering Avilies, levatating, Terragoygles as applicable) and the carried text and quotations updated to match; misspellings are never carried into a record.
 - 2026-09-07, trait evidence bar (Nick): cut perceptive, slippery, hypnotic, inspiring; pool expected count 3.90 to 2.80.
+- 2026-09-07, trait evidence bar iteration two (Nick): restored perceptive (45, class 4, the record's graded sight and smell bands); cut none; expected count 2.80 to 3.25.

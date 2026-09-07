@@ -48,12 +48,13 @@ Four entries, shaped rather than laddered. `berserker` 40, strength and enduranc
 
 Legacy `statRatings` gives only two marks, a medium standard attack and a high recovery, used as a relative gauge and not copied. `strength` 55 to 78 and `endurance` 58 to 80 are the top pair, species: "its powerful horns can break through the strongest of material". `resilience` 52 to 74 for the plated limbs. `vitality` 42 to 62, mid, since the trunk is unplated. `willpower` 40 to 62 for a body built to keep boring. `instinct` 35 to 55 with the tremor read. `agility` 28 to 48 and `reflex` 25 to 45, a heavy plated frame. `intelligence` 22 to 42, well under true-human, an excavation body. `charisma` 15 to 32, nothing in either source presents it.
 
-### Trait pool (expected count 2.25)
+### Trait pool (expected count 2.75)
 
 - `armored` 100: body-demanded. Species: "This creature has a metallic exoskeleton on its limbs", and an armored covering carries the trait at 100.
-- `resistant` 55: environment-demanded, planet: "Despite its immense productive potential, the world was inimical to organic life, making it very difficult for the Vallerii to sustain a local workforce" and planet: "Xalians that paid no mind to the heat of its forges". An environmental adaptation, which a planet-wide sentence may justify.
+- `regenerative` 85: restored under evidence class 5, Nick's authored legacy design intent. The `recoveryRating` of high in `species.json` is one of the two ratings the widened bar admits, and it maps to regenerative. The Veridium Generator environmental report reinforces it, listing self-repairing frame architectures among the planet's fauna and self-repair routines among its output priorities.
 - `ramming` 45: species: "its powerful horns can break through the strongest of material" is a body fact about driving a point through mass, and `ramming` is the trait for blows landing harder with movement behind them.
 - `anchored` 25: a boring body braces against what it cuts, and the art shows a wide planted stance. Held low because no sentence states it.
+- `perceptive` 20: restored under evidence class 4, a ratified field of the record. `physiology.senses.special` carries tremorsense, which the widened bar reads as the body fact behind perceptive. Held at its former percent, low because the graded sense bands are all modest.
 
 Traits considered and left off, with reasons: `menacing` and `inspiring`, neither source presents the body socially; `stealthy`, a plated biped carrying two shafts longer than itself; `toxic` and `volatile`, no agent or reaction named; `healing` and `protective`, no sentence shows it acting on others; `luminous`, `phasing`, `telekinetic`, `foresighted`, `hypnotic`, `mind-sealed`, `reflective`, `slippery`, and `nocturnal`, none supported by either source.
 
@@ -61,9 +62,8 @@ Traits considered and left off, with reasons: `menacing` and `inspiring`, neithe
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
-| `regenerative` | 85 | The legacy stat gauge alone: the legacy recovery rating, with no sentence showing the body repairing itself. |
-| `perceptive` | 20 | Body-type plausibility: a minority tilt read off the tremor-sensing body, with no source sentence. |
-| `solitary` | 15 | Argued from absence: neither source shows pack or isolation for this species. |
+| `solitary` | 15 | No ratified field and no sentence: neither source shows pack or isolation, and Veridium's report says nothing about group life. |
+| `resistant` | 55 | Ruling B: the planet history's only specific cause is the heat of the forges, and the general line about a world inimical to organic life names no toxin, disease, radiation, corrosion, or hostile atmosphere. Veridium's report hazards are machinery proximity, discharge arcs, and molten pours, which are injury rather than contamination. |
 
 ### Signature ability
 
@@ -125,3 +125,4 @@ logged to docs\species-templatesalidation-logoromeer.jsonl
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [-12, 36] to [-10, 36] (intersection) against the rebuilt planet record's habitable band [-10, 80] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 1.55.
 - 2026-09-02, art correction from Nick (the artist): the head growths are antennae, not antlers, and the drills are its hands. `antlers` replaced by `antennae`; the drill hands are keyed `spurs` (limb spikes; `horns` is a cranial key and the registry has no drill key), so instruments are spurs and shell and the signature is spurs / strike. Prose keeps the source phrase "drill-like horns" for the hands and no longer describes head horns.
 - 2026-09-07, trait evidence bar (Nick): cut `regenerative`, `perceptive`, `solitary`; pool expected count 3.45 to 2.25.
+- 2026-09-07, trait evidence bar iteration two (Nick): restored `regenerative` (85, class 5) and `perceptive` (20, class 4); cut `resistant` (55, ruling B); expected count 2.25 to 2.75.

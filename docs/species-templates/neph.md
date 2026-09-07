@@ -72,7 +72,7 @@ Legacy `statRatings` used as a relative gauge only: specialAttackRating high, sp
 
 ### Trait pool
 
-Expected count is 3.40 traits per individual (`volatile` 1.00 + `pack-bonded` 0.90 + `slippery` 0.70 + `resistant` 0.45 + `protective` 0.30 + `menacing` 0.05). There is no exclusion pair in this pool because `solitary` is not listed, so no exclusion adjustment applies. Revised 2026-09-07 by the trait evidence bar: the cut table below lists what was removed, and the surviving pool stands at 3.05 expected traits.
+Expected count is 3.40 traits per individual (`volatile` 1.00 + `pack-bonded` 0.90 + `slippery` 0.70 + `resistant` 0.45 + `protective` 0.30 + `menacing` 0.05). There is no exclusion pair in this pool because `solitary` is not listed, so no exclusion adjustment applies. Revised 2026-09-07 by the trait evidence bar, and re-checked the same day under iteration two of that bar with no change: the cut table below lists what is still removed, and the surviving pool stands at 3.05 expected traits.
 
 - `volatile` 100: body-demanded. Species, "being composed almost entirely hydrogen means that the Neph can also spray their enemies with bouts of flammable gas", and planet, "entire flocks of Neph, being 95% hydrogen, were being ignited". Every Neph is hazardous to strike. This is a fact of the body, so it is universal.
 - `pack-bonded` 90: species, "travel in free-floating herds" and "roam the clouds in flocks", both about this species by name, not a planet-wide sentence. Not 100 so that Generator variance can produce a solitary drifter. `solitary` is not listed at all, so it has a 0 chance; the two exclusion partners therefore cannot both land.
@@ -87,7 +87,7 @@ Expected count is 3.40 traits per individual (`volatile` 1.00 + `pack-bonded` 0.
 | `protective` | 30 | the cited sentence describes self-defense; shielding others is inferred from the flocking |
 | `menacing` | 5 | a use others put it to, not a presence the sources describe it projecting |
 
-Pool expected count 3.40 to 3.05. No surviving percent was changed.
+Pool expected count 3.40 to 3.05 in iteration one, and unchanged by iteration two: neither cut entry clears the widened bar. `protective` has no ratified field, no drawn feature, and no sentence behind it. `menacing` does clear the size half of the field class, since the Neph is the second-tallest species on the roster, but the class also requires a threat sentence, and the only candidate describes what the Neph does when it is threatened rather than any presence it projects. `resistant` was re-checked under the ruling that heat, cold, or desiccation alone never justifies it and survives: the planet-wide fact behind it is sulfuric acid cloud contact, which the Saiphus hazard list repeats, and that is corrosion rather than temperature.
 
 ### Element
 
@@ -179,3 +179,4 @@ The single remaining WARN is answered in the Script denials section above and in
 - 2026-09-02, after the independent validation (PASS) and the orchestrator's own look at the art (single floating bell, eight tubular tentacles with open ends, two eyes): no value changed. Weight band kept at 30 to 90 kg on the sourced buoyancy; lifespan `standard` follows the rubric, and the rubric note about floating bodies is carried to the rulings file.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [-60, 45] to [-30, 45] (intersection) against the rebuilt planet record's habitable band [-30, 45] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 1.79.
 - 2026-09-07, trait evidence bar (Nick): cut protective, menacing; pool expected count 3.40 to 3.05.
+- 2026-09-07, trait evidence bar iteration two (Nick): restored none; cut none; expected count 3.05 to 3.05.

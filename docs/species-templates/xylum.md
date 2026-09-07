@@ -70,20 +70,22 @@ Upgraded-description clauses and their sources:
 
 **Trait pool.** Expected count is (100 + 72 + 25 + 25 + 60 + 15 + 12 + 35) divided by 100, which is 3.44. There is no exclusion pair active in this pool, since `pack-bonded` is not listed, so the figure stands at 3.44. The first authored row summed to 3.82 and the script raised a WARN on it (see Script denials); I trimmed the four weights that rest on no species sentence rather than argue for a heavier creature.
 - `anchored 100` (body-demanded): the registry entry is a body that cannot be moved against its will. A root mass that "lives mostly underground" (species) and is drawn breaking the soil line in the art is exactly that.
+- `regenerative 72`: restored 2026-09-07 under class 5, Nick's authored legacy design intent. The `statRatings` block for Xylum in `species.json` carries `recoveryRating` of high, which the widened bar maps directly to this trait. Floria's Generator Environmental Report lists regenerative tissue among its output priorities, which agrees, but the legacy rating alone is what carries the entry. Restored at the former 72.
+- `perceptive 15`: restored 2026-09-07 under class 4, a ratified field of the record. `physiology.senses.special` carries `tremorsense`, which the widened bar names outright as justification for this trait. On a blind buried body with a sight band topping out at 15, tremorsense is the only way it finds anything, and it stays at the authored 15.
 - `resistant 35`: an environmental adaptation the planet may justify. The Floria history names "massive infestations of toxic fungi" (planet) in the same ground layer this species is buried in, so a soil-dwelling body that shrugs off contamination is a fair environmental weight, and environmental adaptation is the one thing a planet-wide sentence may support.
 
 #### Cut by the evidence bar (2026-09-07)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
-| `regenerative` | 72 | the legacy stat gauge alone ('the one high legacy rating is recovery') plus body-type plausibility; the entry concedes 'the stub never states it and the legacy rating is a relative gauge, not a fact' |
-| `healing` | 25 | body-type plausibility from the plant element; no sentence |
-| `protective` | 25 | a planet-wide sentence stretched to a behavior, which the rule reserves for environmental adaptations |
-| `solitary` | 60 | argued from absence ('no source showing more than one at a time'); a single organism in a portrait silhouette is true of every species art and evidences nothing |
-| `perceptive` | 15 | 'no species sentence supports it as a behavior' |
-| `menacing` | 12 | body-type plausibility ('a large mass that erupts from the ground unsettles'); 'no species sentence says so' |
+| `healing` | 25 | still body-type plausibility from the plant element; no sentence, no ratified field, and no legacy rating maps to it |
+| `protective` | 25 | class 3 fails: the planet sentence behind it is stretched to a behavior, and a planet fact may support an environmental adaptation only |
+| `solitary` | 60 | still argued from absence; a single organism in a portrait silhouette is true of every species art and evidences nothing |
+| `menacing` | 12 | class 4 fails: the size is among the largest of the roster, but large justifies menacing only alongside a threat sentence, and neither source carries one |
 
-Expected trait count after the bar: (100 + 35) / 100 = 1.35. `resistant` at 35 is the sub-100 entry the model requires.
+Expected trait count after iteration two: (100 + 72 + 35 + 15) / 100 = 2.22. `regenerative` at 72 and `resistant` at 35 are sub-100 entries, so the model's requirement holds.
+
+`resistant` re-checked under ruling B and kept: its support is the toxic fungal load of Floria's soil layer, which the Generator report repeats as a hazard. That is contamination, not temperature, so the ruling does not touch it.
 
 - Left out on purpose: `armored` (no armored covering and no `shell` key, so the body does not demand it), `toxic` (the toxic fungi belong to the planet, not to this creature's weapons), `nocturnal` (Floria is not a night world), `stealthy` (a giant mass is the opposite), `luminous`, `reflective`, `volatile`, `ramming`, `hypnotic`, `inspiring`, `slippery`, `mind-sealed`, `phasing`, `foresighted`, `telekinetic`, and `pack-bonded` (see `solitary`). Each is absent, which means a 0 chance.
 
@@ -153,3 +155,4 @@ logged to docs/species-templates/validation-log/xylum.jsonl
 
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: the Genesis Prototype origin stated as fact, the water-and-mineral feeding, the 'rises where the ground is disturbed' behavior with its causal claim about Vallerii survey parties, and the closing 'belongs to Xylum' flourish were all unsourced; cut, and the origin now carries the history's own hedge without naming the Xylum. Encyclopedia reduced to the stub's facts. The run's art line 'part of the body is below the surface' overstates the render: the base meets the ground line, nothing is drawn below it; no value depended on it. Height band ruled as the visible crown (a recorded height is what a surveyor could see). Description now 103 words.
 - 2026-09-07, trait evidence bar (Nick): cut regenerative, healing, protective, solitary, perceptive, menacing; pool expected count 3.44 to 1.35.
+- 2026-09-07, trait evidence bar iteration two (Nick): restored regenerative (72, class 5, legacy `recoveryRating` high), perceptive (15, class 4, `senses.special` tremorsense); cut none; expected count 1.35 to 2.22.

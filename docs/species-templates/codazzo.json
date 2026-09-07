@@ -155,7 +155,8 @@
       "regenerative": 100,
       "volatile": 85,
       "stealthy": 70,
-      "resistant": 55
+      "resistant": 55,
+      "perceptive": 40
     }
   },
   "instruments": [

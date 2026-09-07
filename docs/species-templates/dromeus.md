@@ -72,9 +72,10 @@ Legacy `statRatings` used only as a relative gauge: `standardAttackRating: high`
 Independent percents, one roll each.
 
 - `resistant: 92`: environment-demanded and near universal. planet, "The acrid air is thick with volcanic smoke, staining the sky crimson and lacing the atmosphere with sulfuric ash and pungent, toxic fumes." and planet, "creatures capable of adapting to Magmuth's primeval conditions and bioengineered to survive in a world of heat, fire, lava, and ash." A planet-wide sentence is explicitly allowed to justify `resistant`. Not 100 because nothing in the sources makes it absolute, and the pool needs entries below 100.
+- `perceptive: 40`: restored under evidence class 4, a ratified field of the record. `physiology.senses.sight` is banded [70, 90] and `hearing` [50, 70], so the graded sight band clears the upper bound of 60 that the widened bar admits. A sight band that high is the body fact itself, not an inference from body type.
 - `ramming: 60`: species, "When running at high speeds, they can spread their wings to temporarily take flight as they launch into the air and sink their teeth into their prey." This is precisely a blow landing far harder with movement behind it, and it is the species' own act, not a planet claim.
 
-Expected trait count: 0.92 + 0.60 = 1.52 traits per individual. No exclusion pair remains, since both `pack-bonded` and `solitary` were cut by the evidence bar.
+Expected trait count: 0.92 + 0.60 + 0.40 = 1.92 traits per individual. No exclusion pair remains, since both `pack-bonded` and `solitary` were cut by the evidence bar.
 
 Traits I considered and left out, so they carry a 0 chance: `armored` (no shell, no plating, `covering: bare`); `regenerative` (no source); `nocturnal` (Magmuth is not a night world; planet, "Magmuth orbits a red dwarf star, bringing hellish heat to the world's surface"); `volatile` (nothing in the sources makes it hazardous to strike); `toxic` (teeth are sharp, not envenomed); `luminous` (the art shows no light organs); `foresighted` and `telekinetic` (no source at all, and I decline to sprinkle rares for variety); `healing`, `protective`, `inspiring`, `anchored`, `phasing`, `reflective`, `hypnotic`, `mind-sealed` (each contradicted by or absent from the body and both sources).
 
@@ -82,11 +83,10 @@ Traits I considered and left out, so they carry a 0 chance: `armored` (no shell,
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
-| `pack-bonded` | 55 | No source sentence: the plural pronouns in the description are grammar, not a statement about living or hunting in groups. |
-| `perceptive` | 40 | Body-type plausibility plus the legacy sight band; the walkthrough itself says the source shows hunting, not detecting. |
-| `slippery` | 30 | The legacy stat gauge alone: the registry tilt on the agility band, with no sentence. |
+| `pack-bonded` | 55 | Class 3 fails on kind: Magmuth's report notes elevated inter-pack aggression, but a planet-wide fact may carry only an environmental adaptation, never a behavioral trait, and no ratified field states group living. |
+| `slippery` | 30 | Class 5 fails: the legacy `evasionRating` for Dromeus is empty, so the one rating that maps to slippery is absent, and no other rating substitutes. |
 | `stealthy` | 20 | Argued from absence: a pursuit runner is said not to be an ambusher by nature, with no sentence showing it moving unseen. |
-| `menacing` | 15 | Body-type plausibility: the quoted teeth are a body fact, and the claim that they unsettle opponents is inference. |
+| `menacing` | 15 | Class 2 fails: the art shows the jaws thrown wide inside a mid-stride hunting lunge, which is the attack rather than a threat display, and no threat sentence exists to pair with a size claim. |
 | `solitary` | 12 | No source sentence: listed only as the lower half of the exclusion pair. |
 
 ### Signature ability
@@ -162,3 +162,4 @@ WARN signature.instrument.list      signature instrument "fangs" is not in the s
 - 2026-09-02, covering (Nick): `covering` set to `feathers` under the new partial-surface sentence in the covering rule (skill v2.17); was `bare`.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [65, 240] to [65, 105] (intersection) against the rebuilt planet record's habitable band [40, 105] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 1.53.
 - 2026-09-07, trait evidence bar (Nick): cut `pack-bonded`, `perceptive`, `slippery`, `stealthy`, `menacing`, `solitary`; pool expected count 3.17 to 1.52.
+- 2026-09-07, trait evidence bar iteration two (Nick): restored `perceptive` (40, class 4); cut nothing further, since `resistant` rests on Magmuth's sulfuric ash and toxic fumes rather than on heat alone; expected count 1.52 to 1.92.

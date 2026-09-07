@@ -104,19 +104,19 @@ Legacy `statRatings` used only as a relative gauge: specialDefenseRating low and
 - `charisma [15, 35]`: nothing in either source gives it presence.
 - `resilience [15, 35]`: legacy gauge: specialDefenseRating low, the one explicitly low rating, and the art shows no armored aspect.
 
-### Trait pool (expected count 1.80)
+### Trait pool (expected count 2.15)
 
-Sum of percents is 180, and the exclusion adjustment does not apply because `solitary` is not in the pool, so the expected count is 1.80.
+Sum of percents is 215, and the exclusion adjustment does not apply because `solitary` is not in the pool, so the expected count is 2.15.
 
 - `resistant: 90`: planet: "Soon, aquatic, water-breathing Xalians capable of surviving in its rising and acidifying oceans began to populate the sea" and planet: "Vicious storm winds carried the toxic microbes from pole to pole, wiping out the Vallerii who remained. Only the subsurface Xalians survived". This is an environmental adaptation of the body, which the skill permits a planet-wide sentence to justify; it is not at 100 because the sentence describes Poseidas Xalians as a class rather than this species by name, so a small share of Generator variance is left.
 - `slippery: 65`: species: "its slender frame"; art: a smooth-edged, long, segmented body with no protruding grip points. A body that is both slender and smooth is hard to hold, and it is the trait a water fighter most plainly carries. Below 100 because no source sentence shows it escaping anything.
+- `regenerative: 35`: evidence class 5, the legacy `statRatings` mapping. Nick's authored design intent for this species sets `recoveryRating` to high, and the ratified iteration-two bar reads a high recovery rating as `regenerative`. It is one of only two filled rating fields on the species, so it is the strongest relative signal the authored inputs give about this body; restored at its former percent of 35 because no prose sentence shows it repairing itself.
 - `perceptive: 25`: art: two very large forward eyes with slit pupils and two long antennae. Art is a source for the body, and the body here is built around sensing; kept low because no sentence shows it finding anything hidden.
 
 #### Cut by the evidence bar (2026-09-07)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
-| `regenerative` | 35 | legacy stat gauge alone (recoveryRating), no source sentence |
 | `pack-bonded` | 30 | planet fact stretched to a behavioral trait (collective labor on the rigs) |
 | `stealthy` | 15 | body-type plausibility from the silhouette, no sentence and no stealth feature in the art |
 | `protective` | 10 | planet fact stretched to a behavioral trait, flagged in the record as weakly evidenced |
@@ -200,3 +200,4 @@ WARN signature.action.matrix        signature action "snare" is outside the phys
 
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: the rig job, algae trawling (the source's subject is the rigs), deck hauling, death-tide survival and the deep-cities workplace were all invented for this species; rewritten to the two source sentences and the planet-level facts. `claws` and `jaws` removed from anatomy and instruments: the art draws pad-tipped splayed toes and no mouth at all (the text's 'webbed feet' wins over the art for the feet, and no registry key names a webbed foot). `coils` added (a long segmented body that wraps, the registry's wrap-and-crush body) and the signature moved to coils / snare, inside the physical row, so the rule 4 exception is gone. Encyclopedia's 'faster in the sea than on land' replaced with the source's own combat claim. `regenerative` stays at 35 (legacy ratings are a gauge, not a sentence). Art matched the run's reading.
 - 2026-09-07, trait evidence bar (Nick): cut `regenerative`, `pack-bonded`, `stealthy`, `protective`; pool expected count 2.70 to 1.80.
+- 2026-09-07, trait evidence bar iteration two (Nick): restored `regenerative`; cut none; expected count 1.80 to 2.15.

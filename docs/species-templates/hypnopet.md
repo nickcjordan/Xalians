@@ -82,12 +82,13 @@ Primary is `psychic`, from the species type and the home planet Telypso. Seconda
 
 ## Trait pool
 
-Expected count: the percents sum to 530, so the expected number of traits per individual is 5.30. There is no exclusion pair active: `pack-bonded` is listed at 25 and `solitary` is not listed at all, so no exclusion adjustment applies. At least one entry sits strictly between 0 and 100, and the two entries at 100 are not exclusion partners. Revised 2026-09-07 by the trait evidence bar: the cut table below lists what was removed, and the surviving pool stands at 3.30 expected traits.
+Expected count: the percents sum to 530, so the expected number of traits per individual is 5.30. There is no exclusion pair active: `pack-bonded` is listed at 25 and `solitary` is not listed at all, so no exclusion adjustment applies. At least one entry sits strictly between 0 and 100, and the two entries at 100 are not exclusion partners. Revised 2026-09-07 by the trait evidence bar, then again the same day by iteration two of that bar: the cut table below lists what is still removed, and the surviving pool stands at 3.75 expected traits.
 
 - `healing` 100, species: "their natural empathic healing abilities served to balance and treat patients". Body-demanded, stated as natural.
 - `hypnotic` 100, species: "it hypnotizes others and locks them in a trance". Organ-demanded, and the organ is on every individual per species: "a single color-changing unicorn horn atop their heads".
 - `protective` 70, species: "created by the Telypso Generator as service animals and therapists". The instinct to shield and protect others is the purpose it was built for, but it is a disposition rather than an organ, so it is not universal.
 - `luminous` 60, species: "Hypnopets resemble glowing, golden-furred bunny rabbits". The body is called glowing, which is the registry `luminous` definition. Not at 100 because the display is described as something that begins, species: "When their horn begins to pulse and swirl with psychedelic color", so an individual may be dim at rest.
+- `perceptive` 45. Restored 2026-09-07 under evidence class 4, ratified fields of the record: `physiology.senses.hearing` is banded 70 to 90 and `physiology.senses.sight` 55 to 75, both upper bounds well past 60, and `physiology.senses.special` carries `psychic`, which the widened bar names as the kind of special sense that justifies this trait outright. It no longer rests on the healing sentence that carried it in iteration one.
 
 Traits considered and left out, with reasons: `armored`, because no armored covering or shell appears in either source; `phasing`, because the body is corporeal and nothing shows physical interactions passing through it; `menacing`, because nothing shows it eroding courage, its effect being a trance rather than fear; `stealthy`, because nothing shows it moving unseen and the body glows, which argues against it; `nocturnal`, because the planet history names an ultraviolet sun and lit jungles rather than perpetual night, so there is no environmental demand; `regenerative`, because its healing is stated as done to others and never to itself; and `toxic`, `volatile`, `reflective`, `ramming`, `anchored`, `resistant`, and `solitary`, because nothing in either source supports any of them and `solitary` would contradict the pack-bonded reading of healers traveling together.
 
@@ -96,14 +97,13 @@ Traits considered and left out, with reasons: `armored`, because no armored cove
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
 | `inspiring` | 25 | the cited sentence names where the species is employed, not a morale effect on others |
-| `perceptive` | 45 | restatement of the same sentence that already carries healing at 100 |
 | `slippery` | 35 | body-type plausibility from the art; no sentence and no drawn evasive feature |
 | `mind-sealed` | 30 | plausibility from working near deranged minds; the sources never claim immunity |
 | `pack-bonded` | 25 | the cited sentence is about dispersal to the stars, not about living or working in groups |
 | `telekinetic` | 5 | no source sentence; rare-band filler |
 | `foresighted` | 5 | no source sentence; rare-band filler |
 
-Pool expected count 5.00 to 3.30. No surviving percent was changed.
+Pool expected count 5.00 to 3.30 in iteration one, then 3.30 to 3.75 in iteration two once `perceptive` was restored. No surviving percent was changed in either pass.
 
 ## Instruments
 
@@ -183,3 +183,4 @@ WARN signature.action.matrix        signature action "snare" is outside the allo
 - 2026-09-02, archetype scale (Nick): `archetypeWeights` converted from relative 1 to 5 weights to percents summing to 100 by largest remainder, order preserved: sage 33, sovereign 27, seeker 20, virtuoso 13, runner 7 (was sage 5, sovereign 4, seeker 3, virtuoso 2, runner 1).
 - 2026-09-02, archetype rethink (Nick): the converted row kept the old 5-4-3-2-1 ladder shape shared by every record, so the distribution was re-authored on this species alone: sovereign 38, sage 30, virtuoso 22, seeker 10 (was sage 33, sovereign 27, seeker 20, virtuoso 13, runner 7). Reasoning: healing and hypnotic both at 100 on the highest charisma and willpower bands in the set: sovereign leads, sage and virtuoso close behind; runner dropped as ladder filler.
 - 2026-09-07, trait evidence bar (Nick): cut inspiring, perceptive, slippery, mind-sealed, pack-bonded, telekinetic, foresighted; pool expected count 5.00 to 3.30.
+- 2026-09-07, trait evidence bar iteration two (Nick): restored perceptive; cut none; expected count 3.30 to 3.75.

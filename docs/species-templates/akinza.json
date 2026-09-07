@@ -151,7 +151,7 @@
       "stealthy": 100,
       "nocturnal": 96,
       "perceptive": 40,
-      "resistant": 20
+      "slippery": 30
     }
   },
   "instruments": [

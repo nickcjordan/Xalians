@@ -155,7 +155,8 @@
       "toxic": 100,
       "stealthy": 90,
       "hypnotic": 70,
-      "resistant": 60,
+      "perceptive": 40,
+      "nocturnal": 25,
       "menacing": 20
     }
   },

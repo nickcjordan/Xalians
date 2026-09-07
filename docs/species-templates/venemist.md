@@ -76,19 +76,20 @@ Primary `chemical`, fixed by the species entry type Chemical. On-graph secondari
 - `toxic: 100`: the body demands it. Species: "The toxic mist expelled from a tube in its mouth helps to dissolve its prey." A natural weapon that delivers a debilitating agent is the definition of the trait, and every individual has the tube. Source `species`.
 - `resistant: 95`: environment-demanded, and the registry allows a planet-wide sentence to justify an environmental adaptation. Planet: "The Xalians on Drainov quickly adapted to not only the smog and industrial waste common to the world but also to its bubbling acid swamps, steaming corrosive rain, asphyxiating fumes, slow-drifting clouds of neurotoxic gases, and virulent pathogens." Left at 95 rather than 100 so the pool carries variance and because the species sentence itself does not name resistance. Source `planet`.
 - Considered and left out: `armored` (no armored covering or shell), `regenerative`, `healing`, `protective`, `inspiring`, `menacing`, `hypnotic` (nothing in either source), `nocturnal` (Drainov is smog-blanketed but the history never calls it a night world, so the environment does not demand it), `luminous`, `telekinetic`, `foresighted`, `mind-sealed`, `phasing`, `anchored`, `ramming`, `reflective`, `slippery`.
+- `perceptive: 35`: restored 2026-09-07 under class 4, a ratified field of the record. `physiology.senses.smell` is graded [60, 85] and `hearing` [55, 80], both with an upper bound at or above 60, which the widened bar reads as the record's own statement that this body finds what it hunts. Held at the authored 35 because the graded band is a body fact, not a sentence about seeing through concealment.
+- `volatile: 12`: restored 2026-09-07 under class 3, a planet-wide environmental fact from the Generator Environmental Report for Drainov, whose `fauna.observations` records reactive discharge on structural breach as a cataloged property of the world's fauna. That is the trait's own body fact stated planet-wide rather than a behavior, and it sits on a species whose one carried agent is a corrosive mist. Left in single figures, as authored.
 - Expected trait count: (100 + 95 + 40 + 35 + 30 + 20 + 12) / 100 = 3.32, less the exclusion correction (0.20 times 0.30 = 0.06) = 3.26.
 
 #### Cut by the evidence bar (2026-09-07)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
-| `stealthy` | 40 | body-type plausibility (a short-range mist hunter 'has to get close'); the entry itself says 'neither source shows it hiding' |
-| `perceptive` | 35 | derived from the record's own sense bands, 'no source sentence' for finding what hides |
-| `solitary` | 30 | argued from absence ('neither source says whether the Venemist hunts alone or in numbers'); 'Authored' |
-| `pack-bonded` | 20 | argued from the same silence; the exclusion partner with no sentence either, so both go |
-| `volatile` | 12 | 'A restatement of the same toxic load, kept in single figures because no source shows it' |
+| `stealthy` | 40 | class 4 fails: the burrow band is 0 to 10 and no hiding or ambush sentence exists to pair with it; still body-type plausibility |
+| `solitary` | 30 | still argued from absence; no sentence and no ratified field states it |
+| `pack-bonded` | 20 | still argued from the same silence; the exclusion partner has no sentence or field either, so both stay out |
 
-- Expected trait count after the bar: (100 + 95) / 100 = 1.95. `resistant` at 95 is the entry below 100 the model requires; no exclusion pair remains, so no correction applies.
+- Expected trait count after iteration two: (100 + 95 + 35 + 12) / 100 = 2.42. `resistant` at 95 is the entry below 100 the model requires; no exclusion pair remains, so no correction applies.
+- `resistant` re-checked under ruling B and kept: its support is the toxin, acid, corrosive-rain and pathogen load of Drainov, and the Generator report records full-spectrum toxin immunity as universal in the planet's fauna. None of that is thermal or desiccation, so the ruling does not touch it.
 
 ## Instruments and conduits
 
@@ -181,3 +182,4 @@ logged to docsspecies-templatesalidation-logenemist.jsonl
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: 'a solvent gut turned outward' (metaphor), the syndicate labor sentence (a planet-wide sentence with the Venemist as its subject) and the corrosion-stripping close (invented use and flourish) cut; the description ends on the sourced Generator clause. `communication` reduced to `vocal` (authored): the mist is an aimed ability, not a chemical signal. `vents` kept for the mouth tube; the registry definition is widened below so the key covers an oral discharge organ. Art matched the run's reading (two fangs, tube with spray, shag on the dorsal edge only, forelimbs bearing weight). Description now 70 words.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [-10, 43] to [0, 43] (intersection) against the rebuilt planet record's habitable band [0, 60] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 0.82.
 - 2026-09-07, trait evidence bar (Nick): cut stealthy, perceptive, solitary, pack-bonded, volatile; pool expected count 3.32 to 1.95.
+- 2026-09-07, trait evidence bar iteration two (Nick): restored perceptive (35, class 4, graded sense bands), volatile (12, class 3, Generator report fauna observation of reactive discharge on breach); cut none; expected count 1.95 to 2.42.

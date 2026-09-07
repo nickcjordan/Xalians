@@ -20,22 +20,22 @@ No other anatomy key has a source sentence. There are no jaws, spines, tail, or 
 
 ### Trait pool (independent per-trait percents)
 
-Every trait below is rolled independently at its own percent (1 to 100); there is no count, minimum, or cap. A trait absent from the pool has a 0 chance and is not listed.
+Every trait below is rolled independently at its own percent (1 to 100); there is no count, minimum, or cap. A trait absent from the pool has a 0 chance and is not listed. Expected count: (100 + 100 + 60 + 30 + 6) / 100 = 2.96.
 
 | Trait | Percent | Evidence | Source |
 |---|---|---|---|
 | `armored` | 100 | species: "the black-shelled body of a crab" and "an immovable wall of chitin". A shelled and chitin-covered body demands it on every individual; this also answers the validator `traits.armored` check by satisfying it rather than overriding it. | species |
 | `anchored` | 100 | species: "the Graviclaw can use its powers to root itself to the ground, becoming an immovable wall of chitin". The registry definition of `anchored` is a body that cannot be moved against its will, which is exactly what the sentence states. This is a body-demanded fact every individual carries, not a rolled option. | species |
 | `stealthy` | 60 | species: "lurks just beneath the foggy wetlands of Grimedes". Lurking submerged until it strikes is the registry sense of moving unseen until it acts. Highest of the non-body-demanded percents because it is the most directly stated behavior. | species |
+| `perceptive` | 30 | Restored under evidence class 4, a ratified field of the record: `physiology.senses.special` carries void-sense, and the widened bar reads a special sense of that kind as the body fact behind perceptive. The Grimedes Generator environmental report reinforces it, giving non-visual sensory systems as a planet-wide output priority and recording that fauna sensory apparatus registers mass and motion. | record field, planet report |
 | `telekinetic` | 6 | species: "using its bizarre control over the intensification of gravitational waves to generate miniature black holes in the water and draw its helpless prey right into its clutches" is moving objects without touching them. Rare percent because the description frames the pull as a hunting mechanism terminating in the claws, not as constant levitation. | species |
 
 #### Cut by the evidence bar (2026-09-07)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
-| `solitary` | 45 | Argued from absence: the table itself rested it on the singular hunting frame and granted that absence of evidence is the weaker case. |
-| `perceptive` | 30 | Body-type plausibility: detection was implied from the hunting method, with no sentence about finding what is hidden. |
-| `menacing` | 30 | Restatement of the `anchored` sentence: the wall of chitin is physical immobility, and the resolve-breaking reading is inference. |
+| `solitary` | 45 | No ratified field and no sentence: the singular hunting frame is grammar, and Grimedes' report says nothing about group life. |
+| `menacing` | 30 | Class 2 fails: the raised open pincer in the art carries the gravitational vortex, so the feature depicts the gravity ability rather than a threat display, and the wall of chitin sentence states immobility, not a threat. |
 
 `pack-bonded` stays absent from the pool: it was excluded by `solitary`, and `solitary` is now cut as well, so neither is rolled.
 
@@ -174,3 +174,4 @@ ok   md.quotes                      30 of 30 distinct quotations found verbatim 
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [-6, 34] to [-60, 5] (full habitable band (the old sub-band barely overlapped it)) against the rebuilt planet record's habitable band [-60, 5] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 0.44.
 - 2026-09-07, hardening pass: the trait section was rewritten under the percent model (no more 'guaranteed'/'rolled pool weights' split); the table now lists the exact percents in `graviclaw.json` and states which trait was cut, rather than appending a note beside stale reasoning.
 - 2026-09-07, trait evidence bar (Nick): cut `solitary`, `perceptive`, `menacing`; pool expected count 3.71 to 2.66.
+- 2026-09-07, trait evidence bar iteration two (Nick): restored `perceptive` (30, class 4); cut nothing, since the pool carries no `resistant`; expected count 2.66 to 2.96.

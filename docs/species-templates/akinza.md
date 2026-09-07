@@ -114,21 +114,21 @@ Legacy `statRatings` are used only as a relative gauge per operating rule 6: `sp
 - `element: ice`, primary at 100, from the species entry type of Ice; `homePlanet: krystos` from the entry planet. Secondaries are whatever the graph allows for ice (metal, water, dark), rolled per individual; nothing is picked here.
 - `affinityOdds` omitted, so the species inherits the 75/25 baseline. No lore reason to override: nothing in either source shows this creature as unusually mixed or unusually pure.
 
-### Trait pool (raw sum 2.56, expected count 2.56)
+### Trait pool (raw sum 2.66, expected count 2.66)
 
 | Trait | Percent | Reason and source |
 |---|---|---|
 | `stealthy` | 100 | The entire species sentence: "incredible stealth and night vision allow it to sneak through the night with ease". Description-demanded, so universal. |
 | `nocturnal` | 96 | Environment-demanded: the sky is permanently dark, "blotting out the sun and all warmth that accompanied it", and the species sentence independently names night. Held below 100 so the pool carries variance. |
 | `perceptive` | 40 | Species: "night vision", a sense claim about this species, not a planet-wide one. Not at 100 because the sentence claims a sense, not the specific act of finding what hides, and `perceptive` is the counter to `stealthy` rather than a restatement of it. |
-| `resistant` | 20 | Environmental: the Generator produced "fierce and resilient lifeforms capable of surviving in the harsh, frozen tundra". A planet-wide sentence, which section 5.3 permits for an environmental adaptation only, which is why this is a modest percent and not a guarantee. |
+| `slippery` | 30 | Class 5, a ratified authored input: Nick's legacy `statRatings` block for the Akinza in `lambda/src/json/species.json` carries `evasionRating` of high, which is the one gauge the widened bar maps to this trait. Restored at its former percent, well under the stealth entry, because a design gauge states a tendency and not a guarantee. |
 
-#### Cut by the evidence bar (2026-09-07)
+#### Cut by the evidence bar (2026-09-07, iterations one and two)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
+| `resistant` | 20 | ruling B: its only support was thermal, the planet-wide sentence about surviving the frozen tundra, and the Krystos hazard list is cold, blizzards, avalanche and preservation of organic material, with no toxin, corrosion, radiation or hostile atmosphere; temperature is already carried by `environmentalTolerance.temperatureC` |
 | `solitary` | 55 | argued from absence (no group shown in the sentence); its planet quote is about role, not grouping, and its exclusion partner also failed |
-| `slippery` | 30 | legacy stat gauge (`evasionRating`) plus body-type plausibility (light frame); no sentence shows it evading a grip |
 | `pack-bonded` | 12 | argued from absence: the walkthrough states that no source shows the Akinza working in numbers |
 | `menacing` | 8 | planet-wide sentence about the wasteland stock stretched to a behavior trait |
 | `foresighted` | 4 | no source sentence; rare-band value only |
@@ -235,3 +235,4 @@ All three WARNs are answered in the Script denials section above.
 - 2026-09-02, archetype rethink (Nick): the converted row kept the old 5-4-3-2-1 ladder shape shared by every record, so the distribution was re-authored on this species alone: prowler 45, skirmisher 30, predator 25 (was prowler 38, skirmisher 31, predator 23, runner 8). Reasoning: a single-sentence stealth species: three archetypes cover it; runner dropped, endurance is a middle band.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [-95, -10] to [-60, -10] (intersection) against the rebuilt planet record's habitable band [-60, 15] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 0.54.
 - 2026-09-07, trait evidence bar (Nick): cut solitary, slippery, pack-bonded, menacing, foresighted; pool expected count 3.65 to 2.56.
+- 2026-09-07, trait evidence bar iteration two (Nick): restored slippery (30, class 5, legacy `evasionRating` of high); cut resistant (20, ruling B, thermal-only support); expected count 2.56 to 2.66.

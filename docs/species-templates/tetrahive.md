@@ -72,19 +72,19 @@ The familiars are treated as projections held by the central mind, not as living
 
 ## Traits
 
-The pool has no body-demanded entry at 100: it has no shell or plating (so not `armored`), it is corporeal (so not `phasing`), and it does not grip the ground (so not `anchored`). Every trait below is rolled independently at its own percent (1 to 100); there is no count, minimum, or cap, so an individual may in principle carry zero traits or both. Expected trait count: (95 + 35) / 100 = 1.30.
+The pool has no body-demanded entry at 100: it has no shell or plating (so not `armored`), it is corporeal (so not `phasing`), and it does not grip the ground (so not `anchored`). Every trait below is rolled independently at its own percent (1 to 100); there is no count, minimum, or cap, so an individual may in principle carry zero traits or all four. Expected trait count: (95 + 45 + 35 + 20) / 100 = 1.95.
 
 | Trait | Percent | Justification |
 |---|---|---|
 | `nocturnal` | 95 | planet: the whole world is "surrounded in a cloak of perpetual night" and its star "emits almost no visible light", and the art gives the creature small slitted eyes and large ears, a body reading as night-adapted. This is an environmental adaptation the planet fact justifies at nearly universal, per the amended evidence rule. |
+| `slippery` | 45 | evidence class 5, the legacy `statRatings` mapping: `evasionRating` is high, which is Nick's authored design intent for this species and which the iteration-two bar reads as `slippery`. Restored at its former percent of 45; the reading agrees with a small flier whose fighting mass is a conjured cloud rather than one body a hand can close on. |
 | `mind-sealed` | 35 | species: "It controls the swarm with its mind" is the one capability either source names, so the mind is this species' load-bearing organ; a mind that holds a swarm together is the physiology that supports resisting intrusion. |
+| `perceptive` | 20 | evidence class 4, a ratified field of the record: `physiology.senses.hearing` is banded [60, 85], an upper bound of 60 or more, which the iteration-two bar accepts as a graded sense sharp enough to carry `perceptive`. Restored at its former percent of 20; the earlier art argument about ear size is dropped and the band is the whole support. |
 
 #### Cut by the evidence bar (2026-09-07)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
-| `slippery` | 45 | legacy stat gauge alone (evasion rated high) plus body-type plausibility from the frame |
-| `perceptive` | 20 | the art claim does not hold: the render gives the central body small pointed ear nubs, not large upright ears, so this is body-type plausibility |
 | `menacing` | 20 | restatement of the swarm attack, with no source sentence describing an effect on courage |
 | `solitary` | 10 | argued from absence; neither source states it operates alone |
 
@@ -208,3 +208,4 @@ logged to docs\species-templates\validation-log\tetrahive.jsonl
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [-6, 34] to [-60, 5] (full habitable band (the old sub-band barely overlapped it)) against the rebuilt planet record's habitable band [-60, 5] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 0.44.
 - 2026-09-07, hardening pass: the trait section was rewritten under the percent model; the table now lists exactly the six pool entries in `tetrahive.json` with their percents, in the order the audit's correction established, and drops `stealthy`, which the JSON never carried.
 - 2026-09-07, trait evidence bar (Nick): cut `slippery`, `perceptive`, `menacing`, `solitary`; pool expected count 2.25 to 1.30.
+- 2026-09-07, trait evidence bar iteration two (Nick): restored `slippery`, `perceptive`; cut none; expected count 1.30 to 1.95.

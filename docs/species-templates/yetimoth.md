@@ -64,27 +64,27 @@ Every line names its source. `species` = the Yetimoth entry in species.json; `pl
 - charisma `[35,55]` : species: "Hulking". Presence from bulk, not from bearing.
 - resilience `[70,90]` : species: "covering themselves in a near-impenetrable armor" and "If their enormous size and strength was not enough to keep prisoners in line".
 
-### Trait pool (expected count 3.97 before the 2026-09-07 evidence bar, 3.10 after)
+### Trait pool (expected count 3.97 before the 2026-09-07 evidence bar, 3.10 after it, 2.50 after iteration two)
 
 Arithmetic: the eight non-excluded entries sum to 85 + 80 + 55 + 45 + 25 + 20 + 20 + 15 = 345, giving 3.45. The exclusion pair adds `pack-bonded` at 0.45 plus `solitary` at 0.12 times (1 minus 0.45) = 0.066. Expected count 3.97.
 
 - `armored` 85 : species: "covering themselves in a near-impenetrable armor". Not 100: the covering at rest is fur, not an armored covering, so the trait describes the armored state the body reliably reaches rather than a body-demanded fact. The 15 percent that lack it are Generator variance on the frost-forming aspect.
-- `resistant` 80 : planet data block: a temperature low of -122 degrees Celsius, and planet: "the endless cold and hunger that stalked each and every soldier who made landfall on Krystos". This is an environmental adaptation on a world whose cold kills unadapted bodies, which section 5.3 permits a planet-wide sentence to justify. Near-universal, not 100, so individuals differ.
 - `menacing` 55 : species: "to keep prisoners in line". A guard whose function is deterrence. Species-sourced behavior, not planet-sourced.
 - `anchored` 45 : species: "blocking off escape routes in walls of frost". A body that makes itself the barrier, on a world whose data block gives a gravity of 1.2 times Earth, carried on a 400 kg frame. Not 100: nothing says it cannot be moved, only that it blocks.
 - `pack-bonded` 45 : species: "the Yetimoths formed the rank and file of Krystos' prisonguards in ancient times". Rank and file is a body that works in formation with others. Higher partner of the exclusion pair, so it is rolled first.
+- `perceptive` 20 : restored 2026-09-07 under class 4, a ratified field of the record. `physiology.senses.hearing` is graded [55, 75] and `smell` [55, 75], both with an upper bound at or above 60, which the widened bar reads as the record's own statement that this body tracks what it is set to contain. Restored at the former 20, since graded bands are a body fact rather than a sentence about seeing through concealment.
 
 #### Cut by the evidence bar (2026-09-07)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
-| `protective` | 25 | a restatement of the kept `anchored` sentence; the entry itself reads the instinct as containment rather than shielding an ally |
-| `perceptive` | 20 | a restatement of the kept `menacing` and `anchored` sentences; 'no sentence says it finds what hides' |
-| `ramming` | 20 | the quoted sentence argues against it ('the source's own word is lumber'), leaving body-mass plausibility |
-| `mind-sealed` | 15 | an inference from the rank-and-file sentence ('engineered not to be talked around'); no sentence on mental resistance |
-| `solitary` | 12 | a planet-wide sentence about Krystos guard stock stretched to this species' behavior, and the exclusion partner without a sentence while `pack-bonded` has one |
+| `protective` | 25 | class 4 fails: the signature's ward action layers frost over its own pelt, which names `armored`, not shielding an ally; still a restatement of the kept `anchored` sentence |
+| `ramming` | 20 | class 4 fails: the sprint band is 20 to 35, and the source's own word is lumber; only body-mass plausibility is left |
+| `mind-sealed` | 15 | still an inference from the rank-and-file sentence; no sentence and no ratified field speaks to mental resistance |
+| `solitary` | 12 | still a planet-wide sentence stretched to behavior, and the exclusion partner without a sentence while `pack-bonded` has one |
+| `resistant` | 80 | newly cut 2026-09-07 under ruling B: its only support was the cold of Krystos, and temperature alone never justifies this trait. The Generator report's hazards for Krystos are lethal cold, blizzard cycles, avalanche and the preservation of organic material where it falls, with no toxin, radiation, corrosion or hostile atmosphere among them, and the cold tolerance already lives in `environmentalTolerance.temperatureC` as -60 to -10 |
 
-Expected trait count after the bar: (85 + 80 + 55 + 45 + 45) / 100 = 3.10, with no exclusion correction, since `solitary` is gone. Every surviving entry is below 100.
+Expected trait count after iteration two: (85 + 55 + 45 + 45 + 20) / 100 = 2.50, with no exclusion correction, since `solitary` is gone. Every surviving entry is below 100.
 
 - Left out with reason: `inspiring` (dropped in the trim below; the rank-and-file sentence supports a body that holds a formation, not one that lifts the others, so it was the weakest entry in the pool); `healing` and `regenerative` (nothing in either source shows repair); `phasing` (corporeal, no ghost reading); `toxic` and `volatile` (its weapons are blunt and cold, never chemical or reactive); `reflective` (the armor absorbs, it does not return); `hypnotic` (nothing entrancing); `foresighted` and `telekinetic` (both rare and both unsupported: the frost forms on its own body and on the ground around it, never lifted and moved); `stealthy` (a hulking body that lumbers, and the registry tilt is against it); `nocturnal` (the planet history never says Krystos is dark, only cold; the debris blotted the sky but the sources do not describe a night-adapted population); `luminous` (nothing sheds light); `slippery` (the opposite of this body).
 
@@ -165,3 +165,4 @@ WARN conduits.source                conduit fists for ice: the validator agent m
 - 2026-09-02, archetype rethink (Nick): the converted row kept the old 5-4-3-2-1 ladder shape shared by every record, so the distribution was re-authored on this species alone: juggernaut 36, bulwark 34, stalwart 18, vanguard 12 (was juggernaut 33, bulwark 27, vanguard 20, stalwart 13, survivor 7). Reasoning: strength and resilience at the top with a ward signature: juggernaut and bulwark near-equal (the pummeler and the armored wall are the same body), stalwart for the guard's will; survivor dropped as ladder filler.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [-122, -10] to [-60, -10] (intersection) against the rebuilt planet record's habitable band [-60, 15] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 0.54.
 - 2026-09-07, trait evidence bar (Nick): cut protective, perceptive, ramming, mind-sealed, solitary; pool expected count 3.97 to 3.10.
+- 2026-09-07, trait evidence bar iteration two (Nick): restored perceptive (20, class 4, graded hearing and smell bands); cut resistant (80, ruling B, cold-only support); expected count 3.10 to 2.50.

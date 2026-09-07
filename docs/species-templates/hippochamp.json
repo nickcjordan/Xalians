@@ -156,7 +156,8 @@
     "pool": {
       "protective": 85,
       "resistant": 70,
-      "pack-bonded": 60
+      "pack-bonded": 60,
+      "perceptive": 30
     }
   },
   "instruments": [
