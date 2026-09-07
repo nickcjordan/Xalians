@@ -10,6 +10,7 @@
 //                           (via scripts/bundleAbilityCatalog.js)
 //   tour.json            <- docs/encyclopedia/tour.json, when it exists
 //   narration.json        <- docs/encyclopedia/narration.json, when it exists
+//   plates.json           <- docs/encyclopedia/plates.json, when it exists
 //
 // Idempotent. Run by hand after any lore change:  node scripts/bundleLore.js
 // Design contract: docs/design/xalian-encyclopedia-page.md section 2.
@@ -41,6 +42,13 @@ if (fs.existsSync(narrationPath)) {
   write('narration.json', read(narrationPath));
 } else {
   console.log('skipped narration.json: docs/encyclopedia/narration.json not written yet');
+}
+
+const platesPath = path.join(docs, 'encyclopedia', 'plates.json');
+if (fs.existsSync(platesPath)) {
+  write('plates.json', read(platesPath));
+} else {
+  console.log('skipped plates.json: docs/encyclopedia/plates.json not written yet');
 }
 
 const templates = path.join(docs, 'species-templates');

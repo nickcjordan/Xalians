@@ -175,6 +175,38 @@
 
 .enc-story-def { margin-bottom: var(--g-7); }
 
+/* ---- era plate: one painted frontispiece per part -------------------------- */
+/* Matte, framed like a specimen plate -- a thin bevelled seam, no glow, no
+   filter. Same border/radius/shadow recipe as .g-panel (system.css) so the
+   frame reads as the same hardware, just built directly on the <figure>
+   rather than composed from .g-panel (a plate is an image, not a card). */
+
+.enc-story-plate {
+	margin: 0 0 var(--g-7);
+	padding: var(--g-2);
+	background: var(--g-hull);
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: var(--g-radius-panel);
+	box-shadow: var(--g-relief), var(--g-drop);
+}
+
+.enc-story-plate img {
+	display: block;
+	width: 100%;
+	height: auto;
+	border-radius: calc(var(--g-radius-panel) - 2px);
+}
+
+.enc-story-plate-caption {
+	margin: var(--g-2) 0 0;
+	padding: 0 var(--g-2);
+	max-width: 70ch;
+	color: var(--g-ink-low);
+	font-size: var(--g-size-tiny);
+	text-align: left;
+	line-height: 1.6;
+}
+
 /* ---- narrator beats -------------------------------------------------------- */
 
 .enc-story-beat {
