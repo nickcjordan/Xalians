@@ -47,6 +47,15 @@ SEEDS_PER_ERA = 4
 GOUACHE_SET_STYLE = ('flat gouache painting, hard-edged shapes, visible brush texture, palette of near-black, '
                      'slate grey and bone with a single hot orange accent, no text, no lettering, no frame, no border')
 
+# 2026-09-07, runs 111/112: Nick does not want a nominated accent colour, and the art must not borrow from the
+# site's design system at all (that system is being overhauled separately; the plates are lore artwork, not UI).
+# `gouache-open` keeps only the medium and handling and names no palette; each scene carries its own colour.
+STYLES = {
+    'gouache-set': GOUACHE_SET_STYLE,
+    'gouache-open': ('flat gouache painting, hard-edged shapes, visible brush texture, restrained muted colour, '
+                     'no text, no lettering, no frame, no border'),
+}
+
 ERA_ORDER = [s['key'] for s in SUPPORT['slots'] if s['kind'] == 'era']
 
 
@@ -55,12 +64,12 @@ def seed_for(era: str, seed_idx: int, seed_base: int = 400000) -> int:
     return seed_base + era_i * 1000 + seed_idx
 
 
-def build_prompt(era_prompt: str) -> str:
+def build_prompt(era_prompt: str, style: str = GOUACHE_SET_STYLE) -> str:
     # era_prompt from support.json starts with run 101's "painterly concept art, high contrast, single light
     # source, muted palette." lead-in; drop that clause and prepend the gouache-set style instead.
     lead = 'painterly concept art, high contrast, single light source, muted palette. '
     body = era_prompt[len(lead):] if era_prompt.startswith(lead) else era_prompt
-    return f'{GOUACHE_SET_STYLE}. {body}'
+    return f'{style}. {body}'
 
 
 def contact_sheet_multi(out: Path, tag: str, rows, cols=4, cell=384):
@@ -86,6 +95,7 @@ def main():
     ap.add_argument('--eras', default='all', help='comma-separated era keys, or "all"')
     ap.add_argument('--steps', type=int, default=8)
     ap.add_argument('--tag', required=True)
+    ap.add_argument('--style', default='gouache-set', choices=sorted(STYLES))
     ap.add_argument('--seed-base', type=int, default=400000,
                      help='seed family base; run 104 used 400000, a rerun of a subset should use a fresh '
                           'family (e.g. 500000) so seeds never collide with a prior run')
@@ -107,7 +117,7 @@ def main():
     pipe.enable_model_cpu_offload()
 
     overall_manifest = {
-        'kind': 'era', 'style': 'gouache-set', 'style_clause': GOUACHE_SET_STYLE, 'tag': args.tag, 'model': MODEL,
+        'kind': 'era', 'style': args.style, 'style_clause': STYLES[args.style], 'tag': args.tag, 'model': MODEL,
         'quant': 'bitsandbytes 4-bit (pre-quantized)', 'steps': args.steps, 'guidance': 0.0,
         'scheduler': type(pipe.scheduler).__name__,
         'seed_scheme': f'{args.seed_base} + era_index*1000 + seed_index; era_index order ' + str(ERA_ORDER),
@@ -118,7 +128,7 @@ def main():
     for slot in slots:
         key = slot['key']
         width, height = slot['width'], slot['height']
-        prompt = build_prompt(slot['prompt'])
+        prompt = build_prompt(slot['prompt'], STYLES[args.style])
         seeds = [seed_for(key, i, args.seed_base) for i in range(SEEDS_PER_ERA)]
         slot_entry = {'key': key, 'prompt': prompt, 'requested_size': [width, height], 'used_size': None,
                       'fallback_used': False, 'candidates': []}
