@@ -1,9 +1,6 @@
+// Terminal: relay. The navbar's auth keys: sign in, sign up, verify, sign
+// out, moulded into the relay's cover plate alongside the route legends.
 import React from 'react'
-import ListGroup from 'react-bootstrap/ListGroup';
-import Badge from 'react-bootstrap/Badge';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import SignUpModal from './signUpModal';
 import VerifyEmailModal from './verifyEmailModal';
 import SignInModal from './signInModal';
@@ -12,9 +9,6 @@ import * as dbApi from '../../utils/dbApi';
 import { store } from 'state-pool';
 import { Auth } from 'aws-amplify';
 import { Hub } from 'aws-amplify';
-import Button from 'react-bootstrap/Button';
-import NavbarBrand from 'react-bootstrap/esm/NavbarBrand';
-import Navbar from "react-bootstrap/Navbar";
 
 
 class AuthButtonGroup extends React.Component {
@@ -99,8 +93,6 @@ class AuthButtonGroup extends React.Component {
     }
 
     signUpCallback = (username, email, password) => {
-        // console.log(JSON.stringify(info, null, 2));
-        // store.setState('authenticatedUser', info);
         this.setState({
             username: username,
             email: email,
@@ -113,10 +105,6 @@ class AuthButtonGroup extends React.Component {
     }
 
     signInCallback = () => {
-        // Auth.currentUserInfo().then(user => {
-        // store.setState('user', user);
-        // });
-        // store.setState('authenticatedUser', info);
     }
 
     emailVerifiedCallback = () => {
@@ -138,77 +126,37 @@ class AuthButtonGroup extends React.Component {
     handleSignOut = () => {
         store.clear();
         authUtil.signOut().then(() => {
-            // var x = globalState.getValue();
-            // x.authenticatedUser = {};
-            // globalState.updateValue(val => x);
         });
-
     }
 
     render() {
         return (
             <React.Fragment>
                 {this.state.loggedInUser &&
-                    <React.Fragment>
-                        <Navbar.Text className="navbar-user-name-wrapper vertically-center-contents">
-                            <a className='username-navbar-link' href={'/account'}>{this.state.loggedInUser.username}</a>
-                        </Navbar.Text>
-                    </React.Fragment>
+                    <span className="relay-username">
+                        <a className="g-legend relay-username-link" href={'/account'}>{this.state.loggedInUser.username}</a>
+                    </span>
                 }
                 {!this.state.loggedInUser &&
-                    <React.Fragment>
-                        <Navbar.Text className="navbar-auth-button-wrapper vertically-center-contents">
-                            <Button onClick={() => this.setState({ signInModalShow: true })}>
-                                Sign In
-                            </Button>
-                        </Navbar.Text>
-                    </React.Fragment>
+                    <button type="button" className="g-key relay-auth-key" onClick={() => this.setState({ signInModalShow: true })}>
+                        Sign In
+                    </button>
                 }
                 {!this.state.loggedInUser &&
-                    <React.Fragment>
-                        <div className="navbar-auth-button-wrapper vertically-center-contents">
-                            <Button variant="primary" onClick={() => this.setState({ signupModalShow: true })}>
-                                Sign Up
-                            </Button>
-                        </div>
-                    </React.Fragment>
+                    <button type="button" className="g-key relay-auth-key" onClick={() => this.setState({ signupModalShow: true })}>
+                        Sign Up
+                    </button>
                 }
                 {((this.state.loggedInUser && !this.state.loggedInUser.hasVerifiedEmail)) &&
-                    <React.Fragment>
-                        <div className="navbar-auth-button-wrapper vertically-center-contents">
-                            <Button variant="primary" onClick={() => this.setState({ verifyEmailModalShow: true })}>
-                                Verify Email
-                            </Button>
-                        </div>
-                    </React.Fragment>
+                    <button type="button" className="g-key relay-auth-key" onClick={() => this.setState({ verifyEmailModalShow: true })}>
+                        Verify Email
+                    </button>
                 }
                 {this.state.loggedInUser &&
-                    <React.Fragment>
-                        <div className="navbar-auth-button-wrapper vertically-center-contents">
-                            <Button variant="primary" onClick={() => this.handleSignOut()}>
-                                Sign Out
-                            </Button>
-                        </div>
-                    </React.Fragment>
+                    <button type="button" className="g-key relay-auth-key" onClick={() => this.handleSignOut()}>
+                        Sign Out
+                    </button>
                 }
-
-
-
-
-
-
-                {/* <div className="">
-                                    <Button variant="primary" onClick={() => console.log(`user state => \n${JSON.stringify(store.getState('user'), null, 2)}`)}>
-                                        Print State
-                                    </Button>
-                                </div>
-                                <div className="">
-                                    <Button variant="primary" onClick={() => this.printCurrentAuthUser()}>
-                                        Print Auth
-                                    </Button>
-                                </div> */}
-
-
 
                 <SignUpModal
                     show={this.state.signupModalShow}
@@ -236,9 +184,6 @@ class AuthButtonGroup extends React.Component {
             </React.Fragment>
         );
     }
-
-
-
 
 }
 

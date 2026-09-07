@@ -24,6 +24,10 @@ class XalianAttributeChart extends React.Component {
 		let xalian = this.props.xalian;
 		let species = this.props.species;
 
+		if (this.props.id) {
+			pairs.push(this.pair('index', 'Index', `#${this.props.id}`));
+		}
+
 		if (xalian && xalian.elements) {
 			pairs.push(this.pair('primary', 'Primary Element', `${xalian.elements.primaryType} [${xalian.elements.primaryElement}]`));
 			pairs.push(this.pair('secondary', 'Secondary Element', `${xalian.elements.secondaryType} [${xalian.elements.secondaryElement}]`));
@@ -48,8 +52,16 @@ class XalianAttributeChart extends React.Component {
 	}
 
 	render() {
+		// `specimen-spec` (style.css) laid two pairs per row for the old
+		// full-bleed panel; on the Field Terminal's narrower CRT that packs
+		// two fixed-width label columns tight enough that the value columns
+		// have no room left (minmax(6rem,10.5rem) x2 plus three column gaps
+		// can exceed the CRT's ~400px content width, so the two minmax(0,1fr)
+		// value tracks compute to 0 and the values overlap the next label).
+		// Plain `.g-spec` — a single label/value column, the same shape the
+		// mockup's CRT specs use — reads correctly at any container width.
 		return (
-			<dl className={`g-spec specimen-spec ${this.props.moreClasses || ''}`}>
+			<dl className={`g-spec ${this.props.moreClasses || ''}`}>
 				{this.buildPairs()}
 			</dl>
 		);

@@ -1,0 +1,222 @@
+/* Terminal: registry (docs/DESIGN_SYSTEM.md). Page compositions specific to
+   Duel setup, roster and results go here. No colors: every value reads a
+   --g-* token from system.css. Owner: Duel setup and roster (games/duelStartPage.js). */
+
+.registry-shell {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-5);
+}
+
+.registry-counter {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-4);
+}
+
+/* The typed docket clipped to the counter. Sits very slightly askew, the way
+   a real slip does under a clip, and never carries a button (Rule B). */
+.registry-docket {
+	transform: rotate(-0.6deg);
+	display: grid;
+	gap: var(--g-2);
+	max-width: 30rem;
+}
+
+.registry-docket-hd {
+	font-family: var(--g-font-legend);
+	font-weight: 700;
+	font-size: var(--g-size-tiny);
+	letter-spacing: var(--g-track-wide);
+	text-transform: uppercase;
+	color: var(--g-paper-ink-faint);
+	margin: 0;
+	padding-left: var(--g-5);
+}
+
+.registry-docket-row {
+	display: grid;
+	grid-template-columns: minmax(7rem, auto) 1fr;
+	gap: var(--g-2) var(--g-4);
+	align-items: baseline;
+	padding-left: var(--g-5);
+}
+
+/* The docket and the clerk's switches share the counter's writing surface:
+   docket left, controls in a column to its right, so the counter is only as
+   tall as its content instead of a slab with the docket alone up top. */
+.registry-counter-top {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: var(--g-6);
+}
+
+.registry-counter-top .g-clip-well { flex: 0 1 30rem; }
+
+.registry-counter-top .registry-controls { flex: 1 1 16rem; padding-top: var(--g-3); }
+
+/* The questions the clerk asks, answered on hull switches beside the docket
+   rather than on the paper itself. */
+.registry-controls {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-3);
+}
+
+.registry-control {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--g-4);
+	flex-wrap: wrap;
+}
+
+.registry-bezel { margin: 0; }
+
+.registry-keybank {
+	justify-content: flex-end;
+}
+
+.registry-window-plate {
+	font-family: var(--g-font-legend);
+	font-size: var(--g-size-micro);
+	letter-spacing: var(--g-track-wide);
+	text-transform: uppercase;
+	color: var(--g-trim);
+	opacity: 0.8;
+	margin-right: auto;
+	padding-left: var(--g-2);
+	border-left: 1px solid color-mix(in srgb, var(--g-trim) 35%, transparent);
+}
+
+.registry-note {
+	font-family: var(--g-font-ui);
+	font-size: var(--g-size-small);
+	color: var(--g-ink-mid);
+	margin: 0;
+}
+
+/* -------------------------------------------------------------------------
+   Roster: candidate dockets laid out on the counter, one per combatant on
+   file. Selecting one presses a key — the card stays a button — and the
+   pressed state is an inked stamp, never a glow (Rule: only screens and
+   lamps emit).
+   ------------------------------------------------------------------------- */
+
+.registry-roster-head {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: var(--g-3);
+}
+
+.registry-roster-count { color: var(--g-ink); }
+
+.registry-roster-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+	gap: var(--g-4);
+}
+
+.registry-roster-card {
+	position: relative;
+	display: grid;
+	gap: var(--g-2);
+	text-align: left;
+	padding: var(--g-3);
+	border: 0;
+	cursor: pointer;
+	transform: rotate(-0.4deg);
+	transition: transform var(--g-snap);
+}
+
+.registry-roster-card:nth-child(even) { transform: rotate(0.5deg); }
+
+.registry-roster-card:hover { transform: rotate(0deg) translateY(-2px); }
+
+.registry-roster-card:active { transform: translateY(1px); }
+
+.registry-roster-card:focus-visible {
+	outline: 2px solid var(--g-accent);
+	outline-offset: 2px;
+}
+
+.registry-roster-card--selected { box-shadow: var(--g-relief), 0 0 0 2px var(--g-accent); }
+
+.registry-roster-row {
+	display: flex;
+	gap: var(--g-3);
+	align-items: flex-start;
+}
+
+/* The mockup's black-and-white identification photograph: --g-photo-filter
+   is set to grayscale for the registry terminal in system.css (S6), so
+   .g-plate--photo already renders it that way here without a local override. */
+.registry-roster-photo {
+	flex: none;
+	width: 3.25rem;
+	height: 3.25rem;
+}
+
+.registry-roster-photo .species-tile-img { width: 100%; height: 100%; }
+
+.registry-roster-info {
+	display: grid;
+	gap: 2px;
+	min-width: 0;
+}
+
+.registry-roster-name {
+	display: flex;
+	align-items: center;
+	gap: var(--g-2);
+	font-family: var(--g-font-out);
+	font-size: var(--g-size-body);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--g-paper-ink);
+}
+
+.registry-roster-id {
+	font-family: var(--g-font-out);
+	font-size: var(--g-size-micro);
+	letter-spacing: var(--g-track-label);
+	color: var(--g-paper-ink-faint);
+}
+
+.registry-roster-chips {
+	display: flex;
+	gap: var(--g-2);
+	margin-top: var(--g-1);
+}
+
+.registry-roster-meter {
+	display: grid;
+	grid-template-columns: 4.5rem 1fr;
+	align-items: center;
+	gap: var(--g-2);
+	color: var(--g-paper-ink);
+}
+
+.registry-roster-stamp {
+	position: absolute;
+	right: var(--g-3);
+	top: var(--g-3);
+	z-index: 1;
+}
+
+@media (max-width: 480px) {
+	.registry-roster-grid { grid-template-columns: 1fr; }
+
+	.registry-control {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.registry-window-plate {
+		margin-right: 0;
+		border-left: 0;
+		padding-left: 0;
+	}
+}

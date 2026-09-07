@@ -6,11 +6,15 @@ import XalianStatChart from '../xalianStatChart';
 import EncyclopediaLink from '../encyclopediaLink';
 
 /**
- * One owned Xalian as a record strip: the account page's row.
+ * One owned Xalian as a record strip: the species catalogue's row on the
+ * `panel` terminal, or a screen line on the relay's account tube.
  *
- * Was four bootstrap columns floating on the starfield, with the delete button
- * nested two Cols deep inside the name column. Same document as the species
- * strip, with the generated stat allocation and move set as its readouts.
+ * On the account page (`accountPage`), the strip carries no hull panel of
+ * its own: it is a line of live content inside the shared `.g-crt` the
+ * account page wraps its list in (docs/DESIGN_SYSTEM.md's medium rule — a
+ * user's holdings are variable, live data, not a painted panel), and the
+ * delete control is a physical `.g-key` rather than a hull button dressed as
+ * an icon. Elsewhere (userDetailsPage.js) it keeps its `.g-panel` hull.
  */
 class XalianStatRowView extends React.Component {
 
@@ -21,9 +25,10 @@ class XalianStatRowView extends React.Component {
 	render() {
 		let x = this.props.xalian.attributes;
 		let type = x.elements.primaryType.toLowerCase();
+		let onScreen = this.props.accountPage;
 
 		return (
-			<article className={`g-panel record-strip record-strip--wide g-el-${type}`}>
+			<article className={`record-strip record-strip--wide g-el-${type} ${onScreen ? 'record-strip--screen' : 'g-panel'}`}>
 				<div className="record-strip-plate">
 					<XalianImage
 						colored
@@ -43,7 +48,7 @@ class XalianStatRowView extends React.Component {
 					{this.props.accountPage &&
 						<button
 							type="button"
-							className="g-btn g-btn--danger g-btn--icon record-strip-delete"
+							className="g-key record-strip-delete"
 							title="Remove from your faction"
 							aria-label={`Remove ${x.species.name} from your faction`}
 							onClick={this.callAccountPageCallback}>

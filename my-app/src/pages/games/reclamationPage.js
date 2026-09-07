@@ -1,3 +1,4 @@
+// Terminal: panel (baseline). Target: field. Reclamation is survey work on the salvaged ECHELON unit.
 import React from 'react';
 import XalianNavbar from '../../components/navbar';
 import ReclamationMatch from '../../components/games/reclamation/reclamationMatch';
@@ -295,7 +296,7 @@ class ReclamationPage extends React.Component {
 
 		if (draft) {
 			return (
-				<div className="g-console rec-console rec-console--draft">
+				<div className="g-console rec-console rec-console--draft" data-terminal="panel">
 					<XalianNavbar />
 					<div className="g-shell rec-shell rec-shell--draft">
 						<header className="rec-masthead">
@@ -323,7 +324,7 @@ class ReclamationPage extends React.Component {
 				? resume.squadIds.map((id) => resume.rosters.A.find((r) => r.id === id)).filter(Boolean)
 				: null;
 			return (
-				<div className="g-console rec-console rec-console--match">
+				<div className="g-console rec-console rec-console--match" data-terminal="panel">
 					<XalianNavbar />
 					<div className="g-shell rec-shell rec-shell--match">
 						<header className="rec-masthead">
@@ -355,7 +356,7 @@ class ReclamationPage extends React.Component {
 		}
 
 		return (
-			<div className="g-console rec-console rec-console--intro">
+			<div className="g-console rec-console rec-console--intro" data-terminal="panel">
 				<XalianNavbar />
 				<div className="g-shell rec-shell rec-shell--intro">
 					<header className="rec-masthead">

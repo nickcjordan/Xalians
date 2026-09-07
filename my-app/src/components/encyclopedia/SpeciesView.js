@@ -33,8 +33,7 @@ function meterRow(key, name, band, maxBand) {
     return (
         <div className="g-meter-row" key={key}>
             <span className="g-meter-name">{name}</span>
-            <div className="g-meter">
-                <div className="g-meter-ghost" style={{ width: `${ghostPct}%` }} />
+            <div className="g-meter g-meter--ink">
                 <div className="g-meter-fill" style={{ width: `${fillPct}%` }} />
             </div>
             <span className="g-meter-value">{bandText(band)}</span>
@@ -148,13 +147,13 @@ function Signature({ signature }) {
             <div className="enc-section-head">
                 <h2 className="g-h2">Signature</h2>
             </div>
-            <div className="g-screen enc-species-signature">
-                <p className="g-mono">{signature.name}</p>
-                <p className="g-mono">
+            <div className="g-paper enc-species-signature">
+                <p className="enc-species-signature-name">{signature.name}</p>
+                <p>
                     INSTRUMENT {signature.instrument} / ACTION {signature.action} / MEDIUM {signature.medium}
                 </p>
-                <p className="g-mono">INTENSITY {bandText(signature.intensity)}</p>
-                <p className="g-mono">{signature.description}</p>
+                <p>INTENSITY {bandText(signature.intensity)}</p>
+                <p>{signature.description}</p>
             </div>
         </section>
     );
@@ -168,7 +167,7 @@ function GeneratorTemplate({ record }) {
                     <div className="enc-section-head">
                         <h2 className="g-h2">Capabilities</h2>
                     </div>
-                    <div className="g-panel g-panel--recessed">
+                    <div className="g-paper">
                         {record.capabilities.map((c) => meterRow(c.key, c.name, c.band))}
                     </div>
                 </section>
@@ -177,7 +176,7 @@ function GeneratorTemplate({ record }) {
                     <div className="enc-section-head">
                         <h2 className="g-h2">Senses</h2>
                     </div>
-                    <div className="g-panel g-panel--recessed">
+                    <div className="g-paper">
                         {record.senses.graded.map((s) => meterRow(s.key, s.name, s.band))}
                         {record.senses.special.length > 0 && (
                             <div className="enc-species-chip-row">
@@ -195,7 +194,7 @@ function GeneratorTemplate({ record }) {
                     <div className="enc-section-head">
                         <h2 className="g-h2">Attributes</h2>
                     </div>
-                    <div className="g-panel g-panel--recessed">
+                    <div className="g-paper">
                         {record.attributes.map((a) => meterRow(a.key, a.name, a.band))}
                     </div>
                 </section>
@@ -215,7 +214,7 @@ function GeneratorTemplate({ record }) {
                     <div className="enc-section-head enc-species-archetypes-head">
                         <h2 className="g-h2">Archetypes</h2>
                     </div>
-                    <ol className="g-panel g-panel--recessed enc-species-archetypes">
+                    <ol className="g-paper enc-species-archetypes">
                         {record.archetypes.map((a) => (
                             <li key={a.key}>
                                 <span className="enc-species-archetype-name">{a.name}</span>
@@ -307,11 +306,12 @@ export default function SpeciesView() {
             </header>
 
             <div className="enc-record">
-                <div className="enc-species-plate">
-                    <div className="g-specimen">
-                        <div className="g-specimen-inner">
-                            <XalianImage colored speciesName={view.name} primaryType={view.element} moreClasses="enc-species-portrait" />
-                        </div>
+                <div className="g-paper g-paper--card enc-species-plate">
+                    <div className="g-paper-tabs">
+                        <span className={`g-tab g-el-${view.element}`}>{view.element}</span>
+                    </div>
+                    <div className="g-plate--photo enc-species-mount">
+                        <XalianImage colored speciesName={view.name} primaryType={view.element} moreClasses="enc-species-portrait" />
                     </div>
                 </div>
 

@@ -1,3 +1,4 @@
+// Terminal: panel (baseline). Target: field. Training games are diagnostic programs on the salvaged ECHELON survey unit.
 import React from 'react';
 import Col from 'react-bootstrap/Col';
 
@@ -309,7 +310,7 @@ class MatchCardGamePage extends React.Component {
 	render() {
 		return (
 			<React.Fragment>
-				<div id="match-card-game-wrapper" className="match-card-game-wrapper">
+				<div id="match-card-game-wrapper" className="match-card-game-wrapper" data-terminal="panel">
 					{this.state.cards}
 					{/* the start control used to sit on top of the middle of the board,
 					    covering two cards; it is a curtain over the whole board until

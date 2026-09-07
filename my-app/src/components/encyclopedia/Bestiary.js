@@ -15,25 +15,19 @@ function BestiaryTile({ species: s }) {
     return (
         <Link
             to={lore.routeFor('species', s.key)}
-            className={`g-tile g-el-${s.element} enc-bestiary-tile`}
+            className={`g-paper g-paper--card g-el-${s.element} enc-bestiary-card`}
         >
-            <div className="g-tile-art">
+            <div className="g-paper-tabs">
+                <span className={`g-tab g-el-${s.element}`}>{s.element}</span>
+            </div>
+            <div className="g-plate--photo enc-bestiary-mount">
                 <XalianImage colored speciesName={s.name} primaryType={s.element} moreClasses="enc-bestiary-portrait" />
             </div>
-            <span className="g-tile-name">{s.name}</span>
-            <div className="g-tile-meta">
-                <span className="g-chip">{s.element}</span>
-                <span className="enc-bestiary-world">{s.planet ? s.planet.name : s.homePlanet}</span>
-            </div>
-            <div className="enc-bestiary-lamps">
-                <span className={`g-lamp enc-bestiary-lamp ${s.source === 'template' ? '' : 'g-lamp--off'}`}>
-                    {s.source === 'template' ? 'record' : 'pending'}
-                </span>
-                {read && (
-                    <span className="g-lamp enc-bestiary-lamp enc-bestiary-read-lamp" title="Reviewed">
-                        reviewed
-                    </span>
-                )}
+            <span className="enc-bestiary-card-name">{s.name}</span>
+            <span className="enc-bestiary-world">{s.planet ? s.planet.name : s.homePlanet}</span>
+            <div className="enc-bestiary-stamps">
+                {s.source !== 'template' && <span className="enc-bestiary-pending">pending record</span>}
+                {read && <span className="g-stamp enc-bestiary-reviewed-stamp"><small>reviewed</small></span>}
             </div>
         </Link>
     );

@@ -46,8 +46,11 @@
 }
 
 .enc-scrub-station[aria-pressed='true'] {
-	color: var(--g-ink-invert);
-	background: var(--g-hazard);
+	/* --g-hazard is a v2 accent the design doc retires (section 8) and it is
+	   not part of any v3 terminal's material tokens, so it never retunes.
+	   Read the terminal's own accent instead. */
+	color: var(--g-accent-ink);
+	background: var(--g-accent);
 }
 
 .enc-scrub-station:focus-visible {

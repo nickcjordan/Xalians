@@ -162,21 +162,18 @@ Game data JSON is **duplicated by build step, not imported across packages**: `m
 
 `utils/valueTranslator.js` and `constants/constants.js` (element → theme color map) drive the element-themed styling used throughout charts and SVG rendering.
 
-### Design system
+### Design system: one relay, many terminals (version 3, 2026-09-07)
 
-**Read `docs/DESIGN_SYSTEM.md` before changing anything visual.** The site is styled as the control panel of a Xalian Generator — Star Wars by way of Fallout, where the machine is centuries ahead but the interface is enamelled steel, brass and bakelite. The short version:
+**Before touching anything visual, read `docs/DESIGN_SYSTEM.md` and load the `build-ui` skill (`.claude/skills/build-ui/SKILL.md`).** No exceptions for "small" changes: a className, a chart color, a modal, a game screen.
 
-- **Panels are matte and never glow.** Depth is a bevel plus rivets. Phosphor, scanlines and bloom live strictly inside `.g-screen` (a CRT bolted into the hull), which is the only thing that emits light. Lamps (`.g-lamp`) are the other lit thing, and they are static.
-- **Colour is energy or a warning.** The hull is olive/bone/gunmetal; the 14 element hues and the hazard livery are the only saturated things. Element colours are fixed points — do not restyle them.
-- `--g-el` is the element in scope: put `.g-el-fire` on any container and every meter, chip and tagged panel inside it retunes. Components read `--g-el` rather than naming a colour.
-- The palette lives **twice on purpose**: `public/assets/css/system.css` (`--g-*`, the CSS source of truth) and `src/constants/designTokens.js` (the same values for recharts `fill` props, GSAP tweens and SVG attributes, which cannot read a CSS variable). `src/__tests__/designTokens.test.js` fails if they disagree — **never edit one side alone**.
-- Components are prefixed `.g-`: `.g-panel`, `.g-screen`, `.g-meter`, `.g-chip`, `.g-btn`, `.g-input`, `.g-range`, `.g-segmented`, `.g-lamp`, `.g-specimen`, `.g-tile`, `.g-record`, `.g-spec`, `.g-data`.
-- Page-level compositions built from those parts live in `style.css`: `.specimen-record` (generator, via `components/xalianRecord.js`), `.record-strip` (species stats list + account), `.species-tile` (duel squad picker), `.game-curtain` (training games). They are deliberately the same document in different widths — designation across the top, plate on the left, printed data beside it, readouts below. `.planet-record` was retired with `planetPage.js` (2026-09-03); the Encyclopedia's Worlds section uses its own `.enc-world-*` classes.
-- **No new raw hex** in CSS or JSX. Add a token to both sides plus the test's `PAIRINGS` list.
-- Type is Oswald (stencilled legends), Barlow (prose), IBM Plex Mono (machine output, always tabular).
-- `/styleguide` is a living reference rendering every token and component. It is deliberately not linked from the navbar — it is a developer tool.
-- `public/assets/css/tokens.css` is a **temporary shim** mapping old `--x-*` names onto the new `--g-*` ones so unmigrated CSS still looks right. Do not add to it; delete rules from it as pages migrate.
-- `style.css` is a 3504-line BootstrapMade template. Many class names look unused but that signal has false positives (`btn-xalianGreen` is composed by bootstrap from `variant='xalianGreen'`), so do not bulk-delete it.
+The premise: the site is a Zolto **QED relay**, and every area of the site is a **remote terminal** from a different faction and era that the relay patches you into. Holism is required within an area, not across the site. The aesthetic is used-universe cassette futurism in the Alien Nostromo strain, never Fallout Americana.
+
+- **Pick the terminal first, from the lore.** `relay` (Zolto network: navbar, home, account), `field` (salvaged ECHELON survey unit: generator, Reclamation, training), `archive` (Poseidas reading desk: encyclopedia), `registry` (Kozrak's arena counter: duel), `readout` (the Generator's own voice, a mode inside another terminal). Set `data-terminal="..."` on the page root and record the lore reason in the page file's header comment. A new area that fits none of these needs a new terminal row in the design doc, ruled by Nick, before it gets a look.
+- **The medium rule.** Every element is hull (painted once, fixed legends, keys, lamps), paper (printed once, committed records, no buttons) or screen (live, the only thing that emits). Variable data never sits on the hull. The specimen record is content rendered inside the terminal's medium (`.g-crt`, `.g-paper--card`, `.g-paper--docket`), not a restyled panel.
+- **The anchoring rule.** Objects show how they attach to the world (bezel and screws, clip and lip, lamp pool, key travel) with the fewest cues that make them read.
+- **Core vs material.** Core tokens (spacing, type scale, 14 element hues, stat colors) are shared and fixed. Material tokens are set per terminal in `system.css` under `[data-terminal="..."]`; components read tokens and never name a color or font family. The palette lives twice on purpose (`system.css` and `src/constants/designTokens.js`); `designTokens.test.js` fails if they disagree, and `designSystem.test.js` fails if a page has no terminal or raw hex is added outside `system.css`.
+- Page compositions live in `public/assets/css/pages/<area>.css`. `style.css`, `tokens.css`, `duel*.css`, `reclamation.css` and `encyclopedia.css` are legacy and shrinking; never add to them.
+- `/styleguide` renders every terminal from the real classes. `docs/design/terminal-mockups.html` holds the ratified mockups with their object descriptions. `scripts/design/snap.js` screenshots every route at desktop and phone; run it before claiming visual work is done.
 
 ## Conventions and gotchas
 

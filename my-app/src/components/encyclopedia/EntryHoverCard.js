@@ -19,10 +19,10 @@ export default function EntryHoverCard({ entryKey, children }) {
         >
             {children}
             {show && (
-                <span className={`g-panel g-panel--raised enc-hover-card ${entry.element ? `g-el-${entry.element}` : ''}`} role="tooltip">
+                <span className={`g-paper g-paper--card enc-hover-card ${entry.element ? `g-el-${entry.element}` : ''}`} role="tooltip">
                     <span className="g-kicker enc-hover-cat">{entry.category}</span>
                     <span className="enc-hover-title">{entry.title}</span>
-                    <span className="g-body enc-hover-def">{entry.definition}</span>
+                    <span className="enc-hover-def">{entry.definition}</span>
                 </span>
             )}
         </span>

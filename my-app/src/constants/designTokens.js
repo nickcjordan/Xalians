@@ -104,6 +104,140 @@ const chart = {
 	axis: '#ddd4bd',
 };
 
+/**
+ * The material layer, v3 ("one relay, many terminals" — docs/DESIGN_SYSTEM.md).
+ * One entry per [data-terminal="..."] block in system.css, mirroring its
+ * material colours exactly; src/__tests__/designTokens.test.js fails if any
+ * of these disagree with the matching CSS block. "panel" mirrors :root's
+ * defaults, the version 2 look kept as the migration baseline. Non-colour
+ * material settings (fonts, radius, wear, per-terminal token overrides) stay
+ * CSS-only: nothing in JS currently needs them as strings.
+ */
+const terminals = {
+	panel: {
+		hull: hull.base,
+		hullHi: hull.hi,
+		hullLo: hull.lo,
+		face: hull.base,
+		ink: ink.base,
+		trim: brass.base,
+		accent: hazard.base,
+		glass: phosphor.glass,
+		phosphor: phosphor.base,
+		vfd: phosphor.base,
+		paper: '#ddd4bd',
+		paperInk: '#23231a',
+		lampOn: phosphor.base,
+	},
+	field: {
+		hull: '#3a3d3e',
+		hullHi: '#4a4d4d',
+		hullLo: '#262829',
+		face: '#cfc8b6',
+		ink: '#1e1d19',
+		trim: '#2b2b28',
+		accent: '#c8572b',
+		glass: '#0f0d0a',
+		phosphor: '#e9e3d2',
+		vfd: '#ffb347',
+		paper: '#e9e2cc',
+		paperInk: '#2b2a26',
+		lampOn: '#ffb347',
+	},
+	relay: {
+		hull: '#0a0c10',
+		hullHi: '#141821',
+		hullLo: '#05060a',
+		face: '#0a0c10',
+		ink: '#d8dde8',
+		trim: '#2b3444',
+		accent: '#e0364a',
+		glass: '#07090d',
+		phosphor: '#dfe4ea',
+		vfd: '#e2bd43',
+		paper: '#e9e2cc',
+		paperInk: '#2b2a26',
+		lampOn: '#e2bd43',
+	},
+	registry: {
+		hull: '#0f0c0c',
+		hullHi: '#1c1515',
+		hullLo: '#070505',
+		face: '#e6dcc6',
+		ink: '#e9dfc8',
+		trim: '#c9a44a',
+		accent: '#8f1d1d',
+		glass: '#120a0a',
+		phosphor: '#e7c98a',
+		vfd: '#e7c98a',
+		paper: '#e6dcc6',
+		paperInk: '#1d1710',
+		lampOn: '#e4483c',
+	},
+	archive: {
+		hull: '#3a4a4e',
+		hullHi: '#465659',
+		hullLo: '#2e3b3e',
+		face: '#f8f5ec',
+		ink: '#e6dfcc',
+		trim: '#7d9397',
+		accent: '#1f5f6b',
+		glass: '#1c2426',
+		phosphor: '#1f5f6b',
+		vfd: '#1f5f6b',
+		paper: '#e6d9b6',
+		paperInk: '#3b3428',
+		lampOn: '#1f5f6b',
+	},
+	readout: {
+		hull: '#0b0d0b',
+		hullHi: '#111411',
+		hullLo: '#060706',
+		face: '#0b0d0b',
+		ink: '#e6e4d8',
+		trim: '#2a2e2a',
+		accent: '#e8e6da',
+		glass: '#0c100d',
+		phosphor: '#e8e6da',
+		vfd: '#e8e6da',
+		paper: '#e8e6da',
+		paperInk: '#0b0d0b',
+		lampOn: '#e8e6da',
+	},
+};
+
+/**
+ * Interaction-state and readout-mode colours that used to be raw hex inside
+ * component rules in system.css (button hovers, the danger variant, the
+ * checked-toggle track, the hazard-strip's alternate stripe, the readout
+ * mode's fixed monochrome palette, and the near-black ink a classification
+ * tab prints on a saturated element colour). Panel-scoped except the
+ * `readout*`/`tab*` entries, which are terminal-invariant by design: the
+ * readout is "a mode, not a place" (docs/DESIGN_SYSTEM.md section 3).
+ */
+const material = {
+	accentInk: '#17120a',
+	hullHover: '#3c3c32',
+	accentHover: '#f0b71a',
+	danger: '#7c2b26',
+	dangerInk: '#ffdedb',
+	dangerEdge: '#43110e',
+	dangerHover: '#94332d',
+	checkOn: '#40340b',
+	hazardStripe: '#15130c',
+	readoutInk: '#0b0d0b',
+	tabInk: '#1a1a1a',
+	/**
+	 * The panel terminal's --g-paper-ink-faint. Deliberately its own field
+	 * rather than reusing ink.low: the two tokens used to share one value
+	 * (#6b665a) but that only cleared 3.87:1 against --g-paper, below the
+	 * 4.5:1 floor (round1-findings.md S5). Darkening --g-ink-low to fix it
+	 * would have retuned every hull legend that reads it; this token is
+	 * paper-only, so it moves alone.
+	 */
+	paperInkFaint: '#5c584d',
+};
+
 module.exports = {
 	hull,
 	brass,
@@ -115,5 +249,7 @@ module.exports = {
 	stat,
 	statPoints,
 	chart,
+	terminals,
+	material,
 	themeColors: colorConstants.themeColors,
 };

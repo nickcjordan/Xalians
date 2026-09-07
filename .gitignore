@@ -62,3 +62,6 @@ node_modules/
 
 # lambda deploy artifact is built by CI, not committed
 generate_xalian_lambda.zip
+
+# local scratch (design snapshots, session logs)
+untracked/

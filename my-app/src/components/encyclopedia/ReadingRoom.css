@@ -10,31 +10,35 @@
 }
 
 /* ---- begin / resume card ------------------------------------------------- */
+/* A card on the desk plus one key beside it, never a hull panel with a
+   button inside (round1-findings.md A2: medium rule). */
 
 .enc-room-begin {
 	display: flex;
 	flex-wrap: wrap;
-	align-items: baseline;
-	gap: var(--g-2) var(--g-4);
-	padding: var(--g-4) var(--g-5);
+	align-items: center;
+	gap: var(--g-4);
 	margin-bottom: var(--g-6);
 }
 
+.enc-room-begin-card {
+	flex: 1 1 22rem;
+}
+
 .enc-room-begin-kicker {
-	flex-basis: 100%;
+	display: block;
+	margin-bottom: var(--g-1);
 }
 
 .enc-room-begin-title {
-	margin: 0;
+	margin: 0 0 var(--g-1);
 }
 
 .enc-room-begin-meta {
 	margin: 0;
-	color: var(--g-ink-mid);
-	flex: 1 1 auto;
 }
 
-.enc-room-begin .g-btn {
+.enc-room-begin-key {
 	flex: none;
 }
 
@@ -46,21 +50,60 @@
 }
 
 /* ---- contents ------------------------------------------------------------- */
+/* The card itself (.g-paper .g-paper--card) lives on <ol class="enc-contents-
+   list"> in StoryContents.js, so both callers (here and /encyclopedia/story)
+   get the same card. This section only owns the fixed "Contents" legend
+   printed on the desk above it. */
 
 .enc-room-contents {
-	padding: var(--g-4);
 	margin-bottom: var(--g-7);
 }
 
-/* ---- reference shelf ------------------------------------------------------- */
-
-.enc-room-strip {
-	margin-top: 0;
-	grid-template-columns: repeat(4, minmax(0, 1fr));
+.enc-room-contents-title {
+	margin: 0 0 var(--g-3);
 }
 
-@media (max-width: 900px) {
-	.enc-room-strip {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
+/* ---- reference shelf: one typed drawer-label strip, not four hull tiles -- */
+
+.enc-room-drawer {
+	display: flex;
+	flex-wrap: wrap;
+	margin-top: 0;
+}
+
+.enc-room-drawer-tab {
+	display: flex;
+	flex: 1 1 12rem;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--g-2);
+	padding: var(--g-2) var(--g-4);
+	border-left: var(--g-hairline) dotted var(--g-paper-rule);
+	text-decoration: none;
+}
+
+.enc-room-drawer-tab:first-child {
+	border-left: 0;
+	padding-left: 0;
+}
+
+.enc-room-drawer-count {
+	white-space: nowrap;
+}
+
+.enc-room-drawer-tab:hover .enc-room-drawer-label {
+	text-decoration: underline;
+}
+
+@media (max-width: 700px) {
+	.enc-room-drawer-tab {
+		flex: 1 1 100%;
+		border-left: 0;
+		border-top: var(--g-hairline) dotted var(--g-paper-rule);
+		padding-left: 0;
+	}
+
+	.enc-room-drawer-tab:first-child {
+		border-top: 0;
 	}
 }

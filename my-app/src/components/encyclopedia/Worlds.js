@@ -18,29 +18,25 @@ export default function Worlds() {
                 <span className="enc-count">{worlds.length} surveyed</span>
             </div>
 
-            <div className="enc-grid">
+            <div className="enc-grid enc-card-grid">
                 {worlds.map((world) => (
                     <Link
                         key={world.key}
                         to={lore.routeFor('world', world.key)}
-                        className={`g-tile g-el-${world.element} enc-worlds-tile`}
+                        className={`g-paper g-paper--card g-el-${world.element} enc-worlds-card`}
                     >
-                        <div className="g-specimen enc-worlds-mount">
-                            <div className="g-specimen-inner">
-                                <img
-                                    src={`/${world.images.planet}`}
-                                    alt={`${world.name} globe`}
-                                    className="enc-worlds-globe"
-                                />
-                            </div>
+                        <div className="g-paper-tabs">
+                            <span className={`g-tab g-el-${world.element}`}>{world.element}</span>
                         </div>
-                        <div className="g-tile-meta">
-                            <span className="g-tile-name">{world.name}</span>
+                        <div className="g-plate--photo enc-worlds-mount">
+                            <img
+                                src={`/${world.images.planet}`}
+                                alt={`${world.name} globe`}
+                                className="enc-worlds-globe"
+                            />
                         </div>
-                        <div className="g-tile-meta enc-worlds-sub">
-                            <span className="g-chip">{world.element}</span>
-                        </div>
-                        <span className="g-tile-id enc-worlds-terrain">{world.physical.terrainLabel}</span>
+                        <span className="enc-worlds-card-name">{world.name}</span>
+                        <span className="enc-worlds-card-terrain">{world.physical.terrainLabel}</span>
                     </Link>
                 ))}
             </div>

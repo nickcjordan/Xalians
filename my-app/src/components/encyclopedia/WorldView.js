@@ -220,15 +220,16 @@ export default function WorldView() {
             <Link to="/encyclopedia/worlds" className="enc-back">&laquo; Back to Worlds</Link>
 
             <div className="enc-record">
-                <div className="enc-world-plate">
-                    <div className="g-specimen enc-world-mount">
-                        <div className="g-specimen-inner">
-                            <img
-                                src={`/${world.images.planet}`}
-                                alt={`${world.name} globe`}
-                                className="enc-world-globe"
-                            />
-                        </div>
+                <div className="g-paper g-paper--card enc-world-plate">
+                    <div className="g-paper-tabs">
+                        <span className={`g-tab g-el-${world.element}`}>{world.element}</span>
+                    </div>
+                    <div className="g-plate--photo enc-world-mount">
+                        <img
+                            src={`/${world.images.planet}`}
+                            alt={`${world.name} globe`}
+                            className="enc-world-globe"
+                        />
                     </div>
                     <div className="g-spec enc-world-spec">
                         {PHYSICAL_DISPLAY_SET.map(([label, format]) => (
@@ -359,9 +360,12 @@ export default function WorldView() {
                                     <Link
                                         key={s.key}
                                         to={lore.routeFor('species', s.key)}
-                                        className={`g-tile g-el-${s.element} enc-world-species-tile enc-world-species-tile--compact`}
+                                        className={`g-paper g-paper--card g-el-${s.element} enc-world-species-tile enc-world-species-tile--compact`}
                                     >
-                                        <div className="g-tile-art enc-world-species-art">
+                                        <div className="g-paper-tabs">
+                                            <span className={`g-tab g-el-${s.element}`}>{s.element}</span>
+                                        </div>
+                                        <div className="g-plate--photo enc-world-species-art">
                                             <XalianImage
                                                 colored
                                                 speciesName={s.name}
@@ -369,9 +373,7 @@ export default function WorldView() {
                                                 moreClasses="species-tile-img"
                                             />
                                         </div>
-                                        <div className="g-tile-meta">
-                                            <span className="g-tile-name">{s.name}</span>
-                                        </div>
+                                        <span className="enc-world-species-name">{s.name}</span>
                                     </Link>
                                 ))}
                             </div>
@@ -383,7 +385,7 @@ export default function WorldView() {
                             <div className="enc-section-head enc-world-record-section-head">
                                 <h2 className="g-h3">Entries Naming This World</h2>
                             </div>
-                            <div className="g-panel g-panel--recessed enc-world-entries">
+                            <div className="g-paper enc-world-entries">
                                 {world.entries.map((entry) => (
                                     <div key={entry.key} className={`g-record ${entry.element ? `g-el-${entry.element}` : ''}`}>
                                         <Link to={lore.routeFor('entry', entry.key)} className="g-record-term">
@@ -403,43 +405,43 @@ export default function WorldView() {
                     </Fold>
 
                     <Fold label="Generator survey">
-                        <div className="g-screen enc-world-report">
-                            <p className="g-screen-line">UNIT &nbsp;{report.unit}</p>
-                            <p className="g-screen-line">PROTOCOL &nbsp;{report.protocol}</p>
-                            <p className="g-screen-line g-screen-line--dim">CYCLE &nbsp;{report.cycle}</p>
+                        <div className="g-paper enc-world-report">
+                            <p className="enc-world-report-line">UNIT &nbsp;{report.unit}</p>
+                            <p className="enc-world-report-line">PROTOCOL &nbsp;{report.protocol}</p>
+                            <p className="enc-world-report-line enc-world-report-line--faint">CYCLE &nbsp;{report.cycle}</p>
 
-                            <p className="g-screen-line enc-world-report-block">
+                            <p className="enc-world-report-line enc-world-report-block">
                                 TERRAIN &nbsp;{report.terrain.features.join(' / ')}
                             </p>
                             {report.terrain.notes && (
-                                <p className="g-screen-line g-screen-line--dim">{report.terrain.notes}</p>
+                                <p className="enc-world-report-line enc-world-report-line--faint">{report.terrain.notes}</p>
                             )}
 
-                            <p className="g-screen-line enc-world-report-block">MOBILITY</p>
+                            <p className="enc-world-report-line enc-world-report-block">MOBILITY</p>
                             {MOBILITY_ORDER.filter((k) => report.mobility[k]).map((k) => {
                                 const m = report.mobility[k];
                                 return (
-                                    <p key={k} className="g-screen-line">
+                                    <p key={k} className="enc-world-report-line">
                                         {k.toUpperCase()} &nbsp;{m.rating.toUpperCase()}
-                                        {m.note && <span className="g-screen-line--dim"> &mdash; {m.note}</span>}
+                                        {m.note && <span className="enc-world-report-line--faint"> &mdash; {m.note}</span>}
                                     </p>
                                 );
                             })}
 
-                            <p className="g-screen-line enc-world-report-block">FAUNA</p>
+                            <p className="enc-world-report-line enc-world-report-block">FAUNA</p>
                             {report.fauna.observations.map((obs, i) => (
-                                <p key={i} className="g-screen-line">{obs}</p>
+                                <p key={i} className="enc-world-report-line">{obs}</p>
                             ))}
 
-                            <p className="g-screen-line enc-world-report-block">
+                            <p className="enc-world-report-line enc-world-report-block">
                                 HAZARDS &nbsp;{report.hazards.join(' / ')}
                             </p>
 
-                            <p className="g-screen-line enc-world-report-block">
+                            <p className="enc-world-report-line enc-world-report-block">
                                 OUTPUT PRIORITIES &nbsp;{report.outputPriorities.join(' / ')}
                             </p>
 
-                            <p className="g-screen-line g-screen-line--dim enc-world-report-block">RECEIPT UNCONFIRMED_</p>
+                            <p className="enc-world-report-line enc-world-report-line--faint enc-world-report-block">RECEIPT UNCONFIRMED, filed by hand&mdash;archivist</p>
                         </div>
                     </Fold>
                 </div>
