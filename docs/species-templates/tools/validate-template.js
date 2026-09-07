@@ -358,9 +358,6 @@ if (T) {
   }
   if (!Object.values(pool).some(v => Number.isInteger(v) && v > 0 && v < 100)) warn('traits.pool.variance', 'no listed trait sits below 100, so every individual of this species carries the same traits; confirm that is intended');
   const g = Object.keys(pool).filter(k => pool[k] === 100);
-  let expected = Object.values(pool).filter(Number.isFinite).reduce((x, y) => x + y, 0) / 100;
-  for (const [x, y] of TRAIT_EXCLUSIONS) if (has(pool, x) && has(pool, y)) { const hi = Math.max(pool[x], pool[y]), lo = Math.min(pool[x], pool[y]); expected -= (lo / 100) * (hi / 100); }
-  if (expected > 3.5) warn('traits.expected', 'expected trait count ' + expected.toFixed(2) + ' is above 3.5; confirm the species is meant to carry that many');
   for (const [x, y] of TRAIT_EXCLUSIONS) {
     if (pool[x] === 100 && pool[y] === 100) fail('traits.exclusion', x + ' and ' + y + ' are exclusion partners and cannot both be at 100');
     else if (has(pool, x) && has(pool, y) && pool[x] === pool[y]) warn('traits.exclusion.tie', x + ' and ' + y + ' have equal authored percents; the generator rolls the higher TILTED percent first, so after tilts one will lead, but say in the walkthrough which you intend');
@@ -477,7 +474,7 @@ if (ENC && T) {
     if (sentences < 1 || sentences > 2) fail('enc.definition.sentences', 'encyclopedia definition should be one or two sentences, has ' + sentences);
     if (!new RegExp('\\b' + T.name + '\\b').test(ENC.definition)) warn('enc.definition.name', 'definition does not name the species');
   }
-  for (const k of Object.keys(ENC)) if (!['key', 'title', 'category', 'definition', 'related'].includes(k)) fail('enc.extra', 'unexpected encyclopedia field "' + k + '"');
+  for (const k of Object.keys(ENC)) if (!['key', 'title', 'category', 'definition', 'related', 'pronunciation'].includes(k)) fail('enc.extra', 'unexpected encyclopedia field "' + k + '"');
 }
 
 // ---------- walkthrough ----------

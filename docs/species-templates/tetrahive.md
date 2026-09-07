@@ -72,17 +72,18 @@ The familiars are treated as projections held by the central mind, not as living
 
 ## Traits
 
-`guaranteed` is empty. The body demands nothing: it has no shell or plating (so not `armored`), it is corporeal (so not `phasing`), and it does not grip the ground (so not `anchored`). `rolledCount` is `[1, 2]`, so every individual carries at least one trait and at most two.
+The pool has no body-demanded entry at 100: it has no shell or plating (so not `armored`), it is corporeal (so not `phasing`), and it does not grip the ground (so not `anchored`). Every trait below is rolled independently at its own percent (1 to 100); there is no count, minimum, or cap, so an individual may in principle carry zero traits or all six.
 
-| Pool entry | Weight | Justification |
+| Trait | Percent | Justification |
 |---|---|---|
-| `nocturnal` | 5 | planet: the whole world is "surrounded in a cloak of perpetual night" and its star "emits almost no visible light", and the art gives the creature small slitted eyes and large ears, a body reading as night-adapted. Highest weight because both the body and the world point the same way |
-| `mind-sealed` | 4 | species: "It controls the swarm with its mind" is the one capability either source names, so the mind is this species' load-bearing organ; a mind that holds a swarm together is the physiology that supports resisting intrusion |
-| `slippery` | 3 | legacy gauge: evasion is the one stat rated `high`; the art's light wing-dominated frame agrees |
-| `stealthy` | 3 | art: a small dark-silhouetted flier with no bright or noisy features, on a world of perpetual night per the planet history |
-| `perceptive` | 2 | art: large upright ears; a low weight because no source sentence describes it finding anything hidden |
-| `menacing` | 2 | species: a swarm of familiars "with teeth like piranhas" attacking as one unit; low weight because no source sentence describes an effect on courage |
-| `solitary` | 1 | the creature is drawn and described as one body with its own conjured swarm rather than as part of a group; lowest weight because neither source states it operates alone. `pack-bonded` is therefore excluded from the pool |
+| `nocturnal` | 95 | planet: the whole world is "surrounded in a cloak of perpetual night" and its star "emits almost no visible light", and the art gives the creature small slitted eyes and large ears, a body reading as night-adapted. This is an environmental adaptation the planet fact justifies at nearly universal, per the amended evidence rule. |
+| `slippery` | 45 | legacy gauge: evasion is the one stat rated `high`; the art's light wing-dominated frame agrees. Sits above `mind-sealed` because a creature whose body is mostly conjured units is hard to hold, which the same evidence supports. |
+| `mind-sealed` | 35 | species: "It controls the swarm with its mind" is the one capability either source names, so the mind is this species' load-bearing organ; a mind that holds a swarm together is the physiology that supports resisting intrusion. |
+| `perceptive` | 20 | art: large upright ears; a modest percent because no source sentence describes it finding anything hidden. |
+| `menacing` | 20 | species: a swarm of familiars "with teeth like piranhas" attacking as one unit; modest because no source sentence describes an effect on courage. |
+| `solitary` | 10 | the creature is drawn and described as one body with its own conjured swarm rather than as part of a group; lowest percent because neither source states it operates alone. `pack-bonded` is therefore excluded from the pool. |
+
+`stealthy` was considered (a small dark-silhouetted flier with no bright or noisy features, on a world of perpetual night) and removed: its only support was the planet-wide perpetual-night sentence, which cannot carry a species trait on its own once it is already spent on `nocturnal`.
 
 ## Instruments
 
@@ -158,6 +159,7 @@ I believe this FAIL is a **false positive** and I passed the point with `--note`
 
 A second WARN cleared in the same pass was `enc.definition.name`: the encyclopedia definition originally opened `A small winged Xalian of Grimedes...` and did not name the species. It now opens `The Tetrahive is a small winged Xalian of Grimedes...`. That is a legitimate catch, not a denial.
 
+
 ## WARN answers
 
 Two WARNs remain on the final run, both the same code on the same instrument.
@@ -199,3 +201,4 @@ logged to docs\species-templates\validation-log\tetrahive.jsonl
 - 2026-09-02, archetype scale (Nick): `archetypeWeights` converted from relative 1 to 5 weights to percents summing to 100 by largest remainder, order preserved: skirmisher 33, sage 27, prowler 20, seeker 13, sovereign 7 (was skirmisher 5, sage 4, prowler 3, seeker 2, sovereign 1).
 - 2026-09-02, archetype rethink (Nick): the converted row kept the old 5-4-3-2-1 ladder shape shared by every record, so the distribution was re-authored on this species alone: sage 42, skirmisher 24, sovereign 18, seeker 16 (was skirmisher 33, sage 27, prowler 20, seeker 13, sovereign 7). Reasoning: a mind first (willpower is its highest band, the legion is conjured and held by will), quick in the body second; sovereign raised because commanding a swarm is charisma and will; prowler dropped, nothing in its sources is a stalker.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [-6, 34] to [-60, 5] (full habitable band (the old sub-band barely overlapped it)) against the rebuilt planet record's habitable band [-60, 5] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 0.44.
+- 2026-09-07, hardening pass: the trait section was rewritten under the percent model; the table now lists exactly the six pool entries in `tetrahive.json` with their percents, in the order the audit's correction established, and drops `stealthy`, which the JSON never carried.

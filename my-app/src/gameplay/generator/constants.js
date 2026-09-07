@@ -7,10 +7,14 @@
 	.claude/skills/migrate-species/SKILL.md sections 5.3, 5.7, 5.7a, 5.8, 5.9.
 */
 
-// 0.x: the first runnable generator. It follows the ratified pipeline but is not yet the
-// bit-exact spec (canonical PRNG, hashed manifest) the redesign doc's audit section asks
-// for before real Scrambler Tokens are expanded. Bump when any table below moves.
-export const GENERATOR_VERSION = '0.1.0';
+// 0.x: still short of the bit-exact spec (a hashed content manifest) the redesign doc's
+// audit section asks for before real Scrambler Tokens are expanded, but 0.2.0 closes the
+// two gaps that mattered most: the seed is now a full 128-bit stream (prng.js, cyrb128
+// into xoshiro128**) instead of a 32-bit fold, and the ability name draw is weighted by
+// heft so a heavy roll gets a heavy name. Records from 0.1.0 do not reproduce under
+// 0.2.0, which is exactly what pinning the version is for. Bump when any table below
+// moves.
+export const GENERATOR_VERSION = '0.2.0';
 export const SCHEMA_VERSION = '1.0.0';
 
 export const ATTRIBUTE_KEYS = [
@@ -85,6 +89,12 @@ export const FINISH_ODDS = [
 // 8c / 5.8: signature plus 2 or 3 rolled abilities; rolled intensity band.
 export const ROLLED_ABILITY_COUNT = [2, 3];
 export const ROLLED_INTENSITY_BAND = [15, 95];
+// 8c: intensity-weighted naming (hardening Decision 9). A rolled intensity picks a target
+// heft (1 below 34, 2 from 34 to 66, 3 above 66) and the name draw weights candidates by
+// how far their bundled heft sits from that target: a match, a neighbor, anything else.
+// The catalog computes heft; these weights decide how hard it pulls.
+export const HEFT_BANDS = [34, 66];
+export const HEFT_MATCH_WEIGHTS = [3, 2, 1];
 // when a secondary affinity exists, the share of rolled abilities that use it as medium
 export const SECONDARY_MEDIUM_SHARE = 0.4;
 

@@ -13,6 +13,12 @@ Per-species decisions that a migration agent cannot derive from the sources alon
 - 2026-09-02: trait model. Every pool trait is rolled independently at its own percent (1 to 100); 100 means every individual; no count, minimum, or cap; `guaranteed` and `rolledCount` retired. Exclusion partners: the generator rolls the higher percent first and skips the partner if it lands; never both at 100. A planet-wide sentence may justify an environmental adaptation trait (nocturnal, resistant) at or near 100, never a behavioral one.
 - 2026-09-02: catalog tags. A name carries instrument tags only when the name itself names or implies a part (Wraith Claws stays gated to claws); a name that names no part carries no tag and is drawable by any instrument that can perform the action. The 63 ghost rake names tagged claws without naming a part were untagged.
 
+- 2026-09-07 (Nick): the catalog's one-cell-per-name rule is struck. A name may sit in more than one action cell, in more than one element file, and in the neutral pool as well as an element cell, wherever each placement is logically sound on its own. The 2026-09-07 dedupe ledger was not applied.
+
+## Frackworm
+
+- 2026-09-04: covering `chitin`, anatomy `jaws, vents, shell, body, eyes`, `armored` 100. A worm that bores through rock and glass sand wears grown overlapping armor plates, not hide. Eyes are tiny pinpoint dots on the collar behind the drill, no stalks (2026-09-04 later ruling: stalk eyes read goofy); sight stays 0 to 15. Art brief: the signature is the sand slurry blasting from the vent ring behind the head; the drill head is a blunt ringed cone with a small maw, never a mouth full of teeth. Applies the relatable-first principle in docs/design/xalian-creature-system-redesign.md section 1.
+
 ## Graviclaw
 
 - 2026-09-01: signature is Point of No Return, pincers / snare / dark (the pull past the horizon into the claws, not the crushing close). Recorded in `consolidated-dark.md` line 52.
@@ -76,3 +82,4 @@ Per-species decisions that a migration agent cannot derive from the sources alon
 - 2026-09-02: Stonera and Endessa batch: Codazzo, Terragoyle, Scalatto, Thirstaserp, Drilltail migrated, validated, amended; roster complete (29 of 29). Rulings: Terragoyle stone is a held object, not composition; carried source descriptions may have unambiguous misspellings corrected with a note (species.json to be fixed upstream); the armored-covering lifespan adjustment is applied as written (Foromeer, Scalatto, Drilltail are `long`); Drilltail signature is pincers / crush. Notes carried, no change made: a resting perch read as a gait (Terragoyle), the armored clause on small disposable chitin bodies (Drilltail), the rock `burst` cell being unreachable for spined species, and `communication` having no unknown value.
 - 2026-09-02: art corrections from Nick: Crystorn has two crystal horns (`horns`, light conduit); Luceras has two curved ram horns (`horns`, signature horns / shove); Foromeer has antennae on its head and its drills are its hands (`spurs`, signature spurs / strike).
 - 2026-09-02 (Nick): misspellings are never carried into a record; species.json corrected upstream (Crystorn temperament, Avilily petals and Avililies, Terragoyle levitating and Terragoyles). Drilltail signature is the drill tail (tail / strike), not the pincers.
+- 2026-09-02: Frackworm authored (species 00030, Endessa, sand) and migrated; covering hide under the flesh-animal ruling pending art; no artwork exists yet.

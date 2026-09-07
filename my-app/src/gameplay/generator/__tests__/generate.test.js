@@ -2,7 +2,8 @@ import { describe, test, expect } from 'vitest';
 import { generateXalian, generateBatch, getSpeciesTemplates, speciesDisplayName, GENERATOR_VERSION } from '../index.js';
 import registries from '../../../json/registries.json';
 import catalog from '../../../json/abilityCatalog.json';
-import { ELEMENT_ADJACENCY, CONDUIT_ACTIONS_BY_MEDIUM, TRAIT_EXCLUSIONS } from '../constants.js';
+import { ELEMENT_ADJACENCY, CONDUIT_ACTIONS_BY_MEDIUM, TRAIT_EXCLUSIONS, HEFT_BANDS } from '../constants.js';
+import { makeRng } from '../prng.js';
 
 /*
 	Contracts from docs/design/xalian-creature-data-structure.md section 3 and the
@@ -191,7 +192,8 @@ describe('generator: every ratified species honors the record contract', () => {
 				const name = a.name.toLowerCase();
 				const owned = findEntry(catalog.elements[a.medium] && catalog.elements[a.medium][a.action], name);
 				const neutral = findEntry(catalog.neutral[a.action], name);
-				const permits = (e) => e !== undefined && (!Array.isArray(e) || e[1].includes(a.instrument));
+				// [name, tags, heft] entries may carry an empty tag list; empty means untagged
+				const permits = (e) => e !== undefined && (!Array.isArray(e) || e[1].length === 0 || e[1].includes(a.instrument));
 				expect(permits(owned) || permits(neutral)).toBe(true);
 			});
 		});
@@ -246,5 +248,136 @@ describe('generator: pipeline tilts read the body', () => {
 		const share = withSecondary / rolls.length;
 		expect(share).toBeGreaterThan(0.18);
 		expect(share).toBeLessThan(0.32);
+	});
+});
+
+describe('generator: the seed is a 128-bit stream, not a 32-bit fold', () => {
+	/*
+		Decision 7 of docs/design/xalian-creature-system-hardening.md. Generator 0.1.0
+		folded the seed string into one 32-bit word before stepping mulberry32, so two
+		Scrambler Tokens collided at birthday scale (about 65,000 mints) and the whole
+		128-bit genome the redesign doc mints was thrown away. These tests fail on any
+		return to a 32-bit seed.
+	*/
+
+	test('seeds that collided under the old 32-bit fold now diverge', () => {
+		// "Aa" and "BB" have the same value under the retired h = h * 31 + c fold
+		// (65 * 31 + 97 === 66 * 31 + 66), so 0.1.0 expanded them to the same creature
+		const a = generateXalian('graviclaw', 'Aa', { generatedAt: FIXED_TIME });
+		const b = generateXalian('graviclaw', 'BB', { generatedAt: FIXED_TIME });
+		expect(a.id).not.toBe(b.id);
+		expect(a.attributes).not.toEqual(b.attributes);
+	});
+
+	test('the raw stream separates seeds differing only past 32 bits of hash space', () => {
+		const seen = new Set();
+		for (let i = 0; i < 4000; i++) {
+			const rng = makeRng(`token-${i}`);
+			seen.add([rng.hex(8), rng.hex(8), rng.hex(8), rng.hex(8)].join(''));
+		}
+		expect(seen.size).toBe(4000);
+	});
+
+	test('2000 sequential seeds give 2000 distinct ids and attribute vectors', () => {
+		const ids = new Set();
+		const vectors = new Set();
+		for (let i = 0; i < 2000; i++) {
+			const r = generateXalian('graviclaw', `mint-${i}`, { generatedAt: FIXED_TIME });
+			ids.add(r.id);
+			vectors.add(ATTRIBUTES.map((k) => r.attributes[k]).join(','));
+		}
+		expect(ids.size).toBe(2000);
+		expect(vectors.size).toBe(2000);
+	});
+
+	test('a numeric seed is the same stream as its decimal spelling', () => {
+		const a = generateXalian('graviclaw', 12345, { generatedAt: FIXED_TIME });
+		const b = generateXalian('graviclaw', '12345', { generatedAt: FIXED_TIME });
+		expect(a).toEqual(b);
+	});
+});
+
+describe('generator: forks are independent sub-streams', () => {
+	const drawFive = (rng) => [rng.float(), rng.float(), rng.float(), rng.float(), rng.float()];
+
+	test('consuming one fork does not shift another', () => {
+		const before = drawFive(makeRng('root-seed').fork('a'));
+
+		const root = makeRng('root-seed');
+		const b = root.fork('b');
+		for (let i = 0; i < 17; i++) {
+			b.float();
+		}
+		const after = drawFive(root.fork('a'));
+
+		expect(after).toEqual(before);
+	});
+
+	test('drawing from the parent does not shift a fork', () => {
+		const plain = makeRng('root-seed');
+		const before = drawFive(plain.fork('archetype'));
+
+		const used = makeRng('root-seed');
+		used.float();
+		used.int(100);
+		const after = drawFive(used.fork('archetype'));
+
+		expect(after).toEqual(before);
+	});
+
+	test('different labels give different streams', () => {
+		const root = makeRng('root-seed');
+		expect(drawFive(root.fork('a'))).not.toEqual(drawFive(root.fork('b')));
+	});
+});
+
+describe('generator: names are drawn toward the rolled intensity', () => {
+	/*
+		Decision 9: the bundler computes a heft per catalog entry (1 small, 2 ordinary,
+		3 grand) and the generator weights the name draw toward the heft matching the
+		intensity tercile. The catalog is heavily weighted toward heft 2, so the effect is
+		a shift in the mean rather than a clean separation.
+	*/
+	const heftIndex = (() => {
+		const map = new Map();
+		const add = (e) => {
+			const name = (Array.isArray(e) ? e[0] : e).toLowerCase();
+			const h = Array.isArray(e) && typeof e[2] === 'number' ? e[2] : 2;
+			if (!map.has(name)) {
+				map.set(name, h);
+			}
+		};
+		Object.values(catalog.elements).forEach((cells) => Object.values(cells).forEach((list) => list.forEach(add)));
+		Object.values(catalog.neutral).forEach((list) => list.forEach(add));
+		return map;
+	})();
+
+	test('the catalog ships a heft on every entry that is not ordinary', () => {
+		expect(catalog.counts.heft).toBeDefined();
+		expect(catalog.counts.heft['1']).toBeGreaterThan(0);
+		expect(catalog.counts.heft['3']).toBeGreaterThan(0);
+	});
+
+	test('high-intensity abilities carry heavier names than low-intensity ones', () => {
+		const rolls = generateBatch(TEMPLATES.length * 40, 'heft-seed', { generatedAt: FIXED_TIME });
+		const heavy = [];
+		const light = [];
+		rolls.forEach((r) => {
+			r.abilities.filter((a) => !a.signature).forEach((a) => {
+				const h = heftIndex.get(a.name.toLowerCase());
+				if (h === undefined) {
+					return;
+				}
+				if (a.intensity > HEFT_BANDS[1]) {
+					heavy.push(h);
+				} else if (a.intensity < HEFT_BANDS[0]) {
+					light.push(h);
+				}
+			});
+		});
+		const mean = (list) => list.reduce((n, h) => n + h, 0) / list.length;
+		expect(heavy.length).toBeGreaterThan(200);
+		expect(light.length).toBeGreaterThan(200);
+		expect(mean(heavy)).toBeGreaterThan(mean(light));
 	});
 });

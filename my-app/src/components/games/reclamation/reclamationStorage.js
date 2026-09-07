@@ -10,6 +10,8 @@
 	fake and the functions still work with no `window` at all (returns defaults).
 */
 
+import { GENERATOR_VERSION } from '../../../gameplay/generator/constants.js';
+
 const MATCH_KEY = 'reclamation.match.v1';
 const HISTORY_KEY = 'reclamation.history.v1';
 const RIVAL_KEY = 'reclamation.rival';
@@ -80,14 +82,21 @@ function removeKey(storage, key) {
 	saveMatch(payload, storage): payload is whatever JSON the caller gives (match state,
 	seed, rivalId, log, squadIds, mode, ...); this wraps it with version 1 so a later
 	shape change can tell an old save apart and discard it rather than misread it.
+
+	The wrapper also records the generator version (hardening Decision 8). A saved match
+	stores seeds, not creatures, so a resumed match regenerates its rosters; under a new
+	generator those seeds expand into different creatures than the saved log names. That
+	is worse than losing the save, so a generator mismatch discards exactly like a storage
+	version mismatch does.
 */
 export function saveMatch(payload, storage) {
-	return writeJSON(storage, MATCH_KEY, { version: MATCH_VERSION, payload });
+	return writeJSON(storage, MATCH_KEY, { version: MATCH_VERSION, generatorVersion: GENERATOR_VERSION, payload });
 }
 
 /*
 	loadMatch(storage) -> the saved payload, or null when there is nothing saved, the JSON
-	is corrupt, or the saved version does not match what this build expects.
+	is corrupt, or the saved storage version or generator version does not match what this
+	build expects.
 */
 export function loadMatch(storage) {
 	const wrapper = readJSON(storage, MATCH_KEY);
@@ -95,6 +104,9 @@ export function loadMatch(storage) {
 		return null;
 	}
 	if (wrapper.version !== MATCH_VERSION) {
+		return null;
+	}
+	if (wrapper.generatorVersion !== GENERATOR_VERSION) {
 		return null;
 	}
 	if (!Object.prototype.hasOwnProperty.call(wrapper, 'payload')) {

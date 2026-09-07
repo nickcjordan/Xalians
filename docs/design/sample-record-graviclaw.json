@@ -1,76 +1,108 @@
 {
-  "id": "xal_01J8QK4R7MZ3VXNB2C9D1E5F6G",
+  "id": "xal_0f17b9b682da4399938c",
   "species": "graviclaw",
   "provenance": {
-    "seed": "7f3a9c41e8b2d05f6a1c93e7d4b8f210",
-    "generatorVersion": "1.0.0",
+    "seed": "sample-graviclaw-1",
+    "generatorVersion": "0.2.0",
     "schemaVersion": "1.0.0",
-    "generatedAt": "2026-09-14T18:22:07Z",
+    "generatedAt": "2026-09-07T00:00:00Z",
     "origin": "grimedes",
-    "serial": 213
+    "serial": 1
   },
   "physiology": {
     "corporeality": "corporeal",
-    "composition": { "primary": "flesh" },
+    "composition": {
+      "primary": "flesh",
+      "secondary": "mineral"
+    },
     "bodyPlan": "multiped",
-    "anatomy": ["pincers", "walking-legs"],
+    "anatomy": [
+      "pincers",
+      "shell",
+      "body"
+    ],
     "covering": "chitin",
-    "heightCm": 198,
-    "weightKg": 372,
-    "lifespan": "enduring",
-    "genome": { "chirality": "dextro" },
+    "heightCm": 204,
+    "weightKg": 243,
+    "lifespan": "long",
+    "genome": {
+      "chirality": "dextro"
+    },
     "diet": "carnivore",
-    "communication": ["vibration"],
-    "breathes": ["gas", "liquid"],
+    "communication": [],
+    "breathes": [
+      "gas",
+      "liquid"
+    ],
     "environmentalTolerance": {
-      "ambientMedia": ["gas", "liquid"],
-      "temperatureC": { "min": -15, "max": 20 }
+      "ambientMedia": [
+        "gas",
+        "liquid"
+      ],
+      "temperatureC": {
+        "min": -60,
+        "max": 5
+      }
     },
     "capabilities": {
       "flight": 0,
-      "swim": 52,
-      "burrow": 31,
-      "climb": 18,
-      "sprint": 12,
-      "leap": 4,
-      "manipulation": 44
+      "swim": 54,
+      "burrow": 57,
+      "climb": 13,
+      "sprint": 25,
+      "leap": 6,
+      "manipulation": 57
     },
     "senses": {
-      "sight": 55,
-      "hearing": 28,
-      "smell": 47,
-      "special": ["tremorsense"]
+      "sight": 32,
+      "hearing": 44,
+      "smell": 52,
+      "special": [
+        "void-sense"
+      ]
     }
   },
-  "archetype": { "key": "stalwart", "favors": ["resilience", "willpower"] },
+  "archetype": {
+    "key": "predator",
+    "favors": [
+      "instinct",
+      "reflex"
+    ]
+  },
   "attributes": {
-    "strength": 74,
-    "vitality": 61,
-    "endurance": 65,
-    "agility": 14,
-    "reflex": 38,
-    "intelligence": 42,
-    "willpower": 78,
-    "instinct": 71,
-    "charisma": 19,
-    "resilience": 93
+    "strength": 86,
+    "vitality": 66,
+    "endurance": 57,
+    "agility": 25,
+    "reflex": 49,
+    "intelligence": 39,
+    "willpower": 62,
+    "instinct": 69,
+    "charisma": 38,
+    "resilience": 81
   },
   "element": {
     "primary": "dark",
-    "affinities": { "dark": 100, "ghost": 44 }
+    "affinities": {
+      "dark": 100
+    }
   },
-  "traits": {
-    "guaranteed": ["armored", "anchored"],
-    "rolled": ["stealthy"]
-  },
+  "traits": [
+    "armored",
+    "anchored",
+    "menacing",
+    "stealthy"
+  ],
   "temperament": {
-    "boldness": 81,
-    "curiosity": 48,
-    "energy": 25,
-    "aggression": 66,
-    "sociability": 22
+    "boldness": 61,
+    "curiosity": 51,
+    "energy": 43,
+    "aggression": 75,
+    "sociability": 43
   },
-  "appearance": { "finish": "gleam" },
+  "appearance": {
+    "finish": "standard"
+  },
   "abilities": [
     {
       "name": "Point of No Return",
@@ -78,32 +110,24 @@
       "instrument": "pincers",
       "action": "snare",
       "medium": "dark",
-      "intensity": 74,
-      "description": "Collapses gravitational waves into a point inside its open claw, dragging prey toward the closing pincer."
+      "intensity": 70,
+      "description": "It opens a claw beneath the water and collapses the gravitational waves inside it until nothing within reach can swim away from the closing grip."
     },
     {
-      "name": "Wraith Vise",
-      "signature": false,
-      "instrument": "pincers",
-      "action": "crush",
-      "medium": "ghost",
-      "intensity": 48
-    },
-    {
-      "name": "Null Grasp",
-      "signature": false,
-      "instrument": "mind",
-      "action": "snare",
-      "medium": "dark",
-      "intensity": 33
-    },
-    {
-      "name": "Event Horizon",
+      "name": "Gravity Buttress",
       "signature": false,
       "instrument": "pincers",
       "action": "ward",
       "medium": "dark",
-      "intensity": 41
+      "intensity": 93
+    },
+    {
+      "name": "Undoing",
+      "signature": false,
+      "instrument": "pincers",
+      "action": "drain",
+      "medium": "dark",
+      "intensity": 95
     }
   ]
 }
