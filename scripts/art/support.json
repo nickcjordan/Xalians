@@ -7,8 +7,13 @@
       "model": "zimage",
       "width": 1536,
       "height": 768,
-      "seeds": [201000, 201001, 201002, 201003],
-      "prompt": "painterly concept art, high contrast, single light source, muted palette. A single round grey planet, whole and unbroken, fills the exact center of the frame; the planet is the largest and brightest object in the picture. A wide broken ring of dark rock chunks and dust orbits around that planet, close in, at every distance from it, forming a visible band that circles the planet on all sides. Far behind the planet and ring, near the top corner of the frame and much smaller than the planet, sits one dim small point of a star, faint and not glowing brightly. The rest of the frame is empty black space. Ancient, cold, immense scale, utter emptiness, ruin long since gone quiet."
+      "seeds": [
+        201000,
+        201001,
+        201002,
+        201003
+      ],
+      "prompt": "flat gouache painting, hard-edged shapes, visible brush texture, palette of near-black, slate grey and bone with a single hot orange accent, no text, no lettering, no frame, no border. A field of broken rock fragments in deep space fills the whole frame: thousands of jagged grey and black boulders and shards with sharp cracked edges, drifting in a wide loose band that curves across the picture from the left edge to the right edge, the band thick with rubble and dust and never a smooth flat ring. In a gap near the centre of the band hangs one small round intact planet, smooth grey stone, no larger than a coin against the wide frame, alone and unbroken among the wreckage. Far off in the upper right, one small dim orange point of light is the only star. Everything else is near-black space and faint grey dust."
     },
     {
       "kind": "era",
@@ -16,7 +21,12 @@
       "model": "zimage",
       "width": 1536,
       "height": 768,
-      "seeds": [202000, 202001, 202002, 202003],
+      "seeds": [
+        202000,
+        202001,
+        202002,
+        202003
+      ],
       "prompt": "painterly concept art, high contrast, single light source, muted palette. Rows of tall spacecraft hulls stand upright on a flat landing field, each hull a long grey cylinder with a rounded nose cone pointing straight up at the sky and a set of triangular tail fins splayed out at the bottom where the hull meets the ground, three thin metal support struts holding each hull upright like legs. Rings of small square windows run around each hull in bands, and horizontal panel seams mark the hull plating from top to bottom. The hulls stand far taller than any building, taller than they are wide, in straight orderly rows like a forest of standing rockets on a paved field. Behind the standing hulls, low slate-stone colony halls with flat roofs stretch to the horizon, each hall shorter than the hulls in front of it. A pale bone-coloured sky sits above the whole scene. One single bright orange glow burns at the base of one hull, the only accent of colour in the picture; grey, slate, bone and black elsewhere. A new frontier just being claimed, vast scale, orderly rows of upright hulls and stone dwarfing any single figure."
     },
     {
@@ -25,8 +35,13 @@
       "model": "zimage",
       "width": 1536,
       "height": 768,
-      "seeds": [203000, 203001, 203002, 203003],
-      "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view down the length of a vast empty colony hall: rows and rows of silent quarters and cradles stretching into the distance under a high vaulted ceiling, all of it empty and unused, lit by a cold blue glow pulsing from an enormous engine core visible through an archway at the far end of the hall. Stillness, absence, a faint hum of dread, scale that dwarfs any single figure."
+      "seeds": [
+        203000,
+        203001,
+        203002,
+        203003
+      ],
+      "prompt": "flat gouache painting, hard-edged shapes, visible brush texture, palette of near-black, slate grey and bone with a single hot orange accent, no text, no lettering, no frame, no border. A vast empty dormitory hall seen straight down its centre line: two long rows of identical empty beds, each a low rectangular bed with a flat bone-coloured mattress and one small pillow, standing on the stone floor on both sides of a wide central aisle, hundreds of beds receding to a far archway, all bare, made up and unslept in. Above them a high vaulted ceiling of slate stone. Through the archway at the far end a cold pale blue light glows from one large round dark shape. No shelves, no racks, no lockers, no crates, no wheels, no pipes. Slate walls, near-black shadows, one small orange lamp high on the far wall as the only warm light."
     },
     {
       "kind": "era",
@@ -34,7 +49,12 @@
       "model": "zimage",
       "width": 1536,
       "height": 768,
-      "seeds": [204000, 204001, 204002, 204003],
+      "seeds": [
+        204000,
+        204001,
+        204002,
+        204003
+      ],
       "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view of an industrial world at full production: dozens of towering foundry stacks and refinery spires across a volcanic plain, a grey overcast sky above, slate-grey ground below, the stacks themselves black, columns of smoke and steam rising into the overcast, rivers of molten rock cutting between the structures as the single orange accent in the scene. Furious energy, wealth being torn out of the ground, a boomtown skyline of black and slate lit only by the molten channels."
     },
     {
@@ -43,7 +63,12 @@
       "model": "zimage",
       "width": 1536,
       "height": 768,
-      "seeds": [205000, 205001, 205002, 205003],
+      "seeds": [
+        205000,
+        205001,
+        205002,
+        205003
+      ],
       "prompt": "painterly concept art, high contrast, single light source, muted palette. A tall thin dark grey mast stands upright in the middle of a mountain valley at night, and from the very tip of the mast three or four taut straight glowing white lines stretch straight up into the sky, each line as bright and continuous as a lit wire, running unbroken from the mast's tip up into the belly of a storm cloud directly overhead, where the lines vanish into the cloud; these glowing lines are steady and unbroken, not jagged, and are the brightest, most eye-catching part of the whole picture, brighter than anything else in the frame. Above and around the mast, separate jagged white lightning bolts branch down from a mass of grey and black storm clouds and strike the jagged black mountain peaks ringing the valley, distinct from the steady glowing lines at the mast. No magenta, no purple and no red anywhere in the scene. Tense hush before a change, a single watchful structure under an enormous natural power, uneasy calm."
     },
     {
@@ -52,7 +77,12 @@
       "model": "zimage",
       "width": 1536,
       "height": 768,
-      "seeds": [206000, 206001, 206002, 206003],
+      "seeds": [
+        206000,
+        206001,
+        206002,
+        206003
+      ],
       "prompt": "painterly concept art, high contrast, single light source, muted palette. A wide cinematic view of a dark world under a raging orbital battle: jagged black spires rising from a barren plain into a starless sky, streaks of weapon fire and the flares of distant explosions lighting the clouds above, one massive fleet silhouette burning as it falls toward the horizon. Cold, hostile, apocalyptic scale, the last stand of a dying war lit only by destruction."
     },
     {
@@ -61,7 +91,12 @@
       "model": "zimage",
       "width": 1536,
       "height": 768,
-      "seeds": [207000, 207001, 207002, 207003],
+      "seeds": [
+        207000,
+        207001,
+        207002,
+        207003
+      ],
       "prompt": "painterly concept art, high contrast, single light source, muted palette. A flat round stone floor sits at the center of the frame, glowing solid orange from within like a heated metal plate, its edge a clean hard circle with no sand, no dust and no spilled liquid anywhere on it. Tiered stone galleries in near-black and slate rise on all sides around the circle, seat after empty seat, empty of any crowd, dark and unlit. No sky is visible; nothing stands on or beside the glowing circle; there is no vehicle, no engine, no boiler, no pipework, no wheels and no machine of any kind anywhere in the picture. Ceremonial, watchful, a fragile order held together by spectacle and one ruler's will."
     }
   ]
