@@ -5,9 +5,10 @@ on:
     branches: [main]
     paths:
       - "lambda/**"
-      - "main.tf"
-      - "variables.tf"
-      - "outputs.tf"
+      # glob rather than a list of filenames: a new root-level .tf file must
+      # trigger the apply that manages it. github-oidc.tf was added in #66 and
+      # would not have deployed under the old explicit list.
+      - "*.tf"
       - "terraform/**"
       - ".github/workflows/deploy-backend.yml"
   # no paths filter on PRs: "Terraform plan" is a required status check for
