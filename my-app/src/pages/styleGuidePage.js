@@ -101,21 +101,30 @@ class StyleGuidePage extends React.Component {
                 <div className="g-shell sg-page">
 
                     {/* ---- masthead ---- */}
-                    <header className="sg-masthead">
-                        <p className="g-label">Xalian Generator</p>
-                        <h1 className="g-title">Console Design System</h1>
-                        <p className="g-body">
-                            The site is a relay, patched through into a different terminal for every
-                            area. This reference reads through the relay itself, which is why its own
-                            hull and screen are the relay's — blue-black steel, a salvaged colour tube,
-                            copper-yellow silkscreen. Panels are matte objects and never glow. The only
-                            light in the room comes from a screen bolted into the hull, and from the
-                            indicator lamps beside it.
-                        </p>
-                        <div className="sg-masthead-status">
-                            <span className="g-lamp">Generator online</span>
-                            <span className="g-lamp g-lamp--amber">Plague containment nominal</span>
-                            <span className="g-lamp g-lamp--off">APEX link severed</span>
+                    {/* .g-masthead is core (round3-coherence.md "one frame"): kicker
+                        over title on the left, an optional .g-masthead-aside slot on
+                        the right holding one key or a .g-nameplate. Every page uses
+                        this same wrapper; the styleguide is no exception. */}
+                    <header className="g-masthead">
+                        <div className="g-masthead-heading">
+                            <p className="g-label">Xalian Generator</p>
+                            <h1 className="g-title">Console Design System</h1>
+                            <p className="g-body">
+                                The site is a relay, patched through into a different terminal for every
+                                area. This reference reads through the relay itself, which is why its own
+                                hull and screen are the relay's — blue-black steel, a salvaged colour tube,
+                                copper-yellow silkscreen. Panels are matte objects and never glow. The only
+                                light in the room comes from a screen bolted into the hull, and from the
+                                indicator lamps beside it.
+                            </p>
+                            <div className="sg-masthead-status">
+                                <span className="g-lamp">Generator online</span>
+                                <span className="g-lamp g-lamp--amber">Plague containment nominal</span>
+                                <span className="g-lamp g-lamp--off">APEX link severed</span>
+                            </div>
+                        </div>
+                        <div className="g-masthead-aside">
+                            <span className="g-nameplate">Styleguide &middot; Dev Reference</span>
                         </div>
                     </header>
 
@@ -646,6 +655,41 @@ class StyleGuidePage extends React.Component {
                                     <span className="g-readout-unit"> stat score</span>
                                 </div>
                                 <p className="g-kicker">Machine readout — tabular, never reflows</p>
+                            </div>
+                        </div>
+
+                        {/* ---- frame: .g-masthead, .g-nameplate, .g-object ---- */}
+                        <div className="g-panel sg-mt">
+                            <div className="g-panel-head">
+                                <span className="g-label">Frame</span>
+                                <span className="g-kicker">one shell &middot; one masthead &middot; one object width</span>
+                            </div>
+                            <p className="g-body sg-small-body">
+                                Every page reads: navbar, <span className="g-mono">.g-shell</span>, then{' '}
+                                <span className="g-mono">.g-masthead</span> (this section&rsquo;s own header,
+                                above, is one), then the terminal object at full shell width via{' '}
+                                <span className="g-mono">.g-object</span>. The nameplate stays each
+                                terminal&rsquo;s own face &mdash; the one exception to the core type system.
+                            </p>
+
+                            <p className="g-kicker sg-mb">Nameplate &middot; one face per terminal</p>
+                            <div className="sg-chip-row sg-mb">
+                                <div data-terminal="panel"><span className="g-nameplate">Panel &middot; IBM Plex Mono</span></div>
+                                <div data-terminal="field"><span className="g-nameplate">Field &middot; Michroma</span></div>
+                                <div data-terminal="registry"><span className="g-nameplate">Registry &middot; Cinzel</span></div>
+                                <div data-terminal="archive"><span className="g-nameplate">Archive &middot; Spectral</span></div>
+                                <div data-terminal="relay"><span className="g-nameplate">Relay &middot; Chakra Petch</span></div>
+                                <div data-terminal="readout"><span className="g-nameplate">Readout &middot; IBM Plex Mono</span></div>
+                            </div>
+
+                            <p className="g-kicker sg-mb">Object width</p>
+                            <div data-terminal="field">
+                                <div className="g-object g-case">
+                                    <span className="g-legend">
+                                        .g-object spans the shell at full width, with the same outer margin
+                                        as .g-case / .g-counter / .g-desk / .g-cover-plate.
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </section>

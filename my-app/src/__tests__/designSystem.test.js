@@ -142,6 +142,47 @@ describe('design system structure', () => {
 		});
 	});
 
+	describe('one room, one type system (round3-coherence.md, docs/DESIGN_SYSTEM.md Rule A)', () => {
+		const css = fs.readFileSync(SYSTEM_PATH, 'utf8');
+		const stripped = css.replace(/\/\*[\s\S]*?\*\//g, '');
+		const blockRe = /\[data-terminal=(['"])([a-z]+)\1\]\s*\{([^}]*)\}/g;
+		const terminalBlocks = Array.from(stripped.matchAll(blockRe)).map((m) => ({ name: m[2], body: m[3] }));
+
+		// The room (--g-void/--g-hull*/--g-seam/--g-bevel*/--g-rule*) and the
+		// four core type faces are core: no [data-terminal] block may
+		// redeclare any of them. This is the whole first live release's bug
+		// (docs/DESIGN_SYSTEM.md section 2, "why the line sits here").
+		const FORBIDDEN = [
+			'--g-void', '--g-hull-lo', '--g-hull', '--g-hull-hi', '--g-seam',
+			'--g-bevel-light', '--g-bevel-dark', '--g-rule', '--g-rule-faint',
+			'--g-font-legend', '--g-font-out', '--g-font-paper', '--g-font-ui',
+			// Ink on the room is core, ink on the face is material (Rule A /
+			// round3-coherence.md): a terminal block sets --g-face-ink* for its
+			// own face, never --g-ink* — the room's ink is inherited from :root,
+			// and the object classes (.g-case etc.) re-scope --g-ink* to face
+			// ink for their own contents.
+			'--g-ink', '--g-ink-mid', '--g-ink-low', '--g-ink-invert',
+		];
+
+		it('system.css defines at least one [data-terminal] block to check', () => {
+			expect(terminalBlocks.length).toBeGreaterThan(0);
+		});
+
+		terminalBlocks.forEach(({ name, body }) => {
+			FORBIDDEN.forEach((token) => {
+				it(`[data-terminal="${name}"] does not declare ${token}`, () => {
+					// \b after the token name stops --g-hull from matching inside
+					// --g-hull-lo/--g-hull-hi/--g-hull-hover; requiring the colon
+					// right after (only whitespace between) means it only matches
+					// an actual declaration of that exact custom property, not a
+					// var(--g-hull) reference elsewhere in the block.
+					const declRe = new RegExp(`${token}\\b\\s*:`);
+					expect(declRe.test(body)).toBe(false);
+				});
+			});
+		});
+	});
+
 	describe('no new raw hex in CSS', () => {
 		it('system.css confines hex to :root and [data-terminal] blocks', () => {
 			const css = fs.readFileSync(SYSTEM_PATH, 'utf8');

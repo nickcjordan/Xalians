@@ -139,8 +139,11 @@
 	   "sci-fi" typeface, because the fiction is industrial, not futuristic. */
 	--g-font-ui: 'Barlow', system-ui, sans-serif;
 
-	--g-size-micro: 0.6875rem;
-	--g-size-tiny: 0.75rem;
+	/* --g-size-micro/--g-size-tiny bumped a hair for Barlow Condensed: its
+	   caps run a touch smaller than Oswald's at the same rem size, and the
+	   smallest legends (asset plates, tabs) were the first to feel thin. */
+	--g-size-micro: 0.7rem;
+	--g-size-tiny: 0.8125rem;
 	--g-size-small: 0.875rem;
 	--g-size-body: 1rem;
 	--g-size-lead: 1.125rem;
@@ -149,8 +152,13 @@
 	--g-size-h1: clamp(2.5rem, 1.8rem + 3.4vw, 4.25rem);
 	--g-size-readout: clamp(1.75rem, 1.2rem + 2.2vw, 2.75rem);
 
-	--g-track-label: 0.12em;
-	--g-track-wide: 0.26em;
+	/* Re-tuned once for Barlow Condensed (round3-coherence.md): it is already
+	   a condensed face, unlike Oswald's semi-condensed, so the same tracking
+	   read airy rather than stencilled. Pulled in a touch and the small
+	   sizes bumped so caps at --g-size-tiny/--g-size-micro stay legible at
+	   the tighter spacing. */
+	--g-track-label: 0.1em;
+	--g-track-wide: 0.2em;
 
 	/* --- space ------------------------------------------------------------ */
 	--g-1: 4px;
@@ -197,6 +205,15 @@
 	--g-face: var(--g-hull);
 	--g-face-ink: var(--g-ink);
 	--g-face-ink-mid: var(--g-ink-mid);
+	--g-face-ink-low: var(--g-ink-low);
+	/* The face's own recessed/raised steps, for a terminal object's nested
+	   surfaces (a counter's lip, a cover plate's screw well, a keybank).
+	   :root's panel terminal aliases these to the room's hull steps, which is
+	   a no-op (its object IS the hull, unlike every other terminal) — every
+	   other terminal below sets these as its own literal colours instead of
+	   drawing on the (now single, shared) --g-hull-lo/--g-hull-hi. */
+	--g-face-lo: var(--g-hull-lo);
+	--g-face-hi: var(--g-hull-hi);
 
 	--g-trim: #b08d3f;
 	--g-trim-dark: #6b5423;
@@ -217,15 +234,32 @@
 	--g-paper-ink-faint: #5c584d;
 	--g-paper-rule: rgba(35, 35, 26, 0.2);
 
-	--g-font-legend: 'Oswald', 'Barlow Condensed', Impact, sans-serif;
+	/* One type system, core (Rule A / round3-coherence.md): Barlow Condensed
+	   is the legend face everywhere, IBM Plex Mono the machine's output
+	   everywhere, Special Elite the typewriter everywhere, Barlow the prose
+	   everywhere. No [data-terminal] block below overrides any of these four
+	   — the v3 build let each terminal set its own legend face and that was
+	   the single biggest thing that made the site read as six unrelated
+	   products (docs/DESIGN_SYSTEM.md Rule A). */
+	--g-font-legend: 'Barlow Condensed', 'Oswald', Impact, sans-serif;
 	--g-font-out: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
-	--g-font-paper: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+	--g-font-paper: 'Special Elite', 'IBM Plex Mono', monospace;
+	/* --g-font-ui is declared once, above, as 'Barlow' — also core, unchanged. */
 
-	/* Legacy names for the two lines above, kept because a lot of existing CSS
-	   still spells them this way. Resolved live, so they retune per terminal
-	   along with --g-font-legend/--g-font-out. */
+	/* Legacy names for --g-font-legend/--g-font-out, kept because a lot of
+	   existing CSS still spells them this way. Since none of the four core
+	   font tokens are overridden per terminal any more, these two aliases no
+	   longer need redeclaring inside every [data-terminal] block the way
+	   section 10's lesson describes for a genuinely material var() chain —
+	   there is nothing left for any terminal to retune. */
 	--g-font-stencil: var(--g-font-legend);
 	--g-font-mono: var(--g-font-out);
+
+	/* --g-font-nameplate is the one exception: the single face that stays the
+	   terminal's own, used only by .g-nameplate and .g-stamp. :root's value
+	   (IBM Plex Mono) covers the panel baseline and the readout mode; every
+	   other terminal below sets its own. */
+	--g-font-nameplate: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
 
 	/* 0..1: how much scuff, tape shadow and fade a terminal's furniture shows.
 	   The panel is the clean migration baseline, so it carries none. */
@@ -289,18 +323,18 @@
 /* FIELD — ECHELON-era portable survey unit: gunmetal case, off-white enamel
    face, color CRT under dark glass, one-line amber VFD status strip. */
 [data-terminal='field'] {
-	--g-hull-lo: #262829;
-	--g-hull: #3a3d3e;
-	--g-hull-hi: #4a4d4d;
-	--g-seam: #1a1b1c;
+	/* The room (--g-void/--g-hull*/--g-seam) is core (Rule A) and is not set
+	   here; the case's own gunmetal body is --g-face-lo/--g-face-hi below. */
 	--g-face: #cfc8b6;
+	--g-face-lo: #262829;
+	--g-face-hi: #4a4d4d;
+	/* Ink on the room is core, ink on the face is material (Rule A /
+	   round3-coherence.md): the field unit's light enamel face needs dark
+	   ink, so these three stay literal rather than aliasing :root's --g-ink*
+	   (which is now the room's light-on-dark value, unrelated to this face). */
 	--g-face-ink: #1e1d19;
 	--g-face-ink-mid: #5b584f;
-
-	--g-ink: #1e1d19;
-	--g-ink-mid: #5b584f;
-	--g-ink-low: #8a857a;
-	--g-ink-invert: #e9e3d2;
+	--g-face-ink-low: #8a857a;
 
 	--g-trim: #2b2b28;
 	--g-trim-dark: #1a1a18;
@@ -328,15 +362,10 @@
 	--g-paper-ink-faint: #5b584f;
 	--g-paper-rule: rgba(30, 29, 25, 0.25);
 
-	--g-font-legend: 'Michroma', sans-serif;
-	--g-font-out: 'Share Tech Mono', monospace;
-	--g-font-paper: 'Share Tech Mono', monospace;
-	/* Redeclared for the same reason as --g-screen-bloom above: these two
-	   legacy names are what most components actually read, and left only in
-	   :root they resolve once against the panel's Oswald/IBM Plex Mono and
-	   never retune per terminal. */
-	--g-font-stencil: var(--g-font-legend);
-	--g-font-mono: var(--g-font-out);
+	/* Legend/output/paper/ui are core now (Rule A); Michroma survives only as
+	   the field unit's own nameplate face, used nowhere else on this
+	   terminal. */
+	--g-font-nameplate: 'Michroma', sans-serif;
 
 	--g-radius: 3px;
 	--g-wear: 0.6;
@@ -350,18 +379,18 @@
 /* REGISTRY — Kozrak's arena counter: black lacquer, gold leaf, a docket under
    a steel clip, a one-line amber ledger, two bakelite keys in sockets. */
 [data-terminal='registry'] {
-	--g-hull-lo: #070505;
-	--g-hull: #0f0c0c;
-	--g-hull-hi: #1c1515;
-	--g-seam: #050303;
+	/* The room is core; the counter's own lacquer body is face-lo/face-hi. */
 	--g-face: #e6dcc6;
-	--g-face-ink: #1d1710;
-	--g-face-ink-mid: #6b5f4c;
-
-	--g-ink: #e9dfc8;
-	--g-ink-mid: #a89d86;
-	--g-ink-low: #6e6558;
-	--g-ink-invert: #1d1710;
+	--g-face-lo: #070505;
+	--g-face-hi: #1c1515;
+	/* --g-face here doubles as the docket's paper tone (see --g-paper below);
+	   the counter's own body (.g-counter, reading --g-face-ink*) is the dark
+	   lacquer carried in --g-face-lo/--g-face-hi, so its ink is the light
+	   gold this terminal used to force onto the whole room's --g-ink. Ink on
+	   the room is core, ink on the face is material (Rule A). */
+	--g-face-ink: #e9dfc8;
+	--g-face-ink-mid: #a89d86;
+	--g-face-ink-low: #6e6558;
 
 	--g-trim: #c9a44a;
 	--g-trim-dark: #7a5f24;
@@ -385,11 +414,10 @@
 	--g-paper-ink-faint: #6b5f4c;
 	--g-paper-rule: rgba(143, 29, 29, 0.35);
 
-	--g-font-legend: 'Cinzel', serif;
-	--g-font-out: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
-	--g-font-paper: 'Special Elite', 'IBM Plex Mono', monospace;
-	--g-font-stencil: var(--g-font-legend);
-	--g-font-mono: var(--g-font-out);
+	/* Legend/output/paper are core now; Cinzel survives only as the
+	   registry's nameplate face (the counter's engraved name, the docket's
+	   admission stamp). */
+	--g-font-nameplate: 'Cinzel', serif;
 
 	--g-radius: 0;
 	--g-wear: 0.3;
@@ -403,18 +431,17 @@
 /* ARCHIVE — reading desk in the Poseidas Deep Archive: dark sea-slate under
    a warm lamp pool, a yellowed catalogue card. No live display. */
 [data-terminal='archive'] {
-	--g-hull-lo: #2e3b3e;
-	--g-hull: #3a4a4e;
-	--g-hull-hi: #465659;
-	--g-seam: #222b2d;
+	/* The room is core; the desk's own slate body is face-lo/face-hi. */
 	--g-face: #f8f5ec;
-	--g-face-ink: #1f2f36;
-	--g-face-ink-mid: #5b6b71;
-
-	--g-ink: #e6dfcc;
-	--g-ink-mid: #a9b3b0;
-	--g-ink-low: #7d8886;
-	--g-ink-invert: #1f2f36;
+	--g-face-lo: #2e3b3e;
+	--g-face-hi: #465659;
+	/* The desk's own body (.g-desk, reading --g-face-ink*) is the dark
+	   sea-slate carried in --g-face-lo/--g-face-hi, so its ink is the light
+	   value this terminal used to force onto the whole room's --g-ink. Ink
+	   on the room is core, ink on the face is material (Rule A). */
+	--g-face-ink: #e6dfcc;
+	--g-face-ink-mid: #a9b3b0;
+	--g-face-ink-low: #7d8886;
 
 	--g-trim: #7d9397;
 	--g-trim-dark: #5b6f72;
@@ -440,12 +467,10 @@
 	--g-paper-ink-faint: #635a4a;
 	--g-paper-rule: rgba(70, 90, 100, 0.2);
 
-	--g-font-legend: 'Spectral', serif;
-	--g-font-out: 'IBM Plex Mono', monospace;
-	--g-font-paper: 'Special Elite', 'IBM Plex Mono', monospace;
-	--g-font-ui: 'IBM Plex Sans', sans-serif;
-	--g-font-stencil: var(--g-font-legend);
-	--g-font-mono: var(--g-font-out);
+	/* Legend/output/paper/ui are core now; Spectral survives only as the
+	   archive's nameplate face (the desk's own name plate, the card's file
+	   stamp). */
+	--g-font-nameplate: 'Spectral', serif;
 
 	--g-radius: 0;
 	--g-wear: 0.8;
@@ -458,18 +483,14 @@
 /* RELAY — hand-built Zolto QED unit: sheet-steel cover plate, screws and
    vents, a salvaged colour tube in a frame on standoffs, one cable, tape. */
 [data-terminal='relay'] {
-	--g-hull-lo: #05060a;
-	--g-hull: #0a0c10;
-	--g-hull-hi: #141821;
-	--g-seam: #030406;
+	/* The room is core; the cover plate's own steel body is
+	   face-lo/face-hi. */
 	--g-face: #0a0c10;
+	--g-face-lo: #05060a;
+	--g-face-hi: #141821;
 	--g-face-ink: #d8dde8;
 	--g-face-ink-mid: #7f889a;
-
-	--g-ink: #d8dde8;
-	--g-ink-mid: #7f889a;
-	--g-ink-low: #4f5766;
-	--g-ink-invert: #0a0c10;
+	--g-face-ink-low: #4f5766;
 
 	--g-trim: #2b3444;
 	--g-trim-dark: #1a1f2a;
@@ -499,11 +520,10 @@
 	--g-paper-ink-faint: #5a616d;
 	--g-paper-rule: rgba(43, 52, 68, 0.3);
 
-	--g-font-legend: 'Chakra Petch', sans-serif;
-	--g-font-out: 'Space Mono', monospace;
-	--g-font-paper: 'Space Mono', monospace;
-	--g-font-stencil: var(--g-font-legend);
-	--g-font-mono: var(--g-font-out);
+	/* Legend/output/paper are core now; Chakra Petch survives only as the
+	   relay's nameplate face (the .g-nameplate on the navbar and the cover
+	   plate). */
+	--g-font-nameplate: 'Chakra Petch', sans-serif;
 
 	--g-radius: 2px;
 	--g-wear: 0.5;
@@ -517,18 +537,16 @@
    legends, one key. A mode, not a place: applied to a .g-crt while a
    creature prints, on whichever terminal is hosting it. */
 [data-terminal='readout'] {
-	--g-hull-lo: #060706;
-	--g-hull: #0b0d0b;
-	--g-hull-hi: #111411;
-	--g-seam: #030403;
+	/* The room is core. Readout is a mode, not a place (section 3): it hosts
+	   no case/counter/desk/cover-plate of its own, but every terminal sets
+	   every material token, so face-lo/face-hi mirror --g-face here rather
+	   than being left to fall back to the (unrelated) room steps. */
 	--g-face: #0b0d0b;
+	--g-face-lo: #060706;
+	--g-face-hi: #111411;
 	--g-face-ink: #e6e4d8;
 	--g-face-ink-mid: #8d8f84;
-
-	--g-ink: #e6e4d8;
-	--g-ink-mid: #8d8f84;
-	--g-ink-low: #565850;
-	--g-ink-invert: #0b0d0b;
+	--g-face-ink-low: #565850;
 
 	--g-trim: #2a2e2a;
 	--g-trim-dark: #161916;
@@ -553,12 +571,9 @@
 	--g-paper-ink-faint: rgba(232, 230, 218, 0.4);
 	--g-paper-rule: rgba(42, 46, 42, 0.3);
 
-	--g-font-legend: 'IBM Plex Mono', monospace;
-	--g-font-out: 'IBM Plex Mono', monospace;
-	--g-font-paper: 'IBM Plex Mono', monospace;
-	--g-font-ui: 'IBM Plex Mono', monospace;
-	--g-font-stencil: var(--g-font-legend);
-	--g-font-mono: var(--g-font-out);
+	/* No legends on a readout (section 3), so this mode never actually reads
+	   --g-font-legend/--g-font-ui; core's IBM Plex Mono / Barlow apply if
+	   anything does. --g-font-nameplate stays IBM Plex Mono, same as :root. */
 
 	--g-radius: 0;
 	--g-wear: 0;
@@ -628,7 +643,10 @@
 
 .g-title {
 	font-family: var(--g-font-stencil);
-	font-weight: 700;
+	/* 600, not 700: Barlow Condensed loads only 500/600 (index.html); 700
+	   would synthetically embolden in every browser that does that at all,
+	   which reads worse than the face's own heaviest real weight. */
+	font-weight: 600;
 	font-size: var(--g-size-h1);
 	text-transform: uppercase;
 	letter-spacing: 0.005em;
@@ -1527,13 +1545,73 @@
    LAYOUT
    ------------------------------------------------------------------------- */
 
+/* One max-width for every page (round3-coherence.md rule 3): 1440px is the
+   widest shell already in use anywhere on the site (reclamation.css's
+   .rec-shell--match/--intro/--draft modifiers), so this raises every other
+   page's frame to match rather than narrowing that one. Body copy still
+   caps at --g-measure regardless — only the outer frame and the terminal
+   object inside it get wider. */
 .g-shell {
-	max-width: 1320px;
+	max-width: 1440px;
 	margin: 0 auto;
 	padding: 0 var(--g-5);
 }
 
 .g-measure { max-width: var(--g-measure); }
+
+/* -------------------------------------------------------------------------
+   FRAME (v3, "one frame" — round3-coherence.md rule 3)
+   Every page: navbar, .g-shell, .g-masthead, then the terminal object at
+   full shell width. No page centers a narrower object in the shell.
+   ------------------------------------------------------------------------- */
+
+.g-masthead {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: var(--g-4);
+	/* Consistent margin below the navbar and above the object, on every
+	   page, regardless of terminal. */
+	margin: var(--g-7) 0 var(--g-6);
+}
+
+/* The kicker-over-title block, on the left. Plain block children stack on
+   their own; this wrapper exists so .g-masthead-aside has something to sit
+   beside rather than wrapping under the title. */
+.g-masthead-heading {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+	min-width: 0;
+}
+
+/* The optional right-hand slot: one .g-key, or a .g-nameplate. */
+.g-masthead-aside {
+	display: flex;
+	align-items: center;
+	gap: var(--g-3);
+	flex: none;
+}
+
+@media (max-width: 720px) {
+	.g-masthead {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+}
+
+/* A generic wrapper the terminal bodies extend: every object (.g-case,
+   .g-counter, .g-desk, .g-cover-plate) spans the shell width with the same
+   outer margin, so no page centers a narrower object inside .g-shell. */
+.g-case,
+.g-counter,
+.g-desk,
+.g-cover-plate,
+.g-object {
+	width: 100%;
+	margin: 0 auto var(--g-8);
+}
 
 @media (max-width: 640px) {
 	.g-record { grid-template-columns: 1fr; gap: var(--g-2); }
@@ -1784,8 +1862,13 @@
 }
 
 /* The nav sits on the same rail as page content. */
+/* .xalian-navbar/.navbar-shell below (and the whole "CONSOLE HEADER" block
+   above it) is dead: navbar.js carries .relay-navbar/.g-cover-plate now, not
+   .xalian-navbar. Left alone here (not in this round's scope) rather than
+   deleted; pages/relay.css's real .relay-navbar-shell carries the live
+   max-width fix, next to it. */
 .xalian-navbar .navbar-shell {
-	max-width: 1320px;
+	max-width: 1440px;
 	margin: 0 auto;
 	padding-left: var(--g-5);
 	padding-right: var(--g-5);
@@ -1820,6 +1903,14 @@ html {
 /* HULL. The field unit's face: a case with a hinge strip along the top and
    four corner screws, matching .t-field in the mockups. */
 .g-case {
+	/* Ink on the room is core, ink on the face is material (Rule A /
+	   round3-coherence.md): re-scope --g-ink* to this face's own ink so
+	   every descendant that reads --g-ink (legends, keys, the masthead
+	   nameplate slot, spec keys/values) paints correctly without a
+	   per-component override. */
+	--g-ink: var(--g-face-ink);
+	--g-ink-mid: var(--g-face-ink-mid);
+	--g-ink-low: var(--g-face-ink-low);
 	position: relative;
 	padding: var(--g-5);
 	background: var(--g-face);
@@ -1872,12 +1963,16 @@ html {
 /* HULL. The registry: a lacquered counter with a lit top edge and a dark
    front lip you stand behind. */
 .g-counter {
+	/* Ink on the room is core, ink on the face is material (Rule A). */
+	--g-ink: var(--g-face-ink);
+	--g-ink-mid: var(--g-face-ink-mid);
+	--g-ink-low: var(--g-face-ink-low);
 	position: relative;
 	padding: var(--g-6) var(--g-5) 0;
 	background:
 		linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 18%),
 		radial-gradient(90% 40% at 50% 0%, color-mix(in srgb, var(--g-trim) 8%, transparent), transparent 70%),
-		linear-gradient(180deg, var(--g-hull-hi), var(--g-hull));
+		linear-gradient(180deg, var(--g-face-hi), var(--g-face));
 	color: var(--g-ink);
 	border-radius: var(--g-radius);
 	box-shadow: var(--g-relief), var(--g-drop);
@@ -1887,7 +1982,7 @@ html {
 .g-counter-lip {
 	height: 16px;
 	margin: var(--g-4) calc(var(--g-5) * -1) 0;
-	background: linear-gradient(180deg, var(--g-hull-lo), var(--g-seam));
+	background: linear-gradient(180deg, var(--g-face-lo), var(--g-seam));
 	border-top: 1px solid var(--g-trim);
 	box-shadow: inset 0 3px 4px rgba(0, 0, 0, 0.8);
 }
@@ -1898,11 +1993,15 @@ html {
 /* HULL. The archive: a dark desk surface lit by one warm reading-lamp pool.
    The card is the lit thing; the desk stays dim around it. */
 .g-desk {
+	/* Ink on the room is core, ink on the face is material (Rule A). */
+	--g-ink: var(--g-face-ink);
+	--g-ink-mid: var(--g-face-ink-mid);
+	--g-ink-low: var(--g-face-ink-low);
 	position: relative;
 	padding: var(--g-6) var(--g-5) var(--g-5);
 	background:
 		radial-gradient(75% 60% at 50% 40%, rgba(255, 236, 190, 0.35) 0%, rgba(255, 225, 170, 0.12) 40%, transparent 75%),
-		linear-gradient(180deg, var(--g-hull-hi), var(--g-hull-lo));
+		linear-gradient(180deg, var(--g-face-hi), var(--g-face-lo));
 	color: var(--g-ink);
 	border-radius: var(--g-radius);
 	box-shadow: var(--g-relief), var(--g-drop);
@@ -1911,11 +2010,15 @@ html {
 /* HULL. The relay: a sheet-steel cover plate over the electronics, with
    screws and low louvred vents where the warm parts sit. */
 .g-cover-plate {
+	/* Ink on the room is core, ink on the face is material (Rule A). */
+	--g-ink: var(--g-face-ink);
+	--g-ink-mid: var(--g-face-ink-mid);
+	--g-ink-low: var(--g-face-ink-low);
 	position: relative;
 	padding: var(--g-6) var(--g-5) var(--g-5);
 	background:
 		linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 30%),
-		linear-gradient(160deg, var(--g-hull-hi), var(--g-hull) 55%, var(--g-hull-lo));
+		linear-gradient(160deg, var(--g-face-hi), var(--g-face) 55%, var(--g-face-lo));
 	border: 1px solid var(--g-trim);
 	border-radius: var(--g-radius);
 	box-shadow: var(--g-relief), var(--g-drop);
@@ -1948,7 +2051,7 @@ html {
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	background: var(--g-hull-lo);
+	background: var(--g-face-lo);
 }
 
 .g-cover-screw::before { width: 7px; height: 1.4px; transform: translate(-50%, -50%); }
@@ -2007,7 +2110,7 @@ html {
 	height: 12px;
 	border-radius: 50%;
 	background: radial-gradient(circle at 40% 35%, var(--g-trim-light), var(--g-trim-dark) 60%);
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 0 2px var(--g-hull-lo);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 0 2px var(--g-face-lo);
 	pointer-events: none;
 }
 
@@ -2018,12 +2121,18 @@ html {
 
 /* HULL. A recessed bank keys sit in, with real travel. */
 .g-keybank {
+	/* Ink on the room is core, ink on the face is material (Rule A). Kept
+	   here too (not just on the enclosing object) so a keybank used outside
+	   .g-case/.g-counter/.g-desk/.g-cover-plate still reads face ink. */
+	--g-ink: var(--g-face-ink);
+	--g-ink-mid: var(--g-face-ink-mid);
+	--g-ink-low: var(--g-face-ink-low);
 	display: flex;
 	flex-wrap: wrap;
 	gap: var(--g-3);
 	align-items: center;
 	padding: var(--g-3);
-	background: var(--g-hull-lo);
+	background: var(--g-face-lo);
 	border-radius: var(--g-radius);
 	box-shadow: var(--g-recess);
 }
@@ -2052,7 +2161,7 @@ html {
 	text-transform: uppercase;
 	letter-spacing: var(--g-track-label);
 	color: var(--g-ink);
-	background: var(--g-hull-hi);
+	background: var(--g-face-hi);
 	border: 0;
 	border-radius: var(--g-radius);
 	box-shadow:
@@ -2064,7 +2173,10 @@ html {
 	transition: transform var(--g-snap), box-shadow var(--g-snap);
 }
 
-.g-key:hover:not(:disabled) { background: var(--g-hull-hover); }
+/* A key is part of the terminal's own face, not the room's hull, so its
+   hover state lightens --g-face-hi rather than reading the room's fixed
+   --g-hull-hover (which would tint every terminal's keys the same way). */
+.g-key:hover:not(:disabled) { background: color-mix(in srgb, var(--g-face-hi) 85%, white); }
 
 .g-key:active:not(:disabled) {
 	transform: translateY(4px);
@@ -2089,7 +2201,7 @@ html {
 /* Unpowered, not faded: the cap is still moulded there, the legend is dead. */
 .g-key:disabled {
 	color: var(--g-ink-low);
-	background: var(--g-hull-lo);
+	background: var(--g-face-lo);
 	cursor: not-allowed;
 	box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.7);
 	transform: none;
@@ -2118,6 +2230,36 @@ html {
 	padding: 2px var(--g-3);
 	transform: rotate(-2deg);
 	box-shadow: 0 calc(1px + var(--g-wear) * 3px) calc(2px + var(--g-wear) * 4px) rgba(0, 0, 0, calc(0.3 + var(--g-wear) * 0.3));
+}
+
+/* HULL. A stencilled or engraved plate carrying the object's own name — the
+   one place a terminal's --g-font-nameplate face appears outside .g-stamp
+   (round3-coherence.md, Rule A / section 6). A single line: field face-lo
+   ground with a trim border, registry Cinzel, archive Spectral, relay
+   Chakra Petch, readout and the panel baseline IBM Plex Mono. Used by the
+   navbar (the relay's own name, replacing a plain .g-legend) and by
+   .g-masthead-aside on any page that wants the object's designation next to
+   the page title. */
+.g-nameplate {
+	display: inline-flex;
+	align-items: center;
+	padding: 2px var(--g-4);
+	background: var(--g-face-lo);
+	/* Not var(--g-ink): --g-face-lo is always a dark, recessed step, but
+	   --g-ink resolves to whichever ink is in scope where a .g-nameplate is
+	   placed — light on the room, but the face's own (possibly dark) ink
+	   inside a rescoped object such as .g-case (Rule A). Mixing a touch of
+	   the plate's own colour into white keeps a faint material tint while
+	   staying light regardless of which terminal or scope is in effect. */
+	color: color-mix(in srgb, var(--g-face-lo) 12%, white);
+	font-family: var(--g-font-nameplate);
+	font-size: var(--g-size-tiny);
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	border: var(--g-hairline) solid var(--g-trim);
+	border-radius: 2px;
+	white-space: nowrap;
 }
 
 /* === PAPER ================================================================ */
@@ -2240,7 +2382,10 @@ html {
 	display: inline-block;
 	border: 3px double var(--g-accent);
 	color: var(--g-accent);
-	font-family: var(--g-font-legend);
+	/* The stamp is the one other place a terminal's own nameplate face
+	   appears (docs/DESIGN_SYSTEM.md Rule A / section 6): an admission stamp
+	   is engraved rubber, not a silkscreened legend. */
+	font-family: var(--g-font-nameplate);
 	font-weight: 700;
 	font-size: var(--g-size-tiny);
 	letter-spacing: var(--g-track-wide);

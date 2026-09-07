@@ -17,6 +17,12 @@
 	align-items: center;
 	flex-wrap: wrap;
 	gap: var(--g-4);
+	/* The nav sits on the same rail as page content (round3-coherence.md rule
+	   3): same max-width and horizontal padding as .g-shell. */
+	max-width: 1440px;
+	margin: 0 auto;
+	padding-left: var(--g-5);
+	padding-right: var(--g-5);
 }
 
 .relay-wordmark {
@@ -26,12 +32,10 @@
 	margin: 0;
 }
 
-.relay-wordmark-text {
-	color: var(--g-ink);
-	font-size: var(--g-size-small);
-	letter-spacing: var(--g-track-wide);
-	white-space: nowrap;
-}
+/* The unit's own name, as a .g-nameplate (system.css) rather than a plain
+   .g-legend: identity that has to survive across a click belongs in the
+   core frame, but the nameplate face itself stays the relay's own (Rule A).
+   No overrides needed here beyond the responsive hide below. */
 
 /* The QED entanglement bars and the "entangled" lamp: the relay's own
    status voice, always visible, never collapsed with the nav links. */
@@ -164,11 +168,14 @@
 }
 
 /* -------------------------------------------------------------------------
-   ACCOUNT — the user's Xalians as lines on the relay's own tube, with a
-   physical key on the cover plate to drop one from the faction.
+   ACCOUNT / USER DETAILS — a user's Xalians as lines on the relay's own
+   tube, bolted under a cover plate the same way the home page's tube is.
+   The account page adds a physical key on each line to drop it from the
+   faction; user details reads someone else's holdings, so its rows carry no
+   key (xalianStatRowView's `screen` prop, not `accountPage`).
    ------------------------------------------------------------------------- */
 
-.account-tube {
+.relay-record-tube {
 	display: flex;
 	flex-direction: column;
 	gap: 0;

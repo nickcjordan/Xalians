@@ -107,6 +107,11 @@ class HowToPlayModal extends React.Component {
                 centered
                 scrollable
                 className="themed-modal dark-themed-modal"
+                // react-bootstrap portals the modal to document.body by default, which
+                // escapes the [data-terminal="registry"] subtree the "Got it" key's
+                // --g-accent read depends on. Mounting it inside the registry terminal
+                // keeps the key crimson instead of falling back to the core default.
+                container={() => document.querySelector('[data-terminal="registry"]')}
             >
                 <Modal.Header closeButton closeVariant="white">
                     <Modal.Title>How to play Duel</Modal.Title>

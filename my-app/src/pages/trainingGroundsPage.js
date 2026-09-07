@@ -1,4 +1,4 @@
-// Terminal: panel (baseline). Target: field. Training games are diagnostic programs on the salvaged ECHELON survey unit.
+// Terminal: field. Training games are diagnostic programs on the salvaged ECHELON survey unit.
 import React from 'react';
 import XalianNavbar from '../components/navbar';
 import MatchCardGamePage from './games/matchCardGamePage';
@@ -34,14 +34,16 @@ class TrainingGroundsPage extends React.Component {
 
         return <React.Fragment>
 
-            <div className="g-console" data-terminal="panel">
+            <div className="g-console" data-terminal="field">
                 <XalianNavbar></XalianNavbar>
 
                 <div className="g-shell page-shell training-shell">
-                    <header className="page-header">
-                        <p className="g-kicker">Simulation Deck</p>
-                        <h1 className="g-title">Training Grounds</h1>
-                        <p className="training-grounds-subtitle">Warm-up games while you wait for a duel.</p>
+                    <header className="g-masthead">
+                        <div className="g-masthead-heading">
+                            <p className="g-kicker">Field terminal</p>
+                            <h1 className="g-title">Training Grounds</h1>
+                            <p className="training-grounds-subtitle">Warm-up games while you wait for a duel.</p>
+                        </div>
                     </header>
 
                     {/* was a single unlabelled bootstrap-blue "switch" button that

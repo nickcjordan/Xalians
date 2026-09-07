@@ -29,7 +29,9 @@
 }
 
 .rec-shell {
-	max-width: 1400px;
+	/* matches the shared .g-shell width (round3-coherence.md "one frame"); only
+	   .rec-shell--match widens further, below. */
+	max-width: 1440px;
 }
 
 .rec-shell--match {
@@ -194,7 +196,8 @@
 	gap: var(--g-2);
 }
 
-.rec-intro-actions .g-btn { align-self: stretch; justify-content: center; }
+.rec-intro-actions .g-btn,
+.rec-intro-actions .g-key { align-self: stretch; justify-content: center; }
 
 .rec-intro-seed {
 	font-size: var(--g-size-micro);
@@ -307,7 +310,7 @@
 	color: var(--g-ink);
 }
 
-.rec-score--mine .rec-score-value { color: var(--g-hazard); }
+.rec-score--mine .rec-score-value { color: var(--g-accent); }
 .rec-score--theirs .rec-score-value { color: var(--g-ink-mid); }
 
 .rec-score-of {
@@ -456,7 +459,7 @@
 	color: var(--g-ink-mid);
 }
 
-.rec-tally--leading .rec-tally-value { color: var(--g-hazard); }
+.rec-tally--leading .rec-tally-value { color: var(--g-accent); }
 
 .rec-site-field {
 	flex: 1 1 auto;
@@ -516,7 +519,7 @@
 	font-size: var(--g-size-micro);
 	text-transform: uppercase;
 	letter-spacing: var(--g-track-label);
-	color: var(--g-hazard);
+	color: var(--g-accent);
 }
 
 /* the Judge's stamped verdict */
@@ -533,11 +536,11 @@
 	color: var(--g-ink-mid);
 }
 
-.rec-stamp--yours { color: var(--g-hazard); }
+.rec-stamp--yours { color: var(--g-accent); }
 .rec-stamp--theirs { color: var(--g-lamp-red); }
 .rec-stamp--court { color: var(--g-ink-low); }
 
-.rec-site--verdict-yours { border-color: color-mix(in srgb, var(--g-hazard) 55%, var(--g-seam)); }
+.rec-site--verdict-yours { border-color: color-mix(in srgb, var(--g-accent) 55%, var(--g-seam)); }
 .rec-site--verdict-theirs { border-color: color-mix(in srgb, var(--g-lamp-red) 45%, var(--g-seam)); }
 
 /* -------------------------------------------------------------------------
@@ -671,7 +674,7 @@
 }
 
 .rec-tag--home { color: var(--g-brass-light); }
-.rec-tag--strain { color: var(--g-hazard); }
+.rec-tag--strain { color: var(--g-accent); }
 .rec-tag--severe { color: var(--g-lamp-red); }
 
 /* states */
@@ -694,8 +697,8 @@
 
 .rec-figure--selected .rec-figure-plate,
 .rec-figure--armed .rec-figure-plate {
-	border-color: var(--g-hazard);
-	box-shadow: var(--g-relief), 0 0 0 1px var(--g-hazard);
+	border-color: var(--g-accent);
+	box-shadow: var(--g-relief), 0 0 0 1px var(--g-accent);
 }
 
 .rec-figure--dimmed { opacity: 0.45; }
@@ -990,7 +993,7 @@
 	border-left: 4px solid var(--g-ink-low);
 }
 
-.rec-verdict--won { border-left-color: var(--g-hazard); }
+.rec-verdict--won { border-left-color: var(--g-accent); }
 .rec-verdict--lost { border-left-color: var(--g-lamp-red); }
 
 .rec-verdict .g-kicker { margin: 0; }
@@ -1108,13 +1111,13 @@
 	box-shadow: var(--g-recess);
 }
 
-.rec-score--mine .rec-pip--lit { background: var(--g-hazard); border-color: var(--g-hazard); box-shadow: none; }
+.rec-score--mine .rec-pip--lit { background: var(--g-accent); border-color: var(--g-accent); box-shadow: none; }
 .rec-score--theirs .rec-pip--lit { background: var(--g-lamp-red); border-color: var(--g-lamp-red); box-shadow: none; }
 
 .rec-score-value { font-size: var(--g-size-lead); }
 
 .rec-turn--yours .rec-turn-text {
-	color: var(--g-hazard);
+	color: var(--g-accent);
 	font-weight: 600;
 }
 
@@ -1128,7 +1131,7 @@
 .rec-status-hint--yours {
 	color: var(--g-ink);
 	padding-left: var(--g-3);
-	border-left: 3px solid var(--g-hazard);
+	border-left: 3px solid var(--g-accent);
 }
 
 /* --- sites: the margin band is the biggest number on the site --- */
@@ -1155,8 +1158,8 @@
 	color: var(--g-ink-low);
 }
 
-.rec-site-margin--mine { border-left-color: var(--g-hazard); }
-.rec-site-margin--mine .rec-site-margin-text { color: var(--g-hazard); }
+.rec-site-margin--mine { border-left-color: var(--g-accent); }
+.rec-site-margin--mine .rec-site-margin-text { color: var(--g-accent); }
 .rec-site-margin--theirs { border-left-color: var(--g-lamp-red); }
 .rec-site-margin--theirs .rec-site-margin-text { color: var(--g-lamp-red); }
 
@@ -1176,17 +1179,17 @@
 }
 
 /* a site you are winning, losing, or that is level: a quiet tint on the panel edge */
-.rec-site--mine { border-top: 3px solid color-mix(in srgb, var(--g-hazard) 60%, var(--g-seam)); }
+.rec-site--mine { border-top: 3px solid color-mix(in srgb, var(--g-accent) 60%, var(--g-seam)); }
 .rec-site--theirs { border-top: 3px solid color-mix(in srgb, var(--g-lamp-red) 50%, var(--g-seam)); }
 
 /* a site waiting for the armed creature: an obvious target, not a hairline */
 .rec-site--targeted {
-	border-color: var(--g-hazard);
-	box-shadow: var(--g-relief), 0 0 0 1px color-mix(in srgb, var(--g-hazard) 45%, transparent);
+	border-color: var(--g-accent);
+	box-shadow: var(--g-relief), 0 0 0 1px color-mix(in srgb, var(--g-accent) 45%, transparent);
 	cursor: pointer;
 }
 
-.rec-site--targeted:hover { background: color-mix(in srgb, var(--g-hazard) 6%, var(--g-hull)); }
+.rec-site--targeted:hover { background: color-mix(in srgb, var(--g-accent) 6%, var(--g-hull)); }
 
 .rec-site-midline { min-height: 30px; }
 
@@ -1202,9 +1205,9 @@
 	font-weight: 700;
 	text-transform: uppercase;
 	letter-spacing: var(--g-track-wide);
-	color: var(--g-hazard);
+	color: var(--g-accent);
 	padding: 1px var(--g-2);
-	border: var(--g-hairline) solid var(--g-hazard);
+	border: var(--g-hairline) solid var(--g-accent);
 	border-radius: 2px;
 }
 
@@ -1287,7 +1290,7 @@
 
 .rec-figure--armed .rec-figure-plate,
 .rec-figure--selected .rec-figure-plate {
-	outline: 2px solid var(--g-hazard);
+	outline: 2px solid var(--g-accent);
 	outline-offset: 1px;
 }
 
@@ -1327,7 +1330,7 @@
 }
 
 .rec-figure-flash--rout { color: var(--g-lamp-red); }
-.rec-figure-flash--stagger { color: var(--g-hazard); }
+.rec-figure-flash--stagger { color: var(--g-accent); }
 .rec-figure-flash--shrug { color: var(--g-ink-mid); }
 .rec-figure-flash--ward { color: var(--g-brass-light); }
 
@@ -1363,7 +1366,7 @@
 	border-left: 3px solid var(--g-seam);
 }
 
-.rec-deploy-note--open { border-left-color: var(--g-hazard); color: var(--g-ink); }
+.rec-deploy-note--open { border-left-color: var(--g-accent); color: var(--g-ink); }
 
 /* --- orders: chips, the button that cannot scroll away, the bar on the table --- */
 
@@ -1414,9 +1417,9 @@
 .rec-act-chip:hover:not(:disabled) { border-color: var(--g-ink-low); color: var(--g-ink); }
 
 .rec-act-chip--chosen {
-	border-color: var(--g-hazard);
+	border-color: var(--g-accent);
 	color: var(--g-ink);
-	box-shadow: inset 0 0 0 1px var(--g-hazard);
+	box-shadow: inset 0 0 0 1px var(--g-accent);
 }
 
 .rec-act-chip:disabled { cursor: default; opacity: 0.6; }
@@ -1458,7 +1461,7 @@
 	background: var(--g-hull-lo);
 	border-radius: var(--g-radius);
 	box-shadow: var(--g-recess);
-	border-left: 3px solid var(--g-hazard);
+	border-left: 3px solid var(--g-accent);
 }
 
 .rec-orders-bar-text {
@@ -2098,7 +2101,7 @@
 	animation: rec-callout var(--rec-beat-ms) cubic-bezier(0.3, 0, 0.2, 1) both;
 }
 
-.rec-callout--you { border-left-color: var(--g-hazard); }
+.rec-callout--you { border-left-color: var(--g-accent); }
 .rec-callout--rival { border-left-color: var(--g-lamp-red); }
 .rec-callout--judge { border-left-color: var(--g-brass-light); }
 .rec-callout--world { border-left-color: var(--g-el); }
@@ -2113,7 +2116,7 @@
 	color: var(--g-ink-low);
 }
 
-.rec-callout--you .rec-callout-kicker { color: var(--g-hazard); }
+.rec-callout--you .rec-callout-kicker { color: var(--g-accent); }
 .rec-callout--rival .rec-callout-kicker { color: var(--g-lamp-red); }
 .rec-callout--judge .rec-callout-kicker { color: var(--g-brass-light); }
 
@@ -2157,7 +2160,7 @@
 .rec-site--landed-theirs { animation: rec-landed-theirs 1300ms ease-out both; }
 
 @keyframes rec-landed-mine {
-	0% { background: color-mix(in srgb, var(--g-hazard) 22%, var(--g-hull)); box-shadow: var(--g-relief), 0 0 0 2px var(--g-hazard); }
+	0% { background: color-mix(in srgb, var(--g-accent) 22%, var(--g-hull)); box-shadow: var(--g-relief), 0 0 0 2px var(--g-accent); }
 	100% { background: var(--g-hull); box-shadow: var(--g-relief), 0 0 0 0 transparent; }
 }
 
@@ -2669,7 +2672,7 @@
 }
 
 .rec-medium-glyph { width: 11px; height: 11px; fill: currentColor; stroke: currentColor; }
-.rec-env-medium--strained { color: var(--g-hazard); border-color: var(--g-hazard); }
+.rec-env-medium--strained { color: var(--g-accent); border-color: var(--g-accent); }
 .rec-env-medium--cannot { color: var(--g-lamp-red); border-color: var(--g-lamp-red); }
 .rec-env-medium--ok { color: var(--rec-you); }
 
@@ -2708,7 +2711,7 @@
 	transition: left var(--g-move), width var(--g-move);
 }
 
-.rec-env--strained .rec-env-band--creature { background: repeating-linear-gradient(90deg, var(--g-hazard) 0 2px, transparent 2px 3px); box-shadow: 0 0 0 1px var(--g-hazard); }
+.rec-env--strained .rec-env-band--creature { background: repeating-linear-gradient(90deg, var(--g-accent) 0 2px, transparent 2px 3px); box-shadow: 0 0 0 1px var(--g-accent); }
 .rec-env--severe .rec-env-band--creature { background: repeating-linear-gradient(90deg, var(--g-lamp-red) 0 2px, transparent 2px 3px); box-shadow: 0 0 0 1px var(--g-lamp-red); }
 
 .rec-env-readout {
@@ -2843,7 +2846,7 @@
 }
 
 /* what the site takes: bulbs that would be lit unstrained, shown dim */
-.rec-bulb--dim { background: color-mix(in srgb, var(--g-hazard) 45%, var(--g-lamp-off)); }
+.rec-bulb--dim { background: color-mix(in srgb, var(--g-accent) 45%, var(--g-lamp-off)); }
 .rec-bulb--dim-severe { background: color-mix(in srgb, var(--g-lamp-red) 45%, var(--g-lamp-off)); }
 
 /* what a stagger took: struck red */
@@ -3344,7 +3347,7 @@
 }
 
 .rec-rival:hover { border-color: var(--g-brass-dark); }
-.rec-rival:focus-visible { outline: 2px solid var(--g-hazard); outline-offset: 2px; }
+.rec-rival:focus-visible { outline: 2px solid var(--g-accent); outline-offset: 2px; }
 .rec-rival--chosen { border-color: var(--g-brass); }
 .rec-rival--chosen .rec-rival-name { color: var(--g-brass-light); }
 
@@ -3407,7 +3410,7 @@
 	gap: var(--g-3);
 	padding: var(--g-2) var(--g-4);
 	margin-bottom: var(--g-3);
-	border-left: 3px solid var(--g-hazard);
+	border-left: 3px solid var(--g-accent);
 }
 
 .rec-resume-text { flex: 1 1 auto; font-size: var(--g-size-small); color: var(--g-ink); }
@@ -3728,7 +3731,7 @@
 
 .rec-rival { gap: var(--g-2); }
 .rec-rival-glyph { font-size: 32px; color: var(--g-brass-light); line-height: 1; }
-.rec-rival--chosen .rec-rival-glyph { color: var(--g-hazard); }
+.rec-rival--chosen .rec-rival-glyph { color: var(--g-accent); }
 .rec-rival-tag { font-size: var(--g-size-small); color: var(--g-ink-mid); }
 .rec-rival-ladder { display: inline-flex; gap: 5px; margin-top: auto; padding-top: var(--g-2); }
 .rec-rival-ladder .g-lamp { width: 9px; height: 9px; }
@@ -3922,13 +3925,13 @@
 	padding: 0 4px;
 	border-radius: 2px;
 	color: var(--g-ink);
-	background: var(--g-hazard);
+	background: var(--g-accent);
 }
 .rec-figure-threat--rout { background: var(--g-lamp-red); }
 .rec-figure--threat-rout .rec-figure-plate { outline: 1px solid var(--g-lamp-red); }
-.rec-figure--threat-stagger .rec-figure-plate { outline: 1px solid var(--g-hazard); }
+.rec-figure--threat-stagger .rec-figure-plate { outline: 1px solid var(--g-accent); }
 
-.rec-plan-threat { color: var(--g-hazard); }
+.rec-plan-threat { color: var(--g-accent); }
 .rec-plan-threat--rout { color: var(--g-lamp-red); }
 
 /* initiative on the plinth */
@@ -3973,7 +3976,7 @@
 	gap: var(--g-3);
 	padding: var(--g-2) var(--g-4);
 	background: var(--g-hull-lo);
-	border-left: 3px solid var(--g-hazard);
+	border-left: 3px solid var(--g-accent);
 	box-shadow: var(--g-recess);
 }
 
@@ -3991,7 +3994,7 @@
 	border: 1px solid var(--g-rule);
 	font-size: var(--g-size-micro);
 }
-.rec-coach-step--now .rec-coach-index { border-color: var(--g-hazard); color: var(--g-hazard); }
+.rec-coach-step--now .rec-coach-index { border-color: var(--g-accent); color: var(--g-accent); }
 .rec-coach-dismiss { flex: 0 0 auto; }
 
 @media (max-width: 760px) {
@@ -4073,7 +4076,7 @@
 	transition: border-color var(--g-move), opacity var(--g-move);
 }
 .rec-draft-card:hover { border-color: var(--g-brass-dark); }
-.rec-draft-card:focus-visible { outline: 2px solid var(--g-hazard); outline-offset: 2px; }
+.rec-draft-card:focus-visible { outline: 2px solid var(--g-accent); outline-offset: 2px; }
 .rec-draft-card--kept { border-color: var(--rec-you); }
 .rec-draft-card:not(.rec-draft-card--kept) .rec-plinth-art { opacity: 0.6; }
 .rec-draft-card .rec-plinth-art { width: 64px; height: 64px; }
@@ -4094,7 +4097,7 @@
 	gap: var(--g-3);
 	padding: var(--g-3) var(--g-4);
 	background: var(--g-hull-lo);
-	border-left: 3px solid var(--g-hazard);
+	border-left: 3px solid var(--g-accent);
 	box-shadow: var(--g-recess);
 	position: sticky;
 	bottom: var(--g-2);
@@ -4116,8 +4119,8 @@
 .rec-sound .g-lamp { width: 8px; height: 8px; }
 
 /* the Loki line on the bench: a returned creature and the trailing seat's bonus pip */
-.rec-plinth-tag--returned { color: var(--g-hazard); }
-.rec-send-pip--bonus { border-color: var(--g-hazard); }
+.rec-plinth-tag--returned { color: var(--g-accent); }
+.rec-send-pip--bonus { border-color: var(--g-accent); }
 
 /* ===========================================================================
    THE NOTES — the Proving notes panel on the report (docs/design/

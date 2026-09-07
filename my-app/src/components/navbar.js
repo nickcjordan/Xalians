@@ -112,7 +112,7 @@ class XalianNavbar extends React.Component {
 						<Container fluid className="relay-navbar-shell">
 							<Navbar.Brand href="/" className="relay-wordmark">
 								<img src="/assets/img/logo/xalians_logo_small.png" height="30px" alt="Xalians" />
-								<span className="g-legend relay-wordmark-text">QED Relay &middot; Zolton-3</span>
+								<span className="g-nameplate relay-wordmark-text">QED Relay &middot; Zolton-3</span>
 							</Navbar.Brand>
 
 							<div className="relay-status">

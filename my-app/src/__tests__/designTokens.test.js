@@ -127,6 +127,13 @@ const PAIRINGS = [
 	// material.paperInkFaint in designTokens.js (round1-findings.md S5).
 	['--g-paper-ink-faint', designTokens.material.paperInkFaint],
 
+	// The panel terminal's own face steps (round3-coherence.md "one room"):
+	// :root aliases these to --g-hull-lo/--g-hull-hi, which is a no-op for
+	// panel specifically (its object IS the hull), unlike every other
+	// terminal, which sets its own literal face-lo/face-hi below.
+	['--g-face-lo', designTokens.hull.lo],
+	['--g-face-hi', designTokens.hull.hi],
+
 	['--g-lamp-on', designTokens.phosphor.base],
 
 	['--g-hull-hover', designTokens.material.hullHover],
@@ -150,11 +157,15 @@ const PAIRINGS = [
 // the same way every other terminal falls back to :root for anything it does
 // not redefine.
 const TERMINAL_FIELD_TOKENS = {
-	hull: '--g-hull',
-	hullHi: '--g-hull-hi',
-	hullLo: '--g-hull-lo',
 	face: '--g-face',
-	ink: '--g-ink',
+	faceLo: '--g-face-lo',
+	faceHi: '--g-face-hi',
+	// Ink on the room is core, ink on the face is material (Rule A /
+	// round3-coherence.md): the terminal block itself only ever sets
+	// --g-face-ink*, never --g-ink* (the room's, inherited from :root).
+	faceInk: '--g-face-ink',
+	faceInkMid: '--g-face-ink-mid',
+	faceInkLow: '--g-face-ink-low',
 	trim: '--g-trim',
 	accent: '--g-accent',
 	glass: '--g-glass',

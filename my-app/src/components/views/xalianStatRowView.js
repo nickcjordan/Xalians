@@ -7,14 +7,17 @@ import EncyclopediaLink from '../encyclopediaLink';
 
 /**
  * One owned Xalian as a record strip: the species catalogue's row on the
- * `panel` terminal, or a screen line on the relay's account tube.
+ * `panel` terminal, or a screen line on the relay's tube.
  *
- * On the account page (`accountPage`), the strip carries no hull panel of
- * its own: it is a line of live content inside the shared `.g-crt` the
- * account page wraps its list in (docs/DESIGN_SYSTEM.md's medium rule — a
- * user's holdings are variable, live data, not a painted panel), and the
- * delete control is a physical `.g-key` rather than a hull button dressed as
- * an icon. Elsewhere (userDetailsPage.js) it keeps its `.g-panel` hull.
+ * On the relay (`accountPage`, or the read-only `screen` on userDetailsPage),
+ * the strip carries no hull panel of its own: it is a line of live content
+ * inside the shared `.g-crt` the page wraps its list in
+ * (docs/DESIGN_SYSTEM.md's medium rule — a user's holdings are variable,
+ * live data, not a painted panel). `accountPage` additionally gets a delete
+ * control as a physical `.g-key` (it is the signed-in user's own faction);
+ * `screen` gets the same screen medium with no delete key, for reading
+ * someone else's holdings. Elsewhere (the species catalogue) it keeps its
+ * `.g-panel` hull.
  */
 class XalianStatRowView extends React.Component {
 
@@ -25,7 +28,7 @@ class XalianStatRowView extends React.Component {
 	render() {
 		let x = this.props.xalian.attributes;
 		let type = x.elements.primaryType.toLowerCase();
-		let onScreen = this.props.accountPage;
+		let onScreen = this.props.accountPage || this.props.screen;
 
 		return (
 			<article className={`record-strip record-strip--wide g-el-${type} ${onScreen ? 'record-strip--screen' : 'g-panel'}`}>
