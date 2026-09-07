@@ -24,9 +24,11 @@ Every terminal obeys all three. The `build-ui` skill checks them in this order.
 
 ### Rule A: core and material
 
-**Core** (shared, never overridden per terminal): spacing scale, type scale, the 14 element hues, stat colors, meter and chip semantics, the contrast floor (4.5:1), one primary action per screen, only screens and lamps emit, motion is mechanical, tabular numerals, and rules B and C.
+**Core** (shared, never overridden per terminal): **the room** (page ground, paint tooth, vignette: every terminal is an object sitting in the same hangar), **the type system** (one legend face, one prose face, one output face, one paper face), **the page frame** (`.g-shell` width, the `.g-masthead` kicker-and-title block in the same position under the navbar, the same spacing), the spacing scale, the type scale, the 14 element hues, stat colors, meter and chip semantics, the contrast floor (4.5:1), one primary action per screen, only screens and lamps emit, motion is mechanical, tabular numerals, and rules B and C.
 
-**Material** (set once per terminal, in `system.css` under `[data-terminal="..."]`): hull and face colors, ink on the hull, paper stock and its typewriter face, glass and phosphor, the accent (the committing color), the trim (bezel, seal, rule), legend typeface, output typeface, corner radius, bevel depth, wear level, and the terminal's diegetic furniture (tape, clip, stamp, cover plate).
+**Material** (set once per terminal, in `system.css` under `[data-terminal="..."]`): the object's face and its ink, trim (bezel, seal, rule), accent (the committing color), glass and phosphor, the VFD strip, paper stock and its ink, corner radius, wear level, the lamp color, the terminal's diegetic furniture (tape, clip, stamp, cover plate), and **one nameplate face** (`--g-font-nameplate`) that appears in exactly one place per terminal: its nameplate or stamp. Nothing else on the terminal uses it.
+
+**Why the line sits here (ruled 2026-09-07 after the first live release).** The first version 3 release let each terminal recolor the whole room and set its own legend typeface, and the site read as six unrelated products under one navbar. Identity that has to survive across a click belongs in the core: the room, the type, the frame. Identity that belongs to the object stays in the material: what it is made of, what its screen looks like, what furniture is on it.
 
 ### Rule B: the medium rule
 
@@ -46,7 +48,7 @@ An object shows how it is attached to the world, or the viewer cannot tell a sur
 
 ## 3. The terminals
 
-| `data-terminal` | Object | Faction and era | Hull | Paper | Screen | Accent | Legend face |
+| `data-terminal` | Object | Faction and era | Face | Paper | Screen | Accent | Nameplate face |
 |---|---|---|---|---|---|---|---|
 | `relay` | Hand-built Zolto QED unit: sheet-steel cover plate with screws and vents, a salvaged color tube in a frame on standoffs, one cable, a tape label | Zolto rebels, present day | Blue-black steel | None. A relay does not print. | Color CRT; record and packet state together | Bloodstorm crimson; copper-yellow silkscreen | Chakra Petch (condensed technical) |
 | `field` | ECHELON-era portable survey unit: gunmetal case, off-white enamel face, hinge, four screws, a color CRT under dark glass, a one-line amber VFD status strip, reconditioning tape, asset plate | ECHELON corporations, pre-End Wars, salvaged now | Gunmetal case, off-white enamel face | Tape and asset label only (a slip may print on mint) | Color CRT carries the record; amber VFD carries battery, link, job | Signal orange (company livery) | Michroma (stands in for Eurostile Extended) |
@@ -116,15 +118,16 @@ Components read material tokens and never name a color. `--g-el` is still the el
 
 | Token | Meaning |
 |---|---|
-| `--g-void`, `--g-hull-lo`, `--g-hull`, `--g-hull-hi`, `--g-seam` | The room and the terminal's body. |
-| `--g-face`, `--g-face-ink`, `--g-face-ink-mid` | A lighter face plate on the body (the field unit's enamel) and the legends printed on it. Same as hull/ink where the terminal has no face. |
-| `--g-ink`, `--g-ink-mid`, `--g-ink-low`, `--g-ink-invert` | Legends painted on the hull. |
+| `--g-void`, `--g-hull-lo`, `--g-hull`, `--g-hull-hi`, `--g-seam` | **Core.** The room and the neutral body every object shares. Terminals do not override these. |
+| `--g-ink`, `--g-ink-mid`, `--g-ink-low`, `--g-ink-invert` | **Core.** Legends painted on the room. No `[data-terminal]` block overrides these; they are inherited from `:root`. |
+| `--g-face`, `--g-face-ink`, `--g-face-ink-mid`, `--g-face-ink-low` | **Material.** A lighter face plate on the body (the field unit's enamel) and the legends printed on it. The object classes (`.g-case`, `.g-counter`, `.g-desk`, `.g-cover-plate`, `.g-keybank`) re-declare `--g-ink`/`--g-ink-mid`/`--g-ink-low` to these values so their contents read face ink automatically; `.g-crt` and `.g-paper` keep their own remaps instead. |
 | `--g-trim`, `--g-trim-dark`, `--g-trim-light` | Bezels, seals, rules, fasteners. (`--g-brass*` are aliases kept for legacy CSS.) |
 | `--g-accent`, `--g-accent-ink` | The committing color and the ink printed on it. (`--g-hazard*` are aliases kept for legacy CSS.) |
 | `--g-glass`, `--g-phosphor`, `--g-phosphor-dim`, `--g-phosphor-a20`, `--g-screen-glass` | The screen. On a color CRT, phosphor is the text color and element hues carry the rest. |
 | `--g-vfd`, `--g-vfd-glass` | The one-line status strip, where the terminal has one. |
 | `--g-paper`, `--g-paper-ink`, `--g-paper-ink-faint`, `--g-paper-rule` | Paper stock, its ink, and its ruled lines. |
-| `--g-font-legend`, `--g-font-out`, `--g-font-paper`, `--g-font-ui` | Legends on the hull, the machine's output, the typewriter on paper, prose. (`--g-font-stencil` and `--g-font-mono` are aliases for the first two.) |
+| `--g-font-legend`, `--g-font-out`, `--g-font-paper`, `--g-font-ui` | **Core.** Barlow Condensed for legends on the hull, IBM Plex Mono for the machine's output, Special Elite for the typewriter on paper, Barlow for prose. Terminals do not override these. (`--g-font-stencil` and `--g-font-mono` are aliases for the first two.) |
+| `--g-font-nameplate` | **Material.** The one face that is the terminal's own (Michroma on the field unit, Cinzel on the registry, Spectral on the archive, Chakra Petch on the relay). Used only by `.g-nameplate` and `.g-stamp`. |
 | `--g-radius`, `--g-radius-panel`, `--g-radius-housing` | Corner geometry. |
 | `--g-wear` | 0 to 1. How much scuff, tape shadow and fade the terminal's furniture shows. |
 | `--g-lamp-amber`, `--g-lamp-red`, `--g-lamp-off`, `--g-lamp-on` | Indicator bulbs. `--g-lamp-on` is the terminal's live color. |
@@ -169,10 +172,11 @@ Components read material tokens and never name a color. `--g-el` is still the el
 | Generator | field + readout | migrated 2026-09-07 |
 | Shell: navbar, home, account | relay | migrated 2026-09-07 |
 | Encyclopedia (all sections) | archive | migrated 2026-09-07 |
-| Duel setup and roster | registry | migrated 2026-09-07; the live board (`duelPage.js`) stays on `panel` |
+| Duel setup, roster, live board and playground | registry | migrated 2026-09-07 |
 | Styleguide | relay, renders every terminal | migrated 2026-09-07 |
-| Reclamation | field | not started; on explicit `panel` baseline |
-| Training games, Long Return, duel playground, user details | field / registry / relay | not started; on explicit `panel` baseline |
+| Reclamation | field | migrated 2026-09-07 |
+| Training games, Long Return | field | migrated 2026-09-07 |
+| User details | relay | migrated 2026-09-07 |
 
 Update this table in the PR that migrates a page.
 
@@ -182,3 +186,4 @@ Update this table in the PR that migrates a page.
 - `.g-console::before` (the paint tooth) must be `position: absolute`, not `fixed`, or it clips at one viewport height and paints a seam on every tall page.
 - The navbar declares `data-terminal="relay"` on itself so it stays the relay on every page. Because it is on every page, it may not carry the page's single primary key.
 - Modifier classes (`.g-paper--card`) do not work without their base class (`.g-paper`); the remaps live on the base.
+- Ink follows the surface it is painted on: room ink is core, face ink is material, and the object classes re-scope `--g-ink` to face ink for their contents. A first version 3 release let field's `[data-terminal]` block override `--g-ink*` with values tuned for its light enamel face; because the room inherits that same variable, the masthead title, kickers, section headings and stat numbers sitting in the room went nearly invisible on every field page (round3-coherence.md).

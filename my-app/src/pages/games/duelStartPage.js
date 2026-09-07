@@ -128,10 +128,16 @@ class DuelStartPage extends React.Component {
                 <div className="g-console" data-terminal="registry">
                     <XalianNavbar />
 
-                    <div className="g-shell page-shell registry-shell">
-                        <header className="page-header">
-                            <p className="g-kicker">Valleron Arena Registry</p>
-                            <h1 className="g-title">Muster the Roster</h1>
+                    <div className="g-shell registry-shell">
+                        <header className="g-masthead">
+                            <div className="g-masthead-heading">
+                                <p className="g-kicker">Registry</p>
+                                <h1 className="g-title">Duel</h1>
+                                <p className="g-body">Muster the roster before the bracket admits you.</p>
+                            </div>
+                            <div className="g-masthead-aside">
+                                <span className="g-nameplate">Valleron Arena &middot; Window 2</span>
+                            </div>
                         </header>
 
                         <div className="g-counter registry-counter">
@@ -217,10 +223,15 @@ class DuelStartPage extends React.Component {
                 <div className="g-console" data-terminal="registry">
                     <XalianNavbar />
 
-                    <div className="g-shell page-shell registry-shell">
-                        <header className="page-header">
-                            <p className="g-kicker">Valleron Arena Registry</p>
-                            <h1 className="g-title">Duel Setup</h1>
+                    <div className="g-shell registry-shell">
+                        <header className="g-masthead">
+                            <div className="g-masthead-heading">
+                                <p className="g-kicker">Registry</p>
+                                <h1 className="g-title">Duel</h1>
+                            </div>
+                            <div className="g-masthead-aside">
+                                <span className="g-nameplate">Valleron Arena &middot; Window 2</span>
+                            </div>
                         </header>
 
                         {/* the clerk's counter: the docket up top carries the typed
@@ -325,7 +336,6 @@ class DuelStartPage extends React.Component {
                             </div>
 
                             <div className="g-keybank registry-keybank">
-                                <span className="registry-window-plate">Window 2</span>
                                 <span className="g-key-socket">
                                     <button type="button" className="g-key" onClick={() => this.setState({ showHowToPlay: true })}>
                                         How to Play

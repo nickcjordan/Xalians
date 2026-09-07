@@ -1,4 +1,4 @@
-// Terminal: panel (baseline). Target: registry. The live board runs inside Kozrak's arena ledger.
+// Terminal: registry. The live board runs inside Kozrak's arena ledger.
 import React from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -234,7 +234,7 @@ class DuelPage extends React.Component {
 
 
 					// <GameContainer>
-					<div data-terminal="panel">
+					<div data-terminal="registry">
 					{details.bot &&
 						<>
 						<DuelClient playerID="0" />
@@ -257,18 +257,25 @@ class DuelPage extends React.Component {
 			);
 		} else {
 			return (
-				<React.Fragment>
-					<Container fluid className="content-background-container" data-terminal="panel">
-					<XalianNavbar></XalianNavbar>
-				
+				<div className="g-console" data-terminal="registry">
+					<XalianNavbar />
 
-					<GameContainer>
-					WAITING ON RESPONSE...
-					</GameContainer>
-					
-					</Container>
+					<div className="g-shell registry-shell">
+						<header className="g-masthead">
+							<div className="g-masthead-heading">
+								<p className="g-kicker">Valleron Arena Registry</p>
+								<h1 className="g-title">Duel</h1>
+							</div>
+							<div className="g-masthead-aside">
+								<span className="g-nameplate">Valleron Arena &middot; Window 2</span>
+							</div>
+						</header>
 
-				</React.Fragment>
+						<div className="g-counter registry-counter">
+							WAITING ON RESPONSE...
+						</div>
+					</div>
+				</div>
 			);
 		}
 	}

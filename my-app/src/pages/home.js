@@ -45,60 +45,74 @@ class Home extends React.Component {
 				<XalianNavbar></XalianNavbar>
 
 				<main className="g-shell home-shell">
-					<section className="g-cover-plate home-plate">
+					<header className="g-masthead">
+						<div className="g-masthead-heading">
+							<p className="g-kicker">Relay</p>
+							<h1 className="g-title">Xalians</h1>
+						</div>
+						<div className="g-masthead-aside">
+							<span className="g-nameplate">QED Relay &middot; Zolton-3</span>
+						</div>
+					</header>
+
+					<section className="g-cover-plate g-object">
 						<span className="g-cover-screw" style={{ left: '10px', top: '10px' }}></span>
 						<span className="g-cover-screw" style={{ right: '10px', top: '10px' }}></span>
 						<span className="g-cover-screw" style={{ left: '10px', bottom: '10px' }}></span>
 						<span className="g-cover-screw" style={{ right: '10px', bottom: '10px' }}></span>
 
-						<div className="g-tube home-tube-frame">
-							<span className="g-standoff g-standoff--tl"></span>
-							<span className="g-standoff g-standoff--tr"></span>
-							<span className="g-standoff g-standoff--bl"></span>
-							<span className="g-standoff g-standoff--br"></span>
+						<div className="home-plate-body">
+							<div className="g-tube home-tube-frame">
+								<span className="g-standoff g-standoff--tl"></span>
+								<span className="g-standoff g-standoff--tr"></span>
+								<span className="g-standoff g-standoff--bl"></span>
+								<span className="g-standoff g-standoff--br"></span>
 
-							<div className="g-crt home-tube">
-								<p className="g-screen-line">QED RELAY &middot; ZOLTON-3</p>
-								<p className="g-screen-line g-screen-line--dim">HANDSHAKE ... HOLD ... PAIR FOUND</p>
-								<p className="g-screen-line">
-									ENTANGLED<span className="g-cursor" aria-hidden="true"></span>
-								</p>
+								<div className="g-crt home-tube">
+									<p className="g-screen-line">QED RELAY &middot; ZOLTON-3</p>
+									<p className="g-screen-line g-screen-line--dim">HANDSHAKE ... HOLD ... PAIR FOUND</p>
+									<p className="g-screen-line">
+										ENTANGLED<span className="g-cursor" aria-hidden="true"></span>
+									</p>
 
-								<div className="home-terminal-list">
-									{REACHABLE_TERMINALS.map((t) => (
-										<div className="home-terminal-row" key={t.name}>
-											<span className="g-lamp" aria-hidden="true"></span>
-											<div className="home-terminal-copy">
-												<p className="g-screen-line">
-													{t.name.toUpperCase()} <span className="g-screen-line--dim">&middot; {t.terminal}</span>
-												</p>
-												<p className="g-screen-line g-screen-line--dim">{t.description}</p>
+									<div className="home-terminal-list">
+										{REACHABLE_TERMINALS.map((t) => (
+											<div className="home-terminal-row" key={t.name}>
+												<span className="g-lamp" aria-hidden="true"></span>
+												<div className="home-terminal-copy">
+													<p className="g-screen-line">
+														{t.name.toUpperCase()} <span className="g-screen-line--dim">&middot; {t.terminal}</span>
+													</p>
+													<p className="g-screen-line g-screen-line--dim">{t.description}</p>
+												</div>
+												<Link to={t.to} className="g-key home-terminal-key">
+													Patch Through
+												</Link>
 											</div>
-											<Link to={t.to} className="g-key home-terminal-key">
-												Patch Through
-											</Link>
-										</div>
-									))}
+										))}
+									</div>
 								</div>
 							</div>
-						</div>
 
-						<p className="g-body home-premise">
-							Xalians are the bioengineered creatures Vallerii Generators grow to survive Xalia's worst worlds, no two genomes alike. King Kozrak's Mercurius Machine is the last device that can print a Scrambler Token, an encrypted genome safe from the Nemesis Plague, and he pays them out to the winners of his arena tournaments. This relay is what reaches every terminal from here: a Generator to grow one, the Archive to read what is known, the arena registry for the duel, and the survey terminals for Reclamation and training.
-						</p>
+							<div className="home-plate-copy">
+								<p className="g-body home-premise">
+									Xalians are the bioengineered creatures Vallerii Generators grow to survive Xalia's worst worlds, no two genomes alike. King Kozrak's Mercurius Machine is the last device that can print a Scrambler Token, an encrypted genome safe from the Nemesis Plague, and he pays them out to the winners of his arena tournaments. This relay is what reaches every terminal from here: a Generator to grow one, the Archive to read what is known, the arena registry for the duel, and the survey terminals for Reclamation and training.
+								</p>
 
-						<div className="home-social-row">
-							<a href="https://discord.gg/sgGNhNJ2KN" className="g-legend home-social-link">
-								Discord
-							</a>
-							<a href="https://twitter.com/xaliansgame" className="g-legend home-social-link">
-								Twitter
-							</a>
-						</div>
+								<div className="home-social-row">
+									<a href="https://discord.gg/sgGNhNJ2KN" className="g-legend home-social-link">
+										Discord
+									</a>
+									<a href="https://twitter.com/xaliansgame" className="g-legend home-social-link">
+										Twitter
+									</a>
+								</div>
 
-						<div className="g-asset-plate">
-							<span>Zolton-3 Relay &middot; Rev C</span>
-							<span>Hand-built &middot; Keep Dry</span>
+								<div className="g-asset-plate">
+									<span>Zolton-3 Relay &middot; Rev C</span>
+									<span>Hand-built &middot; Keep Dry</span>
+								</div>
+							</div>
 						</div>
 					</section>
 				</main>

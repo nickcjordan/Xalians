@@ -95,9 +95,14 @@ class UserAccountPage extends React.Component {
 					<XalianNavbar></XalianNavbar>
 
 					<div className="g-shell page-shell account-shell">
-						<header className="page-header">
-							<p className="g-kicker">Registry Holdings</p>
-							<h1 className="g-title">Your Xalian Faction</h1>
+						<header className="g-masthead">
+							<div className="g-masthead-heading">
+								<p className="g-kicker">Relay</p>
+								<h1 className="g-title">Your Xalian faction</h1>
+							</div>
+							<div className="g-masthead-aside">
+								<span className="g-nameplate">Registry holdings</span>
+							</div>
 						</header>
 
 						{/* signed out, or an empty faction: say so on a panel with the way
@@ -110,7 +115,13 @@ class UserAccountPage extends React.Component {
 						}
 
 						{this.state.xalianRows && this.state.xalianRows.length > 0 &&
-							<div className="g-crt account-tube">{this.state.xalianRows}</div>
+							<section className="g-cover-plate g-object">
+								<span className="g-cover-screw" style={{ left: '10px', top: '10px' }}></span>
+								<span className="g-cover-screw" style={{ right: '10px', top: '10px' }}></span>
+								<span className="g-cover-screw" style={{ left: '10px', bottom: '10px' }}></span>
+								<span className="g-cover-screw" style={{ right: '10px', bottom: '10px' }}></span>
+								<div className="g-crt relay-record-tube">{this.state.xalianRows}</div>
+							</section>
 						}
 					</div>
 

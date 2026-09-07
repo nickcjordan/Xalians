@@ -42,7 +42,7 @@ function RedirectTour() {
 
 // Terminal: archive. Poseidas is the neutral seat of science and arbitration; the encyclopedia is a reading desk in its Deep Archive, paper under a lamp.
 /**
- * ENCYCLOPEDIA XALIA — the Generator's archive.
+ * ENCYCLOPEDIA XALIA - the Generator's archive.
  *
  * Route shell only. Every section is its own component under
  * components/encyclopedia/, and every one of them reads data through

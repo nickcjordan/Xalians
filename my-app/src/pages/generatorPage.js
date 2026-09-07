@@ -39,7 +39,17 @@ class GeneratorPage extends React.Component {
 
 				<main className="g-console" data-terminal="field">
 					<div className="g-shell field-shell">
-						<section className="g-case field-case">
+						<header className="g-masthead">
+							<div className="g-masthead-heading">
+								<p className="g-kicker">Field terminal</p>
+								<h1 className="g-title">Generator</h1>
+							</div>
+							<div className="g-masthead-aside">
+								<span className="g-nameplate">PSU-7 &middot; Echelon Bioworks</span>
+							</div>
+						</header>
+
+						<section className="g-case g-object field-case">
 							<div className="g-case-hinge" />
 							<span className="g-case-screw g-case-screw--tl" />
 							<span className="g-case-screw g-case-screw--tr" />

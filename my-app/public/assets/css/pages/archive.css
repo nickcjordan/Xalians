@@ -12,38 +12,47 @@
    the .g-paper ink block, the hand-rolled search input chrome) are gone;
    what is left below is composition system.css has no class for. */
 
-/* ---- room: the whole page reads as the desk, not a dark bulkhead with a
-   panel floating in it (round1-findings.md A1) --------------------------- */
+/* ---- room: core now (round3-coherence.md rule 1). The page ground is the
+   shared room every terminal sits in; the desk is the object, painted below
+   by .g-desk in system.css. No page-level room background here any more. */
 
-[data-terminal='archive'].enc-console {
-	background-color: var(--g-hull-lo);
-	background-image:
-		radial-gradient(70% 42% at 50% 0%, rgba(255, 236, 190, 0.16), transparent 66%),
-		linear-gradient(180deg, var(--g-hull-hi), var(--g-hull-lo) 55%, var(--g-hull-lo));
-}
+/* ---- desk: the archive's object, spanning the shell like every other
+   terminal's (round3-coherence.md rule 3). .g-desk (system.css) supplies
+   the slate body, lamp pool and relief; this is only the composition of
+   the section keys, the request slip and the version legend on top of it. */
 
-/* ---- masthead: the archive's name plate on the desk (hull), flush with
-   the desk surface, not a raised box on top of it (round1-findings.md A1) */
-
-.enc-masthead {
-	position: relative;
+.enc-desk-tools {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: var(--g-4);
 	padding-bottom: var(--g-4);
 	border-bottom: var(--g-hairline) solid var(--g-trim-dark);
 }
 
-.enc-masthead::after {
-	/* the drawer-rod hole, echoed once on the desk itself, at the seam
-	   between the name plate and the section keys below it */
-	content: '';
-	position: absolute;
-	left: 50%;
-	bottom: -7px;
-	width: 11px;
-	height: 11px;
-	margin-left: -5.5px;
-	border-radius: 50%;
-	background: var(--g-hull-lo);
-	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.7), 0 0 0 1px var(--g-seam);
+.enc-desk-tools .enc-sections {
+	margin-bottom: 0;
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.enc-desk-slip {
+	display: flex;
+	align-items: center;
+	gap: var(--g-3);
+	flex: none;
+}
+
+.enc-version {
+	display: block;
+	margin: var(--g-3) 0 0;
+}
+
+@media (max-width: 700px) {
+	.enc-desk-tools { align-items: stretch; }
+	.enc-desk-slip { flex: 1 1 100%; width: 100%; flex-wrap: nowrap; gap: var(--g-2); }
+	.enc-pull-record { flex: 1 1 auto; }
 }
 
 .enc-pull-record {
@@ -147,7 +156,7 @@
    moved onto paper (round1-findings.md A2) and no longer need this. */
 
 [data-terminal='archive'] .enc-room-map-panel {
-	background: linear-gradient(180deg, var(--g-hull-hi), var(--g-hull-lo));
+	background: linear-gradient(180deg, var(--g-face-hi), var(--g-face-lo));
 }
 
 /* ---- galaxy map: a chart pinned to the desk, not a screen --------------- */

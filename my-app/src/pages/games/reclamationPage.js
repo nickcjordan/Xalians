@@ -1,4 +1,4 @@
-// Terminal: panel (baseline). Target: field. Reclamation is survey work on the salvaged ECHELON unit.
+// Terminal: field. Reclamation is survey work on the salvaged ECHELON unit.
 import React from 'react';
 import XalianNavbar from '../../components/navbar';
 import ReclamationMatch from '../../components/games/reclamation/reclamationMatch';
@@ -296,7 +296,7 @@ class ReclamationPage extends React.Component {
 
 		if (draft) {
 			return (
-				<div className="g-console rec-console rec-console--draft" data-terminal="panel">
+				<div className="g-console rec-console rec-console--draft" data-terminal="field">
 					<XalianNavbar />
 					<div className="g-shell rec-shell rec-shell--draft">
 						<header className="rec-masthead">
@@ -324,7 +324,7 @@ class ReclamationPage extends React.Component {
 				? resume.squadIds.map((id) => resume.rosters.A.find((r) => r.id === id)).filter(Boolean)
 				: null;
 			return (
-				<div className="g-console rec-console rec-console--match" data-terminal="panel">
+				<div className="g-console rec-console rec-console--match" data-terminal="field">
 					<XalianNavbar />
 					<div className="g-shell rec-shell rec-shell--match">
 						<header className="rec-masthead">
@@ -356,13 +356,18 @@ class ReclamationPage extends React.Component {
 		}
 
 		return (
-			<div className="g-console rec-console rec-console--intro" data-terminal="panel">
+			<div className="g-console rec-console rec-console--intro" data-terminal="field">
 				<XalianNavbar />
 				<div className="g-shell rec-shell rec-shell--intro">
-					<header className="rec-masthead">
-						<span className="g-kicker">Kozrak's Charter</span>
-						<h1 className="rec-masthead-title">Reclamation</h1>
-						<span className="g-mono rec-masthead-seed">seed {seed}</span>
+					<header className="g-masthead">
+						<div className="g-masthead-heading">
+							<p className="g-kicker">Field terminal</p>
+							<h1 className="g-title">Reclamation</h1>
+						</div>
+						<div className="g-masthead-aside">
+							<span className="g-mono rec-masthead-seed">seed {seed}</span>
+							<span className="g-nameplate">Survey program</span>
+						</div>
 					</header>
 
 					{saved && (
@@ -372,8 +377,8 @@ class ReclamationPage extends React.Component {
 								A Proving against the {rivalById(saved.rivalId || DEFAULT_RIVAL_ID).name} is still on the frame, round {(saved.match.frameIndex || 0) + 1}, {saved.match.players.A.sitesWon} worlds to {saved.match.players.B.sitesWon}.
 							</span>
 							<span className="rec-resume-actions">
-								<button type="button" className="g-btn g-btn--primary" onClick={this.resumeMatch} data-resume-match>Resume the Proving</button>
-								<button type="button" className="g-btn" onClick={this.discardSaved} data-discard-match>Abandon it</button>
+								<button type="button" className="g-key g-key--primary" onClick={this.resumeMatch} data-resume-match>Resume the Proving</button>
+								<button type="button" className="g-key" onClick={this.discardSaved} data-discard-match>Abandon it</button>
 							</span>
 						</div>
 					)}
@@ -439,7 +444,7 @@ class ReclamationPage extends React.Component {
 								<div className="rec-intro-mode" title={mode === 'simple' ? 'Simple: the suggested move is marked and orders go by nature.' : 'Advanced: every order, every number, hidden sends, the log and the dossiers.'}>
 									<ModeSwitch mode={mode} onChange={this.setMode} />
 								</div>
-								<button type="button" className="g-btn g-btn--primary rec-enter" onClick={this.startMatch} data-enter>
+								<button type="button" className="g-key g-key--primary rec-enter" onClick={this.startMatch} data-enter>
 									Enter the frame
 								</button>
 								<span className="rec-intro-against">against the {rival.name}</span>

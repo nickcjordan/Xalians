@@ -1,4 +1,4 @@
-// Terminal: panel (baseline). Target: registry. Duel Playground is arena affordance reference.
+// Terminal: registry. Duel Playground is the arena's own design reference, read at the clerk's counter.
 import React from 'react';
 import XalianNavbar from '../../components/navbar';
 import DuelSpecimenBoard from '../../components/games/duel/playground/duelSpecimenBoard';
@@ -699,7 +699,7 @@ class DuelPlaygroundPage extends React.Component {
 	render() {
 		if (!this.state.squad) {
 			return (
-				<div className="g-console" data-terminal="panel">
+				<div className="g-console" data-terminal="registry">
 					<XalianNavbar />
 					<div className="g-shell sg-page"><p className="g-body">Loading specimens...</p></div>
 				</div>
@@ -707,34 +707,39 @@ class DuelPlaygroundPage extends React.Component {
 		}
 
 		return (
-			<div className="g-console" data-terminal="panel">
+			<div className="g-console" data-terminal="registry">
 				<XalianNavbar />
 
 				<div className="g-shell sg-page dp-page">
 
-					<header className="sg-masthead">
-						<p className="g-label">Duel</p>
-						<h1 className="g-title">Arena Affordance Reference</h1>
-						<p className="g-body">
-							Everything the duel board can say, drawn at once. The arena is normally rendered
-							from a live game, so the only way to look at a state was to play a match until it
-							happened: until something was carrying a flag, until a piece was down to two health,
-							until an immune matchup came up. That is a slow way to compare two marks and an
-							impossible way to compare fourteen.
-						</p>
-						<p className="g-body">
-							Every board below is the real component against the real stylesheet, handed a
-							position instead of a game. Nothing here is a mock, so nothing here can flatter the
-							design: if a mark reads badly on this page it reads badly in a match.
-						</p>
+					<header className="g-masthead">
+						<div className="g-masthead-heading">
+							<p className="g-kicker">Registry</p>
+							<h1 className="g-title">Arena Affordance Reference</h1>
+							<p className="g-body">
+								Everything the duel board can say, drawn at once. The arena is normally rendered
+								from a live game, so the only way to look at a state was to play a match until it
+								happened: until something was carrying a flag, until a piece was down to two health,
+								until an immune matchup came up. That is a slow way to compare two marks and an
+								impossible way to compare fourteen.
+							</p>
+							<p className="g-body">
+								Every board below is the real component against the real stylesheet, handed a
+								position instead of a game. Nothing here is a mock, so nothing here can flatter the
+								design: if a mark reads badly on this page it reads badly in a match.
+							</p>
 
-						<div className="dp-controls g-panel">
-							<label className="g-label dp-control">
-								Cell size
-								<input type="range" className="g-range" min="40" max="96" value={this.state.cellSize}
-									onChange={(e) => this.setState({ cellSize: parseInt(e.target.value) })} />
-								<span className="g-mono dp-control-value">{this.state.cellSize}px</span>
-							</label>
+							<div className="dp-controls g-panel">
+								<label className="g-label dp-control">
+									Cell size
+									<input type="range" className="g-range" min="40" max="96" value={this.state.cellSize}
+										onChange={(e) => this.setState({ cellSize: parseInt(e.target.value) })} />
+									<span className="g-mono dp-control-value">{this.state.cellSize}px</span>
+								</label>
+							</div>
+						</div>
+						<div className="g-masthead-aside">
+							<span className="g-nameplate">Valleron Arena &middot; Window 2</span>
 						</div>
 					</header>
 

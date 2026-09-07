@@ -1,13 +1,7 @@
-// Terminal: panel (baseline). Target: relay. A user's record is read over the Zolto relay.
+// Terminal: relay. A user's record, read over the Zolto relay the same way
+// your own faction is on userAccountPage.js — the same tube, no delete key.
 import React from 'react';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
 import XalianNavbar from '../components/navbar';
-import SignUpModal from '../components/auth/signUpModal';
-import VerifyEmailModal from '../components/auth/verifyEmailModal';
-import SignInModal from '../components/auth/signInModal';
 import * as authUtil from '../utils/authUtil';
 import * as dbApi from '../utils/dbApi';
 import { store } from 'state-pool';
@@ -41,7 +35,7 @@ class UserAccountPage extends React.Component {
         //     user: mockUser,
         //     xalians: mockXalians
         // })
-        
+
     }
 
 
@@ -53,7 +47,7 @@ class UserAccountPage extends React.Component {
         var rows = [];
         if (this.state.xalians) {
             this.state.xalians.forEach(xalian => {
-                rows.push(<XalianStatRowView xalian={xalian}/>);
+                rows.push(<XalianStatRowView screen xalian={xalian} key={xalian.xalianId} />);
             });
         }
         return rows;
@@ -63,24 +57,39 @@ class UserAccountPage extends React.Component {
         return (
             <React.Fragment>
 
-                <Container fluid className="content-background-container" data-terminal="panel">
+                <div className="g-console" data-terminal="relay">
                     <XalianNavbar authAlertCallback={this.setUserInfo}></XalianNavbar>
 
-                    <Container className="content-container">
+                    <div className="g-shell page-shell account-shell">
+                        <header className="g-masthead">
+                            <div className="g-masthead-heading">
+                                <p className="g-kicker">Relay</p>
+                                <h1 className="g-title">
+                                    {(this.state.user && (this.state.user.username || this.state.user.userId) + "'s Xalian faction") || 'Xalian faction'}
+                                </h1>
+                            </div>
+                            <div className="g-masthead-aside">
+                                <span className="g-nameplate">Registry holdings</span>
+                            </div>
+                        </header>
 
-                    <Row className='account-page-xalians-title vertically-center-contents'>
-                        {this.state.user && 
-                            <h1>{(this.state.user.username || this.state.user.userId) + "'s Xalian Faction"}</h1>
+                        {this.state.message &&
+                            <div className="g-panel account-notice">
+                                <p className="g-empty account-notice-text">{this.state.message}</p>
+                            </div>
                         }
-							
-						</Row>
-                        <Row>
-                            {this.buildXaliansView()}
-                        </Row>
 
-                    </Container>
-                    
-                </Container>
+                        {this.state.xalians && this.state.xalians.length > 0 &&
+                            <section className="g-cover-plate g-object">
+                                <span className="g-cover-screw" style={{ left: '10px', top: '10px' }}></span>
+                                <span className="g-cover-screw" style={{ right: '10px', top: '10px' }}></span>
+                                <span className="g-cover-screw" style={{ left: '10px', bottom: '10px' }}></span>
+                                <span className="g-cover-screw" style={{ right: '10px', bottom: '10px' }}></span>
+                                <div className="g-crt relay-record-tube">{this.buildXaliansView()}</div>
+                            </section>
+                        }
+                    </div>
+                </div>
                 {this.state.isLoading && <div id="preloader"></div>}
             </React.Fragment>
 

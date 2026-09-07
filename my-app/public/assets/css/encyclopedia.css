@@ -1,42 +1,22 @@
 /* =========================================================================
-   ENCYCLOPEDIA XALIA — page-level compositions for /encyclopedia.
+   ENCYCLOPEDIA XALIA - page-level compositions for /encyclopedia.
    Built only from system.css parts and --g-* tokens. No raw colour here.
    Shared rules first (shell, search, prose, hover card, layout helpers);
    each section owns a block below, prefixed .enc-<section>-.
    Contract: docs/design/xalian-encyclopedia-page.md
    ========================================================================= */
 
-/* ---- shell ------------------------------------------------------------- */
-
-.enc-masthead {
-	display: flex;
-	align-items: flex-end;
-	justify-content: space-between;
-	gap: var(--g-6);
-	flex-wrap: wrap;
-	margin-bottom: var(--g-5);
-}
-
-.enc-masthead-text { min-width: 0; }
-
-.enc-title { margin: var(--g-1) 0 0; }
+/* ---- shell --------------------------------------------------------------
+   .g-masthead (round3-coherence.md rule 3, system.css) replaced the old
+   .enc-masthead slab; only the version legend is still page-specific. */
 
 .enc-version {
-	margin: var(--g-2) 0 0;
+	margin: 0;
 	font-size: var(--g-size-tiny);
 	color: var(--g-ink-low);
 	letter-spacing: var(--g-track-label);
 	text-transform: uppercase;
 }
-
-/* Compact masthead: every route except the Reading Room. The kicker and
-   version line step aside so the record starts sooner; the title steps down
-   one size. Phones already hide the kicker and version at full size, so this
-   mainly affects desktop/tablet. */
-.enc-masthead--compact .g-kicker { display: none; }
-.enc-masthead--compact .enc-version { display: none; }
-.enc-masthead--compact .enc-title { margin-top: 0; font-size: var(--g-size-h2); }
-.enc-masthead--compact { margin-bottom: var(--g-4); }
 
 .enc-sections {
 	margin-bottom: var(--g-7);
@@ -80,18 +60,6 @@
 	box-shadow: none;
 }
 
-.enc-masthead-tools {
-	display: flex;
-	align-items: center;
-	gap: var(--g-3);
-	flex-wrap: wrap;
-}
-
-@media (max-width: 700px) {
-	.enc-masthead-tools { flex: 1 1 100%; width: 100%; }
-	.enc-pull-record { flex: 1 1 auto; }
-}
-
 /* Bootstrap paints bare anchors blue; inside the archive a link is either a
    printed term (.g-link, element-coloured) or a whole tile/record (inherits). */
 .enc-console a:not(.g-link):not(.g-btn):not(.g-segment):not(.nav-link) { color: inherit; }
@@ -103,15 +71,8 @@
 	   larger phone-only value; system.css keeps the desktop rem value. */
 	.enc-console { --g-size-tiny: 0.8125rem; --g-size-micro: 0.75rem; }
 
-	/* Masthead: kicker and version line are the two lines the fold cannot
-	   afford. Title drops to h2. Search and Pull share one row so the
-	   whole masthead clears under 140px before the section bank starts. */
-	.enc-masthead { gap: var(--g-2); margin-bottom: var(--g-3); align-items: center; }
-	.enc-masthead-text { flex: 1 1 100%; overflow-wrap: anywhere; }
-	.enc-masthead .g-kicker { display: none; }
-	.enc-title { margin-top: 0; font-size: var(--g-size-h2); }
+	/* The canon-revision legend is the one line the fold cannot afford. */
 	.enc-version { display: none; }
-	.enc-masthead-tools { flex: 1 1 100%; width: 100%; flex-wrap: nowrap; gap: var(--g-2); }
 	.enc-search { flex: 1 1 auto; min-width: 0; }
 	.enc-pull-record { flex: 0 0 auto; }
 	.enc-btn-label-full { display: none; }

@@ -12,18 +12,31 @@
 	padding-bottom: var(--g-6);
 }
 
-.home-plate {
-	max-width: 44rem;
-	margin: 0 auto;
+/* The plate's interior lays out as one column, tube above copy, until the
+   shell is wide enough for the tube to sit beside the premise instead of
+   above it (field.css's .g-record-content-body uses the same 900px cut for
+   the same reason: a survey unit's own two-column record layout). */
+.home-plate-body {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--g-5);
+}
+
+@media (min-width: 900px) {
+	.home-plate-body {
+		grid-template-columns: minmax(280px, 30rem) 1fr;
+		align-items: start;
+	}
+}
+
+.home-plate-copy {
 	display: flex;
 	flex-direction: column;
 	gap: var(--g-5);
 }
 
 .home-tube-frame {
-	align-self: center;
 	width: 100%;
-	max-width: 30rem;
 }
 
 .home-tube {

@@ -4,12 +4,11 @@
 
 /* -------------------------------------------------------------------------
    THE UNIT ITSELF
-   The suitcase sits centered in the room, not stretched to the viewport —
-   it is a portable field instrument, not a dashboard.
+   The case spans the shell like every other terminal's object (round3
+   "one frame" rule) rather than sitting narrower and centered on its own.
    ------------------------------------------------------------------------- */
 
 .field-shell {
-	max-width: 1100px;
 	padding-top: var(--g-8);
 	padding-bottom: var(--g-8);
 }
@@ -21,10 +20,12 @@
 }
 
 /* the reconditioning tape, stuck on at a slight angle over the top edge of
-   the case, per the mockup */
+   the case, per the mockup. Anchored inside the case (a positive offset from
+   its top edge) rather than hanging above it, so it does not overlap the
+   masthead nameplate sitting above the case in the room. */
 .field-tape {
 	position: absolute;
-	top: calc(var(--g-3) * -1);
+	top: var(--g-3);
 	right: var(--g-6);
 	z-index: 1;
 }
@@ -51,7 +52,7 @@
 }
 
 .field-readout-section {
-	background: var(--g-hull-lo);
+	background: var(--g-face-lo);
 	border-radius: var(--g-radius);
 	padding: var(--g-4);
 }
