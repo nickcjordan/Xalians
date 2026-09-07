@@ -4,6 +4,7 @@ import {
 } from '../expeditionRules.js';
 import {
 	ROSTER_SIZE, SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH, FRAMES_PER_MATCH, WORLDS_PER_FRAME,
+	ROSTER_TRAILING_BONUS,
 } from '../expeditionInterpretation.js';
 
 /*
@@ -1122,5 +1123,196 @@ describe('relocateVanguard: the vanguard falls back', () => {
 		expect(ev.handler).toBe(starter);
 		expect(ev.fromSite).toBe(frame.sites[0].id);
 		expect(ev.toSite).toBe(frame.sites[1].id);
+	});
+});
+
+/*
+	The rules object: one ablation switch per lever (docs/design/game-validation-principles.md
+	"Ablation"). Each test below turns one lever off and checks the engine actually stops
+	doing that thing, plus a test that the defaults are unchanged - the whole rest of this
+	file is that second assertion, so it is only stated once here.
+*/
+describe('rules ablation switches', () => {
+	function stealthyRoster(prefix) {
+		const roster = [];
+		for (let i = 0; i < ROSTER_SIZE; i++) {
+			roster.push(makeRecord(`${prefix}_${i}`, { traits: { guaranteed: ['stealthy'], rolled: [] } }));
+		}
+		return roster;
+	}
+
+	function matchWithRules(rules, rosterFn = makeRoster) {
+		return createMatch({
+			rosterA: rosterFn('A'),
+			rosterB: rosterFn('B'),
+			worlds: makeWorlds(),
+			seed: 'ablation-seed',
+			rules,
+		});
+	}
+
+	it('defaults to every rule on when createMatch is called without a rules object', () => {
+		const state = freshMatch();
+		expect(state.rules).toEqual({
+			hiddenSends: true,
+			lokiLine: true,
+			trailingBonus: ROSTER_TRAILING_BONUS,
+			initiative: true,
+			disabledActs: [],
+		});
+	});
+
+	it('merges a partial rules object over the defaults', () => {
+		const state = matchWithRules({ hiddenSends: false });
+		expect(state.rules.hiddenSends).toBe(false);
+		expect(state.rules.lokiLine).toBe(true);
+		expect(state.rules.trailingBonus).toBe(ROSTER_TRAILING_BONUS);
+	});
+
+	it('exposes the rules object through getPublicState so the bot can respect it', () => {
+		const state = matchWithRules({ hiddenSends: false, disabledActs: ['ward'] });
+		const view = getPublicState(state, 'A');
+		expect(view.rules.hiddenSends).toBe(false);
+		expect(view.rules.disabledActs).toEqual(['ward']);
+	});
+
+	it('hiddenSends false makes a hidden send illegal even for a stealthy creature', () => {
+		const state = matchWithRules({ hiddenSends: false }, stealthyRoster);
+		const handler = state.turn;
+		const site = currentFrame(state).sites[0].id;
+		const recordId = `${handler}_0`;
+		expect(send(state, handler, recordId, site, true)).toBeNull();
+		// the same creature sent openly is still perfectly legal
+		expect(send(state, handler, recordId, site, false)).not.toBeNull();
+	});
+
+	it('hiddenSends true (the default) still allows a stealthy hidden send', () => {
+		const state = matchWithRules({}, stealthyRoster);
+		const handler = state.turn;
+		const site = currentFrame(state).sites[0].id;
+		expect(send(state, handler, `${handler}_0`, site, true)).not.toBeNull();
+	});
+
+	it('disabledActs makes the named act illegal in order() while hold stays legal', () => {
+		let state = matchWithRules({ disabledActs: ['strike'] });
+		// both sides send one creature so there is something to order
+		state = send(state, state.turn, `${state.turn}_0`, currentFrame(state).sites[0].id, false);
+		state = send(state, state.turn, `${state.turn}_0`, currentFrame(state).sites[0].id, false);
+		state = pass(state, state.turn);
+		state = pass(state, state.turn);
+		expect(state.phase).toBe('orders');
+		expect(order(state, 'A', 'A_0', 'strike')).toBeNull();
+		expect(order(state, 'A', 'A_0', 'hold')).not.toBeNull();
+	});
+
+	it('disabledActs empty (the default) leaves every act orderable', () => {
+		let state = matchWithRules({});
+		state = send(state, state.turn, `${state.turn}_0`, currentFrame(state).sites[0].id, false);
+		state = send(state, state.turn, `${state.turn}_0`, currentFrame(state).sites[0].id, false);
+		state = pass(state, state.turn);
+		state = pass(state, state.turn);
+		expect(order(state, 'A', 'A_0', 'strike')).not.toBeNull();
+	});
+
+	// the Loki line and the trailing bonus both fire at Judge, so both need a whole round
+	// played out. playOneRound sends `count` creatures per side at the given site indices
+	// and commits empty orders, so the judged result is decided purely by hold.
+	function playOneRound(state, sitesForA, sitesForB) {
+		const frame = currentFrame(state);
+		const queue = { A: sitesForA.slice(), B: sitesForB.slice() };
+		let next = state;
+		let sentA = 0;
+		let sentB = 0;
+		while (next.phase === 'deploy') {
+			const handler = next.turn;
+			if (handler === null) {
+				break;
+			}
+			const sent = handler === 'A' ? sentA : sentB;
+			if (queue[handler].length > sent) {
+				const siteIndex = queue[handler][sent];
+				const after = send(next, handler, `${handler}_${sent}`, frame.sites[siteIndex].id, false);
+				if (handler === 'A') {
+					sentA++;
+				} else {
+					sentB++;
+				}
+				next = after;
+			} else {
+				next = pass(next, handler);
+			}
+		}
+		next = commitOrders(next, 'A');
+		next = commitOrders(next, 'B');
+		return next;
+	}
+
+	it('lokiLine true (the default) returns a creature from a LOST world to its roster', () => {
+		// A sends two to site 0, B sends one: B loses site 0 and gets its creature back
+		const state = matchWithRules({});
+		const started = state.starter === 'A' ? state : { ...state, starter: 'A', turn: 'A' };
+		const after = playOneRound(started, [0, 0], [0]);
+		expect(after.players.B.returned.length).toBeGreaterThan(0);
+		expect(after.players.B.roster.some((r) => after.players.B.returned.includes(r.id))).toBe(true);
+	});
+
+	it('lokiLine false withdraws a lost creature with no return, like a tie', () => {
+		const state = matchWithRules({ lokiLine: false });
+		const started = state.starter === 'A' ? state : { ...state, starter: 'A', turn: 'A' };
+		const after = playOneRound(started, [0, 0], [0]);
+		expect(after.players.B.returned).toEqual([]);
+		expect(after.players.B.withdrawn.length).toBeGreaterThan(0);
+	});
+
+	it('trailingBonus is the rules number, not the constant, when the sides finish uneven', () => {
+		const state = matchWithRules({ trailingBonus: 3 });
+		const started = state.starter === 'A' ? state : { ...state, starter: 'A', turn: 'A' };
+		const after = playOneRound(started, [0, 1], []);
+		expect(after.phase).toBe('deploy');
+		// A took worlds, B trailed, so B carries the bonus into the next round
+		expect(after.trailingBonus.B).toBe(3);
+		expect(after.trailingBonus.A).toBe(0);
+	});
+
+	it('trailingBonus 0 removes the compensation entirely', () => {
+		const state = matchWithRules({ trailingBonus: 0 });
+		const started = state.starter === 'A' ? state : { ...state, starter: 'A', turn: 'A' };
+		const after = playOneRound(started, [0, 1], []);
+		expect(after.trailingBonus).toEqual({ A: 0, B: 0 });
+	});
+
+	it('initiative false resolves in sent order regardless of reflex and agility', () => {
+		// two creatures on one side, the LATER-sent one far faster: with initiative on it
+		// acts first, with initiative off the earlier-sent one does.
+		function speedRoster(prefix) {
+			const roster = [];
+			for (let i = 0; i < ROSTER_SIZE; i++) {
+				roster.push(makeRecord(`${prefix}_${i}`, {
+					attributes: i === 1 ? { agility: 99, reflex: 99 } : { agility: 1, reflex: 1 },
+				}));
+			}
+			return roster;
+		}
+		function firstActorOf(rules) {
+			let state = createMatch({
+				rosterA: speedRoster('A'), rosterB: speedRoster('B'), worlds: makeWorlds(), seed: 'init-seed', rules,
+			});
+			state = state.starter === 'A' ? state : { ...state, starter: 'A', turn: 'A' };
+			const site = currentFrame(state).sites[0].id;
+			state = send(state, 'A', 'A_0', site, false);
+			state = send(state, 'B', 'B_0', site, false);
+			state = send(state, 'A', 'A_1', site, false);
+			state = pass(state, 'B');
+			state = pass(state, 'A');
+			state = order(state, 'A', 'A_0', 'strike') || state;
+			state = order(state, 'A', 'A_1', 'strike') || state;
+			state = order(state, 'B', 'B_0', 'hold') || state;
+			state = commitOrders(state, 'A');
+			state = commitOrders(state, 'B');
+			const acts = state.resolutionLog.filter((e) => e.type !== 'judge' && (e.recordId === 'A_0' || e.recordId === 'A_1'));
+			return acts.length > 0 ? acts[0].recordId : null;
+		}
+		expect(firstActorOf({ initiative: true })).toBe('A_1');
+		expect(firstActorOf({ initiative: false })).toBe('A_0');
 	});
 });

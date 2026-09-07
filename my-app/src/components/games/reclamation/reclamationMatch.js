@@ -115,12 +115,15 @@ class ReclamationMatch extends React.Component {
 		this.beatSeq = 0;
 		this.ordersPanel = React.createRef();
 		this.lastLoggedEventCount = 0;
+		this.ordersEverGiven = false;
+		this.matchEndTold = false;
 	}
 
 	componentDidMount() {
 		document.addEventListener('keydown', this.handleKeyDown);
 		this.exposeDebug();
 		this.scheduleBotIfDue();
+		this.trackDecisionWindows(null, this.state);
 	}
 
 	componentDidUpdate(prevProps, prevState) {
@@ -131,7 +134,66 @@ class ReclamationMatch extends React.Component {
 		if (prevState.match !== this.state.match && !this.state.playback && !this.state.judged) {
 			this.scheduleBotIfDue();
 		}
+		this.trackDecisionWindows(prevState, this.state);
+		this.trackHovers(prevState, this.state);
+		this.trackMatchEnd(prevState, this.state);
 	}
+
+	// ------------------------------------------------------------------
+	// telemetry (docs/design/game-validation-principles.md section 3): decision timing,
+	// preview usage, skip depth, coach dismissal, sound, and match outcome. Every call is
+	// guarded on this.props.telemetry so the table behaves identically with none wired.
+	// ------------------------------------------------------------------
+	trackDecisionWindows = (prevState, state) => {
+		if (!this.props.telemetry) {
+			return;
+		}
+		const wasYourDeployTurn = !!prevState && prevState.match.phase === 'deploy' && prevState.match.turn === YOU && !prevState.playback;
+		const isYourDeployTurn = state.match.phase === 'deploy' && state.match.turn === YOU && !state.playback;
+		if (isYourDeployTurn && !wasYourDeployTurn) {
+			this.props.telemetry.decisionStart('deploy', { round: state.match.frameIndex });
+		}
+		const wasOrdersOpenForYou = !!prevState && prevState.match.phase === 'orders' && !prevState.match.players[YOU].committed;
+		const isOrdersOpenForYou = state.match.phase === 'orders' && !state.match.players[YOU].committed;
+		if (isOrdersOpenForYou && !wasOrdersOpenForYou) {
+			this.props.telemetry.decisionStart('orders', { round: state.match.frameIndex });
+		}
+	};
+
+	trackHovers = (prevState, state) => {
+		if (!this.props.telemetry) {
+			return;
+		}
+		if (state.hoverSiteId != null && (!prevState || prevState.hoverSiteId == null)) {
+			this.props.telemetry.hover('site');
+		}
+		if (state.hoverRecordId != null && (!prevState || prevState.hoverRecordId == null)) {
+			this.props.telemetry.hover('record');
+		}
+		if (state.inspect != null && (!prevState || prevState.inspect == null)) {
+			this.props.telemetry.hover('inspect');
+		}
+	};
+
+	trackMatchEnd = (prevState, state) => {
+		if (!this.props.telemetry || this.matchEndTold) {
+			return;
+		}
+		// once the report is on the table, not when the engine's phase flips: the last
+		// round's playback (and its skip) is still running at that moment
+		if (state.match.phase !== 'matchEnd' || state.playback) {
+			return;
+		}
+		this.matchEndTold = true;
+		const you = state.match.players[YOU];
+		const them = state.match.players[THEM];
+		this.props.telemetry.endMatch({
+			won: state.match.winner === YOU,
+			sitesYou: you.sitesWon,
+			sitesRival: them.sitesWon,
+			reason: state.match.matchEndReason,
+		});
+	};
 
 	componentWillUnmount() {
 		document.removeEventListener('keydown', this.handleKeyDown);
@@ -188,6 +250,7 @@ class ReclamationMatch extends React.Component {
 			playing: !!this.state.playback,
 			rosterIds: (view.players[YOU].roster || []).map((r) => r.id),
 			format: formatHold,
+			telemetry: () => this.props.telemetry && this.props.telemetry.snapshot(),
 		};
 	};
 
@@ -364,6 +427,9 @@ class ReclamationMatch extends React.Component {
 
 	dismissCoach = () => {
 		writeCoached();
+		if (this.props.telemetry) {
+			this.props.telemetry.coachDismissed({ beforeFirstOrders: !this.ordersEverGiven });
+		}
 		this.setState({ coached: true });
 	};
 
@@ -402,6 +468,7 @@ class ReclamationMatch extends React.Component {
 			if (this.botTimer) {
 				clearTimeout(this.botTimer);
 			}
+			this.botBeatStartedAt = Date.now();
 			this.botTimer = setTimeout(this.runBotDeployTurn, BOT_DELAY_MS);
 		}
 	};
@@ -595,6 +662,13 @@ class ReclamationMatch extends React.Component {
 			this.appendLog(line);
 			this.arrive([ev.recordId], ev.toSite, YOU);
 			this.beat({ kind: 'your-relocate', seat: YOU, short: 'Fell back', text: line });
+			if (this.props.telemetry) {
+				// relocate does not spend the deploy turn (see the class doc comment), so the
+				// decision window is closed as 'relocate' and immediately reopened: the player
+				// is still mid-turn and will send or pass next.
+				this.props.telemetry.decisionEnd('deploy', 'relocate', { round: match.frameIndex });
+				this.props.telemetry.decisionStart('deploy', { round: match.frameIndex });
+			}
 			this.setState({ match: next, relocating: false }, this.afterEngineStep);
 			return;
 		}
@@ -622,6 +696,9 @@ class ReclamationMatch extends React.Component {
 		}
 		this.tellSend(match, next, record, siteId, sendHidden);
 		this.cue('send');
+		if (this.props.telemetry) {
+			this.props.telemetry.decisionEnd('deploy', 'send', { round: match.frameIndex });
+		}
 		this.setState({ match: next, armedRecordId: null, sendHidden: false, hoverSiteId: null, hoverRecordId: null }, this.afterEngineStep);
 	};
 
@@ -670,6 +747,9 @@ class ReclamationMatch extends React.Component {
 		this.appendLog(line);
 		this.beat({ kind: 'your-pass', seat: YOU, short: 'Passed', text: line });
 		this.beatPhaseChange(match, next);
+		if (this.props.telemetry) {
+			this.props.telemetry.decisionEnd('deploy', 'pass', { round: match.frameIndex });
+		}
 		this.setState({ match: next, armedRecordId: null, relocating: false }, this.afterEngineStep);
 	};
 
@@ -773,12 +853,24 @@ class ReclamationMatch extends React.Component {
 
 		const newEvents = next.resolutionLog.slice(beforeLogLength);
 		this.cue('seal');
+		this.ordersEverGiven = true;
 		if (!this.state.coached) {
 			writeCoached();
+			// the coach strip is dismissed automatically the moment orders are first given,
+			// if the player never dismissed it by hand; that is not "before" its own lesson,
+			// so beforeFirstOrders is false here (only the manual dismissForCoach() call can
+			// be true, and only when it happens before any orders were given).
+			if (this.props.telemetry) {
+				this.props.telemetry.coachDismissed({ beforeFirstOrders: false });
+			}
+		}
+		if (this.props.telemetry) {
+			this.props.telemetry.decisionEnd('orders', 'go', { round: match.frameIndex });
 		}
 		this.appendLog('Orders are revealed.');
 		this.cutBeats();
 		this.beat({ kind: 'resolve', seat: null, short: 'Resolving', text: 'Orders are revealed. Each creature acts in turn, fastest first.' });
+		this.playbackStartedAt = Date.now();
 		this.setState({
 			match: next,
 			playback: {
@@ -864,11 +956,19 @@ class ReclamationMatch extends React.Component {
 	// rival's thinking beat to its move
 	hurry = () => {
 		if (this.state.playback) {
+			if (this.props.telemetry) {
+				const since = this.playbackStartedAt ? Date.now() - this.playbackStartedAt : 0;
+				this.props.telemetry.skip('playback', since);
+			}
 			this.cutBeats();
 			this.skipPlayback();
 			return;
 		}
 		if (this.botTimer) {
+			if (this.props.telemetry) {
+				const since = this.botBeatStartedAt ? Date.now() - this.botBeatStartedAt : 0;
+				this.props.telemetry.skip('rival', since);
+			}
 			clearTimeout(this.botTimer);
 			this.botTimer = null;
 			this.runBotDeployTurn();
@@ -1270,6 +1370,9 @@ class ReclamationMatch extends React.Component {
 				report={report}
 				rivalName={this.rival.name}
 				onNewProving={this.props.onNewProving}
+				seed={this.props.seed}
+				rivalId={this.props.rivalId}
+				telemetry={this.props.telemetry}
 			/>
 		);
 	}

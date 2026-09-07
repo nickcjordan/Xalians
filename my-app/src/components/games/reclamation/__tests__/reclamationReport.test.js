@@ -1,8 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { act } from 'react-dom/test-utils';
+import { describe, it, expect, afterEach } from 'vitest';
 import { createMatch, send, pass, order, commitOrders, getPublicState, createRngState, nextRandom } from '../../../../gameplay/expedition/expeditionRules';
 import { chooseSend, chooseOrders } from '../../../../gameplay/expedition/expeditionBot';
 import { ROSTER_SIZE } from '../../../../gameplay/expedition/expeditionInterpretation';
-import { buildMatchReport } from '../reclamationReport';
+import { buildMatchReport, ReclamationReport } from '../reclamationReport';
 
 /*
 	Coverage for buildMatchReport, per docs/design/reclamation-play-enhancements.md Pass 1
@@ -243,5 +246,178 @@ describe('buildMatchReport', () => {
 		expect(() => buildMatchReport({}, 'A')).not.toThrow();
 		expect(() => buildMatchReport(null, 'A')).not.toThrow();
 		expect(() => buildMatchReport(undefined, 'A')).not.toThrow();
+	});
+});
+
+/*
+	ReclamationReport / the Proving notes panel.
+
+	@testing-library/react is not a devDependency here (see reclamationDraft.test.js's
+	file header for the same note), but react-dom 17 is a direct dependency, so this
+	file mounts the component with plain ReactDOM.render + react-dom/test-utils' act,
+	against a real jsdom container, and drives it with native DOM events. No new
+	dependency is added.
+
+	Storage is injected via the `storage` prop (a fake object, the same shape used
+	throughout this test suite and in reclamationStorage.test.js / reclamationTelemetry.
+	test.js): ReclamationReport passes it straight into createTelemetry({ storage })
+	when no `telemetry` prop is given, so the panel's save/export calls land on the fake
+	rather than the real window.localStorage. See reclamationReport.js's
+	ReclamationProvingNotes class comment for the two supported injection points.
+*/
+
+function makeFakeStorage(initial = {}) {
+	const data = { ...initial };
+	return {
+		getItem(key) {
+			return Object.prototype.hasOwnProperty.call(data, key) ? data[key] : null;
+		},
+		setItem(key, value) {
+			data[key] = String(value);
+		},
+		removeItem(key) {
+			delete data[key];
+		},
+		_raw: data,
+	};
+}
+
+function minimalReport(won) {
+	return {
+		won,
+		sitesYou: won ? 5 : 2,
+		sitesRival: won ? 2 : 5,
+		sitesCourt: 0,
+		reason: 'clinched',
+		worlds: [],
+		sends: { you: 3, rival: 4 },
+		routs: { dealt: 1, taken: 0 },
+		staggers: { dealt: 0, taken: 1 },
+		decisive: 'You clinched the Charter in round 3, taking Magmuth by 4.',
+		champion: null,
+	};
+}
+
+describe('ReclamationReport / Proving notes panel', () => {
+	let container;
+
+	function mount(props) {
+		container = document.createElement('div');
+		document.body.appendChild(container);
+		act(() => {
+			ReactDOM.render(<ReclamationReport {...props} />, container);
+		});
+		return container;
+	}
+
+	afterEach(() => {
+		if (container) {
+			act(() => {
+				ReactDOM.unmountComponentAtNode(container);
+			});
+			container.remove();
+			container = null;
+		}
+	});
+
+	function setInputValue(input, value) {
+		const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+		setter.call(input, value);
+		input.dispatchEvent(new window.Event('input', { bubbles: true }));
+	}
+
+	it('renders the notes panel with the three questions and the expected data attributes', () => {
+		const storage = makeFakeStorage();
+		mount({
+			report: minimalReport(true), onNewProving: () => {}, rivalName: 'Broker', seed: 42, rivalId: 'proctor', storage,
+		});
+		expect(container.querySelector('[data-notes]')).toBeTruthy();
+		expect(container.querySelector('[data-notes-tension]')).toBeTruthy();
+		expect(container.querySelector('[data-notes-obvious]')).toBeTruthy();
+		expect(container.querySelector('[data-notes-earned="earned"]')).toBeTruthy();
+		expect(container.querySelector('[data-notes-earned="handed"]')).toBeTruthy();
+		expect(container.querySelector('[data-notes-earned="unsure"]')).toBeTruthy();
+		expect(container.querySelector('[data-notes-save]')).toBeTruthy();
+		expect(container.querySelector('[data-notes-export]')).toBeTruthy();
+		expect(container.querySelector('[data-notes-count]')).toBeTruthy();
+		// "Unsure" is the default segment
+		expect(container.querySelector('[data-notes-earned="unsure"]').getAttribute('aria-pressed')).toBe('true');
+	});
+
+	it('typing into the two text rows and choosing a segment, then saving, calls saveNotes with the seed and the answers', () => {
+		const storage = makeFakeStorage();
+		mount({
+			report: minimalReport(true), onNewProving: () => {}, rivalName: 'Broker', seed: 42, rivalId: 'proctor', storage,
+		});
+
+		const tensionInput = container.querySelector('[data-notes-tension]');
+		const obviousInput = container.querySelector('[data-notes-obvious]');
+		act(() => { setInputValue(tensionInput, 'Round 3, the last world'); });
+		act(() => { setInputValue(obviousInput, 'Orders, every time'); });
+		act(() => {
+			container.querySelector('[data-notes-earned="handed"]').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+		});
+		act(() => {
+			container.querySelector('[data-notes-save]').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+		});
+
+		const saved = JSON.parse(storage.getItem('reclamation.notes.v1'));
+		expect(saved).toHaveLength(1);
+		expect(saved[0].seed).toBe(42);
+		expect(saved[0].rivalId).toBe('proctor');
+		expect(saved[0].won).toBe(true);
+		expect(saved[0].tension).toBe('Round 3, the last world');
+		expect(saved[0].obvious).toBe('Orders, every time');
+		expect(saved[0].earned).toBe('handed');
+
+		// the button shows Saved and disables, with the confirmation lamp visible
+		const saveBtn = container.querySelector('[data-notes-save]');
+		expect(saveBtn.textContent).toBe('Saved');
+		expect(saveBtn.disabled).toBe(true);
+		expect(container.querySelector('[data-notes-saved-lamp]')).toBeTruthy();
+	});
+
+	it('New Proving still works without saving notes first (saving is optional)', () => {
+		const storage = makeFakeStorage();
+		let clicked = false;
+		mount({
+			report: minimalReport(false), onNewProving: () => { clicked = true; }, rivalName: 'Broker', seed: 7, rivalId: 'broker', storage,
+		});
+		act(() => {
+			container.querySelector('[data-new-proving]').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+		});
+		expect(clicked).toBe(true);
+		expect(storage.getItem('reclamation.notes.v1')).toBeNull();
+	});
+
+	it('Export notes calls exportAll and reveals a read-only textarea with the JSON', () => {
+		const storage = makeFakeStorage();
+		mount({
+			report: minimalReport(true), onNewProving: () => {}, rivalName: 'Broker', seed: 5, rivalId: 'proctor', storage,
+		});
+		expect(container.querySelector('[data-notes-export-text]')).toBeFalsy();
+		act(() => {
+			container.querySelector('[data-notes-export]').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+		});
+		const textarea = container.querySelector('[data-notes-export-text]');
+		expect(textarea).toBeTruthy();
+		expect(textarea.readOnly).toBe(true);
+		const parsed = JSON.parse(textarea.value);
+		expect(typeof parsed.exportedAt).toBe('string');
+		expect(Array.isArray(parsed.notes)).toBe(true);
+		expect(Array.isArray(parsed.telemetry)).toBe(true);
+	});
+
+	it('the count line reads N Provings noted, M recorded and updates after a save', () => {
+		const storage = makeFakeStorage();
+		storage.setItem('reclamation.telemetry.v1', JSON.stringify([{ seed: 1 }, { seed: 2 }]));
+		mount({
+			report: minimalReport(true), onNewProving: () => {}, rivalName: 'Broker', seed: 9, rivalId: 'proctor', storage,
+		});
+		expect(container.querySelector('[data-notes-count]').textContent).toBe('0 Provings noted, 2 recorded');
+		act(() => {
+			container.querySelector('[data-notes-save]').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+		});
+		expect(container.querySelector('[data-notes-count]').textContent).toBe('1 Proving noted, 2 recorded');
 	});
 });
