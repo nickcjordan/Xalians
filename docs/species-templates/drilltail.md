@@ -79,21 +79,21 @@ Word count 108, one paragraph, present tense, ends on a plain present-tense fact
 
 ## Trait pool
 
-Expected count: (100 + 80 + 60) / 100 = 2.40. No exclusion pair is present: `pack-bonded` was cut by the evidence bar and `solitary` was never listed.
+Expected count: (100 + 80 + 45 + 25) / 100 = 2.50. No exclusion pair is present: `pack-bonded` stays cut by the evidence bar and `solitary` was never listed.
 
 - `armored: 100`: body-demanded by the `chitin` covering and the `shell` anatomy key. The registry states a shelled or plated body means armored at 100.
 - `stealthy: 80`. Source, species: "darting in and out of the surface as they hunt for prey to ambush". A species behavior from a species sentence, not a planet-wide one. Below 100 so individuals differ.
-- `resistant: 60`: environment-demanded, and a planet-wide environmental sentence may carry it; planet: "turning the planet into an unforgiving desert expanse comprised of vast seas of endless rolling dunes and arid, sweltering heat." A body generated to work sand and heat shrugs off the abrasion and desiccation of that medium.
+- `perceptive: 45`: restored under evidence class 4, a ratified field of the record. `physiology.senses.special` carries tremorsense, and a special sense of that kind is the body fact behind perceptive rather than an inference from body type. The Endessa Generator environmental report reinforces it, listing vibration-hunting forms among the planet's fauna.
+- `slippery: 25`: restored under evidence class 5, Nick's authored legacy design intent. The `evasionRating` of high in `species.json` is one of the two ratings that map to a trait, and it maps to slippery.
 - Traits I considered and left out: `nocturnal`, because nothing in either source names night habits and Endessa's twin suns are the opposite register; `anchored`, because the body is defined by movement; `menacing`, `hypnotic`, and `inspiring`, because no presence claim appears anywhere in the sources; `ramming`, because the tail bores rather than delivering a moving blow; `regenerative`, `healing`, and `protective`, because nothing supports them.
 
 #### Cut by the evidence bar (2026-09-07)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
-| `perceptive` | 45 | Body-type plausibility: the quoted sentence shows it hunting, not detecting, and the walkthrough said so itself. |
-| `pack-bonded` | 15 | No source sentence: plural usage in the description is not a sentence about group living, and the one supporting clause was already found invented. |
-| `slippery` | 25 | The legacy stat gauge alone, the walkthrough resting it on the legacy evasion rating, plus body-type plausibility. |
-| `toxic` | 5 | No source sentence: the organ is a drill, and the stinger resemblance is a shape simile. |
+| `pack-bonded` | 15 | No source sentence and no ratified field: plural usage in the description is not a statement about group living, and the Endessa report says nothing about group life. |
+| `toxic` | 5 | Class 4 fails: anatomy carries no spines and no stinger, the organ is a drill, and no agent is described anywhere. |
+| `resistant` | 60 | Ruling B: its only support was the abrasion, heat, and desiccation of the dune surface. Endessa's report hazards are thermal load, desiccation, tunnel collapse, and vibration-triggered predation, none of which is contamination. |
 
 ## Element
 
@@ -157,3 +157,4 @@ The single WARN is answered in the Signature ability section and in Script denia
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: 'generated for' hardened the source's 'used by'; the pincers clearing spoil, 'cheap to field and easy to lose', 'worked in numbers', the Endessa Syndicate employer (the history says the Xalians kept drilling after the crime bosses died) and 'between shifts' were invented;  lowered from 35 to 15 since 'worked in numbers' was its only support; rewritten to the two source sentences and the planet's cavern-network sentence. Signature moved from tail / ambush (outside the tail row, rule 4 exception) to pincers / crush, inside the pincers row: the source names the scissor-like claws as what the ambush ends in. `lifespan` set to `long` as the rubric reads (armored covering adjustment), matching Scalatto and Foromeer; the run's argument that the clause should be gated is carried to the rulings file. `temperatureC` [-5, 52] -> [-5, 52] inside the habitable band [-10, 55]. Description now 81 words.
 - 2026-09-02, correction from Nick: the drill tail is the defining part and the signature belongs to it. Signature restored to tail / strike (the auger bores; strike is in the tail row), description ends drill first; the scissor-like claws remain the pincers instrument. The orchestrator's earlier move to pincers / crush was wrong.
 - 2026-09-07, trait evidence bar (Nick): cut `perceptive`, `pack-bonded`, `slippery`, `toxic`; pool expected count 3.30 to 2.40.
+- 2026-09-07, trait evidence bar iteration two (Nick): restored `perceptive` (45, class 4), `slippery` (25, class 5); cut `resistant` (60, ruling B); expected count 2.40 to 2.50.

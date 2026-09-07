@@ -155,6 +155,7 @@
       "armored": 100,
       "anchored": 100,
       "stealthy": 60,
+      "perceptive": 30,
       "telekinetic": 6
     }
   },

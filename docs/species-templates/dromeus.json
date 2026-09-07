@@ -153,6 +153,7 @@
   "traits": {
     "pool": {
       "resistant": 92,
+      "perceptive": 40,
       "ramming": 60
     }
   },

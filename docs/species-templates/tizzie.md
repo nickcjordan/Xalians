@@ -121,15 +121,15 @@ Primary `psychic` from `species.type` Psychic, stored at affinity 100. On-graph 
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
-| `slippery` | 45 | art-derived body-type plausibility, self-described 'Partly authored'; no sentence |
-| `stealthy` | 40 | art-derived body-type plausibility, self-described 'Partly authored'; no sentence |
-| `solitary` | 30 | argued from absence ('nothing shows cooperation') |
-| `menacing` | 20 | restatement of the kept `hypnotic` sentence; 'minority reading' with no fear sentence |
-| `mind-sealed` | 15 | 'no source sentence, so held low. Partly authored.' |
-| `foresighted` | 6 | planet fact stretched to a behavioral trait; 'Environmental support only' |
-| `telekinetic` | 4 | planet fact about the world's fungi, 'not in this species' |
+| `slippery` | 45 | class 5 fails: the legacy `evasionRating` is unrated, and `speedRating` high maps to no trait. No sentence, art feature, planet fact, or ratified field behind it |
+| `stealthy` | 40 | class 4 fails: the burrow band is 5 to 20, far under the threshold, and no hiding or ambush sentence exists to pair with it |
+| `solitary` | 30 | still argued from absence; no sentence and no ratified field states it |
+| `menacing` | 20 | class 4 fails: at 80 to 95 cm this is among the smallest of the roster, and small justifies nothing; no threat sentence and no threat display in the art |
+| `mind-sealed` | 15 | no sentence, no field; the psychic special sense maps to `perceptive` only |
+| `foresighted` | 6 | class 3 fails: the anticipatory-response line in the Generator report is a behavioral reading, and a planet fact may support an environmental adaptation only |
+| `telekinetic` | 4 | class 4 fails: the manipulation band is a capability, not a field the bar maps to this trait, and the planet fungi sentence is not about this species |
 
-Expected trait count after the bar: (100 + 55) / 100 = 1.55. (The `healing` row above was already removed from `traits.pool` by the 2026-09-02 orchestrator amendment, so the pool total before this pass was 3.15, not the 3.40 printed here.)
+Expected trait count after the bar, unchanged by iteration two: (100 + 55) / 100 = 1.55. (The `healing` row above was already removed from `traits.pool` by the 2026-09-02 orchestrator amendment, so the pool total before this pass was 3.15, not the 3.40 printed here.)
 
 At least one entry is strictly between 0 and 100 (`perceptive` at 55). No exclusion pair is both at 100; `pack-bonded` is not in the pool at all.
 
@@ -236,3 +236,4 @@ The single WARN is answered in the Answers to WARN lines section above.
 - 2026-09-02, archetype scale (Nick): `archetypeWeights` converted from relative 1 to 5 weights to percents summing to 100 by largest remainder, order preserved: virtuoso 36, prowler 22, skirmisher 21, sage 14, rogue 7 (was virtuoso 5, prowler 3, skirmisher 3, sage 2, rogue 1).
 - 2026-09-02, archetype rethink (Nick): the converted row kept the old 5-4-3-2-1 ladder shape shared by every record, so the distribution was re-authored on this species alone: virtuoso 40, sovereign 25, prowler 15, skirmisher 12, sage 8 (was virtuoso 36, prowler 22, skirmisher 21, sage 14, rogue 7). Reasoning: the hypnotist (hypnotic 100, charisma its top band) is charisma and intelligence, then charisma and will; the hanging climber body keeps a real prowler and skirmisher share; rogue dropped.
 - 2026-09-07, trait evidence bar (Nick): cut slippery, stealthy, solitary, menacing, mind-sealed, foresighted, telekinetic; pool expected count 3.15 to 1.55.
+- 2026-09-07, trait evidence bar iteration two (Nick): restored none; cut none; expected count 1.55 to 1.55. Every cut entry was re-tested against the widened bar, including the ratified-field class and the two legacy-rating mappings, and none passed. `resistant` is not in this pool, so ruling B changes nothing here.

@@ -99,12 +99,13 @@ Primary `sand` from the species `type` field, stored at affinity 100. On-graph s
 
 ### Trait pool
 
-Expected count is the sum of the percents divided by 100; no exclusion pair remains in the pool: 100 + 90 + 70 + 60 + 20 = 340, so 3.40 traits per individual.
+Expected count is the sum of the percents divided by 100; no exclusion pair remains in the pool: 100 + 90 + 70 + 40 + 25 + 20 = 345, so 3.45 traits per individual.
 
 - `toxic: 100`. Body-demanded. species: "attack with a unique venom that drains the victim’s water when bitten". The registry's `toxic` is `natural weapons deliver debilitating agents`, which is exactly the bite. Every individual has it.
 - `stealthy: 90`. species: "hides beneath the sand" is a species sentence, not a planet-wide one, and it is the first thing the description says about its behavior. Not 100 because the registry requires at least one entry strictly between 0 and 100 for individuals to differ, and a buried ambusher is the honest place to put the variance rather than on its venom.
 - `hypnotic: 70`. species: "can lure and mesmerize opponents long enough for them to draw near". `hypnotic` is `entrances and holds attention, dulling the will to act`, which is the word mesmerize. Below 100 because the source hedges with "can".
-- `resistant: 60`. Environment-adapted, and the planet-wide sentence is allowed to justify an environmental adaptation. planet: "arid, sweltering heat" on a world whose surface was left by "over half a million megatons of thermonuclear ordnance" and whose sand is broken-down glass. A body generated for that ground shrugs off contamination more often than not. Not near 100, because the harshness described is heat and abrasion rather than the toxins and radiation the trait names.
+- `perceptive: 40`. Evidence class 4, a ratified field of the record: `physiology.senses.special` carries `tremorsense`, and under the iteration-two bar every entry of `senses.special` justifies `perceptive`; the `smell` band's upper bound of 75 is a second qualifying field. A buried ambusher that reads the ground is the counter to concealment, and it is restored at its former percent of 40 rather than higher because the sensing is how it times the strike, not a claim that nothing hides from it.
+- `nocturnal: 25`. Evidence class 3, a planet-wide environmental fact from the Generator Environmental Report for Endessa, whose terrain note records that surface insolation is lethal without adaptation on a dual-star world and whose mobility entry rates sprint viable only in low-insolation hours. Surface activity on this world belongs to the dark hours, which is an environmental adaptation and not a behavior; restored at its former percent of 25 because burial remains this species' own stated answer to the suns.
 - `menacing: 20`. art shows a flared hood and bared fangs, which is a threat display. Low because the description never says its presence erodes anything; its effect on the will is the lure, which is `hypnotic`.
 
 #### Cut by the evidence bar (2026-09-07)
@@ -113,9 +114,8 @@ Expected count is the sum of the percents divided by 100; no exclusion pair rema
 |---|---|---|
 | `solitary` | 55 | argued from absence; there is no group in either the description or the art |
 | `pack-bonded` | 10 | no source sentence; a species-level plural is not evidence of grouping |
-| `perceptive` | 40 | restatement of the `tremorsense` special sense; the record concedes that the source states the timing, not the sensing |
 | `slippery` | 30 | body-type plausibility (a limbless serpent), and the art shows a banded, ridged body rather than the smooth one the justification names |
-| `nocturnal` | 25 | planet fact stretched past the source's own answer to the suns, which is burial; restatement of the kept `stealthy` |
+| `resistant` | 60 | class 3 fails under the iteration-two ruling: its only support was Endessa's heat and abrasion, and a hazard profile of thermal load and desiccation never justifies `resistant` |
 
 Traits the body could plausibly carry that were left out, with reasons: `armored` (the covering is `scales`, which the registry defines as flexible and unarmored, and the anatomy carries no `shell`); `ramming` (no source shows it hitting with movement behind it, and its kill is venom); `regenerative` (nothing in either source); `anchored` (a burrower that hides is not a body that cannot be moved); `luminous`, `telekinetic`, `foresighted`, `phasing`, `reflective`, `volatile`, `healing`, `protective`, `inspiring`, `mind-sealed` (no support of any kind in either source). Registry tilts are not re-declared here; they apply at generation.
 
@@ -204,3 +204,4 @@ WARN enc.definition.elementkey      encyclopedia definition uses element key wor
 
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: the Nightcap-wells job, the wildcatters' tunnels and 'the one thing Endessa no longer has' were invented or flourish; the description now carries the source mechanism and the planet's vaporized oceans. Signature description reduced to the sourced act. `communication` keeps `vibration` (a broadcast the body makes; the lure is carried by the hypnotic trait). Affinity odds stay at the baseline (no lore sentence states a water affinity). `temperatureC` [10, 55] -> [10, 55] inside the habitable band [-10, 55]. Description now 80 words.
 - 2026-09-07, trait evidence bar (Nick): cut `solitary`, `pack-bonded`, `perceptive`, `slippery`, `nocturnal`; pool expected count 4.90 to 3.40.
+- 2026-09-07, trait evidence bar iteration two (Nick): restored `perceptive`, `nocturnal`; cut `resistant`; expected count 3.40 to 3.45.

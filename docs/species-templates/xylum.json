@@ -154,7 +154,9 @@
   "traits": {
     "pool": {
       "anchored": 100,
-      "resistant": 35
+      "regenerative": 72,
+      "resistant": 35,
+      "perceptive": 15
     }
   },
   "instruments": [

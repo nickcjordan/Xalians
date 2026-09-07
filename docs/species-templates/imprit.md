@@ -65,7 +65,7 @@ Legacy statRatings used only as a relative gauge: standard attack low, evasion h
 
 ### Trait pool
 
-Nine entries, expected count 4.55 traits per individual before tilts and before the exclusion rule. There is only one exclusion-eligible entry here, `solitary`, with no partner listed, so the expected count needs no adjustment. Revised 2026-09-07 by the trait evidence bar: the cut table below lists what was removed, and the surviving pool stands at 4.93 expected traits.
+Nine entries, expected count 4.55 traits per individual before tilts and before the exclusion rule. There is only one exclusion-eligible entry here, `solitary`, with no partner listed, so the expected count needs no adjustment. Revised 2026-09-07 by the trait evidence bar, then again the same day by iteration two of that bar: the cut table below lists what is still removed, and the surviving pool stands at 5.03 expected traits.
 
 - `resistant: 100`, body demanded. It survives its own permanent burning and the fur exists to make that survivable. Evidence (species): "Imprits possess fire-retardant fur that protects their bodies from the flammable oils they secrete, allowing them to survive despite being in a state of constant immolation." The planet's toxic atmosphere reinforces it but the species sentence carries it alone.
 - `volatile: 85`, hazardous to strike, element-colored. Anything that hits this creature hits burning fur soaked in flammable oil. Evidence (species): "the flammable oils they secrete". Not 100, because the state of immolation is a description of the body, not a statement that every individual reacts explosively, and the registry requires at least one entry below 100 anyway.
@@ -74,6 +74,7 @@ Nine entries, expected count 4.55 traits per individual before tilts and before 
 - `solitary: 45`. It was left alone in the tunnels for its whole working existence and that isolation is what the description says shaped it. Evidence (species): "where they were left to their own devices" and "driven mad by the isolation of the deep tunnels". `pack-bonded` is deliberately not listed, so it has a zero chance and no exclusion comparison arises.
 - `luminous: 40`. A body in permanent flame sheds light. Evidence (species): "in a state of constant immolation". Not higher, because the registry's `luminous` is a mechanical fact about stripping concealment nearby and a small guttering body is a weak lamp; not lower, because it is genuinely always alight.
 - `menacing: 25`. Evidence (species): "Imprits are demonic looking creatures". This is an appearance sentence, so it supports a modest chance rather than a high one.
+- `perceptive: 10`. Restored 2026-09-07 under evidence class 4, ratified fields of the record: `physiology.senses.hearing` is banded 60 to 80 and `physiology.senses.sight` 52 to 72, both upper bounds at or past 60, which the widened bar accepts as the record's own statement of sharpened senses. It no longer rests on the shaft-darkness argument that failed in iteration one, and it stays in the rare band because the record grades those senses only a little above the roster average.
 
 Traits I considered and left out, so their chance is zero: `armored`, since there is no armored aspect anywhere and the covering is fur with the anatomy key `hide`; `regenerative`, no source; `anchored`, the opposite of everything the description shows; `ramming`; `protective`, `healing` and `inspiring`, since nothing shows it acting for others; `mind-sealed`, since the description says its mind broke, which is the reverse; `hypnotic`; `foresighted`; `telekinetic`; `phasing`; `reflective`; `pack-bonded`, excluded in favor of `solitary`; and `stealthy`, because a body in permanent visible flame cannot move unseen and `luminous` is the honest opposite entry.
 
@@ -82,9 +83,8 @@ Traits I considered and left out, so their chance is zero: `armored`, since ther
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
 | `toxic` | 12 | plausibility from the flammable oil; no sentence shows it harming by chemistry |
-| `perceptive` | 10 | a shaft-darkness fact stretched to a sensory trait; the walkthrough concedes working in the dark is not seeing what hides |
 
-Pool expected count 5.15 to 4.93. No surviving percent was changed.
+Pool expected count 5.15 to 4.93 in iteration one, then 4.93 to 5.03 in iteration two once `perceptive` was restored. No surviving percent was changed in either pass. `resistant` was re-checked under the ruling that heat alone never justifies it and survives on its own footing: the species sentence about fire-retardant fur names the flammable oils the body secretes, which is contamination the body shrugs off rather than a temperature band.
 
 ### Signature ability
 
@@ -166,3 +166,4 @@ WARN signature.description.elementkey signature description uses element key wor
 - 2026-09-02, body plan (Nick): the forelimb-work clause now yields to art that shows the forelimbs bearing weight (skill v2.19); `bodyPlan` set to `quadruped`, was `biped`.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [65, 300] to [65, 105] (intersection) against the rebuilt planet record's habitable band [40, 105] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 1.53.
 - 2026-09-07, trait evidence bar (Nick): cut toxic, perceptive; pool expected count 5.15 to 4.93.
+- 2026-09-07, trait evidence bar iteration two (Nick): restored perceptive; cut none; expected count 4.93 to 5.03.

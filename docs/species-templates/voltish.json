@@ -155,7 +155,9 @@
     "pool": {
       "resistant": 90,
       "volatile": 75,
-      "menacing": 45
+      "menacing": 45,
+      "perceptive": 35,
+      "armored": 10
     }
   },
   "instruments": [

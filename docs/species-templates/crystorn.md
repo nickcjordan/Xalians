@@ -83,7 +83,7 @@ Expected trait count: (100 + 96 + 55 + 34) / 100 = 2.85. No exclusion pair is pr
 - `reflective: 55`: species and planet together: the crown is faceted crystal (art) and planet: the crystalline leaves of Luminax work by "refracting the intense light of Luminax's suns to reflect back harmful wave lengths". This is the closest registry trait to a prism that turns energy back, and it is a body reading, not a behavior. Held at 55, well below 100, because the planet sentence is about the flora and not about this creature; a faceted crown makes reflection plausible in a majority of individuals, not universal.
 - `mind-sealed: 34`: species: "don't be deceived by its calm temperament" is the one sentence about its inner state, and `mind-sealed` is the registry trait for a mind nothing sways. Kept under half because a calm temperament is weaker evidence than an unbreakable one.
 
-#### Cut by the evidence bar (2026-09-07)
+#### Cut by the evidence bar (2026-09-07, iterations one and two)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
@@ -167,3 +167,4 @@ logged to docsspecies-templatesalidation-logcrystorn.jsonl
 - 2026-09-02, art correction from Nick (the artist): the head growths are two crystal horns. `core` replaced by `horns` in anatomy, instruments and the conduit; the signature (beam, light) stays legal through the horns light conduit (beam is in the light medium row). Prose now says crystal horns.
 - 2026-09-02, spelling (Nick): misspellings in the source description were corrected upstream in species.json (temperment, closed pedals of a flower, flittering Avilies, levatating, Terragoygles as applicable) and the carried text and quotations updated to match; misspellings are never carried into a record.
 - 2026-09-07, trait evidence bar (Nick): cut protective, anchored, menacing, foresighted; pool expected count 3.47 to 2.85.
+- 2026-09-07, trait evidence bar iteration two (Nick): restored none; cut none; expected count 2.85 to 2.85. All four cut entries were re-checked against the widened bar and none passes: `protective` and `foresighted` have neither sentence nor field, `anchored` gets no help from `signatureAbility`, whose action is `beam` and whose description is a still body releasing light rather than a snare that holds and a body that braces, and `menacing` fails the class 4 size route because that route needs a threat sentence alongside the large body, and the record's one temperament line is about deception rather than fear. `resistant` at 96 was re-checked under ruling B and kept: the Luminax report names cumulative radiation load as a hazard and radiation-tolerant integument as universal sunward, which is contamination and not temperature.

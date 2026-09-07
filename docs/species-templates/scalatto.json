@@ -153,8 +153,8 @@
   "traits": {
     "pool": {
       "armored": 100,
-      "resistant": 70,
-      "ramming": 55
+      "ramming": 55,
+      "perceptive": 12
     }
   },
   "instruments": [

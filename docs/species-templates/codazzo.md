@@ -83,13 +83,13 @@ Legacy `statRatings` used only as a relative gauge: `specialAttackRating` and `r
 - `volatile: 85`. Hazardous to strike, from "its tail made of explosive barbs" (species). Not 100 because the stub attaches the explosive quality to the barbs it fires rather than declaring the whole body reacts when hit, so Generator variance is allowed.
 - `stealthy: 70`. Not a planet-wide claim: the species own sentence is concealment, "digs its body underground when spooked, exposing only its tail" (species). Held at 70 rather than 100 because the tail is deliberately left showing, which is the opposite of unseen.
 - `resistant: 55`. Environment-demanded and legitimately sourced to a planet-wide sentence per section 5.3, planet, "the rubbing of these particulates in the atmosphere generates colossal static discharges that crackle pervasively in the lower atmosphere, spelling danger to all who dare to land on the planet's jagged surface." Bodily contamination tolerance for a dust-choked, thin-aired world.
-- Expected trait count: (100 + 85 + 70 + 55) / 100 = 3.10, after the 2026-09-07 evidence bar; it was 4.15 before.
+- `perceptive: 40`. Class 4, a ratified field of the record itself: `physiology.senses.special` carries `tremorsense`, and the widened bar admits every entry of `senses.special` as evidence for this trait. Restored at its former percent, since a buried body that reads the ground is alert to what approaches without being alert to everything; the graded sight band is low and the trait should not run higher than the sense it rests on.
+- Expected trait count: (100 + 85 + 70 + 55 + 40) / 100 = 3.50, after the 2026-09-07 evidence bar and its second iteration; it was 4.15 before the bar and 3.10 after the first pass.
 
-#### Cut by the evidence bar (2026-09-07)
+#### Cut by the evidence bar (2026-09-07, iterations one and two)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
-| `perceptive` | 40 | the quoted sentence describes the reaction (burying when spooked) rather than acuity, and the rest of the case is the `tremorsense` stat band |
 | `slippery` | 30 | a restatement of the kept `stealthy` sentence; no sentence shows it escaping a hold |
 | `solitary` | 25 | argued from absence: nothing in the sources shows it working or fighting in numbers |
 | `menacing` | 10 | no source sentence; the walkthrough states outright that no source calls it frightening |
@@ -162,3 +162,4 @@ Run history: run 1 was `0 FAIL, 2 WARN` (the trait-count WARN plus the Encyclope
 
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: the seam-working purpose, the barb-as-charge mining technique, the strip-mine job and the counting enforcers were invented (two of them planet-wide sentences given this species as subject); the description now carries the bombardment and the Generator's digging Xalians as planet facts and ends on the source's own sentences. `temperatureC` [-20, 34] -> [-20, 25] inside the habitable band [-45, 25] (the run read the legacy planet file). Gravity cited in the run (0.74) is now 0.53; no value depended on it. Art matched the run's reading (upright on two legs, hooked claws free, dorsal ridge, tufted coat, a fan of about twelve banded barbs). Description now 81 words.
 - 2026-09-07, trait evidence bar (Nick): cut perceptive, slippery, solitary, menacing; pool expected count 4.15 to 3.10.
+- 2026-09-07, trait evidence bar iteration two (Nick): restored perceptive (40, class 4, the record's `senses.special` entry `tremorsense`); cut none; expected count 3.10 to 3.50. `resistant` was re-checked under ruling B and kept: its support is the static-charged, dust-saturated atmosphere of Stonera, a hostile atmosphere rather than a thermal or desiccation hazard.

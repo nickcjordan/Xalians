@@ -155,7 +155,8 @@
     "pool": {
       "perceptive": 70,
       "hypnotic": 45,
-      "telekinetic": 35
+      "telekinetic": 35,
+      "mind-sealed": 25
     }
   },
   "instruments": [

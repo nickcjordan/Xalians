@@ -101,12 +101,13 @@ Legacy `standardAttackRating`: "medium" is consistent with strength sitting mid-
 
 ## Trait pool
 
-Percents are independent per-trait chances. Expected count, counting the exclusion pair correctly: 1.00 + 0.70 + 0.55 + 0.40 + 0.30 + 0.20 + 0.15 x (1 - 0.30) = 3.26 traits per individual. Revised 2026-09-07 by the trait evidence bar: the cut table below lists what was removed, and the surviving pool stands at 1.95 expected traits.
+Percents are independent per-trait chances. Expected count, counting the exclusion pair correctly: 1.00 + 0.70 + 0.55 + 0.40 + 0.30 + 0.20 + 0.15 x (1 - 0.30) = 3.26 traits per individual. Revised 2026-09-07 by the trait evidence bar, then again the same day by iteration two of that bar: the cut table below lists what is still removed, and the surviving pool stands at 2.65 expected traits.
 
 | Trait | Percent | Reason |
 |---|---|---|
 | `ramming` | 100 | body-demanded by the one act the description gives it: "it comes missiling down on its enemy like a battering ram." The registry defines `ramming` as a living ram whose blows land far harder with movement behind them, which is that sentence exactly. |
 | `resistant` | 55 | environment-demanded and justified from a planet-wide sentence, which the rules permit for an environmental adaptation: "Sulfuric acid clouds sweep haphazardly across the sky, choking the life out of anything they happen to touch." Not at 100 because the same sentence says those clouds kill what they touch, so the Generator's answer is partial at best. |
+| `slippery` | 70 | restored 2026-09-07 under evidence class 5, Nick's authored legacy design intent: the `statRatings` block in `lambda/src/json/species.json` sets `evasionRating` to high for this species, which the widened bar maps directly onto `slippery`. The percent is the one it carried before the cut, and the reading is unchanged: a body that lives in the air between islands is hard to catch. |
 | `perceptive` | 40 | art: the outsized ears and the long whisker spray. This rests on the art, not on any planet-wide sentence, since a behavior may not be justified planet-wide. |
 
 Traits the body could plausibly carry that I left out, with reasons: `armored` (the covering is fur, with no armored aspect, so 0); `anchored` (the opposite of everything the description says); `volatile` and `toxic` (nothing in either source names an agent or a reaction); `luminous` (the planet history names "colonies of bright, colorful airborne algae and bioluminescent zooplankton," but that is other life, not this species); `regenerative`, `healing`, `protective`, `inspiring`, `menacing`, `hypnotic`, `mind-sealed`, `reflective`, `phasing`, `nocturnal`, `foresighted`, `telekinetic` (no supporting sentence or art feature; `nocturnal` in particular has no basis, since Saiphus's history describes sunrises lighting the whole world, not perpetual night).
@@ -115,12 +116,11 @@ Traits the body could plausibly carry that I left out, with reasons: `armored` (
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
-| `slippery` | 70 | the legacy stat gauge plus body-type plausibility; no source sentence |
 | `pack-bonded` | 30 | a planet-wide plural framing of another class of animal stretched to this behavior |
 | `stealthy` | 20 | authored; no source sentence and no drawn feature |
 | `solitary` | 15 | argued from absence; the walkthrough itself rested it on nothing in the sources showing this species in a group |
 
-Pool expected count 3.30 to 1.95. No surviving percent was changed.
+Pool expected count 3.30 to 1.95 in iteration one, then 1.95 to 2.65 in iteration two once `slippery` was restored. No surviving percent was changed in either pass. `resistant` was re-checked under the ruling that thermal support alone never justifies it and survives: the planet-wide fact behind it is sulfuric acid cloud contact, which the Saiphus hazard list repeats, and that is corrosion rather than temperature.
 
 ## Signature ability
 
@@ -198,3 +198,4 @@ Run with VERBOSE=1 to show the ok lines; the terse run prints only the tally. Th
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [-34, 42] to [-30, 42] (intersection) against the rebuilt planet record's habitable band [-30, 45] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 1.79.
 - 2026-09-02, art correction from Nick (the artist): the swept head growths are two curved horns (the ram), not a second ear; the validator and orchestrator read them wrongly. `horns` restored to anatomy and instruments; the signature is now horns / shove (the ram lands horns first, and shove is in the horns row). Prose corrected.
 - 2026-09-07, trait evidence bar (Nick): cut slippery, pack-bonded, stealthy, solitary; pool expected count 3.30 to 1.95.
+- 2026-09-07, trait evidence bar iteration two (Nick): restored slippery; cut none; expected count 1.95 to 2.65.

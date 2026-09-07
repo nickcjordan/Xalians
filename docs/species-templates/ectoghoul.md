@@ -126,9 +126,11 @@ Each percent is an independent roll. Expected count is the sum divided by 100, w
 - `phasing` 100. body-demanded. Species: "passing through surfaces"; planet: "with no corporeal bodies to speak of". Non-corporeal bodies carry it at 100 by registry rule.
 - `menacing` 85. species: "emitting a terrifying cackle wherever they go" and "amuse themselves by terrorizing other Xalians". This is the single best-evidenced behavior in the description and it is species-sourced, not planet-sourced. Not 100, because the description says they terrorize by choice and amusement, so an individual that does not unnerve everything nearby is possible.
 - `stealthy` 60. species: "disappearing and re-appearing at will". Vanishing at will is the registry's "moves unseen and unheard until it acts". Held at 60 rather than higher because the same sentence says it announces itself with a cackle "wherever they go", which cuts directly against being unnoticed; the two behaviors are in tension in the source and the percent reflects that.
+- `slippery` 55. Restored under evidence class 5, Nick's authored legacy design intent: the `evasionRating` of high in `species.json` is one of the two ratings the widened bar admits, and it maps to slippery. The overlap with `phasing` is real but the rating is authored evidence in its own right, so the entry returns at its former percent.
+- `perceptive` 20. Restored under evidence class 4, a ratified field of the record: `physiology.senses.sight` is banded [50, 75] and `hearing` [45, 70], both clearing the upper bound of 60 the widened bar admits for graded sense bands.
 - `resistant` 15. planet: "it would appear that it only targets organic, cellular life", so the body is unreadable to the killing signal, and planet: the Dreadscape is "deep, tarry oceans formed from the fluids that eek out from the ever-compressing layers of a planetwide mass grave", which is a contaminated place to live. Environmental and planet-sourced, which the rules permit for `resistant`. Kept low because immunity to the moon-weapon comes from the body having no cells at all rather than from a hardiness trait.
 
-Sum: 100 + 85 + 60 + 15 = 260. **Expected trait count 2.60.** No exclusion pair is present in the pool (`solitary` was cut by the evidence bar and `pack-bonded` was never listed), so no adjustment applies. At least one entry is strictly between 0 and 100; only `phasing` is at 100.
+Sum: 100 + 85 + 60 + 55 + 20 + 15 = 335. **Expected trait count 3.35.** No exclusion pair is present in the pool (`solitary` was cut by the evidence bar and `pack-bonded` was never listed), so no adjustment applies. At least one entry is strictly between 0 and 100; only `phasing` is at 100.
 
 Traits the body could plausibly carry that I left out, with reasons: `armored` (no covering or anatomy gives it an armored aspect; covering is `mist`), `anchored` (a drifting body is the opposite), `regenerative` (nothing shows it repairing), `healing` and `protective` and `inspiring` (nothing in the description shows it helping anything; it is explicitly described terrorizing), `ramming` (no mass and no sprint band), `volatile` and `reflective` (nothing shows it reacting when struck), `mind-sealed` (untested in the source), `telekinetic` (no source sentence and no manipulation to justify even the rare band), `pack-bonded` (excluded by the solitary reading above).
 
@@ -136,13 +138,11 @@ Traits the body could plausibly carry that I left out, with reasons: `armored` (
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
-| `slippery` | 55 | Restatement of a kept trait plus the legacy stat gauge: the walkthrough grants that `phasing` at 100 already carries most of it. |
-| `nocturnal` | 40 | The planet fact does not carry it: the walkthrough concedes Phantiri is dim rather than dark and that the history never gives it perpetual night. |
-| `toxic` | 30 | No source sentence: no source names an effect of the ectoplasm on a target. |
-| `solitary` | 25 | Argued from absence: the description never shows two of them working together. |
-| `perceptive` | 20 | Body-type plausibility: nothing in either source shows it finding something hidden. |
-| `luminous` | 12 | No source sentence and no art feature: no source says it glows, and green is a named color rather than a light organ. |
-| `hypnotic` | 8 | Restatement of `menacing` from the same cackle sentence, which shows fright rather than fascination. |
+| `nocturnal` | 40 | Class 3 fails: Phantiri's report terrain lists persistent windless fog and gives no darkness fact, so there is no dark-world statement to adapt to. |
+| `toxic` | 30 | Class 4 fails: anatomy is jaws, tail, and body, with no spines and no stinger, and no agent is described for the ectoplasm. |
+| `solitary` | 25 | Class 3 fails on kind: Phantiri's report notes proximity-aversion territoriality in other populations, but a planet-wide fact may carry only an environmental adaptation, never a behavioral trait. |
+| `luminous` | 12 | Class 4 fails: `physiology.anatomy` declares no light-organs, and green is a named color rather than emitted light. |
+| `hypnotic` | 8 | Class 4 fails: the signature ability's action is terrorize, not a hypnotic act, so the record's own signature names a different trait. |
 | `foresighted` | 4 | No source sentence: neither source claims precognition. |
 
 ## Step 10. Signature ability
@@ -249,3 +249,4 @@ Both WARN lines are answered in the `## Script denials` section above under 'Ans
 - 2026-09-02, archetype rethink (Nick): the converted row kept the old 5-4-3-2-1 ladder shape shared by every record, so the distribution was re-authored on this species alone: prowler 35, rogue 30, skirmisher 20, predator 15 (was prowler 33, skirmisher 27, rogue 20, predator 13, seeker 7). Reasoning: a haunter that terrorizes: rogue (charisma, reflex) raised to a near-equal second because its signature and its menacing 85 are presence, not speed; seeker dropped.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [-58, 53] to [-50, 20] (intersection) against the rebuilt planet record's habitable band [-50, 20] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 0.45.
 - 2026-09-07, trait evidence bar (Nick): cut `slippery`, `nocturnal`, `toxic`, `solitary`, `perceptive`, `luminous`, `hypnotic`, `foresighted`; pool expected count 4.54 to 2.60.
+- 2026-09-07, trait evidence bar iteration two (Nick): restored `slippery` (55, class 5) and `perceptive` (20, class 4); cut nothing further, since `resistant` rests on the tarry oceans of a planetwide mass grave rather than on temperature; expected count 2.60 to 3.35.

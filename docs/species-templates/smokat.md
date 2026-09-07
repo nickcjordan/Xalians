@@ -114,6 +114,8 @@ Expected trait count: (100 + 85 + 55 + 20 + 15 + 20) / 100 = 2.95.
 | `solitary` | 45 | argued from absence; the record itself calls it an absence of evidence rather than evidence of solitude |
 | `foresighted` | 4 | no source sentence; a rare-band minimum carried only by the stub word clever |
 
+Under the widened iteration-two bar neither cut entry is restored: `solitary` has no sentence and no ratified field, Phantiri's report records proximity-aversion territoriality only for other populations and only as a behavior, which class 3 may never carry; `foresighted` has no sentence, no `senses.special` entry, and no ratified field of any kind behind it. `resistant` at 15 is re-checked under ruling B and kept: its support is the planet's tarry runoff basins over a planetwide mass grave, which is contamination and not a thermal or desiccation hazard.
+
 Traits considered and left out: `menacing` (nothing in either source shows it eroding courage; the snarl in the art is an attack posture, not a presence effect), `luminous` (nothing sheds light), `regenerative` (no source), `armored` (a `bare` covering forbids it), `toxic`, `volatile`, `reflective`, `healing`, `protective`, `inspiring`, `hypnotic`, `mind-sealed`, `telekinetic`, `ramming`, `anchored`, `pack-bonded` (all unsupported).
 
 ## Step 10: signature ability
@@ -191,3 +193,4 @@ Two WARNs were raised across the run and both were answered by revision rather t
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [-30, 45] to [-30, 20] (intersection) against the rebuilt planet record's habitable band [-50, 20] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 0.45.
 - 2026-09-02, consistency sweep: covering set to hide (was bare) under the ruling that a flesh animal body carrying the hide anatomy key takes the hide covering; bare is for membranes, slime, plant and mineral surfaces.
 - 2026-09-07, trait evidence bar (Nick): cut `solitary`, `foresighted`; pool expected count 3.44 to 2.95.
+- 2026-09-07, trait evidence bar iteration two (Nick): restored none; cut none; expected count 2.95 to 2.95.

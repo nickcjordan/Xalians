@@ -152,10 +152,10 @@
   "traits": {
     "pool": {
       "armored": 85,
-      "resistant": 80,
       "menacing": 55,
       "anchored": 45,
-      "pack-bonded": 45
+      "pack-bonded": 45,
+      "perceptive": 20
     }
   },
   "instruments": [
