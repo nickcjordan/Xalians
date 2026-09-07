@@ -13,6 +13,8 @@ Per-species decisions that a migration agent cannot derive from the sources alon
 - 2026-09-02: trait model. Every pool trait is rolled independently at its own percent (1 to 100); 100 means every individual; no count, minimum, or cap; `guaranteed` and `rolledCount` retired. Exclusion partners: the generator rolls the higher percent first and skips the partner if it lands; never both at 100. A planet-wide sentence may justify an environmental adaptation trait (nocturnal, resistant) at or near 100, never a behavioral one.
 - 2026-09-02: catalog tags. A name carries instrument tags only when the name itself names or implies a part (Wraith Claws stays gated to claws); a name that names no part carries no tag and is drawable by any instrument that can perform the action. The 63 ghost rake names tagged claws without naming a part were untagged.
 
+- 2026-09-07 (Nick): the catalog's one-cell-per-name rule is struck. A name may sit in more than one action cell, in more than one element file, and in the neutral pool as well as an element cell, wherever each placement is logically sound on its own. The 2026-09-07 dedupe ledger was not applied.
+
 ## Frackworm
 
 - 2026-09-04: covering `chitin`, anatomy `jaws, vents, shell, body, eyes`, `armored` 100. A worm that bores through rock and glass sand wears grown overlapping armor plates, not hide. Eyes are tiny pinpoint dots on the collar behind the drill, no stalks (2026-09-04 later ruling: stalk eyes read goofy); sight stays 0 to 15. Art brief: the signature is the sand slurry blasting from the vent ring behind the head; the drill head is a blunt ringed cone with a small maw, never a mouth full of teeth. Applies the relatable-first principle in docs/design/xalian-creature-system-redesign.md section 1.

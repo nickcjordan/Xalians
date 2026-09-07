@@ -1,3 +1,5 @@
+> **STRUCK, NOT APPLIED (Nick, 2026-09-07).** The one-cell-per-name rule this ledger enforces was struck: a name may sit in more than one cell where each placement is logically sound, and none of the removals below were kept. The parser fixes (unclosed notes and slash shorthand shipping as names) stayed. The file is kept only because its rows record where a name sits in a cell its definition does not support, which is reference material for a later move pass.
+
 # Ability-catalog dedupe ledger, 2026-09-07
 
 Every name in `docs/ability-catalog/consolidated-<element>.md` and `docs/ability-catalog/neutral-pools.md` that currently sits in more than one place, with one disposition per name. Computed from `lambda/src/json/abilityCatalog.json` (the bundle produced by `scripts/bundleAbilityCatalog.js`), so the locations below are exactly what the generator sees today. Names compare case-insensitively.

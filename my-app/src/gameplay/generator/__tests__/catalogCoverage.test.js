@@ -146,38 +146,3 @@ describe('ability catalog coverage (grammar-doc variety floors)', () => {
 	});
 });
 
-// One cell per name, forever (grammar doc, "Curated Name Catalog"): after the 2026-09-07
-// dedupe (docs/ability-catalog/DEDUPE-LEDGER-2026-09-07.md) no name sits in two element
-// cells and no neutral name is also element-owned. This keeps it that way.
-describe('catalog: one cell per name', () => {
-	const nameOf = (e) => (Array.isArray(e) ? e[0] : e).toLowerCase();
-	test('no name appears in more than one element cell', () => {
-		const seen = new Map();
-		const dups = [];
-		Object.entries(catalog.elements).forEach(([el, cells]) => {
-			Object.entries(cells).forEach(([action, list]) => {
-				list.forEach((e) => {
-					const k = nameOf(e);
-					if (seen.has(k)) dups.push(`${k}: ${seen.get(k)}, ${el}/${action}`);
-					seen.set(k, `${el}/${action}`);
-				});
-			});
-		});
-		expect(dups).toEqual([]);
-	});
-	test('no neutral name is also element-owned, and no neutral name sits in two actions', () => {
-		const owned = new Set();
-		Object.values(catalog.elements).forEach((cells) => Object.values(cells).forEach((list) => list.forEach((e) => owned.add(nameOf(e)))));
-		const seen = new Set();
-		const bad = [];
-		Object.entries(catalog.neutral).forEach(([action, list]) => {
-			list.forEach((e) => {
-				const k = nameOf(e);
-				if (owned.has(k)) bad.push(`${action}: ${k} is element-owned`);
-				if (seen.has(k)) bad.push(`${action}: ${k} repeats across neutral actions`);
-				seen.add(k);
-			});
-		});
-		expect(bad).toEqual([]);
-	});
-});
