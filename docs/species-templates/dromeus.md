@@ -69,16 +69,25 @@ Legacy `statRatings` used only as a relative gauge: `standardAttackRating: high`
 
 ### Trait pool
 
-Independent percents, one roll each.
+Pool shape of 2026-09-08. One required trait at 100 and a rolled set of three sharing exactly 100. Expected count: 1 + 100/100 = 2.00. No exclusion pair remains, since both `pack-bonded` and `solitary` were cut by the evidence bar.
 
-- `hardened: 100`: added at 100 under the demanded-trait rule of 2026-09-08, environmental class. Magmuth's Generator environmental report lists firestorms and ambient temperature excursions among the planet's hazards, gives thermal shielding as the first of its two output priorities, and states heat-shielded integument universal in its fauna observations with no quantifier attached. All three are the demanded-trait pattern, and thermal load names `hardened` under the narrowing, so a body that works at 65 to 105 C carries it on every individual.
-- `resistant: 92`: environment-demanded and near universal. planet, "The acrid air is thick with volcanic smoke, staining the sky crimson and lacing the atmosphere with sulfuric ash and pungent, toxic fumes." and planet, "creatures capable of adapting to Magmuth's primeval conditions and bioengineered to survive in a world of heat, fire, lava, and ash." Re-checked under the 2026-09-08 narrowing and kept: the support is an atmosphere laced with sulfuric ash and toxic fumes, which is chemically hostile air and therefore contamination, not the heat that now belongs to `hardened`. Not raised to 100, because the fact comes from the planet history rather than from a hazards entry, a report priority, or a ratified field, and the pool needs entries below 100.
-- `perceptive: 40`: kept at its authored percent after the 2026-09-08 tightening. `physiology.senses.sight` is banded [70, 90], and an upper bound of 90 clears the new floor of 80 for a graded sense band, so the entry survives the tighter bar. It is not raised: `senses.special` is empty, so nothing names perceptive as a species-wide fact.
-- `ramming: 60`: species, "When running at high speeds, they can spread their wings to temporarily take flight as they launch into the air and sink their teeth into their prey." This is precisely a blow landing far harder with movement behind it, and it is the species' own act, not a planet claim.
+#### Required
 
-Expected trait count: 1.00 + 0.92 + 0.60 + 0.40 = 2.92 traits per individual. No exclusion pair remains, since both `pack-bonded` and `solitary` were cut by the evidence bar.
+| Trait | Evidence |
+|---|---|
+| `ramming` | The behavior the description and the signature ability are both built around. Species: "When running at high speeds, they can spread their wings to temporarily take flight as they launch into the air and sink their teeth into their prey." That is a blow landing far harder with movement behind it, stated of this species rather than of its world. No body fact demands a trait here: the covering is `feathers` and the body is corporeal flesh, so this species carries one required trait rather than two. |
 
-Traits I considered and left out, so they carry a 0 chance: `armored` (no shell, no plating, `covering: bare`); `regenerative` (no source); `nocturnal` (Magmuth is not a night world; planet, "Magmuth orbits a red dwarf star, bringing hellish heat to the world's surface"); `volatile` (nothing in the sources makes it hazardous to strike); `toxic` (teeth are sharp, not envenomed); `luminous` (the art shows no light organs); `foresighted` and `telekinetic` (no source at all, and I decline to sprinkle rares for variety); `healing`, `protective`, `inspiring`, `anchored`, `phasing`, `reflective`, `hypnotic`, `mind-sealed` (each contradicted by or absent from the body and both sources).
+#### Rolled (shares sum to 100)
+
+| Trait | Share | Evidence |
+|---|---|---|
+| `hardened` | 40 | Strongest of the rolled set. Magmuth's Generator environmental report lists firestorms and ambient temperature excursions among the planet's hazards, gives thermal shielding as the first of its two output priorities, and states heat-shielded integument in its fauna observations with no quantifier. A planet-wide adaptation, and the Dromeus description is about speed and killing rather than about surviving the heat, so it rolls. |
+| `resistant` | 35 | Also planet-wide, and one class weaker: it rests on the planet history rather than on a hazards entry. Planet: "The acrid air is thick with volcanic smoke, staining the sky crimson and lacing the atmosphere with sulfuric ash and pungent, toxic fumes." Chemically hostile air is contamination, which is this key rather than `hardened`. |
+| `perceptive` | 25 | The weakest class, a record field: `physiology.senses.sight` is banded [70, 90] and the upper bound clears the floor of 80 for a graded band. `senses.special` is empty, so nothing names it species-wide. |
+
+Legacy `statRatings` add nothing to the shares here: `standardAttackRating` and `speedRating` are high, and neither of those maps to a trait.
+
+Traits I considered and left out, so they carry a 0 chance: `armored` (no shell, no plating); `regenerative` (no source); `nocturnal` (Magmuth is not a night world); `volatile` (nothing makes it hazardous to strike); `toxic` (teeth are sharp, not envenomed); `luminous` (the art shows no light organs); `foresighted` and `telekinetic` (no source at all); `healing`, `protective`, `inspiring`, `anchored`, `phasing`, `reflective`, `hypnotic`, `mind-sealed` (each contradicted by or absent from the body and both sources).
 
 #### Cut by the evidence bar (2026-09-07)
 
@@ -151,11 +160,13 @@ The covering rule forced `bare` on a creature whose description's very first wor
 
 ## Validator output
 
-```
-WARN signature.instrument.list      signature instrument "fangs" is not in the species instrument list (allowed by rule 4; justify)
+Final run after the pool-shape pass of 2026-09-08:
 
-0 FAIL, 1 WARN (structurally clean; every WARN must be answered in the walkthrough)
 ```
+0 FAIL, 0 WARN (structurally clean; every WARN must be answered in the walkthrough)
+```
+
+The trait checks `traits.pool.required`, `traits.pool.rolledSum` and `traits.pool.size` are all silent.
 
 ## Orchestrator amendments
 
@@ -165,3 +176,4 @@ WARN signature.instrument.list      signature instrument "fangs" is not in the s
 - 2026-09-07, trait evidence bar (Nick): cut `pack-bonded`, `perceptive`, `slippery`, `stealthy`, `menacing`, `solitary`; pool expected count 3.17 to 1.52.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored `perceptive` (40, class 4); cut nothing further, since `resistant` rests on Magmuth's sulfuric ash and toxic fumes rather than on heat alone; expected count 1.52 to 1.92.
 - 2026-09-08, trait evidence bar iteration three (Nick): added `hardened` (100, Magmuth thermal shielding priority and the universal heat-shielded integument observation); raised nothing; cut nothing, since `perceptive` rests on a sight band whose upper bound is 90 and `resistant` on chemically hostile air; expected count 1.92 to 2.92.
+- 2026-09-08, pool shape (Nick): required `ramming`; rolled `hardened` 40, `resistant` 35, `perceptive` 25; expected count 2.92 to 2.00.

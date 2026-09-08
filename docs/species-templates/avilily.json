@@ -149,16 +149,14 @@
       30
     ]
   },
-  "traits": {
+    "traits": {
     "pool": {
       "toxic": 100,
-      "resistant": 100,
-      "regenerative": 100,
       "territorial": 100,
-      "stealthy": 80,
-      "pack-bonded": 70,
-      "perceptive": 45,
-      "protective": 35
+      "stealthy": 35,
+      "pack-bonded": 30,
+      "resistant": 20,
+      "perceptive": 15
     }
   },
   "instruments": [

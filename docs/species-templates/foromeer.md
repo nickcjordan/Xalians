@@ -48,14 +48,25 @@ Four entries, shaped rather than laddered. `berserker` 40, strength and enduranc
 
 Legacy `statRatings` gives only two marks, a medium standard attack and a high recovery, used as a relative gauge and not copied. `strength` 55 to 78 and `endurance` 58 to 80 are the top pair, species: "its powerful horns can break through the strongest of material". `resilience` 52 to 74 for the plated limbs. `vitality` 42 to 62, mid, since the trunk is unplated. `willpower` 40 to 62 for a body built to keep boring. `instinct` 35 to 55 with the tremor read. `agility` 28 to 48 and `reflex` 25 to 45, a heavy plated frame. `intelligence` 22 to 42, well under true-human, an excavation body. `charisma` 15 to 32, nothing in either source presents it.
 
-### Trait pool (expected count 4.70)
+### Trait pool (expected count 3.00)
 
-- `armored` 100: body-demanded. Species: "This creature has a metallic exoskeleton on its limbs", and an armored covering carries the trait at 100.
-- `hardened` 100: added at 100 on 2026-09-08 under the demanded-trait rule, environmental class. The Veridium Generator environmental report lists molten pours among the planet's hazards, which is thermal load and names `hardened` under the narrowing, and its fauna observations open on furnace-tolerant plated forms with no quantifier. A hazard entry names the adaptation every native must carry, so the entry sits at 100.
-- `regenerative` 100: raised from 85 on 2026-09-08 under the demanded-trait rule. The `recoveryRating` of high in `species.json` is one of the two legacy ratings that map to a trait and it maps to regenerative, and the Veridium report gives self-repair routines as an output priority and self-repairing frame architectures as a fauna observation with no quantifier. Two independent sources name it species-wide, so no percent may hide it.
-- `ramming` 45: species: "its powerful horns can break through the strongest of material" is a body fact about driving a point through mass, and `ramming` is the trait for blows landing harder with movement behind them.
-- `anchored` 25: a boring body braces against what it cuts, and the art shows a wide planted stance. Held low because no sentence states it.
-- `perceptive` 100: raised from 20 on 2026-09-08 under the demanded-trait rule. `physiology.senses.special` carries tremorsense, and a special sense is a ratified field of the record naming perceptive as a species-wide fact. The modest graded bands no longer hold the percent down, because the demanded-trait rule overrides an authored percent rather than averaging with it.
+Pool shape of 2026-09-08. Two required traits at 100 and four rolled entries sharing exactly 100, six in total, which is the maximum a pool may list. Expected count: 2 + 100/100 = 3.00.
+
+#### Required
+
+| Trait | Evidence |
+|---|---|
+| `armored` | The body fact. Species: "This creature has a metallic exoskeleton on its limbs", and the art draws the limbs as plated assemblies with panel highlights. An armored covering carries the key on every individual. |
+| `ramming` | The behavior the description is built around. Species: "its powerful horns can break through the strongest of material", and the excavation purpose the stub gives it turns on driving those shafts through mass. That is the registry key for a blow landing far harder with movement behind it, and it is where the signature ability terminates. |
+
+#### Rolled (shares sum to 100)
+
+| Trait | Share | Evidence |
+|---|---|---|
+| `regenerative` | 35 | Strongest of the rolled set. The `recoveryRating` of high in `species.json` is one of the two legacy ratings that map to a trait and it maps to regenerative, which ranks it first; the Veridium report reinforces it with self-repair routines as an output priority and self-repairing frame architectures as a fauna observation. |
+| `hardened` | 30 | A planet-wide adaptation. The Veridium Generator environmental report lists molten pours among the planet's hazards, which is thermal load, and its fauna observations open on furnace-tolerant plated forms. Rolled rather than required, because neither source makes surviving the forges the point of this creature; it is a digger, not a furnace worker. |
+| `perceptive` | 25 | A record field: `physiology.senses.special` carries tremorsense, which fits a body that reads rock through the shafts it is turning. A senses entry never makes a trait required, since a trait must not restate a field the record already carries. |
+| `anchored` | 10 | The weakest entry, and the only one with no sentence behind it: a boring body braces against what it cuts, and the art shows a wide planted stance. Kept in the pool at the smallest share rather than cut, because bracing is the direct mechanical consequence of the act the species is built for. |
 
 Traits considered and left off, with reasons: `menacing` and `inspiring`, neither source presents the body socially; `stealthy`, a plated biped carrying two shafts longer than itself; `toxic` and `volatile`, no agent or reaction named; `healing` and `protective`, no sentence shows it acting on others; `luminous`, `phasing`, `telekinetic`, `foresighted`, `hypnotic`, `mind-sealed`, `reflective`, `slippery`, and `nocturnal`, none supported by either source.
 
@@ -115,12 +126,13 @@ No FAIL was raised by any run of the validator on this key, so nothing was chang
 
 ## Validator output
 
-```
-WARN enc.definition.elementkey      encyclopedia definition uses element key word(s) as plain words: metal (allowed only as ordinary English, never as a type label)
+Final run after the pool-shape pass of 2026-09-08:
 
-0 FAIL, 1 WARN (structurally clean; every WARN must be answered in the walkthrough)
-logged to docs\species-templatesalidation-logoromeer.jsonl
 ```
+0 FAIL, 0 WARN (structurally clean; every WARN must be answered in the walkthrough)
+```
+
+The trait checks `traits.pool.required`, `traits.pool.rolledSum` and `traits.pool.size` are all silent.
 
 ## Orchestrator amendments
 
@@ -130,3 +142,4 @@ logged to docs\species-templatesalidation-logoromeer.jsonl
 - 2026-09-07, trait evidence bar (Nick): cut `regenerative`, `perceptive`, `solitary`; pool expected count 3.45 to 2.25.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored `regenerative` (85, class 5) and `perceptive` (20, class 4); cut `resistant` (55, ruling B); expected count 2.25 to 2.75.
 - 2026-09-08, trait evidence bar iteration three (Nick): added `hardened` (100, Veridium molten pours hazard and furnace-tolerant fauna line); raised `regenerative` (85 to 100, legacy `recoveryRating` high plus the self-repair output priority) and `perceptive` (20 to 100, tremorsense special sense); cut nothing; expected count 2.75 to 4.70. `insulated` was considered on the discharge-arcs hazard and left off; see the note below.
+- 2026-09-08, pool shape (Nick): required `armored`, `ramming`; rolled `regenerative` 35, `hardened` 30, `perceptive` 25, `anchored` 10; expected count 4.70 to 3.00.

@@ -150,13 +150,13 @@
       42
     ]
   },
-  "traits": {
+    "traits": {
     "pool": {
       "luminous": 100,
-      "resistant": 100,
-      "slippery": 55,
-      "perceptive": 20,
-      "pack-bonded": 15
+      "slippery": 45,
+      "resistant": 30,
+      "perceptive": 15,
+      "pack-bonded": 10
     }
   },
   "instruments": [

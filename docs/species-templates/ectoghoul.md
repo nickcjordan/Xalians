@@ -121,18 +121,25 @@ Primary `ghost`, from the species `type` field, stored at affinity 100. On-graph
 
 ## Step 9. Trait pool
 
-Each percent is an independent roll. Expected count is the sum divided by 100, with the exclusion adjustment noted below.
+Pool shape of 2026-09-08. Two required traits at 100, and four rolled entries sharing exactly 100. Expected count: 2 + 100/100 = 3.00. Six entries in total, the maximum a pool may list. No exclusion pair is present, since `solitary` was cut by the evidence bar and `pack-bonded` was never listed.
 
-- `hardened` 100. Added at 100 under the demanded-trait rule of 2026-09-08. `environmentalTolerance.ambientMedia` is a ratified field of the record and it carries vacuum, and vacuum is the far end of the thin-air extreme that the narrowed registry gives to `hardened`. A body the record states can hold together with no medium around it at all carries the key on every individual. Flagged as a line call: the demanded-trait rule names anatomy, covering, composition, corporeality and `senses.special` as the record fields that name a trait, and `ambientMedia` is a sixth field being read the same way.
-- `phasing` 100. body-demanded. Species: "passing through surfaces"; planet: "with no corporeal bodies to speak of". Non-corporeal bodies carry it at 100 by registry rule.
-- `menacing` 85. species: "emitting a terrifying cackle wherever they go" and "amuse themselves by terrorizing other Xalians". This is the single best-evidenced behavior in the description and it is species-sourced, not planet-sourced. Not 100, because the description says they terrorize by choice and amusement, so an individual that does not unnerve everything nearby is possible.
-- `stealthy` 60. species: "disappearing and re-appearing at will". Vanishing at will is the registry's "moves unseen and unheard until it acts". Held at 60 rather than higher because the same sentence says it announces itself with a cackle "wherever they go", which cuts directly against being unnoticed; the two behaviors are in tension in the source and the percent reflects that.
-- `slippery` 100. Raised from 55 under the demanded-trait rule of 2026-09-08: the `evasionRating` of high in `species.json` is one of the two legacy ratings that map to a trait, it maps to slippery, and a rating that names the trait sets the entry at 100. The overlap with `phasing` is real and now total, which is noted rather than worked around.
-- `resistant` 15. planet: "it would appear that it only targets organic, cellular life", so the body is unreadable to the killing signal, and planet: the Dreadscape is "deep, tarry oceans formed from the fluids that eek out from the ever-compressing layers of a planetwide mass grave", which is a contaminated place to live. Environmental and planet-sourced, which the rules permit for `resistant`. Kept low because immunity to the moon-weapon comes from the body having no cells at all rather than from a hardiness trait. Re-checked under the 2026-09-08 narrowing and kept at 15: its support is a contaminated place to live, not temperature, thin air, dust or charge, so it is still contamination and still belongs to this key.
+### Required
 
-Sum: 100 + 100 + 100 + 85 + 60 + 15 = 460. **Expected trait count 4.60.** No exclusion pair is present in the pool (`solitary` was cut by the evidence bar and `pack-bonded` was never listed), so no adjustment applies. Three entries are strictly between 0 and 100, so the pool still differentiates individuals.
+| Trait | Evidence |
+|---|---|
+| `phasing` | The body fact. Species: "passing through surfaces"; planet: "with no corporeal bodies to speak of". `corporeality` is non-corporeal, and a non-corporeal body carries the key on every individual by registry rule. |
+| `menacing` | The behavior the description is built around, and the act the signature ability is named for. Species: "emitting a terrifying cackle wherever they go" and "amuse themselves by terrorizing other Xalians". Both clauses of the second source sentence turn on it, and it is species-sourced rather than planet-sourced. |
 
-Traits the body could plausibly carry that I left out, with reasons: `armored` (no covering or anatomy gives it an armored aspect; covering is `mist`), `anchored` (a drifting body is the opposite), `regenerative` (nothing shows it repairing), `healing` and `protective` and `inspiring` (nothing in the description shows it helping anything; it is explicitly described terrorizing), `ramming` (no mass and no sprint band), `volatile` and `reflective` (nothing shows it reacting when struck), `mind-sealed` (untested in the source), `telekinetic` (no source sentence and no manipulation to justify even the rare band), `pack-bonded` (excluded by the solitary reading above).
+### Rolled (shares sum to 100)
+
+| Trait | Share | Evidence |
+|---|---|---|
+| `stealthy` | 35 | Strongest of the rolled set: a species sentence about its own behavior. Species: "disappearing and re-appearing at will". It does not become required because the same sentence has it announcing itself with a cackle wherever it goes, so the two behaviors sit in tension in the source. |
+| `slippery` | 30 | The `evasionRating` of high in `species.json` is one of the two legacy ratings that map to a trait, which ranks it next. It overlaps `phasing` heavily, so it rides in the rolled set rather than doubling the required one. |
+| `resistant` | 20 | A planet-wide fact. Planet: the Dreadscape is "deep, tarry oceans formed from the fluids that eek out from the ever-compressing layers of a planetwide mass grave", which is a contaminated place to live rather than a temperature, a pressure, or a charge. Low, because the body's immunity to the moon weapon comes from having no cells at all rather than from hardiness. |
+| `hardened` | 15 | The weakest entry, resting on a record field: `environmentalTolerance.ambientMedia` carries vacuum, which is the far end of the thin-air extreme the registry gives this key. Kept small and rolled, since no source sentence makes enduring the physical extremes the point of the creature. |
+
+Traits the body could plausibly carry that I left out, with reasons: `armored` (covering is `mist` and no anatomy gives an armored aspect), `anchored` (a drifting body is the opposite), `regenerative` (nothing shows it repairing), `healing`, `protective`, and `inspiring` (it is explicitly described terrorizing), `ramming` (no mass and no sprint band), `volatile` and `reflective` (nothing shows it reacting when struck), `mind-sealed` (untested in the source), `telekinetic` (no source sentence), `pack-bonded` (no group-living sentence).
 
 #### Cut by the evidence bar (2026-09-07)
 
@@ -232,14 +239,15 @@ Third, and smallest. I listed `jaws` in anatomy and made it the third instrument
 
 ## Validator output
 
+Final run after the pool-shape pass of 2026-09-08:
+
 ```
-WARN traits.expected                expected trait count 4.54 is above 3.5; confirm the species is meant to carry that many
 WARN instruments.predicate.source   channel "secretion" has a source-text predicate (an emitted substance); the validator agent must confirm the quoted sentence
 
-0 FAIL, 2 WARN (structurally clean; every WARN must be answered in the walkthrough)
+0 FAIL, 1 WARN (structurally clean; every WARN must be answered in the walkthrough)
 ```
 
-Both WARN lines are answered in the `## Script denials` section above under 'Answers to every WARN'.
+The remaining WARN is the instrument predicate, answered in the `## Script denials` section under 'Answers to every WARN'. The old `traits.expected` WARN no longer fires: the pool shape puts the expected count at 3.00. The trait checks `traits.pool.required`, `traits.pool.rolledSum` and `traits.pool.size` are all silent.
 
 ## Orchestrator amendments
 
@@ -252,3 +260,4 @@ Both WARN lines are answered in the `## Script denials` section above under 'Ans
 - 2026-09-07, trait evidence bar (Nick): cut `slippery`, `nocturnal`, `toxic`, `solitary`, `perceptive`, `luminous`, `hypnotic`, `foresighted`; pool expected count 4.54 to 2.60.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored `slippery` (55, class 5) and `perceptive` (20, class 4); cut nothing further, since `resistant` rests on the tarry oceans of a planetwide mass grave rather than on temperature; expected count 2.60 to 3.35.
 - 2026-09-08, trait evidence bar iteration three (Nick): added `hardened` (100, vacuum in `ambientMedia`); raised `slippery` (55 to 100, legacy `evasionRating` high); cut `perceptive` (20, no special sense and both graded bands under 80); expected count 3.35 to 4.60.
+- 2026-09-08, pool shape (Nick): required `phasing`, `menacing`; rolled `stealthy` 35, `slippery` 30, `resistant` 20, `hardened` 15; expected count 4.60 to 3.00.

@@ -153,14 +153,12 @@
   },
   "traits": {
     "pool": {
-      "resistant": 100,
-      "perceptive": 100,
       "insulated": 100,
-      "hardened": 100,
-      "volatile": 75,
-      "menacing": 45,
-      "pack-bonded": 25,
-      "armored": 10
+      "volatile": 30,
+      "menacing": 22,
+      "resistant": 20,
+      "hardened": 16,
+      "perceptive": 12
     }
   },
   "instruments": [

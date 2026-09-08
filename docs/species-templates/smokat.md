@@ -96,16 +96,23 @@ Primary `ghost`, from `type` in the species entry. Home planet Phantiri. On-grap
 
 ## Step 9: trait pool
 
-| Trait | Percent | Reason |
-|---|---|---|
-| `stealthy` | 100 | species: "sneak attack"; the defining act, body-demanded |
-| `slippery` | 100 | raised from 85. Evidence class 5, the legacy `statRatings` mapping, which the iteration-three ruling reads as a demand: `evasionRating` is high for this species, and a high evasion rating names `slippery`. The prose agrees, species: "quick evasion", and a body that "can instantly atomize into a cloud of smoke" cannot be held; the Generator-variance discount that held it at 85 is gone, because no percent hides a demanded trait |
-| `nocturnal` | 55 | the planet data block terrain field naming thick haze, plus the Dreadscape wasteland; an environmental adaptation a planet-wide fact may justify, but the haze is dimming rather than true perpetual night, so this is a coin-flip and not near 100 |
-| `perceptive` | 20 | unchanged, and re-checked under the tightened rule. This species has no `senses.special` entry, so the graded bands must carry it, and both `sight` and `hearing` are banded [55, 80], an upper bound of exactly 80 and therefore at the bar rather than under it. The art agrees, large tufted ears and a drawn eye; a modest species-level chance, not derived from any planet-wide sentence |
-| `resistant` | 15 | unchanged, and re-checked under the narrowed definition. planet: "deep, tarry oceans formed from the fluids that eek out from the ever-compressing layers of a planetwide mass grave" is an environmental contamination a species generated there may partly shrug off; environmental only, kept low |
-| `phasing` | 20 | species: "instantly atomize into a cloud of smoke" is the corporeal-body case the registry calls a rare roll; raised above single digits because the atomizing is this species' signature act, but held well below half because the resting body is solid |
+Reshaped on 2026-09-08 under Nick's pool-shape ruling. Two required traits, four rolled entries whose shares sum to 100, six entries in all, which is the cap. Expected count 3.00. The chance an individual lands none of the four rolled traits is 30.9 percent.
 
-Expected trait count: (100 + 100 + 55 + 20 + 15 + 20) / 100 = 3.10.
+**Required**
+
+| Trait | Evidence |
+|---|---|
+| `stealthy` | The behavior the description and the signature ability are built around. species: "can instantly atomize into a cloud of smoke for a sneak attack or quick evasion", and the signature is an ambush that crosses the ground as haze and closes with the claws already out. Every individual carries it. |
+| `slippery` | The other half of the same sentence, which names quick evasion as the second use of the trick, and the body fact behind it: a creature that comes apart into smoke cannot be held. Two required traits is the normal ceiling, and this species genuinely has two defining acts, one for reaching a target unseen and one for not being caught. Legacy `statRatings` agree, `evasionRating` high, but the sentence is what makes it required. |
+
+**Rolled (shares sum to 100)**
+
+| Trait | Share | Evidence |
+|---|---|---|
+| `phasing` | 35 | A species sentence about the species' own body: it atomizes into a cloud of smoke and gathers itself again. That is the corporeal-body case the registry calls a rare roll, and it is the strongest species-level evidence in the rolled set, so it leads. Well short of the required tier because the resting body is solid flesh and claw. |
+| `nocturnal` | 30 | The Phantiri data block's terrain field names thick haze, and the species hunts that haze over the Dreadscape. A planet-wide dimming rather than a true night world, and the description never makes darkness the point of the creature, so it sits in the rolled set. |
+| `perceptive` | 20 | Record fields: `senses.sight` and `senses.hearing` are both banded to an upper bound of exactly 80, which is at the bar, and the art gives large tufted ears. There is no `senses.special` entry. Rolled-set evidence only. |
+| `resistant` | 15 | planet: "deep, tarry oceans formed from the fluids that eek out from the ever-compressing layers of a planetwide mass grave" is a contamination a body generated there may partly shrug off. Weakest entry: environmental, and no sentence attaches it to this creature. |
 
 #### Cut by the evidence bar (2026-09-07)
 
@@ -178,7 +185,6 @@ The registry rules that a transient state produced by an ability never changes c
 $ node docs/species-templates/tools/validate-template.js smokat
 
 0 FAIL, 0 WARN (structurally clean; every WARN must be answered in the walkthrough)
-logged to docs\species-templates\validation-log\smokat.jsonl
 ```
 
 Two WARNs were raised across the run and both were answered by revision rather than argument. `traits.expected` fired at 3.99 on the first pool; I dropped `menacing` and trimmed three percents, bringing the expected count to 3.44. `enc.definition.name` fired because the encyclopedia definition did not name the species; I rewrote it to open with `The Smokat is`. Both were fair calls.
@@ -195,3 +201,4 @@ Two WARNs were raised across the run and both were answered by revision rather t
 - 2026-09-07, trait evidence bar (Nick): cut `solitary`, `foresighted`; pool expected count 3.44 to 2.95.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored none; cut none; expected count 2.95 to 2.95.
 - 2026-09-08, trait evidence bar iteration three (Nick): added none; raised `slippery` 85 to 100; cut none; expected count 2.95 to 3.10.
+- 2026-09-08, pool shape (Nick): required `stealthy`, `slippery`; rolled `phasing` 35, `nocturnal` 30, `perceptive` 20, `resistant` 15; expected count 3.10 to 3.00.

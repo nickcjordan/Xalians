@@ -146,15 +146,14 @@
       95
     ]
   },
-  "traits": {
+    "traits": {
     "pool": {
       "armored": 100,
-      "resistant": 100,
       "regenerative": 100,
-      "toxic": 100,
-      "perceptive": 100,
-      "volatile": 100,
-      "anchored": 45
+      "toxic": 40,
+      "resistant": 25,
+      "volatile": 20,
+      "perceptive": 15
     }
   },
   "instruments": [

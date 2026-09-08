@@ -104,15 +104,24 @@ Legacy `statRatings` used only as a relative gauge: specialDefenseRating low and
 - `charisma [15, 35]`: nothing in either source gives it presence.
 - `resilience [15, 35]`: legacy gauge: specialDefenseRating low, the one explicitly low rating, and the art shows no armored aspect.
 
-### Trait pool (expected count 4.65)
+### Trait pool (expected count 2.00)
 
-Sum of percents is 465, and the exclusion adjustment does not apply because `solitary` is not in the pool, so the expected count is 4.65.
+Reshaped on 2026-09-08 under Nick's pool-shape ruling. One required trait, four rolled entries whose shares sum to 100, five entries in all. An individual expects one rolled trait on top of the required one, and the chance of landing none of the four is 31.2 percent.
 
-- `hardened: 100`: evidence class 4, the Generator Environmental Report for Poseidas. Its hazard list carries crush depth and its output priorities carry depth tolerance, and under the iteration-three ruling a hazard of the home planet names the environmental adaptation every native must carry. Crushing water is a physical extreme of the body, which is what the narrowed registry gives to `hardened` rather than to `resistant`. The species is a swimmer of the deep-city waters, so the demand reaches it directly and the entry sits at 100.
-- `resistant: 100`: raised from 90. The report's hazard list for Poseidas carries semiannual toxic bloom events with airborne microbial dispersal and its output priorities carry filtration metabolism, both of which name `resistant` as a species-wide fact under the iteration-three ruling. The contamination reading survives the narrowing of the key, because acidifying water and toxic microbes are chemical and biological loads on the body rather than temperature or pressure. No percent hides a demanded trait, so the Generator-variance discount that held it at 90 is gone.
-- `regenerative: 100`: raised from 35. Evidence class 5, the legacy `statRatings` mapping, which the iteration-three ruling reads as a demand rather than a gauge: `recoveryRating` is high for this species, and a high recovery rating names `regenerative`. This answers the open question this walkthrough carried, which recommended holding it at 35 pending a Poseidas batch decision; Nick's ruling supersedes that recommendation.
-- `perceptive: 100`: raised from 25. Evidence class 4, a ratified field of the record: `physiology.senses.special` carries tremorsense, and every special sense names `perceptive` as a species-wide fact. The graded bands no longer carry it on their own under the tightened rule, since `sight` tops out at exactly 80 and would qualify while `hearing` and `smell` would not, but the special sense settles it without them.
-- `slippery: 65`: unchanged. species: "its slender frame"; art: a smooth-edged, long, segmented body with no protruding grip points. A body that is both slender and smooth is hard to hold, and it is the trait a water fighter most plainly carries. Below 100 because no source sentence shows it escaping anything.
+**Required**
+
+| Trait | Evidence |
+|---|---|
+| `slippery` | The body fact the description and the art agree on. species: "its slender frame and webbed feet make it a formidable opponent in water"; art: a long segmented body with a smooth silhouette edge throughout and no protruding grip point anywhere. A slender, smooth, sixteen-legged swimmer is a thing that cannot be held, and it is the one body reading the sources state rather than imply. Nothing else is demanded: the covering is `bare` so no `armored`, the body is corporeal so no `phasing`, and it is a free swimmer so no `anchored`. |
+
+**Rolled (shares sum to 100)**
+
+| Trait | Share | Evidence |
+|---|---|---|
+| `regenerative` | 35 | Legacy `statRatings`: `recoveryRating` is high, and a high recovery rating maps to `regenerative`. This is the strongest single signal the legacy data gives about this species, so it ranks first among the rolled entries; under the pool-shape ruling a legacy rating ranks a trait and never sets it at 100. |
+| `hardened` | 25 | The Generator Environmental Report for Poseidas carries crush depth in its hazard list and depth tolerance in its output priorities, and the species is a swimmer of the deep-city waters, so the hazard covers its form. Pressure is a physical extreme of the body, which the narrowed registry gives to `hardened`. A planet-wide adaptation, and the description never makes depth the point of the creature, so it is rolled rather than required. |
+| `resistant` | 20 | The same report carries semiannual toxic bloom events and filtration metabolism, and planet: "Soon, aquatic, water-breathing Xalians capable of surviving in its rising and acidifying oceans began to populate the sea" covers this species' form directly. Acid and microbial load are contamination, which is the narrowed reading of the key. Planet-wide, so rolled. |
+| `perceptive` | 20 | A record field: `physiology.senses.special` carries tremorsense, and `senses.sight` tops out at exactly 80. Under the pool-shape ruling the senses list is evidence for the rolled set and never makes the trait required, because a required trait must not restate a field the record already carries. |
 
 #### Cut by the evidence bar (2026-09-07)
 
@@ -194,7 +203,9 @@ Should the Newtapede's high legacy recovery rating be read as the `regenerative`
 Final run, `node docs/species-templates/tools/validate-template.js newtapede`:
 
 ```
-WARN signature.action.matrix        signature action "snare" is outside the physical row for claws [strike, rake, crush, shove, ambush] but inside the water medium row: declare claws as a water conduit if the sources show it
+$ node docs/species-templates/tools/validate-template.js newtapede
+
+WARN enc.definition.elementkey      encyclopedia definition uses element key word(s) as plain words: water (allowed only as ordinary English, never as a type label)
 
 0 FAIL, 1 WARN (structurally clean; every WARN must be answered in the walkthrough)
 ```
@@ -205,3 +216,4 @@ WARN signature.action.matrix        signature action "snare" is outside the phys
 - 2026-09-07, trait evidence bar (Nick): cut `regenerative`, `pack-bonded`, `stealthy`, `protective`; pool expected count 2.70 to 1.80.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored `regenerative`; cut none; expected count 1.80 to 2.15.
 - 2026-09-08, trait evidence bar iteration three (Nick): added `hardened` at 100; raised `resistant` 90 to 100, `regenerative` 35 to 100, `perceptive` 25 to 100; cut none; expected count 2.15 to 4.65.
+- 2026-09-08, pool shape (Nick): required `slippery`; rolled `regenerative` 35, `hardened` 25, `resistant` 20, `perceptive` 20; expected count 4.65 to 2.00.

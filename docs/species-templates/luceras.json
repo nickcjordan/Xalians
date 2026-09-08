@@ -149,9 +149,9 @@
   "traits": {
     "pool": {
       "ramming": 100,
-      "slippery": 100,
-      "resistant": 100,
-      "perceptive": 40
+      "slippery": 45,
+      "resistant": 30,
+      "perceptive": 25
     }
   },
   "instruments": [

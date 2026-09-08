@@ -148,12 +148,12 @@
       80
     ]
   },
-  "traits": {
+    "traits": {
     "pool": {
       "luminous": 100,
-      "resistant": 100,
-      "reflective": 55,
-      "mind-sealed": 34
+      "reflective": 40,
+      "resistant": 35,
+      "mind-sealed": 25
     }
   },
   "instruments": [

@@ -154,10 +154,10 @@
   "traits": {
     "pool": {
       "anchored": 100,
-      "regenerative": 100,
-      "resistant": 100,
-      "perceptive": 100,
-      "territorial": 100
+      "regenerative": 35,
+      "territorial": 25,
+      "resistant": 22,
+      "perceptive": 18
     }
   },
   "instruments": [

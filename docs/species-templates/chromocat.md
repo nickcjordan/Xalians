@@ -60,15 +60,28 @@ The row is one dominant nature with a short tail, because the description reads 
 - `intelligence [30, 52]`: an animal that comprehends instruction and worked as harvest labor, well under true-human range.
 - `willpower [35, 58]` and `charisma [30, 55]`: neither source addresses mind or presence, so both sit in a plain middle band. Flagged in Authored fields.
 
-### Trait pool
+### Trait pool (required 1, rolled sum 100, expected count 2.00)
 
-Expected trait count after iteration three of the evidence bar: (100 + 100 + 55 + 20 + 15) divided by 100, which is 2.90, up from 2.80 after the 2026-09-07 pass. `solitary` was cut, so the exclusion pair no longer applies and no adjustment is needed. The raw sum before the first bar was 3.51 (3.47 with the old exclusion adjustment).
+Iteration four applies Nick's pool shape of 2026-09-08. One entry is required and four are rolled, the rolled shares sum to exactly 100, and the pool holds five entries. Expected count falls from 2.90 to 2.00. The chance an individual lands none of the rolled entries is 0.55 times 0.70 times 0.85 times 0.90, which is 0.294.
 
-- `luminous: 100`. Body-demanded. species: "two sickle-shaped blades infused with pure ionized radiation" and "their ability to enter a photonic-state": a body that carries radiating blades and turns to light sheds light. Universal, and so exempt from tilts.
-- `resistant: 100`. Environment-demanded, raised from 90 on 2026-09-08. The Luminax record lists cumulative radiation load among `report.hazards`, and a hazard of the home planet names the adaptation every native must carry; `report.fauna.observations` states radiation-tolerant integument as universal sunward, and albino coats are the example the line gives, which is this species exactly. planet: "Being well adapted to the immense radiation present on their planet, Xalians from Luminax were a natural choice of labor for the design of the Stellaris Superstructure." The earlier 10 percent gap was reasoned from the ION-9 misfires still mutating the Luminarii; mutation is a separate fact from whether the body tolerates the ambient load, and a demanded trait sits at 100. Radiation is contamination, so the entry is unaffected by the narrowing of this trait.
-- `slippery: 55`. species: "allow them to seemingly 'teleport' around the battlefield" describes a body that cannot be pinned down. Below 100 because the sentence describes movement rather than an established guarantee against grabs, and because individuals should differ.
-- `pack-bonded: 15`. species uses the plural throughout for the harvest work, "they could comb through and harvest entire fields in record time", which is a body of workers acting together. Kept low because the present-day sentence describes a single creature harassing opponents. Its exclusion partner `solitary` was cut by the evidence bar, so the pair never both roll.
-- `perceptive: 20`. Art: the two large tufted ears and the forward-set eyes. Deliberately not justified from the planet's light or dark hemispheres, since a planet-wide sentence may never justify a behavior. Re-checked under the 2026-09-08 tightening and kept: it does not rest on a graded band alone, and the record's sight band of 70 to 92 clears the new 80 line in any case. `physiology.senses` carries no `special` entry, so nothing raises it to 100.
+#### Required
+
+| Trait | Evidence |
+|---|---|
+| `luminous` | Body fact. The species carries two sickle-shaped blades infused with pure ionized radiation and can enter a photonic state, so light is what this body is made of and what it fights with. The signature ability, Harvest at the Speed of Light, is that body used, and Luminax `report.fauna.observations` records crystalline emitter growths across the population. One required entry is enough here: nothing else in the sources is a second defining fact rather than a strong tendency. |
+
+#### Rolled (shares sum to 100)
+
+| Trait | Share | Evidence |
+|---|---|---|
+| `slippery` | 45 | A species sentence about this creature's own movement, a body that seems to teleport around the battlefield and cannot be pinned down. Strongest of the rolled entries. It is not required because the sentence describes speed of movement rather than a guarantee against being held, and the legacy `statRatings` gauge that reads high for the Chromocat is `speedRating`, which maps to no trait. |
+| `resistant` | 30 | Class 3 and a close fit. Luminax `report.hazards` opens with cumulative radiation load and `report.fauna.observations` states radiation-tolerant integument as universal sunward, giving albino coats as its first example, which is this species exactly. Radiation is contamination under the narrowed definition. It rolls rather than being required because the species' own description is about the blades and the speed, not about surviving the light. |
+| `perceptive` | 15 | Class 4, the art and the record together: the two large tufted ears and forward-set eyes, with a sight band of 70 to 92 whose top clears the 80 line. `physiology.senses` carries no `special` entry, and a graded band may never raise the trait to required. |
+| `pack-bonded` | 10 | The species uses the plural for the harvest work, a body of Chromocats combing whole fields in record time. Smallest share because the present-day sentence describes a single creature harassing opponents, so the group fact belongs to the old labor cohort rather than to every individual now. Its exclusion partner `solitary` was cut on 2026-09-07 and stays cut, so the pair never both roll. |
+
+#### Cut by the pool shape (2026-09-08, iteration four)
+
+No entry was cut this iteration. The pool held five entries before the reshape and holds five after; the change is that four of them now roll against each other for about one expected slot instead of two of them being universal.
 
 #### Cut by the evidence bar (2026-09-07, iterations one and two)
 
@@ -154,3 +167,4 @@ No run of the script has ever raised a FAIL on this key. The two entries in the 
 - 2026-09-07, trait evidence bar (Nick): cut solitary, stealthy, volatile, foresighted; pool expected count 3.51 to 2.80.
 - 2026-09-08, trait evidence bar iteration three (Nick): added none; raised resistant; cut none; expected count 2.80 to 2.90. `hardened` was checked against the sweep's twin-sun insolation suggestion and NOT added: Luminax lists no thermal hazard and no thermal output priority, its hazards are radiation load, glare and ION-9 misfires, and this record's temperature band of 25 to 70 C sits inside the ordinary habitable band rather than at a lethal extreme. The four earlier cuts stay cut, and none of the three rulings reaches them.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored none; cut none; expected count 2.80 to 2.80. All four cut entries were re-checked against the widened bar and none passes: `solitary` and `foresighted` have no sentence and no field, `stealthy` fails class 4 because the burrow band tops out at 5 and no hiding or ambush sentence exists, and `volatile` still rests on radiation carried on the blades it strikes with rather than on a reaction to being struck. Class 5 offers nothing here, since the legacy gauges that read high for the Chromocat are `speedRating` and neither of the two mapped ratings. `resistant` at 90 was re-checked under ruling B and kept: the Luminax report names cumulative radiation load as a hazard and radiation-tolerant integument as universal sunward, which is contamination and not temperature.
+- 2026-09-08, pool shape (Nick): required luminous; rolled slippery 45, resistant 30, perceptive 15, pack-bonded 10; expected count 2.90 to 2.00.

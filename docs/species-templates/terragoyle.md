@@ -74,18 +74,25 @@ Legacy `statRatings` used only as a relative gauge: `standardDefenseRating: "hig
 
 `rock` primary at 100 by species `type`. Secondaries inherit the baseline 75/25 odds and come from the Stonera graph row, `metal`, `sand`, `fire`; no `affinityOdds` override is declared because no source sentence justifies one.
 
-### Trait pool
+### Trait pool (expected count 3.00)
 
-Expected trait count: (100 + 100 + 100 + 100 + 90 + 85 + 50) / 100 = 6.25.
+Reshaped on 2026-09-08 under Nick's pool-shape ruling. Two required traits, four rolled entries whose shares sum to 100, six entries in all, which is the cap. The chance an individual lands none of the four rolled traits is 31.2 percent.
 
-- `anchored: 100`: the body demands it. Species, "now stand guard over the perimeter in a statue-like state", plus the legacy gauge of 380 kg on a 163 cm frame. A thing that holds a perimeter as a statue is not moved against its will.
-- `telekinetic: 100`: the body demands it and the description names the mechanism twice, "elongated tails tipped with a levitating ball of stone" and "using their tails to levitate boulders and fling them like great flying catapults". Levitation is constant here, which is exactly the registry's reading of the trait, and the flinging is the derived ability.
-- `perceptive: 100`: raised from 55. Evidence class 4, a ratified field of the record: `physiology.senses.special` carries tremorsense, and under the iteration-three ruling every special sense names `perceptive` as a species-wide fact, so no percent may hide it. The species sentence agrees, "hibernating to conserve their energy until a threat is detected", and the `hearing` band's upper bound of 85 clears the tightened graded-sense bar of 80 as well.
-- `insulated: 100`: new. Evidence class 4, the Generator Environmental Report for Stonera, whose hazard list carries static discharge. Under the iteration-three ruling a hazard of the home planet names the environmental adaptation every native must carry, and continuous static discharge names `insulated`. The planet history says the same thing in prose, "the rubbing of these particulates in the atmosphere generates colossal static discharges that crackle pervasively in the lower atmosphere". This is one half of the support that used to sit under `resistant`, now carried by the key that owns it.
-- `territorial: 90`: new. species, "now stand guard over the perimeter in a statue-like state", which is the species' present function stated flatly and without a qualifier: a form set to hold ground and deny passage rather than to pursue. Authored at 90 rather than 100 because the sentence states what Terragoyles do, not that every one of them does it, and the iteration-three ruling holds a species sentence to the authored percent unless it is plainly universal. Distinct from `anchored`, which is about not being moved, and from `protective`, which is about shielding others.
-- `dormant: 85`: new. species, "hibernating to conserve their energy until a threat is detected", which is the registry's definition almost word for word: it suspends its own vitals to wait out what it cannot spend energy on and wakes on a trigger. Authored at 85 on the same reading as `territorial`, a species sentence that is not plainly universal, and a shade lower because the statue posture is the more variable half of the pair, the guard duty being the constant.
-- `hardened: 50`: new, carried across from the cut `resistant` entry at its former percent. The other half of that entry's support was the planet's incredibly thin atmosphere, and under the narrowed 2026-09-08 definition thin air is a physical extreme of the body and belongs to `hardened`. The percent does not move, because the evidence did not change; only the key that owns it did. It stays below 100 because thin atmosphere is not on Stonera's hazard list and the species' own text never claims it.
-- At least one entry sits strictly between 0 and 100 (three do); the exclusion pair is not both at 100 because neither `solitary` nor `pack-bonded` is listed.
+**Required**
+
+| Trait | Evidence |
+|---|---|
+| `telekinetic` | The body fact, named in the description as a permanent feature of the anatomy and again as the working act: "elongated tails tipped with a levitating ball of stone", and "using their tails to levitate boulders and fling them like great flying catapults across the Chasm beneath them". The levitation is continuous rather than triggered, so every individual carries it. |
+| `territorial` | The behavior the description and the signature ability are built around: "now stand guard over the perimeter in a statue-like state", and the signature answers whatever crosses the rim from above it. The registry's `territorial` is being stronger holding ground it has been set to hold and denying passage rather than pursuing, which is this species' whole present function. |
+
+**Rolled (shares sum to 100)**
+
+| Trait | Share | Evidence |
+|---|---|---|
+| `dormant` | 35 | A species sentence about its own behavior: "hibernating to conserve their energy until a threat is detected", which is the registry definition almost word for word. Strongest of the rolled entries. It is the posture rather than the duty, and the duty is what `territorial` already carries, so it rolls rather than becoming a third required trait. |
+| `anchored` | 25 | The statue-like guard state read as a body fact, with the legacy gauge of 380 kg on a 163 cm frame and `evasionRating` low behind it. Second because it restates the sentence `territorial` and `dormant` already draw on rather than adding a new one. |
+| `perceptive` | 20 | Record fields: `physiology.senses.special` carries tremorsense and `senses.hearing` tops out at 85, over the bar of 80. The species sentence about a threat being detected agrees. The senses list is rolled-set evidence and never makes the trait required. |
+| `insulated` | 20 | Stonera's hazard list carries static discharge, and the planet history says the same in prose: "the rubbing of these particulates in the atmosphere generates colossal static discharges that crackle pervasively in the lower atmosphere". A sentry perched on an open rim is covered by it. A planet-wide adaptation the description never makes the point of the creature, so it is rolled. |
 
 #### Cut by the evidence bar (2026-09-07)
 
@@ -94,8 +101,9 @@ Expected trait count: (100 + 100 + 100 + 100 + 90 + 85 + 50) / 100 = 6.25.
 | `menacing` | 60 | the quoted sentence describes an attack (the strafing run, which is the signature ability), not a presence that erodes courage; restatement of a kept element |
 | `solitary` | 35 | argued from absence, and the record concedes the same sentence could be read as a line of sentries working together |
 | `resistant` | 50 | cut 2026-09-08 under the narrowed definition: its support was thin atmosphere and static discharge, which are not contamination; the support moved to `hardened` and `insulated` |
+| `hardened` | 50 | pool full, weaker evidence (2026-09-08): thin atmosphere is not on Stonera hazard list and the species own text never claims it, so it loses the sixth slot to `insulated` |
 
-Under the widened iteration-two bar neither cut entry is restored: `menacing` would need class 4 size plus a threat sentence, and this species is heavy but the sources give it a statue posture and an aerial bombardment rather than any presence that erodes courage, while the art draws a closed level mouth and no threat display; `solitary` still rests on absence, and the species sentence about Terragoyles lining the edges of the Chasm reads against it. `resistant` at 50 was kept under ruling B but is cut on 2026-09-08 under the narrowed definition, which reserves the key for contamination: toxins, disease, radiation, corrosion and chemically hostile air. Its support was Stonera's incredibly thin atmosphere and pervasive static discharge, and neither is contamination. Dust is particulate, not chemical, so the thin-atmosphere half moves to `hardened` and the discharge half moves to `insulated`, both listed above; nothing is lost, the support is simply filed under the keys that now own it.
+Under the widened iteration-two bar neither cut entry is restored: `menacing` would need class 4 size plus a threat sentence, and this species is heavy but the sources give it a statue posture and an aerial bombardment rather than any presence that erodes courage, while the art draws a closed level mouth and no threat display; `solitary` still rests on absence, and the species sentence about Terragoyles lining the edges of the Chasm reads against it. `resistant` at 50 was kept under ruling B but is cut on 2026-09-08 under the narrowed definition, which reserves the key for contamination: toxins, disease, radiation, corrosion and chemically hostile air. Its support was Stonera's incredibly thin atmosphere and pervasive static discharge, and neither is contamination. Dust is particulate, not chemical, so the thin-atmosphere half moved to `hardened` and the discharge half to `insulated`. On 2026-09-08 the pool-shape ruling capped the pool at six entries, and `hardened` lost the last slot to `insulated`, whose support sits on Stonera hazard list where thin atmosphere does not; it is recorded in the table above.
 
 Traits I considered and left out, with reasons: `armored`, because the covering is `hide` and the `hide` anatomy key states the body has no armored aspect, and neither source names plating or a carapace, only a posture that looks like statuary; `ramming`, because the described attack is release from height, not a body blow with movement behind it; `nocturnal`, because the planet history gives grey skies rather than perpetual night, "The debris from such collisions have launched enormous swathes of dirt into the air, dying the sky a dusty grey", which is dimness, not a night world; `stealthy`, because a statue on a rim is conspicuous by design; `protective`, because guarding a corporate perimeter is an order it was engineered under, not an instinct to shield others.
 
@@ -156,13 +164,14 @@ The source description spells the levitating stone as `levitating` and spells th
 Final run of `node docs/species-templates/tools/validate-template.js terragoyle`:
 
 ```
-WARN traits.expected                expected trait count 4.00 is above 3.5; confirm the species is meant to carry that many
+$ node docs/species-templates/tools/validate-template.js terragoyle
+
 WARN conduits.source                conduit tail for rock: the validator agent must confirm the sentence or art showing the element leaving through this part
 
-0 FAIL, 2 WARN (structurally clean; every WARN must be answered in the walkthrough)
+0 FAIL, 1 WARN (structurally clean; every WARN must be answered in the walkthrough)
 ```
 
-Both WARN lines are answered above under Answers to the WARN lines.
+The one WARN line, the conduit source check, is answered above under Answers to the WARN lines; the trait-count WARN it used to carry no longer fires under the 2026-09-08 pool shape.
 
 ## Orchestrator amendments
 
@@ -172,3 +181,4 @@ Both WARN lines are answered above under Answers to the WARN lines.
 - 2026-09-07, trait evidence bar (Nick): cut `menacing`, `solitary`; pool expected count 4.00 to 3.05.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored none; cut none; expected count 3.05 to 3.05.
 - 2026-09-08, trait evidence bar iteration three (Nick): added `insulated` at 100, `territorial` at 90, `dormant` at 85, `hardened` at 50; raised `perceptive` 55 to 100; cut `resistant`; expected count 3.05 to 6.25.
+- 2026-09-08, pool shape (Nick): required `telekinetic`, `territorial`; rolled `dormant` 35, `anchored` 25, `perceptive` 20, `insulated` 20; expected count 6.25 to 3.00.

@@ -155,11 +155,10 @@
     "pool": {
       "healing": 100,
       "hypnotic": 100,
-      "regenerative": 100,
-      "perceptive": 100,
-      "luminous": 100,
-      "protective": 70,
-      "foresighted": 5
+      "regenerative": 35,
+      "luminous": 30,
+      "protective": 20,
+      "perceptive": 15
     }
   },
   "instruments": [

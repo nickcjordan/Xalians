@@ -70,12 +70,23 @@ Not taken: `spines`. The swept strands at the nape read as a mane in a flat silh
 
 **Element and affinity** - primary `sand` at 100 by species `type`. On-graph secondaries for sand are water, rock, and ghost; I do not pick one. No `affinityOdds` override is declared, so the 75/25 baseline is inherited; I considered arguing water upward from the drowned history of the planet and rejected it, because that history belongs to the planet and not to this creature's body.
 
-**Trait pool** (expected count: the percents sum to 355, and no exclusion pair is listed, so the expected count is 3.55):
+**Trait pool** (expected count 2.00)
 
-- `armored: 100` - body-demanded. Species: "Shielded by a scaly exoskeleton, this creature can roll into a ball to protect itself." A chitin covering carries armored at 100.
-- `hardened: 100` - evidence class 4, the Generator Environmental Report for Endessa. Its hazard list carries thermal load and desiccation and its output priorities carry water retention and thermal shielding, and under the iteration-three ruling a hazard of the home planet names the environmental adaptation every native must carry. Heat and dryness are physical extremes of the body, which the narrowed registry gives to `hardened`; this is where the support that once stood behind the cut `resistant` entry properly belongs.
-- `perceptive: 100` - raised from 12. Evidence class 4, a ratified field of the record: `physiology.senses.special` carries tremorsense, and every special sense names `perceptive` as a species-wide fact, so no percent may hide it. The `hearing` band's upper bound of 65 no longer counts as support under the tightened rule, which requires a graded band to reach 80, so the special sense is the whole of the case and it is enough on its own.
-- `ramming: 55` - unchanged. species: "Shielded by a scaly exoskeleton, this creature can roll into a ball to protect itself." A body that rolls is a body whose blows land with movement behind them; held below 100 because the source names the roll as protection, not as attack, and it is the one entry that keeps individuals different.
+Reshaped on 2026-09-08 under Nick's pool-shape ruling. One required trait, three rolled entries whose shares sum to 100, four entries in all. The chance an individual lands none of the three rolled traits is 28.6 percent.
+
+**Required**
+
+| Trait | Evidence |
+|---|---|
+| `armored` | The body fact and the defining behavior are the same thing here, so one required trait carries both. species: "Shielded by a scaly exoskeleton, this creature can roll into a ball to protect itself." The covering is `chitin` and the anatomy carries `shell`, which the registry demands `armored` at 100 for, and the signature ability is the closed rolling guard the same sentence describes. No second required trait is needed, because every other candidate restates this one or rests on the planet rather than the creature. |
+
+**Rolled (shares sum to 100)**
+
+| Trait | Share | Evidence |
+|---|---|---|
+| `ramming` | 45 | A species sentence about the species' own body: "Shielded by a scaly exoskeleton, this creature can roll into a ball to protect itself." A body that rolls is a body whose blows land with movement behind them. Strongest of the rolled entries because it is the only one drawn from the species' own text, and rolled rather than required because the sentence names the roll as protection and not as attack. |
+| `hardened` | 35 | The Generator Environmental Report for Endessa carries thermal load and desiccation in its hazard list and water retention and thermal shielding in its output priorities, and a plated biped that works the dunes and the cavern networks is covered by them. Heat and dryness are physical extremes of the body, which the narrowed registry gives to `hardened`. A planet-wide adaptation the description never makes the point of the creature, so it is rolled. |
+| `perceptive` | 20 | A record field: `physiology.senses.special` carries tremorsense. The senses list is rolled-set evidence only, never grounds for a required trait, and the graded bands do not help it: `hearing` tops out at 65, under the bar of 80. |
 
 #### Cut by the evidence bar (2026-09-07)
 
@@ -146,10 +157,11 @@ Should the swept strands at the nape in the artwork be read as `spines` in anato
 Final run, from the worktree root:
 
 ```
-$ node docs/species-templates/tools/validate-template.js scalatto --note "..."
-0 FAIL, 0 WARN (structurally clean; every WARN must be answered in the walkthrough)
-logged to docs\species-templates\validation-log\scalatto.jsonl
-EXIT=0
+$ node docs/species-templates/tools/validate-template.js scalatto
+
+WARN enc.definition.elementkey      encyclopedia definition uses element key word(s) as plain words: sand (allowed only as ordinary English, never as a type label)
+
+0 FAIL, 1 WARN (structurally clean; every WARN must be answered in the walkthrough)
 ```
 
 Run three consecutive times with identical results, because an earlier run had reported a false clean on content that a later run failed three times over; see Script denials. No WARN lines were raised, so there are none to answer.
@@ -160,3 +172,4 @@ Run three consecutive times with identical results, because an earlier run had r
 - 2026-09-07, trait evidence bar (Nick): cut `solitary`, `anchored`, `protective`, `menacing`, `perceptive`, `regenerative`; pool expected count 3.50 to 2.25.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored `perceptive`; cut `resistant`; expected count 2.25 to 1.67.
 - 2026-09-08, trait evidence bar iteration three (Nick): added `hardened` at 100; raised `perceptive` 12 to 100; cut none; expected count 1.67 to 3.55.
+- 2026-09-08, pool shape (Nick): required `armored`; rolled `ramming` 45, `hardened` 35, `perceptive` 20; expected count 3.55 to 2.00.

@@ -79,17 +79,31 @@ Nothing agile, clever, social or predatory is listed, because no source shows an
 - `charisma [5, 20]`: mute, faceless apart from one eye; no source shows presence.
 - `resilience [75, 95]`: species, "protected by a thick rocky exoskeleton" and "allowing for great defense." The highest band in the set, which is the whole point of the species.
 
-## Trait pool
+## Trait pool (required 2, rolled sum 100, expected count 3.00)
 
-Expected trait count after iteration three: (100 + 100 + 100 + 100 + 100 + 100 + 45) / 100 = 6.45, up from 4.05, and there is no exclusion pair present with both partners, so no adjustment applies. Every entry but one is now demanded by the body, by the record's own fields, or by the Drainov Generator report, and `anchored` at 45 carries the variance for the pool. This is a high pool, and it is high because Drainov's report states four separate population facts without a quantifier and this species matches all of them; it is reported to Nick as a line call rather than tuned down.
+Iteration four applies Nick's pool shape of 2026-09-08 and ends the high-pool line call raised in iteration three. Two entries are required and four are rolled, the rolled shares sum to exactly 100, and the pool holds six entries, the maximum. Expected count falls from 6.45 to 3.00. The chance an individual lands none of the rolled entries is 0.60 times 0.75 times 0.80 times 0.85, which is 0.306.
 
-- `armored: 100`: body-demanded. Species, "protected by a thick rocky exoskeleton". The registry states a shelled or plated body means armored at 100.
-- `resistant: 100`: environment-demanded and body-demanded together. Species, "An acid slime organism", a body whose own substance is acid; planet, "Drainov's Xalian Generator was able to miraculously bioengineer new forms of life capable of surviving within the planet's hostile wastelands." The registry allows an environmental adaptation to rest on a planet-wide sentence, and resistance to contamination is exactly that.
-- `regenerative: 100`: species, "Its slime can continually regenerate an outer shell". Raised from 90 on 2026-09-08. The sentence states the capability of the species as such, with no qualifier, so it is plainly universal and no percent may hide it; the earlier 90 was written only to keep one high entry varying, and `anchored` at 45 already does that work.
-- `toxic: 100`: species, "An acid slime organism". Raised from 70 on 2026-09-08: Drainov `report.fauna.observations` names synthesized solvent and venom secretion of the population with no quantifier on the line, which names the trait as a species-wide fact for a body whose own substance is a solvent. The earlier reading held it back because the stub frames the acid as what the creature is rather than as a weapon it applies; the report settles that a Drainov body carries the agent either way.
-- `perceptive: 100`: demanded by a ratified field of the record, added 2026-09-08. `physiology.senses.special` carries `tremorsense`, and every entry of `senses.special` names this trait. A blind mass that reads the ground is exactly the non-visual sensory system Drainov's neighbors were generated with, and the graded sight and hearing bands, at 20 to 40 and 10 to 30, are low precisely because this sense does the work.
-- `volatile: 100`: environment-demanded, added 2026-09-08. Drainov `report.fauna.observations` names reactive discharge on structural breach, stated of the population without a quantifier, and this species is the clearest case of it in the catalog: a rocky casing over an acid body, so breaching the casing releases the acid. The earlier walkthrough left the trait out because no sentence showed a reaction to being struck; the report line is that sentence.
-- `anchored: 45`: art, a heavy flat-based mass with no bearing limbs, spread wide on the ground. Substantial but not universal, since a formless body can also be displaced by being pushed off its base. This is the one entry below 100 and it carries the whole pool's variance.
+### Required
+
+| Trait | Evidence |
+|---|---|
+| `armored` | Body fact stated by the covering: the species is protected by a thick rocky exoskeleton, and the registry states that a shelled or plated body means armored in every individual. |
+| `regenerative` | The behavior both the description and the signature are built around: the slime continually regenerates an outer shell, and the signature ability, Everforming Carapace, is that act, the slime flooding over broken plates and hardening into new shell. A shell that is always being remade is what this creature does. |
+
+### Rolled (shares sum to 100)
+
+| Trait | Share | Evidence |
+|---|---|---|
+| `toxic` | 40 | A species sentence about the body itself, an acid slime organism, backed by Drainov `report.fauna.observations` naming synthesized solvent and venom secretion of the population with no quantifier. Strongest of the rolled entries because both a species line and a fauna line cover it, and it stays rolled rather than required because the stub frames the acid as what the creature is made of rather than as an agent it applies. |
+| `resistant` | 25 | Class 3. Drainov `report.hazards` lists atmosphere, hydrosphere, precipitation and substrate, and `report.fauna.observations` opens with full-spectrum toxin immunity as universal, which is contamination under the narrowed definition. A planet-wide adaptation is required only where the species' own description makes it the point, and this one is about the shell and the acid, so the tolerance rolls. |
+| `volatile` | 20 | Class 3, a fauna observation that covers this species' form exactly: reactive discharge on structural breach, and this body is a rocky casing over an acid interior, so breaching the casing releases the acid. No species sentence shows a reaction to being struck, which is why the planet line has to carry it. |
+| `perceptive` | 15 | Class 4, a ratified field of the record. `physiology.senses.special` carries `tremorsense`, and the graded sight and hearing bands of 20 to 40 and 10 to 30 are low precisely because that sense does the work. An entry in the senses list is evidence for the trait but never makes it required, since the record already carries the field. |
+
+### Cut by the pool shape (2026-09-08, iteration four)
+
+| Trait | Former percent | Reason |
+|---|---|---|
+| `anchored` | 45 | Pool full, weaker evidence. Its only support is an art reading, a heavy flat-based mass spread wide on the ground with no bearing limbs, with no species sentence and no planet line behind it, and the walkthrough already conceded that a formless body can be shoved off its base. The four kept rolled entries each rest on a species sentence, a planet report line, or a ratified field. |
 
 #### Cut by the evidence bar (2026-09-07, iterations one and two)
 
@@ -173,3 +187,5 @@ logged to docs\species-templatesalidation-logioflim.jsonl
 - 2026-09-07, trait evidence bar (Nick): cut protective, slippery, solitary; pool expected count 4.52 to 4.05.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored none; cut none; expected count 4.05 to 4.05. Each of the three cut entries was re-checked against the widened bar and none passes it: `protective` still has no sentence and no field naming an instinct to shield, `slippery` fails class 5 because the legacy `statRatings` gauge that carries high for the Bioflim is `standardDefenseRating` and not `evasionRating`, and `solitary` is still argued from absence with no field behind it. `resistant` at 100 is untouched by rule, and it would survive ruling B in any case: the Drainov report lists atmosphere, hydrosphere, precipitation and substrate as hazards and names full-spectrum toxin immunity as universal in its fauna, which is contamination and not temperature.
 - 2026-09-08, trait evidence bar iteration three (Nick): added perceptive, volatile; raised regenerative, toxic; cut none; expected count 4.05 to 6.45. `resistant` at 100 survives the narrowing unchanged, since its support is full-spectrum toxin immunity and a chemically hostile atmosphere rather than temperature, dust or charge.
+
+- 2026-09-08, pool shape (Nick): required armored, regenerative; rolled toxic 40, resistant 25, volatile 20, perceptive 15; expected count 6.45 to 3.00.

@@ -149,11 +149,11 @@
   "traits": {
     "pool": {
       "phasing": 100,
-      "hardened": 100,
-      "slippery": 100,
-      "menacing": 85,
-      "stealthy": 60,
-      "resistant": 15
+      "menacing": 100,
+      "stealthy": 35,
+      "slippery": 30,
+      "resistant": 20,
+      "hardened": 15
     }
   },
   "instruments": [

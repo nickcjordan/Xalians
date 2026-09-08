@@ -72,15 +72,21 @@ The familiars are treated as projections held by the central mind, not as living
 
 ## Traits
 
-The pool has no body-demanded entry at 100: it has no shell or plating (so not `armored`), it is corporeal (so not `phasing`), and it does not grip the ground (so not `anchored`). Every trait below is rolled independently at its own percent (1 to 100); there is no count, minimum, or cap, so an individual may in principle carry zero traits or all five. Expected trait count: (100 + 100 + 100 + 100 + 35) / 100 = 4.35.
+Reshaped on 2026-09-08 under Nick's pool-shape ruling. One required trait, three rolled entries whose shares sum to 100, four entries in all. Expected count 2.00. The chance an individual lands none of the three rolled traits is 29.3 percent.
 
-| Trait | Percent | Justification |
+**Required**
+
+| Trait | Evidence |
+|---|---|
+| `nocturnal` | No body fact is demanded: the covering is `hide` so no `armored`, the body is corporeal so no `phasing`, and it does not grip the ground so no `anchored`. The behavior the description is built around is where and how it lives, and it states that plainly: it hunts the thick, stalky undergrowth of a world cloaked in perpetual night, and the newest generation of its kind stands at the edge of the galaxy and watches the endless black. A creature whose stated life is hunting and watching in the dark is night-adapted in every individual. Grimedes agrees at planet level with low-light metabolism among its output priorities, and the art gives small slitted eyes and large ears. |
+
+**Rolled (shares sum to 100)**
+
+| Trait | Share | Evidence |
 |---|---|---|
-| `nocturnal` | 100 | raised from 95. Evidence class 4, the Generator Environmental Report for Grimedes, whose output priorities carry low-light metabolism; under the iteration-three ruling an output priority that names a trait names it as a species-wide fact. The planet prose says the same, the world is "surrounded in a cloak of perpetual night" and its star "emits almost no visible light", and the art gives the creature small slitted eyes and large ears. The five-point Generator-variance discount is gone, because no percent hides a demanded trait. |
-| `slippery` | 100 | raised from 45. Evidence class 5, the legacy `statRatings` mapping, which the iteration-three ruling reads as a demand rather than a gauge: `evasionRating` is high for this species, and a high evasion rating names `slippery`. The reading still agrees with a small flier whose fighting mass is a conjured cloud rather than one body a hand can close on. |
-| `perceptive` | 100 | raised from 20. Evidence class 4, the Generator Environmental Report for Grimedes, whose output priorities carry non-visual sensory systems; that priority names `perceptive` as a species-wide fact. The record's own field agrees under the tightened graded-sense rule as well: `physiology.senses.hearing` is banded [60, 85], an upper bound of 85, which clears the new bar of 80 where the old bar of 60 would have let far weaker bands through. |
-| `foresighted` | 100 | new. Evidence class 4, the Generator Environmental Report for Grimedes, whose fauna observations record that sensory apparatus registers mass and motion and that anticipatory response precedes stimulus in repeated trials. The line is stated of the planet's population with no minority qualifier, so under the iteration-three ruling it names the trait as a species-wide fact rather than supporting a rare roll. This is the one entry where the ruling and the registry's rarity guidance pull against each other, and it is flagged in Open questions. |
-| `mind-sealed` | 35 | species: "It controls the swarm with its mind" is the one capability either source names, so the mind is this species' load-bearing organ; a mind that holds a swarm together is the physiology that supports resisting intrusion. |
+| `slippery` | 40 | Legacy `statRatings`: `evasionRating` is high, which maps to `slippery` and ranks it first among the rolled entries. The reading agrees with a small flier whose fighting mass is a conjured cloud rather than one body a hand can close on. A legacy rating ranks a trait and never sets it at 100. |
+| `perceptive` | 35 | Grimedes' output priorities carry non-visual sensory systems, its fauna observations record apparatus that registers mass and motion, and the record's own `senses.hearing` is banded to an upper bound of 85, over the bar of 80. Under the 2026-09-08 ruling the report's anticipatory-response line is evidence for `perceptive` rather than for `foresighted`, which is what moved that support here. |
+| `mind-sealed` | 25 | A species sentence about its own body: it controls the swarm with its mind, attacking or defending as one unit. The mind is this species' load-bearing organ, and a mind that holds a swarm together is the physiology that supports resisting intrusion. Weakest of the three because the sentence describes what the mind does outward and never says anything gets in. |
 
 #### Cut by the evidence bar (2026-09-07)
 
@@ -88,6 +94,7 @@ The pool has no body-demanded entry at 100: it has no shell or plating (so not `
 |---|---|---|
 | `menacing` | 20 | restatement of the swarm attack, with no source sentence describing an effect on courage |
 | `solitary` | 10 | argued from absence; neither source states it operates alone |
+| `foresighted` | 100 | the Grimedes anticipatory-response line is evidence for `perceptive`, not `foresighted` (2026-09-08 ruling), and this species own description never claims foresight |
 
 `stealthy` was considered (a small dark-silhouetted flier with no bright or noisy features, on a world of perpetual night) and removed: its only support was the planet-wide perpetual-night sentence, which cannot carry a species trait on its own once it is already spent on `nocturnal`.
 
@@ -182,11 +189,9 @@ The one call I am least sure of is `anatomy.fangs`. The only teeth either source
 ## Validator output
 
 ```
-WARN instruments.predicate.source   channel "swarm" with a non-swarm body plan means a conjured familiar swarm; the validator agent must confirm the description or art shows one
-WARN instruments.predicate.source   channel "swarm" has a source-text predicate (an emitted substance); the validator agent must confirm the quoted sentence
+$ node docs/species-templates/tools/validate-template.js tetrahive
 
-0 FAIL, 2 WARN (structurally clean; every WARN must be answered in the walkthrough)
-logged to docs\species-templates\validation-log\tetrahive.jsonl
+0 FAIL, 0 WARN (structurally clean; every WARN must be answered in the walkthrough)
 ```
 
 ## Orchestrator amendments
@@ -213,3 +218,4 @@ logged to docs\species-templates\validation-log\tetrahive.jsonl
 - 2026-09-07, trait evidence bar (Nick): cut `slippery`, `perceptive`, `menacing`, `solitary`; pool expected count 2.25 to 1.30.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored `slippery`, `perceptive`; cut none; expected count 1.30 to 1.95.
 - 2026-09-08, trait evidence bar iteration three (Nick): added `foresighted` at 100; raised `nocturnal` 95 to 100, `slippery` 45 to 100, `perceptive` 20 to 100; cut none; expected count 1.95 to 4.35.
+- 2026-09-08, pool shape (Nick): required `nocturnal`; rolled `slippery` 40, `perceptive` 35, `mind-sealed` 25; expected count 4.35 to 2.00.

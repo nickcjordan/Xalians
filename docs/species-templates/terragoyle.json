@@ -153,13 +153,12 @@
   },
   "traits": {
     "pool": {
-      "anchored": 100,
       "telekinetic": 100,
-      "perceptive": 100,
-      "insulated": 100,
-      "territorial": 90,
-      "dormant": 85,
-      "hardened": 50
+      "territorial": 100,
+      "dormant": 35,
+      "anchored": 25,
+      "perceptive": 20,
+      "insulated": 20
     }
   },
   "instruments": [

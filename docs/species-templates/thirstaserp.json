@@ -153,12 +153,11 @@
   "traits": {
     "pool": {
       "toxic": 100,
-      "hardened": 100,
-      "perceptive": 100,
-      "stealthy": 90,
-      "hypnotic": 70,
-      "nocturnal": 25,
-      "menacing": 20
+      "stealthy": 100,
+      "hypnotic": 40,
+      "hardened": 25,
+      "perceptive": 20,
+      "menacing": 15
     }
   },
   "instruments": [

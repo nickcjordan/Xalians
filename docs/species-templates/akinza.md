@@ -114,17 +114,31 @@ Legacy `statRatings` are used only as a relative gauge per operating rule 6: `sp
 - `element: ice`, primary at 100, from the species entry type of Ice; `homePlanet: krystos` from the entry planet. Secondaries are whatever the graph allows for ice (metal, water, dark), rolled per individual; nothing is picked here.
 - `affinityOdds` omitted, so the species inherits the 75/25 baseline. No lore reason to override: nothing in either source shows this creature as unusually mixed or unusually pure.
 
-### Trait pool (raw sum 6.36, expected count 6.36)
+### Trait pool (required 2, rolled sum 100, expected count 3.00)
 
-| Trait | Percent | Reason and source |
+Iteration four applies Nick's pool shape of 2026-09-08. Two entries are required and four are rolled, the rolled shares sum to exactly 100, and the pool holds six entries, the maximum. Expected count falls from 6.36 to 3.00. An individual always carries the two required traits and expects about one more; the chance it lands none of the four rolled entries is 0.65 times 0.70 times 0.80 times 0.85, which is 0.309, so a little under a third of Akinzas carry the required pair alone.
+
+#### Required
+
+| Trait | Evidence |
+|---|---|
+| `stealthy` | The species' whole entry is one sentence and this is what it is about: incredible stealth carrying the creature through the night with ease. The signature ability, Silence of the Long Night, is the same act, and the archetype row leads with prowler. This is the behavior the description is built around, so it defines the species. |
+| `nocturnal` | The same sentence makes the night the point of the creature twice over, once in night vision and once in moving through the night, and the ability is named for it. A planet-wide adaptation is required only where the species' own description makes it the point, and Krystos being permanently dark is the setting rather than the reason: the reason is that this animal's one stated fact is that it works after dark. |
+
+#### Rolled (shares sum to 100)
+
+| Trait | Share | Evidence |
 |---|---|---|
-| `stealthy` | 100 | The entire species sentence: "incredible stealth and night vision allow it to sneak through the night with ease". Description-demanded, so universal. |
-| `nocturnal` | 96 | Environment-demanded: the sky is permanently dark, "blotting out the sun and all warmth that accompanied it", and the species sentence independently names night. Held below 100 so the pool carries variance. |
-| `perceptive` | 40 | Species: "night vision", a sense claim about this species, not a planet-wide one. Not at 100 because the sentence claims a sense, not the specific act of finding what hides, and `perceptive` is the counter to `stealthy` rather than a restatement of it. |
-| `slippery` | 100 | Demanded, and a demanded trait sits at 100 (iteration three, 2026-09-08). Nick's legacy `statRatings` block for the Akinza in `lambda/src/json/species.json` carries `evasionRating` of high, and a high evasion rating names this trait as a species-wide fact. Raised from 30. |
-| `hardened` | 100 | Environment-demanded (2026-09-08). The Krystos record lists sustained lethal cold among `report.hazards` and cold-proof insulation among `report.outputPriorities`, and a hazard of the home planet names the physical adaptation every native must carry. This is the half of the old `resistant` entry that the narrowed definition moved here: cold is a physical extreme, not contamination. |
-| `dormant` | 100 | Environment-demanded (2026-09-08). Krystos `report.outputPriorities` names metabolic suspension, and `report.fauna.observations` records forms capable of full vital arrest through storm duration with no quantifier on the line. Blizzard cycles are a listed hazard, so sleeping a storm through is the planet's own answer for an animal that works the open surface. |
-| `territorial` | 100 | Demanded (2026-09-08). Krystos `report.fauna.observations` names guard-pattern forms retained from penal commissions, again without a quantifier, and the record's ratified `lore.description` places this species in the feral stock that remained in the wastelands outside the prison complexes, where such creatures proved as useful for deterring escape as the guards inside. Deterring escape is denying passage rather than pursuing, which is the registry definition of the trait. |
+| `slippery` | 35 | Class 5, Nick's legacy `statRatings` for the Akinza in `lambda/src/json/species.json`, where `evasionRating` reads high. Under the 2026-09-08 shape a high legacy rating ranks its trait first among the rolled entries without setting an absolute percent, so it takes the largest share rather than a fixed one. |
+| `perceptive` | 30 | The species sentence names night vision, a claim about this animal's own senses rather than a planet-wide one. The record's sight band of 70 to 95 clears the 80 line and supports it, but a graded band or a senses list may never make the trait required, since a trait must not restate a field the record already carries. |
+| `territorial` | 20 | Krystos `report.fauna.observations` records guard-pattern forms retained from penal commissions, with no quantifier, and the record's ratified `lore.description` places this species in the feral stock left outside the prison complexes, which proved useful for deterring escape. Denying passage rather than pursuing is the registry definition, so the planet-wide line covers this species' form. |
+| `hardened` | 15 | Krystos `report.hazards` opens with sustained lethal cold and `report.outputPriorities` names cold-proof insulation, which a fur-covered native working the open surface must carry. Rolled rather than required because the species' own description is about the dark and not about the cold. |
+
+#### Cut by the pool shape (2026-09-08, iteration four)
+
+| Trait | Former percent | Reason |
+|---|---|---|
+| `dormant` | 100 | Pool full, weaker evidence. Its support is the Krystos metabolic-suspension output priority and the matching fauna line about full vital arrest through storm duration, and that line describes forms that sleep a blizzard through, which sits awkwardly against a species whose only stated behavior is working the night. Four rolled slots were available and the four kept entries all rest on the species' own sentence, on the legacy ratings, or on a planet line that names this creature's own cohort. |
 
 #### Cut by the evidence bar (2026-09-07, iterations one and two)
 
@@ -138,7 +152,7 @@ Legacy `statRatings` are used only as a relative gauge per operating rule 6: `sp
 
 Traits the body could plausibly carry that were left out, with reasons: `armored` (no plating, casing, or spines in the art; the covering is `fur` and the surface key is `hide`), `anchored` (a light runner is the opposite), `phasing` (corporeal, and nothing suggests it), `regenerative` (no source), `healing` and `protective` and `inspiring` (nothing shows it acting for others; the planet history in fact separates this stock from the guards), `ramming` (a light frame that strikes with claws, not mass), `toxic` and `volatile` and `reflective` (no source of any kind), `hypnotic` and `mind-sealed` and `telekinetic` (no mental register anywhere in either source), `luminous` (a creature whose function is not being seen would be actively harmed by it, and nothing in the art glows).
 
-Five listed traits sit at 100 after iteration three, `stealthy`, `slippery`, `hardened`, `dormant` and `territorial`, and two sit below it, `nocturnal` at 96 and `perceptive` at 40, so the pool still varies between individuals. `perceptive` was re-checked under the tightened rule and kept: the record grades sight at 70 to 95, whose upper bound clears the new 80 line, and the species sentence names night vision independently. Both exclusion partners were cut by the 2026-09-07 evidence bar, so neither `solitary` nor `pack-bonded` is in the pool.
+Under the 2026-09-08 pool shape two entries are required, `stealthy` and `nocturnal`, and four roll for about one further slot, so individuals differ. Both exclusion partners were cut by the 2026-09-07 evidence bar, so neither `solitary` nor `pack-bonded` is in the pool.
 
 ### Instruments
 
@@ -240,3 +254,4 @@ All three WARNs are answered in the Script denials section above.
 - 2026-09-07, trait evidence bar (Nick): cut solitary, slippery, pack-bonded, menacing, foresighted; pool expected count 3.65 to 2.56.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored slippery (30, class 5, legacy `evasionRating` of high); cut resistant (20, ruling B, thermal-only support); expected count 2.56 to 2.66.
 - 2026-09-08, trait evidence bar iteration three (Nick): added hardened, dormant, territorial; raised slippery; cut none; expected count 2.66 to 6.36.
+- 2026-09-08, pool shape (Nick): required stealthy, nocturnal; rolled slippery 35, perceptive 30, territorial 20, hardened 15; expected count 6.36 to 3.00.

@@ -153,11 +153,11 @@
   "traits": {
     "pool": {
       "armored": 100,
-      "hardened": 100,
-      "regenerative": 100,
-      "perceptive": 100,
-      "ramming": 45,
-      "anchored": 25
+      "ramming": 100,
+      "regenerative": 35,
+      "hardened": 30,
+      "perceptive": 25,
+      "anchored": 10
     }
   },
   "instruments": [
