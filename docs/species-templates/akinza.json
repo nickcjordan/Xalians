@@ -149,9 +149,12 @@
   "traits": {
     "pool": {
       "stealthy": 100,
+      "slippery": 100,
+      "hardened": 100,
+      "dormant": 100,
+      "territorial": 100,
       "nocturnal": 96,
-      "perceptive": 40,
-      "slippery": 30
+      "perceptive": 40
     }
   },
   "instruments": [

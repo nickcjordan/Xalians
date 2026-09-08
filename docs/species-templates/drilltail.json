@@ -154,9 +154,10 @@
   "traits": {
     "pool": {
       "armored": 100,
+      "hardened": 100,
       "stealthy": 80,
-      "perceptive": 45,
-      "slippery": 25
+      "perceptive": 100,
+      "slippery": 100
     }
   },
   "instruments": [

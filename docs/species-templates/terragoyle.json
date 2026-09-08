@@ -155,8 +155,11 @@
     "pool": {
       "anchored": 100,
       "telekinetic": 100,
-      "perceptive": 55,
-      "resistant": 50
+      "perceptive": 100,
+      "insulated": 100,
+      "territorial": 90,
+      "dormant": 85,
+      "hardened": 50
     }
   },
   "instruments": [

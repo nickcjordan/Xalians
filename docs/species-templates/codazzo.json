@@ -153,10 +153,10 @@
   "traits": {
     "pool": {
       "regenerative": 100,
+      "perceptive": 100,
+      "insulated": 100,
       "volatile": 85,
-      "stealthy": 70,
-      "resistant": 55,
-      "perceptive": 40
+      "stealthy": 70
     }
   },
   "instruments": [

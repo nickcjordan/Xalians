@@ -155,7 +155,8 @@
   "traits": {
     "pool": {
       "hypnotic": 100,
-      "perceptive": 55
+      "perceptive": 100,
+      "foresighted": 6
     }
   },
   "instruments": [

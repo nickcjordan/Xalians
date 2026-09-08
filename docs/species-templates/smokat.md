@@ -99,13 +99,13 @@ Primary `ghost`, from `type` in the species entry. Home planet Phantiri. On-grap
 | Trait | Percent | Reason |
 |---|---|---|
 | `stealthy` | 100 | species: "sneak attack"; the defining act, body-demanded |
-| `slippery` | 85 | species: "quick evasion", and a body that "can instantly atomize into a cloud of smoke" cannot be held; a few individuals fall short of it by Generator variance |
+| `slippery` | 100 | raised from 85. Evidence class 5, the legacy `statRatings` mapping, which the iteration-three ruling reads as a demand: `evasionRating` is high for this species, and a high evasion rating names `slippery`. The prose agrees, species: "quick evasion", and a body that "can instantly atomize into a cloud of smoke" cannot be held; the Generator-variance discount that held it at 85 is gone, because no percent hides a demanded trait |
 | `nocturnal` | 55 | the planet data block terrain field naming thick haze, plus the Dreadscape wasteland; an environmental adaptation a planet-wide fact may justify, but the haze is dimming rather than true perpetual night, so this is a coin-flip and not near 100 |
-| `perceptive` | 20 | art: large tufted ears and a drawn eye; a modest species-level chance, not derived from any planet-wide sentence |
-| `resistant` | 15 | planet: "deep, tarry oceans formed from the fluids that eek out from the ever-compressing layers of a planetwide mass grave" is an environmental contamination a species generated there may partly shrug off; environmental only, kept low |
+| `perceptive` | 20 | unchanged, and re-checked under the tightened rule. This species has no `senses.special` entry, so the graded bands must carry it, and both `sight` and `hearing` are banded [55, 80], an upper bound of exactly 80 and therefore at the bar rather than under it. The art agrees, large tufted ears and a drawn eye; a modest species-level chance, not derived from any planet-wide sentence |
+| `resistant` | 15 | unchanged, and re-checked under the narrowed definition. planet: "deep, tarry oceans formed from the fluids that eek out from the ever-compressing layers of a planetwide mass grave" is an environmental contamination a species generated there may partly shrug off; environmental only, kept low |
 | `phasing` | 20 | species: "instantly atomize into a cloud of smoke" is the corporeal-body case the registry calls a rare roll; raised above single digits because the atomizing is this species' signature act, but held well below half because the resting body is solid |
 
-Expected trait count: (100 + 85 + 55 + 20 + 15 + 20) / 100 = 2.95.
+Expected trait count: (100 + 100 + 55 + 20 + 15 + 20) / 100 = 3.10.
 
 #### Cut by the evidence bar (2026-09-07)
 
@@ -114,7 +114,7 @@ Expected trait count: (100 + 85 + 55 + 20 + 15 + 20) / 100 = 2.95.
 | `solitary` | 45 | argued from absence; the record itself calls it an absence of evidence rather than evidence of solitude |
 | `foresighted` | 4 | no source sentence; a rare-band minimum carried only by the stub word clever |
 
-Under the widened iteration-two bar neither cut entry is restored: `solitary` has no sentence and no ratified field, Phantiri's report records proximity-aversion territoriality only for other populations and only as a behavior, which class 3 may never carry; `foresighted` has no sentence, no `senses.special` entry, and no ratified field of any kind behind it. `resistant` at 15 is re-checked under ruling B and kept: its support is the planet's tarry runoff basins over a planetwide mass grave, which is contamination and not a thermal or desiccation hazard.
+Under the widened iteration-two bar neither cut entry is restored: `solitary` has no sentence and no ratified field, Phantiri's report records proximity-aversion territoriality only for other populations and only as a behavior, which class 3 may never carry; `foresighted` has no sentence, no `senses.special` entry, and no ratified field of any kind behind it. `resistant` at 15 is re-checked under ruling B and kept: its support is the planet's tarry runoff basins over a planetwide mass grave, which is contamination and not a thermal or desiccation hazard. The 2026-09-08 narrowing does not touch it either, since the support is neither thin air, dust, static discharge nor temperature. Phantiri's report adds nothing at 100: its one hazard is the lunar weapon, which no body adapts to, and its single output priority is non-corporeal architectures, which this corporeal body does not satisfy.
 
 Traits considered and left out: `menacing` (nothing in either source shows it eroding courage; the snarl in the art is an attack posture, not a presence effect), `luminous` (nothing sheds light), `regenerative` (no source), `armored` (a `bare` covering forbids it), `toxic`, `volatile`, `reflective`, `healing`, `protective`, `inspiring`, `hypnotic`, `mind-sealed`, `telekinetic`, `ramming`, `anchored`, `pack-bonded` (all unsupported).
 
@@ -194,3 +194,4 @@ Two WARNs were raised across the run and both were answered by revision rather t
 - 2026-09-02, consistency sweep: covering set to hide (was bare) under the ruling that a flesh animal body carrying the hide anatomy key takes the hide covering; bare is for membranes, slime, plant and mineral surfaces.
 - 2026-09-07, trait evidence bar (Nick): cut `solitary`, `foresighted`; pool expected count 3.44 to 2.95.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored none; cut none; expected count 2.95 to 2.95.
+- 2026-09-08, trait evidence bar iteration three (Nick): added none; raised `slippery` 85 to 100; cut none; expected count 2.95 to 3.10.

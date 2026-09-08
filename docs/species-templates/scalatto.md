@@ -70,11 +70,12 @@ Not taken: `spines`. The swept strands at the nape read as a mane in a flat silh
 
 **Element and affinity** - primary `sand` at 100 by species `type`. On-graph secondaries for sand are water, rock, and ghost; I do not pick one. No `affinityOdds` override is declared, so the 75/25 baseline is inherited; I considered arguing water upward from the drowned history of the planet and rejected it, because that history belongs to the planet and not to this creature's body.
 
-**Trait pool** (expected count: the percents sum to 167, and no exclusion pair is listed, so the expected count is 1.67):
+**Trait pool** (expected count: the percents sum to 355, and no exclusion pair is listed, so the expected count is 3.55):
 
 - `armored: 100` - body-demanded. Species: "Shielded by a scaly exoskeleton, this creature can roll into a ball to protect itself." A chitin covering carries armored at 100.
-- `ramming: 55` - species: "Shielded by a scaly exoskeleton, this creature can roll into a ball to protect itself." A body that rolls is a body whose blows land with movement behind them; held below 100 because the source names the roll as protection, not as attack.
-- `perceptive: 12` - evidence class 4, a ratified field of the record. `physiology.senses.special` carries `tremorsense`, and under the iteration-two bar every entry of `senses.special` justifies `perceptive`; the `hearing` band's upper bound of 65 is a second qualifying field. Restored at its former percent of 12, which is where the record already placed it: the body reads the ground, but no sentence shows it finding anything hidden.
+- `hardened: 100` - evidence class 4, the Generator Environmental Report for Endessa. Its hazard list carries thermal load and desiccation and its output priorities carry water retention and thermal shielding, and under the iteration-three ruling a hazard of the home planet names the environmental adaptation every native must carry. Heat and dryness are physical extremes of the body, which the narrowed registry gives to `hardened`; this is where the support that once stood behind the cut `resistant` entry properly belongs.
+- `perceptive: 100` - raised from 12. Evidence class 4, a ratified field of the record: `physiology.senses.special` carries tremorsense, and every special sense names `perceptive` as a species-wide fact, so no percent may hide it. The `hearing` band's upper bound of 65 no longer counts as support under the tightened rule, which requires a graded band to reach 80, so the special sense is the whole of the case and it is enough on its own.
+- `ramming: 55` - unchanged. species: "Shielded by a scaly exoskeleton, this creature can roll into a ball to protect itself." A body that rolls is a body whose blows land with movement behind them; held below 100 because the source names the roll as protection, not as attack, and it is the one entry that keeps individuals different.
 
 #### Cut by the evidence bar (2026-09-07)
 
@@ -85,7 +86,7 @@ Not taken: `spines`. The swept strands at the nape read as a mane in a flat silh
 | `protective` | 25 | the quoted sentence covers protecting itself, not shielding others; the record calls it an extension |
 | `menacing` | 15 | body-type plausibility from mass and plating, with no source giving it a fearsome aspect |
 | `regenerative` | 8 | no source of any kind; the record says nothing sources it, and `recoveryRating` is blank in the legacy ratings, so the class 5 mapping does not reach it |
-| `resistant` | 70 | class 3 fails under the iteration-two ruling: its only support was Endessa's heat and abrasion, and a hazard profile of thermal load and desiccation never justifies `resistant` |
+| `resistant` | 70 | class 3 fails under the iteration-two ruling: its only support was Endessa's heat and abrasion, and a hazard profile of thermal load and desiccation never justifies `resistant`; the narrowed 2026-09-08 definition confirms the cut and routes that support to `hardened` instead |
 
 Traits considered and left out (a trait not listed has a 0 chance): `pack-bonded` (nothing shows it in company); `healing`, `inspiring`, `hypnotic`, `mind-sealed`, `foresighted`, `telekinetic`, `luminous`, `phasing`, `reflective`, `volatile`, `toxic`; `stealthy` and `slippery` (a plated body that hides by closing rather than by vanishing or escaping); `nocturnal` (Endessa is a twin-sun desert and no source gives it a night adaptation).
 
@@ -158,3 +159,4 @@ Run three consecutive times with identical results, because an earlier run had r
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: the labor rationale, the Nightcap cavern job, the rolling-down-shafts and shaft-collapse behavior and the 'under the twin suns it curls and waits' close were invented; the description now keeps the stub's one fact and the planet's own Generator sentence. `temperatureC` [-10, 48] -> [-10, 48] inside the habitable band [-10, 55]. Nape strands stay out of anatomy (a silhouette cannot separate a mane from quills). The run's 'validator non-determinism' was the orchestrator changing the script's planet source between its runs, not a script fault. Description now 60 words.
 - 2026-09-07, trait evidence bar (Nick): cut `solitary`, `anchored`, `protective`, `menacing`, `perceptive`, `regenerative`; pool expected count 3.50 to 2.25.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored `perceptive`; cut `resistant`; expected count 2.25 to 1.67.
+- 2026-09-08, trait evidence bar iteration three (Nick): added `hardened` at 100; raised `perceptive` 12 to 100; cut none; expected count 1.67 to 3.55.

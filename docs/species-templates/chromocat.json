@@ -153,7 +153,7 @@
   "traits": {
     "pool": {
       "luminous": 100,
-      "resistant": 90,
+      "resistant": 100,
       "slippery": 55,
       "perceptive": 20,
       "pack-bonded": 15

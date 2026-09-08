@@ -114,20 +114,23 @@ Legacy `statRatings` are used only as a relative gauge per operating rule 6: `sp
 - `element: ice`, primary at 100, from the species entry type of Ice; `homePlanet: krystos` from the entry planet. Secondaries are whatever the graph allows for ice (metal, water, dark), rolled per individual; nothing is picked here.
 - `affinityOdds` omitted, so the species inherits the 75/25 baseline. No lore reason to override: nothing in either source shows this creature as unusually mixed or unusually pure.
 
-### Trait pool (raw sum 2.66, expected count 2.66)
+### Trait pool (raw sum 6.36, expected count 6.36)
 
 | Trait | Percent | Reason and source |
 |---|---|---|
 | `stealthy` | 100 | The entire species sentence: "incredible stealth and night vision allow it to sneak through the night with ease". Description-demanded, so universal. |
 | `nocturnal` | 96 | Environment-demanded: the sky is permanently dark, "blotting out the sun and all warmth that accompanied it", and the species sentence independently names night. Held below 100 so the pool carries variance. |
 | `perceptive` | 40 | Species: "night vision", a sense claim about this species, not a planet-wide one. Not at 100 because the sentence claims a sense, not the specific act of finding what hides, and `perceptive` is the counter to `stealthy` rather than a restatement of it. |
-| `slippery` | 30 | Class 5, a ratified authored input: Nick's legacy `statRatings` block for the Akinza in `lambda/src/json/species.json` carries `evasionRating` of high, which is the one gauge the widened bar maps to this trait. Restored at its former percent, well under the stealth entry, because a design gauge states a tendency and not a guarantee. |
+| `slippery` | 100 | Demanded, and a demanded trait sits at 100 (iteration three, 2026-09-08). Nick's legacy `statRatings` block for the Akinza in `lambda/src/json/species.json` carries `evasionRating` of high, and a high evasion rating names this trait as a species-wide fact. Raised from 30. |
+| `hardened` | 100 | Environment-demanded (2026-09-08). The Krystos record lists sustained lethal cold among `report.hazards` and cold-proof insulation among `report.outputPriorities`, and a hazard of the home planet names the physical adaptation every native must carry. This is the half of the old `resistant` entry that the narrowed definition moved here: cold is a physical extreme, not contamination. |
+| `dormant` | 100 | Environment-demanded (2026-09-08). Krystos `report.outputPriorities` names metabolic suspension, and `report.fauna.observations` records forms capable of full vital arrest through storm duration with no quantifier on the line. Blizzard cycles are a listed hazard, so sleeping a storm through is the planet's own answer for an animal that works the open surface. |
+| `territorial` | 100 | Demanded (2026-09-08). Krystos `report.fauna.observations` names guard-pattern forms retained from penal commissions, again without a quantifier, and the record's ratified `lore.description` places this species in the feral stock that remained in the wastelands outside the prison complexes, where such creatures proved as useful for deterring escape as the guards inside. Deterring escape is denying passage rather than pursuing, which is the registry definition of the trait. |
 
 #### Cut by the evidence bar (2026-09-07, iterations one and two)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
-| `resistant` | 20 | ruling B: its only support was thermal, the planet-wide sentence about surviving the frozen tundra, and the Krystos hazard list is cold, blizzards, avalanche and preservation of organic material, with no toxin, corrosion, radiation or hostile atmosphere; temperature is already carried by `environmentalTolerance.temperatureC` |
+| `resistant` | 20 | ruling B, and still cut under the 2026-09-08 narrowing, which now confines this trait to contamination; the physical half of its old support is carried by `hardened`, added at 100 this iteration: its only support was thermal, the planet-wide sentence about surviving the frozen tundra, and the Krystos hazard list is cold, blizzards, avalanche and preservation of organic material, with no toxin, corrosion, radiation or hostile atmosphere; temperature is already carried by `environmentalTolerance.temperatureC` |
 | `solitary` | 55 | argued from absence (no group shown in the sentence); its planet quote is about role, not grouping, and its exclusion partner also failed |
 | `pack-bonded` | 12 | argued from absence: the walkthrough states that no source shows the Akinza working in numbers |
 | `menacing` | 8 | planet-wide sentence about the wasteland stock stretched to a behavior trait |
@@ -135,7 +138,7 @@ Legacy `statRatings` are used only as a relative gauge per operating rule 6: `sp
 
 Traits the body could plausibly carry that were left out, with reasons: `armored` (no plating, casing, or spines in the art; the covering is `fur` and the surface key is `hide`), `anchored` (a light runner is the opposite), `phasing` (corporeal, and nothing suggests it), `regenerative` (no source), `healing` and `protective` and `inspiring` (nothing shows it acting for others; the planet history in fact separates this stock from the guards), `ramming` (a light frame that strikes with claws, not mass), `toxic` and `volatile` and `reflective` (no source of any kind), `hypnotic` and `mind-sealed` and `telekinetic` (no mental register anywhere in either source), `luminous` (a creature whose function is not being seen would be actively harmed by it, and nothing in the art glows).
 
-The single trait at 100 is `stealthy`, and three listed traits sit below 100. Both exclusion partners were cut by the 2026-09-07 evidence bar, so neither `solitary` nor `pack-bonded` is in the pool.
+Five listed traits sit at 100 after iteration three, `stealthy`, `slippery`, `hardened`, `dormant` and `territorial`, and two sit below it, `nocturnal` at 96 and `perceptive` at 40, so the pool still varies between individuals. `perceptive` was re-checked under the tightened rule and kept: the record grades sight at 70 to 95, whose upper bound clears the new 80 line, and the species sentence names night vision independently. Both exclusion partners were cut by the 2026-09-07 evidence bar, so neither `solitary` nor `pack-bonded` is in the pool.
 
 ### Instruments
 
@@ -236,3 +239,4 @@ All three WARNs are answered in the Script denials section above.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [-95, -10] to [-60, -10] (intersection) against the rebuilt planet record's habitable band [-60, 15] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 0.54.
 - 2026-09-07, trait evidence bar (Nick): cut solitary, slippery, pack-bonded, menacing, foresighted; pool expected count 3.65 to 2.56.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored slippery (30, class 5, legacy `evasionRating` of high); cut resistant (20, ruling B, thermal-only support); expected count 2.56 to 2.66.
+- 2026-09-08, trait evidence bar iteration three (Nick): added hardened, dormant, territorial; raised slippery; cut none; expected count 2.66 to 6.36.

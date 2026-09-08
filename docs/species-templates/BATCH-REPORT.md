@@ -1,6 +1,6 @@
 # Batch report
 
-Generator version: 0.2.0. Seed: `batch-2026-09-07`. N per species: 200. Generated: 2026-09-07T22:01:27.008Z.
+Generator version: 0.2.0. Seed: `batch-2026-09-07`. N per species: 200. Generated: 2026-09-08T20:49:07.978Z.
 
 Every number here is an observation for the tuning session, not a target.
 
@@ -49,7 +49,7 @@ Strength histogram, deciles 1-10 through 91-99:
 
 ### Trait count distribution, roster-wide
 
-0: 68 (1.2%), 1: 625 (10.8%), 2: 1813 (31.3%), 3: 1898 (32.7%), 4: 1036 (17.9%), 5+: 360 (6.2%)
+0: 0 (0.0%), 1: 53 (0.9%), 2: 473 (8.2%), 3: 855 (14.7%), 4: 1450 (25.0%), 5+: 2969 (51.2%)
 
 ### Action mix across rolled abilities
 
@@ -129,11 +129,14 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | stealthy | 100.0 | 100.0% |
+| slippery | 100.0 | 100.0% |
+| hardened | 100.0 | 100.0% |
+| dormant | 100.0 | 100.0% |
+| territorial | 100.0 | 100.0% |
 | nocturnal | 96.0 | 95.0% |
 | perceptive | 40.0 | 41.0% |
-| slippery | 30.0 | 31.5% |
 
-Observed trait count mean: 2.67 (authored expected count: 2.66). Distribution: 0: 0 (0.0%), 1: 3 (1.5%), 2: 87 (43.5%), 3: 82 (41.0%), 4: 28 (14.0%), 5+: 0 (0.0%)
+Observed trait count mean: 6.36 (authored expected count: 6.36). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 0 (0.0%), 3: 0 (0.0%), 4: 0 (0.0%), 5+: 200 (100.0%)
 
 Ability name diversity: 0.58 (707 abilities rolled).
 
@@ -171,13 +174,16 @@ Trait landed rate vs authored percent:
 
 | trait | authored % | observed % |
 | --- | --- | --- |
-| stealthy | 80.0 | 74.5% |
-| pack-bonded | 70.0 | 71.0% |
-| toxic | 95.0 | 95.5% |
-| perceptive | 45.0 | 47.0% |
+| toxic | 100.0 | 100.0% |
+| resistant | 100.0 | 100.0% |
+| regenerative | 100.0 | 100.0% |
+| territorial | 100.0 | 100.0% |
+| stealthy | 80.0 | 76.5% |
+| pack-bonded | 70.0 | 70.5% |
+| perceptive | 45.0 | 44.5% |
 | protective | 35.0 | 36.0% |
 
-Observed trait count mean: 3.24 (authored expected count: 3.25). Distribution: 0: 1 (0.5%), 1: 6 (3.0%), 2: 39 (19.5%), 3: 75 (37.5%), 4: 56 (28.0%), 5+: 23 (11.5%)
+Observed trait count mean: 6.28 (authored expected count: 6.30). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 0 (0.0%), 3: 0 (0.0%), 4: 5 (2.5%), 5+: 195 (97.5%)
 
 Ability name diversity: 0.59 (705 abilities rolled).
 
@@ -217,11 +223,13 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | armored | 100.0 | 100.0% |
 | resistant | 100.0 | 100.0% |
-| regenerative | 90.0 | 91.5% |
-| toxic | 70.0 | 70.0% |
-| anchored | 45.0 | 49.0% |
+| regenerative | 100.0 | 100.0% |
+| toxic | 100.0 | 100.0% |
+| perceptive | 100.0 | 100.0% |
+| volatile | 100.0 | 100.0% |
+| anchored | 45.0 | 45.0% |
 
-Observed trait count mean: 4.11 (authored expected count: 4.05). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 3 (1.5%), 3: 40 (20.0%), 4: 90 (45.0%), 5+: 67 (33.5%)
+Observed trait count mean: 6.45 (authored expected count: 6.45). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 0 (0.0%), 3: 0 (0.0%), 4: 0 (0.0%), 5+: 200 (100.0%)
 
 Ability name diversity: 0.58 (709 abilities rolled).
 
@@ -260,12 +268,12 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | luminous | 100.0 | 100.0% |
-| resistant | 90.0 | 86.0% |
-| slippery | 55.0 | 65.0% |
-| perceptive | 20.0 | 18.0% |
-| pack-bonded | 15.0 | 15.5% |
+| resistant | 100.0 | 100.0% |
+| slippery | 55.0 | 58.5% |
+| perceptive | 20.0 | 25.5% |
+| pack-bonded | 15.0 | 13.0% |
 
-Observed trait count mean: 2.85 (authored expected count: 2.80). Distribution: 0: 0 (0.0%), 1: 8 (4.0%), 2: 53 (26.5%), 3: 105 (52.5%), 4: 30 (15.0%), 5+: 4 (2.0%)
+Observed trait count mean: 2.97 (authored expected count: 2.90). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 56 (28.0%), 3: 97 (48.5%), 4: 44 (22.0%), 5+: 3 (1.5%)
 
 Ability name diversity: 0.59 (698 abilities rolled).
 
@@ -304,12 +312,12 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | regenerative | 100.0 | 100.0% |
+| perceptive | 100.0 | 100.0% |
+| insulated | 100.0 | 100.0% |
 | volatile | 85.0 | 82.5% |
-| stealthy | 70.0 | 66.5% |
-| resistant | 55.0 | 48.0% |
-| perceptive | 40.0 | 38.5% |
+| stealthy | 70.0 | 64.0% |
 
-Observed trait count mean: 3.35 (authored expected count: 3.50). Distribution: 0: 0 (0.0%), 1: 2 (1.0%), 2: 29 (14.5%), 3: 80 (40.0%), 4: 74 (37.0%), 5+: 15 (7.5%)
+Observed trait count mean: 4.46 (authored expected count: 4.55). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 0 (0.0%), 3: 10 (5.0%), 4: 87 (43.5%), 5+: 103 (51.5%)
 
 Ability name diversity: 0.53 (706 abilities rolled).
 
@@ -348,11 +356,11 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | luminous | 100.0 | 100.0% |
-| resistant | 96.0 | 90.5% |
-| reflective | 55.0 | 53.0% |
-| mind-sealed | 34.0 | 38.0% |
+| resistant | 100.0 | 100.0% |
+| reflective | 55.0 | 57.5% |
+| mind-sealed | 34.0 | 33.5% |
 
-Observed trait count mean: 2.81 (authored expected count: 2.85). Distribution: 0: 0 (0.0%), 1: 8 (4.0%), 2: 65 (32.5%), 3: 83 (41.5%), 4: 44 (22.0%), 5+: 0 (0.0%)
+Observed trait count mean: 2.91 (authored expected count: 2.89). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 59 (29.5%), 3: 100 (50.0%), 4: 41 (20.5%), 5+: 0 (0.0%)
 
 Ability name diversity: 0.54 (695 abilities rolled).
 
@@ -391,11 +399,12 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | armored | 100.0 | 100.0% |
+| hardened | 100.0 | 100.0% |
 | stealthy | 80.0 | 78.5% |
-| perceptive | 45.0 | 44.0% |
-| slippery | 25.0 | 30.5% |
+| perceptive | 100.0 | 100.0% |
+| slippery | 100.0 | 100.0% |
 
-Observed trait count mean: 2.53 (authored expected count: 2.50). Distribution: 0: 0 (0.0%), 1: 16 (8.0%), 2: 88 (44.0%), 3: 70 (35.0%), 4: 26 (13.0%), 5+: 0 (0.0%)
+Observed trait count mean: 4.79 (authored expected count: 4.80). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 0 (0.0%), 3: 0 (0.0%), 4: 43 (21.5%), 5+: 157 (78.5%)
 
 Ability name diversity: 0.53 (702 abilities rolled).
 
@@ -432,11 +441,12 @@ Trait landed rate vs authored percent:
 
 | trait | authored % | observed % |
 | --- | --- | --- |
+| hardened | 100.0 | 100.0% |
 | resistant | 92.0 | 90.0% |
-| perceptive | 40.0 | 40.0% |
-| ramming | 60.0 | 61.0% |
+| ramming | 60.0 | 61.5% |
+| perceptive | 40.0 | 39.5% |
 
-Observed trait count mean: 1.91 (authored expected count: 1.92). Distribution: 0: 2 (1.0%), 1: 54 (27.0%), 2: 104 (52.0%), 3: 40 (20.0%), 4: 0 (0.0%), 5+: 0 (0.0%)
+Observed trait count mean: 2.91 (authored expected count: 2.92). Distribution: 0: 0 (0.0%), 1: 2 (1.0%), 2: 54 (27.0%), 3: 104 (52.0%), 4: 40 (20.0%), 5+: 0 (0.0%)
 
 Ability name diversity: 0.52 (699 abilities rolled).
 
@@ -475,13 +485,13 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | phasing | 100.0 | 100.0% |
-| menacing | 85.0 | 85.5% |
+| hardened | 100.0 | 100.0% |
+| slippery | 100.0 | 100.0% |
+| menacing | 85.0 | 84.5% |
 | stealthy | 60.0 | 57.5% |
-| slippery | 55.0 | 56.0% |
-| perceptive | 20.0 | 20.5% |
-| resistant | 15.0 | 20.5% |
+| resistant | 15.0 | 17.5% |
 
-Observed trait count mean: 3.40 (authored expected count: 3.35). Distribution: 0: 0 (0.0%), 1: 1 (0.5%), 2: 42 (21.0%), 3: 61 (30.5%), 4: 69 (34.5%), 5+: 27 (13.5%)
+Observed trait count mean: 4.59 (authored expected count: 4.60). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 0 (0.0%), 3: 8 (4.0%), 4: 83 (41.5%), 5+: 109 (54.5%)
 
 Ability name diversity: 0.53 (694 abilities rolled).
 
@@ -519,12 +529,13 @@ Trait landed rate vs authored percent:
 
 | trait | authored % | observed % |
 | --- | --- | --- |
-| perceptive | 70.0 | 68.0% |
+| perceptive | 100.0 | 100.0% |
 | hypnotic | 45.0 | 47.5% |
-| telekinetic | 35.0 | 35.0% |
-| mind-sealed | 25.0 | 26.5% |
+| telekinetic | 35.0 | 35.5% |
+| mind-sealed | 25.0 | 27.5% |
+| foresighted | 8.0 | 9.5% |
 
-Observed trait count mean: 1.77 (authored expected count: 1.75). Distribution: 0: 24 (12.0%), 1: 52 (26.0%), 2: 75 (37.5%), 3: 44 (22.0%), 4: 5 (2.5%), 5+: 0 (0.0%)
+Observed trait count mean: 2.20 (authored expected count: 2.13). Distribution: 0: 0 (0.0%), 1: 51 (25.5%), 2: 80 (40.0%), 3: 51 (25.5%), 4: 14 (7.0%), 5+: 4 (2.0%)
 
 Ability name diversity: 0.59 (689 abilities rolled).
 
@@ -563,12 +574,13 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | armored | 100.0 | 100.0% |
-| regenerative | 85.0 | 84.5% |
-| ramming | 45.0 | 43.0% |
-| anchored | 25.0 | 27.5% |
-| perceptive | 20.0 | 19.5% |
+| hardened | 100.0 | 100.0% |
+| regenerative | 100.0 | 100.0% |
+| perceptive | 100.0 | 100.0% |
+| ramming | 45.0 | 37.0% |
+| anchored | 25.0 | 18.5% |
 
-Observed trait count mean: 2.75 (authored expected count: 2.75). Distribution: 0: 0 (0.0%), 1: 7 (3.5%), 2: 79 (39.5%), 3: 77 (38.5%), 4: 32 (16.0%), 5+: 5 (2.5%)
+Observed trait count mean: 4.55 (authored expected count: 4.70). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 0 (0.0%), 3: 0 (0.0%), 4: 99 (49.5%), 5+: 101 (50.5%)
 
 Ability name diversity: 0.48 (690 abilities rolled).
 
@@ -608,11 +620,13 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | armored | 100.0 | 100.0% |
 | anchored | 100.0 | 100.0% |
+| nocturnal | 100.0 | 100.0% |
+| perceptive | 100.0 | 100.0% |
+| foresighted | 100.0 | 100.0% |
 | stealthy | 60.0 | 65.0% |
-| perceptive | 30.0 | 30.5% |
-| telekinetic | 6.0 | 6.5% |
+| telekinetic | 6.0 | 7.0% |
 
-Observed trait count mean: 3.02 (authored expected count: 2.96). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 42 (21.0%), 3: 113 (56.5%), 4: 44 (22.0%), 5+: 1 (0.5%)
+Observed trait count mean: 5.72 (authored expected count: 5.66). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 0 (0.0%), 3: 0 (0.0%), 4: 0 (0.0%), 5+: 200 (100.0%)
 
 Ability name diversity: 0.59 (696 abilities rolled).
 
@@ -650,12 +664,13 @@ Trait landed rate vs authored percent:
 
 | trait | authored % | observed % |
 | --- | --- | --- |
-| protective | 85.0 | 88.0% |
-| resistant | 70.0 | 70.5% |
-| pack-bonded | 60.0 | 57.5% |
-| perceptive | 30.0 | 25.5% |
+| resistant | 100.0 | 100.0% |
+| hardened | 100.0 | 100.0% |
+| territorial | 100.0 | 100.0% |
+| protective | 85.0 | 89.5% |
+| pack-bonded | 60.0 | 56.0% |
 
-Observed trait count mean: 2.42 (authored expected count: 2.45). Distribution: 0: 1 (0.5%), 1: 30 (15.0%), 2: 78 (39.0%), 3: 67 (33.5%), 4: 24 (12.0%), 5+: 0 (0.0%)
+Observed trait count mean: 4.46 (authored expected count: 4.45). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 0 (0.0%), 3: 11 (5.5%), 4: 87 (43.5%), 5+: 102 (51.0%)
 
 Ability name diversity: 0.56 (710 abilities rolled).
 
@@ -695,11 +710,13 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | healing | 100.0 | 100.0% |
 | hypnotic | 100.0 | 100.0% |
+| regenerative | 100.0 | 100.0% |
+| perceptive | 100.0 | 100.0% |
+| luminous | 100.0 | 100.0% |
 | protective | 70.0 | 65.5% |
-| luminous | 60.0 | 59.5% |
-| perceptive | 45.0 | 51.0% |
+| foresighted | 5.0 | 5.5% |
 
-Observed trait count mean: 3.76 (authored expected count: 3.75). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 19 (9.5%), 3: 55 (27.5%), 4: 81 (40.5%), 5+: 45 (22.5%)
+Observed trait count mean: 5.71 (authored expected count: 5.75). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 0 (0.0%), 3: 0 (0.0%), 4: 0 (0.0%), 5+: 200 (100.0%)
 
 Ability name diversity: 0.57 (689 abilities rolled).
 
@@ -737,16 +754,16 @@ Trait landed rate vs authored percent:
 
 | trait | authored % | observed % |
 | --- | --- | --- |
-| resistant | 100.0 | 100.0% |
+| hardened | 100.0 | 100.0% |
 | luminous | 100.0 | 100.0% |
-| volatile | 85.0 | 84.5% |
-| slippery | 72.0 | 74.5% |
-| nocturnal | 66.0 | 63.0% |
-| solitary | 45.0 | 43.5% |
-| menacing | 25.0 | 23.5% |
-| perceptive | 10.0 | 13.0% |
+| slippery | 100.0 | 100.0% |
+| volatile | 85.0 | 83.0% |
+| nocturnal | 66.0 | 64.0% |
+| solitary | 45.0 | 38.5% |
+| menacing | 25.0 | 25.0% |
+| perceptive | 10.0 | 9.0% |
 
-Observed trait count mean: 5.02 (authored expected count: 5.03). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 2 (1.0%), 3: 16 (8.0%), 4: 49 (24.5%), 5+: 133 (66.5%)
+Observed trait count mean: 5.20 (authored expected count: 5.31). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 0 (0.0%), 3: 6 (3.0%), 4: 38 (19.0%), 5+: 156 (78.0%)
 
 Ability name diversity: 0.53 (705 abilities rolled).
 
@@ -784,12 +801,14 @@ Trait landed rate vs authored percent:
 
 | trait | authored % | observed % |
 | --- | --- | --- |
-| anchored | 55.0 | 52.5% |
-| resistant | 40.0 | 40.0% |
-| menacing | 25.0 | 31.0% |
-| regenerative | 25.0 | 30.5% |
+| resistant | 100.0 | 100.0% |
+| regenerative | 100.0 | 100.0% |
+| territorial | 100.0 | 100.0% |
+| perceptive | 100.0 | 100.0% |
+| anchored | 55.0 | 52.0% |
+| menacing | 25.0 | 21.0% |
 
-Observed trait count mean: 1.54 (authored expected count: 1.45). Distribution: 0: 23 (11.5%), 1: 82 (41.0%), 2: 61 (30.5%), 3: 32 (16.0%), 4: 2 (1.0%), 5+: 0 (0.0%)
+Observed trait count mean: 4.73 (authored expected count: 4.80). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 0 (0.0%), 3: 0 (0.0%), 4: 74 (37.0%), 5+: 126 (63.0%)
 
 Ability name diversity: 0.56 (693 abilities rolled).
 
@@ -828,11 +847,11 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | ramming | 100.0 | 100.0% |
-| slippery | 70.0 | 73.5% |
-| resistant | 55.0 | 54.0% |
-| perceptive | 40.0 | 42.5% |
+| slippery | 100.0 | 100.0% |
+| resistant | 100.0 | 100.0% |
+| perceptive | 40.0 | 43.0% |
 
-Observed trait count mean: 2.70 (authored expected count: 2.65). Distribution: 0: 0 (0.0%), 1: 13 (6.5%), 2: 71 (35.5%), 3: 79 (39.5%), 4: 37 (18.5%), 5+: 0 (0.0%)
+Observed trait count mean: 3.43 (authored expected count: 3.40). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 0 (0.0%), 3: 114 (57.0%), 4: 86 (43.0%), 5+: 0 (0.0%)
 
 Ability name diversity: 0.53 (689 abilities rolled).
 
@@ -870,12 +889,12 @@ Trait landed rate vs authored percent:
 
 | trait | authored % | observed % |
 | --- | --- | --- |
-| pack-bonded | 90.0 | 91.5% |
 | volatile | 100.0 | 100.0% |
-| slippery | 70.0 | 67.5% |
-| resistant | 45.0 | 49.5% |
+| slippery | 100.0 | 100.0% |
+| resistant | 100.0 | 100.0% |
+| pack-bonded | 90.0 | 90.0% |
 
-Observed trait count mean: 3.08 (authored expected count: 3.05). Distribution: 0: 0 (0.0%), 1: 3 (1.5%), 2: 37 (18.5%), 3: 100 (50.0%), 4: 60 (30.0%), 5+: 0 (0.0%)
+Observed trait count mean: 3.90 (authored expected count: 3.90). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 0 (0.0%), 3: 20 (10.0%), 4: 180 (90.0%), 5+: 0 (0.0%)
 
 Ability name diversity: 0.61 (702 abilities rolled).
 
@@ -913,12 +932,13 @@ Trait landed rate vs authored percent:
 
 | trait | authored % | observed % |
 | --- | --- | --- |
-| resistant | 90.0 | 87.0% |
-| slippery | 65.0 | 68.0% |
-| regenerative | 35.0 | 40.5% |
-| perceptive | 25.0 | 32.0% |
+| hardened | 100.0 | 100.0% |
+| resistant | 100.0 | 100.0% |
+| regenerative | 100.0 | 100.0% |
+| perceptive | 100.0 | 100.0% |
+| slippery | 65.0 | 73.5% |
 
-Observed trait count mean: 2.27 (authored expected count: 2.15). Distribution: 0: 2 (1.0%), 1: 32 (16.0%), 2: 90 (45.0%), 3: 61 (30.5%), 4: 15 (7.5%), 5+: 0 (0.0%)
+Observed trait count mean: 4.74 (authored expected count: 4.65). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 0 (0.0%), 3: 0 (0.0%), 4: 53 (26.5%), 5+: 147 (73.5%)
 
 Ability name diversity: 0.49 (694 abilities rolled).
 
@@ -957,10 +977,11 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | armored | 100.0 | 100.0% |
+| hardened | 100.0 | 100.0% |
+| perceptive | 100.0 | 100.0% |
 | ramming | 55.0 | 54.0% |
-| perceptive | 12.0 | 14.5% |
 
-Observed trait count mean: 1.69 (authored expected count: 1.67). Distribution: 0: 0 (0.0%), 1: 79 (39.5%), 2: 105 (52.5%), 3: 16 (8.0%), 4: 0 (0.0%), 5+: 0 (0.0%)
+Observed trait count mean: 3.54 (authored expected count: 3.55). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 0 (0.0%), 3: 92 (46.0%), 4: 108 (54.0%), 5+: 0 (0.0%)
 
 Ability name diversity: 0.54 (714 abilities rolled).
 
@@ -999,13 +1020,13 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | stealthy | 100.0 | 100.0% |
-| slippery | 85.0 | 91.5% |
-| phasing | 20.0 | 27.0% |
-| nocturnal | 55.0 | 53.5% |
-| perceptive | 20.0 | 25.0% |
-| resistant | 15.0 | 12.5% |
+| slippery | 100.0 | 100.0% |
+| nocturnal | 55.0 | 62.0% |
+| phasing | 20.0 | 25.5% |
+| perceptive | 20.0 | 20.0% |
+| resistant | 15.0 | 21.5% |
 
-Observed trait count mean: 3.10 (authored expected count: 2.95). Distribution: 0: 0 (0.0%), 1: 5 (2.5%), 2: 43 (21.5%), 3: 94 (47.0%), 4: 46 (23.0%), 5+: 12 (6.0%)
+Observed trait count mean: 3.29 (authored expected count: 3.10). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 35 (17.5%), 3: 91 (45.5%), 4: 55 (27.5%), 5+: 19 (9.5%)
 
 Ability name diversity: 0.48 (694 abilities rolled).
 
@@ -1045,10 +1066,13 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | anchored | 100.0 | 100.0% |
 | telekinetic | 100.0 | 100.0% |
-| perceptive | 55.0 | 60.5% |
-| resistant | 50.0 | 52.5% |
+| perceptive | 100.0 | 100.0% |
+| insulated | 100.0 | 100.0% |
+| territorial | 90.0 | 93.5% |
+| dormant | 85.0 | 84.5% |
+| hardened | 50.0 | 49.5% |
 
-Observed trait count mean: 3.13 (authored expected count: 3.05). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 33 (16.5%), 3: 108 (54.0%), 4: 59 (29.5%), 5+: 0 (0.0%)
+Observed trait count mean: 6.28 (authored expected count: 6.25). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 0 (0.0%), 3: 0 (0.0%), 4: 1 (0.5%), 5+: 199 (99.5%)
 
 Ability name diversity: 0.50 (705 abilities rolled).
 
@@ -1086,12 +1110,13 @@ Trait landed rate vs authored percent:
 
 | trait | authored % | observed % |
 | --- | --- | --- |
-| nocturnal | 95.0 | 91.0% |
-| slippery | 45.0 | 56.0% |
-| mind-sealed | 35.0 | 37.5% |
-| perceptive | 20.0 | 19.5% |
+| nocturnal | 100.0 | 100.0% |
+| perceptive | 100.0 | 100.0% |
+| slippery | 100.0 | 100.0% |
+| foresighted | 100.0 | 100.0% |
+| mind-sealed | 35.0 | 35.0% |
 
-Observed trait count mean: 2.04 (authored expected count: 1.95). Distribution: 0: 7 (3.5%), 1: 39 (19.5%), 2: 100 (50.0%), 3: 47 (23.5%), 4: 7 (3.5%), 5+: 0 (0.0%)
+Observed trait count mean: 4.35 (authored expected count: 4.35). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 0 (0.0%), 3: 0 (0.0%), 4: 130 (65.0%), 5+: 70 (35.0%)
 
 Ability name diversity: 0.64 (703 abilities rolled).
 
@@ -1130,13 +1155,14 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | toxic | 100.0 | 100.0% |
+| hardened | 100.0 | 100.0% |
+| perceptive | 100.0 | 100.0% |
 | stealthy | 90.0 | 85.5% |
 | hypnotic | 70.0 | 71.0% |
-| perceptive | 40.0 | 42.5% |
-| nocturnal | 25.0 | 22.5% |
-| menacing | 20.0 | 24.5% |
+| nocturnal | 25.0 | 27.0% |
+| menacing | 20.0 | 20.0% |
 
-Observed trait count mean: 3.46 (authored expected count: 3.45). Distribution: 0: 0 (0.0%), 1: 3 (1.5%), 2: 27 (13.5%), 3: 72 (36.0%), 4: 73 (36.5%), 5+: 25 (12.5%)
+Observed trait count mean: 5.04 (authored expected count: 5.05). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 0 (0.0%), 3: 5 (2.5%), 4: 46 (23.0%), 5+: 149 (74.5%)
 
 Ability name diversity: 0.56 (694 abilities rolled).
 
@@ -1176,9 +1202,10 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | hypnotic | 100.0 | 100.0% |
-| perceptive | 55.0 | 57.5% |
+| perceptive | 100.0 | 100.0% |
+| foresighted | 6.0 | 5.5% |
 
-Observed trait count mean: 1.57 (authored expected count: 1.55). Distribution: 0: 0 (0.0%), 1: 85 (42.5%), 2: 115 (57.5%), 3: 0 (0.0%), 4: 0 (0.0%), 5+: 0 (0.0%)
+Observed trait count mean: 2.06 (authored expected count: 2.06). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 189 (94.5%), 3: 11 (5.5%), 4: 0 (0.0%), 5+: 0 (0.0%)
 
 Ability name diversity: 0.56 (683 abilities rolled).
 
@@ -1217,11 +1244,11 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | toxic | 100.0 | 100.0% |
-| resistant | 95.0 | 86.5% |
-| perceptive | 35.0 | 39.0% |
-| volatile | 12.0 | 13.0% |
+| resistant | 100.0 | 100.0% |
+| volatile | 100.0 | 100.0% |
+| perceptive | 35.0 | 36.0% |
 
-Observed trait count mean: 2.38 (authored expected count: 2.42). Distribution: 0: 0 (0.0%), 1: 10 (5.0%), 2: 110 (55.0%), 3: 73 (36.5%), 4: 7 (3.5%), 5+: 0 (0.0%)
+Observed trait count mean: 3.36 (authored expected count: 3.35). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 0 (0.0%), 3: 128 (64.0%), 4: 72 (36.0%), 5+: 0 (0.0%)
 
 Ability name diversity: 0.60 (694 abilities rolled).
 
@@ -1259,13 +1286,16 @@ Trait landed rate vs authored percent:
 
 | trait | authored % | observed % |
 | --- | --- | --- |
-| resistant | 90.0 | 89.5% |
-| volatile | 75.0 | 73.5% |
-| menacing | 45.0 | 52.0% |
-| perceptive | 35.0 | 40.5% |
-| armored | 10.0 | 8.0% |
+| resistant | 100.0 | 100.0% |
+| perceptive | 100.0 | 100.0% |
+| insulated | 100.0 | 100.0% |
+| hardened | 100.0 | 100.0% |
+| volatile | 75.0 | 75.5% |
+| menacing | 45.0 | 47.5% |
+| pack-bonded | 25.0 | 23.5% |
+| armored | 10.0 | 11.0% |
 
-Observed trait count mean: 2.63 (authored expected count: 2.55). Distribution: 0: 3 (1.5%), 1: 22 (11.0%), 2: 60 (30.0%), 3: 76 (38.0%), 4: 38 (19.0%), 5+: 1 (0.5%)
+Observed trait count mean: 5.58 (authored expected count: 5.55). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 0 (0.0%), 3: 0 (0.0%), 4: 20 (10.0%), 5+: 180 (90.0%)
 
 Ability name diversity: 0.49 (703 abilities rolled).
 
@@ -1304,11 +1334,12 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | anchored | 100.0 | 100.0% |
-| regenerative | 72.0 | 77.0% |
-| resistant | 35.0 | 36.0% |
-| perceptive | 15.0 | 14.0% |
+| regenerative | 100.0 | 100.0% |
+| resistant | 100.0 | 100.0% |
+| perceptive | 100.0 | 100.0% |
+| territorial | 100.0 | 100.0% |
 
-Observed trait count mean: 2.27 (authored expected count: 2.22). Distribution: 0: 0 (0.0%), 1: 27 (13.5%), 2: 99 (49.5%), 3: 67 (33.5%), 4: 7 (3.5%), 5+: 0 (0.0%)
+Observed trait count mean: 5.00 (authored expected count: 5.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 0 (0.0%), 3: 0 (0.0%), 4: 0 (0.0%), 5+: 200 (100.0%)
 
 Ability name diversity: 0.54 (684 abilities rolled).
 
@@ -1347,12 +1378,14 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | armored | 85.0 | 85.5% |
+| hardened | 100.0 | 100.0% |
+| territorial | 100.0 | 100.0% |
+| dormant | 100.0 | 100.0% |
 | menacing | 55.0 | 53.5% |
 | anchored | 45.0 | 45.0% |
 | pack-bonded | 45.0 | 41.5% |
-| perceptive | 20.0 | 19.0% |
 
-Observed trait count mean: 2.44 (authored expected count: 2.50). Distribution: 0: 5 (2.5%), 1: 38 (19.0%), 2: 57 (28.5%), 3: 65 (32.5%), 4: 33 (16.5%), 5+: 2 (1.0%)
+Observed trait count mean: 5.25 (authored expected count: 5.30). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 0 (0.0%), 3: 7 (3.5%), 4: 44 (22.0%), 5+: 149 (74.5%)
 
 Ability name diversity: 0.59 (694 abilities rolled).
 

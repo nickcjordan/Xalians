@@ -149,10 +149,10 @@
   "traits": {
     "pool": {
       "phasing": 100,
+      "hardened": 100,
+      "slippery": 100,
       "menacing": 85,
       "stealthy": 60,
-      "slippery": 55,
-      "perceptive": 20,
       "resistant": 15
     }
   },

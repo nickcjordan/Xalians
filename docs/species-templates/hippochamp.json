@@ -154,10 +154,11 @@
   },
   "traits": {
     "pool": {
+      "resistant": 100,
+      "hardened": 100,
+      "territorial": 100,
       "protective": 85,
-      "resistant": 70,
-      "pack-bonded": 60,
-      "perceptive": 30
+      "pack-bonded": 60
     }
   },
   "instruments": [

@@ -154,8 +154,10 @@
     "pool": {
       "armored": 100,
       "anchored": 100,
+      "nocturnal": 100,
+      "perceptive": 100,
+      "foresighted": 100,
       "stealthy": 60,
-      "perceptive": 30,
       "telekinetic": 6
     }
   },

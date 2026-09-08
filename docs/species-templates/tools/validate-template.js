@@ -30,7 +30,7 @@ const ENCYCLOPEDIA_PATH = path.join(ROOT, 'docs', 'encyclopedia', 'encyclopedia.
 // ---------- registries (mirror of SKILL.md sections 5.1 to 5.7; keep in sync) ----------
 const ATTRIBUTES = ['strength', 'vitality', 'endurance', 'agility', 'reflex', 'intelligence', 'willpower', 'instinct', 'charisma', 'resilience'];
 const ARCHETYPES = ['vanguard', 'juggernaut', 'berserker', 'bulwark', 'survivor', 'stalwart', 'skirmisher', 'runner', 'prowler', 'predator', 'seeker', 'sage', 'virtuoso', 'sovereign', 'rogue', 'balanced'];
-const TRAITS = ['healing', 'protective', 'regenerative', 'armored', 'anchored', 'phasing', 'resistant', 'ramming', 'toxic', 'volatile', 'reflective', 'menacing', 'hypnotic', 'perceptive', 'foresighted', 'mind-sealed', 'pack-bonded', 'solitary', 'stealthy', 'nocturnal', 'inspiring', 'slippery', 'luminous', 'telekinetic'];
+const TRAITS = ['healing', 'protective', 'regenerative', 'armored', 'anchored', 'phasing', 'resistant', 'hardened', 'dormant', 'insulated', 'territorial', 'ramming', 'toxic', 'volatile', 'reflective', 'menacing', 'hypnotic', 'perceptive', 'foresighted', 'mind-sealed', 'pack-bonded', 'solitary', 'stealthy', 'nocturnal', 'inspiring', 'slippery', 'luminous', 'telekinetic'];
 const TRAIT_EXCLUSIONS = [['pack-bonded', 'solitary']];
 const ELEMENTS = {
   fire: { planet: 'magmuth', secondaries: ['rock', 'chemical', 'metal'] },
