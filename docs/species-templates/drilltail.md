@@ -79,12 +79,13 @@ Word count 108, one paragraph, present tense, ends on a plain present-tense fact
 
 ## Trait pool
 
-Expected count: (100 + 80 + 45 + 25) / 100 = 2.50. No exclusion pair is present: `pack-bonded` stays cut by the evidence bar and `solitary` was never listed.
+Expected count: (100 + 100 + 80 + 100 + 100) / 100 = 4.80. No exclusion pair is present: `pack-bonded` stays cut by the evidence bar and `solitary` was never listed.
 
 - `armored: 100`: body-demanded by the `chitin` covering and the `shell` anatomy key. The registry states a shelled or plated body means armored at 100.
-- `stealthy: 80`. Source, species: "darting in and out of the surface as they hunt for prey to ambush". A species behavior from a species sentence, not a planet-wide one. Below 100 so individuals differ.
-- `perceptive: 45`: restored under evidence class 4, a ratified field of the record. `physiology.senses.special` carries tremorsense, and a special sense of that kind is the body fact behind perceptive rather than an inference from body type. The Endessa Generator environmental report reinforces it, listing vibration-hunting forms among the planet's fauna.
-- `slippery: 25`: restored under evidence class 5, Nick's authored legacy design intent. The `evasionRating` of high in `species.json` is one of the two ratings that map to a trait, and it maps to slippery.
+- `hardened: 100`: added at 100 under the demanded-trait rule, environmental class. The Endessa Generator environmental report lists thermal load and desiccation among the planet's hazards, and a hazard entry names the adaptation every native must carry; water retention and thermal shielding are two of the three output priorities, and the fauna line about desiccation-immune surface-crossing forms carries no quantifier. Under the 2026-09-08 narrowing, heat and dryness belong to `hardened`, which is why the same facts that failed to hold `resistant` in iteration two hold this key instead.
+- `stealthy: 80`. Source, species: "darting in and out of the surface as they hunt for prey to ambush". A species behavior from a species sentence, not a planet-wide one. Below 100 so individuals differ, and after iteration three it is the only entry in this pool that is.
+- `perceptive: 100`: raised from 45 under the demanded-trait rule of 2026-09-08. `physiology.senses.special` carries tremorsense, and a special sense is a ratified field of the record naming perceptive as a species-wide fact, so no percent may hide it. The Endessa Generator environmental report reinforces it, listing vibration-hunting forms among the planet's fauna.
+- `slippery: 100`: raised from 25 under the demanded-trait rule. The `evasionRating` of high in `species.json` is one of the two legacy ratings that map to a trait, it maps to slippery, and a legacy rating that names the trait sets the entry at 100 rather than at an authored percent.
 - Traits I considered and left out: `nocturnal`, because nothing in either source names night habits and Endessa's twin suns are the opposite register; `anchored`, because the body is defined by movement; `menacing`, `hypnotic`, and `inspiring`, because no presence claim appears anywhere in the sources; `ramming`, because the tail bores rather than delivering a moving blow; `regenerative`, `healing`, and `protective`, because nothing supports them.
 
 #### Cut by the evidence bar (2026-09-07)
@@ -93,7 +94,7 @@ Expected count: (100 + 80 + 45 + 25) / 100 = 2.50. No exclusion pair is present:
 |---|---|---|
 | `pack-bonded` | 15 | No source sentence and no ratified field: plural usage in the description is not a statement about group living, and the Endessa report says nothing about group life. |
 | `toxic` | 5 | Class 4 fails: anatomy carries no spines and no stinger, the organ is a drill, and no agent is described anywhere. |
-| `resistant` | 60 | Ruling B: its only support was the abrasion, heat, and desiccation of the dune surface. Endessa's report hazards are thermal load, desiccation, tunnel collapse, and vibration-triggered predation, none of which is contamination. |
+| `resistant` | 60 | Ruling B: its only support was the abrasion, heat, and desiccation of the dune surface. Endessa's report hazards are thermal load, desiccation, tunnel collapse, and vibration-triggered predation, none of which is contamination. Those same hazards now carry `hardened` instead, added on 2026-09-08; `resistant` stays cut. |
 
 ## Element
 
@@ -158,3 +159,4 @@ The single WARN is answered in the Signature ability section and in Script denia
 - 2026-09-02, correction from Nick: the drill tail is the defining part and the signature belongs to it. Signature restored to tail / strike (the auger bores; strike is in the tail row), description ends drill first; the scissor-like claws remain the pincers instrument. The orchestrator's earlier move to pincers / crush was wrong.
 - 2026-09-07, trait evidence bar (Nick): cut `perceptive`, `pack-bonded`, `slippery`, `toxic`; pool expected count 3.30 to 2.40.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored `perceptive` (45, class 4), `slippery` (25, class 5); cut `resistant` (60, ruling B); expected count 2.40 to 2.50.
+- 2026-09-08, trait evidence bar iteration three (Nick): added `hardened` (100, Endessa thermal load and desiccation hazards); raised `perceptive` (45 to 100, tremorsense special sense), `slippery` (25 to 100, legacy `evasionRating` high); cut nothing; expected count 2.50 to 4.80.

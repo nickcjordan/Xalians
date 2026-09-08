@@ -152,10 +152,12 @@
   "traits": {
     "pool": {
       "armored": 85,
+      "hardened": 100,
+      "territorial": 100,
+      "dormant": 100,
       "menacing": 55,
       "anchored": 45,
-      "pack-bonded": 45,
-      "perceptive": 20
+      "pack-bonded": 45
     }
   },
   "instruments": [

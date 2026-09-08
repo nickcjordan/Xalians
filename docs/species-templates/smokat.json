@@ -150,9 +150,9 @@
   "traits": {
     "pool": {
       "stealthy": 100,
-      "slippery": 85,
-      "phasing": 20,
+      "slippery": 100,
       "nocturnal": 55,
+      "phasing": 20,
       "perceptive": 20,
       "resistant": 15
     }

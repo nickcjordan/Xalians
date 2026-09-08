@@ -30,9 +30,9 @@ No clause states a schedule, a scene, a named individual, a causal claim about t
 
 ## Buried-auto-trait pass
 
-Body-demanded (100): none. The body has no armored covering, is corporeal, and is not rooted, so `armored`, `phasing`, and `anchored` are all absent from the pool. This species genuinely has no trait at 100, which is legal; the rule requires at least one trait strictly between 0 and 100, not one at 100.
+Body-demanded (100): none. The body has no armored covering, is corporeal, and is not rooted, so `armored`, `phasing`, and `anchored` are all absent from the pool. This species genuinely has no BODY-demanded trait at 100, which is legal; the rule requires at least one trait strictly between 0 and 100, not one at 100. Superseded in part on 2026-09-08: the environment and the legacy ratings demand four entries at 100, so the pool now has them, but none of them is demanded by the body plan.
 
-Environment-demanded (near 100): `resistant` at 90, from the planet history.
+Environment-demanded (near 100): `resistant` at 90, from the planet history. Amended 2026-09-08: `resistant` at 100 and `hardened` at 100, from the Generator Environmental Report's hazard list and output priorities for Poseidas.
 
 Suggested by body or description: `slippery`, `regenerative`, `pack-bonded`, `perceptive`, `stealthy`, `protective`, each below.
 
@@ -104,14 +104,15 @@ Legacy `statRatings` used only as a relative gauge: specialDefenseRating low and
 - `charisma [15, 35]`: nothing in either source gives it presence.
 - `resilience [15, 35]`: legacy gauge: specialDefenseRating low, the one explicitly low rating, and the art shows no armored aspect.
 
-### Trait pool (expected count 2.15)
+### Trait pool (expected count 4.65)
 
-Sum of percents is 215, and the exclusion adjustment does not apply because `solitary` is not in the pool, so the expected count is 2.15.
+Sum of percents is 465, and the exclusion adjustment does not apply because `solitary` is not in the pool, so the expected count is 4.65.
 
-- `resistant: 90`: planet: "Soon, aquatic, water-breathing Xalians capable of surviving in its rising and acidifying oceans began to populate the sea" and planet: "Vicious storm winds carried the toxic microbes from pole to pole, wiping out the Vallerii who remained. Only the subsurface Xalians survived". This is an environmental adaptation of the body, which the skill permits a planet-wide sentence to justify; it is not at 100 because the sentence describes Poseidas Xalians as a class rather than this species by name, so a small share of Generator variance is left.
-- `slippery: 65`: species: "its slender frame"; art: a smooth-edged, long, segmented body with no protruding grip points. A body that is both slender and smooth is hard to hold, and it is the trait a water fighter most plainly carries. Below 100 because no source sentence shows it escaping anything.
-- `regenerative: 35`: evidence class 5, the legacy `statRatings` mapping. Nick's authored design intent for this species sets `recoveryRating` to high, and the ratified iteration-two bar reads a high recovery rating as `regenerative`. It is one of only two filled rating fields on the species, so it is the strongest relative signal the authored inputs give about this body; restored at its former percent of 35 because no prose sentence shows it repairing itself.
-- `perceptive: 25`: art: two very large forward eyes with slit pupils and two long antennae. Art is a source for the body, and the body here is built around sensing; kept low because no sentence shows it finding anything hidden.
+- `hardened: 100`: evidence class 4, the Generator Environmental Report for Poseidas. Its hazard list carries crush depth and its output priorities carry depth tolerance, and under the iteration-three ruling a hazard of the home planet names the environmental adaptation every native must carry. Crushing water is a physical extreme of the body, which is what the narrowed registry gives to `hardened` rather than to `resistant`. The species is a swimmer of the deep-city waters, so the demand reaches it directly and the entry sits at 100.
+- `resistant: 100`: raised from 90. The report's hazard list for Poseidas carries semiannual toxic bloom events with airborne microbial dispersal and its output priorities carry filtration metabolism, both of which name `resistant` as a species-wide fact under the iteration-three ruling. The contamination reading survives the narrowing of the key, because acidifying water and toxic microbes are chemical and biological loads on the body rather than temperature or pressure. No percent hides a demanded trait, so the Generator-variance discount that held it at 90 is gone.
+- `regenerative: 100`: raised from 35. Evidence class 5, the legacy `statRatings` mapping, which the iteration-three ruling reads as a demand rather than a gauge: `recoveryRating` is high for this species, and a high recovery rating names `regenerative`. This answers the open question this walkthrough carried, which recommended holding it at 35 pending a Poseidas batch decision; Nick's ruling supersedes that recommendation.
+- `perceptive: 100`: raised from 25. Evidence class 4, a ratified field of the record: `physiology.senses.special` carries tremorsense, and every special sense names `perceptive` as a species-wide fact. The graded bands no longer carry it on their own under the tightened rule, since `sight` tops out at exactly 80 and would qualify while `hearing` and `smell` would not, but the special sense settles it without them.
+- `slippery: 65`: unchanged. species: "its slender frame"; art: a smooth-edged, long, segmented body with no protruding grip points. A body that is both slender and smooth is hard to hold, and it is the trait a water fighter most plainly carries. Below 100 because no source sentence shows it escaping anything.
 
 #### Cut by the evidence bar (2026-09-07)
 
@@ -168,7 +169,9 @@ Two cases, both complied with as written:
 
 1. **The `claws` row does not allow `snare`, and the conduit predicate cannot be satisfied for a species whose description names no part.** The natural signature for a sixteen-legged aquatic grappler is holding a target under with its legs, and the water conduit row allows `snare` exactly. But the conduit predicate requires a source showing the element leaving the body through the part, and this species' description names no part at all, so no conduit can ever be declared for it under the rule as written. I complied by taking the signature-rule-4 matrix exception. Smallest fix: allow a conduit to be declared from the medium plus a body-plan reading when the species is on the section 8 authored-anatomy list, or add `snare` to the `claws` physical row, since a raptorial grip that pins is what `talons` already gets (`talons` has snare; `claws` does not, and the difference is not obviously principled for a sixteen-legged gripper).
 
-2. **No trait sits at 100, which is unusual for the corpus but forced and correct here.** The body demands nothing: it is corporeal, unarmored, unrooted, and not luminous, so no trait is universal. The rule as written permits this (it requires at least one trait strictly between 0 and 100, not one at 100), so there is nothing to fix; I record it only because every prior species in this batch had a body-demanded 100 and a reviewer may expect one.
+2. **No trait sits at 100, which is unusual for the corpus but forced and correct here.** Resolved 2026-09-08 by the iteration-three ruling; four entries now sit at 100 and the case below is kept only as the record of how the pool read before it.
+
+    The body demands nothing: it is corporeal, unarmored, unrooted, and not luminous, so no trait is universal. The rule as written permits this (it requires at least one trait strictly between 0 and 100, not one at 100), so there is nothing to fix; I record it only because every prior species in this batch had a body-demanded 100 and a reviewer may expect one.
 
 ## Script denials
 
@@ -184,7 +187,7 @@ The one standing WARN, `signature.action.matrix`, is answered in the signature s
 
 ## Open questions for Nick
 
-Should the Newtapede's high legacy recovery rating be read as the `regenerative` trait at a much higher percent than the 35 I gave it? The legacy `statRatings` block for this species has exactly two filled fields, specialDefenseRating low and recoveryRating high, which makes recovery the single strongest relative signal the legacy data gives about it, and on a planet whose entire economy is the galaxy's only healing substance a fast-repairing body is thematically the most Poseidas thing a creature could carry. I held it to 35 because the skill is explicit that legacy numbers are a relative gauge and never a source sentence, and no prose in either file says this creature repairs itself. My recommendation is to leave it at 35 for this run and revisit it as a batch decision across all Poseidas species once Hippochamp is migrated, so the two species of the planet get a consistent reading of what a high legacy recovery rating means.
+Should the Newtapede's high legacy recovery rating be read as the `regenerative` trait at a much higher percent than the 35 I gave it? The legacy `statRatings` block for this species has exactly two filled fields, specialDefenseRating low and recoveryRating high, which makes recovery the single strongest relative signal the legacy data gives about it, and on a planet whose entire economy is the galaxy's only healing substance a fast-repairing body is thematically the most Poseidas thing a creature could carry. I held it to 35 because the skill is explicit that legacy numbers are a relative gauge and never a source sentence, and no prose in either file says this creature repairs itself. My recommendation was to leave it at 35 for this run and revisit it as a batch decision across all Poseidas species once Hippochamp is migrated, so the two species of the planet get a consistent reading of what a high legacy recovery rating means. Answered 2026-09-08: Nick ruled that a high `recoveryRating` names `regenerative` as a species-wide fact, so the entry is at 100 and this question is closed.
 
 ## Validator output
 
@@ -201,3 +204,4 @@ WARN signature.action.matrix        signature action "snare" is outside the phys
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: the rig job, algae trawling (the source's subject is the rigs), deck hauling, death-tide survival and the deep-cities workplace were all invented for this species; rewritten to the two source sentences and the planet-level facts. `claws` and `jaws` removed from anatomy and instruments: the art draws pad-tipped splayed toes and no mouth at all (the text's 'webbed feet' wins over the art for the feet, and no registry key names a webbed foot). `coils` added (a long segmented body that wraps, the registry's wrap-and-crush body) and the signature moved to coils / snare, inside the physical row, so the rule 4 exception is gone. Encyclopedia's 'faster in the sea than on land' replaced with the source's own combat claim. `regenerative` stays at 35 (legacy ratings are a gauge, not a sentence). Art matched the run's reading.
 - 2026-09-07, trait evidence bar (Nick): cut `regenerative`, `pack-bonded`, `stealthy`, `protective`; pool expected count 2.70 to 1.80.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored `regenerative`; cut none; expected count 1.80 to 2.15.
+- 2026-09-08, trait evidence bar iteration three (Nick): added `hardened` at 100; raised `resistant` 90 to 100, `regenerative` 35 to 100, `perceptive` 25 to 100; cut none; expected count 2.15 to 4.65.

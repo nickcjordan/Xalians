@@ -152,9 +152,10 @@
   },
   "traits": {
     "pool": {
+      "hardened": 100,
       "resistant": 92,
-      "perceptive": 40,
-      "ramming": 60
+      "ramming": 60,
+      "perceptive": 40
     }
   },
   "instruments": [

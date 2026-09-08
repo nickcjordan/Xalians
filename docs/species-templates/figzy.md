@@ -108,12 +108,13 @@ Independent percents; a trait not listed has a 0 chance.
 
 | Trait | Percent | Reason |
 |---|---|---|
-| `perceptive` | 70 | `art:` the two enormous ears and two very large eyes are the dominant features of the body, and the species carries the `psychic` special sense. This is a body fact, not a planet-wide inference. |
+| `perceptive` | 100 | Raised from 70 on 2026-09-08 under the demanded-trait rule. `physiology.senses.special` carries psychic, and a special sense is a ratified field of the record naming perceptive as a species-wide fact, so no percent may hide it. The art agrees: the two enormous ears and two very large eyes are the dominant features of the body. |
 | `hypnotic` | 45 | planet: "Soon, psychic Xalians capable of targeting and influencing emotion, thought, and perception were emerging from the fungal forests – creatures that could enter dreams or induce hypnosis - all in the hopes of harmonizing Telypso’s life, both old and new." This is the Generator's stated output class for the species' own kind and its own planet, so it is an origin fact rather than a behavior read off a planet-wide sentence; kept well under 100 because the sentence covers a class, not this species specifically. |
 | `telekinetic` | 35 | `art:` the starburst floats free of the body in front of the raised open hands, which is an effect acting at a distance without contact; species stub: "What this creature lacks in stature it makes up for with its incredible magical abilities." Above the 2 to 8 percent rarity band because the art shows it directly, but well short of universal. |
+| `foresighted` | 8 | Restored on 2026-09-08 at its former percent, planet report as ordinary evidence. The Telypso Generator environmental report lists anticipatory-response forms among the planet's fauna. That line names a category of form inside a list of categories rather than a fact of the whole population, so it is qualified evidence and does not set the entry at 100; it returns at the 8 the walkthrough authored, inside the registry's 2 to 8 rarity band for this key. |
 | `mind-sealed` | 25 | Restored under evidence class 3, a planet-wide environmental fact carrying an environmental adaptation. The Telypso Generator environmental report lists ambient psychic amplification of observer state among the planet's hazards and distress-tolerance thresholds among its output priorities, so a mind the ambient field cannot sway is the adaptation the world selects for. Held at its former percent because the report states the priority for the planet's output, not for this species alone. |
 
-Expected trait count: (70 + 45 + 35 + 25) / 100 = 1.75.
+Expected trait count: (100 + 45 + 35 + 25 + 8) / 100 = 2.13.
 
 Traits the body could plausibly carry that I left out, with reasons: `luminous` (Telypso glows, but the art draws no light organ on the body and the planet's glow is not the creature's); `nocturnal` (Telypso is not a night world); `solitary` (nothing in the sources shows the Figzy alone, and listing it against `pack-bonded` would add noise for no evidence); `armored`, `anchored`, `ramming`, `toxic`, `volatile`, `reflective`, `regenerative`, `resistant`, `phasing`, `menacing` (no source or art support; `menacing` in particular is contradicted by the stub's docility).
 
@@ -127,7 +128,8 @@ Traits the body could plausibly carry that I left out, with reasons: `luminous` 
 | `inspiring` | 20 | Body-type plausibility: the quoted docility is not a sentence about bolstering anything, and the bolstering clause is inference. |
 | `stealthy` | 20 | Argued from absence: no source sentence shows the Figzy hiding. |
 | `pack-bonded` | 20 | Planet fact stretched to behavior: Telypso's shared dream is a world fact, not a statement that this species lives in groups. |
-| `foresighted` | 8 | Class 4 fails on scope: `senses.special` carries psychic, but the widened bar reads a special sense as the body fact behind perceptive, which is already kept at 70, and precognition is a further claim the field does not state. See the line calls note. |
+
+(`foresighted` was cut here on 2026-09-07 at 8 and restored on 2026-09-08 on the Telypso anticipatory-response line; it is no longer cut.)
 
 ## Signature ability
 
@@ -207,3 +209,4 @@ logged to docs/species-templates/validation-log/figzy.jsonl
 - 2026-09-02, archetype rethink (Nick): the converted row kept the old 5-4-3-2-1 ladder shape shared by every record, so the distribution was re-authored on this species alone: sage 50, seeker 20, virtuoso 15, skirmisher 15 (was sage 36, seeker 22, skirmisher 21, virtuoso 14, prowler 7). Reasoning: deceptively smart with projected force: intelligence and will dominate outright; prowler dropped, it is not a stalker.
 - 2026-09-07, trait evidence bar (Nick): cut `protective`, `healing`, `mind-sealed`, `slippery`, `inspiring`, `stealthy`, `pack-bonded`, `foresighted`; pool expected count 3.33 to 1.50.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored `mind-sealed` (25, class 3); cut nothing, since the pool carries no `resistant`; expected count 1.50 to 1.75.
+- 2026-09-08, trait evidence bar iteration three (Nick): added `foresighted` (8, Telypso anticipatory-response forms, qualified evidence so restored at its authored percent); raised `perceptive` (70 to 100, psychic special sense); cut nothing, since the pool carries no `resistant`; expected count 1.75 to 2.13.

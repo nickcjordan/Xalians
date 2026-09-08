@@ -150,8 +150,10 @@
     "pool": {
       "armored": 100,
       "resistant": 100,
-      "regenerative": 90,
-      "toxic": 70,
+      "regenerative": 100,
+      "toxic": 100,
+      "perceptive": 100,
+      "volatile": 100,
       "anchored": 45
     }
   },

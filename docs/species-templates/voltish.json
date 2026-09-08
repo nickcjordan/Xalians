@@ -153,10 +153,13 @@
   },
   "traits": {
     "pool": {
-      "resistant": 90,
+      "resistant": 100,
+      "perceptive": 100,
+      "insulated": 100,
+      "hardened": 100,
       "volatile": 75,
       "menacing": 45,
-      "perceptive": 35,
+      "pack-bonded": 25,
       "armored": 10
     }
   },

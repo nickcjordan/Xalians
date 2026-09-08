@@ -151,7 +151,7 @@
   "traits": {
     "pool": {
       "luminous": 100,
-      "resistant": 96,
+      "resistant": 100,
       "reflective": 55,
       "mind-sealed": 34
     }

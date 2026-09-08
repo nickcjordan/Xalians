@@ -147,10 +147,10 @@
   },
   "traits": {
     "pool": {
-      "pack-bonded": 90,
       "volatile": 100,
-      "slippery": 70,
-      "resistant": 45
+      "slippery": 100,
+      "resistant": 100,
+      "pack-bonded": 90
     }
   },
   "instruments": [

@@ -113,7 +113,8 @@ Primary `psychic` from `species.type` Psychic, stored at affinity 100. On-graph 
 | Trait | % | Justification |
 |---|---|---|
 | `hypnotic` | 100 | `species`: "It uses its tail to draw attention to its big, hypnotic eyes." Body-demanded; the eyes are on every individual. Exempt from tilts. |
-| `perceptive` | 55 | `species`: "Once eye contact is made" requires it to find and meet a subject's eyes, a species behavior sentence, not a planet-wide one. Not universal: nothing says it sees through concealment. |
+| `perceptive` | 100 | Demanded at 100 by iteration three: `physiology.senses.special` carries `psychic`, and a special sense names this trait as a species-wide fact. Raised from the authored 55. The species sentence still agrees, `species`: "Once eye contact is made". |
+| `foresighted` | 6 | Restored at its authored percent as ordinary evidence, not as a demanded trait: the Telypso Generator Environmental Report lists anticipatory-response forms among its fauna observations. That line enumerates distinct form categories rather than stating a fact of every native, and this species is the trance-induction form of the same list, so it does not name the trait species-wide. Rolled. |
 | `healing` | 25 | `planet`: "the Generator began to treat the prisoners as patients, hoping to cure them and merge them into the mind of the rest of Telypso's psychosphere." This is a Generator-intent sentence about the psychic Xalians it produced, which colors what some individuals of a psychic species can do; kept at a minority percent precisely because it is not a species sentence. |
 
 
@@ -126,12 +127,13 @@ Primary `psychic` from `species.type` Psychic, stored at affinity 100. On-graph 
 | `solitary` | 30 | still argued from absence; no sentence and no ratified field states it |
 | `menacing` | 20 | class 4 fails: at 80 to 95 cm this is among the smallest of the roster, and small justifies nothing; no threat sentence and no threat display in the art |
 | `mind-sealed` | 15 | no sentence, no field; the psychic special sense maps to `perceptive` only |
-| `foresighted` | 6 | class 3 fails: the anticipatory-response line in the Generator report is a behavioral reading, and a planet fact may support an environmental adaptation only |
 | `telekinetic` | 4 | class 4 fails: the manipulation band is a capability, not a field the bar maps to this trait, and the planet fungi sentence is not about this species |
 
-Expected trait count after the bar, unchanged by iteration two: (100 + 55) / 100 = 1.55. (The `healing` row above was already removed from `traits.pool` by the 2026-09-02 orchestrator amendment, so the pool total before this pass was 3.15, not the 3.40 printed here.)
+Expected trait count after iteration three: (100 + 100 + 6) / 100 = 2.06. (The `healing` row above was already removed from `traits.pool` by the 2026-09-02 orchestrator amendment, so the pool total before the 2026-09-07 bar was 3.15, not the 3.40 printed here.)
 
-At least one entry is strictly between 0 and 100 (`perceptive` at 55). No exclusion pair is both at 100; `pack-bonded` is not in the pool at all.
+At least one entry is strictly between 0 and 100 (`foresighted` at 6). No exclusion pair is both at 100; `pack-bonded` is not in the pool at all.
+
+Ruling 3 for iteration three: `resistant` is not in this pool, so the narrowed definition changes nothing. No hazard, output priority or fauna observation on Telypso names `hardened`, `insulated`, `dormant` or `territorial`: the world's hazards are psychic amplification, environmental reactivity and navigational unreliability, and its output priorities are psychic stabilization capacity, emotional regulation function and distress-tolerance thresholds, none of which map to a trait.
 
 Plausible traits deliberately left out: `protective` (the harmonizing purpose belongs to the Generator, not to a shielding instinct in this body), `luminous` (the world glows, this creature is not shown to), `nocturnal` (Telypso has an "ultraviolet sun" and no perpetual night), `resistant` (no bodily-contamination sentence), `inspiring` (the presence draws attention, it does not bolster allies; nothing supports it), `pack-bonded` (no cooperation sentence, and listing it against `solitary` with no evidence would be padding).
 
@@ -237,3 +239,4 @@ The single WARN is answered in the Answers to WARN lines section above.
 - 2026-09-02, archetype rethink (Nick): the converted row kept the old 5-4-3-2-1 ladder shape shared by every record, so the distribution was re-authored on this species alone: virtuoso 40, sovereign 25, prowler 15, skirmisher 12, sage 8 (was virtuoso 36, prowler 22, skirmisher 21, sage 14, rogue 7). Reasoning: the hypnotist (hypnotic 100, charisma its top band) is charisma and intelligence, then charisma and will; the hanging climber body keeps a real prowler and skirmisher share; rogue dropped.
 - 2026-09-07, trait evidence bar (Nick): cut slippery, stealthy, solitary, menacing, mind-sealed, foresighted, telekinetic; pool expected count 3.15 to 1.55.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored none; cut none; expected count 1.55 to 1.55. Every cut entry was re-tested against the widened bar, including the ratified-field class and the two legacy-rating mappings, and none passed. `resistant` is not in this pool, so ruling B changes nothing here.
+- 2026-09-08, trait evidence bar iteration three (Nick): added foresighted (6, rolled at its authored percent, Telypso anticipatory-response forms line, not a demanded trait); raised perceptive 55 to 100 (`senses.special` psychic, a demanded trait sits at 100); cut none; expected count 1.55 to 2.06.

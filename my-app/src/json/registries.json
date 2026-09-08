@@ -230,7 +230,27 @@
     {
       "key": "resistant",
       "name": "Resistant",
-      "nature": "Shrugs off contamination: toxins, disease, radiation, corrosion, hostile atmospheres (bodily only)."
+      "nature": "Shrugs off contamination: toxins, disease, radiation, corrosion, chemically hostile air (bodily only; thin or crushing air is hardened, charge is insulated)."
+    },
+    {
+      "key": "hardened",
+      "name": "Hardened",
+      "nature": "Built for physical extremes: heat, cold, pressure, dryness, thin or crushing air (bodily only; the physical twin of resistant, which covers contamination)."
+    },
+    {
+      "key": "dormant",
+      "name": "Dormant",
+      "nature": "Suspends its own vitals to wait out what it cannot survive awake and wakes on a trigger (bodily only)."
+    },
+    {
+      "key": "insulated",
+      "name": "Insulated",
+      "nature": "Charge, current and discharge pass over or through it without harm (bodily only; the energy twin of resistant and hardened)."
+    },
+    {
+      "key": "territorial",
+      "name": "Territorial",
+      "nature": "Stronger holding ground it has claimed or been set to hold; denies passage rather than pursuing."
     },
     {
       "key": "ramming",

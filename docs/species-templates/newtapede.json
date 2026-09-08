@@ -155,10 +155,11 @@
   },
   "traits": {
     "pool": {
-      "resistant": 90,
-      "slippery": 65,
-      "regenerative": 35,
-      "perceptive": 25
+      "hardened": 100,
+      "resistant": 100,
+      "regenerative": 100,
+      "perceptive": 100,
+      "slippery": 65
     }
   },
   "instruments": [

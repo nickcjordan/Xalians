@@ -149,8 +149,8 @@
   "traits": {
     "pool": {
       "ramming": 100,
-      "slippery": 70,
-      "resistant": 55,
+      "slippery": 100,
+      "resistant": 100,
       "perceptive": 40
     }
   },
