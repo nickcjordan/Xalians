@@ -148,10 +148,9 @@
   "traits": {
     "pool": {
       "nocturnal": 100,
-      "perceptive": 100,
-      "slippery": 100,
-      "foresighted": 100,
-      "mind-sealed": 35
+      "slippery": 40,
+      "perceptive": 35,
+      "mind-sealed": 25
     }
   },
   "instruments": [

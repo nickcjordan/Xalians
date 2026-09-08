@@ -74,14 +74,27 @@ Legacy `statRatings` used only as a relative gauge: `specialAttackRating: high` 
 
 Primary `light` from species `type: Light`. Secondaries are whatever the graph allows for light (fire, electric, psychic); the template does not pick one and does not override the 75/25 baseline odds, so `affinityOdds` is omitted.
 
-## Trait pool
+## Trait pool (required 1, rolled sum 100, expected count 2.00)
 
-Expected trait count after iteration three: (100 + 100 + 55 + 34) / 100 = 2.89, up from 2.85. No exclusion pair is present, so no adjustment. The first authored pool came out at 3.90 and the script warned above its 3.5 bar; that reduction is recorded under Script denials, and the 2026-09-07 evidence bar cut four further entries, recorded in the table below.
+Iteration four applies Nick's pool shape of 2026-09-08. One entry is required and three are rolled, the rolled shares sum to exactly 100, and the pool holds four entries. Expected count falls from 2.89 to 2.00. The chance an individual lands none of the rolled entries is 0.60 times 0.65 times 0.75, which is 0.293.
 
-- `luminous: 100`: body-demanded. Species: "The gems growing out of this creature's head transmit powerful light energy." A body that emits light shed from its own crown is luminous in every individual.
-- `resistant: 100`: environment-demanded, raised from 96 on 2026-09-08. The Luminax record lists cumulative radiation load among `report.hazards`, and a hazard of the home planet names the adaptation every native must carry; `report.fauna.observations` states radiation-tolerant integument as universal sunward, and refractive carapaces are one of the two examples it gives, which fits a crystal-crowned body. Planet: "Being well adapted to the immense radiation present on their planet, Xalians from Luminax were a natural choice of labor for the design of the Stellaris Superstructure." The old 4 percent gap was Generator variance rather than evidence, and no percent may hide a demanded trait; `reflective` at 55 and `mind-sealed` at 34 keep the pool varying. Radiation is contamination, so the narrowing of this trait leaves it untouched.
-- `reflective: 55`: species and planet together: the crown is faceted crystal (art) and planet: the crystalline leaves of Luminax work by "refracting the intense light of Luminax's suns to reflect back harmful wave lengths". This is the closest registry trait to a prism that turns energy back, and it is a body reading, not a behavior. Held at 55, well below 100, because the planet sentence is about the flora and not about this creature; a faceted crown makes reflection plausible in a majority of individuals, not universal.
-- `mind-sealed: 34`: species: "don't be deceived by its calm temperament" is the one sentence about its inner state, and `mind-sealed` is the registry trait for a mind nothing sways. Kept under half because a calm temperament is weaker evidence than an unbreakable one.
+### Required
+
+| Trait | Evidence |
+|---|---|
+| `luminous` | Body fact. The crystal horns growing from this creature's head transmit powerful light energy, so the body carries light-organs and sheds their light in every individual, and the signature ability, Coronet of the Twin Suns, is that crown released in one line. |
+
+### Rolled (shares sum to 100)
+
+| Trait | Share | Evidence |
+|---|---|---|
+| `reflective` | 40 | A body reading with a planet line that covers this form. The art shows faceted crystal horns, Luminax `report.fauna.observations` names refractive carapaces as one of its two examples of the sunward integument, and the planet's crystalline flora work by refracting the suns' light to turn harmful wavelengths back. Largest share as the closest registry fit for a prism that returns energy, but not required, because the refraction sentence is about the flora rather than about this creature. |
+| `resistant` | 35 | Class 3. Luminax `report.hazards` opens with cumulative radiation load and its fauna line states radiation-tolerant integument as universal sunward, which is contamination under the narrowed definition. It rolls rather than being required, since the species' own description is about the light the horns give off and never about surviving what the suns pour down. |
+| `mind-sealed` | 25 | The one species sentence about its inner state, an instruction not to be deceived by its calm temperament, and this is the registry trait for a mind nothing sways. Smallest share because a calm temperament is a weaker reading than an unbreakable one, and no second source supports it. |
+
+### Cut by the pool shape (2026-09-08, iteration four)
+
+No entry was cut this iteration. The pool held four entries before the reshape and holds four after; `resistant` moves from universal to rolled.
 
 #### Cut by the evidence bar (2026-09-07, iterations one and two)
 
@@ -169,3 +182,4 @@ logged to docsspecies-templatesalidation-logcrystorn.jsonl
 - 2026-09-07, trait evidence bar (Nick): cut protective, anchored, menacing, foresighted; pool expected count 3.47 to 2.85.
 - 2026-09-08, trait evidence bar iteration three (Nick): added none; raised resistant; cut none; expected count 2.85 to 2.89. `hardened` was checked against the sweep's twin-sun insolation suggestion and NOT added: Luminax lists no thermal hazard and no thermal output priority, and this record's temperature band of 30 to 70 C sits inside the habitable band rather than at a lethal extreme. `perceptive` is not in the pool and nothing demands it, since `physiology.senses` carries no `special` entry after the 2026-09-02 removal of the heat-sense. The four earlier cuts stay cut.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored none; cut none; expected count 2.85 to 2.85. All four cut entries were re-checked against the widened bar and none passes: `protective` and `foresighted` have neither sentence nor field, `anchored` gets no help from `signatureAbility`, whose action is `beam` and whose description is a still body releasing light rather than a snare that holds and a body that braces, and `menacing` fails the class 4 size route because that route needs a threat sentence alongside the large body, and the record's one temperament line is about deception rather than fear. `resistant` at 96 was re-checked under ruling B and kept: the Luminax report names cumulative radiation load as a hazard and radiation-tolerant integument as universal sunward, which is contamination and not temperature.
+- 2026-09-08, pool shape (Nick): required luminous; rolled reflective 40, resistant 35, mind-sealed 25; expected count 2.89 to 2.00.

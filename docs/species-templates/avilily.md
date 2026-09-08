@@ -43,18 +43,32 @@ Read from the body and the legacy relative gauge. `agility [62, 85]` and `reflex
 
 Primary `plant` from the species entry type. On graph secondaries for plant are water, chemical, and psychic; I do not pick one. `affinityOdds` omitted, so the species inherits the 75/25 baseline. A case exists for tilting chemical up, since the sedative saliva is chemistry, but the species is not shown to be more prone to a second affinity than any other creature, and the odds field governs how often an affinity appears at all, not which one. Left at baseline.
 
-### Trait pool
+### Trait pool (required 2, rolled sum 100, expected count 3.00)
 
-Expected count is 6.30 traits after iteration three, computed as 100 plus 100 plus 100 plus 100 plus 80 plus 70 plus 45 plus 35, which is 630, divided by 100. It was 3.25 before this iteration. There is no exclusion pair in the pool, since `solitary` is absent. Three entries remain cut by the 2026-09-07 evidence bar and are recorded in the table below.
+Iteration four applies Nick's pool shape of 2026-09-08. Two entries are required and four are rolled, the rolled shares sum to exactly 100, and the pool holds six entries, the maximum. Expected count falls from 6.30 to 3.00. The chance an individual lands none of the rolled entries is 0.65 times 0.70 times 0.80 times 0.85, which is 0.309.
 
-- `toxic: 100`: species, "their saliva contains a powerful sedative which paralyzes anything that it comes in contact with". Raised from 95 on 2026-09-08: the sentence states the fact of the species' saliva as such, with no qualifier, so it is plainly universal and a demanded trait sits at 100. The enhancement clause the earlier reading leaned on varies the strength of the agent, not whether an individual carries one, and four other entries now sit below 100 so the pool still varies.
-- `resistant: 100`: environment-demanded, added 2026-09-08. Floria `report.hazards` lists toxic fungal blooms, and a hazard of the home planet names the adaptation every native must carry, which under the narrowed definition is contamination tolerance. The earlier walkthrough left this out because a planet-wide sentence may not carry a species trait; the iteration-three ruling makes a hazards entry of the home planet a demand rather than ordinary evidence, and the reading also fits a bird that manufactures a potent sedative in its own mouth.
-- `regenerative: 100`: environment-demanded, added 2026-09-08. Floria `report.outputPriorities` names regenerative tissue, and an output priority that names a trait names it for the planet's natives. The same priority is what the history's regrowing forest runs on.
-- `territorial: 100`: demanded, added 2026-09-08. Floria `report.fauna.observations` carries a territorial strategy line, growth, entanglement and regrowth in place of engagement, stated of the population without a quantifier, and the species sentence states the same fact for this species, species, "swarms of flittering Avililies protect the most sacred parts of Floria’s jungles, paralyzing and consuming all who dare to threaten the pristineness of their forests". Holding claimed ground against anything that enters it is the registry definition, and it is a better fit for that sentence than `protective`, which is why `protective` stays at its authored percent below.
-- `stealthy: 80`: species, "camouflaging into the planet’s many flowery meadows as they travel". Concealment until it acts is the definition, and this is a species sentence, not a planet-wide one.
-- `pack-bonded: 70`: species, "swarms of flittering Avililies protect the most sacred parts of Floria’s jungles". They act in numbers. Not 100 because the same description also shows individual Avililies carried alone by Vallerii explorers, species, "serving as mobile bug repellent on Florian ventures". `solitary` is not in the pool at all, so no exclusion comparison arises.
-- `perceptive: 45`: class 4, ratified fields of the record itself. `physiology.senses` grades sight at 65 to 85, whose upper bound of 85 clears the 80 line the 2026-09-08 tightening set for a graded band, so the entry survives iteration three at its authored percent. The smell band at 50 to 70 and the hearing band no longer count toward it on their own. Held below 100 because two acute senses on a small hunting bird are a strong tendency rather than a certainty.
-- `protective: 35`: species, "swarms of flittering Avililies protect the most sacred parts of Floria’s jungles". The instinct to shield is right there in the verb, but the object is a place rather than another creature, so this is a partial fit at a moderate percent rather than a high one.
+#### Required
+
+| Trait | Evidence |
+|---|---|
+| `toxic` | Body fact, stated of the species without a qualifier: the saliva contains a powerful sedative that paralyzes what it touches. A body that manufactures a paralytic agent carries it in every individual, and the signature ability, Blossoming Ambuscade, is that agent applied. |
+| `territorial` | The behavior the description is built around: swarms hold the most sacred parts of Floria's jungles and paralyze and consume whatever threatens them. Holding claimed ground against anything that enters it is the registry definition, and Floria `report.fauna.observations` states the same strategy for the population, growth and entanglement and regrowth in place of engagement. |
+
+#### Rolled (shares sum to 100)
+
+| Trait | Share | Evidence |
+|---|---|---|
+| `stealthy` | 35 | A species sentence about this bird's own behavior, camouflaging into the flowery meadows as it travels, and concealment until it acts is the registry definition. Strongest of the rolled entries, since it rests on the species' own line and nothing has to be borrowed for it. |
+| `pack-bonded` | 30 | A species sentence again, the swarms that hold the sacred jungle. Below the camouflage entry because the same description also shows single Avililies carried alone by Vallerii explorers as mobile repellent, so acting in numbers is a strong tendency rather than the whole species. `solitary` is not in the pool, so the exclusion pair never both roll. |
+| `resistant` | 20 | Class 3, a planet-wide hazard. Floria `report.hazards` lists toxic fungal blooms, which under the narrowed definition is contamination, and a bird that carries a potent agent in its own mouth is a plausible carrier of the tolerance. A hazard is ordinary evidence rather than a demand under the new shape, so it rolls. |
+| `perceptive` | 15 | Class 4, a ratified field of the record. `physiology.senses` grades sight at 65 to 85, whose top clears the 80 line. The senses list may never raise this to required, so it takes the smallest share. |
+
+#### Cut by the pool shape (2026-09-08, iteration four)
+
+| Trait | Former percent | Reason |
+|---|---|---|
+| `regenerative` | 100 | Its only support was the Floria output priority naming regenerative tissue, and an output priority alone never brings a trait into a pool. Floria's fauna observations name regrowth as a territorial strategy of the flora-integrated forms rather than a healing body, and no species sentence shows this bird repairing itself. |
+| `protective` | 35 | Pool full, weaker evidence. It rests on the same sentence that carries the required `territorial` entry, and its object is a place rather than another creature, which is a partial fit at best. Spending a rolled slot on a second reading of one sentence is the weakest use of the six. |
 
 #### Cut by the evidence bar (2026-09-07, iterations one and two)
 
@@ -140,3 +154,4 @@ WARN conduits.source                conduit secretion for plant: the validator a
 - 2026-09-07, trait evidence bar (Nick): cut perceptive, slippery, hypnotic, inspiring; pool expected count 3.90 to 2.80.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored perceptive (45, class 4, the record's graded sight and smell bands); cut none; expected count 2.80 to 3.25.
 - 2026-09-08, trait evidence bar iteration three (Nick): added resistant, regenerative, territorial; raised toxic; cut none; expected count 3.25 to 6.30.
+- 2026-09-08, pool shape (Nick): required toxic, territorial; rolled stealthy 35, pack-bonded 30, resistant 20, perceptive 15; expected count 6.30 to 3.00.

@@ -150,13 +150,13 @@
       55
     ]
   },
-  "traits": {
+    "traits": {
     "pool": {
       "regenerative": 100,
-      "perceptive": 100,
-      "insulated": 100,
-      "volatile": 85,
-      "stealthy": 70
+      "stealthy": 40,
+      "volatile": 30,
+      "insulated": 20,
+      "perceptive": 10
     }
   },
   "instruments": [

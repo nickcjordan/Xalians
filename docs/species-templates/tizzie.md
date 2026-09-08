@@ -110,13 +110,21 @@ Primary `psychic` from `species.type` Psychic, stored at affinity 100. On-graph 
 
 ## 9. Trait pool
 
-| Trait | % | Justification |
-|---|---|---|
-| `hypnotic` | 100 | `species`: "It uses its tail to draw attention to its big, hypnotic eyes." Body-demanded; the eyes are on every individual. Exempt from tilts. |
-| `perceptive` | 100 | Demanded at 100 by iteration three: `physiology.senses.special` carries `psychic`, and a special sense names this trait as a species-wide fact. Raised from the authored 55. The species sentence still agrees, `species`: "Once eye contact is made". |
-| `foresighted` | 6 | Restored at its authored percent as ordinary evidence, not as a demanded trait: the Telypso Generator Environmental Report lists anticipatory-response forms among its fauna observations. That line enumerates distinct form categories rather than stating a fact of every native, and this species is the trance-induction form of the same list, so it does not name the trait species-wide. Rolled. |
-| `healing` | 25 | `planet`: "the Generator began to treat the prisoners as patients, hoping to cure them and merge them into the mind of the rest of Telypso's psychosphere." This is a Generator-intent sentence about the psychic Xalians it produced, which colors what some individuals of a psychic species can do; kept at a minority percent precisely because it is not a species sentence. |
+Pool shape, 2026-09-08 ruling: one required trait and three rolled entries whose shares sum to 100. Iteration three had `hypnotic` and `perceptive` both at 100; only the first defines this species in its own lore, so the second drops into the rolled set.
 
+**Required**
+
+| Trait | Evidence |
+|---|---|
+| `hypnotic` | The one act the species is built around, in its own description and in its signature ability alike. `species`: "It uses its tail to draw attention to its big, hypnotic eyes." The record's signature, Spiral of Perfect Attention, is a `gaze` snare through those same eyes, and the upgraded description makes the turning disc, the eye contact and the hold the entire working of the creature. Body-demanded as well: the spiral eyes fill half the face in the art and are on every individual. |
+
+**Rolled (shares sum to 100)**
+
+| Trait | Share | Evidence |
+|---|---|---|
+| `perceptive` | 55 | Strongest of the rolled set. `physiology.senses.special` carries `psychic`, and an entry in the record's special-sense list is evidence for this trait but never enough to make it required, since a required trait must not restate a field the record already carries. The species sentence agrees, `species`: "Once eye contact is made". Demoted from 100. |
+| `healing` | 37 | Restored to the pool. The upgraded description makes the therapeutic act this creature's own rather than the Generator's: it was generated to counterbalance the psychic energies of the marooned Vallerii, and the treatment proceeds from inside the patient's mind rather than through the body. Telypso's output priorities of psychic stabilization capacity and emotional regulation function agree, though an output priority alone would not carry an entry; the species sentence is what does. `planet`: "the Generator began to treat the prisoners as patients, hoping to cure them and merge them into the mind of the rest of Telypso's psychosphere." |
+| `foresighted` | 8 | Held in the rare band the 2026-09-08 ruling sets for this trait. The Telypso Generator Environmental Report lists anticipatory-response forms among its fauna observations, and that report is the only support; the species' own description claims no foresight, so it cannot rise above the band. |
 
 #### Cut by the evidence bar (2026-09-07)
 
@@ -129,9 +137,9 @@ Primary `psychic` from `species.type` Psychic, stored at affinity 100. On-graph 
 | `mind-sealed` | 15 | no sentence, no field; the psychic special sense maps to `perceptive` only |
 | `telekinetic` | 4 | class 4 fails: the manipulation band is a capability, not a field the bar maps to this trait, and the planet fungi sentence is not about this species |
 
-Expected trait count after iteration three: (100 + 100 + 6) / 100 = 2.06. (The `healing` row above was already removed from `traits.pool` by the 2026-09-02 orchestrator amendment, so the pool total before the 2026-09-07 bar was 3.15, not the 3.40 printed here.)
+Expected trait count after the pool shape: (100 + 55 + 37 + 8) / 100 = 2.00, down from the 2.06 of iteration three. The rolled set is three entries, so an individual expects about one trait beyond `hypnotic`, and the chance of landing none of the three is 0.45 times 0.63 times 0.92, which is 26.1 percent. (The `healing` row had been dropped from `traits.pool` by the 2026-09-02 orchestrator amendment; it is restored here as a rolled entry on the strength of the upgraded description, which makes the treatment the creature's own act.)
 
-At least one entry is strictly between 0 and 100 (`foresighted` at 6). No exclusion pair is both at 100; `pack-bonded` is not in the pool at all.
+Pool size is four entries, inside the cap of six. Three entries sit strictly between 0 and 100, and one sits at 100. No exclusion pair is present: neither `pack-bonded` nor `solitary` is in the pool.
 
 Ruling 3 for iteration three: `resistant` is not in this pool, so the narrowed definition changes nothing. No hazard, output priority or fauna observation on Telypso names `hardened`, `insulated`, `dormant` or `territorial`: the world's hazards are psychic amplification, environmental reactivity and navigational unreliability, and its output priorities are psychic stabilization capacity, emotional regulation function and distress-tolerance thresholds, none of which map to a trait.
 
@@ -240,3 +248,4 @@ The single WARN is answered in the Answers to WARN lines section above.
 - 2026-09-07, trait evidence bar (Nick): cut slippery, stealthy, solitary, menacing, mind-sealed, foresighted, telekinetic; pool expected count 3.15 to 1.55.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored none; cut none; expected count 1.55 to 1.55. Every cut entry was re-tested against the widened bar, including the ratified-field class and the two legacy-rating mappings, and none passed. `resistant` is not in this pool, so ruling B changes nothing here.
 - 2026-09-08, trait evidence bar iteration three (Nick): added foresighted (6, rolled at its authored percent, Telypso anticipatory-response forms line, not a demanded trait); raised perceptive 55 to 100 (`senses.special` psychic, a demanded trait sits at 100); cut none; expected count 1.55 to 2.06.
+- 2026-09-08, pool shape (Nick): required hypnotic; rolled perceptive 55, healing 37, foresighted 8; expected count 2.06 to 2.00.

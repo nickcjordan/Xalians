@@ -97,17 +97,25 @@ The legacy `statRatings` are used only as a relative gauge: `standardAttackRatin
 
 Primary `sand` from the species `type` field, stored at affinity 100. On-graph secondaries for sand are water, rock, and ghost; the template does not pick one. `affinityOdds` omitted, so the 75/25 baseline is inherited. There is a real temptation to override toward `water`, given planet's "Endessa’s oceans had been vaporized" and a venom that drains water, but an odds override needs a lore reason about this species and the sources give a mechanism, not a stated affinity, so the baseline stands.
 
-### Trait pool
+### Trait pool (expected count 3.00)
 
-Expected count is the sum of the percents divided by 100; no exclusion pair remains in the pool: 100 + 100 + 100 + 90 + 70 + 25 + 20 = 505, so 5.05 traits per individual.
+Reshaped on 2026-09-08 under Nick's pool-shape ruling. Two required traits, four rolled entries whose shares sum to 100, six entries in all, which is the cap. The chance an individual lands none of the four rolled traits is 30.6 percent.
 
-- `toxic: 100`. Body-demanded. species: "attack with a unique venom that drains the victim’s water when bitten". The registry's `toxic` is `natural weapons deliver debilitating agents`, which is exactly the bite. Every individual has it.
-- `stealthy: 90`. Unchanged, and now one of three entries that keep individuals different. species: "hides beneath the sand" is a species sentence, not a planet-wide one, and it is the first thing the description says about its behavior. Not 100 because the registry requires at least one entry strictly between 0 and 100 for individuals to differ, and a buried ambusher is the honest place to put the variance rather than on its venom.
-- `hypnotic: 70`. species: "can lure and mesmerize opponents long enough for them to draw near". `hypnotic` is `entrances and holds attention, dulling the will to act`, which is the word mesmerize. Below 100 because the source hedges with "can".
-- `hardened: 100`. New. Evidence class 4, the Generator Environmental Report for Endessa, whose hazard list carries thermal load and desiccation and whose output priorities carry water retention and thermal shielding. Under the iteration-three ruling a hazard of the home planet names the environmental adaptation every native must carry, and heat and dryness are physical extremes of the body, which the narrowed registry gives to `hardened`. This is the key that properly owns the support behind the `resistant` entry cut in iteration two, so the fact is restored to the pool under the right name rather than lost. A serpent that lies buried in the dunes of a world whose oceans were vaporized carries it at 100.
-- `perceptive: 100`. Raised from 40. Evidence class 4, a ratified field of the record: `physiology.senses.special` carries tremorsense, and every special sense names `perceptive` as a species-wide fact, so no percent may hide it. The `smell` band's upper bound of 75 no longer counts as support under the tightened rule, which requires a graded band to reach 80, but the special sense settles it alone. A buried ambusher that reads the ground is the counter to concealment.
-- `nocturnal: 25`. Evidence class 3, a planet-wide environmental fact from the Generator Environmental Report for Endessa, whose terrain note records that surface insolation is lethal without adaptation on a dual-star world and whose mobility entry rates sprint viable only in low-insolation hours. Surface activity on this world belongs to the dark hours, which is an environmental adaptation and not a behavior; restored at its former percent of 25 because burial remains this species' own stated answer to the suns.
-- `menacing: 20`. art shows a flared hood and bared fangs, which is a threat display. Low because the description never says its presence erodes anything; its effect on the will is the lure, which is `hypnotic`.
+**Required**
+
+| Trait | Evidence |
+|---|---|
+| `toxic` | The point of the creature in its own description and the act its signature ability performs: "attack with a unique venom that drains the victim’s water when bitten, causing them to suffer and die from extreme dehydration". The registry's `toxic` is natural weapons delivering debilitating agents, which is this bite exactly. Every individual has it. |
+| `stealthy` | The behavior the description states first and flatly: "hides beneath the sand", with a `burrow` band topping out at 85 to match. The whole attack sequence begins buried, so a Thirstaserp that is not concealed is not the creature the sources describe. |
+
+**Rolled (shares sum to 100)**
+
+| Trait | Share | Evidence |
+|---|---|---|
+| `hypnotic` | 40 | A species sentence about its own behavior: "can lure and mesmerize opponents long enough for them to draw near". Strongest of the rolled entries, and rolled rather than required only because the source hedges the lure where it states the venom and the burial flatly. |
+| `hardened` | 25 | Endessa's hazard list carries thermal load and desiccation and its output priorities carry water retention and thermal shielding, and a serpent lying buried in the dunes of a world whose oceans were vaporized is covered by them. Heat and dryness are physical extremes of the body, which the narrowed registry gives to `hardened`. Planet-wide, so rolled. |
+| `perceptive` | 20 | Record fields: `physiology.senses.special` carries tremorsense, which suits a buried ambusher that reads the ground. `smell` tops out at 75, under the bar of 80, so the special sense is the whole of the case. The senses list is rolled-set evidence and never makes the trait required. |
+| `menacing` | 15 | art: a flared hood and bared fangs, which is a threat display. Weakest entry: the description never says its presence erodes anything, and its stated effect on the will is the lure, which `hypnotic` already carries. |
 
 #### Cut by the evidence bar (2026-09-07)
 
@@ -117,6 +125,7 @@ Expected count is the sum of the percents divided by 100; no exclusion pair rema
 | `pack-bonded` | 10 | no source sentence; a species-level plural is not evidence of grouping |
 | `slippery` | 30 | body-type plausibility (a limbless serpent), and the art shows a banded, ridged body rather than the smooth one the justification names |
 | `resistant` | 60 | class 3 fails under the iteration-two ruling: its only support was Endessa's heat and abrasion, and a hazard profile of thermal load and desiccation never justifies `resistant`; the narrowed 2026-09-08 definition confirms the cut, and that support now sits in the pool as `hardened` |
+| `nocturnal` | 25 | pool full, weaker evidence (2026-09-08): a planet-wide insolation note, and burial is this species own stated answer to the suns |
 
 Traits the body could plausibly carry that were left out, with reasons: `armored` (the covering is `scales`, which the registry defines as flexible and unarmored, and the anatomy carries no `shell`); `ramming` (no source shows it hitting with movement behind it, and its kill is venom); `regenerative` (nothing in either source, and `recoveryRating` is blank in the legacy ratings so the class 5 mapping does not reach it); `anchored` (a burrower that hides is not a body that cannot be moved); `luminous`, `telekinetic`, `foresighted`, `phasing`, `reflective`, `volatile`, `healing`, `protective`, `inspiring`, `mind-sealed` (no support of any kind in either source). Registry tilts are not re-declared here; they apply at generation.
 
@@ -193,12 +202,13 @@ Should the Thirstaserp declare an affinity-odds override toward `water`? The bas
 Final run (run 3):
 
 ```
-WARN traits.expected                expected trait count 4.95 is above 3.5; confirm the species is meant to carry that many
+$ node docs/species-templates/tools/validate-template.js thirstaserp
+
 WARN instruments.predicate.source   channel "secretion" has a source-text predicate (an emitted substance); the validator agent must confirm the quoted sentence
 WARN signature.description.elementkey signature description uses element key word(s) as plain words: water (allowed only as ordinary English, never as a type label)
 WARN enc.definition.elementkey      encyclopedia definition uses element key word(s) as plain words: water (allowed only as ordinary English, never as a type label)
 
-0 FAIL, 4 WARN (structurally clean; every WARN must be answered in the walkthrough)
+0 FAIL, 3 WARN (structurally clean; every WARN must be answered in the walkthrough)
 ```
 
 ## Orchestrator amendments
@@ -207,3 +217,4 @@ WARN enc.definition.elementkey      encyclopedia definition uses element key wor
 - 2026-09-07, trait evidence bar (Nick): cut `solitary`, `pack-bonded`, `perceptive`, `slippery`, `nocturnal`; pool expected count 4.90 to 3.40.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored `perceptive`, `nocturnal`; cut `resistant`; expected count 3.40 to 3.45.
 - 2026-09-08, trait evidence bar iteration three (Nick): added `hardened` at 100; raised `perceptive` 40 to 100; cut none; expected count 3.45 to 5.05.
+- 2026-09-08, pool shape (Nick): required `toxic`, `stealthy`; rolled `hypnotic` 40, `hardened` 25, `perceptive` 20, `menacing` 15; expected count 5.05 to 3.00.

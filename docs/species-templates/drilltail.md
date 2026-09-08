@@ -79,14 +79,24 @@ Word count 108, one paragraph, present tense, ends on a plain present-tense fact
 
 ## Trait pool
 
-Expected count: (100 + 100 + 80 + 100 + 100) / 100 = 4.80. No exclusion pair is present: `pack-bonded` stays cut by the evidence bar and `solitary` was never listed.
+Pool shape of 2026-09-08. Two required traits sit at 100 and the rolled set shares exactly 100 between three entries, so an individual expects one extra trait and landing all three is rare. Expected count: 2 + 100/100 = 3.00. No exclusion pair is present: `pack-bonded` stays cut by the evidence bar and `solitary` was never listed.
 
-- `armored: 100`: body-demanded by the `chitin` covering and the `shell` anatomy key. The registry states a shelled or plated body means armored at 100.
-- `hardened: 100`: added at 100 under the demanded-trait rule, environmental class. The Endessa Generator environmental report lists thermal load and desiccation among the planet's hazards, and a hazard entry names the adaptation every native must carry; water retention and thermal shielding are two of the three output priorities, and the fauna line about desiccation-immune surface-crossing forms carries no quantifier. Under the 2026-09-08 narrowing, heat and dryness belong to `hardened`, which is why the same facts that failed to hold `resistant` in iteration two hold this key instead.
-- `stealthy: 80`. Source, species: "darting in and out of the surface as they hunt for prey to ambush". A species behavior from a species sentence, not a planet-wide one. Below 100 so individuals differ, and after iteration three it is the only entry in this pool that is.
-- `perceptive: 100`: raised from 45 under the demanded-trait rule of 2026-09-08. `physiology.senses.special` carries tremorsense, and a special sense is a ratified field of the record naming perceptive as a species-wide fact, so no percent may hide it. The Endessa Generator environmental report reinforces it, listing vibration-hunting forms among the planet's fauna.
-- `slippery: 100`: raised from 25 under the demanded-trait rule. The `evasionRating` of high in `species.json` is one of the two legacy ratings that map to a trait, it maps to slippery, and a legacy rating that names the trait sets the entry at 100 rather than at an authored percent.
-- Traits I considered and left out: `nocturnal`, because nothing in either source names night habits and Endessa's twin suns are the opposite register; `anchored`, because the body is defined by movement; `menacing`, `hypnotic`, and `inspiring`, because no presence claim appears anywhere in the sources; `ramming`, because the tail bores rather than delivering a moving blow; `regenerative`, `healing`, and `protective`, because nothing supports them.
+### Required
+
+| Trait | Evidence |
+|---|---|
+| `armored` | The body fact. Covering is `chitin` and anatomy carries `shell`; species: "scorpion-like creatures", with the art drawing the trunk and limbs as hard stepped segments. A shelled, chitin-covered body carries the trait on every individual. |
+| `stealthy` | The behavior the description is built around. Species: "darting in and out of the surface as they hunt for prey to ambush". A hunter that arrives from beneath the sand is unseen until it acts, which is the registry sense of the key, and it is the act the signature ability is named for. |
+
+### Rolled (shares sum to 100)
+
+| Trait | Share | Evidence |
+|---|---|---|
+| `slippery` | 45 | Strongest of the rolled set. The `evasionRating` of high in `species.json` is one of the two legacy ratings that map to a trait and it maps to slippery, which ranks it first among the rolled entries. |
+| `hardened` | 30 | A planet-wide adaptation rather than the point of this creature. The Endessa Generator environmental report lists thermal load and desiccation among the planet's hazards, water retention and thermal shielding are two of its three output priorities, and the fauna line on desiccation-immune surface-crossing forms covers this body. Rolled, not required, because the species description is about boring and hunting, not about enduring the dunes. |
+| `perceptive` | 25 | The weakest class, a record field: `physiology.senses.special` carries tremorsense. A senses entry never makes a trait required, since a trait must not restate a field the record already carries, so it takes the smallest share. |
+
+Traits I considered and left out: `nocturnal`, because nothing in either source names night habits and Endessa's twin suns are the opposite register; `anchored`, because the body is defined by movement; `ramming`, because the tail bores rather than delivering a moving blow; `foresighted`, because neither source claims foresight; `menacing`, `hypnotic`, `inspiring`, `regenerative`, `healing`, and `protective`, because nothing supports them.
 
 #### Cut by the evidence bar (2026-09-07)
 
@@ -143,15 +153,13 @@ The lifespan rubric's armored-covering clause pushes this species to `long`, mea
 
 ## Validator output
 
-Final run, `node docs/species-templates/tools/validate-template.js drilltail`:
+Final run after the pool-shape pass of 2026-09-08, `node docs/species-templates/tools/validate-template.js drilltail`:
 
 ```
-WARN signature.action.matrix        signature action "ambush" is outside the physical row for tail [strike, lash, crush, shove, snare, hurl] and outside the sand medium row (rule 4 exception; justify)
-
-0 FAIL, 1 WARN (structurally clean; every WARN must be answered in the walkthrough)
+0 FAIL, 0 WARN (structurally clean; every WARN must be answered in the walkthrough)
 ```
 
-The single WARN is answered in the Signature ability section and in Script denials, item 2: it is the exception signature rule 4 explicitly permits, taken because the source names the ambush as the defining act and the tail auger is the organ that delivers it.
+The earlier `signature.action.matrix` WARN no longer fires; the signature is tail / strike, inside the tail row. The trait checks `traits.pool.required`, `traits.pool.rolledSum` and `traits.pool.size` are all silent.
 
 ## Orchestrator amendments
 
@@ -160,3 +168,4 @@ The single WARN is answered in the Signature ability section and in Script denia
 - 2026-09-07, trait evidence bar (Nick): cut `perceptive`, `pack-bonded`, `slippery`, `toxic`; pool expected count 3.30 to 2.40.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored `perceptive` (45, class 4), `slippery` (25, class 5); cut `resistant` (60, ruling B); expected count 2.40 to 2.50.
 - 2026-09-08, trait evidence bar iteration three (Nick): added `hardened` (100, Endessa thermal load and desiccation hazards); raised `perceptive` (45 to 100, tremorsense special sense), `slippery` (25 to 100, legacy `evasionRating` high); cut nothing; expected count 2.50 to 4.80.
+- 2026-09-08, pool shape (Nick): required `armored`, `stealthy`; rolled `slippery` 45, `hardened` 30, `perceptive` 25; expected count 4.80 to 3.00.

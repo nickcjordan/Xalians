@@ -77,14 +77,28 @@ Legacy `statRatings` used only as a relative gauge: `specialAttackRating` and `r
 
 - Primary `rock` from the species entry, whose "type" is "Rock". Home planet Stonera. On-graph secondaries are metal, sand, fire (section 5.4). `affinityOdds` omitted, so the 75/25 baseline is inherited; nothing in the sources justifies an override.
 
-### Trait pool
+### Trait pool (required 1, rolled sum 100, expected count 2.00)
 
-- `regenerative: 100`. Body-demanded and stated outright, "as its regenerative power can quickly grow more" (species). The species cannot function without it, so it is universal.
-- `volatile: 85`. Hazardous to strike, from "its tail made of explosive barbs" (species). Not 100 because the stub attaches the explosive quality to the barbs it fires rather than declaring the whole body reacts when hit, so Generator variance is allowed.
-- `stealthy: 70`. Not a planet-wide claim: the species own sentence is concealment, "digs its body underground when spooked, exposing only its tail" (species). Held at 70 rather than 100 because the tail is deliberately left showing, which is the opposite of unseen.
-- `insulated: 100`. Environment-demanded, added 2026-09-08, and it replaces the `resistant` entry that stood here. Stonera `report.hazards` lists static discharge, and `report.terrain.features` records atmospheric dust saturation with static discharge; a continuous-discharge hazard of the home planet names the adaptation every native must carry, and charge that passes over or through a body without harming it is the registry definition of this trait. The supporting sentence is the same one the old entry used, planet, "the rubbing of these particulates in the atmosphere generates colossal static discharges that crackle pervasively in the lower atmosphere, spelling danger to all who dare to land on the planet's jagged surface." It sits at 100 rather than at the old 55 because a hazards entry is a demand, not ordinary evidence.
-- `perceptive: 100`. Demanded by a ratified field of the record, raised from 40 on 2026-09-08: `physiology.senses.special` carries `tremorsense`, and every entry of `senses.special` names this trait as a species-wide fact rather than a tendency. The earlier reading held it at 40 to keep the trait under the low graded sight band; the iteration-three ruling is that no percent hides a demanded trait, and the sense the entry rests on is itself universal equipment, not a graded one. A body that hides underground and reads what walks above it is the case the rule was written for.
-- Expected trait count after iteration three: (100 + 100 + 100 + 85 + 70) / 100 = 4.55, up from 3.50; it was 4.15 before the bar, 3.10 after the first pass and 3.50 after the second. `volatile` at 85 and `stealthy` at 70 keep the pool varying between individuals.
+Iteration four applies Nick's pool shape of 2026-09-08. One entry is required and four are rolled, the rolled shares sum to exactly 100, and the pool holds five entries. Expected count falls from 4.55 to 2.00. The chance an individual lands none of the rolled entries is 0.60 times 0.70 times 0.80 times 0.90, which is 0.302.
+
+#### Required
+
+| Trait | Evidence |
+|---|---|
+| `regenerative` | The behavior both the description and the signature are built around: the species fires the explosive barbs of its tail because its regenerative power can quickly grow more, and the signature ability, Buried Quiver, ends on growing them back. Without it the creature has one volley and then nothing, so the trait is what makes the animal work. Nick's legacy `statRatings` also read `recoveryRating` high for the Codazzo, which agrees with the reading. |
+
+#### Rolled (shares sum to 100)
+
+| Trait | Share | Evidence |
+|---|---|---|
+| `stealthy` | 40 | A species sentence about its own behavior, digging its body underground when spooked and exposing only the tail, and the signature is built on the same act. Largest share. It is not required because the tail is deliberately left showing, which is a partial fit with concealment until it acts. |
+| `volatile` | 30 | A species sentence about its own body, a tail made of explosive barbs. Held rolled because the explosive quality is attached to the barbs it throws rather than to a body that reacts when struck, which is the registry sense of the trait, and Stonera's report offers no discharge-on-breach line to close the gap. |
+| `insulated` | 20 | Class 3, a planet-wide hazard. Stonera `report.hazards` lists static discharge and `report.terrain.features` records dust saturation with continuous crackling discharge in the lower atmosphere, and charge that passes over a body without harming it is the registry definition. Rolled and no longer required, since the species' own description never makes the charge its subject. |
+| `perceptive` | 10 | Class 4, a ratified field of the record. `physiology.senses.special` carries `tremorsense`, which fits a body that hides underground and reads what walks above it, but the senses list may never make the trait required because the record already carries the field, and the graded sight band of 30 to 50 gives it no second support. |
+
+#### Cut by the pool shape (2026-09-08, iteration four)
+
+No entry was cut this iteration. The pool held five entries before the reshape and holds five after; three entries that were universal now roll.
 
 #### Cut by the evidence bar (2026-09-07 and 2026-09-08, iterations one to three)
 
@@ -165,3 +179,4 @@ Run history: run 1 was `0 FAIL, 2 WARN` (the trait-count WARN plus the Encyclope
 - 2026-09-07, trait evidence bar (Nick): cut perceptive, slippery, solitary, menacing; pool expected count 4.15 to 3.10.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored perceptive (40, class 4, the record's `senses.special` entry `tremorsense`); cut none; expected count 3.10 to 3.50. `resistant` was re-checked under ruling B and kept: its support is the static-charged, dust-saturated atmosphere of Stonera, a hostile atmosphere rather than a thermal or desiccation hazard.
 - 2026-09-08, trait evidence bar iteration three (Nick): added insulated; raised perceptive; cut resistant; expected count 3.50 to 4.55.
+- 2026-09-08, pool shape (Nick): required regenerative; rolled stealthy 40, volatile 30, insulated 20, perceptive 10; expected count 4.55 to 2.00.

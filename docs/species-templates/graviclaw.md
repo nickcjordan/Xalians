@@ -18,32 +18,39 @@ Sources read in full: the `Graviclaw` entry in `species.json` and the entire `Gr
 
 No other anatomy key has a source sentence. There are no jaws, spines, tail, or antennae in either source, so none are declared.
 
-### Trait pool (independent per-trait percents)
+### Trait pool (pool shape, 2026-09-08)
 
-Every trait below is rolled independently at its own percent (1 to 100); there is no count, minimum, or cap. A trait absent from the pool has a 0 chance and is not listed. Expected count: (100 + 100 + 100 + 100 + 60 + 100 + 6) / 100 = 5.66.
+Two required traits at 100 and four rolled entries sharing exactly 100, six in total, which is the maximum a pool may list. Expected count: 2 + 100/100 = 3.00.
 
-| Trait | Percent | Evidence | Source |
+#### Required
+
+| Trait | Evidence | Source |
+|---|---|---|
+| `armored` | The body fact. species: "the black-shelled body of a crab" and "an immovable wall of chitin". A shelled, chitin-covered body carries the key on every individual, which also satisfies the validator `traits.armored` check rather than overriding it. | species |
+| `anchored` | The behavior the description is built around. species: "the Graviclaw can use its powers to root itself to the ground, becoming an immovable wall of chitin". The registry definition is a body that cannot be moved against its will, which is what the sentence states outright. | species |
+
+#### Rolled (shares sum to 100)
+
+| Trait | Share | Evidence | Source |
 |---|---|---|---|
-| `armored` | 100 | species: "the black-shelled body of a crab" and "an immovable wall of chitin". A shelled and chitin-covered body demands it on every individual; this also answers the validator `traits.armored` check by satisfying it rather than overriding it. | species |
-| `anchored` | 100 | species: "the Graviclaw can use its powers to root itself to the ground, becoming an immovable wall of chitin". The registry definition of `anchored` is a body that cannot be moved against its will, which is exactly what the sentence states. This is a body-demanded fact every individual carries, not a rolled option. | species |
-| `stealthy` | 60 | species: "lurks just beneath the foggy wetlands of Grimedes". Lurking submerged until it strikes is the registry sense of moving unseen until it acts. Highest of the non-body-demanded percents because it is the most directly stated behavior. | species |
-| `perceptive` | 100 | Raised from 30 on 2026-09-08 under the demanded-trait rule. `physiology.senses.special` carries void-sense, and a special sense is a ratified field of the record naming perceptive as a species-wide fact. The Grimedes Generator environmental report names it a second time, giving non-visual sensory systems as an output priority. | record field, planet report |
-| `nocturnal` | 100 | Added on 2026-09-08 under the demanded-trait rule, environmental class. The Grimedes Generator environmental report gives low-light metabolism as one of its three output priorities, and an output priority that names a trait sets it at 100. This supersedes the iteration-one reasoning below, which read the planet's perpetual night as a sentence too general to carry a percent: the report states it as a design requirement of the world's output, not as scenery. | planet report |
-| `foresighted` | 100 | Added on 2026-09-08 under the demanded-trait rule. The Grimedes report's fauna observations state that anticipatory response precedes stimulus in repeated trials, with no quantifier and no lineage limit, which is the pattern that names a trait species-wide. Flagged as friction: the registry calls this key rare and pins it at 2 to 8 percent, and a planet whose report states it of the whole population puts every Grimedes native at 100. See the note below. | planet report |
-| `telekinetic` | 6 | species: "using its bizarre control over the intensification of gravitational waves to generate miniature black holes in the water and draw its helpless prey right into its clutches" is moving objects without touching them. Rare percent because the description frames the pull as a hunting mechanism terminating in the claws, not as constant levitation. | species |
+| `stealthy` | 35 | Strongest of the rolled set: a species sentence about its own behavior. species: "lurks just beneath the foggy wetlands of Grimedes". Lurking submerged until it strikes is the registry sense of moving unseen until it acts. | species |
+| `telekinetic` | 25 | Also a species sentence: "using its bizarre control over the intensification of gravitational waves to generate miniature black holes in the water and draw its helpless prey right into its clutches" is moving things without touching them. Below `stealthy` because the description frames the pull as a hunting mechanism that terminates in the claws, not as a constant state. | species |
+| `nocturnal` | 22 | A planet-wide adaptation. The Grimedes Generator environmental report gives low-light metabolism as one of its three output priorities. Rolled rather than required, because nothing in the species entry makes night adaptation the point of this creature; its own niche sentence is about fog and water, not darkness. | planet report |
+| `perceptive` | 18 | The weakest class, a record field: `physiology.senses.special` carries void-sense, and the Grimedes report gives non-visual sensory systems as an output priority. The report's anticipatory-response observation is read here as further evidence for this key rather than for `foresighted`. A senses entry never makes a trait required, since a trait must not restate a field the record already carries. | record field, planet report |
 
-#### Cut by the evidence bar (2026-09-07)
+#### Cut by the evidence bar (2026-09-07) and by the pool shape (2026-09-08)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
 | `solitary` | 45 | No ratified field and no sentence: the singular hunting frame is grammar, and Grimedes' report says nothing about group life. |
+| `foresighted` | 100 (2026-09-08 only) | Removed by the pool shape of 2026-09-08: the Grimedes anticipatory-response line is evidence for `perceptive`, and neither source claims foresight for this species. |
 | `menacing` | 30 | Class 2 fails: the raised open pincer in the art carries the gravitational vortex, so the feature depicts the gravity ability rather than a threat display, and the wall of chitin sentence states immobility, not a threat. |
 
 `pack-bonded` stays absent from the pool: it was excluded by `solitary`, and `solitary` is now cut as well, so neither is rolled.
 
-`nocturnal` was considered (the low-light submerged niche) and cut on 2026-09-07: the planet-wide perpetual-night sentence cannot carry a species trait percent on its own, and nothing in the species entry adds a species-specific nocturnal fact beyond that planet-wide one. That reading is superseded on 2026-09-08. The trait is not resting on the history's night sentence now; it is resting on the Generator report's output priority of low-light metabolism, which is a stated design requirement of everything the Grimedes Generator makes, and the demanded-trait rule puts a named output priority at 100.
+`nocturnal` was cut on 2026-09-07, restored at 100 on 2026-09-08, and now sits in the rolled set at 22. The Grimedes Generator report's output priority of low-light metabolism is real evidence, but it is a fact of the world the Generator builds for rather than the point of this particular creature, and under the pool shape a planet-wide adaptation is rolled unless the species' own description makes it the point. Graviclaw's description is about fog, water, gravity and armor, so the entry rolls.
 
-2026-09-08, friction on `foresighted`. The registry lists this key as passive and rare and gives 2 to 8 percent as its band, which reads as a design intent that precognition stays exotic across the roster. The Grimedes report states anticipatory response of the planet's fauna without qualification, so the demanded-trait rule puts it at 100 here, and by the same line it goes to 100 on Tetrahive, the other Grimedes species. That makes a whole planet precognitive and spends the rarest key in the registry on two species at once. Smallest fix if that is not wanted: read the Grimedes anticipatory-response line as a sensory-apparatus fact that names `perceptive` (which the same observation line already names) rather than `foresighted`, and leave `foresighted` to species whose own description claims foresight. Applied as the rule reads and recorded here as overridable.
+`foresighted` was added at 100 on 2026-09-08 and is removed from the pool on the same day under the pool shape. Nick's ruling reads the Grimedes anticipatory-response observation as evidence for `perceptive`, which the same line already names, rather than for `foresighted`, and leaves `foresighted` to species whose own description claims foresight or whose form line names it. Neither source claims foresight for this species, so the key is out. This is the fix the iteration-three friction note asked for, applied.
 
 ### Physiology
 
@@ -145,21 +152,17 @@ Only one. The description says the Graviclaw generates its black holes "in the w
 
 ## Validator output
 
+Final run after the pool-shape pass of 2026-09-08:
+
 ```
+WARN conduits.source                conduit pincers for dark: the validator agent must confirm the sentence or art showing the element leaving through this part
 WARN signature.description.elementkey signature description uses element key word(s) as plain words: water (allowed only as ordinary English, never as a type label)
 WARN enc.definition.elementkey      encyclopedia definition uses element key word(s) as plain words: water (allowed only as ordinary English, never as a type label)
 
-0 FAIL, 2 WARN (structurally clean; every WARN must be answered in the walkthrough)
+0 FAIL, 3 WARN (structurally clean; every WARN must be answered in the walkthrough)
 ```
 
-Verbose run confirms the checks the summary suppresses:
-
-```
-ok   temperature.planet             temperatureC [-6, 34] lies inside Grimedes range [-6, 93] C
-ok   signature.collision            no catalog collision for 'Point of No Return'
-ok   signature.reserved             signature name matches the reserved ledger entry at consolidated-dark.md:52
-ok   md.quotes                      30 of 30 distinct quotations found verbatim in the sources
-```
+All three are pre-existing and answered below and in the amendments: the conduit rests on the source sentence about strengthening the gravitational pull of the claws, and the two element-key lines are the ordinary English word for the wetland the creature hunts in, not a type label. The trait checks `traits.pool.required`, `traits.pool.rolledSum` and `traits.pool.size` are all silent.
 
 ## Script denials
 
@@ -180,3 +183,4 @@ ok   md.quotes                      30 of 30 distinct quotations found verbatim 
 - 2026-09-07, trait evidence bar (Nick): cut `solitary`, `perceptive`, `menacing`; pool expected count 3.71 to 2.66.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored `perceptive` (30, class 4); cut nothing, since the pool carries no `resistant`; expected count 2.66 to 2.96.
 - 2026-09-08, trait evidence bar iteration three (Nick): added `nocturnal` (100, Grimedes low-light metabolism output priority) and `foresighted` (100, the report's unqualified anticipatory-response observation); raised `perceptive` (30 to 100, void-sense special sense); cut nothing, since the pool carries no `resistant`; expected count 2.96 to 5.66.
+- 2026-09-08, pool shape (Nick): required `armored`, `anchored`; rolled `stealthy` 35, `telekinetic` 25, `nocturnal` 22, `perceptive` 18; expected count 5.66 to 3.00.

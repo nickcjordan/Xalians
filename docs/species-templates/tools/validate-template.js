@@ -357,6 +357,12 @@ if (T) {
     if (!(Number.isInteger(v) && v >= 1 && v <= 100)) fail('traits.pool.percent', 'percent for ' + k + ' must be an integer 1 to 100 (leave a trait out instead of writing 0; absence means 0)');
   }
   if (!Object.values(pool).some(v => Number.isInteger(v) && v > 0 && v < 100)) warn('traits.pool.variance', 'no listed trait sits below 100, so every individual of this species carries the same traits; confirm that is intended');
+  // Nick's pool shape guideline (2026-09-08): one required trait minimum, two normally, three only as a special case; rolled entries share 100 points between them so extra traits are rare; a pool never lists more than six entries.
+  { const req = Object.values(pool).filter(v => v >= 100).length; const rolled = Object.values(pool).filter(v => v > 0 && v < 100).reduce((a, b) => a + b, 0);
+    if (req > 2) warn('traits.pool.required', `${req} traits at 100; the guideline is one, two at most, three only as a justified special case`);
+    if (req < 1) warn('traits.pool.required', 'no trait at 100; every species has at least one required trait that defines it');
+    if (rolled < 90 || rolled > 110) warn('traits.pool.rolledSum', `rolled percents sum to ${rolled}; the guideline is 100 (90 to 110)`);
+    if (Object.keys(pool).length > 6) warn('traits.pool.size', `${Object.keys(pool).length} entries; a pool lists at most six`); }
   const g = Object.keys(pool).filter(k => pool[k] === 100);
   for (const [x, y] of TRAIT_EXCLUSIONS) {
     if (pool[x] === 100 && pool[y] === 100) fail('traits.exclusion', x + ' and ' + y + ' are exclusion partners and cannot both be at 100');

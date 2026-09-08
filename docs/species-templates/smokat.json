@@ -151,8 +151,8 @@
     "pool": {
       "stealthy": 100,
       "slippery": 100,
-      "nocturnal": 55,
-      "phasing": 20,
+      "phasing": 35,
+      "nocturnal": 30,
       "perceptive": 20,
       "resistant": 15
     }
