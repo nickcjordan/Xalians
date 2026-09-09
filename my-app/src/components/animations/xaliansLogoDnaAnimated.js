@@ -8,7 +8,7 @@
 import React from 'react';
 import gsap from 'gsap';
 import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin';
-import HelixMark from '../brand/helixMark';
+import { HelixMark } from '@/components/system/brand';
 
 gsap.registerPlugin(MorphSVGPlugin);
 
@@ -139,11 +139,16 @@ class XaliansLogoDnaAnimated extends React.Component {
 	render() {
 		const { resting, xPath } = this.state;
 		return (
-			<a className="g-brand g-brand--big xlda-lockup" href="/" aria-label="Xalians" ref={this.containerRef}>
+			<a
+				className="mb-2 inline-flex items-center gap-3.5 font-brand uppercase leading-none text-viable-hi no-underline hover:text-viable-hi sm:gap-5 sm:text-[64px] text-[40px]"
+				href="/"
+				aria-label="Xalians"
+				ref={this.containerRef}
+			>
 				{resting || !xPath ? (
-					<HelixMark className="g-brand-mark" title="Xalians" />
+					<HelixMark className="h-[52px] sm:h-[84px]" title="Xalians" />
 				) : (
-					<svg className="g-brand-mark xlda-mark" viewBox="-6 -6 144 173" aria-hidden="true">
+					<svg className="helix block h-[52px] w-auto overflow-visible sm:h-[84px]" viewBox="-6 -6 144 173" aria-hidden="true">
 						<g transform={GROUP_TRANSFORM}>
 							<path ref={this.morphRef} className="strand" d={xPath} />
 							<path className="strand xlda-fade" d={STRAND_SHORT_1} style={{ opacity: 0 }} />
@@ -161,8 +166,8 @@ class XaliansLogoDnaAnimated extends React.Component {
 						<line className="rung xlda-fade" style={{ opacity: 0 }} x1="39.41" y1="152.87" x2="91.03" y2="153.01" />
 					</svg>
 				)}
-				<span className="xlda-word">
-					<span className="xlda-word-x" style={{ opacity: resting || !xPath ? 1 : 0 }} aria-hidden="true">X</span>ALIANS
+				<span>
+					<span className="transition-opacity duration-3 ease-out" style={{ opacity: resting || !xPath ? 1 : 0 }} aria-hidden="true">X</span>ALIANS
 				</span>
 			</a>
 		);

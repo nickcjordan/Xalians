@@ -286,17 +286,13 @@ body { width: 100%; max-width: 100%; height: auto;
 * Desktop Navigation 
 */
 
-.visible {
-  transform: scaleY(1);
-  transform-origin: top;
-  transition: transform 0.26s ease;
-}
-
-.hidden {
-  transform: scaleY(0);
-  transform-origin: top;
-  transition: transform 0.26s ease;
-}
+/* .visible / .hidden (the old scroll-hide navbar's transform classes) were
+   removed here: they collided token-for-token with Tailwind's own
+   `visible` and `hidden` utilities on the stack-migration pages (a Tailwind
+   "hidden md:flex" element inherited transform: scaleY(0) from here and
+   stayed collapsed at every width) and nothing still toggles them via
+   classList (the last caller, navbar.js, was rewritten to navbar.tsx and
+   drives the same show/hide with a Tailwind class instead). */
 
 .xalian-navbar {
   padding: 0px !important;
