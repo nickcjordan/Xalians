@@ -8,11 +8,11 @@ The art is a black-and-white silhouette of a single body with no limbs at all. A
 
 The lore block holds three prose fields. `description` is Nick's teaser, carried from `species.json` verbatim and never edited here. `body` and `habits` are authored below under the lore split of 2026-09-09; every claim in each is ledgered.
 
-### body (95 words)
+### body (60 words)
 
-There are no limbs anywhere on it and nothing touches the ground. A skull sits at the front with empty orbits and a fixed grin of teeth. Behind the skull the body runs into a smooth tapering ribbon that curves and hooks back on itself, and the lower end of that ribbon does not stop at an edge: it thins into mist and drifting particles. It has no flesh; it is spectral through and through, about a meter long and weighing almost nothing. It sees and hears, and it has almost no sense of smell.
+A spectral green mist that forms the vague impression of a grinning skull with a ghost-like tail for a body. It has no flesh and no limbs, weighs almost nothing, and never touches the ground; it moves by floating and passes through surfaces. It is about a meter long. It sees and hears, and has almost no sense of smell.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits (105 words)
 

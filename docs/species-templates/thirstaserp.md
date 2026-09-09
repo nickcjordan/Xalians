@@ -8,11 +8,11 @@ The artwork shows a single limbless serpent drawn in flat black silhouette, coil
 
 The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description` verbatim and moves everything else into two authored fields.
 
-### body (85 words)
+### body (46 words)
 
-A limbless serpent, some two meters and a hundred kilograms, that loops flat on the ground and rears the front third of itself upright. The head is a viper's wedge with long curved fangs. Behind it a hood spreads wide. Heavy bands of scale run the whole length. The tail finishes in a splayed rosette of narrow blades that it sounds like a rattle. There is nothing else on it: no limb, no wing, no fin. It digs, it smells, and it reads the ground.
+A large, cobra-like serpent, some two meters and a hundred kilograms, scaled and limbless, with fangs in its jaws and a rattle on its tail. It burrows under sand and can strike with a leap. It smells better than it sees, and it feels the ground.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits (95 words)
 

@@ -8,11 +8,11 @@ The artwork is a flat black silhouette, front-facing, of a single body. Rising f
 
 The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
 
-### body (79 words)
+### body (48 words)
 
-A tall, heavy, shaggy biped, well past three hundred kilograms, thick through the shoulders and barrel. Two large faceted crystal formations rise from its crown in place of horns, mineral grown out of flesh. The head is long and ends in a broad blunt muzzle. Its forelimbs end in open hands with a digit set to oppose the rest, and it has no tail. Fur covers everything but the crystal. It sees far better than it hears or smells.
+A tall, heavy biped, well past three hundred kilograms, fur-covered, with gems growing out of its head where horns would be, mineral grown from flesh, and hands that can grip. It is slow on its feet and has little leap or climb. Its eyes are its strongest sense.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits
 

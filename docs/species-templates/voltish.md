@@ -8,11 +8,11 @@ The artwork shows a single body, drawn as a solid black silhouette against a bac
 
 Split applied 2026-09-09. `lore.description` is Nick's teaser from `species.json`, verbatim. The pre-split upgraded description carried three sentences; they are sorted into body and habits below, and the one that restated the teaser is dropped rather than repeated.
 
-### body (79 words)
+### body (51 words)
 
-A tall, long-limbed quadruped, near two meters at the shoulder, on four broad clawed paws. The head is narrow with a long tapering muzzle and two upright pointed ears. From the neck and shoulders rises a stiff erect ruff of spiked filaments, standing clear of the back line, and a large bushy tail sweeps up behind about the length of the torso. A shaggy pelt covers the whole outline. There is metal grown into its frame alongside the flesh.
+A tall quadruped, over two meters at the shoulder and a hundred and twenty kilograms, fur-covered, with bones and claws made of a tough, conductive metal alloy, a biting jaw and a tail. It runs, climbs and leaps adequately. Its ordinary senses are middling, and it senses electrical charge around it.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits (111 words)
 

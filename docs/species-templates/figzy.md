@@ -8,11 +8,11 @@ The art shows a single small creature standing upright on two digitigrade legs, 
 
 The lore block holds three prose fields. `description` is Nick's teaser, carried from `species.json` verbatim and never edited here. `body` and `habits` are authored below under the lore split of 2026-09-09, re-cut from the stub-upgrade draft of 2026-09-08.
 
-### body (75 words)
+### body (49 words)
 
-A small upright biped on digitigrade legs, a little over a meter tall and light in the frame, with forelimbs ending in hands. The head carries most of what marks it: two enormous ears flaring wider than the skull, slender branched antlers rising from the crown, and very large eyes over a small blunt muzzle. A shaggy coat covers it, with no plate or shell anywhere. It hears better than anything else on it works.
+A small fur-covered biped, a little over a meter tall and light in the frame, with antlers on its head and hands that grip. It runs and climbs adequately and leaps a little. It hears better than it sees, and beyond the ordinary senses it has a psychic one.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits (117 words)
 

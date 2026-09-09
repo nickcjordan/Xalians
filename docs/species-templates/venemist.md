@@ -8,11 +8,11 @@ The artwork shows a single shaggy quadruped seated on its haunches in three-quar
 
 Split applied 2026-09-09. `lore.description` is Nick's teaser from `species.json`, verbatim. `lore.body` and `lore.habits` are authored below and neither restates the teaser's own two facts (the mist dissolving prey, the two teeth).
 
-### body (84 words)
+### body (46 words)
 
-A mid-sized four-legged hunter, heavier through the chest than the haunch, shaggy along the neck and back and smooth along the flanks. Two long ears stand upright on a blunt head that opens into wide jaws hung with two long curved fangs, and between the fangs a narrow tube projects past the lip, the vent it sprays from. A tail sweeps out behind. Nothing on it is plated; under the pelt the hide is unarmored. It smells and hears far better than it sees.
+A mid-sized fur-covered quadruped, about a meter tall and fifty kilograms, with only two teeth in its jaws and a tube in its mouth that expels toxic mist, plus a tail and unarmored hide. It runs adequately. It smells and hears far better than it sees.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits (114 words)
 

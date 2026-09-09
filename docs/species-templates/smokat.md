@@ -8,11 +8,11 @@ The render shows a single lean feline standing upright on its two hind legs, che
 
 The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description` verbatim and moves everything else into two authored fields.
 
-### body (81 words)
+### body (38 words)
 
-An upright cat-shaped biped under two meters and around seventy kilograms, chest raised and back arched, forepaws lifted and open. The muzzle is long and the ears are pointed and tufted. The hind feet end in clawed toes. A long tail tapers away behind it and its tip goes to vapor, and vapor rises off the shoulders, flanks and feet. Under it the hide is smooth and unarmored. It climbs, sprints and leaps, and it sees and hears in equal measure.
+A feline-shaped biped in its normal form, under two meters and around seventy kilograms, with claws, a biting jaw, a tail, and smooth unarmored hide. It sprints, climbs and leaps well. Its sight and hearing are equally keen.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits (82 words)
 

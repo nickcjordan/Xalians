@@ -8,11 +8,11 @@ The artwork is a flat black silhouette of a single creature, front-on, standing 
 
 Split applied 2026-09-09. `lore.description` was already the `species.json` text verbatim and is unchanged. This species had no upgraded description to re-cut, so body and habits are authored fresh, and both are written around the teaser rather than over it: the ice sheets, the near-impenetrable armor, the walls of frost, the encapsulating and the ice-gauntleted fists are all the teaser's and appear in neither field.
 
-### body (89 words)
+### body (51 words)
 
-A hulking white-furred ape that stands upright on two legs and carries its whole weight on them, arms hanging free and ending in heavy closed hands. The shoulders slope wider than the hips with no neck between them. The skull is broad and domed, with ears fanned wide and a long trunk hanging down the chest. Its tusks are ice, mineral grown from flesh, and sweep out past the width of the shoulders. The feet are broad and flat. It stands over two meters and near four hundred kilograms.
+A hulking, white-furred ape with the head of a mammoth, over two meters tall and near four hundred kilograms, with tusks of pure ice, mineral grown from flesh, a trunk, and heavy fists. It is slow, and it does not climb or leap. It hears and smells better than it sees.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits (120 words)
 

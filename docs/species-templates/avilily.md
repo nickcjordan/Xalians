@@ -8,11 +8,11 @@ The artwork is a solid black silhouette of a single bird in flight, seen from it
 
 The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
 
-### body (77 words)
+### body (61 words)
 
-A small bird with a heavy teardrop body, broad long-feathered wings that carry it, a feathered crest on the crown and long streamer feathers trailing from the head. The bill is the strange part: it opens outward into broad lobes around a spray of fine filaments, more structure than a bill needs for feeding alone. The legs hang clear beneath and end in gripping toes. Feathers cover it. It sees and smells far better than it hears.
+A small green bird, under half a meter and light, in bright floral plumage. Its beak resembles the closed petals of a flower and opens like one blooming; it has a crest, wings that carry it, taloned feet and a tail. Flight is what it does, and on the ground it is slow. It sees and smells better than it hears.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits (119 words)
 

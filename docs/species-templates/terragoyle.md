@@ -12,11 +12,11 @@ Four limbs bear weight in this pose. The forelimbs are not held clear, they are 
 
 The lore split (Nick, 2026-09-09). `lore.description` was already the species.json teaser verbatim and is unchanged; body and habits below are new, and both were written to add to the teaser rather than restate it.
 
-### body (83 words)
+### body (56 words)
 
-It crouches on all fours, hands and feet both taking weight, a heavy muscled trunk under smooth unarmored hide. Two ribbed horns curl up and back off the skull. Membranous wings spread from the shoulders. The tail rises over the head and opens into a cradle, and its stone rides above that cradle without touching it. Under two meters tall and three hundred kilograms and more, it flies regardless. Its mouth carries nothing to bite with, and it hears better than it sees.
+A horned, vaguely humanoid bat, under two meters tall and well over three hundred kilograms, with membranous wings, an elongated tail tipped with a levitating ball of stone, and smooth hide. It goes on all fours on the ground and flies regardless of its weight. It hears better than it sees, and it feels the ground.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits (113 words)
 

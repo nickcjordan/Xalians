@@ -8,11 +8,11 @@ The render shows the same creature twice. On the left is a lateral view: a long,
 
 The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description` verbatim and moves everything else into two authored fields. The body and habits below are the record's text.
 
-### body (94 words)
+### body (46 words)
 
-One long arched train of segments, thickest at the shoulder and tapering to the rear, borne on pair after pair of thin limbs spaced down its whole length, each ending in a splayed toed foot. The head is broad and rounded, with two very large forward-facing eyes and two thin antennae swept back from the crown. Nothing on it is plated: the surface is bare hide and the outline smooth from end to end. It runs about two meters and a hundred kilograms, swims better than it walks, and takes the ground as tremor.
+A sixteen-legged amphibious creature with a long, segmented body, about two meters and ninety kilograms, slender in the frame, with webbed feet, antennae, and bare unarmored hide. It swims better than it walks and climbs well. Its eyes lead, and it feels the ground as tremor.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits (101 words)
 
