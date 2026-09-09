@@ -85,6 +85,8 @@ Skeletons remain banned; shadcn's `Skeleton` is not installed.
 
 Each phase merges to `main` on its own so the site stays deployable throughout.
 
+**Status, 2026-09-09:** all four phases landed the same day. Phase 1 PR #139; phase 2 PRs #140 to #146; phase 3 PRs #147 and #148; phase 4 the teardown PR. Bootstrap, React-Bootstrap, the BootstrapMade template script, the three icon fonts and the vendor folder are gone from the package and the page. Tailwind's preflight is on. Two interop rules stay while the legacy stylesheets load for the immersive pages: Tailwind utilities are imported with `important` (the legacy files carry 300 `!important` declarations of their own), and bare anchors inherit their ink (the old template paints them mint). Both leave with `public/assets/css/legacy/`.
+
 ## Rules for the agents
 
 - The design contract wins over shadcn defaults. Square corners, one accent, no shadows off the floating layer, no skeletons, the helix spinner for loading.

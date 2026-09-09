@@ -742,3 +742,74 @@
 .dp-bench .duel-specimen-wrapper {
   zoom: 3.4;
 }
+
+/* Moved from pages/styleguide.css in the stack teardown: the reference board
+   still wears these classes until its immersive brief. Do not extend. */
+.sg-page {
+	padding-top: var(--g-8);
+	padding-bottom: var(--g-9);
+}
+
+.sg-index {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	gap: var(--g-1);
+	margin-bottom: var(--g-9);
+}
+
+.sg-index-item {
+	display: flex;
+	align-items: baseline;
+	gap: var(--g-2);
+	padding: var(--g-2) var(--g-3);
+	text-decoration: none;
+	transition: background var(--g-snap);
+}
+
+.sg-index-item:hover {
+	background: rgba(255, 244, 214, 0.05);
+}
+
+.sg-index-num {
+	font-size: var(--g-size-micro);
+	color: var(--g-hazard);
+}
+
+.sg-index-name {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-micro);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-mid);
+}
+
+.sg-section {
+	margin-bottom: var(--g-9);
+	scroll-margin-top: var(--g-8);
+}
+
+.sg-section-head {
+	position: relative;
+	padding-top: var(--g-4);
+	border-top: var(--g-hairline) solid var(--g-rule);
+	margin-bottom: var(--g-6);
+}
+
+.sg-section-index {
+	position: absolute;
+	top: var(--g-4);
+	right: 0;
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-low);
+	letter-spacing: var(--g-track-wide);
+}
+
+.sg-section-note {
+	margin-top: var(--g-3);
+	margin-bottom: 0;
+}
+
+/* Phones: the big lockup is wider than half a row; give its cell the row. */
+@media (max-width: 640px) {
+	.sg4-brand-row .sg4-brand-cell:nth-child(2) { flex: 1 1 100%; }
+}

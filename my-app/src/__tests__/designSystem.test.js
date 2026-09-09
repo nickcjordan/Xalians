@@ -27,8 +27,8 @@ const path = require('path');
  */
 
 const PAGES_DIR = path.join(__dirname, '..', 'pages');
-const SYSTEM_PATH = path.join(__dirname, '..', '..', 'public', 'assets', 'css', 'system.css');
-const CSS_DIR = path.join(__dirname, '..', '..', 'public', 'assets', 'css');
+const SYSTEM_PATH = path.join(__dirname, '..', '..', 'public', 'assets', 'css', 'legacy', 'system.css');
+const CSS_DIR = path.join(__dirname, '..', '..', 'public', 'assets', 'css', 'legacy');
 const STYLEGUIDE_PATH = path.join(PAGES_DIR, 'styleGuidePage.tsx');
 
 /** Every *.js under src/pages/, recursively, with paths relative to src/pages/. */
