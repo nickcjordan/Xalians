@@ -8,19 +8,11 @@ The artwork shows a single body, drawn as a solid black silhouette against a bac
 
 Split applied 2026-09-09. `lore.description` is Nick's teaser from `species.json`, verbatim. The pre-split upgraded description carried three sentences; they are sorted into body and habits below, and the one that restated the teaser is dropped rather than repeated.
 
-### body (102 words)
+### body (79 words)
 
-A tall, long-limbed quadruped carried on four broad paws whose digits are separated and end in heavy claws. The head is narrow, with a long tapering muzzle and two upright pointed ears, each cut through by a small fork-shaped notch. From the neck and shoulders rises a stiff erect ruff of long spiked filaments, standing clear of the back line. A large bushy tail sweeps up and back about the length of the torso. The whole outline, legs and tail included, is ragged and tufted, a shaggy pelt with a fringe running along the belly and down the backs of the legs.
+A tall, long-limbed quadruped, near two meters at the shoulder, on four broad clawed paws. The head is narrow with a long tapering muzzle and two upright pointed ears. From the neck and shoulders rises a stiff erect ruff of spiked filaments, standing clear of the back line, and a large bushy tail sweeps up behind about the length of the torso. A shaggy pelt covers the whole outline. There is metal grown into its frame alongside the flesh.
 
-| Claim | Source |
-|---|---|
-| tall, long-limbed quadruped on four broad paws with separated digits | art: a long-limbed body standing with all four limbs on the ground, ending in broad paws with visible separated digits; `physiology.bodyPlan` quadruped; `physiology.size` 190 to 235 cm and 105 to 145 kg |
-| heavy claws | `physiology.anatomy` claws, which the teaser names directly; `instruments` claws; `conduits` claws to electric |
-| narrow head with a long tapering muzzle | art: a narrow head with a long tapering muzzle; `physiology.anatomy` jaws |
-| two upright pointed ears, each cut by a small fork-shaped notch | art: two upright pointed ears, each pierced by a small zigzag notch in the shape of a lightning fork; `physiology.senses.hearing` [50, 70] |
-| a stiff erect ruff of long spiked filaments off the neck and shoulders, clear of the back line | art: a tall erect crest of long spiked filaments rising from the neck and shoulders as a raised structure separate from the body outline. Written as pelt structure, not as an anatomy key, because the record declares no `crest` (see Friction, 2026-09-09, below) |
-| large bushy tail about the length of the torso | art: a large bushy tail sweeping up and back, roughly torso length; `physiology.anatomy` tail |
-| ragged tufted outline with a fringe along the belly and the backs of the legs | art: the entire outline drawn in ragged tufted edges with a matching fringe on the belly and rear legs; `physiology.covering` fur |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits (111 words)
 

@@ -8,21 +8,11 @@ The artwork is a flat black silhouette, front-facing, of a single body. Rising f
 
 The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
 
-### body
+### body (79 words)
 
-Two large faceted crystal formations rise from its crown, cut with interior facet lines, and the fur to either side of the crown falls into a drooping point. The head is long and heavily shaggy and ends in a broad blunt muzzle with two flat nostrils and a wide mouth. The trunk is thick through the shoulders and heavy through the barrel, and overlapping pointed tufts cover all of it. Its forelimbs reach out and slightly down, each ending in an open hand with separated digits and an innermost digit set to oppose them. The hind legs fold and cross at the ankles beneath it. There is no tail. It is tall and heavy, well past three hundred kilograms.
+A tall, heavy, shaggy biped, well past three hundred kilograms, thick through the shoulders and barrel. Two large faceted crystal formations rise from its crown in place of horns, mineral grown out of flesh. The head is long and ends in a broad blunt muzzle. Its forelimbs end in open hands with a digit set to oppose the rest, and it has no tail. Fur covers everything but the crystal. It sees far better than it hears or smells.
 
-| Claim | Source |
-|---|---|
-| Two large faceted crystal formations rise from its crown, cut with interior facet lines | art: two large faceted crystal formations on the crown drawn with interior facet lines; record `physiology.anatomy` includes horns and `composition.secondary: mineral` |
-| The fur to either side of the crown falls into a drooping point | art: the mass below and slightly outboard of each crystal falls to a drooping point |
-| A long, heavily shaggy head ending in a broad blunt muzzle with two flat nostrils and a wide mouth | art: a long heavily shaggy head ending in a broad blunt muzzle with two flat nostrils and a wide mouth line |
-| A trunk thick through the shoulders and heavy through the barrel | art: a thickly shaggy torso, broad through the shoulders and heavy through the barrel |
-| Overlapping pointed tufts cover all of it | art: the outline of trunk and head drawn as shaggy tufted edges throughout; record `physiology.covering: fur` |
-| Forelimbs reaching out and slightly down, each ending in an open hand with separated digits and an innermost digit set to oppose them | art: two forelimbs held out at knee height, palms open, each hand showing separated digits including an opposable-looking innermost digit; record `physiology.anatomy` includes fists and `capabilities.manipulation [45, 70]` |
-| The hind legs fold and cross at the ankles beneath it | art: hindlimbs folded in front of the body and crossed at the ankles in a seated posture |
-| There is no tail | art: no tail visible |
-| It is tall and heavy, well past three hundred kilograms | record `physiology.size.heightCm [160, 195]` and `weightKg [300, 420]` |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits
 

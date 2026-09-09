@@ -6,20 +6,11 @@ Sources read in full: the `Graviclaw` entry in `species.json` and the entire `Gr
 
 The lore block holds three prose fields. `description` is Nick's teaser, already the `species.json` text and unchanged by this pass (its status was `source`). `body` and `habits` are authored below under the lore split of 2026-09-09; every claim in each is ledgered. The teaser already carries the crab body, the upright torso, the gravitational pull, the snapping claws and the rooting, so none of that is restated here.
 
-### body (110 words)
+### body (85 words)
 
-A broad low carapace rides on more than four jointed legs, each ending in a single hooked point, and from the front of it an upright torso rises with heavy shoulders and two thick arms. The head is small and narrow for the mass beneath it, with two pale eye slits and a short crest of thin filaments at the crown. One arm ends in a pincer as long as the torso, a hooked upper blade closing against a lower one; the other is a heavy limb of the same build. Standing near two meters and carrying most of a quarter ton, it is far heavier than its height suggests.
+A broad low carapace on more than four jointed legs, with an upright torso rising from the front of it on heavy shoulders. One arm ends in a pincer as long as the torso; the other is a heavy limb of the same build. Chitin plates all of it, with mineral grown into the shell. Standing near two meters and carrying most of a quarter ton, it is far heavier than its height suggests. It sees poorly and reads mass and motion by other means.
 
-| Claim | Source |
-|---|---|
-| a broad low carapace | art: the large rounded shelled mass carrying the whole body; record `anatomy: shell`, `covering: chitin` |
-| more than four jointed legs, each ending in a single hooked point | art: jointed crab legs on both sides, more than four, each tapering to one hooked point; record `bodyPlan: multiped` |
-| an upright torso rising from the front of it, heavy shoulders, two thick arms | art: the humanoid torso set at the front of the carapace with broad shoulders and two heavy arms |
-| a small narrow head with two pale eye slits | art: the narrow head carrying two white eye slits |
-| a short crest of thin filaments at the crown | art: the small tuft of thin filaments on top of the head |
-| one arm ending in a pincer as long as the torso, a hooked upper blade against a lower one | art: the raised pincer with a hooked upper claw closing on a lower one, of a length with the torso; record `anatomy: pincers` |
-| the other arm a heavy limb of the same build | art: the second arm drawn heavy and reaching |
-| near two meters, most of a quarter ton, far heavier than its height suggests | record `size.heightCm` 165 to 215 against `size.weightKg` 180 to 260 |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits (119 words)
 

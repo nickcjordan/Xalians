@@ -8,7 +8,7 @@
   ],
   "lore": {
     "description": "An acid slime organism protected by a thick rocky exoskeleton. Its slime can continually regenerate an outer shell, allowing for great defense.",
-    "body": "It has no legs and no hands. A rounded hood forms the top of the mass and carries a single opening, an oval with a vertical slit inside it, which is all the eye it has. Two thick protrusions spread wide from the upper body, broad where they meet it and blunt at their ends, with no joint anywhere along them, and their undersides break into long pointed runnels where the material sags. Below that the mass widens into a grooved skirt and meets the ground in a flat spreading base, shedding droplets. It stands about two meters and carries several hundred kilograms. It is mute, it sees poorly, and it reads what moves through the ground it covers.",
+    "body": "A standing mass of living slime with no legs and no hands, roughly two meters tall and several hundred kilograms. A hooded top carries its one eye, two thick jointless protrusions spread wide from the upper body, and below them the mass widens into a skirt and spreads flat on the ground, shedding droplets as it goes. A hardened shell plates the hood and the upper mass. It is mute and sees poorly, and it reads what moves through the ground it covers.",
     "habits": "Drainov's Generator made it for a world of bubbling acid swamps, steaming corrosive rain, asphyxiating fumes, and slow-drifting clouds of neurotoxic gases, and it draws no breath from any of them. It moves through the acid swamps rather than over them, and slowly: the substrate of that world is unreliable and this is not a body that hurries. It feeds on whatever it settles over, of any kind, and it reads what approaches through the ground rather than seeing it. The planet is now held by a loose conglomerate of Vallerii space pirates and interstellar crime syndicates, and it still rains burning refuse, industrial waste, and hazardous materials on the swamps below. Its own working life is long.",
     "biomeNiche": "the acid swamps and reopened chemical plants of Drainov"
   },
@@ -147,7 +147,7 @@
       95
     ]
   },
-    "traits": {
+  "traits": {
     "pool": {
       "armored": 100,
       "regenerative": 100,

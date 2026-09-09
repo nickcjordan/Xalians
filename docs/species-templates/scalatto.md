@@ -8,21 +8,11 @@ The artwork is a single black silhouette of one creature, standing upright on tw
 
 The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description` verbatim and moves everything else into two authored fields.
 
-### body (118 words)
+### body (86 words)
 
-It stands on two heavy columnar legs, knees bent, broad flat feet splayed under the whole weight of it, and holds its forelimbs up and clear of the ground; each of those ends in three long curved claws. The head is low and long and finishes in a blunt snout, with one small eye set high at the brow and a run of swept strands trailing back from the skull along the nape. Deep overlapping bands, some nine of them, cross the trunk from shoulder to hip, and the same ringed banding continues down a very long tail that tapers to a hooked tip. It stands a little over a meter and carries seventy kilograms of that plating.
+A stout biped a little over a meter tall on two heavy columnar legs and broad flat feet, its forelimbs held clear of the ground and ending in long curved claws. The head is low and long and finishes in a blunt snout. Deep overlapping bands of chitin cross the trunk from shoulder to hip, and the same ringed banding runs down a very long tail that tapers to a hooked tip. It carries seventy kilograms of that plating, and it reads the ground through it.
 
-| Claim | Source |
-|---|---|
-| stands on two heavy columnar legs, knees bent, broad flat feet splayed under the whole weight | art: heavy columnar hindlimbs bent at a digitigrade knee, planted flat with broad splayed feet, the whole mass over them; record `physiology.bodyPlan` is `biped` |
-| forelimbs held up and clear of the ground | art: both forelimbs raised, free of the ground, bearing no weight |
-| each of those ends in three long curved claws | art: three long curved claws per forelimb; record `physiology.anatomy` carries `claws` |
-| low, long head finishing in a blunt snout | art: a long low head ending in a blunt tapering snout |
-| one small eye set high at the brow | art: a single light-toned eye set high near the brow |
-| a run of swept strands trailing back from the skull along the nape | art: a swept crest of tapering strands running back from the skull down the neck |
-| deep overlapping bands, some nine of them, from shoulder to hip | art: roughly nine overlapping curved segments running from shoulder to hip; record `physiology.covering` is `chitin` and `anatomy` carries `shell` |
-| the same ringed banding continues down a very long tail that tapers to a hooked tip | art: a very long banded tail curling into a high hook at the tip; record `anatomy` carries `tail` |
-| a little over a meter, seventy kilograms | record `physiology.size.heightCm` [95, 125] and `weightKg` [58, 84] |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits (90 words)
 

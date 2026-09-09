@@ -8,7 +8,7 @@
   ],
   "lore": {
     "description": "The gems growing out of this creature's head transmit powerful light energy, don't be deceived by its calm temperament.",
-    "body": "Two large faceted crystal formations rise from its crown, cut with interior facet lines, and the fur to either side of the crown falls into a drooping point. The head is long and heavily shaggy and ends in a broad blunt muzzle with two flat nostrils and a wide mouth. The trunk is thick through the shoulders and heavy through the barrel, and overlapping pointed tufts cover all of it. Its forelimbs reach out and slightly down, each ending in an open hand with separated digits and an innermost digit set to oppose them. The hind legs fold and cross at the ankles beneath it. There is no tail. It is tall and heavy, well past three hundred kilograms.",
+    "body": "A tall, heavy, shaggy biped, well past three hundred kilograms, thick through the shoulders and barrel. Two large faceted crystal formations rise from its crown in place of horns, mineral grown out of flesh. The head is long and ends in a broad blunt muzzle. Its forelimbs end in open hands with a digit set to oppose the rest, and it has no tail. Fur covers everything but the crystal. It sees far better than it hears or smells.",
     "habits": "Luminax's Generator grew its Xalians with albino features or with prismatic crystal so that they could survive the brilliant light of the twin suns while they worked the fields, and this is one of the crystal-bearing forms. Its ground is the sunward face, among the oases of translucent, alabaster flora, where radiation-tolerant integument is universal and the cumulative radiation load is the standing hazard. The misfiring panels of the Stellaris Superstructure are burning new sun-scorched blast zones into that surface, and some of the world's Xalians have survived in the residual radiation left in them. It does not graze and it does not hunt: it takes in energy. It is slow, and it holds still.",
     "biomeNiche": "the sunward oases of translucent, crystalline-leaved flora on Luminax"
   },
@@ -149,7 +149,7 @@
       80
     ]
   },
-    "traits": {
+  "traits": {
     "pool": {
       "luminous": 100,
       "reflective": 40,

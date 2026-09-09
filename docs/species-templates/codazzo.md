@@ -8,21 +8,11 @@ The artwork shows a single body, a lean fox-like or jackal-like creature standin
 
 The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
 
-### body
+### body (68 words)
 
-It is lean and fox-like, upright on two digitigrade hind legs, its forelimbs hanging free along the body and each ending in three or four long hooked claws. The muzzle is long and narrow, the ears tall and pointed, and a short spiky ridge runs down the neck and back. Tufted shaggy edges mark the ruff, the ridge, and the haunches. The tail is thick and muscular where it leaves the hindquarters, rising to a narrow junction, from which about a dozen large cone-shaped barbs splay outward in a fan, each banded with two or three transverse lines and tipped with a small nub. It is a small animal, and it reads the ground better than it sees.
+A small, lean, fox-like biped on digitigrade hind legs, its free forelimbs ending in long hooked claws made for digging. A spiky ridge of spines runs down the neck and back. The tail is the heaviest thing on it, thick and muscular where it leaves the hindquarters and opening into a fan of large cone-shaped barbs. Fur covers the rest. It reads the ground better than it sees.
 
-| Claim | Source |
-|---|---|
-| Lean and fox-like, upright on two digitigrade hind legs | art: a lean fox-like body standing upright on two digitigrade hind legs; record `physiology.bodyPlan: biped` |
-| Forelimbs hanging free along the body, each ending in three or four long hooked claws | art: forelimbs hanging free along the body with three or four long hooked claws each; record `physiology.anatomy` includes claws |
-| A long narrow muzzle and tall pointed ears | art: a long narrow muzzle with two tall pointed ears; record `senses.smell [40, 60]` and `senses.hearing [45, 65]` |
-| A short spiky ridge running down the neck and back | art: a short spiky ridge down the back and neck |
-| Tufted shaggy edges at the ruff, the ridge, and the haunches | art: tufted shaggy outline at ruff, back ridge and haunches; record `physiology.covering: fur` |
-| A thick muscular tail rising from the hindquarters to a narrow junction | art: a thick muscular tail rising from the hindquarters and curving up and out; record `physiology.anatomy` includes tail |
-| About a dozen large cone-shaped barbs splaying outward in a fan from that junction, each banded with two or three transverse lines and tipped with a small nub | art: a radiating fan of roughly a dozen cone-shaped barbs, each banded with two or three transverse segment lines and ending in a small nub tip, splayed from one narrow junction; record `physiology.anatomy` includes spines |
-| It is a small animal | record `physiology.size.heightCm [58, 82]` and `weightKg [18, 32]` |
-| It reads the ground better than it sees | record `senses.special: [tremorsense]` against `senses.sight [30, 50]` |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits
 

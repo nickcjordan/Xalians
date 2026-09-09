@@ -8,20 +8,11 @@ The render shows a single small creature seated upright on its haunches, filling
 
 The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` teaser carried verbatim and is never edited here; `body` is the physical record, `habits` is how the creature lives now. `descriptionStatus` was removed from the record; status lives in `docs/species-templates/lore-status.json`.
 
-### body
+### body (80 words)
 
-A small animal that sits up on its haunches, round-headed and shaggy, with two very long lop ears that fall well past the body on either side and a single ribbed, spiraling horn rising from the crown between them. The face is mostly eyes: two enormous round ones above a small muzzle and an open mouth. The forelimbs are short and end in small paws held against the chest; the hind limbs are large, splayed forward, and padded on the soles and heels. Fur stands out in ragged tufts around the ruff, cheeks and shoulders. There is no tail, no wing, and no plating or shell.
+A small shaggy animal that sits up on its haunches, round-headed, with two very long lop ears that fall well past the body and a single ribbed, spiraling horn rising from the crown between them. The face is mostly eyes. The forelimbs are short and held against the chest; the hind limbs are large and built to spring. Fur covers it, and there is no tail, no wing, and no plating or shell. It hears far better than it sees.
 
-| Claim | Source |
-|---|---|
-| Small animal sitting up on its haunches, round-headed and shaggy | art; record `physiology.size` 30 to 42 cm, 9 to 16 kg |
-| Two very long lop ears falling well past the body on either side | art |
-| A single ribbed, spiraling horn rising from the crown between them | art; record `physiology.anatomy: crest` |
-| A face that is mostly eyes: two enormous round ones above a small muzzle and an open mouth | art |
-| Short forelimbs ending in small paws held against the chest | art |
-| Large hind limbs splayed forward, padded on the soles and heels | art; record `capabilities.leap` 55 to 75 |
-| Fur standing out in ragged tufts around the ruff, cheeks and shoulders | art (the outline is drawn as tufted fur); record `physiology.covering: fur` |
-| No tail, no wing, no plating or shell | art; record `physiology.anatomy` carries none of `tail`, `wings`, `shell` |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits (119 words)
 

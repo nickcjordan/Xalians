@@ -8,22 +8,11 @@ The render shows a single tall body standing upright on two long digitigrade leg
 
 The lore block holds three prose fields. `description` is Nick's teaser, carried from `species.json` verbatim and never edited here. `body` and `habits` are authored below under the lore split of 2026-09-09; every claim in each is ledgered.
 
-### body (110 words)
+### body (98 words)
 
-It stands close to two meters on two long jointed legs, thigh, shin and foot each a plated segment. The head is narrow and deerlike, carried high on a slim neck, tapering to a small closed mouth with one pale eye and ears swept back along the skull; from the crown rise two long thin filaments that sweep back and fork near their tips. The torso is unplated, broad at the shoulders and narrow at the waist. Both forearms are cased in plated gauntlets, and out of each hand rises a tapering helically threaded shaft longer than the creature is tall. There is no tail and there are no wings.
+A biped close to two meters tall on long jointed legs, each leg a run of plated segments. The head is narrow and deerlike on a slim neck, with two long thin antennae sweeping back from the crown. The torso is broad at the shoulders and narrow at the waist. Both forearms are cased in plating, and out of each hand rises a long helically threaded shaft, longer than the creature is tall: the drills it works with. There is no tail and there are no wings. It sees and hears poorly, and reads its ground another way.
 
-| Claim | Source |
-|---|---|
-| close to two meters tall | record `size.heightCm` 180 to 215 |
-| two long jointed legs bearing the weight | art: two digitigrade legs carrying the full weight; record `bodyPlan: biped` |
-| thigh, shin and foot each a plated segment | art: segmented jointed plated assemblies with panel highlights at thigh, shin and foot; record `covering: plating`, `anatomy: shell` |
-| narrow deerlike head high on a slim neck, tapering to a small closed mouth | art: the narrow antelope-like head on a slim neck with a small closed mouth |
-| one pale eye, ears swept back along the skull | art: one visible pale eye and swept-back ears |
-| two long thin filaments from the crown, sweeping back and forking near the tips | art: the two backswept forked head filaments; record `anatomy: antennae` (Nick's art correction of 2026-09-02: these are antennae, not antlers) |
-| the torso is unplated, broad at the shoulders and narrow at the waist | art: an unbroken untextured trunk, broad shouldered and narrow waisted |
-| both forearms cased in plated gauntlets | art: the gauntlet-like hand and forearm assemblies drawn with panel highlights |
-| out of each hand a tapering helically threaded shaft longer than the creature is tall | art: the two threaded drill shafts, longer than the body, rising from the hands; record `anatomy: spurs` |
-| no tail, no wings | art: neither is drawn |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits (116 words)
 

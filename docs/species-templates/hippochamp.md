@@ -8,21 +8,11 @@ The render shows a single body, rearing, drawn as a black silhouette with white 
 
 The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` teaser carried verbatim and is never edited here; `body` is the physical record, `habits` is how the creature lives now. `descriptionStatus` was removed from the record; status lives in `docs/species-templates/lore-status.json`.
 
-### body
+### body (83 words)
 
-Horse-bodied from the shoulder back and seahorse-headed in front, it carries a long tapering snout that narrows to a small round opening at the tip. A spiked, sail-like crest runs from the brow down the neck, and stepped rows of fin-like spines continue along the spine to the hindquarters and along the underside of the neck and belly. A small webbed fin sits behind the jaw, and the eye is a narrow slit. All four legs end in blunt, unsplit feet with no digits or hooks, and the thick, ridged tail coils into a tight inward spiral held clear of the ground. The surface is smooth, with no plate or scale edge anywhere on it.
+Horse-bodied from the shoulder back and seahorse-headed in front, with a long tapering snout that ends in a small round opening. A sail-like crest runs from the brow down the neck, and rows of fin-like spines continue along the back and belly. All four legs end in blunt hooves, and the thick ridged tail coils into a tight spiral held clear of the ground. The surface is smooth hide, with no plate or scale on it. It swims as readily as it runs.
 
-| Claim | Source |
-|---|---|
-| Horse-bodied from the shoulder back and seahorse-headed in front | art (horse barrel, shoulders and hindquarters; seahorse head and snout); species.json, "Four-legged creatures resembling a seahorse" |
-| Long tapering snout narrowing to a small round opening at the tip | art (the fan of water leaves through that opening); record `physiology.anatomy: trunk` |
-| Spiked, sail-like crest from the brow down the neck | art; record `physiology.anatomy: crest` |
-| Stepped rows of fin-like spines along the spine to the hindquarters and along the underside of neck and belly | art; record `physiology.anatomy: spines` |
-| Small webbed fin behind the jaw | art |
-| The eye is a narrow slit | art; record `physiology.senses.sight` 45 to 65 |
-| Four legs ending in blunt, unsplit feet with no digits or hooks | art; record `physiology.bodyPlan: quadruped` and `anatomy: hooves` |
-| Thick, ridged tail coiled into a tight inward spiral held clear of the ground | art; record `physiology.anatomy: tail` |
-| Smooth surface, no plate or scale edge | art (unbroken outline apart from crest and spine rows); record `physiology.covering: hide` and the absence of `shell` |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits
 

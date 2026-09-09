@@ -8,22 +8,11 @@ The render shows the same creature twice. On the left is a lateral view: a long,
 
 The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description` verbatim and moves everything else into two authored fields. The body and habits below are the record's text.
 
-### body (118 words)
+### body (94 words)
 
-The body is one long arched train of segments, thickest at the shoulder and tapering to a narrow rear, borne on pair after pair of thin elbowed limbs spaced down its whole length. Each limb ends in a splayed foot whose long toes spread wide and finish in small bulbs. The head is broad and rounded, tapering downward, and carries two very large forward-facing eyes with vertical slit pupils, two thin antennae swept back from the crown, and two small nostrils low on the face. Nothing on it is plated: the surface is bare and the outline smooth from end to end. It runs about two meters and a hundred kilograms, and it takes the ground as tremor.
+One long arched train of segments, thickest at the shoulder and tapering to the rear, borne on pair after pair of thin limbs spaced down its whole length, each ending in a splayed toed foot. The head is broad and rounded, with two very large forward-facing eyes and two thin antennae swept back from the crown. Nothing on it is plated: the surface is bare hide and the outline smooth from end to end. It runs about two meters and a hundred kilograms, swims better than it walks, and takes the ground as tremor.
 
-| Claim | Source |
-|---|---|
-| one long arched train of segments, thickest at the shoulder, tapering to a narrow rear | art: the lateral view, a long arched visibly segmented body thickest at the front and tapering to a narrow rear |
-| pair after pair of thin elbowed limbs down its whole length | art: many pairs of slender elbowed limbs spaced down the body |
-| each limb ends in a splayed foot, long toes spread wide, tipped with small bulbs | art: splayed feet with long spreading toes tipped with small bulbs |
-| broad rounded head tapering downward | art: the frontal view |
-| two very large forward-facing eyes with vertical slit pupils | art |
-| two thin antennae swept back from the crown | art; record `physiology.anatomy` carries `antennae` |
-| two small nostrils low on the face | art: two nostril dots low on the face |
-| nothing plated, the surface bare, the outline smooth end to end | art: no plates, scutes or shell edges, smooth silhouette throughout; record `physiology.covering` is `bare` and `anatomy` carries `hide`, never `shell` |
-| about two meters and a hundred kilograms | record `physiology.size.heightCm` [170, 230] and `weightKg` [70, 115] |
-| takes the ground as tremor | record `physiology.senses.special` carries `tremorsense` |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits (101 words)
 

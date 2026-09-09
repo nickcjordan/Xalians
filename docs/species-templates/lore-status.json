@@ -1,5 +1,5 @@
 {
-  "note": "Review status of the lore prose fields per species (Nick signs off). This is ephemeral metadata kept OUT of the creature records on purpose (Nick, 2026-09-09). description is always source (species.json verbatim); body and habits are pending, draft, or ratified.",
+  "note": "Review status of the lore prose fields per species (Nick signs off). This is ephemeral metadata kept OUT of the creature records on purpose (Nick, 2026-09-09). description is always source (species.json verbatim); body and habits are pending, draft, or ratified. Bodies re-cut 2026-09-09 under the defining-features rule; body and habits stay draft until Nick signs off per planet batch.",
   "species": {
     "akinza": {
       "description": "source",

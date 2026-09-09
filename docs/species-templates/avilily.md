@@ -8,21 +8,11 @@ The artwork is a solid black silhouette of a single bird in flight, seen from it
 
 The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
 
-### body
+### body (77 words)
 
-A spray of narrow feathers stands up from its crown, and a neck runs down into a heavy teardrop body. Opened, the bill spreads into four broad lobes set around a starburst of fine filaments, so the front of the face carries far more structure than a bill needs. Its wings are broad and long-feathered and are what move it, and two long streamer feathers run back from behind the head. The legs hang clear beneath and end in three or four long splayed toes that grip. Feathers cover it. It is a small bird, and it sees and smells far better than it hears.
+A small bird with a heavy teardrop body, broad long-feathered wings that carry it, a feathered crest on the crown and long streamer feathers trailing from the head. The bill is the strange part: it opens outward into broad lobes around a spray of fine filaments, more structure than a bill needs for feeding alone. The legs hang clear beneath and end in gripping toes. Feathers cover it. It sees and smells far better than it hears.
 
-| Claim | Source |
-|---|---|
-| A spray of narrow feathers standing up from the crown | art: a crest of narrow feathers standing up from the head; record `physiology.anatomy` includes crest |
-| A neck running down into a heavy teardrop body | art: a neck running down into a heavy teardrop body |
-| Opened, the bill spreads into four broad lobes set around a starburst of fine filaments | art: the beak split open into four broad petals arranged around a starburst of fine filaments |
-| Broad long-feathered wings, and they are what move it | art: one large wing fully extended with flight feathers drawn as long overlapping blades, a second below it; record `physiology.bodyPlan: avian` and `capabilities.flight [70, 88]` |
-| Two long streamer feathers running back from behind the head | art: two long streamer feathers running back from behind the head, over the wing; record `physiology.anatomy` includes tail |
-| Legs hanging clear beneath, ending in three or four long splayed toes that grip | art: two legs hanging below the body, each ending in three or four long splayed toes held clear of any ground; record `physiology.anatomy` includes talons |
-| Feathers cover it | record `physiology.covering: feathers` |
-| It is a small bird | record `physiology.size.heightCm [40, 56]` and `weightKg [6, 10]` |
-| It sees and smells far better than it hears | record `senses.sight [65, 85]`, `senses.smell [50, 70]`, `senses.hearing [45, 60]` |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits (119 words)
 

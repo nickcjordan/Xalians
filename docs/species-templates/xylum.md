@@ -8,20 +8,11 @@ The render is a solid black silhouette on white. A single bulbous, roughly ovoid
 
 Split applied 2026-09-09. `lore.description` is Nick's teaser from `species.json`, verbatim. The pre-split upgraded description and the 2026-09-08 stub-upgrade draft are re-cut into body and habits below, with the orchestrator's edit applied ('a limb cut off it comes back' becomes 'a limb torn from it grows back').
 
-### body (110 words)
+### body (83 words)
 
-A bulbous trunk-mass breaks the soil line, and from it six thick limbs rise and curl outward, three to a side, tapering from a very wide base to a fine curled tip. Each carries a row of short, regular sawtooth serrations along the outer edge of its last third, and what those limbs wrap they hold. Two narrower shoots rise straight from the crown, smooth-edged, crossing each other in a tapering point. The two lowest limbs sweep down until their bases meet the ground beside the trunk. There is no head, no face, no eyes and no mouth on it anywhere: it takes the world as tremor through the soil.
+A bulbous trunk-mass of plant tissue breaking the soil line, three to four meters tall, with six thick limbs rising and curling outward from it, three to a side, each tapering to a fine tip and edged with serrations along its outer length. Two narrower shoots rise straight from the crown. Roots hold the rest of it below the soil. There is no head, no face, no eyes and no mouth on it anywhere: it takes the world as tremor through the ground.
 
-| Claim | Source |
-|---|---|
-| a bulbous trunk-mass breaking the soil line | art: a bulbous roughly ovoid trunk-mass whose base breaks a ragged horizontal soil line; the teaser gives the underground habit |
-| six thick limbs rising and curling outward, three to a side, wide base to fine curled tip | art: six thick limbs, three to a side, tapering from a very wide base to a fine curled tip; `physiology.bodyPlan` multiped; `physiology.anatomy` roots and tendrils |
-| a row of short, regular sawtooth serrations along the outer edge of the last third of each limb | art: exactly that; `physiology.anatomy` spines |
-| what those limbs wrap they hold | the teaser's roots that act as tentacles; `capabilities.manipulation` [45, 70], which the grasping keys `roots` and `tendrils` license above 40 |
-| two narrower smooth shoots rising from the crown and crossing in a tapering point | art: two further limbs rising straight from the crown, narrower and smooth-edged, crossing in a point |
-| the two lowest limbs sweep down until their bases meet the ground | art: the two lowest limbs sweeping down and out so their bases meet the ground beside the trunk |
-| no head, no face, no eyes, no mouth | art: no head, face, eyes, mouth, wings, discrete legs or tail; `physiology.senses.sight` [0, 15] |
-| takes the world as tremor through the soil | `physiology.senses.special` tremorsense; `physiology.communication` vibration |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits (115 words)
 

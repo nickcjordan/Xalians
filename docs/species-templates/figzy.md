@@ -8,20 +8,11 @@ The art shows a single small creature standing upright on two digitigrade legs, 
 
 The lore block holds three prose fields. `description` is Nick's teaser, carried from `species.json` verbatim and never edited here. `body` and `habits` are authored below under the lore split of 2026-09-09, re-cut from the stub-upgrade draft of 2026-09-08.
 
-### body (107 words)
+### body (75 words)
 
-A small upright body stands on two digitigrade legs, weight braced back on one of them, with both forelimbs held up in front of the chest and ending in five-fingered hands, the fingers splayed open. The head carries the rest of it: two enormous ears flaring wider than the skull, a pair of slender branched antlers rising from the crown, two very large round eyes, and a small blunt muzzle beneath them. A shaggy coat breaks the outline into tufts along the ears, cheeks, chest, forelimbs and thighs. Nothing on it is plated or shelled, and at a little over a meter it is a light frame.
+A small upright biped on digitigrade legs, a little over a meter tall and light in the frame, with forelimbs ending in hands. The head carries most of what marks it: two enormous ears flaring wider than the skull, slender branched antlers rising from the crown, and very large eyes over a small blunt muzzle. A shaggy coat covers it, with no plate or shell anywhere. It hears better than anything else on it works.
 
-| Claim | Source |
-|---|---|
-| small upright body on two digitigrade legs, weight braced back on one | art: standing on two digitigrade legs with the weight braced back; record `bodyPlan: biped` |
-| both forelimbs held up in front of the chest, ending in five-fingered hands with the fingers splayed | art: both forelimbs raised and free of the ground, small five-fingered hands splayed open; record `anatomy: fists` |
-| two enormous ears flaring wider than the skull | art: the two shaggy ears flaring wider than the head |
-| a pair of slender branched antlers rising from the crown | art: the branched racks on the crown; record `anatomy: antlers` |
-| two very large round eyes and a small blunt muzzle | art: the two large round eyes with bright highlights and the small blunt muzzle |
-| a shaggy coat tufting the outline along ears, cheeks, chest, forelimbs and thighs | art: the tufted ragged outline on those parts; record `covering: fur` |
-| nothing plated or shelled | record `anatomy: hide` and no `shell` |
-| a little over a meter, a light frame | record `size` 95 to 125 cm and 34 to 52 kg |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits (117 words)
 

@@ -10,19 +10,11 @@ Split applied 2026-09-09. This record is an unratified draft and has no `species
 
 The species now has artwork at `art/frackworm.png`; the Art reading section above, which states there is none, predates it. Body below is written from the render.
 
-### body (105 words)
+### body (90 words)
 
-A limbless body in overlapping plates, ringed segment by segment from the blunt taper of the tail to the collar behind the head, and thick enough through the trunk that the front third rears and curves back over the rest of itself when it lifts. The head narrows forward through banded rings to a working face. Set on the collar behind it is a single pinpoint eye, and it reads almost nothing. Nothing on the body grips or grasps: the plates are the surface, the rings are the mechanism, and what the creature does it does with its head end or with its whole length.
+A limbless armored worm, nine to fifteen meters of overlapping chitin plates ringed segment by segment, and thick enough through the trunk that the front third rears and curves over the rest when it lifts. The head narrows forward to a working face of jaws, with vents set into the collar behind it. It is nearly blind. Nothing on it grips or grasps: what it does, it does with its head end or with its whole length, and it reads the ground it moves through rather than looking at it.
 
-| Claim | Source |
-|---|---|
-| limbless body in overlapping plates, ringed segment by segment | art: a segmented trunk drawn as overlapping plates with pale seam lines running the whole length, no limb of any kind; `physiology.bodyPlan` serpentine; `physiology.covering` chitin; `physiology.anatomy` shell |
-| blunt taper at the tail, a collar behind the head | art: the rear end tapering to a blunt point, a distinct collar segment between the drill head and the trunk |
-| the front third rears and curves back over the rest of itself | art: the forward third of the body raised and curved back over the resting length |
-| the head narrows forward through banded rings to a working face | art: a broad ringed head banded across its length and narrowing forward; the record's own `lore.description`, a ringed drill-like head; `physiology.anatomy` jaws |
-| a single pinpoint eye on the collar, reading almost nothing | art: one small dot eye set on the collar behind the drill; `physiology.senses.sight` [0, 15]; the 2026-09-04 amendment, now carried in the changelog below |
-| nothing on the body grips or grasps | `capabilities.manipulation` [5, 15] and `climb` [0, 10]; no grasping key in `physiology.anatomy` |
-| what it does it does with its head end or with its whole length | `instruments` jaws, vents and body |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits (105 words)
 

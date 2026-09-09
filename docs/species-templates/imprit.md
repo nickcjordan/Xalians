@@ -8,20 +8,11 @@ The render is a flat black silhouette of a single body, one creature and not a s
 
 The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` teaser carried verbatim and is never edited here; `body` is the physical record, `habits` is how the creature lives now. `descriptionStatus` was removed from the record; status lives in `docs/species-templates/lore-status.json`.
 
-### body
+### body (93 words)
 
-A lean, long-limbed simian shape that goes in a low crouch with all four limbs on the ground, its hands and feet bare spread digits and bare soles with no hooks or claws drawn on them. The head is broad and slung low and forward, carrying two heavy curved horns that sweep up and back from the crown, a smaller curled pair at the sides of the skull, two long downward fangs, and two large slanted eyes. A very thin whip of a tail rises from the hindquarters, loops high above the body in a wide S, and tapers to a fine point. Flame stands off the shoulders, neck and skull in a constant crown.
+A lean, long-limbed simian shape that goes in a low crouch on all four limbs, its hands and feet bare-soled and clawless, made for gripping. The head is broad and slung low and forward, carrying heavy curved horns swept up and back from the crown and long downward fangs. A very thin whip of a tail rises from the hindquarters and loops high over the body. Fur covers it, and flame stands off the shoulders, neck and skull in a constant crown. It climbs, leaps and handles things far better than it runs.
 
-| Claim | Source |
-|---|---|
-| Lean, long-limbed simian shape going in a low crouch with all four limbs on the ground | art; record `physiology.bodyPlan: quadruped` |
-| Hands and feet drawn as bare spread digits and bare soles, no hooks or claws | art; record `physiology.anatomy: fists` and the absence of `claws` |
-| Broad head slung low and forward | art |
-| Two heavy curved horns sweeping up and back from the crown, and a smaller curled pair at the sides of the skull | art; record `physiology.anatomy: horns` |
-| Two long downward fangs | art; record `physiology.anatomy: fangs` |
-| Two large slanted eyes | art |
-| A very thin whip of a tail looping high above the body in a wide S and tapering to a fine point | art; record `physiology.anatomy: tail` |
-| Flame standing off the shoulders, neck and skull in a constant crown | art (stylized flame tongues rising from shoulders, neck and skull) |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits (119 words)
 
