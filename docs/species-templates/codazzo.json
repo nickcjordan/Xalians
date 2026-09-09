@@ -7,8 +7,9 @@
     "stonera"
   ],
   "lore": {
-    "description": "A lean, upright digger whose raised tail carries a fan of banded explosive barbs, the Codazzo was generated on Stonera, a world that crosses the Jorian Belt each year under a planetwide bombardment of asteroids and meteors, where the Generator produced Xalians that could quickly dig their way to safety. When spooked it digs its body underground and exposes only that tail. If provoked it will not hesitate to fire off a few projectiles, and its regenerative power quickly grows more.",
-    "descriptionStatus": "upgraded",
+    "description": "This creature digs its body underground when spooked, exposing only its tail made of explosive barbs. If provoked, it won't hesitate to fire off a few projectiles, as its regenerative power can quickly grow more.",
+    "body": "It is lean and fox-like, upright on two digitigrade hind legs, its forelimbs hanging free along the body and each ending in three or four long hooked claws. The muzzle is long and narrow, the ears tall and pointed, and a short spiky ridge runs down the neck and back. Tufted shaggy edges mark the ruff, the ridge, and the haunches. The tail is thick and muscular where it leaves the hindquarters, rising to a narrow junction, from which about a dozen large cone-shaped barbs splay outward in a fan, each banded with two or three transverse lines and tipped with a small nub. It is a small animal, and it reads the ground better than it sees.",
+    "habits": "The Stonera Generator made it for a world that crosses the Jorian Belt once a year and takes a planetwide bombardment of asteroids and meteors for it. Rapid subsurface retreat is the primary survival adaptation there, and nothing this animal does it does better than dig. Its ground is the fissured rock and the crater fields, which it works from beneath. The dust-saturated air of that world crackles with continuous static discharge, and the charge passes over it without harm. Stonera is now a planetary strip-mine spiraling into the Chasm under King Kozrak's enforcers. It eats what the ground and the rubble hold, of any kind, and signals through the stone rather than across it.",
     "biomeNiche": "tunneler in the fissured rock and craters of Stonera"
   },
   "physiology": {

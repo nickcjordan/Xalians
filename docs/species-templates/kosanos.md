@@ -4,6 +4,44 @@
 
 The artwork shows a single heavy-bodied creature standing in three-quarter view on four thick columnar legs, all four of which reach the ground and bear weight; the forelimbs are legs, not free arms. The body is a deep barrel trunk that tapers back to the hindquarters, ending in a short upturned tail that curls to a fine point. The head is low and blunt, carried near the level of the shoulders, with one large almond eye drawn in outline and an open mouth showing a row of long tapering teeth, upper and lower, in a broad gape. From the top of the head rises a single long appendage, ribbed or segmented along its inner curve, which arcs up and back over the whole body and flattens into a wide, thin, gently curved blade that sweeps rearward past the hips and tapers to a needle point; the blade is by far the largest single feature of the silhouette, roughly as long as the body itself. The feet are rounded pads with a single crease line above each, neither split hooves nor spread digits; no claws, talons, spines, plates, or wings are drawn anywhere. The outline is smooth throughout, with no tufted, plumed, scaled, or plated edge treatment. One body, one head, one blade-tipped trunk.
 
+## Lore
+
+The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` teaser carried verbatim and is never edited here; `body` is the physical record, `habits` is how the creature lives now. `descriptionStatus` was removed from the record; status lives in `docs/species-templates/lore-status.json`.
+
+### body
+
+A heavy quadruped on four thick columnar legs, all of them bearing weight, with a deep barrel body that tapers back to the hindquarters and a short upturned tail curling to a fine point. The head is blunt and carried low near the shoulders, with one large almond eye and a broad gape showing rows of long tapering teeth. From the crown rises a single long trunk, ribbed along its inner curve, which arcs up and back over the whole animal and flattens into a wide, thin blade that sweeps past the hips to a needle point, roughly as long as the body itself. The feet are rounded pads. The hide is smooth throughout, unplated and unspined.
+
+| Claim | Source |
+|---|---|
+| Heavy quadruped on four thick columnar legs, all of them bearing weight | art; record `physiology.bodyPlan: quadruped`, `size` 210 to 265 cm and 320 to 430 kg |
+| Deep barrel body tapering back to the hindquarters, short upturned tail curling to a fine point | art; record `physiology.anatomy: tail` |
+| Blunt head carried low near the shoulders, one large almond eye | art |
+| Broad gape showing rows of long tapering teeth | art; record `physiology.anatomy: jaws` |
+| A single long trunk rising from the crown, ribbed along its inner curve, arcing up and back over the whole animal | art; record `physiology.anatomy: trunk` |
+| Flattening into a wide, thin blade that sweeps past the hips to a needle point, roughly as long as the body | art; record `physiology.anatomy: blades`; species.json, "With a large blade at the end of its trunk" |
+| Feet are rounded pads | art (rounded pads with a single crease, neither split hooves nor spread digits) |
+| Hide smooth throughout, unplated and unspined | art (smooth outline, no plate, scale or spine edges); record `physiology.covering: hide` and the absence of `shell` and `spines` |
+
+### habits
+
+It works the underforests beneath the World Tree canopies, where open ground is scarce and obstruction makes the going slow, felling standing growth in long low arcs of the blade. It sets its feet and reads the tremor in the ground before it swings. It feeds as it works, on the growth it opens and on what the opening turns up. The toxic fungal blooms of the understory do not take in its hide, and what the brush tears in that hide closes over again. It holds the lane it has cut, in a forest whose answer to cutting is growth, entanglement and regrowth rather than a fight, and it gapes its long teeth at whatever comes down that lane.
+
+| Claim | Source |
+|---|---|
+| Works the underforests beneath the World Tree canopies | planets.json Floria paragraph 7, the World Trees whose "thick canopies had shaded the underforests"; planetRecords.json floria report terrain feature, understory fungal thickets; record `lore.biomeNiche` |
+| Open ground is scarce and obstruction makes the going slow | planetRecords.json floria report terrain notes, "Open ground: none of significance."; report mobility sprint, inefficient, "ground-level obstruction density" |
+| Fells standing growth in long low arcs of the blade | record `signatureAbility` Understory Reaping and `instruments: blades`; species.json, designed to clear the thick brush of Floria |
+| Sets its feet before it swings | record `traits.pool.anchored` 100 |
+| Reads the tremor in the ground | record `physiology.senses.special: tremorsense` |
+| Feeds as it works, on the growth it opens and on what the opening turns up | record `physiology.diet: omnivore` |
+| The toxic fungal blooms of the understory do not take in its hide | planetRecords.json floria report hazards, toxic fungal blooms; planets.json Floria paragraph 8, "massive infestations of toxic fungi"; record `traits.pool.resistant` |
+| What the brush tears in that hide closes over again | planetRecords.json floria report output priorities, regenerative tissue; record `traits.pool.regenerative` |
+| Holds the lane it has cut | record `traits.pool.territorial` |
+| In a forest whose answer to cutting is growth, entanglement and regrowth rather than a fight | planetRecords.json floria report fauna observation, "territorial strategy: growth, entanglement, and regrowth in place of engagement"; planets.json Floria paragraph 8, the coordinated response to any attempt to clear ground |
+| Gapes its long teeth at whatever comes down that lane | art (broad gape, long tapering teeth); record `physiology.anatomy: jaws` |
+
+
 ## Sources
 
 Species entry (`species.json`, Kosanos): "With a large blade at the end of its trunk, this simple yet powerful creature is thought to have been designed to clear the thick brush of Floria." Legacy height 236 cm, weight 376 kg, type Plant, planet Floria, `statRatings` giving low special attack and low speed, legacy traits `canFly: false` and `attackRange: medium`.
@@ -188,3 +226,4 @@ logged to docs\species-templates\validation-log\kosanos.jsonl
 - 2026-09-07, trait evidence bar iteration two (Nick): restored regenerative; cut none; expected count 1.20 to 1.45.
 - 2026-09-08, trait evidence bar iteration three (Nick): added territorial, perceptive; raised resistant, regenerative; cut none; expected count 1.45 to 4.80.
 - 2026-09-08, pool shape (Nick): required anchored; rolled resistant 35, regenerative 30, perceptive 20, territorial 15; expected count 4.80 to 2.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.

@@ -4,6 +4,47 @@
 
 The artwork shows a single body, drawn as a solid black silhouette against a background of branching lightning. It is a long-limbed quadruped standing on all four limbs: both forelimbs and both hindlimbs reach the ground and end in broad paws with visible separated digits, and the forelimbs are not held clear of the ground or doing any work. The head is narrow and canine or cervine in shape, with a long tapering muzzle, a single visible pale eye, and two upright pointed ears each pierced by a small zigzag notch in the shape of a lightning fork. Rising from the neck and shoulders is a tall erect crest of long spiked filaments, drawn as a distinct raised structure separate from the body outline. A large bushy tail sweeps up and back, roughly as long as the torso. The entire outline of the body, legs, crest, and tail is drawn with ragged, tufted, spiked edges rather than a smooth line, and a fringe of the same tufting runs along the belly and down the backs of the legs. No wings, no fins, no horns, no visible teeth, no armor plates or scale edges are shown. The pose is standing, weight on all four feet, head turned toward the viewer.
 
+## Lore
+
+Split applied 2026-09-09. `lore.description` is Nick's teaser from `species.json`, verbatim. The pre-split upgraded description carried three sentences; they are sorted into body and habits below, and the one that restated the teaser is dropped rather than repeated.
+
+### body (102 words)
+
+A tall, long-limbed quadruped carried on four broad paws whose digits are separated and end in heavy claws. The head is narrow, with a long tapering muzzle and two upright pointed ears, each cut through by a small fork-shaped notch. From the neck and shoulders rises a stiff erect ruff of long spiked filaments, standing clear of the back line. A large bushy tail sweeps up and back about the length of the torso. The whole outline, legs and tail included, is ragged and tufted, a shaggy pelt with a fringe running along the belly and down the backs of the legs.
+
+| Claim | Source |
+|---|---|
+| tall, long-limbed quadruped on four broad paws with separated digits | art: a long-limbed body standing with all four limbs on the ground, ending in broad paws with visible separated digits; `physiology.bodyPlan` quadruped; `physiology.size` 190 to 235 cm and 105 to 145 kg |
+| heavy claws | `physiology.anatomy` claws, which the teaser names directly; `instruments` claws; `conduits` claws to electric |
+| narrow head with a long tapering muzzle | art: a narrow head with a long tapering muzzle; `physiology.anatomy` jaws |
+| two upright pointed ears, each cut by a small fork-shaped notch | art: two upright pointed ears, each pierced by a small zigzag notch in the shape of a lightning fork; `physiology.senses.hearing` [50, 70] |
+| a stiff erect ruff of long spiked filaments off the neck and shoulders, clear of the back line | art: a tall erect crest of long spiked filaments rising from the neck and shoulders as a raised structure separate from the body outline. Written as pelt structure, not as an anatomy key, because the record declares no `crest` (see Friction, 2026-09-09, below) |
+| large bushy tail about the length of the torso | art: a large bushy tail sweeping up and back, roughly torso length; `physiology.anatomy` tail |
+| ragged tufted outline with a fringe along the belly and the backs of the legs | art: the entire outline drawn in ragged tufted edges with a matching fringe on the belly and rear legs; `physiology.covering` fur |
+
+### habits (111 words)
+
+It feeds on charge and takes nothing else, working the deep canyons and metallic peaks where Zolton's energy cycle lays down visible rivers of electricity that surge like wire currents over the crust. Storage is the rare answer on that world; most cataloged forms conduct the current and pass it along, and every one of them avoids the black lightning dead zones without exception. It keeps to canyons saturated with dense freezing gases and has no use for the warm end of its world. The Generator that made it was set on Zolton because black lightning did no harm to inorganic matter, so any loss of labor could simply be replenished.
+
+| Claim | Source |
+|---|---|
+| feeds on charge and takes nothing else | `physiology.diet` energy-feeder; `physiology.senses.special` electroreception |
+| works the deep canyons and metallic peaks | `lore.biomeNiche`; Zolton history paragraph 1, a mountainous world of deep canyons and craggy spires whose metallic peaks act as natural lightning rods; Zolton report terrain features |
+| the energy cycle lays down visible rivers of electricity surging like wire currents over the crust | Zolton history paragraph 3, the energy dissipating into the canyon network and forming visible rivers of electricity that surged like wire currents over the crust; Zolton report terrain feature, active cyclical surface current rivers |
+| storage is the rare answer; most forms conduct the current and pass it along | Zolton report fauna observation, universal adaptation of energy conduction and redirection with storage in a minority of lineages (the line Nick softened on 2026-09-08 precisely so this species could stand as the exception) |
+| every cataloged form avoids the black lightning dead zones without exception | Zolton report fauna observation, black lightning dead zones avoided by all cataloged forms without exception |
+| keeps to canyons saturated with dense freezing gases, no use for the warm end | Zolton history paragraph 1, deep canyons saturated with dense, freezing gases; `environmentalTolerance.temperatureC` -55 to 35 against a habitable band that runs to 35; Zolton report hazard, cryogenic canyon exposure; `traits.pool.hardened` 16 |
+| the Generator was set there because black lightning did no harm to inorganic matter and any loss of labor could simply be replenished | Zolton history paragraph 5, the corporate proposal to withdraw Vallerii workforces and establish a Generator, since black lightning did no damage to inorganic matter and the Generator could simply continue replenishing any loss of labor |
+
+### Sentences dropped from the pre-split description
+
+- 'The Voltish stores electrical energy from its surroundings and releases the shock into enemies.' Not lost: it is the teaser's own claim, carried verbatim in `lore.description`, and the split forbids repeating it.
+- Nothing else was dropped. The other two sentences of the pre-split description (the alloy appositive with its Zolton origin, and the rivers of electricity) are carried in habits and in the teaser respectively.
+
+### Friction, 2026-09-09 (operating rule 7)
+
+The 2026-09-02 orchestrator amendment reads the tall spiked structure in the art as a raised forelimb ending in five splayed claws, with the creature crouching on one forelimb and two hind legs, and removed `crest` from anatomy on that reading. The current `art/voltish.png` does not show that. It shows a standing quadruped with all four broad paws flat on the ground and a stiff spiked ruff running up the neck and shoulders, clear of the back line. Either the art was replaced after the amendment or the amendment misread it. I have written body to the art as it now stands, without naming an anatomy key the record does not carry, and changed no record field. Smallest fix if the art is authoritative: restore `crest` to `physiology.anatomy` and reopen the 2026-09-02 question of whether the ruff is electrical, which was already put to Nick and never answered.
+
 ## Source text
 
 The species description, in full: "With bones and claws made from a tough, conductive metal alloy, this daunting creature can store electrical energy from its surroundings and release the shock into enemies."
@@ -205,3 +246,5 @@ Both WARNs are answered in the Validator warnings answered section above.
 - 2026-09-08, trait evidence bar iteration three (Nick): added insulated (100, Zolton insulation output priority plus the continuous-lightning hazard), hardened (100, cryogenic canyon exposure hazard), pack-bonded (25, rolled at its authored percent on the qualified entangled-pair lineage line); raised resistant 90 to 100 (black lightning neutron emission hazard) and perceptive 35 to 100 (`senses.special` electroreception); cut none; expected count 2.55 to 5.55.
 - 2026-09-08, pool shape (Nick): required insulated; rolled volatile 30, menacing 22, resistant 20, hardened 16, perceptive 12; expected count 5.55 to 2.00.
 - 2026-09-08, new keys (Nick): no change to `voltish.json`. `grappling`, `commanding` and the widened `armored` were checked against this species and none applies: nothing shows it holding what it catches, it directs no other bodies or projections of itself, and its metal is a skeleton and a set of claws under fur rather than a covering the body forms on itself, so the pool-shape ruling of the same day stands as authored, required `insulated`, rolled `volatile` 30, `menacing` 22, `resistant` 20, `hardened` 16, `perceptive` 12, expected count 2.00. The friction note about the Zolton Generator report contradicting this species is replaced with the resolution above: the report's universal-adaptation line was softened on 2026-09-08 to allow storage in a minority of lineages.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
+- 2026-09-09, lore fact-check gate (independent checker, no files changed by it): no UNSUPPORTED and no CONTRADICTED claims; nothing changed. The checker also read the tufted mass in the art as following a raised foreleg rather than a neck ruff, which is the same ambiguity recorded under Friction above and is why the prose names no anatomy key for it.

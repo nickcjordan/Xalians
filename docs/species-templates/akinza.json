@@ -7,8 +7,9 @@
     "krystos"
   ],
   "lore": {
-    "description": "A lean upright creature with enormous fringed ears, slit eyes that gather what little light the sky still gives, and a spread of long plumed tail fronds, the Akinza was generated on Krystos after the impact, when the blotted sky ended the dainty and graceful stock and the Generator turned to lifeforms capable of surviving in the harsh, frozen tundra. It belongs to the feral stock that remained in the arctic wastelands outside the high-security prison complexes, where such creatures proved as useful for deterring escape as the guards inside. The Akinza moves through open snow without sound or track and sneaks through the night with ease.",
-    "descriptionStatus": "upgraded",
+    "description": "This creature's incredible stealth and night vision allow it to sneak through the night with ease.",
+    "body": "Akinza stands upright on two digitigrade hind legs, narrow through the waist and light in the frame, and its forelimbs are held in at the waist, ending in small hooked claws that carry no weight. The head is feline, a short muzzle over a small triangular nose, with two tall vertical slit pupils set above it. The ears dominate everything else, a ragged and deeply fringed pair spread wider than the shoulders. A plumed tail sweeps up behind and opens into three or four shaggy fronds, each about as long as the body. Fur covers all of it. The long hind legs carry it at speed and the claws take it up ice and stone.",
+    "habits": "It belongs to the feral stock that came out of the Krystos Generator after the impact, when the debris blotted out the sun and the machine turned from dainty and graceful creatures to lifeforms capable of surviving the harsh, frozen tundra. Its ground is the arctic wastelands outside the high-security prison complexes rather than the penitentiary halls, where such creatures proved just as useful for deterring any prisoners from seeking to escape. Blizzard cycles and sustained lethal cold are the conditions it works in, and the dark hours are the ones it keeps. It takes what the permafrost gives, of any kind.",
     "biomeNiche": "the arctic wastelands outside the prison complexes, worked at night"
   },
   "physiology": {

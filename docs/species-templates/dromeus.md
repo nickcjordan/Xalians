@@ -4,6 +4,45 @@
 
 The image is a single black silhouette of one creature, a raptor-shaped theropod caught mid-stride and leaning forward. It stands on two hind legs; the near leg is planted and the far leg is drawn up, and each foot ends in a set of hooked toe claws. The forelimbs are held well clear of the ground, folded up against the chest and ending in three long curved hooked claws that are plainly not bearing weight. Behind the forelimb, a broad fan of stiff pointed plumes projects backward from the arm, read as a feathered wing surface rather than a bird's full airfoil. The head is long, narrow and lizard-like, jaws thrown wide to show two rows of triangular pointed teeth top and bottom, with a small round eye and a raised brow ridge. A long tail sweeps up and forward over the back, tapering to a spray of separated pointed plumes at the tip, and a second smaller plume group sits at the hip. The trunk outline itself is smooth and unbroken, with no tufted, plated, or scaled edge drawn anywhere along it. One body, no shell, no horns, no visible emission structures.
 
+## Lore
+
+The lore block holds three prose fields. `description` is Nick's teaser, carried from `species.json` verbatim and never edited here. `body` and `habits` are authored below under the lore split of 2026-09-09, re-cut from the stub-upgrade draft of 2026-09-08 with the orchestrator's edit applied.
+
+### body (115 words)
+
+It stands on two long hind legs, each foot set with hooked toe claws. The skull is narrow and lizard-like, with a small round eye under a raised brow ridge and two rows of triangular pointed teeth in jaws that open wide. The forelimbs stay folded against the chest, clear of the ground, and end in three long curved hooks. A broad fan of stiff pointed plumes sweeps back from each arm, with a second smaller group at the hip and a spray of them at the tip of the long tail carried up over the back. Between the plumes the trunk is smooth and unarmored, and the whole frame is light for its height.
+
+| Claim | Source |
+|---|---|
+| stands on two long hind legs | art: one leg planted and one drawn up, forelimbs bearing nothing; record `bodyPlan: biped` |
+| each foot set with hooked toe claws | art: hooked toe claws on each foot; record `anatomy: talons` |
+| narrow lizard-like skull, small round eye, raised brow ridge | art: the long narrow lizard head with a small round eye and a raised brow ridge |
+| two rows of triangular pointed teeth in jaws that open wide | art: jaws thrown wide showing two rows of triangular teeth; record `anatomy: jaws`, `fangs` |
+| forelimbs folded against the chest, clear of the ground, ending in three long curved hooks | art: forelimbs folded up against the chest, three long curved claws bearing no weight; record `anatomy: claws` |
+| a broad fan of stiff pointed plumes sweeping back from each arm | art: the plume fan projecting backward from the arm; record `anatomy: wings`, `covering: feathers` |
+| a second smaller plume group at the hip, and a spray at the tail tip | art: the hip plume group and the plumed tail tip; record `anatomy: tail` |
+| the long tail is carried up over the back | art: the tail sweeping up and forward over the back |
+| the trunk is smooth and unarmored | art: an unbroken trunk outline with no plated or scaled edge; record `anatomy: hide`, no `shell` |
+| the frame is light for its height | record `size` 88 to 112 cm against 38 to 56 kg |
+
+### habits (94 words)
+
+Magmuth's corporations designed it for the transient mineral islands, where a cooling flow gives only a brief window before the ground opens underfoot, and it was built to cross one inside that window. It hunts on those hardened flats and eats what it runs down. The ash storms and the sulfuric air of that world pass over it without harm, and it picks a moving shape out of the haze from a long way off. It still runs the ash fields, where the blood feuds that arose from the company wars have never ended.
+
+| Claim | Source |
+|---|---|
+| Magmuth's corporations designed it | Magmuth history paragraph 4, on the corporations designing all manner of Xalians to extract the planet's metals, minerals and gases |
+| for the transient mineral islands | Magmuth history paragraph 3, on the transient islands formed from hardened lava being replete with heavy metals; paragraph 4, the mineral laden islands as mining zones |
+| a cooling flow gives only a brief window before the ground opens underfoot | Magmuth history paragraph 1, on lava flows forming temporary islands by rapid cooling; Generator report mobility, sprint note that surface transit windows between flow shifts are brief |
+| built to cross one inside that window | Generator report output priorities, burst locomotion; record `capabilities.sprint` 80 to 98 |
+| hunts on the hardened flats and eats what it runs down | Magmuth history paragraph 1, hardened lava flows as desolate expanses of obsidian and basalt; record `diet: carnivore` |
+| ash storms and sulfuric air pass over it without harm | Magmuth history paragraph 2, on volcanic smoke lacing the atmosphere with sulfuric ash and toxic fumes, and on violent ash storms; Generator report fauna, heat-shielded integument universal; output priorities, thermal shielding |
+| picks a moving shape out of the haze from a long way off | record `senses.sight` 70 to 90; Magmuth history paragraph 2, acrid air thick with volcanic smoke |
+| still runs the ash fields | Magmuth history paragraph 1, almost everything on Magmuth covered in a thick layer of ash; Generator report terrain, ash deposition near total |
+| the blood feuds that arose from the company wars have never ended | Magmuth history paragraph 7, on internecine warfare fueled by old blood feuds that arose from the company wars |
+
+Written toward but not written: the draft's loose-groups hunting sentence was dropped on the orchestrator's instruction as unsourced, so no pack or solitary sentence appears and `pack-bonded` stays cut.
+
 ## Judgment lines
 
 Source abbreviations: `species` is the Dromeus `description` in `species.json`; `planet` is the Magmuth `history` array or `data` block in `planets.json`; `art` is the artwork read above.
@@ -177,3 +216,4 @@ The trait checks `traits.pool.required`, `traits.pool.rolledSum` and `traits.poo
 - 2026-09-07, trait evidence bar iteration two (Nick): restored `perceptive` (40, class 4); cut nothing further, since `resistant` rests on Magmuth's sulfuric ash and toxic fumes rather than on heat alone; expected count 1.52 to 1.92.
 - 2026-09-08, trait evidence bar iteration three (Nick): added `hardened` (100, Magmuth thermal shielding priority and the universal heat-shielded integument observation); raised nothing; cut nothing, since `perceptive` rests on a sight band whose upper bound is 90 and `resistant` on chemically hostile air; expected count 1.92 to 2.92.
 - 2026-09-08, pool shape (Nick): required `ramming`; rolled `hardened` 40, `resistant` 35, `perceptive` 25; expected count 2.92 to 2.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.

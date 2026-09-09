@@ -4,6 +4,45 @@
 
 The artwork is a flat black silhouette of a single hunched body with no legs, no feet, no hands, no wings and no tail. A rounded hood or dome forms the top of the body and carries one opening rendered in negative space, a rough oval with a vertical slit inside it, which reads as a single eye. Below the hood the mass swells outward and two thick arm-like protrusions spread wide to the left and right, broad where they meet the body and tapering toward blunt ends, with the undersides of both broken into long pointed runnels as though the material is sagging off them. The lower two-thirds of the body is a single widening skirt that meets the ground in a flat spreading base, its front face grooved by more vertical runnels, with several detached droplets falling away on both sides. Nothing in the outline is drawn as a discrete limb joint, and nothing bears weight the way a leg does: the body simply broadens until it reaches the ground. The outline is smooth apart from the drip edges, so it shows no fur, feather, scale or plate texture of its own.
 
+## Lore
+
+The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
+
+### body
+
+It has no legs and no hands. A rounded hood forms the top of the mass and carries a single opening, an oval with a vertical slit inside it, which is all the eye it has. Two thick protrusions spread wide from the upper body, broad where they meet it and blunt at their ends, with no joint anywhere along them, and their undersides break into long pointed runnels where the material sags. Below that the mass widens into a grooved skirt and meets the ground in a flat spreading base, shedding droplets. It stands about two meters and carries several hundred kilograms. It is mute, it sees poorly, and it reads what moves through the ground it covers.
+
+| Claim | Source |
+|---|---|
+| No legs and no hands | art: a hunched body with no legs, no feet, no hands, no wings and no tail |
+| A rounded hood forms the top of the mass | art: a rounded hood or dome forming the top of the body |
+| A single opening, an oval with a vertical slit inside it, is all the eye it has | art: one opening in negative space, a rough oval with a vertical slit inside it; record `senses.sight [20, 40]` |
+| Two thick protrusions spread wide from the upper body, broad where they meet it and blunt at their ends, with no joint anywhere along them | art: two thick arm-like protrusions spread left and right, broad at the body, tapering to blunt ends, with no discrete limb joint drawn; record `physiology.anatomy` includes pseudopods |
+| Their undersides break into long pointed runnels where the material sags | art: the undersides of both broken into long pointed runnels as though the material is sagging off |
+| The mass widens into a grooved skirt and meets the ground in a flat spreading base, shedding droplets | art: a single widening skirt grooved by vertical runnels, meeting the ground in a flat spreading base, with detached droplets falling away; record `physiology.bodyPlan: amorphous` |
+| It stands about two meters and carries several hundred kilograms | record `physiology.size.heightCm [180, 250]` and `weightKg [320, 500]` |
+| It is mute | record `physiology.communication: []` |
+| It sees poorly | record `senses.sight [20, 40]` |
+| It reads what moves through the ground it covers | record `senses.special: [tremorsense]`; art: the wide flat ground-contact base |
+
+### habits
+
+Drainov's Generator made it for a world of bubbling acid swamps, steaming corrosive rain, asphyxiating fumes, and slow-drifting clouds of neurotoxic gases, and it draws no breath from any of them. It moves through the acid swamps rather than over them, and slowly: the substrate of that world is unreliable and this is not a body that hurries. It feeds on whatever it settles over, of any kind, and it reads what approaches through the ground rather than seeing it. The planet is now held by a loose conglomerate of Vallerii space pirates and interstellar crime syndicates, and it still rains burning refuse, industrial waste, and hazardous materials on the swamps below. Its own working life is long.
+
+| Claim | Source |
+|---|---|
+| Drainov's Generator made it for that world | planets.json Drainov history paragraph 5: the Generator bioengineering new forms of life capable of surviving within the planet's hostile wastelands |
+| Bubbling acid swamps, steaming corrosive rain, asphyxiating fumes, and slow-drifting clouds of neurotoxic gases | planets.json Drainov history paragraph 5, the adaptation sentence, restated |
+| It draws no breath from any of them | record `physiology.breathes: []` |
+| It moves through the acid swamps rather than over them, and slowly | record `environmentalTolerance.ambientMedia: [gas, liquid]` with `capabilities.swim [30, 50]` and `sprint [3, 15]`; planetRecords.json drainov `report.mobility.swim` viable, chemically immune forms only |
+| The substrate of that world is unreliable | planetRecords.json drainov `report.mobility.sprint` inefficient, substrate integrity unreliable |
+| This is not a body that hurries | record `capabilities.sprint [3, 15]`, `agility [5, 20]`; the legacy speed gauge is low |
+| It feeds on whatever it settles over, of any kind | record `physiology.diet: omnivore` |
+| It reads what approaches through the ground rather than seeing it | record `senses.special: [tremorsense]` against `senses.sight [20, 40]` |
+| The planet is now held by a loose conglomerate of Vallerii space pirates and interstellar crime syndicates | planets.json Drainov history paragraph 7 |
+| It still rains burning refuse, industrial waste, and hazardous materials on the swamps below | planets.json Drainov history paragraph 4; planetRecords.json drainov `report.terrain.features`, ongoing orbital debris infall and corrosive precipitation |
+| Its own working life is long | record `physiology.lifespan: long` |
+
 ## Description status
 
 The species text is a two-sentence stub, so `descriptionStatus` is `upgraded`. Stub, verbatim: "An acid slime organism protected by a thick rocky exoskeleton. Its slime can continually regenerate an outer shell, allowing for great defense."
@@ -189,3 +228,4 @@ logged to docs\species-templatesalidation-logioflim.jsonl
 - 2026-09-08, trait evidence bar iteration three (Nick): added perceptive, volatile; raised regenerative, toxic; cut none; expected count 4.05 to 6.45. `resistant` at 100 survives the narrowing unchanged, since its support is full-spectrum toxin immunity and a chemically hostile atmosphere rather than temperature, dust or charge.
 
 - 2026-09-08, pool shape (Nick): required armored, regenerative; rolled toxic 40, resistant 25, volatile 20, perceptive 15; expected count 6.45 to 3.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.

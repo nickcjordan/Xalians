@@ -4,6 +4,43 @@
 
 The artwork shows a single body, a lean fox-like or jackal-like creature standing upright on two digitigrade hind legs, weight entirely on the hind feet. The forelimbs hang free at the chest, clear of the ground, each ending in three or four long hooked claws. The head is a long narrow muzzle with two tall pointed ears and one visible eye. A short spiky ridge runs down the back and neck, and the outline is drawn with tufted, shaggy edges at the ruff, the back ridge, and the haunches. The tail is thick and muscular, rising from the hindquarters and curving up and out to the side, and it terminates in a radiating fan of roughly a dozen large cone-shaped barbs. Each barb is banded with two or three transverse segment lines and ends in a small nub tip, and they are splayed outward from a single narrow junction at the tail tip, which reads as a cluster of detachable projectiles rather than a fixed crest. Nothing in the art shows wings, fins, or a second body.
 
+## Lore
+
+The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
+
+### body
+
+It is lean and fox-like, upright on two digitigrade hind legs, its forelimbs hanging free along the body and each ending in three or four long hooked claws. The muzzle is long and narrow, the ears tall and pointed, and a short spiky ridge runs down the neck and back. Tufted shaggy edges mark the ruff, the ridge, and the haunches. The tail is thick and muscular where it leaves the hindquarters, rising to a narrow junction, from which about a dozen large cone-shaped barbs splay outward in a fan, each banded with two or three transverse lines and tipped with a small nub. It is a small animal, and it reads the ground better than it sees.
+
+| Claim | Source |
+|---|---|
+| Lean and fox-like, upright on two digitigrade hind legs | art: a lean fox-like body standing upright on two digitigrade hind legs; record `physiology.bodyPlan: biped` |
+| Forelimbs hanging free along the body, each ending in three or four long hooked claws | art: forelimbs hanging free along the body with three or four long hooked claws each; record `physiology.anatomy` includes claws |
+| A long narrow muzzle and tall pointed ears | art: a long narrow muzzle with two tall pointed ears; record `senses.smell [40, 60]` and `senses.hearing [45, 65]` |
+| A short spiky ridge running down the neck and back | art: a short spiky ridge down the back and neck |
+| Tufted shaggy edges at the ruff, the ridge, and the haunches | art: tufted shaggy outline at ruff, back ridge and haunches; record `physiology.covering: fur` |
+| A thick muscular tail rising from the hindquarters to a narrow junction | art: a thick muscular tail rising from the hindquarters and curving up and out; record `physiology.anatomy` includes tail |
+| About a dozen large cone-shaped barbs splaying outward in a fan from that junction, each banded with two or three transverse lines and tipped with a small nub | art: a radiating fan of roughly a dozen cone-shaped barbs, each banded with two or three transverse segment lines and ending in a small nub tip, splayed from one narrow junction; record `physiology.anatomy` includes spines |
+| It is a small animal | record `physiology.size.heightCm [58, 82]` and `weightKg [18, 32]` |
+| It reads the ground better than it sees | record `senses.special: [tremorsense]` against `senses.sight [30, 50]` |
+
+### habits
+
+The Stonera Generator made it for a world that crosses the Jorian Belt once a year and takes a planetwide bombardment of asteroids and meteors for it. Rapid subsurface retreat is the primary survival adaptation there, and nothing this animal does it does better than dig. Its ground is the fissured rock and the crater fields, which it works from beneath. The dust-saturated air of that world crackles with continuous static discharge, and the charge passes over it without harm. Stonera is now a planetary strip-mine spiraling into the Chasm under King Kozrak's enforcers. It eats what the ground and the rubble hold, of any kind, and signals through the stone rather than across it.
+
+| Claim | Source |
+|---|---|
+| The Stonera Generator made it for that world | planets.json Stonera history paragraphs 3 and 4: the economic decision to establish a Xalian Generator, and the Xalians that could quickly dig their way to safety |
+| Stonera crosses the Jorian Belt once a year and takes a planetwide bombardment of asteroids and meteors for it | planets.json Stonera history paragraph 1; planetRecords.json stonera `report.terrain.notes`, annual Jorian Belt transit producing sustained meteoric bombardment |
+| Rapid subsurface retreat is the primary survival adaptation there | planetRecords.json stonera `report.mobility.burrow`, optimal, rapid subsurface retreat is the primary survival adaptation |
+| Nothing this animal does it does better than dig | record `capabilities.burrow [70, 92]`, the highest band in the record |
+| Its ground is the fissured rock and the crater fields, which it works from beneath | planets.json Stonera history paragraph 1, deep fissures and rocky craters; planetRecords.json stonera `report.terrain.features`, impact-cratered ridge systems; record `lore.biomeNiche` |
+| The dust-saturated air of that world crackles with continuous static discharge | planetRecords.json stonera `report.terrain.features`, atmospheric dust saturation with static discharge; planets.json Stonera history paragraph 1 |
+| The charge passes over it without harm | record `traits.pool.insulated` |
+| Stonera is now a planetary strip-mine spiraling into the Chasm under King Kozrak's enforcers | planets.json Stonera history paragraph 9 |
+| It eats what the ground and the rubble hold, of any kind | record `physiology.diet: omnivore` |
+| It signals through the stone rather than across it | record `physiology.communication: [vibration]` |
+
 ## Judgments
 
 ### Description status
@@ -180,3 +217,4 @@ Run history: run 1 was `0 FAIL, 2 WARN` (the trait-count WARN plus the Encyclope
 - 2026-09-07, trait evidence bar iteration two (Nick): restored perceptive (40, class 4, the record's `senses.special` entry `tremorsense`); cut none; expected count 3.10 to 3.50. `resistant` was re-checked under ruling B and kept: its support is the static-charged, dust-saturated atmosphere of Stonera, a hostile atmosphere rather than a thermal or desiccation hazard.
 - 2026-09-08, trait evidence bar iteration three (Nick): added insulated; raised perceptive; cut resistant; expected count 3.50 to 4.55.
 - 2026-09-08, pool shape (Nick): required regenerative; rolled stealthy 40, volatile 30, insulated 20, perceptive 10; expected count 4.55 to 2.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.

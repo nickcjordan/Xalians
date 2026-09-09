@@ -4,6 +4,42 @@
 
 The render shows a single body, rearing, drawn as a black silhouette with white interior line work. It is horse-shaped from the shoulder back and seahorse-shaped from the shoulder forward: a long tapering snout with a small round opening at the tip, from which a wide fan of water is jetting forward and downward in ribboned streaks. The head carries a spiked, sail-like crest running from the brow back down the neck, and a second row of stepped, fin-like spines continues down the spine to the hindquarters, with a further row of short spines along the underside of the neck and belly. A small webbed fin sits behind the jaw. The eye is a single narrow slit. Both forelimbs are lifted clear of the ground in the rear, ending in blunt, unsplit hoof-like feet with no digits, hooks, or grasping fingers drawn; both hind legs bear the whole body and end in the same blunt feet. The tail is thick at the base and coils into a tight inward spiral, ridged along its outer edge, held clear of the ground. No wings, no visible ears, no teeth, and no exposed plates or scale edges: the outline is smooth apart from the crest and spine rows.
 
+## Lore
+
+The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` teaser carried verbatim and is never edited here; `body` is the physical record, `habits` is how the creature lives now. `descriptionStatus` was removed from the record; status lives in `docs/species-templates/lore-status.json`.
+
+### body
+
+Horse-bodied from the shoulder back and seahorse-headed in front, it carries a long tapering snout that narrows to a small round opening at the tip. A spiked, sail-like crest runs from the brow down the neck, and stepped rows of fin-like spines continue along the spine to the hindquarters and along the underside of the neck and belly. A small webbed fin sits behind the jaw, and the eye is a narrow slit. All four legs end in blunt, unsplit feet with no digits or hooks, and the thick, ridged tail coils into a tight inward spiral held clear of the ground. The surface is smooth, with no plate or scale edge anywhere on it.
+
+| Claim | Source |
+|---|---|
+| Horse-bodied from the shoulder back and seahorse-headed in front | art (horse barrel, shoulders and hindquarters; seahorse head and snout); species.json, "Four-legged creatures resembling a seahorse" |
+| Long tapering snout narrowing to a small round opening at the tip | art (the fan of water leaves through that opening); record `physiology.anatomy: trunk` |
+| Spiked, sail-like crest from the brow down the neck | art; record `physiology.anatomy: crest` |
+| Stepped rows of fin-like spines along the spine to the hindquarters and along the underside of neck and belly | art; record `physiology.anatomy: spines` |
+| Small webbed fin behind the jaw | art |
+| The eye is a narrow slit | art; record `physiology.senses.sight` 45 to 65 |
+| Four legs ending in blunt, unsplit feet with no digits or hooks | art; record `physiology.bodyPlan: quadruped` and `anatomy: hooves` |
+| Thick, ridged tail coiled into a tight inward spiral held clear of the ground | art; record `physiology.anatomy: tail` |
+| Smooth surface, no plate or scale edge | art (unbroken outline apart from crest and spine rows); record `physiology.covering: hide` and the absence of `shell` |
+
+### habits
+
+Its ground is a fleet: rig upon rig in interlocking nets of floating industrial zones, each trawling a global ocean for algae. It works in crews rather than alone. It breathes as readily in water as in air, so it can drop below the surface when the storm systems come over the rigs and when the semiannual bloom lays toxic microbes across the waves, which is the same reason the rigs themselves were built deeper and deeper beneath the ocean. It feeds on what the rigs and the water under them yield. Inside the settlement perimeters its aggression stays suppressed, and it saves what force it has for what comes at the rigs from outside them.
+
+| Claim | Source |
+|---|---|
+| Its ground is a fleet, rig upon rig in interlocking nets of floating industrial zones trawling a global ocean for algae | planets.json Poseidas paragraph 7, "rig upon rig that formed interlocking nets of giant floating industrial zones, each of them trawling the ocean for as much algae as possible"; planetRecords.json poseidas report terrain feature, global ocean; record `lore.biomeNiche` |
+| It works in crews rather than alone | species.json, "emergency response crews"; record `traits.pool.pack-bonded` |
+| Breathes as readily in water as in air | record `physiology.breathes: [gas, liquid]` and `environmentalTolerance.ambientMedia` |
+| Drops below the surface when storm systems come over the rigs and when the semiannual bloom lays toxic microbes across the waves | planetRecords.json poseidas report hazards, surface storm systems and semiannual toxic bloom events with airborne microbial dispersal at surface |
+| That is the same reason the rigs themselves were built deeper and deeper beneath the ocean | planets.json Poseidas paragraph 10, "building them deeper and deeper beneath the ocean in order to avoid the tumultuous storms and toxic microbes that racked its surface" |
+| Feeds on what the rigs and the water under them yield | record `physiology.diet: omnivore` (no source sentence shows it feeding; the record field is the anchor) |
+| Aggression stays suppressed inside the settlement perimeters | planetRecords.json poseidas report fauna observation, aggression suppressed within settlement perimeters; output priority, low-aggression settlement compatibility |
+| Saves its force for what comes at the rigs from outside them | species.json, defense against pirates seeking to steal Algael; record `traits.pool.protective` 100 |
+
+
 ## Description status
 
 The source description is a two-sentence stub in the legacy register, so `descriptionStatus` is `upgraded`. Every clause of the upgrade and its source:
@@ -165,3 +201,4 @@ WARN enc.definition.elementkey      encyclopedia definition uses element key wor
 - 2026-09-07, trait evidence bar iteration two (Nick): restored perceptive; cut none; expected count 2.15 to 2.45.
 - 2026-09-08, trait evidence bar iteration three (Nick): added hardened, territorial; raised resistant; cut perceptive; expected count 2.45 to 4.45.
 - 2026-09-08, pool shape (Nick): required protective; rolled territorial 35, pack-bonded 25, hardened 22, resistant 18; expected count 4.45 to 2.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.

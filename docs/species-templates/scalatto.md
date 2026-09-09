@@ -4,6 +4,44 @@
 
 The artwork is a single black silhouette of one creature, standing upright on two legs and drawn in left profile with the head turned to the right. It has a long low head ending in a blunt tapering snout, with a single light-toned eye set high near the brow and a swept crest of tapering strands running back from the skull down the neck; these read as a mane or a run of backswept strands along the nape rather than as horns. The neck is thick and the trunk is deep and heavily banded: the back and flank are drawn as roughly nine overlapping curved segments running from shoulder to hip, each segment separated by a light line, in the manner of an articulated banded shell. The two forelimbs are both raised and free of the ground, held forward and down at chest height; each ends in three long curved claws. They bear no weight. The two hindlimbs are heavy and columnar, bent at a digitigrade knee and planted flat on the ground with broad splayed feet and short blunt toes; the whole mass of the body sits over them. A very long tail sweeps down and away to the right and then curls back up into a high hook at its tip; the tail is banded along its length with the same ring segmentation as the trunk, and it tapers to a point. There is one body, one head, one tail, two arms, two legs. No wings, no fins, no visible mouth armament, no emitters. The outline of the trunk is drawn as plate edges, not as tufts or plumes.
 
+## Lore
+
+The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description` verbatim and moves everything else into two authored fields.
+
+### body (118 words)
+
+It stands on two heavy columnar legs, knees bent, broad flat feet splayed under the whole weight of it, and holds its forelimbs up and clear of the ground; each of those ends in three long curved claws. The head is low and long and finishes in a blunt snout, with one small eye set high at the brow and a run of swept strands trailing back from the skull along the nape. Deep overlapping bands, some nine of them, cross the trunk from shoulder to hip, and the same ringed banding continues down a very long tail that tapers to a hooked tip. It stands a little over a meter and carries seventy kilograms of that plating.
+
+| Claim | Source |
+|---|---|
+| stands on two heavy columnar legs, knees bent, broad flat feet splayed under the whole weight | art: heavy columnar hindlimbs bent at a digitigrade knee, planted flat with broad splayed feet, the whole mass over them; record `physiology.bodyPlan` is `biped` |
+| forelimbs held up and clear of the ground | art: both forelimbs raised, free of the ground, bearing no weight |
+| each of those ends in three long curved claws | art: three long curved claws per forelimb; record `physiology.anatomy` carries `claws` |
+| low, long head finishing in a blunt snout | art: a long low head ending in a blunt tapering snout |
+| one small eye set high at the brow | art: a single light-toned eye set high near the brow |
+| a run of swept strands trailing back from the skull along the nape | art: a swept crest of tapering strands running back from the skull down the neck |
+| deep overlapping bands, some nine of them, from shoulder to hip | art: roughly nine overlapping curved segments running from shoulder to hip; record `physiology.covering` is `chitin` and `anatomy` carries `shell` |
+| the same ringed banding continues down a very long tail that tapers to a hooked tip | art: a very long banded tail curling into a high hook at the tip; record `anatomy` carries `tail` |
+| a little over a meter, seventy kilograms | record `physiology.size.heightCm` [95, 125] and `weightKg` [58, 84] |
+
+### habits (90 words)
+
+It comes off the prototype Generator the Syndicate stole and smuggled to Endessa to man the drilling, and it keeps to the cavern networks that run deep beneath the dunes, where Nightcap is still pumped out barrel after barrel. It reads the ground through what it stands on, and down there it hears more than it sees. Tunnel collapse is a common death in those workings, and its plating is what it meets one with. Above ground the twin suns allow only the low hours, and it crosses in them.
+
+| Claim | Source |
+|---|---|
+| comes off the prototype Generator the Syndicate stole and smuggled to Endessa to man the drilling | planet: "That is, until the Syndicate stole a Xalian Generator." and "the theft of a prototype Xalian Generator from a high-security ECHELON fleet would go down in history as the grandest heist to have ever taken place in all of the interstellar criminal community." and "With an unlimited labor force now capable of manning their drilling operations, the Syndicate and its various other criminal subsidiaries began to develop an air of business-like legitimacy" |
+| keeps to the cavern networks that run deep beneath the dunes | planet: "Working in large cavern networks extending deep beneath the surface, rogue fortune-seekers continued to drill haphazard wells, hoping to strike green gold."; record `lore.biomeNiche` |
+| Nightcap is still pumped out barrel after barrel | planet: "The Xalians who had made their living in Endessa’s tunnels continued to drill, pumping Nightcap out barrel after barrel" |
+| reads the ground through what it stands on | record `physiology.senses.special` carries `tremorsense` |
+| down there it hears more than it sees | record `physiology.senses.hearing` [40, 65] against `sight` [30, 55] |
+| tunnel collapse is a common death in those workings | Endessa Generator report `hazards`, tunnel collapse |
+| its plating is what it meets one with | record `physiology.covering` is `chitin`, `anatomy` carries `shell`, `traits.pool.armored` sits at 100, and the `signatureAbility` is a ward |
+| the twin suns leave it only the low hours above ground | Endessa Generator report `terrain.notes`, surface insolation lethal without adaptation, dual-star, and `mobility.sprint`, viable, low-insolation hours; planet: "Endessa’s twin suns, which once kept its deep oceans warm enough to sustain life, now blazed through a cloudless sky, scorching the earth and the sand-bleached bones of the billions of dead that had become one with the sand." |
+
+Cut on the fact-check pass: a particulate-swimming clause (Endessa's burrow-optimal rating is planet-wide, and this record's own `capabilities.burrow` is only [35, 60]), a feeding clause (nothing sources what it eats), and a water-retention clause (a planet-wide output priority, and `hardened` is a rolled trait here rather than a universal one). Nothing from the old upgraded description was lost. Its plated-biped and banded-from-neck-to-tail clauses are in body, its stolen-Generator and cavern-network clauses are in habits, and its roll-into-a-ball clause is Nick's teaser again.
+
+
 ## Description status
 
 Legacy stub (15 words), so `descriptionStatus: 'upgraded'`. Stub in full: "Shielded by a scaly exoskeleton, this creature can roll into a ball to protect itself."
@@ -173,3 +211,4 @@ Run three consecutive times with identical results, because an earlier run had r
 - 2026-09-07, trait evidence bar iteration two (Nick): restored `perceptive`; cut `resistant`; expected count 2.25 to 1.67.
 - 2026-09-08, trait evidence bar iteration three (Nick): added `hardened` at 100; raised `perceptive` 12 to 100; cut none; expected count 1.67 to 3.55.
 - 2026-09-08, pool shape (Nick): required `armored`; rolled `ramming` 45, `hardened` 35, `perceptive` 20; expected count 3.55 to 2.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.

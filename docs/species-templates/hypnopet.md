@@ -4,6 +4,42 @@
 
 The render shows a single small creature seated upright on its haunches, filling the frame: a shaggy, heavily tufted body with a rounded head, two very long lop ears that fall well past the body on either side, and a single ribbed spiral horn rising from the crown between them. The face carries two enormous round eyes with bright catchlights, a small muzzle, and an open mouth. The forelimbs are short and end in small paws held clear of the ground against the chest and belly; the hind limbs are large, splayed forward, and drawn with visible pads on the soles and heels. The silhouette edge is drawn as ragged tufts and spikes of fur all around the ruff, cheeks, and shoulders, so the surface itself is shown as fur rather than a smooth outline. No wings, no tail, no visible plating, shell, spines, or armored aspect. One body, one head, one horn.
 
+## Lore
+
+The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` teaser carried verbatim and is never edited here; `body` is the physical record, `habits` is how the creature lives now. `descriptionStatus` was removed from the record; status lives in `docs/species-templates/lore-status.json`.
+
+### body
+
+A small animal that sits up on its haunches, round-headed and shaggy, with two very long lop ears that fall well past the body on either side and a single ribbed, spiraling horn rising from the crown between them. The face is mostly eyes: two enormous round ones above a small muzzle and an open mouth. The forelimbs are short and end in small paws held against the chest; the hind limbs are large, splayed forward, and padded on the soles and heels. Fur stands out in ragged tufts around the ruff, cheeks and shoulders. There is no tail, no wing, and no plating or shell.
+
+| Claim | Source |
+|---|---|
+| Small animal sitting up on its haunches, round-headed and shaggy | art; record `physiology.size` 30 to 42 cm, 9 to 16 kg |
+| Two very long lop ears falling well past the body on either side | art |
+| A single ribbed, spiraling horn rising from the crown between them | art; record `physiology.anatomy: crest` |
+| A face that is mostly eyes: two enormous round ones above a small muzzle and an open mouth | art |
+| Short forelimbs ending in small paws held against the chest | art |
+| Large hind limbs splayed forward, padded on the soles and heels | art; record `capabilities.leap` 55 to 75 |
+| Fur standing out in ragged tufts around the ruff, cheeks and shoulders | art (the outline is drawn as tufted fur); record `physiology.covering: fur` |
+| No tail, no wing, no plating or shell | art; record `physiology.anatomy` carries none of `tail`, `wings`, `shell` |
+
+### habits (119 words)
+
+It lives among Telypso's fungal forests and smothering mists, on ground that deforms with whatever mood is passing through it, and it grazes on what that overgrowth puts out. It reads the state of whatever stands near it and answers in feeling as much as in sound, steadying what is unsteady and settling what will not settle on its own. When feeling is not enough the horn takes over: the color climbs and turns, the eyes watching it stop tracking anything else, and the body goes quiet whether or not it meant to. Since the plague reached the world there is more of that work than there has ever been, and a body this small does not last long.
+
+| Claim | Source |
+|---|---|
+| Lives among Telypso's fungal forests and smothering mists | planets.json Telypso paragraph 2, "Towering forests of mushrooms ascended from humid, smothering mists"; planetRecords.json telypso report terrain feature, fungal forest systems; record `lore.biomeNiche` |
+| On ground that deforms with whatever mood is passing through it | planetRecords.json telypso report terrain feature, terrain deformation correlated with ambient emotional state |
+| Grazes on what that overgrowth puts out | record `physiology.diet: omnivore` |
+| Reads the state of whatever stands near it | record `physiology.senses.special: psychic`; planetRecords.json telypso report fauna observation, empathic forms with emotional-state regulation function |
+| Answers in feeling as much as in sound | record `physiology.communication: telepathic`, alongside `vocal` and `display` |
+| Steadies what is unsteady, settles what will not settle on its own | planetRecords.json telypso report output priorities, psychic stabilization capacity and emotional regulation function |
+| When feeling is not enough the horn takes over: the color climbs and turns | species.json: "When their horn begins to pulse and swirl with psychedelic color"; record `physiology.anatomy: crest` and `conduits` crest for psychic |
+| The eyes watching it stop tracking anything else, and the body goes quiet whether or not it meant to | species.json: "it hypnotizes others and locks them in a trance, which was useful for sedating patients when they entered into dangerous bouts of mania"; record `traits.pool.hypnotic` at 100 |
+| Since the plague reached the world there is more of that work than there has ever been | planetRecords.json telypso report fauna observation, ambient psychic distress has increased since plague onset, inter-population aggression rising in affected sectors; planets.json Telypso paragraph 7, "the world now screams in psychic pain" |
+| A body this small does not last long | record `physiology.lifespan: short` and `physiology.size` |
+
 ## Description status
 
 `source`. The species.json text is already in the full register: it opens with a body appositive, states the engineered purpose under the Vallerii, and turns to the present day anchored to a named institution and person. Word count is 110, inside the 60 to 140 band. Carried verbatim, with `descriptionStatus` set to `source`.
@@ -199,3 +235,5 @@ WARN signature.action.matrix        signature action "snare" is outside the allo
 - 2026-09-07, trait evidence bar iteration two (Nick): restored perceptive; cut none; expected count 3.30 to 3.75.
 - 2026-09-08, trait evidence bar iteration three (Nick): added regenerative; raised perceptive, luminous; restored foresighted at 5; cut none; expected count 3.75 to 5.75.
 - 2026-09-08, pool shape (Nick): required healing, hypnotic; rolled regenerative 35, luminous 30, protective 20, perceptive 15; expected count 5.75 to 3.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
+- 2026-09-09, lore overlap lever: habits (and body where changed) rewritten so the defining act is present from its own angle.

@@ -4,6 +4,44 @@
 
 The render shows the same creature twice. On the left is a lateral view: a long, arched, visibly segmented body, thickest at the front and tapering to a narrow rear, borne on many pairs of thin limbs spaced down its whole length. Each limb is slender, elbowed, and ends in a splayed foot with long spreading toes tipped with small bulbs; the toes are drawn wide apart rather than as a closed paw. On the right is a frontal view: a broad, rounded, downward-tapering head carrying two very large forward-facing eyes with vertical slit pupils, two long thin antennae rising and sweeping back from the crown, and two small nostril dots low on the face. Below the head the trunk is ribbed with paired segment marks, and four limb pairs are visible from the front, held out to the sides with the same splayed, long-toed feet, the forward pair raised clear of the ground. The rearmost segment sits low and wide, with the hindmost feet planted flat. There are no wings, no tail spike, no rattle, no horns, no visible teeth, and no plates, scutes, or shell edges anywhere in the outline; the silhouette edge is smooth throughout.
 
+## Lore
+
+The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description` verbatim and moves everything else into two authored fields. The body and habits below are the record's text.
+
+### body (118 words)
+
+The body is one long arched train of segments, thickest at the shoulder and tapering to a narrow rear, borne on pair after pair of thin elbowed limbs spaced down its whole length. Each limb ends in a splayed foot whose long toes spread wide and finish in small bulbs. The head is broad and rounded, tapering downward, and carries two very large forward-facing eyes with vertical slit pupils, two thin antennae swept back from the crown, and two small nostrils low on the face. Nothing on it is plated: the surface is bare and the outline smooth from end to end. It runs about two meters and a hundred kilograms, and it takes the ground as tremor.
+
+| Claim | Source |
+|---|---|
+| one long arched train of segments, thickest at the shoulder, tapering to a narrow rear | art: the lateral view, a long arched visibly segmented body thickest at the front and tapering to a narrow rear |
+| pair after pair of thin elbowed limbs down its whole length | art: many pairs of slender elbowed limbs spaced down the body |
+| each limb ends in a splayed foot, long toes spread wide, tipped with small bulbs | art: splayed feet with long spreading toes tipped with small bulbs |
+| broad rounded head tapering downward | art: the frontal view |
+| two very large forward-facing eyes with vertical slit pupils | art |
+| two thin antennae swept back from the crown | art; record `physiology.anatomy` carries `antennae` |
+| two small nostrils low on the face | art: two nostril dots low on the face |
+| nothing plated, the surface bare, the outline smooth end to end | art: no plates, scutes or shell edges, smooth silhouette throughout; record `physiology.covering` is `bare` and `anatomy` carries `hide`, never `shell` |
+| about two meters and a hundred kilograms | record `physiology.size.heightCm` [170, 230] and `weightKg` [70, 115] |
+| takes the ground as tremor | record `physiology.senses.special` carries `tremorsense` |
+
+### habits (101 words)
+
+It was generated among the water-breathing Xalians put into Poseidas's seas once those seas rose and turned acid, and it lives in the water around the rigs, which the planet's Xalians went on building deeper and deeper beneath the ocean to stay clear of the storms above. It tolerates depth and it tolerates company, moving without aggression inside the settlement perimeters. What it does catch it holds, folding its whole length around a swimmer and keeping it under. Twice a year the blooms come up and saturate the surface with toxic microbes, and the water it keeps to is deep water.
+
+| Claim | Source |
+|---|---|
+| generated among the water-breathing Xalians put into the seas once they rose and turned acid | planet: "Soon, aquatic, water-breathing Xalians capable of surviving in its rising and acidifying oceans began to populate the sea, manning ECHELON’s rigs and replacing the dwindling Vallerii population." |
+| lives in the water around the rigs | record `lore.biomeNiche`; planet: "they would go on to man Poseidas’s rigs in the absence of their masters" |
+| the rigs were built deeper and deeper beneath the ocean to stay clear of the storms | planet: "building them deeper and deeper beneath the ocean in order to avoid the tumultuous storms and toxic microbes that racked its surface." |
+| tolerates depth | Poseidas Generator report `outputPriorities`, depth tolerance, and `mobility.swim` note, depth tolerance stratifies population distribution; record `capabilities.swim` [70, 92] |
+| tolerates company, moving without aggression inside the settlement perimeters | Poseidas Generator report `fauna.observations`, aggression suppressed within settlement perimeters, and `outputPriorities`, low-aggression settlement compatibility |
+| what it catches it holds, folding its whole length around a swimmer and keeping it under | record `traits.pool.grappling` at 100; record `signatureAbility`, Sixteenfold Undertow |
+| twice a year the blooms come up and saturate the surface with toxic microbes, and the water it keeps to is deep water | record `lore.biomeNiche`, the deep-city waters; planet: "twice a year, a vicious storm season in Poseidas’s distant polar regions would cause an upwelling of nutrients from the sea floor" and "the world’s air, particularly near its shores, would semiannually become saturated with toxic microbes that had been kicked up and made airborne by the waves and the wind, infecting and killing off the Vallerii settlers."; Poseidas Generator report `hazards`, semiannual toxic bloom events with airborne microbial dispersal at surface |
+
+Nothing from the old upgraded description was lost: its body appositive is Nick's teaser again, its generated-among clause and its rig-and-storms clause are in habits above. No feeding sentence was authored at all: the record's `diet` reads `omnivore` as the no-evidence fallback, the Poseidas report's filtration metabolism is a planet-wide output priority, and neither source shows this species feeding, so habits says nothing about what it eats.
+
+
 ## Sources
 
 Species (`species.json`, Newtapede, id 00006, type Water, planet Poseidas): "A 16 legged amphibious creature with a long, segmented body. While adapted to land, its slender frame and webbed feet make it a formidable opponent in water."
@@ -112,7 +150,7 @@ Reshaped on 2026-09-08 under Nick's pool-shape ruling, then reworked the same da
 
 | Trait | Evidence |
 |---|---|
-| `grappling` | The act the description and the signature are both built around. The signature ability, Sixteenfold Undertow, is stated in the record as wrapping its whole segmented length around a swimmer and holding it under, and the description gives the body that does it: species: "A sixteen legged amphibious creature with a long, segmented body" whose "slender frame and webbed feet make it a formidable opponent in water". Sixteen legs closing on a swimmer and keeping it down is the registry key word for word, a body that is stronger holding what it has caught, and it is the one thing both sources agree this creature is for. Nothing is demanded by the body itself: the covering is `bare` so no `armored`, the body is corporeal so no `phasing`, and it is a free swimmer so no `anchored`. |
+| `grappling` | The act the description and the signature are both built around. The signature ability, Sixteenfold Undertow, is stated in the record as wrapping its whole segmented length around a swimmer and holding it under, and the description gives the body that does it: species: "A 16 legged amphibious creature with a long, segmented body." and "its slender frame and webbed feet make it a formidable opponent in water". Sixteen legs closing on a swimmer and keeping it down is the registry key word for word, a body that is stronger holding what it has caught, and it is the one thing both sources agree this creature is for. Nothing is demanded by the body itself: the covering is `bare` so no `armored`, the body is corporeal so no `phasing`, and it is a free swimmer so no `anchored`. |
 
 **Rolled (shares sum to 100)**
 
@@ -222,3 +260,4 @@ WARN enc.definition.elementkey      encyclopedia definition uses element key wor
 - 2026-09-08, pool shape (Nick): required `slippery`; rolled `regenerative` 35, `hardened` 25, `resistant` 20, `perceptive` 20; expected count 4.65 to 2.00.
 - 2026-09-08, new keys (Nick): `grappling` added to the registry as a body stronger holding what it has caught, and it takes the required slot on the signature that holds a swimmer under; `slippery` moves into the rolled set ranked first on its species sentence and the art (the instruction cited a legacy high `evasionRating` this species does not have; friction recorded); the rolled set re-shared as `slippery` 30, `regenerative` 25, `hardened` 18, `resistant` 14, `perceptive` 13; no entry cut and the pool sits at six, the cap; expected count 2.00 unchanged.
 - 2026-09-08, orchestrator: rolled ranking corrected to the rule as written; Newtapede carries no evasionRating, its one high legacy rating is recovery, so regenerative ranks first (30) and slippery second (25); the fold note above that ranked slippery first on a misattributed rating is superseded.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.

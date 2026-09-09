@@ -8,7 +8,8 @@
   ],
   "lore": {
     "description": "Carnivorous little green birds with bright, floral plumage, Avililies flit between Floria’s trees, camouflaging into the planet’s many flowery meadows as they travel. Their beaks resemble the closed petals of a flower but when they open their mouths that 'flower' blooms. They attract insects with their sweet, syrupy smelling saliva and vibrant floral display, but their saliva contains a powerful sedative which paralyzes anything that it comes in contact with. In ancient times, Avililies were used by Vallerii scientists and explorers to trap insects, serving as mobile bug repellent on Florian ventures. Today, the sedative properties of their saliva have been enhanced for a far-more dangerous galaxy, and swarms of flittering Avililies protect the most sacred parts of Floria’s jungles, paralyzing and consuming all who dare to threaten the pristineness of their forests.",
-    "descriptionStatus": "source",
+    "body": "A spray of narrow feathers stands up from its crown, and a neck runs down into a heavy teardrop body. Opened, the bill spreads into four broad lobes set around a starburst of fine filaments, so the front of the face carries far more structure than a bill needs. Its wings are broad and long-feathered and are what move it, and two long streamer feathers run back from behind the head. The legs hang clear beneath and end in three or four long splayed toes that grip. Feathers cover it. It is a small bird, and it sees and smells far better than it hears.",
+    "habits": "It works the canopy stratum of the World Trees, where flight within and above the branches is the efficient way to move and the obstructed ground below is not worth running on. It hunts without chasing. The opened bill and the sweet smell bring the insect in, and whatever the saliva touches stops moving; what stops moving is eaten, and it takes nothing but meat. It keeps company, and a body of them holds its stretch of forest the way the rest of Floria does, by growth, entanglement, and regrowth in place of engagement, and anything entering the deep groves gets the same stillness and the same meal. The toxic fungal blooms of the underforest do not trouble it.",
     "biomeNiche": "flowering meadows and jungle canopy of the Florian underforests"
   },
   "physiology": {
@@ -149,7 +150,7 @@
       30
     ]
   },
-    "traits": {
+  "traits": {
     "pool": {
       "toxic": 100,
       "territorial": 100,

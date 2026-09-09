@@ -4,6 +4,47 @@
 
 The render shows a single tall body standing upright on two long digitigrade legs, weight fully on the feet, with a narrow deer-like or antelope-like head carried high on a slim neck. The muzzle tapers to a small closed mouth; one pale eye is visible; the ears sweep back along the skull; from the crown rise two long, thin, backswept filaments that fork near their tips. The torso is a solid unbroken silhouette, broad at the shoulders and narrow at the waist, with no drawn surface texture. Both forelimbs are raised and held clear of the ground; each ends in a plated gauntlet-like hand and forearm assembly drawn with panel highlights, and out of each of those hands rises a very long, tapering, helically threaded shaft angled up and outward, unmistakably a screw or drill bit. The two shafts are longer than the creature is tall. The hind limbs and feet are drawn as segmented, jointed, plated mechanical assemblies with highlight panels at thigh, shin, and foot; the head, neck, and trunk are not drawn as plated. There is no tail and there are no wings. One body, one central mind, two bearing legs, two raised arms terminating in drills.
 
+## Lore
+
+The lore block holds three prose fields. `description` is Nick's teaser, carried from `species.json` verbatim and never edited here. `body` and `habits` are authored below under the lore split of 2026-09-09; every claim in each is ledgered.
+
+### body (110 words)
+
+It stands close to two meters on two long jointed legs, thigh, shin and foot each a plated segment. The head is narrow and deerlike, carried high on a slim neck, tapering to a small closed mouth with one pale eye and ears swept back along the skull; from the crown rise two long thin filaments that sweep back and fork near their tips. The torso is unplated, broad at the shoulders and narrow at the waist. Both forearms are cased in plated gauntlets, and out of each hand rises a tapering helically threaded shaft longer than the creature is tall. There is no tail and there are no wings.
+
+| Claim | Source |
+|---|---|
+| close to two meters tall | record `size.heightCm` 180 to 215 |
+| two long jointed legs bearing the weight | art: two digitigrade legs carrying the full weight; record `bodyPlan: biped` |
+| thigh, shin and foot each a plated segment | art: segmented jointed plated assemblies with panel highlights at thigh, shin and foot; record `covering: plating`, `anatomy: shell` |
+| narrow deerlike head high on a slim neck, tapering to a small closed mouth | art: the narrow antelope-like head on a slim neck with a small closed mouth |
+| one pale eye, ears swept back along the skull | art: one visible pale eye and swept-back ears |
+| two long thin filaments from the crown, sweeping back and forking near the tips | art: the two backswept forked head filaments; record `anatomy: antennae` (Nick's art correction of 2026-09-02: these are antennae, not antlers) |
+| the torso is unplated, broad at the shoulders and narrow at the waist | art: an unbroken untextured trunk, broad shouldered and narrow waisted |
+| both forearms cased in plated gauntlets | art: the gauntlet-like hand and forearm assemblies drawn with panel highlights |
+| out of each hand a tapering helically threaded shaft longer than the creature is tall | art: the two threaded drill shafts, longer than the body, rising from the hands; record `anatomy: spurs` |
+| no tail, no wings | art: neither is drawn |
+
+### habits (116 words)
+
+Veridium's crust is worked metal with veins of heavy metals striking deep into it, and the Foromeer opens those veins. It works among the factory trenches and forge districts, where molten pours and machinery running without regard to proximity are the ordinary risks, and its plating takes them. The manufactory rings so loudly across the gunmetal surface that it mutes all other sound, so the creature reads the ground it is braced on and answers by drumming rather than by call. Injuries close over on their own. Since Source Code 606 released the Veridians from their robotic masters the demand for the factories has troughed, and the planet's Xalians now tinker with salvaged drones and machines.
+
+| Claim | Source |
+|---|---|
+| Veridium's crust is worked metal with veins of heavy metals striking deep into it | Veridium history paragraph 0, on veins of heavy metals striking their way deep into the dull metallic crust; Generator report terrain, worked metal to maximum sensor depth |
+| the Foromeer opens those veins | `species.json` Foromeer, the excavation purpose and the horns that break through the strongest of material, carried in `lore.description`; record `signatureAbility` Vein Breaker |
+| factory trenches and forge districts | Veridium Generator report terrain features, factory trench systems and active forge districts |
+| molten pours and machinery running without regard to proximity are the ordinary risks | Veridium Generator report hazards, industrial machinery operating without regard to proximity, discharge arcs, molten pours |
+| its plating takes them | Generator report fauna, furnace-tolerant plated forms; output priorities, plated chassis; record `covering: plating` |
+| the manufactory rings so loudly that it mutes all other sound | Veridium history paragraph 4, on the cacophony of the world's manufactory ringing across its gunmetal surface and muting out all other sounds |
+| reads the ground it is braced on | record `senses.special: tremorsense` against `senses.hearing` 20 to 40 |
+| answers by drumming rather than by call | record `communication: ["vibration"]`, no `vocal` |
+| injuries close over on their own | Generator report output priorities, self-repair routines; fauna, self-repairing frame architectures; legacy `recoveryRating` high; record `traits.pool.regenerative` |
+| Source Code 606 released the Veridians from their robotic masters | Veridium history paragraph 8, on Source Code 606 burning away APEX's control of the world and releasing the Veridians from the oversight of their robotic masters |
+| the demand for the factories has troughed, and the planet's Xalians now tinker with salvaged drones and machines | Veridium history paragraph 9, on demand for Veridium's factories having troughed and its current inhabitants tinkering with salvaged drones, robots and machines |
+
+No pack or solitary sentence is written: `solitary` was cut on 2026-09-07 for want of a source, and the Veridium report says nothing about group life.
+
 ## Judgment lines
 
 ### Description status: upgraded
@@ -143,3 +184,4 @@ The trait checks `traits.pool.required`, `traits.pool.rolledSum` and `traits.poo
 - 2026-09-07, trait evidence bar iteration two (Nick): restored `regenerative` (85, class 5) and `perceptive` (20, class 4); cut `resistant` (55, ruling B); expected count 2.25 to 2.75.
 - 2026-09-08, trait evidence bar iteration three (Nick): added `hardened` (100, Veridium molten pours hazard and furnace-tolerant fauna line); raised `regenerative` (85 to 100, legacy `recoveryRating` high plus the self-repair output priority) and `perceptive` (20 to 100, tremorsense special sense); cut nothing; expected count 2.75 to 4.70. `insulated` was considered on the discharge-arcs hazard and left off; see the note below.
 - 2026-09-08, pool shape (Nick): required `armored`, `ramming`; rolled `regenerative` 35, `hardened` 30, `perceptive` 25, `anchored` 10; expected count 4.70 to 3.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.

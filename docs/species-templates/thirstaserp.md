@@ -4,6 +4,43 @@
 
 The artwork shows a single limbless serpent drawn in flat black silhouette, coiled on the ground with the front third of its body reared vertically. The head is a viper's wedge, mouth open wide with two long curved fangs in the upper jaw and a forked tongue extended; a single eye is visible in profile. Behind the head a broad fan-shaped hood flares out and is drawn with radiating internal ribs, the classic cobra spread. The neck and body carry heavy transverse banding, drawn as overlapping crosswise plates along the underside and flank, which reads as a scaled belly. The body loops twice on the ground in flat coils, and a second, thinner tail section rises separately on the left side of the frame ending in a splayed rosette of narrow pointed blades arranged like petals. Behind that rosette the artist has drawn a large field of concentric ripple rings radiating outward, which reads as the vibration coming off that tail organ rather than as any solid part of the body. There are no limbs of any kind, no wings, and no fins. One body, one head, one tail.
 
+## Lore
+
+The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description` verbatim and moves everything else into two authored fields.
+
+### body (105 words)
+
+A limbless body, some two meters of it and a hundred kilograms, that loops flat on the ground and rears the front third of itself upright. The head is a viper's wedge; the upper jaw carries two long curved fangs and a forked tongue runs out between them. Behind the head a fan-shaped hood spreads wide on radiating ribs. Heavy crosswise bands of scale run the underside and the flank the whole length. The tail rises separately from the coils and finishes in a splayed rosette of narrow pointed blades set like petals. There is nothing else on it: no limb, no wing, no fin.
+
+| Claim | Source |
+|---|---|
+| a limbless body that loops flat on the ground and rears the front third of itself upright | art: a limbless serpent coiled on the ground with the front third reared vertically, looping twice in flat coils; record `physiology.bodyPlan` is `serpentine` |
+| some two meters of it and a hundred kilograms | record `physiology.size.heightCm` [190, 250] and `weightKg` [95, 145] |
+| the head is a viper's wedge | art: a wedge-shaped viper head seen in profile |
+| the upper jaw carries two long curved fangs | art: mouth open wide with two long curved fangs in the upper jaw; record `physiology.anatomy` carries `fangs` and `jaws` |
+| a forked tongue runs out between them | art: a forked tongue extended |
+| a fan-shaped hood spreads wide on radiating ribs behind the head | art: a broad fan-shaped hood drawn with radiating internal ribs |
+| heavy crosswise bands of scale run the underside and the flank the whole length | art: heavy transverse banding drawn as overlapping crosswise plates along the underside and flank; record `physiology.covering` is `scales` |
+| the tail rises separately from the coils and finishes in a splayed rosette of narrow pointed blades set like petals | art: a second thinner tail section rising on the left, ending in a splayed rosette of narrow pointed blades arranged like petals; record `anatomy` carries `tail` and `rattle` |
+| no limb, no wing, no fin | art: no limbs of any kind, no wings, no fins |
+
+### habits (95 words)
+
+It lies buried and reads the ground it lies in, and it moves through loose particulate as readily as a swimmer moves through water. It hunts by vibration and it kills by attrition: what has been bitten is left to fail rather than fought down. Water is the thing worth taking on a world whose oceans were vaporized and whose dunes now lie over glass, and water is what it takes. The ground it holds is open dune, and it holds it from underneath. It spreads the hood and shows the fangs before it strikes.
+
+| Claim | Source |
+|---|---|
+| lies buried and reads the ground it lies in | species: "hides beneath the sand"; record `physiology.senses.special` carries `tremorsense` and `traits.pool.stealthy` sits at 100 |
+| moves through loose particulate as readily as a swimmer moves through water | Endessa Generator report `mobility.burrow`, optimal, including sustained particulate-swimming, and `outputPriorities`, particulate locomotion; record `capabilities.burrow` [60, 85] |
+| hunts by vibration | Endessa Generator report `fauna.observations`, subsurface ambush forms and vibration-hunting forms, and `hazards`, vibration-triggered predation |
+| kills by attrition: what has been bitten is left to fail rather than fought down | Endessa Generator report `fauna.observations`, predation strategy attrition; record `signatureAbility`, Thirst of the Endless Sea, and `traits.pool.toxic` at 100 |
+| water is the thing worth taking on a world whose oceans were vaporized and whose dunes now lie over glass | planet: "By the end of the siege, Endessa’s oceans had been vaporized, and the entire surface of the planetary sea floor had been turned to glass." and "Over the course of thousands of years, the glass surface of Endessa broke down into particulates, turning the planet into an unforgiving desert expanse comprised of vast seas of endless rolling dunes and arid, sweltering heat."; Endessa Generator report `outputPriorities`, water retention |
+| the ground it holds is open dune, and it holds it from underneath | record `lore.biomeNiche`, buried in the rolling dunes of Endessa; species: "hides beneath the sand"; Endessa Generator report `fauna.observations`, subsurface ambush forms |
+| spreads the hood and shows the fangs before it strikes | art: the flared hood and the bared fangs, a threat display; record `traits.pool.menacing` |
+
+Nothing from the old upgraded description was lost: its hood-and-rattling-tail appositive is in body, its vaporized-oceans and buried-in-the-sand clauses are in habits, and its lure-and-venom sentence is Nick's teaser again. No feeding schedule and no job on the wells was authored for this species. The fact-check pass cut a clause placing it above the Nightcap cavern networks: that drilling context belongs to Endessa broadly and to Scalatto's sourced origin, and this record's own `biomeNiche` puts it in the open dunes.
+
+
 ## Judgment lines
 
 Every line names its source. `species` = the species.json description. `planet` = the Endessa history or data block. `art` = the artwork above.
@@ -218,3 +255,4 @@ WARN enc.definition.elementkey      encyclopedia definition uses element key wor
 - 2026-09-07, trait evidence bar iteration two (Nick): restored `perceptive`, `nocturnal`; cut `resistant`; expected count 3.40 to 3.45.
 - 2026-09-08, trait evidence bar iteration three (Nick): added `hardened` at 100; raised `perceptive` 40 to 100; cut none; expected count 3.45 to 5.05.
 - 2026-09-08, pool shape (Nick): required `toxic`, `stealthy`; rolled `hypnotic` 40, `hardened` 25, `perceptive` 20, `menacing` 15; expected count 5.05 to 3.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.

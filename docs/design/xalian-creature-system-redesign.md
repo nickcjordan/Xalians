@@ -402,11 +402,13 @@ Games derive mechanics from the structured fields (the duel maps archetype/deliv
   "signatureAbility": { "name": "Ignition Sprint", "instrument": "body", "archetype": "ambush", "medium": "fire", "intensity": 8 },
   // no appearance block needed in the common case (global finish odds apply);
   // optional override: "appearanceOdds": { "prismatic": 0.005 }
-  "lore": { "description": "...", "biomeNiche": "open volcanic plains sprinter" }
+  "lore": { "description": "<Nick teaser, species.json verbatim>", "body": "<physical prose, 40 to 120 words>", "habits": "<how it lives now, 40 to 120 words>", "biomeNiche": "open volcanic plains sprinter" }   // lore split ratified 2026-09-09; review status lives outside the record
 }
 ```
 
 Existing 29 species migrate by hand-authoring templates from their descriptions and current `statRatings`/`traits` (a one-time, per-species judgment task — good subagent fan-out work). Many more species to be authored with Nick later; the template above is the only thing a new species requires.
+
+**Lore split (RATIFIED 2026-09-09, Nick).** A species carries three prose fields under `lore`: `description` is Nick's character teaser (the species.json text verbatim: the hook, the signature act, the role on the planet, the lore link) and is never rewritten to serve a trait or a field; `body` is the physical description (what it looks like and how it is built, from the art and the record's own fields); `habits` is how it lives now (feeding, company, ground held, how its world touches it). The trait evidence bar reads `body` and `habits` as source once Nick has signed them off and reads `description` only for the signature act. The former `descriptionStatus` field and the `amendments` array are struck: a record holds creature facts only, and review status lives in `docs/species-templates/lore-status.json`. The migration-time upgraded descriptions are sorted into `body` and `habits`, and every teaser reverts to Nick's text.
 
 ### Graviclaw pilot (ratified 2026-08-31 — the migration pattern)
 

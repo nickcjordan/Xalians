@@ -6,6 +6,46 @@ The artwork is a flat black silhouette of a large feline in a low prowl, seen th
 
 Note that the render is a black silhouette, so the albino coloring the description states is not visible in it; the description settles color and the art settles form.
 
+## Lore
+
+The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
+
+### body
+
+Four limbs bear its weight and the crouch is low, the back arched from a raised haunch to shoulders that drop the head near the ground. The skull is broad, with two long tufted points rising from it, a shaggy ruff hanging below each cheek, narrow slit eyes, and a mouth that opens on two long upper and two long lower fangs. Five curved claws show on each planted paw. A long thick tail sweeps up from the haunch and curls over to a tufted tip. Pointed tufts break the outline at the ears, cheeks, shoulder, and tail, so the coat is shaggy. Behind each front paw a crescent sweeps back, drawn in fine striation rather than solid mass.
+
+| Claim | Source |
+|---|---|
+| Four limbs bear its weight, and the crouch is low | art: all four limbs planted, the body in a low prowl; record `physiology.bodyPlan: quadruped` |
+| The back arches from a raised haunch to shoulders that drop the head near the ground | art: the back arching from the raised haunch to the shoulders, the neck dropping low |
+| A broad skull with two long tufted points rising from it | art: a broad cat-like head with two long tufted ear points |
+| A shaggy ruff hanging below each cheek | art: a shaggy ruff of pointed fur below each cheek |
+| Narrow slit eyes | art: two narrow slit eyes |
+| A mouth that opens on two long upper and two long lower fangs | art: an open snarling mouth showing an upper and a lower pair of long fangs; record `physiology.anatomy` includes jaws and fangs |
+| Five curved claws on each planted paw | art: five curved claws visible on the near forepaw, with claws on the other planted paws; record `physiology.anatomy` includes claws |
+| A long thick tail sweeping up from the haunch and curling over to a tufted tip | art: a long thick tail sweeping up and back from the haunch, tufted at the tip; record `physiology.anatomy` includes tail |
+| Pointed tufts break the outline at the ears, cheeks, shoulder, and tail, so the coat is shaggy | art: pointed tufts at ears, cheeks, shoulder and tail tip; record `physiology.covering: fur` |
+| Behind each front paw a crescent sweeps back, drawn in fine striation rather than solid mass | art: two large crescents behind the front paws rendered in fine parallel striation rather than solid black; record `physiology.anatomy` includes blades and `conduits.blades: light` |
+
+### habits (115 words)
+
+It works the sunward face, where the fields it was made for still stand among crystalline-leafed oases and the silver grids of the old solar farms. Nothing conceals anything on that ground, the sightlines being unbroken, so it does not stalk: it crosses in the open and is simply there, the blades behind its front paws having opened the cut before the crossing reads as movement at all. It eats what the fields hold, of any kind. Its albino coat is the ordinary sunward integument against a cumulative radiation load, and it works now among the expanding blast zones the misfiring Stellaris Superstructure burns into the surface, on ground held under King Kozrak's martial law.
+
+| Claim | Source |
+|---|---|
+| It works the sunward face | record `lore.biomeNiche`; planetRecords.json luminax `report.terrain.features`, the sunward entries; planets.json Luminax history paragraph 0, the tidally locked daylight face |
+| The fields still stand among crystalline-leafed oases and the silver grids of the old solar farms | planetRecords.json luminax `report.terrain.features`: crystalline-leafed flora oases and legacy solar farm grids; planets.json Luminax history paragraph 7, the solar farms seen as great shining silver grids from space |
+| Nothing conceals anything on that ground, the sightlines being unbroken, so it does not stalk | planetRecords.json luminax `report.mobility.sprint` and `report.mobility.flight`, both noting sightlines unbroken and concealment unavailable sunward; record `traits.pool` carries no stealthy entry, cut 2026-09-07 |
+| It crosses in the open and is simply there | species.json: "their ability to enter a photonic-state and leap through fields at the speed of light"; record `capabilities.sprint [80, 98]` |
+| The blades behind its front paws | species.json: "two sickle-shaped blades infused with pure ionized radiation that extend backwards from its front paws"; art (a striated crescent sweeping back behind each front paw); record `physiology.anatomy: blades` |
+| Having opened the cut before the crossing reads as movement at all | species.json: "barraging them with rapid cuts in a slice-and-dice pattern so swift that reaction becomes nearly impossible" |
+| It eats what the fields hold, of any kind | record `physiology.diet: omnivore` |
+| Its albino coat is the ordinary sunward integument against a cumulative radiation load | planetRecords.json luminax `report.fauna.observations`, radiation-tolerant integument universal sunward with albino coats as its first example; `report.hazards`, cumulative radiation load; record `traits.pool.resistant` |
+| It works now among the expanding blast zones the misfiring Stellaris Superstructure burns into the surface | planetRecords.json luminax `report.terrain.features`, ION-9 misfire blast zones, expanding; planets.json Luminax history paragraph 11 |
+| On ground held under King Kozrak's martial law | planets.json Luminax history paragraph 13 |
+
+The glare clause of the first pass was cut for room; the radiation load already carries what the sunward face does to this body.
+
 ## Judgments
 
 ### Description status
@@ -168,3 +208,5 @@ No run of the script has ever raised a FAIL on this key. The two entries in the 
 - 2026-09-08, trait evidence bar iteration three (Nick): added none; raised resistant; cut none; expected count 2.80 to 2.90. `hardened` was checked against the sweep's twin-sun insolation suggestion and NOT added: Luminax lists no thermal hazard and no thermal output priority, its hazards are radiation load, glare and ION-9 misfires, and this record's temperature band of 25 to 70 C sits inside the ordinary habitable band rather than at a lethal extreme. The four earlier cuts stay cut, and none of the three rulings reaches them.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored none; cut none; expected count 2.80 to 2.80. All four cut entries were re-checked against the widened bar and none passes: `solitary` and `foresighted` have no sentence and no field, `stealthy` fails class 4 because the burrow band tops out at 5 and no hiding or ambush sentence exists, and `volatile` still rests on radiation carried on the blades it strikes with rather than on a reaction to being struck. Class 5 offers nothing here, since the legacy gauges that read high for the Chromocat are `speedRating` and neither of the two mapped ratings. `resistant` at 90 was re-checked under ruling B and kept: the Luminax report names cumulative radiation load as a hazard and radiation-tolerant integument as universal sunward, which is contamination and not temperature.
 - 2026-09-08, pool shape (Nick): required luminous; rolled slippery 45, resistant 30, perceptive 15, pack-bonded 10; expected count 2.90 to 2.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
+- 2026-09-09, lore overlap lever: habits (and body where changed) rewritten so the defining act is present from its own angle.

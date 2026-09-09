@@ -7,8 +7,9 @@
     "floria"
   ],
   "lore": {
-    "description": "A giant organism of thick, intertwined roots that act as tentacles, the Xylum keeps the greater part of itself buried and shows only the crown of its mass above the soil of the underforests. It lives mostly underground, as this is where it absorbs its power, and its limbs carry rows of short serrations along the last of their length. Some say the oldest Xalians of Floria were born from the first seeds of the Genesis Prototype. Vallerii activity on the planet never grew past small settlements, research labs, and exploration parties, and the Xylum remains in the ground beneath the World Trees.",
-    "descriptionStatus": "upgraded",
+    "description": "A giant organism of thick, intertwined roots that act as tentacles. It lives mostly underground as this is where it absorbs its power.",
+    "body": "A bulbous trunk-mass breaks the soil line, and from it six thick limbs rise and curl outward, three to a side, tapering from a very wide base to a fine curled tip. Each carries a row of short, regular sawtooth serrations along the outer edge of its last third, and what those limbs wrap they hold. Two narrower shoots rise straight from the crown, smooth-edged, crossing each other in a tapering point. The two lowest limbs sweep down until their bases meet the ground beside the trunk. There is no head, no face, no eyes and no mouth on it anywhere: it takes the world as tremor through the soil.",
+    "habits": "Floria's understory carries massive infestations of toxic fungi, and they do not take in it. Ground disturbed above answers with every one of those limbs coming up out of it, and it meets what crosses its ground by growing over it rather than by giving way; a limb torn from it grows back. That is the answer the whole planet makes to cutting and clearing, growth and entanglement and regrowth in place of engagement. Vallerii activity here never grew past small settlements, research labs and exploration parties, and the ground beneath the World Trees was never built on. Some say the oldest Xalians of Floria were born from the first seeds of the Genesis Prototype.",
     "biomeNiche": "the buried soil layer of the underforests, beneath the canopies of the World Trees"
   },
   "physiology": {

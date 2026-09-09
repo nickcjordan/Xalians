@@ -4,6 +4,47 @@
 
 The render is a solid black silhouette on white. A single bulbous, roughly ovoid trunk-mass sits at the bottom of the frame, its base breaking a ragged horizontal soil line that is drawn as broken ground rather than a flat floor, so part of the body is below the surface. Six thick limbs rise and curl outward from that mass, three to a side, tapering from a very wide base to a fine curled tip; each one carries a row of short, regular, sawtooth serrations along its outer edge for the last third of its length, and the two lowest limbs sweep down and out so that their bases meet the ground beside the trunk. Two further limbs rise straight up from the crown of the mass, narrower and smooth-edged, crossing each other in a tapering point, with a small leaf-shaped void between them. Two small hooked voids sit low on the trunk where the outermost limbs join it. There is one body, not many. There is no head, no face, no eyes, no mouth, no wings, no discrete legs and no tail: the creature is a central mass and its limbs, and it is presented rising out of the ground rather than standing on it.
 
+## Lore
+
+Split applied 2026-09-09. `lore.description` is Nick's teaser from `species.json`, verbatim. The pre-split upgraded description and the 2026-09-08 stub-upgrade draft are re-cut into body and habits below, with the orchestrator's edit applied ('a limb cut off it comes back' becomes 'a limb torn from it grows back').
+
+### body (110 words)
+
+A bulbous trunk-mass breaks the soil line, and from it six thick limbs rise and curl outward, three to a side, tapering from a very wide base to a fine curled tip. Each carries a row of short, regular sawtooth serrations along the outer edge of its last third, and what those limbs wrap they hold. Two narrower shoots rise straight from the crown, smooth-edged, crossing each other in a tapering point. The two lowest limbs sweep down until their bases meet the ground beside the trunk. There is no head, no face, no eyes and no mouth on it anywhere: it takes the world as tremor through the soil.
+
+| Claim | Source |
+|---|---|
+| a bulbous trunk-mass breaking the soil line | art: a bulbous roughly ovoid trunk-mass whose base breaks a ragged horizontal soil line; the teaser gives the underground habit |
+| six thick limbs rising and curling outward, three to a side, wide base to fine curled tip | art: six thick limbs, three to a side, tapering from a very wide base to a fine curled tip; `physiology.bodyPlan` multiped; `physiology.anatomy` roots and tendrils |
+| a row of short, regular sawtooth serrations along the outer edge of the last third of each limb | art: exactly that; `physiology.anatomy` spines |
+| what those limbs wrap they hold | the teaser's roots that act as tentacles; `capabilities.manipulation` [45, 70], which the grasping keys `roots` and `tendrils` license above 40 |
+| two narrower smooth shoots rising from the crown and crossing in a tapering point | art: two further limbs rising straight from the crown, narrower and smooth-edged, crossing in a point |
+| the two lowest limbs sweep down until their bases meet the ground | art: the two lowest limbs sweeping down and out so their bases meet the ground beside the trunk |
+| no head, no face, no eyes, no mouth | art: no head, face, eyes, mouth, wings, discrete legs or tail; `physiology.senses.sight` [0, 15] |
+| takes the world as tremor through the soil | `physiology.senses.special` tremorsense; `physiology.communication` vibration |
+
+### habits (115 words)
+
+Floria's understory carries massive infestations of toxic fungi, and they do not take in it. Ground disturbed above answers with every one of those limbs coming up out of it, and it meets what crosses its ground by growing over it rather than by giving way; a limb torn from it grows back. That is the answer the whole planet makes to cutting and clearing, growth and entanglement and regrowth in place of engagement. Vallerii activity here never grew past small settlements, research labs and exploration parties, and the ground beneath the World Trees was never built on. Some say the oldest Xalians of Floria were born from the first seeds of the Genesis Prototype.
+
+| Claim | Source |
+|---|---|
+| Floria's understory carries massive infestations of toxic fungi | Floria history paragraph 8, massive infestations of toxic fungi; Floria report hazard, toxic fungal blooms; report terrain feature, understory fungal thickets |
+| they do not take in it | `traits.pool.resistant` 22, whose entire support is that fungal load on a body buried in the same soil layer |
+| ground disturbed above answers with every one of those limbs coming up out of it | art: six serrated limbs rising and curling outward from the buried mass; Floria history paragraph 8, any endeavor to build met with stampeding plant-like Xalians and freakish overgrowths |
+| it meets what crosses its ground by growing over it rather than by giving way | Floria report fauna observation, territorial strategy of growth, entanglement and regrowth in place of engagement; `traits.pool.territorial` 25 |
+| a limb torn from it grows back | legacy `recoveryRating` high, the one legacy rating that maps to this trait; Floria report output priority, regenerative tissue; `traits.pool.regenerative` 35 |
+| that is the answer the whole planet makes to cutting and clearing | Floria report fauna observation, coordinated ecosystem response to cutting and clearing confirmed at planetary scale |
+| Vallerii activity never grew past small settlements, research labs and exploration parties, and the ground beneath the World Trees was never built on | Floria history paragraph 8, the planet hostile to military bases, urban centers and industrial zones, with Vallerii activity remaining limited to small settlements, research labs and exploration parties |
+| some say the oldest Xalians of Floria were born from the first seeds of the Genesis Prototype | Floria history paragraph 10, with the source's own hedge preserved and the Xylum not named as one of them |
+
+### Sentences dropped from the pre-split description and draft
+
+- 'It has no eyes and takes the world as tremor through the soil, whose toxic fungal blooms do not take in it.' Not dropped: split across body (no eyes, tremor) and habits (the fungi).
+- 'It lives mostly underground, as this is where it absorbs its power' and 'A giant organism of thick, intertwined roots that act as tentacles.' Not lost: both are the teaser, carried verbatim in `lore.description`, and the split forbids repeating them.
+- 'Some say the oldest Xalians of Floria were born from the first seeds of the Genesis Prototype.' Kept, in habits, hedge intact.
+- Nothing in the pre-split description or the draft was discarded outright.
+
 ## Judgments
 
 **Description status: `upgraded`.** The source is a two-sentence stub, "A giant organism of thick, intertwined roots that act as tentacles. It lives mostly underground as this is where it absorbs its power.", which is well short of the 60-to-140-word register and carries no engineered purpose and no present-day turn. Upgraded per section 3, clause by clause below.
@@ -173,3 +214,5 @@ logged to docs/species-templates/validation-log/xylum.jsonl
 - 2026-09-07, trait evidence bar iteration two (Nick): restored regenerative (72, class 5, legacy `recoveryRating` high), perceptive (15, class 4, `senses.special` tremorsense); cut none; expected count 1.35 to 2.22.
 - 2026-09-08, trait evidence bar iteration three (Nick): added territorial (100, the unquantified territorial-strategy line in the Floria Generator Environmental Report); raised regenerative 72 to 100 (legacy `recoveryRating` high, plus the regenerative-tissue output priority), resistant 35 to 100 (toxic-fungal-bloom hazard) and perceptive 15 to 100 (`senses.special` tremorsense); cut none; expected count 2.22 to 5.00. The pool is now all at 100, which is reported to Nick, not fixed.
 - 2026-09-08, pool shape (Nick): required anchored; rolled regenerative 35, territorial 25, resistant 22, perceptive 18; expected count 5.00 to 2.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
+- 2026-09-09, lore fact-check gate (independent checker, no files changed by it): the checker returned one CONTRADICTED claim, that the art draws four serrated limbs and not six. Rejected on re-inspection: `art/xylum.png` draws six serrated limbs, three to a side, plus the two smooth crossing shoots at the crown, which is also what the Art reading section above and the 2026-09-08 stub-upgrade ledger independently recorded. Nothing changed on that point. The one UNSUPPORTED flag, that the limbs rise `in a ring`, was a fair catch on an unanchored visual and the phrase is gone.

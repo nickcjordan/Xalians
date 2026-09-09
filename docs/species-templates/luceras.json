@@ -7,8 +7,9 @@
     "saiphus"
   ],
   "lore": {
-    "description": "A long-eared bounding animal of the floating islands of Saiphus, slight in the body and hugely muscled in the hind legs, with two curved horns swept back along its skull like a battering ram and a long plumed tail. The Saiphus Generator created the great leaping animals that bounded between islands as if gravity held no sway over them, on a world whose habitable surface is broken into buoyant chunks separated by a sea of clouds and dense fog. The Luceras can jump so high that at times it seems as if it is flying. Once up in the air, it comes missiling down on its enemy like a battering ram.",
-    "descriptionStatus": "upgraded",
+    "description": "This creature can jump so high that at times it seems as if it is flying. Once up in the air, it comes missiling down on its enemy like a battering ram.",
+    "body": "A small bounding animal built almost entirely around its hindquarters. The forelimbs are thin and short, each ending in a small toed foot; the hind limbs are long, deeply muscled at the haunch, and folded to spring. The head is rounded and carries two long upright ears, a blunt nose and a spray of long whiskers, and from the crown a single long ridged horn sweeps back over the shoulders and curls down to about the level of the mid-back. Shaggy, tufted fur breaks the outline at the chest, throat, flanks and belly. The tail is longer than the body, thin as a whip, and ends in a spiked plume.",
+    "habits": "Its ground is not continuous. The habitable band of Saiphus is a scatter of buoyant islands separated by a sea of clouds and dense fog, and it crosses the gaps, one of the great leaping animals the Saiphus Generator raised to bound between islands as if gravity held no sway over them. It grazes the rolling plains such an island carries and drinks from the deep canyons where vapor condenses into water. It listens and it moves: sulfuric cloud banks sweep across the sky without warning, the storms do not stop, and a descent into the fluid layer below the islands is not recoverable.",
     "biomeNiche": "the gaps between the floating islands of Saiphus's upper-atmosphere life band"
   },
   "physiology": {

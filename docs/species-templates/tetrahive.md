@@ -6,6 +6,42 @@ Sources read in full: the `Tetrahive` entry in `species.json`, the `Grimedes` en
 
 A single central creature dominates the frame, drawn in flat black silhouette: a bat-shaped body with two very broad membranous wings spread wide, a small blunt head with two pointed upright ears and a pair of narrow slitted eyes, short forelimbs ending in three or four hooked digits held near the chest, a pair of hind feet with splayed hooked digits, and a long, thin, whip-like tail that trails down and curls into a full loop at its tip. The body is smooth and unarmored in outline, with no plates, spines, shell, horns, or visible teeth. Ringing that central figure, filling the whole border of the image, are roughly twenty much smaller flying silhouettes of the same wing-and-ear shape, all in flight and all facing different directions, arranged around the central creature rather than in a flock heading anywhere. The composition reads as one body with a conjured cloud of small copies of itself held around it, which is exactly what the species text describes.
 
+## Lore
+
+The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description` verbatim. Body and habits below are re-cut from the ratified draft in `docs/design/species-stub-upgrades-2026-09-08.md`, with the orchestrator's edit applied: the draft's opening 'A small winged thing' reads 'A small winged hunter'.
+
+### body (102 words)
+
+A small winged hunter, under a meter and a dozen kilograms: two broad membranous wings off a blunt bat-shaped body, a small head with pointed upright ears and narrow slitted eyes, short forelimbs held near the chest and ending in a few hooked digits, hind feet carrying the same hooks splayed wide, and a long thin tail that trails behind it and curls into a full loop at the tip. The outline is smooth all the way round, unarmored hide with no plate, spine, horn or bared tooth anywhere on it. It has no call and makes no sound of its own.
+
+| Claim | Source |
+|---|---|
+| a small winged hunter, under a meter and a dozen kilograms | record `physiology.size.heightCm` [60, 90] and `weightKg` [8, 16]; record `physiology.diet` is `carnivore` |
+| two broad membranous wings off a blunt bat-shaped body | art: a bat-shaped body with two very broad membranous wings spread wide; record `physiology.anatomy` carries `wings` |
+| a small head with pointed upright ears and narrow slitted eyes | art: a small blunt head with two pointed upright ears and a pair of narrow slitted eyes |
+| short forelimbs held near the chest, ending in a few hooked digits | art: short forelimbs ending in three or four hooked digits held near the chest; record `anatomy` carries `claws` |
+| hind feet carrying the same hooks splayed wide | art: a pair of hind feet with splayed hooked digits |
+| a long thin tail trailing behind it, curling into a full loop at the tip | art: a long, thin, whip-like tail that trails down and curls into a full loop at its tip; record `anatomy` carries `tail` |
+| outline smooth all the way round, unarmored hide, no plate, spine, horn or bared tooth | art: a smooth unarmored outline with no plates, spines, shell, horns, or visible teeth; record `physiology.covering` is `hide` |
+| no call, no sound of its own | record `physiology.communication` is `[]`, which the contract reads as mute |
+
+### habits (104 words)
+
+It was generated on Grimedes not as a labor force but as a test subject, one of the Xalians the Vallerii experimented on in laboratories rumored to be black sites for ECHELON. It hunts the thick, stalky undergrowth of a world cloaked in perpetual night, taking its bearings by ear rather than by eye, and it keeps its own body inside the wheeling cloud it holds so that nothing can tell which shape is the one that matters. Whatever hears that cloud coming breaks and runs. The newest generation of its kind stands at the edge of the galaxy and watches the endless black.
+
+| Claim | Source |
+|---|---|
+| generated on Grimedes not as a labor force but as a test subject | planet: "unlike most worlds, the Xalians on Grimedes were not intended to serve as a labor force, but as a population of test subjects for experimentation" |
+| one of the Xalians the Vallerii experimented on in laboratories rumored to be black sites for ECHELON | planet: "insisted on studying its effects on the Xalian population, leading to all manner of horrific experiments" and "Rumor has it that many of these facilities were in fact black sites for covert research funded by ECHELON’s most classified R&D divisions." The source's hedge is kept |
+| hunts the thick, stalky undergrowth of a world cloaked in perpetual night | planet: "came to be covered in a layer of thick, stalky undergrowth" and "the planet Grimedes is surrounded in a cloak of perpetual night"; record `physiology.diet` is `carnivore` |
+| takes its bearings by ear rather than by eye | record `physiology.senses.hearing` [60, 85] against `sight` [30, 55]; Grimedes Generator report `outputPriorities`, non-visual sensory systems, and `terrain.notes`, illumination infrared only |
+| keeps its own body inside the wheeling cloud it holds, so nothing can tell which shape matters | art: the central figure is the same silhouette as the roughly twenty small copies ringing it; record `traits.pool.slippery` |
+| whatever hears that cloud coming breaks and runs | record `traits.pool` and the `signatureAbility`, Unbidden Legion; a claim about flight response only, with no claim about any effect on a Xalian mind |
+| the newest generation of its kind stands at the edge of the galaxy and watches the endless black | planet: "the newest generation of Grimedites now serve a vital role in the galaxy of Xalia" and "the Grimedites stand at the edge of the galaxy, trusted or perhaps condemned to watch the endless black" |
+
+Nothing from the old upgraded description was lost: its body appositive and tail are in body, its test-subject and black-site clauses and its undergrowth and rim-watch clauses are in habits, and its conjuring clause is Nick's teaser again. No gravity, shadow-copy or temporal claim is made: the Grimedes history gives those to other lineages.
+
+
 ## Source text
 
 Species description (the whole of it, verbatim):
@@ -223,3 +259,4 @@ $ node docs/species-templates/tools/validate-template.js tetrahive
 - 2026-09-08, trait evidence bar iteration three (Nick): added `foresighted` at 100; raised `nocturnal` 95 to 100, `slippery` 45 to 100, `perceptive` 20 to 100; cut none; expected count 1.95 to 4.35.
 - 2026-09-08, pool shape (Nick): required `nocturnal`; rolled `slippery` 40, `perceptive` 35, `mind-sealed` 25; expected count 4.35 to 2.00.
 - 2026-09-08, new keys (Nick): `commanding` added to the registry as a body that directs other bodies, or projections of itself, as one unit, and it takes the required slot on the sentence about holding every familiar in its mind and moving them as a single unit; `nocturnal` moves into the rolled set ranked first; the rolled set re-shared as `nocturnal` 34, `slippery` 28, `perceptive` 22, `mind-sealed` 16; no entry cut and the pool sits at five; expected count 2.00 unchanged.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.

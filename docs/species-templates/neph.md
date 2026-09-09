@@ -4,6 +4,41 @@
 
 The artwork shows a single body, drawn as a jellyfish seen from slightly below. A large smooth rounded bell dominates the upper two thirds of the frame, its outline unbroken and untextured, with the lower rim flaring outward like a skirt on both sides. Under the crown of the bell hangs a dark ridged inner mass, segmented into about seven lobes, and from the underside of that mass drops a curtain of fine short filaments. Below the bell sits a rounded central body carrying two small round eyes set close together. Radiating from that central body are roughly eight long, thick, tubular tentacles that curve outward and downward across the frame; each is drawn as a hollow tube, and several of them end in a clearly open circular mouth so that the inside of the tube is visible. There are no wings, no fins, no legs, no jaws and no visible mouth on the central body. Posture is drifting: nothing touches a ground plane and the tentacles trail loose.
 
+## Lore
+
+The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` teaser carried verbatim and is never edited here; `body` is the physical record, `habits` is how the creature lives now. `descriptionStatus` was removed from the record; status lives in `docs/species-templates/lore-status.json`.
+
+### body
+
+A drifting body with no legs, no wings and no jaws. One large smooth bell dominates it, the lower rim flaring outward like a skirt; under the crown of the bell hangs a dark ridged inner mass of some seven lobes with a curtain of fine filaments below it, and beneath that sits a small rounded body carrying two close-set eyes. Radiating from that body are roughly eight thick tentacles, each a hollow tube, several of them open at the end so that the inside of the tube shows. The surface is bare and untextured. It measures four to six meters and weighs almost nothing for its size.
+
+| Claim | Source |
+|---|---|
+| A drifting body with no legs, no wings and no jaws | art; record `physiology.bodyPlan: floating` |
+| One large smooth bell dominating it, the lower rim flaring outward like a skirt | art |
+| A dark ridged inner mass of some seven lobes under the crown of the bell, with a curtain of fine filaments below it | art |
+| A small rounded body beneath that, carrying two close-set eyes | art; record `physiology.senses.sight` 25 to 45 |
+| Roughly eight thick tentacles radiating from that body, each a hollow tube, several open at the end | art; record `physiology.anatomy: tendrils` and `vents` |
+| Surface bare and untextured | art (unbroken, untextured bell outline); record `physiology.covering: bare` |
+| Measures four to six meters and weighs almost nothing for its size | record `physiology.size` 380 to 620 cm, 30 to 90 kg |
+
+### habits (120 words)
+
+It travels in herd distribution rather than alone, and its amorphous form lets the hurricane-force winds of the lower skies sweep it up and set it down again unharmed. The tentacles do the work. They draw the slush of the deeper atmosphere up hollow tubes and keep the Benthane that comes up with the food, and the same tubes reverse to pull a thing in against its will, to put it off at pressure, or to blast it cold with the coolant. Being almost entirely hydrogen, it can spray flammable gas as well. For what that filtering leaves behind it is shepherded, herded and milked. What kills it is the sky it lives in, sulfuric cloud contact and island collision.
+
+| Claim | Source |
+|---|---|
+| Travels in herd distribution rather than alone | planetRecords.json saiphus report fauna observation, "buoyant grazing forms in herd distribution"; record `traits.pool.pack-bonded` |
+| Its amorphous form lets the hurricane-force winds of the lower skies sweep it up and set it down again unharmed | planets.json Saiphus paragraph 5, "Their amorphous forms allowed them to be swept up and deposited harmlessly by the hurricane-force winds that plagued the lower skies" |
+| The tentacles draw the slush of the deeper atmosphere up hollow tubes and keep the Benthane that comes up with the food | species.json: "grazing off of the biochemicals and atmospheric plankton contained in the gas-liquid slush of Saiphus's deeper atmosphere using long, trailing tentacles that vacuum up valuable Benthane along with their food"; art (each tentacle drawn as a hollow tube, open at the end); record `physiology.diet: herbivore` |
+| The same tubes reverse to pull a thing in against its will, or to put it off at pressure | species.json: "these same tentacles can be used to pull in opponents with considerable suction or to jettison air at high pressure" |
+| Or to blast it cold with the coolant | species.json: "expel jets of Benthane gas, which is typically used a coolant for starship engines, from their tentacles in order to blast their enemies with freezing air" |
+| Being almost entirely hydrogen, it can spray flammable gas as well | species.json: "being composed almost entirely hydrogen means that the Neph can also spray their enemies with bouts of flammable gas"; record `traits.pool.volatile` 100 |
+| For what that filtering leaves behind it is shepherded, herded and milked | planetRecords.json saiphus report fauna observation, "under pastoral management"; planets.json Saiphus paragraph 5, "the pastoral activity of shepherding and “milking” Benthane gas from flocks of peaceful, roaming Nephs" |
+| What kills it is sulfuric cloud contact and island collision | planetRecords.json saiphus report hazards, sulfuric cloud contact and island collision |
+
+The smell-over-sight clause and the ignited-flocks clause of the first pass were cut for room; both remain in the judgment section, and the hydrogen fact is now carried by what the creature does with it rather than by what was done to it.
+
 ## Description status
 
 `source`. The species.json description is already in the full register: it opens with a body appositive ("Colossal hydrogen jellyfish that travel in free-floating herds across Saiphus's lower atmosphere"), names the engineered purpose ("the Neph are instrumental to the Benthane industry"), and runs to 128 words in one paragraph, present tense. Carried verbatim, no clauses added.
@@ -193,3 +228,5 @@ The single remaining WARN is answered in the Script denials section above and in
 - 2026-09-07, trait evidence bar iteration two (Nick): restored none; cut none; expected count 3.05 to 3.05.
 - 2026-09-08, trait evidence bar iteration three (Nick): added none; raised resistant, slippery; cut none; expected count 3.05 to 3.90.
 - 2026-09-08, pool shape (Nick): required volatile; rolled pack-bonded 45, slippery 30, resistant 25; expected count 3.90 to 2.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
+- 2026-09-09, lore overlap lever: habits (and body where changed) rewritten so the defining act is present from its own angle.

@@ -4,6 +4,41 @@
 
 The artwork is a flat black silhouette, front-facing, of a single body. Rising from the top of the head are two large faceted crystal formations, drawn with interior facet lines as gem or prism shapes, one on each side of the crown. Below and slightly outboard of each crystal is a drooping pointed ear. The head is long and heavily shaggy, the fur rendered as dozens of overlapping pointed tufts, and it ends in a broad blunt muzzle with two flat nostrils and a wide mouth line. The torso is thickly shaggy in the same tufted style, broad through the shoulders and heavy through the barrel. Two forelimbs extend outward and slightly down, one to each side; each ends in a hand with separated digits including an opposable-looking innermost digit, and neither hand rests on the ground: they are held out at knee height, palms open. The hindlimbs are folded in front of the body, crossed at the ankles in a seated cross-legged posture, with two padded foot masses visible where the legs cross. There is no tail visible, no wings, no visible spines or plating, and exactly one body. The outline of the trunk and head is drawn as shaggy tufted edges throughout.
 
+## Lore
+
+The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
+
+### body
+
+Two large faceted crystal formations rise from its crown, cut with interior facet lines, and the fur to either side of the crown falls into a drooping point. The head is long and heavily shaggy and ends in a broad blunt muzzle with two flat nostrils and a wide mouth. The trunk is thick through the shoulders and heavy through the barrel, and overlapping pointed tufts cover all of it. Its forelimbs reach out and slightly down, each ending in an open hand with separated digits and an innermost digit set to oppose them. The hind legs fold and cross at the ankles beneath it. There is no tail. It is tall and heavy, well past three hundred kilograms.
+
+| Claim | Source |
+|---|---|
+| Two large faceted crystal formations rise from its crown, cut with interior facet lines | art: two large faceted crystal formations on the crown drawn with interior facet lines; record `physiology.anatomy` includes horns and `composition.secondary: mineral` |
+| The fur to either side of the crown falls into a drooping point | art: the mass below and slightly outboard of each crystal falls to a drooping point |
+| A long, heavily shaggy head ending in a broad blunt muzzle with two flat nostrils and a wide mouth | art: a long heavily shaggy head ending in a broad blunt muzzle with two flat nostrils and a wide mouth line |
+| A trunk thick through the shoulders and heavy through the barrel | art: a thickly shaggy torso, broad through the shoulders and heavy through the barrel |
+| Overlapping pointed tufts cover all of it | art: the outline of trunk and head drawn as shaggy tufted edges throughout; record `physiology.covering: fur` |
+| Forelimbs reaching out and slightly down, each ending in an open hand with separated digits and an innermost digit set to oppose them | art: two forelimbs held out at knee height, palms open, each hand showing separated digits including an opposable-looking innermost digit; record `physiology.anatomy` includes fists and `capabilities.manipulation [45, 70]` |
+| The hind legs fold and cross at the ankles beneath it | art: hindlimbs folded in front of the body and crossed at the ankles in a seated posture |
+| There is no tail | art: no tail visible |
+| It is tall and heavy, well past three hundred kilograms | record `physiology.size.heightCm [160, 195]` and `weightKg [300, 420]` |
+
+### habits
+
+Luminax's Generator grew its Xalians with albino features or with prismatic crystal so that they could survive the brilliant light of the twin suns while they worked the fields, and this is one of the crystal-bearing forms. Its ground is the sunward face, among the oases of translucent, alabaster flora, where radiation-tolerant integument is universal and the cumulative radiation load is the standing hazard. The misfiring panels of the Stellaris Superstructure are burning new sun-scorched blast zones into that surface, and some of the world's Xalians have survived in the residual radiation left in them. It does not graze and it does not hunt: it takes in energy. It is slow, and it holds still.
+
+| Claim | Source |
+|---|---|
+| Luminax's Generator grew its Xalians with albino features or with prismatic crystal so that they could survive the brilliant light of the twin suns while they worked the fields | planets.json Luminax history paragraph 6, restated at the class scope the sentence itself uses |
+| This is one of the crystal-bearing forms | record `composition.secondary: mineral` and `physiology.anatomy` includes horns; art: the faceted crystal crown |
+| Its ground is the sunward face, among the oases of translucent, alabaster flora | planets.json Luminax history paragraph 5; planetRecords.json luminax `report.terrain.features`, sunward crystalline-leafed flora oases; record `lore.biomeNiche` |
+| Radiation-tolerant integument is universal there and the cumulative radiation load is the standing hazard | planetRecords.json luminax `report.fauna.observations` and `report.hazards`; record `traits.pool.resistant` |
+| It does not graze and it does not hunt: it takes in energy | record `physiology.diet: energy-feeder` |
+| It is slow | record `capabilities.sprint [10, 30]`, `agility [12, 32]`; the legacy speed gauge is low |
+| And it holds still | record `archetypeWeights` led by sage, bulwark and stalwart with nothing agile or predatory listed, and `signatureAbility.description`, which is a still body releasing its light |
+| The misfiring panels of the Stellaris Superstructure are burning new sun-scorched blast zones into that surface, and some of the world's Xalians have survived in the residual radiation left in them | planets.json Luminax history paragraphs 11 and 12; planetRecords.json luminax `report.terrain.features`, ION-9 misfire blast zones, expanding |
+
 ## Description status
 
 Legacy text is a single-sentence stub, `The gems growing out of this creature's head transmit powerful light energy, don't be deceived by its calm temperament.` That is far below the 60 to 140 word register, so `descriptionStatus` is `upgraded`.
@@ -183,3 +218,4 @@ logged to docsspecies-templatesalidation-logcrystorn.jsonl
 - 2026-09-08, trait evidence bar iteration three (Nick): added none; raised resistant; cut none; expected count 2.85 to 2.89. `hardened` was checked against the sweep's twin-sun insolation suggestion and NOT added: Luminax lists no thermal hazard and no thermal output priority, and this record's temperature band of 30 to 70 C sits inside the habitable band rather than at a lethal extreme. `perceptive` is not in the pool and nothing demands it, since `physiology.senses` carries no `special` entry after the 2026-09-02 removal of the heat-sense. The four earlier cuts stay cut.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored none; cut none; expected count 2.85 to 2.85. All four cut entries were re-checked against the widened bar and none passes: `protective` and `foresighted` have neither sentence nor field, `anchored` gets no help from `signatureAbility`, whose action is `beam` and whose description is a still body releasing light rather than a snare that holds and a body that braces, and `menacing` fails the class 4 size route because that route needs a threat sentence alongside the large body, and the record's one temperament line is about deception rather than fear. `resistant` at 96 was re-checked under ruling B and kept: the Luminax report names cumulative radiation load as a hazard and radiation-tolerant integument as universal sunward, which is contamination and not temperature.
 - 2026-09-08, pool shape (Nick): required luminous; rolled reflective 40, resistant 35, mind-sealed 25; expected count 2.89 to 2.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.

@@ -4,6 +4,44 @@
 
 A single black silhouette of one creature, drawn in a rearing three-quarter pose. The head is canine, a long tapered wolf-like muzzle with two nostril dots at the tip, one narrow white eye-slit, and one upright pointed ear laid back along the skull; the mouth line runs the length of the muzzle, so the head carries biting jaws. Behind the head sits a rounded segmented thorax. From the rear of that thorax an arched, thickly segmented tail rises up and forward over the back in a scorpion curve, and it terminates not in a stinger tip but in a wide bearing collar of three stacked rings followed by a long conical helical auger: a screw thread wound around a tapered shaft that ends in a point. Two forelimbs end in large opposing pincers with a fixed jaw and a hooked movable jaw, and both are held clear of the ground, one raised out to the left of the head and one lower and forward beneath the muzzle. The remaining limbs are walking legs, jointed in two or three segments and ending in single pointed tips: I count four clearly on the right side of the body plus two more emerging under the thorax, so more than four bearing limbs. Body segments and limb segments are drawn with hard rim highlights and stepped joint edges rather than a smooth continuous outline. One body, no wings, no fins.
 
+## Lore
+
+The lore block holds three prose fields. `description` is Nick's teaser, carried from `species.json` verbatim and never edited here. `body` and `habits` are authored below under the lore split of 2026-09-09; every claim in each is ledgered.
+
+### body (114 words)
+
+A hard-shelled body the size of a large dog rides on more than four jointed walking legs, each ending in a single hooked point. The head is canine, a long tapering muzzle with a mouth line running its length, one narrow eye slit and one pointed ear laid flat along the skull. Two forelimbs are carried clear of the ground and end in opposing pincers, one blade fixed and one hooked. Behind a rounded segmented thorax the tail arches up and forward in a scorpion curve, ending not in a spike but in a stacked bearing collar and a long tapering helical auger. The trunk and limb segments are hard stepped plates of chitin.
+
+| Claim | Source |
+|---|---|
+| hard-shelled body the size of a large dog | art: the trunk drawn as hard stepped segments; record `covering: chitin`, `anatomy: shell`, `size.heightCm` 55 to 85 |
+| more than four jointed walking legs, each ending in a single hooked point | art: four legs clear on the right side plus two more under the thorax, each ending in one point; record `bodyPlan: multiped`, `anatomy: claws` |
+| canine head, long tapering muzzle, mouth line the length of it | art: the wolf-like muzzle with nostril dots and a full mouth line; record `anatomy: jaws` |
+| one narrow eye slit, one pointed ear laid flat | art: a single white eye slit and one upright ear laid back along the skull |
+| two forelimbs clear of the ground ending in opposing pincers, one blade fixed and one hooked | art: both pincer forelimbs held off the ground, a fixed jaw against a hooked movable one; record `anatomy: pincers` |
+| rounded segmented thorax | art: the rounded segmented thorax behind the head |
+| tail arching up and forward in a scorpion curve | art: the thickly segmented tail rising over the back |
+| ends in a stacked bearing collar and a long tapering helical auger, not a spike | art: three stacked rings then a helical screw thread on a tapered shaft ending in a point; record declares no `stinger` |
+| hard stepped plates of chitin | art: hard rim highlights and stepped joint edges on body and limb segments; record `covering: chitin` |
+
+### habits (105 words)
+
+It holds the haphazard wells and cavern networks that fortune-seekers drilled beneath the dunes, workings the Xalians who took them over still pump. It reads what moves overhead through the ground rather than by eye, and it wears a target down over repeated passes rather than settling it in one. Endessa's twin suns make the open surface lethal to cross, so it moves at the low hours or swims through loose particulate instead of walking on it. It signals by drumming through rock and sand, the only channel a shaft carries. The dunes cost heat and water, and its body gives up little of either.
+
+| Claim | Source |
+|---|---|
+| haphazard wells and cavern networks drilled beneath the dunes by fortune-seekers | Endessa history paragraph 10, on rogue fortune-seekers drilling haphazard wells in large cavern networks deep beneath the surface; Generator report terrain, subsurface excavation tunnel networks |
+| the Xalians who took the workings over still pump them | Endessa history paragraph 16, the Xalians who had made their living in the tunnels continued to drill, pumping Nightcap out barrel after barrel |
+| reads what moves overhead through the ground rather than by eye | record `senses.special: tremorsense` against `senses.sight` 35 to 55; Generator report fauna, vibration-hunting forms |
+| wears a target down over repeated passes | Endessa Generator report fauna, predation strategy: attrition; record `diet: carnivore` |
+| the twin suns make the open surface lethal to cross | Endessa history paragraph 10 on the twin suns blazing through a cloudless sky; Generator report terrain notes, surface insolation lethal without adaptation, dual-star |
+| moves at the low hours | Generator report mobility, sprint viable in low-insolation hours |
+| swims through loose particulate instead of walking on it | Generator report mobility, burrow optimal including sustained particulate-swimming; output priorities, particulate locomotion |
+| signals by drumming through rock and sand | record `communication: ["vibration"]` |
+| the dunes cost heat and water, and its body gives up little of either | Generator report hazards, thermal load and desiccation; output priorities, water retention and thermal shielding |
+
+No pack or solitary sentence is written: `pack-bonded` was cut on 2026-09-07 for want of a source and `solitary` was never listed.
+
 ## Sources
 
 Species entry, `species.json`: "Dog-sized, scorpion-like creatures, Drilltails were originally used by wildcatters who lacked the funding to employ larger drilling Xalians like the Frackworm. Drilltails use their small, stinger-like drills to quickly tunnel through the earth, darting in and out of the surface as they hunt for prey to ambush with their sharp, scissor-like claws."
@@ -169,3 +207,4 @@ The earlier `signature.action.matrix` WARN no longer fires; the signature is tai
 - 2026-09-07, trait evidence bar iteration two (Nick): restored `perceptive` (45, class 4), `slippery` (25, class 5); cut `resistant` (60, ruling B); expected count 2.40 to 2.50.
 - 2026-09-08, trait evidence bar iteration three (Nick): added `hardened` (100, Endessa thermal load and desiccation hazards); raised `perceptive` (45 to 100, tremorsense special sense), `slippery` (25 to 100, legacy `evasionRating` high); cut nothing; expected count 2.50 to 4.80.
 - 2026-09-08, pool shape (Nick): required `armored`, `stealthy`; rolled `slippery` 45, `hardened` 30, `perceptive` 25; expected count 4.80 to 3.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.

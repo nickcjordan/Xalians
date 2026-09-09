@@ -6,6 +6,39 @@ The artwork shows a single creature, one body, drawn in mid-leap with no part of
 
 Body-plan call from this reading: four limbs, of which the forelimbs are short paw-ended limbs and the hindlimbs are the leaping engine. Nothing in the art bears weight, since the whole animal is airborne, and the description does not name a leg count. Per the selection rule, the forelimbs end in small toed paws rather than `hands, fists, claws held up, tools, or wings`, and no source sentence names the forelimbs doing work, so this reads as a bounding quadruped, not a biped. The raised forelimbs are the leading limbs of a bound, which is why I did not read them as held-clear arms.
 
+## Lore
+
+The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` teaser carried verbatim and is never edited here; `body` is the physical record, `habits` is how the creature lives now. `descriptionStatus` was removed from the record; status lives in `docs/species-templates/lore-status.json`.
+
+### body
+
+A small bounding animal built almost entirely around its hindquarters. The forelimbs are thin and short, each ending in a small toed foot; the hind limbs are long, deeply muscled at the haunch, and folded to spring. The head is rounded and carries two long upright ears, a blunt nose and a spray of long whiskers, and from the crown a single long ridged horn sweeps back over the shoulders and curls down to about the level of the mid-back. Shaggy, tufted fur breaks the outline at the chest, throat, flanks and belly. The tail is longer than the body, thin as a whip, and ends in a spiked plume.
+
+| Claim | Source |
+|---|---|
+| Small bounding animal built almost entirely around its hindquarters | art; record `physiology.size` 48 to 66 cm, 9 to 17 kg |
+| Thin, short forelimbs, each ending in a small toed foot | art |
+| Long hind limbs, deeply muscled at the haunch, folded to spring | art; record `capabilities.leap` 82 to 97; record `physiology.bodyPlan: quadruped` |
+| Rounded head with two long upright ears, a blunt nose and a spray of long whiskers | art; record `physiology.senses.hearing` 70 to 90 |
+| A single long ridged horn sweeping back over the shoulders and curling down to about the mid-back | art; record `physiology.anatomy: horns` |
+| Shaggy, tufted fur breaking the outline at chest, throat, flanks and belly | art; record `physiology.covering: fur` |
+| Tail longer than the body, thin as a whip, ending in a spiked plume | art; record `physiology.anatomy: tail` |
+
+### habits
+
+Its ground is not continuous. The habitable band of Saiphus is a scatter of buoyant islands separated by a sea of clouds and dense fog, and it crosses the gaps, one of the great leaping animals the Saiphus Generator raised to bound between islands as if gravity held no sway over them. It grazes the rolling plains such an island carries and drinks from the deep canyons where vapor condenses into water. It listens and it moves: sulfuric cloud banks sweep across the sky without warning, the storms do not stop, and a descent into the fluid layer below the islands is not recoverable.
+
+| Claim | Source |
+|---|---|
+| Its ground is not continuous: the habitable band of Saiphus is a scatter of buoyant islands separated by a sea of clouds and dense fog | planets.json Saiphus paragraph 1, "Separated by a sea of clouds and dense fog, these floating islands range in size from little more than flying boulders to landmasses that are hundreds of miles across"; planetRecords.json saiphus report terrain feature, buoyant island archipelago |
+| It crosses the gaps, one of the great leaping animals the Saiphus Generator raised to bound between islands as if gravity held no sway over them | planets.json Saiphus paragraph 5, "great leaping animals that bounded between islands as if gravity held no sway over them"; planetRecords.json saiphus report mobility sprint, optimal, "inter-island leaping on high-mass builds"; record `traits.pool.ramming` and `capabilities.leap` 82 to 97 |
+| Grazes the rolling plains such an island carries and drinks from the deep canyons where vapor condenses into water | planets.json Saiphus paragraph 1, "clusters of rolling plains carrying fruitful vegetation and deep canyons in which vapors condense and form reserves of potable water"; record `physiology.diet: omnivore` |
+| It listens | record `physiology.senses.hearing` 70 to 90; `attributes.reflex` 65 to 85 |
+| Sulfuric cloud banks sweep across the sky without warning | planetRecords.json saiphus report terrain feature, mobile sulfuric cloud banks, and hazards, sulfuric cloud contact; planets.json Saiphus paragraph 2, "Sulfuric acid clouds sweep haphazardly across the sky, choking the life out of anything they happen to touch" |
+| The storms do not stop | planetRecords.json saiphus report terrain feature, continuous planetary-scale storm systems |
+| A descent into the fluid layer below the islands is not recoverable | planetRecords.json saiphus report mobility swim, unsupported, "descent into the fluid layer is not recoverable"; hazards, unrecoverable descent |
+
+
 ## Sources
 
 Species entry, verbatim description: "This creature can jump so high that at times it seems as if it is flying. Once up in the air, it comes missiling down on its enemy like a battering ram."
@@ -209,3 +242,4 @@ Run with VERBOSE=1 to show the ok lines; the terse run prints only the tally. Th
 - 2026-09-07, trait evidence bar iteration two (Nick): restored slippery; cut none; expected count 1.95 to 2.65.
 - 2026-09-08, trait evidence bar iteration three (Nick): added none; raised resistant, slippery; cut none; expected count 2.65 to 3.40.
 - 2026-09-08, pool shape (Nick): required ramming; rolled slippery 45, resistant 30, perceptive 25; expected count 3.40 to 2.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.

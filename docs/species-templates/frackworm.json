@@ -8,7 +8,8 @@
   ],
   "lore": {
     "description": "A colossal segmented worm with a ringed, drill-like head and a body that holds a slurry of sand under pressure, the Frackworm was generated on Endessa by the Syndicate's stolen prototype Generator to work the Nightcap wells. It bores down through the glass particulate of the dunes to the old ocean-floor substrate and forces its slurry into the seams at pressure until the rock fractures and the Nightcap pools drain toward the well. Wildcatters who could afford one opened a well in days that a crew of Drilltails took a season to reach, and the Nightcap Barons fielded them by the dozen. Today the Frackworms still work the cavern networks beneath the dunes, fracturing the substrate for the Xalians who kept drilling after the Barons died.",
-    "descriptionStatus": "source",
+    "body": "A limbless body in overlapping plates, ringed segment by segment from the blunt taper of the tail to the collar behind the head, and thick enough through the trunk that the front third rears and curves back over the rest of itself when it lifts. The head narrows forward through banded rings to a working face. Set on the collar behind it is a single pinpoint eye, and it reads almost nothing. Nothing on the body grips or grasps: the plates are the surface, the rings are the mechanism, and what the creature does it does with its head end or with its whole length.",
+    "habits": "Endessa's surface insolation is lethal without adaptation under two suns, so the whole of its working life happens inside the dunes and the excavation tunnels beneath them, moving through loose particulate the way another body moves through water. It has no use for sight down there and reads the ground by tremor instead, which cuts both ways: the subsurface of that world hunts by vibration and takes what it takes by attrition, so the same sense that guides it advertises it. What it signals, it signals through the rock. Thermal load, desiccation and tunnel collapse are the standing hazards and it works through all three.",
     "biomeNiche": "the cavern networks and excavation tunnels beneath Endessa's dunes, boring to the old ocean-floor substrate"
   },
   "physiology": {
@@ -21,8 +22,7 @@
       "jaws",
       "vents",
       "shell",
-      "body",
-      "eyes"
+      "body"
     ],
     "covering": "chitin",
     "size": {
@@ -182,17 +182,5 @@
       85
     ],
     "description": "The Frackworm sets its ringed head against a seam of the old ocean-floor substrate and drives its pressurized slurry in until the substrate fractures and the Nightcap runs."
-  },
-  "amendments": [
-    {
-      "date": "2026-09-04",
-      "by": "Nick",
-      "note": "Covering hide -> chitin (grown overlapping armor plates: a soft hide would be torn apart boring through rock and glass sand); anatomy hide -> shell per the one-surface rule; armored 100 per the chitin rule; eyes added, tiny stalked bead eyes like a crab's or a clam's, near blind (sight unchanged), so the creature has a face to meet. Ruling in docs/species-templates/RULINGS.md."
-    },
-    {
-      "date": "2026-09-04",
-      "by": "Nick",
-      "note": "Eyes are tiny pinpoint dots on the collar behind the drill, no stalks (stalk eyes read goofy in the run 62 to 67 art)."
-    }
-  ]
+  }
 }
