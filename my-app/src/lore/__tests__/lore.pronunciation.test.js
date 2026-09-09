@@ -6,6 +6,7 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import encyclopedia from '../../json/encyclopedia.json';
 import Pronunciation from '../../components/encyclopedia/Pronunciation';
 import EntryView from '../../components/encyclopedia/EntryView';
+import EncyclopediaShell from '../../components/encyclopedia/EncyclopediaShell';
 
 const byKey = Object.fromEntries(encyclopedia.entries.map((e) => [e.key, e]));
 
@@ -72,17 +73,25 @@ describe('pronunciation rendering', () => {
 	});
 
 	it('shows up under the title on a real entry page', () => {
+		// The title and its pronunciation both live in the one shared masthead
+		// (EncyclopediaShell), not in EntryView itself -- see the v4 polish
+		// brief's "one masthead" rule. Mount through the shell on the real
+		// route shape so the masthead resolves the entry and its pronunciation.
 		const c = paint(
-			<MemoryRouter initialEntries={['/encyclopedia/entry/telypso']}>
-				<Route path="/encyclopedia/entry/:key"><EntryView /></Route>
+			<MemoryRouter initialEntries={['/encyclopedia/index/telypso']}>
+				<EncyclopediaShell>
+					<Route path="/encyclopedia/index/:key"><EntryView /></Route>
+				</EncyclopediaShell>
 			</MemoryRouter>
 		);
 		const h1 = c.querySelector('h1.g-title');
 		expect(h1.textContent).toBe('Telypso');
 		const pron = c.querySelector('.enc-pronunciation');
 		expect(pron.textContent).toBe('teh-LIP-so');
-		// and it sits after the title inside the same designation header
-		expect(h1.parentElement.contains(pron)).toBe(true);
+		// and it sits after the title, inside the same masthead heading block
+		const heading = c.querySelector('.g-masthead-heading');
+		expect(heading.contains(h1)).toBe(true);
+		expect(heading.contains(pron)).toBe(true);
 		expect(h1.compareDocumentPosition(pron) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
 	});
 });

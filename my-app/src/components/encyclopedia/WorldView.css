@@ -1,71 +1,33 @@
 /* WorldView section. Prefix: .enc-world- */
 
 .enc-world-chronicle {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: baseline;
-	gap: var(--g-3) var(--g-4);
 	margin-top: var(--g-3);
 	margin-bottom: var(--g-6);
 }
 
-.enc-world-chronicle-label {
-	font-size: var(--g-size-tiny);
-	color: var(--g-ink-3);
-	letter-spacing: var(--g-track-label);
-	text-transform: uppercase;
-	flex: none;
-}
-
-.enc-world-chronicle-rail {
-	display: flex;
-	flex-wrap: wrap;
-	gap: var(--g-2);
-	min-width: 0;
-}
-
-.enc-world-chronicle-station {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 2px;
-	padding: var(--g-2) var(--g-3);
-	border: var(--g-hairline) solid var(--g-edge);
-	background: var(--g-s0);
-	text-decoration: none;
-	color: var(--g-ink);
-}
-
-a.enc-world-chronicle-station:hover,
-a.enc-world-chronicle-station:focus-visible {
-	color: var(--g-ink);
-	border-color: var(--g-edge-strong);
-	background: var(--g-s1);
+/* Lit stations are plain .g-tab-link (the era has chapters or events);
+   this only adds the read count. Dim stations (no chapters, no events) are
+   text with no box, in the disabled tertiary tone -- never a button that
+   looks pressable but isn't. */
+.enc-world-chronicle-station-count {
+	margin-left: var(--g-2);
+	font-size: var(--g-size-micro);
+	color: var(--g-text-2);
 }
 
 .enc-world-chronicle-station--dim {
-	color: var(--g-ink-3);
-	opacity: 0.55;
-	border-color: transparent;
-	cursor: default;
-}
-
-.enc-world-chronicle-station-name {
-	font-size: var(--g-size-tiny);
+	display: inline-flex;
+	align-items: center;
+	padding: var(--g-2) var(--g-4);
+	font-family: var(--g-font-legend);
+	font-size: 13px;
 	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
-	white-space: nowrap;
-}
-
-.enc-world-chronicle-station-count {
-	font-size: var(--g-size-micro);
-	color: var(--g-ink-2);
+	letter-spacing: var(--g-track-legend);
+	color: var(--g-text-3);
 }
 
 .enc-world-plate {
-	display: flex;
-	flex-direction: column;
-	gap: var(--g-4);
+	padding: var(--g-5);
 }
 
 .enc-world-lede {
@@ -75,10 +37,11 @@ a.enc-world-chronicle-station:focus-visible {
 	margin-bottom: var(--g-5);
 }
 
+/* The planet render, large: full plate width (the .enc-record left column
+   caps at 360px), a globe on its element wash. */
 .enc-world-mount {
-	width: 148px;
-	height: 148px;
-	margin: 0 auto;
+	width: 100%;
+	aspect-ratio: 1;
 	display: grid;
 	place-items: center;
 	background: color-mix(in srgb, var(--g-el) 24%, var(--g-s1));
@@ -93,8 +56,18 @@ a.enc-world-chronicle-station:focus-visible {
 	border-radius: 50%;
 }
 
-.enc-world-spec {
-	padding: 0 var(--g-1);
+/* The physical facts, beside the lede rather than cramped under the plate
+   (docs/DESIGN_SYSTEM.md common brief rule 4: density). */
+.enc-world-facts {
+	margin-bottom: var(--g-6);
+}
+
+.enc-world-facts-terrain {
+	font-family: var(--g-font-ui);
+	font-variant-numeric: normal;
+	text-transform: none;
+	letter-spacing: normal;
+	color: var(--g-text-2);
 }
 
 .enc-world-record-col {
@@ -172,7 +145,7 @@ a.enc-world-chronicle-station:focus-visible {
 }
 
 .enc-world-chapter-index-num {
-	color: var(--g-ink-3);
+	color: var(--g-text-2);
 	font-size: var(--g-size-tiny);
 	flex: none;
 }
@@ -199,7 +172,7 @@ a.enc-world-chronicle-station:focus-visible {
 }
 
 .enc-world-chapter-num {
-	color: var(--g-ink-3);
+	color: var(--g-text-2);
 }
 
 .enc-world-entries {

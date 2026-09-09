@@ -25,25 +25,23 @@
 }
 
 .enc-species-plate {
-	display: flex;
-	flex-direction: column;
-	gap: var(--g-4);
-	padding-top: var(--g-6);
-	align-items: center;
+	padding: var(--g-5);
 }
 
+/* The creature art, large: full plate width, on the same element wash the
+   Bestiary tiles use (color-mix with the dark surface, not a circle -- a
+   specimen, not a globe). */
 .enc-species-mount {
-	width: 148px;
-	height: 148px;
+	width: 100%;
+	aspect-ratio: 1;
 	display: grid;
 	place-items: center;
 	background: color-mix(in srgb, var(--g-el) 24%, var(--g-s1));
-	border-radius: 50%;
 }
 
 .enc-species-portrait {
-	width: 100%;
-	height: 100%;
+	width: 62%;
+	height: 62%;
 }
 
 .enc-species-signature-name {

@@ -3,7 +3,6 @@ import { Link, useParams } from 'react-router-dom';
 import * as lore from '../../lore';
 import Prose from './Prose';
 import Connections from './Connections';
-import Pronunciation from './Pronunciation';
 import { useVisit, useResume } from './trail';
 import './EntryView.css';
 
@@ -60,7 +59,8 @@ function Fold({ label, count, children }) {
 
 // Wraps every whole-word (optionally plural) mention of `name` in `text` with
 // a <mark>, the same way Connections marks its subject (see Connections.js
-// markSubject / lore/connections.js findMention).
+// markSubject / lore/connections.js findMention), but its own class: the v4
+// polish brief calls for the viable tint here, not Connections' grey box.
 function markName(text, name) {
     const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const re = new RegExp(`\\b(${escaped}s?)\\b`, 'gi');
@@ -68,7 +68,7 @@ function markName(text, name) {
     if (parts.length === 1) return text;
     return parts.map((part, i) => (
         i % 2 === 1
-            ? <mark key={i} className="enc-conn-mark">{part}</mark>
+            ? <mark key={i} className="enc-entry-mark">{part}</mark>
             : part
     ));
 }
@@ -103,27 +103,25 @@ function StoryEra({ row, entryTitle }) {
             )}
 
             {row.excerpts.slice(0, EXCERPTS_PER_ERA).map((excerpt) => (
-                <div key={`${excerpt.world.key}:${excerpt.index}`} className="enc-reader-para enc-entry-story-para">
-                    <div className="enc-reader-note">
+                <div key={`${excerpt.world.key}:${excerpt.index}`} className="enc-entry-story-para">
+                    <div className="enc-entry-story-para-meta">
                         <Link
                             to={lore.routeFor('world', excerpt.world.key)}
-                            className={`g-chip g-chip--outline g-el-${excerpt.world.element} enc-reader-note-chip`}
+                            className={`g-chip g-chip--outline g-el-${excerpt.world.element} enc-entry-story-para-chip`}
                         >
                             {excerpt.world.name}
                         </Link>
-                        <span className="g-mono enc-reader-note-chapter">Ch. {String(excerpt.index).padStart(2, '0')}</span>
+                        <span className="g-mono enc-entry-story-para-chapter">Ch. {String(excerpt.index).padStart(2, '0')}</span>
                     </div>
-                    <div>
-                        <p className="g-body enc-prose enc-reader-para-text">
-                            {markName(excerptWindow(excerpt.text, entryTitle), entryTitle)}
-                        </p>
+                    <p className="g-body enc-prose enc-entry-story-para-text">
+                        {markName(excerptWindow(excerpt.text, entryTitle), entryTitle)}{' '}
                         <Link
                             to={`${lore.routeFor('era', row.era.key)}#chapter-${excerpt.world.key}-${excerpt.index}`}
                             className="g-link enc-entry-story-read-link"
                         >
                             Read in Part {row.era.order + 1}
                         </Link>
-                    </div>
+                    </p>
                 </div>
             ))}
             {row.excerpts.length > EXCERPTS_PER_ERA && (
@@ -145,14 +143,13 @@ function StoryEra({ row, entryTitle }) {
 export default function EntryView() {
     const { key } = useParams();
     const entry = lore.getEntry(key);
-    const wasRead = useVisit(entry
+    useVisit(entry
         ? { kind: 'entry', key, name: entry.title, element: entry.element }
         : { kind: null, key: null });
 
     if (!entry) {
         return (
             <div className="enc-entry">
-                <Link to="/encyclopedia/index" className="enc-back">&laquo; Back to Index</Link>
                 <p className="g-empty">No record for &ldquo;{key}&rdquo;.</p>
             </div>
         );
@@ -160,32 +157,12 @@ export default function EntryView() {
 
     const related = lore.getRelated(key);
     const story = lore.getEntryStory(key);
-    const era = entry.category === 'history' ? lore.getEraForEntry(key) : null;
     const connectionsCount = lore.getConnections('entry', key, { limit: 12 }).length;
     const scopeClass = entry.element ? `g-el-${entry.element}` : '';
 
     return (
         <div className={`enc-entry ${scopeClass}`}>
-            <Link to="/encyclopedia/index" className="enc-back">&laquo; Back to Index</Link>
-
             <article className="enc-entry-doc">
-                <header className="g-masthead">
-                    <div className="g-masthead-heading">
-                        <p className="g-kicker">{entry.category}</p>
-                        <h1 className="g-title">{entry.title}</h1>
-                        <Pronunciation pronunciation={entry.pronunciation} />
-                        {wasRead && <span className="g-badge g-badge--ok enc-entry-reviewed">Reviewed</span>}
-                    </div>
-                    <div className="g-masthead-aside enc-chips">
-                        {entry.element && <span className={`g-chip g-el-${entry.element}`}>{entry.element}</span>}
-                        {era && (
-                            <Link to={lore.routeFor('era', era.key)} className="g-chip g-chip--outline enc-entry-era-chip">
-                                {era.name}
-                            </Link>
-                        )}
-                    </div>
-                </header>
-
                 <div className="enc-record">
                     <div className="enc-entry-plate">
                         <Prose text={entry.definition} except={key} />

@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import * as lore from '../../lore';
 import Prose from './Prose';
 import { useReadMark } from './trail';
@@ -21,8 +21,8 @@ function IndexRecord({ entry }) {
                     {entry.title}
                 </Link>
                 <div className="enc-index-chips-row">
-                    <span className="g-chip">{entry.category}</span>
-                    {entry.element && <span className="g-chip">{entry.element}</span>}
+                    <span className="g-badge">{entry.category}</span>
+                    {entry.element && <span className={`g-chip g-el-${entry.element}`}>{entry.element}</span>}
                     {read && (
                         <span className="g-badge g-badge--ok enc-index-read-badge">Reviewed</span>
                     )}
@@ -39,6 +39,7 @@ function IndexRecord({ entry }) {
  */
 export default function Index() {
     const location = useLocation();
+    const history = useHistory();
     const initialQuery = useMemo(() => {
         const params = new URLSearchParams(location.search);
         return params.get('q') || '';
@@ -76,6 +77,11 @@ export default function Index() {
 
     let lastInitial = null;
 
+    function pullRandom() {
+        const record = lore.getRandomRecord();
+        history.push(lore.routeFor(record.kind, record.key));
+    }
+
     return (
         <div className="enc-index">
             <div className="enc-index-controls-sticky">
@@ -88,10 +94,13 @@ export default function Index() {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                 />
-                <div className="g-segmented enc-index-chips enc-scrollrow" aria-label="Filter by category">
+                <button type="button" className="g-btn g-btn--quiet enc-index-random" onClick={pullRandom}>
+                    Random entry
+                </button>
+                <div className="g-tabs enc-index-chips enc-scrollrow" aria-label="Filter by category">
                     <button
                         type="button"
-                        className="g-segment"
+                        className={`g-tab-link ${category === 'all' ? 'on' : ''}`}
                         aria-pressed={category === 'all'}
                         onClick={() => setCategory('all')}
                     >
@@ -101,7 +110,7 @@ export default function Index() {
                         <button
                             key={c}
                             type="button"
-                            className="g-segment"
+                            className={`g-tab-link ${category === c ? 'on' : ''}`}
                             aria-pressed={category === c}
                             onClick={() => setCategory(c)}
                         >
@@ -111,20 +120,22 @@ export default function Index() {
                 </div>
             </div>
 
-            <div className="g-segmented enc-index-alphabet enc-scrollrow" role="group" aria-label="Jump to letter">
+            <div className="enc-index-alphabet enc-scrollrow" role="group" aria-label="Jump to letter">
                 {ALPHABET.map((letter) => {
                     const live = liveLetters.has(letter);
-                    return (
+                    return live ? (
                         <button
                             key={letter}
                             type="button"
-                            className="g-segment enc-index-alphabet-key"
-                            disabled={!live}
-                            aria-disabled={!live}
+                            className="g-btn g-btn--quiet enc-index-alphabet-key"
                             onClick={() => scrollToLetter(letter)}
                         >
                             {letter}
                         </button>
+                    ) : (
+                        <span key={letter} className="enc-index-alphabet-key enc-index-alphabet-key--dim" aria-hidden="true">
+                            {letter}
+                        </span>
                     );
                 })}
             </div>

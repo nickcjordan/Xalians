@@ -1,2 +1,16 @@
 /* Worlds section. Tile layout is the shared .enc-tile* rules in
-   public/assets/css/pages/encyclopedia-page.css; nothing left to add here. */
+   public/assets/css/pages/encyclopedia-page.css; this file only overrides
+   the terrain caption, which needs body face and two-line clamp rather than
+   .enc-tile-sub's shared single-line mono treatment (Bestiary and the
+   native-fauna tiles keep that default). */
+
+.enc-worlds-terrain {
+	font-family: var(--g-font-ui);
+	text-transform: none;
+	letter-spacing: normal;
+	color: var(--g-text-2);
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}

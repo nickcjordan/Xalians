@@ -332,8 +332,6 @@ function StoryContentsPage() {
 	useVisit({ kind: 'story', key: 'story', name: story.title });
 	return (
 		<div className="enc-story enc-story-contents">
-			<p className="g-kicker enc-story-kicker">The Story of Xalia</p>
-			<h1 className="g-title enc-story-title">{story.title}</h1>
 			<p className="g-body enc-prose enc-story-def">
 				Seven parts, one for each era the Generator's records carry. Begin at Part 1, or open any part below.
 			</p>
@@ -419,8 +417,6 @@ function StoryPart() {
 			<div className="enc-story-layout">
 				<PartRail story={story} part={part} progress={progress} />
 				<div className="enc-story-main">
-					<p className="g-kicker enc-story-kicker">Part {part.order} of {story.parts.length}</p>
-					<h1 className="g-title enc-story-title">{part.era.name}</h1>
 					{part.plate && (
 						<figure className="enc-story-plate">
 							<img
