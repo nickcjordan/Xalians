@@ -10,22 +10,11 @@ Note that the render is a black silhouette, so the albino coloring the descripti
 
 The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
 
-### body
+### body (61 words)
 
-Four limbs bear its weight and the crouch is low, the back arched from a raised haunch to shoulders that drop the head near the ground. The skull is broad, with two long tufted points rising from it, a shaggy ruff hanging below each cheek, narrow slit eyes, and a mouth that opens on two long upper and two long lower fangs. Five curved claws show on each planted paw. A long thick tail sweeps up from the haunch and curls over to a tufted tip. Pointed tufts break the outline at the ears, cheeks, shoulder, and tail, so the coat is shaggy. Behind each front paw a crescent sweeps back, drawn in fine striation rather than solid mass.
+A low-crouching four-legged cat, shaggy in the coat, with long fangs, clawed paws and a long thick tail carried up over the back. Long tufted points rise from the skull. Behind each front paw a curved blade sweeps back, the part of it that cuts. It is built for speed and the leap, and it hunts by sight above all else.
 
-| Claim | Source |
-|---|---|
-| Four limbs bear its weight, and the crouch is low | art: all four limbs planted, the body in a low prowl; record `physiology.bodyPlan: quadruped` |
-| The back arches from a raised haunch to shoulders that drop the head near the ground | art: the back arching from the raised haunch to the shoulders, the neck dropping low |
-| A broad skull with two long tufted points rising from it | art: a broad cat-like head with two long tufted ear points |
-| A shaggy ruff hanging below each cheek | art: a shaggy ruff of pointed fur below each cheek |
-| Narrow slit eyes | art: two narrow slit eyes |
-| A mouth that opens on two long upper and two long lower fangs | art: an open snarling mouth showing an upper and a lower pair of long fangs; record `physiology.anatomy` includes jaws and fangs |
-| Five curved claws on each planted paw | art: five curved claws visible on the near forepaw, with claws on the other planted paws; record `physiology.anatomy` includes claws |
-| A long thick tail sweeping up from the haunch and curling over to a tufted tip | art: a long thick tail sweeping up and back from the haunch, tufted at the tip; record `physiology.anatomy` includes tail |
-| Pointed tufts break the outline at the ears, cheeks, shoulder, and tail, so the coat is shaggy | art: pointed tufts at ears, cheeks, shoulder and tail tip; record `physiology.covering: fur` |
-| Behind each front paw a crescent sweeps back, drawn in fine striation rather than solid mass | art: two large crescents behind the front paws rendered in fine parallel striation rather than solid black; record `physiology.anatomy` includes blades and `conduits.blades: light` |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits (115 words)
 

@@ -10,19 +10,11 @@ Body-plan call from this reading: four limbs, of which the forelimbs are short p
 
 The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` teaser carried verbatim and is never edited here; `body` is the physical record, `habits` is how the creature lives now. `descriptionStatus` was removed from the record; status lives in `docs/species-templates/lore-status.json`.
 
-### body
+### body (85 words)
 
-A small bounding animal built almost entirely around its hindquarters. The forelimbs are thin and short, each ending in a small toed foot; the hind limbs are long, deeply muscled at the haunch, and folded to spring. The head is rounded and carries two long upright ears, a blunt nose and a spray of long whiskers, and from the crown a single long ridged horn sweeps back over the shoulders and curls down to about the level of the mid-back. Shaggy, tufted fur breaks the outline at the chest, throat, flanks and belly. The tail is longer than the body, thin as a whip, and ends in a spiked plume.
+A small bounding animal built around its hindquarters: thin short forelimbs, long deeply muscled hind limbs folded to spring. The head is rounded with two long upright ears and a spray of whiskers, and from the crown a single long ridged horn sweeps back over the shoulders. Shaggy fur covers it. The tail is longer than the body, thin as a whip, and ends in a spiked plume. It hears far better than it sees, and it leaps far better than it does anything else.
 
-| Claim | Source |
-|---|---|
-| Small bounding animal built almost entirely around its hindquarters | art; record `physiology.size` 48 to 66 cm, 9 to 17 kg |
-| Thin, short forelimbs, each ending in a small toed foot | art |
-| Long hind limbs, deeply muscled at the haunch, folded to spring | art; record `capabilities.leap` 82 to 97; record `physiology.bodyPlan: quadruped` |
-| Rounded head with two long upright ears, a blunt nose and a spray of long whiskers | art; record `physiology.senses.hearing` 70 to 90 |
-| A single long ridged horn sweeping back over the shoulders and curling down to about the mid-back | art; record `physiology.anatomy: horns` |
-| Shaggy, tufted fur breaking the outline at chest, throat, flanks and belly | art; record `physiology.covering: fur` |
-| Tail longer than the body, thin as a whip, ending in a spiked plume | art; record `physiology.anatomy: tail` |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits
 

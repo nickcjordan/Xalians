@@ -10,22 +10,11 @@ The art and the description do not disagree; the description is silent on the bo
 
 The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
 
-### body
+### body (81 words)
 
-Akinza stands upright on two digitigrade hind legs, narrow through the waist and light in the frame, and its forelimbs are held in at the waist, ending in small hooked claws that carry no weight. The head is feline, a short muzzle over a small triangular nose, with two tall vertical slit pupils set above it. The ears dominate everything else, a ragged and deeply fringed pair spread wider than the shoulders. A plumed tail sweeps up behind and opens into three or four shaggy fronds, each about as long as the body. Fur covers all of it. The long hind legs carry it at speed and the claws take it up ice and stone.
+An upright, light-framed biped on long hind legs, feline in the head, with small hooked forelimb claws that carry no weight. Its ears are the largest thing on it, a fringed pair spread wider than the shoulders, and a plumed tail about as long as the body sweeps up behind it. Fur covers all of it. It is built to run and leap, the claws take it up ice and stone, and it watches and listens far more than it smells.
 
-| Claim | Source |
-|---|---|
-| Upright on two digitigrade hind legs, forelimbs held in at the waist and carrying no weight | art: both arms held in at the waist clear of the ground, weight entirely on the hind legs; record `physiology.bodyPlan: biped` |
-| Small hooked claws on the free forelimbs | art: short curved hooked digits on both hands; record `physiology.anatomy` includes claws |
-| Narrow through the waist, light in the frame | art: slim narrow-waisted torso with smooth limb outlines |
-| Feline head, short muzzle over a small triangular nose | art: feline or fox-like head with a small muzzle and a small triangular nose |
-| Two tall vertical slit pupils | art: two very large eyes drawn as vertical slit pupils |
-| Ragged, deeply fringed ears spread wider than the shoulders | art: a pair of enormous ears, far wider than the shoulders, deeply ragged and fringed |
-| A plumed tail opening into three or four shaggy fronds about as long as the body | art: enormous plumed tail structure resolving into three or four fronds, each roughly as long as the whole body; record `physiology.anatomy` includes tail |
-| Fur covers all of it | record `physiology.covering: fur`; art: the only outlines drawn as a surface, the ears and the tail fronds, are tufted and shaggy |
-| The long hind legs carry it at speed | record `capabilities.sprint [65, 88]` |
-| The claws take it up ice and stone | record `capabilities.climb [45, 70]`; planetRecords.json krystos `report.mobility.climb` viable, `report.terrain.features` ice crystal peaks and mountain drift systems |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits
 

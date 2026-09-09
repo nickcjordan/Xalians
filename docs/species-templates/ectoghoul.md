@@ -8,20 +8,11 @@ The art is a black-and-white silhouette of a single body with no limbs at all. A
 
 The lore block holds three prose fields. `description` is Nick's teaser, carried from `species.json` verbatim and never edited here. `body` and `habits` are authored below under the lore split of 2026-09-09; every claim in each is ledgered.
 
-### body (113 words)
+### body (95 words)
 
-There are no limbs anywhere on it and nothing touches the ground. A skull sits at the front, tipped back, with two deep empty orbits, a small triangular nasal opening, and a grinning row of squared teeth set in one fused upturned arc rather than on a hinged lower jaw. Behind the skull the body runs straight into a smooth tapering ribbon that curves down and hooks back on itself, splitting near the end into two or three thin streamers that curl to points. The lower half of that ribbon does not end at an edge: it thins into a scatter of drifting particles. At about a meter long it weighs almost nothing.
+There are no limbs anywhere on it and nothing touches the ground. A skull sits at the front with empty orbits and a fixed grin of teeth. Behind the skull the body runs into a smooth tapering ribbon that curves and hooks back on itself, and the lower end of that ribbon does not stop at an edge: it thins into mist and drifting particles. It has no flesh; it is spectral through and through, about a meter long and weighing almost nothing. It sees and hears, and it has almost no sense of smell.
 
-| Claim | Source |
-|---|---|
-| no limbs anywhere, nothing touching the ground | art: no arms, legs, wings or fins, and a drifting posture with no ground contact; record `bodyPlan: floating` |
-| a skull at the front, tipped back | art: the human-style skull tipped back and to the side |
-| two deep empty orbits and a small triangular nasal opening | art: the two deep orbits and the small triangular nasal opening |
-| a grinning row of squared teeth in one fused upturned arc, no hinged lower jaw | art: squared even teeth in an upturned arc with no separate lower jaw piece; record `anatomy: jaws` |
-| the body runs from the skull into a smooth tapering ribbon that curves down and hooks back | art: the skull base running into a thick tapering ribbon that curves and hooks on itself; record `anatomy: tail` |
-| splitting near the end into two or three thin streamers curling to points | art: the trailing streamers at the end of the ribbon |
-| the lower half thins into a scatter of drifting particles rather than ending at an edge | art: the dense scatter of specks thinning outward; record `covering: mist`, `corporeality: non-corporeal` |
-| about a meter long, weighing almost nothing | record `size.heightCm` 80 to 105, `size.weightKg` 0.1 to 0.5 |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits (105 words)
 

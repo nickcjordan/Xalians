@@ -8,22 +8,11 @@ The artwork is a flat black silhouette of a single hunched body with no legs, no
 
 The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
 
-### body
+### body (83 words)
 
-It has no legs and no hands. A rounded hood forms the top of the mass and carries a single opening, an oval with a vertical slit inside it, which is all the eye it has. Two thick protrusions spread wide from the upper body, broad where they meet it and blunt at their ends, with no joint anywhere along them, and their undersides break into long pointed runnels where the material sags. Below that the mass widens into a grooved skirt and meets the ground in a flat spreading base, shedding droplets. It stands about two meters and carries several hundred kilograms. It is mute, it sees poorly, and it reads what moves through the ground it covers.
+A standing mass of living slime with no legs and no hands, roughly two meters tall and several hundred kilograms. A hooded top carries its one eye, two thick jointless protrusions spread wide from the upper body, and below them the mass widens into a skirt and spreads flat on the ground, shedding droplets as it goes. A hardened shell plates the hood and the upper mass. It is mute and sees poorly, and it reads what moves through the ground it covers.
 
-| Claim | Source |
-|---|---|
-| No legs and no hands | art: a hunched body with no legs, no feet, no hands, no wings and no tail |
-| A rounded hood forms the top of the mass | art: a rounded hood or dome forming the top of the body |
-| A single opening, an oval with a vertical slit inside it, is all the eye it has | art: one opening in negative space, a rough oval with a vertical slit inside it; record `senses.sight [20, 40]` |
-| Two thick protrusions spread wide from the upper body, broad where they meet it and blunt at their ends, with no joint anywhere along them | art: two thick arm-like protrusions spread left and right, broad at the body, tapering to blunt ends, with no discrete limb joint drawn; record `physiology.anatomy` includes pseudopods |
-| Their undersides break into long pointed runnels where the material sags | art: the undersides of both broken into long pointed runnels as though the material is sagging off |
-| The mass widens into a grooved skirt and meets the ground in a flat spreading base, shedding droplets | art: a single widening skirt grooved by vertical runnels, meeting the ground in a flat spreading base, with detached droplets falling away; record `physiology.bodyPlan: amorphous` |
-| It stands about two meters and carries several hundred kilograms | record `physiology.size.heightCm [180, 250]` and `weightKg [320, 500]` |
-| It is mute | record `physiology.communication: []` |
-| It sees poorly | record `senses.sight [20, 40]` |
-| It reads what moves through the ground it covers | record `senses.special: [tremorsense]`; art: the wide flat ground-contact base |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits
 

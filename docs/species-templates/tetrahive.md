@@ -10,20 +10,11 @@ A single central creature dominates the frame, drawn in flat black silhouette: a
 
 The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description` verbatim. Body and habits below are re-cut from the ratified draft in `docs/design/species-stub-upgrades-2026-09-08.md`, with the orchestrator's edit applied: the draft's opening 'A small winged thing' reads 'A small winged hunter'.
 
-### body (102 words)
+### body (77 words)
 
-A small winged hunter, under a meter and a dozen kilograms: two broad membranous wings off a blunt bat-shaped body, a small head with pointed upright ears and narrow slitted eyes, short forelimbs held near the chest and ending in a few hooked digits, hind feet carrying the same hooks splayed wide, and a long thin tail that trails behind it and curls into a full loop at the tip. The outline is smooth all the way round, unarmored hide with no plate, spine, horn or bared tooth anywhere on it. It has no call and makes no sound of its own.
+A small winged hunter, under a meter and a dozen kilograms: two broad membranous wings off a blunt bat-shaped body, a small head with upright ears, short hooked forelimbs, hooked hind feet, and a long thin tail trailing behind. The outline is smooth all the way round, unarmored hide with no plate, spine, horn or tooth on it. It has no call and makes no sound of its own, and it hears far better than it sees.
 
-| Claim | Source |
-|---|---|
-| a small winged hunter, under a meter and a dozen kilograms | record `physiology.size.heightCm` [60, 90] and `weightKg` [8, 16]; record `physiology.diet` is `carnivore` |
-| two broad membranous wings off a blunt bat-shaped body | art: a bat-shaped body with two very broad membranous wings spread wide; record `physiology.anatomy` carries `wings` |
-| a small head with pointed upright ears and narrow slitted eyes | art: a small blunt head with two pointed upright ears and a pair of narrow slitted eyes |
-| short forelimbs held near the chest, ending in a few hooked digits | art: short forelimbs ending in three or four hooked digits held near the chest; record `anatomy` carries `claws` |
-| hind feet carrying the same hooks splayed wide | art: a pair of hind feet with splayed hooked digits |
-| a long thin tail trailing behind it, curling into a full loop at the tip | art: a long, thin, whip-like tail that trails down and curls into a full loop at its tip; record `anatomy` carries `tail` |
-| outline smooth all the way round, unarmored hide, no plate, spine, horn or bared tooth | art: a smooth unarmored outline with no plates, spines, shell, horns, or visible teeth; record `physiology.covering` is `hide` |
-| no call, no sound of its own | record `physiology.communication` is `[]`, which the contract reads as mute |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits (104 words)
 

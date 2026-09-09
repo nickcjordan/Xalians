@@ -8,19 +8,11 @@ The artwork shows a single body, drawn as a jellyfish seen from slightly below. 
 
 The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` teaser carried verbatim and is never edited here; `body` is the physical record, `habits` is how the creature lives now. `descriptionStatus` was removed from the record; status lives in `docs/species-templates/lore-status.json`.
 
-### body
+### body (88 words)
 
-A drifting body with no legs, no wings and no jaws. One large smooth bell dominates it, the lower rim flaring outward like a skirt; under the crown of the bell hangs a dark ridged inner mass of some seven lobes with a curtain of fine filaments below it, and beneath that sits a small rounded body carrying two close-set eyes. Radiating from that body are roughly eight thick tentacles, each a hollow tube, several of them open at the end so that the inside of the tube shows. The surface is bare and untextured. It measures four to six meters and weighs almost nothing for its size.
+A drifting body with no legs, no wings and no jaws, four to six meters across and weighing almost nothing for its size. One large smooth bell dominates it, the lower rim flaring outward like a skirt, with a small rounded body hanging beneath the crown of the bell. From that body radiate thick hollow tentacles, several of them open at the end. The surface is bare and untextured. It has little sight or hearing, and it finds its way by smell and by what the tentacles touch.
 
-| Claim | Source |
-|---|---|
-| A drifting body with no legs, no wings and no jaws | art; record `physiology.bodyPlan: floating` |
-| One large smooth bell dominating it, the lower rim flaring outward like a skirt | art |
-| A dark ridged inner mass of some seven lobes under the crown of the bell, with a curtain of fine filaments below it | art |
-| A small rounded body beneath that, carrying two close-set eyes | art; record `physiology.senses.sight` 25 to 45 |
-| Roughly eight thick tentacles radiating from that body, each a hollow tube, several open at the end | art; record `physiology.anatomy: tendrils` and `vents` |
-| Surface bare and untextured | art (unbroken, untextured bell outline); record `physiology.covering: bare` |
-| Measures four to six meters and weighs almost nothing for its size | record `physiology.size` 380 to 620 cm, 30 to 90 kg |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits (120 words)
 

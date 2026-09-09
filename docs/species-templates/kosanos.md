@@ -8,20 +8,11 @@ The artwork shows a single heavy-bodied creature standing in three-quarter view 
 
 The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` teaser carried verbatim and is never edited here; `body` is the physical record, `habits` is how the creature lives now. `descriptionStatus` was removed from the record; status lives in `docs/species-templates/lore-status.json`.
 
-### body
+### body (96 words)
 
-A heavy quadruped on four thick columnar legs, all of them bearing weight, with a deep barrel body that tapers back to the hindquarters and a short upturned tail curling to a fine point. The head is blunt and carried low near the shoulders, with one large almond eye and a broad gape showing rows of long tapering teeth. From the crown rises a single long trunk, ribbed along its inner curve, which arcs up and back over the whole animal and flattens into a wide, thin blade that sweeps past the hips to a needle point, roughly as long as the body itself. The feet are rounded pads. The hide is smooth throughout, unplated and unspined.
+A heavy quadruped on four thick columnar legs, with a deep barrel body and a short upturned tail. The head is blunt and carried low near the shoulders, with a broad gape of long teeth. From the crown rises a single long trunk that arcs up and back over the whole animal and flattens into a wide thin blade sweeping past the hips, roughly as long as the body itself. The hide is smooth and unplated. It weighs well past three hundred kilograms, and it reads the ground through its feet as much as it looks.
 
-| Claim | Source |
-|---|---|
-| Heavy quadruped on four thick columnar legs, all of them bearing weight | art; record `physiology.bodyPlan: quadruped`, `size` 210 to 265 cm and 320 to 430 kg |
-| Deep barrel body tapering back to the hindquarters, short upturned tail curling to a fine point | art; record `physiology.anatomy: tail` |
-| Blunt head carried low near the shoulders, one large almond eye | art |
-| Broad gape showing rows of long tapering teeth | art; record `physiology.anatomy: jaws` |
-| A single long trunk rising from the crown, ribbed along its inner curve, arcing up and back over the whole animal | art; record `physiology.anatomy: trunk` |
-| Flattening into a wide, thin blade that sweeps past the hips to a needle point, roughly as long as the body | art; record `physiology.anatomy: blades`; species.json, "With a large blade at the end of its trunk" |
-| Feet are rounded pads | art (rounded pads with a single crease, neither split hooves nor spread digits) |
-| Hide smooth throughout, unplated and unspined | art (smooth outline, no plate, scale or spine edges); record `physiology.covering: hide` and the absence of `shell` and `spines` |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits
 

@@ -10,20 +10,11 @@ Note on the pose and the plan: the art shows a mammalian four-limbed body caught
 
 Split applied 2026-09-09. `lore.description` is Nick's teaser, carried from `species.json` verbatim and never edited here. `lore.body` and `lore.habits` below are authored to the split contract, 40 to 120 words each, and neither repeats a sentence the teaser already carries (the turning disc, the eye contact, and the working from inside a mind are all the teaser's and are deliberately absent from both fields).
 
-### body (110 words)
+### body (82 words)
 
-A small shaggy climber that hangs from the branches by long-fingered hands, a single hand taking the whole body. The pelt is drawn in tufted, spiky edges along the chest, flanks and haunches, with no plate or shell anywhere on it. Two pointed ears rise nearly as long as the head. The face is mostly eye: two wide circles patterned as spiral pinwheels, set side by side, filling about half the skull. A long thin tail curves up behind the head and ends in a flat disc filled with a tight spiral, held out at eye height and about as wide as the skull itself. The hind feet are two-toed.
+A small shaggy climber that hangs from the branches by long-fingered hands, a single hand taking the whole body. Two pointed ears rise nearly as long as the head, and the face is mostly eye, two wide spiral-patterned circles filling half the skull. A long thin tail curves up over the head and ends in a flat disc marked with a spiral, held out at eye height: the lure. Fur covers it, with no plate or shell. It sees and hears keenly.
 
-| Claim | Source |
-|---|---|
-| small shaggy climber hanging from the branches by long-fingered hands | art: hangs from a branch by one long-fingered hand with the hind legs clear of any ground; `physiology.bodyPlan` biped, `physiology.anatomy` fists, `capabilities.climb` [65, 90] |
-| a single hand taking the whole body | art: the creature hangs from a branch by one long-fingered hand with the hind legs clear of any ground; `physiology.size` 80 to 95 cm and 10 to 16 kg |
-| pelt in tufted, spiky edges along chest, flanks and haunches | art: the outline is drawn as tufted shaggy edges; `physiology.covering` fur |
-| no plate or shell anywhere on it | art: no shell, plating, horns or weaponry drawn; `physiology.anatomy` declares `hide`, which states the body has no armored aspect |
-| two pointed ears nearly as long as the head | art: two enormous pointed ears, each nearly as long as the head; `physiology.senses.hearing` [65, 88] |
-| two spiral-pinwheel eyes filling about half the skull | art: two large circular spiral pinwheel eyes taking roughly half the head; `physiology.senses.sight` [70, 92] |
-| long thin tail ending in a flat spiral disc, held at eye height, about the width of the skull | art: S-curved tail terminating in a large flat spiral disc roughly the diameter of the skull, held out at eye height; `physiology.anatomy` tail and lure |
-| hind feet two-toed | art: two-toed hind feet |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits (112 words)
 

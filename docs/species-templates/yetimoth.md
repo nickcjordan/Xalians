@@ -8,20 +8,11 @@ The artwork is a flat black silhouette of a single creature, front-on, standing 
 
 Split applied 2026-09-09. `lore.description` was already the `species.json` text verbatim and is unchanged. This species had no upgraded description to re-cut, so body and habits are authored fresh, and both are written around the teaser rather than over it: the ice sheets, the near-impenetrable armor, the walls of frost, the encapsulating and the ice-gauntleted fists are all the teaser's and appear in neither field.
 
-### body (113 words)
+### body (89 words)
 
-It stands upright on two legs and carries its whole weight on them, the arms hanging free at the sides and ending in closed blocky hands. The shoulders slope wider than the hips with no neck between them, and the outline of arms, flanks and thighs is ragged and tufted all the way around. The skull is broad and domed, with two ears fanned wide and a long segmented trunk hanging down the center of the chest and curling forward at the tip. The tusks sweep out past the width of the shoulders and end level with the ears, drawn cracked and faceted through rather than solid. The feet are broad and flat.
+A hulking white-furred ape that stands upright on two legs and carries its whole weight on them, arms hanging free and ending in heavy closed hands. The shoulders slope wider than the hips with no neck between them. The skull is broad and domed, with ears fanned wide and a long trunk hanging down the chest. Its tusks are ice, mineral grown from flesh, and sweep out past the width of the shoulders. The feet are broad and flat. It stands over two meters and near four hundred kilograms.
 
-| Claim | Source |
-|---|---|
-| stands upright on two legs bearing the whole weight; arms hang free, ending in closed blocky hands | art: two legs bearing the whole body, arms hanging free and bearing no weight, ending in closed blocky hands with thumb and knuckles picked out; `physiology.bodyPlan` biped; `physiology.anatomy` fists |
-| shoulders sloping wider than the hips, no neck | art: sloped shoulders wider than the hips with no neck to speak of |
-| ragged, tufted outline around arms, flanks and thighs | art: the outline drawn in ragged tufted edges all the way around; `physiology.covering` fur |
-| broad domed skull with two ears fanned wide | art: a broad domed skull and two large fanned ears set wide; `physiology.senses.hearing` [55, 75] |
-| long segmented trunk hanging down the center of the chest, curling forward at the tip | art: exactly that; `physiology.anatomy` trunk; `physiology.senses.smell` [55, 75] |
-| tusks sweeping past shoulder width, ending level with the ears | art: two enormous curved tusks arcing up and outward past the width of the shoulders, ending in points level with the ears; `physiology.anatomy` tusks |
-| tusks drawn cracked and faceted through rather than solid | art: the tusks drawn in outline with cracked, faceted interior lines rather than filled solid; `physiology.composition.secondary` mineral |
-| feet broad and flat | art: a broad flat foot with visible toes on the leading leg |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits (120 words)
 

@@ -12,21 +12,11 @@ Four limbs bear weight in this pose. The forelimbs are not held clear, they are 
 
 The lore split (Nick, 2026-09-09). `lore.description` was already the species.json teaser verbatim and is unchanged; body and habits below are new, and both were written to add to the teaser rather than restate it.
 
-### body (119 words)
+### body (83 words)
 
-It crouches on all fours, the arms coming down between splayed knees so that both hands take weight on spread fingers, the legs folded deep with flat splayed feet gripping. Two ribbed horns curl up and back off the skull. The face carries two eyes, a small nose and a level closed mouth, with nothing in it to bite with. The trunk is heavy with muscle and bare, smooth unarmored hide drawn over a blocked chest and belly. Membranous wings ribbed on finger struts spread from the shoulders. The tail rises over the head and opens into a five-pointed cradle, and the stone rides above that cradle without touching it. Under two meters, and three hundred kilograms and more.
+It crouches on all fours, hands and feet both taking weight, a heavy muscled trunk under smooth unarmored hide. Two ribbed horns curl up and back off the skull. Membranous wings spread from the shoulders. The tail rises over the head and opens into a cradle, and its stone rides above that cradle without touching it. Under two meters tall and three hundred kilograms and more, it flies regardless. Its mouth carries nothing to bite with, and it hears better than it sees.
 
-| Claim | Source |
-|---|---|
-| crouches on all fours, arms down between splayed knees, both hands taking weight on spread fingers | art: the arms descend between the splayed knees, hands flat on the surface with fingers spread, bearing weight; record `physiology.bodyPlan` is `quadruped` |
-| legs folded deep, feet flat and splayed, toes gripping | art |
-| two ribbed horns curling up and back off the skull | art: two ridged horns curling up and back, ribbed along their length; record `physiology.anatomy` carries `horns` |
-| two eyes, a small nose, a level closed mouth, nothing in it to bite with | art: two eyes, a small nose, a closed level mouth, no visible fangs, beak, or tusks; record `anatomy` carries no `jaws`, `fangs`, `beak` or `tusks` |
-| trunk heavy with muscle and bare, smooth unarmored hide over a blocked chest and belly | art: a heavily muscled bare trunk with pectorals and a segmented abdomen drawn as line work on smooth skin, the silhouette edge smooth everywhere; record `physiology.covering` is `hide` |
-| membranous wings ribbed on finger struts, spread from the shoulders | art: large membranous wings ribbed with finger struts in the bat pattern; record `anatomy` carries `wings` |
-| the tail rises over the head and opens into a five-pointed cradle | art: one long tail sweeping up and over the head, ending in a flared cradle of five backswept points; record `anatomy` carries `tail` |
-| the stone rides above that cradle without touching it | art: a rough irregular ball of stone floating above the cradle, separated by a clear gap, unattached |
-| under two meters, three hundred kilograms and more | record `physiology.size.heightCm` [150, 185] and `weightKg` [300, 430] |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits (113 words)
 

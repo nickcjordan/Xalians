@@ -8,21 +8,11 @@ A single black silhouette of one creature, drawn in a rearing three-quarter pose
 
 The lore block holds three prose fields. `description` is Nick's teaser, carried from `species.json` verbatim and never edited here. `body` and `habits` are authored below under the lore split of 2026-09-09; every claim in each is ledgered.
 
-### body (114 words)
+### body (84 words)
 
-A hard-shelled body the size of a large dog rides on more than four jointed walking legs, each ending in a single hooked point. The head is canine, a long tapering muzzle with a mouth line running its length, one narrow eye slit and one pointed ear laid flat along the skull. Two forelimbs are carried clear of the ground and end in opposing pincers, one blade fixed and one hooked. Behind a rounded segmented thorax the tail arches up and forward in a scorpion curve, ending not in a spike but in a stacked bearing collar and a long tapering helical auger. The trunk and limb segments are hard stepped plates of chitin.
+A hard-shelled, dog-sized body on more than four jointed walking legs, cased in stepped plates of chitin. The head is canine, a long tapering muzzle with working jaws. Two forelimbs are carried clear of the ground and end in pincers. The tail arches up and forward over the back in a scorpion curve and ends in a long tapering helical auger, the drill it is named for. It is a burrower first, and it reads the ground it digs through better than it sees.
 
-| Claim | Source |
-|---|---|
-| hard-shelled body the size of a large dog | art: the trunk drawn as hard stepped segments; record `covering: chitin`, `anatomy: shell`, `size.heightCm` 55 to 85 |
-| more than four jointed walking legs, each ending in a single hooked point | art: four legs clear on the right side plus two more under the thorax, each ending in one point; record `bodyPlan: multiped`, `anatomy: claws` |
-| canine head, long tapering muzzle, mouth line the length of it | art: the wolf-like muzzle with nostril dots and a full mouth line; record `anatomy: jaws` |
-| one narrow eye slit, one pointed ear laid flat | art: a single white eye slit and one upright ear laid back along the skull |
-| two forelimbs clear of the ground ending in opposing pincers, one blade fixed and one hooked | art: both pincer forelimbs held off the ground, a fixed jaw against a hooked movable one; record `anatomy: pincers` |
-| rounded segmented thorax | art: the rounded segmented thorax behind the head |
-| tail arching up and forward in a scorpion curve | art: the thickly segmented tail rising over the back |
-| ends in a stacked bearing collar and a long tapering helical auger, not a spike | art: three stacked rings then a helical screw thread on a tapered shaft ending in a point; record declares no `stinger` |
-| hard stepped plates of chitin | art: hard rim highlights and stepped joint edges on body and limb segments; record `covering: chitin` |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits (105 words)
 

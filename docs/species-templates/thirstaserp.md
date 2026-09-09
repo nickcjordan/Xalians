@@ -8,21 +8,11 @@ The artwork shows a single limbless serpent drawn in flat black silhouette, coil
 
 The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description` verbatim and moves everything else into two authored fields.
 
-### body (105 words)
+### body (85 words)
 
-A limbless body, some two meters of it and a hundred kilograms, that loops flat on the ground and rears the front third of itself upright. The head is a viper's wedge; the upper jaw carries two long curved fangs and a forked tongue runs out between them. Behind the head a fan-shaped hood spreads wide on radiating ribs. Heavy crosswise bands of scale run the underside and the flank the whole length. The tail rises separately from the coils and finishes in a splayed rosette of narrow pointed blades set like petals. There is nothing else on it: no limb, no wing, no fin.
+A limbless serpent, some two meters and a hundred kilograms, that loops flat on the ground and rears the front third of itself upright. The head is a viper's wedge with long curved fangs. Behind it a hood spreads wide. Heavy bands of scale run the whole length. The tail finishes in a splayed rosette of narrow blades that it sounds like a rattle. There is nothing else on it: no limb, no wing, no fin. It digs, it smells, and it reads the ground.
 
-| Claim | Source |
-|---|---|
-| a limbless body that loops flat on the ground and rears the front third of itself upright | art: a limbless serpent coiled on the ground with the front third reared vertically, looping twice in flat coils; record `physiology.bodyPlan` is `serpentine` |
-| some two meters of it and a hundred kilograms | record `physiology.size.heightCm` [190, 250] and `weightKg` [95, 145] |
-| the head is a viper's wedge | art: a wedge-shaped viper head seen in profile |
-| the upper jaw carries two long curved fangs | art: mouth open wide with two long curved fangs in the upper jaw; record `physiology.anatomy` carries `fangs` and `jaws` |
-| a forked tongue runs out between them | art: a forked tongue extended |
-| a fan-shaped hood spreads wide on radiating ribs behind the head | art: a broad fan-shaped hood drawn with radiating internal ribs |
-| heavy crosswise bands of scale run the underside and the flank the whole length | art: heavy transverse banding drawn as overlapping crosswise plates along the underside and flank; record `physiology.covering` is `scales` |
-| the tail rises separately from the coils and finishes in a splayed rosette of narrow pointed blades set like petals | art: a second thinner tail section rising on the left, ending in a splayed rosette of narrow pointed blades arranged like petals; record `anatomy` carries `tail` and `rattle` |
-| no limb, no wing, no fin | art: no limbs of any kind, no wings, no fins |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits (95 words)
 

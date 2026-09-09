@@ -8,22 +8,11 @@ The image is a single black silhouette of one creature, a raptor-shaped theropod
 
 The lore block holds three prose fields. `description` is Nick's teaser, carried from `species.json` verbatim and never edited here. `body` and `habits` are authored below under the lore split of 2026-09-09, re-cut from the stub-upgrade draft of 2026-09-08 with the orchestrator's edit applied.
 
-### body (115 words)
+### body (90 words)
 
-It stands on two long hind legs, each foot set with hooked toe claws. The skull is narrow and lizard-like, with a small round eye under a raised brow ridge and two rows of triangular pointed teeth in jaws that open wide. The forelimbs stay folded against the chest, clear of the ground, and end in three long curved hooks. A broad fan of stiff pointed plumes sweeps back from each arm, with a second smaller group at the hip and a spray of them at the tip of the long tail carried up over the back. Between the plumes the trunk is smooth and unarmored, and the whole frame is light for its height.
+A light-framed runner on two long hind legs, each foot set with hooked toe claws. The skull is narrow and lizard-like with wide-opening jaws. The forelimbs are held folded against the chest and end in curved claws. Fans of stiff plumes sweep back from each arm, the wings such as they are, with more at the hip and at the tip of the long tail carried up over the back. Between the plumes the hide is smooth and unarmored. It is built for the sprint and it hunts by sight.
 
-| Claim | Source |
-|---|---|
-| stands on two long hind legs | art: one leg planted and one drawn up, forelimbs bearing nothing; record `bodyPlan: biped` |
-| each foot set with hooked toe claws | art: hooked toe claws on each foot; record `anatomy: talons` |
-| narrow lizard-like skull, small round eye, raised brow ridge | art: the long narrow lizard head with a small round eye and a raised brow ridge |
-| two rows of triangular pointed teeth in jaws that open wide | art: jaws thrown wide showing two rows of triangular teeth; record `anatomy: jaws`, `fangs` |
-| forelimbs folded against the chest, clear of the ground, ending in three long curved hooks | art: forelimbs folded up against the chest, three long curved claws bearing no weight; record `anatomy: claws` |
-| a broad fan of stiff pointed plumes sweeping back from each arm | art: the plume fan projecting backward from the arm; record `anatomy: wings`, `covering: feathers` |
-| a second smaller plume group at the hip, and a spray at the tail tip | art: the hip plume group and the plumed tail tip; record `anatomy: tail` |
-| the long tail is carried up over the back | art: the tail sweeping up and forward over the back |
-| the trunk is smooth and unarmored | art: an unbroken trunk outline with no plated or scaled edge; record `anatomy: hide`, no `shell` |
-| the frame is light for its height | record `size` 88 to 112 cm against 38 to 56 kg |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits (94 words)
 

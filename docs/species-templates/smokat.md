@@ -8,21 +8,11 @@ The render shows a single lean feline standing upright on its two hind legs, che
 
 The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description` verbatim and moves everything else into two authored fields.
 
-### body (111 words)
+### body (81 words)
 
-It stands upright on two hind legs, chest raised and back arched, forepaws lifted and open with the toes spread. The muzzle is long and pulls back off a full row of small sharp teeth; the ears are pointed and tufted, the eye a narrow slit. The hind feet end in three splayed clawed toes. A long tail tapers away behind it and its tip goes to vapor, and vapor rises off the shoulder, the forepaw, the flank, the thigh and the planted foot. Under all of it the outline is smooth and unbroken, unarmored hide rather than plate or scale, on a frame under two meters and around seventy kilograms.
+An upright cat-shaped biped under two meters and around seventy kilograms, chest raised and back arched, forepaws lifted and open. The muzzle is long and the ears are pointed and tufted. The hind feet end in clawed toes. A long tail tapers away behind it and its tip goes to vapor, and vapor rises off the shoulders, flanks and feet. Under it the hide is smooth and unarmored. It climbs, sprints and leaps, and it sees and hears in equal measure.
 
-| Claim | Source |
-|---|---|
-| stands upright on two hind legs, chest raised and back arched | art: a lean feline standing upright on its two hind legs, chest raised, back arched; record `physiology.bodyPlan` is `biped` |
-| forepaws lifted and open with the toes spread | art: both forelimbs lifted clear of the ground, paws held open, toes spread |
-| long muzzle pulled back off a full row of small sharp teeth | art: a long muzzle drawn open in a snarl over a full row of small sharp teeth; record `physiology.anatomy` carries `jaws` |
-| pointed tufted ears, the eye a narrow slit | art: pointed tufted ears, one narrow slit eye |
-| hind feet end in three splayed clawed toes | art; record `anatomy` carries `claws` |
-| a long tail tapering away behind it, its tip going to vapor | art: a long tapering tail whose tip dissolves into a large roiling curl of vapor; record `anatomy` carries `tail` |
-| vapor off the shoulder, forepaw, flank, thigh and planted foot | art: curling tongues of smoke rising off the shoulder, the raised forepaw, the flank, the hind thigh and the standing foot |
-| the outline smooth and unbroken, unarmored hide rather than plate or scale | art: a smooth unbroken trunk outline with no plate seams or scale seams; record `physiology.covering` is `hide` and `anatomy` carries `hide`, never `shell` |
-| under two meters, around seventy kilograms | record `physiology.size.heightCm` [150, 185] and `weightKg` [58, 84] |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits (82 words)
 

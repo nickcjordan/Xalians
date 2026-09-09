@@ -8,21 +8,11 @@ The artwork shows a single shaggy quadruped seated on its haunches in three-quar
 
 Split applied 2026-09-09. `lore.description` is Nick's teaser from `species.json`, verbatim. `lore.body` and `lore.habits` are authored below and neither restates the teaser's own two facts (the mist dissolving prey, the two teeth).
 
-### body (98 words)
+### body (84 words)
 
-A mid-sized four-legged hunter, heavier through the chest than through the haunch, with the neck, shoulders and back edged in a ragged shag while the flanks and legs run smooth. Two long ears stand upright on a blunt head, and the head opens into wide gaping jaws. Two long curved fangs hang from the upper jaw and nothing else in that mouth reads as a tooth. Between them a narrow tube projects forward past the lip. A tail sweeps out behind the rump. Nothing on it is plated or shelled; under the pelt the surface is unarmored hide.
+A mid-sized four-legged hunter, heavier through the chest than the haunch, shaggy along the neck and back and smooth along the flanks. Two long ears stand upright on a blunt head that opens into wide jaws hung with two long curved fangs, and between the fangs a narrow tube projects past the lip, the vent it sprays from. A tail sweeps out behind. Nothing on it is plated; under the pelt the hide is unarmored. It smells and hears far better than it sees.
 
-| Claim | Source |
-|---|---|
-| mid-sized four-legged hunter | art: a seated quadruped whose forelimbs reach the ground and bear weight; `physiology.bodyPlan` quadruped; `physiology.size` 95 to 120 cm and 42 to 62 kg |
-| heavier through the chest than the haunch | art: the shoulder and chest mass against the seated hindquarters |
-| neck, shoulders and back edged in ragged shag, flanks and legs smooth | art: the dorsal outline is a row of ragged tufts, the flanks and legs a smooth line; `physiology.covering` fur |
-| two long ears standing upright | art: two long upright ears; the registry routes sense organs to `senses`, so this is `physiology.senses.hearing` [55, 80] and not anatomy |
-| blunt head opening into wide gaping jaws | art: head thrown back with the jaws gaped wide; `physiology.anatomy` jaws |
-| two long curved fangs and nothing else that reads as a tooth | art: exactly two long curved teeth in the upper jaw; `physiology.anatomy` fangs; the teaser gives the count |
-| narrow tube projecting forward past the lip | art: a narrow tube-like organ projecting out of the open mouth; `physiology.anatomy` vents; `conduits` vents to chemical |
-| a tail sweeping out behind the rump | `physiology.anatomy` tail; the walkthrough art reading above records a long tail curling behind the rump, though the render is cropped close at the hindquarters, so the shape is not restated in the prose |
-| nothing plated or shelled; unarmored hide under the pelt | art: no plate, shell or scale edge anywhere; `physiology.anatomy` hide, the surface key that states the body has no armored aspect |
+Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
 
 ### habits (114 words)
 
