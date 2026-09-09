@@ -8,11 +8,15 @@ The artwork is a flat black silhouette, front-facing, of a single body. Rising f
 
 The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
 
-### body (48 words)
+### appearance (5 entries)
 
-A tall, heavy biped, well past three hundred kilograms, fur-covered, with gems growing out of its head where horns would be, mineral grown from flesh, and hands that can grip. It is slow on its feet and has little leap or climb. Its eyes are its strongest sense.
+- Tall, heavy, shaggy biped
+- Two large faceted gems growing out of the head
+- Broad blunt muzzle
+- Open hands with an opposable digit
+- No tail
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
 
 ### habits
 

@@ -8,7 +8,14 @@
   ],
   "lore": {
     "description": "It uses its tail to draw attention to its big, hypnotic eyes. Once eye contact is made, this creature can attack from within your mind.",
-    "body": "A small fur-covered biped, under a meter and light, with big hypnotic eyes, a tail that ends in a lure it uses to draw attention to them, and hands that grip. It is a climber first and a runner second. Its sight and hearing are both keen, and beyond them it has a psychic sense.",
+    "appearance": [
+      "Small shaggy climber, lightly built",
+      "Fur coat",
+      "Enormous pointed ears",
+      "Big hypnotic eyes filling half the face",
+      "Long-fingered gripping hands",
+      "Long thin tail ending in a flat spiral disc, the lure"
+    ],
     "habits": "It lives up in the bioluminescent fungal forests of Telypso, moving along the branches and taking its food from what those forests give. It is quick in the branches and hard to hold there. The Generator raised it to counterbalance the psychic energies of the deranged Vallerii the Imperial Houses marooned on the world, and the work was meant as treatment rather than injury, the subject a patient to be settled and folded back into the mind of the planet. Since the Nemesis Plague reached Telypso's sanctuaries and turned the creatures of the world against one another, Tizzies turn on each other, and they have only the one way of doing it.",
     "biomeNiche": "the bioluminescent fungal forests and dense flora of Telypso"
   },

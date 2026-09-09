@@ -8,7 +8,14 @@
   ],
   "lore": {
     "description": "This creature can jump so high that at times it seems as if it is flying. Once up in the air, it comes missiling down on its enemy like a battering ram.",
-    "body": "A small fur-covered quadruped, about half a meter long and light, with horns on its head and a tail. It is built almost entirely for the leap, so high it seems to fly, and it sprints well too. It hears better than it sees.",
+    "appearance": [
+      "Small bounding quadruped, built around its hind legs",
+      "Shaggy fur",
+      "Single long ridged horn sweeping back over the shoulders",
+      "Long upright ears",
+      "Long whiskers",
+      "Whip tail longer than the body, ending in a spiked plume"
+    ],
     "habits": "Its ground is not continuous. The habitable band of Saiphus is a scatter of buoyant islands separated by a sea of clouds and dense fog, and it crosses the gaps, one of the great leaping animals the Saiphus Generator raised to bound between islands as if gravity held no sway over them. It grazes the rolling plains such an island carries and drinks from the deep canyons where vapor condenses into water. It listens and it moves: sulfuric cloud banks sweep across the sky without warning, the storms do not stop, and a descent into the fluid layer below the islands is not recoverable.",
     "biomeNiche": "the gaps between the floating islands of Saiphus's upper-atmosphere life band"
   },

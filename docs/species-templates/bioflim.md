@@ -8,11 +8,15 @@ The artwork is a flat black silhouette of a single hunched body with no legs, no
 
 The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
 
-### body (62 words)
+### appearance (5 entries)
 
-An acid slime organism with no legs and no hands, standing about two meters and weighing several hundred kilograms, encased in a thick rocky exoskeleton that its slime regenerates as it is worn away. It moves by flowing and reaches out with pseudopods. It is slow, sees and hears poorly, smells well, and feels what moves through the ground it sits on.
+- Amorphous mass of acid slime, tall as a person and very heavy
+- No legs, no hands, no face beyond a single eye
+- Thick rocky exoskeleton over the upper mass, continually regrown
+- Pseudopods for reaching
+- Drips and runnels where the slime sags
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
 
 ### habits
 

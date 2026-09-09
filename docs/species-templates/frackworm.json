@@ -8,7 +8,14 @@
   ],
   "lore": {
     "description": "A colossal segmented worm with a ringed, drill-like head and a body that holds a slurry of sand under pressure, the Frackworm was generated on Endessa by the Syndicate's stolen prototype Generator to work the Nightcap wells. It bores down through the glass particulate of the dunes to the old ocean-floor substrate and forces its slurry into the seams at pressure until the rock fractures and the Nightcap pools drain toward the well. Wildcatters who could afford one opened a well in days that a crew of Drilltails took a season to reach, and the Nightcap Barons fielded them by the dozen. Today the Frackworms still work the cavern networks beneath the dunes, fracturing the substrate for the Xalians who kept drilling after the Barons died.",
-    "body": "A colossal segmented worm, nine to fifteen meters long and several tons, limbless, armored in chitin plates, with a ringed, drill-like head and jaws at the working end, vents along the body, and a body that holds a slurry of sand under pressure. It bores; it barely moves on the surface. It is nearly blind and hears little, and it reads the ground it moves through as vibration.",
+    "appearance": [
+      "Colossal segmented worm, the largest thing under Endessa's sands",
+      "Limbless",
+      "Overlapping chitin plates ringed segment by segment",
+      "Ringed drill-like head with jaws at the working end",
+      "Vents along the body",
+      "Nearly blind"
+    ],
     "habits": "Endessa's surface insolation is lethal without adaptation under two suns, so the whole of its working life happens inside the dunes and the excavation tunnels beneath them, moving through loose particulate the way another body moves through water. It has no use for sight down there and reads the ground by tremor instead, which cuts both ways: the subsurface of that world hunts by vibration and takes what it takes by attrition, so the same sense that guides it advertises it. What it signals, it signals through the rock. Thermal load, desiccation and tunnel collapse are the standing hazards and it works through all three.",
     "biomeNiche": "the cavern networks and excavation tunnels beneath Endessa's dunes, boring to the old ocean-floor substrate"
   },

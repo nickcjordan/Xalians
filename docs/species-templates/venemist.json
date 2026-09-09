@@ -8,7 +8,14 @@
   ],
   "lore": {
     "description": "The toxic mist expelled from a tube in its mouth helps to dissolve its prey. With only 2 teeth, this tactic is necessary for the creature to survive.",
-    "body": "A mid-sized fur-covered quadruped, about a meter tall and fifty kilograms, with only two teeth in its jaws and a tube in its mouth that expels toxic mist, plus a tail and unarmored hide. It runs adequately. It smells and hears far better than it sees.",
+    "appearance": [
+      "Mid-sized four-legged hunter, heavier in front",
+      "Shaggy along the neck and back, smooth on the flanks",
+      "Long upright ears",
+      "Wide gaping jaws with only two teeth, both long curved fangs",
+      "A tube in the mouth that sprays toxic mist",
+      "Long tail"
+    ],
     "habits": "It hunts by scent rather than by sight, working a smog too thick to see through and coming to its prey on the smell of it alone. Its ground is the acid swamps and the derelict chemical plants of the factoryscape, where abandoned facilities still run themselves and still fail. The Generator that shaped it was built to fill a world of acid swamps and industrial waste with life capable of surviving there at all, and nothing on that world burns it: not the corrosive rain, not the swamps it wades, not the agent it carries. A body opened in a fight discharges through the breach, which is true of everything printed on Drainov.",
     "biomeNiche": "acid swamps and the derelict chemical plants of Drainov's factoryscape"
   },

@@ -8,7 +8,13 @@
   ],
   "lore": {
     "description": "This creature has a metallic exoskeleton on its limbs, with long drill-like horns for arms. Thought to once be used for mineral excavation, its powerful horns can break through the strongest of material.",
-    "body": "A biped close to two meters tall, its limbs cased in a metallic exoskeleton, with long drill-like horns for arms and a pair of antennae on its head. It has no tail and no wings. It is a digger rather than a runner, climber or leaper; its own senses are dull, and it reads vibration through the ground.",
+    "appearance": [
+      "Tall biped on long jointed legs",
+      "Metallic exoskeleton on the limbs",
+      "Long drill-like horns for arms, longer than the body",
+      "Narrow deer-like head with a pair of antennae",
+      "No tail, no wings"
+    ],
     "habits": "Veridium's crust is worked metal with veins of heavy metals striking deep into it, and the Foromeer opens those veins. It works among the factory trenches and forge districts, where molten pours and machinery running without regard to proximity are the ordinary risks, and its plating takes them. The manufactory rings so loudly across the gunmetal surface that it mutes all other sound, so the creature reads the ground it is braced on and answers by drumming rather than by call. Injuries close over on their own. Since Source Code 606 released the Veridians from their robotic masters the demand for the factories has troughed, and the planet's Xalians now tinker with salvaged drones and machines.",
     "biomeNiche": "the ore-filled soil and heavy-metal veins of Veridium's mineral crust"
   },

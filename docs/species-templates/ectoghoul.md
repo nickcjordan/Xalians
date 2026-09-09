@@ -8,11 +8,14 @@ The art is a black-and-white silhouette of a single body with no limbs at all. A
 
 The lore block holds three prose fields. `description` is Nick's teaser, carried from `species.json` verbatim and never edited here. `body` and `habits` are authored below under the lore split of 2026-09-09; every claim in each is ledgered.
 
-### body (60 words)
+### appearance (4 entries)
 
-A spectral green mist that forms the vague impression of a grinning skull with a ghost-like tail for a body. It has no flesh and no limbs, weighs almost nothing, and never touches the ground; it moves by floating and passes through surfaces. It is about a meter long. It sees and hears, and has almost no sense of smell.
+- Spectral green mist, weightless and limbless
+- Vague impression of a grinning skull
+- Ghost-like tail for a body, trailing off into drifting particles
+- Never touches the ground
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
 
 ### habits (105 words)
 

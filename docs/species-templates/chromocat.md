@@ -10,11 +10,16 @@ Note that the render is a black silhouette, so the albino coloring the descripti
 
 The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
 
-### body (49 words)
+### appearance (6 entries)
 
-A large albino cat on four legs, fur-covered, with a long tail, clawed paws and a fanged bite. Two sickle-shaped blades extend backward from its front paws, the only thing on it that is not ordinary feline build. It is built for the sprint and the leap, and it hunts by sight.
+- Large feline on four legs
+- Albino fur coat
+- Two sickle-shaped blades of ionized light sweeping back from the front paws
+- Long fangs
+- Clawed paws
+- Long thick tail
 
-Record-only register (Nick, approved 2026-09-09): large albino cat, the blades from the front paws are the teaser; four legs, fur, tail, claws, fangs are record anatomy; sprint, leap and sight are record bands. No clause is taken from the drawing.
+Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
 
 ### habits (115 words)
 

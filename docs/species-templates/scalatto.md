@@ -8,11 +8,16 @@ The artwork is a single black silhouette of one creature, standing upright on tw
 
 The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description` verbatim and moves everything else into two authored fields.
 
-### body (50 words)
+### appearance (6 entries)
 
-A stout biped a little over a meter tall and seventy kilograms, shielded by a scaly chitin exoskeleton, with claws and a long tail. It can roll into a ball inside that shell. It burrows and runs adequately, and it feels the ground through its plating better than it sees.
+- Stout biped, heavy for its height
+- Scaly chitin exoskeleton in overlapping bands
+- Long low head with a blunt snout
+- Long curved claws on the forelimbs
+- Very long banded tail with a hooked tip
+- Rolls into a ball
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
 
 ### habits (90 words)
 

@@ -8,11 +8,16 @@ The render is a solid black silhouette on white. A single bulbous, roughly ovoid
 
 Split applied 2026-09-09. `lore.description` is Nick's teaser from `species.json`, verbatim. The pre-split upgraded description and the 2026-09-08 stub-upgrade draft are re-cut into body and habits below, with the orchestrator's edit applied ('a limb cut off it comes back' becomes 'a limb torn from it grows back').
 
-### body (53 words)
+### appearance (6 entries)
 
-A giant organism of thick, intertwined roots that act as tentacles, three to four meters tall, plant tissue throughout, bare, with spines on it. It lives mostly underground and burrows well; it does not run or leap. It is nearly blind and hears little, and it feels the ground it is rooted in.
+- Giant organism of thick intertwined roots, mostly underground
+- Bulbous trunk-mass at the soil line
+- Six thick root-limbs curling outward, serrated along the edges
+- Two narrower shoots rising from the crown
+- Plant tissue throughout
+- No head, no face, no eyes, no mouth
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
 
 ### habits (115 words)
 

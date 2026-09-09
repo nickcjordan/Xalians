@@ -8,7 +8,13 @@
   ],
   "lore": {
     "description": "An acid slime organism protected by a thick rocky exoskeleton. Its slime can continually regenerate an outer shell, allowing for great defense.",
-    "body": "An acid slime organism with no legs and no hands, standing about two meters and weighing several hundred kilograms, encased in a thick rocky exoskeleton that its slime regenerates as it is worn away. It moves by flowing and reaches out with pseudopods. It is slow, sees and hears poorly, smells well, and feels what moves through the ground it sits on.",
+    "appearance": [
+      "Amorphous mass of acid slime, tall as a person and very heavy",
+      "No legs, no hands, no face beyond a single eye",
+      "Thick rocky exoskeleton over the upper mass, continually regrown",
+      "Pseudopods for reaching",
+      "Drips and runnels where the slime sags"
+    ],
     "habits": "Drainov's Generator made it for a world of bubbling acid swamps, steaming corrosive rain, asphyxiating fumes, and slow-drifting clouds of neurotoxic gases, and it draws no breath from any of them. It moves through the acid swamps rather than over them, and slowly: the substrate of that world is unreliable and this is not a body that hurries. It feeds on whatever it settles over, of any kind, and it reads what approaches through the ground rather than seeing it. The planet is now held by a loose conglomerate of Vallerii space pirates and interstellar crime syndicates, and it still rains burning refuse, industrial waste, and hazardous materials on the swamps below. Its own working life is long.",
     "biomeNiche": "the acid swamps and reopened chemical plants of Drainov"
   },

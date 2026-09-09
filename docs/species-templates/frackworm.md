@@ -10,11 +10,16 @@ Split applied 2026-09-09. This record is an unratified draft and has no `species
 
 The species now has artwork at `art/frackworm.png`; the Art reading section above, which states there is none, predates it. Body below is written from the render.
 
-### body (68 words)
+### appearance (6 entries)
 
-A colossal segmented worm, nine to fifteen meters long and several tons, limbless, armored in chitin plates, with a ringed, drill-like head and jaws at the working end, vents along the body, and a body that holds a slurry of sand under pressure. It bores; it barely moves on the surface. It is nearly blind and hears little, and it reads the ground it moves through as vibration.
+- Colossal segmented worm, the largest thing under Endessa's sands
+- Limbless
+- Overlapping chitin plates ringed segment by segment
+- Ringed drill-like head with jaws at the working end
+- Vents along the body
+- Nearly blind
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
 
 ### habits (105 words)
 

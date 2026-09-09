@@ -8,11 +8,15 @@ The artwork shows a single heavy-bodied creature standing in three-quarter view 
 
 The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` teaser carried verbatim and is never edited here; `body` is the physical record, `habits` is how the creature lives now. `descriptionStatus` was removed from the record; status lives in `docs/species-templates/lore-status.json`.
 
-### body (60 words)
+### appearance (5 entries)
 
-A large, heavy quadruped, over two meters tall and near four hundred kilograms, with a trunk that ends in a large blade, a biting jaw, a tail, and smooth hide. It is slow and does not climb or leap, but it handles that blade with control. It smells better than it sees, and it feels the ground through its feet.
+- Large, heavy quadruped on thick columnar legs
+- Smooth hide
+- Blunt low-carried head with a wide gape of long teeth
+- Single long trunk arching over the back, ending in a blade as long as the body
+- Short upturned tail
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
 
 ### habits
 

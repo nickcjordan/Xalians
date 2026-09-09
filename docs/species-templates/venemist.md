@@ -8,11 +8,16 @@ The artwork shows a single shaggy quadruped seated on its haunches in three-quar
 
 Split applied 2026-09-09. `lore.description` is Nick's teaser from `species.json`, verbatim. `lore.body` and `lore.habits` are authored below and neither restates the teaser's own two facts (the mist dissolving prey, the two teeth).
 
-### body (46 words)
+### appearance (6 entries)
 
-A mid-sized fur-covered quadruped, about a meter tall and fifty kilograms, with only two teeth in its jaws and a tube in its mouth that expels toxic mist, plus a tail and unarmored hide. It runs adequately. It smells and hears far better than it sees.
+- Mid-sized four-legged hunter, heavier in front
+- Shaggy along the neck and back, smooth on the flanks
+- Long upright ears
+- Wide gaping jaws with only two teeth, both long curved fangs
+- A tube in the mouth that sprays toxic mist
+- Long tail
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
 
 ### habits (114 words)
 

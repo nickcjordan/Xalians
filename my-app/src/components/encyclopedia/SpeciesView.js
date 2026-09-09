@@ -318,10 +318,14 @@ export default function SpeciesView() {
                 <div className="enc-species-body">
                     <Prose text={view.description} except={view.entry && view.entry.key} />
 
-                    {view.body && (
+                    {Array.isArray(view.appearance) && view.appearance.length > 0 && (
                         <div className="enc-species-niche">
-                            <p className="g-kicker">Body</p>
-                            <p className="g-body">{view.body}</p>
+                            <p className="g-kicker">Appearance</p>
+                            <ul className="g-body enc-species-appearance">
+                                {view.appearance.map((quality) => (
+                                    <li key={quality}>{quality}</li>
+                                ))}
+                            </ul>
                         </div>
                     )}
 

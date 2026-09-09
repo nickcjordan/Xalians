@@ -8,11 +8,16 @@ The artwork shows a single body, drawn as a solid black silhouette against a bac
 
 Split applied 2026-09-09. `lore.description` is Nick's teaser from `species.json`, verbatim. The pre-split upgraded description carried three sentences; they are sorted into body and habits below, and the one that restated the teaser is dropped rather than repeated.
 
-### body (51 words)
+### appearance (6 entries)
 
-A tall quadruped, over two meters at the shoulder and a hundred and twenty kilograms, fur-covered, with bones and claws made of a tough, conductive metal alloy, a biting jaw and a tail. It runs, climbs and leaps adequately. Its ordinary senses are middling, and it senses electrical charge around it.
+- Tall long-limbed quadruped
+- Shaggy fur coat
+- Bones and claws of conductive metal alloy
+- Narrow head with a long muzzle and upright pointed ears
+- Tall erect crest of spiked filaments on the neck and shoulders
+- Large bushy tail
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
 
 ### habits (111 words)
 

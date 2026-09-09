@@ -8,7 +8,14 @@
   ],
   "lore": {
     "description": "Hypnopets resemble glowing, golden-furred bunny rabbits with a single color-changing unicorn horn atop their heads. They were created by the Telypso Generator as service animals and therapists for the insane Vallerii imprisoned on the world, where their natural empathic healing abilities served to balance and treat patients. When their horn begins to pulse and swirl with psychedelic color, it hypnotizes others and locks them in a trance, which was useful for sedating patients when they entered into dangerous bouts of mania. With the Nemesis Plague reducing the patient population of Telypso, many Hypnopets have taken to the stars as healers, though some have been forced into service by King Kozrak, who uses their hypnotic abilities as crowd control on rebellious worlds.",
-    "body": "A small, glowing, golden-furred rabbit, under half a meter and light, with a single color-changing unicorn horn atop its head and nothing else on it that is not rabbit. It leaps and runs like one. It hears better than it sees, and beyond the ordinary senses it has a psychic one.",
+    "appearance": [
+      "Small bunny rabbit, glowing",
+      "Golden fur",
+      "Single color-changing unicorn horn atop the head",
+      "Very long lop ears",
+      "Very large eyes",
+      "Large springing hind legs"
+    ],
     "habits": "It lives among Telypso's fungal forests and smothering mists, on ground that deforms with whatever mood is passing through it, and it grazes on what that overgrowth puts out. It reads the state of whatever stands near it and answers in feeling as much as in sound, steadying what is unsteady and settling what will not settle on its own. When feeling is not enough the horn takes over: the color climbs and turns, the eyes watching it stop tracking anything else, and the body goes quiet whether or not it meant to. Since the plague reached the world there is more of that work than there has ever been, and a body this small does not last long.",
     "biomeNiche": "the bioluminescent fungal forests and mist-smothered jungles of Telypso, working among the world's marooned Vallerii patients"
   },

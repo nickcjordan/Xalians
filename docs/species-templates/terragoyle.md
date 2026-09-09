@@ -12,11 +12,16 @@ Four limbs bear weight in this pose. The forelimbs are not held clear, they are 
 
 The lore split (Nick, 2026-09-09). `lore.description` was already the species.json teaser verbatim and is unchanged; body and habits below are new, and both were written to add to the teaser rather than restate it.
 
-### body (56 words)
+### appearance (6 entries)
 
-A horned, vaguely humanoid bat, under two meters tall and well over three hundred kilograms, with membranous wings, an elongated tail tipped with a levitating ball of stone, and smooth hide. It goes on all fours on the ground and flies regardless of its weight. It hears better than it sees, and it feels the ground.
+- Horned, vaguely humanoid bat, hunched on all fours
+- Very heavy for its height
+- Ribbed horns curling back from the skull
+- Large membranous wings
+- Bare muscled hide
+- Long tail ending in a cradle, with a ball of stone levitating above it
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
 
 ### habits (113 words)
 

@@ -8,11 +8,15 @@ The artwork shows a single limbless serpent drawn in flat black silhouette, coil
 
 The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description` verbatim and moves everything else into two authored fields.
 
-### body (46 words)
+### appearance (5 entries)
 
-A large, cobra-like serpent, some two meters and a hundred kilograms, scaled and limbless, with fangs in its jaws and a rattle on its tail. It burrows under sand and can strike with a leap. It smells better than it sees, and it feels the ground.
+- Large cobra-like serpent
+- Scaled, limbless, coiled flat on the sand
+- Viper's wedge head with long curved fangs
+- Wide hood behind the head
+- Tail ending in a rattle of splayed narrow blades
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
 
 ### habits (95 words)
 

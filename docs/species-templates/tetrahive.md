@@ -10,11 +10,16 @@ A single central creature dominates the frame, drawn in flat black silhouette: a
 
 The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description` verbatim. Body and habits below are re-cut from the ratified draft in `docs/design/species-stub-upgrades-2026-09-08.md`, with the orchestrator's edit applied: the draft's opening 'A small winged thing' reads 'A small winged hunter'.
 
-### body (50 words)
+### appearance (6 entries)
 
-A small winged creature, under a meter and about a dozen kilograms, with hide, claws and a tail, together with the swarm of small flying familiars it summons, toothed like piranhas, that it controls with its mind as one unit. It flies well. It hears far better than it sees.
+- Small bat-shaped flier, light
+- Broad membranous wings
+- Upright ears
+- Hooked claws on the forelimbs and feet
+- Long thin tail
+- The swarm of small piranha-toothed familiars it summons
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
 
 ### habits (104 words)
 

@@ -8,7 +8,12 @@
   ],
   "lore": {
     "description": "Appearing as a spectral green mist that forms the vague impression of a grinning skull with a ghost-like tail for a body, Ectoghouls zip across the Dreadscape, emitting a terrifying cackle wherever they go. They seem to amuse themselves by terrorizing other Xalians, disappearing and re-appearing at will, passing through surfaces, and zapping their opponents with blasts of gooey ectoplasm.",
-    "body": "A spectral green mist that forms the vague impression of a grinning skull with a ghost-like tail for a body. It has no flesh and no limbs, weighs almost nothing, and never touches the ground; it moves by floating and passes through surfaces. It is about a meter long. It sees and hears, and has almost no sense of smell.",
+    "appearance": [
+      "Spectral green mist, weightless and limbless",
+      "Vague impression of a grinning skull",
+      "Ghost-like tail for a body, trailing off into drifting particles",
+      "Never touches the ground"
+    ],
     "habits": "It ranges the corpse islands of the Dreadscape, the macabre forests of splayed limbs and the tarry oceans that seep from the compressing layers of a planetwide mass grave, and it goes through what stands in the way rather than around it. The moon-weapon appears to target only organic, cellular life, so it passes freely over the ground where the organic workforce fell. It takes nothing in and feeds on nothing, so the ranging is not a hunt: what it looks for in other Xalians is their nerve, the cackle first, then the vanishing and the reappearing, then the ectoplasm. Nothing issues it orders now.",
     "biomeNiche": "drifting scavenger of the Dreadscape corpse islands and tarry oceans"
   },

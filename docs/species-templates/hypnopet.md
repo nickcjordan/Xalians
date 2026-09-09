@@ -8,11 +8,16 @@ The render shows a single small creature seated upright on its haunches, filling
 
 The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` teaser carried verbatim and is never edited here; `body` is the physical record, `habits` is how the creature lives now. `descriptionStatus` was removed from the record; status lives in `docs/species-templates/lore-status.json`.
 
-### body (51 words)
+### appearance (6 entries)
 
-A small, glowing, golden-furred rabbit, under half a meter and light, with a single color-changing unicorn horn atop its head and nothing else on it that is not rabbit. It leaps and runs like one. It hears better than it sees, and beyond the ordinary senses it has a psychic one.
+- Small bunny rabbit, glowing
+- Golden fur
+- Single color-changing unicorn horn atop the head
+- Very long lop ears
+- Very large eyes
+- Large springing hind legs
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
 
 ### habits (119 words)
 

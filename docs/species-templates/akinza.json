@@ -8,7 +8,14 @@
   ],
   "lore": {
     "description": "This creature's incredible stealth and night vision allow it to sneak through the night with ease.",
-    "body": "A fur-covered biped of middling size, around a meter and a half tall and sixty kilograms, with claws, a biting jaw and a tail. It is built to sprint and leap, climbs well, and leads with its eyes and ears: it sees in the dark and moves through it without being noticed.",
+    "appearance": [
+      "Upright feline biped, middling in size and light in the frame",
+      "Fur coat",
+      "Large rabbit-like ears atop the head",
+      "Large eyes",
+      "Small hooked claws on the forelimbs",
+      "Long plumed tail"
+    ],
     "habits": "It belongs to the feral stock that came out of the Krystos Generator after the impact, when the debris blotted out the sun and the machine turned from dainty and graceful creatures to lifeforms capable of surviving the harsh, frozen tundra. Its ground is the arctic wastelands outside the high-security prison complexes rather than the penitentiary halls, where such creatures proved just as useful for deterring any prisoners from seeking to escape. Blizzard cycles and sustained lethal cold are the conditions it works in, and the dark hours are the ones it keeps. It takes what the permafrost gives, of any kind.",
     "biomeNiche": "the arctic wastelands outside the prison complexes, worked at night"
   },

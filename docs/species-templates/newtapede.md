@@ -8,11 +8,16 @@ The render shows the same creature twice. On the left is a lateral view: a long,
 
 The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description` verbatim and moves everything else into two authored fields. The body and habits below are the record's text.
 
-### body (46 words)
+### appearance (6 entries)
 
-A sixteen-legged amphibious creature with a long, segmented body, about two meters and ninety kilograms, slender in the frame, with webbed feet, antennae, and bare unarmored hide. It swims better than it walks and climbs well. Its eyes lead, and it feels the ground as tremor.
+- Long, arched, segmented body on sixteen legs
+- Slender frame
+- Webbed splayed feet
+- Broad rounded head with very large forward-facing eyes
+- Two thin antennae
+- Bare unarmored hide
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
 
 ### habits (101 words)
 

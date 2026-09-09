@@ -1,183 +1,183 @@
 {
-  "note": "Review status of the lore prose fields per species (Nick signs off). This is ephemeral metadata kept OUT of the creature records on purpose (Nick, 2026-09-09). description is always source (species.json verbatim); body and habits are pending, draft, or ratified. Bodies re-cut 2026-09-09 under the defining-features rule; body and habits stay draft until Nick signs off per planet batch.",
+  "note": "Review status of the lore prose fields per species (Nick signs off). This is ephemeral metadata kept OUT of the creature records on purpose (Nick, 2026-09-09). description is always source (species.json verbatim); appearance and habits are pending, draft, or ratified. Prose body struck 2026-09-09 for the appearance list; appearance and habits stay draft until Nick signs off.",
   "species": {
     "akinza": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was upgraded before the split"
     },
     "avilily": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was source before the split"
     },
     "bioflim": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was upgraded before the split"
     },
     "chromocat": {
       "description": "source",
-      "body": "ratified",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was source before the split"
     },
     "codazzo": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was upgraded before the split"
     },
     "crystorn": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was upgraded before the split"
     },
     "drilltail": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was upgraded before the split"
     },
     "dromeus": {
       "description": "source",
-      "body": "ratified",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was upgraded before the split"
     },
     "ectoghoul": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was upgraded before the split"
     },
     "figzy": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was upgraded before the split"
     },
     "foromeer": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was upgraded before the split"
     },
     "graviclaw": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was source before the split"
     },
     "hippochamp": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was upgraded before the split"
     },
     "hypnopet": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was source before the split"
     },
     "imprit": {
       "description": "source",
-      "body": "ratified",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was source before the split"
     },
     "kosanos": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was upgraded before the split"
     },
     "luceras": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was upgraded before the split"
     },
     "neph": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was source before the split"
     },
     "newtapede": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was upgraded before the split"
     },
     "scalatto": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was upgraded before the split"
     },
     "smokat": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was upgraded before the split"
     },
     "terragoyle": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was source before the split"
     },
     "tetrahive": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was upgraded before the split"
     },
     "thirstaserp": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was upgraded before the split"
     },
     "tizzie": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was upgraded before the split"
     },
     "venemist": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was upgraded before the split"
     },
     "voltish": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was upgraded before the split"
     },
     "xylum": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was upgraded before the split"
     },
     "yetimoth": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "teaser was source before the split"
     },
     "frackworm": {
       "description": "source",
-      "body": "draft",
+      "appearance": "draft",
       "habits": "draft",
       "note": "unratified draft record"
     }

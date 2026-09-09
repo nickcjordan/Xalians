@@ -8,7 +8,14 @@
   ],
   "lore": {
     "description": "Feline shaped in normal form, this clever creature can instantly atomize into a cloud of smoke for a sneak attack or quick evasion.",
-    "body": "A feline-shaped biped in its normal form, under two meters and around seventy kilograms, with claws, a biting jaw, a tail, and smooth unarmored hide. It sprints, climbs and leaps well. Its sight and hearing are equally keen.",
+    "appearance": [
+      "Lean feline-shaped biped",
+      "Smooth unarmored hide",
+      "Long muzzle and pointed tufted ears",
+      "Clawed paws",
+      "Long tail whose tip trails off into smoke",
+      "Smoke rising off the body"
+    ],
     "habits": "It came off the secret Generator the Vallerii left in the bowels of Phantiri, put there to supply the laborers who did the heavy lifting at the dig sites, and it hunts now above the Dreadscape, the wasteland of piled Xalian remains that buried the obelisks of the old world. It climbs and springs where the footing is bad, and it takes what crosses beneath it. The fog over that ground stands windless and never lifts, and it works from inside it.",
     "biomeNiche": "the thick haze over the corpse islands of the Dreadscape"
   },

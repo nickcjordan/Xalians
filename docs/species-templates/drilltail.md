@@ -8,11 +8,15 @@ A single black silhouette of one creature, drawn in a rearing three-quarter pose
 
 The lore block holds three prose fields. `description` is Nick's teaser, carried from `species.json` verbatim and never edited here. `body` and `habits` are authored below under the lore split of 2026-09-09; every claim in each is ledgered.
 
-### body (49 words)
+### appearance (5 entries)
 
-A dog-sized, scorpion-like creature on many legs under a chitin shell, with a biting jaw, scissor-like claws, and a tail that ends in a small stinger-like drill. It is a burrower first and quick on the surface, and it feels the ground it tunnels through better than it sees.
+- Dog-sized scorpion-like body on many legs
+- Chitin shell
+- Canine head with biting jaws
+- Scissor-like pincer claws on the forelimbs
+- Segmented tail arched over the back, ending in a helical drill
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
 
 ### habits (105 words)
 

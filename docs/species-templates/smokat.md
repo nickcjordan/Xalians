@@ -8,11 +8,16 @@ The render shows a single lean feline standing upright on its two hind legs, che
 
 The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description` verbatim and moves everything else into two authored fields.
 
-### body (38 words)
+### appearance (6 entries)
 
-A feline-shaped biped in its normal form, under two meters and around seventy kilograms, with claws, a biting jaw, a tail, and smooth unarmored hide. It sprints, climbs and leaps well. Its sight and hearing are equally keen.
+- Lean feline-shaped biped
+- Smooth unarmored hide
+- Long muzzle and pointed tufted ears
+- Clawed paws
+- Long tail whose tip trails off into smoke
+- Smoke rising off the body
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
 
 ### habits (82 words)
 

@@ -8,11 +8,15 @@ The render shows a single tall body standing upright on two long digitigrade leg
 
 The lore block holds three prose fields. `description` is Nick's teaser, carried from `species.json` verbatim and never edited here. `body` and `habits` are authored below under the lore split of 2026-09-09; every claim in each is ledgered.
 
-### body (58 words)
+### appearance (5 entries)
 
-A biped close to two meters tall, its limbs cased in a metallic exoskeleton, with long drill-like horns for arms and a pair of antennae on its head. It has no tail and no wings. It is a digger rather than a runner, climber or leaper; its own senses are dull, and it reads vibration through the ground.
+- Tall biped on long jointed legs
+- Metallic exoskeleton on the limbs
+- Long drill-like horns for arms, longer than the body
+- Narrow deer-like head with a pair of antennae
+- No tail, no wings
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
 
 ### habits (116 words)
 

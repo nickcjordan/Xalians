@@ -8,7 +8,14 @@
   ],
   "lore": {
     "description": "When in battle, this creature summons a swarm of small flying familiars with teeth like piranhas. It controls the swarm with its mind, attacking or defending as one unit.",
-    "body": "A small winged creature, under a meter and about a dozen kilograms, with hide, claws and a tail, together with the swarm of small flying familiars it summons, toothed like piranhas, that it controls with its mind as one unit. It flies well. It hears far better than it sees.",
+    "appearance": [
+      "Small bat-shaped flier, light",
+      "Broad membranous wings",
+      "Upright ears",
+      "Hooked claws on the forelimbs and feet",
+      "Long thin tail",
+      "The swarm of small piranha-toothed familiars it summons"
+    ],
     "habits": "It was generated on Grimedes not as a labor force but as a test subject, one of the Xalians the Vallerii experimented on in laboratories rumored to be black sites for ECHELON. It hunts the thick, stalky undergrowth of a world cloaked in perpetual night, taking its bearings by ear rather than by eye, and it keeps its own body inside the wheeling cloud it holds so that nothing can tell which shape is the one that matters. Whatever hears that cloud coming breaks and runs. The newest generation of its kind stands at the edge of the galaxy and watches the endless black.",
     "biomeNiche": "the thick stalky undergrowth of the flat, lightless plains of Grimedes"
   },

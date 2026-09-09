@@ -8,7 +8,14 @@
   ],
   "lore": {
     "description": "Colossal hydrogen jellyfish that travel in free-floating herds across Saiphus's lower atmosphere, the Neph are instrumental to the Benthane industry. These domesticated creatures roam the clouds in flocks, grazing off of the biochemicals and atmospheric plankton contained in the gas-liquid slush of Saiphus's deeper atmosphere using long, trailing tentacles that vacuum up valuable Benthane along with their food. When threatened, these same tentacles can be used to pull in opponents with considerable suction or to jettison air at high pressure. Neph can also forcibly expel jets of Benthane gas, which is typically used a coolant for starship engines, from their tentacles in order to blast their enemies with freezing air. Finally, being composed almost entirely hydrogen means that the Neph can also spray their enemies with bouts of flammable gas.",
-    "body": "A colossal hydrogen jellyfish, four to six meters across and weighing almost nothing for its size: a bare, untextured body composed almost entirely of hydrogen, with vents through which it expels gas and long trailing tentacles that vacuum, pull and jet. There are no legs, wings or jaws. It floats and drifts. It smells well and sees and hears poorly.",
+    "appearance": [
+      "Colossal hydrogen jellyfish, huge but nearly weightless",
+      "One large smooth bell",
+      "Long trailing hollow tentacles, open at the ends",
+      "Small central body beneath the bell",
+      "Bare untextured surface",
+      "No legs, wings or jaws"
+    ],
     "habits": "It travels in herd distribution rather than alone, and its amorphous form lets the hurricane-force winds of the lower skies sweep it up and set it down again unharmed. The tentacles do the work. They draw the slush of the deeper atmosphere up hollow tubes and keep the Benthane that comes up with the food, and the same tubes reverse to pull a thing in against its will, to put it off at pressure, or to blast it cold with the coolant. Being almost entirely hydrogen, it can spray flammable gas as well. For what that filtering leaves behind it is shepherded, herded and milked. What kills it is the sky it lives in, sulfuric cloud contact and island collision.",
     "biomeNiche": "the cloud layers of Saiphus's lower atmosphere, where Benthane plumes rise"
   },
