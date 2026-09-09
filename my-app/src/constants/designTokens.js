@@ -19,14 +19,50 @@
 const colorConstants = require('./colorConstants');
 
 /**
+ * Version 4 (docs/DESIGN_SYSTEM.md section 3): the room, surfaces, glass,
+ * edges, ink, the viable accent (three tiers of one hue) and semantic
+ * status colours. Mirrors public/assets/css/system.css's :root primitives
+ * exactly; paired in src/__tests__/designTokens.test.js.
+ */
+const v4 = {
+	room: '#121110',
+	s0: '#191816',
+	s1: '#201f1c',
+	s2: '#282723',
+	s3: '#31302b',
+	glass: '#0e100f',
+	edge: 'rgba(217, 210, 192, 0.10)',
+	edgeHi: 'rgba(255, 244, 214, 0.07)',
+	edgeStrong: 'rgba(217, 210, 192, 0.22)',
+	glassEdge: 'rgba(217, 210, 192, 0.14)',
+	ink: '#d9d2c0',
+	ink2: '#9a9382',
+	ink3: '#6c6659',
+	ink4: '#4a4640',
+	viableHi: '#86ffb5',
+	viable: '#4fc98d',
+	viableLo: '#2f8f63',
+	viableTint: 'rgba(134, 255, 181, 0.10)',
+	viableInk: '#08150e',
+	plague: '#b5566c',
+	plagueTint: 'rgba(181, 86, 108, 0.14)',
+	plagueInk: '#fff1f3',
+	caution: '#cfa54a',
+	cautionTint: 'rgba(207, 165, 74, 0.14)',
+	neutralStatus: '#8a97a6',
+};
+
+/**
  * The hull: enamelled steel, brass and bone silkscreen. Deliberately
  * desaturated — the element hues are the only saturated things in the system.
+ * Repointed to the v4 surface steps (docs/DESIGN_SYSTEM.md section 3.3);
+ * --g-seam has no v4 equivalent and keeps its own value.
  */
 const hull = {
-	void: '#0d0b09',
-	lo: '#16160f',
-	base: '#23231a',
-	hi: '#32322a',
+	void: v4.room,
+	lo: v4.s0,
+	base: v4.s1,
+	hi: v4.s2,
 	seam: '#0a0a07',
 };
 
@@ -36,11 +72,13 @@ const brass = {
 	light: '#d8b45e',
 };
 
-/** Printed matter. Never pure white: paint yellows. */
+/** Printed matter. Never pure white: paint yellows.
+ * Repointed to the v4 ink primitives; --g-ink-invert has no v4 equivalent
+ * and keeps its own value. */
 const ink = {
-	base: '#ddd4bd',
-	mid: '#9a9280',
-	low: '#6b665a',
+	base: v4.ink,
+	mid: v4.ink2,
+	low: v4.ink3,
 	invert: '#14120c',
 };
 
@@ -122,8 +160,11 @@ const terminals = {
 		faceInkMid: ink.mid,
 		faceInkLow: ink.low,
 		trim: brass.base,
-		accent: hazard.base,
-		glass: phosphor.glass,
+		// Repointed with --g-accent/--g-glass (docs/DESIGN_SYSTEM.md section 3):
+		// the panel terminal has no CSS block of its own, so it reads :root's
+		// defaults, which now resolve to the v4 viable accent and glass tone.
+		accent: v4.viable,
+		glass: v4.glass,
 		phosphor: phosphor.base,
 		vfd: phosphor.base,
 		paper: '#ddd4bd',
@@ -227,11 +268,14 @@ const terminals = {
  * readout is "a mode, not a place" (docs/DESIGN_SYSTEM.md section 3).
  */
 const material = {
-	accentInk: '#17120a',
-	hullHover: '#3c3c32',
-	accentHover: '#f0b71a',
-	danger: '#7c2b26',
-	dangerInk: '#ffdedb',
+	// Repointed with --g-accent-ink/--g-hull-hover/--g-accent-hover/--g-danger*
+	// (docs/DESIGN_SYSTEM.md section 3): the accent is now the viable signal
+	// and danger the plague status colour, not the retired hazard/red pair.
+	accentInk: v4.viableInk,
+	hullHover: v4.s3,
+	accentHover: '#5fd89b',
+	danger: v4.plague,
+	dangerInk: v4.plagueInk,
 	dangerEdge: '#43110e',
 	dangerHover: '#94332d',
 	checkOn: '#40340b',
@@ -250,6 +294,7 @@ const material = {
 };
 
 module.exports = {
+	v4,
 	hull,
 	brass,
 	ink,

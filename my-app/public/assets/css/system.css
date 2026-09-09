@@ -1,30 +1,19 @@
 /**
- * XALIAN GENERATOR — design system v2
+ * XALIAN DESIGN SYSTEM
  * =============================================================================
- * The premise: this is the control panel of a Xalian Generator. The machine can
- * bioengineer life on a dead world — but it was built by an industrial empire
- * during its atomic age, and it looks like it. Enamelled steel, brass bezels,
- * bakelite keys, a small green CRT bolted into a hole in the panel.
+ * This file carries two layers. Version 4 ("one site, featured components,
+ * immersive experiences" — docs/DESIGN_SYSTEM.md) is the ratified contract
+ * and the layer new work reads: quiet chrome, one accent (the viable
+ * signal), square corners with the chamfer reserved for glass and the
+ * primary key, the helix spinner, no terminal props. Version 3 ("one relay,
+ * many terminals") is kept underneath, additive only, until each page
+ * migrates off `data-terminal` onto `data-tier` (section 11 of the doc) —
+ * its terminal material blocks and furniture classes (.g-case, .g-crt,
+ * .g-paper*, .g-key*, .g-screen, .g-readout*, .g-lamp, .g-hazard-strip,
+ * .g-rivet-rule) are untouched by the v4 migration and must keep working
+ * exactly as before.
  *
- * Star Wars by way of Fallout: the capability is centuries ahead, the interface
- * is decades behind. Nothing here is sleek. Everything is a physical object
- * that somebody screwed to a frame in a factory.
- *
- * Four rules:
- *
- *  1. PANELS ARE MATTE OBJECTS. Enamel over pressed steel. Depth comes from a
- *     bevel — light on the top edge, shadow underneath — plus rivets and seams.
- *     Nothing on the hull glows, ever.
- *  2. ONLY SCREENS AND LAMPS EMIT. Phosphor, scanlines and bloom live strictly
- *     inside .g-screen. A CRT behind glass is the one lit thing in the room,
- *     which is precisely why the eye goes to it.
- *  3. COLOUR IS ENERGY OR A WARNING. The hull is olive, bone and gunmetal. The
- *     fourteen element hues and the hazard channels are the only saturated
- *     things in the system, so they read instantly.
- *  4. LEGENDS ARE STENCILLED. Condensed industrial caps for anything painted on
- *     the hull; monospace for anything the machine itself prints.
- *
- * Namespace is --g-* / .g-*, alongside the old --x-* system during migration.
+ * Namespace is --g-* / .g-* for both layers.
  */
 
 /* -------------------------------------------------------------------------
@@ -32,16 +21,123 @@
    ------------------------------------------------------------------------- */
 
 :root {
+	/* =========================================================================
+	   VERSION 4 PRIMITIVES (docs/DESIGN_SYSTEM.md section 3)
+	   The room, surfaces, glass, ink, the viable accent (three tiers of one
+	   hue), semantic status colours, corners and motion. Mirrored in
+	   designTokens.js, paired in designTokens.test.js.
+	   ========================================================================= */
+
+	/* Room + surfaces. Warm near-black; each surface a step warmer/lighter. */
+	--g-room: #121110;
+	--g-s0: #191816;
+	--g-s1: #201f1c;
+	--g-s2: #282723;
+	--g-s3: #31302b;
+
+	/* Glass: live data only. Darker than the room. */
+	--g-glass: #0e100f;
+
+	/* Edges. */
+	--g-edge: rgba(217, 210, 192, 0.10);
+	--g-edge-hi: rgba(255, 244, 214, 0.07);
+	--g-edge-strong: rgba(217, 210, 192, 0.22);
+	--g-glass-edge: rgba(217, 210, 192, 0.14);
+
+	/* Ink: bone rather than white. */
+	--g-ink: #d9d2c0;
+	--g-ink-2: #9a9382;
+	--g-ink-3: #6c6659;
+	--g-ink-4: #4a4640;
+
+	/* The viable signal: the accent. Three tiers of one hue, the bright one
+	   only ever small (docs/DESIGN_SYSTEM.md section 3.1). */
+	--g-viable-hi: #86ffb5;
+	--g-viable: #4fc98d;
+	--g-viable-lo: #2f8f63;
+	--g-viable-tint: rgba(134, 255, 181, 0.10);
+	--g-viable-ink: #08150e;
+
+	/* Semantic status, separate from the accent and the element hues. */
+	--g-plague: #b5566c;
+	--g-plague-tint: rgba(181, 86, 108, 0.14);
+	--g-plague-ink: #fff1f3;
+	/* Muted plague text for the outline/quiet destructive state (rest and
+	   hover, before the fill commits): not in docs/DESIGN_SYSTEM.md's table
+	   by name, taken from docs/design/v4-foundations.html's .btn.danger. */
+	--g-plague-outline-ink: #e8a4b4;
+	--g-caution: #cfa54a;
+	--g-caution-tint: rgba(207, 165, 74, 0.14);
+	--g-neutral-status: #8a97a6;
+
+	/* Corners: square everywhere except the chamfer, reserved for glass and
+	   the one primary key (docs/DESIGN_SYSTEM.md section 5). */
+	--g-cut: 12px;
+	--g-cut-key: 8px;
+	--g-chamfer: polygon(var(--g-cut) 0, 100% 0, 100% calc(100% - var(--g-cut)), calc(100% - var(--g-cut)) 100%, 0 100%, 0 var(--g-cut));
+	--g-chamfer-key: polygon(var(--g-cut-key) 0, 100% 0, 100% calc(100% - var(--g-cut-key)), calc(100% - var(--g-cut-key)) 100%, 0 100%, 0 var(--g-cut-key));
+
+	/* Motion (docs/DESIGN_SYSTEM.md section 7). */
+	--g-dur-1: 120ms;
+	--g-dur-2: 200ms;
+	--g-dur-3: 320ms;
+	--g-ease-out: cubic-bezier(.2, .7, .2, 1);
+	--g-ease-in: cubic-bezier(.6, 0, .8, .4);
+
+	/* Type faces (docs/DESIGN_SYSTEM.md section 4): Saira for anything that
+	   labels or heads, Atkinson Hyperlegible for prose, Martian Mono for
+	   values, Iceland for the wordmark only. */
+	--g-font-legend: 'Saira', 'Barlow Condensed', Impact, sans-serif;
+	--g-font-body: 'Atkinson Hyperlegible', 'Barlow', system-ui, sans-serif;
+	--g-font-data: 'Martian Mono', 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+	--g-font-brand: 'Iceland', var(--g-font-legend);
+
+	/* Type scale, in pixels per the doc: display 40, title 32, heading 24,
+	   subhead 19, legend 11.5 (tracked .1em), lead 17, body 15, small 13.5. */
+	--g-size-display: 40px;
+	--g-size-title: 32px;
+	--g-size-heading: 24px;
+	--g-size-subhead: 19px;
+	--g-size-legend: 11.5px;
+	--g-size-lead: 17px;
+	--g-size-body-v4: 15px;
+	--g-size-small-v4: 13.5px;
+	--g-track-legend: .1em;
+	--g-track-heading: .06em;
+
+	/* =========================================================================
+	   VERSION 4 SEMANTIC ALIASES (docs/DESIGN_SYSTEM.md section 3.5)
+	   ========================================================================= */
+	--g-surface-page: var(--g-room);
+	--g-surface-0: var(--g-s0);
+	--g-surface-1: var(--g-s1);
+	--g-surface-2: var(--g-s2);
+	--g-surface-live: var(--g-glass);
+	--g-surface-float: var(--g-s2);
+	--g-text: var(--g-ink);
+	--g-text-2: var(--g-ink-2);
+	--g-text-3: var(--g-ink-3);
+	--g-focus: var(--g-viable-hi);
+	--g-status-ok: var(--g-viable);
+	--g-status-danger: var(--g-plague);
+	--g-status-warn: var(--g-caution);
+	--g-status-info: var(--g-neutral-status);
+
+	/* =========================================================================
+	   VERSION 3 TOKENS (kept; see header comment)
+	   ========================================================================= */
 	/* --- the room ---------------------------------------------------------
-	   Warm near-black, tinted brown rather than blue. A hangar, not a showroom. */
-	--g-void: #0d0b09;
+	   Warm near-black, tinted brown rather than blue. A hangar, not a showroom.
+	   Repointed to the v4 room primitive: same warm near-black idea, one value. */
+	--g-void: var(--g-room);
 
 	/* --- hull -------------------------------------------------------------
 	   Enamelled steel in olive drab. Three steps — recessed, standard, raised —
-	   deliberately close together, because it is all one pressed sheet. */
-	--g-hull-lo: #16160f;
-	--g-hull: #23231a;
-	--g-hull-hi: #32322a;
+	   deliberately close together, because it is all one pressed sheet.
+	   Repointed to the v4 surface steps (docs/DESIGN_SYSTEM.md section 3.3). */
+	--g-hull-lo: var(--g-s0);
+	--g-hull: var(--g-s1);
+	--g-hull-hi: var(--g-s2);
 	--g-seam: #0a0a07;
 
 	/* Bevel. A painted edge catches light along the top and drops shadow below.
@@ -58,10 +154,11 @@
 	--g-brass-light: #d8b45e;
 
 	/* --- printed matter ---------------------------------------------------
-	   Bone-white silkscreen and cream bakelite. Never pure white — paint yellows. */
-	--g-ink: #ddd4bd;
-	--g-ink-mid: #9a9280;
-	--g-ink-low: #6b665a;
+	   Bone-white silkscreen and cream bakelite. Never pure white — paint yellows.
+	   --g-ink is declared once, above, as the v4 ink primitive (#d9d2c0);
+	   --g-ink-mid/--g-ink-low repoint to the v4 secondary/tertiary ink. */
+	--g-ink-mid: var(--g-ink-2);
+	--g-ink-low: var(--g-ink-3);
 	--g-ink-invert: #14120c;
 
 	/* --- phosphor ---------------------------------------------------------
@@ -79,8 +176,10 @@
 	--g-lamp-off: #3d3a30;
 
 	/* --- hazard -----------------------------------------------------------
-	   Painted warning livery, straight off a loading bay. */
-	--g-hazard: #d9a410;
+	   Painted warning livery, straight off a loading bay. Repointed: hazard
+	   livery is deliberately avoided in v4 (docs/DESIGN_SYSTEM.md section
+	   13), so this now reads the viable fill rather than its own hue. */
+	--g-hazard: var(--g-viable);
 	--g-hazard-dark: #6d5108;
 
 	/* --- sides ------------------------------------------------------------
@@ -93,20 +192,20 @@
 	/* --- element energy ---------------------------------------------------
 	   Unchanged, and the fixed point of the whole system: fire is red because
 	   fire is red. The hull went colourless so these own every saturated pixel. */
-	--g-el-fire: #df6d5e;
-	--g-el-water: #60a0c5;
-	--g-el-air: #ffffff;
-	--g-el-electric: #e2bd43;
-	--g-el-rock: #8d7050;
-	--g-el-plant: #708844;
-	--g-el-chemical: #64bd9f;
-	--g-el-light: #ffffc7;
-	--g-el-dark: #57619c;
-	--g-el-metal: #8d8d8d;
-	--g-el-psychic: #d39bcb;
-	--g-el-ghost: #8764a8;
-	--g-el-ice: #85dde4;
-	--g-el-sand: #e6b26f;
+	--g-el-fire: #e5735f;
+	--g-el-water: #6a9fd8;
+	--g-el-air: #d8e6ee;
+	--g-el-electric: #e9c93a;
+	--g-el-rock: #a98a6a;
+	--g-el-plant: #83a44b;
+	--g-el-chemical: #58c3ba;
+	--g-el-light: #f5ec9a;
+	--g-el-dark: #7378c4;
+	--g-el-metal: #a4a8ad;
+	--g-el-psychic: #dc9fd2;
+	--g-el-ghost: #a886cf;
+	--g-el-ice: #8fd6ee;
+	--g-el-sand: #dba873;
 
 	/* The element in scope. One class on a container retunes everything inside. */
 	--g-el: var(--g-phosphor);
@@ -137,7 +236,7 @@
 	   stencilled onto equipment and painted on placards. IBM Plex Mono is the
 	   machine's own output — a terminal line, a printed slip. Neither is a
 	   "sci-fi" typeface, because the fiction is industrial, not futuristic. */
-	--g-font-ui: 'Barlow', system-ui, sans-serif;
+	--g-font-ui: var(--g-font-body);
 
 	/* --g-size-micro/--g-size-tiny bumped a hair for Barlow Condensed: its
 	   caps run a touch smaller than Oswald's at the same rem size, and the
@@ -174,9 +273,12 @@
 	/* --- geometry ---------------------------------------------------------
 	   Streamline moderne: softly rounded housings, not sharp corners and not
 	   sci-fi chamfers. Moulded plastic and pressed steel both have a radius. */
-	--g-radius: 4px;
-	--g-radius-panel: 8px;
-	--g-radius-housing: 14px;
+	/* Square everywhere in v4 (docs/DESIGN_SYSTEM.md section 5); the chamfer
+	   (--g-chamfer/--g-chamfer-key, declared above) replaces radius as the
+	   one signature cut, reserved for glass and the primary key. */
+	--g-radius: 0;
+	--g-radius-panel: 0;
+	--g-radius-housing: 0;
 	--g-hairline: 1px;
 
 	/* --- light ------------------------------------------------------------
@@ -219,10 +321,13 @@
 	--g-trim-dark: #6b5423;
 	--g-trim-light: #d8b45e;
 
-	--g-accent: #d9a410;
-	--g-accent-ink: #17120a;
+	--g-accent: var(--g-viable);
+	--g-accent-ink: var(--g-viable-ink);
 
-	--g-glass: #07120c;
+	/* --g-glass is declared once, above, as the v4 primitive (#0e100f); every
+	   [data-terminal] block below still overrides it with its own literal
+	   screen-glass colour, which wins for that terminal's descendants
+	   (nearest declaration in the tree, not source order). */
 	--g-vfd: var(--g-phosphor);
 	--g-vfd-glass: var(--g-screen-glass);
 
@@ -241,10 +346,10 @@
 	   — the v3 build let each terminal set its own legend face and that was
 	   the single biggest thing that made the site read as six unrelated
 	   products (docs/DESIGN_SYSTEM.md Rule A). */
-	--g-font-legend: 'Barlow Condensed', 'Oswald', Impact, sans-serif;
-	--g-font-out: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+	/* --g-font-legend is declared once, above, as the v4 primitive (Saira). */
+	--g-font-out: var(--g-font-data);
 	--g-font-paper: 'Special Elite', 'IBM Plex Mono', monospace;
-	/* --g-font-ui is declared once, above, as 'Barlow' — also core, unchanged. */
+	/* --g-font-ui is declared once, above, repointed to --g-font-body. */
 
 	/* Legacy names for --g-font-legend/--g-font-out, kept because a lot of
 	   existing CSS still spells them this way. Since none of the four core
@@ -253,7 +358,7 @@
 	   section 10's lesson describes for a genuinely material var() chain —
 	   there is nothing left for any terminal to retune. */
 	--g-font-stencil: var(--g-font-legend);
-	--g-font-mono: var(--g-font-out);
+	--g-font-mono: var(--g-font-data);
 
 	/* --g-font-nameplate is the one exception: the single face that stays the
 	   terminal's own, used only by .g-nameplate and .g-stamp. :root's value
@@ -274,10 +379,10 @@
 	   Hover/checked/danger states that were literal hex scattered through the
 	   component rules below. Panel-only for now; a terminal that needs its own
 	   hover or danger treatment can override these same names. */
-	--g-hull-hover: #3c3c32;
-	--g-accent-hover: #f0b71a;
-	--g-danger: #7c2b26;
-	--g-danger-ink: #ffdedb;
+	--g-hull-hover: var(--g-s3);
+	--g-accent-hover: #5fd89b;
+	--g-danger: var(--g-plague);
+	--g-danger-ink: var(--g-plague-ink);
 	--g-danger-edge: #43110e;
 	--g-danger-hover: #94332d;
 	--g-check-on: #40340b;
@@ -624,6 +729,149 @@
 	z-index: 2;
 }
 
+/* =========================================================================
+   VERSION 4: PAGE ROOT
+   The v4 page root, sibling of .g-console (which stays for unmigrated
+   pages). Same warm room, same faint paint-tooth grain and edge vignette as
+   .g-console has, drawn the same way (a pseudo layer, `position: absolute`,
+   never `fixed` — docs/DESIGN_SYSTEM.md section 14). No terminal furniture.
+   ========================================================================= */
+
+.g-page {
+	position: relative;
+	min-height: 100vh;
+	background-color: var(--g-surface-page);
+	background-image:
+		radial-gradient(ellipse 110% 60% at 25% -10%, rgba(255, 236, 194, 0.05), transparent 62%),
+		radial-gradient(ellipse 80% 50% at 95% 108%, rgba(255, 236, 194, 0.028), transparent 60%);
+	color: var(--g-text);
+	font-family: var(--g-font-body);
+	font-size: var(--g-size-body-v4);
+	line-height: 1.5;
+}
+
+.g-page::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	z-index: 1;
+	opacity: 0.18;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+
+.g-page > * {
+	position: relative;
+	z-index: 2;
+}
+
+/* Type roles, v4 (docs/DESIGN_SYSTEM.md section 4). Saira for anything that
+   labels or heads, uppercase with tracking; Atkinson Hyperlegible for prose;
+   Martian Mono for values, always tabular. */
+.g-display {
+	font-family: var(--g-font-legend);
+	font-weight: 600;
+	font-size: var(--g-size-display);
+	text-transform: uppercase;
+	line-height: .95;
+	letter-spacing: .01em;
+	color: var(--g-text);
+	margin: 0;
+}
+
+.g-title-v4 {
+	font-family: var(--g-font-legend);
+	font-weight: 600;
+	font-size: var(--g-size-title);
+	text-transform: uppercase;
+	line-height: .95;
+	letter-spacing: .01em;
+	color: var(--g-text);
+	margin: 0;
+}
+
+.g-heading-v4 {
+	font-family: var(--g-font-legend);
+	font-weight: 600;
+	font-size: var(--g-size-heading);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-heading);
+	color: var(--g-text);
+	margin: 0;
+}
+
+.g-subhead-v4 {
+	font-family: var(--g-font-legend);
+	font-weight: 500;
+	font-size: var(--g-size-subhead);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-heading);
+	color: var(--g-text);
+	margin: 0;
+}
+
+.g-legend-v4 {
+	font-family: var(--g-font-legend);
+	font-weight: 500;
+	font-size: var(--g-size-legend);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-legend);
+	color: var(--g-text-2);
+}
+
+.g-lead-v4 {
+	font-family: var(--g-font-body);
+	font-size: var(--g-size-lead);
+	max-width: 62ch;
+	color: var(--g-text);
+	margin: 0;
+}
+
+.g-body-v4 {
+	font-family: var(--g-font-body);
+	font-size: var(--g-size-body-v4);
+	max-width: 62ch;
+	color: var(--g-text-2);
+	margin: 0;
+}
+
+.g-small-v4 {
+	font-family: var(--g-font-body);
+	font-size: var(--g-size-small-v4);
+	color: var(--g-text-2);
+}
+
+.g-data-v4 {
+	font-family: var(--g-font-data);
+	font-variant-numeric: tabular-nums;
+	font-size: var(--g-size-body-v4);
+	color: var(--g-text);
+}
+
+.g-figure-v4 {
+	font-family: var(--g-font-data);
+	font-variant-numeric: tabular-nums;
+	font-size: var(--g-size-heading);
+	color: var(--g-text);
+}
+
+.g-data-v4,
+.g-figure-v4 {
+	overflow-wrap: break-word;
+}
+
+/* Masthead, restyled: kicker legend tracked in ink-3, title 32 Saira 600
+   uppercase (docs/DESIGN_SYSTEM.md section 4). Layout is unchanged from
+   .g-masthead below (shared with v3), which the v4 kicker/title classes
+   above are meant to be used inside of. */
+.g-page .g-masthead .g-kicker,
+.g-page .g-kicker {
+	font-family: var(--g-font-legend);
+	font-size: var(--g-size-legend);
+	letter-spacing: var(--g-track-legend);
+	color: var(--g-text-3);
+}
+
 /* -------------------------------------------------------------------------
    TYPE
    ------------------------------------------------------------------------- */
@@ -695,21 +943,23 @@
    it earns it, four rivets.
    ------------------------------------------------------------------------- */
 
+/* Restyled for v4: level 1 card. Matte, hairline edge, one inset top
+   highlight, square (docs/DESIGN_SYSTEM.md section 5). */
 .g-panel {
-	--panel-fill: var(--g-hull);
+	--panel-fill: var(--g-s1);
 	position: relative;
 	padding: var(--g-5);
 	background: var(--panel-fill);
-	border: var(--g-hairline) solid var(--g-seam);
+	border: var(--g-hairline) solid var(--g-edge);
 	border-radius: var(--g-radius-panel);
-	box-shadow: var(--g-relief), var(--g-drop);
+	box-shadow: inset 0 1px 0 var(--g-edge-hi);
 }
 
-.g-panel--raised { --panel-fill: var(--g-hull-hi); }
+.g-panel--raised { --panel-fill: var(--g-s2); }
 
 .g-panel--recessed {
-	--panel-fill: var(--g-hull-lo);
-	box-shadow: var(--g-recess);
+	--panel-fill: var(--g-s0);
+	box-shadow: none;
 }
 
 /* Fasteners, one per corner — drawn, not marked up, and small enough to read
@@ -886,52 +1136,35 @@
    into the hull, lit in the element's colour.
    ------------------------------------------------------------------------- */
 
+/* Restyled for v4: a plain square track, no segmented bulbs, no glow
+   (docs/DESIGN_SYSTEM.md section 5 and 6). */
 .g-meter {
-	--seg: 7px;
-	--gap: 3px;
 	position: relative;
-	height: 14px;
-	background-color: var(--g-seam);
-	border-radius: 2px;
-	box-shadow: var(--g-recess);
+	height: 8px;
+	background-color: rgba(255, 255, 255, 0.06);
+	border-radius: 0;
+	box-shadow: none;
+	overflow: hidden;
 }
 
 .g-meter-track {
 	position: absolute;
-	inset: 2px;
-	background-image: repeating-linear-gradient(
-		90deg,
-		rgba(255, 244, 214, 0.05) 0 var(--seg),
-		transparent var(--seg) calc(var(--seg) + var(--gap))
-	);
+	inset: 0;
 }
 
-/* Headroom the stat could still grow into: bulbs that exist but are not lit. */
+/* Headroom the stat could still grow into. */
 .g-meter-ghost {
 	position: absolute;
-	top: 2px;
-	bottom: 2px;
-	left: 2px;
-	background-image: repeating-linear-gradient(
-		90deg,
-		color-mix(in srgb, var(--g-el) 30%, transparent) 0 var(--seg),
-		transparent var(--seg) calc(var(--seg) + var(--gap))
-	);
+	inset: 0;
+	background: color-mix(in srgb, var(--g-el) 30%, transparent);
 }
 
-/* Lit bulbs: what the stat actually is. */
+/* What the stat actually is. */
 .g-meter-fill {
 	position: absolute;
-	top: 2px;
-	bottom: 2px;
-	left: 2px;
-	background-image: repeating-linear-gradient(
-		90deg,
-		var(--g-el) 0 var(--seg),
-		transparent var(--seg) calc(var(--seg) + var(--gap))
-	);
-	filter: drop-shadow(0 0 4px color-mix(in srgb, var(--g-el) 70%, transparent));
-	transition: width var(--g-move);
+	inset: 0;
+	background: var(--g-el);
+	transition: width var(--g-dur-2) var(--g-ease-out);
 }
 
 .g-meter-row {
@@ -964,19 +1197,21 @@
    A printed classification label, like a sticker on a specimen jar.
    ------------------------------------------------------------------------- */
 
+/* Chips are content: they carry an element hue and name an element
+   (docs/DESIGN_SYSTEM.md section 6). Square, dark text on the hue. */
 .g-chip {
 	display: inline-flex;
 	align-items: center;
 	padding: 2px var(--g-3);
-	font-family: var(--g-font-stencil);
-	font-size: var(--g-size-small);
-	font-weight: 600;
+	font-family: var(--g-font-legend);
+	font-size: 11px;
+	font-weight: 500;
 	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
+	letter-spacing: var(--g-track-legend);
 	color: var(--g-ink-invert);
 	background: var(--g-el);
-	border-radius: 2px;
-	box-shadow: var(--g-relief);
+	border-radius: 0;
+	box-shadow: none;
 }
 
 .g-chip--outline {
@@ -992,62 +1227,76 @@
    when pressed.
    ------------------------------------------------------------------------- */
 
+/* Restyled for v4 (docs/DESIGN_SYSTEM.md section 6): flat, square, no
+   bevel/glow/travel. Secondary rank by default; --btn-primary is the one
+   accent-filled key per screen, chamfered. Four ranks, five states each. */
 .g-btn {
-	--btn-face: var(--g-hull-hi);
-	--btn-ink: var(--g-ink);
-	--btn-edge: var(--g-seam);
+	--btn-face: var(--g-s2);
+	--btn-ink: var(--g-text);
+	--btn-edge: var(--g-edge);
 	position: relative;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	gap: var(--g-2);
 	padding: var(--g-3) var(--g-5);
-	font-family: var(--g-font-stencil);
-	font-size: var(--g-size-body);
-	font-weight: 600;
+	font-family: var(--g-font-legend);
+	font-size: 13px;
+	font-weight: 500;
 	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
+	letter-spacing: var(--g-track-legend);
 	color: var(--btn-ink);
 	background: var(--btn-face);
 	border: var(--g-hairline) solid var(--btn-edge);
 	border-radius: var(--g-radius);
-	box-shadow: var(--g-relief), 0 3px 0 var(--g-seam), 0 4px 8px rgba(0, 0, 0, 0.55);
+	box-shadow: inset 0 1px 0 var(--g-edge-hi);
 	cursor: pointer;
-	transition: background var(--g-snap), transform var(--g-snap), box-shadow var(--g-snap);
+	transition: background var(--g-dur-1) var(--g-ease-out), color var(--g-dur-1) var(--g-ease-out);
 }
 
-.g-btn:hover:not(:disabled) { --btn-face: var(--g-hull-hover); }
+.g-btn:hover:not(:disabled) { --btn-face: var(--g-s3); }
 
-/* The key travels down onto the panel. */
-.g-btn:active:not(:disabled) {
-	transform: translateY(3px);
-	box-shadow: var(--g-recess);
-}
+.g-btn:active:not(:disabled) { --btn-face: var(--g-s1); box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5); }
 
 .g-btn:focus-visible {
-	outline: 2px solid var(--g-phosphor);
+	outline: 2px solid var(--g-focus);
 	outline-offset: 2px;
 }
 
-/* The committing action wears the terminal's accent paint. */
+/* The one primary action per screen: viable fill, chamfered, no shadow. */
 .g-btn--primary {
-	--btn-face: var(--g-accent);
-	--btn-ink: var(--g-accent-ink);
-	/* --g-hazard-dark never retunes per terminal (it has no per-terminal
-	   override); the primary key's edge is the accent darkened, not the
-	   panel's fixed hazard yellow. */
-	--btn-edge: color-mix(in srgb, var(--g-accent) 60%, black);
+	--btn-face: var(--g-viable);
+	--btn-ink: var(--g-viable-ink);
+	--btn-edge: transparent;
+	clip-path: var(--g-chamfer-key);
+	box-shadow: none;
 }
 
 .g-btn--primary:hover:not(:disabled) { --btn-face: var(--g-accent-hover); }
+.g-btn--primary:active:not(:disabled) { --btn-face: var(--g-viable-lo); box-shadow: none; }
 
-.g-btn--danger {
-	--btn-face: var(--g-danger);
-	--btn-ink: var(--g-danger-ink);
-	--btn-edge: var(--g-danger-edge);
+/* No fill, no edge — the rank for a page's secondary actions (Sign in). */
+.g-btn--quiet {
+	--btn-face: transparent;
+	--btn-ink: var(--g-text-2);
+	--btn-edge: transparent;
+	box-shadow: none;
 }
 
-.g-btn--danger:hover:not(:disabled) { --btn-face: var(--g-danger-hover); }
+.g-btn--quiet:hover:not(:disabled) { --btn-face: var(--g-s1); --btn-ink: var(--g-text); }
+.g-btn--quiet:active:not(:disabled) { --btn-face: var(--g-s0); box-shadow: none; }
+
+/* Outline at rest so a delete action does not shout; fills only once the
+   person is reaching for it (docs/DESIGN_SYSTEM.md section 6). */
+.g-btn--danger {
+	--btn-face: transparent;
+	--btn-ink: var(--g-plague-outline-ink);
+	--btn-edge: var(--g-plague);
+	box-shadow: none;
+}
+
+.g-btn--danger:hover:not(:disabled) { --btn-face: var(--g-plague-tint); }
+.g-btn--danger:active:not(:disabled) { --btn-face: var(--g-plague); --btn-ink: var(--g-plague-ink); box-shadow: none; }
 
 /* A square key carrying a glyph instead of a legend. */
 .g-btn--icon {
@@ -1058,46 +1307,63 @@
 	line-height: 1;
 }
 
-/* Unpowered, not faded: the key is still moulded there, the legend is dead. */
 .g-btn:disabled {
-	--btn-face: var(--g-hull-lo);
-	--btn-ink: var(--g-ink-low);
+	opacity: 0.4;
 	cursor: not-allowed;
-	box-shadow: var(--g-recess);
+	box-shadow: none;
 }
 
 /* Text entry is a screen, so it is phosphor on glass.
    The !important flags are load-bearing: bootstrap ships a `.form-control`
    rule in an injected <style> tag, which outranks any linked stylesheet at
    equal specificity. */
+/* Restyled for v4: matte s0 fill, hairline edge, focus is the emitter ring
+   (docs/DESIGN_SYSTEM.md section 6). */
 .g-input,
 .g-select {
 	width: 100%;
 	padding: var(--g-3) var(--g-4);
-	font-family: var(--g-font-mono) !important;
-	font-size: var(--g-size-small);
-	color: var(--g-phosphor) !important;
-	background: var(--g-glass) !important;
-	border: 2px solid var(--g-trim-dark) !important;
+	font-family: var(--g-font-body) !important;
+	font-size: 14px;
+	color: var(--g-text) !important;
+	background: var(--g-s0) !important;
+	border: 1px solid var(--g-edge-strong) !important;
 	border-radius: var(--g-radius) !important;
-	box-shadow: var(--g-recess) !important;
+	box-shadow: none !important;
+	transition: border-color var(--g-dur-1) var(--g-ease-out);
 }
 
-.g-input::placeholder { color: rgba(116, 255, 176, 0.32); }
+.g-input::placeholder { color: var(--g-text-3); }
+
+.g-input:hover,
+.g-select:hover {
+	border-color: rgba(217, 210, 192, 0.35) !important;
+}
 
 .g-input:focus,
 .g-select:focus {
-	outline: none;
-	border-color: var(--g-trim) !important;
-	box-shadow: var(--g-recess), var(--g-screen-bloom) !important;
+	outline: 2px solid var(--g-focus);
+	outline-offset: 1px;
+	border-color: transparent !important;
+	box-shadow: none !important;
+}
+
+.g-input--error {
+	border-color: var(--g-plague) !important;
+	background: var(--g-plague-tint) !important;
+}
+
+.g-input:disabled,
+.g-select:disabled {
+	opacity: 0.4;
 }
 
 .g-select {
 	appearance: none;
 	padding-right: var(--g-7);
 	background-image:
-		linear-gradient(45deg, transparent 50%, var(--g-phosphor) 50%),
-		linear-gradient(135deg, var(--g-phosphor) 50%, transparent 50%);
+		linear-gradient(45deg, transparent 50%, var(--g-text-2) 50%),
+		linear-gradient(135deg, var(--g-text-2) 50%, transparent 50%);
 	background-position: right 20px center, right 14px center;
 	background-size: 6px 6px, 6px 6px;
 	background-repeat: no-repeat;
@@ -1136,44 +1402,42 @@
 	margin-bottom: var(--g-2);
 }
 
-/* A bank of selector keys in a recessed housing. */
+/* Restyled for v4: flat, square, no recessed housing (docs/DESIGN_SYSTEM.md
+   section 6). */
 .g-segmented {
 	display: inline-flex;
-	padding: 3px;
-	gap: 3px;
-	background: var(--g-seam);
-	border-radius: var(--g-radius);
-	box-shadow: var(--g-recess);
 }
 
 .g-segment {
-	padding: var(--g-2) var(--g-4);
-	font-family: var(--g-font-stencil);
-	font-size: var(--g-size-small);
-	font-weight: 600;
+	padding: 6px 12px;
+	font-family: var(--g-font-legend);
+	font-size: 13px;
+	font-weight: 500;
 	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
-	color: var(--g-ink-mid);
-	background: var(--g-hull);
-	border: 0;
-	border-radius: 2px;
-	box-shadow: var(--g-relief);
+	letter-spacing: var(--g-track-legend);
+	color: var(--g-text-2);
+	background: var(--g-s2);
+	border: 1px solid var(--g-edge);
+	margin-left: -1px;
+	border-radius: 0;
+	box-shadow: none;
 	cursor: pointer;
-	transition: background var(--g-snap), color var(--g-snap);
+	transition: background var(--g-dur-1) var(--g-ease-out), color var(--g-dur-1) var(--g-ease-out);
 }
 
 .g-segment:hover:not([aria-pressed='true']) {
-	background: var(--g-hull-hi);
-	color: var(--g-ink);
+	background: var(--g-s3);
+	color: var(--g-text);
 }
 
 .g-segment[aria-pressed='true'] {
-	color: var(--g-accent-ink);
-	background: var(--g-accent);
+	color: var(--g-viable-ink);
+	background: var(--g-viable);
+	border-color: transparent;
 }
 
 .g-segment:focus-visible {
-	outline: 2px solid var(--g-phosphor);
+	outline: 2px solid var(--g-focus);
 	outline-offset: -3px;
 }
 
@@ -1198,38 +1462,40 @@
 	height: 0;
 }
 
+/* Restyled for v4: a toggle, not a bakelite switch. Pills are the one
+   exception to square corners (docs/DESIGN_SYSTEM.md section 5). */
 .g-check-box {
 	position: relative;
-	width: 46px;
-	height: 24px;
+	width: 16px;
+	height: 16px;
 	flex: none;
-	background: var(--g-seam);
-	border-radius: 3px;
-	box-shadow: var(--g-recess);
-	transition: background var(--g-snap);
+	background: var(--g-s0);
+	border: 1px solid var(--g-edge-strong);
+	border-radius: 0;
+	box-shadow: none;
+	transition: background var(--g-dur-1) var(--g-ease-out), border-color var(--g-dur-1) var(--g-ease-out);
 }
+
+.g-check:hover .g-check-box { border-color: var(--g-ink-2); }
 
 .g-check-box::after {
 	content: '';
 	position: absolute;
-	top: 3px;
-	left: 3px;
-	width: 20px;
-	height: 18px;
-	background: var(--g-hull-hi);
-	border-radius: 2px;
-	box-shadow: var(--g-relief), 0 1px 3px rgba(0, 0, 0, 0.7);
-	transition: transform var(--g-snap), background var(--g-snap);
+	left: 4px;
+	top: 1px;
+	width: 5px;
+	height: 9px;
+	border: solid var(--g-viable-ink);
+	border-width: 0 2px 2px 0;
+	transform: rotate(45deg) scale(0);
+	transition: transform var(--g-dur-1) var(--g-ease-out);
 }
 
-.g-check input:checked + .g-check-box { background: var(--g-check-on); }
-.g-check input:checked + .g-check-box::after {
-	transform: translateX(20px);
-	background: var(--g-accent);
-}
+.g-check input:checked + .g-check-box { background: var(--g-viable); border-color: transparent; }
+.g-check input:checked + .g-check-box::after { transform: rotate(45deg) scale(1); }
 
 .g-check input:focus-visible + .g-check-box {
-	outline: 2px solid var(--g-phosphor);
+	outline: 2px solid var(--g-focus);
 	outline-offset: 2px;
 }
 
@@ -1279,23 +1545,38 @@
    FEEDBACK
    ------------------------------------------------------------------------- */
 
+/* Restyled for v4: a toast, level 2, strong edge, a status dot
+   (docs/DESIGN_SYSTEM.md section 6). --g-notice-dot is the dot's colour. */
 .g-notice {
-	--tone: var(--g-hazard);
+	--tone: var(--g-viable-hi);
+	--g-notice-dot: var(--tone);
 	display: flex;
+	align-items: flex-start;
 	gap: var(--g-3);
 	padding: var(--g-3) var(--g-4);
-	background: var(--g-hull-lo);
-	border-left: 4px solid var(--tone);
+	background: var(--g-s2);
+	border: 1px solid var(--g-edge-strong);
+	border-left: 1px solid var(--g-edge-strong);
 	border-radius: var(--g-radius);
-	box-shadow: var(--g-relief);
-	font-family: var(--g-font-ui);
-	font-size: var(--g-size-small);
-	color: var(--g-ink);
+	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+	font-family: var(--g-font-body);
+	font-size: 13.5px;
+	color: var(--g-text);
 }
 
-.g-notice--alert { --tone: var(--g-lamp-red); }
-.g-notice--ok { --tone: var(--g-phosphor); }
-.g-notice--inert { --tone: var(--g-ink-low); }
+.g-notice::before {
+	content: '';
+	width: 8px;
+	height: 8px;
+	margin-top: 6px;
+	flex: none;
+	border-radius: 50%;
+	background: var(--g-notice-dot);
+}
+
+.g-notice--alert { --tone: var(--g-plague); }
+.g-notice--ok { --tone: var(--g-viable-hi); }
+.g-notice--inert { --tone: var(--g-neutral-status); }
 
 .g-notice-title {
 	display: block;
@@ -1350,17 +1631,28 @@
 	white-space: nowrap;
 }
 
+/* Restyled for v4: a dashed hairline box, no bevel (docs/DESIGN_SYSTEM.md
+   section 6). */
 .g-empty {
-	padding: var(--g-8) var(--g-4);
+	padding: var(--g-7) var(--g-4);
 	text-align: center;
-	border: 2px dashed var(--g-rule);
+	border: 1px dashed var(--g-edge-strong);
 	border-radius: var(--g-radius);
-	font-family: var(--g-font-stencil);
-	font-size: var(--g-size-body);
-	font-weight: 500;
+	font-family: var(--g-font-body);
+	font-size: 14px;
+	font-weight: 400;
+	color: var(--g-text-2);
+}
+
+.g-empty b {
+	display: block;
+	font-family: var(--g-font-legend);
 	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
-	color: var(--g-ink-low);
+	letter-spacing: var(--g-track-legend);
+	color: var(--g-text);
+	font-size: 13px;
+	font-weight: 500;
+	margin-bottom: var(--g-1);
 }
 
 /* -------------------------------------------------------------------------
@@ -1821,43 +2113,44 @@
 	cursor: pointer;
 }
 
+/* Restyled for v4: flat track, square thumb, no bevel. */
 .g-range::-webkit-slider-runnable-track {
-	height: 8px;
-	background: var(--g-seam);
+	height: 4px;
+	background: var(--g-s2);
 	border-radius: 2px;
-	box-shadow: var(--g-recess);
+	box-shadow: none;
 }
 
 .g-range::-moz-range-track {
-	height: 8px;
-	background: var(--g-seam);
+	height: 4px;
+	background: var(--g-s2);
 	border-radius: 2px;
-	box-shadow: var(--g-recess);
+	box-shadow: none;
 }
 
 .g-range::-webkit-slider-thumb {
 	-webkit-appearance: none;
 	appearance: none;
 	width: 14px;
-	height: 20px;
-	margin-top: -6px;
-	background: var(--g-hull-hi);
-	border: var(--g-hairline) solid var(--g-seam);
-	border-radius: 2px;
-	box-shadow: var(--g-relief), 0 1px 3px rgba(0, 0, 0, 0.7);
+	height: 14px;
+	margin-top: -5px;
+	background: var(--g-viable);
+	border: none;
+	border-radius: 0;
+	box-shadow: none;
 }
 
 .g-range::-moz-range-thumb {
 	width: 14px;
-	height: 20px;
-	background: var(--g-hull-hi);
-	border: var(--g-hairline) solid var(--g-seam);
-	border-radius: 2px;
-	box-shadow: var(--g-relief), 0 1px 3px rgba(0, 0, 0, 0.7);
+	height: 14px;
+	background: var(--g-viable);
+	border: none;
+	border-radius: 0;
+	box-shadow: none;
 }
 
 .g-range:focus-visible {
-	outline: 2px solid var(--g-phosphor);
+	outline: 2px solid var(--g-focus);
 	outline-offset: 4px;
 }
 
@@ -2650,4 +2943,241 @@ html {
 
 @media (prefers-reduced-motion: reduce) {
 	.g-cursor { animation: none; }
+}
+
+/* =========================================================================
+   VERSION 4: NEW COMPONENTS
+   docs/DESIGN_SYSTEM.md sections 5 (chamfer), 6 (spinner, badges, tabs,
+   toggle), 8 (brand). Values and technique taken from
+   docs/design/v4-foundations.html and docs/design/v4-chrome.html.
+   ========================================================================= */
+
+/* --- glass: live-data surface, chamfered ---------------------------------
+   Two clipped layers so the hairline follows the cut contour (section 14). */
+.g-glass {
+	position: relative;
+	background: var(--g-glass-edge);
+	clip-path: var(--g-chamfer);
+	border: 0;
+	border-radius: 0;
+}
+
+.g-glass::before {
+	content: '';
+	position: absolute;
+	inset: 1px;
+	background: var(--g-surface-live);
+	clip-path: var(--g-chamfer);
+	box-shadow: inset 0 12px 30px rgba(0, 0, 0, 0.35);
+	z-index: 0;
+}
+
+.g-glass > * {
+	position: relative;
+	z-index: 1;
+}
+
+/* --- badges: state, not content ------------------------------------------
+   Chips are content (an element hue); badges are state, in the world's own
+   words (section 6). Square pills with a hairline edge. */
+.g-badge {
+	display: inline-flex;
+	align-items: center;
+	font-family: var(--g-font-legend);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-legend);
+	font-size: 11px;
+	padding: 2px 8px;
+	border-radius: 0;
+	border: 1px solid var(--g-edge-strong);
+	color: var(--g-text-2);
+	background: transparent;
+}
+
+.g-badge--ok { border-color: var(--g-viable-lo); color: var(--g-viable-hi); background: var(--g-viable-tint); }
+.g-badge--danger { border-color: var(--g-plague); color: var(--g-plague-outline-ink); background: var(--g-plague-tint); }
+.g-badge--warn { border-color: var(--g-caution); color: var(--g-caution); background: var(--g-caution-tint); }
+.g-badge--info { border-color: var(--g-edge-strong); color: var(--g-neutral-status); background: transparent; }
+
+/* --- tabs ------------------------------------------------------------- */
+.g-tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 2px;
+}
+
+.g-tab-link {
+	font-family: var(--g-font-legend);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-legend);
+	font-size: 13px;
+	padding: var(--g-2) var(--g-4);
+	background: var(--g-s1);
+	border: 1px solid var(--g-edge);
+	border-bottom: 2px solid transparent;
+	color: var(--g-text-2);
+	cursor: pointer;
+	transition: color var(--g-dur-1) var(--g-ease-out), border-color var(--g-dur-1) var(--g-ease-out);
+}
+
+.g-tab-link:hover { color: var(--g-text); }
+.g-tab-link.on { color: var(--g-text); border-bottom-color: var(--g-viable); }
+.g-tab-link:focus-visible { outline: 2px solid var(--g-focus); outline-offset: -2px; }
+
+/* --- toggle: a mechanism-only variant, no label wrapper ------------------- */
+.g-toggle {
+	display: inline-block;
+	width: 36px;
+	height: 20px;
+	border-radius: 10px;
+	background: var(--g-s2);
+	border: 1px solid var(--g-edge);
+	position: relative;
+	vertical-align: middle;
+	cursor: pointer;
+	transition: background var(--g-dur-1) var(--g-ease-out);
+}
+
+.g-toggle::after {
+	content: '';
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	background: var(--g-ink-3);
+	transition: transform var(--g-dur-1) var(--g-ease-out), background var(--g-dur-1) var(--g-ease-out);
+}
+
+.g-toggle.on { background: var(--g-viable-lo); border-color: transparent; }
+.g-toggle.on::after { transform: translateX(16px); background: var(--g-viable-hi); }
+.g-toggle:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+
+/* --- helix spinner ---------------------------------------------------------
+   The DNA mark with its strands at low opacity and its rungs lighting in
+   sequence, top to bottom. Never a skeleton (section 6). The SVG markup is
+   the React component in src/components/brand/helixSpinner.js; this is only
+   the paint and the animation. */
+.g-spinner {
+	display: block;
+	overflow: visible;
+	width: 32px;
+	height: auto;
+}
+
+.g-spinner--sm { width: 20px; }
+.g-spinner--lg { width: 56px; }
+
+.g-spinner .strand {
+	fill: none;
+	stroke: var(--g-viable-hi);
+	stroke-width: 4px;
+	stroke-linejoin: round;
+	opacity: 0.28;
+}
+
+.g-spinner .rung {
+	stroke: var(--g-viable-hi);
+	stroke-width: 8px;
+	stroke-linecap: round;
+	opacity: 0.15;
+	animation: g-spinner-rung 1.4s var(--g-ease-out) infinite;
+	animation-delay: calc(var(--i) * .16s);
+}
+
+.g-spinner--sm .rung { stroke-width: 12px; }
+
+@keyframes g-spinner-rung {
+	0%, 60%, 100% { opacity: 0.15; }
+	20% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.g-spinner .rung { animation: none; opacity: 0.7; }
+}
+
+/* --- brand lockup ----------------------------------------------------------
+   Helix at left, then the word, in --g-viable-hi (section 8). Navbar size by
+   default; --brand modifies to the splash size. */
+.g-brand {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	color: var(--g-viable-hi);
+	text-transform: uppercase;
+	font-family: var(--g-font-brand);
+	font-size: 22px;
+	letter-spacing: .04em;
+	line-height: 1;
+	text-decoration: none;
+}
+
+.g-brand .strand,
+.g-helix .strand {
+	fill: none;
+	stroke: var(--g-viable-hi);
+	stroke-width: 5px;
+	stroke-linejoin: round;
+}
+
+.g-brand .rung,
+.g-helix .rung {
+	stroke: var(--g-viable-hi);
+	stroke-width: 9px;
+	stroke-linecap: round;
+}
+
+.g-brand .g-brand-mark {
+	height: 28px;
+	display: block;
+	overflow: visible;
+}
+
+.g-brand--big {
+	font-size: 64px;
+	gap: 22px;
+}
+
+.g-brand--big .g-brand-mark { height: 84px; }
+
+/* The splash-size lockup does not shrink its own text, so it must not be
+   asked to sit in a column narrower than its content on small viewports. */
+@media (max-width: 480px) {
+	.g-brand--big {
+		font-size: 40px;
+		gap: 14px;
+	}
+
+	.g-brand--big .g-brand-mark { height: 52px; }
+}
+
+/* --- card link: a .g-panel that is a link --------------------------------- */
+.g-card-link {
+	display: block;
+	text-decoration: none;
+	color: inherit;
+	transition: background var(--g-dur-1) var(--g-ease-out);
+}
+
+.g-card-link:hover { background: var(--g-s2); }
+.g-card-link:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+
+/* --- react-bootstrap modal hooks -------------------------------------------
+   Pass `container` to the react-bootstrap Modal so it portals inside .g-page
+   and these tokens apply (section 14). */
+.g-page .modal-content {
+	background: var(--g-s2);
+	color: var(--g-text);
+	border: 1px solid var(--g-edge-strong);
+	border-radius: 0;
+	box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55), inset 0 1px 0 var(--g-edge-hi);
+}
+
+.g-page .modal-backdrop {
+	background: var(--g-void);
+}
+
+.g-page .modal-backdrop.show {
+	opacity: 0.72;
 }

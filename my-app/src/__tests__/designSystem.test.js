@@ -2,23 +2,28 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * Enforces the three structural rules of the v3 design system, "one relay,
- * many terminals" (docs/DESIGN_SYSTEM.md):
+ * Enforces the structural rules of the design system across both layers it
+ * currently carries — version 3 ("one relay, many terminals") and version 4
+ * ("one site, featured components, immersive experiences",
+ * docs/DESIGN_SYSTEM.md):
  *
- *  1. Every page under src/pages/ sets data-terminal explicitly, so an
- *     unmigrated page cannot silently ship with no material at all.
+ *  1. Every page under src/pages/ classifies itself: either the v3
+ *     `data-terminal=` (unmigrated) or the v4 `data-tier=` (migrated,
+ *     docs/DESIGN_SYSTEM.md section 10). A page with neither fails.
  *  2. Every [data-terminal="x"] block in system.css has a matching terminal
- *     rendered on /styleguide, so the living reference cannot drift from the
- *     CSS.
- *  3. No raw hex leaks into CSS outside system.css's :root/[data-terminal]
+ *     rendered on /styleguide, so the living v3 reference cannot drift from
+ *     the CSS.
+ *  3. Every component in V4_COMPONENTS is rendered somewhere on
+ *     /styleguide, so the living v4 reference cannot drift either.
+ *  4. No raw hex leaks into CSS outside system.css's :root/[data-terminal]
  *     blocks (checked by designTokens.test.js) or, for the legacy files,
  *     grows past today's count — they are meant to shrink as pages migrate,
  *     never grow.
  *
  * This is deliberately not green because every page under src/pages/ has
- * migrated — it isn't, not yet. MIGRATION_PENDING lists are the explicit,
- * shrinking allowlist that keeps the suite passing at each commit; other
- * agents remove entries from them as they migrate a page.
+ * migrated to v4 — it isn't, not yet. MIGRATION_PENDING lists are the
+ * explicit, shrinking allowlist that keeps the suite passing at each commit;
+ * other agents remove entries from them as they migrate a page.
  */
 
 const PAGES_DIR = path.join(__dirname, '..', 'pages');
@@ -63,6 +68,14 @@ const MIGRATION_PENDING = [];
 const STYLEGUIDE_MIGRATION_PENDING = [];
 
 /**
+ * Version 4 components that must each appear somewhere on /styleguide
+ * (docs/DESIGN_SYSTEM.md section 10, "the reference an agent checks before
+ * building anything"). Checked as a literal class-name substring against the
+ * page source, the same way STYLEGUIDE_MIGRATION_PENDING checks a terminal.
+ */
+const V4_COMPONENTS = ['g-page', 'g-btn--quiet', 'g-glass', 'g-badge', 'g-tabs', 'g-toggle', 'g-spinner', 'g-brand'];
+
+/**
  * Today's raw-hex count in each legacy CSS file (docs/DESIGN_SYSTEM.md
  * section 5: "Legacy. Shrinking. Do not add colours to them; move rules out
  * as pages migrate."). These files may shrink this count as pages migrate
@@ -89,7 +102,7 @@ const countHex = (css) => {
 
 describe('design system structure', () => {
 
-	describe('every page sets a terminal', () => {
+	describe('every page classifies itself (data-terminal or data-tier)', () => {
 		const allPages = listPageFiles(PAGES_DIR).filter((p) => !DEAD_PAGES.includes(p));
 
 		it('MIGRATION_PENDING only lists real page files', () => {
@@ -102,16 +115,27 @@ describe('design system structure', () => {
 			const pending = MIGRATION_PENDING.includes(relPath);
 			const label = pending ? `${relPath} (MIGRATION_PENDING)` : relPath;
 
-			it(`${label} contains data-terminal=`, () => {
+			it(`${label} contains data-terminal= or data-tier=`, () => {
 				const source = fs.readFileSync(path.join(PAGES_DIR, relPath), 'utf8');
 				const hasTerminal = /data-terminal=/.test(source);
+				const hasTier = /data-tier=/.test(source);
 				if (pending) {
 					// Not yet migrated: must NOT have data-terminal, so an entry is
 					// removed from MIGRATION_PENDING the moment it is no longer true.
 					expect(hasTerminal).toBe(false);
 				} else {
-					expect(hasTerminal).toBe(true);
+					expect(hasTerminal || hasTier).toBe(true);
 				}
+			});
+		});
+	});
+
+	describe('styleguide renders every v4 component', () => {
+		const styleguideSource = fs.readFileSync(STYLEGUIDE_PATH, 'utf8');
+
+		V4_COMPONENTS.forEach((name) => {
+			it(`styleGuidePage.js renders ${name}`, () => {
+				expect(styleguideSource.includes(name)).toBe(true);
 			});
 		});
 	});
