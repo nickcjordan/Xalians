@@ -1,10 +1,5 @@
 import React from 'react'
-import ListGroup from 'react-bootstrap/ListGroup';
-import Badge from 'react-bootstrap/Badge';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Table from 'react-bootstrap/Table'
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 
 class CharacterStats extends React.Component {
 
@@ -34,12 +29,12 @@ class CharacterStats extends React.Component {
     }
 
     buildRow(val) {
-        return  <tr>
-                    <td>{this.translateStatName(val.name)}</td>
-                    <td>{val.range}</td>
-                    <td>{val.points}</td>
-                    <td>{val.percentage}%</td>
-                </tr>
+        return  <TableRow key={val.name}>
+                    <TableCell>{this.translateStatName(val.name)}</TableCell>
+                    <TableCell>{val.range}</TableCell>
+                    <TableCell>{val.points}</TableCell>
+                    <TableCell>{val.percentage}%</TableCell>
+                </TableRow>
     }
 
     render() {
@@ -49,19 +44,18 @@ class CharacterStats extends React.Component {
             list.push(this.buildRow(val));
         }
 
-        // return <Table striped bordered hover variant="dark" size="sm" className="stat-table">
-        return <Table hover variant="dark" bordered size="sm" className="stat-table">
-            <thead>
-                <tr>
-                    <th>Stat</th>
-                    <th>Range</th>
-                    <th>Points</th>
-                    <th>Result</th>
-                </tr>
-            </thead>
-            <tbody>
+        return <Table className="stat-table">
+            <TableHeader>
+                <TableRow>
+                    <TableHead>Stat</TableHead>
+                    <TableHead>Range</TableHead>
+                    <TableHead>Points</TableHead>
+                    <TableHead>Result</TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
                 {list}
-            </tbody>
+            </TableBody>
         </Table>;
     }
 
