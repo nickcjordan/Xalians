@@ -809,6 +809,25 @@
 .g-page .g-record-term,
 .g-page .g-legend { font-family: var(--g-font-legend); color: var(--g-text-2); }
 
+
+/* Art mounts on chrome pages: the legacy .<element>-color wrappers (typeColors.css)
+   sit on a half-strength wash of the revised hue over level 0, so a black
+   silhouette still reads and the tint matches the rest of the system. */
+.g-page .fire-color { background: color-mix(in srgb, var(--g-el-fire) 52%, var(--g-s0)) !important; }
+.g-page .water-color { background: color-mix(in srgb, var(--g-el-water) 52%, var(--g-s0)) !important; }
+.g-page .air-color { background: color-mix(in srgb, var(--g-el-air) 52%, var(--g-s0)) !important; }
+.g-page .electric-color { background: color-mix(in srgb, var(--g-el-electric) 52%, var(--g-s0)) !important; }
+.g-page .rock-color { background: color-mix(in srgb, var(--g-el-rock) 52%, var(--g-s0)) !important; }
+.g-page .plant-color { background: color-mix(in srgb, var(--g-el-plant) 52%, var(--g-s0)) !important; }
+.g-page .chemical-color { background: color-mix(in srgb, var(--g-el-chemical) 52%, var(--g-s0)) !important; }
+.g-page .light-color { background: color-mix(in srgb, var(--g-el-light) 52%, var(--g-s0)) !important; }
+.g-page .dark-color { background: color-mix(in srgb, var(--g-el-dark) 52%, var(--g-s0)) !important; }
+.g-page .metal-color { background: color-mix(in srgb, var(--g-el-metal) 52%, var(--g-s0)) !important; }
+.g-page .psychic-color { background: color-mix(in srgb, var(--g-el-psychic) 52%, var(--g-s0)) !important; }
+.g-page .ghost-color { background: color-mix(in srgb, var(--g-el-ghost) 52%, var(--g-s0)) !important; }
+.g-page .ice-color { background: color-mix(in srgb, var(--g-el-ice) 52%, var(--g-s0)) !important; }
+.g-page .sand-color { background: color-mix(in srgb, var(--g-el-sand) 52%, var(--g-s0)) !important; }
+
 /* A chip with no element in scope is neutral, never the accent. */
 .g-page { --g-el: var(--g-neutral-status); }
 

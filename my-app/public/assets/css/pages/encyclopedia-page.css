@@ -25,6 +25,8 @@
 	gap: var(--g-3);
 }
 
+.enc-shell-tabs { margin-bottom: var(--g-5); }
+
 .enc-shell-tabs-back {
 	margin-left: auto;
 	align-self: center;
