@@ -13,7 +13,7 @@
 
 .gen-record {
 	display: grid;
-	grid-template-columns: 280px 1fr minmax(160px, 220px);
+	grid-template-columns: 280px 1fr minmax(260px, 300px);
 	align-items: start;
 	gap: var(--g-5);
 	padding: var(--g-5);
@@ -88,7 +88,7 @@
 }
 
 .gen-record-specs dt { margin: 0; }
-.gen-record-specs dd { margin: 0; }
+.gen-record-specs dd { margin: 0; white-space: nowrap; }
 
 /* -------------------------------------------------------------------------
    STATS AND MOVES, TWO PANELS SIDE BY SIDE
