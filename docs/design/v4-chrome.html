@@ -1,0 +1,324 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Xalians Chrome</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600&family=IBM+Plex+Mono:wght@400;500&family=Saira:wght@500;600&family=Atkinson+Hyperlegible:wght@400;700&family=Martian+Mono:wght@400;500&family=Iceland&family=Anta&display=swap">
+<style>
+:root{
+  --room:#121110; --s0:#191816; --s1:#201f1c; --s2:#282723; --edge:rgba(217,210,192,.10); --edge-hi:rgba(255,244,214,.07);
+  --glass:#0e100f; --glass-edge:rgba(217,210,192,.14);
+  --ink:#d9d2c0; --ink-2:#9a9382; --ink-3:#6c6659;
+  --accent:#4fc98d; --accent-ink:#08150e; --accent-hi:#86ffb5;
+  --el-psychic:#dc9fd2; --el-dark:#7378c4; --el-fire:#e5735f; --el-water:#6a9fd8; --el-plant:#83a44b; --el-ice:#8fd6ee; --el-rock:#a98a6a; --el-light:#f5ec9a; --el-chemical:#58c3ba;
+  --f-legend:'Saira','Barlow Condensed',Impact,sans-serif; --f-body:'Atkinson Hyperlegible','Barlow',system-ui,sans-serif; --f-mono:'Martian Mono','IBM Plex Mono',ui-monospace,Menlo,monospace;
+  --r:0px; --cut:12px; --cut-btn:8px; --pc:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut)); --pcb:polygon(var(--cut-btn) 0,100% 0,100% calc(100% - var(--cut-btn)),calc(100% - var(--cut-btn)) 100%,0 100%,0 var(--cut-btn));
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--room);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+a{color:inherit;text-decoration:none}
+.legend{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-weight:500}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.note{max-width:1200px;margin:28px auto 0;padding:0 24px;color:var(--ink-2);font-size:14px}
+.note b{color:var(--ink)}
+.note h2{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.06em;font-weight:600;color:var(--ink);font-size:20px;margin:36px 0 6px}
+.frame{max-width:1200px;margin:14px auto 0;padding:0 24px}
+.screen{border:1px solid var(--edge);border-radius:0;overflow:hidden;background:var(--room);box-shadow:0 20px 50px rgba(0,0,0,.45)}
+
+/* NAV */
+.nav{display:flex;align-items:center;gap:28px;padding:0 24px;height:54px;background:var(--s0);border-bottom:1px solid var(--edge)}
+.nav .wordmark{font-family:var(--f-legend);font-weight:600;letter-spacing:.14em;font-size:17px;color:var(--ink)}
+.nav .links{display:flex;gap:22px;margin-left:8px}
+.nav .links a{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-size:13.5px;color:var(--ink-2);padding:18px 0;border-bottom:2px solid transparent}
+.nav .links a.on{color:var(--ink);border-bottom-color:var(--accent)}
+.nav .right{margin-left:auto;display:flex;gap:10px;align-items:center}
+.btn{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-size:13px;padding:8px 14px;border-radius:var(--r);border:1px solid var(--edge);background:var(--s2);color:var(--ink);box-shadow:inset 0 1px 0 var(--edge-hi),0 1px 0 rgba(0,0,0,.6)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent;clip-path:var(--pcb);box-shadow:none}
+.btn.quiet{background:transparent;border-color:transparent;color:var(--ink-2)}
+
+/* PAGE */
+.page{padding:36px 24px 44px}
+.masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:22px}
+.kicker{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.12em;font-size:12px;color:var(--ink-3);margin-bottom:6px}
+.title{font-family:var(--f-legend);font-weight:600;text-transform:uppercase;font-size:34px;line-height:.95;margin:0;letter-spacing:.01em}
+.sub{color:var(--ink-2);margin:8px 0 0;max-width:62ch}
+
+/* surfaces */
+.card{background:var(--s1);border:1px solid var(--edge);border-radius:var(--r);box-shadow:inset 0 1px 0 var(--edge-hi)}
+.glass{position:relative;background:var(--glass-edge);clip-path:var(--pc);border:0;border-radius:0}
+.glass::before{content:"";position:absolute;inset:1px;background:var(--glass);clip-path:var(--pc);box-shadow:inset 0 12px 30px rgba(0,0,0,.35);z-index:0}
+.glass>*{position:relative;z-index:1}
+.head{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--edge)}
+.head .legend{font-size:12px;color:var(--ink-2)}
+.chip{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-size:11px;padding:2px 8px;border-radius:0;color:#111;background:var(--el)}
+.chip.psychic{--el:var(--el-psychic)}.chip.dark{--el:var(--el-dark);color:#eee}.chip.fire{--el:var(--el-fire)}.chip.water{--el:var(--el-water)}.chip.plant{--el:var(--el-plant)}.chip.ice{--el:var(--el-ice)}.chip.rock{--el:var(--el-rock)}.chip.light{--el:var(--el-light)}.chip.chemical{--el:var(--el-chemical)}
+
+/* HOME */
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:start;margin-bottom:28px}
+.hero p{color:var(--ink-2);font-size:16px;max-width:58ch;margin:0 0 14px}
+.hero .actions{display:flex;gap:10px}
+.dest{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.dest a{display:block;padding:14px;min-height:118px}
+.dest .legend{font-size:14px;color:var(--ink);font-weight:600;display:block;margin-bottom:6px}
+.dest small{color:var(--ink-2);font-size:13px;line-height:1.4;display:block}
+.status{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+.status .glass{padding:12px 14px}
+.status .k{font-size:11px;color:var(--ink-3)}
+.status .v{font-size:22px;color:var(--ink);margin-top:2px}
+
+/* RECORD */
+.record{display:grid;grid-template-columns:300px 1fr;gap:0}
+.record .plate{margin:14px;aspect-ratio:1;clip-path:var(--pc);display:grid;place-items:center;background:linear-gradient(160deg,color-mix(in srgb,var(--el-psychic) 85%,black) ,color-mix(in srgb,var(--el-dark) 85%,black));box-shadow:inset 0 0 0 1px rgba(0,0,0,.5)}
+.record .plate svg{width:62%;fill:#0f0d10}
+.record .ident{padding:16px 16px 0}
+.record .name{font-family:var(--f-legend);font-weight:600;text-transform:uppercase;font-size:28px;line-height:1;margin:0 0 8px}
+.record .chips{display:flex;gap:6px;margin-bottom:10px}
+.specs{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:6px 16px;padding:14px 16px;font-size:13.5px;border-top:1px solid var(--edge)}
+.specs .k{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-size:11.5px;color:var(--ink-3);padding-top:2px}
+.specs .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.desc{padding:0 16px 14px;color:var(--ink-2);font-size:14px;max-width:60ch}
+.readouts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.meter{display:grid;grid-template-columns:110px 1fr 44px;gap:10px;align-items:center;font-size:12px;padding:4px 0}
+.meter .k{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.06em;font-size:11px;color:var(--ink-2)}
+.meter .track{height:8px;background:rgba(255,255,255,.06);border-radius:0;overflow:hidden}
+.meter .fill{height:100%;background:var(--c)}
+.meter .n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.moves .mv{display:grid;grid-template-columns:28px 1fr;gap:10px;padding:10px 14px;border-top:1px solid var(--edge)}
+.moves .mv:first-of-type{border-top:0}
+.moves .r{font-family:var(--f-mono);color:var(--ink-3)}
+.moves .t{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.06em;font-weight:600;font-size:14px}
+.moves .d{color:var(--ink-2);font-size:13px}
+.keys{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}
+
+/* ARCHIVE */
+.tabs{display:flex;gap:2px;margin-bottom:18px}
+.tabs a{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-size:13px;padding:8px 14px;background:var(--s1);border:1px solid var(--edge);color:var(--ink-2)}
+.tabs a.on{color:var(--ink);border-bottom:2px solid var(--accent)}
+.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.tile{padding:0;overflow:hidden}
+.tile .art{aspect-ratio:1;display:grid;place-items:center;background:color-mix(in srgb,var(--el) 78%,black)}
+.tile .art svg{width:60%;fill:#0e0d0f}
+.tile .m{padding:10px 12px}
+.tile .n{font-family:var(--f-legend);text-transform:uppercase;font-weight:600;font-size:14px;letter-spacing:.04em}
+.tile .w{font-family:var(--f-mono);font-size:11px;color:var(--ink-3);margin-top:2px}
+.tile .tab{height:3px;background:var(--el)}
+.featured{display:grid;grid-template-columns:1.2fr .8fr;gap:12px;margin-top:12px}
+.map{padding:14px}
+.map .chart{height:220px;position:relative;background:var(--glass-edge);clip-path:var(--pc)}
+.map .chart::before{content:"";position:absolute;inset:1px;clip-path:var(--pc);background:radial-gradient(ellipse at 50% 50%,rgba(255,255,255,.04),transparent 70%),var(--glass)}
+.map .chart i{position:absolute;width:10px;height:10px;border-radius:50%;background:var(--c);box-shadow:0 0 0 3px rgba(0,0,0,.6)}
+.map .chart b{position:absolute;font-family:var(--f-legend);font-size:10px;letter-spacing:.1em;color:var(--ink-2);text-transform:uppercase}
+.map .chart .orb{position:absolute;border:1px solid rgba(217,210,192,.12);border-radius:50%}
+.excerpt{padding:14px}
+.excerpt .q{font-size:14.5px;color:var(--ink);line-height:1.6}
+.excerpt .src{font-family:var(--f-mono);font-size:11px;color:var(--ink-3);margin-top:10px}
+
+/* FORM */
+.form{display:grid;grid-template-columns:1fr 340px;gap:12px}
+.row{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-top:1px solid var(--edge)}
+.row:first-child{border-top:0}
+.row .k{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-size:12.5px;color:var(--ink-2)}
+.seg{display:flex}
+.seg span{font-family:var(--f-legend);font-size:13px;padding:6px 12px;border:1px solid var(--edge);background:var(--s2);color:var(--ink-2);margin-left:-1px}
+.seg span.on{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.tog{width:36px;height:20px;border-radius:10px;background:var(--s2);border:1px solid var(--edge);position:relative}
+.tog::after{content:"";position:absolute;top:2px;left:17px;width:14px;height:14px;border-radius:50%;background:var(--accent)}
+.summary{padding:14px 16px}
+.summary .line{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:13px;padding:5px 0;color:var(--ink-2)}
+.summary .line b{color:var(--ink);font-weight:500}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px}
+.compare div{padding:12px 14px;border:1px solid var(--edge);border-radius:var(--r);font-size:14px}
+.compare b{display:block;font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-size:12px;color:var(--ink-3);margin-bottom:6px}
+
+/* brand lockup */
+.brand{display:flex;align-items:center;gap:10px;color:var(--accent-hi);text-transform:uppercase;font-family:var(--f-brand);font-size:22px;letter-spacing:.04em;line-height:1}
+.brand .hx{height:28px;display:block;overflow:visible}
+.brand .strand{fill:none;stroke:var(--accent-hi);stroke-width:5px;stroke-linejoin:round}
+.brand .rung{stroke:var(--accent-hi);stroke-width:9px;stroke-linecap:round}
+.brand.big{font-size:64px;gap:22px;margin-bottom:18px}
+.brand.big .hx{height:84px}
+.screen[data-brand="iceland"]{--f-brand:'Iceland',sans-serif}
+.screen[data-brand="anta"]{--f-brand:'Anta',sans-serif}
+.screen[data-brand="anta"] .brand{letter-spacing:.06em;font-size:20px}
+.screen[data-brand="anta"] .brand.big{font-size:56px}
+</style>
+
+<div class="note">
+  <h2 style="margin-top:8px">Site chrome, proposed (square, with the chamfer for emphasis)</h2>
+  <p>One design system for everything that is not a game in progress. Same room, same type, same frame we already have, with the terminal props removed: no tape, screws, hinges, clips, stamps, nameplates, fake readouts or in-world button copy. One neutral surface family, one accent, glass only where the content is live data, and the element hues as the only saturated color. Corners are square everywhere; the twelve pixel chamfer is reserved for the glass tier and the one primary key on a screen, so the cut marks what is live and what is next. Below: the navbar and home, a generator record, the encyclopedia with one featured component, and a settings form, all in the same system.</p>
+</div>
+
+<!-- HOME -->
+<div class="note"><h2>Wordmark in place: Iceland</h2><p>Helix plus the word in Iceland, in the navbar at 22 pixels and on the home fold at 64. The helix is what the X morphs into on arrival.</p></div>
+<div class="frame"><div class="screen" data-brand="iceland">
+  <nav class="nav">
+    <a class="brand"><svg class="hx" viewBox="-6 -6 144 173" aria-hidden="true"><g transform="translate(758.03 -766.78)"><path class="strand" d="M-653.6,842.22c-1.65-1.59-12.81-6.83-17.46-9,23.9-17.4,17.56-64.41,17.56-64.41H-628C-628,807.81-640.29,829.71-653.6,842.22Z"/><path class="strand" d="M-732.58,856.85a50.41,50.41,0,0,0,16.92,7.91C-731.89,883-730.5,926-730.5,926H-756S-750.6,883.43-732.58,856.85Z"/><path class="strand" d="M-730.5,768.78C-741.25,880.57-643,790.18-628,926H-653.5c-9-115.36-102-19.15-102.53-157.22Z"/><path class="rung" d="M-722,777.85h38.87"/><path class="rung" d="M-671,777.85h8.39"/></g><line class="rung" x1="37.16" y1="29.9" x2="93.65" y2="29.9"/><line class="rung" x1="45.18" y1="48.73" x2="86.61" y2="48.73"/><line class="rung" x1="45.22" y1="115.28" x2="78.03" y2="115.28"/><g transform="translate(758.03 -766.78)"><path class="rung" d="M-716.83,900.89H-709"/><path class="rung" d="M-697,900.89h26.41"/></g><line class="rung" x1="39.41" y1="152.87" x2="91.03" y2="153.01"/></svg><span>Xalians</span></a>
+    <div class="links"><a class="on">Home</a><a>Encyclopedia</a><a>Generator</a><a>Duel</a><a>Reclamation</a><a>Training</a></div>
+    <div class="right"><a class="btn quiet">Sign in</a><a class="btn">Create account</a></div>
+  </nav>
+  <div class="page">
+    <div class="hero">
+      <div>
+        <div class="brand big"><svg class="hx" viewBox="-6 -6 144 173" aria-hidden="true"><g transform="translate(758.03 -766.78)"><path class="strand" d="M-653.6,842.22c-1.65-1.59-12.81-6.83-17.46-9,23.9-17.4,17.56-64.41,17.56-64.41H-628C-628,807.81-640.29,829.71-653.6,842.22Z"/><path class="strand" d="M-732.58,856.85a50.41,50.41,0,0,0,16.92,7.91C-731.89,883-730.5,926-730.5,926H-756S-750.6,883.43-732.58,856.85Z"/><path class="strand" d="M-730.5,768.78C-741.25,880.57-643,790.18-628,926H-653.5c-9-115.36-102-19.15-102.53-157.22Z"/><path class="rung" d="M-722,777.85h38.87"/><path class="rung" d="M-671,777.85h8.39"/></g><line class="rung" x1="37.16" y1="29.9" x2="93.65" y2="29.9"/><line class="rung" x1="45.18" y1="48.73" x2="86.61" y2="48.73"/><line class="rung" x1="45.22" y1="115.28" x2="78.03" y2="115.28"/><g transform="translate(758.03 -766.78)"><path class="rung" d="M-716.83,900.89H-709"/><path class="rung" d="M-697,900.89h26.41"/></g><line class="rung" x1="39.41" y1="152.87" x2="91.03" y2="153.01"/></svg><span>Xalians</span></div>
+        <div class="kicker">Xalia</div>
+        <h1 class="title">Creatures grown for<br>dying worlds</h1>
+        <p class="sub" style="margin-top:14px">Xalians are bioengineered creatures the Vallerii Generators grow to survive the worst planets in the galaxy, no two genomes alike. King Kozrak's Mercurius Machine prints the Scrambler Tokens that make new ones, and pays them out to the winners of his arena tournaments.</p>
+        <div class="actions"><a class="btn primary">Generate a Xalian</a><a class="btn">Read the story</a></div>
+      </div>
+      <div class="status">
+        <div class="glass"><div class="k legend">Species on file</div><div class="v mono">29</div></div>
+        <div class="glass"><div class="k legend">Worlds surveyed</div><div class="v mono">14</div></div>
+        <div class="glass"><div class="k legend">Your Xalians</div><div class="v mono">0</div></div>
+      </div>
+    </div>
+    <div class="dest">
+      <a class="card"><span class="legend">Generator</span><small>Print a new Xalian from a Scrambler Token and keep it to your account.</small></a>
+      <a class="card"><span class="legend">Encyclopedia</span><small>Every world, species, power and event on file, read as one story or by entry.</small></a>
+      <a class="card"><span class="legend">Duel</span><small>Squad tactics on an 8 by 8 board. Capture the flag or eliminate the team.</small></a>
+      <a class="card"><span class="legend">Reclamation</span><small>Send creatures into three worlds a round and hold more of them than your rival.</small></a>
+      <a class="card"><span class="legend">Training</span><small>Short games to learn the pieces before the arena.</small></a>
+    </div>
+  </div>
+</div></div>
+
+<!-- HOME (Anta) -->
+<div class="note"><h2>Wordmark in place: Anta</h2><p>Same page, same sizes, the word in Anta.</p></div>
+<div class="frame"><div class="screen" data-brand="anta">
+  <nav class="nav">
+    <a class="brand"><svg class="hx" viewBox="-6 -6 144 173" aria-hidden="true"><g transform="translate(758.03 -766.78)"><path class="strand" d="M-653.6,842.22c-1.65-1.59-12.81-6.83-17.46-9,23.9-17.4,17.56-64.41,17.56-64.41H-628C-628,807.81-640.29,829.71-653.6,842.22Z"/><path class="strand" d="M-732.58,856.85a50.41,50.41,0,0,0,16.92,7.91C-731.89,883-730.5,926-730.5,926H-756S-750.6,883.43-732.58,856.85Z"/><path class="strand" d="M-730.5,768.78C-741.25,880.57-643,790.18-628,926H-653.5c-9-115.36-102-19.15-102.53-157.22Z"/><path class="rung" d="M-722,777.85h38.87"/><path class="rung" d="M-671,777.85h8.39"/></g><line class="rung" x1="37.16" y1="29.9" x2="93.65" y2="29.9"/><line class="rung" x1="45.18" y1="48.73" x2="86.61" y2="48.73"/><line class="rung" x1="45.22" y1="115.28" x2="78.03" y2="115.28"/><g transform="translate(758.03 -766.78)"><path class="rung" d="M-716.83,900.89H-709"/><path class="rung" d="M-697,900.89h26.41"/></g><line class="rung" x1="39.41" y1="152.87" x2="91.03" y2="153.01"/></svg><span>Xalians</span></a>
+    <div class="links"><a class="on">Home</a><a>Encyclopedia</a><a>Generator</a><a>Duel</a><a>Reclamation</a><a>Training</a></div>
+    <div class="right"><a class="btn quiet">Sign in</a><a class="btn">Create account</a></div>
+  </nav>
+  <div class="page">
+    <div class="hero">
+      <div>
+        <div class="brand big"><svg class="hx" viewBox="-6 -6 144 173" aria-hidden="true"><g transform="translate(758.03 -766.78)"><path class="strand" d="M-653.6,842.22c-1.65-1.59-12.81-6.83-17.46-9,23.9-17.4,17.56-64.41,17.56-64.41H-628C-628,807.81-640.29,829.71-653.6,842.22Z"/><path class="strand" d="M-732.58,856.85a50.41,50.41,0,0,0,16.92,7.91C-731.89,883-730.5,926-730.5,926H-756S-750.6,883.43-732.58,856.85Z"/><path class="strand" d="M-730.5,768.78C-741.25,880.57-643,790.18-628,926H-653.5c-9-115.36-102-19.15-102.53-157.22Z"/><path class="rung" d="M-722,777.85h38.87"/><path class="rung" d="M-671,777.85h8.39"/></g><line class="rung" x1="37.16" y1="29.9" x2="93.65" y2="29.9"/><line class="rung" x1="45.18" y1="48.73" x2="86.61" y2="48.73"/><line class="rung" x1="45.22" y1="115.28" x2="78.03" y2="115.28"/><g transform="translate(758.03 -766.78)"><path class="rung" d="M-716.83,900.89H-709"/><path class="rung" d="M-697,900.89h26.41"/></g><line class="rung" x1="39.41" y1="152.87" x2="91.03" y2="153.01"/></svg><span>Xalians</span></div>
+        <div class="kicker">Xalia</div>
+        <h1 class="title">Creatures grown for<br>dying worlds</h1>
+        <p class="sub" style="margin-top:14px">Xalians are bioengineered creatures the Vallerii Generators grow to survive the worst planets in the galaxy, no two genomes alike. King Kozrak's Mercurius Machine prints the Scrambler Tokens that make new ones, and pays them out to the winners of his arena tournaments.</p>
+        <div class="actions"><a class="btn primary">Generate a Xalian</a><a class="btn">Read the story</a></div>
+      </div>
+      <div class="status">
+        <div class="glass"><div class="k legend">Species on file</div><div class="v mono">29</div></div>
+        <div class="glass"><div class="k legend">Worlds surveyed</div><div class="v mono">14</div></div>
+        <div class="glass"><div class="k legend">Your Xalians</div><div class="v mono">0</div></div>
+      </div>
+    </div>
+    <div class="dest">
+      <a class="card"><span class="legend">Generator</span><small>Print a new Xalian from a Scrambler Token and keep it to your account.</small></a>
+      <a class="card"><span class="legend">Encyclopedia</span><small>Every world, species, power and event on file, read as one story or by entry.</small></a>
+      <a class="card"><span class="legend">Duel</span><small>Squad tactics on an 8 by 8 board. Capture the flag or eliminate the team.</small></a>
+      <a class="card"><span class="legend">Reclamation</span><small>Send creatures into three worlds a round and hold more of them than your rival.</small></a>
+      <a class="card"><span class="legend">Training</span><small>Short games to learn the pieces before the arena.</small></a>
+    </div>
+  </div>
+</div></div>
+
+<div class="note"><h2>Generator</h2><p>Chrome page. The record is live data, so it sits on glass; everything around it is matte surface. No case, no VFD, no asset plate. The element wash on the plate and the chips are the only color.</p></div>
+
+<div class="frame"><div class="screen" data-brand="iceland">
+  <nav class="nav"><a class="brand"><svg class="hx" viewBox="-6 -6 144 173" aria-hidden="true"><g transform="translate(758.03 -766.78)"><path class="strand" d="M-653.6,842.22c-1.65-1.59-12.81-6.83-17.46-9,23.9-17.4,17.56-64.41,17.56-64.41H-628C-628,807.81-640.29,829.71-653.6,842.22Z"/><path class="strand" d="M-732.58,856.85a50.41,50.41,0,0,0,16.92,7.91C-731.89,883-730.5,926-730.5,926H-756S-750.6,883.43-732.58,856.85Z"/><path class="strand" d="M-730.5,768.78C-741.25,880.57-643,790.18-628,926H-653.5c-9-115.36-102-19.15-102.53-157.22Z"/><path class="rung" d="M-722,777.85h38.87"/><path class="rung" d="M-671,777.85h8.39"/></g><line class="rung" x1="37.16" y1="29.9" x2="93.65" y2="29.9"/><line class="rung" x1="45.18" y1="48.73" x2="86.61" y2="48.73"/><line class="rung" x1="45.22" y1="115.28" x2="78.03" y2="115.28"/><g transform="translate(758.03 -766.78)"><path class="rung" d="M-716.83,900.89H-709"/><path class="rung" d="M-697,900.89h26.41"/></g><line class="rung" x1="39.41" y1="152.87" x2="91.03" y2="153.01"/></svg><span>Xalians</span></a><div class="links"><a>Home</a><a>Encyclopedia</a><a class="on">Generator</a><a>Duel</a><a>Reclamation</a><a>Training</a></div><div class="right"><a class="btn quiet">Sign in</a><a class="btn">Create account</a></div></nav>
+  <div class="page">
+    <div class="masthead"><div><div class="kicker">Generator</div><h1 class="title">Hypnopet</h1></div><div class="keys" style="margin:0"><a class="btn">Sign in to keep</a><a class="btn primary">Generate another</a></div></div>
+    <div class="glass record">
+      <div class="plate"><svg viewBox="0 0 100 100"><circle cx="50" cy="48" r="26"/><circle cx="30" cy="20" r="9"/><circle cx="70" cy="20" r="9"/><rect x="34" y="70" width="32" height="18" rx="6"/></svg></div>
+      <div>
+        <div class="ident">
+          <div class="chips"><span class="chip psychic">Psychic</span><span class="chip dark">Dark</span><span class="mono" style="margin-left:auto;color:var(--ink-3);font-size:12px">#00015</span></div>
+          <p class="desc" style="padding:0;margin:0 0 12px">Created by the Telypso Generator as a therapy animal for the insane Vallerii imprisoned on that world. Docile, and reads intent.</p>
+        </div>
+        <div class="specs">
+          <span class="k">Origin</span><span class="v">Telypso</span><span class="k">Generation</span><span class="v">0</span>
+          <span class="k">Height</span><span class="v">93 in / 236 cm</span><span class="k">Weight</span><span class="v">830 lbs / 376 kg</span>
+          <span class="k">Stat score</span><span class="v">1,204</span><span class="k">Potential</span><span class="v">1,410</span>
+        </div>
+      </div>
+    </div>
+    <div class="readouts">
+      <div class="card"><div class="head"><span class="legend">Stats</span><span class="legend" style="color:var(--ink-3)">current / potential</span></div>
+        <div style="padding:10px 14px">
+          <div class="meter"><span class="k">Std attack</span><div class="track"><div class="fill" style="width:74%;--c:#a84032"></div></div><span class="n">741</span></div>
+          <div class="meter"><span class="k">Spc attack</span><div class="track"><div class="fill" style="width:24%;--c:#753027"></div></div><span class="n">236</span></div>
+          <div class="meter"><span class="k">Std defense</span><div class="track"><div class="fill" style="width:50%;--c:#535dc2"></div></div><span class="n">503</span></div>
+          <div class="meter"><span class="k">Spc defense</span><div class="track"><div class="fill" style="width:45%;--c:#494f8c"></div></div><span class="n">454</span></div>
+          <div class="meter"><span class="k">Speed</span><div class="track"><div class="fill" style="width:65%;--c:#d0d466"></div></div><span class="n">651</span></div>
+          <div class="meter"><span class="k">Stamina</span><div class="track"><div class="fill" style="width:58%;--c:#4bbf4e"></div></div><span class="n">582</span></div>
+        </div>
+      </div>
+      <div class="card moves"><div class="head"><span class="legend">Moves</span><span class="legend" style="color:var(--ink-3)">rating</span></div>
+        <div class="mv"><span class="r">12</span><div><div class="t">Glacial Slash</div><div class="d">Ice. A sweeping cut made with a sharp instrument.</div></div></div>
+        <div class="mv"><span class="r">7</span><div><div class="t">Corrosive Impact</div><div class="d">Chemical. A violent collision that eats what it hits.</div></div></div>
+        <div class="mv"><span class="r">8</span><div><div class="t">Mighty Pinch</div><div class="d">Untyped. Force applied between two points.</div></div></div>
+        <div class="mv"><span class="r">9</span><div><div class="t">Poisonous Kick</div><div class="d">Chemical. Quick strike with a toxic edge.</div></div></div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<div class="note"><h2>Encyclopedia, with one featured component</h2><p>Chrome page. The tiles are plain surfaces with an element wash and a hairline element tab. The middle tier lives here: the galaxy map is a <b>featured component</b>, richer than the chrome around it but built from the same tokens and typefaces, so it reads as the encyclopedia's own instrument rather than a different site.</p></div>
+
+<div class="frame"><div class="screen" data-brand="iceland">
+  <nav class="nav"><a class="brand"><svg class="hx" viewBox="-6 -6 144 173" aria-hidden="true"><g transform="translate(758.03 -766.78)"><path class="strand" d="M-653.6,842.22c-1.65-1.59-12.81-6.83-17.46-9,23.9-17.4,17.56-64.41,17.56-64.41H-628C-628,807.81-640.29,829.71-653.6,842.22Z"/><path class="strand" d="M-732.58,856.85a50.41,50.41,0,0,0,16.92,7.91C-731.89,883-730.5,926-730.5,926H-756S-750.6,883.43-732.58,856.85Z"/><path class="strand" d="M-730.5,768.78C-741.25,880.57-643,790.18-628,926H-653.5c-9-115.36-102-19.15-102.53-157.22Z"/><path class="rung" d="M-722,777.85h38.87"/><path class="rung" d="M-671,777.85h8.39"/></g><line class="rung" x1="37.16" y1="29.9" x2="93.65" y2="29.9"/><line class="rung" x1="45.18" y1="48.73" x2="86.61" y2="48.73"/><line class="rung" x1="45.22" y1="115.28" x2="78.03" y2="115.28"/><g transform="translate(758.03 -766.78)"><path class="rung" d="M-716.83,900.89H-709"/><path class="rung" d="M-697,900.89h26.41"/></g><line class="rung" x1="39.41" y1="152.87" x2="91.03" y2="153.01"/></svg><span>Xalians</span></a><div class="links"><a>Home</a><a class="on">Encyclopedia</a><a>Generator</a><a>Duel</a><a>Reclamation</a><a>Training</a></div><div class="right"><a class="btn quiet">Sign in</a><a class="btn">Create account</a></div></nav>
+  <div class="page">
+    <div class="masthead"><div><div class="kicker">Encyclopedia</div><h1 class="title">Bestiary</h1><p class="sub">29 species, 14 worlds.</p></div><div class="keys" style="margin:0"><input class="btn" style="width:260px;text-align:left;text-transform:none;letter-spacing:0;font-family:var(--f-body);color:var(--ink-3)" value="Search worlds, species, terms"></div></div>
+    <div class="tabs"><a>Reading room</a><a>The story</a><a>Worlds</a><a class="on">Bestiary</a><a>Powers</a><a>Index</a></div>
+    <div class="grid">
+      <a class="card tile" style="--el:var(--el-ice)"><div class="tab"></div><div class="art"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="28"/></svg></div><div class="m"><div class="n">Akinza</div><div class="w">Krystos</div></div></a>
+      <a class="card tile" style="--el:var(--el-plant)"><div class="tab"></div><div class="art"><svg viewBox="0 0 100 100"><rect x="25" y="25" width="50" height="50" rx="8"/></svg></div><div class="m"><div class="n">Avilily</div><div class="w">Floria</div></div></a>
+      <a class="card tile" style="--el:var(--el-chemical)"><div class="tab"></div><div class="art"><svg viewBox="0 0 100 100"><polygon points="50,20 80,80 20,80"/></svg></div><div class="m"><div class="n">Bioflim</div><div class="w">Drainov</div></div></a>
+      <a class="card tile" style="--el:var(--el-light)"><div class="tab"></div><div class="art"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="28"/></svg></div><div class="m"><div class="n">Chromocat</div><div class="w">Luminax</div></div></a>
+      <a class="card tile" style="--el:var(--el-rock)"><div class="tab"></div><div class="art"><svg viewBox="0 0 100 100"><rect x="25" y="25" width="50" height="50" rx="8"/></svg></div><div class="m"><div class="n">Codazzo</div><div class="w">Stonera</div></div></a>
+      <a class="card tile" style="--el:var(--el-fire)"><div class="tab"></div><div class="art"><svg viewBox="0 0 100 100"><polygon points="50,20 80,80 20,80"/></svg></div><div class="m"><div class="n">Dromeus</div><div class="w">Magmuth</div></div></a>
+    </div>
+    <div class="featured">
+      <div class="card map"><div class="head" style="padding:0 0 10px;border:0"><span class="legend">Galaxy of Xalia</span><span class="legend" style="color:var(--ink-3)">featured component</span></div>
+        <div class="chart">
+          <span class="orb" style="left:20%;top:12%;width:60%;height:76%"></span><span class="orb" style="left:33%;top:30%;width:34%;height:40%"></span>
+          <i style="left:49%;top:47%;--c:var(--el-psychic)"></i><b style="left:46%;top:57%">Telypso</b>
+          <i style="left:70%;top:20%;--c:var(--el-fire)"></i><b style="left:67%;top:30%">Magmuth</b>
+          <i style="left:28%;top:26%;--c:var(--el-water)"></i><b style="left:24%;top:36%">Poseidas</b>
+          <i style="left:18%;top:70%;--c:var(--el-rock)"></i><b style="left:15%;top:80%">Stonera</b>
+          <i style="left:78%;top:66%;--c:var(--el-light)"></i><b style="left:75%;top:76%">Luminax</b>
+          <i style="left:55%;top:78%;--c:var(--el-plant)"></i><b style="left:52%;top:88%">Floria</b>
+        </div>
+      </div>
+      <div class="card excerpt"><div class="head" style="padding:0 0 10px;border:0"><span class="legend">From the story</span><span class="legend" style="color:var(--ink-3)">The Age of Unbirth</span></div>
+        <div class="q">The Cherenkov radiation that made the Tachyon Drive possible was also what ended the Vallerii. Within three generations the birth rate was gone. The Generators were not built to make companions. They were built to make a workforce.</div>
+        <div class="src">chronicle · era 03 · paragraph 2</div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<div class="note"><h2>Duel setup</h2><p>Chrome page. Setup is a form; the board you enter afterward is the immersive experience and gets its own design. The summary on the right is live data, so it is glass.</p></div>
+
+<div class="frame"><div class="screen" data-brand="iceland">
+  <nav class="nav"><a class="brand"><svg class="hx" viewBox="-6 -6 144 173" aria-hidden="true"><g transform="translate(758.03 -766.78)"><path class="strand" d="M-653.6,842.22c-1.65-1.59-12.81-6.83-17.46-9,23.9-17.4,17.56-64.41,17.56-64.41H-628C-628,807.81-640.29,829.71-653.6,842.22Z"/><path class="strand" d="M-732.58,856.85a50.41,50.41,0,0,0,16.92,7.91C-731.89,883-730.5,926-730.5,926H-756S-750.6,883.43-732.58,856.85Z"/><path class="strand" d="M-730.5,768.78C-741.25,880.57-643,790.18-628,926H-653.5c-9-115.36-102-19.15-102.53-157.22Z"/><path class="rung" d="M-722,777.85h38.87"/><path class="rung" d="M-671,777.85h8.39"/></g><line class="rung" x1="37.16" y1="29.9" x2="93.65" y2="29.9"/><line class="rung" x1="45.18" y1="48.73" x2="86.61" y2="48.73"/><line class="rung" x1="45.22" y1="115.28" x2="78.03" y2="115.28"/><g transform="translate(758.03 -766.78)"><path class="rung" d="M-716.83,900.89H-709"/><path class="rung" d="M-697,900.89h26.41"/></g><line class="rung" x1="39.41" y1="152.87" x2="91.03" y2="153.01"/></svg><span>Xalians</span></a><div class="links"><a>Home</a><a>Encyclopedia</a><a>Generator</a><a class="on">Duel</a><a>Reclamation</a><a>Training</a></div><div class="right"><a class="btn quiet">Sign in</a><a class="btn">Create account</a></div></nav>
+  <div class="page">
+    <div class="masthead"><div><div class="kicker">Duel</div><h1 class="title">New match</h1></div><div class="keys" style="margin:0"><a class="btn">How to play</a><a class="btn primary">Start match</a></div></div>
+    <div class="form">
+      <div class="card">
+        <div class="row"><span class="k">Opponent</span><div class="seg"><span class="on">Bot</span><span>Second player</span></div></div>
+        <div class="row"><span class="k">Team size</span><div class="seg"><span>2</span><span>3</span><span class="on">4</span><span>5</span><span>6</span></div></div>
+        <div class="row"><span class="k">Randomize start positions</span><span class="tog"></span></div>
+        <div class="row"><span class="k">Squad</span><span style="color:var(--ink-2);font-size:14px">Sign in to pick from your Xalians</span></div>
+      </div>
+      <div class="glass summary">
+        <div class="legend" style="font-size:12px;color:var(--ink-2);margin-bottom:8px">Match</div>
+        <div class="line"><span>Opponent</span><b>Bot</b></div>
+        <div class="line"><span>Team size</span><b>4 v 4</b></div>
+        <div class="line"><span>Start positions</span><b>Randomized</b></div>
+        <div class="line"><span>Squad</span><b>not set</b></div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<div class="note">
+  <h2>The three tiers</h2>
+  <div class="compare">
+    <div><b>Site chrome</b>Everything that reads, browses, configures or manages: navigation, home, account, encyclopedia, generator, every lobby and setup and results screen. One system, as above. Quiet, coherent, daily.</div>
+    <div><b>Featured components</b>Richer pieces built inside the chrome from the same tokens and type: the galaxy map, a species plate with its element wash, a story reader, a stat chart. They give an area character without changing the site.</div>
+    <div><b>Immersive experiences</b>A game in progress: the duel board, the Reclamation match, the training minigames, Long Return. Entered deliberately, may replace the chrome, keeps the core (type scale, element hues, stat semantics, contrast floor), and always has a way back out.</div>
+    <div><b>What leaves</b>Terminal objects and their props, fake readouts, in-world button copy, per-area typefaces, per-area accents. The world lives in the content. The interface stays quiet so the content can be loud.</div>
+  </div>
+</div>

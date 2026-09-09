@@ -1,0 +1,564 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Xalians Foundations</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600&family=IBM+Plex+Mono:wght@400;500&family=Saira:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&family=Martian+Mono:wght@400;500&family=Big+Shoulders+Display:wght@600;700;800&family=Familjen+Grotesk:wght@400;500;600&family=Azeret+Mono:wght@400;500&family=Tektur:wght@500;600;700&family=Sora:wght@400;500&family=Space+Mono:wght@400;700&family=Michroma&family=Allerta+Stencil&family=Anta&family=Audiowide&family=Big+Shoulders+Stencil:wght@700&family=Bruno+Ace&family=Chakra+Petch:wght@700&family=Electrolize&family=Expletus+Sans&family=Genos:wght@700&family=Geo&family=Goldman&family=Iceberg&family=Iceland&family=Keania+One&family=Megrim&family=Michroma&family=Nova+Cut&family=Nova+Square&family=Offside&family=Oxanium:wght@700&family=Quantico:wght@700&family=Rationale&family=Saira:wght@700&family=Sarpanch&family=Sirin+Stencil&family=Stalinist+One&family=Syncopate&family=Tourney:wght@700&family=Turret+Road:wght@700&family=Unica+One&family=Wallpoet&family=Zen+Dots&family=Saira+Stencil+One&family=Orbitron:wght@600;700&family=Exo+2:wght@700;800&family=Oxanium:wght@600;700&family=Audiowide&family=Quantico:wght@700&family=Syncopate:wght@700&display=swap">
+<style>
+:root{
+  color-scheme:dark;
+  /* room + surfaces (kept from the chrome mockup) */
+  --room:#121110; --s0:#191816; --s1:#201f1c; --s2:#282723; --s3:#31302b;
+  --edge:rgba(217,210,192,.10); --edge-hi:rgba(255,244,214,.07); --edge-strong:rgba(217,210,192,.22);
+  --glass:#0e100f; --glass-edge:rgba(217,210,192,.14);
+  /* ink */
+  --ink:#d9d2c0; --ink-2:#9a9382; --ink-3:#6c6659; --ink-4:#4a4640;
+  /* accent: the viable signal. Three tiers of one hue. */
+  --viable-hi:#86ffb5;            /* the logo. emitter tier: small, live, on dark only */
+  --viable:#4fc98d;               /* fill tier: primary button, selected segment, toggle */
+  --viable-lo:#2f8f63;            /* pressed, borders, hover on lo surfaces */
+  --viable-tint:rgba(134,255,181,.10);
+  --viable-ink:#08150e;           /* text on a viable fill */
+  /* semantic */
+  --plague:#b5566c; --plague-tint:rgba(181,86,108,.14); --plague-ink:#fff1f3;
+  --caution:#cfa54a; --caution-tint:rgba(207,165,74,.14);
+  --neutral-status:#8a97a6;
+  --focus:var(--viable-hi);
+  /* elements (fixed points, unchanged) */
+  --el-fire:#e5735f;--el-sand:#dba873;--el-electric:#e9c93a;--el-rock:#a98a6a;--el-plant:#83a44b;--el-chemical:#58c3ba;--el-ice:#8fd6ee;--el-water:#6a9fd8;--el-air:#d8e6ee;--el-light:#f5ec9a;--el-dark:#7378c4;--el-ghost:#a886cf;--el-psychic:#dc9fd2;--el-metal:#a4a8ad;
+  --o-fire:#df6d5e;--o-sand:#e6b26f;--o-electric:#e2bd43;--o-rock:#8d7050;--o-plant:#708844;--o-chemical:#64bd9f;--o-ice:#85dde4;--o-water:#60a0c5;--o-air:#ffffff;--o-light:#ffffc7;--o-dark:#57619c;--o-ghost:#8764a8;--o-psychic:#d39bcb;--o-metal:#8d8d8d;
+  /* type */
+  --f-legend:'Saira','Barlow Condensed',Impact,sans-serif; --f-body:'Atkinson Hyperlegible','Barlow',system-ui,sans-serif; --f-mono:'Martian Mono','IBM Plex Mono',ui-monospace,Menlo,monospace;
+  --t-1:11.5px;--t-2:13.5px;--t-3:15px;--t-4:17px;--t-5:19px;--t-6:24px;--t-7:32px;--t-8:40px;
+  /* space 4pt */
+  --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--sp-7:48px;--sp-8:64px;
+  --r-1:3px;--r-2:6px;--r-full:999px;
+  --dur-1:120ms;--dur-2:200ms;--dur-3:320ms;--ease-out:cubic-bezier(.2,.7,.2,1);--ease-in:cubic-bezier(.6,0,.8,.4);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--room);color:var(--ink);font-family:var(--f-body);font-size:var(--t-3);line-height:1.5}
+a{color:inherit;text-decoration:none}
+.legend{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.06em;font-weight:500}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+.note{color:var(--ink-2);font-size:14px;max-width:70ch}
+.note b{color:var(--ink)}
+h2.sec{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.06em;font-weight:600;color:var(--ink);font-size:var(--t-5);margin:56px 0 6px;display:flex;align-items:baseline;gap:14px}
+h2.sec small{font-family:var(--f-mono);text-transform:none;letter-spacing:0;font-weight:400;color:var(--ink-3);font-size:12px}
+h3.sub{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-weight:500;color:var(--ink-2);font-size:13px;margin:26px 0 10px}
+.screen{border:1px solid var(--edge);border-radius:var(--r-2);overflow:hidden;background:var(--room);box-shadow:0 20px 50px rgba(0,0,0,.45);margin-top:16px}
+
+/* hero */
+.hero{padding:56px 0 8px;display:grid;grid-template-columns:1fr 380px;gap:40px;align-items:end}
+.hero .kicker{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.14em;font-size:12px;color:var(--viable);margin-bottom:10px}
+.hero h1{font-family:var(--f-legend);font-weight:600;text-transform:uppercase;font-size:var(--t-8);line-height:.95;margin:0 0 14px;letter-spacing:.01em;text-wrap:balance}
+.hero p{color:var(--ink-2);font-size:16px;max-width:60ch;margin:0}
+.marks{display:grid;grid-template-columns:1fr auto;gap:22px;align-items:center;padding:22px 24px;background:var(--s0);border:1px solid var(--edge);border-radius:var(--r-2)}
+.marks svg{display:block;width:100%;height:auto;overflow:visible}
+.marks .word path{fill:var(--viable-hi);stroke:var(--room)!important;stroke-width:5px!important}
+.marks .helix{width:56px}
+.marks .helix path,.marks .helix line{fill:none;stroke:var(--viable-hi)!important}
+.marks .helix path[id*="x-"]{fill:var(--viable-hi)}
+.marks .cap{grid-column:1/-1;font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
+
+/* swatches */
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.tier{border:1px solid var(--edge);border-radius:var(--r-2);overflow:hidden;background:var(--s0)}
+.tier .sw{height:74px;display:flex;align-items:flex-end;padding:10px 12px}
+.tier .sw b{font-family:var(--f-mono);font-size:12px;font-weight:400;opacity:.9}
+.tier .m{padding:10px 12px 12px}
+.tier .m .n{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-size:13px;color:var(--ink)}
+.tier .m .u{color:var(--ink-2);font-size:13px;margin-top:4px;line-height:1.4}
+.scale{display:grid;grid-template-columns:repeat(9,1fr);gap:6px;margin-top:14px}
+.scale div{height:52px;border-radius:var(--r-1);border:1px solid var(--edge);display:flex;align-items:flex-end;padding:6px;font-family:var(--f-mono);font-size:10.5px;color:var(--ink-2)}
+.sem{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+.sem .card{padding:14px;background:var(--s1);border:1px solid var(--edge);border-radius:var(--r-2)}
+.sem .card .n{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-size:13px;display:flex;align-items:center;gap:8px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:var(--c)}
+.dot.live{box-shadow:0 0 0 2px rgba(0,0,0,.6),0 0 8px var(--c)}
+.sem .card p{margin:6px 0 0;color:var(--ink-2);font-size:13px;line-height:1.45}
+.sem .ex{margin-top:10px;font-size:13px;padding:8px 10px;border-radius:var(--r-1);border:1px solid var(--edge)}
+.els{display:grid;grid-template-columns:repeat(14,1fr);gap:4px;margin-top:14px}
+.els div{height:34px;border-radius:2px;position:relative}
+.els div span{position:absolute;left:0;right:0;bottom:-18px;font-family:var(--f-legend);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);text-align:center}
+
+/* type */
+.typ{margin-top:14px;border:1px solid var(--edge);border-radius:var(--r-2);background:var(--s0)}
+.typ .row{display:grid;grid-template-columns:150px 1fr 220px;gap:20px;padding:14px 18px;border-top:1px solid var(--edge);align-items:baseline}
+.typ .row:first-child{border-top:0}
+.typ .k{font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
+.typ .u{font-size:12.5px;color:var(--ink-2)}
+.d8{font-family:var(--f-legend);font-weight:600;text-transform:uppercase;font-size:var(--t-8);line-height:.95}
+.d7{font-family:var(--f-legend);font-weight:600;text-transform:uppercase;font-size:var(--t-7);line-height:1}
+.d6{font-family:var(--f-legend);font-weight:600;text-transform:uppercase;font-size:var(--t-6);line-height:1.05}
+.d5{font-family:var(--f-legend);font-weight:500;text-transform:uppercase;letter-spacing:.06em;font-size:var(--t-5)}
+.lg{font-family:var(--f-legend);font-weight:500;text-transform:uppercase;letter-spacing:.1em;font-size:var(--t-1);color:var(--ink-2)}
+.b4{font-size:var(--t-4);max-width:62ch}
+.b3{font-size:var(--t-3);max-width:62ch;color:var(--ink-2)}
+.b2{font-size:var(--t-2);color:var(--ink-2)}
+.m3{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:var(--t-3)}
+.m6{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:var(--t-6);color:var(--ink)}
+
+/* space + depth */
+.sp{display:flex;gap:14px;align-items:flex-end;margin-top:14px}
+.sp div{background:var(--viable-tint);border:1px solid var(--viable-lo);width:var(--w);height:var(--w);position:relative}
+.sp div::after{content:attr(data-n);position:absolute;top:100%;left:0;margin-top:6px;font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3)}
+.depth{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:14px;padding:24px;background:var(--room);border:1px solid var(--edge);border-radius:var(--r-2)}
+.depth > div{padding:14px;min-height:110px;border-radius:var(--r-1);display:flex;flex-direction:column;justify-content:space-between}
+.depth .n{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-size:12px}
+.depth .u{font-size:12px;color:var(--ink-2);line-height:1.4}
+.L0{background:var(--s0);border:1px solid var(--edge)}
+.L1{background:var(--s1);border:1px solid var(--edge);box-shadow:inset 0 1px 0 var(--edge-hi)}
+.L2{background:var(--s2);border:1px solid var(--edge);box-shadow:inset 0 1px 0 var(--edge-hi)}
+.Lglass{background:var(--glass);border:1px solid var(--glass-edge);box-shadow:inset 0 0 0 1px rgba(0,0,0,.6),inset 0 12px 30px rgba(0,0,0,.35)}
+.LF{background:var(--s2);border:1px solid var(--edge-strong);box-shadow:0 18px 40px rgba(0,0,0,.55),inset 0 1px 0 var(--edge-hi)}
+
+/* controls */
+.ctl{margin-top:14px;border:1px solid var(--edge);border-radius:var(--r-2);background:var(--s0);overflow:hidden}
+.ctl .hd{display:grid;grid-template-columns:130px repeat(5,1fr);gap:10px;padding:10px 16px;border-bottom:1px solid var(--edge);font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-size:11px;color:var(--ink-3)}
+.ctl .r{display:grid;grid-template-columns:130px repeat(5,1fr);gap:10px;padding:12px 16px;border-top:1px solid var(--edge);align-items:center}
+.ctl .r:nth-child(2){border-top:0}
+.ctl .r .k{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-size:12px;color:var(--ink-2)}
+.btn{display:inline-block;font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-size:13px;padding:8px 14px;border-radius:var(--r-1);border:1px solid var(--edge);background:var(--s2);color:var(--ink);box-shadow:inset 0 1px 0 var(--edge-hi),0 1px 0 rgba(0,0,0,.6);text-align:center;white-space:nowrap;transition:background var(--dur-1) var(--ease-out),transform var(--dur-1) var(--ease-out)}
+.btn.hov{background:var(--s3)}
+.btn.act{background:var(--s1);box-shadow:inset 0 2px 4px rgba(0,0,0,.5);transform:translateY(1px)}
+.btn.foc{outline:2px solid var(--focus);outline-offset:2px}
+.btn.dis{opacity:.4;box-shadow:none}
+.btn.primary{background:var(--viable);color:var(--viable-ink);border-color:transparent}
+.btn.primary.hov{background:#5fd89b}
+.btn.primary.act{background:var(--viable-lo);color:#e9fff2}
+.btn.quiet{background:transparent;border-color:transparent;color:var(--ink-2);box-shadow:none}
+.btn.quiet.hov{background:var(--s1);color:var(--ink)}
+.btn.quiet.act{background:var(--s0)}
+.btn.danger{background:transparent;border-color:var(--plague);color:#e8a4b4;box-shadow:none}
+.btn.danger.hov{background:var(--plague-tint)}
+.btn.danger.act{background:var(--plague);color:var(--plague-ink)}
+.inp{font-family:var(--f-body);font-size:14px;padding:8px 10px;border-radius:var(--r-1);border:1px solid var(--edge-strong);background:var(--s0);color:var(--ink);width:100%}
+.inp.ph{color:var(--ink-3)}
+.inp.hov{border-color:rgba(217,210,192,.35)}
+.inp.foc{outline:2px solid var(--focus);outline-offset:1px;border-color:transparent}
+.inp.err{border-color:var(--plague);background:var(--plague-tint)}
+.inp.dis{opacity:.4}
+
+.pieces{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.piece{padding:14px;background:var(--s1);border:1px solid var(--edge);border-radius:var(--r-2)}
+.piece .h{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-size:11px;color:var(--ink-3);margin-bottom:10px}
+.seg{display:inline-flex}
+.seg span{font-family:var(--f-legend);font-size:13px;padding:6px 12px;border:1px solid var(--edge);background:var(--s2);color:var(--ink-2);margin-left:-1px}
+.seg span:first-child{border-radius:var(--r-1) 0 0 var(--r-1)}.seg span:last-child{border-radius:0 var(--r-1) var(--r-1) 0}
+.seg span.on{background:var(--viable);color:var(--viable-ink);border-color:transparent}
+.tog{width:36px;height:20px;border-radius:10px;background:var(--s2);border:1px solid var(--edge);position:relative;display:inline-block;vertical-align:middle}
+.tog::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--ink-3)}
+.tog.on{background:var(--viable-lo);border-color:transparent}.tog.on::after{left:18px;background:var(--viable-hi)}
+.chk{width:16px;height:16px;border-radius:3px;border:1px solid var(--edge-strong);display:inline-block;vertical-align:middle;background:var(--s0)}
+.chk.on{background:var(--viable);border-color:transparent}
+.chip{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-size:11px;padding:2px 8px;border-radius:2px;color:#111;background:var(--el);display:inline-block}
+.badge{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-size:11px;padding:2px 8px;border-radius:2px;display:inline-block;border:1px solid var(--edge-strong);color:var(--ink-2)}
+.badge.viable{border-color:var(--viable-lo);color:var(--viable-hi);background:var(--viable-tint)}
+.badge.plague{border-color:var(--plague);color:#e8a4b4;background:var(--plague-tint)}
+.badge.caution{border-color:var(--caution);color:#ead9a8;background:var(--caution-tint)}
+.meter{display:grid;grid-template-columns:90px 1fr 40px;gap:10px;align-items:center;font-size:12px;padding:4px 0}
+.meter .k{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.06em;font-size:11px;color:var(--ink-2)}
+.meter .track{height:8px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
+.meter .fill{height:100%;background:var(--c)}
+.meter .n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.toast{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:var(--r-1);background:var(--s2);border:1px solid var(--edge-strong);box-shadow:0 12px 30px rgba(0,0,0,.5);font-size:13.5px}
+.toast .dot{margin-top:6px;flex:none}
+.toast + .toast{margin-top:8px}
+.tabs{display:flex;gap:2px}
+.tabs a{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-size:13px;padding:8px 14px;background:var(--s1);border:1px solid var(--edge);color:var(--ink-2)}
+.tabs a.on{color:var(--ink);border-bottom:2px solid var(--viable)}
+.empty{padding:26px;text-align:center;border:1px dashed var(--edge-strong);border-radius:var(--r-2);color:var(--ink-2);font-size:14px}
+.empty b{display:block;font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;color:var(--ink);font-size:13px;margin-bottom:4px}
+.skel{height:12px;border-radius:2px;background:linear-gradient(90deg,var(--s1),var(--s3),var(--s1));background-size:200% 100%;animation:sh 1.4s linear infinite;margin:8px 0}
+@keyframes sh{to{background-position:-200% 0}}
+@media (prefers-reduced-motion:reduce){.skel{animation:none}}
+
+/* applied */
+.nav{display:flex;align-items:center;gap:28px;padding:0 24px;height:54px;background:var(--s0);border-bottom:1px solid var(--edge)}
+.nav .logo{height:22px}
+.nav .logo{fill:var(--viable-hi);stroke:var(--s0);stroke-width:5px;stroke-linejoin:round}
+.nav .links{display:flex;gap:22px;margin-left:8px}
+.nav .links a{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-size:13.5px;color:var(--ink-2);padding:18px 0;border-bottom:2px solid transparent}
+.nav .links a.on{color:var(--ink);border-bottom-color:var(--viable)}
+.nav .right{margin-left:auto;display:flex;gap:10px;align-items:center}
+.page{padding:44px 24px 44px}
+.splash{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center}
+.splash .big{width:100%;max-width:520px}
+.splash .big{fill:var(--viable-hi);stroke:var(--room);stroke-width:5px;stroke-linejoin:round;max-width:420px}
+.splash .kicker{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.12em;font-size:12px;color:var(--ink-3);margin:18px 0 6px}
+.splash h1{font-family:var(--f-legend);font-weight:600;text-transform:uppercase;font-size:34px;line-height:.98;margin:0 0 12px}
+.splash p{color:var(--ink-2);font-size:16px;max-width:56ch;margin:0 0 16px}
+.actions{display:flex;gap:10px}
+.status{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.status .g{padding:12px 14px;background:var(--glass);border:1px solid var(--glass-edge);border-radius:var(--r-1);box-shadow:inset 0 0 0 1px rgba(0,0,0,.6),inset 0 12px 30px rgba(0,0,0,.35)}
+.status .k{font-size:11px;color:var(--ink-3)}
+.status .v{font-size:22px;color:var(--ink);margin-top:2px}
+.status .v.live{color:var(--viable-hi)}
+.record{display:grid;grid-template-columns:260px 1fr;gap:0;margin-top:26px;background:var(--glass);border:1px solid var(--glass-edge);border-radius:var(--r-1);box-shadow:inset 0 0 0 1px rgba(0,0,0,.6),inset 0 12px 30px rgba(0,0,0,.35)}
+.record .plate{margin:14px;aspect-ratio:1;border-radius:var(--r-1);display:grid;place-items:center;background:linear-gradient(160deg,color-mix(in srgb,var(--el-psychic) 85%,black),color-mix(in srgb,var(--el-dark) 85%,black));box-shadow:inset 0 0 0 1px rgba(0,0,0,.5)}
+.record .plate svg{width:62%;fill:#0f0d10}
+.record .body{padding:16px 16px 14px}
+.record .top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.record .name{font-family:var(--f-legend);font-weight:600;text-transform:uppercase;font-size:28px;line-height:1;margin:0 0 8px}
+.specs{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:6px 16px;font-size:13.5px;border-top:1px solid var(--edge);padding-top:12px;margin-top:12px}
+.specs .k{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-size:11.5px;color:var(--ink-3);padding-top:2px}
+.specs .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.rules div{padding:14px;border:1px solid var(--edge);border-radius:var(--r-2);background:var(--s0);font-size:14px;color:var(--ink-2)}
+.rules b{display:block;font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-size:12px;color:var(--ink);margin-bottom:6px}
+.foot{padding:56px 0 64px;color:var(--ink-3);font-size:13px}
+
+/* element pass */
+.elpass{margin-top:14px;border:1px solid var(--edge);border-radius:var(--r-2);background:var(--s0);overflow:hidden}
+.elpass .hd,.elpass .r{display:grid;grid-template-columns:90px 120px 120px 1fr;gap:12px;align-items:center;padding:10px 16px;border-top:1px solid var(--edge)}
+.elpass .hd{border-top:0;font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-size:11px;color:var(--ink-3)}
+.elpass .r .k{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-size:12px}
+.elpass .sw{height:34px;border-radius:2px;display:flex;align-items:center;padding:0 8px;font-family:var(--f-mono);font-size:11px;color:#111}
+.elpass .u{font-size:13px;color:var(--ink-2);line-height:1.4}
+/* type pairings */
+.pair{margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.pair > div{background:var(--s0);border:1px solid var(--edge);border-radius:var(--r-2);padding:16px;display:flex;flex-direction:column;gap:10px}
+.pair .tag{font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
+.pair .h{text-transform:uppercase;font-size:30px;line-height:1;color:var(--ink);letter-spacing:.01em}
+.pair .l{text-transform:uppercase;letter-spacing:.1em;font-size:12px;color:var(--ink-2)}
+.pair .b{font-size:15px;color:var(--ink-2);line-height:1.5}
+.pair .d{font-size:14px;color:var(--ink);font-variant-numeric:tabular-nums}
+.pair .why{font-size:13px;color:var(--ink-2);border-top:1px solid var(--edge);padding-top:10px;line-height:1.45}
+.pair .why b{color:var(--ink)}
+.pA .h{font-family:'Saira',sans-serif;font-weight:600}.pA .l{font-family:'Saira',sans-serif;font-weight:500}.pA .b{font-family:'Atkinson Hyperlegible',sans-serif}.pA .d{font-family:'Martian Mono',monospace}
+.pB .h{font-family:'Big Shoulders Display',sans-serif;font-weight:700;font-size:36px}.pB .l{font-family:'Big Shoulders Display',sans-serif;font-weight:600;font-size:14px}.pB .b{font-family:'Familjen Grotesk',sans-serif}.pB .d{font-family:'Azeret Mono',monospace}
+.pC .h{font-family:'Tektur',sans-serif;font-weight:600;font-size:26px}.pC .l{font-family:'Tektur',sans-serif;font-weight:500}.pC .b{font-family:'Sora',sans-serif;font-size:14px}.pC .d{font-family:'Space Mono',monospace}
+/* spinner */
+.spinrow{display:flex;gap:28px;align-items:flex-end}
+.spin{display:block;overflow:visible}
+.spin .strand{fill:none;stroke:var(--viable-hi);stroke-width:4px;stroke-linejoin:round;opacity:.28}
+.spin .rung{stroke:var(--viable-hi);stroke-width:8px;stroke-linecap:round;opacity:.15;animation:rung 1.4s var(--ease-out) infinite;animation-delay:calc(var(--i) * .16s)}
+@keyframes rung{0%,60%,100%{opacity:.15}20%{opacity:1}}
+.spin.sm .rung{stroke-width:12px}
+@media (prefers-reduced-motion:reduce){.spin .rung{animation:none;opacity:.7}}
+/* lockups */
+.lock{margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lock > div{background:var(--s0);border:1px solid var(--edge);border-radius:var(--r-2);padding:22px 20px 14px;display:flex;flex-direction:column;gap:12px}
+.lock .tag{font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
+.lockup{display:flex;align-items:center;gap:.12em;color:var(--viable-hi);text-transform:uppercase;line-height:1}
+.lockup svg{height:1.02em;width:auto;display:block;overflow:visible}
+.lockup .strand{fill:none;stroke:var(--viable-hi);stroke-width:5px;stroke-linejoin:round}
+.lockup .rung{stroke:var(--viable-hi);stroke-width:9px;stroke-linecap:round}
+.lockup.cur svg{height:1.3em;stroke:var(--room);stroke-width:5px;fill:var(--viable-hi)}
+/* chamfer signature */
+.cham{margin-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.cut{--c:12px;position:relative;background:var(--s1);padding:16px;clip-path:polygon(var(--c) 0,100% 0,100% calc(100% - var(--c)),calc(100% - var(--c)) 100%,0 100%,0 var(--c))}
+.btn.cut{--c:8px;clip-path:polygon(var(--c) 0,100% 0,100% calc(100% - var(--c)),calc(100% - var(--c)) 100%,0 100%,0 var(--c));border-radius:0;padding:9px 16px}
+.btn.audit{margin-top:14px;border:1px solid var(--edge);border-radius:var(--r-2);background:var(--s0)}
+.audit .r{display:grid;grid-template-columns:230px 1fr 1fr;gap:16px;padding:12px 16px;border-top:1px solid var(--edge);font-size:13.5px;color:var(--ink-2);line-height:1.45}
+.audit .r:first-child{border-top:0;font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.08em;font-size:11px;color:var(--ink-3)}
+.audit .r .k{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.06em;font-size:12.5px;color:var(--ink)}
+
+/* wordmark round 2 */
+.lock2{margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lock2 > div{background:var(--s0);border:1px solid var(--edge);border-radius:var(--r-2);padding:22px 20px 14px;display:flex;flex-direction:column;gap:12px;min-height:150px}
+.lock2 .tag{font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
+.lock2 .u{font-size:13px;color:var(--ink-2);line-height:1.45;margin-top:auto}
+.wm{display:flex;align-items:center;gap:.28em;color:var(--viable-hi);text-transform:uppercase;font-family:'Saira',sans-serif;font-weight:600;letter-spacing:.06em;line-height:1}
+.wm svg{display:block;overflow:visible}
+.wm .strand{fill:none;stroke:var(--viable-hi);stroke-width:5px;stroke-linejoin:round}
+.wm .rung{stroke:var(--viable-hi);stroke-width:9px;stroke-linecap:round}
+.wm .xo{fill:var(--viable-hi);stroke:var(--room);stroke-width:4px;stroke-linejoin:round}
+.wm .xl{fill:none;stroke:var(--viable-hi);stroke-width:13px;stroke-linecap:butt}
+.wm .xr{stroke:var(--viable-hi);stroke-width:5.5px;stroke-linecap:round}
+.wm.stack{flex-direction:column;align-items:center;gap:10px}
+/* corners round 2 */
+.corners{margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.corners .u{font-size:13px;color:var(--ink-2);line-height:1.45;margin-top:10px}
+.corners .lbl{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.06em;font-size:12px;color:var(--ink-2)}
+.chamf{--c:12px;--pc:polygon(var(--c) 0,100% 0,100% calc(100% - var(--c)),calc(100% - var(--c)) 100%,0 100%,0 var(--c));clip-path:var(--pc);background:var(--edge-strong);padding:1px}
+.chamf > div{clip-path:var(--pc);background:var(--s1);padding:16px;min-height:120px}
+.chamf.glass > div{background:var(--glass)}
+.btn.chamf{--c:8px;display:inline-block;padding:1px;border:0;box-shadow:none;background:var(--edge-strong);border-radius:0}
+.btn.chamf > span{display:block;clip-path:var(--pc);background:var(--s2);padding:8px 14px}
+.btn.chamf.primary{background:var(--viable)}
+.btn.chamf.primary > span{background:var(--viable);color:var(--viable-ink)}
+.btn.chamf.danger{background:var(--plague)}
+.btn.chamf.danger > span{background:var(--s0);color:#e8a4b4}
+.square{border:1px solid var(--edge-strong);background:var(--s1);padding:16px;min-height:120px;border-radius:0}
+.ticks{position:relative;border:1px solid var(--edge);background:var(--s1);padding:16px;min-height:120px;border-radius:0}
+.ticks::before,.ticks::after{content:"";position:absolute;width:14px;height:14px;border:0 solid var(--ink-2)}
+.ticks::before{top:-1px;left:-1px;border-top-width:2px;border-left-width:2px}
+.ticks::after{bottom:-1px;right:-1px;border-bottom-width:2px;border-right-width:2px}
+.btn.sq{border-radius:0}
+
+/* wordmark round 3 */
+.wm3{margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.wm3 > div{background:var(--s0);border:1px solid var(--edge);padding:20px 20px 14px;display:flex;flex-direction:column;gap:10px}
+.wm3 .tag{font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
+.wm3 .u{font-size:13px;color:var(--ink-2);line-height:1.45;margin-top:auto}
+.w{color:var(--viable-hi);text-transform:uppercase;line-height:1;font-size:44px;letter-spacing:.06em;white-space:nowrap}
+.w.sliced{width:max-content;background:linear-gradient(112deg,var(--viable-hi) 0 27%,transparent 27% 28.6%,var(--viable-hi) 28.6% 56%,transparent 56% 57.6%,var(--viable-hi) 57.6% 79%,transparent 79% 80.6%,var(--viable-hi) 80.6%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.w.outline{color:transparent;-webkit-text-stroke:2px var(--viable-hi)}
+.w.split{position:relative}
+.w.split b{font-weight:inherit;color:var(--ink)}
+.morph{margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end}
+.morph > div{background:var(--s0);border:1px solid var(--edge);padding:16px;display:flex;flex-direction:column;align-items:center;gap:10px;min-height:130px;justify-content:flex-end}
+.morph .tag{font-family:var(--f-mono);font-size:11px;color:var(--ink-3);text-align:center}
+.morph svg{display:block;overflow:visible;height:54px}
+.morph .strand{fill:none;stroke:var(--viable-hi);stroke-width:5px;stroke-linejoin:round}
+.morph .rung{stroke:var(--viable-hi);stroke-width:9px;stroke-linecap:round}
+.morph .xo{fill:var(--viable-hi)}
+
+/* cut letters */
+.cw{margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cw > div{background:var(--room);border:1px solid var(--edge);padding:22px 20px 14px;display:flex;flex-direction:column;gap:12px;--cutcol:var(--room)}
+.cw .tag{font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
+.cw .u{font-size:13px;color:var(--ink-2);line-height:1.45;margin-top:auto}
+.cutword{display:block;height:44px;width:auto;overflow:visible}
+.cutword .g{fill:var(--viable-hi)}
+.cutword .st{fill:none;stroke:var(--viable-hi);stroke-width:22px;stroke-linecap:butt}
+.cutword .xa{stroke:var(--cutcol);paint-order:stroke fill;stroke-linejoin:miter}
+.cutword .c{stroke:var(--cutcol);stroke-linecap:butt}
+.cw .lockup2{display:flex;align-items:center;gap:18px}
+.cw .hx{height:58px;display:block;overflow:visible}
+.cw .strand{fill:none;stroke:var(--viable-hi);stroke-width:5px;stroke-linejoin:round}
+.cw .rung{stroke:var(--viable-hi);stroke-width:9px;stroke-linecap:round}
+.cw .sizes{display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+.cw .navbar{display:flex;align-items:center;gap:22px;background:var(--s0);--cutcol:var(--s0);padding:0 18px;height:48px;border:1px solid var(--edge);width:100%}
+.cw .navbar .cutword{height:16px}
+.cw .navbar .hx{height:24px}
+.cw .navbar a{font-family:var(--f-legend);text-transform:uppercase;letter-spacing:.06em;font-size:13px;color:var(--ink-2)}
+.cw .navbar a.on{color:var(--ink)}
+
+/* font scan */
+.scan{margin-top:14px;display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.scan > div{background:var(--room);border:1px solid var(--edge);padding:16px 18px 12px;display:flex;flex-direction:column;gap:8px}
+.scan .tag{font-family:var(--f-mono);font-size:11px;color:var(--ink-3);display:flex;justify-content:space-between}
+.scan .tag i{font-style:normal;color:var(--ink-4)}
+.scan .wd{color:var(--viable-hi);text-transform:uppercase;font-size:40px;line-height:1.05;white-space:nowrap;letter-spacing:.04em}
+.scan .sm{color:var(--ink-2);text-transform:uppercase;font-size:15px;letter-spacing:.06em}
+.scan .u{font-size:12.5px;color:var(--ink-2);line-height:1.4}
+.scan .pick{outline:2px solid var(--viable-lo);outline-offset:-2px}
+</style>
+
+<div class="wrap">
+  <div class="hero">
+    <div>
+      <div class="kicker">Design system v4, foundations</div>
+      <h1>The viable signal</h1>
+      <p>The accent is the color a Generator shows when a genome is alive and printable. It is the logo's own mint, carried into the interface with one meaning: this is living, or this is the next step. Everything else on the page stays quiet so that the signal, and the creatures, can be loud.</p>
+    </div>
+    <div class="marks">
+      <svg class="word" viewBox="0 0 569.26 104.48" aria-label="Xalians wordmark"><g><path d="M-823.59,804.67q.21,0,3.28,8.94,19.2,54.12,19.55,55.37h-19.55q-.21-.35-3.7-10.47l-8.8-24.65h-.07q-1.53,4.47-25.41,70.8c0,.19-.08.28-.21.28h-19.35a.13.13,0,0,1-.14-.14l28-77.71q7.75-21.51,8.1-22.42ZM-814,886.3h19.34c.14,0,.54,1,1.19,3.14l5.52,15.43-.14.07h-19.41c-.1-.05-.86-2.12-2.31-6.21l-4.33-12.36Z" transform="translate(973.18 -802.46)"/><path d="M-777.68,804.74h18.78a.12.12,0,0,1,.14.14v60.61a.12.12,0,0,1-.14.14h-18.78a.13.13,0,0,1-.14-.14V804.88A.13.13,0,0,1-777.68,804.74Zm0,82H-731s.07,0,.07.14V904.8c0,.09,0,.14-.07.14h-46.64a.13.13,0,0,1-.14-.14V886.93A.12.12,0,0,1-777.68,886.79Z" transform="translate(973.18 -802.46)"/><path d="M-719.9,804.88h55a.13.13,0,0,1,.14.14v18.16a.13.13,0,0,1-.14.14h-55a.13.13,0,0,1-.14-.14V805A.13.13,0,0,1-719.9,804.88Zm18.16,39.52h18.64a.12.12,0,0,1,.14.14v42h18.09a.12.12,0,0,1,.14.14V904.8a.13.13,0,0,1-.14.14h-55a.13.13,0,0,1-.14-.14V886.65a.12.12,0,0,1,.14-.14h18v-42A.13.13,0,0,1-701.74,844.4Z" transform="translate(973.18 -802.46)"/><path d="M-601.57,804.67q.21,0,3.28,8.94,19.2,54.12,19.55,55.37h-19.55q-.21-.35-3.7-10.47l-8.8-24.65h-.07q-1.53,4.47-25.42,70.8c0,.19-.07.28-.21.28h-19.34a.13.13,0,0,1-.14-.14l28-77.71q7.76-21.51,8.1-22.42ZM-592,886.3h19.34c.14,0,.54,1,1.19,3.14l5.52,15.43-.14.07h-19.41q-.15-.08-2.31-6.21l-4.33-12.36Z" transform="translate(973.18 -802.46)"/><path d="M-555.66,804.46h18.15q.71,1,37.71,57.82,5.24,8,5.31,8.24h.07V844.61a.12.12,0,0,1,.14-.14h18.85c.09,0,.14.1.14.14V904.8a.13.13,0,0,1-.14.14h-18.16q-1.95-2.79-31.91-48.81-10.18-15.5-11.1-17h-.07v65.7a.12.12,0,0,1-.14.14h-18.85a.13.13,0,0,1-.14-.14V804.6A.13.13,0,0,1-555.66,804.46Zm61.38,0h18.85a.13.13,0,0,1,.14.14v18.51a.13.13,0,0,1-.14.14h-18.85a.12.12,0,0,1-.14-.14V804.6A.12.12,0,0,1-494.28,804.46Z" transform="translate(973.18 -802.46)"/><path d="M-435.1,805q12.28,0,22.27,9.78,3.13,3.07,5.24,5.58L-421,832.11l-2.93-3.63q-5.73-6.13-11.45-6.14-5.31,0-7.61,4.12a4.55,4.55,0,0,0-.42,1.95v.28c0,2.28,1.32,4.59,4,6.91q7.6,7.13,19.06,16.55a63.9,63.9,0,0,1,8,8.17,27.2,27.2,0,0,1,6.42,17.6q0,14.87-12.92,23a32.57,32.57,0,0,1-16.4,4q-20.4,0-30.45-20.67,14.88-9.07,15.22-9.14,6.86,12.55,15.71,12.56A11.1,11.1,0,0,0-424.49,882a8.09,8.09,0,0,0,.77-3.21q0-5.44-7.33-11.52-2.65-2.52-10.76-9.08-4.11-3.49-10.33-9.78-9.08-9.55-9.08-19.06v-.63q0-11.87,11.45-19.69A26.91,26.91,0,0,1-435.1,805Z" transform="translate(973.18 -802.46)"/><path d="M-971,805h20.27c0,.06,48.36,77.3,62.32,100h-20.33Z" transform="translate(973.18 -802.46)"/><path d="M-909,805c.15.14,20.29-.27,20.26.14-1.81,2.71-20.57,32.94-24.38,39l-10.48-15.92C-920,822.53-910.47,806.94-909,805Z" transform="translate(973.18 -802.46)"/><path d="M-950.92,904.56c-.15-.14-20.29.27-20.26-.14,1.81-2.71,20.57-32.95,24.37-39l10.49,15.91C-939.93,887-949.45,902.61-950.92,904.56Z" transform="translate(973.18 -802.46)"/></g></svg>
+      <svg class="helix" viewBox="0 0 132.07 161.22" aria-label="DNA mark"><path id="x-top" d="M-653.6,842.22c-1.65-1.59-12.81-6.83-17.46-9,23.9-17.4,17.56-64.41,17.56-64.41H-628C-628,807.81-640.29,829.71-653.6,842.22Z" transform="translate(758.03 -766.78)" style="stroke-width:4px"/><path id="x-bottom" d="M-732.58,856.85a50.41,50.41,0,0,0,16.92,7.91C-731.89,883-730.5,926-730.5,926H-756S-750.6,883.43-732.58,856.85Z" transform="translate(758.03 -766.78)" style="stroke-width:4px"/><path id="x-long" d="M-730.5,768.78C-741.25,880.57-643,790.18-628,926H-653.5c-9-115.36-102-19.15-102.53-157.22Z" transform="translate(758.03 -766.78)" style="stroke-width:4px"/><line x1="45.18" y1="48.73" x2="86.61" y2="48.73" style="stroke-width:7.5px;stroke-linecap:round"/><line x1="37.16" y1="29.9" x2="93.65" y2="29.9" style="stroke-width:7.5px;stroke-linecap:round"/><line x1="45.22" y1="115.28" x2="78.03" y2="115.28" style="stroke-width:8px;stroke-linecap:round"/><path d="M-697,900.89h26.41" transform="translate(758.03 -766.78)" style="stroke-width:8px;stroke-linecap:round"/><path d="M-716.83,900.89H-709" transform="translate(758.03 -766.78)" style="stroke-width:8px;stroke-linecap:round"/><line x1="39.41" y1="152.87" x2="91.03" y2="153.01" style="stroke-width:8px;stroke-linecap:round"/><path d="M-671,777.85h8.39" transform="translate(758.03 -766.78)" style="stroke-width:8px;stroke-linecap:round"/><path d="M-722,777.85h38.87" transform="translate(758.03 -766.78)" style="stroke-width:8px;stroke-linecap:round"/></svg>
+      <div class="cap">The existing wordmark and the DNA form it morphs into on the home splash. Both stay. Their mint, #86ffb5, is the source of the accent.</div>
+    </div>
+  </div>
+
+  <h2 class="sec">1. Accent <small>one hue, three tiers</small></h2>
+  <p class="note">The logo mint at full strength is an emitter: it looks like light. Used large it turns the site into a green terminal, which is the Pip-Boy signal we agreed to avoid. So the hue is carried in three tiers, and the bright one is only ever small.</p>
+  <div class="tiers">
+    <div class="tier"><div class="sw" style="background:var(--viable-hi)"><b style="color:#08150e">#86ffb5 viable-hi</b></div><div class="m"><div class="n">Emitter</div><div class="u">The logo, live values on glass, status dots, the focus ring, the active toggle knob. Small, on dark, never a fill wider than a line of text.</div></div></div>
+    <div class="tier"><div class="sw" style="background:var(--viable)"><b style="color:#08150e">#4fc98d viable</b></div><div class="m"><div class="n">Fill</div><div class="u">The one primary button on a screen, the selected segment, the active tab underline. Calm enough to sit on a matte surface without glowing.</div></div></div>
+    <div class="tier"><div class="sw" style="background:var(--viable-lo)"><b style="color:#e9fff2">#2f8f63 viable-lo</b></div><div class="m"><div class="n">Pressed and border</div><div class="u">Pressed state of the primary button, the on-state of a toggle track, a selected row's border. Plus a 10% tint of the emitter for selected backgrounds.</div></div></div>
+  </div>
+  <div class="rules">
+    <div><b>The test any agent can apply</b>Is this thing alive, or is it the one action that moves the person forward? If neither, it is not accent-colored. Headings, icons, dividers, decorative rules and section markers never wear it. One primary button per screen.</div>
+    <div><b>Why it is grounded</b>Xalians are engineered life; the Generators, the Scrambler Tokens, the tournament loop and the Plague are all about genomes. The helix in the logo already says so. The accent is the Generator's signal that a genome is viable, so a living Xalian and a forward action share one color for one reason.</div>
+  </div>
+
+  <h2 class="sec">2. Semantic colors <small>status only, never content</small></h2>
+  <p class="note">Status colors say what state something is in. They are separate from the accent and separate from the element hues, and they appear only on interface state: badges, borders, toasts, validation. Content never borrows them.</p>
+  <div class="sem">
+    <div class="card"><div class="n"><span class="dot live" style="--c:var(--viable-hi)"></span>Viable</div><p>Success, alive, connected, saved. Same hue as the accent on purpose: the good outcome and the forward action are one idea.</p><div class="ex" style="border-color:var(--viable-lo);background:var(--viable-tint);color:var(--ink)">Saved to your account.</div></div>
+    <div class="card"><div class="n"><span class="dot" style="--c:var(--plague)"></span>Plague</div><p>Error, failure, destructive. A sick raspberry, kept away from the Fire element's orange-red. Never used as a highlight, so the two ends of the lore's conflict are the two ends of the palette.</p><div class="ex" style="border-color:var(--plague);background:var(--plague-tint);color:#f3d6de">Could not save. Sign in and try again.</div></div>
+    <div class="card"><div class="n"><span class="dot" style="--c:var(--caution)"></span>Caution</div><p>Warning, unsaved, expiring. A dusty amber. Rare by design; most of the site has nothing to warn about.</p><div class="ex" style="border-color:var(--caution);background:var(--caution-tint);color:#ead9a8">This Xalian is not kept. Sign in before you leave.</div></div>
+    <div class="card"><div class="n"><span class="dot" style="--c:var(--neutral-status)"></span>Neutral</div><p>Information, idle, offline, not set. A cool slate that is clearly not a verdict.</p><div class="ex" style="border-color:var(--edge-strong);color:var(--ink-2)">Squad not set.</div></div>
+  </div>
+  <h3 class="sub">Element hues, your originals and a proposed pass</h3>
+<div class="elpass"><div class="hd"><span>Element</span><span>Yours</span><span>Proposed</span><span>What changed and why</span></div>
+<div class="r"><span class="k">fire</span><div class="sw" style="background:var(--o-fire)">fire</div><div class="sw" style="background:var(--el-fire)">fire</div><span class="u">Untouched apart from a hair more light so it clears 6:1. Red-orange stays the hottest thing in the set.</span></div>
+<div class="r"><span class="k">sand</span><div class="sw" style="background:var(--o-sand)">sand</div><div class="sw" style="background:var(--el-sand)">sand</div><span class="u">Was almost the same color as Electric (the closest pair in the whole set). Pulled toward peach-tan and a step less saturated, so yellow belongs to Electric alone.</span></div>
+<div class="r"><span class="k">electric</span><div class="sw" style="background:var(--o-electric)">electric</div><div class="sw" style="background:var(--el-electric)">electric</div><span class="u">Nudged to a cleaner lemon and brighter. Now 30 degrees of hue from Sand instead of 20.</span></div>
+<div class="r"><span class="k">rock</span><div class="sw" style="background:var(--o-rock)">rock</div><div class="sw" style="background:var(--el-rock)">rock</div><span class="u">Was too dark to carry dark text (4.1:1) and sat on top of Plant. Lifted to a warm stone at low saturation; it is the only earthy neutral now.</span></div>
+<div class="r"><span class="k">plant</span><div class="sw" style="background:var(--o-plant)">plant</div><div class="sw" style="background:var(--el-plant)">plant</div><span class="u">Was 4.8:1, borderline. Lifted and slightly greener so it reads as leaf rather than olive drab, and stays 30 degrees from the mint accent.</span></div>
+<div class="r"><span class="k">chemical</span><div class="sw" style="background:var(--o-chemical)">chemical</div><div class="sw" style="background:var(--el-chemical)">chemical</div><span class="u">Was the nearest color to the new accent. Pushed to a toxic teal so mint stays the site's signal and Chemical reads as a vat, not a seal of approval.</span></div>
+<div class="r"><span class="k">ice</span><div class="sw" style="background:var(--o-ice)">ice</div><div class="sw" style="background:var(--el-ice)">ice</div><span class="u">Kept, with a touch more blue so it is not the same family as Chemical.</span></div>
+<div class="r"><span class="k">water</span><div class="sw" style="background:var(--o-water)">water</div><div class="sw" style="background:var(--el-water)">water</div><span class="u">Deepened and more saturated. Was nearly indistinguishable from Metal grey at a glance.</span></div>
+<div class="r"><span class="k">air</span><div class="sw" style="background:var(--o-air)">air</div><div class="sw" style="background:var(--el-air)">air</div><span class="u">Was pure white, which cannot be a swatch on a white page and was the same as Light. Now a pale cool sky; distinct from Light by temperature.</span></div>
+<div class="r"><span class="k">light</span><div class="sw" style="background:var(--o-light)">light</div><div class="sw" style="background:var(--el-light)">light</div><span class="u">Was near-white. Now a clear pale gold so it reads as light rather than paper.</span></div>
+<div class="r"><span class="k">dark</span><div class="sw" style="background:var(--o-dark)">dark</div><div class="sw" style="background:var(--el-dark)">dark</div><span class="u">Was the one clearly failing color: 3.2:1 with dark text. Lifted to a dusky indigo at 4.7:1. It is still the deepest, coolest hue in the set, which is where the meaning lives.</span></div>
+<div class="r"><span class="k">ghost</span><div class="sw" style="background:var(--o-ghost)">ghost</div><div class="sw" style="background:var(--el-ghost)">ghost</div><span class="u">Was too dark (4.0:1) and sat on Dark. Lifted to a wraith lavender, 26 degrees from Dark and 27 from Psychic.</span></div>
+<div class="r"><span class="k">psychic</span><div class="sw" style="background:var(--o-psychic)">psychic</div><div class="sw" style="background:var(--el-psychic)">psychic</div><span class="u">Kept, a touch brighter.</span></div>
+<div class="r"><span class="k">metal</span><div class="sw" style="background:var(--o-metal)">metal</div><div class="sw" style="background:var(--el-metal)">metal</div><span class="u">Was a dead grey. Given a cool steel tint so it reads as a material, and lightened away from Water.</span></div>
+</div>
+<p class="note" style="margin-top:14px">Method: every color measured in OKLCH, the perceptual color space, and scored two ways: contrast against a dark foreground (floor 4.5:1, since these are backgrounds under dark text) and distance to its nearest neighbor. Yours had three contrast failures (Dark, Ghost, Rock) and five near-identical pairs (Electric and Sand, Air and Light, Dark and Ghost, Plant and Rock, Water and Metal). The proposed set has no contrast failures and its closest pair is 60 percent further apart than yours was. The hues now sit roughly 26 degrees apart around the wheel, which is as far as fourteen colors can be spread. Element hues appear only on element-tagged content, interface state never uses them, and collisions with the accent or status colors are resolved by role.</p>
+<h2 class="sec">3. Neutrals <small>warm room, bone ink</small></h2>
+  <p class="note">The room is a warm near-black and the ink is bone rather than white. The warmth is deliberate: mint against a cool grey reads as software; mint against a warm dark reads as a light in a real room. Surfaces step up in four tones. Glass is darker than the room and holds only live data.</p>
+  <div class="scale">
+    <div style="background:var(--room)">room #121110</div><div style="background:var(--s0)">s0 #191816</div><div style="background:var(--s1)">s1 #201f1c</div><div style="background:var(--s2)">s2 #282723</div><div style="background:var(--s3)">s3 #31302b</div><div style="background:var(--glass)">glass #0e100f</div><div style="background:var(--ink-3);color:#111">ink-3</div><div style="background:var(--ink-2);color:#111">ink-2</div><div style="background:var(--ink);color:#111">ink #d9d2c0</div>
+  </div>
+
+  <h2 class="sec">4. Type <small>three faces, eight sizes</small></h2>
+  <p class="note">Saira for anything that labels or heads; Atkinson Hyperlegible for anything read as prose; Martian Mono for anything that is a value. Pairing A, approved 2026-09-09, and the whole of this page is now set in it. A face is chosen by role, never by page. Digits are always tabular.</p>
+  <div class="typ">
+    <div class="row"><span class="k">display 40 / Saira 600</span><span class="d8">Creatures grown for dying worlds</span><span class="u">Home splash and one-per-site moments only.</span></div>
+    <div class="row"><span class="k">title 32 / Saira 600</span><span class="d7">Hypnopet</span><span class="u">Page title in the masthead.</span></div>
+    <div class="row"><span class="k">heading 24 / Saira 600</span><span class="d6">The Age of Unbirth</span><span class="u">Section heads inside a page.</span></div>
+    <div class="row"><span class="k">subhead 19 / Saira 500</span><span class="d5">Stats, current and potential</span><span class="u">Card and panel heads.</span></div>
+    <div class="row"><span class="k">legend 11.5 / Saira 500 tracked</span><span class="lg">Species on file</span><span class="u">Labels, kickers, table heads, nav. Always uppercase.</span></div>
+    <div class="row"><span class="k">lead 17 / Atkinson 400</span><span class="b4">Xalians are bioengineered creatures the Vallerii Generators grow to survive the worst planets in the galaxy.</span><span class="u">First paragraph of a page. 62 characters wide.</span></div>
+    <div class="row"><span class="k">body 15 / Atkinson 400</span><span class="b3">Created by the Telypso Generator as a therapy animal for the insane Vallerii imprisoned on that world. Docile, and reads intent.</span><span class="u">Running prose. 62 characters wide, ink-2.</span></div>
+    <div class="row"><span class="k">small 13.5 / Atkinson 400</span><span class="b2">Sign in to pick from your Xalians.</span><span class="u">Help text, captions, descriptions in lists.</span></div>
+    <div class="row"><span class="k">data 15 / Martian 400</span><span class="m3">93 in / 236 cm &nbsp; 830 lbs / 376 kg &nbsp; #00015</span><span class="u">Every value. Tabular digits.</span></div>
+    <div class="row"><span class="k">figure 24 / Martian 400</span><span class="m6">1,204</span><span class="u">A number that is the point of its panel.</span></div>
+  </div>
+
+  <h3 class="sub">Faces with more character, three pairings rendered live</h3>
+<p class="note">Barlow is a safe choice and that is the problem with it. Each set below is a display face for heads and legends, a body face, and a data face. The display face carries the personality; the body face has to be quiet enough to read for a page and still not be Inter.</p>
+<div class="pair">
+  <div class="pA"><span class="tag">A. Saira / Atkinson Hyperlegible / Martian Mono. Recommended.</span><div class="h">Creatures grown for dying worlds</div><div class="l">Species on file</div><div class="b">Created by the Telypso Generator as a therapy animal for the insane Vallerii imprisoned on that world. Docile, and reads intent.</div><div class="d">93 in / 236 cm &nbsp; 830 lbs / 376 kg &nbsp; #00015</div><div class="why"><b>Engineered.</b> Saira has squared bowls from the Eurostile lineage, the typeface of every spacecraft placard since 1962, but drawn wide and modern so it never tips into costume. It echoes the cut corners in the logo. Atkinson Hyperlegible was designed for low vision and has odd, memorable letterforms at text size. Martian Mono is a wide, blocky mono that looks like a readout without scanlines.</div></div>
+  <div class="pB"><span class="tag">B. Big Shoulders Display / Familjen Grotesk / Azeret Mono</span><div class="h">Creatures grown for dying worlds</div><div class="l">Species on file</div><div class="b">Created by the Telypso Generator as a therapy animal for the insane Vallerii imprisoned on that world. Docile, and reads intent.</div><div class="d">93 in / 236 cm &nbsp; 830 lbs / 376 kg &nbsp; #00015</div><div class="why"><b>Industrial.</b> Big Shoulders is stenciled Chicago signage, tall and hand-cut, which suits a salvage era and Kozrak's arenas. Familjen Grotesk is a slightly eccentric grotesque. Azeret Mono is squarish and warm. The most character of the three and the furthest from a software site; also the hardest to keep tidy in small UI.</div></div>
+  <div class="pC"><span class="tag">C. Tektur / Sora / Space Mono</span><div class="h">Creatures grown for dying worlds</div><div class="l">Species on file</div><div class="b">Created by the Telypso Generator as a therapy animal for the insane Vallerii imprisoned on that world. Docile, and reads intent.</div><div class="d">93 in / 236 cm &nbsp; 830 lbs / 376 kg &nbsp; #00015</div><div class="why"><b>Overt.</b> Tektur is unashamedly science fiction. It looks great on one title and tiring on a page of them, which is the risk with any face that announces its genre. Shown so the line is visible: this is the point past which the site starts to look like a game menu.</div></div>
+</div>
+<p class="note" style="margin-top:14px">A is approved and this page is set in it. B and C stay here as the record of what was considered.</p>
+<h2 class="sec">5. Space, radius, depth <small>4 point grid, low relief</small></h2>
+  <p class="note">Spacing is a 4 point scale. Corners are 3 on controls and 6 on panels; nothing is a pill except a dot or a toggle. Depth is low: surfaces are told apart by tone and a hairline edge, with a single inset highlight on the top edge. Drop shadows exist only on things that float over the page.</p>
+  <div class="sp"><div style="--w:4px" data-n="4"></div><div style="--w:8px" data-n="8"></div><div style="--w:12px" data-n="12"></div><div style="--w:16px" data-n="16"></div><div style="--w:24px" data-n="24"></div><div style="--w:32px" data-n="32"></div><div style="--w:48px" data-n="48"></div><div style="--w:64px" data-n="64"></div></div>
+  <div class="depth" style="margin-top:44px">
+    <div class="L0"><span class="n">Level 0, s0</span><span class="u">Navbar, page footer, sidebars. Sits on the room.</span></div>
+    <div class="L1"><span class="n">Level 1, s1</span><span class="u">Cards and panels. The default container for content.</span></div>
+    <div class="L2"><span class="n">Level 2, s2</span><span class="u">Controls resting on a panel. Buttons, segments, inputs.</span></div>
+    <div class="Lglass"><span class="n">Glass</span><span class="u">Live data only: a fresh record, a match summary, a status figure. Darker than the room.</span></div>
+    <div class="LF"><span class="n">Floating</span><span class="u">Modal, popover, toast, menu. The only things with a drop shadow.</span></div>
+  </div>
+
+  <h2 class="sec">6. Controls <small>every state, four ranks</small></h2>
+  <p class="note">Buttons have four ranks and one of them is the accent. Every control has the same five states, and focus is always the emitter ring, two pixels, offset two.</p>
+  <div class="ctl">
+    <div class="hd"><span></span><span>Default</span><span>Hover</span><span>Pressed</span><span>Focus</span><span>Disabled</span></div>
+    <div class="r"><span class="k">Primary</span><a class="btn primary">Generate</a><a class="btn primary hov">Generate</a><a class="btn primary act">Generate</a><a class="btn primary foc">Generate</a><a class="btn primary dis">Generate</a></div>
+    <div class="r"><span class="k">Secondary</span><a class="btn">Read the story</a><a class="btn hov">Read the story</a><a class="btn act">Read the story</a><a class="btn foc">Read the story</a><a class="btn dis">Read the story</a></div>
+    <div class="r"><span class="k">Quiet</span><a class="btn quiet">Sign in</a><a class="btn quiet hov">Sign in</a><a class="btn quiet act">Sign in</a><a class="btn quiet foc">Sign in</a><a class="btn quiet dis">Sign in</a></div>
+    <div class="r"><span class="k">Destructive</span><a class="btn danger">Release</a><a class="btn danger hov">Release</a><a class="btn danger act">Release</a><a class="btn danger foc">Release</a><a class="btn danger dis">Release</a></div>
+    <div class="r"><span class="k">Text input</span><input class="inp ph" value="Search worlds, species, terms"><input class="inp hov" value="Hypno"><input class="inp" value="Hypnopet"><input class="inp foc" value="Hypnopet"><input class="inp dis" value="Hypnopet"></div>
+    <div class="r"><span class="k">Input, error</span><input class="inp err" value="hypno pet!"><span class="b2" style="grid-column:span 4;color:#e8a4b4">Names use letters only. Remove the space and the exclamation mark.</span></div>
+  </div>
+
+  <p class="note" style="margin-top:12px"><b>Destructive rank, answered.</b> At rest it is an outline in the Plague color on no fill, so a page with a delete button does not shout. It fills solid Plague only on hover and press, when the person is already reaching for it. That is the common convention (Polaris, Atlassian and GitHub all do it) and the one I built. The alternative, solid red at rest, is right only inside a confirmation dialog where destroying is the whole point.</p>
+  <div class="pieces">
+    <div class="piece"><div class="h">Segmented, toggle, checkbox</div>
+      <div class="seg"><span class="on">Bot</span><span>Second player</span></div>
+      <div style="margin-top:12px;display:flex;gap:16px;align-items:center;font-size:13.5px"><span class="tog on"></span> Randomize positions <span class="tog"></span> Sound</div>
+      <div style="margin-top:12px;display:flex;gap:16px;align-items:center;font-size:13.5px"><span class="chk on"></span> Keep this Xalian <span class="chk"></span> Public</div>
+    </div>
+    <div class="piece"><div class="h">Chips are content, badges are state</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="chip" style="--el:var(--el-psychic)">Psychic</span><span class="chip" style="--el:var(--el-dark);color:#eee">Dark</span><span class="chip" style="--el:var(--el-fire)">Fire</span></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px"><span class="badge viable">Kept</span><span class="badge plague">Unsaved</span><span class="badge caution">Expiring</span><span class="badge">Draft</span></div>
+    </div>
+    <div class="piece"><div class="h">Meters read the element in scope</div>
+      <div class="meter"><span class="k">Std attack</span><div class="track"><div class="fill" style="width:74%;--c:var(--el-psychic)"></div></div><span class="n">741</span></div>
+      <div class="meter"><span class="k">Speed</span><div class="track"><div class="fill" style="width:65%;--c:var(--el-psychic)"></div></div><span class="n">651</span></div>
+      <div class="meter"><span class="k">Stamina</span><div class="track"><div class="fill" style="width:58%;--c:var(--el-psychic)"></div></div><span class="n">582</span></div>
+    </div>
+    <div class="piece"><div class="h">Tabs</div><div class="tabs"><a>Reading room</a><a>Worlds</a><a class="on">Bestiary</a><a>Index</a></div></div>
+    <div class="piece"><div class="h">Toasts</div>
+      <div class="toast"><span class="dot live" style="--c:var(--viable-hi)"></span><span>Hypnopet kept to your account.</span></div>
+      <div class="toast"><span class="dot" style="--c:var(--plague)"></span><span>Could not reach the registry. Your Xalian is still on this page.</span></div>
+    </div>
+    <div class="piece"><div class="h">Empty and loading</div>
+      <div class="empty"><b>No Xalians yet</b>Generate one and keep it to see it here.</div>
+      <div class="spinrow" style="margin-top:14px"><svg class="spin sm" viewBox="-6 -6 144 173" width="20" aria-label="Loading"><g transform="translate(758.03 -766.78)"><path class="strand" d="M-653.6,842.22c-1.65-1.59-12.81-6.83-17.46-9,23.9-17.4,17.56-64.41,17.56-64.41H-628C-628,807.81-640.29,829.71-653.6,842.22Z"/><path class="strand" d="M-732.58,856.85a50.41,50.41,0,0,0,16.92,7.91C-731.89,883-730.5,926-730.5,926H-756S-750.6,883.43-732.58,856.85Z"/><path class="strand" d="M-730.5,768.78C-741.25,880.57-643,790.18-628,926H-653.5c-9-115.36-102-19.15-102.53-157.22Z"/><path class="rung" style="--i:0" d="M-722,777.85h38.87"/><path class="rung" style="--i:0" d="M-671,777.85h8.39"/></g><line class="rung" style="--i:1" x1="37.16" y1="29.9" x2="93.65" y2="29.9"/><line class="rung" style="--i:2" x1="45.18" y1="48.73" x2="86.61" y2="48.73"/><line class="rung" style="--i:3" x1="45.22" y1="115.28" x2="78.03" y2="115.28"/><g transform="translate(758.03 -766.78)"><path class="rung" style="--i:4" d="M-716.83,900.89H-709"/><path class="rung" style="--i:4" d="M-697,900.89h26.41"/></g><line class="rung" style="--i:5" x1="39.41" y1="152.87" x2="91.03" y2="153.01"/></svg><svg class="spin" viewBox="-6 -6 144 173" width="32" aria-label="Loading"><g transform="translate(758.03 -766.78)"><path class="strand" d="M-653.6,842.22c-1.65-1.59-12.81-6.83-17.46-9,23.9-17.4,17.56-64.41,17.56-64.41H-628C-628,807.81-640.29,829.71-653.6,842.22Z"/><path class="strand" d="M-732.58,856.85a50.41,50.41,0,0,0,16.92,7.91C-731.89,883-730.5,926-730.5,926H-756S-750.6,883.43-732.58,856.85Z"/><path class="strand" d="M-730.5,768.78C-741.25,880.57-643,790.18-628,926H-653.5c-9-115.36-102-19.15-102.53-157.22Z"/><path class="rung" style="--i:0" d="M-722,777.85h38.87"/><path class="rung" style="--i:0" d="M-671,777.85h8.39"/></g><line class="rung" style="--i:1" x1="37.16" y1="29.9" x2="93.65" y2="29.9"/><line class="rung" style="--i:2" x1="45.18" y1="48.73" x2="86.61" y2="48.73"/><line class="rung" style="--i:3" x1="45.22" y1="115.28" x2="78.03" y2="115.28"/><g transform="translate(758.03 -766.78)"><path class="rung" style="--i:4" d="M-716.83,900.89H-709"/><path class="rung" style="--i:4" d="M-697,900.89h26.41"/></g><line class="rung" style="--i:5" x1="39.41" y1="152.87" x2="91.03" y2="153.01"/></svg><svg class="spin" viewBox="-6 -6 144 173" width="56" aria-label="Loading"><g transform="translate(758.03 -766.78)"><path class="strand" d="M-653.6,842.22c-1.65-1.59-12.81-6.83-17.46-9,23.9-17.4,17.56-64.41,17.56-64.41H-628C-628,807.81-640.29,829.71-653.6,842.22Z"/><path class="strand" d="M-732.58,856.85a50.41,50.41,0,0,0,16.92,7.91C-731.89,883-730.5,926-730.5,926H-756S-750.6,883.43-732.58,856.85Z"/><path class="strand" d="M-730.5,768.78C-741.25,880.57-643,790.18-628,926H-653.5c-9-115.36-102-19.15-102.53-157.22Z"/><path class="rung" style="--i:0" d="M-722,777.85h38.87"/><path class="rung" style="--i:0" d="M-671,777.85h8.39"/></g><line class="rung" style="--i:1" x1="37.16" y1="29.9" x2="93.65" y2="29.9"/><line class="rung" style="--i:2" x1="45.18" y1="48.73" x2="86.61" y2="48.73"/><line class="rung" style="--i:3" x1="45.22" y1="115.28" x2="78.03" y2="115.28"/><g transform="translate(758.03 -766.78)"><path class="rung" style="--i:4" d="M-716.83,900.89H-709"/><path class="rung" style="--i:4" d="M-697,900.89h26.41"/></g><line class="rung" style="--i:5" x1="39.41" y1="152.87" x2="91.03" y2="153.01"/></svg><span class="b2" style="max-width:22ch">The helix reads its rungs while the page waits. No skeletons anywhere on the site.</span></div>
+    </div>
+  </div>
+
+  <h2 class="sec">7. Motion <small>quick, physical, optional</small></h2>
+  <div class="rules">
+    <div><b>Durations</b>120 ms for state changes on controls, 200 ms for things that appear or move within a panel, 320 ms for a panel or modal entering. Nothing on the chrome is longer. Enter eases out, exit eases in.</div>
+    <div><b>What may move</b>A control changing state, a panel entering, a value updating on glass, the home splash once on arrival. Nothing loops, nothing pulses, nothing glows on a timer. Under reduced motion every transition is instant and the splash shows its resting frame.</div>
+  </div>
+
+  <h2 class="sec">8. Applied <small>home and a record, on the system</small></h2>
+  <p class="note">The chrome mockup with the mint in place of the orange, and the wordmark back in the navbar and on the splash where the animation plays once.</p>
+  <div class="screen">
+    <nav class="nav">
+      <svg class="logo" viewBox="0 0 569.26 104.48" aria-label="Xalians"><use href="#wordmark-paths"/></svg>
+      <div class="links"><a class="on">Home</a><a>Encyclopedia</a><a>Generator</a><a>Duel</a><a>Reclamation</a><a>Training</a></div>
+      <div class="right"><a class="btn quiet">Sign in</a><a class="btn">Create account</a></div>
+    </nav>
+    <div class="page">
+      <div class="splash">
+        <div>
+          <svg class="big" viewBox="0 0 569.26 104.48" aria-label="Xalians"><use href="#wordmark-paths"/></svg>
+          <div class="kicker">Xalia</div>
+          <h1>Creatures grown for dying worlds</h1>
+          <p>Bioengineered life the Vallerii Generators grow to survive the worst planets in the galaxy, no two genomes alike. Kozrak's Mercurius Machine prints the Scrambler Tokens that make new ones, and pays them out to the winners of his arena.</p>
+          <div class="actions"><a class="btn primary">Generate a Xalian</a><a class="btn">Read the story</a></div>
+        </div>
+        <div class="status">
+          <div class="g"><div class="k legend">Species on file</div><div class="v mono">29</div></div>
+          <div class="g"><div class="k legend">Worlds surveyed</div><div class="v mono">14</div></div>
+          <div class="g"><div class="k legend">Your Xalians</div><div class="v mono live">3</div></div>
+        </div>
+      </div>
+      <div class="record">
+        <div class="plate"><svg viewBox="0 0 100 100"><circle cx="50" cy="48" r="26"/><circle cx="30" cy="20" r="9"/><circle cx="70" cy="20" r="9"/><rect x="34" y="70" width="32" height="18" rx="6"/></svg></div>
+        <div class="body">
+          <div class="top"><span class="chip" style="--el:var(--el-psychic)">Psychic</span><span class="chip" style="--el:var(--el-dark);color:#eee">Dark</span><span class="badge viable" style="margin-left:auto">Kept</span><span class="mono" style="color:var(--ink-3);font-size:12px">#00015</span></div>
+          <div class="name">Hypnopet</div>
+          <p class="b3" style="margin:0">Created by the Telypso Generator as a therapy animal for the insane Vallerii imprisoned on that world. Docile, and reads intent.</p>
+          <div class="specs">
+            <span class="k">Origin</span><span class="v">Telypso</span><span class="k">Generation</span><span class="v">0</span>
+            <span class="k">Height</span><span class="v">93 in / 236 cm</span><span class="k">Weight</span><span class="v">830 lbs / 376 kg</span>
+            <span class="k">Stat score</span><span class="v">1,204</span><span class="k">Potential</span><span class="v">1,410</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="sec">8b. Wordmark, round four <small>real faces, scanned</small></h2>
+<p class="note">Agreed: hand-applied cuts were the wrong direction. I scanned the Google Fonts catalog by its own tags (Stencil, Techno, Futuristic, and the Nova family which is untagged) and pulled every free face that either has designer-made cuts or breaks in the letters, or has the squared engineered character without them. Google Fonts only, because they are the one font host the mockup page can load; Fontshare and Velvetyne have a few more candidates and I can render those as images in a second pass if nothing here lands. Every candidate is shown at splash size and at navbar size, in mint, as the real word.</p>
+<p class="note" style="margin-top:10px"><b>The morph works with any of them.</b> The X of whichever face wins is converted to an SVG path once (opentype.js does this), and GSAP's MorphSVG morphs that path into the helix's strands the same way it morphs your three-piece X today. If the helix should stay three pieces, the X path is split at its crossing. So the choice is on looks alone.</p>
+<h3 class="sub">Faces with cuts or breaks drawn by their designer</h3>
+<div class="scan"><div class="pick"><span class="tag"><span>Nova Cut</span><i>cut</i></span><div class="wd" style="font-family:'Nova Cut',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Nova Cut',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Wojciech Kalinowski. The whole Nova family is one skeleton; Cut is the version with the strokes cleaved apart. A real designer did what I was trying to do by hand.</span></div><div class="pick"><span class="tag"><span>Iceland</span><i>broken strokes</i></span><div class="wd" style="font-family:'Iceland',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Iceland',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Ivan Gladkikh. Squared, with the joins broken open at the corners. The closest in spirit to your original wordmark of anything on Google Fonts.</span></div><div class=""><span class="tag"><span>Offside</span><i>cut</i></span><div class="wd" style="font-family:'Offside',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Offside',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Fine cuts at every join, jersey-number lineage. Light weight only.</span></div><div class=""><span class="tag"><span>Rationale</span><i>broken strokes</i></span><div class="wd" style="font-family:'Rationale',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Rationale',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Broken strokes in a narrow techno frame. Reads as a cut face at display size, as a plain one small.</span></div><div class=""><span class="tag"><span>Goldman</span><i>notched</i></span><div class="wd" style="font-family:'Goldman',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Goldman',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Heavy, with one notch cut into each letter. Wrestling-belt energy; strong, maybe too loud.</span></div><div class=""><span class="tag"><span>Expletus Sans</span><i>broken</i></span><div class="wd" style="font-family:'Expletus Sans',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Expletus Sans',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Geometric with the counters opened by cuts. Softer than the rest.</span></div><div class=""><span class="tag"><span>Turret Road</span><i>broken</i></span><div class="wd" style="font-family:'Turret Road',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Turret Road',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Broken rounds, variable weight. Retro-console feel.</span></div><div class=""><span class="tag"><span>Stalinist One</span><i>angular cuts</i></span><div class="wd" style="font-family:'Stalinist One',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Stalinist One',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Angular, chunky, cut. Very loud.</span></div><div class=""><span class="tag"><span>Tourney</span><i>cut-out</i></span><div class="wd" style="font-family:'Tourney',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Tourney',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Variable width and weight, cut-out counters. Sports and racing.</span></div><div class=""><span class="tag"><span>Megrim</span><i>skeletal</i></span><div class="wd" style="font-family:'Megrim',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Megrim',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Skeletal single-stroke. Fragile at small sizes.</span></div><div class=""><span class="tag"><span>Sarpanch</span><i>cut</i></span><div class="wd" style="font-family:'Sarpanch',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Sarpanch',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Heavy with squared cuts. Devanagari-companion design.</span></div><div class=""><span class="tag"><span>Keania One</span><i>stencil</i></span><div class="wd" style="font-family:'Keania One',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Keania One',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Stencil. Included for completeness; you have ruled stencils out.</span></div><div class=""><span class="tag"><span>Sirin Stencil</span><i>stencil</i></span><div class="wd" style="font-family:'Sirin Stencil',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Sirin Stencil',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Stencil.</span></div><div class=""><span class="tag"><span>Allerta Stencil</span><i>stencil</i></span><div class="wd" style="font-family:'Allerta Stencil',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Allerta Stencil',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Stencil.</span></div><div class=""><span class="tag"><span>Big Shoulders Stencil</span><i>stencil</i></span><div class="wd" style="font-family:'Big Shoulders Stencil',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Big Shoulders Stencil',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Stencil.</span></div><div class=""><span class="tag"><span>Wallpoet</span><i>stencil</i></span><div class="wd" style="font-family:'Wallpoet',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Wallpoet',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Stencil, heavy.</span></div></div>
+<h3 class="sub">Whole faces with the engineered character</h3>
+<div class="scan"><div class="pick"><span class="tag"><span>Anta</span><i>whole</i></span><div class="wd" style="font-family:'Anta',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Anta',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Squared, slightly narrow, calm. Has a cut-corner feel without any cuts.</span></div><div class=""><span class="tag"><span>Electrolize</span><i>whole</i></span><div class="wd" style="font-family:'Electrolize',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Electrolize',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Classic squared techno, light.</span></div><div class=""><span class="tag"><span>Quantico</span><i>whole</i></span><div class="wd" style="font-family:'Quantico',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Quantico',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Squared, sturdy, a little military.</span></div><div class=""><span class="tag"><span>Genos</span><i>whole</i></span><div class="wd" style="font-family:'Genos',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Genos',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Wide, precise, variable.</span></div><div class=""><span class="tag"><span>Geo</span><i>whole</i></span><div class="wd" style="font-family:'Geo',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Geo',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Very geometric, near-monoline.</span></div><div class=""><span class="tag"><span>Zen Dots</span><i>whole</i></span><div class="wd" style="font-family:'Zen Dots',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Zen Dots',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Rounded techno.</span></div><div class=""><span class="tag"><span>Syncopate</span><i>whole</i></span><div class="wd" style="font-family:'Syncopate',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Syncopate',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Very wide, low.</span></div><div class=""><span class="tag"><span>Audiowide</span><i>whole</i></span><div class="wd" style="font-family:'Audiowide',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Audiowide',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Rounded and wide, 1970s console.</span></div><div class=""><span class="tag"><span>Nova Square</span><i>whole</i></span><div class="wd" style="font-family:'Nova Square',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Nova Square',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">The whole-letter version of Nova Cut, for the pair.</span></div><div class=""><span class="tag"><span>Bruno Ace</span><i>whole</i></span><div class="wd" style="font-family:'Bruno Ace',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Bruno Ace',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Wide, cut-corner rounds. Cassette-era.</span></div><div class=""><span class="tag"><span>Unica One</span><i>whole</i></span><div class="wd" style="font-family:'Unica One',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Unica One',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Condensed with a squared feel.</span></div><div class=""><span class="tag"><span>Iceberg</span><i>whole</i></span><div class="wd" style="font-family:'Iceberg',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Iceberg',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Extended, squared, cold.</span></div><div class=""><span class="tag"><span>Michroma</span><i>whole</i></span><div class="wd" style="font-family:'Michroma',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Michroma',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">The placard face from earlier rounds.</span></div><div class=""><span class="tag"><span>Chakra Petch</span><i>whole</i></span><div class="wd" style="font-family:'Chakra Petch',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Chakra Petch',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Squared Thai-Latin techno; was the relay nameplate face in v3.</span></div><div class="pick"><span class="tag"><span>Oxanium</span><i>whole</i></span><div class="wd" style="font-family:'Oxanium',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Oxanium',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">Squared with cut-corner rounds; closest stock face to your original letterforms.</span></div><div class=""><span class="tag"><span>Saira</span><i>whole, the site face</i></span><div class="wd" style="font-family:'Saira',sans-serif;font-weight:700">Xalians</div><div class="sm" style="font-family:'Saira',sans-serif;font-weight:700">Xalians &nbsp; Generator &nbsp; Encyclopedia</div><span class="u">The site display face, for comparison. A plain lockup in the site face is always the safe answer.</span></div></div>
+<p class="note" style="margin-top:14px">Outlined cards are my short list. <b>Iceland</b> is the one I would put first: it is squared like Saira, its joins are broken open at the corners the way your original's are, and it is calm enough to sit in a navbar. <b>Nova Cut</b> is the purer "cut" face, with Nova Square as its whole twin if you ever want both. If the cuts turn out to be a phase, <b>Anta</b> and <b>Oxanium</b> carry the cut-corner feel with whole letters. The wordmark face is a brand asset used in one place, so it does not have to be Saira; it only has to sit next to Saira without arguing.</p>
+<h2 class="sec">8c. Where this still reads as a software site <small>an honest pass</small></h2>
+<p class="note">You asked me to check where I am leaning on the corporate half of my training. Here is what I see, what it would become instead, and what I am proposing to do about it. The interface staying quiet is still right; the question is whether the world gets to show up in it. Right now it mostly does not.</p>
+<div class="audit">
+  <div class="r"><span>Pattern</span><span>Why it reads corporate</span><span>What replaces it</span></div>
+  <div class="r"><span class="k">Three glass stat tiles on the home page</span><span>"Species on file 29" is a dashboard KPI row. Every analytics product opens this way.</span><span>Gone. The home page opens on the splash animation and the world: the fourteen planets as a field you can enter, each with its hue and a line of its story. The numbers live in the encyclopedia where they mean something.</span></div>
+  <div class="r"><span class="k">Five destination cards, title plus one line each</span><span>The marketing features row. A grid of equal boxes with a heading and a sentence is the most recognizable software-site shape there is.</span><span>Destinations are unequal on purpose. The Generator is the big one, the games are what they are (a board, a match), the encyclopedia is a reading room. Different sizes, different shapes, one line of plain copy each.</span></div>
+  <div class="r"><span class="k">Kicker, headline, paragraph, two buttons</span><span>The universal hero. It is fine, and it is exactly what a template gives you.</span><span>Keep the bones, change the content: the headline is the world's, the first button is the accent, the second is not a button but a link into the story. And the splash animation is the hero, not the text.</span></div>
+  <div class="r"><span class="k">Rounded rectangles everywhere</span><span>Three and six pixel radii on every surface is the default of every component library.</span><span>No radius anywhere, and the cut corner reserved for the primary key and glass. Shown below in round two.</span></div>
+  <div class="r"><span class="k">Badges saying Kept, Draft, Expiring</span><span>Status pills are workflow-software vocabulary.</span><span>Keep the mechanism, fix the words. A Xalian is kept, released, or unclaimed; a match is won, lost, or abandoned. Words from the world's own registry, never from a ticketing tool.</span></div>
+  <div class="r"><span class="k">Segmented controls plus a live summary card</span><span>A settings form. Correct for a setup screen and identical to every setup screen.</span><span>Stays as the mechanism, but the summary is the thing you are about to do rendered as itself: the squad as plates, the board as a small board, not a list of key and value.</span></div>
+  <div class="r"><span class="k">Toasts with a colored dot</span><span>Fine. Every site has them, and a toast that tries to be clever is worse.</span><span>Stays.</span></div>
+  <div class="r"><span class="k">Flat, uniform, textureless surfaces</span><span>Every surface the same matte tone reads as a design-tool export.</span><span>A very faint grain on the room and a vignette at the edges, which the current site already has and I kept. Depth stays low; the room just should not be a flat fill.</span></div>
+  <div class="r"><span class="k">The typography</span><span>Barlow is on thousands of sites. It carries no world.</span><span>Section 4, pairing A or B.</span></div>
+</div>
+<h3 class="sub">Corners, round two</h3>
+<p class="note">Right: a clip-path cuts the border off with the corner. The fix is to draw the surface as two layers, an edge-colored layer and a one pixel smaller surface layer, both clipped, so the hairline follows the contour. That version is on the left. Beside it, the two alternatives that get character without any cutting at all.</p>
+<div class="corners">
+  <div><div class="chamf"><div><div class="lbl">Chamfer, border follows the cut</div><p class="b3" style="margin:8px 0 0;font-size:14px">Twelve pixel cut, top left and bottom right. The hairline now runs the whole contour, on glass and on the primary key too.</p></div></div>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap"><a class="btn chamf primary"><span>Generate</span></a><a class="btn chamf"><span>Read the story</span></a><a class="btn chamf danger"><span>Release</span></a></div>
+    <div class="u">Most distinctive. Costs a wrapper element per surface, which the component library hides. Rungs, plates and tiles all take the same cut.</div></div>
+  <div><div class="square"><div class="lbl">Square, no radius anywhere</div><p class="b3" style="margin:8px 0 0;font-size:14px">Every corner square. No cut, no rounding. Buttons and inputs too.</p></div>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap"><a class="btn primary sq">Generate</a><a class="btn sq">Read the story</a><a class="btn danger sq">Release</a></div>
+    <div class="u">Quietest move away from the component-library look. Sharp corners with the warm room and Saira already read as instrument rather than app. Zero implementation cost.</div></div>
+  <div><div class="ticks"><div class="lbl">Square with registration ticks</div><p class="b3" style="margin:8px 0 0;font-size:14px">Square corners, hairline edge, and a two pixel bracket on two opposite corners like a specimen frame.</p></div>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap"><a class="btn primary sq">Generate</a><a class="btn sq">Read the story</a><a class="btn danger sq">Release</a></div>
+    <div class="u">Panels only; buttons stay plain square. The bracket is a nod to survey sheets and photo mounts. Easy to overuse, so it would be reserved for the glass tier where live data sits.</div></div>
+</div>
+<p class="note" style="margin-top:14px">My pick is square everywhere, with the chamfer kept only for the one primary key and the glass tier, so the cut reads as a signature rather than a texture. If you would rather have no cutting at all, square alone still holds.</p>
+<h2 class="sec">9. What a complete system includes <small>scope of the v4 contract</small></h2>
+  <div class="rules">
+    <div><b>Foundations</b>Everything on this page as tokens in three layers: primitive (the hex), semantic (surface, ink, accent, status, focus), component (button-primary-bg and so on). CSS and JavaScript mirrors stay paired by test.</div>
+    <div><b>Component inventory</b>Buttons by rank, links, inputs, select, segmented, checkbox, toggle, range, form field with label and help and error; cards, lists, tables, tabs, badges, chips, meters, progress; navbar, masthead, footer, breadcrumb; modal, drawer, toast, tooltip, menu; empty, loading, error and skeleton states; pagination.</div>
+    <div><b>Patterns and templates</b>Index page, record page, setup form, results screen, reading page. Form validation, destructive confirmation, responsive collapse at 1024 and 640, the way a featured component sits inside the chrome.</div>
+    <div><b>Content and accessibility</b>Plain copy on controls, sentence case except legends, numbers and units formatting, where in-world voice is allowed (content) and where it is not (controls). Contrast floor 4.5:1, visible focus, keyboard order, 44 pixel touch targets, reduced motion.</div>
+    <div><b>Governance</b>The classification rule (chrome, featured component, immersive experience) with the test for each; how to add a token; the paint-check harness; a styleguide page that renders every token and every component state; the build-ui skill as a decision tree that ends in an existing component or a written justification for a custom one.</div>
+    <div><b>What leaves</b>Terminal objects and their props, per-area faces and accents, fake readouts, in-world button copy, hazard livery, the orange. The world lives in the content. The interface stays quiet so the content can be loud.</div>
+  </div>
+
+  <p class="foot">Xalians design system v4 foundations, proposed 2026-09-08. Every value here is a lever, chosen so work can proceed; a real case met while building reopens it.</p>
+</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><g id="wordmark-paths"><path d="M-823.59,804.67q.21,0,3.28,8.94,19.2,54.12,19.55,55.37h-19.55q-.21-.35-3.7-10.47l-8.8-24.65h-.07q-1.53,4.47-25.41,70.8c0,.19-.08.28-.21.28h-19.35a.13.13,0,0,1-.14-.14l28-77.71q7.75-21.51,8.1-22.42ZM-814,886.3h19.34c.14,0,.54,1,1.19,3.14l5.52,15.43-.14.07h-19.41c-.1-.05-.86-2.12-2.31-6.21l-4.33-12.36Z" transform="translate(973.18 -802.46)"/><path d="M-777.68,804.74h18.78a.12.12,0,0,1,.14.14v60.61a.12.12,0,0,1-.14.14h-18.78a.13.13,0,0,1-.14-.14V804.88A.13.13,0,0,1-777.68,804.74Zm0,82H-731s.07,0,.07.14V904.8c0,.09,0,.14-.07.14h-46.64a.13.13,0,0,1-.14-.14V886.93A.12.12,0,0,1-777.68,886.79Z" transform="translate(973.18 -802.46)"/><path d="M-719.9,804.88h55a.13.13,0,0,1,.14.14v18.16a.13.13,0,0,1-.14.14h-55a.13.13,0,0,1-.14-.14V805A.13.13,0,0,1-719.9,804.88Zm18.16,39.52h18.64a.12.12,0,0,1,.14.14v42h18.09a.12.12,0,0,1,.14.14V904.8a.13.13,0,0,1-.14.14h-55a.13.13,0,0,1-.14-.14V886.65a.12.12,0,0,1,.14-.14h18v-42A.13.13,0,0,1-701.74,844.4Z" transform="translate(973.18 -802.46)"/><path d="M-601.57,804.67q.21,0,3.28,8.94,19.2,54.12,19.55,55.37h-19.55q-.21-.35-3.7-10.47l-8.8-24.65h-.07q-1.53,4.47-25.42,70.8c0,.19-.07.28-.21.28h-19.34a.13.13,0,0,1-.14-.14l28-77.71q7.76-21.51,8.1-22.42ZM-592,886.3h19.34c.14,0,.54,1,1.19,3.14l5.52,15.43-.14.07h-19.41q-.15-.08-2.31-6.21l-4.33-12.36Z" transform="translate(973.18 -802.46)"/><path d="M-555.66,804.46h18.15q.71,1,37.71,57.82,5.24,8,5.31,8.24h.07V844.61a.12.12,0,0,1,.14-.14h18.85c.09,0,.14.1.14.14V904.8a.13.13,0,0,1-.14.14h-18.16q-1.95-2.79-31.91-48.81-10.18-15.5-11.1-17h-.07v65.7a.12.12,0,0,1-.14.14h-18.85a.13.13,0,0,1-.14-.14V804.6A.13.13,0,0,1-555.66,804.46Zm61.38,0h18.85a.13.13,0,0,1,.14.14v18.51a.13.13,0,0,1-.14.14h-18.85a.12.12,0,0,1-.14-.14V804.6A.12.12,0,0,1-494.28,804.46Z" transform="translate(973.18 -802.46)"/><path d="M-435.1,805q12.28,0,22.27,9.78,3.13,3.07,5.24,5.58L-421,832.11l-2.93-3.63q-5.73-6.13-11.45-6.14-5.31,0-7.61,4.12a4.55,4.55,0,0,0-.42,1.95v.28c0,2.28,1.32,4.59,4,6.91q7.6,7.13,19.06,16.55a63.9,63.9,0,0,1,8,8.17,27.2,27.2,0,0,1,6.42,17.6q0,14.87-12.92,23a32.57,32.57,0,0,1-16.4,4q-20.4,0-30.45-20.67,14.88-9.07,15.22-9.14,6.86,12.55,15.71,12.56A11.1,11.1,0,0,0-424.49,882a8.09,8.09,0,0,0,.77-3.21q0-5.44-7.33-11.52-2.65-2.52-10.76-9.08-4.11-3.49-10.33-9.78-9.08-9.55-9.08-19.06v-.63q0-11.87,11.45-19.69A26.91,26.91,0,0,1-435.1,805Z" transform="translate(973.18 -802.46)"/><path d="M-971,805h20.27c0,.06,48.36,77.3,62.32,100h-20.33Z" transform="translate(973.18 -802.46)"/><path d="M-909,805c.15.14,20.29-.27,20.26.14-1.81,2.71-20.57,32.94-24.38,39l-10.48-15.92C-920,822.53-910.47,806.94-909,805Z" transform="translate(973.18 -802.46)"/><path d="M-950.92,904.56c-.15-.14-20.29.27-20.26-.14,1.81-2.71,20.57-32.95,24.37-39l10.49,15.91C-939.93,887-949.45,902.61-950.92,904.56Z" transform="translate(973.18 -802.46)"/></g></defs></svg>
