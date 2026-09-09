@@ -23,20 +23,20 @@ export default function Worlds() {
                     <Link
                         key={world.key}
                         to={lore.routeFor('world', world.key)}
-                        className={`g-paper g-paper--card g-el-${world.element} enc-worlds-card`}
+                        className={`g-panel g-card-link g-el-${world.element} enc-tile`}
                     >
-                        <div className="g-paper-tabs">
-                            <span className={`g-tab g-el-${world.element}`}>{world.element}</span>
-                        </div>
-                        <div className="g-plate--photo enc-worlds-mount">
+                        <div className="enc-tile-bar" />
+                        <div className="enc-tile-art">
                             <img
                                 src={`/${world.images.planet}`}
                                 alt={`${world.name} globe`}
-                                className="enc-worlds-globe"
+                                className="enc-tile-art-img"
                             />
                         </div>
-                        <span className="enc-worlds-card-name">{world.name}</span>
-                        <span className="enc-worlds-card-terrain">{world.physical.terrainLabel}</span>
+                        <div className="enc-tile-meta">
+                            <span className="g-h3 enc-tile-name">{world.name}</span>
+                            <span className="g-mono enc-tile-sub">{world.physical.terrainLabel}</span>
+                        </div>
                     </Link>
                 ))}
             </div>

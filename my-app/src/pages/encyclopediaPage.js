@@ -1,3 +1,4 @@
+// Tier: chrome. Reference reading -- browses and searches the archive, no play surface.
 import React, { useEffect, useRef } from 'react';
 import { Switch, Route, Redirect, useRouteMatch, useLocation, useParams } from 'react-router-dom';
 import * as lore from '../lore';
@@ -40,7 +41,6 @@ function RedirectTour() {
     return <Redirect to={lore.routeFor('story')} />;
 }
 
-// Terminal: archive. Poseidas is the neutral seat of science and arbitration; the encyclopedia is a reading desk in its Deep Archive, paper under a lamp.
 /**
  * ENCYCLOPEDIA XALIA - the Generator's archive.
  *
@@ -128,7 +128,7 @@ export default function EncyclopediaPage() {
     }, [location.pathname, location.hash]);
 
     return (
-        <div className="g-console enc-console" data-terminal="archive">
+        <main className="g-page enc-console" data-tier="chrome">
             <XalianNavbar />
             <EncyclopediaShell>
                 <Switch>
@@ -153,6 +153,6 @@ export default function EncyclopediaPage() {
                     <Route><p className="g-empty">No record at this address.</p></Route>
                 </Switch>
             </EncyclopediaShell>
-        </div>
+        </main>
     );
 }

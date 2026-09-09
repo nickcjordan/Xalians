@@ -11,7 +11,7 @@
 
 .enc-world-chronicle-label {
 	font-size: var(--g-size-tiny);
-	color: var(--g-ink-low);
+	color: var(--g-ink-3);
 	letter-spacing: var(--g-track-label);
 	text-transform: uppercase;
 	flex: none;
@@ -30,21 +30,21 @@
 	align-items: flex-start;
 	gap: 2px;
 	padding: var(--g-2) var(--g-3);
-	border: 1px solid var(--g-seam);
-	border-radius: 2px;
+	border: var(--g-hairline) solid var(--g-edge);
+	background: var(--g-s0);
 	text-decoration: none;
 	color: var(--g-ink);
-	background: var(--g-hull-lo);
 }
 
 a.enc-world-chronicle-station:hover,
 a.enc-world-chronicle-station:focus-visible {
-	color: var(--g-brass);
-	border-color: var(--g-brass);
+	color: var(--g-ink);
+	border-color: var(--g-edge-strong);
+	background: var(--g-s1);
 }
 
 .enc-world-chronicle-station--dim {
-	color: var(--g-ink-low);
+	color: var(--g-ink-3);
 	opacity: 0.55;
 	border-color: transparent;
 	cursor: default;
@@ -59,14 +59,13 @@ a.enc-world-chronicle-station:focus-visible {
 
 .enc-world-chronicle-station-count {
 	font-size: var(--g-size-micro);
-	color: var(--g-ink-mid);
+	color: var(--g-ink-2);
 }
 
 .enc-world-plate {
 	display: flex;
 	flex-direction: column;
 	gap: var(--g-4);
-	padding-top: var(--g-6);
 }
 
 .enc-world-lede {
@@ -77,9 +76,13 @@ a.enc-world-chronicle-station:focus-visible {
 }
 
 .enc-world-mount {
-	width: 132px;
-	height: 132px;
+	width: 148px;
+	height: 148px;
 	margin: 0 auto;
+	display: grid;
+	place-items: center;
+	background: color-mix(in srgb, var(--g-el) 24%, var(--g-s1));
+	border-radius: 50%;
 }
 
 .enc-world-globe {
@@ -92,11 +95,6 @@ a.enc-world-chronicle-station:focus-visible {
 
 .enc-world-spec {
 	padding: 0 var(--g-1);
-}
-
-.enc-world-spec .g-spec-key,
-.enc-world-spec .g-spec-val {
-	font-family: var(--g-font-paper);
 }
 
 .enc-world-record-col {
@@ -112,34 +110,6 @@ a.enc-world-chronicle-station:focus-visible {
 
 .enc-world-record-section-head {
 	margin-bottom: var(--g-3);
-}
-
-.enc-world-fauna-grid {
-	grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-	gap: var(--g-4);
-}
-
-.enc-world-species-tile {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: var(--g-1);
-	text-decoration: none;
-	padding-top: var(--g-6);
-	text-align: center;
-}
-
-.enc-world-species-tile--compact .enc-world-species-art {
-	width: 64px;
-	height: 64px;
-}
-
-.enc-world-species-name {
-	font-family: var(--g-font-paper);
-	font-size: var(--g-size-small);
-	color: var(--g-paper-ink);
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
 }
 
 .enc-world-history-layout {
@@ -191,29 +161,18 @@ a.enc-world-chronicle-station:focus-visible {
 	flex-wrap: wrap;
 	gap: var(--g-2);
 	padding: var(--g-2);
-	border-radius: 2px;
 	text-decoration: none;
 	color: var(--g-ink);
 }
 
-.enc-world-chapter-index-lamp {
-	flex: none;
-	align-self: center;
-}
-
-.enc-world-chapter-index-lamp::before {
-	width: 6px;
-	height: 6px;
-}
-
 .enc-world-chapter-index-row:hover,
 .enc-world-chapter-index-row:focus-visible {
-	color: var(--g-brass);
-	background: var(--g-seam);
+	color: var(--g-ink);
+	background: var(--g-s2);
 }
 
 .enc-world-chapter-index-num {
-	color: var(--g-ink-low);
+	color: var(--g-ink-3);
 	font-size: var(--g-size-tiny);
 	flex: none;
 }
@@ -225,7 +184,7 @@ a.enc-world-chronicle-station:focus-visible {
 
 .enc-world-chapter-index-snippet {
 	font-size: var(--g-size-small);
-	color: var(--g-ink-mid);
+	color: var(--g-ink-2);
 }
 
 .enc-world-chapter {
@@ -240,37 +199,27 @@ a.enc-world-chronicle-station:focus-visible {
 }
 
 .enc-world-chapter-num {
-	color: var(--g-ink-low);
-}
-
-.enc-world-species-art {
-	padding: var(--g-2);
+	color: var(--g-ink-3);
 }
 
 .enc-world-entries {
 	padding: var(--g-2) var(--g-4);
 }
 
-.enc-world-report {
-	font-family: var(--g-font-paper);
-}
-
 .enc-world-report-line {
 	margin: 0 0 var(--g-1);
-	font-family: var(--g-font-paper);
-	color: var(--g-paper-ink);
-	letter-spacing: var(--g-track-label);
+	color: var(--g-ink);
 }
 
 .enc-world-report-line--faint {
-	color: var(--g-paper-ink-faint);
+	color: var(--g-ink-2);
 }
 
 .enc-world-report-block {
 	margin-top: var(--g-3);
 	text-transform: uppercase;
 	font-size: var(--g-size-tiny);
-	color: var(--g-paper-ink-faint);
+	color: var(--g-ink-3);
 }
 
 @media (max-width: 700px) {

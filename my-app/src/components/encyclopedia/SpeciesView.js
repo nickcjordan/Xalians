@@ -33,7 +33,7 @@ function meterRow(key, name, band, maxBand) {
     return (
         <div className="g-meter-row" key={key}>
             <span className="g-meter-name">{name}</span>
-            <div className="g-meter g-meter--ink">
+            <div className="g-meter">
                 <div className="g-meter-fill" style={{ width: `${fillPct}%` }} />
             </div>
             <span className="g-meter-value">{bandText(band)}</span>
@@ -147,7 +147,7 @@ function Signature({ signature }) {
             <div className="enc-section-head">
                 <h2 className="g-h2">Signature</h2>
             </div>
-            <div className="g-paper enc-species-signature">
+            <div className="g-panel enc-species-signature">
                 <p className="enc-species-signature-name">{signature.name}</p>
                 <p>
                     INSTRUMENT {signature.instrument} / ACTION {signature.action} / MEDIUM {signature.medium}
@@ -167,7 +167,7 @@ function GeneratorTemplate({ record }) {
                     <div className="enc-section-head">
                         <h2 className="g-h2">Capabilities</h2>
                     </div>
-                    <div className="g-paper">
+                    <div className="g-panel">
                         {record.capabilities.map((c) => meterRow(c.key, c.name, c.band))}
                     </div>
                 </section>
@@ -176,7 +176,7 @@ function GeneratorTemplate({ record }) {
                     <div className="enc-section-head">
                         <h2 className="g-h2">Senses</h2>
                     </div>
-                    <div className="g-paper">
+                    <div className="g-panel">
                         {record.senses.graded.map((s) => meterRow(s.key, s.name, s.band))}
                         {record.senses.special.length > 0 && (
                             <div className="enc-species-chip-row">
@@ -194,7 +194,7 @@ function GeneratorTemplate({ record }) {
                     <div className="enc-section-head">
                         <h2 className="g-h2">Attributes</h2>
                     </div>
-                    <div className="g-paper">
+                    <div className="g-panel">
                         {record.attributes.map((a) => meterRow(a.key, a.name, a.band))}
                     </div>
                 </section>
@@ -214,7 +214,7 @@ function GeneratorTemplate({ record }) {
                     <div className="enc-section-head enc-species-archetypes-head">
                         <h2 className="g-h2">Archetypes</h2>
                     </div>
-                    <ol className="g-paper enc-species-archetypes">
+                    <ol className="g-panel enc-species-archetypes">
                         {record.archetypes.map((a) => (
                             <li key={a.key}>
                                 <span className="enc-species-archetype-name">{a.name}</span>
@@ -293,24 +293,24 @@ export default function SpeciesView() {
         <article className={`enc-species g-el-${view.element}`}>
             <Link to="/encyclopedia/species" className="enc-back">&laquo; Back to Bestiary</Link>
 
-            <header className="enc-designation">
-                <h1 className="g-title">{view.name}</h1>
-                <Pronunciation pronunciation={(lore.getEntry(view.key) || {}).pronunciation} />
-                <div className="enc-chips">
-                    <span className="g-chip">{view.element}</span>
+            <header className="g-masthead">
+                <div className="g-masthead-heading">
+                    <p className="g-kicker">Species record</p>
+                    <h1 className="g-title">{view.name}</h1>
+                    <Pronunciation pronunciation={(lore.getEntry(view.key) || {}).pronunciation} />
+                    {wasRead && <span className="g-badge g-badge--ok enc-species-reviewed">Reviewed</span>}
+                </div>
+                <div className="g-masthead-aside enc-chips">
+                    <span className={`g-chip g-el-${view.element}`}>{view.element}</span>
                     <Link to={lore.routeFor('world', view.homePlanet)} className={`g-chip g-el-${view.element}`}>
                         {worldName}
                     </Link>
                 </div>
-                {wasRead && <p className="g-mono enc-species-reviewed">reviewed</p>}
             </header>
 
             <div className="enc-record">
-                <div className="g-paper g-paper--card enc-species-plate">
-                    <div className="g-paper-tabs">
-                        <span className={`g-tab g-el-${view.element}`}>{view.element}</span>
-                    </div>
-                    <div className="g-plate--photo enc-species-mount">
+                <div className="g-panel enc-species-plate">
+                    <div className="enc-species-mount">
                         <XalianImage colored speciesName={view.name} primaryType={view.element} moreClasses="enc-species-portrait" />
                     </div>
                 </div>
@@ -340,8 +340,8 @@ export default function SpeciesView() {
             <ContinueTheStory />
 
             <Fold label="Generator template">
-                <p className="g-mono enc-species-template-status">
-                    <span className={`g-lamp ${isTemplate ? '' : 'g-lamp--off'}`}>
+                <p className="enc-species-template-status">
+                    <span className={`g-badge ${isTemplate ? 'g-badge--ok' : 'g-badge--info'}`}>
                         {isTemplate ? 'Record ratified' : 'Record pending migration'}
                     </span>
                 </p>

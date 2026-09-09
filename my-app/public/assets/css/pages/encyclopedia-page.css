@@ -1,0 +1,180 @@
+/* Encyclopedia (docs/DESIGN_SYSTEM.md, chrome tier). Page compositions
+   specific to the archive's own shell, search and card grids -- system.css
+   already supplies .g-masthead, .g-tabs, .g-panel, .g-glass, .g-card-link,
+   .g-input and .g-record; this file is only the layout on top of them. No
+   colors: every value reads a --g-* token from system.css. */
+
+/* ---- masthead aside: search plus the "pull a record" key -------------- */
+
+.enc-shell-subtitle {
+	margin: var(--g-2) 0 0;
+	max-width: 62ch;
+}
+
+.enc-shell-aside {
+	display: flex;
+	align-items: center;
+	gap: var(--g-3);
+}
+
+.enc-search-slip {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-1);
+	width: 20rem;
+	max-width: 60vw;
+}
+
+.enc-search-input {
+	width: 100%;
+	padding-right: var(--g-7) !important;
+}
+
+.enc-search-hint {
+	position: absolute;
+	top: 50%;
+	right: var(--g-3);
+	transform: translateY(-50%);
+	color: var(--g-ink-3);
+	pointer-events: none;
+}
+
+/* No floating-panel shadow token exists in v4 yet (system.css defines
+   --g-surface-float but nothing for the drop shadow section 5 promises
+   floating things); this rgba matches the one v4-chrome.html itself uses
+   for its screens (see friction in the migration report). */
+.enc-search-results {
+	position: absolute;
+	top: calc(100% + var(--g-2));
+	right: 0;
+	left: 0;
+	z-index: var(--g-layer-nav);
+	max-height: 60vh;
+	overflow-y: auto;
+	padding: var(--g-4) var(--g-4) var(--g-3);
+	box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+}
+
+.enc-search-group-label {
+	margin: 0 0 var(--g-1);
+	font-family: var(--g-font-legend);
+	font-size: var(--g-size-micro);
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+	color: var(--g-ink-3);
+}
+
+.enc-search-empty {
+	margin: 0;
+	color: var(--g-ink-2);
+}
+
+.enc-search-hit:hover,
+.enc-search-hit:focus-visible,
+.enc-search-hit--active {
+	background: var(--g-s2);
+	outline: none;
+}
+
+.enc-pull-record {
+	flex: none;
+	white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+	.enc-shell-aside {
+		width: 100%;
+		flex-wrap: nowrap;
+	}
+	.enc-search-slip {
+		width: auto;
+		flex: 1 1 auto;
+		max-width: none;
+	}
+}
+
+/* ---- read-mark dot: the small progress indicator used in the chapter
+   rail, the story margin notes, Index and Connections. No .g-lamp (banned
+   for v4); a plain dot in a status token instead. */
+
+.enc-read-dot {
+	display: inline-block;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: var(--g-edge-strong);
+}
+
+.enc-read-dot--on {
+	background: var(--g-status-ok);
+}
+
+/* ---- catalogue grids: worlds, bestiary, native fauna --------------------
+   .g-card-link tiles: a 3px element bar at the top, the art on an element
+   wash, the name in Saira, the world/element line in the data face at
+   --g-ink-3 (docs/design/v4-step2-encyclopedia.md). Six across at 1440,
+   stepping down as the shell narrows. */
+
+.enc-card-grid {
+	gap: var(--g-5) var(--g-4);
+	grid-template-columns: repeat(3, 1fr);
+}
+
+@media (min-width: 720px) {
+	.enc-card-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media (min-width: 1080px) {
+	.enc-card-grid { grid-template-columns: repeat(5, 1fr); }
+}
+
+@media (min-width: 1440px) {
+	.enc-card-grid { grid-template-columns: repeat(6, 1fr); }
+}
+
+.enc-tile {
+	padding: 0;
+	overflow: hidden;
+}
+
+.enc-tile-bar {
+	height: 3px;
+	background: var(--g-el);
+}
+
+.enc-tile-art {
+	aspect-ratio: 1;
+	display: grid;
+	place-items: center;
+	background: color-mix(in srgb, var(--g-el) 24%, var(--g-s1));
+}
+
+.enc-tile-art-img {
+	width: 62%;
+	height: 62%;
+	object-fit: contain;
+}
+
+.enc-tile-meta {
+	padding: var(--g-3) var(--g-4) var(--g-4);
+}
+
+.enc-tile-name {
+	display: block;
+}
+
+.enc-tile-sub {
+	display: block;
+	margin-top: var(--g-1);
+	color: var(--g-ink-3);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	font-size: var(--g-size-small);
+}
+
+.enc-tile-badges {
+	display: flex;
+	gap: var(--g-2);
+	margin-top: var(--g-2);
+}

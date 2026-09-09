@@ -23,11 +23,7 @@
 .enc-entry-era-chip { text-decoration: none; }
 
 .enc-entry-reviewed {
-	margin: 0;
-	font-size: var(--g-size-tiny);
-	color: var(--g-ink-low);
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
+	margin-top: var(--g-2);
 }
 
 .enc-entry-related { padding: var(--g-2) var(--g-4); }
@@ -56,7 +52,7 @@
 .enc-entry-story-era-name { text-decoration: none; }
 
 .enc-entry-story-era-name:hover,
-.enc-entry-story-era-name:focus-visible { color: var(--g-brass); }
+.enc-entry-story-era-name:focus-visible { color: var(--g-edge-strong); }
 
 .enc-entry-story-points {
 	list-style: none;

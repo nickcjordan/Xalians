@@ -70,16 +70,6 @@
 	color: var(--g-ink-mid);
 }
 
-.enc-index-read-lamp {
-	font-size: var(--g-size-micro);
-	gap: var(--g-1);
-}
-
-.enc-index-read-lamp::before {
-	width: 6px;
-	height: 6px;
-}
-
 @media (min-width: 900px) {
 	.enc-index-controls-sticky {
 		position: sticky;
@@ -102,7 +92,7 @@
 
 .enc-index-archive-note a:hover,
 .enc-index-archive-note a:focus-visible {
-	color: var(--g-brass-light);
+	color: var(--g-ink-2);
 }
 
 @media (max-width: 700px) {
