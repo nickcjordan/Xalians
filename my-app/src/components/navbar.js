@@ -1,19 +1,20 @@
-// Terminal: relay. The navbar is the relay's own control strip: it carries
-// the unit's status (signal bars, the entangled lamp) on every page, so it
-// sets data-terminal="relay" on itself rather than inheriting the page's.
+// Tier: chrome. The navbar is on every page, including unmigrated v3 ones,
+// so it keeps its own data-tier="chrome" and uses only v4 primitives.
 import React from 'react';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import AuthButtonGroup from './auth/authButtonGroup';
+import BrandLockup from './brand/brandLockup';
 import { Hub } from 'aws-amplify';
 import FadeAlert from './fadeAlert';
 import * as authUtil from '../utils/authUtil';
 import { Auth } from 'aws-amplify';
 
-const RELAY_LINKS = [
+const NAV_LINKS = [
 	{ href: '/', label: 'Home' },
 	{ href: '/encyclopedia', label: 'Encyclopedia' },
+	{ href: '/generator', label: 'Generator' },
 	{ href: '/duel', label: 'Duel' },
 	{ href: '/reclamation', label: 'Reclamation' },
 	{ href: '/long-return', label: 'Expedition' },
@@ -107,45 +108,24 @@ class XalianNavbar extends React.Component {
 	render() {
 		return (
 			<React.Fragment>
-				<div data-terminal="relay">
-					<Navbar id="navvy" collapseOnSelect expand="xl" variant="dark" sticky="top" className="g-cover-plate relay-navbar">
-						<Container fluid className="relay-navbar-shell">
-							<Navbar.Brand href="/" className="relay-wordmark">
-								<img src="/assets/img/logo/xalians_logo_small.png" height="30px" alt="Xalians" />
-								<span className="g-nameplate relay-wordmark-text">QED Relay &middot; Zolton-3</span>
-							</Navbar.Brand>
+				<div data-tier="chrome">
+					<Navbar id="navvy" collapseOnSelect expand="xl" variant="dark" sticky="top" className="shell-nav">
+						<Container fluid className="shell-nav-shell">
+							<BrandLockup className="shell-nav-brand" />
 
-							<div className="relay-status">
-								<span className="relay-signal" aria-hidden="true">
-									<i className="relay-signal-bar" style={{ '--h': '5px' }}></i>
-									<i className="relay-signal-bar" style={{ '--h': '8px' }}></i>
-									<i className="relay-signal-bar" style={{ '--h': '11px' }}></i>
-									<i className="relay-signal-bar relay-signal-bar--off" style={{ '--h': '14px' }}></i>
-								</span>
-								<span className="g-lamp relay-entangled-lamp">Entangled</span>
-							</div>
-
-							<Navbar.Toggle aria-controls="responsive-navbar-nav" className="g-key relay-toggle" />
+							<Navbar.Toggle aria-controls="responsive-navbar-nav" className="shell-nav-toggle" />
 							<Navbar.Collapse id="responsive-navbar-nav">
-								<Nav className="relay-links">
-									{RELAY_LINKS.map((link) => (
+								<Nav className="shell-nav-links">
+									{NAV_LINKS.map((link) => (
 										<Nav.Link
 											key={link.href}
 											href={link.href}
-											className={`g-legend relay-link${this.isActiveRoute(link.href) ? ' relay-link--active' : ''}`}>
+											className={`shell-nav-link${this.isActiveRoute(link.href) ? ' on' : ''}`}>
 											{link.label}
 										</Nav.Link>
 									))}
 								</Nav>
-								<Nav className="relay-actions">
-									{/* The navbar carries the relay's plain key everywhere; the page
-									    underneath owns the single --primary accent (docs/DESIGN_SYSTEM.md
-									    rule A, "one primary action per screen", round1-findings.md S9). */}
-									<Nav.Link className="g-key relay-key" href="/generator">
-										Generator
-									</Nav.Link>
-								</Nav>
-								<div className="relay-auth">
+								<div className="shell-nav-right">
 									<AuthButtonGroup authAlertCallback={this.handleUserAuthAction}></AuthButtonGroup>
 								</div>
 							</Navbar.Collapse>

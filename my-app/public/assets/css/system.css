@@ -779,6 +779,13 @@
 	margin: 0;
 }
 
+.g-page .g-title {
+	font-family: var(--g-font-legend);
+	font-size: var(--g-size-title);
+	letter-spacing: .01em;
+	color: var(--g-text);
+}
+
 .g-title-v4 {
 	font-family: var(--g-font-legend);
 	font-weight: 600;
