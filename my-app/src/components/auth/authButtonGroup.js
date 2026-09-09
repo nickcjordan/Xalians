@@ -1,5 +1,6 @@
-// Terminal: relay. The navbar's auth keys: sign in, sign up, verify, sign
-// out, moulded into the relay's cover plate alongside the route legends.
+// Tier: chrome. The navbar's auth controls: sign in, create account, verify,
+// sign out. Plain g-btn ranks, never a primary — the navbar never carries
+// the page's one accent-filled action (docs/DESIGN_SYSTEM.md section 3.1).
 import React from 'react'
 import SignUpModal from './signUpModal';
 import VerifyEmailModal from './verifyEmailModal';
@@ -133,28 +134,26 @@ class AuthButtonGroup extends React.Component {
         return (
             <React.Fragment>
                 {this.state.loggedInUser &&
-                    <span className="relay-username">
-                        <a className="g-legend relay-username-link" href={'/account'}>{this.state.loggedInUser.username}</a>
-                    </span>
+                    <a className="g-btn g-btn--quiet shell-nav-username" href={'/account'}>{this.state.loggedInUser.username}</a>
                 }
                 {!this.state.loggedInUser &&
-                    <button type="button" className="g-key relay-auth-key" onClick={() => this.setState({ signInModalShow: true })}>
-                        Sign In
+                    <button type="button" className="g-btn g-btn--quiet" onClick={() => this.setState({ signInModalShow: true })}>
+                        Sign in
                     </button>
                 }
                 {!this.state.loggedInUser &&
-                    <button type="button" className="g-key relay-auth-key" onClick={() => this.setState({ signupModalShow: true })}>
-                        Sign Up
+                    <button type="button" className="g-btn" onClick={() => this.setState({ signupModalShow: true })}>
+                        Create account
                     </button>
                 }
                 {((this.state.loggedInUser && !this.state.loggedInUser.hasVerifiedEmail)) &&
-                    <button type="button" className="g-key relay-auth-key" onClick={() => this.setState({ verifyEmailModalShow: true })}>
-                        Verify Email
+                    <button type="button" className="g-btn g-btn--quiet" onClick={() => this.setState({ verifyEmailModalShow: true })}>
+                        Verify email
                     </button>
                 }
                 {this.state.loggedInUser &&
-                    <button type="button" className="g-key relay-auth-key" onClick={() => this.handleSignOut()}>
-                        Sign Out
+                    <button type="button" className="g-btn g-btn--quiet" onClick={() => this.handleSignOut()}>
+                        Sign out
                     </button>
                 }
 

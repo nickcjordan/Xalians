@@ -1,101 +1,97 @@
-// Terminal: relay. A user's record, read over the Zolto relay the same way
-// your own faction is on userAccountPage.js — the same tube, no delete key.
+// Tier: chrome. Someone else's Xalians, read the same way as your own on
+// userAccountPage.js — the same tile grid, no delete control.
 import React from 'react';
+import { Link } from 'react-router-dom';
 import XalianNavbar from '../components/navbar';
-import * as authUtil from '../utils/authUtil';
+import XalianImage from '../components/xalianImage';
+import HelixSpinner from '../components/brand/helixSpinner';
+import { routeFor } from '../lore/routeFor';
 import * as dbApi from '../utils/dbApi';
-import { store } from 'state-pool';
-import { Auth } from 'aws-amplify';
-import { Hub, Logger } from 'aws-amplify';
-import XalianStatRowView from '../components/views/xalianStatRowView'
 
+class UserDetailsPage extends React.Component {
+	state = {
+		user: null,
+		message: null,
+		xalians: [],
+		isLoading: false,
+	};
 
-class UserAccountPage extends React.Component {
+	componentDidMount() {
+		this.setState({ isLoading: true });
+		dbApi
+			.callGetUser(this.props.id, true)
+			.then((u) => {
+				this.setState({ isLoading: false, user: u, xalians: u.xalians });
+			})
+			.catch((e) => {
+				this.setState({ message: "Could not load this user's Xalians — please try again later", isLoading: false });
+			});
+	}
 
-    state = {
-        loggedInUser: null,
-        user: null,
-        message: null,
-        xalians: [],
-        isLoading: false
-    };
+	renderXalianTile = (xalian) => {
+		let x = xalian.attributes;
+		let primaryType = x.elements.primaryType.toLowerCase();
+		let secondaryType = x.elements.secondaryType.toLowerCase();
+		return (
+			<Link
+				key={xalian.xalianId}
+				to={routeFor('species', x.species.name.toLowerCase())}
+				className={`g-card-link account-tile-link account-tile-link--standalone g-el-${primaryType}`}>
+				<div className="account-tile-plate">
+					<XalianImage colored speciesName={x.species.name} primaryType={x.elements.primaryType} secondaryType={x.elements.secondaryType} />
+				</div>
+				<div className="account-tile-meta">
+					<span className="g-legend-v4 account-tile-name">{x.species.name}</span>
+					<div className="account-tile-chips">
+						<span className={`g-chip g-el-${primaryType}`}>{x.elements.primaryType}</span>
+						<span className={`g-chip g-el-${secondaryType}`}>{x.elements.secondaryType}</span>
+					</div>
+				</div>
+			</Link>
+		);
+	};
 
-    componentDidMount() {
-        this.setState({ isLoading: true });
-        dbApi.callGetUser(this.props.id,true).then(u => {
-            this.setState({ isLoading: false });
-            this.setState({ user: u, xalians: u.xalians });
-        }).catch(e => {
-            this.setState({ message: 'Could not load this user\'s Xalians — please try again later', isLoading: false });
-        })
+	render() {
+		let xalians = this.state.xalians || [];
+		let title = (this.state.user && (this.state.user.username || this.state.user.userId)) || 'Xalian account';
+		return (
+			<main className="g-page" data-tier="chrome">
+				<XalianNavbar></XalianNavbar>
 
-        // let mockXalians = JSON.parse('[ { "speciesId": "00014", "xalianId": "00014-b049976e-1a31-4728-8817-923d444a80b8", "attributes": { "xalianId": "00014-b049976e-1a31-4728-8817-923d444a80b8", "species": { "generation": "0", "planet": "Drainov", "name": "Venemist", "description": "The toxic mist expelled from a tube in its mouth helps to dissolve its prey. With only 2 teeth, this tactic is necessary for the creature to survive.", "weight": "103 lbs / 46 kg", "id": "00014", "height": "38 in / 96 cm" }, "healthPoints": 999, "stats": { "evasionPoints": { "name": "evasionPoints", "range": "medium", "points": 458, "percentage": 91 }, "standardAttackPoints": { "name": "standardAttackPoints", "range": "medium", "points": 551, "percentage": 110 }, "standardDefensePoints": { "name": "standardDefensePoints", "range": "medium", "points": 440, "percentage": 88 }, "staminaPoints": { "name": "staminaPoints", "range": "high", "points": 680, "percentage": 90 }, "specialDefensePoints": { "name": "specialDefensePoints", "range": "low", "points": 238, "percentage": 95 }, "recoveryPoints": { "name": "recoveryPoints", "range": "low", "points": 284, "percentage": 113 }, "specialAttackPoints": { "name": "specialAttackPoints", "range": "medium", "points": 418, "percentage": 83 }, "speedPoints": { "name": "speedPoints", "range": "low", "points": 270, "percentage": 108 } }, "moves": [ { "name": "Modest Infectious Shot", "rating": 9, "description": "Chemical-typed sufficiently sized attack hard enough to cause injury", "cost": 10, "type": "Chemical", "element": "Infectious" }, { "name": "Irritating Lunge", "rating": 6, "description": "Causing physical discomfort, sudden forward strike", "cost": 10 }, { "name": "Unfriendly Microbe Bang", "rating": 8, "description": "Chemical-typed disagreeable or hostile, vigorous attack", "cost": 10, "type": "Chemical", "element": "Microbe" }, { "name": "Heroic Boot", "rating": 10, "description": "Impressive and courageous attack with the foot", "cost": 10 } ], "meta": { "avgPercentage": 97, "totalStatPoints": 3339 }, "elements": { "secondaryType": "Dark", "primaryType": "Chemical", "secondaryElement": "Shadow", "primaryElement": "Poison" }, "speciesId": "00014", "createTimestamp": 1644614990305 } } ]');
-        // let mockUser = JSON.parse('{ "attributes": { "userId": "King_Kozrak", "attributes": {} }, "xalianIds": [ "00018-11cefad5-3873-4ce6-870f-b73d8f01f442", "00014-b049976e-1a31-4728-8817-923d444a80b8" ], "userId": "king_kozrak" }');
-        // this.setState({
-        //     user: mockUser,
-        //     xalians: mockXalians
-        // })
+				<div className="g-shell page-shell account-shell">
+					<header className="g-masthead">
+						<div className="g-masthead-heading">
+							<p className="g-kicker">Account</p>
+							<h1 className="g-title-v4">{title}</h1>
+						</div>
+					</header>
 
-    }
+					{this.state.isLoading && (
+						<div className="account-loading">
+							<HelixSpinner />
+						</div>
+					)}
 
+					{!this.state.isLoading && this.state.message && (
+						<div className="g-empty account-empty">
+							<b>{this.state.message}</b>
+						</div>
+					)}
 
-    setUserInfo = (user) => {
-        this.setState({ loggedInUser: user })
-    }
+					{!this.state.isLoading && !this.state.message && xalians.length === 0 && (
+						<div className="g-empty account-empty">
+							<b>No Xalians yet</b>
+							This account has not kept any Xalians.
+						</div>
+					)}
 
-    buildXaliansView = () => {
-        var rows = [];
-        if (this.state.xalians) {
-            this.state.xalians.forEach(xalian => {
-                rows.push(<XalianStatRowView screen xalian={xalian} key={xalian.xalianId} />);
-            });
-        }
-        return rows;
-    }
-
-    render() {
-        return (
-            <React.Fragment>
-
-                <div className="g-console" data-terminal="relay">
-                    <XalianNavbar authAlertCallback={this.setUserInfo}></XalianNavbar>
-
-                    <div className="g-shell page-shell account-shell">
-                        <header className="g-masthead">
-                            <div className="g-masthead-heading">
-                                <p className="g-kicker">Relay</p>
-                                <h1 className="g-title">
-                                    {(this.state.user && (this.state.user.username || this.state.user.userId) + "'s Xalian faction") || 'Xalian faction'}
-                                </h1>
-                            </div>
-                            <div className="g-masthead-aside">
-                                <span className="g-nameplate">Registry holdings</span>
-                            </div>
-                        </header>
-
-                        {this.state.message &&
-                            <div className="g-panel account-notice">
-                                <p className="g-empty account-notice-text">{this.state.message}</p>
-                            </div>
-                        }
-
-                        {this.state.xalians && this.state.xalians.length > 0 &&
-                            <section className="g-cover-plate g-object">
-                                <span className="g-cover-screw" style={{ left: '10px', top: '10px' }}></span>
-                                <span className="g-cover-screw" style={{ right: '10px', top: '10px' }}></span>
-                                <span className="g-cover-screw" style={{ left: '10px', bottom: '10px' }}></span>
-                                <span className="g-cover-screw" style={{ right: '10px', bottom: '10px' }}></span>
-                                <div className="g-crt relay-record-tube">{this.buildXaliansView()}</div>
-                            </section>
-                        }
-                    </div>
-                </div>
-                {this.state.isLoading && <div id="preloader"></div>}
-            </React.Fragment>
-
-
-        )
-    }
+					{!this.state.isLoading && xalians.length > 0 && (
+						<div className="account-grid">{xalians.map((x) => this.renderXalianTile(x))}</div>
+					)}
+				</div>
+			</main>
+		);
+	}
 }
 
-export default UserAccountPage;
+export default UserDetailsPage;
