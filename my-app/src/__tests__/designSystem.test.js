@@ -91,7 +91,6 @@ const LEGACY_HEX_BASELINE = {
 	'duel.css': 1,
 	'duel-playground.css': 11,
 	'tokens.css': 29,
-	'encyclopedia.css': 0,
 	'reclamation.css': 0,
 	'typeColors.css': 0,
 };

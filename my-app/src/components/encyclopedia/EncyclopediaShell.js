@@ -189,7 +189,7 @@ export default function EncyclopediaShell({ children }) {
     const hideAsideSearch = location.pathname === '/encyclopedia/index';
 
     return (
-        <Shell className="overflow-x-clip" data-tier="chrome">
+        <Shell className="overflow-x-clip">
             <Masthead
                 kicker={masthead.kicker}
                 title={masthead.title}
