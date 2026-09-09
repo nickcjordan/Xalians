@@ -1,100 +1,85 @@
-import React, { PureComponent } from "react";
-import { LabelList, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { phosphor, chart } from "../constants/designTokens";
+import React from 'react';
+import { LabelList, BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from 'recharts';
+import { phosphor, chart } from '../constants/designTokens';
 
-const d = [];
-
+/**
+ * An early stat chart, kept for compatibility. Version 4 on the new stack:
+ * fixed the `class=` typo (it never applied) and swapped the wrapper for
+ * Tailwind. Recharts fills keep reading `designTokens.js`.
+ */
 class CharacterGeneratedStatChart extends React.Component {
-  state = {
-    isLoaded: false,
-  };
+	setupData = (x) => {
+		if (!x) {
+			return [];
+		}
+		let transMap = new Map();
+		transMap['standardAttackRating'] = 'Attack';
+		transMap['specialAttackRating'] = 'Sp. Attack';
+		transMap['standardDefenseRating'] = 'Defense';
+		transMap['specialDefenseRating'] = 'Sp. Defense';
+		transMap['speedRating'] = 'Speed';
+		transMap['evasionRating'] = 'Evasion';
+		transMap['staminaRating'] = 'Stamina';
+		transMap['recoveryRating'] = 'Recovery';
 
-  componentDidMount() {
-    // setTimeout(() => {
-    //     this.setState({ isLoaded: true });
-    // }, 2000);
-  }
+		transMap['standardAttackPoints'] = 'Standard Attack';
+		transMap['specialAttackPoints'] = 'Special Attack';
+		transMap['standardDefensePoints'] = 'Standard Defense';
+		transMap['specialDefensePoints'] = 'Special Defense';
+		transMap['speedPoints'] = 'Speed';
+		transMap['evasionPoints'] = 'Evasion';
+		transMap['staminaPoints'] = 'Stamina';
+		transMap['recoveryPoints'] = 'Recovery';
 
-  componentDidUpdate() {}
+		transMap['low'] = 'Low';
+		transMap['medium'] = 'Medium';
+		transMap['high'] = 'High';
 
-  setupData = (x) => {
-    if (!x) {
-      return [];
-    }
-    let transMap = new Map();
-    transMap["standardAttackRating"] = "Attack";
-    transMap["specialAttackRating"] = "Sp. Attack";
-    transMap["standardDefenseRating"] = "Defense";
-    transMap["specialDefenseRating"] = "Sp. Defense";
-    transMap["speedRating"] = "Speed";
-    transMap["evasionRating"] = "Evasion";
-    transMap["staminaRating"] = "Stamina";
-    transMap["recoveryRating"] = "Recovery";
+		let valMap = new Map();
+		valMap['low'] = 1;
+		valMap['medium'] = 2;
+		valMap['high'] = 3;
 
-    transMap["standardAttackPoints"] = "Standard Attack";
-    transMap["specialAttackPoints"] = "Special Attack";
-    transMap["standardDefensePoints"] = "Standard Defense";
-    transMap["specialDefensePoints"] = "Special Defense";
-    transMap["speedPoints"] = "Speed";
-    transMap["evasionPoints"] = "Evasion";
-    transMap["staminaPoints"] = "Stamina";
-    transMap["recoveryPoints"] = "Recovery";
+		var dataSet = [];
+		for (var key in x.stats) {
+			let stat = x.stats[key];
+			let translated = transMap[key];
+			let rangeVal = parseInt(valMap[stat.range]) * 250;
+			if (translated) {
+				dataSet.push({
+					statName: key,
+					statLabel: transMap[key],
+					rangeName: transMap[stat.range],
+					rangeNumber: rangeVal,
+					points: stat.points,
+					percentageText: stat.points + ' Points, ' + stat.percentage + '%',
+				});
+			}
+		}
+		return dataSet;
+	};
 
-    transMap["low"] = "Low";
-    transMap["medium"] = "Medium";
-    transMap["high"] = "High";
+	render() {
+		return (
+			<div className="flex h-full w-full flex-col">
+				{this.props.xalian && (
+					<ResponsiveContainer>
+						<BarChart data={this.setupData(this.props.xalian)} layout="vertical" maxBarSize={35}>
+							<XAxis type="number" hide />
+							<YAxis type="category" dataKey="statLabel" stroke={phosphor.base} />
 
-    let valMap = new Map();
-    valMap["low"] = 1;
-    valMap["medium"] = 2;
-    valMap["high"] = 3;
-
-    var dataSet = [];
-    for (var key in x.stats) {
-      let stat = x.stats[key];
-      let translated = transMap[key];
-      let rangeVal = parseInt(valMap[stat.range]) * 250;
-      if (translated) {
-        dataSet.push({
-          statName: key,
-          statLabel: transMap[key],
-          rangeName: transMap[stat.range],
-          rangeNumber: rangeVal,
-          points: stat.points,
-          percentageText: stat.points + " Points, " + stat.percentage + "%",
-        });
-      }
-    }
-    // this.setState({ data: dataSet });
-    return dataSet;
-  };
-
-  render() {
-    return (
-      <div class="expanded-chart-div centered-view">
-        {this.props.xalian && (
-          <ResponsiveContainer className="chart-container centered-view">
-            <BarChart data={this.setupData(this.props.xalian)} layout="vertical" maxBarSize={35}>
-              <XAxis type="number" hide />
-              {/* was #80ffb1, one digit off the brand green - a typo, not a second colour */}
-              <YAxis type="category" dataKey="statLabel" stroke={phosphor.base} />
-              {/* <Tooltip cursor={false}/> */}
-
-              <Bar isAnimationActive={false} animationBegin={50} dataKey="rangeNumber" fill={chart.rangeTrack}>
-                <LabelList dataKey="rangeName" position="center" fill="white" className="chart-bar-label" id="stat-bar-label" />
-              </Bar>
-              <Bar isAnimationActive={false} animationBegin={50} dataKey="points" fill={chart.pointsFill}>
-                <LabelList dataKey="percentageText" position="center" fill="white" className="chart-bar-label" id="stat-bar-label" />
-              </Bar>
-              {/* <Bar dataKey="percentage" fill="#80dbff34" >
-                            <LabelList dataKey="percentage" position="center" fill="white" className="chart-bar-label" id="stat-bar-label"/>
-                        </Bar> */}
-            </BarChart>
-          </ResponsiveContainer>
-        )}
-      </div>
-    );
-  }
+							<Bar isAnimationActive={false} animationBegin={50} dataKey="rangeNumber" fill={chart.rangeTrack}>
+								<LabelList dataKey="rangeName" position="center" fill="white" />
+							</Bar>
+							<Bar isAnimationActive={false} animationBegin={50} dataKey="points" fill={chart.pointsFill}>
+								<LabelList dataKey="percentageText" position="center" fill="white" />
+							</Bar>
+						</BarChart>
+					</ResponsiveContainer>
+				)}
+			</div>
+		);
+	}
 }
 
 export default CharacterGeneratedStatChart;
