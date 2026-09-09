@@ -135,3 +135,8 @@
 	*, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 	.helix-spinner .rung { animation: none; opacity: 0.7; }
 }
+
+/* Bootstrap interop, until phase 4 unlinks it: Tailwind's `collapse`
+   utility (visibility: collapse) lands on Bootstrap's `.collapse` navbar
+   wrapper and hides the old navbar's links. Gone with the old navbar. */
+.collapse.navbar-collapse { visibility: visible; }
