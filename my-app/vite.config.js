@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig, transformWithEsbuild } from 'vite';
 import path from 'node:path';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
@@ -17,6 +17,17 @@ export default defineConfig(({ mode }) => ({
 		// See vite/commonjsShim.js.
 		commonjsShim(),
 
+		// JSX inside .js files under src (75 components predate the TypeScript
+		// layer). A targeted pre-transform, so .tsx keeps the TypeScript loader.
+		{
+			name: 'jsx-in-js',
+			enforce: 'pre',
+			async transform(code, id) {
+				if (!/\/src\/.*\.js$/.test(id.replace(/\\/g, '/'))) return null;
+				return transformWithEsbuild(code, id, { loader: 'jsx', jsx: 'automatic' });
+			},
+		},
+
 		// Tailwind 4 (docs/design/frontend-stack-migration.md): tokens and
 		// utilities from src/styles; no tailwind.config.js.
 		tailwindcss(),
@@ -32,17 +43,9 @@ export default defineConfig(({ mode }) => ({
 		}),
 	],
 
-	// 75 components carry JSX in `.js` files. Treat every `.js` under src as JSX
-	// rather than renaming them all.
-	esbuild: {
-		// Only .js files need the JSX loader; .ts/.tsx use esbuild's TypeScript
-		// loader (forcing jsx on them breaks type syntax).
-		include: /\/src\/.*\.js$/,
-		// Vite's default exclude is /\.js$/, which would silently undo the
-		// include above; an empty list is what actually lets .js through.
-		exclude: [],
-		loader: 'jsx',
-	},
+	// 75 components carry JSX in `.js` files. Those are compiled by the jsxInJs
+	// plugin above; .ts/.tsx use esbuild's own TypeScript loader, so the global
+	// esbuild options stay at their defaults.
 	optimizeDeps: {
 		esbuildOptions: {
 			loader: { '.js': 'jsx' },
