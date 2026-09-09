@@ -89,7 +89,7 @@ function TemplatePhysiology({ view }) {
     const chirality = p.genome && p.genome.chirality ? p.genome.chirality.name : '';
 
     return (
-        <div className="g-spec">
+        <div className="g-spec enc-species-physiology-spec">
             <span className="g-spec-key">Corporeality</span>
             <span className="g-spec-val">{p.corporeality.name}</span>
             <span className="g-spec-key">Composition</span>
@@ -115,7 +115,7 @@ function TemplatePhysiology({ view }) {
             <span className="g-spec-key">Lifespan</span>
             <span className="g-spec-val">
                 {p.lifespan.name}
-                {p.lifespan.nature && <span className="g-mono enc-species-dim"> {p.lifespan.nature}</span>}
+                {p.lifespan.nature && <span className="enc-species-dim"> {p.lifespan.nature}</span>}
             </span>
             <span className="g-spec-key">Chirality</span>
             <span className="g-spec-val">{chirality || 'Not recorded'}</span>
@@ -126,7 +126,7 @@ function TemplatePhysiology({ view }) {
 function LegacyPhysiology({ view }) {
     const legacy = view.legacy;
     return (
-        <div className="g-spec">
+        <div className="g-spec enc-species-physiology-spec">
             <span className="g-spec-key">Height</span>
             <span className="g-spec-val">{legacy.height}</span>
             <span className="g-spec-key">Weight</span>
@@ -142,19 +142,21 @@ function LegacyPhysiology({ view }) {
 function Signature({ signature }) {
     if (!signature) return null;
     return (
-        <section className="enc-section">
-            <div className="enc-section-head">
-                <h2 className="g-h2">Signature</h2>
+        <div className="g-panel enc-species-signature">
+            <p className="g-legend-v4 enc-species-signature-label">Signature</p>
+            <p className="g-h3 enc-species-signature-name">{signature.name}</p>
+            <div className="g-spec enc-species-signature-spec">
+                <span className="g-spec-key">Instrument</span>
+                <span className="g-spec-val">{signature.instrument}</span>
+                <span className="g-spec-key">Action</span>
+                <span className="g-spec-val">{signature.action}</span>
+                <span className="g-spec-key">Medium</span>
+                <span className="g-spec-val">{signature.medium}</span>
+                <span className="g-spec-key">Intensity</span>
+                <span className="g-spec-val">{bandText(signature.intensity)}</span>
             </div>
-            <div className="g-panel enc-species-signature">
-                <p className="enc-species-signature-name">{signature.name}</p>
-                <p>
-                    INSTRUMENT {signature.instrument} / ACTION {signature.action} / MEDIUM {signature.medium}
-                </p>
-                <p>INTENSITY {bandText(signature.intensity)}</p>
-                <p>{signature.description}</p>
-            </div>
-        </section>
+            <p className="g-small-v4 enc-species-signature-desc">{signature.description}</p>
+        </div>
     );
 }
 
@@ -289,10 +291,13 @@ export default function SpeciesView() {
     return (
         <article className={`enc-species g-el-${view.element}`}>
             <div className="enc-record">
-                <div className="g-panel enc-species-plate">
-                    <div className="enc-species-mount">
-                        <XalianImage colored speciesName={view.name} primaryType={view.element} moreClasses="enc-species-portrait" />
+                <div className="enc-species-plate-col">
+                    <div className="g-panel enc-species-plate">
+                        <div className="enc-species-mount">
+                            <XalianImage colored speciesName={view.name} primaryType={view.element} moreClasses="enc-species-portrait" />
+                        </div>
                     </div>
+                    {isTemplate && <Signature signature={view.record.signature} />}
                 </div>
 
                 <div className="enc-species-body">
@@ -322,9 +327,7 @@ export default function SpeciesView() {
                 </div>
             </div>
 
-            {isTemplate && <Signature signature={view.record.signature} />}
-
-            <section className="enc-section">
+            <section className="enc-section enc-species-physiology">
                 <div className="enc-section-head">
                     <h2 className="g-h2">Physiology</h2>
                 </div>

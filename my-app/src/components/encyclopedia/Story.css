@@ -10,7 +10,7 @@
 /* ---- contents page ------------------------------------------------------ */
 
 .enc-story-contents .enc-story-def {
-	margin-bottom: var(--g-7);
+	margin-bottom: var(--g-5);
 }
 
 /* The seven parts, no outer panel: each row sits on its own hairline
@@ -20,7 +20,17 @@
 	margin: 0;
 }
 
-.enc-contents-row { padding: var(--g-3) 0; border-bottom-color: var(--g-edge); }
+.enc-contents-row {
+	grid-template-columns: 20rem minmax(0, 1fr) max-content;
+	align-items: baseline;
+	padding: var(--g-3) 0;
+	border-bottom-color: var(--g-edge);
+}
+
+@media (max-width: 900px) {
+	.enc-contents-row { grid-template-columns: minmax(0, 1fr); }
+	.enc-contents-meta { grid-column: 1 / -1; }
+}
 
 .enc-contents-term {
 	display: flex;
@@ -47,11 +57,11 @@
 }
 
 .enc-contents-meta {
-	grid-column: 1 / -1;
-	margin: var(--g-2) 0 0;
+	margin: 0;
 	color: var(--g-text-2);
 	font-size: var(--g-size-tiny);
 	white-space: nowrap;
+	text-align: right;
 }
 
 /* ---- part page layout: sticky rail + main column ------------------------- */
@@ -179,8 +189,8 @@
    start to finish, so it gets the tighter measure named in the brief. */
 .enc-story-main {
 	min-width: 0;
-	max-width: 62ch;
-	margin: 0 auto;
+	max-width: var(--g-measure);
+	margin: 0;
 }
 
 .enc-story-def { margin-bottom: var(--g-7); }
@@ -257,16 +267,20 @@
 	margin-bottom: var(--g-3);
 }
 
-.enc-story-para {
+.enc-story-para,
+.enc-story-para.g-panel {
 	display: grid;
 	grid-template-columns: 8rem minmax(0, 1fr);
 	gap: var(--g-4);
 	align-items: start;
+	padding: var(--g-4) 0;
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
 }
 
 .enc-story-para + .enc-story-para {
-	margin-top: var(--g-4);
-	padding-top: var(--g-4);
 	border-top: var(--g-hairline) solid var(--g-rule-faint);
 }
 

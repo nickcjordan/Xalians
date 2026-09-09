@@ -24,8 +24,34 @@
 	.enc-species-dossier { grid-template-columns: minmax(0, 1fr); }
 }
 
+.enc-species > .enc-section { margin-top: var(--g-6); }
+
+.enc-species-plate-col {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-4);
+	min-width: 0;
+}
+
 .enc-species-plate {
 	padding: var(--g-5);
+}
+
+/* The signature, under the plate: a compact spec card. */
+.enc-species-signature { padding: var(--g-4); }
+.enc-species-signature-label { margin: 0 0 var(--g-1); }
+.enc-species-signature-name { margin: 0 0 var(--g-3); }
+.enc-species-signature-spec { margin-bottom: var(--g-3); }
+.enc-species-signature-desc { margin: 0; }
+
+/* Physiology as a two-column spec plate: key, value, key, value. */
+.enc-species-physiology-spec {
+	grid-template-columns: minmax(9rem, max-content) minmax(0, 1fr) minmax(9rem, max-content) minmax(0, 1fr);
+	max-width: 64rem;
+}
+
+@media (max-width: 900px) {
+	.enc-species-physiology-spec { grid-template-columns: minmax(7rem, max-content) minmax(0, 1fr); }
 }
 
 /* The creature art, large: full plate width, on the same element wash the
@@ -44,18 +70,12 @@
 	height: 62%;
 }
 
-.enc-species-signature-name {
-	font-family: var(--g-font-legend);
-	font-size: var(--g-size-lead);
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
-}
-
 .enc-species-dim {
 	display: block;
-	color: var(--g-ink-low);
-	font-size: var(--g-size-micro);
-	margin-top: var(--g-1);
+	font-family: var(--g-font-body);
+	color: var(--g-text-2);
+	font-size: var(--g-size-small-v4);
+	margin-top: 2px;
 }
 
 .enc-species-body {
@@ -110,14 +130,6 @@
 	letter-spacing: var(--g-track-label);
 	font-size: var(--g-size-small);
 	color: var(--g-ink);
-}
-
-.enc-species-signature p {
-	margin: 0 0 var(--g-2);
-}
-
-.enc-species-signature p:last-child {
-	margin-bottom: 0;
 }
 
 .enc-species-template-status {

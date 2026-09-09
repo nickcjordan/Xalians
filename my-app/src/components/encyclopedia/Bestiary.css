@@ -1,10 +1,28 @@
+/* Bestiary section. Prefix: .enc-bestiary- */
+
+/* Element filter as the site's tabs row; the second row holds the world
+   select, the sort, the ratified toggle and the live count, all one height. */
+.enc-bestiary-elements { margin-bottom: var(--g-3); }
+
+.enc-bestiary-filters {
+	gap: var(--g-3);
+	margin-bottom: var(--g-5);
+}
+
 .enc-bestiary-count {
-	margin: 0 0 var(--g-4);
+	margin: 0 0 0 auto;
+	color: var(--g-text-2);
 }
 
 .enc-bestiary-world-select {
 	width: auto;
 	min-width: 10rem;
+	padding: 6px 36px 6px 12px !important;
+	font-family: var(--g-font-legend) !important;
+	font-size: 13px;
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-legend);
+	background-position: right 16px center, right 10px center;
 }
 
 .enc-bestiary-ratified-toggle {
@@ -16,6 +34,8 @@
 		flex-direction: column;
 		align-items: stretch;
 	}
+
+	.enc-bestiary-count { margin-left: 0; }
 
 	.enc-filters .g-segmented.enc-scrollrow {
 		display: flex;

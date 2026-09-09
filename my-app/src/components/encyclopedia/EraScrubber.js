@@ -62,7 +62,7 @@ export default function EraScrubber({ era, onChange }) {
 	return (
 		<div className="enc-scrub">
 			<div
-				className="enc-scrub-rail enc-scrollrow"
+				className="g-tabs enc-scrub-rail enc-scrollrow"
 				ref={railRef}
 				role="group"
 				aria-label="Filter the map by era"
@@ -72,13 +72,10 @@ export default function EraScrubber({ era, onChange }) {
 					<button
 						key={s.key === null ? 'all' : s.key}
 						type="button"
-						className="enc-scrub-station"
+						className={`g-tab-link enc-scrub-station${i === activeIndex ? ' on' : ''}`}
 						aria-pressed={i === activeIndex}
 						onClick={() => onChange(s.key)}
 					>
-						{s.order !== null && (
-							<span className="enc-scrub-order g-mono">{String(s.order + 1).padStart(2, '0')}</span>
-						)}
 						<span className="enc-scrub-name">{s.name}</span>
 					</button>
 				))}

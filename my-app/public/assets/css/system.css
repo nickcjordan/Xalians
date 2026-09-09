@@ -837,6 +837,45 @@
 .g-page .move-rating,
 .g-page .g-spec-val { font-style: normal; }
 
+/* Consistency pass (2026-09-09, second polish round). One masthead rhythm on
+   every chrome page: a kicker, the title, an optional one-line subtitle 8px
+   under it, and 24px to the first object. Pages do not add their own top
+   padding above the masthead. */
+.g-page .g-masthead-heading { gap: var(--g-2); }
+.g-page .g-masthead-heading > p:last-child { margin: 0; }
+
+/* A pressed segment is a selected filter, not the page's forward action:
+   it marks itself with the viable underline the tabs use, never a fill. */
+.g-page .g-segment[aria-pressed='true'] {
+	color: var(--g-text);
+	background: var(--g-s0);
+	border-color: var(--g-edge-strong);
+	box-shadow: inset 0 -2px 0 var(--g-viable);
+}
+
+/* An empty state is a quiet solid frame on level 0, not a dashed box. */
+.g-page .g-empty {
+	border: 1px solid var(--g-edge);
+	background: var(--g-s0);
+	text-align: left;
+	padding: var(--g-5);
+}
+.g-page .g-empty b { font-size: var(--g-size-legend); letter-spacing: var(--g-track-legend); color: var(--g-text-2); margin-bottom: var(--g-3); }
+
+/* A spec plate reads as one table: keys on a fixed column, values tabular. */
+.g-page .g-spec { gap: var(--g-2) var(--g-5); }
+.g-page .g-spec-key { font-size: var(--g-size-legend); letter-spacing: var(--g-track-legend); }
+.g-page .g-spec-val { font-family: var(--g-font-data); font-size: var(--g-size-small-v4); color: var(--g-text); }
+
+/* Record rows are 12px rows on hairlines. */
+.g-page .g-record { padding: var(--g-3) 0; gap: var(--g-2) var(--g-5); }
+.g-page .g-record:hover { background: transparent; }
+.g-page .g-record-body { font-family: var(--g-font-body); font-size: var(--g-size-small-v4); color: var(--g-text-2); }
+
+/* A chip that is also a link keeps the chip's ink. */
+.g-page a.g-chip { color: var(--g-ink-invert); text-decoration: none; }
+.g-page a.g-chip--outline { color: var(--g-el); }
+
 .g-title-v4 {
 	font-family: var(--g-font-legend);
 	font-weight: 600;

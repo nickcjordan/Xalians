@@ -1,9 +1,23 @@
 /* WorldView section. Prefix: .enc-world- */
 
-.enc-world-chronicle {
-	margin-top: var(--g-3);
-	margin-bottom: var(--g-6);
+.enc-world-chronicle-row {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--g-2);
+	margin-top: var(--g-6);
+	padding-top: var(--g-4);
+	border-top: var(--g-hairline) solid var(--g-rule-faint);
 }
+
+.enc-world-chronicle .g-tab-link,
+.enc-world-chronicle-station--dim { padding: var(--g-2) 10px; font-size: 12px; }
+
+.enc-world-chronicle-label { white-space: nowrap; }
+
+.enc-world-chronicle { min-width: 0; }
+
+
 
 /* Lit stations are plain .g-tab-link (the era has chapters or events);
    this only adds the read count. Dim stations (no chapters, no events) are
@@ -58,12 +72,31 @@
 
 /* The physical facts, beside the lede rather than cramped under the plate
    (docs/DESIGN_SYSTEM.md common brief rule 4: density). */
-.enc-world-facts {
-	margin-bottom: var(--g-6);
+.enc-world-plate-col {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-4);
+	min-width: 0;
 }
 
-.enc-world-facts-terrain {
-	font-family: var(--g-font-ui);
+.enc-world-facts { margin: 0; }
+
+.enc-world-below {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-6);
+	margin-top: var(--g-6);
+	min-width: 0;
+}
+
+.enc-world-below > .enc-section { margin-top: 0; }
+.enc-world-below > .enc-continue { margin-top: 0; }
+.enc-world-below > .enc-fold + .enc-fold { margin-top: 0; }
+
+.enc-world-history-layout .enc-world-history { max-width: var(--g-measure); }
+
+.g-page .enc-world-facts-terrain {
+	font-family: var(--g-font-body);
 	font-variant-numeric: normal;
 	text-transform: none;
 	letter-spacing: normal;
@@ -73,9 +106,11 @@
 .enc-world-record-col {
 	display: flex;
 	flex-direction: column;
-	gap: var(--g-6);
+	gap: var(--g-5);
 	min-width: 0;
 }
+
+.enc-world-lede { margin-bottom: 0; }
 
 .enc-world-record-section {
 	min-width: 0;
@@ -114,18 +149,21 @@
 
 .enc-world-chapter-index {
 	position: sticky;
-	top: var(--g-8);
-	padding: 0 0 var(--g-2);
+	top: var(--g-6);
+	padding: var(--g-4) var(--g-4) var(--g-2);
 	min-width: 0;
 }
+
+.enc-world-chapter-index .g-panel-head { padding-bottom: var(--g-2); margin-bottom: var(--g-2); }
+.enc-world-chapter-index .g-panel-head .g-h3 { margin: 0; }
 
 .enc-world-chapter-index-list {
 	list-style: none;
 	margin: 0;
-	padding: 0 var(--g-2) var(--g-2);
+	padding: 0;
 	display: flex;
 	flex-direction: column;
-	gap: var(--g-1);
+	gap: 0;
 }
 
 .enc-world-chapter-index-row {
@@ -133,7 +171,7 @@
 	align-items: baseline;
 	flex-wrap: wrap;
 	gap: var(--g-2);
-	padding: var(--g-2);
+	padding: var(--g-2) 0;
 	text-decoration: none;
 	color: var(--g-ink);
 }
@@ -156,8 +194,12 @@
 }
 
 .enc-world-chapter-index-snippet {
-	font-size: var(--g-size-small);
-	color: var(--g-ink-2);
+	flex: 1 1 100%;
+	font-size: var(--g-size-small-v4);
+	color: var(--g-text-2);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .enc-world-chapter {

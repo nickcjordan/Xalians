@@ -58,7 +58,7 @@ class UserDetailsPage extends React.Component {
 			<main className="g-page" data-tier="chrome">
 				<XalianNavbar></XalianNavbar>
 
-				<div className="g-shell page-shell account-shell">
+				<div className="g-shell account-shell">
 					<header className="g-masthead">
 						<div className="g-masthead-heading">
 							<p className="g-kicker">Account</p>
