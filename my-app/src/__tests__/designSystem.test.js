@@ -29,7 +29,7 @@ const path = require('path');
 const PAGES_DIR = path.join(__dirname, '..', 'pages');
 const SYSTEM_PATH = path.join(__dirname, '..', '..', 'public', 'assets', 'css', 'system.css');
 const CSS_DIR = path.join(__dirname, '..', '..', 'public', 'assets', 'css');
-const STYLEGUIDE_PATH = path.join(PAGES_DIR, 'styleGuidePage.js');
+const STYLEGUIDE_PATH = path.join(PAGES_DIR, 'styleGuidePage.tsx');
 
 /** Every *.js under src/pages/, recursively, with paths relative to src/pages/. */
 const listPageFiles = (dir, base) => {
@@ -60,12 +60,22 @@ const DEAD_PAGES = ['games/baseGamePage.js'];
 const MIGRATION_PENDING = [];
 
 /**
- * Version 4 components that must each appear somewhere on /styleguide
- * (docs/DESIGN_SYSTEM.md section 10, "the reference an agent checks before
- * building anything"). Checked as a literal class-name substring against the
- * page source, the same way STYLEGUIDE_MIGRATION_PENDING checks a terminal.
+ * Version 4 component modules that must each be imported somewhere on
+ * /styleguide (docs/DESIGN_SYSTEM.md section 10, "the reference an agent
+ * checks before building anything"). Checked as a literal import-path
+ * substring against the page source, the same way STYLEGUIDE_MIGRATION_PENDING
+ * checks a terminal.
  */
-const V4_COMPONENTS = ['g-page', 'g-btn--quiet', 'g-glass', 'g-badge', 'g-tabs', 'g-toggle', 'g-spinner', 'g-brand'];
+const V4_IMPORTS = [
+	'@/components/ui/button',
+	'@/components/ui/badge',
+	'@/components/ui/card',
+	'@/components/ui/tabs',
+	'@/components/ui/dialog',
+	'@/components/system/brand',
+	'@/components/system/record',
+	'@/components/system/masthead',
+];
 
 /**
  * Today's raw-hex count in each legacy CSS file (docs/DESIGN_SYSTEM.md
@@ -125,8 +135,8 @@ describe('design system structure', () => {
 	describe('styleguide renders every v4 component', () => {
 		const styleguideSource = fs.readFileSync(STYLEGUIDE_PATH, 'utf8');
 
-		V4_COMPONENTS.forEach((name) => {
-			it(`styleGuidePage.js renders ${name}`, () => {
+		V4_IMPORTS.forEach((name) => {
+			it(`styleGuidePage.tsx imports ${name}`, () => {
 				expect(styleguideSource.includes(name)).toBe(true);
 			});
 		});
