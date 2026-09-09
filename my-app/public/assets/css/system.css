@@ -816,17 +816,23 @@
    color of their own, so there is never a second square inside the mount. */
 .g-page .xalian-image-wrapper[class*='-color'] { background: transparent !important; }
 
+/* The square keeps the old plate's soft vignette (the hue at the center,
+   falling to a darker rim) and the silhouette fills it edge to edge, with
+   just enough margin that limbs do not touch the frame. */
 .g-page .enc-tile-art,
 .g-page .enc-species-mount,
 .g-page .home-species-plate,
 .g-page .account-tile-plate,
 .g-page .gen-record-plate {
-	background: var(--g-el);
-	padding: 12%;
+	background-color: var(--g-el);
+	background-image: radial-gradient(circle at 50% 50%, transparent 58%, rgba(0, 0, 0, 0.28) 100%);
+	padding: 4%;
 }
 
 .g-page .gen-record-plate {
-	background: linear-gradient(160deg, var(--g-el), var(--g-el-2, var(--g-el)));
+	background-image:
+		radial-gradient(circle at 50% 50%, transparent 58%, rgba(0, 0, 0, 0.28) 100%),
+		linear-gradient(160deg, var(--g-el), var(--g-el-2, var(--g-el)));
 }
 
 .g-page .enc-tile-art-img,
