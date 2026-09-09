@@ -35,7 +35,9 @@ export default defineConfig(({ mode }) => ({
 	// 75 components carry JSX in `.js` files. Treat every `.js` under src as JSX
 	// rather than renaming them all.
 	esbuild: {
-		include: /\/src\/.*\.[jt]sx?$/,
+		// Only .js files need the JSX loader; .ts/.tsx use esbuild's TypeScript
+		// loader (forcing jsx on them breaks type syntax).
+		include: /\/src\/.*\.js$/,
 		// Vite's default exclude is /\.js$/, which would silently undo the
 		// include above; an empty list is what actually lets .js through.
 		exclude: [],
