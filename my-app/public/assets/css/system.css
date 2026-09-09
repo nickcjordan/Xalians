@@ -779,6 +779,15 @@
 	margin: 0;
 }
 
+.g-page .g-link {
+	color: var(--g-text);
+	text-decoration-color: var(--g-ink-3);
+}
+
+.g-page .g-link:hover { text-decoration-color: var(--g-text); }
+
+.g-page .g-masthead { margin: var(--g-6) 0 var(--g-5); }
+
 .g-page .g-title {
 	font-family: var(--g-font-legend);
 	font-size: var(--g-size-title);

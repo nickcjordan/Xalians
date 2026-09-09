@@ -27,8 +27,14 @@
 	padding-right: var(--g-5);
 }
 
-.shell-nav-brand {
+.shell-nav .shell-nav-brand,
+.shell-nav .shell-nav-brand:focus {
 	margin: 0;
+	padding: 0;
+	font-size: 22px;
+	font-family: var(--g-font-brand);
+	color: var(--g-viable-hi);
+	white-space: nowrap;
 }
 
 .shell-nav-links {
