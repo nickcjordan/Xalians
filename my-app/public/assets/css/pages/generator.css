@@ -44,6 +44,8 @@
 	width: 70%;
 }
 
+.gen-record-link { margin-left: auto; white-space: nowrap; }
+
 .gen-record-identity {
 	min-width: 0;
 	display: flex;
@@ -105,28 +107,9 @@
 	color: var(--g-ink-3);
 }
 
-/* The move set (xalianMoveSet.js / style.css's .move-row) is shared with the
-   record strip on the account and user-detail pages, so its class names and
-   base rules stay in style.css. Scoped here to just retune the type: rating
-   in the data face, name in the legend face, description as one line of
-   quiet prose (docs/DESIGN_SYSTEM.md section 4). */
-.gen-moves .move-detail {
-	min-width: 0;
-}
-
-.gen-moves .move-rating {
-	font-family: var(--g-font-data);
-	font-variant-numeric: tabular-nums;
-	color: var(--g-ink);
-}
-
-.gen-moves .move-name {
-	font-family: var(--g-font-legend);
-}
-
+/* The move set itself is system.css (.xalian-move-set, .move-row). On the
+   wide generator panel a description is one line, clipped. */
 .gen-moves .move-description {
-	font-family: var(--g-font-body);
-	color: var(--g-ink-2);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
