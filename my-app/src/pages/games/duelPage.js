@@ -1,11 +1,6 @@
 // Terminal: registry. The live board runs inside Kozrak's arena ledger.
 import React from 'react';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
 import XalianNavbar from '../../components/navbar';
-import Form from 'react-bootstrap/Form';
 import XalianImage from '../../components/xalianImage';
 import MatchGameFlippedCard from '../../components/games/elements/matchGameFlippedCard';
 

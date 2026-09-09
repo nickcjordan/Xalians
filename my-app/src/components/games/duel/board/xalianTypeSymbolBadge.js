@@ -1,5 +1,4 @@
 import React from 'react';
-import { Row, Col } from 'react-bootstrap';
 import textFit from '../../../../utils/textFit';
 import * as styleUtil from '../../../../utils/styleUtil';
 import * as svgUtil from '../../../../utils/svgUtil';
