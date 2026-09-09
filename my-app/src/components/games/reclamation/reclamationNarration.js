@@ -1,20 +1,28 @@
 import { speciesDisplayName, getSpeciesTemplate } from '../../../gameplay/generator/index.js';
 
 /*
-	Reclamation — plain-sentence narration of the engine's resolution log.
+	Reclamation - plain-sentence narration of the engine's resolution log.
 
-	Pure functions only (no React, no engine imports beyond constants), so the sentences
-	can be unit-tested directly. See __tests__/reclamationNarration.test.js.
+	Pure functions only (no React, no engine imports beyond the species vocabulary), so
+	the sentences can be unit-tested directly. See __tests__/reclamationNarration.test.js.
 
-	ENGINE GAP (noted for the engine owner, worked around here): act events in
-	expeditionRules.resolutionLog carry no `type` field — they are bare
-	{recordId, action, target?, site?, outcome, hitCount?, toSite?} objects, while the
-	structural events do carry one ('vanguard-relocate', 'judge'). classifyEvent() below
-	therefore treats "has an `outcome` and no `type`" as an act event. Act events also
-	carry no magnitude and no hold, so the narration cannot say "for 8" from the log
-	alone; the numbers in the sentences come from a snapshot of the board taken before
-	resolution (see buildActorIndex) and from the magnitude the UI recomputes with the
-	engine's own creatureOnTable helpers.
+	THE BASE (docs/design/reclamation-base-redesign.md, 2026-09-09). Orders are gone and
+	so are the sixteen acts. Every creature is a hold and one role, and the log the table
+	narrates carries three kinds of resolution event, each with a `type`:
+
+		blow   { recordId, role: 'strike' | 'area', site, target, amount, remaining,
+		         outcome: 'staggered' | 'routed' | 'cancelled' | 'lapsed' | 'no-target',
+		         hidden, cancelled }
+		area   { recordId, role: 'area', site, amount, hitCount, hidden, cancelled,
+		         cancelledAgainst }   - followed by one `blow` per victim
+		shield { recordId, site, cancelled, amount }
+
+	plus the structural 'judge' and 'vanguard-relocate' events, unchanged.
+
+	A blow whose outcome is 'cancelled' is narrated by the SHIELD event that cancelled it
+	("Yetimoth shields: Voltish's blow of 4 is cancelled"), so narrateEvent returns null
+	for it rather than saying the same thing twice. Every other event gives exactly one
+	sentence.
 */
 
 // Display name for a record: the provisional roller gives records no `name`, only a
@@ -43,9 +51,6 @@ export function classifyEvent(event) {
 	if (event.type) {
 		return event.type;
 	}
-	if (Object.prototype.hasOwnProperty.call(event, 'outcome')) {
-		return 'act';
-	}
 	return 'unknown';
 }
 
@@ -58,110 +63,105 @@ export function formatHold(value) {
 	return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
 }
 
-const ACT_VERB = {
-	strike: 'strikes',
-	crush: 'crushes',
-	rake: 'rakes',
-	lash: 'lashes',
-	shove: 'shoves',
-	snare: 'snares',
-	drain: 'drains',
-	ambush: 'ambushes',
-	beam: 'beams',
-	hurl: 'hurls at',
-	burst: 'bursts over',
-	spray: 'sprays',
-	cloud: 'clouds',
-	ward: 'wards',
-	mend: 'mends',
-	terrorize: 'terrorizes',
-};
-
-export function actVerb(action) {
-	return ACT_VERB[action] || String(action || 'acts');
+/*
+	The role, as the one sentence the plinth, the bench, the dossier and the ghost preview
+	all print (the base redesign's "Interface consequences": one sentence per rule). N is
+	the creature's own blow magnitude, before the element matchup against any one target.
+*/
+export function roleSentence(role, blowMagnitude) {
+	const n = typeof blowMagnitude === 'number' ? formatHold(blowMagnitude) : '?';
+	switch (role) {
+		case 'strike': return `Strikes one enemy here for ${n}`;
+		case 'area': return `Strikes everyone here for ${n}`;
+		case 'bolster': return 'Bolsters allies here against the world';
+		case 'shield': return 'Shields allies here from the largest blow';
+		default: return 'Stands here and throws nothing';
+	}
 }
 
-// The strike outcomes read best in the passive ("Vrix is struck by Rakh"), which needs a
-// past participle rather than the third-person form ACT_VERB carries.
-const ACT_PARTICIPLE = {
-	strike: 'struck',
-	crush: 'crushed',
-	rake: 'raked',
-	lash: 'lashed',
-	drain: 'drained',
-	ambush: 'ambushed',
-	beam: 'beamed',
-	hurl: 'hit',
-	burst: 'caught in a burst',
-	spray: 'sprayed',
-	cloud: 'clouded',
-};
+// the word for the role, where a sentence is too much (a chip, a title attribute)
+export function roleWord(role) {
+	switch (role) {
+		case 'strike': return 'strike';
+		case 'area': return 'area';
+		case 'bolster': return 'bolster';
+		case 'shield': return 'shield';
+		default: return 'none';
+	}
+}
 
-export function actParticiple(action) {
-	return ACT_PARTICIPLE[action] || 'hit';
+// the verb a landing blow reads with: a strike is aimed, an area catches whatever
+// happens to be standing at the world
+function blowVerb(role) {
+	return role === 'area' ? 'catches' : 'strikes';
 }
 
 /*
-	narrateAct(event, ctx) -> one plain sentence.
+	narrateEvent(event, ctx) -> one plain sentence, or null for an event the table says
+	elsewhere.
 
-	ctx: {
-		actorName, actorHold, targetName, targetHold, siteName, magnitude,
-	}
+	ctx: { actorName, targetName, siteName, worldName }
 	Every field is optional; the sentence degrades rather than printing "undefined".
 */
-export function narrateAct(event, ctx = {}) {
+export function narrateEvent(event, ctx = {}) {
+	if (!event) {
+		return null;
+	}
 	const actor = ctx.actorName || 'A creature';
 	const target = ctx.targetName || 'its target';
-	const at = ctx.siteName ? ` at ${ctx.siteName}` : '';
-	const forN = typeof ctx.magnitude === 'number' ? ` for ${ctx.magnitude}` : '';
-	const targetHold = typeof ctx.targetHold === 'number' ? ` (hold ${formatHold(ctx.targetHold)})` : '';
-	const verb = actVerb(event.action);
-
-	switch (event.outcome) {
-		case 'held':
-			return `${actor} holds its ground${at}.`;
-		case 'lost-act-snared':
-			return `${actor} is snared and loses its act.`;
-		case 'shrugged':
-			return `${target}${targetHold} is ${actParticiple(event.action)} by ${actor}${forN} and shrugs it off.`;
-		case 'staggered':
-			return `${target}${targetHold} is ${actParticiple(event.action)} by ${actor}${forN} and is staggered.`;
-		case 'routed':
-			return `${target}${targetHold} is ${actParticiple(event.action)} by ${actor}${forN} and is routed.`;
-		case 'shoved':
-			return `${actor} shoves ${target}${targetHold} to another site.`;
-		case 'snared':
-			return `${actor} snares ${target}${targetHold}.`;
-		case 'terrorized':
-			return `${actor} terrorizes ${target}${targetHold}, which withdraws unsent.`;
-		case 'warded-ally':
-			return `${actor} wards ${target}.`;
-		case 'warded-self':
-			return `${actor} wards itself.`;
-		case 'warded-absorbed':
-			return `${actor} strikes ${target}, and the ward absorbs it entirely.`;
-		case 'mended':
-			return `${actor} mends ${target}, which recovers from its stagger.`;
-		case 'no-effect':
-			return `${actor} tries to mend, and finds nothing to mend.`;
-		case 'anchored-immune':
-			return `${target} is anchored and cannot be moved by ${actor}.`;
-		case 'snared-immune':
-			return `${target} is snared and ${actor} cannot move it.`;
-		case 'area-struck': {
-			const site = ctx.siteName ? ` ${ctx.siteName}` : '';
-			const n = typeof event.hitCount === 'number' ? event.hitCount : 0;
-			return `${actor} ${verb}${site}, catching ${n} creature${n === 1 ? '' : 's'} on both sides.`;
+	const fromHiding = event.hidden ? ', from hiding,' : '';
+	if (event.type === 'shield') {
+		if (!event.cancelled) {
+			return `${actor} shields, and nothing is thrown at its side.`;
 		}
-		case 'no-target-held':
-			return `${actor} finds nothing in reach and holds.`;
-		case 'revealed':
-			return `${actor} reveals itself.`;
-		case 'target-already-gone':
-			return `${actor} swings at a creature already driven off.`;
-		default:
-			return `${actor} ${verb} ${target}.`;
+		const blocked = ctx.targetName || 'the blow';
+		return `${actor} shields: ${blocked}'s blow of ${formatHold(event.amount)} is cancelled.`;
 	}
+	if (event.type === 'area') {
+		const where = ctx.worldName || ctx.siteName || 'the world';
+		const n = typeof event.hitCount === 'number' ? event.hitCount : 0;
+		// an area standing alone at a world still declares, and "catching 0 creatures" reads
+		// as a non-event; say what actually happened instead
+		if (n === 0) {
+			return `${actor}${fromHiding} bursts over ${where}, and catches nothing.`;
+		}
+		return `${actor}${fromHiding} bursts over ${where} for ${formatHold(event.amount)} each, catching ${n} creature${n === 1 ? '' : 's'}.`;
+	}
+	if (event.type !== 'blow') {
+		return null;
+	}
+	switch (event.outcome) {
+		case 'routed':
+			return `${actor}${fromHiding} ${blowVerb(event.role)} ${target} for ${formatHold(event.amount)} and routs ${target}.`;
+		case 'staggered':
+			return `${actor}${fromHiding} ${blowVerb(event.role)} ${target} for ${formatHold(event.amount)}; ${target} stands at ${formatHold(event.remaining)}.`;
+		case 'cancelled':
+			// said by the shield event that cancelled it
+			return null;
+		case 'lapsed':
+			return `${actor}'s blow lapses, routed first.`;
+		case 'no-target':
+			return `${actor}${fromHiding} finds no target.`;
+		default:
+			return `${actor} ${blowVerb(event.role)} ${target}.`;
+	}
+}
+
+/*
+	cueForEvent(event) -> the console cue an event plays, or null. Kept beside the
+	sentences because it reads the same outcomes they do.
+*/
+export function cueForEvent(event) {
+	if (!event || event.type !== 'blow') {
+		return null;
+	}
+	if (event.outcome === 'routed') {
+		return { name: 'rout' };
+	}
+	if (event.outcome === 'staggered') {
+		return { name: 'strike', opts: { magnitude: 0.8 } };
+	}
+	return null;
 }
 
 export function narrateRelocate(event, ctx = {}) {

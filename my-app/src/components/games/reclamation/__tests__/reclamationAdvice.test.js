@@ -24,6 +24,8 @@ describe('recommendSend', () => {
 		expect(view.frame.sites.some((s) => s.id === rec.siteId)).toBe(true);
 		expect(rec.label).toMatch(/^Send .+ to /);
 		expect(rec.reason).toMatch(/holds [0-9.]+ at .+, which nobody has claimed yet\./);
+		// the reason ends on the role sentence, the one sentence the whole table prints
+		expect(rec.reason).toMatch(/(Strikes one enemy here for [0-9.]+|Strikes everyone here for [0-9.]+|Bolsters allies here against the world|Shields allies here from the largest blow|Stands here and throws nothing)\.$/);
 	});
 
 	test('the recommended send is legal', () => {
@@ -77,6 +79,8 @@ describe('recommendSend', () => {
 			}
 		}
 		expect(sawPass).toBe(true);
-		expect(match.phase).toBe('orders');
+		// THE BASE: the second pass resolves and judges inside pass(), so the round is over
+		// the moment both seats have passed - there is no Orders phase to land in
+		expect(['deploy', 'matchEnd']).toContain(match.phase);
 	});
 });

@@ -93,16 +93,26 @@ describe('expeditionSimulator report shape', () => {
 		expect(re.unsentAtMatchEnd.B).toBeGreaterThanOrEqual(0);
 	});
 
-	test('section 5 (combat): outcome histogram counts are non-negative, per-act rates valid', () => {
+	test('section 5 (combat): outcome histogram counts are non-negative, per-role rates valid', () => {
 		const c = report.combat;
 		Object.values(c.outcomeHistogram).forEach((count) => expect(count).toBeGreaterThanOrEqual(0));
-		Object.values(c.perAct).forEach((a) => {
-			expect(a.timesOrdered).toBeGreaterThanOrEqual(0);
-			expect(a.averageMagnitude).toBeGreaterThanOrEqual(0);
-			expect(isRateOrNull(a.staggerRate)).toBe(true);
-			expect(isRateOrNull(a.routRate)).toBe(true);
-			expect(isRateOrNull(a.noTargetRate)).toBe(true);
+		// per ROLE since the base redesign (docs/design/reclamation-base-redesign.md
+		// assumption 4): the sixteen-act tables measured a choice nobody makes any more
+		['strike', 'area', 'bolster', 'shield', 'none'].forEach((role) => {
+			const r = c.perRole[role];
+			expect(r).toBeTruthy();
+			expect(r.sends).toBeGreaterThanOrEqual(0);
+			expect(r.meanAmountPerBlow).toBeGreaterThanOrEqual(0);
+			expect(r.routsDealt).toBeGreaterThanOrEqual(0);
+			expect(isRateOrNull(r.sendShare)).toBe(true);
+			expect(isRateOrNull(r.keeperWinRate)).toBe(true);
 		});
+		expect(c.blowStats.blowsPerMatch).toBeGreaterThanOrEqual(0);
+		expect(c.blowStats.routsPerMatch).toBeGreaterThanOrEqual(0);
+		expect(isRateOrNull(c.blowStats.cancelledShare)).toBe(true);
+		expect(isRateOrNull(c.blowStats.fallbackBlowShare)).toBe(true);
+		expect(c.shieldStats.cancelsPerMatch).toBeGreaterThanOrEqual(0);
+		expect(c.bolsterStats.holdRestoredPerBolsterSend).toBeGreaterThanOrEqual(0);
 		['none', 'strained', 'severe'].forEach((level) => {
 			expect(c.strainIncidence[level]).toBeTruthy();
 			expect(isRateOrNull(c.strainIncidence[level].sendShare)).toBe(true);

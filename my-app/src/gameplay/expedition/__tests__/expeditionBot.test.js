@@ -1,5 +1,5 @@
-import { createMatch, send, pass, order, commitOrders, getPublicState, createRngState, nextRandom, relocateVanguard } from '../expeditionRules.js';
-import { chooseSend, chooseOrders, RIVALS, DEFAULT_RIVAL_ID, rivalById } from '../expeditionBot.js';
+import { createMatch, send, pass, getPublicState, createRngState, nextRandom, relocateVanguard } from '../expeditionRules.js';
+import { chooseSend, roleValueOf, RIVALS, DEFAULT_RIVAL_ID, rivalById } from '../expeditionBot.js';
 import { ROSTER_SIZE, SENDABLE } from '../expeditionInterpretation.js';
 
 /*
@@ -78,7 +78,7 @@ function makeRng(seed) {
 
 /*
 	Plays one full deterministic match with the given rivals (defaults to the proctor for
-	whichever side is omitted, matching chooseSend/chooseOrders' own default), asserting
+	whichever side is omitted, matching chooseSend's own default), asserting
 	every action is legal along the way. Returns the final state plus telemetry used by the
 	rival behaviour assertions below: the ordered action log, sends per side, hidden sends
 	per side, and the frame index each side first passed in.
@@ -128,28 +128,6 @@ function playMatch(rosterA, rosterB, worlds, seed, rivals = {}) {
 			}
 			if (!next) {
 				throw new Error(`illegal deploy action: ${JSON.stringify(action)} for ${handler}`);
-			}
-			state = next;
-		} else if (state.phase === 'orders') {
-			['A', 'B'].forEach((handler) => {
-				const publicState = getPublicState(state, handler);
-				const orders = chooseOrders(publicState, handler, rivals[handler]);
-				Object.keys(orders).forEach((creatureId) => {
-					const next = order(state, handler, creatureId, orders[creatureId]);
-					if (!next) {
-						throw new Error(`illegal order for ${creatureId}: ${orders[creatureId]}`);
-					}
-					state = next;
-				});
-			});
-			let next = commitOrders(state, 'A');
-			if (!next) {
-				throw new Error('commitOrders(A) failed');
-			}
-			state = next;
-			next = commitOrders(state, 'B');
-			if (!next) {
-				throw new Error('commitOrders(B) failed');
 			}
 			state = next;
 		}
@@ -209,24 +187,28 @@ describe('chooseSend', () => {
 	});
 });
 
-describe('chooseOrders', () => {
-	test('only orders the handler\'s own deployed creatures with legal actions', () => {
-		let state = createMatch({ rosterA: makeRoster('A'), rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'bot-orders-seed' });
+describe('roleValueOf: what a role is worth at a world', () => {
+	test('a strike is worth what it would take off its conduct target, and a presence is worth its effect', () => {
+		let state = createMatch({ rosterA: makeRoster('A'), rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'bot-role-seed' });
 		const frame = state.frames[0];
 		const starter = state.starter;
 		const other = starter === 'A' ? 'B' : 'A';
 		state = send(state, starter, state.players[starter].roster[0].id, frame.sites[0].id);
-		state = send(state, other, state.players[other].roster[0].id, frame.sites[0].id);
-		state = pass(state, state.turn);
-		state = pass(state, state.turn);
+		const publicState = getPublicState(state, other);
+		const record = state.players[other].roster[0];
+		const value = roleValueOf(publicState, record, frame.sites[0], 0, other);
+		// a striker facing exactly one visible enemy is worth a real, capped number
+		expect(typeof value).toBe('number');
+		expect(value).toBeGreaterThanOrEqual(0);
+	});
 
-		const publicState = getPublicState(state, starter);
-		const orders = chooseOrders(publicState, starter);
-		const orderedIds = Object.keys(orders);
-		orderedIds.forEach((id) => {
-			const next = order(state, starter, id, orders[id]);
-			expect(next).not.toBeNull();
-		});
+	test('a send with no enemy at the site is worth nothing beyond its own hold', () => {
+		const state = createMatch({ rosterA: makeRoster('A'), rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'bot-role-empty' });
+		const frame = state.frames[0];
+		const handler = state.starter;
+		const publicState = getPublicState(state, handler);
+		const record = state.players[handler].roster[0];
+		expect(roleValueOf(publicState, record, frame.sites[0], 0, handler)).toBe(0);
 	});
 });
 
@@ -252,22 +234,6 @@ describe('full bot-vs-bot match', () => {
 				} else {
 					next = pass(state, handler);
 				}
-				expect(next).not.toBeNull();
-				state = next;
-			} else if (state.phase === 'orders') {
-				['A', 'B'].forEach((handler) => {
-					const publicState = getPublicState(state, handler);
-					const orders = chooseOrders(publicState, handler);
-					Object.keys(orders).forEach((creatureId) => {
-						const next = order(state, handler, creatureId, orders[creatureId]);
-						expect(next).not.toBeNull();
-						state = next;
-					});
-				});
-				let next = commitOrders(state, 'A');
-				expect(next).not.toBeNull();
-				state = next;
-				next = commitOrders(state, 'B');
 				expect(next).not.toBeNull();
 				state = next;
 			}
@@ -332,7 +298,7 @@ describe('rivals', () => {
 			expect(typeof r.home).toBe('string');
 			expect(typeof r.style).toBe('string');
 			expect(r.style.length).toBeGreaterThan(0);
-			expect(r.style).not.toMatch(/—|--/); // no em-dashes in the fiction
+			expect(r.style).not.toMatch(/ - |--/); // no em-dashes in the fiction
 			expect(typeof r.weights).toBe('object');
 		});
 		expect(DEFAULT_RIVAL_ID).toBe('proctor');

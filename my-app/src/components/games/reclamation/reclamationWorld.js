@@ -1,5 +1,6 @@
 import React from 'react';
 import ReclamationFigure, { ReclamationSilhouette, HoldMeter } from './reclamationFigure';
+import { RoleGlyph } from './reclamationGlyphs';
 import { formatHold } from './reclamationNarration';
 
 /*
@@ -140,13 +141,13 @@ function ReclamationWorld({
 	relocating,
 	vanguardRecordId,
 	onSiteClick,
+	onSiteHover,
 	onFigureClick,
 	clickable,
 	recommendedSiteId,
 	holdingIds,
 	hiddenEnemyCount,
 	threats,
-	badges,
 	highlights,
 	arrival,
 	hoverSiteId,
@@ -163,7 +164,7 @@ function ReclamationWorld({
 				<div className="rec-hidden-banner rec-rise" data-hidden-banner>
 					<ReclamationSilhouette count={hiddenEnemyCount} />
 					<span className="rec-hidden-banner-text">
-						The rival has {hiddenEnemyCount === 1 ? 'a creature' : `${hiddenEnemyCount} creatures`} hidden somewhere in the frame. It is revealed when orders are.
+						The rival has {hiddenEnemyCount === 1 ? 'a creature' : `${hiddenEnemyCount} creatures`} hidden somewhere in the frame. It is revealed when the worlds resolve, and it strikes first.
 					</span>
 				</div>
 			)}
@@ -218,6 +219,9 @@ function ReclamationWorld({
 						isHome: holds[entry.recordId] ? holds[entry.recordId].isHome : false,
 						unstrainedHold: holds[entry.recordId] ? holds[entry.recordId].unstrained : undefined,
 						baseHold: holds[entry.recordId] ? holds[entry.recordId].baseHold : undefined,
+						// the base redesign's one glyph per creature: what it does at Resolve
+						role: holds[entry.recordId] ? holds[entry.recordId].role : entry.role,
+						blowMagnitude: holds[entry.recordId] ? holds[entry.recordId].blowMagnitude : undefined,
 						selected: armedRecordId === entry.recordId || (relocating && vanguardRecordId === entry.recordId),
 						dimmed: holdingIds && holdingIds.includes(entry.recordId),
 						acting: hl.acting === entry.recordId,
@@ -225,7 +229,6 @@ function ReclamationWorld({
 						hover: hl.hover === entry.recordId,
 						flash: hl.hit === entry.recordId ? hl.flash : undefined,
 						arrive: arrivedIds.includes(entry.recordId),
-						badge: badges ? badges[entry.recordId] : undefined,
 						threat: threats && threats[entry.recordId] ? threats[entry.recordId] : undefined,
 						onClick: (e) => {
 							e.stopPropagation();
@@ -241,6 +244,8 @@ function ReclamationWorld({
 							data-site-id={site.id}
 							style={{ '--rec-i': siteIndex }}
 							onClick={clickable ? () => onSiteClick(site.id) : undefined}
+							onMouseEnter={clickable && onSiteHover ? () => onSiteHover(site.id) : undefined}
+							onMouseLeave={clickable && onSiteHover ? () => onSiteHover(null) : undefined}
 							role={clickable ? 'button' : undefined}
 							tabIndex={clickable ? 0 : undefined}
 							onKeyDown={clickable ? (e) => {
@@ -312,11 +317,23 @@ function ReclamationWorld({
 
 								<div className={`rec-site-midline${empty ? ' rec-site-midline--empty' : ''}`}>
 									{ghost && (
-										<span className="rec-ghost">
+										<span className="rec-ghost" data-ghost={site.id}>
 											<span className="rec-ghost-cta">{ghost.preview ? 'would hold' : 'send here'}</span>
 											<HoldMeter hold={ghost.hold} unstrained={ghost.unstrained} isHome={ghost.isHome} strainLevel={ghost.strainLevel} size="large" scale />
 											<span className="rec-ghost-value">{formatHold(ghost.hold)}</span>
-
+											{/* the arithmetic of the send, from the engine's own numbers: the role
+											    in a sentence, then what it would do to the board as it stands */}
+											{ghost.roleLine && (
+												<span className="rec-ghost-plan" data-ghost-plan={site.id}>
+													<span className="rec-ghost-role">
+														{ghost.role && ghost.role !== 'none' && <RoleGlyph role={ghost.role} />}
+														{ghost.roleLine}
+													</span>
+													{advanced && (ghost.lines || []).map((line, i) => (
+														<span className="rec-ghost-line" key={`${site.id}-${i}`}>{line}</span>
+													))}
+												</span>
+											)}
 										</span>
 									)}
 									{!ghost && relocating && <span className="rec-ghost rec-ghost--relocate">fall back here</span>}

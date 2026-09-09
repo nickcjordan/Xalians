@@ -1,5 +1,6 @@
 import React from 'react';
-import { speciesLabel, formatHold } from './reclamationNarration';
+import { speciesLabel, formatHold, roleSentence } from './reclamationNarration';
+import { RoleGlyph } from './reclamationGlyphs';
 import { createTelemetry } from './reclamationTelemetry';
 
 /*
@@ -49,10 +50,15 @@ function buildWorlds(match, you, recordsById) {
 			const site = frame ? frame.sites.find((s) => s.id === siteId) : null;
 			const who = !result.winner ? 'court' : result.winner === you ? 'you' : 'rival';
 			const entries = result.entries || { A: [], B: [] };
+			// the judge entry carries the hold the Court counted and the role the creature
+			// played (the base redesign's judge event), so the row needs nothing derived
 			const rowsFor = (side) => (entries[side] || []).map((e) => ({
 				recordId: e.recordId,
 				record: recordsById ? recordsById[e.recordId] || null : null,
 				hold: e.hold,
+				fullHold: e.fullHold,
+				damage: e.damage || 0,
+				role: e.role || null,
 				staggered: !!e.staggered,
 				fate: fateOf(e.recordId, match.players),
 			}));
@@ -77,7 +83,9 @@ function buildWorlds(match, you, recordsById) {
 
 function routsAndStaggers(match, you) {
 	const rival = otherSide(you);
-	const acts = (match.resolutionLog || []).filter((e) => e && !e.type && Object.prototype.hasOwnProperty.call(e, 'outcome'));
+	// THE BASE: a landing blow is a 'blow' event with an outcome; the 'area' event that
+	// precedes a burst is only its announcement and lands nothing itself
+	const acts = (match.resolutionLog || []).filter((e) => e && e.type === 'blow');
 	const sideOfRecord = (recordId) => {
 		if (match.players.A.holding.includes(recordId) || match.players.A.withdrawn.includes(recordId) || match.players.A.routed.includes(recordId) || match.players.A.roster.some((r) => r.id === recordId)) {
 			return 'A';
@@ -300,17 +308,27 @@ function worldsByRound(worlds) {
 	return [...rounds.entries()].sort((a, b) => a[0] - b[0]);
 }
 
-function creatureLine(entries) {
+// one creature on a world row: its role glyph, its name, and the hold the Court counted
+function CreatureLine({ entries }) {
 	if (!entries || entries.length === 0) {
-		return 'no one';
+		return <span className="rec-report-creature rec-report-creature--none">no one</span>;
 	}
-	return entries
-		.map((e) => {
-			const name = speciesLabel(e.record);
-			const tag = e.fate === 'routed' ? ' (routed)' : '';
-			return `${name} ${formatHold(e.hold)}${tag}`;
-		})
-		.join(', ');
+	return (
+		<>
+			{entries.map((e) => (
+				<span className="rec-report-creature" key={e.recordId} data-report-creature={e.recordId}>
+					{e.role && e.role !== 'none' && (
+						<span className="rec-role-glyph rec-report-role" title={roleSentence(e.role)} data-role={e.role}>
+							<RoleGlyph role={e.role} />
+						</span>
+					)}
+					<span className="rec-report-creature-name">{speciesLabel(e.record)}</span>
+					<span className="rec-report-creature-hold g-mono">{formatHold(e.hold)}</span>
+					{e.fate === 'routed' && <span className="rec-report-creature-fate">routed</span>}
+				</span>
+			))}
+		</>
+	);
 }
 
 function WorldRow({ world, you }) {
@@ -335,8 +353,8 @@ function WorldRow({ world, you }) {
 				<span className="rec-report-world-who">{whoText}</span>
 			</div>
 			<div className="rec-report-world-creatures">
-				<span className="rec-report-world-side rec-report-world-side--you"><strong>You</strong> {creatureLine(world.yours)}</span>
-				<span className="rec-report-world-side rec-report-world-side--rival"><strong>Rival</strong> {creatureLine(world.theirs)}</span>
+				<span className="rec-report-world-side rec-report-world-side--you"><strong>You</strong> <CreatureLine entries={world.yours} /></span>
+				<span className="rec-report-world-side rec-report-world-side--rival"><strong>Rival</strong> <CreatureLine entries={world.theirs} /></span>
 			</div>
 		</div>
 	);

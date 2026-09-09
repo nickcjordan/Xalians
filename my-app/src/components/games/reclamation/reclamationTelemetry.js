@@ -6,6 +6,12 @@
 	lesson is used, and the setup choices). Everything here is local, exportable, never
 	sent anywhere.
 
+	THE BASE (docs/design/reclamation-base-redesign.md): the Orders phase is gone, so
+	there is no 'orders' decision to time any more. decisionEnd('orders', ...) is accepted
+	and ignored, and the `orders` field stays in the stored summary at zeros (and
+	`ordersMeanMs` at null in byRound) so records written before the redesign still parse
+	against the same shape.
+
 	Same discipline as reclamationStorage.js: pure functions, no React, storage and clock
 	injected so tests can pass fakes (createTelemetry({ storage, now })). Every read and
 	write is wrapped so a missing or throwing storage degrades to safe defaults rather
@@ -122,7 +128,9 @@ function summarizeByRound(deployRecords, ordersRecords) {
 		bucket.deployMs.push(r.ms);
 		bucket.hovers.push(r.hovers || 0);
 	});
-	ordersRecords.forEach((r) => {
+	// ordersRecords is always empty since the base redesign; the field is kept so an
+	// exported summary has the same shape as the ones written before it
+	(ordersRecords || []).forEach((r) => {
 		const bucket = touch(r.round);
 		bucket.ordersMs.push(r.ms);
 	});
@@ -197,10 +205,9 @@ export function createTelemetry({ storage, now } = {}) {
 		const ms = Math.max(0, clock() - open.startedAt);
 		const round = data && typeof data.round === 'number' ? data.round : open.round;
 		const record = { ms, hovers: open.hovers, choice, round };
+		// deploy is the only decision the base leaves; anything else is dropped
 		if (phase === 'deploy') {
 			deployRecords.push(record);
-		} else if (phase === 'orders') {
-			ordersRecords.push(record);
 		}
 		delete openDecisions[phase];
 	}

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
-	speciesLabel, formatHold, classifyEvent, narrateAct, narrateRelocate,
-	narrateSend, narratePass, narrateJudge, narrateMatchEnd,
+	speciesLabel, formatHold, classifyEvent, narrateEvent, cueForEvent, roleSentence,
+	roleWord, narrateRelocate, narrateSend, narratePass, narrateJudge, narrateMatchEnd,
 } from '../reclamationNarration';
 
 describe('speciesLabel', () => {
@@ -32,64 +32,97 @@ describe('formatHold', () => {
 });
 
 describe('classifyEvent', () => {
-	// the engine's act events carry no `type` field, only `outcome` — this is the
-	// workaround documented at the top of reclamationNarration.js.
-	it('reads a bare act event as an act', () => {
-		expect(classifyEvent({ recordId: 'x', action: 'strike', outcome: 'routed' })).toBe('act');
-	});
-
-	it('passes structural events through by their type', () => {
+	// THE BASE: every resolution event carries a `type` now, so the old "has an outcome and
+	// no type" workaround is gone with the acts it worked around.
+	it('reads each resolution event by its type', () => {
+		expect(classifyEvent({ type: 'blow', outcome: 'routed' })).toBe('blow');
+		expect(classifyEvent({ type: 'area', hitCount: 3 })).toBe('area');
+		expect(classifyEvent({ type: 'shield', cancelled: 'x' })).toBe('shield');
 		expect(classifyEvent({ type: 'judge', siteResults: {} })).toBe('judge');
 		expect(classifyEvent({ type: 'vanguard-relocate' })).toBe('vanguard-relocate');
 	});
+
+	it('reads an event with no type at all as unknown rather than guessing', () => {
+		expect(classifyEvent({ recordId: 'x', outcome: 'routed' })).toBe('unknown');
+		expect(classifyEvent(null)).toBe('unknown');
+	});
 });
 
-describe('narrateAct', () => {
-	it('narrates a rout as one plain sentence', () => {
-		const sentence = narrateAct(
-			{ recordId: 'a', action: 'strike', target: 'b', outcome: 'routed' },
-			{ actorName: 'Rakh', targetName: 'Vrix', targetHold: 6, magnitude: 8 },
-		);
-		expect(sentence).toBe('Vrix (hold 6) is struck by Rakh for 8 and is routed.');
+describe('roleSentence', () => {
+	it('gives one sentence per role, naming the number where there is one', () => {
+		expect(roleSentence('strike', 4)).toBe('Strikes one enemy here for 4');
+		expect(roleSentence('area', 2.5)).toBe('Strikes everyone here for 2.5');
+		expect(roleSentence('bolster')).toBe('Bolsters allies here against the world');
+		expect(roleSentence('shield')).toBe('Shields allies here from the largest blow');
+		expect(roleSentence('none')).toBe('Stands here and throws nothing');
 	});
 
-	it('narrates a stagger', () => {
-		const sentence = narrateAct(
-			{ action: 'crush', outcome: 'staggered' },
-			{ actorName: 'Gorrel', targetName: 'Vrix', targetHold: 9.5, magnitude: 5 },
-		);
-		expect(sentence).toBe('Vrix (hold 9.5) is crushed by Gorrel for 5 and is staggered.');
+	it('names each role in one word for a chip or a title', () => {
+		['strike', 'area', 'bolster', 'shield'].forEach((role) => expect(roleWord(role)).toBe(role));
+		expect(roleWord(undefined)).toBe('none');
+	});
+});
+
+describe('narrateEvent', () => {
+	const ctx = { actorName: 'Rakh', targetName: 'Vrix', siteName: 'The Chasm', worldName: 'Stonera' };
+
+	it('narrates a strike that leaves its target standing, with the number and what is left', () => {
+		expect(narrateEvent({ type: 'blow', role: 'strike', outcome: 'staggered', amount: 4, remaining: 3 }, ctx))
+			.toBe('Rakh strikes Vrix for 4; Vrix stands at 3.');
 	});
 
-	it('narrates a hold with the site named', () => {
-		expect(narrateAct({ action: 'hold', outcome: 'held' }, { actorName: 'Gorrel', siteName: 'The Chasm' }))
-			.toBe('Gorrel holds its ground at The Chasm.');
+	it('narrates a rout', () => {
+		expect(narrateEvent({ type: 'blow', role: 'strike', outcome: 'routed', amount: 8, remaining: 0 }, ctx))
+			.toBe('Rakh strikes Vrix for 8 and routs Vrix.');
 	});
 
-	it('narrates an area act with its hit count', () => {
-		expect(narrateAct(
-			{ action: 'burst', outcome: 'area-struck', hitCount: 3 },
-			{ actorName: 'Neph', siteName: 'The Reef' },
-		)).toBe('Neph bursts over The Reef, catching 3 creatures on both sides.');
+	it('says a hidden blow came from hiding', () => {
+		expect(narrateEvent({ type: 'blow', role: 'strike', outcome: 'staggered', amount: 4, remaining: 3, hidden: true }, ctx))
+			.toBe('Rakh, from hiding, strikes Vrix for 4; Vrix stands at 3.');
 	});
 
-	it('narrates a ward absorbing a blow', () => {
-		expect(narrateAct({ action: 'strike', outcome: 'warded-absorbed' }, { actorName: 'Rakh', targetName: 'Vrix' }))
-			.toBe('Rakh strikes Vrix, and the ward absorbs it entirely.');
+	it('leaves a cancelled blow to the shield that cancelled it', () => {
+		expect(narrateEvent({ type: 'blow', role: 'strike', outcome: 'cancelled', amount: 4 }, ctx)).toBeNull();
+		expect(narrateEvent({ type: 'shield', cancelled: 'v', amount: 4 }, { actorName: 'Yetimoth', targetName: 'Voltish' }))
+			.toBe("Yetimoth shields: Voltish's blow of 4 is cancelled.");
 	});
 
-	it('reads a passive outcome with a past participle, never the third-person form', () => {
-		const sentence = narrateAct(
-			{ action: 'ambush', outcome: 'routed' },
-			{ actorName: 'Gravenmaw', targetName: 'Shockstrider', targetHold: 2.3, magnitude: 14 },
-		);
-		expect(sentence).toBe('Shockstrider (hold 2.3) is ambushed by Gravenmaw for 14 and is routed.');
-		expect(sentence).not.toContain('is ambushes');
+	it('says a shield with nothing to cancel, and a blow with nothing to hit', () => {
+		expect(narrateEvent({ type: 'shield', cancelled: null, amount: 0 }, { actorName: 'Yetimoth' }))
+			.toBe('Yetimoth shields, and nothing is thrown at its side.');
+		expect(narrateEvent({ type: 'blow', role: 'strike', outcome: 'no-target', amount: 0 }, ctx))
+			.toBe('Rakh finds no target.');
 	});
 
-	it('never prints undefined when the log gives it nothing', () => {
-		const sentence = narrateAct({ action: 'strike', outcome: 'shrugged' }, {});
+	it('says a blow lapsed when its striker was routed first', () => {
+		expect(narrateEvent({ type: 'blow', role: 'strike', outcome: 'lapsed', amount: 0 }, ctx))
+			.toBe("Rakh's blow lapses, routed first.");
+	});
+
+	it('announces an area over the world, then tells each victim as its own blow', () => {
+		expect(narrateEvent({ type: 'area', role: 'area', amount: 2, hitCount: 3 }, ctx))
+			.toBe('Rakh bursts over Stonera for 2 each, catching 3 creatures.');
+		expect(narrateEvent({ type: 'blow', role: 'area', outcome: 'staggered', amount: 2, remaining: 5 }, ctx))
+			.toBe('Rakh catches Vrix for 2; Vrix stands at 5.');
+		// an area alone at a world declares and hits nobody; "catching 0 creatures" is not
+		// a sentence anyone should read
+		expect(narrateEvent({ type: 'area', role: 'area', amount: 2, hitCount: 0 }, ctx))
+			.toBe('Rakh bursts over Stonera, and catches nothing.');
+	});
+
+	it('never prints undefined when the event gives it nothing', () => {
+		const sentence = narrateEvent({ type: 'blow', role: 'strike', outcome: 'staggered' }, {});
 		expect(sentence).not.toMatch(/undefined/);
+	});
+});
+
+describe('cueForEvent', () => {
+	it('maps a blow to the strike and rout cues by its outcome, and nothing else', () => {
+		expect(cueForEvent({ type: 'blow', outcome: 'routed' })).toEqual({ name: 'rout' });
+		expect(cueForEvent({ type: 'blow', outcome: 'staggered' }).name).toBe('strike');
+		expect(cueForEvent({ type: 'blow', outcome: 'cancelled' })).toBeNull();
+		expect(cueForEvent({ type: 'shield', cancelled: 'x' })).toBeNull();
+		expect(cueForEvent({ type: 'judge' })).toBeNull();
 	});
 });
 
