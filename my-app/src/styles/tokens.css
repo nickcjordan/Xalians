@@ -3,12 +3,13 @@
    size. src/constants/designTokens.js mirrors the colors for recharts, GSAP
    and SVG attributes; src/__tests__/designTokens.test.js keeps them equal.
 
-   Preflight is deliberately not imported yet: Bootstrap's reset is still
-   loaded until the last page leaves it (docs/design/frontend-stack-migration.md,
-   phase 4 turns preflight on and unlinks Bootstrap). */
+   The full Tailwind base: preflight, theme, utilities. Bootstrap left in the
+   stack teardown (docs/design/frontend-stack-migration.md, phase 4). */
 @import "tailwindcss/theme" layer(theme);
-/* `important` so Tailwind utilities outrank Bootstrap's !important utilities
-   (bg-primary, border) while both stacks load; harmless after phase 4. */
+@import "tailwindcss/preflight" layer(base);
+/* `important`: the legacy stylesheets the immersive pages still read carry
+   their own !important rules; utilities must outrank them until those
+   files are deleted by the immersive redesign. */
 @import "tailwindcss/utilities" layer(utilities) important;
 
 @theme {

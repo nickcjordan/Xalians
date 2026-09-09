@@ -182,21 +182,24 @@ Empty states are a solid hairline box on `--g-s0` with a legend line and one sen
 
 ## 10. Where things live
 
+The vehicle changed on 2026-09-09 (Nick: strip all Bootstrap; shadcn on Tailwind 4 with Lucide). `docs/design/frontend-stack-migration.md` is the contract for the build; this section is the map.
+
 | File | Role |
 |---|---|
-| `my-app/public/assets/css/system.css` | **The design system.** Primitive tokens in `:root`, semantic aliases, every `.g-*` component with its states. After migration there are no `[data-terminal]` blocks. |
-| `my-app/src/constants/designTokens.js` | The JavaScript half of the palette for recharts, GSAP and SVG. Mirrors every primitive. |
-| `my-app/src/constants/colorConstants.js` | The element hues as the game code reads them. Must equal `--g-el-*`. |
-| `my-app/src/__tests__/designTokens.test.js` | Fails if CSS and JavaScript palettes disagree. |
-| `my-app/src/__tests__/designSystem.test.js` | Fails if a page is unclassified, if the styleguide is missing a component, or if raw hex is added to CSS outside `system.css`. Retargeted from `data-terminal` to `data-tier` in the migration. |
-| `my-app/public/assets/css/pages/*.css` | One file per page or area for compositions specific to it. No colors; everything reads a token. |
-| `my-app/public/assets/css/style.css`, `encyclopedia.css`, `reclamation.css`, `duel*.css`, `tokens.css` | Legacy. Shrinking. Never add to them. |
-| `my-app/src/pages/styleGuidePage.js` | `/styleguide`: every token, every component in every state, the spinner, the lockup. The reference an agent checks before building anything. |
+| `my-app/src/styles/tokens.css` | **The tokens**, as the Tailwind theme. The only file in the app holding a raw color, font name or size: the room and surfaces, edges, ink, the viable signal, status, the 14 element hues, the four faces, the type scale, radius 0, the one float shadow, the breakpoints. |
+| `my-app/src/styles/globals.css` | The semantic layer over the tokens: shadcn's variables mapped onto the contract, the `el-*` element scope, the chamfer and cut utilities, the `type-*` roles, the helix strokes and keyframes. No values, only references. |
+| `my-app/src/constants/designTokens.js`, `colorConstants.js` | The JavaScript half of the palette for recharts, GSAP and SVG. Must equal the tokens. |
+| `my-app/src/__tests__/tokens.test.js` | Fails if `tokens.css` and `designTokens.js` disagree, or if any other stylesheet under `src` carries a raw hex. |
+| `my-app/src/components/ui/*.tsx` | shadcn components restyled to the contract: button ranks, chips and badges, cards, inputs, tabs, overlays, data pieces. Add one with `npx shadcn@latest add <name>` and restyle it here. |
+| `my-app/src/components/system/*.tsx` | House components: Shell, Masthead, SectionHead, SpecPlate, RecordRow, Meter, MoveSet, EmptyState, Tile, HelixMark, HelixSpinner, BrandLockup. |
+| `my-app/src/pages/styleGuidePage.tsx` | `/styleguide`: every component in every state, the spinner, the lockup, rendered from the real code. The reference an agent checks before building anything. |
+| `my-app/src/__tests__/designSystem.test.js` | Fails if a page is unclassified (`data-tier` or the legacy `data-terminal`) or the style guide stops importing the system. |
+| `my-app/public/assets/css/legacy/*` | Legacy: the version 3 system (`system.css`), the old template (`style.css`), and the immersive pages' own stylesheets. Read only by the immersive pages until each gets its brief, which deletes its share. Never add a rule; never load on a chrome page. |
 | `docs/design/v4-foundations.html`, `docs/design/v4-chrome.html` | The ratified proposal pages. |
 | `docs/design/terminal-mockups.html` | Version 3, kept as the record of what was tried. |
 | `scripts/design/snap.js` | Screenshot harness: every route at desktop and phone with overflow and console-error checks. Run it before claiming visual work is done. |
 
-Page classification is declared on the page root: `<main className="g-page" data-tier="chrome">`, `data-tier="immersive"`, and a featured component declares `data-tier="featured"` on its own root. The test fails if a page has neither.
+Page classification is declared on the page root: `data-tier="chrome"`, `data-tier="immersive"`, and a featured component declares `data-tier="featured"` on its own root. The test fails if a page has neither this nor the legacy `data-terminal`.
 
 ## 11. Migration from version 3, in order
 

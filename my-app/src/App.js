@@ -1,4 +1,3 @@
-import './App.css';
 import Home from './pages/home';
 import species from './json/species.json';
 // import ProjectPage from './pages/projectPage';

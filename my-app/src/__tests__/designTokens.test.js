@@ -17,8 +17,8 @@ const designTokens = require('../constants/designTokens');
 // `--g-vfd: var(--g-phosphor)` compares against its resolved colour, not the
 // literal text "var(--g-phosphor)".
 
-const SYSTEM_PATH = path.join(__dirname, '..', '..', 'public', 'assets', 'css', 'system.css');
-const TYPE_COLORS_PATH = path.join(__dirname, '..', '..', 'public', 'assets', 'css', 'typeColors.css');
+const SYSTEM_PATH = path.join(__dirname, '..', '..', 'public', 'assets', 'css', 'legacy', 'system.css');
+const TYPE_COLORS_PATH = path.join(__dirname, '..', '..', 'public', 'assets', 'css', 'legacy', 'typeColors.css');
 
 /** Parses :root and every [data-terminal="x"] block into { root: {...}, x: {...} }. */
 const readBlocks = (css) => {
