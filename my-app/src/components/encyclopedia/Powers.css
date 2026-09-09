@@ -2,11 +2,12 @@
 
 .enc-powers-first { margin-top: 0; }
 
-.enc-powers-panel { padding: var(--g-2) var(--g-4); }
+.enc-powers .enc-section { margin-top: var(--g-6); }
 
-.enc-powers-panel .g-record { padding-top: var(--g-3); padding-bottom: var(--g-3); }
+/* Rows on hairlines, no panel: the section head is the separator. */
+.enc-powers-list { border-top: var(--g-hairline) solid var(--g-rule-faint); }
 
-.enc-powers-panel .g-record:last-child { border-bottom: none; }
+.enc-powers-list .g-record .g-record-term { text-decoration: none; }
 
 .enc-powers-world-chip {
 	margin-top: var(--g-2);
@@ -14,6 +15,6 @@
 }
 
 .enc-powers-no-entry {
-	color: var(--g-ink-low);
+	color: var(--g-text-3);
 	margin: 0;
 }

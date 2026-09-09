@@ -68,7 +68,26 @@
 	flex-wrap: wrap;
 }
 
-.enc-entry-story-point-link { font-size: var(--g-size-body); }
+.g-page .enc-entry-story-point-link {
+	font-family: var(--g-font-body);
+	font-size: var(--g-size-body-v4);
+	font-weight: 400;
+	text-transform: none;
+	letter-spacing: 0;
+	color: var(--g-text);
+	text-decoration: underline;
+	text-decoration-color: var(--g-ink-3);
+}
+
+.enc-entry-story-point::before {
+	content: '';
+	display: inline-block;
+	width: 5px;
+	height: 5px;
+	margin-right: var(--g-2);
+	background: var(--g-text-3);
+	vertical-align: middle;
+}
 
 .enc-entry-chronicle-inferred {
 	font-size: var(--g-size-tiny);
@@ -100,7 +119,7 @@
 
 .enc-entry-story-para-chip { text-decoration: none; }
 
-.enc-entry-story-para-chapter { color: var(--g-text-2); }
+.enc-entry-story-para-chapter { color: var(--g-text-2); font-size: var(--g-size-small-v4); }
 
 .enc-entry-story-para-text { margin: 0; }
 

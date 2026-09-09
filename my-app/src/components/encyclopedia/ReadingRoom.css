@@ -17,7 +17,9 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
+	justify-content: space-between;
 	gap: var(--g-4);
+	padding: var(--g-4) var(--g-5);
 	margin-bottom: var(--g-6);
 }
 
@@ -45,7 +47,6 @@
 /* ---- galaxy map hero ---------------------------------------------------- */
 
 .enc-room-map-panel {
-	padding: var(--g-4);
 	margin-bottom: var(--g-7);
 }
 

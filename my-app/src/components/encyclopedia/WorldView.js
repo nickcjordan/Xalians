@@ -223,19 +223,17 @@ export default function WorldView() {
 
     return (
         <article className={`enc-world g-el-${world.element}`}>
-            <div className="enc-record">
-                <div className="g-panel enc-world-plate">
-                    <div className="enc-world-mount">
-                        <img
-                            src={`/${world.images.planet}`}
-                            alt={`${world.name} globe`}
-                            className="enc-world-globe"
-                        />
+            <div className="enc-record enc-world-fold">
+                <div className="enc-world-plate-col">
+                    <div className="g-panel enc-world-plate">
+                        <div className="enc-world-mount">
+                            <img
+                                src={`/${world.images.planet}`}
+                                alt={`${world.name} globe`}
+                                className="enc-world-globe"
+                            />
+                        </div>
                     </div>
-                </div>
-
-                <div className="enc-world-record-col">
-                    <WorldLede world={world} />
 
                     <div className="g-spec enc-world-facts">
                         {PHYSICAL_DISPLAY_SET.map(([label, format, mono]) => (
@@ -247,13 +245,23 @@ export default function WorldView() {
                             </React.Fragment>
                         ))}
                     </div>
+                </div>
 
-                    <nav className="enc-world-chronicle g-tabs" aria-label="In the story">
-                        {timeline.map((row) => (
-                            <ChronicleStation key={row.era.key} row={row} />
-                        ))}
-                    </nav>
+                <div className="enc-world-record-col">
+                    <WorldLede world={world} />
+                </div>
+            </div>
 
+            <div className="enc-world-chronicle-row">
+                <span className="g-legend-v4 enc-world-chronicle-label">In the story</span>
+                <nav className="enc-world-chronicle g-tabs" aria-label="In the story">
+                    {timeline.map((row) => (
+                        <ChronicleStation key={row.era.key} row={row} />
+                    ))}
+                </nav>
+            </div>
+
+            <div className="enc-world-below">
                     <section className="enc-section enc-world-record-section">
                         <div className="enc-section-head">
                             <h2 className="g-h2">History</h2>
@@ -436,7 +444,6 @@ export default function WorldView() {
                             <p className="enc-world-report-line enc-world-report-line--faint enc-world-report-block">RECEIPT UNCONFIRMED, filed by hand&mdash;archivist</p>
                         </div>
                     </Fold>
-                </div>
             </div>
         </article>
     );

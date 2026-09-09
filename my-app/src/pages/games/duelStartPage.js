@@ -186,7 +186,7 @@ class DuelStartPage extends React.Component {
                                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.setState({ randomizeStartingPositions: !this.state.randomizeStartingPositions }); } }} />
                             </div>
 
-                            <div className="lobbies-row lobbies-row--stack">
+                            <div className={`lobbies-row${this.state.userXalians ? ' lobbies-row--stack' : ''}`}>
                                 <span className="g-legend-v4">Squad</span>
                                 {this.state.userXalians ? this.renderSquadPicker() :
                                     <span className="g-small-v4">Sign in to pick from your Xalians</span>

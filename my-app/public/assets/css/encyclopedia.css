@@ -62,7 +62,7 @@
 
 /* Bootstrap paints bare anchors blue; inside the archive a link is either a
    printed term (.g-link, element-coloured) or a whole tile/record (inherits). */
-.enc-console a:not(.g-link):not(.g-btn):not(.g-segment):not(.nav-link) { color: inherit; }
+.enc-console a:not(.g-link):not(.g-btn):not(.g-segment):not(.nav-link):not(.g-chip):not(.g-tab-link) { color: inherit; }
 .enc-console a.g-tile, .enc-console .g-tile a, .enc-console a.g-record-term { text-decoration: none; }
 .enc-console a.g-tile:hover .g-tile-name, .enc-console a.g-record-term:hover { color: var(--g-ink); }
 
@@ -239,6 +239,11 @@
 	flex-wrap: wrap;
 }
 
+/* An outline chip that names an entry, not a world or species, stays
+   neutral even inside an element-scoped record (rule 3: element hue only
+   when the thing tagged is of that element). */
+.enc-chips .g-chip--outline:not([class*='g-el-']) { --g-el: var(--g-neutral-status); }
+
 .enc-section { margin-top: var(--g-7); }
 
 .enc-section-head {
@@ -374,8 +379,12 @@
 
 .enc-continue {
 	margin-top: var(--g-7);
-	padding: var(--g-4) var(--g-5);
+	padding: var(--g-4) 0;
+	border-top: var(--g-hairline) solid var(--g-rule-faint);
 }
+
+.g-page .enc-continue .g-record-term { color: var(--g-text-2); }
+.g-page .enc-continue .g-record-body { font-size: var(--g-size-body-v4); color: var(--g-text); }
 
 /* ---- reading room ------------------------------------------------------ */
 

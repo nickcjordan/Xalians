@@ -3,9 +3,9 @@
 .enc-index-controls {
 	display: flex;
 	flex-wrap: wrap;
-	gap: var(--g-4);
+	gap: var(--g-3) var(--g-4);
 	align-items: center;
-	margin-bottom: var(--g-4);
+	margin-bottom: var(--g-3);
 }
 
 .enc-index-search { flex: 1 1 16rem; min-width: 12rem; }
@@ -21,7 +21,7 @@
 	flex-wrap: wrap;
 }
 
-.enc-index-panel { padding: var(--g-2) var(--g-4); }
+.enc-index-panel { padding: 0; }
 
 .enc-index-list {
 	display: grid;
@@ -40,12 +40,12 @@
 .enc-index-letter-heading {
 	grid-column: 1 / -1;
 	margin: var(--g-4) 0 0;
-	font-family: var(--g-font-stencil);
-	font-size: var(--g-size-small);
-	letter-spacing: var(--g-track-label);
+	font-family: var(--g-font-legend);
+	font-size: var(--g-size-legend);
+	letter-spacing: var(--g-track-legend);
 	text-transform: uppercase;
-	color: var(--g-ink-low);
-	border-bottom: var(--g-hairline) solid var(--g-rule-faint);
+	color: var(--g-text-2);
+	border-bottom: var(--g-hairline) solid var(--g-edge);
 	padding-bottom: var(--g-1);
 }
 
@@ -55,7 +55,7 @@
 	display: flex;
 	flex-wrap: wrap;
 	gap: 2px;
-	margin-bottom: var(--g-4);
+	margin-bottom: var(--g-2);
 }
 
 .enc-index-alphabet-key {
@@ -77,10 +77,10 @@
 @media (min-width: 900px) {
 	.enc-index-controls-sticky {
 		position: sticky;
-		top: var(--g-6);
+		top: 0;
 		z-index: 2;
-		background: var(--g-hull);
-		padding-top: var(--g-2);
+		background: var(--g-room);
+		padding-top: var(--g-3);
 		padding-bottom: var(--g-2);
 	}
 }

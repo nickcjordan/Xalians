@@ -1,83 +1,35 @@
 /* =========================================================================
-   ERA SCRUBBER — station rail under the galaxy map.
-   Contract: docs/design/xalian-encyclopedia-ux-pass.md item 1.
-   Matte, static: a bank of selector keys, not a slider. No new colour, no
-   motion beyond the shared hover/focus snap already defined for .g-segment.
+   ERA SCRUBBER: the era rail under the galaxy map. Chrome tier: the rail is
+   a .g-tabs row (system.css) and each station a .g-tab-link, so it reads
+   like every other filter on the site. This file only adds the order
+   number and the caption under the rail.
    ========================================================================= */
 
 .enc-scrub {
-	margin-top: var(--g-5);
-}
-
-.enc-scrub-rail {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 3px;
-	padding: 3px;
-	background: var(--g-edge-strong);
-	border-radius: var(--g-radius);
-	box-shadow: var(--g-recess);
+	margin-top: var(--g-4);
 }
 
 .enc-scrub-station {
-	display: inline-flex;
-	align-items: baseline;
-	gap: var(--g-2);
-	flex: 1 1 0;
 	white-space: nowrap;
 	padding: var(--g-2) var(--g-3);
-	font-family: var(--g-font-stencil);
-	font-size: var(--g-size-small);
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
-	color: var(--g-ink-mid);
-	background: var(--g-hull);
-	border: 0;
-	box-shadow: var(--g-relief);
-	cursor: pointer;
-	transition: background var(--g-snap), color var(--g-snap);
-}
-
-.enc-scrub-station:hover:not([aria-pressed='true']) {
-	background: var(--g-hull-hi);
-	color: var(--g-ink);
-}
-
-.enc-scrub-station[aria-pressed='true'] {
-	/* --g-hazard is a v2 accent the design doc retires (section 8) and it is
-	   not part of any v3 terminal's material tokens, so it never retunes.
-	   Read the terminal's own accent instead. */
-	color: var(--g-accent-ink);
-	background: var(--g-accent);
-}
-
-.enc-scrub-station:focus-visible {
-	outline: 2px solid var(--g-phosphor);
-	outline-offset: -3px;
-}
-
-.enc-scrub-order {
-	font-size: var(--g-size-tiny);
-	opacity: 0.75;
 }
 
 .enc-scrub-definition {
 	margin: var(--g-3) 0 0;
 	max-width: var(--g-measure);
-	color: var(--g-ink-mid);
+	color: var(--g-text-2);
 }
 
 .enc-scrub-legend {
 	margin: var(--g-2) 0 0;
 	max-width: var(--g-measure);
 	font-size: var(--g-size-tiny);
-	color: var(--g-ink-low);
+	color: var(--g-text-3);
 }
 
-/* .enc-scrollrow (encyclopedia.css) supplies the horizontal scroll, hidden
-   scrollbar, nowrap, and trailing fade at max-width 700px; do not duplicate
-   here, only the station's own flex-basis for that row. */
+/* .enc-scrollrow (encyclopedia.css) supplies the horizontal scroll at
+   max-width 700px; only the station's own flex-basis for that row lives
+   here. */
 @media (max-width: 700px) {
 	.enc-scrub-station {
 		flex: 0 0 auto;

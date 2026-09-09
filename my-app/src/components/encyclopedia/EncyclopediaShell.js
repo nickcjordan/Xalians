@@ -118,7 +118,7 @@ function resolveMasthead(pathname) {
             subtitle: pronunciationSubtitle((lore.getEntry(view.key) || {}).pronunciation),
             chips: [
                 elementChip('el', view.element),
-                { key: 'world', label: worldName, to: lore.routeFor('world', view.homePlanet), className: `g-chip g-el-${view.element}` },
+                { key: 'world', label: worldName, to: lore.routeFor('world', view.homePlanet), className: `g-chip g-chip--outline g-el-${view.element}` },
             ],
             badge: reviewedBadge('species', key),
             back: { label: 'Back to Bestiary', to: '/encyclopedia/species' },

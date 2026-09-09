@@ -79,28 +79,24 @@ export default function Bestiary() {
 
     return (
         <div className="enc-bestiary">
-            {/* The masthead already carries "Bestiary" and the total count; this
-                is the live filtered count, which does change, so it stays. */}
-            <p className="enc-count enc-bestiary-count">{list.length} of {species.length} specimens</p>
-
-            <div className="enc-filters">
-                <div className="g-segmented enc-scrollrow" role="group" aria-label="Filter by element" ref={elementRowRef}>
-                    <button type="button" className="g-segment" aria-pressed={element === 'all'} onClick={() => setElement('all')}>
-                        All
+            <div className="g-tabs enc-scrollrow enc-bestiary-elements" role="group" aria-label="Filter by element" ref={elementRowRef}>
+                <button type="button" className={`g-tab-link${element === 'all' ? ' on' : ''}`} aria-pressed={element === 'all'} onClick={() => setElement('all')}>
+                    All
+                </button>
+                {ELEMENTS.map((el) => (
+                    <button
+                        key={el}
+                        type="button"
+                        className={`g-tab-link${element === el ? ' on' : ''}`}
+                        aria-pressed={element === el}
+                        onClick={() => setElement(el)}
+                    >
+                        {el}
                     </button>
-                    {ELEMENTS.map((el) => (
-                        <button
-                            key={el}
-                            type="button"
-                            className="g-segment"
-                            aria-pressed={element === el}
-                            onClick={() => setElement(el)}
-                        >
-                            {el}
-                        </button>
-                    ))}
-                </div>
+                ))}
+            </div>
 
+            <div className="enc-filters enc-bestiary-filters">
                 <select
                     className="g-select enc-bestiary-world-select"
                     aria-label="Filter by world"
@@ -130,6 +126,10 @@ export default function Bestiary() {
                 >
                     Ratified
                 </button>
+
+                {/* The masthead already carries "Bestiary" and the total count; this
+                    is the live filtered count, which does change, so it stays. */}
+                <p className="enc-count enc-bestiary-count">{list.length} of {species.length} specimens</p>
             </div>
 
             {list.length === 0 ? (

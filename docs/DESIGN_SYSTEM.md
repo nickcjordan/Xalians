@@ -148,13 +148,13 @@ Four ranks of button, five states each. Focus is always a two pixel ring in `--g
 
 Destructive is an outline at rest so a page with a delete button does not shout; it fills only when the person is already reaching for it. Solid Plague at rest belongs only inside a confirmation dialog.
 
-Inputs: `--g-s0` fill, `--g-edge-strong` border; hover brightens the border; focus is the ring; error is a `--g-plague` border on `--g-plague-tint` with a message that says what is wrong and how to fix it. Segmented control, toggle, checkbox and range follow the same fills and states.
+Inputs: `--g-s0` fill, `--g-edge-strong` border; hover brightens the border; focus is the ring; error is a `--g-plague` border on `--g-plague-tint` with a message that says what is wrong and how to fix it. Segmented control, toggle, checkbox and range follow the same fills and states. A pressed segment is a selected filter, not the forward action: it sits on `--g-s0` with a 2px `--g-viable` underline, the same mark the tabs use, never an accent fill (ruled 2026-09-09; filter rows were drawing more accent than the primary).
 
 **Chips are content, badges are state.** A chip carries an element hue and names an element. A badge carries a status color and names a state, in the world's own words: a Xalian is kept, released or unclaimed; a match is won, lost or abandoned. Never "draft", "pending" or other ticketing vocabulary.
 
 **Loading is the helix spinner, never a skeleton.** The DNA mark with its strands at low opacity and its six rungs lighting in sequence from top to bottom, in three sizes (20, 32, 56). Under reduced motion it holds a still frame at 70 percent. Skeleton screens are banned site-wide (ruled 2026-09-08: they read as software-as-a-service and people are tired of them).
 
-Empty states are a dashed hairline box with a legend line and one sentence that says what to do. Toasts are level 2 with a strong edge, a status dot, and one sentence.
+Empty states are a solid hairline box on `--g-s0` with a legend line and one sentence that says what to do (dashed borders retired 2026-09-09; they read as a drop target). Toasts are level 2 with a strong edge, a status dot, and one sentence.
 
 ## 7. Motion
 

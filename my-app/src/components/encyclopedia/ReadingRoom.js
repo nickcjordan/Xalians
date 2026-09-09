@@ -34,8 +34,8 @@ function BeginOrResumeCard({ story }) {
 
 	if (resumedPart) {
 		return (
-			<div className="enc-room-begin">
-				<div className="g-panel enc-room-begin-card">
+			<div className="g-panel enc-room-begin">
+				<div className="enc-room-begin-card">
 					<span className="g-kicker enc-room-begin-kicker">Continue reading</span>
 					<h2 className="g-h2 enc-room-begin-title">{story.title}</h2>
 					<p className="g-body enc-room-begin-meta">
@@ -52,8 +52,8 @@ function BeginOrResumeCard({ story }) {
 
 	const firstPart = story.parts[0];
 	return (
-		<div className="enc-room-begin">
-			<div className="g-panel enc-room-begin-card">
+		<div className="g-panel enc-room-begin">
+			<div className="enc-room-begin-card">
 				<span className="g-kicker enc-room-begin-kicker">Begin here</span>
 				<h2 className="g-h2 enc-room-begin-title">{story.title}</h2>
 				<p className="g-body enc-room-begin-meta">{story.parts.length} parts, one per era.</p>
@@ -93,10 +93,10 @@ export default function ReadingRoom() {
 
 			<BeginOrResumeCard story={story} />
 
-			<section className="g-panel enc-room-map-panel">
-				<header className="g-panel-head">
+			<section className="enc-room-map-panel">
+				<div className="enc-section-head">
 					<h2 className="g-h2">Galaxy of Xalia</h2>
-				</header>
+				</div>
 				<GalaxyMap era={era} />
 				<EraScrubber era={era} onChange={setEra} />
 			</section>

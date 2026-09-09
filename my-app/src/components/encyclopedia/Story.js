@@ -33,7 +33,7 @@ function RecordsConsulted({ beat }) {
 			<p className="g-kicker">Records consulted</p>
 			<div className="enc-chips">
 				{beat.worlds.map((world) => (
-					<Link key={world.key} to={lore.routeFor('world', world.key)} className={`g-chip g-el-${world.element}`}>
+					<Link key={world.key} to={lore.routeFor('world', world.key)} className={`g-chip g-chip--outline g-el-${world.element}`}>
 						{world.name}
 					</Link>
 				))}
