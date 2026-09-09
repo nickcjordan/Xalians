@@ -11,6 +11,11 @@ import * as valueTranslator from '../utils/valueTranslator';
  * 300px of empty plot area, each labelled with the word it already said. A
  * bulb strip states the same thing in the machine's own vocabulary, shows the
  * unrated stats honestly as unlit, and takes the height it needs.
+ *
+ * Version 4 on the new stack: the strip mirrors `Meter`
+ * (src/components/system/record.tsx) in Tailwind — it can't reuse that
+ * component directly because it reads a rating word, not a numeric value —
+ * and still reads the `--el` element scope set by its caller.
  */
 
 // the ordering the rest of the site lists stats in
@@ -36,19 +41,19 @@ class SpeciesRatingMeters extends React.Component {
 		let value = raw ? valueTranslator.statFieldToDescription(raw) : 'Unrated';
 
 		return (
-			<div className={`g-meter-row${raw ? '' : ' species-meter-row--unrated'}`} key={key}>
-				<span className="g-meter-name">{label}</span>
-				<div className="g-meter">
-					<div className="g-meter-fill" style={{ width: `${pct}%` }} />
+			<div key={key} className={`grid grid-cols-[8.5rem_1fr_5rem] items-center gap-3 py-1 ${raw ? '' : 'opacity-50'}`}>
+				<span className="type-legend">{label}</span>
+				<div className="relative h-1.5 bg-s0">
+					<div className="absolute inset-y-0 left-0 bg-el" style={{ width: `${pct}%` }} />
 				</div>
-				<span className="g-meter-value">{value}</span>
+				<span className="type-data text-right text-small text-ink">{value}</span>
 			</div>
 		);
 	}
 
 	render() {
 		return (
-			<div className="species-rating-meters">
+			<div>
 				{STAT_ORDER.map((key) => this.buildRow(key))}
 			</div>
 		);
