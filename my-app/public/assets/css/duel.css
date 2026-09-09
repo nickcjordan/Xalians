@@ -1461,3 +1461,21 @@
 .duel-stage--stacked .duel-roster-detail {
   display: none;
 }
+
+/* -------------------------------------------------------------------------
+   Moved from public/assets/css/pages/lobbies.css (phase 2 lobbies brief):
+   duelPage.js (still v3, phase 3) reads these two layout classes. Delete
+   once the duel board gets its own v4 pass. Do not add to them.
+   ------------------------------------------------------------------------- */
+
+.registry-shell {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-5);
+}
+
+.registry-counter {
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-4);
+}

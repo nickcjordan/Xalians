@@ -1,9 +1,4 @@
 import React from 'react';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
-
 
 import { gsap, Linear } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -46,15 +41,13 @@ class GameContainer extends React.Component {
 
 	render() {
 		return (
-			<React.Fragment>
-				<Container fluid className="game-container">
-                    {this.state.size && 
-                        <div className="game-container-content-wrapper" style={{ height: `${this.state.size.min}px`, width: `${this.state.size.min}px` }} >
-                            {this.props.children}
-                        </div>
-                    }
-				</Container>
-			</React.Fragment>
+			<div className="game-container">
+				{this.state.size &&
+					<div className="game-container-content-wrapper" style={{ height: `${this.state.size.min}px`, width: `${this.state.size.min}px` }} >
+						{this.props.children}
+					</div>
+				}
+			</div>
 		);
 	}
 }
