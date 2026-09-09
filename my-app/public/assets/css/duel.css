@@ -752,13 +752,15 @@
    ------------------------------------------------------------------------- */
 
 /* a control dialog, not a page of prose: narrower than .themed-modal's
-   reading measure */
-.duel-modal .modal-dialog {
-  max-width: 460px;
+   reading measure. Both dialogs are shadcn Dialogs now (radix content is a
+   single element, not modal-dialog/modal-content split), so these override
+   the component's own defaults directly on the class it carries. */
+.duel-modal {
+  max-width: 460px !important;
 }
 
-.duel-modal .modal-title {
-  font-size: var(--g-size-body);
+.duel-modal [data-slot="dialog-title"] {
+  font-size: var(--g-size-body) !important;
 }
 
 /* the verb between the two names is printed, not stencilled */
@@ -876,9 +878,11 @@
 }
 
 /* The blow landing. Fitty sizes the two headings to the dialog, so they set no
-   size of their own — only face, tracking and colour. */
-.duel-action-modal .modal-body {
-  padding: var(--g-5);
+   size of their own — only face, tracking and colour. The shadcn DialogContent
+   is one element playing the part of both modal-content and modal-body, so
+   this overrides its own p-6 default directly. */
+.duel-action-modal {
+  padding: var(--g-5) !important;
 }
 
 .duel-action-heading {
