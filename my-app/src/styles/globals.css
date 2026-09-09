@@ -136,7 +136,14 @@
 	.helix-spinner .rung { animation: none; opacity: 0.7; }
 }
 
-/* Bootstrap interop, until phase 4 unlinks it: Tailwind's `collapse`
-   utility (visibility: collapse) lands on Bootstrap's `.collapse` navbar
-   wrapper and hides the old navbar's links. Gone with the old navbar. */
+/* Bootstrap interop, until phase 4 unlinks it and turns preflight on.
+   1. Tailwind's `collapse` utility lands on Bootstrap's `.collapse` navbar
+      wrapper and hides the old navbar's links.
+   2. Without preflight a bare <button> keeps the browser's white face and
+      border, and lists keep their markers and indent; the new components
+      assume the preflight reset. Scoped to the new stack's own elements
+      (data-slot) and to buttons, which every old page styles explicitly. */
 .collapse.navbar-collapse { visibility: visible; }
+button, [role="button"] { background-color: transparent; background-image: none; border: 0; padding: 0; color: inherit; font: inherit; letter-spacing: inherit; cursor: pointer; }
+ul[data-slot], ol[data-slot] { list-style: none; margin: 0; padding: 0; }
+a[data-slot] { color: inherit; }
