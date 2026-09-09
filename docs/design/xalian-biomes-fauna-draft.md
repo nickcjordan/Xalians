@@ -50,7 +50,7 @@ The multi-era human storytelling entries from draft v4 are PARKED (appendix at b
 **ZOLTON — Standardized Environmental Assay. Unit: Zolton Xalian Generator. Filed per APEX Accords reporting protocol. Cycle: current. Receipt unconfirmed.**
 - **Terrain:** Vertical relief: conductive metallic spires functioning as natural lightning rods. Canyon systems: dense cryogenic gas saturation. Surface current rivers: active, cyclical. Strike frequency: approximately 2.5 billion events per local day.
 - **Mobility:** Climb: OPTIMAL on spire networks with insulation. Sprint: VIABLE where timed to discharge cycles. Burrow: VIABLE for storm shelter. Flight: INEFFICIENT; strike exposure in all air corridors. Swim: UNSUPPORTED; canyon gas is not a swimming medium.
-- **Extant fauna:** Insulated climbing forms, discharge-timed sprinters. Universal adaptation: energy conduction and redirection rather than storage. Entangled pair lineages persist from the discontinued relay program; paired individuals register synchronized responses at arbitrary separation. Black lightning dead zones are avoided by all cataloged forms without exception.
+- **Extant fauna:** Insulated climbing forms, discharge-timed sprinters. Universal adaptation: energy conduction and redirection; storage in a minority of lineages. Entangled pair lineages persist from the discontinued relay program; paired individuals register synchronized responses at arbitrary separation. Black lightning dead zones are avoided by all cataloged forms without exception.
 - **Hazards:** Continuous lightning, bloodstorm entanglement events, black lightning neutron emission, cryogenic canyon exposure.
 - **Output priorities:** Insulation, conduction pathways, discharge-cycle response timing.
 

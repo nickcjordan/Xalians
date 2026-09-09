@@ -2109,10 +2109,10 @@
         "pool": {
           "armored": 100,
           "anchored": 100,
-          "stealthy": 35,
-          "telekinetic": 25,
-          "nocturnal": 22,
-          "perceptive": 18
+          "grappling": 32,
+          "stealthy": 28,
+          "telekinetic": 22,
+          "nocturnal": 18
         }
       },
       "instruments": [
@@ -3362,11 +3362,12 @@
       },
       "traits": {
         "pool": {
-          "slippery": 100,
-          "regenerative": 35,
-          "hardened": 25,
-          "resistant": 20,
-          "perceptive": 20
+          "grappling": 100,
+          "regenerative": 30,
+          "slippery": 25,
+          "hardened": 18,
+          "resistant": 14,
+          "perceptive": 13
         }
       },
       "instruments": [
@@ -4069,10 +4070,11 @@
       },
       "traits": {
         "pool": {
-          "nocturnal": 100,
-          "slippery": 40,
-          "perceptive": 35,
-          "mind-sealed": 25
+          "commanding": 100,
+          "nocturnal": 34,
+          "slippery": 28,
+          "perceptive": 22,
+          "mind-sealed": 16
         }
       },
       "instruments": [

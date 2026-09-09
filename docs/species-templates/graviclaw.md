@@ -20,7 +20,7 @@ No other anatomy key has a source sentence. There are no jaws, spines, tail, or 
 
 ### Trait pool (pool shape, 2026-09-08)
 
-Two required traits at 100 and four rolled entries sharing exactly 100, six in total, which is the maximum a pool may list. Expected count: 2 + 100/100 = 3.00.
+Two required traits at 100 and four rolled entries sharing exactly 100, six in total, which is the maximum a pool may list. Expected count: 2 + 100/100 = 3.00. Reworked later the same day when `grappling` entered the registry: it takes the top rolled share and `perceptive`, the weakest-evidenced entry, drops into the cut table to keep the pool at six.
 
 #### Required
 
@@ -33,22 +33,25 @@ Two required traits at 100 and four rolled entries sharing exactly 100, six in t
 
 | Trait | Share | Evidence | Source |
 |---|---|---|---|
-| `stealthy` | 35 | Strongest of the rolled set: a species sentence about its own behavior. species: "lurks just beneath the foggy wetlands of Grimedes". Lurking submerged until it strikes is the registry sense of moving unseen until it acts. | species |
-| `telekinetic` | 25 | Also a species sentence: "using its bizarre control over the intensification of gravitational waves to generate miniature black holes in the water and draw its helpless prey right into its clutches" is moving things without touching them. Below `stealthy` because the description frames the pull as a hunting mechanism that terminates in the claws, not as a constant state. | species |
-| `nocturnal` | 22 | A planet-wide adaptation. The Grimedes Generator environmental report gives low-light metabolism as one of its three output priorities. Rolled rather than required, because nothing in the species entry makes night adaptation the point of this creature; its own niche sentence is about fog and water, not darkness. | planet report |
-| `perceptive` | 18 | The weakest class, a record field: `physiology.senses.special` carries void-sense, and the Grimedes report gives non-visual sensory systems as an output priority. The report's anticipatory-response observation is read here as further evidence for this key rather than for `foresighted`. A senses entry never makes a trait required, since a trait must not restate a field the record already carries. | record field, planet report |
+| `grappling` | 32 | Strongest of the rolled set: two species sentences about the creature's own claws, and the one thing its signature ability is built on. species: "Graviclaws can strengthen the gravitational pull of their massive claws in order to snap them shut with a force many times heavier than their implied mass", and species: it draws "its helpless prey right into its clutches". A pincer that closes with far more force than its mass implies, on a body whose whole hunting method ends with prey held in the claws, is the registry key exactly: stronger holding what it has caught. It is rolled rather than required because the two required entries are already the body facts the description leads with, and the pool shape allows two. |
+| `stealthy` | 28 | A species sentence about its own behavior. species: "lurks just beneath the foggy wetlands of Grimedes". Lurking submerged until it strikes is the registry sense of moving unseen until it acts. | species |
+| `telekinetic` | 22 | Also a species sentence: "using its bizarre control over the intensification of gravitational waves to generate miniature black holes in the water and draw its helpless prey right into its clutches" is moving things without touching them. Below `stealthy` because the description frames the pull as a hunting mechanism that terminates in the claws, not as a constant state. | species |
+| `nocturnal` | 18 | A planet-wide adaptation. The Grimedes Generator environmental report gives low-light metabolism as one of its three output priorities. Rolled rather than required, because nothing in the species entry makes night adaptation the point of this creature; its own niche sentence is about fog and water, not darkness. | planet report |
 
-#### Cut by the evidence bar (2026-09-07) and by the pool shape (2026-09-08)
+#### Cut by the evidence bar (2026-09-07), by the pool shape (2026-09-08), and by the new keys (2026-09-08)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
 | `solitary` | 45 | No ratified field and no sentence: the singular hunting frame is grammar, and Grimedes' report says nothing about group life. |
 | `foresighted` | 100 (2026-09-08 only) | Removed by the pool shape of 2026-09-08: the Grimedes anticipatory-response line is evidence for `perceptive`, and neither source claims foresight for this species. |
 | `menacing` | 30 | Class 2 fails: the raised open pincer in the art carries the gravitational vortex, so the feature depicts the gravity ability rather than a threat display, and the wall of chitin sentence states immobility, not a threat. |
+| `perceptive` | 18 | pool full, weaker evidence: its only support was a record field, `physiology.senses.special` carries void-sense, plus the Grimedes output priority of non-visual sensory systems. Every kept entry rests on a species sentence or, in `nocturnal`'s case, on a planet-wide adaptation named as an output priority and a hazard together, so when `grappling` entered the pool this was the weakest of seven candidates for six slots. |
 
 `pack-bonded` stays absent from the pool: it was excluded by `solitary`, and `solitary` is now cut as well, so neither is rolled.
 
 `nocturnal` was cut on 2026-09-07, restored at 100 on 2026-09-08, and now sits in the rolled set at 22. The Grimedes Generator report's output priority of low-light metabolism is real evidence, but it is a fact of the world the Generator builds for rather than the point of this particular creature, and under the pool shape a planet-wide adaptation is rolled unless the species' own description makes it the point. Graviclaw's description is about fog, water, gravity and armor, so the entry rolls.
+
+`grappling` is the case the new key was written for. Before 2026-09-08 the record had nowhere to put the claws: `telekinetic` carries the pull that brings prey in, and `armored` carries the shell, but the closing grip that severs the hardest of materials and holds what it has caught had no key at all, and the strain went into the signature ability alone. The key now takes it, and the signature Point of No Return reads as the trait in action rather than as an unsupported exception.
 
 `foresighted` was added at 100 on 2026-09-08 and is removed from the pool on the same day under the pool shape. Nick's ruling reads the Grimedes anticipatory-response observation as evidence for `perceptive`, which the same line already names, rather than for `foresighted`, and leaves `foresighted` to species whose own description claims foresight or whose form line names it. Neither source claims foresight for this species, so the key is out. This is the fix the iteration-three friction note asked for, applied.
 
@@ -184,3 +187,4 @@ All three are pre-existing and answered below and in the amendments: the conduit
 - 2026-09-07, trait evidence bar iteration two (Nick): restored `perceptive` (30, class 4); cut nothing, since the pool carries no `resistant`; expected count 2.66 to 2.96.
 - 2026-09-08, trait evidence bar iteration three (Nick): added `nocturnal` (100, Grimedes low-light metabolism output priority) and `foresighted` (100, the report's unqualified anticipatory-response observation); raised `perceptive` (30 to 100, void-sense special sense); cut nothing, since the pool carries no `resistant`; expected count 2.96 to 5.66.
 - 2026-09-08, pool shape (Nick): required `armored`, `anchored`; rolled `stealthy` 35, `telekinetic` 25, `nocturnal` 22, `perceptive` 18; expected count 5.66 to 3.00.
+- 2026-09-08, new keys (Nick): `grappling` added to the registry as a body stronger holding what it has caught, and it enters the rolled set at the top share on the claws that snap shut with a force many times heavier than their implied mass and draw prey into its clutches; `perceptive` (18) cut to the table above with the reason pool full, weaker evidence; the rolled set re-shared as `grappling` 32, `stealthy` 28, `telekinetic` 22, `nocturnal` 18; required unchanged at `armored` and `anchored`; pool holds at six, the cap; expected count 3.00 unchanged.
