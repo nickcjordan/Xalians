@@ -18,7 +18,7 @@ class XalianTypeSymbolBadge extends React.Component {
 		let newSize = Math.max(20, badgeWidth);
 		let primaryColor = styleUtil.getTypeColor(this.props.type);
 		return (
-			<div  className={` ${this.props.type.toLowerCase()}-color ` + ' vertically-center-contents ' + classes} style={{ height: newSize, width: newSize, background: primaryColor,  pointerEvents: 'none', background: `radial-gradient(circle, ${primaryColor} 60%, ${primaryColor + '85'} 100%)`, filter: 'drop-shadow(0px 0px 3px #000000)' }}>
+			<div  className={` ${this.props.type.toLowerCase()}-color ` + ' vertically-center-contents ' + classes} style={{ height: newSize, width: newSize, pointerEvents: 'none', background: `radial-gradient(circle, ${primaryColor} 60%, ${primaryColor + '85'} 100%)`, filter: 'drop-shadow(0px 0px 3px #000000)' }}>
              { svgUtil.getSpeciesTypeSymbol(this.props.type, false, newSize - (newSize * 0.2), "duel-type-badge-symbol") }
 			</div>
 		);

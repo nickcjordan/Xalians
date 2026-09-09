@@ -1,5 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import XalianImage from './xalianImage';
+import * as lore from '../lore';
 
 /**
  * A specimen record: plate, chips, id, description and the spec grid.
@@ -59,6 +61,12 @@ class XalianRecord extends React.Component {
 		let secondaryElement = subject.secondaryType ? subject.secondaryType.toLowerCase() : null;
 		let plateStyle = secondaryElement ? { '--g-el-2': `var(--g-el-${secondaryElement})` } : undefined;
 
+		// Links into the encyclopedia, only where the record exists there.
+		let speciesKey = subject.name ? subject.name.toLowerCase() : null;
+		let worldKey = subject.planet ? subject.planet.toLowerCase() : null;
+		let speciesRoute = speciesKey && lore.getSpecies(speciesKey) ? lore.routeFor('species', speciesKey) : null;
+		let worldRoute = worldKey && lore.getWorld(worldKey) ? lore.routeFor('world', worldKey) : null;
+
 		return (
 			<div className="gen-record">
 				<div className={`gen-record-plate g-el-${element}`} style={plateStyle}>
@@ -79,6 +87,9 @@ class XalianRecord extends React.Component {
 						{subject.id != null && !this.props.hideId &&
 							<span className="gen-record-id g-mono">#{subject.id}</span>
 						}
+						{speciesRoute &&
+							<Link to={speciesRoute} className="g-link g-small-v4 gen-record-link">Species record</Link>
+						}
 					</div>
 
 					{subject.description &&
@@ -87,7 +98,10 @@ class XalianRecord extends React.Component {
 
 					<div className="gen-record-origin">
 						<span className="g-spec-key">Origin</span>
-						<span className="g-spec-val">{subject.planet}</span>
+						{worldRoute
+							? <Link to={worldRoute} className="g-spec-val g-link">{subject.planet}</Link>
+							: <span className="g-spec-val">{subject.planet}</span>
+						}
 					</div>
 				</div>
 

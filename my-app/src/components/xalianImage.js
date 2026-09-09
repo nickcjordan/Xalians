@@ -5,14 +5,6 @@ import XalianSVG from '../svg/species/xalianSvg';
 // import * as constants from '../svg/constants'
 
 class XalianImage extends React.Component {
-	getImageLocationFromSpecies(name) {
-		return require(`../svg/species/${name.toLowerCase()}.svg`)?.default;
-	}
-
-	// getImageLocationFromSpecies(name) {
-	// 	return require(`./img/species/${name.toLowerCase()}.png`)?.default;
-	// }
-
 	getTypeColorClassName(type) {
 		var x = this.props.colored ? ` ${type.toLowerCase()}-color ` : '';
 		x = x + (this.props.bordered ? ` xalian-image-bordered ` : '');

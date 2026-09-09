@@ -132,7 +132,7 @@ The version 3 faces (Barlow Condensed, Barlow, IBM Plex Mono, Special Elite and 
 - **Space** is a 4 point scale: 4, 8, 12, 16, 24, 32, 48, 64 (`--g-1` to `--g-8`).
 - **Corners are square.** No radius anywhere except dots and toggles. Ruled 2026-09-09.
 - **The chamfer is the signature shape**, reserved for emphasis: a twelve pixel cut at top left and bottom right on the **glass tier** (live data), and an eight pixel cut on the **one primary key** per screen. Nothing else is cut. The cut echoes the logo's corners, and because it is rare it marks what is live and what is next. It is drawn as two clipped layers (an edge-colored layer and a one pixel inset surface layer) so the hairline follows the contour; `.g-glass` and `.g-key--primary` carry this and nothing else needs to.
-- **Depth is low.** Surfaces are told apart by tone and a hairline edge with one inset top highlight. Levels: page (`--g-room`), 0, 1, 2, glass, floating. Drop shadows exist only on things that float over the page: modal, drawer, popover, toast, menu.
+- **Depth is low.** Surfaces are told apart by tone and a hairline edge with one inset top highlight. Levels: page (`--g-room`), 0, 1, 2, glass, floating. Drop shadows exist only on things that float over the page: modal, drawer, popover, toast, menu, search results. The one shadow they cast is `--g-shadow-float`; no page CSS writes a literal shadow.
 - The room keeps a very faint grain and edge vignette. It is not a flat fill.
 
 ## 6. Controls and states

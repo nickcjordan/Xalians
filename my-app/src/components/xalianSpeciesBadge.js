@@ -31,7 +31,7 @@ class XalianSpeciesBadge extends React.Component {
 		let primaryColor = styleUtil.getTypeColor(this.props.type);
 		let expandedClass = this.props.duel ? ' duel-type-badge ' : ' xalian-species-badge ';
 		return (
-			<div className={this.getBgClassFromType(this.props.type) + ' vertically-center-contents ' + this.props.moreClasses + expandedClass} style={{ width: badgeWidth, background: primaryColor, background: `radial-gradient(circle, ${primaryColor} 60%, ${primaryColor + '85'} 100%)` }}>
+			<div className={this.getBgClassFromType(this.props.type) + ' vertically-center-contents ' + this.props.moreClasses + expandedClass} style={{ width: badgeWidth, background: `radial-gradient(circle, ${primaryColor} 60%, ${primaryColor + '85'} 100%)` }}>
 				<div id={this.props.id} className={'species-badge-wrapper'}>
 					<Row style={{ margin: '0px', padding: '0px', height: '100%', width: '100%' }}>
 						{!this.props.hideSymbol && (

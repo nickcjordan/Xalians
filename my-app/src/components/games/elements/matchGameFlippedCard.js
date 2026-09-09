@@ -8,10 +8,6 @@ gsap.registerPlugin(DrawSVGPlugin);
 
 class MatchGameFlippedCard extends React.Component {
 
-	getImageLocation() {
-		return require('../../../svg/logo/xalians_logo_x.svg')?.default;
-	}
-
     getClasses() {
 		var x = 'xalian-image-bordered xalian-image-shadowed xalian-image-wrapper-padded ';
 		x = x + this.props.moreClasses;

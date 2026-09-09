@@ -128,7 +128,7 @@ export default function EncyclopediaPage() {
     }, [location.pathname, location.hash]);
 
     return (
-        <main className="g-page enc-console" data-tier="chrome">
+        <main className="g-page" data-tier="chrome">
             <XalianNavbar />
             <EncyclopediaShell>
                 <Switch>

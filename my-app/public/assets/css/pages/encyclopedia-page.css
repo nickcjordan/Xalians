@@ -56,10 +56,6 @@
 	pointer-events: none;
 }
 
-/* No floating-panel shadow token exists in v4 yet (system.css defines
-   --g-surface-float but nothing for the drop shadow section 5 promises
-   floating things); this rgba matches the one v4-chrome.html itself uses
-   for its screens (see friction in the migration report). */
 .enc-search-results {
 	position: absolute;
 	top: calc(100% + var(--g-2));
@@ -69,7 +65,7 @@
 	max-height: 60vh;
 	overflow-y: auto;
 	padding: var(--g-4) var(--g-4) var(--g-3);
-	box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+	box-shadow: var(--g-shadow-float);
 }
 
 .enc-search-group-label {
@@ -200,4 +196,27 @@
 	display: flex;
 	gap: var(--g-2);
 	margin-top: var(--g-2);
+}
+
+/* ---- one horizontal, scrollable row on phones -----------------------------
+   Filters, the era rail, index chips, the section tabs, the trail. Adds only
+   the scroll and trailing fade at phone widths; wider layouts keep their own
+   wrap or grid. Scoped to .enc-shell (the encyclopedia frame) so it wins over
+   component stylesheets that set flex-wrap: wrap at equal specificity. */
+@media (max-width: 700px) {
+	.enc-shell .enc-scrollrow {
+		display: flex;
+		flex-wrap: nowrap;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: none;
+		-ms-overflow-style: none;
+		-webkit-mask-image: linear-gradient(to right, var(--g-text) 0, var(--g-text) calc(100% - 40px), transparent 100%);
+		mask-image: linear-gradient(to right, var(--g-text) 0, var(--g-text) calc(100% - 40px), transparent 100%);
+		padding-right: var(--g-6);
+	}
+
+	.enc-shell .enc-scrollrow::-webkit-scrollbar { display: none; }
+
+	.enc-shell .enc-scrollrow > * { flex: 0 0 auto; }
 }
