@@ -13,7 +13,7 @@ Split applied 2026-09-09. `lore.description` is Nick's teaser from `species.json
 - Mid-sized four-legged hunter, heavier in front
 - Shaggy along the neck and back, smooth on the flanks
 - Long upright ears
-- Wide gaping jaws with only two teeth, both long curved fangs
+- Wide gaping jaws holding two teeth, both long curved fangs
 - A tube in the mouth that sprays toxic mist
 - Long tail
 
