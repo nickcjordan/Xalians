@@ -872,6 +872,16 @@
 .g-page .g-record:hover { background: transparent; }
 .g-page .g-record-body { font-family: var(--g-font-body); font-size: var(--g-size-small-v4); color: var(--g-text-2); }
 
+/* Phones: the masthead's action row wraps under the title as one row of
+   equal keys, never a stack of full-width buttons. Meter names take a
+   narrower column so the strip keeps its length. */
+@media (max-width: 720px) {
+	.g-page .g-masthead-aside { width: 100%; flex-wrap: wrap; }
+	.g-page .g-masthead-aside .g-btn { flex: 1 1 0; min-width: 0; padding-left: var(--g-3); padding-right: var(--g-3); font-size: 12px; white-space: nowrap; }
+	.g-page .g-meter-row { grid-template-columns: 7rem 1fr 3.5rem; gap: var(--g-2); }
+	.g-page .g-meter-name { font-size: var(--g-size-legend); letter-spacing: var(--g-track-legend); }
+}
+
 /* A chip that is also a link keeps the chip's ink. */
 .g-page a.g-chip { color: var(--g-ink-invert); text-decoration: none; }
 .g-page a.g-chip--outline { color: var(--g-el); }

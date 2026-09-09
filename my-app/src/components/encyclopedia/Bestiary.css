@@ -30,18 +30,15 @@
 }
 
 @media (max-width: 700px) {
-	.enc-filters {
-		flex-direction: column;
-		align-items: stretch;
+	.enc-bestiary-filters {
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: center;
 	}
 
-	.enc-bestiary-count { margin-left: 0; }
+	.enc-bestiary-world-select { flex: 1 1 100%; }
 
-	.enc-filters .g-segmented.enc-scrollrow {
-		display: flex;
-		width: 100%;
-		max-width: 100%;
-	}
+	.enc-bestiary-count { flex: 1 1 100%; margin-left: 0; }
 
 	.enc-filters .g-segment {
 		white-space: nowrap;

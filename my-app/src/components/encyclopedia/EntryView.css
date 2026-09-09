@@ -62,10 +62,7 @@
 }
 
 .enc-entry-story-point {
-	display: flex;
-	align-items: baseline;
-	gap: var(--g-3);
-	flex-wrap: wrap;
+	display: block;
 }
 
 .g-page .enc-entry-story-point-link {
