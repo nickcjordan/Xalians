@@ -13,6 +13,7 @@ import SpeciesView from '../components/encyclopedia/SpeciesView';
 import Powers from '../components/encyclopedia/Powers';
 import Index from '../components/encyclopedia/Index';
 import EntryView from '../components/encyclopedia/EntryView';
+import { EmptyState } from '@/components/system/record';
 
 /**
  * Retired-route redirects: First Survey, Chronicle and Read collapsed into
@@ -128,7 +129,7 @@ export default function EncyclopediaPage() {
     }, [location.pathname, location.hash]);
 
     return (
-        <main className="g-page" data-tier="chrome">
+        <main className="min-h-screen bg-room font-body text-ink" data-tier="chrome">
             <XalianNavbar />
             <EncyclopediaShell>
                 <Switch>
@@ -150,7 +151,7 @@ export default function EncyclopediaPage() {
                     <Route exact path={`${path}/chronicle/:era`}><RedirectToEra /></Route>
                     <Route exact path={`${path}/read`}><RedirectToStory /></Route>
                     <Route exact path={`${path}/read/:era`}><RedirectToEra /></Route>
-                    <Route><p className="g-empty">No record at this address.</p></Route>
+                    <Route><EmptyState legend="Not found">No record at this address.</EmptyState></Route>
                 </Switch>
             </EncyclopediaShell>
         </main>

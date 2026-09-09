@@ -3,18 +3,18 @@ import React from 'react';
 /**
  * The specimen's attributes, printed as a spec grid.
  *
- * This was a stack of bootstrap Rows with a right-aligned label column, which
- * put a wide unexplained gutter between every label and its value. It is a
- * description list — the design system draws one as `.g-spec`, the same
- * treatment the planetary survey records use.
+ * Version 4 on the new stack: the same key/value markup `SpecPlate` draws
+ * (src/components/system/record.tsx), inlined here rather than imported so
+ * this stays a plain description list independent of that component's
+ * grid-column layout.
  */
 class XalianAttributeChart extends React.Component {
 
 	pair(key, label, value) {
 		return (
 			<React.Fragment key={key}>
-				<dt className="g-spec-key">{label}</dt>
-				<dd className="g-spec-val">{value}</dd>
+				<dt className="type-legend">{label}</dt>
+				<dd className="m-0 type-data text-small text-ink">{value}</dd>
 			</React.Fragment>
 		);
 	}
@@ -52,16 +52,8 @@ class XalianAttributeChart extends React.Component {
 	}
 
 	render() {
-		// `specimen-spec` (style.css) laid two pairs per row for the old
-		// full-bleed panel; on the Field Terminal's narrower CRT that packs
-		// two fixed-width label columns tight enough that the value columns
-		// have no room left (minmax(6rem,10.5rem) x2 plus three column gaps
-		// can exceed the CRT's ~400px content width, so the two minmax(0,1fr)
-		// value tracks compute to 0 and the values overlap the next label).
-		// Plain `.g-spec` — a single label/value column, the same shape the
-		// mockup's CRT specs use — reads correctly at any container width.
 		return (
-			<dl className={`g-spec ${this.props.moreClasses || ''}`}>
+			<dl className={`m-0 grid grid-cols-[minmax(7rem,max-content)_minmax(0,1fr)] items-baseline gap-x-6 gap-y-2 ${this.props.moreClasses || ''}`}>
 				{this.buildPairs()}
 			</dl>
 		);

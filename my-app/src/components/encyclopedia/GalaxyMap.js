@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import * as lore from '../../lore';
-import './GalaxyMap.css';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
 
 // Telypso sits at the drawn center of the galaxy (POSITIONS.telypso above);
 // on phones the map scrolls wider than the viewport, so the wrapper opens
@@ -66,7 +67,7 @@ function WorldEventPin({ world, events, eraKey, onHover, onLeave }) {
 
 	return (
 		<g
-			className="enc-map-pin"
+			className="group cursor-pointer outline-none"
 			transform={`translate(${pos.x + PIN_OFFSET.x}, ${pos.y + PIN_OFFSET.y})`}
 			role="link"
 			tabIndex={0}
@@ -78,11 +79,20 @@ function WorldEventPin({ world, events, eraKey, onHover, onLeave }) {
 			onFocus={(e) => onHover(events, e)}
 			onBlur={onLeave}
 		>
-			<circle className="enc-map-pin-hit" r={22} />
-			<circle className="enc-map-pin-head" r={9} />
-			<circle className="enc-map-pin-ring" r={9} />
+			<circle r={22} fill="transparent" stroke="none" className="pointer-events-auto" />
+			<circle
+				r={9}
+				className="fill-[var(--color-room)] stroke-edge-strong transition-[stroke-width] duration-1 group-hover:[stroke-width:2px] group-focus-visible:[stroke-width:2px]"
+				strokeWidth={1.5}
+			/>
+			<circle
+				r={9}
+				fill="none"
+				className="stroke-edge-strong opacity-55 transition-opacity duration-1 group-hover:opacity-100 group-focus-visible:opacity-100"
+				strokeWidth={1}
+			/>
 			{events.length > 1 && (
-				<text className="enc-map-pin-count g-mono" y={3}>
+				<text className="type-data fill-ink-2 text-center" style={{ fontSize: 9, fontWeight: 600, textAnchor: 'middle' }} y={3}>
 					{events.length}
 				</text>
 			)}
@@ -108,9 +118,11 @@ function WorldMark({ world, compact, lit, dimLabel, era, onHover, onLeave }) {
 		}
 	};
 
+	const dim = lit === false;
+
 	return (
 		<g
-			className={`enc-map-world g-el-${world.element} ${lit === false ? 'enc-map-world--dim' : ''}`}
+			className={`el-${world.element} group cursor-pointer outline-none`}
 			transform={`translate(${pos.x}, ${pos.y})`}
 			role="link"
 			tabIndex={0}
@@ -122,11 +134,25 @@ function WorldMark({ world, compact, lit, dimLabel, era, onHover, onLeave }) {
 			onFocus={(e) => onHover(world, e)}
 			onBlur={onLeave}
 		>
-			<circle className="enc-map-world-hit" r={30} />
-			<circle className="enc-map-world-disc" r={11} />
-			{lit !== false && <circle className="enc-map-world-ring" r={11} />}
-			{!(dimLabel && lit === false) && (
-				<text className="enc-map-world-label" y={compact ? 22 : 26}>
+			<circle r={30} fill="transparent" stroke="none" className="pointer-events-auto" />
+			<circle
+				r={11}
+				className={`fill-el transition-[r,opacity] duration-1 group-hover:[r:15px] group-focus-visible:[r:15px] ${dim ? 'opacity-[0.28] group-hover:opacity-50 group-focus-visible:opacity-50' : ''}`}
+			/>
+			{!dim && (
+				<circle
+					r={11}
+					fill="none"
+					strokeWidth={1.5}
+					className="stroke-edge-strong transition-[stroke-width] duration-1 group-hover:[stroke-width:2.5px] group-focus-visible:[stroke-width:2.5px]"
+				/>
+			)}
+			{!(dimLabel && dim) && (
+				<text
+					y={compact ? 22 : 26}
+					className={`type-legend ${dim ? 'fill-ink-3' : 'fill-ink'}`}
+					style={{ fontSize: compact ? 9 : 12, fontWeight: 600, textAnchor: 'middle', textTransform: 'uppercase' }}
+				>
 					{world.name}
 				</text>
 			)}
@@ -198,118 +224,123 @@ export default function GalaxyMap({ era = null, showEvents = true, compact = fal
 	const onLeave = () => setHoverState(null);
 
 	return (
-		<div className={`enc-map ${compact ? 'enc-map--compact' : ''}`} data-tier="featured">
-			<p className="g-mono enc-map-pan-hint">Drag to pan the galaxy.</p>
-			<div className="g-glass enc-map-glass">
-			<div className="enc-map-scroll" ref={scrollRef}>
-				<svg
-					className="enc-map-svg"
-					viewBox="0 0 1000 700"
-					role="img"
-					aria-label="Galaxy map of Xalia, showing the fourteen worlds"
+		<div className="relative" data-tier="featured">
+			<p className="type-data m-0 mb-2 text-small text-ink-3 sm:hidden">Drag to pan the galaxy.</p>
+			<Card variant="glass" className="p-4">
+				<div
+					ref={scrollRef}
+					className="w-full max-sm:overflow-x-auto max-sm:[mask-image:linear-gradient(to_right,var(--color-ink)_0,var(--color-ink)_calc(100%-40px),transparent_100%)] max-sm:pr-6"
 				>
-					<rect className="enc-map-void" x={0} y={0} width={1000} height={700} />
+					<svg
+						className="block w-full max-sm:min-w-[640px]"
+						viewBox="0 0 1000 700"
+						role="img"
+						aria-label="Galaxy map of Xalia, showing the fourteen worlds"
+					>
+						<rect x={0} y={0} width={1000} height={700} className="fill-[var(--color-room)]" />
 
-					{/* Faint concentric guides suggesting the disc of the galaxy. */}
-					<ellipse className="enc-map-guide" cx={500} cy={350} rx={460} ry={300} />
-					<ellipse className="enc-map-guide" cx={500} cy={350} rx={320} ry={210} />
-					<ellipse className="enc-map-guide" cx={500} cy={350} rx={180} ry={120} />
+						{/* Faint concentric guides suggesting the disc of the galaxy. */}
+						<ellipse cx={500} cy={350} rx={460} ry={300} fill="none" className="stroke-edge" strokeWidth={1} />
+						<ellipse cx={500} cy={350} rx={320} ry={210} fill="none" className="stroke-edge" strokeWidth={1} />
+						<ellipse cx={500} cy={350} rx={180} ry={120} fill="none" className="stroke-edge" strokeWidth={1} />
 
-					{/* Cybele: the belt Stonera crosses annually. */}
-					<ellipse
-						className="enc-map-belt"
-						cx={230}
-						cy={430}
-						rx={130}
-						ry={70}
-						transform="rotate(-18 230 430)"
-					/>
-					<text className="enc-map-belt-label" x={205} y={370}>
-						Cybele
-					</text>
+						{/* Cybele: the belt Stonera crosses annually. */}
+						<ellipse
+							cx={230}
+							cy={430}
+							rx={130}
+							ry={70}
+							transform="rotate(-18 230 430)"
+							fill="none"
+							className="stroke-ink-3 opacity-60"
+							strokeWidth={1}
+							strokeDasharray="3 5"
+						/>
+						<text x={205} y={370} className="type-legend fill-ink-3" style={{ fontSize: 11, fontWeight: 600 }}>
+							Cybele
+						</text>
 
-					{/* Wraithix: Phantiri's own system, with its moon. */}
-					<text className="enc-map-system-label" x={75} y={130}>
-						Wraithix
-					</text>
-					<circle className="enc-map-moon" cx={WRAITHIX_MOON.x} cy={WRAITHIX_MOON.y} r={3} />
+						{/* Wraithix: Phantiri's own system, with its moon. */}
+						<text x={75} y={130} className="type-legend fill-ink-3" style={{ fontSize: 11, fontWeight: 600 }}>
+							Wraithix
+						</text>
+						<circle cx={WRAITHIX_MOON.x} cy={WRAITHIX_MOON.y} r={3} className="fill-ink-3 opacity-80" />
 
-					{/* The black hole beside Grimedes. */}
-					<circle className="enc-map-hole-core" cx={BLACK_HOLE.x} cy={BLACK_HOLE.y} r={9} />
-					<circle className="enc-map-hole-ring" cx={BLACK_HOLE.x} cy={BLACK_HOLE.y} r={13} />
+						{/* The black hole beside Grimedes. */}
+						<circle cx={BLACK_HOLE.x} cy={BLACK_HOLE.y} r={9} className="fill-[var(--color-room)] stroke-edge-strong" strokeWidth={1} />
+						<circle cx={BLACK_HOLE.x} cy={BLACK_HOLE.y} r={13} fill="none" className="stroke-edge-strong opacity-85" strokeWidth={1} />
 
-					{worlds.map((world) => {
-						const row = footprintByWorld ? footprintByWorld.get(world.key) : null;
-						const lit = footprint ? Boolean(row && (row.chapterCount > 0 || row.events.length > 0)) : true;
-						return (
-							<WorldMark
+						{worlds.map((world) => {
+							const row = footprintByWorld ? footprintByWorld.get(world.key) : null;
+							const lit = footprint ? Boolean(row && (row.chapterCount > 0 || row.events.length > 0)) : true;
+							return (
+								<WorldMark
+									key={world.key}
+									world={world}
+									compact={compact}
+									lit={footprint ? lit : true}
+									dimLabel={compact}
+									era={era}
+									onHover={(w, e) => onHoverWorld(w, footprint ? lit : true, e)}
+									onLeave={onLeave}
+								/>
+							);
+						})}
+
+						{worldPins.map(({ world, events }) => (
+							<WorldEventPin
 								key={world.key}
 								world={world}
-								compact={compact}
-								lit={footprint ? lit : true}
-								dimLabel={compact}
-								era={era}
-								onHover={(w, e) => onHoverWorld(w, footprint ? lit : true, e)}
+								events={events}
+								eraKey={era}
+								onHover={(evs, e) => onHoverEvents(world, evs, e)}
 								onLeave={onLeave}
 							/>
-						);
-					})}
-
-					{worldPins.map(({ world, events }) => (
-						<WorldEventPin
-							key={world.key}
-							world={world}
-							events={events}
-							eraKey={era}
-							onHover={(evs, e) => onHoverEvents(world, evs, e)}
-							onLeave={onLeave}
-						/>
-					))}
-				</svg>
-			</div>
-			</div>
+						))}
+					</svg>
+				</div>
+			</Card>
 
 			{hoverState && hoverState.kind === 'world' && (
 				<div
-					className={`g-panel g-panel--raised enc-map-card g-el-${hoverState.world.element}`}
+					className={`el-${hoverState.world.element} pointer-events-none absolute z-40 w-[220px] max-w-[60vw] -translate-x-1/2 -translate-y-full border border-edge bg-s2 p-4 shadow-[inset_0_1px_0_var(--color-edge-hi)]`}
 					style={{ left: hoverState.left, top: hoverState.top - 18 }}
 				>
-					<span className="enc-map-card-name">{hoverState.world.name}</span>
-					<span className="g-chip">{hoverState.world.element}</span>
-					<span className="enc-map-card-terrain">{hoverState.world.physical && hoverState.world.physical.terrainLabel}</span>
-					<span className="enc-map-card-species">{hoverState.world.nativeSpecies.length} native species</span>
-					<span className="enc-map-card-action g-mono">
+					<span className="type-legend block text-[15px] text-ink">{hoverState.world.name}</span>
+					<Badge variant="chip" className="mt-2">{hoverState.world.element}</Badge>
+					<span className="mt-1 block text-[13px] text-ink-2">{hoverState.world.physical && hoverState.world.physical.terrainLabel}</span>
+					<span className="mt-1 block text-[13px] text-ink-3">{hoverState.world.nativeSpecies.length} native species</span>
+					<span className="type-data mt-2 block text-[13px] text-ink-2">
 						{era && hoverState.lit !== false ? 'Read in this era' : 'Open survey record'}
 					</span>
 				</div>
 			)}
 
 			{hoverState && hoverState.kind === 'events' && (
-				<div className="g-panel g-panel--raised enc-map-card enc-map-card--event" style={{ left: hoverState.left, top: hoverState.top - 18 }}>
-					<span className="g-kicker enc-map-card-kicker">
+				<div
+					className="pointer-events-none absolute z-40 w-[200px] -translate-x-1/2 -translate-y-full border border-edge bg-s2 p-4 shadow-[inset_0_1px_0_var(--color-edge-hi)]"
+					style={{ left: hoverState.left, top: hoverState.top - 18 }}
+				>
+					<span className="type-legend block">
 						{hoverState.events.length > 1 ? `${hoverState.events.length} events` : 'Event'}
 					</span>
 					{hoverState.events.map((event) => (
-						<span className="enc-map-card-name enc-map-card-event-title" key={event.key}>
+						<span className="mt-1 block text-[15px] text-ink" key={event.key}>
 							{event.title}
 						</span>
 					))}
 				</div>
 			)}
 
-			<div className="enc-map-chips enc-scrollrow">
+			<div className="mt-4 hidden gap-2 max-sm:flex max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:[mask-image:linear-gradient(to_right,black_calc(100%-40px),transparent)]">
 				{worlds.map((world) => {
 					const row = footprintByWorld ? footprintByWorld.get(world.key) : null;
 					const lit = footprint ? Boolean(row && (row.chapterCount > 0 || row.events.length > 0)) : true;
 					const route =
 						era && lit ? `${lore.routeFor('era', era)}?world=${world.key}` : lore.routeFor('world', world.key);
 					return (
-						<Link
-							key={world.key}
-							to={route}
-							className={`g-chip ${lit ? '' : 'g-chip--outline'} g-el-${world.element}`}
-						>
-							{world.name}
+						<Link key={world.key} to={route} className={`el-${world.element} shrink-0`}>
+							<Badge variant={lit ? 'chip' : 'chip-outline'}>{world.name}</Badge>
 						</Link>
 					);
 				})}

@@ -1,5 +1,6 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
+import { cardVariants } from "@/components/ui/card"
 
 /**
  * Printed data (docs/DESIGN_SYSTEM.md section 6): a spec plate of key/value
@@ -133,5 +134,43 @@ function EmptyState({
   )
 }
 
-export { SpecPlate, RecordRow, Meter, MoveSet, EmptyState }
+/**
+ * A catalogue tile: a `Card variant="link"` with a 3px element bar, an art
+ * plate, and a meta block. `as` lets a router Link wear the card styling
+ * (pass `as={Link} to={...}`) so the whole tile is one target.
+ */
+function Tile({
+  as,
+  className,
+  ...props
+}: React.ComponentProps<"a"> & { as?: React.ElementType }) {
+  const Comp = (as || "a") as React.ElementType
+  return (
+    <Comp
+      data-slot="tile"
+      className={cn(cardVariants({ variant: "link" }), "block overflow-hidden p-0", className)}
+      {...props}
+    />
+  )
+}
+
+function TileBar({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="tile-bar" className={cn("h-[3px] bg-el", className)} {...props} />
+}
+
+function TileArt({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="tile-art"
+      className={cn("grid aspect-square place-items-center bg-el/24", className)}
+      {...props}
+    />
+  )
+}
+
+function TileMeta({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="tile-meta" className={cn("px-4 pb-4 pt-3", className)} {...props} />
+}
+
+export { SpecPlate, RecordRow, Meter, MoveSet, EmptyState, Tile, TileBar, TileArt, TileMeta }
 export type { SpecEntry, Move }
