@@ -20,7 +20,6 @@ import species from './json/species.json';
 
 
 import XalianNavbar from './components/navbar';
-import Container from 'react-bootstrap/Container';
 import React, { Suspense, lazy } from 'react';
 // import React, { lazy } from 'react';
 
