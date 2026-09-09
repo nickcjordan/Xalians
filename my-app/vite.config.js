@@ -1,5 +1,7 @@
 import { defineConfig } from 'vite';
+import path from 'node:path';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 import svgr from 'vite-plugin-svgr';
 import commonjsShim from './vite/commonjsShim.js';
 
@@ -14,6 +16,10 @@ export default defineConfig(({ mode }) => ({
 		// The few CommonJS files inside src (lambda copies, one vendored UMD lib).
 		// See vite/commonjsShim.js.
 		commonjsShim(),
+
+		// Tailwind 4 (docs/design/frontend-stack-migration.md): tokens and
+		// utilities from src/styles; no tailwind.config.js.
+		tailwindcss(),
 
 		react(),
 
@@ -39,6 +45,10 @@ export default defineConfig(({ mode }) => ({
 		esbuildOptions: {
 			loader: { '.js': 'jsx' },
 		},
+	},
+
+	resolve: {
+		alias: { '@': path.resolve(__dirname, 'src') },
 	},
 
 	define: {
