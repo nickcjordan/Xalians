@@ -119,7 +119,7 @@ Traits are descriptive facts, never rules text; no negative traits; anatomy gate
 | `healing` | passive | restores others; element colors how; flavor never restricts targets |
 | `protective` | passive | instinct to shield and protect others |
 | `regenerative` | passive | rapid self-repair, organic or mechanical |
-| `armored` | passive | natural plating, shell, or integrated chassis |
+| `armored` | passive | natural plating, shell, integrated chassis, or a covering the body reliably forms on itself (frost, resin, slag); WIDENED 2026-09-08 (Nick) for Yetimoth's frost armor |
 | `anchored` | passive | cannot be moved against its will |
 | `phasing` | passive | some physical interactions pass through it; auto-granted to non-corporeal bodies, rare roll on corporeal ones |
 | `resistant` | passive | shrugs off contamination: toxins, disease, radiation, corrosion, chemically hostile air (bodily only); thin or crushing air is `hardened`, charge is `insulated` (narrowed 2026-09-08) |
@@ -127,6 +127,8 @@ Traits are descriptive facts, never rules text; no negative traits; anatomy gate
 | `dormant` | passive | suspends its own vitals to wait out what it cannot survive awake and wakes on a trigger (bodily only); ADDED 2026-09-08 (Nick): Terragoyle's statue-state hibernation, Krystos metabolic suspension |
 | `insulated` | passive | charge, current and discharge pass over or through it without harm (bodily only; the energy twin of resistant and hardened); ADDED 2026-09-08 (Nick): Voltish stores lightning, Zolton insulation priority, Stonera static discharge |
 | `territorial` | passive | stronger holding ground it has claimed or been set to hold; denies passage rather than pursuing; ADDED 2026-09-08 (Nick): Terragoyle perimeter, Yetimoth and Akinza prison guards, Avilily sacred groves, Hippochamp patrols; distinct from protective (shields others), anchored (cannot be moved), menacing (erodes courage) |
+| `grappling` | passive | stronger holding what it has caught; the mirror of `slippery`; ADDED 2026-09-08 (Nick): Newtapede holds a swimmer under, Graviclaw's pincers |
+| `commanding` | passive | directs other bodies, or projections of itself, as one unit; ADDED 2026-09-08 (Nick): Tetrahive's conjured swarm held in one mind |
 | `ramming` | passive | a living ram; blows land far harder with movement behind them |
 | `toxic` | passive | natural weapons deliver debilitating agents; element colors which |
 | `volatile` | reactive | hazardous to strike; reacts when hit, element-colored |

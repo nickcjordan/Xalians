@@ -215,7 +215,7 @@
     {
       "key": "armored",
       "name": "Armored",
-      "nature": "Natural plating, shell, or integrated chassis."
+      "nature": "Natural plating, shell, integrated chassis, or a covering the body reliably forms on itself (frost, resin, slag)."
     },
     {
       "key": "anchored",
@@ -251,6 +251,16 @@
       "key": "territorial",
       "name": "Territorial",
       "nature": "Stronger holding ground it has claimed or been set to hold; denies passage rather than pursuing."
+    },
+    {
+      "key": "grappling",
+      "name": "Grappling",
+      "nature": "Stronger holding what it has caught; the mirror of slippery."
+    },
+    {
+      "key": "commanding",
+      "name": "Commanding",
+      "nature": "Directs other bodies, or projections of itself, as one unit."
     },
     {
       "key": "ramming",

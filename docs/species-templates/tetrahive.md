@@ -72,29 +72,32 @@ The familiars are treated as projections held by the central mind, not as living
 
 ## Traits
 
-Reshaped on 2026-09-08 under Nick's pool-shape ruling. One required trait, three rolled entries whose shares sum to 100, four entries in all. Expected count 2.00. The chance an individual lands none of the three rolled traits is 29.3 percent.
+Reshaped on 2026-09-08 under Nick's pool-shape ruling, then reworked the same day when `commanding` entered the registry. One required trait, four rolled entries whose shares sum to 100, five entries in all. Expected count 2.00. The chance an individual lands none of the four rolled traits is 30.2 percent.
 
 **Required**
 
 | Trait | Evidence |
 |---|---|
-| `nocturnal` | No body fact is demanded: the covering is `hide` so no `armored`, the body is corporeal so no `phasing`, and it does not grip the ground so no `anchored`. The behavior the description is built around is where and how it lives, and it states that plainly: it hunts the thick, stalky undergrowth of a world cloaked in perpetual night, and the newest generation of its kind stands at the edge of the galaxy and watches the endless black. A creature whose stated life is hunting and watching in the dark is night-adapted in every individual. Grimedes agrees at planet level with low-light metabolism among its output priorities, and the art gives small slitted eyes and large ears. |
+| `commanding` | The one thing the description says this creature is, in its first sentence: it fights by conjuring a swarm of little flying familiars, holding every one of them in its mind and moving them as a single unit to attack or defend. The registry key is a body that directs other bodies, or projections of itself, as one unit, which is that sentence restated in registry words, and the 2026-09-02 ruling that a conjured familiar swarm is a projection rather than life is what makes the familiars the projections the key names. The record agrees throughout: `bodyPlan` is `swarm`, the signature instrument is `swarm`, and the signature Unbidden Legion sets the familiars on one target as one mind. No body fact is demanded: the covering is `hide` so no `armored`, the body is corporeal so no `phasing`, and it does not grip the ground so no `anchored`. |
 
 **Rolled (shares sum to 100)**
 
 | Trait | Share | Evidence |
 |---|---|---|
-| `slippery` | 40 | Legacy `statRatings`: `evasionRating` is high, which maps to `slippery` and ranks it first among the rolled entries. The reading agrees with a small flier whose fighting mass is a conjured cloud rather than one body a hand can close on. A legacy rating ranks a trait and never sets it at 100. |
-| `perceptive` | 35 | Grimedes' output priorities carry non-visual sensory systems, its fauna observations record apparatus that registers mass and motion, and the record's own `senses.hearing` is banded to an upper bound of 85, over the bar of 80. Under the 2026-09-08 ruling the report's anticipatory-response line is evidence for `perceptive` rather than for `foresighted`, which is what moved that support here. |
-| `mind-sealed` | 25 | A species sentence about its own body: it controls the swarm with its mind, attacking or defending as one unit. The mind is this species' load-bearing organ, and a mind that holds a swarm together is the physiology that supports resisting intrusion. Weakest of the three because the sentence describes what the mind does outward and never says anything gets in. |
+| `nocturnal` | 34 | Strongest of the rolled set, and required until `commanding` arrived. It is where and how the creature lives, stated plainly: it hunts the thick, stalky undergrowth of a world cloaked in perpetual night, and the newest generation of its kind stands at the edge of the galaxy and watches the endless black. Grimedes agrees at planet level with low-light metabolism among its output priorities, and the art gives small slitted eyes and large ears. It rolls rather than sits at 100 because under the pool shape a planet-wide adaptation is required only where the description makes it the point of the creature, and the point of this creature is the legion it holds in its mind; the dark is the room it does that in. |
+| `slippery` | 28 | Legacy `statRatings`: `evasionRating` is high, which maps to `slippery` and ranks it first among the entries carried by a gauge rather than a sentence. The reading agrees with a small flier whose fighting mass is a conjured cloud rather than one body a hand can close on. A legacy rating ranks a trait and never sets it at 100, and here it ranks below `nocturnal`, which has a species sentence and the planet report together. |
+| `perceptive` | 22 | Grimedes' output priorities carry non-visual sensory systems, its fauna observations record apparatus that registers mass and motion, and the record's own `senses.hearing` is banded to an upper bound of 85, over the bar of 80. Under the 2026-09-08 ruling the report's anticipatory-response line is evidence for `perceptive` rather than for `foresighted`, which is what moved that support here. |
+| `mind-sealed` | 16 | A species sentence about its own body: it controls the swarm with its mind, attacking or defending as one unit. The mind is this species' load-bearing organ, and a mind that holds a swarm together is the physiology that supports resisting intrusion. Weakest of the four because the sentence describes what the mind does outward and never says anything gets in. |
 
-#### Cut by the evidence bar (2026-09-07)
+#### Cut by the evidence bar (2026-09-07) and by the new keys (2026-09-08)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
 | `menacing` | 20 | restatement of the swarm attack, with no source sentence describing an effect on courage |
 | `solitary` | 10 | argued from absence; neither source states it operates alone |
 | `foresighted` | 100 | the Grimedes anticipatory-response line is evidence for `perceptive`, not `foresighted` (2026-09-08 ruling), and this species own description never claims foresight |
+
+`commanding` is the case the new key was written for. Before 2026-09-08 the record carried the swarm as a body plan, an instrument and a signature, but the one mechanical fact that makes this creature what it is, that a single mind moves many bodies as one unit, had no trait key, and `mind-sealed` was left holding the mind by its weakest edge. The key now takes it, and `mind-sealed` reads as what it always was, a secondary consequence of a load-bearing mind.
 
 `stealthy` was considered (a small dark-silhouetted flier with no bright or noisy features, on a world of perpetual night) and removed: its only support was the planet-wide perpetual-night sentence, which cannot carry a species trait on its own once it is already spent on `nocturnal`.
 
@@ -219,3 +222,4 @@ $ node docs/species-templates/tools/validate-template.js tetrahive
 - 2026-09-07, trait evidence bar iteration two (Nick): restored `slippery`, `perceptive`; cut none; expected count 1.30 to 1.95.
 - 2026-09-08, trait evidence bar iteration three (Nick): added `foresighted` at 100; raised `nocturnal` 95 to 100, `slippery` 45 to 100, `perceptive` 20 to 100; cut none; expected count 1.95 to 4.35.
 - 2026-09-08, pool shape (Nick): required `nocturnal`; rolled `slippery` 40, `perceptive` 35, `mind-sealed` 25; expected count 4.35 to 2.00.
+- 2026-09-08, new keys (Nick): `commanding` added to the registry as a body that directs other bodies, or projections of itself, as one unit, and it takes the required slot on the sentence about holding every familiar in its mind and moving them as a single unit; `nocturnal` moves into the rolled set ranked first; the rolled set re-shared as `nocturnal` 34, `slippery` 28, `perceptive` 22, `mind-sealed` 16; no entry cut and the pool sits at five; expected count 2.00 unchanged.
