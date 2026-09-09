@@ -55,7 +55,7 @@ export default function StoryContents({ story }) {
 
 	return (
 		<Card variant="panel" className="p-0">
-			<ol className="m-0 flex flex-col">
+			<ol className="m-0 flex list-none flex-col p-0">
 				{story.parts.map((part, i) => {
 					const total = partParagraphCount(part);
 					const read = readCounts[i] || 0;

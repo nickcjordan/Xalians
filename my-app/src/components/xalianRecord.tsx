@@ -81,7 +81,7 @@ function XalianRecord({ xalian, species, hideId }: { xalian?: any; species?: any
 	const worldRoute = worldKey && lore.getWorld(worldKey) ? lore.routeFor('world', worldKey) : null;
 
 	return (
-		<div className={`el-${element} grid gap-5 md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr_minmax(260px,300px)]`}>
+		<div className={`el-${element} grid gap-5 md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr_minmax(280px,320px)]`}>
 			<div className="mx-auto w-[220px] aspect-square overflow-hidden p-[4%] md:mx-0 md:w-full lg:col-start-1" style={plateStyle}>
 				<XalianImage
 					speciesName={subject.name}
@@ -119,6 +119,7 @@ function XalianRecord({ xalian, species, hideId }: { xalian?: any; species?: any
 
 			<div className="lg:col-start-3">
 				<SpecPlate
+					nowrap
 					entries={[
 						{ key: 'Generation', value: subject.generation },
 						{ key: 'Height', value: subject.height },

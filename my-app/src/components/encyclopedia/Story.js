@@ -246,7 +246,7 @@ function FixedPoints({ fixedPoints }) {
 function PartRailBody({ story, part }) {
 	return (
 		<>
-			<ol className="m-0 flex flex-col p-0">
+			<ol className="m-0 flex list-none flex-col p-0">
 				{story.parts.map((p) => (
 					<li key={p.era.key}>
 						<Link

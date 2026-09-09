@@ -15,8 +15,9 @@ function SpecPlate({
   className,
   entries,
   columns = 1,
+  nowrap = false,
   ...props
-}: React.ComponentProps<"dl"> & { entries: SpecEntry[]; columns?: 1 | 2 }) {
+}: React.ComponentProps<"dl"> & { entries: SpecEntry[]; columns?: 1 | 2; nowrap?: boolean }) {
   return (
     <dl
       data-slot="spec-plate"
@@ -32,7 +33,7 @@ function SpecPlate({
       {entries.map((e, i) => (
         <React.Fragment key={i}>
           <dt className="type-legend">{e.key}</dt>
-          <dd className={cn("m-0 text-small text-ink", e.body ? "font-body" : "type-data")}>{e.value}</dd>
+          <dd className={cn("m-0 text-small text-ink", e.body ? "font-body" : "type-data", nowrap && "whitespace-nowrap")}>{e.value}</dd>
         </React.Fragment>
       ))}
     </dl>
@@ -50,7 +51,7 @@ function RecordRow({
     <div
       data-slot="record-row"
       className={cn(
-        "grid grid-cols-[minmax(8rem,15rem)_1fr] gap-x-6 gap-y-2 border-b border-edge py-3 last:border-b-0",
+        "grid grid-cols-1 gap-x-6 gap-y-1 border-b border-edge py-3 last:border-b-0 sm:grid-cols-[minmax(8rem,15rem)_1fr] sm:gap-y-2",
         className
       )}
       {...props}
