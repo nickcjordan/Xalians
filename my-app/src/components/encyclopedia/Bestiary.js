@@ -3,7 +3,12 @@ import { Link } from 'react-router-dom';
 import * as lore from '../../lore';
 import XalianImage from '../xalianImage';
 import { useReadMark } from './trail';
-import './Bestiary.css';
+import { Tile, TileBar, TileArt, TileMeta, EmptyState } from '@/components/system/record';
+import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { Toggle } from '@/components/ui/toggle';
+import { tabTriggerClass } from '@/components/ui/tabs';
 
 const ELEMENTS = [
     'fire', 'water', 'dark', 'light', 'plant', 'electric', 'ghost', 'rock',
@@ -13,25 +18,22 @@ const ELEMENTS = [
 function BestiaryTile({ species: s }) {
     const read = useReadMark('species', s.key);
     return (
-        <Link
-            to={lore.routeFor('species', s.key)}
-            className={`g-panel g-card-link g-el-${s.element} enc-tile`}
-        >
-            <div className="enc-tile-bar" />
-            <div className="enc-tile-art">
-                <XalianImage colored speciesName={s.name} primaryType={s.element} moreClasses="enc-tile-art-img" />
-            </div>
-            <div className="enc-tile-meta">
-                <span className="g-h3 enc-tile-name">{s.name}</span>
-                <span className="g-mono enc-tile-sub">{s.planet ? s.planet.name : s.homePlanet}</span>
+        <Tile as={Link} to={lore.routeFor('species', s.key)} className={`el-${s.element}`}>
+            <TileBar />
+            <TileArt>
+                <XalianImage colored speciesName={s.name} primaryType={s.element} moreClasses="h-[62%] w-[62%] object-contain" />
+            </TileArt>
+            <TileMeta>
+                <span className="type-subhead block text-base">{s.name}</span>
+                <span className="type-data mt-1 block text-small text-ink-3">{s.planet ? s.planet.name : s.homePlanet}</span>
                 {(s.source !== 'template' || read) && (
-                    <div className="enc-tile-badges">
-                        {s.source !== 'template' && <span className="g-badge g-badge--info">Pending record</span>}
-                        {read && <span className="g-badge g-badge--ok">Reviewed</span>}
+                    <div className="mt-2 flex gap-2">
+                        {s.source !== 'template' && <Badge variant="info">Pending record</Badge>}
+                        {read && <Badge variant="ok">Reviewed</Badge>}
                     </div>
                 )}
-            </div>
-        </Link>
+            </TileMeta>
+        </Tile>
     );
 }
 
@@ -78,16 +80,28 @@ export default function Bestiary() {
     }, [species, element, world, sort, ratifiedOnly]);
 
     return (
-        <div className="enc-bestiary">
-            <div className="g-tabs enc-scrollrow enc-bestiary-elements" role="group" aria-label="Filter by element" ref={elementRowRef}>
-                <button type="button" className={`g-tab-link${element === 'all' ? ' on' : ''}`} aria-pressed={element === 'all'} onClick={() => setElement('all')}>
+        <div>
+            <div
+                className="mb-3 flex flex-wrap gap-0.5 max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:[mask-image:linear-gradient(to_right,black_calc(100%-40px),transparent)]"
+                role="group"
+                aria-label="Filter by element"
+                ref={elementRowRef}
+            >
+                <button
+                    type="button"
+                    data-state={element === 'all' ? 'active' : 'inactive'}
+                    className={`${tabTriggerClass} max-sm:shrink-0`}
+                    aria-pressed={element === 'all'}
+                    onClick={() => setElement('all')}
+                >
                     All
                 </button>
                 {ELEMENTS.map((el) => (
                     <button
                         key={el}
                         type="button"
-                        className={`g-tab-link${element === el ? ' on' : ''}`}
+                        data-state={element === el ? 'active' : 'inactive'}
+                        className={`${tabTriggerClass} max-sm:shrink-0`}
                         aria-pressed={element === el}
                         onClick={() => setElement(el)}
                     >
@@ -96,46 +110,42 @@ export default function Bestiary() {
                 ))}
             </div>
 
-            <div className="enc-filters enc-bestiary-filters">
-                <select
-                    className="g-select enc-bestiary-world-select"
-                    aria-label="Filter by world"
-                    value={world}
-                    onChange={(e) => setWorld(e.target.value)}
-                >
-                    <option value="all">All worlds</option>
-                    {worlds.map((w) => (
-                        <option key={w.key} value={w.key}>{w.name}</option>
-                    ))}
-                </select>
+            <div className="mb-5 flex flex-wrap items-center gap-3 max-sm:flex-row max-sm:flex-wrap">
+                <Select value={world} onValueChange={setWorld}>
+                    <SelectTrigger aria-label="Filter by world" className="min-w-[10rem] max-sm:flex-1 max-sm:basis-full">
+                        <SelectValue placeholder="All worlds" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All worlds</SelectItem>
+                        {worlds.map((w) => (
+                            <SelectItem key={w.key} value={w.key}>{w.name}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
 
-                <div className="g-segmented enc-scrollrow" role="group" aria-label="Sort by">
-                    <button type="button" className="g-segment" aria-pressed={sort === 'name'} onClick={() => setSort('name')}>
-                        Name
-                    </button>
-                    <button type="button" className="g-segment" aria-pressed={sort === 'world'} onClick={() => setSort('world')}>
-                        World
-                    </button>
-                </div>
+                <ToggleGroup type="single" value={sort} onValueChange={(v) => v && setSort(v)} variant="outline" aria-label="Sort by">
+                    <ToggleGroupItem value="name">Name</ToggleGroupItem>
+                    <ToggleGroupItem value="world">World</ToggleGroupItem>
+                </ToggleGroup>
 
-                <button
-                    type="button"
-                    className="g-segment enc-bestiary-ratified-toggle"
-                    aria-pressed={ratifiedOnly}
-                    onClick={() => setRatifiedOnly((v) => !v)}
+                <Toggle
+                    pressed={ratifiedOnly}
+                    onPressedChange={setRatifiedOnly}
+                    variant="outline"
+                    className="whitespace-nowrap"
                 >
                     Ratified
-                </button>
+                </Toggle>
 
                 {/* The masthead already carries "Bestiary" and the total count; this
                     is the live filtered count, which does change, so it stays. */}
-                <p className="enc-count enc-bestiary-count">{list.length} of {species.length} specimens</p>
+                <p className="type-data m-0 ml-auto text-small text-ink-2 max-sm:ml-0 max-sm:basis-full">{list.length} of {species.length} specimens</p>
             </div>
 
             {list.length === 0 ? (
-                <p className="g-empty">No specimens match the current filter.</p>
+                <EmptyState legend="No results">No specimens match the current filter.</EmptyState>
             ) : (
-                <div className="enc-grid enc-card-grid">
+                <div className="grid grid-cols-2 gap-3 gap-y-4 sm:grid-cols-3 sm:gap-4 sm:gap-y-5 md:grid-cols-4 min-[1080px]:grid-cols-5 xl:grid-cols-6">
                     {list.map((s) => <BestiaryTile key={s.key} species={s} />)}
                 </div>
             )}

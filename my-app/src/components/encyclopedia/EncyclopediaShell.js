@@ -6,6 +6,9 @@ import LoreSearch from './LoreSearch';
 import Pronunciation from './Pronunciation';
 import TrailStrip from './TrailStrip';
 import BackToTop from './BackToTop';
+import { Shell, Masthead } from '@/components/system/masthead';
+import { Badge } from '@/components/ui/badge';
+import { tabTriggerClass } from '@/components/ui/tabs';
 
 function sectionSubtitle(to) {
     switch (to) {
@@ -40,11 +43,11 @@ const SECTIONS = [
 ];
 
 function elementChip(key, element) {
-    return { key, label: element, className: `g-chip g-el-${element}` };
+    return { key, label: element, className: `el-${element}`, chip: true };
 }
 
 function reviewedBadge(kind, key) {
-    return isRead(kind, key) ? <span className="g-badge g-badge--ok">Reviewed</span> : null;
+    return isRead(kind, key) ? <Badge variant="ok">Reviewed</Badge> : null;
 }
 
 function pronunciationSubtitle(pronunciation) {
@@ -118,7 +121,7 @@ function resolveMasthead(pathname) {
             subtitle: pronunciationSubtitle((lore.getEntry(view.key) || {}).pronunciation),
             chips: [
                 elementChip('el', view.element),
-                { key: 'world', label: worldName, to: lore.routeFor('world', view.homePlanet), className: `g-chip g-chip--outline g-el-${view.element}` },
+                { key: 'world', label: worldName, to: lore.routeFor('world', view.homePlanet), className: `el-${view.element}`, outline: true },
             ],
             badge: reviewedBadge('species', key),
             back: { label: 'Back to Bestiary', to: '/encyclopedia/species' },
@@ -140,7 +143,7 @@ function resolveMasthead(pathname) {
         const era = entry.category === 'history' ? lore.getEraForEntry(key) : null;
         const chips = [];
         if (entry.element) chips.push(elementChip('el', entry.element));
-        if (era) chips.push({ key: 'era', label: era.name, to: lore.routeFor('era', era.key), className: 'g-chip g-chip--outline' });
+        if (era) chips.push({ key: 'era', label: era.name, to: lore.routeFor('era', era.key), outline: true });
         return {
             kicker: entry.category,
             title: entry.title,
@@ -155,17 +158,18 @@ function resolveMasthead(pathname) {
 }
 
 function MastheadChip({ chip }) {
+    const badge = <Badge variant={chip.chip ? 'chip' : 'chip-outline'} className={chip.className}>{chip.label}</Badge>;
     if (chip.to) {
-        return <Link to={chip.to} className={chip.className}>{chip.label}</Link>;
+        return <Link to={chip.to} className={chip.className}>{badge}</Link>;
     }
-    return <span className={chip.className}>{chip.label}</span>;
+    return <span className={chip.className}>{badge}</span>;
 }
 
 /**
  * Core frame (docs/DESIGN_SYSTEM.md section 2): navbar (rendered by the
- * page), then .g-masthead -- kicker, title, chips and subtitle resolved from
+ * page), then Masthead -- kicker, title, chips and subtitle resolved from
  * the address by resolveMasthead, search on the right -- then section
- * navigation as .g-tabs, with a "Back to <section>" .g-link at the tabs
+ * navigation as router tabs, with a "Back to <section>" link at the tabs
  * row's right end on a record page. No forward action lives here; the
  * Encyclopedia is reference, not a workflow.
  */
@@ -185,52 +189,44 @@ export default function EncyclopediaShell({ children }) {
     const hideAsideSearch = location.pathname === '/encyclopedia/index';
 
     return (
-        <div className="g-shell enc-shell">
-            <header className="g-masthead">
-                <div className="g-masthead-heading">
-                    <p className="g-kicker">{masthead.kicker}</p>
-                    <div className="enc-masthead-title-row">
-                        <h1 className="g-title">{masthead.title}</h1>
-                        {chips.map((chip) => <MastheadChip key={chip.key} chip={chip} />)}
-                        {masthead.badge}
-                    </div>
-                    {masthead.subtitle && (
-                        typeof masthead.subtitle === 'string'
-                            ? <p className="g-body enc-shell-subtitle">{masthead.subtitle}</p>
-                            : <div className="enc-shell-subtitle">{masthead.subtitle}</div>
-                    )}
-                </div>
-                {!hideAsideSearch && (
-                    <div className="g-masthead-aside enc-shell-aside">
-                        <LoreSearch key={location.pathname} />
-                    </div>
-                )}
-            </header>
+        <Shell className="overflow-x-clip" data-tier="chrome">
+            <Masthead
+                kicker={masthead.kicker}
+                title={masthead.title}
+                beside={<>
+                    {chips.map((chip) => <MastheadChip key={chip.key} chip={chip} />)}
+                    {masthead.badge}
+                </>}
+                subtitle={masthead.subtitle}
+                aside={!hideAsideSearch ? <LoreSearch key={location.pathname} /> : null}
+            />
 
-            <nav className="g-tabs enc-scrollrow enc-shell-tabs" aria-label="Encyclopedia sections">
+            <nav
+                className="mb-5 flex flex-wrap gap-0.5 max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:[mask-image:linear-gradient(to_right,black_calc(100%-40px),transparent)]"
+                aria-label="Encyclopedia sections"
+            >
                 {SECTIONS.map((s) => (
                     <NavLink
                         key={s.to}
                         to={s.to}
                         exact={s.exact}
-                        className="g-tab-link"
-                        activeClassName="on"
+                        className={tabTriggerClass}
                         aria-current={s === activeSection ? 'page' : undefined}
                     >
                         {s.label}
                     </NavLink>
                 ))}
                 {masthead.back && (
-                    <Link to={masthead.back.to} className="g-link enc-shell-tabs-back">
+                    <Link to={masthead.back.to} className="ml-auto self-center whitespace-nowrap text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink max-sm:hidden">
                         &laquo; {masthead.back.label}
                     </Link>
                 )}
             </nav>
 
-            <div className="enc-body">{children}</div>
+            <div className="min-h-[40vh]">{children}</div>
 
             <TrailStrip />
             <BackToTop />
-        </div>
+        </Shell>
     );
 }

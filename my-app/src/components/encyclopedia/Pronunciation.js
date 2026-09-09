@@ -1,5 +1,4 @@
 import React from 'react';
-import './Pronunciation.css';
 
 /**
  * Pronunciation: the respelled reading of a coined name, printed under the
@@ -16,7 +15,7 @@ export default function Pronunciation({ pronunciation }) {
     if (!pronunciation || !pronunciation.respelling) return null;
 
     return (
-        <p className="g-mono enc-pronunciation" title={pronunciation.ipa || undefined}>
+        <p data-slot="pronunciation" className="type-data m-0 mt-0.5 text-small tracking-wide text-ink-2" title={pronunciation.ipa || undefined}>
             {pronunciation.respelling}
         </p>
     );

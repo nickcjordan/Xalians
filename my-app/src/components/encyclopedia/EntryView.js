@@ -4,7 +4,11 @@ import * as lore from '../../lore';
 import Prose from './Prose';
 import Connections from './Connections';
 import { useVisit, useResume } from './trail';
-import './EntryView.css';
+import { SectionHead } from '@/components/system/masthead';
+import { RecordRow, EmptyState } from '@/components/system/record';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 
 /**
  * The part of a history paragraph that carries the entry: the sentence that
@@ -26,7 +30,7 @@ function excerptWindow(text, title) {
     return `${start > 0 ? '… ' : ''}${body}${end < sentences.length ? ' …' : ''}`;
 }
 
-/** "Continue the story" foot: one .g-record line pointing at the reader's furthest part, or Part 1 when nothing is stored. */
+/** "Continue the story" foot: one row pointing at the reader's furthest part, or Part 1 when nothing is stored. */
 function ContinueTheStory() {
     const resume = useResume();
     const eras = lore.getEras();
@@ -34,33 +38,22 @@ function ContinueTheStory() {
     const target = era || eras[0];
     if (!target) return null;
     return (
-        <div className="g-record enc-continue">
-            <span className="g-record-term">Continue the story</span>
-            <Link to={lore.routeFor('era', target.key)} className="g-record-body g-link">
-                Part {target.order + 1}, {target.name}
-            </Link>
+        <div className="mt-8 border-t border-edge pt-4">
+            <RecordRow
+                className="border-b-0 py-0"
+                term="Continue the story"
+            >
+                <Link to={lore.routeFor('era', target.key)} className="text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink">
+                    Part {target.order + 1}, {target.name}
+                </Link>
+            </RecordRow>
         </div>
     );
 }
 
-/** A closed-by-default panel of secondary record data. */
-function Fold({ label, count, children }) {
-    return (
-        <details className="g-panel enc-fold">
-            <summary className="enc-fold-summary">
-                <span className="g-kicker enc-fold-label">{label}</span>
-                {typeof count === 'number' && <span className="g-mono enc-fold-count">{count}</span>}
-                <span className="enc-fold-chevron" aria-hidden="true" />
-            </summary>
-            <div className="enc-fold-body">{children}</div>
-        </details>
-    );
-}
-
 // Wraps every whole-word (optionally plural) mention of `name` in `text` with
-// a <mark>, the same way Connections marks its subject (see Connections.js
-// markSubject / lore/connections.js findMention), but its own class: the v4
-// polish brief calls for the viable tint here, not Connections' grey box.
+// a <mark>, the same way Connections marks its subject, but the viable tint
+// (content, not the plain grey mark Connections uses for interface state).
 function markName(text, name) {
     const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const re = new RegExp(`\\b(${escaped}s?)\\b`, 'gi');
@@ -68,7 +61,7 @@ function markName(text, name) {
     if (parts.length === 1) return text;
     return parts.map((part, i) => (
         i % 2 === 1
-            ? <mark key={i} className="enc-entry-mark">{part}</mark>
+            ? <mark key={i} className="bg-viable-tint px-0.5 text-inherit">{part}</mark>
             : part
     ));
 }
@@ -79,21 +72,21 @@ const EXCERPTS_PER_ERA = 3;
 /** One era's reading in "In the story": the fixed points that name this entry, then the excerpts as reader-style paragraphs. */
 function StoryEra({ row, entryTitle }) {
     return (
-        <section className="enc-entry-story-era">
-            <div className="enc-entry-story-era-head">
-                <Link to={lore.routeFor('era', row.era.key)} className="g-h3 enc-entry-story-era-name">
+        <section className="border-t border-edge pt-5 first-of-type:border-t-0 first-of-type:pt-0 [&+&]:mt-5">
+            <div className="mb-3 flex items-baseline gap-3">
+                <Link to={lore.routeFor('era', row.era.key)} className="type-heading text-[19px] no-underline hover:text-edge-strong">
                     {row.era.name}
                 </Link>
-                <span className="g-mono enc-fold-count">Part {row.era.order + 1}</span>
+                <span className="type-data text-small text-ink-2">Part {row.era.order + 1}</span>
             </div>
 
             {row.events.length > 0 && (
-                <ul className="enc-entry-story-points">
+                <ul className="m-0 mb-4 flex list-none flex-col gap-2 p-0">
                     {row.events.map(({ event }) => (
-                        <li key={event.key} className="enc-entry-story-point">
+                        <li key={event.key} className="block before:mr-2 before:inline-block before:size-[5px] before:bg-ink-3 before:align-middle before:content-['']">
                             <Link
                                 to={lore.routeFor('event', `${row.era.key}:${event.key}`)}
-                                className="g-record-term enc-entry-story-point-link"
+                                className="font-body text-body text-ink underline decoration-ink-3"
                             >
                                 {event.title}
                             </Link>
@@ -103,21 +96,21 @@ function StoryEra({ row, entryTitle }) {
             )}
 
             {row.excerpts.slice(0, EXCERPTS_PER_ERA).map((excerpt) => (
-                <div key={`${excerpt.world.key}:${excerpt.index}`} className="enc-entry-story-para">
-                    <div className="enc-entry-story-para-meta">
-                        <Link
-                            to={lore.routeFor('world', excerpt.world.key)}
-                            className={`g-chip g-chip--outline g-el-${excerpt.world.element} enc-entry-story-para-chip`}
-                        >
-                            {excerpt.world.name}
+                <div
+                    key={`${excerpt.world.key}:${excerpt.index}`}
+                    className="grid grid-cols-[8rem_minmax(0,1fr)] items-baseline gap-x-4 gap-y-2 border-t border-edge py-3 first:border-t-0 max-sm:grid-cols-1"
+                >
+                    <div className={`el-${excerpt.world.element} flex flex-col items-start gap-1`}>
+                        <Link to={lore.routeFor('world', excerpt.world.key)}>
+                            <Badge variant="chip-outline">{excerpt.world.name}</Badge>
                         </Link>
-                        <span className="g-mono enc-entry-story-para-chapter">Ch. {String(excerpt.index).padStart(2, '0')}</span>
+                        <span className="type-data text-small text-ink-2">Ch. {String(excerpt.index).padStart(2, '0')}</span>
                     </div>
-                    <p className="g-body enc-prose enc-entry-story-para-text">
+                    <p className="m-0 max-w-[62ch] font-body text-body text-ink">
                         {markName(excerptWindow(excerpt.text, entryTitle), entryTitle)}{' '}
                         <Link
                             to={`${lore.routeFor('era', row.era.key)}#chapter-${excerpt.world.key}-${excerpt.index}`}
-                            className="g-link enc-entry-story-read-link"
+                            className="ml-2 text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink"
                         >
                             Read in Part {row.era.order + 1}
                         </Link>
@@ -125,8 +118,8 @@ function StoryEra({ row, entryTitle }) {
                 </div>
             ))}
             {row.excerpts.length > EXCERPTS_PER_ERA && (
-                <p className="g-mono enc-entry-story-more">
-                    <Link to={lore.routeFor('era', row.era.key)} className="g-link">
+                <p className="type-data m-0 mb-5 mt-2 text-[11px]">
+                    <Link to={lore.routeFor('era', row.era.key)} className="text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink">
                         and {row.excerpts.length - EXCERPTS_PER_ERA} more in Part {row.era.order + 1}
                     </Link>
                 </p>
@@ -149,8 +142,8 @@ export default function EntryView() {
 
     if (!entry) {
         return (
-            <div className="enc-entry">
-                <p className="g-empty">No record for &ldquo;{key}&rdquo;.</p>
+            <div>
+                <EmptyState legend="Not found">No record for &ldquo;{key}&rdquo;.</EmptyState>
             </div>
         );
     }
@@ -158,58 +151,67 @@ export default function EntryView() {
     const related = lore.getRelated(key);
     const story = lore.getEntryStory(key);
     const connectionsCount = lore.getConnections('entry', key, { limit: 12 }).length;
-    const scopeClass = entry.element ? `g-el-${entry.element}` : '';
+    const scopeClass = entry.element ? `el-${entry.element}` : '';
 
     return (
-        <div className={`enc-entry ${scopeClass}`}>
-            <article className="enc-entry-doc">
-                <div className="enc-record">
-                    <div className="enc-entry-plate">
-                        <Prose text={entry.definition} except={key} />
-                    </div>
+        <div className={scopeClass}>
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(240px,360px)_minmax(0,1fr)]">
+                <div className="min-w-0 max-w-[40ch] lg:sticky lg:top-8">
+                    <Prose text={entry.definition} except={key} />
+                </div>
 
-                    <div className="enc-entry-rails">
-                        {story.length > 0 && (
-                            <section className="enc-section enc-entry-story">
-                                <div className="enc-section-head">
-                                    <h2 className="g-h2">In the Story</h2>
-                                </div>
-                                {story.map((row) => (
-                                    <StoryEra key={row.era.key} row={row} entryTitle={entry.title} />
-                                ))}
-                            </section>
-                        )}
+                <div className="flex min-w-0 flex-col gap-8">
+                    {story.length > 0 && (
+                        <section>
+                            <SectionHead title="In the Story" />
+                            {story.map((row) => (
+                                <StoryEra key={row.era.key} row={row} entryTitle={entry.title} />
+                            ))}
+                        </section>
+                    )}
 
-                        {related.length > 0 && (
-                            <section className="enc-section">
-                                <div className="enc-section-head">
-                                    <h2 className="g-h2">Related</h2>
-                                </div>
-                                <div className="g-panel enc-entry-related">
-                                    {related.map((rel) => (
-                                        <div key={rel.key} className={`g-record ${rel.element ? `g-el-${rel.element}` : ''}`}>
-                                            <Link to={lore.routeFor('entry', rel.key)} className="g-record-term">
+                    {related.length > 0 && (
+                        <section>
+                            <SectionHead title="Related" />
+                            <Card variant="panel" className="p-0 px-4 py-2">
+                                {related.map((rel) => (
+                                    <RecordRow
+                                        key={rel.key}
+                                        className={rel.element ? `el-${rel.element}` : ''}
+                                        term={
+                                            <Link to={lore.routeFor('entry', rel.key)} className="no-underline hover:underline">
                                                 {rel.title}
                                             </Link>
-                                            <Prose text={rel.definition} except={rel.key} className="g-record-body" />
-                                        </div>
-                                    ))}
-                                </div>
-                            </section>
-                        )}
+                                        }
+                                    >
+                                        <Prose text={rel.definition} except={rel.key} className="m-0 max-w-none text-small text-ink-2" />
+                                    </RecordRow>
+                                ))}
+                            </Card>
+                        </section>
+                    )}
 
-                        {story.length === 0 && related.length === 0 && (
-                            <p className="g-empty">No cross-references on file.</p>
-                        )}
+                    {story.length === 0 && related.length === 0 && (
+                        <EmptyState legend="No cross-references">No cross-references on file.</EmptyState>
+                    )}
 
-                        <ContinueTheStory />
+                    <ContinueTheStory />
 
-                        <Fold label="Cross references" count={connectionsCount}>
-                            <Connections kind="entry" recordKey={key} limit={12} />
-                        </Fold>
-                    </div>
+                    <Accordion type="single" collapsible>
+                        <AccordionItem value="cross-references" className="border border-edge bg-s1 px-5">
+                            <AccordionTrigger className="hover:no-underline">
+                                <span className="type-legend">Cross references</span>
+                                {typeof connectionsCount === 'number' && (
+                                    <span className="type-data ml-auto mr-2 text-small text-ink-2">{connectionsCount}</span>
+                                )}
+                            </AccordionTrigger>
+                            <AccordionContent>
+                                <Connections kind="entry" recordKey={key} limit={12} />
+                            </AccordionContent>
+                        </AccordionItem>
+                    </Accordion>
                 </div>
-            </article>
+            </div>
         </div>
     );
 }

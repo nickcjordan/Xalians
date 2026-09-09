@@ -5,7 +5,9 @@ import GalaxyMap from './GalaxyMap';
 import EraScrubber from './EraScrubber';
 import StoryContents from './StoryContents';
 import { useResume } from './trail';
-import './ReadingRoom.css';
+import { SectionHead } from '@/components/system/masthead';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 const TILES = [
 	{ label: 'Worlds', to: '/encyclopedia/worlds', count: () => `${lore.getWorlds().length} worlds surveyed` },
@@ -34,34 +36,38 @@ function BeginOrResumeCard({ story }) {
 
 	if (resumedPart) {
 		return (
-			<div className="g-panel enc-room-begin">
-				<div className="enc-room-begin-card">
-					<span className="g-kicker enc-room-begin-kicker">Continue reading</span>
-					<h2 className="g-h2 enc-room-begin-title">{story.title}</h2>
-					<p className="g-body enc-room-begin-meta">
+			<Card variant="panel" className="mb-6 flex flex-row flex-wrap items-center justify-between gap-4">
+				<div className="min-w-0 flex-[1_1_22rem]">
+					<span className="type-legend mb-1 block">Continue reading</span>
+					<h2 className="type-heading m-0 mb-1">{story.title}</h2>
+					<p className="m-0 font-body text-body text-ink-2">
 						Part {resumedPart.order} of {story.parts.length}, {resumedPart.era.name}
 					</p>
 				</div>
 				{/* The one forward action on this screen: the primary key. */}
-				<Link to={lore.routeFor('era', resumedPart.era.key)} className="g-btn g-btn--primary enc-room-begin-key">
-					Resume Part {resumedPart.order}, {resumedPart.era.name}
-				</Link>
-			</div>
+				<Button asChild className="shrink-0">
+					<Link to={lore.routeFor('era', resumedPart.era.key)}>
+						Resume Part {resumedPart.order}, {resumedPart.era.name}
+					</Link>
+				</Button>
+			</Card>
 		);
 	}
 
 	const firstPart = story.parts[0];
 	return (
-		<div className="g-panel enc-room-begin">
-			<div className="enc-room-begin-card">
-				<span className="g-kicker enc-room-begin-kicker">Begin here</span>
-				<h2 className="g-h2 enc-room-begin-title">{story.title}</h2>
-				<p className="g-body enc-room-begin-meta">{story.parts.length} parts, one per era.</p>
+		<Card variant="panel" className="mb-6 flex flex-row flex-wrap items-center justify-between gap-4">
+			<div className="min-w-0 flex-[1_1_22rem]">
+				<span className="type-legend mb-1 block">Begin here</span>
+				<h2 className="type-heading m-0 mb-1">{story.title}</h2>
+				<p className="m-0 font-body text-body text-ink-2">{story.parts.length} parts, one per era.</p>
 			</div>
-			<Link to={lore.routeFor('era', firstPart.era.key)} className="g-btn g-btn--primary enc-room-begin-key">
-				Begin Part 1, {firstPart.era.name}
-			</Link>
-		</div>
+			<Button asChild className="shrink-0">
+				<Link to={lore.routeFor('era', firstPart.era.key)}>
+					Begin Part 1, {firstPart.era.name}
+				</Link>
+			</Button>
+		</Card>
 	);
 }
 
@@ -84,7 +90,7 @@ export default function ReadingRoom() {
 
 	return (
 		<div>
-			<p className="g-body enc-room-preface">
+			<p className="mb-6 max-w-[62ch] font-body text-body text-ink-2">
 				Every record the Generator holds on the galaxy it serves is here: the worlds, the fauna printed for
 				them, the powers that ordered the printing, and the sequence of events that left Xalia as it is.
 				Nothing is dated. The archive knows only what came before what. Read it as one story from the first
@@ -93,29 +99,31 @@ export default function ReadingRoom() {
 
 			<BeginOrResumeCard story={story} />
 
-			<section className="enc-room-map-panel">
-				<div className="enc-section-head">
-					<h2 className="g-h2">Galaxy of Xalia</h2>
-				</div>
+			<section className="mb-8">
+				<SectionHead title="Galaxy of Xalia" />
 				<GalaxyMap era={era} />
 				<EraScrubber era={era} onChange={setEra} />
 			</section>
 
-			<section className="enc-room-contents">
-				<h2 className="g-h2 enc-room-contents-title">Contents</h2>
+			<section className="mb-8">
+				<h2 className="type-heading m-0 mb-3">Contents</h2>
 				<StoryContents story={story} />
 			</section>
 
 			{/* One shelf line per section, on a single panel rather than a tile grid --
-			    it duplicates the .g-tabs section nav, so it stays quiet. */}
-			<div className="g-panel enc-room-drawer">
+			    it duplicates the section nav, so it stays quiet. */}
+			<Card variant="panel" className="flex flex-wrap p-0">
 				{TILES.map((tile) => (
-					<Link key={tile.to} to={tile.to} className="enc-room-drawer-tab">
-						<span className="g-record-term enc-room-drawer-label">{tile.label}</span>
-						<span className="g-record-body enc-room-drawer-count">{tile.count()}</span>
+					<Link
+						key={tile.to}
+						to={tile.to}
+						className="flex flex-1 basis-48 items-baseline justify-between gap-2 border-l border-dotted border-edge px-4 py-2 no-underline first:border-l-0 first:pl-0 max-sm:basis-full max-sm:border-l-0 max-sm:border-t max-sm:border-dotted max-sm:border-edge max-sm:pl-0 max-sm:first:border-t-0"
+					>
+						<span className="type-legend text-[13px] hover:underline">{tile.label}</span>
+						<span className="whitespace-nowrap font-body text-small text-ink-2">{tile.count()}</span>
 					</Link>
 				))}
-			</div>
+			</Card>
 		</div>
 	);
 }

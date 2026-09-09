@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import * as lore from '../../lore';
-import './EraScrubber.css';
+import { tabTriggerClass } from '@/components/ui/tabs';
 
 /**
  * A rail of stations under the galaxy map: "All" plus the seven eras.
@@ -34,7 +34,7 @@ export default function EraScrubber({ era, onChange }) {
 	useEffect(() => {
 		const rail = railRef.current;
 		if (!rail) return;
-		const buttons = rail.querySelectorAll('.enc-scrub-station');
+		const buttons = rail.querySelectorAll('[data-slot="scrub-station"]');
 		const btn = buttons[Math.max(activeIndex, 0)];
 		if (btn && btn.scrollIntoView) {
 			btn.scrollIntoView({ block: 'nearest', inline: 'center' });
@@ -44,7 +44,7 @@ export default function EraScrubber({ era, onChange }) {
 	const focusStation = (index) => {
 		const rail = railRef.current;
 		if (!rail) return;
-		const buttons = rail.querySelectorAll('.enc-scrub-station');
+		const buttons = rail.querySelectorAll('[data-slot="scrub-station"]');
 		const btn = buttons[index];
 		if (btn) btn.focus();
 	};
@@ -60,9 +60,9 @@ export default function EraScrubber({ era, onChange }) {
 	};
 
 	return (
-		<div className="enc-scrub">
+		<div className="mt-4">
 			<div
-				className="g-tabs enc-scrub-rail enc-scrollrow"
+				className="flex flex-wrap gap-0.5 max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:[mask-image:linear-gradient(to_right,black_calc(100%-40px),transparent)]"
 				ref={railRef}
 				role="group"
 				aria-label="Filter the map by era"
@@ -72,17 +72,19 @@ export default function EraScrubber({ era, onChange }) {
 					<button
 						key={s.key === null ? 'all' : s.key}
 						type="button"
-						className={`g-tab-link enc-scrub-station${i === activeIndex ? ' on' : ''}`}
+						data-slot="scrub-station"
+						data-state={i === activeIndex ? 'active' : 'inactive'}
+						className={`${tabTriggerClass} max-sm:shrink-0`}
 						aria-pressed={i === activeIndex}
 						onClick={() => onChange(s.key)}
 					>
-						<span className="enc-scrub-name">{s.name}</span>
+						<span>{s.name}</span>
 					</button>
 				))}
 			</div>
-			<p className="g-body enc-scrub-definition">{definition}</p>
+			<p className="m-0 mt-3 max-w-[62ch] font-body text-body text-ink-2">{definition}</p>
 			{footprint && (
-				<p className="g-mono enc-scrub-legend">
+				<p className="type-data m-0 mt-2 max-w-[62ch] text-small text-ink-3">
 					Lit: worlds with chapters in this era. Pins: events fixed to a world. ({litCount} worlds,{' '}
 					{eventCount} events)
 				</p>

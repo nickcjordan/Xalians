@@ -62,9 +62,9 @@ describe('pronunciation rendering', () => {
 	it('paints the respelling for an entry that has one', () => {
 		const c = paint(<Pronunciation pronunciation={byKey['phantiri'].pronunciation} />);
 		expect(c.textContent).toContain('fan-TEER-ee');
-		expect(c.querySelector('.enc-pronunciation')).toBeTruthy();
+		expect(c.querySelector('[data-slot="pronunciation"]')).toBeTruthy();
 		// the IPA rides along as the title attribute
-		expect(c.querySelector('.enc-pronunciation').getAttribute('title')).toBe(byKey['phantiri'].pronunciation.ipa);
+		expect(c.querySelector('[data-slot="pronunciation"]').getAttribute('title')).toBe(byKey['phantiri'].pronunciation.ipa);
 	});
 
 	it('renders nothing at all when an entry has none', () => {
@@ -84,12 +84,12 @@ describe('pronunciation rendering', () => {
 				</EncyclopediaShell>
 			</MemoryRouter>
 		);
-		const h1 = c.querySelector('h1.g-title');
+		const h1 = c.querySelector('header[data-slot="masthead"] h1');
 		expect(h1.textContent).toBe('Telypso');
-		const pron = c.querySelector('.enc-pronunciation');
+		const pron = c.querySelector('[data-slot="pronunciation"]');
 		expect(pron.textContent).toBe('teh-LIP-so');
 		// and it sits after the title, inside the same masthead heading block
-		const heading = c.querySelector('.g-masthead-heading');
+		const heading = c.querySelector('header[data-slot="masthead"]');
 		expect(heading.contains(h1)).toBe(true);
 		expect(heading.contains(pron)).toBe(true);
 		expect(h1.compareDocumentPosition(pron) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
