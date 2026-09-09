@@ -96,13 +96,12 @@ export default function LoreSearch() {
     }
 
     return (
-        <form className="enc-search g-paper g-paper--slip enc-search-slip" role="search" onSubmit={submit} ref={box}>
-            <span className="g-kicker enc-search-slip-label">Request slip</span>
+        <form className="enc-search enc-search-slip" role="search" onSubmit={submit} ref={box}>
             <input
                 ref={inputRef}
-                className="g-input g-input--paper enc-search-input"
+                className="g-input enc-search-input"
                 type="search"
-                placeholder="Title, world or term&hellip;"
+                placeholder="Search worlds, species, terms"
                 aria-label="Search the encyclopedia"
                 value={query}
                 onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
@@ -117,7 +116,7 @@ export default function LoreSearch() {
             />
             <span className="enc-search-hint g-mono" aria-hidden="true">/</span>
             {open && trimmed.length >= 2 && (
-                <div id="enc-search-listbox" className="g-paper g-paper--card enc-search-results" role="listbox" aria-label="Search results">
+                <div id="enc-search-listbox" className="g-panel g-panel--raised enc-search-results" role="listbox" aria-label="Search results">
                     {groups.length === 0 && <p className="enc-search-empty">No record matches &ldquo;{trimmed}&rdquo;.</p>}
                     {groups.map((g) => (
                         <div key={g.kind} className="enc-search-group">

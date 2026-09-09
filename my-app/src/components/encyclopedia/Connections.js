@@ -60,7 +60,7 @@ function tallyDots(count) {
     const capped = Math.min(count, 8);
     const dots = [];
     for (let i = 0; i < capped; i++) {
-        dots.push(<span key={i} className="g-lamp enc-conn-tally-dot" aria-hidden="true" />);
+        dots.push(<span key={i} className="enc-read-dot enc-read-dot--on enc-conn-tally-dot" aria-hidden="true" />);
     }
     return dots;
 }
@@ -139,7 +139,7 @@ export default function Connections({ kind, recordKey, limit = 12 }) {
                 <h2 className="g-h2">Connections</h2>
                 <span className="enc-count">{rows.length}</span>
             </div>
-            <ul className="g-paper enc-conn-list">
+            <ul className="g-panel enc-conn-list">
                 {rows.map((row) => (
                     <ConnectionRow key={`${row.kind}:${row.key}`} row={row} isPhone={isPhone} />
                 ))}

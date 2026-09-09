@@ -24,7 +24,7 @@ function IndexRecord({ entry }) {
                     <span className="g-chip">{entry.category}</span>
                     {entry.element && <span className="g-chip">{entry.element}</span>}
                     {read && (
-                        <span className="g-lamp enc-index-read-lamp" title="Reviewed">reviewed</span>
+                        <span className="g-badge g-badge--ok enc-index-read-badge">Reviewed</span>
                     )}
                 </div>
             </div>
@@ -135,7 +135,7 @@ export default function Index() {
             {entries.length === 0 ? (
                 <p className="g-empty">No record matches the current filter.</p>
             ) : (
-                <div className="g-paper enc-index-panel">
+                <div className="g-panel enc-index-panel">
                     <div className="enc-index-list">
                         {entries.map((entry) => {
                             const initial = initialOf(entry.title);

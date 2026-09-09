@@ -15,19 +15,21 @@ function BestiaryTile({ species: s }) {
     return (
         <Link
             to={lore.routeFor('species', s.key)}
-            className={`g-paper g-paper--card g-el-${s.element} enc-bestiary-card`}
+            className={`g-panel g-card-link g-el-${s.element} enc-tile`}
         >
-            <div className="g-paper-tabs">
-                <span className={`g-tab g-el-${s.element}`}>{s.element}</span>
+            <div className="enc-tile-bar" />
+            <div className="enc-tile-art">
+                <XalianImage colored speciesName={s.name} primaryType={s.element} moreClasses="enc-tile-art-img" />
             </div>
-            <div className="g-plate--photo enc-bestiary-mount">
-                <XalianImage colored speciesName={s.name} primaryType={s.element} moreClasses="enc-bestiary-portrait" />
-            </div>
-            <span className="enc-bestiary-card-name">{s.name}</span>
-            <span className="enc-bestiary-world">{s.planet ? s.planet.name : s.homePlanet}</span>
-            <div className="enc-bestiary-stamps">
-                {s.source !== 'template' && <span className="enc-bestiary-pending">pending record</span>}
-                {read && <span className="g-stamp enc-bestiary-reviewed-stamp"><small>reviewed</small></span>}
+            <div className="enc-tile-meta">
+                <span className="g-h3 enc-tile-name">{s.name}</span>
+                <span className="g-mono enc-tile-sub">{s.planet ? s.planet.name : s.homePlanet}</span>
+                {(s.source !== 'template' || read) && (
+                    <div className="enc-tile-badges">
+                        {s.source !== 'template' && <span className="g-badge g-badge--info">Pending record</span>}
+                        {read && <span className="g-badge g-badge--ok">Reviewed</span>}
+                    </div>
+                )}
             </div>
         </Link>
     );
@@ -134,7 +136,7 @@ export default function Bestiary() {
             {list.length === 0 ? (
                 <p className="g-empty">No specimens match the current filter.</p>
             ) : (
-                <div className="enc-grid">
+                <div className="enc-grid enc-card-grid">
                     {list.map((s) => <BestiaryTile key={s.key} species={s} />)}
                 </div>
             )}

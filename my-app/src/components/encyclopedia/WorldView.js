@@ -84,7 +84,7 @@ function ChapterRailRow({ chapter, index, world, label, onFallbackRead }) {
             className="enc-world-chapter-index-row"
             onClick={onFallbackRead}
         >
-            <span className={`g-lamp enc-world-chapter-index-lamp ${read ? '' : 'g-lamp--off'}`} aria-hidden="true" />
+            <span className={`enc-read-dot ${read ? 'enc-read-dot--on' : ''}`} aria-hidden="true" />
             <span className="g-mono enc-world-chapter-index-num">
                 CH. {String(index + 1).padStart(2, '0')}
             </span>
@@ -219,12 +219,20 @@ export default function WorldView() {
         <article className={`enc-world g-el-${world.element}`}>
             <Link to="/encyclopedia/worlds" className="enc-back">&laquo; Back to Worlds</Link>
 
+            <header className="g-masthead">
+                <div className="g-masthead-heading">
+                    <p className="g-kicker">World record</p>
+                    <h1 className="g-title">{world.name}</h1>
+                    <Pronunciation pronunciation={(lore.getEntry(world.key) || {}).pronunciation} />
+                </div>
+                <div className="g-masthead-aside enc-chips">
+                    <span className={`g-chip g-el-${world.element}`}>{world.element}</span>
+                </div>
+            </header>
+
             <div className="enc-record">
-                <div className="g-paper g-paper--card enc-world-plate">
-                    <div className="g-paper-tabs">
-                        <span className={`g-tab g-el-${world.element}`}>{world.element}</span>
-                    </div>
-                    <div className="g-plate--photo enc-world-mount">
+                <div className="g-panel enc-world-plate">
+                    <div className="enc-world-mount">
                         <img
                             src={`/${world.images.planet}`}
                             alt={`${world.name} globe`}
@@ -242,15 +250,6 @@ export default function WorldView() {
                 </div>
 
                 <div className="enc-world-record-col">
-                    <header className="enc-designation">
-                        <h1 className="g-title">{world.name}</h1>
-                        <Pronunciation pronunciation={(lore.getEntry(world.key) || {}).pronunciation} />
-                        <div className="enc-chips">
-                            <span className="g-chip">{world.element}</span>
-                            <span className="g-chip g-chip--outline">Survey Record</span>
-                        </div>
-                    </header>
-
                     <WorldLede world={world} />
 
                     <nav className="enc-world-chronicle" aria-label="In the story">
@@ -355,25 +354,25 @@ export default function WorldView() {
                                 <h2 className="g-h3">Native Fauna</h2>
                                 <span className="enc-count">{world.nativeSpecies.length} species</span>
                             </div>
-                            <div className="enc-grid enc-world-fauna-grid">
+                            <div className="enc-grid enc-card-grid">
                                 {world.nativeSpecies.map((s) => (
                                     <Link
                                         key={s.key}
                                         to={lore.routeFor('species', s.key)}
-                                        className={`g-paper g-paper--card g-el-${s.element} enc-world-species-tile enc-world-species-tile--compact`}
+                                        className={`g-panel g-card-link g-el-${s.element} enc-tile`}
                                     >
-                                        <div className="g-paper-tabs">
-                                            <span className={`g-tab g-el-${s.element}`}>{s.element}</span>
-                                        </div>
-                                        <div className="g-plate--photo enc-world-species-art">
+                                        <div className="enc-tile-bar" />
+                                        <div className="enc-tile-art">
                                             <XalianImage
                                                 colored
                                                 speciesName={s.name}
                                                 primaryType={s.element}
-                                                moreClasses="species-tile-img"
+                                                moreClasses="enc-tile-art-img"
                                             />
                                         </div>
-                                        <span className="enc-world-species-name">{s.name}</span>
+                                        <div className="enc-tile-meta">
+                                            <span className="g-h3 enc-tile-name">{s.name}</span>
+                                        </div>
                                     </Link>
                                 ))}
                             </div>
@@ -385,7 +384,7 @@ export default function WorldView() {
                             <div className="enc-section-head enc-world-record-section-head">
                                 <h2 className="g-h3">Entries Naming This World</h2>
                             </div>
-                            <div className="g-paper enc-world-entries">
+                            <div className="g-panel enc-world-entries">
                                 {world.entries.map((entry) => (
                                     <div key={entry.key} className={`g-record ${entry.element ? `g-el-${entry.element}` : ''}`}>
                                         <Link to={lore.routeFor('entry', entry.key)} className="g-record-term">
@@ -405,7 +404,7 @@ export default function WorldView() {
                     </Fold>
 
                     <Fold label="Generator survey">
-                        <div className="g-paper enc-world-report">
+                        <div className="g-panel enc-world-report">
                             <p className="enc-world-report-line">UNIT &nbsp;{report.unit}</p>
                             <p className="enc-world-report-line">PROTOCOL &nbsp;{report.protocol}</p>
                             <p className="enc-world-report-line enc-world-report-line--faint">CYCLE &nbsp;{report.cycle}</p>

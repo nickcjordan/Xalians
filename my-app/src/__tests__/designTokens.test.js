@@ -64,6 +64,33 @@ const tokens = rootBlock;
 const resolvedRoot = (name) => resolveToken(name, rootBlock, rootBlock);
 
 const PAIRINGS = [
+	// --- v4 primitives (docs/DESIGN_SYSTEM.md section 3) --------------------
+	['--g-room', designTokens.v4.room],
+	['--g-s0', designTokens.v4.s0],
+	['--g-s1', designTokens.v4.s1],
+	['--g-s2', designTokens.v4.s2],
+	['--g-s3', designTokens.v4.s3],
+	['--g-glass', designTokens.v4.glass],
+	['--g-edge', designTokens.v4.edge],
+	['--g-edge-hi', designTokens.v4.edgeHi],
+	['--g-edge-strong', designTokens.v4.edgeStrong],
+	['--g-glass-edge', designTokens.v4.glassEdge],
+	['--g-ink', designTokens.v4.ink],
+	['--g-ink-2', designTokens.v4.ink2],
+	['--g-ink-3', designTokens.v4.ink3],
+	['--g-ink-4', designTokens.v4.ink4],
+	['--g-viable-hi', designTokens.v4.viableHi],
+	['--g-viable', designTokens.v4.viable],
+	['--g-viable-lo', designTokens.v4.viableLo],
+	['--g-viable-tint', designTokens.v4.viableTint],
+	['--g-viable-ink', designTokens.v4.viableInk],
+	['--g-plague', designTokens.v4.plague],
+	['--g-plague-tint', designTokens.v4.plagueTint],
+	['--g-plague-ink', designTokens.v4.plagueInk],
+	['--g-caution', designTokens.v4.caution],
+	['--g-caution-tint', designTokens.v4.cautionTint],
+	['--g-neutral-status', designTokens.v4.neutralStatus],
+
 	['--g-void', designTokens.hull.void],
 	['--g-hull-lo', designTokens.hull.lo],
 	['--g-hull', designTokens.hull.base],
@@ -89,7 +116,9 @@ const PAIRINGS = [
 	['--g-lamp-red', designTokens.lamp.red],
 	['--g-lamp-off', designTokens.lamp.off],
 
-	['--g-hazard', designTokens.hazard.base],
+	// Repointed with --g-hazard (docs/DESIGN_SYSTEM.md section 13, hazard
+	// livery deliberately avoided in v4): now reads the viable fill.
+	['--g-hazard', designTokens.v4.viable],
 	['--g-hazard-dark', designTokens.hazard.dark],
 
 	['--g-stat-standard-attack', designTokens.stat.standardAttack],
@@ -114,15 +143,24 @@ const PAIRINGS = [
 	['--g-trim', designTokens.brass.base],
 	['--g-trim-dark', designTokens.brass.dark],
 	['--g-trim-light', designTokens.brass.light],
-	['--g-accent', designTokens.hazard.base],
+	// Repointed with --g-accent/--g-accent-ink (docs/DESIGN_SYSTEM.md section
+	// 3): the panel default is now the v4 viable accent, not the retired
+	// hazard yellow.
+	['--g-accent', designTokens.v4.viable],
 	['--g-accent-ink', designTokens.material.accentInk],
 
-	['--g-glass', designTokens.phosphor.glass],
+	// --g-glass is declared once, as the v4 primitive (see the comment in
+	// system.css); the panel terminal has no block of its own, so it reads
+	// this default too.
+	['--g-glass', designTokens.v4.glass],
 	['--g-vfd', designTokens.phosphor.base],
 	['--g-vfd-glass', designTokens.phosphor.glass],
 
-	['--g-paper', designTokens.ink.base],
-	['--g-paper-ink', designTokens.hull.base],
+	// --g-paper/--g-paper-ink keep their own v3 literal values (unrelated to
+	// the v4 ink/hull repoint above); designTokens.terminals.panel carries
+	// the same literals for the per-terminal check below.
+	['--g-paper', designTokens.terminals.panel.paper],
+	['--g-paper-ink', designTokens.terminals.panel.paperInk],
 	// Its own field, not designTokens.ink.low: see the comment on
 	// material.paperInkFaint in designTokens.js (round1-findings.md S5).
 	['--g-paper-ink-faint', designTokens.material.paperInkFaint],

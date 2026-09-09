@@ -61,7 +61,7 @@ export default function TrailStrip() {
 					<span className="enc-trail-chip-name">{visit.name}</span>
 				</Link>
 			))}
-			<button type="button" className="g-btn g-btn--ghost enc-btn-small enc-trail-clear" onClick={clear}>
+			<button type="button" className="g-btn g-btn--quiet enc-btn-small enc-trail-clear" onClick={clear}>
 				Clear
 			</button>
 		</div>

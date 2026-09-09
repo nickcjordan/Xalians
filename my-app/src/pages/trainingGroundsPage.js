@@ -1,81 +1,73 @@
-// Terminal: field. Training games are diagnostic programs on the salvaged ECHELON survey unit.
+// Tier: chrome. A lobby of short warm-up games, not a game itself.
 import React from 'react';
 import XalianNavbar from '../components/navbar';
 import MatchCardGamePage from './games/matchCardGamePage';
 import PhysicsGamePage from './games/physicsGamePage';
 import GameContainer from '../components/games/elements/gameContainer';
 
+const GAMES = [
+    {
+        name: 'Xalian Match',
+        description: 'Flip cards and match each silhouette to its species before you run out of turns.',
+        element: <MatchCardGamePage key="match" />
+    },
+    {
+        name: 'Physics',
+        description: 'Dial in an angle and power to launch a shot at the target.',
+        element: <PhysicsGamePage key="physics" />
+    }
+];
+
 class TrainingGroundsPage extends React.Component {
 
     state = {
-        games: [],
-        selectedGameIndex: 0,
-        selectedGame: null
-    }
-
-    componentDidMount() {
-        this.buildGamesList()
-    }
-
-    buildGamesList = () => {
-        let list = [
-            { name: 'Xalian Match', element: <MatchCardGamePage key="match" /> },
-            { name: 'Physics', element: <PhysicsGamePage key="physics" /> },
-        ];
-
-        this.setState({ games: list, selectedGame: list[0].element });
+        selectedGameIndex: 0
     }
 
     selectGame = (index) => {
-        this.setState({ selectedGameIndex: index, selectedGame: this.state.games[index].element });
+        this.setState({ selectedGameIndex: index });
     }
 
     render() {
+        let selectedGame = GAMES[this.state.selectedGameIndex];
 
-        return <React.Fragment>
+        return (
+            <main className="g-page" data-tier="chrome">
+                <XalianNavbar />
 
-            <div className="g-console" data-terminal="field">
-                <XalianNavbar></XalianNavbar>
-
-                <div className="g-shell page-shell training-shell">
+                <div className="g-shell">
                     <header className="g-masthead">
                         <div className="g-masthead-heading">
-                            <p className="g-kicker">Field terminal</p>
-                            <h1 className="g-title">Training Grounds</h1>
-                            <p className="training-grounds-subtitle">Warm-up games while you wait for a duel.</p>
+                            <p className="g-kicker">Training</p>
+                            <h1 className="g-title">Training grounds</h1>
+                            <p className="g-body-v4">Short games to learn the pieces before the arena.</p>
                         </div>
                     </header>
 
-                    {/* was a single unlabelled bootstrap-blue "switch" button that
-                        cycled games without saying which one you were on */}
-                    <div className="training-game-switcher">
-                        <div className="g-segmented" role="group" aria-label="Training game">
-                            {this.state.games.map((game, index) => (
-                                <button
-                                    type="button"
-                                    className="g-segment"
-                                    key={game.name}
-                                    onClick={() => this.selectGame(index)}
-                                    aria-pressed={this.state.selectedGameIndex === index}
-                                >
-                                    {game.name}
-                                </button>
-                            ))}
-                        </div>
+                    <div className="lobbies-training-grid">
+                        {GAMES.map((game, index) => (
+                            <button
+                                type="button"
+                                key={game.name}
+                                className={`g-panel g-card-link lobbies-training-tile${this.state.selectedGameIndex === index ? ' on' : ''}`}
+                                aria-pressed={this.state.selectedGameIndex === index}
+                                onClick={() => this.selectGame(index)}>
+                                <span className="g-legend-v4">{game.name}</span>
+                                <p className="g-small-v4">{game.description}</p>
+                                {index === 0 &&
+                                    <span className="g-btn g-btn--primary lobbies-training-play">Play</span>
+                                }
+                            </button>
+                        ))}
                     </div>
 
                     <GameContainer>
-                        {this.state.selectedGame}
+                        {selectedGame.element}
                     </GameContainer>
                 </div>
-
-            </div>
-        </React.Fragment>
-
-
+            </main>
+        );
     }
-
 }
-
 
 export default TrainingGroundsPage;

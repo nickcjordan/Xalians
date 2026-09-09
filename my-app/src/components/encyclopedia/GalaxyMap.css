@@ -9,6 +9,10 @@
 	position: relative;
 }
 
+.enc-map-glass {
+	padding: var(--g-4);
+}
+
 .enc-map-scroll {
 	width: 100%;
 }
@@ -88,14 +92,14 @@
 
 .enc-map-hole-ring {
 	fill: none;
-	stroke: var(--g-brass-light);
+	stroke: var(--g-edge-strong);
 	stroke-width: 1;
 	opacity: 0.85;
 }
 
 .enc-map-hole-core {
 	fill: var(--g-void);
-	stroke: var(--g-seam);
+	stroke: var(--g-edge-strong);
 	stroke-width: 1;
 }
 
@@ -127,14 +131,14 @@
 
 .enc-map-world-ring {
 	fill: none;
-	stroke: var(--g-brass);
+	stroke: var(--g-edge-strong);
 	stroke-width: 1.5;
 	transition: stroke var(--g-snap), stroke-width var(--g-snap);
 }
 
 .enc-map-world:hover .enc-map-world-ring,
 .enc-map-world:focus-visible .enc-map-world-ring {
-	stroke: var(--g-brass-light);
+	stroke: var(--g-edge-strong);
 	stroke-width: 2.5;
 }
 
@@ -191,20 +195,20 @@
 
 .enc-map-pin-head {
 	fill: var(--g-void);
-	stroke: var(--g-brass);
+	stroke: var(--g-edge-strong);
 	stroke-width: 1.5;
 }
 
 .enc-map-pin-ring {
 	fill: none;
-	stroke: var(--g-brass-light);
+	stroke: var(--g-edge-strong);
 	stroke-width: 1;
 	opacity: 0.55;
 }
 
 .enc-map-pin:hover .enc-map-pin-head,
 .enc-map-pin:focus-visible .enc-map-pin-head {
-	stroke: var(--g-brass-light);
+	stroke: var(--g-edge-strong);
 	stroke-width: 2;
 }
 
@@ -216,7 +220,7 @@
 .enc-map-pin-count {
 	font-size: 9px;
 	font-weight: 600;
-	fill: var(--g-brass-light);
+	fill: var(--g-ink-2);
 	text-anchor: middle;
 }
 
@@ -291,7 +295,7 @@
 	display: block;
 	margin-top: var(--g-2);
 	font-size: var(--g-size-tiny);
-	color: var(--g-brass-light);
+	color: var(--g-ink-2);
 }
 
 .enc-map-card-event-title {

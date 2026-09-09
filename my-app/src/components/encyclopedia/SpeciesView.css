@@ -1,9 +1,5 @@
 .enc-species-reviewed {
-	margin: 0;
-	font-size: var(--g-size-tiny);
-	color: var(--g-ink-low);
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
+	margin-top: var(--g-2);
 }
 
 .enc-species .g-meter-value {
@@ -39,6 +35,10 @@
 .enc-species-mount {
 	width: 148px;
 	height: 148px;
+	display: grid;
+	place-items: center;
+	background: color-mix(in srgb, var(--g-el) 24%, var(--g-s1));
+	border-radius: 50%;
 }
 
 .enc-species-portrait {

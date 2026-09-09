@@ -198,8 +198,9 @@ export default function GalaxyMap({ era = null, showEvents = true, compact = fal
 	const onLeave = () => setHoverState(null);
 
 	return (
-		<div className={`enc-map ${compact ? 'enc-map--compact' : ''}`}>
+		<div className={`enc-map ${compact ? 'enc-map--compact' : ''}`} data-tier="featured">
 			<p className="g-mono enc-map-pan-hint">Drag to pan the galaxy.</p>
+			<div className="g-glass enc-map-glass">
 			<div className="enc-map-scroll" ref={scrollRef}>
 				<svg
 					className="enc-map-svg"
@@ -265,6 +266,7 @@ export default function GalaxyMap({ era = null, showEvents = true, compact = fal
 						/>
 					))}
 				</svg>
+			</div>
 			</div>
 
 			{hoverState && hoverState.kind === 'world' && (

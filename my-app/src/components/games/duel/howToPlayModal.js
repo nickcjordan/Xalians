@@ -84,13 +84,13 @@ class HowToPlayModal extends React.Component {
 
     renderSection = (section) => {
         return (
-            <section className="howto-section" key={`duel-how-to-${section.title}`}>
-                <h3 className="howto-title">
+            <section className="lobbies-howto-section" key={`duel-how-to-${section.title}`}>
+                <h3 className="g-legend-v4 lobbies-howto-title">
                     <i className={`bi ${section.icon}`} />
                     {section.title}
                 </h3>
                 {section.lines.map((line, i) => (
-                    <p className="howto-line" key={`duel-how-to-${section.title}-${i}`}>
+                    <p className="g-body-v4 lobbies-howto-line" key={`duel-how-to-${section.title}-${i}`}>
                         {line}
                     </p>
                 ))}
@@ -106,23 +106,21 @@ class HowToPlayModal extends React.Component {
                 size="lg"
                 centered
                 scrollable
-                className="themed-modal dark-themed-modal"
                 // react-bootstrap portals the modal to document.body by default, which
-                // escapes the [data-terminal="registry"] subtree the "Got it" key's
-                // --g-accent read depends on. Mounting it inside the registry terminal
-                // keeps the key crimson instead of falling back to the core default.
-                container={() => document.querySelector('[data-terminal="registry"]')}
+                // escapes the .g-page subtree the v4 tokens (and .g-page .modal-content
+                // restyle in system.css) depend on.
+                container={() => document.querySelector('.g-page')}
             >
                 <Modal.Header closeButton closeVariant="white">
-                    <Modal.Title>How to play Duel</Modal.Title>
+                    <Modal.Title className="g-heading-v4">How to play Duel</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <p className="howto-standfirst">
+                    <p className="g-lead-v4 lobbies-howto-standfirst">
                         Duel is a squad tactics game: capture the flag on a chess-sized board, with elemental creatures instead of chess pieces.
                     </p>
                     {SECTIONS.map(this.renderSection)}
                 </Modal.Body>
-                <Modal.Footer className="duel-modal-footer">
+                <Modal.Footer>
                     <button type="button" className="g-btn g-btn--primary" onClick={this.props.onHide}>Got it</button>
                 </Modal.Footer>
             </Modal>

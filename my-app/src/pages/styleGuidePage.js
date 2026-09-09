@@ -5,6 +5,9 @@ import React from 'react';
 import XalianNavbar from '../components/navbar';
 import XalianImage from '../components/xalianImage';
 import tokens from '../constants/designTokens';
+import HelixMark from '../components/brand/helixMark';
+import HelixSpinner from '../components/brand/helixSpinner';
+import BrandLockup from '../components/brand/brandLockup';
 
 /**
  * GENERATOR CONSOLE — the design system reference.
@@ -16,6 +19,7 @@ import tokens from '../constants/designTokens';
 const ELEMENTS = Object.keys(tokens.themeColors);
 
 const SECTIONS = [
+    { id: 'v4', index: 'V4', name: 'Version 4' },
     { id: 'terminals', index: '00', name: 'Terminals' },
     { id: 'foundation', index: '01', name: 'Foundation' },
     { id: 'elements', index: '02', name: 'Element Energy' },
@@ -95,10 +99,207 @@ class StyleGuidePage extends React.Component {
 
     render() {
         return (
-            <div className="g-console" data-terminal="relay">
+            <div className="g-page" data-tier="chrome">
                 <XalianNavbar />
 
                 <div className="g-shell sg-page">
+
+                    {/* =================================================================
+                        VERSION 4 — docs/DESIGN_SYSTEM.md sections 3-8.
+                        Every v4 token and component in one place, rendered from the
+                        real .g-* classes so this reference cannot drift from the CSS.
+                        ================================================================= */}
+                    <section id="v4" className="sg-section">
+                        <header className="sg-section-head">
+                            <span className="sg-section-index g-mono">V4</span>
+                            <h2 className="g-heading-v4">Version 4</h2>
+                            <p className="g-body-v4 sg-section-note">
+                                One site, featured components, immersive experiences
+                                (docs/DESIGN_SYSTEM.md). Quiet chrome, one accent — the
+                                viable signal — square corners with the chamfer reserved
+                                for glass and the one primary key, the helix spinner, no
+                                terminal props.
+                            </p>
+                        </header>
+
+                        {/* ---- brand ---- */}
+                        {/* BrandLockup renders .g-brand / .g-brand--big (docs/DESIGN_SYSTEM.md
+                            section 8); HelixSpinner below renders .g-spinner. */}
+                        <h3 className="g-subhead-v4 sg4-sub">Brand</h3>
+                        <div className="sg4-brand-row">
+                            <div className="g-panel sg4-brand-cell">
+                                <span className="g-legend-v4">Lockup &middot; .g-brand</span>
+                                <BrandLockup />
+                            </div>
+                            <div className="g-panel sg4-brand-cell">
+                                <span className="g-legend-v4">Lockup, big &middot; .g-brand--big</span>
+                                <BrandLockup big />
+                            </div>
+                            <div className="g-panel sg4-brand-cell">
+                                <span className="g-legend-v4">The mark alone</span>
+                                <HelixMark className="sg4-mark" title="Xalians" />
+                            </div>
+                        </div>
+
+                        {/* ---- accent tiers, status, elements ---- */}
+                        <h3 className="g-subhead-v4 sg4-sub">Accent, status, elements</h3>
+                        <div className="sg4-swatch-row">
+                            <div className="sg4-swatch" style={{ background: 'var(--g-viable-hi)' }}><span className="g-small-v4">viable-hi</span></div>
+                            <div className="sg4-swatch" style={{ background: 'var(--g-viable)' }}><span className="g-small-v4">viable</span></div>
+                            <div className="sg4-swatch" style={{ background: 'var(--g-viable-lo)' }}><span className="g-small-v4">viable-lo</span></div>
+                        </div>
+                        <div className="sg4-swatch-row">
+                            <div className="sg4-swatch" style={{ background: 'var(--g-status-ok)' }}><span className="g-small-v4">ok</span></div>
+                            <div className="sg4-swatch" style={{ background: 'var(--g-status-danger)' }}><span className="g-small-v4">danger</span></div>
+                            <div className="sg4-swatch" style={{ background: 'var(--g-status-warn)' }}><span className="g-small-v4">warn</span></div>
+                            <div className="sg4-swatch" style={{ background: 'var(--g-status-info)' }}><span className="g-small-v4">info</span></div>
+                        </div>
+                        <div className="sg4-el-row">
+                            {ELEMENTS.map((el) => (
+                                <div className={`sg4-swatch g-el-${el}`} style={{ background: 'var(--g-el)' }} key={el}>
+                                    <span className="g-small-v4">{el}</span>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* ---- type roles ---- */}
+                        <h3 className="g-subhead-v4 sg4-sub">Type</h3>
+                        <div className="g-panel sg4-type">
+                            <p className="g-display">Creatures grown for dying worlds</p>
+                            <p className="g-title-v4">Hypnopet</p>
+                            <p className="g-heading-v4">The Age of Unbirth</p>
+                            <p className="g-subhead-v4">Stats, current and potential</p>
+                            <p className="g-legend-v4">Species on file</p>
+                            <p className="g-lead-v4">Xalians are bioengineered creatures the Vallerii Generators grow to survive the worst planets in the galaxy.</p>
+                            <p className="g-body-v4">Created by the Telypso Generator as a therapy animal for the insane Vallerii imprisoned on that world.</p>
+                            <p className="g-small-v4">Sign in to pick from your Xalians.</p>
+                            <p className="g-data-v4">93 in / 236 cm &nbsp; 830 lbs / 376 kg &nbsp; #00015</p>
+                            <p className="g-figure-v4">1,204</p>
+                        </div>
+
+                        {/* ---- depth ---- */}
+                        <h3 className="g-subhead-v4 sg4-sub">Depth</h3>
+                        <div className="sg4-depth-row">
+                            <div className="sg4-depth-cell" style={{ background: 'var(--g-surface-0)' }}><span className="g-small-v4">s0</span></div>
+                            <div className="sg4-depth-cell" style={{ background: 'var(--g-surface-1)' }}><span className="g-small-v4">s1</span></div>
+                            <div className="sg4-depth-cell" style={{ background: 'var(--g-surface-2)' }}><span className="g-small-v4">s2</span></div>
+                            <div className="g-glass sg4-depth-cell"><span className="g-small-v4">glass</span></div>
+                            <div className="sg4-depth-cell sg4-depth-float"><span className="g-small-v4">floating</span></div>
+                        </div>
+
+                        {/* ---- buttons, every rank and state ---- */}
+                        <h3 className="g-subhead-v4 sg4-sub">Controls</h3>
+                        <div className="sg4-ctl-grid">
+                            <span className="g-legend-v4">Primary</span>
+                            <button className="g-btn g-btn--primary" type="button">Generate</button>
+                            <button className="g-btn g-btn--primary" type="button" style={{ outline: '2px solid var(--g-focus)', outlineOffset: '2px' }}>Focus</button>
+                            <button className="g-btn g-btn--primary" type="button" disabled>Disabled</button>
+                            <span className="g-small-v4">Hover/pressed are pseudo-classes; hover the live button to see them.</span>
+
+                            <span className="g-legend-v4">Secondary</span>
+                            <button className="g-btn" type="button">Read the story</button>
+                            <button className="g-btn" type="button" style={{ outline: '2px solid var(--g-focus)', outlineOffset: '2px' }}>Focus</button>
+                            <button className="g-btn" type="button" disabled>Disabled</button>
+                            <span className="g-small-v4">&nbsp;</span>
+
+                            <span className="g-legend-v4">Quiet</span>
+                            <button className="g-btn g-btn--quiet" type="button">Sign in</button>
+                            <button className="g-btn g-btn--quiet" type="button" style={{ outline: '2px solid var(--g-focus)', outlineOffset: '2px' }}>Focus</button>
+                            <button className="g-btn g-btn--quiet" type="button" disabled>Disabled</button>
+                            <span className="g-small-v4">&nbsp;</span>
+
+                            <span className="g-legend-v4">Destructive</span>
+                            <button className="g-btn g-btn--danger" type="button">Release</button>
+                            <button className="g-btn g-btn--danger" type="button" style={{ outline: '2px solid var(--g-focus)', outlineOffset: '2px' }}>Focus</button>
+                            <button className="g-btn g-btn--danger" type="button" disabled>Disabled</button>
+                            <span className="g-small-v4">Outline at rest; fills only on hover/press.</span>
+                        </div>
+
+                        {/* ---- inputs ---- */}
+                        <h3 className="g-subhead-v4 sg4-sub">Inputs</h3>
+                        <div className="sg4-input-row">
+                            <input className="g-input" placeholder="Search worlds, species, terms" />
+                            <input className="g-input" defaultValue="Hypnopet" />
+                            <input className="g-input g-input--error" defaultValue="hypno pet!" />
+                            <input className="g-input" defaultValue="Hypnopet" disabled />
+                        </div>
+                        <p className="g-small-v4" style={{ color: 'var(--g-status-danger)' }}>Names use letters only. Remove the space and the exclamation mark.</p>
+
+                        {/* ---- segmented, toggle, checkbox, range ---- */}
+                        <h3 className="g-subhead-v4 sg4-sub">Segmented, toggle, checkbox, range</h3>
+                        <div className="g-panel sg4-pieces">
+                            <div className="g-segmented">
+                                <button className="g-segment" type="button" aria-pressed="true">Bot</button>
+                                <button className="g-segment" type="button" aria-pressed="false">Second player</button>
+                            </div>
+                            <div className="sg4-toggle-row">
+                                <span className="g-toggle on" role="switch" aria-checked="true" /> <span className="g-small-v4">Randomize positions</span>
+                                <span className="g-toggle" role="switch" aria-checked="false" /> <span className="g-small-v4">Sound</span>
+                            </div>
+                            <label className="g-check">
+                                <input type="checkbox" defaultChecked />
+                                <span className="g-check-box" />
+                                Keep this Xalian
+                            </label>
+                            <input className="g-range" type="range" defaultValue="60" />
+                        </div>
+
+                        {/* ---- chips vs badges ---- */}
+                        <h3 className="g-subhead-v4 sg4-sub">Chips are content, badges are state</h3>
+                        <div className="sg4-chip-row">
+                            <span className="g-chip g-el-psychic">Psychic</span>
+                            <span className="g-chip g-el-dark">Dark</span>
+                            <span className="g-chip g-el-fire">Fire</span>
+                        </div>
+                        <div className="sg4-chip-row">
+                            <span className="g-badge g-badge--ok">Kept</span>
+                            <span className="g-badge g-badge--danger">Unclaimed</span>
+                            <span className="g-badge g-badge--warn">Expiring</span>
+                            <span className="g-badge g-badge--info">Not set</span>
+                        </div>
+
+                        {/* ---- meters ---- */}
+                        <h3 className="g-subhead-v4 sg4-sub">Meters</h3>
+                        <div className="g-panel sg4-meters g-el-psychic">
+                            {this.renderStatMeter({ name: 'Std attack', value: 741, pct: 74 })}
+                            {this.renderStatMeter({ name: 'Speed', value: 651, pct: 65 })}
+                            {this.renderStatMeter({ name: 'Stamina', value: 582, pct: 58 })}
+                        </div>
+
+                        {/* ---- tabs ---- */}
+                        <h3 className="g-subhead-v4 sg4-sub">Tabs</h3>
+                        <div className="g-tabs">
+                            <a className="g-tab-link">Reading room</a>
+                            <a className="g-tab-link">Worlds</a>
+                            <a className="g-tab-link on">Bestiary</a>
+                            <a className="g-tab-link">Index</a>
+                        </div>
+
+                        {/* ---- spinner ---- */}
+                        <h3 className="g-subhead-v4 sg4-sub">Loading: the helix spinner, never a skeleton</h3>
+                        <div className="sg4-spinner-row">
+                            <HelixSpinner size="sm" />
+                            <HelixSpinner />
+                            <HelixSpinner size="lg" />
+                            <span className="g-small-v4">The helix reads its rungs while the page waits. No skeletons anywhere on the site.</span>
+                        </div>
+
+                        {/* ---- empty state ---- */}
+                        <h3 className="g-subhead-v4 sg4-sub">Empty state</h3>
+                        <div className="g-empty">
+                            <b>No Xalians yet</b>
+                            Generate one and keep it to see it here.
+                        </div>
+
+                        {/* ---- toasts ---- */}
+                        <h3 className="g-subhead-v4 sg4-sub">Toasts</h3>
+                        <div className="sg4-toast-col">
+                            <div className="g-notice g-notice--ok">Hypnopet kept to your account.</div>
+                            <div className="g-notice g-notice--alert">Could not reach the registry. Your Xalian is still on this page.</div>
+                        </div>
+                    </section>
+
+                    <h2 className="g-heading-v4 sg4-v3-heading">Version 3 (retiring)</h2>
 
                     {/* ---- masthead ---- */}
                     {/* .g-masthead is core (round3-coherence.md "one frame"): kicker
