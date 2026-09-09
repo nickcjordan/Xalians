@@ -17,8 +17,12 @@ export default defineConfig(({ mode }) => ({
 		// See vite/commonjsShim.js.
 		commonjsShim(),
 
-		// JSX inside .js files under src (75 components predate the TypeScript
-		// layer). A targeted pre-transform, so .tsx keeps the TypeScript loader.
+		// 75 components carry JSX in `.js` files. Vite's default esbuild
+		// transform only treats `.jsx`/`.tsx` as JSX, so `.js` needs a targeted
+		// pre-transform rather than renaming them all. Using `esbuild.include`
+		// on the root config instead would replace Vite's default filter
+		// (rather than extend it), which then skips `.tsx` entirely and breaks
+		// import analysis on every shadcn/system component.
 		{
 			name: 'jsx-in-js',
 			enforce: 'pre',
@@ -43,9 +47,6 @@ export default defineConfig(({ mode }) => ({
 		}),
 	],
 
-	// 75 components carry JSX in `.js` files. Those are compiled by the jsxInJs
-	// plugin above; .ts/.tsx use esbuild's own TypeScript loader, so the global
-	// esbuild options stay at their defaults.
 	optimizeDeps: {
 		esbuildOptions: {
 			loader: { '.js': 'jsx' },
