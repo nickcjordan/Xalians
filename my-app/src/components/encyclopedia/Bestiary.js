@@ -79,10 +79,9 @@ export default function Bestiary() {
 
     return (
         <div className="enc-bestiary">
-            <div className="enc-section-head">
-                <h1 className="g-h2">Bestiary</h1>
-                <span className="enc-count">{list.length} of {species.length} specimens</span>
-            </div>
+            {/* The masthead already carries "Bestiary" and the total count; this
+                is the live filtered count, which does change, so it stays. */}
+            <p className="enc-count enc-bestiary-count">{list.length} of {species.length} specimens</p>
 
             <div className="enc-filters">
                 <div className="g-segmented enc-scrollrow" role="group" aria-label="Filter by element" ref={elementRowRef}>
