@@ -14,12 +14,12 @@ The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` te
 
 - Small bounding quadruped, built around its hind legs
 - Shaggy fur
-- Single long ridged horn sweeping back over the shoulders
+- A pair of curved ram-like horns
 - Long upright ears
 - Long whiskers
 - Whip tail longer than the body, ending in a spiked plume
 
-Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits
 

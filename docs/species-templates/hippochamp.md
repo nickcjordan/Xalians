@@ -8,16 +8,17 @@ The render shows a single body, rearing, drawn as a black silhouette with white 
 
 The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` teaser carried verbatim and is never edited here; `body` is the physical record, `habits` is how the creature lives now. `descriptionStatus` was removed from the record; status lives in `docs/species-templates/lore-status.json`.
 
-### appearance (6 entries)
+### appearance (7 entries)
 
 - Four-legged, horse-bodied and seahorse-headed
 - Long trunk-like snout, a water cannon
-- Sail-like crest from brow to neck, with spines continuing along the back
+- Sail-like crest from brow to neck
+- Fin-like spines continuing along the back
 - Blunt hooves
 - Thick tail coiled in a spiral
 - Smooth hide
 
-Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits
 

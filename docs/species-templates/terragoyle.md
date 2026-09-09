@@ -16,12 +16,12 @@ The lore split (Nick, 2026-09-09). `lore.description` was already the species.js
 
 - Horned, vaguely humanoid bat, hunched on all fours
 - Very heavy for its height
-- Ribbed horns curling back from the skull
+- Ribbed ram-like horns curling back from the skull
 - Large membranous wings
 - Bare muscled hide
 - Long tail ending in a cradle, with a ball of stone levitating above it
 
-Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits (113 words)
 

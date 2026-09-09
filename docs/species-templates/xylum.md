@@ -8,16 +8,15 @@ The render is a solid black silhouette on white. A single bulbous, roughly ovoid
 
 Split applied 2026-09-09. `lore.description` is Nick's teaser from `species.json`, verbatim. The pre-split upgraded description and the 2026-09-08 stub-upgrade draft are re-cut into body and habits below, with the orchestrator's edit applied ('a limb cut off it comes back' becomes 'a limb torn from it grows back').
 
-### appearance (6 entries)
+### appearance (5 entries)
 
-- Giant organism of thick intertwined roots, mostly underground
-- Bulbous trunk-mass at the soil line
-- Six thick root-limbs curling outward, serrated along the edges
-- Two narrower shoots rising from the crown
+- Giant squid-like organism, inverted, its mantle buried below the soil
+- Six thick root-like tentacles rising from the body, serrated along the edges
+- A mouth at the base where the tentacles meet
+- An eye on either side of the body at the soil line
 - Plant tissue throughout
-- No head, no face, no eyes, no mouth
 
-Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits (115 words)
 

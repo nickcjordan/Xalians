@@ -2,7 +2,7 @@
 
 ## Art reading
 
-There is no artwork for the Frackworm. `docs/species-templates/art/frackworm.png` does not exist; the species was authored today and has not been illustrated. Every body-plan, anatomy, covering and posture call below therefore rests on the description alone, and each is flagged in Authored fields where the description does not settle it. The orchestrator's art check for this species is pending an illustration: when one is drawn, the body plan (`serpentine`), the anatomy set (`jaws`, `vents`, `body`), and the covering default (`bare`) are the three calls most likely to be overturned by it, and the covering is the one I expect to change first.
+Update 2026-09-09: `docs/species-templates/art/frackworm.png` now exists (a ringed segmented worm rearing its drill-like head and spraying slurry from it, one small eye on the collar behind the head); the appearance list below was written against it, and the record calls named in the next paragraph remain to be re-checked against it. Original reading: There is no artwork for the Frackworm. `docs/species-templates/art/frackworm.png` does not exist; the species was authored today and has not been illustrated. Every body-plan, anatomy, covering and posture call below therefore rests on the description alone, and each is flagged in Authored fields where the description does not settle it. The orchestrator's art check for this species is pending an illustration: when one is drawn, the body plan (`serpentine`), the anatomy set (`jaws`, `vents`, `body`), and the covering default (`bare`) are the three calls most likely to be overturned by it, and the covering is the one I expect to change first.
 
 ## Lore
 
@@ -10,16 +10,15 @@ Split applied 2026-09-09. This record is an unratified draft and has no `species
 
 The species now has artwork at `art/frackworm.png`; the Art reading section above, which states there is none, predates it. Body below is written from the render.
 
-### appearance (6 entries)
+### appearance (5 entries)
 
-- Colossal segmented worm, the largest thing under Endessa's sands
-- Limbless
+- Colossal segmented worm, without limbs
 - Overlapping chitin plates ringed segment by segment
 - Ringed drill-like head with jaws at the working end
-- Vents along the body
-- Nearly blind
+- A single small eye on the collar behind the head
+- Vents along the body that spray its slurry
 
-Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits (105 words)
 

@@ -8,15 +8,17 @@ The artwork shows a single body, a lean fox-like or jackal-like creature standin
 
 The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
 
-### appearance (5 entries)
+### appearance (7 entries)
 
-- Small fox-like biped, lightly built
-- Fur coat with a spiny ridge down the back
+- Small fox-like biped
+- Lightly built
+- Fur coat
+- Spiny ridge down the neck and back
 - Long digging claws on the forelimbs
 - Tall pointed ears
 - Thick tail ending in a fan of explosive barbs
 
-Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits
 

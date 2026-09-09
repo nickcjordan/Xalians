@@ -8,16 +8,17 @@ The render shows the same creature twice. On the left is a lateral view: a long,
 
 The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description` verbatim and moves everything else into two authored fields. The body and habits below are the record's text.
 
-### appearance (6 entries)
+### appearance (7 entries)
 
 - Long, arched, segmented body on sixteen legs
 - Slender frame
 - Webbed splayed feet
-- Broad rounded head with very large forward-facing eyes
+- Broad rounded head
+- Very large forward-facing eyes
 - Two thin antennae
-- Bare unarmored hide
+- Bare hide
 
-Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits (101 words)
 

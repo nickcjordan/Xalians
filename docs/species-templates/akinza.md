@@ -10,16 +10,17 @@ The art and the description do not disagree; the description is silent on the bo
 
 The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
 
-### appearance (6 entries)
+### appearance (7 entries)
 
-- Upright feline biped, middling in size and light in the frame
+- Upright feline biped
+- Slender and light in the frame
 - Fur coat
 - Large rabbit-like ears atop the head
 - Large eyes
-- Small hooked claws on the forelimbs
+- Slender arms ending in clawed hands
 - Long plumed tail
 
-Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits
 

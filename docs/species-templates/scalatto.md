@@ -8,16 +8,17 @@ The artwork is a single black silhouette of one creature, standing upright on tw
 
 The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description` verbatim and moves everything else into two authored fields.
 
-### appearance (6 entries)
+### appearance (7 entries)
 
-- Stout biped, heavy for its height
+- Stout biped
+- Heavy for its height
 - Scaly chitin exoskeleton in overlapping bands
 - Long low head with a blunt snout
+- Backswept spines running from the head down the neck
 - Long curved claws on the forelimbs
 - Very long banded tail with a hooked tip
-- Rolls into a ball
 
-Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits (90 words)
 

@@ -13,11 +13,12 @@
       "lore": {
         "description": "This creature's incredible stealth and night vision allow it to sneak through the night with ease.",
         "appearance": [
-          "Upright feline biped, middling in size and light in the frame",
+          "Upright feline biped",
+          "Slender and light in the frame",
           "Fur coat",
           "Large rabbit-like ears atop the head",
           "Large eyes",
-          "Small hooked claws on the forelimbs",
+          "Slender arms ending in clawed hands",
           "Long plumed tail"
         ],
         "habits": "It belongs to the feral stock that came out of the Krystos Generator after the impact, when the debris blotted out the sun and the machine turned from dainty and graceful creatures to lifeforms capable of surviving the harsh, frozen tundra. Its ground is the arctic wastelands outside the high-security prison complexes rather than the penitentiary halls, where such creatures proved just as useful for deterring any prisoners from seeking to escape. Blizzard cycles and sustained lethal cold are the conditions it works in, and the dark hours are the ones it keeps. It takes what the permafrost gives, of any kind.",
@@ -195,11 +196,11 @@
       "lore": {
         "description": "Carnivorous little green birds with bright, floral plumage, Avililies flit between Floria’s trees, camouflaging into the planet’s many flowery meadows as they travel. Their beaks resemble the closed petals of a flower but when they open their mouths that 'flower' blooms. They attract insects with their sweet, syrupy smelling saliva and vibrant floral display, but their saliva contains a powerful sedative which paralyzes anything that it comes in contact with. In ancient times, Avililies were used by Vallerii scientists and explorers to trap insects, serving as mobile bug repellent on Florian ventures. Today, the sedative properties of their saliva have been enhanced for a far-more dangerous galaxy, and swarms of flittering Avililies protect the most sacred parts of Floria’s jungles, paralyzing and consuming all who dare to threaten the pristineness of their forests.",
         "appearance": [
-          "Small bird, light enough to flit",
+          "Small bird",
           "Bright green floral plumage",
           "Beak like the closed petals of a flower, opening into a bloom",
           "Feathered crest",
-          "Broad wings, its means of travel",
+          "Broad wings",
           "Long streamer feathers trailing from the head",
           "Taloned gripping feet"
         ],
@@ -382,8 +383,10 @@
       "lore": {
         "description": "An acid slime organism protected by a thick rocky exoskeleton. Its slime can continually regenerate an outer shell, allowing for great defense.",
         "appearance": [
-          "Amorphous mass of acid slime, tall as a person and very heavy",
-          "No legs, no hands, no face beyond a single eye",
+          "Shapeless mass of acid slime, without limbs",
+          "Tall as a person",
+          "Very heavy",
+          "A single eye in the hooded top",
           "Thick rocky exoskeleton over the upper mass, continually regrown",
           "Pseudopods for reaching",
           "Drips and runnels where the slime sags"
@@ -752,8 +755,10 @@
       "lore": {
         "description": "This creature digs its body underground when spooked, exposing only its tail made of explosive barbs. If provoked, it won't hesitate to fire off a few projectiles, as its regenerative power can quickly grow more.",
         "appearance": [
-          "Small fox-like biped, lightly built",
-          "Fur coat with a spiny ridge down the back",
+          "Small fox-like biped",
+          "Lightly built",
+          "Fur coat",
+          "Spiny ridge down the neck and back",
           "Long digging claws on the forelimbs",
           "Tall pointed ears",
           "Thick tail ending in a fan of explosive barbs"
@@ -937,11 +942,11 @@
       "lore": {
         "description": "The gems growing out of this creature's head transmit powerful light energy, don't be deceived by its calm temperament.",
         "appearance": [
-          "Tall, heavy, shaggy biped",
+          "Tall, heavy biped",
+          "Shaggy fur coat",
           "Two large faceted gems growing out of the head",
           "Broad blunt muzzle",
-          "Open hands with an opposable digit",
-          "No tail"
+          "Open hands with an opposable digit"
         ],
         "habits": "Luminax's Generator grew its Xalians with albino features or with prismatic crystal so that they could survive the brilliant light of the twin suns while they worked the fields, and this is one of the crystal-bearing forms. Its ground is the sunward face, among the oases of translucent, alabaster flora, where radiation-tolerant integument is universal and the cumulative radiation load is the standing hazard. The misfiring panels of the Stellaris Superstructure are burning new sun-scorched blast zones into that surface, and some of the world's Xalians have survived in the residual radiation left in them. It does not graze and it does not hunt: it takes in energy. It is slow, and it holds still.",
         "biomeNiche": "the sunward oases of translucent, crystalline-leaved flora on Luminax"
@@ -1306,8 +1311,9 @@
       "lore": {
         "description": "Partially feathered ground birds with lizard features, these creatures are extremely quick with razor sharp teeth. When running at high speeds, they can spread their wings to temporarily take flight as they launch into the air and sink their teeth into their prey.",
         "appearance": [
-          "Ground bird with lizard features, on two legs, light for its height",
-          "Partly feathered, bare hide between",
+          "Ground bird with lizard features, on two legs",
+          "Light for its height",
+          "Partly feathered, with bare hide between",
           "Narrow lizard-like head with jaws of sharp teeth",
           "Clawed forelimbs held clear of the ground",
           "Plumed wings along the arms",
@@ -1492,7 +1498,8 @@
       "lore": {
         "description": "Appearing as a spectral green mist that forms the vague impression of a grinning skull with a ghost-like tail for a body, Ectoghouls zip across the Dreadscape, emitting a terrifying cackle wherever they go. They seem to amuse themselves by terrorizing other Xalians, disappearing and re-appearing at will, passing through surfaces, and zapping their opponents with blasts of gooey ectoplasm.",
         "appearance": [
-          "Spectral green mist, weightless and limbless",
+          "Spectral green mist, without limbs",
+          "Weightless",
           "Vague impression of a grinning skull",
           "Ghost-like tail for a body, trailing off into drifting particles",
           "Never touches the ground"
@@ -1672,7 +1679,8 @@
       "lore": {
         "description": "What this creature lacks in stature it makes up for with its incredible magical abilities. It is deceptively smart, yet known to be docile when it trusts you.",
         "appearance": [
-          "Small upright biped, lightly built",
+          "Small upright biped",
+          "Lightly built",
           "Shaggy fur coat",
           "Very large ears",
           "Slender branched antlers",
@@ -1865,8 +1873,8 @@
           "Tall biped on long jointed legs",
           "Metallic exoskeleton on the limbs",
           "Long drill-like horns for arms, longer than the body",
-          "Narrow deer-like head with a pair of antennae",
-          "No tail, no wings"
+          "Narrow deer-like head",
+          "A pair of long thin antennae swept back from the crown"
         ],
         "habits": "Veridium's crust is worked metal with veins of heavy metals striking deep into it, and the Foromeer opens those veins. It works among the factory trenches and forge districts, where molten pours and machinery running without regard to proximity are the ordinary risks, and its plating takes them. The manufactory rings so loudly across the gunmetal surface that it mutes all other sound, so the creature reads the ground it is braced on and answers by drumming rather than by call. Injuries close over on their own. Since Source Code 606 released the Veridians from their robotic masters the demand for the factories has troughed, and the planet's Xalians now tinker with salvaged drones and machines.",
         "biomeNiche": "the ore-filled soil and heavy-metal veins of Veridium's mineral crust"
@@ -2048,7 +2056,8 @@
         "description": "With the black-shelled body of a crab and an upright torso, the centaur-like crustacean known as the Graviclaw lurks just beneath the foggy wetlands of Grimedes, using its bizarre control over the intensification of gravitational waves to generate miniature black holes in the water and draw its helpless prey right into its clutches. Graviclaws can strengthen the gravitational pull of their massive claws in order to snap them shut with a force many times heavier than their implied mass, severing through even the hardest of materials with crushing pressure. When facing larger foes, the Graviclaw can use its powers to root itself to the ground, becoming an immovable wall of chitin.",
         "appearance": [
           "Centaur-like crustacean, crab body below and upright torso above",
-          "Black chitin shell, heavy for its height",
+          "Black chitin shell",
+          "Heavy for its height",
           "Many jointed legs",
           "One massive pincer claw as long as the torso",
           "Small head on heavy shoulders"
@@ -2237,7 +2246,8 @@
         "appearance": [
           "Four-legged, horse-bodied and seahorse-headed",
           "Long trunk-like snout, a water cannon",
-          "Sail-like crest from brow to neck, with spines continuing along the back",
+          "Sail-like crest from brow to neck",
+          "Fin-like spines continuing along the back",
           "Blunt hooves",
           "Thick tail coiled in a spiral",
           "Smooth hide"
@@ -2426,8 +2436,8 @@
       "lore": {
         "description": "Hypnopets resemble glowing, golden-furred bunny rabbits with a single color-changing unicorn horn atop their heads. They were created by the Telypso Generator as service animals and therapists for the insane Vallerii imprisoned on the world, where their natural empathic healing abilities served to balance and treat patients. When their horn begins to pulse and swirl with psychedelic color, it hypnotizes others and locks them in a trance, which was useful for sedating patients when they entered into dangerous bouts of mania. With the Nemesis Plague reducing the patient population of Telypso, many Hypnopets have taken to the stars as healers, though some have been forced into service by King Kozrak, who uses their hypnotic abilities as crowd control on rebellious worlds.",
         "appearance": [
-          "Small bunny rabbit, glowing",
-          "Golden fur",
+          "Small bunny rabbit",
+          "Glowing golden fur",
           "Single color-changing unicorn horn atop the head",
           "Very long lop ears",
           "Very large eyes",
@@ -2617,7 +2627,8 @@
         "description": "Imprits are demonic looking creatures, resembling flaming, horned monkeys backed by long tails with scythe-like tips. Imprits possess fire-retardant fur that protects their bodies from the flammable oils they secrete, allowing them to survive despite being in a state of constant immolation.  They are remarkably intelligent among other Xalians, having been designed in ancient times as natural tinkerers and let loose into the various lightless mining shafts of Magmuth, where they were left to their own devices to fix and maintain the often makeshift mining equipment sent deep into the earth by the Vallerii. Today, they are known for being entirely erratic, likely driven mad by the isolation of the deep tunnels in which they tinkered and toiled. When released from their claustrophobic confines and set loose on the surface, Imprits take ecstatic pleasure from using their tails to swing through the air from place to place and setting fires where they least belong.",
         "appearance": [
           "Small horned monkey on all fours",
-          "Fire-retardant fur, wreathed in constant flame",
+          "Fire-retardant fur",
+          "Wreathed in constant flame",
           "Heavy curved horns",
           "Long fangs",
           "Bare gripping hands and feet",
@@ -2807,7 +2818,8 @@
         "appearance": [
           "Large, heavy quadruped on thick columnar legs",
           "Smooth hide",
-          "Blunt low-carried head with a wide gape of long teeth",
+          "Blunt low-carried head",
+          "Wide gape of long teeth",
           "Single long trunk arching over the back, ending in a blade as long as the body",
           "Short upturned tail"
         ],
@@ -2993,7 +3005,7 @@
         "appearance": [
           "Small bounding quadruped, built around its hind legs",
           "Shaggy fur",
-          "Single long ridged horn sweeping back over the shoulders",
+          "A pair of curved ram-like horns",
           "Long upright ears",
           "Long whiskers",
           "Whip tail longer than the body, ending in a spiked plume"
@@ -3171,12 +3183,12 @@
       "lore": {
         "description": "Colossal hydrogen jellyfish that travel in free-floating herds across Saiphus's lower atmosphere, the Neph are instrumental to the Benthane industry. These domesticated creatures roam the clouds in flocks, grazing off of the biochemicals and atmospheric plankton contained in the gas-liquid slush of Saiphus's deeper atmosphere using long, trailing tentacles that vacuum up valuable Benthane along with their food. When threatened, these same tentacles can be used to pull in opponents with considerable suction or to jettison air at high pressure. Neph can also forcibly expel jets of Benthane gas, which is typically used a coolant for starship engines, from their tentacles in order to blast their enemies with freezing air. Finally, being composed almost entirely hydrogen means that the Neph can also spray their enemies with bouts of flammable gas.",
         "appearance": [
-          "Colossal hydrogen jellyfish, huge but nearly weightless",
+          "Colossal hydrogen jellyfish",
+          "Nearly weightless for its size",
           "One large smooth bell",
-          "Long trailing hollow tentacles, open at the ends",
           "Small central body beneath the bell",
-          "Bare untextured surface",
-          "No legs, wings or jaws"
+          "Long trailing hollow tentacles, open at the ends",
+          "Bare untextured surface"
         ],
         "habits": "It travels in herd distribution rather than alone, and its amorphous form lets the hurricane-force winds of the lower skies sweep it up and set it down again unharmed. The tentacles do the work. They draw the slush of the deeper atmosphere up hollow tubes and keep the Benthane that comes up with the food, and the same tubes reverse to pull a thing in against its will, to put it off at pressure, or to blast it cold with the coolant. Being almost entirely hydrogen, it can spray flammable gas as well. For what that filtering leaves behind it is shepherded, herded and milked. What kills it is the sky it lives in, sulfuric cloud contact and island collision.",
         "biomeNiche": "the cloud layers of Saiphus's lower atmosphere, where Benthane plumes rise"
@@ -3356,9 +3368,10 @@
           "Long, arched, segmented body on sixteen legs",
           "Slender frame",
           "Webbed splayed feet",
-          "Broad rounded head with very large forward-facing eyes",
+          "Broad rounded head",
+          "Very large forward-facing eyes",
           "Two thin antennae",
-          "Bare unarmored hide"
+          "Bare hide"
         ],
         "habits": "It was generated among the water-breathing Xalians put into Poseidas's seas once those seas rose and turned acid, and it lives in the water around the rigs, which the planet's Xalians went on building deeper and deeper beneath the ocean to stay clear of the storms above. It tolerates depth and it tolerates company, moving without aggression inside the settlement perimeters. What it does catch it holds, folding its whole length around a swimmer and keeping it under. Twice a year the blooms come up and saturate the surface with toxic microbes, and the water it keeps to is deep water.",
         "biomeNiche": "a swimmer and rig hand of the deep-city waters, at home in an acidifying global ocean"
@@ -3542,12 +3555,13 @@
       "lore": {
         "description": "Shielded by a scaly exoskeleton, this creature can roll into a ball to protect itself.",
         "appearance": [
-          "Stout biped, heavy for its height",
+          "Stout biped",
+          "Heavy for its height",
           "Scaly chitin exoskeleton in overlapping bands",
           "Long low head with a blunt snout",
+          "Backswept spines running from the head down the neck",
           "Long curved claws on the forelimbs",
-          "Very long banded tail with a hooked tip",
-          "Rolls into a ball"
+          "Very long banded tail with a hooked tip"
         ],
         "habits": "It comes off the prototype Generator the Syndicate stole and smuggled to Endessa to man the drilling, and it keeps to the cavern networks that run deep beneath the dunes, where Nightcap is still pumped out barrel after barrel. It reads the ground through what it stands on, and down there it hears more than it sees. Tunnel collapse is a common death in those workings, and its plating is what it meets one with. Above ground the twin suns allow only the low hours, and it crosses in them.",
         "biomeNiche": "the dunes and cavern networks of Endessa"
@@ -3728,8 +3742,9 @@
         "description": "Feline shaped in normal form, this clever creature can instantly atomize into a cloud of smoke for a sneak attack or quick evasion.",
         "appearance": [
           "Lean feline-shaped biped",
-          "Smooth unarmored hide",
-          "Long muzzle and pointed tufted ears",
+          "Smooth hide",
+          "Long muzzle",
+          "Pointed tufted ears",
           "Clawed paws",
           "Long tail whose tip trails off into smoke",
           "Smoke rising off the body"
@@ -3912,7 +3927,7 @@
         "appearance": [
           "Horned, vaguely humanoid bat, hunched on all fours",
           "Very heavy for its height",
-          "Ribbed horns curling back from the skull",
+          "Ribbed ram-like horns curling back from the skull",
           "Large membranous wings",
           "Bare muscled hide",
           "Long tail ending in a cradle, with a ball of stone levitating above it"
@@ -4101,12 +4116,13 @@
       "lore": {
         "description": "When in battle, this creature summons a swarm of small flying familiars with teeth like piranhas. It controls the swarm with its mind, attacking or defending as one unit.",
         "appearance": [
-          "Small bat-shaped flier, light",
+          "Small bat-shaped flier",
+          "Light",
           "Broad membranous wings",
           "Upright ears",
           "Hooked claws on the forelimbs and feet",
           "Long thin tail",
-          "The swarm of small piranha-toothed familiars it summons"
+          "Surrounded by a swarm of summoned flying familiars, toothed like piranhas"
         ],
         "habits": "It was generated on Grimedes not as a labor force but as a test subject, one of the Xalians the Vallerii experimented on in laboratories rumored to be black sites for ECHELON. It hunts the thick, stalky undergrowth of a world cloaked in perpetual night, taking its bearings by ear rather than by eye, and it keeps its own body inside the wheeling cloud it holds so that nothing can tell which shape is the one that matters. Whatever hears that cloud coming breaks and runs. The newest generation of its kind stands at the edge of the galaxy and watches the endless black.",
         "biomeNiche": "the thick stalky undergrowth of the flat, lightless plains of Grimedes"
@@ -4282,10 +4298,10 @@
         "description": "A large, cobra-like creature that hides beneath the sand, Thirstaserps emit a subsonic vibration from the rattles on their tails that can lure and mesmerize opponents long enough for them to draw near and attack with a unique venom that drains the victim’s water when bitten, causing them to suffer and die from extreme dehydration.",
         "appearance": [
           "Large cobra-like serpent",
-          "Scaled, limbless, coiled flat on the sand",
+          "Scaled",
           "Viper's wedge head with long curved fangs",
           "Wide hood behind the head",
-          "Tail ending in a rattle of splayed narrow blades"
+          "Tail ending in a rattle shaped like a lotus flower"
         ],
         "habits": "It lies buried and reads the ground it lies in, and it moves through loose particulate as readily as a swimmer moves through water. It hunts by vibration and it kills by attrition: what has been bitten is left to fail rather than fought down. Water is the thing worth taking on a world whose oceans were vaporized and whose dunes now lie over glass, and water is what it takes. The ground it holds is open dune, and it holds it from underneath. It spreads the hood and shows the fangs before it strikes.",
         "biomeNiche": "buried in the rolling dunes of Endessa"
@@ -4467,7 +4483,8 @@
       "lore": {
         "description": "It uses its tail to draw attention to its big, hypnotic eyes. Once eye contact is made, this creature can attack from within your mind.",
         "appearance": [
-          "Small shaggy climber, lightly built",
+          "Small shaggy climber",
+          "Lightly built",
           "Fur coat",
           "Enormous pointed ears",
           "Big hypnotic eyes filling half the face",
@@ -4844,11 +4861,12 @@
       "lore": {
         "description": "With bones and claws made from a tough, conductive metal alloy, this daunting creature can store electrical energy from its surroundings and release the shock into enemies.",
         "appearance": [
-          "Tall long-limbed quadruped",
+          "Tall long-limbed quadruped, crouched low",
           "Shaggy fur coat",
           "Bones and claws of conductive metal alloy",
-          "Narrow head with a long muzzle and upright pointed ears",
-          "Tall erect crest of spiked filaments on the neck and shoulders",
+          "Narrow head with a long muzzle",
+          "Upright pointed ears",
+          "Broad clawed forepaws that grip like hands",
           "Large bushy tail"
         ],
         "habits": "It feeds on charge and takes nothing else, working the deep canyons and metallic peaks where Zolton's energy cycle lays down visible rivers of electricity that surge like wire currents over the crust. Storage is the rare answer on that world; most cataloged forms conduct the current and pass it along, and every one of them avoids the black lightning dead zones without exception. It keeps to canyons saturated with dense freezing gases and has no use for the warm end of its world. The Generator that made it was set on Zolton because black lightning did no harm to inorganic matter, so any loss of labor could simply be replenished.",
@@ -5035,12 +5053,11 @@
       "lore": {
         "description": "A giant organism of thick, intertwined roots that act as tentacles. It lives mostly underground as this is where it absorbs its power.",
         "appearance": [
-          "Giant organism of thick intertwined roots, mostly underground",
-          "Bulbous trunk-mass at the soil line",
-          "Six thick root-limbs curling outward, serrated along the edges",
-          "Two narrower shoots rising from the crown",
-          "Plant tissue throughout",
-          "No head, no face, no eyes, no mouth"
+          "Giant squid-like organism, inverted, its mantle buried below the soil",
+          "Six thick root-like tentacles rising from the body, serrated along the edges",
+          "A mouth at the base where the tentacles meet",
+          "An eye on either side of the body at the soil line",
+          "Plant tissue throughout"
         ],
         "habits": "Floria's understory carries massive infestations of toxic fungi, and they do not take in it. Ground disturbed above answers with every one of those limbs coming up out of it, and it meets what crosses its ground by growing over it rather than by giving way; a limb torn from it grows back. That is the answer the whole planet makes to cutting and clearing, growth and entanglement and regrowth in place of engagement. Vallerii activity here never grew past small settlements, research labs and exploration parties, and the ground beneath the World Trees was never built on. Some say the oldest Xalians of Floria were born from the first seeds of the Genesis Prototype.",
         "biomeNiche": "the buried soil layer of the underforests, beneath the canopies of the World Trees"

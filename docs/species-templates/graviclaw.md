@@ -6,15 +6,16 @@ Sources read in full: the `Graviclaw` entry in `species.json` and the entire `Gr
 
 The lore block holds three prose fields. `description` is Nick's teaser, already the `species.json` text and unchanged by this pass (its status was `source`). `body` and `habits` are authored below under the lore split of 2026-09-09; every claim in each is ledgered. The teaser already carries the crab body, the upright torso, the gravitational pull, the snapping claws and the rooting, so none of that is restated here.
 
-### appearance (5 entries)
+### appearance (6 entries)
 
 - Centaur-like crustacean, crab body below and upright torso above
-- Black chitin shell, heavy for its height
+- Black chitin shell
+- Heavy for its height
 - Many jointed legs
 - One massive pincer claw as long as the torso
 - Small head on heavy shoulders
 
-Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits (119 words)
 

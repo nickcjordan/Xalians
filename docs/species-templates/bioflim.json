@@ -9,8 +9,10 @@
   "lore": {
     "description": "An acid slime organism protected by a thick rocky exoskeleton. Its slime can continually regenerate an outer shell, allowing for great defense.",
     "appearance": [
-      "Amorphous mass of acid slime, tall as a person and very heavy",
-      "No legs, no hands, no face beyond a single eye",
+      "Shapeless mass of acid slime, without limbs",
+      "Tall as a person",
+      "Very heavy",
+      "A single eye in the hooded top",
       "Thick rocky exoskeleton over the upper mass, continually regrown",
       "Pseudopods for reaching",
       "Drips and runnels where the slime sags"

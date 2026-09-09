@@ -9,7 +9,8 @@
   "lore": {
     "description": "Appearing as a spectral green mist that forms the vague impression of a grinning skull with a ghost-like tail for a body, Ectoghouls zip across the Dreadscape, emitting a terrifying cackle wherever they go. They seem to amuse themselves by terrorizing other Xalians, disappearing and re-appearing at will, passing through surfaces, and zapping their opponents with blasts of gooey ectoplasm.",
     "appearance": [
-      "Spectral green mist, weightless and limbless",
+      "Spectral green mist, without limbs",
+      "Weightless",
       "Vague impression of a grinning skull",
       "Ghost-like tail for a body, trailing off into drifting particles",
       "Never touches the ground"

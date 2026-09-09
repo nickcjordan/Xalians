@@ -10,16 +10,17 @@ Note on the pose and the plan: the art shows a mammalian four-limbed body caught
 
 Split applied 2026-09-09. `lore.description` is Nick's teaser, carried from `species.json` verbatim and never edited here. `lore.body` and `lore.habits` below are authored to the split contract, 40 to 120 words each, and neither repeats a sentence the teaser already carries (the turning disc, the eye contact, and the working from inside a mind are all the teaser's and are deliberately absent from both fields).
 
-### appearance (6 entries)
+### appearance (7 entries)
 
-- Small shaggy climber, lightly built
+- Small shaggy climber
+- Lightly built
 - Fur coat
 - Enormous pointed ears
 - Big hypnotic eyes filling half the face
 - Long-fingered gripping hands
 - Long thin tail ending in a flat spiral disc, the lure
 
-Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits (112 words)
 

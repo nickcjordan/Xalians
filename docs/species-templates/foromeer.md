@@ -13,10 +13,10 @@ The lore block holds three prose fields. `description` is Nick's teaser, carried
 - Tall biped on long jointed legs
 - Metallic exoskeleton on the limbs
 - Long drill-like horns for arms, longer than the body
-- Narrow deer-like head with a pair of antennae
-- No tail, no wings
+- Narrow deer-like head
+- A pair of long thin antennae swept back from the crown
 
-Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits (116 words)
 

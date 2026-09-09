@@ -10,8 +10,9 @@
     "description": "Feline shaped in normal form, this clever creature can instantly atomize into a cloud of smoke for a sneak attack or quick evasion.",
     "appearance": [
       "Lean feline-shaped biped",
-      "Smooth unarmored hide",
-      "Long muzzle and pointed tufted ears",
+      "Smooth hide",
+      "Long muzzle",
+      "Pointed tufted ears",
       "Clawed paws",
       "Long tail whose tip trails off into smoke",
       "Smoke rising off the body"

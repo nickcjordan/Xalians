@@ -10,13 +10,13 @@ The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carrie
 
 ### appearance (5 entries)
 
-- Tall, heavy, shaggy biped
+- Tall, heavy biped
+- Shaggy fur coat
 - Two large faceted gems growing out of the head
 - Broad blunt muzzle
 - Open hands with an opposable digit
-- No tail
 
-Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits
 

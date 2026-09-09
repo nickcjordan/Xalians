@@ -8,16 +8,17 @@ The render shows a single lean feline standing upright on its two hind legs, che
 
 The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description` verbatim and moves everything else into two authored fields.
 
-### appearance (6 entries)
+### appearance (7 entries)
 
 - Lean feline-shaped biped
-- Smooth unarmored hide
-- Long muzzle and pointed tufted ears
+- Smooth hide
+- Long muzzle
+- Pointed tufted ears
 - Clawed paws
 - Long tail whose tip trails off into smoke
 - Smoke rising off the body
 
-Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits (82 words)
 

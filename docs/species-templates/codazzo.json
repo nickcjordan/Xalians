@@ -9,8 +9,10 @@
   "lore": {
     "description": "This creature digs its body underground when spooked, exposing only its tail made of explosive barbs. If provoked, it won't hesitate to fire off a few projectiles, as its regenerative power can quickly grow more.",
     "appearance": [
-      "Small fox-like biped, lightly built",
-      "Fur coat with a spiny ridge down the back",
+      "Small fox-like biped",
+      "Lightly built",
+      "Fur coat",
+      "Spiny ridge down the neck and back",
       "Long digging claws on the forelimbs",
       "Tall pointed ears",
       "Thick tail ending in a fan of explosive barbs"

@@ -10,15 +10,15 @@ The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carrie
 
 ### appearance (7 entries)
 
-- Small bird, light enough to flit
+- Small bird
 - Bright green floral plumage
 - Beak like the closed petals of a flower, opening into a bloom
 - Feathered crest
-- Broad wings, its means of travel
+- Broad wings
 - Long streamer feathers trailing from the head
 - Taloned gripping feet
 
-Appearance list (Nick, 2026-09-09): one defining presentation quality per entry, relative size words only, sourced from the teaser, the record fields, and the art for major visible features (large ears, big eyes, a shaggy coat) but never for how a feature is shaped, angled or counted. Prose body field struck; the art reading above keeps the full observation.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits (119 words)
 
