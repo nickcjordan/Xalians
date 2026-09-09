@@ -1,72 +1,64 @@
 import React from 'react';
-import Image from 'react-bootstrap/Image';
-import * as constants from '../constants/colorConstants';
 import XalianSVG from '../svg/species/xalianSvg';
-// import * as constants from '../svg/constants'
 
+/**
+ * A species' silhouette, drawn on its own element wash.
+ *
+ * Version 4 on the new stack: the wrapper is a plain div (no
+ * react-bootstrap `Image`), always `aspect-square`, with the radial (one
+ * type) or linear (two types) wash as an inline style — Tailwind utilities
+ * can't express a gradient built from two runtime element colors, so the
+ * wash stays inline, reading the `--color-el-*` tokens rather than a raw
+ * hex. Every prop from the previous version is kept because the immersive
+ * pages (duel board, Reclamation, the training games) and the encyclopedia
+ * still pass the full set.
+ */
 class XalianImage extends React.Component {
-	getTypeColorClassName(type) {
-		var x = this.props.colored ? ` ${type.toLowerCase()}-color ` : '';
-		x = x + (this.props.bordered ? ` xalian-image-bordered ` : '');
-		x = x + (this.props.rounded ? ` xalian-image-rounded ` : '');
-		x = x + (this.props.selected ? ` xalian-image-selected ` : '');
-		x = x + (this.props.shadowed ? ' xalian-image-shadowed ' : '');
-		x = x + (!this.props.unPadded ? ' xalian-image-wrapper-padded ' : '');
-		x = x + this.props.moreClasses;
+	getWrapperClassName() {
+		let x = this.props.bordered ? ' border border-edge-strong ' : '';
+		x += this.props.rounded ? ' rounded-full ' : '';
+		x += this.props.selected ? ' outline outline-2 outline-offset-2 outline-viable-hi ' : '';
+		x += this.props.shadowed ? ' shadow-float ' : '';
+		x += !this.props.unPadded ? ' p-[6%] ' : '';
+		x += ' ' + (this.props.moreClasses || '');
 		return x;
 	}
 
 	buildXalian = () => {
-		return <XalianSVG 
-			name={this.props.speciesName.toLowerCase()} className={'xalian-image'} 
-			style={{ 
-				padding: this.props.padding || '2%', 
+		return <XalianSVG
+			name={this.props.speciesName.toLowerCase()} className={'block h-full w-full'}
+			style={{
+				padding: this.props.padding || '2%',
 				fill: this.props.fill || 'black',
 				stroke: this.props.stroke || '0',
 				strokeWidth: this.props.strokeWidth,
 				strokeLinecap: 'round',
 				filter: this.props.filter,
 				opacity: this.props.opacity || 1
-			}} 
+			}}
 		/>;
-	} 
+	}
 
 	render() {
 		let xalian = this.buildXalian();
-		if (this.props.secondaryType) {
-			let primaryColor = constants.themeColors[this.props.primaryType.toLowerCase()];
-			let secondaryColor = constants.themeColors[this.props.secondaryType.toLowerCase()];
-			let builtClasses = this.getTypeColorClassName(this.props.primaryType);
-			if (this.props.colored) {
-				return (
-					<div id={this.props.id} className={'xalian-image-wrapper ' + builtClasses} style={{ background: `linear-gradient(135deg, ${primaryColor} 15%, ${secondaryColor} 85%)` }}>
-						{xalian}
-					</div>
-				);
+		let builtClasses = this.getWrapperClassName();
+		let wrapperStyle;
+
+		if (this.props.colored) {
+			let primaryVar = `var(--color-el-${this.props.primaryType.toLowerCase()})`;
+			if (this.props.secondaryType) {
+				let secondaryVar = `var(--color-el-${this.props.secondaryType.toLowerCase()})`;
+				wrapperStyle = { background: `linear-gradient(135deg, ${primaryVar} 15%, ${secondaryVar} 85%)` };
 			} else {
-				return (
-					<div id={this.props.id} className={'xalian-image-wrapper ' + builtClasses}>
-						{xalian}
-					</div>
-				);
-			}
-		} else {
-			let primaryColor = constants.themeColors[this.props.primaryType.toLowerCase()];
-			let builtClasses = this.getTypeColorClassName(this.props.primaryType);
-			if (this.props.colored) {
-				return (
-					<div id={this.props.id} className={'xalian-image-wrapper ' + builtClasses} style={{ background: `radial-gradient(circle, ${primaryColor} 65%, ${primaryColor + '90'} 100%)` }}>
-						{xalian}
-					</div>
-				);
-			} else {
-				return (
-					<div id={this.props.id} className={'xalian-image-wrapper ' + builtClasses}>
-						{xalian}
-					</div>
-				);
+				wrapperStyle = { background: `radial-gradient(circle, ${primaryVar} 65%, ${primaryVar} 100%)` };
 			}
 		}
+
+		return (
+			<div id={this.props.id} className={'flex aspect-square items-center justify-center overflow-hidden ' + builtClasses} style={wrapperStyle}>
+				{xalian}
+			</div>
+		);
 	}
 }
 
