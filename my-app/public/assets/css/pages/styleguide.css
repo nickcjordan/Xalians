@@ -1,10 +1,23 @@
 /* Page-specific composition for /styleguide. This file is layout scaffolding
    only — the design system itself (colour, type, components) lives entirely
    in system.css. Every value below reads a --g-* token; nothing here is a
-   raw hex. The sg4-* rules are the version 4 section's layout; the sg-*/sgt-*
-   rules below them are version 3's, kept as-is under "Version 3 (retiring)". */
+   raw hex. Version 4 only (docs/DESIGN_SYSTEM.md sections 3-8); the version 3
+   terminal reference was retired with this page. */
 
-/* ---- V4 section ---------------------------------------------------------- */
+.sg4-page {
+	padding-bottom: var(--g-9);
+}
+
+.sg4-tabs {
+	flex-wrap: wrap;
+	margin: var(--g-5) 0 var(--g-7);
+}
+
+.sg4-section {
+	margin-bottom: var(--g-7);
+	scroll-margin-top: var(--g-8);
+}
+
 .sg4-sub {
 	margin: var(--g-6) 0 var(--g-3);
 }
@@ -16,6 +29,7 @@
 	display: flex;
 	gap: var(--g-3);
 	flex-wrap: wrap;
+	margin-top: var(--g-3);
 }
 
 .sg4-brand-cell {
@@ -119,10 +133,25 @@
 	max-width: 480px;
 }
 
-.sg4-v3-heading {
-	margin: var(--g-8) 0 var(--g-4);
-	padding-top: var(--g-6);
-	border-top: 1px dashed var(--g-edge-strong);
+.sg4-record-panel {
+	margin-top: var(--g-3);
+}
+
+.sg4-record-rows {
+	margin-top: var(--g-4);
+}
+
+.sg4-card-row {
+	display: flex;
+	gap: var(--g-4);
+	flex-wrap: wrap;
+	margin-top: var(--g-3);
+}
+
+.sg4-card-row .enc-tile,
+.sg4-card-row .home-species-tile {
+	width: 220px;
+	max-width: 100%;
 }
 
 @media (max-width: 640px) {
@@ -147,102 +176,70 @@
 	}
 }
 
-/* ---- 00 Terminals: one demo per terminal, description beside the block --
-   Stacks to a single column on phone so nothing scrolls horizontally and
-   the block always stays above its own description. */
-.sgt-demo {
+/* Duel playground's how-to-play reference still uses these three v3 section
+   classes unchanged (my-app/src/pages/games/duelPlaygroundPage.js); they are
+   kept here, moved out of style.css's retired styleguide block, under their
+   original names. */
+.sg-page {
+	padding-top: var(--g-8);
+	padding-bottom: var(--g-9);
+}
+
+.sg-index {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
-	gap: var(--g-6);
-	align-items: start;
-	margin-bottom: var(--g-8);
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	gap: var(--g-1);
+	margin-bottom: var(--g-9);
 }
 
-@media (max-width: 900px) {
-	.sgt-demo {
-		grid-template-columns: 1fr;
-	}
+.sg-index-item {
+	display: flex;
+	align-items: baseline;
+	gap: var(--g-2);
+	padding: var(--g-2) var(--g-3);
+	text-decoration: none;
+	transition: background var(--g-snap);
 }
 
-.sgt-demo-desc > * + * {
-	margin-top: var(--g-3);
+.sg-index-item:hover {
+	background: rgba(255, 244, 214, 0.05);
 }
 
-.sgt-mapping {
-	border-left: var(--g-hairline) solid var(--g-rule);
-	padding-left: var(--g-3);
-}
-
-/* The specimen plate beside a record's spec block, inside a paper or
-   screen medium. Stacks under the spec list on very narrow phones. */
-.sgt-plate-row {
-	display: grid;
-	grid-template-columns: 6rem 1fr;
-	gap: var(--g-4);
-	align-items: start;
-	margin: var(--g-3) 0;
-}
-
-@media (max-width: 480px) {
-	.sgt-plate-row {
-		grid-template-columns: 1fr;
-	}
-}
-
-.sgt-plate-photo {
-	width: 100%;
-	aspect-ratio: 1;
-	overflow: hidden;
-}
-
-.sgt-plate-photo img,
-.sgt-plate-photo svg {
-	width: 100%;
-	height: 100%;
-	object-fit: contain;
-}
-
-.sgt-italic {
-	font-style: italic;
-}
-
-.sgt-accession {
-	display: block;
-	letter-spacing: var(--g-track-label);
-	text-transform: uppercase;
+.sg-index-num {
 	font-size: var(--g-size-micro);
+	color: var(--g-hazard);
 }
 
-/* ---- Medium rule: the same meter, three media, side by side ---- */
-.sgt-medium-grid {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: var(--g-4);
-	margin-top: var(--g-4);
+.sg-index-name {
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-micro);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-mid);
 }
 
-@media (max-width: 720px) {
-	.sgt-medium-grid {
-		grid-template-columns: 1fr;
-	}
+.sg-section {
+	margin-bottom: var(--g-9);
+	scroll-margin-top: var(--g-8);
 }
 
-.sgt-medium-cell > * + * {
-	margin-top: var(--g-2);
+.sg-section-head {
+	position: relative;
+	padding-top: var(--g-4);
+	border-top: var(--g-hairline) solid var(--g-rule);
+	margin-bottom: var(--g-6);
 }
 
-.sgt-medium-crt,
-.sgt-medium-paper {
-	padding: var(--g-4);
+.sg-section-index {
+	position: absolute;
+	top: var(--g-4);
+	right: 0;
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-low);
+	letter-spacing: var(--g-track-wide);
 }
 
-/* system.css repaints .g-legend, .g-spec-key and .g-meter-name for the
-   paper medium (--g-paper-ink-faint) and .g-spec-val / .g-record-term
-   (--g-paper-ink), but not .g-meter-value: it is left at the default
-   --g-ink, a light tone meant for a dark hull, which goes almost invisible
-   on paper's cream stock (registry docket, archive card, the medium-rule
-   "ink" demo). Filed as a request to add this pairing to system.css's own
-   .g-paper block; a token-only local fix until then. */
-.g-paper .g-meter-value {
-	color: var(--g-paper-ink);
+.sg-section-note {
+	margin-top: var(--g-3);
+	margin-bottom: 0;
 }

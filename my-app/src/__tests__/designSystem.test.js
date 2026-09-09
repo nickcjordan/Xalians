@@ -60,14 +60,6 @@ const DEAD_PAGES = ['games/baseGamePage.js'];
 const MIGRATION_PENDING = [];
 
 /**
- * Terminals that /styleguide does not yet render a `data-terminal="x"`
- * section for. Starts with all five new terminals, since the styleguide's
- * migration to v3 is owned by a separate agent. Remove an entry here in the
- * same change that adds that terminal's section to styleGuidePage.js.
- */
-const STYLEGUIDE_MIGRATION_PENDING = [];
-
-/**
  * Version 4 components that must each appear somewhere on /styleguide
  * (docs/DESIGN_SYSTEM.md section 10, "the reference an agent checks before
  * building anything"). Checked as a literal class-name substring against the
@@ -140,7 +132,13 @@ describe('design system structure', () => {
 		});
 	});
 
-	describe('styleguide renders every terminal', () => {
+	describe('styleguide is version 4 only', () => {
+		// /styleguide retired its v3 terminal reference (docs/DESIGN_SYSTEM.md
+		// "Version 4 was ruled by Nick on 2026-09-08 and 2026-09-09"); the five
+		// [data-terminal] blocks below still live in system.css because the
+		// remaining immersive experiences (duel board/playground, Reclamation,
+		// training games, Long Return) still read them, but /styleguide itself
+		// must not reference any of them any more.
 		const css = fs.readFileSync(SYSTEM_PATH, 'utf8');
 		const cssTerminals = Array.from(
 			new Set(Array.from(css.matchAll(/\[data-terminal=(['"])([a-z]+)\1\]/g)).map((m) => m[2]))
@@ -151,18 +149,8 @@ describe('design system structure', () => {
 			expect(cssTerminals).toEqual(['archive', 'field', 'readout', 'registry', 'relay']);
 		});
 
-		cssTerminals.forEach((name) => {
-			const pending = STYLEGUIDE_MIGRATION_PENDING.includes(name);
-			const label = pending ? `${name} (STYLEGUIDE_MIGRATION_PENDING)` : name;
-
-			it(`styleGuidePage.js renders data-terminal="${label}"`, () => {
-				const hasSection = styleguideSource.includes(`data-terminal="${name}"`) || styleguideSource.includes(`data-terminal='${name}'`);
-				if (pending) {
-					expect(hasSection).toBe(false);
-				} else {
-					expect(hasSection).toBe(true);
-				}
-			});
+		it('styleGuidePage.js contains no data-terminal=', () => {
+			expect(/data-terminal=/.test(styleguideSource)).toBe(false);
 		});
 	});
 
