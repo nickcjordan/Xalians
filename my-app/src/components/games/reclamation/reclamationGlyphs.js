@@ -114,3 +114,52 @@ export function HiddenGlyph({ className }) {
 		</svg>
 	);
 }
+
+/*
+	The four roles of the base redesign (docs/design/reclamation-base-redesign.md,
+	assumption 4 and "Interface consequences"): one glyph beside the hold bulb on the
+	plinth, on the figure, in the dossier and in the report's world rows. 'none' draws
+	nothing, since a creature with no role does nothing at Resolve.
+
+	strike  a single point driven at one mark
+	area    a burst thrown out in every direction
+	bolster a hand lifting a bar
+	shield  a plate over what stands behind it
+*/
+export function RoleGlyph({ role, className }) {
+	const cls = `rec-glyph rec-glyph--role rec-glyph--role-${role}${className ? ` ${className}` : ''}`;
+	switch (role) {
+		case 'strike':
+			return (
+				<svg className={cls} {...box}>
+					<path d="M4 20 17 7" /><path d="M13 4h7v7" /><path d="M14.5 9.5 20 4" />
+				</svg>
+			);
+		case 'area':
+			return (
+				<svg className={cls} {...box}>
+					<circle cx="12" cy="12" r="3" />
+					<path d="M12 6.5V3" /><path d="M12 17.5V21" />
+					<path d="M6.5 12H3" /><path d="M17.5 12H21" />
+					<path d="m8.1 8.1-2.5-2.5" /><path d="m15.9 15.9 2.5 2.5" />
+					<path d="m15.9 8.1 2.5-2.5" /><path d="m8.1 15.9-2.5 2.5" />
+				</svg>
+			);
+		case 'bolster':
+			return (
+				<svg className={cls} {...box}>
+					<path d="M4 20h16" /><path d="M12 16V5" /><path d="M7.5 9.5 12 5l4.5 4.5" />
+					<path d="M6 16h12" />
+				</svg>
+			);
+		case 'shield':
+			return (
+				<svg className={cls} {...box}>
+					<path d="M12 3 5 6v5.5c0 4.2 2.9 7.6 7 9.5 4.1-1.9 7-5.3 7-9.5V6z" />
+					<path d="M9 12l2 2 4-4" />
+				</svg>
+			);
+		default:
+			return null;
+	}
+}

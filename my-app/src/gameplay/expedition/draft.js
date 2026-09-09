@@ -1,5 +1,5 @@
 /*
-	Expedition — the pre-match draft.
+	Expedition - the pre-match draft.
 
 	Per docs/design/reclamation-play-enhancements.md "Pass 3, the draft": before the
 	Proving the frame shows its first three worlds and eighteen generated creatures; the
@@ -18,8 +18,15 @@
 import { generateBatch } from '../generator/index.js';
 import { createRngState, nextRandom, createMatch } from './expeditionRules.js';
 import { getWorlds } from './sites.js';
-import { prepare } from './creatureOnTable.js';
-import { ROSTER_SIZE } from './expeditionInterpretation.js';
+import { prepare, roleOf } from './creatureOnTable.js';
+import { ROSTER_SIZE, ROLE, AREA_DISCOUNT, BOLSTER_FLOOR, SHIELD_CAP } from './expeditionInterpretation.js';
+
+// an area catches this many creatures at a world on the numbers the simulator measures
+// (mean creatures per world at deploy end, both sides), so an area's worth is its
+// discounted magnitude times this
+export const AREA_EXPECTED_CREATURES = 3;
+// a bolsterer lifts about this many allies at a world, itself excluded
+export const BOLSTER_EXPECTED_ALLIES = 2;
 
 // both sides draft from a pool of eighteen and keep twelve (ROSTER_SIZE)
 export const DRAFT_POOL_SIZE = 18;
@@ -108,28 +115,93 @@ function sitesOf(frames) {
 }
 
 /*
-	rateForDraft(record, frames) -> { best, mean, homes, byWorld }
+	rateForDraft(record, frames, options) -> { best, mean, homes, role, roleValue, rating, byWorld }
 
 	byWorld is one row per site of the nine-world Proving (frame order preserved), each
-	{ planet, element, hold, isHome, strainLevel }, built from prepare() exactly as the
-	bench and figures read a creature — no formula of this module's own.
+	{ planet, element, hold, isHome, strainLevel, blowMagnitude, bolsterLift }, built from
+	prepare() exactly as the bench and figures read a creature - no formula of this
+	module's own.
+
+	RATING = mean hold + role value (2026-09-09, docs/design/reclamation-base-redesign.md
+	assumption 4). Rating by hold alone left 21 of 29 species outside the 30 to 90 percent
+	keep band, because a creature's whole contribution to a world is its hold PLUS what
+	its one role does there, and the draft was pricing only the first half. Role value, in
+	hold units, matched to how expeditionBot.roleValueOf prices the same creature at a
+	real world:
+
+	- strike:  its mean blow magnitude across the nine worlds
+	- area:    the same, times rules.areaDiscount, times AREA_EXPECTED_CREATURES
+	- shield:  a typical cancel, which is the POOL's mean blow magnitude (options.poolMeanBlow),
+	           priced by rules.shieldCap the way the engine pays it out: 'half' nets half a
+	           blow, since the shielder takes the other half itself
+	- bolster: its mean own-strain grade lift across the nine worlds, times
+	           BOLSTER_EXPECTED_ALLIES, plus rules.bolsterFloor for itself
+
+	options: { rules, poolMeanBlow }. Both optional; with neither, the module constants and
+	a shield value of zero are used, which is what a caller with no pool in hand can know.
 */
-export function rateForDraft(record, frames) {
+export function rateForDraft(record, frames, options = {}) {
+	const rules = options.rules || null;
+	const areaDiscount = rules && typeof rules.areaDiscount === 'number' ? rules.areaDiscount : AREA_DISCOUNT;
+	const bolsterFloor = rules && typeof rules.bolsterFloor === 'number' ? rules.bolsterFloor : BOLSTER_FLOOR;
+	const shieldCap = (rules && rules.shieldCap) || SHIELD_CAP;
+
 	const byWorld = sitesOf(frames).map((site) => {
-		const view = prepare(record, site, null, 0);
+		const view = prepare(record, site, null, 0, { rules });
+		const lifted = prepare(record, site, null, 0, { rules, bolstered: true });
 		return {
 			planet: site.world.planet,
 			element: site.world.element,
 			hold: view.hold,
 			isHome: view.isHome,
 			strainLevel: view.strainLevel,
+			blowMagnitude: view.blowMagnitude,
+			bolsterLift: Math.max(0, lifted.hold - view.hold),
 		};
 	});
 	const holds = byWorld.map((w) => w.hold);
 	const best = holds.reduce((a, b) => Math.max(a, b), 0);
 	const mean = holds.length > 0 ? holds.reduce((a, b) => a + b, 0) / holds.length : 0;
 	const homes = byWorld.filter((w) => w.isHome).length;
-	return { best, mean, homes, byWorld };
+
+	const role = roleOf(record, rules);
+	const meanBlow = byWorld.length > 0 ? byWorld.reduce((sum, w) => sum + w.blowMagnitude, 0) / byWorld.length : 0;
+	const meanLift = byWorld.length > 0 ? byWorld.reduce((sum, w) => sum + w.bolsterLift, 0) / byWorld.length : 0;
+
+	let roleValue = 0;
+	if (role === ROLE.STRIKE) {
+		roleValue = meanBlow;
+	} else if (role === ROLE.AREA) {
+		roleValue = meanBlow * areaDiscount * AREA_EXPECTED_CREATURES;
+	} else if (role === ROLE.SHIELD) {
+		const typicalCancel = typeof options.poolMeanBlow === 'number' ? options.poolMeanBlow : 0;
+		roleValue = shieldCap === 'half' ? typicalCancel / 2 : typicalCancel;
+	} else if (role === ROLE.BOLSTER) {
+		roleValue = meanLift * BOLSTER_EXPECTED_ALLIES + bolsterFloor;
+	}
+
+	return { best, mean, homes, role, roleValue, rating: mean + roleValue, byWorld };
+}
+
+/*
+	poolMeanBlowOf(pool, frames, rules) -> the mean blow magnitude of every blow creature
+	in the pool across the nine worlds. This is what a shield's cancel is worth on average,
+	and it is a property of the POOL, not of the shielder, which is why it is computed once
+	here and handed to rateForDraft rather than derived per creature.
+*/
+export function poolMeanBlowOf(pool, frames, rules) {
+	const sites = sitesOf(frames);
+	const magnitudes = [];
+	pool.forEach((record) => {
+		const role = roleOf(record, rules);
+		if (role !== ROLE.STRIKE && role !== ROLE.AREA) {
+			return;
+		}
+		sites.forEach((site) => {
+			magnitudes.push(prepare(record, site, null, 0, { rules }).blowMagnitude);
+		});
+	});
+	return magnitudes.length > 0 ? magnitudes.reduce((a, b) => a + b, 0) / magnitudes.length : 0;
 }
 
 // the planet a creature holds best at, used by the windsailor's spread bonus/penalty
@@ -175,19 +247,28 @@ function meanInitiativeOf(record) {
 	- broker: prefers stealthy creatures (its style is built on hiding sends)
 	- envoy: prefers high initiative (rations the roster and wants first strikes to
 	  matter when it finally spends)
-	- proctor, and any unrecognized id: plain mean hold, by the book
+	- proctor, and any unrecognized id: the plain rating, by the book
+
+	The rating every habit bends is now hold PLUS role value (see rateForDraft), not hold
+	alone, so a creature is drafted for what it will do at a world as well as for how long
+	it will stand there.
 
 	Deterministic: ties break on record id so the result never depends on iteration
 	order or floating-point jitter.
 */
-export function botDraft(pool, frames, rival) {
+export function botDraft(pool, frames, rival, options = {}) {
 	const rivalId = (rival && rival.id) || 'proctor';
-	const ratings = pool.map((record) => ({ record, rating: rateForDraft(record, frames) }));
+	const rules = options.rules || null;
+	const poolMeanBlow = poolMeanBlowOf(pool, frames, rules);
+	const ratings = pool.map((record) => ({
+		record,
+		rating: rateForDraft(record, frames, { rules, poolMeanBlow }),
+	}));
 
 	const scored = ratings.map(({ record, rating }) => {
-		let score = rating.mean + rating.best * 0.25;
+		let score = rating.rating + rating.best * 0.25;
 		if (rivalId === 'heir') {
-			score = rating.mean * 1.5 + rating.best * 0.1;
+			score = rating.rating * 1.5 + rating.best * 0.1;
 		} else if (rivalId === 'broker') {
 			score += isStealthy(record) ? 4 : 0;
 		} else if (rivalId === 'envoy') {
@@ -196,35 +277,79 @@ export function botDraft(pool, frames, rival) {
 		return { record, rating, score, bestPlanet: bestPlanetOf(rating) };
 	});
 
-	if (rivalId === 'windsailor') {
-		// greedy pick with a running penalty for a repeated best-world: sort once by raw
-		// score, then walk it, discounting a candidate that shares a best world with a
-		// creature already kept and re-sorting the remainder so the discount can change
-		// the order (a spread bias, not just a static score).
-		const remaining = scored.slice().sort((a, b) => b.score - a.score || a.record.id.localeCompare(b.record.id));
-		const kept = [];
-		const bestPlanetCounts = new Map();
-		while (kept.length < ROSTER_SIZE && remaining.length > 0) {
-			remaining.sort((a, b) => {
-				const penaltyA = a.bestPlanet ? (bestPlanetCounts.get(a.bestPlanet) || 0) * 3 : 0;
-				const penaltyB = b.bestPlanet ? (bestPlanetCounts.get(b.bestPlanet) || 0) * 3 : 0;
-				const adjA = a.score - penaltyA;
-				const adjB = b.score - penaltyB;
-				return adjB - adjA || a.record.id.localeCompare(b.record.id);
-			});
-			const pick = remaining.shift();
-			kept.push(pick);
-			if (pick.bestPlanet) {
-				bestPlanetCounts.set(pick.bestPlanet, (bestPlanetCounts.get(pick.bestPlanet) || 0) + 1);
+	// the windsailor's spread bias: a running penalty for a repeated best-world, so the
+	// discount can change the order as the keep fills (a habit, not a static score)
+	const bestPlanetCounts = new Map();
+	const adjust = rivalId === 'windsailor'
+		? (candidate) => candidate.score - (candidate.bestPlanet ? (bestPlanetCounts.get(candidate.bestPlanet) || 0) * 3 : 0)
+		: (candidate) => candidate.score;
+	const onPick = rivalId === 'windsailor'
+		? (candidate) => {
+			if (candidate.bestPlanet) {
+				bestPlanetCounts.set(candidate.bestPlanet, (bestPlanetCounts.get(candidate.bestPlanet) || 0) + 1);
 			}
 		}
-		return kept.map((k) => k.record.id);
+		: () => {};
+
+	return draftPick(scored, adjust, onPick).map((k) => k.record.id);
+}
+
+/*
+	draftPick(scored, adjust, onPick) -> the ROSTER_SIZE entries kept.
+
+	A greedy pick under the SPREAD RULE (2026-09-09): at most MAX_PER_SPECIES of any one
+	species, and at least one creature of every role the pool can offer. Rating by hold
+	plus role value already narrowed the keep-rate spread, but eighteen of twenty-nine
+	species still sat outside the 30 to 90 percent band, because a rating is a total order
+	and a total order always keeps its own top twelve. The spread rule is the smallest
+	thing that makes the draft a composition problem rather than a sort: a second copy of
+	the best species is worth less than the first, and a squad with no shield is not a
+	squad.
+
+	`adjust` prices a candidate as the keep fills (the windsailor's repeated-best-world
+	penalty) and `onPick` records whatever that pricing reads. Deterministic throughout:
+	ties break on record id.
+*/
+export const MAX_PER_SPECIES = 2;
+
+function draftPick(scored, adjust, onPick) {
+	const remaining = scored.slice();
+	const kept = [];
+	const speciesCounts = new Map();
+	const roleCounts = new Map();
+	const rolesInPool = [...new Set(scored.map((c) => c.rating.role))];
+
+	const speciesOf = (candidate) => candidate.record.species || 'unknown';
+	const speciesOk = (candidate) => (speciesCounts.get(speciesOf(candidate)) || 0) < MAX_PER_SPECIES;
+
+	while (kept.length < ROSTER_SIZE && remaining.length > 0) {
+		remaining.sort((x, y) => adjust(y) - adjust(x) || x.record.id.localeCompare(y.record.id));
+		const slotsLeft = ROSTER_SIZE - kept.length;
+		// roles still missing that the remainder can still supply
+		const missing = rolesInPool.filter(
+			(role) => (roleCounts.get(role) || 0) === 0 && remaining.some((c) => c.rating.role === role),
+		);
+
+		let pick = null;
+		if (missing.length >= slotsLeft) {
+			// every remaining slot is spoken for by a missing role: take the best candidate
+			// of one, preferring one that also keeps the species cap
+			pick = remaining.find((c) => missing.includes(c.rating.role) && speciesOk(c))
+				|| remaining.find((c) => missing.includes(c.rating.role));
+		}
+		if (!pick) {
+			// the species cap is relaxed only when nothing else is left to take
+			pick = remaining.find(speciesOk) || remaining[0];
+		}
+
+		remaining.splice(remaining.indexOf(pick), 1);
+		kept.push(pick);
+		speciesCounts.set(speciesOf(pick), (speciesCounts.get(speciesOf(pick)) || 0) + 1);
+		roleCounts.set(pick.rating.role, (roleCounts.get(pick.rating.role) || 0) + 1);
+		onPick(pick);
 	}
 
-	return scored
-		.sort((a, b) => b.score - a.score || a.record.id.localeCompare(b.record.id))
-		.slice(0, ROSTER_SIZE)
-		.map((s) => s.record.id);
+	return kept;
 }
 
 /*

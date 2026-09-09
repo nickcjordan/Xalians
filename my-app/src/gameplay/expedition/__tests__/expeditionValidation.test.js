@@ -6,7 +6,7 @@
 	renders) and DETERMINISM (the same seed gives byte-identical output twice), which are
 	the two properties a designer relies on when diffing two runs. Batch sizes are tiny on
 	purpose: a shape test does not need statistical power, and the ablation section runs
-	seven configurations by five rivals, so four matches per cell is already 140 matches.
+	nine configurations by five rivals, so four matches per cell is already 180 matches.
 
 	Nothing here prints.
 */
@@ -15,7 +15,7 @@ import { describe, it, expect } from 'vitest';
 import {
 	runValidation, sectionRegret, sectionSpread, sectionDecided, sectionAblation, sectionDraft,
 	buildSections, toMarkdown, decidedRoundOf, lockedRoundOf, matchShapeOf, rate,
-	ALL_SECTIONS, NAIVE_POLICIES, ABLATIONS,
+	ALL_SECTIONS, NAIVE_POLICIES, ABLATIONS, parseSweep, sweepRulesOf, runSweep,
 } from '../devtools/expeditionValidation.js';
 import { buildExpeditionPool } from '../roster.js';
 import { RIVALS } from '../expeditionBot.js';
@@ -247,6 +247,40 @@ describe('rendering', () => {
 	});
 
 	it('uses no em-dashes anywhere in the markdown', () => {
-		expect(toMarkdown(report)).not.toContain('—');
+		expect(toMarkdown(report)).not.toContain(String.fromCharCode(8212));
+	});
+});
+
+describe('the base redesign additions', () => {
+	it('offers the always-presence-first policy the base redesign asks for', () => {
+		expect(NAIVE_POLICIES.map((p) => p.id)).toContain('alwaysPresenceFirst');
+	});
+
+	it('ablates every rule AND every role', () => {
+		const ids = ABLATIONS.map((a) => a.id);
+		['baseline', 'noHidden', 'noLoki', 'noTrailing', 'noInitiative', 'noHiddenFirst', 'noArea', 'noBolster', 'noShield']
+			.forEach((id) => expect(ids).toContain(id));
+		expect(ABLATIONS.find((a) => a.id === 'noArea').rules).toEqual({ roles: { area: false } });
+	});
+
+	it('parses a single-lever sweep and a paired-lever sweep', () => {
+		expect(parseSweep('magnitudeScale=0.5,1')).toEqual({ rules: ['magnitudeScale'], values: [[0.5], [1]] });
+		const paired = parseSweep('holdFloor:holdCeiling=2.8:17.6,6:14.9');
+		expect(paired.rules).toEqual(['holdFloor', 'holdCeiling']);
+		expect(sweepRulesOf(paired, paired.values[0])).toEqual({ holdFloor: 2.8, holdCeiling: 17.6 });
+		expect(parseSweep('nonsense')).toBeNull();
+	});
+
+	it('runs a sweep and returns one row per value, each carrying the gauges', () => {
+		const sweep = parseSweep('magnitudeScale=0.5,1.5');
+		const report = runSweep({ matches: 2, seed: SEED, only: ['decided'], sweep });
+		expect(report.rows.length).toBe(2);
+		report.rows.forEach((row) => {
+			expect(typeof row.label).toBe('string');
+			expect(typeof row.routsPerMatch).toBe('number');
+			expect(isRate(row.resolveChangedLeaderRate)).toBe(true);
+		});
+		// a bigger magnitude scale must move the routs, or the lever is doing nothing
+		expect(report.rows[1].routsPerMatch).toBeGreaterThan(report.rows[0].routsPerMatch);
 	});
 });

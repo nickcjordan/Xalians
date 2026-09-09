@@ -187,9 +187,12 @@ describe('buildMatchReport', () => {
 		const recordsById = recordsByIdFrom(rosterA, rosterB);
 		const report = buildMatchReport(state, 'A', recordsById);
 
-		const acts = state.resolutionLog.filter((e) => e && !e.type && Object.prototype.hasOwnProperty.call(e, 'outcome'));
+		// THE BASE: a landing blow is a 'blow' event; the 'area' event before a burst
+		// announces it and lands nothing itself
+		const acts = state.resolutionLog.filter((e) => e && e.type === 'blow');
 		const routedCount = acts.filter((e) => e.outcome === 'routed').length;
 		const staggeredCount = acts.filter((e) => e.outcome === 'staggered').length;
+		expect(routedCount + staggeredCount).toBeGreaterThan(0);
 
 		expect(report.routs.dealt + report.routs.taken).toBeLessThanOrEqual(routedCount);
 		expect(report.staggers.dealt + report.staggers.taken).toBeLessThanOrEqual(staggeredCount);

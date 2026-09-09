@@ -12,7 +12,14 @@
 
 import { GENERATOR_VERSION } from '../../../gameplay/generator/constants.js';
 
-const MATCH_KEY = 'reclamation.match.v1';
+/*
+	THE BASE (docs/design/reclamation-base-redesign.md): the saved match shape changed
+	with the round (no orders, no committed map, a mutable currentHold on every board
+	row), so the key is bumped to v2. A v1 save cannot be resumed and is not offered: it
+	is removed the first time this module is asked for a match.
+*/
+const MATCH_KEY = 'reclamation.match.v2';
+const LEGACY_MATCH_KEYS = ['reclamation.match.v1'];
 const HISTORY_KEY = 'reclamation.history.v1';
 const RIVAL_KEY = 'reclamation.rival';
 const MATCH_VERSION = 1;
@@ -99,6 +106,9 @@ export function saveMatch(payload, storage) {
 	build expects.
 */
 export function loadMatch(storage) {
+	// a Proving saved under the pre-base rules can never be resumed; drop it rather than
+	// leaving it to be offered forever
+	LEGACY_MATCH_KEYS.forEach((key) => removeKey(storage, key));
 	const wrapper = readJSON(storage, MATCH_KEY);
 	if (!wrapper || typeof wrapper !== 'object') {
 		return null;

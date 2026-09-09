@@ -1,5 +1,6 @@
 import React from 'react';
-import { speciesLabel, formatHold } from './reclamationNarration';
+import { speciesLabel, formatHold, roleSentence } from './reclamationNarration';
+import { RoleGlyph } from './reclamationGlyphs';
 import XalianImage from '../../xalianImage';
 import XalianTypeSymbolBadge from '../duel/board/xalianTypeSymbolBadge';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
@@ -25,7 +26,12 @@ import { team } from '../../../constants/designTokens';
 	  with `flash` naming the outcome over the figure
 	- hover: the creature under the pointer in a preview line
 	- arrive: it just landed (the controller clears this after the animation)
-	- badge: a small tag on the plate (the act ordered, during Orders)
+	- badge: a small tag on the plate
+	- role: one of 'strike' | 'area' | 'bolster' | 'shield' (the base redesign's four
+	  roles), drawn as one glyph beside the hold bulb with the role sentence as its title;
+	  'none' draws nothing
+	- threat: { level: 'rout' | 'amount', amount, text } - what this creature would lose
+	  this round to the worst visible enemy blow
 */
 export const FIGURE_SIZE = 56;
 // The meter's printed range. Base hold runs 0 to 20; the bulbs past 20 are home
@@ -101,6 +107,8 @@ function ReclamationFigure({
 	unstrainedHold,
 	baseHold,
 	facing,
+	role,
+	blowMagnitude,
 	selected,
 	armed,
 	recommended,
@@ -135,6 +143,7 @@ function ReclamationFigure({
 	if (dimmed) classes.push('rec-figure--dimmed');
 	if (acting) classes.push('rec-figure--acting');
 	if (threat) classes.push(`rec-figure--threat-${threat.level}`);
+	if (role && role !== 'none') classes.push(`rec-figure--role-${role}`);
 	if (hit) classes.push('rec-figure--hit');
 	if (hover) classes.push('rec-figure--hover');
 	if (arrive) classes.push('rec-figure--arrive');
@@ -177,9 +186,18 @@ function ReclamationFigure({
 			<span className="rec-figure-plate">
 				<span className="rec-figure-name">{name}</span>
 				{badge && <span className="rec-figure-badge">{badge}</span>}
-				{threat && <span className={`rec-figure-threat rec-figure-threat--${threat.level}`} title={threat.text} data-threat={threat.level}>{threat.level}</span>}
+				{threat && (
+					<span className={`rec-figure-threat rec-figure-threat--${threat.level}`} title={threat.text} data-threat={threat.level}>
+						{threat.level === 'rout' ? 'rout' : `-${threat.amount}`}
+					</span>
+				)}
 			</span>
 			<span className="rec-figure-foot">
+				{role && role !== 'none' && (
+					<span className="rec-role-glyph" title={roleSentence(role, blowMagnitude)} aria-label={roleSentence(role, blowMagnitude)} data-role={role}>
+						<RoleGlyph role={role} />
+					</span>
+				)}
 				{typeof hold === 'number' && (
 					<HoldMeter
 						hold={hold}

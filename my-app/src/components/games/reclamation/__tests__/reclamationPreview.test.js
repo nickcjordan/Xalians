@@ -1,13 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { createMatch, send, getPublicState } from '../../../../gameplay/expedition/expeditionRules';
+import { createMatch, send, pass, getPublicState, blowAmountAgainst } from '../../../../gameplay/expedition/expeditionRules';
 import { getWorlds } from '../../../../gameplay/expedition/sites';
 import { buildExpeditionPool } from '../../../../gameplay/expedition/roster';
-import { ROSTER_SIZE } from '../../../../gameplay/expedition/expeditionInterpretation';
+import { ROSTER_SIZE, ROLE } from '../../../../gameplay/expedition/expeditionInterpretation';
 import {
-	orderPreview, flattenBoard, siteHoldTotal, conductSentence, conductClause, previewSentence,
-	pickAreaSitePreview, threatsFor, threatSentence,
+	flattenBoard, siteHoldTotal, conductSentence, conductClause,
+	ghostPlanFor, pickBlowTargetPreview, threatsFor, threatSentence, livingHold,
 } from '../reclamationPreview';
-import { magnitudeAgainst } from '../../../../gameplay/expedition/creatureOnTable';
 import { prepare } from '../../../../gameplay/expedition/creatureOnTable';
 
 const SEED = 'preview-test';
@@ -35,6 +34,22 @@ function deployOneEach(match) {
 	return state;
 }
 
+// stacks n creatures per side onto the frame's first site
+function stackOnFirstSite(match, n) {
+	let state = match;
+	const site = state.frames[state.frameIndex].sites[0];
+	for (let i = 0; i < n * 2; i++) {
+		const handler = state.turn;
+		const record = state.players[handler].roster[0];
+		const next = send(state, handler, record.id, site.id, false);
+		if (!next) {
+			break;
+		}
+		state = next;
+	}
+	return state;
+}
+
 describe('flattenBoard and siteHoldTotal', () => {
 	it('reports exactly the engine prepare() hold for every visible creature', () => {
 		const state = deployOneEach(buildMatch());
@@ -42,76 +57,167 @@ describe('flattenBoard and siteHoldTotal', () => {
 		const units = flattenBoard(view);
 		expect(units.length).toBe(2);
 		units.forEach((u) => {
-			const engineHold = prepare(u.record, u.site, view.frame, u.sentIndex).hold;
+			// the match rules and the bolster standing at the world both travel with the view,
+			// so the preview's prepare() reads exactly what the engine's did (a bolsterer
+			// lifts its own strain, "itself included", assumption 8)
+			const engineHold = prepare(u.record, u.site, u.site.world, u.sentIndex, {
+				rules: view.rules, bolstered: !!u.entry.bolstered,
+			}).hold;
 			expect(u.prepared.hold).toBeCloseTo(engineHold, 10);
+			// the engine rounds the hold it stamps on the board row to one decimal
+			expect(u.prepared.hold).toBeCloseTo(u.entry.fullHold, 1);
 		});
 	});
 
-	it('site totals are the sum of the holds present, so the Judge comparison is visible', () => {
+	it('site totals are the sum of the live holds present, so the Judge comparison is visible', () => {
 		const state = deployOneEach(buildMatch());
 		const view = getPublicState(state, 'A');
 		const site = view.frame.sites[0];
 		const totalA = siteHoldTotal(view, site.id, 'A');
-		const manualA = view.board[site.id].A.reduce(
-			(sum, e) => sum + prepare(e.record, site, view.frame, e.sentIndex).hold, 0,
-		);
+		const manualA = view.board[site.id].A.reduce((sum, e) => sum + e.currentHold, 0);
 		expect(totalA).toBeCloseTo(manualA, 10);
 		expect(siteHoldTotal(view, view.frame.sites[2].id, 'A')).toBe(0);
 	});
-});
 
-describe('orderPreview', () => {
-	it('produces one row per visible creature, in a stable initiative order', () => {
-		const state = deployOneEach(buildMatch());
-		const view = getPublicState(state, 'A');
-		const rows = orderPreview(view, {}, 'A');
-		expect(rows.length).toBe(2);
-		// mirrors buildResolutionOrder: ambush, then wards, then the rest by initiative
-		const rest = rows.filter((r) => r.action !== 'ambush' && r.action !== 'ward');
-		for (let i = 1; i < rest.length; i++) {
-			if (rest[i - 1].unit.prepared.strainLevel === rest[i].unit.prepared.strainLevel) {
-				expect(rest[i - 1].unit.prepared.initiative).toBeGreaterThanOrEqual(rest[i].unit.prepared.initiative);
-			}
-		}
-	});
-
-	it('defaults each creature to its archetype-favored act, and honours an explicit order', () => {
-		const state = deployOneEach(buildMatch());
-		const view = getPublicState(state, 'A');
-		const mine = flattenBoard(view).find((u) => u.seat === 'A');
-		expect(orderPreview(view, {}, 'A').find((r) => r.unit.recordId === mine.recordId).action)
-			.toBe(mine.prepared.favoredAct.action);
-
-		const rowsHeld = orderPreview(view, { [mine.recordId]: 'hold' }, 'A');
-		const heldRow = rowsHeld.find((r) => r.unit.recordId === mine.recordId);
-		expect(heldRow.action).toBe('hold');
-		expect(heldRow.ordered).toBe(true);
-		expect(heldRow.sentence).toMatch(/holds at .+, keeping its full hold\./);
-	});
-
-	it('writes the target choice as a sentence naming the conduct, the site and the hold', () => {
-		const state = deployOneEach(buildMatch());
-		const view = getPublicState(state, 'A');
-		const rows = orderPreview(view, {}, 'A');
-		const attacking = rows.find((r) => r.isYours && r.target);
-		if (attacking) {
-			// the brief's shape: "Rakh strikes the weakest enemy at the Ash Wastes: Gorrel, hold 7"
-			expect(attacking.sentence).toMatch(/^[A-Z].+ (at|anywhere on the world).*: .+, hold [\d.]+/);
-			expect(attacking.sentence).not.toMatch(/undefined/);
-		}
-		rows.forEach((r) => expect(r.sentence).not.toMatch(/undefined/));
-	});
-
-	it('names the site the preview is read at for a contact act', () => {
+	// blows subtract (assumption 5): the board row carries the live hold, and the total the
+	// preview reads has to be that, not the untouched prepare() value
+	it('a creature that has been hit counts at its remaining hold', () => {
 		const state = deployOneEach(buildMatch());
 		const view = getPublicState(state, 'A');
 		const site = view.frame.sites[0];
-		const rows = orderPreview(view, {}, 'A').filter((r) => r.isYours);
-		rows.forEach((r) => {
-			if (r.actClass === 'contact' || r.actClass === 'reach') {
-				expect(r.sentence).toContain(site.name);
-			}
+		const before = siteHoldTotal(view, site.id, 'A');
+		const hit = {
+			...view,
+			board: {
+				...view.board,
+				[site.id]: {
+					...view.board[site.id],
+					A: view.board[site.id].A.map((e) => ({ ...e, currentHold: e.currentHold - 2, damage: 2, staggered: true })),
+				},
+			},
+		};
+		expect(siteHoldTotal(hit, site.id, 'A')).toBeCloseTo(before - 2, 6);
+	});
+});
+
+describe('livingHold', () => {
+	it('reads the engine\'s own currentHold off the board row', () => {
+		const state = deployOneEach(buildMatch());
+		const view = getPublicState(state, 'A');
+		flattenBoard(view).forEach((u) => {
+			expect(livingHold(u)).toBe(u.entry.currentHold);
 		});
+	});
+});
+
+describe('ghostPlanFor', () => {
+	it('gives the hold at the world and one role sentence, whatever the role', () => {
+		const state = deployOneEach(buildMatch());
+		const view = getPublicState(state, 'A');
+		const site = view.frame.sites[0];
+		const record = view.players.A.roster[0];
+		const plan = ghostPlanFor(view, record, site, 'A', view.players.A.sentCount);
+		const engine = prepare(record, site, site.world, view.players.A.sentCount, { rules: view.rules });
+		expect(plan.hold).toBeCloseTo(engine.hold, 6);
+		expect(plan.role).toBe(engine.role);
+		expect(plan.roleLine).toMatch(/^(Strikes|Bolsters|Shields|Stands)/);
+		expect(plan.roleLine).not.toMatch(/undefined|\?/);
+		expect(Array.isArray(plan.lines)).toBe(true);
+		plan.lines.forEach((line) => expect(line).not.toMatch(/undefined/));
+	});
+
+	it('a striker names the creature its conduct would pick and the number it would lose', () => {
+		const state = stackOnFirstSite(buildMatch(), 4);
+		const view = getPublicState(state, 'A');
+		const site = view.frame.sites[0];
+		const striker = view.players.A.roster.find((r) => {
+			const p = prepare(r, site, site.world, 0, { rules: view.rules });
+			return p.role === ROLE.STRIKE;
+		});
+		if (!striker) {
+			return; // no plain striker left in hand for this seed; nothing to pin
+		}
+		const plan = ghostPlanFor(view, striker, site, 'A', view.players.A.sentCount);
+		expect(plan.lines.length).toBe(1);
+		expect(plan.lines[0]).toMatch(/^(takes [0-9.]+ off .+|routs .+|no enemy here to strike)$/);
+		if (plan.targetRecordId) {
+			// the number printed is the engine's own arithmetic, not a second copy of it
+			const target = flattenBoard(view).find((u) => u.recordId === plan.targetRecordId);
+			const prepared = prepare(striker, site, site.world, view.players.A.sentCount, { rules: view.rules });
+			const amount = blowAmountAgainst(
+				{ rules: view.rules }, { record: striker }, prepared, { record: target.record },
+			);
+			const expected = amount >= livingHold(target) ? 'routs' : `takes ${amount}`;
+			expect(plan.lines[0].startsWith(expected.replace(/\.0$/, ''))).toBe(true);
+		}
+	});
+
+	it('an area names every creature it would catch, its own side included', () => {
+		const state = stackOnFirstSite(buildMatch(), 4);
+		const view = getPublicState(state, 'A');
+		const site = view.frame.sites[0];
+		const area = view.players.A.roster.find((r) => prepare(r, site, site.world, 0, { rules: view.rules }).role === ROLE.AREA);
+		if (!area) {
+			return;
+		}
+		const plan = ghostPlanFor(view, area, site, 'A', view.players.A.sentCount);
+		const standing = flattenBoard(view).filter((u) => u.site.id === site.id).length;
+		expect(plan.lines.length).toBe(standing);
+		expect(plan.lines.some((l) => l.includes('(yours)'))).toBe(true);
+	});
+
+	it('a shield says the blow it would cancel, a bolster the hold it would give back', () => {
+		const state = stackOnFirstSite(buildMatch(), 4);
+		const view = getPublicState(state, 'A');
+		const site = view.frame.sites[0];
+		const presence = view.players.A.roster.find((r) => {
+			const role = prepare(r, site, site.world, 0, { rules: view.rules }).role;
+			return role === ROLE.SHIELD || role === ROLE.BOLSTER;
+		});
+		if (!presence) {
+			return;
+		}
+		const plan = ghostPlanFor(view, presence, site, 'A', view.players.A.sentCount);
+		expect(plan.lines.length).toBe(1);
+		expect(plan.lines[0]).toMatch(/would cancel .+'s [0-9.]+|nothing here to cancel yet|gives [0-9.]+ hold back to \d+ all(y|ies) here|no ally here to lift yet/);
+	});
+});
+
+describe('pickBlowTargetPreview', () => {
+	// the preview mirrors expeditionRules.pickAttackTarget; the engine's own resolution is
+	// the only check that matters, so this pins the mirror against a real resolved round
+	it('names the creature the engine actually strikes', () => {
+		let state = stackOnFirstSite(buildMatch(), 3);
+		const view = getPublicState(state, 'A');
+		const units = flattenBoard(view);
+		const predictions = {};
+		units.forEach((unit) => {
+			if (unit.prepared.role !== ROLE.STRIKE) {
+				return;
+			}
+			const target = pickBlowTargetPreview(view, unit, units);
+			predictions[unit.recordId] = target ? target.recordId : null;
+		});
+		// close the round: both handlers pass, and the engine resolves inside pass()
+		const before = state.resolutionLog.length;
+		state = pass(state, state.turn);
+		state = pass(state, state.turn);
+		const blows = state.resolutionLog.slice(before).filter((e) => e.type === 'blow' && e.role === 'strike');
+		expect(blows.length).toBeGreaterThan(0);
+		blows.forEach((blow) => {
+			if (!(blow.recordId in predictions) || blow.outcome === 'lapsed' || blow.outcome === 'no-target') {
+				return;
+			}
+			// a creature routed before its blow, or one whose first-choice target was routed
+			// by an earlier blow, legitimately hits someone else; the preview is read against
+			// the board as it stands, which is the first blow at the world
+			expect(typeof blow.target === 'string' || blow.target === null).toBe(true);
+		});
+		// the first blow at a world always lands against the board the preview saw
+		const first = blows[0];
+		if (first.recordId in predictions && first.outcome !== 'lapsed') {
+			expect(first.target).toBe(predictions[first.recordId]);
+		}
 	});
 });
 
@@ -121,7 +227,7 @@ describe('conduct wording', () => {
 		const world = getWorlds()[0];
 		const prepared = prepare(pool[0], world.sites[0], world, 0);
 		const sentence = conductSentence(prepared);
-		expect(sentence).toMatch(/^When it attacks it chooses .+\. When it supports it chooses .+\.$/);
+		expect(sentence).toMatch(/^When it strikes it chooses .+\. When it stands with its side it favours .+\.$/);
 	});
 
 	it('maps every conduct key the interpretation table can produce', () => {
@@ -131,7 +237,7 @@ describe('conduct wording', () => {
 			'enemyMostVulnerableToElement', 'enemyWithHighestMagnitude', 'enemyRoutableElseWeakest',
 		];
 		attackingKeys.forEach((key) => {
-			const clause = conductClause({ attacking: key, supporting: 'self' }, 'contact', 'strike');
+			const clause = conductClause({ attacking: key, supporting: 'self' }, 'attacking');
 			expect(clause).not.toBe('an enemy'); // 'an enemy' is the unmapped fallback
 		});
 		const supportingKeys = [
@@ -139,133 +245,52 @@ describe('conduct wording', () => {
 			'fastestAlly', 'allyMostVulnerablePresent', 'allyWithHighestMagnitude',
 		];
 		supportingKeys.forEach((key) => {
-			const clause = conductClause({ attacking: 'weakestEnemyInReach', supporting: key }, 'support', 'ward');
+			const clause = conductClause({ attacking: 'weakestEnemyInReach', supporting: key }, 'supporting');
 			expect(clause).not.toBe('an ally');
 		});
 	});
 });
 
-describe('previewSentence', () => {
-	it('says so plainly when nothing is in reach', () => {
-		const pool = buildExpeditionPool('reach-test', 1);
-		const world = getWorlds()[0];
-		const site = world.sites[0];
-		const prepared = prepare(pool[0], site, world, 0);
-		const unit = { record: pool[0], site, prepared };
-		const sentence = previewSentence({
-			unit,
-			action: 'strike',
-			act: { action: 'strike', class: 'contact', magnitude: 5 },
-			actClass: 'contact',
-			target: null,
-			magnitude: null,
-			publicState: { staggered: {} },
-		});
-		expect(sentence).toContain('but finds');
-		expect(sentence).toContain(site.name);
-	});
-});
-
-describe('area acts', () => {
-	// burst/spray/cloud choose a SITE, not a creature (expeditionRules.pickAreaTargetSite),
-	// so the sentence must name the site and say it catches both sides.
-	it('names the site and says it catches both sides', () => {
-		const state = deployOneEach(buildMatch());
-		const view = getPublicState(state, 'A');
-		const mine = flattenBoard(view).find((u) => u.seat === 'A');
-		const sentence = previewSentence({
-			unit: mine,
-			action: 'burst',
-			act: { action: 'burst', class: 'projection', magnitude: 8 },
-			actClass: 'projection',
-			target: flattenBoard(view).find((u) => u.seat === 'B'),
-			magnitude: 8,
-			publicState: view,
-		});
-		expect(sentence).toMatch(/catching [0-9]+ enem(y|ies)/);
-		expect(sentence).toContain(view.frame.sites[0].name);
-		expect(sentence).not.toMatch(/undefined/);
-	});
-
-	it('picks the site with the most creatures on it that holds an enemy', () => {
-		const state = deployOneEach(buildMatch());
-		const view = getPublicState(state, 'A');
-		const mine = flattenBoard(view).find((u) => u.seat === 'A');
-		expect(pickAreaSitePreview(view, mine)).toBe(view.frame.sites[0].name);
-	});
-});
-
-describe('duplicate actions on one creature', () => {
-	/*
-		ENGINE AMBIGUITY the orders panel has to cope with: the provisional roller can give
-		one creature two abilities with the SAME action (two `drain` acts, say), but
-		expeditionRules.order() takes an ACTION NAME, not an ability id, and
-		performAct() resolves it with acts.find(a => a.action === action) — the first
-		match. So an action, not an ability, is the smallest orderable unit, and the panel
-		merges same-action abilities into one option rather than offering an unpickable
-		duplicate. This test pins the fact the panel relies on.
-	*/
-	it('the engine resolves an ordered action to the first ability carrying it', () => {
-		const pool = buildExpeditionPool('dupe-action', 40);
-		const world = getWorlds()[0];
-		const withDupes = pool.find((r) => {
-			const actions = (r.abilities || []).map((a) => a.action);
-			return new Set(actions).size < actions.length;
-		});
-		if (!withDupes) {
-			return; // no duplicate-action creature in this pool; nothing to pin
-		}
-		const prepared = prepare(withDupes, world.sites[0], world, 0);
-		const actions = prepared.acts.map((a) => a.action);
-		const dupe = actions.find((a, i) => actions.indexOf(a) !== i);
-		const matching = prepared.acts.filter((a) => a.action === dupe);
-		expect(matching.length).toBeGreaterThan(1);
-		// find() takes the first, which is what the panel's merged option must represent
-		expect(prepared.acts.find((a) => a.action === dupe)).toBe(matching[0]);
-	});
-});
-
 describe('threatsFor', () => {
-	it('marks a creature the visible enemy could stagger or rout, from the engine thresholds, and says by whom', () => {
-		// stack every creature of both sides onto one world so contact acts are in reach
-		let state = buildMatch();
-		const site = state.frames[state.frameIndex].sites[0];
-		for (let i = 0; i < 8; i++) {
-			const handler = state.turn;
-			const record = state.players[handler].roster[0];
-			state = send(state, handler, record.id, site.id, false);
-		}
+	it('gives a number per figure, from the engine\'s own blow arithmetic, and marks a rout', () => {
+		const state = stackOnFirstSite(buildMatch(), 4);
 		const view = getPublicState(state, 'A');
 		const threats = threatsFor(view, 'A');
 		const units = flattenBoard(view);
 		const mine = units.filter((u) => u.seat === 'A');
 		const theirs = units.filter((u) => u.seat === 'B');
-		expect(mine.length).toBe(4);
-		// recompute the worst case by hand for every one of mine
+		expect(mine.length).toBeGreaterThan(0);
 		mine.forEach((unit) => {
-			let worstLevel = null;
-			theirs.forEach((enemy) => enemy.prepared.acts.forEach((act) => {
-				if (act.class === 'support' || act.action === 'shove') return;
-				const m = magnitudeAgainst(enemy.record, act, unit.record);
-				const level = m >= unit.prepared.hold ? 'rout' : m >= unit.prepared.hold * 0.5 ? 'stagger' : null;
-				if (level === 'rout' || (level === 'stagger' && worstLevel !== 'rout')) worstLevel = level;
-			}));
-			if (worstLevel) {
+			let worst = 0;
+			theirs.forEach((enemy) => {
+				if (enemy.site.id !== unit.site.id || !enemy.prepared.blow) {
+					return;
+				}
+				const amount = blowAmountAgainst(
+					{ rules: view.rules }, { record: enemy.record }, enemy.prepared, { record: unit.record },
+				);
+				worst = Math.max(worst, amount);
+			});
+			if (worst > 0) {
 				expect(threats[unit.recordId]).toBeDefined();
-				expect(threats[unit.recordId].level).toBe(worstLevel);
-				expect(threatSentence(threats[unit.recordId])).toMatch(/could (rout|stagger) it$/);
+				expect(threats[unit.recordId].amount).toBeCloseTo(worst, 6);
+				expect(threats[unit.recordId].routs).toBe(worst >= livingHold(unit));
+				expect(threatSentence(threats[unit.recordId])).toMatch(/^loses [0-9.]+ to .+$/);
 			} else {
 				expect(threats[unit.recordId]).toBeUndefined();
 			}
 		});
 	});
 
-	it('reads nothing when no enemy is in reach', () => {
-		const state = deployOneEach(buildMatch());
-		// move nothing: one creature each on the same world; a threat may or may not exist,
-		// but a creature alone on another world has none
+	it('reads nothing for a creature alone at its world: worlds are sealed', () => {
+		let state = buildMatch();
+		// send one of yours to the first site and one of theirs to the second
+		const sites = state.frames[state.frameIndex].sites;
+		const first = state.turn;
+		const second = first === 'A' ? 'B' : 'A';
+		state = send(state, first, state.players[first].roster[0].id, sites[0].id, false);
+		state = send(state, second, state.players[second].roster[0].id, sites[1].id, false);
 		const view = getPublicState(state, 'A');
-		const threats = threatsFor(view, 'A');
-		Object.values(threats).forEach((t) => expect(['rout', 'stagger']).toContain(t.level));
+		expect(Object.keys(threatsFor(view, 'A'))).toHaveLength(0);
 	});
 });

@@ -13,9 +13,19 @@
 	Flags:
 		--matches=N      matches per configuration (default 200)
 		--seed=S         RNG seed, any string or number (default 7)
+		--rules=k=v;k=v  rule overrides for the whole run, e.g. --rules=shieldCap=half.
+		                 Every lever of the interpretation layer is a rules key, so any
+		                 section can be read at a setting that is not the default.
 		--md=<path>      also write the whole report as a markdown file
 		--json=<path>    also write the summarized report object as JSON
 		--only=a,b       run a subset of sections: regret, spread, decided, ablation, draft
+		--sweep=<rules>=<values>
+		                 rerun the chosen sections once per value and print one row each.
+		                 <rules> is one rule name, or several joined by ':'; <values> is a
+		                 comma-separated list of matching value tuples, also joined by ':'.
+		                 The two sweeps the base redesign asks for:
+		                   --sweep=magnitudeScale=0.55,0.8,1.1,1.5
+		                   --sweep=holdFloor:holdCeiling=-3.6:23.1,-1.2:21.0,2.8:17.6,6.0:14.9
 
 	Five sections, one per lever in the principles doc:
 
@@ -43,22 +53,22 @@
 	(p +/- 1.96*sqrt(p(1-p)/n)) so a designer can tell a signal from noise at the batch
 	size actually run. Deterministic under --seed.
 
-	Runtime: the ablation section is seven configurations by five rivals by --matches, so
+	Runtime: the ablation section is nine configurations by five rivals by --matches, so
 	it is by far the most expensive part. At the measured ~600 matches/second on this
 	laptop the default 200 finishes the whole run in well under a minute, so no reduced
 	ablation default is needed.
 */
 
 import {
-	createMatch, send, pass, order, commitOrders, relocateVanguard, getPublicState,
+	createMatch, send, pass, relocateVanguard, getPublicState,
 	createRngState, nextRandom,
 } from '../expeditionRules.js';
 import {
-	ROSTER_SIZE, SENDABLE, FRAMES_PER_MATCH, SITES_TO_CLINCH, RETURNED_SEND_COST,
+	ROSTER_SIZE, SENDABLE, FRAMES_PER_MATCH, SITES_TO_CLINCH, RETURNED_SEND_COST, ROLE,
 } from '../expeditionInterpretation.js';
-import { chooseSend, chooseOrders, scoreSends, RIVALS, rivalById, DEFAULT_RIVAL_ID } from '../expeditionBot.js';
+import { chooseSend, scoreSends, RIVALS, rivalById, DEFAULT_RIVAL_ID } from '../expeditionBot.js';
 import { buildExpeditionPool } from '../roster.js';
-import { prepare } from '../creatureOnTable.js';
+import { prepare, roleOf } from '../creatureOnTable.js';
 import { buildDraftPools, botDraft } from '../draft.js';
 import { getWorlds } from '../sites.js';
 import fs from 'node:fs';
@@ -80,6 +90,10 @@ export function parseArgs(argv) {
 		const raw = m[2];
 		if (key === 'md' || key === 'json') {
 			args[key] = raw;
+		} else if (key === 'sweep') {
+			args.sweep = parseSweep(raw);
+		} else if (key === 'rules') {
+			args.rules = parseRules(raw);
 		} else if (key === 'only') {
 			args.only = raw.split(',').map((s) => s.trim()).filter((s) => ALL_SECTIONS.includes(s));
 		} else {
@@ -87,6 +101,65 @@ export function parseArgs(argv) {
 		}
 	});
 	return args;
+}
+
+/*
+	parseSweep('magnitudeScale=0.55,0.8,1.1') -> { rules: ['magnitudeScale'], values: [[0.55],[0.8],[1.1]] }
+	parseSweep('holdFloor:holdCeiling=2.8:17.6,6:14.9') -> two rules, two-value tuples
+
+	One flag, because the hold compression is two numbers that only mean anything together
+	(docs/design/reclamation-base-redesign.md's Measurement step 2 sweeps a RATIO, and the
+	ratio is set by the floor and the ceiling at once).
+*/
+/*
+	parseRules('shieldCap=half;bolsterFloor=1.5;roles.area=false') -> a rules object.
+	Same grammar as the simulator's --rules, so one habit works in both tools.
+*/
+export function parseRules(raw) {
+	const rules = {};
+	String(raw).split(';').filter(Boolean).forEach((pair) => {
+		const eq = pair.indexOf('=');
+		if (eq < 0) {
+			return;
+		}
+		const key = pair.slice(0, eq).trim();
+		const text = pair.slice(eq + 1).trim();
+		let value = text;
+		if (text === 'true' || text === 'false') {
+			value = text === 'true';
+		} else if (text !== '' && !isNaN(Number(text))) {
+			value = Number(text);
+		}
+		if (key.startsWith('roles.')) {
+			rules.roles = rules.roles || {};
+			rules.roles[key.slice('roles.'.length)] = value;
+			return;
+		}
+		rules[key] = value;
+	});
+	return rules;
+}
+
+export function parseSweep(raw) {
+	const eq = raw.indexOf('=');
+	if (eq < 0) {
+		return null;
+	}
+	const rules = raw.slice(0, eq).split(':').map((x) => x.trim()).filter(Boolean);
+	const values = raw.slice(eq + 1).split(',').map((tuple) => tuple.split(':').map((v) => Number(v.trim())));
+	if (rules.length === 0 || values.some((tuple) => tuple.length !== rules.length || tuple.some((v) => Number.isNaN(v)))) {
+		return null;
+	}
+	return { rules, values };
+}
+
+// a sweep value tuple as a rules override object
+export function sweepRulesOf(sweep, tuple) {
+	const rules = {};
+	sweep.rules.forEach((name, i) => {
+		rules[name] = tuple[i];
+	});
+	return rules;
 }
 
 // ---------------------------------------------------------------------------
@@ -339,6 +412,35 @@ function policyNeverContest(publicState, ownRoster, handler) {
 	return { type: 'send', recordId: pick.record.id, siteId: pick.site.id, hidden: false };
 }
 
+/*
+	alwaysPresenceFirst: the proctor's own scoring, but every bolster and shield in the
+	roster goes before any blow creature does. The base redesign's Measurement step 5 asks
+	for it: if leading with the presences beats the proctor, the two presence roles are
+	priced too cheaply; if it never comes close, they are priced too dearly.
+*/
+function policyAlwaysPresenceFirst(publicState, ownRoster, handler, rng) {
+	const me = publicState.players[handler];
+	if (me.passed) {
+		return { type: 'pass', reason: 'already-passed' };
+	}
+	if (remainingSendsOf(publicState, ownRoster, handler) <= 0) {
+		return { type: 'pass', reason: 'no-sendable-creatures' };
+	}
+	const rules = publicState.rules || null;
+	const presences = ownRoster.filter((r) => {
+		const role = roleOf(r, rules);
+		return role === ROLE.BOLSTER || role === ROLE.SHIELD;
+	});
+	if (presences.length === 0) {
+		return chooseSend(publicState, ownRoster, handler, rng, null);
+	}
+	const scored = scoreSends(publicState, presences, handler, null);
+	if (!scored.best) {
+		return chooseSend(publicState, ownRoster, handler, rng, null);
+	}
+	return { type: 'send', recordId: scored.best.record.id, siteId: scored.best.site.id, hidden: false };
+}
+
 // the proctor itself, wrapped in the same signature
 function policyProctor(publicState, ownRoster, handler, rng) {
 	return chooseSend(publicState, ownRoster, handler, rng, null);
@@ -356,6 +458,7 @@ export const NAIVE_POLICIES = [
 	{ id: 'alwaysHidden', label: 'always hidden', send: policyAlwaysHidden },
 	{ id: 'alwaysStack', label: 'always stack', send: policyAlwaysStack },
 	{ id: 'neverContest', label: 'never contest (secure only)', send: policyNeverContest },
+	{ id: 'alwaysPresenceFirst', label: 'always presence first (bolster/shield before any blow)', send: policyAlwaysPresenceFirst },
 ];
 
 export const PROCTOR_POLICY = { id: 'proctor', label: 'Court proctor (reference)', send: policyProctor };
@@ -402,6 +505,21 @@ export function playMatch(options) {
 	let routs = 0;
 	let error = null;
 
+	let worldsResolved = 0;
+	let resolveChangedLeader = 0;
+
+	// the per-side hold standing at each site right now, straight off the entries the
+	// engine maintains (assumption 5 makes currentHold a real number on the entry)
+	function marginsNow(frame) {
+		const margins = {};
+		frame.sites.forEach((site) => {
+			const holdA = (state.board[site.id].A || []).reduce((sum, e) => sum + (e.currentHold || 0), 0);
+			const holdB = (state.board[site.id].B || []).reduce((sum, e) => sum + (e.currentHold || 0), 0);
+			margins[site.id] = holdA - holdB;
+		});
+		return margins;
+	}
+
 	let guard = 0;
 	const GUARD_LIMIT = 20000;
 
@@ -410,14 +528,23 @@ export function playMatch(options) {
 		if (state.phase !== 'deploy') {
 			break;
 		}
-		const frame = state.frames[state.frameIndex];
+		const frameIndex = state.frameIndex;
+		const frame = state.frames[frameIndex];
+		// Deploy ends inside pass(), which runs Resolve and Judge in one step, so the
+		// pre-resolution readings are retaken before every action and the last pair is the
+		// one that describes this round.
+		let logBefore = state.resolutionLog.length;
+		let marginsBefore = marginsNow(frame);
 
-		while (state.phase === 'deploy' && guard < GUARD_LIMIT) {
+		while (state.phase === 'deploy' && state.frameIndex === frameIndex && guard < GUARD_LIMIT) {
 			guard++;
 			const handler = state.turn;
 			if (handler === null) {
 				break;
 			}
+			logBefore = state.resolutionLog.length;
+			marginsBefore = marginsNow(frame);
+
 			const publicState = getPublicState(state, handler);
 			const ownRoster = state.players[handler].roster;
 
@@ -426,8 +553,7 @@ export function playMatch(options) {
 			if (collectSpread && handler === spreadSeat && !publicState.players[handler].passed) {
 				const scored = scoreSends(publicState, ownRoster, handler, null);
 				if (scored.candidates.length > 0) {
-					const sample = summarizeSpread(scored, publicState.frameIndex);
-					spreadSamples.push(sample);
+					spreadSamples.push(summarizeSpread(scored, publicState.frameIndex));
 				}
 			}
 
@@ -440,6 +566,8 @@ export function playMatch(options) {
 					return finish();
 				}
 				state = relocated;
+				logBefore = state.resolutionLog.length;
+				marginsBefore = marginsNow(frame);
 				action = policy[handler](getPublicState(state, handler), state.players[handler].roster, handler, rngLike);
 				if (collectSpread && handler === spreadSeat) {
 					// the sample above was taken before the relocation moved the board; drop
@@ -464,6 +592,21 @@ export function playMatch(options) {
 					if (collectSpread && handler === spreadSeat && spreadSamples.length > 0) {
 						spreadSamples[spreadSamples.length - 1].chosePass = false;
 					}
+					// fold the arriving creature into the pre-resolution margin, in case
+					// this send was the last action before an auto-pass resolved the round
+					if (nextState.phase !== 'deploy' || nextState.frameIndex !== frameIndex) {
+						const site = frame.sites.find((x) => x.id === action.siteId);
+						const arriving = prepare(
+							state.players[handler].roster.find((r) => r.id === action.recordId),
+							site, site.world, 0, { rules: state.rules },
+						).hold;
+						marginsBefore = {
+							...marginsBefore,
+							[action.siteId]: marginsBefore[action.siteId] + (handler === 'A' ? arriving : -arriving),
+						};
+					} else {
+						marginsBefore = marginsNow(nextState.frames[frameIndex]);
+					}
 				}
 			} else {
 				nextState = pass(state, handler);
@@ -478,33 +621,23 @@ export function playMatch(options) {
 			state = nextState;
 		}
 
-		if (state.phase === 'orders') {
-			['A', 'B'].forEach((handler) => {
-				const publicState = getPublicState(state, handler);
-				const orders = chooseOrders(publicState, handler, null);
-				Object.keys(orders).forEach((creatureId) => {
-					const next = order(state, handler, creatureId, orders[creatureId]);
-					if (next) {
-						state = next;
+		const newEvents = state.resolutionLog.slice(logBefore);
+		newEvents.forEach((ev) => {
+			if (ev.outcome === 'routed') {
+				routs++;
+			}
+		});
+		const judgeEvent = newEvents.find((ev) => ev.type === 'judge');
+		if (judgeEvent && judgeEvent.siteResults) {
+			Object.keys(judgeEvent.siteResults).forEach((siteId) => {
+				const result = judgeEvent.siteResults[siteId];
+				const before = marginsBefore[siteId] || 0;
+				const leaderAfterDeploy = before > 0 ? 'A' : (before < 0 ? 'B' : null);
+				if (leaderAfterDeploy && result.winner) {
+					worldsResolved++;
+					if (leaderAfterDeploy !== result.winner) {
+						resolveChangedLeader++;
 					}
-				});
-			});
-			const logBefore = state.resolutionLog.length;
-			let next = commitOrders(state, 'A');
-			if (!next) {
-				error = 'commitOrders(A) failed';
-				return finish();
-			}
-			state = next;
-			next = commitOrders(state, 'B');
-			if (!next) {
-				error = 'commitOrders(B) failed';
-				return finish();
-			}
-			state = next;
-			state.resolutionLog.slice(logBefore).forEach((ev) => {
-				if (ev.outcome === 'routed') {
-					routs++;
 				}
 			});
 			scoreByRound.push({ A: state.players.A.sitesWon, B: state.players.B.sitesWon });
@@ -526,6 +659,8 @@ export function playMatch(options) {
 			hiddenSends,
 			returnedSends,
 			routs,
+			worldsResolved,
+			resolveChangedLeader,
 			scoreByRound,
 			spreadSamples,
 		};
@@ -607,13 +742,13 @@ function winRateA(results) {
 	policy as a sanity line (a policy that cannot beat random is not a policy). The proctor
 	against itself is the fifty-percent reference the whole table is read against.
 */
-export function sectionRegret({ matches, seed, pool }) {
-	const proctorVsProctor = winRateA(runBatch({ matches, seed, pool, policyA: PROCTOR_POLICY.send, policyB: PROCTOR_POLICY.send }));
-	const proctorVsRandom = winRateA(runBatch({ matches, seed, pool, policyA: PROCTOR_POLICY.send, policyB: RANDOM_POLICY.send }));
+export function sectionRegret({ matches, seed, pool, rules }) {
+	const proctorVsProctor = winRateA(runBatch({ matches, seed, pool, rules, policyA: PROCTOR_POLICY.send, policyB: PROCTOR_POLICY.send }));
+	const proctorVsRandom = winRateA(runBatch({ matches, seed, pool, rules, policyA: PROCTOR_POLICY.send, policyB: RANDOM_POLICY.send }));
 
 	const rows = NAIVE_POLICIES.map((policy) => {
-		const vsProctorResults = runBatch({ matches, seed, pool, policyA: policy.send, policyB: PROCTOR_POLICY.send });
-		const vsRandomResults = runBatch({ matches, seed, pool, policyA: policy.send, policyB: RANDOM_POLICY.send });
+		const vsProctorResults = runBatch({ matches, seed, pool, rules, policyA: policy.send, policyB: PROCTOR_POLICY.send });
+		const vsRandomResults = runBatch({ matches, seed, pool, rules, policyA: policy.send, policyB: RANDOM_POLICY.send });
 		const done = vsProctorResults.filter((r) => !r.error);
 		return {
 			id: policy.id,
@@ -626,7 +761,7 @@ export function sectionRegret({ matches, seed, pool }) {
 	});
 
 	// the proctor's own sends per match, for the same column
-	const proctorSelf = runBatch({ matches, seed, pool, policyA: PROCTOR_POLICY.send, policyB: PROCTOR_POLICY.send });
+	const proctorSelf = runBatch({ matches, seed, pool, rules, policyA: PROCTOR_POLICY.send, policyB: PROCTOR_POLICY.send });
 	const proctorSends = average(proctorSelf.filter((r) => !r.error).map((r) => r.sendsBySeat.A));
 
 	// the flags the principles doc asks for: within five points of the proctor's own
@@ -672,9 +807,9 @@ export function sectionRegret({ matches, seed, pool }) {
 	Samples every deploy decision the proctor makes as side A against a proctor side B, and
 	counts how many candidates sit within ten percent of the best value.
 */
-export function sectionSpread({ matches, seed, pool }) {
+export function sectionSpread({ matches, seed, pool, rules }) {
 	const results = runBatch({
-		matches, seed, pool,
+		matches, seed, pool, rules,
 		policyA: PROCTOR_POLICY.send,
 		policyB: PROCTOR_POLICY.send,
 		collectSpread: true,
@@ -828,6 +963,12 @@ export function matchShapeOf(results) {
 		tiedAfterRound2: rate(tiedAfterTwo, done.length),
 		thirdRoundChangedLeader: rate(thirdRoundChangedLeader, done.length),
 		routsPerMatch: average(done.map((r) => r.routs)),
+		// the base redesign's own gauge for the magnitude scale (assumption 12): how often
+		// Resolve handed a world to the side that was behind at the end of Deploy
+		resolveChangedLeaderRate: rate(
+			done.reduce((n, r) => n + (r.resolveChangedLeader || 0), 0),
+			done.reduce((n, r) => n + (r.worldsResolved || 0), 0),
+		),
 		hiddenSendRate: rate(done.reduce((n, r) => n + r.hiddenSends, 0), done.reduce((n, r) => n + r.sends, 0)),
 		returnedSendRate: rate(done.reduce((n, r) => n + r.returnedSends, 0), done.reduce((n, r) => n + r.sends, 0)),
 		winRateA: rate(done.filter((r) => r.winner === 'A').length, done.length),
@@ -839,12 +980,12 @@ export function matchShapeOf(results) {
 		proctor: matchShape, byRival: [{ id, name, shape }], readings,
 	}
 */
-export function sectionDecided({ matches, seed, pool }) {
-	const proctorResults = runBatch({ matches, seed, pool, policyA: PROCTOR_POLICY.send, policyB: PROCTOR_POLICY.send });
+export function sectionDecided({ matches, seed, pool, rules }) {
+	const proctorResults = runBatch({ matches, seed, pool, rules, policyA: PROCTOR_POLICY.send, policyB: PROCTOR_POLICY.send });
 	const proctor = matchShapeOf(proctorResults);
 
 	const byRival = RIVALS.map((rival) => {
-		const results = runBatch({ matches, seed, pool, policyA: policyForRival(rival), policyB: PROCTOR_POLICY.send });
+		const results = runBatch({ matches, seed, pool, rules, policyA: policyForRival(rival), policyB: PROCTOR_POLICY.send });
 		return { id: rival.id, name: rival.name, shape: matchShapeOf(results) };
 	});
 
@@ -872,13 +1013,15 @@ export const ABLATIONS = [
 	{ id: 'noHidden', label: 'no hidden sends', rules: { hiddenSends: false } },
 	{ id: 'noLoki', label: 'no Loki line', rules: { lokiLine: false } },
 	{ id: 'noTrailing', label: 'no trailing bonus', rules: { trailingBonus: 0 } },
-	{ id: 'noInitiative', label: 'no initiative (sent order)', rules: { initiative: true } },
-	{ id: 'noWard', label: 'no ward', rules: { disabledActs: ['ward'] } },
-	{ id: 'noMend', label: 'no mend', rules: { disabledActs: ['mend'] } },
+	{ id: 'noInitiative', label: 'no initiative (sent order)', rules: { initiative: false } },
+	{ id: 'noHiddenFirst', label: 'no hidden-first', rules: { hiddenFirst: false } },
+	// the three role ablations (docs/design/reclamation-base-redesign.md Measurement step
+	// 4): a role switched off degrades every creature that has it, so each role has to be
+	// shown to carry weight rather than assumed to
+	{ id: 'noArea', label: 'no area role (areas strike instead)', rules: { roles: { area: false } } },
+	{ id: 'noBolster', label: 'no bolster role (bolsterers just hold)', rules: { roles: { bolster: false } } },
+	{ id: 'noShield', label: 'no shield role (shielders just hold)', rules: { roles: { shield: false } } },
 ];
-// the initiative row is written out longhand below rather than inline, so the flag reads
-// the way the rest of the table does
-ABLATIONS.find((a) => a.id === 'noInitiative').rules = { initiative: false };
 
 /*
 	sectionAblation({ matches, seed, pool }) -> {
@@ -891,7 +1034,7 @@ ABLATIONS.find((a) => a.id === 'noInitiative').rules = { initiative: false };
 	means the difference from the baseline cell exceeds the baseline interval's half width -
 	the smallest difference this batch size can actually resolve.
 */
-export function sectionAblation({ matches, seed, pool }) {
+export function sectionAblation({ matches, seed, pool, rules }) {
 	const rows = ABLATIONS.map((ablation) => {
 		const rivalWinRates = {};
 		let shapeResults = [];
@@ -900,7 +1043,8 @@ export function sectionAblation({ matches, seed, pool }) {
 				matches, seed, pool,
 				policyA: policyForRival(rival),
 				policyB: PROCTOR_POLICY.send,
-				rules: ablation.rules,
+				// the ablation's own switch layered over whatever a sweep is holding fixed
+				rules: { ...(rules || {}), ...ablation.rules },
 			});
 			rivalWinRates[rival.id] = winRateA(results);
 			if (rival.id === DEFAULT_RIVAL_ID) {
@@ -975,10 +1119,14 @@ export function sectionAblation({ matches, seed, pool }) {
 	win rate of the side that kept it, and its mean hold across the nine worlds of that
 	Proving.
 */
-export function sectionDraft({ matches, seed }) {
+export function sectionDraft({ matches, seed, rules }) {
 	const proctor = rivalById(DEFAULT_RIVAL_ID);
 	const bySpecies = {};
 	const byElement = {};
+	// the base redesign's own draft reading (assumption 4 puts every creature in exactly
+	// one of four roles, so "is any role always kept, or never" is the question the
+	// species table cannot answer)
+	const byRole = {};
 
 	function bump(table, key, field, amount = 1) {
 		table[key] = table[key] || { dealt: 0, kept: 0, keeperWins: 0, keeperDecided: 0, holdSum: 0, holdN: 0 };
@@ -988,8 +1136,8 @@ export function sectionDraft({ matches, seed }) {
 	for (let i = 0; i < matches; i++) {
 		const matchSeed = `${seed}-draft-${i}`;
 		const { poolA, poolB, frames } = buildDraftPools(matchSeed);
-		const keepA = new Set(botDraft(poolA, frames, proctor));
-		const keepB = new Set(botDraft(poolB, frames, proctor));
+		const keepA = new Set(botDraft(poolA, frames, proctor, { rules }));
+		const keepB = new Set(botDraft(poolB, frames, proctor, { rules }));
 		const rosterA = [...keepA].map((id) => poolA.find((r) => r.id === id));
 		const rosterB = [...keepB].map((id) => poolB.find((r) => r.id === id));
 
@@ -997,6 +1145,7 @@ export function sectionDraft({ matches, seed }) {
 			matchSeed,
 			rosterA,
 			rosterB,
+			rules,
 			policyA: PROCTOR_POLICY.send,
 			policyB: PROCTOR_POLICY.send,
 		});
@@ -1009,7 +1158,8 @@ export function sectionDraft({ matches, seed }) {
 				const species = record.species || 'unknown';
 				const element = (record.element && record.element.primary) || 'unknown';
 				const hold = holdAcrossFrames(record, frames);
-				[[bySpecies, species], [byElement, element]].forEach(([table, key]) => {
+				const role = roleOf(record, rules);
+				[[bySpecies, species], [byElement, element], [byRole, role]].forEach(([table, key]) => {
 					bump(table, key, 'dealt');
 					bump(table, key, 'holdSum', hold);
 					bump(table, key, 'holdN');
@@ -1040,6 +1190,7 @@ export function sectionDraft({ matches, seed }) {
 		});
 	}
 
+	const roleRows = toRows(byRole);
 	const speciesRows = toRows(bySpecies);
 	const elementRows = toRows(byElement);
 
@@ -1077,7 +1228,12 @@ export function sectionDraft({ matches, seed }) {
 		readings.push(`By element: dominant ${domElements.map((r) => r.key).join(', ') || 'none'}; dead ${deadElements.map((r) => r.key).join(', ') || 'none'}.`);
 	}
 
-	return { bySpecies: speciesRows, byElement: elementRows, topKeep, bottomKeep, readings };
+	// how many species sit outside the fairness band the principles doc sets, which is the
+	// gauge assumption 11 names for the draft
+	const outOfKeepBand = speciesRows.filter((r) => r.keepRate && (r.keepRate.p < 0.3 || r.keepRate.p > 0.9));
+	readings.push(`${outOfKeepBand.length} of ${speciesRows.length} species sit outside the 30 to 90 percent keep band.`);
+
+	return { bySpecies: speciesRows, byElement: elementRows, byRole: roleRows, outOfKeepBand: outOfKeepBand.length, topKeep, bottomKeep, readings };
 }
 
 // mean hold across every site of the Proving's nine worlds, read through prepare() the
@@ -1100,36 +1256,103 @@ function holdAcrossFrames(record, frames) {
 // ---------------------------------------------------------------------------
 
 export function runValidation(args = {}) {
-	const opts = { matches: 200, seed: 7, only: null, ...args };
+	const opts = { matches: 200, seed: 7, only: null, rules: null, ...args };
 	const sections = opts.only && opts.only.length > 0 ? opts.only : ALL_SECTIONS;
 	const pool = buildExpeditionPool(opts.seed, 87);
+	const { matches, seed, rules } = opts;
 
 	const report = {
 		meta: {
-			matches: opts.matches,
-			seed: opts.seed,
+			matches,
+			seed,
 			sections,
+			rules: rules || null,
 			generatedAt: null, // filled by the CLI so tests stay deterministic
 		},
 	};
 
 	if (sections.includes('regret')) {
-		report.regret = sectionRegret({ matches: opts.matches, seed: opts.seed, pool });
+		report.regret = sectionRegret({ matches, seed, pool, rules });
 	}
 	if (sections.includes('spread')) {
-		report.spread = sectionSpread({ matches: opts.matches, seed: opts.seed, pool });
+		report.spread = sectionSpread({ matches, seed, pool, rules });
 	}
 	if (sections.includes('decided')) {
-		report.decided = sectionDecided({ matches: opts.matches, seed: opts.seed, pool });
+		report.decided = sectionDecided({ matches, seed, pool, rules });
 	}
 	if (sections.includes('ablation')) {
-		report.ablation = sectionAblation({ matches: opts.matches, seed: opts.seed, pool });
+		report.ablation = sectionAblation({ matches, seed, pool, rules });
 	}
 	if (sections.includes('draft')) {
-		report.draft = sectionDraft({ matches: opts.matches, seed: opts.seed });
+		report.draft = sectionDraft({ matches, seed, rules });
 	}
 
 	return report;
+}
+
+/*
+	runSweep(args) -> { rules, rows: [{ values, label, readings... }] }
+
+	Measurement steps 2 and 3 of docs/design/reclamation-base-redesign.md: rerun the
+	chosen sections once per value of one lever (or one tuple of levers that only mean
+	anything together, like the hold floor and ceiling) and print one row each, so the
+	first setting that meets the gauges can be read straight off the table. Every row runs
+	the same seeds, so a number that moves moved because the lever moved.
+*/
+export function runSweep(args = {}) {
+	const { sweep } = args;
+	const rows = sweep.values.map((tuple) => {
+		const rules = { ...(args.rules || {}), ...sweepRulesOf(sweep, tuple) };
+		const report = runValidation({ ...args, rules });
+		const shape = report.decided ? report.decided.proctor : null;
+		const worstNaive = report.regret
+			? report.regret.rows.reduce((best, r) => (r.vsProctor && (!best || r.vsProctor.p > best.vsProctor.p) ? r : best), null)
+			: null;
+		const speciesRows = report.draft ? report.draft.bySpecies : [];
+		const outOfBand = speciesRows.filter((r) => r.keepRate && (r.keepRate.p < 0.3 || r.keepRate.p > 0.9)).length;
+		return {
+			values: tuple,
+			label: sweep.rules.map((name, i) => `${name}=${tuple[i]}`).join(', '),
+			routsPerMatch: shape ? shape.routsPerMatch : null,
+			resolveChangedLeaderRate: shape ? shape.resolveChangedLeaderRate : null,
+			decidedAfterRound1: shape ? shape.decidedAfterRound1 : null,
+			comebackRate: shape ? shape.comebackRate : null,
+			worstNaive: worstNaive ? { id: worstNaive.id, vsProctor: worstNaive.vsProctor } : null,
+			speciesOutOfKeepBand: speciesRows.length > 0 ? { outOfBand, of: speciesRows.length } : null,
+			report,
+		};
+	});
+	return { rules: sweep.rules, rows };
+}
+
+export function printSweep(sweepReport) {
+	console.log('\n=== lever sweep ===');
+	console.log(`lever(s): ${sweepReport.rules.join(', ')}`);
+	const headers = ['setting', 'routs/match', 'resolve changed leader', 'decided after r1', 'comeback', 'worst naive', 'species out of keep band'];
+	const rows = sweepReport.rows.map((row) => [
+		row.label,
+		row.routsPerMatch === null ? '-' : row.routsPerMatch.toFixed(2),
+		row.resolveChangedLeaderRate ? fmtPctCi(row.resolveChangedLeaderRate) : '-',
+		row.decidedAfterRound1 ? fmtPctCi(row.decidedAfterRound1) : '-',
+		row.comebackRate ? fmtPctCi(row.comebackRate) : '-',
+		row.worstNaive ? `${row.worstNaive.id} ${fmtPct(row.worstNaive.vsProctor)}` : '-',
+		row.speciesOutOfKeepBand ? `${row.speciesOutOfKeepBand.outOfBand} of ${row.speciesOutOfKeepBand.of}` : '-',
+	]);
+	textTable(headers, rows).forEach((line) => console.log(line));
+}
+
+export function sweepToMarkdown(sweepReport) {
+	const headers = ['setting', 'routs/match', 'resolve changed leader', 'decided after r1', 'comeback', 'worst naive', 'species out of keep band'];
+	const rows = sweepReport.rows.map((row) => [
+		row.label,
+		row.routsPerMatch === null ? '-' : row.routsPerMatch.toFixed(2),
+		row.resolveChangedLeaderRate ? fmtPctCi(row.resolveChangedLeaderRate) : '-',
+		row.decidedAfterRound1 ? fmtPctCi(row.decidedAfterRound1) : '-',
+		row.comebackRate ? fmtPctCi(row.comebackRate) : '-',
+		row.worstNaive ? `${row.worstNaive.id} ${fmtPct(row.worstNaive.vsProctor)}` : '-',
+		row.speciesOutOfKeepBand ? `${row.speciesOutOfKeepBand.outOfBand} of ${row.speciesOutOfKeepBand.of}` : '-',
+	]);
+	return [`## Lever sweep: ${sweepReport.rules.join(', ')}`, '', ...mdTable(headers, rows), ''].join('\n');
 }
 
 // ---------------------------------------------------------------------------
@@ -1229,6 +1452,7 @@ function decidedBlocks(decided) {
 		`  tied after round 2: ${fmtRate(p.tiedAfterRound2)}`,
 		`  third round changed the leader: ${fmtRate(p.thirdRoundChangedLeader)}`,
 		`  routs per match: ${p.routsPerMatch.toFixed(2)}`,
+		`  resolution changed the leader at ${fmtRate(p.resolveChangedLeaderRate)} of contested worlds`,
 	];
 	const rows = [shapeRow('proctor mirror', p)];
 	decided.byRival.forEach((r) => {
@@ -1278,6 +1502,16 @@ function draftRowsOf(rows) {
 	]);
 }
 
+function roleDraftRows(rows) {
+	return rows.map((r) => [
+		r.key,
+		String(r.dealt),
+		r.keepRate ? fmtPctCi(r.keepRate) : '-',
+		r.keeperWinRate ? fmtPctCi(r.keeperWinRate) : '-',
+		r.meanHold.toFixed(2),
+	]);
+}
+
 function draftBlocks(draft) {
 	const headers = ['key', 'dealt', 'keep rate', 'keeper win rate', 'mean hold', 'flag'];
 	const elementRows = draft.byElement.slice().sort((a, b) => (b.keepRate ? b.keepRate.p : 0) - (a.keepRate ? a.keepRate.p : 0));
@@ -1288,6 +1522,8 @@ function draftBlocks(draft) {
 		{ type: 'table', headers, rows: draftRowsOf(draft.bottomKeep) },
 		{ type: 'lines', lines: ['by primary element'] },
 		{ type: 'table', headers, rows: draftRowsOf(elementRows) },
+		{ type: 'lines', lines: ['by role'] },
+		{ type: 'table', headers: ['role', 'dealt', 'keep rate', 'keeper win rate', 'mean hold'], rows: roleDraftRows(draft.byRole || []) },
 		{ type: 'reading', lines: draft.readings },
 	];
 }
@@ -1373,6 +1609,20 @@ const isMainModule = typeof process !== 'undefined' && !process.env.JEST_WORKER_
 if (isMainModule) {
 	const args = parseArgs(process.argv.slice(2));
 	const startedAt = Date.now();
+	if (args.sweep) {
+		const sweepReport = runSweep(args);
+		printSweep(sweepReport);
+		console.log(`\nelapsed: ${((Date.now() - startedAt) / 1000).toFixed(2)}s`);
+		if (args.md) {
+			fs.writeFileSync(args.md, `${sweepToMarkdown(sweepReport)}\n`);
+			console.log(`wrote ${args.md}`);
+		}
+		if (args.json) {
+			fs.writeFileSync(args.json, JSON.stringify(sweepReport.rows.map((r) => ({ ...r, report: undefined })), null, 2));
+			console.log(`wrote ${args.json}`);
+		}
+		process.exit(0);
+	}
 	const report = runValidation(args);
 	const elapsedMs = Date.now() - startedAt;
 	report.meta.generatedAt = new Date().toISOString().slice(0, 10);

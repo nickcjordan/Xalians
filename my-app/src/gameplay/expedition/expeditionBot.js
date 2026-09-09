@@ -2,23 +2,28 @@
 	Expedition, the bot.
 
 	Per docs/design/reclamation-design.md's "The bot" section: public information only.
-	Deploy is an allocation problem across three sites with a roster that has to last
+	Deploy is the only decision left (docs/design/reclamation-base-redesign.md assumption
+	1), and it is an allocation problem across three sites with a roster that has to last
 	three worlds, so the bot thinks in two currencies: sites it can flip or secure on this
-	world, and sends it must keep for the worlds still to come. Orders pick, per creature,
-	the act with the best expected outcome against the visible board.
+	world, and sends it must keep for the worlds still to come.
+
+	Since the base redesign a send is worth its whole expected effect on the world's
+	margin, not just the hold it puts on the table: the creature's hold after strain and
+	bolster, PLUS what its role is worth there (roleValueOf below). chooseOrders is gone
+	with the Orders phase.
 
 	Only ever reads publicState + the bot's OWN roster; getPublicState never exposes the
 	opponent's roster contents or hidden creatures' identity or site.
 
 	Five rival handlers (RIVALS, below) are the same bot with its tunables overridden by a
 	weights set, so the ladder is one engine playing five styles rather than five separate
-	implementations. The Court proctor is the bot exactly as it always was: chooseSend and
-	chooseOrders both take an optional rival argument that defaults to the proctor, so every
-	existing call site keeps working unchanged.
+	implementations. The Court proctor is the bot exactly as it always was: chooseSend
+	takes an optional rival argument that defaults to the proctor, so every existing call
+	site keeps working unchanged.
 */
 
-import { prepare, traitKeywordsOf, magnitudeAgainst } from './creatureOnTable.js';
-import { getActClass, ACT_CLASS, SENDABLE, SITES_TO_CLINCH, FRAMES_PER_MATCH, RETURNED_SEND_COST, STAGGER_FRACTION } from './expeditionInterpretation.js';
+import { prepare, traitKeywordsOf, magnitudeAgainst, roleOf, round1 } from './creatureOnTable.js';
+import { ROLE, SENDABLE, SITES_TO_CLINCH, FRAMES_PER_MATCH, RETURNED_SEND_COST } from './expeditionInterpretation.js';
 
 // --- tunables ----------------------------------------------------------------------
 
@@ -80,8 +85,33 @@ function visibleEntries(publicState, siteId, seat) {
 	return (publicState.board[siteId][seat] || []).filter((e) => e.record);
 }
 
+// the match's rules travel on the public state (hold compression, magnitude scale, role
+// ablations), so every number the bot reads is the number the engine will use
+function rulesOf(publicState) {
+	return (publicState && publicState.rules) || null;
+}
+
+function prepareAt(publicState, siteId, entry, opts = {}) {
+	return prepare(entry.record, siteFromPublic(publicState, siteId), null, entry.sentIndex, {
+		rules: rulesOf(publicState),
+		...opts,
+	});
+}
+
 function holdOf(publicState, siteId, entry) {
-	return prepare(entry.record, siteFromPublic(publicState, siteId), null, entry.sentIndex).hold;
+	// the board already carries the engine's own current hold for every visible creature;
+	// prepare() is the fallback for a view built before the field existed
+	if (typeof entry.currentHold === 'number') {
+		return entry.currentHold;
+	}
+	return prepareAt(publicState, siteId, entry).hold;
+}
+
+// does a bolsterer of this seat already stand at this site?
+function bolsterPresent(publicState, siteId, seat) {
+	return visibleEntries(publicState, siteId, seat).some(
+		(e) => !e.hidden && roleOf(e.record, rulesOf(publicState)) === ROLE.BOLSTER,
+	);
 }
 
 function siteHoldTotal(publicState, siteId, seat) {
@@ -126,7 +156,8 @@ function evaluateVanguardRelocation(publicState, handler, margins, weights) {
 		return null; // defensive: should always be visible to its own handler
 	}
 
-	const fromHold = prepare(vanguardEntry.record, siteFromPublic(publicState, fromSiteId), null, vanguardEntry.sentIndex).hold;
+	const fromHold = prepareAt(publicState, fromSiteId, vanguardEntry).hold
+		+ roleValueOf(publicState, vanguardEntry.record, siteFromPublic(publicState, fromSiteId), vanguardEntry.sentIndex, handler);
 	const fromMargin = margins[fromSiteId];
 	// value of STAYING put, in the same units evaluateSend/candidates use below: a site
 	// currently flippable/securable is worth losing if the vanguard leaves, so "staying"
@@ -138,8 +169,11 @@ function evaluateVanguardRelocation(publicState, handler, margins, weights) {
 		if (site.id === fromSiteId) {
 			return;
 		}
-		const prepared = prepare(vanguardEntry.record, site, null, vanguardEntry.sentIndex);
-		const h = prepared.hold;
+		const prepared = prepare(vanguardEntry.record, site, null, vanguardEntry.sentIndex, {
+			rules: rulesOf(publicState),
+			bolstered: bolsterPresent(publicState, site.id, handler),
+		});
+		const h = prepared.hold + roleValueOf(publicState, vanguardEntry.record, site, vanguardEntry.sentIndex, handler, prepared);
 		const m = margins[site.id];
 		// margin at the destination as it would be AFTER arriving (m does not yet include
 		// the vanguard's own hold there, since it currently stands elsewhere)
@@ -251,8 +285,14 @@ export function scoreSends(publicState, ownRoster, handler, rival) {
 			return;
 		}
 		frame.sites.forEach((site) => {
-			const prepared = prepare(record, site, null, me.sentCount);
-			const h = prepared.hold;
+			const prepared = prepare(record, site, null, me.sentCount, {
+				rules: rulesOf(publicState),
+				bolstered: bolsterPresent(publicState, site.id, handler),
+			});
+			// what this send moves the world's margin by: its own hold, plus what its role
+			// is worth standing here (the base redesign's four roles)
+			const roleValue = roleValueOf(publicState, record, site, me.sentCount, handler, prepared);
+			const h = prepared.hold + roleValue;
 			const m = margins[site.id];
 			const stacked = (publicState.board[site.id][handler] || []).length;
 			let value;
@@ -269,7 +309,10 @@ export function scoreSends(publicState, ownRoster, handler, rival) {
 			if (cost > 1) {
 				value -= weights.holdCost * h * (cost - 1);
 			}
-			candidates.push({ record, site, prepared, margin: m, value, flips: m <= 0 && h > -m, cost });
+			candidates.push({
+				record, site, prepared, margin: m, value, flips: m <= 0 && h > -m, cost,
+				roleValue, effect: h, role: prepared.role,
+			});
 		});
 	});
 	candidates.sort((a, b) => b.value - a.value);
@@ -373,138 +416,180 @@ export function chooseSend(publicState, ownRoster, handler, rng, rival) {
 	// A rules ablation can turn hidden sends off entirely (publicState.rules.hiddenSends);
 	// the bot must never propose a send the engine would reject, so the flag gates hiding
 	// before the bias is ever consulted.
+	// Hidden first (assumption 9) is what gives hiding its teeth: a hidden creature's blow
+	// lands before anyone else's at its world, so the value of hiding rises by the blow
+	// the creature would land. A blow that would be worth nothing here (a presence, or a
+	// striker with nothing to hit) gains nothing from going first, and is sent openly
+	// unless the site is contested on hold alone.
 	const rulesAllowHiding = !publicState.rules || publicState.rules.hiddenSends !== false;
-	const resultMargin = pick.margin + pick.prepared.hold;
+	const hiddenFirstOn = !publicState.rules || publicState.rules.hiddenFirst !== false;
+	const hideBonus = hiddenFirstOn ? (pick.roleValue || 0) : 0;
+	const effect = pick.prepared.hold + hideBonus;
+	const resultMargin = pick.margin + effect;
+	// "securing a lead" is unchanged in spirit: the send leaves the site far enough ahead
+	// that the rival would have to match this whole creature again just to get back to
+	// even. What has changed is that `effect` now counts the role's own worth as well as
+	// the hold it puts on the table.
 	const securesALead = resultMargin >= pick.prepared.hold;
 	const rivalCanStillAnswer = !opp.passed;
-	const baseRuleSaysHide = canHide && rivalCanStillAnswer && !securesALead && pick.prepared.hold >= pick.margin;
+	const baseRuleSaysHide = canHide && rivalCanStillAnswer && !securesALead && effect >= pick.margin;
 	const wantsHidden = applyHideBias(baseRuleSaysHide, canHide, weights.hideBias, rng);
 	const hidden = rulesAllowHiding && wantsHidden;
 
 	return { type: 'send', recordId: pick.record.id, siteId: pick.site.id, hidden };
 }
 
-// --- orders --------------------------------------------------------------------------
-
-// stagger/rout points a strike of `magnitude` would score against a creature of `hold`
-function strikeValue(magnitude, hold) {
-	if (hold <= 0) {
-		return 0;
-	}
-	const stagger = magnitude >= hold * 0.5 ? 1 : 0;
-	const rout = magnitude >= hold ? 1 : 0;
-	return stagger + rout;
-}
+// --- what a role is worth at a world -------------------------------------------------
 
 /*
-	Estimates the value of ordering `action` for `record` at `site` against the visible
-	board, from public information only.
+	Since the base redesign (docs/design/reclamation-base-redesign.md), a send is worth
+	its whole expected effect on the world's margin, and a creature's role is most of
+	that effect. roleValueOf returns that effect in HOLD UNITS, so it adds straight onto
+	the creature's own hold in scoreSends and the flip/secure arithmetic above it does
+	not have to change:
+
+	- strike:  the amount it would take off its conduct target, capped by that target's
+	           remaining hold (removing eight from a creature holding three is worth
+	           three, not eight)
+	- area:    the same, summed over every visible enemy at the world, minus the same
+	           summed over its own allies there, since an area catches both sides
+	- shield:  the largest enemy blow at the world it would cancel
+	- bolster: the hold it restores to its allies there, itself included
+
+	Everything is read from public information: visible enemies only, and their holds as
+	the board prints them. A hidden enemy is unseen and is priced by the margin's own
+	hidden-hold haircut, not here.
 */
-function estimateActionValue(publicState, record, site, sentIndex, action, handler) {
-	const frame = publicState.frame;
-	const prepared = prepare(record, site, null, sentIndex);
-	const act = prepared.acts.find((a) => a.action === action);
-	if (action === 'hold' || !act) {
+
+// the amount `attacker` would take off `victim`, before the cap
+function rawBlowAmount(publicState, siteId, attackerEntry, victimEntry, attackerPrepared) {
+	const prepared = attackerPrepared || prepareAt(publicState, siteId, attackerEntry);
+	if (!prepared.blow) {
 		return 0;
 	}
+	const rules = rulesOf(publicState);
+	let amount = magnitudeAgainst(attackerEntry.record, prepared.blow, victimEntry.record);
+	if (prepared.role === ROLE.AREA) {
+		amount *= rules && typeof rules.areaDiscount === 'number' ? rules.areaDiscount : 0.6;
+	}
+	if (traitsOf(victimEntry.record).includes('armored')) {
+		const reduction = rules && typeof rules.armoredReduction === 'number' ? rules.armoredReduction : 0.25;
+		amount *= 1 - reduction;
+	}
+	return round1(Math.max(0, amount));
+}
+
+// the enemy the actor's conduct is most likely to pick, read from public information.
+// A compact reading of expeditionInterpretation.CONDUCT_BY_ARCHETYPE's attacking lines:
+// the weakest-seeking lines take the lowest hold, the strongest-seeking lines the
+// highest, and everything else falls back to the earliest send, which is the engine's
+// own default.
+function conductTargetGuess(publicState, siteId, prepared, enemies) {
+	if (enemies.length === 0) {
+		return null;
+	}
+	const holds = enemies.map((e) => ({ entry: e, hold: holdOf(publicState, siteId, e) }));
+	const line = prepared.conduct.attacking;
+	const strongest = ['strongestEnemyInReach', 'enemyThreateningWeakestAlly', 'enemyWithHighestMagnitude'];
+	const weakest = ['weakestEnemyInReach', 'slowerEnemyWeakestFirst', 'enemyRoutableElseWeakest', 'enemyWithLowestMagnitude'];
+	if (strongest.includes(line)) {
+		return holds.reduce((best, c) => (c.hold > best.hold ? c : best)).entry;
+	}
+	if (weakest.includes(line)) {
+		return holds.reduce((best, c) => (c.hold < best.hold ? c : best)).entry;
+	}
+	if (line === 'enemyMostVulnerableToElement') {
+		return holds.reduce((best, c) => {
+			const eff = magnitudeAgainst(prepared.record, prepared.blow || { magnitude: 1 }, c.entry.record);
+			const bestEff = magnitudeAgainst(prepared.record, prepared.blow || { magnitude: 1 }, best.entry.record);
+			return eff > bestEff ? c : best;
+		}).entry;
+	}
+	return holds.reduce((best, c) => (c.entry.sentIndex < best.entry.sentIndex ? c : best)).entry;
+}
+
+export function roleValueOf(publicState, record, site, sentIndex, handler, prepared) {
+	const seat = handler;
 	const opponentSeat = otherSeat(handler);
-	const cls = getActClass(action);
+	const view = prepared || prepare(record, site, null, sentIndex, { rules: rulesOf(publicState) });
+	const enemies = visibleEntries(publicState, site.id, opponentSeat).filter((e) => !e.hidden);
+	const allies = visibleEntries(publicState, site.id, seat);
+	// the creature the bot is scoring is not on the board yet, so it stands in as its own
+	// board entry wherever the arithmetic needs one
+	const self = { recordId: record.id, record, sentIndex, currentHold: view.hold };
 
-	const enemiesAt = (siteId) => visibleEntries(publicState, siteId, opponentSeat).filter((e) => !e.hidden);
-	const alliesAt = (siteId) => visibleEntries(publicState, siteId, handler);
-
-	if (act.class === 'support') {
-		if (action === 'ward') {
-			const threatHere = enemiesAt(site.id).length;
-			const projectionThreat = frame.sites.some((s) => enemiesAt(s.id).some((e) => (e.record.abilities || []).some((a) => getActClass(a.action) === ACT_CLASS.PROJECTION)));
-			return threatHere > 0 || projectionThreat ? 1 : 0.25;
+	if (view.role === ROLE.STRIKE) {
+		const target = conductTargetGuess(publicState, site.id, view, enemies);
+		if (!target) {
+			return 0;
 		}
-		if (action === 'mend') {
-			// score mend on the staggers the visible enemy COULD deal this round, not on
-			// observed ones: orders are given before resolution, so `staggered` is always
-			// empty at order time and the old rule (any ally already staggered) ordered mend
-			// once in 200 matches (validation pass, 2026-09-07). An ally is threatened when
-			// an enemy at this site, or a projection-capable enemy anywhere in the frame, has
-			// a strike whose magnitude against that ally reaches the stagger fraction of its
-			// current hold.
-			const allies = alliesAt(site.id);
-			const threatened = allies.some((ally) => {
-				const threshold = STAGGER_FRACTION * holdOf(publicState, site.id, ally);
-				return frame.sites.some((s) => enemiesAt(s.id).some((enemy) => {
-					const enemyPrepared = prepare(enemy.record, s, null, enemy.sentIndex);
-					return enemyPrepared.acts.some((enemyAct) => {
-						if (enemyAct.class === 'support') {
-							return false;
-						}
-						if (s.id !== site.id && getActClass(enemyAct.action) !== ACT_CLASS.PROJECTION) {
-							return false;
-						}
-						return magnitudeAgainst(enemy.record, enemyAct, ally.record) >= threshold;
-					});
-				}));
-			});
-			return threatened ? 1.5 : 0;
-		}
-		if (action === 'terrorize') {
-			return enemiesAt(site.id).length > 0 ? 1 + act.magnitude / 10 : 0;
-		}
-		return 0;
+		return Math.min(rawBlowAmount(publicState, site.id, self, target, view), holdOf(publicState, site.id, target));
 	}
 
-	// area acts: everything at one site, both sides
-	if (action === 'burst' || action === 'spray' || action === 'cloud') {
-		let bestSiteValue = 0;
-		frame.sites.forEach((s) => {
-			const gain = enemiesAt(s.id).reduce((sum, e) => sum + strikeValue(act.magnitude, holdOf(publicState, s.id, e)), 0);
-			const loss = alliesAt(s.id).reduce((sum, e) => sum + strikeValue(act.magnitude, holdOf(publicState, s.id, e)), 0);
-			bestSiteValue = Math.max(bestSiteValue, gain - loss);
-		});
-		return bestSiteValue > 0 ? bestSiteValue + act.magnitude / 20 : 0;
+	if (view.role === ROLE.AREA) {
+		const gain = enemies.reduce(
+			(sum, e) => sum + Math.min(rawBlowAmount(publicState, site.id, self, e, view), holdOf(publicState, site.id, e)),
+			0,
+		);
+		const loss = allies.reduce(
+			(sum, e) => sum + Math.min(rawBlowAmount(publicState, site.id, self, e, view), holdOf(publicState, site.id, e)),
+			0,
+		);
+		return round1(gain - loss);
 	}
 
-	// single-target acts: best target in reach
-	const reachSites = cls === ACT_CLASS.PROJECTION ? frame.sites.map((s) => s.id) : [site.id];
-	let best = 0;
-	reachSites.forEach((siteId) => {
-		enemiesAt(siteId).forEach((e) => {
-			best = Math.max(best, strikeValue(act.magnitude, holdOf(publicState, siteId, e)));
+	if (view.role === ROLE.SHIELD) {
+		// the largest enemy blow standing here, capped by what it could actually take off
+		// the ally it would land on (the weakest of my creatures there, this one included)
+		const protectees = [...allies, self];
+		const weakest = protectees.reduce(
+			(best, e) => (holdOf(publicState, site.id, e) < holdOf(publicState, site.id, best) ? e : best),
+			protectees[0],
+		);
+		let largest = 0;
+		enemies.forEach((enemy) => {
+			const enemyPrepared = prepareAt(publicState, site.id, enemy);
+			const amount = Math.min(
+				rawBlowAmount(publicState, site.id, enemy, weakest, enemyPrepared),
+				holdOf(publicState, site.id, weakest),
+			);
+			largest = Math.max(largest, amount);
 		});
-	});
-	return best > 0 ? best + act.magnitude / 20 : 0;
-}
+		// rules.shieldCap prices the cancel, so the bot must price it the same way the
+		// engine will pay it out (expeditionRules.resolveWorld, the shield step)
+		const rules = rulesOf(publicState);
+		const cap = (rules && rules.shieldCap) || 'none';
+		if (cap === 'ownHold') {
+			return round1(Math.min(largest, view.hold));
+		}
+		if (cap === 'half') {
+			// the blow is cancelled but half of it comes off the shielder, so the net worth
+			// to the world's margin is half the blow
+			return round1(largest / 2);
+		}
+		return round1(largest);
+	}
 
-/*
-	chooseOrders(publicState, handler) -> { [creatureId]: actName }
-*/
-/*
-	chooseOrders(publicState, handler, rival) -> { [creatureId]: actName }
-
-	rival is accepted for symmetry with chooseSend and defaults to the Court proctor, but no
-	rival currently retunes Orders - every weight in RIVALS below is a Deploy-time knob. If a
-	rival ever needs an Orders habit (a bluffer that prefers projection acts, say), it is a
-	new weights key threaded through estimateActionValue the same way chooseSend's are.
-*/
-export function chooseOrders(publicState, handler, rival) {
-	const frame = publicState.frame;
-	const orders = {};
-	// a rules ablation can take acts off the table entirely (publicState.rules.disabledActs);
-	// order() rejects them, so the bot must never name one - `hold` is never disablable.
-	const disabled = new Set((publicState.rules && publicState.rules.disabledActs) || []);
-	frame.sites.forEach((site) => {
-		visibleEntries(publicState, site.id, handler).forEach((entry) => {
-			const record = entry.record;
-			const actions = ['hold', ...(record.abilities || []).map((a) => a.action).filter((a) => !disabled.has(a))];
-			let best = { action: 'hold', value: 0 };
-			actions.forEach((action) => {
-				const value = estimateActionValue(publicState, record, site, entry.sentIndex, action, handler);
-				if (value > best.value) {
-					best = { action, value };
-				}
-			});
-			orders[entry.recordId] = best.action;
+	if (view.role === ROLE.BOLSTER) {
+		// what arriving restores: every ally here recomputed with the strain lift, plus
+		// this creature's own lift, and nothing at all where a bolsterer already stands
+		if (bolsterPresent(publicState, site.id, seat)) {
+			return 0;
+		}
+		let restored = 0;
+		allies.forEach((ally) => {
+			const before = prepareAt(publicState, site.id, ally).hold;
+			const after = prepareAt(publicState, site.id, ally, { bolstered: true }).hold;
+			restored += Math.max(0, after - before);
 		});
-	});
-	return orders;
+		const selfBefore = prepare(record, site, null, sentIndex, { rules: rulesOf(publicState) }).hold;
+		const selfAfter = prepare(record, site, null, sentIndex, { rules: rulesOf(publicState), bolstered: true }).hold;
+		restored += Math.max(0, selfAfter - selfBefore);
+		return round1(restored);
+	}
+
+	// ROLE.NONE: a role switched off leaves a plain holder, worth exactly its own hold
+	return 0;
 }
 
 // --- the rivals ------------------------------------------------------------------------

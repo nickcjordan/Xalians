@@ -1,10 +1,10 @@
 import React from 'react';
-import { InfoGlyph, HiddenGlyph } from './reclamationGlyphs';
+import { InfoGlyph, HiddenGlyph, RoleGlyph } from './reclamationGlyphs';
 import XalianImage from '../../xalianImage';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
 import { team } from '../../../constants/designTokens';
 import { slotStateOf, siteHoldsFor } from './reclamationRoster';
-import { speciesLabel, formatHold } from './reclamationNarration';
+import { speciesLabel, formatHold, roleSentence } from './reclamationNarration';
 import { prepare, initiativeOf } from '../../../gameplay/expedition/creatureOnTable';
 import { SENDABLE, RETURNED_SEND_COST } from '../../../gameplay/expedition/expeditionInterpretation';
 
@@ -42,7 +42,12 @@ function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspec
 	// the Loki line: back from a lost world, sendable again at double cost
 	const returned = inHand && ((view.players[you].returned || []).includes(record.id));
 	const holds = inHand ? siteHoldsFor(record, view, you) : null;
-	const stealthy = prepare(record, view.frame.sites[0], null, 0).stealthy;
+	const readAt = prepare(record, view.frame.sites[0], null, 0, { rules: view.rules });
+	const stealthy = readAt.stealthy;
+	// the base redesign's one glyph per creature: the role it plays at Resolve, the same
+	// on the bench as on the plinth on the table and in the dossier
+	const role = readAt.role;
+	const roleLine = roleSentence(role, readAt.blowMagnitude);
 	const el = record.element.primary;
 	const classes = ['rec-plinth', `rec-plinth--${slot.state}`];
 	if (armed) classes.push('rec-plinth--armed');
@@ -72,7 +77,12 @@ function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspec
 					<XalianImage speciesName={record.species} primaryType={el} padding="0px" fill="black" filter={pieceShadowFilter(team.one, 44)} moreClasses="rec-plinth-art" />
 				</span>
 				<span className="rec-plinth-name">{speciesLabel(record)}</span>
-				<span className="rec-plinth-init g-mono" title="Initiative: the higher acts first when orders resolve">{Math.round(initiativeOf(record))}</span>
+				{role && role !== 'none' && (
+					<span className="rec-role-glyph rec-plinth-role" title={roleLine} aria-label={roleLine} data-role={role}>
+						<RoleGlyph role={role} />
+					</span>
+				)}
+				<span className="rec-plinth-init g-mono" title="Initiative: the higher blows land first when the worlds resolve">{Math.round(initiativeOf(record))}</span>
 				{inHand && holds && (
 					<span className="rec-lamps" aria-label="Where it holds well">
 						{holds.map((h) => (
@@ -141,7 +151,8 @@ function ReclamationBench({
 	const step = !yourTurn ? 0 : armed ? 2 : 1;
 	const rec = recommendation && recommendation.type === 'send' ? recommendation : null;
 	const suggestedRecordId = rec && !armed ? rec.recordId : null;
-	const armedStealthy = !!(armed && prepare(armed, view.frame.sites[0], null, 0).stealthy);
+	const armedRead = armed ? prepare(armed, view.frame.sites[0], null, 0, { rules: view.rules }) : null;
+	const armedStealthy = !!(armedRead && armedRead.stealthy);
 	const showHidden = armedStealthy && (advanced || (rec && rec.hidden));
 	const showFallback = !!vanguard && (advanced || (recommendation && recommendation.type === 'relocate'));
 
@@ -158,7 +169,8 @@ function ReclamationBench({
 		lead = 'Press a world to move your vanguard there. This does not spend your turn.';
 	} else if (step === 2) {
 		heading = `${speciesLabel(armed)} is lifted`;
-		lead = 'Press a world to send it there. Each world shows what it would hold.';
+		// the lead is the role sentence, the same one the dossier and the plinth print
+		lead = `${roleSentence(armedRead.role, armedRead.blowMagnitude)}. Press a world to send it there; each world shows what it would hold and what it would do.`;
 	} else {
 		heading = 'Lift a creature';
 		lead = sendsLeft === 0
@@ -175,7 +187,6 @@ function ReclamationBench({
 				</span>
 				<div className="rec-bench-say">
 					<h3 className="rec-bench-heading" key={heading}>{heading}</h3>
-					{sendsLeft === 0 && <p className="rec-bench-lead g-body">{lead}</p>}
 				</div>
 				<span className="rec-deploy-count" title={`${me.sentCount || 0} of ${cap} sends spent this Proving${cap > SENDABLE ? ", one of them the trailing seat's bonus this round" : ''}; ${(me.roster || []).length} in hand`}>
 					<span className="rec-sends" aria-hidden="true">
@@ -218,6 +229,11 @@ function ReclamationBench({
 					</div>
 				)}
 			</header>
+			{/* the lead rides on its own line under the head: with a creature lifted it is the
+			    role sentence, the same one the plinth, the dossier and the ghost preview print */}
+			{(sendsLeft === 0 || step === 2) && (
+				<p className="rec-bench-lead g-body" data-bench-lead>{lead}</p>
+			)}
 			<div className="rec-plinths" role="list">
 				{squad.map((record) => (
 					<Plinth

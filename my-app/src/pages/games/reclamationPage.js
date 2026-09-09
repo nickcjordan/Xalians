@@ -102,11 +102,11 @@ function RivalPlates({ rivalId, onChange }) {
 	);
 }
 
-// how a round goes, as four glyphs with a word each
+// how a round goes, as three glyphs with a word each (the base redesign: Deploy,
+// Resolve, Judge; there is no Orders phase and a creature's role is fixed at send)
 const PHASES = [
 	{ kind: 'deploy', word: 'Deploy', note: 'send a creature, or pass' },
-	{ kind: 'orders', word: 'Orders', note: 'each creature an act, sealed' },
-	{ kind: 'resolve', word: 'Resolve', note: 'acts strike at hold' },
+	{ kind: 'resolve', word: 'Resolve', note: 'blows subtract from hold' },
 	{ kind: 'judge', word: 'Judge', note: 'more hold takes the world' },
 ];
 
@@ -441,7 +441,7 @@ class ReclamationPage extends React.Component {
 								</div>
 							</div>
 							<div className="rec-intro-actions">
-								<div className="rec-intro-mode" title={mode === 'simple' ? 'Simple: the suggested move is marked and orders go by nature.' : 'Advanced: every order, every number, hidden sends, the log and the dossiers.'}>
+								<div className="rec-intro-mode" title={mode === 'simple' ? 'Simple: the suggested move is marked and only what would rout is printed.' : 'Advanced: every number on the figures, the plan lines under a send, hidden sends, the log and the dossiers.'}>
 									<ModeSwitch mode={mode} onChange={this.setMode} />
 								</div>
 								<button type="button" className="g-key g-key--primary rec-enter" onClick={this.startMatch} data-enter>
@@ -455,7 +455,7 @@ class ReclamationPage extends React.Component {
 							<summary className="rec-fiction-summary">Why the frame</summary>
 							<div className="g-screen rec-rules-screen">
 								<div className="g-screen-line">The worlds were lost to war and plague, and no expedition goes in blind. Before Kozrak grants a Charter over a world, the claim is proved on the Court's <strong>frame</strong>: the Generators' own models of the fourteen worlds, run on Poseidas without the Generators. Only the fighting is simulated. The Charter, and the Tokens that come with it, are real.</div>
-								<div className="g-screen-line">Each round the frame loads three worlds side by side, every one at a different site of its surface, and no world is loaded twice in a Proving. Creatures on a won world stay in its model to hold the claim; the rest withdraw; either way they are out of the Proving. A pass is permanent for the round. The side that sends first in a round may, once, move its first creature to another world without spending a turn. A stealthy creature may be sent hidden.</div>
+								<div className="g-screen-line">Each round the frame loads three worlds side by side, every one at a different site of its surface, and no world is loaded twice in a Proving. When both handlers have passed, every world resolves at once: each creature does the one thing its nature does there, blows subtract from hold, and a creature driven to nothing is routed out of the Proving. Creatures on a won world stay in its model to hold the claim; the rest withdraw; either way they are out of the Proving. A pass is permanent for the round. The side that sends first in a round may, once, move its first creature to another world without spending a turn. A stealthy creature may be sent hidden, and its blow lands before all others.</div>
 							</div>
 						</details>
 					</div>

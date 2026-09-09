@@ -80,7 +80,7 @@ describe('createTelemetry: decision timing', () => {
 		expect(summary.decisions.deploy.hoversBeforeSend).toBe(2);
 	});
 
-	it('byRound groups deploy and orders means by round index', () => {
+	it('byRound groups deploy means by round index, and never an orders mean', () => {
 		const storage = makeFakeStorage();
 		const now = makeClock(0);
 		const telemetry = createTelemetry({ storage, now });
@@ -103,8 +103,10 @@ describe('createTelemetry: decision timing', () => {
 		const round0 = summary.byRound.find((r) => r.round === 0);
 		const round1 = summary.byRound.find((r) => r.round === 1);
 		expect(round0.deployMeanMs).toBe(1000);
-		expect(round0.ordersMeanMs).toBe(2000);
 		expect(round1.deployMeanMs).toBe(4000);
+		// THE BASE: the Orders phase is gone, so an 'orders' decision is accepted and
+		// dropped; the field stays at null so a summary written before the redesign parses
+		expect(round0.ordersMeanMs).toBeNull();
 		expect(round1.ordersMeanMs).toBeNull();
 	});
 
@@ -114,7 +116,9 @@ describe('createTelemetry: decision timing', () => {
 		telemetry.beginMatch({ seed: 4, rivalId: 'proctor', mode: 'simple', draft: 'none', resumed: false });
 		expect(() => telemetry.decisionEnd('orders', 'go')).not.toThrow();
 		const summary = telemetry.endMatch({ won: true, sitesYou: 5, sitesRival: 0, reason: 'clinched' });
+		// the orders field is kept at zeros for the shape, never filled
 		expect(summary.decisions.orders.count).toBe(0);
+		expect(summary.decisions.orders.meanMs).toBe(0);
 	});
 });
 

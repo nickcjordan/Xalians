@@ -1,4 +1,6 @@
-import { buildDraftPools, rateForDraft, botDraft, validateKeep, DRAFT_POOL_SIZE } from '../draft.js';
+import { buildDraftPools, rateForDraft, botDraft, validateKeep, poolMeanBlowOf, DRAFT_POOL_SIZE, MAX_PER_SPECIES, AREA_EXPECTED_CREATURES, BOLSTER_EXPECTED_ALLIES } from '../draft.js';
+import { roleOf } from '../creatureOnTable.js';
+import { ROLE, AREA_DISCOUNT, BOLSTER_FLOOR } from '../expeditionInterpretation.js';
 import { RIVALS } from '../expeditionBot.js';
 import { ROSTER_SIZE, WORLDS_PER_MATCH } from '../expeditionInterpretation.js';
 
@@ -127,5 +129,76 @@ describe('validateKeep', () => {
 		const ids = poolA.slice(0, ROSTER_SIZE - 1).map((r) => r.id);
 		ids.push('not-in-the-pool');
 		expect(validateKeep(poolA, ids)).toBe(false);
+	});
+});
+
+describe('the rating is hold plus role value', () => {
+	it('rates every creature as mean hold plus what its role is worth', () => {
+		const { poolA, frames } = buildDraftPools('rating-seed');
+		const poolMeanBlow = poolMeanBlowOf(poolA, frames, null);
+		poolA.forEach((record) => {
+			const r = rateForDraft(record, frames, { poolMeanBlow });
+			expect(r.role).toBe(roleOf(record, null));
+			expect(r.roleValue).toBeGreaterThanOrEqual(0);
+			expect(r.rating).toBeCloseTo(r.mean + r.roleValue, 5);
+		});
+	});
+
+	it('prices a strike at its mean blow and an area at the discounted blow times the expected count', () => {
+		const { poolA, frames } = buildDraftPools('rating-seed');
+		const meanBlowOf = (r) => r.byWorld.reduce((sum, w) => sum + w.blowMagnitude, 0) / r.byWorld.length;
+		const strike = poolA.find((x) => roleOf(x, null) === ROLE.STRIKE);
+		const area = poolA.find((x) => roleOf(x, null) === ROLE.AREA);
+		if (strike) {
+			const r = rateForDraft(strike, frames);
+			expect(r.roleValue).toBeCloseTo(meanBlowOf(r), 5);
+		}
+		if (area) {
+			const r = rateForDraft(area, frames);
+			expect(r.roleValue).toBeCloseTo(meanBlowOf(r) * AREA_DISCOUNT * AREA_EXPECTED_CREATURES, 5);
+		}
+	});
+
+	it('prices a bolster from its own grade lift and a shield from the pool mean blow', () => {
+		const { poolA, frames } = buildDraftPools('rating-seed');
+		const poolMeanBlow = poolMeanBlowOf(poolA, frames, null);
+		expect(poolMeanBlow).toBeGreaterThan(0);
+		const bolster = poolA.find((x) => roleOf(x, null) === ROLE.BOLSTER);
+		const shield = poolA.find((x) => roleOf(x, null) === ROLE.SHIELD);
+		if (bolster) {
+			const r = rateForDraft(bolster, frames);
+			const meanLift = r.byWorld.reduce((sum, w) => sum + w.bolsterLift, 0) / r.byWorld.length;
+			expect(r.roleValue).toBeCloseTo(meanLift * BOLSTER_EXPECTED_ALLIES + BOLSTER_FLOOR, 5);
+		}
+		if (shield) {
+			// the shipped shieldCap is 'half', so a cancel nets half a typical blow
+			expect(rateForDraft(shield, frames, { poolMeanBlow }).roleValue).toBeCloseTo(poolMeanBlow / 2, 5);
+			expect(rateForDraft(shield, frames, { poolMeanBlow, rules: { shieldCap: 'none' } }).roleValue).toBeCloseTo(poolMeanBlow, 5);
+		}
+	});
+});
+
+describe('the draft spread rule', () => {
+	it('never keeps more than MAX_PER_SPECIES of one species', () => {
+		for (let i = 0; i < 20; i++) {
+			const { poolA, frames } = buildDraftPools(`spread-${i}`);
+			const kept = botDraft(poolA, frames, null);
+			const counts = {};
+			kept.forEach((id) => {
+				const species = poolA.find((r) => r.id === id).species;
+				counts[species] = (counts[species] || 0) + 1;
+			});
+			Object.values(counts).forEach((n) => expect(n).toBeLessThanOrEqual(MAX_PER_SPECIES));
+		}
+	});
+
+	it('keeps at least one of every role the pool can offer', () => {
+		for (let i = 0; i < 20; i++) {
+			const { poolA, frames } = buildDraftPools(`spread-role-${i}`);
+			const poolRoles = new Set(poolA.map((r) => roleOf(r, null)));
+			const kept = botDraft(poolA, frames, null);
+			const keptRoles = new Set(kept.map((id) => roleOf(poolA.find((r) => r.id === id), null)));
+			poolRoles.forEach((role) => expect(keptRoles.has(role)).toBe(true));
+		}
 	});
 });

@@ -1,6 +1,6 @@
 import { chooseSend } from '../../../gameplay/expedition/expeditionBot';
 import { prepare } from '../../../gameplay/expedition/creatureOnTable';
-import { speciesLabel, formatHold } from './reclamationNarration';
+import { speciesLabel, formatHold, roleSentence } from './reclamationNarration';
 import { siteHoldTotal } from './reclamationPreview';
 
 /*
@@ -9,8 +9,11 @@ import { siteHoldTotal } from './reclamationPreview';
 
 	The recommendation is the bot's own choice for the handler's seat (expeditionBot
 	chooseSend, run without its randomizer so the same board always gives the same
-	advice). The reason is derived from the engine's numbers for that send, never from
-	the bot's internal score, so what the sentence says is what the table will show.
+	advice), which values a send by the hold it puts on a world PLUS what its role is
+	worth there (expeditionBot.scoreSends / roleValueOf). The reason is derived from the
+	engine's numbers for that send, never from the bot's internal score, so what the
+	sentence says is what the table will show; it names the hold and then the role, in the
+	same sentence the plinth, the bench and the dossier print.
 */
 
 const PASS_REASONS = {
@@ -28,7 +31,7 @@ function siteOf(view, siteId) {
 
 function sendReason(view, record, site, you) {
 	const opponent = you === 'A' ? 'B' : 'A';
-	const prepared = prepare(record, site, site.world, view.players[you].sentCount);
+	const prepared = prepare(record, site, site.world, view.players[you].sentCount, { rules: view.rules });
 	const mine = siteHoldTotal(view, site.id, you);
 	const theirs = siteHoldTotal(view, site.id, opponent);
 	const margin = mine - theirs;
@@ -53,6 +56,8 @@ function sendReason(view, record, site, you) {
 	} else if (prepared.strainLevel === 'strained') {
 		text += ' It is strained there.';
 	}
+	// what it does when the world resolves, in the one role sentence the whole table uses
+	text += ` ${roleSentence(prepared.role, prepared.blowMagnitude)}.`;
 	return text;
 }
 

@@ -1,14 +1,14 @@
 import React from 'react';
 import { prepare } from '../../../gameplay/expedition/creatureOnTable';
 import {
-	HOME_GROUND_MULTIPLIER, STAGGER_FRACTION, ROUT_FRACTION,
-	ARMORED_STAGGER_FRACTION, ARMORED_ROUT_FRACTION, STRAIN_MULTIPLIER, SEVERE_STRAIN_MULTIPLIER,
+	HOME_GROUND_MULTIPLIER, ARMORED_REDUCTION, STRAIN_MULTIPLIER, SEVERE_STRAIN_MULTIPLIER,
 } from '../../../gameplay/expedition/expeditionInterpretation';
 import { conductSentence } from './reclamationPreview';
-import { speciesLabel, formatHold } from './reclamationNarration';
+import { speciesLabel, formatHold, roleSentence } from './reclamationNarration';
+import { RoleGlyph } from './reclamationGlyphs';
 import XalianImage from '../../xalianImage';
 import {
-	speciesFacts, archetypeLabel, traitName, traitNature, actionName, instrumentName,
+	speciesFacts, archetypeLabel, traitName, traitNature,
 	elementName, sizeLine, toleranceLine, breathesLine, coveringName, bodyPlanName,
 } from './reclamationVocabulary';
 import { TRAIT } from '../../../gameplay/expedition/expeditionInterpretation';
@@ -24,6 +24,12 @@ const READ_TRAITS = new Set(Object.values(TRAIT));
 	Every number here comes from the engine's own prepare() for the site in question (or
 	the frame's first site, when the creature is still in the roster and has no site
 	yet), so what the panel says is what the rules will use.
+
+	THE BASE (docs/design/reclamation-base-redesign.md). The sixteen acts are gone, and so
+	are the act table and the stagger/rout threshold pair that used to head the spec: a
+	creature is a hold and ONE role, and blows subtract. The panel prints the role in the
+	same sentence the plinth and the bench print, the blow magnitude, and the armored
+	reduction where the trait applies.
 */
 function multiplierLines(record, prepared, site, world) {
 	const lines = [];
@@ -61,13 +67,13 @@ function temperamentWords(temperament) {
 	return words.length > 0 ? words.join(', ') : 'even-tempered throughout';
 }
 
-function ReclamationInspect({ record, site, frame, onClose }) {
+function ReclamationInspect({ record, site, frame, rules, onClose }) {
 	if (!record) {
 		return null;
 	}
 	const target = site || frame.sites[0];
 	const world = target.world;
-	const prepared = prepare(record, target, world, 0);
+	const prepared = prepare(record, target, world, 0, { rules });
 	const el = record.element.primary;
 	const armored = prepared.armored;
 	const facts = speciesFacts(record);
@@ -116,32 +122,30 @@ function ReclamationInspect({ record, site, frame, onClose }) {
 				))}
 				<span className="g-spec-key">Initiative</span>
 				<span className="g-spec-val">{formatHold(prepared.initiative)}</span>
-				<span className="g-spec-key">Stagger at</span>
-				<span className="g-spec-val">{armored ? `${ARMORED_STAGGER_FRACTION * 100}% of hold (armored)` : `${STAGGER_FRACTION * 100}% of hold`}</span>
-				<span className="g-spec-key">Rout at</span>
-				<span className="g-spec-val">{armored ? `${ARMORED_ROUT_FRACTION * 100}% of hold (armored)` : `${ROUT_FRACTION * 100}% of hold`}</span>
+				{prepared.blow && (
+					<>
+						<span className="g-spec-key">Blow</span>
+						<span className="g-spec-val">{formatHold(prepared.blowMagnitude)}{prepared.blowIsFallback ? ' (no attacking ability; the minimum)' : ` (${prepared.blow.name})`}</span>
+					</>
+				)}
+				{armored && (
+					<>
+						<span className="g-spec-key">Armored</span>
+						<span className="g-spec-val">blows against it are cut by {ARMORED_REDUCTION * 100}%</span>
+					</>
+				)}
 			</div>
 
 			<div className="rec-inspect-section">
-				<span className="g-label">Acts</span>
-				<table className="g-data rec-inspect-acts">
-					<thead>
-						<tr><th>Name</th><th>Act</th><th>By</th><th>Medium</th><th>Magnitude</th></tr>
-					</thead>
-					<tbody>
-						{prepared.acts.map((a) => (
-							<tr key={a.name} className={a.action === prepared.favoredAct.action ? 'rec-act-favored' : ''} title={a.class ? `${a.class} act` : undefined}>
-								<td>{a.name}{a.signature ? ' *' : ''}</td>
-								<td>{actionName(a.action).toLowerCase()}</td>
-								<td>{instrumentName(a.instrument).toLowerCase()}</td>
-								<td>{a.medium ? elementName(a.medium).toLowerCase() : ''}</td>
-								<td>{a.magnitude}</td>
-							</tr>
-						))}
-					</tbody>
-				</table>
+				<span className="g-label">Role</span>
+				<p className="g-body rec-inspect-role" data-inspect-role={prepared.role}>
+					{prepared.role && prepared.role !== 'none' && <RoleGlyph role={prepared.role} className="rec-inspect-role-glyph" />}
+					{roleSentence(prepared.role, prepared.blowMagnitude)}.
+				</p>
 				<p className="g-body rec-inspect-note">
-					By nature it performs {prepared.favoredAct.name || 'Hold'} when given no order. A starred act is its signature.
+					Its role is fixed the moment it is sent; there is nothing to order. {prepared.blow
+						? `It throws ${prepared.blow.name} for ${formatHold(prepared.blowMagnitude)}, before the element matchup against whatever it meets.`
+						: 'It throws no blow at all; standing at the world is what it does.'}
 				</p>
 				{signature && signature.description && (
 					<p className="g-body rec-inspect-signature">

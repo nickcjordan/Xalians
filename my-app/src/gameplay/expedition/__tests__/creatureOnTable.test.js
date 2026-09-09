@@ -1,8 +1,12 @@
 import {
 	baseHold, holdAtSite, worldMatchupMultiplier, strainLevel, strainMultiplierFor,
 	initiativeOf, buildActs, magnitudeOf, magnitudeAgainst, favoredAct, conductOf, prepare,
-	traitKeywordsOf,
+	traitKeywordsOf, roleOf, naturalRoleOf, blowActOf, liftedStrainLevel,
 } from '../creatureOnTable.js';
+import {
+	HOLD_FLOOR, HOLD_CEILING, RAW_ATTRIBUTE_MIN, RAW_ATTRIBUTE_MAX, ROLE, BOLSTER_FLOOR,
+	MAGNITUDE_SCALE,
+} from '../expeditionInterpretation.js';
 
 /*
 	Coverage for "The creature on the table" section of docs/design/reclamation-design.md:
@@ -45,15 +49,110 @@ function site(overrides = {}) {
 	};
 }
 
-describe('baseHold', () => {
-	test('mean of vitality, resilience, endurance / HOLD_DIVISOR(5)', () => {
-		// mean(60, 80, 70) = 70; 70 / 5 = 14
-		expect(baseHold(record())).toBeCloseTo(14, 5);
+// hold compression (docs/design/reclamation-base-redesign.md assumption 11)
+function compressed(raw, floor = HOLD_FLOOR, ceiling = HOLD_CEILING) {
+	return floor + ((raw - RAW_ATTRIBUTE_MIN) * (ceiling - floor)) / (RAW_ATTRIBUTE_MAX - RAW_ATTRIBUTE_MIN);
+}
+
+describe('baseHold: the hold compression', () => {
+	test('maps the raw mean of vitality, resilience and endurance onto [floor, ceiling]', () => {
+		// mean(60, 80, 70) = 70
+		expect(baseHold(record())).toBeCloseTo(compressed(70), 5);
 	});
 
-	test('typically lands in the 6-16 band across neutral attributes', () => {
-		const r = record({ attributes: { ...record().attributes, vitality: 50, resilience: 50, endurance: 50 } });
-		expect(baseHold(r)).toBeCloseTo(10, 5);
+	test('hits the compression endpoints exactly at the registry attribute range', () => {
+		const zero = record({ attributes: { ...record().attributes, vitality: 0, resilience: 0, endurance: 0 } });
+		const full = record({ attributes: { ...record().attributes, vitality: 100, resilience: 100, endurance: 100 } });
+		expect(baseHold(zero)).toBeCloseTo(HOLD_FLOOR, 5);
+		expect(baseHold(full)).toBeCloseTo(HOLD_CEILING, 5);
+	});
+
+	test('a rules object moves the floor and ceiling without touching a record', () => {
+		const r = record();
+		expect(baseHold(r, { holdFloor: 0, holdCeiling: 20 })).toBeCloseTo(compressed(70, 0, 20), 5);
+		// raising the floor compresses: two creatures land closer together
+		const weak = record({ attributes: { ...record().attributes, vitality: 30, resilience: 30, endurance: 30 } });
+		const flat = baseHold(r, { holdFloor: 0, holdCeiling: 20 }) / baseHold(weak, { holdFloor: 0, holdCeiling: 20 });
+		const tight = baseHold(r, { holdFloor: 6, holdCeiling: 15 }) / baseHold(weak, { holdFloor: 6, holdCeiling: 15 });
+		expect(tight).toBeLessThan(flat);
+	});
+});
+
+describe('roleOf: every creature is a hold and one role (assumption 4)', () => {
+	const strikeAbility = { name: 'Strike', action: 'strike', intensity: 60 };
+	const areaAbility = { name: 'Burst', action: 'burst', intensity: 60 };
+	const wardAbility = { name: 'Ward', action: 'ward', intensity: 60 };
+	const mendAbility = { name: 'Mend', action: 'mend', intensity: 60 };
+
+	test('bulwark and stalwart are shields, survivor and sage are bolsters', () => {
+		const both = [wardAbility, mendAbility];
+		expect(naturalRoleOf(record({ archetype: { key: 'bulwark' }, abilities: both }))).toBe(ROLE.SHIELD);
+		expect(naturalRoleOf(record({ archetype: { key: 'stalwart' }, abilities: both }))).toBe(ROLE.SHIELD);
+		expect(naturalRoleOf(record({ archetype: { key: 'survivor' }, abilities: both }))).toBe(ROLE.BOLSTER);
+		expect(naturalRoleOf(record({ archetype: { key: 'sage' }, abilities: both }))).toBe(ROLE.BOLSTER);
+	});
+
+	test('the abilities override the archetype when they clearly point one way', () => {
+		expect(naturalRoleOf(record({ archetype: { key: 'bulwark' }, abilities: [mendAbility] }))).toBe(ROLE.BOLSTER);
+		expect(naturalRoleOf(record({ archetype: { key: 'survivor' }, abilities: [wardAbility] }))).toBe(ROLE.SHIELD);
+	});
+
+	test('everyone else is a blow: area with an area ability, else strike', () => {
+		expect(naturalRoleOf(record({ archetype: { key: 'predator' }, abilities: [strikeAbility] }))).toBe(ROLE.STRIKE);
+		expect(naturalRoleOf(record({ archetype: { key: 'predator' }, abilities: [strikeAbility, areaAbility] }))).toBe(ROLE.AREA);
+	});
+
+	test('a role switched off degrades: area to a plain strike, a presence to a plain holder', () => {
+		const area = record({ archetype: { key: 'predator' }, abilities: [strikeAbility, areaAbility] });
+		const shield = record({ archetype: { key: 'bulwark' }, abilities: [wardAbility] });
+		const bolster = record({ archetype: { key: 'sage' }, abilities: [mendAbility] });
+		expect(roleOf(area, { roles: { area: false, bolster: true, shield: true } })).toBe(ROLE.STRIKE);
+		expect(roleOf(shield, { roles: { area: true, bolster: true, shield: false } })).toBe(ROLE.NONE);
+		expect(roleOf(bolster, { roles: { area: true, bolster: false, shield: true } })).toBe(ROLE.NONE);
+	});
+
+	test('blowActOf gives an area its area ability and a presence no blow at all', () => {
+		const area = record({ archetype: { key: 'predator' }, abilities: [strikeAbility, areaAbility] });
+		const acts = buildActs(area, 1, MAGNITUDE_SCALE);
+		expect(blowActOf(area, acts, ROLE.AREA).action).toBe('burst');
+		expect(blowActOf(area, acts, ROLE.SHIELD)).toBe(null);
+	});
+
+	test('a blow creature with no attacking ability at all still strikes, at the pool minimum', () => {
+		const wardOnly = record({ archetype: { key: 'predator' }, abilities: [wardAbility] });
+		const acts = buildActs(wardOnly, 1, MAGNITUDE_SCALE);
+		const blow = blowActOf(wardOnly, acts, ROLE.STRIKE);
+		expect(blow.fallback).toBe(true);
+		expect(blow.magnitude).toBeGreaterThan(0);
+	});
+});
+
+describe('bolster lifts one grade of strain (assumption 8)', () => {
+	test('liftedStrainLevel steps severe to strained and strained to comfortable', () => {
+		expect(liftedStrainLevel('severe')).toBe('strained');
+		expect(liftedStrainLevel('strained')).toBe('none');
+		expect(liftedStrainLevel('none')).toBe('none');
+	});
+
+	test('a comfortable creature takes the bolster floor instead of a grade', () => {
+		const r = record();
+		const w = world();
+		const s = site({ environment: { medium: 'gas', temperatureC: { min: -10, max: 40 } } });
+		const plain = holdAtSite(r, s, w);
+		const lifted = holdAtSite(r, s, w, { bolstered: true });
+		expect(plain.level).toBe('none');
+		expect(lifted.value).toBeCloseTo(plain.value + BOLSTER_FLOOR, 5);
+	});
+
+	test('a strained creature is recomputed at the comfortable multiplier', () => {
+		const r = record({ physiology: { breathes: ['gas'], environmentalTolerance: { ambientMedia: ['gas'], temperatureC: { min: 0, max: 5 } } } });
+		const w = world();
+		const s = site({ environment: { medium: 'gas', temperatureC: { min: 20, max: 30 } } });
+		const plain = holdAtSite(r, s, w);
+		const lifted = holdAtSite(r, s, w, { bolstered: true });
+		expect(plain.level).toBe('strained');
+		expect(lifted.effectiveLevel).toBe('none');
+		expect(lifted.value).toBeCloseTo(plain.value / strainMultiplierFor('strained'), 5);
 	});
 });
 
@@ -87,8 +186,8 @@ describe('holdAtSite: home ground and strain composition', () => {
 		const s = site({ environment: { medium: 'gas', temperatureC: { min: -10, max: 40 } } });
 		const { value, isHome } = holdAtSite(r, s, w);
 		expect(isHome).toBe(true);
-		// base 14 * matchup(rock-vs-rock = 1) * home(1.5) * strain(1) = 21
-		expect(value).toBeCloseTo(14 * 1 * 1.5, 5);
+		// baseHold * matchup(rock-vs-rock = 1) * home(1.5) * strain(1)
+		expect(value).toBeCloseTo(baseHold(r) * 1 * 1.5, 5);
 	});
 
 	test('no home ground bonus off the origin world', () => {
@@ -250,16 +349,19 @@ describe('traitKeywordsOf', () => {
 
 describe('prepare', () => {
 	test('produces the full derived view with all expected fields', () => {
-		const r = record({ traits: { guaranteed: ['anchored'], rolled: [] } });
+		const r = record({ traits: { guaranteed: ['armored'], rolled: [] } });
 		const w = world();
 		const s = site();
 		const view = prepare(r, s, w, 0);
 		expect(view.id).toBe(r.id);
 		expect(view.hold).toBeGreaterThan(0);
-		expect(view.anchored).toBe(true);
+		expect(view.armored).toBe(true);
 		expect(view.acts.length).toBe(r.abilities.length);
 		expect(view.favoredAct).toBeTruthy();
 		expect(view.conduct).toBeTruthy();
+		// the base redesign's four roles travel on the prepared view
+		expect([ROLE.STRIKE, ROLE.AREA, ROLE.BOLSTER, ROLE.SHIELD, ROLE.NONE]).toContain(view.role);
+		expect(typeof view.blowMagnitude).toBe('number');
 	});
 
 	test('pack-bonded gains +1 hold per kin at the site', () => {

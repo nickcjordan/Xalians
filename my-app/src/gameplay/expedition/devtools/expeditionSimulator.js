@@ -19,15 +19,20 @@
 		--random=A|B        the named side plays a uniformly random legal policy instead
 		                    of the bot: random send among legal (record, site) pairs, a
 		                    small fixed pass probability once >=1 creature is on the
-		                    board, random legal act (or hold) per creature in Orders. Lets
-		                    a designer measure how much of the bot's edge is skill versus
-		                    structural (seat, starter, roster) advantage.
+		                    board. Lets a designer measure how much of the bot's edge is
+		                    skill versus structural (seat, starter, roster) advantage.
 		--rivalA=<id>       rival handler side A plays (see expeditionBot.js RIVALS);
 		                    defaults to the Court proctor. Unknown ids fall back to the
 		                    proctor via rivalById.
 		--rivalB=<id>       same, for side B. Together these are how a rival's measured
 		                    difficulty against the proctor, and its ladder position, gets
 		                    set - never asserted.
+		--rules=k=v;k=v     rule overrides passed straight to createMatch, so a whole
+		                    balance report can be read at a lever setting that is not the
+		                    default (e.g. --rules=shieldCap=half;bolsterFloor=1.5).
+		                    Numbers are parsed as numbers, true/false as booleans, and
+		                    roles.area / roles.bolster / roles.shield reach the nested
+		                    roles object.
 
 	This is a full designer-facing balance report (see docs/design/reclamation-design.md's
 	"Tuning" open item): seat fairness, match shape, site economy, roster economy, combat,
@@ -46,15 +51,15 @@
 */
 
 import {
-	createMatch, send, pass, order, commitOrders, relocateVanguard, getPublicState,
+	createMatch, send, pass, relocateVanguard, getPublicState,
 	createRngState, nextRandom,
 } from '../expeditionRules.js';
 import {
-	ROSTER_SIZE, SITES_PER_WORLD, ACT_CLASS_BY_ACTION, SENDABLE, FRAMES_PER_MATCH, WORLDS_PER_FRAME,
-	RETURNED_SEND_COST,
+	ROSTER_SIZE, SITES_PER_WORLD, SENDABLE, FRAMES_PER_MATCH, WORLDS_PER_FRAME,
+	RETURNED_SEND_COST, ROLE,
 } from '../expeditionInterpretation.js';
-import { chooseSend, chooseOrders, rivalById, DEFAULT_RIVAL_ID } from '../expeditionBot.js';
-import { prepare, magnitudeAgainst, baseHold, initiativeOf, strainLevel } from '../creatureOnTable.js';
+import { chooseSend, rivalById, DEFAULT_RIVAL_ID } from '../expeditionBot.js';
+import { prepare, baseHold, initiativeOf, strainLevel, roleOf } from '../creatureOnTable.js';
 import { buildExpeditionPool } from '../roster.js';
 import { getWorlds } from '../sites.js';
 import fs from 'node:fs';
@@ -66,7 +71,7 @@ import fs from 'node:fs';
 function parseArgs(argv) {
 	const args = {
 		matches: 300, seed: 7, json: null, mirror: false, random: null,
-		rivalA: DEFAULT_RIVAL_ID, rivalB: DEFAULT_RIVAL_ID,
+		rivalA: DEFAULT_RIVAL_ID, rivalB: DEFAULT_RIVAL_ID, rules: null,
 	};
 	argv.forEach((arg) => {
 		if (arg === '--mirror') {
@@ -83,12 +88,45 @@ function parseArgs(argv) {
 				args.random = raw === 'A' || raw === 'B' ? raw : null;
 			} else if (key === 'rivalA' || key === 'rivalB') {
 				args[key] = raw;
+			} else if (key === 'rules') {
+				args.rules = parseRules(raw);
 			} else {
 				args[key] = isNaN(Number(raw)) ? raw : Number(raw);
 			}
 		}
 	});
 	return args;
+}
+
+/*
+	parseRules('shieldCap=half;bolsterFloor=1.5;roles.area=false') -> a rules object for
+	createMatch. Every lever of the interpretation layer is a rules key (docs/design/
+	reclamation-base-redesign.md assumption 15), so the whole balance report can be read at
+	any setting without editing a constant.
+*/
+export function parseRules(raw) {
+	const rules = {};
+	String(raw).split(';').filter(Boolean).forEach((pair) => {
+		const eq = pair.indexOf('=');
+		if (eq < 0) {
+			return;
+		}
+		const key = pair.slice(0, eq).trim();
+		const text = pair.slice(eq + 1).trim();
+		let value = text;
+		if (text === 'true' || text === 'false') {
+			value = text === 'true';
+		} else if (text !== '' && !isNaN(Number(text))) {
+			value = Number(text);
+		}
+		if (key.startsWith('roles.')) {
+			rules.roles = rules.roles || {};
+			rules.roles[key.slice('roles.'.length)] = value;
+			return;
+		}
+		rules[key] = value;
+	});
+	return rules;
 }
 
 // ---------------------------------------------------------------------------
@@ -210,21 +248,6 @@ function randomChooseSend(publicState, ownRoster, handler, rng) {
 	return { type: 'send', recordId: pick.record.id, siteId: pick.site.id, hidden };
 }
 
-function randomChooseOrders(publicState, handler, rng) {
-	const frame = publicState.frame;
-	const orders = {};
-	frame.sites.forEach((site) => {
-		(publicState.board[site.id][handler] || []).forEach((entry) => {
-			if (!entry.record) {
-				return;
-			}
-			const actions = ['hold', ...(entry.record.abilities || []).map((a) => a.action)];
-			orders[entry.recordId] = actions[Math.floor(rng.float() * actions.length)];
-		});
-	});
-	return orders;
-}
-
 // ---------------------------------------------------------------------------
 // per-match board helpers (these read the RAW engine state, not getPublicState, since
 // the simulator plays both sides and is allowed full information for measurement)
@@ -237,15 +260,38 @@ function siteMarginRaw(state, frame, siteId) {
 }
 
 function entryHold(state, frame, siteId, entry) {
+	if (typeof entry.currentHold === 'number') {
+		return entry.currentHold;
+	}
 	const site = frame.sites.find((s) => s.id === siteId);
-	return prepare(entry.record, site, site.world, entry.sentIndex).hold;
+	return prepare(entry.record, site, site.world, entry.sentIndex, { rules: state.rules }).hold;
+}
+
+/*
+	Bolster's reading (docs/design/reclamation-base-redesign.md assumption 8): the hold a
+	bolsterer actually restores at its world, measured at the end of Deploy as the
+	difference between every ally's hold as the engine computed it (already bolstered) and
+	the same hold computed with the lift taken away.
+*/
+function bolsterRestoredAt(state, frame, site, player) {
+	const entries = (state.board[site.id][player] || []).filter((e) => !e.routed);
+	const bolsterers = entries.filter((e) => !e.hidden && roleOf(e.record, state.rules) === ROLE.BOLSTER);
+	if (bolsterers.length === 0) {
+		return null;
+	}
+	let restored = 0;
+	entries.forEach((e) => {
+		const withoutLift = prepare(e.record, site, site.world, e.sentIndex, { rules: state.rules }).hold;
+		restored += Math.max(0, (typeof e.fullHold === 'number' ? e.fullHold : withoutLift) - withoutLift);
+	});
+	return { bolsterers: bolsterers.length, restored };
 }
 
 function deployEndSnapshot(state, frame) {
 	// per-site margin (A-hold minus B-hold) and per-side counts, taken right at the
 	// moment Deploy ends (before Resolve/Judge) - this is "the leader after Deploy" used
 	// for the "resolve mattered" and relocation-flip stats.
-	const bySite = {};
+	const bySite = { bolster: {} };
 	frame.sites.forEach((site) => {
 		const a = state.board[site.id].A || [];
 		const b = state.board[site.id].B || [];
@@ -254,6 +300,12 @@ function deployEndSnapshot(state, frame) {
 			countB: b.length,
 			marginAfterDeploy: siteMarginRaw(state, frame, site.id),
 		};
+		['A', 'B'].forEach((player) => {
+			const reading = bolsterRestoredAt(state, frame, site, player);
+			if (reading) {
+				bySite.bolster[`${site.id}:${player}`] = reading;
+			}
+		});
 	});
 	return bySite;
 }
@@ -264,14 +316,14 @@ function deployEndSnapshot(state, frame) {
 // ---------------------------------------------------------------------------
 
 function runOneMatch(matchSeed, pool, rng, options) {
-	const { mirror, randomSeat, rivals } = options;
+	const { mirror, randomSeat, rivals, rules } = options;
 	const rivalFor = { A: rivals && rivals.A, B: rivals && rivals.B };
 
 	const rosterA = buildRandomRoster(pool, rng);
 	const rosterB = mirror ? rosterA.slice() : buildRandomRoster(pool, rng);
 
 	const worlds = getWorlds();
-	let state = createMatch({ rosterA, rosterB, worlds, seed: matchSeed });
+	let state = createMatch({ rosterA, rosterB, worlds, seed: matchSeed, rules });
 	const roundOneStarter = state.starter;
 
 	let botRngState = createRngState(`${matchSeed}-bot`);
@@ -289,13 +341,24 @@ function runOneMatch(matchSeed, pool, rng, options) {
 	// section - computed once by the caller and passed in via options.poolHoldRank
 
 	const siteRecords = [];
-	const actRecords = [];
+	const blowRecords = []; // one per 'blow' event (assumption 5: every blow is a number)
+	const shieldRecords = []; // one per 'shield' event (assumption 7)
+	const bolsterRecords = []; // one per site per side where a bolsterer stood (assumption 8)
 	const sendRecords = []; // filled progressively; siteResult/won attached at judge time
 	const relocationRecords = [];
-	let decisions = 0; // sends + passes + relocations + orders, as a playtime proxy
+	let decisions = 0; // sends + passes + relocations, as a playtime proxy
 	let sitesWonAfterWorld1 = null; // { A, B } snapshot for the comeback-rate stat
 	let error = null;
 	let vanguardRelocationsThisMatch = 0;
+
+	function bail() {
+		return {
+			finalState: state, error, roundOneStarter, siteRecords, blowRecords, shieldRecords,
+			bolsterRecords, sendRecords, relocationRecords, decisions, rosterMeanHold,
+			rosterMeanInitiative, sitesWonAfterWorld1, vanguardRelocationsThisMatch,
+			rosterAIds: rosterA.map((r) => r.id), rosterBIds: rosterB.map((r) => r.id),
+		};
+	}
 
 	function chooseSendFor(handler, publicState, ownRoster) {
 		if (randomSeat === handler) {
@@ -303,239 +366,199 @@ function runOneMatch(matchSeed, pool, rng, options) {
 		}
 		return chooseSend(publicState, ownRoster, handler, rngLike, rivalFor[handler]);
 	}
-	function chooseOrdersFor(handler, publicState) {
-		if (randomSeat === handler) {
-			return randomChooseOrders(publicState, handler, rngLike);
-		}
-		return chooseOrders(publicState, handler, rivalFor[handler]);
-	}
 
 	let guard = 0;
 	const GUARD_LIMIT = 20000;
 
 	while (state.phase !== 'matchEnd' && guard < GUARD_LIMIT) {
 		guard++;
+		if (state.phase !== 'deploy') {
+			break;
+		}
+		const frameIndex = state.frameIndex;
+		const frame = state.frames[frameIndex];
+		const frameStarter = state.starter;
+		// records sent this round, keyed by recordId, so the site's judged outcome can be
+		// attached to each send once Judge has run
+		const sentThisRound = {};
+		// Deploy now ends INSIDE pass(): the second pass runs Resolve and Judge in one
+		// step (assumption 1), so the deploy-end snapshot and the log watermark are taken
+		// fresh before every action and the last pair is the one that describes the round.
+		let deployEnd = deployEndSnapshot(state, frame);
+		let logLengthBeforeResolve = state.resolutionLog.length;
 
-		if (state.phase === 'deploy') {
-			const frameIndex = state.frameIndex;
-			const frame = state.frames[frameIndex];
-			const frameStarter = state.starter;
-			// records sent this round, keyed by recordId, so we can attach the site's
-			// judged outcome to each send once Judge runs
-			const sentThisRound = {};
-			let lastHandlerToPass = null;
+		while (state.phase === 'deploy' && state.frameIndex === frameIndex && guard < GUARD_LIMIT) {
+			guard++;
+			const handler = state.turn;
+			if (handler === null) {
+				break;
+			}
+			deployEnd = deployEndSnapshot(state, frame);
+			logLengthBeforeResolve = state.resolutionLog.length;
 
-			while (state.phase === 'deploy' && guard < GUARD_LIMIT) {
-				guard++;
-				const handler = state.turn;
-				if (handler === null) {
-					break;
+			const publicState = getPublicState(state, handler);
+			const ownRoster = state.players[handler].roster;
+			let action = chooseSendFor(handler, publicState, ownRoster);
+
+			if (action.type === 'relocate') {
+				const fromSiteId = boardSiteOf(state, frame, handler, publicState.players[handler].vanguardRecordId);
+				const marginBefore = fromSiteId ? siteMarginRaw(state, frame, fromSiteId) : 0;
+				const wasLosingBefore = handler === 'A' ? marginBefore < 0 : marginBefore > 0;
+
+				const relocated = relocateVanguard(state, handler, action.siteId);
+				if (!relocated) {
+					error = `illegal relocate action: ${JSON.stringify(action)} for ${handler}`;
+					return bail();
 				}
-				const publicState = getPublicState(state, handler);
-				const ownRoster = state.players[handler].roster;
-				let action = chooseSendFor(handler, publicState, ownRoster);
-
-				if (action.type === 'relocate') {
-					const fromSiteId = boardSiteOf(state, frame, handler, publicState.players[handler].vanguardRecordId);
-					const marginBefore = fromSiteId ? siteMarginRaw(state, frame, fromSiteId) : 0;
-					const wasLosingBefore = handler === 'A' ? marginBefore < 0 : marginBefore > 0;
-
-					const relocated = relocateVanguard(state, handler, action.siteId);
-					if (!relocated) {
-						error = `illegal relocate action: ${JSON.stringify(action)} for ${handler}`;
-						return { finalState: state, error, roundOneStarter, siteRecords, actRecords, sendRecords, relocationRecords, decisions, rosterMeanHold, rosterMeanInitiative, sitesWonAfterWorld1, vanguardRelocationsThisMatch };
-					}
-					state = relocated;
-					vanguardRelocationsThisMatch++;
-					decisions++;
-
-					const marginAfter = siteMarginRaw(state, frame, action.siteId);
-					const isWinningAfter = handler === 'A' ? marginAfter > 0 : marginAfter < 0;
-					relocationRecords.push({ handler, wasLosingBefore, isWinningAfter, flippedToWinning: wasLosingBefore && isWinningAfter });
-
-					const publicStateAfter = getPublicState(state, handler);
-					action = chooseSendFor(handler, publicStateAfter, state.players[handler].roster);
-				}
-
-				let nextState = null;
-				if (action.type === 'send') {
-					// captured BEFORE send(), which clears the flag on the sent record - the
-					// Loki line (docs/design/reclamation-play-enhancements.md "Pass 2 levers")
-					const wasReturned = (state.players[handler].returned || []).includes(action.recordId);
-					nextState = send(state, handler, action.recordId, action.siteId, action.hidden);
-					if (nextState) {
-						const record = state.players[handler].roster.find((r) => r.id === action.recordId);
-						const site = frame.sites.find((s) => s.id === action.siteId);
-						sentThisRound[action.recordId] = {
-							recordId: action.recordId,
-							record,
-							side: handler,
-							frameIndex,
-							site: action.siteId,
-							hidden: !!action.hidden,
-							strainLevel: strainLevel(record, site, site.world),
-							homeGround: !!(record.provenance && record.provenance.origin && String(record.provenance.origin).toLowerCase() === String(site.world.planet).toLowerCase()),
-							returnedSend: wasReturned,
-						};
-					}
-				} else {
-					nextState = pass(state, handler);
-					if (nextState) {
-						lastHandlerToPass = handler;
-					}
-				}
-				if (!nextState) {
-					error = `illegal deploy action: ${JSON.stringify(action)} for ${handler}`;
-					return { finalState: state, error, roundOneStarter, siteRecords, actRecords, sendRecords, relocationRecords, decisions, rosterMeanHold, rosterMeanInitiative, sitesWonAfterWorld1, vanguardRelocationsThisMatch };
-				}
+				state = relocated;
+				vanguardRelocationsThisMatch++;
 				decisions++;
-				state = nextState;
+
+				const marginAfter = siteMarginRaw(state, frame, action.siteId);
+				const isWinningAfter = handler === 'A' ? marginAfter > 0 : marginAfter < 0;
+				relocationRecords.push({ handler, wasLosingBefore, isWinningAfter, flippedToWinning: wasLosingBefore && isWinningAfter });
+
+				deployEnd = deployEndSnapshot(state, frame);
+				logLengthBeforeResolve = state.resolutionLog.length;
+				const publicStateAfter = getPublicState(state, handler);
+				action = chooseSendFor(handler, publicStateAfter, state.players[handler].roster);
 			}
 
-			// deploy-end snapshot: per-site counts/margin BEFORE resolve/judge, used for
-			// "resolve mattered" and the stack-vs-spread section
-			const deployEnd = deployEndSnapshot(state, frame);
+			let nextState = null;
+			if (action.type === 'send') {
+				// captured BEFORE send(), which clears the flag on the sent record
+				const wasReturned = (state.players[handler].returned || []).includes(action.recordId);
+				const record = state.players[handler].roster.find((r) => r.id === action.recordId);
+				nextState = send(state, handler, action.recordId, action.siteId, action.hidden);
+				if (nextState) {
+					const site = frame.sites.find((s) => s.id === action.siteId);
+					const prepared = prepare(record, site, site.world, 0, { rules: state.rules });
+					sentThisRound[action.recordId] = {
+						recordId: action.recordId,
+						record,
+						side: handler,
+						frameIndex,
+						site: action.siteId,
+						hidden: !!action.hidden,
+						role: prepared.role,
+						blowFallback: !!prepared.blowIsFallback,
+						strainLevel: strainLevel(record, site, site.world),
+						homeGround: !!(record.provenance && record.provenance.origin && String(record.provenance.origin).toLowerCase() === String(site.world.planet).toLowerCase()),
+						returnedSend: wasReturned,
+					};
+					// the deploy-end snapshot has to include the send that just landed, in
+					// case this was the last action before an auto-pass ended the round.
+					// When the send DID end the round (the sender had nothing legal left
+					// and was auto-passed into Resolve), nextState already carries the next
+					// frame's board, so the arriving creature is folded into the previous
+					// snapshot by hand instead.
+					if (nextState.phase === 'deploy' && nextState.frameIndex === frameIndex) {
+						deployEnd = deployEndSnapshot(nextState, frame);
+					} else {
+						const arriving = prepared.hold * (handler === 'A' ? 1 : -1);
+						const before = deployEnd[action.siteId];
+						deployEnd = {
+							...deployEnd,
+							[action.siteId]: {
+								countA: before.countA + (handler === 'A' ? 1 : 0),
+								countB: before.countB + (handler === 'B' ? 1 : 0),
+								marginAfterDeploy: before.marginAfterDeploy + arriving,
+							},
+						};
+					}
+				}
+			} else {
+				nextState = pass(state, handler);
+			}
+			if (!nextState) {
+				error = `illegal deploy action: ${JSON.stringify(action)} for ${handler}`;
+				return bail();
+			}
+			decisions++;
+			state = nextState;
+		}
 
-			if (state.phase === 'orders') {
-				['A', 'B'].forEach((handler) => {
-					const publicState = getPublicState(state, handler);
-					const orders = chooseOrdersFor(handler, publicState);
-					Object.keys(orders).forEach((creatureId) => {
-						const next = order(state, handler, creatureId, orders[creatureId]);
-						if (next) {
-							state = next;
-							decisions++;
-						}
-					});
+		// bolster's reading is taken from the deploy-end board, where every ally that will
+		// be lifted is already standing
+		['A', 'B'].forEach((side) => {
+			frame.sites.forEach((site) => {
+				const reading = deployEnd.bolster && deployEnd.bolster[`${site.id}:${side}`];
+				if (reading) {
+					bolsterRecords.push({ side, frameIndex, siteId: site.id, ...reading });
+				}
+			});
+		});
+
+		// walk the events this round's resolve+judge produced
+		const newEvents = state.resolutionLog.slice(logLengthBeforeResolve);
+		newEvents.forEach((ev) => {
+			if (ev.type === 'blow') {
+				const sentInfo = sentThisRound[ev.recordId];
+				blowRecords.push({
+					frameIndex,
+					role: ev.role,
+					side: sentInfo ? sentInfo.side : null,
+					archetype: sentInfo && sentInfo.record.archetype ? sentInfo.record.archetype.key : null,
+					element: sentInfo && sentInfo.record.element ? sentInfo.record.element.primary : null,
+					outcome: ev.outcome,
+					amount: typeof ev.amount === 'number' ? ev.amount : null,
+					remaining: ev.remaining,
+					hidden: !!ev.hidden,
+					cancelled: !!ev.cancelled,
 				});
+				return;
+			}
+			if (ev.type === 'shield') {
+				shieldRecords.push({ frameIndex, recordId: ev.recordId, cancelled: ev.cancelled, amount: ev.amount || 0 });
+			}
+		});
 
-				const frameIndexBeforeCommit = state.frameIndex;
-				const resolutionLogLengthBefore = state.resolutionLog.length;
-
-				let next = commitOrders(state, 'A');
-				if (!next) {
-					error = 'commitOrders(A) failed';
-					return { finalState: state, error, roundOneStarter, siteRecords, actRecords, sendRecords, relocationRecords, decisions, rosterMeanHold, rosterMeanInitiative, sitesWonAfterWorld1, vanguardRelocationsThisMatch };
-				}
-				state = next;
-				next = commitOrders(state, 'B');
-				if (!next) {
-					error = 'commitOrders(B) failed';
-					return { finalState: state, error, roundOneStarter, siteRecords, actRecords, sendRecords, relocationRecords, decisions, rosterMeanHold, rosterMeanInitiative, sitesWonAfterWorld1, vanguardRelocationsThisMatch };
-				}
-				state = next;
-
-				// walk the new resolutionLog entries produced by this round's resolve+judge
-				const newEvents = state.resolutionLog.slice(resolutionLogLengthBefore);
-				const actedRecordIds = new Set();
-				newEvents.forEach((ev) => {
-					if (ev.type === 'judge') {
-						return; // handled below via siteResults
-					}
-					const sentInfo = sentThisRound[ev.recordId];
-					const actorRecord = sentInfo ? sentInfo.record : null;
-					const actorSide = sentInfo ? sentInfo.side : null;
-					if (ev.action && ev.action !== 'hold') {
-						actedRecordIds.add(ev.recordId);
-					}
-					let magnitude = null;
-					if (actorRecord && ev.target) {
-						const targetInfo = sentThisRound[ev.target];
-						const targetRecord = targetInfo ? targetInfo.record : null;
-						if (targetRecord) {
-							const actorSite = sentInfo.site;
-							const site = frame.sites.find((s) => s.id === actorSite);
-							const prepared = prepare(actorRecord, site, site.world, 0);
-							const act = prepared.acts.find((a) => a.action === ev.action);
-							if (act) {
-								magnitude = magnitudeAgainst(actorRecord, act, targetRecord);
-							}
-						}
-					}
-					actRecords.push({
-						frameIndex: frameIndexBeforeCommit,
-						action: ev.action || null,
-						class: ev.action ? (ACT_CLASS_BY_ACTION[ev.action] || null) : null,
-						side: actorSide,
-						archetype: actorRecord && actorRecord.archetype ? actorRecord.archetype.key : null,
-						element: actorRecord && actorRecord.element ? actorRecord.element.primary : null,
-						outcome: ev.outcome,
-						magnitude,
-						areaHit: !!ev.areaHit,
-						hadTarget: !!ev.target || ev.outcome === 'area-struck',
-					});
+		const judgeEvent = newEvents.find((ev) => ev.type === 'judge');
+		if (judgeEvent && judgeEvent.siteResults) {
+			Object.keys(judgeEvent.siteResults).forEach((siteId) => {
+				const result = judgeEvent.siteResults[siteId];
+				const before = deployEnd[siteId] || { countA: 0, countB: 0, marginAfterDeploy: 0 };
+				const leaderAfterDeploy = before.marginAfterDeploy > 0 ? 'A' : (before.marginAfterDeploy < 0 ? 'B' : null);
+				const uncontested = (before.countA > 0) !== (before.countB > 0) && (before.countA > 0 || before.countB > 0);
+				const empty = before.countA === 0 && before.countB === 0;
+				const margin = Math.abs(result.holdA - result.holdB);
+				const site = frame.sites.find((s) => s.id === siteId);
+				siteRecords.push({
+					frameIndex,
+					frameStarter,
+					siteId,
+					planet: site ? site.world.planet : null,
+					winner: result.winner,
+					tie: result.winner === null,
+					countA: before.countA,
+					countB: before.countB,
+					uncontested,
+					empty,
+					margin,
+					leaderAfterDeploy,
+					resolveMattered: !!leaderAfterDeploy && !!result.winner && leaderAfterDeploy !== result.winner,
 				});
+			});
 
-				const judgeEvent = newEvents.find((ev) => ev.type === 'judge');
-				if (judgeEvent && judgeEvent.siteResults) {
-					Object.keys(judgeEvent.siteResults).forEach((siteId) => {
-						const result = judgeEvent.siteResults[siteId];
-						const before = deployEnd[siteId] || { countA: 0, countB: 0, marginAfterDeploy: 0 };
-						const leaderAfterDeploy = before.marginAfterDeploy > 0 ? 'A' : (before.marginAfterDeploy < 0 ? 'B' : null);
-						const uncontested = (before.countA > 0) !== (before.countB > 0) && (before.countA > 0 || before.countB > 0);
-						const empty = before.countA === 0 && before.countB === 0;
-						const margin = Math.abs(result.holdA - result.holdB);
-						const site = frame.sites.find((s) => s.id === siteId);
-						siteRecords.push({
-							frameIndex: frameIndexBeforeCommit,
-							frameStarter,
-							siteId,
-							planet: site ? site.world.planet : null,
-							winner: result.winner,
-							tie: result.winner === null,
-							countA: before.countA,
-							countB: before.countB,
-							uncontested,
-							empty,
-							margin,
-							leaderAfterDeploy,
-							resolveMattered: !!leaderAfterDeploy && !!result.winner && leaderAfterDeploy !== result.winner,
-						});
-					});
-
-					// attach each send's outcome (its side's win/loss at its own site) now
-					// that Judge has run
-					Object.values(sentThisRound).forEach((s) => {
-						const result = judgeEvent.siteResults[s.site];
-						if (!result) {
-							return;
-						}
-						sendRecords.push({
-							...s,
-							won: result.winner === s.side,
-							tie: result.winner === null,
-							actedThisRound: actedRecordIds.has(s.recordId),
-						});
-					});
-
-					if (frameIndexBeforeCommit === 0) {
-						sitesWonAfterWorld1 = { A: state.players.A.sitesWon, B: state.players.B.sitesWon };
-					}
+			Object.values(sentThisRound).forEach((sent) => {
+				const result = judgeEvent.siteResults[sent.site];
+				if (!result) {
+					return;
 				}
+				sendRecords.push({ ...sent, won: result.winner === sent.side, tie: result.winner === null });
+			});
+
+			if (frameIndex === 0) {
+				sitesWonAfterWorld1 = { A: state.players.A.sitesWon, B: state.players.B.sitesWon };
 			}
 		}
 	}
 
-	if (guard >= GUARD_LIMIT) {
+		if (guard >= GUARD_LIMIT) {
 		error = 'guard limit reached - possible infinite loop';
 	}
 
-	return {
-		finalState: state,
-		error,
-		roundOneStarter,
-		siteRecords,
-		actRecords,
-		sendRecords,
-		relocationRecords,
-		decisions,
-		rosterMeanHold,
-		rosterMeanInitiative,
-		sitesWonAfterWorld1,
-		vanguardRelocationsThisMatch,
-		rosterAIds: rosterA.map((r) => r.id),
-		rosterBIds: rosterB.map((r) => r.id),
-	};
+	return bail();
 }
 
 // helper used only inside the relocate branch above, to find which site a handler's
@@ -561,7 +584,9 @@ function summarize(matchResults, args, pool, rivals) {
 	const errors = matchResults.filter((m) => m.error).map((m, i) => ({ matchIndex: i, error: m.error }));
 
 	const allSites = completedMatches.flatMap((m) => m.siteRecords);
-	const allActs = completedMatches.flatMap((m) => m.actRecords);
+	const allBlows = completedMatches.flatMap((m) => m.blowRecords);
+	const allShields = completedMatches.flatMap((m) => m.shieldRecords);
+	const allBolsters = completedMatches.flatMap((m) => m.bolsterRecords);
 	const allSends = completedMatches.flatMap((m) => m.sendRecords);
 	const allRelocations = completedMatches.flatMap((m) => m.relocationRecords);
 
@@ -700,51 +725,92 @@ function summarize(matchResults, args, pool, rivals) {
 		B: average(completedMatches.map((m) => m.finalState.players.B.roster.length)),
 	};
 
+	/*
+		Hold compression's own gauge (docs/design/reclamation-base-redesign.md assumption
+		11): the species mean hold spread across the whole generated pool, before any
+		world, strain or company. The base redesign asks for about 2:1; a floor of zero
+		leaves it wherever the records put it.
+	*/
+	const holdBySpecies = {};
+	pool.forEach((record) => {
+		const key = record.species || 'unknown';
+		holdBySpecies[key] = holdBySpecies[key] || [];
+		holdBySpecies[key].push(baseHold(record));
+	});
+	const speciesMeanHolds = Object.keys(holdBySpecies).map((key) => ({
+		species: key,
+		meanHold: average(holdBySpecies[key]),
+	})).sort((a, b) => a.meanHold - b.meanHold);
+	const speciesHoldSpread = {
+		lowest: speciesMeanHolds[0] || null,
+		highest: speciesMeanHolds[speciesMeanHolds.length - 1] || null,
+		ratio: speciesMeanHolds.length > 0 && speciesMeanHolds[0].meanHold > 0
+			? speciesMeanHolds[speciesMeanHolds.length - 1].meanHold / speciesMeanHolds[0].meanHold
+			: null,
+		rows: speciesMeanHolds,
+	};
+
 	const rosterEconomy = {
 		sentPerWorldPositionPerSide,
 		unsentAtMatchEnd: unsentAtEnd,
+		speciesHoldSpread,
 	};
 
 	// -------------------- 5. combat --------------------
+	/*
+		Per ROLE, not per act: since the base redesign (docs/design/reclamation-base-redesign.md
+		assumption 4) a creature has exactly one of four roles and no act is ever chosen, so
+		the sixteen-act tables measured nothing a designer could act on. What is left is the
+		reading the base redesign's gauges name: sends per role, the keeper win rate of each
+		role, the mean amount a blow removes, cancels per match, hold restored per bolster
+		send, routs per match, and how often resolution changed the leader at a world.
+	*/
 	const outcomeHistogram = {};
-	allActs.forEach((a) => {
-		outcomeHistogram[a.outcome] = (outcomeHistogram[a.outcome] || 0) + 1;
-	});
-	const perAct = {};
-	const actionNames = [...new Set(allActs.map((a) => a.action).filter(Boolean))];
-	actionNames.forEach((action) => {
-		const all = allActs.filter((a) => a.action === action);
-		// an area act logs one summary event (the order) plus one event per creature it
-		// caught; orders are counted from the former, hits from the latter
-		const orders = all.filter((a) => !a.areaHit);
-		const hits = all.filter((a) => a.areaHit || a.outcome !== 'area-struck');
-		const magnitudes = hits.map((r) => r.magnitude).filter((v) => typeof v === 'number');
-		perAct[action] = {
-			timesOrdered: orders.length,
-			averageMagnitude: average(magnitudes),
-			staggerRate: rate(hits.filter((r) => r.outcome === 'staggered').length, hits.length),
-			routRate: rate(hits.filter((r) => r.outcome === 'routed').length, hits.length),
-			noTargetRate: rate(orders.filter((r) => r.outcome === 'no-target-held').length, orders.length),
-		};
-	});
-	const holdOrders = allActs.filter((a) => a.action === null || a.outcome === 'held');
-	const actClassUsage = {};
-	allActs.forEach((a) => {
-		if (a.class) {
-			actClassUsage[a.class] = (actClassUsage[a.class] || 0) + 1;
-		}
+	allBlows.forEach((b) => {
+		outcomeHistogram[b.outcome] = (outcomeHistogram[b.outcome] || 0) + 1;
 	});
 
-	const routs = allActs.filter((a) => a.outcome === 'routed');
-	// "initiative alpha-strike": share of routs where the ROUTED creature had not yet
-	// acted this round. We can only tell this from the send record's actedThisRound flag
-	// on the target side, matched by looking up whether that recordId shows up as an
-	// actor anywhere in the SAME round before this event. Approximated here via the
-	// per-send actedThisRound flag captured for every sent creature.
-	const sendByRecordId = {};
-	allSends.forEach((s) => {
-		sendByRecordId[`${s.frameIndex}:${s.recordId}`] = s;
+	const landedBlows = allBlows.filter((b) => b.outcome === 'staggered' || b.outcome === 'routed');
+	const perRole = {};
+	[ROLE.STRIKE, ROLE.AREA, ROLE.BOLSTER, ROLE.SHIELD, ROLE.NONE].forEach((role) => {
+		const sends = allSends.filter((x) => x.role === role);
+		const decided = sends.filter((x) => !x.tie);
+		const blows = landedBlows.filter((b) => b.role === role);
+		perRole[role] = {
+			sends: sends.length,
+			sendShare: rate(sends.length, allSends.length),
+			keeperWinRate: rate(decided.filter((x) => x.won).length, decided.length),
+			meanAmountPerBlow: average(blows.map((b) => b.amount).filter((v) => typeof v === 'number')),
+			routsDealt: allBlows.filter((b) => b.role === role && b.outcome === 'routed').length,
+		};
 	});
+
+	const cancels = allShields.filter((x) => x.cancelled);
+	const shieldStats = {
+		shieldSendsPerMatch: average(completedMatches.map((m) => m.sendRecords.filter((x) => x.role === ROLE.SHIELD).length)),
+		cancelsPerMatch: average(completedMatches.map((m) => m.shieldRecords.filter((x) => x.cancelled).length)),
+		cancelRate: rate(cancels.length, allShields.length),
+		meanAmountCancelled: average(cancels.map((x) => x.amount)),
+	};
+
+	const bolsterStats = {
+		bolsterSendsPerMatch: average(completedMatches.map((m) => m.sendRecords.filter((x) => x.role === ROLE.BOLSTER).length)),
+		holdRestoredPerBolsterSend: average(allBolsters.map((x) => x.restored / Math.max(1, x.bolsterers))),
+		sitesWithABolsterer: allBolsters.length,
+	};
+
+	const blowStats = {
+		blowsPerMatch: average(completedMatches.map((m) => m.blowRecords.length)),
+		routsPerMatch: average(completedMatches.map((m) => m.blowRecords.filter((b) => b.outcome === 'routed').length)),
+		meanAmount: average(landedBlows.map((b) => b.amount)),
+		cancelledShare: rate(allBlows.filter((b) => b.cancelled).length, allBlows.length),
+		noTargetShare: rate(allBlows.filter((b) => b.outcome === 'no-target').length, allBlows.length),
+		lapsedShare: rate(allBlows.filter((b) => b.outcome === 'lapsed').length, allBlows.length),
+		hiddenBlowShare: rate(allBlows.filter((b) => b.hidden).length, allBlows.length),
+		// a blow creature with no attacking ability at all strikes at the pool minimum
+		// (creatureOnTable.blowActOf); this is how often that fallback fired
+		fallbackBlowShare: rate(allSends.filter((x) => x.blowFallback).length, allSends.length),
+	};
 
 	const strainBuckets = { none: [], strained: [], severe: [] };
 	allSends.forEach((s) => {
@@ -810,9 +876,10 @@ function summarize(matchResults, args, pool, rivals) {
 
 	const combat = {
 		outcomeHistogram,
-		perAct,
-		holdOrderCount: holdOrders.length,
-		actClassUsage,
+		perRole,
+		blowStats,
+		shieldStats,
+		bolsterStats,
 		strainIncidence,
 		homeGround,
 		hiddenSendStats,
@@ -830,13 +897,13 @@ function summarize(matchResults, args, pool, rivals) {
 			byArchetype[key].wins++;
 		}
 	});
-	allActs.forEach((a) => {
-		if (!a.archetype) {
+	allBlows.forEach((b) => {
+		if (!b.archetype) {
 			return;
 		}
-		byArchetype[a.archetype] = byArchetype[a.archetype] || { sent: 0, wins: 0, routsDealt: 0, routsSuffered: 0 };
-		if (a.outcome === 'routed') {
-			byArchetype[a.archetype].routsDealt++;
+		byArchetype[b.archetype] = byArchetype[b.archetype] || { sent: 0, wins: 0, routsDealt: 0, routsSuffered: 0 };
+		if (b.outcome === 'routed') {
+			byArchetype[b.archetype].routsDealt++;
 		}
 	});
 	const archetypeReport = {};
@@ -1025,7 +1092,7 @@ function summarize(matchResults, args, pool, rivals) {
 		worldsReport[planet] = {
 			timesDrawn: byPlanet[planet].drawn,
 			tieRate: rate(sites.filter((s) => s.tie).length, sites.length),
-			routsPerSite: sites.length > 0 ? (allActs.filter((a) => a.outcome === 'routed').length / completedMatches.length) / Math.max(1, byPlanet[planet].drawn / completedMatches.length * SITES_PER_WORLD) : 0,
+			routsPerSite: sites.length > 0 ? (allBlows.filter((b) => b.outcome === 'routed').length / completedMatches.length) / Math.max(1, byPlanet[planet].drawn / completedMatches.length * SITES_PER_WORLD) : 0,
 			homeElementPresent: homeElementSends.length > 0,
 			homeElementSiteWinRate: rate(homeElementSends.filter((s) => s.won).length, homeElementSends.filter((s) => !s.tie).length),
 		};
@@ -1070,7 +1137,7 @@ function printReport(report) {
 	console.log('=== Reclamation bot-vs-bot simulation ===');
 	console.log(`matches: ${meta.matches} (completed: ${meta.completedMatches})  seed: ${meta.seed}${meta.mirror ? '  [mirror]' : ''}${meta.random ? `  [random=${meta.random}]` : ''}`);
 	// note --random overrides a side's rival with the uniform random policy at match time
-	// (see chooseSendFor/chooseOrdersFor in runOneMatch); the rival named here is still
+	// (see chooseSendFor in runOneMatch); the rival named here is still
 	// whatever --rivalA/--rivalB asked for, since a rival choice and --random are
 	// independent flags and a random side simply never consults its weights
 	const nameFor = (side, rival) => (meta.random === side ? `${rival.name || rival.id} (${rival.id}, overridden by --random)` : `${rival.name || rival.id} (${rival.id})`);
@@ -1098,15 +1165,15 @@ function printReport(report) {
 	console.log('final site score distribution:');
 	printHistogram(ms.finalScoreCounts);
 	console.log(`comeback rate (trailing after world 1, won the match): ${fmtRate(ms.comebackWinRate)}`);
-	console.log(`decisions per match (sends+passes+relocations+orders): ${ms.decisionsPerMatch.toFixed(1)}`);
+	console.log(`decisions per match (sends+passes+relocations): ${ms.decisionsPerMatch.toFixed(1)}`);
 
 	console.log('\n--- 3. site economy ---');
 	const se = report.siteEconomy;
-	console.log(`sites won per match — A: ${se.sitesWonPerMatch.A.toFixed(2)}, B: ${se.sitesWonPerMatch.B.toFixed(2)}`);
+	console.log(`sites won per match - A: ${se.sitesWonPerMatch.A.toFixed(2)}, B: ${se.sitesWonPerMatch.B.toFixed(2)}`);
 	console.log(`ties-to-Court rate: ${fmtRate(se.tieToCourtRate)}`);
 	console.log(`uncontested sites: ${fmtRate(se.uncontestedRate)}`);
 	console.log(`empty sites: ${fmtRate(se.emptyRate)}`);
-	console.log(`contested site margin — median ${se.contestedMarginMedian.toFixed(2)}, Q1 ${se.contestedMarginQ1.toFixed(2)}, Q3 ${se.contestedMarginQ3.toFixed(2)}`);
+	console.log(`contested site margin - median ${se.contestedMarginMedian.toFixed(2)}, Q1 ${se.contestedMarginQ1.toFixed(2)}, Q3 ${se.contestedMarginQ3.toFixed(2)}`);
 	console.log(`resolve mattered (leader after deploy != winner at judge): ${fmtRate(se.resolveMatteredRate)}`);
 	console.log('per world position:');
 	Object.keys(se.perWorldPosition).forEach((w) => {
@@ -1121,20 +1188,27 @@ function printReport(report) {
 		const p = re.sentPerWorldPositionPerSide[w];
 		console.log(`  world ${Number(w) + 1}: A=${p.A}, B=${p.B}`);
 	});
-	console.log(`creatures unsent at match end — A: ${re.unsentAtMatchEnd.A.toFixed(2)}, B: ${re.unsentAtMatchEnd.B.toFixed(2)}`);
+	console.log(`creatures unsent at match end - A: ${re.unsentAtMatchEnd.A.toFixed(2)}, B: ${re.unsentAtMatchEnd.B.toFixed(2)}`);
+	const hs = re.speciesHoldSpread;
+	if (hs && hs.lowest && hs.highest) {
+		console.log(`species mean hold spread: ${hs.lowest.meanHold.toFixed(2)} (${hs.lowest.species}) to ${hs.highest.meanHold.toFixed(2)} (${hs.highest.species}) = ${hs.ratio.toFixed(2)}:1`);
+	}
 
 	console.log('\n--- 5. combat ---');
 	const c = report.combat;
-	console.log('outcome histogram:');
+	console.log('blow outcome histogram:');
 	printHistogram(c.outcomeHistogram);
-	console.log('act class usage:');
-	printHistogram(c.actClassUsage);
-	console.log(`hold orders: ${c.holdOrderCount}`);
-	console.log('per act:');
-	Object.keys(c.perAct).sort().forEach((action) => {
-		const a = c.perAct[action];
-		console.log(`  ${action}: ordered=${a.timesOrdered}, avg magnitude=${a.averageMagnitude.toFixed(2)}, stagger=${fmtRate(a.staggerRate)}, rout=${fmtRate(a.routRate)}, no-target=${fmtRate(a.noTargetRate)}`);
+	console.log(`blows per match: ${c.blowStats.blowsPerMatch.toFixed(2)}, routs per match: ${c.blowStats.routsPerMatch.toFixed(2)}`);
+	console.log(`mean amount per landed blow: ${c.blowStats.meanAmount.toFixed(2)}`);
+	console.log(`cancelled share ${fmtRate(c.blowStats.cancelledShare)}, no-target ${fmtRate(c.blowStats.noTargetShare)}, lapsed ${fmtRate(c.blowStats.lapsedShare)}`);
+	console.log(`hidden blows: ${fmtRate(c.blowStats.hiddenBlowShare)}; fallback (no attacking ability) sends: ${fmtRate(c.blowStats.fallbackBlowShare)}`);
+	console.log('per role (sends, share, keeper win rate, mean amount per blow, routs dealt):');
+	Object.keys(c.perRole).forEach((role) => {
+		const r = c.perRole[role];
+		console.log(`  ${role}: sends=${r.sends} (${fmtRate(r.sendShare)}), keeper win rate=${fmtRate(r.keeperWinRate)}, mean amount=${r.meanAmountPerBlow.toFixed(2)}, routs dealt=${r.routsDealt}`);
 	});
+	console.log(`shield: ${c.shieldStats.shieldSendsPerMatch.toFixed(2)} sends per match, ${c.shieldStats.cancelsPerMatch.toFixed(2)} cancels per match, cancel rate ${fmtRate(c.shieldStats.cancelRate)}, mean amount cancelled ${c.shieldStats.meanAmountCancelled.toFixed(2)}`);
+	console.log(`bolster: ${c.bolsterStats.bolsterSendsPerMatch.toFixed(2)} sends per match, ${c.bolsterStats.holdRestoredPerBolsterSend.toFixed(2)} hold restored per bolster send`);
 	console.log('strain incidence:');
 	Object.keys(c.strainIncidence).forEach((level) => {
 		const s = c.strainIncidence[level];
@@ -1149,9 +1223,9 @@ function printReport(report) {
 	printHistogram(c.stackVsSpread.histogram.A);
 	console.log('stack-vs-spread histogram (creatures at one site, B):');
 	printHistogram(c.stackVsSpread.histogram.B);
-	console.log(`site win rate at count 1 — A: ${fmtRate(c.stackVsSpread.siteWinRateAt1.A)}, B: ${fmtRate(c.stackVsSpread.siteWinRateAt1.B)}`);
-	console.log(`site win rate at count 2 — A: ${fmtRate(c.stackVsSpread.siteWinRateAt2.A)}, B: ${fmtRate(c.stackVsSpread.siteWinRateAt2.B)}`);
-	console.log(`site win rate at count 3+ — A: ${fmtRate(c.stackVsSpread.siteWinRateAt3Plus.A)}, B: ${fmtRate(c.stackVsSpread.siteWinRateAt3Plus.B)}`);
+	console.log(`site win rate at count 1 - A: ${fmtRate(c.stackVsSpread.siteWinRateAt1.A)}, B: ${fmtRate(c.stackVsSpread.siteWinRateAt1.B)}`);
+	console.log(`site win rate at count 2 - A: ${fmtRate(c.stackVsSpread.siteWinRateAt2.A)}, B: ${fmtRate(c.stackVsSpread.siteWinRateAt2.B)}`);
+	console.log(`site win rate at count 3+ - A: ${fmtRate(c.stackVsSpread.siteWinRateAt3Plus.A)}, B: ${fmtRate(c.stackVsSpread.siteWinRateAt3Plus.B)}`);
 
 	console.log('\n--- 6. creature balance ---');
 	console.log('by archetype (sent, site win rate, routs dealt):');
@@ -1185,10 +1259,10 @@ function printReport(report) {
 	cb.bottom5ByWinRate.forEach((r) => {
 		console.log(`  ${r.species} (${r.archetype}/${r.element}) hold=${r.hold.toFixed(1)} rank ${r.holdRank}/${r.poolSize}: win rate ${(r.siteWinRate * 100).toFixed(1)}% (sent ${r.sent})`);
 	});
-	console.log(`power correlation — higher mean base hold wins: ${fmtRate(cb.higherMeanHoldWinRate)}`);
-	console.log(`power correlation — higher mean initiative wins: ${fmtRate(cb.higherMeanInitiativeWinRate)}`);
+	console.log(`power correlation - higher mean base hold wins: ${fmtRate(cb.higherMeanHoldWinRate)}`);
+	console.log(`power correlation - higher mean initiative wins: ${fmtRate(cb.higherMeanInitiativeWinRate)}`);
 	if (cb.higherMeanHoldWinRate && cb.higherMeanHoldWinRate.p > 0.6) {
-		console.log('  NOTE: the stronger roster wins far above 60% — this reads as stats deciding the match more than decisions. Worth a design look.');
+		console.log('  NOTE: the stronger roster wins far above 60% - this reads as stats deciding the match more than decisions. Worth a design look.');
 	}
 
 	console.log('\n--- 7. worlds ---');
@@ -1219,7 +1293,7 @@ export function runSimulation(args = {}) {
 	const matchResults = [];
 	for (let i = 0; i < opts.matches; i++) {
 		const matchSeed = `${opts.seed}-match-${i}`;
-		const result = runOneMatch(matchSeed, pool, rng, { mirror: opts.mirror, randomSeat: opts.random, rivals });
+		const result = runOneMatch(matchSeed, pool, rng, { mirror: opts.mirror, randomSeat: opts.random, rivals, rules: opts.rules || null });
 		matchResults.push(result);
 	}
 
@@ -1235,7 +1309,7 @@ export function runSimulationRaw(args = {}) {
 	const matchResults = [];
 	for (let i = 0; i < opts.matches; i++) {
 		const matchSeed = `${opts.seed}-match-${i}`;
-		matchResults.push(runOneMatch(matchSeed, pool, rng, { mirror: opts.mirror, randomSeat: opts.random, rivals }));
+		matchResults.push(runOneMatch(matchSeed, pool, rng, { mirror: opts.mirror, randomSeat: opts.random, rivals, rules: opts.rules || null }));
 	}
 	return matchResults;
 }

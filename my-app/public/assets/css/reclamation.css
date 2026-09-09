@@ -4204,3 +4204,122 @@
 	.rec-masthead { flex-wrap: wrap; row-gap: var(--g-1); }
 	.rec-console--match .rec-masthead-rival { display: inline; font-size: var(--g-size-micro); }
 }
+
+/* ===========================================================================
+   THE BASE (docs/design/reclamation-base-redesign.md, "Interface consequences")
+
+   The adaptation pass, not the v4 immersive brief (assumption 16): the Orders
+   panel is gone, every creature wears one role glyph beside its hold bulb, the
+   ghost preview prints the arithmetic of a send, and a threat is a number. These
+   are the only rules the adaptation needed that the table did not already have.
+   Tokens only, no raw hex.
+   =========================================================================== */
+
+/* the role glyph: one stroke picture beside the bulb, in the element in scope,
+   sized to sit under a figure's plate without changing its height */
+.rec-role-glyph {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--g-el, var(--g-ink-mid));
+}
+.rec-role-glyph svg { width: 12px; height: 12px; }
+.rec-figure--theirs .rec-role-glyph { color: var(--g-ink-mid); }
+.rec-plinth-role svg { width: 13px; height: 13px; }
+.rec-plinth-role { margin-left: var(--g-1); }
+
+/* the threat read is a number now: how much this creature would lose, with the
+   rout mark kept as it was */
+.rec-figure-threat--amount {
+	background: transparent;
+	border: 1px solid var(--g-accent);
+	color: var(--g-accent);
+	font-family: var(--g-font-mono);
+	font-variant-numeric: tabular-nums;
+}
+.rec-figure--threat-amount .rec-figure-plate { outline: 1px solid var(--g-accent); }
+
+/* the ghost preview: the role in a sentence under the bulb, then the arithmetic
+   of the send, one line each (advanced only) */
+.rec-ghost-plan {
+	flex: 1 0 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2px;
+	text-align: center;
+	max-width: 100%;
+}
+.rec-ghost-role {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--g-1);
+	font-size: var(--g-size-micro);
+	color: var(--g-ink);
+}
+.rec-ghost-role svg { width: 12px; height: 12px; color: var(--g-el, var(--g-ink)); }
+.rec-ghost-line {
+	font-family: var(--g-font-mono);
+	font-variant-numeric: tabular-nums;
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-mid);
+}
+
+/* the dossier: the role sentence where the act table used to be */
+.rec-inspect-role {
+	display: flex;
+	align-items: center;
+	gap: var(--g-2);
+}
+.rec-inspect-role-glyph { width: 18px; height: 18px; flex: 0 0 auto; color: var(--g-el, var(--g-ink)); }
+
+/* the report's world rows: a role glyph before each creature's name */
+.rec-report-creature {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 4px;
+	margin-right: var(--g-2);
+	white-space: nowrap;
+}
+.rec-report-creature .rec-role-glyph { align-self: center; color: var(--g-ink-mid); }
+.rec-report-creature-hold {
+	font-variant-numeric: tabular-nums;
+	color: var(--g-ink-mid);
+}
+.rec-report-creature-fate {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	color: var(--g-lamp-red);
+}
+.rec-report-creature--none { color: var(--g-ink-low); }
+
+@media (max-width: 390px) {
+	.rec-ghost-line { display: none; }
+	.rec-report-creature { white-space: normal; }
+}
+
+/* The bench's lead is now printed whenever a creature is lifted (the role sentence), not
+   only when the sends run out, so it rides on its own line under the head rather than in
+   a grid column that the actions squeeze to nothing. */
+.rec-bench > .rec-bench-lead {
+	margin: 0;
+	padding: var(--g-2) var(--g-4) 0;
+	color: var(--g-ink-mid);
+}
+
+/* the ghost's arithmetic sits over the open ground of a world, so it carries the hull
+   behind it rather than reading through the figures */
+.rec-ghost-plan {
+	padding: 2px var(--g-2);
+	border-radius: 2px;
+	background: color-mix(in srgb, var(--g-hull-lo) 88%, transparent);
+}
+
+/* with the arithmetic under it the ghost outgrows the seam. It stays out of the flow (a
+   tray whose height follows the pointer never settles), so instead the seam is given
+   room whenever a plan is on the table: every tray carries a ghost at once while a
+   creature is lifted, so the height changes with the lift, never with the hover */
+.rec-site-floor .rec-site-midline:has(.rec-ghost-plan) { min-height: 136px; }
+.rec-ghost-plan { background: transparent; }
