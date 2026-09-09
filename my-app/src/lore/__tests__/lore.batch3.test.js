@@ -48,7 +48,7 @@ describe('getConnections', () => {
 	});
 
 	it('ranks by specificity, not raw count: galaxy-wide records fall out of the top of the ranking', () => {
-		const rows = getConnections('world', 'magmuth');
+		const rows = getConnections('world', 'magmuth', { limit: 40 }); // wide so the galaxy-wide records are still in the list to be ranked below
 		expect(rows.length).toBeGreaterThan(0);
 		for (const row of rows) {
 			expect(typeof row.score).toBe('number');

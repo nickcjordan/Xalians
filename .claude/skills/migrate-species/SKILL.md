@@ -60,8 +60,9 @@ Write `docs/species-templates/<key>.json` in exactly this shape. Every field lis
   "homePlanet": "<planet>",                  // lowercase
   "generatorPlanets": ["<planet>"],          // home-only for legacy species
   "lore": {
-    "description": "...",                   // source text if already in full register; upgraded prose if it was a stub
-    "descriptionStatus": "source" | "upgraded",
+    "description": "...",                   // Nick's teaser, the species.json text VERBATIM; never edited by an agent
+    "body": "...",                          // physical description, 40 to 120 words (lore section of 5)
+    "habits": "...",                        // how it lives now, 40 to 120 words (lore section of 5)
     "biomeNiche": "..."                     // one phrase, sourced from the planet history
   },
   "physiology": {
@@ -301,10 +302,13 @@ Bands of a working life. Apply the cuts in order: composition first, then mass a
 - `rolled`: each individual rolls levo or dextro at 50/50; the default. The generated record stores `levo` or `dextro`.
 - `achiral`: the species has no handedness to roll; declared only when the body has no chiral chemistry (energy, spectral, some mineral). The record stores `achiral`.
 
-#### lore.descriptionStatus (2)
+#### lore (three prose fields, ratified 2026-09-09)
 
-- `source`: the species.json description is carried verbatim because it is already in the full register.
-- `upgraded`: the description was rewritten from a stub using only the stub, the art, and the planet history.
+- `description`: Nick's character teaser, the species.json text verbatim (the validator fails on any difference). It carries the hook, the signature act and the lore link; it is never rewritten to satisfy a trait or a field. Misspellings are corrected upstream in species.json by Nick, never here.
+- `body`: what it looks like and how it is built, 40 to 120 words, one paragraph, present tense, physical only: the silhouette shape, the parts in plain words (never registry keys), the covering, the size feel, how it moves, what it senses with. Every claim traceable to the art or a record field. No purpose, no events, no planet history.
+- `habits`: how it lives now, 40 to 120 words, one paragraph, present tense: how it hunts or feeds, whether it keeps company, what ground it holds, how its world touches it and how it answers, and what it was engineered to do only as that bears on behavior. Every behavioral claim anchored to a species sentence, a planet-history sentence, a Generator report line or a record field; a pack or solitary sentence needs a source; no invented named people, events or institutions; no trait keys as labels; no game mechanics.
+- Overlap with the teaser (lever set 2026-09-09 after the first roster pass): body and habits never copy a teaser sentence, but each MAY restate the defining physical or behavioral fact from its own angle when leaving it out would make the field describe the world acting on the creature instead of the creature acting (a Hypnopet's habits say what the horn does to a patient; a Yetimoth's habits say how it walls a corridor). The Generator report and the planet history are the sources that reliably add what the teaser does not.
+- Status (which of these Nick has signed off) is NOT a record field. It lives in `docs/species-templates/lore-status.json`.
 
 #### capabilities (7 bands, 0 to 100)
 
@@ -456,7 +460,7 @@ Temperament is five stored axes (boldness, curiosity, energy, aggression, sociab
 ## 6. Procedure (generation-layer order; do every step, in order)
 
 1. **Read the sources in full.** The species entry, the species artwork (open the PNG and describe what you see in one paragraph at the top of the walkthrough: body plan, visible parts, number of bodies, posture), and the whole home-planet history. Note the exact sentences that describe the body, the engineered purpose, the environment, and the present day. These quotes are your evidence for every later step.
-2. **Description status.** If the description is already in the full species register (body appositive, engineered purpose, present-day turn, 60 to 140 words), keep it verbatim with `descriptionStatus: "source"`. If it is a two-sentence stub, write the upgraded description per section 3 using only facts from the stub and the planet history, mark `"upgraded"`, and list in the walkthrough every added clause with its source sentence.
+2. **Lore fields.** Copy the species.json description into `lore.description` verbatim, whatever its length. Write `lore.body` and `lore.habits` per the lore section of 5 (registers, sources, word ranges). Record their review status in `docs/species-templates/lore-status.json`, never in the record.
 3. **Buried-auto-trait pass.** From the body facts, list every trait the body DEMANDS (these go in the pool at 100). Then list traits the environment demands (at or near 100) and traits the description or art merely suggests (at a justified percent).
 4. **Physiology.** Fill every field in section 4. Anatomy from the 34 keys, justified part by part from the description; if the description names no clean part, author the minimum honest set and say so. Size bands as realistic absolutes. Lifespan from the wear rubric. Environmental fields from the planet's `data` block and history plus the body. Capabilities and senses as bands with one-line reasons. Any field with no supporting source sentence takes its minimum honest value (`[]` for communication, no `special` sense, the fewest anatomy keys the body demands) and is listed in the walkthrough's Authored fields section; the JSON carries no provenance, so that section is the only record of which values are guesses.
 5. **Instruments.** 1 to 3. Each physical instrument must be in anatomy; each channel must satisfy its predicate. Prefer the parts the description actually uses to fight or work. Then declare `conduits` (section 5.7a) only for instruments the description or art shows channeling an element, and quote the sentence.

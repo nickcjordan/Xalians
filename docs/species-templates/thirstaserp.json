@@ -7,8 +7,9 @@
     "endessa"
   ],
   "lore": {
-    "description": "A large, cobra-like serpent with a broad flaring hood and a rattling tail, the Thirstaserp hides beneath the sand of Endessa, a world whose oceans were vaporized and whose surface is now desert. It emits a subsonic vibration from the rattles on its tail that can lure and mesmerize opponents long enough for it to draw near and attack with a unique venom that drains the victim's water when bitten, causing the victim to suffer and die from extreme dehydration.",
-    "descriptionStatus": "upgraded",
+    "description": "A large, cobra-like creature that hides beneath the sand, Thirstaserps emit a subsonic vibration from the rattles on their tails that can lure and mesmerize opponents long enough for them to draw near and attack with a unique venom that drains the victim’s water when bitten, causing them to suffer and die from extreme dehydration.",
+    "body": "A limbless body, some two meters of it and a hundred kilograms, that loops flat on the ground and rears the front third of itself upright. The head is a viper's wedge; the upper jaw carries two long curved fangs and a forked tongue runs out between them. Behind the head a fan-shaped hood spreads wide on radiating ribs. Heavy crosswise bands of scale run the underside and the flank the whole length. The tail rises separately from the coils and finishes in a splayed rosette of narrow pointed blades set like petals. There is nothing else on it: no limb, no wing, no fin.",
+    "habits": "It lies buried and reads the ground it lies in, and it moves through loose particulate as readily as a swimmer moves through water. It hunts by vibration and it kills by attrition: what has been bitten is left to fail rather than fought down. Water is the thing worth taking on a world whose oceans were vaporized and whose dunes now lie over glass, and water is what it takes. The ground it holds is open dune, and it holds it from underneath. It spreads the hood and shows the fangs before it strikes.",
     "biomeNiche": "buried in the rolling dunes of Endessa"
   },
   "physiology": {

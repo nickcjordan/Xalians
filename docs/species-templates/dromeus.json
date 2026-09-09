@@ -7,8 +7,9 @@
     "magmuth"
   ],
   "lore": {
-    "description": "A partially feathered ground bird with lizard features, built long in the leg and narrow in the skull, the Dromeus was designed by Magmuth's corporations for the transient mineral islands, fast enough to cross a cooling lava flow before it opened underfoot. It is extremely quick and carries razor sharp teeth. At speed it spreads its wings and takes flight for a few seconds, launching into the air to sink its teeth into its prey. It still runs the ash fields of Magmuth, where the blood feuds of the company wars have never ended.",
-    "descriptionStatus": "upgraded",
+    "description": "Partially feathered ground birds with lizard features, these creatures are extremely quick with razor sharp teeth. When running at high speeds, they can spread their wings to temporarily take flight as they launch into the air and sink their teeth into their prey.",
+    "body": "It stands on two long hind legs, each foot set with hooked toe claws. The skull is narrow and lizard-like, with a small round eye under a raised brow ridge and two rows of triangular pointed teeth in jaws that open wide. The forelimbs stay folded against the chest, clear of the ground, and end in three long curved hooks. A broad fan of stiff pointed plumes sweeps back from each arm, with a second smaller group at the hip and a spray of them at the tip of the long tail carried up over the back. Between the plumes the trunk is smooth and unarmored, and the whole frame is light for its height.",
+    "habits": "Magmuth's corporations designed it for the transient mineral islands, where a cooling flow gives only a brief window before the ground opens underfoot, and it was built to cross one inside that window. It hunts on those hardened flats and eats what it runs down. The ash storms and the sulfuric air of that world pass over it without harm, and it picks a moving shape out of the haze from a long way off. It still runs the ash fields, where the blood feuds that arose from the company wars have never ended.",
     "biomeNiche": "the ash fields and hardened lava flows of Magmuth's transient islands"
   },
   "physiology": {

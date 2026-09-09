@@ -24,6 +24,8 @@ function buildLegacyView(species) {
 		source: 'legacy',
 		portrait: { svgName: species.key },
 		description: raw.description,
+		body: undefined,
+		habits: undefined,
 		biomeNiche: undefined,
 		entry: getEntry(species.key),
 		legacy: {
@@ -145,6 +147,8 @@ function buildTemplateView(species, template) {
 		source: 'template',
 		portrait: { svgName: species.key },
 		description: template.lore.description,
+		body: template.lore.body,
+		habits: template.lore.habits,
 		biomeNiche: template.lore.biomeNiche,
 		entry: getEntry(species.key),
 		record: {

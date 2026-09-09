@@ -4,6 +4,44 @@
 
 The render is a flat black silhouette of a single body, one creature and not a swarm. It is a lean, long-limbed simian shape drawn in a low prowling crouch with all four limbs on the ground: both hind legs are extended behind and to the side, and both forelimbs reach forward and down so that the splayed hands lie flat on the ground with the fingers spread. The head is broad and low-slung, thrust forward at the viewer, with two heavy curved horns sweeping up and back from the crown and a second smaller pair of curled projections at the sides of the skull. The face carries two large slanted eye shapes and a pair of long downward fangs at the muzzle. A very long, thin, whip-like tail rises from the hindquarters, loops high above the body in a wide S-curve and ends in a fine curved point. The entire upper body and head are wreathed in a crown of stylized flame tongues rising from the shoulders, neck and skull. The hands and feet are drawn as bare digits and a bare sole, with no claws rendered as separate hooks and no wings anywhere on the body. The silhouette outline is smooth, so it shows no surface texture of its own.
 
+## Lore
+
+The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` teaser carried verbatim and is never edited here; `body` is the physical record, `habits` is how the creature lives now. `descriptionStatus` was removed from the record; status lives in `docs/species-templates/lore-status.json`.
+
+### body
+
+A lean, long-limbed simian shape that goes in a low crouch with all four limbs on the ground, its hands and feet bare spread digits and bare soles with no hooks or claws drawn on them. The head is broad and slung low and forward, carrying two heavy curved horns that sweep up and back from the crown, a smaller curled pair at the sides of the skull, two long downward fangs, and two large slanted eyes. A very thin whip of a tail rises from the hindquarters, loops high above the body in a wide S, and tapers to a fine point. Flame stands off the shoulders, neck and skull in a constant crown.
+
+| Claim | Source |
+|---|---|
+| Lean, long-limbed simian shape going in a low crouch with all four limbs on the ground | art; record `physiology.bodyPlan: quadruped` |
+| Hands and feet drawn as bare spread digits and bare soles, no hooks or claws | art; record `physiology.anatomy: fists` and the absence of `claws` |
+| Broad head slung low and forward | art |
+| Two heavy curved horns sweeping up and back from the crown, and a smaller curled pair at the sides of the skull | art; record `physiology.anatomy: horns` |
+| Two long downward fangs | art; record `physiology.anatomy: fangs` |
+| Two large slanted eyes | art |
+| A very thin whip of a tail looping high above the body in a wide S and tapering to a fine point | art; record `physiology.anatomy: tail` |
+| Flame standing off the shoulders, neck and skull in a constant crown | art (stylized flame tongues rising from shoulders, neck and skull) |
+
+### habits (119 words)
+
+Its ground is the legacy shafts, which hold where fresh excavation would open onto magma seepage, and the crag networks above them, the only ground on Magmuth that stays put between flow shifts. It climbs and leaps that ground rather than crossing the open, swinging from the tail as readily as from a hand. What it finds down there it takes apart and puts back together, gripping and turning with bare digits rather than hooks or claws, and the makeshift equipment it was left with is still what it works on. Above ground it is far less predictable, and it leaves fire behind it in places that had none. Firestorms and pyroclastic flows pass over it without marking it.
+
+| Claim | Source |
+|---|---|
+| Its ground is the legacy shafts, which hold where fresh excavation would open onto magma seepage | planetRecords.json magmuth report terrain feature, legacy mining shafts; report mobility burrow note, "legacy shafts hold; new excavation intersects magma seepage" |
+| And the crag networks above them, the only ground that stays put between flow shifts | planetRecords.json magmuth report mobility climb note, "crag networks are the only persistent ground"; sprint note, "surface transit windows between flow shifts are brief" |
+| Climbs and leaps that ground rather than crossing the open | record `capabilities.climb` 78 to 95 and `capabilities.leap` 70 to 90; planetRecords.json magmuth report mobility sprint note on brief transit windows |
+| Swinging from the tail as readily as from a hand | species.json: "using their tails to swing through the air from place to place"; record `physiology.anatomy: tail` |
+| What it finds down there it takes apart and puts back together | species.json: "designed in ancient times as natural tinkerers" and "left to their own devices to fix and maintain the often makeshift mining equipment"; record `attributes.intelligence` 62 to 80 |
+| Gripping and turning with bare digits rather than hooks or claws | art (bare spread digits and bare soles, no claws drawn); record `capabilities.manipulation` 74 to 92 |
+| The makeshift equipment it was left with is still what it works on | species.json: "the often makeshift mining equipment sent deep into the earth by the Vallerii" |
+| Above ground it is far less predictable | species.json: "they are known for being entirely erratic" and "When released from their claustrophobic confines and set loose on the surface" |
+| And it leaves fire behind it in places that had none | species.json: "setting fires where they least belong" |
+| Firestorms and pyroclastic flows pass over it without marking it | planetRecords.json magmuth report hazards, firestorms and pyroclastic flows; report fauna observation, heat-shielded integument universal; record `traits.pool.hardened` 100 |
+
+The diet clause and the stillness-then-output clause of the first pass were cut for room; the predation-pattern line still stands in the judgment section.
+
 ## Judgments, each with its source
 
 ### Description status
@@ -180,3 +218,5 @@ WARN signature.description.elementkey signature description uses element key wor
 - 2026-09-07, trait evidence bar iteration two (Nick): restored perceptive; cut none; expected count 4.93 to 5.03.
 - 2026-09-08, trait evidence bar iteration three (Nick): added hardened; raised slippery; cut resistant; expected count 5.03 to 5.31.
 - 2026-09-08, pool shape (Nick): required hardened; rolled slippery 30, luminous 25, volatile 20, nocturnal 15, solitary 10; expected count 5.31 to 2.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
+- 2026-09-09, lore overlap lever: habits (and body where changed) rewritten so the defining act is present from its own angle.

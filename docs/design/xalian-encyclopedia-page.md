@@ -120,7 +120,7 @@ SpeciesView = {
   key, name, element, homePlanet, planet: PlanetView,
   source: 'template' | 'legacy',
   portrait: { svgName },                                   the name XalianImage expects
-  description, biomeNiche?, entry?: Entry,
+  description, body?, habits?, biomeNiche?, entry?: Entry,   // body and habits added by the 2026-09-09 lore split
   legacy?: { height, weight, statRatings, traits },        only when source is legacy
   record?: {                                               only when source is template
     physiology, traits: [{ key, name, nature, percent }],  sorted percent desc, zeros dropped

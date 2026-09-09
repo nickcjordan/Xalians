@@ -4,6 +4,42 @@
 
 The art is a black-and-white silhouette of a single body with no limbs at all. A large, cleanly drawn human-style skull occupies the upper right, tipped back and to the side, with two deep empty orbits, a small triangular nasal opening, and a wide grinning row of squared teeth running in an upturned arc; there are no lower jaw hinges drawn as a separate piece, so the grin reads as one fused mouth. Below and to the left the skull's base runs straight into a smooth, thick, tapering ribbon of body that curves down and then hooks back on itself, splitting near the end into two or three thin trailing streamers that curl into points. There are no arms, no legs, no wings, and no fins anywhere in the image. The entire lower half of the body dissolves into a dense scatter of small dark specks, thickest where the body is and thinning outward in every direction, so that the tail does not end at an edge but disperses into a cloud of particles. The posture is a drift or a swoop, nose up and tail streaming behind, the way something hanging in air is drawn rather than something standing. One body, one head, no limbs, no ground contact.
 
+## Lore
+
+The lore block holds three prose fields. `description` is Nick's teaser, carried from `species.json` verbatim and never edited here. `body` and `habits` are authored below under the lore split of 2026-09-09; every claim in each is ledgered.
+
+### body (113 words)
+
+There are no limbs anywhere on it and nothing touches the ground. A skull sits at the front, tipped back, with two deep empty orbits, a small triangular nasal opening, and a grinning row of squared teeth set in one fused upturned arc rather than on a hinged lower jaw. Behind the skull the body runs straight into a smooth tapering ribbon that curves down and hooks back on itself, splitting near the end into two or three thin streamers that curl to points. The lower half of that ribbon does not end at an edge: it thins into a scatter of drifting particles. At about a meter long it weighs almost nothing.
+
+| Claim | Source |
+|---|---|
+| no limbs anywhere, nothing touching the ground | art: no arms, legs, wings or fins, and a drifting posture with no ground contact; record `bodyPlan: floating` |
+| a skull at the front, tipped back | art: the human-style skull tipped back and to the side |
+| two deep empty orbits and a small triangular nasal opening | art: the two deep orbits and the small triangular nasal opening |
+| a grinning row of squared teeth in one fused upturned arc, no hinged lower jaw | art: squared even teeth in an upturned arc with no separate lower jaw piece; record `anatomy: jaws` |
+| the body runs from the skull into a smooth tapering ribbon that curves down and hooks back | art: the skull base running into a thick tapering ribbon that curves and hooks on itself; record `anatomy: tail` |
+| splitting near the end into two or three thin streamers curling to points | art: the trailing streamers at the end of the ribbon |
+| the lower half thins into a scatter of drifting particles rather than ending at an edge | art: the dense scatter of specks thinning outward; record `covering: mist`, `corporeality: non-corporeal` |
+| about a meter long, weighing almost nothing | record `size.heightCm` 80 to 105, `size.weightKg` 0.1 to 0.5 |
+
+### habits (105 words)
+
+It ranges the corpse islands of the Dreadscape, the macabre forests of splayed limbs and the tarry oceans that seep from the compressing layers of a planetwide mass grave, and it goes through what stands in the way rather than around it. The moon-weapon appears to target only organic, cellular life, so it passes freely over the ground where the organic workforce fell. It takes nothing in and feeds on nothing, so the ranging is not a hunt: what it looks for in other Xalians is their nerve, the cackle first, then the vanishing and the reappearing, then the ectoplasm. Nothing issues it orders now.
+
+| Claim | Source |
+|---|---|
+| Ranges the corpse islands of the Dreadscape, the forests of splayed limbs and the tarry oceans | Phantiri history paragraph 12, on the Dreadscape's islands of corpses covered in macabre forests of splayed limbs and deep tarry oceans formed from the fluids that eek out of a planetwide mass grave |
+| It goes through what stands in the way rather than around it | species.json: "passing through surfaces"; record `physiology.corporeality: non-corporeal` and `traits.pool.phasing` at 100 |
+| The moon-weapon appears to target only organic, cellular life | Phantiri history paragraph 13, which states it with that hedge; the hedge is kept |
+| So it passes freely over the ground where the organic workforce fell | Generator report mobility, flight not-applicable because current output is non-corporeal and matter does not obstruct transit; Generator report output notes, survival duration under current conditions was zero across all trials |
+| It takes nothing in and feeds on nothing, so the ranging is not a hunt | record `physiology.diet: none`, `physiology.breathes: []` |
+| What it looks for in other Xalians is their nerve | species.json: "They seem to amuse themselves by terrorizing other Xalians" |
+| The cackle first, then the vanishing and the reappearing, then the ectoplasm | species.json: "emitting a terrifying cackle wherever they go" and "disappearing and re-appearing at will, passing through surfaces, and zapping their opponents with blasts of gooey ectoplasm" |
+| Nothing issues it orders now | Phantiri history paragraph 11, the excavation fleet going radio silent, all findings sealed and classified, and the Wraithix System marked as restricted space into perpetuity |
+
+No pack or solitary sentence is written. The Phantiri report's proximity-aversion territoriality line is explicitly about other populations, so it does not carry a group or isolation claim for this species; `solitary` stays cut. The Leviticus Overdrive origin sentence of the first pass was cut for room: it is the Generator's act, not the creature's, and the moon-weapon line carries the same world fact.
+
 ## Sources
 
 Species entry (`species.json`, Ectoghoul, id 00024): type Ghost, planet Phantiri, legacy height 35 in / 90 cm, legacy weight 6 lbs / 3 kg, legacy `statRatings` special attack `medium` and evasion `high`, legacy `traits` `canFly: true` and `attackRange: medium`.
@@ -261,3 +297,5 @@ The remaining WARN is the instrument predicate, answered in the `## Script denia
 - 2026-09-07, trait evidence bar iteration two (Nick): restored `slippery` (55, class 5) and `perceptive` (20, class 4); cut nothing further, since `resistant` rests on the tarry oceans of a planetwide mass grave rather than on temperature; expected count 2.60 to 3.35.
 - 2026-09-08, trait evidence bar iteration three (Nick): added `hardened` (100, vacuum in `ambientMedia`); raised `slippery` (55 to 100, legacy `evasionRating` high); cut `perceptive` (20, no special sense and both graded bands under 80); expected count 3.35 to 4.60.
 - 2026-09-08, pool shape (Nick): required `phasing`, `menacing`; rolled `stealthy` 35, `slippery` 30, `resistant` 20, `hardened` 15; expected count 4.60 to 3.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
+- 2026-09-09, lore overlap lever: habits (and body where changed) rewritten so the defining act is present from its own angle.

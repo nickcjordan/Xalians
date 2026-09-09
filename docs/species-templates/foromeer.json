@@ -7,8 +7,9 @@
     "veridium"
   ],
   "lore": {
-    "description": "A tall upright creature whose hands are long drill-like horns and whose head carries two thin antennae, the Foromeer has a metallic exoskeleton on its limbs and is thought to once have been used for mineral excavation on Veridium, a world of dull, metallic crust with veins of heavy metals striking their way deep into it. Its powerful horns can break through the strongest of material. Since Source Code 606 released the Veridians from the oversight of their robotic masters, the demand for Veridium's factories has troughed, and the planet's Xalians tinker with salvaged drones, robots, and machines.",
-    "descriptionStatus": "upgraded",
+    "description": "This creature has a metallic exoskeleton on its limbs, with long drill-like horns for arms. Thought to once be used for mineral excavation, its powerful horns can break through the strongest of material.",
+    "body": "It stands close to two meters on two long jointed legs, thigh, shin and foot each a plated segment. The head is narrow and deerlike, carried high on a slim neck, tapering to a small closed mouth with one pale eye and ears swept back along the skull; from the crown rise two long thin filaments that sweep back and fork near their tips. The torso is unplated, broad at the shoulders and narrow at the waist. Both forearms are cased in plated gauntlets, and out of each hand rises a tapering helically threaded shaft longer than the creature is tall. There is no tail and there are no wings.",
+    "habits": "Veridium's crust is worked metal with veins of heavy metals striking deep into it, and the Foromeer opens those veins. It works among the factory trenches and forge districts, where molten pours and machinery running without regard to proximity are the ordinary risks, and its plating takes them. The manufactory rings so loudly across the gunmetal surface that it mutes all other sound, so the creature reads the ground it is braced on and answers by drumming rather than by call. Injuries close over on their own. Since Source Code 606 released the Veridians from their robotic masters the demand for the factories has troughed, and the planet's Xalians now tinker with salvaged drones and machines.",
     "biomeNiche": "the ore-filled soil and heavy-metal veins of Veridium's mineral crust"
   },
   "physiology": {

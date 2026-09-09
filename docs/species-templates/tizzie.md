@@ -6,6 +6,45 @@ The artwork is a flat black silhouette of a small shaggy mammal-shaped creature 
 
 Note on the pose and the plan: the art shows a mammalian four-limbed body caught mid-spring, with the forelimbs off the ground in that instant. The registry's selection rule says the plan is the stance at rest, not the stance in the pose, and that a rearing, crouching, or leaping pose does not override it. The forelimbs in this art end in small padded paws with short digits, not hands, fists, tools, or held claws, and the description never shows the forelimbs doing work. A creature drawn on paws in a spring is a `quadruped` at rest. Recorded as an art-judgment call in Authored fields.
 
+## Lore
+
+Split applied 2026-09-09. `lore.description` is Nick's teaser, carried from `species.json` verbatim and never edited here. `lore.body` and `lore.habits` below are authored to the split contract, 40 to 120 words each, and neither repeats a sentence the teaser already carries (the turning disc, the eye contact, and the working from inside a mind are all the teaser's and are deliberately absent from both fields).
+
+### body (110 words)
+
+A small shaggy climber that hangs from the branches by long-fingered hands, a single hand taking the whole body. The pelt is drawn in tufted, spiky edges along the chest, flanks and haunches, with no plate or shell anywhere on it. Two pointed ears rise nearly as long as the head. The face is mostly eye: two wide circles patterned as spiral pinwheels, set side by side, filling about half the skull. A long thin tail curves up behind the head and ends in a flat disc filled with a tight spiral, held out at eye height and about as wide as the skull itself. The hind feet are two-toed.
+
+| Claim | Source |
+|---|---|
+| small shaggy climber hanging from the branches by long-fingered hands | art: hangs from a branch by one long-fingered hand with the hind legs clear of any ground; `physiology.bodyPlan` biped, `physiology.anatomy` fists, `capabilities.climb` [65, 90] |
+| a single hand taking the whole body | art: the creature hangs from a branch by one long-fingered hand with the hind legs clear of any ground; `physiology.size` 80 to 95 cm and 10 to 16 kg |
+| pelt in tufted, spiky edges along chest, flanks and haunches | art: the outline is drawn as tufted shaggy edges; `physiology.covering` fur |
+| no plate or shell anywhere on it | art: no shell, plating, horns or weaponry drawn; `physiology.anatomy` declares `hide`, which states the body has no armored aspect |
+| two pointed ears nearly as long as the head | art: two enormous pointed ears, each nearly as long as the head; `physiology.senses.hearing` [65, 88] |
+| two spiral-pinwheel eyes filling about half the skull | art: two large circular spiral pinwheel eyes taking roughly half the head; `physiology.senses.sight` [70, 92] |
+| long thin tail ending in a flat spiral disc, held at eye height, about the width of the skull | art: S-curved tail terminating in a large flat spiral disc roughly the diameter of the skull, held out at eye height; `physiology.anatomy` tail and lure |
+| hind feet two-toed | art: two-toed hind feet |
+
+### habits (112 words)
+
+It lives up in the bioluminescent fungal forests of Telypso, moving along the branches and taking its food from what those forests give. It is quick in the branches and hard to hold there. The Generator raised it to counterbalance the psychic energies of the deranged Vallerii the Imperial Houses marooned on the world, and the work was meant as treatment rather than injury, the subject a patient to be settled and folded back into the mind of the planet. Since the Nemesis Plague reached Telypso's sanctuaries and turned the creatures of the world against one another, Tizzies turn on each other, and they have only the one way of doing it.
+
+| Claim | Source |
+|---|---|
+| lives in the bioluminescent fungal forests of Telypso | `lore.biomeNiche`; Telypso history paragraph 6, psychic Xalians emerging from the fungal forests; Telypso Generator report terrain feature, fungal forest systems |
+| moves along the branches | art: the hanging posture; `capabilities.climb` [65, 90] |
+| takes its food from what those forests give | `physiology.diet` omnivore, the registry fallback recorded for this species; no source shows it feeding, so the claim states only that it eats where it lives |
+| quick in the branches and hard to hold there | `capabilities.climb` [65, 90] and `leap` [40, 65]; `attributes.agility` [55, 82]; legacy `speedRating` high |
+| raised to counterbalance the psychic energies of the deranged Vallerii the Imperial Houses marooned on the world | Telypso history paragraph 5, the Imperial Houses leaving Telypso as a cosmic asylum and sending the most unstable and mentally deranged of the Vallerii there; paragraph 6, the Generator churning out Xalians whose psychic energies could counterbalance those of the brainsick creatures populating the planet |
+| the work was meant as treatment rather than injury, the subject a patient folded back into the mind of the planet | Telypso history paragraph 6, the Generator treating the prisoners as patients and merging them into the mind of the rest of Telypso's psychosphere; Telypso report fauna observation, population function is therapeutic per this unit's standing directive |
+| since the plague reached the sanctuaries and turned the creatures of the world against one another, Tizzies turn on each other, and have only the one way of doing it | Telypso history paragraph 7, the Nemesis Plague reaching Telypso's sanctuaries and tainting the creatures of Telypso, turning them against one another; Telypso report fauna observation, inter-population aggression rising in affected sectors |
+| no company sentence is written | deliberate: no source states pack or solitary for this species, and both were cut from the trait pool on 2026-09-07 for want of evidence |
+
+### Sentences dropped from the pre-split description
+
+- 'Nothing takes the same hold on it,' from the 2026-09-08 stub-upgrade draft. Dropped on the orchestrator's instruction for this pass; its only support was the absence of a stated counterpart vulnerability, which is argument from silence.
+- The clause naming the turning disc, the eye contact and the treatment proceeding from inside the mind. Not lost: it is the teaser, carried verbatim in `lore.description`, and the split forbids repeating a teaser sentence in body or habits.
+
 ## Sources
 
 Species entry (`species.json`), full description, two sentences:
@@ -249,3 +288,5 @@ The single WARN is answered in the Answers to WARN lines section above.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored none; cut none; expected count 1.55 to 1.55. Every cut entry was re-tested against the widened bar, including the ratified-field class and the two legacy-rating mappings, and none passed. `resistant` is not in this pool, so ruling B changes nothing here.
 - 2026-09-08, trait evidence bar iteration three (Nick): added foresighted (6, rolled at its authored percent, Telypso anticipatory-response forms line, not a demanded trait); raised perceptive 55 to 100 (`senses.special` psychic, a demanded trait sits at 100); cut none; expected count 1.55 to 2.06.
 - 2026-09-08, pool shape (Nick): required hypnotic; rolled perceptive 55, healing 37, foresighted 8; expected count 2.06 to 2.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
+- 2026-09-09, lore fact-check gate (independent checker, no files changed by it): four claims came back UNSUPPORTED and all four were fixed rather than argued. The one-handed hang is now written as the art observation it is; `understory` was Floria vocabulary and became what the fungal forests give; the staged hand-closing sentence became a plain capability statement off `capabilities.climb`, `leap` and `attributes.agility`; and the plague close now states the join it makes (the sources give the turning-against-one-another and the species gives its only mode) instead of asserting the mechanism as fact. No CONTRADICTED claims.

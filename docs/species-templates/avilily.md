@@ -4,6 +4,46 @@
 
 The artwork is a solid black silhouette of a single bird in flight, seen from its left side. Its head carries a spray of narrow feathers standing up as a crest, and one pale eye is drawn into the head. The beak is the centerpiece: it is split open into four broad petals arranged around a starburst of fine filaments, so that the whole front of the face reads as an open flower rather than a bill. A long neck runs down into a heavy teardrop body. One large wing is spread wide and fully extended behind the head, its flight feathers drawn as long overlapping blades, and a second, smaller wing shows below and behind it. Two long streamer feathers trail off the back. Below the body hang two legs, each ending in three or four long splayed toes held clear of any ground; there is no ground line in the image and nothing bears weight. The bird is one body, not many. Total impression: a small hovering or flitting flier caught mid air with its flower face open.
 
+## Lore
+
+The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
+
+### body
+
+A spray of narrow feathers stands up from its crown, and a neck runs down into a heavy teardrop body. Opened, the bill spreads into four broad lobes set around a starburst of fine filaments, so the front of the face carries far more structure than a bill needs. Its wings are broad and long-feathered and are what move it, and two long streamer feathers run back from behind the head. The legs hang clear beneath and end in three or four long splayed toes that grip. Feathers cover it. It is a small bird, and it sees and smells far better than it hears.
+
+| Claim | Source |
+|---|---|
+| A spray of narrow feathers standing up from the crown | art: a crest of narrow feathers standing up from the head; record `physiology.anatomy` includes crest |
+| A neck running down into a heavy teardrop body | art: a neck running down into a heavy teardrop body |
+| Opened, the bill spreads into four broad lobes set around a starburst of fine filaments | art: the beak split open into four broad petals arranged around a starburst of fine filaments |
+| Broad long-feathered wings, and they are what move it | art: one large wing fully extended with flight feathers drawn as long overlapping blades, a second below it; record `physiology.bodyPlan: avian` and `capabilities.flight [70, 88]` |
+| Two long streamer feathers running back from behind the head | art: two long streamer feathers running back from behind the head, over the wing; record `physiology.anatomy` includes tail |
+| Legs hanging clear beneath, ending in three or four long splayed toes that grip | art: two legs hanging below the body, each ending in three or four long splayed toes held clear of any ground; record `physiology.anatomy` includes talons |
+| Feathers cover it | record `physiology.covering: feathers` |
+| It is a small bird | record `physiology.size.heightCm [40, 56]` and `weightKg [6, 10]` |
+| It sees and smells far better than it hears | record `senses.sight [65, 85]`, `senses.smell [50, 70]`, `senses.hearing [45, 60]` |
+
+### habits (119 words)
+
+It works the canopy stratum of the World Trees, where flight within and above the branches is the efficient way to move and the obstructed ground below is not worth running on. It hunts without chasing. The opened bill and the sweet smell bring the insect in, and whatever the saliva touches stops moving; what stops moving is eaten, and it takes nothing but meat. It keeps company, and a body of them holds its stretch of forest the way the rest of Floria does, by growth, entanglement, and regrowth in place of engagement, and anything entering the deep groves gets the same stillness and the same meal. The toxic fungal blooms of the underforest do not trouble it.
+
+| Claim | Source |
+|---|---|
+| It works the canopy stratum of the World Trees | planetRecords.json floria `report.fauna.observations` canopy stratum of branch-runners and fliers; `report.terrain.features` World Tree crowns at city scale |
+| Flight within and above the branches is the efficient way to move | planetRecords.json floria `report.mobility.flight` optimal, within and above canopy |
+| The obstructed ground below is not worth running on | planetRecords.json floria `report.mobility.sprint` inefficient, ground-level obstruction density |
+| It hunts without chasing; the opened bill and the sweet smell bring the insect in | species.json: "when they open their mouths that 'flower' blooms" and "They attract insects with their sweet, syrupy smelling saliva and vibrant floral display"; record `capabilities.sprint [15, 30]` against `flight [70, 88]` |
+| Whatever the saliva touches stops moving | species.json: "their saliva contains a powerful sedative which paralyzes anything that it comes in contact with" |
+| What stops moving is eaten, and it takes nothing but meat | species.json: "paralyzing and consuming all who dare to threaten"; record `physiology.diet: carnivore` |
+| It keeps company | species.json: the description states that the species moves and holds ground in swarms; record `traits.pool.pack-bonded` |
+| A body of them holds its stretch of forest | record `traits.pool.territorial` at 100, required; species.json: "protect the most sacred parts of" its jungles |
+| By growth, entanglement, and regrowth in place of engagement | planetRecords.json floria `report.fauna.observations`, the territorial strategy line |
+| Anything entering the deep groves gets the same stillness and the same meal | species.json: "paralyzing and consuming all who dare to threaten the pristineness of their forests" |
+| The toxic fungal blooms of the underforest do not trouble it | planetRecords.json floria `report.hazards` toxic fungal blooms; record `traits.pool.resistant` |
+
+The lifespan and plague clause of the first pass was cut for room; it restates `physiology.lifespan` and a planet fact that says nothing about how this bird lives.
+
 ## Judgments
 
 ### Description status
@@ -155,3 +195,5 @@ WARN conduits.source                conduit secretion for plant: the validator a
 - 2026-09-07, trait evidence bar iteration two (Nick): restored perceptive (45, class 4, the record's graded sight and smell bands); cut none; expected count 2.80 to 3.25.
 - 2026-09-08, trait evidence bar iteration three (Nick): added resistant, regenerative, territorial; raised toxic; cut none; expected count 3.25 to 6.30.
 - 2026-09-08, pool shape (Nick): required toxic, territorial; rolled stealthy 35, pack-bonded 30, resistant 20, perceptive 15; expected count 6.30 to 3.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
+- 2026-09-09, lore overlap lever: habits (and body where changed) rewritten so the defining act is present from its own angle.

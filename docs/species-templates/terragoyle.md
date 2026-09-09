@@ -8,6 +8,44 @@ A single body, drawn front on, hunched low. Two ridged horns curl up and back fr
 
 Four limbs bear weight in this pose. The forelimbs are not held clear, they are planted.
 
+## Lore
+
+The lore split (Nick, 2026-09-09). `lore.description` was already the species.json teaser verbatim and is unchanged; body and habits below are new, and both were written to add to the teaser rather than restate it.
+
+### body (119 words)
+
+It crouches on all fours, the arms coming down between splayed knees so that both hands take weight on spread fingers, the legs folded deep with flat splayed feet gripping. Two ribbed horns curl up and back off the skull. The face carries two eyes, a small nose and a level closed mouth, with nothing in it to bite with. The trunk is heavy with muscle and bare, smooth unarmored hide drawn over a blocked chest and belly. Membranous wings ribbed on finger struts spread from the shoulders. The tail rises over the head and opens into a five-pointed cradle, and the stone rides above that cradle without touching it. Under two meters, and three hundred kilograms and more.
+
+| Claim | Source |
+|---|---|
+| crouches on all fours, arms down between splayed knees, both hands taking weight on spread fingers | art: the arms descend between the splayed knees, hands flat on the surface with fingers spread, bearing weight; record `physiology.bodyPlan` is `quadruped` |
+| legs folded deep, feet flat and splayed, toes gripping | art |
+| two ribbed horns curling up and back off the skull | art: two ridged horns curling up and back, ribbed along their length; record `physiology.anatomy` carries `horns` |
+| two eyes, a small nose, a level closed mouth, nothing in it to bite with | art: two eyes, a small nose, a closed level mouth, no visible fangs, beak, or tusks; record `anatomy` carries no `jaws`, `fangs`, `beak` or `tusks` |
+| trunk heavy with muscle and bare, smooth unarmored hide over a blocked chest and belly | art: a heavily muscled bare trunk with pectorals and a segmented abdomen drawn as line work on smooth skin, the silhouette edge smooth everywhere; record `physiology.covering` is `hide` |
+| membranous wings ribbed on finger struts, spread from the shoulders | art: large membranous wings ribbed with finger struts in the bat pattern; record `anatomy` carries `wings` |
+| the tail rises over the head and opens into a five-pointed cradle | art: one long tail sweeping up and over the head, ending in a flared cradle of five backswept points; record `anatomy` carries `tail` |
+| the stone rides above that cradle without touching it | art: a rough irregular ball of stone floating above the cradle, separated by a clear gap, unattached |
+| under two meters, three hundred kilograms and more | record `physiology.size.heightCm` [150, 185] and `weightKg` [300, 430] |
+
+### habits (113 words)
+
+It holds the rim above a planetary strip-mine that spirals down into the Chasm, where Kozrak's enforcers work Stonera's war refugees for whatever the liquid metal below is worth, and it holds that rim in a line rather than alone. Most of the time it holds it as a statue, vitals arrested, spending no more than the rubble around it. The ground carries a footfall to it long before anything shows against the gray sky, and then it is up in the static-crackling air with the stone riding over the cradle of its tail, flinging boulders and gravel down onto whatever is climbing. Going up into that air costs it something every time.
+
+| Claim | Source |
+|---|---|
+| Holds the rim above a planetary strip-mine that spirals down into the Chasm | species.json: "Terragoyles can be found lining the edges of the Chasm"; planet: "A planetary strip-mine now dominates the Chasm, spiraling deep into the hollow earth"; record `lore.biomeNiche` and `traits.pool.territorial` at 100 |
+| Kozrak's enforcers work Stonera's war refugees for whatever the liquid metal below is worth | planet: "where Kozrak’s enforcers exploit Stonera’s war-torn refugees as a captive labor force, squeezing them for every last ounce of profit to be made" and "a gaping hole now descends into a deep ocean of liquified metal and rich minerals of unimaginable value" |
+| Holds that rim in a line rather than alone | species.json: "Terragoyles can be found lining the edges of the Chasm" (the one sentence in either source that puts more than one of them on the ground at once) |
+| Most of the time it holds it as a statue, vitals arrested, spending no more than the rubble around it | species.json: "now stand guard over the perimeter in a statue-like state, hibernating to conserve their energy until a threat is detected"; record `traits.pool.dormant` |
+| The ground carries a footfall to it before anything shows against the gray sky | record `senses.special`, `tremorsense`; record `physiology.senses.hearing` [60, 85] against `sight` [55, 80]; planet: "The debris from such collisions have launched enormous swathes of dirt into the air, dying the sky a dusty grey" |
+| Then it is up in the static-crackling air | species.json: "When awoken, Terragoyles rise high into the sky"; planet: "the rubbing of these particulates in the atmosphere generates colossal static discharges that crackle pervasively in the lower atmosphere"; report `terrain.features`, atmospheric dust saturation with static discharge; record `traits.pool.insulated` |
+| With the stone riding over the cradle of its tail | art (a five-pointed cradle at the tail tip with the stone held clear above it); species.json: "elongated tails tipped with a levitating ball of stone" |
+| Flinging boulders and gravel down onto whatever is climbing | species.json: "using their tails to levitate boulders and fling them like great flying catapults across the Chasm beneath them or to carpet bomb intruders with strafing runs of gravel and rock as they soar overhead" |
+| Going up into that air costs it something every time | Stonera Generator report `mobility.flight`, inefficient, debris and static exposure |
+
+No feeding claim was authored: neither source shows this species feeding, and `physiology.diet` reads `omnivore` as the no-evidence fallback, so habits says nothing about what it eats. The Jorian Belt bombardment clause of the first pass was cut for room; the dusty sky and the static in the air still carry it, and the field now spends its length on what the creature does from the rim rather than on what falls on it.
+
 ## Description status
 
 `source`. The `species.json` description is 105 words, one paragraph, present tense, and already runs the full register: it opens with a body appositive, `Resembling horned and vaguely humanoid bats with elongated tails tipped with a levitating ball of stone`, gives the engineered purpose, "They were originally used to airlift debris out of Stonera's strip mines with their levitational tails", and turns to the present day anchored to a named place, "but now stand guard over the perimeter in a statue-like state, hibernating to conserve their energy until a threat is detected." Carried verbatim, including the source's own spelling of `levitating`, because a source-status description is copied character for character and is not silently corrected. Flagged as an open question below.
@@ -182,3 +220,5 @@ The one WARN line, the conduit source check, is answered above under Answers to 
 - 2026-09-07, trait evidence bar iteration two (Nick): restored none; cut none; expected count 3.05 to 3.05.
 - 2026-09-08, trait evidence bar iteration three (Nick): added `insulated` at 100, `territorial` at 90, `dormant` at 85, `hardened` at 50; raised `perceptive` 55 to 100; cut `resistant`; expected count 3.05 to 6.25.
 - 2026-09-08, pool shape (Nick): required `telekinetic`, `territorial`; rolled `dormant` 35, `anchored` 25, `perceptive` 20, `insulated` 20; expected count 6.25 to 3.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
+- 2026-09-09, lore overlap lever: habits (and body where changed) rewritten so the defining act is present from its own angle.

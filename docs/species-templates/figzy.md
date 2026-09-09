@@ -4,6 +4,44 @@
 
 The art shows a single small creature standing upright on two digitigrade legs, weight braced back on one leg, with both forelimbs held free of the ground and raised in front of the chest. The forelimbs end in small five-fingered hands with the fingers splayed open, doing no weight-bearing work. The head is dominated by two enormous shaggy ears that flare wider than the skull, a pair of slender branched antlers rising from the crown, two very large round eyes with bright highlights, and a small blunt muzzle. The whole outline is drawn with tufted, ragged edges along the ears, cheeks, chest, forelimbs and thighs, which reads as a shaggy coat rather than a smooth surface. Off to the creature's side and clearly separated from the body floats a many-pointed starburst with a hollow center, positioned in front of the raised hands, so the art shows a projected release of energy leaving the hands and arriving at a short distance from the body. One creature, one body; no wings, no tail, no visible plating or shell.
 
+## Lore
+
+The lore block holds three prose fields. `description` is Nick's teaser, carried from `species.json` verbatim and never edited here. `body` and `habits` are authored below under the lore split of 2026-09-09, re-cut from the stub-upgrade draft of 2026-09-08.
+
+### body (107 words)
+
+A small upright body stands on two digitigrade legs, weight braced back on one of them, with both forelimbs held up in front of the chest and ending in five-fingered hands, the fingers splayed open. The head carries the rest of it: two enormous ears flaring wider than the skull, a pair of slender branched antlers rising from the crown, two very large round eyes, and a small blunt muzzle beneath them. A shaggy coat breaks the outline into tufts along the ears, cheeks, chest, forelimbs and thighs. Nothing on it is plated or shelled, and at a little over a meter it is a light frame.
+
+| Claim | Source |
+|---|---|
+| small upright body on two digitigrade legs, weight braced back on one | art: standing on two digitigrade legs with the weight braced back; record `bodyPlan: biped` |
+| both forelimbs held up in front of the chest, ending in five-fingered hands with the fingers splayed | art: both forelimbs raised and free of the ground, small five-fingered hands splayed open; record `anatomy: fists` |
+| two enormous ears flaring wider than the skull | art: the two shaggy ears flaring wider than the head |
+| a pair of slender branched antlers rising from the crown | art: the branched racks on the crown; record `anatomy: antlers` |
+| two very large round eyes and a small blunt muzzle | art: the two large round eyes with bright highlights and the small blunt muzzle |
+| a shaggy coat tufting the outline along ears, cheeks, chest, forelimbs and thighs | art: the tufted ragged outline on those parts; record `covering: fur` |
+| nothing plated or shelled | record `anatomy: hide` and no `shell` |
+| a little over a meter, a light frame | record `size` 95 to 125 cm and 34 to 52 kg |
+
+### habits (117 words)
+
+The Telypso Generator built it to counterbalance the unstable auras of the Vallerii marooned planetside, treating them as patients rather than removing them, and it was one of the small psychic bodies that emerged from the fungal forests to steady what the deranged left behind. It still works that way, putting itself between a distressed mind and whatever is agitating it, holding the one quiet and driving the other back with a burst that leaves its open hands. Telypso's ambient field amplifies whatever state it meets, and its own stays steady. The Nemesis Plague has set the creatures of Telypso against one another, and a Figzy that trusts no one raises its hands against its own kind.
+
+| Claim | Source |
+|---|---|
+| the Telypso Generator built it to counterbalance the unstable auras of the Vallerii marooned planetside | Telypso history paragraph 6, on the Generator sensing their unstable auras and churning out Xalians whose psychic energies could counterbalance those of the brainsick creatures, once the most insane and demented of the Vallerii began finding themselves marooned planetside |
+| treating them as patients rather than removing them | Telypso history paragraph 6, on the Generator treating the prisoners as patients, set against the same paragraph's rejected alternative of Xalians tasked with removing such Vallerii |
+| one of the small psychic bodies that emerged from the fungal forests | Telypso history paragraph 6, on psychic Xalians emerging from the fungal forests; record `lore.biomeNiche` |
+| to steady what the deranged left behind | Telypso history paragraph 6, on intrusive thoughts and erratic behaviors leaving psychic impressions that had to be rectified to keep Telypso in harmony |
+| puts itself between a distressed mind and whatever is agitating it, holding the one quiet | Telypso Generator report fauna, empathic forms with emotional-state regulation function; output priorities, psychic stabilization capacity and emotional regulation function, stated here as this creature's own act |
+| drives the other back with a burst that leaves its open hands | record `signatureAbility` Small Hands of the Psychosphere, instrument `mind`, action `burst`; `conduits` mind and fists for psychic; art: the starburst separated from the body in front of the raised hands |
+| Telypso's ambient field amplifies whatever state it meets | Telypso Generator report hazards, ambient psychic amplification of observer state |
+| its own stays steady | Generator report output priorities, distress-tolerance thresholds; record `traits.pool.mind-sealed` |
+| the plague has set the creatures of Telypso against one another | Telypso history paragraph 7, on waves of spiritual sorrow tainting the creatures of Telypso and turning them against one another |
+| a Figzy that trusts no one raises its hands against its own kind | the ratified turn of the previous record text, joining the teaser's trust condition to the paragraph above; no new fact |
+
+No pack or solitary sentence is written: `pack-bonded` was cut on 2026-09-07 and `solitary` was never listed.
+
 ## Description status
 
 The legacy description is a two-sentence stub, so `descriptionStatus` is `upgraded`. Source stub, verbatim: "What this creature lacks in stature it makes up for with its incredible magical abilities. It is deceptively smart, yet known to be docile when it trusts you."
@@ -223,3 +261,4 @@ Both WARNs are the conduit-source check on the conduits Nick added on 2026-09-02
 - 2026-09-07, trait evidence bar iteration two (Nick): restored `mind-sealed` (25, class 3); cut nothing, since the pool carries no `resistant`; expected count 1.50 to 1.75.
 - 2026-09-08, trait evidence bar iteration three (Nick): added `foresighted` (8, Telypso anticipatory-response forms, qualified evidence so restored at its authored percent); raised `perceptive` (70 to 100, psychic special sense); cut nothing, since the pool carries no `resistant`; expected count 1.75 to 2.13.
 - 2026-09-08, pool shape (Nick): required `telekinetic`; rolled `hypnotic` 35, `perceptive` 30, `mind-sealed` 27, `foresighted` 8; expected count 2.13 to 2.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.

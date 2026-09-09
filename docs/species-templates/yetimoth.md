@@ -4,6 +4,44 @@
 
 The artwork is a flat black silhouette of a single creature, front-on, standing upright on two legs. The head is a mammoth's: broad domed skull, two large fanned ears set wide, a long segmented trunk hanging down the center of the chest and curling forward at the tip, and two enormous curved tusks that sweep out from beside the trunk, arc up and outward past the width of the shoulders, and end in points level with the ears. The tusks are drawn in outline with cracked, faceted interior lines rather than filled solid, which reads as translucent material rather than bone. Below the head the body is a heavy shaggy ape torso: sloped shoulders wider than the hips, no neck to speak of, and two long arms that hang free at the sides and end in closed blocky hands with the thumb and knuckles picked out. The arms do not reach the ground and bear no weight. The two legs bear the whole body; the near leg is drawn stepping forward with a broad flat foot and visible toes, the far leg trailing. The outline of the arms, flanks, and thighs is drawn in ragged tufted edges all the way around, which reads as a shaggy pelt. One body, one head, no wings, no tail visible, no spines, no visible armor plates.
 
+## Lore
+
+Split applied 2026-09-09. `lore.description` was already the `species.json` text verbatim and is unchanged. This species had no upgraded description to re-cut, so body and habits are authored fresh, and both are written around the teaser rather than over it: the ice sheets, the near-impenetrable armor, the walls of frost, the encapsulating and the ice-gauntleted fists are all the teaser's and appear in neither field.
+
+### body (113 words)
+
+It stands upright on two legs and carries its whole weight on them, the arms hanging free at the sides and ending in closed blocky hands. The shoulders slope wider than the hips with no neck between them, and the outline of arms, flanks and thighs is ragged and tufted all the way around. The skull is broad and domed, with two ears fanned wide and a long segmented trunk hanging down the center of the chest and curling forward at the tip. The tusks sweep out past the width of the shoulders and end level with the ears, drawn cracked and faceted through rather than solid. The feet are broad and flat.
+
+| Claim | Source |
+|---|---|
+| stands upright on two legs bearing the whole weight; arms hang free, ending in closed blocky hands | art: two legs bearing the whole body, arms hanging free and bearing no weight, ending in closed blocky hands with thumb and knuckles picked out; `physiology.bodyPlan` biped; `physiology.anatomy` fists |
+| shoulders sloping wider than the hips, no neck | art: sloped shoulders wider than the hips with no neck to speak of |
+| ragged, tufted outline around arms, flanks and thighs | art: the outline drawn in ragged tufted edges all the way around; `physiology.covering` fur |
+| broad domed skull with two ears fanned wide | art: a broad domed skull and two large fanned ears set wide; `physiology.senses.hearing` [55, 75] |
+| long segmented trunk hanging down the center of the chest, curling forward at the tip | art: exactly that; `physiology.anatomy` trunk; `physiology.senses.smell` [55, 75] |
+| tusks sweeping past shoulder width, ending level with the ears | art: two enormous curved tusks arcing up and outward past the width of the shoulders, ending in points level with the ears; `physiology.anatomy` tusks |
+| tusks drawn cracked and faceted through rather than solid | art: the tusks drawn in outline with cracked, faceted interior lines rather than filled solid; `physiology.composition.secondary` mineral |
+| feet broad and flat | art: a broad flat foot with visible toes on the leading leg |
+
+### habits (120 words)
+
+Its ground is the high-security complexes of the frozen tundra and the waste immediately outside them, where the ones too tough or too feral for indoor work were just as useful for discouraging an escape. It does not work alone; the pattern is formation, and one of them holding a line assumes others beside it. A corridor is closed by standing in it and drawing the frost out of the air until the way is a wall, and whatever is left on the wrong side of that wall is cased in the same ice and held there until the fists arrive. The commissions that posted it there are centuries gone, and the guard pattern is still what the Generator prints.
+
+| Claim | Source |
+|---|---|
+| Its ground is the high-security complexes of the frozen tundra | `lore.biomeNiche`; Krystos history paragraph 7, several high-security prison complexes with the emerging stock of sturdy Xalians manning the penitentiaries |
+| And the waste immediately outside them, where the tougher or more feral were useful for discouraging an escape | Krystos history paragraph 7, those tough enough or feral enough to remain in the arctic wastelands outside being just as useful for deterring prisoners from seeking to escape |
+| Does not work alone; the pattern is formation | the teaser's own rank-and-file sentence, which is a species sentence; `traits.pool.pack-bonded` 27, whose sole evidence is that clause |
+| A corridor is closed by standing in it and drawing the frost out of the air until the way is a wall | species.json: "they could also form thick sheets of ice from thin air" and "blocking off escape routes in walls of frost"; record `conduits` hide for ice |
+| Whatever is left on the wrong side of that wall is cased in the same ice | species.json: "encapsulating their opponents" |
+| And held there until the fists arrive | species.json: "until they could lumber over close enough to pummel them into submission with their meaty, ice-gauntleted fists"; record `physiology.anatomy: fists` and `conduits` fists for ice |
+| The commissions are centuries gone and the guard pattern is still what the Generator prints | Krystos report fauna observation, guard-pattern forms retained from penal commissions; `traits.pool` required `territorial` |
+
+### Claims considered and left out
+
+- A present-day placement of the species in Krystos's divided politics or in the prison fortresses of the closing history paragraph. That paragraph is about Krystians as a people and about the APEX-loyalist prisoners; nothing attaches it to this species, so it stays out.
+- The whole-cold and no-preference-feeding clauses of the first pass, cut for room. Both are still carried by the judgment section; the ice work replaced them under the overlap lever, since a guard that never does the thing it guards with was the field describing Krystos rather than the Yetimoth.
+
 ## Description status
 
 `source`. The species.json description is one paragraph, present in the full register: it opens with a body appositive ("Hulking, white-furred apes with the heads of mammoths and tusks made of pure ice"), states the engineered purpose ("the Yetimoths formed the rank and file of Krystos' prisonguards in ancient times"), and turns to what the body does in the field. It is carried verbatim, including its original double space, and no clause was added.
@@ -189,3 +227,6 @@ WARN conduits.source                conduit fists for ice: the validator agent m
 - 2026-09-08, trait evidence bar iteration three (Nick): added hardened (100, sustained lethal cold hazard plus the cold-proof insulation output priority), territorial (100, the unquantified guard-pattern forms observation plus the species prisonguard sentence), dormant (100, the metabolic-suspension output priority); raised none; cut perceptive (20, ruling 1, graded bands topping out at 75 with no special sense); expected count 2.50 to 5.30.
 - 2026-09-08, pool shape (Nick): required armored, territorial; rolled menacing 30, pack-bonded 27, anchored 23, hardened 20; expected count 5.30 to 3.00.
 - 2026-09-08, new keys (Nick): `armored` widened in the registry to cover a covering the body reliably forms on itself (frost, resin, slag). The required `armored` evidence line is rewritten to cite the widened definition, and the friction note the earlier pass left about the definition straining is replaced with the resolution. No percent changed: required `armored`, `territorial`; rolled `menacing` 30, `pack-bonded` 27, `anchored` 23, `hardened` 20; pool six entries; expected count 3.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
+- 2026-09-09, lore fact-check gate (independent checker, no files changed by it): no UNSUPPORTED and no CONTRADICTED claims; nothing changed. The checker noted that the company sentence leans on `traits.pool.pack-bonded` 27 alone, which is correct: its underlying evidence is the teaser's own rank-and-file clause, and no other source speaks to Yetimoth sociality.
+- 2026-09-09, lore overlap lever: habits (and body where changed) rewritten so the defining act is present from its own angle.

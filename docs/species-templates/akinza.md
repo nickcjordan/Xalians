@@ -6,6 +6,42 @@ The image is a flat black silhouette of a single creature, one body, no second u
 
 The art and the description do not disagree; the description is silent on the body and the art supplies it.
 
+## Lore
+
+The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
+
+### body
+
+Akinza stands upright on two digitigrade hind legs, narrow through the waist and light in the frame, and its forelimbs are held in at the waist, ending in small hooked claws that carry no weight. The head is feline, a short muzzle over a small triangular nose, with two tall vertical slit pupils set above it. The ears dominate everything else, a ragged and deeply fringed pair spread wider than the shoulders. A plumed tail sweeps up behind and opens into three or four shaggy fronds, each about as long as the body. Fur covers all of it. The long hind legs carry it at speed and the claws take it up ice and stone.
+
+| Claim | Source |
+|---|---|
+| Upright on two digitigrade hind legs, forelimbs held in at the waist and carrying no weight | art: both arms held in at the waist clear of the ground, weight entirely on the hind legs; record `physiology.bodyPlan: biped` |
+| Small hooked claws on the free forelimbs | art: short curved hooked digits on both hands; record `physiology.anatomy` includes claws |
+| Narrow through the waist, light in the frame | art: slim narrow-waisted torso with smooth limb outlines |
+| Feline head, short muzzle over a small triangular nose | art: feline or fox-like head with a small muzzle and a small triangular nose |
+| Two tall vertical slit pupils | art: two very large eyes drawn as vertical slit pupils |
+| Ragged, deeply fringed ears spread wider than the shoulders | art: a pair of enormous ears, far wider than the shoulders, deeply ragged and fringed |
+| A plumed tail opening into three or four shaggy fronds about as long as the body | art: enormous plumed tail structure resolving into three or four fronds, each roughly as long as the whole body; record `physiology.anatomy` includes tail |
+| Fur covers all of it | record `physiology.covering: fur`; art: the only outlines drawn as a surface, the ears and the tail fronds, are tufted and shaggy |
+| The long hind legs carry it at speed | record `capabilities.sprint [65, 88]` |
+| The claws take it up ice and stone | record `capabilities.climb [45, 70]`; planetRecords.json krystos `report.mobility.climb` viable, `report.terrain.features` ice crystal peaks and mountain drift systems |
+
+### habits
+
+It belongs to the feral stock that came out of the Krystos Generator after the impact, when the debris blotted out the sun and the machine turned from dainty and graceful creatures to lifeforms capable of surviving the harsh, frozen tundra. Its ground is the arctic wastelands outside the high-security prison complexes rather than the penitentiary halls, where such creatures proved just as useful for deterring any prisoners from seeking to escape. Blizzard cycles and sustained lethal cold are the conditions it works in, and the dark hours are the ones it keeps. It takes what the permafrost gives, of any kind.
+
+| Claim | Source |
+|---|---|
+| It belongs to the feral stock that came out of the Krystos Generator after the impact | planets.json Krystos history paragraphs 4 to 7: the impact event, and the emerging stock of Xalians on the frozen world |
+| The debris blotted out the sun | planets.json Krystos history paragraph 5: the atmospheric debris blotting out the sun and all warmth that accompanied it |
+| The machine turned from dainty and graceful creatures to lifeforms capable of surviving the harsh, frozen tundra | planets.json Krystos history paragraph 6, the Generator sentence, restated |
+| Its ground is the arctic wastelands outside the high-security prison complexes rather than the penitentiary halls | planets.json Krystos history paragraph 7: the sturdy stock manned the penitentiaries while the feral stock remained in the arctic wastelands outside; record `lore.biomeNiche` |
+| Such creatures proved just as useful for deterring any prisoners from seeking to escape | planets.json Krystos history paragraph 7, same sentence; planetRecords.json krystos `report.fauna.observations` guard-pattern forms retained from penal commissions |
+| It takes what the permafrost gives, of any kind | record `physiology.diet: omnivore` |
+| Blizzard cycles and sustained lethal cold are the conditions it works in | planetRecords.json krystos `report.hazards`: sustained lethal cold, blizzard cycles; record `environmentalTolerance.temperatureC [-60, -10]` |
+| The dark hours are the ones it keeps | record `traits.pool.nocturnal` at 100 and `lore.biomeNiche`, worked at night |
+
 ## Source sentences
 
 Species (the whole entry description, one sentence):
@@ -255,3 +291,4 @@ All three WARNs are answered in the Script denials section above.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored slippery (30, class 5, legacy `evasionRating` of high); cut resistant (20, ruling B, thermal-only support); expected count 2.56 to 2.66.
 - 2026-09-08, trait evidence bar iteration three (Nick): added hardened, dormant, territorial; raised slippery; cut none; expected count 2.66 to 6.36.
 - 2026-09-08, pool shape (Nick): required stealthy, nocturnal; rolled slippery 35, perceptive 30, territorial 20, hardened 15; expected count 6.36 to 3.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.

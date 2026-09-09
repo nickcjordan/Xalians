@@ -688,18 +688,6 @@
         "name": "Achiral",
         "nature": "The species has no handedness to roll; declared only when the body has no chiral chemistry."
       }
-    ],
-    "descriptionStatus": [
-      {
-        "key": "source",
-        "name": "Source",
-        "nature": "The species.json description is carried verbatim because it is already in the full register."
-      },
-      {
-        "key": "upgraded",
-        "name": "Upgraded",
-        "nature": "The description was rewritten from a stub using only the stub, the art, and the planet history."
-      }
     ]
   },
   "capabilities": [

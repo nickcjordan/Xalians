@@ -84,7 +84,10 @@ for (const planet of planetsInOrder) {
 
 for (const species of legacySpeciesList) {
 	const template = templateRecordsByKey.get(species.key);
-	const description = template ? template.lore.description : species.raw.description;
+	// the 2026-09-09 lore split: the teaser plus the body and habits prose are the species' text
+	const description = template
+		? [template.lore.description, template.lore.body, template.lore.habits].filter(Boolean).join(' ')
+		: species.raw.description;
 	if (description) {
 		textUnits.push({ kind: 'species', key: species.key, label: `Species: ${species.name}`, text: description });
 	}
@@ -174,14 +177,18 @@ for (const unit of textUnits) {
 
 const totalUnits = textUnits.length;
 
-// Specificity score: count * log(totalUnits / documentFrequency). A subject
-// mentioned in most text units (Vallerii, Xalians, Xalia, Xalian Generator)
-// has documentFrequency close to totalUnits, so its log term collapses
-// toward zero and it naturally falls to the bottom of the ranking without
-// needing a hard exclusion list.
+// Specificity score: count * log(totalUnits / documentFrequency) squared. A
+// subject mentioned in most text units (Vallerii, Xalians, Xalia, Xalian
+// Generator) has documentFrequency close to totalUnits, so its log term
+// collapses toward zero and it falls to the bottom of the ranking without a
+// hard exclusion list. The square (2026-09-09) makes the collapse hold once the
+// species text units became the short teasers plus body and habits: "Xalians"
+// then sat in about a quarter of units, and a plain log left it third for a
+// world with seven co-mentions, above a species mentioned in a handful.
 function specificityScore(subject, count) {
 	const df = documentFrequency.get(subjectId(subject)) || 1;
-	return count * Math.log(totalUnits / df);
+	const idf = Math.log(totalUnits / df);
+	return count * idf * idf;
 }
 
 export function getConnections(kind, key, { limit = 12 } = {}) {

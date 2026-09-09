@@ -4,6 +4,42 @@
 
 The render shows a single lean feline standing upright on its two hind legs, chest raised and back arched, with both forelimbs lifted clear of the ground and the paws held open, toes spread, in front of the chest. The head is in profile: pointed tufted ears, a long muzzle drawn open in a snarl over a full row of small sharp teeth, and one narrow slit eye. A long tapering tail sweeps down and away to the left and its tip dissolves into a large roiling curl of vapor drawn as a separate billowing mass. Curling tongues of smoke rise along the entire right side of the animal, off the shoulder, off the raised forepaw, off the flank, off the hind thigh, and off the standing foot; the same curls trail from the tail tip. The hind feet end in three splayed clawed toes. The outline of the trunk is smooth and unbroken, with no tufting, plume edges, plate seams, or scale seams anywhere on it. It is one body, not many.
 
+## Lore
+
+The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description` verbatim and moves everything else into two authored fields.
+
+### body (111 words)
+
+It stands upright on two hind legs, chest raised and back arched, forepaws lifted and open with the toes spread. The muzzle is long and pulls back off a full row of small sharp teeth; the ears are pointed and tufted, the eye a narrow slit. The hind feet end in three splayed clawed toes. A long tail tapers away behind it and its tip goes to vapor, and vapor rises off the shoulder, the forepaw, the flank, the thigh and the planted foot. Under all of it the outline is smooth and unbroken, unarmored hide rather than plate or scale, on a frame under two meters and around seventy kilograms.
+
+| Claim | Source |
+|---|---|
+| stands upright on two hind legs, chest raised and back arched | art: a lean feline standing upright on its two hind legs, chest raised, back arched; record `physiology.bodyPlan` is `biped` |
+| forepaws lifted and open with the toes spread | art: both forelimbs lifted clear of the ground, paws held open, toes spread |
+| long muzzle pulled back off a full row of small sharp teeth | art: a long muzzle drawn open in a snarl over a full row of small sharp teeth; record `physiology.anatomy` carries `jaws` |
+| pointed tufted ears, the eye a narrow slit | art: pointed tufted ears, one narrow slit eye |
+| hind feet end in three splayed clawed toes | art; record `anatomy` carries `claws` |
+| a long tail tapering away behind it, its tip going to vapor | art: a long tapering tail whose tip dissolves into a large roiling curl of vapor; record `anatomy` carries `tail` |
+| vapor off the shoulder, forepaw, flank, thigh and planted foot | art: curling tongues of smoke rising off the shoulder, the raised forepaw, the flank, the hind thigh and the standing foot |
+| the outline smooth and unbroken, unarmored hide rather than plate or scale | art: a smooth unbroken trunk outline with no plate seams or scale seams; record `physiology.covering` is `hide` and `anatomy` carries `hide`, never `shell` |
+| under two meters, around seventy kilograms | record `physiology.size.heightCm` [150, 185] and `weightKg` [58, 84] |
+
+### habits (82 words)
+
+It came off the secret Generator the Vallerii left in the bowels of Phantiri, put there to supply the laborers who did the heavy lifting at the dig sites, and it hunts now above the Dreadscape, the wasteland of piled Xalian remains that buried the obelisks of the old world. It climbs and springs where the footing is bad, and it takes what crosses beneath it. The fog over that ground stands windless and never lifts, and it works from inside it.
+
+| Claim | Source |
+|---|---|
+| came off the secret Generator the Vallerii left in the bowels of Phantiri | planet: "But the Vallerii had left behind a secret Xalian Generator in the bowels of Phantiri" |
+| put there to supply the laborers who did the heavy lifting at the dig sites | planet: "They would need Xalian laborers after all, to do the heavy lifting necessary to uncover the answers to the one question that now plagued them." and "Ever more dig sites continued to uncover stranger and stranger artifacts" |
+| hunts now above the Dreadscape, a wasteland of piled Xalian remains that buried the obelisks of the old world | planet: "its frantic activity forever changed the surface of the entire planet, burying the obelisks of the ancient Phantiri under mountains upon mountains of Xalian corpses" and "blanketed in a vast wasteland known as the Dreadscape"; record `lore.biomeNiche` |
+| the fog over that ground stands windless and never lifts, and it works from inside it | Phantiri `data.Terrain`, thick haze; Phantiri Generator report `terrain.features`, persistent windless fog; record `traits.pool.stealthy` at 100 and `nocturnal` |
+| climbs and springs where the footing is bad | record `capabilities.climb` [55, 80], `leap` [55, 80], `sprint` [60, 85] |
+| takes what crosses beneath it | record `physiology.diet` is `omnivore` |
+
+Clauses dropped from the old upgraded description, with the reason: 'and gather itself again' (the reassembly half of the atomizing act) and 'uses the same trick for quick evasion and sneak attacks' were both cut, because both restate Nick's teaser, which now carries them in its own words; nothing they asserted is lost, and the record's `signatureAbility` still states the re-forming.
+
+
 ## Source text
 
 Species description (verbatim, and the whole of it): "Feline shaped in normal form, this clever creature can instantly atomize into a cloud of smoke for a sneak attack or quick evasion."
@@ -202,3 +238,4 @@ Two WARNs were raised across the run and both were answered by revision rather t
 - 2026-09-07, trait evidence bar iteration two (Nick): restored none; cut none; expected count 2.95 to 2.95.
 - 2026-09-08, trait evidence bar iteration three (Nick): added none; raised `slippery` 85 to 100; cut none; expected count 2.95 to 3.10.
 - 2026-09-08, pool shape (Nick): required `stealthy`, `slippery`; rolled `phasing` 35, `nocturnal` 30, `perceptive` 20, `resistant` 15; expected count 3.10 to 3.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.

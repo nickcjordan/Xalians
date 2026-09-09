@@ -2,6 +2,45 @@
 
 Sources read in full: the `Graviclaw` entry in `species.json` and the entire `Grimedes` entry in `planets.json` (all eleven history paragraphs plus the `data` block). No summary document, prior template, or design doc was consulted.
 
+## Lore
+
+The lore block holds three prose fields. `description` is Nick's teaser, already the `species.json` text and unchanged by this pass (its status was `source`). `body` and `habits` are authored below under the lore split of 2026-09-09; every claim in each is ledgered. The teaser already carries the crab body, the upright torso, the gravitational pull, the snapping claws and the rooting, so none of that is restated here.
+
+### body (110 words)
+
+A broad low carapace rides on more than four jointed legs, each ending in a single hooked point, and from the front of it an upright torso rises with heavy shoulders and two thick arms. The head is small and narrow for the mass beneath it, with two pale eye slits and a short crest of thin filaments at the crown. One arm ends in a pincer as long as the torso, a hooked upper blade closing against a lower one; the other is a heavy limb of the same build. Standing near two meters and carrying most of a quarter ton, it is far heavier than its height suggests.
+
+| Claim | Source |
+|---|---|
+| a broad low carapace | art: the large rounded shelled mass carrying the whole body; record `anatomy: shell`, `covering: chitin` |
+| more than four jointed legs, each ending in a single hooked point | art: jointed crab legs on both sides, more than four, each tapering to one hooked point; record `bodyPlan: multiped` |
+| an upright torso rising from the front of it, heavy shoulders, two thick arms | art: the humanoid torso set at the front of the carapace with broad shoulders and two heavy arms |
+| a small narrow head with two pale eye slits | art: the narrow head carrying two white eye slits |
+| a short crest of thin filaments at the crown | art: the small tuft of thin filaments on top of the head |
+| one arm ending in a pincer as long as the torso, a hooked upper blade against a lower one | art: the raised pincer with a hooked upper claw closing on a lower one, of a length with the torso; record `anatomy: pincers` |
+| the other arm a heavy limb of the same build | art: the second arm drawn heavy and reaching |
+| near two meters, most of a quarter ton, far heavier than its height suggests | record `size.heightCm` 165 to 215 against `size.weightKg` 180 to 260 |
+
+### habits (119 words)
+
+It hunts under a sky of permanent night, where the only light is infrared, and it registers mass and motion rather than looking for it. It does not chase. It lies under the wetland surface and opens a collapse point in the water above it, so the prey arrives at the pincers on its own; the pincers then shut with a weight the arm does not have, and what is caught is not let go. Faced with something too large to draw in, it fixes itself to the bottom and stops being movable. It makes no call, no cry, and no signal of any kind. The Grimedites watch the galaxy's edge for APEX's return; it keeps the wetlands below.
+
+| Claim | Source |
+|---|---|
+| A sky of permanent night where the only light is infrared | Grimedes history paragraph 0, on a world cloaked in perpetual night around a dying brown dwarf emitting almost no visible light beyond the shortest infrared bands; Generator report terrain notes, illumination infrared only |
+| Registers mass and motion rather than looking | Grimedes Generator report fauna, sensory apparatus registers mass and motion; output priorities, non-visual sensory systems; record `senses.sight` 20 to 45 against `senses.special: void-sense` |
+| It does not chase | Grimedes Generator report fauna, extant fauna substitute gravitational manipulation for the majority of pursuit locomotion; record `capabilities.sprint` 15 to 35 |
+| It lies under the wetland surface and opens a collapse point in the water above it | species.json: "lurks just beneath the foggy wetlands of Grimedes, using its bizarre control over the intensification of gravitational waves to generate miniature black holes in the water"; Grimedes Generator report fauna, wetland forms generate submerged collapse-points |
+| So the prey arrives at the pincers on its own | species.json: "draw its helpless prey right into its clutches" |
+| The pincers shut with a weight the arm does not have | species.json: "snap them shut with a force many times heavier than their implied mass" |
+| What is caught is not let go | record `traits.pool.grappling`; species.json: "severing through even the hardest of materials with crushing pressure" |
+| Faced with something too large to draw in, it fixes itself to the bottom and stops being movable | species.json: "When facing larger foes, the Graviclaw can use its powers to root itself to the ground, becoming an immovable wall of chitin."; record `traits.pool.anchored` |
+| No call, no cry, no signal of any kind | record `physiology.communication: []`, which the enum defines as mute |
+| The Grimedites watch the galaxy's edge for APEX's return | Grimedes history paragraph 9, on the newest generation of Grimedites standing at the edge of the galaxy to watch the endless black and guard against APEX's inevitable return |
+| It keeps the wetlands below | record `lore.biomeNiche`; Generator report terrain features, fog-covered wetland systems |
+
+No pack or solitary sentence is written: `solitary` was cut on 2026-09-07 and `pack-bonded` is absent from the pool. The test-subject and ECHELON black-site origin of the first pass was cut for room; it is a fact about how the species was made rather than how it lives now, and the walkthrough's judgment lines keep it.
+
 ## Description status
 
 `descriptionStatus` is `source`. The legacy description is already in the full species register: it opens with a body appositive ("With the black-shelled body of a crab and an upright torso"), states the creature hunting purpose, and anchors to a named place on its home world ("the foggy wetlands of Grimedes"). It is one paragraph of 114 words, inside the 60 to 140 band, so it is carried verbatim and no clauses were added.
@@ -188,3 +227,5 @@ All three are pre-existing and answered below and in the amendments: the conduit
 - 2026-09-08, trait evidence bar iteration three (Nick): added `nocturnal` (100, Grimedes low-light metabolism output priority) and `foresighted` (100, the report's unqualified anticipatory-response observation); raised `perceptive` (30 to 100, void-sense special sense); cut nothing, since the pool carries no `resistant`; expected count 2.96 to 5.66.
 - 2026-09-08, pool shape (Nick): required `armored`, `anchored`; rolled `stealthy` 35, `telekinetic` 25, `nocturnal` 22, `perceptive` 18; expected count 5.66 to 3.00.
 - 2026-09-08, new keys (Nick): `grappling` added to the registry as a body stronger holding what it has caught, and it enters the rolled set at the top share on the claws that snap shut with a force many times heavier than their implied mass and draw prey into its clutches; `perceptive` (18) cut to the table above with the reason pool full, weaker evidence; the rolled set re-shared as `grappling` 32, `stealthy` 28, `telekinetic` 22, `nocturnal` 18; required unchanged at `armored` and `anchored`; pool holds at six, the cap; expected count 3.00 unchanged.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
+- 2026-09-09, lore overlap lever: habits (and body where changed) rewritten so the defining act is present from its own angle.

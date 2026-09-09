@@ -59,7 +59,6 @@ const ENUMS = {
   special: ['echolocation', 'tremorsense', 'electroreception', 'psychic', 'heat-sense', 'void-sense'],
   lifespan: ['fleeting', 'short', 'standard', 'long', 'enduring', 'ageless'],
   chirality: ['rolled', 'achiral'],
-  descriptionStatus: ['source', 'upgraded'],
 };
 const CAPABILITIES = ['flight', 'swim', 'burrow', 'climb', 'sprint', 'leap', 'manipulation'];
 const ANATOMY = ['jaws', 'fangs', 'beak', 'tusks', 'horns', 'antlers', 'trunk', 'tongue', 'crest', 'lure', 'claws', 'talons', 'fists', 'hooves', 'pincers', 'blades', 'spurs', 'wings', 'tail', 'stinger', 'rattle', 'coils', 'hide', 'shell', 'spines', 'tendrils', 'roots', 'pseudopods', 'spinnerets', 'light-organs', 'vents', 'core', 'antennae', 'body'];
@@ -251,13 +250,16 @@ if (T) {
 
   // lore
   const L = T.lore || {};
-  checkEnum('lore.descriptionStatus', L.descriptionStatus, ENUMS.descriptionStatus, 'lore.descriptionStatus');
-  if (L.descriptionStatus === 'source') {
-    if (species && normalize(L.description) !== normalize(species.description)) fail('lore.description.verbatim', 'descriptionStatus is "source" but description is not the species.json text verbatim');
-    checkProse('lore.description', L.description, 'lore.description');
-  } else {
-    checkProse('lore.description', L.description, 'lore.description', { wordRange: [60, 140] });
-  }
+  // lore split (Nick, 2026-09-09): description is Nick's teaser and must be the species.json text verbatim;
+  // body (physical) and habits (behavior and ecology) are authored prose, 40 to 120 words each.
+  if (species && normalize(L.description) !== normalize(species.description)) fail('lore.description.verbatim', 'lore.description must be the species.json description verbatim (it is the teaser; physical and behavioral prose go in lore.body and lore.habits)');
+  checkProse('lore.description', L.description, 'lore.description');
+  if (typeof L.body !== 'string' || !L.body.trim()) fail('lore.body', 'lore.body missing (the physical description)');
+  else checkProse('lore.body', L.body, 'lore.body', { wordRange: [40, 120] });
+  if (typeof L.habits !== 'string' || !L.habits.trim()) fail('lore.habits', 'lore.habits missing (how it lives now)');
+  else checkProse('lore.habits', L.habits, 'lore.habits', { wordRange: [40, 120] });
+  if ('descriptionStatus' in L) fail('lore.extra', 'lore.descriptionStatus is metadata, not a creature fact; status lives in docs/species-templates/lore-status.json');
+  if ('amendments' in T) fail('template.extra', 'amendments is metadata, not a creature fact; record amendments in the walkthrough changelog');
   if (typeof L.biomeNiche !== 'string' || !L.biomeNiche.trim()) fail('lore.biomeNiche', 'biomeNiche missing');
   else if (EM_DASH.test(L.biomeNiche)) fail('lore.biomeNiche.emdash', 'biomeNiche contains an em-dash');
 
@@ -495,7 +497,7 @@ if (MD) {
     // reset per line so one stray quote cannot mis-pair the rest of the document.
     const skillPath = path.join(ROOT, '.claude', 'skills', 'migrate-species', 'SKILL.md');
     const skillText = fs.existsSync(skillPath) ? fold(fs.readFileSync(skillPath, 'utf8')) : '';
-    const own = [T && T.lore && T.lore.description, T && T.signatureAbility && T.signatureAbility.description, ENC && ENC.definition].filter(Boolean).map(fold).join(' \n ');
+    const own = [T && T.lore && T.lore.description, T && T.lore && T.lore.body, T && T.lore && T.lore.habits, T && T.signatureAbility && T.signatureAbility.description, ENC && ENC.definition].filter(Boolean).map(fold).join(' \n ');
     const quotes = [];
     let inFence = false;
     let inDenials = false;

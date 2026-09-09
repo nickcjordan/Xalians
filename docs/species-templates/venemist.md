@@ -4,6 +4,46 @@
 
 The artwork shows a single shaggy quadruped seated on its haunches in three-quarter profile, head thrown back and jaws gaped wide open. Two long curved fangs hang from the upper jaw and nothing else in the mouth reads as a tooth. A narrow tube-like organ projects forward out of the open mouth and a fanning shower of droplets bursts from its tip, spreading upward and outward in a wide cone. The head carries two long upright ears. The outline of the neck, shoulders and back is drawn as a row of ragged tufts, a shaggy pelt edge rather than a smooth silhouette; the flanks and legs are smooth. The forelimbs reach the ground and bear weight, the hindquarters are down in a seated pose, and a long tail curls out behind the rump. One body, no wings, no fins, no visible armor plate, no horns, no claws drawn as distinct hooking digits.
 
+## Lore
+
+Split applied 2026-09-09. `lore.description` is Nick's teaser from `species.json`, verbatim. `lore.body` and `lore.habits` are authored below and neither restates the teaser's own two facts (the mist dissolving prey, the two teeth).
+
+### body (98 words)
+
+A mid-sized four-legged hunter, heavier through the chest than through the haunch, with the neck, shoulders and back edged in a ragged shag while the flanks and legs run smooth. Two long ears stand upright on a blunt head, and the head opens into wide gaping jaws. Two long curved fangs hang from the upper jaw and nothing else in that mouth reads as a tooth. Between them a narrow tube projects forward past the lip. A tail sweeps out behind the rump. Nothing on it is plated or shelled; under the pelt the surface is unarmored hide.
+
+| Claim | Source |
+|---|---|
+| mid-sized four-legged hunter | art: a seated quadruped whose forelimbs reach the ground and bear weight; `physiology.bodyPlan` quadruped; `physiology.size` 95 to 120 cm and 42 to 62 kg |
+| heavier through the chest than the haunch | art: the shoulder and chest mass against the seated hindquarters |
+| neck, shoulders and back edged in ragged shag, flanks and legs smooth | art: the dorsal outline is a row of ragged tufts, the flanks and legs a smooth line; `physiology.covering` fur |
+| two long ears standing upright | art: two long upright ears; the registry routes sense organs to `senses`, so this is `physiology.senses.hearing` [55, 80] and not anatomy |
+| blunt head opening into wide gaping jaws | art: head thrown back with the jaws gaped wide; `physiology.anatomy` jaws |
+| two long curved fangs and nothing else that reads as a tooth | art: exactly two long curved teeth in the upper jaw; `physiology.anatomy` fangs; the teaser gives the count |
+| narrow tube projecting forward past the lip | art: a narrow tube-like organ projecting out of the open mouth; `physiology.anatomy` vents; `conduits` vents to chemical |
+| a tail sweeping out behind the rump | `physiology.anatomy` tail; the walkthrough art reading above records a long tail curling behind the rump, though the render is cropped close at the hindquarters, so the shape is not restated in the prose |
+| nothing plated or shelled; unarmored hide under the pelt | art: no plate, shell or scale edge anywhere; `physiology.anatomy` hide, the surface key that states the body has no armored aspect |
+
+### habits (114 words)
+
+It hunts by scent rather than by sight, working a smog too thick to see through and coming to its prey on the smell of it alone. Its ground is the acid swamps and the derelict chemical plants of the factoryscape, where abandoned facilities still run themselves and still fail. The Generator that shaped it was built to fill a world of acid swamps and industrial waste with life capable of surviving there at all, and nothing on that world burns it: not the corrosive rain, not the swamps it wades, not the agent it carries. A body opened in a fight discharges through the breach, which is true of everything printed on Drainov.
+
+| Claim | Source |
+|---|---|
+| hunts by scent rather than sight | `physiology.senses.smell` [60, 85] against `sight` [40, 60]; Drainov report mobility note on flight, airborne particulates degrade tissue and instrumentation |
+| a smog too thick to see through | Drainov history paragraph 3, a desolated hellscape blanketed in a miasma of toxic smog; planet data Terrain, Gaseous Smog |
+| comes to its prey | `physiology.diet` carnivore, settled by the teaser's own word prey. Written as prey and not as a carcass: nothing makes this species a scavenger |
+| its ground is the acid swamps and the derelict chemical plants of the factoryscape | `lore.biomeNiche`; Drainov history paragraph 1, the world turned into a sprawling factoryscape, and paragraph 3, urban decay melting into acid swamps |
+| abandoned facilities still run themselves and still fail | Drainov history paragraph 3, abandoned processing facilities and chemical plants continuing to chug along on automated systems with very few safety measures, and annual meltdowns, explosions and leaks; Drainov report terrain note, automated legacy facilities continue uncommanded operation with periodic containment failure |
+| nothing on that world burns it: corrosive rain, swamps, its own agent | Drainov report fauna observation, full-spectrum toxin immunity universal; output priorities chemical immunity and containment-grade integument; history paragraph 5, the Xalians adapting to bubbling acid swamps, steaming corrosive rain, asphyxiating fumes and neurotoxic gases; `traits.pool.resistant` 55 |
+| a body opened in a fight discharges through the breach, which is true of everything printed on Drainov | Drainov report fauna observation, reactive discharge on structural breach; `traits.pool.volatile` 25 |
+| the Generator was built to fill a world of acid swamps and industrial waste with life capable of surviving there at all | Drainov history paragraph 5, the Generator bioengineering new forms of life capable of surviving within the planet's hostile wastelands |
+
+### Sentences dropped from the pre-split description
+
+- 'and several will stand over the same one until it is thin enough to drink' from the 2026-09-08 stub-upgrade draft. Dropped on the orchestrator's instruction for this pass: no source states that this species feeds in company, Nick has not ruled on it, and `pack-bonded` was cut from the pool on 2026-09-07 for the same reason. Nothing else in the draft was lost; its remaining authored extensions (scent hunting, universal chemical immunity, discharge on breach) are all carried in habits above.
+- The teaser's own two facts (the mist that dissolves prey, the two teeth that make it necessary) are not repeated in body or habits by design.
+
 ## Description status: upgraded
 
 The source description is a two-sentence stub: "The toxic mist expelled from a tube in its mouth helps to dissolve its prey. With only 2 teeth, this tactic is necessary for the creature to survive." That is not the full species register, so it was upgraded and marked `upgraded`. Every added clause and its source:
@@ -196,3 +236,5 @@ logged to docsspecies-templatesalidation-logenemist.jsonl
 - 2026-09-07, trait evidence bar iteration two (Nick): restored perceptive (35, class 4, graded sense bands), volatile (12, class 3, Generator report fauna observation of reactive discharge on breach); cut none; expected count 1.95 to 2.42.
 - 2026-09-08, trait evidence bar iteration three (Nick): added none; raised resistant 95 to 100 and volatile 12 to 100 (both demanded species-wide by the Drainov Generator Environmental Report, universal toxin immunity plus chemical-immunity and filtration output priorities plus the atmosphere hazard for the first, unquantified reactive discharge on structural breach for the second); cut none; expected count 2.42 to 3.35.
 - 2026-09-08, pool shape (Nick): required toxic; rolled resistant 55, volatile 25, perceptive 20; expected count 3.35 to 2.00.
+- 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
+- 2026-09-09, lore fact-check gate (independent checker, no files changed by it): one CONTRADICTED claim and one UNSUPPORTED claim, both fixed. `carcass` implied a scavenger and contradicted the teaser and `diet: carnivore`; it is now prey. The discharge-on-breach sentence is now written as the planet-wide fauna observation it rests on rather than as a fact about this species alone. The tail is no longer given a shape in the prose: the render is cropped close at the hindquarters and `physiology.anatomy` tail is what carries it.

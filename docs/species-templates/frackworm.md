@@ -4,6 +4,47 @@
 
 There is no artwork for the Frackworm. `docs/species-templates/art/frackworm.png` does not exist; the species was authored today and has not been illustrated. Every body-plan, anatomy, covering and posture call below therefore rests on the description alone, and each is flagged in Authored fields where the description does not settle it. The orchestrator's art check for this species is pending an illustration: when one is drawn, the body plan (`serpentine`), the anatomy set (`jaws`, `vents`, `body`), and the covering default (`bare`) are the three calls most likely to be overturned by it, and the covering is the one I expect to change first.
 
+## Lore
+
+Split applied 2026-09-09. This record is an unratified draft and has no `species.json` entry, so there is no upstream teaser to revert to: the existing `lore.description` is kept exactly as it stood and is treated as the teaser for the purposes of the split. `lore.body` and `lore.habits` are authored below and neither repeats a teaser sentence (the boring down to the substrate, the slurry driven into the seams, the fracturing, the Nightcap draining to the well, the Wildcatters and the Barons are all the teaser's).
+
+The species now has artwork at `art/frackworm.png`; the Art reading section above, which states there is none, predates it. Body below is written from the render.
+
+### body (105 words)
+
+A limbless body in overlapping plates, ringed segment by segment from the blunt taper of the tail to the collar behind the head, and thick enough through the trunk that the front third rears and curves back over the rest of itself when it lifts. The head narrows forward through banded rings to a working face. Set on the collar behind it is a single pinpoint eye, and it reads almost nothing. Nothing on the body grips or grasps: the plates are the surface, the rings are the mechanism, and what the creature does it does with its head end or with its whole length.
+
+| Claim | Source |
+|---|---|
+| limbless body in overlapping plates, ringed segment by segment | art: a segmented trunk drawn as overlapping plates with pale seam lines running the whole length, no limb of any kind; `physiology.bodyPlan` serpentine; `physiology.covering` chitin; `physiology.anatomy` shell |
+| blunt taper at the tail, a collar behind the head | art: the rear end tapering to a blunt point, a distinct collar segment between the drill head and the trunk |
+| the front third rears and curves back over the rest of itself | art: the forward third of the body raised and curved back over the resting length |
+| the head narrows forward through banded rings to a working face | art: a broad ringed head banded across its length and narrowing forward; the record's own `lore.description`, a ringed drill-like head; `physiology.anatomy` jaws |
+| a single pinpoint eye on the collar, reading almost nothing | art: one small dot eye set on the collar behind the drill; `physiology.senses.sight` [0, 15]; the 2026-09-04 amendment, now carried in the changelog below |
+| nothing on the body grips or grasps | `capabilities.manipulation` [5, 15] and `climb` [0, 10]; no grasping key in `physiology.anatomy` |
+| what it does it does with its head end or with its whole length | `instruments` jaws, vents and body |
+
+### habits (105 words)
+
+Endessa's surface insolation is lethal without adaptation under two suns, so the whole of its working life happens inside the dunes and the excavation tunnels beneath them, moving through loose particulate the way another body moves through water. It has no use for sight down there and reads the ground by tremor instead, which cuts both ways: the subsurface of that world hunts by vibration and takes what it takes by attrition, so the same sense that guides it advertises it. What it signals, it signals through the rock. Thermal load, desiccation and tunnel collapse are the standing hazards and it works through all three.
+
+| Claim | Source |
+|---|---|
+| the whole of its working life happens below | `lore.biomeNiche`; Endessa report terrain feature, subsurface excavation tunnel networks; `capabilities.burrow` [80, 95] against `sprint` [10, 25] |
+| surface insolation lethal without adaptation, under two suns | Endessa report terrain note, surface insolation lethal without adaptation, dual-star; Endessa history paragraph 10, the twin suns blazing through a cloudless sky |
+| inside the dunes and the excavation tunnels beneath them | Endessa report terrain features, dune systems of vitreous particulate over ocean-floor substrate and subsurface excavation tunnel networks; history paragraph 10, large cavern networks extending deep beneath the surface |
+| moves through loose particulate the way another body moves through water | Endessa report mobility, burrow rated optimal including sustained particulate-swimming; report output priority, particulate locomotion |
+| no use for sight; reads the ground by tremor | `physiology.senses.sight` [0, 15]; `physiology.senses.special` tremorsense |
+| the subsurface of that world hunts by vibration and takes what it takes by attrition, so the same sense advertises it | Endessa report fauna observations, subsurface ambush forms and vibration-hunting forms, and predation strategy of attrition; report hazard, vibration-triggered predation. Written of the world around the creature, not of the creature's own feeding, which no source shows |
+| what it signals, it signals through the rock | `physiology.communication` vibration |
+| thermal load, desiccation and tunnel collapse are the standing hazards and it works through all three | Endessa report hazards, thermal load, desiccation, tunnel collapse; output priorities, water retention and thermal shielding; `traits.pool.resistant` 75 |
+
+### Claims considered and left out
+
+- Any feeding claim. `physiology.diet` is `omnivore` by registry default and no source shows this species eating anything; the attrition line above is about Endessa's subsurface fauna as a class, not about the Frackworm's meals.
+- Any company or solitude claim. The teaser carries both sides of it (one worm against a crew, and worms fielded by the dozen), and the pool carries `solitary` 50 against `pack-bonded` 20, so habits states neither.
+- The aquatic-class output glitch on Endessa. It is the world's live mystery and touches nothing about how this species lives.
+
 ## Source quotes used
 
 From `species.json`, the Frackworm description, in order:
@@ -166,3 +207,8 @@ The single remaining WARN is the by-design conduit confirmation, answered under 
 ## Orchestrator amendments
 
 - 2026-09-02: `hide` added to anatomy and `covering` set to `hide` (was bare) under the ruling that a flesh animal body with no named surface takes the hide covering; bare is for membranes, slime, plant and mineral surfaces. Authored pending art; if the illustration shows plating, the covering and the armored trait are revisited.
+- 2026-09-04, amendment moved here from the record's `amendments` array by the 2026-09-09 lore split: covering hide to chitin (grown overlapping armor plates: a soft hide would be torn apart boring through rock and glass sand); anatomy hide to shell per the one-surface rule; armored 100 per the chitin rule; eyes added, tiny stalked bead eyes like a crab's or a clam's, near blind (sight unchanged), so the creature has a face to meet. Ruling in docs/species-templates/RULINGS.md. (Nick)
+- 2026-09-04, amendment moved here from the record's `amendments` array by the 2026-09-09 lore split: eyes are tiny pinpoint dots on the collar behind the drill, no stalks (stalk eyes read goofy in the run 62 to 67 art). (Nick)
+- 2026-09-09, lore split (Nick): this record has no `species.json` entry, so `lore.description` was kept exactly as it stood rather than reverted; body and habits authored; `descriptionStatus` removed; the `amendments` array removed and its two entries recorded above. Two FAIL lines predate this pass and were not touched, since both lie outside the lore block: `enc.missing` (no encyclopedia entry for this key) and `anatomy` (`eyes` is not a registry key, and the registry rules sense organs are never anatomy).
+- 2026-09-09, lore fact-check gate (independent checker, no files changed by it): no UNSUPPORTED and no CONTRADICTED claims. Two teaser-overlap flags were acted on: the opening of habits and the drill-head restatement in body both said again what `lore.description` already says, and both were cut back.
+- 2026-09-09, orchestrator: `eyes` removed from anatomy (sense organs are never anatomy keys; the pinpoint eyes Nick ruled on live in `senses.sight` and in the art brief). Anatomy is now jaws, vents, shell, body.

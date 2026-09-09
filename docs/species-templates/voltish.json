@@ -7,8 +7,9 @@
     "zolton"
   ],
   "lore": {
-    "description": "A long-limbed, shaggy creature whose bones and claws are made from a tough, conductive metal alloy, the Voltish was generated on Zolton, where black lightning did no harm to inorganic matter and the Generator could simply replenish any loss of labor. Zolton's canyons carry visible rivers of electricity that surge like wire currents over the crust. The Voltish stores electrical energy from its surroundings and releases the shock into enemies.",
-    "descriptionStatus": "upgraded",
+    "description": "With bones and claws made from a tough, conductive metal alloy, this daunting creature can store electrical energy from its surroundings and release the shock into enemies.",
+    "body": "A tall, long-limbed quadruped carried on four broad paws whose digits are separated and end in heavy claws. The head is narrow, with a long tapering muzzle and two upright pointed ears, each cut through by a small fork-shaped notch. From the neck and shoulders rises a stiff erect ruff of long spiked filaments, standing clear of the back line. A large bushy tail sweeps up and back about the length of the torso. The whole outline, legs and tail included, is ragged and tufted, a shaggy pelt with a fringe running along the belly and down the backs of the legs.",
+    "habits": "It feeds on charge and takes nothing else, working the deep canyons and metallic peaks where Zolton's energy cycle lays down visible rivers of electricity that surge like wire currents over the crust. Storage is the rare answer on that world; most cataloged forms conduct the current and pass it along, and every one of them avoids the black lightning dead zones without exception. It keeps to canyons saturated with dense freezing gases and has no use for the warm end of its world. The Generator that made it was set on Zolton because black lightning did no harm to inorganic matter, so any loss of labor could simply be replenished.",
     "biomeNiche": "the deep canyons and metallic peaks of Zolton, where ground-borne lightning surges over the crust"
   },
   "physiology": {
