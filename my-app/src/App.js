@@ -37,6 +37,8 @@ import Amplify from 'aws-amplify';
 import awsconfig from './aws-exports';
 
 import { Provider } from 'react-redux'
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { Toaster } from '@/components/ui/sonner';
 import store from './store/store';
 
 
@@ -82,7 +84,7 @@ class App extends React.Component {
       <Provider store={store}>
 
       
-      <React.Fragment>
+      <TooltipProvider>
         <Router>
          <Suspense fallback={<div>Loading...</div>}>
             <Switch>
@@ -113,7 +115,8 @@ class App extends React.Component {
             </Switch>
       </Suspense>
         </Router>
-      </React.Fragment>
+        <Toaster />
+      </TooltipProvider>
       </Provider>
     );
   }
