@@ -4,6 +4,7 @@ import XalianMoveSet from '../components/xalianMoveSet';
 import XalianRecord from '../components/xalianRecord';
 import XalianNavbar from '../components/navbar';
 import HelixSpinner from '../components/brand/helixSpinner';
+import HelixMark from '../components/brand/helixMark';
 import * as xalianApi from '../utils/xalianApi';
 import * as dbApi from '../utils/dbApi';
 import * as alertUtil from '../utils/alertUtil';
@@ -76,15 +77,6 @@ class GeneratorPage extends React.Component {
 								<h1 className="g-title">{x ? x.species.name : 'Generator'}</h1>
 							</div>
 							<div className="g-masthead-aside">
-								{x &&
-									<button
-										type="button"
-										className="g-btn g-btn--quiet"
-										disabled={printing}
-										onClick={() => this.setState({ jsonModalShow: true })}>
-										View record data
-									</button>
-								}
 								<button
 									type="button"
 									className="g-btn"
@@ -112,30 +104,40 @@ class GeneratorPage extends React.Component {
 								<XalianRecord xalian={x} />
 							</div>
 						) : (
-							<div className="g-empty">
-								<b>No Xalian yet</b>
-								Generate one to see its record here.
+							<div className="g-glass gen-record gen-record--empty">
+								<HelixMark className="gen-empty-helix" />
+								<span className="g-legend">No Xalian yet</span>
+								<p className="g-small-v4 gen-empty-copy">Generate one to see its record here.</p>
 							</div>
 						)}
 
 						{x && !printing &&
-							<div className="gen-readouts">
-								<div className="g-panel gen-stats">
-									<div className="g-panel-head">
-										<span className="g-legend">Stats</span>
-										<span className="g-legend gen-panel-note">current / potential</span>
+							<React.Fragment>
+								<div className="gen-readouts">
+									<div className="g-panel gen-stats">
+										<div className="g-panel-head">
+											<span className="g-legend">Stats</span>
+											<span className="g-legend gen-panel-note">current / potential</span>
+										</div>
+										{STAT_ROWS.map((row) => this.renderStatMeter(row))}
 									</div>
-									{STAT_ROWS.map((row) => this.renderStatMeter(row))}
+
+									<div className="g-panel gen-moves">
+										<div className="g-panel-head">
+											<span className="g-legend">Moves</span>
+											<span className="g-legend gen-panel-note">rating</span>
+										</div>
+										<XalianMoveSet showDescription moves={x.moves} />
+									</div>
 								</div>
 
-								<div className="g-panel gen-moves">
-									<div className="g-panel-head">
-										<span className="g-legend">Moves</span>
-										<span className="g-legend gen-panel-note">rating</span>
-									</div>
-									<XalianMoveSet showDescription moves={x.moves} />
-								</div>
-							</div>
+								<button
+									type="button"
+									className="g-btn g-btn--quiet gen-raw-data"
+									onClick={() => this.setState({ jsonModalShow: true })}>
+									Raw data
+								</button>
+							</React.Fragment>
 						}
 					</div>
 				</main>

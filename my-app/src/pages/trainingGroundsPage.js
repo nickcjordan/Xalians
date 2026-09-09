@@ -45,20 +45,23 @@ class TrainingGroundsPage extends React.Component {
                     </header>
 
                     <div className="lobbies-training-grid">
-                        {GAMES.map((game, index) => (
-                            <button
-                                type="button"
-                                key={game.name}
-                                className={`g-panel g-card-link lobbies-training-tile${this.state.selectedGameIndex === index ? ' on' : ''}`}
-                                aria-pressed={this.state.selectedGameIndex === index}
-                                onClick={() => this.selectGame(index)}>
-                                <span className="g-legend-v4">{game.name}</span>
-                                <p className="g-small-v4">{game.description}</p>
-                                {index === 0 &&
-                                    <span className="g-btn g-btn--primary lobbies-training-play">Play</span>
-                                }
-                            </button>
-                        ))}
+                        {GAMES.map((game, index) => {
+                            const selected = this.state.selectedGameIndex === index;
+                            return (
+                                <button
+                                    type="button"
+                                    key={game.name}
+                                    className={`g-card-link lobbies-training-tile${selected ? ' on' : ''}`}
+                                    aria-pressed={selected}
+                                    onClick={() => this.selectGame(index)}>
+                                    <span className="g-h3 lobbies-training-name">{game.name}</span>
+                                    <p className="g-small-v4 lobbies-training-desc">{game.description}</p>
+                                    {selected &&
+                                        <span className="g-badge g-badge--info lobbies-training-badge">Selected</span>
+                                    }
+                                </button>
+                            );
+                        })}
                     </div>
 
                     <GameContainer>
