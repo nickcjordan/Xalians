@@ -24,8 +24,7 @@
 	letter-spacing: var(--g-track-label);
 	color: var(--g-ink-low);
 	background: var(--g-hull);
-	border: var(--g-hairline) solid var(--g-seam);
-	border-radius: 2px;
+	border: var(--g-hairline) solid var(--g-edge-strong);
 }
 
 .enc-link--icon:hover .enc-link-icon-tab {

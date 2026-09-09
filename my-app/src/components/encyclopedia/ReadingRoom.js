@@ -35,16 +35,15 @@ function BeginOrResumeCard({ story }) {
 	if (resumedPart) {
 		return (
 			<div className="enc-room-begin">
-				<div className="g-paper g-paper--card enc-room-begin-card">
+				<div className="g-panel enc-room-begin-card">
 					<span className="g-kicker enc-room-begin-kicker">Continue reading</span>
 					<h2 className="g-h2 enc-room-begin-title">{story.title}</h2>
 					<p className="g-body enc-room-begin-meta">
 						Part {resumedPart.order} of {story.parts.length}, {resumedPart.era.name}
 					</p>
 				</div>
-				{/* A key on the desk, not a button on paper (medium rule): the CTA
-				    sits beside the card, never inside it. */}
-				<Link to={lore.routeFor('era', resumedPart.era.key)} className="g-key g-key--primary enc-room-begin-key">
+				{/* The one forward action on this screen: the primary key. */}
+				<Link to={lore.routeFor('era', resumedPart.era.key)} className="g-btn g-btn--primary enc-room-begin-key">
 					Resume Part {resumedPart.order}, {resumedPart.era.name}
 				</Link>
 			</div>
@@ -54,12 +53,12 @@ function BeginOrResumeCard({ story }) {
 	const firstPart = story.parts[0];
 	return (
 		<div className="enc-room-begin">
-			<div className="g-paper g-paper--card enc-room-begin-card">
+			<div className="g-panel enc-room-begin-card">
 				<span className="g-kicker enc-room-begin-kicker">Begin here</span>
 				<h2 className="g-h2 enc-room-begin-title">{story.title}</h2>
 				<p className="g-body enc-room-begin-meta">{story.parts.length} parts, one per era.</p>
 			</div>
-			<Link to={lore.routeFor('era', firstPart.era.key)} className="g-key g-key--primary enc-room-begin-key">
+			<Link to={lore.routeFor('era', firstPart.era.key)} className="g-btn g-btn--primary enc-room-begin-key">
 				Begin Part 1, {firstPart.era.name}
 			</Link>
 		</div>
@@ -94,7 +93,7 @@ export default function ReadingRoom() {
 
 			<BeginOrResumeCard story={story} />
 
-			<section className="g-panel g-panel--bolted enc-room-map-panel">
+			<section className="g-panel enc-room-map-panel">
 				<header className="g-panel-head">
 					<h2 className="g-h2">Galaxy of Xalia</h2>
 				</header>
@@ -107,10 +106,9 @@ export default function ReadingRoom() {
 				<StoryContents story={story} />
 			</section>
 
-			{/* A single typed drawer-label strip, not tiles carrying live counts on
-			    the hull (medium rule, round1-findings.md A3): one paper card, one
-			    typed line per shelf. */}
-			<div className="g-paper g-paper--card enc-room-drawer">
+			{/* One shelf line per section, on a single panel rather than a tile grid --
+			    it duplicates the .g-tabs section nav, so it stays quiet. */}
+			<div className="g-panel enc-room-drawer">
 				{TILES.map((tile) => (
 					<Link key={tile.to} to={tile.to} className="enc-room-drawer-tab">
 						<span className="g-record-term enc-room-drawer-label">{tile.label}</span>

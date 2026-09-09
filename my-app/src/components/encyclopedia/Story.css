@@ -13,15 +13,14 @@
 	margin-bottom: var(--g-7);
 }
 
-/* The seven parts, printed on one index card (.g-paper .g-paper--card on the
-   ol itself, round1-findings.md A2): every row and rule reads paper ink and
-   the paper's own hairline, not the hull tones .g-record defaults to. */
+/* The seven parts, printed on one panel (.g-panel on the ol itself): every
+   row and rule reads the panel's own hairline. */
 .enc-contents-list {
 	list-style: none;
 	margin: 0;
 }
 
-.enc-contents-row { padding: var(--g-5) 0; border-bottom-color: var(--g-paper-rule); }
+.enc-contents-row { padding: var(--g-5) 0; border-bottom-color: var(--g-edge); }
 
 .enc-contents-term {
 	display: flex;
@@ -30,7 +29,7 @@
 }
 
 .enc-contents-index {
-	color: var(--g-paper-ink-faint);
+	color: var(--g-ink-3);
 	font-size: var(--g-size-small);
 }
 
@@ -40,7 +39,7 @@
 
 .enc-contents-meta {
 	margin: var(--g-2) 0 0;
-	color: var(--g-paper-ink-faint);
+	color: var(--g-ink-3);
 	font-size: var(--g-size-tiny);
 }
 
@@ -165,9 +164,11 @@
 
 /* ---- main column: reading measure ---------------------------------------- */
 
+/* 62ch, not the shared --g-measure (68ch): the story reader is prose read
+   start to finish, so it gets the tighter measure named in the brief. */
 .enc-story-main {
 	min-width: 0;
-	max-width: var(--g-measure);
+	max-width: 62ch;
 	margin: 0 auto;
 }
 
@@ -187,7 +188,7 @@
 	margin: 0 0 var(--g-7);
 	padding: var(--g-2);
 	background: var(--g-hull);
-	border: var(--g-hairline) solid var(--g-seam);
+	border: var(--g-hairline) solid var(--g-edge-strong);
 	border-radius: var(--g-radius-panel);
 	box-shadow: var(--g-relief), var(--g-drop);
 }
@@ -278,11 +279,6 @@
 .enc-story-note-chapter {
 	color: var(--g-ink-low);
 	font-size: var(--g-size-tiny);
-}
-
-.enc-story-note-lamp {
-	width: 10px;
-	padding: 0;
 }
 
 .enc-story-para-text {

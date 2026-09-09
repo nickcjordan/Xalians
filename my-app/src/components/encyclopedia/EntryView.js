@@ -169,19 +169,21 @@ export default function EntryView() {
             <Link to="/encyclopedia/index" className="enc-back">&laquo; Back to Index</Link>
 
             <article className="enc-entry-doc">
-                <header className="enc-designation">
-                    <h1 className="g-title">{entry.title}</h1>
-                    <Pronunciation pronunciation={entry.pronunciation} />
-                    <div className="enc-chips">
-                        <span className="g-chip">{entry.category}</span>
-                        {entry.element && <span className="g-chip">{entry.element}</span>}
+                <header className="g-masthead">
+                    <div className="g-masthead-heading">
+                        <p className="g-kicker">{entry.category}</p>
+                        <h1 className="g-title">{entry.title}</h1>
+                        <Pronunciation pronunciation={entry.pronunciation} />
+                        {wasRead && <span className="g-badge g-badge--ok enc-entry-reviewed">Reviewed</span>}
+                    </div>
+                    <div className="g-masthead-aside enc-chips">
+                        {entry.element && <span className={`g-chip g-el-${entry.element}`}>{entry.element}</span>}
                         {era && (
-                            <Link to={lore.routeFor('era', era.key)} className={`g-chip g-chip--outline enc-entry-era-chip`}>
+                            <Link to={lore.routeFor('era', era.key)} className="g-chip g-chip--outline enc-entry-era-chip">
                                 {era.name}
                             </Link>
                         )}
                     </div>
-                    {wasRead && <p className="g-mono enc-entry-reviewed">reviewed</p>}
                 </header>
 
                 <div className="enc-record">
@@ -206,7 +208,7 @@ export default function EntryView() {
                                 <div className="enc-section-head">
                                     <h2 className="g-h2">Related</h2>
                                 </div>
-                                <div className="g-paper enc-entry-related">
+                                <div className="g-panel enc-entry-related">
                                     {related.map((rel) => (
                                         <div key={rel.key} className={`g-record ${rel.element ? `g-el-${rel.element}` : ''}`}>
                                             <Link to={lore.routeFor('entry', rel.key)} className="g-record-term">

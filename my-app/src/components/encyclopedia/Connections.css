@@ -71,7 +71,7 @@ summary.enc-conn-row-summary::marker { content: ''; }
 
 .enc-conn-sample-label:hover,
 .enc-conn-sample-label:focus-visible {
-	color: var(--g-brass);
+	color: var(--g-edge-strong);
 }
 
 .enc-conn-sample-excerpt { color: var(--g-ink-mid); }
@@ -80,7 +80,6 @@ summary.enc-conn-row-summary::marker { content: ''; }
 	background: var(--g-rule);
 	color: inherit;
 	padding: 0 2px;
-	border-radius: 2px;
 }
 
 /* Phone: rows collapse to name plus count; the sample sits behind a tap on

@@ -14,7 +14,7 @@
 	flex-wrap: wrap;
 	gap: 3px;
 	padding: 3px;
-	background: var(--g-seam);
+	background: var(--g-edge-strong);
 	border-radius: var(--g-radius);
 	box-shadow: var(--g-recess);
 }
@@ -34,7 +34,6 @@
 	color: var(--g-ink-mid);
 	background: var(--g-hull);
 	border: 0;
-	border-radius: 2px;
 	box-shadow: var(--g-relief);
 	cursor: pointer;
 	transition: background var(--g-snap), color var(--g-snap);
