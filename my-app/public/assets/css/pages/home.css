@@ -56,8 +56,16 @@
 
 .home-worlds-grid {
 	display: grid;
-	grid-template-columns: repeat(2, 1fr);
+	grid-template-columns: repeat(4, 1fr);
 	gap: var(--g-2);
+}
+
+/* Phones: fourteen small tiles, art and name only; the chip returns at 560. */
+@media (max-width: 559px) {
+	.home-world-tile { padding-bottom: var(--g-2); }
+	.home-world-name { font-size: 10px; letter-spacing: 0.04em; margin-top: var(--g-1); padding: 0 var(--g-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+	.home-world-chip { display: none; }
+	.home-world-art-img { width: 76%; height: 76%; }
 }
 
 @media (min-width: 560px) {
@@ -131,6 +139,20 @@
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
 	gap: var(--g-2);
+}
+
+/* Phones: one horizontal strip, scrolled by touch, instead of a tall grid. */
+@media (max-width: 559px) {
+	.home-species-strip {
+		display: flex;
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+		scrollbar-width: none;
+		margin: 0 calc(-1 * var(--g-5));
+		padding: 0 var(--g-5);
+	}
+	.home-species-strip::-webkit-scrollbar { display: none; }
+	.home-species-tile { flex: 0 0 140px; scroll-snap-align: start; }
 }
 
 @media (min-width: 560px) {

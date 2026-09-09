@@ -128,8 +128,20 @@
    stepping down as the shell narrows. */
 
 .enc-card-grid {
-	gap: var(--g-5) var(--g-4);
-	grid-template-columns: repeat(3, 1fr);
+	gap: var(--g-4) var(--g-3);
+	grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 520px) {
+	.enc-card-grid { grid-template-columns: repeat(3, 1fr); gap: var(--g-5) var(--g-4); }
+}
+
+/* Phones: the record's section tab is the way back, so the trailing back
+   link stays off the scrolling tabs row. */
+@media (max-width: 700px) {
+	.enc-shell-tabs-back { display: none; }
+	.g-page .enc-tile-name { font-size: 16px; }
+	.enc-tile-meta { padding: var(--g-2) var(--g-3) var(--g-3); }
 }
 
 @media (min-width: 720px) {

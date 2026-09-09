@@ -243,17 +243,38 @@
 		top: auto;
 	}
 
-	.enc-world-chapter-index-summary {
+	.enc-world-chapter-index { padding: var(--g-3) var(--g-4); }
+
+	.enc-world-chapter-index .enc-world-chapter-index-summary {
 		cursor: pointer;
 		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
 		align-items: center;
+		gap: var(--g-3);
+		text-align: left;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		list-style: none;
 	}
+
+	.enc-world-chapter-index-summary::-webkit-details-marker { display: none; }
+	.enc-world-chapter-index-summary::marker { content: ''; }
 
 	.enc-world-chapter-index-summary .g-h3 {
 		margin: 0;
+		font-size: var(--g-size-legend);
+		letter-spacing: var(--g-track-legend);
+		color: var(--g-text-2);
 	}
 
-	.enc-world-chapter-index[open] .enc-world-chapter-index-summary {
-		margin-bottom: var(--g-2);
+	.enc-world-chapter-index-summary::after { content: ''; width: 8px; height: 8px; border-right: 1px solid var(--g-text-2); border-bottom: 1px solid var(--g-text-2); transform: rotate(45deg); margin-left: auto; }
+
+	.enc-world-chapter-index[open] .enc-world-chapter-index-summary.g-panel-head {
+		margin-bottom: var(--g-3);
+		padding-bottom: var(--g-3);
+		border-bottom: var(--g-hairline) solid var(--g-rule-faint);
 	}
+	.enc-world-chapter-index[open] .enc-world-chapter-index-summary::after { transform: rotate(-135deg); }
 }

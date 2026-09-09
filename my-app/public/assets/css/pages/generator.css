@@ -210,17 +210,10 @@
 		grid-template-columns: 1fr;
 	}
 
-	/* The masthead's action row does not wrap on its own (it is a fixed
-	   flex row, by design, on desktop); below 700px stack the keys full
-	   width instead of letting three shrink-to-fit buttons overflow the
-	   shell. */
-	.gen-shell .g-masthead-aside {
-		flex-direction: column;
-		align-items: stretch;
-		width: 100%;
-	}
-
-	.gen-shell .g-masthead-aside .g-btn {
-		width: 100%;
+	/* The masthead's keys sit in one row of equal widths under the title
+	   (system.css .g-page .g-masthead-aside); nothing to add here. A move's
+	   description wraps instead of truncating where the row is narrow. */
+	.gen-moves .move-description {
+		white-space: normal;
 	}
 }
