@@ -20,8 +20,8 @@ function BestiaryTile({ species: s }) {
     return (
         <Tile as={Link} to={lore.routeFor('species', s.key)} className={`el-${s.element}`}>
             <TileBar />
-            <TileArt>
-                <XalianImage colored speciesName={s.name} primaryType={s.element} moreClasses="h-[62%] w-[62%] object-contain" />
+            <TileArt className="bg-el p-[4%]">
+                <XalianImage colored speciesName={s.name} primaryType={s.element} moreClasses="w-full" />
             </TileArt>
             <TileMeta>
                 <span className="type-subhead block text-base">{s.name}</span>

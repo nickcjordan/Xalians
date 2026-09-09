@@ -271,7 +271,7 @@ export default function WorldView() {
                 <section className="min-w-0">
                     <SectionHead title="History" />
                     <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)]">
-                        <ol className="m-0 flex min-w-0 max-w-[68ch] flex-col gap-6 p-0">
+                        <ol className="m-0 flex min-w-0 max-w-[68ch] list-none flex-col gap-6 p-0">
                             {world.chapters.map((chapter, i) => {
                                 const eraKey = chapterEraTag(chapter);
                                 const label = chapterEraLabel(chapter, eraKey ? eraNameByKey.get(eraKey) : null);
@@ -310,7 +310,7 @@ export default function WorldView() {
                                         <h3 className="type-legend m-0 text-ink-2">Chapters ({world.chapters.length})</h3>
                                     </AccordionTrigger>
                                     <AccordionContent>
-                                        <ol className="m-0 flex flex-col p-0">{chapterList()}</ol>
+                                        <ol className="m-0 flex list-none flex-col p-0">{chapterList()}</ol>
                                     </AccordionContent>
                                 </AccordionItem>
                             </Accordion>
@@ -320,7 +320,7 @@ export default function WorldView() {
                                     <header className="mb-2 border-b border-edge pb-2">
                                         <h3 className="type-heading m-0 text-[19px]">Chapters</h3>
                                     </header>
-                                    <ol className="m-0 flex flex-col p-0">{chapterList()}</ol>
+                                    <ol className="m-0 flex list-none flex-col p-0">{chapterList()}</ol>
                                 </nav>
                             </Card>
                         )}
@@ -334,12 +334,12 @@ export default function WorldView() {
                             {world.nativeSpecies.map((s) => (
                                 <Tile as={Link} key={s.key} to={lore.routeFor('species', s.key)} className={`el-${s.element}`}>
                                     <TileBar />
-                                    <TileArt>
+                                    <TileArt className="bg-el p-[4%]">
                                         <XalianImage
                                             colored
                                             speciesName={s.name}
                                             primaryType={s.element}
-                                            moreClasses="h-[62%] w-[62%] object-contain"
+                                            moreClasses="w-full"
                                         />
                                     </TileArt>
                                     <TileMeta>
