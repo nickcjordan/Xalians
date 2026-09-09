@@ -1,11 +1,5 @@
-import React, { PureComponent } from 'react';
-import { LabelList, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import ListGroup from 'react-bootstrap/ListGroup';
-import Badge from 'react-bootstrap/Badge';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Table from 'react-bootstrap/Table';
+import React from 'react';
+import { LabelList, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import * as valueTranslator from '../utils/valueTranslator';
 import * as constants from '../constants/constants';
 import { chart, ink } from '../constants/designTokens';
