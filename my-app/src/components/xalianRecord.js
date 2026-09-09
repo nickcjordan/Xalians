@@ -57,10 +57,11 @@ class XalianRecord extends React.Component {
 
 		let element = subject.primaryType.toLowerCase();
 		let secondaryElement = subject.secondaryType ? subject.secondaryType.toLowerCase() : null;
+		let plateStyle = secondaryElement ? { '--g-el-2': `var(--g-el-${secondaryElement})` } : undefined;
 
 		return (
 			<div className="gen-record">
-				<div className={`gen-record-plate g-el-${element}`}>
+				<div className={`gen-record-plate g-el-${element}`} style={plateStyle}>
 					<XalianImage
 						colored
 						speciesName={subject.name}
@@ -69,7 +70,7 @@ class XalianRecord extends React.Component {
 						moreClasses="gen-record-plate-img" />
 				</div>
 
-				<div className="gen-record-info">
+				<div className="gen-record-identity">
 					<div className="gen-record-chips">
 						<span className={`g-chip g-el-${element}`}>{subject.primaryType}</span>
 						{secondaryElement &&
@@ -84,29 +85,32 @@ class XalianRecord extends React.Component {
 						<p className="g-body gen-record-desc">{subject.description}</p>
 					}
 
-					<dl className="gen-record-specs">
-						<dt className="g-spec-key">Origin</dt>
-						<dd className="g-spec-val">{subject.planet}</dd>
-						<dt className="g-spec-key">Generation</dt>
-						<dd className="g-spec-val">{subject.generation}</dd>
-						<dt className="g-spec-key">Height</dt>
-						<dd className="g-spec-val">{subject.height}</dd>
-						<dt className="g-spec-key">Weight</dt>
-						<dd className="g-spec-val">{subject.weight}</dd>
-						{subject.statScore != null &&
-							<React.Fragment>
-								<dt className="g-spec-key">Stat score</dt>
-								<dd className="g-spec-val">{subject.statScore.toLocaleString()}</dd>
-							</React.Fragment>
-						}
-						{subject.potentialScore != null &&
-							<React.Fragment>
-								<dt className="g-spec-key">Potential</dt>
-								<dd className="g-spec-val">{subject.potentialScore.toLocaleString()}</dd>
-							</React.Fragment>
-						}
-					</dl>
+					<div className="gen-record-origin">
+						<span className="g-spec-key">Origin</span>
+						<span className="g-spec-val">{subject.planet}</span>
+					</div>
 				</div>
+
+				<dl className="gen-record-specs">
+					<dt className="g-spec-key">Generation</dt>
+					<dd className="g-spec-val">{subject.generation}</dd>
+					<dt className="g-spec-key">Height</dt>
+					<dd className="g-spec-val">{subject.height}</dd>
+					<dt className="g-spec-key">Weight</dt>
+					<dd className="g-spec-val">{subject.weight}</dd>
+					{subject.statScore != null &&
+						<React.Fragment>
+							<dt className="g-spec-key">Stat score</dt>
+							<dd className="g-spec-val">{subject.statScore.toLocaleString()}</dd>
+						</React.Fragment>
+					}
+					{subject.potentialScore != null &&
+						<React.Fragment>
+							<dt className="g-spec-key">Potential</dt>
+							<dd className="g-spec-val">{subject.potentialScore.toLocaleString()}</dd>
+						</React.Fragment>
+					}
+				</dl>
 			</div>
 		);
 	}

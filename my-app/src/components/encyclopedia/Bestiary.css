@@ -1,3 +1,7 @@
+.enc-bestiary-count {
+	margin: 0 0 var(--g-4);
+}
+
 .enc-bestiary-world-select {
 	width: auto;
 	min-width: 10rem;

@@ -13,7 +13,8 @@
 
 .gen-record {
 	display: grid;
-	grid-template-columns: minmax(180px, 300px) 1fr;
+	grid-template-columns: 280px 1fr minmax(260px, 300px);
+	align-items: start;
 	gap: var(--g-5);
 	padding: var(--g-5);
 }
@@ -29,17 +30,21 @@
 
 .gen-record-plate {
 	aspect-ratio: 1;
+	display: grid;
+	place-items: center;
+	overflow: hidden;
+	background: linear-gradient(
+		160deg,
+		color-mix(in srgb, var(--g-el) 78%, black),
+		color-mix(in srgb, var(--g-el-2, var(--g-el)) 78%, black)
+	);
 }
 
 .gen-record-plate-img {
-	display: block;
-	width: 100%;
-	aspect-ratio: 1;
-	margin: 0;
-	border-radius: 0;
+	width: 70%;
 }
 
-.gen-record-info {
+.gen-record-identity {
 	min-width: 0;
 	display: flex;
 	flex-direction: column;
@@ -62,19 +67,28 @@
 .gen-record-desc {
 	margin: 0;
 	max-width: none;
+	color: var(--g-text);
 }
 
-.gen-record-specs {
-	display: grid;
-	grid-template-columns: auto 1fr auto 1fr;
-	gap: var(--g-2) var(--g-5);
-	margin: 0;
+.gen-record-origin {
+	display: flex;
+	align-items: baseline;
+	gap: var(--g-2);
+	margin-top: auto;
 	padding-top: var(--g-3);
 	border-top: var(--g-hairline) solid var(--g-edge);
 }
 
+.gen-record-specs {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: var(--g-2) var(--g-4);
+	margin: 0;
+	align-content: start;
+}
+
 .gen-record-specs dt { margin: 0; }
-.gen-record-specs dd { margin: 0; }
+.gen-record-specs dd { margin: 0; white-space: nowrap; }
 
 /* -------------------------------------------------------------------------
    STATS AND MOVES, TWO PANELS SIDE BY SIDE
@@ -118,6 +132,35 @@
 	text-overflow: ellipsis;
 }
 
+.gen-record--empty {
+	grid-template-columns: none;
+	justify-items: center;
+	align-content: center;
+	gap: var(--g-2);
+	min-height: 280px;
+	padding: var(--g-6);
+	text-align: center;
+}
+
+.gen-empty-helix {
+	width: 96px;
+	height: auto;
+}
+
+.gen-empty-helix .strand,
+.gen-empty-helix .rung {
+	stroke: var(--g-ink-3);
+}
+
+.gen-empty-copy {
+	margin: 0;
+	color: var(--g-text-2);
+}
+
+.gen-raw-data {
+	margin-top: var(--g-4);
+}
+
 .gen-json {
 	max-height: 60vh;
 	overflow: auto;
@@ -125,6 +168,24 @@
 	font-size: var(--g-size-tiny);
 	color: var(--g-ink);
 	margin: 0;
+}
+
+/* -------------------------------------------------------------------------
+   TABLET — the spec column no longer fits a third slot; it drops under the
+   plate and identity and runs two key/value pairs per row instead of one.
+   ------------------------------------------------------------------------- */
+
+@media (max-width: 1000px) {
+	.gen-record {
+		grid-template-columns: 220px 1fr;
+	}
+
+	.gen-record-specs {
+		grid-column: 1 / -1;
+		grid-template-columns: auto 1fr auto 1fr;
+		padding-top: var(--g-3);
+		border-top: var(--g-hairline) solid var(--g-edge);
+	}
 }
 
 /* -------------------------------------------------------------------------

@@ -3,9 +3,17 @@ import { Link } from 'react-router-dom';
 import * as lore from '../../lore';
 import './Worlds.css';
 
+function sentenceCase(text) {
+    if (!text) return text;
+    const lower = text.toLowerCase();
+    return lower.charAt(0).toUpperCase() + lower.slice(1);
+}
+
 /**
  * Worlds: the survey tile catalogue, fourteen worlds keyed by element, in
- * file order (planetRecords.json order, per contract).
+ * file order (planetRecords.json order, per contract). The masthead already
+ * carries the section title and the "N worlds surveyed" count; this section
+ * renders no heading of its own.
  * Contract: docs/design/xalian-encyclopedia-page.md §5 "Worlds and world".
  */
 export default function Worlds() {
@@ -13,11 +21,6 @@ export default function Worlds() {
 
     return (
         <div className="enc-worlds">
-            <div className="enc-section-head">
-                <h1 className="g-h2">Worlds</h1>
-                <span className="enc-count">{worlds.length} surveyed</span>
-            </div>
-
             <div className="enc-grid enc-card-grid">
                 {worlds.map((world) => (
                     <Link
@@ -35,7 +38,7 @@ export default function Worlds() {
                         </div>
                         <div className="enc-tile-meta">
                             <span className="g-h3 enc-tile-name">{world.name}</span>
-                            <span className="g-mono enc-tile-sub">{world.physical.terrainLabel}</span>
+                            <span className="enc-tile-sub enc-worlds-terrain">{sentenceCase(world.physical.terrainLabel)}</span>
                         </div>
                     </Link>
                 ))}

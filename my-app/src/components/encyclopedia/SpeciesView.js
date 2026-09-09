@@ -4,7 +4,6 @@ import * as lore from '../../lore';
 import Prose from './Prose';
 import XalianImage from '../xalianImage';
 import Connections from './Connections';
-import Pronunciation from './Pronunciation';
 import { useVisit, useResume } from './trail';
 import './SpeciesView.css';
 
@@ -272,42 +271,23 @@ function LegacyRatings({ view }) {
 export default function SpeciesView() {
     const { key } = useParams();
     const view = lore.getSpecies(key);
-    const wasRead = useVisit(view
+    useVisit(view
         ? { kind: 'species', key, name: view.name, element: view.element }
         : { kind: null, key: null });
 
     if (!view) {
         return (
             <div className="enc-species">
-                <Link to="/encyclopedia/species" className="enc-back">&laquo; Back to Bestiary</Link>
                 <p className="g-empty">No record for &ldquo;{key}&rdquo;.</p>
             </div>
         );
     }
 
     const isTemplate = view.source === 'template';
-    const worldName = view.planet ? view.planet.name : view.homePlanet;
     const connectionsCount = lore.getConnections('species', key, { limit: 12 }).length;
 
     return (
         <article className={`enc-species g-el-${view.element}`}>
-            <Link to="/encyclopedia/species" className="enc-back">&laquo; Back to Bestiary</Link>
-
-            <header className="g-masthead">
-                <div className="g-masthead-heading">
-                    <p className="g-kicker">Species record</p>
-                    <h1 className="g-title">{view.name}</h1>
-                    <Pronunciation pronunciation={(lore.getEntry(view.key) || {}).pronunciation} />
-                    {wasRead && <span className="g-badge g-badge--ok enc-species-reviewed">Reviewed</span>}
-                </div>
-                <div className="g-masthead-aside enc-chips">
-                    <span className={`g-chip g-el-${view.element}`}>{view.element}</span>
-                    <Link to={lore.routeFor('world', view.homePlanet)} className={`g-chip g-el-${view.element}`}>
-                        {worldName}
-                    </Link>
-                </div>
-            </header>
-
             <div className="enc-record">
                 <div className="g-panel enc-species-plate">
                     <div className="enc-species-mount">
@@ -320,21 +300,21 @@ export default function SpeciesView() {
 
                     {view.body && (
                         <div className="enc-species-niche">
-                            <p className="g-kicker">Body</p>
+                            <h3 className="g-h3">Body</h3>
                             <p className="g-body">{view.body}</p>
                         </div>
                     )}
 
                     {view.habits && (
                         <div className="enc-species-niche">
-                            <p className="g-kicker">Habits</p>
+                            <h3 className="g-h3">Habits</h3>
                             <p className="g-body">{view.habits}</p>
                         </div>
                     )}
 
                     {view.biomeNiche && (
                         <div className="enc-species-niche">
-                            <p className="g-kicker">Niche</p>
+                            <h3 className="g-h3">Niche</h3>
                             <p className="g-body">{view.biomeNiche}</p>
                         </div>
                     )}

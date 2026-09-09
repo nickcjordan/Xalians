@@ -53,28 +53,21 @@ export default function StoryContents({ story }) {
 	const readCounts = useReadCounts(story.parts);
 
 	return (
-		<ol className="g-panel enc-contents-list">
+		<ol className="enc-contents-list">
 			{story.parts.map((part, i) => {
 				const total = partParagraphCount(part);
 				const read = readCounts[i] || 0;
+				const meta = `${total} chapter${total === 1 ? '' : 's'}, ${part.worlds.length} world${part.worlds.length === 1 ? '' : 's'}${total > 0 ? `, ${read} read` : ''}`;
 				return (
 					<li key={part.era.key} className="g-record enc-contents-row">
-						<h3 className="g-record-term enc-contents-term">
+						<h3 className="g-h3 enc-contents-term">
 							<span className="g-mono enc-contents-index">{String(part.order).padStart(2, '0')}</span>
 							<Link to={lore.routeFor('era', part.era.key)} className="g-link">
 								{part.title}
 							</Link>
 						</h3>
-						<p className="g-record-body enc-contents-teaser">{part.era.definition}</p>
-						<p className="g-mono enc-contents-meta">
-							{total} chapter{total === 1 ? '' : 's'} &middot; {part.worlds.length} world
-							{part.worlds.length === 1 ? '' : 's'}
-							{total > 0 && (
-								<>
-									{' '}&middot; {read} / {total} read
-								</>
-							)}
-						</p>
+						<p className="g-body enc-contents-teaser">{part.era.definition}</p>
+						<p className="g-mono enc-contents-meta">{meta}</p>
 					</li>
 				);
 			})}

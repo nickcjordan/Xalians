@@ -4,7 +4,15 @@
    .g-input and .g-record; this file is only the layout on top of them. No
    colors: every value reads a --g-* token from system.css. */
 
-/* ---- masthead aside: search plus the "pull a record" key -------------- */
+/* ---- masthead: title row (title + record chips + badge), subtitle,
+   search aside, and the tabs row's trailing "back to <section>" link ------ */
+
+.enc-masthead-title-row {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: var(--g-3);
+}
 
 .enc-shell-subtitle {
 	margin: var(--g-2) 0 0;
@@ -15,6 +23,14 @@
 	display: flex;
 	align-items: center;
 	gap: var(--g-3);
+}
+
+.enc-shell-tabs { margin-bottom: var(--g-5); }
+
+.enc-shell-tabs-back {
+	margin-left: auto;
+	align-self: center;
+	white-space: nowrap;
 }
 
 .enc-search-slip {
@@ -75,11 +91,6 @@
 .enc-search-hit--active {
 	background: var(--g-s2);
 	outline: none;
-}
-
-.enc-pull-record {
-	flex: none;
-	white-space: nowrap;
 }
 
 @media (max-width: 700px) {

@@ -78,71 +78,142 @@
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: var(--g-2);
-	padding: var(--g-3) var(--g-2) var(--g-2);
+	gap: var(--g-1);
+	padding: 0 0 var(--g-2);
 	background: var(--g-surface-1);
 	border: var(--g-hairline) solid var(--g-edge);
+	overflow: hidden;
 }
 
-.home-world-tab {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	height: 4px;
-	background: var(--g-el);
+.home-world-art {
+	width: 100%;
+	aspect-ratio: 1;
+	display: grid;
+	place-items: center;
+	background: color-mix(in srgb, var(--g-el) 24%, var(--g-s1));
+}
+
+.home-world-art-img {
+	width: 68%;
+	height: 68%;
+	object-fit: contain;
 }
 
 .home-world-name {
 	color: var(--g-text);
-	margin-top: var(--g-1);
+	margin: var(--g-2) 0 0;
+	padding: 0 var(--g-2);
+}
+
+.home-world-chip {
+	margin: 0 var(--g-2);
+	max-width: calc(100% - 2 * var(--g-2));
+	padding-left: var(--g-2);
+	padding-right: var(--g-2);
+	font-size: 10px;
+	letter-spacing: 0.02em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 /* -------------------------------------------------------------------------
-   DESTINATIONS — unequal band: a large panel for the Generator, a stacked
-   list of plain rows for everything else.
+   SPECIES STRIP — featured component: eight species, chosen at random each
+   load, art centered on a deep element wash (docs/DESIGN_SYSTEM.md, the
+   bestiary formula). The first creature a visitor sees.
    ------------------------------------------------------------------------- */
 
-.home-destinations {
-	display: grid;
-	grid-template-columns: 1fr;
-	gap: var(--g-5);
+.home-species {
+	margin-bottom: var(--g-7);
 }
 
-@media (min-width: 900px) {
-	.home-destinations {
-		grid-template-columns: 1.2fr 0.8fr;
-		align-items: start;
+.home-species-strip {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: var(--g-2);
+}
+
+@media (min-width: 560px) {
+	.home-species-strip {
+		grid-template-columns: repeat(4, 1fr);
 	}
 }
 
-.home-generator {
-	display: flex;
-	flex-direction: column;
-	gap: var(--g-3);
+@media (min-width: 900px) {
+	.home-species-strip {
+		grid-template-columns: repeat(8, 1fr);
+	}
 }
 
-.home-generator-copy {
-	margin: 0;
-}
-
-.home-destination-list {
+.home-species-tile {
 	display: flex;
 	flex-direction: column;
+	align-items: center;
+	gap: var(--g-2);
+	padding: 0 0 var(--g-3);
 	background: var(--g-surface-1);
 	border: var(--g-hairline) solid var(--g-edge);
+	overflow: hidden;
 }
 
-.home-destination-row {
-	display: flex;
-	flex-direction: column;
-	gap: var(--g-1);
-	padding: var(--g-4);
+.home-species-plate {
+	width: 100%;
+	aspect-ratio: 1;
+	display: grid;
+	place-items: center;
+	background: color-mix(in srgb, var(--g-el) 78%, black);
+}
+
+.home-species-plate-img {
+	width: 70%;
+}
+
+.home-species-name {
+	color: var(--g-text);
+	text-align: center;
+}
+
+/* -------------------------------------------------------------------------
+   DESTINATIONS — five equal rows on hairlines. No panel, no big box; the
+   primary action stays in the hero.
+   ------------------------------------------------------------------------- */
+
+.home-destinations {
 	border-top: var(--g-hairline) solid var(--g-edge);
 }
 
-.home-destination-row:first-child {
-	border-top: 0;
+.home-destination-row {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--g-1);
+	align-items: baseline;
+	padding: var(--g-3) 0;
+	border-bottom: var(--g-hairline) solid var(--g-edge);
+}
+
+@media (min-width: 700px) {
+	.home-destination-row {
+		grid-template-columns: 200px 1fr auto;
+		gap: var(--g-4);
+	}
+}
+
+.home-destination-name {
+	color: var(--g-text);
+}
+
+.home-destination-copy {
+	color: var(--g-text-2);
+}
+
+.home-destination-open {
+	justify-self: start;
+}
+
+@media (min-width: 700px) {
+	.home-destination-open {
+		justify-self: end;
+	}
 }
 
 /* -------------------------------------------------------------------------

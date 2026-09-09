@@ -6,12 +6,15 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import XalianNavbar from '../components/navbar';
 import VerifyRemoveXalianModal from '../components/verifyRemoveXalianModal';
+import SignInModal from '../components/auth/signInModal';
+import SignUpModal from '../components/auth/signUpModal';
+import VerifyEmailModal from '../components/auth/verifyEmailModal';
 import XalianImage from '../components/xalianImage';
 import HelixSpinner from '../components/brand/helixSpinner';
 import { routeFor } from '../lore/routeFor';
 import * as authUtil from '../utils/authUtil';
 import * as dbApi from '../utils/dbApi';
-import { Auth } from 'aws-amplify';
+import { Auth, Hub } from 'aws-amplify';
 
 class UserAccountPage extends React.Component {
 	state = {
@@ -19,24 +22,55 @@ class UserAccountPage extends React.Component {
 		loggedInUser: null,
 		xalianToDelete: null,
 		isLoading: false,
+		signInModalShow: false,
+		signupModalShow: false,
+		verifyEmailModalShow: false,
 	};
 
 	componentDidMount() {
+		this.refreshUser();
+		this.authListener = (data) => {
+			if (data.payload.event === 'signIn') {
+				this.setState({ signInModalShow: false });
+				this.refreshUser();
+			}
+			if (data.payload.event === 'signIn_failure' && data.payload.data.code === 'UserNotConfirmedException') {
+				this.setState({ signInModalShow: false, verifyEmailModalShow: true });
+			}
+		};
+		Hub.listen('auth', this.authListener);
+	}
+
+	componentWillUnmount() {
+		if (this.authListener) {
+			Hub.remove('auth', this.authListener);
+		}
+	}
+
+	refreshUser = () => {
 		this.setState({ isLoading: true });
 		Auth.currentUserInfo()
 			.then((data) => {
 				if (data) {
 					let u = authUtil.buildAuthState(data);
-					this.setState({ loggedInUser: u });
+					this.setState({ loggedInUser: u, signedOut: false, message: null });
 					this.updateXaliansState(u.username);
 				} else {
-					this.setState({ isLoading: false, message: 'Sign in to see your Xalians' });
+					this.setState({ isLoading: false, signedOut: true });
 				}
 			})
 			.catch(() => {
-				this.setState({ isLoading: false, message: 'Sign in to see your Xalians' });
+				this.setState({ isLoading: false, signedOut: true });
 			});
-	}
+	};
+
+	signUpCallback = (username, email, password) => {
+		this.setState({ username, email, password, verifyEmailModalShow: true });
+	};
+
+	emailVerifiedCallback = () => {
+		this.setState({ verifyEmailModalShow: false, signInModalShow: true });
+	};
 
 	updateXaliansState = (username) => {
 		dbApi
@@ -122,14 +156,33 @@ class UserAccountPage extends React.Component {
 							</div>
 						)}
 
-						{!this.state.isLoading && this.state.message && (
+						{!this.state.isLoading && this.state.signedOut && (
 							<div className="g-empty account-empty">
-								<b>{this.state.message}</b>
-								{this.state.loggedInUser && <Link className="g-btn" to="/generator">Generate a Xalian</Link>}
+								<b>Sign in to see your Xalians</b>
+								<div className="account-empty-actions">
+									<button
+										type="button"
+										className="g-btn g-btn--primary"
+										onClick={() => this.setState({ signInModalShow: true })}>
+										Sign in
+									</button>
+									<button
+										type="button"
+										className="g-link account-empty-create"
+										onClick={() => this.setState({ signupModalShow: true })}>
+										Create account
+									</button>
+								</div>
 							</div>
 						)}
 
-						{!this.state.isLoading && !this.state.message && xalians.length === 0 && (
+						{!this.state.isLoading && !this.state.signedOut && this.state.message && (
+							<div className="g-empty account-empty">
+								<b>{this.state.message}</b>
+							</div>
+						)}
+
+						{!this.state.isLoading && !this.state.signedOut && !this.state.message && xalians.length === 0 && (
 							<div className="g-empty account-empty">
 								<b>No Xalians yet</b>
 								Generate one and keep it to see it here.
@@ -137,7 +190,7 @@ class UserAccountPage extends React.Component {
 							</div>
 						)}
 
-						{!this.state.isLoading && xalians.length > 0 && (
+						{!this.state.isLoading && !this.state.signedOut && xalians.length > 0 && (
 							<div className="account-grid">{xalians.map((x) => this.renderXalianTile(x))}</div>
 						)}
 					</div>
@@ -150,6 +203,29 @@ class UserAccountPage extends React.Component {
 							xalian={this.state.xalianToDelete.attributes}
 							username={this.state.loggedInUser.username}></VerifyRemoveXalianModal>
 					)}
+
+					<SignInModal
+						show={this.state.signInModalShow}
+						callback={() => {}}
+						onHide={() => this.setState({ signInModalShow: false })}
+						mustVerifyEmailCallback={(u) => this.setState({ username: u || this.state.username, verifyEmailModalShow: true })}
+						username={this.state.username}
+						password={this.state.password}
+					/>
+
+					<SignUpModal
+						show={this.state.signupModalShow}
+						callback={this.signUpCallback}
+						onHide={() => this.setState({ signupModalShow: false })}
+					/>
+
+					<VerifyEmailModal
+						show={this.state.verifyEmailModalShow}
+						callback={this.emailVerifiedCallback}
+						onHide={() => this.setState({ verifyEmailModalShow: false })}
+						username={this.state.username}
+						email={this.state.email}
+					/>
 				</main>
 			</React.Fragment>
 		);

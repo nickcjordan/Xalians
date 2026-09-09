@@ -173,9 +173,15 @@
 
 .lobbies-training-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+	grid-template-columns: repeat(2, 1fr);
 	gap: var(--g-4);
 	margin-bottom: var(--g-6);
+}
+
+@media (max-width: 700px) {
+	.lobbies-training-grid {
+		grid-template-columns: 1fr;
+	}
 }
 
 .lobbies-training-tile {
@@ -184,16 +190,21 @@
 	align-items: flex-start;
 	gap: var(--g-2);
 	width: 100%;
+	padding: var(--g-4);
 	background: var(--g-s1);
-	border: none;
+	border: var(--g-hairline) solid var(--g-edge);
 	font: inherit;
 	text-align: left;
 	cursor: pointer;
 }
 
-.lobbies-training-tile.on { border-color: var(--g-viable); }
+.lobbies-training-tile.on { border-color: var(--g-viable-lo); }
 
-.lobbies-training-play { margin-top: var(--g-2); }
+.lobbies-training-name { color: var(--g-text); }
+
+.lobbies-training-desc { margin: 0; color: var(--g-text-2); }
+
+.lobbies-training-badge { margin-top: var(--g-1); }
 
 /* -------------------------------------------------------------------------
    HOW TO PLAY MODAL

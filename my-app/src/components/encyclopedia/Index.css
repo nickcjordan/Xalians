@@ -10,6 +10,8 @@
 
 .enc-index-search { flex: 1 1 16rem; min-width: 12rem; }
 
+.enc-index-random { flex: none; white-space: nowrap; }
+
 .enc-index-chips { flex-wrap: wrap; }
 
 .enc-index-chips-row {
@@ -50,7 +52,9 @@
 .enc-index-list > *:first-child.enc-index-letter-heading { margin-top: 0; }
 
 .enc-index-alphabet {
+	display: flex;
 	flex-wrap: wrap;
+	gap: 2px;
 	margin-bottom: var(--g-4);
 }
 
@@ -60,14 +64,14 @@
 	text-align: center;
 }
 
-.enc-index-alphabet-key:disabled {
-	opacity: 0.35;
-	cursor: default;
-}
-
-.enc-index-alphabet-key:disabled:hover {
-	background: var(--g-hull);
-	color: var(--g-ink-mid);
+/* A disabled letter is plain text, not a greyed-out button. */
+.enc-index-alphabet-key--dim {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-family: var(--g-font-legend);
+	font-size: 13px;
+	color: var(--g-text-3);
 }
 
 @media (min-width: 900px) {

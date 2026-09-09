@@ -4,7 +4,6 @@ import * as lore from '../../lore';
 import Prose from './Prose';
 import XalianImage from '../xalianImage';
 import Connections from './Connections';
-import Pronunciation from './Pronunciation';
 import { useVisit, useReadMark, markRead, useResume } from './trail';
 import './WorldView.css';
 
@@ -26,14 +25,22 @@ function useIsPhone() {
     return isPhone;
 }
 
+function sentenceCase(text) {
+    if (!text) return text;
+    const lower = text.toLowerCase();
+    return lower.charAt(0).toUpperCase() + lower.slice(1);
+}
+
 // The physical plate is a small display-set so fields can change in one
-// place while the planet data block is mid-redesign (per contract).
+// place while the planet data block is mid-redesign (per contract). Terrain
+// reads in body face, sentence case (docs/DESIGN_SYSTEM.md common brief rule
+// 6); the rest are data-face values.
 const PHYSICAL_DISPLAY_SET = [
-    ['Terrain', (p) => p.terrainLabel],
-    ['Size vs Earth', (p) => `${p.sizeVsEarth}x`],
-    ['Radius km', (p) => Number(p.radiusKm).toLocaleString('en-US')],
-    ['Gravity vs Earth', (p) => `${p.gravityVsEarth}x`],
-    ['Temperature range', (p) => `${p.temperatureC.low} to ${p.temperatureC.high} C`],
+    ['Terrain', (p) => sentenceCase(p.terrainLabel), false],
+    ['Size vs Earth', (p) => `${p.sizeVsEarth}x`, true],
+    ['Radius km', (p) => Number(p.radiusKm).toLocaleString('en-US'), true],
+    ['Gravity vs Earth', (p) => `${p.gravityVsEarth}x`, true],
+    ['Temperature range', (p) => `${p.temperatureC.low} to ${p.temperatureC.high} C`, true],
 ];
 
 const MOBILITY_ORDER = ['flight', 'swim', 'burrow', 'climb', 'sprint'];
@@ -47,7 +54,7 @@ function chapterEraLabel(chapter, eraLabel) {
     return eraLabel || chapter.era;
 }
 
-/** One station on the "In the Chronicle" rail: lit and linked when the world has chapters or events in this era. */
+/** One stop on the "In the story" rail: a .g-tab-link when the world has chapters or events in this era, plain --g-text-3 text with no box otherwise. */
 function ChronicleStation({ row }) {
     const count = row.chapters.length;
     const lit = count > 0 || row.events.length > 0;
@@ -56,7 +63,7 @@ function ChronicleStation({ row }) {
     if (!lit) {
         return (
             <span className="enc-world-chronicle-station enc-world-chronicle-station--dim" aria-hidden="true">
-                <span className="enc-world-chronicle-station-name">{row.era.name}</span>
+                {row.era.name}
             </span>
         );
     }
@@ -64,10 +71,10 @@ function ChronicleStation({ row }) {
     return (
         <Link
             to={lore.routeFor('era', row.era.key)}
-            className="enc-world-chronicle-station"
+            className="g-tab-link enc-world-chronicle-station"
             title={titleAttr}
         >
-            <span className="enc-world-chronicle-station-name">{row.era.name}</span>
+            {row.era.name}
             {count > 0 && <span className="g-mono enc-world-chronicle-station-count">{count} ch</span>}
         </Link>
     );
@@ -88,7 +95,7 @@ function ChapterRailRow({ chapter, index, world, label, onFallbackRead }) {
             <span className="g-mono enc-world-chapter-index-num">
                 CH. {String(index + 1).padStart(2, '0')}
             </span>
-            <span className="g-chip g-chip--outline enc-world-chapter-index-era">{label}</span>
+            <span className="g-badge enc-world-chapter-index-era">{label}</span>
             <span className="enc-world-chapter-index-snippet">{words}&hellip;</span>
         </a>
     );
@@ -196,7 +203,6 @@ export default function WorldView() {
     if (!world) {
         return (
             <div className="enc-world">
-                <Link to="/encyclopedia/worlds" className="enc-back">&laquo; Back to Worlds</Link>
                 <p className="g-empty">No record for &ldquo;{key}&rdquo;.</p>
             </div>
         );
@@ -217,19 +223,6 @@ export default function WorldView() {
 
     return (
         <article className={`enc-world g-el-${world.element}`}>
-            <Link to="/encyclopedia/worlds" className="enc-back">&laquo; Back to Worlds</Link>
-
-            <header className="g-masthead">
-                <div className="g-masthead-heading">
-                    <p className="g-kicker">World record</p>
-                    <h1 className="g-title">{world.name}</h1>
-                    <Pronunciation pronunciation={(lore.getEntry(world.key) || {}).pronunciation} />
-                </div>
-                <div className="g-masthead-aside enc-chips">
-                    <span className={`g-chip g-el-${world.element}`}>{world.element}</span>
-                </div>
-            </header>
-
             <div className="enc-record">
                 <div className="g-panel enc-world-plate">
                     <div className="enc-world-mount">
@@ -239,26 +232,26 @@ export default function WorldView() {
                             className="enc-world-globe"
                         />
                     </div>
-                    <div className="g-spec enc-world-spec">
-                        {PHYSICAL_DISPLAY_SET.map(([label, format]) => (
-                            <React.Fragment key={label}>
-                                <span className="g-spec-key">{label}</span>
-                                <span className="g-spec-val g-mono">{format(physical)}</span>
-                            </React.Fragment>
-                        ))}
-                    </div>
                 </div>
 
                 <div className="enc-world-record-col">
                     <WorldLede world={world} />
 
-                    <nav className="enc-world-chronicle" aria-label="In the story">
-                        <span className="enc-world-chronicle-label g-mono">In the story</span>
-                        <div className="enc-world-chronicle-rail">
-                            {timeline.map((row) => (
-                                <ChronicleStation key={row.era.key} row={row} />
-                            ))}
-                        </div>
+                    <div className="g-spec enc-world-facts">
+                        {PHYSICAL_DISPLAY_SET.map(([label, format, mono]) => (
+                            <React.Fragment key={label}>
+                                <span className="g-spec-key">{label}</span>
+                                <span className={mono ? 'g-spec-val g-mono' : 'g-spec-val enc-world-facts-terrain'}>
+                                    {format(physical)}
+                                </span>
+                            </React.Fragment>
+                        ))}
+                    </div>
+
+                    <nav className="enc-world-chronicle g-tabs" aria-label="In the story">
+                        {timeline.map((row) => (
+                            <ChronicleStation key={row.era.key} row={row} />
+                        ))}
                     </nav>
 
                     <section className="enc-section enc-world-record-section">
@@ -285,11 +278,11 @@ export default function WorldView() {
                                                     CH. {String(i + 1).padStart(2, '0')}
                                                 </span>
                                                 {eraKey ? (
-                                                    <Link to={lore.routeFor('era', eraKey)} className="g-chip g-chip--outline">
+                                                    <Link to={lore.routeFor('era', eraKey)} className="g-badge">
                                                         {label}
                                                     </Link>
                                                 ) : (
-                                                    <span className="g-chip g-chip--outline">{label}</span>
+                                                    <span className="g-badge">{label}</span>
                                                 )}
                                             </div>
                                             <Prose text={chapter.text} />
