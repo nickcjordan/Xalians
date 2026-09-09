@@ -1,11 +1,5 @@
 import React, { PureComponent } from 'react';
 import { LabelList, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import ListGroup from 'react-bootstrap/ListGroup';
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Table from 'react-bootstrap/Table';
 import XalianImage from '../xalianImage';
 import XalianStatRatingChart from '../xalianStatRatingChart';
 import XalianMoveSet from '../xalianMoveSet';

@@ -1,8 +1,4 @@
 import React from 'react';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
 import XalianNavbar from '../../components/navbar';
 
 import XalianImage from '../../components/xalianImage';

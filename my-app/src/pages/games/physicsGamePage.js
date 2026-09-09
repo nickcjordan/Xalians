@@ -1,9 +1,5 @@
 // Terminal: field. Training games are diagnostic programs on the salvaged ECHELON survey unit.
 import React from 'react';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
 import XalianNavbar from '../../components/navbar';
 
 import XalianImage from '../../components/xalianImage';
@@ -11,7 +7,6 @@ import MatchGameFlippedCard from '../../components/games/elements/matchGameFlipp
 import species from '../../json/species.json';
 
 import { ReactComponent as FigzySVG } from '../../svg/species/figzy.svg';
-import Form from "react-bootstrap/Form";
 
 import GameContainer from '../../components/games/elements/gameContainer';
 
@@ -26,8 +21,6 @@ import { Physics2DPlugin } from 'gsap/Physics2DPlugin';
 import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin';
 import { GSDevTools } from 'gsap/GSDevTools';
 import PhysicsPropsPlugin from 'gsap/PhysicsPropsPlugin';
-import ThemedSceneDiv from '../../components/views/themedSceneDiv';
-import BaseGamePage from './baseGamePage';
 gsap.registerPlugin(MotionPathPlugin, TextPlugin, ScrollTrigger, DrawSVGPlugin, Draggable, InertiaPlugin, Physics2DPlugin, MorphSVGPlugin, GSDevTools, PhysicsPropsPlugin);
 
 
@@ -207,16 +200,16 @@ class PhysicsGamePage extends React.Component {
 											Fire
 										</button>
 									</div>
-									<Row style={{ height: '100%'}}>
-										<Col style={{ height: '100%'}}>
+									<div className="flex flex-wrap" style={{ height: '100%'}}>
+										<div className="flex-1" style={{ height: '100%'}}>
 											<div id="arena" className="physics-arena">
 												<div style={{ maxHeight: this.state.size.min * 0.1, maxWidth: this.state.size.min * 0.1, margin: 'auto', position: 'absolute', bottom: '0%', left: '0' }}>
                                                     <FigzySVG style={{ height: '100%', width: '100%', overflow: 'visible' }} />
 												</div>
                                                     <div id="target" className="physics-target"></div>
 											</div>
-										</Col>
-									</Row>
+										</div>
+									</div>
 								{/* // </Container> */}
                                     </React.Fragment>
     }
