@@ -8,11 +8,11 @@ The render is a flat black silhouette of a single body, one creature and not a s
 
 The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` teaser carried verbatim and is never edited here; `body` is the physical record, `habits` is how the creature lives now. `descriptionStatus` was removed from the record; status lives in `docs/species-templates/lore-status.json`.
 
-### body (93 words)
+### body (73 words)
 
-A lean, long-limbed simian shape that goes in a low crouch on all four limbs, its hands and feet bare-soled and clawless, made for gripping. The head is broad and slung low and forward, carrying heavy curved horns swept up and back from the crown and long downward fangs. A very thin whip of a tail rises from the hindquarters and loops high over the body. Fur covers it, and flame stands off the shoulders, neck and skull in a constant crown. It climbs, leaps and handles things far better than it runs.
+A small horned monkey, fur-covered and burning: the flammable oil it secretes keeps it in a constant state of immolation, and its fire-retardant fur is what lets it survive that. It goes on all fours and has fangs, gripping hands, and a long tail ending in a scythe-like tip that it swings from. It is a climber and a leaper with clever hands, not a runner, and it hears better than it sees.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, approved 2026-09-09): horned monkey, flame, the oil and fur, the scythe-tipped tail and the swinging are the teaser; four limbs, fangs, fists and hide are record anatomy; climb, leap, manipulation, sprint and hearing are record bands. No clause is taken from the drawing.
 
 ### habits (119 words)
 

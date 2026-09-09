@@ -255,7 +255,7 @@ if (T) {
   if (species && normalize(L.description) !== normalize(species.description)) fail('lore.description.verbatim', 'lore.description must be the species.json description verbatim (it is the teaser; physical and behavioral prose go in lore.body and lore.habits)');
   checkProse('lore.description', L.description, 'lore.description');
   if (typeof L.body !== 'string' || !L.body.trim()) fail('lore.body', 'lore.body missing (the physical description)');
-  else checkProse('lore.body', L.body, 'lore.body', { wordRange: [40, 120] });
+  else checkProse('lore.body', L.body, 'lore.body', { wordRange: [25, 120] });
   if (typeof L.habits !== 'string' || !L.habits.trim()) fail('lore.habits', 'lore.habits missing (how it lives now)');
   else checkProse('lore.habits', L.habits, 'lore.habits', { wordRange: [40, 120] });
   if ('descriptionStatus' in L) fail('lore.extra', 'lore.descriptionStatus is metadata, not a creature fact; status lives in docs/species-templates/lore-status.json');

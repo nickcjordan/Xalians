@@ -6,11 +6,11 @@ Sources read in full: the `Graviclaw` entry in `species.json` and the entire `Gr
 
 The lore block holds three prose fields. `description` is Nick's teaser, already the `species.json` text and unchanged by this pass (its status was `source`). `body` and `habits` are authored below under the lore split of 2026-09-09; every claim in each is ledgered. The teaser already carries the crab body, the upright torso, the gravitational pull, the snapping claws and the rooting, so none of that is restated here.
 
-### body (85 words)
+### body (67 words)
 
-A broad low carapace on more than four jointed legs, with an upright torso rising from the front of it on heavy shoulders. One arm ends in a pincer as long as the torso; the other is a heavy limb of the same build. Chitin plates all of it, with mineral grown into the shell. Standing near two meters and carrying most of a quarter ton, it is far heavier than its height suggests. It sees poorly and reads mass and motion by other means.
+A centaur-like crustacean with the black-shelled body of a crab and an upright torso rising from it, on many legs, with massive claws. Chitin shell throughout, with mineral grown into it. It stands near two meters and carries most of a quarter ton. It swims, burrows and grips well but is slow on its feet; it sees poorly and senses by means other than the ordinary five.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits (119 words)
 

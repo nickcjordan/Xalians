@@ -8,11 +8,11 @@ The artwork shows a single body, a lean fox-like or jackal-like creature standin
 
 The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
 
-### body (68 words)
+### body (50 words)
 
-A small, lean, fox-like biped on digitigrade hind legs, its free forelimbs ending in long hooked claws made for digging. A spiky ridge of spines runs down the neck and back. The tail is the heaviest thing on it, thick and muscular where it leaves the hindquarters and opening into a fan of large cone-shaped barbs. Fur covers the rest. It reads the ground better than it sees.
+A small fur-covered biped, under a meter tall and light, with digging claws, spines, and a tail made of explosive barbs that regrow after they are fired. It is a burrower above everything else, quick to go underground, and it reads the ground it lies in better than it sees.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits
 

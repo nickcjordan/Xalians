@@ -8,11 +8,11 @@ The render shows a single tall body standing upright on two long digitigrade leg
 
 The lore block holds three prose fields. `description` is Nick's teaser, carried from `species.json` verbatim and never edited here. `body` and `habits` are authored below under the lore split of 2026-09-09; every claim in each is ledgered.
 
-### body (98 words)
+### body (58 words)
 
-A biped close to two meters tall on long jointed legs, each leg a run of plated segments. The head is narrow and deerlike on a slim neck, with two long thin antennae sweeping back from the crown. The torso is broad at the shoulders and narrow at the waist. Both forearms are cased in plating, and out of each hand rises a long helically threaded shaft, longer than the creature is tall: the drills it works with. There is no tail and there are no wings. It sees and hears poorly, and reads its ground another way.
+A biped close to two meters tall, its limbs cased in a metallic exoskeleton, with long drill-like horns for arms and a pair of antennae on its head. It has no tail and no wings. It is a digger rather than a runner, climber or leaper; its own senses are dull, and it reads vibration through the ground.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits (116 words)
 

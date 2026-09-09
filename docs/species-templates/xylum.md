@@ -8,11 +8,11 @@ The render is a solid black silhouette on white. A single bulbous, roughly ovoid
 
 Split applied 2026-09-09. `lore.description` is Nick's teaser from `species.json`, verbatim. The pre-split upgraded description and the 2026-09-08 stub-upgrade draft are re-cut into body and habits below, with the orchestrator's edit applied ('a limb cut off it comes back' becomes 'a limb torn from it grows back').
 
-### body (83 words)
+### body (53 words)
 
-A bulbous trunk-mass of plant tissue breaking the soil line, three to four meters tall, with six thick limbs rising and curling outward from it, three to a side, each tapering to a fine tip and edged with serrations along its outer length. Two narrower shoots rise straight from the crown. Roots hold the rest of it below the soil. There is no head, no face, no eyes and no mouth on it anywhere: it takes the world as tremor through the ground.
+A giant organism of thick, intertwined roots that act as tentacles, three to four meters tall, plant tissue throughout, bare, with spines on it. It lives mostly underground and burrows well; it does not run or leap. It is nearly blind and hears little, and it feels the ground it is rooted in.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits (115 words)
 

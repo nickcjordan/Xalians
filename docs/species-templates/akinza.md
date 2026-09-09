@@ -10,11 +10,11 @@ The art and the description do not disagree; the description is silent on the bo
 
 The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
 
-### body (81 words)
+### body (52 words)
 
-An upright, light-framed biped on long hind legs, feline in the head, with small hooked forelimb claws that carry no weight. Its ears are the largest thing on it, a fringed pair spread wider than the shoulders, and a plumed tail about as long as the body sweeps up behind it. Fur covers all of it. It is built to run and leap, the claws take it up ice and stone, and it watches and listens far more than it smells.
+A fur-covered biped of middling size, around a meter and a half tall and sixty kilograms, with claws, a biting jaw and a tail. It is built to sprint and leap, climbs well, and leads with its eyes and ears: it sees in the dark and moves through it without being noticed.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits
 

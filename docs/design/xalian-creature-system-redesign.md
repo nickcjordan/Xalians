@@ -402,7 +402,7 @@ Games derive mechanics from the structured fields (the duel maps archetype/deliv
   "signatureAbility": { "name": "Ignition Sprint", "instrument": "body", "archetype": "ambush", "medium": "fire", "intensity": 8 },
   // no appearance block needed in the common case (global finish odds apply);
   // optional override: "appearanceOdds": { "prismatic": 0.005 }
-  "lore": { "description": "<Nick teaser, species.json verbatim>", "body": "<physical prose, 40 to 120 words>", "habits": "<how it lives now, 40 to 120 words>", "biomeNiche": "open volcanic plains sprinter" }   // lore split ratified 2026-09-09; review status lives outside the record
+  "lore": { "description": "<Nick teaser, species.json verbatim>", "body": "<physical prose, 25 to 120 words, teaser and record fields only>", "habits": "<how it lives now, 40 to 120 words>", "biomeNiche": "open volcanic plains sprinter" }   // lore split ratified 2026-09-09; review status lives outside the record
 }
 ```
 

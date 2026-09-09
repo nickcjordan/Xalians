@@ -8,11 +8,11 @@ The render shows a single body, rearing, drawn as a black silhouette with white 
 
 The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` teaser carried verbatim and is never edited here; `body` is the physical record, `habits` is how the creature lives now. `descriptionStatus` was removed from the record; status lives in `docs/species-templates/lore-status.json`.
 
-### body (83 words)
+### body (55 words)
 
-Horse-bodied from the shoulder back and seahorse-headed in front, with a long tapering snout that ends in a small round opening. A sail-like crest runs from the brow down the neck, and rows of fin-like spines continue along the back and belly. All four legs end in blunt hooves, and the thick ridged tail coils into a tight spiral held clear of the ground. The surface is smooth hide, with no plate or scale on it. It swims as readily as it runs.
+A four-legged creature resembling a seahorse, about a meter and a third at the shoulder and a hundred and forty kilograms, with a long trunk-like snout that works as a high-pressure water cannon, a crest, spines, hooves and a tail, all under smooth hide. It swims well and runs adequately, and its senses are ordinary.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits
 

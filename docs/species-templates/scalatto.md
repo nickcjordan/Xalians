@@ -8,11 +8,11 @@ The artwork is a single black silhouette of one creature, standing upright on tw
 
 The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description` verbatim and moves everything else into two authored fields.
 
-### body (86 words)
+### body (50 words)
 
-A stout biped a little over a meter tall on two heavy columnar legs and broad flat feet, its forelimbs held clear of the ground and ending in long curved claws. The head is low and long and finishes in a blunt snout. Deep overlapping bands of chitin cross the trunk from shoulder to hip, and the same ringed banding runs down a very long tail that tapers to a hooked tip. It carries seventy kilograms of that plating, and it reads the ground through it.
+A stout biped a little over a meter tall and seventy kilograms, shielded by a scaly chitin exoskeleton, with claws and a long tail. It can roll into a ball inside that shell. It burrows and runs adequately, and it feels the ground through its plating better than it sees.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits (90 words)
 

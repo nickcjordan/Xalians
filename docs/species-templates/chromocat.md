@@ -10,11 +10,11 @@ Note that the render is a black silhouette, so the albino coloring the descripti
 
 The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
 
-### body (61 words)
+### body (49 words)
 
-A low-crouching four-legged cat, shaggy in the coat, with long fangs, clawed paws and a long thick tail carried up over the back. Long tufted points rise from the skull. Behind each front paw a curved blade sweeps back, the part of it that cuts. It is built for speed and the leap, and it hunts by sight above all else.
+A large albino cat on four legs, fur-covered, with a long tail, clawed paws and a fanged bite. Two sickle-shaped blades extend backward from its front paws, the only thing on it that is not ordinary feline build. It is built for the sprint and the leap, and it hunts by sight.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, approved 2026-09-09): large albino cat, the blades from the front paws are the teaser; four legs, fur, tail, claws, fangs are record anatomy; sprint, leap and sight are record bands. No clause is taken from the drawing.
 
 ### habits (115 words)
 

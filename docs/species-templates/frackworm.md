@@ -10,11 +10,11 @@ Split applied 2026-09-09. This record is an unratified draft and has no `species
 
 The species now has artwork at `art/frackworm.png`; the Art reading section above, which states there is none, predates it. Body below is written from the render.
 
-### body (90 words)
+### body (68 words)
 
-A limbless armored worm, nine to fifteen meters of overlapping chitin plates ringed segment by segment, and thick enough through the trunk that the front third rears and curves over the rest when it lifts. The head narrows forward to a working face of jaws, with vents set into the collar behind it. It is nearly blind. Nothing on it grips or grasps: what it does, it does with its head end or with its whole length, and it reads the ground it moves through rather than looking at it.
+A colossal segmented worm, nine to fifteen meters long and several tons, limbless, armored in chitin plates, with a ringed, drill-like head and jaws at the working end, vents along the body, and a body that holds a slurry of sand under pressure. It bores; it barely moves on the surface. It is nearly blind and hears little, and it reads the ground it moves through as vibration.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits (105 words)
 

@@ -10,11 +10,11 @@ A single central creature dominates the frame, drawn in flat black silhouette: a
 
 The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description` verbatim. Body and habits below are re-cut from the ratified draft in `docs/design/species-stub-upgrades-2026-09-08.md`, with the orchestrator's edit applied: the draft's opening 'A small winged thing' reads 'A small winged hunter'.
 
-### body (77 words)
+### body (50 words)
 
-A small winged hunter, under a meter and a dozen kilograms: two broad membranous wings off a blunt bat-shaped body, a small head with upright ears, short hooked forelimbs, hooked hind feet, and a long thin tail trailing behind. The outline is smooth all the way round, unarmored hide with no plate, spine, horn or tooth on it. It has no call and makes no sound of its own, and it hears far better than it sees.
+A small winged creature, under a meter and about a dozen kilograms, with hide, claws and a tail, together with the swarm of small flying familiars it summons, toothed like piranhas, that it controls with its mind as one unit. It flies well. It hears far better than it sees.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits (104 words)
 

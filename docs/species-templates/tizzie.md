@@ -10,11 +10,11 @@ Note on the pose and the plan: the art shows a mammalian four-limbed body caught
 
 Split applied 2026-09-09. `lore.description` is Nick's teaser, carried from `species.json` verbatim and never edited here. `lore.body` and `lore.habits` below are authored to the split contract, 40 to 120 words each, and neither repeats a sentence the teaser already carries (the turning disc, the eye contact, and the working from inside a mind are all the teaser's and are deliberately absent from both fields).
 
-### body (82 words)
+### body (55 words)
 
-A small shaggy climber that hangs from the branches by long-fingered hands, a single hand taking the whole body. Two pointed ears rise nearly as long as the head, and the face is mostly eye, two wide spiral-patterned circles filling half the skull. A long thin tail curves up over the head and ends in a flat disc marked with a spiral, held out at eye height: the lure. Fur covers it, with no plate or shell. It sees and hears keenly.
+A small fur-covered biped, under a meter and light, with big hypnotic eyes, a tail that ends in a lure it uses to draw attention to them, and hands that grip. It is a climber first and a runner second. Its sight and hearing are both keen, and beyond them it has a psychic sense.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits (112 words)
 

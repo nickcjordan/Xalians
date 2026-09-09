@@ -8,11 +8,11 @@ The artwork shows a single heavy-bodied creature standing in three-quarter view 
 
 The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` teaser carried verbatim and is never edited here; `body` is the physical record, `habits` is how the creature lives now. `descriptionStatus` was removed from the record; status lives in `docs/species-templates/lore-status.json`.
 
-### body (96 words)
+### body (60 words)
 
-A heavy quadruped on four thick columnar legs, with a deep barrel body and a short upturned tail. The head is blunt and carried low near the shoulders, with a broad gape of long teeth. From the crown rises a single long trunk that arcs up and back over the whole animal and flattens into a wide thin blade sweeping past the hips, roughly as long as the body itself. The hide is smooth and unplated. It weighs well past three hundred kilograms, and it reads the ground through its feet as much as it looks.
+A large, heavy quadruped, over two meters tall and near four hundred kilograms, with a trunk that ends in a large blade, a biting jaw, a tail, and smooth hide. It is slow and does not climb or leap, but it handles that blade with control. It smells better than it sees, and it feels the ground through its feet.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits
 

@@ -8,11 +8,11 @@ The artwork is a flat black silhouette of a single hunched body with no legs, no
 
 The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
 
-### body (83 words)
+### body (62 words)
 
-A standing mass of living slime with no legs and no hands, roughly two meters tall and several hundred kilograms. A hooded top carries its one eye, two thick jointless protrusions spread wide from the upper body, and below them the mass widens into a skirt and spreads flat on the ground, shedding droplets as it goes. A hardened shell plates the hood and the upper mass. It is mute and sees poorly, and it reads what moves through the ground it covers.
+An acid slime organism with no legs and no hands, standing about two meters and weighing several hundred kilograms, encased in a thick rocky exoskeleton that its slime regenerates as it is worn away. It moves by flowing and reaches out with pseudopods. It is slow, sees and hears poorly, smells well, and feels what moves through the ground it sits on.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits
 

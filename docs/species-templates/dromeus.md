@@ -8,11 +8,11 @@ The image is a single black silhouette of one creature, a raptor-shaped theropod
 
 The lore block holds three prose fields. `description` is Nick's teaser, carried from `species.json` verbatim and never edited here. `body` and `habits` are authored below under the lore split of 2026-09-09, re-cut from the stub-upgrade draft of 2026-09-08 with the orchestrator's edit applied.
 
-### body (90 words)
+### body (69 words)
 
-A light-framed runner on two long hind legs, each foot set with hooked toe claws. The skull is narrow and lizard-like with wide-opening jaws. The forelimbs are held folded against the chest and end in curved claws. Fans of stiff plumes sweep back from each arm, the wings such as they are, with more at the hip and at the tip of the long tail carried up over the back. Between the plumes the hide is smooth and unarmored. It is built for the sprint and it hunts by sight.
+A partly feathered ground bird with lizard features, standing on two legs, under a meter tall and light for its height. It has jaws of sharp teeth, clawed forelimbs, taloned feet, wings, and a tail; the feathers cover only part of it, bare hide showing between. It is built for the sprint above everything, with a strong leap and only a brief, low flight, and it hunts by sight.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, approved 2026-09-09): ground bird, lizard features, partial feathering, sharp teeth and the wings are the teaser; two legs, claws, talons, tail and hide are record anatomy; the size feel is the record size band; sprint, leap, flight and sight are record bands. No clause is taken from the drawing.
 
 ### habits (94 words)
 

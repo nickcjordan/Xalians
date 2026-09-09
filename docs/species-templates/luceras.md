@@ -10,11 +10,11 @@ Body-plan call from this reading: four limbs, of which the forelimbs are short p
 
 The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` teaser carried verbatim and is never edited here; `body` is the physical record, `habits` is how the creature lives now. `descriptionStatus` was removed from the record; status lives in `docs/species-templates/lore-status.json`.
 
-### body (85 words)
+### body (44 words)
 
-A small bounding animal built around its hindquarters: thin short forelimbs, long deeply muscled hind limbs folded to spring. The head is rounded with two long upright ears and a spray of whiskers, and from the crown a single long ridged horn sweeps back over the shoulders. Shaggy fur covers it. The tail is longer than the body, thin as a whip, and ends in a spiked plume. It hears far better than it sees, and it leaps far better than it does anything else.
+A small fur-covered quadruped, about half a meter long and light, with horns on its head and a tail. It is built almost entirely for the leap, so high it seems to fly, and it sprints well too. It hears better than it sees.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits
 

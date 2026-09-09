@@ -8,11 +8,11 @@ A single black silhouette of one creature, drawn in a rearing three-quarter pose
 
 The lore block holds three prose fields. `description` is Nick's teaser, carried from `species.json` verbatim and never edited here. `body` and `habits` are authored below under the lore split of 2026-09-09; every claim in each is ledgered.
 
-### body (84 words)
+### body (49 words)
 
-A hard-shelled, dog-sized body on more than four jointed walking legs, cased in stepped plates of chitin. The head is canine, a long tapering muzzle with working jaws. Two forelimbs are carried clear of the ground and end in pincers. The tail arches up and forward over the back in a scorpion curve and ends in a long tapering helical auger, the drill it is named for. It is a burrower first, and it reads the ground it digs through better than it sees.
+A dog-sized, scorpion-like creature on many legs under a chitin shell, with a biting jaw, scissor-like claws, and a tail that ends in a small stinger-like drill. It is a burrower first and quick on the surface, and it feels the ground it tunnels through better than it sees.
 
-Re-cut 2026-09-09 under the defining-features rule (Nick): the body names only what a second artist drawing this species would have to keep. Every clause traces to the record's physiology fields (body plan, anatomy, covering, composition, size, capability and sense bands), to Nick's teaser, or to the silhouette-level shape of the art. Incidental rendering details (tooth shape, pupil shape, eye and nostril counts, digit and tuft counts, banding counts, the pose in the one drawing) are left out on purpose.
+Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
 
 ### habits (105 words)
 
