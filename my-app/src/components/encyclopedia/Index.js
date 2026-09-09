@@ -3,7 +3,11 @@ import { Link, useHistory, useLocation } from 'react-router-dom';
 import * as lore from '../../lore';
 import Prose from './Prose';
 import { useReadMark } from './trail';
-import './Index.css';
+import { RecordRow, EmptyState } from '@/components/system/record';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { tabTriggerClass } from '@/components/ui/tabs';
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
@@ -15,21 +19,24 @@ function initialOf(title) {
 function IndexRecord({ entry }) {
     const read = useReadMark('entry', entry.key);
     return (
-        <div id={`index-${entry.key}`} className={`g-record ${entry.element ? `g-el-${entry.element}` : ''}`}>
-            <div>
-                <Link to={lore.routeFor('entry', entry.key)} className="g-record-term">
-                    {entry.title}
-                </Link>
-                <div className="enc-index-chips-row">
-                    <span className="g-badge">{entry.category}</span>
-                    {entry.element && <span className={`g-chip g-el-${entry.element}`}>{entry.element}</span>}
-                    {read && (
-                        <span className="g-badge g-badge--ok enc-index-read-badge">Reviewed</span>
-                    )}
+        <RecordRow
+            id={`index-${entry.key}`}
+            className={entry.element ? `el-${entry.element}` : ''}
+            term={
+                <div>
+                    <Link to={lore.routeFor('entry', entry.key)} className="no-underline hover:underline">
+                        {entry.title}
+                    </Link>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                        <Badge>{entry.category}</Badge>
+                        {entry.element && <Badge variant="chip" className={`el-${entry.element}`}>{entry.element}</Badge>}
+                        {read && <Badge variant="ok">Reviewed</Badge>}
+                    </div>
                 </div>
-            </div>
-            <Prose text={entry.definition} except={entry.key} className="g-record-body" />
-        </div>
+            }
+        >
+            <Prose text={entry.definition} except={entry.key} className="m-0 max-w-none text-small text-ink-2" />
+        </RecordRow>
     );
 }
 
@@ -83,99 +90,107 @@ export default function Index() {
     }
 
     return (
-        <div className="enc-index">
-            <div className="enc-index-controls-sticky">
-            <div className="enc-index-controls">
-                <input
-                    className="g-input enc-index-search"
-                    type="search"
-                    placeholder="SEARCH ENTRIES"
-                    aria-label="Search entries"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                />
-                <button type="button" className="g-btn g-btn--quiet enc-index-random" onClick={pullRandom}>
-                    Random entry
-                </button>
-                <div className="g-tabs enc-index-chips enc-scrollrow" aria-label="Filter by category">
-                    <button
-                        type="button"
-                        className={`g-tab-link ${category === 'all' ? 'on' : ''}`}
-                        aria-pressed={category === 'all'}
-                        onClick={() => setCategory('all')}
-                    >
-                        All
-                    </button>
-                    {categories.map((c) => (
+        <div>
+            <div className="md:sticky md:top-0 md:z-10 md:bg-room md:pb-2 md:pt-3">
+                <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-3">
+                    <Input
+                        className="min-w-48 flex-[1_1_16rem]"
+                        type="search"
+                        placeholder="SEARCH ENTRIES"
+                        aria-label="Search entries"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                    />
+                    <Button type="button" variant="ghost" className="shrink-0 whitespace-nowrap" onClick={pullRandom}>
+                        Random entry
+                    </Button>
+                    <div className="flex flex-wrap gap-0.5 max-sm:w-full max-sm:flex-nowrap max-sm:overflow-x-auto" aria-label="Filter by category">
                         <button
-                            key={c}
                             type="button"
-                            className={`g-tab-link ${category === c ? 'on' : ''}`}
-                            aria-pressed={category === c}
-                            onClick={() => setCategory(c)}
+                            data-state={category === 'all' ? 'active' : 'inactive'}
+                            className={`${tabTriggerClass} max-sm:shrink-0`}
+                            aria-pressed={category === 'all'}
+                            onClick={() => setCategory('all')}
                         >
-                            {c}
+                            All
                         </button>
-                    ))}
+                        {categories.map((c) => (
+                            <button
+                                key={c}
+                                type="button"
+                                data-state={category === c ? 'active' : 'inactive'}
+                                className={`${tabTriggerClass} max-sm:shrink-0`}
+                                aria-pressed={category === c}
+                                onClick={() => setCategory(c)}
+                            >
+                                {c}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="mb-2 flex flex-wrap gap-0.5 max-sm:w-full max-sm:flex-nowrap max-sm:overflow-x-auto" role="group" aria-label="Jump to letter">
+                    {ALPHABET.map((letter) => {
+                        const live = liveLetters.has(letter);
+                        return live ? (
+                            <Button
+                                key={letter}
+                                type="button"
+                                variant="ghost"
+                                size="xs"
+                                className="min-w-8 max-sm:h-9 max-sm:w-9 max-sm:shrink-0"
+                                onClick={() => scrollToLetter(letter)}
+                            >
+                                {letter}
+                            </Button>
+                        ) : (
+                            <span
+                                key={letter}
+                                className="type-legend flex min-w-8 items-center justify-center text-[13px] text-ink-3 max-sm:h-9 max-sm:w-9 max-sm:shrink-0"
+                                aria-hidden="true"
+                            >
+                                {letter}
+                            </span>
+                        );
+                    })}
                 </div>
             </div>
 
-            <div className="enc-index-alphabet enc-scrollrow" role="group" aria-label="Jump to letter">
-                {ALPHABET.map((letter) => {
-                    const live = liveLetters.has(letter);
-                    return live ? (
-                        <button
-                            key={letter}
-                            type="button"
-                            className="g-btn g-btn--quiet enc-index-alphabet-key"
-                            onClick={() => scrollToLetter(letter)}
-                        >
-                            {letter}
-                        </button>
-                    ) : (
-                        <span key={letter} className="enc-index-alphabet-key enc-index-alphabet-key--dim" aria-hidden="true">
-                            {letter}
-                        </span>
-                    );
-                })}
-            </div>
-            </div>
-
-            <p className="enc-count">{entries.length} record{entries.length === 1 ? '' : 's'}</p>
+            <p className="type-data m-0 text-small text-ink-2">{entries.length} record{entries.length === 1 ? '' : 's'}</p>
 
             {entries.length === 0 ? (
-                <p className="g-empty">No record matches the current filter.</p>
+                <EmptyState legend="No results">No record matches the current filter.</EmptyState>
             ) : (
-                <div className="enc-index-panel">
-                    <div className="enc-index-list">
-                        {entries.map((entry) => {
-                            const initial = initialOf(entry.title);
-                            const showHeading = initial !== lastInitial;
-                            lastInitial = initial;
-                            return (
-                                <React.Fragment key={entry.key}>
-                                    {showHeading && (
-                                        <p className="enc-index-letter-heading" aria-hidden="true">{initial}</p>
-                                    )}
-                                    <IndexRecord entry={entry} />
-                                </React.Fragment>
-                            );
-                        })}
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 md:gap-x-6">
+                    {entries.map((entry) => {
+                        const initial = initialOf(entry.title);
+                        const showHeading = initial !== lastInitial;
+                        lastInitial = initial;
+                        return (
+                            <React.Fragment key={entry.key}>
+                                {showHeading && (
+                                    <p
+                                        className="type-legend col-span-full m-0 mt-4 border-b border-edge pb-1 text-ink-2 first:mt-0"
+                                        aria-hidden="true"
+                                    >
+                                        {initial}
+                                    </p>
+                                )}
+                                <IndexRecord entry={entry} />
+                            </React.Fragment>
+                        );
+                    })}
                 </div>
             )}
 
-            <div className="g-record enc-index-archive-note">
-                <p className="g-record-term">The whole archive as one document</p>
-                <p className="g-record-body">
-                    Every world, species, and entry in one file, generated for machines and offline reading.{' '}
-                    <a href="/lore/xalia.md" target="_blank" rel="noopener">Markdown</a>
-                    {' · '}
-                    <a href="/lore/xalia.html" target="_blank" rel="noopener">HTML</a>
-                    {' · '}
-                    <a href="/lore/xalia.json" target="_blank" rel="noopener">JSON</a>
-                </p>
-            </div>
+            <RecordRow className="mt-6" term="The whole archive as one document">
+                Every world, species, and entry in one file, generated for machines and offline reading.{' '}
+                <a href="/lore/xalia.md" target="_blank" rel="noopener" className="text-ink underline hover:text-ink-2">Markdown</a>
+                {' · '}
+                <a href="/lore/xalia.html" target="_blank" rel="noopener" className="text-ink underline hover:text-ink-2">HTML</a>
+                {' · '}
+                <a href="/lore/xalia.json" target="_blank" rel="noopener" className="text-ink underline hover:text-ink-2">JSON</a>
+            </RecordRow>
         </div>
     );
 }

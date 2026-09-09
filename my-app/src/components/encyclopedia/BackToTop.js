@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import './BackToTop.css';
+import { Button } from '@/components/ui/button';
+import { ArrowUp } from 'lucide-react';
 
 /**
  * Phone-only "back to top" key. Appears once the reader has scrolled past
- * two viewport heights, fixed at the bottom right. Matte .g-btn, no glow,
+ * two viewport heights, fixed at the bottom right. Matte button, no glow,
  * no motion beyond the shared hover/focus snap. Contract: UX-BRIEF.md.
  */
 export default function BackToTop() {
@@ -35,8 +36,15 @@ export default function BackToTop() {
 	if (!visible) return null;
 
 	return (
-		<button type="button" className="g-btn enc-back-to-top" onClick={onClick} aria-label="Back to top">
-			<span aria-hidden="true">&#8593;</span>
-		</button>
+		<Button
+			type="button"
+			variant="secondary"
+			size="icon"
+			className="fixed bottom-4 right-4 z-40 hidden max-sm:flex"
+			onClick={onClick}
+			aria-label="Back to top"
+		>
+			<ArrowUp className="size-4" />
+		</Button>
 	);
 }
