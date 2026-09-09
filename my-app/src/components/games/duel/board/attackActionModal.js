@@ -1,11 +1,5 @@
 import React from 'react';
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import FloatingLabel from 'react-bootstrap/FloatingLabel'
-import Spinner from 'react-bootstrap/Spinner'
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import fitty from 'fitty';
 
 import { gsap } from 'gsap';
@@ -48,6 +42,15 @@ class AttackActionModal extends React.Component {
     }
 
     componentDidMount() {
+        // The shadcn Dialog portals its content via Radix (the old react-bootstrap
+        // Modal did too, but synchronously within the same commit); querying by id
+        // immediately on mount can race the portal attaching its children, so this
+        // is deferred one frame — imperceptible, and it guarantees the elements
+        // below exist before the fancy zoom-in animation is built.
+        requestAnimationFrame(() => this.runAnimationSetup());
+    }
+
+    runAnimationSetup = () => {
         try {
             // calculate variables
             let attackerElem = document.getElementById('duel-attack-action-' + this.props.attacker.xalianId + '-animation');
@@ -221,13 +224,13 @@ class AttackActionModal extends React.Component {
                 <div onClick={this.closeModal} style={{ position: 'absolute', width: '100%', height: '100%', top: 0, left: 0 }} ></div>
             }
             {this.props.result &&
-                <Modal id='attack-action-modal'
-                    show={this.props.show} onHide={this.props.onHide}
-                    size="sm"
-                    centered
-                    className={this.props.light ? "themed-modal light-themed-modal duel-modal" : "themed-modal dark-themed-modal duel-modal duel-action-modal"}
-                >
-                    <Modal.Body>
+                <Dialog open={this.props.show} onOpenChange={(open) => { if (!open) { this.props.onHide(); } }}>
+                    <DialogContent
+                        id='attack-action-modal'
+                        showCloseButton={false}
+                        className={this.props.light ? "duel-modal duel-action-modal--light" : "duel-modal duel-action-modal"}
+                    >
+                        <DialogTitle className="sr-only">{this.props.attacker.species.name} attacks {this.props.defender.species.name}</DialogTitle>
                          {/* the engagement, called out the way the console labels
                              anything else: stencilled, upper case, no italics */}
                          <div className="duel-action-heading">
@@ -237,9 +240,9 @@ class AttackActionModal extends React.Component {
                             <h2 className='fit-text duel-action-effect' id='duel-attack-action-effectiveness-text'>{effectivenessText}</h2>
                          </div>
 
-                                
-                        <Row style={{ display: 'flex', justifyContent: 'center', alignContent: 'center', alignItems: 'center', padding: '20px 20px 20px 20px' }}>
-                            <Col >
+
+                        <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'center', alignItems: 'center', padding: '20px 20px 20px 20px' }}>
+                            <div className="flex-1 min-w-0">
                                 <div id='duel-attack-action-attacker-type-icon'>
 
                                     <XalianTypeSymbolBadge
@@ -248,8 +251,8 @@ class AttackActionModal extends React.Component {
                                         type={this.props.attacker.elementType}
                                         classes='type-badge' />
                                 </div>
-                            </Col>
-                            <Col >
+                            </div>
+                            <div className="flex-1 min-w-0">
                                 <div id='duel-attack-action-defender-type-icon'>
 
                                     <XalianTypeSymbolBadge
@@ -258,10 +261,10 @@ class AttackActionModal extends React.Component {
                                         type={this.props.defender.elementType}
                                         classes='type-badge' />
                                 </div>
-                            </Col>
-                        </Row>
-                        <Row style={{ display: 'flex', justifyContent: 'center', alignContent: 'center', alignItems: 'center', padding: '20px 20px 20px 20px' }}>
-                            <Col >
+                            </div>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'center', alignItems: 'center', padding: '20px 20px 20px 20px' }}>
+                            <div className="flex-1 min-w-0">
                                 <XalianImage id={'duel-attack-action-' + this.props.attacker.xalianId + '-animation'}
                                     speciesName={this.props.attacker.species.name}
                                     primaryType={this.props.attacker.elementType}
@@ -270,8 +273,8 @@ class AttackActionModal extends React.Component {
                                     fill={'black'}
                                     filter={this.buildDropShadowFilter(this.props.attackerColor)} />
 
-                            </Col>
-                            <Col >
+                            </div>
+                            <div className="flex-1 min-w-0">
                                 <XalianImage id={'duel-attack-action-' + this.props.defender.xalianId + '-animation'}
                                     speciesName={this.props.defender.species.name}
                                     primaryType={this.props.defender.elementType}
@@ -280,46 +283,45 @@ class AttackActionModal extends React.Component {
                                     fill={'black'}
                                     filter={this.buildDropShadowFilter(this.props.defenderColor)} />
 
-                            </Col>
-                        </Row>
-                        <Row style={{ display: 'flex', justifyContent: 'center', alignContent: 'center', alignItems: 'center', padding: '5px 20px 5px 20px' }}>
-                            <Col >
+                            </div>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'center', alignItems: 'center', padding: '5px 20px 5px 20px' }}>
+                            <div className="flex-1 min-w-0">
                                 <div id='duel-attack-action-attacker-health-bar-wrapper' className="duel-action-vitals" style={{ opacity: 0 }}>
                                     <div id='duel-attack-action-attacker-health-bar' style={{ width: `${attackerHealthDelta.start.percent}%`, backgroundColor: attackerHealthDelta.start.color, pointerEvents: 'none', height: '100%' }} />
                                 </div>
-                            </Col>
-                            <Col >
+                            </div>
+                            <div className="flex-1 min-w-0">
                                 <div id='duel-attack-action-defender-health-bar-wrapper' className="duel-action-vitals" style={{ opacity: 0 }}>
                                     <div id='duel-attack-action-defender-health-bar' style={{ width: `${defenderHealthDelta.start.percent}%`, backgroundColor: defenderHealthDelta.start.color, pointerEvents: 'none', height: '100%' }} />
                                 </div>
-                            </Col>
-                        </Row>
-                        
-                        <Row style={{ display: 'flex', justifyContent: 'center', alignContent: 'center', alignItems: 'center', padding: '0px 20px 0px 20px' }}>
+                            </div>
+                        </div>
 
-                            <Col xs={6}>
+                        <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'center', alignItems: 'center', padding: '0px 20px 0px 20px' }}>
+
+                            <div className="w-1/2">
                                 {this.props.result.reactionDamage && (parseInt(this.props.result.reactionDamage) > 0) ?
                                     <div id='duel-attack-action-attacker-result-damage' style={{ width: '100%', margin: 'auto', marginTop: '10px' }}>
                                         <p className="duel-action-damage">-{this.props.result.reactionDamage}</p>
                                     </div>
                                     : null
                                 }
-                            </Col>
+                            </div>
 
-                            <Col xs={6}>
+                            <div className="w-1/2">
                                 {this.props.result.damage && (this.props.result.damage > 0) &&
                                     <div id='duel-attack-action-defender-result-damage' style={{ width: '100%', margin: 'auto', marginTop: '10px' }}>
                                         <p className="duel-action-damage">-{this.props.result.damage}</p>
                                     </div>
                                 }
-                            </Col>
-                        </Row>
-                
-                        
+                            </div>
+                        </div>
 
-                    </Modal.Body>
 
-                </Modal>
+
+                    </DialogContent>
+                </Dialog>
             }
 
         </React.Fragment>

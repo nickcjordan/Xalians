@@ -1,11 +1,6 @@
 
 import React from 'react';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
-import Navbar from 'react-bootstrap/Navbar';
-import Stack from 'react-bootstrap/Stack';
+import { CircleHelp } from 'lucide-react';
 import PropTypes from 'prop-types';
 import * as gameConstants from '../../../../gameplay/duel/duelGameConstants';
 import * as duelUtil from '../../../../utils/duelUtil';
@@ -617,7 +612,7 @@ class DuelBoard extends React.Component {
 				title="How to play"
 				aria-label="How to play"
 				onClick={() => this.setState({ showHowToPlay: true })}>
-				<i className="bi bi-question-lg" />
+				<CircleHelp className="size-4" />
 			</button>
 		)
 
@@ -895,7 +890,7 @@ class DuelBoard extends React.Component {
 						{/* </Stack> */}
 							{/* the turn's instruments, on a panel bolted along the bottom of
 							    the console rather than a black gradient bar */}
-							<div className="fixed-bottom duel-status-strip" style={{ opacity: isCurrentLogIndex ? 1 : 0.4 }}>
+							<div className="fixed inset-x-0 bottom-0 z-[1030] duel-status-strip" style={{ opacity: isCurrentLogIndex ? 1 : 0.4 }}>
 								{!isCurrentLogIndex &&
 									<p className="duel-status-stale">Replaying — showing turn {this.state.logIndex}</p>
 								}
@@ -923,7 +918,7 @@ class DuelBoard extends React.Component {
 								</div>
 							</div>
 							{this.state.debugText && 
-								<div className="fixed-top" style={{ width: '100%', height: '90vh', backgroundColor: '#0000007a' }}>
+								<div className="fixed inset-x-0 top-0 z-[1030]" style={{ width: '100%', height: '90vh', backgroundColor: '#0000007a' }}>
 									<pre style={{ width: '100%', height: '100%', color: 'white' }}>{this.state.debugText}</pre>
 								</div>
 							}
