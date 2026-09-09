@@ -235,7 +235,7 @@ describe('Long Return Simple mode', () => {
     expect(container.textContent).toMatch(/Annex stabilityStable · 10\/10/i);
     expect(container.querySelectorAll('.lr-simple-scouts > button')).toHaveLength(3);
     expect(container.querySelectorAll('.lr-signal-gauge')).toHaveLength(3);
-    expect(container.querySelectorAll('.lr-signal-gauge .bi-eye-fill').length).toBeGreaterThan(0);
+    expect(container.querySelectorAll('.lr-signal-gauge .is-filled').length).toBeGreaterThan(0);
     expect(container.querySelector('.lr-scout-visuals')).toBeNull();
     expect(container.querySelector('.lr-projection-legend')).toBeNull();
     expect(container.querySelector('.lr-scout-impact')).toBeNull();

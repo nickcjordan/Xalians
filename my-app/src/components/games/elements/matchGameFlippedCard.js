@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'react-bootstrap/Image';
 import {gsap} from 'gsap';
 import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
 import { ReactComponent as XaliansLogoSVG } from '../../../svg/logo/xalians_logo_x.svg';

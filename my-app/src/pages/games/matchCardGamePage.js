@@ -1,6 +1,5 @@
 // Terminal: field. Training games are diagnostic programs on the salvaged ECHELON survey unit.
 import React from 'react';
-import Col from 'react-bootstrap/Col';
 
 import XalianImage from '../../components/xalianImage';
 import MatchGameFlippedCard from '../../components/games/elements/matchGameFlippedCard';
@@ -278,7 +277,7 @@ class MatchCardGamePage extends React.Component {
 		let xId = id + '-x-image';
 		let card = (
 			<React.Fragment>
-				<Col xs={12 / rowSize} style={{ position: 'relative', overflow: 'visible', justifyContent: 'center', alignContent: 'center' }}>
+				<div style={{ flex: `0 0 ${100 / rowSize}%`, width: `${100 / rowSize}%`, maxWidth: `${100 / rowSize}%`, position: 'relative', overflow: 'visible', justifyContent: 'center', alignContent: 'center' }}>
 					<div
 						onClick={(event) => {
 							this.handleCardClick(species.indexOf(x), event, imageId, xId);
@@ -290,7 +289,7 @@ class MatchCardGamePage extends React.Component {
 						<MatchGameFlippedCard delay={rand} id={xId} moreClasses="match-game-card-flipped" visibility="visible" />
 						<div className={'xalian-image-wrapper '}></div>
 					</div>
-				</Col>
+				</div>
 			</React.Fragment>
 		);
 		cards.push(card);
