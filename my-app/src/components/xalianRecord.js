@@ -1,22 +1,14 @@
 import React from 'react';
-import XalianSpeciesBadge from './xalianSpeciesBadge';
 import XalianImage from './xalianImage';
-import XalianAttributeChart from './xalianAttributeChart';
-import EncyclopediaLink from './encyclopediaLink';
 
 /**
- * A specimen record: the creature equivalent of the planetary survey record.
+ * A specimen record: plate, chips, id, description and the spec grid.
  *
- * Version 3 of the design system draws the specimen record as content only
- * (Rule B, the medium rule, docs/DESIGN_SYSTEM.md): name, element chips,
- * portrait plate, specs and description, plus whatever readouts (stat
- * charts, move sets) are passed as children. It owns no hull, no housing,
- * no buttons and no modal — the page decides what medium carries it (a
- * color CRT on the Field Terminal, a paper card in the Archive, a docket in
- * the Registry) and, per Rule B, "no buttons inside paper" applies to every
- * medium a record might sit on, so the caller owns any button that opens a
- * raw-record view rather than this component rendering one into its own
- * content.
+ * Version 4 (docs/DESIGN_SYSTEM.md): content only, no surface of its own —
+ * the page decides the medium (glass, for a live record) and this component
+ * just fills it. No case, no VFD, no asset plate, no buttons, no readouts;
+ * a stat chart or move list is a sibling panel the page renders next to
+ * this, not a child of it.
  */
 class XalianRecord extends React.Component {
 
@@ -31,6 +23,11 @@ class XalianRecord extends React.Component {
 				primaryType: xalian.elements.primaryType,
 				secondaryType: xalian.elements.secondaryType,
 				planet: xalian.species.planet,
+				generation: xalian.species.generation || 0,
+				height: xalian.species.height,
+				weight: xalian.species.weight,
+				statScore: xalian.meta ? xalian.meta.statScore : null,
+				potentialScore: xalian.meta ? xalian.meta.potentialStatScore : null,
 			};
 		}
 		let species = this.props.species;
@@ -42,6 +39,11 @@ class XalianRecord extends React.Component {
 				primaryType: species.type,
 				secondaryType: null,
 				planet: species.planet,
+				generation: species.generation || 0,
+				height: species.height,
+				weight: species.weight,
+				statScore: null,
+				potentialScore: null,
 			};
 		}
 		return null;
@@ -54,52 +56,57 @@ class XalianRecord extends React.Component {
 		}
 
 		let element = subject.primaryType.toLowerCase();
+		let secondaryElement = subject.secondaryType ? subject.secondaryType.toLowerCase() : null;
 
 		return (
-			<div className={`g-el-${element} g-record-content`}>
-
-				<header className="g-record-content-head">
-					<p className="g-legend">{this.props.kicker || 'Specimen Record'}</p>
-					<h1 className="g-record-term g-record-content-name">
-						{subject.name}
-						<EncyclopediaLink kind="species" name={subject.name} variant="chip" />
-						{subject.planet &&
-							<EncyclopediaLink kind="world" name={subject.planet} variant="chip" />
-						}
-					</h1>
-					<div className="g-record-content-chips">
-						<XalianSpeciesBadge type={element} />
-						{subject.secondaryType &&
-							<XalianSpeciesBadge type={subject.secondaryType.toLowerCase()} />
-						}
-					</div>
-				</header>
-
-				<div className="g-record-content-body">
-					<div className="g-record-content-plate">
-						<XalianImage
-							colored
-							speciesName={subject.name}
-							primaryType={subject.primaryType}
-							secondaryType={subject.secondaryType}
-							moreClasses="g-record-content-plate-img" />
-					</div>
-
-					<div className="g-record-content-data">
-						<XalianAttributeChart
-							xalian={this.props.xalian}
-							species={this.props.species}
-							id={!this.props.hideId ? subject.id : null} />
-						{subject.description &&
-							<p className="g-record-body g-record-content-description">{subject.description}</p>
-						}
-					</div>
+			<div className="gen-record">
+				<div className={`gen-record-plate g-el-${element}`}>
+					<XalianImage
+						colored
+						speciesName={subject.name}
+						primaryType={subject.primaryType}
+						secondaryType={subject.secondaryType}
+						moreClasses="gen-record-plate-img" />
 				</div>
 
-				{this.props.children &&
-					<div className="g-record-content-readouts">{this.props.children}</div>
-				}
+				<div className="gen-record-info">
+					<div className="gen-record-chips">
+						<span className={`g-chip g-el-${element}`}>{subject.primaryType}</span>
+						{secondaryElement &&
+							<span className={`g-chip g-el-${secondaryElement}`}>{subject.secondaryType}</span>
+						}
+						{subject.id != null && !this.props.hideId &&
+							<span className="gen-record-id g-mono">#{subject.id}</span>
+						}
+					</div>
 
+					{subject.description &&
+						<p className="g-body gen-record-desc">{subject.description}</p>
+					}
+
+					<dl className="gen-record-specs">
+						<dt className="g-spec-key">Origin</dt>
+						<dd className="g-spec-val">{subject.planet}</dd>
+						<dt className="g-spec-key">Generation</dt>
+						<dd className="g-spec-val">{subject.generation}</dd>
+						<dt className="g-spec-key">Height</dt>
+						<dd className="g-spec-val">{subject.height}</dd>
+						<dt className="g-spec-key">Weight</dt>
+						<dd className="g-spec-val">{subject.weight}</dd>
+						{subject.statScore != null &&
+							<React.Fragment>
+								<dt className="g-spec-key">Stat score</dt>
+								<dd className="g-spec-val">{subject.statScore.toLocaleString()}</dd>
+							</React.Fragment>
+						}
+						{subject.potentialScore != null &&
+							<React.Fragment>
+								<dt className="g-spec-key">Potential</dt>
+								<dd className="g-spec-val">{subject.potentialScore.toLocaleString()}</dd>
+							</React.Fragment>
+						}
+					</dl>
+				</div>
 			</div>
 		);
 	}

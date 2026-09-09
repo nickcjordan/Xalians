@@ -3,14 +3,28 @@ import Modal from 'react-bootstrap/Modal';
 import XalianMoveSet from '../components/xalianMoveSet';
 import XalianRecord from '../components/xalianRecord';
 import XalianNavbar from '../components/navbar';
-import XalianStatChart from '../components/xalianStatChart';
+import HelixSpinner from '../components/brand/helixSpinner';
 import * as xalianApi from '../utils/xalianApi';
 import * as dbApi from '../utils/dbApi';
 import * as alertUtil from '../utils/alertUtil';
+import { stat as statColors } from '../constants/designTokens';
+import * as constants from '../constants/constants';
 
-// Terminal: field, with readout as its print mode. Salvaged ECHELON survey
-// hardware pointed at a Generator: the CRT hands over to the machine's own
-// voice while a creature prints, then cuts back to the record in color.
+// Tier: chrome. Generation, review and keeping a Xalian is a configure/manage
+// screen (docs/DESIGN_SYSTEM.md section 1); the record itself is a featured
+// use of glass, not a game in progress.
+
+const STAT_ROWS = [
+	['standardAttackPoints', 'Std attack', statColors.standardAttack],
+	['specialAttackPoints', 'Spc attack', statColors.specialAttack],
+	['standardDefensePoints', 'Std defense', statColors.standardDefense],
+	['specialDefensePoints', 'Spc defense', statColors.specialDefense],
+	['speedPoints', 'Speed', statColors.speed],
+	['evasionPoints', 'Evasion', statColors.evasion],
+	['staminaPoints', 'Stamina', statColors.stamina],
+	['recoveryPoints', 'Recovery', statColors.recovery],
+];
+
 class GeneratorPage extends React.Component {
 	state = {
 		xalian: null,
@@ -20,6 +34,8 @@ class GeneratorPage extends React.Component {
 		jsonModalShow: false,
 	};
 
+	pageRef = React.createRef();
+
 	componentDidMount() {
 		this.getXalian();
 	}
@@ -28,110 +44,99 @@ class GeneratorPage extends React.Component {
 		this.setState({ loggedInUser: user });
 	};
 
+	renderStatMeter([key, label, color]) {
+		let s = this.state.xalian.stats[key];
+		let pct = Math.round((s.points / constants.STAT_POINT_MAX) * 100);
+		return (
+			<div className="g-meter-row" key={key}>
+				<span className="g-meter-name">{label}</span>
+				<div className="g-meter" style={{ '--g-el': color }}>
+					<div className="g-meter-ghost" style={{ width: '100%' }} />
+					<div className="g-meter-fill" style={{ width: `${pct}%` }} />
+				</div>
+				<span className="g-meter-value">{s.points}</span>
+			</div>
+		);
+	}
+
 	render() {
 		let x = this.state.xalian;
-		let element = x ? x.elements.primaryType.toLowerCase() : null;
 		let printing = this.state.isGenerating;
+		let canKeep = !!this.state.loggedInUser;
 
 		return (
 			<React.Fragment>
 				<XalianNavbar authAlertCallback={this.setLoggedInUser}></XalianNavbar>
 
-				<main className="g-console" data-terminal="field">
-					<div className="g-shell field-shell">
+				<main className="g-page" data-tier="chrome" ref={this.pageRef}>
+					<div className="g-shell gen-shell">
 						<header className="g-masthead">
 							<div className="g-masthead-heading">
-								<p className="g-kicker">Field terminal</p>
-								<h1 className="g-title">Generator</h1>
+								<p className="g-kicker">Generator</p>
+								<h1 className="g-title">{x ? x.species.name : 'Generator'}</h1>
 							</div>
 							<div className="g-masthead-aside">
-								<span className="g-nameplate">PSU-7 &middot; Echelon Bioworks</span>
+								{x &&
+									<button
+										type="button"
+										className="g-btn g-btn--quiet"
+										disabled={printing}
+										onClick={() => this.setState({ jsonModalShow: true })}>
+										View record data
+									</button>
+								}
+								<button
+									type="button"
+									className="g-btn"
+									disabled={!canKeep || !x || printing || this.state.isLoading}
+									onClick={this.saveXalian}>
+									{canKeep ? 'Keep' : 'Sign in to keep'}
+								</button>
+								<button
+									type="button"
+									className="g-btn g-btn--primary"
+									disabled={printing}
+									onClick={this.getXalian}>
+									{x ? 'Generate another' : 'Generate a Xalian'}
+								</button>
 							</div>
 						</header>
 
-						<section className="g-case g-object field-case">
-							<div className="g-case-hinge" />
-							<span className="g-case-screw g-case-screw--tl" />
-							<span className="g-case-screw g-case-screw--tr" />
-							<span className="g-case-screw g-case-screw--bl" />
-							<span className="g-case-screw g-case-screw--br" />
-
-							<span className="g-tape field-tape">reconditioned &middot; do not return to depot</span>
-
-							<div className="g-vfd field-vfd" role="status" aria-live="polite">
-								<span>PSU-7&nbsp;&nbsp;BATT 61%</span>
-								<span>{printing ? 'LINK RELAY/ZOLTON-3 HELD' : x ? 'GENOME CHIP READ' : 'LINK RELAY/ZOLTON-3 HELD'}</span>
+						{printing ? (
+							<div className="g-glass gen-record gen-record--loading">
+								<HelixSpinner size="lg" />
+								<span className="g-legend">Generating</span>
 							</div>
+						) : x ? (
+							<div className="g-glass">
+								<XalianRecord xalian={x} />
+							</div>
+						) : (
+							<div className="g-empty">
+								<b>No Xalian yet</b>
+								Generate one to see its record here.
+							</div>
+						)}
 
-							<div className={`g-crt field-crt${element && !printing ? ` g-el-${element}` : ''}${printing ? ' g-readout-mode' : ''}`}>
-								{printing ? (
-									<div className="g-screen field-readout" id="generator-readout">
-										<p className="g-screen-line">TOKEN ACCEPTED &middot; GENOME DECRYPTED</p>
-										<p className="g-screen-line g-screen-line--dim">ENVIRONMENT: DECRYPTING</p>
-										<p className="g-screen-line">
-											PRINTING<span className="g-cursor" aria-hidden="true" />
-										</p>
+						{x && !printing &&
+							<div className="gen-readouts">
+								<div className="g-panel gen-stats">
+									<div className="g-panel-head">
+										<span className="g-legend">Stats</span>
+										<span className="g-legend gen-panel-note">current / potential</span>
 									</div>
-								) : x ? (
-									<div id="generated-xalian-fragment">
-										<XalianRecord kicker="Generator Output" xalian={x}>
-											<section className="field-readout-section">
-												<p className="g-legend">Stat Allocation</p>
-												<XalianStatChart
-													includeLabel
-													labelFontSize={'10pt'}
-													barSize={26}
-													stats={x.stats}
-													moreClasses="field-stat-chart" />
-											</section>
+									{STAT_ROWS.map((row) => this.renderStatMeter(row))}
+								</div>
 
-											<section className="field-readout-section">
-												<p className="g-legend">Move Set</p>
-												<XalianMoveSet showDescription moves={x.moves} />
-											</section>
-										</XalianRecord>
+								<div className="g-panel gen-moves">
+									<div className="g-panel-head">
+										<span className="g-legend">Moves</span>
+										<span className="g-legend gen-panel-note">rating</span>
 									</div>
-								) : (
-									<div className="g-screen field-readout">
-										<p className="g-screen-line g-screen-line--dim">AWAITING GENOME CHIP</p>
-									</div>
-								)}
+									<XalianMoveSet showDescription moves={x.moves} />
+								</div>
 							</div>
-
-							<div className="g-keybank">
-								<span className="g-lamp field-keybank-legend">Generator link</span>
-								<span className="field-keybank-btns">
-									<button
-										type="button"
-										className="g-key g-key--primary"
-										disabled={printing}
-										onClick={this.getXalian}>
-										Generate
-									</button>
-									<button
-										type="button"
-										className="g-key"
-										disabled={!this.state.loggedInUser || !x || printing}
-										onClick={this.saveXalian}>
-										{this.state.loggedInUser ? 'Save to Your Faction' : 'Sign In to Keep'}
-									</button>
-									<button
-										type="button"
-										className="g-key field-json-key"
-										disabled={!x || printing}
-										title="View raw record"
-										aria-label="View raw record"
-										onClick={() => this.setState({ jsonModalShow: true })}>
-										JSON
-									</button>
-								</span>
-							</div>
-
-							<div className="g-asset-plate">
-								<span>Property of Echelon Bioworks</span>
-								<span>Asset 0419-PSU</span>
-							</div>
-						</section>
+						}
 					</div>
 				</main>
 
@@ -141,12 +146,13 @@ class GeneratorPage extends React.Component {
 						onHide={() => this.setState({ jsonModalShow: false })}
 						size="lg"
 						centered
+						container={this.pageRef.current}
 						className="themed-modal dark-themed-modal">
 						<Modal.Header closeButton closeVariant="white">
 							<Modal.Title>{x.species.name} Record Data</Modal.Title>
 						</Modal.Header>
 						<Modal.Body>
-							<pre className="g-screen field-json">{JSON.stringify(x, null, 2)}</pre>
+							<pre className="gen-json">{JSON.stringify(x, null, 2)}</pre>
 						</Modal.Body>
 					</Modal>
 				}
@@ -155,12 +161,8 @@ class GeneratorPage extends React.Component {
 	}
 
 	getXalian = () => {
-		// The CRT hands over to the readout mode the instant the request goes
-		// out and hands back the instant it lands: a cut, not a fade (Rule C,
-		// "motion is mechanical").
 		this.setState({ isGenerating: true }, () => {
 			xalianApi.callGenerateXalian().then((x) => {
-				console.log(JSON.stringify(x, null, 2));
 				this.setState({
 					xalian: x,
 					isLoading: false,
@@ -181,15 +183,13 @@ class GeneratorPage extends React.Component {
 		dbApi
 			.callCreateXalian(this.state.xalian)
 			.then(() => dbApi.callUpdateUserAddXalian(this.state.loggedInUser.username, this.state.xalian.xalianId))
-			.then((x) => {
+			.then(() => {
 				this.setState({ isLoading: false });
-				console.log(JSON.stringify(x, null, 2));
-				alertUtil.sendAlert('Xalian Saved!', null, 'success');
+				alertUtil.sendAlert(`${this.state.xalian.species.name} kept.`, null, 'success');
 			})
-			.catch((error) => {
+			.catch(() => {
 				this.setState({ isLoading: false });
-				console.log(JSON.stringify(error, null, 2));
-				alertUtil.sendAlert('Could not save your Xalian — please try again', null, 'danger');
+				alertUtil.sendAlert('Could not keep your Xalian — please try again', null, 'danger');
 			});
 	};
 }
