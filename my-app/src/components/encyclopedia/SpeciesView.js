@@ -5,7 +5,11 @@ import Prose from './Prose';
 import XalianImage from '../xalianImage';
 import Connections from './Connections';
 import { useVisit, useResume } from './trail';
-import './SpeciesView.css';
+import { SectionHead } from '@/components/system/masthead';
+import { SpecPlate, RecordRow, EmptyState } from '@/components/system/record';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 
 function bandText(band) {
     if (!Array.isArray(band)) return '';
@@ -25,22 +29,21 @@ function capitalize(text) {
     return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-function meterRow(key, name, band, maxBand) {
+function MeterRow({ name, band, maxBand }) {
     const ceiling = maxBand || 100;
-    const ghostPct = Math.min(100, Math.round((band[1] / ceiling) * 100));
     const fillPct = Math.min(100, Math.round((band[0] / ceiling) * 100));
     return (
-        <div className="g-meter-row" key={key}>
-            <span className="g-meter-name">{name}</span>
-            <div className="g-meter">
-                <div className="g-meter-fill" style={{ width: `${fillPct}%` }} />
+        <div className="grid grid-cols-[7rem_1fr_3.5rem] items-center gap-2 py-1 md:grid-cols-[8.5rem_1fr_3.5rem] md:gap-3">
+            <span className="type-legend">{name}</span>
+            <div className="relative h-1.5 bg-s0">
+                <div className="absolute inset-y-0 left-0 bg-el" style={{ width: `${fillPct}%` }} />
             </div>
-            <span className="g-meter-value">{bandText(band)}</span>
+            <span className="type-data text-right text-small text-ink">{bandText(band)}</span>
         </div>
     );
 }
 
-/** "Continue the story" foot: one .g-record line pointing at the reader's furthest part, or Part 1 when nothing is stored. */
+/** "Continue the story" foot: one row pointing at the reader's furthest part, or Part 1 when nothing is stored. */
 function ContinueTheStory() {
     const resume = useResume();
     const eras = lore.getEras();
@@ -48,26 +51,13 @@ function ContinueTheStory() {
     const target = era || eras[0];
     if (!target) return null;
     return (
-        <div className="g-record enc-continue">
-            <span className="g-record-term">Continue the story</span>
-            <Link to={lore.routeFor('era', target.key)} className="g-record-body g-link">
-                Part {target.order + 1}, {target.name}
-            </Link>
+        <div className="border-t border-edge pt-4">
+            <RecordRow className="border-b-0 py-0" term="Continue the story">
+                <Link to={lore.routeFor('era', target.key)} className="text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink">
+                    Part {target.order + 1}, {target.name}
+                </Link>
+            </RecordRow>
         </div>
-    );
-}
-
-/** A closed-by-default panel of secondary record data. */
-function Fold({ label, count, children }) {
-    return (
-        <details className="g-panel enc-fold">
-            <summary className="enc-fold-summary">
-                <span className="g-kicker enc-fold-label">{label}</span>
-                {typeof count === 'number' && <span className="g-mono enc-fold-count">{count}</span>}
-                <span className="enc-fold-chevron" aria-hidden="true" />
-            </summary>
-            <div className="enc-fold-body">{children}</div>
-        </details>
     );
 }
 
@@ -88,153 +78,128 @@ function TemplatePhysiology({ view }) {
     const breathes = p.breathes ? p.breathes.map((m) => m.name).join(', ') : ambientMedia;
     const chirality = p.genome && p.genome.chirality ? p.genome.chirality.name : '';
 
-    return (
-        <div className="g-spec enc-species-physiology-spec">
-            <span className="g-spec-key">Corporeality</span>
-            <span className="g-spec-val">{p.corporeality.name}</span>
-            <span className="g-spec-key">Composition</span>
-            <span className="g-spec-val">{composition}</span>
-            <span className="g-spec-key">Body plan</span>
-            <span className="g-spec-val">{p.bodyPlan.name}</span>
-            <span className="g-spec-key">Covering</span>
-            <span className="g-spec-val">{p.covering.name}</span>
-            <span className="g-spec-key">Height</span>
-            <span className="g-spec-val">{bandText(p.size.heightCm)} cm</span>
-            <span className="g-spec-key">Weight</span>
-            <span className="g-spec-val">{bandText(p.size.weightKg)} kg</span>
-            <span className="g-spec-key">Diet</span>
-            <span className="g-spec-val">{p.diet.name}</span>
-            <span className="g-spec-key">Communication</span>
-            <span className="g-spec-val">{communication}</span>
-            <span className="g-spec-key">Breathes</span>
-            <span className="g-spec-val">{breathes || 'Not recorded'}</span>
-            <span className="g-spec-key">Ambient media</span>
-            <span className="g-spec-val">{ambientMedia || 'Not recorded'}</span>
-            <span className="g-spec-key">Temperature band</span>
-            <span className="g-spec-val">{temperature || 'Not recorded'}</span>
-            <span className="g-spec-key">Lifespan</span>
-            <span className="g-spec-val">
-                {p.lifespan.name}
-                {p.lifespan.nature && <span className="enc-species-dim"> {p.lifespan.nature}</span>}
-            </span>
-            <span className="g-spec-key">Chirality</span>
-            <span className="g-spec-val">{chirality || 'Not recorded'}</span>
-        </div>
-    );
+    const entries = [
+        { key: 'Corporeality', value: p.corporeality.name },
+        { key: 'Composition', value: composition },
+        { key: 'Body plan', value: p.bodyPlan.name },
+        { key: 'Covering', value: p.covering.name },
+        { key: 'Height', value: `${bandText(p.size.heightCm)} cm` },
+        { key: 'Weight', value: `${bandText(p.size.weightKg)} kg` },
+        { key: 'Diet', value: p.diet.name },
+        { key: 'Communication', value: communication },
+        { key: 'Breathes', value: breathes || 'Not recorded' },
+        { key: 'Ambient media', value: ambientMedia || 'Not recorded' },
+        { key: 'Temperature band', value: temperature || 'Not recorded' },
+        {
+            key: 'Lifespan',
+            value: (
+                <>
+                    {p.lifespan.name}
+                    {p.lifespan.nature && <span className="mt-0.5 block font-body text-small text-ink-2">{p.lifespan.nature}</span>}
+                </>
+            ),
+        },
+        { key: 'Chirality', value: chirality || 'Not recorded' },
+    ].map((e) => ({ ...e, value: <span className="font-body normal-case tracking-normal text-ink">{e.value}</span> }));
+
+    return <SpecPlate columns={2} entries={entries} className="max-w-4xl" />;
 }
 
 function LegacyPhysiology({ view }) {
     const legacy = view.legacy;
-    return (
-        <div className="g-spec enc-species-physiology-spec">
-            <span className="g-spec-key">Height</span>
-            <span className="g-spec-val">{legacy.height}</span>
-            <span className="g-spec-key">Weight</span>
-            <span className="g-spec-val">{legacy.weight}</span>
-            <span className="g-spec-key">Attack range</span>
-            <span className="g-spec-val">{legacy.traits.attackRange || 'Not recorded'}</span>
-            <span className="g-spec-key">Flight</span>
-            <span className="g-spec-val">{legacy.traits.canFly ? 'Yes' : 'No'}</span>
-        </div>
-    );
+    const entries = [
+        { key: 'Height', value: legacy.height },
+        { key: 'Weight', value: legacy.weight },
+        { key: 'Attack range', value: legacy.traits.attackRange || 'Not recorded' },
+        { key: 'Flight', value: legacy.traits.canFly ? 'Yes' : 'No' },
+    ].map((e) => ({ ...e, value: <span className="font-body normal-case tracking-normal text-ink">{e.value}</span> }));
+    return <SpecPlate columns={2} entries={entries} className="max-w-4xl" />;
 }
 
 function Signature({ signature }) {
     if (!signature) return null;
     return (
-        <div className="g-panel enc-species-signature">
-            <p className="g-legend-v4 enc-species-signature-label">Signature</p>
-            <p className="g-h3 enc-species-signature-name">{signature.name}</p>
-            <div className="g-spec enc-species-signature-spec">
-                <span className="g-spec-key">Instrument</span>
-                <span className="g-spec-val">{signature.instrument}</span>
-                <span className="g-spec-key">Action</span>
-                <span className="g-spec-val">{signature.action}</span>
-                <span className="g-spec-key">Medium</span>
-                <span className="g-spec-val">{signature.medium}</span>
-                <span className="g-spec-key">Intensity</span>
-                <span className="g-spec-val">{bandText(signature.intensity)}</span>
-            </div>
-            <p className="g-small-v4 enc-species-signature-desc">{signature.description}</p>
-        </div>
+        <Card variant="panel" className="p-4">
+            <p className="type-legend m-0">Signature</p>
+            <p className="type-heading m-0 text-[19px]">{signature.name}</p>
+            <SpecPlate
+                entries={[
+                    { key: 'Instrument', value: signature.instrument },
+                    { key: 'Action', value: signature.action },
+                    { key: 'Medium', value: signature.medium },
+                    { key: 'Intensity', value: bandText(signature.intensity) },
+                ]}
+            />
+            <p className="m-0 font-body text-small text-ink-2">{signature.description}</p>
+        </Card>
     );
 }
 
 function GeneratorTemplate({ record }) {
     return (
         <>
-            <div className="enc-record enc-species-dossier">
-                <section className="enc-section">
-                    <div className="enc-section-head">
-                        <h2 className="g-h2">Capabilities</h2>
-                    </div>
-                    <div className="g-panel">
-                        {record.capabilities.map((c) => meterRow(c.key, c.name, c.band))}
-                    </div>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <section>
+                    <SectionHead title="Capabilities" />
+                    <Card variant="panel">
+                        {record.capabilities.map((c) => <MeterRow key={c.key} name={c.name} band={c.band} />)}
+                    </Card>
                 </section>
 
-                <section className="enc-section">
-                    <div className="enc-section-head">
-                        <h2 className="g-h2">Senses</h2>
-                    </div>
-                    <div className="g-panel">
-                        {record.senses.graded.map((s) => meterRow(s.key, s.name, s.band))}
+                <section>
+                    <SectionHead title="Senses" />
+                    <Card variant="panel">
+                        {record.senses.graded.map((s) => <MeterRow key={s.key} name={s.name} band={s.band} />)}
                         {record.senses.special.length > 0 && (
-                            <div className="enc-species-chip-row">
+                            <div className="mt-3 flex flex-wrap gap-2 border-t border-edge pt-3">
                                 {record.senses.special.map((s) => (
-                                    <span key={s.key} className="g-chip" title={s.nature}>{s.name}</span>
+                                    <Badge key={s.key} variant="chip-outline" title={s.nature}>{s.name}</Badge>
                                 ))}
                             </div>
                         )}
-                    </div>
+                    </Card>
                 </section>
             </div>
 
-            <div className="enc-record enc-species-dossier">
-                <section className="enc-section">
-                    <div className="enc-section-head">
-                        <h2 className="g-h2">Attributes</h2>
-                    </div>
-                    <div className="g-panel">
-                        {record.attributes.map((a) => meterRow(a.key, a.name, a.band))}
-                    </div>
+            <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+                <section>
+                    <SectionHead title="Attributes" />
+                    <Card variant="panel">
+                        {record.attributes.map((a) => <MeterRow key={a.key} name={a.name} band={a.band} />)}
+                    </Card>
                 </section>
 
-                <section className="enc-section">
-                    <div className="enc-section-head">
-                        <h2 className="g-h2">Traits</h2>
-                    </div>
-                    <div className="enc-species-chip-row">
+                <section>
+                    <SectionHead title="Traits" />
+                    <div className="flex flex-wrap gap-2">
                         {record.traits.map((t) => (
-                            <span key={t.key} className="g-chip" title={t.nature}>
-                                {t.name} <span className="g-mono">{t.percent}</span>
-                            </span>
+                            <Badge key={t.key} variant="chip-outline" title={t.nature} className="gap-2">
+                                {t.name} <span className="type-data">{t.percent}</span>
+                            </Badge>
                         ))}
                     </div>
 
-                    <div className="enc-section-head enc-species-archetypes-head">
-                        <h2 className="g-h2">Archetypes</h2>
-                    </div>
-                    <ol className="g-panel enc-species-archetypes">
-                        {record.archetypes.map((a) => (
-                            <li key={a.key}>
-                                <span className="enc-species-archetype-name">{a.name}</span>
-                                <span className="g-mono">{a.weight}</span>
-                                <span className="g-body enc-species-dim">{a.nature}</span>
-                            </li>
-                        ))}
-                    </ol>
+                    <SectionHead title="Archetypes" className="mt-4" />
+                    <Card variant="panel">
+                        <ol className="m-0 flex flex-col gap-2 p-0">
+                            {record.archetypes.map((a) => (
+                                <li key={a.key} className="flex flex-wrap items-baseline gap-3">
+                                    <span className="type-legend text-small">{a.name}</span>
+                                    <span className="type-data text-small">{a.weight}</span>
+                                    <span className="font-body text-small text-ink-2">{a.nature}</span>
+                                </li>
+                            ))}
+                        </ol>
+                    </Card>
                 </section>
             </div>
 
-            <div className="enc-record enc-species-dossier">
-                <section className="enc-section">
-                    <div className="enc-section-head">
-                        <h2 className="g-h2">Instruments</h2>
-                    </div>
-                    <div className="enc-species-chip-row">
+            <div className="mt-6">
+                <section>
+                    <SectionHead title="Instruments" />
+                    <div className="flex flex-wrap gap-2">
                         {record.instruments.map((i) => (
-                            <span key={i.key} className="g-chip">{i.name}</span>
+                            <Badge key={i.key} variant="chip-outline">{i.name}</Badge>
                         ))}
                     </div>
                 </section>
@@ -246,19 +211,15 @@ function GeneratorTemplate({ record }) {
 function LegacyRatings({ view }) {
     const ratings = Object.entries(view.legacy.statRatings || {}).filter(([, v]) => v);
     return (
-        <section className="enc-section">
-            <div className="enc-section-head">
-                <h2 className="g-h2">Legacy ratings</h2>
-            </div>
-            <div className="g-spec">
-                {ratings.map(([key, value]) => (
-                    <React.Fragment key={key}>
-                        <span className="g-spec-key">{humanize(key)}</span>
-                        <span className="g-spec-val">{capitalize(value)}</span>
-                    </React.Fragment>
-                ))}
-            </div>
-            <p className="g-notice g-notice--inert">
+        <section>
+            <SectionHead title="Legacy ratings" />
+            <SpecPlate
+                entries={ratings.map(([key, value]) => ({
+                    key: humanize(key),
+                    value: <span className="font-body normal-case tracking-normal text-ink">{capitalize(value)}</span>,
+                }))}
+            />
+            <p className="mt-4 max-w-[62ch] font-body text-small text-ink-2">
                 This species has not yet been migrated to the ratified record. Readouts arrive with its template.
             </p>
         </section>
@@ -279,8 +240,8 @@ export default function SpeciesView() {
 
     if (!view) {
         return (
-            <div className="enc-species">
-                <p className="g-empty">No record for &ldquo;{key}&rdquo;.</p>
+            <div>
+                <EmptyState legend="Not found">No record for &ldquo;{key}&rdquo;.</EmptyState>
             </div>
         );
     }
@@ -289,65 +250,76 @@ export default function SpeciesView() {
     const connectionsCount = lore.getConnections('species', key, { limit: 12 }).length;
 
     return (
-        <article className={`enc-species g-el-${view.element}`}>
-            <div className="enc-record">
-                <div className="enc-species-plate-col">
-                    <div className="g-panel enc-species-plate">
-                        <div className="enc-species-mount">
-                            <XalianImage colored speciesName={view.name} primaryType={view.element} moreClasses="enc-species-portrait" />
+        <article className={`el-${view.element}`}>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-[minmax(240px,360px)_minmax(0,1fr)]">
+                <div className="flex min-w-0 flex-col gap-4 max-sm:contents">
+                    <Card variant="panel" className="p-5 max-sm:order-1 max-sm:max-w-[320px]">
+                        <div className="grid aspect-square w-full place-items-center bg-el/24">
+                            <XalianImage colored speciesName={view.name} primaryType={view.element} moreClasses="h-[62%] w-[62%]" />
                         </div>
-                    </div>
-                    {isTemplate && <Signature signature={view.record.signature} />}
+                    </Card>
+                    {isTemplate && <div className="max-sm:order-3"><Signature signature={view.record.signature} /></div>}
                 </div>
 
-                <div className="enc-species-body">
+                <div className="flex min-w-0 flex-col gap-4 max-sm:order-2">
                     <Prose text={view.description} except={view.entry && view.entry.key} />
 
                     {view.body && (
-                        <div className="enc-species-niche">
-                            <h3 className="g-h3">Body</h3>
-                            <p className="g-body">{view.body}</p>
+                        <div className="flex flex-col gap-1">
+                            <h3 className="type-heading m-0 text-[19px]">Body</h3>
+                            <p className="m-0 font-body text-body text-ink-2">{view.body}</p>
                         </div>
                     )}
 
                     {view.habits && (
-                        <div className="enc-species-niche">
-                            <h3 className="g-h3">Habits</h3>
-                            <p className="g-body">{view.habits}</p>
+                        <div className="flex flex-col gap-1">
+                            <h3 className="type-heading m-0 text-[19px]">Habits</h3>
+                            <p className="m-0 font-body text-body text-ink-2">{view.habits}</p>
                         </div>
                     )}
 
                     {view.biomeNiche && (
-                        <div className="enc-species-niche">
-                            <h3 className="g-h3">Niche</h3>
-                            <p className="g-body">{view.biomeNiche}</p>
+                        <div className="flex flex-col gap-1">
+                            <h3 className="type-heading m-0 text-[19px]">Niche</h3>
+                            <p className="m-0 font-body text-body text-ink-2">{view.biomeNiche}</p>
                         </div>
                     )}
-
                 </div>
             </div>
 
-            <section className="enc-section enc-species-physiology">
-                <div className="enc-section-head">
-                    <h2 className="g-h2">Physiology</h2>
-                </div>
+            <section className="mt-7">
+                <SectionHead title="Physiology" />
                 {isTemplate ? <TemplatePhysiology view={view} /> : <LegacyPhysiology view={view} />}
             </section>
 
-            <ContinueTheStory />
+            <div className="mt-8">
+                <ContinueTheStory />
+            </div>
 
-            <Fold label="Generator template">
-                <p className="enc-species-template-status">
-                    <span className={`g-badge ${isTemplate ? 'g-badge--ok' : 'g-badge--info'}`}>
-                        {isTemplate ? 'Record ratified' : 'Record pending migration'}
-                    </span>
-                </p>
-                {isTemplate ? <GeneratorTemplate record={view.record} /> : <LegacyRatings view={view} />}
-            </Fold>
-
-            <Fold label="Cross references" count={connectionsCount}>
-                <Connections kind="species" recordKey={key} limit={12} />
-            </Fold>
+            <Accordion type="single" collapsible className="mt-6 flex flex-col gap-2">
+                <AccordionItem value="generator-template" className="border border-edge bg-s1 px-5">
+                    <AccordionTrigger className="hover:no-underline">
+                        <span className="type-legend">Generator template</span>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                        <p className="mb-4">
+                            <Badge variant={isTemplate ? 'ok' : 'info'}>
+                                {isTemplate ? 'Record ratified' : 'Record pending migration'}
+                            </Badge>
+                        </p>
+                        {isTemplate ? <GeneratorTemplate record={view.record} /> : <LegacyRatings view={view} />}
+                    </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="cross-references" className="border border-edge bg-s1 px-5">
+                    <AccordionTrigger className="hover:no-underline">
+                        <span className="type-legend">Cross references</span>
+                        <span className="type-data ml-auto mr-2 text-small text-ink-2">{connectionsCount}</span>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                        <Connections kind="species" recordKey={key} limit={12} />
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
         </article>
     );
 }
