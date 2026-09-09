@@ -3257,28 +3257,6 @@ input, textarea {
 
 }
 
-.move-name {
-  color: white;
-  text-align: left;
-}
-
-.move-description {
-  font-style: italic;
-  color: cadetblue;
-  text-align: left;
-}
-
-.move-rating {
-  font-style: italic;
-  text-align: right;
-}
-
-.move-rating-col {
-  width: fit-content;
-}
-
-.xalian-move-set-wrapper {}
-
 .xalian-species-title {
   padding-top: 25px;
   padding-bottom: 25px;
@@ -3694,61 +3672,6 @@ input, textarea {
 
 /* Move set ---------------------------------------------------------------- */
 
-.xalian-move-set {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.move-row {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--g-4);
-  align-items: baseline;
-  padding: var(--g-3) 0;
-  border-bottom: var(--g-hairline) solid var(--g-seam);
-}
-
-.move-row:last-child {
-  border-bottom: 0;
-  padding-bottom: 0;
-}
-
-.move-row:first-child {
-  padding-top: 0;
-}
-
-/* the rating is a stamped figure, not a heading */
-.move-rating {
-  font-family: var(--g-font-mono);
-  font-size: var(--g-size-lead);
-  font-variant-numeric: tabular-nums;
-  color: var(--g-el, var(--g-phosphor));
-  min-width: 2.25rem;
-  text-align: right;
-}
-
-.move-name {
-  font-family: var(--g-font-stencil);
-  font-size: var(--g-size-body);
-  font-weight: 600;
-  letter-spacing: var(--g-track-label);
-  text-transform: uppercase;
-  color: var(--g-ink);
-  margin: 0;
-}
-
-.move-description {
-  font-family: var(--g-font-ui);
-  font-size: var(--g-size-small);
-  font-style: normal;
-  letter-spacing: normal;
-  text-transform: none;
-  color: var(--g-ink-low);
-  margin: var(--g-1) 0 0 0;
-}
 
 
 /* Generator page ---------------------------------------------------------- */

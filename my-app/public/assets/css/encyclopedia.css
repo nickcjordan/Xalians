@@ -32,7 +32,7 @@
 /* clip, not hidden: hidden makes the console a scroll container and every
    position: sticky rail inside it (era rail, chapter rail, entry plate)
    silently stops sticking. clip only paints nothing past the edge. */
-.enc-console { overflow-x: clip; }
+.enc-shell { overflow-x: clip; }
 
 /* A small key, shorter than the default .g-btn, used where legend space
    is tight (masthead tools, trail clear). */
@@ -62,14 +62,14 @@
 
 /* Bootstrap paints bare anchors blue; inside the archive a link is either a
    printed term (.g-link, element-coloured) or a whole tile/record (inherits). */
-.enc-console a:not(.g-link):not(.g-btn):not(.g-segment):not(.nav-link):not(.g-chip):not(.g-tab-link) { color: inherit; }
-.enc-console a.g-tile, .enc-console .g-tile a, .enc-console a.g-record-term { text-decoration: none; }
-.enc-console a.g-tile:hover .g-tile-name, .enc-console a.g-record-term:hover { color: var(--g-ink); }
+.enc-shell a:not(.g-link):not(.g-btn):not(.g-segment):not(.nav-link):not(.g-chip):not(.g-tab-link) { color: inherit; }
+.enc-shell a.g-tile, .enc-shell .g-tile a, .enc-shell a.g-record-term { text-decoration: none; }
+.enc-shell a.g-tile:hover .g-tile-name, .enc-shell a.g-record-term:hover { color: var(--g-ink); }
 
 @media (max-width: 700px) {
 	/* Tiny type stays legible at arm's length on a phone. Same token,
 	   larger phone-only value; system.css keeps the desktop rem value. */
-	.enc-console { --g-size-tiny: 0.8125rem; --g-size-micro: 0.75rem; }
+	.enc-shell { --g-size-tiny: 0.8125rem; --g-size-micro: 0.75rem; }
 
 	/* The canon-revision legend is the one line the fold cannot afford. */
 	.enc-version { display: none; }
@@ -101,19 +101,19 @@
 
 	/* Tap targets: every console chip/back-link/segment key clears the
 	   32px touch minimum without changing desktop sizing. */
-	.enc-console a.g-chip,
-	.enc-console button.g-chip {
+	.enc-shell a.g-chip,
+	.enc-shell button.g-chip {
 		min-height: 32px;
 		display: inline-flex;
 		align-items: center;
 	}
-	.enc-console .enc-back {
+	.enc-shell .enc-back {
 		padding: var(--g-2) 0;
 		min-height: 32px;
 		display: inline-flex;
 		align-items: center;
 	}
-	.enc-console .g-segment {
+	.enc-shell .g-segment {
 		min-height: 40px;
 		display: inline-flex;
 		align-items: center;
@@ -290,35 +290,6 @@
 	font-variant-numeric: tabular-nums;
 }
 
-/* One horizontal, scrollable row: filters, scrubber stations, index chips,
-   the section bank, the trail. Works on a flex row already (.g-segmented,
-   a plain flex row) — it only adds the scroll/snap/fade behavior, scoped to
-   phone widths so wider layouts keep whatever wrap/grid they already use.
-   Children must set flex: 0 0 auto themselves (already true of
-   .g-segment/.g-chip; the rule below covers plain children too). */
-@media (max-width: 700px) {
-	/* .enc-console prefix: component stylesheets load after this file and
-	   several rails set flex-wrap: wrap at equal specificity. */
-	.enc-console .enc-scrollrow {
-		display: flex;
-		flex-wrap: nowrap;
-		overflow-x: auto;
-		-webkit-overflow-scrolling: touch;
-		scrollbar-width: none;
-		-ms-overflow-style: none;
-		/* Trailing fade tells a touch reader the row continues off-screen;
-		   padding-right clears the fade so the last item is fully legible. */
-		-webkit-mask-image: linear-gradient(to right, var(--g-ink) 0, var(--g-ink) calc(100% - 40px), transparent 100%);
-		mask-image: linear-gradient(to right, var(--g-ink) 0, var(--g-ink) calc(100% - 40px), transparent 100%);
-		padding-right: var(--g-6);
-	}
-
-	.enc-console .enc-scrollrow::-webkit-scrollbar { display: none; }
-
-	.enc-console .enc-scrollrow > * {
-		flex: 0 0 auto;
-	}
-}
 
 /* ---- fold: a closed-by-default panel of secondary record data ---------
    <details class="g-panel enc-fold"><summary class="enc-fold-summary">.
@@ -403,5 +374,5 @@
 /* ---- reduced motion ---------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
-	.enc-console * { transition: none !important; animation: none !important; }
+	.enc-shell * { transition: none !important; animation: none !important; }
 }
