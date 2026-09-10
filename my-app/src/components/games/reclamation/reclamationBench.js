@@ -44,6 +44,13 @@ function lampLevel(hold) {
 	return 0;
 }
 
+// the table writes small counts as words in prose and as digits on a readout; the price
+// of hiding is a lever, so the word is derived rather than written out
+const NUMBER_WORDS = ['no', 'one', 'two', 'three', 'four', 'five'];
+export function numberWord(n) {
+	return NUMBER_WORDS[n] || String(n);
+}
+
 function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspect, onHover }) {
 	const slot = slotStateOf(record, view, you);
 	const inHand = slot.state === 'hand';
@@ -169,6 +176,11 @@ function ReclamationBench({
 	// the round's cap: the sendable ten, plus the trailing seat's bonus send this round
 	const cap = typeof me.sendableCap === 'number' ? me.sendableCap : SENDABLE;
 	const sendsLeft = Math.max(0, cap - (me.sentCount || 0));
+	// the price of hiding (Pass 3, assumption 21): a hidden send costs this much against
+	// the round's cap. The engine puts the number on the public state, so the bench never
+	// hard-codes it.
+	const hiddenCost = typeof view.hiddenSendCost === 'number' ? view.hiddenSendCost : 1;
+	const hiddenAffordable = sendsLeft >= hiddenCost;
 	const armed = armedRecordId ? (me.roster || []).find((r) => r.id === armedRecordId) : null;
 	const step = !yourTurn ? 0 : armed ? 2 : 1;
 	const rec = recommendation && recommendation.type === 'send' ? recommendation : null;
@@ -196,6 +208,10 @@ function ReclamationBench({
 		heading = `${speciesLabel(armed)} is lifted`;
 		// the lead is the role sentence, the same one the dossier and the plinth print
 		lead = `${roleSentence(armedRead.role, armedRead.blowMagnitude)}. Press a world to send it there; each world shows what it would hold and what it would do.`;
+		// armed AND hidden: the whole price of hiding, in one line (assumption 21)
+		if (sendHidden && armedStealthy) {
+			lead = `${lead} Hidden: lands first at three quarters power, costs ${numberWord(hiddenCost)} sends.`;
+		}
 	} else {
 		heading = 'Lift a creature';
 		lead = sendsLeft === 0
@@ -214,20 +230,46 @@ function ReclamationBench({
 					<h3 className="rec-bench-heading" key={heading}>{heading}</h3>
 				</div>
 				<span className="rec-deploy-count" title={`${me.sentCount || 0} of ${cap} sends spent this Proving${cap > SENDABLE ? ", one of them the trailing seat's bonus this round" : ''}; ${(me.roster || []).length} in hand`}>
+					{/* the pips preview what the send in hand would cost: one for an open send,
+					    hiddenSendCost for a hidden one, so the price of hiding is seen before
+					    it is paid (assumption 21) */}
 					<span className="rec-sends" aria-hidden="true">
-						{Array.from({ length: cap }).map((_, i) => (
-							<span className={`rec-send-pip${i < (me.sentCount || 0) ? ' rec-send-pip--spent' : ''}${i >= SENDABLE ? ' rec-send-pip--bonus' : ''}`} key={i} />
-						))}
+						{Array.from({ length: cap }).map((_, i) => {
+							const spent = i < (me.sentCount || 0);
+							const previewCost = armed ? (sendHidden && armedStealthy ? hiddenCost : 1) : 0;
+							const pending = !spent && previewCost > 0
+								&& i < (me.sentCount || 0) + previewCost;
+							return (
+								<span
+									className={`rec-send-pip${spent ? ' rec-send-pip--spent' : ''}${pending ? ' rec-send-pip--pending' : ''}${i >= SENDABLE ? ' rec-send-pip--bonus' : ''}`}
+									key={i}
+								/>
+							);
+						})}
 					</span>
 					<span className="g-mono rec-sends-text">{sendsLeft} send{sendsLeft === 1 ? '' : 's'} left</span>
 				</span>
 				{yourTurn && !me.passed && (
 					<div className="rec-bench-actions">
 						{showHidden && (
-							<label className="g-check rec-hidden-toggle" title="A stealthy creature may be sent hidden: the rival learns that you sent something, not what or where, until orders are revealed.">
-								<input type="checkbox" checked={!!sendHidden} onChange={onToggleHidden} data-hidden-toggle />
+							<label
+								className={`g-check rec-hidden-toggle${hiddenAffordable ? '' : ' rec-hidden-toggle--unaffordable'}`}
+								title={hiddenAffordable
+									? `A stealthy creature may be sent hidden: the rival learns that you sent something, not what or where, until the worlds clash. It lands first, at three quarters power, and costs ${hiddenCost} of your ${cap} sends.`
+									: `A hidden send costs ${hiddenCost} sends and you have ${sendsLeft} left.`}
+							>
+								<input
+									type="checkbox"
+									checked={!!sendHidden && hiddenAffordable}
+									onChange={onToggleHidden}
+									disabled={!hiddenAffordable}
+									data-hidden-toggle
+								/>
 								<span className="g-check-box" />
 								<span>Send hidden</span>
+								<span className="rec-hidden-price g-mono" data-hidden-price>
+									{hiddenAffordable ? `costs ${hiddenCost} sends` : 'not enough sends left'}
+								</span>
 							</label>
 						)}
 						{movers.map((mover) => (

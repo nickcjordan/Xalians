@@ -5,15 +5,15 @@ import ReclamationInspect from './reclamationInspect';
 import ReclamationLog from './reclamationLog';
 import { ReclamationReport, buildMatchReport } from './reclamationReport';
 import {
-	send, pass, moveSwift, getPublicState,
+	send, pass, moveSwift, stakeWorld, getPublicState,
 	createRngState, nextRandom,
 } from '../../../gameplay/expedition/expeditionRules';
-import { chooseSend, rivalById, DEFAULT_RIVAL_ID } from '../../../gameplay/expedition/expeditionBot';
+import { chooseSend, chooseStake, rivalById, DEFAULT_RIVAL_ID } from '../../../gameplay/expedition/expeditionBot';
 import { prepare, strainMultiplierFor } from '../../../gameplay/expedition/creatureOnTable';
 import { SENDABLE, SITES_TO_CLINCH, FRAMES_PER_MATCH } from '../../../gameplay/expedition/expeditionInterpretation';
 import {
 	speciesLabel, formatHold, classifyEvent, narrateEvent, cueForEvent, narrateSwiftMove,
-	narrateSend, narratePass, narrateJudge, narrateMatchEnd,
+	narrateSend, narratePass, narrateJudge, narrateMatchEnd, narrateStake, countWord,
 } from './reclamationNarration';
 import { flattenBoard, prepareWithCompanions, siteHoldTotal, threatsFor, threatSentence, ghostPlanFor } from './reclamationPreview';
 import { recommendSend } from './reclamationAdvice';
@@ -83,6 +83,10 @@ class ReclamationMatch extends React.Component {
 			// assumption 20: the swift creature armed to move, if any. A move does not spend
 			// the turn, so this is its own arming, separate from armedRecordId.
 			movingRecordId: null,
+			// assumption 22: the world whose Stake control was pressed, waiting on the
+			// inline confirm in the status strip. A stake is once per Proving, so it is
+			// never taken on one click.
+			pendingStakeSiteId: null,
 			inspect: null, // { record, site }
 			// resolution playback
 			playback: null, // { events, index, snapshotBoard, hurtAt }
@@ -382,8 +386,10 @@ class ReclamationMatch extends React.Component {
 			return;
 		}
 		if (e.key === 'Escape') {
-			if (this.state.armedRecordId || this.state.movingRecordId || this.state.inspect) {
-				this.setState({ armedRecordId: null, movingRecordId: null, inspect: null, sendHidden: false });
+			if (this.state.armedRecordId || this.state.movingRecordId || this.state.inspect || this.state.pendingStakeSiteId) {
+				this.setState({
+					armedRecordId: null, movingRecordId: null, inspect: null, sendHidden: false, pendingStakeSiteId: null,
+				});
 			}
 			return;
 		}
@@ -422,6 +428,33 @@ class ReclamationMatch extends React.Component {
 		let moved = null;
 
 		let publicState = getPublicState(match, THEM);
+
+		/*
+			THE STAKE (assumption 22), on the rival's turn before its first send of the
+			round. Staking does not spend the turn, so it is applied first and the bot is
+			then asked for its send as normal. The engine drives the legality; chooseStake
+			only ever names a world the rival's own `stakeableSiteIds` allows.
+		*/
+		const stakeChoice = chooseStake(publicState, match.players[THEM].roster, THEM, this.rival);
+		if (stakeChoice && stakeChoice.siteId) {
+			const staked = stakeWorld(match, THEM, stakeChoice.siteId);
+			if (staked) {
+				const worldName = this.worldName(match, stakeChoice.siteId);
+				const counted = getPublicState(staked, THEM).stakes[stakeChoice.siteId].countedValue;
+				const sentence = narrateStake({ you: false, worldName, countedValue: counted });
+				lines.push(sentence);
+				this.beat({
+					kind: 'rival-stake',
+					seat: THEM,
+					short: 'The rival staked',
+					siteId: stakeChoice.siteId,
+					text: sentence,
+				});
+				match = staked;
+				publicState = getPublicState(match, THEM);
+			}
+		}
+
 		let action = chooseSend(publicState, match.players[THEM].roster, THEM, rngLike, this.rival);
 
 		// a swift move does not consume the turn: apply it, then ask again for the send/pass
@@ -504,6 +537,14 @@ class ReclamationMatch extends React.Component {
 		const frame = match.frames[match.frameIndex];
 		const site = frame.sites.find((s) => s.id === siteId);
 		return site ? site.name : siteId;
+	};
+
+	// the planet a site stands on: what the stake is named by, since a stake is on the
+	// world and not on the patch of ground the frame loaded
+	worldName = (match, siteId) => {
+		const frame = match.frames[match.frameIndex];
+		const site = frame.sites.find((s) => s.id === siteId);
+		return site ? site.world.planet : siteId;
 	};
 
 	// after every engine step: refresh the debug surface and hand the page what a resume
@@ -621,7 +662,14 @@ class ReclamationMatch extends React.Component {
 		const next = send(match, YOU, armedRecordId, siteId, sendHidden);
 		if (!next) {
 			if (sendHidden) {
-				this.notice(`${speciesLabel(record)} is not stealthy and cannot be sent hidden.`);
+				const live = this.view();
+				const cost = typeof live.hiddenSendCost === 'number' ? live.hiddenSendCost : 1;
+				const left = (live.players[YOU].sendableCap || SENDABLE) - (live.players[YOU].sentCount || 0);
+				this.notice(left < cost
+					// the price of hiding (assumption 21): a hidden send too dear for what is
+					// left of the cap is refused, and the open send is still there
+					? `A hidden send costs ${cost} of your sends and you have ${left} left. Send it in the open instead.`
+					: `${speciesLabel(record)} is not stealthy and cannot be sent hidden.`);
 			} else {
 				this.notice('That send is not allowed right now.');
 			}
@@ -688,6 +736,58 @@ class ReclamationMatch extends React.Component {
 			this.props.telemetry.decisionEnd('deploy', 'pass', { round: match.frameIndex });
 		}
 		this.commitStep(match, next, { armedRecordId: null, movingRecordId: null });
+	};
+
+	// ------------------------------------------------------------------
+	// the stake (assumption 22): once a Proving, before your first send of the round
+	// ------------------------------------------------------------------
+
+	/*
+		The Stake control on a tray head asks before it acts. The question is put in the
+		status strip rather than a browser dialog, so the worlds stay on screen while it is
+		answered and the answer is a press on the same panel as everything else.
+	*/
+	askStake = (siteId) => {
+		if (this.state.playback) {
+			this.notice('The round is still resolving.');
+			return;
+		}
+		const view = this.view();
+		const stakeable = (view.players[YOU].stakeableSiteIds) || [];
+		if (!stakeable.includes(siteId)) {
+			this.notice('That world cannot be staked now. A stake is once a Proving, and only before your first send of the round.');
+			return;
+		}
+		this.setState((prev) => ({
+			pendingStakeSiteId: prev.pendingStakeSiteId === siteId ? null : siteId,
+		}));
+	};
+
+	cancelStake = () => this.setState({ pendingStakeSiteId: null });
+
+	confirmStake = () => {
+		const { match, pendingStakeSiteId } = this.state;
+		if (!pendingStakeSiteId) {
+			return;
+		}
+		const next = stakeWorld(match, YOU, pendingStakeSiteId);
+		if (!next) {
+			this.setState({ pendingStakeSiteId: null });
+			this.notice('That world cannot be staked now. A stake is once a Proving, and only before your first send of the round.');
+			return;
+		}
+		const worldName = this.worldName(match, pendingStakeSiteId);
+		const counted = getPublicState(next, YOU).stakes[pendingStakeSiteId].countedValue;
+		const line = narrateStake({ you: true, worldName, countedValue: counted });
+		this.cue('seal');
+		this.appendLog(line);
+		this.beat({ kind: 'your-stake', seat: YOU, short: 'Staked', siteId: pendingStakeSiteId, text: line });
+		if (this.props.telemetry) {
+			this.props.telemetry.mark('stake', { site: pendingStakeSiteId, round: match.frameIndex });
+		}
+		// a stake does not spend the turn and can never close a round, so it is a plain
+		// state step rather than a commitStep
+		this.setState({ match: next, pendingStakeSiteId: null }, this.afterEngineStep);
 	};
 
 	/*
@@ -758,11 +858,11 @@ class ReclamationMatch extends React.Component {
 	beginResolution = (before, next, extra) => {
 		const frameBefore = before.frames[before.frameIndex];
 		const boardBefore = this.snapshotBoard(before);
-		// a swift move was told when it happened, during Deploy; leaving it in the playback
-		// only makes the table pause on a step with nothing to say
+		// a swift move and a stake were both told when they happened, during Deploy; leaving
+		// them in the playback only makes the table pause on a step with nothing to say
 		const newEvents = next.resolutionLog
 			.slice(before.resolutionLog.length)
-			.filter((e) => e.type !== 'swift-move');
+			.filter((e) => e.type !== 'swift-move' && e.type !== 'stake');
 		const events = this.sequenceEvents(newEvents, frameBefore);
 		// the whole public view with both sides in and nothing clashed yet: the board the
 		// playback draws (see view()). The engine reveals every hidden creature at the
@@ -951,13 +1051,22 @@ class ReclamationMatch extends React.Component {
 	tellEvent = (event, playback) => {
 		const kind = classifyEvent(event);
 		const snap = playback.boardBefore;
-		if (kind === 'swift-move') {
+		if (kind === 'swift-move' || kind === 'stake') {
 			return; // already narrated as it happened during deploy
 		}
 		if (kind === 'judge') {
+			// a staked world is named by its planet alone in the ruling, so the count reads
+			// as the world's own parenthetical ("Zolton (counting two) is yours") rather
+			// than trailing a second bracket after the site's name
 			const siteNames = {};
-			playback.frame.sites.forEach((s) => { siteNames[s.id] = `${s.world.planet} (${s.name})`; });
-			this.appendLogLines(narrateJudge(event, { siteNames, you: YOU }));
+			const counted = {};
+			playback.frame.sites.forEach((s) => {
+				const result = (event.siteResults || {})[s.id];
+				const value = result && typeof result.countedValue === 'number' ? result.countedValue : 1;
+				counted[s.id] = value;
+				siteNames[s.id] = value > 1 ? s.world.planet : `${s.world.planet} (${s.name})`;
+			});
+			this.appendLogLines(narrateJudge(event, { siteNames, counted, you: YOU }));
 			return;
 		}
 		if (kind !== 'attack' && kind !== 'sweep' && kind !== 'shield' && kind !== 'recover') {
@@ -1206,6 +1315,9 @@ class ReclamationMatch extends React.Component {
 		if (view.players[YOU].passed) {
 			return 'You have passed. Waiting on the rival.';
 		}
+		if ((view.players[YOU].stakeableSiteIds || []).length > 0) {
+			return 'Lift a creature from the bench, then press a world. Or stake a world, once this Proving, to make it count two. Or pass.';
+		}
 		return 'Lift a creature from the bench, then press a world. Or pass.';
 	}
 
@@ -1295,9 +1407,34 @@ class ReclamationMatch extends React.Component {
 					)}
 				</div>
 
-				<p className={`rec-status-hint g-body${yourTurn ? ' rec-status-hint--yours' : ''}`} data-hint>
-					{rivalBeat ? this.rivalBeat().text : this.whatAClickDoes(view)}
-				</p>
+				{this.state.pendingStakeSiteId ? this.renderStakeConfirm(view) : (
+					<p className={`rec-status-hint g-body${yourTurn ? ' rec-status-hint--yours' : ''}`} data-hint>
+						{rivalBeat ? this.rivalBeat().text : this.whatAClickDoes(view)}
+					</p>
+				)}
+			</div>
+		);
+	}
+
+	/*
+		The stake's question, asked once, on the status strip: the worlds stay on screen
+		while it is answered. The count named is the engine's own for that world after the
+		stake would land, so a world the rival already staked correctly asks about three.
+	*/
+	renderStakeConfirm(view) {
+		const siteId = this.state.pendingStakeSiteId;
+		const site = view.frame.sites.find((s) => s.id === siteId);
+		const already = view.stakes && view.stakes[siteId] ? view.stakes[siteId].by.length : 0;
+		const word = countWord(already >= 1 ? 3 : 2);
+		return (
+			<div className="rec-stake-ask g-body" data-stake-ask={siteId} role="status">
+				<span className="rec-stake-ask-text">
+					Stake {site ? site.world.planet : 'this world'}? It counts {word} toward the Charter for whoever holds it. Once a Proving.
+				</span>
+				<span className="rec-stake-ask-actions">
+					<button type="button" className="g-btn g-btn--primary rec-stake-yes" onClick={this.confirmStake} data-stake-confirm>Stake it</button>
+					<button type="button" className="g-btn rec-stake-no" onClick={this.cancelStake} data-stake-cancel>Not this round</button>
+				</span>
 			</div>
 		);
 	}
@@ -1454,6 +1591,10 @@ class ReclamationMatch extends React.Component {
 							highlights={highlights}
 							hoverSiteId={this.state.hoverSiteId}
 							advanced={!simple}
+							stakes={view.stakes}
+							stakeableSiteIds={deploying && view.turn === YOU ? (me.stakeableSiteIds || []) : []}
+							pendingStakeSiteId={this.state.pendingStakeSiteId}
+							onStake={this.askStake}
 							onSiteClick={this.handleSiteClick}
 							onSiteHover={(id) => this.setState({ hoverSiteId: id })}
 							onFigureClick={(entry, seat, site) => this.inspectRecord(entry.record, site)}

@@ -99,6 +99,11 @@ function buildWorlds(match, you, recordsById) {
 				siteName: site ? site.name : siteId,
 				element: site ? site.world.element : null,
 				who,
+				// the stake (Pass 3, assumption 22): what the Court counted this world for,
+				// and which handlers staked it. Both come off the judge event's own
+				// arithmetic, so the row never recomputes the Charter.
+				countedValue: typeof result.countedValue === 'number' ? result.countedValue : 1,
+				staked: result.staked || [],
 				holdYou: you === 'A' ? result.holdA : result.holdB,
 				holdRival: you === 'A' ? result.holdB : result.holdA,
 				yours: rowsFor(you),
@@ -376,6 +381,15 @@ function WorldRow({ world, you }) {
 				<span className={`g-chip g-chip--outline rec-report-world-planet g-el-${world.element || 'fire'}`}>
 					{world.planet || 'Unknown world'}
 				</span>
+				{world.countedValue > 1 && (
+					<span
+						className="rec-report-world-counted g-mono"
+						data-counted={world.countedValue}
+						title={`Staked${(world.staked || []).length > 1 ? ' by both handlers' : ''}: it counted ${world.countedValue} toward the Charter.`}
+					>
+						x{world.countedValue}
+					</span>
+				)}
 				<span className="rec-report-world-site">{world.siteName}</span>
 				<span className="rec-report-world-holds">
 					<span className={`rec-report-hold rec-report-hold--you${youHigher && world.who === 'you' ? ' rec-report-hold--winner' : ''}`}>

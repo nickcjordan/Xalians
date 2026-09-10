@@ -47,7 +47,7 @@ describe('saveMatch / loadMatch / clearMatch', () => {
 
 	it('returns null on a version mismatch', () => {
 		const storage = makeFakeStorage();
-		storage.setItem('reclamation.match.v2', JSON.stringify({ version: 2, generatorVersion: GENERATOR_VERSION, payload: { anything: true } }));
+		storage.setItem('reclamation.match.v3', JSON.stringify({ version: 2, generatorVersion: GENERATOR_VERSION, payload: { anything: true } }));
 		expect(loadMatch(storage)).toBeNull();
 	});
 
@@ -55,26 +55,37 @@ describe('saveMatch / loadMatch / clearMatch', () => {
 		// hardening Decision 8: a save stores seeds, so a new generator would regenerate
 		// different creatures than the saved log names; discard rather than misread
 		const storage = makeFakeStorage();
-		storage.setItem('reclamation.match.v2', JSON.stringify({ version: 1, generatorVersion: '0.0.1-not-this-one', payload: { anything: true } }));
+		storage.setItem('reclamation.match.v3', JSON.stringify({ version: 1, generatorVersion: '0.0.1-not-this-one', payload: { anything: true } }));
 		expect(loadMatch(storage)).toBeNull();
 	});
 
 	it('discards a save written before the generator version was recorded', () => {
 		const storage = makeFakeStorage();
-		storage.setItem('reclamation.match.v2', JSON.stringify({ version: 1, payload: { anything: true } }));
+		storage.setItem('reclamation.match.v3', JSON.stringify({ version: 1, payload: { anything: true } }));
 		expect(loadMatch(storage)).toBeNull();
 	});
 
 	it('stamps the current generator version onto the save', () => {
 		const storage = makeFakeStorage();
 		saveMatch({ seed: 'abc' }, storage);
-		const wrapper = JSON.parse(storage.getItem('reclamation.match.v2'));
+		const wrapper = JSON.parse(storage.getItem('reclamation.match.v3'));
 		expect(wrapper.generatorVersion).toBe(GENERATOR_VERSION);
+	});
+
+	it('drops a save under either older key rather than offering it (Pass 3 bumped to v3)', () => {
+		// the stake put `stakes` on every frame and `stakeUsed` on every player, so a v2
+		// save resumes into a match the table cannot read the Charter arithmetic off
+		const storage = makeFakeStorage();
+		storage.setItem('reclamation.match.v1', JSON.stringify({ version: 1, generatorVersion: GENERATOR_VERSION, payload: { old: true } }));
+		storage.setItem('reclamation.match.v2', JSON.stringify({ version: 1, generatorVersion: GENERATOR_VERSION, payload: { old: true } }));
+		expect(loadMatch(storage)).toBeNull();
+		expect(storage.getItem('reclamation.match.v1')).toBeNull();
+		expect(storage.getItem('reclamation.match.v2')).toBeNull();
 	});
 
 	it('returns null on corrupt JSON rather than throwing', () => {
 		const storage = makeFakeStorage();
-		storage.setItem('reclamation.match.v2', '{not valid json');
+		storage.setItem('reclamation.match.v3', '{not valid json');
 		expect(() => loadMatch(storage)).not.toThrow();
 		expect(loadMatch(storage)).toBeNull();
 	});

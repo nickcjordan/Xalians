@@ -69,6 +69,15 @@ import {
 	HURT_ATTACKS_LESS,
 	BOLSTER_RECOVERY,
 	presenceScaleOf,
+	// Pass 3 (assumptions 21 and 22): the price of hiding, and the stake
+	HIDDEN_SEND_COST,
+	HIDDEN_FIRST_NEEDS_COMPANY,
+	HIDDEN_POWER,
+	STAKE_ENABLED,
+	STAKE_SITE_VALUE,
+	STAKE_BOTH_VALUE,
+	DRAFT_POOL_SIZE,
+	DRAFT_DISTINCT_SPECIES,
 } from './expeditionInterpretation.js';
 
 // ---------------------------------------------------------------------------
@@ -206,7 +215,10 @@ function drawFrames(worlds, rngState) {
 			state = nextState;
 			sites.push({ ...world.sites[siteIndex], world: worldFacts(world) });
 		}
-		frames.push({ index: f, sites });
+		// `stakes` is the per-frame record of who staked which world this round
+		// (docs/design/reclamation-base-redesign.md assumption 22), keyed by handler; the
+		// frame is cloned by stakeWorld rather than mutated, so it stays immutable.
+		frames.push({ index: f, sites, stakes: {} });
 	}
 	return { frames, nextState: state };
 }
@@ -267,6 +279,18 @@ function drawFrames(worlds, rngState) {
 	- willfulThreshold / keenInstinct / dullInstinct / swiftSpeed: the attribute cuts.
 	- trailingBonus: 0 by default since assumption 20 cut the catch-up send; the key stays
 	  so an ablation row can put it back.
+
+	Pass 3's levers (docs/design/reclamation-base-redesign.md assumptions 21 to 23):
+	- hiddenSendCost: what a hidden send costs against the round's sendable cap, charged
+	  the same way RETURNED_SEND_COST is (assumption 21, variant a).
+	- hiddenFirstNeedsCompany: hidden-first only applies while another creature of the
+	  hidden creature's side stands at that world (assumption 21, variant b).
+	- hiddenPower: the multiplier on an attack thrown from hiding (assumption 21, variant c).
+	- stake: false removes the stake entirely (stakeWorld returns null and every world
+	  counts one), which is the ablation row the stake has to beat (assumption 22).
+	- draftPoolSize / draftDistinctSpecies: the draft's shape (assumption 23). Neither is
+	  read by the engine itself; they travel on the rules object so one --rules flag moves
+	  the draft the same way it moves every other lever, and draft.js reads them from there.
 */
 export const DEFAULT_RULES = {
 	hiddenSends: true,
@@ -292,6 +316,13 @@ export const DEFAULT_RULES = {
 	swiftSpeed: SWIFT_SPEED,
 	hurtAttacksLess: HURT_ATTACKS_LESS,
 	bolsterRecovery: BOLSTER_RECOVERY,
+	// Pass 3 (assumptions 21 to 23)
+	hiddenSendCost: HIDDEN_SEND_COST,
+	hiddenFirstNeedsCompany: HIDDEN_FIRST_NEEDS_COMPANY,
+	hiddenPower: HIDDEN_POWER,
+	stake: STAKE_ENABLED,
+	draftPoolSize: DRAFT_POOL_SIZE,
+	draftDistinctSpecies: DRAFT_DISTINCT_SPECIES,
 };
 
 // merges a caller's partial rules over the defaults, so a batch only names what it moves
@@ -328,6 +359,15 @@ function normalizeRules(rules) {
 		swiftSpeed: num(r.swiftSpeed, DEFAULT_RULES.swiftSpeed),
 		hurtAttacksLess: r.hurtAttacksLess !== undefined ? !!r.hurtAttacksLess : DEFAULT_RULES.hurtAttacksLess,
 		bolsterRecovery: num(r.bolsterRecovery, DEFAULT_RULES.bolsterRecovery),
+		// Pass 3 (assumptions 21 to 23)
+		hiddenSendCost: num(r.hiddenSendCost, DEFAULT_RULES.hiddenSendCost),
+		hiddenFirstNeedsCompany: r.hiddenFirstNeedsCompany !== undefined
+			? !!r.hiddenFirstNeedsCompany : DEFAULT_RULES.hiddenFirstNeedsCompany,
+		hiddenPower: num(r.hiddenPower, DEFAULT_RULES.hiddenPower),
+		stake: r.stake !== undefined ? !!r.stake : DEFAULT_RULES.stake,
+		draftPoolSize: num(r.draftPoolSize, DEFAULT_RULES.draftPoolSize),
+		draftDistinctSpecies: r.draftDistinctSpecies !== undefined
+			? !!r.draftDistinctSpecies : DEFAULT_RULES.draftDistinctSpecies,
 	};
 }
 
@@ -358,6 +398,8 @@ export function createMatch({ rosterA, rosterB, worlds, seed, rules }) {
 		passed: false,
 		firstPasser: false,
 		sitesWon: 0,
+		// the stake is once per Proving, not once per round (assumption 22)
+		stakeUsed: false,
 	});
 
 	return {
@@ -371,6 +413,10 @@ export function createMatch({ rosterA, rosterB, worlds, seed, rules }) {
 		// per-frame: record ids that have used their one swift move this round (assumption
 		// 20 replaced the vanguard fall-back with this)
 		swiftMoved: { A: [], B: [] },
+		// per-frame send counts, kept apart from players[x].sentCount (which is the whole
+		// Proving's sendable cap): the stake is legal only before a handler's FIRST send
+		// of the round (assumption 22).
+		sentThisFrame: { A: 0, B: 0 },
 		trailingBonus: { A: 0, B: 0 }, // per-frame: extra sends the trailing seat gets this round only (ROSTER_TRAILING_BONUS)
 		phase: 'deploy',
 		starter,
@@ -539,12 +585,23 @@ function sendableCapFor(state, player) {
 	return SENDABLE + bonus;
 }
 
-// the send cost for one record: RETURNED_SEND_COST if it is flagged `returned` (the Loki
-// line - a creature back in the roster after its world was lost), 1 otherwise.
-function sendCostFor(playerState, recordId) {
-	return (playerState.returned || []).includes(recordId) ? RETURNED_SEND_COST : 1;
+/*
+	The send cost for one record, against the round's sendable cap: RETURNED_SEND_COST if it
+	is flagged `returned` (the Loki line - a creature back in the roster after its world was
+	lost), rules.hiddenSendCost when it is sent hidden (the price of hiding, assumption 21),
+	1 otherwise. A returned creature sent hidden pays the LARGER of the two rather than
+	their sum: each is a price on the same one send, and stacking them could make a send
+	illegal that neither price alone forbids.
+*/
+function sendCostFor(playerState, recordId, hidden = false, rules = DEFAULT_RULES) {
+	const returnedCost = (playerState.returned || []).includes(recordId) ? RETURNED_SEND_COST : 1;
+	const hiddenCost = hidden && typeof rules.hiddenSendCost === 'number' ? rules.hiddenSendCost : 1;
+	return Math.max(returnedCost, hiddenCost);
 }
 
+// the records this handler could still send OPENLY. Hiding is always optional, so a
+// hidden send's own price (assumption 21) never makes a handler's turn illegal: a creature
+// too expensive to hide can still be sent in the open.
 function sendableRoster(playerState, cap) {
 	if (playerState.sentCount >= cap) {
 		return [];
@@ -592,12 +649,6 @@ export function send(state, handler, recordId, siteId, hidden = false) {
 	if (!record) {
 		return null;
 	}
-	// the Loki line: a returned creature's send costs RETURNED_SEND_COST against the cap,
-	// not 1 - illegal if there is not enough of the round's cap left for it.
-	const cost = sendCostFor(p, recordId);
-	if (p.sentCount + cost > sendableCapFor(state, handler)) {
-		return null;
-	}
 	const frame = currentFrame(state);
 	const site = siteById(frame, siteId);
 	if (!site) {
@@ -612,6 +663,12 @@ export function send(state, handler, recordId, siteId, hidden = false) {
 		if (!traitKeywordsOf(record).includes('stealthy')) {
 			return null;
 		}
+	}
+	// the Loki line and the price of hiding (assumption 21) are both charged against the
+	// round's cap - illegal if there is not enough of it left for this send.
+	const cost = sendCostFor(p, recordId, hidden, rulesOf(state));
+	if (p.sentCount + cost > sendableCapFor(state, handler)) {
+		return null;
 	}
 
 	const sentIndex = p.sentCount;
@@ -648,7 +705,14 @@ export function send(state, handler, recordId, siteId, hidden = false) {
 		},
 	};
 
-	let nextState = withRecomputedHolds({ ...state, players: nextPlayers, board: nextBoard });
+	const nextSentThisFrame = {
+		...(state.sentThisFrame || { A: 0, B: 0 }),
+		[handler]: ((state.sentThisFrame && state.sentThisFrame[handler]) || 0) + 1,
+	};
+
+	let nextState = withRecomputedHolds({
+		...state, players: nextPlayers, board: nextBoard, sentThisFrame: nextSentThisFrame,
+	});
 	return advanceDeployTurn(nextState, handler);
 }
 
@@ -681,6 +745,81 @@ export function pass(state, handler) {
 // them before the Orders phase was removed (assumption 1).
 function runResolveAndJudge(state) {
 	return judge(resolve({ ...state, phase: 'resolve', turn: null }));
+}
+
+/*
+	stakeWorld(state, handler, siteId) -> new state, or null
+
+	THE STAKE (docs/design/reclamation-base-redesign.md assumption 22), the first comeback
+	avenue that is a chosen risk rather than a gift. Once per Proving, before that handler's
+	first send of the round, a handler may stake one of the round's three worlds: at the
+	Ruling that world counts STAKE_SITE_VALUE toward the Charter for whoever holds it, and
+	STAKE_BOTH_VALUE when both handlers staked the same one. A tie counts nothing, exactly
+	as a tied world always has, and the clinch at SITES_TO_CLINCH is unchanged, so a stake
+	can end a Proving early for EITHER side. That symmetry is the whole point: the trailing
+	handler doubles a world it thinks it can hold, and doubles the loss if it cannot.
+
+	It does NOT spend the turn and it is not gated on whose turn it is: staking is a
+	declaration, not an action of the Deploy alternation, so either handler may stake at any
+	point in Deploy before its own first send of that round.
+
+	Illegal if: phase is not deploy, rules.stake is off, this handler has already staked
+	this Proving, this frame already carries an entry for this handler, this handler has
+	passed, this handler has already sent this round, or the site is not one of this
+	frame's three.
+*/
+export function stakeWorld(state, handler, siteId) {
+	if (state.phase !== 'deploy') {
+		return null;
+	}
+	const rules = rulesOf(state);
+	if (!rules.stake) {
+		return null;
+	}
+	const p = state.players[handler];
+	if (!p || p.passed || p.stakeUsed) {
+		return null;
+	}
+	if (((state.sentThisFrame && state.sentThisFrame[handler]) || 0) > 0) {
+		return null;
+	}
+	const frame = currentFrame(state);
+	const stakes = frame.stakes || {};
+	if (stakes[handler]) {
+		return null;
+	}
+	if (!siteById(frame, siteId)) {
+		return null;
+	}
+
+	const nextFrames = state.frames.map((f, i) => (
+		i === state.frameIndex ? { ...f, stakes: { ...stakes, [handler]: siteId } } : f
+	));
+	return {
+		...state,
+		frames: nextFrames,
+		players: { ...state.players, [handler]: { ...p, stakeUsed: true } },
+		resolutionLog: [...state.resolutionLog, {
+			type: 'stake', handler, site: siteId, round: state.frameIndex,
+		}],
+	};
+}
+
+// the sites this handler may still stake this round: empty once it has staked, sent, or
+// passed, or where the rule is off. Own side only in spirit, though a stake is public the
+// moment it is made.
+export function stakeableSiteIdsFor(state, handler) {
+	if (state.phase !== 'deploy' || !rulesOf(state).stake) {
+		return [];
+	}
+	const p = state.players[handler];
+	if (!p || p.passed || p.stakeUsed) {
+		return [];
+	}
+	if (((state.sentThisFrame && state.sentThisFrame[handler]) || 0) > 0) {
+		return [];
+	}
+	return currentFrame(state).sites.map((site) => site.id);
 }
 
 /*
@@ -1054,13 +1193,20 @@ function findLiveEntry(state, recordId) {
 */
 function buildResolutionOrder(state, entries) {
 	const rules = rulesOf(state);
+	// the price of hiding, variant b (assumption 21): with hiddenFirstNeedsCompany on, a
+	// hidden creature's attack only lands first while another creature of its own side
+	// stands at the world. Company is read off the entries present at this world at
+	// Resolve, the hidden creature itself excluded, so a lone ambusher waits its turn.
+	const needsCompany = !!rules.hiddenFirstNeedsCompany;
 	const withMeta = entries.map((e) => {
 		const prepared = prepareEntry(state, e);
+		const hasCompany = entries.some((other) => other.player === e.player && other.recordId !== e.recordId);
 		return {
 			entry: e,
 			speed: prepared.speed,
 			strained: prepared.strainLevel !== 'none',
-			hidden: !!e.wasHidden,
+			hidden: !!e.wasHidden && (!needsCompany || hasCompany),
+			wasHidden: !!e.wasHidden,
 		};
 	});
 
@@ -1160,6 +1306,15 @@ function resolveWorld(state, site) {
 	const order = buildResolutionOrder(state, present);
 
 	// ---- 1. declare ----
+	/*
+		The price of hiding, variant c (assumption 21): an attack thrown from hiding lands at
+		rules.hiddenPower of its power. It is applied at DECLARATION, not at landing, so a
+		shielder reads the attack it will actually have to cancel rather than the one the
+		striker would have thrown in the open. It is read off `wasHidden`, not the ordering
+		flag: a lone hidden creature that lost hidden-first to variant b was still hiding,
+		and still pays for it.
+	*/
+	const hiddenPower = typeof rules.hiddenPower === 'number' ? rules.hiddenPower : 1;
 	const declarations = [];
 	order.forEach((item) => {
 		const entry = item.entry;
@@ -1167,14 +1322,17 @@ function resolveWorld(state, site) {
 		if (prepared.role !== ROLE.STRIKE && prepared.role !== ROLE.SWEEP) {
 			return;
 		}
+		const fromHiding = !!item.wasHidden;
+		const powerFactor = fromHiding ? hiddenPower : 1;
 		if (prepared.role === ROLE.STRIKE) {
 			const target = pickAttackTarget(state, entry, prepared.conduct, present);
 			declarations.push({
 				entry,
 				role: ROLE.STRIKE,
-				hidden: item.hidden,
+				hidden: fromHiding,
+				first: item.hidden,
 				target: target || null,
-				amount: target ? attackPowerAgainst(state, entry, prepared, target) : 0,
+				amount: target ? round1(attackPowerAgainst(state, entry, prepared, target) * powerFactor) : 0,
 				cancelledAgainst: {},
 			});
 			return;
@@ -1183,13 +1341,14 @@ function resolveWorld(state, site) {
 		// sides; the actor is the one creature its own cloud does not catch
 		const victims = present
 			.filter((e) => e.recordId !== entry.recordId)
-			.map((victim) => ({ victim, amount: attackPowerAgainst(state, entry, prepared, victim) }));
+			.map((victim) => ({ victim, amount: round1(attackPowerAgainst(state, entry, prepared, victim) * powerFactor) }));
 		declarations.push({
 			entry,
 			role: ROLE.SWEEP,
-			hidden: item.hidden,
+			hidden: fromHiding,
+			first: item.hidden,
 			victims,
-			amount: round1(prepared.blowMagnitude * rules.sweepDiscount),
+			amount: round1(prepared.blowMagnitude * rules.sweepDiscount * powerFactor),
 			cancelledAgainst: {},
 		});
 	});
@@ -1512,6 +1671,23 @@ function judge(state) {
 	// (assumption 5 makes that number the whole outcome model). `resilient` recovered a
 	// creature from the hurt STATUS, and there is no such status any more, so the
 	// trait is no longer read here; see the base redesign's "Traits that remain".
+	/*
+		The stake (assumption 22): a world staked by one handler counts STAKE_SITE_VALUE
+		toward the Charter for whoever HOLDS it, and STAKE_BOTH_VALUE when both staked the
+		same world. It is not "worth double to the staker": staking doubles the world for
+		either side, which is what makes it a chosen risk. A tie counts nothing, as a tied
+		world always has.
+	*/
+	const stakes = frame.stakes || {};
+	const stakedBy = (siteId) => ['A', 'B'].filter((who) => stakes[who] === siteId);
+	const countedValueOf = (siteId) => {
+		const by = stakedBy(siteId);
+		if (by.length >= 2) {
+			return STAKE_BOTH_VALUE;
+		}
+		return by.length === 1 ? STAKE_SITE_VALUE : 1;
+	};
+
 	const siteResults = {};
 	frame.sites.forEach((site) => {
 		const entryView = (e) => ({
@@ -1532,7 +1708,12 @@ function judge(state) {
 		} else if (holdB > holdA) {
 			winner = 'B';
 		}
-		siteResults[site.id] = { holdA, holdB, winner, entries: { A: entriesA, B: entriesB } };
+		siteResults[site.id] = {
+			holdA, holdB, winner, entries: { A: entriesA, B: entriesB },
+			// the Ruling's own arithmetic, so the report and the table never recompute it
+			staked: stakedBy(site.id),
+			countedValue: countedValueOf(site.id),
+		};
 	});
 
 	['A', 'B'].forEach((player) => {
@@ -1541,7 +1722,7 @@ function judge(state) {
 			const result = siteResults[site.id];
 			const entries = s.board[site.id][player];
 			if (result.winner === player) {
-				s.players[player] = { ...s.players[player], holding: [...s.players[player].holding, ...entries.map((e) => e.recordId)], sitesWon: s.players[player].sitesWon + 1 };
+				s.players[player] = { ...s.players[player], holding: [...s.players[player].holding, ...entries.map((e) => e.recordId)], sitesWon: s.players[player].sitesWon + result.countedValue };
 			} else if (result.winner === opponent && rulesOf(s).lokiLine) {
 				// LOST (not tied): the Loki line returns these creatures to the roster,
 				// flagged so their next send costs RETURNED_SEND_COST (see send()). With
@@ -1562,7 +1743,7 @@ function judge(state) {
 		});
 	});
 
-	const bannerLog = { round: state.frameIndex, siteResults };
+	const bannerLog = { round: state.frameIndex, siteResults, stakes: { ...stakes } };
 	s.resolutionLog = [...s.resolutionLog, { type: 'judge', ...bannerLog }];
 
 	const sitesWonA = s.players.A.sitesWon;
@@ -1596,6 +1777,9 @@ function judge(state) {
 		frameIndex: nextFrameIndex,
 		board: emptyBoardForFrame(nextFrame),
 		swiftMoved: { A: [], B: [] },
+		// the stake is once per Proving, but "before your first send of the round" is a
+		// per-round condition, so this counter resets with the frame (assumption 22)
+		sentThisFrame: { A: 0, B: 0 },
 		players: {
 			A: { ...s.players.A, passed: false, firstPasser: false },
 			B: { ...s.players.B, passed: false, firstPasser: false },
@@ -1701,6 +1885,9 @@ export function getPublicState(state, handler) {
 			passed: p.passed,
 			sitesWon: p.sitesWon,
 			hiddenSentThisRound: hiddenCountThisRound(who),
+			// the stake is once per Proving and is public the moment it is made
+			// (assumption 22), so both seats read it
+			stakeUsed: !!p.stakeUsed,
 			// SENDABLE plus this round's trailing-seat bonus, if any (Pass 2's roster-economy
 			// lever); sitesWon is already public, so this reveals nothing the opponent
 			// couldn't derive themselves.
@@ -1714,6 +1901,9 @@ export function getPublicState(state, handler) {
 				// Own side only, like the roster itself: which of the opponent's creatures
 				// are swift is not something the board tells you.
 				movableRecordIds: movableRecordIdsFor(state, who),
+				// the three worlds this handler may still stake this round, empty once it
+				// has staked, sent or passed (assumption 22)
+				stakeableSiteIds: stakeableSiteIdsFor(state, who),
 				// the Loki line: which of THIS handler's own roster record ids are flagged
 				// "returned" (withdrawn from a lost world, sendable again at
 				// RETURNED_SEND_COST) - own-side only, same as the roster itself, since the
@@ -1742,6 +1932,27 @@ export function getPublicState(state, handler) {
 		turn: state.turn,
 		starter: state.starter,
 		board,
+		/*
+			The stake, per site (assumption 22): { [siteId]: ['A'] } names who has staked
+			this round's worlds, and `countedValue` is what each world is worth toward the
+			Charter, so the table can print "this world counts two" without doing the
+			arithmetic itself. Both are public: a stake is a declaration, never a hidden one.
+		*/
+		stakes: (() => {
+			const view = {};
+			const stakes = (frame && frame.stakes) || {};
+			frame.sites.forEach((site) => {
+				const by = ['A', 'B'].filter((who) => stakes[who] === site.id);
+				view[site.id] = {
+					by,
+					countedValue: by.length >= 2 ? STAKE_BOTH_VALUE : (by.length === 1 ? STAKE_SITE_VALUE : 1),
+				};
+			});
+			return view;
+		})(),
+		// what a hidden send costs against the sendable cap this match (assumption 21), so
+		// the table can price the pips before the handler commits to hiding
+		hiddenSendCost: rulesOf(state).hiddenSendCost,
 		// the whole log travels: with Orders gone there is nothing in it a handler is not
 		// allowed to have seen, and the table narrates from its tail
 		resolutionLog: state.resolutionLog,
@@ -1764,5 +1975,5 @@ export function getPublicState(state, handler) {
 */
 export {
 	prepareEntry, currentFrame, siteById, allBoardEntries, boardEntriesFor, findEntry,
-	currentHoldOf, attackPowerAgainst,
+	currentHoldOf, attackPowerAgainst, sendCostFor,
 };

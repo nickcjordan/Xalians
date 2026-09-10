@@ -1,4 +1,5 @@
-import { buildDraftPools, rateForDraft, botDraft, validateKeep, poolMeanBlowOf, DRAFT_POOL_SIZE, MAX_PER_SPECIES, SWEEP_EXPECTED_CREATURES, BOLSTER_EXPECTED_ALLIES } from '../draft.js';
+import { buildDraftPools, rateForDraft, botDraft, validateKeep, poolMeanBlowOf, draftOptionsFromRules, DRAFT_POOL_SIZE, MAX_PER_SPECIES, SWEEP_EXPECTED_CREATURES, BOLSTER_EXPECTED_ALLIES } from '../draft.js';
+import { DEFAULT_RULES } from '../expeditionRules.js';
 import { roleOf } from '../creatureOnTable.js';
 import { ROLE, SWEEP_DISCOUNT, BOLSTER_FLOOR } from '../expeditionInterpretation.js';
 import { RIVALS } from '../expeditionBot.js';
@@ -200,5 +201,64 @@ describe('the draft spread rule', () => {
 			const keptRoles = new Set(kept.map((id) => roleOf(poolA.find((r) => r.id === id), null)));
 			poolRoles.forEach((role) => expect(keptRoles.has(role)).toBe(true));
 		}
+	});
+});
+
+
+/*
+	PASS 3, the draft's shape (docs/design/reclamation-base-redesign.md assumption 23). Both
+	levers are rules keys carried on the match's rules object, so one --rules flag moves the
+	draft the same way it moves every other lever.
+*/
+describe('pass 3: the draft\'s shape', () => {
+	it('deals a pool of the requested size, still disjoint and still deterministic', () => {
+		const a = buildDraftPools(31, { poolSize: 15 });
+		const b = buildDraftPools(31, { poolSize: 15 });
+		expect(a.poolA.length).toBe(15);
+		expect(a.poolB.length).toBe(15);
+		const idsB = new Set(a.poolB.map((r) => r.id));
+		a.poolA.forEach((r) => expect(idsB.has(r.id)).toBe(false));
+		expect(a.poolA.map((r) => r.id)).toEqual(b.poolA.map((r) => r.id));
+	});
+
+	it('the species-distinct deal gives each pool one creature per species', () => {
+		const { poolA, poolB } = buildDraftPools(37, { distinctSpecies: true });
+		[poolA, poolB].forEach((pool) => {
+			expect(pool.length).toBe(DRAFT_POOL_SIZE);
+			const species = pool.map((r) => r.species);
+			expect(new Set(species).size).toBe(species.length);
+		});
+		const idsB = new Set(poolB.map((r) => r.id));
+		poolA.forEach((r) => expect(idsB.has(r.id)).toBe(false));
+	});
+
+	it('a pool larger than the species list repeats species, and the distinct deal falls back to distinct-as-far-as-possible', () => {
+		// the generator deals from twenty-nine species, so a pool of thirty-five cannot be
+		// species-distinct: the fallback tops the pool up rather than dealing short
+		const plain = buildDraftPools(19, { poolSize: 35, distinctSpecies: false }).poolA.map((r) => r.species);
+		expect(plain.length).toBe(35);
+		expect(new Set(plain).size).toBeLessThan(plain.length);
+
+		const distinct = buildDraftPools(19, { poolSize: 35, distinctSpecies: true }).poolA.map((r) => r.species);
+		expect(distinct.length).toBe(35);
+		// as many distinct species as the species list can supply, and no more
+		expect(new Set(distinct).size).toBeGreaterThan(new Set(plain).size);
+	});
+
+	it('a keep from a smaller pool is still exactly ROSTER_SIZE distinct ids', () => {
+		const { poolA, frames } = buildDraftPools(41, { poolSize: 15 });
+		const keep = botDraft(poolA, frames, RIVALS[0]);
+		expect(validateKeep(poolA, keep)).toBe(true);
+	});
+
+	it('draftOptionsFromRules reads both levers off a match rules object', () => {
+		expect(draftOptionsFromRules(DEFAULT_RULES)).toEqual({
+			poolSize: DEFAULT_RULES.draftPoolSize,
+			distinctSpecies: DEFAULT_RULES.draftDistinctSpecies,
+		});
+		expect(draftOptionsFromRules({ draftPoolSize: 15, draftDistinctSpecies: true }))
+			.toEqual({ poolSize: 15, distinctSpecies: true });
+		// a caller with no rules in hand gets the module defaults, never undefined
+		expect(draftOptionsFromRules(null)).toEqual({ poolSize: DRAFT_POOL_SIZE, distinctSpecies: false });
 	});
 });

@@ -202,16 +202,44 @@ export function narratePass(ctx = {}) {
 }
 
 /*
+	THE STAKE (docs/design/reclamation-base-redesign.md assumption 22, Pass 3). A staked
+	world counts two toward the Charter for whoever holds it, three when both handlers
+	staked the same one. The table says the count in words, never as a multiplier, so the
+	sentence reads the same in the log, the callout and the Ruling.
+*/
+export function countWord(countedValue) {
+	return countedValue >= 3 ? 'three' : 'two';
+}
+
+/*
+	narrateStake(ctx) -> "You stake Zolton: it counts two." / "The rival stakes Zolton:
+	it counts two." ctx: { you, worldName, countedValue }
+*/
+export function narrateStake(ctx = {}) {
+	const who = ctx.you ? 'You stake' : 'The rival stakes';
+	const where = ctx.worldName || 'a world';
+	return `${who} ${where}: it counts ${countWord(ctx.countedValue)}.`;
+}
+
+/*
 	narrateJudge(event, ctx) -> [sentence, ...] one per site plus a summary line.
-	ctx: { siteNames: {siteId: name}, you: 'A'|'B' }
+	ctx: { siteNames: {siteId: name}, counted: {siteId: countedValue}, you: 'A'|'B' }
+
+	A staked world names its count in the ruling sentence itself ("Zolton (counting two)
+	is yours"), since that is the moment the extra count is actually taken.
 */
 export function narrateJudge(event, ctx = {}) {
 	const you = ctx.you || 'A';
 	const names = ctx.siteNames || {};
+	const counted = ctx.counted || {};
 	const lines = [];
 	Object.keys(event.siteResults || {}).forEach((siteId) => {
 		const r = event.siteResults[siteId];
-		const name = names[siteId] || siteId;
+		// the engine's own arithmetic travels on the judge event; ctx.counted is the
+		// fallback for a caller holding it separately
+		const value = typeof r.countedValue === 'number' ? r.countedValue : (counted[siteId] || 1);
+		const base = names[siteId] || siteId;
+		const name = value > 1 ? `${base} (counting ${countWord(value)})` : base;
 		const a = formatHold(r.holdA);
 		const b = formatHold(r.holdB);
 		const mine = you === 'A' ? a : b;
