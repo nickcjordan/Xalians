@@ -38,6 +38,12 @@ variable "environment_variables" {
   default     = {}
 }
 
+variable "has_environment" {
+  description = "set true alongside environment_variables; keeps the environment block count known at plan time even when a variable value is not (see the environment block below)"
+  type        = bool
+  default     = false
+}
+
 
 
 
@@ -55,13 +61,17 @@ resource "aws_lambda_function" "lambda_function" {
   source_code_hash = var.lambda_archive_file_output_hash
   role             = var.iam_role_arn
 
-  # Only set when the map is non-empty: an environment block with an empty `variables`
+  # Only set when has_environment is true: an environment block with an empty `variables`
   # map is valid but shows as a diff against a function with no block at all, so most
-  # functions (which need no secrets) get no block rather than an empty one.
+  # functions (which need no secrets) get no block rather than an empty one. The block
+  # count is keyed off a plain boolean rather than length(var.environment_variables):
+  # when a value in the map is unknown at plan time (a random_password created in the
+  # same apply), the length is unknown too, Terraform plans zero blocks, applies one, and
+  # fails with "Provider produced inconsistent final plan" (seen 2026-09-10).
   dynamic "environment" {
-    for_each = length(var.environment_variables) > 0 ? [var.environment_variables] : []
+    for_each = var.has_environment ? [1] : []
     content {
-      variables = environment.value
+      variables = var.environment_variables
     }
   }
 }

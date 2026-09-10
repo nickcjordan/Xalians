@@ -289,6 +289,7 @@ module "generate_xalian_lambda_module" {
   apigw_lambda_route_key          = "GET /xalian"
   base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
   authorization_type              = "NONE"
+  has_environment                 = true
   environment_variables = {
     XALIAN_SIGNING_SECRET = random_password.xalian_signing_secret.result
   }
@@ -315,6 +316,7 @@ module "table_create_xalian_lambda_module" {
   base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
   authorization_type              = "JWT"
   authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
+  has_environment                 = true
   environment_variables = {
     XALIAN_SIGNING_SECRET = random_password.xalian_signing_secret.result
   }
