@@ -4,6 +4,7 @@ import { MAX_INSTABILITY, MAX_STRAIN } from './longReturnData';
 import { sceneArtFor } from './sceneArt';
 import { scoutPerformance } from './performanceVisuals';
 import { playGameSound } from './gameAudio';
+import BiIcon from './BiIcon';
 import './scoutTransition.css';
 
 function scoutBeats(action) {
@@ -28,7 +29,7 @@ function scoutBeats(action) {
 function Meter({ kind, before, after, active }) {
   const max = kind === 'energy' ? MAX_STRAIN : MAX_INSTABILITY;
   return <div className={`lr-scout-meter is-${kind}`} aria-label={`${kind}: ${active ? after : before} of ${max}`}>
-    <span><i className={`bi ${kind === 'energy' ? 'bi-lightning-charge-fill' : 'bi-building'}`} />{kind}</span>
+    <span><BiIcon cls={`bi ${kind === 'energy' ? 'bi-lightning-charge-fill' : 'bi-building'}`} />{kind}</span>
     <div aria-hidden="true">{Array.from({ length: max }, (_, index) => {
       const removed = index >= after && index < before;
       return <i className={`${index < after ? 'is-full' : removed && active ? 'is-draining' : index < before ? 'is-full' : 'is-empty'}`} key={index} />;
@@ -72,11 +73,11 @@ export default function ScoutTransition({ action, onComplete, soundEnabled = tru
     <div className="lr-scout-art" style={{ backgroundImage: `url(${art.src})` }} /><div className="lr-scout-vignette" />
     <header><small>{action.scene.deck} · field action</small><h2>{returning ? 'The scout returns' : 'Scouting ahead'}</h2></header>
     <div className="lr-scout-stage" aria-hidden="true">
-      <div className="lr-scout-origin"><i className="bi bi-people-fill" /></div>
+      <div className="lr-scout-origin"><BiIcon cls="bi bi-people-fill" /></div>
       <div className="lr-scout-trail"><i /><i /><i /><i /></div>
       <div className="lr-scout-performer"><XalianImage speciesName={action.scout.species} primaryType={action.scout.element.primary} fill="#070907" stroke="#cbf7dc" strokeWidth="1.2" unPadded /></div>
-      {(beat.kind === 'observe' || beat.kind === 'signal' || beat.kind === 'silence') && <div className={`lr-scout-effect is-${beat.kind}`}><i className={`bi ${beat.icon}`} /></div>}
-      {(beat.kind === 'depart' || beat.kind === 'observe') && <div className={`lr-scout-role-effect is-${performance.id}`}><i className={`bi ${performance.icon}`} /></div>}
+      {(beat.kind === 'observe' || beat.kind === 'signal' || beat.kind === 'silence') && <div className={`lr-scout-effect is-${beat.kind}`}><BiIcon cls={`bi ${beat.icon}`} /></div>}
+      {(beat.kind === 'depart' || beat.kind === 'observe') && <div className={`lr-scout-role-effect is-${performance.id}`}><BiIcon cls={`bi ${performance.icon}`} /></div>}
       {action.encounter && index >= nativeAt && <div className="lr-scout-native"><XalianImage speciesName={action.encounter.species} primaryType={action.encounter.element.primary} fill="#050705" stroke="#f2d25e" strokeWidth="1.3" unPadded /></div>}
     </div>
     <div className="lr-scout-hud">
@@ -84,7 +85,7 @@ export default function ScoutTransition({ action, onComplete, soundEnabled = tru
       <Meter kind="energy" before={energyBefore} after={energyAfter} active={index >= energyAt} />
       {returning && <Meter kind="stability" before={stabilityBefore} after={stabilityAfter} active={index >= stabilityAt} />}
     </div>
-    <section className="lr-scout-caption" key={`${index}-${beat.kind}`} aria-live="polite"><i className={`bi ${beat.icon}`} /><div><small>{final ? action.encounter ? 'Contact' : 'Scout action complete' : 'Scout action'}</small><strong>{beat.text}</strong></div><span>{index + 1}/{beats.length}</span></section>
-    <button ref={buttonRef} type="button" onClick={skip}>{final ? action.encounter ? 'Respond to encounter' : !returning && !action.result.relay ? 'Check scout status' : 'Review scout report' : 'Skip to outcome'} <i className="bi bi-arrow-right" /></button>
+    <section className="lr-scout-caption" key={`${index}-${beat.kind}`} aria-live="polite"><BiIcon cls={`bi ${beat.icon}`} /><div><small>{final ? action.encounter ? 'Contact' : 'Scout action complete' : 'Scout action'}</small><strong>{beat.text}</strong></div><span>{index + 1}/{beats.length}</span></section>
+    <button ref={buttonRef} type="button" onClick={skip}>{final ? action.encounter ? 'Respond to encounter' : !returning && !action.result.relay ? 'Check scout status' : 'Review scout report' : 'Skip to outcome'} <BiIcon cls="bi bi-arrow-right" /></button>
   </div>;
 }

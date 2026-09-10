@@ -5,12 +5,13 @@ import { buildActionSequence, eventIndexFor } from './actionSequence';
 import { sceneArtFor } from './sceneArt';
 import { methodPerformance } from './performanceVisuals';
 import { playGameSound } from './gameAudio';
+import BiIcon from './BiIcon';
 import './actionTransition.css';
 const icons = { move: 'bi-arrow-right', hazard: 'bi-lightning-charge-fill', support: 'bi-people-fill', companion: 'bi-person-check-fill', energy: 'bi-lightning-charge-fill', stability: 'bi-building-fill-exclamation', salvage: 'bi-box-seam', complete: 'bi-check-lg', encounter: 'bi-exclamation-diamond-fill', decision: 'bi-signpost-split-fill' };
 
 function PipMeter({ kind, label, max, before, after, eventAt, index }) {
   return <div className={`lr-sequence-meter is-${kind}`} aria-label={`${label}: ${index < eventAt ? before : after} of ${max}`}>
-    <span><i className={`bi ${kind === 'energy' ? 'bi-lightning-charge-fill' : 'bi-building'}`} /> {label}</span>
+    <span><BiIcon cls={`bi ${kind === 'energy' ? 'bi-lightning-charge-fill' : 'bi-building'}`} /> {label}</span>
     <div aria-hidden="true">{Array.from({ length: max }, (_, pip) => {
       const lost = pip >= after && pip < before;
       const state = !lost ? pip < after ? 'is-full' : 'is-empty' : index < eventAt ? 'is-full' : index === eventAt ? 'is-draining' : 'is-empty';
@@ -84,22 +85,23 @@ export default function ActionTransition({ action, onComplete, soundEnabled = tr
     <header className="lr-sequence-title"><span>{action.scene.deck}</span><h2>{encounter ? 'Something moves ahead' : action.route.title}</h2><p>{encounter ? action.route ? 'The crossing is interrupted' : `${action.lead.species} scouts alone` : action.method.label}</p></header>
 
     {!encounter && <aside className={`lr-sequence-annex${stabilityAt === index ? ' is-taking-hit' : ''}`}><PipMeter kind="stability" label="Annex stability" max={MAX_INSTABILITY} before={MAX_INSTABILITY - result.instabilityChange.before} after={MAX_INSTABILITY - result.instabilityChange.after} eventAt={stabilityAt} index={index} /></aside>}
-    {!encounter && <div className={`lr-sequence-salvage${salvageAt === index ? ' is-collecting' : ''}`} aria-label={`${index < salvageAt ? result.salvageAfter - result.salvage : result.salvageAfter} salvage carried`}><i className="bi bi-box-seam" /><strong>{index < salvageAt ? result.salvageAfter - result.salvage : result.salvageAfter}</strong></div>}
+    {!encounter && <div className={`lr-sequence-salvage${salvageAt === index ? ' is-collecting' : ''}`} aria-label={`${index < salvageAt ? result.salvageAfter - result.salvage : result.salvageAfter} salvage carried`}><BiIcon cls="bi bi-box-seam" /><strong>{index < salvageAt ? result.salvageAfter - result.salvage : result.salvageAfter}</strong></div>}
 
     <div className="lr-action-stage" aria-hidden="true">
       <div className="lr-action-path"><i /><i /><i /><i /><i /></div>
       <div className={`lr-action-creature is-lead${current.actorId === action.lead.id ? ' is-performing' : ''}${current.kind === 'hazard' ? ' is-hit' : ''}`}><XalianImage speciesName={action.lead.species} primaryType={action.lead.element.primary} fill="#080a08" stroke="#cbf7dc" strokeWidth="1" unPadded moreClasses="lr-action-silhouette" /></div>
       {action.support && <div className={`lr-action-creature is-support${current.kind === 'support' ? ' is-performing' : ''}`}><XalianImage speciesName={action.support.species} primaryType={action.support.element.primary} fill="#080a08" stroke="#c6d8d1" strokeWidth="1" unPadded moreClasses="lr-action-silhouette" /></div>}
+      {action.reserve && <div className="lr-action-creature is-reserve"><XalianImage speciesName={action.reserve.species} primaryType={action.reserve.element.primary} fill="#080a08" stroke="#91a29b" strokeWidth="1" unPadded moreClasses="lr-action-silhouette" /></div>}
       {action.companion && <div className={`lr-action-creature is-companion${current.kind === 'companion' ? ' is-performing' : ''}`}><XalianImage speciesName={action.companion.species} primaryType={action.companion.element.primary} fill="#060806" stroke="#74ffb0" strokeWidth="1.2" unPadded moreClasses="lr-action-silhouette" /></div>}
       {encounter && <div className={`lr-action-creature is-native${nativeVisible ? ' is-visible' : ''}`}><XalianImage speciesName={action.encounter.species} primaryType={action.encounter.element.primary} fill="#050705" stroke="#f2d25e" strokeWidth="1.4" unPadded moreClasses="lr-action-silhouette" /></div>}
-      {(current.kind === 'hazard' || current.kind === 'encounter' || current.kind === 'complete') && <div className="lr-action-impact" key={`${index}-${current.kind}`}><i className={`bi ${icons[current.kind]}`} /></div>}
-      {!encounter && current.kind === 'move' && <div className={`lr-performance-effect is-${performance.id}`} key={performance.id}><i className={`bi ${performance.icon}`} /></div>}
+      {(current.kind === 'hazard' || current.kind === 'encounter' || current.kind === 'complete') && <div className="lr-action-impact" key={`${index}-${current.kind}`}><BiIcon cls={`bi ${icons[current.kind]}`} /></div>}
+      {!encounter && current.kind === 'move' && <div className={`lr-performance-effect is-${performance.id}`} key={performance.id}><BiIcon cls={`bi ${performance.icon}`} /></div>}
     </div>
 
-    {!encounter && <div className="lr-sequence-crew"><CreatureStatus creature={action.lead} change={crewChanges.find((change) => change.creature.id === action.lead.id)} events={events} index={index} role="lead" />{action.support && <CreatureStatus creature={action.support} change={crewChanges.find((change) => change.creature.id === action.support.id)} events={events} index={index} role="support" />}</div>}
+    {!encounter && <div className="lr-sequence-crew"><CreatureStatus creature={action.lead} change={crewChanges.find((change) => change.creature.id === action.lead.id)} events={events} index={index} role="lead" />{action.support && <CreatureStatus creature={action.support} change={crewChanges.find((change) => change.creature.id === action.support.id)} events={events} index={index} role="support" />}{action.reserve && <CreatureStatus creature={action.reserve} change={crewChanges.find((change) => change.creature.id === action.reserve.id)} events={events} index={index} role="reserve · crosses safely" />}</div>}
 
-    {final && !encounter && <section className="lr-sequence-recap" aria-label="Crossing changes"><header><i className="bi bi-check-circle-fill" /><span><small>Crossing complete</small><strong>Changes held for review</strong></span></header><div>{recap.length ? recap.map((item) => <span className={`is-${item.kind}`} key={`${item.kind}-${item.label}`}><i className={`bi ${item.icon}`} /><small>{item.label}</small><strong>{item.value}</strong></span>) : <span className="is-safe"><i className="bi bi-shield-check" /><small>Crew and annex</small><strong>No resources lost</strong></span>}</div></section>}
-    <section className="lr-sequence-caption" key={`${index}-${current.kind}`} aria-live="polite"><i className={`bi ${icons[current.kind]}`} /><div><small>{current.kind === 'complete' ? 'Crossing complete' : current.kind === 'decision' ? 'Contact established' : 'In progress'}</small><strong>{current.message}</strong></div><span>{index + 1} / {events.length}</span></section>
-    <button ref={closeButtonRef} type="button" onClick={skip}>{final ? encounter ? 'Choose response' : 'Continue to result' : 'Skip to outcome'} <i className="bi bi-arrow-right" /></button>
+    {final && !encounter && <section className="lr-sequence-recap" aria-label="Crossing changes"><header><BiIcon cls="bi bi-check-circle-fill" /><span><small>Crossing complete</small><strong>Changes held for review</strong></span></header><div>{recap.length ? recap.map((item) => <span className={`is-${item.kind}`} key={`${item.kind}-${item.label}`}><BiIcon cls={`bi ${item.icon}`} /><small>{item.label}</small><strong>{item.value}</strong></span>) : <span className="is-safe"><BiIcon cls="bi bi-shield-check" /><small>Crew and annex</small><strong>No resources lost</strong></span>}</div></section>}
+    <section className="lr-sequence-caption" key={`${index}-${current.kind}`} aria-live="polite"><BiIcon cls={`bi ${icons[current.kind]}`} /><div><small>{current.kind === 'complete' ? 'Crossing complete' : current.kind === 'decision' ? 'Contact established' : 'In progress'}</small><strong>{current.message}</strong></div><span>{index + 1} / {events.length}</span></section>
+    <button ref={closeButtonRef} type="button" onClick={skip}>{final ? encounter ? 'Choose response' : 'Continue to result' : 'Skip to outcome'} <BiIcon cls="bi bi-arrow-right" /></button>
   </div>;
 }

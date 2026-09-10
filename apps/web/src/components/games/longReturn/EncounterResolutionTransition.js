@@ -4,6 +4,7 @@ import { MAX_INSTABILITY, MAX_STRAIN } from './longReturnData';
 import { buildEncounterResolutionSequence, encounterEventIndex } from './encounterSequence';
 import { sceneArtFor } from './sceneArt';
 import { playGameSound } from './gameAudio';
+import BiIcon from './BiIcon';
 import './encounterResolutionTransition.css';
 
 const eventIcons = {
@@ -14,7 +15,7 @@ const eventSounds = { response: 'commit', energy: 'energy', stability: 'stabilit
 
 function ReserveMeter({ kind, label, max, before, after, eventAt, index }) {
   return <div className={`lr-encounter-sequence-meter is-${kind}`} aria-label={`${label}: ${index < eventAt ? before : after} of ${max}`}>
-    <span><i className={`bi ${kind === 'energy' ? 'bi-lightning-charge-fill' : 'bi-building'}`} /><strong>{label}</strong><b>{index < eventAt ? before : after}/{max}</b></span>
+    <span><BiIcon cls={`bi ${kind === 'energy' ? 'bi-lightning-charge-fill' : 'bi-building'}`} /><strong>{label}</strong><b>{index < eventAt ? before : after}/{max}</b></span>
     <div aria-hidden="true">{Array.from({ length: max }, (_, pip) => {
       const lost = pip >= after && pip < before;
       const state = pip < after ? 'is-full' : lost && index < eventAt ? 'is-full' : lost && index === eventAt ? 'is-draining' : 'is-empty';
@@ -70,10 +71,10 @@ export default function EncounterResolutionTransition({ action, onComplete, soun
       <div className={`lr-encounter-sequence-creature is-actor${current.kind === 'response' ? ' is-acting' : ''}`}><XalianImage speciesName={action.actor.species} primaryType={action.actor.element.primary} fill="#050705" stroke="#c9f6dc" strokeWidth="1.1" unPadded /></div>
       {action.witness && <div className="lr-encounter-sequence-creature is-witness"><XalianImage speciesName={action.witness.species} primaryType={action.witness.element.primary} fill="#050705" stroke="#91b9aa" strokeWidth="1" unPadded /></div>}
       <div className={`lr-encounter-sequence-creature is-native is-${action.option.resolution}${action.option.companion ? ' is-companion' : ''}`}><XalianImage speciesName={action.native.species} primaryType={action.native.element.primary} fill="#050705" stroke="#f2d25e" strokeWidth="1.35" unPadded /></div>
-      <div className="lr-encounter-sequence-link"><i className={`bi ${action.presentation.identity.icon}`} /></div>
-      {outcome && <div className={`lr-encounter-sequence-outcome is-${current.kind}`} key={current.kind}><i className={`bi ${eventIcons[current.kind]}`} /></div>}
+      <div className="lr-encounter-sequence-link"><BiIcon cls={`bi ${action.presentation.identity.icon}`} /></div>
+      {outcome && <div className={`lr-encounter-sequence-outcome is-${current.kind}`} key={current.kind}><BiIcon cls={`bi ${eventIcons[current.kind]}`} /></div>}
     </div>
-    <section className="lr-sequence-caption" key={`${index}-${current.kind}`} aria-live="polite"><i className={`bi ${eventIcons[current.kind]}`} /><div><small>{outcome ? 'Encounter outcome' : 'Response in progress'}</small><strong>{current.message}</strong></div><span>{index + 1} / {events.length}</span></section>
-    <button ref={buttonRef} type="button" onClick={advance}>{final ? 'See encounter result' : 'Skip to outcome'} <i className="bi bi-arrow-right" /></button>
+    <section className="lr-sequence-caption" key={`${index}-${current.kind}`} aria-live="polite"><BiIcon cls={`bi ${eventIcons[current.kind]}`} /><div><small>{outcome ? 'Encounter outcome' : 'Response in progress'}</small><strong>{current.message}</strong></div><span>{index + 1} / {events.length}</span></section>
+    <button ref={buttonRef} type="button" onClick={advance}>{final ? 'See encounter result' : 'Skip to outcome'} <BiIcon cls="bi bi-arrow-right" /></button>
   </div>;
 }

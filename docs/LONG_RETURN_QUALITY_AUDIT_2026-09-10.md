@@ -36,7 +36,7 @@ Release interpretation: internal playable. The public-demo threshold is not yet 
 
 ## Verification record
 
-- Automated: 507 tests passed across 38 test files.
+- Automated: 991 tests passed across 44 web test files after rebasing into the current `apps/web` Vite/Lucide frontend workspace.
 - Build: Vite production build passed.
 - Browser: no Long Return runtime errors; only the pre-existing anonymous-user authentication log appeared.
 - Live URL: `http://127.0.0.1:4173/long-return`.

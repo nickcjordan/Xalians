@@ -27,11 +27,12 @@ import RouteMap from './RouteMap';
 import { BRIEFING_ART, sceneArtFor } from './sceneArt';
 import { playGameSound, readSoundEnabled, writeSoundEnabled } from './gameAudio';
 import { encounterChoicePresentation } from './encounterPresentation';
+import SharedBiIcon from './BiIcon';
 
 // Bootstrap Icons retired in the stack migration (docs/design/frontend-stack-migration.md);
 // this maps the old `bi-*` glyph names this file used onto their lucide-react equivalents so
 // every call site that built a `bi-*` class string (many of them dynamically, per-branch) can
-// keep doing exactly that and hand it to <BiIcon cls={...} /> instead of <i className={...} />.
+// keep doing exactly that and hand it to <BiIcon cls={...} /> instead of <BiIcon cls={...} />.
 const BI_ICON_MAP = {
   'bi-arrow-down-right-circle': ArrowDownRight,
   'bi-arrow-left-right': ArrowLeftRight,
@@ -98,15 +99,11 @@ const BI_ICON_MAP = {
   'bi-x-lg': X,
 };
 
-// Drop-in for the old `<i className={`bi ${...}`} />` (or the static `<i className="bi bi-x" />`)
+// Drop-in for the old `<BiIcon cls={`bi ${...}`} />` (or the static `<BiIcon cls="bi bi-x" />`)
 // pattern: `cls` is that same string (icon token plus any modifier classes, e.g. 'bi-eye-fill
 // is-filled'), so every call site could keep its existing icon-selection logic unchanged.
 function BiIcon({ cls, className, ...rest }) {
-  const tokens = (cls || '').split(/\s+/).filter(Boolean);
-  const iconToken = tokens.find((t) => t.startsWith('bi-'));
-  const extraClasses = tokens.filter((t) => t !== iconToken);
-  const Icon = (iconToken && BI_ICON_MAP[iconToken]) || CircleHelp;
-  return <Icon className={[...extraClasses, className].filter(Boolean).join(' ')} aria-hidden="true" {...rest} />;
+  return <SharedBiIcon cls={cls} className={className} {...rest} />;
 }
 
 const initialCrew = ['graviclaw-213', 'chromocat-088', 'hippochamp-041'];
@@ -204,7 +201,7 @@ function SalvageGauge({ value, label = 'Salvage recovered' }) {
   const filled = Math.max(0, Math.min(10, value));
   return (
     <span className="lr-salvage-gauge" aria-label={`${label}: ${value}`}>
-      {Array.from({ length: 10 }, (_, index) => <i key={index} className={`bi ${index < filled ? 'bi-box-seam is-filled' : 'bi-box-seam'}`} aria-hidden="true" />)}
+      {Array.from({ length: 10 }, (_, index) => <BiIcon key={index} cls={`bi ${index < filled ? 'bi-box-seam is-filled' : 'bi-box-seam'}`} aria-hidden="true" />)}
     </span>
   );
 }
@@ -214,7 +211,7 @@ const scoutRoleIcon = (role) => role === 'Quiet scout' ? 'bi-eye-slash-fill' : r
 function CurrentAction({ stage, title, hint, icon, resolved = false, onHelp }) {
   return (
     <section className={`lr-current-action${resolved ? ' is-resolved' : ''}`} aria-live="polite" tabIndex="-1" data-wizard-focus>
-      <i className={`bi ${icon}`} />
+      <BiIcon cls={`bi ${icon}`} />
       <div><span>{stage}</span><strong>{title}</strong><small>{hint}</small></div>
       <button type="button" onClick={onHelp}><BiIcon cls="bi-info-circle" /> Game rules</button>
     </section>
@@ -365,19 +362,19 @@ function SimpleWizardChrome({ scene, sceneIndex, crew, strain, pressure, salvage
     <div className="lr-wizard-topline">
       <div><small>Scene {sceneIndex + 1} of {MISSION.scenes.length} · {scene.deck}</small><h1>{scene.title}</h1></div>
       <div className="lr-wizard-tools">
-        <span className="is-salvage" title="Salvage carried"><i className="bi bi-box-seam" /><b>{salvage}</b></span>
-        <button type="button" ref={journalButtonRef} onClick={onJournal} title="Review choices and lasting changes" aria-label={`Expedition log, ${journalCount} ${journalCount === 1 ? 'crossing' : 'crossings'} recorded`}><i className="bi bi-journal-text" /><span>Log{journalCount ? ` · ${journalCount}` : ''}</span></button>
-        <button type="button" aria-pressed={soundEnabled} title={soundEnabled ? 'Mute expedition sounds' : 'Enable expedition sounds'} onClick={onToggleSound}><i className={`bi ${soundEnabled ? 'bi-volume-up-fill' : 'bi-volume-mute-fill'}`} /><span>Sound</span></button>
-        <button type="button" onClick={onHelp}><i className="bi bi-question-circle" /><span>Rules</span></button>
+        <span className="is-salvage" title="Salvage carried"><BiIcon cls="bi bi-box-seam" /><b>{salvage}</b></span>
+        <button type="button" ref={journalButtonRef} onClick={onJournal} title="Review choices and lasting changes" aria-label={`Expedition log, ${journalCount} ${journalCount === 1 ? 'crossing' : 'crossings'} recorded`}><BiIcon cls="bi bi-journal-text" /><span>Log{journalCount ? ` · ${journalCount}` : ''}</span></button>
+        <button type="button" aria-pressed={soundEnabled} title={soundEnabled ? 'Mute expedition sounds' : 'Enable expedition sounds'} onClick={onToggleSound}><BiIcon cls={`bi ${soundEnabled ? 'bi-volume-up-fill' : 'bi-volume-mute-fill'}`} /><span>Sound</span></button>
+        <button type="button" onClick={onHelp}><BiIcon cls="bi bi-question-circle" /><span>Rules</span></button>
       </div>
     </div>
-    <div className="lr-wizard-objective"><i className="bi bi-crosshair" /><span><small>Current objective</small><strong>{scene.goal}</strong></span></div>
+    <div className="lr-wizard-objective"><BiIcon cls="bi bi-crosshair" /><span><small>Current objective</small><strong>{scene.goal}</strong></span></div>
     <div className="lr-wizard-resources" aria-label="Expedition resources">
-      <span className="is-stability"><i className="bi bi-building" /><b>{MAX_INSTABILITY - pressure}</b><small>Stability</small></span>
-      {crew.map((member) => <span key={member.id} title={`${member.species}: ${MAX_STRAIN - (strain[member.id] || 0)} energy`}><i className="bi bi-lightning-charge-fill" /><b>{MAX_STRAIN - (strain[member.id] || 0)}</b><small>{member.species}</small></span>)}
+      <span className="is-stability"><BiIcon cls="bi bi-building" /><b>{MAX_INSTABILITY - pressure}</b><small>Stability</small></span>
+      {crew.map((member) => <span key={member.id} title={`${member.species}: ${MAX_STRAIN - (strain[member.id] || 0)} energy`}><BiIcon cls="bi bi-lightning-charge-fill" /><b>{MAX_STRAIN - (strain[member.id] || 0)}</b><small>{member.species}</small></span>)}
     </div>
     <ol className="lr-wizard-progress" aria-label="Expedition decision steps">
-      {WIZARD_STEPS.map((step, index) => <li key={step.label} className={`${index === active ? 'is-current' : ''}${index < active ? ' is-complete' : ''}`} aria-current={index === active ? 'step' : undefined}><i className={`bi ${index < active ? 'bi-check-lg' : step.icon}`} /><span>{step.label}</span></li>)}
+      {WIZARD_STEPS.map((step, index) => <li key={step.label} className={`${index === active ? 'is-current' : ''}${index < active ? ' is-complete' : ''}`} aria-current={index === active ? 'step' : undefined}><BiIcon cls={`bi ${index < active ? 'bi-check-lg' : step.icon}`} /><span>{step.label}</span></li>)}
     </ol>
   </header>;
 }
@@ -445,7 +442,7 @@ function supportRoleForPlan(plan) {
   const alone = plan.rawMethodScore - plan.difficulty;
   if (alone < 0 && plan.margin >= 0) return 'Turns a failed attempt into a passage';
   if (alone < 14 && plan.margin >= 14) return 'Prevents the lead from losing 1 energy';
-  return 'Stands ready if the lead loses control';
+  return 'Backup role · no energy spent unless needed';
 }
 
 function MechanicsModal({ open, onClose }) {
@@ -459,15 +456,15 @@ function MechanicsModal({ open, onClose }) {
   return (
     <div className="lr-modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
       <section className="lr-detail-modal lr-mechanics-modal" role="dialog" aria-modal="true" aria-labelledby="lr-mechanics-title" onKeyDown={trapDialogTab}>
-        <button type="button" className="lr-modal-close" onClick={onClose} aria-label="Close crossing rules" autoFocus><i className="bi bi-x-lg" /></button>
+        <button type="button" className="lr-modal-close" onClick={onClose} aria-label="Close crossing rules" autoFocus><BiIcon cls="bi bi-x-lg" /></button>
         <p className="g-kicker">How to play</p>
         <h2 id="lr-mechanics-title">How every crossing works</h2>
         <CrossingPrimer detailed />
         <div className="lr-mechanics-survival">
-          <div><i className="bi bi-heart-fill" /><span><strong>Readiness states</strong>At 3 energy a creature is Worn and contributes less; at 1 it is Critical and cannot scout; at 0 it is Spent and cannot act.</span></div>
-          <div><i className="bi bi-building" /><span><strong>Annex stability</strong>This is the mission’s external safety reserve. Failing structure and waking systems drain it. At 0, the crew must extract.</span></div>
-          <div><i className="bi bi-lightning-charge-fill" /><span><strong>Creature energy</strong>Actions consume energy. At 0, a creature is spent and cannot act. The run ends if fewer than two crew members can continue.</span></div>
-          <div><i className="bi bi-box-seam" /><span><strong>Salvage</strong>Keep it for extraction, or spend it between crossings: restore energy, brace stability, or rebuild a used command override. One field action per crossing. Spent creatures cannot be revived.</span></div>
+          <div><BiIcon cls="bi bi-heart-fill" /><span><strong>Readiness states</strong>At 3 energy a creature is Worn and contributes less; at 1 it is Critical and cannot scout; at 0 it is Spent and cannot act.</span></div>
+          <div><BiIcon cls="bi bi-building" /><span><strong>Annex stability</strong>This is the mission’s external safety reserve. Failing structure and waking systems drain it. At 0, the crew must extract.</span></div>
+          <div><BiIcon cls="bi bi-lightning-charge-fill" /><span><strong>Creature energy</strong>Actions consume energy. At 0, a creature is spent and cannot act. The run ends if fewer than two crew members can continue.</span></div>
+          <div><BiIcon cls="bi bi-box-seam" /><span><strong>Salvage</strong>Keep it for extraction, or spend it between crossings: restore energy, brace stability, or rebuild a used command override. One field action per crossing. Spent creatures cannot be revived.</span></div>
         </div>
         <button type="button" className="g-btn g-btn--primary" onClick={onClose}>Return to mission</button>
       </section>
@@ -489,29 +486,29 @@ function MissionMemoryModal({ open, onClose, entries, runFlags, companion, salva
   return (
     <div className="lr-modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
       <section className="lr-detail-modal lr-memory-modal" role="dialog" aria-modal="true" aria-labelledby="lr-memory-title" onKeyDown={trapDialogTab}>
-        <button type="button" className="lr-modal-close" onClick={onClose} aria-label="Close expedition log" autoFocus><i className="bi bi-x-lg" /></button>
+        <button type="button" className="lr-modal-close" onClick={onClose} aria-label="Close expedition log" autoFocus><BiIcon cls="bi bi-x-lg" /></button>
         <p className="g-kicker">Mission memory</p>
         <h2 id="lr-memory-title">Your expedition so far</h2>
         <div className="lr-memory-summary" aria-label={`${entries.length} crossings, ${salvage} salvage, ${MAX_INSTABILITY - pressure} stability remaining`}>
-          <span><i className="bi bi-signpost-2-fill" /><b>{entries.length}</b><small>Crossings</small></span>
-          <span><i className="bi bi-box-seam" /><b>{salvage}</b><small>Salvage</small></span>
-          <span><i className="bi bi-building" /><b>{MAX_INSTABILITY - pressure}</b><small>Stability</small></span>
-          <span className={objectiveReached ? 'is-secured' : ''}><i className={`bi ${objectiveReached ? 'bi-check-circle-fill' : 'bi-bullseye'}`} /><b>{objectiveReached ? 'YES' : 'NO'}</b><small>Index</small></span>
+          <span><BiIcon cls="bi bi-signpost-2-fill" /><b>{entries.length}</b><small>Crossings</small></span>
+          <span><BiIcon cls="bi bi-box-seam" /><b>{salvage}</b><small>Salvage</small></span>
+          <span><BiIcon cls="bi bi-building" /><b>{MAX_INSTABILITY - pressure}</b><small>Stability</small></span>
+          <span className={objectiveReached ? 'is-secured' : ''}><BiIcon cls={`bi ${objectiveReached ? 'bi-check-circle-fill' : 'bi-bullseye'}`} /><b>{objectiveReached ? 'YES' : 'NO'}</b><small>Index</small></span>
         </div>
-        {!entries.length ? <div className="lr-memory-empty"><i className="bi bi-compass" /><strong>The first crossing will appear here.</strong><span>Your route, costs, haul, and lasting consequence will be recorded without interrupting play.</span></div> : <ol className="lr-memory-timeline">
+        {!entries.length ? <div className="lr-memory-empty"><BiIcon cls="bi bi-compass" /><strong>The first crossing will appear here.</strong><span>Your route, costs, haul, and lasting consequence will be recorded without interrupting play.</span></div> : <ol className="lr-memory-timeline">
           {entries.map((entry, index) => <li key={entry.id}>
-            <span className="lr-memory-node"><i className="bi bi-check-lg" /></span>
-            <div className="lr-memory-choice"><small>{index + 1} · {entry.scene}</small><strong>{entry.route}</strong>{entry.fieldWork && <em><i className="bi bi-tools" /> {entry.fieldWork}</em>}</div>
+            <span className="lr-memory-node"><BiIcon cls="bi bi-check-lg" /></span>
+            <div className="lr-memory-choice"><small>{index + 1} · {entry.scene}</small><strong>{entry.route}</strong>{entry.fieldWork && <em><BiIcon cls="bi bi-tools" /> {entry.fieldWork}</em>}</div>
             <div className="lr-memory-deltas" aria-label={`${entry.energy || 0} energy spent, ${entry.stability || 0} stability lost, ${entry.salvage} salvage recovered`}>
-              {entry.energy > 0 && <span className="is-energy"><i className="bi bi-lightning-charge-fill" />−{entry.energy}</span>}
-              {entry.stability > 0 && <span className="is-stability"><i className="bi bi-building" />−{entry.stability}</span>}
-              <span className="is-salvage"><i className="bi bi-box-seam" />+{entry.salvage}</span>
+              {entry.energy > 0 && <span className="is-energy"><BiIcon cls="bi bi-lightning-charge-fill" />−{entry.energy}</span>}
+              {entry.stability > 0 && <span className="is-stability"><BiIcon cls="bi bi-building" />−{entry.stability}</span>}
+              <span className="is-salvage"><BiIcon cls="bi bi-box-seam" />+{entry.salvage}</span>
             </div>
           </li>)}
         </ol>}
         {(consequences.length > 0 || companion) && <section className="lr-memory-lasting"><span>Still affecting the mission</span><div>
-          {consequences.map((consequence) => <article key={consequence.id}><i className="bi bi-diagram-3-fill" /><strong>{consequence.label}</strong><small>{consequence.future}</small></article>)}
-          {companion && <article className={companion.ready ? 'is-ready' : 'is-spent'}><i className="bi bi-person-check-fill" /><strong>{companion.creature.species} · field ally</strong><small>{companion.ready ? 'Ready for one intervention.' : 'Its intervention has been used.'}</small></article>}
+          {consequences.map((consequence) => <article key={consequence.id}><BiIcon cls="bi bi-diagram-3-fill" /><strong>{consequence.label}</strong><small>{consequence.future}</small></article>)}
+          {companion && <article className={companion.ready ? 'is-ready' : 'is-spent'}><BiIcon cls="bi bi-person-check-fill" /><strong>{companion.creature.species} · field ally</strong><small>{companion.ready ? 'Ready for one intervention.' : 'Its intervention has been used.'}</small></article>}
         </div></section>}
         <button type="button" className="g-btn g-btn--primary" onClick={onClose}>Return to current decision</button>
       </section>
@@ -530,7 +527,7 @@ function MethodDetailModal({ forecast, lead, support, route, onClose }) {
   return (
     <div className="lr-modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
       <section className="lr-detail-modal" role="dialog" aria-modal="true" aria-labelledby="lr-method-detail-title" onKeyDown={trapDialogTab}>
-        <button type="button" className="lr-modal-close" onClick={onClose} aria-label="Close method details" autoFocus><i className="bi bi-x-lg" /></button>
+        <button type="button" className="lr-modal-close" onClick={onClose} aria-label="Close method details" autoFocus><BiIcon cls="bi bi-x-lg" /></button>
         <p className="g-kicker">Calculation details</p>
         <h2 id="lr-method-detail-title">{forecast.method.label}</h2>
         <div className="lr-detail-equation">
@@ -632,7 +629,7 @@ function RouteCard({ route, selected, onSelect, onPreview, onPreviewEnd, scan })
   const methodKeys = [...new Set(route.methods.map((method) => method.key))];
   return (
     <button type="button" className={`lr-route${selected ? ' lr-route--selected' : ''}`} onClick={onSelect} onMouseEnter={onPreview} onMouseLeave={onPreviewEnd} onFocus={onPreview} onBlur={onPreviewEnd} aria-pressed={selected}>
-      <span className="lr-route-select"><i className={`bi ${selected ? 'bi-record-circle-fill' : 'bi-circle'}`} /></span>
+      <span className="lr-route-select"><BiIcon cls={`bi ${selected ? 'bi-record-circle-fill' : 'bi-circle'}`} /></span>
       <div className="lr-route-title-row">
         <h3>{route.title}</h3>
         <span className="lr-difficulty">Target {route.difficulty}</span>
@@ -655,7 +652,7 @@ function RouteCard({ route, selected, onSelect, onPreview, onPreviewEnd, scan })
         </div>
       ))}
       <div className="lr-route-methods"><span>Best tools</span><div>{methodKeys.map((key) => <b key={key}>{key}</b>)}</div></div>
-      <div className="lr-route-cost"><span><i className="bi bi-building" /> Instability +{route.pressure}</span><span><i className="bi bi-box-seam" /> Salvage {route.salvage}</span></div>
+      <div className="lr-route-cost"><span><BiIcon cls="bi bi-building" /> Instability +{route.pressure}</span><span><BiIcon cls="bi bi-box-seam" /> Salvage {route.salvage}</span></div>
     </button>
   );
 }
@@ -1069,7 +1066,7 @@ function LongReturnGame() {
       salvageAfter: salvage + result.salvage
     };
 
-    setActionTransition({ type: 'crossing', scene, route, lead: actingLead, support: actingSupport, method: actingMethod, result, companion: companionHelp && companion ? companion.creature : null });
+    setActionTransition({ type: 'crossing', scene, route, lead: actingLead, support: actingSupport, reserve: crew.find((member) => member.id !== actingLead.id && member.id !== actingSupport.id), method: actingMethod, result, companion: companionHelp && companion ? companion.creature : null });
 
     setLeadId(actingLead.id); setSupportId(actingSupport.id); setMethodId(actingMethod.id);
     setPressure(nextPressure);
@@ -1137,7 +1134,7 @@ function LongReturnGame() {
   if (!started) {
     return (
       <main className={`lr-shell lr-mode-${guidanceLevel}`}>
-        {savedCheckpoint && <section className="lr-resume-card"><i className="bi bi-bookmark-check" /><div><strong>Your expedition is waiting</strong><p>{savedCheckpoint.phase === 'result' ? `Checkpoint after crossing ${savedCheckpoint.sceneIndex + 1}: ${MISSION.scenes[savedCheckpoint.sceneIndex].title}` : 'Checkpoint at annex entry'}</p><small>Saved in this browser. Any unfinished crossing restarts from this checkpoint.</small></div><button type="button" className="g-btn g-btn--primary" onClick={resumeExpedition}>Resume expedition <i className="bi bi-arrow-right" /></button></section>}
+        {savedCheckpoint && <section className="lr-resume-card"><BiIcon cls="bi bi-bookmark-check" /><div><strong>Your expedition is waiting</strong><p>{savedCheckpoint.phase === 'result' ? `Checkpoint after crossing ${savedCheckpoint.sceneIndex + 1}: ${MISSION.scenes[savedCheckpoint.sceneIndex].title}` : 'Checkpoint at annex entry'}</p><small>Saved in this browser. Any unfinished crossing restarts from this checkpoint.</small></div><button type="button" className="g-btn g-btn--primary" onClick={resumeExpedition}>Resume expedition <BiIcon cls="bi bi-arrow-right" /></button></section>}
         <section className="lr-briefing g-panel g-panel--bolted" style={{ '--briefing-art': `url(${BRIEFING_ART})` }}>
           <div className="lr-briefing-hardware" aria-hidden="true"><i /><i /><i /><i /></div>
           <div className="lr-briefing-copy">
@@ -1191,7 +1188,7 @@ function LongReturnGame() {
           <div className="lr-launch-row">
             <p><BiIcon cls="bi-info-circle" /> Prototype records are authored for this mission from the ratified creature schema.</p>
             <button className="g-btn g-btn--primary lr-launch" type="button" disabled={selectedCrew.length !== 3} title={selectedCrew.length !== 3 ? `Choose ${3 - selectedCrew.length} more creature${3 - selectedCrew.length === 1 ? '' : 's'}` : 'Begin the expedition'} onClick={startExpedition}>
-              {selectedCrew.length === 3 ? savedCheckpoint ? 'Replace checkpoint & start new expedition' : 'Seal Crew & Enter Annex' : `Choose ${3 - selectedCrew.length} More`} <i className={`bi ${selectedCrew.length === 3 ? 'bi-arrow-right' : 'bi-lock-fill'}`} />
+              {selectedCrew.length === 3 ? savedCheckpoint ? 'Replace checkpoint & start new expedition' : 'Seal Crew & Enter Annex' : `Choose ${3 - selectedCrew.length} More`} <BiIcon cls={`bi ${selectedCrew.length === 3 ? 'bi-arrow-right' : 'bi-lock-fill'}`} />
             </button>
           </div>
         </section>
@@ -1207,7 +1204,7 @@ function LongReturnGame() {
       <main className="lr-shell lr-end-shell">
         <section className={`g-panel g-panel--bolted lr-end-card lr-end-card--${outcome.tone}${success ? ' lr-end-card--success' : ''}`} style={{ '--end-art': `url(${sceneArtFor(scene).src})` }}>
           <p className="g-kicker">Mission report / {MISSION.id}</p>
-          <div className="lr-end-seal"><i className={`bi ${outcome.icon}`} /></div>
+          <div className="lr-end-seal"><BiIcon cls={`bi ${outcome.icon}`} /></div>
           <span className="lr-end-outcome">{outcome.label}</span>
           <h1 className="g-title">{outcome.title}</h1>
           <p className="lr-end-copy">{outcome.copy}</p>
@@ -1249,8 +1246,8 @@ function LongReturnGame() {
       <header className="lr-mission-head">
         <div><p className="g-kicker">{MISSION.location}</p><h1>{MISSION.title}</h1></div>
         <div className="lr-head-readouts">
-          <button type="button" className="lr-sound-toggle" aria-pressed={soundEnabled} title={soundEnabled ? 'Mute expedition sounds' : 'Enable expedition sounds'} onClick={() => { const next = !soundEnabled; setSoundEnabled(next); writeSoundEnabled(next); playGameSound('select', next); }}><i className={`bi ${soundEnabled ? 'bi-volume-up-fill' : 'bi-volume-mute-fill'}`} /><span>{soundEnabled ? 'Sound on' : 'Sound off'}</span></button>
-          <button type="button" className="lr-rules-button" onClick={() => setMechanicsOpen(true)}><i className="bi bi-question-circle" /> How crossings work</button>
+          <button type="button" className="lr-sound-toggle" aria-pressed={soundEnabled} title={soundEnabled ? 'Mute expedition sounds' : 'Enable expedition sounds'} onClick={() => { const next = !soundEnabled; setSoundEnabled(next); writeSoundEnabled(next); playGameSound('select', next); }}><BiIcon cls={`bi ${soundEnabled ? 'bi-volume-up-fill' : 'bi-volume-mute-fill'}`} /><span>{soundEnabled ? 'Sound on' : 'Sound off'}</span></button>
+          <button type="button" className="lr-rules-button" onClick={() => setMechanicsOpen(true)}><BiIcon cls="bi bi-question-circle" /> How crossings work</button>
           <Meter value={pressure} max={MAX_INSTABILITY} label="Annex stability" danger={pressure >= 7} depleted />
           <div className={`lr-counter lr-salvage-counter${motionCue && motionCue.salvage ? ' is-changing' : ''}`} title="Spend salvage on recovery and field repairs between crossings, or bank it on extraction."><span>Salvage carried</span><strong>{salvage}</strong>{motionCue && !!motionCue.salvage && <em key={motionCue.id}>{signed(motionCue.salvage)}</em>}</div>
           <div className="lr-counter"><span>Commands</span><strong>{commands}</strong></div>
@@ -1258,7 +1255,7 @@ function LongReturnGame() {
       </header>
 
       <MissionTrack sceneIndex={sceneIndex} objectiveReached={objectiveReached} />
-      <details className={`lr-checkpoint-indicator${saveStatus === 'unavailable' ? ' is-warning' : ''}`}><summary><i className={`bi ${saveStatus === 'unavailable' ? 'bi-exclamation-triangle' : 'bi-bookmark-check'}`} /> {saveStatus === 'unavailable' ? 'Saving unavailable' : savedCheckpoint && savedCheckpoint.phase === 'result' ? `Checkpoint saved · crossing ${savedCheckpoint.sceneIndex + 1}` : 'Checkpoint saved · annex entry'}</summary><p>{saveStatus === 'unavailable' ? 'This browser could not save your expedition. Keep this tab open to continue the current run.' : 'Saved in this browser after crossings and field work. Reloading during a crossing returns to this checkpoint.'}</p></details>
+      <details className={`lr-checkpoint-indicator${saveStatus === 'unavailable' ? ' is-warning' : ''}`}><summary><BiIcon cls={`bi ${saveStatus === 'unavailable' ? 'bi-exclamation-triangle' : 'bi-bookmark-check'}`} /> {saveStatus === 'unavailable' ? 'Saving unavailable' : savedCheckpoint && savedCheckpoint.phase === 'result' ? `Checkpoint saved · crossing ${savedCheckpoint.sceneIndex + 1}` : 'Checkpoint saved · annex entry'}</summary><p>{saveStatus === 'unavailable' ? 'This browser could not save your expedition. Keep this tab open to continue the current run.' : 'Saved in this browser after crossings and field work. Reloading during a crossing returns to this checkpoint.'}</p></details>
       <MissionJournal entries={journal} />
 
       {guidanceLevel === 'simple' && <SimpleRunStatus crew={crew} strain={strain} pressure={pressure} objectiveReached={objectiveReached} companion={companion} motionCue={motionCue} />}
@@ -1340,38 +1337,38 @@ function LongReturnGame() {
                     const selected = encounterOptionId === option.id;
                     return <button type="button" key={option.id} className={`${option.recommended ? 'is-recommended' : ''}${selected ? ' is-selected' : ''}`} aria-pressed={guidanceLevel === 'simple' ? selected : undefined} title={guidanceLevel === 'simple' ? option.summary : undefined} onClick={() => guidanceLevel === 'simple' ? setEncounterOptionId(option.id) : resolveEncounter(option)}>
                       <span className="lr-encounter-choice-head">
-                        <i className={`bi ${presentation.identity.icon}`} />
+                        <BiIcon cls={`bi ${presentation.identity.icon}`} />
                         <span><small>{presentation.identity.label}</small><strong>{option.label}</strong></span>
                         {option.recommended && <em>Recommended</em>}
                       </span>
                       <span className="lr-encounter-choice-path">
-                        <span className={`is-action is-${presentation.identity.tone}`}><i className={`bi ${presentation.identity.icon}`} /><small>Response</small><strong>{presentation.identity.label}</strong></span>
-                        <i className="bi bi-chevron-right" />
+                        <span className={`is-action is-${presentation.identity.tone}`}><BiIcon cls={`bi ${presentation.identity.icon}`} /><small>Response</small><strong>{presentation.identity.label}</strong></span>
+                        <BiIcon cls="bi bi-chevron-right" />
                         <span className={`is-cost${!strainCost && !instabilityCost ? ' is-clear' : ''}`}>
-                          {!strainCost && !instabilityCost ? <><i className="bi bi-shield-check" /><small>Immediate cost</small><strong>None</strong></> : <>
-                            <span className="lr-encounter-cost-icons">{strainCost > 0 && <b><i className="bi bi-lightning-charge-fill" />−{strainCost}</b>}{instabilityCost > 0 && <b><i className="bi bi-building" />−{instabilityCost}</b>}</span>
+                          {!strainCost && !instabilityCost ? <><BiIcon cls="bi bi-shield-check" /><small>Immediate cost</small><strong>None</strong></> : <>
+                            <span className="lr-encounter-cost-icons">{strainCost > 0 && <b><BiIcon cls="bi bi-lightning-charge-fill" />−{strainCost}</b>}{instabilityCost > 0 && <b><BiIcon cls="bi bi-building" />−{instabilityCost}</b>}</span>
                             <small>Immediate cost</small><strong>{strainCost && instabilityCost ? 'Energy + stability' : strainCost ? `${affectedCreature ? affectedCreature.species : 'Crew'} energy` : 'Annex stability'}</strong>
                           </>}
                         </span>
-                        <i className="bi bi-chevron-right" />
-                        <span className={`is-outcome is-${presentation.outcome.tone}`}><i className={`bi ${presentation.outcome.icon}`} /><small>Afterward</small><strong>{presentation.outcome.label}</strong></span>
+                        <BiIcon cls="bi bi-chevron-right" />
+                        <span className={`is-outcome is-${presentation.outcome.tone}`}><BiIcon cls={`bi ${presentation.outcome.icon}`} /><small>Afterward</small><strong>{presentation.outcome.label}</strong></span>
                       </span>
                       {guidanceLevel !== 'simple' && <p>{option.summary}</p>}
-                      <span className="lr-encounter-choice-state"><i className={`bi ${selected ? 'bi-check-circle-fill' : 'bi-circle'}`} /> {selected ? 'Selected' : 'Preview response'}</span>
+                      <span className="lr-encounter-choice-state"><BiIcon cls={`bi ${selected ? 'bi-check-circle-fill' : 'bi-circle'}`} /> {selected ? 'Selected' : 'Preview response'}</span>
                     </button>;
                   })}
                 </div>
                 {guidanceLevel === 'simple' && <div className="lr-encounter-commit-bar">
-                  <span>{encounterOptionId ? <><i className="bi bi-check-circle-fill" /><small>Selected response</small><strong>{activeEncounterOptions.find((option) => option.id === encounterOptionId)?.label}</strong></> : <><i className="bi bi-cursor-fill" /><strong>Choose a response above</strong></>}</span>
-                  <button type="button" className="g-btn g-btn--primary" disabled={!encounterOptionId} onClick={() => resolveEncounter(activeEncounterOptions.find((option) => option.id === encounterOptionId))}>{encounterOptionId ? 'Take this action' : 'Select a response'} <i className="bi bi-arrow-right" /></button>
+                  <span>{encounterOptionId ? <><BiIcon cls="bi bi-check-circle-fill" /><small>Selected response</small><strong>{activeEncounterOptions.find((option) => option.id === encounterOptionId)?.label}</strong></> : <><BiIcon cls="bi bi-cursor-fill" /><strong>Choose a response above</strong></>}</span>
+                  <button type="button" className="g-btn g-btn--primary" disabled={!encounterOptionId} onClick={() => resolveEncounter(activeEncounterOptions.find((option) => option.id === encounterOptionId))}>{encounterOptionId ? 'Take this action' : 'Select a response'} <BiIcon cls="bi bi-arrow-right" /></button>
                 </div>}
               </> : <>
-                <div className="lr-encounter-result-head"><i className={`bi ${encounterState.result.companion ? 'bi-person-check-fill' : encounterState.result.resolution === 'detour' ? 'bi-arrow-return-right' : 'bi-shield-check'}`} /><div><span>Encounter resolved</span><h3>{encounterState.result.companion ? 'The native chooses to follow' : encounterState.result.resolution === 'unresolved' ? 'The scout returns with a warning' : encounterState.result.resolution === 'detour' ? 'The crew avoids contact' : 'The route is clear'}</h3></div></div>
+                <div className="lr-encounter-result-head"><BiIcon cls={`bi ${encounterState.result.companion ? 'bi-person-check-fill' : encounterState.result.resolution === 'detour' ? 'bi-arrow-return-right' : 'bi-shield-check'}`} /><div><span>Encounter resolved</span><h3>{encounterState.result.companion ? 'The native chooses to follow' : encounterState.result.resolution === 'unresolved' ? 'The scout returns with a warning' : encounterState.result.resolution === 'detour' ? 'The crew avoids contact' : 'The route is clear'}</h3></div></div>
                 <p className="lr-simple-story">{encounterState.result.narrative}</p>
                 <div className="lr-encounter-impact">
-                  {(encounterState.result.scoutStrain || encounterState.result.crewStrain) > 0 ? <span><i className="bi bi-lightning-charge-fill" /><strong>Energy spent</strong> −{encounterState.result.scoutStrain || encounterState.result.crewStrain}</span> : <span className="is-good"><i className="bi bi-check-circle" /><strong>No energy spent</strong></span>}
-                  {encounterState.result.instability > 0 ? <span><i className="bi bi-building" /><strong>Stability lost</strong> −{encounterState.result.instability}</span> : <span className="is-good"><i className="bi bi-check-circle" /><strong>No stability lost</strong></span>}
-                  {encounterState.result.companion && <span className="is-good"><i className="bi bi-person-plus-fill" /><strong>Field companion</strong> {scene.encounter.companionBenefit}</span>}
+                  {(encounterState.result.scoutStrain || encounterState.result.crewStrain) > 0 ? <span><BiIcon cls="bi bi-lightning-charge-fill" /><strong>Energy spent</strong> −{encounterState.result.scoutStrain || encounterState.result.crewStrain}</span> : <span className="is-good"><BiIcon cls="bi bi-check-circle" /><strong>No energy spent</strong></span>}
+                  {encounterState.result.instability > 0 ? <span><BiIcon cls="bi bi-building" /><strong>Stability lost</strong> −{encounterState.result.instability}</span> : <span className="is-good"><BiIcon cls="bi bi-check-circle" /><strong>No stability lost</strong></span>}
+                  {encounterState.result.companion && <span className="is-good"><BiIcon cls="bi bi-person-plus-fill" /><strong>Field companion</strong> {scene.encounter.companionBenefit}</span>}
                 </div>
                 <button type="button" className="g-btn g-btn--primary" onClick={continueEncounter}>{encounterState.result.resolution === 'detour' ? 'Compare routes again' : encounterState.mode === 'scout' ? 'Review scout report' : 'Plan the crossing'} <BiIcon cls="bi-arrow-right" /></button>
               </>}
@@ -1381,7 +1378,7 @@ function LongReturnGame() {
           {phase === 'scout' && (guidanceLevel === 'simple' ? (
             <div className="lr-simple-decision">
               <div className="lr-simple-question"><span>Decision now</span><h3>Who should scout—or should the crew stay together?</h3><p>Select a creature to preview its full trip.</p></div>
-              {scene.encounterHint && <details className="lr-field-sign"><summary><i className="bi bi-binoculars-fill" /><span>Native trace detected</span><small>Contact is possible</small><i className="bi bi-chevron-down" /></summary><p>{scene.encounterHint}</p></details>}
+              {scene.encounterHint && <details className="lr-field-sign"><summary><BiIcon cls="bi bi-binoculars-fill" /><span>Native trace detected</span><small>Contact is possible</small><BiIcon cls="bi bi-chevron-down" /></summary><p>{scene.encounterHint}</p></details>}
               <div className="lr-simple-scouts">
                 {simpleScoutOptions.map((option, index) => {
                   const selected = scoutId === option.member.id;
@@ -1398,10 +1395,10 @@ function LongReturnGame() {
                         <small>Likely trip</small>
                         <span className="lr-scout-storyline">
                           <span className="lr-scout-story-step is-discovery">
-                            <i className="bi bi-binoculars-fill" />
+                            <BiIcon cls="bi bi-binoculars-fill" />
                             <span><small>Scout for danger</small><b>{option.profile.detect >= 80 ? 'Excellent awareness' : option.profile.detect >= 65 ? 'Strong awareness' : 'Limited awareness'}</b></span>
                             <SignalGauge value={option.profile.detect} label={`${option.member.species} scouting awareness`} />
-                            <em className="is-energy"><i className="bi bi-lightning-charge-fill" /> Uses 1 energy</em>
+                            <em className="is-energy"><BiIcon cls="bi bi-lightning-charge-fill" /> Uses 1 energy</em>
                           </span>
                           <BiIcon cls="bi-chevron-right" aria-hidden="true" />
                           <span className="lr-scout-story-step is-communication">
@@ -1413,19 +1410,19 @@ function LongReturnGame() {
                             <BiIcon cls={option.preview.relay ? 'bi-check-circle-fill' : 'bi-arrow-return-left'} />
                             <span><small>{option.preview.relay ? 'Follow-up' : 'Must return'}</small><b>{option.preview.relay ? 'Report reaches crew' : 'Returns to crew'}</b></span>
                             {option.preview.relay
-                              ? <em className="is-safe"><i className="bi bi-shield-check" /> No return needed</em>
-                              : <span className="lr-return-cost"><em className="is-energy"><i className="bi bi-lightning-charge-fill" /> Uses 1 more energy</em><em className="is-stability"><i className="bi bi-building" /> Loses 1 stability</em></span>}
+                              ? <em className="is-safe"><BiIcon cls="bi bi-shield-check" /> No return needed</em>
+                              : <span className="lr-return-cost"><em className="is-energy"><BiIcon cls="bi bi-lightning-charge-fill" /> Uses 1 more energy</em><em className="is-stability"><BiIcon cls="bi bi-building" /> Loses 1 stability</em></span>}
                           </span>
                         </span>
                       </span>
-                      <b className="lr-scout-action">{selected ? <><i className="bi bi-check-circle-fill" /> Selected</> : <>Select <i className="bi bi-arrow-right" /></>}</b>
+                      <b className="lr-scout-action">{selected ? <><BiIcon cls="bi bi-check-circle-fill" /> Selected</> : <>Select <BiIcon cls="bi bi-arrow-right" /></>}</b>
                     </span>
                   </button>;
                 })}
               </div>
               <div className="lr-scout-commit-bar">
-                <button type="button" className="lr-simple-secondary" onClick={proceedBlind}><i className="bi bi-people-fill" /><span><strong>Stay together</strong><small>No energy spent · danger stays hidden</small></span></button>
-                <button type="button" className="g-btn g-btn--primary" disabled={!selectedScoutOption} onClick={() => selectedScoutOption && performScanFor(selectedScoutOption.member)}>{selectedScoutOption ? <>Send {selectedScoutOption.member.species} <i className="bi bi-arrow-right" /></> : <>Select a scout <i className="bi bi-lock-fill" /></>}</button>
+                <button type="button" className="lr-simple-secondary" onClick={proceedBlind}><BiIcon cls="bi bi-people-fill" /><span><strong>Stay together</strong><small>No energy spent · danger stays hidden</small></span></button>
+                <button type="button" className="g-btn g-btn--primary" disabled={!selectedScoutOption} onClick={() => selectedScoutOption && performScanFor(selectedScoutOption.member)}>{selectedScoutOption ? <>Send {selectedScoutOption.member.species} <BiIcon cls="bi bi-arrow-right" /></> : <>Select a scout <BiIcon cls="bi bi-lock-fill" /></>}</button>
               </div>
             </div>
           ) : (
@@ -1455,7 +1452,7 @@ function LongReturnGame() {
                 {report.revealed.length ? report.revealed.map((hazard) => <strong key={hazard.id}><BiIcon cls="bi-exclamation-triangle-fill" /> {hazard.label}</strong>) : <strong><BiIcon cls="bi-question-circle" /> No route danger was confirmed</strong>}
                 <p>{report.decision}</p>
               </div>
-              {!scan.returned && scan.mode !== 'blind' ? <button type="button" className="g-btn g-btn--primary" onClick={recoverScout}>Wait for {scanScout.species} to return <span>−1 energy · −1 stability</span> <i className="bi bi-arrow-right" /></button> : <button type="button" className="g-btn g-btn--primary" onClick={advanceToRoutes}>Choose a route <i className="bi bi-arrow-right" /></button>}
+              {!scan.returned && scan.mode !== 'blind' ? <button type="button" className="g-btn g-btn--primary" onClick={recoverScout}>Wait for {scanScout.species} to return <span>−1 energy · −1 stability</span> <BiIcon cls="bi bi-arrow-right" /></button> : <button type="button" className="g-btn g-btn--primary" onClick={advanceToRoutes}>Choose a route <BiIcon cls="bi bi-arrow-right" /></button>}
             </div>
           ) : (
             <div className={`lr-phase-panel lr-scan-report lr-scan-report--${report.outcome}`}>
@@ -1488,7 +1485,7 @@ function LongReturnGame() {
               </div>
               <div className="lr-action-row">
                 {!scan.returned && scan.mode !== 'blind' ? <button type="button" className="g-btn g-btn--primary" onClick={recoverScout}>Wait for scout return · −1 energy / −1 stability</button> : <button type="button" className="g-btn g-btn--primary" onClick={advanceToRoutes}>
-                  {report.outcome === 'blind' ? 'Accept Unknowns & Compare Routes' : 'Acknowledge Report & Compare Routes'} <i className="bi bi-arrow-right" />
+                  {report.outcome === 'blind' ? 'Accept Unknowns & Compare Routes' : 'Acknowledge Report & Compare Routes'} <BiIcon cls="bi bi-arrow-right" />
                 </button>}
               </div>
             </div>
@@ -1509,7 +1506,7 @@ function LongReturnGame() {
               {!route && <RouteMap scene={scene} activeRouteId={routeVisualId || pendingRouteId} runFlags={runFlags} encounterStatus={encounterResolution ? { ...encounterResolution, label: encounterResolution.companion ? `${encounterCreature.species} joined the crew` : encounterResolution.resolution === 'unresolved' ? `${encounterCreature.species} remains in the route` : encounterResolution.resolution === 'detour' ? 'Crew withdrew from contact' : 'Native passage cleared' } : null} />}
               {guidanceLevel === 'simple' && route ? null : guidanceLevel === 'simple' ? <>
                 {routeRecommendation && <div className="lr-route-guidance has-recommendation">
-                  <i className="bi bi-stars" />
+                  <BiIcon cls="bi bi-stars" />
                   <div><span>Command recommendation</span><strong>{routeRecommendation.plan.route.title}</strong><p>{routeRecommendation.reason}</p></div>
                 </div>}
                 <div className="lr-simple-routes">
@@ -1521,17 +1518,17 @@ function LongReturnGame() {
                       <button type="button" className="lr-route-choice-main" onClick={() => previewSimpleRoute(plan.route.id)} onMouseEnter={() => setRouteVisualId(plan.route.id)} onMouseLeave={() => setRouteVisualId(pendingRouteId)} onFocus={() => setRouteVisualId(plan.route.id)} onBlur={() => setRouteVisualId(pendingRouteId)} aria-pressed={selected}>
                         <span className="lr-simple-route-head"><em>{recommended ? 'Recommended' : advantage}</em><b>{plan.route.title}</b></span>
                         <p>{plan.route.description}</p>
-                        <div className="lr-route-memory-slot">{plan.route.activeEffects && plan.route.activeEffects.map((effect) => <span className="lr-route-memory" key={effect.flag}><i className="bi bi-diagram-3-fill" /><b>{effect.label}:</b> {effect.difficulty < 0 ? `this route is easier by ${Math.abs(effect.difficulty)}` : `this route is harder by ${effect.difficulty}`}</span>)}</div>
+                        <div className="lr-route-memory-slot">{plan.route.activeEffects && plan.route.activeEffects.map((effect) => <span className="lr-route-memory" key={effect.flag}><BiIcon cls="bi bi-diagram-3-fill" /><b>{effect.label}:</b> {effect.difficulty < 0 ? `this route is easier by ${Math.abs(effect.difficulty)}` : `this route is harder by ${effect.difficulty}`}</span>)}</div>
                         <RouteTradeoff plan={plan} rewardBaseline={routeRewardBaseline} strain={strain} pressure={pressure} companion={companion} />
-                        <b className="lr-simple-route-action">{selected ? <><i className="bi bi-check-circle-fill" /> Selected</> : <>Select this route <i className="bi bi-arrow-right" /></>}</b>
+                        <b className="lr-simple-route-action">{selected ? <><BiIcon cls="bi bi-check-circle-fill" /> Selected</> : <>Select this route <BiIcon cls="bi bi-arrow-right" /></>}</b>
                       </button>
                       <details className="lr-route-analysis"><summary><BiIcon cls="bi-info-circle" /> See analysis</summary><p>Best available plan: {plan.lead.species} leads with {plan.method.label}, supported by {plan.support.species}. Crew score {plan.teamScore} against target {plan.difficulty}. {plan.unresolvedHazards.length ? 'Hidden danger may still change the final cost.' : 'All route hazards are accounted for.'}</p></details>
                     </article>;
                   })}
                 </div>
                 {pendingRoutePlan && <div className="lr-route-continue" role="status">
-                  <span><i className="bi bi-check-circle-fill" /><span><small>Selected route</small><strong>{pendingRoutePlan.route.title}</strong></span></span>
-                  <button type="button" className="g-btn lr-prepare-next" onClick={confirmSimpleRoute}>Next: review crew <i className="bi bi-arrow-right" /><small>No crossing yet</small></button>
+                  <span><BiIcon cls="bi bi-check-circle-fill" /><span><small>Selected route</small><strong>{pendingRoutePlan.route.title}</strong></span></span>
+                  <button type="button" className="g-btn lr-prepare-next" onClick={confirmSimpleRoute}>Next: review crew <BiIcon cls="bi bi-arrow-right" /><small>No crossing yet</small></button>
                 </div>}
               </> : <div className="lr-route-grid">
                 {scene.routes.map((entry) => <RouteCard key={entry.id} route={entry} selected={routeId === entry.id} onSelect={() => chooseRoute(entry.id)} onPreview={() => setRouteVisualId(entry.id)} onPreviewEnd={() => setRouteVisualId(routeId)} scan={scan} />)}
@@ -1539,22 +1536,22 @@ function LongReturnGame() {
 
               {route && guidanceLevel === 'simple' && !simpleCustomizing && suggestedPlan && (
                 <div className="lr-simple-plan">
-                  <div className="lr-simple-plan-head"><i className="bi bi-check2-circle" /><div><span><i className="bi bi-signpost-split" /> {route.title}</span><h3>Crew plan ready</h3></div></div>
+                  <div className="lr-simple-plan-head"><BiIcon cls="bi bi-check2-circle" /><div><span><BiIcon cls="bi bi-signpost-split" /> {route.title}</span><h3>Crew plan ready</h3></div></div>
                   <div className="lr-simple-plan-crew" aria-label="Every creature crosses; each has a different role">
-                    <span className="is-lead"><i className="bi bi-play-fill" /><small>Lead acts</small><strong>{suggestedPlan.lead.species}</strong><em>{suggestedPlan.method.label}</em></span>
-                    <i className="bi bi-arrow-right" />
-                    <span className="is-support"><i className="bi bi-shield-fill-check" /><small>Support changes the attempt</small><strong>{suggestedPlan.support.species}</strong><em>{supportRoleForPlan(suggestedPlan)}</em></span>
-                    <i className="bi bi-arrow-right" />
-                    {(() => { const planReserve = crew.find((member) => member.id !== suggestedPlan.lead.id && member.id !== suggestedPlan.support.id); return <span className="is-reserve"><i className="bi bi-people-fill" /><small>Reserve still crosses</small><strong>{planReserve ? planReserve.species : 'Remaining crew'}</strong><em>No crossing energy spent</em></span>; })()}
+                    <span className="is-lead"><BiIcon cls="bi bi-play-fill" /><small>Lead acts</small><strong>{suggestedPlan.lead.species}</strong><em>{suggestedPlan.method.label}</em></span>
+                    <BiIcon cls="bi bi-arrow-right" />
+                    <span className="is-support"><BiIcon cls="bi bi-shield-fill-check" /><small>Support changes the attempt</small><strong>{suggestedPlan.support.species}</strong><em>{supportRoleForPlan(suggestedPlan)}</em></span>
+                    <BiIcon cls="bi bi-arrow-right" />
+                    {(() => { const planReserve = crew.find((member) => member.id !== suggestedPlan.lead.id && member.id !== suggestedPlan.support.id); return <span className="is-reserve"><BiIcon cls="bi bi-people-fill" /><small>Reserve still crosses</small><strong>{planReserve ? planReserve.species : 'Remaining crew'}</strong><em>No crossing energy spent</em></span>; })()}
                   </div>
                   <div className={`lr-simple-plan-outlook lr-outcome-summary--${suggestedPlan.quality}`}><span>These roles produce</span><strong>{suggestedPlan.label}</strong></div>
                   <div className="lr-simple-plan-projections"><RouteTradeoff plan={suggestedPlan} stabilityCost={Math.max(0, suggestedPlan.knownPressure - (useCommand && !suggestedPlan.naturalReaction ? 1 : 0))} reward={false} strain={strain} pressure={pressure} companion={companion} /></div>
-                  <details className="lr-plan-analysis"><summary><i className="bi bi-info-circle" /> Why this crew?</summary><p>{suggestedPlan.lead.species} contributes the strongest available match for {suggestedPlan.method.label}. {suggestedPlan.support.species} adds {suggestedPlan.supportBonus} support, producing team score {suggestedPlan.teamScore} against target {suggestedPlan.difficulty}.</p></details>
+                  <details className="lr-plan-analysis"><summary><BiIcon cls="bi bi-info-circle" /> Why this crew?</summary><p>{suggestedPlan.lead.species} contributes the strongest available match for {suggestedPlan.method.label}. {suggestedPlan.support.species} adds {suggestedPlan.supportBonus} support, producing team score {suggestedPlan.teamScore} against target {suggestedPlan.difficulty}.</p></details>
                   {!suggestedPlan.naturalReaction && commands > 0 && <label className="lr-simple-override"><input type="checkbox" checked={useCommand} onChange={(event) => setUseCommand(event.target.checked)} /><span>Use 1 command to preserve 1 annex stability</span></label>}
                   <div className="lr-simple-plan-actions">
-                    <button type="button" className="lr-simple-secondary lr-customize-plan" onClick={() => setSimpleCustomizing(true)}><i className="bi bi-sliders" /> Advanced: customize crew plan</button>
-                    <button type="button" className="lr-simple-secondary" onClick={changeRoute}><i className="bi bi-arrow-left" /> Back to routes</button>
-                    <button type="button" className="g-btn g-btn--primary lr-cross-now" onClick={() => commit(suggestedPlan)}><i className="bi bi-play-fill" /> Cross now<small>Take action · costs apply</small></button>
+                    <button type="button" className="lr-simple-secondary lr-customize-plan" onClick={() => setSimpleCustomizing(true)}><BiIcon cls="bi bi-sliders" /> Advanced: customize crew plan</button>
+                    <button type="button" className="lr-simple-secondary" onClick={changeRoute}><BiIcon cls="bi bi-arrow-left" /> Back to routes</button>
+                    <button type="button" className="g-btn g-btn--primary lr-cross-now" onClick={() => commit(suggestedPlan)}><BiIcon cls="bi bi-play-fill" /> Cross now<small>Take action · costs apply</small></button>
                   </div>
                 </div>
               )}
@@ -1615,7 +1612,7 @@ function LongReturnGame() {
                         return (
                           <div key={entry.id} className={`lr-method-option${methodId === entry.id ? ' is-selected' : ''}${recommended ? ' is-recommended' : ''}`}>
                             <button type="button" className="lr-method-select" disabled={!support} title={!support ? 'Assign support before choosing a method' : `Choose ${entry.label}`} onClick={() => setMethodId(entry.id)} aria-pressed={methodId === entry.id}>
-                              <span className="lr-method-icon"><i className={`bi ${entry.kind === 'action' ? 'bi-lightning-charge' : entry.kind === 'capability' ? 'bi-person-fill' : entry.kind === 'trait' ? 'bi-shield-check' : 'bi-tools'}`} /></span>
+                              <span className="lr-method-icon"><BiIcon cls={`bi ${entry.kind === 'action' ? 'bi-lightning-charge' : entry.kind === 'capability' ? 'bi-person-fill' : entry.kind === 'trait' ? 'bi-shield-check' : 'bi-tools'}`} /></span>
                               <span className="lr-method-copy">
                                 <span className="lr-method-name"><strong>{entry.label}</strong>{recommended && <em>Recommended</em>}</span>
                                 <small>{entry.kind} · {entry.attribute ? ATTRIBUTE_LABELS[entry.attribute] : ''}</small>
@@ -1640,10 +1637,10 @@ function LongReturnGame() {
                         <div className={`lr-outcome-summary lr-outcome-summary--${selectedForecast.quality}`}>
                           <div className="lr-outcome-head"><span>Known forecast</span><strong>{selectedForecast.label}</strong><b>{signed(selectedForecast.margin)} margin</b></div>
                           <div className="lr-outcome-signals">
-                            <div><i className="bi bi-check2-circle" /><span>Passage</span><strong>{selectedForecast.margin >= 0 ? 'Clear' : 'Forced'}</strong></div>
-                            <div><i className="bi bi-lightning-charge-fill" /><span>Known energy cost</span><strong>−{Math.max(0, selectedForecast.baseLeadStrain + selectedForecast.baseSupportStrain + selectedForecast.environment.strain - (selectedForecast.naturalReaction ? 1 : 0))}</strong></div>
-                            <div><i className="bi bi-building" /><span>Stability cost</span><strong>−{route.pressure + (!selectedForecast.naturalReaction && !useCommand ? 1 : 0)}</strong></div>
-                            <div className={selectedForecast.unresolvedHazards.length ? 'is-unknown' : ''}><i className="bi bi-question-diamond" /><span>Hidden risks</span><strong>{selectedForecast.unresolvedHazards.length || 'None'}</strong></div>
+                            <div><BiIcon cls="bi bi-check2-circle" /><span>Passage</span><strong>{selectedForecast.margin >= 0 ? 'Clear' : 'Forced'}</strong></div>
+                            <div><BiIcon cls="bi bi-lightning-charge-fill" /><span>Known energy cost</span><strong>−{Math.max(0, selectedForecast.baseLeadStrain + selectedForecast.baseSupportStrain + selectedForecast.environment.strain - (selectedForecast.naturalReaction ? 1 : 0))}</strong></div>
+                            <div><BiIcon cls="bi bi-building" /><span>Stability cost</span><strong>−{route.pressure + (!selectedForecast.naturalReaction && !useCommand ? 1 : 0)}</strong></div>
+                            <div className={selectedForecast.unresolvedHazards.length ? 'is-unknown' : ''}><BiIcon cls="bi bi-question-diamond" /><span>Hidden risks</span><strong>{selectedForecast.unresolvedHazards.length || 'None'}</strong></div>
                           </div>
                           <div className="lr-outcome-flags">{selectedForecast.environment.notes.map((note) => <span key={note}><BiIcon cls="bi-exclamation-triangle" /> {note}</span>)}{!selectedForecast.environment.notes.length && <span className="is-good"><BiIcon cls="bi-check-lg" /> Environment compatible</span>}</div>
                           <button type="button" className="lr-calculation-link" onClick={() => setDetailMethodId(method.id)}><BiIcon cls="bi-info-circle" /> How this was calculated</button>
@@ -1675,35 +1672,35 @@ function LongReturnGame() {
 
           {phase === 'result' && lastResult && (guidanceLevel === 'simple' ? (
             <div className={`lr-simple-decision lr-simple-result${objectiveReached && !missionCannotContinue && sceneIndex < MISSION.scenes.length - 1 ? ' has-depth-decision' : ''}`}>
-              <div className={`lr-simple-result-head is-${lastResult.impactQuality}`}><i className={`bi ${lastResult.impactQuality === 'clean' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'}`} /><div><span>Crossing complete · {lastResult.impactLabel}</span><h3>{lastResult.impactQuality === 'clean' ? 'The plan worked without a cost' : lastResult.impactQuality === 'costly' ? 'The crew crossed, but paid for it' : 'A hard-won crossing'}</h3></div></div>
+              <div className={`lr-simple-result-head is-${lastResult.impactQuality}`}><BiIcon cls={`bi ${lastResult.impactQuality === 'clean' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'}`} /><div><span>Crossing complete · {lastResult.impactLabel}</span><h3>{lastResult.impactQuality === 'clean' ? 'The plan worked without a cost' : lastResult.impactQuality === 'costly' ? 'The crew crossed, but paid for it' : 'A hard-won crossing'}</h3></div></div>
               <p className="lr-simple-story">{lastResult.story}</p>
-              <p className="lr-creature-reaction lr-turning-point"><i className="bi bi-people-fill" /> {lastResult.turningPoint || lastResult.reaction}</p>
+              <p className="lr-creature-reaction lr-turning-point"><BiIcon cls="bi bi-people-fill" /> {lastResult.turningPoint || lastResult.reaction}</p>
               <details className="lr-result-explanation"><summary>Why this happened · {lastResult.crewChanges[0].creature.species}'s crossing</summary><ul>{lastResult.causes.map((cause) => <li key={cause}>{cause}</li>)}</ul></details>
               <section className="lr-result-changes"><span>What changed</span><div>
-                {lastResult.crewChanges.filter((change) => change.added > 0).map((change) => <article key={change.creature.id} className="is-warning"><span><i className="bi bi-lightning-charge-fill" /><strong>{change.creature.species} energy</strong><b>−{change.added}</b></span><ProjectionTrack value={change.before} added={change.added} max={MAX_STRAIN} label={`${change.creature.species} energy`} kind="strain" /></article>)}
-                {lastResult.instabilityChange.added > 0 && <article className="is-warning"><span><i className="bi bi-building" /><strong>Annex stability</strong><b>−{lastResult.instabilityChange.added}</b></span><ProjectionTrack value={lastResult.instabilityChange.before} added={lastResult.instabilityChange.added} max={MAX_INSTABILITY} label="Annex stability" kind="annex" /></article>}
-                {!lastResult.crewChanges.some((change) => change.added > 0) && !lastResult.instabilityChange.added && <article className="is-good lr-result-no-cost"><i className="bi bi-check-circle-fill" /><strong>No energy or stability cost</strong></article>}
-                <article className="lr-result-salvage"><span><i className="bi bi-box-seam" /><strong>Salvage recovered</strong><b>+{lastResult.salvage}</b></span><SalvageGauge value={lastResult.salvage} /><small>{salvage} carried · bank on extraction</small></article>
+                {lastResult.crewChanges.filter((change) => change.added > 0).map((change) => <article key={change.creature.id} className="is-warning"><span><BiIcon cls="bi bi-lightning-charge-fill" /><strong>{change.creature.species} energy</strong><b>−{change.added}</b></span><ProjectionTrack value={change.before} added={change.added} max={MAX_STRAIN} label={`${change.creature.species} energy`} kind="strain" /></article>)}
+                {lastResult.instabilityChange.added > 0 && <article className="is-warning"><span><BiIcon cls="bi bi-building" /><strong>Annex stability</strong><b>−{lastResult.instabilityChange.added}</b></span><ProjectionTrack value={lastResult.instabilityChange.before} added={lastResult.instabilityChange.added} max={MAX_INSTABILITY} label="Annex stability" kind="annex" /></article>}
+                {!lastResult.crewChanges.some((change) => change.added > 0) && !lastResult.instabilityChange.added && <article className="is-good lr-result-no-cost"><BiIcon cls="bi bi-check-circle-fill" /><strong>No energy or stability cost</strong></article>}
+                <article className="lr-result-salvage"><span><BiIcon cls="bi bi-box-seam" /><strong>Salvage recovered</strong><b>+{lastResult.salvage}</b></span><SalvageGauge value={lastResult.salvage} /><small>{salvage} carried · bank on extraction</small></article>
               </div></section>
-              {lastResult.companionHelp && lastResult.turningPoint !== lastResult.companionHelp && <div className="lr-simple-surprise is-good"><i className="bi bi-person-check-fill" /><span><strong>Field companion intervened:</strong> {lastResult.companionHelp}</span></div>}
-              {lastResult.unseenHazards.length > 0 && <div className="lr-simple-surprise"><i className="bi bi-exclamation-triangle-fill" /><span><strong>Unexpected danger:</strong> {lastResult.unseenHazards.map((hazard) => hazard.label).join(', ')}</span></div>}
-              {lastResult.consequence && <div className="lr-consequence-preview"><i className="bi bi-diagram-3-fill" /><div><span>This choice carries forward</span><strong>{lastResult.consequence.label}</strong><p>{lastResult.consequence.future}</p></div></div>}
+              {lastResult.companionHelp && lastResult.turningPoint !== lastResult.companionHelp && <div className="lr-simple-surprise is-good"><BiIcon cls="bi bi-person-check-fill" /><span><strong>Field companion intervened:</strong> {lastResult.companionHelp}</span></div>}
+              {lastResult.unseenHazards.length > 0 && <div className="lr-simple-surprise"><BiIcon cls="bi bi-exclamation-triangle-fill" /><span><strong>Unexpected danger:</strong> {lastResult.unseenHazards.map((hazard) => hazard.label).join(', ')}</span></div>}
+              {lastResult.consequence && <div className="lr-consequence-preview"><BiIcon cls="bi bi-diagram-3-fill" /><div><span>This choice carries forward</span><strong>{lastResult.consequence.label}</strong><p>{lastResult.consequence.future}</p></div></div>}
               {fieldWorkshop}
               <div className={`lr-next-stakes${missionCannotContinue ? ' is-critical' : ''}`}>
-                <i className={`bi ${objectiveReached ? 'bi-check-circle' : 'bi-compass'}`} />
+                <BiIcon cls={`bi ${objectiveReached ? 'bi-check-circle' : 'bi-compass'}`} />
                 <div><strong>{missionCannotContinue ? 'The expedition cannot continue' : sceneIndex === MISSION.scenes.length - 1 ? 'The final crossing is behind you.' : objectiveReached ? 'The Index is yours. Everything deeper is optional.' : `${crossingsToIndex} ${crossingsToIndex === 1 ? 'crossing' : 'crossings'} to the Index`}</strong>
                   <span>{missionCannotContinue ? 'Forced extraction ends this run. Field repairs are no longer possible.' : sceneIndex === MISSION.scenes.length - 1 ? `Leave the annex to bank ${salvage} salvage and complete the deep retrieval.` : objectiveReached ? `Extract to bank ${salvage} salvage, or risk the remaining crew energy and ${MAX_INSTABILITY - pressure} stability for more.` : `${MAX_INSTABILITY - pressure} stability remains. Recover if needed, then press toward the archive.`}</span></div>
               </div>
               {!missionCannotContinue && objectiveReached && sceneIndex < MISSION.scenes.length - 1 ? <section className="lr-depth-decision" aria-labelledby="lr-depth-title">
                 <div className="lr-depth-heading"><span>Mission fork</span><h4 id="lr-depth-title">Leave with the Index—or risk the optional depths</h4></div>
                 <div className="lr-depth-options lr-result-actions">
-                  <button type="button" className="g-btn lr-depth-option is-extract" onClick={extract}><i className="bi bi-shield-check" /><span><small>Secure outcome</small><strong>Extract now</strong><em><b>{salvage}</b> salvage banked · Index secured</em></span><i className="bi bi-arrow-right" /></button>
-                  <button type="button" className="g-btn g-btn--primary lr-depth-option is-deeper" onClick={continueRun}><i className="bi bi-arrow-down-right-circle" /><span><small>Optional risk</small><strong>Enter {MISSION.scenes[sceneIndex + 1].title}</strong><em>Up to <b>+{optionalSalvagePotential}</b> more salvage · {optionalScenesRemaining.length} {optionalScenesRemaining.length === 1 ? 'sector' : 'sectors'}</em></span><i className="bi bi-arrow-right" /></button>
+                  <button type="button" className="g-btn lr-depth-option is-extract" onClick={extract}><BiIcon cls="bi bi-shield-check" /><span><small>Secure outcome</small><strong>Extract now</strong><em><b>{salvage}</b> salvage banked · Index secured</em></span><BiIcon cls="bi bi-arrow-right" /></button>
+                  <button type="button" className="g-btn g-btn--primary lr-depth-option is-deeper" onClick={continueRun}><BiIcon cls="bi bi-arrow-down-right-circle" /><span><small>Optional risk</small><strong>Enter {MISSION.scenes[sceneIndex + 1].title}</strong><em>Up to <b>+{optionalSalvagePotential}</b> more salvage · {optionalScenesRemaining.length} {optionalScenesRemaining.length === 1 ? 'sector' : 'sectors'}</em></span><BiIcon cls="bi bi-arrow-right" /></button>
                 </div>
-                <div className="lr-depth-reserve"><span><i className="bi bi-building" /><b>{MAX_INSTABILITY - pressure}</b> stability left</span>{crew.map((member) => <span key={member.id}><i className="bi bi-lightning-charge-fill" /><b>{MAX_STRAIN - (strain[member.id] || 0)}</b> {member.species}</span>)}</div>
+                <div className="lr-depth-reserve"><span><BiIcon cls="bi bi-building" /><b>{MAX_INSTABILITY - pressure}</b> stability left</span>{crew.map((member) => <span key={member.id}><BiIcon cls="bi bi-lightning-charge-fill" /><b>{MAX_STRAIN - (strain[member.id] || 0)}</b> {member.species}</span>)}</div>
               </section> : <div className="lr-action-row lr-result-actions">
                 {!missionCannotContinue && !objectiveReached && <button type="button" className="g-btn g-btn--danger" onClick={extract}>Abort mission</button>}
-                <button type="button" className="g-btn g-btn--primary" onClick={continueRun}>{missionCannotContinue ? 'View mission report' : sceneIndex === MISSION.scenes.length - 1 ? 'Leave with full salvage' : 'Continue mission'} <i className="bi bi-arrow-right" /></button>
+                <button type="button" className="g-btn g-btn--primary" onClick={continueRun}>{missionCannotContinue ? 'View mission report' : sceneIndex === MISSION.scenes.length - 1 ? 'Leave with full salvage' : 'Continue mission'} <BiIcon cls="bi bi-arrow-right" /></button>
               </div>}
             </div>
           ) : (
@@ -1720,10 +1717,10 @@ function LongReturnGame() {
                 <div><span>Annex stability</span><strong>−{lastResult.pressure}</strong><small>external safety reserve</small></div>
                 <div><span>Salvage</span><strong>+{lastResult.salvage}</strong><small>bank on extraction</small></div>
               </div>
-              {lastResult.unseenHazards.length > 0 && <div className="lr-result-note lr-result-note--danger"><i className="bi bi-exclamation-triangle-fill" /><span><strong>Unseen fallout:</strong> {lastResult.unseenHazards.map((hazard) => hazard.label).join(', ')}.</span></div>}
-              {lastResult.environment.notes.length > 0 && <div className="lr-result-note"><i className="bi bi-thermometer-snow" /><span>{lastResult.environment.notes.join('; ')}.</span></div>}
-              <div className="lr-result-note"><i className="bi bi-compass" /><span>{lastResult.naturalReaction ? 'The lead followed its natural response and preserved 1 energy.' : useCommand ? 'Command override kept the lead on plan.' : 'The lead followed its own nature; annex stability fell.'}</span></div>
-              {lastResult.consequence && <div className="lr-result-note"><i className="bi bi-diagram-3-fill" /><span><strong>{lastResult.consequence.label}:</strong> {lastResult.consequence.future}</span></div>}
+              {lastResult.unseenHazards.length > 0 && <div className="lr-result-note lr-result-note--danger"><BiIcon cls="bi bi-exclamation-triangle-fill" /><span><strong>Unseen fallout:</strong> {lastResult.unseenHazards.map((hazard) => hazard.label).join(', ')}.</span></div>}
+              {lastResult.environment.notes.length > 0 && <div className="lr-result-note"><BiIcon cls="bi bi-thermometer-snow" /><span>{lastResult.environment.notes.join('; ')}.</span></div>}
+              <div className="lr-result-note"><BiIcon cls="bi bi-compass" /><span>{lastResult.naturalReaction ? 'The lead followed its natural response and preserved 1 energy.' : useCommand ? 'Command override kept the lead on plan.' : 'The lead followed its own nature; annex stability fell.'}</span></div>
+              {lastResult.consequence && <div className="lr-result-note"><BiIcon cls="bi bi-diagram-3-fill" /><span><strong>{lastResult.consequence.label}:</strong> {lastResult.consequence.future}</span></div>}
               {fieldWorkshop}
 
               <div className="lr-action-row lr-result-actions">

@@ -8,7 +8,7 @@
 .lr-route-contract.is-gamble > span:first-child strong { color:#f1cb58; }
 .lr-route-contract .is-reward { justify-items:end; text-align:right; }
 .lr-route-contract .is-reward strong { color:#f1cb58; font-size:18px; }
-.lr-route-contract .is-reward em { color:#f1cb58; font:700 8px/1.2 var(--g-font-mono,monospace); text-transform:uppercase; white-space:nowrap; }
+.lr-route-contract .is-reward em { max-width:130px; color:#f1cb58; font:700 8px/1.2 var(--g-font-mono,monospace); text-transform:uppercase; white-space:normal; }
 .lr-hud-certainty { display:flex; align-items:center; gap:8px; color:#8ee5a7; font:700 12px/1.2 var(--g-font-mono,monospace); letter-spacing:.05em; text-transform:uppercase; }
 .lr-hud-certainty.is-unknown { color:#f1cb58; }
 .lr-hud-resources { display:grid; gap:9px; }

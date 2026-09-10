@@ -1,5 +1,6 @@
 import React from 'react';
 import { MAX_INSTABILITY, MAX_STRAIN } from './longReturnData';
+import BiIcon from './BiIcon';
 
 function ResourceMeter({ kind, label, current, max, cost }) {
   const remaining = Math.max(0, current - cost);
@@ -7,7 +8,7 @@ function ResourceMeter({ kind, label, current, max, cost }) {
   const summary = `${label}: ${current} available; ${cost} spent; ${remaining} remains`;
   return <div className={`lr-hud-meter is-${kind}`} aria-label={summary}>
     <div className="lr-hud-meter-label">
-      <span><i className={`bi ${icon}`} aria-hidden="true" />{label}</span>
+      <span><BiIcon cls={`bi ${icon}`} aria-hidden="true" />{label}</span>
       <b>{cost ? `−${cost}` : 'safe'}</b>
     </div>
     <div className="lr-hud-pips" aria-hidden="true">
@@ -22,9 +23,9 @@ function ResourceMeter({ kind, label, current, max, cost }) {
 
 function HiddenRisk() {
   return <div className="lr-hidden-risk" aria-label="An unscouted hazard may consume crew energy, annex stability, or both">
-    <span className="lr-hidden-risk__signal"><i className="bi bi-radar" /><b>?</b></span>
+    <span className="lr-hidden-risk__signal"><BiIcon cls="bi bi-radar" /><b>?</b></span>
     <span><small>Unscouted hazard</small><strong>Cost can rise</strong></span>
-    <span className="lr-hidden-risk__stakes" aria-hidden="true"><i className="bi bi-lightning-charge-fill" /><i className="bi bi-building" /><b>?</b></span>
+    <span className="lr-hidden-risk__stakes" aria-hidden="true"><BiIcon cls="bi bi-lightning-charge-fill" /><BiIcon cls="bi bi-building" /><b>?</b></span>
   </div>;
 }
 
@@ -44,18 +45,18 @@ export default function RouteTradeoff({ plan, stabilityCost = plan.knownPressure
   const extraReward = Math.max(0, plan.route.salvage - rewardBaseline);
   return <div className={`lr-route-tradeoff${uncertain ? ' has-unknown-cost' : ''}`}>
     {reward ? <div className={`lr-route-contract${uncertain ? ' is-gamble' : ' is-fixed'}`}>
-      <span><small>{uncertain ? 'Risk' : 'Cost'}</small><strong><i className={`bi ${uncertain ? 'bi-dice-5-fill' : 'bi-shield-check'}`} />{uncertain ? 'Unscouted gamble' : 'Predictable crossing'}</strong></span>
-      <i className="bi bi-arrow-right" aria-hidden="true" />
-      <span className="is-reward lr-route-reward"><small>Haul</small><strong>+{plan.route.salvage} <i className="bi bi-box-seam" /></strong>{extraReward > 0 && <em>+{extraReward} more than safer route</em>}</span>
-    </div> : <div className={`lr-hud-certainty${uncertain ? ' is-unknown' : ''}`}><i className={`bi ${uncertain ? 'bi-dice-5-fill' : 'bi-shield-check'}`} /><span>{uncertain ? 'Hidden hazard can still raise this cost' : 'Known crossing cost'}</span></div>}
+      <span><small>{uncertain ? 'Risk' : 'Cost'}</small><strong><BiIcon cls={`bi ${uncertain ? 'bi-dice-5-fill' : 'bi-shield-check'}`} />{uncertain ? 'Unscouted gamble' : 'Predictable crossing'}</strong></span>
+      <BiIcon cls="bi bi-arrow-right" aria-hidden="true" />
+      <span className="is-reward lr-route-reward"><small>Haul</small><strong>+{plan.route.salvage} <BiIcon cls="bi bi-box-seam" /></strong>{extraReward > 0 && <em>+{extraReward} more than safer route</em>}</span>
+    </div> : <div className={`lr-hud-certainty${uncertain ? ' is-unknown' : ''}`}><BiIcon cls={`bi ${uncertain ? 'bi-dice-5-fill' : 'bi-shield-check'}`} /><span>{uncertain ? 'Hidden hazard can still raise this cost' : 'Known crossing cost'}</span></div>}
     {companionWillHelp && <div className="lr-companion-preview" aria-label={`${companion.creature.species} will preserve 1 ${plan.lead.species} energy`}>
-      <span><i className="bi bi-person-check-fill" /><b>{companion.creature.species}</b></span><i className="bi bi-arrow-right" /><span><i className="bi bi-lightning-charge-fill" /><b>1 energy preserved</b></span>
+      <span><BiIcon cls="bi bi-person-check-fill" /><b>{companion.creature.species}</b></span><BiIcon cls="bi bi-arrow-right" /><span><BiIcon cls="bi bi-lightning-charge-fill" /><b>1 energy preserved</b></span>
     </div>}
     <div className="lr-hud-resources">
       {showLead && <ResourceMeter kind="energy" label={`${plan.lead.species} energy`} current={leadEnergy} max={MAX_STRAIN} cost={leadCost} />}
       {showSupport && <ResourceMeter kind="energy" label={`${plan.support.species} energy`} current={supportEnergy} max={MAX_STRAIN} cost={supportCost} />}
       {stabilityCost > 0 && <ResourceMeter kind="stability" label="Annex stability" current={stability} max={MAX_INSTABILITY} cost={stabilityCost} />}
-      {noKnownDrain && <div className="lr-hud-clean"><i className="bi bi-shield-check" /><strong>No resources at risk</strong></div>}
+      {noKnownDrain && <div className="lr-hud-clean"><BiIcon cls="bi bi-shield-check" /><strong>No resources at risk</strong></div>}
       {uncertain && <HiddenRisk />}
     </div>
   </div>;
