@@ -19,7 +19,13 @@ const path = require('path');
 
 const root = path.join(__dirname, '..');
 const docs = path.join(root, 'docs');
-const out = path.join(root, 'packages', 'content', 'json');
+// CONTENT_BUNDLE_OUT_DIR lets scripts/checkBundle.js redirect the write to a scratch
+// directory for a stale-bundle diff without touching the committed files. Unset in normal
+// use, so default behavior (writing into packages/content/json) is unchanged.
+const out = process.env.CONTENT_BUNDLE_OUT_DIR
+  ? path.resolve(process.env.CONTENT_BUNDLE_OUT_DIR)
+  : path.join(root, 'packages', 'content', 'json');
+fs.mkdirSync(out, { recursive: true });
 const read = (p) => JSON.parse(fs.readFileSync(p, 'utf8'));
 const write = (name, data) => {
   fs.writeFileSync(path.join(out, name), JSON.stringify(data, null, 2) + '\n');
