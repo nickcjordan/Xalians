@@ -59,7 +59,7 @@ Per-species decisions that a migration agent cannot derive from the sources alon
 - 2026-09-02: Akinza and Yetimoth ratified as presented (Krystos complete).
 - 2026-09-02: archetype rows re-authored per species to break the shared 5-4-3-2-1 ladder (Nick): graviclaw: juggernaut 45, bulwark 25, predator 20, stalwart 10; tetrahive: sage 42, skirmisher 24, sovereign 18, seeker 16; smokat: prowler 40, skirmisher 30, predator 22, rogue 8; ectoghoul: prowler 35, rogue 30, skirmisher 20, predator 15; tizzie: virtuoso 40, sovereign 25, prowler 15, skirmisher 12, sage 8; figzy: sage 50, seeker 20, virtuoso 15, skirmisher 15; hypnopet: sovereign 38, sage 30, virtuoso 22, seeker 10; akinza: prowler 45, skirmisher 30, predator 25; yetimoth: juggernaut 36, bulwark 34, stalwart 18, vanguard 12.
 
-## Magmuth and Floria batch (pending Nick)
+## Magmuth and Floria batch (historical; ratified 2026-09-02)
 
 - 2026-09-02: Dromeus, Imprit, Xylum, Kosanos, Avilily migrated, validated, amended; presented with three lever questions (partial-surface covering, small-flier lifespan clause, forelimb-work body plan clause) and rulings on composition-from-element (never), Kosanos trunk plus blades, Xylum height as visible crown.
 - 2026-09-02: Dromeus, Imprit, Xylum, Kosanos, Avilily ratified as presented, with the orchestrator rulings (Kosanos flesh and omnivore; Imprit no tail conduit, fists, fangs, luminous 100; Avilily no conduit; Xylum height as visible crown; Kosanos trunk plus blades). Covering rule amended: a named partial surface is the covering when nothing else is named or shown; Dromeus is `feathers`.

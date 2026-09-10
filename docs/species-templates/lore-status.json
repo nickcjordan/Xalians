@@ -143,9 +143,9 @@
     },
     "smokat": {
       "description": "source",
-      "appearance": "draft",
+      "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch two)",
+      "note": "teaser was upgraded before the split; appearance and fields ratified by Nick through the completed review, confirmed 2026-09-10",
       "traits": "ratified"
     },
     "terragoyle": {

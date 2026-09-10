@@ -76,6 +76,12 @@ const PlanetRecordEntrySchema = z.object({
     gravityVsEarth: z.number().positive(),
     temperatureC: z.object({ low: z.number(), high: z.number() }),
   }),
+  environment: z.object({
+    habitableBandC: z.object({ min: z.number(), max: z.number() }).refine(
+      ({ min, max }) => min <= max,
+      { message: 'habitable temperature minimum must not exceed maximum' },
+    ),
+  }),
   report: PlanetRecordReportSchema,
   history: z.array(z.string().min(1)).min(1),
 });
