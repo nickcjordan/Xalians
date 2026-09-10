@@ -25,8 +25,14 @@ export function canonicalize(value: unknown): string {
     return `[${value.map((item) => canonicalize(item)).join(',')}]`;
   }
   if (value !== null && typeof value === 'object') {
-    const keys = Object.keys(value as Record<string, unknown>).sort();
-    const entries = keys.map((key) => `${JSON.stringify(key)}:${canonicalize((value as Record<string, unknown>)[key])}`);
+    // Keys whose value is undefined are dropped, exactly as JSON.stringify drops them on
+    // the wire: the server signs the in-memory object and the client sends it back through
+    // JSON, so the two views must canonicalize identically.
+    const obj = value as Record<string, unknown>;
+    const keys = Object.keys(obj)
+      .filter((key) => obj[key] !== undefined)
+      .sort();
+    const entries = keys.map((key) => `${JSON.stringify(key)}:${canonicalize(obj[key])}`);
     return `{${entries.join(',')}}`;
   }
   return JSON.stringify(value);

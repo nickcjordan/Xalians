@@ -26,6 +26,12 @@ describe('signing', () => {
     expect(signRecord(a)).toBe(signRecord(b));
   });
 
+  it('survives a JSON round trip: undefined-valued keys do not affect the signature', () => {
+    const inMemory = { a: 1, b: undefined, nested: { c: 'x', d: undefined } };
+    const overTheWire = JSON.parse(JSON.stringify(inMemory));
+    expect(verifyRecord(overTheWire, signRecord(inMemory))).toBe(true);
+  });
+
   it('fails verification when a stat is tampered with', () => {
     const record = { xalianId: 'fire-1', stats: { speedPoints: { points: 5 } } };
     const signature = signRecord(record);
