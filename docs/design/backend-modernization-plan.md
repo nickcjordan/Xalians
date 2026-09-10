@@ -1,0 +1,61 @@
+# Backend modernization plan
+
+Execution plan for `docs/design/backend-modernization-audit.md`, approved by Nick on 2026-09-10 ("on board for everything"). It fixes the 22 audit findings through eight pull requests in four waves, each implemented by a delegated agent in its own worktree and reviewed by the orchestrating session before the next wave starts. It also adopts the layout recommended the same morning in `docs/design/frontend-backend-data-sharing.md` (branch `design/data-sharing`), with one deliberate deviation recorded below.
+
+## Context
+
+Seven Lambda handlers in CommonJS behind one HTTP API, a legacy generation engine that the ratified generator in `my-app/src/gameplay/generator/` has superseded, shared code copied between `lambda/` and `my-app/` by shell scripts, hand-made DynamoDB tables, and two live authorization holes (any signed-in user can edit any user, and kept Xalians are trusted from the client). Infrastructure is already current (Node 20 runtime, SDK v3, Terraform 1.14, OIDC deploys); the code and the sharing model are not.
+
+## Assumptions & Decisions
+
+| # | Assumption / Decision | Confidence | Supporting Evidence |
+|---|---|---|---|
+| 1 | npm workspaces at the root with `apps/api` (moved from `lambda/`), `packages/content`, `packages/rules`, and `my-app` registered in place. `my-app` is not renamed to `apps/web` in this program: twelve local worktrees carry unmerged branches under `my-app/`, and a directory rename would make every one of them a conflict. The rename is a one-line follow-up once they land. | 85% | `git worktree list` (13 entries); only one open PR; `frontend-backend-data-sharing.md` decision 1 |
+| 2 | Authorization moves from `AWS_IAM` plus SigV4 to a Cognito user-pool JWT authorizer on the HTTP API. The subject is `cognito:username` lowercased, which is exactly the existing `userId` key, so no user record migrates. The ID token is sent as the bearer (its `aud` claim is the app client id, which the authorizer's audience check needs; access tokens carry `client_id` instead). | 90% | `userTableCRUDLambdas.js:152` lowercases username; `responseBuilder.js:63`; API Gateway JWT authorizer audience semantics |
+| 3 | Runtime `nodejs22.x`. Node 20 is past end of life. `nodejs24.x` is used instead if the pinned AWS provider accepts it at plan time. | 85% | Node release schedule; `terraform/modules/lambda/lambda_instance.tf:47` |
+| 4 | The legacy engine is quarantined, not ported. `GET /xalian` keeps serving the free showroom in the legacy shape, and the keep flow becomes server-side (the server generates and persists; the client body is ignored). The engine files move to `apps/api/src/legacy/` as JavaScript under `allowJs` and are deleted when the generator and account pages are rewritten to the ratified record shape, which is a separate design brief because it is visual work. | 80% | `generatorPage.tsx`, `characterStatChart.js`, and the duel all render the legacy shape today; audit assumption 2 |
+| 5 | New records go to a new table `XalianRegistry` (hash key `xalianId`, GSI `byOwner` on `ownerId`), on-demand billing, point-in-time recovery on. The two legacy tables are imported into Terraform and left untouched; legacy records are not migrated because the stat system they encode is scrapped. | 85% | `main.tf:799` commented table blocks; `sample-record-graviclaw.json` id format; memory: creature system redesign scrapped old stats |
+| 6 | `PATCH /db/user` shrinks to `REMOVE_XALIAN_ID`. `ADD_XALIAN_ID` becomes a server-side effect of keeping; `ADD_TOKENS` and `REMOVE_TOKENS` are removed from the client-reachable API since token issuance is server-only by the vision doc and nothing spends tokens yet. Balances already stored are preserved. | 85% | `userTableCRUDLambdas.js:160-190`; `xalians-platform-vision-and-economy.md` |
+| 7 | Package manager is npm everywhere. `my-app/yarn.lock` is replaced by the root `package-lock.json`; workflows switch from yarn to `npm ci` at the root. | 75% | `lambda/package-lock.json` lockfileVersion 3; `deploy-backend.yml` already caches npm |
+| 8 | The user record is created lazily on the first authenticated `GET /db/user` for the caller's own id, replacing the browser-side `callCreateUser` after sign-up. The Amplify post-confirmation trigger is left as is; its runtime bump needs `amplify push`, which CI cannot run, so it is a manual step for Nick. | 85% | `authButtonGroup.tsx:90`; Amplify function CloudFormation templates pin `nodejs14.x` |
+| 9 | Types come from zod schemas in `packages/content` (record, template, registries) and `apps/api` (request and response shapes); `z.infer` is the only source of TypeScript types shared across the boundary. | 85% | `my-app/package.json` already depends on zod 4; data-sharing doc decision 9 |
+| 10 | Duel and expedition rules stay in `my-app/src/gameplay` for this program. `packages/rules` takes the generator, the attack calculator, and the lambda-copied constants only. The reclamation branch in flight edits the expedition tree, and the data-sharing doc allows module-by-module moves. | 85% | `git diff --stat main...feat/reclamation-lanes`; data-sharing doc order-of-work step 4 |
+| 11 | Delegation: each PR is one Sonnet general-purpose agent in a dedicated worktree branched from `main`. The orchestrator writes the brief, reviews the diff and CI before the next wave, and never lets an agent run `terraform apply` or `aws` commands. Agent spend was authorized by Nick on 2026-09-10 with the request to delegate. | 95% | Memory: delegate grunt work; billing cost pause |
+| 12 | AWS cost delta of the whole program is negligible: one on-demand table, point-in-time recovery on three small tables, a free JWT authorizer, unchanged Lambda and log volume. | 90% | AWS pricing for on-demand DynamoDB and PITR |
+
+## Waves and pull requests
+
+Each PR is opened with a full description, `Fixes #N` where an issue exists, and `gh pr merge N --auto --merge` immediately after. A wave starts only when the previous wave's PRs have merged and the orchestrator has reviewed them.
+
+### Wave A (parallel): close the live holes, no restructuring
+
+**A1. `infra/runtime-hardening`.** Terraform only. Runtime to `nodejs22.x`. Replace `AmazonDynamoDBFullAccess` with one inline policy per function group scoped to the two table ARNs and the exact actions used (the generator gets no DynamoDB access). Stage-level `default_route_settings` throttling on both stages plus a tighter per-route override on `GET /xalian`. `import` blocks and resource definitions for `XalianTable` and `XalianUsersTable` with PITR enabled. `terraform fmt -recursive` and make the fmt check blocking. Update the stale excludes list. Findings F5, F6 (API functions), F11, F15, F22.
+
+**A2. `api/jwt-auth`.** Terraform: `aws_apigatewayv2_authorizer` (JWT, issuer the user pool, audience the web client id from `my-app/src/aws-exports.js`), the six `/db/*` routes switched to it. Handlers: subject from `event.requestContext.authorizer.jwt.claims`, client-supplied `userId` ignored, `retrieveXalian` restricted to the caller's own Xalians, the missing `return` fixed, `console.log(event)` replaced with a structured logger that never prints headers or bodies, `buildError` returns a fixed shape with a request id. Frontend: `dbApi.js` sends `Authorization: Bearer <idToken>` from `Auth.currentSession()` and drops `Signer`. Findings F1, F3, F4, F8 (the bug), F17. Rebases on A1 before opening.
+
+### Wave B (sequential): the workspace
+
+**B1. `chore/workspace`.** Root `package.json` with workspaces `apps/*`, `packages/*`, `my-app`. `lambda/` moved to `apps/api` unchanged in behavior; `main.tf`, both workflows, and `CLAUDE.md` command paths updated. `packages/content` created from `lambda/src/json`, with `scripts/bundleLore.js`, `bundleAbilityCatalog.js`, `buildCodex.js`, `checkCatalogCoverage.js`, `loreCoverage.js`, `rebandSites.js`, and `docs/species-templates/tools/validate-template.js` repointed. The 27 files in `my-app/src` that import from `json/` repointed at `@xalians/content`; `my-app/src/json` and `copy-json` deleted. `my-app` converted from yarn to npm; workflows run `npm ci` at the root. Waits for PR #131 (touches `lambda/src/json` and the generator test) to merge. Findings F7 (content half), F18.
+
+**B2. `chore/rules-package`.** `packages/rules` in TypeScript: the generator (`prng`, `constants`, `generate`, `grade`, `index`) with its tests, the attack calculator, and the five lambda-copied constant files, converted to typed ESM as they move. `my-app` imports repointed; `my-app/src/gameplay/generator`, `my-app/src/gameplay/attackCalculator.js`, the copied constants, `copy-js`, and `vite/commonjsShim.js` deleted. `designTokens.js` and `colorConstants.js` stay in `my-app` (they were never copies). Finding F7 (rules half), F13 (the CWD path juggling goes with the copies).
+
+### Wave C (parallel): types and the API rewrite
+
+**C1. `content/schemas`.** zod schemas in `packages/content/src/schema`: `XalianRecord` (from `docs/design/xalian-creature-data-structure.md` and `sample-record-graviclaw.json`), `SpeciesTemplate`, `Registries`, `User`. A Vitest suite that validates every bundled JSON file against its schema, and a stale-bundle check that fails CI when `docs/` and the bundle disagree. Exported types via `z.infer`.
+
+**C2. `api/typescript`.** `apps/api` rewritten in TypeScript, ESM, bundled per handler by esbuild to `dist/<handler>/index.mjs` with `@aws-sdk/*` external. A `withApi(schema, fn)` wrapper: parse and validate input, subject from claims, map `ApiError` to status, one structured log line per request. Delegates return promises; user updates use atomic `list_append` and `DELETE` with condition expressions; batch reads page through `UnprocessedKeys` and chunk at 100. Lazy user creation. `uuid` replaced by `crypto.randomUUID()`. Legacy engine moved to `apps/api/src/legacy` under `allowJs`. Handler tests with `aws-sdk-client-mock`. `archive_file` points at `dist`; the excludes list is gone. Findings F8, F9, F10, F13, F14, F16, F19, F20 (partly).
+
+### Wave D (sequential): generate on the server, then docs
+
+**D1. `api/registry`.** `XalianRegistry` table in Terraform. `POST /xalians` generates a record from `@xalians/rules` with a server-drawn seed, persists it under the caller, and returns it; `GET /xalians` lists the caller's records; `GET /xalians/{id}` reads one the caller owns. Legacy keep made server-side: `POST /db/xalian` ignores the body, generates in the legacy engine, persists, and appends to the user in one handler. `PATCH /db/user` reduced per decision 6. Frontend keep flow becomes one call. Response shapes validated against the C1 schemas. Findings F2, F12, F20. Issue #20 gets its first real implementation and a comment linking here.
+
+**D2. `docs/backend`.** `CLAUDE.md` backend and commands sections rewritten to the new layout; the audit doc gets a status header; issues filed for the two deferred items (generator and account pages on the ratified record shape; Amplify function runtime bump). Finding F21.
+
+## Agent brief rules
+
+Every brief carries these lines verbatim: work only in the assigned worktree; branch is already created; never run `terraform apply`, `aws`, or `amplify`; `terraform fmt`, `terraform validate`, and `terraform plan` are allowed only where they need no credentials (fmt and validate; plan runs in CI); run the full test suite and the build before opening the PR; commit messages carry no `Co-Authored-By` line; American English and no em-dashes in any prose or comment; open the PR with a complete description and enable auto-merge; report back with the PR URL, what was verified, and anything that did not fit the brief.
+
+## Manual steps for Nick
+
+1. After A2 merges, confirm sign-in still reaches the account page (the only change a user can feel in this program).
+2. `amplify push` from `my-app` after bumping the two function runtimes in `amplify/backend/function/*/…-cloudformation-template.json` to `nodejs22.x` and switching `add-to-group.js` to `@aws-sdk/client-cognito-identity-provider`. CI cannot do this. D2 files the issue with the exact edits.

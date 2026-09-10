@@ -51,9 +51,39 @@ resource "aws_iam_role_policy_attachment" "lambda_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-resource "aws_iam_role_policy_attachment" "dynamodb_policy" {
-  role       = aws_iam_role.lambda_exec.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+# Scoped in place of AmazonDynamoDBFullAccess: only the two live tables and
+# their indexes, only the actions the CRUD handlers actually call. The
+# generator function (GET /xalian) does not touch DynamoDB at all, but it
+# shares this role with the CRUD functions, so it also ends up with this
+# scoped access rather than none; splitting into per-function roles is out
+# of scope for this change.
+resource "aws_iam_role_policy" "dynamodb_policy" {
+  name = "xalian-dynamodb-access"
+  role = aws_iam_role.lambda_exec.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "XalianTables"
+        Effect = "Allow"
+        Action = [
+          "dynamodb:GetItem",
+          "dynamodb:BatchGetItem",
+          "dynamodb:PutItem",
+          "dynamodb:UpdateItem",
+          "dynamodb:Query",
+          "dynamodb:DeleteItem",
+          "dynamodb:ConditionCheckItem",
+        ]
+        Resource = [
+          "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/XalianTable",
+          "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/XalianUsersTable",
+          "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/Xalian*/index/*",
+        ]
+      },
+    ]
+  })
 }
 #####                                               #####
 #########################################################
@@ -80,11 +110,23 @@ data "archive_file" "lambda_zip_file" {
   # stays in the repo but does not need to ship inside the function bundle.
   excludes = [
     "src/json/planets.json",
+    "src/json/planetRecords.json",
+    "src/json/planetStatus.json",
     "src/json/glossary.json",
     "src/json/typeEffectivenessMatrix.json",
     "src/json/populated_moves.json",
     "src/json/helping_moves.json",
     "src/json/current_xalian.json",
+    "src/json/abilityCatalog.json",
+    "src/json/chronicle.json",
+    "src/json/encyclopedia.json",
+    "src/json/gradeCalibration.json",
+    "src/json/narration.json",
+    "src/json/plates.json",
+    "src/json/registries.json",
+    "src/json/sites.json",
+    "src/json/speciesRecords.json",
+    "src/json/tour.json",
     "src/json/mock",
   ]
 }
@@ -114,11 +156,11 @@ resource "aws_apigatewayv2_api" "lambda" {
   name          = "XalianAPIGateway"
   protocol_type = "HTTP"
   cors_configuration {
-    allow_origins = ["http://*", "https://*"]
-    allow_methods = ["GET", "OPTIONS", "PUT", "PATCH", "POST", "DELETE", "HEAD"]
-    allow_headers = ["host", "authorization", "x-amz-date", "X-Amz-Security-Token", "Content-Type"]
+    allow_origins     = ["http://*", "https://*"]
+    allow_methods     = ["GET", "OPTIONS", "PUT", "PATCH", "POST", "DELETE", "HEAD"]
+    allow_headers     = ["host", "authorization", "x-amz-date", "X-Amz-Security-Token", "Content-Type"]
     allow_credentials = true
-    max_age       = 300
+    max_age           = 300
   }
 }
 
@@ -127,6 +169,19 @@ resource "aws_apigatewayv2_stage" "prod" {
 
   name        = "prod"
   auto_deploy = true
+
+  # Tuned levers, not fixed limits: revisit if legitimate traffic gets
+  # throttled or if the free generator route needs tighter protection.
+  default_route_settings {
+    throttling_burst_limit = 50
+    throttling_rate_limit  = 20
+  }
+
+  route_settings {
+    route_key              = "GET /xalian"
+    throttling_burst_limit = 10
+    throttling_rate_limit  = 5
+  }
 
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.api_gw.arn
@@ -152,6 +207,19 @@ resource "aws_apigatewayv2_stage" "test" {
 
   name        = "test"
   auto_deploy = true
+
+  # Tuned levers, not fixed limits: revisit if legitimate traffic gets
+  # throttled or if the free generator route needs tighter protection.
+  default_route_settings {
+    throttling_burst_limit = 50
+    throttling_rate_limit  = 20
+  }
+
+  route_settings {
+    route_key              = "GET /xalian"
+    throttling_burst_limit = 10
+    throttling_rate_limit  = 5
+  }
 
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.api_gw.arn
