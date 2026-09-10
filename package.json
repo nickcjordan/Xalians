@@ -21,5 +21,9 @@
   },
   "overrides": {
     "maplibre-gl": "1.15.3"
+  },
+  "optionalDependencies": {
+    "@esbuild/linux-x64": "0.28.2",
+    "@rollup/rollup-linux-x64-gnu": "4.63.1"
   }
 }
