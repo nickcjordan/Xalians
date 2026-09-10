@@ -37,6 +37,7 @@ import awsconfig from './aws-exports';
 import { Provider } from 'react-redux'
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from '@/components/ui/sonner';
+import { ErrorBoundary } from '@/components/system/status';
 import store from './store/store';
 
 
@@ -54,6 +55,8 @@ const ReclamationPage = lazy(() => import('./pages/games/reclamationPage'));
 const DuelPlaygroundPage = lazy(() => import('./pages/games/duelPlaygroundPage'));
 const EncyclopediaPage = lazy(() => import('./pages/encyclopediaPage'));
 const LongReturnPage = lazy(() => import('./pages/games/longReturnPage'));
+const NotFoundPage = lazy(() => import('./pages/system/notFoundPage'));
+const DevErrorPage = lazy(() => import('./pages/system/devErrorPage'));
 
 
 // The legacy species detail route accepted either a zero-padded numeric id
@@ -85,6 +88,7 @@ class App extends React.Component {
       <TooltipProvider>
         <Router>
          <Suspense fallback={<div>Loading...</div>}>
+          <ErrorBoundary>
             <Switch>
               <Route exact path="/"><Home /></Route>
               <Route exact path="/generator"><GeneratorPage /></Route>
@@ -100,6 +104,9 @@ class App extends React.Component {
               {/* the design system reference - unlinked from the navbar, it is a
                   developer tool rather than a page for players */}
               <Route exact path="/styleguide"><StyleGuidePage /></Route>
+              {/* throws on render, to exercise ErrorBoundary/ErrorPage - a developer
+                  route, unlinked like /styleguide */}
+              <Route exact path="/dev/error"><DevErrorPage /></Route>
               {/* the duel's own affordance reference - also a developer tool,
                   also deliberately unlinked */}
               <Route exact path="/duel/reference"><DuelPlaygroundPage /></Route>
@@ -110,7 +117,10 @@ class App extends React.Component {
               <Route exact path="/train"><TrainingGroundsPage /></Route>
                 <Route exact path="/train/match"><MatchCardGamePage /></Route>
                 <Route exact path="/train/physics"><PhysicsGamePage /></Route>
+              {/* catch-all: keep this last */}
+              <Route><NotFoundPage /></Route>
             </Switch>
+          </ErrorBoundary>
       </Suspense>
         </Router>
         <Toaster />

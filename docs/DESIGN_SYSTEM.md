@@ -164,6 +164,21 @@ Empty states are a solid hairline box on `--g-s0` with a legend line and one sen
 - Under `prefers-reduced-motion`, every transition is instant and the splash shows its resting frame.
 - Immersive experiences set their own motion within the core.
 
+**The motion catalog.** Everything in the chrome that moves, and nothing else:
+
+| Motion | Duration | Where it lives |
+|---|---|---|
+| Control state (hover, press, focus ring) | 120 ms | `transition-colors` on every ui component |
+| Chevron rotating on a collapsible or accordion | 200 ms | the component |
+| Popover, dropdown, tooltip, hover card entering | 200 ms | `tw-animate-css` fade and zoom on the content |
+| Dialog, sheet, drawer, alert dialog entering | 320 ms | fade on the overlay, slide or zoom on the content |
+| Toast entering and leaving | 320 ms | sonner |
+| Helix spinner rungs lighting in sequence | 1.2 s cycle | `.helix-spinner` in `globals.css`; the one loop, because it is loading |
+| The home splash morph, once on arrival | GSAP timeline | `xaliansLogoDnaAnimated.js` |
+| A value updating on glass | 200 ms | the component |
+
+Under reduced motion `globals.css` sets every animation and transition to near zero, the spinner holds its 70 percent frame and the splash shows its resting frame. Nothing in the catalog is added without a row here.
+
 ## 8. Brand
 
 - **The mark is the DNA X** (`my-app/src/svg/logo/xalians_dna_logo.svg`), drawn in `--g-viable-hi`. It stays. It is also the favicon and the app icon.
@@ -190,14 +205,48 @@ The vehicle changed on 2026-09-09 (Nick: strip all Bootstrap; shadcn on Tailwind
 | `my-app/src/styles/globals.css` | The semantic layer over the tokens: shadcn's variables mapped onto the contract, the `el-*` element scope, the chamfer and cut utilities, the `type-*` roles, the helix strokes and keyframes. No values, only references. |
 | `my-app/src/constants/designTokens.js`, `colorConstants.js` | The JavaScript half of the palette for recharts, GSAP and SVG. Must equal the tokens. |
 | `my-app/src/__tests__/tokens.test.js` | Fails if `tokens.css` and `designTokens.js` disagree, or if any other stylesheet under `src` carries a raw hex. |
-| `my-app/src/components/ui/*.tsx` | shadcn components restyled to the contract: button ranks, chips and badges, cards, inputs, tabs, overlays, data pieces. Add one with `npx shadcn@latest add <name>` and restyle it here. |
-| `my-app/src/components/system/*.tsx` | House components: Shell, Masthead, SectionHead, SpecPlate, RecordRow, Meter, MoveSet, EmptyState, Tile, HelixMark, HelixSpinner, BrandLockup. |
-| `my-app/src/pages/styleGuidePage.tsx` | `/styleguide`: every component in every state, the spinner, the lockup, rendered from the real code. The reference an agent checks before building anything. |
-| `my-app/src/__tests__/designSystem.test.js` | Fails if a page is unclassified (`data-tier` or the legacy `data-terminal`) or the style guide stops importing the system. |
+| `my-app/src/components/ui/*.tsx` | shadcn components restyled to the contract (the inventory below). Add one with `npx shadcn@latest add <name>` and restyle it here. |
+| `my-app/src/components/system/*.tsx` | House components and page templates (the inventory below). |
+| `my-app/src/pages/styleGuidePage.tsx`, `my-app/src/pages/styleguide/*.tsx` | `/styleguide`: every component in every state, rendered from the real code. The reference an agent checks before building anything. The page holds the foundations; the section files hold the rest. |
+| `my-app/src/pages/system/*.tsx` | The status pages: `/404` and the router fallback, `/dev/error` for the boundary. |
+| `my-app/src/__tests__/designSystem.test.js`, `systemGuards.test.js` | Fail if a page is unclassified (`data-tier`), if a component under `ui` or `system` is not on the style guide, or if a chrome file carries a raw hex, a version 3 class or a Bootstrap import. |
 | `my-app/public/assets/css/legacy/*` | Legacy: the version 3 system (`system.css`), the old template (`style.css`), and the immersive pages' own stylesheets. Read only by the immersive pages until each gets its brief, which deletes its share. Never add a rule; never load on a chrome page. |
 | `docs/design/v4-foundations.html`, `docs/design/v4-chrome.html` | The ratified proposal pages. |
 | `docs/design/terminal-mockups.html` | Version 3, kept as the record of what was tried. |
 | `scripts/design/snap.js` | Screenshot harness: every route at desktop and phone with overflow and console-error checks. Run it before claiming visual work is done. |
+
+### 10.1 The component inventory
+
+Everything the chrome tier may be built from, as of 2026-09-10. Each is on `/styleguide` with its states; `systemGuards.test.js` fails if one is added without a section.
+
+**Primitives** (`src/components/ui`, shadcn restyled)
+
+| Group | Components |
+|---|---|
+| Actions | Button (ranks: `default` the one primary, `secondary`, `outline`, `ghost`, `destructive`, `link`; sizes incl. `icon`), ButtonGroup, Toggle, ToggleGroup |
+| Inputs | Input, Textarea, InputGroup (leading icon, trailing addon or clear), NativeSelect, Select, Checkbox, RadioGroup, Switch, Slider, Label, Form (react-hook-form + zod), Field set (FieldSet, FieldLegend, FieldGroup, Field, FieldLabel, FieldDescription, FieldError) |
+| Choosing | Command (palette, CommandDialog), Combobox, Tabs (`tabTriggerClass` for router links) |
+| Content | Card (`panel`, `recessed`, `raised`, `glass`, `link`), Badge (`chip`, `chip-outline` for elements; `default`, `ok`, `warn`, `danger`, `info` for state), Avatar (sm 24, md 32, lg 48; AvatarGroup), AspectRatio, Separator, ScrollArea, Collapsible, Accordion, Alert, Kbd, Progress |
+| Overlays | Dialog, AlertDialog (destructive confirm), Sheet (desktop side panel), Drawer (phone bottom sheet), Popover, HoverCard, DropdownMenu, Tooltip, sonner `toast` |
+| Data | Table, Chart (recharts themed from the tokens; `ChartContainer`, `ChartTooltip`, `ChartLegend`), Pagination, Breadcrumb |
+
+**House pieces** (`src/components/system`)
+
+| File | Components | For |
+|---|---|---|
+| `masthead.tsx` | Shell, Masthead, SectionHead | The core frame of every page |
+| `brand.tsx` | HelixMark, HelixSpinner, BrandLockup | The mark, loading, the lockup |
+| `record.tsx` | SpecPlate, RecordRow, Meter, MoveSet, EmptyState, Tile, TileBar, TileArt, TileMeta | Records and catalog tiles |
+| `layout.tsx` | IndexPage, RecordPage, FormPage, ResultsPage | The four page shapes: an index with filter bar and pagination, a record with plate and readouts, a single-column form with the keys pinned on the phone, a result with an outcome badge and stat tiles |
+| `status.tsx` | NotFoundPage, ErrorPage, OfflinePage, ErrorBoundary | The pages a site needs before it has content |
+| `a11y.tsx` | SkipLink, VisuallyHidden, LiveRegion | Section 15 |
+| `stepper.tsx` | Stepper, Step | Multi-step flows: squad, board, confirm |
+| `readouts.tsx` | StatTile, KeyValueList, Timeline, TimelineItem, Callout (`note`, `caution`, `plague`, `viable`), DataBlock | Numbers, facts, eras, asides, raw data |
+| `filters.tsx` | SearchField, FilterBar | Index pages; the bar folds into a Sheet under `sm` |
+| `data-table.tsx` | DataTable | Sortable, linkable, selectable rows on the Table primitive; never collapses into cards |
+| `identity.tsx` | IdentityRow | A person or account: Avatar, name, detail |
+
+Deliberately absent: Skeleton (section 6), Calendar and date pickers, Carousel, Resizable, Sidebar, Menubar, ContextMenu, NavigationMenu, InputOTP. Add one only when a page needs it, through step 2 of the build-ui skill.
 
 Page classification is declared on the page root: `data-tier="chrome"`, `data-tier="immersive"`, and a featured component declares `data-tier="featured"` on its own root. The test fails if a page has neither this nor the legacy `data-terminal`.
 
@@ -243,3 +292,27 @@ Each step is one PR, verified by paint with `scripts/design/snap.js`, auto-merge
 - A `clip-path` cuts the border off with the corner; a chamfered surface is two clipped layers.
 - Class selectors are case-insensitive in quirks mode; do not rely on `.LG` and `.lg` being different.
 - When fanning out agents on visual work, one shared worktree is unsafe (an agent ran `git stash` and wiped others' work). One agent at a time on shared files, or separate worktrees.
+
+## 15. Accessibility
+
+Part of done, checked on every component before it is on `/styleguide` and on every page before its paint check.
+
+- **Keyboard.** Every control reachable by Tab in reading order, operable with Enter, Space and the arrow keys Radix gives it. Overlays trap focus and return it to the trigger on close. Escape closes every overlay.
+- **Focus.** One visible focus ring, two pixels in `--color-viable`, offset two on the surface behind it (`focus-visible:ring-2 ring-viable ring-offset-2 ring-offset-s0`). Never removed, never replaced by a color change alone.
+- **Skip link.** Every page's `<main>` carries `id="main"` and renders `SkipLink` first, so the first Tab lands on "Skip to content".
+- **Names.** Every control has a name: visible label, `aria-label` on icon-only keys, `Label htmlFor` on every input. Icons are decorative (`aria-hidden`) unless they are the whole control.
+- **Announcements.** Loading and result changes that the eye would catch are announced through the `LiveRegion` (`aria-live="polite"`); toasts announce themselves.
+- **Contrast.** Text 4.5:1 against its surface, legends and data included; the ink scale on the surface scale holds this by construction, an element hue as text does not, so element hues color chips and plates, never body text.
+- **Targets.** 44 by 44 pixels on the phone layout for anything tapped; a 32 pixel icon key gets its hit area from padding, not from a bigger glyph.
+- **Motion.** `prefers-reduced-motion` is honored by the theme (section 7). Nothing autoplays with sound; nothing flashes.
+- **Structure.** One `h1` per page, in the masthead. Sections head with `h2`, subsections `h3`; the type roles (`type-title`, `type-heading`, `type-subhead`) never substitute for the element. Lists are lists, tables are tables (`DataTable` on the `Table` primitive; never a grid of divs pretending).
+- **Language.** Errors say what went wrong and how to fix it, next to the field, and are linked to it (`aria-describedby`, which `Form` does). Placeholder text is never the only label.
+
+## 16. Icons
+
+- **Lucide only** (`lucide-react`), at four sizes: `size-3.5` inline with small text and in badges, `size-4` inline with body text and inside buttons, `size-5` on icon keys and section heads, `size-6` on the phone menu key and empty states. No other size, no other set, no emoji.
+- **Stroke** stays at Lucide's default; icons take `currentColor` and so wear the ink of the text they sit in. An icon never wears the accent or a status hue on its own; it inherits from a badge, a callout or a key that already does.
+- **Meaning.** One icon per meaning across the site (search is `Search`, close is `X`, more is `MoreHorizontal`, remove is `Trash2`, sort is `ArrowUpDown`, expand is `ChevronDown`, external is `ArrowUpRight`). A new meaning gets a row in the style guide's icon section before it is used twice.
+- **Never alone in chrome copy.** An icon beside a word, or an icon-only key with `aria-label`; an icon standing in for a word in prose is a picture, not a word.
+- Species, planets and elements are art, not icons: `XalianImage` and the planet renders, never a Lucide glyph.
+
