@@ -55,7 +55,11 @@ type AnySite = (AuthoredSite & { world?: WorldFacts }) | FrameSite;
 // ---------------------------------------------------------------------------
 
 function recordElement(record: XalianRecord | null | undefined): XalianRecord['element'] {
-	return (record && record.element) || { primary: '', affinities: {} };
+	// the '' fallback primary is not a real ElementKey (registry-enums narrowed it to a
+	// literal union); this path only runs for a record missing element entirely, which
+	// none of the real callers ever pass, so the cast documents "never a real element"
+	// rather than widening the type for everyone else
+	return (record && record.element) || ({ primary: '', affinities: {} } as unknown as XalianRecord['element']);
 }
 
 // world matchup: matrix[creature][world], softened + blended, creature as attacker

@@ -2,13 +2,13 @@
 /*
 	*** DEVTOOLS - not part of the shipped app ***
 
-	Decision-quality validation for Reclamation. Where expeditionSimulator.js measures
+	Decision-quality validation for Reclamation. Where expeditionSimulator.ts measures
 	whether the game is BALANCED, this measures whether its decisions are INTERESTING, on
 	the terms set out in docs/design/game-validation-principles.md section 1. Run via the
 	esbuild runner, exactly like the simulator:
 
-		node my-app/src/gameplay/expedition/devtools/runNode.cjs \
-			my-app/src/gameplay/expedition/devtools/expeditionValidation.js --matches=200 --seed=7
+		node my-app/scripts/runNode.cjs \
+			packages/rules/src/expedition/devtools/expeditionValidation.ts --matches=200 --seed=7
 
 	Flags:
 		--matches=N      matches per configuration (default 200)
