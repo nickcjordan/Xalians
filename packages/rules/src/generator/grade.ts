@@ -31,7 +31,7 @@ import { ATTRIBUTE_KEYS, FINISH_ODDS } from './constants.ts';
 // owns; cast at the boundary (a zod schema for it lives in packages/content/src/schema,
 // branch content/schemas, landing separately)
 import bundledCalibrationJson from '@xalians/content/gradeCalibration.json';
-import type { Band, SpeciesTemplate, XalianRecord } from './types.ts';
+import type { Band, SpeciesTemplate, TraitKey, XalianRecord } from './types.ts';
 
 export interface GradeCalibration {
 	generatorVersion?: string;
@@ -115,10 +115,14 @@ function bandPosition(value: number, [lo, hi]: Band): number {
 }
 
 function traitsScore(record: XalianRecord, template: SpeciesTemplate): number {
-	const pool = (template.traits && template.traits.pool) || {};
+	const pool = ((template.traits && template.traits.pool) || {}) as Partial<Record<TraitKey, number>>;
+	// Object.keys always returns string[] regardless of the record's key type (a TS
+	// limitation, not a narrowing gap), so this is cast back to the TraitKey the record
+	// actually contains -- see the same cast and comment in generate.ts's rollTraits.
+	const poolKeys = Object.keys(pool) as TraitKey[];
 	const traits = record.traits || [];
 	let score = 0;
-	Object.keys(pool).forEach((key) => {
+	poolKeys.forEach((key: TraitKey) => {
 		// traits.pool is a partial record (an unlisted trait key is an implicit 0), but
 		// key came from Object.keys(pool) so the value is always present here.
 		const percent = pool[key] ?? 0;

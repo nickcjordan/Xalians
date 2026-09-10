@@ -7,6 +7,7 @@
 	.claude/skills/migrate-species/SKILL.md sections 5.3, 5.7, 5.7a, 5.8, 5.9.
 */
 import type {
+	ActionKey,
 	AttributeKey,
 	CapabilityKey,
 	ElementKey,
@@ -14,6 +15,7 @@ import type {
 	GradedSenseKey,
 	TemperamentKey,
 	TemperamentTiltSpec,
+	TraitKey,
 	TraitTiltSpec,
 } from './types.ts';
 
@@ -62,14 +64,14 @@ export const SECONDARY_AFFINITY_CHANCE = 0.25;
 export const FAVORED_DRAWS = 2;
 
 // 6: exclusion pairs. The higher tilted percent rolls first; a landed partner skips the other.
-export const TRAIT_EXCLUSIONS: string[][] = [['pack-bonded', 'solitary']];
+export const TRAIT_EXCLUSIONS: TraitKey[][] = [['pack-bonded', 'solitary']];
 
 // 6: tilt table. Each entry names the rolled quantity that tilts the trait and the
 // direction. The tilt multiplies the authored percent by 1 + TILT_STRENGTH * (p - 0.5) *
 // direction, where p is where the rolled value sits in its species band (0 bottom, 1
 // top); entries at 100 are exempt; results clamp to 1 to 99.
 export const TILT_STRENGTH = 0.6;
-export const TRAIT_TILTS: Record<string, TraitTiltSpec> = {
+export const TRAIT_TILTS: Partial<Record<TraitKey, TraitTiltSpec>> = {
 	stealthy: { on: 'mass', dir: -1 },
 	anchored: { on: 'mass', dir: 1 },
 	menacing: { on: 'height', dir: 1 },
@@ -109,7 +111,7 @@ export const HEFT_MATCH_WEIGHTS: number[] = [3, 2, 1];
 export const SECONDARY_MEDIUM_SHARE = 0.4;
 
 // 5.7a: what an element can do through a declared conduit.
-export const CONDUIT_ACTIONS_BY_MEDIUM: Record<ElementKey, string[]> = {
+export const CONDUIT_ACTIONS_BY_MEDIUM: Record<ElementKey, ActionKey[]> = {
 	fire: ['strike', 'beam', 'spray', 'burst', 'cloud', 'hurl', 'lash'],
 	water: ['spray', 'burst', 'cloud', 'snare', 'shove', 'mend', 'lash'],
 	dark: ['snare', 'crush', 'shove', 'drain', 'burst', 'ward', 'terrorize'],
