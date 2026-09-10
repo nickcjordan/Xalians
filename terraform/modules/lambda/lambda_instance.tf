@@ -101,6 +101,12 @@ resource "aws_apigatewayv2_integration" "lambda_apigw_integration" {
   integration_uri    = aws_lambda_function.lambda_function.invoke_arn
   integration_type   = "AWS_PROXY"
   integration_method = "POST"
+  # Payload format 2.0: the handlers type the event as
+  # APIGatewayProxyEventV2WithJWTAuthorizer (claims at
+  # requestContext.authorizer.jwt.claims). lib/auth.ts still reads the 1.0 claims path
+  # (requestContext.authorizer.claims) as a fallback so a future format change cannot
+  # lock every caller out again.
+  payload_format_version = "2.0"
 }
 
 # route from api gateway to lambda

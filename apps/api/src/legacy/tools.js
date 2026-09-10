@@ -1,5 +1,4 @@
 const fs = require('fs')
-const path = require('path')
 const constants = require('./constants/constants.js');
 
 module.exports = {
@@ -45,32 +44,38 @@ function getPropsFromFile(fullfileName) {
 }
 
 // Shared game data (elements, species, qualifiers, moves) lives in the
-// @xalians/content workspace package, not under this app. In dev and test
-// (npm workspaces linked, CWD irrelevant) require.resolve finds it on the
-// module path. In the deployed Lambda zip the workspace package is not
-// present (the zip is built from apps/api alone), so scripts/stageApiContent.js
-// (run in CI before `terraform apply`) copies the four engine JSON files into
-// apps/api/dist-content/, and that is the fallback below. This staging step
-// goes away in PR C2 once esbuild bundles the @xalians/content imports directly.
-function getObject(fileName) {
-    return JSON.parse(getJson(fileName));
-}
-
-function getJson(fileName) {
-    try {
-        return getJsonFromFile(require.resolve('@xalians/content/' + fileName + '.json'));
-    } catch (err) {
-        try {
-            return getJsonFromFile(path.join(__dirname, '..', 'dist-content', fileName + '.json'));
-        } catch (e) {
-            console.error(err);
-        }
+// @xalians/content workspace package, not under this app. These four names
+// are the only ones the legacy engine ever asks for (ai.js, moveBuilder.js,
+// gameplay/attackCalculator.js), so they are required statically rather than
+// built from a dynamic path: esbuild can see a static `require('@xalians/
+// content/elements.json')` at bundle time and inline the JSON directly into
+// the handler bundle, which is what lets this file drop the CWD-relative
+// fallback chain of staged-copy directories that only existed to cover
+// the un-bundled deploy zip.
+function loadContentJson(fileName) {
+    switch (fileName) {
+        case 'elements':
+            return require('@xalians/content/elements.json');
+        case 'species':
+            return require('@xalians/content/species.json');
+        case 'qualifiers':
+            return require('@xalians/content/qualifiers.json');
+        case 'moves':
+            return require('@xalians/content/moves.json');
+        default:
+            throw new Error('tools.getObject/getJson: unknown content file "' + fileName + '"');
     }
 }
 
-function getJsonFromFile(fileName) {
-    const data = fs.readFileSync(fileName, 'utf8');
-    return data.toString()
+function getObject(fileName) {
+    return loadContentJson(fileName);
+}
+
+// Callers (gameplay/attackCalculator.js) still expect a JSON string they
+// JSON.parse themselves, so this re-serializes the already-loaded object
+// rather than reading a file.
+function getJson(fileName) {
+    return JSON.stringify(loadContentJson(fileName));
 }
 
 

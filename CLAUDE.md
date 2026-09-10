@@ -86,11 +86,12 @@ Run the generator engine locally (no AWS needed) — `start.js` is a scratch dri
 npm start          # node start.js
 ```
 
-Backend (`apps/api`, from the repo root):
+Backend (`apps/api`, TypeScript/ESM, from the repo root):
 
 ```bash
-npm test -w apps/api   # node --test, the CRUD/auth handler suite
-npm run build:api      # stages the four engine JSON files from packages/content into apps/api/dist-content/, for the Lambda zip
+npm run typecheck -w apps/api   # tsc --noEmit
+npm test -w apps/api            # vitest run, the handler/repository suite (aws-sdk-client-mock)
+npm run build -w apps/api       # esbuild: one bundle per handler at apps/api/dist/<name>/index.mjs
 ```
 
 Frontend (from `my-app/`, or `-w my-app` from the root):
@@ -106,10 +107,10 @@ Infrastructure (from repo root):
 
 ```bash
 npm run publish    # terraform apply -auto-approve
-terraform plan     # preview; main.tf zips ./apps/api into generate_xalian_lambda.zip and uploads it (run `npm run build:api` first so the zip has its dist-content/ fallback copy)
+terraform plan     # preview; main.tf zips apps/api/dist (run `npm run build -w apps/api` first) into generate_xalian_lambda.zip and uploads it
 ```
 
-There is no test suite for the generation engine itself (`ai.js`, `xalianBuilder.js`, `moveBuilder.js`) — verification is done by running `start.js` and inspecting output. `apps/api/test` covers the CRUD/auth handlers with `node --test`. The frontend has tests for the duel rules (`my-app/src/gameplay/duel/__tests__/duelRules.test.js`), run under Vitest (`npm test -- --run` from `my-app/`); CI runs them on every PR. Add to them when changing combat or movement rules.
+There is no test suite for the legacy generation engine itself (`src/legacy/ai.js`, `xalianBuilder.js`, `moveBuilder.js`) — verification is done by running `start.js` and inspecting output. `apps/api/test` covers the handlers and repositories with Vitest and `aws-sdk-client-mock`. The frontend has tests for the duel rules (`my-app/src/gameplay/duel/__tests__/duelRules.test.js`), run under Vitest (`npm test -- --run` from `my-app/`); CI runs them on every PR. Add to them when changing combat or movement rules.
 
 ## Backlog & workflow
 
@@ -123,42 +124,42 @@ There is no test suite for the generation engine itself (`ai.js`, `xalianBuilder
 
 ## Architecture
 
-### Generation engine (`apps/api/src/`)
+### Generation engine (`apps/api/src/legacy/`)
 
-Everything flows through `xalianBuilder.buildXalian()`:
+The pre-record engine that still serves the free showroom (`GET /xalian`) and the legacy keep flow (`POST /db/xalian`). It is plain CommonJS kept under `allowJs`, quarantined rather than ported: the ratified generator in `my-app/src/gameplay/generator/` supersedes it, and this tree is deleted once generation moves server-side onto that generator (Wave D in `docs/design/backend-modernization-plan.md`). Everything flows through `xalianBuilder.buildXalian()`:
 
-1. `ai.selectSpecies()` picks from `json/species.json`.
-2. `ai.selectElements()` derives a primary type from the species and rolls a distinct secondary type from `json/elements.json`.
+1. `ai.selectSpecies()` picks from `species.json`.
+2. `ai.selectElements()` derives a primary type from the species and rolls a distinct secondary type from `elements.json`.
 3. `ai.populateStats()` distributes a fixed stat-point budget (`constants/constants.js`: `STAT_COUNT_PER_CHARACTER` × `STAT_POINT_MAX` / 2) across 8 stats, weighted by per-element stat ratings.
-4. `moveBuilder.getMove()` is called 4×, drawing from `json/moves.json` / `json/all_move_data.json` filtered by the Xalian's elements.
+4. `moveBuilder.getMove()` is called 4×, drawing from `moves.json` / `qualifiers.json` filtered by the Xalian's elements.
 
 `ai.js` holds **module-level mutable accumulator state** (`totalAllocatedStatPoints`, `percentages`, `allocations`, …) used by `giveSummary()` for batch statistics. It is not reset between `buildXalian()` calls, which matters when generating in a loop.
 
 The internal `character.js` model is *not* the API shape. `translator.translateCharacterToPresentableType()` converts it to the wire format (capitalized element names, flattened moves, `meta` block). Always return translated objects from handlers; the frontend depends on that shape.
 
-`tools.getObject(name)` loads `<name>.json` from the `@xalians/content` workspace package via `require.resolve`, falling back to `apps/api/dist-content/<name>.json` (staged by `npm run build:api`, relative to `__dirname` so CWD no longer matters) when the workspace package is not resolvable — the case inside the deployed Lambda zip, which ships `apps/api` alone.
+`tools.getObject`/`getJson` load the four engine JSON files (`elements`, `species`, `qualifiers`, `moves`) via static `require('@xalians/content/<name>.json')` calls, one per name in a switch — static so esbuild can see them and inline the JSON directly into each handler bundle at build time. There is no CWD-relative fallback; `apps/api/src/legacy/package.json` pins `"type": "commonjs"` so this tree keeps working as CommonJS even though `apps/api/package.json` itself is `"type": "module"`.
 
-Combat math lives in `gameplay/attackCalculator.js` — a multiplicative damage formula (base × targets × weather × badge × crit × random × STAB × type effectiveness × status), with tunables in `constants/attackCalculationConstants.js`.
+Combat math lives in `legacy/gameplay/attackCalculator.js` — a multiplicative damage formula (base × targets × weather × badge × crit × random × STAB × type effectiveness × status), with tunables in `legacy/constants/attackCalculationConstants.js`.
 
 ### Lambdas and API
 
-Each handler is a named export inside `apps/api/src/`; Terraform wires one Lambda + API Gateway route per handler via the reusable `terraform/modules/lambda` module (`main.tf` lines ~166–310):
+`apps/api/src/handlers/*.ts` are the six route handlers, each `export const handler = withApi(fn, opts)`. `withApi` (`src/lib/api.ts`) parses and validates the body/query against a zod schema, derives the subject from the JWT claims (`src/lib/auth.ts`), calls the route function, serializes `{status, body}` into the Lambda response, maps a thrown `ApiError` to its status/errorCode and anything else to a logged 500 with a request id, and emits one structured log line per request. Persistence goes through promise-returning repositories (`src/repositories/users.ts`, `src/repositories/xalians.ts`) over one shared `DynamoDBDocumentClient` (`src/lib/db.ts`) — no callbacks anywhere in this tree.
 
-| Route | Handler | Auth |
+Terraform wires one Lambda + API Gateway route per handler via the reusable `terraform/modules/lambda` module (`main.tf` lines ~255–400):
+
+| Route | Handler bundle | Auth |
 |---|---|---|
-| `GET /xalian` | `generateXalianLambda.handler` | NONE |
-| `POST /db/xalian` | `xalianTableCRUDLambdas.createXalian` | AWS_IAM |
-| `GET /db/xalian` | `xalianTableCRUDLambdas.retrieveXalian` | AWS_IAM |
-| `GET /db/xalians` | `xalianTableCRUDLambdas.retrieveXalianBatch` | AWS_IAM |
-| `GET /db/user` | `userTableCRUDLambdas.retrieveXalianUser` | AWS_IAM |
-| `POST /db/user` | `userTableCRUDLambdas.createXalianUser` | AWS_IAM |
-| `PATCH /db/user` | `userTableCRUDLambdas.updateXalianUser` | AWS_IAM |
+| `GET /xalian` | `generateXalian/index.handler` | NONE |
+| `POST /db/xalian` | `createXalian/index.handler` | JWT |
+| `GET /db/xalian` | `retrieveXalian/index.handler` | JWT |
+| `GET /db/xalians` | `retrieveXalian/index.handler` (same bundle as the single-id route) | JWT |
+| `GET /db/user` | `retrieveUser/index.handler` | JWT |
+| `POST /db/user` | `createUser/index.handler` | JWT |
+| `PATCH /db/user` | `updateUser/index.handler` | JWT |
 
-Adding an endpoint means: new exported handler → new `module "..._lambda_module"` block in `main.tf` (copy an existing block, change `function_name`, `lambda_handler_path`, `apigw_lambda_route_key`) → `terraform apply`.
+Adding an endpoint means: new `src/handlers/<name>.ts` exporting `handler` → new `module "..._lambda_module"` block in `main.tf` pointing `lambda_handler_path` at `<name>/index.handler` → `terraform apply`.
 
-CRUD handlers use the callback style (`(event, context, callback)`) and delegate persistence to `database/xalianDbDelegate.js` (table `XalianTable`) and `database/userDbDelegate.js` (table `XalianUsersTable`), both raw `AWS.DynamoDB.DocumentClient`. Responses are built with `database/responseBuilder.js` — use it rather than hand-rolling status codes and CORS headers.
-
-All lambdas share one deployment artifact: `archive_file` zips the whole `apps/api/` directory into `generate_xalian_lambda.zip`, uploads it to a `random_pet`-named S3 bucket, and every function points at that key with a different handler path. **Dependencies must be installed into `apps/api/node_modules` and `npm run build:api` run (staging `apps/api/dist-content/`) before applying** — `uuid` is a real dependency of `xalianBuilder.js`, declared in `apps/api/package.json`; the deploy workflow runs `npm ci` at the workspace root before zipping.
+Every handler is bundled independently by esbuild (`apps/api/esbuild.config.mjs`, `npm run build -w apps/api`) to `apps/api/dist/<name>/index.mjs`: ESM, platform node, target node22, `@aws-sdk/*` left external (the `nodejs22.x` runtime provides it), everything else — `zod`, `@xalians/content` JSON, the legacy CommonJS engine — bundled in. `terraform`'s `archive_file` zips `apps/api/dist` directly; there is no excludes list and nothing is staged into `node_modules` before `terraform apply`, because the bundle has no runtime dependency on the workspace at all. `uuid` is gone; `xalianBuilder.js` uses `crypto.randomUUID()`.
 
 Two API Gateway stages exist (`prod`, `test`) mapped to `api.xalians.com` and `testapi.xalians.com`. The frontend hardcodes `https://api.xalians.com/prod/...` in `my-app/src/utils/dbApi.js`.
 

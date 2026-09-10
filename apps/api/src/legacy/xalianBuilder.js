@@ -1,5 +1,5 @@
 var Xalian = require('./model/character.js');
-const { v4: uuidv4 } = require('uuid');
+const { randomUUID } = require('crypto');
 const moveBuilder = require('./moveBuilder.js');
 const ai = require('./ai.js');
 const fs = require('fs')
@@ -42,5 +42,5 @@ function buildXalian(selectedSpecies = null) {
 }
 
 function generateXalianId(speciesId) {
-    return speciesId + '-' + uuidv4();
+    return speciesId + '-' + randomUUID();
 }
