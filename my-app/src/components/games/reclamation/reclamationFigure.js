@@ -4,7 +4,7 @@ import { RoleGlyph } from './reclamationGlyphs';
 import XalianImage from '../../xalianImage';
 import XalianTypeSymbolBadge from '../duel/board/xalianTypeSymbolBadge';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
-import { getSpeciesTemplate } from '../../../gameplay/generator/index.js';
+import { getSpeciesTemplate } from '@xalians/rules/generator';
 import { team } from '../../../constants/designTokens';
 
 /*

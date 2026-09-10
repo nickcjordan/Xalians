@@ -4,7 +4,7 @@ import {
 	recordResult, loadHistory, recordAgainst, clearHistory,
 	loadRivalId, saveRivalId,
 } from '../reclamationStorage';
-import { GENERATOR_VERSION } from '../../../../gameplay/generator/constants.js';
+import { GENERATOR_VERSION } from '@xalians/rules/generator/constants';
 
 /*
 	Coverage for reclamationStorage's contract: every read/write degrades to a safe

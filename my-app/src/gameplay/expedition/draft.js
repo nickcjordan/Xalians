@@ -15,7 +15,7 @@
 	reaching past createMatch's public contract to get at it).
 */
 
-import { generateBatch } from '../generator/index.js';
+import { generateBatch } from '@xalians/rules/generator';
 import { createRngState, nextRandom, createMatch } from './expeditionRules.js';
 import { getWorlds } from './sites.js';
 import { prepare, roleOf, speedOf } from './creatureOnTable.js';

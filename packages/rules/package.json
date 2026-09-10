@@ -1,0 +1,19 @@
+{
+  "name": "@xalians/rules",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The ratified Xalian creature generator, shared by my-app and (later) apps/api. TypeScript source is the published form; no build step.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./generator": "./src/generator/index.ts",
+    "./generator/*": "./src/generator/*.ts"
+  },
+  "dependencies": {
+    "@xalians/content": "1.0.0"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  }
+}

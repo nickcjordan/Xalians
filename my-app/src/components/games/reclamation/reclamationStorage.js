@@ -10,7 +10,7 @@
 	fake and the functions still work with no `window` at all (returns defaults).
 */
 
-import { GENERATOR_VERSION } from '../../../gameplay/generator/constants.js';
+import { GENERATOR_VERSION } from '@xalians/rules/generator/constants';
 
 /*
 	THE BASE (docs/design/reclamation-base-redesign.md): the saved match shape changed

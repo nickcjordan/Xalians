@@ -23,7 +23,7 @@ import rawTypeEffectivenessMatrix from '@xalians/content/typeEffectivenessMatrix
 
 /*
 	Hold compression (assumption 11). The registry's attribute range is 1 to 99 (the
-	generator clamps every attribute there, my-app/src/gameplay/generator/generate.js),
+	generator clamps every attribute there, packages/rules/src/generator/generate.ts),
 	so the raw mean of vitality/resilience/endurance is read against a 0 to 100 scale and
 	mapped onto [HOLD_FLOOR, HOLD_CEILING]:
 
