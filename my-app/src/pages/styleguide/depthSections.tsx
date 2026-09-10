@@ -62,9 +62,11 @@ function SpeciesTile({ name, world, element, className = '', num }: { name: stri
 function AdoptedBlock() {
     return (
         <Card variant="panel" className="mt-6">
-            <Verdict kept>Thickness means pressable, only where the face is colored enough for the mass to read. Textures instead of flat fills.</Verdict>
+            <Verdict kept>Thickness means pressable, on every key, toggle and tile: mass offset down and right in the ink (level-2 keys), the darker viable (primary) or the element dimmed (tiles). Textures instead of flat fills.</Verdict>
             <div className="flex flex-wrap items-start gap-8 pb-2">
                 <Demo label="Primary key, 4px on viable-lo"><Button>Generate</Button></Demo>
+                <Demo label="Secondary and destructive, 3px in the ink"><div className="flex gap-4"><Button variant="secondary">Keep</Button><Button variant="destructive">Release</Button></div></Demo>
+                <Demo label="Segmented: selected is pressed"><ToggleGroup type="single" defaultValue="all" variant="outline">{['all', 'fire', 'water'].map((v) => <ToggleGroupItem key={v} value={v}>{v}</ToggleGroupItem>)}</ToggleGroup></Demo>
                 <Demo label="Element tile, its hue dimmed"><SpeciesTile name="Hypnopet" world="Telypso" element="psychic" /></Demo>
                 <Demo label="Wash: grain and vignette">
                     <div className="el-fire w-[168px]"><XalianImage colored speciesName="Dromeus" primaryType="fire" moreClasses="w-full" /></div>

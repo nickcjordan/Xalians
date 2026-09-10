@@ -99,10 +99,24 @@
 	}
 
 	/* Depth, round two (section 5, proposed 2026-09-10): thickness means
-	   pressable. A pressable thing stands on a solid mass in its own color one
-	   step darker, lifts a pixel under the pointer and drops flat when
-	   pressed. Only where the face is colored enough for the mass to read:
-	   the primary key and the element tiles. Flat things stay flat. */
+	   pressable. Every pressable thing stands on a solid mass offset down and
+	   to the right (the chamfer's corner), lifts a pixel under the pointer and
+	   drops flat when pressed. The mass is flat and unlit: the ink for level-2
+	   keys, the darker viable under the primary, the element dimmed under a
+	   tile. Flat things (cards, badges, content chips, slots) carry none. */
+	.mass-key {
+		--mass: var(--color-ink-3);
+		--thick: 3px;
+		box-shadow: inset 0 1px 0 var(--color-edge-hi), var(--thick) var(--thick) 0 0 var(--mass);
+		transition: transform 120ms ease-out, box-shadow 120ms ease-out, background-color 120ms ease-out, color 120ms ease-out, border-color 120ms ease-out;
+	}
+	.mass-key:hover { transform: translate(-1px, -1px); box-shadow: inset 0 1px 0 var(--color-edge-hi), calc(var(--thick) + 1px) calc(var(--thick) + 1px) 0 0 var(--mass); }
+	.mass-key:active,
+	.mass-key[data-state="on"],
+	.mass-key[aria-pressed="true"] { transform: translate(var(--thick), var(--thick)); box-shadow: inset 0 1px 0 var(--color-edge-hi); }
+	.mass-key[data-state="on"]:hover { transform: translate(var(--thick), var(--thick)); }
+	.mass-key:disabled { transform: none; box-shadow: none; }
+
 	.key-primary {
 		--key-face: var(--color-viable);
 		--key-mass: var(--color-viable-lo);
@@ -110,7 +124,7 @@
 		position: relative;
 		isolation: isolate;
 		background: transparent;
-		transition: transform var(--default-transition-duration, 120ms) var(--ease-out, ease-out);
+		transition: transform 120ms ease-out;
 	}
 	.key-primary::before,
 	.key-primary::after {
@@ -121,21 +135,23 @@
 		transition: background-color 120ms ease-out, transform 120ms ease-out;
 	}
 	.key-primary::before { z-index: -1; background: var(--key-face); }
-	.key-primary::after { z-index: -2; background: var(--key-mass); transform: translateY(var(--thick)); }
-	.key-primary:hover { --key-face: var(--color-viable-hi); transform: translateY(-1px); }
-	.key-primary:hover::after { transform: translateY(calc(var(--thick) + 1px)); }
-	.key-primary:active { --key-face: var(--color-viable-lo); transform: translateY(var(--thick)); }
-	.key-primary:active::after { transform: translateY(0); }
+	.key-primary::after { z-index: -2; background: var(--key-mass); transform: translate(var(--thick), var(--thick)); }
+	.key-primary:hover { --key-face: var(--color-viable-hi); transform: translate(-1px, -1px); }
+	.key-primary:hover::after { transform: translate(calc(var(--thick) + 1px), calc(var(--thick) + 1px)); }
+	.key-primary:active { --key-face: var(--color-viable-lo); transform: translate(var(--thick), var(--thick)); }
+	.key-primary:active::after { transform: translate(0, 0); }
 	.key-primary:disabled { transform: none; }
+	.key-primary:disabled::after { display: none; }
 
 	/* An element tile is a plate you can lift: its mass is its own hue, dimmed. */
 	.mass-el {
 		--thick: 4px;
-		box-shadow: 0 var(--thick) 0 0 color-mix(in srgb, var(--color-el) 45%, black);
+		--mass: color-mix(in srgb, var(--color-el) 45%, black);
+		box-shadow: var(--thick) var(--thick) 0 0 var(--mass);
 		transition: transform 120ms ease-out, box-shadow 120ms ease-out, background-color 120ms ease-out, border-color 120ms ease-out;
 	}
-	.mass-el:hover { transform: translateY(-1px); box-shadow: 0 calc(var(--thick) + 1px) 0 0 color-mix(in srgb, var(--color-el) 45%, black); }
-	.mass-el:active { transform: translateY(var(--thick)); box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-el) 45%, black); }
+	.mass-el:hover { transform: translate(-1px, -1px); box-shadow: calc(var(--thick) + 1px) calc(var(--thick) + 1px) 0 0 var(--mass); }
+	.mass-el:active { transform: translate(var(--thick), var(--thick)); box-shadow: 0 0 0 0 var(--mass); }
 
 	/* Level-0 surfaces carry a faint 32px layout grid; nothing else does. */
 	.surface-0 {
