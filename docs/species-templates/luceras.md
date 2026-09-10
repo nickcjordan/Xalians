@@ -10,11 +10,16 @@ Body-plan call from this reading: four limbs, of which the forelimbs are short p
 
 The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` teaser carried verbatim and is never edited here; `body` is the physical record, `habits` is how the creature lives now. `descriptionStatus` was removed from the record; status lives in `docs/species-templates/lore-status.json`.
 
-### body (44 words)
+### appearance (6 entries)
 
-A small fur-covered quadruped, about half a meter long and light, with horns on its head and a tail. It is built almost entirely for the leap, so high it seems to fly, and it sprints well too. It hears better than it sees.
+- Small bounding quadruped, built around its hind legs
+- Shaggy fur
+- A pair of curved ram-like horns
+- Long upright ears
+- Long whiskers
+- Whip tail longer than the body, ending in a spiked plume
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits
 

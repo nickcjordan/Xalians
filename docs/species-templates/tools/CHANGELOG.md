@@ -25,3 +25,5 @@ One dated line per change, written by the orchestrator after a denial review. Ea
 - 2026-09-07: the encyclopedia allowlist now accepts `pronunciation` (the live encyclopedia.json carries respelling and IPA blocks; the validator failed every ratified record on `enc.extra` since that field landed).
 - 2026-09-07: encyclopedia allowlist accepts `aliases` (ten live entries carry it).
 - 2026-09-08: pool shape WARNs (Nick): `traits.pool.required` outside one to two at 100, `traits.pool.rolledSum` outside 90 to 110, `traits.pool.size` above six entries.
+
+- 2026-09-09: SOURCE_DIRS now prefers the worktree own lambda/src/json over the C:/dev/src/Xalians checkout; the old order validated the Frackworm teaser against another checkout and failed a verbatim match that was true.

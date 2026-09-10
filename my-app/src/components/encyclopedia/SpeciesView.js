@@ -264,10 +264,14 @@ export default function SpeciesView() {
                 <div className="flex min-w-0 flex-col gap-4 max-sm:order-2">
                     <Prose text={view.description} except={view.entry && view.entry.key} />
 
-                    {view.body && (
+                    {Array.isArray(view.appearance) && view.appearance.length > 0 && (
                         <div className="flex flex-col gap-1">
-                            <h3 className="type-heading m-0 text-[19px]">Body</h3>
-                            <p className="m-0 font-body text-body text-ink-2">{view.body}</p>
+                            <h3 className="type-heading m-0 text-[19px]">Appearance</h3>
+                            <ul className="m-0 flex list-none flex-col gap-1 p-0 font-body text-body text-ink-2">
+                                {view.appearance.map((quality) => (
+                                    <li key={quality}>{quality}</li>
+                                ))}
+                            </ul>
                         </div>
                     )}
 

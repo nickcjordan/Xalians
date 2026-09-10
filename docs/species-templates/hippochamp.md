@@ -8,11 +8,17 @@ The render shows a single body, rearing, drawn as a black silhouette with white 
 
 The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` teaser carried verbatim and is never edited here; `body` is the physical record, `habits` is how the creature lives now. `descriptionStatus` was removed from the record; status lives in `docs/species-templates/lore-status.json`.
 
-### body (55 words)
+### appearance (7 entries)
 
-A four-legged creature resembling a seahorse, about a meter and a third at the shoulder and a hundred and forty kilograms, with a long trunk-like snout that works as a high-pressure water cannon, a crest, spines, hooves and a tail, all under smooth hide. It swims well and runs adequately, and its senses are ordinary.
+- Four-legged, horse-bodied and seahorse-headed
+- Long trunk-like snout, a water cannon
+- Sail-like crest from brow to neck
+- Fin-like spines continuing along the back
+- Blunt hooves
+- Thick tail coiled in a spiral
+- Smooth hide
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits
 

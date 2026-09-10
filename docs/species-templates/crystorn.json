@@ -8,7 +8,13 @@
   ],
   "lore": {
     "description": "The gems growing out of this creature's head transmit powerful light energy, don't be deceived by its calm temperament.",
-    "body": "A tall, heavy biped, well past three hundred kilograms, fur-covered, with gems growing out of its head where horns would be, mineral grown from flesh, and hands that can grip. It is slow on its feet and has little leap or climb. Its eyes are its strongest sense.",
+    "appearance": [
+      "Tall, heavy biped",
+      "Shaggy fur coat",
+      "Two large faceted gems growing out of the head",
+      "Broad blunt muzzle",
+      "Open hands with an opposable digit"
+    ],
     "habits": "Luminax's Generator grew its Xalians with albino features or with prismatic crystal so that they could survive the brilliant light of the twin suns while they worked the fields, and this is one of the crystal-bearing forms. Its ground is the sunward face, among the oases of translucent, alabaster flora, where radiation-tolerant integument is universal and the cumulative radiation load is the standing hazard. The misfiring panels of the Stellaris Superstructure are burning new sun-scorched blast zones into that surface, and some of the world's Xalians have survived in the residual radiation left in them. It does not graze and it does not hunt: it takes in energy. It is slow, and it holds still.",
     "biomeNiche": "the sunward oases of translucent, crystalline-leaved flora on Luminax"
   },

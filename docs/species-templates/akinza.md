@@ -10,11 +10,17 @@ The art and the description do not disagree; the description is silent on the bo
 
 The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
 
-### body (52 words)
+### appearance (7 entries)
 
-A fur-covered biped of middling size, around a meter and a half tall and sixty kilograms, with claws, a biting jaw and a tail. It is built to sprint and leap, climbs well, and leads with its eyes and ears: it sees in the dark and moves through it without being noticed.
+- Upright feline biped
+- Slender and light in the frame
+- Fur coat
+- Large rabbit-like ears atop the head
+- Large eyes
+- Slender arms ending in clawed hands
+- Long plumed tail
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits
 

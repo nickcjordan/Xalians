@@ -96,6 +96,21 @@ resource "aws_iam_role_policy" "github_terraform" {
         Resource = "arn:aws:apigateway:${var.aws_region}::/*"
       },
       {
+        Sid    = "DynamoDB"
+        Effect = "Allow"
+        Action = ["dynamodb:*"]
+        Resource = [
+          "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/Xalian*",
+          "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/Xalian*/index/*",
+        ]
+      },
+      {
+        Sid      = "DynamoDBListTables"
+        Effect   = "Allow"
+        Action   = ["dynamodb:ListTables"]
+        Resource = "*"
+      },
+      {
         Sid    = "LambdaExecRole"
         Effect = "Allow"
         Action = [
@@ -146,13 +161,24 @@ resource "aws_iam_role_policy" "github_terraform" {
       # Deliberately excludes Delete*/CreateRole so a bad plan cannot
       # destroy the credentials CI depends on.
       {
+        # This statement grants the role permission to manage its own policy
+        # document, including this very statement. That is a one-time
+        # bootstrap problem: the CI role cannot grant itself a new
+        # permission it does not already have, so the change that ADDS
+        # iam:DeleteRolePolicy (and the DynamoDB/table-management actions
+        # elsewhere in this file) has to be applied once from Nick's
+        # machine with his own credentials:
+        #   terraform apply -target=aws_iam_role_policy.github_terraform
+        # After that one apply, CI can plan and apply further changes to
+        # this policy itself, same as everything else in the account.
         Sid    = "SelfManageOidcRole"
         Effect = "Allow"
         Action = [
           "iam:GetRole", "iam:UpdateRole", "iam:UpdateAssumeRolePolicy",
-          "iam:GetRolePolicy", "iam:PutRolePolicy", "iam:ListRolePolicies",
-          "iam:ListAttachedRolePolicies", "iam:ListRoleTags", "iam:TagRole",
-          "iam:UntagRole", "iam:ListInstanceProfilesForRole",
+          "iam:GetRolePolicy", "iam:PutRolePolicy", "iam:DeleteRolePolicy",
+          "iam:ListRolePolicies", "iam:ListAttachedRolePolicies",
+          "iam:ListRoleTags", "iam:TagRole", "iam:UntagRole",
+          "iam:ListInstanceProfilesForRole",
         ]
         Resource = aws_iam_role.github_terraform.arn
       },

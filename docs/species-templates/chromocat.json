@@ -8,7 +8,14 @@
   ],
   "lore": {
     "description": "Used in ancient times to quickly harvest the vast crop yields of Luminax's fields, the large, albino feline known as the Chromocat possesses two sickle-shaped blades infused with pure ionized radiation that extend backwards from its front paws. These 'energy swords' allowed them to cut through grains with minimal effort, and their ability to enter a photonic-state and leap through fields at the speed of light meant they could comb through and harvest entire fields in record time. Today, their wicked speed and ionic blades allow them to seemingly 'teleport' around the battlefield, harassing their opponents by barraging them with rapid cuts in a slice-and-dice pattern so swift that reaction becomes nearly impossible.",
-    "body": "A large albino cat on four legs, fur-covered, with a long tail, clawed paws and a fanged bite. Two sickle-shaped blades extend backward from its front paws, the only thing on it that is not ordinary feline build. It is built for the sprint and the leap, and it hunts by sight.",
+    "appearance": [
+      "Large feline on four legs",
+      "Albino fur coat",
+      "Two sickle-shaped blades of ionized light sweeping back from the front paws",
+      "Long fangs",
+      "Clawed paws",
+      "Long thick tail"
+    ],
     "habits": "It works the sunward face, where the fields it was made for still stand among crystalline-leafed oases and the silver grids of the old solar farms. Nothing conceals anything on that ground, the sightlines being unbroken, so it does not stalk: it crosses in the open and is simply there, the blades behind its front paws having opened the cut before the crossing reads as movement at all. It eats what the fields hold, of any kind. Its albino coat is the ordinary sunward integument against a cumulative radiation load, and it works now among the expanding blast zones the misfiring Stellaris Superstructure burns into the surface, on ground held under King Kozrak's martial law.",
     "biomeNiche": "the cultivated fields of Luminax's sunward face"
   },

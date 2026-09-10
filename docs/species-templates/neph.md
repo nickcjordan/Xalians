@@ -8,11 +8,16 @@ The artwork shows a single body, drawn as a jellyfish seen from slightly below. 
 
 The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` teaser carried verbatim and is never edited here; `body` is the physical record, `habits` is how the creature lives now. `descriptionStatus` was removed from the record; status lives in `docs/species-templates/lore-status.json`.
 
-### body (60 words)
+### appearance (6 entries)
 
-A colossal hydrogen jellyfish, four to six meters across and weighing almost nothing for its size: a bare, untextured body composed almost entirely of hydrogen, with vents through which it expels gas and long trailing tentacles that vacuum, pull and jet. There are no legs, wings or jaws. It floats and drifts. It smells well and sees and hears poorly.
+- Colossal hydrogen jellyfish
+- Nearly weightless for its size
+- One large smooth bell
+- Small central body beneath the bell
+- Long trailing hollow tentacles, open at the ends
+- Bare untextured surface
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits (120 words)
 

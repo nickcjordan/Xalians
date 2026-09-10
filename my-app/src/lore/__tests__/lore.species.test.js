@@ -62,9 +62,9 @@ describe('SpeciesView', () => {
 		expect(view.record.instruments.some((i) => i.key === 'swarm')).toBe(true);
 	});
 
-	it('getSpeciesList is sorted by name and covers all 29 species', () => {
+	it('getSpeciesList is sorted by name and covers all 30 species', () => {
 		const list = getSpeciesList();
-		expect(list.length).toBe(29);
+		expect(list.length).toBe(30);
 		const names = list.map((s) => s.name);
 		const sorted = [...names].sort((a, b) => a.localeCompare(b));
 		expect(names).toEqual(sorted);

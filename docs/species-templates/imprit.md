@@ -8,11 +8,17 @@ The render is a flat black silhouette of a single body, one creature and not a s
 
 The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` teaser carried verbatim and is never edited here; `body` is the physical record, `habits` is how the creature lives now. `descriptionStatus` was removed from the record; status lives in `docs/species-templates/lore-status.json`.
 
-### body (73 words)
+### appearance (7 entries)
 
-A small horned monkey, fur-covered and burning: the flammable oil it secretes keeps it in a constant state of immolation, and its fire-retardant fur is what lets it survive that. It goes on all fours and has fangs, gripping hands, and a long tail ending in a scythe-like tip that it swings from. It is a climber and a leaper with clever hands, not a runner, and it hears better than it sees.
+- Small horned monkey on all fours
+- Fire-retardant fur
+- Wreathed in constant flame
+- Heavy curved horns
+- Long fangs
+- Bare gripping hands and feet
+- Long whip tail with a scythe-like tip
 
-Record-only register (Nick, approved 2026-09-09): horned monkey, flame, the oil and fur, the scythe-tipped tail and the swinging are the teaser; four limbs, fangs, fists and hide are record anatomy; climb, leap, manipulation, sprint and hearing are record bands. No clause is taken from the drawing.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits (119 words)
 

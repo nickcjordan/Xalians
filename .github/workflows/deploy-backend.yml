@@ -54,7 +54,6 @@ jobs:
 
       - name: Terraform fmt check
         run: terraform fmt -check -recursive
-        continue-on-error: true # legacy formatting; tighten once the tree is fmt-clean
 
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4

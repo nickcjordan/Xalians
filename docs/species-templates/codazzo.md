@@ -8,11 +8,17 @@ The artwork shows a single body, a lean fox-like or jackal-like creature standin
 
 The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
 
-### body (50 words)
+### appearance (7 entries)
 
-A small fur-covered biped, under a meter tall and light, with digging claws, spines, and a tail made of explosive barbs that regrow after they are fired. It is a burrower above everything else, quick to go underground, and it reads the ground it lies in better than it sees.
+- Small fox-like biped
+- Lightly built
+- Fur coat
+- Spiny ridge down the neck and back
+- Long digging claws on the forelimbs
+- Tall pointed ears
+- Thick tail ending in a fan of explosive barbs
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits
 

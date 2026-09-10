@@ -8,7 +8,13 @@
   ],
   "lore": {
     "description": "A large, cobra-like creature that hides beneath the sand, Thirstaserps emit a subsonic vibration from the rattles on their tails that can lure and mesmerize opponents long enough for them to draw near and attack with a unique venom that drains the victim’s water when bitten, causing them to suffer and die from extreme dehydration.",
-    "body": "A large, cobra-like serpent, some two meters and a hundred kilograms, scaled and limbless, with fangs in its jaws and a rattle on its tail. It burrows under sand and can strike with a leap. It smells better than it sees, and it feels the ground.",
+    "appearance": [
+      "Large cobra-like serpent",
+      "Scaled",
+      "Viper's wedge head with long curved fangs",
+      "Wide hood behind the head",
+      "Tail ending in a rattle shaped like a lotus flower"
+    ],
     "habits": "It lies buried and reads the ground it lies in, and it moves through loose particulate as readily as a swimmer moves through water. It hunts by vibration and it kills by attrition: what has been bitten is left to fail rather than fought down. Water is the thing worth taking on a world whose oceans were vaporized and whose dunes now lie over glass, and water is what it takes. The ground it holds is open dune, and it holds it from underneath. It spreads the hood and shows the fangs before it strikes.",
     "biomeNiche": "buried in the rolling dunes of Endessa"
   },
