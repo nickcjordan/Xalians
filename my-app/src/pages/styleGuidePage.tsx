@@ -59,9 +59,8 @@ import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { Kbd } from '@/components/ui/kbd';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-// Brief B ("patterns") sections, built from @/components/system/layout, @/components/system/status,
-// @/components/system/a11y, @/components/system/stepper, @/components/system/readouts,
-// @/components/system/filters, @/components/system/data-table, @/components/system/identity.
+// The rest of the system, one file per brief so the page stays readable.
+import { SECTIONS as PRIMITIVE_SECTIONS } from './styleguide/primitiveSections';
 import { SECTIONS as PATTERN_SECTIONS } from './styleguide/patternSections';
 
 /**
@@ -91,6 +90,7 @@ const SECTIONS: { id: string; label: string }[] = [
     { id: 'overlays', label: 'Overlays' },
     { id: 'data', label: 'Data' },
     { id: 'icons', label: 'Icons' },
+    ...PRIMITIVE_SECTIONS.map(({ id, label }) => ({ id, label })),
     ...PATTERN_SECTIONS.map(({ id, label }) => ({ id, label })),
 ];
 
@@ -682,6 +682,9 @@ function StyleGuidePage() {
                     </div>
                 </section>
 
+                {PRIMITIVE_SECTIONS.map((s) => (
+                    <React.Fragment key={s.id}>{s.node}</React.Fragment>
+                ))}
                 {PATTERN_SECTIONS.map((s) => (
                     <section key={s.id} id={s.id} className="mt-12">{s.node}</section>
                 ))}

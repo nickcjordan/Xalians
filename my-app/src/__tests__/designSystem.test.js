@@ -30,6 +30,10 @@ const PAGES_DIR = path.join(__dirname, '..', 'pages');
 const SYSTEM_PATH = path.join(__dirname, '..', '..', 'public', 'assets', 'css', 'legacy', 'system.css');
 const CSS_DIR = path.join(__dirname, '..', '..', 'public', 'assets', 'css', 'legacy');
 const STYLEGUIDE_PATH = path.join(PAGES_DIR, 'styleGuidePage.tsx');
+const STYLEGUIDE_DIR = path.join(PAGES_DIR, 'styleguide');
+/** The page plus its section files under pages/styleguide/. */
+const readStyleguide = () => [STYLEGUIDE_PATH, ...fs.readdirSync(STYLEGUIDE_DIR).map((f) => path.join(STYLEGUIDE_DIR, f))].map((f) => fs.readFileSync(f, 'utf8')).join('
+');
 
 /** Every *.js under src/pages/, recursively, with paths relative to src/pages/. */
 const listPageFiles = (dir, base) => {
@@ -75,6 +79,18 @@ const V4_IMPORTS = [
 	'@/components/system/brand',
 	'@/components/system/record',
 	'@/components/system/masthead',
+	'@/components/ui/avatar',
+	'@/components/ui/collapsible',
+	'@/components/ui/hover-card',
+	'@/components/ui/command',
+	'@/components/ui/combobox',
+	'@/components/ui/drawer',
+	'@/components/ui/aspect-ratio',
+	'@/components/ui/input-group',
+	'@/components/ui/field',
+	'@/components/ui/button-group',
+	'@/components/ui/chart',
+	'@/components/ui/native-select',
 	'@/components/system/layout',
 	'@/components/system/status',
 	'@/components/system/a11y',
@@ -140,10 +156,10 @@ describe('design system structure', () => {
 	});
 
 	describe('styleguide renders every v4 component', () => {
-		const styleguideSource = fs.readFileSync(STYLEGUIDE_PATH, 'utf8');
+		const styleguideSource = readStyleguide();
 
 		V4_IMPORTS.forEach((name) => {
-			it(`styleGuidePage.tsx imports ${name}`, () => {
+			it(`the style guide imports ${name}`, () => {
 				expect(styleguideSource.includes(name)).toBe(true);
 			});
 		});
