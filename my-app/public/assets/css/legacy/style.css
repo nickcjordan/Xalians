@@ -1344,39 +1344,8 @@ section {
 }
 
 
-/*--------------------------------------------------------------
-# Text Sizing
---------------------------------------------------------------*/
-
-@media (max-width: 1024px) {
-  section h3 {
-    font-size: 1.5em !important;
-  }
-
-  section p {
-    font-size: 1.25em !important;
-  }
-}
-
-@media (max-width: 768px) {
-  section h3 {
-    font-size: 1.25em !important;
-  }
-
-  section p {
-    font-size: 1em !important;
-  }
-}
-
-@media (max-width: 375px) {
-  section h3 {
-    font-size: 1em !important;
-  }
-
-  section p {
-    font-size: 0.8em !important;
-  }
-}
+/* The template's "Text Sizing" block (section p / section h3 at !important under
+   1024px) was deleted 2026-09-10: it resized every paragraph on the chrome tier. */
 
 
 

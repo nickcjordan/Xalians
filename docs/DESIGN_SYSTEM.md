@@ -164,6 +164,21 @@ Empty states are a solid hairline box on `--g-s0` with a legend line and one sen
 - Under `prefers-reduced-motion`, every transition is instant and the splash shows its resting frame.
 - Immersive experiences set their own motion within the core.
 
+**The motion catalog.** Everything in the chrome that moves, and nothing else:
+
+| Motion | Duration | Where it lives |
+|---|---|---|
+| Control state (hover, press, focus ring) | 120 ms | `transition-colors` on every ui component |
+| Chevron rotating on a collapsible or accordion | 200 ms | the component |
+| Popover, dropdown, tooltip, hover card entering | 200 ms | `tw-animate-css` fade and zoom on the content |
+| Dialog, sheet, drawer, alert dialog entering | 320 ms | fade on the overlay, slide or zoom on the content |
+| Toast entering and leaving | 320 ms | sonner |
+| Helix spinner rungs lighting in sequence | 1.2 s cycle | `.helix-spinner` in `globals.css`; the one loop, because it is loading |
+| The home splash morph, once on arrival | GSAP timeline | `xaliansLogoDnaAnimated.js` |
+| A value updating on glass | 200 ms | the component |
+
+Under reduced motion `globals.css` sets every animation and transition to near zero, the spinner holds its 70 percent frame and the splash shows its resting frame. Nothing in the catalog is added without a row here.
+
 ## 8. Brand
 
 - **The mark is the DNA X** (`my-app/src/svg/logo/xalians_dna_logo.svg`), drawn in `--g-viable-hi`. It stays. It is also the favicon and the app icon.
@@ -243,3 +258,27 @@ Each step is one PR, verified by paint with `scripts/design/snap.js`, auto-merge
 - A `clip-path` cuts the border off with the corner; a chamfered surface is two clipped layers.
 - Class selectors are case-insensitive in quirks mode; do not rely on `.LG` and `.lg` being different.
 - When fanning out agents on visual work, one shared worktree is unsafe (an agent ran `git stash` and wiped others' work). One agent at a time on shared files, or separate worktrees.
+
+## 15. Accessibility
+
+Part of done, checked on every component before it is on `/styleguide` and on every page before its paint check.
+
+- **Keyboard.** Every control reachable by Tab in reading order, operable with Enter, Space and the arrow keys Radix gives it. Overlays trap focus and return it to the trigger on close. Escape closes every overlay.
+- **Focus.** One visible focus ring, two pixels in `--color-viable`, offset two on the surface behind it (`focus-visible:ring-2 ring-viable ring-offset-2 ring-offset-s0`). Never removed, never replaced by a color change alone.
+- **Skip link.** Every page's `<main>` carries `id="main"` and renders `SkipLink` first, so the first Tab lands on "Skip to content".
+- **Names.** Every control has a name: visible label, `aria-label` on icon-only keys, `Label htmlFor` on every input. Icons are decorative (`aria-hidden`) unless they are the whole control.
+- **Announcements.** Loading and result changes that the eye would catch are announced through the `LiveRegion` (`aria-live="polite"`); toasts announce themselves.
+- **Contrast.** Text 4.5:1 against its surface, legends and data included; the ink scale on the surface scale holds this by construction, an element hue as text does not, so element hues color chips and plates, never body text.
+- **Targets.** 44 by 44 pixels on the phone layout for anything tapped; a 32 pixel icon key gets its hit area from padding, not from a bigger glyph.
+- **Motion.** `prefers-reduced-motion` is honored by the theme (section 7). Nothing autoplays with sound; nothing flashes.
+- **Structure.** One `h1` per page, in the masthead. Sections head with `h2`, subsections `h3`; the type roles (`type-title`, `type-heading`, `type-subhead`) never substitute for the element. Lists are lists, tables are tables (`DataTable` on the `Table` primitive; never a grid of divs pretending).
+- **Language.** Errors say what went wrong and how to fix it, next to the field, and are linked to it (`aria-describedby`, which `Form` does). Placeholder text is never the only label.
+
+## 16. Icons
+
+- **Lucide only** (`lucide-react`), at four sizes: `size-3.5` inline with small text and in badges, `size-4` inline with body text and inside buttons, `size-5` on icon keys and section heads, `size-6` on the phone menu key and empty states. No other size, no other set, no emoji.
+- **Stroke** stays at Lucide's default; icons take `currentColor` and so wear the ink of the text they sit in. An icon never wears the accent or a status hue on its own; it inherits from a badge, a callout or a key that already does.
+- **Meaning.** One icon per meaning across the site (search is `Search`, close is `X`, more is `MoreHorizontal`, remove is `Trash2`, sort is `ArrowUpDown`, expand is `ChevronDown`, external is `ArrowUpRight`). A new meaning gets a row in the style guide's icon section before it is used twice.
+- **Never alone in chrome copy.** An icon beside a word, or an icon-only key with `aria-label`; an icon standing in for a word in prose is a picture, not a word.
+- Species, planets and elements are art, not icons: `XalianImage` and the planet renders, never a Lucide glyph.
+
