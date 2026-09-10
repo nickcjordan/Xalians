@@ -184,6 +184,22 @@ resource "aws_iam_role_policy" "github_terraform" {
         Action   = ["acm:DescribeCertificate", "acm:ListCertificates", "acm:ListTagsForCertificate"]
         Resource = "*"
       },
+      # The site distribution (#203): read and update only, scoped to the one
+      # distribution, so CI can import it and manage its error mapping but a
+      # bad plan can never create or delete a distribution.
+      {
+        Sid    = "CloudFrontSite"
+        Effect = "Allow"
+        Action = [
+          "cloudfront:GetDistribution",
+          "cloudfront:GetDistributionConfig",
+          "cloudfront:UpdateDistribution",
+          "cloudfront:ListTagsForResource",
+          "cloudfront:TagResource",
+          "cloudfront:UntagResource",
+        ]
+        Resource = var.cloudfront_arn
+      },
       # Without these the role cannot refresh the two resources above, and
       # every `terraform plan` in CI fails with AccessDenied on itself.
       # Deliberately excludes Delete*/CreateRole so a bad plan cannot
