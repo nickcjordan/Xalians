@@ -1,6 +1,6 @@
 # Backend modernization audit
 
-Status: complete as of 2026-09-10. Every finding except the page-level part of F2 and F20 (issue #180, the record view design brief) landed through PRs #152 to #187; see `backend-modernization-plan.md` for the wave-by-wave record. Kept as the audit of record; line references describe the pre-migration tree.
+Status: complete as of 2026-09-10. Every finding landed through PRs #152 to #201, including the page-level part of F2 and F20 (#195, the record view); see `backend-modernization-plan.md` for the wave-by-wave record. Kept as the audit of record; line references and the `lambda/` and `my-app/` paths describe the pre-migration tree (now `apps/api` and `apps/web`).
 
 Audit of everything behind `api.xalians.com` as of 2026-09-10: `lambda/`, the root `package.json`, `main.tf` and `terraform/modules/lambda`, `github-oidc.tf`, the two backend workflows, the Amplify-managed Cognito functions, and the seam where backend code is copied into `my-app/`. Requested by Nick after noticing the Lambdas are CommonJS on an old stack. The brief: find what should be modernized, with TypeScript shared between frontend and backend as the headline, and raise anything else worth enhancing.
 
