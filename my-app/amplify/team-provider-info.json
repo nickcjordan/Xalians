@@ -17,17 +17,7 @@
         "xalianSignUpSignInResource": {},
         "userPoolGroups": {}
       },
-      "function": {
-        "xalianSignUpSignInResourcePostConfirmation": {
-          "GROUP": "xalianAuthenticatedUserGroup",
-          "deploymentBucketName": "amplify-amplifyxalians-dev-74008-deployment",
-          "s3Key": "amplify-builds/xalianSignUpSignInResourcePostConfirmation-704a7177704756543941-build.zip"
-        },
-        "AdminQueriesc0a581bf": {
-          "deploymentBucketName": "amplify-amplifyxalians-dev-74008-deployment",
-          "s3Key": "amplify-builds/AdminQueriesc0a581bf-33583957694845716f44-build.zip"
-        }
-      }
+      "function": {}
     }
   }
 }
