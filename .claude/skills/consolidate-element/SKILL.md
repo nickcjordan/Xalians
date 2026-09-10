@@ -62,6 +62,8 @@ One element in, one consolidated catalog file out. This process was burned twice
 
 ## Standing cross-element rulings (append as new ones land)
 
+- 2026-09-10 placement policy (Nick struck one-cell-per-name on 2026-09-07; this is what replaced it): a name may sit in every cell whose action definition it satisfies; duplication is never a cut reason. An elemental word never sits in a neutral pool (it would be drawn by elements it does not fit). A bare neutral word in an element cell is tolerated overlap. Placements are removed only for a cited action-definition failure. Judgment calls stay.
+
 - Dual medium tags are real but rare and definition-audited each way: Tidal Lash + Vortex = water+dark (owned by dark's file); Stasis family = dark+ice; Supernova = dark+light.
 - RATIFIED 2026-09-01: the weather trio are all water+air duals ("why not both?"). Waterspout water-owned (hurl), Monsoon water-owned (burst), Squall AIR-owned (wind-first definition) — air's consolidation must place Squall with a water dual tag and cross-reference Waterspout/Monsoon without re-owning them.
 - Branch gotcha: the skills and docs/ability-catalog are tracked on `data/ability-catalog`; switching that worktree back to another branch DELETES them from the working tree — restore with `git restore --source=data/ability-catalog --worktree -- .claude/skills` after any checkout.
