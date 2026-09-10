@@ -128,24 +128,35 @@ Legacy `standardAttackRating`: "medium" is consistent with strength sitting mid-
 
 ## Trait pool
 
-Reshaped on 2026-09-08 under Nick's pool shape: one required trait at 100, three rolled entries whose percents sum to exactly 100, and four entries in all. The expected count falls from 3.40 to 2.00, and an individual lands no rolled trait at all 28.9 percent of the time. No exclusion pair is listed, so no adjustment applies.
+Pool shape: one required trait at 100, four rolled entries whose percents sum to exactly 100, five entries in all (expected count 2.00). No exclusion pair is listed at 100 (`solitary` is absent entirely), so no adjustment applies.
 
 Required
 
 | Trait | Evidence |
 |---|---|
-| `ramming` | The body fact and the behavior at once, which is why it takes the single required slot without argument. The anatomy carries `horns`, the art draws them swept back along the skull as a ram, and the one act the description gives the animal is the same word. Evidence (species): "it comes missiling down on its enemy like a battering ram." The signature ability is built on it as well, horns first out of the fall. The registry defines the key as a living ram whose blows land far harder with movement behind them, which is that sentence exactly. |
+| `ramming` | The body fact and the behavior at once, which is why it takes the single required slot without argument. The anatomy carries `horns`, the art draws them swept back along the skull as a ram, and the one act the description gives the animal is the same word. Evidence (species): "it comes missiling down on its enemy like a battering ram." The ratified `lore.behavior` field restates the same fact in the same words: "It jumps so high it seems to fly, then comes missiling down on its enemy like a battering ram." The signature ability is built on it as well, horns first out of the fall. The registry defines the key as a living ram whose blows land far harder with movement behind them, which is that sentence exactly. |
 
 Rolled (shares sum to 100)
 
 | Trait | Share | Evidence |
 |---|---|---|
-| `slippery` | 45 | First of the rolled set by rule: the `statRatings` block in `lambda/src/json/species.json` sets `evasionRating` to high for this species, which ranks the trait first among the rolled entries without setting an absolute percent. The Saiphus fauna observations say it a second way, recording minimal restraint tolerance across all lineages. Demoted from 100 because neither the legacy rating nor a planet-wide observation is the point of the creature, which is the ram. |
-| `resistant` | 30 | The Saiphus hazard list carries sulfuric cloud contact and the output priorities carry atmospheric filtration, and the planet history states the same fact in prose: "Sulfuric acid clouds sweep haphazardly across the sky, choking the life out of anything they happen to touch." A planet-wide adaptation that this species' own description never makes its point, so under the pool shape it rolls rather than being required. |
-| `perceptive` | 25 | Record field and art: `physiology.senses.hearing` is banded 70 to 90, an upper bound past the 80 the bar requires, and the art draws outsized ears and a long whisker spray. No `senses.special` entry exists. The percent rises from 40 only because the rolled shares must sum to 100, not because the evidence changed. |
+| `pack-bonded` | 35 | Restored on this re-run: the ratified `lore.company` field is a species-specific, unhedged present-tense fact, "It grazes in groups," which is exactly the kind of source the exclusion class was waiting on. The former cut rested on 'a planet-wide plural framing of another class of animal stretched to this behavior'; the company field is about Luceras itself, not another Saiphus class, so the objection no longer applies. Held out of the required set because the required slot belongs to the body fact the signature is built on (the ram), not to a habit, matching the same reasoning Neph's sibling walkthrough uses for its own pack-bonded entry. |
+| `slippery` | 30 | The `statRatings` block in `lambda/src/json/species.json` sets `evasionRating` to high for this species, which ranks the trait among the rolled entries without setting an absolute percent. The Saiphus fauna observations say it a second way, recording minimal restraint tolerance across all lineages. Share reduced from 45 to make room for `pack-bonded`; the underlying evidence is unchanged. |
+| `resistant` | 20 | The Saiphus hazard list carries sulfuric cloud contact and the output priorities carry atmospheric filtration, and the planet history states the same fact in prose: "Sulfuric acid clouds sweep haphazardly across the sky, choking the life out of anything they happen to touch." A planet-wide adaptation that this species' own description never makes its point, so under the pool shape it rolls rather than being required. Share reduced from 30 to make room for `pack-bonded`. |
+| `perceptive` | 15 | Record field and art: `physiology.senses.hearing` is banded 70 to 90, an upper bound past the 80 the bar requires, and the art draws outsized ears and a long whisker spray. No `senses.special` entry exists. Share reduced from 25 to make room for `pack-bonded`; the underlying evidence is unchanged. |
 
+Traits the body could plausibly carry that I left out, with reasons: `armored` (the covering is fur, with no armored aspect, so 0); `anchored` (the opposite of everything the description says); `volatile` and `toxic` (nothing in either source names an agent or a reaction); `luminous` (the planet history names "colonies of bright, colorful airborne algae and bioluminescent zooplankton," but that is other life, not this species); `regenerative`, `healing`, `protective`, `inspiring`, `menacing`, `hypnotic`, `mind-sealed`, `reflective`, `phasing`, `nocturnal`, `foresighted`, `telekinetic` (no supporting sentence or art feature; `nocturnal` in particular has no basis, since Saiphus's history describes sunrises lighting the whole world, not perpetual night); `stealthy` and `solitary` remain left out, see the re-run note below.
 
-Traits the body could plausibly carry that I left out, with reasons: `armored` (the covering is fur, with no armored aspect, so 0); `anchored` (the opposite of everything the description says); `volatile` and `toxic` (nothing in either source names an agent or a reaction); `luminous` (the planet history names "colonies of bright, colorful airborne algae and bioluminescent zooplankton," but that is other life, not this species); `regenerative`, `healing`, `protective`, `inspiring`, `menacing`, `hypnotic`, `mind-sealed`, `reflective`, `phasing`, `nocturnal`, `foresighted`, `telekinetic` (no supporting sentence or art feature; `nocturnal` in particular has no basis, since Saiphus's history describes sunrises lighting the whole world, not perpetual night).
+#### Trait re-run (2026-09-10)
+
+The five ratified `lore` fields (`appearance`, `origin`, `habitat`, `feeding`, `behavior`, `company`) are now source text on the same footing as the teaser, the art and the planet record. Reviewing the pool against them:
+
+- `pack-bonded` restored at 35 (was cut on 2026-09-07 at 30, absent from the pool since). The ratified `company` field, "It grazes in groups," is the species-specific sentence the earlier cut said was missing; the earlier evidence was a planet-wide plural framing of a different animal class, which the cut correctly rejected, but this is no longer that. `slippery`, `resistant`, and `perceptive` each gave up 5, 10, and 10 points respectively so the rolled shares still sum to 100.
+- `stealthy` (cut at 20) stays out: none of the five new fields name anything about concealment, quiet movement, or being unseen; `habitat`, `feeding`, and `behavior` all describe an animal in the open (grazing plains, jumping visibly, missiling down on an enemy).
+- `solitary` (cut at 15) stays out, now more firmly: the ratified `company` field states the opposite, "It grazes in groups," so an argued-from-absence case is no longer even available.
+- No other cut trait is affected; `origin`, `habitat`, and `feeding` add nothing that reopens `armored`, `anchored`, `volatile`, `toxic`, `luminous`, or any of the passives with no supporting sentence.
+
+Expected count is unchanged at 2.00 (the required slot still contributes 1, and the rolled shares still sum to 100 divided by 100), since the re-run redistributes rolled shares rather than adding a sixth entry.
 
 #### Cut by the evidence bar (2026-09-07)
 
@@ -155,7 +166,9 @@ Traits the body could plausibly carry that I left out, with reasons: `armored` (
 | `stealthy` | 20 | authored; no source sentence and no drawn feature |
 | `solitary` | 15 | argued from absence; the walkthrough itself rested it on nothing in the sources showing this species in a group |
 
-Pool expected count 3.30 to 1.95 in iteration one, then 1.95 to 2.65 in iteration two once `slippery` was restored. No surviving percent was changed in either pass. `resistant` was re-checked under the ruling that thermal support alone never justifies it and survives: the planet-wide fact behind it is sulfuric acid cloud contact, which the Saiphus hazard list repeats, and that is corrosion rather than temperature. Iteration three on 2026-09-08 moved it from 2.65 to 3.40: `resistant` and `slippery` both raised to 100 as demanded traits. Nothing was cut. `hardened` was considered and left at 0, because the Saiphus hazards are storms, sulfuric cloud contact, island collision and unrecoverable descent, and none of those is thermal load, deep cold, desiccation, crush depth or thin air; the fall this species lives by is its own act, not a hazard the world imposes on every body. The pool shape of the same date then replaced iteration three: `ramming` is the single required trait, `resistant` and `slippery` fell out of the demanded set into the rolled one, and the three rolled shares were authored to sum to exactly 100. Nothing new was cut, so this table is unchanged. Expected count 3.40 to 2.00.
+Restored on the 2026-09-10 re-run: `pack-bonded`, now sourced by the ratified `lore.company` field, "It grazes in groups," rather than the planet-wide framing this table originally rejected. `stealthy` and `solitary` are not restored; see above.
+
+Pool expected count 3.30 to 1.95 in iteration one, then 1.95 to 2.65 in iteration two once `slippery` was restored. No surviving percent was changed in either pass. `resistant` was re-checked under the ruling that thermal support alone never justifies it and survives: the planet-wide fact behind it is sulfuric acid cloud contact, which the Saiphus hazard list repeats, and that is corrosion rather than temperature. Iteration three on 2026-09-08 moved it from 2.65 to 3.40: `resistant` and `slippery` both raised to 100 as demanded traits. Nothing was cut. `hardened` was considered and left at 0, because the Saiphus hazards are storms, sulfuric cloud contact, island collision and unrecoverable descent, and none of those is thermal load, deep cold, desiccation, crush depth or thin air; the fall this species lives by is its own act, not a hazard the world imposes on every body. The pool shape of the same date then replaced iteration three: `ramming` is the single required trait, `resistant` and `slippery` fell out of the demanded set into the rolled one, and the three rolled shares were authored to sum to exactly 100. Nothing new was cut, so this table is unchanged from that pass. Expected count 3.40 to 2.00, and the 2026-09-10 re-run keeps it at 2.00 after adding `pack-bonded`.
 
 ## Signature ability
 
@@ -216,16 +229,16 @@ No FAIL was raised by the script on any run of this key; see the validator outpu
 
 ## Validator output
 
-```
-ok   temperature.planet             temperatureC [-34, 42] lies inside Saiphus range [-66, 58] C
-ok   signature.collision            no catalog collision for 'The Long Fall of Saiphus'
-ok   md.quotes                      20 of 20 distinct quotations found verbatim in the sources
+Final run of the 2026-09-10 trait re-run, pasted verbatim:
 
-0 FAIL, 0 WARN (structurally clean; every WARN must be answered in the walkthrough)
-logged to docs/species-templates/validation-log/luceras.jsonl
+```
+WARN temperature.planet             validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable
+
+0 FAIL, 1 WARN (structurally clean; every WARN must be answered in the walkthrough)
+logged to docs\species-templates\validation-log\luceras.jsonl
 ```
 
-Run with VERBOSE=1 to show the ok lines; the terse run prints only the tally. Three runs total, all 0 FAIL 0 WARN, all logged.
+The `temperature.planet` WARN is not a trait-pool matter and nothing on this run touched `temperatureC`: the script's own message and its source comment (`issue #167`) say the committed `planetRecords.json` carries no `environment.habitableBandC`, so it falls back to the legacy `planets.json` extremes, which is exactly what happened when this template was first validated against the pre-rebuild data. `temperatureC` [-30, 42] already lies inside the legacy Saiphus range and was previously validated clean against the rebuilt habitable band before that field went missing from the committed file; this is an upstream data gap outside this task's scope (re-authoring the trait pool), not a new problem introduced by the re-run, so I have not touched physiology to work around it. An earlier run this session hit one FAIL, `md.quote`, because the walkthrough's `pack-bonded` restoration note quoted my own prior cut-table phrasing in double quotes; fixed by switching that span to single quotes, since it is my own paraphrase rather than verbatim species, planet, or registry text.
 
 ## Orchestrator amendments
 
@@ -237,3 +250,4 @@ Run with VERBOSE=1 to show the ok lines; the terse run prints only the tally. Th
 - 2026-09-08, trait evidence bar iteration three (Nick): added none; raised resistant, slippery; cut none; expected count 2.65 to 3.40.
 - 2026-09-08, pool shape (Nick): required ramming; rolled slippery 45, resistant 30, perceptive 25; expected count 3.40 to 2.00.
 - 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
+- 2026-09-10, trait re-run (Nick): the ratified `appearance` and five short fields are now source text for the pool. Restored `pack-bonded` at 35 on the strength of the ratified `company` field, "It grazes in groups"; `slippery`, `resistant`, and `perceptive` reduced to 30, 20, and 15 so the rolled shares still sum to 100. `stealthy` and `solitary` stay cut; expected count unchanged at 2.00.

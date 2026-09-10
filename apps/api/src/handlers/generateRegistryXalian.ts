@@ -1,9 +1,9 @@
-// POST /xalians (D1, the registry). Generates a ratified XalianRecord server-side from
+// POST /xalians (the registry). Generates a ratified XalianRecord server-side from
 // @xalians/rules with a server-drawn seed, persists it under the caller, and returns it.
 // This is the "generate" verb the vision doc ratified (the word "mint" is banned
-// platform-wide): the server owns the creature from the moment it exists, unlike the
-// legacy showroom flow (GET /xalian, POST /db/xalian) where the client shows a record and
-// then asks to keep it.
+// platform-wide): the creature is the caller's from the moment it exists, so there is no
+// second "keep" call a client could skip, forge, or race.
+// GET /xalians/showroom is the same generator with nothing persisted.
 import { randomBytes } from 'node:crypto';
 import { ApiError, withApi } from '../lib/api.ts';
 import { GenerateRegistryXalianBodySchema } from '../lib/schemas.ts';
@@ -25,9 +25,13 @@ export const handler = withApi(
       throw new ApiError(400, 'UNKNOWN_SPECIES', `"${body.species}" is not a ratified species`);
     }
 
+    // Global per-species count, not per-owner: see the doc comment on registryRepo.nextSerial.
+    const serial = await registryRepo.nextSerial(template.key);
+
     const seed = randomBytes(16).toString('hex');
     const generated = generateXalian(template, seed, {
       origin: template.homePlanet,
+      serial,
       generatedAt: new Date().toISOString(),
     });
 

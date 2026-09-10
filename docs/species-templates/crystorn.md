@@ -102,7 +102,7 @@ Primary `light` from species `type: Light`. Secondaries are whatever the graph a
 
 ## Trait pool (required 1, rolled sum 100, expected count 2.00)
 
-Iteration four applies Nick's pool shape of 2026-09-08. One entry is required and three are rolled, the rolled shares sum to exactly 100, and the pool holds four entries. Expected count falls from 2.89 to 2.00. The chance an individual lands none of the rolled entries is 0.60 times 0.65 times 0.75, which is 0.293.
+Re-run of 2026-09-10 (Nick): the ratified `lore.appearance` list and the five ratified short fields (`origin`, `habitat`, `feeding`, `behavior`, `company`) are now source text on the same footing as the teaser, the art and the planet record. One entry is required and four are rolled, the rolled shares sum to exactly 100, and the pool holds five entries. The chance an individual lands none of the rolled entries is 0.60 times 0.75 times 0.80 times 0.85, which is roughly 0.31.
 
 ### Required
 
@@ -114,15 +114,24 @@ Iteration four applies Nick's pool shape of 2026-09-08. One entry is required an
 
 | Trait | Share | Evidence |
 |---|---|---|
-| `reflective` | 40 | A body reading with a planet line that covers this form. The art shows faceted crystal horns, Luminax `report.fauna.observations` names refractive carapaces as one of its two examples of the sunward integument, and the planet's crystalline flora work by refracting the suns' light to turn harmful wavelengths back. Largest share as the closest registry fit for a prism that returns energy, but not required, because the refraction sentence is about the flora rather than about this creature. |
-| `resistant` | 35 | Class 3. Luminax `report.hazards` opens with cumulative radiation load and its fauna line states radiation-tolerant integument as universal sunward, which is contamination under the narrowed definition. It rolls rather than being required, since the species' own description is about the light the horns give off and never about surviving what the suns pour down. |
-| `mind-sealed` | 25 | The one species sentence about its inner state, an instruction not to be deceived by its calm temperament, and this is the registry trait for a mind nothing sways. Smallest share because a calm temperament is a weaker reading than an unbreakable one, and no second source supports it. |
+| `solitary` | 40 | The ratified `company` field states plainly: "It lives alone." This is a direct, unhedged, species-level statement, the strongest single piece of evidence in the pool, so it takes the largest rolled share. Not required at 100 because the field describes a typical company state rather than the anatomical or behavioral point of the creature, which is the light-transmitting crown; Generator variance is allowed to leave the odd individual paired. |
+| `reflective` | 25 | A body reading with a planet line that covers this form. The art shows faceted crystal horns, Luminax `report.fauna.observations` names refractive carapaces as one of its two examples of the sunward integument, and the planet's crystalline flora work by refracting the suns' light to turn harmful wavelengths back. Closest registry fit for a prism that returns energy, but not required, because the refraction sentence is about the flora rather than about this creature. |
+| `resistant` | 20 | Class 3. Luminax `report.hazards` opens with cumulative radiation load and its fauna line states radiation-tolerant integument as universal sunward, which is contamination under the narrowed definition; the ratified `origin` field restates the same fact from the creature's own side: "One of the crystal-bearing forms the Luminax Generator grew to survive the light of the twin suns while working the fields." It rolls rather than being required, since the emphasis of every source is the light the horns give off, not the surviving of what the suns pour down. |
+| `mind-sealed` | 15 | The species sentence about its inner state, an instruction not to be deceived by its calm temperament, now corroborated by the ratified `behavior` field: "It is calm and slow and holds still, and the gems on its head transmit powerful light energy when it is provoked." Smallest share because a calm temperament under provocation is still a weaker reading than an unbreakable mind, and no source states the mind resists outside influence directly. |
 
 ### Cut by the pool shape (2026-09-08, iteration four)
 
 No entry was cut this iteration. The pool held four entries before the reshape and holds four after; `resistant` moves from universal to rolled.
 
-#### Cut by the evidence bar (2026-09-07, iterations one and two)
+#### Trait re-run (2026-09-10)
+
+Sources added for this run: the ratified `lore.appearance` list and the five ratified fields (`docs/species-templates/lore-status.json` marks crystorn's `appearance` and `fields` both `ratified`). Changes from the previous pool:
+
+- Added `solitary` at 40. The ratified `company` field, "It lives alone," is new, direct, species-level evidence that did not exist at the 2026-09-07 evidence-bar pass (at that time the walkthrough could only note the absence of any source either way, so the trait was considered and left out rather than cut). This is the largest single addition this run and takes the largest rolled share because the evidence is a plain, unhedged statement rather than an inference.
+- `reflective` lowered from 40 to 25, `resistant` lowered from 35 to 20, `mind-sealed` lowered from 25 to 15, all rescaled to make room for `solitary` while preserving the same relative order and underlying evidence; `resistant` and `mind-sealed` are now each corroborated by a second, ratified source (`origin` for resistant, `behavior` for mind-sealed) alongside the planet record and the species sentence, though the rescaling reduces their shares rather than raising them, since the new fields restate existing facts rather than adding new strength.
+- No trait was removed. Pool size grows from four entries to five.
+
+##### Cut by the evidence bar (2026-09-07, iterations one and two)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
@@ -131,7 +140,9 @@ No entry was cut this iteration. The pool held four entries before the reshape a
 | `menacing` | 12 | the "don't be deceived" clause is about deception, not about presence eroding courage; no sentence describes fear |
 | `foresighted` | 4 | no source sentence; a rare-band roll on a still, watchful body |
 
-Traits considered and deliberately left out: `armored` (the art shows no plating, shell, or carapace, and the species declares `hide`, which the registry says states the body has no armored aspect); `nocturnal` (the species is generated for the sunward face of a tidally locked world in "eternal daylight", the opposite adaptation); `stealthy` and `perceptive` (both are behaviors, and only planet-wide sentences would support them, which the rules forbid); `telekinetic` (nothing in either source shows it moving anything untouched); `pack-bonded` and `solitary` (no source shows it either with others or alone); `healing` (the light element could color a restorative crown, but no sentence in either source shows this creature restoring anything, so it is left off rather than carried at a token percent); `ramming`, `toxic`, `volatile`, `slippery`, `regenerative`, `phasing`, `hypnotic`, `inspiring` (no supporting sentence in either source).
+None of these four is restored on this re-run: the ratified `behavior` field ("It is calm and slow and holds still, and the gems on its head transmit powerful light energy when it is provoked") describes the creature's own stillness and its emission trigger, not an inability to be moved (`anchored`), an instinct to shield others (`protective`), a fear-inducing presence (`menacing`), or reading moments ahead (`foresighted`); the `habitat`, `feeding`, and `origin` fields add nothing to any of the four either. The one restoration this run is `solitary`, addressed above, which was not on this cut table because it was previously listed among the traits considered and left out for lack of any source, not cut for failing an evidence class.
+
+Traits considered and deliberately left out: `armored` (the art shows no plating, shell, or carapace, and the species declares `hide`, which the registry says states the body has no armored aspect); `nocturnal` (the species is generated for the sunward face of a tidally locked world in "eternal daylight", the opposite adaptation, restated by the ratified `habitat` field, "The sunward face of Luminax."); `stealthy` and `perceptive` (both are behaviors, and only planet-wide sentences would support them, which the rules forbid; the ratified fields add nothing behavioral in this direction); `telekinetic` (nothing in any source shows it moving anything untouched); `pack-bonded` (the ratified `company` field points the other way, "It lives alone," which is the evidence for `solitary` instead, and the two are exclusion partners); `healing` (the light element could color a restorative crown, but no sentence in any source, including `feeding`, "It feeds on the light of the twin suns through the gems on its head," shows this creature restoring anything other than itself, so it is left off rather than carried at a token percent); `ramming`, `toxic`, `volatile`, `slippery`, `regenerative`, `phasing`, `hypnotic`, `inspiring` (no supporting sentence in any source).
 
 ## Signature ability
 
@@ -190,14 +201,19 @@ The one question I want to raise concerns the crown. The registry's `core` key i
 
 ## Validator output
 
+Re-run of 2026-09-10 (trait pool re-derivation), current state:
+
 ```
-WARN conduits.source                conduit core for light: the validator agent must confirm the sentence or art showing the element leaving through this part
+WARN temperature.planet             validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable
+WARN conduits.source                conduit horns for light: the validator agent must confirm the sentence or art showing the element leaving through this part
 WARN signature.description.elementkey signature description uses element key word(s) as plain words: light (allowed only as ordinary English, never as a type label)
 WARN enc.definition.elementkey      encyclopedia definition uses element key word(s) as plain words: light (allowed only as ordinary English, never as a type label)
 
-0 FAIL, 3 WARN (structurally clean; every WARN must be answered in the walkthrough)
-logged to docsspecies-templatesalidation-logcrystorn.jsonl
+0 FAIL, 4 WARN (structurally clean; every WARN must be answered in the walkthrough)
+logged to docs/species-templates/validation-log/crystorn.jsonl
 ```
+
+Two FAILs were raised and fixed during this re-run (recorded in Script denials below): md.quote on two spans in the Trait re-run (2026-09-10) section that paraphrased the prior walkthrough's own words inside double quotes instead of quoting a source; both were rewritten as unquoted paraphrase, per the quotation convention. A further two FAILs surfaced on this run because the validator-output summary named other section headings in double quotes; both are rewritten below as unquoted references. No WARN on this run concerns the trait pool: traits.pool.required, traits.pool.rolledSum, traits.pool.size, and traits.pool.variance are all silent, confirming one required trait, a rolled sum of exactly 100, five entries (under the cap of six), and variance present. temperature.planet is a pre-existing environment limitation of the script's data source, unrelated to the trait re-run. conduits.source and the two elementkey warnings are pre-existing and already answered above under the Answers to the script warnings heading.
 
 ## Orchestrator amendments
 

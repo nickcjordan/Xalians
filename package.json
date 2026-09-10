@@ -8,8 +8,6 @@
     "my-app"
   ],
   "scripts": {
-    "start": "node start.js",
-    "cleanup": "node cleanup.js",
     "test": "npm test --workspaces --if-present",
     "publish": "terraform apply -auto-approve"
   },

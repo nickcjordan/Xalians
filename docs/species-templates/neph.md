@@ -97,7 +97,7 @@ Legacy `statRatings` used as a relative gauge only: specialAttackRating high, sp
 
 ### Trait pool
 
-Reshaped on 2026-09-08 under Nick's pool shape: one required trait at 100, three rolled entries whose percents sum to exactly 100, and four entries in all. The expected count falls from 3.90 to 2.00, and an individual lands no rolled trait at all 28.9 percent of the time. `solitary` is not listed, so at most one of the exclusion pair can land and no adjustment applies.
+Pool shape: one required trait at 100, three rolled entries whose percents sum to exactly 100, four entries in all (expected count 2.00). `solitary` is not listed, so at most one of the exclusion pair can land and no adjustment applies.
 
 Required
 
@@ -109,12 +109,22 @@ Rolled (shares sum to 100)
 
 | Trait | Share | Evidence |
 |---|---|---|
-| `pack-bonded` | 45 | Strongest of the rolled set: two species sentences about this animal's own behavior by name, herds that travel free-floating and flocks that roam the clouds. Held out of the required set deliberately, because the record has always reserved room for a lone drifter, and because the required slot belongs to the body fact rather than to the habit. |
-| `slippery` | 30 | The Saiphus fauna observations record minimal restraint tolerance across all lineages, which covers a herded species that people try to hold, and the planet history says the same of this body: "Their amorphous forms allowed them to be swept up and deposited harmlessly by the hurricane-force winds". Planet-wide support, so it rolls. |
+| `pack-bonded` | 45 | Strongest of the rolled set: the ratified `lore.company` field states it plainly and species-specifically, "It travels in free-floating herds," matching the species description's own "travel in free-floating herds across Saiphus's lower atmosphere" and the planet history's "flocks of peaceful, roaming Nephs." Held out of the required set deliberately, because the record has always reserved room for a lone drifter, and because the required slot belongs to the body fact rather than to the habit. |
+| `slippery` | 30 | The Saiphus fauna observations record minimal restraint tolerance across all lineages, which covers a herded species that people try to hold, and the planet history says the same of this body: "Their amorphous forms allowed them to be swept up and deposited harmlessly by the hurricane-force winds". The ratified `appearance` entry "Nearly weightless for its size" restates the same physical fact from the body's own angle. Planet-wide support plus the body fact, so it rolls. |
 | `resistant` | 25 | Weakest of the set: the Saiphus hazard list carries sulfuric cloud contact and the output priorities carry atmospheric filtration, with the planet history stating that sulfuric acid clouds choke the life out of what they touch. A planet-wide adaptation the species' own description never makes its point, so under the pool shape it rolls rather than being required. |
 
-- Left out and why: `armored` (no armored covering and no `shell`); `anchored` (a body that the wind carries is the opposite); `regenerative` (no source); `toxic` (its discharges are cold and flammable, not debilitating agents); `reflective`, `hypnotic`, `foresighted`, `telekinetic`, `mind-sealed`, `stealthy`, `healing` (nothing in either source); `nocturnal` (Saiphus is not a night world; the history describes sunrises across the whole sky); `luminous` (the planet history's bioluminescent zooplankton are a different organism, and reading that onto the Neph would be exactly the planet-wide-to-species error the rules forbid); `inspiring`, `ramming`, `phasing`, `solitary`; and `perceptive`, which stays at 0, since `physiology.senses` carries no `special` entry and no source names a sense of any kind, the smell band of 55 to 80 being authored from the grazing habit rather than stated.
+- Left out and why: `armored` (no armored covering and no `shell`; the ratified `appearance` entry "Bare untextured surface" states the same fact from the body's own angle); `anchored` (a body that the wind carries is the opposite); `regenerative` (no source); `toxic` (its discharges are cold and flammable, not debilitating agents); `reflective`, `hypnotic`, `foresighted`, `telekinetic`, `mind-sealed`, `stealthy`, `healing` (nothing in either source, including the ratified fields); `nocturnal` (Saiphus is not a night world; the history describes sunrises across the whole sky); `luminous` (the planet history's bioluminescent zooplankton are a different organism, and reading that onto the Neph would be exactly the planet-wide-to-species error the rules forbid); `inspiring`, `ramming`, `phasing`, `solitary`; `protective` and `menacing` (see the re-run note below, still cut); and `perceptive`, which stays at 0, since `physiology.senses` carries no `special` entry and no source names a sense of any kind, the smell band of 55 to 80 being authored from the grazing habit rather than stated.
 
+#### Trait re-run (2026-09-10)
+
+The five ratified `lore` fields (`appearance`, `origin`, `habitat`, `feeding`, `behavior`, `company`) are now source text on the same footing as the teaser, the art and the planet record. Reviewing the pool against them, no trait changes:
+
+- `pack-bonded` (45), `slippery` (30), and `resistant` (25) are unchanged in share; the ratified `company` field ("It travels in free-floating herds") and the ratified `appearance` entry ("Nearly weightless for its size") restate facts the pool already carried from the teaser and the planet history rather than adding new ones, so the evidence lines above now cite them alongside the original quotes but no percent moves.
+- `protective` (cut at 30 on 2026-09-07) stays out: the ratified `behavior` field, "When threatened it pulls opponents in with suction, jets air at high pressure, blasts freezing Benthane from its tentacles, or sprays flammable hydrogen," is entirely self-defense, exactly the same shape of evidence the earlier cut rejected. Nothing in `origin`, `habitat`, `feeding`, or `company` shows the Neph shielding another body.
+- `menacing` (cut at 5 on 2026-09-07) stays out: none of the five fields describe a presence the Neph projects; `behavior` again describes reactive defense, and `appearance`'s "Colossal hydrogen jellyfish" and "One large smooth bell" restate size and shape already on record, not a threat the body projects passively.
+- No other cut or left-out trait is reopened: `origin` ("Domesticated for the Benthane industry...") and `habitat` ("The cloud layers of Saiphus's lower atmosphere") add nothing that would justify `armored`, `anchored`, `toxic`, `luminous`, or any of the passives with no supporting sentence.
+
+Expected count is unchanged at 2.00.
 
 #### Cut by the evidence bar (2026-09-07)
 
@@ -123,7 +133,9 @@ Rolled (shares sum to 100)
 | `protective` | 30 | the cited sentence describes self-defense; shielding others is inferred from the flocking |
 | `menacing` | 5 | a use others put it to, not a presence the sources describe it projecting |
 
-Pool expected count 3.40 to 3.05 in iteration one, and unchanged by iteration two: neither cut entry clears the widened bar. `protective` has no ratified field, no drawn feature, and no sentence behind it. `menacing` does clear the size half of the field class, since the Neph is the second-tallest species on the roster, but the class also requires a threat sentence, and the only candidate describes what the Neph does when it is threatened rather than any presence it projects. `resistant` was re-checked under the ruling that heat, cold, or desiccation alone never justifies it and survives: the planet-wide fact behind it is sulfuric acid cloud contact, which the Saiphus hazard list repeats, and that is corrosion rather than temperature. Iteration three on 2026-09-08 moved the pool from 3.05 to 3.90: `resistant` and `slippery` both raised to 100 as demanded traits, nothing added and nothing cut. `hardened` was considered and left at 0: the Saiphus hazards are storms, sulfuric cloud contact, island collision and unrecoverable descent, and none of those is thermal load, deep cold, desiccation or crush depth. `insulated` was considered and left at 0 as well, since no lightning or static hazard appears in the record for this world. The pool shape of the same date then replaced iteration three: `volatile` is the single required trait, `slippery`, `resistant` and `pack-bonded` became rolled entries summing to exactly 100, and nothing new was cut, so this table is unchanged. Expected count 3.90 to 2.00.
+Neither cut is restored on the 2026-09-10 re-run: the ratified `behavior` field describes the same self-directed defense the original cut identified, and none of the five ratified fields describes the Neph shielding another body or projecting a passive threat. See the re-run note above.
+
+Pool expected count 3.40 to 3.05 in iteration one, and unchanged by iteration two: neither cut entry clears the widened bar. `protective` has no ratified field, no drawn feature, and no sentence behind it. `menacing` does clear the size half of the field class, since the Neph is the second-tallest species on the roster, but the class also requires a threat sentence, and the only candidate describes what the Neph does when it is threatened rather than any presence it projects. `resistant` was re-checked under the ruling that heat, cold, or desiccation alone never justifies it and survives: the planet-wide fact behind it is sulfuric acid cloud contact, which the Saiphus hazard list repeats, and that is corrosion rather than temperature. Iteration three on 2026-09-08 moved the pool from 3.05 to 3.90: `resistant` and `slippery` both raised to 100 as demanded traits, nothing added and nothing cut. `hardened` was considered and left at 0: the Saiphus hazards are storms, sulfuric cloud contact, island collision and unrecoverable descent, and none of those is thermal load, deep cold, desiccation or crush depth. `insulated` was considered and left at 0 as well, since no lightning or static hazard appears in the record for this world. The pool shape of the same date then replaced iteration three: `volatile` is the single required trait, `slippery`, `resistant` and `pack-bonded` became rolled entries summing to exactly 100, and nothing new was cut, so this table is unchanged. Expected count 3.90 to 2.00, and the 2026-09-10 re-run leaves it at 2.00 with no trait added or cut.
 
 ### Element
 
@@ -196,18 +208,19 @@ The weight band is the one number I would most like you to look at. I put the Ne
 
 ## Validator output
 
-Final run, pasted verbatim:
+Final run of the 2026-09-10 trait re-run, pasted verbatim:
 
 ```
+WARN temperature.planet             validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable
 WARN conduits.source                conduit vents for air: the validator agent must confirm the sentence or art showing the element leaving through this part
 
-0 FAIL, 1 WARN (structurally clean; every WARN must be answered in the walkthrough)
-logged to docs\species-templatesalidation-log
-eph.jsonl
+0 FAIL, 2 WARN (structurally clean; every WARN must be answered in the walkthrough)
+logged to docs/species-templates/validation-log/neph.jsonl
 ```
 
-The single remaining WARN is answered in the Script denials section above and in the Instruments and conduits section: the conduit sentence is species.json, 'these same tentacles can be used ... to jettison air at high pressure'.
+`conduits.source` is answered in the Script denials section above and in the Instruments and conduits section: the conduit sentence is species.json, 'these same tentacles can be used ... to jettison air at high pressure'.
 
+`temperature.planet` is new since the last recorded run and is not a trait-pool matter; nothing on this re-run touched `temperatureC`. The script's own message and its source comment (`issue #167`) say the committed `planetRecords.json` carries no `environment.habitableBandC`, so it falls back to the legacy `planets.json` extremes. `temperatureC` [-30, 45] already lies inside the legacy Saiphus range and was previously validated clean against the rebuilt habitable band before that field went missing from the committed file; this is an upstream data gap outside this task's scope, not a problem introduced by the re-run, so physiology was left untouched.
 
 
 ## Orchestrator amendments
@@ -220,3 +233,4 @@ The single remaining WARN is answered in the Script denials section above and in
 - 2026-09-08, pool shape (Nick): required volatile; rolled pack-bonded 45, slippery 30, resistant 25; expected count 3.90 to 2.00.
 - 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
 - 2026-09-09, lore overlap lever: habits (and body where changed) rewritten so the defining act is present from its own angle.
+- 2026-09-10, trait re-run (Nick): the ratified `appearance` and five short fields reviewed as source for the pool. No trait added, removed, or reweighted; `pack-bonded`, `slippery`, and `resistant` gained additional citations from the ratified `company` and `appearance` fields, and `protective` and `menacing` stay cut, since the ratified `behavior` field restates the same self-defense-only shape of evidence the 2026-09-07 cut already rejected. Expected count unchanged at 2.00.

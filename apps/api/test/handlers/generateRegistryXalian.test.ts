@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { mockClient } from 'aws-sdk-client-mock';
-import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { handler } from '../../src/handlers/generateRegistryXalian.ts';
 import { XalianRecordSchema } from '@xalians/content/schema';
 import { getSpeciesTemplates } from '@xalians/rules/generator';
@@ -10,6 +10,11 @@ const ddbMock = mockClient(DynamoDBDocumentClient);
 
 beforeEach(() => {
   ddbMock.reset();
+  // registryRepo.nextSerial's UpdateCommand (the global per-species COUNTER# item) is
+  // asked for ReturnValues: 'UPDATED_NEW', so it needs a shaped Attributes response to
+  // unwrap; stubbed generically here so each test only has to arrange the PutCommand it
+  // cares about.
+  ddbMock.on(UpdateCommand).resolves({ Attributes: { serial: 1 } });
 });
 
 describe('generateRegistryXalian handler', () => {
@@ -45,6 +50,32 @@ describe('generateRegistryXalian handler', () => {
     const putCalls = ddbMock.commandCalls(PutCommand);
     expect(putCalls).toHaveLength(1);
     expect(putCalls[0].args[0].input.Item).toMatchObject({ ownerId: 'nick', xalianId: body.id, species });
+  });
+
+  it('passes the counted serial into provenance.serial via a single global per-species counter item', async () => {
+    ddbMock.on(PutCommand).resolves({});
+    ddbMock.on(UpdateCommand).resolves({ Attributes: { serial: 7 } });
+    const species = 'graviclaw';
+
+    const result = await handler(authedEvent('nick', { body: JSON.stringify({ species }) }), fakeContext());
+
+    expect(result.statusCode).toBe(201);
+    const body = JSON.parse(result.body as string);
+    expect(body.provenance.serial).toBe(7);
+
+    const updateCalls = ddbMock.commandCalls(UpdateCommand);
+    expect(updateCalls).toHaveLength(1);
+    const input = updateCalls[0].args[0].input;
+    expect(input.TableName).toBe('XalianRegistry');
+    expect(input.Key).toEqual({ xalianId: 'COUNTER#graviclaw' });
+    expect(input.UpdateExpression).toBe('ADD serial :one');
+    expect(input.ExpressionAttributeValues).toEqual({ ':one': 1 });
+    expect(input.ReturnValues).toBe('UPDATED_NEW');
+
+    // Only registryRepo.putRecord's PutCommand runs; no XalianUsersTable write.
+    const putCalls = ddbMock.commandCalls(PutCommand);
+    expect(putCalls).toHaveLength(1);
+    expect(putCalls[0].args[0].input.TableName).toBe('XalianRegistry');
   });
 
   it('draws a species uniformly when none is given', async () => {

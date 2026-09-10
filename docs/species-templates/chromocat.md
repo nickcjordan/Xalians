@@ -87,9 +87,9 @@ The row is one dominant nature with a short tail, because the description reads 
 - `intelligence [30, 52]`: an animal that comprehends instruction and worked as harvest labor, well under true-human range.
 - `willpower [35, 58]` and `charisma [30, 55]`: neither source addresses mind or presence, so both sit in a plain middle band. Flagged in Authored fields.
 
-### Trait pool (required 1, rolled sum 100, expected count 2.00)
+### Trait pool (required 1, rolled sum 100, expected count 1.99)
 
-Iteration four applies Nick's pool shape of 2026-09-08. One entry is required and four are rolled, the rolled shares sum to exactly 100, and the pool holds five entries. Expected count falls from 2.90 to 2.00. The chance an individual lands none of the rolled entries is 0.55 times 0.70 times 0.85 times 0.90, which is 0.294.
+Re-run of 2026-09-10 (Nick): the ratified `lore.appearance` list and the five ratified short fields (`origin`, `habitat`, `feeding`, `behavior`, `company`) are now source text on the same footing as the teaser, the art and the planet record. The pool is re-derived from all of it together. One entry is required and five are rolled, the rolled shares sum to exactly 100, and the pool holds six entries, the cap. The chance an individual lands none of the rolled entries is 0.62 times 0.74 times 0.87 times 0.85 times 0.92, which is roughly 0.29.
 
 #### Required
 
@@ -101,16 +101,26 @@ Iteration four applies Nick's pool shape of 2026-09-08. One entry is required an
 
 | Trait | Share | Evidence |
 |---|---|---|
-| `slippery` | 45 | A species sentence about this creature's own movement, a body that seems to teleport around the battlefield and cannot be pinned down. Strongest of the rolled entries. It is not required because the sentence describes speed of movement rather than a guarantee against being held, and the legacy `statRatings` gauge that reads high for the Chromocat is `speedRating`, which maps to no trait. |
-| `resistant` | 30 | Class 3 and a close fit. Luminax `report.hazards` opens with cumulative radiation load and `report.fauna.observations` states radiation-tolerant integument as universal sunward, giving albino coats as its first example, which is this species exactly. Radiation is contamination under the narrowed definition. It rolls rather than being required because the species' own description is about the blades and the speed, not about surviving the light. |
-| `perceptive` | 15 | Class 4, the art and the record together: the two large tufted ears and forward-set eyes, with a sight band of 70 to 92 whose top clears the 80 line. `physiology.senses` carries no `special` entry, and a graded band may never raise the trait to required. |
-| `pack-bonded` | 10 | The species uses the plural for the harvest work, a body of Chromocats combing whole fields in record time. Smallest share because the present-day sentence describes a single creature harassing opponents, so the group fact belongs to the old labor cohort rather than to every individual now. Its exclusion partner `solitary` was cut on 2026-09-07 and stays cut, so the pair never both roll. |
+| `slippery` | 38 | A species sentence about this creature's own movement, a body that seems to teleport around the battlefield and cannot be pinned down, restated by the ratified `behavior` field: "It enters a photonic state and crosses ground at the speed of light, so it seems to teleport around a fight, harassing its opponent with rapid cuts too fast to react to." Strongest of the rolled entries. It is not required because the field describes speed of movement rather than a guarantee against being held. |
+| `resistant` | 26 | Class 3 and a close fit. Luminax `report.hazards` opens with cumulative radiation load and `report.fauna.observations` states radiation-tolerant integument as universal sunward, giving albino coats as its first example, which is this species exactly. Radiation is contamination under the narrowed definition. It rolls rather than being required because neither the description nor the ratified fields are about surviving the light, only about the blades and the speed. |
+| `perceptive` | 13 | Class 4, the art and the record together: the two large tufted ears and forward-set eyes, with a sight band of 70 to 92 whose top clears the 80 line. `physiology.senses` carries no `special` entry, and a graded band may never raise the trait to required. |
+| `solitary` | 15 | Restored by the ratified `company` field: "Today it fights alone." This is the present-day half of the field and is now a direct, ratified, species-level statement rather than an inference from absence, so the cut of 2026-09-07 no longer holds. Rolled above its exclusion partner because the field states the present-day fact in the second sentence, the one that governs how the species fights now. |
+| `pack-bonded` | 8 | The same ratified `company` field opens with the historical half: "It worked the fields in numbers." Kept as the smaller partner because the field itself frames this as the old labor arrangement ("today" marks the change), so the present-day individual is more often the solitary reading. Exclusion partner of `solitary`; the pair never both roll, and the generator rolls `solitary` first on its higher tilted percent. |
 
 #### Cut by the pool shape (2026-09-08, iteration four)
 
 No entry was cut this iteration. The pool held five entries before the reshape and holds five after; the change is that four of them now roll against each other for about one expected slot instead of two of them being universal.
 
-#### Cut by the evidence bar (2026-09-07, iterations one and two)
+#### Trait re-run (2026-09-10)
+
+Sources added for this run: the ratified `lore.appearance` list and the five ratified fields (`docs/species-templates/lore-status.json` marks chromocat's `appearance` and `fields` both `ratified`). Changes from the previous pool:
+
+- Added `solitary` at 15. The ratified `company` field states outright, "Today it fights alone," which is a direct species-level statement rather than an absence argument. This restores the trait cut on 2026-09-07 (see table below); the earlier cut was correct against the evidence available at the time (only the harvest sentence's plural), but the new field settles the present-day half of the question directly.
+- `pack-bonded` lowered from 10 to 8. Re-grounded on the same ratified `company` field's first sentence, "It worked the fields in numbers," rather than an inference from the harvest sentence's plural; kept as the smaller exclusion partner because the field's own "today" marks the shift away from group work.
+- `slippery` lowered from 45 to 38, `resistant` from 30 to 26, `perceptive` from 15 to 13, all rescaled proportionally to make room for `solitary` and `pack-bonded` while keeping the same relative ordering and the same underlying evidence, now also corroborated by the `behavior` field's restatement of the teleport clause.
+- No trait was removed. Pool size grows from five entries to six, the cap; no further trait can be added without cutting one.
+
+##### Cut by the evidence bar (2026-09-07, iterations one and two)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
@@ -119,7 +129,9 @@ No entry was cut this iteration. The pool held five entries before the reshape a
 | `volatile` | 8 | the quoted radiation is on the blades it strikes with, not a hazard to those who strike it, and the walkthrough concedes no source shows a reaction to being hit |
 | `foresighted` | 5 | the quoted sentence is about opponents being unable to react, not about this creature acting ahead; a rare-band value |
 
-- Considered and left out: `armored`, since there is no armored covering and the body carries the unarmored surface key; `nocturnal`, since the fields this species worked are on the sunward face in eternal daylight, so night adaptation would contradict the source, and the dark side is planet-wide context that could not justify a trait here in any case; `ramming`, since nothing in the sources shows it hitting with its body; `phasing`, since the photonic state is a transient ability state and the registry rule is that a transient state is an ability rather than a change to the body, and treating it as `phasing` would also brush the no-teleportation constraint; `telekinetic`, `healing`, `protective`, `mind-sealed`, `hypnotic`, `menacing`, `inspiring`, `toxic`, `reflective`, `regenerative`, and `anchored`, none of which has support in either source, with `anchored` contradicted outright by the mobility the description is built on.
+Restored on this re-run: `solitary` only, per the ratified `company` field quoted above. `stealthy`, `volatile`, and `foresighted` are not restored: the ratified fields add nothing to them (`behavior` describes only the teleport-speed harassment, not concealment; no field describes a reaction to being struck or a foresight; the cuts stand exactly as reasoned in 2026-09-07).
+
+- Considered and left out: `armored`, since there is no armored covering and the body carries the unarmored surface key, and no ratified field names any plating; `nocturnal`, since the fields this species worked are on the sunward face in eternal daylight per both `habitat` ("The sunward face of Luminax, among the old fields, oases and solar farms.") and the description, so night adaptation would contradict the source; `ramming`, since nothing in the sources, including `feeding` ("It eats what the fields and oases give, meat and grain alike."), shows it hitting with its body; `phasing`, since the photonic state is a transient ability state and the registry rule is that a transient state is an ability rather than a change to the body, and treating it as `phasing` would also brush the no-teleportation constraint; `telekinetic`, `healing`, `protective`, `mind-sealed`, `hypnotic`, `menacing`, `inspiring`, `toxic`, `reflective`, `regenerative`, and `anchored`, none of which has support in any source including the newly ratified fields, with `anchored` contradicted outright by the mobility the `behavior` field and description are built on.
 
 ### Signature ability
 
@@ -176,14 +188,18 @@ The description says the Chromocat can seemingly `teleport` around the battlefie
 
 ## Validator output
 
+Re-run of 2026-09-10 (trait pool re-derivation), current state:
+
 ```
+WARN temperature.planet             validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable
 WARN conduits.source                conduit blades for light: the validator agent must confirm the sentence or art showing the element leaving through this part
-WARN signature.action.matrix        signature action "ambush" is outside the physical row for blades [strike, rake, lash] and outside the light medium row (rule 4 exception; justify)
-WARN signature.description.elementkey signature description uses element key word(s) as plain words: light (allowed only as ordinary English, never as a type label)
 WARN enc.definition.elementkey      encyclopedia definition uses element key word(s) as plain words: light (allowed only as ordinary English, never as a type label)
 
-0 FAIL, 4 WARN (structurally clean; every WARN must be answered in the walkthrough)
+0 FAIL, 3 WARN (structurally clean; every WARN must be answered in the walkthrough)
+logged to docs/species-templates/validation-log/chromocat.jsonl
 ```
+
+No WARN on this run concerns the trait pool: `traits.pool.required`, `traits.pool.rolledSum`, `traits.pool.size`, and `traits.pool.variance` are all silent, confirming one required trait, a rolled sum in range, six entries (at the cap), and variance present. `temperature.planet` is a pre-existing environment limitation of the script's data source (`planetRecords.json` carries no `environment.habitableBandC` block in this workspace), unrelated to the trait re-run. `conduits.source` and `enc.definition.elementkey` are pre-existing and already answered above under the 'Answers to every script WARN' heading. The `signature.action.matrix` WARN from the original run no longer appears because the signature action was changed from `ambush` to `rake` in the 2026-09-02 orchestrator amendment below, which is in the physical `blades` row.
 
 No run of the script has ever raised a FAIL on this key. The two entries in the Script denials section above are recorded because they are places where I chose against a stated rule or default, not because the script rejected a value.
 

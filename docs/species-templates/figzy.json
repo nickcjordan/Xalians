@@ -166,10 +166,11 @@
   "traits": {
     "pool": {
       "telekinetic": 100,
-      "hypnotic": 35,
-      "perceptive": 30,
-      "mind-sealed": 27,
-      "foresighted": 8
+      "protective": 100,
+      "perceptive": 45,
+      "mind-sealed": 30,
+      "hypnotic": 15,
+      "foresighted": 10
     }
   },
   "instruments": [

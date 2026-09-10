@@ -1,185 +1,215 @@
 {
-  "note": "Review status of the lore prose fields per species (Nick signs off). This is ephemeral metadata kept OUT of the creature records on purpose (Nick, 2026-09-09). description is always source (species.json verbatim); appearance and fields (the five short fields, judged as a group) are pending, draft, or ratified. Prose body struck 2026-09-09 for the appearance list; the five short fields replaced habits on 2026-09-10, all five required on every species since later that day, and are draft until Nick signs off.",
+  "note": "Review status of the lore prose fields per species (Nick signs off). This is ephemeral metadata kept OUT of the creature records on purpose (Nick, 2026-09-09). description is always source (species.json verbatim); appearance and fields (the five short fields, judged as a group) are pending, draft, or ratified. Prose body struck 2026-09-09 for the appearance list; the five short fields replaced habits on 2026-09-10, all five required on every species since later that day, and are draft until Nick signs off. traits records the trait pool review status: the 2026-09-10 re-run against the ratified lore was signed off by Nick the same day.",
   "species": {
     "akinza": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch three)"
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch three)",
+      "traits": "ratified"
     },
     "avilily": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was source before the split; fields ratified 2026-09-10 (batch one)"
+      "note": "teaser was source before the split; fields ratified 2026-09-10 (batch one)",
+      "traits": "ratified"
     },
     "bioflim": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch two)"
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch two)",
+      "traits": "ratified"
     },
     "chromocat": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was source before the split; fields ratified 2026-09-10 (batch one)"
+      "note": "teaser was source before the split; fields ratified 2026-09-10 (batch one)",
+      "traits": "ratified"
     },
     "codazzo": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch two)"
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch two)",
+      "traits": "ratified"
     },
     "crystorn": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch one)"
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch one)",
+      "traits": "ratified"
     },
     "drilltail": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch three)"
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch three)",
+      "traits": "ratified"
     },
     "dromeus": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch one)"
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch one)",
+      "traits": "ratified"
     },
     "ectoghoul": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch two)"
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch two)",
+      "traits": "ratified"
     },
     "figzy": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch three)"
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch three)",
+      "traits": "ratified"
     },
     "foromeer": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch three)"
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch three)",
+      "traits": "ratified"
     },
     "graviclaw": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was source before the split; fields ratified 2026-09-10 (batch one)"
+      "note": "teaser was source before the split; fields ratified 2026-09-10 (batch one)",
+      "traits": "ratified"
     },
     "hippochamp": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch one)"
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch one)",
+      "traits": "ratified"
     },
     "hypnopet": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was source before the split; fields ratified 2026-09-10 (batch three)"
+      "note": "teaser was source before the split; fields ratified 2026-09-10 (batch three)",
+      "traits": "ratified"
     },
     "imprit": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was source before the split; fields ratified 2026-09-10 (batch one)"
+      "note": "teaser was source before the split; fields ratified 2026-09-10 (batch one)",
+      "traits": "ratified"
     },
     "kosanos": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch one)"
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch one)",
+      "traits": "ratified"
     },
     "luceras": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch two)"
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch two)",
+      "traits": "ratified"
     },
     "neph": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was source before the split; fields ratified 2026-09-10 (batch two)"
+      "note": "teaser was source before the split; fields ratified 2026-09-10 (batch two)",
+      "traits": "ratified"
     },
     "newtapede": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch one)"
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch one)",
+      "traits": "ratified"
     },
     "scalatto": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch three)"
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch three)",
+      "traits": "ratified"
     },
     "smokat": {
       "description": "source",
       "appearance": "draft",
       "fields": "ratified",
-      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch two)"
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch two)",
+      "traits": "ratified"
     },
     "terragoyle": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was source before the split; fields ratified 2026-09-10 (batch two)"
+      "note": "teaser was source before the split; fields ratified 2026-09-10 (batch two)",
+      "traits": "ratified"
     },
     "tetrahive": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch one)"
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch one)",
+      "traits": "ratified"
     },
     "thirstaserp": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch three)"
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch three)",
+      "traits": "ratified"
     },
     "tizzie": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch three)"
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch three)",
+      "traits": "ratified"
     },
     "venemist": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch two)"
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch two)",
+      "traits": "ratified"
     },
     "voltish": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch two)"
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch two)",
+      "traits": "ratified"
     },
     "xylum": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch one)"
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch one)",
+      "traits": "ratified"
     },
     "yetimoth": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "teaser was source before the split; fields ratified 2026-09-10 (batch three)"
+      "note": "teaser was source before the split; fields ratified 2026-09-10 (batch three)",
+      "traits": "ratified"
     },
     "frackworm": {
       "description": "source",
       "appearance": "ratified",
       "fields": "ratified",
-      "note": "ratified 2026-09-09 as species 00030; fields ratified 2026-09-10 (batch three)"
+      "note": "ratified 2026-09-09 as species 00030; fields ratified 2026-09-10 (batch three)",
+      "traits": "ratified"
     }
   }
 }

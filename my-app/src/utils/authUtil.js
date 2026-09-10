@@ -41,6 +41,26 @@ import {store} from 'state-pool';
 //     });
 // }
 
+/**
+ * The current session, or null when signed out.
+ *
+ * VITE_USE_CACHE_AUTH=true answers with a stub account instead of asking
+ * Cognito, which is what lets the signed-in pages be opened and screenshot
+ * locally with no real session. It is separate from VITE_USE_CACHE (which
+ * makes dbApi answer from sample records) so the signed-out branch of a page
+ * can be painted with stubbed data too. Both are development switches only;
+ * the production build sets neither.
+ */
+export const currentUser = () => {
+    if (import.meta.env.VITE_USE_CACHE_AUTH === 'true') {
+        return Promise.resolve({
+            username: 'sample',
+            attributes: { sub: 'sample', email: 'sample@xalians.com', email_verified: true },
+        });
+    }
+    return Auth.currentUserInfo();
+};
+
 export const buildAuthState = (data) => {
     return { 
         userId: data.attributes.sub,

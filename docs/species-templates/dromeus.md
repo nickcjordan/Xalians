@@ -98,7 +98,7 @@ Legacy `statRatings` used only as a relative gauge: `standardAttackRating: high`
 
 ### Trait pool
 
-Pool shape of 2026-09-08. One required trait at 100 and a rolled set of three sharing exactly 100. Expected count: 1 + 100/100 = 2.00. No exclusion pair remains, since both `pack-bonded` and `solitary` were cut by the evidence bar.
+Pool shape, re-run 2026-09-10. One required trait at 100 and a rolled set of four sharing exactly 100. Expected count: 1 + 100/100 = 2.00. `solitary` is not in the pool, so `pack-bonded` rolls with no exclusion adjustment.
 
 #### Required
 
@@ -110,23 +110,33 @@ Pool shape of 2026-09-08. One required trait at 100 and a rolled set of three sh
 
 | Trait | Share | Evidence |
 |---|---|---|
-| `hardened` | 40 | Strongest of the rolled set. Magmuth's Generator environmental report lists firestorms and ambient temperature excursions among the planet's hazards, gives thermal shielding as the first of its two output priorities, and states heat-shielded integument in its fauna observations with no quantifier. A planet-wide adaptation, and the Dromeus description is about speed and killing rather than about surviving the heat, so it rolls. |
-| `resistant` | 35 | Also planet-wide, and one class weaker: it rests on the planet history rather than on a hazards entry. Planet: "The acrid air is thick with volcanic smoke, staining the sky crimson and lacing the atmosphere with sulfuric ash and pungent, toxic fumes." Chemically hostile air is contamination, which is this key rather than `hardened`. |
-| `perceptive` | 25 | The weakest class, a record field: `physiology.senses.sight` is banded [70, 90] and the upper bound clears the floor of 80 for a graded band. `senses.special` is empty, so nothing names it species-wide. |
+| `hardened` | 35 | Strongest of the rolled set. Magmuth's Generator environmental report lists firestorms and ambient temperature excursions among the planet's hazards, gives thermal shielding as the first of its two output priorities, and states heat-shielded integument in its fauna observations with no quantifier. A planet-wide adaptation, and the Dromeus description is about speed and killing rather than about surviving the heat, so it rolls. |
+| `pack-bonded` | 30 | The ratified `company` field states it plainly: "It runs in packs." That is a direct, present-tense, species-specific sentence, the evidence class the 2026-09-07 cut said was missing (`no ratified field states group living`). Magmuth's fauna observations, "inter-pack aggression elevated; engagement persistence exceeds nutritional explanation," corroborate that Dromeus-type runners hold pack structure on this world, but the company field alone is what restores the trait. |
+| `resistant` | 20 | Also planet-wide, and one class weaker than `hardened`: it rests on the planet history rather than on a hazards entry. Planet: "The acrid air is thick with volcanic smoke, staining the sky crimson and lacing the atmosphere with sulfuric ash and pungent, toxic fumes." Chemically hostile air is contamination, which is this key rather than `hardened`. |
+| `perceptive` | 15 | The weakest class, a record field: `physiology.senses.sight` is banded [70, 90] and the upper bound clears the floor of 80 for a graded band. `senses.special` is empty, so nothing names it species-wide. |
 
-Legacy `statRatings` add nothing to the shares here: `standardAttackRating` and `speedRating` are high, and neither of those maps to a trait.
+Legacy `statRatings` add nothing to the shares here: `standardAttackRating` and `speedRating` are high, and neither of those maps to a trait. The ratified `feeding` field, "It hunts on the flats and eats whatever it can run down," and `behavior` field, "It runs. When it reaches speed it spreads its wings, launches itself at its prey, and bites," restate `ramming` and the carnivore diet rather than adding a new trait. The `habitat` field, "The hardened lava flats and ash fields of Magmuth," restates the ground `hardened`/`resistant` already rest on rather than adding one.
 
-Traits I considered and left out, so they carry a 0 chance: `armored` (no shell, no plating); `regenerative` (no source); `nocturnal` (Magmuth is not a night world); `volatile` (nothing makes it hazardous to strike); `toxic` (teeth are sharp, not envenomed); `luminous` (the art shows no light organs); `foresighted` and `telekinetic` (no source at all); `healing`, `protective`, `inspiring`, `anchored`, `phasing`, `reflective`, `hypnotic`, `mind-sealed` (each contradicted by or absent from the body and both sources).
+Traits I considered and left out, so they carry a 0 chance: `armored` (no shell, no plating); `regenerative` (no source); `nocturnal` (Magmuth is not a night world); `volatile` (nothing makes it hazardous to strike); `toxic` (teeth are sharp, not envenomed); `luminous` (the art shows no light organs); `foresighted` and `telekinetic` (no source at all); `solitary` (the company field states packs, its exclusion partner, and nothing says an individual ever runs alone); `healing`, `protective`, `inspiring`, `anchored`, `phasing`, `reflective`, `hypnotic`, `mind-sealed` (each contradicted by or absent from the body and both sources).
+
+#### Trait re-run (2026-09-10)
+
+The teaser, art, and planet record were already in evidence for the prior pool. What is new this pass is the ratified `lore.appearance` list and the five short fields, now source text on the same footing. Reading them against the existing pool:
+
+- `pack-bonded` restored at 30 (was cut entirely). The `company` field, "It runs in packs," is exactly the ratified-field evidence the 2026-09-07 cut said was absent. Restoring it required reapportioning the rolled 100: `hardened` down from 40 to 35, `resistant` down from 35 to 20, `perceptive` down from 25 to 15, freeing the 30 points `pack-bonded` now holds. Entry count rises from four to five, still inside the six-entry ceiling.
+- `appearance` entries ("Light for its height," "Clawed forelimbs held clear of the ground," "Hooked toe claws") add body facts already carried by the anatomy and size fields; none of them state a new trait-bearing fact (no evasion sentence, no threat display, no light-organ), so `slippery`, `menacing`, and `luminous` stay out.
+- `origin`, `habitat`, `feeding`, and `behavior` restate facts the pool already rests on (the mining-island origin, the ash-field ground, the hunt-and-bite behavior) and add nothing new.
+- `solitary` stays out: the new `company` field settles the exclusion pair toward `pack-bonded`, not away from it.
 
 #### Cut by the evidence bar (2026-09-07)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
-| `pack-bonded` | 55 | Class 3 fails on kind: Magmuth's report notes elevated inter-pack aggression, but a planet-wide fact may carry only an environmental adaptation, never a behavioral trait, and no ratified field states group living. |
-| `slippery` | 30 | Class 5 fails: the legacy `evasionRating` for Dromeus is empty, so the one rating that maps to slippery is absent, and no other rating substitutes. |
-| `stealthy` | 20 | Argued from absence: a pursuit runner is said not to be an ambusher by nature, with no sentence showing it moving unseen. |
-| `menacing` | 15 | Class 2 fails: the art shows the jaws thrown wide inside a mid-stride hunting lunge, which is the attack rather than a threat display, and no threat sentence exists to pair with a size claim. |
-| `solitary` | 12 | No source sentence: listed only as the lower half of the exclusion pair. |
+| `pack-bonded` | 55 | Class 3 fails on kind: Magmuth's report notes elevated inter-pack aggression, but a planet-wide fact may carry only an environmental adaptation, never a behavioral trait, and no ratified field states group living. **Restored 2026-09-10 at 30**: the ratified `company` field, "It runs in packs," is now exactly that ratified field. |
+| `slippery` | 30 | Class 5 fails: the legacy `evasionRating` for Dromeus is empty, so the one rating that maps to slippery is absent, and no other rating substitutes. Not restored: neither the appearance list nor the five fields state an evasion behavior. |
+| `stealthy` | 20 | Argued from absence: a pursuit runner is said not to be an ambusher by nature, with no sentence showing it moving unseen. Not restored: no field states stealth. |
+| `menacing` | 15 | Class 2 fails: the art shows the jaws thrown wide inside a mid-stride hunting lunge, which is the attack rather than a threat display, and no threat sentence exists to pair with a size claim. Not restored: no field states a threat display. |
+| `solitary` | 12 | No source sentence: listed only as the lower half of the exclusion pair. Not restored: the new `company` field states packs, not solitude, which settles the exclusion pair the other way. |
 
 ### Signature ability
 
@@ -189,13 +199,15 @@ The covering rule forced `bare` on a creature whose description's very first wor
 
 ## Validator output
 
-Final run after the pool-shape pass of 2026-09-08:
+Final run after the trait re-run of 2026-09-10:
 
 ```
-0 FAIL, 0 WARN (structurally clean; every WARN must be answered in the walkthrough)
+WARN temperature.planet             validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable
+
+0 FAIL, 1 WARN (structurally clean; every WARN must be answered in the walkthrough)
 ```
 
-The trait checks `traits.pool.required`, `traits.pool.rolledSum` and `traits.pool.size` are all silent.
+The trait checks `traits.pool.required`, `traits.pool.rolledSum` and `traits.pool.size` are all silent; the standing `temperature.planet` warning is unrelated to the trait pool and was already carried by this record before the re-run (the validator's habitable-band data is unavailable for `planetRecords.json` in this workspace layout, so it falls back to the legacy planet extremes, which the `temperatureC` band in this record already sits inside).
 
 ## Orchestrator amendments
 
@@ -207,3 +219,4 @@ The trait checks `traits.pool.required`, `traits.pool.rolledSum` and `traits.poo
 - 2026-09-08, trait evidence bar iteration three (Nick): added `hardened` (100, Magmuth thermal shielding priority and the universal heat-shielded integument observation); raised nothing; cut nothing, since `perceptive` rests on a sight band whose upper bound is 90 and `resistant` on chemically hostile air; expected count 1.92 to 2.92.
 - 2026-09-08, pool shape (Nick): required `ramming`; rolled `hardened` 40, `resistant` 35, `perceptive` 25; expected count 2.92 to 2.00.
 - 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
+- 2026-09-10, trait re-run: pool re-derived against the newly ratified `lore.appearance` list and five short fields. `pack-bonded` restored at 30 on the `company` field, "It runs in packs."; `hardened` 40 to 35, `resistant` 35 to 20, `perceptive` 25 to 15 to make room; expected count stays 2.00 (1 required + rolled sum 100/100).

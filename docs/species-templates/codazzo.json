@@ -165,10 +165,11 @@
   "traits": {
     "pool": {
       "regenerative": 100,
-      "stealthy": 40,
-      "volatile": 30,
-      "insulated": 20,
-      "perceptive": 10
+      "stealthy": 35,
+      "solitary": 30,
+      "volatile": 20,
+      "insulated": 10,
+      "perceptive": 5
     }
   },
   "instruments": [

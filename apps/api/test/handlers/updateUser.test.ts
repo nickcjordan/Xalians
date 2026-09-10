@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { mockClient } from 'aws-sdk-client-mock';
-import { DynamoDBDocumentClient, GetCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { handler } from '../../src/handlers/updateUser.ts';
 import { authedEvent, fakeContext } from '../testEvent.ts';
 
@@ -10,79 +10,46 @@ beforeEach(() => {
   ddbMock.reset();
 });
 
+// Every action is rejected (issue #180): the xalian-id actions belonged to the retired
+// legacy keep flow and token accounting was already server-only. The route survives only
+// until a real user-settings action exists.
 describe('updateUser handler', () => {
-  it('rejects ADD_TOKENS with a 403 and never touches the delegate', async () => {
-    const result = await handler(
-      authedEvent('nick', { body: JSON.stringify({ action: 'ADD_TOKENS', value: '1000000' }) }),
-      fakeContext('req-5')
-    );
+  const actions = [
+    ['ADD_TOKENS', '1000000'],
+    ['REMOVE_TOKENS', '3'],
+    ['ADD_XALIAN_ID', 'xal_1'],
+    ['REMOVE_XALIAN_ID', 'xal_1'],
+  ] as const;
 
-    expect(result.statusCode).toBe(403);
-    expect(JSON.parse(result.body as string).errorCode).toBe('FORBIDDEN_ACTION');
-    expect(ddbMock.calls()).toHaveLength(0);
+  actions.forEach(([action, value], index) => {
+    it(`rejects ${action} with a 403 and never touches the table`, async () => {
+      const result = await handler(
+        authedEvent('nick', { body: JSON.stringify({ action, value }) }),
+        fakeContext(`req-${index}`)
+      );
+
+      expect(result.statusCode).toBe(403);
+      expect(JSON.parse(result.body as string).errorCode).toBe('FORBIDDEN_ACTION');
+      expect(ddbMock.calls()).toHaveLength(0);
+    });
   });
 
-  it('rejects REMOVE_TOKENS with a 403 and never touches the delegate (token accounting is server-side, D1)', async () => {
+  it('still 400s on a body shape it has never accepted', async () => {
     const result = await handler(
-      authedEvent('nick', { body: JSON.stringify({ action: 'REMOVE_TOKENS', value: '3' }) }),
-      fakeContext('req-9')
-    );
-
-    expect(result.statusCode).toBe(403);
-    expect(JSON.parse(result.body as string).errorCode).toBe('FORBIDDEN_ACTION');
-    expect(ddbMock.calls()).toHaveLength(0);
-  });
-
-  it('rejects ADD_XALIAN_ID with a 403 and never touches the delegate (keeping is server-side, D1)', async () => {
-    const result = await handler(
-      authedEvent('nick', { body: JSON.stringify({ action: 'ADD_XALIAN_ID', value: 'xal_1' }) }),
-      fakeContext('req-6')
-    );
-
-    expect(result.statusCode).toBe(403);
-    expect(JSON.parse(result.body as string).errorCode).toBe('FORBIDDEN_ACTION');
-    expect(ddbMock.calls()).toHaveLength(0);
-  });
-
-  it('REMOVE_XALIAN_ID sends REMOVE with the index condition', async () => {
-    ddbMock.on(GetCommand).resolves({ Item: { userId: 'nick', xalianIds: ['a', 'xal_1', 'b'], attributes: {} } });
-    ddbMock.on(UpdateCommand).resolves({});
-
-    const result = await handler(
-      authedEvent('nick', { body: JSON.stringify({ action: 'REMOVE_XALIAN_ID', value: 'xal_1' }) }),
-      fakeContext('req-7')
-    );
-
-    expect(result.statusCode).toBe(200);
-    const input = ddbMock.commandCalls(UpdateCommand)[0].args[0].input;
-    expect(input.UpdateExpression).toBe('REMOVE xalianIds[1]');
-    expect(input.ConditionExpression).toBe('xalianIds[1] = :id');
-    expect(input.ExpressionAttributeValues).toEqual({ ':id': 'xal_1' });
-  });
-
-  it('REMOVE_XALIAN_ID 400s when the id is not present', async () => {
-    ddbMock.on(GetCommand).resolves({ Item: { userId: 'nick', xalianIds: [], attributes: {} } });
-
-    const result = await handler(
-      authedEvent('nick', { body: JSON.stringify({ action: 'REMOVE_XALIAN_ID', value: 'ghost' }) }),
-      fakeContext('req-8')
+      authedEvent('nick', { body: JSON.stringify({ action: 'RENAME', value: 'x' }) }),
+      fakeContext('req-shape')
     );
 
     expect(result.statusCode).toBe(400);
-    expect(JSON.parse(result.body as string).errorCode).toBe('XALIAN_NOT_FOUND_IN_USER');
+    expect(JSON.parse(result.body as string).errorCode).toBe('BAD_REQUEST');
   });
 
-  it('ignores userId in the body; the subject always comes from the JWT', async () => {
-    ddbMock.on(GetCommand).resolves({ Item: { userId: 'nick', xalianIds: ['xal_1'], attributes: {} } });
-    ddbMock.on(UpdateCommand).resolves({});
-
+  it('401s before the body is read when there is no subject', async () => {
     const result = await handler(
-      authedEvent('nick', { body: JSON.stringify({ userId: 'someone-else', action: 'REMOVE_XALIAN_ID', value: 'xal_1' }) }),
-      fakeContext('req-12')
+      { body: JSON.stringify({ action: 'REMOVE_XALIAN_ID', value: 'x' }), requestContext: {} },
+      fakeContext('req-anon')
     );
 
-    expect(result.statusCode).toBe(200);
-    const input = ddbMock.commandCalls(UpdateCommand)[0].args[0].input;
-    expect(input.Key).toEqual({ userId: 'nick' });
+    expect(result.statusCode).toBe(401);
   });
 });

@@ -101,41 +101,51 @@ Upgraded-description clauses and their sources:
 
 **Element affinity.** Primary `plant` at 100; the on-graph secondaries for plant are water, chemical and psychic. No `affinityOdds` override: nothing in either source argues this species leans toward or away from a secondary, so it inherits the 75/25 baseline.
 
-**Trait pool.** Pool shape, 2026-09-08 ruling: one required trait and four rolled entries whose shares sum to 100. Iteration three had all five entries at 100, so every Xylum carried the same traits; only `anchored` is what this species is in its own lore, and the other four drop into the rolled set.
+**Trait pool.** Re-run of 2026-09-10: the pool is re-derived from scratch under the same 2026-09-08 pool shape, now with `lore.appearance` and the five ratified short fields on equal footing with the teaser, the art, and the planet record as sources (procedure step 9). Three entries are required at 100 and three are rolled, the rolled shares summing to exactly 100, six entries in all, the cap. Expected count rises from 2.00 to 4.00 because the ratified `behavior` and `company` fields turn two rolled body facts into unhedged required ones.
 
 **Required**
 
 | Trait | Evidence |
 |---|---|
-| `anchored` | The body fact, straight from the registry definition of a body that cannot be moved against its will. `species`: "It lives mostly underground as this is where it absorbs its power." The art draws a root mass breaking the soil line with the greater part of itself buried, `physiology.capabilities.burrow` is [70, 92] against a sprint band of [5, 20], and the signature ability Deeproot Reclamation works by sinking those limbs deeper. Nothing else in the record survives without it. |
+| `anchored` | The body fact, straight from the registry definition of a body that cannot be moved against its will. `species`: "It lives mostly underground as this is where it absorbs its power." `habitat`: "Underground in Floria's understory, beneath the World Trees, where it absorbs its power." The art draws a root mass breaking the soil line with the greater part of itself buried, `physiology.capabilities.burrow` is [70, 92] against a sprint band of [5, 20], and the signature ability Deeproot Reclamation works by sinking those limbs deeper. Nothing else in the record survives without it. |
+| `regenerative` | Promoted from a rolled 35. The ratified `behavior` field now states the fact plainly and without qualifier: `behavior`: "and a tentacle torn off grows back." A body the record itself says regrows a severed limb is a body-demanded trait, not a planet-wide plausibility; the prior evidence, `statRatings.recoveryRating` high and the Floria output priority naming regenerative tissue, stands behind it but is no longer what carries it. |
+| `solitary` | New, on the ratified `company` field: `company`: "It lies alone under the soil." Unhedged, and it is the species' own field rather than an argument from the portrait silhouette that the 2026-09-07 evidence bar correctly rejected. `pack-bonded` is not in the pool, so the exclusion rule is not engaged. |
 
 **Rolled (shares sum to 100)**
 
 | Trait | Share | Evidence |
 |---|---|---|
-| `regenerative` | 35 | First among the rolled entries on Nick's legacy gauge: `statRatings.recoveryRating` for Xylum is high, which is the one legacy rating that maps to this trait. The rating ranks the entry first rather than setting its percent. Floria's Generator Environmental Report agrees, listing regenerative tissue among its output priorities, though an output priority alone would not carry an entry. Demoted from 100. |
-| `territorial` | 25 | A planet-wide line that covers this species' form: the Floria Generator Environmental Report states, without a quantifier, that the planet's territorial strategy is growth, entanglement and regrowth in place of engagement, which is a rooted mass holding the ground it occupies. It is planet evidence rather than a species sentence, so it sits below the legacy rating. Demoted from 100. |
-| `resistant` | 22 | A planet hazard covering this form. Toxic fungal blooms are a hazard entry for Floria and toxins sit inside the narrowed scope of the trait, and this body is buried in the same soil layer. `planet`: "massive infestations of toxic fungi". Demoted from 100: the species' own description is about drawing power from the ground, not about shrugging off the fungi, so the world demands it of everything rooted there rather than of this creature in particular. |
-| `perceptive` | 18 | A record field, the weakest class kept. `physiology.senses.special` carries `tremorsense`, which the senses list makes evidence for the trait but never enough to make it required, since a required trait must not restate a field the record already carries. It matters on a blind body whose sight band tops out at 15, which is why it stays in the pool at all. Demoted from 100. |
+| `territorial` | 35 | A planet-wide line that covers this species' form: the Floria Generator Environmental Report states, without a quantifier, that the planet's territorial strategy is growth, entanglement and regrowth in place of engagement, which is a rooted mass holding the ground it occupies. Reinforced by `behavior`: the tentacles come up and hold whatever disturbs the ground above, which is the same ground-holding act at the species' own level. It is still planet-wide in its clearest statement, so it stays rolled rather than required. |
+| `grappling` | 35 | New. The ratified `behavior` field describes the act directly: `behavior`: "its tentacles come up out of the soil and wrap whatever is there." Wrapping and holding what it has caught is the registry's own definition of the trait. This is the strongest new candidate the five fields surfaced, and it takes the slot `perceptive` held in the prior pool. |
+| `resistant` | 30 | A planet hazard covering this form. Toxic fungal blooms are a hazard entry for Floria and toxins sit inside the narrowed scope of the trait, and this body is buried in the same soil layer. `planet`: "massive infestations of toxic fungi". The species' own fields are about drawing power from the ground and holding what disturbs it, not about shrugging off the fungi, so the world demands this of everything rooted there rather than of this creature in particular, and it stays rolled. |
 
-#### Cut by the evidence bar (2026-09-07)
+#### Trait re-run (2026-09-10)
 
-| Trait | Former percent | Evidence class that failed |
-|---|---|---|
-| `healing` | 25 | still body-type plausibility from the plant element; no sentence, no ratified field, and no legacy rating maps to it |
-| `protective` | 25 | class 3 fails: the planet sentence behind it is stretched to a behavior, and a planet fact may support an environmental adaptation only |
-| `solitary` | 60 | still argued from absence; a single organism in a portrait silhouette is true of every species art and evidences nothing |
-| `menacing` | 12 | class 4 fails: the size is among the largest of the roster, but large justifies menacing only alongside a threat sentence, and neither source carries one |
+- `regenerative`: promoted from a rolled 35 to required 100. Reason: `behavior`, "a tentacle torn off grows back," is an unhedged, species-own statement of self-repair, replacing the legacy-rating-plus-output-priority case that only justified a rolled share before.
+- `solitary`: added at required 100. Reason: `company`, "It lies alone under the soil," is the unhedged, species-own field the 2026-09-07 evidence bar found missing when it cut this trait for being argued from the art alone. Three required traits (`anchored`, `regenerative`, `solitary`) is a justified special case: each is independently pinned by its own unhedged, dedicated source (the buried, immovable body; the regrowth line; the company line) rather than by inference or planet-wide plausibility.
+- `grappling`: added at rolled 35. Reason: `behavior`, "its tentacles come up out of the soil and wrap whatever is there," is a direct description of holding a caught target, the registry definition of the trait. This is new evidence the five fields surfaced that did not exist in the prior pass.
+- `perceptive`: dropped from the pool (was rolled 18). Its only evidence remains `physiology.senses.special: tremorsense`, a record-field restatement the pool shape already treats as the weakest class kept, and with the pool at the six-entry cap, `grappling`'s direct behavior-field evidence is the stronger claim on the open slot.
+- `territorial`: unchanged in its evidence, rescaled from 25 to 35 as part of resumming the rolled set to 100 after `regenerative` left it; the new `behavior` line about tentacles holding what disturbs the ground is added as reinforcing evidence.
+- `resistant`: unchanged in its evidence, rescaled from 22 to 30 for the same resumming; no new field bears on it.
 
-Expected trait count after the pool shape: (100 + 35 + 25 + 22 + 18) / 100 = 2.00, down from the 5.00 of iteration three. The chance an individual lands none of the four rolled traits is 0.65 times 0.75 times 0.78 times 0.82, which is 31.2 percent. Pool size is five entries, inside the cap of six, so nothing had to be cut for want of a slot.
+**Cut by the evidence bar (2026-09-07), now reviewed against the five new fields:**
 
-The uniformity problem of iteration three is gone. Four of the five entries now vary, so two Xylum differ in traits as well as in attributes, archetype, secondary element and signature intensity, and the one thing they always share is the buried root mass that cannot be shifted. Nothing new was admitted to the pool: `healing`, `protective`, `solitary` and `menacing` all remain cut on the evidence they failed in iteration one, and none of them would displace a kept entry.
+| Trait | Former percent | Evidence class that failed | Restored? |
+|---|---|---|---|
+| `healing` | 25 | still body-type plausibility from the plant element; no sentence, no ratified field, and no legacy rating maps to it | No. `feeding` states it "eats nothing" and draws power from the ground; none of the five fields shows it restoring another creature. |
+| `protective` | 25 | class 3 fails: the planet sentence behind it is stretched to a behavior, and a planet fact may support an environmental adaptation only | No. `behavior` shows it wrapping whatever disturbs its own ground, an act aimed at what threatens it, not at shielding another creature. |
+| `solitary` | 60 | still argued from absence; a single organism in a portrait silhouette is true of every species art and evidences nothing | Yes, restored at required 100 on the ratified `company` field; see Trait re-run above. |
+| `menacing` | 12 | class 4 fails: the size is among the largest of the roster, but large justifies menacing only alongside a threat sentence, and neither source carries one | No. `behavior` and `feeding` describe a buried ambush mechanism, not a presence that erodes courage; still no threat sentence. |
 
-`resistant` re-checked under the narrowed 2026-09-08 definition and kept in the pool: its support is the toxic fungal load of Floria's soil layer, which the Generator report repeats as a hazard. That is contamination, not thin atmosphere, dust, static discharge or temperature, so the definition does not touch it. What changed is only its standing, from required to rolled.
+Expected trait count after the re-run: (100 + 100 + 100 + 35 + 35 + 30) / 100 = 4.00, up from the 2.00 of the 2026-09-08 pool shape. The chance an individual lands none of the three rolled traits is 0.65 times 0.65 times 0.70, which is 29.6 percent. Pool size is six entries, at the cap.
 
-No `hardened`, `insulated` or `dormant`: Floria's hazards are the coordinated ecosystem response, toxic fungal blooms and unstable root substrate, with no thermal load, cold, desiccation, crush depth, thin air, lightning or static discharge among them, and its output priorities name grip and climb morphology, regenerative tissue and ecosystem-integration compatibility, none of which is insulation or metabolic suspension.
+The uniformity problem of iteration three does not return. `territorial`, `grappling`, and `resistant` still vary, so two Xylum still differ in traits as well as in attributes, archetype, secondary element and signature intensity, and the things they now always share are the buried immovable mass, the regrowing limb, and the solitary life under the soil, three separate facts the record states of every individual rather than one.
 
-- Left out on purpose: `armored` (no armored covering and no `shell` key, so the body does not demand it), `toxic` (the toxic fungi belong to the planet, not to this creature's weapons), `nocturnal` (Floria is not a night world), `stealthy` (a giant mass is the opposite), `luminous`, `reflective`, `volatile`, `ramming`, `hypnotic`, `inspiring`, `slippery`, `mind-sealed`, `phasing`, `foresighted`, `telekinetic`, and `pack-bonded` (see `solitary`). Each is absent, which means a 0 chance.
+`resistant` re-checked under the narrowed 2026-09-08 definition and kept in the pool: its support is the toxic fungal load of Floria's soil layer, which the Generator report repeats as a hazard. That is contamination, not thin atmosphere, dust, static discharge or temperature, so the definition does not touch it. It remains rolled, not required, because its clearest statement is still planet-wide.
+
+No `hardened`, `insulated` or `dormant`: Floria's hazards are the coordinated ecosystem response, toxic fungal blooms and unstable root substrate, with no thermal load, cold, desiccation, crush depth, thin air, lightning or static discharge among them, and its output priorities name grip and climb morphology, regenerative tissue and ecosystem-integration compatibility, none of which is insulation or metabolic suspension. None of the five new fields adds a thermal, pressure, or discharge claim either.
+
+- Left out on purpose: `armored` (no armored covering and no `shell` key, so the body does not demand it), `toxic` (the toxic fungi belong to the planet, not to this creature's weapons), `nocturnal` (Floria is not a night world), `stealthy` (a giant mass is the opposite), `luminous`, `reflective`, `volatile`, `ramming`, `hypnotic`, `inspiring`, `slippery`, `mind-sealed`, `phasing`, `foresighted`, `telekinetic`, and `pack-bonded` (excluded by `solitary`, which is now required). Each is absent, which means a 0 chance.
 
 **instruments `roots`, `tendrils`.** Both are in anatomy. Both are the parts the stub actually shows doing work: "thick, intertwined roots that act as tentacles" (species) is a sentence about reaching and holding with those two things, and the buried limbs are what absorbs its power (species). `spines` is anatomy but not an instrument: the serrations appear in the art only and nothing shows the creature fighting with them. No channels: `mind` fails its predicate, `voice` fails because communication carries no vocal entry, `breath` would pass its bare predicate but nothing shows an expelled substance, and `aura` fails because no source describes an emanation from the body as a whole.
 
@@ -148,6 +158,10 @@ No `hardened`, `insulated` or `dormant`: Floria's hazards are the coordinated ec
 - intensity `[35, 80]`: a wide band because the amount drawn depends on how deep the individual is set.
 - name: no catalog ledger entry mentions Xylum at all (a case-insensitive search across all fourteen `consolidated-*.md` files and `neutral-pools.md` for the species name returned nothing), so no reserved name applies. `Deeproot Reclamation` was collision-scanned against every catalog cell and the neutral pools and is absent. It is in the grander register, two words, no possessive, no hyphen.
 - description: one line, canon voice, no mechanics named.
+
+#### Orchestrator review of the 2026-09-10 trait re-run
+
+Final pool: `{"anchored":100,"regenerative":100,"solitary":30,"grappling":30,"territorial":22,"resistant":18}` (the agent's pool was `{"anchored":100,"regenerative":100,"solitary":100,"territorial":35,"grappling":35,"resistant":30}`). solitary returned to the rolled set (was promoted to required at 100 on the company field). regenerative stays required: "a tentacle torn off grows back" is a body fact. Same company-line ruling as the rest of the batch. Rolled set resummed to 100.
 
 ## Authored fields
 
@@ -194,10 +208,17 @@ Nothing forced an outcome I believe is wrong for this species. Two rules are wor
 
 ## Validator output
 
+Final run (2026-09-10 trait re-run):
+
 ```
-0 FAIL, 0 WARN (structurally clean; every WARN must be answered in the walkthrough)
+WARN temperature.planet             validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable
+WARN traits.pool.required           3 traits at 100; the guideline is one, two at most, three only as a justified special case
+
+0 FAIL, 2 WARN (structurally clean; every WARN must be answered in the walkthrough)
 logged to docs/species-templates/validation-log/xylum.jsonl
 ```
+
+`temperature.planet` is out of scope for this trait-pool re-run: `planetRecords.json` in this worktree carries no `environment.habitableBandC` field, a schema question unrelated to the trait pool, so it was not touched. `traits.pool.required` is answered above (Trait re-run subsection): `anchored`, `regenerative`, and `solitary` are each pinned by their own unhedged, dedicated source (the buried immovable body, the `behavior` field's regrowth line, and the `company` field's solitary line), which is the justified special case the guideline asks for.
 
 ## Orchestrator amendments
 
@@ -208,3 +229,4 @@ logged to docs/species-templates/validation-log/xylum.jsonl
 - 2026-09-08, pool shape (Nick): required anchored; rolled regenerative 35, territorial 25, resistant 22, perceptive 18; expected count 5.00 to 2.00.
 - 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
 - 2026-09-09, lore fact-check gate (independent checker, no files changed by it): the checker returned one CONTRADICTED claim, that the art draws four serrated limbs and not six. Rejected on re-inspection: `art/xylum.png` draws six serrated limbs, three to a side, plus the two smooth crossing shoots at the crown, which is also what the Art reading section above and the 2026-09-08 stub-upgrade ledger independently recorded. Nothing changed on that point. The one UNSUPPORTED flag, that the limbs rise `in a ring`, was a fair catch on an unanchored visual and the phrase is gone.
+- 2026-09-10, trait re-run: `lore.appearance` and the five ratified short fields admitted as pool sources on the same footing as the teaser, the art, and the planet record. `regenerative` promoted from a rolled 35 to required 100 on the ratified `behavior` field, "a tentacle torn off grows back." `solitary` added at required 100 on the ratified `company` field, "It lies alone under the soil," restoring a trait the 2026-09-07 evidence bar cut for want of exactly this kind of sentence; three required traits (`anchored`, `regenerative`, `solitary`) taken as a justified special case since each has its own unhedged, dedicated source. `grappling` added at rolled 35 on the `behavior` field, "its tentacles come up out of the soil and wrap whatever is there," taking the slot `perceptive` held; `perceptive` dropped from the pool for resting only on a record-field restatement once a stronger behavior-sourced candidate existed and the pool was at the six-entry cap. `territorial` rescaled 25 to 35 and `resistant` rescaled 22 to 30 to resum the rolled set to 100. Expected count 2.00 to 4.00.

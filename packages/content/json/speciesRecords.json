@@ -166,9 +166,9 @@
         "pool": {
           "stealthy": 100,
           "nocturnal": 100,
-          "slippery": 35,
-          "perceptive": 30,
-          "territorial": 20,
+          "solitary": 35,
+          "perceptive": 25,
+          "territorial": 25,
           "hardened": 15
         }
       },
@@ -355,10 +355,10 @@
         "pool": {
           "toxic": 100,
           "territorial": 100,
-          "stealthy": 35,
-          "pack-bonded": 30,
-          "resistant": 20,
-          "perceptive": 15
+          "pack-bonded": 40,
+          "stealthy": 30,
+          "resistant": 18,
+          "perceptive": 12
         }
       },
       "instruments": [
@@ -545,7 +545,7 @@
           "toxic": 40,
           "resistant": 25,
           "volatile": 20,
-          "perceptive": 15
+          "solitary": 15
         }
       },
       "instruments": [
@@ -731,10 +731,11 @@
       "traits": {
         "pool": {
           "luminous": 100,
-          "slippery": 45,
-          "resistant": 30,
-          "perceptive": 15,
-          "pack-bonded": 10
+          "slippery": 38,
+          "resistant": 26,
+          "perceptive": 13,
+          "solitary": 15,
+          "pack-bonded": 8
         }
       },
       "instruments": [
@@ -923,10 +924,11 @@
       "traits": {
         "pool": {
           "regenerative": 100,
-          "stealthy": 40,
-          "volatile": 30,
-          "insulated": 20,
-          "perceptive": 10
+          "stealthy": 35,
+          "solitary": 30,
+          "volatile": 20,
+          "insulated": 10,
+          "perceptive": 5
         }
       },
       "instruments": [
@@ -1109,9 +1111,10 @@
       "traits": {
         "pool": {
           "luminous": 100,
-          "reflective": 40,
-          "resistant": 35,
-          "mind-sealed": 25
+          "solitary": 40,
+          "reflective": 25,
+          "resistant": 20,
+          "mind-sealed": 15
         }
       },
       "instruments": [
@@ -1300,9 +1303,10 @@
         "pool": {
           "armored": 100,
           "stealthy": 100,
-          "slippery": 45,
-          "hardened": 30,
-          "perceptive": 25
+          "slippery": 35,
+          "hardened": 25,
+          "solitary": 20,
+          "perceptive": 20
         }
       },
       "instruments": [
@@ -1489,9 +1493,10 @@
       "traits": {
         "pool": {
           "ramming": 100,
-          "hardened": 40,
-          "resistant": 35,
-          "perceptive": 25
+          "hardened": 35,
+          "pack-bonded": 30,
+          "resistant": 20,
+          "perceptive": 15
         }
       },
       "instruments": [
@@ -1673,10 +1678,10 @@
         "pool": {
           "phasing": 100,
           "menacing": 100,
-          "stealthy": 35,
-          "slippery": 30,
-          "resistant": 20,
-          "hardened": 15
+          "solitary": 35,
+          "stealthy": 30,
+          "slippery": 20,
+          "resistant": 15
         }
       },
       "instruments": [
@@ -1863,10 +1868,11 @@
       "traits": {
         "pool": {
           "telekinetic": 100,
-          "hypnotic": 35,
-          "perceptive": 30,
-          "mind-sealed": 27,
-          "foresighted": 8
+          "protective": 100,
+          "perceptive": 45,
+          "mind-sealed": 30,
+          "hypnotic": 15,
+          "foresighted": 10
         }
       },
       "instruments": [
@@ -2055,10 +2061,10 @@
         "pool": {
           "armored": 100,
           "ramming": 100,
-          "regenerative": 35,
-          "hardened": 30,
-          "perceptive": 25,
-          "anchored": 10
+          "hardened": 35,
+          "regenerative": 30,
+          "perceptive": 20,
+          "solitary": 15
         }
       },
       "instruments": [
@@ -2242,9 +2248,11 @@
       "traits": {
         "pool": {
           "armored": 100,
-          "anchored": 40,
-          "ramming": 30,
-          "hardened": 30
+          "anchored": 30,
+          "ramming": 25,
+          "hardened": 20,
+          "solitary": 15,
+          "pack-bonded": 10
         }
       },
       "instruments": [
@@ -2434,10 +2442,10 @@
         "pool": {
           "armored": 100,
           "anchored": 100,
-          "grappling": 32,
-          "stealthy": 28,
+          "grappling": 36,
+          "solitary": 26,
           "telekinetic": 22,
-          "nocturnal": 18
+          "stealthy": 16
         }
       },
       "instruments": [
@@ -2822,10 +2830,10 @@
         "pool": {
           "healing": 100,
           "hypnotic": 100,
-          "regenerative": 35,
-          "luminous": 30,
+          "luminous": 40,
+          "regenerative": 30,
           "protective": 20,
-          "perceptive": 15
+          "perceptive": 10
         }
       },
       "instruments": [
@@ -3013,11 +3021,11 @@
       "traits": {
         "pool": {
           "hardened": 100,
-          "slippery": 30,
-          "luminous": 25,
-          "volatile": 20,
-          "nocturnal": 15,
-          "solitary": 10
+          "solitary": 30,
+          "luminous": 30,
+          "slippery": 20,
+          "volatile": 15,
+          "nocturnal": 5
         }
       },
       "instruments": [
@@ -3207,10 +3215,11 @@
       "traits": {
         "pool": {
           "anchored": 100,
-          "resistant": 35,
-          "regenerative": 30,
-          "perceptive": 20,
-          "territorial": 15
+          "pack-bonded": 35,
+          "resistant": 25,
+          "territorial": 20,
+          "regenerative": 10,
+          "perceptive": 10
         }
       },
       "instruments": [
@@ -3392,9 +3401,10 @@
       "traits": {
         "pool": {
           "ramming": 100,
-          "slippery": 45,
-          "resistant": 30,
-          "perceptive": 25
+          "pack-bonded": 35,
+          "slippery": 30,
+          "resistant": 20,
+          "perceptive": 15
         }
       },
       "instruments": [
@@ -3772,7 +3782,7 @@
           "slippery": 25,
           "hardened": 18,
           "resistant": 14,
-          "perceptive": 13
+          "pack-bonded": 13
         }
       },
       "instruments": [
@@ -3958,9 +3968,11 @@
       "traits": {
         "pool": {
           "armored": 100,
-          "ramming": 45,
-          "hardened": 35,
-          "perceptive": 20
+          "ramming": 30,
+          "nocturnal": 25,
+          "hardened": 20,
+          "solitary": 15,
+          "perceptive": 10
         }
       },
       "instruments": [
@@ -4143,10 +4155,10 @@
         "pool": {
           "phasing": 100,
           "stealthy": 100,
-          "slippery": 40,
-          "nocturnal": 25,
-          "perceptive": 20,
-          "resistant": 15
+          "slippery": 35,
+          "solitary": 30,
+          "nocturnal": 20,
+          "perceptive": 15
         }
       },
       "instruments": [
@@ -4333,8 +4345,8 @@
         "pool": {
           "telekinetic": 100,
           "territorial": 100,
-          "dormant": 35,
-          "anchored": 25,
+          "dormant": 40,
+          "anchored": 20,
           "perceptive": 20,
           "insulated": 20
         }
@@ -4521,10 +4533,11 @@
       "traits": {
         "pool": {
           "commanding": 100,
-          "nocturnal": 34,
-          "slippery": 28,
-          "perceptive": 22,
-          "mind-sealed": 16
+          "nocturnal": 30,
+          "solitary": 26,
+          "stealthy": 22,
+          "slippery": 12,
+          "perceptive": 10
         }
       },
       "instruments": [
@@ -4709,10 +4722,10 @@
         "pool": {
           "toxic": 100,
           "stealthy": 100,
-          "hypnotic": 40,
-          "hardened": 25,
-          "perceptive": 20,
-          "menacing": 15
+          "hypnotic": 35,
+          "menacing": 25,
+          "solitary": 25,
+          "hardened": 15
         }
       },
       "instruments": [
@@ -4901,9 +4914,10 @@
       "traits": {
         "pool": {
           "hypnotic": 100,
-          "perceptive": 55,
-          "healing": 37,
-          "foresighted": 8
+          "perceptive": 45,
+          "healing": 35,
+          "pack-bonded": 15,
+          "foresighted": 5
         }
       },
       "instruments": [
@@ -5091,9 +5105,11 @@
       "traits": {
         "pool": {
           "toxic": 100,
-          "resistant": 55,
-          "volatile": 25,
-          "perceptive": 20
+          "resistant": 40,
+          "volatile": 20,
+          "solitary": 20,
+          "stealthy": 12,
+          "perceptive": 8
         }
       },
       "instruments": [
@@ -5285,10 +5301,10 @@
         "pool": {
           "insulated": 100,
           "volatile": 30,
-          "menacing": 22,
-          "resistant": 20,
-          "hardened": 16,
-          "perceptive": 12
+          "solitary": 22,
+          "hardened": 20,
+          "menacing": 18,
+          "perceptive": 10
         }
       },
       "instruments": [
@@ -5477,10 +5493,11 @@
       "traits": {
         "pool": {
           "anchored": 100,
-          "regenerative": 35,
-          "territorial": 25,
-          "resistant": 22,
-          "perceptive": 18
+          "regenerative": 100,
+          "solitary": 30,
+          "grappling": 30,
+          "territorial": 22,
+          "resistant": 18
         }
       },
       "instruments": [
@@ -5664,9 +5681,9 @@
         "pool": {
           "armored": 100,
           "territorial": 100,
-          "menacing": 30,
-          "pack-bonded": 27,
-          "anchored": 23,
+          "pack-bonded": 35,
+          "menacing": 25,
+          "anchored": 20,
           "hardened": 20
         }
       },

@@ -124,34 +124,47 @@ Primary `ghost`, from `type` in the species entry. Home planet Phantiri. On-grap
 
 ## Step 9: trait pool
 
-Reshaped on 2026-09-08 under Nick's pool-shape ruling. Two required traits, four rolled entries whose shares sum to 100, six entries in all, which is the cap. Expected count 3.00. The chance an individual lands none of the four rolled traits is 30.9 percent.
+Pool shape re-run of 2026-09-10 (see the subsection below for what changed and why). This step's baseline is the 2026-09-09 orchestrator amendment that moved the species into the ghost register (non-corporeal, `phasing` required by registry rule, `stealthy` kept required as the signature-tied behavior). Two required traits at 100, four rolled entries whose shares sum to 100, six entries in all, which is the cap. Expected count 3.00.
 
 **Required**
 
 | Trait | Evidence |
 |---|---|
-| `stealthy` | The behavior the description and the signature ability are built around. species: "can instantly atomize into a cloud of smoke for a sneak attack or quick evasion", and the signature is an ambush that crosses the ground as haze and closes with the claws already out. Every individual carries it. |
-| `slippery` | The other half of the same sentence, which names quick evasion as the second use of the trick, and the body fact behind it: a creature that comes apart into smoke cannot be held. Two required traits is the normal ceiling, and this species genuinely has two defining acts, one for reaching a target unseen and one for not being caught. Legacy `statRatings` agree, `evasionRating` high, but the sentence is what makes it required. |
+| `phasing` | The body fact, since the 2026-09-09 amendment made the species non-corporeal: species: "can instantly atomize into a cloud of smoke". `corporeality` is `non-corporeal`, and the registry rule carries `phasing` at 100 on every individual of a non-corporeal body. |
+| `stealthy` | The behavior the description and the signature ability are built around. species: "can instantly atomize into a cloud of smoke for a sneak attack or quick evasion", and the signature is an ambush that crosses the ground as haze and closes with the claws already out. Ratified `lore.behavior` restates it: "instantly atomizes into a cloud of smoke for a sneak attack or a quick escape." Every individual carries it. |
 
 **Rolled (shares sum to 100)**
 
 | Trait | Share | Evidence |
 |---|---|---|
-| `phasing` | 35 | A species sentence about the species' own body: it atomizes into a cloud of smoke and gathers itself again. That is the corporeal-body case the registry calls a rare roll, and it is the strongest species-level evidence in the rolled set, so it leads. Well short of the required tier because the resting body is solid flesh and claw. |
-| `nocturnal` | 30 | The Phantiri data block's terrain field names thick haze, and the species hunts that haze over the Dreadscape. A planet-wide dimming rather than a true night world, and the description never makes darkness the point of the creature, so it sits in the rolled set. |
-| `perceptive` | 20 | Record fields: `senses.sight` and `senses.hearing` are both banded to an upper bound of exactly 80, which is at the bar, and the art gives large tufted ears. There is no `senses.special` entry. Rolled-set evidence only. |
-| `resistant` | 15 | planet: "deep, tarry oceans formed from the fluids that eek out from the ever-compressing layers of a planetwide mass grave" is a contamination a body generated there may partly shrug off. Weakest entry: environmental, and no sentence attaches it to this creature. |
+| `slippery` | 35 | The other half of the stub sentence, naming quick evasion as the trick's second use, and the body fact behind it: a creature that comes apart into smoke cannot be held. Legacy `statRatings` agree, `evasionRating` high. Strongest of the rolled set, but not required: `phasing` and `stealthy` already fill the two required slots (the body fact and the signature-tied behavior), and slippery overlaps `phasing` heavily. |
+| `solitary` | 30 | Now sourced directly: the ratified `lore.company` field states "It hunts alone." This is a definite company statement, not an absence of evidence, so it clears the bar that stopped the trait in the first pass (see the cut table below, restored line). |
+| `nocturnal` | 20 | The Phantiri data block's terrain field names thick haze, and the ratified `lore.habitat` field places it "inside its windless fog." A planet-wide dimming rather than a true night world, and no source makes darkness the point of the creature, so it sits in the rolled set. |
+| `perceptive` | 15 | Record fields: `senses.sight` and `senses.hearing` are both banded to an upper bound of exactly 80, which is at the bar, and the art gives large tufted ears. There is no `senses.special` entry. Rolled-set evidence only. |
 
-#### Cut by the evidence bar (2026-09-07)
+Traits considered and left out: `menacing` (nothing in either source shows it eroding courage; the snarl in the art is an attack posture, not a presence effect), `luminous` (nothing sheds light), `regenerative` (no source), `armored` (covering is `mist`, not a plated or shelled surface), `toxic`, `volatile`, `reflective`, `healing`, `protective`, `inspiring`, `hypnotic`, `mind-sealed`, `telekinetic`, `ramming`, `anchored`, `pack-bonded` (excluded by `solitary`, and no group-living sentence exists anyway), `resistant`, `foresighted` (dropped this pass, see below), `hardened` (`ambientMedia` is `gas` alone, no vacuum or thin-air extreme named for this species) (all unsupported by any source, ratified or legacy).
 
-| Trait | Former percent | Evidence class that failed |
-|---|---|---|
-| `solitary` | 45 | argued from absence; the record itself calls it an absence of evidence rather than evidence of solitude |
-| `foresighted` | 4 | no source sentence; a rare-band minimum carried only by the stub word clever |
+#### Trait re-run (2026-09-10)
 
-Under the widened iteration-two bar neither cut entry is restored: `solitary` has no sentence and no ratified field, Phantiri's report records proximity-aversion territoriality only for other populations and only as a behavior, which class 3 may never carry; `foresighted` has no sentence, no `senses.special` entry, and no ratified field of any kind behind it. `resistant` at 15 is re-checked under ruling B and kept: its support is the planet's tarry runoff basins over a planetwide mass grave, which is contamination and not a thermal or desiccation hazard. The 2026-09-08 narrowing does not touch it either, since the support is neither thin air, dust, static discharge nor temperature. Phantiri's report adds nothing at 100: its one hazard is the lunar weapon, which no body adapts to, and its single output priority is non-corporeal architectures, which this corporeal body does not satisfy.
+The lore.appearance list and the five short lore fields are now ratified sources (`lore-status.json`: smokat appearance ratified, fields ratified, batch two). Re-checked every trait against them:
 
-Traits considered and left out: `menacing` (nothing in either source shows it eroding courage; the snarl in the art is an attack posture, not a presence effect), `luminous` (nothing sheds light), `regenerative` (no source), `armored` (a `bare` covering forbids it), `toxic`, `volatile`, `reflective`, `healing`, `protective`, `inspiring`, `hypnotic`, `mind-sealed`, `telekinetic`, `ramming`, `anchored`, `pack-bonded` (all unsupported).
+- `origin` confirms the non-corporeal Leviticus Overdrive body fact already behind `phasing`; adds nothing new.
+- `habitat` ("The Dreadscape of Phantiri, inside its windless fog") restates the fog setting already behind `nocturnal`; strengthens the wording but does not change the percent.
+- `feeding` confirms `diet: none`; no pool trait reads from it.
+- `behavior` restates the stub (holds a feline shape, climbs and springs where the footing is bad, atomizes for a sneak attack or a quick escape) without adding a new fact, reinforcing `stealthy` and `slippery` but changing no percent on its own.
+- `company` is new and decisive: "It hunts alone." This directly ratifies `solitary`, which the first pass cut for arguing from absence rather than from a stated fact (see the cut table below, restored line). `solitary` is added to the pool at 30.
+- `appearance` (seven entries) restates body facts already covered (smoke body, no firm edge, muzzle, ears, claws, tail trailing into smoke, near-weightlessness); nothing here changes an existing percent or adds a new trait.
+
+Adding `solitary` at 30 without breaking the six-entry cap required cutting one existing rolled trait. `resistant` (formerly 15) is cut: it was already flagged in the first pass as the weakest entry, environmental, with no sentence attaching it to this creature, so it is the correct one to give up in favor of the now-ratified, species-level `solitary`. `slippery` is trimmed from 40 to 35, `nocturnal` from 25 to 20, and `perceptive` from 20 to 15 to make room, keeping the same relative ordering as before (the stub's own second act first, then the environmental fog reading, then the weakest sense-band reading). Expected count is unchanged at 3.00, since required traits still number two and the rolled tier still sums to exactly 100.
+
+##### Cut by the evidence bar (2026-09-07), with this pass's restorations
+
+| Trait | Former percent | Evidence class that failed | Restored this pass? |
+|---|---|---|---|
+| `solitary` | 45 | Argued from absence; the record itself calls it an absence of evidence rather than evidence of solitude. | **Yes.** The ratified `company` field states a fact directly ("It hunts alone."), not an absence, so the original objection no longer applies. Restored at 30 in the rolled tier. |
+| `foresighted` | 4 | No source sentence; a rare-band minimum carried only by the stub word clever. | No: no ratified field claims precognition either. |
+
+Under the widened iteration-two bar (2026-09-07) neither entry was restored at that time; this pass restores `solitary` on the strength of the new ratified `company` field specifically, not on any change to the class-3 reasoning itself. `resistant` at 15 survived the 2026-09-07 and 2026-09-08 bars on its planet-wide contamination reading, but is cut in this pass, not by the evidence bar, but to make room for `solitary` within the six-entry cap; it remains the weakest-evidenced trait in the prior pool and is the correct one to give up.
 
 ## Step 10: signature ability
 
@@ -209,13 +222,19 @@ The registry rules that a transient state produced by an ability never changes c
 
 ## Validator output
 
+Final run after the trait re-run of 2026-09-10:
+
 ```
 $ node docs/species-templates/tools/validate-template.js smokat
 
-0 FAIL, 0 WARN (structurally clean; every WARN must be answered in the walkthrough)
+WARN temperature.planet             validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable
+
+0 FAIL, 1 WARN (structurally clean; every WARN must be answered in the walkthrough)
 ```
 
-Two WARNs were raised across the run and both were answered by revision rather than argument. `traits.expected` fired at 3.99 on the first pool; I dropped `menacing` and trimmed three percents, bringing the expected count to 3.44. `enc.definition.name` fired because the encyclopedia definition did not name the species; I rewrote it to open with `The Smokat is`. Both were fair calls.
+The remaining WARN does not concern the trait pool: `planetRecords.json`'s Phantiri entry carries `physical.temperatureC` rather than `environment.habitableBandC`, so the script falls back to validating against the legacy planets.json extremes, which is the intended fallback (issue #167), not a defect in this record. The trait checks `traits.pool.required`, `traits.pool.rolledSum`, `traits.pool.size` and `traits.exclusion` are all silent, confirming the re-run pool (two required at 100, four rolled summing to 100, six entries, no exclusion pair at 100) is within shape.
+
+Earlier in the record's history, two WARNs were raised and answered by revision rather than argument: `traits.expected` fired at 3.99 on the first pool; the entry dropped `menacing` and trimmed three percents, bringing the expected count to 3.44. `enc.definition.name` fired because the encyclopedia definition did not name the species; it was rewritten to open with `The Smokat is`. Both were fair calls.
 
 ## Orchestrator amendments
 

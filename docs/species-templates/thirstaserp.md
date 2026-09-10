@@ -125,35 +125,42 @@ Primary `sand` from the species `type` field, stored at affinity 100. On-graph s
 
 ### Trait pool (expected count 3.00)
 
-Reshaped on 2026-09-08 under Nick's pool-shape ruling. Two required traits, four rolled entries whose shares sum to 100, six entries in all, which is the cap. The chance an individual lands none of the four rolled traits is 30.6 percent.
+Pool shape re-run of 2026-09-10 (see Trait re-run below for what changed and why). Two required traits, four rolled entries whose shares sum to 100, six entries in all, which is the cap.
 
 **Required**
 
 | Trait | Evidence |
 |---|---|
 | `toxic` | The point of the creature in its own description and the act its signature ability performs: "attack with a unique venom that drains the victim’s water when bitten, causing them to suffer and die from extreme dehydration". The registry's `toxic` is natural weapons delivering debilitating agents, which is this bite exactly. Every individual has it. |
-| `stealthy` | The behavior the description states first and flatly: "hides beneath the sand", with a `burrow` band topping out at 85 to match. The whole attack sequence begins buried, so a Thirstaserp that is not concealed is not the creature the sources describe. |
+| `stealthy` | The behavior the description states first and flatly: "hides beneath the sand", with a `burrow` band topping out at 85 to match. The ratified `habitat` field restates it: "Buried beneath the rolling dunes of Endessa." The whole attack sequence begins buried, so a Thirstaserp that is not concealed is not the creature the sources describe. |
 
 **Rolled (shares sum to 100)**
 
 | Trait | Share | Evidence |
 |---|---|---|
-| `hypnotic` | 40 | A species sentence about its own behavior: "can lure and mesmerize opponents long enough for them to draw near". Strongest of the rolled entries, and rolled rather than required only because the source hedges the lure where it states the venom and the burial flatly. |
-| `hardened` | 25 | Endessa's hazard list carries thermal load and desiccation and its output priorities carry water retention and thermal shielding, and a serpent lying buried in the dunes of a world whose oceans were vaporized is covered by them. Heat and dryness are physical extremes of the body, which the narrowed registry gives to `hardened`. Planet-wide, so rolled. |
-| `perceptive` | 20 | Record fields: `physiology.senses.special` carries tremorsense, which suits a buried ambusher that reads the ground. `smell` tops out at 75, under the bar of 80, so the special sense is the whole of the case. The senses list is rolled-set evidence and never makes the trait required. |
-| `menacing` | 15 | art: a flared hood and bared fangs, which is a threat display. Weakest entry: the description never says its presence erodes anything, and its stated effect on the will is the lure, which `hypnotic` already carries. |
+| `hypnotic` | 35 | A species sentence about its own behavior: "can lure and mesmerize opponents long enough for them to draw near", restated in the ratified `behavior` field: "emits a subsonic vibration from the rattle on its tail that lures and mesmerizes opponents long enough for it to draw near and strike." Strongest of the rolled entries, and rolled rather than required only because the source hedges the lure where it states the venom and the burial flatly. |
+| `menacing` | 25 | Previously supported only by the art (a flared hood and bared fangs). The ratified `behavior` field now states the display directly and as its own sentence: "It spreads its hood and shows its fangs before it does." A threat display stated in the creature's own behavior field is stronger evidence than an art reading alone, so the share rises from its earlier place as the weakest entry. |
+| `solitary` | 25 | The ratified `company` field states it directly: "It hunts alone." This clears the evidence bar the 2026-09-07 cut could not: it is a species-level statement about how the creature hunts, not an argument from absence. |
+| `hardened` | 15 | Endessa's hazard list carries thermal load and desiccation and its output priorities carry water retention and thermal shielding, and a serpent lying buried in the dunes of a world whose oceans were vaporized is covered by them. Heat and dryness are physical extremes of the body, which the narrowed registry gives to `hardened`. Planet-wide, so rolled, and the weakest entry now that two species-level fields have displaced it from the row's stronger positions. |
 
 #### Cut by the evidence bar (2026-09-07)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
-| `solitary` | 55 | argued from absence; there is no group in either the description or the art |
-| `pack-bonded` | 10 | no source sentence; a species-level plural is not evidence of grouping |
-| `slippery` | 30 | body-type plausibility (a limbless serpent), and the art shows a banded, ridged body rather than the smooth one the justification names |
-| `resistant` | 60 | class 3 fails under the iteration-two ruling: its only support was Endessa's heat and abrasion, and a hazard profile of thermal load and desiccation never justifies `resistant`; the narrowed 2026-09-08 definition confirms the cut, and that support now sits in the pool as `hardened` |
-| `nocturnal` | 25 | pool full, weaker evidence (2026-09-08): a planet-wide insolation note, and burial is this species own stated answer to the suns |
+| `solitary` | 55 | argued from absence; there is no group in either the description or the art. Restored on the 2026-09-10 re-run at 25: the ratified `company` field ("It hunts alone.") now states the same fact directly, so the cut no longer holds. |
+| `pack-bonded` | 10 | no source sentence; a species-level plural is not evidence of grouping. Not restored: the `company` field states the opposite ("It hunts alone."), so the exclusion partner stays cut rather than both being listed. |
+| `slippery` | 30 | body-type plausibility (a limbless serpent), and the art shows a banded, ridged body rather than the smooth one the justification names. Not restored: none of the five ratified fields describes evasion or escape. |
+| `resistant` | 60 | class 3 fails under the iteration-two ruling: its only support was Endessa's heat and abrasion, and a hazard profile of thermal load and desiccation never justifies `resistant`; the narrowed 2026-09-08 definition confirms the cut, and that support now sits in the pool as `hardened`. Not affected by the lore fields, which add no contamination evidence. |
+| `nocturnal` | 25 | pool full, weaker evidence (2026-09-08): a planet-wide insolation note, and burial is this species own stated answer to the suns. Not restored: the ratified `habitat` field ("Buried beneath the rolling dunes of Endessa") describes depth, not time of day, so it adds nothing a nocturnal reading needs. |
+| `perceptive` | 20 (in the pre-re-run pool, not this evidence-bar table) | Cut on this re-run, not the 2026-09-07 pass, to make room within the six-entry cap for the two fields that now clear the bar (`solitary`, and the strengthened `menacing`). It remains true, per the pool-shape rule, that a senses-list entry (`physiology.senses.special: tremorsense`) never restates into a required trait and is the weakest class of evidence in this pool; when a stronger, newly ratified species-level statement needed the room, this was the trait to give it up. |
 
-Traits the body could plausibly carry that were left out, with reasons: `armored` (the covering is `scales`, which the registry defines as flexible and unarmored, and the anatomy carries no `shell`); `ramming` (no source shows it hitting with movement behind it, and its kill is venom); `regenerative` (nothing in either source, and `recoveryRating` is blank in the legacy ratings so the class 5 mapping does not reach it); `anchored` (a burrower that hides is not a body that cannot be moved); `luminous`, `telekinetic`, `foresighted`, `phasing`, `reflective`, `volatile`, `healing`, `protective`, `inspiring`, `mind-sealed` (no support of any kind in either source). Registry tilts are not re-declared here; they apply at generation.
+Traits the body could plausibly carry that were left out, with reasons: `armored` (the covering is `scales`, which the registry defines as flexible and unarmored, and the anatomy carries no `shell`); `ramming` (no source shows it hitting with movement behind it, and its kill is venom); `regenerative` (nothing in either source, and `recoveryRating` is blank in the legacy ratings so the class 5 mapping does not reach it); `anchored` (a burrower that hides is not a body that cannot be moved); `pack-bonded` (see above, the excluded partner of the restored `solitary`); `luminous`, `telekinetic`, `foresighted`, `phasing`, `reflective`, `volatile`, `healing`, `protective`, `inspiring`, `mind-sealed` (no support of any kind in the teaser, the art, the planet record, or the five ratified fields). Registry tilts are not re-declared here; they apply at generation.
+
+#### Trait re-run (2026-09-10)
+
+Every ratified species field is now source text on the same footing as the teaser, the art, and the planet record (docs/species-templates/lore-status.json confirms `appearance` and `fields` both ratified for Thirstaserp). Re-checked all five fields against the pool as it stood after the 2026-09-08 pool-shape pass (`toxic` 100, `stealthy` 100, `hypnotic` 40, `hardened` 25, `perceptive` 20, `menacing` 15). `origin` adds nothing new (it states only that no record survives of the species' purpose). `habitat` and `feeding` restate `stealthy` and `toxic` respectively, adding no new trait. `behavior` supplies two things: it restates the lure-and-strike act already captured by `hypnotic`, and it adds a new sentence for the threat display, "It spreads its hood and shows its fangs before it does," which the pool had previously supported only through the art. `company` supplies the new fact that closes the case for `solitary`: "It hunts alone."
+
+Change: restored `solitary` at 25 (cut on 2026-09-07 for arguing from absence; the company field now states it directly) and raised `menacing` from art-only support to a stronger share of 25 on the strength of the now-ratified behavior sentence. Because the pool is already at the six-entry cap, `perceptive` was cut to make room: it was the weakest entry before this pass (a senses-list restatement, per the pool-shape rule that a trait never restates a record field) and none of the five ratified fields adds independent support for it, while `solitary` and the strengthened `menacing` both now rest on direct species-level sentences. `hypnotic` eased from 40 to 35 and `hardened` from 25 to 15 to keep the rolled percents summing to exactly 100.
 
 ### Signature ability
 
@@ -225,17 +232,20 @@ Should the Thirstaserp declare an affinity-odds override toward `water`? The bas
 
 ## Validator output
 
-Final run (run 3):
+Final run after the 2026-09-10 trait re-run:
 
 ```
 $ node docs/species-templates/tools/validate-template.js thirstaserp
 
+WARN temperature.planet             validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable
 WARN instruments.predicate.source   channel "secretion" has a source-text predicate (an emitted substance); the validator agent must confirm the quoted sentence
 WARN signature.description.elementkey signature description uses element key word(s) as plain words: water (allowed only as ordinary English, never as a type label)
 WARN enc.definition.elementkey      encyclopedia definition uses element key word(s) as plain words: water (allowed only as ordinary English, never as a type label)
 
-0 FAIL, 3 WARN (structurally clean; every WARN must be answered in the walkthrough)
+0 FAIL, 4 WARN (structurally clean; every WARN must be answered in the walkthrough)
 ```
+
+None of the four WARNs concerns the trait pool; all four are pre-existing and answered elsewhere (the secretion predicate under Instruments, the two element-key notes under Script denials, and the temperature-planet fallback is an unrelated infrastructure note). The trait checks `traits.pool.required`, `traits.pool.rolledSum` and `traits.pool.size` are all silent, confirming the new six-entry pool (two required at 100, four rolled summing to exactly 100) is structurally clean.
 
 ## Orchestrator amendments
 

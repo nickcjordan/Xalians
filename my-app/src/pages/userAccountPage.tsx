@@ -1,35 +1,44 @@
-// Tier: chrome. The signed-in user's own Xalians: a grid of tiles linking
-// out to each species' record, with a delete control on each (this is the
-// user's own faction, so removal lives here — userDetailsPage.tsx reads
-// someone else's holdings and carries no delete control).
+// Tier: chrome. The signed-in user's own Xalians: the registry records
+// generated under their name, as tiles that open the full record, each with a
+// release key (this is the user's own collection, so removal lives here;
+// userDetailsPage.tsx reads someone else's and carries no release control).
+//
+// Legacy kept Xalians are not shown. The XalianTable rows people kept under the
+// old flow still exist and the table is retained, but nothing reads it any
+// more; what becomes of those roughly 70 records is Nick's decision (#180).
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Auth, Hub } from 'aws-amplify';
+import { Hub } from 'aws-amplify';
 import { Trash2 } from 'lucide-react';
+import type { XalianRecord } from '@xalians/content/schema';
+import { speciesDisplayName } from '@xalians/rules/generator';
 
 import XalianNavbar from '../components/navbar';
 import VerifyRemoveXalianModal from '../components/verifyRemoveXalianModal';
 import SignInModal from '../components/auth/signInModal';
 import SignUpModal from '../components/auth/signUpModal';
 import VerifyEmailModal from '../components/auth/verifyEmailModal';
-import XalianImage from '../components/xalianImage';
-import { routeFor } from '../lore/routeFor';
+import RecordTile from '../components/record/RecordTile';
+import RecordView from '../components/record/RecordView';
 import * as authUtil from '../utils/authUtil';
 import * as dbApi from '../utils/dbApi';
 
 import { Shell, Masthead } from '@/components/system/masthead';
 import { HelixSpinner } from '@/components/system/brand';
 import { EmptyState } from '@/components/system/record';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { VisuallyHidden } from '@/components/system/a11y';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 type AuthUser = { username: string; hasVerifiedEmail: boolean } | null;
 
 function UserAccountPage() {
 	const [loggedInUser, setLoggedInUser] = React.useState<AuthUser>(null);
-	const [xalians, setXalians] = React.useState<any[]>([]);
+	const [records, setRecords] = React.useState<XalianRecord[]>([]);
+	const [cursor, setCursor] = React.useState<string | undefined>();
 	const [isLoading, setIsLoading] = React.useState(false);
+	const [isLoadingMore, setIsLoadingMore] = React.useState(false);
 	const [signedOut, setSignedOut] = React.useState(false);
 	const [message, setMessage] = React.useState<string | null>(null);
 
@@ -40,14 +49,16 @@ function UserAccountPage() {
 	const [email, setEmail] = React.useState<string | undefined>();
 	const [password, setPassword] = React.useState<string | undefined>();
 
-	const [xalianToDelete, setXalianToDelete] = React.useState<any>(null);
-	const [verifyRemoveShow, setVerifyRemoveShow] = React.useState(false);
+	const [openRecord, setOpenRecord] = React.useState<XalianRecord | null>(null);
+	const [recordToRelease, setRecordToRelease] = React.useState<XalianRecord | null>(null);
+	const [verifyReleaseShow, setVerifyReleaseShow] = React.useState(false);
 
-	const updateXaliansState = React.useCallback((forUsername: string) => {
+	const loadFirstPage = React.useCallback(() => {
 		dbApi
-			.callGetUser(forUsername, true)
-			.then((user: any) => {
-				setXalians(user.xalians);
+			.callListXalians()
+			.then((page: any) => {
+				setRecords(page.items);
+				setCursor(page.nextCursor);
 				setIsLoading(false);
 			})
 			.catch(() => {
@@ -56,16 +67,31 @@ function UserAccountPage() {
 			});
 	}, []);
 
+	const loadMore = () => {
+		if (!cursor) return;
+		setIsLoadingMore(true);
+		dbApi
+			.callListXalians(undefined, cursor)
+			.then((page: any) => {
+				setRecords((prev) => [...prev, ...page.items]);
+				setCursor(page.nextCursor);
+				setIsLoadingMore(false);
+			})
+			.catch(() => {
+				setIsLoadingMore(false);
+				setMessage('Could not load more Xalians. Please try again later.');
+			});
+	};
+
 	const refreshUser = React.useCallback(() => {
 		setIsLoading(true);
-		Auth.currentUserInfo()
+		authUtil.currentUser()
 			.then((data: any) => {
 				if (data) {
-					const u = authUtil.buildAuthState(data);
-					setLoggedInUser(u);
+					setLoggedInUser(authUtil.buildAuthState(data));
 					setSignedOut(false);
 					setMessage(null);
-					updateXaliansState(u.username);
+					loadFirstPage();
 				} else {
 					setIsLoading(false);
 					setSignedOut(true);
@@ -75,7 +101,7 @@ function UserAccountPage() {
 				setIsLoading(false);
 				setSignedOut(true);
 			});
-	}, [updateXaliansState]);
+	}, [loadFirstPage]);
 
 	React.useEffect(() => {
 		refreshUser();
@@ -106,60 +132,42 @@ function UserAccountPage() {
 		setSignInModalShow(true);
 	};
 
-	const deleteXalianCallback = (xalian: any) => {
-		setXalianToDelete(xalian);
-		setVerifyRemoveShow(true);
+	const askToRelease = (record: XalianRecord) => {
+		setRecordToRelease(record);
+		setVerifyReleaseShow(true);
 	};
 
-	const verifyRemoveXalianCallback = () => {
-		setXalians((prev) => prev.filter((x) => x.xalianId !== xalianToDelete.xalianId));
-		setVerifyRemoveShow(false);
-		setXalianToDelete(null);
+	const onReleased = () => {
+		setRecords((prev) => prev.filter((x) => x.id !== (recordToRelease && recordToRelease.id)));
+		if (openRecord && recordToRelease && openRecord.id === recordToRelease.id) {
+			setOpenRecord(null);
+		}
+		setVerifyReleaseShow(false);
+		setRecordToRelease(null);
 	};
 
-	const closeModalCallback = () => {
-		setVerifyRemoveShow(false);
-		setXalianToDelete(null);
-	};
-
-	const renderXalianTile = (xalian: any) => {
-		const x = xalian.attributes;
-		const primaryType = x.elements.primaryType.toLowerCase();
-		const secondaryType = x.elements.secondaryType.toLowerCase();
-		return (
-			<Card key={xalian.xalianId} variant="link" className={`el-${primaryType} relative flex flex-col p-0`}>
-				<Link to={routeFor('species', x.species.name.toLowerCase())} className="flex flex-1 flex-col no-underline">
-					<div className="aspect-square w-full bg-el">
-						<XalianImage colored speciesName={x.species.name} primaryType={x.elements.primaryType} secondaryType={x.elements.secondaryType} moreClasses="w-full" />
-					</div>
-					<div className="flex flex-col gap-2 p-3">
-						<span className="type-legend text-ink">{x.species.name}</span>
-						<div className="flex flex-wrap gap-2">
-							<span className={`el-${primaryType}`}><Badge variant="chip">{x.elements.primaryType}</Badge></span>
-							<span className={`el-${secondaryType}`}><Badge variant="chip">{x.elements.secondaryType}</Badge></span>
-						</div>
-					</div>
-				</Link>
-				<Button
-					variant="ghost"
-					size="icon"
-					className="absolute top-2 right-2 bg-s0"
-					title="Release this Xalian"
-					aria-label={`Release ${x.species.name} from your account`}
-					onClick={() => deleteXalianCallback(xalian)}
-				>
-					<Trash2 />
-				</Button>
-			</Card>
-		);
+	const closeReleaseModal = () => {
+		setVerifyReleaseShow(false);
+		setRecordToRelease(null);
 	};
 
 	return (
-		<main className="min-h-screen bg-room text-ink font-body" data-tier="chrome">
+		<main id="main" className="min-h-screen bg-room text-ink font-body" data-tier="chrome">
 			<XalianNavbar />
 
 			<Shell className="pb-16">
-				<Masthead kicker="Account" title={(loggedInUser && loggedInUser.username) || 'Your account'} />
+				<Masthead
+					kicker="Account"
+					title={(loggedInUser && loggedInUser.username) || 'Your account'}
+					subtitle={records.length > 0 ? `${records.length} generated` : undefined}
+					aside={
+						!signedOut ? (
+							<Button asChild>
+								<Link to="/generator">Generate a Xalian</Link>
+							</Button>
+						) : undefined
+					}
+				/>
 
 				{isLoading && (
 					<div className="flex justify-center py-16">
@@ -178,9 +186,9 @@ function UserAccountPage() {
 
 				{!isLoading && !signedOut && message && <EmptyState legend={message} />}
 
-				{!isLoading && !signedOut && !message && xalians.length === 0 && (
+				{!isLoading && !signedOut && !message && records.length === 0 && (
 					<EmptyState legend="No Xalians yet">
-						Generate one and keep it to see it here.
+						Generate one and it is yours.
 						<div className="mt-3">
 							<Button asChild>
 								<Link to="/generator">Generate a Xalian</Link>
@@ -189,20 +197,59 @@ function UserAccountPage() {
 					</EmptyState>
 				)}
 
-				{!isLoading && !signedOut && xalians.length > 0 && (
-					<div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-						{xalians.map((x) => renderXalianTile(x))}
-					</div>
+				{!isLoading && !signedOut && records.length > 0 && (
+					<React.Fragment>
+						<div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+							{records.map((record) => (
+								<RecordTile
+									key={record.id}
+									record={record}
+									onOpen={setOpenRecord}
+									action={
+										<Button
+											variant="ghost"
+											size="icon"
+											className="bg-s0"
+											aria-label={`Release ${speciesDisplayName(record.species)}`}
+											onClick={() => askToRelease(record)}
+										>
+											<Trash2 />
+										</Button>
+									}
+								/>
+							))}
+						</div>
+
+						{cursor && (
+							<div className="mt-6 flex justify-center">
+								<Button variant="secondary" disabled={isLoadingMore} onClick={loadMore}>
+									{isLoadingMore ? 'Loading' : 'Load more'}
+								</Button>
+							</div>
+						)}
+					</React.Fragment>
 				)}
 			</Shell>
 
-			{xalianToDelete && loggedInUser && (
+			<Dialog open={!!openRecord} onOpenChange={(open) => !open && setOpenRecord(null)}>
+				<DialogContent className="sm:max-w-4xl">
+					<DialogHeader>
+						<VisuallyHidden>
+							<DialogTitle>{openRecord ? speciesDisplayName(openRecord.species) : 'Record'}</DialogTitle>
+						</VisuallyHidden>
+					</DialogHeader>
+					<ScrollArea className="max-h-[75vh] pr-4">
+						{openRecord && <RecordView record={openRecord} kicker="Yours" />}
+					</ScrollArea>
+				</DialogContent>
+			</Dialog>
+
+			{recordToRelease && (
 				<VerifyRemoveXalianModal
-					show={verifyRemoveShow}
-					onHide={closeModalCallback}
-					onXalianDelete={verifyRemoveXalianCallback}
-					xalian={xalianToDelete.attributes}
-					username={loggedInUser.username}
+					show={verifyReleaseShow}
+					onHide={closeReleaseModal}
+					onXalianDelete={onReleased}
+					record={recordToRelease}
 				/>
 			)}
 

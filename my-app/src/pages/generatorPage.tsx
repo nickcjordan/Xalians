@@ -1,176 +1,198 @@
 import * as React from 'react';
-import XalianRecord from '../components/xalianRecord';
-import { MoveSet, Meter } from '@/components/system/record';
+import { Link } from 'react-router-dom';
+import { Hub } from 'aws-amplify';
+import { toast } from 'sonner';
+import type { XalianRecord } from '@xalians/content/schema';
+
+import XalianNavbar from '../components/navbar';
+import RecordView from '../components/record/RecordView';
+import SignInModal from '../components/auth/signInModal';
+import VerifyEmailModal from '../components/auth/verifyEmailModal';
+import * as authUtil from '../utils/authUtil';
+import * as dbApi from '../utils/dbApi';
+
 import { Shell, Masthead } from '@/components/system/masthead';
-import { HelixSpinner, HelixMark } from '@/components/system/brand';
+import { HelixSpinner } from '@/components/system/brand';
+import { EmptyState } from '@/components/system/record';
+import { Callout } from '@/components/system/readouts';
+import { LiveRegion } from '@/components/system/a11y';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { toast } from 'sonner';
-import XalianNavbar from '../components/navbar';
-import * as xalianApi from '../utils/xalianApi';
-import * as dbApi from '../utils/dbApi';
-import { stat as statColors } from '../constants/designTokens';
-import * as constants from '../constants/constants';
 
-// Tier: chrome. Generation, review and keeping a Xalian is a configure/manage
-// screen (docs/DESIGN_SYSTEM.md section 1); the record itself is a featured
-// use of glass, not a game in progress.
+/**
+ * Tier: chrome. The Generator: pull the lever, watch a creature that has never
+ * existed before come out of it.
+ *
+ * The two branches are the platform's free lever and its product
+ * (docs/design/xalians-platform-vision-and-economy.md section 3). Signed out,
+ * GET /xalians/showroom generates a real ratified record that nobody owns and
+ * the server never stored: infinite pulls, nothing kept. Signed in,
+ * POST /xalians generates one and it is the caller's from the moment it
+ * exists, so there is no separate "keep" step to get wrong.
+ */
 
-const STAT_ROWS: [string, string, string][] = [
-	['standardAttackPoints', 'Std attack', statColors.standardAttack],
-	['specialAttackPoints', 'Spc attack', statColors.specialAttack],
-	['standardDefensePoints', 'Std defense', statColors.standardDefense],
-	['specialDefensePoints', 'Spc defense', statColors.specialDefense],
-	['speedPoints', 'Speed', statColors.speed],
-	['evasionPoints', 'Evasion', statColors.evasion],
-	['staminaPoints', 'Stamina', statColors.stamina],
-	['recoveryPoints', 'Recovery', statColors.recovery],
-];
+type Mode = 'showroom' | 'owned';
+type AuthUser = { username: string; hasVerifiedEmail: boolean } | null;
 
 function GeneratorPage() {
-	// Holds the whole { xalian, signature } envelope generateXalian returns. `xalian` is
-	// the legacy shape every render below already expects; `signature` only matters to
-	// saveXalian, which sends the envelope back unchanged so the server can verify the
-	// stats were never edited client-side.
-	const [envelope, setEnvelope] = React.useState<any>(null);
-	const [isLoading, setIsLoading] = React.useState(true);
-	const [isGenerating, setIsGenerating] = React.useState(false);
-	const [loggedInUser, setLoggedInUser] = React.useState<any>(null);
-	const [jsonOpen, setJsonOpen] = React.useState(false);
+	const [record, setRecord] = React.useState<XalianRecord | null>(null);
+	const [mode, setMode] = React.useState<Mode>('showroom');
+	const [isGenerating, setIsGenerating] = React.useState(true);
+	const [loggedInUser, setLoggedInUser] = React.useState<AuthUser>(null);
+	const [signInShow, setSignInShow] = React.useState(false);
+	const [verifyEmailShow, setVerifyEmailShow] = React.useState(false);
+	const [pendingUsername, setPendingUsername] = React.useState<string | undefined>();
 
-	const xalian = envelope ? envelope.xalian : null;
+	const signedIn = !!loggedInUser;
 
-	const getXalian = React.useCallback(() => {
+	const generate = React.useCallback((asOwner: boolean) => {
 		setIsGenerating(true);
-		xalianApi
-			.callGenerateXalian()
-			.then((e: any) => {
-				setEnvelope(e);
-				setIsLoading(false);
+		const request = asOwner
+			? dbApi.callGenerateXalian()
+			: dbApi.callShowroomXalian().then((result: any) => result.record);
+		return request
+			.then((generated: XalianRecord) => {
+				setRecord(generated);
+				setMode(asOwner ? 'owned' : 'showroom');
 				setIsGenerating(false);
 			})
 			.catch(() => {
 				setIsGenerating(false);
-				toast.error('Could not generate a Xalian. Please try again.');
+				toast.error('The Generator did not answer. Pull the lever again.');
 			});
 	}, []);
 
+	// The session is resolved here rather than waited for from the navbar: the
+	// navbar only calls back when the user signs in or out during this visit,
+	// so arriving with a session already open would otherwise read as anonymous.
 	React.useEffect(() => {
-		getXalian();
+		let cancelled = false;
+		authUtil.currentUser()
+			.then((data: any) => {
+				if (cancelled) return;
+				if (data && data.attributes) {
+					setLoggedInUser(authUtil.buildAuthState(data));
+				}
+			})
+			.catch(() => {
+				// signed out; the showroom is the right branch
+			});
+		return () => {
+			cancelled = true;
+		};
+	}, []);
+
+	// The first record is always a showroom pull, even for a signed-in visitor:
+	// arriving on the page should never spend anything or write to the registry.
+	React.useEffect(() => {
+		generate(false);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const saveXalian = () => {
-		setIsLoading(true);
-		// Keeping is one call: the server verifies the signature, persists, and appends
-		// the id to the caller's user record itself.
-		dbApi
-			.callKeepXalian(envelope)
-			.then(() => {
-				setIsLoading(false);
-				toast.success(`${xalian.species.name} kept.`);
-			})
-			.catch(() => {
-				setIsLoading(false);
-				toast.error('Could not keep your Xalian. Please try again.');
-			});
-	};
-
-	const canKeep = !!loggedInUser;
-	const printing = isGenerating;
+	React.useEffect(() => {
+		const authListener = (data: any) => {
+			if (data.payload.event === 'signIn') {
+				setSignInShow(false);
+				setLoggedInUser(authUtil.buildAuthState(data.payload.data));
+			}
+			if (data.payload.event === 'signOut') {
+				setLoggedInUser(null);
+			}
+		};
+		Hub.listen('auth', authListener);
+		return () => Hub.remove('auth', authListener);
+	}, []);
 
 	return (
 		<React.Fragment>
 			<XalianNavbar authAlertCallback={setLoggedInUser} />
 
-			<main className="min-h-screen bg-room text-ink font-body" data-tier="chrome">
-				<Shell>
+			<main id="main" className="min-h-screen bg-room text-ink font-body" data-tier="chrome">
+				<Shell className="pb-16">
 					<Masthead
 						kicker="Generator"
-						title={xalian ? xalian.species.name : 'Generator'}
+						title="Generator"
+						subtitle={
+							signedIn
+								? 'Every creature it prints for you is yours, written into the registry under your name.'
+								: 'The showroom prints commoners, and prints them all day. Sign in and what it prints is yours to keep.'
+						}
 						aside={
-							<React.Fragment>
-								<Button
-									variant="secondary"
-									disabled={!canKeep || !xalian || printing || isLoading}
-									onClick={saveXalian}
-								>
-									{canKeep ? 'Keep' : 'Sign in to keep'}
-								</Button>
-								<Button disabled={printing} onClick={getXalian}>
-									{xalian ? 'Generate another' : 'Generate a Xalian'}
-								</Button>
-							</React.Fragment>
+							<Button disabled={isGenerating} onClick={() => generate(signedIn)}>
+								{record ? 'Generate another' : 'Generate a Xalian'}
+							</Button>
 						}
 					/>
 
-					{printing ? (
-						<Card variant="glass" className="flex min-h-[280px] flex-col items-center justify-center gap-3 text-center">
+					<LiveRegion>
+						{isGenerating ? 'Generating a Xalian' : record ? `Generated a ${record.species}` : ''}
+					</LiveRegion>
+
+					{isGenerating ? (
+						<Card variant="glass" className="flex min-h-[320px] flex-col items-center justify-center gap-3 text-center">
 							<HelixSpinner size="lg" />
 							<span className="type-legend">Generating</span>
 						</Card>
-					) : xalian ? (
-						<Card variant="glass">
-							<XalianRecord xalian={xalian} />
-						</Card>
-					) : (
-						<Card variant="glass" className="flex min-h-[280px] flex-col items-center justify-center gap-2 text-center">
-							<div style={{ '--color-viable-hi': 'var(--color-ink-3)' } as React.CSSProperties}>
-								<HelixMark className="h-24 w-auto" title="No Xalian" />
-							</div>
-							<span className="type-legend">No Xalian yet</span>
-							<p className="m-0 font-body text-body text-ink-2">Generate one to see its record here.</p>
-						</Card>
-					)}
-
-					{xalian && !printing && (
+					) : record ? (
 						<React.Fragment>
-							<div className="mt-4 grid gap-4 lg:grid-cols-2">
-								<Card variant="panel">
-									<div className="flex items-baseline justify-between">
-										<span className="type-legend">Stats</span>
-										<span className="type-legend text-ink-3">Current / potential</span>
-									</div>
-									<div>
-										{STAT_ROWS.map(([key, label, color]) => {
-											const s = xalian.stats[key];
-											return (
-												<div key={key} style={{ '--el': color } as React.CSSProperties}>
-													<Meter name={label} value={s.points} max={constants.STAT_POINT_MAX} potential={constants.STAT_POINT_MAX} />
-												</div>
-											);
-										})}
-									</div>
-								</Card>
+							<Card variant="glass">
+								<RecordView record={record} kicker={mode === 'owned' ? 'Yours' : 'Showroom'} />
+							</Card>
 
-								<Card variant="panel">
-									<span className="type-legend">Moves</span>
-									<MoveSet moves={xalian.moves} className="lg:[&_p]:truncate" />
-								</Card>
-							</div>
-
-							<Button variant="ghost" className="mt-4" onClick={() => setJsonOpen(true)}>
-								Raw data
-							</Button>
+							{mode === 'owned' ? (
+								<Callout variant="viable" title="Kept" className="mt-6">
+									<p className="m-0">This one is yours. It is in the registry under your name.</p>
+									<div className="mt-3">
+										<Button variant="secondary" asChild>
+											<Link to="/account">See your Xalians</Link>
+										</Button>
+									</div>
+								</Callout>
+							) : (
+								<Callout variant="note" title="Showroom creature" className="mt-6">
+									<p className="m-0">
+										Showroom creatures cannot be kept. This one is real, and it is gone the moment the lever turns
+										again. Sign in and the Generator writes what it prints into the registry under your name.
+									</p>
+									<div className="mt-3">
+										<Button variant="secondary" onClick={() => setSignInShow(true)}>
+											Sign in to generate
+										</Button>
+									</div>
+								</Callout>
+							)}
 						</React.Fragment>
+					) : (
+						<EmptyState legend="No Xalian yet">
+							Pull the lever and the Generator prints one.
+							<div className="mt-3">
+								<Button onClick={() => generate(signedIn)}>Generate a Xalian</Button>
+							</div>
+						</EmptyState>
 					)}
 				</Shell>
 			</main>
 
-			{xalian && (
-				<Dialog open={jsonOpen} onOpenChange={setJsonOpen}>
-					<DialogContent className="sm:max-w-2xl">
-						<DialogHeader>
-							<DialogTitle>{xalian.species.name} record data</DialogTitle>
-						</DialogHeader>
-						<ScrollArea className="max-h-[60vh]">
-							<pre className="m-0 whitespace-pre-wrap break-words type-data text-small text-ink">{JSON.stringify(xalian, null, 2)}</pre>
-						</ScrollArea>
-					</DialogContent>
-				</Dialog>
-			)}
+			<SignInModal
+				show={signInShow}
+				callback={() => {}}
+				onHide={() => setSignInShow(false)}
+				mustVerifyEmailCallback={(name) => {
+					setPendingUsername(name);
+					setVerifyEmailShow(true);
+				}}
+				username={pendingUsername}
+			/>
+
+			<VerifyEmailModal
+				show={verifyEmailShow}
+				callback={() => {
+					setVerifyEmailShow(false);
+					setSignInShow(true);
+				}}
+				onHide={() => setVerifyEmailShow(false)}
+				username={pendingUsername}
+			/>
 		</React.Fragment>
 	);
 }

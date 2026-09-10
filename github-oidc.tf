@@ -150,6 +150,20 @@ resource "aws_iam_role_policy" "github_terraform" {
         Resource = "*"
       },
       {
+        # cognito.tf (#182) makes the CI role manage the user pool directly (imported,
+        # lambda_config points at the new Terraform-managed post-confirmation function).
+        # Scoped to the one pool ARN; no Create/Delete action, so this role can update but
+        # never create or destroy a user pool.
+        Sid    = "CognitoUserPool"
+        Effect = "Allow"
+        Action = [
+          "cognito-idp:DescribeUserPool", "cognito-idp:UpdateUserPool",
+          "cognito-idp:GetUserPoolMfaConfig", "cognito-idp:TagResource",
+          "cognito-idp:UntagResource", "cognito-idp:ListTagsForResource",
+        ]
+        Resource = "arn:aws:cognito-idp:${var.aws_region}:${data.aws_caller_identity.current.account_id}:userpool/${var.cognito_user_pool_id}"
+      },
+      {
         Sid    = "Route53Zone"
         Effect = "Allow"
         Action = [

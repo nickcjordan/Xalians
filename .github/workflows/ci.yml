@@ -49,3 +49,6 @@ jobs:
 
       - name: Content bundle is up to date
         run: npm run check:bundle -w packages/content
+
+      - name: Species records validate
+        run: node docs/species-templates/tools/validate-all.js
