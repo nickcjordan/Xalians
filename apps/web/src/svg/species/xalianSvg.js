@@ -29,6 +29,7 @@ import { ReactComponent as NephSVG } from './neph.svg';
 import { ReactComponent as TerragoyleSVG } from './terragoyle.svg';
 import { ReactComponent as HypnopetSVG } from './hypnopet.svg';
 import { ReactComponent as DrilltailSVG } from './drilltail.svg';
+import { ReactComponent as FrackwormSVG } from './frackworm.svg';
 
 
 
@@ -76,6 +77,7 @@ class XalianSVG extends React.Component {
         if (speciesName == 'terragoyle') { return <TerragoyleSVG style={this.props.style} className={this.props.className} /> }
         if (speciesName == 'hypnopet') { return <HypnopetSVG style={this.props.style} className={this.props.className} /> }
         if (speciesName == 'drilltail') { return <DrilltailSVG style={this.props.style} className={this.props.className} /> }
+        if (speciesName == 'frackworm') { return <FrackwormSVG style={this.props.style} className={this.props.className} /> }
         else {
             // Every canon species has a static import above. A name that is
             // not one of them has no art; render nothing rather than reach
