@@ -80,12 +80,6 @@ Lives in `my-app/src/components/games/duel/` (UI), `my-app/src/gameplay/duel/` (
 
 The repo is an npm workspace rooted here (`workspaces: ["apps/*", "packages/*", "my-app"]`); run `npm ci` once at the root, not inside each package.
 
-Run the generator engine locally (no AWS needed) — `start.js` is a scratch driver that builds 10,000 Xalians and prints the best/worst:
-
-```bash
-npm start          # node start.js
-```
-
 Backend (`apps/api`, TypeScript/ESM, from the repo root):
 
 ```bash
@@ -110,7 +104,7 @@ npm run publish    # terraform apply -auto-approve
 terraform plan     # preview; main.tf zips apps/api/dist (run `npm run build -w apps/api` first) into generate_xalian_lambda.zip and uploads it
 ```
 
-There is no test suite for the legacy generation engine itself (`src/legacy/ai.js`, `xalianBuilder.js`, `moveBuilder.js`) — verification is done by running `start.js` and inspecting output. `apps/api/test` covers the handlers and repositories with Vitest and `aws-sdk-client-mock`. The frontend has tests for the duel rules (`my-app/src/gameplay/duel/__tests__/duelRules.test.js`), run under Vitest (`npm test -- --run` from `my-app/`); CI runs them on every PR. Add to them when changing combat or movement rules.
+`apps/api/test` covers the handlers and repositories with Vitest and `aws-sdk-client-mock`. The frontend has tests for the duel rules (`my-app/src/gameplay/duel/__tests__/duelRules.test.js`), run under Vitest (`npm test -- --run` from `my-app/`); CI runs them on every PR. Add to them when changing combat or movement rules.
 
 ## Backlog & workflow
 
@@ -124,54 +118,33 @@ There is no test suite for the legacy generation engine itself (`src/legacy/ai.j
 
 ## Architecture
 
-### Generation engine (`apps/api/src/legacy/`)
-
-The pre-record engine that still serves the free showroom (`GET /xalian`) and the legacy keep flow (`POST /db/xalian`). It is plain CommonJS kept under `allowJs`, quarantined rather than ported: the ratified generator in `my-app/src/gameplay/generator/` supersedes it, and this tree is deleted once generation moves server-side onto that generator (Wave D in `docs/design/backend-modernization-plan.md`). Everything flows through `xalianBuilder.buildXalian()`:
-
-1. `ai.selectSpecies()` picks from `species.json`.
-2. `ai.selectElements()` derives a primary type from the species and rolls a distinct secondary type from `elements.json`.
-3. `ai.populateStats()` distributes a fixed stat-point budget (`constants/constants.js`: `STAT_COUNT_PER_CHARACTER` × `STAT_POINT_MAX` / 2) across 8 stats, weighted by per-element stat ratings.
-4. `moveBuilder.getMove()` is called 4×, drawing from `moves.json` / `qualifiers.json` filtered by the Xalian's elements.
-
-`ai.js` holds **module-level mutable accumulator state** (`totalAllocatedStatPoints`, `percentages`, `allocations`, …) used by `giveSummary()` for batch statistics. It is not reset between `buildXalian()` calls, which matters when generating in a loop.
-
-The internal `character.js` model is *not* the API shape. `translator.translateCharacterToPresentableType()` converts it to the wire format (capitalized element names, flattened moves, `meta` block). Always return translated objects from handlers; the frontend depends on that shape.
-
-`tools.getObject`/`getJson` load the four engine JSON files (`elements`, `species`, `qualifiers`, `moves`) via static `require('@xalians/content/<name>.json')` calls, one per name in a switch — static so esbuild can see them and inline the JSON directly into each handler bundle at build time. There is no CWD-relative fallback; `apps/api/src/legacy/package.json` pins `"type": "commonjs"` so this tree keeps working as CommonJS even though `apps/api/package.json` itself is `"type": "module"`.
-
-Combat math lives in `legacy/gameplay/attackCalculator.js` — a multiplicative damage formula (base × targets × weather × badge × crit × random × STAB × type effectiveness × status), with tunables in `legacy/constants/attackCalculationConstants.js`.
-
 ### Lambdas and API
 
-`apps/api/src/handlers/*.ts` are the nine route handlers, each `export const handler = withApi(fn, opts)`. `withApi` (`src/lib/api.ts`) parses and validates the body, query, and path params against zod schemas (`src/lib/schemas.ts`), derives the subject from the JWT claims (`src/lib/auth.ts`, reads both payload 1.0 and 2.0 claim shapes), calls the route function, serializes `{status, body}` into the Lambda response, maps a thrown `ApiError` to its status and errorCode and anything else to a logged 500 with a request id, and emits one structured log line per request (never headers or bodies). Persistence goes through promise-returning repositories (`src/repositories/users.ts`, `xalians.ts`, `registry.ts`) over one shared `DynamoDBDocumentClient` (`src/lib/db.ts`); user mutations use condition expressions (atomic `list_append` and indexed `REMOVE` for the id list, a `>=` condition for token spends), batch reads chunk at 100 keys and retry `UnprocessedKeys`. No callbacks anywhere in this tree.
+`apps/api/src/handlers/*.ts` are the eight route handlers plus the Cognito post-confirmation trigger, each `export const handler = withApi(fn, opts)`. `withApi` (`src/lib/api.ts`) parses and validates the body, query, and path params against zod schemas (`src/lib/schemas.ts`), derives the subject from the JWT claims (`src/lib/auth.ts`, reads both payload 1.0 and 2.0 claim shapes), calls the route function, serializes `{status, body}` into the Lambda response, maps a thrown `ApiError` to its status and errorCode and anything else to a logged 500 with a request id, and emits one structured log line per request (never headers or bodies). Persistence goes through promise-returning repositories (`src/repositories/users.ts`, `registry.ts`) over one shared `DynamoDBDocumentClient` (`src/lib/db.ts`); user mutations use condition expressions (atomic `list_append` and indexed `REMOVE` for the id list, a `>=` condition for token spends), batch reads chunk at 100 keys and retry `UnprocessedKeys`. No callbacks anywhere in this tree.
 
-Two creature flows coexist until issue #180 lands:
+There is one creature flow, the registry, holding the ratified record from `@xalians/rules` (the legacy engine, `GET /xalian`, `POST /db/xalian` and their `XalianTable` code path were deleted with issue #180). `POST /xalians` generates server-side from a server-drawn seed, validates against `XalianRecordSchema`, persists to `XalianRegistry` (hash `xalianId`, GSI `byOwner` on `ownerId` + `generatedAt`) under the caller, and returns 201. `GET /xalians` lists an owner's records newest first with an opaque cursor; `GET /xalians/{xalianId}` reads one (any authenticated caller; records are public); `DELETE /xalians/{xalianId}` releases one (owner-only: 404 when missing, 403 `NOT_OWNER` otherwise). `GET /xalians/showroom` is the free lever from `docs/design/xalians-platform-vision-and-economy.md`: the same generator, anonymous, persisting nothing, answering `{ record, keepable: false }` so the page can say the creature cannot be kept. The generator's verb is "generate"; the word "mint" is banned platform-wide.
 
-- **Legacy showroom** (the shape every current page renders): `GET /xalian` runs the legacy engine anonymously and returns `{ xalian, signature }`, an HMAC-SHA256 over canonical JSON (`src/lib/signing.ts`, secret `XALIAN_SIGNING_SECRET` from a `random_password` in `main.tf`, injected only into the two functions that sign and verify). `POST /db/xalian` verifies the signature, requires `createTimestamp` within 24 hours, persists to `XalianTable`, and appends the id to the caller's user record in one call. A client cannot keep stats it invented.
-- **Registry** (the ratified record from `@xalians/rules`): `POST /xalians` generates server-side with a server-drawn seed, validates against `XalianRecordSchema`, persists to `XalianRegistry` (hash `xalianId`, GSI `byOwner` on `ownerId` + `generatedAt`) under the caller, returns 201. `GET /xalians` lists an owner's records newest first with a cursor; `GET /xalians/{xalianId}` reads one. No page renders these yet (#180).
-
-Identity is the lowercased Cognito username from the JWT; a client-supplied `userId` is only ever "which profile to view" (`GET /db/user?userId=` returns the public profile: `userId` and `xalianIds`). The caller's own `GET /db/user` creates the record lazily if it is missing. `PATCH /db/user` accepts only `REMOVE_XALIAN_ID`; adding is a server-side effect of keeping, and token accounting is server-only (`ADD_TOKENS`, `REMOVE_TOKENS`, `ADD_XALIAN_ID` return 403).
+Identity is the lowercased Cognito username from the JWT; a client-supplied `userId` is only ever "which profile to view" (`GET /db/user?userId=` returns the public profile, which is `userId` and nothing else since #180). The caller's own `GET /db/user` creates the record lazily if it is missing; its `populateXalians` parameter is accepted and ignored, because someone's creatures now come from `GET /xalians?ownerId=`. `PATCH /db/user` rejects every action with 403 `FORBIDDEN_ACTION` and survives only until a real user-settings action exists to put through it.
 
 Terraform wires one Lambda + API Gateway route per handler via the reusable `terraform/modules/lambda` module (payload format 2.0, Cognito JWT authorizer `aws_apigatewayv2_authorizer.cognito`):
 
 | Route | Handler bundle | Auth |
 |---|---|---|
-| `GET /xalian` | `generateXalian/index.handler` | NONE (throttled: burst 10, rate 5) |
-| `POST /db/xalian` | `createXalian/index.handler` | JWT |
-| `GET /db/xalian`, `GET /db/xalians` | `retrieveXalian/index.handler` | JWT |
-| `GET /db/user` | `retrieveUser/index.handler` | JWT |
-| `POST /db/user` | `createUser/index.handler` | JWT |
-| `PATCH /db/user` | `updateUser/index.handler` | JWT |
+| `GET /xalians/showroom` | `showroomXalian/index.handler` | NONE (throttled: burst 10, rate 5) |
 | `POST /xalians` | `generateRegistryXalian/index.handler` | JWT |
 | `GET /xalians` | `listRegistryXalians/index.handler` | JWT |
 | `GET /xalians/{xalianId}` | `retrieveRegistryXalian/index.handler` | JWT |
+| `DELETE /xalians/{xalianId}` | `releaseRegistryXalian/index.handler` | JWT |
+| `GET /db/user` | `retrieveUser/index.handler` | JWT |
+| `POST /db/user` | `createUser/index.handler` | JWT |
+| `PATCH /db/user` | `updateUser/index.handler` | JWT |
 | (none -- Cognito post-confirmation trigger) | `postConfirmation/index.handler` (`XalianPostConfirmation`, `cognito.tf`) | Cognito invokes directly, no API Gateway route |
 
 Adding an endpoint means: new `src/handlers/<name>.ts` exporting `handler`, a zod schema for its input, a test under `apps/api/test`, and a new `module "..._lambda_module"` block in `main.tf` pointing `lambda_handler_path` at `<name>/index.handler` (pass `has_environment = true` plus `environment_variables` only if it needs a secret). Merging applies it.
 
-Every handler is bundled independently by esbuild (`apps/api/esbuild.config.mjs`, `npm run build -w apps/api`) to `apps/api/dist/<name>/index.mjs`: ESM, platform node, target node22, `@aws-sdk/*` external (the `nodejs22.x` runtime provides it), everything else (`zod`, `@xalians/content` JSON, `@xalians/rules` TypeScript, the legacy CommonJS engine) bundled in. `archive_file` zips `apps/api/dist` directly; the bundle has no runtime dependency on the workspace.
+Every handler is bundled independently by esbuild (`apps/api/esbuild.config.mjs`, `npm run build -w apps/api`) to `apps/api/dist/<name>/index.mjs`: ESM, platform node, target node22, `@aws-sdk/*` external (the `nodejs22.x` runtime provides it), everything else (`zod`, `@xalians/content` JSON, `@xalians/rules` TypeScript) bundled in. `archive_file` zips `apps/api/dist` directly; the bundle has no runtime dependency on the workspace.
 
-The three DynamoDB tables (`XalianTable`, `XalianUsersTable`, `XalianRegistry`) are Terraform-managed with point-in-time recovery and `prevent_destroy`; the Lambda role's inline policy names their ARNs exactly. Terraform state lives in the `xalians-terraform-state-*` S3 bucket with a lockfile; CI plans on every PR and applies on merge through the GitHub OIDC role in `github-oidc.tf`, which can manage its own policy, so permission additions apply from CI (the one-time bootstrap was done 2026-09-10).
+Three DynamoDB tables are Terraform-managed with point-in-time recovery and `prevent_destroy`, but only two are live: `XalianRegistry` (creatures) and `XalianUsersTable` (accounts), whose ARNs the Lambda role's inline policy names exactly. `XalianTable` is retained and read by nothing — it still holds the roughly 70 creatures people kept under the legacy flow, and their fate is Nick's call (#180). Terraform state lives in the `xalians-terraform-state-*` S3 bucket with a lockfile; CI plans on every PR and applies on merge through the GitHub OIDC role in `github-oidc.tf`, which can manage its own policy, so permission additions apply from CI (the one-time bootstrap was done 2026-09-10).
 
 Two API Gateway stages exist (`prod`, `test`) mapped to `api.xalians.com` and `testapi.xalians.com`, both with default throttling (burst 50, rate 20). The frontend hardcodes `https://api.xalians.com/prod/...` in `my-app/src/utils/dbApi.js`.
 

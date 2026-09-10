@@ -55,12 +55,14 @@ resource "aws_iam_role_policy_attachment" "lambda_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-# Scoped in place of AmazonDynamoDBFullAccess: only the two live tables and
-# their indexes, only the actions the CRUD handlers actually call. The
-# generator function (GET /xalian) does not touch DynamoDB at all, but it
-# shares this role with the CRUD functions, so it also ends up with this
-# scoped access rather than none; splitting into per-function roles is out
-# of scope for this change.
+# Scoped in place of AmazonDynamoDBFullAccess: only the live tables the
+# handlers read and write, only the actions they actually call. The showroom
+# function (GET /xalians/showroom) does not touch DynamoDB at all, but it
+# shares this role with the rest, so it also ends up with this scoped access
+# rather than none; splitting into per-function roles is out of scope here.
+#
+# XalianTable is deliberately absent (issue #180): the legacy creature flow and
+# every handler that read that table are gone, so nothing needs access to it.
 resource "aws_iam_role_policy" "dynamodb_policy" {
   name = "xalian-dynamodb-access"
   role = aws_iam_role.lambda_exec.id
@@ -81,31 +83,15 @@ resource "aws_iam_role_policy" "dynamodb_policy" {
           "dynamodb:ConditionCheckItem",
         ]
         Resource = [
-          "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/XalianTable",
           "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/XalianUsersTable",
-          # XalianRegistry (D1): the two entries above are exact table names, not a
-          # table-level wildcard, so the new registry table needs its own ARN here. The
-          # index wildcard below already covers its byOwner GSI.
+          # Exact table names, not a table-level wildcard, so each table needs its own
+          # ARN here. The index wildcard below covers XalianRegistry's byOwner GSI.
           "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/XalianRegistry",
           "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/Xalian*/index/*",
         ]
       },
     ]
   })
-}
-#####                                               #####
-#########################################################
-
-#########################################################
-#####          XALIAN SIGNING SECRET (F2)           #####
-#########################################################
-# HMAC secret for the legacy showroom keep flow (audit F2 / D1, apps/api/src/lib/signing.ts):
-# GET /xalian (GenerateXalian) signs the record it returns; POST /db/xalian
-# (TableCreateXalian) verifies that signature before persisting, so a client can no longer
-# keep a record it fabricated or tampered with. Only those two functions receive it.
-resource "random_password" "xalian_signing_secret" {
-  length  = 48
-  special = false
 }
 #####                                               #####
 #########################################################
@@ -181,8 +167,11 @@ resource "aws_apigatewayv2_stage" "prod" {
     throttling_rate_limit  = 20
   }
 
+  # The free lever is the one anonymous route, so it keeps its own tighter
+  # throttle (the vision doc's ratified "endpoint gets API Gateway throttling
+  # regardless").
   route_settings {
-    route_key              = "GET /xalian"
+    route_key              = "GET /xalians/showroom"
     throttling_burst_limit = 10
     throttling_rate_limit  = 5
   }
@@ -219,8 +208,11 @@ resource "aws_apigatewayv2_stage" "test" {
     throttling_rate_limit  = 20
   }
 
+  # The free lever is the one anonymous route, so it keeps its own tighter
+  # throttle (the vision doc's ratified "endpoint gets API Gateway throttling
+  # regardless").
   route_settings {
-    route_key              = "GET /xalian"
+    route_key              = "GET /xalians/showroom"
     throttling_burst_limit = 10
     throttling_rate_limit  = 5
   }
@@ -270,105 +262,6 @@ resource "aws_apigatewayv2_authorizer" "cognito" {
 }
 #####                                               #####
 #########################################################
-
-
-#########################################################
-#####               LAMBDA INSTANCE                 #####
-##              Generate Xalian Lambda                 ##
-#########################################################
-module "generate_xalian_lambda_module" {
-  source = "./terraform/modules/lambda"
-
-  function_name                   = "GenerateXalian"
-  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
-  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
-  lambda_handler_path             = "generateXalian/index.handler"
-  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
-  iam_role_arn                    = aws_iam_role.lambda_exec.arn
-  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
-  apigw_lambda_route_key          = "GET /xalian"
-  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
-  authorization_type              = "NONE"
-  has_environment                 = true
-  environment_variables = {
-    XALIAN_SIGNING_SECRET = random_password.xalian_signing_secret.result
-  }
-}
-#####                                               #####
-#########################################################
-
-
-#########################################################
-#####               LAMBDA INSTANCE                 #####
-##            Table Create Xalian Lambda               ##
-#########################################################
-module "table_create_xalian_lambda_module" {
-  source = "./terraform/modules/lambda"
-
-  function_name                   = "TableCreateXalian"
-  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
-  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
-  lambda_handler_path             = "createXalian/index.handler"
-  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
-  iam_role_arn                    = aws_iam_role.lambda_exec.arn
-  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
-  apigw_lambda_route_key          = "POST /db/xalian"
-  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
-  authorization_type              = "JWT"
-  authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
-  has_environment                 = true
-  environment_variables = {
-    XALIAN_SIGNING_SECRET = random_password.xalian_signing_secret.result
-  }
-}
-#####                                               #####
-#########################################################
-
-
-#########################################################
-#####               LAMBDA INSTANCE                 #####
-##           Table Retrieve Xalian Lambda              ##
-#########################################################
-module "table_retrieve_xalian_lambda_module" {
-  source = "./terraform/modules/lambda"
-
-  function_name                   = "TableRetrieveXalian"
-  lambda_handler_path             = "retrieveXalian/index.handler"
-  apigw_lambda_route_key          = "GET /db/xalian"
-  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
-  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
-  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
-  iam_role_arn                    = aws_iam_role.lambda_exec.arn
-  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
-  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
-  authorization_type              = "JWT"
-  authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
-}
-#####                                               #####
-#########################################################
-
-#########################################################
-#####               LAMBDA INSTANCE                 #####
-##         Table Retrieve Xalian Batch Lambda          ##
-#########################################################
-module "table_retrieve_xalian_batch_lambda_module" {
-  source = "./terraform/modules/lambda"
-
-  function_name                   = "TableRetrieveXalianBatch"
-  lambda_handler_path             = "retrieveXalian/index.handler"
-  apigw_lambda_route_key          = "GET /db/xalians"
-  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
-  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
-  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
-  iam_role_arn                    = aws_iam_role.lambda_exec.arn
-  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
-  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
-  authorization_type              = "JWT"
-  authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
-}
-#####                                               #####
-#########################################################
-
 
 #########################################################
 #####               LAMBDA INSTANCE                 #####
@@ -498,6 +391,52 @@ module "retrieve_registry_xalian_lambda_module" {
   base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
   authorization_type              = "JWT"
   authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
+}
+#####                                               #####
+#########################################################
+
+#########################################################
+#####               LAMBDA INSTANCE                 #####
+##           Release Registry Xalian Lambda            ##
+#########################################################
+module "release_registry_xalian_lambda_module" {
+  source = "./terraform/modules/lambda"
+
+  function_name                   = "ReleaseRegistryXalian"
+  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
+  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
+  lambda_handler_path             = "releaseRegistryXalian/index.handler"
+  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
+  iam_role_arn                    = aws_iam_role.lambda_exec.arn
+  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
+  apigw_lambda_route_key          = "DELETE /xalians/{xalianId}"
+  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type              = "JWT"
+  authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
+}
+#####                                               #####
+#########################################################
+
+#########################################################
+#####               LAMBDA INSTANCE                 #####
+##               Showroom Xalian Lambda                ##
+#########################################################
+# The free lever: the one route on this API with no authorizer. It generates a
+# ratified record and persists nothing, so an anonymous visitor can pull it as
+# often as they like; both stages give the route its own tighter throttle above.
+module "showroom_xalian_lambda_module" {
+  source = "./terraform/modules/lambda"
+
+  function_name                   = "ShowroomXalian"
+  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
+  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
+  lambda_handler_path             = "showroomXalian/index.handler"
+  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
+  iam_role_arn                    = aws_iam_role.lambda_exec.arn
+  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
+  apigw_lambda_route_key          = "GET /xalians/showroom"
+  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type              = "NONE"
 }
 #####                                               #####
 #########################################################
@@ -977,6 +916,11 @@ resource "aws_s3_bucket_cors_configuration" "react_bucket" {
 # (for example the key-design rework tracked in issue #20) accidentally
 # planning a destroy/recreate of tables that hold real user data.
 
+# RETAINED, READ BY NOTHING (issue #180). The legacy creature flow and every handler
+# that touched this table are deleted, and no Lambda role grants access to it any more.
+# The resource stays, with prevent_destroy and point-in-time recovery, because it still
+# holds the ~70 records people kept under the old system; what becomes of them (migrate
+# to XalianRegistry, export, or drop) is Nick's decision, not this change's.
 resource "aws_dynamodb_table" "xalian_table" {
   name         = "XalianTable"
   billing_mode = "PAY_PER_REQUEST"

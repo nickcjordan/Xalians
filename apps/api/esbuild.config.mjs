@@ -3,16 +3,13 @@
 // "<name>/index.handler".
 //
 // @aws-sdk/* is left external: nodejs22.x provides the SDK v3 at runtime, so bundling it
-// would only bloat the zip. Everything else (zod, @xalians/content JSON, the legacy CJS
-// engine under src/legacy) is bundled in, which is what removes the old pre-build content
-// staging step and the CWD-relative JSON fallback in tools.js.
+// would only bloat the zip. Everything else (zod, @xalians/rules, the @xalians/content
+// JSON) is bundled in, which is what removes the old pre-build content staging step.
 //
-// The banner below defines `require` via node:module's createRequire. It exists only
-// because src/legacy is CommonJS: when esbuild pulls a CJS module into an ESM output
-// bundle, calls that resolve to an external module (an @aws-sdk/* package, or a Node
-// builtin such as "crypto") are left as literal `require(...)` calls in the bundle, and
-// plain ESM output has no global `require` to satisfy them. Without the banner, a bundled
-// handler throws "require is not defined" the first time the legacy engine runs.
+// The banner below defines `require` via node:module's createRequire. It is kept as a
+// safety net for any CommonJS dependency esbuild pulls into the ESM output: such a module
+// leaves calls that resolve to an external package as literal `require(...)`, and plain
+// ESM output has no global `require` to satisfy them.
 import { build } from 'esbuild';
 import { readdirSync } from 'fs';
 import { fileURLToPath } from 'url';

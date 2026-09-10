@@ -41,10 +41,10 @@ describe('retrieveUser handler', () => {
     );
     expect(result.statusCode).toBe(200);
     const body = JSON.parse(result.body as string);
-    expect(body.userId).toBe('someoneelse');
-    expect(body.xalianIds).toEqual(['a', 'b']);
-    expect('attributes' in body).toBe(false);
-    expect('tokens' in body).toBe(false);
+    // The public profile is userId and nothing else (issue #180): xalianIds listed the
+    // retired legacy XalianTable, and a stranger's creatures now come from
+    // GET /xalians?ownerId=... instead.
+    expect(body).toEqual({ userId: 'someoneelse' });
   });
 
   it('lazily creates the caller\'s own record on a miss instead of 404ing (audit F16)', async () => {
@@ -76,12 +76,9 @@ describe('retrieveUser handler', () => {
     expect(ddbMock.commandCalls(PutCommand)).toHaveLength(0);
   });
 
-  it('populates xalians via batch get when populateXalians=true', async () => {
+  it('ignores populateXalians and never batch-loads the legacy table', async () => {
     ddbMock.on(GetCommand).resolves({
       Item: { userId: 'nick', xalianIds: ['fire-1'], attributes: {} },
-    });
-    ddbMock.on(BatchGetCommand).resolves({
-      Responses: { XalianTable: [{ speciesId: 'fire', xalianId: 'fire-1', attributes: { name: 'Ember' } }] },
     });
 
     const result = await handler(
@@ -91,6 +88,7 @@ describe('retrieveUser handler', () => {
 
     expect(result.statusCode).toBe(200);
     const body = JSON.parse(result.body as string);
-    expect(body.xalians).toEqual([{ speciesId: 'fire', xalianId: 'fire-1', attributes: { name: 'Ember' } }]);
+    expect('xalians' in body).toBe(false);
+    expect(ddbMock.commandCalls(BatchGetCommand)).toHaveLength(0);
   });
 });

@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { toast } from 'sonner';
+import type { XalianRecord } from '@xalians/content/schema';
+import { speciesDisplayName } from '@xalians/rules/generator';
 
 import * as dbApi from '../utils/dbApi';
 
@@ -8,30 +10,33 @@ import {
 	AlertDialogDescription, AlertDialogFooter, AlertDialogAction, AlertDialogCancel,
 } from '@/components/ui/alert-dialog';
 
-type Xalian = { xalianId: string; species: { name: string } };
+/**
+ * Confirms releasing one of the caller's own Xalians. Release is
+ * DELETE /xalians/{xalianId}; the server is what enforces ownership, so the
+ * caller's id is not sent and cannot be spoofed here.
+ */
 
 type VerifyRemoveXalianModalProps = {
 	show: boolean;
 	onHide: () => void;
 	onXalianDelete: () => void;
-	xalian: Xalian;
-	username: string;
+	record: XalianRecord;
 };
 
-function VerifyRemoveXalianModal({ show, onHide, onXalianDelete, xalian, username }: VerifyRemoveXalianModalProps) {
+function VerifyRemoveXalianModal({ show, onHide, onXalianDelete, record }: VerifyRemoveXalianModalProps) {
 	const [isThinking, setIsThinking] = React.useState(false);
+	const name = speciesDisplayName(record.species);
 
-	const deleteXalian = () => {
+	const release = () => {
 		setIsThinking(true);
 		dbApi
-			.callUpdateUserRemoveXalian(username, xalian.xalianId)
+			.callReleaseXalian(record.id)
 			.then(() => {
 				setIsThinking(false);
-				toast.success('Xalian released.');
+				toast.success(`${name} released.`);
 				onXalianDelete();
 			})
-			.catch((error: any) => {
-				console.log(JSON.stringify(error, null, 2));
+			.catch(() => {
 				toast.error('Could not release this Xalian. Please try again.');
 				setIsThinking(false);
 			});
@@ -41,14 +46,15 @@ function VerifyRemoveXalianModal({ show, onHide, onXalianDelete, xalian, usernam
 		<AlertDialog open={show} onOpenChange={(open) => !open && onHide()}>
 			<AlertDialogContent>
 				<AlertDialogHeader>
-					<AlertDialogTitle>Release {xalian.species.name}?</AlertDialogTitle>
+					<AlertDialogTitle>Release {name}?</AlertDialogTitle>
 					<AlertDialogDescription>
-						You will no longer own this Xalian. This cannot be undone.
+						This creature leaves the registry and no one owns it. It cannot be undone, and the same seed will not be
+						drawn again.
 					</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
 					<AlertDialogCancel onClick={onHide}>Cancel</AlertDialogCancel>
-					<AlertDialogAction variant="destructive" disabled={isThinking} onClick={deleteXalian}>
+					<AlertDialogAction variant="destructive" disabled={isThinking} onClick={release}>
 						Release
 					</AlertDialogAction>
 				</AlertDialogFooter>
