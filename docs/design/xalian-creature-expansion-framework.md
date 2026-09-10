@@ -11,6 +11,8 @@ New creatures are selected from demonstrated universe needs, not from an isolate
 
 The generated [coverage ledger](./CREATURE-EXPANSION-COVERAGE.md) answers the first question. It deliberately does not pretend that equal representation means equal strength.
 
+The first application of this process is recorded in [Creature Expansion Target Briefs 01](./creature-expansion-target-briefs-01.md).
+
 ## Sources of truth
 
 Every expansion pass starts from the committed versions of:
