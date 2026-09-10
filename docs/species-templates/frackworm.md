@@ -20,20 +20,20 @@ The species now has artwork at `art/frackworm.png`; the Art reading section abov
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits (105 words)
+### habits (110 words)
 
-Endessa's surface insolation is lethal without adaptation under two suns, so the whole of its working life happens inside the dunes and the excavation tunnels beneath them, moving through loose particulate the way another body moves through water. It has no use for sight down there and reads the ground by tremor instead, which cuts both ways: the subsurface of that world hunts by vibration and takes what it takes by attrition, so the same sense that guides it advertises it. What it signals, it signals through the rock. Thermal load, desiccation and tunnel collapse are the standing hazards and it works through all three.
+It works the cavern networks beneath the dunes, boring through loose glass sand and packed substrate the way another body moves through water, and it does not come up: the surface under Endessa's suns is deadly to anything without shielding, and everything it needs is below. It reads the ground by tremor, since there is nothing to see down there, and the same tremor carries it to whatever else hunts by vibration in that ground. Heat, dryness and tunnel collapse are the standing hazards of that work and it goes on through all three, and where the Nightcap has pooled it sets its head against the seam and fractures it.
 
 | Claim | Source |
 |---|---|
-| the whole of its working life happens below | `lore.biomeNiche`; Endessa report terrain feature, subsurface excavation tunnel networks; `capabilities.burrow` [80, 95] against `sprint` [10, 25] |
-| surface insolation lethal without adaptation, under two suns | Endessa report terrain note, surface insolation lethal without adaptation, dual-star; Endessa history paragraph 10, the twin suns blazing through a cloudless sky |
-| inside the dunes and the excavation tunnels beneath them | Endessa report terrain features, dune systems of vitreous particulate over ocean-floor substrate and subsurface excavation tunnel networks; history paragraph 10, large cavern networks extending deep beneath the surface |
-| moves through loose particulate the way another body moves through water | Endessa report mobility, burrow rated optimal including sustained particulate-swimming; report output priority, particulate locomotion |
-| no use for sight; reads the ground by tremor | `physiology.senses.sight` [0, 15]; `physiology.senses.special` tremorsense |
-| the subsurface of that world hunts by vibration and takes what it takes by attrition, so the same sense advertises it | Endessa report fauna observations, subsurface ambush forms and vibration-hunting forms, and predation strategy of attrition; report hazard, vibration-triggered predation. Written of the world around the creature, not of the creature's own feeding, which no source shows |
-| what it signals, it signals through the rock | `physiology.communication` vibration |
-| thermal load, desiccation and tunnel collapse are the standing hazards and it works through all three | Endessa report hazards, thermal load, desiccation, tunnel collapse; output priorities, water retention and thermal shielding; `traits.pool.resistant` 75 |
+| works the cavern networks beneath the dunes | Endessa history: rogue fortune-seekers drilling haphazard wells in large cavern networks deep beneath the surface |
+| bores through glass sand and substrate | Endessa history: the sea floor turned to glass; record burrow band 80 to 95 |
+| the surface is deadly without shielding | Generator report hazards: surface insolation lethal without adaptation |
+| reads the ground by tremor; the subsurface hunts by vibration | record senses, tremorsense, sight 0 to 15; Generator report fauna observations |
+| heat, dryness and tunnel collapse are the hazards | Generator report hazards: thermal load, desiccation, tunnel collapse |
+| sets its head against the seam and fractures it | species description; signature Fracture the Seam |
+
+Draft until Nick signs it off.
 
 ### Claims considered and left out
 
@@ -201,6 +201,8 @@ logged to docs/species-templates/validation-log/frackworm.jsonl
 The single remaining WARN is the by-design conduit confirmation, answered under Instruments and conduits and again in Script denials. Run 1 raised four WARNs and no FAIL; three of the four were fixed, and the fourth is this one.
 
 ## Orchestrator amendments
+
+- 2026-09-09, Nick ratified the Frackworm as canon species 00030 after a clean-up pass under the current lore rules: description tightened as the teaser and written into species.json (Nick's file, so it is now his to edit); habits rewritten in plain register from the Generator report and the planet history; appearance list already in the ratified shape; trait pool reshaped to the pool shape (armored 100 required for the chitin shell; anchored 40, ramming 30, hardened 30 rolled; solitary, perceptive, menacing, pack-bonded, toxic and resistant dropped as either restating record fields or unsourced); encyclopedia entry added; key added to RATIFIED.json; the frontend species count moves to 30.
 
 - 2026-09-02: `hide` added to anatomy and `covering` set to `hide` (was bare) under the ruling that a flesh animal body with no named surface takes the hide covering; bare is for membranes, slime, plant and mineral surfaces. Authored pending art; if the illustration shows plating, the covering and the armored trait are revisited.
 - 2026-09-04, amendment moved here from the record's `amendments` array by the 2026-09-09 lore split: covering hide to chitin (grown overlapping armor plates: a soft hide would be torn apart boring through rock and glass sand); anatomy hide to shell per the one-surface rule; armored 100 per the chitin rule; eyes added, tiny stalked bead eyes like a crab's or a clam's, near blind (sight unchanged), so the creature has a face to meet. Ruling in docs/species-templates/RULINGS.md. (Nick)

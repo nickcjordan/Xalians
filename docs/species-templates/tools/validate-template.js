@@ -24,7 +24,7 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..', '..', '..');
 const TEMPLATES = path.join(ROOT, 'docs', 'species-templates');
 const CATALOG = path.join(ROOT, 'docs', 'ability-catalog');
-const SOURCE_DIRS = ['C:/dev/src/Xalians/lambda/src/json', path.join(ROOT, 'lambda', 'src', 'json')];
+const SOURCE_DIRS = [path.join(ROOT, 'lambda', 'src', 'json'), 'C:/dev/src/Xalians/lambda/src/json'];
 const ENCYCLOPEDIA_PATH = path.join(ROOT, 'docs', 'encyclopedia', 'encyclopedia.json');
 
 // ---------- registries (mirror of SKILL.md sections 5.1 to 5.7; keep in sync) ----------
