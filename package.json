@@ -14,9 +14,6 @@
     "test": "npm test --workspaces --if-present",
     "publish": "terraform apply -auto-approve"
   },
-  "dependencies": {
-    "axios": "^0.24.0"
-  },
   "devDependencies": {
     "react": "18.3.1",
     "react-dom": "18.3.1",
