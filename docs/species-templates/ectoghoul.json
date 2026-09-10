@@ -160,10 +160,10 @@
     "pool": {
       "phasing": 100,
       "menacing": 100,
-      "stealthy": 35,
-      "slippery": 30,
-      "resistant": 20,
-      "hardened": 15
+      "solitary": 35,
+      "stealthy": 30,
+      "slippery": 20,
+      "resistant": 15
     }
   },
   "instruments": [

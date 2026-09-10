@@ -100,7 +100,7 @@ The familiars are treated as projections held by the central mind, not as living
 
 ## Traits
 
-Reshaped on 2026-09-08 under Nick's pool-shape ruling, then reworked the same day when `commanding` entered the registry. One required trait, four rolled entries whose shares sum to 100, five entries in all. Expected count 2.00. The chance an individual lands none of the four rolled traits is 30.2 percent.
+Re-run 2026-09-10 against the now-ratified `lore.appearance` list and the five short fields (`origin`, `habitat`, `feeding`, `behavior`, `company`), which sit on the same evidentiary footing as the teaser, the art, and the planet record. One required trait, five rolled entries whose shares sum to 100, six entries in all, the maximum a pool may list. Expected count 2.00. The company field restores `solitary`, which had previously been cut for arguing from absence, and the behavior field's second sentence gives `stealthy` a species-specific reason it did not have before.
 
 **Required**
 
@@ -108,14 +108,30 @@ Reshaped on 2026-09-08 under Nick's pool-shape ruling, then reworked the same da
 |---|---|
 | `commanding` | The one thing the description says this creature is, in its first sentence: it fights by conjuring a swarm of little flying familiars, holding every one of them in its mind and moving them as a single unit to attack or defend. The registry key is a body that directs other bodies, or projections of itself, as one unit, which is that sentence restated in registry words, and the 2026-09-02 ruling that a conjured familiar swarm is a projection rather than life is what makes the familiars the projections the key names. The record agrees throughout: `bodyPlan` is `swarm`, the signature instrument is `swarm`, and the signature Unbidden Legion sets the familiars on one target as one mind. No body fact is demanded: the covering is `hide` so no `armored`, the body is corporeal so no `phasing`, and it does not grip the ground so no `anchored`. |
 
+A second required slot was considered for `solitary` given how flatly the company field reads ("It goes with its swarm and nothing else."), but the swarm itself is not another living company, so the sentence is company evidence rather than the body fact or the defining behavior the pool shape reserves the required slots for; it stays rolled, at a high share, below.
+
 **Rolled (shares sum to 100)**
 
 | Trait | Share | Evidence |
 |---|---|---|
-| `nocturnal` | 34 | Strongest of the rolled set, and required until `commanding` arrived. It is where and how the creature lives, stated plainly: it hunts the thick, stalky undergrowth of a world cloaked in perpetual night, and the newest generation of its kind stands at the edge of the galaxy and watches the endless black. Grimedes agrees at planet level with low-light metabolism among its output priorities, and the art gives small slitted eyes and large ears. It rolls rather than sits at 100 because under the pool shape a planet-wide adaptation is required only where the description makes it the point of the creature, and the point of this creature is the legion it holds in its mind; the dark is the room it does that in. |
-| `slippery` | 28 | Legacy `statRatings`: `evasionRating` is high, which maps to `slippery` and ranks it first among the entries carried by a gauge rather than a sentence. The reading agrees with a small flier whose fighting mass is a conjured cloud rather than one body a hand can close on. A legacy rating ranks a trait and never sets it at 100, and here it ranks below `nocturnal`, which has a species sentence and the planet report together. |
-| `perceptive` | 22 | Grimedes' output priorities carry non-visual sensory systems, its fauna observations record apparatus that registers mass and motion, and the record's own `senses.hearing` is banded to an upper bound of 85, over the bar of 80. Under the 2026-09-08 ruling the report's anticipatory-response line is evidence for `perceptive` rather than for `foresighted`, which is what moved that support here. |
-| `mind-sealed` | 16 | A species sentence about its own body: it controls the swarm with its mind, attacking or defending as one unit. The mind is this species' load-bearing organ, and a mind that holds a swarm together is the physiology that supports resisting intrusion. Weakest of the four because the sentence describes what the mind does outward and never says anything gets in. |
+| `nocturnal` | 30 | Strongest of the rolled set. It is where and how the creature lives, stated plainly: it hunts the thick, stalky undergrowth of a world cloaked in perpetual night, and the newest generation of its kind stands at the edge of the galaxy and watches the endless black. Reinforced by the ratified habitat field: "The thick, stalky undergrowth of Grimedes, in permanent night." Grimedes agrees at planet level with low-light metabolism among its output priorities, and the art gives small slitted eyes and large ears. It rolls rather than sits at 100 because under the pool shape a planet-wide adaptation is required only where the description makes it the point of the creature, and the point of this creature is the legion it holds in its mind; the dark is the room it does that in. |
+| `solitary` | 26 | New: the ratified company field states, company: "It goes with its swarm and nothing else." Its swarm is a conjured projection, not another living creature (per the 2026-09-02 conjured-familiar ruling), so a body whose only company is its own projected swarm has no living company at all, which is the registry key exactly: stronger operating alone. |
+| `stealthy` | 22 | New: the ratified behavior field's second sentence, behavior: "It keeps its own body inside the swarm so nothing can tell which shape matters." That is species-specific evidence distinct from the planet-wide perpetual-night sentence the trait was cut on before: the creature conceals its own body among identical decoys so it cannot be singled out, which is the registry sense of moving unseen (or unmarked) until it acts. |
+| `slippery` | 12 | Legacy `statRatings`: `evasionRating` is high, which maps to `slippery`. The reading agrees with a small flier whose fighting mass is a conjured cloud rather than one body a hand can close on. A legacy rating justifies rolling a trait in and never sets its percent, so this sits low among the now-larger rolled set. |
+| `perceptive` | 10 | Grimedes' output priorities carry non-visual sensory systems, its fauna observations record apparatus that registers mass and motion, and the record's own `senses.hearing` is banded to an upper bound of 85, over the bar of 80. This is planet-report evidence rather than a species-specific sentence, so it ranks lowest now that two directly-sourced species traits have entered the pool. |
+
+Sum: 30 + 26 + 22 + 12 + 10 = 100.
+
+`mind-sealed` is cut from the pool on this pass (see the re-run table below) to keep the pool at six once `solitary` and `stealthy` earned their places on newly-ratified fields.
+
+#### Trait re-run (2026-09-10)
+
+| Change | Reason |
+|---|---|
+| `solitary` added at 26 (rolled) | Restored by the new ratified `company` field: "It goes with its swarm and nothing else." The swarm is a projection, not living company, so this reads as a flat statement of operating alone; the exact case the re-run exists for. |
+| `stealthy` added at 22 (rolled) | New species-specific evidence from the ratified `behavior` field: "It keeps its own body inside the swarm so nothing can tell which shape matters." This is a fresh sentence, distinct from the planet-wide perpetual-night sentence the trait was cut on in the 2026-09-02 amendment; it describes the creature's own tactic of hiding its true body among decoys. |
+| `mind-sealed` removed (was 16) | The pool is capped at six entries. It was already the weakest of the prior four rolled entries, its only support describing what the mind does outward and never saying anything gets in, and it has no new support from the ratified lore fields, so it is the one cut to make room for the two newly-sourced traits. |
+| `nocturnal` re-shared from 34 to 30, `slippery` re-shared from 28 to 12, `perceptive` re-shared from 22 to 10 | Reallocated so the five rolled shares still sum to exactly 100 after `mind-sealed`'s 16 points were removed and `solitary` (26) and `stealthy` (22) were added; `nocturnal` keeps the top share since it now has two reinforcing sentences (species and the ratified habitat field), while `slippery` and `perceptive` are pushed down because their evidence class (a legacy rating and a planet-wide report) is weaker than the two new species-specific fields. |
 
 #### Cut by the evidence bar (2026-09-07) and by the new keys (2026-09-08)
 
@@ -125,9 +141,11 @@ Reshaped on 2026-09-08 under Nick's pool-shape ruling, then reworked the same da
 | `solitary` | 10 | argued from absence; neither source states it operates alone |
 | `foresighted` | 100 | the Grimedes anticipatory-response line is evidence for `perceptive`, not `foresighted` (2026-09-08 ruling), and this species own description never claims foresight |
 
-`commanding` is the case the new key was written for. Before 2026-09-08 the record carried the swarm as a body plan, an instrument and a signature, but the one mechanical fact that makes this creature what it is, that a single mind moves many bodies as one unit, had no trait key, and `mind-sealed` was left holding the mind by its weakest edge. The key now takes it, and `mind-sealed` reads as what it always was, a secondary consequence of a load-bearing mind.
+Which of these cuts the 2026-09-10 re-run restores: only `solitary`, and only because `lore.company` now exists and states it outright ("It goes with its swarm and nothing else."). `menacing` and `foresighted` are unchanged by the new lore fields: nothing in `appearance` or the five short fields adds a courage-eroding sentence or a foresight claim, so both stay cut. `stealthy`, cut in the 2026-09-02 amendment below for resting only on the planet-wide perpetual-night sentence, is also restored on this pass, but on new evidence (the ratified `behavior` field), not by lifting the evidence bar on its old, weaker support.
 
-`stealthy` was considered (a small dark-silhouetted flier with no bright or noisy features, on a world of perpetual night) and removed: its only support was the planet-wide perpetual-night sentence, which cannot carry a species trait on its own once it is already spent on `nocturnal`.
+`commanding` is the case the new key was written for on 2026-09-08. Before that date the record carried the swarm as a body plan, an instrument and a signature, but the one mechanical fact that makes this creature what it is, that a single mind moves many bodies as one unit, had no trait key, and `mind-sealed` was left holding the mind by its weakest edge. The key took it, and `mind-sealed` read as what it always was, a secondary consequence of a load-bearing mind, until the 2026-09-10 re-run cut it for pool space.
+
+`stealthy` was considered on 2026-09-02 (a small dark-silhouetted flier with no bright or noisy features, on a world of perpetual night) and removed: its only support at the time was the planet-wide perpetual-night sentence, which cannot carry a species trait on its own once it is already spent on `nocturnal`. The 2026-09-10 re-run restores it on different, species-specific grounds (see above).
 
 ## Instruments
 
@@ -201,15 +219,24 @@ One FAIL was raised against my runs.
 
 I believe this FAIL is a **false positive** and I passed the point with `--note` on the passing run. The regex bans the word `turn`/`turns`, which is correct for the game noun (a turn of play) but fires here on the ordinary transitive verb in 'turns them on a target'. There is no mechanics claim in that sentence. Two secondary edits came with the rewrite and were my own choice, not the script's: 'a target' became 'a single target' so the sentence does not imply an area effect the source never states, and 'into the dark' became 'into the black' so the element key does not appear as a plain word (this also cleared the `signature.description.elementkey` WARN). Suggested script fix: require the noun sense, for example `\b(this|next|each|per|a)\s+turn\b` rather than a bare `turns`.
 
+**2026-09-10, trait re-run.** One `md.quote` FAIL was raised and fixed, no record value denied.
+
+| Original text | Script message | Fix | Was the original better? |
+|---|---|---|---|
+| `#### Trait re-run` table cell quoting the walkthrough's own prior wording in double quotes: "describes what the mind does outward and never says anything gets in" | `FAIL md.quote` double-quoted text not found verbatim in `species.json`, the planet history, or the registry | Rewritten as plain prose describing the same point with no quotation marks | No, the substance is unchanged; it was simply quoted where it should have been paraphrased |
+
+This is the same class of friction the Graviclaw walkthrough recorded on 2026-09-07: a table whose job is to summarize a prior justification cannot cite that justification in quotation marks, since `md.quote` verifies every double-quoted span against the sources rather than against the walkthrough's own earlier text. Not a false positive; the fix is correct. Smallest fix if it recurs across the roster: exempt double-quoted text inside a `#### Trait re-run` or `#### Cut by the evidence bar` heading's table from `md.quote`.
+
 A second WARN cleared in the same pass was `enc.definition.name`: the encyclopedia definition originally opened `A small winged Xalian of Grimedes...` and did not name the species. It now opens `The Tetrahive is a small winged Xalian of Grimedes...`. That is a legitimate catch, not a denial.
 
 
 ## WARN answers
 
-Two WARNs remain on the final run, both the same code on the same instrument.
+Two WARNs from the earlier passes, both the same code on the same instrument, plus one new WARN from the 2026-09-10 trait re-run.
 
 - `instruments.predicate.source`: channel `swarm` with a non-`swarm` body plan means a conjured familiar swarm. Confirmed. The species text is "summons a swarm of small flying familiars with teeth like piranhas" and "It controls the swarm with its mind", and the art shows about twenty small copies of the central figure ringing it. This is the conjured-familiar case: the familiars are projections held by the mind, not living creatures, so nothing here creates or kills life.
 - `instruments.predicate.source`: the script's generic branch describes the `swarm` channel's source-text predicate using the `secretion` wording, 'an emitted substance'. That wording does not fit `swarm` and is a cosmetic defect in the script's message, not a real question. The predicate that actually applies is the conjured-familiar one answered directly above, and it is satisfied by the two quoted sentences. Minor suggested script fix: give `swarm` its own message text rather than falling through to the `secretion` phrasing.
+- `temperature.planet` (new on the 2026-09-10 re-run): `temperatureC` [-60, 5] reads as outside the Grimedes legacy data block range [-6, 93] C. This is the tracked issue #167: the script still compares against the legacy record-extremes range rather than `environment.habitableBandC`, which is not yet present in `planetRecords.json`. The 2026-09-02 orchestrator amendment already re-banded this field against the rebuilt planet record's habitable band of [-60, 5] C, which this range matches exactly, so the value is unchanged and correct; the warning is the tracked gap, not something the trait re-run introduced.
 
 ## Open questions for Nick
 
@@ -219,11 +246,17 @@ The one call I am least sure of is `anatomy.fangs`. The only teeth either source
 
 ## Validator output
 
+Final run after the 2026-09-10 trait re-run:
+
 ```
 $ node docs/species-templates/tools/validate-template.js tetrahive
 
-0 FAIL, 0 WARN (structurally clean; every WARN must be answered in the walkthrough)
+WARN temperature.planet             temperatureC [-60, 5] extends outside the Grimedes legacy data block range [-6, 93] C; the legacy extremes are record extremes, not the habitable band, so this is a warning until planetRecords.json carries environment.habitableBandC (issue #167)
+
+0 FAIL, 1 WARN (structurally clean; every WARN must be answered in the walkthrough)
 ```
+
+The one WARN is answered above in `## WARN answers`: it is the tracked gap of issue #167 against an already-correct temperature band, not something the re-run introduced. The trait checks `traits.pool.required`, `traits.pool.rolledSum` and `traits.pool.size` are all silent, confirming the re-run pool (one required at 100, five rolled summing to 100) is structurally sound. One `md.quote` FAIL surfaced during the re-run itself (a paraphrase of the walkthrough's own prior wording written with double quotes instead of single); it is recorded in `## Script denials` below and was fixed by switching to single-quote convention rather than by removing the point.
 
 ## Orchestrator amendments
 
@@ -252,3 +285,4 @@ $ node docs/species-templates/tools/validate-template.js tetrahive
 - 2026-09-08, pool shape (Nick): required `nocturnal`; rolled `slippery` 40, `perceptive` 35, `mind-sealed` 25; expected count 4.35 to 2.00.
 - 2026-09-08, new keys (Nick): `commanding` added to the registry as a body that directs other bodies, or projections of itself, as one unit, and it takes the required slot on the sentence about holding every familiar in its mind and moving them as a single unit; `nocturnal` moves into the rolled set ranked first; the rolled set re-shared as `nocturnal` 34, `slippery` 28, `perceptive` 22, `mind-sealed` 16; no entry cut and the pool sits at five; expected count 2.00 unchanged.
 - 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
+- 2026-09-10, trait re-run: `lore.appearance` and the five short fields are now ratified and stand as source on the same footing as the teaser, the art, and the planet record. `solitary` restored to the rolled set at 26 on the ratified `company` field, "It goes with its swarm and nothing else."; `stealthy` restored to the rolled set at 22 on new, species-specific evidence from the ratified `behavior` field, "It keeps its own body inside the swarm so nothing can tell which shape matters." (distinct from the planet-wide sentence it was cut on in 2026-09-02); `mind-sealed` cut (was 16) to keep the pool at the six-entry cap; `nocturnal`, `slippery`, and `perceptive` re-shared to 30, 12, and 10 so the rolled set still sums to 100. Expected count unchanged at 2.00.

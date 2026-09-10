@@ -164,11 +164,11 @@
   "traits": {
     "pool": {
       "hardened": 100,
-      "slippery": 30,
-      "luminous": 25,
-      "volatile": 20,
-      "nocturnal": 15,
-      "solitary": 10
+      "solitary": 30,
+      "luminous": 30,
+      "slippery": 20,
+      "volatile": 15,
+      "nocturnal": 5
     }
   },
   "instruments": [

@@ -160,9 +160,10 @@
   "traits": {
     "pool": {
       "ramming": 100,
-      "slippery": 45,
-      "resistant": 30,
-      "perceptive": 25
+      "pack-bonded": 35,
+      "slippery": 30,
+      "resistant": 20,
+      "perceptive": 15
     }
   },
   "instruments": [

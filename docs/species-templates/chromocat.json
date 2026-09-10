@@ -164,10 +164,11 @@
   "traits": {
     "pool": {
       "luminous": 100,
-      "slippery": 45,
-      "resistant": 30,
-      "perceptive": 15,
-      "pack-bonded": 10
+      "slippery": 38,
+      "resistant": 26,
+      "perceptive": 13,
+      "solitary": 15,
+      "pack-bonded": 8
     }
   },
   "instruments": [

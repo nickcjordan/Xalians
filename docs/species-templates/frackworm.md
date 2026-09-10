@@ -129,18 +129,33 @@ The legacy `statRatings` are used only as a relative gauge: health high, standar
 
 ### Trait pool
 
-Expected trait count: the percents sum to 357, and the exclusion pair is counted as the higher partner plus the lower times one minus the higher, so 85 + 75 + 60 + 50 + 30 + 25 + (20 x 0.50) + 12 = 347, which is an expected 3.47 traits per individual. The first version of this pool came out at 3.93 and the script warned it; I answered the warning by cutting `protective` outright and easing five percents, rather than by leaving a row I could not defend. See Script denials.
+Pool shape re-run of 2026-09-10 (see Trait re-run below for what changed since ratification and why). This section describes the current pool, which is what the record carries: one required trait at 100, and a rolled set of five entries whose shares sum to exactly 100, six entries in all, the cap. Expected count with the exclusion pair (`solitary` rolled first, `pack-bonded` only when `solitary` does not land): 1 + 30/100 (anchored) + 25/100 (ramming) + 20/100 (hardened) + [15 + 10 x (1 - 0.15)]/100 (solitary/pack-bonded) = 1 + 0.30 + 0.25 + 0.20 + 0.235 = 2.985, roughly 3.0 traits per individual.
 
-- `anchored: 85` (species): to force a slurry into rock at pressure the body must brace and hold against the reaction, "forces its slurry into the seams at pressure". I stopped short of 100 because the body is not shown as immovable, only as bracing; the registry reserves 100 for a trait the body demands outright, and a worm that can be dragged out of a tunnel is a plausible individual.
-- `resistant: 75` (planet): Endessa's hazards are "thermal load", "desiccation", "tunnel collapse", and the Generator's own output priorities for the world are "water retention", "particulate locomotion", "thermal shielding". This is an environmental adaptation, which the rules permit a planet-wide sentence to justify. It is not at 100 because the species description does not itself name any tolerance.
-- `ramming: 60` (species): a colossal body that drives head first through glass particulate is a living ram, "It bores down through the glass of the dead sea floor". Well short of 100, because the registry ties ramming to blows landing with movement behind them and this body is slow, with a sprint band topping at 25.
-- `solitary: 50` (species): a Frackworm opens a well by itself, and the contrast the description draws is against a crew, "a crew of Drilltails took a season to reach". One worm replaces a crew.
-- `pack-bonded: 20` (species): the exclusion partner, kept in the pool because the Barons "fielded them by the dozen", so worms did work alongside worms. Solitary is the higher percent and is rolled first, so the two are never both taken, and neither is at 100.
-- `perceptive: 30` (species): it locates a seam in substrate it cannot see, "forces its slurry into the seams". This rests on the species sentence, not on Endessa's fauna observations; a planet-wide statement would not be allowed to carry a behavior trait.
-- `menacing: 25` (species): a colossal worm surfacing in a tunnel erodes courage by scale alone, "A colossal segmented worm". Kept modest because the description frames the species as industrial equipment rather than as a terror.
-- `toxic: 12` (species): the slurry it drives at pressure is abrasive glass particulate, "the glass of the dead sea floor", which debilitates what it is driven into. Low because nothing in the description shows it used against a creature.
+#### Required
 
-Traits the body could plausibly carry that I left out, with reasons: `protective`, which I had at 12 on the thin basis that worms work beside other diggers, "the fortune-seekers who kept drilling after the Barons died", and cut when the expected count ran high, because it was the least defensible entry in the row; `armored`, because no armored covering and no `shell` key are declared, and the legacy defense gauge is only medium, so plating would be an invention; `stealthy`, because although a subsurface ambush register exists on Endessa, that is a planet-wide fauna observation and may not carry a behavior trait for this species, whose own description shows it working openly for owners; `nocturnal`, because the species lives underground where the dual-star day does not reach, so night adaptation is not what its body is for; `regenerative`, `healing`, `slippery`, `luminous`, `volatile`, `reflective`, `hypnotic`, `foresighted`, `mind-sealed`, `inspiring`, `telekinetic`, `phasing`, because nothing in either source touches them.
+| Trait | Evidence |
+|---|---|
+| `armored` | The body fact. Covering is `chitin` and the anatomy carries `shell`; species: "Overlapping chitin plates ringed segment by segment" (appearance) and species: "a ringed, drill-like head" over a body the description calls colossal and segmented. A chitin-covered, shelled body carries the trait on every individual. |
+
+#### Rolled (shares sum to 100)
+
+| Trait | Share | Evidence |
+|---|---|---|
+| `anchored` | 30 | To force a slurry into rock at pressure the body must brace and hold against the reaction, species: "forces its slurry into the seams at pressure", and the ratified `behavior` field restates the same act: "sets its head against a seam, and forces its pressurized slurry in until the rock fractures". Short of 100 because the body is not shown as immovable, only as bracing. |
+| `ramming` | 25 | A colossal body that drives head first through glass particulate is a living ram, species: "It bores down through the glass of the dead sea floor". Well short of 100, because the registry ties ramming to blows landing with movement behind them and this body is slow, with a sprint band topping at 25. |
+| `hardened` | 20 | Endessa's hazards are "thermal load", "desiccation", "tunnel collapse", and the Generator's own output priorities for the world are "water retention", "particulate locomotion", "thermal shielding". This is an environmental adaptation, which the rules permit a planet-wide sentence to justify. |
+| `solitary` | 15 | The ratified `company` field states it directly: "One worm opens a well by itself." This clears the evidence bar a pre-lore-fields pass could not: it is a species-level statement about the individual's own capacity, not an argument from absence. |
+| `pack-bonded` | 10 | The exclusion partner, restored by the same `company` field's second sentence: "The Barons fielded them by the dozen." Kept below `solitary`, since the field's own emphasis is that one worm suffices alone and the fielding-by-the-dozen is an owner's practice rather than a natural grouping instinct. |
+
+Traits the body could plausibly carry that I left out, with reasons: `toxic`, considered from "the glass of the dead sea floor" as an abrasive agent, but none of the five ratified fields, including `feeding` ("It takes its food from the sand and whatever is in it as it bores"), describes the slurry used against a creature rather than against rock; `armored`, beyond the one required entry, is already carried at 100 and not doubled; `stealthy`, because the ratified `habitat` field ("It does not come to the surface") is a placement fact, not a concealment behavior, and Endessa's subsurface ambush register remains a planet-wide fauna observation that cannot carry a behavior trait for this species; `nocturnal`, because a body that never reaches the surface has no day or night to adapt to; `menacing`, `perceptive`, `regenerative`, `healing`, `slippery`, `luminous`, `volatile`, `reflective`, `hypnotic`, `foresighted`, `mind-sealed`, `inspiring`, `telekinetic`, `phasing`, because nothing in the teaser, the art, the planet record, or the five ratified fields touches them.
+
+#### Trait re-run (2026-09-10)
+
+Every ratified species field is now source text on the same footing as the teaser, the art, and the planet record (docs/species-templates/lore-status.json confirms `appearance` and `fields` both ratified for Frackworm). The pool this walkthrough had described before this pass (`anchored` 85, `resistant` 75, `ramming` 60, `solitary` 50, `pack-bonded` 20, `perceptive` 30, `menacing` 25, `toxic` 12) was already stale: the 2026-09-09 ratification amendment (see Orchestrator amendments) dropped `solitary`, `pack-bonded`, `perceptive`, `menacing`, `toxic`, and `resistant`, easing `anchored` to 40 and `ramming` to 30 and adding `hardened` at 30, landing the record at `armored` 100, `anchored` 40, `ramming` 30, `hardened` 30. That ratified pool is the starting point for this re-run, and this section now replaces the stale table above it with the current one.
+
+Re-checked all five ratified fields against that ratified starting pool. `origin`, `habitat`, and `feeding` add nothing beyond what the teaser and planet record already carried for `anchored`, `ramming`, and `hardened`. `behavior` restates the boring-and-bracing act already captured by `anchored`. `company` is the one field with new information: "One worm opens a well by itself. The Barons fielded them by the dozen." states both halves of the exclusion pair outright, in the creature's own terms rather than a planet-wide or ownership-only reading (the "by itself" clause is about the worm's own sufficiency, not merely who owns it).
+
+Change: restored `solitary` at 15 and `pack-bonded` at 10 (both previously cut at ratification for lacking a ratified field; the company field now supplies exactly what was missing), and eased `anchored` (40 to 30) and `ramming` (30 to 25) and `hardened` (30 to 20) to keep the rolled percents summing to exactly 100 within the six-entry cap. `perceptive`, `menacing`, and `toxic` stay cut: no ratified field adds a sentence to any of the three that the original cut did not already lack (the closest, `feeding`, describes eating sand and whatever is in it, not locating a hidden seam or presenting a threat or delivering an agent).
 
 ### Signature ability
 
@@ -185,17 +200,19 @@ Friction to report to Nick, under operating rule 7. One rule strained on this sp
 
 ## Validator output
 
-Final run, from the worktree root:
+Final run after the 2026-09-10 trait re-run, from the worktree root:
 
 ```
-$ node docs/species-templates/tools/validate-template.js frackworm --note "..."
+$ node docs/species-templates/tools/validate-template.js frackworm
+WARN temperature.planet             validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable
 WARN conduits.source                conduit vents for sand: the validator agent must confirm the sentence or art showing the element leaving through this part
+WARN enc.definition.elementkey      encyclopedia definition uses element key word(s) as plain words: rock (allowed only as ordinary English, never as a type label)
 
-0 FAIL, 1 WARN (structurally clean; every WARN must be answered in the walkthrough)
-logged to docs/species-templates/validation-log/frackworm.jsonl
+0 FAIL, 3 WARN (structurally clean; every WARN must be answered in the walkthrough)
+logged to docs\species-templates\validation-log\frackworm.jsonl
 ```
 
-The single remaining WARN is the by-design conduit confirmation, answered under Instruments and conduits and again in Script denials. Run 1 raised four WARNs and no FAIL; three of the four were fixed, and the fourth is this one.
+None of the three WARNs concerns the trait pool: the conduit confirmation is answered under Instruments and conduits and again in Script denials; the encyclopedia element-key note and the temperature-planet fallback are pre-existing and unrelated to traits. The trait checks `traits.pool.required`, `traits.pool.rolledSum` and `traits.pool.size` are all silent, confirming the new six-entry pool (one required at 100, five rolled summing to exactly 100 with the `solitary`/`pack-bonded` exclusion pair never both at 100) is structurally clean.
 
 ## Orchestrator amendments
 

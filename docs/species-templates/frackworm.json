@@ -163,9 +163,11 @@
   "traits": {
     "pool": {
       "armored": 100,
-      "anchored": 40,
-      "ramming": 30,
-      "hardened": 30
+      "anchored": 30,
+      "ramming": 25,
+      "hardened": 20,
+      "solitary": 15,
+      "pack-bonded": 10
     }
   },
   "instruments": [

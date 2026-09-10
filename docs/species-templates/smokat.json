@@ -161,10 +161,10 @@
     "pool": {
       "phasing": 100,
       "stealthy": 100,
-      "slippery": 40,
-      "nocturnal": 25,
-      "perceptive": 20,
-      "resistant": 15
+      "slippery": 35,
+      "solitary": 30,
+      "nocturnal": 20,
+      "perceptive": 15
     }
   },
   "instruments": [

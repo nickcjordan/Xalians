@@ -112,38 +112,46 @@ Primary `plant` from the species `type` field, stored at affinity 100. On-graph 
 
 ## Trait pool
 
-Reshaped on 2026-09-08 under Nick's pool shape: one required trait at 100, four rolled entries whose percents sum to exactly 100, and five entries in all. The expected count falls from 4.80 to 2.00, and an individual lands no rolled trait at all 30.9 percent of the time. No exclusion pair is listed, so no adjustment applies.
+Re-run of 2026-09-10: the pool is re-derived from scratch under the same 2026-09-08 pool shape, now with `lore.appearance` and the five ratified short fields on equal footing with the teaser, the art, and the planet record as sources (procedure step 9). Two entries are required at 100, four rolled entries share percents summing to exactly 100, and six entries in all, the cap. The expected count rises from 2.00 to 3.00 because the ratified `company` field restores `pack-bonded`, which had been cut entirely for want of a sentence.
 
 Required
 
 | Trait | Evidence |
 |---|---|
-| `anchored` | The required slot is the hardest call in this record, because no body field forces a trait here and no registry key names the act the description is built around, which is felling. The description leads with mass and power, the art shows four columnar legs under a barrel body, and the working act is a blade as long as the animal swung in slow arcs, which only a body that cannot be shifted can deliver. Evidence (species): "With a large blade at the end of its trunk, this simple yet powerful creature is thought to have been designed to clear the thick brush of Floria." The registry key is a body that cannot be moved against its will, and that is the fact the description states about this one. Promoted from a rolled 55 rather than added, and the mass tilt raises it further at generation. |
+| `anchored` | No body field forces a trait here and no registry key names the act the description is built around, which is felling. The description leads with mass and power, the art shows four columnar legs under a barrel body, and the working act is a blade as long as the animal swung in slow arcs, which only a body that cannot be shifted can deliver. Evidence (species): "With a large blade at the end of its trunk, this simple yet powerful creature is thought to have been designed to clear the thick brush of Floria." `behavior` reinforces it: "It sets its feet, reads the ground, and fells standing growth in long low arcs of the blade on its trunk, then holds the lane it has cut." The registry key is a body that cannot be moved against its will, and that is the fact both sources state about this one. |
+| `pack-bonded` | The ratified `company` field states the fact without qualifier: `company`: "It moves in herds through the underforest." This is exactly the sentence-level evidence the 2026-09-07 evidence bar found missing when it cut this trait for 'argued from absence.' No planet-wide fact is needed; the field is the species' own. `solitary` is not in the pool, so the exclusion rule is not engaged. |
 
 Rolled (shares sum to 100)
 
 | Trait | Share | Evidence |
 |---|---|---|
 | `resistant` | 35 | Strongest of the rolled set: the Floria hazard list carries toxic fungal blooms, and the planet history states the same fact as massive infestations of toxic fungi. The hazard covers this species' form directly, since the record puts the animal in the understory full time. Planet-wide rather than the point of the creature, so under the pool shape it rolls rather than being required. |
-| `regenerative` | 30 | The Floria fauna observations record a strategy of growth, entanglement and regrowth in place of engagement, and the output priorities list regenerative tissue among the world's three. The observation is what carries it, since an output priority alone never brings a trait into a pool. Ranked below `resistant` because the observation is written about the world's rooted forms and this animal only partly shares that form. |
+| `territorial` | 25 | Raised from 15. The Floria fauna observations still name a world-wide territorial strategy, but the species now has its own line for the same behavior: `behavior`: "then holds the lane it has cut." Holding a cleared lane against re-growth or intrusion is the registry's own definition of the trait, so the share is raised to reflect a species-level source rather than only a planet-wide one. |
+| `regenerative` | 20 | Lowered from 30 to make room for `territorial`'s raise while holding the pool at exactly 100. The Floria fauna observations record a strategy of growth, entanglement and regrowth in place of engagement, and the output priorities list regenerative tissue among the world's three; the observation is written about the world's rooted forms and this animal only partly shares that form, which is why it remains the weaker of the two planet-wide entries. |
 | `perceptive` | 20 | Record fields only: `physiology.senses.special` carries `tremorsense`, which is evidence for this trait and never makes it required, because a trait must not restate a field the record already carries. The graded bands add nothing, since sight, hearing and smell all top out at 70 or below. |
-| `territorial` | 15 | Weakest of the set: the Floria fauna observations name a territorial strategy, but they describe the world's plant-side habit of regrowing across an intruder rather than anything this animal is described doing, and its own description has it opening lanes rather than denying passage. Kept as a low roll rather than cut, because the observation is stated of the population with no quantifier. |
 
+Traits considered and left out, with reasons: `armored` (the smooth outline and the `hide` call state there is no armored aspect); `toxic` and `volatile` (the toxic fungi are the planet's, not this body's, and no source, including the new `feeding` field, gives it an agent or a reaction); `stealthy` (a 375 kg body with an overhead blade cannot move unseen, and the registry tilts it down with mass); `grappling` (the blade cuts and the trunk carries it; nothing in `behavior` or `feeding` shows the trunk holding a caught target rather than felling growth); `foresighted`, `mind-sealed`, `hypnotic`, `telekinetic`, `luminous`, `reflective`, `phasing`, `slippery`, `inspiring`, `nocturnal` (no source in any field, old or new, and Floria is not a dark world; the canopy shades but the history never calls it a night world).
 
-Traits considered and left out, with reasons: `armored` (the smooth outline and the `hide` call state there is no armored aspect); `toxic` and `volatile` (the toxic fungi are the planet's, not this body's, and no source gives it an agent or a reaction); `stealthy` (a 375 kg body with an overhead blade cannot move unseen, and the registry tilts it down with mass); `foresighted`, `mind-sealed`, `hypnotic`, `telekinetic`, `luminous`, `reflective`, `phasing`, `slippery`, `inspiring`, `nocturnal` (no source, and Floria is not a dark world; the canopy shades but the history never calls it a night world).
+#### Trait re-run (2026-09-10)
 
-#### Cut by the evidence bar (2026-09-07)
+- `pack-bonded`: restored from cut to required at 100. Reason: the ratified `company` field, "It moves in herds through the underforest," is exactly the sentence-level, species-own evidence the 2026-09-07 evidence bar found lacking (see the cut table below, 'argued from absence'). This is the second required trait, still within the "two normally" guideline, so no special-case justification is needed.
+- `territorial`: raised from a rolled 15 to a rolled 25 on the new `behavior` field, "then holds the lane it has cut," which states the species' own ground-holding act rather than only the planet-wide fauna observation.
+- `regenerative`: lowered from a rolled 30 to a rolled 20 to keep the rolled set at exactly 100 after `territorial`'s raise; its own evidence (the output priority and the world's-forms fauna observation) is unchanged and remains the weaker planet-wide entry.
+- `resistant` and `perceptive`: unchanged at 35 and 20; no new field bears on either.
+- `grappling`: considered on the trunk-and-blade anatomy but not added; see Traits considered and left out.
 
-| Trait | Former percent | Evidence class that failed |
-|---|---|---|
-| `solitary` | 60 | argued from absence; one body in the art is not a sentence about living alone |
-| `ramming` | 45 | the quoted fragment does not describe the act; the sources show the blade cutting, not the body colliding |
-| `protective` | 30 | a planet-wide sentence stretched to a behavior, then rested on function plausibility |
-| `pack-bonded` | 20 | argued from absence; no sentence (its exclusion partner solitary is cut as well) |
-| `healing` | 10 | the plant element's mend register alone; no source sentence |
-| `menacing` | 25 | pool full, weaker evidence: a broad gape in the art with no source sentence behind it |
+**Cut by the evidence bar (2026-09-07), now reviewed against the five new fields:**
 
-Pool expected count 3.10 to 1.20 in iteration one, then 1.20 to 1.45 in iteration two once `regenerative` was restored. No surviving percent was changed in either pass. `resistant` was re-checked under the ruling that heat, cold, or desiccation alone never justifies it and survives: the planet-wide fact behind it is toxic fungal infestation, which the Floria hazard list repeats as toxic fungal blooms, and that is contamination rather than temperature. Iteration three on 2026-09-08 moved it from 1.45 to 4.80: `resistant` and `regenerative` raised to 100 on the Floria hazard list and output priorities, `territorial` added at 100 on the fauna observation, `perceptive` added at 100 on the tremorsense entry. Nothing was cut, and no surviving rolled percent moved. `hardened` was considered and left at 0: the Floria hazards are ecosystem response, toxic blooms and unstable root substrate, none of which is a physical extreme, and the habitable band of minus four to forty degrees demands nothing of the body. The pool shape of the same date then replaced iteration three: `anchored` was promoted from 55 to the single required trait, `resistant`, `regenerative`, `territorial` and `perceptive` became rolled entries summing to exactly 100, and `menacing` was cut for the pool ceiling. Expected count 4.80 to 2.00.
+| Trait | Former percent | Evidence class that failed | Restored? |
+|---|---|---|---|
+| `solitary` | 60 | argued from absence; one body in the art is not a sentence about living alone | No, and now contradicted: the ratified `company` field states the opposite, "It moves in herds through the underforest." |
+| `ramming` | 45 | the quoted fragment does not describe the act; the sources show the blade cutting, not the body colliding | No. `behavior` describes "long low arcs of the blade," a cutting motion, not a collision. |
+| `protective` | 30 | a planet-wide sentence stretched to a behavior, then rested on function plausibility | No. `behavior` and `feeding` describe the animal working and holding a lane for itself, never shielding another creature. |
+| `pack-bonded` | 20 | argued from absence; no sentence (its exclusion partner solitary is cut as well) | Yes, see Trait re-run above and the Required table. |
+| `healing` | 10 | the plant element's mend register alone; no source sentence | No. None of the five new fields shows the animal restoring anything but the growth it has cleared. |
+| `menacing` | 25 | pool full, weaker evidence: a broad gape in the art with no source sentence behind it | No. No new field speaks to courage or fear. |
+
+Pool expected count 3.10 to 1.20 in iteration one, then 1.20 to 1.45 in iteration two once `regenerative` was restored. No surviving percent was changed in either pass. `resistant` was re-checked under the ruling that heat, cold, or desiccation alone never justifies it and survives: the planet-wide fact behind it is toxic fungal infestation, which the Floria hazard list repeats as toxic fungal blooms, and that is contamination rather than temperature. Iteration three on 2026-09-08 moved it from 1.45 to 4.80: `resistant` and `regenerative` raised to 100 on the Floria hazard list and output priorities, `territorial` added at 100 on the fauna observation, `perceptive` added at 100 on the tremorsense entry. Nothing was cut, and no surviving rolled percent moved. `hardened` was considered and left at 0: the Floria hazards are ecosystem response, toxic blooms and unstable root substrate, none of which is a physical extreme, and the habitable band of minus four to forty degrees demands nothing of the body. The pool shape of the same date then replaced iteration three: `anchored` was promoted from 55 to the single required trait, `resistant`, `regenerative`, `territorial` and `perceptive` became rolled entries summing to exactly 100, and `menacing` was cut for the pool ceiling. Expected count 4.80 to 2.00. The 2026-09-10 re-run above restores `pack-bonded` and re-weights `territorial` and `regenerative`, bringing the expected count to 3.00.
 
 ## Instruments
 
@@ -152,6 +160,10 @@ Pool expected count 3.10 to 1.20 in iteration one, then 1.20 to 1.45 in iteratio
 - `jaws`: art: the open toothed mouth. In anatomy, and the browsing diet uses it.
 
 Three instruments, the maximum. `conduits` is omitted: neither source shows the plant element leaving the body through any part. The blade cuts as a physical edge; the description shows it clearing brush, not projecting anything. The registry is explicit that being of an element never makes a part a conduit.
+
+#### Orchestrator review of the 2026-09-10 trait re-run
+
+Final pool: `{"anchored":100,"pack-bonded":35,"resistant":25,"territorial":20,"regenerative":10,"perceptive":10}` (the agent's pool was `{"anchored":100,"pack-bonded":35,"resistant":25,"territorial":20,"regenerative":10,"perceptive":10}`). pack-bonded returned to the rolled set at the top share (was promoted to required at 100 on the company field "It moves in herds through the underforest."). Same ruling as Avilily: a company line sets the top rolled share, never a required slot. Rolled set resummed to 100.
 
 ## Signature ability
 
@@ -201,12 +213,16 @@ The description sentence calls the blade the thing at the end of the trunk, and 
 
 ## Validator output
 
-Final run, run 6, passing the note text `run 6: corrected the run tally and final-run note reference in the denials and validator sections; final submission`:
+Final run (2026-09-10 trait re-run):
 
 ```
-0 FAIL, 0 WARN (structurally clean; every WARN must be answered in the walkthrough)
+WARN temperature.planet             validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable
+
+0 FAIL, 1 WARN (structurally clean; every WARN must be answered in the walkthrough)
 logged to docs\species-templates\validation-log\kosanos.jsonl
 ```
+
+`temperature.planet` is out of scope for this trait-pool re-run: `planetRecords.json` in this worktree carries no `environment.habitableBandC` field, which is a schema question unrelated to the trait pool, so it was not touched.
 
 ## Orchestrator amendments
 
@@ -216,3 +232,4 @@ logged to docs\species-templates\validation-log\kosanos.jsonl
 - 2026-09-08, trait evidence bar iteration three (Nick): added territorial, perceptive; raised resistant, regenerative; cut none; expected count 1.45 to 4.80.
 - 2026-09-08, pool shape (Nick): required anchored; rolled resistant 35, regenerative 30, perceptive 20, territorial 15; expected count 4.80 to 2.00.
 - 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
+- 2026-09-10, trait re-run: `lore.appearance` and the five ratified short fields admitted as pool sources on the same footing as the teaser, the art, and the planet record. `pack-bonded` restored from cut to required at 100 on the ratified `company` field, "It moves in herds through the underforest," which is exactly the species-own sentence the 2026-09-07 evidence bar found missing. `territorial` raised 15 to 25 and `regenerative` lowered 30 to 20 on the new `behavior` field, "then holds the lane it has cut," keeping the rolled set at exactly 100. `resistant` and `perceptive` unchanged. `grappling` considered on the trunk-and-blade anatomy and left out for want of a holding-not-cutting source. Pool now two required plus four rolled, six entries, the cap; expected count 2.00 to 3.00.

@@ -107,31 +107,44 @@ Nothing agile, clever, social or predatory is listed, because no source shows an
 - `charisma [5, 20]`: mute, faceless apart from one eye; no source shows presence.
 - `resilience [75, 95]`: species, "protected by a thick rocky exoskeleton" and "allowing for great defense." The highest band in the set, which is the whole point of the species.
 
-## Trait pool (required 2, rolled sum 100, expected count 3.00)
+## Trait pool (required 2, rolled sum 100, expected count 3.00, pool size 6 of 6)
 
-Iteration four applies Nick's pool shape of 2026-09-08 and ends the high-pool line call raised in iteration three. Two entries are required and four are rolled, the rolled shares sum to exactly 100, and the pool holds six entries, the maximum. Expected count falls from 6.45 to 3.00. The chance an individual lands none of the rolled entries is 0.60 times 0.75 times 0.80 times 0.85, which is 0.306.
+Re-run of 2026-09-10 (see the Trait re-run subsection below). The lore split of 2026-09-09/10 ratified `lore.appearance` and the five short fields as sources on the same footing as the teaser, the art and the planet record (`docs/species-templates/lore-status.json`: bioflim `appearance: ratified`, `fields: ratified`). This pass re-reads the pool against those fields in addition to the sources iteration four already used. Two entries are required and four are rolled, the rolled shares sum to exactly 100, and the pool holds six entries, the maximum allowed. Expected count is 3.00. The chance an individual lands none of the rolled entries is 0.60 times 0.75 times 0.80 times 0.85, which is 0.306.
 
 ### Required
 
 | Trait | Evidence |
 |---|---|
-| `armored` | Body fact stated by the covering: the species is protected by a thick rocky exoskeleton, and the registry states that a shelled or plated body means armored in every individual. |
-| `regenerative` | The behavior both the description and the signature are built around: the slime continually regenerates an outer shell, and the signature ability, Everforming Carapace, is that act, the slime flooding over broken plates and hardening into new shell. A shell that is always being remade is what this creature does. |
+| `armored` | Body fact stated by the covering: the species is protected by a thick rocky exoskeleton, and the registry states that a shelled or plated body means armored in every individual. Reinforced by `appearance`: "Thick rocky exoskeleton over the upper mass, continually regrown". |
+| `regenerative` | The behavior both the description and the signature are built around: the slime continually regenerates an outer shell, and the signature ability, Everforming Carapace, is that act, the slime flooding over broken plates and hardening into new shell. A shell that is always being remade is what this creature does. Reinforced by the ratified `behavior` field: "It moves slowly, flowing through the swamps rather than over them, and its slime continually regrows the rocky shell around it." |
 
 ### Rolled (shares sum to 100)
 
 | Trait | Share | Evidence |
 |---|---|---|
-| `toxic` | 40 | A species sentence about the body itself, an acid slime organism, backed by Drainov `report.fauna.observations` naming synthesized solvent and venom secretion of the population with no quantifier. Strongest of the rolled entries because both a species line and a fauna line cover it, and it stays rolled rather than required because the stub frames the acid as what the creature is made of rather than as an agent it applies. |
+| `toxic` | 40 | A species sentence about the body itself, an acid slime organism, backed by Drainov `report.fauna.observations` naming synthesized solvent and venom secretion of the population with no quantifier. Strongest of the rolled entries because both a species line and a fauna line cover it, and it stays rolled rather than required because the stub frames the acid as what the creature is made of rather than as an agent it applies. The ratified `feeding` field, "It feeds on whatever it settles over.", restates rather than strengthens this reading (settling to feed is passive whole-body contact, not a targeted weapon application), so the share is unchanged. |
 | `resistant` | 25 | Class 3. Drainov `report.hazards` lists atmosphere, hydrosphere, precipitation and substrate, and `report.fauna.observations` opens with full-spectrum toxin immunity as universal, which is contamination under the narrowed definition. A planet-wide adaptation is required only where the species' own description makes it the point, and this one is about the shell and the acid, so the tolerance rolls. |
 | `volatile` | 20 | Class 3, a fauna observation that covers this species' form exactly: reactive discharge on structural breach, and this body is a rocky casing over an acid interior, so breaching the casing releases the acid. No species sentence shows a reaction to being struck, which is why the planet line has to carry it. |
-| `perceptive` | 15 | Class 4, a ratified field of the record. `physiology.senses.special` carries `tremorsense`, and the graded sight and hearing bands of 20 to 40 and 10 to 30 are low precisely because that sense does the work. An entry in the senses list is evidence for the trait but never makes it required, since the record already carries the field. |
+| `solitary` | 15 | Restored on this pass. The ratified `company` field states plainly: "It lives alone." This is exactly the sourced statement the 2026-09-07 cut said was missing (see the Trait re-run subsection). A company field states the living arrangement, not the mechanical bonus every solitary individual gets, so the share stays modest rather than jumping to a body-demanded 100; 15 is a deliberate step up from the pre-restoration guess of 10, reflecting that the evidence is now a direct ratified sentence rather than an argument from the art's silence. |
+
+Traits considered and deliberately left out, with reasons: `healing` (no source shows it restoring others), `reflective`, `menacing`, `hypnotic`, `foresighted`, `mind-sealed`, `stealthy` ("It moves slowly, flowing through the swamps rather than over them" is the opposite of moving unseen and unheard, and a two-meter dripping mass has nothing to hide behind), `nocturnal` (nothing in the Drainov history or the ratified `habitat` field makes it a night world), `inspiring`, `luminous`, `telekinetic`, `phasing`, `ramming`, `pack-bonded` (excluded by `solitary`, and the ratified `company` field, "It lives alone.", is direct evidence against it), `protective` (the ratified `company` field reinforces that it lives and works alone rather than shielding others), `perceptive` (see the Trait re-run subsection: dropped this pass to make room for `solitary` under the six-entry cap), `anchored` (see the Cut by the pool shape table below; the ratified `behavior` field, "It moves slowly, flowing through the swamps", actively argues against it by describing ongoing movement rather than a fixed position).
+
+#### Trait re-run (2026-09-10)
+
+Every change from the iteration-four pool, with the reason:
+
+- Added `solitary` at 15. The ratified `company` field, "It lives alone.", now exists as a direct source and answers the exact evidence gap the 2026-09-07 cut named, argued from absence with no source showing grouping. Per the migration skill's rule that a ratified `company` field is source for `solitary` or `pack-bonded`, this is no longer an argument from silence.
+- Removed `perceptive` (was 15). The pool was already at the six-entry cap after iteration four, so adding `solitary` required dropping the weakest current entry. `perceptive` rested on the weakest evidence chain in the pool: an authored `senses.special: tremorsense` (itself inferred from the art's flat ground contact, not a sentence, per Authored fields) feeding a record-field justification. Nothing in the newly ratified `appearance` or fields adds a sentence that would strengthen it (the single-eye entry in `appearance` supports the `sight` band, already counted, not a new sense). `solitary`'s new evidence, a direct ratified sentence, outranks it, so it is the entry cut to hold the cap.
+- `toxic`, `resistant`, `volatile`, `armored`, `regenerative` unchanged in share; the ratified fields restate or reinforce their existing evidence (see the Required and Rolled tables above) without adding a new fact that would move a percent.
+- Expected count is unchanged at 3.00 (2 required + rolled sum 100 / 100), because the swap traded one 15-share entry for another.
+
+Cuts restored this pass: `solitary`, from the table below, on the strength of the ratified `company` field. No other cut trait in that table is restored: `protective` and `slippery` still have no supporting sentence anywhere in the record, ratified fields included.
 
 ### Cut by the pool shape (2026-09-08, iteration four)
 
 | Trait | Former percent | Reason |
 |---|---|---|
-| `anchored` | 45 | Pool full, weaker evidence. Its only support is an art reading, a heavy flat-based mass spread wide on the ground with no bearing limbs, with no species sentence and no planet line behind it, and the walkthrough already conceded that a formless body can be shoved off its base. The four kept rolled entries each rest on a species sentence, a planet report line, or a ratified field. |
+| `anchored` | 45 | Pool full, weaker evidence. Its only support is an art reading, a heavy flat-based mass spread wide on the ground with no bearing limbs, with no species sentence and no planet line behind it, and the walkthrough already conceded that a formless body can be shoved off its base. The four kept rolled entries each rest on a species sentence, a planet report line, or a ratified field. Re-checked on the 2026-09-10 re-run: the ratified `behavior` field describes ongoing flowing movement, which argues against rather than for it, so it stays cut. |
 
 #### Cut by the evidence bar (2026-09-07, iterations one and two)
 
@@ -141,7 +154,7 @@ Iteration four applies Nick's pool shape of 2026-09-08 and ends the high-pool li
 | `slippery` | 12 | body-type plausibility from "an acid slime organism"; the walkthrough concedes the rigid casing works against escape |
 | `solitary` | 10 | argued from absence (the art shows one body and no source shows grouping) |
 
-Traits considered and deliberately left out, with reasons: `healing` (no source shows it restoring others), `reflective`, `menacing`, `hypnotic`, `foresighted`, `mind-sealed`, `stealthy` (a two-meter dripping mass is the opposite), `nocturnal` (nothing in the Drainov history makes it a night world), `inspiring`, `luminous`, `telekinetic`, `phasing`, `ramming`, `pack-bonded`.
+Restored 2026-09-10: `solitary`. The ratified `company` field, "It lives alone.", is the sourced sentence this cut said was missing; see the Trait re-run subsection above. `protective` and `slippery` are not restored: no ratified field, appearance entry, or any other source addresses shielding others or evading a grip, so both cuts stand.
 
 ## Signature ability
 
@@ -183,15 +196,17 @@ Combos checked, instrument x allowed action x medium, over the primary `chemical
 
 ## Validator WARN answers
 
-- `traits.expected` (expected trait count 4.52 above 3.5): intended. Four of the eight entries are at or near certainty because this species is defined by durability, and three of those four are demanded by the body or the environment rather than chosen. A pool that expressed the same creature with fewer expected traits would have to drop `resistant` or `toxic`, both of which the sources state directly. Flagged under operating rule 7 as a place where the comfort threshold and a maximally defensive species pull against each other; the smallest fix would be for the threshold to scale with how many pool entries are body-demanded or environment-demanded rather than being a flat 3.5.
+- `temperature.planet` (validated against the legacy `planets.json` extremes only; `planetRecords.json` habitable band unavailable): a script infrastructure note, not a trait-pool question; the temperature band itself is untouched by this re-run and was already re-banded against `planetRecords.json` in the 2026-09-02 planet-rebuild amendment below.
 - `instruments.predicate.source` for `secretion`: the sentence is species, "Its slime can continually regenerate an outer shell, allowing for great defense." The slime is an emitted substance the body puts out and reuses, which is the channel's predicate.
 - `conduits.source` for `secretion` as a `chemical` conduit: the sentence is species, "An acid slime organism protected by a thick rocky exoskeleton." The emitted substance is itself the acid, so the element leaves the body through that part by definition rather than by inference.
+- The 2026-09-08 pool-shape run's WARN on expected trait count (then 4.52, above the 3.5 guideline) no longer applies: the current pool's expected count is 3.00, under the guideline, because the pool-shape iteration already brought it down and this re-run's `solitary`-for-`perceptive` swap held it there.
 
 ## Script denials
 
 Recorded honestly, every FAIL the script raised on any run of this key.
 
-None. The first and only validation run returned 0 FAIL and 3 WARN. No value proposed in this migration was rejected by the script, so nothing was changed under denial and there is no case where a script rule forced a worse outcome. The one rule that did constrain a judgment against the sources is the covering-versus-composition rule, which is not a script denial and is raised as the open question below and under operating rule 7 in the WARN answers above.
+- Run 2026-09-10 (trait re-run), code `md.quote`. The first draft of the Trait re-run subsection quoted the earlier walkthrough's own cut-reason wording, "argued from absence" and "no source shows grouping", in double quotes. The script correctly failed both: neither phrase is species or planet source text, it is this walkthrough's own earlier phrasing, so double quotes were the wrong convention. Fixed by rewriting the sentence in single-quote convention (my own words, not a quotation) rather than working around the check. The denial was legitimate.
+- Earlier runs (through iteration four): none. The original migration and the two evidence-bar iterations plus the pool-shape iteration returned 0 FAIL each time. No value proposed in those passes was rejected by the script. The one rule that did constrain a judgment against the sources is the covering-versus-composition rule, which is not a script denial and is raised as the open question below and under operating rule 7 in the WARN answers above.
 
 ## Open questions for Nick
 
@@ -199,13 +214,14 @@ The description stub calls the exoskeleton `rocky`, and the registry forbids car
 
 ## Validator output
 
-```
-WARN traits.expected                expected trait count 4.52 is above 3.5; confirm the species is meant to carry that many
-WARN instruments.predicate.source   channel "secretion" has a source-text predicate (an emitted substance); the validator agent must confirm the quoted sentence
-WARN conduits.source                conduit secretion for chemical: the validator agent must confirm the sentence or art showing the element leaving through this part
+Final run (trait re-run, 2026-09-10):
 
-0 FAIL, 3 WARN (structurally clean; every WARN must be answered in the walkthrough)
-logged to docs\species-templatesalidation-logioflim.jsonl
+```
+WARN temperature.planet             validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable
+WARN instruments.predicate.source   channel "secretion" has a source-text predicate (an emitted substance); the validator agent must confirm the quoted sentence
+
+0 FAIL, 2 WARN (structurally clean; every WARN must be answered in the walkthrough)
+logged to docs\species-templates\validation-log\bioflim.jsonl
 ```
 
 ## Orchestrator amendments

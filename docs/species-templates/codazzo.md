@@ -107,7 +107,7 @@ Legacy `statRatings` used only as a relative gauge: `specialAttackRating` and `r
 
 ### Trait pool (required 1, rolled sum 100, expected count 2.00)
 
-Iteration four applies Nick's pool shape of 2026-09-08. One entry is required and four are rolled, the rolled shares sum to exactly 100, and the pool holds five entries. Expected count falls from 4.55 to 2.00. The chance an individual lands none of the rolled entries is 0.60 times 0.70 times 0.80 times 0.90, which is 0.302.
+Re-run 2026-09-10: the ratified `lore.appearance` list and the five ratified short fields are now source text on the same footing as the teaser, the art and the planet record (Nick, 2026-09-10). The re-derivation keeps the pool shape (one required trait, the rest rolled 5 to 60 summing to 100, at most six entries) and re-reads every trait against the fuller source set. One entry is required and five are rolled, the rolled shares sum to exactly 100, and the pool holds six entries, the cap. Expected count stays 2.00 (a required trait at 100 plus a rolled set that always sums to 100 is exactly one guaranteed trait plus one expected roll). The chance an individual lands none of the rolled entries is 0.65 times 0.70 times 0.80 times 0.90 times 0.95, which is 0.233.
 
 #### Required
 
@@ -119,25 +119,28 @@ Iteration four applies Nick's pool shape of 2026-09-08. One entry is required an
 
 | Trait | Share | Evidence |
 |---|---|---|
-| `stealthy` | 40 | A species sentence about its own behavior, digging its body underground when spooked and exposing only the tail, and the signature is built on the same act. Largest share. It is not required because the tail is deliberately left showing, which is a partial fit with concealment until it acts. |
-| `volatile` | 30 | A species sentence about its own body, a tail made of explosive barbs. Held rolled because the explosive quality is attached to the barbs it throws rather than to a body that reacts when struck, which is the registry sense of the trait, and Stonera's report offers no discharge-on-breach line to close the gap. |
-| `insulated` | 20 | Class 3, a planet-wide hazard. Stonera `report.hazards` lists static discharge and `report.terrain.features` records dust saturation with continuous crackling discharge in the lower atmosphere, and charge that passes over a body without harming it is the registry definition. Rolled and no longer required, since the species' own description never makes the charge its subject. |
-| `perceptive` | 10 | Class 4, a ratified field of the record. `physiology.senses.special` carries `tremorsense`, which fits a body that hides underground and reads what walks above it, but the senses list may never make the trait required because the record already carries the field, and the graded sight band of 30 to 50 gives it no second support. |
+| `stealthy` | 35 | A species sentence about its own behavior, digging its body underground when spooked and exposing only the tail, and the signature is built on the same act. Largest share. It is not required because the tail is deliberately left showing, which is a partial fit with concealment until it acts. |
+| `solitary` | 30 | The ratified `company` field states the fact directly: "It lives alone in its burrow." Restored on the 2026-09-10 re-run (see below); previously cut for arguing from absence, which the field now closes. Rolled rather than required because the record's defining act is the burrow-and-fire response, already carried by `regenerative`, not the living arrangement. |
+| `volatile` | 20 | A species sentence about its own body, a tail made of explosive barbs. Held rolled because the explosive quality is attached to the barbs it throws rather than to a body that reacts when struck, which is the registry sense of the trait, and Stonera's report offers no discharge-on-breach line to close the gap. |
+| `insulated` | 10 | Class 3, a planet-wide hazard. Stonera `report.hazards` lists static discharge and `report.terrain.features` records dust saturation with continuous crackling discharge in the lower atmosphere, and charge that passes over a body without harming it is the registry definition. Rolled and no longer required, since the species' own description never makes the charge its subject. |
+| `perceptive` | 5 | Class 4, a ratified field of the record. `physiology.senses.special` carries `tremorsense`, which fits a body that hides underground and reads what walks above it, but the senses list may never make the trait required because the record already carries the field, and the graded sight band of 30 to 50 gives it no second support. |
 
-#### Cut by the pool shape (2026-09-08, iteration four)
+#### Trait re-run (2026-09-10)
 
-No entry was cut this iteration. The pool held five entries before the reshape and holds five after; three entries that were universal now roll.
+- Added `solitary` at 30. New source: the ratified `company` field, "It lives alone in its burrow." This is a direct statement of the living arrangement, not an absence argument, so it clears the bar the 2026-09-07/08 passes could not reach. `pack-bonded` is not in the pool, so the exclusion pair is not doubled at 100.
+- Rebalanced the other four rolled entries to make room: `stealthy` 40 to 35, `volatile` 30 to 20, `insulated` 20 to 10, `perceptive` 10 to 5. No new evidence changed any of these four; the shares moved only to keep the rolled set summing to 100 with a sixth entry added. Ranking is unchanged (stealthy still strongest, perceptive still weakest).
+- Reviewed the other four new fields for restorable traits and found none: `origin` and `habitat` restate the burrow-and-bombardment facts already carried by `regenerative`, `stealthy` and the `burrow` capability band, nothing new; `feeding`, "It feeds on what it digs up and on what comes too near its burrow," describes ambush feeding at the burrow mouth, which is diet behavior, not ground held against intruders (the registry sense of `territorial`), so it does not restore that trait; `behavior` restates the description's spook-and-fire sequence verbatim and adds nothing past what `stealthy`, `volatile` and `regenerative` already carry.
 
-#### Cut by the evidence bar (2026-09-07 and 2026-09-08, iterations one to three)
+#### Cut by the evidence bar (2026-09-07 and 2026-09-08, iterations one to three; restorations noted 2026-09-10)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
-| `slippery` | 30 | a restatement of the kept `stealthy` sentence; no sentence shows it escaping a hold |
-| `solitary` | 25 | argued from absence: nothing in the sources shows it working or fighting in numbers |
-| `menacing` | 10 | no source sentence; the walkthrough states outright that no source calls it frightening |
-| `resistant` | 55 | cut 2026-09-08 under the narrowed definition, which confines this trait to contamination: toxins, disease, radiation, corrosion and chemically hostile air. Its whole support was Stonera's dust saturation and static discharge, and dust is not a chemical hazard while charge is now `insulated`, which was added at 100 in its place. Nothing in either source shows this body shrugging off a contaminant. |
+| `slippery` | 30 | a restatement of the kept `stealthy` sentence; no sentence shows it escaping a hold. Not restored: none of the five new fields shows it escaping a grab, pin, trap or snare. |
+| `solitary` | 25 | argued from absence: nothing in the sources shows it working or fighting in numbers. Restored 2026-09-10 at 30 (rolled): the ratified `company` field, "It lives alone in its burrow.", states the fact directly rather than by absence. |
+| `menacing` | 10 | no source sentence; the walkthrough states outright that no source calls it frightening. Not restored: none of the five new fields describes a presence that erodes courage. |
+| `resistant` | 55 | cut 2026-09-08 under the narrowed definition, which confines this trait to contamination: toxins, disease, radiation, corrosion and chemically hostile air. Its whole support was Stonera's dust saturation and static discharge, and dust is not a chemical hazard while charge is now `insulated`, which was added at 100 in its place. Nothing in either source shows this body shrugging off a contaminant. Not restored: the new fields add nothing about contamination. |
 
-- Traits considered and left out, with reasons: `armored` (no rigid covering in the art, and `hide` states the body has no armored aspect); `anchored` (a body that buries itself is not immovable, it is hidden); `toxic` (the barbs are explosive, not envenoming; no source names an agent); `ramming` (nothing shows charging); `nocturnal` (the history calls the sky grey and the world dark but never names a night cycle or night adaptation, so I decline to convert a planet-wide mood sentence into an adaptation); `pack-bonded` (excluded by the solitary reading); `foresighted` and `telekinetic` (no support at all, so not listed rather than given a token percent).
+- Traits considered and left out, with reasons: `armored` (no rigid covering in the art, and `hide` states the body has no armored aspect); `anchored` (a body that buries itself is not immovable, it is hidden; the `habitat` field, "worked from beneath," describes digging, not standing fast); `toxic` (the barbs are explosive, not envenoming; no source names an agent); `ramming` (nothing shows charging); `nocturnal` (the history calls the sky grey and the world dark but never names a night cycle or night adaptation, so I decline to convert a planet-wide mood sentence into an adaptation); `pack-bonded` (excluded by the restored `solitary` reading, and no field shows it coordinating with others); `foresighted` and `telekinetic` (no support at all, so not listed rather than given a token percent).
 
 ### Signature ability
 
@@ -194,12 +197,12 @@ No FAIL was raised on any run of the validator for this key. Two rule frictions 
 Final run, `node docs/species-templates/tools/validate-template.js codazzo`:
 
 ```
-WARN traits.expected                expected trait count 4.15 is above 3.5; confirm the species is meant to carry that many
+WARN temperature.planet             validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable
 
 0 FAIL, 1 WARN (structurally clean; every WARN must be answered in the walkthrough)
 ```
 
-Run history: run 1 was `0 FAIL, 2 WARN` (the trait-count WARN plus the Encyclopedia element-key WARN); the second WARN cleared after the Encyclopedia rewrite. No FAIL was ever raised on this key. Both WARNs are answered under the WARN answers section above.
+Run history: run 1 was `0 FAIL, 2 WARN` (the trait-count WARN plus the Encyclopedia element-key WARN); the second WARN cleared after the Encyclopedia rewrite. The 2026-09-10 trait re-run added `solitary` and rebalanced the rolled shares; expected count is unchanged at 2.00 (the required trait plus a rolled set that still sums to 100), so the trait-count WARN does not recur. The remaining WARN is about the temperature band validation path (unrelated to the trait pool) and is answered in the Orchestrator amendments entry for 2026-09-02 above, which records the temperature band `[-20, 25]` inside the habitable band `[-45, 25]`. No FAIL was ever raised on this key.
 
 ## Orchestrator amendments
 
@@ -209,3 +212,4 @@ Run history: run 1 was `0 FAIL, 2 WARN` (the trait-count WARN plus the Encyclope
 - 2026-09-08, trait evidence bar iteration three (Nick): added insulated; raised perceptive; cut resistant; expected count 3.50 to 4.55.
 - 2026-09-08, pool shape (Nick): required regenerative; rolled stealthy 40, volatile 30, insulated 20, perceptive 10; expected count 4.55 to 2.00.
 - 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
+- 2026-09-10, trait pool re-run (Nick): `lore.appearance` and the five short fields ratified for all species; restored `solitary` at 30 (rolled) on the `company` field, "It lives alone in its burrow."; rebalanced stealthy 40 to 35, volatile 30 to 20, insulated 20 to 10, perceptive 10 to 5 to keep the rolled set summing to 100 with the sixth entry; expected count unchanged at 2.00.

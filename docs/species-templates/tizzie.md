@@ -145,23 +145,35 @@ Primary `psychic` from `species.type` Psychic, stored at affinity 100. On-graph 
 
 ## 9. Trait pool
 
-Pool shape, 2026-09-08 ruling: one required trait and three rolled entries whose shares sum to 100. Iteration three had `hypnotic` and `perceptive` both at 100; only the first defines this species in its own lore, so the second drops into the rolled set.
+Pool shape, 2026-09-08 ruling, re-run 2026-09-10 against the now-ratified `lore.appearance` and five short fields. One required trait and four rolled entries whose shares sum to 100.
 
 **Required**
 
 | Trait | Evidence |
 |---|---|
-| `hypnotic` | The one act the species is built around, in its own description and in its signature ability alike. `species`: "It uses its tail to draw attention to its big, hypnotic eyes." The record's signature, Spiral of Perfect Attention, is a `gaze` snare through those same eyes, and the upgraded description makes the turning disc, the eye contact and the hold the entire working of the creature. Body-demanded as well: the spiral eyes fill half the face in the art and are on every individual. |
+| `hypnotic` | The one act the species is built around, in its own description and in its signature ability alike. `species`: "It uses its tail to draw attention to its big, hypnotic eyes." The record's signature, Spiral of Perfect Attention, is a `gaze` snare through those same eyes, and the upgraded description makes the turning disc, the eye contact and the hold the entire working of the creature. Body-demanded as well: the spiral eyes fill half the face in the art and are on every individual. The ratified `appearance` entry "Big hypnotic eyes filling half the face" and the ratified `behavior` field, "It uses its tail to draw attention to its big hypnotic eyes, and once eye contact is made it attacks from inside your mind", restate the same organ and act. |
 
 **Rolled (shares sum to 100)**
 
 | Trait | Share | Evidence |
 |---|---|---|
-| `perceptive` | 55 | Strongest of the rolled set. `physiology.senses.special` carries `psychic`, and an entry in the record's special-sense list is evidence for this trait but never enough to make it required, since a required trait must not restate a field the record already carries. The species sentence agrees, `species`: "Once eye contact is made". Demoted from 100. |
-| `healing` | 37 | Restored to the pool. The upgraded description makes the therapeutic act this creature's own rather than the Generator's: it was generated to counterbalance the psychic energies of the marooned Vallerii, and the treatment proceeds from inside the patient's mind rather than through the body. Telypso's output priorities of psychic stabilization capacity and emotional regulation function agree, though an output priority alone would not carry an entry; the species sentence is what does. `planet`: "the Generator began to treat the prisoners as patients, hoping to cure them and merge them into the mind of the rest of Telypso's psychosphere." |
-| `foresighted` | 8 | Held in the rare band the 2026-09-08 ruling sets for this trait. The Telypso Generator Environmental Report lists anticipatory-response forms among its fauna observations, and that report is the only support; the species' own description claims no foresight, so it cannot rise above the band. |
+| `perceptive` | 45 | Strongest of the rolled set. `physiology.senses.special` carries `psychic`, and an entry in the record's special-sense list is evidence for this trait but never enough to make it required, since a required trait must not restate a field the record already carries. The species sentence agrees, `species`: "Once eye contact is made", and the ratified `behavior` field restates the same eye-contact act. |
+| `healing` | 35 | The upgraded description makes the therapeutic act this creature's own rather than the Generator's: it was generated to counterbalance the psychic energies of the marooned Vallerii, and the treatment proceeds from inside the patient's mind rather than through the body. The ratified `origin` field now states this directly and for the species itself, not only the planet history's Generator-intent sentence that the 2026-09-07 pass flagged as weak: "Raised by the Telypso Generator to counterbalance the psychic energies of the deranged Vallerii marooned on the world, as treatment rather than injury." "As treatment rather than injury" is the species' own field naming the therapeutic reading over the assault reading, which resolves the open question the previous pass carried on this trait. |
+| `pack-bonded` | 15 | New on this pass. The ratified `company` field states directly that the species lives in groups of its own kind: "It lives among others of its kind in the branches." This is species-specific evidence, not a planet-wide inference, and it also settles the exclusion partner: `solitary` is contradicted by the same sentence and stays out of the pool rather than being listed at 0. |
+| `foresighted` | 5 | Held in the rare band the 2026-09-08 ruling sets for this trait. The Telypso Generator Environmental Report lists anticipatory-response forms among its fauna observations, and that report is the only support; the species' own description claims no foresight, so it cannot rise above the band. |
 
-#### Cut by the evidence bar (2026-09-07)
+#### Trait re-run (2026-09-10)
+
+Sources newly available for this pass: the ratified `lore.appearance` list and the five short lore fields (`origin`, `habitat`, `feeding`, `behavior`, `company`), none of which existed when the 2026-09-08 pool below was authored.
+
+- `pack-bonded` added at 15. The ratified `company` field, "It lives among others of its kind in the branches", is direct species-specific evidence that this species lives with its own kind, which neither the teaser nor the planet history stated. This also confirms `solitary` stays out rather than remaining an unresolved absence: the company field affirmatively rules it out.
+- `healing` raised from 37 to 35 in the JSON share (the drop is bookkeeping to make room for `pack-bonded`, not a weakening of the case): the ratified `origin` field, "as treatment rather than injury", now gives the trait direct species-level support and answers the second open question the previous pass left for Nick (whether the planet-wide Generator-intent sentence was enough on its own). It was; the field confirms the reading rather than overturning it.
+- `perceptive` lowered from 55 to 45 only to keep the rolled set summing to 100 once `pack-bonded` was added; its evidence is unchanged and now also cites the ratified `behavior` field's restatement of eye contact.
+- `foresighted` unchanged at 5.
+- `hypnotic` (required, unchanged at 100) now also cites the ratified `appearance` and `behavior` fields, which restate the same organ and act rather than adding a new fact.
+- Expected trait count: (100 + 45 + 35 + 15 + 5) / 100 = 2.00, the same total as the 2026-09-08 pool, because the new `pack-bonded` entry was funded by trimming `perceptive` and `healing` rather than by growing the rolled sum past 100. Pool size is five entries, inside the cap of six.
+
+##### Cut by the evidence bar (2026-09-07)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
@@ -172,13 +184,13 @@ Pool shape, 2026-09-08 ruling: one required trait and three rolled entries whose
 | `mind-sealed` | 15 | no sentence, no field; the psychic special sense maps to `perceptive` only |
 | `telekinetic` | 4 | class 4 fails: the manipulation band is a capability, not a field the bar maps to this trait, and the planet fungi sentence is not about this species |
 
-Expected trait count after the pool shape: (100 + 55 + 37 + 8) / 100 = 2.00, down from the 2.06 of iteration three. The rolled set is three entries, so an individual expects about one trait beyond `hypnotic`, and the chance of landing none of the three is 0.45 times 0.63 times 0.92, which is 26.1 percent. (The `healing` row had been dropped from `traits.pool` by the 2026-09-02 orchestrator amendment; it is restored here as a rolled entry on the strength of the upgraded description, which makes the treatment the creature's own act.)
+Restored on 2026-09-10: none of this table's cuts return, and `solitary` is no longer merely absent, it is now affirmatively contradicted by the ratified `company` field ("It lives among others of its kind in the branches"), which is why `pack-bonded` enters the pool instead. `slippery`, `stealthy`, `menacing`, `mind-sealed`, and `telekinetic` remain unsupported by any ratified field and stay cut.
 
-Pool size is four entries, inside the cap of six. Three entries sit strictly between 0 and 100, and one sits at 100. No exclusion pair is present: neither `pack-bonded` nor `solitary` is in the pool.
+(The `healing` row had been dropped from `traits.pool` by the 2026-09-02 orchestrator amendment; it was restored on 2026-09-08 as a rolled entry on the strength of the upgraded description, and its evidence is strengthened again on 2026-09-10 by the ratified `origin` field.)
 
 Ruling 3 for iteration three: `resistant` is not in this pool, so the narrowed definition changes nothing. No hazard, output priority or fauna observation on Telypso names `hardened`, `insulated`, `dormant` or `territorial`: the world's hazards are psychic amplification, environmental reactivity and navigational unreliability, and its output priorities are psychic stabilization capacity, emotional regulation function and distress-tolerance thresholds, none of which map to a trait.
 
-Plausible traits deliberately left out: `protective` (the harmonizing purpose belongs to the Generator, not to a shielding instinct in this body), `luminous` (the world glows, this creature is not shown to), `nocturnal` (Telypso has an "ultraviolet sun" and no perpetual night), `resistant` (no bodily-contamination sentence), `inspiring` (the presence draws attention, it does not bolster allies; nothing supports it), `pack-bonded` (no cooperation sentence, and listing it against `solitary` with no evidence would be padding).
+Plausible traits deliberately left out: `protective` (the harmonizing purpose belongs to the Generator, not to a shielding instinct in this body; the ratified `behavior` field describes an attack, not a shield), `luminous` (the world glows, this creature is not shown to), `nocturnal` (Telypso has an "ultraviolet sun" and no perpetual night), `resistant` (no bodily-contamination sentence), `inspiring` (the presence draws attention, it does not bolster allies; nothing supports it).
 
 ## 10. Signature ability
 
@@ -256,23 +268,27 @@ The first run raised two WARN lines and the final run raises one. Both are answe
 
 ## Open questions for Nick
 
-First question, and the only one I would hold the template on. The art draws Tizzie mid-spring with its forelimbs off the ground and its hind legs bearing weight, which is exactly the ambiguous case the body-plan selection rule was written for. I read it as `quadruped`, because the rule says the pose does not decide, the forelimbs end in small paws rather than hands or held claws, and the description never shows the forelimbs doing work. But the silhouette reads to the eye as an upright creature presenting its tail disc like a lantern, and the legacy height of 89 cm only makes sense as an upright measure, which is why I had to author a much shorter height band to make `quadruped` coherent. If you intend Tizzie as a `biped` that stands and holds its tail up, both the plan and the size band should change together, and I would move height to roughly 80 to 95 cm and leave the weight band near 10 to 16 kg. Which is it?
+Both questions this walkthrough originally carried are resolved and are recorded here for history rather than left open.
 
-Second question. I put `healing` in the pool at 25 percent on the strength of the planet history's line that the Generator "began to treat the prisoners as patients, hoping to cure them and merge them into the mind of the rest of Telypso's psychosphere." That is a Generator-intent sentence about the psychic Xalians of Telypso as a class, not a sentence about Tizzie, and the trait rules say a planet-wide sentence may justify an environmental adaptation but never a behavior. I kept it at a minority percent rather than cutting it because the species description's own act (working on a subject from inside its mind) is the same act the history calls treatment, so the therapeutic reading is the source's, not mine. If you read that as over-reaching, the clean move is to drop `healing` from the pool entirely, which lowers the expected trait count to 3.15. Do you want it in or out?
+First question (resolved 2026-09-02, orchestrator amendment). The art was reread as Tizzie hanging from a branch by one long-fingered hand, forelimbs ending in hands rather than paws, which settles `biped` over the `quadruped` reading this section originally proposed; the height and weight bands were corrected to 80 to 95 cm and 10 to 16 kg to match. The current record already carries this.
+
+Second question (resolved 2026-09-10, trait re-run). This walkthrough originally asked whether `healing`'s only support, a planet-wide Generator-intent sentence, was strong enough to keep the trait in the pool. The ratified `origin` field now states the same purpose directly for this species, "as treatment rather than injury", which answers the question: the trait stays, on species-specific rather than planet-wide grounds, and its evidence line above cites the field instead of the planet history alone.
 
 ## Validator output
 
-Final run, from the worktree root `C:\dev\src\xalians-catalog`:
+Final run after the trait re-run of 2026-09-10, from the worktree root:
 
 ```
 $ node docs/species-templates/tools/validate-template.js tizzie
+WARN temperature.planet             validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable
 WARN instruments.predicate.source   channel "gaze" also needs the description to support a stare; the validator agent must confirm
+WARN conduits.source                conduit gaze for psychic: the validator agent must confirm the sentence or art showing the element leaving through this part
 
-0 FAIL, 1 WARN (structurally clean; every WARN must be answered in the walkthrough)
+0 FAIL, 3 WARN (structurally clean; every WARN must be answered in the walkthrough)
 logged to docs\species-templates\validation-log\tizzie.jsonl
 ```
 
-The single WARN is answered in the Answers to WARN lines section above.
+`instruments.predicate.source` is answered in the Answers to WARN lines section above. `conduits.source` is the same conduit-source check as the other Telypso species, answered by the signature section's citation of the eye-contact sentence and the `gaze` instrument. `temperature.planet` is a tooling note about which planet data file the script fell back to, not a judgment about the band itself, and does not concern the trait pool. No trait-pool WARN (`traits.pool.required`, `traits.pool.rolledSum`, `traits.pool.size`, `traits.expected`) fires on the re-run pool.
 
 ## Orchestrator amendments
 
@@ -286,3 +302,4 @@ The single WARN is answered in the Answers to WARN lines section above.
 - 2026-09-08, pool shape (Nick): required hypnotic; rolled perceptive 55, healing 37, foresighted 8; expected count 2.06 to 2.00.
 - 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
 - 2026-09-09, lore fact-check gate (independent checker, no files changed by it): four claims came back UNSUPPORTED and all four were fixed rather than argued. The one-handed hang is now written as the art observation it is; `understory` was Floria vocabulary and became what the fungal forests give; the staged hand-closing sentence became a plain capability statement off `capabilities.climb`, `leap` and `attributes.agility`; and the plague close now states the join it makes (the sources give the turning-against-one-another and the species gives its only mode) instead of asserting the mechanism as fact. No CONTRADICTED claims.
+- 2026-09-10, trait re-run: rolled `pack-bonded` added (15, ratified `company` field, "It lives among others of its kind in the branches", which also settles `solitary` out rather than merely absent), `healing` share adjusted 37 to 35 and `perceptive` 55 to 45 to make room, both now citing the ratified `origin` and `behavior` fields; `foresighted` unchanged at 5; expected count unchanged at 2.00.

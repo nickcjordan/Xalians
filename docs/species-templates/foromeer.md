@@ -76,25 +76,34 @@ Legacy `statRatings` gives only two marks, a medium standard attack and a high r
 
 ### Trait pool (expected count 3.00)
 
-Pool shape of 2026-09-08. Two required traits at 100 and four rolled entries sharing exactly 100, six in total, which is the maximum a pool may list. Expected count: 2 + 100/100 = 3.00.
+Pool shape, re-run 2026-09-10. Two required traits at 100 and four rolled entries sharing exactly 100, six in total, which is the maximum a pool may list. Expected count: 2 + 100/100 = 3.00.
 
 #### Required
 
 | Trait | Evidence |
 |---|---|
-| `armored` | The body fact. Species: "This creature has a metallic exoskeleton on its limbs", and the art draws the limbs as plated assemblies with panel highlights. An armored covering carries the key on every individual. |
-| `ramming` | The behavior the description is built around. Species: "its powerful horns can break through the strongest of material", and the excavation purpose the stub gives it turns on driving those shafts through mass. That is the registry key for a blow landing far harder with movement behind it, and it is where the signature ability terminates. |
+| `armored` | The body fact. Species: "This creature has a metallic exoskeleton on its limbs", and the art draws the limbs as plated assemblies with panel highlights. Reinforced by the ratified `appearance` entry, "Metallic exoskeleton on the limbs." An armored covering carries the key on every individual. |
+| `ramming` | The behavior the description is built around. Species: "its powerful horns can break through the strongest of material", and the excavation purpose the stub gives it turns on driving those shafts through mass. Reinforced by the ratified `behavior` field, "It opens the metal veins with its horns," and the `origin` field, "its drill-like horns breaking through the strongest material." That is the registry key for a blow landing far harder with movement behind it, and it is where the signature ability terminates. |
 
 #### Rolled (shares sum to 100)
 
 | Trait | Share | Evidence |
 |---|---|---|
-| `regenerative` | 35 | Strongest of the rolled set. The `recoveryRating` of high in `species.json` is one of the two legacy ratings that map to a trait and it maps to regenerative, which ranks it first; the Veridium report reinforces it with self-repair routines as an output priority and self-repairing frame architectures as a fauna observation. |
-| `hardened` | 30 | A planet-wide adaptation. The Veridium Generator environmental report lists molten pours among the planet's hazards, which is thermal load, and its fauna observations open on furnace-tolerant plated forms. Rolled rather than required, because neither source makes surviving the forges the point of this creature; it is a digger, not a furnace worker. |
-| `perceptive` | 25 | A record field: `physiology.senses.special` carries tremorsense, which fits a body that reads rock through the shafts it is turning. A senses entry never makes a trait required, since a trait must not restate a field the record already carries. |
-| `anchored` | 10 | The weakest entry, and the only one with no sentence behind it: a boring body braces against what it cuts, and the art shows a wide planted stance. Kept in the pool at the smallest share rather than cut, because bracing is the direct mechanical consequence of the act the species is built for. |
+| `hardened` | 35 | Now the strongest of the rolled set. The ratified `habitat` field states, "The ore-filled crust and heavy-metal veins of Veridium, among its factory trenches and forge districts," which places this species specifically among the forge districts the Veridium Generator environmental report lists molten pours against as a hazard, with furnace-tolerant plated forms among its fauna observations. That reading is species-specific rather than planet-wide, which raises it above the prior demotion. |
+| `regenerative` | 30 | The `recoveryRating` of high in `species.json` is one of the two legacy ratings that map to a trait and it maps to regenerative; the Veridium report reinforces it with self-repair routines as an output priority and self-repairing frame architectures as a fauna observation. Nudged down from its prior share only to make room within the six-slot cap once `hardened` and `solitary` took more of it, not because its own evidence weakened. |
+| `perceptive` | 20 | A record field: `physiology.senses.special` carries tremorsense, which fits a body that reads rock through the shafts it is turning. A senses entry never makes a trait required, since a trait must not restate a field the record already carries. Nudged down for the same budget reason as `regenerative`. |
+| `solitary` | 15 | Restored by the ratified `company` field: "It works the veins alone." Section 9 names a ratified company field as source for `pack-bonded` or `solitary`; this one is unhedged and species-specific. Rolled rather than required: the two required slots this species carries are the body fact (`armored`) and the act the description is built around (`ramming`); a company fact is a separate evidence class from either. |
 
-Traits considered and left off, with reasons: `menacing` and `inspiring`, neither source presents the body socially; `stealthy`, a plated biped carrying two shafts longer than itself; `toxic` and `volatile`, no agent or reaction named; `healing` and `protective`, no sentence shows it acting on others; `luminous`, `phasing`, `telekinetic`, `foresighted`, `hypnotic`, `mind-sealed`, `reflective`, `slippery`, and `nocturnal`, none supported by either source.
+Traits considered and left off, with reasons: `anchored`, cut to make room for `solitary`: it was the one entry in the prior pool with no sentence behind it at all ('a boring body braces against what it cuts' was inference from the art's stance, not a quote), and the six-slot cap forces a choice when a directly-sourced trait becomes available; `menacing` and `inspiring`, neither source nor the new fields present the body socially; `stealthy`, a plated biped carrying two shafts longer than itself; `toxic` and `volatile`, no agent or reaction named, including in `feeding` or `behavior`; `healing` and `protective`, no sentence shows it acting on others; `pack-bonded`, excluded by its own partner now that `solitary` carries the company field's claim; `luminous`, `phasing`, `telekinetic`, `foresighted`, `hypnotic`, `mind-sealed`, `reflective`, `slippery`, and `nocturnal`, none supported by either source or the new lore fields.
+
+#### Trait re-run (2026-09-10)
+
+The lore split ratified `lore.appearance` and the five short fields for every species on 2026-09-10, which reopened the pool built before they existed. Changes from the prior pool (`armored` 100, `ramming` 100, `regenerative` 35, `hardened` 30, `perceptive` 25, `anchored` 10):
+
+- `solitary` added at 15, replacing `anchored`: the `company` field, "It works the veins alone," is now ratified source text and section 9 names a ratified company field as direct evidence for `solitary`. It was cut before for exactly this gap (see the table below): 'no ratified field and no sentence: neither source shows pack or isolation.' The gap is closed, and it replaces `anchored`, the one entry in the prior pool that carried no sentence at all, since the pool is already at the six-entry cap.
+- `hardened` raised 30 to 35, now the top rolled entry: the ratified `habitat` field, "among its factory trenches and forge districts," places this species specifically in the forge terrain the Veridium report's molten-pours hazard and furnace-tolerant fauna line describe, turning a planet-wide reading into a species-specific one.
+- `regenerative` 35 to 30 and `perceptive` 25 to 20: no new evidence either way for either trait; both were nudged down only to keep the rolled set summing to exactly 100 after `hardened` rose and `solitary` was added.
+- `resistant` stays cut. The ratified `feeding` field, "It eats what it finds in the trenches and forge districts," was considered as new support (scavenging industrial debris could argue for shrugging off contamination), but Ruling B's original reasoning still holds: Veridium's specific hazards (machinery proximity, discharge arcs, molten pours) are injury hazards, not toxins, disease, radiation, corrosion, or hostile air, and eating found material is not itself evidence of enduring contamination.
 
 #### Cut by the evidence bar (2026-09-07)
 
@@ -102,6 +111,8 @@ Traits considered and left off, with reasons: `menacing` and `inspiring`, neithe
 |---|---|---|
 | `solitary` | 15 | No ratified field and no sentence: neither source shows pack or isolation, and Veridium's report says nothing about group life. |
 | `resistant` | 55 | Ruling B: the planet history's only specific cause is the heat of the forges, and the general line about a world inimical to organic life names no toxin, disease, radiation, corrosion, or hostile atmosphere. Veridium's report hazards are machinery proximity, discharge arcs, and molten pours, which are injury rather than contamination. |
+
+Of these, `solitary` is restored by the 2026-09-10 re-run: the `company` field named above is the exact ratified sentence the cut said was missing. `resistant` stays cut; see the Trait re-run subsection above for why the new `feeding` field does not change that reading.
 
 ### Signature ability
 
@@ -152,13 +163,15 @@ No FAIL was raised by any run of the validator on this key, so nothing was chang
 
 ## Validator output
 
-Final run after the pool-shape pass of 2026-09-08:
+Final run after the trait re-run of 2026-09-10:
 
 ```
-0 FAIL, 0 WARN (structurally clean; every WARN must be answered in the walkthrough)
+WARN temperature.planet             validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable
+
+0 FAIL, 1 WARN (structurally clean; every WARN must be answered in the walkthrough)
 ```
 
-The trait checks `traits.pool.required`, `traits.pool.rolledSum` and `traits.pool.size` are all silent.
+The trait checks `traits.pool.required`, `traits.pool.rolledSum` and `traits.pool.size` are all silent. `WARN temperature.planet` is the known planetRecords.json gap the skill file documents (issue #167: the committed `planetRecords.json` in this worktree carries no `environment.habitableBandC`); `temperatureC` [-10, 36] was already banded against the rebuilt planet record's habitable band by the 2026-09-02 orchestrator amendment below, so this run has nothing further to narrow.
 
 ## Orchestrator amendments
 

@@ -103,36 +103,44 @@ Legacy `statRatings` used only as a relative gauge: `standardDefenseRating: "hig
 
 ### Trait pool (expected count 3.00)
 
-Reshaped on 2026-09-08 under Nick's pool-shape ruling. Two required traits, four rolled entries whose shares sum to 100, six entries in all, which is the cap. The chance an individual lands none of the four rolled traits is 31.2 percent.
+Re-run 2026-09-10: the ratified `lore.appearance` list and the five ratified short fields are now source text on the same footing as the teaser, the art and the planet record (Nick, 2026-09-10). The pool shape is unchanged (two required, four rolled summing to 100, six entries, the cap); the re-derivation re-reads every trait, and every prior fact, against the fuller source set. The chance an individual lands none of the four rolled traits is 28.8 percent (0.60 times 0.80 times 0.80 times 0.75).
 
 **Required**
 
 | Trait | Evidence |
 |---|---|
-| `telekinetic` | The body fact, named in the description as a permanent feature of the anatomy and again as the working act: "elongated tails tipped with a levitating ball of stone", and "using their tails to levitate boulders and fling them like great flying catapults across the Chasm beneath them". The levitation is continuous rather than triggered, so every individual carries it. |
+| `telekinetic` | The body fact, named in the description as a permanent feature of the anatomy and again as the working act: "elongated tails tipped with a levitating ball of stone", and "using their tails to levitate boulders and fling them like great flying catapults across the Chasm beneath them". The levitation is continuous rather than triggered, so every individual carries it. The ratified `appearance` entry, "Long tail ending in a cradle, with a ball of stone levitating above it," restates the same body fact. |
 | `territorial` | The behavior the description and the signature ability are built around: "now stand guard over the perimeter in a statue-like state", and the signature answers whatever crosses the rim from above it. The registry's `territorial` is being stronger holding ground it has been set to hold and denying passage rather than pursuing, which is this species' whole present function. |
 
 **Rolled (shares sum to 100)**
 
 | Trait | Share | Evidence |
 |---|---|---|
-| `dormant` | 35 | A species sentence about its own behavior: "hibernating to conserve their energy until a threat is detected", which is the registry definition almost word for word. Strongest of the rolled entries. It is the posture rather than the duty, and the duty is what `territorial` already carries, so it rolls rather than becoming a third required trait. |
-| `anchored` | 25 | The statue-like guard state read as a body fact, with the legacy gauge of 380 kg on a 163 cm frame and `evasionRating` low behind it. Second because it restates the sentence `territorial` and `dormant` already draw on rather than adding a new one. |
+| `dormant` | 40 | A species sentence about its own behavior: "hibernating to conserve their energy until a threat is detected", which is the registry definition almost word for word. The ratified `feeding` field adds a second, independent behavior sentence, "It eats when it wakes, whatever the rim offers, and goes long stretches without.", which ties feeding itself to the wake cycle and confirms the fasting stretch a suspended-vitals body needs; share raised from 35 on the strength of this second sentence. Still the posture rather than the duty, and the duty is what `territorial` already carries, so it rolls rather than becoming a third required trait. |
+| `anchored` | 20 | The statue-like guard state read as a body fact, with the legacy gauge of 380 kg on a 163 cm frame and `evasionRating` low behind it, and the ratified `appearance` entry, "Very heavy for its height," now stating the same mass fact directly. Reduced from 25 to make room for `dormant`'s stronger share; still restates the sentence `territorial` and `dormant` already draw on rather than adding a new one. |
 | `perceptive` | 20 | Record fields: `physiology.senses.special` carries tremorsense and `senses.hearing` tops out at 85, over the bar of 80. The species sentence about a threat being detected agrees. The senses list is rolled-set evidence and never makes the trait required. |
 | `insulated` | 20 | Stonera's hazard list carries static discharge, and the planet history says the same in prose: "the rubbing of these particulates in the atmosphere generates colossal static discharges that crackle pervasively in the lower atmosphere". A sentry perched on an open rim is covered by it. A planet-wide adaptation the description never makes the point of the creature, so it is rolled. |
 
-#### Cut by the evidence bar (2026-09-07)
+#### Trait re-run (2026-09-10)
+
+- Raised `dormant` from 35 to 40. New source: the ratified `feeding` field, "It eats when it wakes, whatever the rim offers, and goes long stretches without." This is a second, independent behavior sentence (distinct from the hibernation clause already carried) that ties eating itself to the wake cycle and confirms the long fasting stretch a metabolic-suspension body needs.
+- Lowered `anchored` from 25 to 20 to keep the rolled set summing to 100 after the `dormant` increase. No evidence against `anchored`; the ratified `appearance` entry, "Very heavy for its height," if anything restates its existing support. The share moved only for the total, not because the evidence weakened.
+- `perceptive` and `insulated` unchanged at 20 each; none of the five new fields touches senses or the charge hazard.
+- Reviewed the `company` field, "It stands in a line with others along the rim.", for a restore case on `solitary` or `pack-bonded` and found neither crosses the bar. `solitary` stays excluded: the field states plainly that the species is found with others, which is the opposite of a living-alone fact. `pack-bonded` ("stronger coordinating with others") is not added either: standing in a line along a rim is parallel positioning, each individual holding its own stretch, which is what `territorial` already carries; the field never shows them acting together as one unit (no shared target, no combined strike), so it does not clear the bar the way the Codazzo `company` field cleared it for `solitary` there. This is recorded as reviewed rather than silently skipped.
+- Reviewed `origin` and `habitat` and found nothing new: both restate the strip-mine and Chasm-rim facts already carried by `territorial`, `telekinetic` and the anatomy and capability fields.
+
+#### Cut by the evidence bar (2026-09-07; restorations reviewed 2026-09-10)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
-| `menacing` | 60 | the quoted sentence describes an attack (the strafing run, which is the signature ability), not a presence that erodes courage; restatement of a kept element |
-| `solitary` | 35 | argued from absence, and the record concedes the same sentence could be read as a line of sentries working together |
-| `resistant` | 50 | cut 2026-09-08 under the narrowed definition: its support was thin atmosphere and static discharge, which are not contamination; the support moved to `hardened` and `insulated` |
-| `hardened` | 50 | pool full, weaker evidence (2026-09-08): thin atmosphere is not on Stonera hazard list and the species own text never claims it, so it loses the sixth slot to `insulated` |
+| `menacing` | 60 | the quoted sentence describes an attack (the strafing run, which is the signature ability), not a presence that erodes courage; restatement of a kept element. Not restored: none of the five new fields describes a presence that erodes courage; `behavior` restates the same attack sequence. |
+| `solitary` | 35 | argued from absence, and the record concedes the same sentence could be read as a line of sentries working together. Not restored, and now further confirmed wrong: the ratified `company` field states directly, "It stands in a line with others along the rim.", which rules out a living-alone reading rather than merely failing to support it. |
+| `resistant` | 50 | cut 2026-09-08 under the narrowed definition: its support was thin atmosphere and static discharge, which are not contamination; the support moved to `hardened` and `insulated`. Not restored: no new field adds a contamination fact. |
+| `hardened` | 50 | pool full, weaker evidence (2026-09-08): thin atmosphere is not on Stonera hazard list and the species own text never claims it, so it loses the sixth slot to `insulated`. Not restored: no new field adds a temperature-extreme or pressure fact, and the pool is at its six-entry cap. |
 
-Under the widened iteration-two bar neither cut entry is restored: `menacing` would need class 4 size plus a threat sentence, and this species is heavy but the sources give it a statue posture and an aerial bombardment rather than any presence that erodes courage, while the art draws a closed level mouth and no threat display; `solitary` still rests on absence, and the species sentence about Terragoyles lining the edges of the Chasm reads against it. `resistant` at 50 was kept under ruling B but is cut on 2026-09-08 under the narrowed definition, which reserves the key for contamination: toxins, disease, radiation, corrosion and chemically hostile air. Its support was Stonera's incredibly thin atmosphere and pervasive static discharge, and neither is contamination. Dust is particulate, not chemical, so the thin-atmosphere half moved to `hardened` and the discharge half to `insulated`. On 2026-09-08 the pool-shape ruling capped the pool at six entries, and `hardened` lost the last slot to `insulated`, whose support sits on Stonera hazard list where thin atmosphere does not; it is recorded in the table above.
+Under the widened iteration-two bar neither cut entry is restored: `menacing` would need class 4 size plus a threat sentence, and this species is heavy but the sources give it a statue posture and an aerial bombardment rather than any presence that erodes courage, while the art draws a closed level mouth and no threat display; `solitary` still rests on absence, and the species sentence about Terragoyles lining the edges of the Chasm reads against it, now made explicit by the ratified `company` field. `resistant` at 50 was kept under ruling B but is cut on 2026-09-08 under the narrowed definition, which reserves the key for contamination: toxins, disease, radiation, corrosion and chemically hostile air. Its support was Stonera's incredibly thin atmosphere and pervasive static discharge, and neither is contamination. Dust is particulate, not chemical, so the thin-atmosphere half moved to `hardened` and the discharge half to `insulated`. On 2026-09-08 the pool-shape ruling capped the pool at six entries, and `hardened` lost the last slot to `insulated`, whose support sits on Stonera hazard list where thin atmosphere does not; it is recorded in the table above.
 
-Traits I considered and left out, with reasons: `armored`, because the covering is `hide` and the `hide` anatomy key states the body has no armored aspect, and neither source names plating or a carapace, only a posture that looks like statuary; `ramming`, because the described attack is release from height, not a body blow with movement behind it; `nocturnal`, because the planet history gives grey skies rather than perpetual night, "The debris from such collisions have launched enormous swathes of dirt into the air, dying the sky a dusty grey", which is dimness, not a night world; `stealthy`, because a statue on a rim is conspicuous by design; `protective`, because guarding a corporate perimeter is an order it was engineered under, not an instinct to shield others.
+Traits I considered and left out, with reasons: `armored`, because the covering is `hide` and the `hide` anatomy key states the body has no armored aspect, and neither source names plating or a carapace, only a posture that looks like statuary, and the ratified `appearance` entry, "Bare muscled hide," confirms the bare covering rather than any armor; `ramming`, because the described attack is release from height, not a body blow with movement behind it; `nocturnal`, because the planet history gives grey skies rather than perpetual night, "The debris from such collisions have launched enormous swathes of dirt into the air, dying the sky a dusty grey", which is dimness, not a night world; `stealthy`, because a statue on a rim is conspicuous by design; `protective`, because guarding a corporate perimeter is an order it was engineered under, not an instinct to shield others; `pack-bonded`, because the `company` field describes parallel sentries holding separate ground, not coordinated action (see the re-run note above).
 
 ### Instruments and conduits
 
@@ -188,17 +196,16 @@ The source description spells the levitating stone as `levitating` and spells th
 
 ## Validator output
 
-Final run of `node docs/species-templates/tools/validate-template.js terragoyle`:
+Final run (2026-09-10, after the trait pool re-run) of `node docs/species-templates/tools/validate-template.js terragoyle`:
 
 ```
-$ node docs/species-templates/tools/validate-template.js terragoyle
-
+WARN temperature.planet             temperatureC [-45, 25] extends outside the Stonera legacy data block range [-28, 34] C; the legacy extremes are record extremes, not the habitable band, so this is a warning until planetRecords.json carries environment.habitableBandC (issue #167)
 WARN conduits.source                conduit tail for rock: the validator agent must confirm the sentence or art showing the element leaving through this part
 
-0 FAIL, 1 WARN (structurally clean; every WARN must be answered in the walkthrough)
+0 FAIL, 2 WARN (structurally clean; every WARN must be answered in the walkthrough)
 ```
 
-The one WARN line, the conduit source check, is answered above under Answers to the WARN lines; the trait-count WARN it used to carry no longer fires under the 2026-09-08 pool shape.
+Neither WARN concerns the trait pool. The conduit WARN is answered above under Answers to the WARN lines; the temperature WARN restates the section-5.5-vs-`planetRecords.json` authority mismatch already recorded above (the friction point logged under operating rule 7) and the `temperature.habitable` FAIL history two paragraphs up, and is unaffected by this run's trait changes. The trait-count WARN this species used to carry has not fired since the 2026-09-08 pool shape and does not fire after the 2026-09-10 re-run either: the required traits still sum to 200 (two at 100) and the rolled traits still sum to exactly 100, so expected count stays 3.00.
 
 ## Orchestrator amendments
 
@@ -211,3 +218,4 @@ The one WARN line, the conduit source check, is answered above under Answers to 
 - 2026-09-08, pool shape (Nick): required `telekinetic`, `territorial`; rolled `dormant` 35, `anchored` 25, `perceptive` 20, `insulated` 20; expected count 6.25 to 3.00.
 - 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
 - 2026-09-09, lore overlap lever: habits (and body where changed) rewritten so the defining act is present from its own angle.
+- 2026-09-10, trait pool re-run (Nick): `lore.appearance` and the five short fields ratified for all species; raised `dormant` 35 to 40 on the ratified `feeding` field, "It eats when it wakes, whatever the rim offers, and goes long stretches without."; lowered `anchored` 25 to 20 to keep the rolled set at 100; reviewed the ratified `company` field, "It stands in a line with others along the rim.", against `solitary` and `pack-bonded` and restored neither (it confirms `solitary`'s exclusion and does not show coordinated action for `pack-bonded`); expected count unchanged at 3.00.

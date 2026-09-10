@@ -164,10 +164,10 @@
     "pool": {
       "armored": 100,
       "ramming": 100,
-      "regenerative": 35,
-      "hardened": 30,
-      "perceptive": 25,
-      "anchored": 10
+      "hardened": 35,
+      "regenerative": 30,
+      "perceptive": 20,
+      "solitary": 15
     }
   },
   "instruments": [

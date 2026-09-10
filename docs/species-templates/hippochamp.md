@@ -103,25 +103,24 @@ No clause was added beyond these. No schedule, no invented incident, no causal c
 
 **Attribute bands.** `endurance` highest at 65 to 88: the legacy gauge rates stamina high and species, "can maintain a steady stream" is a sustained-output act. `strength` 45 to 65 and the rest mid-band: the legacy gauge rates standard attack medium and leaves every other rating blank, which is a relative signal of an unremarkable spread. `intelligence` 35 to 55, well below true-human range, for a creature engineered to work a fleet under instruction. `charisma` 30 to 50: nothing in either source gives it presence.
 
-**Trait pool.** Reshaped on 2026-09-08 under Nick's pool shape: one required trait at 100, four rolled entries whose percents sum to exactly 100, and five entries in all. The expected count falls from 4.45 to 2.00, and an individual lands no rolled trait at all 31.2 percent of the time. The exclusion pair is not active, because `solitary` is not listed alongside `pack-bonded`.
+**Trait pool.** Re-derived from scratch on 2026-09-10 (Nick's trait re-run) now that `lore.appearance` and the five short fields are ratified source on the same footing as the teaser, the art, and the planet record (`docs/species-templates/lore-status.json` marks both `appearance` and `fields` `ratified` for this key). Pool shape unchanged: one required trait at 100, four rolled entries whose percents sum to exactly 100, five entries in all. Expected count 2.00, and an individual lands no rolled trait at all 31.2 percent of the time. The exclusion pair is not active, because `solitary` is not listed alongside `pack-bonded`.
 
 Required
 
 | Trait | Evidence |
 |---|---|
-| `protective` | The behavior the description is built around, and the reason the species exists. It was made to answer emergencies on the rigs and to stand between raiders and the Algael, which is the registry instinct to shield and protect others. Evidence (species): "Hippochamps were designed as emergency response crews for the various electrical and chemical fires that occur on rigs, as well as a means of defense against pirates seeking to steal valuable Algael." No body fact claims the first required slot, since the covering is `hide`, the body is corporeal, and nothing in the record states plating, chitin or light organs. |
+| `protective` | The behavior the description is built around, and the reason the species exists. It was made to answer emergencies on the rigs and to stand between raiders and the Algael, which is the registry instinct to shield and protect others. Evidence (species teaser): "Hippochamps were designed as emergency response crews for the various electrical and chemical fires that occur on rigs, as well as a means of defense against pirates seeking to steal valuable Algael." Restated by the ratified `origin` field: "Designed as emergency response crews for the hydro-processing rigs of Poseidas, putting out electrical and chemical fires and holding off pirates after the Algael." and the ratified `behavior` field: "It patrols the rigs and hoses down fires and threats alike with the steady stream from its snout." No body fact claims the first required slot, since the covering is `hide`, the body is corporeal, and nothing in the record states plating, chitin or light organs. |
 
 Rolled (shares sum to 100)
 
 | Trait | Share | Evidence |
 |---|---|---|
-| `territorial` | 35 | Strongest of the set: a species sentence about its own behavior, holding assigned ground, which is the registry definition of denial of passage. Evidence (species): "patrol the various hydro-processing fleets on Poseidas". Demoted from 100 because patrolling is how the species does the job rather than the point of the creature, and the point is already carried by the required trait. |
-| `pack-bonded` | 25 | A species sentence about its own behavior again, the crews being plural and coordinated by the word itself. Evidence (species): "emergency response crews". Ranked below `territorial` because it rests on one noun rather than on a clause about what the animal does. |
-| `hardened` | 22 | The species sentence puts this body inside electrical and chemical rig fires as its working day, which is thermal load, and the Poseidas hazard list carries crush depth for a form that works the rigs and the water beneath them. Planet-wide support behind a species reading, so it rolls rather than being required. |
-| `resistant` | 18 | Weakest of the set: the Poseidas hazard list carries semiannual toxic bloom events with airborne microbial dispersal at the surface, and the output priorities carry filtration metabolism. Both are planet-wide, and the species' own description never makes contamination the point of the creature, so under the pool shape it rolls. |
+| `territorial` | 35 | Strongest of the set: a species sentence about its own behavior, holding assigned ground, which is the registry definition of denial of passage. Evidence (species teaser): "patrol the various hydro-processing fleets on Poseidas". Restated by the ratified `habitat` field: "The floating rig fleets on Poseidas's global ocean, above and below the surface." and the ratified `behavior` field: "It patrols the rigs and hoses down fires and threats alike with the steady stream from its snout." Demoted from 100 because patrolling is how the species does the job rather than the point of the creature, and the point is already carried by the required trait. |
+| `pack-bonded` | 25 | A species sentence about its own behavior again, the crews being plural and coordinated by the word itself. Evidence (species teaser): "emergency response crews". Now also carried by the ratified `company` field, which the trait model names as the source for `pack-bonded` or `solitary`: "It works in crews." Ranked below `territorial` because it rests on one noun rather than on a clause about what the animal does. |
+| `hardened` | 22 | The species sentence puts this body inside electrical and chemical rig fires as its working day, which is thermal load, and the Poseidas hazard list carries crush depth for a form that works the rigs and the water beneath them. The ratified `behavior` field adds a species-level (not merely planet-wide) link to storm exposure: "When storms or the toxic algae blooms come over the rigs it drops below the surface." That sentence describes evasion rather than endurance, so it does not raise the share; it confirms the same physical extreme already carried at this weight rather than adding a new one. |
+| `resistant` | 18 | Weakest of the set: the Poseidas hazard list carries semiannual toxic bloom events with airborne microbial dispersal at the surface, and the output priorities carry filtration metabolism. The ratified `behavior` field now ties this species directly to the toxic blooms rather than leaving the link planet-wide: "When storms or the toxic algae blooms come over the rigs it drops below the surface." As with `hardened`, the sentence describes the creature diving to avoid the bloom, not shrugging it off, so the fact is confirmed at the species level but the share is unchanged. |
 
-
-Traits considered and left out, therefore at 0: `armored` (no armored covering and no `shell`), `regenerative`, `ramming`, `toxic`, `volatile`, `reflective`, `hypnotic`, `mind-sealed`, `foresighted`, `telekinetic`, `stealthy` (a patrol animal that hoses fires is not concealed), `nocturnal` (no source sentence about night on Poseidas), `slippery`, `luminous`, `phasing`, `solitary` (contradicted by the crew reading).
+Traits considered and left out, therefore at 0: `armored` (no armored covering and no `shell`), `regenerative`, `ramming`, `toxic`, `volatile`, `reflective`, `hypnotic`, `mind-sealed`, `foresighted`, `telekinetic`, `stealthy` (a patrol animal that hoses fires is not concealed; the `behavior` field shows it diving away from hazards, not moving unseen to act), `nocturnal` (no source sentence about night on Poseidas, and none of the five fields adds one), `slippery`, `luminous`, `phasing`, `solitary` (contradicted by the `company` field, "It works in crews.").
 
 #### Cut by the evidence bar (2026-09-07)
 
@@ -134,6 +133,12 @@ Traits considered and left out, therefore at 0: `armored` (no armored covering a
 | `perceptive` | 30 | rule one of iteration three: the only support was a graded sight band with an upper bound of 65, under the 80 the tightened bar now requires, and `physiology.senses` carries no `special` entry |
 
 Pool expected count 3.27 to 2.15 in iteration one, then 2.15 to 2.45 in iteration two once `perceptive` was restored. No surviving percent was changed in either pass. Iteration three on 2026-09-08 moved it from 2.45 to 4.45: `resistant` raised to 100, `hardened` and `territorial` added at 100, `perceptive` cut under the tightened sense rule. No surviving rolled percent moved. The pool shape of the same date then replaced iteration three: `protective` is the single required trait, `resistant`, `hardened` and `territorial` fell out of the demanded set into the rolled one, and the four rolled shares were authored to sum to exactly 100. Nothing new was cut, so this table is unchanged. Expected count 4.45 to 2.00.
+
+**None of these five cuts is restored by the re-run.** Checked each against `lore.appearance` and all five ratified fields: `healing` has no field about restoring health (`feeding`, "It eats what the ocean around the rigs gives," is about diet, not aid to others); `anchored` has no field about resisting being moved; `inspiring` has no field about presence bolstering allies (`company`, "It works in crews," is pack-bonded evidence, not a presence claim); `menacing` has no field about eroding courage (`behavior` shows it hosing down threats, not frightening them); `perceptive` was cut on the sense-band rule, not on a missing sentence, and none of the five fields adds a `senses.special` entry or a sight band above 80. The `behavior` field's storm and toxic-bloom clause strengthens `hardened` and `resistant` from planet-wide-only support to a species-specific sentence, but the sentence describes the creature evading the hazard rather than enduring or shrugging it off, so it confirms the existing shares rather than raising them or bringing in a new trait.
+
+#### Trait re-run (2026-09-10)
+
+No change to `traits.pool`. `protective: 100`, `territorial: 35`, `pack-bonded: 25`, `hardened: 22`, `resistant: 18` carry forward unchanged. The five ratified fields were checked against every trait in the registry, not only the previously cut ones: `territorial`, `pack-bonded`, `hardened`, and `resistant` each gained a direct quote from a ratified field restating the same fact the teaser or the planet record already carried, so their evidence lines above now cite the field as well as the original source; none of the five cut traits found new support; no trait outside the previous pool was newly justified. Expected count remains 2.00.
 
 **Instruments `trunk`, `hooves`, `tail`.** `trunk` is the fighting and working part by species, "Their long, trunk-like snouts serve as high-pressure water cannons". `hooves` are the four bearing feet in the art and the only striking parts the body has. `tail` is the coiled grasping part in the art. All three are in anatomy.
 
@@ -177,13 +182,18 @@ No rule of the skill forced an outcome I believe is wrong for this species. Two 
 
 ## Validator output
 
+Re-run 2026-09-10 after the trait re-derivation, `node docs/species-templates/tools/validate-template.js hippochamp`:
+
 ```
+WARN temperature.planet             validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable
 WARN conduits.source                conduit trunk for water: the validator agent must confirm the sentence or art showing the element leaving through this part
 WARN signature.description.elementkey signature description uses element key word(s) as plain words: fire (allowed only as ordinary English, never as a type label)
 WARN enc.definition.elementkey      encyclopedia definition uses element key word(s) as plain words: water, chemical (allowed only as ordinary English, never as a type label)
 
-0 FAIL, 3 WARN (structurally clean; every WARN must be answered in the walkthrough)
+0 FAIL, 4 WARN (structurally clean; every WARN must be answered in the walkthrough)
 ```
+
+`conduits.source`, `signature.description.elementkey`, and `enc.definition.elementkey` are unchanged from the prior run and are answered above under 'Answers to the script's WARN lines.' `temperature.planet` is new this run and does not concern the trait pool: the worktree's `planetRecords.json` no longer carries an `environment.habitableBandC` block for Poseidas (it was rebuilt to a `physical`/`report`/`history` shape without that field), so the script falls back to the legacy extremes file rather than failing. This is a data-schema gap, not a trait-pool finding; the temperature band itself was not touched by this re-run.
 
 ## Orchestrator amendments
 
