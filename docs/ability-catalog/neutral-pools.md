@@ -9,7 +9,7 @@ Method: for each action, walk its harvest lexicon and its own §3 "element-neutr
 ## 1. STRIKE
 
 **Neutral pool** (single words):
-Blow, Strike, Impact, Smash, Slam, Crack, Whack, Thump, Thud, Bash, Clout, Wallop, Clobber, Belt, Sock, Punch, Jab, Cuff, Slap, Chop, Knock, Rap, Crash, Collision, Concussion, Percussion, Buffet, Stroke, Swat, Ram, Butt, Kick, Stamp, Trample, Charge, Barge, Jolt, Jar, Wrench, Crunch, Snap, Backhand, Forehand, Tackle
+Blow, Strike, Impact, Smash, Slam, Crack, Whack, Thump, Thud, Bash, Clout, Wallop, Clobber, Belt, Sock, Punch, Jab, Cuff, Slap, Chop, Knock, Rap, Crash, Collision, Concussion, Percussion, Buffet, Stroke, Swat, Ram, Butt, Kick, Stamp, Trample, Barge, Jolt, Jar, Wrench, Crunch, Snap, Backhand, Forehand
 
 **Neutral pool** (two-word compositions):
 Direct Strike, Hard Impact, Sudden Blow, Crushing Blow, Heavy Blow, Driving Blow, Percussive Strike, Full Impact, Point Strike, Single Strike, True Strike, Body Slam (instrument: body), Blunt Force, Ram Strike, Downstrike, Overhand Strike, Knuckle Strike (instrument: fists), Elbow Strike (instrument: body), Knee Strike (instrument: body), Shoulder Charge (instrument: body), Headlong Charge, Battering Blow, Hammer Blow, Sledge Blow, Pommel Strike, Cudgel Blow, Bludgeon Strike, Jolt Strike, Jarring Blow, Crushing Impact, Shattering Blow, Rattling Blow, Reeling Blow, Staggering Blow, Concussive Blow, Fell Blow, Felling Strike, Decisive Blow, Final Blow, Clean Strike, Solid Strike, Weighted Strike, Driven Impact, Resounding Blow, Headbutt (instrument: body/head), Gore (instrument: horns/tusks — flag), Buttstroke, Body Check
@@ -48,7 +48,7 @@ Sweeping Lash, Wide Lash, Cross Lash, Full Sweep, Broad Sweep, Arcing Strike, Sw
 ## 3. RAKE
 
 **Neutral pool** (single words):
-Rake, Rend, Rip, Shred, Slash (placed here rather than STRIKE/LASH by definition — repeated cutting), Gash, Gouge, Scratch, Claw (instrument: claws — flag), Flurry, Frenzy, Barrage, Volley, Flail, Fusillade, Onslaught, Tattoo, Mangling, Laceration, Abrasion, Whittling, Shearing, Furrow, Score, Nick, Chop, Hack, Tear, Fray, Snip
+Rake, Rend, Rip, Shred, Slash (placed here rather than STRIKE/LASH by definition — repeated cutting), Gash, Gouge, Scratch, Claw (instrument: claws — flag), Flurry, Frenzy, Tattoo, Mangling, Laceration, Whittling, Shearing, Furrow, Score, Nick, Chop, Hack, Tear, Fray, Snip
 
 **Neutral pool** (two-word compositions):
 Raking Strikes, Rending Claws (instrument: claws), Rapid Rake, Slash Flurry, Flurry of Cuts (3 words — cut, see below), Furious Slashing, Tearing Flurry, Claw Flurry (instrument: claws), Scratch Storm, Shredding Flurry, Ragged Slashes, Repeated Rending, Frenzied Slashing, Flailing Claws (instrument: claws), Savage Flurry, Riddling Strikes, Perforating Flurry, Whittling Strikes, Scouring Rake, Grating Strikes, Rasping Claws (instrument: claws), Furrowing Rake, Fraying Slashes, Shearing Flurry, Hacking Frenzy, Mangling Flurry, Chopping Frenzy, Nicking Flurry, Snipping Frenzy
@@ -67,10 +67,10 @@ Raking Strikes, Rending Claws (instrument: claws), Rapid Rake, Slash Flurry, Flu
 ## 4. SHOVE
 
 **Neutral pool** (single words):
-Shove, Push, Thrust, Ram, Charge, Slam, Bash, Buffet, Jolt, Jostle, Barge, Butt, Collision, Impact, Repel, Repulse, Repulsion, Expel, Ejection, Eviction, Displace, Displacement, Dislodge, Unseat, Upset, Overturn, Topple, Overthrow, Stagger, Rock, Buckle, Heave, Stampede, Bump, Wallop, Clout, Blowback, Shockwave, Concussion, Recoil, Backlash
+Shove, Push, Thrust, Ram, Charge, Slam, Buffet, Jolt, Jostle, Barge, Butt, Collision, Impact, Repel, Repulse, Repulsion, Expel, Ejection, Eviction, Displace, Displacement, Dislodge, Unseat, Upset, Overturn, Topple, Overthrow, Stagger, Rock, Buckle, Heave, Stampede, Bump, Shockwave, Recoil, Backlash
 
 **Neutral pool** (two-word compositions):
-Forceful Push, Sudden Thrust, Battering Ram, Full Charge, Body Charge, Body Slam, Body Check, Broadside, Sweep Aside, Drive Back, Force Back, Push Back, Knock Aside, Knock Away, Knock Down, Bowl Over, Send Sprawling, Send Reeling, Wrench Free, Barrel Through, Batter Down, Pressure Wave, Momentum Strike, Overwhelming Push, Driving Force, Rebound Strike, Upheaval, Sudden Upset, Unbalancing Blow, Off-Balance, Reeling Blow, Staggering Blow, Toppling Blow, Displacing Blow, Sweeping Charge, Barreling Charge, Full Body Slam, Great Shove, Mighty Shove, Forceful Thrust, Powerful Ram, Ramming Charge, Overpowering Push, Shoulder Charge (instrument: body)
+Forceful Push, Sudden Thrust, Battering Ram, Full Charge, Body Charge, Body Slam, Body Check, Broadside, Sweep Aside, Drive Back, Force Back, Push Back, Knock Aside, Knock Away, Knock Down, Bowl Over, Send Sprawling, Send Reeling, Wrench Free, Barrel Through, Batter Down, Overwhelming Push, Driving Force, Rebound Strike, Upheaval, Sudden Upset, Unbalancing Blow, Off-Balance, Reeling Blow, Staggering Blow, Toppling Blow, Displacing Blow, Barreling Charge, Full Body Slam, Great Shove, Mighty Shove, Forceful Thrust, Powerful Ram, Ramming Charge, Overpowering Push, Shoulder Charge (instrument: body)
 
 **Disposition notes / flags:**
 - Ram, Butt, Charge, Broadside, Body Slam, Shoulder Charge, Trample, Stampede all tagged with body/mass instrument per the harvest's own anatomy table (body, hooves, horns) — flagged sparingly, held broadly neutral since "the force of a mass meeting a target" is inherently non-anatomical in most of these names.
@@ -86,10 +86,10 @@ Forceful Push, Sudden Thrust, Battering Ram, Full Charge, Body Charge, Body Slam
 ## 5. DRAIN
 
 **Neutral pool** (single words):
-Siphon, Drain, Draft, Suction, Extraction, Withdrawal, Depletion, Exhaustion, Attrition, Sap, Tap, Atrophy, Debilitation, Enervation, Enfeeblement, Ebb, Bleed, Hemorrhage, Vitality, Essence, Vigor, Yield, Toll, Pull, Draw, Vacuum, Void
+Siphon, Drain, Draft, Suction, Extraction, Withdrawal, Depletion, Exhaustion, Attrition, Sap, Tap, Atrophy, Debilitation, Enervation, Enfeeblement, Ebb, Bleed, Hemorrhage, Vitality, Essence, Vigor, Yield, Toll, Pull, Draw, Void
 
 **Neutral pool** (two-word compositions):
-Vital Siphon, Essence Siphon, Life Siphon, Vitality Drain, Strength Sap, Vigor Sap, Draining Touch (instrument: touch/channel), Draining Grasp (instrument: grasp), Draining Bite (instrument: fangs), Draining Clutch (instrument: grasp), Sapping Touch, Sapping Grasp, Sapping Coil (instrument: coils), Enervating Touch, Enervating Grasp, Enfeebling Touch, Withering Touch, Withering Grasp, Withering Clutch, Wasting Touch, Wasting Grip, Vital Extraction, Essence Extraction, Life Extraction, Strength Extraction, Vital Tap, Vitality Tap, Life Tap, Essence Tap, Vital Leech (see leech note below), Essence Leech, Vitality Leech, Marrow Drain (instrument: piercing/boring organ — flag), Marrow Sap, Reserve Drain, Reserve Sap, Vigor Drain, Vital Drain, Vital Pull, Life Pull, Essence Pull, Vital Draw, Essence Draw, Life Draw, Vitality Withdrawal, Strength Withdrawal, Debilitating Touch, Debilitating Grasp, Enervating Grip, Consuming Touch, Consuming Grasp, Consuming Grip, Parasitic Touch, Parasitic Grasp, Parasitic Bond, Parasitic Bind, Feeding Touch, Feeding Grasp, Feeding Bite (instrument: fangs), Feeding Clutch, Vital Wring, Essence Wring, Vital Squeeze, Vigor Squeeze, Withering Clasp, Draining Clasp, Sapping Clasp, Vital Toll, Life Toll, Vital Ebb, Life Ebb, Essence Ebb, Wasting Grasp, Wasting Clutch, Diminishing Touch, Diminishing Grasp
+Vital Siphon, Essence Siphon, Life Siphon, Vitality Drain, Strength Sap, Vigor Sap, Draining Touch (instrument: touch/channel), Draining Grasp (instrument: grasp), Draining Bite (instrument: fangs), Draining Clutch (instrument: grasp), Sapping Touch, Sapping Grasp, Sapping Coil (instrument: coils), Enervating Touch, Enervating Grasp, Enfeebling Touch, Wasting Touch, Wasting Grip, Vital Extraction, Essence Extraction, Life Extraction, Strength Extraction, Vital Tap, Vitality Tap, Life Tap, Essence Tap, Vital Leech (see leech note below), Essence Leech, Vitality Leech, Marrow Drain (instrument: piercing/boring organ — flag), Marrow Sap, Reserve Drain, Reserve Sap, Vigor Drain, Vital Drain, Vital Pull, Life Pull, Essence Pull, Vital Draw, Essence Draw, Life Draw, Vitality Withdrawal, Strength Withdrawal, Debilitating Touch, Debilitating Grasp, Enervating Grip, Consuming Touch, Consuming Grasp, Consuming Grip, Parasitic Touch, Parasitic Grasp, Parasitic Bond, Parasitic Bind, Feeding Touch, Feeding Grasp, Feeding Bite (instrument: fangs), Feeding Clutch, Vital Wring, Essence Wring, Vital Squeeze, Vigor Squeeze, Withering Clasp, Draining Clasp, Sapping Clasp, Vital Toll, Life Toll, Vital Ebb, Life Ebb, Essence Ebb, Wasting Grasp, Wasting Clutch, Diminishing Touch, Diminishing Grasp
 
 **Disposition notes / flags:**
 - "Leech" retained as a plain-English verb/common noun for the act ("Vital Leech," "Essence Leech," "Vitality Leech") per the harvest's explicit ruling — it names the parasitic behavior, not the animal, so it is not an Earth-fauna violation.
@@ -109,10 +109,10 @@ Vital Siphon, Essence Siphon, Life Siphon, Vitality Drain, Strength Sap, Vigor S
 ## 6. AMBUSH
 
 **Neutral pool** (single words):
-Ambush, Pounce, Lunge, Charge, Rush, Dash, Sprint, Dive, Swoop, Stoop, Spring, Leap, Bound, Vault, Onrush, Onslaught, Blitz, Sortie, Sally, Foray, Raid, Skirmish, Snap, Jab, Sneak, Stalk, Prowl, Ambuscade, Waylay, Bushwhack, Takedown, Tackle, Blindside, Interception, Cutoff, Bolt, Streak
+Ambush, Pounce, Lunge, Charge, Rush, Dash, Sprint, Dive, Swoop, Stoop, Spring, Leap, Bound, Vault, Onrush, Onslaught, Blitz, Sortie, Sally, Foray, Raid, Skirmish, Snap, Sneak, Stalk, Prowl, Ambuscade, Waylay, Bushwhack, Takedown, Tackle, Blindside, Interception, Cutoff, Bolt
 
 **Neutral pool** (two-word compositions):
-Sudden Strike, Snap Strike, Sneak Strike, Surprise Strike, First Strike, Close Strike, Sudden Lunge, Lunging Strike, Pouncing Strike, Spring Strike, Leaping Strike, Bounding Strike, Vaulting Strike, Charge Strike, Charging Blow, Rushing Strike, Rush Attack, Blitz Strike, Sortie Strike, Sally Strike, Foray Strike, Raiding Strike, Skirmish Strike, Stalking Strike, Prowling Strike, Skulking Strike, Lurking Strike, Creeping Strike, Closing Strike, Intercepting Strike, Cutoff Strike, Tackling Strike, Bearing-Down Strike, Descending Strike, Blitz Pounce, Flash Pounce, Streaking Strike, Bolting Strike, Bolt Strike, Careening Charge, Barreling Charge, Storming Charge, Gallop Strike, Homing Strike, Precision Pounce, Snap Pounce
+Sudden Strike, Snap Strike, Sneak Strike, Surprise Strike, First Strike, Close Strike, Sudden Lunge, Lunging Strike, Pouncing Strike, Spring Strike, Leaping Strike, Bounding Strike, Vaulting Strike, Charge Strike, Charging Blow, Rushing Strike, Rush Attack, Blitz Strike, Sortie Strike, Sally Strike, Foray Strike, Raiding Strike, Skirmish Strike, Stalking Strike, Prowling Strike, Skulking Strike, Lurking Strike, Creeping Strike, Closing Strike, Intercepting Strike, Cutoff Strike, Tackling Strike, Bearing-Down Strike, Descending Strike, Blitz Pounce, Flash Pounce, Streaking Strike, Bolting Strike, Bolt Strike, Careening Charge, Barreling Charge, Storming Charge, Gallop Strike, Homing Strike, Precision Pounce, Snap Pounce, Sweeping Charge
 
 **Disposition notes / flags:**
 - Harvest's own §3 note singles out the strongest cleanest names: Sudden Strike, Ambush, Blindside, First Strike, Pounce, Lunging Strike, Charging Blow, Onrush, Waylay, Bushwhack, Intercepting Strike, Bolt Strike — all confirmed neutral, all pooled.
@@ -131,10 +131,10 @@ Sudden Strike, Snap Strike, Sneak Strike, Surprise Strike, First Strike, Close S
 ## 7. BEAM
 
 **Neutral pool** (single words):
-Beam, Ray, Lance (instrument-flag: horn/tusk/spike), Spear (instrument-flag: horn/tusk), Shaft, Bolt, Streak, Stream, Jet, Pillar, Column, Spire, Needle (instrument-flag: proboscis/spine), Pin (instrument-flag: spine), Skewer, Pike, Thread, Filament, Wire, Line, Streamer, Glare, Gleam, Blast, Discharge, Emission, Projection, Focus, Convergence, Vector, Trajectory, Path, Rod, Staff, Tracer
+Beam, Lance (instrument-flag: horn/tusk/spike), Spear (instrument-flag: horn/tusk), Shaft, Stream, Jet, Pillar, Column, Spire, Needle (instrument-flag: proboscis/spine), Pin (instrument-flag: spine), Skewer, Pike, Thread, Filament, Wire, Line, Streamer, Glare, Projection, Focus, Convergence, Vector, Trajectory, Path, Rod, Staff, Tracer
 
 **Neutral pool** (two-word compositions):
-Focus Beam, Focused Beam, Piercing Ray, Piercing Lance, Energy Lance, Needle Ray, Pinpoint Beam, Precision Beam, Converging Ray, Concentrated Beam, Sustained Beam, Narrow Beam, Directed Beam, Streaking Ray, Threaded Beam, Threading Lance, Transfixing Ray, Impaling Lance, Skewering Ray, Boring Ray, Drilling Beam, Etching Ray, Tracing Beam, Sighted Beam, Trained Beam, Vector Beam, Searing Line, Focal Ray, Steady Beam, Unbroken Beam, True Beam, Straight Ray, Fine Beam, Hairline Beam, Spearing Ray, Rapier Ray
+Focus Beam, Focused Beam, Piercing Lance, Energy Lance, Pinpoint Beam, Precision Beam, Concentrated Beam, Sustained Beam, Narrow Beam, Directed Beam, Threaded Beam, Threading Lance, Impaling Lance, Drilling Beam, Tracing Beam, Sighted Beam, Trained Beam, Vector Beam, Steady Beam, Unbroken Beam, True Beam, Fine Beam, Hairline Beam
 
 **Disposition notes / flags:**
 - Lance/Spear/Needle/Pin/Skewer/Impaling Lance/Skewering Ray/Spearing Ray/Transfixing Ray tagged per the harvest's own anatomy table — instrument: horn/tusk/spike/spine/proboscis (channel form: "gaze" or "beam-organ" also acceptable for non-physical emitters). Kept broadly since these describe the shape of the emission, not a mandatory body part — flagged sparingly per brief.
@@ -151,10 +151,10 @@ Focus Beam, Focused Beam, Piercing Ray, Piercing Lance, Energy Lance, Needle Ray
 ## 8. HURL
 
 **Neutral pool** (single words):
-Throw, Toss, Pitch, Fling, Lob, Cast, Heave, Hurl, Launch, Volley, Barrage, Salvo, Fusillade, Payload, Sling, Javelin, Dart, Bolt, Shaft, Chunk, Mass, Load
+Throw, Toss, Pitch, Fling, Lob, Cast, Heave, Hurl, Launch, Volley, Barrage, Salvo, Fusillade, Payload, Sling, Javelin, Dart, Shaft, Chunk, Mass, Load
 
 **Neutral pool** (two-word compositions):
-Mass Hurl, Debris Barrage, Shard Barrage, Splinter Volley, Chunk Toss, Wreckage Hurl, Payload Launch, Projectile Volley, Sling Shot, Sling Strike, Heave Toss, Overhand Hurl, Full Heave, Skyward Fling, Arcing Hurl, Arcing Toss, Falling Barrage, Descending Hail, Weighted Toss, Rain of Debris (3 words — cut, see below), Hail of Fragments (3 words — cut), Barrage Volley, Salvo Cast, Fling Assault, Launch Strike, Loosed Volley, Unleashed Barrage, Siege Toss, Siege Volley, Javelin Cast, Bolt Throw, Spear Cast, Wreckage Volley, Fragment Barrage, Plummeting Mass, Heavy Fling, Skybound Toss, Overhead Hurl, Downward Barrage, Peppering Volley, Pelting Hail, Battering Hail, Full Salvo, Concentrated Barrage, Scatter Hurl
+Debris Barrage, Shard Barrage, Splinter Volley, Chunk Toss, Wreckage Hurl, Payload Launch, Projectile Volley, Sling Shot, Sling Strike, Heave Toss, Overhand Hurl, Full Heave, Skyward Fling, Arcing Hurl, Arcing Toss, Falling Barrage, Descending Hail, Weighted Toss, Rain of Debris (3 words — cut, see below), Hail of Fragments (3 words — cut), Barrage Volley, Salvo Cast, Fling Assault, Launch Strike, Loosed Volley, Unleashed Barrage, Siege Toss, Siege Volley, Javelin Cast, Spear Cast, Wreckage Volley, Fragment Barrage, Heavy Fling, Skybound Toss, Overhead Hurl, Downward Barrage, Peppering Volley, Pelting Hail, Battering Hail, Full Salvo, Concentrated Barrage, Scatter Hurl
 
 **Disposition notes / flags:**
 - Siege-engine names (Catapult, Trebuchet, Ballista, Mangonel, Onager) CUT 2026-09-01 under the real-weapons rule (Torpedo precedent: named military machines). Sling kept (generic).
@@ -171,10 +171,10 @@ Mass Hurl, Debris Barrage, Shard Barrage, Splinter Volley, Chunk Toss, Wreckage 
 ## 9. SPRAY
 
 **Neutral pool** (single words):
-Spray, Spew, Gout, Jet, Torrent, Spurt, Squirt, Discharge, Emission, Expulsion, Blast, Volley, Fusillade, Barrage, Deluge, Cascade, Plume, Fountain, Geyser, Flume, Wash, Sluice, Effusion, Sputter, Vent, Fan, Cone, Arc, Sheet, Wave, Froth, Foam
+Spray, Spew, Gout, Jet, Spurt, Squirt, Emission, Expulsion, Blast, Volley, Fusillade, Barrage, Cascade, Plume, Fountain, Flume, Wash, Sluice, Effusion, Sputter, Vent, Fan, Cone, Arc, Sheet, Wave, Froth, Foam
 
 **Neutral pool** (two-word compositions):
-Wide Spray, Full Spray, Spray Volley, Spraying Torrent, Spreading Torrent, Torrent Wash, Torrent Volley, Sudden Gout, Rolling Gout, Wide Gout, Fan Jet, Jet Spray, Spreading Jet, Wide Jet, Broad Jet, Spurt Volley, Rapid Spurt, Sudden Spurt, Discharge Volley, Full Discharge, Wide Discharge, Expulsion Arc, Forceful Expulsion, Emission Wave, Broad Emission, Rolling Fusillade, Barrage Spray, Sweeping Barrage, Sudden Deluge, Rolling Deluge, Wide Cascade, Cascading Wash, Fountain Spray, Rising Fountain, Sudden Geyser, Wide Flume, Open Sluice, Sudden Effusion, Wash Over, Sweeping Wash, Broad Wash, Wide Wash, Sheet Spray, Spreading Sheet, Arc Spray, Sweeping Arc, Wide Arc, Cone Spray, Spreading Cone, Splash Volley, Sweeping Splash, Sudden Purge, Forceful Purge, Sudden Disgorge
+Wide Spray, Full Spray, Spray Volley, Spraying Torrent, Spreading Torrent, Sudden Gout, Rolling Gout, Wide Gout, Fan Jet, Jet Spray, Spreading Jet, Wide Jet, Broad Jet, Spurt Volley, Rapid Spurt, Sudden Spurt, Full Discharge, Wide Discharge, Expulsion Arc, Forceful Expulsion, Emission Wave, Broad Emission, Rolling Fusillade, Barrage Spray, Sweeping Barrage, Sudden Deluge, Rolling Deluge, Wide Cascade, Cascading Wash, Rising Fountain, Sudden Geyser, Wide Flume, Open Sluice, Sudden Effusion, Wash Over, Sweeping Wash, Broad Wash, Wide Wash, Sheet Spray, Spreading Sheet, Arc Spray, Sweeping Arc, Wide Arc, Cone Spray, Spreading Cone, Splash Volley, Sweeping Splash, Sudden Purge, Forceful Purge, Sudden Disgorge
 
 **Disposition notes / flags:**
 - Note: "Wide Arc" appears both here and could tempt use in LASH; disposition is by definition — here it names a spreading fan-shaped expulsion (SPRAY's domain), in LASH it names a sweeping motion path. Kept in both as legitimately different definitions per the brief's "place by definition" instruction; flagging the cross-cell tension per the brief's requirement.
@@ -194,10 +194,10 @@ Wide Spray, Full Spray, Spray Volley, Spraying Torrent, Spreading Torrent, Torre
 ## 10. BURST
 
 **Neutral pool** (single words):
-Burst, Blast, Blowout, Detonation, Discharge, Eruption, Flare, Flareup, Outburst, Rupture, Shockwave, Concussion, Convulsion, Expulsion, Backlash, Overflow, Upheaval, Spasm, Paroxysm, Pulse, Throb, Ripple, Ring, Bloom, Corona, Aureole, Nova, Aftershock
+Burst, Blast, Blowout, Detonation, Eruption, Flareup, Outburst, Rupture, Shockwave, Concussion, Convulsion, Expulsion, Overflow, Upheaval, Spasm, Paroxysm, Pulse, Throb, Ripple, Ring, Corona, Nova
 
 **Neutral pool** (two-word compositions):
-Sudden Burst, Radiant Burst (careful: "Radiant" leans Light idiom even in the abstract-brightness sense — held for auditor, see note), Violent Discharge, Full Discharge, Total Discharge, Concussive Wave, Concussion Pulse, Self Detonation, Sudden Eruption, Inner Eruption, Violent Rupture, Pulse Wave, Radiating Pulse, Radiant Pulse (same Radiant caution as above — held), Nova Burst, Nova Pulse, Corona Burst, Corona Release, Aureole Flare, Halo Burst, Sudden Bloom, Overflow Burst, Sudden Upheaval, Convulsive Burst, Backlash Wave, Backlash Burst, Release Wave, Unleashed Force, Unbound Release, Vent Burst, Pressure Release, Ripple Burst, Radial Burst, Expanding Pulse, Expanding Ring, Flare Burst, Sudden Flare
+Sudden Burst, Radiant Burst (careful: "Radiant" leans Light idiom even in the abstract-brightness sense — held for auditor, see note), Violent Discharge, Full Discharge, Total Discharge, Concussive Wave, Concussion Pulse, Self Detonation, Sudden Eruption, Inner Eruption, Violent Rupture, Pulse Wave, Radiating Pulse, Nova Burst, Nova Pulse, Corona Burst, Corona Release, Aureole Flare, Sudden Bloom, Overflow Burst, Sudden Upheaval, Convulsive Burst, Backlash Wave, Backlash Burst, Release Wave, Unleashed Force, Unbound Release, Vent Burst, Pressure Release, Ripple Burst, Radial Burst, Expanding Pulse, Expanding Ring, Sudden Flare
 
 **Disposition notes / flags:**
 - **Held for auditor (word leans Light idiom despite abstract intent):** Radiant Burst, Radiant Pulse — harvest keeps these as neutral candidates on the theory that "radiant" describes a shockwave's felt intensity, but "radiant" is also literally the core Light-element descriptor used across several other harvests (Light's own pool draws heavily on "radiant"). Flagging as a likely leak rather than confirming.
@@ -217,10 +217,10 @@ Sudden Burst, Radiant Burst (careful: "Radiant" leans Light idiom even in the ab
 ## 11. CLOUD
 
 **Neutral pool** (single words):
-Miasma, Pall, Shroud, Veil, Haze, Mist, Fog, Fume, Vapor, Effluvium, Exhalation, Emanation, Murk, Gloom, Nimbus, Aura, Penumbra, Cloud, Overcast, Canopy, Blanket, Curtain, Screen, Scrim, Billow, Plume, Wreath, Drift, Residue, Film, Cloak, Mantle, Zone, Field, Domain, Presence, Wake, Trail, Envelope, Sheath
+Mist, Effluvium, Exhalation, Emanation, Aura, Penumbra, Cloud, Overcast, Blanket, Curtain, Screen, Scrim, Billow, Plume, Wreath, Drift, Residue, Film, Cloak, Zone, Field, Domain, Presence, Wake, Trail, Envelope, Sheath
 
 **Neutral pool** (two-word compositions):
-Lingering Veil, Shrouding Field, Settling Haze, Standing Mist, Pervading Field, Persistent Pall, Enveloping Field, Drifting Veil, Suffusing Field, Ambient Shroud, Thickening Haze, Residual Field, Cloaking Veil, Hanging Murk, Spreading Gloom, Coalescing Mist, Encroaching Haze, Wreathing Veil, Blanketing Field, Choking Veil, Obscuring Field, Presence Field, Trailing Wake, Steeping Haze
+Lingering Veil, Shrouding Field, Settling Haze, Pervading Field, Persistent Pall, Enveloping Field, Suffusing Field, Ambient Shroud, Residual Field, Cloaking Veil, Coalescing Mist, Encroaching Haze, Wreathing Veil, Blanketing Field, Choking Veil, Obscuring Field, Presence Field, Trailing Wake, Steeping Haze
 
 **Disposition notes / flags:**
 - "Domain of Gloom" — harvest calls this "borderline abstract, kept neutral," but it is 3 words; cut here per the hard 1-2 word rule despite the harvest's own framing. Not pooled.
@@ -236,7 +236,7 @@ Lingering Veil, Shrouding Field, Settling Haze, Standing Mist, Pervading Field, 
 ## 12. WARD
 
 **Neutral pool** (single words):
-Ward, Aegis, Bulwark, Bastion, Rampart, Barrier, Barricade, Shield, Buckler, Redoubt, Stronghold, Sanctuary, Refuge, Haven, Vigil, Safeguard, Custody, Wardship, Fortify, Fortification, Reinforce, Reinforcement, Brace, Bracing, Buttress, Panoply, Cover, Deflect, Deflection, Parry, Rebuff, Repel, Repulse, Absorb, Absorption, Withstand, Endure, Bolster, Blessing, Benediction, Grace, Providence, Sanctify, Consecration, Immunity, Resistance, Insulate, Insulation, Cushion, Buffer, Screen, Veil, Shroud, Mantle, Entrench, Garrison
+Ward, Aegis, Bulwark, Bastion, Rampart, Barrier, Barricade, Shield, Buckler, Redoubt, Stronghold, Sanctuary, Refuge, Haven, Vigil, Safeguard, Custody, Wardship, Fortify, Fortification, Reinforce, Reinforcement, Brace, Bracing, Buttress, Panoply, Cover, Deflect, Deflection, Parry, Rebuff, Repel, Repulse, Absorb, Absorption, Withstand, Endure, Bolster, Blessing, Benediction, Grace, Providence, Sanctify, Consecration, Immunity, Resistance, Insulate, Insulation, Cushion, Buffer, Screen, Veil, Mantle, Entrench, Garrison
 
 **Neutral pool** (two-word compositions):
 Guardian Stance, Guard Wall, Sentinel Stance, Sentinel Guard, Vigilant Ward, Endurance Stance, Sanctuary Ward, Stand Fast, Hold Fast, Hold the Line (3 words — cut, see below), Last Stand, Unbroken Guard, Unyielding Ward, Watchful Ward, Guardian's Grace (possessive — cut per hard rule, see below), Aegis Ward
@@ -261,7 +261,7 @@ Guardian Stance, Guard Wall, Sentinel Stance, Sentinel Guard, Vigilant Ward, End
 ## 13. TERRORIZE
 
 **Neutral pool** (single words):
-Dread, Terror, Horror, Fright, Fear, Panic, Alarm, Dismay, Menace, Threat, Intimidation, Despair, Gloom, Chill, Shudder, Tremor, Shiver, Roar, Bellow, Growl, Snarl, Hiss, Glare, Stare, Sneer, Scowl, Leer, Aura, Malice, Malevolence, Hostility, Presence, Awe, Dishearten
+Dread, Terror, Horror, Fright, Fear, Panic, Alarm, Dismay, Menace, Threat, Intimidation, Despair, Chill, Shudder, Tremor, Shiver, Roar, Bellow, Growl, Snarl, Hiss, Glare, Stare, Sneer, Scowl, Leer, Aura, Malice, Malevolence, Hostility, Presence, Awe, Dishearten
 
 **Neutral pool** (two-word compositions):
 Dread Aura, Terror Wave, Menacing Glare, Intimidating Roar, Chilling Presence, Withering Glare, Cowing Stare, Daunting Presence, Paralyzing Glare, Nerve Breaker, Willbreaker, Resolve Breaker, Morale Break, Courage Drain, Spirit Crush, Fearful Bellow, Menacing Roar, Threatening Display, Intimidation Display, Bristling Display (instrument: hackles/quills/plumage — flag), Hackle Raise (instrument: hackles), Warning Roar, Warning Growl, Cold Sweat, Bone Chill, Chilling Aura, Freezing Stare, Petrifying Glare, Overawing Presence, Looming Presence, Rattling Roar, Shattering Glare, Crushing Presence, Suffocating Presence, Unnerving Stare, Unsettling Presence, Heart-Stopping Roar, Numbing Dread, Withering Roar, Demoralizing Roar, Subduing Presence, Cowering Command, Fearsome Display, Menacing Bellow, Silent Menace, Stalking Presence, Predatory Glare, Predatory Stare, Baleful Glare, Baleful Stare, Malevolent Presence, Hostile Aura, Domineering Presence, Crushing Glare, Nerve Fray
@@ -287,7 +287,7 @@ Dread Aura, Terror Wave, Menacing Glare, Intimidating Roar, Chilling Presence, W
 Snare, Trap, Net, Noose (careful — see flag below), Tether, Leash, Fetter, Shackle, Yoke, Bond, Coil (instrument-flag: serpentine/tendril), Loop, Restraint, Grip, Grasp, Hold, Clutch, Clasp, Ensnare, Entangle, Grapple, Bind, Deadlock
 
 **Neutral pool** (two-word compositions):
-Dead Weight, Tangle Trap, Snare Trap, Binding Hold, Anchor Point, Drag Down, Pull Under, Net Trap, Snap Trap, Deadfall, Mire Trap, Bog Down, Pin Down, Hold Fast, Grip Lock, Reeling Pull, Sinking Grip, No Escape
+Dead Weight, Tangle Trap, Snare Trap, Binding Hold, Anchor Point, Drag Down, Pull Under, Net Trap, Snap Trap, Deadfall, Mire Trap, Bog Down, Pin Down, Hold Fast, Grip Lock, Reeling Pull, No Escape
 
 **Disposition notes / flags:**
 - The orchestrator's own pilot audit already caught and removed the two worst leakage cases before this pass: "Undertow" and "Gravity Well" were originally mis-listed as neutral by the SNARE sub-agent; both are correctly excluded here (Undertow → Water, Gravity Well → Dark).
@@ -307,10 +307,10 @@ Dead Weight, Tangle Trap, Snare Trap, Binding Hold, Anchor Point, Drag Down, Pul
 ## 15. CRUSH
 
 **Neutral pool** (single words; sourced from the combined harvest's CRUSH lists):
-Vise (instrument-flag: pincers/jaws), Press, Clamp, Crusher, Grinder, Millstone, Pestle, Anvil, Tongs, Constriction, Coil (instrument-flag: serpentine), Grip, Clutch, Clasp, Compaction, Landslide (careful — held, see below), Rockslide (held), Avalanche (held), Collapse, Sinkhole, Boulder (held), Rubble, Wreckage, Ruin, Crush, Grind, Compress, Compact, Squeeze, Constrict, Clamp, Clench, Grip, Clasp, Clutch, Strangle, Throttle, Choke, Smother, Squash, Smash, Mash, Pulverize, Pulp, Flatten, Crumple, Mill, Pound, Tamp, Ram, Wring, Bind, Coil, Wrap, Envelop, Buckle
+Vise (instrument-flag: pincers/jaws), Press, Clamp, Crusher, Grinder, Pestle, Anvil, Tongs, Constriction, Coil (instrument-flag: serpentine), Grip, Clutch, Clasp, Compaction, Landslide (careful — held, see below), Collapse, Wreckage, Ruin, Crush, Grind, Compress, Compact, Squeeze, Constrict, Clamp, Clench, Grip, Clasp, Clutch, Strangle, Throttle, Choke, Smother, Squash, Mash, Pulverize, Pulp, Flatten, Crumple, Mill, Pound, Tamp, Wring, Coil, Wrap, Envelop, Buckle
 
 **Neutral pool** (two-word compositions):
-Crushing Grip, Vise Grip (instrument: pincers/jaws), Crush Hold, Grinding Press, Compression Wave, Death Grip (careful — "Death" idiom-adjacent but well-worn plain English, kept; flag for auditor comfort check), Pulverizing Blow, Crushing Weight, Pressure Lock, Wringing Hold, Vise Lock (instrument: pincers/jaws), Clamp Down (instrument: jaws/pincers), Grindstone, Collapsing Grip, Flattening Blow, Millgrind, Anvil Press, Mortar Crush, Pestle Strike
+Crushing Grip, Crush Hold, Compression Wave, Death Grip (careful — "Death" idiom-adjacent but well-worn plain English, kept; flag for auditor comfort check), Pulverizing Blow, Crushing Weight, Wringing Hold, Grindstone, Flattening Blow, Millgrind, Mortar Crush, Pestle Strike
 
 **Disposition notes / flags:**
 - Vise Grip, Vise Lock, Clamp Down — all self-flagged by the source harvest as implying pincers/jaws; kept with instrument tags per the registry rather than cut, consistent with the brief's "use anatomy-evoking ones sparingly" (not "never").
@@ -331,7 +331,7 @@ Crushing Grip, Vise Grip (instrument: pincers/jaws), Crush Hold, Grinding Press,
 ## 16. MEND
 
 **Neutral pool** (single words; sourced from the combined harvest's MEND lists):
-Balm, Salve, Poultice, Unguent, Liniment, Tonic, Elixir, Antidote, Remedy, Cure, Restorative, Analgesic, Anodyne, Compress, Dressing, Bandage, Splint, Suture, Graft, Transfusion, Infusion, Vitality, Vigor, Convalescence, Recuperation, Respite, Relief, Reprieve, Succor, Solace, Comfort, Ease, Renewal, Rebirth, Resurgence, Revival, Rejuvenation, Rekindling, Purification, Cleansing, Catharsis, Regeneration, Regrowth, Bloom, Flourish, Surge, Bounty, Weld, Solder, Patch, Overhaul, Reinforcement, Rally, Rebound, Recuperate, Bolster, Fortify, Brace, Vitalize, Reanimate, Resuscitate, Repair
+Balm, Salve, Poultice, Unguent, Liniment, Tonic, Elixir, Antidote, Remedy, Cure, Restorative, Analgesic, Anodyne, Compress, Dressing, Bandage, Splint, Suture, Graft, Transfusion, Infusion, Vitality, Vigor, Convalescence, Recuperation, Respite, Relief, Reprieve, Succor, Solace, Comfort, Ease, Renewal, Rebirth, Resurgence, Revival, Rejuvenation, Rekindling, Purification, Cleansing, Catharsis, Regeneration, Regrowth, Surge, Weld, Solder, Patch, Overhaul, Rally, Rebound, Recuperate, Vitalize, Reanimate, Resuscitate, Repair
 
 **Neutral pool** (two-word compositions):
 Mending Aura, Restorative Pulse, Second Wind (retained per Nick's explicit pilot ruling — predates gaming as an idiom), Recovery Rally (composed from "Rally" + "Recovery" concept — note: "Rally" and "Recovery" both individually pooled above; kept as bare words rather than forcing an awkward compound), Soothing Aura, Vital Surge, Restorative Field, Healing Aura, Tonic Pulse, Uplift
