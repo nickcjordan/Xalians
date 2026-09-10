@@ -41,3 +41,12 @@ test('requireSubject returns the lowercased subject when present', () => {
 	};
 	assert.equal(requireSubject(event), 'nick');
 });
+
+test('getSubject reads payload format 1.0 claims at requestContext.authorizer.claims', () => {
+	const event = {
+		requestContext: {
+			authorizer: { claims: { 'cognito:username': 'King_Kozrak' }, scopes: null },
+		},
+	};
+	assert.equal(getSubject(event), 'king_kozrak');
+});

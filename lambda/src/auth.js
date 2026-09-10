@@ -14,12 +14,13 @@ class ApiError extends Error {
 // responseBuilder.buildXalianUsersTableItem), so lowercasing here maps onto them with no
 // migration needed.
 function getSubject(event) {
-	const claims =
-		event &&
-		event.requestContext &&
-		event.requestContext.authorizer &&
-		event.requestContext.authorizer.jwt &&
-		event.requestContext.authorizer.jwt.claims;
+	// The HTTP API integrations use Lambda payload format 1.0, which puts JWT claims at
+	// requestContext.authorizer.claims. Payload format 2.0 nests them one level deeper at
+	// requestContext.authorizer.jwt.claims. Read both so a format change cannot lock every
+	// caller out (a valid token produced this handler's own 401 on 2026-09-10 for exactly
+	// that reason).
+	const authorizer = event && event.requestContext && event.requestContext.authorizer;
+	const claims = authorizer && ((authorizer.jwt && authorizer.jwt.claims) || authorizer.claims);
 
 	const username = claims && claims['cognito:username'];
 	return username ? String(username).toLowerCase() : null;
