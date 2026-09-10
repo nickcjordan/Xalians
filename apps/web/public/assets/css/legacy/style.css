@@ -3402,48 +3402,6 @@ input, textarea {
   margin: auto;
 }
 
-/* The pre-round curtain. It covers the board rather than floating on top of a
-   corner of it, so nothing is obscured while it is up and nothing is left
-   overlapping once the round starts. */
-.game-curtain {
-  position: absolute;
-  inset: 0;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--g-3);
-  background: rgba(13, 11, 9, 0.82);
-  border-radius: var(--g-radius-housing);
-}
-
-.game-curtain-kicker {
-  margin: 0;
-}
-
-.game-display-text {
-  font-family: var(--g-font-stencil);
-  font-size: var(--g-size-readout);
-  font-weight: 600;
-  letter-spacing: var(--g-track-label);
-  text-transform: uppercase;
-  color: var(--g-ink);
-  margin: 0;
-}
-
-.game-curtain-note {
-  font-family: var(--g-font-mono);
-  font-size: var(--g-size-small);
-  color: var(--g-ink-mid);
-  margin: 0;
-}
-
-.game-curtain-btn {
-  margin-top: var(--g-3);
-  padding: var(--g-3) var(--g-7);
-}
-
 /* 
 -------------------------------------------
 |   Game Container

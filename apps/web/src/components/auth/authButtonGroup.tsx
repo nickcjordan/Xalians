@@ -20,10 +20,12 @@ import {
 type AuthState = { username: string; hasVerifiedEmail: boolean } | null;
 
 type AuthButtonGroupProps = {
+	/** Key size; the desktop navbar passes "sm" so a key's mass clears its hairline. */
+	size?: "default" | "sm";
 	authAlertCallback: (user: AuthState) => void;
 };
 
-function AuthButtonGroup({ authAlertCallback }: AuthButtonGroupProps) {
+function AuthButtonGroup({ authAlertCallback, size = "default" }: AuthButtonGroupProps) {
 	const [loggedInUser, setLoggedInUser] = React.useState<AuthState>(null);
 	const [signupModalShow, setSignupModalShow] = React.useState(false);
 	const [verifyEmailModalShow, setVerifyEmailModalShow] = React.useState(false);
@@ -104,7 +106,7 @@ function AuthButtonGroup({ authAlertCallback }: AuthButtonGroupProps) {
 			{loggedInUser ? (
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<Button variant="ghost">{loggedInUser.username}</Button>
+						<Button variant="ghost" size={size}>{loggedInUser.username}</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
 						<DropdownMenuItem asChild>
@@ -118,8 +120,8 @@ function AuthButtonGroup({ authAlertCallback }: AuthButtonGroupProps) {
 				</DropdownMenu>
 			) : (
 				<React.Fragment>
-					<Button variant="ghost" onClick={() => setSignInModalShow(true)}>Sign in</Button>
-					<Button variant="secondary" onClick={() => setSignupModalShow(true)}>Create account</Button>
+					<Button variant="ghost" size={size} onClick={() => setSignInModalShow(true)}>Sign in</Button>
+					<Button variant="secondary" size={size} onClick={() => setSignupModalShow(true)}>Create account</Button>
 				</React.Fragment>
 			)}
 

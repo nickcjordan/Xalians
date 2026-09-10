@@ -9,6 +9,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { TextPlugin } from 'gsap/TextPlugin';
 import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
+import { Button } from '@/components/ui/button';
 gsap.registerPlugin(MotionPathPlugin, TextPlugin, ScrollTrigger, DrawSVGPlugin);
 
 class MatchCardGamePage extends React.Component {
@@ -36,7 +37,7 @@ class MatchCardGamePage extends React.Component {
 			tl.to('#match-game-start-button', { autoAlpha: 0 });
 			// the curtain covers the whole board, so it has to clear out of the way
 			// once the round begins - only the countdown legend stays on top
-			tl.to('#match-game-curtain', { backgroundColor: 'rgba(13, 11, 9, 0)', pointerEvents: 'none', duration: 0.4 }, '<');
+			tl.to('#match-game-curtain', { backgroundColor: 'rgba(14, 16, 15, 0)', pointerEvents: 'none', duration: 0.4 }, '<');
 			this.flipAllCardsUp(tl);
 			tl.to('#match-game-display-text', { text: { padSpace: true, preserveSpaces: true, value: '    3...' }, duration: 1 })
 				.to('#match-game-display-text', { text: { padSpace: true, preserveSpaces: true, value: '    2...' }, duration: 1 })
@@ -314,15 +315,15 @@ class MatchCardGamePage extends React.Component {
 					{/* the start control used to sit on top of the middle of the board,
 					    covering two cards; it is a curtain over the whole board until
 					    the round begins, which is what it was always acting as */}
-					<div className="game-curtain" id="match-game-curtain">
-						<p className="g-kicker game-curtain-kicker">Xalian Match</p>
-						<h2 className="game-display-text" id="match-game-display-text">
+					<div className="absolute inset-0 z-[1000] flex flex-col items-center justify-center gap-3 bg-glass/85" id="match-game-curtain">
+						<p className="type-legend m-0">Xalian Match</p>
+						<h2 className="type-title m-0" id="match-game-display-text">
 							Ready...
 						</h2>
-						{this.state.text && <p className="game-curtain-note">{this.state.text}</p>}
-						<button type="button" id="match-game-start-button" className="g-key g-key--primary game-curtain-btn" onClick={this.startGameTapped}>
+						{this.state.text && <p className="type-data m-0 text-small text-ink-2">{this.state.text}</p>}
+						<Button size="lg" id="match-game-start-button" className="mt-3" onClick={this.startGameTapped}>
 							Start
-						</button>
+						</Button>
 					</div>
 				</div>
 			</React.Fragment>

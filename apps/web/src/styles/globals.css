@@ -167,6 +167,11 @@
 	}
 
 	/* The room is not a flat fill: a faint grain and an edge vignette. */
+	/* A page's first margin (the masthead's mt-8) used to collapse through
+	   <main>, so main started 32px below the navbar and the plain body showed
+	   through as a dark strip. flow-root keeps that margin inside main. */
+	main[data-tier="chrome"] { display: flow-root; }
+
 	[data-tier="chrome"] {
 		background-image:
 			linear-gradient(90deg, rgba(0, 0, 0, 0.22), transparent 14%, transparent 86%, rgba(0, 0, 0, 0.22)),

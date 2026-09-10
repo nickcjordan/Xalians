@@ -565,6 +565,76 @@ resource "aws_s3_bucket_website_configuration" "react_bucket" {
   }
 }
 
+# The site distribution (#203). Created in the console long before Terraform
+# and imported here so the deep-link error mapping lives in code: the S3
+# origin answers every client-side route (/generator, /encyclopedia/...) with
+# a 404 whose body is index.html, and CloudFront must rewrite that status to
+# 200 or every deep link is logged as an error and read by crawlers as a
+# missing page. 403 is mapped the same way for the day the bucket policy
+# stops answering missing keys with 404. Everything else matches the live
+# distribution exactly so the import plans as an update, never a replace.
+import {
+  to = aws_cloudfront_distribution.site
+  id = var.cloudfront_id
+}
+
+resource "aws_cloudfront_distribution" "site" {
+  enabled             = true
+  is_ipv6_enabled     = true
+  http_version        = "http2"
+  price_class         = "PriceClass_100"
+  default_root_object = "index.html"
+  aliases             = ["www.xalians.com", "xalians.com"]
+
+  origin {
+    origin_id   = var.frontend_bucket_name
+    domain_name = "${var.frontend_bucket_name}.s3.us-east-1.amazonaws.com"
+    # No s3_origin_config: the live origin has an empty access identity (the
+    # bucket is public-read) and the provider treats the omitted block as that.
+  }
+
+  default_cache_behavior {
+    target_origin_id           = var.frontend_bucket_name
+    viewer_protocol_policy     = "allow-all"
+    allowed_methods            = ["GET", "HEAD", "OPTIONS"]
+    cached_methods             = ["GET", "HEAD"]
+    compress                   = true
+    cache_policy_id            = "658327ea-f89d-4fab-a63d-7e88639e58f6" # Managed-CachingOptimized
+    origin_request_policy_id   = "88a5eaf4-2fd4-4709-b370-b4c650ea3fcf" # Managed-CORS-S3Origin
+    response_headers_policy_id = "5cc3b908-e619-4b99-88e5-2cf7f45965bd" # Managed-CORS-With-Preflight
+  }
+
+  custom_error_response {
+    error_code            = 404
+    response_code         = 200
+    response_page_path    = "/index.html"
+    error_caching_min_ttl = 10
+  }
+
+  custom_error_response {
+    error_code            = 403
+    response_code         = 200
+    response_page_path    = "/index.html"
+    error_caching_min_ttl = 10
+  }
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
+  viewer_certificate {
+    acm_certificate_arn      = var.cert_arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
+  }
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
 resource "aws_s3_bucket_cors_configuration" "react_bucket" {
   bucket = aws_s3_bucket.react_bucket.id
 

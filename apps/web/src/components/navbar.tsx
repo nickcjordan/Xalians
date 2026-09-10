@@ -130,7 +130,7 @@ function XalianNavbar({ authAlertCallback }: XalianNavbarProps) {
 					</nav>
 
 					<div className="ml-auto hidden items-center gap-2 md:flex">
-						<AuthButtonGroup authAlertCallback={handleUserAuthAction} />
+						<AuthButtonGroup size="sm" authAlertCallback={handleUserAuthAction} />
 					</div>
 
 					<Sheet open={menuOpen} onOpenChange={setMenuOpen}>
