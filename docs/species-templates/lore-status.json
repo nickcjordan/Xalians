@@ -4,8 +4,8 @@
     "akinza": {
       "description": "source",
       "appearance": "ratified",
-      "fields": "draft",
-      "note": "teaser was upgraded before the split"
+      "fields": "ratified",
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch three)"
     },
     "avilily": {
       "description": "source",
@@ -40,8 +40,8 @@
     "drilltail": {
       "description": "source",
       "appearance": "ratified",
-      "fields": "draft",
-      "note": "teaser was upgraded before the split"
+      "fields": "ratified",
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch three)"
     },
     "dromeus": {
       "description": "source",
@@ -58,14 +58,14 @@
     "figzy": {
       "description": "source",
       "appearance": "ratified",
-      "fields": "draft",
-      "note": "teaser was upgraded before the split"
+      "fields": "ratified",
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch three)"
     },
     "foromeer": {
       "description": "source",
       "appearance": "ratified",
-      "fields": "draft",
-      "note": "teaser was upgraded before the split"
+      "fields": "ratified",
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch three)"
     },
     "graviclaw": {
       "description": "source",
@@ -82,8 +82,8 @@
     "hypnopet": {
       "description": "source",
       "appearance": "ratified",
-      "fields": "draft",
-      "note": "teaser was source before the split"
+      "fields": "ratified",
+      "note": "teaser was source before the split; fields ratified 2026-09-10 (batch three)"
     },
     "imprit": {
       "description": "source",
@@ -118,8 +118,8 @@
     "scalatto": {
       "description": "source",
       "appearance": "ratified",
-      "fields": "draft",
-      "note": "teaser was upgraded before the split"
+      "fields": "ratified",
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch three)"
     },
     "smokat": {
       "description": "source",
@@ -142,14 +142,14 @@
     "thirstaserp": {
       "description": "source",
       "appearance": "ratified",
-      "fields": "draft",
-      "note": "teaser was upgraded before the split"
+      "fields": "ratified",
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch three)"
     },
     "tizzie": {
       "description": "source",
       "appearance": "ratified",
-      "fields": "draft",
-      "note": "teaser was upgraded before the split"
+      "fields": "ratified",
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch three)"
     },
     "venemist": {
       "description": "source",
@@ -172,14 +172,14 @@
     "yetimoth": {
       "description": "source",
       "appearance": "ratified",
-      "fields": "draft",
-      "note": "teaser was source before the split"
+      "fields": "ratified",
+      "note": "teaser was source before the split; fields ratified 2026-09-10 (batch three)"
     },
     "frackworm": {
       "description": "source",
       "appearance": "ratified",
-      "fields": "draft",
-      "note": "ratified 2026-09-09 as species 00030"
+      "fields": "ratified",
+      "note": "ratified 2026-09-09 as species 00030; fields ratified 2026-09-10 (batch three)"
     }
   }
 }
