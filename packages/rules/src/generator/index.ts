@@ -5,19 +5,24 @@
 	tested with fixtures and later moved to the Lambda.
 */
 
-// the bundled JSON is validated data, not a typed structure this package owns; cast at
-// the boundary (a zod schema for it lives in packages/content/src/schema, branch
-// content/schemas, landing separately)
 import speciesRecordsJson from '@xalians/content/speciesRecords.json';
 import registriesJson from '@xalians/content/registries.json';
 import catalogJson from '@xalians/content/abilityCatalog.json';
+import { SpeciesRecordsBundleSchema } from '@xalians/content/schema';
 import { generateXalian as generateWithTables, generateBatch as generateBatchWithTables } from './generate.ts';
-import type { AbilityCatalog, GenerateBatchOptions, GenerateOptions, Registries, SpeciesRecordsBundle, SpeciesTemplate, XalianRecord } from './types.ts';
+import type { AbilityCatalog, GenerateBatchOptions, GenerateOptions, Registries, SpeciesTemplate, XalianRecord } from './types.ts';
 
 export { GENERATOR_VERSION, SCHEMA_VERSION } from './constants.ts';
 export type * from './types.ts';
 
-const speciesRecords = speciesRecordsJson as unknown as SpeciesRecordsBundle;
+// speciesRecords.json is parsed through the schema (not cast) so a bundle that violates
+// the ratified record shape fails loudly at import time rather than producing garbage
+// records; measured at ~8ms for the 30-species bundle, well under the cost of skipping
+// it. registries.json and abilityCatalog.json stay a cast at the boundary: the ability
+// catalog is validated structurally by packages/content's own test suite rather than
+// per-entry (see abilityCatalog.ts), and registries.json is internal plumbing the
+// generator only reads a few fields of.
+const speciesRecords = SpeciesRecordsBundleSchema.parse(speciesRecordsJson);
 const registries = registriesJson as unknown as Registries;
 const catalog = catalogJson as unknown as AbilityCatalog;
 

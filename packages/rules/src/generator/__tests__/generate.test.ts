@@ -8,7 +8,7 @@ import registriesJson from '@xalians/content/registries.json';
 import catalogJson from '@xalians/content/abilityCatalog.json';
 import { ELEMENT_ADJACENCY, CONDUIT_ACTIONS_BY_MEDIUM, TRAIT_EXCLUSIONS, HEFT_BANDS } from '../constants.ts';
 import { makeRng } from '../prng.ts';
-import type { AttributeKey } from '../types.ts';
+import type { AttributeKey, ElementKey } from '../types.ts';
 
 const registries = registriesJson as any;
 const catalog = catalogJson as any;
@@ -105,7 +105,7 @@ describe('generator: every ratified species honors the record contract', () => {
 				if (el === t.element) {
 					return;
 				}
-				expect(ELEMENT_ADJACENCY[t.element]).toContain(el);
+				expect(ELEMENT_ADJACENCY[t.element as ElementKey]).toContain(el);
 				expect(grade).toBeGreaterThanOrEqual(1);
 				expect(grade).toBeLessThanOrEqual(99);
 			});
@@ -121,7 +121,7 @@ describe('generator: every ratified species honors the record contract', () => {
 				expect(Object.keys(t.traits.pool).concat(['phasing'])).toContain(k);
 			});
 			Object.entries(t.traits.pool).forEach(([k, pct]) => {
-				if (pct >= 100) {
+				if ((pct ?? 0) >= 100) {
 					expect(r.traits).toContain(k);
 				}
 			});

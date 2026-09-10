@@ -188,12 +188,12 @@ function speciesStats(template: SpeciesTemplate, records: XalianRecord[]): Speci
 
 	// build (archetype) shares vs authored weights
 	const weights = template.archetypeWeights || { balanced: 100 };
-	const weightSum = Object.values(weights).reduce((a, b) => a + b, 0) || 1;
+	const weightSum = Object.values(weights).reduce<number>((a, b) => a + (b ?? 0), 0) || 1;
 	const buildCounts = new Map<string, number>();
 	records.forEach((r) => buildCounts.set(r.archetype.key, (buildCounts.get(r.archetype.key) || 0) + 1));
 	const buildRows: BuildRow[] = Object.keys(weights).map((key) => ({
 		key,
-		authoredShare: pct(weights[key], weightSum),
+		authoredShare: pct(weights[key] ?? 0, weightSum),
 		observedShare: pct(buildCounts.get(key) || 0, n),
 	}));
 
@@ -201,9 +201,9 @@ function speciesStats(template: SpeciesTemplate, records: XalianRecord[]): Speci
 	const pool = (template.traits && template.traits.pool) || {};
 	const traitRows: TraitRow[] = Object.keys(pool).map((key) => {
 		const landed = records.filter((r) => r.traits.includes(key)).length;
-		return { key, authoredPercent: pool[key], observedRate: pct(landed, n) };
+		return { key, authoredPercent: pool[key] ?? 0, observedRate: pct(landed, n) };
 	});
-	const expectedTraitCount = Object.values(pool).reduce((a, b) => a + b, 0) / 100;
+	const expectedTraitCount = Object.values(pool).reduce<number>((a, b) => a + (b ?? 0), 0) / 100;
 	const traitCounts = records.map((r) => r.traits.length);
 	const traitCountDist: Record<string, number> = {};
 	traitCounts.forEach((c) => {
@@ -292,9 +292,9 @@ function rosterStats(templates: SpeciesTemplate[], perSpecies: Map<string, Xalia
 	templates.forEach((t) => {
 		const records = perSpecies.get(t.key) || [];
 		const weights = t.archetypeWeights || { balanced: 100 };
-		const weightSum = Object.values(weights).reduce((a, b) => a + b, 0) || 1;
+		const weightSum = Object.values(weights).reduce<number>((a, b) => a + (b ?? 0), 0) || 1;
 		Object.keys(weights).forEach((key) => {
-			const expected = (records.length * weights[key]) / weightSum;
+			const expected = (records.length * (weights[key] ?? 0)) / weightSum;
 			expectedBuildCounts.set(key, (expectedBuildCounts.get(key) || 0) + expected);
 		});
 	});
