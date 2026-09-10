@@ -38,7 +38,12 @@ const path = require('path');
 
 const root = path.join(__dirname, '..');
 const catalogDir = path.join(root, 'docs', 'ability-catalog');
-const outDir = path.join(root, 'packages', 'content', 'json');
+// CONTENT_BUNDLE_OUT_DIR lets scripts/checkBundle.js redirect the write to a scratch
+// directory for a stale-bundle diff without touching the committed file. Unset in normal
+// use, so default behavior (writing into packages/content/json) is unchanged.
+const outDir = process.env.CONTENT_BUNDLE_OUT_DIR
+  ? path.resolve(process.env.CONTENT_BUNDLE_OUT_DIR)
+  : path.join(root, 'packages', 'content', 'json');
 
 const ELEMENTS = ['fire', 'water', 'dark', 'light', 'plant', 'electric', 'ghost', 'rock', 'chemical', 'air', 'psychic', 'ice', 'metal', 'sand'];
 const ACTIONS = ['strike', 'lash', 'crush', 'rake', 'shove', 'drain', 'ambush', 'beam', 'hurl', 'spray', 'burst', 'cloud', 'snare', 'ward', 'mend', 'terrorize'];
@@ -235,6 +240,7 @@ function build() {
 function main() {
   const catalog = build();
   if (skipped.length) console.warn('skipped ' + skipped.length + ' slash-shorthand tokens: ' + skipped.join(' | '));
+  fs.mkdirSync(outDir, { recursive: true });
   const outPath = path.join(outDir, 'abilityCatalog.json');
   fs.writeFileSync(outPath, JSON.stringify(catalog) + '\n');
   const total = Object.values(catalog.counts.elements).reduce((a, b) => a + b, 0);
