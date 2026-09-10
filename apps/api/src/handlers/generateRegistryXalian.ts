@@ -25,9 +25,13 @@ export const handler = withApi(
       throw new ApiError(400, 'UNKNOWN_SPECIES', `"${body.species}" is not a ratified species`);
     }
 
+    // Global per-species count, not per-owner: see the doc comment on registryRepo.nextSerial.
+    const serial = await registryRepo.nextSerial(template.key);
+
     const seed = randomBytes(16).toString('hex');
     const generated = generateXalian(template, seed, {
       origin: template.homePlanet,
+      serial,
       generatedAt: new Date().toISOString(),
     });
 

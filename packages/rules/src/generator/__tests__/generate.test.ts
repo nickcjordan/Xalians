@@ -6,6 +6,7 @@ import { generateXalian, generateBatch, getSpeciesTemplates, speciesDisplayName,
 // in the package's public API.
 import registriesJson from '@xalians/content/registries.json';
 import catalogJson from '@xalians/content/abilityCatalog.json';
+import speciesRecordsJson from '@xalians/content/speciesRecords.json';
 import { ELEMENT_ADJACENCY, CONDUIT_ACTIONS_BY_MEDIUM, TRAIT_EXCLUSIONS, HEFT_BANDS } from '../constants.ts';
 import { makeRng } from '../prng.ts';
 import type { AttributeKey, ElementKey } from '../types.ts';
@@ -71,9 +72,11 @@ describe('generator: every ratified species honors the record contract', () => {
 	const getTemplate = (species: string) => templateByKey.get(species)!;
 	const names = allNames();
 
-	test('30 species, each generated', () => {
-		expect(TEMPLATES.length).toBe(30);
-		expect(new Set(batch.map((r) => r.species)).size).toBe(30);
+	test('every ratified species is a template and each is generated', () => {
+		const ratified = (speciesRecordsJson as any).records.length;
+		expect(ratified).toBeGreaterThan(0);
+		expect(TEMPLATES.length).toBe(ratified);
+		expect(new Set(batch.map((r) => r.species)).size).toBe(ratified);
 	});
 
 	test('attributes are all ten, inside the species band', () => {
