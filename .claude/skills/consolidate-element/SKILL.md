@@ -71,6 +71,7 @@ One element in, one consolidated catalog file out. This process was burned twice
 - Water is DONE to the v5 bar (consolidated-water.md, 1,066 owned, 2026-09-01) — the process-validation pilot. The dark v2 consolidation (198 names) predates the exhaustive cross and requires a full re-run through the current pipeline; so do the other 11 elements from scratch.
 - Reuse water's Section 0 format; each element needs its own Step-0 productive-word list (run a small Step-0-only agent first, then hand its list verbatim to all four composers).
 - Neutral pools are a single shared deliverable (`neutral-pools.md`), built once from the action harvests and referenced by every element.
+- 2026-09-10 (orchestrator recommendation applied, overridable by Nick): sport-register words that are plain English for the path of a blow (Uppercut, Haymaker, Roundhouse) are pooled with instrument tags; the rules cut borrowed franchise names and real weapons, never a register. Held instrument-heavy names resolve by the tag rule (Web Trap spinnerets, Stranglehold coils/tendrils/pincers, Coil Bind coils) and element words go to their element (Root Hold to PLANT).
 
 ## Presenting to Nick — hard rules (added 2026-09-01 after a violation)
 

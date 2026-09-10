@@ -9,7 +9,7 @@ Method: for each action, walk its harvest lexicon and its own §3 "element-neutr
 ## 1. STRIKE
 
 **Neutral pool** (single words):
-Blow, Strike, Impact, Smash, Slam, Crack, Whack, Thump, Thud, Bash, Clout, Wallop, Clobber, Belt, Sock, Punch, Jab, Cuff, Slap, Chop, Knock, Rap, Crash, Collision, Concussion, Percussion, Buffet, Stroke, Swat, Ram, Butt, Kick, Stamp, Trample, Barge, Jolt, Jar, Wrench, Crunch, Snap, Backhand, Forehand
+Blow, Strike, Impact, Smash, Slam, Crack, Whack, Thump, Thud, Bash, Clout, Wallop, Clobber, Belt, Sock, Punch, Jab, Cuff, Slap, Chop, Knock, Rap, Crash, Collision, Concussion, Percussion, Buffet, Stroke, Swat, Ram, Butt, Kick, Stamp, Trample, Barge, Jolt, Jar, Wrench, Crunch, Snap, Backhand, Forehand, Uppercut (instrument: fists), Haymaker (instrument: fists)
 
 **Neutral pool** (two-word compositions):
 Direct Strike, Hard Impact, Sudden Blow, Crushing Blow, Heavy Blow, Driving Blow, Percussive Strike, Full Impact, Point Strike, Single Strike, True Strike, Body Slam (instrument: body), Blunt Force, Ram Strike, Downstrike, Overhand Strike, Knuckle Strike (instrument: fists), Elbow Strike (instrument: body), Knee Strike (instrument: body), Shoulder Charge (instrument: body), Headlong Charge, Battering Blow, Hammer Blow, Sledge Blow, Pommel Strike, Cudgel Blow, Bludgeon Strike, Jolt Strike, Jarring Blow, Crushing Impact, Shattering Blow, Rattling Blow, Reeling Blow, Staggering Blow, Concussive Blow, Fell Blow, Felling Strike, Decisive Blow, Final Blow, Clean Strike, Solid Strike, Weighted Strike, Driven Impact, Resounding Blow, Headbutt (instrument: body/head), Gore (instrument: horns/tusks — flag), Buttstroke, Body Check
@@ -18,7 +18,7 @@ Direct Strike, Hard Impact, Sudden Blow, Crushing Blow, Heavy Blow, Driving Blow
 - Anvil Blow, Anvil Strike, Sledge Blow kept — these describe the *manner* (tool-shaped blow), not a material or medium; harvest's own §3 note confirms neutrality.
 - Gore, Headbutt, Kick, Stamp, Trample, Knuckle Strike, Elbow Strike, Knee Strike, Shoulder Charge, Body Slam, Buttstroke, Pommel Strike — anatomy-evoking, tagged per the registry (jaws/horns/fists/hooves/body as applicable). Kept sparingly per brief's "prefer instrument-neutral" guidance — these are flagged, not excluded.
 - **Cut (signature-register):** none flagged this action — STRIKE's whole field reads plain/combat-register.
-- **Cut (borderline, held for auditor):** Uppercut — human-boxing-specific term, harvest itself flags for downstream franchise-check; held out of the pool pending auditor call. Haymaker — same folk-boxing register, held for auditor.
+- RESOLVED 2026-09-10 (orchestrator recommendation applied, overridable): Uppercut and Haymaker are pooled, tagged fists. They are plain English for the path of a blow, lexicalized well outside the ring, and the rules cut borrowed franchise names and real weapons, never a sport register; "does not fit the register" is not a cut rule. A name that implies a limb carries its instrument tag, which is what keeps them off a creature with no fists.
 - **Flagged out (leans element):** Thunderclap Strike (Electric), Landslide Blow (Rock), Tidal Blow (Water), Frostfall Blow (Ice) — all excluded from neutral pool per harvest's own §5.
 - **Cut (borrowed-adjacent, deferred to final-name stage per harvest note):** Iron Fist, Mega Punch, Sky Uppercut style compounds — not present as candidates here but flagged in source; not pooled.
 
@@ -29,7 +29,7 @@ Direct Strike, Hard Impact, Sudden Blow, Crushing Blow, Heavy Blow, Driving Blow
 ## 2. LASH
 
 **Neutral pool** (single words):
-Lash, Whip, Whiplash, Flail, Swipe, Sweep, Scythe, Arc, Swing, Slash, Crosscut, Backswing, Sidesweep, Cleave, Reap, Mow, Thrash, Windmill, Roundhouse (flag: fighting-game-adjacent register, held for auditor), Flick, Snap, Crack, Scourge
+Lash, Whip, Whiplash, Flail, Swipe, Sweep, Scythe, Arc, Swing, Slash, Crosscut, Backswing, Sidesweep, Cleave, Reap, Mow, Thrash, Windmill, Roundhouse (instrument: body/tail), Flick, Snap, Crack, Scourge
 
 **Neutral pool** (two-word compositions):
 Sweeping Lash, Wide Lash, Cross Lash, Full Sweep, Broad Sweep, Arcing Strike, Sweeping Strike, Sudden Lash, Backhand Sweep, Reaping Arc, Sweeping Reap, Wide Arc, Whip Strike, Whipping Arc, Coiled Lash (instrument: coils/tendrils), Uncoiling Strike (instrument: coils), Wheeling Strike, Fanning Strike (instrument: wings/fins/crest), Sweeping Cleave, Scything Arc, Mowing Sweep, Thrashing Arc, Lashing Sweep, Scourging Arc, Windmill Strike, Circling Lash, Snap Lash, Cracking Lash, Flailing Arc, Sidesweep Strike, Crosscut Sweep, Tail Sweep (instrument: tail)
@@ -37,7 +37,7 @@ Sweeping Lash, Wide Lash, Cross Lash, Full Sweep, Broad Sweep, Arcing Strike, Sw
 **Disposition notes / flags:**
 - Coil/Uncoil-based names and Tail Sweep are anatomy-evoking (instrument: coils/tendrils, tail) — kept but tagged.
 - **Cut (borderline naturalness, per harvest):** Cartwheel Strike — kept only as reference in harvest, not promoted; excluded from pool as unnatural collocation.
-- **Cut (borderline register, held for auditor):** Roundhouse Sweep, Roundhouse Strike, Roundhouse (bare) — harvest explicitly flags "fighting-game connotations worth flagging for curation review" even though it's real English, not itself borrowed. Held out of the confirmed pool, listed above as flagged-hold only.
+- RESOLVED 2026-09-10 (orchestrator recommendation applied, overridable): Roundhouse (bare) is pooled, tagged body/tail, on the same ruling as Uppercut and Haymaker in STRIKE: real English for a sweeping limb path, not a borrowed name; the compounds Roundhouse Sweep and Roundhouse Strike stay out as tautologies (a roundhouse already sweeps and strikes). Element compositions on Roundhouse were cut per name in the dark file for say-aloud failure, which stands.
 - **Flagged out (leans element):** Blazing Lash (Fire), Scalding Sweep (Fire/Water, ambiguous), Frost Lash (Ice), Tidal Sweep (Water), Static Lash (Electric), Venom Lash (Chemical), Spectral Sweep (Ghost), Vine Lash (Plant), Sand Scythe (Sand), Shard Sweep (Rock/Ice), Psychic Sweep (Psychic), Shadow Lash (Dark), Radiant Sweep (Light), Gale Lash (Air), Metal Lash (Metal) — all excluded per harvest §5.
 - **Cut (other-domain, per harvest):** Rake/Raking (belongs to RAKE), Scoop/Scooping (belongs to SHOVE), Buffet/Buffeting (weather/impact-adjacent, kept only cautiously in source verbs, not promoted to a clean name here), Scud (meteorological, excluded).
 
@@ -287,11 +287,12 @@ Dread Aura, Terror Wave, Menacing Glare, Intimidating Roar, Chilling Presence, W
 Snare, Trap, Net, Noose (careful — see flag below), Tether, Leash, Fetter, Shackle, Yoke, Bond, Coil (instrument-flag: serpentine/tendril), Loop, Restraint, Grip, Grasp, Hold, Clutch, Clasp, Ensnare, Entangle, Grapple, Bind, Deadlock
 
 **Neutral pool** (two-word compositions):
-Dead Weight, Tangle Trap, Snare Trap, Binding Hold, Anchor Point, Drag Down, Pull Under, Net Trap, Snap Trap, Deadfall, Mire Trap, Bog Down, Pin Down, Hold Fast, Grip Lock, Reeling Pull, No Escape
+Dead Weight, Tangle Trap, Snare Trap, Binding Hold, Anchor Point, Drag Down, Pull Under, Net Trap, Snap Trap, Deadfall, Mire Trap, Bog Down, Pin Down, Hold Fast, Grip Lock, Reeling Pull, No Escape, Stranglehold (instrument: coils/tendrils/pincers), Coil Bind (instrument: coils), Web Trap (instrument: spinnerets)
 
 **Disposition notes / flags:**
 - The orchestrator's own pilot audit already caught and removed the two worst leakage cases before this pass: "Undertow" and "Gravity Well" were originally mis-listed as neutral by the SNARE sub-agent; both are correctly excluded here (Undertow → Water, Gravity Well → Dark).
 - **Held for auditor (instrument-heavy names, per the pilot's own flags):** Root Hold (flags itself as implying roots/Plant), Web Trap (flags itself as implying spinneret/specific anatomy), Stranglehold (flags itself as neck-specific anatomy), Coil Bind (flags itself as serpentine-specific anatomy) — all four are explicitly self-flagged in the source harvest as anatomy/element-adjacent; held out of the confirmed count above pending auditor judgment, though listed here since the source material treats them as provisional keepers.
+- RESOLVED 2026-09-10 (orchestrator, under standing rulings, overridable): the four held names resolve by the tag rule and the element-word rule rather than by a new ruling. Root Hold moves to PLANT snare (root is a plant lexicon word, never neutral). Web Trap, Stranglehold and Coil Bind are pooled with instrument tags (spinnerets; coils/tendrils/pincers; coils), since each name implies the part and the registry carries the key.
 - RESOLVED 2026-09-01: Steel Trap reserved to METAL per the material-word ruling (see HURL section).
 - **Cut (real weapon adjacent / hard rule):** Noose — carries strong real-world capital-punishment/lynching connotation beyond generic restraint; while technically not a "weapon" in the military sense, it fails the "nothing weird or inappropriate" tone check on its own. Held out of the confirmed pool, listed above only as a raw harvest term, not promoted to a name.
 - **Cut (idiom/word-count, per orchestrator's own flags):** Full Nelson (self-flagged wrestling-idiom borrow), Weight of the World (idiom, 4 words), Squeeze Play (idiom, sports-adjacent — also this belongs more to CRUSH by definition, not SNARE).
@@ -300,7 +301,7 @@ Dead Weight, Tangle Trap, Snare Trap, Binding Hold, Anchor Point, Drag Down, Pul
 - **Cut (adhesive/sticky-substance words, lean Chemical/Plant):** Birdlime, Flypaper, Tar Pit — these name a specific sticky substance rather than the restraining action itself; better suited to element-specific columns (Chemical/Plant) than the neutral pool.
 - Note: the SNARE harvest's own richness assessment calls "drag" word-poor and "pure-slow" the poorest sub-concept of the whole 16-action set (borrows vocabulary from bind/weigh-down rather than having its own distinct words) — Drag Down, Pull Under, Bog Down, Reeling Pull, Sinking Grip above represent the best available neutral coverage for that weak sub-concept; no stronger candidates exist in the source material.
 
-**Count: 23 single-word + 20 two-word = 43 pooled names (plus held-for-auditor: Root Hold, Web Trap, Stranglehold, Coil Bind; Steel Trap resolved to METAL 2026-09-01).**
+**Count: 23 single-word + 23 two-word = 46 pooled names (Web Trap, Stranglehold, Coil Bind pooled 2026-09-10; Root Hold to PLANT; Steel Trap resolved to METAL 2026-09-01).**
 
 ---
 
@@ -376,6 +377,8 @@ Mending Aura, Restorative Pulse, Second Wind (retained per Nick's explicit pilot
 **Total pooled names across all 16 actions: 1,142** (before the auditor resolves the held-for-auditor flags, which if all confirmed would add roughly 25-30 more).
 
 ## Top flags for the central auditor (cross-cutting)
+
+Status 2026-09-10: every flag below is resolved. 1 was ruled 2026-09-01 (material words to ROCK/METAL); 2 by the 2026-09-10 placement audit (Radiant carries light's medium, Radiant Pulse removed); 3 resolved 2026-09-10 (Uppercut, Haymaker, Roundhouse pooled with instrument tags, see the STRIKE and LASH notes); 4 ruled by Nick 2026-09-10 (religious register in both WARD and MEND); 5 settled by the placement policy (a name sits in every cell whose definition it satisfies); 6 ruled by Nick 2026-09-01 (Fallout Field cut with Nuclear Winter); 7 needed no action.
 
 1. **Material-vs-element ambiguity is the single biggest recurring tension**, appearing independently in three separate action pools (Hurl: "Rock Volley"/"Stone Salvo"; Snare: "Steel Trap"; Crush: "Landslide"/"Rockslide"/"Avalanche"/"Boulder"). These are words that name a generic *physical mass* but happen to share vocabulary with the Rock and Metal elements' own columns. Recommend a single ruling applied consistently across all three rather than one-off calls.
 2. **"Radiant" as a word is claimed by both the abstract-intensity sense (Burst's "Radiant Burst/Pulse") and the literal Light-element sense** used elsewhere in the broader catalog — flagging for a single ruling on whether "radiant" is banked as Light-exclusive.
