@@ -16,8 +16,8 @@
     "bioflim": {
       "description": "source",
       "appearance": "ratified",
-      "fields": "draft",
-      "note": "teaser was upgraded before the split"
+      "fields": "ratified",
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch two)"
     },
     "chromocat": {
       "description": "source",
@@ -28,8 +28,8 @@
     "codazzo": {
       "description": "source",
       "appearance": "ratified",
-      "fields": "draft",
-      "note": "teaser was upgraded before the split"
+      "fields": "ratified",
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch two)"
     },
     "crystorn": {
       "description": "source",
@@ -52,8 +52,8 @@
     "ectoghoul": {
       "description": "source",
       "appearance": "ratified",
-      "fields": "draft",
-      "note": "teaser was upgraded before the split"
+      "fields": "ratified",
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch two)"
     },
     "figzy": {
       "description": "source",
@@ -100,14 +100,14 @@
     "luceras": {
       "description": "source",
       "appearance": "ratified",
-      "fields": "draft",
-      "note": "teaser was upgraded before the split"
+      "fields": "ratified",
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch two)"
     },
     "neph": {
       "description": "source",
       "appearance": "ratified",
-      "fields": "draft",
-      "note": "teaser was source before the split"
+      "fields": "ratified",
+      "note": "teaser was source before the split; fields ratified 2026-09-10 (batch two)"
     },
     "newtapede": {
       "description": "source",
@@ -124,14 +124,14 @@
     "smokat": {
       "description": "source",
       "appearance": "draft",
-      "fields": "draft",
-      "note": "teaser was upgraded before the split"
+      "fields": "ratified",
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch two)"
     },
     "terragoyle": {
       "description": "source",
       "appearance": "ratified",
-      "fields": "draft",
-      "note": "teaser was source before the split"
+      "fields": "ratified",
+      "note": "teaser was source before the split; fields ratified 2026-09-10 (batch two)"
     },
     "tetrahive": {
       "description": "source",
@@ -154,14 +154,14 @@
     "venemist": {
       "description": "source",
       "appearance": "ratified",
-      "fields": "draft",
-      "note": "teaser was upgraded before the split"
+      "fields": "ratified",
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch two)"
     },
     "voltish": {
       "description": "source",
       "appearance": "ratified",
-      "fields": "draft",
-      "note": "teaser was upgraded before the split"
+      "fields": "ratified",
+      "note": "teaser was upgraded before the split; fields ratified 2026-09-10 (batch two)"
     },
     "xylum": {
       "description": "source",
