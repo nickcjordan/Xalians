@@ -1,7 +1,7 @@
 import React from 'react';
 import XalianImage from '../../xalianImage';
 import { speciesLabel, formatHold } from './reclamationNarration';
-import { prepare, baseHold, strainMultiplierFor } from '../../../gameplay/expedition/creatureOnTable';
+import { prepare, baseHold, strainMultiplierFor } from '@xalians/rules/expedition/creatureOnTable';
 import { HoldMeter } from './reclamationFigure';
 import { elementName } from './reclamationVocabulary';
 

@@ -1,6 +1,6 @@
-import { buildDraftPools, botDraft, validateKeep } from '../../../../gameplay/expedition/draft.js';
-import { RIVALS } from '../../../../gameplay/expedition/expeditionBot.js';
-import { ROSTER_SIZE } from '../../../../gameplay/expedition/expeditionInterpretation.js';
+import { buildDraftPools, botDraft, validateKeep } from '@xalians/rules/expedition/draft';
+import { RIVALS } from '@xalians/rules/expedition/expeditionBot';
+import { ROSTER_SIZE } from '@xalians/rules/expedition/expeditionInterpretation';
 
 /*
 	ReclamationDraft coverage.

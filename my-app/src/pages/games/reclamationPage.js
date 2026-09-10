@@ -4,13 +4,13 @@ import XalianNavbar from '../../components/navbar';
 import ReclamationMatch from '../../components/games/reclamation/reclamationMatch';
 import { HoldMeter } from '../../components/games/reclamation/reclamationFigure';
 import { PhaseGlyph, RivalGlyph } from '../../components/games/reclamation/reclamationGlyphs';
-import { buildDraftPools, botDraft, validateKeep, draftOptionsFromRules } from '../../gameplay/expedition/draft';
+import { buildDraftPools, botDraft, validateKeep, draftOptionsFromRules } from '@xalians/rules/expedition/draft';
 import ReclamationDraft from '../../components/games/reclamation/reclamationDraft';
 import { createSound } from '../../components/games/reclamation/reclamationSound';
-import { createMatch, DEFAULT_RULES } from '../../gameplay/expedition/expeditionRules';
-import { getWorlds } from '../../gameplay/expedition/sites';
-import { RIVALS, DEFAULT_RIVAL_ID, rivalById } from '../../gameplay/expedition/expeditionBot';
-import { ROSTER_SIZE, SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH, FRAMES_PER_MATCH, WORLDS_PER_FRAME } from '../../gameplay/expedition/expeditionInterpretation';
+import { createMatch, DEFAULT_RULES } from '@xalians/rules/expedition/expeditionRules';
+import { getWorlds } from '@xalians/rules/expedition/sites';
+import { RIVALS, DEFAULT_RIVAL_ID, rivalById } from '@xalians/rules/expedition/expeditionBot';
+import { ROSTER_SIZE, SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH, FRAMES_PER_MATCH, WORLDS_PER_FRAME } from '@xalians/rules/expedition/expeditionInterpretation';
 import {
 	saveMatch, loadMatch, clearMatch, recordResult, recordAgainst, loadRivalId, saveRivalId,
 } from '../../components/games/reclamation/reclamationStorage';

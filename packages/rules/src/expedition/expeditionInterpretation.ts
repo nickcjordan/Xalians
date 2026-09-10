@@ -15,6 +15,8 @@
 */
 
 import rawTypeEffectivenessMatrix from '@xalians/content/typeEffectivenessMatrix.json';
+import type { XalianRecord } from '@xalians/content/schema';
+import type { ActClass, Role, Rules } from './types.ts';
 
 // ---------------------------------------------------------------------------
 // tunable constants - the "first settings" from the base redesign's interpretation
@@ -105,11 +107,11 @@ export const WILLFUL_THRESHOLD = 65;
 export const PRESENCE_SCALE_FLOOR = 0.5;
 export const PRESENCE_SCALE_PER_POINT = 0.01;
 
-export function presenceScaleOf(record, rules) {
+export function presenceScaleOf(record: XalianRecord | null | undefined, rules?: Partial<Rules> | null): number {
 	if (rules && rules.presenceScale === false) {
 		return 1;
 	}
-	const attrs = (record && record.attributes) || {};
+	const attrs = (record && record.attributes) || ({} as Partial<XalianRecord['attributes']>);
 	const charisma = typeof attrs.charisma === 'number' ? attrs.charisma : 50;
 	return PRESENCE_SCALE_FLOOR + charisma * PRESENCE_SCALE_PER_POINT;
 }
@@ -123,14 +125,16 @@ export function presenceScaleOf(record, rules) {
 export const KEEN_INSTINCT = 65;
 export const DULL_INSTINCT = 35;
 
+export type InstinctLane = 'keen' | 'conduct' | 'dull';
+
 // 'keen' | 'conduct' | 'dull' - which targeting lane a creature reads its target from.
 // One definition, read by the engine's own pick and by the bot's preview of it, so the
 // two can never disagree about who a creature would hit.
-export function instinctLaneOf(record, rules) {
+export function instinctLaneOf(record: XalianRecord | null | undefined, rules?: Partial<Rules> | null): InstinctLane {
 	if (rules && rules.instinctLanes === false) {
 		return 'conduct';
 	}
-	const attrs = (record && record.attributes) || {};
+	const attrs = (record && record.attributes) || ({} as Partial<XalianRecord['attributes']>);
 	const instinct = typeof attrs.instinct === 'number' ? attrs.instinct : 50;
 	const keen = rules && typeof rules.keenInstinct === 'number' ? rules.keenInstinct : KEEN_INSTINCT;
 	const dull = rules && typeof rules.dullInstinct === 'number' ? rules.dullInstinct : DULL_INSTINCT;
@@ -265,7 +269,7 @@ export const ARMORED_REDUCTION = 0.25;
 	2026-09-09). SHIELD_CAP is the lever that prices it; see expeditionRules.resolveWorld's
 	shield step for what each setting does.
 */
-export const SHIELD_CAPS = ['none', 'ownHold', 'half'];
+export const SHIELD_CAPS = ['none', 'ownHold', 'half'] as const;
 /*
 	Set 2026-09-09 (200 matches, simulator seed 11, validation seed 7). Shield keeper win
 	rate: 'none' 67.7 percent, 'ownHold' 63.7, 'half' 59.0 - only 'half' is inside the 40
@@ -342,7 +346,7 @@ export const RETURNED_SEND_COST = 2;
 // the four roles (assumption 4)
 // ---------------------------------------------------------------------------
 
-export const ROLE = {
+export const ROLE: { STRIKE: Role; SWEEP: Role; BOLSTER: Role; SHIELD: Role; NONE: Role } = {
 	STRIKE: 'strike',
 	// Pass 2 vocabulary (assumption 17): the area role is a sweep, on the table and in
 	// every field the interface reads.
@@ -362,7 +366,7 @@ export const ROLE = {
 	sage (both are framed as the creatures that keep others going). See roleOf() in
 	creatureOnTable.js for the one case that overrides this table.
 */
-export const PRESENCE_BY_ARCHETYPE = {
+export const PRESENCE_BY_ARCHETYPE: Record<string, Role> = {
 	bulwark: ROLE.SHIELD,
 	stalwart: ROLE.SHIELD,
 	survivor: ROLE.BOLSTER,
@@ -377,14 +381,14 @@ export const PRESENCE_BY_ARCHETYPE = {
 // attribute, and AREA_ABILITY_ACTIONS decides whether a blow creature is an area.
 // ---------------------------------------------------------------------------
 
-export const ACT_CLASS = {
+export const ACT_CLASS: { CONTACT: ActClass; REACH: ActClass; PROJECTION: ActClass; SUPPORT: ActClass } = {
 	CONTACT: 'contact',
 	REACH: 'reach',
 	PROJECTION: 'projection',
 	SUPPORT: 'support',
 };
 
-export const ACT_CLASS_BY_ACTION = {
+export const ACT_CLASS_BY_ACTION: Record<string, ActClass> = {
 	// contact - touches the site the creature stands at
 	strike: ACT_CLASS.CONTACT,
 	crush: ACT_CLASS.CONTACT,
@@ -419,7 +423,7 @@ export const SWEEP_ABILITY_ACTIONS = ['burst', 'spray', 'cloud'];
 export const WARD_ABILITY_ACTION = 'ward';
 export const MEND_ABILITY_ACTION = 'mend';
 
-export function getActClass(action) {
+export function getActClass(action: string | null | undefined): ActClass | null {
 	if (!action) {
 		return null;
 	}
@@ -445,7 +449,7 @@ export function getActClass(action) {
 	as a projection and would have left one action classed one way and powered the other;
 	corrected 2026-09-09 so the class table and this table agree on every row.
 */
-export const GOVERNING_ATTRIBUTE_BY_ACTION = {
+export const GOVERNING_ATTRIBUTE_BY_ACTION: Record<string, string> = {
 	// contact: strength
 	strike: 'strength',
 	crush: 'strength',
@@ -474,7 +478,7 @@ export const GOVERNING_ATTRIBUTE_BY_ACTION = {
 	terrorize: 'charisma',
 };
 
-export function getGoverningAttributeForAction(action) {
+export function getGoverningAttributeForAction(action: string | null | undefined): string | null {
 	if (!action) {
 		return null;
 	}
@@ -492,7 +496,14 @@ export function getGoverningAttributeForAction(action) {
 // not own, and the fallback path has to be written down somewhere.
 // ---------------------------------------------------------------------------
 
-export const FAVORED_ACT_BY_ARCHETYPE = {
+export interface FavoredActSpec {
+	prefer: 'strongestOfClass' | 'specificAction' | 'hold' | 'strongestOverall';
+	classes?: ActClass[];
+	action?: string;
+	actionPriority?: string[];
+}
+
+export const FAVORED_ACT_BY_ARCHETYPE: Record<string, FavoredActSpec> = {
 	predator: { prefer: 'strongestOfClass', classes: [ACT_CLASS.CONTACT, ACT_CLASS.PROJECTION] },
 	prowler: { prefer: 'strongestOfClass', classes: [ACT_CLASS.CONTACT, ACT_CLASS.PROJECTION] },
 	juggernaut: { prefer: 'strongestOfClass', classes: [ACT_CLASS.CONTACT] },
@@ -511,7 +522,7 @@ export const FAVORED_ACT_BY_ARCHETYPE = {
 	rogue: { prefer: 'strongestOverall' },
 };
 
-export function getFavoredActSpec(archetypeKey) {
+export function getFavoredActSpec(archetypeKey: string | null | undefined): FavoredActSpec | null {
 	if (!archetypeKey) {
 		return null;
 	}
@@ -527,7 +538,12 @@ export function getFavoredActSpec(archetypeKey) {
 // (assumption 2 keeps conduct derived and assumption 3 seals the worlds).
 // ---------------------------------------------------------------------------
 
-export const CONDUCT_BY_ARCHETYPE = {
+export interface ConductSpec {
+	attacking: string;
+	supporting: string;
+}
+
+export const CONDUCT_BY_ARCHETYPE: Record<string, ConductSpec> = {
 	predator: { attacking: 'weakestEnemyInReach', supporting: 'allyWithLeastHold' },
 	prowler: { attacking: 'weakestEnemyInReach', supporting: 'allyWithLeastHold' },
 	juggernaut: { attacking: 'strongestEnemyInReach', supporting: 'allyWithMostHold' },
@@ -546,7 +562,7 @@ export const CONDUCT_BY_ARCHETYPE = {
 	rogue: { attacking: 'enemyRoutableElseWeakest', supporting: 'allyWithHighestMagnitude' },
 };
 
-export function getConductSpec(archetypeKey) {
+export function getConductSpec(archetypeKey: string | null | undefined): ConductSpec | null {
 	if (!archetypeKey) {
 		return null;
 	}
@@ -588,11 +604,12 @@ export const SOLITARY_HOLD_PENALTY_PER_ALLY = 1;
 // element strings while the source JSON is capitalized.
 // ---------------------------------------------------------------------------
 
-export const TYPE_EFFECTIVENESS_MATRIX = (() => {
-	const normalized = {};
-	Object.keys(rawTypeEffectivenessMatrix).forEach((attackerKey) => {
+export const TYPE_EFFECTIVENESS_MATRIX: Record<string, Record<string, number>> = (() => {
+	const normalized: Record<string, Record<string, number>> = {};
+	const raw = rawTypeEffectivenessMatrix as Record<string, Record<string, number>>;
+	Object.keys(raw).forEach((attackerKey) => {
 		const attackerLower = attackerKey.toLowerCase();
-		const row = rawTypeEffectivenessMatrix[attackerKey];
+		const row = raw[attackerKey];
 		normalized[attackerLower] = {};
 		Object.keys(row).forEach((defenderKey) => {
 			normalized[attackerLower][defenderKey.toLowerCase()] = row[defenderKey];
@@ -601,7 +618,7 @@ export const TYPE_EFFECTIVENESS_MATRIX = (() => {
 	return normalized;
 })();
 
-export function typeEffectivenessMultiplier(attackerElement, defenderElement) {
+export function typeEffectivenessMultiplier(attackerElement: string | null | undefined, defenderElement: string | null | undefined): number {
 	try {
 		const row = TYPE_EFFECTIVENESS_MATRIX[String(attackerElement).toLowerCase()];
 		if (!row) {

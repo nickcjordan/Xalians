@@ -9,8 +9,9 @@
 	actor's strain).
 */
 
-import { conditionMultiplier } from './elementMatchup.js';
-import { typeEffectivenessMultiplier } from './expeditionInterpretation.js';
+import type { XalianRecord } from '@xalians/content/schema';
+import { conditionMultiplier } from './elementMatchup.ts';
+import { typeEffectivenessMultiplier } from './expeditionInterpretation.ts';
 import {
 	RAW_ATTRIBUTE_MIN,
 	RAW_ATTRIBUTE_MAX,
@@ -37,29 +38,39 @@ import {
 	WILLFUL_THRESHOLD,
 	SWIFT_SPEED,
 	presenceScaleOf,
-} from './expeditionInterpretation.js';
+} from './expeditionInterpretation.ts';
+import type {
+	Act, ActClass, AuthoredSite, Conduct, FrameSite, HoldResult, PrepareOptions,
+	PreparedCreature, Role, Rules, StrainLevel, WorldFacts,
+} from './types.ts';
+
+type AnySite = (AuthoredSite & { world?: WorldFacts }) | FrameSite;
 
 // ---------------------------------------------------------------------------
 // element helpers - the ratified record shape carries element as { primary, affinities }
 // (affinities always includes the primary at 100, plus at most one graded secondary).
-// conditionMultiplier (elementMatchup.js) is the blend this design's "world matchup" and
+// conditionMultiplier (elementMatchup.ts) is the blend this design's "world matchup" and
 // "magnitude against a target" paragraphs both call for: softened(0 -> 0.25) primary
 // blended with a graded secondary, read against the WORLD's element or the TARGET's.
 // ---------------------------------------------------------------------------
 
-function recordElement(record) {
-	return (record && record.element) || { primary: null, affinities: {} };
+function recordElement(record: XalianRecord | null | undefined): XalianRecord['element'] {
+	// the '' fallback primary is not a real ElementKey (registry-enums narrowed it to a
+	// literal union); this path only runs for a record missing element entirely, which
+	// none of the real callers ever pass, so the cast documents "never a real element"
+	// rather than widening the type for everyone else
+	return (record && record.element) || ({ primary: '', affinities: {} } as unknown as XalianRecord['element']);
 }
 
 // world matchup: matrix[creature][world], softened + blended, creature as attacker
-export function worldMatchupMultiplier(record, worldElement) {
+export function worldMatchupMultiplier(record: XalianRecord, worldElement: string | null | undefined): number {
 	return conditionMultiplier(worldElement, recordElement(record));
 }
 
 // magnitude scaling: matrix[creature][target], softened + blended with the TARGET's
 // secondary (per the design doc: "scaled by the type chart, creature against target's
 // element, blended with the target's secondary affinity")
-export function targetMatchupMultiplier(actorRecord, targetRecord) {
+export function targetMatchupMultiplier(actorRecord: XalianRecord, targetRecord: XalianRecord): number {
 	const actorPrimary = recordElement(actorRecord).primary;
 	// conditionMultiplier(againstElement, creatureElement) computes matrix[creatureElement.primary][againstElement]
 	// blended with cardElement's OWN secondary. Here we want matrix[actorPrimary][x] blended
@@ -68,11 +79,12 @@ export function targetMatchupMultiplier(actorRecord, targetRecord) {
 	// the target's primary as the "decree" (defender) element.
 	const targetElement = recordElement(targetRecord);
 	const targetPrimary = targetElement.primary;
-	const targetSecondaryKey = Object.keys(targetElement.affinities || {}).find((k) => k !== targetPrimary);
+	const targetAffinities = (targetElement.affinities || {}) as Record<string, number>;
+	const targetSecondaryKey = Object.keys(targetAffinities).find((k) => k !== targetPrimary);
 	const syntheticCardElement = {
 		primary: actorPrimary,
 		affinities: targetSecondaryKey
-			? { [actorPrimary]: 100, [targetSecondaryKey]: targetElement.affinities[targetSecondaryKey] }
+			? { [actorPrimary]: 100, [targetSecondaryKey]: targetAffinities[targetSecondaryKey] }
 			: { [actorPrimary]: 100 },
 	};
 	return conditionMultiplier(targetPrimary, syntheticCardElement);
@@ -87,25 +99,29 @@ export function targetMatchupMultiplier(actorRecord, targetRecord) {
 	array (`traits: ["armored", "stealthy"]`, docs/design/xalian-creature-system-redesign.md
 	section 2). Older provisional records used `{ guaranteed, rolled }` and the handoff
 	reference sketches `{ keys }`; all three read the same here so no consumer breaks on
-	the shape.
+	the shape. XalianRecord['traits'] is always TraitKey[] under the ratified schema, so the
+	object-shaped branches below are read through `unknown` -- they are defensive against
+	pre-ratification fixtures (draft.ts's placeholderRoster, older devtools pool captures),
+	not a case the current schema can produce.
 */
-export function traitKeywordsOf(record) {
-	const traits = record && record.traits;
+export function traitKeywordsOf(record: XalianRecord | null | undefined): string[] {
+	const traits: unknown = record && record.traits;
 	if (Array.isArray(traits)) {
 		return [...new Set(traits)];
 	}
 	if (!traits || typeof traits !== 'object') {
 		return [];
 	}
-	if (Array.isArray(traits.keys)) {
-		return [...new Set(traits.keys)];
+	const shaped = traits as { keys?: unknown; guaranteed?: unknown; rolled?: unknown };
+	if (Array.isArray(shaped.keys)) {
+		return [...new Set(shaped.keys)];
 	}
-	const guaranteed = Array.isArray(traits.guaranteed) ? traits.guaranteed : [];
-	const rolled = Array.isArray(traits.rolled) ? traits.rolled : [];
+	const guaranteed = Array.isArray(shaped.guaranteed) ? shaped.guaranteed : [];
+	const rolled = Array.isArray(shaped.rolled) ? shaped.rolled : [];
 	return [...new Set([...guaranteed, ...rolled])];
 }
 
-function hasAnyTraitKeyword(record, keyword) {
+function hasAnyTraitKeyword(record: XalianRecord, keyword: string): boolean {
 	return traitKeywordsOf(record).includes(keyword);
 }
 
@@ -137,17 +153,17 @@ export const STRAIN_GAP_SEVERE_C = 30; // a gap wider than this between the two 
 */
 // Since the frame (2026-09-04) a site carries its own world, so callers may pass the
 // frame, or nothing, as `world`; the site's world wins whenever it is there.
-export function worldOfSite(site, world) {
-	return site && site.world ? site.world : world;
+export function worldOfSite(site: AnySite | null | undefined, world: WorldFacts | null | undefined): WorldFacts | null | undefined {
+	return site && (site as FrameSite).world ? (site as FrameSite).world : world;
 }
 
-export function strainLevel(record, site, worldArg) {
+export function strainLevel(record: XalianRecord, site: AnySite | null | undefined, worldArg?: WorldFacts | null): StrainLevel {
 	const world = worldOfSite(site, worldArg);
-	const physiology = (record && record.physiology) || {};
-	const tolerance = physiology.environmentalTolerance || {};
-	const breathes = Array.isArray(physiology.breathes) ? physiology.breathes : [];
-	const ambientMedia = Array.isArray(tolerance.ambientMedia) ? tolerance.ambientMedia : [];
-	const tempBand = tolerance.temperatureC || {};
+	const physiology = (record && record.physiology) || ({} as Partial<XalianRecord['physiology']>);
+	const tolerance = physiology.environmentalTolerance || ({} as Partial<XalianRecord['physiology']['environmentalTolerance']>);
+	const breathes: string[] = Array.isArray(physiology.breathes) ? physiology.breathes : [];
+	const ambientMedia: string[] = Array.isArray(tolerance.ambientMedia) ? tolerance.ambientMedia : [];
+	const tempBand = tolerance.temperatureC || ({} as { min?: number; max?: number });
 
 	const planetName = world && world.planet;
 	if (planetName === 'Grimedes' && hasAnyTraitKeyword(record, 'nocturnal')) {
@@ -157,11 +173,11 @@ export function strainLevel(record, site, worldArg) {
 		return 'none';
 	}
 
-	const siteEnvironment = (site && site.environment) || {};
+	const siteEnvironment = (site && (site as AuthoredSite).environment) || ({} as Partial<AuthoredSite['environment']>);
 	const siteMedium = siteEnvironment.medium;
-	const siteTemp = siteEnvironment.temperatureC || {};
+	const siteTemp = siteEnvironment.temperatureC || ({} as { min?: number; max?: number });
 
-	const cannotBreathe = siteMedium && breathes.length > 0 && !breathes.includes(siteMedium);
+	const cannotBreathe = !!siteMedium && breathes.length > 0 && !breathes.includes(siteMedium);
 	if (cannotBreathe) {
 		return 'severe';
 	}
@@ -172,7 +188,7 @@ export function strainLevel(record, site, worldArg) {
 	const siteMin = typeof siteTemp.min === 'number' ? siteTemp.min : min;
 	const siteMax = typeof siteTemp.max === 'number' ? siteTemp.max : max;
 
-	let temperature = 'none';
+	let temperature: StrainLevel = 'none';
 	if (!(siteMin >= min && siteMax <= max)) {
 		const overlap = Math.min(max, siteMax) - Math.max(min, siteMin);
 		if (overlap > 0) {
@@ -193,7 +209,7 @@ export function strainLevel(record, site, worldArg) {
 	return 'none';
 }
 
-export function strainMultiplierFor(level) {
+export function strainMultiplierFor(level: StrainLevel): number {
 	if (level === 'severe') {
 		return SEVERE_STRAIN_MULTIPLIER;
 	}
@@ -212,7 +228,7 @@ export function strainMultiplierFor(level) {
 	instead, applied by holdAtSite below. Bolsters do not stack: two bolsterers at a world
 	lift exactly one grade, the same as one.
 */
-export function liftedStrainLevel(level) {
+export function liftedStrainLevel(level: StrainLevel): StrainLevel {
 	if (level === 'severe') {
 		return 'strained';
 	}
@@ -241,8 +257,8 @@ export function liftedStrainLevel(level) {
 	rules object (a bench panel, a test, the draft rater) gets the module constants, which
 	are the shipped first settings.
 */
-export function baseHold(record, rules) {
-	const attrs = (record && record.attributes) || {};
+export function baseHold(record: XalianRecord, rules?: Partial<Rules> | null): number {
+	const attrs = (record && record.attributes) || ({} as Partial<XalianRecord['attributes']>);
 	const vitality = typeof attrs.vitality === 'number' ? attrs.vitality : 0;
 	const resilience = typeof attrs.resilience === 'number' ? attrs.resilience : 0;
 	const endurance = typeof attrs.endurance === 'number' ? attrs.endurance : 0;
@@ -263,9 +279,14 @@ export function baseHold(record, rules) {
 	knows who else stands at the site) fold in the trait bonuses/penalties; they default to
 	0 so this function is usable standalone (e.g. by tests and the card-inspection panel).
 */
-export function holdAtSite(record, site, worldArg, opts = {}) {
+export function holdAtSite(
+	record: XalianRecord,
+	site: AnySite | null | undefined,
+	worldArg: WorldFacts | null | undefined,
+	opts: PrepareOptions & { bolstered?: boolean; bolsterScale?: number } = {},
+): HoldResult {
 	const world = worldOfSite(site, worldArg);
-	const rules = opts.rules;
+	const rules = opts.rules as Partial<Rules> | undefined;
 	const base = baseHold(record, rules);
 	const matchup = worldMatchupMultiplier(record, world && world.element);
 	const origin = record && record.provenance && record.provenance.origin;
@@ -320,8 +341,8 @@ export function holdAtSite(record, site, worldArg, opts = {}) {
 	world and, at or above rules.swiftSpeed, lets the creature move once per round during
 	Deploy (assumption 20).
 */
-export function speedOf(record) {
-	const attrs = (record && record.attributes) || {};
+export function speedOf(record: XalianRecord): number {
+	const attrs = (record && record.attributes) || ({} as Partial<XalianRecord['attributes']>);
 	const reflex = typeof attrs.reflex === 'number' ? attrs.reflex : 0;
 	const agility = typeof attrs.agility === 'number' ? attrs.agility : 0;
 	return (reflex + agility) / 2;
@@ -331,7 +352,7 @@ export function speedOf(record) {
 // being moved to speedOf; do not add new uses.
 export const initiativeOf = speedOf;
 
-export function isSwift(record, rules) {
+export function isSwift(record: XalianRecord, rules?: Partial<Rules> | null): boolean {
 	if (rules && rules.swiftMove === false) {
 		return false;
 	}
@@ -339,12 +360,12 @@ export function isSwift(record, rules) {
 	return speedOf(record) >= threshold;
 }
 
-export function isWillful(record, rules) {
+export function isWillful(record: XalianRecord, rules?: Partial<Rules> | null): boolean {
 	if (rules && rules.willful === false) {
 		return false;
 	}
 	const threshold = rules && typeof rules.willfulThreshold === 'number' ? rules.willfulThreshold : WILLFUL_THRESHOLD;
-	const attrs = (record && record.attributes) || {};
+	const attrs = (record && record.attributes) || ({} as Partial<XalianRecord['attributes']>);
 	const willpower = typeof attrs.willpower === 'number' ? attrs.willpower : 0;
 	return willpower >= threshold;
 }
@@ -357,14 +378,14 @@ export function isWillful(record, rules) {
 // formula the first design's tributeCardBuilder.js uses (printedPower), governing
 // attribute looked up per this design's own action table since the action vocabulary and
 // its class groupings differ from the first design.
-export function magnitudeOf(intensity, governingAttrValue) {
+export function magnitudeOf(intensity: number, governingAttrValue: number | undefined): number {
 	const attr = typeof governingAttrValue === 'number' ? governingAttrValue : 50;
 	const raw = (intensity / 10) * (0.5 + attr / 100);
 	return Math.max(1, Math.round(raw));
 }
 
-function abilitiesOf(record) {
-	return Array.isArray(record && record.abilities) ? record.abilities : [];
+function abilitiesOf(record: XalianRecord | null | undefined): XalianRecord['abilities'] {
+	return Array.isArray(record && record.abilities) ? (record as XalianRecord).abilities : [];
 }
 
 /*
@@ -372,19 +393,19 @@ function abilitiesOf(record) {
 	signature }] - one act per ability, magnitude computed against strain only (the
 	type-chart-vs-target scaling happens later, per-target, in magnitudeAgainst).
 */
-export function buildActs(record, strainMult, magnitudeScale) {
+export function buildActs(record: XalianRecord, strainMult: number, magnitudeScale?: number): Act[] {
 	// the global magnitude rescale (assumption 12) is applied here, once, so every
 	// downstream reading of an act's magnitude is already in the game's own units
 	const scale = typeof magnitudeScale === 'number' ? magnitudeScale : MAGNITUDE_SCALE;
 	return abilitiesOf(record).map((ability) => {
 		const governingAttribute = getGoverningAttributeForAction(ability.action);
-		const attrs = (record && record.attributes) || {};
+		const attrs = (record && record.attributes) as unknown as Record<string, number> || {};
 		const attrValue = governingAttribute ? attrs[governingAttribute] : undefined;
 		const printed = magnitudeOf(ability.intensity, attrValue);
 		return {
 			name: ability.name,
 			action: ability.action,
-			class: getActClass(ability.action),
+			class: getActClass(ability.action) as ActClass | null,
 			// the printed magnitude the record would carry on a plate, before strain and
 			// before the game's own rescale, kept for the dossier
 			printedMagnitude: printed,
@@ -397,7 +418,7 @@ export function buildActs(record, strainMult, magnitudeScale) {
 
 // one decimal place everywhere a magnitude or a hold is shown or subtracted, so the
 // balance bar moves by a number a handler can read off the plinth
-export function round1(value) {
+export function round1(value: number): number {
 	return Math.round(value * 10) / 10;
 }
 
@@ -410,7 +431,7 @@ export function round1(value) {
 	strain-scaled base magnitude. Strain is already folded into act.magnitude by
 	buildActs(), so this only adds the target matchup.
 */
-export function magnitudeAgainst(actorRecord, act, targetRecord) {
+export function magnitudeAgainst(actorRecord: XalianRecord, act: Act, targetRecord: XalianRecord): number {
 	const matchup = targetMatchupMultiplier(actorRecord, targetRecord);
 	return round1(Math.max(0.1, act.magnitude * matchup));
 }
@@ -419,23 +440,25 @@ export function magnitudeAgainst(actorRecord, act, targetRecord) {
 // favored act (used when a creature is not given an order)
 // ---------------------------------------------------------------------------
 
+const HOLD_ACT: Act = { action: 'hold', class: null, magnitude: 0, printedMagnitude: 0, name: 'Hold' };
+
 /*
 	favoredAct(record, acts) -> one entry of `acts`, or a synthetic { action: 'hold' }.
 
 	Resolves the archetype's FAVORED_ACT_BY_ARCHETYPE spec against the creature's actual
-	ability list (see expeditionInterpretation.js's long comment on that table for the
+	ability list (see expeditionInterpretation.ts's long comment on that table for the
 	reasoning). Falls back to 'hold' if the archetype favors a specific action the
 	creature does not have, or if the creature has no acts of the preferred classes.
 */
-export function favoredAct(record, acts) {
+export function favoredAct(record: XalianRecord, acts: Act[]): Act {
 	const archetypeKey = record && record.archetype && record.archetype.key;
 	const spec = getFavoredActSpec(archetypeKey);
 	if (!spec || acts.length === 0) {
-		return { action: 'hold', class: null, magnitude: 0, name: 'Hold' };
+		return HOLD_ACT;
 	}
 
 	if (spec.prefer === 'hold') {
-		return { action: 'hold', class: null, magnitude: 0, name: 'Hold' };
+		return HOLD_ACT;
 	}
 
 	if (spec.prefer === 'specificAction') {
@@ -443,17 +466,18 @@ export function favoredAct(record, acts) {
 		if (found) {
 			return found;
 		}
-		return { action: 'hold', class: null, magnitude: 0, name: 'Hold' };
+		return HOLD_ACT;
 	}
 
 	if (spec.prefer === 'strongestOverall') {
-		return acts.reduce((best, a) => (!best || a.magnitude > best.magnitude ? a : best), null);
+		return acts.reduce((best: Act | null, a) => (!best || a.magnitude > best.magnitude ? a : best), null) as Act;
 	}
 
 	if (spec.prefer === 'strongestOfClass') {
-		const inClass = acts.filter((a) => spec.classes.includes(a.class));
+		const classes = spec.classes || [];
+		const inClass = acts.filter((a) => a.class !== null && classes.includes(a.class));
 		if (inClass.length === 0) {
-			return { action: 'hold', class: null, magnitude: 0, name: 'Hold' };
+			return HOLD_ACT;
 		}
 		if (Array.isArray(spec.actionPriority)) {
 			for (const preferredAction of spec.actionPriority) {
@@ -466,7 +490,7 @@ export function favoredAct(record, acts) {
 		return inClass.reduce((best, a) => (!best || a.magnitude > best.magnitude ? a : best));
 	}
 
-	return { action: 'hold', class: null, magnitude: 0, name: 'Hold' };
+	return HOLD_ACT;
 }
 
 // ---------------------------------------------------------------------------
@@ -492,45 +516,47 @@ export function favoredAct(record, acts) {
 	creature to a plain strike if it was a sweep, and to a plain holder (ROLE.NONE) if it
 	was a presence, so a batch can measure what each role actually carries.
 */
-export function roleOf(record, rules) {
+export function roleOf(record: XalianRecord, rules?: Partial<Rules> | null): Role {
 	const natural = naturalRoleOf(record);
 	const toggles = (rules && rules.roles) || null;
 	if (!toggles) {
 		return natural;
 	}
 	if (natural === ROLE.SWEEP && toggles.sweep === false) {
-		return ROLE.STRIKE;
+		return ROLE.STRIKE as Role;
 	}
 	if (natural === ROLE.BOLSTER && toggles.bolster === false) {
-		return ROLE.NONE;
+		return ROLE.NONE as Role;
 	}
 	if (natural === ROLE.SHIELD && toggles.shield === false) {
-		return ROLE.NONE;
+		return ROLE.NONE as Role;
 	}
 	return natural;
 }
 
 // the role before any ablation switch is applied
-export function naturalRoleOf(record) {
+export function naturalRoleOf(record: XalianRecord): Role {
 	const archetypeKey = record && record.archetype && record.archetype.key
 		? String(record.archetype.key).toLowerCase()
 		: null;
 	const abilityActions = abilitiesOf(record).map((a) => a.action);
 
-	const presenceDefault = archetypeKey ? PRESENCE_BY_ARCHETYPE[archetypeKey] : undefined;
+	const presenceDefault = archetypeKey
+		? (PRESENCE_BY_ARCHETYPE as Record<string, Role>)[archetypeKey]
+		: undefined;
 	if (presenceDefault) {
 		const hasWard = abilityActions.includes(WARD_ABILITY_ACTION);
 		const hasMend = abilityActions.includes(MEND_ABILITY_ACTION);
 		if (hasWard && !hasMend) {
-			return ROLE.SHIELD;
+			return ROLE.SHIELD as Role;
 		}
 		if (hasMend && !hasWard) {
-			return ROLE.BOLSTER;
+			return ROLE.BOLSTER as Role;
 		}
 		return presenceDefault;
 	}
 
-	return abilityActions.some((a) => SWEEP_ABILITY_ACTIONS.includes(a)) ? ROLE.SWEEP : ROLE.STRIKE;
+	return abilityActions.some((a) => (SWEEP_ABILITY_ACTIONS as string[]).includes(a)) ? (ROLE.SWEEP as Role) : (ROLE.STRIKE as Role);
 }
 
 /*
@@ -543,11 +569,11 @@ export function naturalRoleOf(record) {
 	no attacking ability at all strikes at MIN_BLOW_MAGNITUDE; `fallback` marks that case
 	so the simulator can count how often it fires.
 */
-export function blowActOf(record, acts, role) {
-	const minimum = {
+export function blowActOf(record: XalianRecord, acts: Act[], role: Role): Act | null {
+	const minimum: Act = {
 		name: 'Blow',
 		action: 'strike',
-		class: ACT_CLASS.CONTACT,
+		class: ACT_CLASS.CONTACT as ActClass,
 		printedMagnitude: MIN_BLOW_MAGNITUDE,
 		magnitude: MIN_BLOW_MAGNITUDE,
 		fallback: true,
@@ -555,9 +581,9 @@ export function blowActOf(record, acts, role) {
 	if (role !== ROLE.STRIKE && role !== ROLE.SWEEP) {
 		return null;
 	}
-	const attacking = acts.filter((a) => a.class !== ACT_CLASS.SUPPORT);
+	const attacking = acts.filter((a) => a.class !== (ACT_CLASS.SUPPORT as ActClass));
 	if (role === ROLE.SWEEP) {
-		const sweeps = acts.filter((a) => SWEEP_ABILITY_ACTIONS.includes(a.action));
+		const sweeps = acts.filter((a) => (SWEEP_ABILITY_ACTIONS as string[]).includes(a.action));
 		if (sweeps.length > 0) {
 			return sweeps.reduce((best, a) => (!best || a.magnitude > best.magnitude ? a : best));
 		}
@@ -566,7 +592,7 @@ export function blowActOf(record, acts, role) {
 		return minimum;
 	}
 	const favored = favoredAct(record, acts);
-	if (favored && favored.action !== 'hold' && favored.class !== ACT_CLASS.SUPPORT
+	if (favored && favored.action !== 'hold' && favored.class !== (ACT_CLASS.SUPPORT as ActClass)
 		&& attacking.some((a) => a.action === favored.action && a.name === favored.name)) {
 		return favored;
 	}
@@ -577,23 +603,24 @@ export function blowActOf(record, acts, role) {
 // conduct
 // ---------------------------------------------------------------------------
 
-export function conductOf(record) {
+export function conductOf(record: XalianRecord): Conduct {
 	const archetypeKey = record && record.archetype && record.archetype.key;
 	const spec = getConductSpec(archetypeKey);
-	const temperament = (record && record.temperament) || {};
+	const temperament = (record && record.temperament) || ({} as Partial<XalianRecord['temperament']>);
+	const at = (v: number | undefined) => (typeof v === 'number' ? v : 50);
 	return {
 		attacking: spec ? spec.attacking : 'enemySentEarliest',
 		supporting: spec ? spec.supporting : 'allySentEarliest',
-		boldness: typeof temperament.boldness === 'number' ? temperament.boldness : 50,
-		curiosity: typeof temperament.curiosity === 'number' ? temperament.curiosity : 50,
-		energy: typeof temperament.energy === 'number' ? temperament.energy : 50,
-		aggression: typeof temperament.aggression === 'number' ? temperament.aggression : 50,
-		sociability: typeof temperament.sociability === 'number' ? temperament.sociability : 50,
-		isHighBoldness: (typeof temperament.boldness === 'number' ? temperament.boldness : 50) >= TEMPERAMENT_HIGH_THRESHOLD,
-		isLowBoldness: (typeof temperament.boldness === 'number' ? temperament.boldness : 50) <= TEMPERAMENT_LOW_THRESHOLD,
-		isHighSociability: (typeof temperament.sociability === 'number' ? temperament.sociability : 50) >= TEMPERAMENT_HIGH_THRESHOLD,
-		isHighCuriosity: (typeof temperament.curiosity === 'number' ? temperament.curiosity : 50) >= TEMPERAMENT_HIGH_THRESHOLD,
-		isHighAggression: (typeof temperament.aggression === 'number' ? temperament.aggression : 50) >= TEMPERAMENT_HIGH_THRESHOLD,
+		boldness: at(temperament.boldness),
+		curiosity: at(temperament.curiosity),
+		energy: at(temperament.energy),
+		aggression: at(temperament.aggression),
+		sociability: at(temperament.sociability),
+		isHighBoldness: at(temperament.boldness) >= TEMPERAMENT_HIGH_THRESHOLD,
+		isLowBoldness: at(temperament.boldness) <= TEMPERAMENT_LOW_THRESHOLD,
+		isHighSociability: at(temperament.sociability) >= TEMPERAMENT_HIGH_THRESHOLD,
+		isHighCuriosity: at(temperament.curiosity) >= TEMPERAMENT_HIGH_THRESHOLD,
+		isHighAggression: at(temperament.aggression) >= TEMPERAMENT_HIGH_THRESHOLD,
 	};
 }
 
@@ -619,9 +646,15 @@ export function conductOf(record) {
 	than being read off the module constants. The rules engine recomputes all of these
 	whenever the company at a site changes.
 */
-export function prepare(record, site, worldArg, sentIndex, opts = {}) {
+export function prepare(
+	record: XalianRecord,
+	site: AnySite | null | undefined,
+	worldArg: WorldFacts | null | undefined,
+	sentIndex: number,
+	opts: PrepareOptions = {},
+): PreparedCreature {
 	const world = worldOfSite(site, worldArg);
-	const rules = opts.rules;
+	const rules = opts.rules as Partial<Rules> | undefined;
 	const level = strainLevel(record, site, world);
 	// willpower first, then bolster, and never past comfortable (assumption 17)
 	const willful = isWillful(record, rules);
@@ -639,7 +672,7 @@ export function prepare(record, site, worldArg, sentIndex, opts = {}) {
 	return {
 		record,
 		id: record.id,
-		site,
+		site: site || null,
 		world,
 		sentIndex,
 		baseHold: baseHold(record, rules),

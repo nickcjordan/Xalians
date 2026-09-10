@@ -28,9 +28,9 @@
 	enemy is absent from it, exactly as it is absent from getPublicState.
 */
 
-import { prepare, magnitudeAgainst, targetMatchupMultiplier } from '../../../gameplay/expedition/creatureOnTable';
-import { attackPowerAgainst } from '../../../gameplay/expedition/expeditionRules';
-import { ROLE, instinctLaneOf, presenceScaleOf } from '../../../gameplay/expedition/expeditionInterpretation';
+import { prepare, magnitudeAgainst, targetMatchupMultiplier } from '@xalians/rules/expedition/creatureOnTable';
+import { attackPowerAgainst } from '@xalians/rules/expedition/expeditionRules';
+import { ROLE, instinctLaneOf, presenceScaleOf } from '@xalians/rules/expedition/expeditionInterpretation';
 import { speciesLabel, formatHold, roleSentence } from './reclamationNarration';
 
 const OTHER = { A: 'B', B: 'A' };

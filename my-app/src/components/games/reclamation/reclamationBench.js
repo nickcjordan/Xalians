@@ -7,9 +7,9 @@ import { pieceShadowFilter } from '../duel/board/duelPieceToken';
 import { team } from '../../../constants/designTokens';
 import { slotStateOf, siteHoldsFor } from './reclamationRoster';
 import { speciesLabel, formatHold, roleSentence } from './reclamationNarration';
-import { prepare, speedOf } from '../../../gameplay/expedition/creatureOnTable';
+import { prepare, speedOf } from '@xalians/rules/expedition/creatureOnTable';
 import { attributeLanes } from './reclamationPreview';
-import { SENDABLE, RETURNED_SEND_COST } from '../../../gameplay/expedition/expeditionInterpretation';
+import { SENDABLE, RETURNED_SEND_COST } from '@xalians/rules/expedition/expeditionInterpretation';
 
 /*
 	ReclamationBench — the squad on a bench under the three worlds (Nick, 2026-09-04,

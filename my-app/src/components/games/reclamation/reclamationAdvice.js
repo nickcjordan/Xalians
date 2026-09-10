@@ -1,5 +1,5 @@
-import { chooseSend } from '../../../gameplay/expedition/expeditionBot';
-import { prepare } from '../../../gameplay/expedition/creatureOnTable';
+import { chooseSend } from '@xalians/rules/expedition/expeditionBot';
+import { prepare } from '@xalians/rules/expedition/creatureOnTable';
 import { speciesLabel, formatHold, roleSentence } from './reclamationNarration';
 import { siteHoldTotal } from './reclamationPreview';
 

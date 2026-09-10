@@ -1,4 +1,5 @@
-import { runSimulation, runSimulationRaw } from '../devtools/expeditionSimulator.js';
+import { describe, test, it, expect } from 'vitest';
+import { runSimulation, runSimulationRaw } from '../devtools/expeditionSimulator.ts';
 
 /*
 	Coverage for the devtools simulator's report shape (docs/design/reclamation-design.md
@@ -12,7 +13,7 @@ import { runSimulation, runSimulationRaw } from '../devtools/expeditionSimulator
 	itself taking meaningfully longer.
 */
 
-function isRateOrNull(r) {
+function isRateOrNull(r: any) {
 	if (r === null) {
 		return true;
 	}
@@ -39,7 +40,7 @@ describe('expeditionSimulator report shape', () => {
 	});
 
 	test('every top-level section is present', () => {
-		['seatFairness', 'matchShape', 'siteEconomy', 'rosterEconomy', 'combat', 'creatureBalance', 'worlds', 'errors'].forEach((key) => {
+		['seatFairness', 'matchShape', 'siteEconomy', 'rosterEconomy', 'combat', 'creatureBalance', 'worlds', 'errors'].forEach((key: any) => {
 			expect(report).toHaveProperty(key);
 		});
 	});
@@ -47,7 +48,7 @@ describe('expeditionSimulator report shape', () => {
 	test('section 1 (seat fairness): rates are valid rate objects or null', () => {
 		const sf = report.seatFairness;
 		expect(isRateOrNull(sf.starterWinRate)).toBe(true);
-		Object.values(sf.perWorldStarterSiteWinRate).forEach((r) => expect(isRateOrNull(r)).toBe(true));
+		Object.values(sf.perWorldStarterSiteWinRate).forEach((r: any) => expect(isRateOrNull(r)).toBe(true));
 		expect(isRateOrNull(sf.finalPasserWinRate)).toBe(true);
 		expect(typeof sf.swiftMovesPerMatch).toBe('number');
 		expect(sf.swiftMovesPerMatch).toBeGreaterThanOrEqual(0);
@@ -58,11 +59,11 @@ describe('expeditionSimulator report shape', () => {
 
 	test('section 2 (match shape): worlds-played counts sum to completed matches', () => {
 		const ms = report.matchShape;
-		const total = Object.values(ms.worldsPlayedCounts).reduce((a, b) => a + b, 0);
+		const total = Object.values(ms.worldsPlayedCounts).reduce((a: any, b: any) => a + b, 0);
 		expect(total).toBe(report.meta.completedMatches);
-		const endReasonTotal = Object.values(ms.endReasonCounts).reduce((a, b) => a + b, 0);
+		const endReasonTotal = Object.values(ms.endReasonCounts).reduce((a: any, b: any) => a + b, 0);
 		expect(endReasonTotal).toBe(report.meta.completedMatches);
-		const scoreTotal = Object.values(ms.finalScoreCounts).reduce((a, b) => a + b, 0);
+		const scoreTotal = Object.values(ms.finalScoreCounts).reduce((a: any, b: any) => a + b, 0);
 		expect(scoreTotal).toBe(report.meta.completedMatches);
 		expect(isRateOrNull(ms.comebackWinRate)).toBe(true);
 		expect(typeof ms.decisionsPerMatch).toBe('number');
@@ -76,7 +77,7 @@ describe('expeditionSimulator report shape', () => {
 		expect(se.contestedMarginQ1).toBeLessThanOrEqual(se.contestedMarginMedian + 1e-9);
 		expect(se.contestedMarginMedian).toBeLessThanOrEqual(se.contestedMarginQ3 + 1e-9);
 		expect(isRateOrNull(se.resolveMatteredRate)).toBe(true);
-		[0, 1, 2].forEach((w) => {
+		[0, 1, 2].forEach((w: any) => {
 			expect(se.perWorldPosition[w]).toBeTruthy();
 			expect(isRateOrNull(se.perWorldPosition[w].tieRate)).toBe(true);
 			expect(isRateOrNull(se.perWorldPosition[w].contestedRate)).toBe(true);
@@ -85,7 +86,7 @@ describe('expeditionSimulator report shape', () => {
 
 	test('section 4 (roster economy): non-negative counts', () => {
 		const re = report.rosterEconomy;
-		[0, 1, 2].forEach((w) => {
+		[0, 1, 2].forEach((w: any) => {
 			expect(re.sentPerWorldPositionPerSide[w].A).toBeGreaterThanOrEqual(0);
 			expect(re.sentPerWorldPositionPerSide[w].B).toBeGreaterThanOrEqual(0);
 		});
@@ -95,10 +96,10 @@ describe('expeditionSimulator report shape', () => {
 
 	test('section 5 (combat): outcome histogram counts are non-negative, per-role rates valid', () => {
 		const c = report.combat;
-		Object.values(c.outcomeHistogram).forEach((count) => expect(count).toBeGreaterThanOrEqual(0));
+		Object.values(c.outcomeHistogram).forEach((count: any) => expect(count).toBeGreaterThanOrEqual(0));
 		// per ROLE since the base redesign (docs/design/reclamation-base-redesign.md
 		// assumption 4): the sixteen-act tables measured a choice nobody makes any more
-		['strike', 'sweep', 'bolster', 'shield', 'none'].forEach((role) => {
+		['strike', 'sweep', 'bolster', 'shield', 'none'].forEach((role: any) => {
 			const r = c.perRole[role];
 			expect(r).toBeTruthy();
 			expect(r.sends).toBeGreaterThanOrEqual(0);
@@ -113,7 +114,7 @@ describe('expeditionSimulator report shape', () => {
 		expect(isRateOrNull(c.attackStats.fallbackAttackShare)).toBe(true);
 		expect(c.shieldStats.cancelsPerMatch).toBeGreaterThanOrEqual(0);
 		expect(c.bolsterStats.holdRestoredPerBolsterSend).toBeGreaterThanOrEqual(0);
-		['none', 'strained', 'severe'].forEach((level) => {
+		['none', 'strained', 'severe'].forEach((level: any) => {
 			expect(c.strainIncidence[level]).toBeTruthy();
 			expect(isRateOrNull(c.strainIncidence[level].sendShare)).toBe(true);
 			expect(isRateOrNull(c.strainIncidence[level].siteWinRate)).toBe(true);
@@ -131,20 +132,20 @@ describe('expeditionSimulator report shape', () => {
 
 	test('section 6 (creature balance): per-archetype/element/trait rates valid, top/bottom 5 well-formed', () => {
 		const cb = report.creatureBalance;
-		Object.values(cb.byArchetype).forEach((a) => {
+		Object.values(cb.byArchetype).forEach((a: any) => {
 			expect(a.sent).toBeGreaterThanOrEqual(0);
 			expect(isRateOrNull(a.siteWinRate)).toBe(true);
 		});
-		Object.values(cb.byElement).forEach((e) => {
+		Object.values(cb.byElement).forEach((e: any) => {
 			expect(e.sent).toBeGreaterThanOrEqual(0);
 			expect(isRateOrNull(e.siteWinRate)).toBe(true);
 			expect(isRateOrNull(e.strainedShare)).toBe(true);
 		});
-		Object.values(cb.byTrait).forEach((t) => {
+		Object.values(cb.byTrait).forEach((t: any) => {
 			expect(t.present).toBeGreaterThanOrEqual(0);
 			expect(isRateOrNull(t.siteWinRate)).toBe(true);
 		});
-		[...cb.top5ByWinRate, ...cb.bottom5ByWinRate].forEach((entry) => {
+		[...cb.top5ByWinRate, ...cb.bottom5ByWinRate].forEach((entry: any) => {
 			expect(entry.sent).toBeGreaterThanOrEqual(10);
 			expect(entry.siteWinRate).toBeGreaterThanOrEqual(0);
 			expect(entry.siteWinRate).toBeLessThanOrEqual(1);
@@ -157,15 +158,15 @@ describe('expeditionSimulator report shape', () => {
 		// printed report, null in the object) for elements absent from this pool/seed
 		const elementRows = Object.keys(cb.elementWorldStrainTable);
 		expect(elementRows.length).toBe(14);
-		elementRows.forEach((el) => {
-			Object.values(cb.elementWorldStrainTable[el]).forEach((v) => {
+		elementRows.forEach((el: any) => {
+			Object.values(cb.elementWorldStrainTable[el]).forEach((v: any) => {
 				expect(v === null || (typeof v === 'number' && v >= 0 && v <= 1)).toBe(true);
 			});
 		});
 	});
 
 	test('section 7 (worlds): per-planet rates valid', () => {
-		Object.values(report.worlds).forEach((w) => {
+		Object.values(report.worlds).forEach((w: any) => {
 			expect(w.timesDrawn).toBeGreaterThanOrEqual(0);
 			expect(isRateOrNull(w.tieRate)).toBe(true);
 			expect(typeof w.homeElementPresent).toBe('boolean');
@@ -181,7 +182,7 @@ describe('expeditionSimulator report shape', () => {
 describe('--mirror gives identical roster ids on both sides', () => {
 	test('every match has A and B rosters with the same record ids', () => {
 		const matchResults = runSimulationRaw({ matches: 5, seed: 'mirror-test-seed', mirror: true });
-		matchResults.forEach((m) => {
+		matchResults.forEach((m: any) => {
 			expect(m.error).toBeNull();
 			expect(m.rosterAIds).toEqual(m.rosterBIds);
 		});
@@ -189,7 +190,7 @@ describe('--mirror gives identical roster ids on both sides', () => {
 
 	test('without --mirror, rosters are not (reliably) identical', () => {
 		const matchResults = runSimulationRaw({ matches: 5, seed: 'no-mirror-test-seed', mirror: false });
-		const anyDifferent = matchResults.some((m) => JSON.stringify(m.rosterAIds) !== JSON.stringify(m.rosterBIds));
+		const anyDifferent = matchResults.some((m: any) => JSON.stringify(m.rosterAIds) !== JSON.stringify(m.rosterBIds));
 		expect(anyDifferent).toBe(true);
 	});
 });

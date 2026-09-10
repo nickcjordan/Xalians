@@ -17,9 +17,9 @@ import {
 	buildSections, toMarkdown, decidedRoundOf, lockedRoundOf, matchShapeOf, rate,
 	ALL_SECTIONS, NAIVE_POLICIES, ABLATIONS, parseSweep, sweepRulesOf, runSweep,
 	sectionLanes, RECORD_ATTRIBUTES, sectionStake, stakeStatsOf, LANE_ROLE_GROUPS,
-} from '../devtools/expeditionValidation.js';
-import { buildExpeditionPool } from '../roster.js';
-import { RIVALS } from '../expeditionBot.js';
+} from '../devtools/expeditionValidation.ts';
+import { buildExpeditionPool } from '../roster.ts';
+import { RIVALS } from '../expeditionBot.ts';
 
 const MATCHES = 4;
 const SEED = 3;
@@ -28,14 +28,14 @@ const SEED = 3;
 // builds one pool for the whole run
 const pool = buildExpeditionPool(SEED, 87);
 
-function isRate(r) {
+function isRate(r: any) {
 	return r === null || (typeof r.p === 'number' && typeof r.n === 'number' && typeof r.halfWidth === 'number');
 }
 
 describe('rate', () => {
 	it('returns null for zero trials and a bounded interval otherwise', () => {
 		expect(rate(0, 0)).toBeNull();
-		const r = rate(5, 10);
+		const r = rate(5, 10)!;
 		expect(r.p).toBe(0.5);
 		expect(r.lo).toBeGreaterThanOrEqual(0);
 		expect(r.hi).toBeLessThanOrEqual(1);
@@ -84,7 +84,7 @@ describe('matchShapeOf', () => {
 		expect(shape.n).toBe(1);
 		expect(shape.decidedCounts[1]).toBe(1);
 		expect(shape.downsPerMatch).toBe(3);
-		expect(shape.hiddenSendRate.p).toBeCloseTo(0.2);
+		expect(shape.hiddenSendRate!.p).toBeCloseTo(0.2);
 	});
 });
 
@@ -93,7 +93,7 @@ describe('sectionRegret', () => {
 
 	it('returns one row per naive policy with both win rates and a sends column', () => {
 		expect(result.rows).toHaveLength(NAIVE_POLICIES.length);
-		result.rows.forEach((row) => {
+		result.rows.forEach((row: any) => {
 			expect(typeof row.id).toBe('string');
 			expect(isRate(row.vsProctor)).toBe(true);
 			expect(isRate(row.vsRandom)).toBe(true);
@@ -109,7 +109,7 @@ describe('sectionRegret', () => {
 	});
 
 	it('plays every naive policy without an illegal action', () => {
-		result.rows.forEach((row) => {
+		result.rows.forEach((row: any) => {
 			expect(row.errors).toBe(0);
 		});
 	});
@@ -119,7 +119,7 @@ describe('sectionSpread', () => {
 	const result = sectionSpread({ matches: MATCHES, seed: SEED, pool });
 
 	it('histograms near-best counts per round and overall', () => {
-		[0, 1, 2].forEach((r) => {
+		[0, 1, 2].forEach((r: any) => {
 			const round = result.byRound[r];
 			expect(Object.keys(round.histogram)).toEqual(['1', '2', '3', '4', '5+']);
 			expect(isRate(round.dominantShare)).toBe(true);
@@ -130,7 +130,7 @@ describe('sectionSpread', () => {
 	});
 
 	it('never counts more near-best candidates than candidates offered', () => {
-		const total = Object.values(result.overall.histogram).reduce((a, b) => a + b, 0);
+		const total = Object.values(result.overall.histogram).reduce((a: any, b: any) => a + b, 0);
 		expect(total).toBe(result.overall.n);
 	});
 });
@@ -141,7 +141,7 @@ describe('sectionDecided', () => {
 	it('returns the proctor mirror in full and one row per rival', () => {
 		expect(result.proctor.n).toBeGreaterThan(0);
 		expect(result.byRival).toHaveLength(RIVALS.length);
-		result.byRival.forEach((row) => {
+		result.byRival.forEach((row: any) => {
 			expect(isRate(row.shape.decidedAfterRound1)).toBe(true);
 			expect(isRate(row.shape.comebackRate)).toBe(true);
 			expect(typeof row.shape.downsPerMatch).toBe('number');
@@ -160,8 +160,8 @@ describe('sectionAblation', () => {
 	it('returns the baseline first and one row per ablation, each with every rival', () => {
 		expect(result.rows).toHaveLength(ABLATIONS.length);
 		expect(result.rows[0].id).toBe('baseline');
-		result.rows.forEach((row) => {
-			RIVALS.forEach((rival) => {
+		result.rows.forEach((row: any) => {
+			RIVALS.forEach((rival: any) => {
 				expect(isRate(row.rivalWinRates[rival.id])).toBe(true);
 			});
 			expect(Array.isArray(row.moved)).toBe(true);
@@ -169,13 +169,13 @@ describe('sectionAblation', () => {
 	});
 
 	it('reports the hidden send rate as zero under the hiddenSends ablation', () => {
-		const noHidden = result.rows.find((r) => r.id === 'noHidden');
-		expect(noHidden.shape.hiddenSendRate.p).toBe(0);
+		const noHidden = result.rows.find((r: any) => r.id === 'noHidden')!;
+		expect(noHidden.shape.hiddenSendRate!.p).toBe(0);
 	});
 
 	it('reports the returned send rate as zero under the lokiLine ablation', () => {
-		const noLoki = result.rows.find((r) => r.id === 'noLoki');
-		expect(noLoki.shape.returnedSendRate.p).toBe(0);
+		const noLoki = result.rows.find((r: any) => r.id === 'noLoki')!;
+		expect(noLoki.shape.returnedSendRate!.p).toBe(0);
 	});
 
 	it('gives one reading per non-baseline row', () => {
@@ -189,7 +189,7 @@ describe('sectionDraft', () => {
 	it('returns species and element rows with keep and keeper win rates', () => {
 		expect(result.bySpecies.length).toBeGreaterThan(0);
 		expect(result.byElement.length).toBeGreaterThan(0);
-		result.bySpecies.forEach((row) => {
+		result.bySpecies.forEach((row: any) => {
 			expect(row.kept).toBeLessThanOrEqual(row.dealt);
 			expect(isRate(row.keepRate)).toBe(true);
 			expect(isRate(row.keeperWinRate)).toBe(true);
@@ -214,7 +214,7 @@ describe('runValidation', () => {
 
 	it('runs every section by default', () => {
 		const report = runValidation({ matches: 2, seed: SEED });
-		ALL_SECTIONS.forEach((id) => {
+		ALL_SECTIONS.forEach((id: any) => {
 			expect(report[id]).toBeDefined();
 		});
 	});
@@ -237,13 +237,13 @@ describe('rendering', () => {
 
 	it('builds one section per section run, in report order', () => {
 		const sections = buildSections(report);
-		expect(sections.map((s) => s.id)).toEqual(ALL_SECTIONS);
+		expect(sections.map((s: any) => s.id)).toEqual(ALL_SECTIONS);
 	});
 
 	it('writes markdown tables with a header row and a separator for every table block', () => {
 		const md = toMarkdown(report);
-		const headerLines = md.split('\n').filter((l) => l.startsWith('| ---'));
-		const tableCount = buildSections(report).reduce((n, s) => n + s.blocks.filter((b) => b.type === 'table').length, 0);
+		const headerLines = md.split('\n').filter((l: any) => l.startsWith('| ---'));
+		const tableCount = buildSections(report).reduce((n: any, s: any) => n + s.blocks.filter((b: any) => b.type === 'table').length, 0);
 		expect(headerLines).toHaveLength(tableCount);
 	});
 
@@ -254,19 +254,19 @@ describe('rendering', () => {
 
 describe('the base redesign additions', () => {
 	it('offers the always-presence-first policy the base redesign asks for', () => {
-		expect(NAIVE_POLICIES.map((p) => p.id)).toContain('alwaysPresenceFirst');
+		expect(NAIVE_POLICIES.map((p: any) => p.id)).toContain('alwaysPresenceFirst');
 	});
 
 	it('ablates every rule AND every role', () => {
-		const ids = ABLATIONS.map((a) => a.id);
+		const ids = ABLATIONS.map((a: any) => a.id);
 		['baseline', 'noHidden', 'noLoki', 'noSpeed', 'hiddenFirstBack', 'hidingPriced', 'noSweep', 'noBolster', 'noShield', 'noHurtAttacksLess', 'noBolsterRecovery', 'noWillful', 'noPresenceScale', 'noInstinctLanes', 'noSwiftMove', 'trailingBonusBack']
-			.forEach((id) => expect(ids).toContain(id));
-		expect(ABLATIONS.find((a) => a.id === 'noSweep').rules).toEqual({ roles: { sweep: false } });
+			.forEach((id: any) => expect(ids).toContain(id));
+		expect(ABLATIONS.find((a: any) => a.id === 'noSweep')!.rules).toEqual({ roles: { sweep: false } });
 	});
 
 	it('parses a single-lever sweep and a paired-lever sweep', () => {
 		expect(parseSweep('magnitudeScale=0.5,1')).toEqual({ rules: ['magnitudeScale'], values: [[0.5], [1]] });
-		const paired = parseSweep('holdFloor:holdCeiling=2.8:17.6,6:14.9');
+		const paired = parseSweep('holdFloor:holdCeiling=2.8:17.6,6:14.9')!;
 		expect(paired.rules).toEqual(['holdFloor', 'holdCeiling']);
 		expect(sweepRulesOf(paired, paired.values[0])).toEqual({ holdFloor: 2.8, holdCeiling: 17.6 });
 		expect(parseSweep('nonsense')).toBeNull();
@@ -276,7 +276,7 @@ describe('the base redesign additions', () => {
 		const sweep = parseSweep('magnitudeScale=0.5,1.5');
 		const report = runSweep({ matches: 2, seed: SEED, only: ['decided'], sweep });
 		expect(report.rows.length).toBe(2);
-		report.rows.forEach((row) => {
+		report.rows.forEach((row: any) => {
 			expect(typeof row.label).toBe('string');
 			expect(typeof row.downsPerMatch).toBe('number');
 			expect(isRate(row.resolveChangedLeaderRate)).toBe(true);
@@ -295,9 +295,9 @@ describe('sectionLanes', () => {
 	const result = sectionLanes({ matches: MATCHES, seed: SEED, pool });
 
 	it('returns one row per record attribute, each with both quartile readings', () => {
-		expect(result.rows.map((r) => r.attribute)).toEqual(RECORD_ATTRIBUTES);
+		expect(result.rows.map((r: any) => r.attribute)).toEqual(RECORD_ATTRIBUTES);
 		expect(RECORD_ATTRIBUTES.length).toBe(10);
-		result.rows.forEach((row) => {
+		result.rows.forEach((row: any) => {
 			expect(typeof row.q1).toBe('number');
 			expect(typeof row.q3).toBe('number');
 			expect(row.q3).toBeGreaterThanOrEqual(row.q1);
@@ -314,9 +314,9 @@ describe('sectionLanes', () => {
 		expect(ALL_SECTIONS).toContain('lanes');
 		const report = runValidation({ matches: 2, seed: SEED, only: ['lanes'] });
 		expect(report.lanes).toBeTruthy();
-		const section = buildSections(report).find((s) => s.id === 'lanes');
+		const section = buildSections(report).find((s: any) => s.id === 'lanes')!;
 		expect(section).toBeTruthy();
-		expect(section.blocks.some((b) => b.type === 'table')).toBe(true);
+		expect(section.blocks.some((b: any) => b.type === 'table')).toBe(true);
 		expect(toMarkdown(report)).toContain('Per-attribute lanes');
 	});
 });
@@ -330,16 +330,16 @@ describe('sectionLanes', () => {
 describe('pass 3: the stake section', () => {
 	it('returns the stake on against the stake off, with the rival ladder under both', () => {
 		const report = sectionStake({ matches: MATCHES, seed: SEED, pool });
-		['on', 'off'].forEach((key) => {
-			expect(isRate(report[key].shape.comebackRate)).toBe(true);
-			expect(typeof report[key].stake.stakesPerMatch).toBe('number');
-			expect(isRate(report[key].stake.usageShare)).toBe(true);
-			expect(isRate(report[key].stake.trailingShare)).toBe(true);
-			expect(isRate(report[key].stake.stakedWinRate)).toBe(true);
-			expect(isRate(report[key].stake.unstakedWinRate)).toBe(true);
+		(['on', 'off'] as const).forEach((key) => {
+			expect(isRate((report as any)[key].shape.comebackRate)).toBe(true);
+			expect(typeof (report as any)[key].stake.stakesPerMatch).toBe('number');
+			expect(isRate((report as any)[key].stake.usageShare)).toBe(true);
+			expect(isRate((report as any)[key].stake.trailingShare)).toBe(true);
+			expect(isRate((report as any)[key].stake.stakedWinRate)).toBe(true);
+			expect(isRate((report as any)[key].stake.unstakedWinRate)).toBe(true);
 		});
 		expect(report.byRival.length).toBe(RIVALS.length);
-		report.byRival.forEach((row) => {
+		report.byRival.forEach((row: any) => {
 			expect(isRate(row.on)).toBe(true);
 			expect(isRate(row.off)).toBe(true);
 		});
@@ -365,7 +365,7 @@ describe('pass 3: the stake section', () => {
 		expect(ALL_SECTIONS).toContain('stake');
 		const report = runValidation({ matches: MATCHES, seed: SEED, only: ['stake'] });
 		const sections = buildSections(report);
-		expect(sections.map((x) => x.id)).toContain('stake');
+		expect(sections.map((x: any) => x.id)).toContain('stake');
 		expect(toMarkdown(report)).toContain('The stake');
 	});
 });
@@ -374,12 +374,12 @@ describe('pass 3: the per-role lane split', () => {
 	it('keeps the overall row and adds one cell per role group', () => {
 		const lanes = sectionLanes({ matches: MATCHES, seed: SEED, pool });
 		expect(lanes.rows.length).toBe(RECORD_ATTRIBUTES.length);
-		expect(lanes.groups.map((g) => g.id)).toEqual(LANE_ROLE_GROUPS.map((g) => g.id));
-		lanes.rows.forEach((row) => {
+		expect(lanes.groups.map((g: any) => g.id)).toEqual(LANE_ROLE_GROUPS.map((g: any) => g.id));
+		lanes.rows.forEach((row: any) => {
 			expect(row.gap === null || typeof row.gap === 'number').toBe(true);
 			expect(row.byRole.length).toBe(LANE_ROLE_GROUPS.length);
-			row.byRole.forEach((cell) => {
-				expect(LANE_ROLE_GROUPS.some((g) => g.id === cell.group)).toBe(true);
+			row.byRole.forEach((cell: any) => {
+				expect(LANE_ROLE_GROUPS.some((g: any) => g.id === cell.group)).toBe(true);
 				expect(isRate(cell.topWinRate)).toBe(true);
 				expect(isRate(cell.bottomWinRate)).toBe(true);
 			});
@@ -389,15 +389,15 @@ describe('pass 3: the per-role lane split', () => {
 
 describe('pass 3: the new ablation rows', () => {
 	it('carries a no-stake row, and since pass 4 the rows that put the old hiding back', () => {
-		const ids = ABLATIONS.map((a) => a.id);
+		const ids = ABLATIONS.map((a: any) => a.id);
 		expect(ids).toContain('noStake');
 		expect(ids).toContain('hiddenFirstBack');
 		expect(ids).toContain('hidingPriced');
 		expect(ids).not.toContain('noHiddenFirst');
-		const noStake = ABLATIONS.find((a) => a.id === 'noStake');
+		const noStake = ABLATIONS.find((a: any) => a.id === 'noStake')!;
 		expect(noStake.rules).toEqual({ stake: false });
-		expect(ABLATIONS.find((a) => a.id === 'hiddenFirstBack').rules).toEqual({ hiddenFirst: true });
-		expect(ABLATIONS.find((a) => a.id === 'hidingPriced').rules).toEqual({ hiddenFirst: true, hiddenSendCost: 2, hiddenPower: 0.75 });
+		expect(ABLATIONS.find((a: any) => a.id === 'hiddenFirstBack')!.rules).toEqual({ hiddenFirst: true });
+		expect(ABLATIONS.find((a: any) => a.id === 'hidingPriced')!.rules).toEqual({ hiddenFirst: true, hiddenSendCost: 2, hiddenPower: 0.75 });
 	});
 });
 
@@ -405,21 +405,21 @@ describe('pass 4: the read (assumption 24)', () => {
 	it('is one of the report sections, renders, and reports concealment rather than gauging it', () => {
 		expect(ALL_SECTIONS).toContain('read');
 		const report = runValidation({ matches: MATCHES, seed: SEED, only: ['read'] });
-		expect(report.read.rows.map((r) => r.id)).toEqual(['anticipation', 'blind', 'sharpRead', 'alwaysHidden', 'neverHides', 'alwaysHiddenVsBlind']);
-		report.read.rows.forEach((r) => {
+		expect(report.read.rows.map((r: any) => r.id)).toEqual(['anticipation', 'blind', 'sharpRead', 'alwaysHidden', 'neverHides', 'alwaysHiddenVsBlind']);
+		report.read.rows.forEach((r: any) => {
 			expect(r.rate).toBeTruthy();
 			expect(r.rate.p).toBeGreaterThanOrEqual(0);
 			expect(r.rate.p).toBeLessThanOrEqual(1);
 		});
-		expect(report.read.readings.some((line) => line.includes('Concealment against the bot'))).toBe(true);
+		expect(report.read.readings.some((line: any) => line.includes('Concealment against the bot'))).toBe(true);
 		const sections = buildSections(report);
-		expect(sections.map((x) => x.id)).toContain('read');
+		expect(sections.map((x: any) => x.id)).toContain('read');
 		expect(toMarkdown(report)).toContain('8. The read');
 	});
 
 	it('the always-hidden regret row is reported, never flagged', () => {
 		const report = runValidation({ matches: MATCHES, seed: SEED, only: ['regret'] });
-		const row = report.regret.rows.find((r) => r.id === 'alwaysHidden');
+		const row = report.regret.rows.find((r: any) => r.id === 'alwaysHidden');
 		expect(row.flag).toBe('reported only (pass 4)');
 	});
 });

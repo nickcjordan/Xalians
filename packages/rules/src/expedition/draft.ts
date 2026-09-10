@@ -7,7 +7,7 @@
 	brought, ten sent) is unchanged; this module only decides which twelve of eighteen
 	each side brings to it.
 
-	Pure and deterministic under the match seed, same discipline as roster.js: two
+	Pure and deterministic under the match seed, same discipline as roster.ts: two
 	disjoint pools of DRAFT_POOL_SIZE dealt from the generator with the engine's own
 	PRNG, and the nine worlds of the Proving reproduced by calling createMatch with
 	placeholder rosters of the right size and reading its `frames` back out, exactly as
@@ -15,14 +15,16 @@
 	reaching past createMatch's public contract to get at it).
 */
 
-import { generateBatch } from '@xalians/rules/generator';
-import { createRngState, nextRandom, createMatch } from './expeditionRules.js';
-import { getWorlds } from './sites.js';
-import { prepare, roleOf, speedOf } from './creatureOnTable.js';
+import { generateBatch } from '../generator/index.ts';
+import type { XalianRecord } from '@xalians/content/schema';
+import { createRngState, nextRandom, createMatch } from './expeditionRules.ts';
+import { getWorlds } from './sites.ts';
+import { prepare, roleOf, speedOf } from './creatureOnTable.ts';
 import {
 	ROSTER_SIZE, ROLE, SWEEP_DISCOUNT, BOLSTER_FLOOR, SHIELD_CAP,
 	DRAFT_POOL_SIZE as DEFAULT_DRAFT_POOL_SIZE, DRAFT_DISTINCT_SPECIES,
-} from './expeditionInterpretation.js';
+} from './expeditionInterpretation.ts';
+import type { Frame, Role as RoleType, Rules, StrainLevel } from './types.ts';
 
 // a sweep catches this many creatures at a world on the numbers the simulator measures
 // (mean creatures per world at deploy end, both sides), so a sweep's worth is its
@@ -33,14 +35,14 @@ export const BOLSTER_EXPECTED_ALLIES = 2;
 
 /*
 	Both sides draft from a pool of DRAFT_POOL_SIZE and keep twelve (ROSTER_SIZE). The
-	number itself lives in expeditionInterpretation.js with every other lever (docs/design/
+	number itself lives in expeditionInterpretation.ts with every other lever (docs/design/
 	reclamation-base-redesign.md assumption 15) and is re-exported here so the draft's own
 	callers keep one import; a match's rules object can move it per batch through
 	`rules.draftPoolSize` (assumption 23).
 */
 export const DRAFT_POOL_SIZE = DEFAULT_DRAFT_POOL_SIZE;
 
-function shuffleWithRng(array, rngState) {
+function shuffleWithRng(array: XalianRecord[], rngState: number): XalianRecord[] {
 	const result = array.slice();
 	let state = rngState;
 	for (let i = result.length - 1; i > 0; i--) {
@@ -56,13 +58,16 @@ function shuffleWithRng(array, rngState) {
 
 // a placeholder roster of the right size, just to satisfy createMatch's validation
 // while we read its frame draw back out; these records never touch a real match
-function placeholderRoster(prefix) {
-	const roster = [];
+function placeholderRoster(prefix: string): XalianRecord[] {
+	const roster: XalianRecord[] = [];
 	for (let i = 0; i < ROSTER_SIZE; i++) {
 		roster.push({
 			id: `${prefix}_${i}`,
 			species: 'placeholder',
-			provenance: { serial: i, origin: 'magmuth' },
+			provenance: {
+				serial: i, origin: 'magmuth', seed: `${prefix}_${i}`,
+				generatorVersion: 'placeholder', schemaVersion: 'placeholder', generatedAt: new Date().toISOString(),
+			},
 			attributes: {
 				strength: 50, vitality: 50, endurance: 50, agility: 50, reflex: 50,
 				intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 50,
@@ -70,13 +75,34 @@ function placeholderRoster(prefix) {
 			element: { primary: 'fire', affinities: { fire: 100 } },
 			archetype: { key: 'balanced', favors: [] },
 			physiology: {
+				corporeality: 'corporeal',
+				composition: { primary: 'organic' },
+				bodyPlan: 'quadruped',
+				anatomy: ['limbs'],
+				covering: 'skin',
+				heightCm: 100,
+				weightKg: 50,
+				lifespan: 'standard',
+				genome: { chirality: 'achiral' },
+				diet: 'omnivore',
+				communication: [],
 				breathes: ['gas'],
 				environmentalTolerance: { ambientMedia: ['gas'], temperatureC: { min: -100, max: 100 } },
+				capabilities: { flight: 0, swim: 0, burrow: 0, climb: 0, sprint: 0, leap: 0, manipulation: 0 },
+				senses: { sight: 50, hearing: 50, smell: 50 },
 			},
 			traits: [],
 			temperament: { boldness: 50, curiosity: 50, energy: 50, aggression: 50, sociability: 50 },
-			abilities: [],
-		});
+			appearance: { finish: 'standard' },
+			abilities: [{
+				name: 'placeholder', signature: true, instrument: 'limbs', action: 'strike',
+				medium: 'fire', intensity: 50,
+			}],
+		} as unknown as XalianRecord);
+		// the placeholder roster only needs to satisfy createMatch's shape and count
+		// validation to read its frame draw back out; building a schema-perfect record here
+		// would duplicate the generator's own construction for no gain, hence the single
+		// cast above rather than typing every field precisely.
 	}
 	return roster;
 }
@@ -89,7 +115,7 @@ function placeholderRoster(prefix) {
 	draw happens before any roster content is read), so a placeholder pair of rosters of
 	the right shape yields the same `frames` the real match will use.
 */
-export function drawnFrames(seed) {
+export function drawnFrames(seed: string | number): Frame[] {
 	const match = createMatch({
 		rosterA: placeholderRoster('draftA'),
 		rosterB: placeholderRoster('draftB'),
@@ -97,6 +123,13 @@ export function drawnFrames(seed) {
 		seed,
 	});
 	return match.frames;
+}
+
+export interface DraftOptions {
+	poolSize?: number;
+	distinctSpecies?: boolean;
+	rules?: Partial<Rules> | null;
+	poolMeanBlow?: number;
 }
 
 /*
@@ -110,10 +143,10 @@ export function drawnFrames(seed) {
 	so an unlucky batch can fall short - the pool is topped up from what is left, which is
 	the "distinct as far as possible" fallback the brief asks for rather than a failure.
 */
-function dealDistinct(shuffled, size) {
-	const pools = [[], []];
-	const seen = [new Set(), new Set()];
-	const leftovers = [];
+function dealDistinct(shuffled: XalianRecord[], size: number): [XalianRecord[], XalianRecord[]] {
+	const pools: [XalianRecord[], XalianRecord[]] = [[], []];
+	const seen: [Set<string>, Set<string>] = [new Set(), new Set()];
+	const leftovers: XalianRecord[] = [];
 	shuffled.forEach((record) => {
 		const species = record.species || 'unknown';
 		for (let i = 0; i < 2; i++) {
@@ -136,11 +169,17 @@ function dealDistinct(shuffled, size) {
 	return pools;
 }
 
+export interface DraftPools {
+	poolA: XalianRecord[];
+	poolB: XalianRecord[];
+	frames: Frame[];
+}
+
 /*
 	buildDraftPools(seed, options) -> { poolA, poolB, frames }
 
 	Two disjoint pools of `options.poolSize` (default DRAFT_POOL_SIZE) generated creatures,
-	dealt from the same kind of generator pool roster.js uses (one big generated batch,
+	dealt from the same kind of generator pool roster.ts uses (one big generated batch,
 	shuffled by the engine's PRNG, then cut), and the nine worlds of the Proving in frame
 	order.
 
@@ -150,7 +189,7 @@ function dealDistinct(shuffled, size) {
 	- distinctSpecies: deal each pool species-distinct (see dealDistinct). The batch is
 	  generated larger in that case, since a distinct deal consumes duplicates.
 */
-export function buildDraftPools(seed, options = {}) {
+export function buildDraftPools(seed: string | number, options: DraftOptions = {}): DraftPools {
 	const poolSize = typeof options.poolSize === 'number' ? options.poolSize : DRAFT_POOL_SIZE;
 	const distinct = options.distinctSpecies !== undefined ? !!options.distinctSpecies : DRAFT_DISTINCT_SPECIES;
 	// a distinct deal throws duplicates back, so it needs a deeper batch to fill two pools
@@ -170,7 +209,7 @@ export function buildDraftPools(seed, options = {}) {
 
 // the draft options a match's rules object carries (assumption 23), so every caller reads
 // the same two keys off the same place rather than each inventing its own plumbing
-export function draftOptionsFromRules(rules) {
+export function draftOptionsFromRules(rules: Partial<Rules> | null | undefined): { poolSize: number; distinctSpecies: boolean } {
 	return {
 		poolSize: rules && typeof rules.draftPoolSize === 'number' ? rules.draftPoolSize : DRAFT_POOL_SIZE,
 		distinctSpecies: rules && rules.draftDistinctSpecies !== undefined
@@ -179,10 +218,30 @@ export function draftOptionsFromRules(rules) {
 }
 
 // every site across a frame list, in frame order
-function sitesOf(frames) {
-	const sites = [];
+function sitesOf(frames: Frame[]) {
+	const sites: Frame['sites'] = [];
 	frames.forEach((frame) => frame.sites.forEach((site) => sites.push(site)));
 	return sites;
+}
+
+export interface DraftWorldRow {
+	planet: string;
+	element: string;
+	hold: number;
+	isHome: boolean;
+	strainLevel: StrainLevel;
+	blowMagnitude: number;
+	bolsterLift: number;
+}
+
+export interface DraftRating {
+	best: number;
+	mean: number;
+	homes: number;
+	role: RoleType;
+	roleValue: number;
+	rating: number;
+	byWorld: DraftWorldRow[];
 }
 
 /*
@@ -211,13 +270,13 @@ function sitesOf(frames) {
 	options: { rules, poolMeanBlow }. Both optional; with neither, the module constants and
 	a shield value of zero are used, which is what a caller with no pool in hand can know.
 */
-export function rateForDraft(record, frames, options = {}) {
+export function rateForDraft(record: XalianRecord, frames: Frame[], options: DraftOptions = {}): DraftRating {
 	const rules = options.rules || null;
 	const sweepDiscount = rules && typeof rules.sweepDiscount === 'number' ? rules.sweepDiscount : SWEEP_DISCOUNT;
 	const bolsterFloor = rules && typeof rules.bolsterFloor === 'number' ? rules.bolsterFloor : BOLSTER_FLOOR;
 	const shieldCap = (rules && rules.shieldCap) || SHIELD_CAP;
 
-	const byWorld = sitesOf(frames).map((site) => {
+	const byWorld: DraftWorldRow[] = sitesOf(frames).map((site) => {
 		const view = prepare(record, site, null, 0, { rules });
 		const lifted = prepare(record, site, null, 0, { rules, bolstered: true });
 		return {
@@ -260,9 +319,9 @@ export function rateForDraft(record, frames, options = {}) {
 	and it is a property of the POOL, not of the shielder, which is why it is computed once
 	here and handed to rateForDraft rather than derived per creature.
 */
-export function poolMeanBlowOf(pool, frames, rules) {
+export function poolMeanBlowOf(pool: XalianRecord[], frames: Frame[], rules?: Partial<Rules> | null): number {
 	const sites = sitesOf(frames);
-	const magnitudes = [];
+	const magnitudes: number[] = [];
 	pool.forEach((record) => {
 		const role = roleOf(record, rules);
 		if (role !== ROLE.STRIKE && role !== ROLE.SWEEP) {
@@ -276,25 +335,35 @@ export function poolMeanBlowOf(pool, frames, rules) {
 }
 
 // the planet a creature holds best at, used by the windsailor's spread bonus/penalty
-function bestPlanetOf(rating) {
+function bestPlanetOf(rating: DraftRating): string | null {
 	if (rating.byWorld.length === 0) {
 		return null;
 	}
 	return rating.byWorld.reduce((a, b) => (b.hold > a.hold ? b : a)).planet;
 }
 
-// stealthy read straight off the record's traits, no site needed
-function isStealthy(record) {
-	const traits = record && record.traits;
+// stealthy read straight off the record's traits, no site needed. XalianRecord['traits']
+// is always an array under the ratified schema; the object-shaped branch is defensive
+// against pre-ratification fixtures, same as creatureOnTable.traitKeywordsOf.
+function isStealthy(record: XalianRecord): boolean {
+	const traits: unknown = record && record.traits;
 	if (Array.isArray(traits)) {
 		return traits.includes('stealthy');
 	}
 	if (traits && typeof traits === 'object') {
-		const guaranteed = Array.isArray(traits.guaranteed) ? traits.guaranteed : [];
-		const rolled = Array.isArray(traits.rolled) ? traits.rolled : [];
+		const shaped = traits as { guaranteed?: unknown; rolled?: unknown };
+		const guaranteed = Array.isArray(shaped.guaranteed) ? shaped.guaranteed : [];
+		const rolled = Array.isArray(shaped.rolled) ? shaped.rolled : [];
 		return guaranteed.includes('stealthy') || rolled.includes('stealthy');
 	}
 	return false;
+}
+
+interface ScoredDraftCandidate {
+	record: XalianRecord;
+	rating: DraftRating;
+	score: number;
+	bestPlanet: string | null;
 }
 
 /*
@@ -320,7 +389,12 @@ function isStealthy(record) {
 	Deterministic: ties break on record id so the result never depends on iteration
 	order or floating-point jitter.
 */
-export function botDraft(pool, frames, rival, options = {}) {
+export function botDraft(
+	pool: XalianRecord[],
+	frames: Frame[],
+	rival: { id?: string } | null | undefined,
+	options: DraftOptions = {},
+): string[] {
 	const rivalId = (rival && rival.id) || 'proctor';
 	const rules = options.rules || null;
 	const poolMeanBlow = poolMeanBlowOf(pool, frames, rules);
@@ -329,7 +403,7 @@ export function botDraft(pool, frames, rival, options = {}) {
 		rating: rateForDraft(record, frames, { rules, poolMeanBlow }),
 	}));
 
-	const scored = ratings.map(({ record, rating }) => {
+	const scored: ScoredDraftCandidate[] = ratings.map(({ record, rating }) => {
 		let score = rating.rating + rating.best * 0.25;
 		if (rivalId === 'heir') {
 			score = rating.rating * 1.5 + rating.best * 0.1;
@@ -343,12 +417,12 @@ export function botDraft(pool, frames, rival, options = {}) {
 
 	// the windsailor's spread bias: a running penalty for a repeated best-world, so the
 	// discount can change the order as the keep fills (a habit, not a static score)
-	const bestPlanetCounts = new Map();
+	const bestPlanetCounts = new Map<string, number>();
 	const adjust = rivalId === 'windsailor'
-		? (candidate) => candidate.score - (candidate.bestPlanet ? (bestPlanetCounts.get(candidate.bestPlanet) || 0) * 3 : 0)
-		: (candidate) => candidate.score;
+		? (candidate: ScoredDraftCandidate) => candidate.score - (candidate.bestPlanet ? (bestPlanetCounts.get(candidate.bestPlanet) || 0) * 3 : 0)
+		: (candidate: ScoredDraftCandidate) => candidate.score;
 	const onPick = rivalId === 'windsailor'
-		? (candidate) => {
+		? (candidate: ScoredDraftCandidate) => {
 			if (candidate.bestPlanet) {
 				bestPlanetCounts.set(candidate.bestPlanet, (bestPlanetCounts.get(candidate.bestPlanet) || 0) + 1);
 			}
@@ -376,15 +450,19 @@ export function botDraft(pool, frames, rival, options = {}) {
 */
 export const MAX_PER_SPECIES = 2;
 
-function draftPick(scored, adjust, onPick) {
+function draftPick(
+	scored: ScoredDraftCandidate[],
+	adjust: (candidate: ScoredDraftCandidate) => number,
+	onPick: (candidate: ScoredDraftCandidate) => void,
+): ScoredDraftCandidate[] {
 	const remaining = scored.slice();
-	const kept = [];
-	const speciesCounts = new Map();
-	const roleCounts = new Map();
+	const kept: ScoredDraftCandidate[] = [];
+	const speciesCounts = new Map<string, number>();
+	const roleCounts = new Map<RoleType, number>();
 	const rolesInPool = [...new Set(scored.map((c) => c.rating.role))];
 
-	const speciesOf = (candidate) => candidate.record.species || 'unknown';
-	const speciesOk = (candidate) => (speciesCounts.get(speciesOf(candidate)) || 0) < MAX_PER_SPECIES;
+	const speciesOf = (candidate: ScoredDraftCandidate) => candidate.record.species || 'unknown';
+	const speciesOk = (candidate: ScoredDraftCandidate) => (speciesCounts.get(speciesOf(candidate)) || 0) < MAX_PER_SPECIES;
 
 	while (kept.length < ROSTER_SIZE && remaining.length > 0) {
 		remaining.sort((x, y) => adjust(y) - adjust(x) || x.record.id.localeCompare(y.record.id));
@@ -394,12 +472,13 @@ function draftPick(scored, adjust, onPick) {
 			(role) => (roleCounts.get(role) || 0) === 0 && remaining.some((c) => c.rating.role === role),
 		);
 
-		let pick = null;
+		let pick: ScoredDraftCandidate | null = null;
 		if (missing.length >= slotsLeft) {
 			// every remaining slot is spoken for by a missing role: take the best candidate
 			// of one, preferring one that also keeps the species cap
 			pick = remaining.find((c) => missing.includes(c.rating.role) && speciesOk(c))
-				|| remaining.find((c) => missing.includes(c.rating.role));
+				|| remaining.find((c) => missing.includes(c.rating.role))
+				|| null;
 		}
 		if (!pick) {
 			// the species cap is relaxed only when nothing else is left to take
@@ -422,7 +501,7 @@ function draftPick(scored, adjust, onPick) {
 	True only when keepIds names exactly ROSTER_SIZE distinct ids, all of them present
 	in the pool.
 */
-export function validateKeep(pool, keepIds) {
+export function validateKeep(pool: XalianRecord[] | null | undefined, keepIds: string[]): boolean {
 	if (!Array.isArray(keepIds) || keepIds.length !== ROSTER_SIZE) {
 		return false;
 	}

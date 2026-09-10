@@ -5,13 +5,13 @@ import ReclamationWorld from '../reclamationWorld';
 import ReclamationBench from '../reclamationBench';
 import ReclamationDraft from '../reclamationDraft';
 import { narrateStake, narrateJudge, countWord } from '../reclamationNarration';
-import { buildDraftPools, draftOptionsFromRules } from '../../../../gameplay/expedition/draft.js';
+import { buildDraftPools, draftOptionsFromRules } from '@xalians/rules/expedition/draft';
 import {
 	createMatch, getPublicState, stakeWorld, DEFAULT_RULES,
-} from '../../../../gameplay/expedition/expeditionRules.js';
-import { getWorlds } from '../../../../gameplay/expedition/sites.js';
-import { prepare } from '../../../../gameplay/expedition/creatureOnTable.js';
-import { ROSTER_SIZE } from '../../../../gameplay/expedition/expeditionInterpretation.js';
+} from '@xalians/rules/expedition/expeditionRules';
+import { getWorlds } from '@xalians/rules/expedition/sites';
+import { prepare } from '@xalians/rules/expedition/creatureOnTable';
+import { ROSTER_SIZE } from '@xalians/rules/expedition/expeditionInterpretation';
 
 /*
 	PASS 3 on the table (docs/design/reclamation-base-redesign.md, assumptions 21 to 23):

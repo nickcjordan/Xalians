@@ -9,17 +9,22 @@
 	blend lives here.
 */
 
-import { typeEffectivenessMultiplier } from './expeditionInterpretation.js';
+import { typeEffectivenessMultiplier } from './expeditionInterpretation.ts';
+import type { XalianRecord } from '@xalians/content/schema';
 
 // a 0 on the chart would zero a creature out of a world entirely; the design softens it
-export function softened(multiplier) {
+export function softened(multiplier: number): number {
 	return multiplier === 0 ? 0.25 : multiplier;
 }
+
+// element.affinities always includes the primary at 100; at most one other key is a graded
+// secondary. Reads defensively against a bare element object rather than a full record.
+type ElementShape = XalianRecord['element'] | null | undefined;
 
 // Picks the graded secondary affinity (if any) out of a record's element.affinities.
 // affinities always contains the primary duplicated at 100; the secondary, if present, is
 // any other key. Mono-typed creatures have no other key, so grade is 0.
-export function secondaryAffinity(element) {
+export function secondaryAffinity(element: ElementShape): { element: string | null; grade: number } {
 	if (!element || !element.affinities) {
 		return { element: null, grade: 0 };
 	}
@@ -30,7 +35,7 @@ export function secondaryAffinity(element) {
 	}
 	// design/record contract: at most one graded secondary
 	const secondaryElement = keys[0];
-	const grade = element.affinities[secondaryElement];
+	const grade = (element.affinities as Record<string, number>)[secondaryElement];
 	return { element: secondaryElement, grade: typeof grade === 'number' ? grade : 0 };
 }
 
@@ -40,7 +45,7 @@ export function secondaryAffinity(element) {
 	creatureElement is the record's element shape: { primary, affinities }. againstElement
 	is the single element being matched against (the world's, or the target's primary).
 */
-export function conditionMultiplier(againstElement, creatureElement) {
+export function conditionMultiplier(againstElement: string | null | undefined, creatureElement: ElementShape): number {
 	const primaryElement = creatureElement && creatureElement.primary;
 	const mPrimary = typeEffectivenessMultiplier(primaryElement, againstElement);
 

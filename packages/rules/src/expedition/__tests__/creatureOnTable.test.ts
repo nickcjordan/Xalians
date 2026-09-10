@@ -1,20 +1,27 @@
+import { describe, test, it, expect } from 'vitest';
+import type { XalianRecord } from '@xalians/content/schema';
 import {
 	baseHold, holdAtSite, worldMatchupMultiplier, strainLevel, strainMultiplierFor,
 	speedOf, buildActs, magnitudeOf, magnitudeAgainst, favoredAct, conductOf, prepare,
 	traitKeywordsOf, roleOf, naturalRoleOf, blowActOf, liftedStrainLevel, isSwift, isWillful,
-} from '../creatureOnTable.js';
+} from '../creatureOnTable.ts';
 import {
 	HOLD_FLOOR, HOLD_CEILING, RAW_ATTRIBUTE_MIN, RAW_ATTRIBUTE_MAX, ROLE, BOLSTER_FLOOR,
 	MAGNITUDE_SCALE, WILLFUL_THRESHOLD, SWIFT_SPEED, KEEN_INSTINCT, DULL_INSTINCT,
 	presenceScaleOf, instinctLaneOf, getGoverningAttributeForAction,
-} from '../expeditionInterpretation.js';
+} from '../expeditionInterpretation.ts';
+import type { FrameSite, World } from '../types.ts';
 
 /*
 	Coverage for "The creature on the table" section of docs/design/reclamation-design.md:
 	hold, world matchup, home ground, strain, initiative, act magnitudes, conduct.
 */
 
-function record(overrides = {}) {
+// fixtures build a deliberately minimal record (and, below, a minimal world/site), enough
+// for the functions under test to read the fields they actually use; casting rather than
+// filling out every registry-required field (appearance, senses, capabilities, ...) keeps
+// the fixtures readable and matches how this suite has always built its test data.
+function record(overrides: any = {}): XalianRecord {
 	return {
 		id: 'xal_test_0001',
 		species: 'testling',
@@ -35,23 +42,23 @@ function record(overrides = {}) {
 			{ name: 'Strike', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 60 },
 		],
 		...overrides,
-	};
+	} as unknown as XalianRecord;
 }
 
-function world(overrides = {}) {
-	return { planet: 'Magmuth', element: 'fire', sites: [], ...overrides };
+function world(overrides: any = {}): World {
+	return { planet: 'Magmuth', element: 'fire', sites: [], ...overrides } as unknown as World;
 }
 
-function site(overrides = {}) {
+function site(overrides: any = {}): FrameSite {
 	return {
 		id: 'site-1', name: 'Test Site', planet: 'Magmuth', element: 'fire',
 		environment: { medium: 'gas', temperatureC: { min: 0, max: 30 } },
 		...overrides,
-	};
+	} as unknown as FrameSite;
 }
 
 // hold compression (docs/design/reclamation-base-redesign.md assumption 11)
-function compressed(raw, floor = HOLD_FLOOR, ceiling = HOLD_CEILING) {
+function compressed(raw: any, floor: any = HOLD_FLOOR, ceiling: any = HOLD_CEILING) {
 	return floor + ((raw - RAW_ATTRIBUTE_MIN) * (ceiling - floor)) / (RAW_ATTRIBUTE_MAX - RAW_ATTRIBUTE_MIN);
 }
 
@@ -115,14 +122,14 @@ describe('roleOf: every creature is a hold and one role (assumption 4)', () => {
 	test('blowActOf gives an area its area ability and a presence no blow at all', () => {
 		const area = record({ archetype: { key: 'predator' }, abilities: [strikeAbility, areaAbility] });
 		const acts = buildActs(area, 1, MAGNITUDE_SCALE);
-		expect(blowActOf(area, acts, ROLE.SWEEP).action).toBe('burst');
+		expect(blowActOf(area, acts, ROLE.SWEEP)!.action).toBe('burst');
 		expect(blowActOf(area, acts, ROLE.SHIELD)).toBe(null);
 	});
 
 	test('a blow creature with no attacking ability at all still strikes, at the pool minimum', () => {
 		const wardOnly = record({ archetype: { key: 'predator' }, abilities: [wardAbility] });
 		const acts = buildActs(wardOnly, 1, MAGNITUDE_SCALE);
-		const blow = blowActOf(wardOnly, acts, ROLE.STRIKE);
+		const blow = blowActOf(wardOnly, acts, ROLE.STRIKE)!;
 		expect(blow.fallback).toBe(true);
 		expect(blow.magnitude).toBeGreaterThan(0);
 	});
@@ -391,7 +398,7 @@ describe('prepare', () => {
 	cut.
 */
 describe('every attribute a job (assumption 17)', () => {
-	function withAbility(action, attrs) {
+	function withAbility(action: any, attrs: any) {
 		return record({
 			attributes: {
 				strength: 50, vitality: 60, endurance: 70, agility: 40, reflex: 60,
@@ -403,7 +410,7 @@ describe('every attribute a job (assumption 17)', () => {
 	}
 
 	test('strength governs every contact attack and intelligence every projected one', () => {
-		['strike', 'crush', 'lash', 'rake'].forEach((action) => {
+		['strike', 'crush', 'lash', 'rake'].forEach((action: any) => {
 			expect(getGoverningAttributeForAction(action)).toBe('strength');
 			// only strength moves a contact attack's power
 			const strong = buildActs(withAbility(action, { strength: 90, intelligence: 10 }), 1, 1)[0];
@@ -411,7 +418,7 @@ describe('every attribute a job (assumption 17)', () => {
 			expect(strong.magnitude).toBeGreaterThan(weak.magnitude);
 		});
 		// hurl rides with the projections: it is classed as one, so it is powered as one
-		['beam', 'spray', 'burst', 'cloud', 'hurl'].forEach((action) => {
+		['beam', 'spray', 'burst', 'cloud', 'hurl'].forEach((action: any) => {
 			expect(getGoverningAttributeForAction(action)).toBe('intelligence');
 			const clever = buildActs(withAbility(action, { strength: 10, intelligence: 90 }), 1, 1)[0];
 			const dull = buildActs(withAbility(action, { strength: 90, intelligence: 10 }), 1, 1)[0];
@@ -479,8 +486,9 @@ describe('every attribute a job (assumption 17)', () => {
 		const view = prepare(record({ attributes: { reflex: 90, agility: 90 } }), site(), world(), 0);
 		expect(view.speed).toBe(90);
 		expect(view.swift).toBe(true);
-		// the old name is gone from the prepared view (assumption 17's vocabulary)
-		expect(view.initiative).toBeUndefined();
+		// the old name is gone from the prepared view (assumption 17's vocabulary); cast
+		// since PreparedCreature no longer declares the field at all, which is the point
+		expect((view as any).initiative).toBeUndefined();
 	});
 
 	test('the instinct lane is keen above the cut, dull below it, conduct in between', () => {

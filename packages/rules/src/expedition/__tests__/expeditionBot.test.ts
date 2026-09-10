@@ -1,13 +1,17 @@
-import { createMatch, send, pass, getPublicState, createRngState, nextRandom, moveSwift } from '../expeditionRules.js';
-import { chooseSend, chooseStake, scoreSends, roleValueOf, readUnseen, RIVALS, DEFAULT_RIVAL_ID, rivalById, HIDE_CONCEALMENT_VALUE } from '../expeditionBot.js';
-import { ROSTER_SIZE, SENDABLE } from '../expeditionInterpretation.js';
+import { describe, test, it, expect } from 'vitest';
+import type { XalianRecord } from '@xalians/content/schema';
+import { createMatch, send, pass, getPublicState, createRngState, nextRandom, moveSwift } from '../expeditionRules.ts';
+import { chooseSend, chooseStake, scoreSends, roleValueOf, readUnseen, RIVALS, DEFAULT_RIVAL_ID, rivalById, HIDE_CONCEALMENT_VALUE } from '../expeditionBot.ts';
+import { ROSTER_SIZE, SENDABLE } from '../expeditionInterpretation.ts';
+import type { Seat, World } from '../types.ts';
 
 /*
 	Coverage for docs/design/reclamation-design.md's "The bot" section: public information
 	only, legal actions, and a full deterministic bot-vs-bot match completing.
 */
 
-function makeRecord(id, overrides = {}) {
+// deliberately minimal fixture, cast rather than filled out - see creatureOnTable.test.ts
+function makeRecord(id: any, overrides: any = {}): XalianRecord {
 	return {
 		id,
 		species: overrides.species || 'testling',
@@ -28,44 +32,44 @@ function makeRecord(id, overrides = {}) {
 		abilities: overrides.abilities || [
 			{ name: 'Strike', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 60 },
 		],
-	};
+	} as unknown as XalianRecord;
 }
 
-function makeRoster(prefix, overridesFn) {
-	const roster = [];
+function makeRoster(prefix: any, overridesFn?: any): XalianRecord[] {
+	const roster: XalianRecord[] = [];
 	for (let i = 0; i < ROSTER_SIZE; i++) {
 		roster.push(makeRecord(`${prefix}_${i}`, overridesFn ? overridesFn(i) : {}));
 	}
 	return roster;
 }
 
-function makeWorld(planet, element) {
+function makeWorld(planet: any, element: any): World {
 	return {
 		planet,
 		element,
-		sites: [0, 1, 2].map((i) => ({
+		sites: [0, 1, 2].map((i: any) => ({
 			id: `${planet.toLowerCase()}-site-${i}`,
 			name: `${planet} Site ${i}`,
 			planet,
 			element,
 			environment: { medium: 'gas', temperatureC: { min: -50, max: 200 } },
 		})),
-	};
+	} as unknown as World;
 }
 
-function makeWorlds(count = 9) {
+function makeWorlds(count: any = 9): World[] {
 	const planets = [
 		'Magmuth', 'Poseidas', 'Grimedes', 'Luminax', 'Floria', 'Zolton', 'Phantiri', 'Stonera', 'Drainov',
 	];
 	const elements = ['fire', 'water', 'dark', 'light', 'plant', 'electric', 'ghost', 'rock', 'chemical'];
-	const worlds = [];
+	const worlds: World[] = [];
 	for (let i = 0; i < count; i++) {
 		worlds.push(makeWorld(planets[i % planets.length], elements[i % elements.length]));
 	}
 	return worlds;
 }
 
-function makeRng(seed) {
+function makeRng(seed: any) {
 	let state = createRngState(seed);
 	return {
 		float() {
@@ -83,21 +87,21 @@ function makeRng(seed) {
 	rival behaviour assertions below: the ordered action log, sends per side, hidden sends
 	per side, and the frame index each side first passed in.
 */
-function playMatch(rosterA, rosterB, worlds, seed, rivals = {}) {
+function playMatch(rosterA: any, rosterB: any, worlds: any, seed: any, rivals: any = {}) {
 	let state = createMatch({ rosterA, rosterB, worlds, seed });
 	const botRng = makeRng(`${seed}-bot`);
 	let guard = 0;
 	const GUARD_LIMIT = 5000;
 
-	const actionLog = [];
+	const actionLog: any[] = [];
 	const sendCounts = { A: 0, B: 0 };
 	const hiddenCounts = { A: 0, B: 0 };
-	const firstPassFrame = { A: null, B: null };
+	const firstPassFrame: Record<Seat, number | null> = { A: null, B: null };
 
 	while (state.phase !== 'matchEnd' && guard < GUARD_LIMIT) {
 		guard++;
 		if (state.phase === 'deploy') {
-			const handler = state.turn;
+			const handler = state.turn!;
 			const publicState = getPublicState(state, handler);
 			let action = chooseSend(publicState, state.players[handler].roster, handler, botRng, rivals[handler]);
 			actionLog.push({ handler, frameIndex: state.frameIndex, ...action });
@@ -157,8 +161,8 @@ describe('chooseSend', () => {
 		const publicState = getPublicState(state, handler);
 		const action = chooseSend(publicState, state.players[handler].roster, handler, makeRng(2));
 		if (action.type === 'send') {
-			expect(state.players[handler].roster.some((r) => r.id === action.recordId)).toBe(true);
-			expect(publicState.frame.sites.some((s) => s.id === action.siteId)).toBe(true);
+			expect(state.players[handler].roster.some((r: any) => r.id === action.recordId)).toBe(true);
+			expect(publicState.frame.sites.some((s: any) => s.id === action.siteId)).toBe(true);
 			const applied = send(state, handler, action.recordId, action.siteId, action.hidden);
 			expect(applied).not.toBeNull();
 		}
@@ -193,7 +197,7 @@ describe('roleValueOf: what a role is worth at a world', () => {
 		const frame = state.frames[0];
 		const starter = state.starter;
 		const other = starter === 'A' ? 'B' : 'A';
-		state = send(state, starter, state.players[starter].roster[0].id, frame.sites[0].id);
+		state = send(state, starter, state.players[starter].roster[0].id, frame.sites[0].id)!;
 		const publicState = getPublicState(state, other);
 		const record = state.players[other].roster[0];
 		const value = roleValueOf(publicState, record, frame.sites[0], 0, other);
@@ -214,8 +218,8 @@ describe('roleValueOf: what a role is worth at a world', () => {
 
 describe('full bot-vs-bot match', () => {
 	test('completes deterministically with only legal actions and no errors', () => {
-		const rosterA = makeRoster('A', (i) => (i % 3 === 0 ? { traits: { guaranteed: [], rolled: ['stealthy'] } } : {}));
-		const rosterB = makeRoster('B', (i) => (i % 4 === 0 ? { traits: { guaranteed: [], rolled: ['armored'] } } : {}));
+		const rosterA = makeRoster('A', (i: any) => (i % 3 === 0 ? { traits: { guaranteed: [], rolled: ['stealthy'] } } : {}));
+		const rosterB = makeRoster('B', (i: any) => (i % 4 === 0 ? { traits: { guaranteed: [], rolled: ['armored'] } } : {}));
 		let state = createMatch({ rosterA, rosterB, worlds: makeWorlds(), seed: 'bot-full-match-seed' });
 
 		let botRng = makeRng('bot-full-match-seed-bot');
@@ -225,7 +229,7 @@ describe('full bot-vs-bot match', () => {
 		while (state.phase !== 'matchEnd' && guard < GUARD_LIMIT) {
 			guard++;
 			if (state.phase === 'deploy') {
-				const handler = state.turn;
+				const handler = state.turn!;
 				const publicState = getPublicState(state, handler);
 				const action = chooseSend(publicState, state.players[handler].roster, handler, botRng);
 				let next;
@@ -235,7 +239,7 @@ describe('full bot-vs-bot match', () => {
 					next = pass(state, handler);
 				}
 				expect(next).not.toBeNull();
-				state = next;
+				state = next!;
 			}
 		}
 
@@ -245,7 +249,7 @@ describe('full bot-vs-bot match', () => {
 	});
 
 	test('is deterministic under a fixed seed (two independent runs agree on the winner)', () => {
-		function playOut(seed) {
+		function playOut(seed: any) {
 			const rosterA = makeRoster('A');
 			const rosterB = makeRoster('B');
 			let state = createMatch({ rosterA, rosterB, worlds: makeWorlds(), seed });
@@ -254,22 +258,12 @@ describe('full bot-vs-bot match', () => {
 			while (state.phase !== 'matchEnd' && guard < 5000) {
 				guard++;
 				if (state.phase === 'deploy') {
-					const handler = state.turn;
+					const handler = state.turn!;
 					const publicState = getPublicState(state, handler);
 					const action = chooseSend(publicState, state.players[handler].roster, handler, botRng);
-					state = action.type === 'send'
+					state = (action.type === 'send'
 						? send(state, handler, action.recordId, action.siteId, action.hidden)
-						: pass(state, handler);
-				} else if (state.phase === 'orders') {
-					['A', 'B'].forEach((handler) => {
-						const publicState = getPublicState(state, handler);
-						const orders = chooseOrders(publicState, handler);
-						Object.keys(orders).forEach((creatureId) => {
-							state = order(state, handler, creatureId, orders[creatureId]);
-						});
-					});
-					state = commitOrders(state, 'A');
-					state = commitOrders(state, 'B');
+						: pass(state, handler))!;
 				}
 			}
 			return state.winner;
@@ -288,11 +282,11 @@ describe('full bot-vs-bot match', () => {
 describe('rivals', () => {
 	test('RIVALS has five profiles in ladder order with the required shape', () => {
 		expect(RIVALS).toHaveLength(5);
-		expect(RIVALS.map((r) => r.id)).toEqual(['envoy', 'heir', 'proctor', 'broker', 'windsailor']);
+		expect(RIVALS.map((r: any) => r.id)).toEqual(['envoy', 'heir', 'proctor', 'broker', 'windsailor']);
 		// the ladder is the measured order, weakest first
-		const marks = RIVALS.map((r) => r.measured.vsProctor);
-		expect(marks.slice().sort((a, b) => a - b)).toEqual(marks);
-		RIVALS.forEach((r) => {
+		const marks = RIVALS.map((r: any) => r.measured.vsProctor);
+		expect(marks.slice().sort((a: any, b: any) => a - b)).toEqual(marks);
+		RIVALS.forEach((r: any) => {
 			expect(typeof r.name).toBe('string');
 			expect(typeof r.faction).toBe('string');
 			expect(typeof r.home).toBe('string');
@@ -311,8 +305,8 @@ describe('rivals', () => {
 	});
 
 	test('chooseSend/chooseOrders with no rival argument matches rivalById("proctor") exactly (same action sequence)', () => {
-		const rosterA = makeRoster('A', (i) => (i % 3 === 0 ? { traits: { guaranteed: [], rolled: ['stealthy'] } } : {}));
-		const rosterB = makeRoster('B', (i) => (i % 4 === 0 ? { traits: { guaranteed: [], rolled: ['armored'] } } : {}));
+		const rosterA = makeRoster('A', (i: any) => (i % 3 === 0 ? { traits: { guaranteed: [], rolled: ['stealthy'] } } : {}));
+		const rosterB = makeRoster('B', (i: any) => (i % 4 === 0 ? { traits: { guaranteed: [], rolled: ['armored'] } } : {}));
 		const proctor = rivalById('proctor');
 
 		const withoutRival = playMatch(rosterA, rosterB, makeWorlds(), 'proctor-default-seed', {});
@@ -322,10 +316,10 @@ describe('rivals', () => {
 		expect(withoutRival.finalState.winner).toBe(withProctor.finalState.winner);
 	});
 
-	RIVALS.forEach((rival) => {
+	RIVALS.forEach((rival: any) => {
 		test(`${rival.id} plays a full deterministic match to matchEnd with only legal actions`, () => {
-			const rosterA = makeRoster('A', (i) => (i % 3 === 0 ? { traits: { guaranteed: [], rolled: ['stealthy'] } } : {}));
-			const rosterB = makeRoster('B', (i) => (i % 4 === 0 ? { traits: { guaranteed: [], rolled: ['armored'] } } : {}));
+			const rosterA = makeRoster('A', (i: any) => (i % 3 === 0 ? { traits: { guaranteed: [], rolled: ['stealthy'] } } : {}));
+			const rosterB = makeRoster('B', (i: any) => (i % 4 === 0 ? { traits: { guaranteed: [], rolled: ['armored'] } } : {}));
 			const result = playMatch(rosterA, rosterB, makeWorlds(), `rival-match-seed-${rival.id}`, { A: rival, B: rivalById('proctor') });
 
 			expect(result.guard).toBeLessThan(5000);
@@ -355,13 +349,16 @@ describe('rivals', () => {
 		// (from the ally already at the site) is at least as large as the candidate's own
 		// hold, so hideBias=1 (the rule exactly as written, which the proctor uses) sends it
 		// openly, and the broker's hideBias=1.8 sends the identical candidate hidden.
-		function site(id) {
+		function site(id: any) {
 			return { id, name: id, environment: { medium: 'gas', temperatureC: { min: -50, max: 200 } }, world: { planet: 'Magmuth', element: 'fire' } };
 		}
 		const ally = makeRecord('A_ally', { attributes: { vitality: 100, resilience: 100, endurance: 100 } });
 		const candidate = makeRecord('A_stealth', { traits: { guaranteed: [], rolled: ['stealthy'] }, attributes: { vitality: 60, resilience: 60, endurance: 60 } });
 		const ownRoster = [candidate];
-		const publicState = {
+		// deliberately hand-built, partial public state (see the comment above) - not a
+		// full PublicState, so it is typed loosely rather than filling in every field the
+		// real getPublicState would carry but this isolation test does not need
+		const publicState: any = {
 			frameIndex: 2, // last frame: mustHold, so the evenShare/overspend gate (which would otherwise pass first) does not apply
 			frame: { sites: [site('s0')] },
 			nextFrame: null,
@@ -378,8 +375,8 @@ describe('rivals', () => {
 			},
 		};
 
-		const permissive = { weights: { minSendValue: 0.1, stackDiscount: 1, holdCost: 0, overspendAllowance: 5, hideBias: 1 } };
-		const brokerHideBias = { weights: { ...permissive.weights, hideBias: rivalById('broker').weights.hideBias } };
+		const permissive: any = { id: 'permissive-test', weights: { minSendValue: 0.1, stackDiscount: 1, holdCost: 0, overspendAllowance: 5, hideBias: 1 } };
+		const brokerHideBias: any = { id: 'broker-hidebias-test', weights: { ...permissive.weights, hideBias: rivalById('broker').weights!.hideBias } };
 		// seed chosen so the hide-bias roll lands well under the broker's 0.8 excess chance
 		// (hideBias 1.8 -> excess = 0.8), so the outcome is not a coin-flip on CI
 		const seed = 'hide-bias-isolation-1';
@@ -388,8 +385,8 @@ describe('rivals', () => {
 
 		expect(baseAction.type).toBe('send');
 		expect(brokerAction.type).toBe('send');
-		expect(baseAction.hidden).toBe(false);
-		expect(brokerAction.hidden).toBe(true);
+		expect((baseAction as any).hidden).toBe(false);
+		expect((brokerAction as any).hidden).toBe(true);
 	});
 
 	test('behaviour: the envoy sends fewer creatures in frame 1 than the windsailor over a batch of matches', () => {
@@ -403,8 +400,8 @@ describe('rivals', () => {
 		// rivals' different minSendValue/holdCost/overspendAllowance thresholds actually
 		// bite differently send by send, instead of both hitting the same all-or-nothing
 		// decision at once
-		function makeVariedRoster(prefix) {
-			return makeRoster(prefix, (i) => ({
+		function makeVariedRoster(prefix: any) {
+			return makeRoster(prefix, (i: any) => ({
 				attributes: { vitality: 40 + i * 5, resilience: 40 + (i % 5) * 10, endurance: 50 + (i % 4) * 8 },
 			}));
 		}
@@ -414,10 +411,10 @@ describe('rivals', () => {
 			const rosterB = makeVariedRoster('B');
 
 			const envoyMatch = playMatch(rosterA, rosterB, makeWorlds(), `envoy-batch-${i}`, { A: envoy, B: rivalById('proctor') });
-			envoyFrame1Sends += envoyMatch.actionLog.filter((a) => a.handler === 'A' && a.frameIndex === 0 && a.type === 'send').length;
+			envoyFrame1Sends += envoyMatch.actionLog.filter((a: any) => a.handler === 'A' && a.frameIndex === 0 && a.type === 'send').length;
 
 			const windsailorMatch = playMatch(rosterA, rosterB, makeWorlds(), `windsailor-batch-${i}`, { A: windsailor, B: rivalById('proctor') });
-			windsailorFrame1Sends += windsailorMatch.actionLog.filter((a) => a.handler === 'A' && a.frameIndex === 0 && a.type === 'send').length;
+			windsailorFrame1Sends += windsailorMatch.actionLog.filter((a: any) => a.handler === 'A' && a.frameIndex === 0 && a.type === 'send').length;
 		}
 
 		expect(envoyFrame1Sends).toBeLessThan(windsailorFrame1Sends);
@@ -445,8 +442,8 @@ describe('rivals', () => {
 		let proctorHidden = 0;
 		let proctorSends = 0;
 
-		function makeStealthyRoster(prefix) {
-			return makeRoster(prefix, (i) => ({
+		function makeStealthyRoster(prefix: any) {
+			return makeRoster(prefix, (i: any) => ({
 				traits: { guaranteed: [], rolled: i % 2 === 0 ? ['stealthy'] : [] },
 				attributes: { vitality: 40 + (i % 6) * 10, resilience: 40 + (i % 5) * 10, endurance: 50 + (i % 4) * 8 },
 			}));
@@ -457,14 +454,14 @@ describe('rivals', () => {
 			const rosterB = makeStealthyRoster('B');
 
 			const brokerMatch = playMatch(rosterA, rosterB, makeWorlds(), `hidebias-broker-${i}`, { A: broker, B: proctor });
-			const brokerActionsA = brokerMatch.actionLog.filter((a) => a.handler === 'A' && a.type === 'send');
+			const brokerActionsA = brokerMatch.actionLog.filter((a: any) => a.handler === 'A' && a.type === 'send');
 			brokerSends += brokerActionsA.length;
-			brokerHidden += brokerActionsA.filter((a) => a.hidden).length;
+			brokerHidden += brokerActionsA.filter((a: any) => a.hidden).length;
 
 			const proctorMatch = playMatch(rosterA, rosterB, makeWorlds(), `hidebias-proctor-${i}`, { A: proctor, B: proctor });
-			const proctorActionsA = proctorMatch.actionLog.filter((a) => a.handler === 'A' && a.type === 'send');
+			const proctorActionsA = proctorMatch.actionLog.filter((a: any) => a.handler === 'A' && a.type === 'send');
 			proctorSends += proctorActionsA.length;
-			proctorHidden += proctorActionsA.filter((a) => a.hidden).length;
+			proctorHidden += proctorActionsA.filter((a: any) => a.hidden).length;
 		}
 
 		const brokerRate = brokerHidden / brokerSends;
@@ -479,7 +476,7 @@ describe('rivals', () => {
 	into moveSwift rather than asserting on the scorer's internals.
 */
 describe('chooseSend: swift creatures move', () => {
-	function swiftRoster(prefix) {
+	function swiftRoster(prefix: any) {
 		const roster = [];
 		for (let i = 0; i < ROSTER_SIZE; i++) {
 			roster.push(makeRecord(`${prefix}_${i}`, { attributes: { agility: 90, reflex: 90 } }));
@@ -497,7 +494,7 @@ describe('chooseSend: swift creatures move', () => {
 		let guard = 0;
 		while (state.phase === 'deploy' && guard < 200) {
 			guard++;
-			const handler = state.turn;
+			const handler = state.turn!;
 			if (handler === null) {
 				break;
 			}
@@ -508,12 +505,12 @@ describe('chooseSend: swift creatures move', () => {
 				expect(view.players[handler].movableRecordIds).toContain(action.recordId);
 				const moved = moveSwift(state, handler, action.recordId, action.siteId);
 				expect(moved).not.toBeNull();
-				state = moved;
+				state = moved!;
 				continue;
 			}
-			state = action.type === 'send'
+			state = (action.type === 'send'
 				? send(state, handler, action.recordId, action.siteId, action.hidden)
-				: pass(state, handler);
+				: pass(state, handler))!;
 			expect(state).not.toBeNull();
 		}
 		// an all-swift board is exactly the case the rule exists for, so it must fire
@@ -529,16 +526,16 @@ describe('chooseSend: swift creatures move', () => {
 		let guard = 0;
 		while (state.phase === 'deploy' && guard < 200) {
 			guard++;
-			const handler = state.turn;
+			const handler = state.turn!;
 			if (handler === null) {
 				break;
 			}
 			const view = getPublicState(state, handler);
 			const action = chooseSend(view, state.players[handler].roster, handler, rng, null);
 			expect(action.type).not.toBe('move');
-			state = action.type === 'send'
+			state = (action.type === 'send'
 				? send(state, handler, action.recordId, action.siteId, action.hidden)
-				: pass(state, handler);
+				: pass(state, handler))!;
 		}
 	});
 });
@@ -550,12 +547,12 @@ describe('chooseSend: swift creatures move', () => {
 	from public information only.
 */
 describe('pass 3: the bot prices hiding (assumption 21)', () => {
-	function stealthMatch(rules) {
+	function stealthMatch(rules: any) {
 		const rosterA = makeRoster('A', () => ({ traits: { guaranteed: ['stealthy'], rolled: [] } }));
 		return createMatch({ rosterA, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'hide-price-seed', rules });
 	}
 
-	function hideValuesOf(rules) {
+	function hideValuesOf(rules: any) {
 		const state = stealthMatch(rules);
 		const view = getPublicState(state, 'A');
 		const scored = scoreSends(view, state.players.A.roster, 'A', null);
@@ -563,7 +560,7 @@ describe('pass 3: the bot prices hiding (assumption 21)', () => {
 	}
 
 	it('every candidate carries a priced hide value, a hide cost and whether the cap affords it', () => {
-		hideValuesOf({}).forEach((c) => {
+		hideValuesOf({}).forEach((c: any) => {
 			expect(typeof c.hideValue).toBe('number');
 			expect(typeof c.hideCost).toBe('number');
 			expect(typeof c.hideAffordable).toBe('boolean');
@@ -579,12 +576,12 @@ describe('pass 3: the bot prices hiding (assumption 21)', () => {
 	});
 
 	it('pass 4: in the shipped game hiding is worth concealment alone, and the hiddenFirst lever adds the first strike back', () => {
-		hideValuesOf({}).forEach((c) => {
+		hideValuesOf({}).forEach((c: any) => {
 			expect(c.hideValue).toBe(HIDE_CONCEALMENT_VALUE);
 			expect(c.hideCost).toBe(1);
 			expect(c.hideAffordable).toBe(true);
 		});
-		hideValuesOf({ hiddenFirst: true }).forEach((c) => {
+		hideValuesOf({ hiddenFirst: true }).forEach((c: any) => {
 			expect(c.hideValue).toBeCloseTo(c.roleValue + HIDE_CONCEALMENT_VALUE, 1);
 		});
 	});
@@ -593,7 +590,7 @@ describe('pass 3: the bot prices hiding (assumption 21)', () => {
 		const state = createMatch({ rosterA: makeRoster('A'), rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'no-hide-seed' });
 		const view = getPublicState(state, 'A');
 		const scored = scoreSends(view, state.players.A.roster, 'A', null);
-		scored.candidates.forEach((c) => {
+		scored.candidates.forEach((c: any) => {
 			expect(c.hideValue).toBe(0);
 			expect(c.hideAffordable).toBe(false);
 		});
@@ -601,14 +598,15 @@ describe('pass 3: the bot prices hiding (assumption 21)', () => {
 
 	it('never proposes a hidden send under the hiddenSends ablation', () => {
 		const state = stealthMatch({ hiddenSends: false });
-		const view = getPublicState(state, state.turn);
-		const action = chooseSend(view, state.players[state.turn].roster, state.turn, null, null);
-		expect(action.hidden).toBeFalsy();
+		const handler = state.turn!;
+		const view = getPublicState(state, handler);
+		const action = chooseSend(view, state.players[handler].roster, handler, null, null);
+		expect((action as any).hidden).toBeFalsy();
 	});
 });
 
 describe('pass 3: the bot and the stake (assumption 22)', () => {
-	function freshView(seed, rules) {
+	function freshView(seed: any, rules?: any) {
 		const state = createMatch({ rosterA: makeRoster('A'), rosterB: makeRoster('B'), worlds: makeWorlds(), seed, rules });
 		return { state, view: getPublicState(state, 'A') };
 	}
@@ -618,7 +616,7 @@ describe('pass 3: the bot and the stake (assumption 22)', () => {
 		const wanted = chooseStake(view, state.players.A.roster, 'A', null);
 		if (wanted) {
 			expect(wanted.type).toBe('stake');
-			expect(view.frame.sites.some((s) => s.id === wanted.siteId)).toBe(true);
+			expect(view.frame.sites.some((s: any) => s.id === wanted.siteId)).toBe(true);
 		} else {
 			expect(wanted).toBeNull();
 		}
@@ -644,7 +642,7 @@ describe('pass 3: the bot and the stake (assumption 22)', () => {
 		const envoy = rivalById('envoy');
 		let envoyStakes = 0;
 		let windsailorStakes = 0;
-		['s1', 's2', 's3', 's4', 's5', 's6'].forEach((seed) => {
+		['s1', 's2', 's3', 's4', 's5', 's6'].forEach((seed: any) => {
 			const { state, view } = freshView(seed);
 			const roster = state.players.A.roster;
 			const e = chooseStake(view, roster, 'A', envoy);
@@ -663,14 +661,14 @@ describe('pass 3: the bot and the stake (assumption 22)', () => {
 	it('prices a staked world above an unstaked one in scoreSends', () => {
 		const { state, view } = freshView('bot-stake-value-seed');
 		const siteId = view.frame.sites[0].id;
-		const staked = {
+		const staked: any = {
 			...view,
 			stakes: { ...view.stakes, [siteId]: { by: ['A'], countedValue: 2 } },
 		};
 		const before = scoreSends(view, state.players.A.roster, 'A', null)
-			.candidates.find((c) => c.site.id === siteId);
+			.candidates.find((c: any) => c.site.id === siteId)!;
 		const after = scoreSends(staked, state.players.A.roster, 'A', null)
-			.candidates.find((c) => c.site.id === siteId);
+			.candidates.find((c: any) => c.site.id === siteId)!;
 		expect(after.value).toBeGreaterThan(before.value);
 	});
 });
