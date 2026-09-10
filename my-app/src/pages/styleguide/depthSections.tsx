@@ -121,6 +121,69 @@ function NotAdoptedBlock() {
     );
 }
 
+// The mass matrix: the same secondary key and the same tile under every
+// combination Nick asked to compare (2026-09-10): mass color (a darker step,
+// the strong edge, the ink) by direction (straight down, diagonal).
+// Literal class strings on purpose: Tailwind only generates classes it can
+// read in the source, so a template string would silently produce nothing.
+const DOWN = 'hover:-translate-y-px active:translate-y-[3px] active:shadow-none';
+const DIAG = 'hover:-translate-x-px hover:-translate-y-px active:translate-x-[3px] active:translate-y-[3px] active:shadow-none';
+const MATRIX: { dir: string; cells: [string, string][] }[] = [
+    { dir: 'Down 3px', cells: [
+        ['Darker step', `shadow-[0_3px_0_0_var(--color-glass)] hover:shadow-[0_4px_0_0_var(--color-glass)] ${DOWN}`],
+        ['Edge', `shadow-[0_3px_0_0_var(--color-edge-strong)] hover:shadow-[0_4px_0_0_var(--color-edge-strong)] ${DOWN}`],
+        ['Ink-3', `shadow-[0_3px_0_0_var(--color-ink-3)] hover:shadow-[0_4px_0_0_var(--color-ink-3)] ${DOWN}`],
+        ['Ink-2', `shadow-[0_3px_0_0_var(--color-ink-2)] hover:shadow-[0_4px_0_0_var(--color-ink-2)] ${DOWN}`],
+        ['Outlined, ink-2', `border-ink-2 shadow-[0_3px_0_0_var(--color-ink-2)] hover:shadow-[0_4px_0_0_var(--color-ink-2)] ${DOWN}`],
+    ] },
+    { dir: 'Diagonal 3px', cells: [
+        ['Darker step', `shadow-[3px_3px_0_0_var(--color-glass)] hover:shadow-[4px_4px_0_0_var(--color-glass)] ${DIAG}`],
+        ['Edge', `shadow-[3px_3px_0_0_var(--color-edge-strong)] hover:shadow-[4px_4px_0_0_var(--color-edge-strong)] ${DIAG}`],
+        ['Ink-3', `shadow-[3px_3px_0_0_var(--color-ink-3)] hover:shadow-[4px_4px_0_0_var(--color-ink-3)] ${DIAG}`],
+        ['Ink-2', `shadow-[3px_3px_0_0_var(--color-ink-2)] hover:shadow-[4px_4px_0_0_var(--color-ink-2)] ${DIAG}`],
+        ['Outlined, ink-2', `border-ink-2 shadow-[3px_3px_0_0_var(--color-ink-2)] hover:shadow-[4px_4px_0_0_var(--color-ink-2)] ${DIAG}`],
+    ] },
+];
+
+function MassMatrix() {
+    return (
+        <Card variant="panel" className="mt-6">
+            <Verdict kept={false}>The secondary key under every mass color and direction. The last column outlines the key in the mass color, the way the reference button does.</Verdict>
+            <div className="overflow-x-auto">
+                <table className="w-auto border-separate border-spacing-x-8 border-spacing-y-4">
+                    <thead>
+                        <tr>
+                            <th className="type-legend text-left text-ink-3">Direction</th>
+                            {MATRIX[0].cells.map(([label]) => <th key={label} className="type-legend text-left text-ink-3">{label}</th>)}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {MATRIX.map(({ dir, cells }) => (
+                            <tr key={dir}>
+                                <td className="type-legend align-middle text-ink-3">{dir}</td>
+                                {cells.map(([label, cls]) => (
+                                    <td key={label} className="pb-[4px] align-middle"><Button variant="secondary" className={cls}>Keep</Button></td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+            <div className="mt-6 flex flex-wrap items-start gap-8">
+                <Demo label="Primary, down"><Button>Generate</Button></Demo>
+                <Demo label="Primary, diagonal (mass drawn by the holder)">
+                    <span className="relative inline-block isolate">
+                        <Button className="[&::after]:!translate-x-1 [&::after]:!translate-y-1 hover:[&::after]:!translate-x-[5px] hover:[&::after]:!translate-y-[5px] hover:!-translate-x-px hover:!-translate-y-px active:!translate-x-1 active:!translate-y-1 active:[&::after]:!translate-x-0 active:[&::after]:!translate-y-0">Generate</Button>
+                    </span>
+                </Demo>
+                <Demo label="Tile, down (adopted)"><SpeciesTile name="Akinza" world="Krystos" element="ice" /></Demo>
+                <Demo label="Tile, diagonal"><SpeciesTile name="Akinza" world="Krystos" element="ice" className={`shadow-none ${MASS_EL_DIAG}`} /></Demo>
+                <Demo label="Tile, diagonal, mass in edge"><SpeciesTile name="Akinza" world="Krystos" element="ice" className="shadow-none shadow-[4px_4px_0_0_var(--color-ink-3)] hover:-translate-x-px hover:-translate-y-px active:translate-x-1 active:translate-y-1 active:shadow-none" /></Demo>
+            </div>
+        </Card>
+    );
+}
+
 export const SECTIONS: { id: string; label: string; node: React.ReactNode }[] = [
     {
         id: 'depth-2',
@@ -131,6 +194,7 @@ export const SECTIONS: { id: string; label: string; node: React.ReactNode }[] = 
                 <p className="text-body text-ink-2">The pressed plate, 2026-09-10: what shipped, and what was built for the proposal and set aside. Hover and press everything.</p>
                 <AdoptedBlock />
                 <NotAdoptedBlock />
+                <MassMatrix />
             </section>
         ),
     },
