@@ -858,31 +858,73 @@ resource "aws_s3_bucket_cors_configuration" "react_bucket" {
 
 
 
-// ###################
-// #     database    #
-// ###################
+#########################################################
+#####                  DATABASE                     #####
+#########################################################
+# Both tables were created by hand outside Terraform. Key schema and settings
+# below were verified against the live tables with describe-table on
+# 2026-09-10: PAY_PER_REQUEST billing, no GSIs, no streams, no TTL, no SSE
+# configured (defaults), and point-in-time recovery currently DISABLED on
+# both. This resource turns PITR on, which is a real, intended change on
+# import, not a drift correction.
+#
+# The `import` blocks below adopt the live tables into state on the next
+# apply. prevent_destroy guards against a future change to these resources
+# (for example the key-design rework tracked in issue #20) accidentally
+# planning a destroy/recreate of tables that hold real user data.
 
-// // resource "aws_dynamodb_table" "xalian_table" {
-// //   name             = "XalianTable"
-// //   hash_key         = "speciesId"
-// //   range_key        = "xalianId"
-// //   billing_mode     = "PAY_PER_REQUEST"
+resource "aws_dynamodb_table" "xalian_table" {
+  name         = "XalianTable"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "speciesId"
+  range_key    = "xalianId"
 
-// //   attribute {
-// //     name = "speciesId"
-// //     type = "S"
-// //   }
+  attribute {
+    name = "speciesId"
+    type = "S"
+  }
 
-// //   attribute {
-// //     name = "xalianId"
-// //     type = "S"
-// //   }
+  attribute {
+    name = "xalianId"
+    type = "S"
+  }
 
-// //   // replica {
-// //   //   region_name = "us-east-2"
-// //   // }
+  point_in_time_recovery {
+    enabled = true
+  }
 
-// //   // replica {
-// //   //   region_name = "us-west-2"
-// //   // }
-// // }
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+resource "aws_dynamodb_table" "xalian_users_table" {
+  name         = "XalianUsersTable"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "userId"
+
+  attribute {
+    name = "userId"
+    type = "S"
+  }
+
+  point_in_time_recovery {
+    enabled = true
+  }
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+import {
+  to = aws_dynamodb_table.xalian_table
+  id = "XalianTable"
+}
+
+import {
+  to = aws_dynamodb_table.xalian_users_table
+  id = "XalianUsersTable"
+}
+#####                                               #####
+#########################################################
