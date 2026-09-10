@@ -10,7 +10,7 @@ const buttonVariants = cva(
       variant: {
         /* The one accent-filled key per screen (contract section 6). */
         default:
-          "cut-key bg-primary text-primary-foreground hover:bg-viable-hi active:bg-viable-lo",
+          "key-primary text-primary-foreground",
         /* Outline at rest; fills only on hover and press. */
         destructive:
           "border border-plague bg-transparent text-plague-outline-ink hover:bg-plague-tint active:bg-plague active:text-plague-ink",

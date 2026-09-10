@@ -98,6 +98,62 @@
 		clip-path: polygon(calc(var(--cut) - 1px) 0, 100% 0, 100% calc(100% - var(--cut) + 1px), calc(100% - var(--cut) + 1px) 100%, 0 100%, 0 calc(var(--cut) - 1px));
 	}
 
+	/* Depth, round two (section 5, proposed 2026-09-10): thickness means
+	   pressable. A pressable thing stands on a solid mass in its own color one
+	   step darker, lifts a pixel under the pointer and drops flat when
+	   pressed. Only where the face is colored enough for the mass to read:
+	   the primary key and the element tiles. Flat things stay flat. */
+	.key-primary {
+		--key-face: var(--color-viable);
+		--key-mass: var(--color-viable-lo);
+		--thick: 4px;
+		position: relative;
+		isolation: isolate;
+		background: transparent;
+		transition: transform var(--default-transition-duration, 120ms) var(--ease-out, ease-out);
+	}
+	.key-primary::before,
+	.key-primary::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+		transition: background-color 120ms ease-out, transform 120ms ease-out;
+	}
+	.key-primary::before { z-index: -1; background: var(--key-face); }
+	.key-primary::after { z-index: -2; background: var(--key-mass); transform: translateY(var(--thick)); }
+	.key-primary:hover { --key-face: var(--color-viable-hi); transform: translateY(-1px); }
+	.key-primary:hover::after { transform: translateY(calc(var(--thick) + 1px)); }
+	.key-primary:active { --key-face: var(--color-viable-lo); transform: translateY(var(--thick)); }
+	.key-primary:active::after { transform: translateY(0); }
+	.key-primary:disabled { transform: none; }
+
+	/* An element tile is a plate you can lift: its mass is its own hue, dimmed. */
+	.mass-el {
+		--thick: 4px;
+		box-shadow: 0 var(--thick) 0 0 color-mix(in srgb, var(--color-el) 45%, black);
+		transition: transform 120ms ease-out, box-shadow 120ms ease-out, background-color 120ms ease-out, border-color 120ms ease-out;
+	}
+	.mass-el:hover { transform: translateY(-1px); box-shadow: 0 calc(var(--thick) + 1px) 0 0 color-mix(in srgb, var(--color-el) 45%, black); }
+	.mass-el:active { transform: translateY(var(--thick)); box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-el) 45%, black); }
+
+	/* Level-0 surfaces carry a faint 32px layout grid; nothing else does. */
+	.surface-0 {
+		background-image:
+			linear-gradient(color-mix(in srgb, var(--color-ink) 4.5%, transparent) 1px, transparent 1px),
+			linear-gradient(90deg, color-mix(in srgb, var(--color-ink) 4.5%, transparent) 1px, transparent 1px);
+		background-size: 32px 32px;
+		background-position: -1px -1px;
+	}
+
+	/* The room is not a flat fill: a faint grain and an edge vignette. */
+	[data-tier="chrome"] {
+		background-image:
+			linear-gradient(90deg, rgba(0, 0, 0, 0.22), transparent 14%, transparent 86%, rgba(0, 0, 0, 0.22)),
+			url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.85 0 0 0 0 0.82 0 0 0 0 0.75 0 0 0 0.05 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+		background-size: 100% 100%, 160px 160px;
+	}
+
 	/* Clip only, no edge layer: for filled surfaces such as the primary key. */
 	.cut { clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px); }
 	.cut-key { clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }

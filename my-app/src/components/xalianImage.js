@@ -46,11 +46,15 @@ class XalianImage extends React.Component {
 
 		if (this.props.colored) {
 			let primaryVar = `var(--color-el-${this.props.primaryType.toLowerCase()})`;
+			// The screen: a halftone in a deeper tone of the wash, so the black
+			// silhouette sits on a printed field rather than a flat swatch
+			// (depth round two, 2026-09-10 experiment). `flat` turns it off.
+			let screen = this.props.flat ? '' : 'radial-gradient(circle, rgba(0, 0, 0, 0.16) 1px, transparent 1.45px) 0 0 / 7px 7px, ';
 			if (this.props.secondaryType) {
 				let secondaryVar = `var(--color-el-${this.props.secondaryType.toLowerCase()})`;
-				wrapperStyle = { background: `linear-gradient(135deg, ${primaryVar} 15%, ${secondaryVar} 85%)` };
+				wrapperStyle = { background: `${screen}linear-gradient(135deg, ${primaryVar} 15%, ${secondaryVar} 85%)` };
 			} else {
-				wrapperStyle = { background: `radial-gradient(circle, ${primaryVar} 65%, ${primaryVar} 100%)` };
+				wrapperStyle = { background: `${screen}radial-gradient(circle, ${primaryVar} 65%, ${primaryVar} 100%)` };
 			}
 		}
 
