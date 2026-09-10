@@ -5,9 +5,7 @@
 	re-exports those so every existing `from './types.ts'` import keeps working. What
 	remains here is generator-internal: types with no schema counterpart, because they
 	describe something the schema doesn't (a roll band, the generator's own option bags,
-	the lever tables in constants.ts) or narrow a schema field the schema itself leaves as
-	a bare `string` (the closed key unions below -- see "Schema changes" in the PR that
-	introduced this file for why those stay local instead of widening call sites).
+	the lever tables in constants.ts).
 */
 
 export type {
@@ -25,36 +23,62 @@ export type {
 export type Band = [number, number];
 
 /*
-	registries.json's closed vocabularies are zod enums built from the JSON at runtime
-	(packages/content/src/schema/registries.ts), which keeps the *values* honest but,
-	because `resolveJsonModule` types every JSON string as plain `string`, their z.infer
-	type is `string`, not a literal union -- so the schema has no narrow-key counterpart
-	to re-export here. The generator leans on these unions for real safety (exhaustive
-	switches in generate.ts, `Record<AttributeKey, ...>` maps that must stay total), so
-	they stay hand-written and local rather than being loosened to `string` at every call
-	site. See "Schema changes" in this PR's description for the follow-up option.
+	registries.json's closed vocabularies used to widen to `string` here because
+	`resolveJsonModule` types every JSON string as plain `string`, so
+	packages/content/src/schema/registries.ts could only build zod enums whose z.infer was
+	`string`, not a literal union -- and this file hand-wrote eight of these unions as the
+	only source of real narrowing (issue #181). Fixed by generating
+	packages/content/src/registriesConst.ts (literal `as const` key arrays, from
+	scripts/bundleLore.js) and building the zod enums from that instead of the JSON import;
+	the schema's z.infer types are now the literal unions, so this file imports and
+	re-exports them (a plain `export type { X } from ...` re-export does not bind the name
+	locally, and TemperamentTiltSpec/FinishOdds below need to reference some of these, so
+	they come in as a regular `import type` and are re-exported alongside). AttributeKey,
+	CapabilityKey, ElementKey, ArchetypeKey, TraitKey, InstrumentKey and ActionKey come from
+	registries.json via registriesConst.ts; GradedSenseKey, TemperamentKey, Chirality and
+	Finish are not registry lists (temperament axes, instance chirality and cosmetic finish
+	are fixed parts of the record shape, and GradedSenseKey is the registries.senses split
+	by its `special` flag) so their one hand-authored source is
+	packages/content/src/schema/record.ts, not this file. Corporeality keeps its
+	generator-facing name here (re-exported from CorporealityKey) to avoid touching every
+	call site.
 */
-export type AttributeKey =
-	| 'strength' | 'vitality' | 'endurance' | 'agility' | 'reflex'
-	| 'intelligence' | 'willpower' | 'instinct' | 'charisma' | 'resilience';
+import type {
+	AbilityCatalog,
+	ActionKey,
+	ArchetypeKey,
+	AttributeKey,
+	CapabilityKey,
+	Chirality,
+	CorporealityKey,
+	ElementKey,
+	Finish,
+	GradedSenseKey,
+	InstrumentKey,
+	Registries,
+	SpeciesTemplate,
+	TemperamentKey,
+	TraitKey,
+} from '@xalians/content/schema';
 
-export type CapabilityKey = 'flight' | 'swim' | 'burrow' | 'climb' | 'sprint' | 'leap' | 'manipulation';
-export type GradedSenseKey = 'sight' | 'hearing' | 'smell';
-export type TemperamentKey = 'boldness' | 'curiosity' | 'energy' | 'aggression' | 'sociability';
-
-export type ElementKey =
-	| 'fire' | 'water' | 'dark' | 'light' | 'plant' | 'electric' | 'ghost'
-	| 'rock' | 'chemical' | 'air' | 'psychic' | 'ice' | 'metal' | 'sand';
-
-export type Chirality = 'levo' | 'dextro' | 'achiral';
-export type Corporeality = 'corporeal' | 'non-corporeal';
-export type Finish = 'standard' | 'gleam' | 'prismatic' | 'eclipse';
+export type {
+	ActionKey,
+	ArchetypeKey,
+	AttributeKey,
+	CapabilityKey,
+	Chirality,
+	ElementKey,
+	Finish,
+	GradedSenseKey,
+	InstrumentKey,
+	TemperamentKey,
+	TraitKey,
+};
+export type { CorporealityKey as Corporeality };
 
 // -----------------------------------------------------------------------------------
 // generateXalian / generateBatch options -- generator-internal, no schema counterpart
 // -----------------------------------------------------------------------------------
-
-import type { AbilityCatalog, Registries, SpeciesTemplate } from '@xalians/content/schema';
 
 export interface GenerateOptions {
 	origin?: string;
