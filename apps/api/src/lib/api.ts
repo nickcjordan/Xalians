@@ -29,6 +29,7 @@ export type ApiResult = {
 export type ApiEvent = {
   body?: string | null;
   queryStringParameters?: Record<string, string | undefined> | null;
+  pathParameters?: Record<string, string | undefined> | null;
   routeKey?: string;
   rawPath?: string;
   requestContext?: {
@@ -40,20 +41,22 @@ export type ApiEvent = {
   };
 };
 
-export type HandlerArgs<TBody, TQuery> = {
+export type HandlerArgs<TBody, TQuery, TParams> = {
   subject: string | null;
   body: TBody;
   query: TQuery;
+  params: TParams;
   event: ApiEvent;
   requestId: string;
 };
 
 export type HandlerResult = { status: number; body: unknown };
 
-export type WithApiOptions<TBody, TQuery> = {
+export type WithApiOptions<TBody, TQuery, TParams> = {
   auth: 'jwt' | 'none';
   body?: ZodType<TBody>;
   query?: ZodType<TQuery>;
+  params?: ZodType<TParams>;
 };
 
 function zodIssueMessage(issue: { path: PropertyKey[]; message: string }): string {
@@ -61,9 +64,9 @@ function zodIssueMessage(issue: { path: PropertyKey[]; message: string }): strin
   return `${path}: ${issue.message}`;
 }
 
-export function withApi<TBody = undefined, TQuery = undefined>(
-  fn: (args: HandlerArgs<TBody, TQuery>) => Promise<HandlerResult>,
-  opts: WithApiOptions<TBody, TQuery>
+export function withApi<TBody = undefined, TQuery = undefined, TParams = undefined>(
+  fn: (args: HandlerArgs<TBody, TQuery, TParams>) => Promise<HandlerResult>,
+  opts: WithApiOptions<TBody, TQuery, TParams>
 ) {
   return async (event: ApiEvent, context: ApiContext): Promise<ApiResult> => {
     const requestId = context?.awsRequestId ?? 'unknown';
@@ -102,7 +105,16 @@ export function withApi<TBody = undefined, TQuery = undefined>(
         query = parsed.data;
       }
 
-      const result = await fn({ subject, body, query, event, requestId });
+      let params = undefined as TParams;
+      if (opts.params) {
+        const parsed = opts.params.safeParse(event.pathParameters ?? {});
+        if (!parsed.success) {
+          throw new ApiError(400, 'BAD_REQUEST', zodIssueMessage(parsed.error.issues[0]));
+        }
+        params = parsed.data;
+      }
+
+      const result = await fn({ subject, body, query, params, event, requestId });
       status = result.status;
       return {
         statusCode: result.status,

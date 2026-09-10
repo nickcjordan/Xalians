@@ -32,6 +32,12 @@ variable "iam_role_arn" {
   type        = string
 }
 
+variable "environment_variables" {
+  description = "environment variables to set on the function; left unset (no environment block at all) when empty, e.g. for functions that need no secrets"
+  type        = map(string)
+  default     = {}
+}
+
 
 
 
@@ -48,6 +54,16 @@ resource "aws_lambda_function" "lambda_function" {
   handler          = var.lambda_handler_path
   source_code_hash = var.lambda_archive_file_output_hash
   role             = var.iam_role_arn
+
+  # Only set when the map is non-empty: an environment block with an empty `variables`
+  # map is valid but shows as a diff against a function with no block at all, so most
+  # functions (which need no secrets) get no block rather than an empty one.
+  dynamic "environment" {
+    for_each = length(var.environment_variables) > 0 ? [var.environment_variables] : []
+    content {
+      variables = environment.value
+    }
+  }
 }
 
 # lambda function cloudwatch log group

@@ -1,6 +1,7 @@
 import axios from "axios";
 import qs from "qs";
 import Amplify, { API, Auth } from "aws-amplify";
+import { UserRecordSchema, PublicProfileSchema, XalianRecordSchema } from "@xalians/content/schema";
 
 async function authHeaders() {
   const session = await Auth.currentSession();
@@ -11,12 +12,35 @@ export const callGetXalian = (id = "00009-4c1d8607-d3de-4313-91b1-84eecd5ce921")
   return callGet("https://api.xalians.com/prod/db/xalian?xalianId=" + id);
 };
 
-export const callGetUser = (id, populateXalians = false) => {
-  if (populateXalians) {
-    return callGet("https://api.xalians.com/prod/db/user?userId=" + id + "&populateXalians=true");
-  } else {
-    return callGet("https://api.xalians.com/prod/db/user?userId=" + id);
+// The legacy user record's shape is still drifting (D1's docs call this out as the
+// "drift alarm", not a hard contract): safeParse rather than parse, warn with the zod
+// issue path on a mismatch, and always return the raw data so the legacy pages that
+// tolerate extra/missing fields keep working either way.
+function warnOnSchemaMismatch(schema, data, label) {
+  const result = schema.safeParse(data);
+  if (!result.success) {
+    console.warn(
+      `dbApi: ${label} response did not match its schema: ${result.error.issues
+        .map((issue) => `${issue.path.join(".") || "(root)"}: ${issue.message}`)
+        .join("; ")}`
+    );
   }
+  return data;
+}
+
+export const callGetUser = (id, populateXalians = false) => {
+  const url = populateXalians
+    ? "https://api.xalians.com/prod/db/user?userId=" + id + "&populateXalians=true"
+    : "https://api.xalians.com/prod/db/user?userId=" + id;
+
+  return callGet(url).then((data) => {
+    // A caller's own full record has "tokens"/"attributes"; anyone else's is the public
+    // profile (userId + xalianIds, optionally xalians). Pick the schema that matches the
+    // shape actually returned rather than guessing from the request.
+    const schema = "tokens" in data || "attributes" in data ? UserRecordSchema : PublicProfileSchema;
+    const label = schema === UserRecordSchema ? "GET /db/user (own profile)" : "GET /db/user (public profile)";
+    return warnOnSchemaMismatch(schema, data, label);
+  });
 };
 
 export const callGet = (url) => {
@@ -48,8 +72,12 @@ export const callGetXalianBatch = (ids) => {
   );
 };
 
-export const callCreateXalian = (xalian) => {
-  return callCreate("https://api.xalians.com/prod/db/xalian", xalian);
+// Keeps a Xalian in one call: posts the { xalian, signature } envelope
+// callGenerateXalian() returned, unchanged. The server verifies the signature, persists,
+// and appends the id to the caller's user record itself (apps/api/src/handlers/createXalian.ts);
+// there is no longer a separate "add to user" step (see the deleted callUpdateUserAddXalian).
+export const callKeepXalian = (envelope) => {
+  return callCreate("https://api.xalians.com/prod/db/xalian", envelope);
 };
 
 export const callCreateUser = (user) => {
@@ -65,10 +93,6 @@ export const callCreate = (url, data) => {
       data,
     }).then((response) => response.data);
   });
-};
-
-export const callUpdateUserAddXalian = (userId, xalianId) => {
-  return callUpdateUserXalian('ADD_XALIAN_ID', userId, xalianId);
 };
 
 export const callUpdateUserRemoveXalian = (userId, xalianId) => {
@@ -93,4 +117,35 @@ export const callUpdateUserXalian = (action, userId, xalianId) => {
       data,
     }).then((response) => response.data);
   });
+};
+
+// -----------------------------------------------------------------------------------
+// Registry (D1): server-generated, ratified XalianRecords. No page uses these yet (the
+// generator and account pages stay on the legacy shape until the separate record-view
+// design brief); these are new and typed end to end, so responses are parsed strictly
+// (schema.parse, not safeParse) rather than warned-and-passed-through.
+// -----------------------------------------------------------------------------------
+
+export const callGenerateRegistryXalian = (species) => {
+  return callCreate("https://api.xalians.com/prod/xalians", species ? { species } : {}).then((data) =>
+    XalianRecordSchema.parse(data)
+  );
+};
+
+export const callListRegistryXalians = (ownerId, cursor) => {
+  const params = new URLSearchParams();
+  if (ownerId) params.set("ownerId", ownerId);
+  if (cursor) params.set("cursor", cursor);
+  const qsSuffix = params.toString() ? "?" + params.toString() : "";
+
+  return callGet("https://api.xalians.com/prod/xalians" + qsSuffix).then((data) => ({
+    items: data.items.map((item) => XalianRecordSchema.parse(item)),
+    nextCursor: data.nextCursor,
+  }));
+};
+
+export const callGetRegistryXalian = (id) => {
+  return callGet("https://api.xalians.com/prod/xalians/" + encodeURIComponent(id)).then((data) =>
+    XalianRecordSchema.parse(data)
+  );
 };
