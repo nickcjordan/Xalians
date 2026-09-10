@@ -1,0 +1,276 @@
+.lr-route-map {
+  position: relative;
+  min-height: 260px;
+  margin: 16px 0 22px;
+  overflow: hidden;
+  border: 1px solid #383b30;
+  background: #070907;
+  isolation: isolate;
+}
+.lr-route-map__plate {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  background-image: var(--route-map-art);
+  background-position: center;
+  background-size: cover;
+  filter: saturate(0.55) brightness(0.53);
+}
+.lr-route-map:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: linear-gradient(
+      90deg,
+      rgba(3, 5, 4, 0.82),
+      rgba(3, 5, 4, 0.15) 48%,
+      rgba(3, 5, 4, 0.72)
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 3px,
+      rgba(0, 0, 0, 0.2) 3px 4px
+    );
+}
+.lr-route-map__origin,
+.lr-route-map__destination {
+  position: absolute;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  gap: 3px;
+  color: #ede8d2;
+  text-shadow: 0 2px 6px #000;
+  font: 700 10px var(--g-font-mono);
+  text-transform: uppercase;
+}
+.lr-route-map__origin {
+  left: 4%;
+  bottom: 39%;
+}
+.lr-route-map__destination {
+  right: 4%;
+  top: 36%;
+  color: var(--route-map-accent);
+}
+.lr-route-map__origin i,
+.lr-route-map__destination i {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid currentColor;
+  background: #080b08;
+  font-size: 16px;
+}
+.lr-route-map__path {
+  position: absolute;
+  z-index: 2;
+  left: 10%;
+  right: 10%;
+  height: 34%;
+  opacity: 0.34;
+  transition: opacity 0.16s ease, filter 0.16s ease;
+}
+.lr-route-map__path.is-upper {
+  top: 18%;
+}
+.lr-route-map__path.is-lower {
+  top: 51%;
+}
+.lr-route-map__path.is-center {
+  top: 35%;
+}
+.lr-route-map__path.is-edge {
+  top: 43%;
+  transform: skewY(-7deg);
+}
+.lr-route-map__line {
+  position: absolute;
+  inset: 50% 8% auto 0;
+  border-top: 3px dashed #828676;
+  filter: drop-shadow(0 2px 2px #000);
+}
+.lr-route-map__line:after {
+  content: "";
+  position: absolute;
+  right: -3px;
+  top: -7px;
+  width: 11px;
+  height: 11px;
+  border-top: 3px solid currentColor;
+  border-right: 3px solid currentColor;
+  transform: rotate(45deg);
+}
+.lr-route-map__path > span {
+  position: absolute;
+  left: 20%;
+  top: calc(50% - 24px);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  max-width: 58%;
+  padding: 8px 11px;
+  color: #bdbdad;
+  border: 1px solid #55584b;
+  background: rgba(5, 7, 5, 0.88);
+  font: 700 11px var(--g-font-mono);
+  text-transform: uppercase;
+}
+.lr-route-map__path > span > i {
+  color: var(--route-map-accent);
+  font-size: 18px;
+}
+.lr-route-map__path > span em {
+  display: none;
+  color: #f0cc57;
+  font-size: 9px;
+  font-style: normal;
+}
+.lr-route-map.has-focus .lr-route-map__path:not(.is-active) {
+  opacity: 0.12;
+}
+.lr-route-map__path.is-active {
+  z-index: 4;
+  opacity: 1;
+  filter: drop-shadow(
+    0 0 10px color-mix(in srgb, var(--route-map-accent) 45%, transparent)
+  );
+}
+.lr-route-map__path.is-active .lr-route-map__line {
+  border-color: var(--route-map-accent);
+  animation: lr-route-trace 0.55s ease-out both;
+}
+.lr-route-map__path.is-active > span {
+  color: #f3efdc;
+  border-color: var(--route-map-accent);
+}
+.lr-route-map__path.is-active.has-unknown > span em {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.lr-route-map__path.is-active.has-unknown .lr-route-map__line {
+  filter: drop-shadow(0 0 5px #e1be43);
+}
+.lr-route-map__memory {
+  position: absolute;
+  z-index: 6;
+  left: 14px;
+  top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.lr-route-map__memory span {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 6px 8px;
+  color: #bce8c8;
+  border-left: 3px solid #7fd69a;
+  background: rgba(5, 11, 7, 0.88);
+  font: 700 10px var(--g-font-mono);
+  text-transform: uppercase;
+}
+.lr-route-map__memory .is-security-pulse {
+  color: #f3a18c;
+  border-color: #e66c58;
+  animation: lr-security-beacon 2.4s ease-in-out infinite alternate;
+}
+.lr-route-map__encounter {
+  position:absolute;
+  z-index:7;
+  left:14px;
+  bottom:12px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 9px;
+  color:#f0cc57;
+  background:rgba(8,10,7,.92);
+  border-left:3px solid currentColor;
+  font:700 9px/1.2 var(--g-font-mono);
+  text-transform:uppercase;
+}
+.lr-route-map__encounter.is-befriended,.lr-route-map__encounter.is-cleared { color:#74ffb0; }
+.lr-route-map__encounter.is-unresolved { animation:lr-security-beacon 2.4s ease-in-out infinite alternate; }
+.lr-route-map figcaption {
+  position: absolute;
+  z-index: 5;
+  right: 12px;
+  bottom: 10px;
+  color: #b5b4a8;
+  font: 700 9px var(--g-font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.lr-route-map.is-flood .lr-route-map__path.is-lower.is-active:after,
+.lr-route-map.is-charge .lr-route-map__path.is-lower.is-active:after {
+  content: "";
+  position: absolute;
+  inset: 32% 10% 18%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(76, 205, 239, 0.28),
+    transparent
+  );
+  animation: lr-route-current 1.2s linear infinite;
+}
+.lr-route-map.is-security .lr-route-map__path.is-active:after {
+  content: "";
+  position: absolute;
+  inset: -40% 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(207, 95, 87, 0.2),
+    transparent
+  );
+  animation: lr-route-current 1.4s linear infinite;
+}
+@keyframes lr-route-trace {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+@keyframes lr-route-current {
+  from {
+    transform: translateX(-60%);
+  }
+  to {
+    transform: translateX(70%);
+  }
+}
+@keyframes lr-security-beacon {
+  to {
+    opacity: 0.68;
+  }
+}
+@media (max-width: 720px) {
+  .lr-route-map {
+    min-height: 230px;
+  }
+  .lr-route-map__path > span {
+    left: 9%;
+    max-width: 72%;
+    font-size: 10px;
+  }
+  .lr-route-map__memory {
+    right: 12px;
+  }
+  .lr-route-map figcaption {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lr-route-map * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -6,6 +6,8 @@ Version 4 was ruled by Nick on 2026-09-08 and 2026-09-09 after the version 3 "on
 
 **Implementation state (2026-09-09): steps 1 and 2 of the migration have landed.** The v4 token layer, the restyled primitives, the new components and the brand pieces are in `system.css`, and every chrome page (navbar, home, account, user details, encyclopedia, generator, duel setup, training menu, styleguide) sets `data-tier="chrome"`. The version 3 terminal blocks and furniture classes are still in `system.css` only because the immersive experiences (duel board and playground, Reclamation, the training games, Long Return) still use them; they are deleted as each immersive brief lands. Do not use a version 3 class on a chrome page.
 
+For interaction vocabulary, game-feel standards, quality scoring, playtest questions, and the living decision registry, also read [`GAME_EXPERIENCE_QUALITY_GUIDE.md`](./GAME_EXPERIENCE_QUALITY_GUIDE.md). This document defines how the interface looks; that guide defines how a game experience should communicate and behave.
+
 ## 1. The three tiers
 
 Every visual thing on the site belongs to exactly one tier. Decide the tier before anything else.

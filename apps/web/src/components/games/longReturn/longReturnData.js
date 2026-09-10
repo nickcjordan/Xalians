@@ -267,7 +267,7 @@ export const MISSION = {
           legacyAdjustments: [{ flag: 'maintenance-codes', difficulty: -6, label: 'Recovered codes', detail: 'The underdeck markings supply the missing opening sequence.' }],
           outcomes: {
             clean: 'The rebuilt protocol ripples through the authentication arms. The iris recognizes a maintenance identity and opens without alarm.',
-            costly: 'The rig accepts the improvised sequence, but its interrogation pattern leaves the lead visibly shaken.',
+            costly: 'The rig accepts the improvised sequence on its second pass. The iris finally releases the crew into the gallery.',
             rough: 'The crew floods the rig with contradictory credentials until the iris opens in self-defense.'
           },
           environment: { medium: 'gas', temperatureC: -4, element: 'psychic' }, hazardIds: ['countermeasure'],
@@ -391,7 +391,7 @@ export const MISSION = {
     {
       id: 'generator-spine', title: 'Generator Spine', trackLabel: 'Generator Spine', deck: 'OPTIONAL 02', optional: true,
       description: 'One last chamber: concentric machinery turning around a view of the white planet below.',
-      goal: 'Take the final recovery prize and leave the annex before its pressure reaches collapse.',
+      goal: 'Take the final recovery prize and reach the extraction lift before the annex loses all stability.',
       destination: 'the surface extraction lift—this is the last crossing',
       surveyFocus: 'the closing rings, control core, and exposed memory spindle',
       relayChannels: ['display', 'telepathic'],
