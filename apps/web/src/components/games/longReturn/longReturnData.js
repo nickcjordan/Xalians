@@ -159,10 +159,10 @@ export const MISSION = {
       surveyFocus: 'the waterline, hanging gantry, and intake channel',
       relayChannels: ['vibration', 'telepathic'],
       hazards: [
-        { id: 'conductive-brine', label: 'Conductive brine', detail: 'The flood carries a dormant Electric charge.', sense: 'smell', threshold: 58, special: 'electroreception', strain: 1, pressure: 1 }
+        { id: 'conductive-brine', label: 'Conductive brine', detail: 'The flood carries a dormant Electric charge.', sense: 'smell', threshold: 58, special: 'electroreception', strain: 2, pressure: 2 }
       ],
       routes: [
-        { id: 'gantry', title: 'Cross the hanging gantry', description: 'Stay dry, move lightly, and trust the old suspension bolts.', difficulty: 63, pressure: 1, salvage: 1,
+        { id: 'gantry', title: 'Cross the hanging gantry', description: 'Stay dry, move lightly, and trust the old suspension bolts.', difficulty: 63, pressure: 0, salvage: 1,
           consequence: { id: 'quiet-entry', label: 'Quiet entry', detail: 'The turbine bank ahead remains dormant.', future: 'Makes the upper catwalk easier in the next scene.' },
           outcomes: {
             clean: 'The gantry bows once, then settles. The crew reaches the far seal without waking the machinery beyond it.',
@@ -267,7 +267,7 @@ export const MISSION = {
           legacyAdjustments: [{ flag: 'maintenance-codes', difficulty: -6, label: 'Recovered codes', detail: 'The underdeck markings supply the missing opening sequence.' }],
           outcomes: {
             clean: 'The rebuilt protocol ripples through the authentication arms. The iris recognizes a maintenance identity and opens without alarm.',
-            costly: 'The rig accepts the improvised sequence, but its interrogation pattern leaves the lead visibly shaken.',
+            costly: 'The rig accepts the improvised sequence on its second pass. The iris finally releases the crew into the gallery.',
             rough: 'The crew floods the rig with contradictory credentials until the iris opens in self-defense.'
           },
           environment: { medium: 'gas', temperatureC: -4, element: 'psychic' }, hazardIds: ['countermeasure'],
@@ -391,7 +391,7 @@ export const MISSION = {
     {
       id: 'generator-spine', title: 'Generator Spine', trackLabel: 'Generator Spine', deck: 'OPTIONAL 02', optional: true,
       description: 'One last chamber: concentric machinery turning around a view of the white planet below.',
-      goal: 'Take the final recovery prize and leave the annex before its pressure reaches collapse.',
+      goal: 'Take the final recovery prize and reach the extraction lift before the annex loses all stability.',
       destination: 'the surface extraction lift—this is the last crossing',
       surveyFocus: 'the closing rings, control core, and exposed memory spindle',
       relayChannels: ['display', 'telepathic'],
