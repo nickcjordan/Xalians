@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { decrement, increment } from './counterSlice'
 import { addAnimationToQueue, popAnimationOffQueue } from './duelAnimationQueueSlice';
 import gsap from 'gsap';
-import * as duelCalculator from '../gameplay/duel/duelCalculator';
+import * as duelCalculator from '@xalians/rules/duel/duelCalculator';
 
 export function AnimationHub(props) {
 

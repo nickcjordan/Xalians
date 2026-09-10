@@ -6,11 +6,11 @@ import DuelRosterRail from '../../components/games/duel/board/duelRosterRail';
 import AttackMoveChooserModal from '../../components/games/duel/board/attackMoveChooserModal';
 import XalianTypeSymbolBadge from '../../components/games/duel/board/xalianTypeSymbolBadge';
 import { verdictFor } from '../../components/games/duel/board/duelTargetLayer';
-import * as duelPieceBuilder from '../../gameplay/duel/duelPieceBuilder';
-import * as duelConstants from '../../gameplay/duel/duelGameConstants';
-import * as duelValueTranslator from '../../gameplay/duel/duelValueTranslator';
+import * as duelPieceBuilder from '@xalians/rules/duel/duelPieceBuilder';
+import * as duelConstants from '@xalians/rules/duel/duelGameConstants';
+import * as duelValueTranslator from '@xalians/rules/duel/duelValueTranslator';
 import * as retrievalUtil from '../../utils/retrievalUtil';
-import tokens from '../../constants/designTokens';
+import * as tokens from '../../constants/designTokens';
 
 /**
  * DUEL - AFFORDANCE REFERENCE.

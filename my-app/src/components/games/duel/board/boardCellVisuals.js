@@ -1,114 +1,14 @@
+/*
+	Duel: DOM visual helpers for board cells.
 
+	Split out of gameplay/duel/boardStateManager.js during the packages/rules move
+	(issue #184, the duel half): these two functions mutate live cell DOM nodes
+	directly (classList, style.opacity) rather than deriving rules state, so they stay
+	in my-app as UI code while the rest of boardStateManager moved to
+	packages/rules/src/duel/boardStateManager.ts.
+*/
 
-import * as duelConstants from './duelGameConstants';
-import * as duelUtil from '../../utils/duelUtil';
-import * as playerStateManager from './playerStateManager';
-import * as xalianStateManager from './xalianStateManager';
-
-export function buildBoardState(G, ctx) {
-    var details = G.currentTurnDetails || currentTurnState(G, ctx);
-
-    return { 
-        moveId: G.moveId,
-        cells: G.cells,
-        xalians: G.xalians,
-        flags: G.flags,
-        currentTurnDetails: details,
-        playerStates: G.playerStates
-       }
-}
-
-export function getLastActionOfPlayer(fullLog, playerID) {
-    let logs = getAllMoveActionsFromLog(fullLog);
-	let logsForCurrentPlayer = getAllActionsForPlayer(playerID, logs);
-    return logsForCurrentPlayer.pop();
-}
-
-export function getAllMoveActionsFromLog(logs) {
-    if (!logs || logs.length === 0) {
-        return [];
-    }
-    let filtered = logs.filter(log =>
-        log.action &&
-        log.action.type &&
-        log.action.type === 'MAKE_MOVE' &&
-        log.action.payload &&
-        log.action.payload.type &&
-        (log.action.payload.type === 'movePiece' || log.action.payload.type === 'doAttack' ));
-    return (logs && logs.length > 0) ? filtered : [];
-    
-            // log.action.payload.type !== 'selectPiece' &&
-            // log.action.payload.type !== 'setPiece')
-}
-
-export function getAllActionsForPlayer(playerID, logs) {
-    return logs.filter(log => (
-        log.action && log.action.payload && log.action.payload.type && log.action.payload.playerID &&
-        log.action.payload.playerID === playerID)
-    );
-}
-
-export function currentTurnState(G, ctx) {
-    // if (G.turnHasEnded) {
-    //     return {
-    //         ...G,
-    //         isComplete: true
-    //     }
-    // } else {
-        var hasAttacked = false;
-        var hasMoved = false;
-        var remainingSpacesToMove = duelConstants.MAX_SPACES_MOVED_PER_TURN;
-        var isComplete = false;
-        let moveMap = new Map();
-        // let actions = G.currentTurnState && G.currentTurnState.actions ? G.currentTurnState.actions : [];
-        let actions = G.currentTurnActions || [];
-
-            actions.forEach(action => {
-                if (action.type == duelConstants.actionTypes.ATTACK) {
-                    hasAttacked = true;
-                }
-
-                if (action.type == duelConstants.actionTypes.MOVE) {
-                    hasMoved = true;
-                    let spacesMovedInAction = action.move.path.spacesMoved;
-                    remainingSpacesToMove -= spacesMovedInAction;
-                    var spacesMovedForXalian = 0;
-                    if (moveMap[action.move.moverId]) {
-                        let entry = moveMap[action.move.moverId];
-                        spacesMovedForXalian = entry.value;
-                    }
-                    spacesMovedForXalian += spacesMovedInAction;
-                    moveMap[action.move.moverId] = {
-                        key: action.move.moverId,
-                        value: spacesMovedForXalian
-                    };
-                }
-            });
-
-
-        // var currentPlayerState = G.playerStates[ctx.currentPlayer];
-        // isComplete = (remainingSpacesToMove == 0 && hasAttacked) || !playerStateManager.playerStateHasMoveAvailable(currentPlayerState, G, ctx);
-        isComplete = (remainingSpacesToMove == 0 && hasAttacked);
-
-
-        var moves = [];
-        Object.values(moveMap).forEach((entry) => {
-            moves.push({ moverId: entry.key, spacesMoved: entry.value });
-        });
-
-
-
-        return {
-            hasAttacked: hasAttacked,
-            hasMoved: hasMoved,
-            remainingSpacesToMove: remainingSpacesToMove,
-            moves: moves,
-            isComplete: isComplete,
-            actions: actions
-        }
-    // }
-}
-
+import * as duelUtil from '@xalians/rules/duel/boardUtil';
 
 export function clearVisualsForAllCells(allCellElems) {
     allCellElems.forEach(cellElem => {
@@ -147,12 +47,12 @@ export function clearVisualsForAllCells(allCellElems) {
 
 export function setVisualsForAllCells(boardState, allCellElems, movableIndicesFromStartingSpot, attackableIndicesFromHoverSpot, draggingXalianId, hoverCellIndex = null) {
 	allCellElems.forEach(cellElem => {
-					
+
 		if (cellElem.childNodes) {
 			let iteratingCellIndex = parseInt(cellElem.id.replace('cell-', ''));
 			let xalianIdOfIteratingCell = boardState.cells[iteratingCellIndex];
-			
-				
+
+
 				cellElem.childNodes.forEach(childElem => {
 
 					if (childElem.classList.contains('duel-piece')) {
@@ -200,7 +100,7 @@ export function setVisualsForAllCells(boardState, allCellElems, movableIndicesFr
 						childElem.style.opacity = 0;
 					}
 				}
-				
+
 			})
 		}
 	});

@@ -16,7 +16,7 @@
  * referenced widely.
  */
 
-const colorConstants = require('./colorConstants');
+import { themeColors as elementThemeColors } from './colorConstants';
 
 /**
  * Version 4 (docs/DESIGN_SYSTEM.md section 3): the room, surfaces, glass,
@@ -24,7 +24,7 @@ const colorConstants = require('./colorConstants');
  * status colours. Mirrors public/assets/css/system.css's :root primitives
  * exactly; paired in src/__tests__/designTokens.test.js.
  */
-const v4 = {
+export const v4 = {
 	room: '#121110',
 	s0: '#191816',
 	s1: '#201f1c',
@@ -58,7 +58,7 @@ const v4 = {
  * Repointed to the v4 surface steps (docs/DESIGN_SYSTEM.md section 3.3);
  * --g-seam has no v4 equivalent and keeps its own value.
  */
-const hull = {
+export const hull = {
 	void: v4.room,
 	lo: v4.s0,
 	base: v4.s1,
@@ -66,7 +66,7 @@ const hull = {
 	seam: '#0a0a07',
 };
 
-const brass = {
+export const brass = {
 	base: '#b08d3f',
 	dark: '#6b5423',
 	light: '#d8b45e',
@@ -75,7 +75,7 @@ const brass = {
 /** Printed matter. Never pure white: paint yellows.
  * Repointed to the v4 ink primitives; --g-ink-invert has no v4 equivalent
  * and keeps its own value. */
-const ink = {
+export const ink = {
 	base: v4.ink,
 	mid: v4.ink2,
 	low: v4.ink3,
@@ -83,25 +83,25 @@ const ink = {
 };
 
 /** The CRT. The only pure saturated light, confined to screens. */
-const phosphor = {
+export const phosphor = {
 	base: '#74ffb0',
 	glass: '#07120c',
 };
 
 /** Bulbs behind coloured plastic, and painted warning livery. */
-const lamp = {
+export const lamp = {
 	amber: '#ffb037',
 	red: '#e4483c',
 	off: '#3d3a30',
 };
 
 /** The two seats at any table: your side cyan, the rival's brass, as the Duel paints them. */
-const team = {
+export const team = {
 	one: '#3bbedf',
 	two: '#c39738',
 };
 
-const hazard = {
+export const hazard = {
 	base: '#d9a410',
 	dark: '#6d5108',
 };
@@ -111,7 +111,7 @@ const hazard = {
  * speed yellow-green, stamina and recovery green, with each "special" variant a
  * darker shade of its standard pair.
  */
-const stat = {
+export const stat = {
 	standardAttack: '#a84032',
 	specialAttack: '#753027',
 	standardDefense: '#535dc2',
@@ -123,7 +123,7 @@ const stat = {
 };
 
 /** The same eight stats as drawn in the points charts, translucent over a track. */
-const statPoints = {
+export const statPoints = {
 	standardAttack: '#df9320be',
 	specialAttack: '#b37519d0',
 	standardDefense: '#70a5dbb7',
@@ -134,7 +134,7 @@ const statPoints = {
 	recovery: '#8f1f1fc9',
 };
 
-const chart = {
+export const chart = {
 	rangeTrack: '#ecff8234',
 	pointsFill: '#80dbff34',
 	barLabel: '#ffffff50',
@@ -151,7 +151,7 @@ const chart = {
  * material settings (fonts, radius, wear, per-terminal token overrides) stay
  * CSS-only: nothing in JS currently needs them as strings.
  */
-const terminals = {
+export const terminals = {
 	panel: {
 		face: hull.base,
 		faceLo: hull.lo,
@@ -267,7 +267,7 @@ const terminals = {
  * `readout*`/`tab*` entries, which are terminal-invariant by design: the
  * readout is "a mode, not a place" (docs/DESIGN_SYSTEM.md section 3).
  */
-const material = {
+export const material = {
 	// Repointed with --g-accent-ink/--g-hull-hover/--g-accent-hover/--g-danger*
 	// (docs/DESIGN_SYSTEM.md section 3): the accent is now the viable signal
 	// and danger the plague status colour, not the retired hazard/red pair.
@@ -293,19 +293,4 @@ const material = {
 	paperInkFaint: '#5c584d',
 };
 
-module.exports = {
-	v4,
-	hull,
-	brass,
-	ink,
-	phosphor,
-	lamp,
-	team,
-	hazard,
-	stat,
-	statPoints,
-	chart,
-	terminals,
-	material,
-	themeColors: colorConstants.themeColors,
-};
+export const themeColors = elementThemeColors;

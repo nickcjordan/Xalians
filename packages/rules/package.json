@@ -2,17 +2,25 @@
   "name": "@xalians/rules",
   "version": "1.0.0",
   "private": true,
-  "description": "The ratified Xalian creature generator and the expedition (Reclamation) rules, shared by my-app and (later) apps/api. TypeScript source is the published form; no build step.",
+  "description": "The ratified Xalian creature generator, the expedition (Reclamation) rules, and the duel (CTF tactics) rules, shared by my-app and (later) apps/api. TypeScript source is the published form; no build step.",
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
     "./generator": "./src/generator/index.ts",
     "./generator/*": "./src/generator/*.ts",
     "./expedition": "./src/expedition/index.ts",
-    "./expedition/*": "./src/expedition/*.ts"
+    "./expedition/*": "./src/expedition/*.ts",
+    "./duel": "./src/duel/index.ts",
+    "./duel/*": "./src/duel/*.ts"
   },
   "dependencies": {
-    "@xalians/content": "1.0.0"
+    "@xalians/content": "1.0.0",
+    "pathfinding": "^0.4.7",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/pathfinding": "^0.1.0",
+    "@types/uuid": "^8.3.4"
   },
   "scripts": {
     "test": "vitest run",

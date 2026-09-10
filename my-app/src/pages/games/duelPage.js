@@ -10,11 +10,11 @@ import { Client } from 'boardgame.io/react';
 import { Duel } from '../../components/games/duel/duel';
 import DuelBoard  from '../../components/games/duel/board/duelBoard';
 import * as translator from '../../utils/valueTranslator';
-import * as gameConstants from '../../gameplay/duel/duelGameConstants'
+import * as gameConstants from '@xalians/rules/duel/duelGameConstants'
 import { Local } from 'boardgame.io/multiplayer';
 import DuelBotInstance from '../../components/games/duel/bot/duelBotInstance';
-import * as duelConstants from '../../gameplay/duel/duelGameConstants'; 
-import * as duelPieceBuilder from '../../gameplay/duel/duelPieceBuilder'; 
+import * as duelConstants from '@xalians/rules/duel/duelGameConstants'; 
+import * as duelPieceBuilder from '@xalians/rules/duel/duelPieceBuilder'; 
 import gsap from 'gsap';
 
 class DuelPage extends React.Component {
