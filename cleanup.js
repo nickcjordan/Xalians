@@ -1,8 +1,8 @@
-const tools = require('./apps/api/src/tools.js');
+const tools = require('./apps/api/src/legacy/tools.js');
 const fs = require('fs')
 const axios = require("axios").default;
-const statConstants = require('./apps/api/src/constants/statConstants.js');
-const ratingValueConstants = require('./apps/api/src/constants/ratingValueConstants.js');
+const statConstants = require('./apps/api/src/legacy/constants/statConstants.js');
+const ratingValueConstants = require('./apps/api/src/legacy/constants/ratingValueConstants.js');
 
 
 // fix("elements");

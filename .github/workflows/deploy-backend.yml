@@ -44,11 +44,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Backend typecheck
+        run: npm run typecheck -w apps/api
+
       - name: Backend tests
         run: npm test -w apps/api
 
-      - name: Stage shared content into the Lambda zip
-        run: npm run build:api
+      - name: Build backend bundles
+        run: npm run build -w apps/api
 
       - uses: hashicorp/setup-terraform@v3
         with:

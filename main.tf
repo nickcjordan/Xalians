@@ -101,23 +101,16 @@ resource "aws_s3_bucket" "lambda_bucket" {
 
 # lambda zip
 #
-# apps/api no longer carries the shared game data or its own node_modules
-# (npm workspaces hoist to the root node_modules). Before this runs, CI runs
-# `npm run build:api` (scripts/stageApiContent.js), which stages the four JSON
-# files the legacy engine reads at runtime into apps/api/dist-content/ (the
-# fallback in apps/api/src/tools.js reads from there) and copies apps/api's
-# runtime npm dependencies into apps/api/node_modules/ if npm hoisted them.
-# Both are gitignored and rebuilt every run. test/ and the lockfile never
-# need to ship.
+# apps/api is built by esbuild (npm run build -w apps/api, wired into
+# .github/workflows/deploy-backend.yml before this runs) into apps/api/dist/<handler>/
+# index.mjs, one bundle per handler with @aws-sdk/* left external (the nodejs22.x runtime
+# provides it) and everything else, including the @xalians/content JSON, inlined. This
+# zips that bundle directory directly; there is no excludes list because dist/ contains
+# nothing but the six handler bundles.
 data "archive_file" "lambda_zip_file" {
   type        = "zip"
-  source_dir  = "${path.module}/apps/api"
+  source_dir  = "${path.module}/apps/api/dist"
   output_path = "${path.module}/generate_xalian_lambda.zip"
-
-  excludes = [
-    "test",
-    "package-lock.json",
-  ]
 }
 
 # lambda bucket object
@@ -267,7 +260,7 @@ module "generate_xalian_lambda_module" {
   function_name                   = "GenerateXalian"
   lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
   lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
-  lambda_handler_path             = "src/generateXalianLambda.handler"
+  lambda_handler_path             = "generateXalian/index.handler"
   lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
   iam_role_arn                    = aws_iam_role.lambda_exec.arn
   apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
@@ -289,7 +282,7 @@ module "table_create_xalian_lambda_module" {
   function_name                   = "TableCreateXalian"
   lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
   lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
-  lambda_handler_path             = "src/database/xalianTableCRUDLambdas.createXalian"
+  lambda_handler_path             = "createXalian/index.handler"
   lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
   iam_role_arn                    = aws_iam_role.lambda_exec.arn
   apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
@@ -310,7 +303,7 @@ module "table_retrieve_xalian_lambda_module" {
   source = "./terraform/modules/lambda"
 
   function_name                   = "TableRetrieveXalian"
-  lambda_handler_path             = "src/database/xalianTableCRUDLambdas.retrieveXalian"
+  lambda_handler_path             = "retrieveXalian/index.handler"
   apigw_lambda_route_key          = "GET /db/xalian"
   lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
   lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
@@ -332,7 +325,7 @@ module "table_retrieve_xalian_batch_lambda_module" {
   source = "./terraform/modules/lambda"
 
   function_name                   = "TableRetrieveXalianBatch"
-  lambda_handler_path             = "src/database/xalianTableCRUDLambdas.retrieveXalianBatch"
+  lambda_handler_path             = "retrieveXalian/index.handler"
   apigw_lambda_route_key          = "GET /db/xalians"
   lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
   lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
@@ -355,7 +348,7 @@ module "table_retrieve_xalian_user_lambda_module" {
   source = "./terraform/modules/lambda"
 
   function_name                   = "TableRetrieveXalianUser"
-  lambda_handler_path             = "src/database/userTableCRUDLambdas.retrieveXalianUser"
+  lambda_handler_path             = "retrieveUser/index.handler"
   apigw_lambda_route_key          = "GET /db/user"
   lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
   lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
@@ -377,7 +370,7 @@ module "table_create_xalian_user_lambda_module" {
   source = "./terraform/modules/lambda"
 
   function_name                   = "TableCreateXalianUser"
-  lambda_handler_path             = "src/database/userTableCRUDLambdas.createXalianUser"
+  lambda_handler_path             = "createUser/index.handler"
   apigw_lambda_route_key          = "POST /db/user"
   lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
   lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
@@ -399,7 +392,7 @@ module "table_update_xalian_user_lambda_module" {
   source = "./terraform/modules/lambda"
 
   function_name                   = "TableUpdateXalianUser"
-  lambda_handler_path             = "src/database/userTableCRUDLambdas.updateXalianUser"
+  lambda_handler_path             = "updateUser/index.handler"
   apigw_lambda_route_key          = "PATCH /db/user"
   lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
   lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key

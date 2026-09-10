@@ -10,7 +10,6 @@
   "scripts": {
     "start": "node start.js",
     "cleanup": "node cleanup.js",
-    "build:api": "node scripts/stageApiContent.js",
     "test": "npm test --workspaces --if-present",
     "publish": "terraform apply -auto-approve"
   },

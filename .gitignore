@@ -65,6 +65,3 @@ generate_xalian_lambda.zip
 
 # local scratch (design snapshots, session logs)
 untracked/
-
-# staged content for the Lambda zip (scripts/stageApiContent.js), rebuilt in CI
-apps/api/dist-content/
