@@ -127,6 +127,60 @@ export async function removeXalianId(userId: string, xalianId: string): Promise<
   }
 }
 
+// Per-owner, per-species generation counter, read by generateRegistryXalian to fill
+// provenance.serial ("the 1-based count of records this owner has generated of this
+// species" per docs/design/xalian-creature-data-structure.md's provenance.serial note).
+// The caller must have already ensured the user item exists (createUserIfMissing).
+//
+// This needs two separate UpdateCommands, not one:
+//   1. SET #attrs.#serials = if_not_exists(#attrs.#serials, :empty) initializes the
+//      per-species map the first time this owner ever generates anything. ADD cannot do
+//      this itself: DynamoDB does not auto-vivify an intermediate map for a nested ADD
+//      path, so `ADD #attrs.#serials.#species :one` fails with a document-path
+//      ValidationException while attributes.serials does not yet exist, even though
+//      attributes itself does (createUserIfMissing seeds attributes: {}). This first
+//      update is idempotent (if_not_exists is a no-op once the map exists), so repeat
+//      calls for the same owner do not disturb existing per-species counters.
+//   2. ADD #attrs.#serials.#species :one increments (or creates) that one species' count
+//      and returns it.
+//   These cannot be combined into one UpdateExpression: DynamoDB rejects a single
+//   expression whose clauses name overlapping document paths (here, #attrs.#serials and
+//   #attrs.#serials.#species overlap), the same rule documented above removeTokens.
+//
+// If generation or persistence fails after this increments, the serial is simply skipped
+// (an owner's per-species serials can have gaps) -- acceptable, since serial is bookkeeping
+// for display/rarity flavor, not a dense sequence anything depends on.
+export async function nextSerial(userId: string, speciesKey: string): Promise<number> {
+  await ddb.send(
+    new UpdateCommand({
+      TableName: TABLE_NAME,
+      Key: { userId },
+      UpdateExpression: 'SET #attrs.#serials = if_not_exists(#attrs.#serials, :empty)',
+      ExpressionAttributeNames: { '#attrs': 'attributes', '#serials': 'serials' },
+      ExpressionAttributeValues: { ':empty': {} },
+    })
+  );
+
+  const result = await ddb.send(
+    new UpdateCommand({
+      TableName: TABLE_NAME,
+      Key: { userId },
+      UpdateExpression: 'ADD #attrs.#serials.#species :one',
+      ExpressionAttributeNames: { '#attrs': 'attributes', '#serials': 'serials', '#species': speciesKey },
+      ExpressionAttributeValues: { ':one': 1 },
+      ReturnValues: 'UPDATED_NEW',
+    })
+  );
+
+  const updatedAttributes = (result.Attributes?.attributes ?? {}) as Record<string, unknown>;
+  const serials = (updatedAttributes.serials ?? {}) as Record<string, unknown>;
+  const value = serials[speciesKey];
+  if (typeof value !== 'number') {
+    throw new Error(`nextSerial: UpdateCommand did not return a numeric counter for ${userId}/${speciesKey}`);
+  }
+  return value;
+}
+
 export type RemoveTokensResult = 'ok' | 'insufficient';
 
 // The ConditionExpression requires attributes.tokens to exist and cover the amount, so
