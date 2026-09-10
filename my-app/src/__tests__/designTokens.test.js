@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const colorConstants = require('../constants/colorConstants');
-const designTokens = require('../constants/designTokens');
+import * as colorConstants from '../constants/colorConstants';
+import * as designTokens from '../constants/designTokens';
 
 // The palette exists on both sides of the stack by necessity: CSS paints with
 // custom properties, while recharts `fill` props, GSAP tweens and SVG

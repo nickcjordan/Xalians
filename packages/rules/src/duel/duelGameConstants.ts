@@ -19,11 +19,19 @@ export const FLAG_CARRIER_MAX_SPACES_PER_TURN = 2;
 // being an outright one-shot.
 export const MAX_SINGLE_HIT_HEALTH_FRACTION = 0.75;
 
+// denominator in the base-damage formula (calculateBaseValue in duelCalculator.ts).
+// Ported from the legacy attackCalculationConstants.js, which duelCalculator.js used to
+// require alongside a pile of other generator-era constants it never referenced; only
+// this one is actually used by the duel formula, so only this one made the move.
+export const BASE_BOTTOM_VAR = 50;
+
 export const actionTypes = {
     MOVE: 'move',
     ATTACK: 'attack',
     COMBO: 'combo'
-}
+} as const;
+
+export type ActionType = (typeof actionTypes)[keyof typeof actionTypes];
 
 export const typeEffectiveness = {
     IMMUNE: 'Immune',
@@ -31,7 +39,7 @@ export const typeEffectiveness = {
     MEDIUM_EFFECT: 'Average',
     HIGH_EFFECT: 'Good',
     SUPER_EFFECT: 'Strong'
-}
+} as const;
 
 export const PLAYER_ONE_COLOR = '#3bbedf';
 export const PLAYER_ONE_COLOR_NO_ALPHA = PLAYER_ONE_COLOR + '00';

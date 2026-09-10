@@ -1,7 +1,4 @@
-import { MCTSBot, Step } from 'boardgame.io/ai';
-import * as duelUtil from '../../../../utils/duelUtil';
-import * as duelCalculator from '../../../../gameplay/duel/duelCalculator';
-import { Hub } from "aws-amplify";
+import { MCTSBot } from 'boardgame.io/ai';
 
 class DuelBotInstance extends MCTSBot {
 

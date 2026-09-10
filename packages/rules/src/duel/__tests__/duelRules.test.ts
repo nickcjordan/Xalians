@@ -1,5 +1,7 @@
-import * as duelCalculator from '../duelCalculator';
-import * as duelConstants from '../duelGameConstants';
+import { describe, it, expect } from 'vitest';
+import * as duelCalculator from '../duelCalculator.ts';
+import * as duelConstants from '../duelGameConstants.ts';
+import type { BoardState, DuelCtx, DuelFlag, DuelMove, DuelPiece } from '../types.ts';
 
 /*
 	Rules coverage for the duel game. The board is 8x8, so cell index = row * 8 + col.
@@ -8,9 +10,9 @@ import * as duelConstants from '../duelGameConstants';
 	exactly the stats it depends on.
 */
 
-const ctx = { phase: 'play', currentPlayer: '0' };
+const ctx: DuelCtx = { phase: 'play', currentPlayer: '0' };
 
-function piece(id, overrides = {}) {
+function piece(id: string, overrides: Partial<DuelPiece> = {}): DuelPiece {
 	return {
 		xalianId: id,
 		species: { id: '00001', name: 'Testling', planet: 'Floria' },
@@ -24,11 +26,17 @@ function piece(id, overrides = {}) {
 	};
 }
 
+interface Placement {
+	index: number;
+	piece: DuelPiece;
+	team?: 0 | 1;
+}
+
 // places pieces at the given cell indices and puts them all on the requested team
-function buildBoard(placements, flags = []) {
-	const cells = new Array(64).fill(null);
-	const xalians = [];
-	const teams = [[], []];
+function buildBoard(placements: Placement[], flags: DuelFlag[] = []): BoardState {
+	const cells: (string | null)[] = new Array(64).fill(null);
+	const xalians: DuelPiece[] = [];
+	const teams: [string[], string[]] = [[], []];
 
 	placements.forEach(({ index, piece: p, team = 0 }) => {
 		cells[index] = p.xalianId;
@@ -49,14 +57,14 @@ function buildBoard(placements, flags = []) {
 	};
 }
 
-function reachableFrom(index, mover, G) {
+function reachableFrom(index: number, mover: DuelPiece, G: BoardState): number[] {
 	return duelCalculator.calculateMovablePaths(index, mover, G, ctx).map((path) => path.endIndex);
 }
 
 describe('movement: pieces block the ground, flight goes over', () => {
 	// row 4: 32 33 34 35 ... - a mover at 32 with blockers at 33 and 34.
 	// walking to 35 means detouring through row 3 or 5 (5 spaces); flying is 3.
-	const blockedLane = (mover) =>
+	const blockedLane = (mover: DuelPiece) =>
 		buildBoard([
 			{ index: 32, piece: mover, team: 0 },
 			{ index: 33, piece: piece('blocker-a'), team: 0 },
@@ -84,7 +92,7 @@ describe('movement: pieces block the ground, flight goes over', () => {
 describe('movement: carrying a flag slows a piece down', () => {
 	const carrierId = 'carrier';
 
-	function boardWithFlag(holder) {
+	function boardWithFlag(holder: boolean) {
 		const carrier = piece(carrierId);
 		return {
 			carrier,
@@ -130,7 +138,7 @@ describe('setup: flag row placement', () => {
 describe('combat', () => {
 	const CEILING = duelConstants.MAX_SINGLE_HIT_HEALTH_FRACTION * duelConstants.MAX_HEALTH_POINTS;
 
-	function attackResult(attacker, defender, move = null) {
+	function attackResult(attacker: DuelPiece, defender: DuelPiece, move: DuelMove | null = null) {
 		const G = buildBoard([
 			{ index: 32, piece: attacker, team: 0 },
 			{ index: 33, piece: defender, team: 1 },
@@ -168,8 +176,8 @@ describe('combat', () => {
 	it('applies STAB when the move type matches the attacker', () => {
 		const attacker = piece('attacker');
 		const defender = piece('defender');
-		const offType = { name: 'Off Type Jab', type: 'Water', rating: 10 };
-		const stabbed = { name: 'On Type Jab', type: 'Plant', rating: 10 };
+		const offType: DuelMove = { name: 'Off Type Jab', type: 'Water', rating: 10 };
+		const stabbed: DuelMove = { name: 'On Type Jab', type: 'Plant', rating: 10 };
 
 		const plain = attackResult(attacker, defender, offType).damage;
 		const boosted = attackResult(attacker, defender, stabbed).damage;
@@ -187,7 +195,7 @@ describe('combat', () => {
 			elements: { primaryType: 'Water', secondaryType: 'Rock' },
 			stats: { ...piece('x').stats, defense: 1 },
 		});
-		const heavyStab = { name: 'Overkill', type: 'Plant', rating: 15 };
+		const heavyStab: DuelMove = { name: 'Overkill', type: 'Plant', rating: 15 };
 
 		const result = attackResult(brute, doublyWeak, heavyStab);
 
@@ -212,12 +220,12 @@ describe('combat', () => {
 
 	it('leaves an immune matchup at zero damage', () => {
 		const attacker = piece('attacker');
-		// Electric is listed as doing 0 against Rock in elements.json
+		// Electric is listed as doing 0 against Rock in typeEffectivenessMatrix.json
 		const grounded = piece('grounded', {
 			elementType: 'Rock',
 			elements: { primaryType: 'Rock', secondaryType: null },
 		});
-		const zap = { name: 'Zap', type: 'Electric', rating: 15 };
+		const zap: DuelMove = { name: 'Zap', type: 'Electric', rating: 15 };
 
 		expect(attackResult(attacker, grounded, zap).damage).toBe(0);
 	});

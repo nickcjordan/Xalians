@@ -1,11 +1,12 @@
-import React from 'react';
-import * as gameConstants from './duelGameConstants';
-import * as duelUtil from '../../utils/duelUtil';
-import * as duelCalculator from './duelCalculator';
-import * as duelConstants from './duelGameConstants';
-import * as boardStateManager from './boardStateManager';
+/*
+	Duel: move/attack animation timeline builder. UI code (gsap, document.getElementById),
+	so it stays in my-app while the pure duel rules moved to packages/rules/src/duel
+	(issue #184, the duel half of the packages/rules move). Moved from
+	my-app/src/gameplay/duel/moveAnimationManager.js.
+*/
+import * as duelUtil from '@xalians/rules/duel/boardUtil';
+import * as duelConstants from '@xalians/rules/duel/duelGameConstants';
 import gsap from 'gsap';
-import AttackActionModal from '../../components/games/duel/board/attackActionModal';
 
 
 function getDiff(pathStartCoord, pathNextCoord, currentCoord) {

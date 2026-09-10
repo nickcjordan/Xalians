@@ -3,8 +3,8 @@ import DuelPieceToken from '../board/duelPieceToken';
 import DuelMoveRegion from '../board/duelMoveRegion';
 import DuelTargetLayer from '../board/duelTargetLayer';
 import { ReactComponent as DuelFlagIcon } from '../../../../svg/games/duel/duel_flag_icon.svg';
-import * as duelConstants from '../../../../gameplay/duel/duelGameConstants';
-import tokens from '../../../../constants/designTokens';
+import * as duelConstants from '@xalians/rules/duel/duelGameConstants';
+import * as tokens from '../../../../constants/designTokens';
 
 /**
  * A board fragment, described rather than played.

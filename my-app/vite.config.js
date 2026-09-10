@@ -3,7 +3,6 @@ import path from 'node:path';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import svgr from 'vite-plugin-svgr';
-import commonjsShim from './vite/commonjsShim.js';
 
 // Vite + Vitest configuration for the Xalians frontend.
 //
@@ -13,10 +12,6 @@ import commonjsShim from './vite/commonjsShim.js';
 
 export default defineConfig(({ mode }) => ({
 	plugins: [
-		// The few CommonJS files inside src (lambda copies, one vendored UMD lib).
-		// See vite/commonjsShim.js.
-		commonjsShim(),
-
 		// 75 components carry JSX in `.js` files. Vite's default esbuild
 		// transform only treats `.jsx`/`.tsx` as JSX, so `.js` needs a targeted
 		// pre-transform rather than renaming them all. Using `esbuild.include`

@@ -5,7 +5,7 @@ import { Flag, Grid3x3, Hourglass, Move, Zap, BatteryMedium, FlagOff, Eye } from
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
-import * as duelConstants from '@/gameplay/duel/duelGameConstants';
+import * as duelConstants from '@xalians/rules/duel/duelGameConstants';
 
 // The rules text is derived from constants rather than hardcoded so it cannot
 // drift away from the actual game as tunables change.

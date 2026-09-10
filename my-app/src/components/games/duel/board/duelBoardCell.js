@@ -1,9 +1,9 @@
 import React from 'react';
 import XalianImage from '../../../xalianImage';
-import * as duelUtil from '../../../../utils/duelUtil';
-import * as duelCalculator from '../../../../gameplay/duel/duelCalculator';
-import * as boardStateManager from '../../../../gameplay/duel/boardStateManager';
-import * as duelConstants from '../../../../gameplay/duel/duelGameConstants';
+import * as duelUtil from '@xalians/rules/duel/boardUtil';
+import * as duelCalculator from '@xalians/rules/duel/duelCalculator';
+import * as boardCellVisuals from './boardCellVisuals';
+import * as duelConstants from '@xalians/rules/duel/duelGameConstants';
 import { ReactComponent as DuelFlagIcon } from '../../../../svg/games/duel/duel_flag_icon.svg';
 import species from '@xalians/content/species.json';
 import XalianTypeSymbolBadge from './xalianTypeSymbolBadge';
@@ -47,7 +47,7 @@ class DuelBoardCell extends React.Component {
 	doFadesAfterMove = () => {
 		var allCellElems = document.querySelectorAll(".duel-board-cell");
 		const cellState = Flip.getState(allCellElems, { props: "background,filter,opacity,backgroundColor" });
-		boardStateManager.clearVisualsForAllCells(allCellElems);
+		boardCellVisuals.clearVisualsForAllCells(allCellElems);
 		Flip.from(cellState);
 	}
 
@@ -183,7 +183,7 @@ class DuelBoardCell extends React.Component {
 				// 	// 		})
 				// 	// 	}
 				// 	// });
-				// 	boardStateManager.setVisualsForAllCells(props.boardState, allCellElems, movableIndicesFromStartingSpot, attackableIndicesFromHoverSpot, draggingXalianId, draggingXalianStartingCellIndex);
+				// 	boardCellVisuals.setVisualsForAllCells(props.boardState, allCellElems, movableIndicesFromStartingSpot, attackableIndicesFromHoverSpot, draggingXalianId, draggingXalianStartingCellIndex);
 				// 	Flip.from(cellState);
 				// },
 				onDragStartParams: [this.props],
@@ -236,7 +236,7 @@ class DuelBoardCell extends React.Component {
 						attackableIndicesFromHoverSpot = attackablePathsFromHoverSpot.map(p => (p.endIndex));
 					}
 
-					boardStateManager.setVisualsForAllCells(props.boardState, allCellElems, movableIndicesFromStartingSpot, attackableIndicesFromHoverSpot, draggingXalianId, hoverCellIndex);
+					boardCellVisuals.setVisualsForAllCells(props.boardState, allCellElems, movableIndicesFromStartingSpot, attackableIndicesFromHoverSpot, draggingXalianId, hoverCellIndex);
 					
 					Flip.from(cellState);
 				},
@@ -269,7 +269,7 @@ class DuelBoardCell extends React.Component {
 					}
 
 					const cellState = Flip.getState(allCellElems, { props: "background,filter,opacity,backgroundColor" });
-					boardStateManager.clearVisualsForAllCells(allCellElems);
+					boardCellVisuals.clearVisualsForAllCells(allCellElems);
 					Flip.from(cellState);
 
 				},
@@ -289,7 +289,7 @@ class DuelBoardCell extends React.Component {
 				// 	// 	})
 				// 	// }
 
-				// 	boardStateManager.clearVisualsForAllCells(allCellElems);
+				// 	boardCellVisuals.clearVisualsForAllCells(allCellElems);
 				// 	Flip.from(cellState);
 				// }
 

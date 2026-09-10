@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const colorConstants = require('../constants/colorConstants');
-const designTokens = require('../constants/designTokens');
+import * as colorConstants from '../constants/colorConstants';
+import * as designTokens from '../constants/designTokens';
 
 // The palette lives twice on purpose (docs/DESIGN_SYSTEM.md section 3.5):
 // src/styles/tokens.css paints the page through Tailwind, and

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import XalianTypeSymbolBadge from './xalianTypeSymbolBadge';
-import * as duelCalculator from '../../../../gameplay/duel/duelCalculator';
+import * as duelCalculator from '@xalians/rules/duel/duelCalculator';
 import { ink, lamp, stat } from '../../../../constants/designTokens';
 
 /**

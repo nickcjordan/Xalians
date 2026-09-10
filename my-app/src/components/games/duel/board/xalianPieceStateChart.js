@@ -1,5 +1,5 @@
 import React from 'react';
-import * as gameConstants from '../../../../gameplay/duel/duelGameConstants';
+import * as gameConstants from '@xalians/rules/duel/duelGameConstants';
 import { lamp, brass, stat } from '../../../../constants/designTokens';
 
 /**
