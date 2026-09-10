@@ -49,11 +49,11 @@ describe('expeditionSimulator report shape', () => {
 		expect(isRateOrNull(sf.starterWinRate)).toBe(true);
 		Object.values(sf.perWorldStarterSiteWinRate).forEach((r) => expect(isRateOrNull(r)).toBe(true));
 		expect(isRateOrNull(sf.finalPasserWinRate)).toBe(true);
-		expect(typeof sf.relocationsPerMatch).toBe('number');
-		expect(sf.relocationsPerMatch).toBeGreaterThanOrEqual(0);
-		expect(isRateOrNull(sf.starterWinRateWithRelocation)).toBe(true);
-		expect(isRateOrNull(sf.starterWinRateWithoutRelocation)).toBe(true);
-		expect(isRateOrNull(sf.relocationFlipRate)).toBe(true);
+		expect(typeof sf.swiftMovesPerMatch).toBe('number');
+		expect(sf.swiftMovesPerMatch).toBeGreaterThanOrEqual(0);
+		expect(isRateOrNull(sf.starterWinRateWithSwiftMove)).toBe(true);
+		expect(isRateOrNull(sf.starterWinRateWithoutSwiftMove)).toBe(true);
+		expect(isRateOrNull(sf.swiftMoveFlipRate)).toBe(true);
 	});
 
 	test('section 2 (match shape): worlds-played counts sum to completed matches', () => {
@@ -98,19 +98,19 @@ describe('expeditionSimulator report shape', () => {
 		Object.values(c.outcomeHistogram).forEach((count) => expect(count).toBeGreaterThanOrEqual(0));
 		// per ROLE since the base redesign (docs/design/reclamation-base-redesign.md
 		// assumption 4): the sixteen-act tables measured a choice nobody makes any more
-		['strike', 'area', 'bolster', 'shield', 'none'].forEach((role) => {
+		['strike', 'sweep', 'bolster', 'shield', 'none'].forEach((role) => {
 			const r = c.perRole[role];
 			expect(r).toBeTruthy();
 			expect(r.sends).toBeGreaterThanOrEqual(0);
-			expect(r.meanAmountPerBlow).toBeGreaterThanOrEqual(0);
-			expect(r.routsDealt).toBeGreaterThanOrEqual(0);
+			expect(r.meanPowerPerAttack).toBeGreaterThanOrEqual(0);
+			expect(r.downsDealt).toBeGreaterThanOrEqual(0);
 			expect(isRateOrNull(r.sendShare)).toBe(true);
 			expect(isRateOrNull(r.keeperWinRate)).toBe(true);
 		});
-		expect(c.blowStats.blowsPerMatch).toBeGreaterThanOrEqual(0);
-		expect(c.blowStats.routsPerMatch).toBeGreaterThanOrEqual(0);
-		expect(isRateOrNull(c.blowStats.cancelledShare)).toBe(true);
-		expect(isRateOrNull(c.blowStats.fallbackBlowShare)).toBe(true);
+		expect(c.attackStats.attacksPerMatch).toBeGreaterThanOrEqual(0);
+		expect(c.attackStats.downsPerMatch).toBeGreaterThanOrEqual(0);
+		expect(isRateOrNull(c.attackStats.cancelledShare)).toBe(true);
+		expect(isRateOrNull(c.attackStats.fallbackAttackShare)).toBe(true);
 		expect(c.shieldStats.cancelsPerMatch).toBeGreaterThanOrEqual(0);
 		expect(c.bolsterStats.holdRestoredPerBolsterSend).toBeGreaterThanOrEqual(0);
 		['none', 'strained', 'severe'].forEach((level) => {
@@ -152,7 +152,7 @@ describe('expeditionSimulator report shape', () => {
 			expect(entry.holdRank).toBeLessThanOrEqual(entry.poolSize);
 		});
 		expect(isRateOrNull(cb.higherMeanHoldWinRate)).toBe(true);
-		expect(isRateOrNull(cb.higherMeanInitiativeWinRate)).toBe(true);
+		expect(isRateOrNull(cb.higherMeanSpeedWinRate)).toBe(true);
 		// every one of the 14 canon elements appears as a row, even if empty ("-" in the
 		// printed report, null in the object) for elements absent from this pool/seed
 		const elementRows = Object.keys(cb.elementWorldStrainTable);

@@ -18,13 +18,13 @@
 import { generateBatch } from '../generator/index.js';
 import { createRngState, nextRandom, createMatch } from './expeditionRules.js';
 import { getWorlds } from './sites.js';
-import { prepare, roleOf } from './creatureOnTable.js';
-import { ROSTER_SIZE, ROLE, AREA_DISCOUNT, BOLSTER_FLOOR, SHIELD_CAP } from './expeditionInterpretation.js';
+import { prepare, roleOf, speedOf } from './creatureOnTable.js';
+import { ROSTER_SIZE, ROLE, SWEEP_DISCOUNT, BOLSTER_FLOOR, SHIELD_CAP } from './expeditionInterpretation.js';
 
-// an area catches this many creatures at a world on the numbers the simulator measures
-// (mean creatures per world at deploy end, both sides), so an area's worth is its
+// a sweep catches this many creatures at a world on the numbers the simulator measures
+// (mean creatures per world at deploy end, both sides), so a sweep's worth is its
 // discounted magnitude times this
-export const AREA_EXPECTED_CREATURES = 3;
+export const SWEEP_EXPECTED_CREATURES = 3;
 // a bolsterer lifts about this many allies at a world, itself excluded
 export const BOLSTER_EXPECTED_ALLIES = 2;
 
@@ -130,7 +130,7 @@ function sitesOf(frames) {
 	real world:
 
 	- strike:  its mean blow magnitude across the nine worlds
-	- area:    the same, times rules.areaDiscount, times AREA_EXPECTED_CREATURES
+	- sweep:   the same, times rules.sweepDiscount, times SWEEP_EXPECTED_CREATURES
 	- shield:  a typical cancel, which is the POOL's mean blow magnitude (options.poolMeanBlow),
 	           priced by rules.shieldCap the way the engine pays it out: 'half' nets half a
 	           blow, since the shielder takes the other half itself
@@ -142,7 +142,7 @@ function sitesOf(frames) {
 */
 export function rateForDraft(record, frames, options = {}) {
 	const rules = options.rules || null;
-	const areaDiscount = rules && typeof rules.areaDiscount === 'number' ? rules.areaDiscount : AREA_DISCOUNT;
+	const sweepDiscount = rules && typeof rules.sweepDiscount === 'number' ? rules.sweepDiscount : SWEEP_DISCOUNT;
 	const bolsterFloor = rules && typeof rules.bolsterFloor === 'number' ? rules.bolsterFloor : BOLSTER_FLOOR;
 	const shieldCap = (rules && rules.shieldCap) || SHIELD_CAP;
 
@@ -171,8 +171,8 @@ export function rateForDraft(record, frames, options = {}) {
 	let roleValue = 0;
 	if (role === ROLE.STRIKE) {
 		roleValue = meanBlow;
-	} else if (role === ROLE.AREA) {
-		roleValue = meanBlow * areaDiscount * AREA_EXPECTED_CREATURES;
+	} else if (role === ROLE.SWEEP) {
+		roleValue = meanBlow * sweepDiscount * SWEEP_EXPECTED_CREATURES;
 	} else if (role === ROLE.SHIELD) {
 		const typicalCancel = typeof options.poolMeanBlow === 'number' ? options.poolMeanBlow : 0;
 		roleValue = shieldCap === 'half' ? typicalCancel / 2 : typicalCancel;
@@ -194,7 +194,7 @@ export function poolMeanBlowOf(pool, frames, rules) {
 	const magnitudes = [];
 	pool.forEach((record) => {
 		const role = roleOf(record, rules);
-		if (role !== ROLE.STRIKE && role !== ROLE.AREA) {
+		if (role !== ROLE.STRIKE && role !== ROLE.SWEEP) {
 			return;
 		}
 		sites.forEach((site) => {
@@ -226,13 +226,6 @@ function isStealthy(record) {
 	return false;
 }
 
-function meanInitiativeOf(record) {
-	const attrs = (record && record.attributes) || {};
-	const reflex = typeof attrs.reflex === 'number' ? attrs.reflex : 0;
-	const agility = typeof attrs.agility === 'number' ? attrs.agility : 0;
-	return (reflex + agility) / 2;
-}
-
 /*
 	botDraft(pool, frames, rival) -> the twelve record ids the rival keeps
 
@@ -245,7 +238,7 @@ function meanInitiativeOf(record) {
 	- heir: prefers the top mean holds outright (stacks a lead, so it keeps the
 	  creatures that hold everywhere rather than gambling on niche specialists)
 	- broker: prefers stealthy creatures (its style is built on hiding sends)
-	- envoy: prefers high initiative (rations the roster and wants first strikes to
+	- envoy: prefers high speed (rations the roster and wants first attacks to
 	  matter when it finally spends)
 	- proctor, and any unrecognized id: the plain rating, by the book
 
@@ -272,7 +265,7 @@ export function botDraft(pool, frames, rival, options = {}) {
 		} else if (rivalId === 'broker') {
 			score += isStealthy(record) ? 4 : 0;
 		} else if (rivalId === 'envoy') {
-			score += meanInitiativeOf(record) * 0.08;
+			score += speedOf(record) * 0.08;
 		}
 		return { record, rating, score, bestPlanet: bestPlanetOf(rating) };
 	});

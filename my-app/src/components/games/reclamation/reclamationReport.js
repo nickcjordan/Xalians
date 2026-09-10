@@ -24,23 +24,51 @@ function otherSide(you) {
 }
 
 // the judge event's siteResults[siteId].entries.<side> lists every creature standing at
-// judgement, already carrying the counted hold (staggered counted at half) and whether it
-// was staggered; here we also need to know which of those were routed or withdrew, which
-// only the resolutionLog's act events (routed) and the player's post-judge withdrawn/
-// holding lists (everyone else) can say.
+// the Ruling, already carrying the counted hold and whether it is hurt; here we also need
+// to know which of those were downed or withdrew, which only the resolutionLog's attack
+// events (downed) and the player's post-Ruling withdrawn/holding lists (everyone else)
+// can say.
 function fateOf(recordId, players) {
 	if (players.A.holding.includes(recordId) || players.B.holding.includes(recordId)) {
 		return 'held';
 	}
-	if (players.A.routed.includes(recordId) || players.B.routed.includes(recordId)) {
-		return 'routed';
+	if ((players.A.downed || []).includes(recordId) || (players.B.downed || []).includes(recordId)) {
+		return 'downed';
 	}
 	return 'withdrew';
+}
+
+/*
+	Recovery under a bolster (assumption 19), per creature per round: the Ruling logs one
+	`recover` event for each creature that got hold back, just before the judge event, so
+	the world row can print "+2.1" beside the hold the Court counted.
+*/
+function recoveredByRound(match) {
+	const byRound = new Map();
+	let round = 0;
+	(match.resolutionLog || []).forEach((event) => {
+		if (!event) {
+			return;
+		}
+		if (event.type === 'recover') {
+			if (!byRound.has(round)) {
+				byRound.set(round, {});
+			}
+			const forRound = byRound.get(round);
+			forRound[event.recordId] = Math.round(((forRound[event.recordId] || 0) + event.amount) * 10) / 10;
+			return;
+		}
+		if (event.type === 'judge') {
+			round = typeof event.round === 'number' ? event.round + 1 : round + 1;
+		}
+	});
+	return byRound;
 }
 
 function buildWorlds(match, you, recordsById) {
 	const rival = otherSide(you);
 	const worlds = [];
+	const recovered = recoveredByRound(match);
 	const judgeEvents = (match.resolutionLog || []).filter((e) => e && e.type === 'judge');
 	judgeEvents.forEach((event) => {
 		const frame = match.frames ? match.frames[event.round] : null;
@@ -52,6 +80,7 @@ function buildWorlds(match, you, recordsById) {
 			const entries = result.entries || { A: [], B: [] };
 			// the judge entry carries the hold the Court counted and the role the creature
 			// played (the base redesign's judge event), so the row needs nothing derived
+			const recoveredHere = recovered.get(event.round) || {};
 			const rowsFor = (side) => (entries[side] || []).map((e) => ({
 				recordId: e.recordId,
 				record: recordsById ? recordsById[e.recordId] || null : null,
@@ -59,7 +88,8 @@ function buildWorlds(match, you, recordsById) {
 				fullHold: e.fullHold,
 				damage: e.damage || 0,
 				role: e.role || null,
-				staggered: !!e.staggered,
+				hurt: !!e.hurt,
+				recovered: recoveredHere[e.recordId] || 0,
 				fate: fateOf(e.recordId, match.players),
 			}));
 			worlds.push({
@@ -81,24 +111,27 @@ function buildWorlds(match, you, recordsById) {
 	return worlds;
 }
 
-function routsAndStaggers(match, you) {
-	const rival = otherSide(you);
-	// THE BASE: a landing blow is a 'blow' event with an outcome; the 'area' event that
-	// precedes a burst is only its announcement and lands nothing itself
-	const acts = (match.resolutionLog || []).filter((e) => e && e.type === 'blow');
+function downsAndHurts(match, you) {
+	// THE BASE: a landing attack is an 'attack' event with an outcome; the 'sweep' event
+	// that precedes a burst is only its announcement and lands nothing itself
+	const acts = (match.resolutionLog || []).filter((e) => e && e.type === 'attack');
 	const sideOfRecord = (recordId) => {
-		if (match.players.A.holding.includes(recordId) || match.players.A.withdrawn.includes(recordId) || match.players.A.routed.includes(recordId) || match.players.A.roster.some((r) => r.id === recordId)) {
+		const inSide = (side) => side.holding.includes(recordId)
+			|| side.withdrawn.includes(recordId)
+			|| (side.downed || []).includes(recordId)
+			|| side.roster.some((r) => r.id === recordId);
+		if (inSide(match.players.A)) {
 			return 'A';
 		}
-		if (match.players.B.holding.includes(recordId) || match.players.B.withdrawn.includes(recordId) || match.players.B.routed.includes(recordId) || match.players.B.roster.some((r) => r.id === recordId)) {
+		if (inSide(match.players.B)) {
 			return 'B';
 		}
 		return null;
 	};
-	let routsDealt = 0;
-	let routsTaken = 0;
-	let staggersDealt = 0;
-	let staggersTaken = 0;
+	let downsDealt = 0;
+	let downsTaken = 0;
+	let hurtsDealt = 0;
+	let hurtsTaken = 0;
 	acts.forEach((act) => {
 		if (!act.target) {
 			return;
@@ -108,23 +141,23 @@ function routsAndStaggers(match, you) {
 			return;
 		}
 		const targetIsYou = targetSide === you;
-		if (act.outcome === 'routed') {
+		if (act.outcome === 'downed') {
 			if (targetIsYou) {
-				routsTaken++;
+				downsTaken++;
 			} else {
-				routsDealt++;
+				downsDealt++;
 			}
-		} else if (act.outcome === 'staggered') {
+		} else if (act.outcome === 'hurt') {
 			if (targetIsYou) {
-				staggersTaken++;
+				hurtsTaken++;
 			} else {
-				staggersDealt++;
+				hurtsDealt++;
 			}
 		}
 	});
 	return {
-		routs: { dealt: routsDealt, taken: routsTaken },
-		staggers: { dealt: staggersDealt, taken: staggersTaken },
+		downs: { dealt: downsDealt, taken: downsTaken },
+		hurts: { dealt: hurtsDealt, taken: hurtsTaken },
 	};
 }
 
@@ -221,8 +254,8 @@ function championOf(worlds, you) {
 export function buildMatchReport(match, you, recordsById) {
 	const safeMatch = match || {};
 	const players = safeMatch.players || {
-		A: { roster: [], holding: [], withdrawn: [], routed: [], sentCount: 0, firstPasser: false },
-		B: { roster: [], holding: [], withdrawn: [], routed: [], sentCount: 0, firstPasser: false },
+		A: { roster: [], holding: [], withdrawn: [], downed: [], sentCount: 0, firstPasser: false },
+		B: { roster: [], holding: [], withdrawn: [], downed: [], sentCount: 0, firstPasser: false },
 	};
 	const normalizedMatch = { ...safeMatch, players, resolutionLog: safeMatch.resolutionLog || [], frames: safeMatch.frames || [] };
 	const rival = otherSide(you);
@@ -260,12 +293,12 @@ export function buildMatchReport(match, you, recordsById) {
 		sendsRival = 0;
 	}
 
-	let routs = { dealt: 0, taken: 0 };
-	let staggers = { dealt: 0, taken: 0 };
+	let downs = { dealt: 0, taken: 0 };
+	let hurts = { dealt: 0, taken: 0 };
 	try {
-		const counted = routsAndStaggers(normalizedMatch, you);
-		routs = counted.routs;
-		staggers = counted.staggers;
+		const counted = downsAndHurts(normalizedMatch, you);
+		downs = counted.downs;
+		hurts = counted.hurts;
 	} catch (err) {
 		// leave the zeroed defaults
 	}
@@ -285,8 +318,8 @@ export function buildMatchReport(match, you, recordsById) {
 		reason: reason || 'frames-exhausted',
 		worlds,
 		sends: { you: sendsYou, rival: sendsRival },
-		routs,
-		staggers,
+		downs,
+		hurts,
 		decisive,
 		champion,
 	};
@@ -324,7 +357,10 @@ function CreatureLine({ entries }) {
 					)}
 					<span className="rec-report-creature-name">{speciesLabel(e.record)}</span>
 					<span className="rec-report-creature-hold g-mono">{formatHold(e.hold)}</span>
-					{e.fate === 'routed' && <span className="rec-report-creature-fate">routed</span>}
+					{e.recovered > 0 && (
+						<span className="rec-report-creature-recovered g-mono" title={`Recovered ${formatHold(e.recovered)} under a bolster at the Ruling`}>+{formatHold(e.recovered)}</span>
+					)}
+					{e.fate === 'downed' && <span className="rec-report-creature-fate">downed</span>}
 				</span>
 			))}
 		</>
@@ -591,8 +627,8 @@ export function ReclamationReport({
 					<span className="rec-report-figure-label">sends spent, you / rival</span>
 				</span>
 				<span className="rec-report-figure" data-routs>
-					<span className="rec-report-figure-value">{report.routs.dealt} / {report.routs.taken}</span>
-					<span className="rec-report-figure-label">routs dealt / taken</span>
+					<span className="rec-report-figure-value">{report.downs.dealt} / {report.downs.taken}</span>
+					<span className="rec-report-figure-label">downs dealt / taken</span>
 				</span>
 				<span className="rec-report-figure" data-champion>
 					<span className="rec-report-figure-value">{report.champion ? `${speciesLabel(report.champion.record)} ${formatHold(report.champion.hold)}` : 'none'}</span>

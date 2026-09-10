@@ -3,9 +3,9 @@ import { prepare } from '../../../gameplay/expedition/creatureOnTable';
 import {
 	HOME_GROUND_MULTIPLIER, ARMORED_REDUCTION, STRAIN_MULTIPLIER, SEVERE_STRAIN_MULTIPLIER,
 } from '../../../gameplay/expedition/expeditionInterpretation';
-import { conductSentence } from './reclamationPreview';
+import { instinctSentence, attributeLanes } from './reclamationPreview';
 import { speciesLabel, formatHold, roleSentence } from './reclamationNarration';
-import { RoleGlyph } from './reclamationGlyphs';
+import { RoleGlyph, SwiftGlyph, WillfulGlyph, InstinctGlyph } from './reclamationGlyphs';
 import XalianImage from '../../xalianImage';
 import {
 	speciesFacts, archetypeLabel, traitName, traitNature,
@@ -13,7 +13,7 @@ import {
 } from './reclamationVocabulary';
 import { TRAIT } from '../../../gameplay/expedition/expeditionInterpretation';
 
-// the traits this game reads (design doc, "Conduct"); every other trait is shown but marked
+// the traits this game reads (design doc, "Instinct"); every other trait is shown but marked
 // as not yet read by the table
 const READ_TRAITS = new Set(Object.values(TRAIT));
 
@@ -26,10 +26,14 @@ const READ_TRAITS = new Set(Object.values(TRAIT));
 	yet), so what the panel says is what the rules will use.
 
 	THE BASE (docs/design/reclamation-base-redesign.md). The sixteen acts are gone, and so
-	are the act table and the stagger/rout threshold pair that used to head the spec: a
-	creature is a hold and ONE role, and blows subtract. The panel prints the role in the
-	same sentence the plinth and the bench print, the blow magnitude, and the armored
+	are the act table and the hurt/downed threshold pair that used to head the spec: a
+	creature is a hold and ONE role, and attacks subtract. The panel prints the role in the
+	same sentence the plinth and the bench print, the attack power, and the armored
 	reduction where the trait applies.
+
+	PASS 2 adds the Lanes block: one line per attribute, saying the job that attribute
+	does on this table and the number this creature brings to it ("every attribute a
+	job", assumption 17). The same sentences ride as the titles of the plinth's marks.
 */
 function multiplierLines(record, prepared, site, world) {
 	const lines = [];
@@ -120,18 +124,18 @@ function ReclamationInspect({ record, site, frame, rules, onClose }) {
 						<span className="g-spec-val">{l.val}</span>
 					</React.Fragment>
 				))}
-				<span className="g-spec-key">Initiative</span>
-				<span className="g-spec-val">{formatHold(prepared.initiative)}</span>
+				<span className="g-spec-key">Speed</span>
+				<span className="g-spec-val">{formatHold(prepared.speed)}{prepared.swift ? ' (swift)' : ''}</span>
 				{prepared.blow && (
 					<>
-						<span className="g-spec-key">Blow</span>
+						<span className="g-spec-key">Attack power</span>
 						<span className="g-spec-val">{formatHold(prepared.blowMagnitude)}{prepared.blowIsFallback ? ' (no attacking ability; the minimum)' : ` (${prepared.blow.name})`}</span>
 					</>
 				)}
 				{armored && (
 					<>
 						<span className="g-spec-key">Armored</span>
-						<span className="g-spec-val">blows against it are cut by {ARMORED_REDUCTION * 100}%</span>
+						<span className="g-spec-val">attacks against it are cut by {ARMORED_REDUCTION * 100}%</span>
 					</>
 				)}
 			</div>
@@ -144,8 +148,8 @@ function ReclamationInspect({ record, site, frame, rules, onClose }) {
 				</p>
 				<p className="g-body rec-inspect-note">
 					Its role is fixed the moment it is sent; there is nothing to order. {prepared.blow
-						? `It throws ${prepared.blow.name} for ${formatHold(prepared.blowMagnitude)}, before the element matchup against whatever it meets.`
-						: 'It throws no blow at all; standing at the world is what it does.'}
+						? `It throws ${prepared.blow.name} for ${formatHold(prepared.blowMagnitude)}, before the element matchup against whatever it meets. Hurt, it attacks for less, in proportion to the hold it has left.`
+						: 'It throws no attack at all; standing at the world is what it does.'}
 				</p>
 				{signature && signature.description && (
 					<p className="g-body rec-inspect-signature">
@@ -155,8 +159,22 @@ function ReclamationInspect({ record, site, frame, rules, onClose }) {
 			</div>
 
 			<div className="rec-inspect-section">
-				<span className="g-label">Conduct</span>
-				<p className="g-body">{conductSentence(prepared)}</p>
+				<span className="g-label">Instinct</span>
+				<p className="g-body">{instinctSentence(prepared, rules)}</p>
+			</div>
+
+			<div className="rec-inspect-section rec-inspect-lanes" data-lanes>
+				<span className="g-label">Lanes</span>
+				<ul className="rec-lane-list">
+					{attributeLanes(prepared, rules).map((laneLine) => (
+						<li className="rec-lane" key={laneLine.key} data-lane={laneLine.key}>
+							{laneLine.glyph === 'swift' && <SwiftGlyph className="rec-lane-glyph" />}
+							{laneLine.glyph === 'willful' && <WillfulGlyph className="rec-lane-glyph" />}
+							{(laneLine.glyph === 'keen' || laneLine.glyph === 'dull') && <InstinctGlyph lane={laneLine.glyph} className="rec-lane-glyph" />}
+							<span className="rec-lane-text">{laneLine.text}</span>
+						</li>
+					))}
+				</ul>
 			</div>
 
 			<div className="rec-inspect-section">

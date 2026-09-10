@@ -6,23 +6,25 @@ import { speciesDisplayName, getSpeciesTemplate } from '../../../gameplay/genera
 	Pure functions only (no React, no engine imports beyond the species vocabulary), so
 	the sentences can be unit-tested directly. See __tests__/reclamationNarration.test.js.
 
-	THE BASE (docs/design/reclamation-base-redesign.md, 2026-09-09). Orders are gone and
-	so are the sixteen acts. Every creature is a hold and one role, and the log the table
-	narrates carries three kinds of resolution event, each with a `type`:
+	THE BASE (docs/design/reclamation-base-redesign.md, 2026-09-09), with Pass 2's
+	vocabulary (assumption 17): the table says attack and power, sweep, hurt and downed.
+	Every creature is a hold and one role, and the log the table narrates carries these
+	resolution events, each with a `type`:
 
-		blow   { recordId, role: 'strike' | 'area', site, target, amount, remaining,
-		         outcome: 'staggered' | 'routed' | 'cancelled' | 'lapsed' | 'no-target',
-		         hidden, cancelled }
-		area   { recordId, role: 'area', site, amount, hitCount, hidden, cancelled,
-		         cancelledAgainst }   - followed by one `blow` per victim
-		shield { recordId, site, cancelled, amount }
+		attack  { recordId, role: 'strike' | 'sweep', site, target, power, remaining,
+		          outcome: 'hurt' | 'downed' | 'cancelled' | 'lapsed' | 'no-target',
+		          hidden, cancelled }
+		sweep   { recordId, role: 'sweep', site, power, hitCount, hidden, cancelled,
+		          cancelledAgainst }   - followed by one `attack` per victim
+		shield  { recordId, site, cancelled, amount }
+		recover { recordId, site, bolster, amount, remaining }  - the Ruling's first step
 
-	plus the structural 'judge' and 'vanguard-relocate' events, unchanged.
+	plus the structural 'judge' and 'swift-move' events.
 
-	A blow whose outcome is 'cancelled' is narrated by the SHIELD event that cancelled it
-	("Yetimoth shields: Voltish's blow of 4 is cancelled"), so narrateEvent returns null
-	for it rather than saying the same thing twice. Every other event gives exactly one
-	sentence.
+	An attack whose outcome is 'cancelled' is narrated by the SHIELD event that cancelled
+	it ("Yetimoth shields: Voltish's attack of 4 is cancelled"), so narrateEvent returns
+	null for it rather than saying the same thing twice. Every other event gives exactly
+	one sentence.
 */
 
 // Display name for a record: the provisional roller gives records no `name`, only a
@@ -66,15 +68,15 @@ export function formatHold(value) {
 /*
 	The role, as the one sentence the plinth, the bench, the dossier and the ghost preview
 	all print (the base redesign's "Interface consequences": one sentence per rule). N is
-	the creature's own blow magnitude, before the element matchup against any one target.
+	the creature's own attack power, before the element matchup against any one target.
 */
-export function roleSentence(role, blowMagnitude) {
-	const n = typeof blowMagnitude === 'number' ? formatHold(blowMagnitude) : '?';
+export function roleSentence(role, attackPower) {
+	const n = typeof attackPower === 'number' ? formatHold(attackPower) : '?';
 	switch (role) {
-		case 'strike': return `Strikes one enemy here for ${n}`;
-		case 'area': return `Strikes everyone here for ${n}`;
-		case 'bolster': return 'Bolsters allies here against the world';
-		case 'shield': return 'Shields allies here from the largest blow';
+		case 'strike': return `Attacks one enemy here for ${n}`;
+		case 'sweep': return `Sweeps everyone here for ${n}`;
+		case 'bolster': return 'Bolsters allies here against the world, and recovers what they lose';
+		case 'shield': return 'Shields allies here from the largest attack';
 		default: return 'Stands here and throws nothing';
 	}
 }
@@ -83,17 +85,17 @@ export function roleSentence(role, blowMagnitude) {
 export function roleWord(role) {
 	switch (role) {
 		case 'strike': return 'strike';
-		case 'area': return 'area';
+		case 'sweep': return 'sweep';
 		case 'bolster': return 'bolster';
 		case 'shield': return 'shield';
 		default: return 'none';
 	}
 }
 
-// the verb a landing blow reads with: a strike is aimed, an area catches whatever
+// the verb a landing attack reads with: a strike is aimed, a sweep catches whatever
 // happens to be standing at the world
-function blowVerb(role) {
-	return role === 'area' ? 'catches' : 'strikes';
+function attackVerb(role) {
+	return role === 'sweep' ? 'catches' : 'strikes';
 }
 
 /*
@@ -109,41 +111,49 @@ export function narrateEvent(event, ctx = {}) {
 	}
 	const actor = ctx.actorName || 'A creature';
 	const target = ctx.targetName || 'its target';
-	const fromHiding = event.hidden ? ', from hiding,' : '';
+	// a hurt creature attacks for less (assumption 18); the sentence names the condition,
+	// since the number it carries has already been scaled by it
+	const condition = ctx.actorHurt && event.hidden ? ', from hiding and hurt,'
+		: ctx.actorHurt ? ', hurt,'
+			: event.hidden ? ', from hiding,' : '';
 	if (event.type === 'shield') {
 		if (!event.cancelled) {
 			return `${actor} shields, and nothing is thrown at its side.`;
 		}
-		const blocked = ctx.targetName || 'the blow';
-		return `${actor} shields: ${blocked}'s blow of ${formatHold(event.amount)} is cancelled.`;
+		const blocked = ctx.targetName || 'the attack';
+		return `${actor} shields: ${blocked}'s attack of ${formatHold(event.amount)} is cancelled.`;
 	}
-	if (event.type === 'area') {
+	if (event.type === 'recover') {
+		const under = ctx.bolsterName ? `under ${ctx.bolsterName}'s bolster` : 'under a bolster';
+		return `${actor} recovers ${formatHold(event.amount)} ${under}; stands at ${formatHold(event.remaining)}.`;
+	}
+	if (event.type === 'sweep') {
 		const where = ctx.worldName || ctx.siteName || 'the world';
 		const n = typeof event.hitCount === 'number' ? event.hitCount : 0;
-		// an area standing alone at a world still declares, and "catching 0 creatures" reads
+		// a sweep standing alone at a world still declares, and "catching 0 creatures" reads
 		// as a non-event; say what actually happened instead
 		if (n === 0) {
-			return `${actor}${fromHiding} bursts over ${where}, and catches nothing.`;
+			return `${actor}${condition} sweeps over ${where}, and catches nothing.`;
 		}
-		return `${actor}${fromHiding} bursts over ${where} for ${formatHold(event.amount)} each, catching ${n} creature${n === 1 ? '' : 's'}.`;
+		return `${actor}${condition} sweeps over ${where} for ${formatHold(event.power)} each, catching ${n} creature${n === 1 ? '' : 's'}.`;
 	}
-	if (event.type !== 'blow') {
+	if (event.type !== 'attack') {
 		return null;
 	}
 	switch (event.outcome) {
-		case 'routed':
-			return `${actor}${fromHiding} ${blowVerb(event.role)} ${target} for ${formatHold(event.amount)} and routs ${target}.`;
-		case 'staggered':
-			return `${actor}${fromHiding} ${blowVerb(event.role)} ${target} for ${formatHold(event.amount)}; ${target} stands at ${formatHold(event.remaining)}.`;
+		case 'downed':
+			return `${actor}${condition} ${attackVerb(event.role)} ${target} for ${formatHold(event.power)} and downs ${target}.`;
+		case 'hurt':
+			return `${actor}${condition} ${attackVerb(event.role)} ${target} for ${formatHold(event.power)}; ${target} stands at ${formatHold(event.remaining)}.`;
 		case 'cancelled':
 			// said by the shield event that cancelled it
 			return null;
 		case 'lapsed':
-			return `${actor}'s blow lapses, routed first.`;
+			return `${actor}'s attack lapses, downed first.`;
 		case 'no-target':
-			return `${actor}${fromHiding} finds no target.`;
+			return `${actor}${condition} finds no target.`;
 		default:
-			return `${actor} ${blowVerb(event.role)} ${target}.`;
+			return `${actor} ${attackVerb(event.role)} ${target}.`;
 	}
 }
 
@@ -152,23 +162,28 @@ export function narrateEvent(event, ctx = {}) {
 	sentences because it reads the same outcomes they do.
 */
 export function cueForEvent(event) {
-	if (!event || event.type !== 'blow') {
+	if (!event || event.type !== 'attack') {
 		return null;
 	}
-	if (event.outcome === 'routed') {
+	// the cue ids are the console's own and do not change with the table's vocabulary
+	if (event.outcome === 'downed') {
 		return { name: 'rout' };
 	}
-	if (event.outcome === 'staggered') {
+	if (event.outcome === 'hurt') {
 		return { name: 'strike', opts: { magnitude: 0.8 } };
 	}
 	return null;
 }
 
-export function narrateRelocate(event, ctx = {}) {
-	const actor = ctx.actorName || 'The vanguard';
-	const from = ctx.fromSiteName || 'its post';
-	const to = ctx.toSiteName || 'another site';
-	return `${actor} falls back from ${from} to ${to}.`;
+/*
+	A swift creature moving during Deploy (assumption 20, which replaced the vanguard
+	fall-back): "Kosanos moves from Zolton to Stonera."
+*/
+export function narrateSwiftMove(event, ctx = {}) {
+	const actor = ctx.actorName || 'A swift creature';
+	const from = ctx.fromSiteName || 'its world';
+	const to = ctx.toSiteName || 'another world';
+	return `${actor} moves from ${from} to ${to}.`;
 }
 
 export function narrateSend(ctx = {}) {

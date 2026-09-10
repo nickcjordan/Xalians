@@ -29,6 +29,17 @@ function siteOf(view, siteId) {
 	return view.frame.sites.find((s) => s.id === siteId);
 }
 
+// a creature already standing at one of the frame's worlds, on your own side
+function findOnBoard(view, you, recordId) {
+	for (const site of view.frame.sites) {
+		const entry = (view.board[site.id][you] || []).find((e) => e.recordId === recordId);
+		if (entry) {
+			return entry.record;
+		}
+	}
+	return null;
+}
+
 function sendReason(view, record, site, you) {
 	const opponent = you === 'A' ? 'B' : 'A';
 	const prepared = prepare(record, site, site.world, view.players[you].sentCount, { rules: view.rules });
@@ -56,16 +67,19 @@ function sendReason(view, record, site, you) {
 	} else if (prepared.strainLevel === 'strained') {
 		text += ' It is strained there.';
 	}
-	// what it does when the world resolves, in the one role sentence the whole table uses
+	// what it does at the Clash, in the one role sentence the whole table uses
 	text += ` ${roleSentence(prepared.role, prepared.blowMagnitude)}.`;
 	return text;
 }
 
 /*
 	recommendSend(view, roster, you) -> {
-		type: 'send' | 'pass' | 'relocate' | 'wait',
+		type: 'send' | 'pass' | 'move' | 'wait',
 		recordId?, siteId?, hidden?, label, reason,
 	}
+
+	'move' is Pass 2's swift move (assumption 20), which replaced the vanguard fall-back:
+	a swift creature already on the table steps to another world without spending the turn.
 */
 export function recommendSend(view, roster, you) {
 	if (!view || view.phase !== 'deploy') {
@@ -93,13 +107,16 @@ export function recommendSend(view, roster, you) {
 			reason: sendReason(view, record, site, you),
 		};
 	}
-	if (choice.type === 'relocate') {
+	if (choice.type === 'move') {
 		const site = siteOf(view, choice.siteId);
+		const record = findOnBoard(view, you, choice.recordId);
+		const name = record ? speciesLabel(record) : 'A swift creature';
 		return {
-			type: 'relocate',
+			type: 'move',
+			recordId: choice.recordId,
 			siteId: choice.siteId,
-			label: `Fall back to ${site ? site.name : 'another site'}`,
-			reason: 'Your first creature would do more at that site, and falling back costs no turn.',
+			label: `Move ${name} to ${site ? site.name : 'another world'}`,
+			reason: `${name} would do more at ${site ? site.name : 'the other world'}, and it is swift, so moving costs no turn.`,
 		};
 	}
 	return {

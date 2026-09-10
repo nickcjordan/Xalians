@@ -24,7 +24,7 @@ import {
 	MIN_BLOW_MAGNITUDE,
 	ROLE,
 	PRESENCE_BY_ARCHETYPE,
-	AREA_ABILITY_ACTIONS,
+	SWEEP_ABILITY_ACTIONS,
 	WARD_ABILITY_ACTION,
 	MEND_ABILITY_ACTION,
 	getActClass,
@@ -34,6 +34,9 @@ import {
 	ACT_CLASS,
 	TEMPERAMENT_HIGH_THRESHOLD,
 	TEMPERAMENT_LOW_THRESHOLD,
+	WILLFUL_THRESHOLD,
+	SWIFT_SPEED,
+	presenceScaleOf,
 } from './expeditionInterpretation.js';
 
 // ---------------------------------------------------------------------------
@@ -269,16 +272,26 @@ export function holdAtSite(record, site, worldArg, opts = {}) {
 	const isHome = !!origin && !!(world && world.planet) && String(origin).toLowerCase() === String(world.planet).toLowerCase();
 	const homeGround = isHome ? HOME_GROUND_MULTIPLIER : 1;
 	const level = strainLevel(record, site, world);
-	// bolster (assumption 8): one grade of strain relief while a bolsterer stands here,
-	// and a flat bolsterFloor for a creature that is already comfortable
+	// willpower's job (assumption 17): a willful creature holds against the world, one
+	// grade less strain, applied BEFORE bolster so the two never stack past comfortable.
+	const willful = isWillful(record, rules);
+	const heldLevel = willful ? liftedStrainLevel(level) : level;
+	// bolster (assumption 8): one more grade of strain relief while a bolsterer stands
+	// here, and a flat bolsterFloor for a creature that is already comfortable. Charisma
+	// scales what the bolsterer restores (assumption 17): opts.bolsterScale is the
+	// bolsterer's presence scale, 1 for a caller that does not know who is bolstering.
 	const bolstered = !!opts.bolstered;
-	const effectiveLevel = bolstered ? liftedStrainLevel(level) : level;
+	const bolsterScale = typeof opts.bolsterScale === 'number' ? opts.bolsterScale : 1;
+	const effectiveLevel = bolstered ? liftedStrainLevel(heldLevel) : heldLevel;
 	const strain = strainMultiplierFor(effectiveLevel);
 
-	let value = base * matchup * homeGround * strain;
-	if (bolstered && level === 'none') {
+	// the lift is priced as a delta so the bolsterer's charisma can scale exactly what the
+	// bolster added and nothing else
+	const unlifted = base * matchup * homeGround * strainMultiplierFor(heldLevel);
+	let value = unlifted + (base * matchup * homeGround * strain - unlifted) * bolsterScale;
+	if (bolstered && heldLevel === 'none') {
 		const floorBonus = rules && typeof rules.bolsterFloor === 'number' ? rules.bolsterFloor : BOLSTER_FLOOR;
-		value += floorBonus;
+		value += floorBonus * bolsterScale;
 	}
 
 	const kinAtSite = typeof opts.packBondedKinAtSite === 'number' ? opts.packBondedKinAtSite : 0;
@@ -291,19 +304,49 @@ export function holdAtSite(record, site, worldArg, opts = {}) {
 	}
 
 	// `level` is the creature's own strain grade, as the plinth prints it; `effectiveLevel`
-	// is the grade actually used for the arithmetic once a bolsterer has lifted it.
-	return { value, level, effectiveLevel, bolstered, isHome, matchup };
+	// is the grade actually used for the arithmetic once willpower and a bolsterer have
+	// lifted it.
+	return { value, level, heldLevel, effectiveLevel, willful, bolstered, isHome, matchup };
 }
 
 // ---------------------------------------------------------------------------
-// initiative
+// speed, willpower, presence (assumption 17: every attribute a job)
 // ---------------------------------------------------------------------------
 
-export function initiativeOf(record) {
+/*
+	speedOf(record) -> the mean of reflex and agility.
+
+	Named `initiative` until Pass 2's vocabulary ruling. Speed orders the attacks at a
+	world and, at or above rules.swiftSpeed, lets the creature move once per round during
+	Deploy (assumption 20).
+*/
+export function speedOf(record) {
 	const attrs = (record && record.attributes) || {};
 	const reflex = typeof attrs.reflex === 'number' ? attrs.reflex : 0;
 	const agility = typeof attrs.agility === 'number' ? attrs.agility : 0;
 	return (reflex + agility) / 2;
+}
+
+// DEPRECATED, one pass only: the old name for speedOf. Callers outside this package are
+// being moved to speedOf; do not add new uses.
+export const initiativeOf = speedOf;
+
+export function isSwift(record, rules) {
+	if (rules && rules.swiftMove === false) {
+		return false;
+	}
+	const threshold = rules && typeof rules.swiftSpeed === 'number' ? rules.swiftSpeed : SWIFT_SPEED;
+	return speedOf(record) >= threshold;
+}
+
+export function isWillful(record, rules) {
+	if (rules && rules.willful === false) {
+		return false;
+	}
+	const threshold = rules && typeof rules.willfulThreshold === 'number' ? rules.willfulThreshold : WILLFUL_THRESHOLD;
+	const attrs = (record && record.attributes) || {};
+	const willpower = typeof attrs.willpower === 'number' ? attrs.willpower : 0;
+	return willpower >= threshold;
 }
 
 // ---------------------------------------------------------------------------
@@ -431,7 +474,7 @@ export function favoredAct(record, acts) {
 // ---------------------------------------------------------------------------
 
 /*
-	roleOf(record, rules) -> 'strike' | 'area' | 'bolster' | 'shield' | 'none'
+	roleOf(record, rules) -> 'strike' | 'sweep' | 'bolster' | 'shield' | 'none'
 
 	Every creature is a hold and exactly one role. The rule, written down once:
 
@@ -442,11 +485,11 @@ export function favoredAct(record, acts) {
 	   mend ability is a shield whatever its archetype says, and one that carries a mend
 	   and no ward is a bolster. Carrying both, or neither, leaves the archetype's default
 	   standing, since nothing in the record then points one way.
-	2. Everyone else is a blow: an AREA if it carries any of the area abilities
+	2. Everyone else is a blow: a SWEEP if it carries any of the sweep abilities
 	   (burst, spray, cloud), else a STRIKE.
 
 	`rules.roles` is the ablation switch (assumption 15): a role turned off degrades the
-	creature to a plain strike if it was an area, and to a plain holder (ROLE.NONE) if it
+	creature to a plain strike if it was a sweep, and to a plain holder (ROLE.NONE) if it
 	was a presence, so a batch can measure what each role actually carries.
 */
 export function roleOf(record, rules) {
@@ -455,7 +498,7 @@ export function roleOf(record, rules) {
 	if (!toggles) {
 		return natural;
 	}
-	if (natural === ROLE.AREA && toggles.area === false) {
+	if (natural === ROLE.SWEEP && toggles.sweep === false) {
 		return ROLE.STRIKE;
 	}
 	if (natural === ROLE.BOLSTER && toggles.bolster === false) {
@@ -487,7 +530,7 @@ export function naturalRoleOf(record) {
 		return presenceDefault;
 	}
 
-	return abilityActions.some((a) => AREA_ABILITY_ACTIONS.includes(a)) ? ROLE.AREA : ROLE.STRIKE;
+	return abilityActions.some((a) => SWEEP_ABILITY_ACTIONS.includes(a)) ? ROLE.SWEEP : ROLE.STRIKE;
 }
 
 /*
@@ -495,8 +538,8 @@ export function naturalRoleOf(record) {
 
 	A blow creature throws one blow: the magnitude of its favored ATTACKING ability
 	(assumption 4 keeps the existing favoredAct machinery), rescaled by the magnitude
-	scale that buildActs has already folded in. An area throws its strongest area
-	ability, since that is what made it an area in the first place. A blow creature with
+	scale that buildActs has already folded in. A sweep throws its strongest sweep
+	ability, since that is what made it a sweep in the first place. A blow creature with
 	no attacking ability at all strikes at MIN_BLOW_MAGNITUDE; `fallback` marks that case
 	so the simulator can count how often it fires.
 */
@@ -509,14 +552,14 @@ export function blowActOf(record, acts, role) {
 		magnitude: MIN_BLOW_MAGNITUDE,
 		fallback: true,
 	};
-	if (role !== ROLE.STRIKE && role !== ROLE.AREA) {
+	if (role !== ROLE.STRIKE && role !== ROLE.SWEEP) {
 		return null;
 	}
 	const attacking = acts.filter((a) => a.class !== ACT_CLASS.SUPPORT);
-	if (role === ROLE.AREA) {
-		const areas = acts.filter((a) => AREA_ABILITY_ACTIONS.includes(a.action));
-		if (areas.length > 0) {
-			return areas.reduce((best, a) => (!best || a.magnitude > best.magnitude ? a : best));
+	if (role === ROLE.SWEEP) {
+		const sweeps = acts.filter((a) => SWEEP_ABILITY_ACTIONS.includes(a.action));
+		if (sweeps.length > 0) {
+			return sweeps.reduce((best, a) => (!best || a.magnitude > best.magnitude ? a : best));
 		}
 	}
 	if (attacking.length === 0) {
@@ -564,7 +607,7 @@ export function conductOf(record) {
 
 		record, id, site, world, sentIndex,
 		baseHold, hold, holdMultiplier, isHome, bolstered,
-		initiative, strainLevel, effectiveStrainLevel, strainMultiplier,
+		speed, willful, swift, presenceScale, strainLevel, effectiveStrainLevel, strainMultiplier,
 		acts, favoredAct, role, blow, blowMagnitude, blowIsFallback,
 		conduct, traitKeywords,
 		stealthy, armored, resilient, menacing, packBonded, solitary
@@ -580,8 +623,11 @@ export function prepare(record, site, worldArg, sentIndex, opts = {}) {
 	const world = worldOfSite(site, worldArg);
 	const rules = opts.rules;
 	const level = strainLevel(record, site, world);
+	// willpower first, then bolster, and never past comfortable (assumption 17)
+	const willful = isWillful(record, rules);
+	const heldLevel = willful ? liftedStrainLevel(level) : level;
 	const bolstered = !!opts.bolstered;
-	const effectiveLevel = bolstered ? liftedStrainLevel(level) : level;
+	const effectiveLevel = bolstered ? liftedStrainLevel(heldLevel) : heldLevel;
 	const strainMult = strainMultiplierFor(effectiveLevel);
 	const { value: hold, isHome, matchup } = holdAtSite(record, site, world, opts);
 	const magnitudeScale = rules && typeof rules.magnitudeScale === 'number' ? rules.magnitudeScale : MAGNITUDE_SCALE;
@@ -601,8 +647,15 @@ export function prepare(record, site, worldArg, sentIndex, opts = {}) {
 		holdMultiplier: matchup,
 		isHome,
 		bolstered,
-		initiative: initiativeOf(record),
+		// Pass 2 vocabulary (assumption 17): initiative is speed everywhere the table can
+		// read it. `willful`, `swift` and `presenceScale` are the other three attribute
+		// jobs, exposed so the plinth and the preview can print them.
+		speed: speedOf(record),
+		willful,
+		swift: isSwift(record, rules),
+		presenceScale: presenceScaleOf(record, rules),
 		strainLevel: level,
+		heldStrainLevel: heldLevel,
 		effectiveStrainLevel: effectiveLevel,
 		strainMultiplier: strainMult,
 		acts,

@@ -18,7 +18,7 @@
 		                 section can be read at a setting that is not the default.
 		--md=<path>      also write the whole report as a markdown file
 		--json=<path>    also write the summarized report object as JSON
-		--only=a,b       run a subset of sections: regret, spread, decided, ablation, draft
+		--only=a,b       run a subset of sections: regret, spread, decided, ablation, draft, lanes
 		--sweep=<rules>=<values>
 		                 rerun the chosen sections once per value and print one row each.
 		                 <rules> is one rule name, or several joined by ':'; <values> is a
@@ -27,7 +27,7 @@
 		                   --sweep=magnitudeScale=0.55,0.8,1.1,1.5
 		                   --sweep=holdFloor:holdCeiling=-3.6:23.1,-1.2:21.0,2.8:17.6,6.0:14.9
 
-	Five sections, one per lever in the principles doc:
+	Six sections: five per lever in the principles doc, plus the per-attribute lanes Pass 2 asks for.
 
 		1. Naive-policy regret. Six trivial policies play side A against the proctor; if a
 		   trivial policy wins nearly as often as the proctor, the deeper decisions are
@@ -46,6 +46,10 @@
 		5. Draft dominance. Both sides draft under botDraft; keep rate and keeper win rate
 		   per species and per element. Always kept and usually winning is a balance
 		   problem; never kept is dead content.
+		6. Per-attribute lanes. For each of the ten record attributes, the site win rate of
+		   sends whose creature is in the top quartile of that attribute against the bottom
+		   quartile. An attribute whose quartiles win alike is an attribute the game does
+		   not read (docs/design/reclamation-base-redesign.md assumption 17).
 
 	Aggregation discipline, same as the simulator: every section returns one plain object,
 	and both the stdout report and the markdown file are rendered from those objects, so
@@ -60,7 +64,7 @@
 */
 
 import {
-	createMatch, send, pass, relocateVanguard, getPublicState,
+	createMatch, send, pass, moveSwift, getPublicState,
 	createRngState, nextRandom,
 } from '../expeditionRules.js';
 import {
@@ -77,7 +81,7 @@ import fs from 'node:fs';
 // CLI args
 // ---------------------------------------------------------------------------
 
-export const ALL_SECTIONS = ['regret', 'spread', 'decided', 'ablation', 'draft'];
+export const ALL_SECTIONS = ['regret', 'spread', 'decided', 'ablation', 'draft', 'lanes'];
 
 export function parseArgs(argv) {
 	const args = { matches: 200, seed: 7, md: null, json: null, only: null };
@@ -112,7 +116,7 @@ export function parseArgs(argv) {
 	ratio is set by the floor and the ceiling at once).
 */
 /*
-	parseRules('shieldCap=half;bolsterFloor=1.5;roles.area=false') -> a rules object.
+	parseRules('shieldCap=half;bolsterFloor=1.5;roles.sweep=false') -> a rules object.
 	Same grammar as the simulator's --rules, so one habit works in both tools.
 */
 export function parseRules(raw) {
@@ -414,7 +418,7 @@ function policyNeverContest(publicState, ownRoster, handler) {
 
 /*
 	alwaysPresenceFirst: the proctor's own scoring, but every bolster and shield in the
-	roster goes before any blow creature does. The base redesign's Measurement step 5 asks
+	roster goes before any attacking creature does. The base redesign's Measurement step 5 asks
 	for it: if leading with the presences beats the proctor, the two presence roles are
 	priced too cheaply; if it never comes close, they are priced too dearly.
 */
@@ -458,7 +462,7 @@ export const NAIVE_POLICIES = [
 	{ id: 'alwaysHidden', label: 'always hidden', send: policyAlwaysHidden },
 	{ id: 'alwaysStack', label: 'always stack', send: policyAlwaysStack },
 	{ id: 'neverContest', label: 'never contest (secure only)', send: policyNeverContest },
-	{ id: 'alwaysPresenceFirst', label: 'always presence first (bolster/shield before any blow)', send: policyAlwaysPresenceFirst },
+	{ id: 'alwaysPresenceFirst', label: 'always presence first (bolster/shield before any attacker)', send: policyAlwaysPresenceFirst },
 ];
 
 export const PROCTOR_POLICY = { id: 'proctor', label: 'Court proctor (reference)', send: policyProctor };
@@ -473,7 +477,7 @@ export const RANDOM_POLICY = NAIVE_POLICIES.find((p) => p.id === 'random');
 
 /*
 	playMatch(options) -> {
-		winner, error, sends, hiddenSends, returnedSends, routs,
+		winner, error, sends, hiddenSends, returnedSends, downs,
 		scoreByRound: [{ A, B }],   // sitesWon after each judge
 		spreadSamples: [...],        // only when options.collectSpread
 	}
@@ -481,7 +485,7 @@ export const RANDOM_POLICY = NAIVE_POLICIES.find((p) => p.id === 'random');
 export function playMatch(options) {
 	const {
 		matchSeed, rosterA, rosterB, policyA, policyB, rules,
-		collectSpread = false, spreadSeat = 'A',
+		collectSpread = false, spreadSeat = 'A', collectLanes = false,
 	} = options;
 
 	let state = createMatch({ rosterA, rosterB, worlds: getWorlds(), seed: matchSeed, rules });
@@ -498,11 +502,16 @@ export function playMatch(options) {
 	const policy = { A: policyA, B: policyB };
 	const scoreByRound = [];
 	const spreadSamples = [];
+	// one row per send, with the sending creature's attributes and whether its world was
+	// won, for the per-attribute lane reading (docs/design/reclamation-base-redesign.md
+	// assumption 17: every attribute should carry weight, so every attribute is measured)
+	const laneSamples = [];
+	let sendsThisFrame = [];
 	let sends = 0;
 	let sendsBySeat = { A: 0, B: 0 };
 	let hiddenSends = 0;
 	let returnedSends = 0;
-	let routs = 0;
+	let downs = 0;
 	let error = null;
 
 	let worldsResolved = 0;
@@ -559,18 +568,18 @@ export function playMatch(options) {
 
 			let action = policy[handler](publicState, ownRoster, handler, rngLike);
 
-			if (action.type === 'relocate') {
-				const relocated = relocateVanguard(state, handler, action.siteId);
-				if (!relocated) {
-					error = `illegal relocate for ${handler}`;
+			if (action.type === 'move') {
+				const moved = moveSwift(state, handler, action.recordId, action.siteId);
+				if (!moved) {
+					error = `illegal swift move for ${handler}`;
 					return finish();
 				}
-				state = relocated;
+				state = moved;
 				logBefore = state.resolutionLog.length;
 				marginsBefore = marginsNow(frame);
 				action = policy[handler](getPublicState(state, handler), state.players[handler].roster, handler, rngLike);
 				if (collectSpread && handler === spreadSeat) {
-					// the sample above was taken before the relocation moved the board; drop
+					// the sample above was taken before the swift move changed the board; drop
 					// it rather than record a shortlist the seat never actually chose from
 					spreadSamples.pop();
 				}
@@ -579,9 +588,13 @@ export function playMatch(options) {
 			let nextState = null;
 			if (action.type === 'send') {
 				const wasReturned = (state.players[handler].returned || []).includes(action.recordId);
+				const sentRecord = state.players[handler].roster.find((r) => r.id === action.recordId);
 				nextState = send(state, handler, action.recordId, action.siteId, action.hidden);
 				if (nextState) {
 					sends++;
+					if (collectLanes && sentRecord) {
+						sendsThisFrame.push({ seat: handler, siteId: action.siteId, attributes: sentRecord.attributes || {} });
+					}
 					sendsBySeat[handler]++;
 					if (action.hidden) {
 						hiddenSends++;
@@ -623,11 +636,21 @@ export function playMatch(options) {
 
 		const newEvents = state.resolutionLog.slice(logBefore);
 		newEvents.forEach((ev) => {
-			if (ev.outcome === 'routed') {
-				routs++;
+			if (ev.outcome === 'downed') {
+				downs++;
 			}
 		});
 		const judgeEvent = newEvents.find((ev) => ev.type === 'judge');
+		if (collectLanes && judgeEvent && judgeEvent.siteResults) {
+			sendsThisFrame.forEach((row) => {
+				const result = judgeEvent.siteResults[row.siteId];
+				if (!result || !result.winner) {
+					return; // a tie reverts to the Court and decides nothing about the send
+				}
+				laneSamples.push({ attributes: row.attributes, won: result.winner === row.seat });
+			});
+		}
+		sendsThisFrame = [];
 		if (judgeEvent && judgeEvent.siteResults) {
 			Object.keys(judgeEvent.siteResults).forEach((siteId) => {
 				const result = judgeEvent.siteResults[siteId];
@@ -658,11 +681,12 @@ export function playMatch(options) {
 			sendsBySeat,
 			hiddenSends,
 			returnedSends,
-			routs,
+			downs,
 			worldsResolved,
 			resolveChangedLeader,
 			scoreByRound,
 			spreadSamples,
+			laneSamples,
 		};
 	}
 }
@@ -702,7 +726,7 @@ function summarizeSpread(scored, frameIndex) {
 	rather than two independent samples.
 */
 export function runBatch(opts) {
-	const { matches, seed, pool, policyA, policyB, rules, collectSpread, spreadSeat } = opts;
+	const { matches, seed, pool, policyA, policyB, rules, collectSpread, spreadSeat, collectLanes } = opts;
 	const rng = makeRng(seed);
 	const results = [];
 	for (let i = 0; i < matches; i++) {
@@ -717,6 +741,7 @@ export function runBatch(opts) {
 			rules,
 			collectSpread,
 			spreadSeat,
+			collectLanes,
 		}));
 	}
 	return results;
@@ -962,7 +987,7 @@ export function matchShapeOf(results) {
 		comebackRate: rate(comebackWins, comebackEligible),
 		tiedAfterRound2: rate(tiedAfterTwo, done.length),
 		thirdRoundChangedLeader: rate(thirdRoundChangedLeader, done.length),
-		routsPerMatch: average(done.map((r) => r.routs)),
+		downsPerMatch: average(done.map((r) => r.downs)),
 		// the base redesign's own gauge for the magnitude scale (assumption 12): how often
 		// Resolve handed a world to the side that was behind at the end of Deploy
 		resolveChangedLeaderRate: rate(
@@ -1012,15 +1037,24 @@ export const ABLATIONS = [
 	{ id: 'baseline', label: 'baseline (all rules on)', rules: {} },
 	{ id: 'noHidden', label: 'no hidden sends', rules: { hiddenSends: false } },
 	{ id: 'noLoki', label: 'no Loki line', rules: { lokiLine: false } },
-	{ id: 'noTrailing', label: 'no trailing bonus', rules: { trailingBonus: 0 } },
-	{ id: 'noInitiative', label: 'no initiative (sent order)', rules: { initiative: false } },
+	{ id: 'noSpeed', label: 'no speed order (sent order)', rules: { speed: false } },
 	{ id: 'noHiddenFirst', label: 'no hidden-first', rules: { hiddenFirst: false } },
 	// the three role ablations (docs/design/reclamation-base-redesign.md Measurement step
 	// 4): a role switched off degrades every creature that has it, so each role has to be
 	// shown to carry weight rather than assumed to
-	{ id: 'noArea', label: 'no area role (areas strike instead)', rules: { roles: { area: false } } },
+	{ id: 'noSweep', label: 'no sweep role (sweeps strike instead)', rules: { roles: { sweep: false } } },
 	{ id: 'noBolster', label: 'no bolster role (bolsterers just hold)', rules: { roles: { bolster: false } } },
 	{ id: 'noShield', label: 'no shield role (shielders just hold)', rules: { roles: { shield: false } } },
+	// Pass 2's own rules (assumptions 17 to 20). Each of these was added because something
+	// measured inert or unread, so each has to earn its place the same way the roles do.
+	{ id: 'noHurtAttacksLess', label: 'no hurt-attacks-less (assumption 18)', rules: { hurtAttacksLess: false } },
+	{ id: 'noBolsterRecovery', label: 'no bolster recovery (assumption 19)', rules: { bolsterRecovery: 0 } },
+	{ id: 'noWillful', label: 'no willful strain relief (assumption 17)', rules: { willful: false } },
+	{ id: 'noPresenceScale', label: 'no presence scale (every presence at charisma 50)', rules: { presenceScale: false } },
+	{ id: 'noInstinctLanes', label: 'no instinct lanes (conduct only)', rules: { instinctLanes: false } },
+	{ id: 'noSwiftMove', label: 'no swift move (assumption 20)', rules: { swiftMove: false } },
+	// not an ablation but a comparison: the catch-up send Nick cut, put back
+	{ id: 'trailingBonusBack', label: 'catch-up send restored (trailingBonus 1)', rules: { trailingBonus: 1 } },
 ];
 
 /*
@@ -1087,10 +1121,10 @@ export function sectionAblation({ matches, seed, pool, rules }) {
 				row.moved.push(label);
 			}
 		});
-		// routs per match is a mean, not a rate, so it gets its own threshold: a tenth of
-		// a rout per match is about the smallest difference worth calling at this size
-		if (Math.abs(row.shape.routsPerMatch - baseline.shape.routsPerMatch) > 0.1) {
-			row.moved.push('routs');
+		// downs per match is a mean, not a rate, so it gets its own threshold: a tenth of
+		// a down per match is about the smallest difference worth calling at this size
+		if (Math.abs(row.shape.downsPerMatch - baseline.shape.downsPerMatch) > 0.1) {
+			row.moved.push('downs');
 		}
 	});
 
@@ -1251,6 +1285,92 @@ function holdAcrossFrames(record, frames) {
 	return n > 0 ? sum / n : 0;
 }
 
+
+// ---------------------------------------------------------------------------
+// section 6: per-attribute lanes
+// ---------------------------------------------------------------------------
+
+/*
+	The ten attributes of the ratified record (docs/design/xalian-creature-system-redesign.md
+	assumption 10). Pass 2 gave each of them a job (reclamation-base-redesign.md assumption
+	17), so each of them should now show up in whether a send's world is won.
+*/
+export const RECORD_ATTRIBUTES = [
+	'vitality', 'resilience', 'endurance', 'strength', 'intelligence',
+	'agility', 'reflex', 'willpower', 'charisma', 'instinct',
+];
+
+function quantileOf(sortedValues, q) {
+	if (sortedValues.length === 0) {
+		return 0;
+	}
+	const index = Math.min(sortedValues.length - 1, Math.max(0, Math.floor(q * (sortedValues.length - 1))));
+	return sortedValues[index];
+}
+
+/*
+	sectionLanes({ matches, seed, pool, rules }) -> {
+		rows: [{ attribute, topWinRate, bottomWinRate, gap, topN, bottomN, q1, q3 }],
+		readings: [...],
+	}
+
+	One proctor mirror batch. Every send is recorded with its creature's attributes and
+	whether the Court gave that world to the sending seat. For each attribute the quartile
+	cuts are taken over the sends actually made, and the site win rate of the top quartile
+	is compared with the bottom quartile. An attribute whose two quartiles win at the same
+	rate is an attribute the game does not read: that is exactly what this pass set out to
+	fix, so it is measured directly rather than inferred from the ablation matrix.
+
+	Ties are excluded (a tied world reverts to the Court and settles nothing about the
+	sends made to it), so the two quartile rates are both read against decided worlds.
+*/
+export function sectionLanes({ matches, seed, pool, rules }) {
+	const results = runBatch({
+		matches, seed, pool, rules,
+		policyA: PROCTOR_POLICY.send,
+		policyB: PROCTOR_POLICY.send,
+		collectLanes: true,
+	});
+	const samples = results.filter((r) => !r.error).flatMap((r) => r.laneSamples || []);
+
+	const rows = RECORD_ATTRIBUTES.map((attribute) => {
+		const withValue = samples.filter((x) => typeof x.attributes[attribute] === 'number');
+		const sorted = withValue.map((x) => x.attributes[attribute]).sort((a, b) => a - b);
+		const q1 = quantileOf(sorted, 0.25);
+		const q3 = quantileOf(sorted, 0.75);
+		const bottom = withValue.filter((x) => x.attributes[attribute] <= q1);
+		const top = withValue.filter((x) => x.attributes[attribute] >= q3);
+		const topWinRate = rate(top.filter((x) => x.won).length, top.length);
+		const bottomWinRate = rate(bottom.filter((x) => x.won).length, bottom.length);
+		return {
+			attribute,
+			q1,
+			q3,
+			topN: top.length,
+			bottomN: bottom.length,
+			topWinRate,
+			bottomWinRate,
+			gap: topWinRate && bottomWinRate ? topWinRate.p - bottomWinRate.p : null,
+		};
+	});
+
+	const readings = [];
+	// "carries weight" at this batch size means the gap clears the top quartile's own
+	// interval half width, the same test the ablation matrix uses
+	const inert = rows.filter((r) => r.gap === null || (r.topWinRate && Math.abs(r.gap) <= r.topWinRate.halfWidth));
+	const carrying = rows.filter((r) => !inert.includes(r));
+	if (carrying.length > 0) {
+		readings.push(`Carrying weight: ${carrying.map((r) => `${r.attribute} ${(r.gap * 100).toFixed(1)} points`).join(', ')}.`);
+	}
+	if (inert.length > 0) {
+		readings.push(`NO MEASURABLE LANE at ${matches} matches: ${inert.map((r) => r.attribute).join(', ')}. The job Pass 2 gave each of these does not yet show in whether its world is won.`);
+	} else {
+		readings.push('Every one of the ten attributes moves the site win rate beyond the interval. Every lane carries weight at this batch size.');
+	}
+
+	return { rows, readings };
+}
+
 // ---------------------------------------------------------------------------
 // runValidation: the public entry point, also used directly by tests
 // ---------------------------------------------------------------------------
@@ -1286,6 +1406,9 @@ export function runValidation(args = {}) {
 	if (sections.includes('draft')) {
 		report.draft = sectionDraft({ matches, seed, rules });
 	}
+	if (sections.includes('lanes')) {
+		report.lanes = sectionLanes({ matches, seed, pool, rules });
+	}
 
 	return report;
 }
@@ -1313,7 +1436,7 @@ export function runSweep(args = {}) {
 		return {
 			values: tuple,
 			label: sweep.rules.map((name, i) => `${name}=${tuple[i]}`).join(', '),
-			routsPerMatch: shape ? shape.routsPerMatch : null,
+			downsPerMatch: shape ? shape.downsPerMatch : null,
 			resolveChangedLeaderRate: shape ? shape.resolveChangedLeaderRate : null,
 			decidedAfterRound1: shape ? shape.decidedAfterRound1 : null,
 			comebackRate: shape ? shape.comebackRate : null,
@@ -1328,10 +1451,10 @@ export function runSweep(args = {}) {
 export function printSweep(sweepReport) {
 	console.log('\n=== lever sweep ===');
 	console.log(`lever(s): ${sweepReport.rules.join(', ')}`);
-	const headers = ['setting', 'routs/match', 'resolve changed leader', 'decided after r1', 'comeback', 'worst naive', 'species out of keep band'];
+	const headers = ['setting', 'downs/match', 'resolve changed leader', 'decided after r1', 'comeback', 'worst naive', 'species out of keep band'];
 	const rows = sweepReport.rows.map((row) => [
 		row.label,
-		row.routsPerMatch === null ? '-' : row.routsPerMatch.toFixed(2),
+		row.downsPerMatch === null ? '-' : row.downsPerMatch.toFixed(2),
 		row.resolveChangedLeaderRate ? fmtPctCi(row.resolveChangedLeaderRate) : '-',
 		row.decidedAfterRound1 ? fmtPctCi(row.decidedAfterRound1) : '-',
 		row.comebackRate ? fmtPctCi(row.comebackRate) : '-',
@@ -1342,10 +1465,10 @@ export function printSweep(sweepReport) {
 }
 
 export function sweepToMarkdown(sweepReport) {
-	const headers = ['setting', 'routs/match', 'resolve changed leader', 'decided after r1', 'comeback', 'worst naive', 'species out of keep band'];
+	const headers = ['setting', 'downs/match', 'resolve changed leader', 'decided after r1', 'comeback', 'worst naive', 'species out of keep band'];
 	const rows = sweepReport.rows.map((row) => [
 		row.label,
-		row.routsPerMatch === null ? '-' : row.routsPerMatch.toFixed(2),
+		row.downsPerMatch === null ? '-' : row.downsPerMatch.toFixed(2),
 		row.resolveChangedLeaderRate ? fmtPctCi(row.resolveChangedLeaderRate) : '-',
 		row.decidedAfterRound1 ? fmtPctCi(row.decidedAfterRound1) : '-',
 		row.comebackRate ? fmtPctCi(row.comebackRate) : '-',
@@ -1436,7 +1559,7 @@ function shapeRow(label, s) {
 		fmtPct(s.comebackRate),
 		fmtPct(s.tiedAfterRound2),
 		fmtPct(s.thirdRoundChangedLeader),
-		s.routsPerMatch.toFixed(2),
+		s.downsPerMatch.toFixed(2),
 	];
 }
 
@@ -1451,7 +1574,7 @@ function decidedBlocks(decided) {
 		`  comeback rate (trailed after round 1, won): ${fmtRate(p.comebackRate)}`,
 		`  tied after round 2: ${fmtRate(p.tiedAfterRound2)}`,
 		`  third round changed the leader: ${fmtRate(p.thirdRoundChangedLeader)}`,
-		`  routs per match: ${p.routsPerMatch.toFixed(2)}`,
+		`  downs per match: ${p.downsPerMatch.toFixed(2)}`,
 		`  resolution changed the leader at ${fmtRate(p.resolveChangedLeaderRate)} of contested worlds`,
 	];
 	const rows = [shapeRow('proctor mirror', p)];
@@ -1462,7 +1585,7 @@ function decidedBlocks(decided) {
 		{ type: 'lines', lines: detail },
 		{
 			type: 'table',
-			headers: ['matchup', 'n', 'decided r1', 'decided r2', 'only at end', 'comeback', 'tied after r2', 'r3 changed leader', 'routs/match'],
+			headers: ['matchup', 'n', 'decided r1', 'decided r2', 'only at end', 'comeback', 'tied after r2', 'r3 changed leader', 'downs/match'],
 			rows,
 		},
 		{ type: 'reading', lines: decided.readings },
@@ -1476,7 +1599,7 @@ function ablationBlocks(ablation) {
 		...rivalIds.map((id) => fmtPctCi(row.rivalWinRates[id])),
 		fmtPct(row.shape.decidedAfterRound1),
 		fmtPct(row.shape.comebackRate),
-		row.shape.routsPerMatch.toFixed(2),
+		row.shape.downsPerMatch.toFixed(2),
 		fmtPct(row.shape.hiddenSendRate),
 		fmtPct(row.shape.returnedSendRate),
 		row.id === 'baseline' ? '(baseline)' : (row.moved.length > 0 ? row.moved.join(', ') : 'nothing'),
@@ -1484,7 +1607,7 @@ function ablationBlocks(ablation) {
 	return [
 		{
 			type: 'table',
-			headers: ['ablation', ...rivalIds, 'decided r1', 'comeback', 'routs/match', 'hidden rate', 'returned rate', 'moved?'],
+			headers: ['ablation', ...rivalIds, 'decided r1', 'comeback', 'downs/match', 'hidden rate', 'returned rate', 'moved?'],
 			rows,
 		},
 		{ type: 'reading', lines: ablation.readings },
@@ -1528,6 +1651,26 @@ function draftBlocks(draft) {
 	];
 }
 
+function laneBlocks(lanes) {
+	const rows = lanes.rows.map((r) => [
+		r.attribute,
+		`${r.q1} / ${r.q3}`,
+		r.topN,
+		r.topWinRate ? fmtPctCi(r.topWinRate) : '-',
+		r.bottomN,
+		r.bottomWinRate ? fmtPctCi(r.bottomWinRate) : '-',
+		r.gap === null ? '-' : `${(r.gap * 100).toFixed(1)}`,
+	]);
+	return [
+		{
+			type: 'table',
+			headers: ['attribute', 'q1 / q3', 'top n', 'top quartile site win', 'bottom n', 'bottom quartile site win', 'gap (points)'],
+			rows,
+		},
+		{ type: 'reading', lines: lanes.readings },
+	];
+}
+
 /*
 	buildSections(report) -> [{ id, title, blocks }]
 
@@ -1551,6 +1694,9 @@ export function buildSections(report) {
 	}
 	if (report.draft) {
 		sections.push({ id: 'draft', title: '5. Draft dominance', blocks: draftBlocks(report.draft) });
+	}
+	if (report.lanes) {
+		sections.push({ id: 'lanes', title: '6. Per-attribute lanes', blocks: laneBlocks(report.lanes) });
 	}
 	return sections;
 }

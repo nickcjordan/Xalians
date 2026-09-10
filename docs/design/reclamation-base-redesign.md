@@ -107,6 +107,46 @@ Built on branch feat/reclamation-base per the plan above. Settings chosen by the
 - **The draft.** Compression cannot move a hold-ordered ranking (all four compression settings left 21 of 29 species outside the keep band). Rating by hold plus role value brought it to 18 of 29 and moved psychic out of dead content; a species cap of two and a one-of-each-role floor changed 16 keeps in 200 and moved nothing. A rating-ordered keep of twelve from eighteen always cuts the bottom third, and rating is species-determined, so the band is unreachable by this kind of draft. Recorded as an open item with three levers.
 - **Friction recorded by the engine pass.** The species mean spread was 2.6:1 before compression, not 4:1. An area does not catch its own caster. A hidden bolsterer does not bolster until revealed. Resilient and anchored read nothing. The bot prices conduct targets by a compact reading of the conduct lines rather than the engine's full pick.
 
+## Pass 2: every attribute a job (2026-09-09, Nick's rulings after the first measurements)
+
+Nick's rulings on the first measurements: the game will not safeguard a player who is swept, so the decided-after-round-1 gauge is dropped and the widening frame is not pursued; kinship is not wanted; light sends are held in reserve; the catch-up send is cut as a gift to the losing side ("a participation trophy"), with comeback avenues to be chosen risks instead; speed need not equal power, but the creature's other properties should balance out; the vocabulary below is adopted; the sequence of attacks stays.
+
+**Why creatures read as weak.** The engine read five of the record's ten attributes (vitality, resilience, endurance for hold; agility, reflex for speed) and none of the seven capabilities. A creature built on the unread half was weak by construction. This pass gives every attribute one job:
+
+| Attribute | Job | Rule |
+|---|---|---|
+| vitality, resilience, endurance | hold | unchanged |
+| strength | attack power of contact attacks | the governing attribute for strike-class abilities |
+| intelligence | attack power of projected and mind attacks | the governing attribute for beam, burst and the mind abilities |
+| agility, reflex | speed: who hits first; swift creatures may move once | `swiftSpeed` threshold; replaces the vanguard fall-back |
+| willpower | holds against the world: one grade less strain above `willfulThreshold` | applied before bolster; does not stack with it past comfortable |
+| charisma | presence strength: bolster restores and shields cancel scaled by charisma | `presenceScale(charisma)` around 1.0 at 50 |
+| instinct | targeting: above `keenInstinct` the creature picks the enemy it can down, else the one it hurts most; below `dullInstinct` it hits the enemy sent earliest; between, the archetype's line as today | refines conduct |
+
+Also in this pass: **a hurt creature attacks for less**, in proportion to the hold it has left (assumption 18), so hitting first shapes every exchange; **bolster recovers damage**: at the ruling, allies at a bolster's world recover half of what attacks took (assumption 19); **the catch-up send is removed** (`trailingBonus` 0) and the Loki return stays; **the vanguard fall-back is replaced by swift creatures moving** (assumption 20).
+
+**Vocabulary** (table-facing; engine identifiers follow where they reach the public state): initiative becomes speed; rout becomes downed; staggered becomes hurt; blow and magnitude become attack and power; the area role becomes sweep; conduct becomes instinct; Resolve becomes Clash; Judge becomes Ruling; the trailing bonus is gone.
+
+**Comeback avenues to test after this pass** (chosen risks, never gifts): the stake, where either handler once per Proving may stake one world of the coming round so that it counts two toward the Charter for whoever holds it; a random draw is available if Nick wants chance back on the table, and it has been out by ruling so far.
+
+| # | Assumption / Decision | Confidence | Supporting Evidence |
+|---|---|---|---|
+| 17 | Every attribute gets one job, per the table above; capabilities stay unread for now | 75% (Nick, 2026-09-09: balance the properties rather than make speed equal power; first mapping to test) | `xalian-creature-system-redesign.md` assumption 10 (the ten attributes) |
+| 18 | A hurt creature attacks for less, in proportion to the hold it has left | 70% (speed measured inert; sequencing kept by Nick's ruling; this is what gives it a point) | first measurements: initiative moved nothing by ablation |
+| 19 | Bolster recovers half the damage its allies took, at the ruling, in addition to the strain grade | 75% (bolster measured inert; strain relief is only more hold, recovery is the one thing hold cannot do) | first measurements: bolster ablation and the floor sweep |
+| 20 | The catch-up send is cut; the vanguard fall-back becomes "swift creatures may move once" | 85% (Nick: no gifts to the losing side; a rule the player could not see a reason for becomes a property of speed) | this pass |
+
+### Pass 2 measurements (2026-09-09, 200 matches, validation seed 7, simulator seed 11)
+
+Settings: `swiftSpeed` 65 (sweep 65/75/85: 4.7, 2.5 and 0.8 moves a match; 85 falls under one move a match; starter win rates all within one interval, so the pick is on frequency), `bolsterRecovery` 0.5 (sweep 0.5/0.75/1.0: every setting keeps bolster in band, but 0.75 drops the presence-first policy to seven points under the mirror and 1.0 to four and a half, so 0.5 is the largest value that clears the eight-point bar), `willfulThreshold` 65, `keenInstinct` 65, `dullInstinct` 35, presence scale 0.5 plus charisma over 100, `trailingBonus` 0, `hurtAttacksLess` on. Hurl is governed by intelligence with the other projected attacks (the pass brief had it under strength).
+
+- **Decisions.** Proctor mirror 51.0; greedy 0, always-stack 0, never-contest 1, random 12.5, pass-early 16, presence-first 41. **Always-hidden 46.5, four and a half points under the mirror, fails the eight-point bar.** The first pass's ten-point gap was seed luck: on four seeds hiding sits within a few points of the mirror under both hurl settings. Hidden-first plus hurt-attacks-for-less is a strong pair (the hidden creature lands first and unhurt; every reply is already scaled down). Hiding needs a price: a hidden send costing more against the cap, or the hidden creature's first attack losing hidden-first when it is the only attacker. Next pass.
+- **Shape.** Spread 5.7 near-best, dominant on 14 percent; downs per match 3.1; resolution changes the leader at 19.8 percent (band 25 to 40, still unmet); comeback 27 (band 30 to 40 unmet; the ablation row that restores the catch-up send reads 30.4 and decided-after-round-1 36 against 47, which is the evidence that a chosen-risk comeback avenue is needed soon); starter win rate 45.
+- **Roles on one bar**, both readings: shield 48.3, strike 53.0, bolster 46.6, sweep 49.3 keeper win rate in the draft; 50.2 to 58.5 in the simulator. Keep rates: presences are kept 87 percent of the time, strikes 53, sweeps 65.
+- **Species.** 17 of 29 outside the keep band (from 21 by hold alone); five dead (avilily, akinza, dromeus, imprit, chromocat); fire the one dead element; every species' keeper win rate inside 40 to 60 (crystorn 41.8 to chromocat 60.0). The draft band remains a draft-shape problem.
+- **Lanes** (top quartile minus bottom quartile site win rate): strength +9.1, instinct +7.4, resilience +6.5, endurance +5.8, vitality +3.3 carry weight; agility, reflex and willpower do not resolve at 200 matches; intelligence (-5.2) and charisma (-7.4) read negative because they are high on the roles that win worlds less (sweeps and presences), so those two lanes measure the role, not the attribute. A per-role split of the lane reading is the next refinement.
+- **Ablation.** Carrying weight: hidden sends, the Loki line, speed order (envoy moves), hidden-first, sweep, bolster (the role, now the second-heaviest rule: broker falls from 44 to 33.5 without it), shield, hurt-attacks-for-less (downs 3.65 without it), willful, the swift move (envoy 38 to 32, downs 3.6, the heaviest new rule). Not measurable at 200 matches: bolster recovery, presence scale, instinct lanes. Each of those three fixes a legibility problem the ablation cannot see (a bolster that does something at every contested world; presences that differ by creature; targeting that follows a stat the player can read), and recovery cannot be raised into measurability without breaking the presence-first gauge, so all three stay as they are, recorded as levers.
+
 ## Open items
 
 - Whether menacing should merge into shield (a weaker cousin that draws rather than cancels).

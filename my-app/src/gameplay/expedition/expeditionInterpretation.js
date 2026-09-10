@@ -74,13 +74,109 @@ export const SEVERE_STRAIN_MULTIPLIER = 0.25;
 */
 export const MAGNITUDE_SCALE = 1.1;
 
-// An area blow removes this share of a strike's magnitude, from every OTHER creature at
-// the world, both sides (assumption 5).
-export const AREA_DISCOUNT = 0.6;
+// A sweep removes this share of a strike's power, from every OTHER creature at the
+// world, both sides (assumption 5). The role was called "area" until Pass 2's vocabulary
+// ruling renamed it (assumption 17's table, "the area role becomes sweep").
+export const SWEEP_DISCOUNT = 0.6;
 
 // Bolster's floor (assumption 8): an ally already comfortable gains this much hold,
 // since there is no strain grade left to lift it out of.
 export const BOLSTER_FLOOR = 1;
+
+/*
+	Pass 2, "every attribute a job" (docs/design/reclamation-base-redesign.md assumption
+	17). Five of the record's ten attributes were read by the engine and five were not, so
+	a creature built on the unread half was weak by construction. Each constant below is
+	the threshold or scale of one attribute's job, and each has a matching key in
+	DEFAULT_RULES so the simulator can ablate it.
+*/
+
+// willpower: at or above this the creature suffers one grade less strain, applied before
+// bolster and never pushing past comfortable.
+export const WILLFUL_THRESHOLD = 65;
+
+/*
+	charisma: presences scale by 0.5 + charisma/100, so a creature of charisma 50 plays a
+	presence exactly as it did before this pass, 100 plays it half again as strong and 0
+	plays it at half. It multiplies a bolster's grade lift, its floor and its recovery, and
+	a shield's cancelled fraction (which is clamped at 1: a shield can never cancel more
+	than the whole attack).
+*/
+export const PRESENCE_SCALE_FLOOR = 0.5;
+export const PRESENCE_SCALE_PER_POINT = 0.01;
+
+export function presenceScaleOf(record, rules) {
+	if (rules && rules.presenceScale === false) {
+		return 1;
+	}
+	const attrs = (record && record.attributes) || {};
+	const charisma = typeof attrs.charisma === 'number' ? attrs.charisma : 50;
+	return PRESENCE_SCALE_FLOOR + charisma * PRESENCE_SCALE_PER_POINT;
+}
+
+/*
+	instinct: targeting. At or above KEEN_INSTINCT a creature picks the enemy it can down
+	with this attack, and failing that the enemy it takes the most off (after matchup); at
+	or below DULL_INSTINCT it simply hits whatever was sent earliest; in between it follows
+	its archetype's conduct line as it always has.
+*/
+export const KEEN_INSTINCT = 65;
+export const DULL_INSTINCT = 35;
+
+// 'keen' | 'conduct' | 'dull' - which targeting lane a creature reads its target from.
+// One definition, read by the engine's own pick and by the bot's preview of it, so the
+// two can never disagree about who a creature would hit.
+export function instinctLaneOf(record, rules) {
+	if (rules && rules.instinctLanes === false) {
+		return 'conduct';
+	}
+	const attrs = (record && record.attributes) || {};
+	const instinct = typeof attrs.instinct === 'number' ? attrs.instinct : 50;
+	const keen = rules && typeof rules.keenInstinct === 'number' ? rules.keenInstinct : KEEN_INSTINCT;
+	const dull = rules && typeof rules.dullInstinct === 'number' ? rules.dullInstinct : DULL_INSTINCT;
+	if (instinct >= keen) {
+		return 'keen';
+	}
+	if (instinct <= dull) {
+		return 'dull';
+	}
+	return 'conduct';
+}
+
+/*
+	agility + reflex: speed. At or above this a creature is `swift` and may move once per
+	round during Deploy (assumption 20, which replaced the vanguard fall-back).
+
+	Set 2026-09-09 by a sweep over 65, 75 and 85 (200 matches, simulator seed 11,
+	validation seed 7). Swift moves per match 4.67, 2.54, 0.80; share flipping a losing
+	world 16.5, 17.1, 10.1 percent; round-one starter win rate 45.0, 42.5, 44.5; side A
+	47.0, 45.5, 45.5; proctor mirror 52.5, 45.5, 51.0. 65 is the setting whose starter win
+	rate sits closest to even while the move still fires several times a match; 85 drops it
+	under once a match, which is a rule the table would rarely see. FRICTION: all three
+	starter readings sit inside one another's intervals (+/- 6.9), so this pick is made on
+	the point estimate and the move's frequency, not on a resolved difference.
+*/
+export const SWIFT_SPEED = 65;
+
+// assumption 18: an attack lands scaled by the attacker's remaining share of its hold, so
+// hitting first shapes every exchange.
+export const HURT_ATTACKS_LESS = true;
+
+/*
+	assumption 19: at the Ruling, each ally at a bolster's world recovers this share of the
+	damage it took this round, times the bolsterer's presence scale.
+
+	Set 2026-09-09 by a sweep over 0.5, 0.75 and 1.0 (200 matches, simulator seed 11,
+	validation seed 7, at swiftSpeed 65). Hold recovered per bolster send 0.61, 0.92, 1.19;
+	bolster keeper win rate 46.6 / 47.2 / 47.2 in the draft and 48.9 / 53.6 / 57.0 in the
+	simulator; always-presence-first against the proctor mirror 41.0 against 51.0, 43.5
+	against 50.5, and 42.0 against 46.5. Every setting keeps bolster inside the 40 to 60
+	band, so the binding gauge is the naive policy: leading with the presences is 10.0
+	points behind the mirror at 0.5, 7.0 at 0.75 and 4.5 at 1.0, where the tool flags the
+	deploy decisions as possibly decorative. 0.5 is the largest setting that clears the
+	eight-point bar.
+*/
+export const BOLSTER_RECOVERY = 0.5;
 
 // Hidden first (assumption 9): a hidden creature's blow lands before all others at its
 // world, in initiative order among the hidden.
@@ -129,7 +225,10 @@ export const SITES_PER_WORLD = 3;
 // reclamation-play-enhancements.md "Pass 2 levers"): the side holding fewer worlds after a
 // round gets this many extra sends (SENDABLE + ROSTER_TRAILING_BONUS) for the very next
 // round only.
-export const ROSTER_TRAILING_BONUS = 1;
+// Cut by assumption 20 ("no gifts to the losing side"): the default is 0 sends, and the
+// constant survives only so an ablation row can put the catch-up send back and measure
+// what removing it cost.
+export const ROSTER_TRAILING_BONUS = 0;
 
 // The Loki line (docs/design/reclamation-play-enhancements.md "Pass 2 levers"): a creature
 // withdrawn from a LOST world (not a tie) returns to its handler's roster and may be sent
@@ -142,7 +241,9 @@ export const RETURNED_SEND_COST = 2;
 
 export const ROLE = {
 	STRIKE: 'strike',
-	AREA: 'area',
+	// Pass 2 vocabulary (assumption 17): the area role is a sweep, on the table and in
+	// every field the interface reads.
+	SWEEP: 'sweep',
 	BOLSTER: 'bolster',
 	SHIELD: 'shield',
 	// what a creature degrades to when its role is switched off by rules.roles: a plain
@@ -207,8 +308,9 @@ export const ACT_CLASS_BY_ACTION = {
 	terrorize: ACT_CLASS.SUPPORT,
 };
 
-// carrying one of these makes a blow creature an AREA rather than a STRIKE (assumption 4)
-export const AREA_ABILITY_ACTIONS = ['burst', 'spray', 'cloud'];
+// carrying one of these makes an attacking creature a SWEEP rather than a STRIKE
+// (assumption 4)
+export const SWEEP_ABILITY_ACTIONS = ['burst', 'spray', 'cloud'];
 
 // the two support abilities that override the archetype's default presence (see roleOf)
 export const WARD_ABILITY_ACTION = 'ward';
@@ -226,23 +328,39 @@ export function getActClass(action) {
 // governing attribute per action - the magnitude formula's second term
 // ---------------------------------------------------------------------------
 
+/*
+	Pass 2 (assumption 17): attack power is strength for every contact attack and
+	intelligence for every projected or area attack. Before this pass the table spread the
+	governing attribute across agility, reflex, endurance and instinct, which gave those
+	attributes a second job while strength and intelligence had almost none, and left the
+	reading of a creature's plate unable to say what makes it hit hard. The lever-pool acts
+	(shove, snare, ambush, drain) keep the entries they had, since nothing in the base
+	reaches them.
+
+	`hurl` is governed by intelligence, with the other projections. The Pass 2 brief listed
+	it among the contact attacks, which contradicted ACT_CLASS_BY_ACTION's own reading of it
+	as a projection and would have left one action classed one way and powered the other;
+	corrected 2026-09-09 so the class table and this table agree on every row.
+*/
 export const GOVERNING_ATTRIBUTE_BY_ACTION = {
+	// contact: strength
 	strike: 'strength',
 	crush: 'strength',
+	lash: 'strength',
+	rake: 'strength',
 	shove: 'strength',
-	hurl: 'strength',
 
-	lash: 'agility',
-	rake: 'agility',
+	// projected and area: intelligence
+	hurl: 'intelligence',
+	beam: 'intelligence',
+	spray: 'intelligence',
+	burst: 'intelligence',
+	cloud: 'intelligence',
 
+	// lever pool, unchanged
 	snare: 'reflex',
 
 	ambush: 'instinct',
-	beam: 'instinct',
-
-	spray: 'endurance',
-	burst: 'endurance',
-	cloud: 'endurance',
 
 	drain: 'vitality',
 

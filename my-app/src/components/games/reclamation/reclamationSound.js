@@ -23,9 +23,9 @@ export const CUES = [
 	'send',    // a figure lands on a tray: a soft thunk, two short filtered noise bursts
 	'pass',    // the handler passes: a lever pulled, click then a lower click
 	'rival',   // the rival moved: a single low relay click, quieter than lift
-	'seal',    // orders are sealed: a latch
-	'strike',  // an act lands: a short dull impact, pitched by a magnitude 0..1 option
-	'rout',    // a creature is routed: a descending two-note buzz, 120 ms
+	'seal',    // the round is sealed and the worlds clash: a latch
+	'strike',  // an attack lands: a short dull impact, pitched by a magnitude 0..1 option
+	'rout',    // a creature is downed: a descending two-note buzz, 120 ms (cue id kept)
 	'stamp',   // the Court's stamp comes down: a heavy thud with a short brass ring, 200 ms
 	'charter', // the match ends: three ascending relay clicks then a low hum fading over 600 ms
 ];
@@ -35,9 +35,9 @@ const CUE_DESCRIPTIONS = {
 	send: 'A soft thunk as a figure lands on its tray.',
 	pass: 'A lever pulled: click then a lower click, for a passed turn.',
 	rival: 'A single low relay click, quieter, marking the rival’s move.',
-	seal: 'A latch closing as orders are sealed.',
-	strike: 'A short dull impact as an act lands.',
-	rout: 'A descending two-note buzz as a creature is routed.',
+	seal: 'A latch closing as the round seals and the worlds clash.',
+	strike: 'A short dull impact as an attack lands.',
+	rout: 'A descending two-note buzz as a creature is downed.',
 	stamp: 'A heavy thud with a short brass ring as the Court’s stamp comes down.',
 	charter: 'Three ascending relay clicks, then a low hum fading out, as the match ends.',
 };
@@ -147,7 +147,7 @@ function scheduleNoiseBurst(ctx, dest, { time, filterFreq, filterType, gain, dur
 }
 
 // A dull tone: a sine or triangle oscillator through a lowpass filter and gain
-// envelope. Used for strike, rout, stamp's ring, and charter's closing hum.
+// envelope. Used for strike, the downed cue, stamp's ring, and charter's closing hum.
 function scheduleTone(ctx, dest, { time, freq, endFreq, type, filterFreq, gain, duration }) {
 	const osc = ctx.createOscillator();
 	osc.type = type || 'sine';

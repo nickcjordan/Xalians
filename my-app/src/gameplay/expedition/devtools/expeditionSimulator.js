@@ -31,7 +31,7 @@
 		                    balance report can be read at a lever setting that is not the
 		                    default (e.g. --rules=shieldCap=half;bolsterFloor=1.5).
 		                    Numbers are parsed as numbers, true/false as booleans, and
-		                    roles.area / roles.bolster / roles.shield reach the nested
+		                    roles.sweep / roles.bolster / roles.shield reach the nested
 		                    roles object.
 
 	This is a full designer-facing balance report (see docs/design/reclamation-design.md's
@@ -41,7 +41,7 @@
 	signal from noise at 300 matches. Deterministic under --seed.
 
 	Design of the collection: runOneMatch() plays one full match and pushes RAW per-site,
-	per-act, per-send, and per-relocation records into flat arrays (plus a few whole-match
+	per-act, per-send, and per-swift-move records into flat arrays (plus a few whole-match
 	scalars) - it does not pre-aggregate anything and does not retain full engine states,
 	so memory stays bounded regardless of --matches. summarize() is the single place that
 	turns those flat record arrays into every rate and histogram in the report; --json is
@@ -51,7 +51,7 @@
 */
 
 import {
-	createMatch, send, pass, relocateVanguard, getPublicState,
+	createMatch, send, pass, moveSwift, getPublicState,
 	createRngState, nextRandom,
 } from '../expeditionRules.js';
 import {
@@ -59,7 +59,7 @@ import {
 	RETURNED_SEND_COST, ROLE,
 } from '../expeditionInterpretation.js';
 import { chooseSend, rivalById, DEFAULT_RIVAL_ID } from '../expeditionBot.js';
-import { prepare, baseHold, initiativeOf, strainLevel, roleOf } from '../creatureOnTable.js';
+import { prepare, baseHold, speedOf, strainLevel, roleOf } from '../creatureOnTable.js';
 import { buildExpeditionPool } from '../roster.js';
 import { getWorlds } from '../sites.js';
 import fs from 'node:fs';
@@ -274,7 +274,7 @@ function entryHold(state, frame, siteId, entry) {
 	the same hold computed with the lift taken away.
 */
 function bolsterRestoredAt(state, frame, site, player) {
-	const entries = (state.board[site.id][player] || []).filter((e) => !e.routed);
+	const entries = (state.board[site.id][player] || []).filter((e) => !e.downed);
 	const bolsterers = entries.filter((e) => !e.hidden && roleOf(e.record, state.rules) === ROLE.BOLSTER);
 	if (bolsterers.length === 0) {
 		return null;
@@ -290,7 +290,7 @@ function bolsterRestoredAt(state, frame, site, player) {
 function deployEndSnapshot(state, frame) {
 	// per-site margin (A-hold minus B-hold) and per-side counts, taken right at the
 	// moment Deploy ends (before Resolve/Judge) - this is "the leader after Deploy" used
-	// for the "resolve mattered" and relocation-flip stats.
+	// for the "resolve mattered" and swift-move flip stats.
 	const bySite = { bolster: {} };
 	frame.sites.forEach((site) => {
 		const a = state.board[site.id].A || [];
@@ -312,7 +312,7 @@ function deployEndSnapshot(state, frame) {
 
 // ---------------------------------------------------------------------------
 // runOneMatch: plays one full match, collecting raw per-site / per-act / per-send /
-// per-relocation records. No full engine state is retained after the match ends.
+// per-swift-move records. No full engine state is retained after the match ends.
 // ---------------------------------------------------------------------------
 
 function runOneMatch(matchSeed, pool, rng, options) {
@@ -336,26 +336,29 @@ function runOneMatch(matchSeed, pool, rng, options) {
 
 	// per-roster power snapshot, taken once at match start (records never mutate)
 	const rosterMeanHold = { A: average(rosterA.map((r) => baseHold(r))), B: average(rosterB.map((r) => baseHold(r))) };
-	const rosterMeanInitiative = { A: average(rosterA.map((r) => initiativeOf(r))), B: average(rosterB.map((r) => initiativeOf(r))) };
+	const rosterMeanSpeed = { A: average(rosterA.map((r) => speedOf(r))), B: average(rosterB.map((r) => speedOf(r))) };
 	// hold rank within the 80-creature pool, for the "top/bottom 5 individual creatures"
 	// section - computed once by the caller and passed in via options.poolHoldRank
 
 	const siteRecords = [];
-	const blowRecords = []; // one per 'blow' event (assumption 5: every blow is a number)
+	const attackRecords = []; // one per 'attack' event (assumption 5: every attack is a number)
 	const shieldRecords = []; // one per 'shield' event (assumption 7)
 	const bolsterRecords = []; // one per site per side where a bolsterer stood (assumption 8)
+	// one per 'recover' event: what a bolster gave back at the Ruling (assumption 19). The
+	// strain lift in bolsterRecords is read at deploy end and is a different quantity.
+	const recoverRecords = [];
 	const sendRecords = []; // filled progressively; siteResult/won attached at judge time
-	const relocationRecords = [];
-	let decisions = 0; // sends + passes + relocations, as a playtime proxy
+	const swiftMoveRecords = [];
+	let decisions = 0; // sends + passes + swift moves, as a playtime proxy
 	let sitesWonAfterWorld1 = null; // { A, B } snapshot for the comeback-rate stat
 	let error = null;
-	let vanguardRelocationsThisMatch = 0;
+	let swiftMovesThisMatch = 0;
 
 	function bail() {
 		return {
-			finalState: state, error, roundOneStarter, siteRecords, blowRecords, shieldRecords,
-			bolsterRecords, sendRecords, relocationRecords, decisions, rosterMeanHold,
-			rosterMeanInitiative, sitesWonAfterWorld1, vanguardRelocationsThisMatch,
+			finalState: state, error, roundOneStarter, siteRecords, attackRecords, shieldRecords,
+			bolsterRecords, recoverRecords, sendRecords, swiftMoveRecords, decisions, rosterMeanHold,
+			rosterMeanSpeed, sitesWonAfterWorld1, swiftMovesThisMatch,
 			rosterAIds: rosterA.map((r) => r.id), rosterBIds: rosterB.map((r) => r.id),
 		};
 	}
@@ -400,23 +403,23 @@ function runOneMatch(matchSeed, pool, rng, options) {
 			const ownRoster = state.players[handler].roster;
 			let action = chooseSendFor(handler, publicState, ownRoster);
 
-			if (action.type === 'relocate') {
-				const fromSiteId = boardSiteOf(state, frame, handler, publicState.players[handler].vanguardRecordId);
+			if (action.type === 'move') {
+				const fromSiteId = boardSiteOf(state, frame, handler, action.recordId);
 				const marginBefore = fromSiteId ? siteMarginRaw(state, frame, fromSiteId) : 0;
 				const wasLosingBefore = handler === 'A' ? marginBefore < 0 : marginBefore > 0;
 
-				const relocated = relocateVanguard(state, handler, action.siteId);
-				if (!relocated) {
-					error = `illegal relocate action: ${JSON.stringify(action)} for ${handler}`;
+				const moved = moveSwift(state, handler, action.recordId, action.siteId);
+				if (!moved) {
+					error = `illegal swift move: ${JSON.stringify(action)} for ${handler}`;
 					return bail();
 				}
-				state = relocated;
-				vanguardRelocationsThisMatch++;
+				state = moved;
+				swiftMovesThisMatch++;
 				decisions++;
 
 				const marginAfter = siteMarginRaw(state, frame, action.siteId);
 				const isWinningAfter = handler === 'A' ? marginAfter > 0 : marginAfter < 0;
-				relocationRecords.push({ handler, wasLosingBefore, isWinningAfter, flippedToWinning: wasLosingBefore && isWinningAfter });
+				swiftMoveRecords.push({ handler, wasLosingBefore, isWinningAfter, flippedToWinning: wasLosingBefore && isWinningAfter });
 
 				deployEnd = deployEndSnapshot(state, frame);
 				logLengthBeforeResolve = state.resolutionLog.length;
@@ -492,16 +495,16 @@ function runOneMatch(matchSeed, pool, rng, options) {
 		// walk the events this round's resolve+judge produced
 		const newEvents = state.resolutionLog.slice(logLengthBeforeResolve);
 		newEvents.forEach((ev) => {
-			if (ev.type === 'blow') {
+			if (ev.type === 'attack') {
 				const sentInfo = sentThisRound[ev.recordId];
-				blowRecords.push({
+				attackRecords.push({
 					frameIndex,
 					role: ev.role,
 					side: sentInfo ? sentInfo.side : null,
 					archetype: sentInfo && sentInfo.record.archetype ? sentInfo.record.archetype.key : null,
 					element: sentInfo && sentInfo.record.element ? sentInfo.record.element.primary : null,
 					outcome: ev.outcome,
-					amount: typeof ev.amount === 'number' ? ev.amount : null,
+					power: typeof ev.power === 'number' ? ev.power : null,
 					remaining: ev.remaining,
 					hidden: !!ev.hidden,
 					cancelled: !!ev.cancelled,
@@ -510,6 +513,10 @@ function runOneMatch(matchSeed, pool, rng, options) {
 			}
 			if (ev.type === 'shield') {
 				shieldRecords.push({ frameIndex, recordId: ev.recordId, cancelled: ev.cancelled, amount: ev.amount || 0 });
+				return;
+			}
+			if (ev.type === 'recover') {
+				recoverRecords.push({ frameIndex, recordId: ev.recordId, bolster: ev.bolster, amount: ev.amount || 0 });
 			}
 		});
 
@@ -561,8 +568,8 @@ function runOneMatch(matchSeed, pool, rng, options) {
 	return bail();
 }
 
-// helper used only inside the relocate branch above, to find which site a handler's
-// vanguard currently stands at from the raw (non-public) state
+// helper used only inside the move branch above, to find which site one of a handler's
+// creatures currently stands at from the raw (non-public) state
 function boardSiteOf(state, frame, handler, recordId) {
 	if (!recordId) {
 		return null;
@@ -584,11 +591,12 @@ function summarize(matchResults, args, pool, rivals) {
 	const errors = matchResults.filter((m) => m.error).map((m, i) => ({ matchIndex: i, error: m.error }));
 
 	const allSites = completedMatches.flatMap((m) => m.siteRecords);
-	const allBlows = completedMatches.flatMap((m) => m.blowRecords);
+	const allAttacks = completedMatches.flatMap((m) => m.attackRecords);
 	const allShields = completedMatches.flatMap((m) => m.shieldRecords);
 	const allBolsters = completedMatches.flatMap((m) => m.bolsterRecords);
+	const allRecoveries = completedMatches.flatMap((m) => m.recoverRecords);
 	const allSends = completedMatches.flatMap((m) => m.sendRecords);
-	const allRelocations = completedMatches.flatMap((m) => m.relocationRecords);
+	const allSwiftMoves = completedMatches.flatMap((m) => m.swiftMoveRecords);
 
 	// side A's raw win rate, independent of who started - this is the number that answers
 	// "how does rivalA do against rivalB" (--rivalA/--rivalB), unlike starterWinRate below
@@ -628,21 +636,21 @@ function summarize(matchResults, args, pool, rivals) {
 		}
 	});
 
-	const totalRelocations = allRelocations.length;
-	const matchesWithRelocation = completedMatches.filter((m) => m.vanguardRelocationsThisMatch > 0);
-	const matchesWithoutRelocation = completedMatches.filter((m) => m.vanguardRelocationsThisMatch === 0);
-	const starterWinsWithRelocation = matchesWithRelocation.filter((m) => m.finalState.winner === m.roundOneStarter).length;
-	const starterWinsWithoutRelocation = matchesWithoutRelocation.filter((m) => m.finalState.winner === m.roundOneStarter).length;
-	const relocationsThatFlipped = allRelocations.filter((r) => r.flippedToWinning).length;
+	const totalSwiftMoves = allSwiftMoves.length;
+	const matchesWithSwiftMove = completedMatches.filter((m) => m.swiftMovesThisMatch > 0);
+	const matchesWithoutSwiftMove = completedMatches.filter((m) => m.swiftMovesThisMatch === 0);
+	const starterWinsWithSwiftMove = matchesWithSwiftMove.filter((m) => m.finalState.winner === m.roundOneStarter).length;
+	const starterWinsWithoutSwiftMove = matchesWithoutSwiftMove.filter((m) => m.finalState.winner === m.roundOneStarter).length;
+	const swiftMovesThatFlipped = allSwiftMoves.filter((r) => r.flippedToWinning).length;
 
 	const seatFairness = {
 		starterWinRate: rate(starterWins, completedMatches.length),
 		perWorldStarterSiteWinRate,
 		finalPasserWinRate: rate(finalPasserWins, finalPasserKnown),
-		relocationsPerMatch: average(completedMatches.map((m) => m.vanguardRelocationsThisMatch)),
-		starterWinRateWithRelocation: rate(starterWinsWithRelocation, matchesWithRelocation.length),
-		starterWinRateWithoutRelocation: rate(starterWinsWithoutRelocation, matchesWithoutRelocation.length),
-		relocationFlipRate: rate(relocationsThatFlipped, totalRelocations),
+		swiftMovesPerMatch: average(completedMatches.map((m) => m.swiftMovesThisMatch)),
+		starterWinRateWithSwiftMove: rate(starterWinsWithSwiftMove, matchesWithSwiftMove.length),
+		starterWinRateWithoutSwiftMove: rate(starterWinsWithoutSwiftMove, matchesWithoutSwiftMove.length),
+		swiftMoveFlipRate: rate(swiftMovesThatFlipped, totalSwiftMoves),
 		mirrorMode: !!args.mirror,
 	};
 
@@ -762,26 +770,26 @@ function summarize(matchResults, args, pool, rivals) {
 		assumption 4) a creature has exactly one of four roles and no act is ever chosen, so
 		the sixteen-act tables measured nothing a designer could act on. What is left is the
 		reading the base redesign's gauges name: sends per role, the keeper win rate of each
-		role, the mean amount a blow removes, cancels per match, hold restored per bolster
-		send, routs per match, and how often resolution changed the leader at a world.
+		role, the mean power an attack removes, cancels per match, hold restored per bolster
+		send, downs per match, and how often resolution changed the leader at a world.
 	*/
 	const outcomeHistogram = {};
-	allBlows.forEach((b) => {
+	allAttacks.forEach((b) => {
 		outcomeHistogram[b.outcome] = (outcomeHistogram[b.outcome] || 0) + 1;
 	});
 
-	const landedBlows = allBlows.filter((b) => b.outcome === 'staggered' || b.outcome === 'routed');
+	const landedAttacks = allAttacks.filter((b) => b.outcome === 'hurt' || b.outcome === 'downed');
 	const perRole = {};
-	[ROLE.STRIKE, ROLE.AREA, ROLE.BOLSTER, ROLE.SHIELD, ROLE.NONE].forEach((role) => {
+	[ROLE.STRIKE, ROLE.SWEEP, ROLE.BOLSTER, ROLE.SHIELD, ROLE.NONE].forEach((role) => {
 		const sends = allSends.filter((x) => x.role === role);
 		const decided = sends.filter((x) => !x.tie);
-		const blows = landedBlows.filter((b) => b.role === role);
+		const attacks = landedAttacks.filter((b) => b.role === role);
 		perRole[role] = {
 			sends: sends.length,
 			sendShare: rate(sends.length, allSends.length),
 			keeperWinRate: rate(decided.filter((x) => x.won).length, decided.length),
-			meanAmountPerBlow: average(blows.map((b) => b.amount).filter((v) => typeof v === 'number')),
-			routsDealt: allBlows.filter((b) => b.role === role && b.outcome === 'routed').length,
+			meanPowerPerAttack: average(attacks.map((b) => b.power).filter((v) => typeof v === 'number')),
+			downsDealt: allAttacks.filter((b) => b.role === role && b.outcome === 'downed').length,
 		};
 	});
 
@@ -797,19 +805,27 @@ function summarize(matchResults, args, pool, rivals) {
 		bolsterSendsPerMatch: average(completedMatches.map((m) => m.sendRecords.filter((x) => x.role === ROLE.BOLSTER).length)),
 		holdRestoredPerBolsterSend: average(allBolsters.map((x) => x.restored / Math.max(1, x.bolsterers))),
 		sitesWithABolsterer: allBolsters.length,
+		// assumption 19: what the Ruling gave back, per bolster SENT, which is the number
+		// the bolsterRecovery lever moves directly
+		recoveriesPerMatch: average(completedMatches.map((m) => m.recoverRecords.length)),
+		holdRecoveredPerBolsterSend: (() => {
+			const sends = completedMatches.reduce((n, m) => n + m.sendRecords.filter((x) => x.role === ROLE.BOLSTER).length, 0);
+			const recovered = allRecoveries.reduce((sum, x) => sum + x.amount, 0);
+			return sends > 0 ? recovered / sends : 0;
+		})(),
 	};
 
-	const blowStats = {
-		blowsPerMatch: average(completedMatches.map((m) => m.blowRecords.length)),
-		routsPerMatch: average(completedMatches.map((m) => m.blowRecords.filter((b) => b.outcome === 'routed').length)),
-		meanAmount: average(landedBlows.map((b) => b.amount)),
-		cancelledShare: rate(allBlows.filter((b) => b.cancelled).length, allBlows.length),
-		noTargetShare: rate(allBlows.filter((b) => b.outcome === 'no-target').length, allBlows.length),
-		lapsedShare: rate(allBlows.filter((b) => b.outcome === 'lapsed').length, allBlows.length),
-		hiddenBlowShare: rate(allBlows.filter((b) => b.hidden).length, allBlows.length),
-		// a blow creature with no attacking ability at all strikes at the pool minimum
+	const attackStats = {
+		attacksPerMatch: average(completedMatches.map((m) => m.attackRecords.length)),
+		downsPerMatch: average(completedMatches.map((m) => m.attackRecords.filter((b) => b.outcome === 'downed').length)),
+		meanPower: average(landedAttacks.map((b) => b.power)),
+		cancelledShare: rate(allAttacks.filter((b) => b.cancelled).length, allAttacks.length),
+		noTargetShare: rate(allAttacks.filter((b) => b.outcome === 'no-target').length, allAttacks.length),
+		lapsedShare: rate(allAttacks.filter((b) => b.outcome === 'lapsed').length, allAttacks.length),
+		hiddenAttackShare: rate(allAttacks.filter((b) => b.hidden).length, allAttacks.length),
+		// an attacking creature with no attacking ability at all strikes at the pool minimum
 		// (creatureOnTable.blowActOf); this is how often that fallback fired
-		fallbackBlowShare: rate(allSends.filter((x) => x.blowFallback).length, allSends.length),
+		fallbackAttackShare: rate(allSends.filter((x) => x.blowFallback).length, allSends.length),
 	};
 
 	const strainBuckets = { none: [], strained: [], severe: [] };
@@ -877,7 +893,7 @@ function summarize(matchResults, args, pool, rivals) {
 	const combat = {
 		outcomeHistogram,
 		perRole,
-		blowStats,
+		attackStats,
 		shieldStats,
 		bolsterStats,
 		strainIncidence,
@@ -891,19 +907,19 @@ function summarize(matchResults, args, pool, rivals) {
 	const byArchetype = {};
 	allSends.filter((s) => !s.tie).forEach((s) => {
 		const key = s.record.archetype ? s.record.archetype.key : 'unknown';
-		byArchetype[key] = byArchetype[key] || { sent: 0, wins: 0, routsDealt: 0, routsSuffered: 0 };
+		byArchetype[key] = byArchetype[key] || { sent: 0, wins: 0, downsDealt: 0, downsSuffered: 0 };
 		byArchetype[key].sent++;
 		if (s.won) {
 			byArchetype[key].wins++;
 		}
 	});
-	allBlows.forEach((b) => {
+	allAttacks.forEach((b) => {
 		if (!b.archetype) {
 			return;
 		}
-		byArchetype[b.archetype] = byArchetype[b.archetype] || { sent: 0, wins: 0, routsDealt: 0, routsSuffered: 0 };
-		if (b.outcome === 'routed') {
-			byArchetype[b.archetype].routsDealt++;
+		byArchetype[b.archetype] = byArchetype[b.archetype] || { sent: 0, wins: 0, downsDealt: 0, downsSuffered: 0 };
+		if (b.outcome === 'downed') {
+			byArchetype[b.archetype].downsDealt++;
 		}
 	});
 	const archetypeReport = {};
@@ -912,7 +928,7 @@ function summarize(matchResults, args, pool, rivals) {
 		archetypeReport[key] = {
 			sent: b.sent,
 			siteWinRate: rate(b.wins, b.sent),
-			routsDealt: b.routsDealt,
+			downsDealt: b.downsDealt,
 		};
 	});
 
@@ -1021,15 +1037,15 @@ function summarize(matchResults, args, pool, rivals) {
 	const top5 = eligible.slice(0, 5);
 	const bottom5 = eligible.slice(-5).reverse();
 
-	// power correlation: per match, which side had the higher mean base hold / initiative
+	// power correlation: per match, which side had the higher mean base hold / speed
 	const holdCorrelationEligible = completedMatches.filter((m) => m.rosterMeanHold.A !== m.rosterMeanHold.B);
 	const holdCorrelationWins = holdCorrelationEligible.filter((m) => {
 		const strongerSide = m.rosterMeanHold.A > m.rosterMeanHold.B ? 'A' : 'B';
 		return m.finalState.winner === strongerSide;
 	}).length;
-	const initCorrelationEligible = completedMatches.filter((m) => m.rosterMeanInitiative.A !== m.rosterMeanInitiative.B);
-	const initCorrelationWins = initCorrelationEligible.filter((m) => {
-		const strongerSide = m.rosterMeanInitiative.A > m.rosterMeanInitiative.B ? 'A' : 'B';
+	const speedCorrelationEligible = completedMatches.filter((m) => m.rosterMeanSpeed.A !== m.rosterMeanSpeed.B);
+	const speedCorrelationWins = speedCorrelationEligible.filter((m) => {
+		const strongerSide = m.rosterMeanSpeed.A > m.rosterMeanSpeed.B ? 'A' : 'B';
 		return m.finalState.winner === strongerSide;
 	}).length;
 
@@ -1041,7 +1057,7 @@ function summarize(matchResults, args, pool, rivals) {
 		top5ByWinRate: top5,
 		bottom5ByWinRate: bottom5,
 		higherMeanHoldWinRate: rate(holdCorrelationWins, holdCorrelationEligible.length),
-		higherMeanInitiativeWinRate: rate(initCorrelationWins, initCorrelationEligible.length),
+		higherMeanSpeedWinRate: rate(speedCorrelationWins, speedCorrelationEligible.length),
 	};
 
 	// -------------------- 7. worlds --------------------
@@ -1058,7 +1074,7 @@ function summarize(matchResults, args, pool, rivals) {
 			});
 		});
 	});
-	// planet-level tie rate / routs-per-site / home-element presence: siteRecords already
+	// planet-level tie rate / downs-per-site / home-element presence: siteRecords already
 	// carry the planet each site's world was (attached in runOneMatch), so no need to
 	// cross-reference finalState.frames again here.
 	const planetSiteRecords = {};
@@ -1092,7 +1108,7 @@ function summarize(matchResults, args, pool, rivals) {
 		worldsReport[planet] = {
 			timesDrawn: byPlanet[planet].drawn,
 			tieRate: rate(sites.filter((s) => s.tie).length, sites.length),
-			routsPerSite: sites.length > 0 ? (allBlows.filter((b) => b.outcome === 'routed').length / completedMatches.length) / Math.max(1, byPlanet[planet].drawn / completedMatches.length * SITES_PER_WORLD) : 0,
+			downsPerSite: sites.length > 0 ? (allAttacks.filter((b) => b.outcome === 'downed').length / completedMatches.length) / Math.max(1, byPlanet[planet].drawn / completedMatches.length * SITES_PER_WORLD) : 0,
 			homeElementPresent: homeElementSends.length > 0,
 			homeElementSiteWinRate: rate(homeElementSends.filter((s) => s.won).length, homeElementSends.filter((s) => !s.tie).length),
 		};
@@ -1151,10 +1167,10 @@ function printReport(report) {
 		console.log(`  world ${Number(w) + 1}: ${fmtRate(sf.perWorldStarterSiteWinRate[w])}`);
 	});
 	console.log(`final-world last-to-pass win rate: ${fmtRate(sf.finalPasserWinRate)}`);
-	console.log(`vanguard relocations per match: ${sf.relocationsPerMatch.toFixed(2)}`);
-	console.log(`starter win rate with a relocation: ${fmtRate(sf.starterWinRateWithRelocation)}`);
-	console.log(`starter win rate without a relocation: ${fmtRate(sf.starterWinRateWithoutRelocation)}`);
-	console.log(`relocations that flipped losing->winning at deploy end: ${fmtRate(sf.relocationFlipRate)}`);
+	console.log(`swift moves per match: ${sf.swiftMovesPerMatch.toFixed(2)}`);
+	console.log(`starter win rate with a swift move: ${fmtRate(sf.starterWinRateWithSwiftMove)}`);
+	console.log(`starter win rate without a swift move: ${fmtRate(sf.starterWinRateWithoutSwiftMove)}`);
+	console.log(`swift moves that flipped losing->winning at deploy end: ${fmtRate(sf.swiftMoveFlipRate)}`);
 
 	console.log('\n--- 2. match shape ---');
 	const ms = report.matchShape;
@@ -1165,7 +1181,7 @@ function printReport(report) {
 	console.log('final site score distribution:');
 	printHistogram(ms.finalScoreCounts);
 	console.log(`comeback rate (trailing after world 1, won the match): ${fmtRate(ms.comebackWinRate)}`);
-	console.log(`decisions per match (sends+passes+relocations): ${ms.decisionsPerMatch.toFixed(1)}`);
+	console.log(`decisions per match (sends+passes+swift moves): ${ms.decisionsPerMatch.toFixed(1)}`);
 
 	console.log('\n--- 3. site economy ---');
 	const se = report.siteEconomy;
@@ -1196,19 +1212,19 @@ function printReport(report) {
 
 	console.log('\n--- 5. combat ---');
 	const c = report.combat;
-	console.log('blow outcome histogram:');
+	console.log('attack outcome histogram:');
 	printHistogram(c.outcomeHistogram);
-	console.log(`blows per match: ${c.blowStats.blowsPerMatch.toFixed(2)}, routs per match: ${c.blowStats.routsPerMatch.toFixed(2)}`);
-	console.log(`mean amount per landed blow: ${c.blowStats.meanAmount.toFixed(2)}`);
-	console.log(`cancelled share ${fmtRate(c.blowStats.cancelledShare)}, no-target ${fmtRate(c.blowStats.noTargetShare)}, lapsed ${fmtRate(c.blowStats.lapsedShare)}`);
-	console.log(`hidden blows: ${fmtRate(c.blowStats.hiddenBlowShare)}; fallback (no attacking ability) sends: ${fmtRate(c.blowStats.fallbackBlowShare)}`);
-	console.log('per role (sends, share, keeper win rate, mean amount per blow, routs dealt):');
+	console.log(`attacks per match: ${c.attackStats.attacksPerMatch.toFixed(2)}, downs per match: ${c.attackStats.downsPerMatch.toFixed(2)}`);
+	console.log(`mean power per landed attack: ${c.attackStats.meanPower.toFixed(2)}`);
+	console.log(`cancelled share ${fmtRate(c.attackStats.cancelledShare)}, no-target ${fmtRate(c.attackStats.noTargetShare)}, lapsed ${fmtRate(c.attackStats.lapsedShare)}`);
+	console.log(`hidden attacks: ${fmtRate(c.attackStats.hiddenAttackShare)}; fallback (no attacking ability) sends: ${fmtRate(c.attackStats.fallbackAttackShare)}`);
+	console.log('per role (sends, share, keeper win rate, mean power per attack, downs dealt):');
 	Object.keys(c.perRole).forEach((role) => {
 		const r = c.perRole[role];
-		console.log(`  ${role}: sends=${r.sends} (${fmtRate(r.sendShare)}), keeper win rate=${fmtRate(r.keeperWinRate)}, mean amount=${r.meanAmountPerBlow.toFixed(2)}, routs dealt=${r.routsDealt}`);
+		console.log(`  ${role}: sends=${r.sends} (${fmtRate(r.sendShare)}), keeper win rate=${fmtRate(r.keeperWinRate)}, mean power=${r.meanPowerPerAttack.toFixed(2)}, downs dealt=${r.downsDealt}`);
 	});
 	console.log(`shield: ${c.shieldStats.shieldSendsPerMatch.toFixed(2)} sends per match, ${c.shieldStats.cancelsPerMatch.toFixed(2)} cancels per match, cancel rate ${fmtRate(c.shieldStats.cancelRate)}, mean amount cancelled ${c.shieldStats.meanAmountCancelled.toFixed(2)}`);
-	console.log(`bolster: ${c.bolsterStats.bolsterSendsPerMatch.toFixed(2)} sends per match, ${c.bolsterStats.holdRestoredPerBolsterSend.toFixed(2)} hold restored per bolster send`);
+	console.log(`bolster: ${c.bolsterStats.bolsterSendsPerMatch.toFixed(2)} sends per match, ${c.bolsterStats.holdRestoredPerBolsterSend.toFixed(2)} hold restored per bolster send, ${c.bolsterStats.holdRecoveredPerBolsterSend.toFixed(2)} hold recovered per bolster send at the Ruling (${c.bolsterStats.recoveriesPerMatch.toFixed(2)} recoveries per match)`);
 	console.log('strain incidence:');
 	Object.keys(c.strainIncidence).forEach((level) => {
 		const s = c.strainIncidence[level];
@@ -1228,11 +1244,11 @@ function printReport(report) {
 	console.log(`site win rate at count 3+ - A: ${fmtRate(c.stackVsSpread.siteWinRateAt3Plus.A)}, B: ${fmtRate(c.stackVsSpread.siteWinRateAt3Plus.B)}`);
 
 	console.log('\n--- 6. creature balance ---');
-	console.log('by archetype (sent, site win rate, routs dealt):');
+	console.log('by archetype (sent, site win rate, downs dealt):');
 	const cb = report.creatureBalance;
 	Object.keys(cb.byArchetype).sort().forEach((key) => {
 		const a = cb.byArchetype[key];
-		console.log(`  ${key}: sent=${a.sent}, win rate=${fmtRate(a.siteWinRate)}, routs dealt=${a.routsDealt}`);
+		console.log(`  ${key}: sent=${a.sent}, win rate=${fmtRate(a.siteWinRate)}, downs dealt=${a.downsDealt}`);
 	});
 	console.log('by element (sent, site win rate, strained share):');
 	Object.keys(cb.byElement).sort().forEach((el) => {
@@ -1260,7 +1276,7 @@ function printReport(report) {
 		console.log(`  ${r.species} (${r.archetype}/${r.element}) hold=${r.hold.toFixed(1)} rank ${r.holdRank}/${r.poolSize}: win rate ${(r.siteWinRate * 100).toFixed(1)}% (sent ${r.sent})`);
 	});
 	console.log(`power correlation - higher mean base hold wins: ${fmtRate(cb.higherMeanHoldWinRate)}`);
-	console.log(`power correlation - higher mean initiative wins: ${fmtRate(cb.higherMeanInitiativeWinRate)}`);
+	console.log(`power correlation - higher mean speed wins: ${fmtRate(cb.higherMeanSpeedWinRate)}`);
 	if (cb.higherMeanHoldWinRate && cb.higherMeanHoldWinRate.p > 0.6) {
 		console.log('  NOTE: the stronger roster wins far above 60% - this reads as stats deciding the match more than decisions. Worth a design look.');
 	}

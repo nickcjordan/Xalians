@@ -10,7 +10,7 @@ import { elementName } from './reclamationVocabulary';
 
 	Every creature you brought has a fixed slot for the whole expedition, in a fixed
 	order, so nothing reshuffles under the cursor: in hand, then sent (with the site it
-	stands at), then holding a won site on an earlier world, or routed out of the
+	stands at), then holding a won site on an earlier world, or downed out of the
 	expedition. A slot carries the species portrait, the name, a hold meter on the
 	Duel's bulb-strip construction, and one chip per world of the frame saying what
 	the creature would hold there, with the best site marked and strain named, so the
@@ -34,8 +34,8 @@ export function slotStateOf(record, view, you) {
 	if ((me.holding || []).includes(record.id)) {
 		return { state: 'holding' };
 	}
-	if ((me.routed || []).includes(record.id)) {
-		return { state: 'routed' };
+	if ((me.downed || []).includes(record.id)) {
+		return { state: 'downed' };
 	}
 	return { state: 'away' };
 }
@@ -125,7 +125,7 @@ export function RosterSlot({
 						<span className="rec-slot-element">{elementName(el).toLowerCase()}</span>
 						{slot.state === 'sent' && <span className="rec-slot-tag rec-slot-tag--sent">sent · {slot.site.name}</span>}
 						{slot.state === 'holding' && <span className="rec-slot-tag rec-slot-tag--holding">holding a world</span>}
-						{slot.state === 'routed' && <span className="rec-slot-tag rec-slot-tag--routed">routed</span>}
+						{slot.state === 'downed' && <span className="rec-slot-tag rec-slot-tag--downed">downed</span>}
 						{slot.state === 'away' && <span className="rec-slot-tag">away</span>}
 						{inHand && suggested && <span className="rec-slot-tag rec-slot-tag--suggested">suggested</span>}
 						{inHand && stealthy && <span className="rec-slot-tag rec-slot-tag--stealthy" title="Can be sent hidden">stealthy</span>}
