@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import * as lore from '../../lore';
 import XalianImage from '../xalianImage';
 import { useReadMark } from './trail';
-import { Tile, TileBar, TileArt, TileMeta, EmptyState } from '@/components/system/record';
+import { Tile, TileArt, TileMeta, EmptyState } from '@/components/system/record';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
@@ -19,7 +19,6 @@ function BestiaryTile({ species: s }) {
     const read = useReadMark('species', s.key);
     return (
         <Tile as={Link} to={lore.routeFor('species', s.key)} className={`el-${s.element}`}>
-            <TileBar />
             <TileArt className="bg-el p-[4%]">
                 <XalianImage colored speciesName={s.name} primaryType={s.element} moreClasses="w-full" />
             </TileArt>
