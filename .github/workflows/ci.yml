@@ -52,3 +52,9 @@ jobs:
 
       - name: Species records validate
         run: node docs/species-templates/tools/validate-all.js
+
+      - name: Creature expansion coverage is up to date
+        run: npm run check:creature-coverage
+
+      - name: Creature generator simulation is up to date
+        run: npm run check:creature-simulation
