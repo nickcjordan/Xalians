@@ -1,33 +1,19 @@
-/* eslint-disable-line */ const aws = require('aws-sdk');
+// Post-confirmation trigger: put every confirmed user into the standard group.
+// Uses AWS SDK v3, which the nodejs22.x runtime provides; nothing is bundled.
+const {
+  CognitoIdentityProviderClient,
+  AdminAddUserToGroupCommand,
+} = require('@aws-sdk/client-cognito-identity-provider');
 
-const cognitoidentityserviceprovider = new aws.CognitoIdentityServiceProvider({
-  apiVersion: '2016-04-18',
-});
+const client = new CognitoIdentityProviderClient({});
 
-exports.handler = async event => {
-  const groupParams = {
-    // GroupName: process.env.GROUP,
-    GroupName: 'xalianStandardUserGroup',
-    UserPoolId: event.userPoolId,
-  };
-  const addUserParams = {
-    // GroupName: process.env.GROUP,
-    GroupName: 'xalianStandardUserGroup',
-    UserPoolId: event.userPoolId,
-    Username: event.userName,
-  };
-  /**
-   * Check if the group exists; if it doesn't, create it.
-   */
-  // try {
-  //   await cognitoidentityserviceprovider.getGroup(groupParams).promise();
-  // } catch (e) {
-  //   await cognitoidentityserviceprovider.createGroup(groupParams).promise();
-  // }
-  /**
-   * Then, add the user to the group.
-   */
-  await cognitoidentityserviceprovider.adminAddUserToGroup(addUserParams).promise();
-
+exports.handler = async (event) => {
+  await client.send(
+    new AdminAddUserToGroupCommand({
+      GroupName: 'xalianStandardUserGroup',
+      UserPoolId: event.userPoolId,
+      Username: event.userName,
+    })
+  );
   return event;
 };
