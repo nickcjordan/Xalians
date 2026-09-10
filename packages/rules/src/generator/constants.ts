@@ -6,6 +6,16 @@
 	Sources: docs/design/xalian-creature-system-redesign.md sections 5b, 5c, 6, 8c, 9, 10;
 	.claude/skills/migrate-species/SKILL.md sections 5.3, 5.7, 5.7a, 5.8, 5.9.
 */
+import type {
+	AttributeKey,
+	CapabilityKey,
+	ElementKey,
+	FinishOdds,
+	GradedSenseKey,
+	TemperamentKey,
+	TemperamentTiltSpec,
+	TraitTiltSpec,
+} from './types.ts';
 
 // 0.x: still short of the bit-exact spec (a hashed content manifest) the redesign doc's
 // audit section asks for before real Scrambler Tokens are expanded, but 0.2.0 closes the
@@ -17,17 +27,17 @@
 export const GENERATOR_VERSION = '0.2.0';
 export const SCHEMA_VERSION = '1.0.0';
 
-export const ATTRIBUTE_KEYS = [
+export const ATTRIBUTE_KEYS: AttributeKey[] = [
 	'strength', 'vitality', 'endurance', 'agility', 'reflex',
 	'intelligence', 'willpower', 'instinct', 'charisma', 'resilience',
 ];
 
-export const CAPABILITY_KEYS = ['flight', 'swim', 'burrow', 'climb', 'sprint', 'leap', 'manipulation'];
-export const GRADED_SENSE_KEYS = ['sight', 'hearing', 'smell'];
-export const TEMPERAMENT_KEYS = ['boldness', 'curiosity', 'energy', 'aggression', 'sociability'];
+export const CAPABILITY_KEYS: CapabilityKey[] = ['flight', 'swim', 'burrow', 'climb', 'sprint', 'leap', 'manipulation'];
+export const GRADED_SENSE_KEYS: GradedSenseKey[] = ['sight', 'hearing', 'smell'];
+export const TEMPERAMENT_KEYS: TemperamentKey[] = ['boldness', 'curiosity', 'energy', 'aggression', 'sociability'];
 
 // 5c: on-graph secondaries per primary element. Every rolled secondary comes from here.
-export const ELEMENT_ADJACENCY = {
+export const ELEMENT_ADJACENCY: Record<ElementKey, ElementKey[]> = {
 	fire: ['rock', 'chemical', 'metal'],
 	water: ['ice', 'plant', 'chemical'],
 	dark: ['ghost', 'psychic', 'ice'],
@@ -52,14 +62,14 @@ export const SECONDARY_AFFINITY_CHANCE = 0.25;
 export const FAVORED_DRAWS = 2;
 
 // 6: exclusion pairs. The higher tilted percent rolls first; a landed partner skips the other.
-export const TRAIT_EXCLUSIONS = [['pack-bonded', 'solitary']];
+export const TRAIT_EXCLUSIONS: string[][] = [['pack-bonded', 'solitary']];
 
 // 6: tilt table. Each entry names the rolled quantity that tilts the trait and the
 // direction. The tilt multiplies the authored percent by 1 + TILT_STRENGTH * (p - 0.5) *
 // direction, where p is where the rolled value sits in its species band (0 bottom, 1
 // top); entries at 100 are exempt; results clamp to 1 to 99.
 export const TILT_STRENGTH = 0.6;
-export const TRAIT_TILTS = {
+export const TRAIT_TILTS: Record<string, TraitTiltSpec> = {
 	stealthy: { on: 'mass', dir: -1 },
 	anchored: { on: 'mass', dir: 1 },
 	menacing: { on: 'height', dir: 1 },
@@ -80,26 +90,26 @@ export const TRAIT_TILTS = {
 };
 
 // 10 / 5.9: appearance finish odds.
-export const FINISH_ODDS = [
+export const FINISH_ODDS: FinishOdds = [
 	['eclipse', 1 / 4000],
 	['prismatic', 1 / 400],
 	['gleam', 1 / 40],
 ];
 
 // 8c / 5.8: signature plus 2 or 3 rolled abilities; rolled intensity band.
-export const ROLLED_ABILITY_COUNT = [2, 3];
-export const ROLLED_INTENSITY_BAND = [15, 95];
+export const ROLLED_ABILITY_COUNT: [number, number] = [2, 3];
+export const ROLLED_INTENSITY_BAND: [number, number] = [15, 95];
 // 8c: intensity-weighted naming (hardening Decision 9). A rolled intensity picks a target
 // heft (1 below 34, 2 from 34 to 66, 3 above 66) and the name draw weights candidates by
 // how far their bundled heft sits from that target: a match, a neighbor, anything else.
 // The catalog computes heft; these weights decide how hard it pulls.
-export const HEFT_BANDS = [34, 66];
-export const HEFT_MATCH_WEIGHTS = [3, 2, 1];
+export const HEFT_BANDS: [number, number] = [34, 66];
+export const HEFT_MATCH_WEIGHTS: number[] = [3, 2, 1];
 // when a secondary affinity exists, the share of rolled abilities that use it as medium
 export const SECONDARY_MEDIUM_SHARE = 0.4;
 
 // 5.7a: what an element can do through a declared conduit.
-export const CONDUIT_ACTIONS_BY_MEDIUM = {
+export const CONDUIT_ACTIONS_BY_MEDIUM: Record<ElementKey, string[]> = {
 	fire: ['strike', 'beam', 'spray', 'burst', 'cloud', 'hurl', 'lash'],
 	water: ['spray', 'burst', 'cloud', 'snare', 'shove', 'mend', 'lash'],
 	dark: ['snare', 'crush', 'shove', 'drain', 'burst', 'ward', 'terrorize'],
@@ -121,7 +131,7 @@ export const CONDUIT_ACTIONS_BY_MEDIUM = {
 // fixed nudges for archetype and traits, then a uniform jitter.
 export const TEMPERAMENT_ATTRIBUTE_PULL = 0.35;
 export const TEMPERAMENT_JITTER = 18;
-export const TEMPERAMENT_TILTS = {
+export const TEMPERAMENT_TILTS: Record<TemperamentKey, TemperamentTiltSpec> = {
 	boldness: { attributes: ['strength', 'resilience'], traits: { menacing: 8, protective: 4 } },
 	curiosity: { attributes: ['intelligence', 'instinct'], traits: { perceptive: 6, foresighted: 6 } },
 	energy: { attributes: ['agility', 'reflex'], traits: { ramming: 6, anchored: -10 } },

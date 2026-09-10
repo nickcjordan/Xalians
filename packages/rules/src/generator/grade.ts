@@ -4,11 +4,11 @@
 	against a calibration batch and a purely cosmetic tier label.
 
 	This is a lens over a record, never a field on it: gradeRecord never writes to the
-	record it is given, and nothing in the pipeline (generate.js) should ever call it. A
+	record it is given, and nothing in the pipeline (generate.ts) should ever call it. A
 	grade is only ever computed on demand, by whatever caller wants to display one.
 
 	gradeRecord(record, template, calibration) -> { score, percentile, tier, components }
-	  record:      a generated record, shaped by generate.js's generateXalian()
+	  record:      a generated record, shaped by generate.ts's generateXalian()
 	  template:    the species template the record was generated from (one entry of
 	               speciesRecords.json's records array)
 	  calibration: { quantiles: [[percentile, score], ...] }, one pair per whole
@@ -24,10 +24,42 @@
 	Every number in GRADE_WEIGHTS is a tuned lever (CLAUDE.md, "levers, not stone"), not a
 	fixed law. Moving one changes what every score means against an older calibration
 	table, so a change here should be paired with a recalibration
-	(devtools/simulateGenerator.js --calibrate) before the new numbers mean anything.
+	(devtools/simulateGenerator.ts --calibrate) before the new numbers mean anything.
 */
-import { ATTRIBUTE_KEYS, FINISH_ODDS } from './constants.js';
-import bundledCalibration from '@xalians/content/gradeCalibration.json';
+import { ATTRIBUTE_KEYS, FINISH_ODDS } from './constants.ts';
+// the checked-in calibration table is validated JSON, not a typed structure this package
+// owns; cast at the boundary (a zod schema for it lives in packages/content/src/schema,
+// branch content/schemas, landing separately)
+import bundledCalibrationJson from '@xalians/content/gradeCalibration.json';
+import type { Band, SpeciesTemplate, XalianRecord } from './types.ts';
+
+export interface GradeCalibration {
+	generatorVersion?: string;
+	seed?: string;
+	n?: number;
+	quantiles: Array<[number, number]>;
+}
+
+export interface GradeComponents {
+	traits: number;
+	affinity: number;
+	finish: number;
+	attributes: number;
+	size: number;
+	abilities: number;
+}
+
+export interface ScoreResult {
+	score: number;
+	components: GradeComponents;
+}
+
+export interface GradeResult extends ScoreResult {
+	percentile: number | null;
+	tier: string | null;
+}
+
+const bundledCalibration = bundledCalibrationJson as unknown as GradeCalibration;
 
 export const GRADE_WEIGHTS = {
 	// traits: sum over the template's trait pool of -log2(p) for a landed entry below
@@ -56,18 +88,18 @@ export const GRADE_WEIGHTS = {
 
 // display-only: percentile -> tier label. Never stored, never used to gate anything;
 // purely a friendlier way to show a percentile to a player.
-const TIER_TABLE = [
+const TIER_TABLE: Array<{ max: number; tier: string }> = [
 	{ max: 50, tier: 'standard' },
 	{ max: 90, tier: 'select' },
 	{ max: 99, tier: 'prime' },
 	{ max: 100, tier: 'apex' },
 ];
 
-function clamp(n, lo, hi) {
+function clamp(n: number, lo: number, hi: number): number {
 	return Math.max(lo, Math.min(hi, n));
 }
 
-function band(value, fallback) {
+function band(value: unknown, fallback: Band): Band {
 	if (Array.isArray(value) && value.length === 2 && typeof value[0] === 'number' && typeof value[1] === 'number') {
 		return [Math.min(value[0], value[1]), Math.max(value[0], value[1])];
 	}
@@ -75,14 +107,14 @@ function band(value, fallback) {
 }
 
 // where a value sits in its band, 0 at the bottom and 1 at the top
-function bandPosition(value, [lo, hi]) {
+function bandPosition(value: number, [lo, hi]: Band): number {
 	if (hi <= lo) {
 		return 0.5;
 	}
 	return clamp((value - lo) / (hi - lo), 0, 1);
 }
 
-function traitsScore(record, template) {
+function traitsScore(record: XalianRecord, template: SpeciesTemplate): number {
 	const pool = (template.traits && template.traits.pool) || {};
 	const traits = record.traits || [];
 	let score = 0;
@@ -97,18 +129,18 @@ function traitsScore(record, template) {
 	return score;
 }
 
-function affinityScore(record) {
+function affinityScore(record: XalianRecord): number {
 	const affinities = (record.element && record.element.affinities) || {};
 	const primary = record.element && record.element.primary;
 	const secondaryKey = Object.keys(affinities).find((k) => k !== primary);
 	if (!secondaryKey) {
 		return 0;
 	}
-	const strength = affinities[secondaryKey];
+	const strength = affinities[secondaryKey as keyof typeof affinities] || 0;
 	return GRADE_WEIGHTS.affinityBase + GRADE_WEIGHTS.affinityStrengthScale * (strength / 100);
 }
 
-function finishScore(record) {
+function finishScore(record: XalianRecord): number {
 	const finish = record.appearance && record.appearance.finish;
 	const row = FINISH_ODDS.find(([name]) => name === finish);
 	if (!row) {
@@ -118,7 +150,7 @@ function finishScore(record) {
 	return GRADE_WEIGHTS.finishScale * Math.log2(1 / odds);
 }
 
-function attributesScore(record, template) {
+function attributesScore(record: XalianRecord, template: SpeciesTemplate): number {
 	const positions = ATTRIBUTE_KEYS.map((key) => {
 		const b = band(template.attributes && template.attributes[key], [30, 70]);
 		return bandPosition(record.attributes[key], b);
@@ -129,18 +161,18 @@ function attributesScore(record, template) {
 	return meanPart + topTenth * GRADE_WEIGHTS.attributesTopTenthBonus;
 }
 
-function sizeScore(record, template) {
-	const size = (template.physiology && template.physiology.size) || {};
+function sizeScore(record: XalianRecord, template: SpeciesTemplate): number {
+	const size = (template.physiology && template.physiology.size) || ({} as SpeciesTemplate['physiology']['size']);
 	const heightBand = band(size.heightCm, [100, 200]);
 	const weightBand = band(size.weightKg, [50, 150]);
 	const heightP = bandPosition(record.physiology.heightCm, heightBand);
 	const weightP = bandPosition(record.physiology.weightKg, weightBand);
 	const margin = GRADE_WEIGHTS.sizeOuterMargin;
-	const isOuter = (p) => p <= margin || p >= 1 - margin;
+	const isOuter = (p: number) => p <= margin || p >= 1 - margin;
 	return isOuter(heightP) || isOuter(weightP) ? GRADE_WEIGHTS.sizeOuterBonus : 0;
 }
 
-function abilitiesScore(record) {
+function abilitiesScore(record: XalianRecord): number {
 	const rolled = (record.abilities || []).filter((a) => !a.signature);
 	if (rolled.length === 0) {
 		return 0;
@@ -152,8 +184,8 @@ function abilitiesScore(record) {
 
 // the score and its components, with no percentile lookup — used both by gradeRecord and
 // by the simulator while it builds the calibration table those percentiles come from
-export function scoreRecord(record, template) {
-	const components = {
+export function scoreRecord(record: XalianRecord, template: SpeciesTemplate): ScoreResult {
+	const components: GradeComponents = {
 		traits: GRADE_WEIGHTS.traits * traitsScore(record, template),
 		affinity: affinityScore(record),
 		finish: finishScore(record),
@@ -165,7 +197,7 @@ export function scoreRecord(record, template) {
 	return { score, components };
 }
 
-function percentileOf(score, calibration) {
+function percentileOf(score: number, calibration: GradeCalibration | null | undefined): number | null {
 	const quantiles = calibration && Array.isArray(calibration.quantiles) ? calibration.quantiles : null;
 	if (!quantiles || quantiles.length === 0) {
 		return null;
@@ -193,7 +225,7 @@ function percentileOf(score, calibration) {
 }
 
 // display-only label from a percentile. Never stored, never used to gate anything.
-function tierOf(percentile) {
+function tierOf(percentile: number | null): string | null {
 	if (percentile == null) {
 		return null;
 	}
@@ -201,13 +233,13 @@ function tierOf(percentile) {
 	return row ? row.tier : 'apex';
 }
 
-export function gradeRecord(record, template, calibration) {
+export function gradeRecord(record: XalianRecord, template: SpeciesTemplate, calibration: GradeCalibration | null | undefined): GradeResult {
 	const { score, components } = scoreRecord(record, template);
 	const percentile = percentileOf(score, calibration);
 	const tier = tierOf(percentile);
 	return { score, percentile, tier, components };
 }
 
-export function gradeWithBundledCalibration(record, template) {
+export function gradeWithBundledCalibration(record: XalianRecord, template: SpeciesTemplate): GradeResult {
 	return gradeRecord(record, template, bundledCalibration);
 }

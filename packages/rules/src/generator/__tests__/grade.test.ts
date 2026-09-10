@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
-import { gradeRecord, gradeWithBundledCalibration } from '../grade.js';
-import { getSpeciesTemplates, generateBatch } from '../index.js';
+import { gradeRecord, gradeWithBundledCalibration } from '../grade.ts';
+import { getSpeciesTemplates, generateBatch } from '../index.ts';
 
 /*
 	Decision 11 (docs/design/xalian-creature-system-hardening.md WP4): gradeRecord is an
@@ -11,8 +11,11 @@ import { getSpeciesTemplates, generateBatch } from '../index.js';
 
 const ATTRIBUTE_KEYS = ['strength', 'vitality', 'endurance', 'agility', 'reflex', 'intelligence', 'willpower', 'instinct', 'charisma', 'resilience'];
 
-function baseTemplate(overrides = {}) {
-	const attributes = {};
+// these fixtures build deliberately minimal templates/records (a handful of fields, not
+// the full ratified shape) so each assertion below isolates one scoring rule; `any` is
+// the loose fixture shape, not a hole in grade.ts's typed API
+function baseTemplate(overrides: any = {}): any {
+	const attributes: Record<string, [number, number]> = {};
 	ATTRIBUTE_KEYS.forEach((k) => {
 		attributes[k] = [30, 70];
 	});
@@ -25,8 +28,8 @@ function baseTemplate(overrides = {}) {
 	};
 }
 
-function baseRecord(overrides = {}) {
-	const attributes = {};
+function baseRecord(overrides: any = {}): any {
+	const attributes: Record<string, number> = {};
 	ATTRIBUTE_KEYS.forEach((k) => {
 		attributes[k] = 50; // dead center of the default [30, 70] band on every attribute
 	});
@@ -108,7 +111,7 @@ describe('gradeWithBundledCalibration', () => {
 		const batch = generateBatch(templates.length * 5, 'grade-test-seed');
 		expect(batch.length).toBeGreaterThan(0);
 		batch.forEach((record) => {
-			const template = templateByKey.get(record.species);
+			const template = templateByKey.get(record.species)!;
 			const graded = gradeWithBundledCalibration(record, template);
 			expect(typeof graded.score).toBe('number');
 			expect(graded.percentile).toBeGreaterThanOrEqual(0);

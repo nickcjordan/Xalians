@@ -1,8 +1,17 @@
 import { describe, test, expect } from 'vitest';
 import speciesRecords from '@xalians/content/speciesRecords.json';
-import registries from '@xalians/content/registries.json';
-import catalog from '@xalians/content/abilityCatalog.json';
-import { ELEMENT_ADJACENCY, CONDUIT_ACTIONS_BY_MEDIUM } from '../constants.js';
+import registriesJson from '@xalians/content/registries.json';
+import catalogJson from '@xalians/content/abilityCatalog.json';
+import { ELEMENT_ADJACENCY, CONDUIT_ACTIONS_BY_MEDIUM } from '../constants.ts';
+
+// This checker mirrors scripts/checkCatalogCoverage.js's untyped, string-keyed traversal
+// of the bundled JSON on purpose (the two must compute the same thing); `any` here is
+// that traversal, not a hole in the generator's own typed API (generate.ts, index.ts).
+const registries = registriesJson as any;
+const catalog = catalogJson as any;
+const ADJACENCY = ELEMENT_ADJACENCY as any;
+const CONDUITS = CONDUIT_ACTIONS_BY_MEDIUM as any;
+const records = speciesRecords as any;
 
 /*
 	Variety floors from docs/design/xalian-ability-grammar-draft.md ("Variety floors"):
@@ -13,7 +22,7 @@ import { ELEMENT_ADJACENCY, CONDUIT_ACTIONS_BY_MEDIUM } from '../constants.js';
 	only re-checks the two floors against the my-app JSON copies so a regression here is
 	caught by `npm test`, not only by the standalone script.
 
-	Reachability mirrors generate.js's own `allowedActions` and `nameCandidates` exactly
+	Reachability mirrors generate.ts's own `allowedActions` and `nameCandidates` exactly
 	(docs/design/xalian-creature-system-hardening.md Decision 10): instruments come from
 	the template, mediums are the template's element plus its ELEMENT_ADJACENCY entries,
 	actions per instrument come from registries.instrumentActions plus the conduit medium's
@@ -22,19 +31,19 @@ import { ELEMENT_ADJACENCY, CONDUIT_ACTIONS_BY_MEDIUM } from '../constants.js';
 	action, filtered to entries that are untagged or tagged with that instrument.
 */
 
-function entryName(e) {
+function entryName(e: any): string {
 	return Array.isArray(e) ? e[0] : e;
 }
 
-function entryAllows(e, instrument) {
+function entryAllows(e: any, instrument: string): boolean {
 	return !Array.isArray(e) || e[1].includes(instrument);
 }
 
-function validNamesForCell(medium, action, instrument) {
+function validNamesForCell(medium: string, action: string, instrument: string): string[] {
 	const cell = (catalog.elements && catalog.elements[medium] && catalog.elements[medium][action]) || [];
 	const neutral = (catalog.neutral && catalog.neutral[action]) || [];
-	const seen = new Set();
-	const names = [];
+	const seen = new Set<string>();
+	const names: string[] = [];
 	[...cell, ...neutral].forEach((e) => {
 		if (!entryAllows(e, instrument)) {
 			return;
@@ -49,12 +58,12 @@ function validNamesForCell(medium, action, instrument) {
 	return names;
 }
 
-function actionsForInstrumentMedium(template, instrument, medium) {
+function actionsForInstrumentMedium(template: any, instrument: string, medium: string): string[] {
 	const table = registries.instrumentActions || {};
-	const row = (Array.isArray(table[instrument]) ? table[instrument] : []).slice();
+	const row: string[] = (Array.isArray(table[instrument]) ? table[instrument] : []).slice();
 	const conduits = template.conduits || {};
 	if (conduits[instrument] === medium) {
-		(CONDUIT_ACTIONS_BY_MEDIUM[medium] || []).forEach((a) => {
+		(CONDUITS[medium] || []).forEach((a: string) => {
 			if (!row.includes(a)) {
 				row.push(a);
 			}
@@ -63,26 +72,33 @@ function actionsForInstrumentMedium(template, instrument, medium) {
 	return row;
 }
 
-function mediumsFor(template) {
-	return [template.element, ...(ELEMENT_ADJACENCY[template.element] || [])];
+function mediumsFor(template: any): string[] {
+	return [template.element, ...(ADJACENCY[template.element] || [])];
 }
 
 // cache: cell key -> valid names, since a cell's validity depends only on the catalog and
 // the instrument, not on which species reaches it (matches checkCatalogCoverage.js)
-const cellCache = new Map();
-function cellFor(instrument, action, medium) {
+const cellCache = new Map<string, string[]>();
+function cellFor(instrument: string, action: string, medium: string): string[] {
 	const key = `${medium}|${action}|${instrument}`;
 	if (!cellCache.has(key)) {
 		cellCache.set(key, validNamesForCell(medium, action, instrument));
 	}
-	return cellCache.get(key);
+	return cellCache.get(key)!;
 }
 
-function coverageFor(template) {
-	const instruments = Array.isArray(template.instruments) && template.instruments.length > 0 ? template.instruments : [];
+interface Cell {
+	instrument: string;
+	medium: string;
+	action: string;
+	names: string[];
+}
+
+function coverageFor(template: any): { cells: Cell[]; totalReachableNames: number } {
+	const instruments: string[] = Array.isArray(template.instruments) && template.instruments.length > 0 ? template.instruments : [];
 	const mediums = mediumsFor(template);
-	const cells = [];
-	const seenCellKeys = new Set();
+	const cells: Cell[] = [];
+	const seenCellKeys = new Set<string>();
 	instruments.forEach((instrument) => {
 		mediums.forEach((medium) => {
 			actionsForInstrumentMedium(template, instrument, medium).forEach((action) => {
@@ -95,7 +111,7 @@ function coverageFor(template) {
 			});
 		});
 	});
-	const distinctNames = new Set();
+	const distinctNames = new Set<string>();
 	cells.forEach((c) => c.names.forEach((n) => distinctNames.add(n.toLowerCase())));
 	return { cells, totalReachableNames: distinctNames.size };
 }
@@ -111,18 +127,18 @@ const CELL_NAME_FLOOR = 6;
 const THIN_CELL_COUNT_RATCHET = 0;
 
 describe('ability catalog coverage (grammar-doc variety floors)', () => {
-	const perSpecies = speciesRecords.records.map((template) => ({ template, coverage: coverageFor(template) }));
+	const perSpecies = records.records.map((template: any) => ({ template, coverage: coverageFor(template) }));
 
 	test('every ratified species reaches at least 30 distinct ability names', () => {
-		const under = perSpecies.filter((s) => s.coverage.totalReachableNames < SPECIES_NAME_FLOOR).map((s) => `${s.template.key} (${s.coverage.totalReachableNames})`);
+		const under = perSpecies.filter((s: any) => s.coverage.totalReachableNames < SPECIES_NAME_FLOOR).map((s: any) => `${s.template.key} (${s.coverage.totalReachableNames})`);
 		expect(under, `species under the ${SPECIES_NAME_FLOOR}-name floor: ${under.join(', ')}`).toEqual([]);
 	});
 
 	test('no reachable cell has zero valid names', () => {
-		const empty = [];
-		const seen = new Set();
-		perSpecies.forEach(({ coverage }) => {
-			coverage.cells.forEach((c) => {
+		const empty: string[] = [];
+		const seen = new Set<string>();
+		perSpecies.forEach(({ coverage }: any) => {
+			coverage.cells.forEach((c: Cell) => {
 				const key = `${c.medium}|${c.action}|${c.instrument}`;
 				if (c.names.length === 0 && !seen.has(key)) {
 					seen.add(key);
@@ -134,9 +150,9 @@ describe('ability catalog coverage (grammar-doc variety floors)', () => {
 	});
 
 	test('thin cells (under the 6-name floor) do not exceed the recorded ratchet', () => {
-		const thinKeys = new Set();
-		perSpecies.forEach(({ coverage }) => {
-			coverage.cells.forEach((c) => {
+		const thinKeys = new Set<string>();
+		perSpecies.forEach(({ coverage }: any) => {
+			coverage.cells.forEach((c: Cell) => {
 				if (c.names.length < CELL_NAME_FLOOR) {
 					thinKeys.add(`${c.medium}|${c.action}|${c.instrument}`);
 				}
@@ -145,4 +161,3 @@ describe('ability catalog coverage (grammar-doc variety floors)', () => {
 		expect(thinKeys.size, `thin cells found: ${Array.from(thinKeys).join(', ')}`).toBeLessThanOrEqual(THIN_CELL_COUNT_RATCHET);
 	});
 });
-
