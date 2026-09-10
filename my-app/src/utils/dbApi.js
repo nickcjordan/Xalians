@@ -1,23 +1,10 @@
 import axios from "axios";
 import qs from "qs";
 import Amplify, { API, Auth } from "aws-amplify";
-import { Signer } from "@aws-amplify/core";
 
-async function signRequest(url, method, body, headers) {
-  const essentialCredentials = Auth.essentialCredentials(await Auth.currentCredentials());
-  const params = {
-    method: method,
-    url: url,
-    data: JSON.stringify(body),
-    headers: headers,
-  };
-  const credentials = {
-    secret_key: essentialCredentials.secretAccessKey,
-    access_key: essentialCredentials.accessKeyId,
-    session_token: essentialCredentials.sessionToken,
-  };
-  const awsDetails = { service: "execute-api", region: "us-east-1" };
-  return Signer.sign(params, credentials, awsDetails);
+async function authHeaders() {
+  const session = await Auth.currentSession();
+  return { Authorization: `Bearer ${session.getIdToken().getJwtToken()}` };
 }
 
 export const callGetXalian = (id = "00009-4c1d8607-d3de-4313-91b1-84eecd5ce921") => {
@@ -33,10 +20,9 @@ export const callGetUser = (id, populateXalians = false) => {
 };
 
 export const callGet = (url) => {
-  return signRequest(url, "GET").then((signedRequest) => {
-    axios.defaults.withCredentials = true;
+  return authHeaders().then((headers) => {
     return axios
-      .get(signedRequest.url, { headers: signedRequest.headers })
+      .get(url, { headers })
       .then((response) => response.data);
   });
 };
@@ -71,13 +57,12 @@ export const callCreateUser = (user) => {
 };
 
 export const callCreate = (url, data) => {
-  return signRequest(url, "POST", data, { "content-type": "application/json" }).then((signedRequest) => {
-    axios.defaults.withCredentials = true;
+  return authHeaders().then((headers) => {
     return axios({
       method: "post",
-      url: signedRequest.url,
-      headers: signedRequest.headers,
-      data: signedRequest.data,
+      url,
+      headers: { ...headers, "content-type": "application/json" },
+      data,
     }).then((response) => response.data);
   });
 };
@@ -100,13 +85,12 @@ export const callUpdateUserXalian = (action, userId, xalianId) => {
   const url = "https://api.xalians.com/prod/db/user";
   const method = "PATCH";
 
-  return signRequest(url, method, data, { "content-type": "application/json" }).then((signedRequest) => {
-    axios.defaults.withCredentials = true;
+  return authHeaders().then((headers) => {
     return axios({
       method: method,
-      url: signedRequest.url,
-      headers: signedRequest.headers,
-      data: signedRequest.data,
+      url,
+      headers: { ...headers, "content-type": "application/json" },
+      data,
     }).then((response) => response.data);
   });
 };

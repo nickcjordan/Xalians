@@ -2,6 +2,7 @@ const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, GetCommand, PutCommand, BatchGetCommand } = require('@aws-sdk/lib-dynamodb');
 const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const builder = require('./responseBuilder.js');
+const log = require('../log.js');
 
 const TABLE_NAME = 'XalianTable';
 
@@ -25,13 +26,12 @@ function getXalian(xalianId, onSuccess, onNotFound, onFail) {
 		dynamoDb.send(new GetCommand(params))
 			.then((data) => {
 				if (data.Item) {
-					console.log(`SUCCESS :: data:\n${JSON.stringify(data.Item.attributes, null, 2)}`);
 					onSuccess(data.Item.attributes);
 				} else {
 					onNotFound();
 				}
 			}, (err) => {
-				console.log(`ERROR :: ${JSON.stringify(err, null, 2)}`);
+				log.error('getXalian failed', { xalianId: xalianId, errorName: err && err.name });
 				onFail(err);
 			});
 	} catch (e) {
@@ -42,12 +42,12 @@ function getXalian(xalianId, onSuccess, onNotFound, onFail) {
 function getXalianBatch(xalianIds, onSuccess, onFail) {
 	try {
         var params = builder.buildBatchGetParams(xalianIds);
-		console.log(`params: \n${JSON.stringify(params, null, 2)}`);
 
 		dynamoDb.send(new BatchGetCommand(params))
 			.then((data) => {
 				onSuccess(data.Responses.XalianTable);
 			}, (err) => {
+				log.error('getXalianBatch failed', { count: xalianIds.length, errorName: err && err.name });
 				onFail(err);
 			});
 	} catch (e) {

@@ -249,6 +249,26 @@ resource "aws_cloudwatch_log_group" "api_gw" {
 
 
 #########################################################
+#####            COGNITO JWT AUTHORIZER             #####
+#########################################################
+# Replaces AWS_IAM + frontend SigV4 signing on the /db/* routes. The audience and issuer
+# ids come from my-app/src/aws-exports.js (aws_user_pools_web_client_id, aws_user_pools_id).
+resource "aws_apigatewayv2_authorizer" "cognito" {
+  api_id           = aws_apigatewayv2_api.lambda.id
+  authorizer_type  = "JWT"
+  identity_sources = ["$request.header.Authorization"]
+  name             = "cognito-user-pool"
+
+  jwt_configuration {
+    audience = [var.cognito_web_client_id]
+    issuer   = "https://cognito-idp.${var.aws_region}.amazonaws.com/${var.cognito_user_pool_id}"
+  }
+}
+#####                                               #####
+#########################################################
+
+
+#########################################################
 #####               LAMBDA INSTANCE                 #####
 ##              Generate Xalian Lambda                 ##
 #########################################################
@@ -286,7 +306,8 @@ module "table_create_xalian_lambda_module" {
   apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
   apigw_lambda_route_key          = "POST /db/xalian"
   base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
-  authorization_type              = "AWS_IAM"
+  authorization_type              = "JWT"
+  authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
 }
 #####                                               #####
 #########################################################
@@ -308,7 +329,8 @@ module "table_retrieve_xalian_lambda_module" {
   iam_role_arn                    = aws_iam_role.lambda_exec.arn
   apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
   base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
-  authorization_type              = "AWS_IAM"
+  authorization_type              = "JWT"
+  authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
 }
 #####                                               #####
 #########################################################
@@ -329,7 +351,8 @@ module "table_retrieve_xalian_batch_lambda_module" {
   iam_role_arn                    = aws_iam_role.lambda_exec.arn
   apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
   base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
-  authorization_type              = "AWS_IAM"
+  authorization_type              = "JWT"
+  authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
 }
 #####                                               #####
 #########################################################
@@ -351,7 +374,8 @@ module "table_retrieve_xalian_user_lambda_module" {
   iam_role_arn                    = aws_iam_role.lambda_exec.arn
   apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
   base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
-  authorization_type              = "AWS_IAM"
+  authorization_type              = "JWT"
+  authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
 }
 #####                                               #####
 #########################################################
@@ -372,7 +396,8 @@ module "table_create_xalian_user_lambda_module" {
   iam_role_arn                    = aws_iam_role.lambda_exec.arn
   apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
   base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
-  authorization_type              = "AWS_IAM"
+  authorization_type              = "JWT"
+  authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
 }
 #####                                               #####
 #########################################################
@@ -393,7 +418,8 @@ module "table_update_xalian_user_lambda_module" {
   iam_role_arn                    = aws_iam_role.lambda_exec.arn
   apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
   base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
-  authorization_type              = "AWS_IAM"
+  authorization_type              = "JWT"
+  authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
 }
 #####                                               #####
 #########################################################

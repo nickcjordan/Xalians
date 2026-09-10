@@ -44,6 +44,10 @@ jobs:
         working-directory: lambda
         run: npm ci --omit=dev
 
+      - name: Backend tests
+        working-directory: lambda
+        run: npm test
+
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "~1.14"

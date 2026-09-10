@@ -1,29 +1,55 @@
 const delegate = require('./xalianDbDelegate.js');
 const builder = require('./responseBuilder.js');
+const log = require('../log.js');
+const { ApiError, requireSubject } = require('../auth.js');
 
+function requestId(context, event) {
+	return (context && context.awsRequestId) || (event && event.requestContext && event.requestContext.requestId);
+}
+
+function respondToError(e, reqId, callback) {
+	if (e instanceof ApiError) {
+		callback(null, builder.buildXalianError(e.code, e.message, e.status));
+	} else {
+		callback(null, builder.buildError(e, reqId));
+	}
+}
+
+// POST /db/xalian. Requires an authenticated caller. The body is still trusted as-is; a
+// later PR (Wave D, D1 in docs/design/backend-modernization-plan.md) moves generation
+// server-side so a client can no longer post arbitrary stats.
 module.exports.createXalian = (event, context, callback) => {
-	console.log(`inbound event: ` + JSON.stringify(event, null, 2));
-
+	const reqId = requestId(context, event);
 	try {
+		requireSubject(event);
 		const xalian = JSON.parse(event.body);
-		console.log(`inbound xalian: ` + JSON.stringify(xalian, null, 2));
 		delegate.createXalian(
 			xalian,
 			function onSuccess() {
+				log.info('createXalian success', { requestId: reqId, xalianId: xalian && xalian.xalianId });
 				callback(undefined, builder.buildSuccess());
 			},
 			function onFail(error) {
-				console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
-				callback(null, builder.buildError(error));
+				respondToError(error, reqId, callback);
 			}
 		);
 	} catch (e) {
-		callback(null, builder.buildError(e));
+		respondToError(e, reqId, callback);
 	}
-
 };
 
+// GET /db/xalian and GET /db/xalians. Requires an authenticated caller; any authenticated
+// caller may read any xalian (collections are viewable by other users, e.g. from
+// userDetailsPage).
 module.exports.retrieveXalian = (event, context, callback) => {
+	const reqId = requestId(context, event);
+	try {
+		requireSubject(event);
+	} catch (e) {
+		respondToError(e, reqId, callback);
+		return;
+	}
+
 	if (!event.queryStringParameters || !event.queryStringParameters.xalianId) {
 		callback(null, builder.buildXalianError('BAD_REQUEST', 'No xalianId found in query string parameters'));
 		return;
@@ -34,22 +60,20 @@ module.exports.retrieveXalian = (event, context, callback) => {
 	if (xalianIds.length == 1) {
 		let xalianId = xalianIds.pop();
 
-    delegate.getXalian(
+		delegate.getXalian(
 			xalianId,
 			function onSuccess(xalian) {
 				let response = builder.buildResponse(200, xalian);
-				console.log(`SUCCESS :: returning response:\n${JSON.stringify(response, null, 2)}`);
+				log.info('retrieveXalian success', { requestId: reqId, xalianId });
 				callback(undefined, response);
 			},
 			function onNotFound() {
 				callback(null, builder.buildXalianError('XALIAN_NOT_FOUND', 'Did not find xalian with xaianId=' + xalianId));
 			},
 			function onFail(error) {
-				console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
-				callback(null, builder.buildError(error));
+				respondToError(error, reqId, callback);
 			}
 		);
-
 	} else {
 		delegate.getXalianBatch(
 			xalianIds,
@@ -57,12 +81,11 @@ module.exports.retrieveXalian = (event, context, callback) => {
 				// return bare xalians like the single-id path does, not raw table items
 				let unwrapped = xalians.map((x) => (x && x.attributes ? x.attributes : x));
 				let response = builder.buildResponse(200, unwrapped);
-				console.log(`SUCCESS :: returning response:\n${JSON.stringify(response, null, 2)}`);
+				log.info('retrieveXalian batch success', { requestId: reqId, count: unwrapped.length });
 				callback(undefined, response);
 			},
 			function onFail(error) {
-				console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
-				callback(null, builder.buildError(error));
+				respondToError(error, reqId, callback);
 			}
 		);
 	}
@@ -71,82 +94,3 @@ module.exports.retrieveXalian = (event, context, callback) => {
 // GET /db/xalians is wired to this handler in main.tf; it accepts the same
 // comma-separated xalianId query param as retrieveXalian
 module.exports.retrieveXalianBatch = module.exports.retrieveXalian;
-
-
-
-// module.exports.deleteXalian = (event, context, callback) => {
-//   const req = JSON.parse(event.body);
-//   const xalianId = req.xalianId;
-
-//   dynamoDb.put(
-//     {
-//       TableName: TABLE_NAME,
-//       Item: req,
-//     },
-//     function (err, data) {
-//       if (err) {
-//         console.log('Error', err);
-//         callback(null, {
-//           statusCode: 500,
-//           body: JSON.stringify({
-//             message: 'Error occurred: ' + err.message
-//           })
-//         })
-//       } else {
-//         console.log('Success', data);
-//         callback(null, {
-//           statusCode: 200,
-//           body: {}
-//         })
-//       }
-//     });
-// };
-
-// module.exports.queryXalians = (event, context, callback) => {
-//   const req = JSON.parse(event.body);
-//   const xalianId = req.xalianId;
-
-//   var params = {
-//     ExpressionAttributeValues: {
-//       ':s': 2,
-//       ':e': 9,
-//       ':topic': 'PHRASE'
-//      },
-//    KeyConditionExpression: 'Season = :s and Episode > :e',
-//    FilterExpression: 'contains (Subtitle, :topic)',
-//    TableName: 'EPISODES_TABLE'
-//   };
-
-//   docClient.query(params, function(err, data) {
-//     if (err) {
-//       console.log('Error', err);
-//     } else {
-//       console.log('Success', data.Items);
-//     }
-//   });
-// };
-
-// module.exports.updateXalian = (event, context, callback) => {
-//   const req = JSON.parse(event.body);
-
-//   var params = {
-//     TableName: TABLE_NAME,
-//     Key: {
-//       'Season': season,
-//       'Episode': episode
-//     },
-//     UpdateExpression: 'set Title = :t, Subtitle = :s',
-//     ExpressionAttributeValues: {
-//       ':t': 'NEW_TITLE',
-//       ':s': 'NEW_SUBTITLE'
-//     }
-//   };
-
-//   docClient.update(params, function (err, data) {
-//     if (err) {
-//       console.log('Error', err);
-//     } else {
-//       console.log('Success', data);
-//     }
-//   });
-// };

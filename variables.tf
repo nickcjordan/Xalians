@@ -41,3 +41,15 @@ variable "cloudfront_id" {
   type        = string
   default     = "E25EPFZCU2J0HP"
 }
+
+variable "cognito_user_pool_id" {
+  description = "Cognito user pool id backing the JWT authorizer (see my-app/src/aws-exports.js aws_user_pools_id)"
+  type        = string
+  default     = "us-east-1_dDy7NYWbz"
+}
+
+variable "cognito_web_client_id" {
+  description = "Cognito user pool web client id, used as the JWT authorizer audience (see my-app/src/aws-exports.js aws_user_pools_web_client_id)"
+  type        = string
+  default     = "67ak7f8lbjlvk0ufj1r46oclmv"
+}
