@@ -259,7 +259,7 @@ describe('the base redesign additions', () => {
 
 	it('ablates every rule AND every role', () => {
 		const ids = ABLATIONS.map((a) => a.id);
-		['baseline', 'noHidden', 'noLoki', 'noSpeed', 'noHiddenFirst', 'noSweep', 'noBolster', 'noShield', 'noHurtAttacksLess', 'noBolsterRecovery', 'noWillful', 'noPresenceScale', 'noInstinctLanes', 'noSwiftMove', 'trailingBonusBack']
+		['baseline', 'noHidden', 'noLoki', 'noSpeed', 'hiddenFirstBack', 'hidingPriced', 'noSweep', 'noBolster', 'noShield', 'noHurtAttacksLess', 'noBolsterRecovery', 'noWillful', 'noPresenceScale', 'noInstinctLanes', 'noSwiftMove', 'trailingBonusBack']
 			.forEach((id) => expect(ids).toContain(id));
 		expect(ABLATIONS.find((a) => a.id === 'noSweep').rules).toEqual({ roles: { sweep: false } });
 	});
@@ -388,13 +388,38 @@ describe('pass 3: the per-role lane split', () => {
 });
 
 describe('pass 3: the new ablation rows', () => {
-	it('carries a no-stake row and an unpriced-hiding row', () => {
+	it('carries a no-stake row, and since pass 4 the rows that put the old hiding back', () => {
 		const ids = ABLATIONS.map((a) => a.id);
 		expect(ids).toContain('noStake');
-		expect(ids).toContain('hidingUnpriced');
+		expect(ids).toContain('hiddenFirstBack');
+		expect(ids).toContain('hidingPriced');
+		expect(ids).not.toContain('noHiddenFirst');
 		const noStake = ABLATIONS.find((a) => a.id === 'noStake');
 		expect(noStake.rules).toEqual({ stake: false });
-		const unpriced = ABLATIONS.find((a) => a.id === 'hidingUnpriced');
-		expect(unpriced.rules).toEqual({ hiddenSendCost: 1, hiddenFirstNeedsCompany: false, hiddenPower: 1 });
+		expect(ABLATIONS.find((a) => a.id === 'hiddenFirstBack').rules).toEqual({ hiddenFirst: true });
+		expect(ABLATIONS.find((a) => a.id === 'hidingPriced').rules).toEqual({ hiddenFirst: true, hiddenSendCost: 2, hiddenPower: 0.75 });
+	});
+});
+
+describe('pass 4: the read (assumption 24)', () => {
+	it('is one of the report sections, renders, and reports concealment rather than gauging it', () => {
+		expect(ALL_SECTIONS).toContain('read');
+		const report = runValidation({ matches: MATCHES, seed: SEED, only: ['read'] });
+		expect(report.read.rows.map((r) => r.id)).toEqual(['anticipation', 'blind', 'sharpRead', 'alwaysHidden', 'neverHides', 'alwaysHiddenVsBlind']);
+		report.read.rows.forEach((r) => {
+			expect(r.rate).toBeTruthy();
+			expect(r.rate.p).toBeGreaterThanOrEqual(0);
+			expect(r.rate.p).toBeLessThanOrEqual(1);
+		});
+		expect(report.read.readings.some((line) => line.includes('Concealment against the bot'))).toBe(true);
+		const sections = buildSections(report);
+		expect(sections.map((x) => x.id)).toContain('read');
+		expect(toMarkdown(report)).toContain('8. The read');
+	});
+
+	it('the always-hidden regret row is reported, never flagged', () => {
+		const report = runValidation({ matches: MATCHES, seed: SEED, only: ['regret'] });
+		const row = report.regret.rows.find((r) => r.id === 'alwaysHidden');
+		expect(row.flag).toBe('reported only (pass 4)');
 	});
 });

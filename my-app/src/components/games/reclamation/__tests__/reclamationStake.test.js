@@ -264,10 +264,10 @@ describe('the price of hiding, on the bench', () => {
 
 	it('the engine tells the table what a hidden send costs', () => {
 		const { view } = makeView('A');
-		expect(view.hiddenSendCost).toBe(2);
+		expect(view.hiddenSendCost).toBe(1);
 	});
 
-	it('the toggle prints the price, and the pips preview two spent instead of one', () => {
+	it('at the default cost of one, the toggle shows no price and the pips preview one spent either way', () => {
 		const { view } = makeView('A');
 		const mine = withTurn(view, 'A');
 		const stealthy = stealthyIdOf(mine);
@@ -276,9 +276,7 @@ describe('the price of hiding, on the bench', () => {
 		// armed but open: one pip is previewed
 		mount(<ReclamationBench {...benchProps(mine, { armedRecordId: stealthy })} />);
 		expect(container.querySelectorAll('.rec-send-pip--pending').length).toBe(1);
-		const price = container.querySelector('[data-hidden-price]');
-		expect(price).toBeTruthy();
-		expect(price.textContent).toBe('costs 2 sends');
+		expect(container.querySelector('[data-hidden-price]')).toBeFalsy();
 
 		act(() => {
 			ReactDOM.render(
@@ -286,28 +284,53 @@ describe('the price of hiding, on the bench', () => {
 				container
 			);
 		});
-		// armed and hidden: two
-		expect(container.querySelectorAll('.rec-send-pip--pending').length).toBe(2);
+		// armed and hidden: still one, since a hidden send costs the same as any other
+		expect(container.querySelectorAll('.rec-send-pip--pending').length).toBe(1);
 		expect(container.querySelector('[data-hidden-toggle]').disabled).toBe(false);
+		expect(container.querySelector('[data-hidden-price]')).toBeFalsy();
 	});
 
-	it('the lead names the whole price when a hidden send is armed', () => {
+	it('the lead names the hidden send but no price when it costs one', () => {
 		const { view } = makeView('A');
 		const mine = withTurn(view, 'A');
 		const stealthy = stealthyIdOf(mine);
 		mount(<ReclamationBench {...benchProps(mine, { armedRecordId: stealthy, sendHidden: true })} />);
-		expect(container.querySelector('[data-bench-lead]').textContent)
-			.toContain('Hidden: lands first at three quarters power, costs two sends.');
+		const lead = container.querySelector('[data-bench-lead]').textContent;
+		expect(lead).toContain('Hidden: the rival will not see it until the worlds clash.');
+		expect(lead).not.toContain('lands first');
+		expect(lead).not.toContain('three quarters power');
+		expect(lead).not.toContain('costs');
 	});
 
-	it('with one send left the toggle is disabled and says so', () => {
+	it('when a rules variant raises the cost above one, the toggle prints the price', () => {
 		const { view } = makeView('A');
-		const mine = withSentCount(withTurn(view, 'A'), 'A', (view.players.A.sendableCap || 10) - 1);
+		const mine = withTurn(view, 'A');
+		const stealthy = stealthyIdOf(mine);
+		const dearer = { ...mine, hiddenSendCost: 2 };
+		mount(<ReclamationBench {...benchProps(dearer, { armedRecordId: stealthy })} />);
+		const price = container.querySelector('[data-hidden-price]');
+		expect(price).toBeTruthy();
+		expect(price.textContent).toBe('costs 2 sends');
+	});
+
+	it('with no sends left the toggle is disabled', () => {
+		const { view } = makeView('A');
+		const mine = withSentCount(withTurn(view, 'A'), 'A', (view.players.A.sendableCap || 10));
 		const stealthy = stealthyIdOf(mine);
 		mount(<ReclamationBench {...benchProps(mine, { armedRecordId: stealthy, sendHidden: true })} />);
 		const toggle = container.querySelector('[data-hidden-toggle]');
 		expect(toggle.disabled).toBe(true);
 		expect(toggle.checked).toBe(false);
+	});
+
+	it('a rules variant that raises the cost above what is left shows the unaffordable price', () => {
+		const { view } = makeView('A');
+		const mine = withSentCount(withTurn(view, 'A'), 'A', (view.players.A.sendableCap || 10) - 1);
+		const stealthy = stealthyIdOf(mine);
+		const dearer = { ...mine, hiddenSendCost: 2 };
+		mount(<ReclamationBench {...benchProps(dearer, { armedRecordId: stealthy, sendHidden: true })} />);
+		const toggle = container.querySelector('[data-hidden-toggle]');
+		expect(toggle.disabled).toBe(true);
 		expect(container.querySelector('[data-hidden-price]').textContent).toBe('not enough sends left');
 	});
 });
