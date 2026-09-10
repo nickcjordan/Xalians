@@ -119,7 +119,9 @@ function traitsScore(record: XalianRecord, template: SpeciesTemplate): number {
 	const traits = record.traits || [];
 	let score = 0;
 	Object.keys(pool).forEach((key) => {
-		const percent = pool[key];
+		// traits.pool is a partial record (an unlisted trait key is an implicit 0), but
+		// key came from Object.keys(pool) so the value is always present here.
+		const percent = pool[key] ?? 0;
 		if (percent >= 100) {
 			return;
 		}

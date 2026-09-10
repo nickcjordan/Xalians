@@ -52,13 +52,16 @@ import type {
 	GenerateBatchArgs,
 	GenerateXalianArgs,
 	Registries,
-	RecordAbility,
-	RecordArchetype,
-	RecordElement,
-	RecordPhysiology,
 	SpeciesTemplate,
 	XalianRecord,
 } from './types.ts';
+
+// record.ts's nested shapes have no standalone exported name (they're inline in
+// XalianRecord), so this package names them locally for its own intermediate results.
+type RecordArchetype = XalianRecord['archetype'];
+type RecordElement = XalianRecord['element'];
+type RecordPhysiology = XalianRecord['physiology'];
+type RecordAbility = XalianRecord['abilities'][number];
 
 // ---------------------------------------------------------------------------
 // helpers
@@ -160,8 +163,8 @@ function rollPhysiology(rng: Rng, template: SpeciesTemplate): PhysiologyResult {
 		senseBands[key] = b;
 		senses[key] = rollInBand(rng, b);
 	});
-	if (Array.isArray(src.senses && src.senses.special) && (src.senses as { special?: string[] }).special!.length > 0) {
-		senses.special = (src.senses as { special: string[] }).special.slice();
+	if (src.senses && Array.isArray(src.senses.special) && src.senses.special.length > 0) {
+		senses.special = src.senses.special.slice();
 	}
 
 	const chiralityRule = src.genome && src.genome.chirality;
@@ -204,7 +207,12 @@ interface AffinitiesResult {
 }
 
 function rollAffinities(rng: Rng, template: SpeciesTemplate): AffinitiesResult {
-	const primary = template.element;
+	// template.element is validated against the closed element enum by
+	// SpeciesTemplateSchema (packages/content/src/schema/speciesTemplate.ts) at bundle
+	// parse time in index.ts, but registries.json-derived key enums infer as a bare
+	// `string` (see the note in ./types.ts), so this package's own ElementKey union is
+	// narrower than the schema's; the cast asserts what parsing already guaranteed.
+	const primary = template.element as ElementKey;
 	const affinities: RecordElement['affinities'] = { [primary]: 100 };
 	const graph = ELEMENT_ADJACENCY[primary] || [];
 	let secondary: ElementKey | null = null;
@@ -269,8 +277,8 @@ function tiltedPercent(key: string, percent: number, ctx: TiltContext): number {
 function rollTraits(rng: Rng, template: SpeciesTemplate, ctx: TiltContext): string[] {
 	const pool = (template.traits && template.traits.pool) || {};
 	const tilted = Object.keys(pool)
-		.filter((key) => pool[key] > 0)
-		.map((key) => ({ key, percent: tiltedPercent(key, pool[key], ctx) }));
+		.filter((key) => (pool[key] ?? 0) > 0)
+		.map((key) => ({ key, percent: tiltedPercent(key, pool[key] ?? 0, ctx) }));
 
 	// a non-corporeal body phases whether or not the template listed it
 	if (ctx.physiology.corporeality === 'non-corporeal' && !tilted.some((t) => t.key === 'phasing')) {

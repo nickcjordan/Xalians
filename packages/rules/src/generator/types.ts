@@ -1,20 +1,39 @@
 /*
-	Shared types for the generator: the species template shape (speciesRecords.json), the
-	registries shape (registries.json), the ability catalog shape (abilityCatalog.json),
-	and the generated creature record shape, per docs/design/xalian-creature-data-structure.md
-	and docs/design/sample-record-graviclaw.json.
-
-	These are derived from what generate.js/index.js/grade.js actually read and write, not
-	hand-invented. A zod-validated version of the record and template shapes is being built
-	independently in packages/content/src/schema (branch content/schemas); these types are
-	the structural contract this package needs until that lands, and are deliberately loose
-	where the JSON data is looser than the ratified doc (see the `Band` / optional-field
-	notes below).
+	Generator types. The species template, registries, ability catalog and generated
+	record shapes are no longer hand-written here: `@xalians/content/schema` derives them
+	from zod schemas (docs/design/xalian-creature-data-structure.md), and this file
+	re-exports those so every existing `from './types.ts'` import keeps working. What
+	remains here is generator-internal: types with no schema counterpart, because they
+	describe something the schema doesn't (a roll band, the generator's own option bags,
+	the lever tables in constants.ts) or narrow a schema field the schema itself leaves as
+	a bare `string` (the closed key unions below -- see "Schema changes" in the PR that
+	introduced this file for why those stay local instead of widening call sites).
 */
 
-// a [min, max] roll band; JSON stores these as two-element arrays
+export type {
+	AbilityCatalog,
+	CatalogEntry,
+	Registries,
+	SpeciesRecordsBundle,
+	SpeciesTemplate,
+	XalianRecord,
+} from '@xalians/content/schema';
+
+// a [min, max] roll band; JSON stores these as two-element arrays. The schema expresses
+// the same shape as a validated tuple inline (speciesTemplate.ts's `range()`) but does
+// not export a standalone name for it.
 export type Band = [number, number];
 
+/*
+	registries.json's closed vocabularies are zod enums built from the JSON at runtime
+	(packages/content/src/schema/registries.ts), which keeps the *values* honest but,
+	because `resolveJsonModule` types every JSON string as plain `string`, their z.infer
+	type is `string`, not a literal union -- so the schema has no narrow-key counterpart
+	to re-export here. The generator leans on these unions for real safety (exhaustive
+	switches in generate.ts, `Record<AttributeKey, ...>` maps that must stay total), so
+	they stay hand-written and local rather than being loosened to `string` at every call
+	site. See "Schema changes" in this PR's description for the follow-up option.
+*/
 export type AttributeKey =
 	| 'strength' | 'vitality' | 'endurance' | 'agility' | 'reflex'
 	| 'intelligence' | 'willpower' | 'instinct' | 'charisma' | 'resilience';
@@ -32,169 +51,10 @@ export type Corporeality = 'corporeal' | 'non-corporeal';
 export type Finish = 'standard' | 'gleam' | 'prismatic' | 'eclipse';
 
 // -----------------------------------------------------------------------------------
-// species template (one entry of @xalians/content/speciesRecords.json's `records` array)
+// generateXalian / generateBatch options -- generator-internal, no schema counterpart
 // -----------------------------------------------------------------------------------
 
-export interface SpeciesTemplateSize {
-	heightCm: Band;
-	weightKg: Band;
-}
-
-export interface SpeciesTemplatePhysiology {
-	corporeality?: Corporeality;
-	composition?: { primary?: string; secondary?: string };
-	bodyPlan?: string;
-	anatomy?: string[];
-	covering?: string;
-	size: SpeciesTemplateSize;
-	lifespan?: string;
-	genome?: { chirality?: 'rolled' | Chirality };
-	diet?: string;
-	communication?: string[];
-	breathes?: string[];
-	environmentalTolerance?: {
-		ambientMedia?: string[];
-		temperatureC?: { min: number; max: number };
-	};
-	capabilities?: Partial<Record<CapabilityKey, Band>>;
-	senses?: Partial<Record<GradedSenseKey, Band>> & { special?: string[] };
-}
-
-export interface SpeciesTemplateSignatureAbility {
-	name: string;
-	instrument: string;
-	action: string;
-	medium: string;
-	intensity: Band;
-	description?: string;
-}
-
-export interface SpeciesTemplate {
-	key: string;
-	name: string;
-	element: ElementKey;
-	homePlanet: string;
-	generatorPlanets?: string[];
-	lore?: Record<string, unknown>;
-	physiology: SpeciesTemplatePhysiology;
-	archetypeWeights: Record<string, number>;
-	attributes: Record<AttributeKey, Band>;
-	traits: { pool: Record<string, number> };
-	instruments: string[];
-	conduits?: Record<string, string>;
-	signatureAbility: SpeciesTemplateSignatureAbility;
-}
-
-export interface SpeciesRecordsBundle {
-	records: SpeciesTemplate[];
-}
-
-// -----------------------------------------------------------------------------------
-// registries.json
-// -----------------------------------------------------------------------------------
-
-export interface ArchetypeRow {
-	key: string;
-	name: string;
-	nature: string;
-	favors: string[];
-}
-
-export interface Registries {
-	version?: string;
-	note?: string;
-	archetypes: ArchetypeRow[];
-	instrumentActions: Record<string, string[]>;
-	[key: string]: unknown;
-}
-
-// -----------------------------------------------------------------------------------
-// abilityCatalog.json
-// -----------------------------------------------------------------------------------
-
-// a bare name (untagged, ordinary heft), [name, tags] (ordinary heft), or
-// [name, tags, heft] (heft 1 or 3) — scripts/bundleAbilityCatalog.js's entry shape
-export type CatalogEntry = string | [string, string[]] | [string, string[], number];
-
-export interface AbilityCatalog {
-	elements: Record<string, Record<string, CatalogEntry[]>>;
-	neutral: Record<string, CatalogEntry[]>;
-	counts?: { heft?: Record<string, number>; [key: string]: unknown };
-	[key: string]: unknown;
-}
-
-// -----------------------------------------------------------------------------------
-// generated record (generate.js's generateXalian output; docs/design/
-// xalian-creature-data-structure.md section 2)
-// -----------------------------------------------------------------------------------
-
-export interface RecordProvenance {
-	seed: string;
-	generatorVersion: string;
-	schemaVersion: string;
-	generatedAt: string;
-	origin: string;
-	serial: number;
-}
-
-export interface RecordPhysiology {
-	corporeality: Corporeality;
-	composition: { primary: string; secondary?: string };
-	bodyPlan: string;
-	anatomy: string[];
-	covering: string;
-	heightCm: number;
-	weightKg: number;
-	lifespan: string;
-	genome: { chirality: Chirality };
-	diet: string;
-	communication: string[];
-	breathes: string[];
-	environmentalTolerance: {
-		ambientMedia: string[];
-		temperatureC: { min: number; max: number };
-	};
-	capabilities: Record<CapabilityKey, number>;
-	senses: Record<GradedSenseKey, number> & { special?: string[] };
-}
-
-export interface RecordArchetype {
-	key: string;
-	favors: string[];
-}
-
-export interface RecordElement {
-	primary: ElementKey;
-	affinities: Partial<Record<ElementKey, number>>;
-}
-
-export interface RecordAbility {
-	name: string;
-	signature: boolean;
-	instrument: string;
-	action: string;
-	medium: string;
-	intensity: number;
-	description?: string;
-}
-
-export interface XalianRecord {
-	id: string;
-	species: string;
-	provenance: RecordProvenance;
-	physiology: RecordPhysiology;
-	archetype: RecordArchetype;
-	attributes: Record<AttributeKey, number>;
-	element: RecordElement;
-	traits: string[];
-	temperament: Record<TemperamentKey, number>;
-	appearance: { finish: Finish };
-	abilities: RecordAbility[];
-}
-
-// -----------------------------------------------------------------------------------
-// generateXalian / generateBatch options
-// -----------------------------------------------------------------------------------
+import type { AbilityCatalog, Registries, SpeciesTemplate } from '@xalians/content/schema';
 
 export interface GenerateOptions {
 	origin?: string;
@@ -217,7 +77,7 @@ export interface GenerateXalianArgs {
 }
 
 // -----------------------------------------------------------------------------------
-// constants.js lever tables
+// constants.ts lever tables -- generator-internal, no schema counterpart
 // -----------------------------------------------------------------------------------
 
 export interface TraitTiltSpec {
