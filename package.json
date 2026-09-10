@@ -16,5 +16,13 @@
   },
   "dependencies": {
     "axios": "^0.24.0"
+  },
+  "devDependencies": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "url": "^0.11.0"
+  },
+  "overrides": {
+    "maplibre-gl": "1.15.3"
   }
 }
