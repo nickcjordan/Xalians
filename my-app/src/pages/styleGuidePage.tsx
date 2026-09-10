@@ -62,6 +62,7 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 // The rest of the system, one file per brief so the page stays readable.
 import { SECTIONS as PRIMITIVE_SECTIONS } from './styleguide/primitiveSections';
 import { SECTIONS as PATTERN_SECTIONS } from './styleguide/patternSections';
+import { SECTIONS as DEPTH_SECTIONS } from './styleguide/depthSections';
 
 /**
  * The design system reference, version 4 on the new stack
@@ -76,6 +77,7 @@ const SECTIONS: { id: string; label: string }[] = [
     { id: 'color', label: 'Color' },
     { id: 'type', label: 'Type' },
     { id: 'depth', label: 'Depth and corners' },
+    ...DEPTH_SECTIONS.map(({ id, label }) => ({ id, label })),
     { id: 'controls', label: 'Controls' },
     { id: 'inputs', label: 'Inputs' },
     { id: 'forms', label: 'Forms' },
@@ -269,6 +271,10 @@ function StyleGuidePage() {
                         <div className="flex h-24 items-center justify-center bg-s2 shadow-float"><span className="type-legend">floating</span></div>
                     </div>
                 </section>
+
+                {DEPTH_SECTIONS.map((s) => (
+                    <React.Fragment key={s.id}>{s.node}</React.Fragment>
+                ))}
 
                 {/* ---- controls ---- */}
                 <section id="controls" className="mt-12">
