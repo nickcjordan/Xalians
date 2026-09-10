@@ -19,7 +19,9 @@
     ],
     "origin": "Made by the Telypso Generator to help settle the unstable minds of the Vallerii marooned on the world, whom it treats as patients.",
     "habitat": "The fungal forests and bioluminescent jungles of Telypso.",
-    "behavior": "It is small, deceptively smart, and docile with those it trusts. It puts itself between a distressed mind and whatever is agitating it, holding one quiet and driving the other back with a burst from its open hands."
+    "feeding": "It eats what the fungal forests offer.",
+    "behavior": "It is small, deceptively smart, and docile with those it trusts. It puts itself between a distressed mind and whatever is agitating it, holding one quiet and driving the other back with a burst from its open hands.",
+    "company": "It stays with those it trusts."
   },
   "physiology": {
     "corporeality": "corporeal",

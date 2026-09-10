@@ -20,7 +20,8 @@
     "origin": "One of the non-corporeal Xalians the abandoned Phantiri Generator produced after it rewrote itself under Leviticus Overdrive.",
     "habitat": "The Dreadscape of Phantiri, inside its windless fog.",
     "feeding": "It takes nothing in and feeds on nothing.",
-    "behavior": "It holds a feline shape, climbs and springs where the footing is bad, and instantly atomizes into a cloud of smoke for a sneak attack or a quick escape."
+    "behavior": "It holds a feline shape, climbs and springs where the footing is bad, and instantly atomizes into a cloud of smoke for a sneak attack or a quick escape.",
+    "company": "It hunts alone."
   },
   "physiology": {
     "corporeality": "non-corporeal",

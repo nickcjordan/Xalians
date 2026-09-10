@@ -17,7 +17,9 @@
     ],
     "origin": "Thought to have been used for mineral excavation on Veridium, its drill-like horns breaking through the strongest material.",
     "habitat": "The ore-filled crust and heavy-metal veins of Veridium, among its factory trenches and forge districts.",
-    "behavior": "It opens the metal veins with its horns. It signals by drumming through the ground rather than by call, since the manufactory is too loud for anything else."
+    "feeding": "It eats what it finds in the trenches and forge districts.",
+    "behavior": "It opens the metal veins with its horns. It signals by drumming through the ground rather than by call, since the manufactory is too loud for anything else.",
+    "company": "It works the veins alone."
   },
   "physiology": {
     "corporeality": "corporeal",

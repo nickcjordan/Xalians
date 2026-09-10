@@ -19,7 +19,9 @@
     ],
     "origin": "One of the Xalians the Syndicate's stolen prototype Generator produced to work the drilling on Endessa.",
     "habitat": "The dunes and cavern networks of Endessa, crossing the surface only in the low hours.",
-    "behavior": "It rolls into a ball inside its scaly exoskeleton to protect itself, and it feels the ground through its plating."
+    "feeding": "It eats what it finds in the caverns and on the dunes in the low hours.",
+    "behavior": "It rolls into a ball inside its scaly exoskeleton to protect itself, and it feels the ground through its plating.",
+    "company": "It crosses the dunes alone."
   },
   "physiology": {
     "corporeality": "corporeal",

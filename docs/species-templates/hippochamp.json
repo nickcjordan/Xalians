@@ -19,6 +19,7 @@
     ],
     "origin": "Designed as emergency response crews for the hydro-processing rigs of Poseidas, putting out electrical and chemical fires and holding off pirates after the Algael.",
     "habitat": "The floating rig fleets on Poseidas's global ocean, above and below the surface.",
+    "feeding": "It eats what the ocean around the rigs gives.",
     "behavior": "It patrols the rigs and hoses down fires and threats alike with the steady stream from its snout. When storms or the toxic algae blooms come over the rigs it drops below the surface.",
     "company": "It works in crews."
   },

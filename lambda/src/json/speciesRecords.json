@@ -23,7 +23,9 @@
         ],
         "origin": "Feral stock from the Krystos Generator after the impact, when the machine turned from making dainty, graceful creatures to lifeforms that could survive the frozen tundra.",
         "habitat": "The arctic wastes outside the prison complexes of Krystos.",
-        "behavior": "It moves at night, using its stealth and night vision to go unseen. Creatures like it proved useful for discouraging prisoners from trying to escape."
+        "feeding": "It forages the tundra at night and eats what it finds.",
+        "behavior": "It moves at night, using its stealth and night vision to go unseen. Creatures like it proved useful for discouraging prisoners from trying to escape.",
+        "company": "It goes alone."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -398,7 +400,8 @@
         "origin": "Made by the Drainov Generator to live in the planet's acid swamps and chemical waste.",
         "habitat": "The acid swamps and derelict chemical plants of Drainov.",
         "feeding": "It feeds on whatever it settles over.",
-        "behavior": "It moves slowly, flowing through the swamps rather than over them, and its slime continually regrows the rocky shell around it."
+        "behavior": "It moves slowly, flowing through the swamps rather than over them, and its slime continually regrows the rocky shell around it.",
+        "company": "It lives alone."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -582,7 +585,9 @@
         ],
         "origin": "Made to harvest the vast crop yields of Luminax's fields, cutting through grain with the ionized blades behind its front paws.",
         "habitat": "The sunward face of Luminax, among the old fields, oases and solar farms.",
-        "behavior": "It enters a photonic state and crosses ground at the speed of light, so it seems to teleport around a fight, harassing its opponent with rapid cuts too fast to react to."
+        "feeding": "It eats what the fields and oases give, meat and grain alike.",
+        "behavior": "It enters a photonic state and crosses ground at the speed of light, so it seems to teleport around a fight, harassing its opponent with rapid cuts too fast to react to.",
+        "company": "It worked the fields in numbers. Today it fights alone."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -772,7 +777,9 @@
         ],
         "origin": "Made by the Stonera Generator for a world that takes a planetwide bombardment every year, where going underground fast is what keeps a creature alive.",
         "habitat": "The fissured rock and crater fields of Stonera, worked from beneath.",
-        "behavior": "When spooked it digs itself underground and leaves only its tail of explosive barbs exposed. If provoked it fires a few of them, and its regenerative power quickly grows more."
+        "feeding": "It feeds on what it digs up and on what comes too near its burrow.",
+        "behavior": "When spooked it digs itself underground and leaves only its tail of explosive barbs exposed. If provoked it fires a few of them, and its regenerative power quickly grows more.",
+        "company": "It lives alone in its burrow."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -958,7 +965,9 @@
         ],
         "origin": "One of the crystal-bearing forms the Luminax Generator grew to survive the light of the twin suns while working the fields.",
         "habitat": "The sunward face of Luminax.",
-        "behavior": "It is calm and slow and holds still, and the gems on its head transmit powerful light energy when it is provoked."
+        "feeding": "It feeds on the light of the twin suns through the gems on its head.",
+        "behavior": "It is calm and slow and holds still, and the gems on its head transmit powerful light energy when it is provoked.",
+        "company": "It lives alone."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -1144,7 +1153,8 @@
         "origin": "Used by wildcatters who could not afford larger drilling Xalians like the Frackworm.",
         "habitat": "The wells and cavern networks beneath Endessa's dunes.",
         "feeding": "It hunts by darting in and out of the surface and ambushing prey with its scissor-like claws.",
-        "behavior": "It tunnels quickly with the small drill on its tail, and it feels what moves overhead through the ground."
+        "behavior": "It tunnels quickly with the small drill on its tail, and it feels what moves overhead through the ground.",
+        "company": "Wildcatters kept several at a time. Left to itself it hunts alone."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -1334,7 +1344,8 @@
         "origin": "Magmuth's mining corporations designed it to cross the transient mineral islands, where a cooling lava flow gives only a short window before the ground opens again.",
         "habitat": "The hardened lava flats and ash fields of Magmuth.",
         "feeding": "It hunts on the flats and eats whatever it can run down.",
-        "behavior": "It runs. When it reaches speed it spreads its wings, launches itself at its prey, and bites."
+        "behavior": "It runs. When it reaches speed it spreads its wings, launches itself at its prey, and bites.",
+        "company": "It runs in packs."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -1520,7 +1531,8 @@
         "origin": "One of the non-corporeal Xalians the abandoned Phantiri Generator produced after it rewrote itself under Leviticus Overdrive.",
         "habitat": "The Dreadscape of Phantiri.",
         "feeding": "It takes nothing in and feeds on nothing.",
-        "behavior": "It zips across the Dreadscape cackling, disappears and reappears at will, passes through surfaces, and zaps its opponents with blasts of gooey ectoplasm. It seems to amuse itself by terrorizing other Xalians."
+        "behavior": "It zips across the Dreadscape cackling, disappears and reappears at will, passes through surfaces, and zaps its opponents with blasts of gooey ectoplasm. It seems to amuse itself by terrorizing other Xalians.",
+        "company": "It roams alone, and it seeks out other Xalians only to torment them."
       },
       "physiology": {
         "corporeality": "non-corporeal",
@@ -1704,7 +1716,9 @@
         ],
         "origin": "Made by the Telypso Generator to help settle the unstable minds of the Vallerii marooned on the world, whom it treats as patients.",
         "habitat": "The fungal forests and bioluminescent jungles of Telypso.",
-        "behavior": "It is small, deceptively smart, and docile with those it trusts. It puts itself between a distressed mind and whatever is agitating it, holding one quiet and driving the other back with a burst from its open hands."
+        "feeding": "It eats what the fungal forests offer.",
+        "behavior": "It is small, deceptively smart, and docile with those it trusts. It puts itself between a distressed mind and whatever is agitating it, holding one quiet and driving the other back with a burst from its open hands.",
+        "company": "It stays with those it trusts."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -1894,7 +1908,9 @@
         ],
         "origin": "Thought to have been used for mineral excavation on Veridium, its drill-like horns breaking through the strongest material.",
         "habitat": "The ore-filled crust and heavy-metal veins of Veridium, among its factory trenches and forge districts.",
-        "behavior": "It opens the metal veins with its horns. It signals by drumming through the ground rather than by call, since the manufactory is too loud for anything else."
+        "feeding": "It eats what it finds in the trenches and forge districts.",
+        "behavior": "It opens the metal veins with its horns. It signals by drumming through the ground rather than by call, since the manufactory is too loud for anything else.",
+        "company": "It works the veins alone."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -2080,7 +2096,9 @@
         ],
         "origin": "Generated by the Syndicate's stolen prototype Generator to open Nightcap wells for the wildcatters and the Nightcap Barons.",
         "habitat": "The cavern networks beneath Endessa's dunes, down to the dead sea floor. It does not come to the surface.",
-        "behavior": "It bores through sand and substrate, sets its head against a seam, and forces its pressurized slurry in until the rock fractures and the Nightcap drains toward the well."
+        "feeding": "It takes its food from the sand and whatever is in it as it bores.",
+        "behavior": "It bores through sand and substrate, sets its head against a seam, and forces its pressurized slurry in until the rock fractures and the Nightcap drains toward the well.",
+        "company": "One worm opens a well by itself. The Barons fielded them by the dozen."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -2270,7 +2288,8 @@
         "origin": "Thought to come from the laboratory experiments on Grimedes, rumored to be ECHELON black sites, that produced the planet's gravity-bending Xalians.",
         "habitat": "The foggy wetlands of Grimedes, just beneath the surface.",
         "feeding": "It lurks under the water and draws prey to its claws with a miniature black hole rather than chasing it.",
-        "behavior": "It snaps its claws shut with a force many times its mass, cutting through the hardest materials. Against something too large to draw in, it roots itself to the ground and becomes an immovable wall of chitin."
+        "behavior": "It snaps its claws shut with a force many times its mass, cutting through the hardest materials. Against something too large to draw in, it roots itself to the ground and becomes an immovable wall of chitin.",
+        "company": "It lurks alone."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -2461,6 +2480,7 @@
         ],
         "origin": "Designed as emergency response crews for the hydro-processing rigs of Poseidas, putting out electrical and chemical fires and holding off pirates after the Algael.",
         "habitat": "The floating rig fleets on Poseidas's global ocean, above and below the surface.",
+        "feeding": "It eats what the ocean around the rigs gives.",
         "behavior": "It patrols the rigs and hoses down fires and threats alike with the steady stream from its snout. When storms or the toxic algae blooms come over the rigs it drops below the surface.",
         "company": "It works in crews."
       },
@@ -2655,7 +2675,8 @@
         "origin": "Created by the Telypso Generator as service animals and therapists for the insane Vallerii imprisoned there, using its empathic healing to balance and treat patients.",
         "habitat": "The fungal forests and mists of Telypso, though many now travel the stars as healers.",
         "feeding": "It grazes on what the overgrowth puts out.",
-        "behavior": "It reads the state of whoever is near it and steadies them. When its horn pulses and swirls with color it hypnotizes whoever is watching and locks them in a trance, which once sedated patients in dangerous manias and now serves King Kozrak as crowd control on rebellious worlds."
+        "behavior": "It reads the state of whoever is near it and steadies them. When its horn pulses and swirls with color it hypnotizes whoever is watching and locks them in a trance, which once sedated patients in dangerous manias and now serves King Kozrak as crowd control on rebellious worlds.",
+        "company": "It keeps close to its patients."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -2847,7 +2868,9 @@
         ],
         "origin": "Designed by Magmuth's corporations as a tinkerer and let loose in the lightless mining shafts to fix and maintain the makeshift equipment the Vallerii sent down.",
         "habitat": "The old mining shafts of Magmuth and the crag networks above them.",
-        "behavior": "It climbs and leaps rather than crossing open ground, swinging from its tail as readily as from a hand. Underground it takes machinery apart and puts it back together. On the surface it is erratic, and it sets fires where they least belong."
+        "feeding": "It eats what it finds in the shafts and on the surface, whatever it is.",
+        "behavior": "It climbs and leaps rather than crossing open ground, swinging from its tail as readily as from a hand. Underground it takes machinery apart and puts it back together. On the surface it is erratic, and it sets fires where they least belong.",
+        "company": "It keeps to itself, shaped by the isolation of the deep tunnels."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -3038,7 +3061,8 @@
         "origin": "Thought to have been designed to clear the thick brush of Floria.",
         "habitat": "The underforests beneath the World Tree canopies.",
         "feeding": "It feeds as it works, on the growth it opens up and whatever the opening turns up.",
-        "behavior": "It sets its feet, reads the ground, and fells standing growth in long low arcs of the blade on its trunk, then holds the lane it has cut."
+        "behavior": "It sets its feet, reads the ground, and fells standing growth in long low arcs of the blade on its trunk, then holds the lane it has cut.",
+        "company": "It moves in herds through the underforest."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -3227,7 +3251,8 @@
         "origin": "One of the leaping animals the Saiphus Generator raised to bound between the floating islands as if gravity held no sway over them.",
         "habitat": "The floating islands of Saiphus and the gaps between them.",
         "feeding": "It grazes the rolling plains of the islands and drinks where vapor condenses in the canyons.",
-        "behavior": "It jumps so high it seems to fly, then comes missiling down on its enemy like a battering ram."
+        "behavior": "It jumps so high it seems to fly, then comes missiling down on its enemy like a battering ram.",
+        "company": "It grazes in groups."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -3594,7 +3619,9 @@
         ],
         "origin": "One of the water-breathing Xalians the Poseidas Generator produced once the seas rose and turned acidic.",
         "habitat": "The water around and beneath Poseidas's rigs and underwater cities.",
-        "behavior": "It is at home on land but far more dangerous in water, where its slender frame and webbed feet carry it. What it catches it wraps its whole length around and holds under."
+        "feeding": "It eats what it catches in the water and what it finds on land.",
+        "behavior": "It is at home on land but far more dangerous in water, where its slender frame and webbed feet carry it. What it catches it wraps its whole length around and holds under.",
+        "company": "It works among the other water-breathing Xalians of the rigs."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -3785,7 +3812,9 @@
         ],
         "origin": "One of the Xalians the Syndicate's stolen prototype Generator produced to work the drilling on Endessa.",
         "habitat": "The dunes and cavern networks of Endessa, crossing the surface only in the low hours.",
-        "behavior": "It rolls into a ball inside its scaly exoskeleton to protect itself, and it feels the ground through its plating."
+        "feeding": "It eats what it finds in the caverns and on the dunes in the low hours.",
+        "behavior": "It rolls into a ball inside its scaly exoskeleton to protect itself, and it feels the ground through its plating.",
+        "company": "It crosses the dunes alone."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -3973,7 +4002,8 @@
         "origin": "One of the non-corporeal Xalians the abandoned Phantiri Generator produced after it rewrote itself under Leviticus Overdrive.",
         "habitat": "The Dreadscape of Phantiri, inside its windless fog.",
         "feeding": "It takes nothing in and feeds on nothing.",
-        "behavior": "It holds a feline shape, climbs and springs where the footing is bad, and instantly atomizes into a cloud of smoke for a sneak attack or a quick escape."
+        "behavior": "It holds a feline shape, climbs and springs where the footing is bad, and instantly atomizes into a cloud of smoke for a sneak attack or a quick escape.",
+        "company": "It hunts alone."
       },
       "physiology": {
         "corporeality": "non-corporeal",
@@ -4155,6 +4185,7 @@
         ],
         "origin": "Used to airlift debris out of Stonera's strip mines with its levitating tail.",
         "habitat": "The edges of the Chasm on Stonera.",
+        "feeding": "It eats when it wakes, whatever the rim offers, and goes long stretches without.",
         "behavior": "It stands guard over the perimeter in a statue-like state, hibernating to conserve energy until it senses a threat. Then it rises into the sky and uses its tail to levitate boulders and fling them across the Chasm, or carpet-bombs intruders with strafing runs of gravel and rock.",
         "company": "It stands in a line with others along the rim."
       },
@@ -4349,7 +4380,9 @@
         ],
         "origin": "One of the Xalians experimented on in the laboratories of Grimedes, rumored to be ECHELON black sites, rather than a labor form.",
         "habitat": "The thick, stalky undergrowth of Grimedes, in permanent night.",
-        "behavior": "In battle it summons a swarm of small flying familiars with teeth like piranhas and controls them with its mind, attacking or defending as one unit. It keeps its own body inside the swarm so nothing can tell which shape matters."
+        "feeding": "It eats what its swarm brings down.",
+        "behavior": "In battle it summons a swarm of small flying familiars with teeth like piranhas and controls them with its mind, attacking or defending as one unit. It keeps its own body inside the swarm so nothing can tell which shape matters.",
+        "company": "It goes with its swarm and nothing else."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -4527,9 +4560,11 @@
           "Wide hood behind the head",
           "Tail ending in a rattle shaped like a lotus flower"
         ],
+        "origin": "One of the desert forms the Syndicate's stolen prototype Generator produced on Endessa. No record says what it was made for.",
         "habitat": "Buried beneath the rolling dunes of Endessa.",
         "feeding": "It bites with a venom that drains the victim's water and leaves it to die of dehydration.",
-        "behavior": "It hides beneath the sand and emits a subsonic vibration from the rattle on its tail that lures and mesmerizes opponents long enough for it to draw near and strike. It spreads its hood and shows its fangs before it does."
+        "behavior": "It hides beneath the sand and emits a subsonic vibration from the rattle on its tail that lures and mesmerizes opponents long enough for it to draw near and strike. It spreads its hood and shows its fangs before it does.",
+        "company": "It hunts alone."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -4719,7 +4754,8 @@
         "origin": "Raised by the Telypso Generator to counterbalance the psychic energies of the deranged Vallerii marooned on the world, as treatment rather than injury.",
         "habitat": "The branches of Telypso's bioluminescent fungal forests.",
         "feeding": "It takes its food from what the forests give.",
-        "behavior": "It uses its tail to draw attention to its big hypnotic eyes, and once eye contact is made it attacks from inside your mind. Since the Nemesis Plague turned Telypso's creatures against one another, Tizzies turn on each other the same way."
+        "behavior": "It uses its tail to draw attention to its big hypnotic eyes, and once eye contact is made it attacks from inside your mind. Since the Nemesis Plague turned Telypso's creatures against one another, Tizzies turn on each other the same way.",
+        "company": "It lives among others of its kind in the branches, and since the Plague they turn on each other."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -4911,7 +4947,8 @@
         "origin": "Made by the Drainov Generator to survive a world of acid swamps and industrial waste.",
         "habitat": "The acid swamps and derelict chemical plants of Drainov.",
         "feeding": "With only two teeth, it dissolves its prey with the toxic mist it expels from the tube in its mouth.",
-        "behavior": "It hunts by scent through smog too thick to see in."
+        "behavior": "It hunts by scent through smog too thick to see in.",
+        "company": "It hunts alone in the smog."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -5098,9 +5135,11 @@
           "Broad clawed hands",
           "Large bushy tail"
         ],
+        "origin": "One of the expendable workforce the Zolton Generator sent onto the lightning fields. No record says what work it was made for.",
         "habitat": "The deep canyons and metallic peaks of Zolton, where ground-borne lightning surges over the crust. It keeps clear of the black lightning dead zones.",
         "feeding": "It feeds on electrical charge from its surroundings and on nothing else.",
-        "behavior": "It stores the charge it gathers in its alloy bones and releases the shock into enemies through its claws."
+        "behavior": "It stores the charge it gathers in its alloy bones and releases the shock into enemies through its claws.",
+        "company": "It keeps to itself."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -5289,8 +5328,11 @@
           "An eye on either side of the body at the soil line",
           "Plant tissue throughout"
         ],
+        "origin": "Grown by the Genesis Prototype on Floria, the first Generator, which ran wild and filled the world with forms like it. No record says what it was made for.",
         "habitat": "Underground in Floria's understory, beneath the World Trees, where it absorbs its power.",
-        "behavior": "It stays buried. When the ground above it is disturbed its tentacles come up out of the soil and wrap whatever is there, and a tentacle torn off grows back."
+        "feeding": "It draws its power from the ground beneath the World Trees and eats nothing.",
+        "behavior": "It stays buried. When the ground above it is disturbed its tentacles come up out of the soil and wrap whatever is there, and a tentacle torn off grows back.",
+        "company": "It lies alone under the soil."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -5476,6 +5518,7 @@
         ],
         "origin": "Formed the rank and file of Krystos's prison guards in ancient times.",
         "habitat": "The high-security prison complexes of Krystos's frozen tundra and the waste outside them.",
+        "feeding": "It eats what the frozen tundra gives, meat or otherwise.",
         "behavior": "It forms thick sheets of ice from thin air, armoring itself, walling off escape routes in frost, or encasing an opponent until it can lumber close enough to pummel it with its ice-gauntleted fists.",
         "company": "It holds a line with others beside it."
       },

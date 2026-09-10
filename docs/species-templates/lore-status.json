@@ -1,5 +1,5 @@
 {
-  "note": "Review status of the lore prose fields per species (Nick signs off). This is ephemeral metadata kept OUT of the creature records on purpose (Nick, 2026-09-09). description is always source (species.json verbatim); appearance and fields (the five short fields, judged as a group) are pending, draft, or ratified. Prose body struck 2026-09-09 for the appearance list; the five short fields replaced habits on 2026-09-10 and are draft until Nick signs off.",
+  "note": "Review status of the lore prose fields per species (Nick signs off). This is ephemeral metadata kept OUT of the creature records on purpose (Nick, 2026-09-09). description is always source (species.json verbatim); appearance and fields (the five short fields, judged as a group) are pending, draft, or ratified. Prose body struck 2026-09-09 for the appearance list; the five short fields replaced habits on 2026-09-10, all five required on every species since later that day, and are draft until Nick signs off.",
   "species": {
     "akinza": {
       "description": "source",

@@ -19,7 +19,9 @@
     ],
     "origin": "Made by the Stonera Generator for a world that takes a planetwide bombardment every year, where going underground fast is what keeps a creature alive.",
     "habitat": "The fissured rock and crater fields of Stonera, worked from beneath.",
-    "behavior": "When spooked it digs itself underground and leaves only its tail of explosive barbs exposed. If provoked it fires a few of them, and its regenerative power quickly grows more."
+    "feeding": "It feeds on what it digs up and on what comes too near its burrow.",
+    "behavior": "When spooked it digs itself underground and leaves only its tail of explosive barbs exposed. If provoked it fires a few of them, and its regenerative power quickly grows more.",
+    "company": "It lives alone in its burrow."
   },
   "physiology": {
     "corporeality": "corporeal",
