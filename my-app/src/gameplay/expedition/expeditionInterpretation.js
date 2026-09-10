@@ -14,7 +14,7 @@
 	it without editing this file (assumption 15).
 */
 
-import rawTypeEffectivenessMatrix from '../../json/typeEffectivenessMatrix.json';
+import rawTypeEffectivenessMatrix from '@xalians/content/typeEffectivenessMatrix.json';
 
 // ---------------------------------------------------------------------------
 // tunable constants - the "first settings" from the base redesign's interpretation

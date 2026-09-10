@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import path from 'path';
 import { createRequire } from 'module';
-import platesData from '../../json/plates.json';
+import platesData from '@xalians/content/plates.json';
 import { erasInOrder } from '../loaders';
 
 const require = createRequire(import.meta.url);

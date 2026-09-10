@@ -3,7 +3,7 @@ import XalianNavbar from '../../components/navbar';
 
 import XalianImage from '../../components/xalianImage';
 import MatchGameFlippedCard from '../../components/games/elements/matchGameFlippedCard';
-import species from '../../json/species.json';
+import species from '@xalians/content/species.json';
 
 import { gsap, Linear } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';

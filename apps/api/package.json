@@ -1,0 +1,13 @@
+{
+  "name": "@xalians/api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Xalian generation engine and CRUD lambdas. Dependencies here are installed into apps/api/node_modules and shipped in the deployment zip; the AWS SDK is not among them because nodejs22.x provides @aws-sdk/* at runtime. Shared game data comes from @xalians/content at dev/test time and from a staged apps/api/dist-content/ copy inside the deployed zip (see scripts/stageApiContent.js at the repo root).",
+  "scripts": {
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@xalians/content": "1.0.0",
+    "uuid": "^8.3.2"
+  }
+}

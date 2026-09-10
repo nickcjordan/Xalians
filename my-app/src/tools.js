@@ -1,4 +1,4 @@
-import elements from './json/elements.json';
+import elements from '@xalians/content/elements.json';
 
 export function getJson(fileName) {
     if (fileName == 'elements') {

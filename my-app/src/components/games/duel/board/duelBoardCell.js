@@ -5,7 +5,7 @@ import * as duelCalculator from '../../../../gameplay/duel/duelCalculator';
 import * as boardStateManager from '../../../../gameplay/duel/boardStateManager';
 import * as duelConstants from '../../../../gameplay/duel/duelGameConstants';
 import { ReactComponent as DuelFlagIcon } from '../../../../svg/games/duel/duel_flag_icon.svg';
-import species from '../../../../json/species.json';
+import species from '@xalians/content/species.json';
 import XalianTypeSymbolBadge from './xalianTypeSymbolBadge';
 
 

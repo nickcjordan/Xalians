@@ -1,9 +1,9 @@
 import { Auth } from 'aws-amplify';
 import * as authUtil from './authUtil';
 import * as dbApi from '../utils/dbApi';
-import mockUserData from '../json/mock/mockUserData.json';
-import mockXalianList from '../json/mock/mockXalianList.json';
-import xalianSamples from '../json/mock/xalianSamples.json';
+import mockUserData from '@xalians/content/mock/mockUserData.json';
+import mockXalianList from '@xalians/content/mock/mockXalianList.json';
+import xalianSamples from '@xalians/content/mock/xalianSamples.json';
 
 // resolves with the user record (xalians populated) when signed in, or null when signed out;
 // rejects if the API call itself fails

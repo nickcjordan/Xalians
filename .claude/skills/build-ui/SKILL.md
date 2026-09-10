@@ -56,7 +56,7 @@ Controls say what happens in plain words. States use the world's registry words 
 
 ## Step 6: verify by paint
 
-1. `cd my-app && yarn test --run && npx tsc --noEmit -p tsconfig.json`.
+1. `cd my-app && npm test -- --run && npx tsc --noEmit -p tsconfig.json`.
 2. With the dev server up, from the repo root: `node scripts/design/snap.js --out untracked/snaps <route> ...`. Open the PNGs at both widths. Check: nothing overflows, no console errors, contrast holds, focus is visible, the accent appears only where the rule allows, the fonts are Saira, Atkinson Hyperlegible and Martian Mono and not a fallback.
 3. If you changed anything in `src/components/ui` or `src/components/system`, also snap `/styleguide`.
 4. Tab through the page once: the skip link appears first, every control takes the ring, every overlay traps and returns focus (contract section 15).

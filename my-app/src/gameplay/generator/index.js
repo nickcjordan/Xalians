@@ -1,13 +1,13 @@
 /*
 	Generator public API, bound to the bundled data (speciesRecords.json, registries.json,
-	abilityCatalog.json, all copied from lambda/src/json by copy-json). Games import from
-	here; generate.js itself takes the tables as arguments so it can be tested with
-	fixtures and later moved to the Lambda.
+	abilityCatalog.json, all read from the @xalians/content workspace package). Games
+	import from here; generate.js itself takes the tables as arguments so it can be
+	tested with fixtures and later moved to the Lambda.
 */
 
-import speciesRecords from '../../json/speciesRecords.json';
-import registries from '../../json/registries.json';
-import catalog from '../../json/abilityCatalog.json';
+import speciesRecords from '@xalians/content/speciesRecords.json';
+import registries from '@xalians/content/registries.json';
+import catalog from '@xalians/content/abilityCatalog.json';
 import { generateXalian as generateWithTables, generateBatch as generateBatchWithTables } from './generate.js';
 
 export { GENERATOR_VERSION, SCHEMA_VERSION } from './constants.js';

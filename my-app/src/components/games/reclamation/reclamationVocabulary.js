@@ -8,7 +8,7 @@
 	ignore unknown keys").
 */
 
-import registries from '../../../json/registries.json';
+import registries from '@xalians/content/registries.json';
 import { speciesDisplayName, getSpeciesTemplate } from '../../../gameplay/generator/index.js';
 
 function toMap(list) {

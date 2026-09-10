@@ -6,9 +6,9 @@
 	is a target: every number is an observation for the tuning session, and the report
 	says so in its own header.
 
-	With --calibrate it also writes lambda/src/json/gradeCalibration.json (score
-	quantiles for grade.js's percentile lookup) and copies it to
-	my-app/src/json/gradeCalibration.json, the frontend's read of the same table.
+	With --calibrate it also writes packages/content/json/gradeCalibration.json (score
+	quantiles for grade.js's percentile lookup), the single shared copy both the API
+	and the frontend read via @xalians/content.
 
 	This must be run from the repo root — every output path below resolves relative to
 	process.cwd(), not to this file:
@@ -24,7 +24,7 @@
 import fs from 'fs';
 import path from 'path';
 import { getSpeciesTemplates, generateBatch, GENERATOR_VERSION } from '../index.js';
-import registries from '../../../json/registries.json';
+import registries from '@xalians/content/registries.json';
 import { ATTRIBUTE_KEYS, FINISH_ODDS } from '../constants.js';
 import { scoreRecord } from '../grade.js';
 
@@ -428,13 +428,10 @@ function main() {
 			n: allRecords.length,
 			quantiles,
 		};
-		const lambdaPath = path.resolve(root, 'lambda/src/json/gradeCalibration.json');
-		const frontendPath = path.resolve(root, 'my-app/src/json/gradeCalibration.json');
+		const contentPath = path.resolve(root, 'packages/content/json/gradeCalibration.json');
 		const json = JSON.stringify(calibration, null, 2);
-		fs.writeFileSync(lambdaPath, json);
-		fs.writeFileSync(frontendPath, json);
-		console.log(`wrote ${lambdaPath}`);
-		console.log(`wrote ${frontendPath}`);
+		fs.writeFileSync(contentPath, json);
+		console.log(`wrote ${contentPath}`);
 	}
 
 	// roster-wide numbers and outliers for the console, so a run's headline results are

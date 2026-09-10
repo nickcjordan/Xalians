@@ -1,4 +1,4 @@
-import effectiveness from '../../../json/typeEffectivenessMatrix.json';
+import effectiveness from '@xalians/content/typeEffectivenessMatrix.json';
 
 const titleCase = (value) => value ? value.charAt(0).toUpperCase() + value.slice(1) : '';
 

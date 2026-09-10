@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import { generateXalian, generateBatch, getSpeciesTemplates, speciesDisplayName, GENERATOR_VERSION } from '../index.js';
-import registries from '../../../json/registries.json';
-import catalog from '../../../json/abilityCatalog.json';
+import registries from '@xalians/content/registries.json';
+import catalog from '@xalians/content/abilityCatalog.json';
 import { ELEMENT_ADJACENCY, CONDUIT_ACTIONS_BY_MEDIUM, TRAIT_EXCLUSIONS, HEFT_BANDS } from '../constants.js';
 import { makeRng } from '../prng.js';
 

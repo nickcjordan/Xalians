@@ -1,6 +1,6 @@
 // Bundles the ability-name catalog (docs/ability-catalog/consolidated-<element>.md, one
 // file per element, sixteen cells each, plus neutral-pools.md, one pool per action) into
-// lambda/src/json/abilityCatalog.json so the generator can draw names at run time.
+// packages/content/json/abilityCatalog.json so the generator can draw names at run time.
 //
 // The markdown is the source of truth and stays hand-audited; this script only reads the
 // cell lines. Cell line form (see any consolidated file, "## Cells"):
@@ -38,7 +38,7 @@ const path = require('path');
 
 const root = path.join(__dirname, '..');
 const catalogDir = path.join(root, 'docs', 'ability-catalog');
-const outDir = path.join(root, 'lambda', 'src', 'json');
+const outDir = path.join(root, 'packages', 'content', 'json');
 
 const ELEMENTS = ['fire', 'water', 'dark', 'light', 'plant', 'electric', 'ghost', 'rock', 'chemical', 'air', 'psychic', 'ice', 'metal', 'sand'];
 const ACTIONS = ['strike', 'lash', 'crush', 'rake', 'shove', 'drain', 'ambush', 'beam', 'hurl', 'spray', 'burst', 'cloud', 'snare', 'ward', 'mend', 'terrorize'];

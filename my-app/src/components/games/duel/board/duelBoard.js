@@ -6,7 +6,7 @@ import * as gameConstants from '../../../../gameplay/duel/duelGameConstants';
 import * as duelUtil from '../../../../utils/duelUtil';
 import * as duelCalculator from '../../../../gameplay/duel/duelCalculator';
 import * as duelConstants from '../../../../gameplay/duel/duelGameConstants';
-import species from '../../../../json/species.json';
+import species from '@xalians/content/species.json';
 import { Hub } from "aws-amplify";
 import DuelBoardCell from './duelBoardCell';
 import DuelRosterRail from './duelRosterRail';

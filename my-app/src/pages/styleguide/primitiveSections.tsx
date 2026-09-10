@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Search, ZoomIn, ZoomOut, Maximize2, X } from 'lucide-react';
 
-import speciesData from '@/json/species.json';
+import speciesData from '@xalians/content/species.json';
 import { themeColors } from '@/constants/designTokens';
 import XalianImage from '../../components/xalianImage';
 

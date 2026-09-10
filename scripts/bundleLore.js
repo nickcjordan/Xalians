@@ -1,5 +1,5 @@
-// Copies the ratified lore bundle from docs/ into lambda/src/json/, which is the
-// only place the frontend reads game data from (my-app's copy-json step mirrors it).
+// Copies the ratified lore bundle from docs/ into packages/content/json/, which both
+// apps/api and my-app read directly through the @xalians/content workspace package.
 //
 //   encyclopedia.json    <- docs/encyclopedia/encyclopedia.json (verbatim)
 //   chronicle.json       <- docs/encyclopedia/chronicle.json (verbatim)
@@ -19,7 +19,7 @@ const path = require('path');
 
 const root = path.join(__dirname, '..');
 const docs = path.join(root, 'docs');
-const out = path.join(root, 'lambda', 'src', 'json');
+const out = path.join(root, 'packages', 'content', 'json');
 const read = (p) => JSON.parse(fs.readFileSync(p, 'utf8'));
 const write = (name, data) => {
   fs.writeFileSync(path.join(out, name), JSON.stringify(data, null, 2) + '\n');

@@ -5,9 +5,7 @@ on:
     branches: [main]
     paths:
       - "my-app/**"
-      - "lambda/src/json/**"
-      - "lambda/src/constants/**"
-      - "lambda/src/gameplay/**"
+      - "packages/**"
       - ".github/workflows/deploy-frontend.yml"
   workflow_dispatch:
 
@@ -32,18 +30,16 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: yarn
-          cache-dependency-path: my-app/yarn.lock
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile --ignore-engines
-
-      - name: Sync shared game data and engine code from lambda/
-        run: yarn copy-json && yarn copy-js
+        working-directory: .
+        run: npm ci
 
       - name: Build
-        run: yarn build
+        run: npm run build
 
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4

@@ -9,6 +9,7 @@
     "@reduxjs/toolkit": "^1.8.1",
     "@tailwindcss/vite": "^4.3.3",
     "@testing-library/jest-dom": "^5.11.4",
+    "@xalians/content": "1.0.0",
     "aws-amplify": "^4.3.14",
     "axios": "^0.24.0",
     "boardgame.io": "^0.49.11",
@@ -49,14 +50,13 @@
   },
   "scripts": {
     "codex": "node ../scripts/buildCodex.js",
-    "dev": "npm run copy-js && npm run copy-json && npm run codex && vite",
+    "dev": "npm run codex && vite",
     "start": "npm run dev",
     "build": "npm run codex && vite build",
     "preview": "vite preview",
-    "build-deploy": "npm run copy-js && npm run copy-json && npm run build && aws s3 sync build s3://xalians.com --delete",
+    "build-deploy": "npm run build && aws s3 sync build s3://xalians.com --delete",
     "deploy": "aws s3 sync build s3://xalians.com --delete",
-    "copy-json": "cp -rf ../lambda/src/json src",
-    "copy-js": "cp -rf ../lambda/src/constants src && cp -rf ../lambda/src/gameplay src",
+    "copy-js": "cp -rf ../apps/api/src/constants src && cp -rf ../apps/api/src/gameplay src",
     "test": "vitest"
   },
   "browserslist": {
