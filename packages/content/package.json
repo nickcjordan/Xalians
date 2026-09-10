@@ -7,6 +7,15 @@
   "exports": {
     "./package.json": "./package.json",
     "./mock/*.json": "./json/mock/*.json",
-    "./*.json": "./json/*.json"
+    "./*.json": "./json/*.json",
+    "./schema": "./src/schema/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "check:bundle": "node scripts/checkBundle.js"
+  },
+  "dependencies": {
+    "zod": "^4.6.0"
   }
 }
