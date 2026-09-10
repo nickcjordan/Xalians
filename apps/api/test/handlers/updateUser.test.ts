@@ -91,7 +91,10 @@ describe('updateUser handler', () => {
 
     expect(result.statusCode).toBe(200);
     const input = ddbMock.commandCalls(UpdateCommand)[0].args[0].input;
-    expect(input.UpdateExpression).toContain('#attrs.tokens');
+    // Exact expression: DynamoDB rejects SET clauses whose document paths overlap
+    // (#attrs alongside #attrs.tokens), so any if_not_exists initializer on #attrs here
+    // would fail every spend at runtime.
+    expect(input.UpdateExpression).toBe('SET #attrs.tokens = #attrs.tokens - :n');
     expect(input.ConditionExpression).toBe('#attrs.tokens >= :n');
     expect(input.ExpressionAttributeValues).toMatchObject({ ':n': 3 });
   });

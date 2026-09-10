@@ -129,22 +129,22 @@ export async function removeXalianId(userId: string, xalianId: string): Promise<
 
 export type RemoveTokensResult = 'ok' | 'insufficient';
 
-// #attrs (attributes) and its tokens field may not exist yet on a user who has never held
-// tokens; if_not_exists in the SET clause initializes both to a usable starting point
-// (an empty map, then zero) before the subtraction is applied. The ConditionExpression
-// runs against the item's state before this update, so it fails closed exactly when the
-// stored balance (treated as zero when the field is absent) is less than the amount
-// requested.
+// The ConditionExpression requires attributes.tokens to exist and cover the amount, so
+// the subtraction can reference the path directly. Do not add if_not_exists
+// initializers for #attrs here: DynamoDB rejects an UpdateExpression whose SET clauses
+// name overlapping document paths (#attrs and #attrs.tokens), so that form fails every
+// spend at runtime. A user with no attributes map or no tokens field simply fails the
+// condition, which is the correct "insufficient" answer.
 export async function removeTokens(userId: string, amount: number): Promise<RemoveTokensResult> {
   try {
     await ddb.send(
       new UpdateCommand({
         TableName: TABLE_NAME,
         Key: { userId },
-        UpdateExpression: 'SET #attrs = if_not_exists(#attrs, :emptyMap), #attrs.tokens = if_not_exists(#attrs.tokens, :zero) - :n',
+        UpdateExpression: 'SET #attrs.tokens = #attrs.tokens - :n',
         ConditionExpression: '#attrs.tokens >= :n',
         ExpressionAttributeNames: { '#attrs': 'attributes' },
-        ExpressionAttributeValues: { ':n': amount, ':zero': 0, ':emptyMap': {} },
+        ExpressionAttributeValues: { ':n': amount },
       })
     );
     return 'ok';
