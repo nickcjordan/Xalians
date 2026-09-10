@@ -1,0 +1,142 @@
+/* The semantic layer over src/styles/tokens.css: shadcn's variables mapped
+   onto the contract, the element scope, the chamfer, the type roles.
+   No raw values here; everything reads a token. */
+@import "./tokens.css";
+@import "tw-animate-css";
+
+:root {
+	/* shadcn semantic variables (components/ui read these). */
+	--background: var(--color-room);
+	--foreground: var(--color-ink);
+	--card: var(--color-s1);
+	--card-foreground: var(--color-ink);
+	--popover: var(--color-s2);
+	--popover-foreground: var(--color-ink);
+	--primary: var(--color-viable);
+	--primary-foreground: var(--color-viable-ink);
+	--secondary: var(--color-s2);
+	--secondary-foreground: var(--color-ink);
+	--muted: var(--color-s0);
+	--muted-foreground: var(--color-ink-2);
+	--accent: var(--color-s3);
+	--accent-foreground: var(--color-ink);
+	--destructive: var(--color-plague);
+	--destructive-foreground: var(--color-plague-ink);
+	--border: var(--color-edge);
+	--input: var(--color-edge-strong);
+	--ring: var(--color-viable-hi);
+	--radius: 0;
+
+	/* The element in scope. Neutral until an el-* class sets it. */
+	--el: var(--color-neutral);
+}
+
+@theme inline {
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+	/* bg-el, text-el, border-el follow the element in scope. */
+	--color-el: var(--el);
+}
+
+/* Element scope: put el-fire on any container and every bg-el, text-el and
+   border-el inside it retunes (docs/DESIGN_SYSTEM.md section 3.4). */
+.el-electric { --el: var(--color-el-electric); }
+.el-air { --el: var(--color-el-air); }
+.el-fire { --el: var(--color-el-fire); }
+.el-water { --el: var(--color-el-water); }
+.el-ice { --el: var(--color-el-ice); }
+.el-plant { --el: var(--color-el-plant); }
+.el-rock { --el: var(--color-el-rock); }
+.el-light { --el: var(--color-el-light); }
+.el-dark { --el: var(--color-el-dark); }
+.el-metal { --el: var(--color-el-metal); }
+.el-sand { --el: var(--color-el-sand); }
+.el-chemical { --el: var(--color-el-chemical); }
+.el-psychic { --el: var(--color-el-psychic); }
+.el-ghost { --el: var(--color-el-ghost); }
+
+@layer components {
+	/* The chamfer (section 5): one cut corner top-left and bottom-right, with
+	   the hairline following the cut. Two clipped layers: the element is the
+	   edge, its ::before is the surface inset by one pixel. Set
+	   --chamfer-fill and --chamfer-edge on the element; children sit above. */
+	.chamfer,
+	.chamfer-key {
+		--cut: 12px;
+		--chamfer-fill: var(--color-glass);
+		--chamfer-edge: var(--color-glass-edge);
+		position: relative;
+		isolation: isolate;
+		background: var(--chamfer-edge);
+		clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+	}
+	.chamfer-key { --cut: 8px; }
+	.chamfer::before,
+	.chamfer-key::before {
+		content: "";
+		position: absolute;
+		inset: 1px;
+		z-index: -1;
+		background: var(--chamfer-fill);
+		clip-path: polygon(calc(var(--cut) - 1px) 0, 100% 0, 100% calc(100% - var(--cut) + 1px), calc(100% - var(--cut) + 1px) 100%, 0 100%, 0 calc(var(--cut) - 1px));
+	}
+
+	/* Clip only, no edge layer: for filled surfaces such as the primary key. */
+	.cut { clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px); }
+	.cut-key { clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+
+	/* The DNA mark and the helix spinner (section 8): SVG strokes read these
+	   because stroke utilities cannot follow a currentColor on a path. */
+	.helix .strand { fill: none; stroke: var(--color-viable-hi); stroke-width: 5px; stroke-linejoin: round; }
+	.helix .rung { stroke: var(--color-viable-hi); stroke-width: 9px; stroke-linecap: round; }
+	.helix-spinner .strand { fill: none; stroke: var(--color-viable-hi); stroke-width: 4px; stroke-linejoin: round; opacity: 0.28; }
+	.helix-spinner .rung {
+		stroke: var(--color-viable-hi);
+		stroke-width: 8px;
+		stroke-linecap: round;
+		opacity: 0.15;
+		animation: helix-rung 1.4s var(--ease-out) infinite;
+		animation-delay: calc(var(--i) * 0.16s);
+	}
+	.helix-spinner.w-5 .rung { stroke-width: 12px; }
+
+	/* Text roles (section 4). */
+	.type-legend { font-family: var(--font-legend); font-size: var(--text-legend); font-weight: 500; letter-spacing: var(--tracking-legend); text-transform: uppercase; color: var(--color-ink-2); }
+	.type-title { font-family: var(--font-legend); font-size: var(--text-title); line-height: 0.95; font-weight: 600; letter-spacing: 0.01em; text-transform: uppercase; color: var(--color-ink); }
+	.type-display { font-family: var(--font-legend); font-size: var(--text-display); line-height: 0.95; font-weight: 600; letter-spacing: 0.01em; text-transform: uppercase; color: var(--color-ink); }
+	.type-heading { font-family: var(--font-legend); font-size: var(--text-heading); font-weight: 600; letter-spacing: var(--tracking-heading); text-transform: uppercase; color: var(--color-ink); }
+	.type-subhead { font-family: var(--font-legend); font-size: var(--text-subhead); font-weight: 500; letter-spacing: var(--tracking-heading); text-transform: uppercase; color: var(--color-ink); }
+	.type-data { font-family: var(--font-data); font-variant-numeric: tabular-nums; font-style: normal; }
+}
+
+@keyframes helix-rung {
+	0%, 60%, 100% { opacity: 0.15; }
+	20% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+	.helix-spinner .rung { animation: none; opacity: 0.7; }
+}
+
+/* Legacy interop, until the immersive redesign deletes public/assets/css/legacy:
+   the old template paints every bare <a> mint; on the new stack a link is the
+   ink of its text unless a class says otherwise. */
+a { color: inherit; }

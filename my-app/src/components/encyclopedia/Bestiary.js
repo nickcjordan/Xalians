@@ -3,7 +3,12 @@ import { Link } from 'react-router-dom';
 import * as lore from '../../lore';
 import XalianImage from '../xalianImage';
 import { useReadMark } from './trail';
-import './Bestiary.css';
+import { Tile, TileBar, TileArt, TileMeta, EmptyState } from '@/components/system/record';
+import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { Toggle } from '@/components/ui/toggle';
+import { tabTriggerClass } from '@/components/ui/tabs';
 
 const ELEMENTS = [
     'fire', 'water', 'dark', 'light', 'plant', 'electric', 'ghost', 'rock',
@@ -13,23 +18,22 @@ const ELEMENTS = [
 function BestiaryTile({ species: s }) {
     const read = useReadMark('species', s.key);
     return (
-        <Link
-            to={lore.routeFor('species', s.key)}
-            className={`g-paper g-paper--card g-el-${s.element} enc-bestiary-card`}
-        >
-            <div className="g-paper-tabs">
-                <span className={`g-tab g-el-${s.element}`}>{s.element}</span>
-            </div>
-            <div className="g-plate--photo enc-bestiary-mount">
-                <XalianImage colored speciesName={s.name} primaryType={s.element} moreClasses="enc-bestiary-portrait" />
-            </div>
-            <span className="enc-bestiary-card-name">{s.name}</span>
-            <span className="enc-bestiary-world">{s.planet ? s.planet.name : s.homePlanet}</span>
-            <div className="enc-bestiary-stamps">
-                {s.source !== 'template' && <span className="enc-bestiary-pending">pending record</span>}
-                {read && <span className="g-stamp enc-bestiary-reviewed-stamp"><small>reviewed</small></span>}
-            </div>
-        </Link>
+        <Tile as={Link} to={lore.routeFor('species', s.key)} className={`el-${s.element}`}>
+            <TileBar />
+            <TileArt className="bg-el p-[4%]">
+                <XalianImage colored speciesName={s.name} primaryType={s.element} moreClasses="w-full" />
+            </TileArt>
+            <TileMeta>
+                <span className="type-subhead block text-base">{s.name}</span>
+                <span className="type-data mt-1 block text-small text-ink-3">{s.planet ? s.planet.name : s.homePlanet}</span>
+                {(s.source !== 'template' || read) && (
+                    <div className="mt-2 flex gap-2">
+                        {s.source !== 'template' && <Badge variant="info">Pending record</Badge>}
+                        {read && <Badge variant="ok">Reviewed</Badge>}
+                    </div>
+                )}
+            </TileMeta>
+        </Tile>
     );
 }
 
@@ -76,65 +80,72 @@ export default function Bestiary() {
     }, [species, element, world, sort, ratifiedOnly]);
 
     return (
-        <div className="enc-bestiary">
-            <div className="enc-section-head">
-                <h1 className="g-h2">Bestiary</h1>
-                <span className="enc-count">{list.length} of {species.length} specimens</span>
-            </div>
-
-            <div className="enc-filters">
-                <div className="g-segmented enc-scrollrow" role="group" aria-label="Filter by element" ref={elementRowRef}>
-                    <button type="button" className="g-segment" aria-pressed={element === 'all'} onClick={() => setElement('all')}>
-                        All
-                    </button>
-                    {ELEMENTS.map((el) => (
-                        <button
-                            key={el}
-                            type="button"
-                            className="g-segment"
-                            aria-pressed={element === el}
-                            onClick={() => setElement(el)}
-                        >
-                            {el}
-                        </button>
-                    ))}
-                </div>
-
-                <select
-                    className="g-select enc-bestiary-world-select"
-                    aria-label="Filter by world"
-                    value={world}
-                    onChange={(e) => setWorld(e.target.value)}
-                >
-                    <option value="all">All worlds</option>
-                    {worlds.map((w) => (
-                        <option key={w.key} value={w.key}>{w.name}</option>
-                    ))}
-                </select>
-
-                <div className="g-segmented enc-scrollrow" role="group" aria-label="Sort by">
-                    <button type="button" className="g-segment" aria-pressed={sort === 'name'} onClick={() => setSort('name')}>
-                        Name
-                    </button>
-                    <button type="button" className="g-segment" aria-pressed={sort === 'world'} onClick={() => setSort('world')}>
-                        World
-                    </button>
-                </div>
-
+        <div>
+            <div
+                className="mb-3 flex flex-wrap gap-0.5 max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:[mask-image:linear-gradient(to_right,black_calc(100%-40px),transparent)]"
+                role="group"
+                aria-label="Filter by element"
+                ref={elementRowRef}
+            >
                 <button
                     type="button"
-                    className="g-segment enc-bestiary-ratified-toggle"
-                    aria-pressed={ratifiedOnly}
-                    onClick={() => setRatifiedOnly((v) => !v)}
+                    data-state={element === 'all' ? 'active' : 'inactive'}
+                    className={`${tabTriggerClass} max-sm:shrink-0`}
+                    aria-pressed={element === 'all'}
+                    onClick={() => setElement('all')}
+                >
+                    All
+                </button>
+                {ELEMENTS.map((el) => (
+                    <button
+                        key={el}
+                        type="button"
+                        data-state={element === el ? 'active' : 'inactive'}
+                        className={`${tabTriggerClass} max-sm:shrink-0`}
+                        aria-pressed={element === el}
+                        onClick={() => setElement(el)}
+                    >
+                        {el}
+                    </button>
+                ))}
+            </div>
+
+            <div className="mb-5 flex flex-wrap items-center gap-3 max-sm:flex-row max-sm:flex-wrap">
+                <Select value={world} onValueChange={setWorld}>
+                    <SelectTrigger aria-label="Filter by world" className="min-w-[10rem] max-sm:flex-1 max-sm:basis-full">
+                        <SelectValue placeholder="All worlds" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All worlds</SelectItem>
+                        {worlds.map((w) => (
+                            <SelectItem key={w.key} value={w.key}>{w.name}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+
+                <ToggleGroup type="single" value={sort} onValueChange={(v) => v && setSort(v)} variant="outline" aria-label="Sort by">
+                    <ToggleGroupItem value="name">Name</ToggleGroupItem>
+                    <ToggleGroupItem value="world">World</ToggleGroupItem>
+                </ToggleGroup>
+
+                <Toggle
+                    pressed={ratifiedOnly}
+                    onPressedChange={setRatifiedOnly}
+                    variant="outline"
+                    className="whitespace-nowrap"
                 >
                     Ratified
-                </button>
+                </Toggle>
+
+                {/* The masthead already carries "Bestiary" and the total count; this
+                    is the live filtered count, which does change, so it stays. */}
+                <p className="type-data m-0 ml-auto text-small text-ink-2 max-sm:ml-0 max-sm:basis-full">{list.length} of {species.length} specimens</p>
             </div>
 
             {list.length === 0 ? (
-                <p className="g-empty">No specimens match the current filter.</p>
+                <EmptyState legend="No results">No specimens match the current filter.</EmptyState>
             ) : (
-                <div className="enc-grid">
+                <div className="grid grid-cols-2 gap-3 gap-y-4 sm:grid-cols-3 sm:gap-4 sm:gap-y-5 md:grid-cols-4 min-[1080px]:grid-cols-5 xl:grid-cols-6">
                     {list.map((s) => <BestiaryTile key={s.key} species={s} />)}
                 </div>
             )}

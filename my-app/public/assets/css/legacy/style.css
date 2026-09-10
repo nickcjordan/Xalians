@@ -1,0 +1,4132 @@
+/**
+* Template Name: Gp - v4.7.0
+* Template URL: https://bootstrapmade.com/gp-free-multipurpose-html-bootstrap-template/
+*
+*   xalian constants:
+*     main green: #80ffb0
+*        hover: #b3ffd0
+*     background gray: #0d0d0d
+*     light gray: #cccccc
+*/
+
+
+/*--------------------------------------------------------------
+# Custom Theme
+--------------------------------------------------------------*/
+/* XALIAN FONT */
+@font-face {
+  font-family: 'ProcrastinatingPixie';
+  src: local('Procrastinating Pixie'), url(./fonts/ProcrastinatingPixie-WyVOO.ttf) format('truetype');
+}
+
+.xalian-font {
+  font-family: 'ProcrastinatingPixie';
+}
+
+/* Buttons.
+   react-bootstrap composes these from `variant="xalianGreen"` / `"xalianGray"`,
+   so the class names stay even though the design changed underneath them. Both
+   are now moulded keys from system.css: xalianGreen is the committing action and
+   wears hazard paint; xalianGray is a plain bakelite key.
+
+   The !important flags are load-bearing - bootstrap's own .btn rules are more
+   specific than these class selectors. */
+
+.btn-xalianGreen,
+.btn-xalianGray {
+  font-family: var(--g-font-stencil) !important;
+  font-size: var(--g-size-body) !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  letter-spacing: var(--g-track-label);
+  border-radius: var(--g-radius) !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  transition: background-color var(--g-snap), transform var(--g-snap), box-shadow var(--g-snap) !important;
+}
+
+.btn-xalianGreen {
+  color: #17120a !important;
+  background-color: var(--g-hazard) !important;
+  border-color: var(--g-hazard-dark) !important;
+  box-shadow: var(--g-relief), 0 3px 0 var(--g-seam), 0 4px 8px rgba(0, 0, 0, 0.55) !important;
+}
+
+.btn-xalianGreen:hover {
+  background-color: #f0b71a !important;
+  border-color: var(--g-hazard-dark) !important;
+}
+
+.btn-xalianGray {
+  color: var(--g-ink) !important;
+  background-color: var(--g-hull-hi) !important;
+  border-color: var(--g-seam) !important;
+  text-shadow: none !important;
+  box-shadow: var(--g-relief), 0 3px 0 var(--g-seam), 0 4px 8px rgba(0, 0, 0, 0.55) !important;
+}
+
+.btn-xalianGray:hover {
+  background-color: #3c3c32 !important;
+  border-color: var(--g-seam) !important;
+}
+
+/* the key travels down onto the panel */
+.btn-xalianGreen:active,
+.btn-xalianGray:active,
+.btn-check:checked + .btn-xalianGreen,
+.btn-check:checked + .btn-xalianGray {
+  transform: translateY(3px);
+  box-shadow: var(--g-recess) !important;
+}
+
+/* a thrown selector key lights in hazard paint */
+.btn-check:checked + .btn-xalianGray,
+.btn-xalianGray.active {
+  color: #17120a !important;
+  background-color: var(--g-hazard) !important;
+  border-color: var(--g-hazard-dark) !important;
+}
+
+.btn-check:checked + .btn-xalianGreen,
+.btn-xalianGreen.active {
+  background-color: #b7890c !important;
+}
+
+.btn-xalianGreen:focus,
+.btn-xalianGray:focus,
+.btn-check:focus + .btn-xalianGreen,
+.btn-check:focus + .btn-xalianGray {
+  box-shadow: var(--g-relief), 0 3px 0 var(--g-seam) !important;
+}
+
+.btn:focus-visible,
+.btn-check:focus-visible + .btn {
+  outline: 2px solid var(--g-phosphor) !important;
+  outline-offset: 2px !important;
+}
+
+/* Unpowered, not faded: the key is still moulded there, the legend is dead. */
+.btn-xalianGreen:disabled,
+.btn-xalianGreen.disabled,
+.btn-xalianGray:disabled,
+.btn-xalianGray.disabled {
+  color: var(--g-ink-low) !important;
+  background-color: var(--g-hull-lo) !important;
+  border-color: var(--g-seam) !important;
+  text-shadow: none !important;
+  box-shadow: var(--g-recess) !important;
+  opacity: 1 !important;
+}
+
+hr.xalian-hr {
+  border-top: 1px solid rgba(128, 128, 128, 0.212);
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.xalian-splash-generator-button {
+  max-width: 75vw !important;
+  margin: auto !important;
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
+  font-size: large !important;
+  padding: 8px;
+  /* stroke-width: 2px; */
+  /* box-shadow: 0px 0px 0px 1px #80ffb0; */
+}
+
+.clickable {
+  z-index: 1000 !important;
+}
+
+/*--------------------------------------------------------------
+# General / common
+--------------------------------------------------------------*/
+/* html {
+  scroll-behavior: smooth;
+} */
+
+/* .row {
+  width: 100%;
+} */
+
+body {
+  font-family: "Abel", sans-serif !important;
+  color: #ffffff;
+  background-color: #0d0d0d !important;
+  overflow-x: hidden;
+  overscroll-behavior: none !important;
+}
+
+a {
+  color: #80ffb0;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #b3ffd0;
+  text-decoration: none;
+}
+
+/* Headings are stencilled onto the hull: condensed caps in bone silkscreen.
+   They are deliberately NOT phosphor - green is emitted light, and only a
+   screen or a lamp is allowed to emit. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--g-font-stencil);
+  font-weight: 600;
+  color: var(--g-ink);
+}
+
+/* Tracking and uppercase belong to the display sizes only. h4-h6 are used in
+   this codebase to hold prose, and tracking out a paragraph makes it harder to
+   read, not more designed. */
+h1, h2, h3 {
+  letter-spacing: var(--g-track-label);
+}
+
+/* Uppercase is applied by the .g-title / .g-h2 / .g-h3 type styles rather than
+   globally: several places in this codebase use a heading tag to hold prose,
+   and shouting a paragraph is worse than the wrong tag. */
+h1, h2, h3 {
+  text-transform: uppercase;
+}
+
+/* species and planet descriptions are prose that happens to sit in an h6 */
+.species-detail-description {
+  font-family: var(--g-font-ui);
+  font-weight: 400;
+  font-style: normal;
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: var(--g-size-body);
+  line-height: 1.65;
+  color: var(--g-ink-mid);
+  max-width: var(--g-measure);
+  margin: 0 auto;
+}
+
+
+
+/*--------------------------------------------------------------
+# Preloader
+--------------------------------------------------------------*/
+#preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  overflow: hidden;
+  background: #151515;
+}
+
+#preloader:before {
+  content: "";
+  position: fixed;
+  top: calc(50% - 0px);
+  left: calc(50% - 30px);
+  border: 6px solid #80ffb0;
+  border-top-color: #151515;
+  border-bottom-color: #151515;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  -webkit-animation: animate-preloader 1s linear infinite;
+  animation: animate-preloader 1s linear infinite;
+}
+
+@-webkit-keyframes animate-preloader {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes animate-preloader {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/*--------------------------------------------------------------
+# Disable aos animation delay on mobile devices
+--------------------------------------------------------------*/
+@media screen and (max-width: 750px) {
+  [data-aos-delay] {
+    transition-delay: 0 !important;
+  }
+}
+
+/* @media screen 
+  and (device-width: 320px) 
+  and (device-height: 640px) 
+  and (orientation: portrait) {
+body { width: 100%; max-width: 100%; height: auto;
+ }
+} */
+
+
+/*--------------------------------------------------------------
+# Navigation Menu
+--------------------------------------------------------------*/
+/**
+* Desktop Navigation 
+*/
+
+/* .visible / .hidden (the old scroll-hide navbar's transform classes) were
+   removed here: they collided token-for-token with Tailwind's own
+   `visible` and `hidden` utilities on the stack-migration pages (a Tailwind
+   "hidden md:flex" element inherited transform: scaleY(0) from here and
+   stayed collapsed at every width) and nothing still toggles them via
+   classList (the last caller, navbar.js, was rewritten to navbar.tsx and
+   drives the same show/hide with a Tailwind class instead). */
+
+.xalian-navbar {
+  padding: 0px !important;
+  /* padding-bottom: 0px !important; */
+  background-color: #0e0e0eea !important;
+  border: 0;
+  border-bottom: 1px solid #80ffb133;
+  /* border-radius: 6px; */
+  width: 100%;
+  opacity: 1;
+  z-index: var(--x-layer-navbar) !important;
+}
+
+/* Modal layering is bootstrap's own: backdrop 1050, modal 1055. This file used
+   to restack them from the --x-* layer scale, which set the modal to 1000 and
+   left the backdrop on bootstrap's 1050 - so the backdrop covered the dialog
+   and swallowed every wheel and click inside it. The navbar sits at 500, well
+   under both, so there is nothing here to correct. */
+
+.navbar {
+  padding: 0;
+}
+
+.navbar ul {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  list-style: none;
+  align-items: center;
+}
+
+.navbar li {
+  position: relative;
+}
+
+.navbar a,
+.navbar a:focus {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0 10px 30px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  transition: 0.3s;
+}
+
+.navbar a i,
+.navbar a:focus i {
+  font-size: 12px;
+  line-height: 0;
+  margin-left: 5px;
+}
+
+.navbar a:hover,
+.navbar .active,
+.navbar .active:focus,
+.navbar li:hover>a {
+  color: #80ffb0;
+}
+
+.navbar .dropdown ul {
+  display: block;
+  position: absolute;
+  left: 14px;
+  top: calc(100% + 30px);
+  margin: 0;
+  padding: 10px 0;
+  z-index: 99;
+  opacity: 0;
+  visibility: hidden;
+  background: #fff;
+  /* box-shadow: 0px 0px 30px rgba(127, 137, 161, 0.25); */
+  transition: 0.3s;
+}
+
+.navbar .dropdown ul li {
+  min-width: 200px;
+}
+
+.navbar .dropdown ul a {
+  padding: 10px 20px;
+  font-size: 14px;
+  text-transform: none;
+  color: #151515;
+  font-weight: 400;
+}
+
+.navbar .dropdown ul a i {
+  font-size: 12px;
+}
+
+.navbar .dropdown ul a:hover,
+.navbar .dropdown ul .active:hover,
+.navbar .dropdown ul li:hover>a {
+  background-color: #80ffb0;
+}
+
+.navbar .dropdown:hover>ul {
+  opacity: 1;
+  top: 100%;
+  visibility: visible;
+}
+
+.navbar .dropdown .dropdown ul {
+  top: 0;
+  left: calc(100% - 30px);
+  visibility: hidden;
+}
+
+.navbar .dropdown .dropdown:hover>ul {
+  opacity: 1;
+  top: 0;
+  left: 100%;
+  visibility: visible;
+}
+
+@media (max-width: 1366px) {
+  .navbar .dropdown .dropdown ul {
+    left: -90%;
+  }
+
+  .navbar .dropdown .dropdown:hover>ul {
+    left: -100%;
+  }
+}
+
+#navvy {
+  /* margin: auto; */
+}
+
+.nav-text-shadow {
+  text-shadow: 0px 0px 2px rgb(0, 0, 0) !important;
+}
+
+.xalian-generator-button-col {
+  /* margin: auto; */
+  height: 90vh;
+}
+
+.xalian-generator-navbar-button {
+  font-style: italic;
+}
+
+
+.generator-button-row {
+  padding-top: 5px;
+  /* padding-bottom: 15px; */
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  text-align: center;
+  margin: auto !important;
+  max-width: 500px;
+}
+
+.json-modal-button {
+  height: 35px;
+  width: 35px;
+  font-size: 35px;
+  border: none;
+  background-color: rgba(0, 0, 0, 0);
+  color: lightgray;
+  text-align: center;
+}
+
+.json-button-wrapper {
+  text-align: right;
+  margin-left: auto !important;
+  margin-right: 0 !important;
+}
+
+/**
+* Mobile Navigation 
+*/
+.mobile-nav-toggle {
+  color: #fff;
+  font-size: 28px;
+  cursor: pointer;
+  display: none;
+  line-height: 0;
+  transition: 0.5s;
+}
+
+@media (max-width: 991px) {
+  .mobile-nav-toggle {
+    display: block;
+  }
+
+  .navbar ul {
+    display: none;
+  }
+}
+
+.navbar-mobile {
+  position: fixed;
+  overflow: hidden;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  transition: 0.3s;
+  z-index: 999;
+}
+
+.navbar-mobile .mobile-nav-toggle {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
+
+.navbar-mobile ul {
+  display: block;
+  position: absolute;
+  top: 55px;
+  right: 15px;
+  bottom: 15px;
+  left: 15px;
+  padding: 10px 0;
+  background-color: #fff;
+  overflow-y: auto;
+  transition: 0.3s;
+}
+
+.navbar-mobile a,
+.navbar-mobile a:focus {
+  padding: 10px 20px;
+  font-size: 15px;
+  color: #151515;
+}
+
+.navbar-mobile a:hover,
+.navbar-mobile .active,
+.navbar-mobile li:hover>a {
+  color: #151515;
+  background-color: #80ffb0;
+}
+
+.navbar-mobile .getstarted,
+.navbar-mobile .getstarted:focus {
+  margin: 15px;
+}
+
+.navbar-mobile .dropdown ul {
+  position: static;
+  display: none;
+  margin: 10px 20px;
+  padding: 10px 0;
+  z-index: 1;
+  opacity: 1;
+  visibility: visible;
+  background: #fff;
+  box-shadow: 0px 0px 30px rgba(127, 137, 161, 0.25);
+}
+
+.navbar-mobile .dropdown ul li {
+  min-width: 200px;
+}
+
+.navbar-mobile .dropdown ul a {
+  padding: 10px 20px;
+  color: #151515;
+}
+
+.navbar-mobile .dropdown ul a i {
+  font-size: 12px;
+}
+
+.navbar-mobile .dropdown ul a:hover,
+.navbar-mobile .dropdown ul .active:hover,
+.navbar-mobile .dropdown ul li:hover>a {
+  background-color: #80ffb0;
+}
+
+.navbar-mobile .dropdown>.dropdown-active {
+  display: block;
+}
+
+/* // NAVBAR AUTH */
+
+.navbar-auth-button-wrapper {
+  /* padding-left: 5px;
+  padding-right: 5px; */
+  /* margin */
+}
+
+.navbar-auth-button-wrapper>button {
+  background-color: rgba(0, 0, 0, 0) !important;
+  border: none;
+  font-style: italic;
+  color: rgba(255, 255, 255, .55);
+}
+
+.navbar-auth-button-wrapper>button:hover {
+  color: white;
+}
+
+.navbar-user-name-wrapper {}
+
+.username-navbar-link {
+  color: #80ffb0 !important;
+  padding: 10px !important;
+}
+
+.username-navbar-link:hover {
+  color: white !important;
+}
+
+.content-wrapper {
+  background: rgb(75, 74, 74);
+  background: radial-gradient(circle, rgba(75, 74, 74, 1) 21%, rgba(57, 57, 57, 1) 53%, rgba(28, 28, 28, 1) 100%);
+  justify-content: center;
+  font-family: 'Abel' !important;
+  color: white;
+  width: 100vw;
+  padding: 0 !important;
+}
+
+/*--------------------------------------------------------------
+# Splash Section
+--------------------------------------------------------------*/
+.splash-background {
+  /* max-width: 100vw !important; */
+  /* max-height: 100vh !important; */
+  width: 100% !important;
+  height: 100vh !important;
+  /* background: url("../img/background/galaxy-splash-dark.png") top center; */
+  /* background-size: cover; */
+  /* min-height: 100%; */
+  /* position: relative; */
+  /* background-attachment: fixed; */
+  padding: 0 !important;
+}
+
+#splash-section {
+  /* width: 100%; */
+  /* height: 100vh !important; */
+  /* position: relative; */
+  padding: 0px !important;
+  text-align: center;
+  margin: auto;
+}
+
+.splash-container {
+  height: 100%;
+  margin: auto;
+}
+
+.title-logo-row {
+  /* max-height: 80vh !important; */
+  /* height: calc(100vh - 60px); */
+  height: calc(100vh - 60px) !important;
+  /* margin-left: auto !important; */
+  /* margin-right: auto !important; */
+  margin: auto !important;
+  margin-top: 0px !important;
+  width: 100%;
+  height: 100%;
+  /* padding-top: 50px; */
+  justify-content: center;
+  /* padding-top: 20px; */
+}
+
+.splash-stack {
+  margin: auto;
+  /* margin-top: 10%; */
+  /* margin-bottom: 0px; */
+}
+
+.title-logo-col {
+  align-content: center;
+}
+
+.home-background {
+  /* background: rgb(0,0,0); */
+  /* background: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(33,33,33,1) 25%, rgba(33,33,33,1) 75%, rgba(0,0,0,1) 100%); */
+  /* max-height: 100vh; */
+  /* max-width: 100vw;   */
+  min-height: 100vh;
+  /* 100vw counts the scrollbar, so this wrapper was 10px wider than the scroll
+     area and pushed page content 5px off the rail the navbar sits on */
+  min-width: 100%;
+  /* display: flex; */
+  /* flex-direction: row; */
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 !important;
+  overflow-x: hidden;
+}
+
+/* 
+*******************
+**  xalians logo **
+******************* 
+*/
+
+.xalian-logo {
+  width: 80% !important;
+  max-width: 600px;
+  /* max-width: 2000px !important; */
+  padding-bottom: 25px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+#xalians-logo-dna > line, #xalians-logo-dna > path, #xalians-logo-dna-x {
+  opacity: 0;
+  stroke-width: 0;
+}
+
+.xalian-svg-col {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  text-align: center;
+}
+
+
+.animated-xalians-row {
+  height: 100%;
+  /* height: fit-content; */
+}
+
+.animated-xalians-col {
+  height: 100%;
+}
+
+
+#splash .icon-box {
+  padding: 30px 20px;
+  /* transition: ease-in-out 0.3s; */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  height: 100%;
+  text-align: center;
+}
+
+#splash .icon-box i {
+  font-size: 55px;
+  line-height: 1;
+  color: #80ffb0;
+}
+
+#splash .icon-box h3 {
+  color: #fff;
+  font-weight: 700;
+  margin: 10px 0 0 0;
+  padding: 0;
+  line-height: 1;
+  font-size: 20px;
+  line-height: 26px;
+}
+
+#splash .icon-box h3 a {
+  transition: ease-in-out 0.3s;
+}
+
+#splash .icon-box h3 a:hover {
+  color: #80ffb0;
+}
+
+#splash .icon-box:hover {
+  border-color: #80ffb0;
+}
+
+#splash a:hover,
+a:visited,
+a:link,
+a:active {
+  text-decoration: none;
+}
+
+/* on mobile make the background look better */
+@media (max-width: 1024px) {
+  section {
+    background-attachment: scroll !important;
+  }
+}
+
+.splash-subtitle-white {
+  font-size: 2em;
+  color: white;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  font-weight: 500 !important;
+}
+
+.splash-subtitle {
+  font-size: 3em;
+  color: #80ffb0;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  font-weight: 500 !important;
+  opacity: 0;
+}
+
+.splash-subtitle-smaller {
+  font-size: 0.5em;
+}
+
+.splash-subline {
+  color: rgba(212, 212, 212, 0.89);
+  padding-top: 3px;
+  padding-bottom: 3px;
+  margin-top: 0;
+  margin-bottom: 0;
+  opacity: 0;
+}
+
+
+@media (max-width: 768px) {
+
+  .splash-subtitle-white {
+    font-size: 1.5em;
+  }
+
+  .splash-subtitle-gray {
+    font-size: 1.2em;
+  }
+}
+
+@media (max-width: 400px) {
+  /* #splash {
+    height: auto;
+  } */
+
+  .splash-subtitle-white {
+    font-size: 1.2em;
+  }
+
+  .splash-subtitle-gray {
+    font-size: 1.2em;
+  }
+}
+
+
+.splash-page-full-content-wrapper {
+  /* width: 100%; */
+  margin: 0px !important;
+  padding: 0px !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  /* border: 1px solid rgb(105, 105, 105); */
+}
+
+
+.animated-xalian-svg {
+  width: 95%;
+  height: 80%;
+  overflow: visible;
+  align-content: center;
+
+}
+
+.splash-bg-star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  visibility: hidden;
+  opacity: 0;
+}
+
+
+.galaxy-splash-animation-bg {
+  z-index: -2 !important;
+  position: fixed !important;
+}
+
+.splash-galaxy-animation-container {
+  z-index: -1 !important;
+  padding: 0px !important;
+  margin: 0px !important;
+  width: 100% !important;
+  max-width: 100vw !important;
+}
+
+.splash-galaxy-animation-children-wrapper {
+  z-index: 1;
+  /* text-align: center; */
+  margin: auto;
+  width: 100%;
+  height: 100%;
+}
+
+#tsparticles {
+  position: absolute;
+  width: 100%;
+  max-width: 100vw;
+  max-height: 100vh;
+  height: 100%;
+  background-color: black;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 50% 50%;
+}
+
+.main-splash-panel {
+  width: 100%;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+  padding: 0px;
+  /* border: 2px solid yellow; */
+  overflow: visible;
+}
+
+.splash-panel {
+  height: 500px;
+  max-height: 100vh;
+  background-color: #000000;
+  /* border: 1px dotted rgb(0, 255, 136); */
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.animation1-scroll-trigger-wrapper {
+  /* height: 100vh !important; */
+  /* min-height: 100vh !important; */
+  /* max-height: 100vh !important; */
+  width: 100vw;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: 'Abel';
+  color: white;
+  padding: 0 !important;
+}
+
+.animation-title-text {
+  max-width: 80vw;
+  margin: auto;
+  padding: 25px 0px 15px 0px;
+}
+
+
+
+.text-wrapper {
+  text-align: left;
+}
+
+
+.splash-page-spaceship-window-animation {
+  /* background-color: rgba(0, 0, 0, 0.7); */
+  align-items: center;
+  /* height: 100% !important; */
+  /* width: 100% !important; */
+
+  /* THIS TELLS HOW MUCH SPACE TO GIVE UNTIL SHOWING COMPUTER CONTENT */
+  height: 100vh !important;
+
+  pointer-events: none;
+
+  /* width: 100vw !important; */
+  text-align: center;
+  /* justify-content: center; */
+  overflow: hidden;
+  align-self: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  z-index: 9999 !important;
+}
+
+#spaceship-window-animation-svg {
+  /* transform-origin: center; */
+  /* position: fixed; */
+  /* top: 50%; */
+  /* left: 50%; */
+  /* position: fixed; */
+  /* background-position-x: center; */
+  /* y: 0; */
+  margin: 0px !important;
+  padding: 0px !important;
+  position: fixed;
+  top: 0;
+  left: 0;
+  /* left: 0; */
+  /* right: 50%; */
+  /* transform: translateX(-50%); */
+  /* transform: translate(-50%, -50%); */
+  /* bottom: 0; */
+  /* right: 0; */
+}
+
+
+#spaceship-computer-animation-svg {
+  background-color: rgb(0, 0, 0);
+  /* background: radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(33,33,33,1) 25%, rgba(33,33,33,1) 75%, rgba(0,0,0,1) 100%); */
+  /* width: 200px;  */
+  /* height: 200px; */
+  /* width: 100%;   */
+  /* height: 100%; */
+  margin: 0px !important;
+  padding: 0px !important;
+  border: 1px dotted rgb(217, 255, 0);
+  position: fixed;
+  top: 0;
+  left: 0;
+  /* transform: translate(-50%, -50%); */
+  /* z-index: 5; */
+}
+
+.centered-on-screen {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: auto !important;
+}
+
+.spaceship-screen {
+  /* background: rgb(62,75,75); */
+  background: no-repeat center url("../img/animation/ship_screen.svg");
+  background-color: rgb(0, 0, 0);
+  background-repeat: no-repeat;
+  /* height: 100%; */
+  /* width: 100%; */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* border: solid 4px black; */
+}
+
+.spaceship-animation-window-panel-wrapper {
+
+  /* background-color: #000000; */
+  position: fixed;
+  top: 0;
+  left: 0;
+  /* height: 100vh;  */
+  /* width: 100%; */
+}
+
+.spaceship-animation-screen-panel-wrapper {
+
+  background-color: #000000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  /* height: 100vh;  */
+  /* width: 100%; */
+
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.spaceship-screen-grid-svg {
+  background: rgb(62, 75, 75);
+  background: radial-gradient(circle, rgba(62, 75, 75, 1) 53%, rgba(20, 23, 23, 1) 100%);
+}
+
+.xalian-logo-letter {
+  opacity: 1;
+}
+
+.xalian-svg-carousel {
+  /* position: fixed; */
+  /* top: 0; */
+  /* left: 0; */
+  /* transform: translate(-50%, 0%); */
+  /* width: 200px; */
+  max-width: 100%;
+  /* width: 100%; */
+  /* max-height: 100%; */
+  /* max-height:20%; */
+  position: relative;
+  overflow: visible;
+  margin: 0;
+  /* display: flex; */
+}
+
+/* .xalian-svg-carousel {
+  height: 100% !important;
+  width: 100% !important;
+  width: auto;
+} */
+
+.xalian-svg-carousel .carousel-inner {
+  /* position: fixed; */
+  /* top: 0; */
+  /* left: 0; */
+  /* transform: translate(-50%, 0%); */
+  /* width: 200px; */
+  max-width: 100%;
+  overflow: visible;
+
+  /* max-height:20%; */
+  position: relative;
+  /* width: 100% */
+  /* display: flex; */
+}
+
+.xalian-svg-carousel-item {
+  /* min-height: 100px; */
+  height: 100%;
+  width: 100%;
+  margin: auto;
+  max-width: 100%;
+  max-height: 100%;
+  /* width: 200px; */
+  /* height: 200px; */
+  /* align-self: flex-start; */
+  /* position: relative; */
+  /* flex:content; */
+  /* max-height: 20vh; */
+}
+
+.splash-xalian-species-carousel-image {
+  max-width: 90%;
+  /* max-height: 90%; */
+  height: 100px;
+  /* object-fit: contain; */
+  /* position: absolute; */
+  background: #ffffff80;
+  border-radius: 10px;
+  border: 1px solid black;
+  padding: 5px;
+  box-shadow: 0px 0px 10px rgb(0, 0, 0);
+
+}
+
+.splash-xalian-carousel-image-text {
+  color: white;
+  font-size: x-large;
+}
+
+
+
+
+
+/* COMPUTER SECTION */
+
+.splash-computer-section {
+  width: 100%;
+  height: 100vh;
+  align-content: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  /* opacity: 0 ; */
+}
+
+.splash-computer-container {
+  width: 100%;
+  max-width: 600px !important;
+  height: 100%;
+  margin: auto;
+  padding: 0 !important;
+  align-content: center;
+  justify-content: center;
+}
+
+.screen-title-wrapper {
+  max-width: 90%;
+}
+
+.screen-text-wrapper {
+  max-width: 90%;
+  height: 100%;
+  /* max-height: 90% !important; */
+  /* padding-top: 15px; */
+  /* padding-bottom: 15px; */
+  /* overflow-y: auto; */
+  /* max-height: 80% !important; */
+  /* display: block !important */
+}
+
+.splash-computer-container-row {
+  width: 100%;
+  position: relative;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  margin: 0 !important;
+}
+
+.splash-computer-col {
+  /* position: relative; */
+  height: 100%;
+  margin: auto;
+  width: 100%;
+  align-content: center;
+  justify-content: center;
+}
+
+.splash-computer-button-col {
+  /* position: relative; */
+  height: 100%;
+  margin: auto;
+  /* width: 100%; */
+  align-content: center;
+  justify-content: center;
+}
+
+.splash-computer-image {
+  position: relative;
+  /* widt
+  h: 100%; */
+  height: 80%;
+  aspect-ratio: 1;
+  /* max-width: 60vw; */
+  /* max-height: 30% !important; */
+  align-self: auto;
+  margin: auto;
+  padding: 5px;
+}
+
+.red {
+  background-color: rgba(255, 103, 103, 0.24);
+}
+
+.green {
+  background-color: rgba(9, 70, 24, 0.24);
+
+}
+
+.purple {
+  background-color: rgba(113, 103, 255, 0.24);
+}
+
+.yellow {
+  background-color: rgba(222, 255, 38, 0.24);
+}
+
+.blue {
+  background-color: rgba(38, 230, 255, 0.24);
+}
+
+.flipped {
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+}
+
+.computer-screen-element {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  /* transform: translate(-50%, -50%); */
+  width: 100%;
+  z-index: 1;
+  padding: 10px;
+  pointer-events: none;
+}
+
+.emphasized-text {
+  font-style: italic;
+}
+
+.computer-screen-arrow-wrapper {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  overflow: visible;
+}
+
+.computer-screen-next-arrow {
+  height: 50%;
+  width: 100%;
+  /* z-index: 1; */
+  padding: 10px;
+  margin: auto;
+  align-content: center;
+  position: relative;
+  overflow: visible;
+}
+
+.computer-screen-x {
+  height: 80%;
+  width: 100%;
+  /* z-index: 1; */
+  padding: 10px;
+  margin: auto;
+  align-content: center;
+  position: relative;
+  overflow: visible;
+  opacity: 0.25;
+}
+
+
+.splash-page-content-end-section {
+  width: 100% !important;
+  height: 100vh !important;
+  margin: auto !important;
+  display: flex;
+  position: relative;
+  box-sizing: border-box;
+  padding: 0px;
+  pointer-events: none;
+
+}
+
+.computer-screen-font {
+  color: #ffffffb0;
+  text-shadow: 1px 1px 2px rgb(0, 0, 0) !important;
+  height: 100%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.screen-panel-title {
+  text-align: center;
+  align-content: center;
+  justify-content: center;
+  margin: auto;
+}
+
+section {
+  /* border: 1px dotted rgb(0, 255, 136); */
+}
+
+.debug-box {
+  /* border: 1px dotted rgb(7, 164, 255); */
+}
+
+.splash-section-debug {
+  /* border: 2px dotted rgb(237, 104, 255); */
+}
+
+
+
+
+
+/*--------------------------------------------------------------
+# Sections General
+--------------------------------------------------------------*/
+section {
+  /* padding: 60px 0; */
+  /* overflow: hidden; */
+}
+
+.gradient-background-section {
+  /* background: radial-gradient(circle, rgba(75,74,74,1) 21%, rgba(57,57,57,1) 53%, rgba(28,28,28,1) 100%); */
+  background: linear-gradient(0deg, rgba(26, 26, 26, 1) 0%, rgba(29, 29, 29, 1) 50%, rgba(26, 26, 26, 1) 100%);
+}
+
+
+/*--------------------------------------------------------------
+# Text Sizing
+--------------------------------------------------------------*/
+
+@media (max-width: 1024px) {
+  section h3 {
+    font-size: 1.5em !important;
+  }
+
+  section p {
+    font-size: 1.25em !important;
+  }
+}
+
+@media (max-width: 768px) {
+  section h3 {
+    font-size: 1.25em !important;
+  }
+
+  section p {
+    font-size: 1em !important;
+  }
+}
+
+@media (max-width: 375px) {
+  section h3 {
+    font-size: 1em !important;
+  }
+
+  section p {
+    font-size: 0.8em !important;
+  }
+}
+
+
+
+/*--------------------------------------------------------------
+# Planet Xalia Section
+--------------------------------------------------------------*/
+.planet-xalia-section {
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.94) 0%, rgba(0, 0, 0, 0.90) 53%, rgba(0, 0, 0, 0.54) 85%, rgba(0, 0, 0, 0.34) 95%, rgba(0, 0, 0, 0) 100%) fixed center center;
+
+  background-size: cover;
+  padding: 60px 0;
+}
+
+
+/*--------------------------------------------------------------
+# Tournament Section
+--------------------------------------------------------------*/
+
+/* .tournament-section h3 {
+  color: rgb(0, 0, 0);
+  font-size: 28px;
+  font-weight: 700;
+}
+.tournament-section p {
+  color: rgb(0, 0, 0);
+} */
+
+
+/*--------------------------------------------------------------
+# Tokens Section
+--------------------------------------------------------------*/
+
+.tokens-section {
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.94) 0%, rgba(0, 0, 0, 0.90) 53%, rgba(0, 0, 0, 0.54) 85%, rgba(0, 0, 0, 0.34) 95%, rgba(0, 0, 0, 0) 100%), url("../img/background/vault.jpg") fixed center center;
+  background-size: cover;
+  /* padding: 60px 0; */
+}
+
+
+/*--------------------------------------------------------------
+# Team
+--------------------------------------------------------------*/
+/* The crew, as riveted name plates rather than black boxes with green text.
+   Same object language as every other card on the site: hull, bevel, stencil
+   legend, machine-set caption. */
+.team {
+  background: var(--g-hull-lo);
+  border-top: var(--g-hairline) solid var(--g-seam);
+  border-bottom: var(--g-hairline) solid var(--g-seam);
+  padding: var(--g-9) 0;
+}
+
+.team-container {
+  max-width: 1100px;
+}
+
+.team.light .team-container > h3,
+.team-container > h3 {
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-h3);
+  text-transform: uppercase;
+  letter-spacing: var(--g-track-label);
+  color: var(--g-ink);
+  text-align: center;
+  margin-bottom: var(--g-6);
+}
+
+.team-row {
+  text-align: center;
+  row-gap: var(--g-4);
+  margin-bottom: 0;
+}
+
+.team .member {
+  width: 100%;
+  margin-bottom: 0;
+  border-radius: var(--g-radius-panel);
+  background: var(--g-hull);
+  border: var(--g-hairline) solid var(--g-seam);
+  box-shadow: var(--g-relief), var(--g-drop);
+}
+
+.team .member .member-info {
+  padding: var(--g-5) var(--g-4);
+}
+
+.team .member .member-info h4 {
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-body);
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-ink);
+  margin-bottom: var(--g-2);
+}
+
+/* the in-world title, then the real-world job: one is the legend on the plate,
+   the other is the note stamped under it */
+.team .member .member-info span {
+  display: block;
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-tiny);
+  color: var(--g-ink-low);
+}
+
+.team .member .member-info span.underline {
+  color: var(--g-brass-light);
+  text-decoration: none;
+  border-bottom: 0;
+  margin-bottom: var(--g-1);
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+
+/*--------------------------------------------------------------
+# Story
+--------------------------------------------------------------*/
+
+
+/* The panel itself carries the measure, rather than each child centring its own
+   copy - the heading and the prose sit in different containers, so centring
+   them separately left the heading floating off to one side. */
+.story-splash-section {
+  /* a matte panel, like every other surface: the lore is printed on the hull,
+     it is not a lit screen */
+  background: var(--g-hull);
+  border: var(--g-hairline) solid var(--g-seam);
+  border-radius: var(--g-radius-panel);
+  box-shadow: var(--g-relief), var(--g-drop);
+  padding: var(--g-7) var(--g-6);
+  max-width: calc(var(--g-measure) + (2 * var(--g-6)));
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.story-splash-section h3 {
+  margin-bottom: var(--g-5);
+  color: var(--g-ink);
+  text-transform: uppercase;
+  letter-spacing: var(--g-track-label);
+}
+
+.story-text {
+  color: var(--g-ink-mid);
+  font-weight: 400 !important;
+  /* was a Segoe UI stack, the only place on the site that broke from the
+     body font - the lore read like it came from a different product */
+  font-family: var(--g-font-ui);
+  font-size: var(--g-size-body);
+  /* explicitly reset: this is a paragraph that happens to sit in an h6 */
+  letter-spacing: normal;
+  text-transform: none;
+  line-height: 1.7;
+  margin-bottom: var(--g-4);
+}
+
+
+
+/*--------------------------------------------------------------
+# Contact
+--------------------------------------------------------------*/
+.contact .info {
+  width: 100%;
+  background: #fff;
+}
+
+.contact .info i {
+  font-size: 20px;
+  background: #80ffb0;
+  color: #151515;
+  float: left;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  transition: all 0.3s ease-in-out;
+}
+
+.contact .info h4 {
+  padding: 0 0 0 60px;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #151515;
+}
+
+.contact .info p {
+  padding: 0 0 0 60px;
+  margin-bottom: 0;
+  font-size: 14px;
+  color: #484848;
+}
+
+.contact .info .email,
+.contact .info .phone {
+  margin-top: 40px;
+}
+
+.contact .php-email-form {
+  width: 100%;
+  background: #fff;
+}
+
+.contact .php-email-form .form-group {
+  padding-bottom: 8px;
+}
+
+.contact .php-email-form .error-message {
+  display: none;
+  color: #fff;
+  background: #ed3c0d;
+  text-align: left;
+  padding: 15px;
+  font-weight: 600;
+}
+
+.contact .php-email-form .error-message br+br {
+  margin-top: 25px;
+}
+
+.contact .php-email-form .sent-message {
+  display: none;
+  color: #fff;
+  background: #18d26e;
+  text-align: center;
+  padding: 15px;
+  font-weight: 600;
+}
+
+.contact .php-email-form .loading {
+  display: none;
+  background: #fff;
+  text-align: center;
+  padding: 15px;
+}
+
+.contact .php-email-form .loading:before {
+  content: "";
+  display: inline-block;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  margin: 0 10px -6px 0;
+  border: 3px solid #18d26e;
+  border-top-color: #eee;
+  -webkit-animation: animate-loading 1s linear infinite;
+  animation: animate-loading 1s linear infinite;
+}
+
+.contact .php-email-form input,
+.contact .php-email-form textarea {
+  border-radius: 0;
+  box-shadow: none;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+.contact .php-email-form input:focus,
+.contact .php-email-form textarea:focus {
+  border-color: #80ffb0;
+}
+
+.contact .php-email-form input {
+  height: 44px;
+}
+
+.contact .php-email-form textarea {
+  padding: 10px 12px;
+}
+
+.contact .php-email-form button[type=submit] {
+  background: #80ffb0;
+  border: 0;
+  padding: 10px 24px;
+  color: #151515;
+  transition: 0.4s;
+  border-radius: 4px;
+}
+
+.contact .php-email-form button[type=submit]:hover {
+  background: #ffcd6b;
+}
+
+@-webkit-keyframes animate-loading {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes animate-loading {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/*--------------------------------------------------------------
+# Breadcrumbs
+--------------------------------------------------------------*/
+.breadcrumbs {
+  padding: 15px 0;
+  background: whitesmoke;
+  min-height: 40px;
+  margin-top: 74px;
+}
+
+.breadcrumbs h2 {
+  font-size: 28px;
+  font-weight: 400;
+}
+
+.breadcrumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.breadcrumbs ol li+li {
+  padding-left: 10px;
+}
+
+.breadcrumbs ol li+li::before {
+  display: inline-block;
+  padding-right: 10px;
+  color: #2f2f2f;
+  content: "/";
+}
+
+@media (max-width: 992px) {
+  .breadcrumbs {
+    margin-top: 68px;
+  }
+
+  .breadcrumbs .d-flex {
+    display: block !important;
+  }
+
+  .breadcrumbs ol {
+    display: block;
+  }
+
+  .breadcrumbs ol li {
+    display: inline-block;
+  }
+}
+
+/*--------------------------------------------------------------
+# Footer
+--------------------------------------------------------------*/
+#footer {
+  background: var(--g-void);
+  color: var(--g-ink-mid);
+  font-size: var(--g-size-small);
+}
+
+#footer .footer-top {
+  background: var(--g-hull-lo);
+  border-top: var(--g-hairline) solid var(--g-seam);
+  padding: var(--g-8) 0 var(--g-7) 0;
+}
+
+#footer .footer-top .footer-info {
+  margin-bottom: 0px;
+  text-align: center;
+}
+
+#footer .footer-top .footer-info h3 {
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-h3);
+  margin: 0 0 var(--g-5) 0;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-ink);
+}
+
+/* the trailing colon was a decorative flourish in a different colour; the
+   heading reads as a heading without it */
+#footer .footer-top .footer-info h3 span {
+  display: none;
+}
+
+#footer .footer-top .footer-info p {
+  font-size: 14px;
+  line-height: 24px;
+  margin-bottom: 0;
+  font-family: "Raleway", sans-serif;
+  color: #fff;
+}
+
+/* each link is a moulded key carrying a glyph, matching .g-btn--icon */
+#footer .footer-top .social-links a {
+  font-size: var(--g-size-body);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--g-hull-hi);
+  border: var(--g-hairline) solid var(--g-seam);
+  color: var(--g-ink-mid);
+  margin-right: var(--g-2);
+  border-radius: var(--g-radius);
+  box-shadow: var(--g-relief), var(--g-drop);
+  width: 40px;
+  height: 36px;
+  transition: color var(--g-snap), background var(--g-snap), transform var(--g-snap);
+}
+
+#footer .footer-top .social-links a:hover {
+  background: var(--g-hull);
+  color: var(--g-ink);
+  text-decoration: none;
+}
+
+#footer .footer-top .social-links a:active {
+  transform: translateY(2px);
+  box-shadow: var(--g-recess);
+}
+
+#footer .footer-top h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  position: relative;
+  padding-bottom: 12px;
+}
+
+#footer .footer-top .footer-links {
+  margin-bottom: 30px;
+}
+
+#footer .footer-top .footer-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#footer .footer-top .footer-links ul i {
+  padding-right: 2px;
+  color: #80ffb0;
+  font-size: 18px;
+  line-height: 1;
+}
+
+#footer .footer-top .footer-links ul li {
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+}
+
+#footer .footer-top .footer-links ul li:first-child {
+  padding-top: 0;
+}
+
+#footer .footer-top .footer-links ul a {
+  color: #fff;
+  transition: 0.3s;
+  display: inline-block;
+  line-height: 1;
+}
+
+#footer .footer-top .footer-links ul a:hover {
+  color: #80ffb0;
+}
+
+#footer .footer-top .footer-newsletter form {
+  margin-top: 30px;
+  background: #fff;
+  padding: 6px 10px;
+  position: relative;
+  border-radius: 4px;
+}
+
+#footer .footer-top .footer-newsletter form input[type=email] {
+  border: 0;
+  padding: 4px;
+  width: calc(100% - 110px);
+}
+
+#footer .footer-top .footer-newsletter form input[type=submit] {
+  position: absolute;
+  top: 0;
+  right: -2px;
+  bottom: 0;
+  border: 0;
+  background: none;
+  font-size: 16px;
+  padding: 0 20px;
+  background: #80ffb0;
+  color: #151515;
+  transition: 0.3s;
+  border-radius: 0 4px 4px 0;
+}
+
+#footer .footer-top .footer-newsletter form input[type=submit]:hover {
+  background: #80ffb0;
+}
+
+#footer .copyright {
+  text-align: center;
+  padding-top: 30px;
+}
+
+#footer .credits {
+  padding-top: 10px;
+  text-align: center;
+  font-size: 13px;
+  color: #fff;
+}
+
+
+.social-links-footer {
+  margin: auto;
+  align-items: center;
+}
+
+/* .dark-img {
+  background-color: #222222;
+} */
+
+.dark h3 {
+  color: rgb(0, 0, 0);
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.dark p {
+  color: rgb(0, 0, 0);
+}
+
+.light {
+  background-color: #222222;
+}
+
+.light h3 {
+  color: rgb(255, 255, 255);
+  font-size: 34px;
+  font-weight: 700;
+}
+
+.light p {
+  color: rgb(255, 255, 255);
+  font-size: 24px;
+}
+
+.info-section-padded {
+  padding-top: 10vh !important;
+  padding-bottom: 10vh !important;
+}
+
+.info-section-padded h3 {
+  color: #80ffb0;
+  text-decoration: underline;
+}
+
+.centered-div {
+  margin: auto !important;
+  padding: 10px !important;
+  justify-content: center;
+}
+
+.embedded-img-wrapper {
+  width: 100%;
+  max-width: 60vw;
+  max-height: 60vh;
+  align-self: auto;
+  aspect-ratio: 1;
+  margin: auto;
+  padding: 5px;
+}
+
+/* @media (min-width: 400px) {
+  .embedded-img-wrapper {
+    width: 80vw;
+  }
+} */
+
+.social-media-links {
+  margin: auto;
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+.social-media-links i {
+  color: #80ffb0;
+  font-size: 24pt;
+}
+
+.social-media-link-row {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.shadow-text {
+  text-shadow: 1px 1px 2px rgb(0, 0, 0) !important;
+}
+
+
+
+.topic-column {
+  margin: auto;
+  align-items: center;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}
+
+.topic-column h3 {
+  text-align: center;
+  padding-top: 25px;
+  font-size: 1em;
+  text-shadow: 0px 0px 4px rgb(0, 0, 0) !important;
+}
+
+.topic-column h4 {
+  text-shadow: 0px 0px 4px rgb(0, 0, 0) !important;
+  color: white;
+}
+
+.topic-column h1 {
+  text-align: center;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  font-size: 2em;
+  font-weight: 800;
+  color: white;
+  text-shadow: 0px 0px 4px rgb(0, 0, 0) !important;
+}
+
+.topic-column p {
+  text-shadow: 0px 0px 4px rgb(0, 0, 0) !important;
+}
+
+@media (max-width: 500px) {
+  .topic-column h1 {
+    font-size: 1.5em;
+    font-weight: 400;
+  }
+
+}
+
+/* .content-row {
+  max-width:/
+} */
+
+.content-container {
+  color: #80ffb0;
+}
+
+/* Pages using this container used to sit on a flat grey radial gradient while
+   home/species/planets showed a starfield, so half the site read as galactic
+   and half did not. This paints the same starfield tile those pages use, over
+   the space background token - the drifting-particle canvas stays opt-in for
+   the pages that mount SplashGalaxyBackground, so this costs no JS. */
+.content-background-container {
+  background-color: var(--x-bg);
+  background-image:
+    radial-gradient(circle, rgba(35, 35, 35, 0.55) 21%, rgba(13, 13, 13, 0.85) 100%),
+    url("../img/background/stars_bg.png");
+  background-size: auto, 50%;
+  background-position: center center, center center;
+  background-repeat: no-repeat, repeat;
+  background-attachment: fixed, fixed;
+  min-height: 100vh;
+  min-width: 100%;
+  /* flex-direction: column; */
+  align-items: center;
+  justify-content: center;
+  font-family: 'Abel';
+  color: white;
+  padding: 0 !important;
+}
+
+.generator-page-content-background-container {
+  background-color: rgb(24, 24, 24, 0.5);
+  min-height: 100vh;
+  min-width: 100%;
+  /* flex-direction: column; */
+  align-items: center;
+  justify-content: center;
+  font-family: 'Abel';
+  color: white;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.content-wrapper {
+  background: rgb(75, 74, 74);
+  background: radial-gradient(circle, rgba(75, 74, 74, 1) 21%, rgba(57, 57, 57, 1) 53%, rgba(28, 28, 28, 1) 100%);
+  justify-content: center;
+  font-family: 'Abel' !important;
+  color: white;
+  width: 100vw;
+  padding: 0 !important;
+}
+
+.topic-column .list-group .list-group-item {
+  background: none !important;
+  color: white;
+  /* border-color: #80ffb0; */
+  border-color: rgba(136, 255, 188, .25);
+}
+
+
+
+.light-text {
+  color: white;
+}
+
+/* .generator- {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+} */
+
+
+.whole-container {
+  /* max-width: 90%; */
+  margin: auto;
+}
+
+.species-title {
+  font-size: 5em;
+  font-weight: 750;
+}
+
+.title-col h2 {
+  font-style: italic;
+  /* padding-top: 0px; */
+  /* padding-bottom: 50px; */
+  text-align: center;
+  color: white;
+  font-size: ;
+}
+
+.title-col h3 {
+  font-style: italic;
+  /* padding-top: 0px; */
+  /* padding-bottom: 50px; */
+  text-align: center;
+  color: lightgrey;
+}
+
+
+
+.stat-list-item {
+  font-size: 0.75em;
+}
+
+.generateButton {
+  margin-top: 20px;
+}
+
+.title-col {
+  text-align: center;
+}
+
+.species-description {
+  font-style: italic;
+  color: cadetblue;
+}
+
+.species-description-div {
+  text-align: center;
+  max-width: 75% !important;
+  justify-content: center;
+  margin: 0 auto;
+  padding-bottom: 50px;
+}
+
+
+.stat-table {
+  background-color: #282c344d;
+  margin: auto;
+  margin-top: 25px !important;
+}
+
+.stat-table thead tr th {
+  font-size: 16pt;
+  color: white;
+  background-color: #282c34;
+}
+
+.stat-table tbody tr td {
+  font-size: 12pt;
+  color: white;
+  background-color: #282c344d;
+}
+
+/* cadet blue hsl(182, 25%, 50%) #5f9ea0 */
+
+/* A leftover gradient-text hack from the template, scoped to the bare
+   `article` element type - so any semantic <article> on the site rendered its
+   text in transparent fill and vanished. Nothing used it. */
+
+
+
+
+/* SCROLL BAR */
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #464646;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #afafaf;
+}
+
+.member-info {
+  width: 100%;
+}
+
+
+/* NAVBAR SCROLL BEHAVIOR */
+
+.slow-show-nav {
+  transform: translateY(-100%);
+  transition: all 0.5s ease-in-out;
+}
+
+.scrolled-down {
+  transform: translateY(-100%);
+  transition: all 0.3s ease-in-out;
+}
+
+.scrolled-up {
+  transform: translateY(0);
+  transition: all 0.3s ease-in-out;
+}
+
+.no-height {
+  height: 0;
+}
+
+
+
+
+
+
+/* 
+*******************
+**      FAQ      **
+******************* 
+*/
+.question-section {
+  padding-top: 25px !important;
+  padding-bottom: 25px !important;
+}
+
+.question-section a {
+  color: #80ffb0;
+  font-weight: 400;
+  text-shadow: 0px 0px 4px rgb(0, 0, 0) !important;
+  text-decoration: underline;
+}
+
+/* 
+*******************
+**    PLANETS    **
+******************* 
+*/
+
+.dark-section-div {
+  background-color: rgba(0, 0, 0, 0.6);
+  border-color: rgb(128, 255, 176, 0.6);
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 25px;
+  margin-bottom: 50px;
+}
+
+.planet-title-row {
+  margin: auto;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: center;
+  align-items: center;
+}
+
+.planet-title-row h2 {
+  /* color: rgb(128, 255, 176); */
+  font-size: 3em;
+}
+
+.planet-img {
+  border-radius: 25px !important;
+  box-shadow: 0px 0px 10px rgb(0, 0, 0);
+  margin: auto;
+  max-width: 250px !important;
+  /* max-width: 60vw !important; */
+  width: 100%;
+}
+
+.planet-gif {
+  align-items: center;
+  align-self: center;
+  margin: auto;
+  width: 100%;
+  /* max-width: 40vw !important; */
+  /* max-width: 400px !important; */
+  max-width: 200px !important;
+  /* max-width: 60vw !important; */
+  padding: 10px;
+}
+
+@media (max-width: 500px) {
+  .planet-img {
+    margin-bottom: 20px;
+  }
+
+}
+
+.planet-details-row {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.planet-details-row-col {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  text-align: center;
+}
+
+.black-text-shadow {
+  text-shadow: 0px 0px 10px rgb(0, 0, 0);
+}
+
+.planet-table {
+  background-color: none;
+  margin-bottom: auto;
+  margin-top: auto;
+  color: white;
+  width: 100%;
+  padding-bottom: 40px;
+}
+
+.planet-table h3 {
+  color: white;
+  text-align: center;
+}
+
+.planet-table thead * th {
+  padding: 3px;
+}
+
+/* planet spec values are machine-reported, so they print in the mono voice
+   rather than the italic serif-ish default the template shipped */
+.planet-table tbody * td {
+  color: var(--g-ink);
+  padding: var(--g-1) var(--g-2);
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-small);
+  font-style: normal;
+  text-align: left !important;
+  width: 60%;
+}
+
+.planet-table tbody * th {
+  font-family: var(--g-font-stencil);
+  font-weight: 500;
+  letter-spacing: var(--g-track-label);
+  color: var(--g-ink-low);
+}
+
+
+.template-col-wrapper h1 {
+  text-align: center;
+  color: white;
+}
+
+.planet-table h2 {
+  text-align: center;
+  font-weight: 500;
+}
+
+.planet-table h3 {
+  color: white;
+  text-align: left;
+}
+
+.planet-table h4 {
+  color: white;
+}
+
+.planet-table-outer-border {
+  border-color: rgb(128, 255, 176, 0.3);
+  border-style: solid;
+  border-width: 2px;
+  margin: auto !important;
+}
+
+.white-outline-text {
+  text-shadow:
+    -1px -1px 0 #FFF,
+    1px -1px 0 #FFF,
+    -1px 1px 0 #FFF,
+    1px 1px 0 #FFF;
+}
+
+
+.black-outline-text {
+  text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+}
+
+.planet-key-col {
+  border-color: rgb(128, 255, 176, 0.3);
+  border-style: solid;
+  border-width: 1px;
+}
+
+.planet-val-col {
+  border-color: #cccccc;
+  border-style: solid;
+  border-width: 1px;
+}
+
+.planet-history-link {
+  color: rgb(194, 194, 194);
+  padding: 5px;
+}
+
+.planet-history-link:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+.vertically-center-contents {
+  display: flex;
+  align-items: center;
+  align-content: center;
+}
+
+.vertically-center-contents-grid {
+  display: grid;
+  align-items: center;
+  align-content: center;
+}
+
+.planet-key-col h4 {
+  margin-top: auto;
+  margin-bottom: auto;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.planet-val-col h4 {
+  margin-top: auto;
+  margin-bottom: auto;
+  color: #afafaf;
+  font-style: italic;
+  text-align: left !important;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.template-col-wrapper {
+  margin: 0px;
+  align-items: center;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}
+
+.planet-show-toggle-button {
+  background-color: rgba(0, 0, 0, 0) !important;
+  border: 0 !important;
+  width: 100%;
+  margin: 0px !important;
+  padding: 0px !important;
+}
+
+.planet-history-wrapper {
+  /* text-align: left; */
+  width: 100%;
+}
+
+.planet-history-wrapper>p {
+  text-align: left;
+}
+
+/* @media (max-width: 500px) {
+  .planet-table h2 {
+    font-size: 1em;
+    font-weight: 250;
+    padding-top: 10px;
+  }
+
+} */
+
+/* 
+*******************
+**    SPECIES    **
+******************* 
+*/
+
+.species-col {
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  text-align: center;
+  padding: 8px !important;
+  padding-bottom: 12px !important;
+}
+
+/* the catalogue index is machine output, the name is a stencilled legend */
+.species-col h6 {
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-micro);
+  font-style: normal;
+  letter-spacing: normal;
+  color: var(--g-ink-low);
+  opacity: 1;
+}
+
+.species-col h5 {
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-body);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--g-track-label);
+  color: var(--g-ink);
+}
+
+.species-name-title {
+  padding-bottom: 15px;
+}
+
+.centered-view {
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  text-align: center;
+  margin: auto !important;
+}
+
+.squeezed-view {
+  width: 1000px;
+  /* max-width: 80vw; */
+  max-width: 90vw;
+}
+
+.species-detail-description {
+  font-style: italic;
+  color: rgb(255, 255, 255);
+  text-align: left;
+}
+
+.species-detail-description-div {
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+
+.species-detail-id {
+  color: lightgrey;
+  font-style: italic;
+  text-align: center;
+}
+
+.species-detail-name {
+  text-align: center;
+  font-weight: bolder;
+  color: white;
+  /* font-size: ; */
+}
+
+.xalian-image-detail {
+  height: auto;
+  max-width: 300px !important;
+  /* margin-top: 20px; */
+  padding: 0 !important;
+  /* margin-left: auto; */
+  /* margin-right: 10%; */
+  margin: auto;
+  border-color: black;
+  border-width: 4px;
+  border-radius: 8px;
+  border-style: solid;
+}
+
+.species-detail-title-row {
+  padding-top: 2vh;
+  padding-bottom: 2vh;
+}
+
+.recharts-tooltip-cursor {
+  border-radius: 10px !important;
+}
+
+.chart-container {
+  /* width: 200px; */
+}
+
+.chart-div {
+  width: 1000px;
+  max-width: 80vw;
+  min-height: 300px !important;
+  height: 100%;
+}
+
+.stat-tooltip {
+  box-shadow: 0px 0px 10px #00000044;
+  background-color: #000000de;
+  color: white;
+}
+
+#gridTab-tab-grid {
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.chart-bar-label {
+  text-shadow: 1px 1px 2px rgb(0, 0, 0) !important;
+}
+
+.species-tab {
+  background-color: rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 0px 10px rgb(0, 0, 0);
+  border-radius: 10px;
+}
+
+.condensed-row {
+  padding: 0;
+  margin: 0;
+}
+
+.stat-tooltip-label {
+  padding: 5px;
+  margin: 0px;
+}
+
+
+/* 
+*******************
+**    DESIGNER    **
+******************* 
+*/
+
+.designer-suggestion-box {}
+
+.designer-suggestion-box iframe {
+  -ms-zoom: 0.75;
+  -moz-transform: scale(0.75);
+  -moz-transform-origin: 0 0;
+  -o-transform: scale(0.75);
+  -o-transform-origin: 0 0;
+  /* -webkit-transform: scale(0.75);
+  -webkit-transform-origin: 0 0; */
+  height: 500px;
+  width: 80vw;
+  margin: auto;
+}
+
+.design-results-row {
+  padding-top: 10px;
+  color: white;
+  margin-bottom: 20px;
+  margin-top: 20px !important;
+}
+
+.design-results-row h1 {
+  color: white;
+  font-weight: 800;
+}
+
+.design-results-row h2 {
+  color: white;
+}
+
+.design-results-row h3 {
+  /* color: white; */
+  /* font-style: italic; */
+}
+
+.design-results-row h4 {
+  /* color: white; */
+  padding: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.design-page-title {
+  color: white;
+  font-weight: 600;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.design-results-row h6 {
+  /* color: rgb(53, 53, 53); */
+  /* font-style: italic; */
+  padding: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  /* font-size: 1em; */
+}
+
+.design-results-row button {
+  background-color: rgba(53, 53, 53, 0);
+  border: 0;
+  margin: 5px;
+}
+
+.design-species-genus-text {
+  font-style: italic;
+  color: rgba(128, 255, 177, 0.671);
+}
+
+.sticky-div {
+  position: sticky;
+  top: 35px;
+  left: 35px;
+  padding: 10px 0px;
+}
+
+.sticky-div button {
+  background-color: rgb(0, 0, 0);
+  border-color: rgba(128, 255, 177, 0.671);
+  box-shadow: 0px 0px 12px 4px rgb(0, 0, 0);
+}
+
+.scrollable-section {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 400px;
+}
+
+.search-bar {
+  width: 200px !important;
+}
+
+.monster-image {
+  height: auto;
+  max-width: 300px !important;
+}
+
+
+/* a definition is prose: cap it so it does not run 140 characters wide on a
+   large monitor */
+.g-record-body {
+  max-width: var(--g-measure);
+}
+
+/* Shared page scaffolding for every migrated page. */
+.page-shell {
+  padding-top: var(--g-8);
+  padding-bottom: var(--g-9);
+}
+
+@media (max-width: 575px) {
+  .page-shell {
+    padding-top: var(--g-6);
+    padding-bottom: var(--g-8);
+  }
+}
+
+.page-header {
+  margin-bottom: var(--g-7);
+}
+
+@media (max-width: 575px) {
+  .page-header {
+    margin-bottom: var(--g-5);
+  }
+}
+
+.page-header .g-title {
+  margin-top: var(--g-2);
+}
+
+.page-header .g-body {
+  margin-top: var(--g-3);
+}
+
+/*
+*******************
+**   Generator   **
+******************* 
+*/
+
+.expanded-chart-div {
+  width: 1250px;
+  max-width: 80vw;
+  min-height: 600px !important;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.hide-overflow-x {
+  overflow-x: hidden;
+}
+
+
+/* 
+*******************
+**   login   **
+******************* 
+*/
+
+.error-message {
+  color: rgb(197, 49, 49);
+}
+
+.resend-verification-link-wrapper a {
+  color: rgb(130, 130, 255) !important;
+}
+
+
+.themed-modal .modal-content {
+  border: 2px solid var(--g-brass-dark);
+  border-radius: var(--g-radius-housing);
+  box-shadow: var(--g-drop);
+}
+
+/* the dialog's own title strip, stencilled onto the housing */
+.themed-modal .modal-header {
+  border-bottom: var(--g-hairline) solid var(--g-seam);
+  padding: var(--g-4) var(--g-5);
+}
+
+.themed-modal .modal-title {
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-h3);
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+}
+
+.themed-modal .modal-body {
+  /* the same horizontal padding as the header, so the prose starts on the
+     same rail as the title rather than floating in the middle of the page */
+  padding: var(--g-6) var(--g-5) var(--g-7);
+}
+
+/* Long-form prose: leading and paragraph spacing that suit reading a planet's
+   history rather than a UI string. The measure is set by the width of the
+   dialog itself (below) - capping the paragraph inside a wide dialog just
+   leaves a dead column down one side of the page. */
+.themed-modal .modal-body p {
+  font-family: var(--g-font-ui);
+  font-size: var(--g-size-body);
+  line-height: 1.75;
+  margin: 0 0 var(--g-5) 0;
+}
+
+/* a page of prose, sized so a line lands near the readable measure */
+.themed-modal .modal-dialog {
+  max-width: 760px;
+}
+
+.themed-modal .modal-body p:last-child {
+  margin-bottom: 0;
+}
+
+
+.themed-modal input,
+.themed-modal textarea {
+  border: none !important;
+  border-bottom: 2px solid rgb(70, 70, 70) !important;
+  border-radius: 0 !important;
+}
+
+
+.dark-themed-modal .modal-content {
+  background: var(--g-hull);
+  color: var(--g-ink);
+}
+
+.dark-themed-modal .modal-title {
+  color: var(--g-ink);
+}
+
+.dark-themed-modal>input {
+  color: white;
+}
+
+.dark-themed-modal input,
+.dark-themed-modal textarea {
+  background-color: #20202000 !important;
+  color: #80ffb0 !important;
+}
+
+.dark-themed-modal input:disabled,
+.dark-themed-modal textarea {
+  background-color: #29292950 !important;
+  color: #c0c0c0 !important;
+}
+
+.dark-themed-modal input:-webkit-autofill {
+  -webkit-text-fill-color: #80ffb0 !important;
+}
+
+
+.light-themed-modal .modal-content {
+  /* printed paper: bone stock and dark ink, not a white browser dialog */
+  background: var(--g-ink);
+  color: var(--g-ink-invert);
+}
+
+.light-themed-modal .modal-header {
+  background: color-mix(in srgb, var(--g-ink) 88%, var(--g-ink-invert));
+  border-bottom-color: color-mix(in srgb, var(--g-ink) 55%, var(--g-ink-invert));
+}
+
+.light-themed-modal .modal-title {
+  color: var(--g-ink-invert);
+}
+
+.light-themed-modal .modal-body p {
+  color: #241f16;
+}
+
+.light-themed-modal>input {
+  color: rgb(0, 0, 0);
+}
+
+.light-themed-modal input,
+.light-themed-modal textarea {
+  background-color: #cccccc !important;
+  color: #242424 !important;
+}
+
+.light-themed-modal input:disabled,
+.light-themed-modal textarea {
+  background-color: #cccccc !important;
+  color: #3b3b3b !important;
+}
+
+.light-themed-modal input:-webkit-autofill {
+  -webkit-text-fill-color: #252525 !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+
+/* 
+input, textarea {
+
+
+} */
+
+.modal-footer>.btn {
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: #3f3f3f !important;
+  color: white !important;
+  border: none !important;
+
+}
+
+.btn-close {
+  color: lightgray !important;
+}
+
+
+
+.fill-height-view {
+  height: 50vh;
+}
+
+/* 
+*******************
+**    alerts    **
+******************* 
+*/
+
+.custom-alert {
+  z-index: 1000 !important;
+  position: absolute !important;
+  width: 100% !important;
+}
+
+.alert-hidden {
+  opacity: 0;
+  transition: all 250ms linear 2s;
+}
+
+.alert-shown {
+  opacity: 0;
+  transition: all 250ms linear 2s;
+}
+
+
+/* 
+**************************************
+**    user detail / account page    **
+**************************************
+*/
+
+.account-page-xalians-title>h1 {
+  margin: auto;
+  margin-top: 25px;
+  margin-bottom: 25px;
+  color: white;
+  text-align: center;
+}
+
+/*--------------------------------------------------------------
+#                     XALAIN VIEWS / ELEMENTS
+--------------------------------------------------------------*/
+
+.xalian-image-grid {
+  width: 80% !important;
+  max-width: 50vh !important;
+  /* margin-top: 20px; */
+  margin: auto;
+  /* margin-left: 0px; */
+  justify-content: center;
+  text-align: center;
+}
+
+.xalian-image-detail {
+  width: 100% !important;
+  max-width: 60vw !important;
+  /* margin-top: 20px; */
+}
+
+.xalian-image-in-row {
+  /* width: 100% !important; */
+  max-width: 50vw !important;
+  max-height: 25vh !important;
+  aspect-ratio: 1;
+}
+
+.xalian-image {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1;
+  margin: auto !important;
+  /* padding: 5px; */
+  padding: 2%;
+  /* padding: 5px !important; */
+}
+
+.splash-xalian-image {
+  /* max-height: 20vh; */
+  max-height: 15vh !important;
+  max-width: 15vh !important;
+  padding: 10px;
+}
+
+.splash-xalian-image img {
+  /* max-height: 20px; */
+  /* max-height: 20vh !important; */
+  /* max-width: 20vh !important; */
+}
+
+
+.xalian-image-wrapper {
+  aspect-ratio: 1;
+}
+
+.xalian-image-wrapper-padded {
+  padding: 1%;
+}
+
+.xalian-image-bordered {
+  border-color: black;
+  border-width: min(2%, 2px);
+  border-radius: 8px;
+  border-style: solid;
+}
+
+.xalian-image-rounded {
+  border-radius: min(10%, 8px);
+}
+
+.xalian-image-selected {
+  border-bottom-color: rgb(255, 255, 255);
+  border-bottom-width: 2px;
+  border-radius: 8px;
+  border-bottom-style: solid;
+}
+
+.xalian-image-shadowed {
+  box-shadow: 0px 0px 10px rgb(0, 0, 0);
+}
+
+.splash-xalian-stat-row-view {
+  max-width: 400px;
+  /* background-color: rgb(0, 0, 0); */
+  /* box-shadow: 0px 0px 10px rgb(0, 0, 0); */
+  border-radius: 10px;
+  margin: auto;
+  padding: 10px;
+}
+
+.xalian-stat-row-view-wrapper {
+  background-color: rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 0px 10px rgb(0, 0, 0);
+  border-radius: 10px;
+  padding: 15px !important;
+  margin: 15px;
+  width: 100%;
+  max-width: 90vw !important;
+  margin: auto !important;
+  justify-content: center;
+}
+
+.condensed-chart-div {
+  /* width: 400px; */
+  width: 100%;
+  max-width: 80vw;
+  height: 200px;
+  /* height: 100%; */
+  padding: 0;
+  margin: 0;
+}
+
+.ultra-condensed-chart-div {
+  width: 100%;
+  max-width: 80vw;
+  height: 100px;
+  /* height: 100%; */
+  padding: 0;
+  margin: 0;
+}
+
+.full-chart-div {
+  width: 600px;
+  max-width: 80vw;
+  height: 400px;
+  /* height: 100%; */
+  padding: 0;
+  margin: 0;
+}
+
+.padded-row {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.xalian-info-box {
+  margin: auto !important;
+}
+
+.xalian-move-set-wrapper {
+  width: 100%;
+}
+
+.xalian-species-badge {
+  border-radius: 10px;
+  border-color: black;
+  border-width: 1px;
+  border-style: solid;
+  max-width: 100%;
+  width: 130px;
+  height: 35px;
+  text-align: center;
+  /* margin: 5px; */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.species-type-symbol {
+  /* max-height: 30px; */
+  /* max-width: 30px; */
+  /* height: 30px; */
+  /* width: 30px; */
+  /* padding-top: 2.5px; */
+  /* padding-bottom: 2.5px; */
+  padding: 2px;
+}
+
+
+
+.species-badge-wrapper {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.species-badge-icon-col {
+  margin: 0px;
+  padding: 0px !important;
+  align-items: center;
+  display: flex;
+  justify-content: right;
+}
+
+.species-badge-text-col {
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  padding: 0px !important;
+  /* align-items: left; */
+  display: flex;
+}
+
+.xalian-badge-text {
+  font-weight: bold;
+  margin: auto !important;
+  /* margin-left: auto; */
+  /* margin-right: auto; */
+  max-height: 30px;
+  min-width: 30px;
+  max-width: 100%;
+  /* height: 30px; */
+  /* width: 30px; */
+  width: 100%;
+  /* text-shadow: 1px 1px 2px black; */
+  color: rgb(0, 0, 0);
+  /* position: relative; */
+  text-align: center;
+
+}
+
+.delete-button {
+  /* width: 35px; */
+  /* height: auto; */
+  color: white;
+  margin: auto;
+}
+
+.species-detail-chart {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  width: 100%;
+}
+
+.species-detail-chart>.row {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.xalian-image-row {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.moves-row {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  /* width: 600px; */
+  max-width: 80vw;
+
+}
+
+.xalian-species-title {
+  padding-top: 25px;
+  padding-bottom: 25px;
+}
+
+.stackable-padding {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.stackable-margin {
+  margin-top: 15px !important;
+  margin-bottom: 15px !important;
+}
+
+/* 
+-------------------------------------------
+|   COMMUNITY PAGE
+-------------------------------------------
+*/
+
+.community-poll-wrapper {}
+
+
+
+.themed-scene-div-wrapper {
+  /* max-width: 90vw !important; */
+  /* margin: auto !important; */
+  /* margin-bottom: 0 !important; */
+  /* padding: 0 !important; */
+  color: white;
+}
+
+
+.themed-scene-div-content-wrapper {
+  background-color: rgba(0, 0, 0, 0.7);
+  text-shadow: 0px 0px 10px rgb(0, 0, 0);
+  border-radius: 10px;
+  /* padding: 15px !important; */
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+.section-top-scene {
+  margin: auto !important;
+  padding: 0px !important;
+  width: 90vw !important;
+}
+
+.absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* 
+-------------------------------------------
+|   ANIMATION
+-------------------------------------------
+*/
+
+
+.sandbox {
+  height: 100%;
+  max-height: 100vh !important;
+  width: 100%;
+  /* display: contents; */
+  align-items: center;
+  align-content: center;
+  text-align: center;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.sandboxtwo {
+  align-items: center;
+  align-content: center;
+  text-align: center;
+  padding: 0 !important;
+  margin: 0 !important;
+  /* overflow-x: hidden; */
+}
+
+.spacer {
+  height: 400vh;
+  width: 100%;
+  padding: 0 !important;
+  margin: 0 !important;
+  background-color: #18d26e;
+}
+
+.sandbox-col {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.sandboxtwo-col {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.sandbox-fullscreen {
+  width: 100vw !important;
+  /* height: 200vh !important; */
+  /* background: rgb(165, 0, 0); */
+  background: radial-gradient(circle, rgb(54, 54, 54) 21%, rgba(57, 57, 57, 1) 53%, rgba(28, 28, 28, 1) 100%);
+  background-size: contain;
+  /* min-height: 100vh; */
+  min-width: 100vw;
+  /* flex-direction: column;
+  align-items: center;
+  justify-content: center; */
+  font-family: 'Abel';
+  color: white;
+  padding: 0 !important;
+  /* margin: 0 !important; */
+
+  /* background: url("../img/background/galaxy-splash-dark.png") top center; */
+  /* background-size: auto, 100vh; */
+  /* min-height: 100%; */
+  /* position: relative; */
+  /* background-attachment: fixed; */
+  /* padding: 0 !important; */
+}
+
+
+
+
+
+
+
+/*
+-------------------------------------------
+|   GAMES
+-------------------------------------------
+*/
+
+.match-card-game-wrapper {
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  flex-flow: column wrap;
+
+  overflow: visible;
+}
+
+.match-game-card-flipped {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  /* padding: 10px; */
+  /* transform: translate(-50%, -50%); */
+  /* top: 50%; */
+  /* left: 50%; */
+}
+
+.game-centered-over-object {
+  position: absolute;
+  z-index: 1000;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  /* bottom: 0%; */
+  left: 50%;
+  margin: auto;
+}
+
+.game-bottom-over-object {
+  position: absolute;
+  z-index: 1000;
+  transform: translate(-50%, 0%);
+  bottom: 2%;
+  left: 50%;
+  margin: auto;
+}
+
+/* The pre-round curtain. It covers the board rather than floating on top of a
+   corner of it, so nothing is obscured while it is up and nothing is left
+   overlapping once the round starts. */
+.game-curtain {
+  position: absolute;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--g-3);
+  background: rgba(13, 11, 9, 0.82);
+  border-radius: var(--g-radius-housing);
+}
+
+.game-curtain-kicker {
+  margin: 0;
+}
+
+.game-display-text {
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-readout);
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-ink);
+  margin: 0;
+}
+
+.game-curtain-note {
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-small);
+  color: var(--g-ink-mid);
+  margin: 0;
+}
+
+.game-curtain-btn {
+  margin-top: var(--g-3);
+  padding: var(--g-3) var(--g-7);
+}
+
+/* 
+-------------------------------------------
+|   Game Container
+-------------------------------------------
+*/
+
+.game-container {
+  /* was pinned to 100vw/100vh, so the board sat in its own full-screen black
+     box unrelated to the page it is part of */
+  background: var(--g-hull-lo);
+  border: var(--g-hairline) solid var(--g-seam);
+  border-radius: var(--g-radius-housing);
+  box-shadow: var(--g-relief), var(--g-drop);
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--g-8) auto !important;
+  padding: var(--g-4) !important;
+  width: fit-content !important;
+  max-width: 100%;
+  position: relative;
+  display: flex;
+}
+
+.game-container-content-wrapper {
+  /* background-color: red; */
+  /* position: absolute; */
+  /* transform-origin: center; */
+  /* transform: translate(50%, 50%); */
+  /* top: 5%; */
+  /* left: 50%; */
+  position: relative;
+  /* margin: auto; */
+}
+
+
+
+/* 
+-------------------------------------------
+|   SMOKE BACKGROUND
+-------------------------------------------
+*/
+
+#smokeBackgroundCanvas {
+  width: 100vw !important;
+  height: 100vh !important;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0;
+}
+
+#smokeBackgroundCanvasBelow {
+  width: 100vw !important;
+  height: 100vh !important;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -2;
+  pointer-events: none;
+  /* opacity: 0; */
+}
+
+.give-some-padding {
+  margin-top: 200px !important;
+  padding-top: 200px !important;
+}
+/*--------------------------------------------------------------
+# Training Grounds
+--------------------------------------------------------------*/
+
+.training-grounds-subtitle {
+  font-family: var(--g-font-ui);
+  color: var(--g-ink-mid);
+  margin: var(--g-2) 0 0 0;
+}
+
+.training-game-switcher {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--g-6);
+}
+
+.training-shell {
+  padding-bottom: var(--g-8);
+  /* the board is a square sized to the viewport, so the whole page is a
+     centred composition rather than a left-rail layout */
+  text-align: center;
+}
+
+/*--------------------------------------------------------------
+# Generator loading state
+--------------------------------------------------------------*/
+
+.generator-page-gradient-overlay {
+  z-index: -1;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0) 25%, rgba(20, 23, 23, 1) 100%);
+}
+
+/* sits above the smoke canvas (z-index 999) so the message is readable while
+   the generator is working */
+.generator-loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  text-align: center;
+}
+
+.generator-loading-text {
+  color: var(--x-green);
+  font-size: var(--x-text-xl);
+  text-shadow: 0 0 12px rgba(0, 0, 0, 0.9);
+  animation: generator-loading-pulse 1.6s ease-in-out infinite;
+}
+
+.generator-loading-sub {
+  color: var(--x-text);
+  font-size: var(--x-text-sm);
+  margin-top: var(--x-space-2);
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.9);
+}
+
+@keyframes generator-loading-pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+/* respect a reduced-motion preference - the pulse is decorative */
+@media (prefers-reduced-motion: reduce) {
+  .generator-loading-text {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* Page titles need clearance under the sticky console header. The old
+   .page-title-text carried this padding; .g-title is a pure type style, so the
+   spacing lives here where the page composes it. */
+.template-col-wrapper .g-title,
+.g-shell > .page-header .g-title {
+  margin-top: 0;
+}
+
+.template-col-wrapper {
+  padding-top: var(--g-7);
+  padding-bottom: var(--g-5);
+}
+
+
+
+/* the training page composes its own header, so it needs the same clearance
+   under the sticky console header that .template-col-wrapper provides */
+.page-header {
+  padding-top: var(--g-7);
+}
+
+/* trailing margin on the last paragraph makes a panel look bottom-heavy */
+.story-splash-section .story-text:last-child,
+.g-panel > p:last-child {
+  margin-bottom: 0;
+}
+
+
+/* Specimen record ---------------------------------------------------------
+   Removed (round1-findings.md S11): version 2 printed the whole creature
+   record in monospace on the matte hull via .specimen-*; xalianRecord.js no
+   longer emits any of these classes (grep confirms), and version 3's medium
+   rule (docs/DESIGN_SYSTEM.md rule B) renders the record inside whichever
+   medium its terminal uses instead (.g-crt on the Field Terminal,
+   .g-paper--card in the Archive, .g-paper--docket in the Registry). Deleted
+   here: .specimen-panel, .specimen-head, .specimen-name, .specimen-head-meta,
+   .specimen-id, .specimen-body, .specimen-plate, .specimen-data,
+   .specimen-spec, .specimen-description, .specimen-readouts,
+   .specimen-readout, .specimen-chart, .specimen-json, plus their responsive
+   variants at 1199px, 767px and 575px. */
+
+
+/* Move set ---------------------------------------------------------------- */
+
+
+
+/* Generator page ---------------------------------------------------------- */
+
+.generator-shell {
+  padding-top: var(--g-6);
+  padding-bottom: var(--g-8);
+  position: relative;
+  z-index: 2;
+}
+
+.generator-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: var(--g-3);
+  margin-bottom: var(--g-6);
+}
+
+
+/* an unrated stat is not zero, it is unknown: the strip stays dark and the
+   caption says so, rather than implying the creature is bad at it */
+.species-meter-row--unrated .g-meter-value {
+  color: var(--g-ink-low);
+  font-style: normal;
+}
+
+.species-meter-row--unrated .g-meter {
+  opacity: 0.6;
+}
+
+
+/* Species catalogue ------------------------------------------------------- */
+
+.species-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--g-4);
+  padding: var(--g-2) 0 var(--g-8) 0;
+}
+
+/* each specimen sits in a housing, the same as every other object on the site */
+.species-tile {
+  display: block;
+  text-decoration: none;
+  background: var(--g-hull);
+  border: var(--g-hairline) solid var(--g-seam);
+  border-radius: var(--g-radius-panel);
+  box-shadow: var(--g-relief), var(--g-drop);
+  padding: var(--g-2);
+  transition: transform var(--g-snap), box-shadow var(--g-snap);
+}
+
+.species-tile:hover,
+.species-tile:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: var(--g-relief), 0 8px 20px rgba(0, 0, 0, 0.6);
+  border-color: color-mix(in srgb, var(--g-el) 45%, var(--g-seam));
+}
+
+.species-tile:focus-visible {
+  outline: 2px solid var(--g-el);
+  outline-offset: 2px;
+}
+
+.species-tile-plate {
+  display: block;
+  border-radius: var(--g-radius);
+  overflow: hidden;
+  box-shadow: var(--g-recess);
+}
+
+.species-tile-plate .xalian-image-wrapper {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  margin: 0;
+  border-radius: var(--g-radius);
+}
+
+/* the name plate: stencilled legend on the hull below the specimen */
+.species-tile-legend {
+  display: block;
+  padding: var(--g-3) var(--g-1) var(--g-1) var(--g-1);
+  text-align: center;
+}
+
+.species-tile-name {
+  display: block;
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-small);
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-ink);
+}
+
+.species-tile-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--g-2);
+  margin-top: var(--g-1);
+}
+
+/* svgUtil sets margin:auto inline on the symbol, which in a flex row throws it
+   and the designation to opposite ends of the plate */
+.species-tile-meta > svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 0 !important;
+}
+
+.species-tile-id {
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-micro);
+  color: var(--g-ink-low);
+}
+
+.species-stat-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--g-3);
+  padding: var(--g-2) 0 var(--g-8) 0;
+}
+
+.species-stat-rows > a {
+  text-decoration: none;
+}
+
+/* Page headers are left-aligned on every route. Centring some titles and not
+   others left the kicker, the title and the content below on three different
+   rails, which is what read as "not quite aligned". */
+
+
+/* Duel setup -------------------------------------------------------------- */
+
+.duel-setup-shell {
+  padding-bottom: var(--g-9);
+  /* The setup form is a single object of a fixed, comfortable width. Narrowing
+     the shell (rather than the panel inside it) means the header and the panel
+     move together and share a left edge - instead of a 720px panel stranded
+     against the left of a 1600px page. */
+  max-width: 880px;
+}
+
+.duel-setup-panel {
+  padding: var(--g-6);
+}
+
+.duel-setup-row,
+.duel-setup-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--g-4);
+  padding: var(--g-4) 0;
+  border-bottom: var(--g-hairline) solid var(--g-seam);
+}
+
+.duel-setup-row:first-child,
+.duel-setup-head:first-child {
+  padding-top: 0;
+}
+
+.duel-setup-label {
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-small);
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-ink-mid);
+}
+
+/* the players toggle carries glyphs rather than a legend, so it needs room */
+.duel-players-segment {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--g-2);
+  font-size: var(--g-size-body);
+}
+
+.duel-squad-count {
+  font-family: var(--g-font-mono);
+  font-size: var(--g-size-lead);
+  font-variant-numeric: tabular-nums;
+  color: var(--g-phosphor);
+}
+
+.duel-squad-grid {
+  padding: var(--g-5) 0 var(--g-2) 0;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+}
+
+/* a selected squad member is latched: brass edge, seated deeper in the hull */
+.duel-squad-tile {
+  border-width: 2px;
+  cursor: pointer;
+  font: inherit;
+  text-align: inherit;
+}
+
+.duel-squad-tile--selected {
+  border-color: var(--g-brass);
+  box-shadow: var(--g-recess), 0 0 0 1px var(--g-brass-dark);
+  transform: translateY(1px);
+}
+
+.duel-setup-note {
+  font-family: var(--g-font-ui);
+  font-size: var(--g-size-small);
+  color: var(--g-ink-low);
+  margin: var(--g-3) 0 0 0;
+}
+
+.duel-setup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--g-3);
+  padding-top: var(--g-6);
+}
+
+@media (max-width: 575px) {
+  .duel-setup-row,
+  .duel-setup-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .duel-setup-actions {
+    justify-content: stretch;
+  }
+
+  .duel-setup-actions .g-btn {
+    flex: 1;
+    /* stretched keys were breaking their legends across two lines */
+    white-space: nowrap;
+  }
+}
+
+
+
+/* Account ------------------------------------------------------------------ */
+
+.account-shell {
+  padding-bottom: var(--g-9);
+}
+
+.account-notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--g-5);
+  padding: var(--g-7) var(--g-6);
+  text-align: left;
+}
+
+/* .g-empty draws a dashed placeholder box, which is right for "no records in
+   this list" but reads as a drop zone around a single line of status text */
+.account-notice-text {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  text-align: left;
+}
+
+/* an anchor styled as a key still has to sit on its baseline like one */
+a.g-btn {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+
+/* Record strip ------------------------------------------------------------
+   The compact form of the specimen record: a plate, an identity block and one
+   or two readouts on a single panel. Used by the species stats list and the
+   account page. */
+
+.record-strip {
+  display: grid;
+  grid-template-columns: 92px minmax(150px, 200px) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--g-5);
+  padding: var(--g-4) var(--g-5);
+}
+
+.record-strip--wide {
+  grid-template-columns: 92px minmax(150px, 190px) minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.record-strip-plate {
+  padding: 4px;
+  background: linear-gradient(160deg, var(--g-hull-hi), var(--g-hull));
+  border: 2px solid var(--g-brass-dark);
+  border-radius: var(--g-radius-panel);
+  box-shadow: var(--g-relief), var(--g-drop);
+}
+
+.record-strip-plate .xalian-image-wrapper {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  margin: 0;
+  border-radius: 3px;
+  box-shadow: var(--g-recess);
+}
+
+.record-strip-ident {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--g-2);
+  min-width: 0;
+}
+
+.record-strip-ident .xalian-species-badge {
+  max-width: 100%;
+}
+
+.record-strip-name {
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-h3);
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-ink);
+  margin: 0;
+}
+
+.record-strip-ident .xalian-species-badge {
+  margin: 0;
+}
+
+.record-strip-delete {
+  margin-top: var(--g-2);
+}
+
+.record-strip-readout {
+  min-width: 0;
+}
+
+.record-strip-chart {
+  height: 190px;
+}
+
+@media (max-width: 991px) {
+  .record-strip,
+  .record-strip--wide {
+    grid-template-columns: 92px minmax(0, 1fr);
+  }
+
+  .record-strip-readout {
+    grid-column: 1 / -1;
+  }
+}
+
+
+/* Physics trainer ---------------------------------------------------------- */
+
+.physics-controls {
+  position: absolute;
+  z-index: 999;
+  top: var(--g-3);
+  left: var(--g-3);
+  right: var(--g-3);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--g-4);
+  padding: var(--g-3) var(--g-4);
+  background: var(--g-hull);
+  border: var(--g-hairline) solid var(--g-seam);
+  border-radius: var(--g-radius-panel);
+  box-shadow: var(--g-relief), var(--g-drop);
+}
+
+.physics-control {
+  flex: 1 1 180px;
+  min-width: 140px;
+  margin: 0;
+}
+
+.physics-control-label {
+  display: block;
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-tiny);
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-ink-mid);
+  margin-bottom: var(--g-1);
+}
+
+.physics-control-value {
+  font-family: var(--g-font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--g-ink);
+  letter-spacing: normal;
+}
+
+.physics-fire {
+  flex: 0 0 auto;
+}
+
+.physics-arena {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  background: var(--g-hull-lo);
+  border-radius: var(--g-radius-panel);
+  box-shadow: var(--g-recess);
+  overflow: hidden;
+}
+
+.physics-target {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 50px;
+  height: 50px;
+  background: var(--g-hazard);
+  border: 2px solid var(--g-hazard-dark);
+  border-radius: var(--g-radius);
+}
+
+
+/* Duel how-to-play -------------------------------------------------------- */
+
+.howto-section {
+  margin-bottom: var(--g-5);
+}
+
+.howto-section:last-child {
+  margin-bottom: 0;
+}
+
+/* was a green h6 set with inline hex; the rules are printed on the hull, so
+   they wear the same stencil as every other section legend */
+.howto-title {
+  display: flex;
+  align-items: center;
+  gap: var(--g-2);
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-small);
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+  color: var(--g-brass-light);
+  margin: 0 0 var(--g-2) 0;
+}
+
+.themed-modal .modal-body p.howto-line {
+  font-size: var(--g-size-small);
+  line-height: 1.6;
+  color: var(--g-ink-mid);
+  margin-bottom: var(--g-2);
+}

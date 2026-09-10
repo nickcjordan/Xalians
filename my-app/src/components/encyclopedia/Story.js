@@ -4,7 +4,13 @@ import * as lore from '../../lore';
 import Prose from './Prose';
 import { useVisit, useReadMark, markRead, recordStoryPosition } from './trail';
 import StoryContents from './StoryContents';
-import './Story.css';
+import { SectionHead } from '@/components/system/masthead';
+import { EmptyState } from '@/components/system/record';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 const PHONE_QUERY = '(max-width: 900px)';
 
@@ -29,17 +35,17 @@ function useIsPhone() {
 function RecordsConsulted({ beat }) {
 	if (beat.worlds.length === 0 && beat.entries.length === 0) return null;
 	return (
-		<div className="enc-story-consulted">
-			<p className="g-kicker">Records consulted</p>
-			<div className="enc-chips">
+		<div className="flex flex-col gap-2">
+			<p className="type-legend m-0">Records consulted</p>
+			<div className="flex flex-wrap gap-2">
 				{beat.worlds.map((world) => (
-					<Link key={world.key} to={lore.routeFor('world', world.key)} className={`g-chip g-el-${world.element}`}>
-						{world.name}
+					<Link key={world.key} to={lore.routeFor('world', world.key)} className={`el-${world.element}`}>
+						<Badge variant="chip-outline">{world.name}</Badge>
 					</Link>
 				))}
 				{beat.entries.map((entry) => (
-					<Link key={entry.key} to={lore.routeFor('entry', entry.key)} className="g-chip g-chip--outline">
-						{entry.title}
+					<Link key={entry.key} to={lore.routeFor('entry', entry.key)}>
+						<Badge variant="chip-outline">{entry.title}</Badge>
 					</Link>
 				))}
 			</div>
@@ -50,16 +56,16 @@ function RecordsConsulted({ beat }) {
 function NarratorBeat({ beat, indexInPart, beatCount }) {
 	useVisit({ kind: 'beat', key: beat.key, name: beat.title });
 	return (
-		<div id={`beat-${beat.key}`} className="g-paper enc-story-beat">
+		<Card variant="panel" id={`beat-${beat.key}`} className="mb-8">
 			{beatCount > 1 && (
-				<p className="g-kicker enc-story-beat-kicker">
+				<p className="type-legend m-0">
 					Beat {indexInPart + 1} of {beatCount}
 				</p>
 			)}
-			<h2 className="g-h2 enc-story-beat-title">{beat.title}</h2>
-			<Prose text={beat.prose} className="enc-story-beat-prose" />
+			<h2 className="type-heading m-0">{beat.title}</h2>
+			<Prose text={beat.prose} className="max-w-none" />
 			<RecordsConsulted beat={beat} />
-		</div>
+		</Card>
 	);
 }
 
@@ -67,15 +73,12 @@ function NarratorBeat({ beat, indexInPart, beatCount }) {
 
 function MarginNote({ world, index, read }) {
 	return (
-		<div className="enc-story-note">
-			<Link
-				to={lore.routeFor('world', world.key)}
-				className={`g-chip g-chip--outline g-el-${world.element} enc-story-note-chip`}
-			>
-				{world.name}
+		<div className="flex flex-col items-start gap-1 pt-0.5 max-sm:flex-row max-sm:items-center max-sm:gap-3">
+			<Link to={lore.routeFor('world', world.key)} className={`el-${world.element} max-w-full`}>
+				<Badge variant="chip-outline">{world.name}</Badge>
 			</Link>
-			<span className="g-mono enc-story-note-chapter">Ch. {String(index).padStart(2, '0')}</span>
-			<span className={`g-lamp enc-story-note-lamp ${read ? '' : 'g-lamp--off'}`} aria-hidden="true" />
+			<span className="type-data text-[11px] text-ink-3">Ch. {String(index).padStart(2, '0')}</span>
+			<span className={`inline-block size-1.5 rounded-full ${read ? 'bg-viable' : 'bg-edge-strong'}`} aria-hidden="true" />
 		</div>
 	);
 }
@@ -107,18 +110,18 @@ function StoryParagraph({ world, index, text }) {
 			ref={ref}
 			id={`chapter-${world.key}-${index}`}
 			data-story-paragraph="true"
-			className="g-paper enc-story-para"
+			className="grid grid-cols-[8rem_minmax(0,1fr)] items-start gap-4 border-t border-edge py-4 first:border-t-0 max-sm:grid-cols-1"
 		>
 			<MarginNote world={world} index={index} read={read} />
-			<Prose text={text} className="enc-story-para-text" />
+			<Prose text={text} className="m-0 max-w-none" />
 		</div>
 	);
 }
 
 function RecordsSection({ section, showHead }) {
 	return (
-		<section className="enc-story-section">
-			{showHead && <p className="g-kicker enc-story-section-head">{section.head || 'Elsewhere in the era'}</p>}
+		<section className="[&+&]:mt-8">
+			{showHead && <p className="type-legend m-0 mb-3">{section.head || 'Elsewhere in the era'}</p>}
 			{section.paragraphs.map((p) => (
 				<StoryParagraph key={`${p.world.key}:${p.index}`} world={p.world} index={p.index} text={p.text} />
 			))}
@@ -150,16 +153,16 @@ function groupEvents(events) {
 function EventAnchors({ anchors }) {
 	if (anchors.length === 0) return null;
 	return (
-		<div className="g-paper enc-story-event-screen">
+		<div className="mt-3 flex flex-col gap-3">
 			{anchors.map((anchor, i) => (
-				<div className="enc-story-anchor" key={i}>
+				<div key={i}>
 					<Link
 						to={`${lore.routeFor('world', anchor.world.key)}#chapter-${anchor.world.key}-${anchor.index}`}
-						className="enc-story-anchor-link"
+						className="inline-block text-ink no-underline hover:underline"
 					>
 						{anchor.world.name} CH. {String(anchor.index).padStart(2, '0')}
 					</Link>
-					<p className="enc-quote enc-story-anchor-text">&ldquo;{anchor.quote}&rdquo;</p>
+					<p className="type-data m-0 whitespace-normal break-words text-small text-ink-2">&ldquo;{anchor.quote}&rdquo;</p>
 				</div>
 			))}
 		</div>
@@ -168,58 +171,54 @@ function EventAnchors({ anchors }) {
 
 function FixedPointCard({ event }) {
 	return (
-		<div id={`event-${event.key}`} className="g-paper enc-story-event-card">
-			<div className="enc-story-event-head">
-				<span className="g-h3 enc-story-event-title">{event.title}</span>
+		<Card variant="panel" id={`event-${event.key}`}>
+			<div className="flex flex-wrap items-baseline justify-between gap-3">
+				<span className="type-heading m-0 text-[19px]">{event.title}</span>
 				{event.planets.length > 0 && (
-					<span className="enc-chips enc-story-event-chips">
+					<span className="flex flex-wrap gap-2">
 						{event.planets.map((planet) => (
-							<span key={planet.key} className={`g-chip g-chip--outline g-el-${planet.element}`}>
-								{planet.name}
+							<span key={planet.key} className={`el-${planet.element}`}>
+								<Badge variant="chip-outline">{planet.name}</Badge>
 							</span>
 						))}
 					</span>
 				)}
 			</div>
 			{event.entry && (
-				<Link to={lore.routeFor('entry', event.entry.key)} className="g-link enc-story-event-entry">
+				<Link to={lore.routeFor('entry', event.entry.key)} className="my-3 inline-block text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink">
 					Entry: {event.entry.title}
 				</Link>
 			)}
 			<EventAnchors anchors={event.anchors} />
-		</div>
+		</Card>
 	);
 }
 
 function ContemporaneousCard({ group }) {
 	return (
-		<div className="g-paper enc-story-event-card">
-			<p className="g-kicker">Contemporaneous, unordered</p>
+		<Card variant="panel">
+			<p className="type-legend m-0">Contemporaneous, unordered</p>
 			{group.events.map((event) => (
-				<div id={`event-${event.key}`} key={event.key} className="enc-story-event">
-					<h4 className="g-h3 enc-story-event-title">{event.title}</h4>
+				<div id={`event-${event.key}`} key={event.key} className="[&+&]:mt-5 [&+&]:border-t [&+&]:border-edge [&+&]:pt-5">
+					<h4 className="type-heading m-0 text-[19px]">{event.title}</h4>
 					{event.planets.length > 0 && (
-						<div className="enc-chips enc-story-event-chips">
+						<div className="mt-3 flex flex-wrap gap-2">
 							{event.planets.map((planet) => (
-								<Link
-									key={planet.key}
-									to={lore.routeFor('world', planet.key)}
-									className={`g-chip g-chip--outline g-el-${planet.element}`}
-								>
-									{planet.name}
+								<Link key={planet.key} to={lore.routeFor('world', planet.key)} className={`el-${planet.element}`}>
+									<Badge variant="chip-outline">{planet.name}</Badge>
 								</Link>
 							))}
 						</div>
 					)}
 					{event.entry && (
-						<Link to={lore.routeFor('entry', event.entry.key)} className="g-link enc-story-event-entry">
+						<Link to={lore.routeFor('entry', event.entry.key)} className="my-3 inline-block text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink">
 							Entry: {event.entry.title}
 						</Link>
 					)}
 					<EventAnchors anchors={event.anchors} />
 				</div>
 			))}
-		</div>
+		</Card>
 	);
 }
 
@@ -227,12 +226,9 @@ function FixedPoints({ fixedPoints }) {
 	const groups = useMemo(() => groupEvents(fixedPoints), [fixedPoints]);
 	if (groups.length === 0) return null;
 	return (
-		<section className="enc-section enc-story-fixed">
-			<div className="enc-section-head">
-				<h2 className="g-h2">Fixed points</h2>
-				<span className="enc-count">{groups.length}</span>
-			</div>
-			<div className="enc-story-event-list">
+		<section className="mt-8">
+			<SectionHead title="Fixed points" count={groups.length} />
+			<div className="flex flex-col gap-4">
 				{groups.map((group, i) =>
 					group.kind === 'firm' ? (
 						<FixedPointCard key={group.events[0].key} event={group.events[0]} />
@@ -250,39 +246,39 @@ function FixedPoints({ fixedPoints }) {
 function PartRailBody({ story, part }) {
 	return (
 		<>
-			<ol className="enc-story-rail-stations">
+			<ol className="m-0 flex list-none flex-col p-0">
 				{story.parts.map((p) => (
 					<li key={p.era.key}>
 						<Link
 							to={lore.routeFor('era', p.era.key)}
-							className="enc-story-rail-station"
+							className={`flex items-baseline gap-3 border-l-2 py-2 pl-3 text-ink-2 no-underline hover:text-ink ${p.era.key === part.era.key ? 'border-l-viable text-ink' : 'border-l-transparent'}`}
 							aria-current={p.era.key === part.era.key ? 'true' : undefined}
 						>
-							<span className="g-mono enc-story-rail-index">{String(p.order).padStart(2, '0')}</span>
-							<span className="enc-story-rail-name">{p.era.name}</span>
+							<span className={`type-data text-[11px] ${p.era.key === part.era.key ? 'text-viable' : 'text-ink-3'}`}>{String(p.order).padStart(2, '0')}</span>
+							<span className="type-legend text-[13px]">{p.era.name}</span>
 						</Link>
 					</li>
 				))}
 			</ol>
 			{part.worlds.length > 0 && (
-				<div className="enc-story-rail-block">
-					<p className="g-kicker enc-story-rail-kicker">Worlds in this part</p>
-					<div className="enc-chips">
+				<div className="mt-4 border-t border-edge pt-4">
+					<p className="type-legend m-0 mb-3">Worlds in this part</p>
+					<div className="flex flex-wrap gap-2">
 						{part.worlds.map((world) => (
-							<Link key={world.key} to={lore.routeFor('world', world.key)} className={`g-chip g-chip--outline g-el-${world.element}`}>
-								{world.name}
+							<Link key={world.key} to={lore.routeFor('world', world.key)} className={`el-${world.element}`}>
+								<Badge variant="chip-outline">{world.name}</Badge>
 							</Link>
 						))}
 					</div>
 				</div>
 			)}
 			{part.fixedPoints.length > 0 && (
-				<div className="enc-story-rail-block">
-					<p className="g-kicker enc-story-rail-kicker">Fixed points</p>
-					<ul className="enc-story-rail-jumps">
+				<div className="mt-4 border-t border-edge pt-4">
+					<p className="type-legend m-0 mb-3">Fixed points</p>
+					<ul className="m-0 flex flex-col gap-2 p-0 text-small">
 						{part.fixedPoints.map((event) => (
 							<li key={event.key}>
-								<a href={`#event-${event.key}`} className="g-link">
+								<a href={`#event-${event.key}`} className="text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink">
 									{event.title}
 								</a>
 							</li>
@@ -299,24 +295,28 @@ function PartRail({ story, part, progress }) {
 
 	if (isPhone) {
 		return (
-			<details className="g-panel g-panel--recessed enc-story-rail enc-story-rail--phone">
-				<summary className="g-panel-head enc-story-rail-summary">
-					<h3 className="g-h3">
-						Part {part.order} of {story.parts.length}
-					</h3>
-				</summary>
-				<p className="g-mono enc-story-rail-progress">
-					{progress} / {part.sections.reduce((sum, s) => sum + s.paragraphs.length, 0)} read in this part
-				</p>
-				<PartRailBody story={story} part={part} />
-			</details>
+			<Accordion type="single" collapsible className="mb-5">
+				<AccordionItem value="part-rail" className="border border-edge bg-s0 px-4">
+					<AccordionTrigger className="hover:no-underline">
+						<h3 className="type-legend m-0 text-ink-2">
+							Part {part.order} of {story.parts.length}
+						</h3>
+					</AccordionTrigger>
+					<AccordionContent>
+						<p className="type-data m-0 mb-3 text-[11px] text-ink-3">
+							{progress} / {part.sections.reduce((sum, s) => sum + s.paragraphs.length, 0)} read in this part
+						</p>
+						<PartRailBody story={story} part={part} />
+					</AccordionContent>
+				</AccordionItem>
+			</Accordion>
 		);
 	}
 
 	return (
-		<nav className="enc-story-rail" aria-label="Story parts">
+		<nav className="sticky top-5 flex max-h-[calc(100vh-64px)] flex-col gap-4 overflow-y-auto pb-3" aria-label="Story parts">
 			<PartRailBody story={story} part={part} />
-			<p className="g-mono enc-story-rail-progress">
+			<p className="type-data m-0 border-t border-edge pt-4 text-[11px] leading-relaxed text-ink-3">
 				Part {part.order} of {story.parts.length}
 				<br />
 				{progress} read
@@ -331,10 +331,8 @@ function StoryContentsPage() {
 	const story = useMemo(() => lore.getStory(), []);
 	useVisit({ kind: 'story', key: 'story', name: story.title });
 	return (
-		<div className="enc-story enc-story-contents">
-			<p className="g-kicker enc-story-kicker">The Story of Xalia</p>
-			<h1 className="g-title enc-story-title">{story.title}</h1>
-			<p className="g-body enc-prose enc-story-def">
+		<div>
+			<p className="mb-6 max-w-[62ch] font-body text-body text-ink-2">
 				Seven parts, one for each era the Generator's records carry. Begin at Part 1, or open any part below.
 			</p>
 			<StoryContents story={story} />
@@ -405,9 +403,9 @@ function StoryPart() {
 
 	if (!part) {
 		return (
-			<div className="enc-story">
-				<Link to="/encyclopedia/story" className="enc-back">&laquo; Back to The Story</Link>
-				<p className="g-empty">No record for &ldquo;{eraKey}&rdquo;.</p>
+			<div>
+				<Link to="/encyclopedia/story" className="mb-4 inline-block text-ink-2 underline decoration-ink-3 underline-offset-4 hover:decoration-ink">&laquo; Back to The Story</Link>
+				<EmptyState legend="Not found">No record for &ldquo;{eraKey}&rdquo;.</EmptyState>
 			</div>
 		);
 	}
@@ -415,14 +413,12 @@ function StoryPart() {
 	const beatCount = part.beats.length;
 
 	return (
-		<div className="enc-story">
-			<div className="enc-story-layout">
+		<div>
+			<div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
 				<PartRail story={story} part={part} progress={progress} />
-				<div className="enc-story-main">
-					<p className="g-kicker enc-story-kicker">Part {part.order} of {story.parts.length}</p>
-					<h1 className="g-title enc-story-title">{part.era.name}</h1>
+				<div className="min-w-0 max-w-[62ch]">
 					{part.plate && (
-						<figure className="enc-story-plate">
+						<figure className="mb-8 border border-edge-strong bg-s0 p-2 shadow-float">
 							<img
 								src={part.plate.src}
 								srcSet={`${part.plate.srcSmall} 768w, ${part.plate.src} 1536w`}
@@ -432,11 +428,12 @@ function StoryPart() {
 								alt={part.plate.alt}
 								loading="eager"
 								decoding="async"
+								className="block h-auto w-full"
 							/>
-							<figcaption className="g-mono enc-story-plate-caption">{part.plate.caption}</figcaption>
+							<figcaption className="mx-0 mt-2 max-w-[70ch] px-2 text-left font-body text-small leading-relaxed text-ink-2">{part.plate.caption}</figcaption>
 						</figure>
 					)}
-					<p className="g-body enc-prose enc-story-def">{part.era.definition}</p>
+					<p className="mb-8 max-w-[62ch] font-body text-body text-ink-2">{part.era.definition}</p>
 
 					{part.beats.map((beat, i) => (
 						<NarratorBeat key={beat.key} beat={beat} indexInPart={i} beatCount={beatCount} />
@@ -444,8 +441,8 @@ function StoryPart() {
 
 					{part.sections.length > 0 && (
 						<>
-							<hr className="enc-story-rule" />
-							<p className="g-kicker enc-story-records-kicker">From the records</p>
+							<hr className="m-0 mb-5 border-t border-edge" />
+							<p className="type-legend m-0 mb-6">From the records</p>
 							{part.sections.map((section, i) => (
 								<RecordsSection
 									key={`${part.era.key}-${i}`}
@@ -458,27 +455,31 @@ function StoryPart() {
 
 					<FixedPoints fixedPoints={part.fixedPoints} />
 
-					<div className="enc-story-nav">
+					<div className="mt-8 flex justify-between gap-4 max-sm:flex-col max-sm:items-stretch">
 						{part.prev ? (
-							<Link to={lore.routeFor('era', part.prev)} className="g-btn enc-story-nav-btn">
-								&larr; {lore.getStoryPart(part.prev).era.name}
-							</Link>
+							<Button asChild variant="secondary">
+								<Link to={lore.routeFor('era', part.prev)}>
+									<ArrowLeft /> {lore.getStoryPart(part.prev).era.name}
+								</Link>
+							</Button>
 						) : (
 							<span />
 						)}
 						{part.next && (
-							<Link to={lore.routeFor('era', part.next)} className="g-btn enc-story-nav-btn">
-								Continue to Part {part.order + 1}: {lore.getStoryPart(part.next).era.name} &rarr;
-							</Link>
+							<Button asChild>
+								<Link to={lore.routeFor('era', part.next)}>
+									Continue to Part {part.order + 1}: {lore.getStoryPart(part.next).era.name} <ArrowRight />
+								</Link>
+							</Button>
 						)}
 					</div>
 
 					{!part.next && (
-						<div className="enc-story-end">
-							<p className="g-kicker">End of the Story</p>
-							<div className="enc-story-end-links">
-								<Link to="/encyclopedia/species" className="g-btn enc-story-nav-btn">The Bestiary</Link>
-								<Link to="/encyclopedia/worlds" className="g-btn enc-story-nav-btn">The Worlds</Link>
+						<div className="mt-7 border-t border-edge pt-5 text-center">
+							<p className="type-legend m-0">End of the Story</p>
+							<div className="mt-4 flex justify-center gap-4">
+								<Button asChild variant="secondary"><Link to="/encyclopedia/species">The Bestiary</Link></Button>
+								<Button asChild variant="secondary"><Link to="/encyclopedia/worlds">The Worlds</Link></Button>
 							</div>
 						</div>
 					)}

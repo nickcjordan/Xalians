@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { routeFor } from '../lore/routeFor';
-import './encyclopediaLink.css';
+import { Badge } from '@/components/ui/badge';
 
 /**
  * A pointer out to the Encyclopedia's archive record for a species, world, or
@@ -23,22 +23,35 @@ function EncyclopediaLink({ kind, name, variant = 'inline', keyOverride, classNa
 	if (variant === 'chip') {
 		const chipLabel = kind === 'species' ? 'Species record' : kind === 'world' ? 'World record' : 'Archive entry';
 		return (
-			<Link to={to} className={`g-chip g-chip--outline enc-link enc-link--chip ${className}`} aria-label={label} {...newTabProps}>
-				{chipLabel}
+			<Link to={to} className={`ml-3 inline-block align-middle ${className}`} aria-label={label} {...newTabProps}>
+				<Badge variant="chip-outline">{chipLabel}</Badge>
 			</Link>
 		);
 	}
 
 	if (variant === 'icon') {
 		return (
-			<Link to={to} className={`enc-link enc-link--icon ${className}`} aria-label={label} title="Archive record" {...newTabProps}>
-				<span className="enc-link-icon-tab">Archive</span>
+			<Link
+				to={to}
+				className={`ml-2 inline-flex items-center align-middle no-underline ${className}`}
+				aria-label={label}
+				title="Archive record"
+				{...newTabProps}
+			>
+				<span className="type-legend inline-block border border-edge-strong bg-s0 px-2 py-px text-[10px] text-ink-2 hover:border-el hover:text-el">
+					Archive
+				</span>
 			</Link>
 		);
 	}
 
 	return (
-		<Link to={to} className={`g-link enc-link enc-link--inline ${className}`} aria-label={label} {...newTabProps}>
+		<Link
+			to={to}
+			className={`text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink ${className}`}
+			aria-label={label}
+			{...newTabProps}
+		>
 			{name}
 		</Link>
 	);

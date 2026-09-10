@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'react-bootstrap/Image';
 import {gsap} from 'gsap';
 import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
 import { ReactComponent as XaliansLogoSVG } from '../../../svg/logo/xalians_logo_x.svg';
@@ -7,10 +6,6 @@ import { ReactComponent as XaliansLogoSVG } from '../../../svg/logo/xalians_logo
 gsap.registerPlugin(DrawSVGPlugin);
 
 class MatchGameFlippedCard extends React.Component {
-
-	getImageLocation() {
-		return require('../../../svg/logo/xalians_logo_x.svg')?.default;
-	}
 
     getClasses() {
 		var x = 'xalian-image-bordered xalian-image-shadowed xalian-image-wrapper-padded ';

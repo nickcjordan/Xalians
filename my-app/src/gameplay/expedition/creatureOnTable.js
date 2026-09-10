@@ -1,5 +1,5 @@
 /*
-	Expedition — the creature on the table.
+	Expedition - the creature on the table.
 
 	Per docs/design/reclamation-design.md ("The creature on the table"): everything a
 	creature is on the table is derived from its record; nothing is stored on the record.
@@ -12,10 +12,21 @@
 import { conditionMultiplier } from './elementMatchup.js';
 import { typeEffectivenessMultiplier } from './expeditionInterpretation.js';
 import {
-	HOLD_DIVISOR,
+	RAW_ATTRIBUTE_MIN,
+	RAW_ATTRIBUTE_MAX,
+	HOLD_FLOOR,
+	HOLD_CEILING,
 	HOME_GROUND_MULTIPLIER,
 	STRAIN_MULTIPLIER,
 	SEVERE_STRAIN_MULTIPLIER,
+	BOLSTER_FLOOR,
+	MAGNITUDE_SCALE,
+	MIN_BLOW_MAGNITUDE,
+	ROLE,
+	PRESENCE_BY_ARCHETYPE,
+	SWEEP_ABILITY_ACTIONS,
+	WARD_ABILITY_ACTION,
+	MEND_ABILITY_ACTION,
 	getActClass,
 	getGoverningAttributeForAction,
 	getFavoredActSpec,
@@ -23,10 +34,13 @@ import {
 	ACT_CLASS,
 	TEMPERAMENT_HIGH_THRESHOLD,
 	TEMPERAMENT_LOW_THRESHOLD,
+	WILLFUL_THRESHOLD,
+	SWIFT_SPEED,
+	presenceScaleOf,
 } from './expeditionInterpretation.js';
 
 // ---------------------------------------------------------------------------
-// element helpers — the ratified record shape carries element as { primary, affinities }
+// element helpers - the ratified record shape carries element as { primary, affinities }
 // (affinities always includes the primary at 100, plus at most one graded secondary).
 // conditionMultiplier (elementMatchup.js) is the blend this design's "world matchup" and
 // "magnitude against a target" paragraphs both call for: softened(0 -> 0.25) primary
@@ -189,23 +203,60 @@ export function strainMultiplierFor(level) {
 	return 1;
 }
 
+/*
+	liftedStrainLevel(level) -> the grade one step up the ladder.
+
+	Bolster (docs/design/reclamation-base-redesign.md assumption 8) lifts every ally at
+	its world one grade of strain: severe to strained, strained to comfortable. A
+	comfortable ally has no grade left to gain, so it takes rules.bolsterFloor hold
+	instead, applied by holdAtSite below. Bolsters do not stack: two bolsterers at a world
+	lift exactly one grade, the same as one.
+*/
+export function liftedStrainLevel(level) {
+	if (level === 'severe') {
+		return 'strained';
+	}
+	if (level === 'strained') {
+		return 'none';
+	}
+	return 'none';
+}
+
 // ---------------------------------------------------------------------------
 // hold
 // ---------------------------------------------------------------------------
 
-export function baseHold(record) {
+/*
+	baseHold(record, rules) -> number
+
+	Hold compression (docs/design/reclamation-base-redesign.md assumption 11): the raw
+	mean of vitality, resilience and endurance is read against the registry's attribute
+	range and mapped onto [floor, ceiling]. Raising the floor compresses the species
+	spread without touching a single creature record, which is the whole point: fairness
+	lives here, never in the records.
+
+		hold = floor + (raw - RAW_ATTRIBUTE_MIN) * (ceiling - floor) / (RAW_ATTRIBUTE_MAX - RAW_ATTRIBUTE_MIN)
+
+	`rules` is optional and only needs to name holdFloor/holdCeiling; a caller with no
+	rules object (a bench panel, a test, the draft rater) gets the module constants, which
+	are the shipped first settings.
+*/
+export function baseHold(record, rules) {
 	const attrs = (record && record.attributes) || {};
 	const vitality = typeof attrs.vitality === 'number' ? attrs.vitality : 0;
 	const resilience = typeof attrs.resilience === 'number' ? attrs.resilience : 0;
 	const endurance = typeof attrs.endurance === 'number' ? attrs.endurance : 0;
-	const mean = (vitality + resilience + endurance) / 3;
-	return mean / HOLD_DIVISOR;
+	const raw = (vitality + resilience + endurance) / 3;
+	const floor = rules && typeof rules.holdFloor === 'number' ? rules.holdFloor : HOLD_FLOOR;
+	const ceiling = rules && typeof rules.holdCeiling === 'number' ? rules.holdCeiling : HOLD_CEILING;
+	const span = RAW_ATTRIBUTE_MAX - RAW_ATTRIBUTE_MIN;
+	return floor + ((raw - RAW_ATTRIBUTE_MIN) * (ceiling - floor)) / span;
 }
 
 /*
 	holdAtSite(record, site, world, options) -> number
 
-	options: { originWorldPlanet, isSelfHomeGround (bool, precomputed) } — home ground is
+	options: { originWorldPlanet, isSelfHomeGround (bool, precomputed) } - home ground is
 	a straight lowercase compare of record.provenance.origin against the world's planet
 	name (design doc: "home ground: hold is multiplied by 1.5 on the creature's origin
 	world"). packBondedKinAtSite / solitaryAlliesAtSite let callers (the rules engine, which
@@ -214,15 +265,34 @@ export function baseHold(record) {
 */
 export function holdAtSite(record, site, worldArg, opts = {}) {
 	const world = worldOfSite(site, worldArg);
-	const base = baseHold(record);
+	const rules = opts.rules;
+	const base = baseHold(record, rules);
 	const matchup = worldMatchupMultiplier(record, world && world.element);
 	const origin = record && record.provenance && record.provenance.origin;
 	const isHome = !!origin && !!(world && world.planet) && String(origin).toLowerCase() === String(world.planet).toLowerCase();
 	const homeGround = isHome ? HOME_GROUND_MULTIPLIER : 1;
 	const level = strainLevel(record, site, world);
-	const strain = strainMultiplierFor(level);
+	// willpower's job (assumption 17): a willful creature holds against the world, one
+	// grade less strain, applied BEFORE bolster so the two never stack past comfortable.
+	const willful = isWillful(record, rules);
+	const heldLevel = willful ? liftedStrainLevel(level) : level;
+	// bolster (assumption 8): one more grade of strain relief while a bolsterer stands
+	// here, and a flat bolsterFloor for a creature that is already comfortable. Charisma
+	// scales what the bolsterer restores (assumption 17): opts.bolsterScale is the
+	// bolsterer's presence scale, 1 for a caller that does not know who is bolstering.
+	const bolstered = !!opts.bolstered;
+	const bolsterScale = typeof opts.bolsterScale === 'number' ? opts.bolsterScale : 1;
+	const effectiveLevel = bolstered ? liftedStrainLevel(heldLevel) : heldLevel;
+	const strain = strainMultiplierFor(effectiveLevel);
 
-	let value = base * matchup * homeGround * strain;
+	// the lift is priced as a delta so the bolsterer's charisma can scale exactly what the
+	// bolster added and nothing else
+	const unlifted = base * matchup * homeGround * strainMultiplierFor(heldLevel);
+	let value = unlifted + (base * matchup * homeGround * strain - unlifted) * bolsterScale;
+	if (bolstered && heldLevel === 'none') {
+		const floorBonus = rules && typeof rules.bolsterFloor === 'number' ? rules.bolsterFloor : BOLSTER_FLOOR;
+		value += floorBonus * bolsterScale;
+	}
 
 	const kinAtSite = typeof opts.packBondedKinAtSite === 'number' ? opts.packBondedKinAtSite : 0;
 	const alliesAtSite = typeof opts.solitaryAlliesAtSite === 'number' ? opts.solitaryAlliesAtSite : 0;
@@ -233,25 +303,57 @@ export function holdAtSite(record, site, worldArg, opts = {}) {
 		value -= alliesAtSite; // SOLITARY_HOLD_PENALTY_PER_ALLY = 1
 	}
 
-	return { value, level, isHome, matchup };
+	// `level` is the creature's own strain grade, as the plinth prints it; `effectiveLevel`
+	// is the grade actually used for the arithmetic once willpower and a bolsterer have
+	// lifted it.
+	return { value, level, heldLevel, effectiveLevel, willful, bolstered, isHome, matchup };
 }
 
 // ---------------------------------------------------------------------------
-// initiative
+// speed, willpower, presence (assumption 17: every attribute a job)
 // ---------------------------------------------------------------------------
 
-export function initiativeOf(record) {
+/*
+	speedOf(record) -> the mean of reflex and agility.
+
+	Named `initiative` until Pass 2's vocabulary ruling. Speed orders the attacks at a
+	world and, at or above rules.swiftSpeed, lets the creature move once per round during
+	Deploy (assumption 20).
+*/
+export function speedOf(record) {
 	const attrs = (record && record.attributes) || {};
 	const reflex = typeof attrs.reflex === 'number' ? attrs.reflex : 0;
 	const agility = typeof attrs.agility === 'number' ? attrs.agility : 0;
 	return (reflex + agility) / 2;
 }
 
+// DEPRECATED, one pass only: the old name for speedOf. Callers outside this package are
+// being moved to speedOf; do not add new uses.
+export const initiativeOf = speedOf;
+
+export function isSwift(record, rules) {
+	if (rules && rules.swiftMove === false) {
+		return false;
+	}
+	const threshold = rules && typeof rules.swiftSpeed === 'number' ? rules.swiftSpeed : SWIFT_SPEED;
+	return speedOf(record) >= threshold;
+}
+
+export function isWillful(record, rules) {
+	if (rules && rules.willful === false) {
+		return false;
+	}
+	const threshold = rules && typeof rules.willfulThreshold === 'number' ? rules.willfulThreshold : WILLFUL_THRESHOLD;
+	const attrs = (record && record.attributes) || {};
+	const willpower = typeof attrs.willpower === 'number' ? attrs.willpower : 0;
+	return willpower >= threshold;
+}
+
 // ---------------------------------------------------------------------------
 // acts
 // ---------------------------------------------------------------------------
 
-// printed(ability) = max(1, round((intensity / 10) * (0.5 + governingAttr / 100))) — same
+// printed(ability) = max(1, round((intensity / 10) * (0.5 + governingAttr / 100))) - same
 // formula the first design's tributeCardBuilder.js uses (printedPower), governing
 // attribute looked up per this design's own action table since the action vocabulary and
 // its class groupings differ from the first design.
@@ -267,24 +369,36 @@ function abilitiesOf(record) {
 
 /*
 	buildActs(record, strainMult) -> [{ name, action, class, magnitude, instrument,
-	signature }] — one act per ability, magnitude computed against strain only (the
+	signature }] - one act per ability, magnitude computed against strain only (the
 	type-chart-vs-target scaling happens later, per-target, in magnitudeAgainst).
 */
-export function buildActs(record, strainMult) {
+export function buildActs(record, strainMult, magnitudeScale) {
+	// the global magnitude rescale (assumption 12) is applied here, once, so every
+	// downstream reading of an act's magnitude is already in the game's own units
+	const scale = typeof magnitudeScale === 'number' ? magnitudeScale : MAGNITUDE_SCALE;
 	return abilitiesOf(record).map((ability) => {
 		const governingAttribute = getGoverningAttributeForAction(ability.action);
 		const attrs = (record && record.attributes) || {};
 		const attrValue = governingAttribute ? attrs[governingAttribute] : undefined;
-		const baseMagnitude = magnitudeOf(ability.intensity, attrValue);
+		const printed = magnitudeOf(ability.intensity, attrValue);
 		return {
 			name: ability.name,
 			action: ability.action,
 			class: getActClass(ability.action),
-			magnitude: Math.max(1, Math.round(baseMagnitude * strainMult)),
+			// the printed magnitude the record would carry on a plate, before strain and
+			// before the game's own rescale, kept for the dossier
+			printedMagnitude: printed,
+			magnitude: round1(Math.max(0, printed * strainMult * scale)),
 			instrument: ability.instrument,
 			signature: !!ability.signature,
 		};
 	});
+}
+
+// one decimal place everywhere a magnitude or a hold is shown or subtracted, so the
+// balance bar moves by a number a handler can read off the plinth
+export function round1(value) {
+	return Math.round(value * 10) / 10;
 }
 
 /*
@@ -298,7 +412,7 @@ export function buildActs(record, strainMult) {
 */
 export function magnitudeAgainst(actorRecord, act, targetRecord) {
 	const matchup = targetMatchupMultiplier(actorRecord, targetRecord);
-	return Math.max(1, Math.round(act.magnitude * matchup));
+	return round1(Math.max(0.1, act.magnitude * matchup));
 }
 
 // ---------------------------------------------------------------------------
@@ -356,6 +470,110 @@ export function favoredAct(record, acts) {
 }
 
 // ---------------------------------------------------------------------------
+// roles (docs/design/reclamation-base-redesign.md assumption 4)
+// ---------------------------------------------------------------------------
+
+/*
+	roleOf(record, rules) -> 'strike' | 'sweep' | 'bolster' | 'shield' | 'none'
+
+	Every creature is a hold and exactly one role. The rule, written down once:
+
+	1. The four PRESENCE archetypes (survivor, bulwark, stalwart, sage) are presences.
+	   Between the two presences the default is shield for bulwark and stalwart, bolster
+	   for survivor and sage (PRESENCE_BY_ARCHETYPE). "Unless the record's abilities
+	   clearly say otherwise" is read as: a presence that carries a ward ability and no
+	   mend ability is a shield whatever its archetype says, and one that carries a mend
+	   and no ward is a bolster. Carrying both, or neither, leaves the archetype's default
+	   standing, since nothing in the record then points one way.
+	2. Everyone else is a blow: a SWEEP if it carries any of the sweep abilities
+	   (burst, spray, cloud), else a STRIKE.
+
+	`rules.roles` is the ablation switch (assumption 15): a role turned off degrades the
+	creature to a plain strike if it was a sweep, and to a plain holder (ROLE.NONE) if it
+	was a presence, so a batch can measure what each role actually carries.
+*/
+export function roleOf(record, rules) {
+	const natural = naturalRoleOf(record);
+	const toggles = (rules && rules.roles) || null;
+	if (!toggles) {
+		return natural;
+	}
+	if (natural === ROLE.SWEEP && toggles.sweep === false) {
+		return ROLE.STRIKE;
+	}
+	if (natural === ROLE.BOLSTER && toggles.bolster === false) {
+		return ROLE.NONE;
+	}
+	if (natural === ROLE.SHIELD && toggles.shield === false) {
+		return ROLE.NONE;
+	}
+	return natural;
+}
+
+// the role before any ablation switch is applied
+export function naturalRoleOf(record) {
+	const archetypeKey = record && record.archetype && record.archetype.key
+		? String(record.archetype.key).toLowerCase()
+		: null;
+	const abilityActions = abilitiesOf(record).map((a) => a.action);
+
+	const presenceDefault = archetypeKey ? PRESENCE_BY_ARCHETYPE[archetypeKey] : undefined;
+	if (presenceDefault) {
+		const hasWard = abilityActions.includes(WARD_ABILITY_ACTION);
+		const hasMend = abilityActions.includes(MEND_ABILITY_ACTION);
+		if (hasWard && !hasMend) {
+			return ROLE.SHIELD;
+		}
+		if (hasMend && !hasWard) {
+			return ROLE.BOLSTER;
+		}
+		return presenceDefault;
+	}
+
+	return abilityActions.some((a) => SWEEP_ABILITY_ACTIONS.includes(a)) ? ROLE.SWEEP : ROLE.STRIKE;
+}
+
+/*
+	blowActOf(record, acts, role) -> one entry of `acts`, or a synthetic minimum strike.
+
+	A blow creature throws one blow: the magnitude of its favored ATTACKING ability
+	(assumption 4 keeps the existing favoredAct machinery), rescaled by the magnitude
+	scale that buildActs has already folded in. A sweep throws its strongest sweep
+	ability, since that is what made it a sweep in the first place. A blow creature with
+	no attacking ability at all strikes at MIN_BLOW_MAGNITUDE; `fallback` marks that case
+	so the simulator can count how often it fires.
+*/
+export function blowActOf(record, acts, role) {
+	const minimum = {
+		name: 'Blow',
+		action: 'strike',
+		class: ACT_CLASS.CONTACT,
+		printedMagnitude: MIN_BLOW_MAGNITUDE,
+		magnitude: MIN_BLOW_MAGNITUDE,
+		fallback: true,
+	};
+	if (role !== ROLE.STRIKE && role !== ROLE.SWEEP) {
+		return null;
+	}
+	const attacking = acts.filter((a) => a.class !== ACT_CLASS.SUPPORT);
+	if (role === ROLE.SWEEP) {
+		const sweeps = acts.filter((a) => SWEEP_ABILITY_ACTIONS.includes(a.action));
+		if (sweeps.length > 0) {
+			return sweeps.reduce((best, a) => (!best || a.magnitude > best.magnitude ? a : best));
+		}
+	}
+	if (attacking.length === 0) {
+		return minimum;
+	}
+	const favored = favoredAct(record, acts);
+	if (favored && favored.action !== 'hold' && favored.class !== ACT_CLASS.SUPPORT
+		&& attacking.some((a) => a.action === favored.action && a.name === favored.name)) {
+		return favored;
+	}
+	return attacking.reduce((best, a) => (!best || a.magnitude > best.magnitude ? a : best));
+}
+
+// ---------------------------------------------------------------------------
 // conduct
 // ---------------------------------------------------------------------------
 
@@ -380,28 +598,43 @@ export function conductOf(record) {
 }
 
 // ---------------------------------------------------------------------------
-// prepare() — the full derived view
+// prepare() - the full derived view
 // ---------------------------------------------------------------------------
 
 /*
-	prepare(record, site, world, sentIndex, opts) -> {
+	prepare(record, site, world, sentIndex, opts) -> the full derived view of one creature
+	standing at one site:
+
 		record, id, site, world, sentIndex,
-		baseHold, hold, holdMultiplier, isHome,
-		initiative, strainLevel, strainMultiplier,
-		acts, favoredAct, conduct, traitKeywords,
-		stealthy, anchored, armored, resilient, menacing, packBonded, solitary,
-	}
+		baseHold, hold, holdMultiplier, isHome, bolstered,
+		speed, willful, swift, presenceScale, strainLevel, effectiveStrainLevel, strainMultiplier,
+		acts, favoredAct, role, blow, blowMagnitude, blowIsFallback,
+		conduct, traitKeywords,
+		stealthy, armored, resilient, menacing, packBonded, solitary
 
 	`opts` may carry { packBondedKinAtSite, solitaryAlliesAtSite } for the trait hold
-	adjustments (the rules engine recomputes these whenever the board at a site changes).
+	adjustments, { bolstered: true } when a bolsterer stands at this site
+	(docs/design/reclamation-base-redesign.md assumption 8), and { rules } so the hold
+	compression, the magnitude scale and the role ablations travel with the match rather
+	than being read off the module constants. The rules engine recomputes all of these
+	whenever the company at a site changes.
 */
 export function prepare(record, site, worldArg, sentIndex, opts = {}) {
 	const world = worldOfSite(site, worldArg);
+	const rules = opts.rules;
 	const level = strainLevel(record, site, world);
-	const strainMult = strainMultiplierFor(level);
+	// willpower first, then bolster, and never past comfortable (assumption 17)
+	const willful = isWillful(record, rules);
+	const heldLevel = willful ? liftedStrainLevel(level) : level;
+	const bolstered = !!opts.bolstered;
+	const effectiveLevel = bolstered ? liftedStrainLevel(heldLevel) : heldLevel;
+	const strainMult = strainMultiplierFor(effectiveLevel);
 	const { value: hold, isHome, matchup } = holdAtSite(record, site, world, opts);
-	const acts = buildActs(record, strainMult);
+	const magnitudeScale = rules && typeof rules.magnitudeScale === 'number' ? rules.magnitudeScale : MAGNITUDE_SCALE;
+	const acts = buildActs(record, strainMult, magnitudeScale);
 	const traitKeywords = traitKeywordsOf(record);
+	const role = roleOf(record, rules);
+	const blow = blowActOf(record, acts, role);
 
 	return {
 		record,
@@ -409,19 +642,33 @@ export function prepare(record, site, worldArg, sentIndex, opts = {}) {
 		site,
 		world,
 		sentIndex,
-		baseHold: baseHold(record),
+		baseHold: baseHold(record, rules),
 		hold,
 		holdMultiplier: matchup,
 		isHome,
-		initiative: initiativeOf(record),
+		bolstered,
+		// Pass 2 vocabulary (assumption 17): initiative is speed everywhere the table can
+		// read it. `willful`, `swift` and `presenceScale` are the other three attribute
+		// jobs, exposed so the plinth and the preview can print them.
+		speed: speedOf(record),
+		willful,
+		swift: isSwift(record, rules),
+		presenceScale: presenceScaleOf(record, rules),
 		strainLevel: level,
+		heldStrainLevel: heldLevel,
+		effectiveStrainLevel: effectiveLevel,
 		strainMultiplier: strainMult,
 		acts,
 		favoredAct: favoredAct(record, acts),
+		// the base redesign's four roles (assumption 4); `blow` is null for a presence and
+		// for a creature whose role has been switched off by a rules ablation
+		role,
+		blow,
+		blowMagnitude: blow ? blow.magnitude : 0,
+		blowIsFallback: !!(blow && blow.fallback),
 		conduct: conductOf(record),
 		traitKeywords,
 		stealthy: traitKeywords.includes('stealthy'),
-		anchored: traitKeywords.includes('anchored'),
 		armored: traitKeywords.includes('armored'),
 		resilient: traitKeywords.includes('resilient'),
 		menacing: traitKeywords.includes('menacing'),

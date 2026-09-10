@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import * as lore from '../../lore';
+import { Card } from '@/components/ui/card';
 
 // Counts paragraphs read for one part from the shared read-mark store
 // (guarded like trail.js: a blocked or empty store reads as zero).
@@ -53,31 +54,32 @@ export default function StoryContents({ story }) {
 	const readCounts = useReadCounts(story.parts);
 
 	return (
-		<ol className="g-paper g-paper--card enc-contents-list">
-			{story.parts.map((part, i) => {
-				const total = partParagraphCount(part);
-				const read = readCounts[i] || 0;
-				return (
-					<li key={part.era.key} className="g-record enc-contents-row">
-						<h3 className="g-record-term enc-contents-term">
-							<span className="g-mono enc-contents-index">{String(part.order).padStart(2, '0')}</span>
-							<Link to={lore.routeFor('era', part.era.key)} className="g-link">
-								{part.title}
-							</Link>
-						</h3>
-						<p className="g-record-body enc-contents-teaser">{part.era.definition}</p>
-						<p className="g-mono enc-contents-meta">
-							{total} chapter{total === 1 ? '' : 's'} &middot; {part.worlds.length} world
-							{part.worlds.length === 1 ? '' : 's'}
-							{total > 0 && (
-								<>
-									{' '}&middot; {read} / {total} read
-								</>
-							)}
-						</p>
-					</li>
-				);
-			})}
-		</ol>
+		<Card variant="panel" className="p-0">
+			<ol className="m-0 flex list-none flex-col p-0">
+				{story.parts.map((part, i) => {
+					const total = partParagraphCount(part);
+					const read = readCounts[i] || 0;
+					const meta = `${total} chapter${total === 1 ? '' : 's'}, ${part.worlds.length} world${part.worlds.length === 1 ? '' : 's'}${total > 0 ? `, ${read} read` : ''}`;
+					return (
+						<li
+							key={part.era.key}
+							className="grid grid-cols-[20rem_1fr_auto] items-baseline gap-x-6 gap-y-2 border-b border-edge px-6 py-4 last:border-b-0 max-sm:grid-cols-1"
+						>
+							<h3 className="m-0 flex items-baseline gap-3">
+								<span className="type-data text-small text-ink-3">{String(part.order).padStart(2, '0')}</span>
+								<Link
+									to={lore.routeFor('era', part.era.key)}
+									className="type-legend text-body text-ink no-underline hover:text-ink"
+								>
+									{part.title}
+								</Link>
+							</h3>
+							<p className="m-0 font-body text-body text-ink-2">{part.era.definition}</p>
+							<p className="type-data m-0 whitespace-nowrap text-small text-ink-3 max-sm:whitespace-normal">{meta}</p>
+						</li>
+					);
+				})}
+			</ol>
+		</Card>
 	);
 }

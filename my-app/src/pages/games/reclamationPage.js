@@ -102,12 +102,25 @@ function RivalPlates({ rivalId, onChange }) {
 	);
 }
 
-// how a round goes, as four glyphs with a word each
+// how a round goes, as three glyphs with a word each (the base redesign: Deploy, Clash,
+// Ruling; there is no Orders phase and a creature's role is fixed at send)
 const PHASES = [
-	{ kind: 'deploy', word: 'Deploy', note: 'send a creature, or pass' },
-	{ kind: 'orders', word: 'Orders', note: 'each creature an act, sealed' },
-	{ kind: 'resolve', word: 'Resolve', note: 'acts strike at hold' },
-	{ kind: 'judge', word: 'Judge', note: 'more hold takes the world' },
+	{ kind: 'deploy', word: 'Deploy', note: 'send a creature, move a swift one, or pass' },
+	{ kind: 'clash', word: 'Clash', note: 'attacks subtract from hold, fastest first' },
+	{ kind: 'ruling', word: 'Ruling', note: 'bolsters recover, then more hold takes the world' },
+];
+
+/*
+	Every attribute a job (docs/design/reclamation-base-redesign.md, "Pass 2"): one line
+	per lane, in the same words the dossier's Lanes block and the plinth's marks use.
+*/
+const LANES = [
+	{ key: 'hold', word: 'Vitality, resilience, endurance', note: 'how much hold it brings to a world' },
+	{ key: 'power', word: 'Strength, intelligence', note: 'attack power, by contact or by mind' },
+	{ key: 'speed', word: 'Agility, reflex', note: 'speed: who attacks first, and who may move once a round' },
+	{ key: 'willpower', word: 'Willpower', note: 'holds against the world: one grade less strain' },
+	{ key: 'charisma', word: 'Charisma', note: 'presence: how much a bolster gives back and a shield stops' },
+	{ key: 'instinct', word: 'Instinct', note: 'targeting: keen picks what it can down, dull hits what came first' },
 ];
 
 function seedFromQueryOrDefault() {
@@ -401,6 +414,19 @@ class ReclamationPage extends React.Component {
 							</ol>
 						</section>
 
+						<section className="rec-module rec-module--lanes" aria-label="Every attribute a job">
+							<h2 className="rec-module-title">Every attribute a job</h2>
+							<p className="rec-module-lead">Nothing on a creature's record is decoration: each attribute does one thing on the table, and the dossier says which.</p>
+							<ul className="rec-lane-list rec-intro-lanes">
+								{LANES.map((lane) => (
+									<li className="rec-lane" key={lane.key} data-intro-lane={lane.key}>
+										<span className="rec-lane-word">{lane.word}</span>
+										<span className="rec-lane-text">{lane.note}</span>
+									</li>
+								))}
+							</ul>
+						</section>
+
 						<section className="rec-module rec-module--hold" aria-label="Hold">
 							<h2 className="rec-module-title">Hold</h2>
 							<p className="rec-module-lead">How firmly a creature keeps a world, 0 to 20. The Generators built each for one world.</p>
@@ -441,7 +467,7 @@ class ReclamationPage extends React.Component {
 								</div>
 							</div>
 							<div className="rec-intro-actions">
-								<div className="rec-intro-mode" title={mode === 'simple' ? 'Simple: the suggested move is marked and orders go by nature.' : 'Advanced: every order, every number, hidden sends, the log and the dossiers.'}>
+								<div className="rec-intro-mode" title={mode === 'simple' ? 'Simple: the suggested move is marked and only what would down a creature is printed.' : 'Advanced: every number on the figures, the plan lines under a send, hidden sends, the log and the dossiers.'}>
 									<ModeSwitch mode={mode} onChange={this.setMode} />
 								</div>
 								<button type="button" className="g-key g-key--primary rec-enter" onClick={this.startMatch} data-enter>
@@ -455,7 +481,8 @@ class ReclamationPage extends React.Component {
 							<summary className="rec-fiction-summary">Why the frame</summary>
 							<div className="g-screen rec-rules-screen">
 								<div className="g-screen-line">The worlds were lost to war and plague, and no expedition goes in blind. Before Kozrak grants a Charter over a world, the claim is proved on the Court's <strong>frame</strong>: the Generators' own models of the fourteen worlds, run on Poseidas without the Generators. Only the fighting is simulated. The Charter, and the Tokens that come with it, are real.</div>
-								<div className="g-screen-line">Each round the frame loads three worlds side by side, every one at a different site of its surface, and no world is loaded twice in a Proving. Creatures on a won world stay in its model to hold the claim; the rest withdraw; either way they are out of the Proving. A pass is permanent for the round. The side that sends first in a round may, once, move its first creature to another world without spending a turn. A stealthy creature may be sent hidden.</div>
+								<div className="g-screen-line">Each round the frame loads three worlds side by side, every one at a different site of its surface, and no world is loaded twice in a Proving. When both handlers have passed, every world clashes at once: each creature does the one thing its nature does there, attacks subtract from hold, and a creature driven to nothing is downed out of the Proving. Creatures on a won world stay in its model to hold the claim; the rest withdraw; either way they are out of the Proving. A pass is permanent for the round. A stealthy creature may be sent hidden, and its attack lands before all others.</div>
+								<div className="g-screen-line">Attacks land in speed order, and a creature already hurt attacks for less, in proportion to the hold it has left, so hitting first shapes the whole exchange. A swift creature already on a world may step to another world of the frame once a round, without spending a turn. At the Ruling, allies standing with a bolster recover half of what the round took from them before the Court reads the worlds. Nothing is given to the side that is behind: there is no catch-up send, and every world is won on what you put on it.</div>
 							</div>
 						</details>
 					</div>

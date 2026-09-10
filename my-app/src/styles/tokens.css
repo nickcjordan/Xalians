@@ -1,0 +1,126 @@
+/* Design system v4 tokens (docs/DESIGN_SYSTEM.md), as the Tailwind 4 theme.
+   This is the only file in the app that holds a raw color, font name or
+   size. src/constants/designTokens.js mirrors the colors for recharts, GSAP
+   and SVG attributes; src/__tests__/designTokens.test.js keeps them equal.
+
+   The full Tailwind base: preflight, theme, utilities. Bootstrap left in the
+   stack teardown (docs/design/frontend-stack-migration.md, phase 4). */
+@import "tailwindcss/theme" layer(theme);
+@import "tailwindcss/preflight" layer(base);
+/* `important`: the legacy stylesheets the immersive pages still read carry
+   their own !important rules; utilities must outrank them until those
+   files are deleted by the immersive redesign. */
+@import "tailwindcss/utilities" layer(utilities) important;
+
+@theme {
+	/* Tailwind's stock palette, radii, shadows and breakpoints are removed so
+	   only the contract's values exist as utilities. */
+	--color-*: initial;
+	--radius-*: initial;
+	--shadow-*: initial;
+	--breakpoint-*: initial;
+	--font-*: initial;
+	--text-*: initial;
+
+	/* --- room and surfaces (section 3.3) --- */
+	--color-room: #121110;
+	--color-s0: #191816;
+	--color-s1: #201f1c;
+	--color-s2: #282723;
+	--color-s3: #31302b;
+	--color-glass: #0e100f;
+
+	/* --- edges --- */
+	--color-edge: rgba(217, 210, 192, 0.10);
+	--color-edge-hi: rgba(255, 244, 214, 0.07);
+	--color-edge-strong: rgba(217, 210, 192, 0.22);
+	--color-glass-edge: rgba(217, 210, 192, 0.14);
+
+	/* --- ink --- */
+	--color-ink: #d9d2c0;
+	--color-ink-2: #9a9382;
+	--color-ink-3: #6c6659;
+	--color-ink-4: #4a4640;
+	--color-black: #000000;
+	--color-white: #ffffff;
+	--color-transparent: transparent;
+
+	/* --- the viable signal (section 3.1) --- */
+	--color-viable-hi: #86ffb5;
+	--color-viable: #4fc98d;
+	--color-viable-lo: #2f8f63;
+	--color-viable-tint: rgba(134, 255, 181, 0.10);
+	--color-viable-ink: #08150e;
+
+	/* --- semantic status (section 3.2) --- */
+	--color-plague: #b5566c;
+	--color-plague-tint: rgba(181, 86, 108, 0.14);
+	--color-plague-ink: #fff1f3;
+	--color-plague-outline-ink: #e8a4b4;
+	--color-caution: #cfa54a;
+	--color-caution-tint: rgba(207, 165, 74, 0.14);
+	--color-neutral: #8a97a6;
+
+	/* --- element hues (section 3.4, revised 2026-09-08) --- */
+	--color-el-electric: #e9c93a;
+	--color-el-air: #d8e6ee;
+	--color-el-fire: #e5735f;
+	--color-el-water: #6a9fd8;
+	--color-el-ice: #8fd6ee;
+	--color-el-plant: #83a44b;
+	--color-el-rock: #a98a6a;
+	--color-el-light: #f5ec9a;
+	--color-el-dark: #7378c4;
+	--color-el-metal: #a4a8ad;
+	--color-el-sand: #dba873;
+	--color-el-chemical: #58c3ba;
+	--color-el-psychic: #dc9fd2;
+	--color-el-ghost: #a886cf;
+
+	/* --- type (section 4) --- */
+	--font-legend: "Saira", "Barlow Condensed", Impact, sans-serif;
+	--font-body: "Atkinson Hyperlegible", system-ui, sans-serif;
+	--font-data: "Martian Mono", ui-monospace, Menlo, monospace;
+	--font-brand: "Iceland", "Saira", sans-serif;
+
+	--text-display: 44px;
+	--text-display--line-height: 0.95;
+	--text-title: 40px;
+	--text-title--line-height: 0.95;
+	--text-heading: 24px;
+	--text-heading--line-height: 1.1;
+	--text-subhead: 19px;
+	--text-subhead--line-height: 1.2;
+	--text-lead: 17px;
+	--text-lead--line-height: 1.5;
+	--text-body: 15px;
+	--text-body--line-height: 1.5;
+	--text-small: 13.5px;
+	--text-small--line-height: 1.5;
+	--text-legend: 11.5px;
+	--text-legend--line-height: 1.3;
+	--text-tiny: 11px;
+	--text-tiny--line-height: 1.3;
+
+	--tracking-legend: 0.1em;
+	--tracking-heading: 0.06em;
+
+	/* --- corners and depth (section 5): square everywhere, one shadow --- */
+	--radius-none: 0;
+	--radius-sm: 0;
+	--radius-md: 0;
+	--radius-lg: 0;
+	--radius-xl: 0;
+	--radius-full: 9999px;
+	--shadow-float: 0 12px 28px rgba(0, 0, 0, 0.45);
+
+	/* --- motion (section 7) --- */
+	--ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+	--ease-in: cubic-bezier(0.6, 0, 0.8, 0.4);
+
+	/* --- breakpoints --- */
+	--breakpoint-sm: 520px;
+	--breakpoint-md: 720px;
+	--breakpoint-lg: 1000px;
+	--breakpoint-xl: 1440px;
+}

@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import * as lore from '../../lore';
+import { Input } from '@/components/ui/input';
+import { Kbd } from '@/components/ui/kbd';
+import { Card } from '@/components/ui/card';
 
 const KIND_LABEL = { entry: 'Entry', world: 'World', species: 'Species', paragraph: 'History', era: 'Era' };
 const KIND_ORDER = ['entry', 'species', 'world', 'era', 'paragraph'];
@@ -96,32 +99,39 @@ export default function LoreSearch() {
     }
 
     return (
-        <form className="enc-search g-paper g-paper--slip enc-search-slip" role="search" onSubmit={submit} ref={box}>
-            <span className="g-kicker enc-search-slip-label">Request slip</span>
-            <input
-                ref={inputRef}
-                className="g-input g-input--paper enc-search-input"
-                type="search"
-                placeholder="Title, world or term&hellip;"
-                aria-label="Search the encyclopedia"
-                value={query}
-                onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
-                onFocus={() => setOpen(true)}
-                onKeyDown={onKeyDownInput}
-                autoComplete="off"
-                role="combobox"
-                aria-expanded={open && trimmed.length >= 2}
-                aria-controls="enc-search-listbox"
-                aria-autocomplete="list"
-                aria-activedescendant={activeIndex >= 0 && flatHits[activeIndex] ? hitId(flatHits[activeIndex]) : undefined}
-            />
-            <span className="enc-search-hint g-mono" aria-hidden="true">/</span>
+        <form className="relative flex w-80 max-w-[60vw] flex-col gap-1 max-sm:w-auto max-sm:flex-1" role="search" onSubmit={submit} ref={box}>
+            <div className="relative">
+                <Input
+                    ref={inputRef}
+                    className="w-full pr-9"
+                    type="search"
+                    placeholder="Search worlds, species, terms"
+                    aria-label="Search the encyclopedia"
+                    value={query}
+                    onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
+                    onFocus={() => setOpen(true)}
+                    onKeyDown={onKeyDownInput}
+                    autoComplete="off"
+                    role="combobox"
+                    aria-expanded={open && trimmed.length >= 2}
+                    aria-controls="enc-search-listbox"
+                    aria-autocomplete="list"
+                    aria-activedescendant={activeIndex >= 0 && flatHits[activeIndex] ? hitId(flatHits[activeIndex]) : undefined}
+                />
+                <Kbd className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 bg-transparent text-ink-3" aria-hidden="true">/</Kbd>
+            </div>
             {open && trimmed.length >= 2 && (
-                <div id="enc-search-listbox" className="g-paper g-paper--card enc-search-results" role="listbox" aria-label="Search results">
-                    {groups.length === 0 && <p className="enc-search-empty">No record matches &ldquo;{trimmed}&rdquo;.</p>}
+                <Card
+                    variant="raised"
+                    id="enc-search-listbox"
+                    role="listbox"
+                    aria-label="Search results"
+                    className="absolute left-0 right-0 top-full z-40 mt-2 max-h-[60vh] overflow-y-auto p-4 shadow-float"
+                >
+                    {groups.length === 0 && <p className="m-0 font-body text-body text-ink-2">No record matches &ldquo;{trimmed}&rdquo;.</p>}
                     {groups.map((g) => (
-                        <div key={g.kind} className="enc-search-group">
-                            <p className="enc-search-group-label">{KIND_LABEL[g.kind]}</p>
+                        <div key={g.kind} className="[&+&]:mt-3">
+                            <p className="type-legend m-0 mb-1 text-[10px] text-ink-3">{KIND_LABEL[g.kind]}</p>
                             {g.hits.map((h) => {
                                 const index = flatHits.indexOf(h);
                                 const active = index === activeIndex;
@@ -132,18 +142,18 @@ export default function LoreSearch() {
                                         to={h.route}
                                         role="option"
                                         aria-selected={active}
-                                        className={`enc-search-hit${active ? ' enc-search-hit--active' : ''}`}
+                                        className={`block px-1 py-1 text-ink no-underline outline-none ${active ? 'bg-s2' : ''}`}
                                         onMouseEnter={() => setActiveIndex(index)}
                                         onClick={() => { setOpen(false); setQuery(''); setActiveIndex(-1); }}
                                     >
-                                        <span className="enc-search-hit-title">{h.title}</span>
-                                        {h.snippet && <span className="enc-search-hit-snippet"> {h.snippet}</span>}
+                                        <span className="font-semibold">{h.title}</span>
+                                        {h.snippet && <span className="text-[13px] opacity-75"> {h.snippet}</span>}
                                     </Link>
                                 );
                             })}
                         </div>
                     ))}
-                </div>
+                </Card>
             )}
         </form>
     );

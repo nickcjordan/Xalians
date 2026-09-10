@@ -1,5 +1,6 @@
 import React from 'react';
 import ReclamationFigure, { ReclamationSilhouette, HoldMeter } from './reclamationFigure';
+import { RoleGlyph } from './reclamationGlyphs';
 import { formatHold } from './reclamationNarration';
 
 /*
@@ -17,7 +18,7 @@ import { formatHold } from './reclamationNarration';
 
 	An empty site is quiet: name and weather, open ground, one faint word. It speaks only
 	when there is something to say: the send invitation while a creature is armed, the
-	fall-back target, or the Court's stamp. A one-sided site says who holds it and skips
+	move target while a swift creature is being moved, or the Court's stamp. A one-sided site says who holds it and skips
 	the totals, since the one number is already in the sentence.
 
 	Every hold shown is passed in already computed by the engine's prepare(): this
@@ -133,20 +134,19 @@ function ReclamationWorld({
 	you,
 	holds,
 	totals,
-	staggered,
+	hurt,
 	ghosts,
 	verdicts,
 	armedRecordId,
-	relocating,
-	vanguardRecordId,
+	movingRecordId,
 	onSiteClick,
+	onSiteHover,
 	onFigureClick,
 	clickable,
 	recommendedSiteId,
 	holdingIds,
 	hiddenEnemyCount,
 	threats,
-	badges,
 	highlights,
 	arrival,
 	hoverSiteId,
@@ -163,7 +163,7 @@ function ReclamationWorld({
 				<div className="rec-hidden-banner rec-rise" data-hidden-banner>
 					<ReclamationSilhouette count={hiddenEnemyCount} />
 					<span className="rec-hidden-banner-text">
-						The rival has {hiddenEnemyCount === 1 ? 'a creature' : `${hiddenEnemyCount} creatures`} hidden somewhere in the frame. It is revealed when orders are.
+						The rival has {hiddenEnemyCount === 1 ? 'a creature' : `${hiddenEnemyCount} creatures`} hidden somewhere in the frame. It is revealed when the worlds clash, and it attacks first.
 					</span>
 				</div>
 			)}
@@ -189,7 +189,7 @@ function ReclamationWorld({
 					if (clickable) {
 						classes.push('rec-site--clickable');
 					}
-					if (ghost || relocating) {
+					if (ghost || movingRecordId) {
 						classes.push('rec-site--targeted');
 					}
 					if (verdict) {
@@ -203,8 +203,9 @@ function ReclamationWorld({
 						classes.push('rec-site--hover');
 					}
 
+					// the key is passed on the element itself, never inside the spread: React
+					// warns loudly about a key arriving through a props object
 					const figureProps = (entry, seat, facing) => ({
-						key: entry.recordId,
 						record: entry.record,
 						element: entry.record.element.primary,
 						seat,
@@ -213,19 +214,21 @@ function ReclamationWorld({
 						hidden: entry.hidden,
 						hold: holds[entry.recordId] ? holds[entry.recordId].hold : undefined,
 						printedHold: holds[entry.recordId] ? holds[entry.recordId].printed : undefined,
-						staggered: !!(staggered && staggered[entry.recordId]),
+						hurt: !!(hurt && hurt[entry.recordId]),
 						strainLevel: holds[entry.recordId] ? holds[entry.recordId].strainLevel : undefined,
 						isHome: holds[entry.recordId] ? holds[entry.recordId].isHome : false,
 						unstrainedHold: holds[entry.recordId] ? holds[entry.recordId].unstrained : undefined,
 						baseHold: holds[entry.recordId] ? holds[entry.recordId].baseHold : undefined,
-						selected: armedRecordId === entry.recordId || (relocating && vanguardRecordId === entry.recordId),
+						// the base redesign's one glyph per creature: what it does at the Clash
+						role: holds[entry.recordId] ? holds[entry.recordId].role : entry.role,
+						blowMagnitude: holds[entry.recordId] ? holds[entry.recordId].blowMagnitude : undefined,
+						selected: armedRecordId === entry.recordId || movingRecordId === entry.recordId,
 						dimmed: holdingIds && holdingIds.includes(entry.recordId),
 						acting: hl.acting === entry.recordId,
 						hit: hl.hit === entry.recordId,
 						hover: hl.hover === entry.recordId,
 						flash: hl.hit === entry.recordId ? hl.flash : undefined,
 						arrive: arrivedIds.includes(entry.recordId),
-						badge: badges ? badges[entry.recordId] : undefined,
 						threat: threats && threats[entry.recordId] ? threats[entry.recordId] : undefined,
 						onClick: (e) => {
 							e.stopPropagation();
@@ -241,6 +244,8 @@ function ReclamationWorld({
 							data-site-id={site.id}
 							style={{ '--rec-i': siteIndex }}
 							onClick={clickable ? () => onSiteClick(site.id) : undefined}
+							onMouseEnter={clickable && onSiteHover ? () => onSiteHover(site.id) : undefined}
+							onMouseLeave={clickable && onSiteHover ? () => onSiteHover(null) : undefined}
 							role={clickable ? 'button' : undefined}
 							tabIndex={clickable ? 0 : undefined}
 							onKeyDown={clickable ? (e) => {
@@ -306,30 +311,42 @@ function ReclamationWorld({
 							<div className={`rec-site-field rec-site-floor${empty ? ' rec-site-field--empty' : ''}`}>
 								<div className={`rec-rank rec-rank--theirs${theirs.length > 4 ? ' rec-rank--crowded' : ''}`} data-rank="theirs">
 									<span className="rec-rank-edge rec-rank-edge--theirs" aria-hidden="true">rival</span>
-									{theirs.map((entry) => <ReclamationFigure {...figureProps(entry, opponent, 'down')} />)}
+									{theirs.map((entry) => <ReclamationFigure key={entry.recordId} {...figureProps(entry, opponent, 'down')} />)}
 									{theirs.length === 0 && <span className="rec-rank-open">no one</span>}
 								</div>
 
 								<div className={`rec-site-midline${empty ? ' rec-site-midline--empty' : ''}`}>
 									{ghost && (
-										<span className="rec-ghost">
+										<span className="rec-ghost" data-ghost={site.id}>
 											<span className="rec-ghost-cta">{ghost.preview ? 'would hold' : 'send here'}</span>
 											<HoldMeter hold={ghost.hold} unstrained={ghost.unstrained} isHome={ghost.isHome} strainLevel={ghost.strainLevel} size="large" scale />
 											<span className="rec-ghost-value">{formatHold(ghost.hold)}</span>
-
+											{/* the arithmetic of the send, from the engine's own numbers: the role
+											    in a sentence, then what it would do to the board as it stands */}
+											{ghost.roleLine && (
+												<span className="rec-ghost-plan" data-ghost-plan={site.id}>
+													<span className="rec-ghost-role">
+														{ghost.role && ghost.role !== 'none' && <RoleGlyph role={ghost.role} />}
+														{ghost.roleLine}
+													</span>
+													{advanced && (ghost.lines || []).map((line, i) => (
+														<span className="rec-ghost-line" key={`${site.id}-${i}`}>{line}</span>
+													))}
+												</span>
+											)}
 										</span>
 									)}
-									{!ghost && relocating && <span className="rec-ghost rec-ghost--relocate">fall back here</span>}
-									{!ghost && !relocating && verdict && (
+									{!ghost && movingRecordId && <span className="rec-ghost rec-ghost--relocate">move here</span>}
+									{!ghost && !movingRecordId && verdict && (
 										<span className={`rec-stamp rec-stamp--${verdict.who} rec-stamp--down`}>{verdict.text}</span>
 									)}
-									{!ghost && !relocating && !verdict && empty && (
+									{!ghost && !movingRecordId && !verdict && empty && (
 										<span className="rec-site-unclaimed">unclaimed</span>
 									)}
 								</div>
 
 								<div className={`rec-rank rec-rank--mine${mine.length > 4 ? ' rec-rank--crowded' : ''}`} data-rank="mine">
-									{mine.map((entry) => <ReclamationFigure {...figureProps(entry, you, 'up')} />)}
+									{mine.map((entry) => <ReclamationFigure key={entry.recordId} {...figureProps(entry, you, 'up')} />)}
 									{mine.length === 0 && <span className="rec-rank-open">no one</span>}
 									<span className="rec-rank-edge rec-rank-edge--mine" aria-hidden="true">you</span>
 								</div>

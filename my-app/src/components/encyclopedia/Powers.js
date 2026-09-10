@@ -2,16 +2,22 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import * as lore from '../../lore';
 import Prose from './Prose';
-import './Powers.css';
+import { SectionHead } from '@/components/system/masthead';
+import { RecordRow, EmptyState } from '@/components/system/record';
+import { Badge } from '@/components/ui/badge';
 
 function EntryRecord({ entry }) {
     return (
-        <div className={`g-record ${entry.element ? `g-el-${entry.element}` : ''}`}>
-            <Link to={lore.routeFor('entry', entry.key)} className="g-record-term">
-                {entry.title}
-            </Link>
-            <Prose text={entry.definition} except={entry.key} className="g-record-body" />
-        </div>
+        <RecordRow
+            className={entry.element ? `el-${entry.element}` : ''}
+            term={
+                <Link to={lore.routeFor('entry', entry.key)} className="no-underline hover:underline">
+                    {entry.title}
+                </Link>
+            }
+        >
+            <Prose text={entry.definition} except={entry.key} className="m-0 max-w-none text-small text-ink-2" />
+        </RecordRow>
     );
 }
 
@@ -24,59 +30,55 @@ export default function Powers() {
     const { factions, vallerii, peoples } = lore.getPowers();
 
     return (
-        <div className="enc-powers">
-            <section className="enc-section enc-powers-first">
-                <div className="enc-section-head">
-                    <h2 className="g-h2">The Vallerii</h2>
-                    <span className="enc-count">{vallerii.length} record{vallerii.length === 1 ? '' : 's'}</span>
-                </div>
+        <div>
+            <section>
+                <SectionHead title="The Vallerii" count={`${vallerii.length} record${vallerii.length === 1 ? '' : 's'}`} />
                 {vallerii.length === 0 ? (
-                    <p className="g-empty">No record on file.</p>
+                    <EmptyState legend="No record">No record on file.</EmptyState>
                 ) : (
-                    <div className="g-paper enc-powers-panel">
+                    <div className="border-t border-edge">
                         {vallerii.map((entry) => <EntryRecord key={entry.key} entry={entry} />)}
                     </div>
                 )}
             </section>
 
-            <section className="enc-section">
-                <div className="enc-section-head">
-                    <h2 className="g-h2">Factions</h2>
-                    <span className="enc-count">{factions.length} record{factions.length === 1 ? '' : 's'}</span>
-                </div>
+            <section className="mt-8">
+                <SectionHead title="Factions" count={`${factions.length} record${factions.length === 1 ? '' : 's'}`} />
                 {factions.length === 0 ? (
-                    <p className="g-empty">No record on file.</p>
+                    <EmptyState legend="No record">No record on file.</EmptyState>
                 ) : (
-                    <div className="g-paper enc-powers-panel">
+                    <div className="border-t border-edge">
                         {factions.map((entry) => <EntryRecord key={entry.key} entry={entry} />)}
                     </div>
                 )}
             </section>
 
-            <section className="enc-section">
-                <div className="enc-section-head">
-                    <h2 className="g-h2">Xalian Peoples</h2>
-                    <span className="enc-count">{peoples.length} record{peoples.length === 1 ? '' : 's'}</span>
-                </div>
-                <div className="g-paper enc-powers-panel">
+            <section className="mt-8">
+                <SectionHead title="Xalian Peoples" count={`${peoples.length} record${peoples.length === 1 ? '' : 's'}`} />
+                <div className="border-t border-edge">
                     {peoples.map((p) => (
-                        <div key={p.name} className={`g-record ${p.planet ? `g-el-${p.planet.element}` : ''}`}>
-                            <div>
-                                <p className="g-record-term">{p.name}</p>
-                                {p.planet && (
-                                    <Link to={lore.routeFor('world', p.planet.key)} className="g-chip enc-powers-world-chip">
-                                        {p.planet.name}
-                                    </Link>
-                                )}
-                            </div>
+                        <RecordRow
+                            key={p.name}
+                            className={p.planet ? `el-${p.planet.element}` : ''}
+                            term={
+                                <div>
+                                    <p className="m-0">{p.name}</p>
+                                    {p.planet && (
+                                        <Link to={lore.routeFor('world', p.planet.key)} className="mt-2 inline-block">
+                                            <Badge variant="chip">{p.planet.name}</Badge>
+                                        </Link>
+                                    )}
+                                </div>
+                            }
+                        >
                             {p.entry ? (
-                                <Prose text={p.entry.definition} except={p.entry.key} className="g-record-body" />
+                                <Prose text={p.entry.definition} except={p.entry.key} className="m-0 max-w-none text-small text-ink-2" />
                             ) : (
-                                <p className="g-mono enc-powers-no-entry">
+                                <p className="type-data m-0 text-small text-ink-3">
                                     No entry on file; see {p.planet ? p.planet.name : 'their homeworld'}.
                                 </p>
                             )}
-                        </div>
+                        </RecordRow>
                     ))}
                 </div>
             </section>

@@ -1,16 +1,23 @@
 import {
-	createMatch, send, pass, order, commitOrders, getPublicState, relocateVanguard,
+	createMatch, send, pass, getPublicState, moveSwift, DEFAULT_RULES,
 	ExpeditionRuleError, hasLegalSend, prepareEntry, currentFrame, findEntry, currentHoldOf,
 } from '../expeditionRules.js';
 import {
 	ROSTER_SIZE, SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH, FRAMES_PER_MATCH, WORLDS_PER_FRAME,
-	ROSTER_TRAILING_BONUS,
+	ROSTER_TRAILING_BONUS, ROLE, HOLD_FLOOR, HOLD_CEILING, MAGNITUDE_SCALE, SWEEP_DISCOUNT,
+	BOLSTER_FLOOR, ARMORED_REDUCTION, SHIELD_CAP, WILLFUL_THRESHOLD, KEEN_INSTINCT,
+	DULL_INSTINCT, SWIFT_SPEED, BOLSTER_RECOVERY,
 } from '../expeditionInterpretation.js';
 
 /*
 	Rules-engine coverage for Expedition's match/round/turn flow, per
-	docs/design/reclamation-design.md's "The round: Deploy, Orders, Resolve, Judge",
-	"The acts", "Conduct", "Roster economy", and match-end sections.
+	docs/design/reclamation-base-redesign.md ("The base": Deploy, Resolve, Judge; the four
+	roles; blows that subtract) and the parts of docs/design/reclamation-design.md it did
+	not supersede ("Conduct", "Roster economy", match end).
+
+	The Orders phase is gone (assumption 1): the second pass of a round runs Resolve and
+	Judge in one step, so every test that used to call commitOrders now simply passes
+	twice and reads the log.
 */
 
 function makeRecord(id, overrides = {}) {
@@ -192,13 +199,16 @@ describe('Deploy phase: send/pass/alternation', () => {
 		expect(send(state, starter, state.players[starter].roster[0].id, currentFrame(state).sites[0].id)).toBeNull();
 	});
 
-	test('deploy ends and moves to orders when both have passed', () => {
+	test('the deploy end runs Resolve and Judge in one step when both have passed', () => {
 		let state = freshMatch();
 		const starter = state.starter;
 		const other = starter === 'A' ? 'B' : 'A';
 		state = pass(state, starter);
 		state = pass(state, other);
-		expect(state.phase).toBe('orders');
+		// no orders phase to sit in: the round is judged and the next one is open
+		expect(['deploy', 'matchEnd']).toContain(state.phase);
+		expect(state.frameIndex).toBe(1);
+		expect(state.resolutionLog.some((e) => e.type === 'judge')).toBe(true);
 	});
 
 	test('SENDABLE limit: a handler cannot send an 11th creature', () => {
@@ -270,105 +280,166 @@ describe('Deploy phase: send/pass/alternation', () => {
 	});
 });
 
-describe('Orders phase', () => {
-	function toOrdersPhase(seed = 'orders-seed') {
-		let state = freshMatch(seed);
-		const starter = state.starter;
-		const other = starter === 'A' ? 'B' : 'A';
+describe('the round: Deploy, Resolve, Judge', () => {
+	// two creatures, one per side, at one site, then both handlers pass. The second pass
+	// resolves and judges (docs/design/reclamation-base-redesign.md assumption 1).
+	function oneWorldRound(recordA, recordB, seed = 'round-seed', siteIndex = 0) {
+		const worlds = makeWorlds();
+		const rosterA = makeRoster('A').map((r, i) => (i === 0 ? { ...recordA, id: 'A_0' } : r));
+		const rosterB = makeRoster('B').map((r, i) => (i === 0 ? { ...recordB, id: 'B_0' } : r));
+		let state = createMatch({ rosterA, rosterB, worlds, seed });
 		const frame = currentFrame(state);
-		const recordIdA = state.players[starter].roster[0].id;
-		state = send(state, starter, recordIdA, frame.sites[0].id);
-		const recordIdB = state.players[other].roster[0].id;
-		state = send(state, other, recordIdB, frame.sites[0].id);
+		state = send(state, state.turn, state.turn === 'A' ? 'A_0' : 'B_0', frame.sites[siteIndex].id);
+		state = send(state, state.turn, state.turn === 'A' ? 'A_0' : 'B_0', frame.sites[siteIndex].id);
 		state = pass(state, state.turn);
 		state = pass(state, state.turn);
-		expect(state.phase).toBe('orders');
-		return { state, sentIds: { [starter]: recordIdA, [other]: recordIdB } };
+		return state;
 	}
 
-	test('order() is only legal in the orders phase and stores privately', () => {
-		const { state, sentIds } = toOrdersPhase();
-		const handler = Object.keys(sentIds)[0];
-		const next = order(state, handler, sentIds[handler], 'strike');
-		expect(next).not.toBeNull();
-		expect(next.orders[handler][sentIds[handler]]).toBe('strike');
+	const plainStriker = (id, intensity, strength) => makeRecord(id, {
+		abilities: [{ name: 'Hit', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity }],
+		attributes: { strength, vitality: 60, endurance: 70, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
 	});
 
-	test('rejects an action the creature does not have', () => {
-		const { state, sentIds } = toOrdersPhase();
-		const handler = Object.keys(sentIds)[0];
-		expect(order(state, handler, sentIds[handler], 'beam')).toBeNull();
+	test('a round produces blow events and a judge event, and opens the next round', () => {
+		const state = oneWorldRound(plainStriker('a', 60, 60), plainStriker('b', 60, 60), 'round-basic');
+		expect(state.resolutionLog.some((e) => e.type === 'attack')).toBe(true);
+		expect(state.resolutionLog.some((e) => e.type === 'judge')).toBe(true);
+		expect(['deploy', 'matchEnd']).toContain(state.phase);
 	});
 
-	test('rejects ordering a creature that is not yours', () => {
-		const { state, sentIds } = toOrdersPhase();
-		const [handlerA, handlerB] = Object.keys(sentIds);
-		expect(order(state, handlerA, sentIds[handlerB], 'strike')).toBeNull();
+	test('blows subtract from currentHold and a creature hit but standing is hurt', () => {
+		const striker = plainStriker('striker', 60, 60);
+		const tanky = makeRecord('tanky', {
+			abilities: [{ name: 'Tap', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 5 }],
+			attributes: { strength: 1, vitality: 99, endurance: 99, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 99 },
+		});
+		const state = oneWorldRound(striker, tanky, 'round-subtract');
+		const blow = state.resolutionLog.find((e) => e.type === 'attack' && e.recordId === 'A_0');
+		expect(blow).toBeTruthy();
+		expect(blow.outcome).toBe('hurt');
+		expect(blow.power).toBeGreaterThan(0);
+		// judge() clears the board for the next round, so the creature is read off the
+		// judge event, which carries the same fullHold/damage/hurt the entry had
+		const judged = state.resolutionLog.find((e) => e.type === 'judge');
+		const target = Object.values(judged.siteResults)
+			.flatMap((r) => [...r.entries.A, ...r.entries.B])
+			.find((e) => e.recordId === 'B_0');
+		expect(target.hold).toBeCloseTo(blow.remaining, 5);
+		expect(target.hold).toBeCloseTo(target.fullHold - blow.power, 5);
+		expect(target.hurt).toBe(true);
 	});
 
-	test('unordered creatures perform their favored act', () => {
-		const { state } = toOrdersPhase();
-		const committed1 = commitOrders(state, 'A');
-		const committed2 = commitOrders(committed1, 'B');
-		expect(committed2.phase).toBe('deploy');
-		expect(Array.isArray(committed2.resolutionLog)).toBe(true);
-		expect(committed2.resolutionLog.length).toBeGreaterThan(0);
+	test('a creature driven to zero is downed, off the world and out of the Proving', () => {
+		const bigStriker = plainStriker('big', 100, 100);
+		const frail = makeRecord('frail', {
+			abilities: [{ name: 'Tap', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 5 }],
+			attributes: { strength: 1, vitality: 1, endurance: 1, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 1 },
+		});
+		const state = oneWorldRound(bigStriker, frail, 'round-rout');
+		const rout = state.resolutionLog.find((e) => e.type === 'attack' && e.outcome === 'downed');
+		expect(rout).toBeTruthy();
+		expect(rout.remaining).toBe(0);
+		expect(state.players.B.downed).toContain('B_0');
+		expect(findEntry(state, 'B_0')).toBeNull();
 	});
 
-	test('resolve() runs and judge() advances phase only when both commit', () => {
-		const { state } = toOrdersPhase();
-		const afterA = commitOrders(state, 'A');
-		expect(afterA.phase).toBe('orders'); // still waiting on B
-		const afterB = commitOrders(afterA, 'B');
-		expect(['deploy', 'matchEnd']).toContain(afterB.phase);
+	test('armored reduces a blow by the rules fraction', () => {
+		const bigStriker = plainStriker('big2', 80, 90);
+		const soft = makeRecord('soft', {
+			abilities: [{ name: 'Tap', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 5 }],
+			attributes: { strength: 1, vitality: 99, endurance: 99, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 99 },
+		});
+		const hard = makeRecord('hard', { ...soft, traits: { guaranteed: ['armored'], rolled: [] } });
+		const soft2 = { ...soft, traits: { guaranteed: [], rolled: [] } };
+		const softState = oneWorldRound(bigStriker, soft2, 'round-armor');
+		const hardState = oneWorldRound(bigStriker, { ...hard, abilities: soft.abilities, attributes: soft.attributes, traits: ['armored'] }, 'round-armor');
+		const softBlow = softState.resolutionLog.find((e) => e.type === 'attack' && e.recordId === 'A_0');
+		const hardBlow = hardState.resolutionLog.find((e) => e.type === 'attack' && e.recordId === 'A_0');
+		expect(hardBlow.power).toBeLessThan(softBlow.power);
+		expect(hardBlow.power).toBeCloseTo(Math.round(softBlow.power * (1 - ARMORED_REDUCTION) * 10) / 10, 5);
 	});
 
-	test('rejects a second commit from the same handler', () => {
-		const { state } = toOrdersPhase();
-		const afterA = commitOrders(state, 'A');
-		expect(commitOrders(afterA, 'A')).toBeNull();
+	test('sealed worlds: a blow never reaches a creature at another site', () => {
+		const projector = makeRecord('projector', {
+			abilities: [{ name: 'Beam', signature: false, instrument: 'eyes', action: 'beam', medium: 'fire', intensity: 100 }],
+			attributes: { strength: 50, vitality: 60, endurance: 70, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 90, charisma: 50, resilience: 60 },
+		});
+		const worlds = makeWorlds();
+		const rosterA = makeRoster('A').map((r, i) => (i === 0 ? { ...projector, id: 'A_0' } : r));
+		const rosterB = makeRoster('B').map((r, i) => (i === 0 ? { ...r, id: 'B_0' } : r));
+		let state = createMatch({ rosterA, rosterB, worlds, seed: 'sealed-seed' });
+		const frame = currentFrame(state);
+		// A stands alone at site 0; B stands alone at site 1
+		state = state.starter === 'A' ? state : { ...state, starter: 'A', turn: 'A' };
+		state = send(state, 'A', 'A_0', frame.sites[0].id);
+		state = send(state, 'B', 'B_0', frame.sites[1].id);
+		state = pass(state, state.turn);
+		state = pass(state, state.turn);
+		const blow = state.resolutionLog.find((e) => e.type === 'attack' && e.recordId === 'A_0');
+		expect(blow.outcome).toBe('no-target');
+		expect(state.players.B.downed).toEqual([]);
 	});
 });
 
-describe('resolution order', () => {
-	test('ambush resolves before initiative-ordered acts', () => {
-		const ambusher = makeRecord('ambusher', {
-			attributes: { strength: 50, vitality: 60, endurance: 70, agility: 10, reflex: 10, intelligence: 50, willpower: 50, instinct: 90, charisma: 50, resilience: 60 },
-			abilities: [{ name: 'Sneak', signature: false, instrument: 'claws', action: 'ambush', medium: 'fire', intensity: 90 }],
-		});
-		const fast = makeRecord('fast', {
-			attributes: { strength: 50, vitality: 60, endurance: 70, agility: 99, reflex: 99, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
-			abilities: [{ name: 'Quick', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 40 }],
-		});
-
+describe('resolution order: hidden first, then initiative, strained last', () => {
+	function twoAtOneSite(recordA, recordB, seed, hiddenA = false) {
 		const worlds = makeWorlds();
-		const rosterA = makeRoster('A').map((r, i) => (i === 0 ? { ...ambusher, id: 'A_0' } : r));
-		const rosterB = makeRoster('B').map((r, i) => (i === 0 ? { ...fast, id: 'B_0' } : r));
-		let state = createMatch({ rosterA, rosterB, worlds, seed: 'ambush-order-seed' });
+		const rosterA = makeRoster('A').map((r, i) => (i === 0 ? { ...recordA, id: 'A_0' } : r));
+		const rosterB = makeRoster('B').map((r, i) => (i === 0 ? { ...recordB, id: 'B_0' } : r));
+		let state = createMatch({ rosterA, rosterB, worlds, seed });
+		state = state.starter === 'A' ? state : { ...state, starter: 'A', turn: 'A' };
 		const frame = currentFrame(state);
-		const starter = state.starter;
-		const other = starter === 'A' ? 'B' : 'A';
-
-		state = send(state, starter, state.players[starter].roster[0].id, frame.sites[0].id);
-		state = send(state, other, state.players[other].roster[0].id, frame.sites[0].id);
+		state = send(state, 'A', 'A_0', frame.sites[0].id, hiddenA);
+		state = send(state, 'B', 'B_0', frame.sites[0].id);
 		state = pass(state, state.turn);
 		state = pass(state, state.turn);
+		return state;
+	}
 
-		state = order(state, 'A', 'A_0', 'ambush');
-		state = order(state, 'B', 'B_0', 'strike');
-		state = commitOrders(state, 'A');
-		state = commitOrders(state, 'B');
-
-		const ambushEventIndex = state.resolutionLog.findIndex((e) => e.recordId === 'A_0');
-		const strikeEventIndex = state.resolutionLog.findIndex((e) => e.recordId === 'B_0');
-		expect(ambushEventIndex).toBeLessThan(strikeEventIndex);
+	const striker = (id, over) => makeRecord(id, {
+		abilities: [{ name: 'Hit', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 60 }],
+		...over,
 	});
 
-	test('strained creatures act last regardless of initiative', () => {
+	test('a hidden creature blows first, however slow it is (assumption 9)', () => {
+		const slowHidden = striker('slow-hidden', {
+			traits: { guaranteed: ['stealthy'], rolled: [] },
+			attributes: { strength: 60, vitality: 60, endurance: 70, agility: 1, reflex: 1, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
+		});
+		const fast = striker('fast', {
+			attributes: { strength: 60, vitality: 60, endurance: 70, agility: 99, reflex: 99, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
+		});
+		const state = twoAtOneSite(slowHidden, fast, 'hidden-first-seed', true);
+		const blows = state.resolutionLog.filter((e) => e.type === 'attack');
+		expect(blows[0].recordId).toBe('A_0');
+		expect(blows[0].hidden).toBe(true);
+	});
+
+	test('with hiddenFirst off the same creature waits its turn in initiative order', () => {
+		const slowHidden = striker('slow-hidden2', {
+			traits: { guaranteed: ['stealthy'], rolled: [] },
+			attributes: { strength: 60, vitality: 60, endurance: 70, agility: 1, reflex: 1, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
+		});
+		const fast = striker('fast2', {
+			attributes: { strength: 60, vitality: 60, endurance: 70, agility: 99, reflex: 99, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
+		});
+		const worlds = makeWorlds();
+		const rosterA = makeRoster('A').map((r, i) => (i === 0 ? { ...slowHidden, id: 'A_0' } : r));
+		const rosterB = makeRoster('B').map((r, i) => (i === 0 ? { ...fast, id: 'B_0' } : r));
+		let state = createMatch({ rosterA, rosterB, worlds, seed: 'hidden-first-seed', rules: { hiddenFirst: false } });
+		state = state.starter === 'A' ? state : { ...state, starter: 'A', turn: 'A' };
+		const frame = currentFrame(state);
+		state = send(state, 'A', 'A_0', frame.sites[0].id, true);
+		state = send(state, 'B', 'B_0', frame.sites[0].id);
+		state = pass(state, state.turn);
+		state = pass(state, state.turn);
+		const blows = state.resolutionLog.filter((e) => e.type === 'attack');
+		expect(blows[0].recordId).toBe('B_0');
+	});
+
+	test('strained creatures blow last regardless of initiative', () => {
 		const strainedFast = makeRecord('strained', {
-			// very high resilience/vitality/endurance so B's weak strike cannot rout it
-			// outright — the point of the test is resolution ORDER, not survival, so it
-			// must live long enough to act (later) and appear in the log
 			attributes: { strength: 50, vitality: 95, endurance: 95, agility: 99, reflex: 99, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 95 },
 			physiology: { breathes: ['liquid'], environmentalTolerance: { ambientMedia: ['liquid'], temperatureC: { min: -50, max: 200 } } },
 		});
@@ -377,12 +448,6 @@ describe('resolution order', () => {
 			abilities: [{ name: 'Tap', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 10 }],
 			physiology: { breathes: ['gas'], environmentalTolerance: { ambientMedia: ['gas'], temperatureC: { min: -50, max: 200 } } },
 		});
-
-		// only Magmuth is authored with a single (gas) site, so its site draw is
-		// deterministic; the other 8 worlds fill out the match and never interfere since
-		// this test only cares about the site the two creatures are actually sent to.
-		// Since a frame draws 3 different worlds, Magmuth lands in whichever frame the
-		// shuffle gives it (the "strain-order-seed" puts it in frame 1, the current one).
 		const worlds = [makeWorld('Magmuth', 'fire', [{ environment: { medium: 'gas', temperatureC: { min: -50, max: 200 } } }]), ...makeWorlds(8)];
 		const rosterA = makeRoster('A').map((r, i) => (i === 0 ? { ...strainedFast, id: 'A_0' } : r));
 		const rosterB = makeRoster('B').map((r, i) => (i === 0 ? { ...slow, id: 'B_0' } : r));
@@ -390,171 +455,244 @@ describe('resolution order', () => {
 		const frame = currentFrame(state);
 		const site = siteOfPlanet(frame, 'Magmuth');
 		expect(site).toBeTruthy();
-		const starter = state.starter;
-		const other = starter === 'A' ? 'B' : 'A';
-		state = send(state, starter, state.players[starter].roster[0].id, site.id);
-		state = send(state, other, state.players[other].roster[0].id, site.id);
+		state = send(state, state.turn, state.turn === 'A' ? 'A_0' : 'B_0', site.id);
+		state = send(state, state.turn, state.turn === 'A' ? 'A_0' : 'B_0', site.id);
 		state = pass(state, state.turn);
 		state = pass(state, state.turn);
-		state = order(state, 'A', 'A_0', 'strike');
-		state = order(state, 'B', 'B_0', 'strike');
-		state = commitOrders(state, 'A');
-		state = commitOrders(state, 'B');
-
-		const strainedIndex = state.resolutionLog.findIndex((e) => e.recordId === 'A_0');
-		const slowIndex = state.resolutionLog.findIndex((e) => e.recordId === 'B_0');
-		expect(strainedIndex).toBeGreaterThanOrEqual(0);
+		const blows = state.resolutionLog.filter((e) => e.type === 'attack');
+		const strainedIndex = blows.findIndex((e) => e.recordId === 'A_0');
+		const slowIndex = blows.findIndex((e) => e.recordId === 'B_0');
 		expect(slowIndex).toBeGreaterThanOrEqual(0);
-		// A_0 has far higher initiative but is severely strained (breathes liquid at a gas
-		// site), so it must still act after B_0
 		expect(strainedIndex).toBeGreaterThan(slowIndex);
 	});
 
 	test('ties in initiative go to the earlier sentIndex', () => {
-		const equalA = makeRecord('eqA', { attributes: { strength: 50, vitality: 60, endurance: 70, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 } });
-		const equalB = makeRecord('eqB', { attributes: { strength: 50, vitality: 60, endurance: 70, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 } });
+		const equal = (id) => makeRecord(id, { attributes: { strength: 50, vitality: 60, endurance: 70, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 } });
 		const worlds = makeWorlds();
-		const rosterA = makeRoster('A').map((r, i) => (i === 0 ? { ...equalA, id: 'A_0' } : (i === 1 ? { ...equalA, id: 'A_1' } : r)));
-		let state = createMatch({ rosterA, rosterB: makeRoster('B').map((r, i) => (i === 0 ? { ...equalB, id: 'B_0' } : r)), worlds, seed: 'tie-seed' });
+		const rosterA = makeRoster('A').map((r, i) => (i < 2 ? { ...equal(`eq${i}`), id: `A_${i}` } : r));
+		const rosterB = makeRoster('B').map((r, i) => (i === 0 ? { ...equal('eqB'), id: 'B_0' } : r));
+		let state = createMatch({ rosterA, rosterB, worlds, seed: 'tie-seed' });
+		state = state.starter === 'A' ? state : { ...state, starter: 'A', turn: 'A' };
 		const frame = currentFrame(state);
-		const starter = state.starter;
-		const other = starter === 'A' ? 'B' : 'A';
-
-		if (starter === 'A') {
-			state = send(state, 'A', 'A_0', frame.sites[0].id);
-			state = send(state, 'B', 'B_0', frame.sites[0].id);
-			state = send(state, 'A', 'A_1', frame.sites[0].id);
-			state = pass(state, state.turn);
-			state = pass(state, state.turn);
-			state = order(state, 'A', 'A_0', 'strike');
-			state = order(state, 'A', 'A_1', 'strike');
-			state = order(state, 'B', 'B_0', 'strike');
-			state = commitOrders(state, 'A');
-			state = commitOrders(state, 'B');
-			const idxA0 = state.resolutionLog.findIndex((e) => e.recordId === 'A_0');
-			const idxA1 = state.resolutionLog.findIndex((e) => e.recordId === 'A_1');
-			expect(idxA0).toBeLessThan(idxA1);
-		}
+		state = send(state, 'A', 'A_0', frame.sites[0].id);
+		state = send(state, 'B', 'B_0', frame.sites[0].id);
+		state = send(state, 'A', 'A_1', frame.sites[0].id);
+		state = pass(state, state.turn);
+		state = pass(state, state.turn);
+		const blows = state.resolutionLog.filter((e) => e.type === 'attack');
+		const idxA0 = blows.findIndex((e) => e.recordId === 'A_0');
+		const idxA1 = blows.findIndex((e) => e.recordId === 'A_1');
+		expect(idxA0).toBeGreaterThanOrEqual(0);
+		expect(idxA1).toBeGreaterThan(idxA0);
 	});
 });
 
-describe('acts: worked examples', () => {
-	function twoSideMatch(recordA, recordB, seed = 'act-seed') {
+describe('the four roles', () => {
+	const bigStriker = (id) => makeRecord(id, {
+		archetype: { key: 'predator', favors: [] },
+		abilities: [{ name: 'Smash', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 100 }],
+		attributes: { strength: 100, vitality: 60, endurance: 70, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
+	});
+	const smallStriker = (id) => makeRecord(id, {
+		archetype: { key: 'predator', favors: [] },
+		abilities: [{ name: 'Poke', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 20 }],
+		attributes: { strength: 20, vitality: 60, endurance: 70, agility: 20, reflex: 20, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
+	});
+	const shielder = (id) => makeRecord(id, {
+		archetype: { key: 'bulwark', favors: [] },
+		abilities: [{ name: 'Guard', signature: false, instrument: 'body', action: 'ward', medium: 'fire', intensity: 60 }],
+		attributes: { strength: 50, vitality: 60, endurance: 70, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
+	});
+	const bolsterer = (id) => makeRecord(id, {
+		archetype: { key: 'sage', favors: [] },
+		abilities: [{ name: 'Steady', signature: false, instrument: 'voice', action: 'mend', medium: 'fire', intensity: 60 }],
+		attributes: { strength: 50, vitality: 60, endurance: 70, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
+	});
+	const areaCreature = (id) => makeRecord(id, {
+		archetype: { key: 'predator', favors: [] },
+		abilities: [{ name: 'Cloud', signature: false, instrument: 'body', action: 'cloud', medium: 'fire', intensity: 90 }],
+		attributes: { strength: 50, vitality: 60, endurance: 90, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
+	});
+
+	// deploys a named list per side at one site: [[recordFactory, id], ...]
+	function deploy(listA, listB, seed, rules) {
 		const worlds = makeWorlds();
-		const rosterA = makeRoster('A').map((r, i) => (i === 0 ? { ...recordA, id: 'A_0' } : r));
-		const rosterB = makeRoster('B').map((r, i) => (i === 0 ? { ...recordB, id: 'B_0' } : r));
-		let state = createMatch({ rosterA, rosterB, worlds, seed });
+		const rosterA = makeRoster('A').map((r, i) => (i < listA.length ? { ...listA[i](`A_${i}`), id: `A_${i}` } : r));
+		const rosterB = makeRoster('B').map((r, i) => (i < listB.length ? { ...listB[i](`B_${i}`), id: `B_${i}` } : r));
+		let state = createMatch({ rosterA, rosterB, worlds, seed, rules });
+		state = state.starter === 'A' ? state : { ...state, starter: 'A', turn: 'A' };
 		const frame = currentFrame(state);
-		state = send(state, state.turn, state.turn === 'A' ? 'A_0' : 'B_0', frame.sites[0].id);
-		state = send(state, state.turn, state.turn === 'A' ? 'A_0' : 'B_0', frame.sites[0].id);
-		state = pass(state, state.turn);
-		state = pass(state, state.turn);
+		let sentA = 0;
+		let sentB = 0;
+		let guard = 0;
+		while (state.phase === 'deploy' && state.frameIndex === 0 && guard < 40) {
+			guard++;
+			const handler = state.turn;
+			if (handler === null) {
+				break;
+			}
+			const sent = handler === 'A' ? sentA : sentB;
+			const list = handler === 'A' ? listA : listB;
+			if (sent < list.length) {
+				state = send(state, handler, `${handler}_${sent}`, frame.sites[0].id);
+				if (handler === 'A') {
+					sentA++;
+				} else {
+					sentB++;
+				}
+			} else {
+				state = pass(state, handler);
+			}
+		}
 		return state;
 	}
 
-	test('shrugged: magnitude below half the target hold does nothing', () => {
-		const weak = makeRecord('weak', { abilities: [{ name: 'Tap', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 5 }], attributes: { strength: 1, vitality: 60, endurance: 70, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 } });
-		const tanky = makeRecord('tanky', { attributes: { strength: 50, vitality: 99, endurance: 99, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 99 } });
-		let state = twoSideMatch(weak, tanky, 'shrug-seed');
-		state = order(state, 'A', 'A_0', 'strike');
-		state = order(state, 'B', 'B_0', 'hold');
-		state = commitOrders(state, 'A');
-		state = commitOrders(state, 'B');
-		const ev = state.resolutionLog.find((e) => e.recordId === 'A_0' && e.action === 'strike');
-		expect(ev.outcome).toBe('shrugged');
+	test('shield cancels the largest blow against its side, and only one per shielder', () => {
+		// B fields two strikers of very different size; A fields one shielder and a body
+		const state = deploy([shielder, smallStriker], [bigStriker, smallStriker], 'shield-seed', { shieldCap: 'none' });
+		const shields = state.resolutionLog.filter((e) => e.type === 'shield');
+		expect(shields.length).toBe(1);
+		expect(shields[0].recordId).toBe('A_0');
+		// the biggest declared blow against A is B_0's
+		expect(shields[0].cancelled).toBe('B_0');
+		const cancelled = state.resolutionLog.filter((e) => e.type === 'attack' && e.outcome === 'cancelled');
+		expect(cancelled.length).toBe(1);
+		expect(cancelled[0].recordId).toBe('B_0');
+		// the smaller blow still lands
+		expect(state.resolutionLog.some((e) => e.type === 'attack' && e.recordId === 'B_1' && e.outcome !== 'cancelled')).toBe(true);
 	});
 
-	test('staggered: magnitude at least half but below full hold halves the target for the round', () => {
-		const midStriker = makeRecord('mid', { abilities: [{ name: 'Hit', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 70 }], attributes: { strength: 70, vitality: 60, endurance: 70, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 } });
-		const target = makeRecord('target', { attributes: { strength: 50, vitality: 90, endurance: 90, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 90 } });
-		let state = twoSideMatch(midStriker, target, 'stagger-seed');
-		state = order(state, 'A', 'A_0', 'strike');
-		state = order(state, 'B', 'B_0', 'hold');
-		state = commitOrders(state, 'A');
-		state = commitOrders(state, 'B');
-		const ev = state.resolutionLog.find((e) => e.recordId === 'A_0' && e.action === 'strike');
-		expect(['shrugged', 'staggered', 'routed']).toContain(ev.outcome);
-	});
-
-	test('routed: magnitude at least the full hold removes the target from the expedition', () => {
-		const bigStriker = makeRecord('big', { abilities: [{ name: 'Smash', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 100 }], attributes: { strength: 100, vitality: 60, endurance: 70, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 } });
-		const frail = makeRecord('frail', { attributes: { strength: 50, vitality: 5, endurance: 5, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 5 } });
-		let state = twoSideMatch(bigStriker, frail, 'rout-seed');
-		state = order(state, 'A', 'A_0', 'strike');
-		state = order(state, 'B', 'B_0', 'hold');
-		state = commitOrders(state, 'A');
-		state = commitOrders(state, 'B');
-		const ev = state.resolutionLog.find((e) => e.recordId === 'A_0' && e.action === 'strike');
-		expect(ev.outcome).toBe('routed');
-	});
-
-	test('armored raises both thresholds (stagger at 3/4, rout at 3/2)', () => {
-		const bigStriker = makeRecord('big2', { abilities: [{ name: 'Smash', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 100 }], attributes: { strength: 100, vitality: 60, endurance: 70, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 } });
-		const armoredFrail = makeRecord('armored-frail', {
-			attributes: { strength: 50, vitality: 5, endurance: 5, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 5 },
-			traits: { guaranteed: ['armored'], rolled: [] },
-		});
-		let state = twoSideMatch(bigStriker, armoredFrail, 'armored-seed');
-		state = order(state, 'A', 'A_0', 'strike');
-		state = order(state, 'B', 'B_0', 'hold');
-		state = commitOrders(state, 'A');
-		state = commitOrders(state, 'B');
-		const ev = state.resolutionLog.find((e) => e.recordId === 'A_0' && e.action === 'strike');
-		expect(['shrugged', 'staggered', 'routed']).toContain(ev.outcome);
-	});
-
-	test('ward absorbs the next hostile act against the warded ally entirely', () => {
-		const striker = makeRecord('striker', { abilities: [{ name: 'Smash', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 100 }], attributes: { strength: 100, vitality: 60, endurance: 70, agility: 10, reflex: 10, instinct: 50, willpower: 50, intelligence: 50, charisma: 50, resilience: 60 } });
-		const warder = makeRecord('warder', { abilities: [{ name: 'Shield', signature: false, instrument: 'body', action: 'ward', medium: 'fire', intensity: 50 }], attributes: { strength: 50, vitality: 60, endurance: 70, agility: 90, reflex: 90, instinct: 50, willpower: 50, intelligence: 50, charisma: 50, resilience: 60 }, archetype: { key: 'bulwark', favors: [] } });
-		const frail = makeRecord('frail2', { attributes: { strength: 50, vitality: 5, endurance: 5, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 5 } });
-
-		const worlds = makeWorlds();
-		const rosterA = makeRoster('A').map((r, i) => (i === 0 ? { ...frail, id: 'A_0' } : (i === 1 ? { ...warder, id: 'A_1' } : r)));
-		const rosterB = makeRoster('B').map((r, i) => (i === 0 ? { ...striker, id: 'B_0' } : r));
-		let state = createMatch({ rosterA, rosterB, worlds, seed: 'ward-seed' });
-		const frame = currentFrame(state);
-		// A needs both its creatures (frail, then warder) on the board; B needs its
-		// striker sent once. Turns strictly alternate, so B sends its one creature on its
-		// first turn then passes (deploy's pass is permanent for the round, which is fine
-		// here since B has nothing else to send), letting A use both of its turns.
-		if (state.turn === 'B') {
-			state = send(state, 'B', 'B_0', frame.sites[0].id);
-			state = send(state, 'A', 'A_0', frame.sites[0].id);
-			state = pass(state, 'B');
-			state = send(state, 'A', 'A_1', frame.sites[0].id);
-		} else {
-			state = send(state, 'A', 'A_0', frame.sites[0].id);
-			state = send(state, 'B', 'B_0', frame.sites[0].id);
-			state = send(state, 'A', 'A_1', frame.sites[0].id);
-			state = pass(state, 'B');
+	test('shieldCap ownHold cancels only the shielder own hold, and the remainder lands', () => {
+		const state = deploy([shielder, smallStriker], [bigStriker, smallStriker], 'shield-seed', { shieldCap: 'ownHold' });
+		const shield = state.resolutionLog.find((e) => e.type === 'shield');
+		const blow = state.resolutionLog.find((e) => e.type === 'attack' && e.recordId === 'B_0');
+		expect(shield.fraction).toBeLessThanOrEqual(1);
+		// the cancel is worth at most the shielder's own hold
+		const judged = state.resolutionLog.find((e) => e.type === 'judge');
+		const shielderRow = Object.values(judged.siteResults)
+			.flatMap((r) => [...r.entries.A, ...r.entries.B])
+			.find((e) => e.recordId === 'A_0');
+		if (shielderRow) {
+			expect(shield.amount).toBeLessThanOrEqual(shielderRow.fullHold + 0.05);
 		}
-		state = pass(state, state.turn);
-
-		state = order(state, 'A', 'A_1', 'ward');
-		state = order(state, 'B', 'B_0', 'strike');
-		state = commitOrders(state, 'A');
-		state = commitOrders(state, 'B');
-
-		const strikeEvent = state.resolutionLog.find((e) => e.recordId === 'B_0' && e.action === 'strike');
-		expect(strikeEvent).toBeTruthy();
-		// either the strike lands on A_1 (bulwark self-target when it has no other ally
-		// preference edge case) or is absorbed; assert no crash and a sensible outcome set
-		expect(['warded-absorbed', 'shrugged', 'staggered', 'routed', 'no-target-held']).toContain(strikeEvent.outcome);
+		// a partial cancel still lands its remainder rather than vanishing
+		if (shield.fraction < 1) {
+			expect(blow.outcome).not.toBe('cancelled');
+			expect(blow.power).toBeGreaterThan(0);
+			expect(blow.cancelled).toBe(true);
+		}
 	});
 
-	test('anchored creatures cannot be shoved, terrorized, or routed off their site', () => {
-		const anchoredTarget = makeRecord('anchored-target', {
-			traits: { guaranteed: ['anchored'], rolled: [] },
-			attributes: { strength: 50, vitality: 5, endurance: 5, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 5 },
+	test('shieldCap half cancels the whole blow and takes half of it off the shielder', () => {
+		const state = deploy([shielder, smallStriker], [bigStriker, smallStriker], 'shield-seed', { shieldCap: 'half' });
+		const shield = state.resolutionLog.find((e) => e.type === 'shield');
+		expect(shield.cancelled).toBe('B_0');
+		expect(shield.fraction).toBe(1);
+		expect(shield.selfDamage).toBeCloseTo(Math.round((shield.amount / 2) * 10) / 10, 5);
+		const cancelled = state.resolutionLog.find((e) => e.type === 'attack' && e.recordId === 'B_0');
+		expect(cancelled.outcome).toBe('cancelled');
+		// the shielder wears the half it absorbed
+		const judged = state.resolutionLog.find((e) => e.type === 'judge');
+		const shielderRow = Object.values(judged.siteResults)
+			.flatMap((r) => [...r.entries.A, ...r.entries.B])
+			.find((e) => e.recordId === 'A_0');
+		expect(shielderRow.damage).toBeGreaterThanOrEqual(shield.selfDamage);
+	});
+
+	test('a shield switched off leaves a plain holder that cancels nothing', () => {
+		const state = deploy([shielder, smallStriker], [bigStriker, smallStriker], 'shield-seed', { roles: { shield: false } });
+		expect(state.resolutionLog.filter((e) => e.type === 'shield').length).toBe(0);
+		expect(state.resolutionLog.filter((e) => e.type === 'attack' && e.outcome === 'cancelled').length).toBe(0);
+	});
+
+	test('bolster lifts its allies a grade, gives a comfortable ally the floor, does not stack, and includes itself', () => {
+		const withOut = deploy([smallStriker, smallStriker], [smallStriker], 'bolster-seed');
+		const withOne = deploy([bolsterer, smallStriker], [smallStriker], 'bolster-seed');
+		const withTwo = deploy([bolsterer, bolsterer, smallStriker], [smallStriker], 'bolster-seed');
+		const holdOf = (state, id) => {
+			const judged = state.resolutionLog.find((e) => e.type === 'judge');
+			return Object.values(judged.siteResults)
+				.flatMap((r) => [...r.entries.A, ...r.entries.B])
+				.find((e) => e.recordId === id).fullHold;
+		};
+		// every creature here is comfortable, so the lift is the flat floor
+		expect(holdOf(withOne, 'A_1') - holdOf(withOut, 'A_1')).toBeCloseTo(BOLSTER_FLOOR, 5);
+		// the bolsterer bolsters itself: its own hold carries the same floor
+		expect(holdOf(withOne, 'A_0') - holdOf(withOut, 'A_0')).toBeCloseTo(BOLSTER_FLOOR, 5);
+		// two bolsterers lift no further than one
+		expect(holdOf(withTwo, 'A_2') - holdOf(withOne, 'A_1')).toBeCloseTo(0, 5);
+	});
+
+	test('bolster lifts a strained ally a whole grade, not just the floor', () => {
+		const strainedStriker = (id) => makeRecord(id, {
+			archetype: { key: 'predator', favors: [] },
+			abilities: [{ name: 'Poke', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 20 }],
+			attributes: { strength: 20, vitality: 60, endurance: 70, agility: 20, reflex: 20, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
+			// a narrow tolerance band against the wide authored site band reads as strained
+			physiology: { breathes: ['gas'], environmentalTolerance: { ambientMedia: ['gas'], temperatureC: { min: 0, max: 5 } } },
 		});
-		const shover = makeRecord('shover', { abilities: [{ name: 'Push', signature: false, instrument: 'body', action: 'shove', medium: 'fire', intensity: 100 }], attributes: { strength: 100, vitality: 60, endurance: 70, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 } });
-		let state = twoSideMatch(shover, anchoredTarget, 'anchor-shove-seed');
-		state = order(state, 'A', 'A_0', 'shove');
-		state = order(state, 'B', 'B_0', 'hold');
-		state = commitOrders(state, 'A');
-		state = commitOrders(state, 'B');
-		const ev = state.resolutionLog.find((e) => e.recordId === 'A_0' && e.action === 'shove');
-		expect(ev.outcome).toBe('anchored-immune');
+		const judgedHold = (state, id) => {
+			const judged = state.resolutionLog.find((e) => e.type === 'judge');
+			return Object.values(judged.siteResults)
+				.flatMap((r) => [...r.entries.A, ...r.entries.B])
+				.find((e) => e.recordId === id).fullHold;
+		};
+		const withOut = deploy([smallStriker, strainedStriker], [smallStriker], 'bolster-grade-seed');
+		const withOne = deploy([bolsterer, strainedStriker], [smallStriker], 'bolster-grade-seed');
+		// strained halves the hold, so lifting the grade doubles it: far more than the floor
+		expect(judgedHold(withOne, 'A_1')).toBeCloseTo(judgedHold(withOut, 'A_1') * 2, 5);
+	});
+
+	test('a bolster switched off leaves a plain holder that lifts nothing', () => {
+		const judgedHold = (state, id) => {
+			const judged = state.resolutionLog.find((e) => e.type === 'judge');
+			return Object.values(judged.siteResults)
+				.flatMap((r) => [...r.entries.A, ...r.entries.B])
+				.find((e) => e.recordId === id);
+		};
+		const withOut = deploy([smallStriker, smallStriker], [smallStriker], 'bolster-seed');
+		const off = deploy([bolsterer, smallStriker], [smallStriker], 'bolster-seed', { roles: { bolster: false } });
+		expect(judgedHold(off, 'A_1').fullHold).toBeCloseTo(judgedHold(withOut, 'A_1').fullHold, 5);
+		expect(judgedHold(off, 'A_0').role).toBe(ROLE.NONE);
+	});
+
+	test('a sweep logs one sweep event plus one attack per creature at the world, both sides', () => {
+		const state = deploy([areaCreature, smallStriker], [smallStriker], 'area-seed');
+		const sweep = state.resolutionLog.find((e) => e.type === 'sweep');
+		expect(sweep).toBeTruthy();
+		expect(sweep.recordId).toBe('A_0');
+		const victims = state.resolutionLog.filter((e) => e.type === 'attack' && e.recordId === 'A_0' && e.role === ROLE.SWEEP);
+		expect(victims.length).toBe(sweep.hitCount);
+		// it catches its own ally as well as the enemy
+		expect(victims.map((v) => v.target).sort()).toEqual(['A_1', 'B_0']);
+	});
+
+	test('a sweep switched off degrades to a plain strike', () => {
+		const state = deploy([areaCreature, smallStriker], [smallStriker], 'area-seed', { roles: { sweep: false } });
+		expect(state.resolutionLog.some((e) => e.type === 'sweep')).toBe(false);
+		const blow = state.resolutionLog.find((e) => e.type === 'attack' && e.recordId === 'A_0');
+		expect(blow.role).toBe(ROLE.STRIKE);
+	});
+
+	test('the public state carries currentHold, role, hurt and hidden per creature', () => {
+		const state = deploy([bigStriker], [smallStriker], 'public-role-seed');
+		// the round has resolved; read the view of the round just played from the log
+		const judged = state.resolutionLog.find((e) => e.type === 'judge');
+		const entries = Object.values(judged.siteResults).flatMap((r) => [...r.entries.A, ...r.entries.B]);
+		expect(entries.some((e) => typeof e.hold === 'number' && typeof e.role === 'string')).toBe(true);
+
+		// and the live board during deploy
+		let fresh = freshMatch('public-role-live');
+		const frame = currentFrame(fresh);
+		fresh = send(fresh, fresh.turn, fresh.players[fresh.turn].roster[0].id, frame.sites[0].id);
+		const seat = fresh.turn === 'A' ? 'B' : 'A';
+		const view = getPublicState(fresh, seat);
+		const mine = view.board[frame.sites[0].id][seat][0];
+		expect(typeof mine.currentHold).toBe('number');
+		expect(typeof mine.fullHold).toBe('number');
+		expect(typeof mine.role).toBe('string');
+		expect(mine.hurt).toBe(false);
+		expect(mine.hidden).toBe(false);
 	});
 });
 
@@ -566,14 +704,12 @@ describe('judging and match end', () => {
 		s = send(s, s.turn, s.players[s.turn].roster[0].id, frame.sites[0].id);
 		s = pass(s, s.turn);
 		s = pass(s, s.turn);
-		s = commitOrders(s, 'A');
-		s = commitOrders(s, 'B');
 		return s;
 	}
 
 	test('a tied site reverts to the Court (no winner)', () => {
-		const equalA = makeRecord('tieA', { attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 } });
-		const equalB = makeRecord('tieB', { attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 } });
+		const equalA = makeRecord('tieA', { attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 }, archetype: { key: 'survivor', favors: [] }, abilities: [{ name: 'Mend', signature: false, instrument: 'voice', action: 'mend', medium: 'light', intensity: 40 }] });
+		const equalB = makeRecord('tieB', { attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 }, archetype: { key: 'survivor', favors: [] }, abilities: [{ name: 'Mend', signature: false, instrument: 'voice', action: 'mend', medium: 'light', intensity: 40 }] });
 		const worlds = makeWorlds();
 		const rosterA = makeRoster('A').map((r, i) => (i === 0 ? { ...equalA, id: 'A_0' } : r));
 		const rosterB = makeRoster('B').map((r, i) => (i === 0 ? { ...equalB, id: 'B_0' } : r));
@@ -583,8 +719,6 @@ describe('judging and match end', () => {
 		state = send(state, state.turn, state.turn === 'A' ? 'A_0' : 'B_0', frame.sites[0].id);
 		state = pass(state, state.turn);
 		state = pass(state, state.turn);
-		state = commitOrders(state, 'A');
-		state = commitOrders(state, 'B');
 		const judgeEvent = state.resolutionLog.find((e) => e.type === 'judge');
 		expect(judgeEvent).toBeTruthy();
 		const siteResult = Object.values(judgeEvent.siteResults)[0];
@@ -609,8 +743,6 @@ describe('judging and match end', () => {
 		}
 		state = pass(state, state.turn);
 		state = pass(state, state.turn);
-		state = commitOrders(state, 'A');
-		state = commitOrders(state, 'B');
 		const judgeEvent = state.resolutionLog.find((e) => e.type === 'judge');
 		const siteResult = judgeEvent.siteResults[siteId];
 		expect(siteResult.entries).toBeDefined();
@@ -619,7 +751,7 @@ describe('judging and match end', () => {
 		siteResult.entries.A.forEach((e) => {
 			expect(e).toHaveProperty('recordId');
 			expect(e).toHaveProperty('hold');
-			expect(e).toHaveProperty('staggered');
+			expect(e).toHaveProperty('hurt');
 		});
 		const sumA = siteResult.entries.A.reduce((sum, e) => sum + e.hold, 0);
 		const sumB = siteResult.entries.B.reduce((sum, e) => sum + e.hold, 0);
@@ -630,7 +762,7 @@ describe('judging and match end', () => {
 	test('creatures at a won site stay to hold the claim, others withdraw, all are out of the expedition', () => {
 		let state = freshMatch('withdraw-seed');
 		state = autoResolveOneRound(state);
-		const totalTracked = (p) => state.players[p].holding.length + state.players[p].withdrawn.length + state.players[p].routed.length;
+		const totalTracked = (p) => state.players[p].holding.length + state.players[p].withdrawn.length + state.players[p].downed.length;
 		expect(totalTracked('A') + totalTracked('B')).toBeGreaterThan(0);
 	});
 
@@ -692,7 +824,7 @@ describe('judging and match end', () => {
 		alternates, and the trailing side instead gets ROSTER_TRAILING_BONUS extra sends for
 		that round only.
 	*/
-	test('the roster-economy lever: the side trailing on worlds gets a bonus send next round, and starter alternates', () => {
+	test('the catch-up send is cut by default and still works when a batch restores it', () => {
 		// force A to win world 1 outright (strong vs weak), so A leads 1-0 into world 2
 		const strongA = () => makeRecord('sA', { attributes: { strength: 99, vitality: 99, endurance: 99, agility: 99, reflex: 99, intelligence: 99, willpower: 99, instinct: 99, charisma: 99, resilience: 99 } });
 		const weakB = () => makeRecord('wB', { attributes: { strength: 1, vitality: 1, endurance: 1, agility: 1, reflex: 1, intelligence: 1, willpower: 1, instinct: 1, charisma: 1, resilience: 1 } });
@@ -708,20 +840,24 @@ describe('judging and match end', () => {
 
 		// starter alternates (no more "trailing seat moves first")
 		expect(state.starter).toBe(starterFrame1 === 'A' ? 'B' : 'A');
-		// B is trailing: gets the bonus this round
-		expect(state.trailingBonus.B).toBeGreaterThan(0);
+		// assumption 20 cut the catch-up send: trailing buys the loser nothing by default
+		expect(state.trailingBonus.B).toBe(0);
 		expect(state.trailingBonus.A).toBe(0);
+		expect(getPublicState(state, 'B').players.B.sendableCap).toBe(SENDABLE);
+		expect(getPublicState(state, 'A').players.A.sendableCap).toBe(SENDABLE);
 
-		const pub = getPublicState(state, 'B');
-		expect(pub.players.B.sendableCap).toBe(SENDABLE + state.trailingBonus.B);
-
-		const pubA = getPublicState(state, 'A');
-		expect(pubA.players.A.sendableCap).toBe(SENDABLE);
+		// the key survives so an ablation row can put the catch-up send back
+		let restored = createMatch({ rosterA, rosterB, worlds, seed: 'trailing-bonus-seed', rules: { trailingBonus: 1 } });
+		restored = autoResolveOneRound(restored);
+		expect(restored.players.A.sitesWon).toBeGreaterThan(restored.players.B.sitesWon);
+		expect(restored.trailingBonus.B).toBe(1);
+		expect(restored.trailingBonus.A).toBe(0);
+		expect(getPublicState(restored, 'B').players.B.sendableCap).toBe(SENDABLE + 1);
 	});
 
 	test('level sites after a round: no trailing bonus for either side', () => {
-		const equalA = makeRecord('eqA', { attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 } });
-		const equalB = makeRecord('eqB', { attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 } });
+		const equalA = makeRecord('eqA', { attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 }, archetype: { key: 'survivor', favors: [] }, abilities: [{ name: 'Mend', signature: false, instrument: 'voice', action: 'mend', medium: 'light', intensity: 40 }] });
+		const equalB = makeRecord('eqB', { attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 }, archetype: { key: 'survivor', favors: [] }, abilities: [{ name: 'Mend', signature: false, instrument: 'voice', action: 'mend', medium: 'light', intensity: 40 }] });
 		const worlds = makeWorlds();
 		const rosterA = makeRoster('A', () => ({ ...equalA }));
 		const rosterB = makeRoster('B', () => ({ ...equalB }));
@@ -741,7 +877,7 @@ describe('judging and match end', () => {
 	*/
 	// A milder gap than the "clinching" test's strong/weak pair: B_0 has meaningfully less
 	// hold than A_0 (so A wins the site outright at Judge) but the gap is not so wide that
-	// A_0's favored strike ROUTS B_0 during Resolve - a routed creature never reaches
+	// A_0's favored strike ROUTS B_0 during Resolve - a downed creature never reaches
 	// withdrawn/returned at all (it is out for the match, per the design doc), which is a
 	// different case from "lost the site but is still standing". Ordering both to `hold`
 	// removes combat from the picture entirely, so only Judge's raw-hold comparison decides
@@ -751,10 +887,6 @@ describe('judging and match end', () => {
 		s = send(s, s0Turn(s), s0Turn(s) === 'A' ? idA : idB, siteId);
 		s = pass(s, s.turn);
 		s = pass(s, s.turn);
-		s = order(s, 'A', idA, 'hold');
-		s = order(s, 'B', idB, 'hold');
-		s = commitOrders(s, 'A');
-		s = commitOrders(s, 'B');
 		return s;
 	}
 	function s0Turn(state) {
@@ -762,8 +894,17 @@ describe('judging and match end', () => {
 	}
 
 	test('the Loki line: a creature withdrawn from a LOST world returns to the roster flagged, sendable again at double cost', () => {
-		const strongA = () => makeRecord('sA', { attributes: { strength: 50, vitality: 90, endurance: 90, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 90 } });
-		const weakB = () => makeRecord('wB', { attributes: { strength: 50, vitality: 20, endurance: 20, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 20 } });
+		// both sides field presences (a ward ability under a bulwark archetype reads as a
+		// shield, docs/design/reclamation-base-redesign.md assumption 4), so no blow lands
+		// and the world is decided purely on hold. A creature ROUTED is out for the match
+		// rather than returned, so a lost-world return has to be tested without combat.
+		const presence = (id, hp) => makeRecord(id, {
+			archetype: { key: 'bulwark', favors: [] },
+			abilities: [{ name: 'Guard', signature: false, instrument: 'body', action: 'ward', medium: 'fire', intensity: 50 }],
+			attributes: { strength: 50, vitality: hp, endurance: hp, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: hp },
+		});
+		const strongA = () => presence('sA', 90);
+		const weakB = () => presence('wB', 20);
 		const worlds = makeWorlds();
 		const rosterA = makeRoster('A', () => strongA());
 		const rosterB = makeRoster('B', () => weakB());
@@ -812,8 +953,8 @@ describe('judging and match end', () => {
 	});
 
 	test('a creature withdrawn from a TIED world does not get the Loki return', () => {
-		const equalA = makeRecord('eqA', { attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 } });
-		const equalB = makeRecord('eqB', { attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 } });
+		const equalA = makeRecord('eqA', { attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 }, archetype: { key: 'survivor', favors: [] }, abilities: [{ name: 'Mend', signature: false, instrument: 'voice', action: 'mend', medium: 'light', intensity: 40 }] });
+		const equalB = makeRecord('eqB', { attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 }, archetype: { key: 'survivor', favors: [] }, abilities: [{ name: 'Mend', signature: false, instrument: 'voice', action: 'mend', medium: 'light', intensity: 40 }] });
 		const worlds = makeWorlds();
 		const rosterA = makeRoster('A').map((r, i) => (i === 0 ? { ...equalA, id: 'A_0' } : r));
 		const rosterB = makeRoster('B').map((r, i) => (i === 0 ? { ...equalB, id: 'B_0' } : r));
@@ -823,8 +964,6 @@ describe('judging and match end', () => {
 		state = send(state, state.turn, state.turn === 'A' ? 'A_0' : 'B_0', frame.sites[0].id);
 		state = pass(state, state.turn);
 		state = pass(state, state.turn);
-		state = commitOrders(state, 'A');
-		state = commitOrders(state, 'B');
 		const judgeEvent = state.resolutionLog.find((e) => e.type === 'judge');
 		const siteResult = Object.values(judgeEvent.siteResults)[0];
 		expect(siteResult.winner).toBeNull(); // tied
@@ -865,19 +1004,6 @@ describe('public state hiding', () => {
 		expect(view.players[state.starter].roster).toBeDefined();
 	});
 
-	test('hides the opponent uncommitted orders', () => {
-		let state = freshMatch('public-orders-seed');
-		const starter = state.starter;
-		const other = starter === 'A' ? 'B' : 'A';
-		const frame = currentFrame(state);
-		state = send(state, starter, state.players[starter].roster[0].id, frame.sites[0].id);
-		state = send(state, other, state.players[other].roster[0].id, frame.sites[0].id);
-		state = pass(state, state.turn);
-		state = pass(state, state.turn);
-		const view = getPublicState(state, starter);
-		expect(view.players[other].orders).toBeUndefined();
-		expect(view.players[starter].orders).toBeDefined();
-	});
 
 	test('hides a hidden creature identity and site, but shows that a hidden send happened', () => {
 		const stealthyRoster = makeRoster('S', () => ({ traits: { guaranteed: [], rolled: ['stealthy'] } }));
@@ -901,228 +1027,155 @@ describe('public state hiding', () => {
 	});
 });
 
-describe('relocateVanguard: the vanguard falls back', () => {
-	// Sends the starter's vanguard, then brings the turn back to the starter (the
-	// opponent passes) so relocate — legal only "on their own turn" — is actually
-	// available for the main-path tests. A dedicated test below covers the
-	// "not their turn" illegal case using the state right after the first send instead.
-	function firstSendState(seed = 'vanguard-seed') {
-		let state = freshMatch(seed);
+/*
+	Swift creatures move (docs/design/reclamation-base-redesign.md assumption 20), the rule
+	that replaced the vanguard fall-back. Speed at or above rules.swiftSpeed makes a
+	creature movable once per round, on its handler's own turn, without spending the turn.
+*/
+describe('moveSwift: swift creatures move', () => {
+	// reflex and agility of 80 put speed at 80, above the swiftSpeed cut of 65
+	function swiftRoster(prefix) {
+		const roster = [];
+		for (let i = 0; i < ROSTER_SIZE; i++) {
+			roster.push(makeRecord(`${prefix}_${i}`, { attributes: { agility: 80, reflex: 80 } }));
+		}
+		return roster;
+	}
+
+	// a roster of creatures too slow to move: speed 20, well under the cut
+	function slowRoster(prefix) {
+		const roster = [];
+		for (let i = 0; i < ROSTER_SIZE; i++) {
+			roster.push(makeRecord(`${prefix}_${i}`, { attributes: { agility: 20, reflex: 20 } }));
+		}
+		return roster;
+	}
+
+	// Sends one creature, then brings the turn back to its handler (the opponent passes)
+	// so a move - legal only "on their own turn" - is actually available.
+	function firstSendState(seed = 'swift-seed', rosterFn = swiftRoster) {
+		let state = createMatch({ rosterA: rosterFn('A'), rosterB: rosterFn('B'), worlds: makeWorlds(), seed });
 		const frame = currentFrame(state);
-		const starter = state.starter;
-		const other = starter === 'A' ? 'B' : 'A';
-		state = send(state, starter, state.players[starter].roster[0].id, frame.sites[0].id);
+		const mover = state.starter;
+		const other = mover === 'A' ? 'B' : 'A';
+		state = send(state, mover, state.players[mover].roster[0].id, frame.sites[0].id);
 		if (state.phase === 'deploy' && state.turn === other) {
 			state = pass(state, other);
 		}
-		return { state, starter, other, frame };
+		return { state, mover, other, frame };
 	}
 
-	test('the starter may relocate the first creature they sent this world to a different site', () => {
-		const { state, starter, frame } = firstSendState();
-		const vanguardId = state.board[frame.sites[0].id][starter][0].recordId;
-		const next = relocateVanguard(state, starter, frame.sites[1].id);
+	test('a swift creature moves to another site of the frame', () => {
+		const { state, mover, frame } = firstSendState();
+		const recordId = state.board[frame.sites[0].id][mover][0].recordId;
+		const next = moveSwift(state, mover, recordId, frame.sites[1].id);
 		expect(next).not.toBeNull();
-		expect(next.board[frame.sites[0].id][starter].length).toBe(0);
-		expect(next.board[frame.sites[1].id][starter].some((e) => e.recordId === vanguardId)).toBe(true);
-		expect(next.vanguardRelocated[starter]).toBe(true);
+		expect(next.board[frame.sites[0].id][mover].length).toBe(0);
+		expect(next.board[frame.sites[1].id][mover].some((e) => e.recordId === recordId)).toBe(true);
+		expect(next.swiftMoved[mover]).toContain(recordId);
 	});
 
-	test('does not consume the turn: the handler still sends or passes on the same turn afterward', () => {
-		const { state, starter, frame } = firstSendState();
-		const turnBefore = state.turn;
-		expect(turnBefore).toBe(starter); // relocate is only legal on the starter's own turn
-		const relocated = relocateVanguard(state, starter, frame.sites[1].id);
-		expect(relocated).not.toBeNull();
-		// the turn marker is untouched by relocate itself...
-		expect(relocated.turn).toBe(turnBefore);
-		expect(relocated.phase).toBe('deploy');
-		expect(relocated.players[starter].passed).toBe(false);
-		// ...and the handler can still legally send afterward, on the very same turn (a
-		// send that had already "used up" the turn would be rejected as out-of-turn)
-		const secondRecordId = relocated.players[starter].roster[0].id;
-		const afterSend = send(relocated, starter, secondRecordId, frame.sites[2].id);
-		expect(afterSend).not.toBeNull();
-		expect(afterSend.board[frame.sites[2].id][starter].some((e) => e.recordId === secondRecordId)).toBe(true);
+	test('does not consume the turn: the handler still sends or passes afterward', () => {
+		const { state, mover, frame } = firstSendState('swift-turn-seed');
+		const recordId = state.board[frame.sites[0].id][mover][0].recordId;
+		const next = moveSwift(state, mover, recordId, frame.sites[1].id);
+		expect(next.turn).toBe(mover);
+		const after = send(next, mover, next.players[mover].roster[0].id, frame.sites[2].id);
+		expect(after).not.toBeNull();
 	});
 
-	test('the relocated creature keeps its sentIndex and hidden flag', () => {
-		const stealthyRoster = makeRoster('S', (i) => (i === 0 ? { traits: { guaranteed: [], rolled: ['stealthy'] } } : {}));
-		let state = createMatch({ rosterA: stealthyRoster, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'vanguard-hidden-seed' });
-		const starter = state.starter;
-		const frame = currentFrame(state);
-		if (starter !== 'A') {
-			return;
+	test('the moved creature keeps its sentIndex and stays hidden if it was hidden', () => {
+		const stealthy = [];
+		for (let i = 0; i < ROSTER_SIZE; i++) {
+			stealthy.push(makeRecord(`A_${i}`, { attributes: { agility: 80, reflex: 80 }, traits: ['stealthy'] }));
 		}
-		state = send(state, 'A', stealthyRoster[0].id, frame.sites[0].id, true);
-		// relocate is only legal on the starter's own turn, so bring the turn back to A by
-		// having B pass, same as firstSendState does
+		let state = createMatch({ rosterA: stealthy, rosterB: slowRoster('B'), worlds: makeWorlds(), seed: 'swift-hidden-seed' });
+		state = state.starter === 'A' ? state : { ...state, starter: 'A', turn: 'A' };
+		const frame = currentFrame(state);
+		state = send(state, 'A', 'A_0', frame.sites[0].id, true);
 		if (state.phase === 'deploy' && state.turn === 'B') {
 			state = pass(state, 'B');
 		}
 		const before = state.board[frame.sites[0].id].A[0];
-		expect(before.hidden).toBe(true);
-		const next = relocateVanguard(state, 'A', frame.sites[1].id);
-		expect(next).not.toBeNull();
-		const after = next.board[frame.sites[1].id].A[0];
-		expect(after.recordId).toBe(before.recordId);
-		expect(after.sentIndex).toBe(before.sentIndex);
-		expect(after.hidden).toBe(true);
+		const next = moveSwift(state, 'A', 'A_0', frame.sites[1].id);
+		const moved = next.board[frame.sites[1].id].A.find((e) => e.recordId === 'A_0');
+		expect(moved.hidden).toBe(true);
+		expect(moved.sentIndex).toBe(before.sentIndex);
 	});
 
-	test('hold is recomputed for the new site at resolution (strain changes if the site does)', () => {
-		const strainableRecord = makeRecord('strain-vanguard', {
-			physiology: {
-				breathes: ['liquid'],
-				environmentalTolerance: { ambientMedia: ['liquid'], temperatureC: { min: -50, max: 200 } },
-			},
-		});
-		// Magmuth has one authored site here (liquid medium, deterministic draw); the
-		// vanguard relocates to a site of a DIFFERENT world in the same frame, so that
-		// world is given a single gas-medium site to make the "after" hold deterministic
-		// too.
-		const worlds = [
-			makeWorld('Magmuth', 'fire', [{ environment: { medium: 'liquid', temperatureC: { min: -50, max: 200 } } }]),
-			makeWorld('Poseidas', 'water', [{ environment: { medium: 'gas', temperatureC: { min: -50, max: 200 } } }]),
-			...makeWorlds(7),
-		];
-		const rosterA = makeRoster('A').map((r, i) => (i === 0 ? { ...strainableRecord, id: 'A_0' } : r));
-		let state = createMatch({ rosterA, rosterB: makeRoster('B'), worlds, seed: 'vanguard-strain-seed' });
-		const starter = state.starter;
-		const frame = currentFrame(state);
-		const fromSite = siteOfPlanet(frame, 'Magmuth');
-		const toSite = siteOfPlanet(frame, 'Poseidas');
-		if (starter !== 'A' || !fromSite || !toSite) {
-			return; // only exercise when both authored worlds land in frame 1 with A starting
-		}
-		state = send(state, 'A', 'A_0', fromSite.id);
-		const holdBefore = currentHoldOf(state, state.board[fromSite.id].A[0]);
-		const next = relocateVanguard(state, 'A', toSite.id);
-		expect(next).not.toBeNull();
-		const holdAfter = currentHoldOf(next, next.board[toSite.id].A[0]);
-		expect(holdAfter).toBeLessThan(holdBefore);
-	});
-
-	test('illegal when the handler is not this world’s starter', () => {
-		const { state, other, frame } = firstSendState();
-		expect(relocateVanguard(state, other, frame.sites[1].id)).toBeNull();
-	});
-
-	test('illegal: phase is not deploy', () => {
-		let state = freshMatch('vanguard-phase-seed');
-		const frame = currentFrame(state);
-		const starter = state.starter;
-		const other = starter === 'A' ? 'B' : 'A';
-		state = send(state, starter, state.players[starter].roster[0].id, frame.sites[0].id);
-		state = send(state, other, state.players[other].roster[0].id, frame.sites[0].id);
-		state = pass(state, state.turn);
-		state = pass(state, state.turn);
-		expect(state.phase).toBe('orders');
-		expect(relocateVanguard(state, starter, frame.sites[1].id)).toBeNull();
-	});
-
-	test('illegal: it is not their turn', () => {
-		// right after the starter's first send, the turn has passed to the opponent (the
-		// starter has not gotten a turn back yet), so relocate must be illegal here
-		let state = freshMatch('vanguard-not-turn-seed');
-		const frame = currentFrame(state);
-		const starter = state.starter;
-		const other = starter === 'A' ? 'B' : 'A';
-		state = send(state, starter, state.players[starter].roster[0].id, frame.sites[0].id);
-		expect(state.turn).toBe(other);
-		expect(relocateVanguard(state, starter, frame.sites[1].id)).toBeNull();
-	});
-
-	test('illegal: the handler has passed', () => {
-		let state = freshMatch('vanguard-passed-seed');
-		const frame = currentFrame(state);
-		const starter = state.starter;
-		const other = starter === 'A' ? 'B' : 'A';
-		state = send(state, starter, state.players[starter].roster[0].id, frame.sites[0].id);
-		state = pass(state, other);
-		expect(state.turn === starter || state.phase !== 'deploy').toBe(true);
-		if (state.phase !== 'deploy') {
-			return;
-		}
-		state = pass(state, starter);
-		expect(state.players[starter].passed).toBe(true);
-		if (state.phase === 'deploy') {
-			expect(relocateVanguard(state, starter, frame.sites[1].id)).toBeNull();
-		}
-	});
-
-	test('illegal: already relocated once this world', () => {
-		const { state, starter, frame } = firstSendState();
-		const once = relocateVanguard(state, starter, frame.sites[1].id);
+	test('once per creature per round: a second move of the same creature is illegal', () => {
+		const { state, mover, frame } = firstSendState('swift-once-seed');
+		const recordId = state.board[frame.sites[0].id][mover][0].recordId;
+		const once = moveSwift(state, mover, recordId, frame.sites[1].id);
 		expect(once).not.toBeNull();
-		expect(relocateVanguard(once, starter, frame.sites[2].id)).toBeNull();
+		expect(moveSwift(once, mover, recordId, frame.sites[2].id)).toBeNull();
 	});
 
-	test('illegal: the target site is the one the vanguard already stands on', () => {
-		const { state, starter, frame } = firstSendState();
-		expect(relocateVanguard(state, starter, frame.sites[0].id)).toBeNull();
+	test('a creature under the swift cut cannot move at all', () => {
+		const { state, mover, frame } = firstSendState('swift-slow-seed', slowRoster);
+		const recordId = state.board[frame.sites[0].id][mover][0].recordId;
+		expect(moveSwift(state, mover, recordId, frame.sites[1].id)).toBeNull();
 	});
 
-	test('illegal: a nonexistent site id', () => {
-		const { state, starter } = firstSendState();
-		expect(relocateVanguard(state, starter, 'not-a-real-site')).toBeNull();
+	test('illegal: not your turn, the same site, an unknown site, a creature not yours', () => {
+		const { state, mover, other, frame } = firstSendState('swift-illegal-seed');
+		const recordId = state.board[frame.sites[0].id][mover][0].recordId;
+		expect(moveSwift(state, other, recordId, frame.sites[1].id)).toBeNull();
+		expect(moveSwift(state, mover, recordId, frame.sites[0].id)).toBeNull();
+		expect(moveSwift(state, mover, recordId, 'not-a-real-site')).toBeNull();
+		expect(moveSwift(state, mover, 'not-a-real-record', frame.sites[1].id)).toBeNull();
 	});
 
-	test('resets per world: a new world clears vanguardRelocated for both sides', () => {
-		// build the round from scratch (not firstSendState, which already burns the
-		// opponent's turn via a permanent pass) so both sides still have live turns left
-		let state = freshMatch('vanguard-reset-seed');
+	test('the swiftMove ablation makes every move illegal and empties movableRecordIds', () => {
+		let state = createMatch({
+			rosterA: swiftRoster('A'), rosterB: swiftRoster('B'), worlds: makeWorlds(),
+			seed: 'swift-ablation-seed', rules: { swiftMove: false },
+		});
 		const frame = currentFrame(state);
-		const starter = state.starter;
-		const other = starter === 'A' ? 'B' : 'A';
-		state = send(state, starter, state.players[starter].roster[0].id, frame.sites[0].id);
-		state = send(state, other, state.players[other].roster[0].id, frame.sites[0].id);
-		expect(state.turn).toBe(starter);
-		const relocated = relocateVanguard(state, starter, frame.sites[1].id);
-		expect(relocated).not.toBeNull();
-		expect(relocated.vanguardRelocated[starter]).toBe(true);
-		let next = pass(relocated, starter);
-		next = pass(next, next.turn);
-		expect(next.phase).toBe('orders');
-		next = commitOrders(next, 'A');
-		next = commitOrders(next, 'B');
-		if (next.phase === 'deploy') {
-			expect(next.vanguardRelocated.A).toBe(false);
-			expect(next.vanguardRelocated.B).toBe(false);
+		const mover = state.starter;
+		const other = mover === 'A' ? 'B' : 'A';
+		state = send(state, mover, state.players[mover].roster[0].id, frame.sites[0].id);
+		if (state.phase === 'deploy' && state.turn === other) {
+			state = pass(state, other);
 		}
+		const recordId = state.board[frame.sites[0].id][mover][0].recordId;
+		expect(moveSwift(state, mover, recordId, frame.sites[1].id)).toBeNull();
+		expect(getPublicState(state, mover).players[mover].movableRecordIds).toEqual([]);
 	});
 
-	test('public state: canRelocateVanguard is true for the starter, false for the other side, and false after use', () => {
-		const { state, starter, other, frame } = firstSendState('vanguard-public-seed');
-		const viewStarter = getPublicState(state, starter);
-		const viewOther = getPublicState(state, other);
-		expect(viewStarter.players[starter].canRelocateVanguard).toBe(true);
-		expect(viewOther.players[starter].canRelocateVanguard).toBe(true);
-		expect(viewStarter.players[other].canRelocateVanguard).toBe(false);
-
-		const relocated = relocateVanguard(state, starter, frame.sites[1].id);
-		const viewAfter = getPublicState(relocated, starter);
-		expect(viewAfter.players[starter].canRelocateVanguard).toBe(false);
+	test('public state: movableRecordIds is own-side only and empties as creatures move', () => {
+		const { state, mover, other, frame } = firstSendState('swift-public-seed');
+		const recordId = state.board[frame.sites[0].id][mover][0].recordId;
+		const view = getPublicState(state, mover);
+		expect(view.players[mover].movableRecordIds).toContain(recordId);
+		expect(view.players[other].movableRecordIds).toBeUndefined();
+		const next = moveSwift(state, mover, recordId, frame.sites[1].id);
+		expect(getPublicState(next, mover).players[mover].movableRecordIds).not.toContain(recordId);
 	});
 
-	test('public state: own side sees its vanguardRecordId; opponent identity of the vanguard stays hidden', () => {
-		const { state, starter, other, frame } = firstSendState('vanguard-identity-seed');
-		const vanguardId = state.board[frame.sites[0].id][starter][0].recordId;
-		const viewSelf = getPublicState(state, starter);
-		expect(viewSelf.players[starter].vanguardRecordId).toBe(vanguardId);
-		const viewOpponent = getPublicState(state, other);
-		expect(viewOpponent.players[starter].vanguardRecordId).toBeUndefined();
+	test('resets per round: a new frame clears swiftMoved for both sides', () => {
+		const first = firstSendState('swift-reset-seed');
+		const mover = first.mover;
+		const frame = first.frame;
+		let state = first.state;
+		const recordId = state.board[frame.sites[0].id][mover][0].recordId;
+		state = moveSwift(state, mover, recordId, frame.sites[1].id);
+		expect(state.swiftMoved[mover]).toContain(recordId);
+		state = pass(state, mover);
+		expect(state.frameIndex).toBe(1);
+		expect(state.swiftMoved.A).toEqual([]);
+		expect(state.swiftMoved.B).toEqual([]);
 	});
 
-	test('event is recorded in the log for narration', () => {
-		const { state, starter, frame } = firstSendState('vanguard-log-seed');
-		const next = relocateVanguard(state, starter, frame.sites[1].id);
-		expect(next).not.toBeNull();
-		const ev = next.resolutionLog.find((e) => e.type === 'vanguard-relocate');
+	test('the move is recorded in the log for narration', () => {
+		const { state, mover, frame } = firstSendState('swift-log-seed');
+		const recordId = state.board[frame.sites[0].id][mover][0].recordId;
+		const next = moveSwift(state, mover, recordId, frame.sites[1].id);
+		const ev = next.resolutionLog.find((e) => e.type === 'swift-move');
 		expect(ev).toBeTruthy();
-		expect(ev.handler).toBe(starter);
-		expect(ev.fromSite).toBe(frame.sites[0].id);
-		expect(ev.toSite).toBe(frame.sites[1].id);
+		expect(ev.recordId).toBe(recordId);
+		expect(ev.from).toBe(frame.sites[0].id);
+		expect(ev.to).toBe(frame.sites[1].id);
 	});
 });
 
@@ -1151,15 +1204,37 @@ describe('rules ablation switches', () => {
 		});
 	}
 
-	it('defaults to every rule on when createMatch is called without a rules object', () => {
+	it('defaults to every rule on and every lever at its first setting', () => {
 		const state = freshMatch();
 		expect(state.rules).toEqual({
 			hiddenSends: true,
 			lokiLine: true,
 			trailingBonus: ROSTER_TRAILING_BONUS,
-			initiative: true,
-			disabledActs: [],
+			speed: true,
+			hiddenFirst: true,
+			roles: { sweep: true, bolster: true, shield: true },
+			holdFloor: HOLD_FLOOR,
+			holdCeiling: HOLD_CEILING,
+			magnitudeScale: MAGNITUDE_SCALE,
+			sweepDiscount: SWEEP_DISCOUNT,
+			bolsterFloor: BOLSTER_FLOOR,
+			armoredReduction: ARMORED_REDUCTION,
+			shieldCap: SHIELD_CAP,
+			// Pass 2's attribute jobs (assumptions 17 to 20)
+			willful: true,
+			willfulThreshold: WILLFUL_THRESHOLD,
+			presenceScale: true,
+			instinctLanes: true,
+			keenInstinct: KEEN_INSTINCT,
+			dullInstinct: DULL_INSTINCT,
+			swiftMove: true,
+			swiftSpeed: SWIFT_SPEED,
+			hurtAttacksLess: true,
+			bolsterRecovery: BOLSTER_RECOVERY,
 		});
+		// assumption 20 cut the catch-up send, so the shipped default is zero
+		expect(state.rules.trailingBonus).toBe(0);
+		expect(state.rules).toEqual(DEFAULT_RULES);
 	});
 
 	it('merges a partial rules object over the defaults', () => {
@@ -1170,10 +1245,11 @@ describe('rules ablation switches', () => {
 	});
 
 	it('exposes the rules object through getPublicState so the bot can respect it', () => {
-		const state = matchWithRules({ hiddenSends: false, disabledActs: ['ward'] });
+		const state = matchWithRules({ hiddenSends: false, roles: { sweep: false }, magnitudeScale: 2 });
 		const view = getPublicState(state, 'A');
 		expect(view.rules.hiddenSends).toBe(false);
-		expect(view.rules.disabledActs).toEqual(['ward']);
+		expect(view.rules.roles).toEqual({ sweep: false, bolster: true, shield: true });
+		expect(view.rules.magnitudeScale).toBe(2);
 	});
 
 	it('hiddenSends false makes a hidden send illegal even for a stealthy creature', () => {
@@ -1193,26 +1269,7 @@ describe('rules ablation switches', () => {
 		expect(send(state, handler, `${handler}_0`, site, true)).not.toBeNull();
 	});
 
-	it('disabledActs makes the named act illegal in order() while hold stays legal', () => {
-		let state = matchWithRules({ disabledActs: ['strike'] });
-		// both sides send one creature so there is something to order
-		state = send(state, state.turn, `${state.turn}_0`, currentFrame(state).sites[0].id, false);
-		state = send(state, state.turn, `${state.turn}_0`, currentFrame(state).sites[0].id, false);
-		state = pass(state, state.turn);
-		state = pass(state, state.turn);
-		expect(state.phase).toBe('orders');
-		expect(order(state, 'A', 'A_0', 'strike')).toBeNull();
-		expect(order(state, 'A', 'A_0', 'hold')).not.toBeNull();
-	});
 
-	it('disabledActs empty (the default) leaves every act orderable', () => {
-		let state = matchWithRules({});
-		state = send(state, state.turn, `${state.turn}_0`, currentFrame(state).sites[0].id, false);
-		state = send(state, state.turn, `${state.turn}_0`, currentFrame(state).sites[0].id, false);
-		state = pass(state, state.turn);
-		state = pass(state, state.turn);
-		expect(order(state, 'A', 'A_0', 'strike')).not.toBeNull();
-	});
 
 	// the Loki line and the trailing bonus both fire at Judge, so both need a whole round
 	// played out. playOneRound sends `count` creatures per side at the given site indices
@@ -1223,7 +1280,10 @@ describe('rules ablation switches', () => {
 		let next = state;
 		let sentA = 0;
 		let sentB = 0;
-		while (next.phase === 'deploy') {
+		const frameIndex = next.frameIndex;
+		// the second pass resolves and judges, reopening 'deploy' on the NEXT frame, so
+		// the loop has to stop when the frame moves rather than on the phase alone
+		while (next.phase === 'deploy' && next.frameIndex === frameIndex) {
 			const handler = next.turn;
 			if (handler === null) {
 				break;
@@ -1242,8 +1302,6 @@ describe('rules ablation switches', () => {
 				next = pass(next, handler);
 			}
 		}
-		next = commitOrders(next, 'A');
-		next = commitOrders(next, 'B');
 		return next;
 	}
 
@@ -1281,7 +1339,7 @@ describe('rules ablation switches', () => {
 		expect(after.trailingBonus).toEqual({ A: 0, B: 0 });
 	});
 
-	it('initiative false resolves in sent order regardless of reflex and agility', () => {
+	it('the speed ablation resolves in sent order regardless of reflex and agility', () => {
 		// two creatures on one side, the LATER-sent one far faster: with initiative on it
 		// acts first, with initiative off the earlier-sent one does.
 		function speedRoster(prefix) {
@@ -1304,15 +1362,246 @@ describe('rules ablation switches', () => {
 			state = send(state, 'A', 'A_1', site, false);
 			state = pass(state, 'B');
 			state = pass(state, 'A');
-			state = order(state, 'A', 'A_0', 'strike') || state;
-			state = order(state, 'A', 'A_1', 'strike') || state;
-			state = order(state, 'B', 'B_0', 'hold') || state;
-			state = commitOrders(state, 'A');
-			state = commitOrders(state, 'B');
 			const acts = state.resolutionLog.filter((e) => e.type !== 'judge' && (e.recordId === 'A_0' || e.recordId === 'A_1'));
 			return acts.length > 0 ? acts[0].recordId : null;
 		}
-		expect(firstActorOf({ initiative: true })).toBe('A_1');
-		expect(firstActorOf({ initiative: false })).toBe('A_0');
+		expect(firstActorOf({ speed: true })).toBe('A_1');
+		expect(firstActorOf({ speed: false })).toBe('A_0');
+	});
+});
+
+/*
+	Pass 2's engine rules (docs/design/reclamation-base-redesign.md assumptions 17 to 20):
+	a hurt creature attacks for less, a bolster recovers damage at the Ruling, instinct
+	picks the target, and charisma prices both presences. One test per rule, each run
+	against its own ablation so the test says what the rule does rather than only that it
+	does something.
+*/
+describe('Pass 2: the attribute rules', () => {
+	const midStriker = (id, over = {}) => makeRecord(id, {
+		archetype: { key: 'predator', favors: [] },
+		abilities: [{ name: 'Jab', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 40 }],
+		attributes: {
+			strength: 50, vitality: 60, endurance: 70, agility: 50, reflex: 50,
+			intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60,
+			...(over.attributes || {}),
+		},
+		...over,
+	});
+	// speed 20: always attacks after the mid striker's 50
+	const slowStriker = (id) => midStriker(id, { attributes: { agility: 20, reflex: 20 } });
+
+	function deployAt(listA, listB, seed, rules, siteIndex = 0) {
+		const worlds = makeWorlds();
+		const rosterA = makeRoster('A').map((r, i) => (i < listA.length ? { ...listA[i](`A_${i}`), id: `A_${i}` } : r));
+		const rosterB = makeRoster('B').map((r, i) => (i < listB.length ? { ...listB[i](`B_${i}`), id: `B_${i}` } : r));
+		let state = createMatch({ rosterA, rosterB, worlds, seed, rules });
+		state = state.starter === 'A' ? state : { ...state, starter: 'A', turn: 'A' };
+		const frame = currentFrame(state);
+		let sentA = 0;
+		let sentB = 0;
+		let guard = 0;
+		while (state.phase === 'deploy' && state.frameIndex === 0 && guard < 40) {
+			guard++;
+			const handler = state.turn;
+			if (handler === null) {
+				break;
+			}
+			const sent = handler === 'A' ? sentA : sentB;
+			const list = handler === 'A' ? listA : listB;
+			if (sent < list.length) {
+				state = send(state, handler, `${handler}_${sent}`, frame.sites[siteIndex].id);
+				if (handler === 'A') {
+					sentA++;
+				} else {
+					sentB++;
+				}
+			} else {
+				state = pass(state, handler);
+			}
+		}
+		return state;
+	}
+
+	const attacksOf = (state, id) => state.resolutionLog.filter((e) => e.type === 'attack' && e.recordId === id);
+	const judgedRow = (state, id) => {
+		const judged = state.resolutionLog.find((e) => e.type === 'judge');
+		return Object.values(judged.siteResults)
+			.flatMap((r) => [...r.entries.A, ...r.entries.B])
+			.find((e) => e.recordId === id);
+	};
+
+	test('a hurt creature attacks for less, in proportion to the hold it has left (assumption 18)', () => {
+		const seed = 'hurt-attacks-less-seed';
+		const on = deployAt([slowStriker], [midStriker], seed);
+		const off = deployAt([slowStriker], [midStriker], seed, { hurtAttacksLess: false });
+
+		// B_0 is faster, so it lands first and A_0 answers already hurt
+		const hurtAnswer = attacksOf(on, 'A_0')[0];
+		const fullAnswer = attacksOf(off, 'A_0')[0];
+		expect(hurtAnswer.outcome).not.toBe('lapsed');
+		expect(hurtAnswer.power).toBeLessThan(fullAnswer.power);
+
+		// the scale is exactly the share of its hold A_0 had left when it attacked, which is
+		// what B_0's blow took off it (the same blow in both runs, since B_0 was untouched)
+		const openingBlow = attacksOf(off, 'B_0')[0];
+		const row = judgedRow(off, 'A_0');
+		const factor = (row.fullHold - openingBlow.power) / row.fullHold;
+		expect(hurtAnswer.power).toBeCloseTo(Math.round(fullAnswer.power * factor * 10) / 10, 5);
+	});
+
+	test('a bolster recovers half the damage its allies took, logged before the judge (assumption 19)', () => {
+		const bolsterer = (id) => makeRecord(id, {
+			archetype: { key: 'sage', favors: [] },
+			abilities: [{ name: 'Steady', signature: false, instrument: 'voice', action: 'mend', medium: 'fire', intensity: 60 }],
+			attributes: {
+				strength: 50, vitality: 60, endurance: 70, agility: 50, reflex: 50,
+				intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60,
+			},
+		});
+		const seed = 'bolster-recovery-seed';
+		const on = deployAt([bolsterer, slowStriker], [midStriker], seed);
+		const off = deployAt([bolsterer, slowStriker], [midStriker], seed, { bolsterRecovery: 0 });
+
+		const recovered = on.resolutionLog.filter((e) => e.type === 'recover');
+		expect(recovered.length).toBeGreaterThan(0);
+		expect(off.resolutionLog.filter((e) => e.type === 'recover').length).toBe(0);
+
+		const ev = recovered[0];
+		expect(ev.bolster).toBe('A_0');
+		expect(typeof ev.site).toBe('string');
+		expect(ev.amount).toBeGreaterThan(0);
+
+		// every recover event precedes the judge event, so the Ruling can be told in order
+		const judgeIndex = on.resolutionLog.findIndex((e) => e.type === 'judge');
+		recovered.forEach((r) => {
+			expect(on.resolutionLog.indexOf(r)).toBeLessThan(judgeIndex);
+		});
+
+		// half of what the round took off it, at a charisma-50 bolsterer's scale of 1
+		const damagedOff = judgedRow(off, ev.recordId);
+		const damagedOn = judgedRow(on, ev.recordId);
+		expect(ev.amount).toBeCloseTo(Math.round(damagedOff.damage * 0.5 * 10) / 10, 5);
+		expect(damagedOn.hold).toBeGreaterThan(damagedOff.hold);
+		expect(ev.remaining).toBeCloseTo(damagedOn.hold, 5);
+	});
+
+	test('keen instinct takes the enemy it can down, over its archetype line (assumption 17)', () => {
+		// a juggernaut's conduct line is "strongest enemy here", so a keen creature that
+		// ignores it for the enemy it can down proves the lane is the thing deciding
+		const keen = (id) => makeRecord(id, {
+			archetype: { key: 'juggernaut', favors: [] },
+			abilities: [{ name: 'Smash', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 100 }],
+			attributes: {
+				strength: 100, vitality: 60, endurance: 70, agility: 50, reflex: 50,
+				intelligence: 50, willpower: 50, instinct: 90, charisma: 50, resilience: 60,
+			},
+		});
+		const tough = (id) => midStriker(id, { attributes: { vitality: 99, endurance: 99, resilience: 99, agility: 10, reflex: 10 } });
+		const frail = (id) => midStriker(id, { attributes: { vitality: 1, endurance: 1, resilience: 1, agility: 10, reflex: 10 } });
+
+		const seed = 'keen-instinct-seed';
+		const on = deployAt([keen], [tough, frail], seed);
+		const off = deployAt([keen], [tough, frail], seed, { instinctLanes: false });
+		expect(attacksOf(on, 'A_0')[0].target).toBe('B_1');
+		expect(attacksOf(off, 'A_0')[0].target).toBe('B_0');
+	});
+
+	test('dull instinct hits whatever was sent earliest, over its archetype line', () => {
+		// a predator's line is "weakest enemy here"; the dull creature takes the first sent
+		const dull = (id) => makeRecord(id, {
+			archetype: { key: 'predator', favors: [] },
+			abilities: [{ name: 'Jab', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 40 }],
+			attributes: {
+				strength: 50, vitality: 60, endurance: 70, agility: 50, reflex: 50,
+				intelligence: 50, willpower: 50, instinct: 10, charisma: 50, resilience: 60,
+			},
+		});
+		const tough = (id) => midStriker(id, { attributes: { vitality: 95, endurance: 95, resilience: 95, agility: 10, reflex: 10 } });
+		const frail = (id) => midStriker(id, { attributes: { vitality: 30, endurance: 30, resilience: 30, agility: 10, reflex: 10 } });
+
+		const seed = 'dull-instinct-seed';
+		const on = deployAt([dull], [tough, frail], seed);
+		const off = deployAt([dull], [tough, frail], seed, { instinctLanes: false });
+		expect(attacksOf(on, 'A_0')[0].target).toBe('B_0');
+		expect(attacksOf(off, 'A_0')[0].target).toBe('B_1');
+	});
+
+	test('charisma scales what a bolster restores', () => {
+		const bolsterWith = (charisma) => (id) => makeRecord(id, {
+			archetype: { key: 'sage', favors: [] },
+			abilities: [{ name: 'Steady', signature: false, instrument: 'voice', action: 'mend', medium: 'fire', intensity: 60 }],
+			attributes: {
+				strength: 50, vitality: 60, endurance: 70, agility: 50, reflex: 50,
+				intelligence: 50, willpower: 50, instinct: 50, charisma, resilience: 60,
+			},
+		});
+		const seed = 'bolster-charisma-seed';
+		const charming = deployAt([bolsterWith(100), slowStriker], [midStriker], seed);
+		const charmless = deployAt([bolsterWith(0), slowStriker], [midStriker], seed);
+		// every creature here is comfortable, so the lift is the scaled floor: 1.5 against 0.5
+		const lift = (state) => judgedRow(state, 'A_1').fullHold;
+		expect(lift(charming) - lift(charmless)).toBeCloseTo(BOLSTER_FLOOR * 1.5 - BOLSTER_FLOOR * 0.5, 5);
+	});
+
+	test('charisma scales what a shield cancels, and shieldCap half still takes half of it', () => {
+		const shieldWith = (charisma) => (id) => makeRecord(id, {
+			archetype: { key: 'bulwark', favors: [] },
+			abilities: [{ name: 'Guard', signature: false, instrument: 'body', action: 'ward', medium: 'fire', intensity: 60 }],
+			attributes: {
+				strength: 50, vitality: 60, endurance: 70, agility: 50, reflex: 50,
+				intelligence: 50, willpower: 50, instinct: 50, charisma, resilience: 60,
+			},
+		});
+		const seed = 'shield-charisma-seed';
+		const charming = deployAt([shieldWith(100), slowStriker], [midStriker], seed);
+		const charmless = deployAt([shieldWith(0), slowStriker], [midStriker], seed);
+
+		const shieldOf = (state) => state.resolutionLog.find((e) => e.type === 'shield');
+		// charisma 100 gives a scale of 1.5, clamped to the whole attack
+		expect(shieldOf(charming).fraction).toBe(1);
+		// charisma 0 gives 0.5, so half the attack still lands
+		expect(shieldOf(charmless).fraction).toBeCloseTo(0.5, 5);
+		expect(charmless.resolutionLog.some((e) => e.type === 'attack' && e.recordId === 'B_0' && e.outcome !== 'cancelled')).toBe(true);
+		expect(charming.resolutionLog.some((e) => e.type === 'attack' && e.recordId === 'B_0' && e.outcome === 'cancelled')).toBe(true);
+
+		// 'half' semantics are unchanged: the shielder wears half of what it CANCELS
+		expect(shieldOf(charmless).selfDamage).toBeCloseTo(Math.round((shieldOf(charmless).amount / 2) * 10) / 10, 5);
+	});
+
+	test('the public vocabulary is attack, power, hurt, downed, sweep and speed', () => {
+		const bigStriker = (id) => makeRecord(id, {
+			archetype: { key: 'predator', favors: [] },
+			abilities: [{ name: 'Smash', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 100 }],
+			attributes: {
+				strength: 100, vitality: 60, endurance: 70, agility: 50, reflex: 50,
+				intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60,
+			},
+		});
+		const frail = (id) => midStriker(id, { attributes: { vitality: 1, endurance: 1, resilience: 1, agility: 10, reflex: 10 } });
+		const state = deployAt([bigStriker], [frail], 'vocabulary-seed');
+
+		const attack = state.resolutionLog.find((e) => e.type === 'attack');
+		expect(attack).toBeTruthy();
+		expect(typeof attack.power).toBe('number');
+		expect(attack.amount).toBeUndefined();
+		expect(state.resolutionLog.some((e) => e.type === 'blow')).toBe(false);
+		expect(['downed', 'hurt', 'cancelled', 'no-target', 'lapsed']).toContain(attack.outcome);
+		expect(state.resolutionLog.some((e) => e.outcome === 'routed' || e.outcome === 'staggered')).toBe(false);
+		// the frail creature was driven to zero, so the player's list of the fallen is `downed`
+		expect(state.players.B.downed).toContain('B_0');
+		expect(state.players.B.routed).toBeUndefined();
+	});
+
+	test('the public board row carries hurt, downed and speed', () => {
+		let state = freshMatch('vocabulary-board-seed');
+		const frame = currentFrame(state);
+		const seat = state.turn;
+		state = send(state, seat, state.players[seat].roster[0].id, frame.sites[0].id);
+		const row = getPublicState(state, seat).board[frame.sites[0].id][seat][0];
+		expect(row.hurt).toBe(false);
+		expect(row.downed).toBe(false);
+		expect(typeof row.speed).toBe('number');
+		expect(row.staggered).toBeUndefined();
 	});
 });

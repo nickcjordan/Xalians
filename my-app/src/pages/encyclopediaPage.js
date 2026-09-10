@@ -1,3 +1,4 @@
+// Tier: chrome. Reference reading -- browses and searches the archive, no play surface.
 import React, { useEffect, useRef } from 'react';
 import { Switch, Route, Redirect, useRouteMatch, useLocation, useParams } from 'react-router-dom';
 import * as lore from '../lore';
@@ -12,6 +13,7 @@ import SpeciesView from '../components/encyclopedia/SpeciesView';
 import Powers from '../components/encyclopedia/Powers';
 import Index from '../components/encyclopedia/Index';
 import EntryView from '../components/encyclopedia/EntryView';
+import { EmptyState } from '@/components/system/record';
 
 /**
  * Retired-route redirects: First Survey, Chronicle and Read collapsed into
@@ -40,7 +42,6 @@ function RedirectTour() {
     return <Redirect to={lore.routeFor('story')} />;
 }
 
-// Terminal: archive. Poseidas is the neutral seat of science and arbitration; the encyclopedia is a reading desk in its Deep Archive, paper under a lamp.
 /**
  * ENCYCLOPEDIA XALIA - the Generator's archive.
  *
@@ -128,7 +129,7 @@ export default function EncyclopediaPage() {
     }, [location.pathname, location.hash]);
 
     return (
-        <div className="g-console enc-console" data-terminal="archive">
+        <main className="min-h-screen bg-room font-body text-ink" data-tier="chrome">
             <XalianNavbar />
             <EncyclopediaShell>
                 <Switch>
@@ -150,9 +151,9 @@ export default function EncyclopediaPage() {
                     <Route exact path={`${path}/chronicle/:era`}><RedirectToEra /></Route>
                     <Route exact path={`${path}/read`}><RedirectToStory /></Route>
                     <Route exact path={`${path}/read/:era`}><RedirectToEra /></Route>
-                    <Route><p className="g-empty">No record at this address.</p></Route>
+                    <Route><EmptyState legend="Not found">No record at this address.</EmptyState></Route>
                 </Switch>
             </EncyclopediaShell>
-        </div>
+        </main>
     );
 }

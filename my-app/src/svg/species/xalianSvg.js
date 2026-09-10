@@ -1,5 +1,4 @@
-import React, { useRef } from 'react';
-import SVG from 'react-inlinesvg';
+import React from 'react';
 
 import { ReactComponent as XylumSVG } from './xylum.svg';
 import { ReactComponent as DromeusSVG } from './dromeus.svg';
@@ -78,19 +77,12 @@ class XalianSVG extends React.Component {
         if (speciesName == 'hypnopet') { return <HypnopetSVG style={this.props.style} className={this.props.className} /> }
         if (speciesName == 'drilltail') { return <DrilltailSVG style={this.props.style} className={this.props.className} /> }
         else {
-            let elem = null;
-            try {
-                elem = require(`./${this.props.name}.svg`).default;
-            } catch (error) {
-                console.log(`No SVG found for species "${this.props.name}"`, error.message);
-                return null;
-            }
-                    return (<React.Fragment>
-            {elem &&
-                <SVG src={elem} onError={(error) => console.log(error.message)} style={this.props.style} className={this.props.className}/>
-            }
-        </React.Fragment>
-        )}
+            // Every canon species has a static import above. A name that is
+            // not one of them has no art; render nothing rather than reach
+            // for a bundler-time require that Vite cannot resolve.
+            console.warn(`No SVG found for species "${this.props.name}"`);
+            return null;
+        }
     }
 }
 

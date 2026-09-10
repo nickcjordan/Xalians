@@ -2,29 +2,34 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * Enforces the three structural rules of the v3 design system, "one relay,
- * many terminals" (docs/DESIGN_SYSTEM.md):
+ * Enforces the structural rules of the design system across both layers it
+ * currently carries — version 3 ("one relay, many terminals") and version 4
+ * ("one site, featured components, immersive experiences",
+ * docs/DESIGN_SYSTEM.md):
  *
- *  1. Every page under src/pages/ sets data-terminal explicitly, so an
- *     unmigrated page cannot silently ship with no material at all.
+ *  1. Every page under src/pages/ classifies itself: either the v3
+ *     `data-terminal=` (unmigrated) or the v4 `data-tier=` (migrated,
+ *     docs/DESIGN_SYSTEM.md section 10). A page with neither fails.
  *  2. Every [data-terminal="x"] block in system.css has a matching terminal
- *     rendered on /styleguide, so the living reference cannot drift from the
- *     CSS.
- *  3. No raw hex leaks into CSS outside system.css's :root/[data-terminal]
+ *     rendered on /styleguide, so the living v3 reference cannot drift from
+ *     the CSS.
+ *  3. Every component in V4_COMPONENTS is rendered somewhere on
+ *     /styleguide, so the living v4 reference cannot drift either.
+ *  4. No raw hex leaks into CSS outside system.css's :root/[data-terminal]
  *     blocks (checked by designTokens.test.js) or, for the legacy files,
  *     grows past today's count — they are meant to shrink as pages migrate,
  *     never grow.
  *
  * This is deliberately not green because every page under src/pages/ has
- * migrated — it isn't, not yet. MIGRATION_PENDING lists are the explicit,
- * shrinking allowlist that keeps the suite passing at each commit; other
- * agents remove entries from them as they migrate a page.
+ * migrated to v4 — it isn't, not yet. MIGRATION_PENDING lists are the
+ * explicit, shrinking allowlist that keeps the suite passing at each commit;
+ * other agents remove entries from them as they migrate a page.
  */
 
 const PAGES_DIR = path.join(__dirname, '..', 'pages');
-const SYSTEM_PATH = path.join(__dirname, '..', '..', 'public', 'assets', 'css', 'system.css');
-const CSS_DIR = path.join(__dirname, '..', '..', 'public', 'assets', 'css');
-const STYLEGUIDE_PATH = path.join(PAGES_DIR, 'styleGuidePage.js');
+const SYSTEM_PATH = path.join(__dirname, '..', '..', 'public', 'assets', 'css', 'legacy', 'system.css');
+const CSS_DIR = path.join(__dirname, '..', '..', 'public', 'assets', 'css', 'legacy');
+const STYLEGUIDE_PATH = path.join(PAGES_DIR, 'styleGuidePage.tsx');
 
 /** Every *.js under src/pages/, recursively, with paths relative to src/pages/. */
 const listPageFiles = (dir, base) => {
@@ -55,12 +60,22 @@ const DEAD_PAGES = ['games/baseGamePage.js'];
 const MIGRATION_PENDING = [];
 
 /**
- * Terminals that /styleguide does not yet render a `data-terminal="x"`
- * section for. Starts with all five new terminals, since the styleguide's
- * migration to v3 is owned by a separate agent. Remove an entry here in the
- * same change that adds that terminal's section to styleGuidePage.js.
+ * Version 4 component modules that must each be imported somewhere on
+ * /styleguide (docs/DESIGN_SYSTEM.md section 10, "the reference an agent
+ * checks before building anything"). Checked as a literal import-path
+ * substring against the page source, the same way STYLEGUIDE_MIGRATION_PENDING
+ * checks a terminal.
  */
-const STYLEGUIDE_MIGRATION_PENDING = [];
+const V4_IMPORTS = [
+	'@/components/ui/button',
+	'@/components/ui/badge',
+	'@/components/ui/card',
+	'@/components/ui/tabs',
+	'@/components/ui/dialog',
+	'@/components/system/brand',
+	'@/components/system/record',
+	'@/components/system/masthead',
+];
 
 /**
  * Today's raw-hex count in each legacy CSS file (docs/DESIGN_SYSTEM.md
@@ -76,7 +91,6 @@ const LEGACY_HEX_BASELINE = {
 	'duel.css': 1,
 	'duel-playground.css': 11,
 	'tokens.css': 29,
-	'encyclopedia.css': 0,
 	'reclamation.css': 0,
 	'typeColors.css': 0,
 };
@@ -89,7 +103,7 @@ const countHex = (css) => {
 
 describe('design system structure', () => {
 
-	describe('every page sets a terminal', () => {
+	describe('every page classifies itself (data-terminal or data-tier)', () => {
 		const allPages = listPageFiles(PAGES_DIR).filter((p) => !DEAD_PAGES.includes(p));
 
 		it('MIGRATION_PENDING only lists real page files', () => {
@@ -102,21 +116,38 @@ describe('design system structure', () => {
 			const pending = MIGRATION_PENDING.includes(relPath);
 			const label = pending ? `${relPath} (MIGRATION_PENDING)` : relPath;
 
-			it(`${label} contains data-terminal=`, () => {
+			it(`${label} contains data-terminal= or data-tier=`, () => {
 				const source = fs.readFileSync(path.join(PAGES_DIR, relPath), 'utf8');
 				const hasTerminal = /data-terminal=/.test(source);
+				const hasTier = /data-tier=/.test(source);
 				if (pending) {
 					// Not yet migrated: must NOT have data-terminal, so an entry is
 					// removed from MIGRATION_PENDING the moment it is no longer true.
 					expect(hasTerminal).toBe(false);
 				} else {
-					expect(hasTerminal).toBe(true);
+					expect(hasTerminal || hasTier).toBe(true);
 				}
 			});
 		});
 	});
 
-	describe('styleguide renders every terminal', () => {
+	describe('styleguide renders every v4 component', () => {
+		const styleguideSource = fs.readFileSync(STYLEGUIDE_PATH, 'utf8');
+
+		V4_IMPORTS.forEach((name) => {
+			it(`styleGuidePage.tsx imports ${name}`, () => {
+				expect(styleguideSource.includes(name)).toBe(true);
+			});
+		});
+	});
+
+	describe('styleguide is version 4 only', () => {
+		// /styleguide retired its v3 terminal reference (docs/DESIGN_SYSTEM.md
+		// "Version 4 was ruled by Nick on 2026-09-08 and 2026-09-09"); the five
+		// [data-terminal] blocks below still live in system.css because the
+		// remaining immersive experiences (duel board/playground, Reclamation,
+		// training games, Long Return) still read them, but /styleguide itself
+		// must not reference any of them any more.
 		const css = fs.readFileSync(SYSTEM_PATH, 'utf8');
 		const cssTerminals = Array.from(
 			new Set(Array.from(css.matchAll(/\[data-terminal=(['"])([a-z]+)\1\]/g)).map((m) => m[2]))
@@ -127,18 +158,8 @@ describe('design system structure', () => {
 			expect(cssTerminals).toEqual(['archive', 'field', 'readout', 'registry', 'relay']);
 		});
 
-		cssTerminals.forEach((name) => {
-			const pending = STYLEGUIDE_MIGRATION_PENDING.includes(name);
-			const label = pending ? `${name} (STYLEGUIDE_MIGRATION_PENDING)` : name;
-
-			it(`styleGuidePage.js renders data-terminal="${label}"`, () => {
-				const hasSection = styleguideSource.includes(`data-terminal="${name}"`) || styleguideSource.includes(`data-terminal='${name}'`);
-				if (pending) {
-					expect(hasSection).toBe(false);
-				} else {
-					expect(hasSection).toBe(true);
-				}
-			});
+		it('styleGuidePage.js contains no data-terminal=', () => {
+			expect(/data-terminal=/.test(styleguideSource)).toBe(false);
 		});
 	});
 

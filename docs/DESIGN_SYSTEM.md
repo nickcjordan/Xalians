@@ -4,7 +4,7 @@
 
 Version 4 was ruled by Nick on 2026-09-08 and 2026-09-09 after the version 3 "one relay, many terminals" release was judged cheesy: every page had become a prop (cases, counters, desks, tape, screws, stamps, fake readouts, in-world button copy) and the site read as cosplay. Version 4 keeps what version 3 got right (one room, one type system, one frame, element hues as the only saturated color, tokens mirrored in CSS and JavaScript with tests) and removes the props. The world lives in the content. The interface stays quiet so the content can be loud.
 
-**Implementation state (2026-09-09): this document is the ratified contract. The code still implements version 3.** `system.css` still has the terminal material blocks and the terminal furniture, and pages still set `data-terminal`. Section 11 lists the migration in order. Until a page is migrated it stays as it is; do not half-apply version 4 to a version 3 page.
+**Implementation state (2026-09-09): steps 1 and 2 of the migration have landed.** The v4 token layer, the restyled primitives, the new components and the brand pieces are in `system.css`, and every chrome page (navbar, home, account, user details, encyclopedia, generator, duel setup, training menu, styleguide) sets `data-tier="chrome"`. The version 3 terminal blocks and furniture classes are still in `system.css` only because the immersive experiences (duel board and playground, Reclamation, the training games, Long Return) still use them; they are deleted as each immersive brief lands. Do not use a version 3 class on a chrome page.
 
 ## 1. The three tiers
 
@@ -132,7 +132,7 @@ The version 3 faces (Barlow Condensed, Barlow, IBM Plex Mono, Special Elite and 
 - **Space** is a 4 point scale: 4, 8, 12, 16, 24, 32, 48, 64 (`--g-1` to `--g-8`).
 - **Corners are square.** No radius anywhere except dots and toggles. Ruled 2026-09-09.
 - **The chamfer is the signature shape**, reserved for emphasis: a twelve pixel cut at top left and bottom right on the **glass tier** (live data), and an eight pixel cut on the **one primary key** per screen. Nothing else is cut. The cut echoes the logo's corners, and because it is rare it marks what is live and what is next. It is drawn as two clipped layers (an edge-colored layer and a one pixel inset surface layer) so the hairline follows the contour; `.g-glass` and `.g-key--primary` carry this and nothing else needs to.
-- **Depth is low.** Surfaces are told apart by tone and a hairline edge with one inset top highlight. Levels: page (`--g-room`), 0, 1, 2, glass, floating. Drop shadows exist only on things that float over the page: modal, drawer, popover, toast, menu.
+- **Depth is low.** Surfaces are told apart by tone and a hairline edge with one inset top highlight. Levels: page (`--g-room`), 0, 1, 2, glass, floating. Drop shadows exist only on things that float over the page: modal, drawer, popover, toast, menu, search results. The one shadow they cast is `--g-shadow-float`; no page CSS writes a literal shadow.
 - The room keeps a very faint grain and edge vignette. It is not a flat fill.
 
 ## 6. Controls and states
@@ -148,13 +148,13 @@ Four ranks of button, five states each. Focus is always a two pixel ring in `--g
 
 Destructive is an outline at rest so a page with a delete button does not shout; it fills only when the person is already reaching for it. Solid Plague at rest belongs only inside a confirmation dialog.
 
-Inputs: `--g-s0` fill, `--g-edge-strong` border; hover brightens the border; focus is the ring; error is a `--g-plague` border on `--g-plague-tint` with a message that says what is wrong and how to fix it. Segmented control, toggle, checkbox and range follow the same fills and states.
+Inputs: `--g-s0` fill, `--g-edge-strong` border; hover brightens the border; focus is the ring; error is a `--g-plague` border on `--g-plague-tint` with a message that says what is wrong and how to fix it. Segmented control, toggle, checkbox and range follow the same fills and states. A pressed segment is a selected filter, not the forward action: it sits on `--g-s0` with a 2px `--g-viable` underline, the same mark the tabs use, never an accent fill (ruled 2026-09-09; filter rows were drawing more accent than the primary).
 
 **Chips are content, badges are state.** A chip carries an element hue and names an element. A badge carries a status color and names a state, in the world's own words: a Xalian is kept, released or unclaimed; a match is won, lost or abandoned. Never "draft", "pending" or other ticketing vocabulary.
 
 **Loading is the helix spinner, never a skeleton.** The DNA mark with its strands at low opacity and its six rungs lighting in sequence from top to bottom, in three sizes (20, 32, 56). Under reduced motion it holds a still frame at 70 percent. Skeleton screens are banned site-wide (ruled 2026-09-08: they read as software-as-a-service and people are tired of them).
 
-Empty states are a dashed hairline box with a legend line and one sentence that says what to do. Toasts are level 2 with a strong edge, a status dot, and one sentence.
+Empty states are a solid hairline box on `--g-s0` with a legend line and one sentence that says what to do (dashed borders retired 2026-09-09; they read as a drop target). Toasts are level 2 with a strong edge, a status dot, and one sentence.
 
 ## 7. Motion
 
@@ -182,28 +182,31 @@ Empty states are a dashed hairline box with a legend line and one sentence that 
 
 ## 10. Where things live
 
+The vehicle changed on 2026-09-09 (Nick: strip all Bootstrap; shadcn on Tailwind 4 with Lucide). `docs/design/frontend-stack-migration.md` is the contract for the build; this section is the map.
+
 | File | Role |
 |---|---|
-| `my-app/public/assets/css/system.css` | **The design system.** Primitive tokens in `:root`, semantic aliases, every `.g-*` component with its states. After migration there are no `[data-terminal]` blocks. |
-| `my-app/src/constants/designTokens.js` | The JavaScript half of the palette for recharts, GSAP and SVG. Mirrors every primitive. |
-| `my-app/src/constants/colorConstants.js` | The element hues as the game code reads them. Must equal `--g-el-*`. |
-| `my-app/src/__tests__/designTokens.test.js` | Fails if CSS and JavaScript palettes disagree. |
-| `my-app/src/__tests__/designSystem.test.js` | Fails if a page is unclassified, if the styleguide is missing a component, or if raw hex is added to CSS outside `system.css`. Retargeted from `data-terminal` to `data-tier` in the migration. |
-| `my-app/public/assets/css/pages/*.css` | One file per page or area for compositions specific to it. No colors; everything reads a token. |
-| `my-app/public/assets/css/style.css`, `encyclopedia.css`, `reclamation.css`, `duel*.css`, `tokens.css` | Legacy. Shrinking. Never add to them. |
-| `my-app/src/pages/styleGuidePage.js` | `/styleguide`: every token, every component in every state, the spinner, the lockup. The reference an agent checks before building anything. |
+| `my-app/src/styles/tokens.css` | **The tokens**, as the Tailwind theme. The only file in the app holding a raw color, font name or size: the room and surfaces, edges, ink, the viable signal, status, the 14 element hues, the four faces, the type scale, radius 0, the one float shadow, the breakpoints. |
+| `my-app/src/styles/globals.css` | The semantic layer over the tokens: shadcn's variables mapped onto the contract, the `el-*` element scope, the chamfer and cut utilities, the `type-*` roles, the helix strokes and keyframes. No values, only references. |
+| `my-app/src/constants/designTokens.js`, `colorConstants.js` | The JavaScript half of the palette for recharts, GSAP and SVG. Must equal the tokens. |
+| `my-app/src/__tests__/tokens.test.js` | Fails if `tokens.css` and `designTokens.js` disagree, or if any other stylesheet under `src` carries a raw hex. |
+| `my-app/src/components/ui/*.tsx` | shadcn components restyled to the contract: button ranks, chips and badges, cards, inputs, tabs, overlays, data pieces. Add one with `npx shadcn@latest add <name>` and restyle it here. |
+| `my-app/src/components/system/*.tsx` | House components: Shell, Masthead, SectionHead, SpecPlate, RecordRow, Meter, MoveSet, EmptyState, Tile, HelixMark, HelixSpinner, BrandLockup. |
+| `my-app/src/pages/styleGuidePage.tsx` | `/styleguide`: every component in every state, the spinner, the lockup, rendered from the real code. The reference an agent checks before building anything. |
+| `my-app/src/__tests__/designSystem.test.js` | Fails if a page is unclassified (`data-tier` or the legacy `data-terminal`) or the style guide stops importing the system. |
+| `my-app/public/assets/css/legacy/*` | Legacy: the version 3 system (`system.css`), the old template (`style.css`), and the immersive pages' own stylesheets. Read only by the immersive pages until each gets its brief, which deletes its share. Never add a rule; never load on a chrome page. |
 | `docs/design/v4-foundations.html`, `docs/design/v4-chrome.html` | The ratified proposal pages. |
 | `docs/design/terminal-mockups.html` | Version 3, kept as the record of what was tried. |
 | `scripts/design/snap.js` | Screenshot harness: every route at desktop and phone with overflow and console-error checks. Run it before claiming visual work is done. |
 
-Page classification is declared on the page root: `<main className="g-page" data-tier="chrome">`, `data-tier="immersive"`, and a featured component declares `data-tier="featured"` on its own root. The test fails if a page has neither.
+Page classification is declared on the page root: `data-tier="chrome"`, `data-tier="immersive"`, and a featured component declares `data-tier="featured"` on its own root. The test fails if a page has neither this nor the legacy `data-terminal`.
 
 ## 11. Migration from version 3, in order
 
 Each step is one PR, verified by paint with `scripts/design/snap.js`, auto-merged.
 
-1. **Tokens and components.** Rewrite `system.css` to the version 4 primitives, semantic aliases and component set; remove every terminal material block and every piece of terminal furniture (`.g-case`, `.g-counter`, `.g-desk`, `.g-cover-plate`, `.g-tube`, `.g-standoff`, `.g-keybank`, `.g-tape`, `.g-asset-plate`, `.g-nameplate`, `.g-stamp`, `.g-clip`, `.g-pencil`, `.g-vfd`, `.g-crt`, `.g-ledger`, `.g-paper*`, `.g-plate--photo`, `.g-meter--ink`, `.g-readout-mode`). Update `designTokens.js`, `colorConstants.js`, both tests, the fonts in `index.html`. Rebuild `/styleguide`. Add the spinner and the lockup components.
-2. **Chrome pages.** Navbar and home (with the new lockup, the morph and the planet field replacing the stat tiles and equal destination cards), account, user details, encyclopedia, generator, duel setup, Reclamation lobby, training menu. Delete the terminal furniture and in-world copy from each. Set `data-tier`.
+1. **Done 2026-09-09 (PR: design/v4-migration).** Tokens and components. Rewrite `system.css` to the version 4 primitives, semantic aliases and component set; remove every terminal material block and every piece of terminal furniture (`.g-case`, `.g-counter`, `.g-desk`, `.g-cover-plate`, `.g-tube`, `.g-standoff`, `.g-keybank`, `.g-tape`, `.g-asset-plate`, `.g-nameplate`, `.g-stamp`, `.g-clip`, `.g-pencil`, `.g-vfd`, `.g-crt`, `.g-ledger`, `.g-paper*`, `.g-plate--photo`, `.g-meter--ink`, `.g-readout-mode`). Update `designTokens.js`, `colorConstants.js`, both tests, the fonts in `index.html`. Rebuild `/styleguide`. Add the spinner and the lockup components.
+2. **Done 2026-09-09, same PR, except the Reclamation lobby, which lives on the same page as the match and moves with it.** Chrome pages. Navbar and home (with the new lockup, the morph and the planet field replacing the stat tiles and equal destination cards), account, user details, encyclopedia, generator, duel setup, Reclamation lobby, training menu. Delete the terminal furniture and in-world copy from each. Set `data-tier`.
 3. **Immersive experiences**, one at a time, each with a short brief approved first: duel board, then Reclamation match, then the training games and Long Return.
 
 ## 12. Rules for new work

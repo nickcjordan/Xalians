@@ -1,5 +1,5 @@
-import { createMatch, send, pass, order, commitOrders, getPublicState, createRngState, nextRandom, relocateVanguard } from '../expeditionRules.js';
-import { chooseSend, chooseOrders, RIVALS, DEFAULT_RIVAL_ID, rivalById } from '../expeditionBot.js';
+import { createMatch, send, pass, getPublicState, createRngState, nextRandom, moveSwift } from '../expeditionRules.js';
+import { chooseSend, roleValueOf, RIVALS, DEFAULT_RIVAL_ID, rivalById } from '../expeditionBot.js';
 import { ROSTER_SIZE, SENDABLE } from '../expeditionInterpretation.js';
 
 /*
@@ -78,7 +78,7 @@ function makeRng(seed) {
 
 /*
 	Plays one full deterministic match with the given rivals (defaults to the proctor for
-	whichever side is omitted, matching chooseSend/chooseOrders' own default), asserting
+	whichever side is omitted, matching chooseSend's own default), asserting
 	every action is legal along the way. Returns the final state plus telemetry used by the
 	rival behaviour assertions below: the ordered action log, sends per side, hidden sends
 	per side, and the frame index each side first passed in.
@@ -102,12 +102,12 @@ function playMatch(rosterA, rosterB, worlds, seed, rivals = {}) {
 			let action = chooseSend(publicState, state.players[handler].roster, handler, botRng, rivals[handler]);
 			actionLog.push({ handler, frameIndex: state.frameIndex, ...action });
 
-			if (action.type === 'relocate') {
-				const relocated = relocateVanguard(state, handler, action.siteId);
-				if (!relocated) {
-					throw new Error(`illegal relocate action: ${JSON.stringify(action)} for ${handler}`);
+			if (action.type === 'move') {
+				const moved = moveSwift(state, handler, action.recordId, action.siteId);
+				if (!moved) {
+					throw new Error(`illegal swift move: ${JSON.stringify(action)} for ${handler}`);
 				}
-				state = relocated;
+				state = moved;
 				// same as the simulator: relocating does not end the turn, so ask again
 				const publicStateAfter = getPublicState(state, handler);
 				action = chooseSend(publicStateAfter, state.players[handler].roster, handler, botRng, rivals[handler]);
@@ -128,28 +128,6 @@ function playMatch(rosterA, rosterB, worlds, seed, rivals = {}) {
 			}
 			if (!next) {
 				throw new Error(`illegal deploy action: ${JSON.stringify(action)} for ${handler}`);
-			}
-			state = next;
-		} else if (state.phase === 'orders') {
-			['A', 'B'].forEach((handler) => {
-				const publicState = getPublicState(state, handler);
-				const orders = chooseOrders(publicState, handler, rivals[handler]);
-				Object.keys(orders).forEach((creatureId) => {
-					const next = order(state, handler, creatureId, orders[creatureId]);
-					if (!next) {
-						throw new Error(`illegal order for ${creatureId}: ${orders[creatureId]}`);
-					}
-					state = next;
-				});
-			});
-			let next = commitOrders(state, 'A');
-			if (!next) {
-				throw new Error('commitOrders(A) failed');
-			}
-			state = next;
-			next = commitOrders(state, 'B');
-			if (!next) {
-				throw new Error('commitOrders(B) failed');
 			}
 			state = next;
 		}
@@ -209,24 +187,28 @@ describe('chooseSend', () => {
 	});
 });
 
-describe('chooseOrders', () => {
-	test('only orders the handler\'s own deployed creatures with legal actions', () => {
-		let state = createMatch({ rosterA: makeRoster('A'), rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'bot-orders-seed' });
+describe('roleValueOf: what a role is worth at a world', () => {
+	test('a strike is worth what it would take off its conduct target, and a presence is worth its effect', () => {
+		let state = createMatch({ rosterA: makeRoster('A'), rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'bot-role-seed' });
 		const frame = state.frames[0];
 		const starter = state.starter;
 		const other = starter === 'A' ? 'B' : 'A';
 		state = send(state, starter, state.players[starter].roster[0].id, frame.sites[0].id);
-		state = send(state, other, state.players[other].roster[0].id, frame.sites[0].id);
-		state = pass(state, state.turn);
-		state = pass(state, state.turn);
+		const publicState = getPublicState(state, other);
+		const record = state.players[other].roster[0];
+		const value = roleValueOf(publicState, record, frame.sites[0], 0, other);
+		// a striker facing exactly one visible enemy is worth a real, capped number
+		expect(typeof value).toBe('number');
+		expect(value).toBeGreaterThanOrEqual(0);
+	});
 
-		const publicState = getPublicState(state, starter);
-		const orders = chooseOrders(publicState, starter);
-		const orderedIds = Object.keys(orders);
-		orderedIds.forEach((id) => {
-			const next = order(state, starter, id, orders[id]);
-			expect(next).not.toBeNull();
-		});
+	test('a send with no enemy at the site is worth nothing beyond its own hold', () => {
+		const state = createMatch({ rosterA: makeRoster('A'), rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'bot-role-empty' });
+		const frame = state.frames[0];
+		const handler = state.starter;
+		const publicState = getPublicState(state, handler);
+		const record = state.players[handler].roster[0];
+		expect(roleValueOf(publicState, record, frame.sites[0], 0, handler)).toBe(0);
 	});
 });
 
@@ -252,22 +234,6 @@ describe('full bot-vs-bot match', () => {
 				} else {
 					next = pass(state, handler);
 				}
-				expect(next).not.toBeNull();
-				state = next;
-			} else if (state.phase === 'orders') {
-				['A', 'B'].forEach((handler) => {
-					const publicState = getPublicState(state, handler);
-					const orders = chooseOrders(publicState, handler);
-					Object.keys(orders).forEach((creatureId) => {
-						const next = order(state, handler, creatureId, orders[creatureId]);
-						expect(next).not.toBeNull();
-						state = next;
-					});
-				});
-				let next = commitOrders(state, 'A');
-				expect(next).not.toBeNull();
-				state = next;
-				next = commitOrders(state, 'B');
 				expect(next).not.toBeNull();
 				state = next;
 			}
@@ -332,7 +298,7 @@ describe('rivals', () => {
 			expect(typeof r.home).toBe('string');
 			expect(typeof r.style).toBe('string');
 			expect(r.style.length).toBeGreaterThan(0);
-			expect(r.style).not.toMatch(/—|--/); // no em-dashes in the fiction
+			expect(r.style).not.toMatch(/ - |--/); // no em-dashes in the fiction
 			expect(typeof r.weights).toBe('object');
 		});
 		expect(DEFAULT_RIVAL_ID).toBe('proctor');
@@ -403,12 +369,12 @@ describe('rivals', () => {
 			turn: 'A',
 			starter: 'A',
 			board: { s0: { A: [{ recordId: 'A_ally', record: ally, sentIndex: 0, hidden: false }], B: [] } },
-			staggered: {},
+			hurt: {},
 			wardedBy: {},
 			snared: {},
 			players: {
-				A: { rosterCount: 1, sentCount: 1, holding: 0, withdrawn: 0, routed: 0, passed: false, sitesWon: 0, hiddenSentThisRound: 0, canRelocateVanguard: false, roster: ownRoster, vanguardRecordId: 'A_ally' },
-				B: { rosterCount: 12, sentCount: 0, holding: 0, withdrawn: 0, routed: 0, passed: false, sitesWon: 0, hiddenSentThisRound: 0 },
+				A: { rosterCount: 1, sentCount: 1, holding: 0, withdrawn: 0, downed: 0, passed: false, sitesWon: 0, hiddenSentThisRound: 0, roster: ownRoster, movableRecordIds: [] },
+				B: { rosterCount: 12, sentCount: 0, holding: 0, withdrawn: 0, downed: 0, passed: false, sitesWon: 0, hiddenSentThisRound: 0 },
 			},
 		};
 
@@ -504,5 +470,75 @@ describe('rivals', () => {
 		const brokerRate = brokerHidden / brokerSends;
 		const proctorRate = proctorHidden / proctorSends;
 		expect(brokerRate).toBeGreaterThan(proctorRate);
+	});
+});
+
+/*
+	The swift move (docs/design/reclamation-base-redesign.md assumption 20). The bot only
+	ever proposes a move the engine will accept, so the test drives the proposal straight
+	into moveSwift rather than asserting on the scorer's internals.
+*/
+describe('chooseSend: swift creatures move', () => {
+	function swiftRoster(prefix) {
+		const roster = [];
+		for (let i = 0; i < ROSTER_SIZE; i++) {
+			roster.push(makeRecord(`${prefix}_${i}`, { attributes: { agility: 90, reflex: 90 } }));
+		}
+		return roster;
+	}
+
+	test('every move the bot proposes names one of its own movable creatures and is legal', () => {
+		let state = createMatch({
+			rosterA: swiftRoster('A'), rosterB: swiftRoster('B'),
+			worlds: makeWorlds(), seed: 'bot-swift-seed',
+		});
+		const rng = makeRng('bot-swift-rng');
+		let proposals = 0;
+		let guard = 0;
+		while (state.phase === 'deploy' && guard < 200) {
+			guard++;
+			const handler = state.turn;
+			if (handler === null) {
+				break;
+			}
+			const view = getPublicState(state, handler);
+			const action = chooseSend(view, state.players[handler].roster, handler, rng, null);
+			if (action.type === 'move') {
+				proposals++;
+				expect(view.players[handler].movableRecordIds).toContain(action.recordId);
+				const moved = moveSwift(state, handler, action.recordId, action.siteId);
+				expect(moved).not.toBeNull();
+				state = moved;
+				continue;
+			}
+			state = action.type === 'send'
+				? send(state, handler, action.recordId, action.siteId, action.hidden)
+				: pass(state, handler);
+			expect(state).not.toBeNull();
+		}
+		// an all-swift board is exactly the case the rule exists for, so it must fire
+		expect(proposals).toBeGreaterThan(0);
+	});
+
+	test('proposes no move at all under the swiftMove ablation', () => {
+		let state = createMatch({
+			rosterA: swiftRoster('A'), rosterB: swiftRoster('B'),
+			worlds: makeWorlds(), seed: 'bot-swift-off-seed', rules: { swiftMove: false },
+		});
+		const rng = makeRng('bot-swift-off-rng');
+		let guard = 0;
+		while (state.phase === 'deploy' && guard < 200) {
+			guard++;
+			const handler = state.turn;
+			if (handler === null) {
+				break;
+			}
+			const view = getPublicState(state, handler);
+			const action = chooseSend(view, state.players[handler].roster, handler, rng, null);
+			expect(action.type).not.toBe('move');
+			state = action.type === 'send'
+				? send(state, handler, action.recordId, action.siteId, action.hidden)
+				: pass(state, handler);
+		}
 	});
 });

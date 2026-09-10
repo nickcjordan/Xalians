@@ -1,5 +1,5 @@
 import React from 'react';
-import Modal from 'react-bootstrap/Modal';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import XalianTypeSymbolBadge from './xalianTypeSymbolBadge';
 import * as duelCalculator from '../../../../gameplay/duel/duelCalculator';
 import { ink, lamp, stat } from '../../../../constants/designTokens';
@@ -73,18 +73,13 @@ class AttackMoveChooserModal extends React.Component {
         }
         let moves = this.props.attacker.moves || [];
         return (
-            <Modal
-                show={this.props.show}
-                onHide={this.props.onCancel}
-                centered
-                className="themed-modal dark-themed-modal duel-modal"
-            >
-                <Modal.Header closeButton closeVariant="white">
-                    <Modal.Title>
-                        {this.props.attacker.species.name} <span className="duel-modal-title-joiner">strikes</span> {this.props.defender.species.name}
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
+            <Dialog open={this.props.show} onOpenChange={(open) => { if (!open) { this.props.onCancel(); } }}>
+                <DialogContent className="duel-modal">
+                    <DialogHeader>
+                        <DialogTitle>
+                            {this.props.attacker.species.name} <span className="duel-modal-title-joiner">strikes</span> {this.props.defender.species.name}
+                        </DialogTitle>
+                    </DialogHeader>
                     <p className="duel-move-legend">Firing solutions</p>
                     <div className="duel-move-list">
                         {moves.map((move, index) => this.renderOption(move, `duel-attack-move-choice-${index}`, index))}
@@ -93,8 +88,8 @@ class AttackMoveChooserModal extends React.Component {
                     <div className="duel-move-cancel-row">
                         <button type="button" className="g-btn" onClick={this.props.onCancel}>Cancel</button>
                     </div>
-                </Modal.Body>
-            </Modal>
+                </DialogContent>
+            </Dialog>
         );
     }
 

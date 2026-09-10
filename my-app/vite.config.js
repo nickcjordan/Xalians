@@ -1,5 +1,7 @@
-import { defineConfig } from 'vite';
+import { defineConfig, transformWithEsbuild } from 'vite';
+import path from 'node:path';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 import svgr from 'vite-plugin-svgr';
 import commonjsShim from './vite/commonjsShim.js';
 
@@ -15,6 +17,25 @@ export default defineConfig(({ mode }) => ({
 		// See vite/commonjsShim.js.
 		commonjsShim(),
 
+		// 75 components carry JSX in `.js` files. Vite's default esbuild
+		// transform only treats `.jsx`/`.tsx` as JSX, so `.js` needs a targeted
+		// pre-transform rather than renaming them all. Using `esbuild.include`
+		// on the root config instead would replace Vite's default filter
+		// (rather than extend it), which then skips `.tsx` entirely and breaks
+		// import analysis on every shadcn/system component.
+		{
+			name: 'jsx-in-js',
+			enforce: 'pre',
+			async transform(code, id) {
+				if (!/\/src\/.*\.js$/.test(id.replace(/\\/g, '/'))) return null;
+				return transformWithEsbuild(code, id, { loader: 'jsx', jsx: 'automatic' });
+			},
+		},
+
+		// Tailwind 4 (docs/design/frontend-stack-migration.md): tokens and
+		// utilities from src/styles; no tailwind.config.js.
+		tailwindcss(),
+
 		react(),
 
 		// CRA-style `import { ReactComponent as X } from './x.svg'`. Named export
@@ -26,19 +47,14 @@ export default defineConfig(({ mode }) => ({
 		}),
 	],
 
-	// 75 components carry JSX in `.js` files. Treat every `.js` under src as JSX
-	// rather than renaming them all.
-	esbuild: {
-		include: /\/src\/.*\.[jt]sx?$/,
-		// Vite's default exclude is /\.js$/, which would silently undo the
-		// include above; an empty list is what actually lets .js through.
-		exclude: [],
-		loader: 'jsx',
-	},
 	optimizeDeps: {
 		esbuildOptions: {
 			loader: { '.js': 'jsx' },
 		},
+	},
+
+	resolve: {
+		alias: { '@': path.resolve(__dirname, 'src') },
 	},
 
 	define: {

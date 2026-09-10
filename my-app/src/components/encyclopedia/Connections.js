@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import * as lore from '../../lore';
-import './Connections.css';
+import { SectionHead } from '@/components/system/masthead';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 const PHONE_QUERY = '(max-width: 700px)';
 
@@ -51,7 +53,7 @@ function markSubject(excerpt, name) {
     if (parts.length === 1) return excerpt;
     return parts.map((part, i) => (
         i % 2 === 1
-            ? <mark key={i} className="enc-conn-mark">{part}</mark>
+            ? <mark key={i} className="bg-viable-tint px-0.5 text-inherit">{part}</mark>
             : part
     ));
 }
@@ -60,7 +62,7 @@ function tallyDots(count) {
     const capped = Math.min(count, 8);
     const dots = [];
     for (let i = 0; i < capped; i++) {
-        dots.push(<span key={i} className="g-lamp enc-conn-tally-dot" aria-hidden="true" />);
+        dots.push(<span key={i} className="inline-block size-1.5 rounded-full bg-viable" aria-hidden="true" />);
     }
     return dots;
 }
@@ -70,14 +72,14 @@ function ConnectionSample({ row }) {
     const excerptNode = markSubject(row.sample.excerpt, row.name);
 
     return (
-        <p className="g-mono enc-conn-sample">
+        <p className="type-data m-0 mt-2 pl-0 text-small text-ink-2">
             {route ? (
-                <Link to={route} className="enc-conn-sample-label">{row.sample.label}</Link>
+                <Link to={route} className="text-ink-3 no-underline hover:text-edge-strong">{row.sample.label}</Link>
             ) : (
-                <span className="enc-conn-sample-label">{row.sample.label}</span>
+                <span className="text-ink-3">{row.sample.label}</span>
             )}
             {' '}
-            <span className="enc-conn-sample-excerpt">{excerptNode}</span>
+            <span className="text-ink-2">{excerptNode}</span>
         </p>
     );
 }
@@ -85,11 +87,11 @@ function ConnectionSample({ row }) {
 function ConnectionRowHead({ row, route }) {
     return (
         <>
-            <Link to={route} className="g-record-term enc-conn-name">{row.name}</Link>
-            {row.element && <span className="g-chip g-chip--outline enc-conn-element">{row.element}</span>}
-            <span className="enc-conn-tally" title={`${row.count} shared mentions`}>
+            <Link to={route} className="type-legend text-body text-ink no-underline hover:text-ink">{row.name}</Link>
+            {row.element && <Badge variant="chip-outline">{row.element}</Badge>}
+            <span className="ml-auto inline-flex items-center gap-[3px]" title={`${row.count} shared mentions`}>
                 {tallyDots(row.count)}
-                <span className="g-mono enc-conn-tally-num">{row.count}</span>
+                <span className="type-data ml-2 text-small text-ink-2">{row.count}</span>
             </span>
         </>
     );
@@ -97,13 +99,13 @@ function ConnectionRowHead({ row, route }) {
 
 function ConnectionRow({ row, isPhone }) {
     const route = lore.routeFor(row.kind, row.key);
-    const scopeClass = row.element ? `g-el-${row.element}` : '';
+    const scopeClass = row.element ? `el-${row.element}` : '';
 
     if (isPhone) {
         return (
-            <li className={`enc-conn-row ${scopeClass}`}>
-                <details className="enc-conn-row-details">
-                    <summary className="enc-conn-row-summary">
+            <li className={`border-b border-edge py-3 last:border-b-0 ${scopeClass}`}>
+                <details className="w-full">
+                    <summary className="flex flex-wrap items-center gap-3 [&::-webkit-details-marker]:hidden [&::marker]:content-none cursor-pointer">
                         <ConnectionRowHead row={row} route={route} />
                     </summary>
                     <ConnectionSample row={row} />
@@ -113,8 +115,8 @@ function ConnectionRow({ row, isPhone }) {
     }
 
     return (
-        <li className={`enc-conn-row ${scopeClass}`}>
-            <div className="enc-conn-row-summary">
+        <li className={`border-b border-edge py-3 last:border-b-0 ${scopeClass}`}>
+            <div className="flex flex-wrap items-center gap-3">
                 <ConnectionRowHead row={row} route={route} />
             </div>
             <ConnectionSample row={row} />
@@ -134,16 +136,15 @@ export default function Connections({ kind, recordKey, limit = 12 }) {
     if (rows.length === 0) return null;
 
     return (
-        <section className="enc-section enc-conn">
-            <div className="enc-section-head">
-                <h2 className="g-h2">Connections</h2>
-                <span className="enc-count">{rows.length}</span>
-            </div>
-            <ul className="g-paper enc-conn-list">
-                {rows.map((row) => (
-                    <ConnectionRow key={`${row.kind}:${row.key}`} row={row} isPhone={isPhone} />
-                ))}
-            </ul>
+        <section className="mt-8">
+            <SectionHead title="Connections" count={rows.length} />
+            <Card variant="panel" className="p-0">
+                <ul className="m-0 flex flex-col px-4 py-2">
+                    {rows.map((row) => (
+                        <ConnectionRow key={`${row.kind}:${row.key}`} row={row} isPhone={isPhone} />
+                    ))}
+                </ul>
+            </Card>
         </section>
     );
 }

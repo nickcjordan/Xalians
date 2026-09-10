@@ -6,7 +6,7 @@
 	renders) and DETERMINISM (the same seed gives byte-identical output twice), which are
 	the two properties a designer relies on when diffing two runs. Batch sizes are tiny on
 	purpose: a shape test does not need statistical power, and the ablation section runs
-	seven configurations by five rivals, so four matches per cell is already 140 matches.
+	nine configurations by five rivals, so four matches per cell is already 180 matches.
 
 	Nothing here prints.
 */
@@ -15,7 +15,8 @@ import { describe, it, expect } from 'vitest';
 import {
 	runValidation, sectionRegret, sectionSpread, sectionDecided, sectionAblation, sectionDraft,
 	buildSections, toMarkdown, decidedRoundOf, lockedRoundOf, matchShapeOf, rate,
-	ALL_SECTIONS, NAIVE_POLICIES, ABLATIONS,
+	ALL_SECTIONS, NAIVE_POLICIES, ABLATIONS, parseSweep, sweepRulesOf, runSweep,
+	sectionLanes, RECORD_ATTRIBUTES,
 } from '../devtools/expeditionValidation.js';
 import { buildExpeditionPool } from '../roster.js';
 import { RIVALS } from '../expeditionBot.js';
@@ -76,13 +77,13 @@ describe('lockedRoundOf', () => {
 describe('matchShapeOf', () => {
 	it('ignores errored matches and reports every shape field', () => {
 		const results = [
-			{ error: 'boom', winner: null, scoreByRound: [], routs: 0, sends: 0, hiddenSends: 0, returnedSends: 0 },
-			{ error: null, winner: 'A', scoreByRound: [{ A: 2, B: 1 }, { A: 4, B: 2 }, { A: 5, B: 4 }], routs: 3, sends: 10, hiddenSends: 2, returnedSends: 1 },
+			{ error: 'boom', winner: null, scoreByRound: [], downs: 0, sends: 0, hiddenSends: 0, returnedSends: 0 },
+			{ error: null, winner: 'A', scoreByRound: [{ A: 2, B: 1 }, { A: 4, B: 2 }, { A: 5, B: 4 }], downs: 3, sends: 10, hiddenSends: 2, returnedSends: 1 },
 		];
 		const shape = matchShapeOf(results);
 		expect(shape.n).toBe(1);
 		expect(shape.decidedCounts[1]).toBe(1);
-		expect(shape.routsPerMatch).toBe(3);
+		expect(shape.downsPerMatch).toBe(3);
 		expect(shape.hiddenSendRate.p).toBeCloseTo(0.2);
 	});
 });
@@ -143,7 +144,7 @@ describe('sectionDecided', () => {
 		result.byRival.forEach((row) => {
 			expect(isRate(row.shape.decidedAfterRound1)).toBe(true);
 			expect(isRate(row.shape.comebackRate)).toBe(true);
-			expect(typeof row.shape.routsPerMatch).toBe('number');
+			expect(typeof row.shape.downsPerMatch).toBe('number');
 		});
 	});
 
@@ -247,6 +248,75 @@ describe('rendering', () => {
 	});
 
 	it('uses no em-dashes anywhere in the markdown', () => {
-		expect(toMarkdown(report)).not.toContain('—');
+		expect(toMarkdown(report)).not.toContain(String.fromCharCode(8212));
+	});
+});
+
+describe('the base redesign additions', () => {
+	it('offers the always-presence-first policy the base redesign asks for', () => {
+		expect(NAIVE_POLICIES.map((p) => p.id)).toContain('alwaysPresenceFirst');
+	});
+
+	it('ablates every rule AND every role', () => {
+		const ids = ABLATIONS.map((a) => a.id);
+		['baseline', 'noHidden', 'noLoki', 'noSpeed', 'noHiddenFirst', 'noSweep', 'noBolster', 'noShield', 'noHurtAttacksLess', 'noBolsterRecovery', 'noWillful', 'noPresenceScale', 'noInstinctLanes', 'noSwiftMove', 'trailingBonusBack']
+			.forEach((id) => expect(ids).toContain(id));
+		expect(ABLATIONS.find((a) => a.id === 'noSweep').rules).toEqual({ roles: { sweep: false } });
+	});
+
+	it('parses a single-lever sweep and a paired-lever sweep', () => {
+		expect(parseSweep('magnitudeScale=0.5,1')).toEqual({ rules: ['magnitudeScale'], values: [[0.5], [1]] });
+		const paired = parseSweep('holdFloor:holdCeiling=2.8:17.6,6:14.9');
+		expect(paired.rules).toEqual(['holdFloor', 'holdCeiling']);
+		expect(sweepRulesOf(paired, paired.values[0])).toEqual({ holdFloor: 2.8, holdCeiling: 17.6 });
+		expect(parseSweep('nonsense')).toBeNull();
+	});
+
+	it('runs a sweep and returns one row per value, each carrying the gauges', () => {
+		const sweep = parseSweep('magnitudeScale=0.5,1.5');
+		const report = runSweep({ matches: 2, seed: SEED, only: ['decided'], sweep });
+		expect(report.rows.length).toBe(2);
+		report.rows.forEach((row) => {
+			expect(typeof row.label).toBe('string');
+			expect(typeof row.downsPerMatch).toBe('number');
+			expect(isRate(row.resolveChangedLeaderRate)).toBe(true);
+		});
+		// a bigger magnitude scale must move the routs, or the lever is doing nothing
+		expect(report.rows[1].downsPerMatch).toBeGreaterThan(report.rows[0].downsPerMatch);
+	});
+});
+
+/*
+	Section 6, the per-attribute lanes (docs/design/reclamation-base-redesign.md assumption
+	17). Shape only, like every other section here: the numbers are the thing that is meant
+	to move between runs.
+*/
+describe('sectionLanes', () => {
+	const result = sectionLanes({ matches: MATCHES, seed: SEED, pool });
+
+	it('returns one row per record attribute, each with both quartile readings', () => {
+		expect(result.rows.map((r) => r.attribute)).toEqual(RECORD_ATTRIBUTES);
+		expect(RECORD_ATTRIBUTES.length).toBe(10);
+		result.rows.forEach((row) => {
+			expect(typeof row.q1).toBe('number');
+			expect(typeof row.q3).toBe('number');
+			expect(row.q3).toBeGreaterThanOrEqual(row.q1);
+			expect(row.topN).toBeGreaterThan(0);
+			expect(row.bottomN).toBeGreaterThan(0);
+			expect(isRate(row.topWinRate)).toBe(true);
+			expect(isRate(row.bottomWinRate)).toBe(true);
+			expect(typeof row.gap).toBe('number');
+		});
+		expect(result.readings.length).toBeGreaterThan(0);
+	});
+
+	it('is included in the full run and renders a table into the markdown', () => {
+		expect(ALL_SECTIONS).toContain('lanes');
+		const report = runValidation({ matches: 2, seed: SEED, only: ['lanes'] });
+		expect(report.lanes).toBeTruthy();
+		const section = buildSections(report).find((s) => s.id === 'lanes');
+		expect(section).toBeTruthy();
+		expect(section.blocks.some((b) => b.type === 'table')).toBe(true);
+		expect(toMarkdown(report)).toContain('Per-attribute lanes');
 	});
 });

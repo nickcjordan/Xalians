@@ -1,55 +1,30 @@
 import React from 'react';
-import { Row, Col } from 'react-bootstrap';
-import textFit from '../utils/textFit';
-import * as styleUtil from '../utils/styleUtil';
+import { Badge } from '@/components/ui/badge';
 import * as svgUtil from '../utils/svgUtil';
 
+/**
+ * A type chip: symbol plus name, filled with the element in scope.
+ *
+ * Version 4 on the new stack: `Badge variant="chip"`, no react-bootstrap
+ * `Row`/`Col`. Every prop from the previous version is kept — the duel
+ * board still renders these for its type-effectiveness summary.
+ */
 class XalianSpeciesBadge extends React.Component {
-
-	state = { symbol: null 	}
-
-	getBgClassFromType = (type) => {
-		return ` ${type.toLowerCase()}-color `;
-	};
-
-	componentDidMount() {
-		// this.setState({ 
-		// 	symbol: svgUtil.getSpeciesTypeSymbol(this.props.type, false, 30)
-		// });
-		
-		// document.addEventListener('DOMContentLoaded', function () {
-		// 	let badgeText = document.getElementById('fitted-badge-text');
-		// 	if (badgeText) {
-		// 		// textFit(badgeText, { multiLine: false, alignHoriz: true, alignVert: true, minFontSize:12, maxFontSize: 24});
-		// 	}
-		// });
-	}
-
 	render() {
-		var badgeWidth = this.props.hideSymbol ? 0 : this.props.size || 30;
-		badgeWidth += this.props.hideName ? 0 : 100;
-		let primaryColor = styleUtil.getTypeColor(this.props.type);
-		let expandedClass = this.props.duel ? ' duel-type-badge ' : ' xalian-species-badge ';
+		let type = this.props.type;
+		if (!type) {
+			return null;
+		}
+		let el = type.toLowerCase();
 		return (
-			<div className={this.getBgClassFromType(this.props.type) + ' vertically-center-contents ' + this.props.moreClasses + expandedClass} style={{ width: badgeWidth, background: primaryColor, background: `radial-gradient(circle, ${primaryColor} 60%, ${primaryColor + '85'} 100%)` }}>
-				<div id={this.props.id} className={'species-badge-wrapper'}>
-					<Row style={{ margin: '0px', padding: '0px', height: '100%', width: '100%' }}>
-						{!this.props.hideSymbol && (
-							<Col xs={!this.props.hideName ? 4 : true} className="species-badge-icon-col">
-								{ svgUtil.getSpeciesTypeSymbol(this.props.type, false, 30, 'species-type-symbol') }
-							</Col>
-						)}
-						{!this.props.hideName && (
-							<Col xs={!this.props.hideSymbol ? 8 : true} style={{  }} className="species-badge-text-col">
-								<h6 className="xalian-badge-text" id="fitted-badge-text" style={{ margin: '0px' }}>
-									{this.props.type.toUpperCase()}
-								</h6>
-								{/* <h6 className="xalian-badge-text" id='fitted-badge-text' style={{ margin: '0px', width: `${this.props.hideName ? 0 : 100}px` }} >{this.props.type.toUpperCase()}</h6> */}
-							</Col>
-						)}
-					</Row>
-				</div>
-			</div>
+			<span id={this.props.id} className={`el-${el} inline-flex ${this.props.moreClasses || ''}`}>
+				<Badge variant="chip" className={this.props.duel ? 'gap-1.5 px-2.5 py-1' : undefined}>
+					{!this.props.hideSymbol &&
+						svgUtil.getSpeciesTypeSymbol(type, false, this.props.size || 14, 'size-3.5')
+					}
+					{!this.props.hideName && type.toUpperCase()}
+				</Badge>
+			</span>
 		);
 	}
 }

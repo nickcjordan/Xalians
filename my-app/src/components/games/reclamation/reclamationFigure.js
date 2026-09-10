@@ -1,5 +1,6 @@
 import React from 'react';
-import { speciesLabel, formatHold } from './reclamationNarration';
+import { speciesLabel, formatHold, roleSentence } from './reclamationNarration';
+import { RoleGlyph } from './reclamationGlyphs';
 import XalianImage from '../../xalianImage';
 import XalianTypeSymbolBadge from '../duel/board/xalianTypeSymbolBadge';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
@@ -25,7 +26,15 @@ import { team } from '../../../constants/designTokens';
 	  with `flash` naming the outcome over the figure
 	- hover: the creature under the pointer in a preview line
 	- arrive: it just landed (the controller clears this after the animation)
-	- badge: a small tag on the plate (the act ordered, during Orders)
+	- badge: a small tag on the plate
+	- role: one of 'strike' | 'sweep' | 'bolster' | 'shield' (the base redesign's four
+	  roles), drawn as one glyph beside the hold bulb with the role sentence as its title;
+	  'none' draws nothing
+	- threat: { level: 'downed' | 'amount', amount, text } - what this creature would lose
+	  this round to the worst visible enemy attack
+
+	The CSS class names still read `staggered` and `routed`; the words the player sees are
+	Pass 2's, hurt and downed (docs/design/reclamation-base-redesign.md assumption 17).
 */
 export const FIGURE_SIZE = 56;
 // The meter's printed range. Base hold runs 0 to 20; the bulbs past 20 are home
@@ -44,26 +53,26 @@ export const HOLD_PRINTED_MAX = 20;
 	Bulbs light in the element in scope, which on the table is the world's, so hold on
 	Zolton reads electric and hold on Telypso reads psychic. What the site's environment
 	takes is the dim bulbs past the lit ones (the bulbs that would be lit unstrained);
-	a stagger is the struck red bulbs from the halved reading back to the printed one.
+	a hit is the struck red bulbs from the live reading back to the printed one.
 	The number prints beside the strip in mono. `scale` adds the printed 0, 10, 20
 	under the strip on the large size.
 
-	Props: hold, unstrained, printedHold, isHome, strainLevel, staggered, size ('chip'
+	Props: hold, unstrained, printedHold, isHome, strainLevel, hurt, size ('chip'
 	| 'full' | 'large'), scale. `small` and `mine` are accepted for old call sites.
 */
-export function HoldMeter({ hold, unstrained, printedHold, isHome, strainLevel, staggered, small, size, scale }) {
+export function HoldMeter({ hold, unstrained, printedHold, isHome, strainLevel, hurt, small, size, scale }) {
 	const sz = size || (small ? 'chip' : 'full');
 	const lit = Math.max(0, Math.min(HOLD_SCALE, Math.round(hold)));
-	const struckTo = staggered && typeof printedHold === 'number' && printedHold > hold ? Math.min(HOLD_SCALE, Math.round(printedHold)) : lit;
+	const struckTo = hurt && typeof printedHold === 'number' && printedHold > hold ? Math.min(HOLD_SCALE, Math.round(printedHold)) : lit;
 	const dimTo = typeof unstrained === 'number' && unstrained > hold ? Math.min(HOLD_SCALE, Math.round(unstrained)) : struckTo;
 	const reach = Math.max(lit, struckTo, dimTo);
 	const count = isHome || reach > HOLD_PRINTED_MAX ? HOLD_SCALE : HOLD_PRINTED_MAX;
 	const lostToStrain = typeof unstrained === 'number' && unstrained > hold ? unstrained - hold : 0;
-	const lostToStagger = staggered && typeof printedHold === 'number' && printedHold > hold ? printedHold - hold : 0;
+	const lostToHits = hurt && typeof printedHold === 'number' && printedHold > hold ? printedHold - hold : 0;
 	const title = [
 		`hold ${formatHold(hold)} of ${HOLD_PRINTED_MAX}`,
 		lostToStrain > 0 ? `${strainLevel === 'severe' ? 'severe strain' : 'strain'} took ${formatHold(lostToStrain)}` : null,
-		lostToStagger > 0 ? `staggered, half of ${formatHold(printedHold)}` : null,
+		lostToHits > 0 ? `hurt, ${formatHold(lostToHits)} taken of ${formatHold(printedHold)}` : null,
 		isHome ? 'home ground, past 20' : null,
 	].filter(Boolean).join(', ');
 	const bulbs = [];
@@ -93,14 +102,16 @@ function ReclamationFigure({
 	printedHold,
 	seat,
 	you,
-	staggered,
-	routed,
+	hurt,
+	downed,
 	hidden,
 	strainLevel,
 	isHome,
 	unstrainedHold,
 	baseHold,
 	facing,
+	role,
+	blowMagnitude,
 	selected,
 	armed,
 	recommended,
@@ -126,8 +137,8 @@ function ReclamationFigure({
 	if (size) {
 		classes.push(`rec-figure--${size}`);
 	}
-	if (staggered) classes.push('rec-figure--staggered');
-	if (routed) classes.push('rec-figure--routed');
+	if (hurt) classes.push('rec-figure--staggered');
+	if (downed) classes.push('rec-figure--routed');
 	if (hidden) classes.push('rec-figure--hidden');
 	if (selected) classes.push('rec-figure--selected');
 	if (armed) classes.push('rec-figure--armed');
@@ -135,6 +146,7 @@ function ReclamationFigure({
 	if (dimmed) classes.push('rec-figure--dimmed');
 	if (acting) classes.push('rec-figure--acting');
 	if (threat) classes.push(`rec-figure--threat-${threat.level}`);
+	if (role && role !== 'none') classes.push(`rec-figure--role-${role}`);
 	if (hit) classes.push('rec-figure--hit');
 	if (hover) classes.push('rec-figure--hover');
 	if (arrive) classes.push('rec-figure--arrive');
@@ -142,7 +154,7 @@ function ReclamationFigure({
 
 	const name = record ? speciesLabel(record) : (label || 'Unknown');
 	const portrait = record && record.species && getSpeciesTemplate(record.species) ? record.species : null;
-	// the meter says home, strain and stagger; only hidden still needs a word
+	// the meter says home, strain and what a hit took; only hidden still needs a word
 	const tags = [];
 	if (hidden) tags.push({ key: 'hidden', text: 'hidden' });
 
@@ -177,9 +189,18 @@ function ReclamationFigure({
 			<span className="rec-figure-plate">
 				<span className="rec-figure-name">{name}</span>
 				{badge && <span className="rec-figure-badge">{badge}</span>}
-				{threat && <span className={`rec-figure-threat rec-figure-threat--${threat.level}`} title={threat.text} data-threat={threat.level}>{threat.level}</span>}
+				{threat && (
+					<span className={`rec-figure-threat rec-figure-threat--${threat.level}`} title={threat.text} data-threat={threat.level}>
+						{threat.level === 'downed' ? 'downed' : `-${threat.amount}`}
+					</span>
+				)}
 			</span>
 			<span className="rec-figure-foot">
+				{role && role !== 'none' && (
+					<span className="rec-role-glyph" title={roleSentence(role, blowMagnitude)} aria-label={roleSentence(role, blowMagnitude)} data-role={role}>
+						<RoleGlyph role={role} />
+					</span>
+				)}
 				{typeof hold === 'number' && (
 					<HoldMeter
 						hold={hold}
@@ -187,7 +208,7 @@ function ReclamationFigure({
 						printedHold={printedHold}
 						isHome={isHome}
 						strainLevel={strainLevel}
-						staggered={staggered}
+						hurt={hurt}
 						size="chip"
 						mine={mine}
 					/>

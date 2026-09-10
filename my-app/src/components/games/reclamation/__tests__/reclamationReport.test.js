@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { act } from 'react-dom/test-utils';
 import { describe, it, expect, afterEach } from 'vitest';
-import { createMatch, send, pass, order, commitOrders, getPublicState, createRngState, nextRandom } from '../../../../gameplay/expedition/expeditionRules';
-import { chooseSend, chooseOrders } from '../../../../gameplay/expedition/expeditionBot';
+import { createMatch, send, pass, moveSwift, getPublicState, createRngState, nextRandom } from '../../../../gameplay/expedition/expeditionRules';
+import { chooseSend } from '../../../../gameplay/expedition/expeditionBot';
 import { ROSTER_SIZE } from '../../../../gameplay/expedition/expeditionInterpretation';
 import { buildMatchReport, ReclamationReport } from '../reclamationReport';
 
@@ -101,19 +101,15 @@ function playToMatchEnd(seed) {
 			const handler = state.turn;
 			const publicState = getPublicState(state, handler);
 			const action = chooseSend(publicState, state.players[handler].roster, handler, botRng);
-			state = action.type === 'send'
-				? send(state, handler, action.recordId, action.siteId, action.hidden)
-				: pass(state, handler);
-		} else if (state.phase === 'orders') {
-			['A', 'B'].forEach((handler) => {
-				const publicState = getPublicState(state, handler);
-				const orders = chooseOrders(publicState, handler);
-				Object.keys(orders).forEach((creatureId) => {
-					state = order(state, handler, creatureId, orders[creatureId]);
-				});
-			});
-			state = commitOrders(state, 'A');
-			state = commitOrders(state, 'B');
+			if (action.type === 'send') {
+				state = send(state, handler, action.recordId, action.siteId, action.hidden);
+			} else if (action.type === 'move') {
+				// a swift move does not spend the turn (assumption 20); if the engine refuses
+				// it, fall through to a pass rather than looping on the same action
+				state = moveSwift(state, handler, action.recordId, action.siteId) || pass(state, handler);
+			} else {
+				state = pass(state, handler);
+			}
 		}
 	}
 	if (guard >= GUARD_LIMIT) {
@@ -166,8 +162,9 @@ describe('buildMatchReport', () => {
 			w.yours.concat(w.theirs).forEach((entry) => {
 				expect(entry).toHaveProperty('recordId');
 				expect(entry).toHaveProperty('hold');
-				expect(entry).toHaveProperty('staggered');
-				expect(['held', 'withdrew', 'routed']).toContain(entry.fate);
+				expect(entry).toHaveProperty('hurt');
+				expect(entry).toHaveProperty('recovered');
+				expect(['held', 'withdrew', 'downed']).toContain(entry.fate);
 				// with a recordsById map supplied, records resolve rather than staying null
 				expect(entry.record).not.toBeNull();
 			});
@@ -182,19 +179,38 @@ describe('buildMatchReport', () => {
 		expect(['clinched', 'frames-exhausted', 'tiebreak']).toContain(report.reason);
 	});
 
-	it('routs and staggers reported are consistent with the resolution log', () => {
+	it('downs and hurts reported are consistent with the resolution log', () => {
 		const { rosterA, rosterB, state } = playToMatchEnd('report-seed-2');
 		const recordsById = recordsByIdFrom(rosterA, rosterB);
 		const report = buildMatchReport(state, 'A', recordsById);
 
-		const acts = state.resolutionLog.filter((e) => e && !e.type && Object.prototype.hasOwnProperty.call(e, 'outcome'));
-		const routedCount = acts.filter((e) => e.outcome === 'routed').length;
-		const staggeredCount = acts.filter((e) => e.outcome === 'staggered').length;
+		// THE BASE, with Pass 2's vocabulary: a landing attack is an 'attack' event; the
+		// 'sweep' event before a burst announces it and lands nothing itself
+		const acts = state.resolutionLog.filter((e) => e && e.type === 'attack');
+		const downedCount = acts.filter((e) => e.outcome === 'downed').length;
+		const hurtCount = acts.filter((e) => e.outcome === 'hurt').length;
+		expect(downedCount + hurtCount).toBeGreaterThan(0);
 
-		expect(report.routs.dealt + report.routs.taken).toBeLessThanOrEqual(routedCount);
-		expect(report.staggers.dealt + report.staggers.taken).toBeLessThanOrEqual(staggeredCount);
-		expect(report.routs.dealt).toBeGreaterThanOrEqual(0);
-		expect(report.routs.taken).toBeGreaterThanOrEqual(0);
+		expect(report.downs.dealt + report.downs.taken).toBeLessThanOrEqual(downedCount);
+		expect(report.hurts.dealt + report.hurts.taken).toBeLessThanOrEqual(hurtCount);
+		expect(report.downs.dealt).toBeGreaterThanOrEqual(0);
+		expect(report.downs.taken).toBeGreaterThanOrEqual(0);
+	});
+
+	// assumption 19: allies recover under a bolster at the Ruling, and the world row says so
+	it('carries the hold a bolster gave back, per creature per round', () => {
+		const { rosterA, rosterB, state } = playToMatchEnd('report-seed-2');
+		const report = buildMatchReport(state, 'A', recordsByIdFrom(rosterA, rosterB));
+		const recovered = state.resolutionLog.filter((e) => e && e.type === 'recover');
+		const reported = report.worlds
+			.flatMap((w) => w.yours.concat(w.theirs))
+			.filter((e) => e.recovered > 0);
+		if (recovered.length === 0) {
+			expect(reported.length).toBe(0);
+		} else {
+			reported.forEach((e) => expect(e.recovered).toBeGreaterThan(0));
+			expect(reported.length).toBeLessThanOrEqual(recovered.length);
+		}
 	});
 
 	it('champion, when present, is on a world the player won and carries the highest counted hold there', () => {
@@ -227,8 +243,8 @@ describe('buildMatchReport', () => {
 			frames: [],
 			resolutionLog: [],
 			players: {
-				A: { roster: [], sentCount: 0, holding: [], withdrawn: [], routed: [], sitesWon: 0, firstPasser: false },
-				B: { roster: [], sentCount: 0, holding: [], withdrawn: [], routed: [], sitesWon: 0, firstPasser: false },
+				A: { roster: [], sentCount: 0, holding: [], withdrawn: [], downed: [], sitesWon: 0, firstPasser: false },
+				B: { roster: [], sentCount: 0, holding: [], withdrawn: [], downed: [], sitesWon: 0, firstPasser: false },
 			},
 			winner: null,
 			matchEndReason: null,
@@ -291,8 +307,8 @@ function minimalReport(won) {
 		reason: 'clinched',
 		worlds: [],
 		sends: { you: 3, rival: 4 },
-		routs: { dealt: 1, taken: 0 },
-		staggers: { dealt: 0, taken: 1 },
+		downs: { dealt: 1, taken: 0 },
+		hurts: { dealt: 0, taken: 1 },
 		decisive: 'You clinched the Charter in round 3, taking Magmuth by 4.',
 		champion: null,
 	};
