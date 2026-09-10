@@ -67,7 +67,8 @@ export async function getRecord(xalianId: string): Promise<XalianRecord | null> 
   try {
     const result = await ddb.send(new GetCommand({ TableName: TABLE_NAME, Key: { xalianId } }));
     const item = result.Item as RegistryItem | undefined;
-    return item ? item.record : null;
+    // A counter item (COUNTER#<species>) has no record; treat a read of one as not found.
+    return item && item.record ? item.record : null;
   } catch (err) {
     log.error('getRecord failed', { xalianId, errorName: err instanceof Error ? err.name : typeof err });
     throw err;
