@@ -4,7 +4,7 @@
 	of the animation pipeline); dropped here rather than pulling aws-amplify into the
 	package. boardgame.io's own plugin type isn't imported either (the package has no
 	boardgame.io dependency - see duelBot.ts's header comment) so the plugin shape is
-	typed structurally against what my-app's boardgame.io Game definition expects.
+	typed structurally against what apps/web's boardgame.io Game definition expects.
 */
 
 import { v4 as uuidv4 } from 'uuid';

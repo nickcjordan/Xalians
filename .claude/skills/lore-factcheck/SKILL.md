@@ -20,7 +20,7 @@ Anything a reader will take as canon: `docs/encyclopedia/tour.json` beats, `docs
 
 ## Procedure
 
-1. **Run the structural validator first.** `npm test -- --run -t tour` from `my-app/` (`src/lore/__tests__/lore.tour.test.js`): sources resolve, entries exist, no em-dashes, no four-digit numbers, word bands, banned words. Fix failures before reading further.
+1. **Run the structural validator first.** `npm test -- --run -t tour` from `apps/web/` (`src/lore/__tests__/lore.tour.test.js`): sources resolve, entries exist, no em-dashes, no four-digit numbers, word bands, banned words. Fix failures before reading further.
 2. **Spawn an independent checker** (a Sonnet subagent that changes no files) with this brief: split each text into atomic claims (actor, action, place, cause, sequence, quantity, motive); for each claim find and quote the supporting source sentence; classify SUPPORTED, PARAPHRASE, UNSUPPORTED, or CONTRADICTED (with the contradicting quote). Be strict: plausible is UNSUPPORTED. Pay special attention to causal links the source does not draw, sequence words, quantities, motives attributed to actors, superlatives, and anything that resolves an open mystery. Ask for every beat whose `sources` list omits a paragraph it relies on.
 3. **Fix or cut.** Every UNSUPPORTED claim is rewritten to what the source says or removed; every CONTRADICTED claim is corrected; PARAPHRASE stays. Add missing `sources`. Never fix by inventing a softer claim that is still unsourced.
 4. **Re-run** the validator and, if more than a sentence changed, the checker on the changed text.

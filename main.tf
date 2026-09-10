@@ -258,7 +258,7 @@ resource "aws_cloudwatch_log_group" "api_gw" {
 #####            COGNITO JWT AUTHORIZER             #####
 #########################################################
 # Replaces AWS_IAM + frontend SigV4 signing on the /db/* routes. The audience and issuer
-# ids come from my-app/src/aws-exports.js (aws_user_pools_web_client_id, aws_user_pools_id).
+# ids come from apps/web/src/aws-exports.js (aws_user_pools_web_client_id, aws_user_pools_id).
 resource "aws_apigatewayv2_authorizer" "cognito" {
   api_id           = aws_apigatewayv2_api.lambda.id
   authorizer_type  = "JWT"

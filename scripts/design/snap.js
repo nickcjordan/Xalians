@@ -12,7 +12,7 @@
  */
 const fs = require('fs');
 const path = require('path');
-const { chromium } = require(require.resolve('playwright-core', { paths: [path.join(__dirname, '..', '..', 'my-app')] }));
+const { chromium } = require(require.resolve('playwright-core', { paths: [path.join(__dirname, '..', '..', 'apps/web')] }));
 
 const args = process.argv.slice(2);
 const opt = (name, dflt) => { const i = args.indexOf(name); return i >= 0 ? args.splice(i, 2)[1] : dflt; };

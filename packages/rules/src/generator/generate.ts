@@ -9,7 +9,7 @@
 	xalian-creature-data-structure.md: nature only, no game numbers. Games derive.
 
 	It is React-free and imports no game code. It lives in packages/rules now (moved out
-	of my-app unchanged, B2 of the backend modernization plan) so it can be shared by the
+	of apps/web unchanged, B2 of the backend modernization plan) so it can be shared by the
 	frontend and the Lambda that will mint real Scrambler Tokens.
 
 	Everything tunable is in ./constants.ts and pinned by GENERATOR_VERSION.

@@ -4,7 +4,7 @@
 	Split out of gameplay/duel/boardStateManager.js during the packages/rules move
 	(issue #184, the duel half): these two functions mutate live cell DOM nodes
 	directly (classList, style.opacity) rather than deriving rules state, so they stay
-	in my-app as UI code while the rest of boardStateManager moved to
+	in apps/web as UI code while the rest of boardStateManager moved to
 	packages/rules/src/duel/boardStateManager.ts.
 */
 

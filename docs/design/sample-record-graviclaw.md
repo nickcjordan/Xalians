@@ -1,6 +1,6 @@
 # Sample record: Graviclaw
 
-`sample-record-graviclaw.json` is real generator output, not a hand-written sketch. Regenerate it with `node my-app/scripts/runNode.cjs <entry>`, where the entry calls `generateXalian('graviclaw', 'sample-graviclaw-1', { generatedAt: '2026-09-07T00:00:00Z' })` and writes the result pretty-printed to this folder.
+`sample-record-graviclaw.json` is real generator output, not a hand-written sketch. Regenerate it with `node apps/web/scripts/runNode.cjs <entry>`, where the entry calls `generateXalian('graviclaw', 'sample-graviclaw-1', { generatedAt: '2026-09-07T00:00:00Z' })` and writes the result pretty-printed to this folder.
 
 Seed: `sample-graviclaw-1`. Fixed timestamp: `2026-09-07T00:00:00Z`.
 

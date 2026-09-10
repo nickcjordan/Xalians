@@ -2,7 +2,7 @@
 	Duel: session-storage-backed board-size cache. Moved from
 	gameplay/duel/utils/boardUtil.js (issue #184's duel half): despite the old
 	"gameplay" home, this reads/writes window.sessionStorage, so it is UI/browser
-	state, not a rule, and stays in my-app while the pure duel rules moved to
+	state, not a rule, and stays in apps/web while the pure duel rules moved to
 	packages/rules/src/duel.
 */
 import LocalDuelStorage from "../store/LocalStorage";

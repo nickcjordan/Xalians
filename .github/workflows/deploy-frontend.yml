@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "my-app/**"
+      - "apps/web/**"
       - "packages/**"
       - ".github/workflows/deploy-frontend.yml"
   workflow_dispatch:
@@ -24,7 +24,7 @@ jobs:
     environment: production
     defaults:
       run:
-        working-directory: my-app
+        working-directory: apps/web
     steps:
       - uses: actions/checkout@v4
 

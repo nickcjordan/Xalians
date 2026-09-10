@@ -7,7 +7,7 @@
 	the terms set out in docs/design/game-validation-principles.md section 1. Run via the
 	esbuild runner, exactly like the simulator:
 
-		node my-app/scripts/runNode.cjs \
+		node apps/web/scripts/runNode.cjs \
 			packages/rules/src/expedition/devtools/expeditionValidation.ts --matches=200 --seed=7
 
 	Flags:

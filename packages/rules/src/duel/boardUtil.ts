@@ -1,8 +1,8 @@
 /*
 	Duel: board/team query helpers.
 
-	Moved from my-app/src/utils/duelUtil.js (issue #184's duel half, following the
-	expedition move in PR #199). Despite its old my-app "utils" home this is pure rules
+	Moved from apps/web/src/utils/duelUtil.js (issue #184's duel half, following the
+	expedition move in PR #199). Despite its old apps/web "utils" home this is pure rules
 	logic over G/ctx - team membership, board indices, flag lookups, turn-availability
 	checks - with zero React or DOM dependency, so it belongs in the package alongside
 	the rest of the duel rules. duelCalculator.ts needs xaliansAreOnSameTeam, which is
@@ -10,9 +10,9 @@
 
 	Named boardUtil.ts (not duelUtil.ts) to match the file the issue's move already
 	named this module after; the browser-storage helper that used to live at
-	my-app/src/gameplay/duel/utils/boardUtil.js is a different, UI-only concern (it
+	apps/web/src/gameplay/duel/utils/boardUtil.js is a different, UI-only concern (it
 	reads/writes window.sessionStorage) and now lives at
-	my-app/src/utils/duelBoardSizeStorage.js instead.
+	apps/web/src/utils/duelBoardSizeStorage.js instead.
 */
 
 import * as duelConstants from './duelGameConstants.ts';

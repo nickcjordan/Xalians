@@ -7,7 +7,7 @@ Per-species decisions that a migration agent cannot derive from the sources alon
 - 2026-09-02: levers, not stone. Every ruling here is a tuned setting, reopened by a concrete case met while building, never by taste; agents report the case and the smallest fix in the moment, Nick decides. Full statement in the repo `CLAUDE.md`.
 - 2026-09-02: one surface key. `shell` is the armored aspect; `hide` means the body has no armored aspect; a species never declares both. Enforced by the script (`anatomy.surface`).
 
-- 2026-09-02: the species artwork (`art/<key>.png`, rendered from `my-app/src/svg/species/`) is source material equal to the description; parts visible in the art are sourced, not authored.
+- 2026-09-02: the species artwork (`art/<key>.png`, rendered from `apps/web/src/svg/species/`) is source material equal to the description; parts visible in the art are sourced, not authored.
 - 2026-09-02: conjured familiars are projections, not life. A central mind may conjure a swarm of hologram-like or ghost-like familiars that phase away when destroyed; this is not summoning or creating life. The `swarm` channel covers such a familiar swarm regardless of the creature's own body plan.
 
 - 2026-09-02: trait model. Every pool trait is rolled independently at its own percent (1 to 100); 100 means every individual; no count, minimum, or cap; `guaranteed` and `rolledCount` retired. Exclusion partners: the generator rolls the higher percent first and skips the partner if it lands; never both at 100. A planet-wide sentence may justify an environmental adaptation trait (nocturnal, resistant) at or near 100, never a behavioral one.

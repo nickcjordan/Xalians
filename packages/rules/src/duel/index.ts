@@ -1,5 +1,5 @@
 /*
-	Duel public API. Re-exports the whole module set my-app's duel components, pages
+	Duel public API. Re-exports the whole module set apps/web's duel components, pages
 	and devtools consume, the same convention packages/rules/src/index.ts uses for the
 	generator and packages/rules/src/expedition/index.ts uses for expedition (issue
 	#184's duel half, following PR #199).

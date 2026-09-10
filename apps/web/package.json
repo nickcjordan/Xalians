@@ -50,7 +50,7 @@
     "os": false
   },
   "scripts": {
-    "codex": "node ../scripts/buildCodex.js",
+    "codex": "node ../../scripts/buildCodex.js",
     "dev": "npm run codex && vite",
     "start": "npm run dev",
     "build": "npm run codex && vite build",

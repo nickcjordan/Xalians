@@ -1,5 +1,5 @@
 // Copies the ratified lore bundle from docs/ into packages/content/json/, which both
-// apps/api and my-app read directly through the @xalians/content workspace package.
+// apps/api and apps/web read directly through the @xalians/content workspace package.
 //
 //   encyclopedia.json    <- docs/encyclopedia/encyclopedia.json (verbatim)
 //   chronicle.json       <- docs/encyclopedia/chronicle.json (verbatim)

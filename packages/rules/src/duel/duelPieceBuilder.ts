@@ -3,9 +3,9 @@ import species from '@xalians/content/species.json';
 import type { DuelPiece, DuelTraits, SourceXalian } from './types.ts';
 
 /*
-	statRangeToInteger, ported from my-app/src/utils/valueTranslator.js: that module
+	statRangeToInteger, ported from apps/web/src/utils/valueTranslator.js: that module
 	also carries UI color-map lookups keyed off designTokens.js, which would pull a
-	my-app import into the package. Only this one pure rating-word lookup is used by
+	apps/web import into the package. Only this one pure rating-word lookup is used by
 	the duel piece builder, so it is copied here rather than importing the rest of
 	that file's UI concerns.
 */

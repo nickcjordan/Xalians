@@ -19,7 +19,7 @@ const records = speciesRecords as any;
 	least 30 total reachable names per species. Coverage claims come only from the
 	automated checker (scripts/checkCatalogCoverage.js, docs/ability-catalog/COVERAGE.md,
 	regenerate with `node scripts/checkCatalogCoverage.js` from the repo root); this test
-	only re-checks the two floors against the my-app JSON copies so a regression here is
+	only re-checks the two floors against the apps/web JSON copies so a regression here is
 	caught by `npm test`, not only by the standalone script.
 
 	Reachability mirrors generate.ts's own `allowedActions` and `nameCandidates` exactly

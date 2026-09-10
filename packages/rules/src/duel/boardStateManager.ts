@@ -4,7 +4,7 @@
 	This used to also carry two DOM-manipulating helpers (clearVisualsForAllCells,
 	setVisualsForAllCells) that directly touched classList/style on live cell elements.
 	Those are UI, not rules - they moved to
-	my-app/src/components/games/duel/board/boardCellVisuals.js in the same commit that
+	apps/web/src/components/games/duel/board/boardCellVisuals.js in the same commit that
 	moved this file's pure half into the package (issue #184's duel half, following the
 	expedition move in PR #199).
 */

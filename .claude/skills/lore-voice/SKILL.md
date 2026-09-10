@@ -13,14 +13,14 @@ The Xalians canon was written by one human hand with an unusually consistent voi
 ## Before you write
 
 1. **Read the reference files.** `references/canon.md` is the fact sheet — timeline, factions, planets, terminology, and the hard continuity constraints. `references/voice.md` is the style analysis with annotated exemplars pulled verbatim from the source. Read both. They are short.
-2. **Read the actual source for whatever you're extending.** Do not write a Magmuth creature without reading Magmuth's history. The fastest complete read is `my-app/public/lore/xalia.md` (the Codex) — the whole canon in one generated document, where each planet's chapter already gathers its history, its Generator environmental report, its native species, and encyclopedia entries that reference it. Regenerate it after lore edits: `node scripts/buildCodex.js` (repo root) or `npm run codex` from `my-app/`. It is generated and gitignored, never committed. The raw JSON remains the source of truth:
+2. **Read the actual source for whatever you're extending.** Do not write a Magmuth creature without reading Magmuth's history. The fastest complete read is `apps/web/public/lore/xalia.md` (the Codex) — the whole canon in one generated document, where each planet's chapter already gathers its history, its Generator environmental report, its native species, and encyclopedia entries that reference it. Regenerate it after lore edits: `node scripts/buildCodex.js` (repo root) or `npm run codex` from `apps/web/`. It is generated and gitignored, never committed. The raw JSON remains the source of truth:
    - Planet histories: `packages/content/json/planets.json` — each planet is `{name, image, planetImage, data, history}` where `history` is an array of paragraph strings.
    - Species: `packages/content/json/species.json`
    - Encyclopedia entries: `docs/encyclopedia/encyclopedia.json` — `{key, title, category, definition, related, element?, aliases?}`; the editorial rules are in `docs/encyclopedia/ENCYCLOPEDIA-INTERNAL.md`. (`packages/content/json/glossary.json` is a legacy mirror; do not add to it.) `aliases` is an optional list of other proper names that unambiguously mean this entry (e.g. `"Kozrak"` for `king-kozrak`) — add one only when it could never mean a different entry, world, species, or era.
    - The Chronicle: `docs/encyclopedia/chronicle.json` and `docs/design/xalian-chronicle.md` — the undated era timeline; place any new event or paragraph in an era and never invent a date.
    - The First Survey: `docs/encyclopedia/tour.json` — eight beats of derived prose (historian register, 120 to 200 words) that restate the histories; every claim must trace to a `sources` paragraph. It is not a canon source; when the histories change, the beats follow.
    - Elements and their move vocabularies: `packages/content/json/elements.json`
-   - Public-facing summary voice: `my-app/src/pages/home.js` (~lines 250–310)
+   - Public-facing summary voice: `apps/web/src/pages/home.js` (~lines 250–310)
    Read them with `node -e` rather than dumping raw JSON, e.g.
    `node -e "const p=require('./packages/content/json/planets.json'); const m=p.find(x=>x.name==='Magmuth'); m.history.forEach(h=>console.log(h+'\n'))"`
 3. **`packages/content/json/` is the only copy** — both the API and the frontend import it directly (`@xalians/content/<name>.json`), there is no build-time copy to keep in sync anymore. Edit the sources there for histories and species, `docs/encyclopedia/` for entries and the chronicle, then run `node scripts/bundleLore.js` from the repo root to regenerate the derived bundles (encyclopedia, chronicle, registries, tour, narration, plates, ability catalog).
@@ -51,7 +51,7 @@ A galactic historian writing a declassified encyclopedia entry, centuries after 
 
 **Glossary entry** — one or two sentences, encyclopedic and definitional, no flourish and no ellipsis. Leads with the category noun: *"A planet-wide chemical disaster site that was once…"*, *"A consortium of Vallerii corporations formed to…"*. Cross-references other canon terms by name freely. Alphabetically it lives in `glossary.json` unsorted — append is fine.
 
-**Homepage / marketing copy** — compressed, present tense, second-person-adjacent, punchier and less hedged than the histories. See `my-app/src/pages/home.js`. Use only for UI-facing summary text.
+**Homepage / marketing copy** — compressed, present tense, second-person-adjacent, punchier and less hedged than the histories. See `apps/web/src/pages/home.js`. Use only for UI-facing summary text.
 
 ## Prohibitions
 

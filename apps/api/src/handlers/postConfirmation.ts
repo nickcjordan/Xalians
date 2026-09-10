@@ -6,7 +6,7 @@
 // continue; throwing here blocks the user's confirmation.
 //
 // Replaces the Amplify-managed function
-// my-app/amplify/backend/function/xalianSignUpSignInResourcePostConfirmation (deleted in
+// apps/web/amplify/backend/function/xalianSignUpSignInResourcePostConfirmation (deleted in
 // the same change, see issue #182): adds the new user to the standard group, same as
 // that function's add-to-group.js, and additionally lazy-creates the XalianUsersTable
 // record (previously only created on first POST /db/user from the frontend) so it exists

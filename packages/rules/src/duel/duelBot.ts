@@ -3,7 +3,7 @@
 	boardgame.io move list. The original file imported MCTSBot/Step from
 	'boardgame.io/ai' but never referenced either binding, so that import (and the
 	boardgame.io dependency it would have pulled into this package) is dropped here;
-	the actual MCTSBot wiring lives in my-app's DuelBotInstance component.
+	the actual MCTSBot wiring lives in apps/web's DuelBotInstance component.
 */
 
 import * as duelUtil from './boardUtil.ts';
