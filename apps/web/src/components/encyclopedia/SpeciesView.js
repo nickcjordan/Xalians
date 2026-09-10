@@ -253,11 +253,9 @@ export default function SpeciesView() {
         <article className={`el-${view.element}`}>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-[minmax(240px,360px)_minmax(0,1fr)]">
                 <div className="flex min-w-0 flex-col gap-4 max-sm:contents">
-                    <Card variant="panel" className="p-5 max-sm:order-1 max-sm:max-w-[320px]">
-                        <div className="grid aspect-square w-full place-items-center">
-                            <XalianImage colored speciesName={view.name} primaryType={view.element} moreClasses="w-full" />
-                        </div>
-                    </Card>
+                    <div className="max-sm:order-1 max-sm:max-w-[320px]">
+                        <XalianImage colored speciesName={view.name} primaryType={view.element} moreClasses="w-full" />
+                    </div>
                     {isTemplate && <div className="max-sm:order-3"><Signature signature={view.record.signature} /></div>}
                 </div>
 

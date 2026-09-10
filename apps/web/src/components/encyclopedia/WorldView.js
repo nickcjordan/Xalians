@@ -241,15 +241,13 @@ export default function WorldView() {
         <article className={`el-${world.element}`}>
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(240px,360px)_minmax(0,1fr)]">
                 <div className="flex min-w-0 flex-col gap-4">
-                    <Card variant="panel" className="p-5">
-                        <div className="grid aspect-square w-full place-items-center rounded-full bg-el/25">
-                            <img
-                                src={`/${world.images.planet}`}
-                                alt={`${world.name} globe`}
-                                className="block size-full rounded-full object-cover"
-                            />
-                        </div>
-                    </Card>
+                    <div className="grid aspect-square w-full place-items-center bg-el/24">
+                        <img
+                            src={`/${world.images.planet}`}
+                            alt={`${world.name} globe`}
+                            className="h-[72%] w-[72%] object-contain"
+                        />
+                    </div>
                     <SpecPlate entries={factsEntries} />
                 </div>
 
