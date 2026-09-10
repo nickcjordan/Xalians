@@ -10,7 +10,6 @@ import { GenerateRegistryXalianBodySchema } from '../lib/schemas.ts';
 import { generateXalian, getSpeciesTemplate, getSpeciesTemplates } from '@xalians/rules/generator';
 import { XalianRecordSchema } from '@xalians/content/schema';
 import * as registryRepo from '../repositories/registry.ts';
-import * as usersRepo from '../repositories/users.ts';
 import * as log from '../lib/log.ts';
 
 function pickRandom<T>(items: T[]): T {
@@ -26,10 +25,8 @@ export const handler = withApi(
       throw new ApiError(400, 'UNKNOWN_SPECIES', `"${body.species}" is not a ratified species`);
     }
 
-    // The user item must exist before nextSerial's ADD can touch it; createUserIfMissing
-    // is itself idempotent (a no-op if the item is already there from sign-in).
-    await usersRepo.createUserIfMissing(ownerId);
-    const serial = await usersRepo.nextSerial(ownerId, template.key);
+    // Global per-species count, not per-owner: see the doc comment on registryRepo.nextSerial.
+    const serial = await registryRepo.nextSerial(template.key);
 
     const seed = randomBytes(16).toString('hex');
     const generated = generateXalian(template, seed, {
