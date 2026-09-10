@@ -4396,3 +4396,145 @@
 	font-variant-numeric: tabular-nums;
 	color: var(--g-brass-light);
 }
+
+/* ===========================================================================
+   THE STAKE (docs/design/reclamation-base-redesign.md, Pass 3, assumptions 21
+   and 22). Three things arrive on the table with this pass: the Stake control
+   and its mark on a world's tray head, the inline confirm that stands in for a
+   browser dialog on the status strip, and the price of hiding, shown on the
+   sends-left pips before it is paid.
+
+   The livery rule is the panel's own: nothing here glows. A staked world is
+   marked by the colour of whoever staked it (yours, the rival's, or a hatch of
+   both) and by a stencilled legend saying what it now counts, never by a lamp.
+   Tokens only.
+   =========================================================================== */
+
+/* --- the mark: what a staked world counts --------------------------------- */
+
+.rec-staked {
+	grid-column: 2;
+	justify-self: start;
+	display: inline-flex;
+	align-items: center;
+	gap: var(--g-1);
+	padding: 1px var(--g-2);
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: 2px;
+	background: var(--g-hull-lo);
+	box-shadow: var(--g-recess);
+	color: var(--g-ink);
+	white-space: nowrap;
+}
+
+.rec-staked--mine { border-color: var(--rec-you); color: var(--rec-you); }
+.rec-staked--theirs { border-color: var(--rec-rival); color: var(--rec-rival); }
+/* staked by both: the two sides' colours as a hazard hatch across the plate, and
+   the legend in the hull's own ink so neither side owns the word */
+.rec-staked--both {
+	border-color: var(--g-brass-dark);
+	color: var(--g-ink);
+	background-image: repeating-linear-gradient(
+		135deg,
+		color-mix(in srgb, var(--rec-you) 42%, transparent) 0 6px,
+		color-mix(in srgb, var(--rec-rival) 42%, transparent) 6px 12px
+	);
+}
+
+/* the tray of a staked world carries a heavier top edge, so the frame reads at a
+   glance which of the three worlds is worth more this round */
+.rec-site--staked { border-top: 3px solid var(--g-brass-light); }
+
+/* --- the control: Stake ---------------------------------------------------- */
+
+.rec-stake-btn {
+	grid-column: 2;
+	justify-self: start;
+	margin-top: 1px;
+	padding: 1px var(--g-2);
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink-mid);
+	background: var(--g-hull-lo);
+	border: var(--g-hairline) solid var(--g-brass-dark);
+	border-radius: 2px;
+	box-shadow: var(--g-relief);
+	cursor: pointer;
+}
+
+.rec-stake-btn:hover,
+.rec-stake-btn:focus-visible { color: var(--g-ink); border-color: var(--g-brass-light); }
+
+.rec-stake-btn--asking {
+	color: var(--g-ink);
+	border-color: var(--rec-you);
+	box-shadow: var(--g-recess);
+}
+
+.rec-site--stake-pending { outline: 2px dashed var(--rec-you); outline-offset: 2px; }
+
+/* --- the question, on the status strip ------------------------------------- */
+
+.rec-stake-ask {
+	grid-column: 1 / -1;
+	margin: 0;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--g-2);
+	padding-top: var(--g-2);
+	border-top: var(--g-hairline) solid var(--g-rule-faint);
+	font-size: var(--g-size-small);
+	color: var(--g-ink);
+}
+
+.rec-stake-ask-text { flex: 1 1 260px; }
+.rec-stake-ask-actions { display: inline-flex; gap: var(--g-2); flex: 0 0 auto; }
+.rec-stake-ask .rec-stake-yes,
+.rec-stake-ask .rec-stake-no { font-size: var(--g-size-tiny); padding: var(--g-1) var(--g-2); }
+
+/* --- the price of hiding --------------------------------------------------- */
+
+/* a pip the send in hand would spend: recessed like a spent one, but hatched, so
+   "two instead of one" is read before the send is made rather than after */
+.rec-send-pip--pending {
+	background-image: repeating-linear-gradient(
+		135deg,
+		color-mix(in srgb, var(--g-void) 70%, transparent) 0 2px,
+		transparent 2px 4px
+	);
+	box-shadow: var(--g-recess);
+}
+
+.rec-hidden-price {
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-low);
+	white-space: nowrap;
+}
+
+.rec-hidden-toggle--unaffordable { opacity: 0.6; cursor: not-allowed; }
+.rec-hidden-toggle--unaffordable .rec-hidden-price { color: var(--g-lamp-red); }
+
+/* --- the report: what a world counted -------------------------------------- */
+
+.rec-report-world-counted {
+	font-size: var(--g-size-micro);
+	font-weight: 600;
+	color: var(--g-brass-light);
+	border: var(--g-hairline) solid var(--g-brass-dark);
+	border-radius: 2px;
+	padding: 0 var(--g-1);
+	white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+	.rec-stake-ask { flex-direction: column; align-items: flex-start; }
+	.rec-stake-ask-actions { width: 100%; }
+}

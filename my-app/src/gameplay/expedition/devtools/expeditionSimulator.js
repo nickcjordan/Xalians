@@ -51,14 +51,14 @@
 */
 
 import {
-	createMatch, send, pass, moveSwift, getPublicState,
+	createMatch, send, pass, moveSwift, stakeWorld, getPublicState,
 	createRngState, nextRandom,
 } from '../expeditionRules.js';
 import {
 	ROSTER_SIZE, SITES_PER_WORLD, SENDABLE, FRAMES_PER_MATCH, WORLDS_PER_FRAME,
 	RETURNED_SEND_COST, ROLE,
 } from '../expeditionInterpretation.js';
-import { chooseSend, rivalById, DEFAULT_RIVAL_ID } from '../expeditionBot.js';
+import { chooseSend, chooseStake, rivalById, DEFAULT_RIVAL_ID } from '../expeditionBot.js';
 import { prepare, baseHold, speedOf, strainLevel, roleOf } from '../creatureOnTable.js';
 import { buildExpeditionPool } from '../roster.js';
 import { getWorlds } from '../sites.js';
@@ -349,6 +349,10 @@ function runOneMatch(matchSeed, pool, rng, options) {
 	const recoverRecords = [];
 	const sendRecords = []; // filled progressively; siteResult/won attached at judge time
 	const swiftMoveRecords = [];
+	// one per stake made (docs/design/reclamation-base-redesign.md assumption 22): who
+	// staked, which world, which round, whether that handler was behind at the time, and
+	// how the Ruling read the world it doubled
+	const stakeRecords = [];
 	let decisions = 0; // sends + passes + swift moves, as a playtime proxy
 	let sitesWonAfterWorld1 = null; // { A, B } snapshot for the comeback-rate stat
 	let error = null;
@@ -357,7 +361,7 @@ function runOneMatch(matchSeed, pool, rng, options) {
 	function bail() {
 		return {
 			finalState: state, error, roundOneStarter, siteRecords, attackRecords, shieldRecords,
-			bolsterRecords, recoverRecords, sendRecords, swiftMoveRecords, decisions, rosterMeanHold,
+			bolsterRecords, recoverRecords, sendRecords, swiftMoveRecords, stakeRecords, decisions, rosterMeanHold,
 			rosterMeanSpeed, sitesWonAfterWorld1, swiftMovesThisMatch,
 			rosterAIds: rosterA.map((r) => r.id), rosterBIds: rosterB.map((r) => r.id),
 		};
@@ -384,6 +388,8 @@ function runOneMatch(matchSeed, pool, rng, options) {
 		// records sent this round, keyed by recordId, so the site's judged outcome can be
 		// attached to each send once Judge has run
 		const sentThisRound = {};
+		// stakes declared this round, resolved against the Ruling below
+		const stakedThisRound = [];
 		// Deploy now ends INSIDE pass(): the second pass runs Resolve and Judge in one
 		// step (assumption 1), so the deploy-end snapshot and the log watermark are taken
 		// fresh before every action and the last pair is the one that describes the round.
@@ -399,8 +405,31 @@ function runOneMatch(matchSeed, pool, rng, options) {
 			deployEnd = deployEndSnapshot(state, frame);
 			logLengthBeforeResolve = state.resolutionLog.length;
 
-			const publicState = getPublicState(state, handler);
+			let publicState = getPublicState(state, handler);
 			const ownRoster = state.players[handler].roster;
+
+			// the stake is offered before this handler's first send of the round and does
+			// not spend the turn (assumption 22), so it is asked for here and the public
+			// state retaken. The random seat never stakes: a random policy is the floor the
+			// bot is measured against, and giving it a considered stake would blur that.
+			if (randomSeat !== handler && (publicState.players[handler].stakeableSiteIds || []).length > 0) {
+				const wanted = chooseStake(publicState, ownRoster, handler, rivalFor[handler]);
+				if (wanted) {
+					const staked = stakeWorld(state, handler, wanted.siteId);
+					if (staked) {
+						stakedThisRound.push({
+							handler,
+							siteId: wanted.siteId,
+							frameIndex,
+							behind: state.players[handler].sitesWon < state.players[handler === 'A' ? 'B' : 'A'].sitesWon,
+						});
+						state = staked;
+						decisions++;
+						publicState = getPublicState(state, handler);
+					}
+				}
+			}
+
 			let action = chooseSendFor(handler, publicState, ownRoster);
 
 			if (action.type === 'move') {
@@ -547,6 +576,19 @@ function runOneMatch(matchSeed, pool, rng, options) {
 				});
 			});
 
+			stakedThisRound.forEach((row) => {
+				const result = judgeEvent.siteResults[row.siteId];
+				const others = Object.keys(judgeEvent.siteResults).filter((id) => id !== row.siteId);
+				stakeRecords.push({
+					...row,
+					won: !!result && result.winner === row.handler,
+					tie: !!result && result.winner === null,
+					countedValue: result ? result.countedValue : 1,
+					unstakedWon: others.filter((id) => judgeEvent.siteResults[id].winner === row.handler).length,
+					unstakedDecided: others.filter((id) => judgeEvent.siteResults[id].winner !== null).length,
+				});
+			});
+
 			Object.values(sentThisRound).forEach((sent) => {
 				const result = judgeEvent.siteResults[sent.site];
 				if (!result) {
@@ -597,6 +639,7 @@ function summarize(matchResults, args, pool, rivals) {
 	const allRecoveries = completedMatches.flatMap((m) => m.recoverRecords);
 	const allSends = completedMatches.flatMap((m) => m.sendRecords);
 	const allSwiftMoves = completedMatches.flatMap((m) => m.swiftMoveRecords);
+	const allStakes = completedMatches.flatMap((m) => m.stakeRecords);
 
 	// side A's raw win rate, independent of who started - this is the number that answers
 	// "how does rivalA do against rivalB" (--rivalA/--rivalB), unlike starterWinRate below
@@ -652,6 +695,30 @@ function summarize(matchResults, args, pool, rivals) {
 		starterWinRateWithoutSwiftMove: rate(starterWinsWithoutSwiftMove, matchesWithoutSwiftMove.length),
 		swiftMoveFlipRate: rate(swiftMovesThatFlipped, totalSwiftMoves),
 		mirrorMode: !!args.mirror,
+	};
+
+	/*
+		The stake (docs/design/reclamation-base-redesign.md assumption 22). The same numbers
+		the validation tool's stake section reads, so the two reports agree: how often it is
+		taken, by which side, and whether the staker actually holds the world it doubled.
+		`unstaked` is the within-round control - the same handler's other two worlds that
+		round - so a staker that wins its staked world less often than its unstaked ones is
+		reading the stake as a trap rather than a chosen risk.
+	*/
+	const decidedStakes = allStakes.filter((r) => !r.tie);
+	const stakeReport = {
+		stakesPerMatch: average(completedMatches.map((m) => m.stakeRecords.length)),
+		matchesWithAStake: rate(completedMatches.filter((m) => m.stakeRecords.length > 0).length, completedMatches.length),
+		byTrailingSide: rate(allStakes.filter((r) => r.behind).length, allStakes.length),
+		stakerWinsStakedWorld: rate(decidedStakes.filter((r) => r.won).length, decidedStakes.length),
+		stakerWinsUnstakedWorlds: rate(
+			allStakes.reduce((n, r) => n + r.unstakedWon, 0),
+			allStakes.reduce((n, r) => n + r.unstakedDecided, 0),
+		),
+		byRound: [0, 1, 2].map((frameIndex) => ({
+			round: frameIndex + 1,
+			count: allStakes.filter((r) => r.frameIndex === frameIndex).length,
+		})),
 	};
 
 	// -------------------- 2. match shape --------------------
@@ -1128,6 +1195,7 @@ function summarize(matchResults, args, pool, rivals) {
 			sideAWinRate,
 		},
 		seatFairness,
+		stake: stakeReport,
 		matchShape,
 		siteEconomy,
 		rosterEconomy,
@@ -1171,6 +1239,14 @@ function printReport(report) {
 	console.log(`starter win rate with a swift move: ${fmtRate(sf.starterWinRateWithSwiftMove)}`);
 	console.log(`starter win rate without a swift move: ${fmtRate(sf.starterWinRateWithoutSwiftMove)}`);
 	console.log(`swift moves that flipped losing->winning at deploy end: ${fmtRate(sf.swiftMoveFlipRate)}`);
+	const stk = report.stake;
+	if (stk) {
+		console.log(`stakes per match: ${stk.stakesPerMatch.toFixed(2)} (Provings with a stake ${fmtRate(stk.matchesWithAStake)})`);
+		console.log(`stakes made by the side behind on worlds: ${fmtRate(stk.byTrailingSide)}`);
+		console.log(`staker holds its staked world: ${fmtRate(stk.stakerWinsStakedWorld)}`);
+		console.log(`the same handlers hold their UNstaked worlds that round: ${fmtRate(stk.stakerWinsUnstakedWorlds)}`);
+		console.log(`stakes by round 1 / 2 / 3: ${stk.byRound.map((r) => r.count).join(' / ')}`);
+	}
 
 	console.log('\n--- 2. match shape ---');
 	const ms = report.matchShape;

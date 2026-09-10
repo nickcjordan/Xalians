@@ -16,7 +16,7 @@ import {
 	runValidation, sectionRegret, sectionSpread, sectionDecided, sectionAblation, sectionDraft,
 	buildSections, toMarkdown, decidedRoundOf, lockedRoundOf, matchShapeOf, rate,
 	ALL_SECTIONS, NAIVE_POLICIES, ABLATIONS, parseSweep, sweepRulesOf, runSweep,
-	sectionLanes, RECORD_ATTRIBUTES,
+	sectionLanes, RECORD_ATTRIBUTES, sectionStake, stakeStatsOf, LANE_ROLE_GROUPS,
 } from '../devtools/expeditionValidation.js';
 import { buildExpeditionPool } from '../roster.js';
 import { RIVALS } from '../expeditionBot.js';
@@ -318,5 +318,83 @@ describe('sectionLanes', () => {
 		expect(section).toBeTruthy();
 		expect(section.blocks.some((b) => b.type === 'table')).toBe(true);
 		expect(toMarkdown(report)).toContain('Per-attribute lanes');
+	});
+});
+
+
+/*
+	PASS 3 (docs/design/reclamation-base-redesign.md assumptions 21 to 23): the stake
+	section, the per-role lane split, and the two new ablation rows. Shape and determinism
+	only, as everywhere else in this file.
+*/
+describe('pass 3: the stake section', () => {
+	it('returns the stake on against the stake off, with the rival ladder under both', () => {
+		const report = sectionStake({ matches: MATCHES, seed: SEED, pool });
+		['on', 'off'].forEach((key) => {
+			expect(isRate(report[key].shape.comebackRate)).toBe(true);
+			expect(typeof report[key].stake.stakesPerMatch).toBe('number');
+			expect(isRate(report[key].stake.usageShare)).toBe(true);
+			expect(isRate(report[key].stake.trailingShare)).toBe(true);
+			expect(isRate(report[key].stake.stakedWinRate)).toBe(true);
+			expect(isRate(report[key].stake.unstakedWinRate)).toBe(true);
+		});
+		expect(report.byRival.length).toBe(RIVALS.length);
+		report.byRival.forEach((row) => {
+			expect(isRate(row.on)).toBe(true);
+			expect(isRate(row.off)).toBe(true);
+		});
+		expect(report.readings.length).toBeGreaterThan(0);
+		// with the rule off nothing is ever staked, which is the control the section needs
+		expect(report.off.stake.stakesPerMatch).toBe(0);
+	});
+
+	it('is deterministic under the seed', () => {
+		const a = sectionStake({ matches: MATCHES, seed: SEED, pool });
+		const b = sectionStake({ matches: MATCHES, seed: SEED, pool });
+		expect(JSON.stringify(a)).toBe(JSON.stringify(b));
+	});
+
+	it('stakeStatsOf reads an empty batch without throwing', () => {
+		const stats = stakeStatsOf([]);
+		expect(stats.n).toBe(0);
+		expect(stats.usageShare).toBeNull();
+		expect(stats.stakesPerMatch).toBe(0);
+	});
+
+	it('is one of the report sections and renders into the markdown', () => {
+		expect(ALL_SECTIONS).toContain('stake');
+		const report = runValidation({ matches: MATCHES, seed: SEED, only: ['stake'] });
+		const sections = buildSections(report);
+		expect(sections.map((x) => x.id)).toContain('stake');
+		expect(toMarkdown(report)).toContain('The stake');
+	});
+});
+
+describe('pass 3: the per-role lane split', () => {
+	it('keeps the overall row and adds one cell per role group', () => {
+		const lanes = sectionLanes({ matches: MATCHES, seed: SEED, pool });
+		expect(lanes.rows.length).toBe(RECORD_ATTRIBUTES.length);
+		expect(lanes.groups.map((g) => g.id)).toEqual(LANE_ROLE_GROUPS.map((g) => g.id));
+		lanes.rows.forEach((row) => {
+			expect(row.gap === null || typeof row.gap === 'number').toBe(true);
+			expect(row.byRole.length).toBe(LANE_ROLE_GROUPS.length);
+			row.byRole.forEach((cell) => {
+				expect(LANE_ROLE_GROUPS.some((g) => g.id === cell.group)).toBe(true);
+				expect(isRate(cell.topWinRate)).toBe(true);
+				expect(isRate(cell.bottomWinRate)).toBe(true);
+			});
+		});
+	});
+});
+
+describe('pass 3: the new ablation rows', () => {
+	it('carries a no-stake row and an unpriced-hiding row', () => {
+		const ids = ABLATIONS.map((a) => a.id);
+		expect(ids).toContain('noStake');
+		expect(ids).toContain('hidingUnpriced');
+		const noStake = ABLATIONS.find((a) => a.id === 'noStake');
+		expect(noStake.rules).toEqual({ stake: false });
+		const unpriced = ABLATIONS.find((a) => a.id === 'hidingUnpriced');
+		expect(unpriced.rules).toEqual({ hiddenSendCost: 1, hiddenFirstNeedsCompany: false, hiddenPower: 1 });
 	});
 });

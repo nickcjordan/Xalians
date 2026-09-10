@@ -1,7 +1,7 @@
 import React from 'react';
 import ReclamationFigure, { ReclamationSilhouette, HoldMeter } from './reclamationFigure';
 import { RoleGlyph } from './reclamationGlyphs';
-import { formatHold } from './reclamationNarration';
+import { formatHold, countWord } from './reclamationNarration';
 
 /*
 	ReclamationWorld — the frame: three worlds side by side, each at one of its sites.
@@ -23,6 +23,13 @@ import { formatHold } from './reclamationNarration';
 
 	Every hold shown is passed in already computed by the engine's prepare(): this
 	component derives nothing except differences between numbers it was given.
+
+	PASS 3, THE STAKE (assumption 22). A tray head carries a "Stake" control while its
+	world is one this handler may still stake, and a mark saying what a staked world now
+	counts. Neither is a decision this component makes: `stakeableSiteIds` is the engine's
+	own list of legal stakes and `stakes` is its own per-site arithmetic, and pressing the
+	control only asks the table to put the question. The question itself is answered on the
+	status strip, so the worlds stay on screen while it is answered.
 */
 
 /*
@@ -128,6 +135,34 @@ function ghostText(ghost, mine, theirs) {
 	return `still behind by ${formatHold(-after)}`;
 }
 
+/*
+	THE STAKE, on the tray head (Pass 3, assumption 22). A world this handler may still
+	stake carries a small "Stake" control; a world already staked carries a mark saying
+	what it now counts, in the colour of whoever staked it, and in both colours when both
+	handlers staked the same one. Everything here is the engine's own arithmetic: the
+	`stakes` block of the public state carries `by` and `countedValue` per site, so the
+	head never counts anything itself.
+*/
+export function StakeMark({ stake, you }) {
+	if (!stake || !stake.by || stake.by.length === 0) {
+		return null;
+	}
+	const mine = stake.by.includes(you);
+	const theirs = stake.by.some((seat) => seat !== you);
+	const who = mine && theirs ? 'both' : mine ? 'mine' : 'theirs';
+	const byText = who === 'both' ? 'staked by both handlers' : who === 'mine' ? 'staked by you' : 'staked by the rival';
+	return (
+		<span
+			className={`rec-staked rec-staked--${who}`}
+			data-staked={who}
+			data-staked-value={stake.countedValue}
+			title={`${byText}: it counts ${countWord(stake.countedValue)} toward the Charter for whoever holds it at the Ruling.`}
+		>
+			counts {countWord(stake.countedValue)}
+		</span>
+	);
+}
+
 function ReclamationWorld({
 	frame,
 	board,
@@ -152,10 +187,15 @@ function ReclamationWorld({
 	hoverSiteId,
 	previewRecordId,
 	advanced,
+	stakes,
+	stakeableSiteIds,
+	pendingStakeSiteId,
+	onStake,
 }) {
 	const opponent = you === 'A' ? 'B' : 'A';
 	const hl = highlights || {};
 	const arrivedIds = arrival ? arrival.ids : [];
+	const stakeable = new Set(stakeableSiteIds || []);
 
 	return (
 		<div className="rec-world">
@@ -177,6 +217,9 @@ function ReclamationWorld({
 					const margin = empty ? { who: 'empty', text: '' } : marginText(totalMine, totalTheirs);
 					const ghost = ghosts && ghosts[site.id];
 					const verdict = verdicts && verdicts[site.id];
+					const stake = stakes && stakes[site.id];
+					const stakedHere = !!(stake && stake.by && stake.by.length > 0);
+					const canStake = !!onStake && stakeable.has(site.id);
 
 					const classes = ['g-panel', 'rec-site', 'rec-site--enter', `rec-site--${margin.who}`, `g-el-${site.world.element}`];
 					// the site something just landed on pulses in the colour of who sent it
@@ -201,6 +244,12 @@ function ReclamationWorld({
 					}
 					if (hoverSiteId === site.id) {
 						classes.push('rec-site--hover');
+					}
+					if (stakedHere) {
+						classes.push('rec-site--staked');
+					}
+					if (pendingStakeSiteId === site.id) {
+						classes.push('rec-site--stake-pending');
 					}
 
 					// the key is passed on the element itself, never inside the spread: React
@@ -261,6 +310,23 @@ function ReclamationWorld({
 								<span className="rec-site-place" title={site.description || undefined}>{site.name}</span>
 								{/* simple mode shows the scale only while a creature is previewed; its room is kept so the card never jumps */}
 								<span className={`rec-env-slot${advanced || ghost ? '' : ' rec-env-slot--quiet'}`}><EnvironmentScale site={site} ghost={ghost} /></span>
+								{/* the stake: what this world counts, or the control that puts it up */}
+								<StakeMark stake={stake} you={you} />
+								{canStake && (
+									<button
+										type="button"
+										className={`rec-stake-btn${pendingStakeSiteId === site.id ? ' rec-stake-btn--asking' : ''}`}
+										data-stake={site.id}
+										aria-pressed={pendingStakeSiteId === site.id}
+										title={`Stake ${site.world.planet}: it would count ${stakedHere ? 'three' : 'two'} toward the Charter for whoever holds it. Once a Proving, and only before your first send of the round.`}
+										onClick={(e) => {
+											e.stopPropagation();
+											onStake(site.id);
+										}}
+									>
+										Stake
+									</button>
+								)}
 								{recommended && <span className="rec-site-recommend" data-recommended-site>recommended</span>}
 							</header>
 

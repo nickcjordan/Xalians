@@ -27,7 +27,8 @@
 		                   --sweep=magnitudeScale=0.55,0.8,1.1,1.5
 		                   --sweep=holdFloor:holdCeiling=-3.6:23.1,-1.2:21.0,2.8:17.6,6.0:14.9
 
-	Six sections: five per lever in the principles doc, plus the per-attribute lanes Pass 2 asks for.
+	Seven sections: five per lever in the principles doc, the per-attribute lanes Pass 2 asks
+	for (split per role since Pass 3), and the stake's own numbers.
 
 		1. Naive-policy regret. Six trivial policies play side A against the proctor; if a
 		   trivial policy wins nearly as often as the proctor, the deeper decisions are
@@ -49,7 +50,13 @@
 		6. Per-attribute lanes. For each of the ten record attributes, the site win rate of
 		   sends whose creature is in the top quartile of that attribute against the bottom
 		   quartile. An attribute whose quartiles win alike is an attribute the game does
-		   not read (docs/design/reclamation-base-redesign.md assumption 17).
+		   not read (docs/design/reclamation-base-redesign.md assumption 17). Since Pass 3
+		   the same gap is also read WITHIN each role, because an attribute that sits on a
+		   role which wins worlds less often reads negative for the role, not for itself.
+		7. The stake. The stake on against the stake off (assumption 22): how often it is
+		   taken, by which side, and whether the staker actually holds the world it doubled.
+		   A staker that wins its staked world less often than its unstaked ones is a trap
+		   and is flagged as one.
 
 	Aggregation discipline, same as the simulator: every section returns one plain object,
 	and both the stdout report and the markdown file are rendered from those objects, so
@@ -64,16 +71,16 @@
 */
 
 import {
-	createMatch, send, pass, moveSwift, getPublicState,
+	createMatch, send, pass, moveSwift, stakeWorld, getPublicState,
 	createRngState, nextRandom,
 } from '../expeditionRules.js';
 import {
 	ROSTER_SIZE, SENDABLE, FRAMES_PER_MATCH, SITES_TO_CLINCH, RETURNED_SEND_COST, ROLE,
 } from '../expeditionInterpretation.js';
-import { chooseSend, scoreSends, RIVALS, rivalById, DEFAULT_RIVAL_ID } from '../expeditionBot.js';
+import { chooseSend, chooseStake, scoreSends, RIVALS, rivalById, DEFAULT_RIVAL_ID } from '../expeditionBot.js';
 import { buildExpeditionPool } from '../roster.js';
 import { prepare, roleOf } from '../creatureOnTable.js';
-import { buildDraftPools, botDraft } from '../draft.js';
+import { buildDraftPools, botDraft, draftOptionsFromRules } from '../draft.js';
 import { getWorlds } from '../sites.js';
 import fs from 'node:fs';
 
@@ -81,7 +88,7 @@ import fs from 'node:fs';
 // CLI args
 // ---------------------------------------------------------------------------
 
-export const ALL_SECTIONS = ['regret', 'spread', 'decided', 'ablation', 'draft', 'lanes'];
+export const ALL_SECTIONS = ['regret', 'spread', 'decided', 'ablation', 'draft', 'lanes', 'stake'];
 
 export function parseArgs(argv) {
 	const args = { matches: 200, seed: 7, md: null, json: null, only: null };
@@ -269,11 +276,30 @@ function remainingSendsOf(publicState, ownRoster, handler) {
 	return Math.min(cap - me.sentCount, ownRoster.length);
 }
 
-function canHideUnder(publicState, record) {
+/*
+	Can this policy legally hide this send? Stealthy, hidden sends allowed by the rules, AND
+	the round's remaining cap able to afford the hidden send's price (pass 3's assumption
+	21 makes hiding cost rules.hiddenSendCost against the cap, so "every send the rules
+	allow to be hidden" now has an affordability clause and a policy that ignored it would
+	name a send the engine rejects).
+*/
+function canHideUnder(publicState, record, handler) {
 	if (publicState.rules && publicState.rules.hiddenSends === false) {
 		return false;
 	}
-	return traitsOf(record).includes('stealthy');
+	if (!traitsOf(record).includes('stealthy')) {
+		return false;
+	}
+	if (!handler) {
+		return true;
+	}
+	const me = publicState.players[handler];
+	const cap = typeof me.sendableCap === 'number' ? me.sendableCap : SENDABLE;
+	const capRemaining = cap - me.sentCount;
+	const returned = (me.returned || []).includes(record.id) ? RETURNED_SEND_COST : 1;
+	const hiddenCost = publicState.rules && typeof publicState.rules.hiddenSendCost === 'number'
+		? publicState.rules.hiddenSendCost : 1;
+	return Math.max(returned, hiddenCost) <= capRemaining;
 }
 
 // random: uniformly random among legal (record, site) pairs, with a small fixed pass
@@ -312,7 +338,7 @@ function policyRandom(publicState, ownRoster, handler, rng) {
 		});
 	});
 	const pick = candidates[Math.floor(rng.float() * candidates.length)];
-	const hidden = canHideUnder(publicState, pick.record) && rng.float() < 0.5;
+	const hidden = canHideUnder(publicState, pick.record, handler) && rng.float() < 0.5;
 	return { type: 'send', recordId: pick.record.id, siteId: pick.site.id, hidden };
 }
 
@@ -361,7 +387,7 @@ function policyAlwaysHidden(publicState, ownRoster, handler, rng) {
 		return action;
 	}
 	const record = ownRoster.find((r) => r.id === action.recordId);
-	return { ...action, hidden: canHideUnder(publicState, record) };
+	return { ...action, hidden: canHideUnder(publicState, record, handler) };
 }
 
 // alwaysStack: the proctor's scoring, but the site is decided before the creature - always
@@ -450,9 +476,17 @@ function policyProctor(publicState, ownRoster, handler, rng) {
 	return chooseSend(publicState, ownRoster, handler, rng, null);
 }
 
-// a rival handler, wrapped in the same signature
+/*
+	a rival handler, wrapped in the same signature. The rival itself is hung on the returned
+	function so playMatch can ask the same handler for its stake (assumption 22) without
+	every policy needing a second entry point: a policy with no `.rival` stakes as the
+	proctor, which is the reading the regret section wants (the stake is not the decision
+	under study there, so both seats should take it by the same rule).
+*/
 function policyForRival(rival) {
-	return (publicState, ownRoster, handler, rng) => chooseSend(publicState, ownRoster, handler, rng, rival);
+	const fn = (publicState, ownRoster, handler, rng) => chooseSend(publicState, ownRoster, handler, rng, rival);
+	fn.rival = rival;
+	return fn;
 }
 
 export const NAIVE_POLICIES = [
@@ -507,9 +541,20 @@ export function playMatch(options) {
 	// assumption 17: every attribute should carry weight, so every attribute is measured)
 	const laneSamples = [];
 	let sendsThisFrame = [];
+	/*
+		The stake (assumption 22). One row per stake made: who made it, which world, which
+		round, whether that handler was behind on worlds at the moment it staked, and how
+		the Ruling read that world. `unstaked` counts the same handler's other worlds that
+		round, which is the within-round control for "does the staker win staked worlds more
+		often than unstaked ones, or is the stake a trap".
+	*/
+	const stakeRecords = [];
+	let stakesThisFrame = [];
 	let sends = 0;
 	let sendsBySeat = { A: 0, B: 0 };
 	let hiddenSends = 0;
+	let hiddenSendWins = 0;
+	let hiddenSendDecided = 0;
 	let returnedSends = 0;
 	let downs = 0;
 	let error = null;
@@ -554,8 +599,29 @@ export function playMatch(options) {
 			logBefore = state.resolutionLog.length;
 			marginsBefore = marginsNow(frame);
 
-			const publicState = getPublicState(state, handler);
+			let publicState = getPublicState(state, handler);
 			const ownRoster = state.players[handler].roster;
+
+			// the stake is offered before the handler's first send of the round and does
+			// not spend the turn, so it is asked for here and the public state is retaken
+			// (assumption 22)
+			if ((publicState.players[handler].stakeableSiteIds || []).length > 0) {
+				const rival = (policy[handler] && policy[handler].rival) || null;
+				const wanted = chooseStake(publicState, ownRoster, handler, rival);
+				if (wanted) {
+					const staked = stakeWorld(state, handler, wanted.siteId);
+					if (staked) {
+						stakesThisFrame.push({
+							handler,
+							siteId: wanted.siteId,
+							frameIndex,
+							behind: state.players[handler].sitesWon < state.players[otherSeat(handler)].sitesWon,
+						});
+						state = staked;
+						publicState = getPublicState(state, handler);
+					}
+				}
+			}
 
 			// option spread is sampled from the seat under study, before its action, using
 			// the bot's own scoring - the same shortlist chooseSend reads
@@ -592,9 +658,17 @@ export function playMatch(options) {
 				nextState = send(state, handler, action.recordId, action.siteId, action.hidden);
 				if (nextState) {
 					sends++;
-					if (collectLanes && sentRecord) {
-						sendsThisFrame.push({ seat: handler, siteId: action.siteId, attributes: sentRecord.attributes || {} });
-					}
+					// every send is recorded lightly (its world, its seat, whether it was
+					// hidden) so the hidden-send site win rate can be read without a second
+					// batch; the attribute payload is only carried under collectLanes.
+					sendsThisFrame.push({
+						seat: handler,
+						siteId: action.siteId,
+						hidden: !!action.hidden,
+						attributes: collectLanes && sentRecord ? (sentRecord.attributes || {}) : null,
+						role: collectLanes && sentRecord ? roleOf(sentRecord, rules) : null,
+					});
+
 					sendsBySeat[handler]++;
 					if (action.hidden) {
 						hiddenSends++;
@@ -641,16 +715,44 @@ export function playMatch(options) {
 			}
 		});
 		const judgeEvent = newEvents.find((ev) => ev.type === 'judge');
-		if (collectLanes && judgeEvent && judgeEvent.siteResults) {
+		if (judgeEvent && judgeEvent.siteResults) {
 			sendsThisFrame.forEach((row) => {
 				const result = judgeEvent.siteResults[row.siteId];
 				if (!result || !result.winner) {
 					return; // a tie reverts to the Court and decides nothing about the send
 				}
-				laneSamples.push({ attributes: row.attributes, won: result.winner === row.seat });
+				// the price of hiding (assumption 21) is read partly off this: does a world
+				// a hidden creature was sent to actually go to the side that hid?
+				if (row.hidden) {
+					hiddenSendDecided++;
+					if (result.winner === row.seat) {
+						hiddenSendWins++;
+					}
+				}
+				// the per-role lane split (pass 3, measurement refinement): intelligence and
+				// charisma read negative overall because they are high on the roles that win
+				// worlds less, so every lane is also read within its own role
+				if (collectLanes && row.attributes) {
+					laneSamples.push({ attributes: row.attributes, role: row.role, won: result.winner === row.seat });
+				}
 			});
 		}
 		sendsThisFrame = [];
+		if (judgeEvent && judgeEvent.siteResults) {
+			stakesThisFrame.forEach((row) => {
+				const result = judgeEvent.siteResults[row.siteId];
+				const others = Object.keys(judgeEvent.siteResults).filter((id) => id !== row.siteId);
+				stakeRecords.push({
+					...row,
+					won: !!result && result.winner === row.handler,
+					tie: !!result && result.winner === null,
+					countedValue: result ? result.countedValue : 1,
+					unstakedWon: others.filter((id) => judgeEvent.siteResults[id].winner === row.handler).length,
+					unstakedDecided: others.filter((id) => judgeEvent.siteResults[id].winner !== null).length,
+				});
+			});
+		}
+		stakesThisFrame = [];
 		if (judgeEvent && judgeEvent.siteResults) {
 			Object.keys(judgeEvent.siteResults).forEach((siteId) => {
 				const result = judgeEvent.siteResults[siteId];
@@ -680,10 +782,13 @@ export function playMatch(options) {
 			sends,
 			sendsBySeat,
 			hiddenSends,
+			hiddenSendWins,
+			hiddenSendDecided,
 			returnedSends,
 			downs,
 			worldsResolved,
 			resolveChangedLeader,
+			stakeRecords,
 			scoreByRound,
 			spreadSamples,
 			laneSamples,
@@ -995,6 +1100,12 @@ export function matchShapeOf(results) {
 			done.reduce((n, r) => n + (r.worldsResolved || 0), 0),
 		),
 		hiddenSendRate: rate(done.reduce((n, r) => n + r.hiddenSends, 0), done.reduce((n, r) => n + r.sends, 0)),
+		// the share of decided worlds a hidden send was made to that went to the side that
+		// hid (assumption 21's fourth gauge)
+		hiddenSendWinRate: rate(
+			done.reduce((n, r) => n + (r.hiddenSendWins || 0), 0),
+			done.reduce((n, r) => n + (r.hiddenSendDecided || 0), 0),
+		),
 		returnedSendRate: rate(done.reduce((n, r) => n + r.returnedSends, 0), done.reduce((n, r) => n + r.sends, 0)),
 		winRateA: rate(done.filter((r) => r.winner === 'A').length, done.length),
 	};
@@ -1053,6 +1164,14 @@ export const ABLATIONS = [
 	{ id: 'noPresenceScale', label: 'no presence scale (every presence at charisma 50)', rules: { presenceScale: false } },
 	{ id: 'noInstinctLanes', label: 'no instinct lanes (conduct only)', rules: { instinctLanes: false } },
 	{ id: 'noSwiftMove', label: 'no swift move (assumption 20)', rules: { swiftMove: false } },
+	// Pass 3's own rules (assumptions 21 and 22), each of which has to be shown to carry
+	// weight the same way every earlier lever did
+	{ id: 'noStake', label: 'no stake (assumption 22)', rules: { stake: false } },
+	{
+		id: 'hidingUnpriced',
+		label: 'hiding unpriced (pass 2 hiding: free, always first, full power)',
+		rules: { hiddenSendCost: 1, hiddenFirstNeedsCompany: false, hiddenPower: 1 },
+	},
 	// not an ablation but a comparison: the catch-up send Nick cut, put back
 	{ id: 'trailingBonusBack', label: 'catch-up send restored (trailingBonus 1)', rules: { trailingBonus: 1 } },
 ];
@@ -1169,7 +1288,9 @@ export function sectionDraft({ matches, seed, rules }) {
 
 	for (let i = 0; i < matches; i++) {
 		const matchSeed = `${seed}-draft-${i}`;
-		const { poolA, poolB, frames } = buildDraftPools(matchSeed);
+		// the draft's shape travels on the rules object (assumption 23), so one --rules flag
+		// moves the pool size and the distinct deal the same way it moves every other lever
+		const { poolA, poolB, frames } = buildDraftPools(matchSeed, draftOptionsFromRules(rules));
 		const keepA = new Set(botDraft(poolA, frames, proctor, { rules }));
 		const keepB = new Set(botDraft(poolB, frames, proctor, { rules }));
 		const rosterA = [...keepA].map((id) => poolA.find((r) => r.id === id));
@@ -1324,6 +1445,43 @@ function quantileOf(sortedValues, q) {
 	Ties are excluded (a tied world reverts to the Court and settles nothing about the
 	sends made to it), so the two quartile rates are both read against decided worlds.
 */
+/*
+	The per-role lane groups (pass 3's measurement refinement). Pass 2 read intelligence at
+	-5.2 and charisma at -7.4 points overall, but both are high on the roles that win worlds
+	less often (sweeps and presences), so those two lanes were measuring the ROLE, not the
+	attribute. Splitting the reading within each role removes that confound; the two
+	presences are read together because a bolster and a shield are the same kind of send and
+	neither alone gives enough samples at 200 matches.
+*/
+export const LANE_ROLE_GROUPS = [
+	{ id: 'strike', label: 'strikes', roles: [ROLE.STRIKE] },
+	{ id: 'sweep', label: 'sweeps', roles: [ROLE.SWEEP] },
+	{ id: 'presence', label: 'presences (bolster + shield)', roles: [ROLE.BOLSTER, ROLE.SHIELD] },
+];
+
+// the top-minus-bottom quartile site win rate of one attribute over one set of samples.
+// Both the overall row and every per-role cell are built from this one function, so the
+// two readings can never be computed differently.
+function laneReadingOf(samples, attribute) {
+	const withValue = samples.filter((x) => typeof x.attributes[attribute] === 'number');
+	const sorted = withValue.map((x) => x.attributes[attribute]).sort((a, b) => a - b);
+	const q1 = quantileOf(sorted, 0.25);
+	const q3 = quantileOf(sorted, 0.75);
+	const bottom = withValue.filter((x) => x.attributes[attribute] <= q1);
+	const top = withValue.filter((x) => x.attributes[attribute] >= q3);
+	const topWinRate = rate(top.filter((x) => x.won).length, top.length);
+	const bottomWinRate = rate(bottom.filter((x) => x.won).length, bottom.length);
+	return {
+		q1,
+		q3,
+		topN: top.length,
+		bottomN: bottom.length,
+		topWinRate,
+		bottomWinRate,
+		gap: topWinRate && bottomWinRate ? topWinRate.p - bottomWinRate.p : null,
+	};
+}
+
 export function sectionLanes({ matches, seed, pool, rules }) {
 	const results = runBatch({
 		matches, seed, pool, rules,
@@ -1333,26 +1491,15 @@ export function sectionLanes({ matches, seed, pool, rules }) {
 	});
 	const samples = results.filter((r) => !r.error).flatMap((r) => r.laneSamples || []);
 
-	const rows = RECORD_ATTRIBUTES.map((attribute) => {
-		const withValue = samples.filter((x) => typeof x.attributes[attribute] === 'number');
-		const sorted = withValue.map((x) => x.attributes[attribute]).sort((a, b) => a - b);
-		const q1 = quantileOf(sorted, 0.25);
-		const q3 = quantileOf(sorted, 0.75);
-		const bottom = withValue.filter((x) => x.attributes[attribute] <= q1);
-		const top = withValue.filter((x) => x.attributes[attribute] >= q3);
-		const topWinRate = rate(top.filter((x) => x.won).length, top.length);
-		const bottomWinRate = rate(bottom.filter((x) => x.won).length, bottom.length);
-		return {
-			attribute,
-			q1,
-			q3,
-			topN: top.length,
-			bottomN: bottom.length,
-			topWinRate,
-			bottomWinRate,
-			gap: topWinRate && bottomWinRate ? topWinRate.p - bottomWinRate.p : null,
-		};
-	});
+	const rows = RECORD_ATTRIBUTES.map((attribute) => ({
+		attribute,
+		...laneReadingOf(samples, attribute),
+		byRole: LANE_ROLE_GROUPS.map((group) => ({
+			group: group.id,
+			label: group.label,
+			...laneReadingOf(samples.filter((x) => group.roles.includes(x.role)), attribute),
+		})),
+	}));
 
 	const readings = [];
 	// "carries weight" at this batch size means the gap clears the top quartile's own
@@ -1368,7 +1515,127 @@ export function sectionLanes({ matches, seed, pool, rules }) {
 		readings.push('Every one of the ten attributes moves the site win rate beyond the interval. Every lane carries weight at this batch size.');
 	}
 
-	return { rows, readings };
+	// the per-role split's own reading: an attribute whose overall sign disagrees with its
+	// sign inside every role was reading the role, not the attribute (pass 3)
+	const confounded = rows.filter((r) => {
+		if (r.gap === null) {
+			return false;
+		}
+		const cells = r.byRole.filter((c) => c.gap !== null);
+		return cells.length > 0 && cells.every((c) => Math.sign(c.gap) !== Math.sign(r.gap));
+	});
+	if (confounded.length > 0) {
+		readings.push(`READS THE ROLE, NOT THE ATTRIBUTE: ${confounded.map((r) => r.attribute).join(', ')}. The overall lane and every per-role lane disagree in sign, so the overall number is the role composition and not the attribute's own job.`);
+	}
+
+	return { rows, groups: LANE_ROLE_GROUPS.map((g) => ({ id: g.id, label: g.label })), readings };
+}
+
+// ---------------------------------------------------------------------------
+// section 7: the stake
+// ---------------------------------------------------------------------------
+
+/*
+	stakeStatsOf(results) -> the stake's own numbers over one batch (assumption 22).
+
+	usageShare      share of Provings where at least one stake was made (gauge 20 to 60)
+	trailingShare   share of stakes made by a handler behind on worlds at the time
+	stakedWinRate   the staker's win rate on the world it staked
+	unstakedWinRate the same handlers' win rate on the OTHER worlds of the same round,
+	                which is the within-round control: if the staked rate is lower, the
+	                stake is a trap and is reported as one
+	onlyTrailingStakedWinRate  match win rate of the trailing side in Provings where it was
+	                the only side to stake
+*/
+export function stakeStatsOf(results) {
+	const done = results.filter((r) => !r.error && r.winner);
+	const all = done.flatMap((r) => r.stakeRecords || []);
+	const decided = all.filter((r) => !r.tie);
+	const withStake = done.filter((r) => (r.stakeRecords || []).length > 0);
+
+	let onlyTrailingMatches = 0;
+	let onlyTrailingWins = 0;
+	done.forEach((r) => {
+		const rows = r.stakeRecords || [];
+		if (rows.length === 0) {
+			return;
+		}
+		const sides = new Set(rows.map((x) => x.handler));
+		if (sides.size !== 1) {
+			return;
+		}
+		const side = [...sides][0];
+		if (!rows.every((x) => x.behind)) {
+			return;
+		}
+		onlyTrailingMatches++;
+		if (r.winner === side) {
+			onlyTrailingWins++;
+		}
+	});
+
+	return {
+		n: done.length,
+		stakesPerMatch: average(done.map((r) => (r.stakeRecords || []).length)),
+		usageShare: rate(withStake.length, done.length),
+		trailingShare: rate(all.filter((x) => x.behind).length, all.length),
+		stakedWinRate: rate(decided.filter((x) => x.won).length, decided.length),
+		unstakedWinRate: rate(
+			all.reduce((n, x) => n + x.unstakedWon, 0),
+			all.reduce((n, x) => n + x.unstakedDecided, 0),
+		),
+		onlyTrailingStakedWinRate: rate(onlyTrailingWins, onlyTrailingMatches),
+	};
+}
+
+/*
+	sectionStake({ matches, seed, pool, rules }) -> {
+		on: { shape, stake }, off: { shape, stake }, byRival: [...], readings,
+	}
+
+	The stake measured against itself off (assumption 22's gauge): comeback rate back
+	toward 30 to 40 without a gift, the stake used in a healthy share of Provings, and the
+	staker winning its staked world at least as often as an unstaked one. The rival ladder
+	is run under both settings, so a rival whose habit the stake breaks shows up here rather
+	than only in the ablation matrix.
+*/
+export function sectionStake({ matches, seed, pool, rules }) {
+	const rulesOn = { ...(rules || {}), stake: true };
+	const rulesOff = { ...(rules || {}), stake: false };
+
+	const onResults = runBatch({ matches, seed, pool, rules: rulesOn, policyA: PROCTOR_POLICY.send, policyB: PROCTOR_POLICY.send });
+	const offResults = runBatch({ matches, seed, pool, rules: rulesOff, policyA: PROCTOR_POLICY.send, policyB: PROCTOR_POLICY.send });
+
+	const byRival = RIVALS.map((rival) => ({
+		id: rival.id,
+		name: rival.name,
+		on: winRateA(runBatch({ matches, seed, pool, rules: rulesOn, policyA: policyForRival(rival), policyB: PROCTOR_POLICY.send })),
+		off: winRateA(runBatch({ matches, seed, pool, rules: rulesOff, policyA: policyForRival(rival), policyB: PROCTOR_POLICY.send })),
+	}));
+
+	const on = { shape: matchShapeOf(onResults), stake: stakeStatsOf(onResults) };
+	const off = { shape: matchShapeOf(offResults), stake: stakeStatsOf(offResults) };
+
+	const readings = [];
+	const usage = on.stake.usageShare;
+	if (usage && (usage.p < 0.2 || usage.p > 0.6)) {
+		readings.push(`STAKE USAGE OUT OF BAND: staked in ${fmtPct(usage)} of Provings against the 20 to 60 percent gauge. ${usage.p < 0.2 ? 'The threshold is too high for the bot to ever take the risk.' : 'The threshold is low enough that staking is automatic, which makes it a habit rather than a decision.'}`);
+	} else {
+		readings.push(`The stake is taken in ${fmtPct(usage)} of Provings, inside the 20 to 60 percent gauge, ${fmtPct(on.stake.trailingShare)} of them by the side behind on worlds.`);
+	}
+	if (on.stake.stakedWinRate && on.stake.unstakedWinRate) {
+		if (on.stake.stakedWinRate.p < on.stake.unstakedWinRate.p) {
+			readings.push(`TRAP: the staker wins its staked world ${fmtPct(on.stake.stakedWinRate)} of the time against ${fmtPct(on.stake.unstakedWinRate)} on the same round's unstaked worlds. Doubling a world it wins less often is a trap; the flag is the safety and the threshold is the thing to move.`);
+		} else {
+			readings.push(`The staker wins its staked world ${fmtPct(on.stake.stakedWinRate)} of the time against ${fmtPct(on.stake.unstakedWinRate)} on the same round's unstaked worlds, so the stake is picking worlds it can hold.`);
+		}
+	}
+	readings.push(`Comeback rate ${fmtPct(on.shape.comebackRate)} with the stake against ${fmtPct(off.shape.comebackRate)} without; decided after round 1 ${fmtPct(on.shape.decidedAfterRound1)} against ${fmtPct(off.shape.decidedAfterRound1)} (reported, not a gauge since pass 2 dropped it).`);
+	if (on.stake.onlyTrailingStakedWinRate) {
+		readings.push(`In Provings where only the trailing side staked, that side won ${fmtRate(on.stake.onlyTrailingStakedWinRate)}.`);
+	}
+
+	return { on, off, byRival, readings };
 }
 
 // ---------------------------------------------------------------------------
@@ -1408,6 +1675,9 @@ export function runValidation(args = {}) {
 	}
 	if (sections.includes('lanes')) {
 		report.lanes = sectionLanes({ matches, seed, pool, rules });
+	}
+	if (sections.includes('stake')) {
+		report.stake = sectionStake({ matches, seed, pool, rules });
 	}
 
 	return report;
@@ -1661,13 +1931,69 @@ function laneBlocks(lanes) {
 		r.bottomWinRate ? fmtPctCi(r.bottomWinRate) : '-',
 		r.gap === null ? '-' : `${(r.gap * 100).toFixed(1)}`,
 	]);
+	// the per-role split (pass 3): the same top-minus-bottom quartile gap, read inside
+	// strikes, inside sweeps and inside the two presences together, so an attribute is
+	// never credited or blamed for the role it tends to sit on
+	const groups = lanes.groups || [];
+	const roleRows = lanes.rows.map((r) => [
+		r.attribute,
+		r.gap === null ? '-' : `${(r.gap * 100).toFixed(1)}`,
+		...groups.map((g) => {
+			const cell = (r.byRole || []).find((c) => c.group === g.id);
+			if (!cell || cell.gap === null) {
+				return '-';
+			}
+			return `${(cell.gap * 100).toFixed(1)} (n=${cell.topN}/${cell.bottomN})`;
+		}),
+	]);
 	return [
 		{
 			type: 'table',
 			headers: ['attribute', 'q1 / q3', 'top n', 'top quartile site win', 'bottom n', 'bottom quartile site win', 'gap (points)'],
 			rows,
 		},
+		{ type: 'lines', lines: ['gap in points, split per role (top quartile minus bottom quartile, within the role)'] },
+		{
+			type: 'table',
+			headers: ['attribute', 'overall', ...groups.map((g) => g.label)],
+			rows: roleRows,
+		},
 		{ type: 'reading', lines: lanes.readings },
+	];
+}
+
+function stakeBlocks(stake) {
+	const stakeRow = (label, block) => [
+		label,
+		block.stake.n,
+		block.stake.stakesPerMatch.toFixed(2),
+		block.stake.usageShare ? fmtPctCi(block.stake.usageShare) : '-',
+		block.stake.trailingShare ? fmtPctCi(block.stake.trailingShare) : '-',
+		block.stake.stakedWinRate ? fmtPctCi(block.stake.stakedWinRate) : '-',
+		block.stake.unstakedWinRate ? fmtPctCi(block.stake.unstakedWinRate) : '-',
+		block.stake.onlyTrailingStakedWinRate ? fmtPctCi(block.stake.onlyTrailingStakedWinRate) : '-',
+	];
+	const shapeRows = [shapeRow('stake on', stake.on.shape), shapeRow('stake off', stake.off.shape)];
+	const rivalRows = stake.byRival.map((r) => [
+		r.id,
+		r.on ? fmtPctCi(r.on) : '-',
+		r.off ? fmtPctCi(r.off) : '-',
+	]);
+	return [
+		{
+			type: 'table',
+			headers: ['setting', 'n', 'stakes/match', 'Provings staked', 'by the trailing side', 'staker wins staked world', 'staker wins unstaked worlds', 'only-trailing-staked match win'],
+			rows: [stakeRow('stake on', stake.on), stakeRow('stake off', stake.off)],
+		},
+		{ type: 'lines', lines: ['match shape, stake on against stake off'] },
+		{
+			type: 'table',
+			headers: ['matchup', 'n', 'decided r1', 'decided r2', 'only at end', 'comeback', 'tied after r2', 'r3 changed leader', 'downs/match'],
+			rows: shapeRows,
+		},
+		{ type: 'lines', lines: ['rival ladder, stake on against stake off'] },
+		{ type: 'table', headers: ['rival', 'wins vs proctor (stake on)', 'wins vs proctor (stake off)'], rows: rivalRows },
+		{ type: 'reading', lines: stake.readings },
 	];
 }
 
@@ -1697,6 +2023,9 @@ export function buildSections(report) {
 	}
 	if (report.lanes) {
 		sections.push({ id: 'lanes', title: '6. Per-attribute lanes', blocks: laneBlocks(report.lanes) });
+	}
+	if (report.stake) {
+		sections.push({ id: 'stake', title: '7. The stake', blocks: stakeBlocks(report.stake) });
 	}
 	return sections;
 }

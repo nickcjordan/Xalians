@@ -19,7 +19,10 @@ import { generateBatch } from '../generator/index.js';
 import { createRngState, nextRandom, createMatch } from './expeditionRules.js';
 import { getWorlds } from './sites.js';
 import { prepare, roleOf, speedOf } from './creatureOnTable.js';
-import { ROSTER_SIZE, ROLE, SWEEP_DISCOUNT, BOLSTER_FLOOR, SHIELD_CAP } from './expeditionInterpretation.js';
+import {
+	ROSTER_SIZE, ROLE, SWEEP_DISCOUNT, BOLSTER_FLOOR, SHIELD_CAP,
+	DRAFT_POOL_SIZE as DEFAULT_DRAFT_POOL_SIZE, DRAFT_DISTINCT_SPECIES,
+} from './expeditionInterpretation.js';
 
 // a sweep catches this many creatures at a world on the numbers the simulator measures
 // (mean creatures per world at deploy end, both sides), so a sweep's worth is its
@@ -28,8 +31,14 @@ export const SWEEP_EXPECTED_CREATURES = 3;
 // a bolsterer lifts about this many allies at a world, itself excluded
 export const BOLSTER_EXPECTED_ALLIES = 2;
 
-// both sides draft from a pool of eighteen and keep twelve (ROSTER_SIZE)
-export const DRAFT_POOL_SIZE = 18;
+/*
+	Both sides draft from a pool of DRAFT_POOL_SIZE and keep twelve (ROSTER_SIZE). The
+	number itself lives in expeditionInterpretation.js with every other lever (docs/design/
+	reclamation-base-redesign.md assumption 15) and is re-exported here so the draft's own
+	callers keep one import; a match's rules object can move it per batch through
+	`rules.draftPoolSize` (assumption 23).
+*/
+export const DRAFT_POOL_SIZE = DEFAULT_DRAFT_POOL_SIZE;
 
 function shuffleWithRng(array, rngState) {
 	const result = array.slice();
@@ -91,19 +100,81 @@ export function drawnFrames(seed) {
 }
 
 /*
-	buildDraftPools(seed) -> { poolA, poolB, frames }
+	dealDistinct(shuffled, size) -> [poolA, poolB]
 
-	Two disjoint pools of DRAFT_POOL_SIZE generated creatures, dealt from the same kind
-	of generator pool roster.js uses (one big generated batch, shuffled by the engine's
-	PRNG, then cut), and the nine worlds of the Proving in frame order.
+	The species-distinct deal (docs/design/reclamation-base-redesign.md assumption 23,
+	variant b). Walking the shuffled batch once, each pool takes the first creature of a
+	species it does not already hold, so no handler is ever dealt two of the same species
+	and the keep cannot be a run of the best species in the batch. If the batch cannot
+	supply `size` distinct species to a pool - the generator deals from twenty-nine species,
+	so an unlucky batch can fall short - the pool is topped up from what is left, which is
+	the "distinct as far as possible" fallback the brief asks for rather than a failure.
 */
-export function buildDraftPools(seed) {
-	const pool = generateBatch(DRAFT_POOL_SIZE * 2, `${seed}-draftpool`);
+function dealDistinct(shuffled, size) {
+	const pools = [[], []];
+	const seen = [new Set(), new Set()];
+	const leftovers = [];
+	shuffled.forEach((record) => {
+		const species = record.species || 'unknown';
+		for (let i = 0; i < 2; i++) {
+			if (pools[i].length < size && !seen[i].has(species)) {
+				pools[i].push(record);
+				seen[i].add(species);
+				return;
+			}
+		}
+		leftovers.push(record);
+	});
+	// top up, in order, so the deal stays deterministic under the seed
+	let next = 0;
+	for (let i = 0; i < 2; i++) {
+		while (pools[i].length < size && next < leftovers.length) {
+			pools[i].push(leftovers[next]);
+			next++;
+		}
+	}
+	return pools;
+}
+
+/*
+	buildDraftPools(seed, options) -> { poolA, poolB, frames }
+
+	Two disjoint pools of `options.poolSize` (default DRAFT_POOL_SIZE) generated creatures,
+	dealt from the same kind of generator pool roster.js uses (one big generated batch,
+	shuffled by the engine's PRNG, then cut), and the nine worlds of the Proving in frame
+	order.
+
+	options (assumption 23; a caller holding a match's rules object can pass it straight
+	through as { poolSize: rules.draftPoolSize, distinctSpecies: rules.draftDistinctSpecies }):
+	- poolSize: how many creatures each side is dealt.
+	- distinctSpecies: deal each pool species-distinct (see dealDistinct). The batch is
+	  generated larger in that case, since a distinct deal consumes duplicates.
+*/
+export function buildDraftPools(seed, options = {}) {
+	const poolSize = typeof options.poolSize === 'number' ? options.poolSize : DRAFT_POOL_SIZE;
+	const distinct = options.distinctSpecies !== undefined ? !!options.distinctSpecies : DRAFT_DISTINCT_SPECIES;
+	// a distinct deal throws duplicates back, so it needs a deeper batch to fill two pools
+	const batchSize = distinct ? poolSize * 6 : poolSize * 2;
+	const pool = generateBatch(batchSize, `${seed}-draftpool`);
 	const shuffled = shuffleWithRng(pool, createRngState(`${seed}-draftbuild`));
+	if (distinct) {
+		const [poolA, poolB] = dealDistinct(shuffled, poolSize);
+		return { poolA, poolB, frames: drawnFrames(seed) };
+	}
 	return {
-		poolA: shuffled.slice(0, DRAFT_POOL_SIZE),
-		poolB: shuffled.slice(DRAFT_POOL_SIZE, DRAFT_POOL_SIZE * 2),
+		poolA: shuffled.slice(0, poolSize),
+		poolB: shuffled.slice(poolSize, poolSize * 2),
 		frames: drawnFrames(seed),
+	};
+}
+
+// the draft options a match's rules object carries (assumption 23), so every caller reads
+// the same two keys off the same place rather than each inventing its own plumbing
+export function draftOptionsFromRules(rules) {
+	return {
+		poolSize: rules && typeof rules.draftPoolSize === 'number' ? rules.draftPoolSize : DRAFT_POOL_SIZE,
+		distinctSpecies: rules && rules.draftDistinctSpecies !== undefined
+			? !!rules.draftDistinctSpecies : DRAFT_DISTINCT_SPECIES,
 	};
 }
 
