@@ -1,6 +1,6 @@
-import { buildDraftPools, rateForDraft, botDraft, validateKeep, poolMeanBlowOf, DRAFT_POOL_SIZE, MAX_PER_SPECIES, AREA_EXPECTED_CREATURES, BOLSTER_EXPECTED_ALLIES } from '../draft.js';
+import { buildDraftPools, rateForDraft, botDraft, validateKeep, poolMeanBlowOf, DRAFT_POOL_SIZE, MAX_PER_SPECIES, SWEEP_EXPECTED_CREATURES, BOLSTER_EXPECTED_ALLIES } from '../draft.js';
 import { roleOf } from '../creatureOnTable.js';
-import { ROLE, AREA_DISCOUNT, BOLSTER_FLOOR } from '../expeditionInterpretation.js';
+import { ROLE, SWEEP_DISCOUNT, BOLSTER_FLOOR } from '../expeditionInterpretation.js';
 import { RIVALS } from '../expeditionBot.js';
 import { ROSTER_SIZE, WORLDS_PER_MATCH } from '../expeditionInterpretation.js';
 
@@ -144,18 +144,18 @@ describe('the rating is hold plus role value', () => {
 		});
 	});
 
-	it('prices a strike at its mean blow and an area at the discounted blow times the expected count', () => {
+	it('prices a strike at its mean attack and a sweep at the discounted attack times the expected count', () => {
 		const { poolA, frames } = buildDraftPools('rating-seed');
 		const meanBlowOf = (r) => r.byWorld.reduce((sum, w) => sum + w.blowMagnitude, 0) / r.byWorld.length;
 		const strike = poolA.find((x) => roleOf(x, null) === ROLE.STRIKE);
-		const area = poolA.find((x) => roleOf(x, null) === ROLE.AREA);
+		const area = poolA.find((x) => roleOf(x, null) === ROLE.SWEEP);
 		if (strike) {
 			const r = rateForDraft(strike, frames);
 			expect(r.roleValue).toBeCloseTo(meanBlowOf(r), 5);
 		}
 		if (area) {
 			const r = rateForDraft(area, frames);
-			expect(r.roleValue).toBeCloseTo(meanBlowOf(r) * AREA_DISCOUNT * AREA_EXPECTED_CREATURES, 5);
+			expect(r.roleValue).toBeCloseTo(meanBlowOf(r) * SWEEP_DISCOUNT * SWEEP_EXPECTED_CREATURES, 5);
 		}
 	});
 

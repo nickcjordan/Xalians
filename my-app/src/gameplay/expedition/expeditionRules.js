@@ -25,8 +25,8 @@
 	derived by conduct, never named (assumption 2). Worlds are sealed, so nothing reaches
 	past the site a creature stands at (assumption 3). Every creature is a hold and one
 	role, strike, area, bolster or shield (assumption 4). Blows SUBTRACT from a mutable
-	per-entry `currentHold` and a creature at or below zero is routed; no shrug, stagger
-	or rout thresholds remain (assumption 5). "Staggered" survives only as the derived
+	per-entry `currentHold` and a creature at or below zero is downed; no shrug, hurt
+	or down thresholds remain (assumption 5). "Hurt" survives only as the derived
 	word for a creature hit and still standing (assumption 6).
 
 	PHASES AND THE TRANSITION. Only two phases are ever observable from outside:
@@ -40,7 +40,7 @@
 
 import {
 	prepare, magnitudeAgainst, holdAtSite, targetMatchupMultiplier, traitKeywordsOf,
-	roleOf, round1,
+	roleOf, round1, isSwift, speedOf,
 } from './creatureOnTable.js';
 import {
 	ROSTER_SIZE,
@@ -54,13 +54,21 @@ import {
 	HOLD_FLOOR,
 	HOLD_CEILING,
 	MAGNITUDE_SCALE,
-	AREA_DISCOUNT,
+	SWEEP_DISCOUNT,
 	BOLSTER_FLOOR,
 	HIDDEN_FIRST,
 	ARMORED_REDUCTION,
 	SHIELD_CAP,
 	SHIELD_CAPS,
 	ROLE,
+	WILLFUL_THRESHOLD,
+	KEEN_INSTINCT,
+	DULL_INSTINCT,
+	SWIFT_SPEED,
+	instinctLaneOf,
+	HURT_ATTACKS_LESS,
+	BOLSTER_RECOVERY,
+	presenceScaleOf,
 } from './expeditionInterpretation.js';
 
 // ---------------------------------------------------------------------------
@@ -230,37 +238,60 @@ function drawFrames(worlds, rngState) {
 	  withdrawn exactly like a tied one.
 	- trailingBonus: the number of extra sends the trailing seat gets next round; 0
 	  removes the lever without changing any other code path.
-	- initiative: false resolves everything in sent order (sentIndex, the same tiebreak
-	  buildResolutionOrder already falls back to) instead of by initiative.
+	- speed: false resolves everything in sent order (sentIndex, the same tiebreak
+	  buildResolutionOrder already falls back to) instead of by speed.
 	- hiddenFirst: false drops assumption 9, so a hidden creature's blow waits its turn in
 	  initiative order like everyone else's.
-	- roles: { area, bolster, shield } - a role switched off degrades every creature that
-	  has it. An area becomes a plain strike; a presence becomes a plain holder, present at
+	- roles: { sweep, bolster, shield } - a role switched off degrades every creature that
+	  has it. A sweep becomes a plain strike; a presence becomes a plain holder, present at
 	  the world and counted in its hold and nothing more (creatureOnTable.roleOf).
+
+	Pass 2's attribute jobs (docs/design/reclamation-base-redesign.md assumptions 17 to 20),
+	each a switch so the simulator can show it carries weight:
+	- willful: false stops willpower relieving a grade of strain.
+	- presenceScale: false makes every presence play at charisma 50 (scale 1).
+	- instinctLanes: false drops the keen and dull targeting lanes, leaving every creature
+	  on its archetype's conduct line.
+	- swiftMove: false removes the swift creature's move during Deploy.
+	- hurtAttacksLess: false lands every attack at full power however hurt its attacker.
+	- bolsterRecovery: 0 removes the recovery at the Ruling.
 
 	Tuning numbers, all first settings from the base redesign's interpretation layer table:
 	- holdFloor / holdCeiling: the hold compression (assumption 11).
-	- magnitudeScale: the global rescale on every blow (assumption 12).
-	- areaDiscount: an area's share of a strike's magnitude, per creature (assumption 5).
+	- magnitudeScale: the global rescale on every attack (assumption 12).
+	- sweepDiscount: a sweep's share of a strike's power, per creature (assumption 5).
 	- bolsterFloor: hold given to an ally already comfortable (assumption 8).
-	- armoredReduction: the fraction taken off a blow against an armored creature.
+	- armoredReduction: the fraction taken off an attack against an armored creature.
 	- shieldCap: how a cancel is priced, 'none' | 'ownHold' | 'half' (see resolveWorld's
 	  shield step for what each does and why the lever exists).
+	- willfulThreshold / keenInstinct / dullInstinct / swiftSpeed: the attribute cuts.
+	- trailingBonus: 0 by default since assumption 20 cut the catch-up send; the key stays
+	  so an ablation row can put it back.
 */
 export const DEFAULT_RULES = {
 	hiddenSends: true,
 	lokiLine: true,
 	trailingBonus: ROSTER_TRAILING_BONUS,
-	initiative: true,
+	speed: true,
 	hiddenFirst: HIDDEN_FIRST,
-	roles: { area: true, bolster: true, shield: true },
+	roles: { sweep: true, bolster: true, shield: true },
 	holdFloor: HOLD_FLOOR,
 	holdCeiling: HOLD_CEILING,
 	magnitudeScale: MAGNITUDE_SCALE,
-	areaDiscount: AREA_DISCOUNT,
+	sweepDiscount: SWEEP_DISCOUNT,
 	bolsterFloor: BOLSTER_FLOOR,
 	armoredReduction: ARMORED_REDUCTION,
 	shieldCap: SHIELD_CAP,
+	willful: true,
+	willfulThreshold: WILLFUL_THRESHOLD,
+	presenceScale: true,
+	instinctLanes: true,
+	keenInstinct: KEEN_INSTINCT,
+	dullInstinct: DULL_INSTINCT,
+	swiftMove: true,
+	swiftSpeed: SWIFT_SPEED,
+	hurtAttacksLess: HURT_ATTACKS_LESS,
+	bolsterRecovery: BOLSTER_RECOVERY,
 };
 
 // merges a caller's partial rules over the defaults, so a batch only names what it moves
@@ -272,20 +303,31 @@ function normalizeRules(rules) {
 		hiddenSends: r.hiddenSends !== undefined ? !!r.hiddenSends : DEFAULT_RULES.hiddenSends,
 		lokiLine: r.lokiLine !== undefined ? !!r.lokiLine : DEFAULT_RULES.lokiLine,
 		trailingBonus: num(r.trailingBonus, DEFAULT_RULES.trailingBonus),
-		initiative: r.initiative !== undefined ? !!r.initiative : DEFAULT_RULES.initiative,
+		speed: r.speed !== undefined ? !!r.speed : DEFAULT_RULES.speed,
 		hiddenFirst: r.hiddenFirst !== undefined ? !!r.hiddenFirst : DEFAULT_RULES.hiddenFirst,
 		roles: {
-			area: roles.area !== undefined ? !!roles.area : true,
+			sweep: roles.sweep !== undefined ? !!roles.sweep : true,
 			bolster: roles.bolster !== undefined ? !!roles.bolster : true,
 			shield: roles.shield !== undefined ? !!roles.shield : true,
 		},
 		holdFloor: num(r.holdFloor, DEFAULT_RULES.holdFloor),
 		holdCeiling: num(r.holdCeiling, DEFAULT_RULES.holdCeiling),
 		magnitudeScale: num(r.magnitudeScale, DEFAULT_RULES.magnitudeScale),
-		areaDiscount: num(r.areaDiscount, DEFAULT_RULES.areaDiscount),
+		sweepDiscount: num(r.sweepDiscount, DEFAULT_RULES.sweepDiscount),
 		bolsterFloor: num(r.bolsterFloor, DEFAULT_RULES.bolsterFloor),
 		armoredReduction: num(r.armoredReduction, DEFAULT_RULES.armoredReduction),
 		shieldCap: SHIELD_CAPS.includes(r.shieldCap) ? r.shieldCap : DEFAULT_RULES.shieldCap,
+		// Pass 2 (assumptions 17 to 20)
+		willful: r.willful !== undefined ? !!r.willful : DEFAULT_RULES.willful,
+		willfulThreshold: num(r.willfulThreshold, DEFAULT_RULES.willfulThreshold),
+		presenceScale: r.presenceScale !== undefined ? !!r.presenceScale : DEFAULT_RULES.presenceScale,
+		instinctLanes: r.instinctLanes !== undefined ? !!r.instinctLanes : DEFAULT_RULES.instinctLanes,
+		keenInstinct: num(r.keenInstinct, DEFAULT_RULES.keenInstinct),
+		dullInstinct: num(r.dullInstinct, DEFAULT_RULES.dullInstinct),
+		swiftMove: r.swiftMove !== undefined ? !!r.swiftMove : DEFAULT_RULES.swiftMove,
+		swiftSpeed: num(r.swiftSpeed, DEFAULT_RULES.swiftSpeed),
+		hurtAttacksLess: r.hurtAttacksLess !== undefined ? !!r.hurtAttacksLess : DEFAULT_RULES.hurtAttacksLess,
+		bolsterRecovery: num(r.bolsterRecovery, DEFAULT_RULES.bolsterRecovery),
 	};
 }
 
@@ -307,7 +349,7 @@ export function createMatch({ rosterA, rosterB, worlds, seed, rules }) {
 		roster: roster.slice(), // records never sent; shrinks as records are sent
 		sentCount: 0,
 		holding: [], // record ids currently holding a won site (stay in that world's model)
-		routed: [], // record ids routed out of the expedition (returned to owner post-match)
+		downed: [], // record ids downed out of the expedition (returned to owner post-match)
 		withdrawn: [], // record ids withdrawn from lost/tied sites (out of the expedition)
 		// The Loki line (Pass 2 lever): record ids back in `roster` after being withdrawn
 		// from a LOST (not tied) world, whose NEXT send costs RETURNED_SEND_COST against the
@@ -326,7 +368,9 @@ export function createMatch({ rosterA, rosterB, worlds, seed, rules }) {
 		frameIndex: 0,
 		players: { A: playerState(rosterA), B: playerState(rosterB) },
 		board: emptyBoardForFrame(frames[0]),
-		vanguardRelocated: { A: false, B: false }, // per-frame: has this handler used its one relocate?
+		// per-frame: record ids that have used their one swift move this round (assumption
+		// 20 replaced the vanguard fall-back with this)
+		swiftMoved: { A: [], B: [] },
 		trailingBonus: { A: 0, B: 0 }, // per-frame: extra sends the trailing seat gets this round only (ROSTER_TRAILING_BONUS)
 		phase: 'deploy',
 		starter,
@@ -387,7 +431,7 @@ function recordById(state, player, recordId) {
 // with, so it is left out until it reveals at Resolve.
 function siteCompanions(state, site, player, excludingRecordId) {
 	return state.board[site.id][player].filter(
-		(e) => e.recordId !== excludingRecordId && !e.hidden && !e.routed,
+		(e) => e.recordId !== excludingRecordId && !e.hidden && !e.downed,
 	);
 }
 
@@ -404,19 +448,42 @@ function roleOfEntry(state, entry) {
 	Bolsters never stack: one bolsterer and three bolsterers lift exactly one grade. A
 	bolsterer still hidden does not bolster, for the same reason it is not company.
 */
-function bolsterAtSite(state, site, player) {
-	return state.board[site.id][player].some(
-		(e) => !e.hidden && !e.routed && roleOfEntry(state, e) === ROLE.BOLSTER,
+function bolsterersAtSite(state, site, player) {
+	return state.board[site.id][player].filter(
+		(e) => !e.hidden && !e.downed && roleOfEntry(state, e) === ROLE.BOLSTER,
 	);
+}
+
+function bolsterAtSite(state, site, player) {
+	return bolsterersAtSite(state, site, player).length > 0;
+}
+
+/*
+	The bolster in force at a site: the strongest presence standing there, since bolsters
+	never stack (assumption 8) and charisma prices what one restores (assumption 17). Two
+	bolsterers lift exactly one grade, at the better charisma of the two.
+*/
+function bolsterInForce(state, site, player) {
+	const rules = rulesOf(state);
+	let best = null;
+	bolsterersAtSite(state, site, player).forEach((e) => {
+		const scale = presenceScaleOf(e.record, rules);
+		if (!best || scale > best.scale) {
+			best = { recordId: e.recordId, scale };
+		}
+	});
+	return best;
 }
 
 // the hold options for one entry: pack/solitary company, bolster, and the match rules
 function holdOptionsFor(state, entry, site) {
 	const companions = siteCompanions(state, site, entry.player, entry.recordId);
+	const bolster = bolsterInForce(state, site, entry.player);
 	return {
 		packBondedKinAtSite: companions.filter((c) => c.record.species === entry.record.species).length,
 		solitaryAlliesAtSite: companions.length,
-		bolstered: bolsterAtSite(state, site, entry.player),
+		bolstered: !!bolster,
+		bolsterScale: bolster ? bolster.scale : 1,
 		rules: rulesOf(state),
 	};
 }
@@ -428,13 +495,13 @@ function holdOptionsFor(state, entry, site) {
 	reduced by blows. `fullHold` is what the creature would hold if it had taken nothing;
 	`damage` is what has been taken off it this round; `currentHold` is the difference.
 	Splitting it this way is what lets the site be recomputed whenever its company changes
-	(an arrival, a departure, a rout) without either forgetting damage already dealt or
+	(an arrival, a departure, a down) without either forgetting damage already dealt or
 	double-counting it, which assumption 8 requires of bolster.
 */
 function recomputeHoldsAtSite(state, site) {
 	['A', 'B'].forEach((player) => {
 		state.board[site.id][player].forEach((entry) => {
-			if (entry.routed) {
+			if (entry.downed) {
 				return;
 			}
 			const { value } = holdAtSite(entry.record, site, site.world, holdOptionsFor(state, entry, site));
@@ -443,9 +510,9 @@ function recomputeHoldsAtSite(state, site) {
 			entry.currentHold = round1(entry.fullHold - entry.damage);
 			entry.role = roleOfEntry(state, entry);
 			entry.bolstered = bolsterAtSite(state, site, entry.player);
-			// "staggered" is only the word for a creature hit and still standing
+			// "hurt" is only the word for a creature hit and still standing
 			// (assumption 6); it is derived, never stored as a status
-			entry.staggered = entry.damage > 0 && entry.currentHold > 0;
+			entry.hurt = entry.damage > 0 && entry.currentHold > 0;
 		});
 	});
 }
@@ -555,14 +622,14 @@ export function send(state, handler, recordId, siteId, hidden = false) {
 		siteId,
 		hidden: !!hidden,
 		sentIndex,
-		routed: false,
+		downed: false,
 		// filled in by recomputeHoldsAtSite immediately below, and again whenever the
 		// company at this site changes
 		fullHold: 0,
 		currentHold: 0,
 		damage: 0,
 		role: roleOf(record, rulesOf(state)),
-		staggered: false,
+		hurt: false,
 		bolstered: false,
 	};
 
@@ -617,24 +684,23 @@ function runResolveAndJudge(state) {
 }
 
 /*
-	relocateVanguard(state, handler, siteId)
+	moveSwift(state, handler, recordId, siteId)
 
-	"The vanguard falls back": once per world, during Deploy, on their own turn and
-	before they have passed, the round's starter may relocate the FIRST creature they
-	sent this frame to a different site of the same frame. Does NOT consume the turn  - 
-	the handler still sends or passes afterward on that same turn. The creature keeps its
-	sentIndex and hidden flag; hold/strain/everything else is recomputed for the new site
-	at resolution as usual, since nothing is stored on the entry beyond siteId.
+	"Swift creatures move" (docs/design/reclamation-base-redesign.md assumption 20, which
+	replaced the vanguard fall-back: a rule the player could not see a reason for became a
+	property of speed). On your own turn during Deploy, before sending or passing, you may
+	move one of your creatures that is `swift` (speed at or above rules.swiftSpeed) and has
+	not moved this round to another site of the frame. It does NOT consume the turn: the
+	handler still sends or passes afterwards. A hidden creature stays hidden and keeps its
+	sentIndex; hold, strain and company are recomputed at both sites, since nothing is
+	stored on the entry beyond siteId.
 
-	Illegal if: the handler is not this world's starter, phase is not deploy, it is not
-	their turn, they have passed, they have already relocated this world, the first-sent
-	creature is no longer on the board (guarded defensively; it cannot actually leave the
-	board during deploy), or the target site is the one it already stands on.
+	Once per creature per round. Illegal if: phase is not deploy, it is not the handler's
+	turn, they have passed, the record is not one of this handler's creatures on the board,
+	the creature is not swift (or rules.swiftMove is off), it has already moved this round,
+	the target site is not in this frame, or it is the site the creature already stands on.
 */
-export function relocateVanguard(state, handler, siteId) {
-	if (state.starter !== handler) {
-		return null;
-	}
+export function moveSwift(state, handler, recordId, siteId) {
 	if (!isPlayersDeployTurn(state, handler)) {
 		return null;
 	}
@@ -642,7 +708,12 @@ export function relocateVanguard(state, handler, siteId) {
 	if (p.passed) {
 		return null;
 	}
-	if (state.vanguardRelocated[handler]) {
+	const rules = rulesOf(state);
+	if (!rules.swiftMove) {
+		return null;
+	}
+	const moved = (state.swiftMoved && state.swiftMoved[handler]) || [];
+	if (moved.includes(recordId)) {
 		return null;
 	}
 	const frame = currentFrame(state);
@@ -650,26 +721,23 @@ export function relocateVanguard(state, handler, siteId) {
 	if (!site) {
 		return null;
 	}
-
-	// "the first creature they sent this world" - the board only ever holds creatures
-	// sent on the CURRENT world (judge() gives every frame a fresh empty board), so this
-	// is simply the handler's own board entry with the lowest sentIndex.
-	const ownEntries = boardEntriesFor(state, handler);
-	if (ownEntries.length === 0) {
-		return null; // defensive: cannot happen during deploy (send() puts it there first)
+	const mover = boardEntriesFor(state, handler).find((e) => e.recordId === recordId);
+	if (!mover) {
+		return null;
 	}
-	const vanguard = ownEntries.reduce((earliest, e) => (!earliest || e.sentIndex < earliest.sentIndex ? e : earliest), null);
-	if (vanguard.siteId === siteId) {
+	if (!isSwift(mover.record, rules)) {
+		return null;
+	}
+	if (mover.siteId === siteId) {
 		return null;
 	}
 
-	const relocated = { ...vanguard, siteId };
-	// hold is recomputed at both sites below, since the company of each has changed
+	const relocated = { ...mover, siteId };
 	const nextBoard = {
 		...state.board,
-		[vanguard.siteId]: {
-			...state.board[vanguard.siteId],
-			[handler]: state.board[vanguard.siteId][handler].filter((e) => e.recordId !== vanguard.recordId),
+		[mover.siteId]: {
+			...state.board[mover.siteId],
+			[handler]: state.board[mover.siteId][handler].filter((e) => e.recordId !== mover.recordId),
 		},
 	};
 	nextBoard[siteId] = {
@@ -677,13 +745,13 @@ export function relocateVanguard(state, handler, siteId) {
 		[handler]: [...nextBoard[siteId][handler], relocated],
 	};
 
-	const nextVanguardRelocated = { ...state.vanguardRelocated, [handler]: true };
+	const nextSwiftMoved = { ...state.swiftMoved, [handler]: [...moved, recordId] };
 	const nextResolutionLog = [...state.resolutionLog, {
-		type: 'vanguard-relocate',
-		recordId: relocated.recordId,
+		type: 'swift-move',
+		recordId,
 		handler,
-		fromSite: vanguard.siteId,
-		toSite: siteId,
+		from: mover.siteId,
+		to: siteId,
 		hidden: relocated.hidden,
 	}];
 
@@ -691,9 +759,25 @@ export function relocateVanguard(state, handler, siteId) {
 	return withRecomputedHolds({
 		...state,
 		board: nextBoard,
-		vanguardRelocated: nextVanguardRelocated,
+		swiftMoved: nextSwiftMoved,
 		resolutionLog: nextResolutionLog,
 	});
+}
+
+// the handler's own creatures that may still move this round (assumption 20). Own side
+// only: which of the opponent's creatures are swift is not something the board tells you.
+export function movableRecordIdsFor(state, handler) {
+	if (state.phase !== 'deploy') {
+		return [];
+	}
+	const rules = rulesOf(state);
+	if (!rules.swiftMove) {
+		return [];
+	}
+	const moved = (state.swiftMoved && state.swiftMoved[handler]) || [];
+	return boardEntriesFor(state, handler)
+		.filter((e) => !e.downed && isSwift(e.record, rules) && !moved.includes(e.recordId))
+		.map((e) => e.recordId);
 }
 
 function advanceDeployTurn(state, actingPlayer) {
@@ -745,7 +829,7 @@ function autoPassIfNoLegalSend(state) {
 // ---------------------------------------------------------------------------
 
 function isAlive(entry) {
-	return !entry.routed;
+	return !entry.downed;
 }
 
 // Sealed worlds (assumption 3): a blow only ever reaches creatures at its own site. The
@@ -798,19 +882,52 @@ function pickAttackTarget(state, entry, conduct, entriesSnapshot) {
 		...e,
 		_hold: currentHoldOf(state, e),
 		_magnitude: prepareEntry(state, e).blowMagnitude,
-		_initiative: prepareEntry(state, e).initiative,
-		_staggered: !!e.staggered,
+		_speed: prepareEntry(state, e).speed,
+		_hurt: !!e.hurt,
 	}));
 	if (candidates.length === 0) {
 		return null;
 	}
 
 	const prepared = prepareEntry(state, entry);
+
+	/*
+		Instinct's job (docs/design/reclamation-base-redesign.md assumption 17). Above
+		rules.keenInstinct the creature reads the world: it takes the enemy this attack can
+		down, and failing that the enemy it takes the most off after matchup. At or below
+		rules.dullInstinct it reads nothing and hits whatever was sent earliest. In between
+		it follows its archetype's conduct line, exactly as it did before this pass. The
+		menacing redirect and the temperament tiebreak still apply on top, at the bottom of
+		this function.
+	*/
+	const lane = instinctLaneOf(entry.record, rulesOf(state));
+	if (lane === 'keen') {
+		const withPower = candidates.map((c) => ({ c, power: attackPowerAgainst(state, entry, prepared, c) }));
+		const downable = withPower.filter((x) => x.power >= x.c._hold);
+		const pool = downable.length > 0 ? downable : withPower;
+		// among the enemies it can down, the biggest scalp; otherwise the most hold removed
+		const key = downable.length > 0 ? (x) => x.c._hold : (x) => Math.min(x.power, x.c._hold);
+		const keenPick = pool.reduce((best, x) => {
+			if (!best) {
+				return x;
+			}
+			if (key(x) !== key(best)) {
+				return key(x) > key(best) ? x : best;
+			}
+			return x.c.sentIndex < best.c.sentIndex ? x : best;
+		}, null);
+		return applyMenacingRedirect(keenPick ? keenPick.c : null, state);
+	}
+	if (lane === 'dull') {
+		const dullPick = candidates.reduce((best, c) => (!best || c.sentIndex < best.sentIndex ? c : best), null);
+		return applyMenacingRedirect(dullPick, state);
+	}
+
 	let chosen = null;
 	switch (conduct.attacking) {
 		case 'weakestEnemyInReach': {
-			// "staggered" is now simply "already hit and still standing" (assumption 6)
-			const hurt = candidates.filter((c) => c._staggered);
+			// "hurt" is now simply "already hit and still standing" (assumption 6)
+			const hurt = candidates.filter((c) => c._hurt);
 			const pool = hurt.length > 0 ? hurt : candidates;
 			chosen = pool.reduce((best, c) => (!best || c._hold < best._hold ? c : best), null);
 			break;
@@ -831,7 +948,7 @@ function pickAttackTarget(state, entry, conduct, entriesSnapshot) {
 			chosen = candidates.reduce((best, c) => (!best || c._magnitude < best._magnitude ? c : best), null);
 			break;
 		case 'slowerEnemyWeakestFirst': {
-			const slower = candidates.filter((c) => c._initiative < prepared.initiative);
+			const slower = candidates.filter((c) => c._speed < prepared.speed);
 			const pool = slower.length > 0 ? slower : candidates;
 			chosen = pool.reduce((best, c) => (!best || c._hold < best._hold ? c : best), null);
 			break;
@@ -843,10 +960,10 @@ function pickAttackTarget(state, entry, conduct, entriesSnapshot) {
 			chosen = candidates.reduce((best, c) => (!best || c._magnitude > best._magnitude ? c : best), null);
 			break;
 		case 'enemyRoutableElseWeakest': {
-			// subtraction makes "routable" exact: the blow this creature would land on
+			// subtraction makes "downable" exact: the blow this creature would land on
 			// that target is at least the target's whole remaining hold (assumption 5)
-			const routable = candidates.filter((c) => blowAmountAgainst(state, entry, prepared, c) >= c._hold);
-			const pool = routable.length > 0 ? routable : candidates;
+			const downable = candidates.filter((c) => attackPowerAgainst(state, entry, prepared, c) >= c._hold);
+			const pool = downable.length > 0 ? downable : candidates;
 			chosen = pool.reduce((best, c) => (!best || c._hold < best._hold ? c : best), null);
 			break;
 		}
@@ -930,8 +1047,8 @@ function findLiveEntry(state, recordId) {
 	world.
 
 	Hidden first (assumption 9): a creature sent hidden strikes before everyone else at
-	its world, in initiative order among the hidden. Then the rest, by initiative, with
-	strained creatures last, ties to the earlier send. The initiative ablation resolves
+	its world, in speed order among the hidden. Then the rest, by speed, with
+	strained creatures last, ties to the earlier send. The speed ablation resolves
 	purely in sent order, and the hiddenFirst ablation drops the hidden group entirely so
 	a hidden creature waits its turn like anyone else.
 */
@@ -941,52 +1058,52 @@ function buildResolutionOrder(state, entries) {
 		const prepared = prepareEntry(state, e);
 		return {
 			entry: e,
-			initiative: prepared.initiative,
+			speed: prepared.speed,
 			strained: prepared.strainLevel !== 'none',
 			hidden: !!e.wasHidden,
 		};
 	});
 
-	const useInitiative = rules.initiative;
-	function byInitiativeThenSent(x, y) {
-		if (!useInitiative) {
+	const useSpeed = rules.speed;
+	function bySpeedThenSent(x, y) {
+		if (!useSpeed) {
 			return x.entry.sentIndex - y.entry.sentIndex;
 		}
 		if (x.strained !== y.strained) {
 			return x.strained ? 1 : -1;
 		}
-		if (y.initiative !== x.initiative) {
-			return y.initiative - x.initiative;
+		if (y.speed !== x.speed) {
+			return y.speed - x.speed;
 		}
 		return x.entry.sentIndex - y.entry.sentIndex;
 	}
 
 	if (!rules.hiddenFirst) {
-		return withMeta.slice().sort(byInitiativeThenSent);
+		return withMeta.slice().sort(bySpeedThenSent);
 	}
-	const hidden = withMeta.filter((m) => m.hidden).sort(byInitiativeThenSent);
-	const rest = withMeta.filter((m) => !m.hidden).sort(byInitiativeThenSent);
+	const hidden = withMeta.filter((m) => m.hidden).sort(bySpeedThenSent);
+	const rest = withMeta.filter((m) => !m.hidden).sort(bySpeedThenSent);
 	return [...hidden, ...rest];
 }
 
 /*
-	blowAmountAgainst(state, actorEntry, preparedActor, targetEntry) -> number
+	attackPowerAgainst(state, actorEntry, preparedActor, targetEntry) -> number
 
-	One blow's magnitude against one creature: the actor's single blow (its favored
+	One attack's power against one creature: the actor's single blow (its favored
 	attacking ability, already scaled by strain and by rules.magnitudeScale in
 	creatureOnTable.buildActs), times the element matchup against that target, times
-	rules.areaDiscount when the actor is an area, less rules.armoredReduction when the
+	rules.sweepDiscount when the actor is a sweep, less rules.armoredReduction when the
 	target is armored.
 */
-function blowAmountAgainst(state, actorEntry, preparedActor, targetEntry) {
+function attackPowerAgainst(state, actorEntry, preparedActor, targetEntry) {
 	const rules = rulesOf(state);
 	const blow = preparedActor.blow;
 	if (!blow) {
 		return 0;
 	}
 	let amount = magnitudeAgainst(actorEntry.record, blow, targetEntry.record);
-	if (preparedActor.role === ROLE.AREA) {
-		amount *= rules.areaDiscount;
+	if (preparedActor.role === ROLE.SWEEP) {
+		amount *= rules.sweepDiscount;
 	}
 	if (traitKeywordsOf(targetEntry.record).includes('armored')) {
 		amount *= 1 - rules.armoredReduction;
@@ -1023,16 +1140,16 @@ function resolve(state) {
 /*
 	resolveWorld(state, site) - one world's resolution, in three steps.
 
-	1. DECLARE. With every creature present and its hold settled, each blow creature
-	   picks its conduct target (or, for an area, its victims) and its amount. Assumption
-	   7 requires this: shields cancel a blow that has been DECLARED, so the declaration
+	1. DECLARE. With every creature present and its hold settled, each attacking creature
+	   picks its conduct target (or, for a sweep, its victims) and its power. Assumption
+	   7 requires this: shields cancel an attack that has been DECLARED, so the declaration
 	   has to happen before anything lands.
-	2. SHIELD. For each side, each shielder standing there cancels the largest blow
-	   declared against its own side, one blow per shielder. Against an area it cancels
-	   the area's effect on its own side only, so the other side still takes it.
-	3. LAND. The blows land in resolution order (hidden first, then initiative, strained
-	   last). A blow whose striker has already been routed does not land, which is what
-	   keeps initiative meaningful.
+	2. SHIELD. For each side, each shielder standing there cancels the largest attack
+	   declared against its own side, one attack per shielder. Against a sweep it cancels
+	   the sweep's effect on its own side only, so the other side still takes it.
+	3. LAND. The attacks land in resolution order (hidden first, then speed, strained
+	   last), each scaled by how much hold its attacker has left (assumption 18). An attack
+	   whose attacker has already been downed does not land, which is what makes speed matter.
 */
 function resolveWorld(state, site) {
 	const rules = rulesOf(state);
@@ -1047,7 +1164,7 @@ function resolveWorld(state, site) {
 	order.forEach((item) => {
 		const entry = item.entry;
 		const prepared = prepareEntry(state, entry);
-		if (prepared.role !== ROLE.STRIKE && prepared.role !== ROLE.AREA) {
+		if (prepared.role !== ROLE.STRIKE && prepared.role !== ROLE.SWEEP) {
 			return;
 		}
 		if (prepared.role === ROLE.STRIKE) {
@@ -1057,41 +1174,47 @@ function resolveWorld(state, site) {
 				role: ROLE.STRIKE,
 				hidden: item.hidden,
 				target: target || null,
-				amount: target ? blowAmountAgainst(state, entry, prepared, target) : 0,
+				amount: target ? attackPowerAgainst(state, entry, prepared, target) : 0,
 				cancelledAgainst: {},
 			});
 			return;
 		}
-		// an area removes a reduced magnitude from every OTHER creature at the world,
-		// both sides; the actor is the one creature its own cloud does not catch
+		// a sweep removes a reduced power from every OTHER creature at the world, both
+		// sides; the actor is the one creature its own cloud does not catch
 		const victims = present
 			.filter((e) => e.recordId !== entry.recordId)
-			.map((victim) => ({ victim, amount: blowAmountAgainst(state, entry, prepared, victim) }));
+			.map((victim) => ({ victim, amount: attackPowerAgainst(state, entry, prepared, victim) }));
 		declarations.push({
 			entry,
-			role: ROLE.AREA,
+			role: ROLE.SWEEP,
 			hidden: item.hidden,
 			victims,
-			amount: round1(prepared.blowMagnitude * rules.areaDiscount),
+			amount: round1(prepared.blowMagnitude * rules.sweepDiscount),
 			cancelledAgainst: {},
 		});
 	});
 
 	// ---- 2. shield ----
 	/*
-		A shielder cancels the largest blow declared against its own side, once per round
+		A shielder cancels the largest attack declared against its own side, once per round
 		(assumption 7). rules.shieldCap prices that cancel, since a free cancel of any size
 		measured as the strongest thing a creature can be (shield keeper win rate 67.7
 		percent against the 40 to 60 band, validation 2026-09-09):
 
-		- 'none':    the whole blow is cancelled, whatever its size. The first setting.
-		- 'ownHold': the shielder cancels at most its OWN current hold of the blow; the
+		- 'none':    the whole attack is cancelled, whatever its size. The first setting.
+		- 'ownHold': the shielder cancels at most its OWN current hold of the attack; the
 		             remainder lands on the original target. A small creature can only
-		             absorb a small blow.
-		- 'half':    the whole blow is cancelled, but the shielder takes half the cancelled
-		             amount itself, and can be routed by it.
+		             absorb a small attack.
+		- 'half':    the whole attack is cancelled, but the shielder takes half the
+		             cancelled amount itself, and can be downed by it.
 
-		Cancellation is stored as a FRACTION per side, so an area caught by an 'ownHold'
+		Charisma prices what the shielder can actually stop (assumption 17): the cancelled
+		fraction is multiplied by the shielder's presence scale and clamped at 1, so a
+		charismatic shielder cancels the whole attack and a charmless one lets part of it
+		through. The 'half' semantics are unchanged: the shielder takes half of what it
+		actually cancels, not half of what was declared.
+
+		Cancellation is stored as a FRACTION per side, so a sweep caught by an 'ownHold'
 		shield is reduced proportionally across that side's victims rather than being all
 		or nothing.
 	*/
@@ -1113,8 +1236,8 @@ function resolveWorld(state, site) {
 			.filter((e) => e.player === side && prepareEntry(state, e).role === ROLE.SHIELD);
 		shielders.forEach((shielderEntry) => {
 			const shielder = findLiveEntry(state, shielderEntry.recordId);
-			if (!shielder || shielder.routed) {
-				return; // routed by an earlier shielder's own half-share
+			if (!shielder || shielder.downed) {
+				return; // downed by an earlier shielder's own half-share
 			}
 			let best = null;
 			let bestAmount = 0;
@@ -1134,10 +1257,13 @@ function resolveWorld(state, site) {
 			}
 
 			const cap = rules.shieldCap;
+			const scale = presenceScaleOf(shielder.record, rules);
 			let fraction = 1;
 			if (cap === 'ownHold') {
 				fraction = Math.min(1, shielder.currentHold / bestAmount);
 			}
+			// charisma scales the cancel and can never take it past the whole attack
+			fraction = Math.min(1, fraction * scale);
 			const cancelledAmount = round1(bestAmount * fraction);
 			best.cancelledAgainst[side] = { recordId: shielder.recordId, fraction };
 
@@ -1165,14 +1291,14 @@ function resolveWorld(state, site) {
 	// ---- 3. land ----
 	declarations.forEach((declaration) => {
 		const striker = findLiveEntry(state, declaration.entry.recordId);
-		if (!striker || striker.routed) {
+		if (!striker || striker.downed) {
 			logEvent(state, {
-				type: 'blow',
+				type: 'attack',
 				recordId: declaration.entry.recordId,
 				role: declaration.role,
 				site: site.id,
 				target: declaration.role === ROLE.STRIKE && declaration.target ? declaration.target.recordId : null,
-				amount: 0,
+				power: 0,
 				remaining: null,
 				outcome: 'lapsed',
 				hidden: declaration.hidden,
@@ -1181,34 +1307,56 @@ function resolveWorld(state, site) {
 			return;
 		}
 		if (declaration.role === ROLE.STRIKE) {
-			landStrike(state, site, declaration);
+			landStrike(state, site, declaration, hurtFactorOf(state, striker));
 			return;
 		}
-		landArea(state, site, declaration);
+		landSweep(state, site, declaration, hurtFactorOf(state, striker));
 	});
 }
 
-function landStrike(state, site, declaration) {
+/*
+	hurtFactorOf(state, attackerEntry) -> the share of its power this attacker still lands.
+
+	A hurt creature attacks for less (docs/design/reclamation-base-redesign.md assumption
+	18): an attack lands scaled by its attacker's currentHold over its fullHold AT THE
+	MOMENT IT LANDS, which is what makes hitting first shape an exchange rather than only
+	deciding who is standing at the end. Declaration is unscaled, so a shield still reads
+	the attack the striker meant to throw.
+*/
+function hurtFactorOf(state, entry) {
+	if (!rulesOf(state).hurtAttacksLess) {
+		return 1;
+	}
+	const full = typeof entry.fullHold === 'number' ? entry.fullHold : 0;
+	if (!(full > 0)) {
+		return 1;
+	}
+	const current = typeof entry.currentHold === 'number' ? entry.currentHold : full;
+	return Math.max(0, Math.min(1, current / full));
+}
+
+function landStrike(state, site, declaration, hurtFactor = 1) {
 	const base = {
-		type: 'blow',
+		type: 'attack',
 		recordId: declaration.entry.recordId,
 		role: ROLE.STRIKE,
 		site: site.id,
 		hidden: declaration.hidden,
 	};
 	if (!declaration.target) {
-		logEvent(state, { ...base, target: null, amount: 0, remaining: null, outcome: 'no-target', cancelled: false });
+		logEvent(state, { ...base, target: null, power: 0, remaining: null, outcome: 'no-target', cancelled: false });
 		return;
 	}
 	const targetSide = declaration.target.player;
 	const cut = declaration.cancelledAgainst[targetSide];
-	// a partial cancel (rules.shieldCap 'ownHold') leaves a remainder that still lands
-	const landing = round1(declaration.amount * (1 - (cut ? cut.fraction : 0)));
+	// a partial cancel (rules.shieldCap 'ownHold', or a charmless shielder) leaves a
+	// remainder that still lands; a hurt attacker lands less of it (assumption 18)
+	const landing = round1(declaration.amount * (1 - (cut ? cut.fraction : 0)) * hurtFactor);
 	if (cut && landing <= 0) {
 		logEvent(state, {
 			...base,
 			target: declaration.target.recordId,
-			amount: declaration.amount,
+			power: declaration.amount,
 			remaining: null,
 			outcome: 'cancelled',
 			cancelled: true,
@@ -1216,26 +1364,26 @@ function landStrike(state, site, declaration) {
 		return;
 	}
 	const live = findLiveEntry(state, declaration.target.recordId);
-	if (!live || live.routed) {
+	if (!live || live.downed) {
 		logEvent(state, {
-			...base, target: declaration.target.recordId, amount: 0, remaining: null, outcome: 'no-target', cancelled: false,
+			...base, target: declaration.target.recordId, power: 0, remaining: null, outcome: 'no-target', cancelled: false,
 		});
 		return;
 	}
 	const { remaining, outcome } = applyBlow(state, site, live, landing);
 	logEvent(state, {
-		...base, target: live.recordId, amount: landing, remaining, outcome, cancelled: !!cut,
+		...base, target: live.recordId, power: landing, remaining, outcome, cancelled: !!cut,
 	});
 }
 
-function landArea(state, site, declaration) {
+function landSweep(state, site, declaration, hurtFactor = 1) {
 	const cancelledSides = Object.keys(declaration.cancelledAgainst);
 	logEvent(state, {
-		type: 'area',
+		type: 'sweep',
 		recordId: declaration.entry.recordId,
-		role: ROLE.AREA,
+		role: ROLE.SWEEP,
 		site: site.id,
-		amount: declaration.amount,
+		power: round1(declaration.amount * hurtFactor),
 		hitCount: declaration.victims.length,
 		hidden: declaration.hidden,
 		cancelled: cancelledSides.length > 0,
@@ -1243,73 +1391,126 @@ function landArea(state, site, declaration) {
 	});
 	declaration.victims.forEach(({ victim, amount }) => {
 		const base = {
-			type: 'blow',
+			type: 'attack',
 			recordId: declaration.entry.recordId,
-			role: ROLE.AREA,
+			role: ROLE.SWEEP,
 			site: site.id,
 			target: victim.recordId,
 			hidden: declaration.hidden,
 		};
 		const cut = declaration.cancelledAgainst[victim.player];
-		const landing = round1(amount * (1 - (cut ? cut.fraction : 0)));
+		const landing = round1(amount * (1 - (cut ? cut.fraction : 0)) * hurtFactor);
 		if (cut && landing <= 0) {
-			logEvent(state, { ...base, amount, remaining: null, outcome: 'cancelled', cancelled: true });
+			logEvent(state, { ...base, power: amount, remaining: null, outcome: 'cancelled', cancelled: true });
 			return;
 		}
 		const live = findLiveEntry(state, victim.recordId);
-		if (!live || live.routed) {
-			logEvent(state, { ...base, amount: 0, remaining: null, outcome: 'no-target', cancelled: false });
+		if (!live || live.downed) {
+			logEvent(state, { ...base, power: 0, remaining: null, outcome: 'no-target', cancelled: false });
 			return;
 		}
 		const { remaining, outcome } = applyBlow(state, site, live, landing);
-		logEvent(state, { ...base, amount: landing, remaining, outcome, cancelled: !!cut });
+		logEvent(state, { ...base, power: landing, remaining, outcome, cancelled: !!cut });
 	});
 }
 
 /*
 	applyBlow(state, site, targetEntry, amount) -> { remaining, outcome }
 
-	Blows subtract (assumption 5). A creature at or below zero is routed: off the world,
-	out of the Proving. Anything else that took a hit and is still standing is staggered,
+	Blows subtract (assumption 5). A creature at or below zero is downed: off the world,
+	out of the Proving. Anything else that took a hit and is still standing is hurt,
 	which is a word for the narration and nothing more (assumption 6).
 */
 function applyBlow(state, site, targetEntry, amount) {
 	targetEntry.damage = round1((targetEntry.damage || 0) + amount);
 	targetEntry.currentHold = round1(targetEntry.fullHold - targetEntry.damage);
 	if (targetEntry.currentHold <= 0) {
-		routEntry(state, targetEntry);
+		downEntry(state, targetEntry);
 		// a departure changes the company at the world, so every hold here is recomputed
 		recomputeHoldsAtSite(state, site);
-		return { remaining: 0, outcome: 'routed' };
+		return { remaining: 0, outcome: 'downed' };
 	}
-	targetEntry.staggered = true;
-	return { remaining: targetEntry.currentHold, outcome: 'staggered' };
+	targetEntry.hurt = true;
+	return { remaining: targetEntry.currentHold, outcome: 'hurt' };
 }
 
-// Marks an entry routed (removed from the site, out of the expedition for the rest of
+// Marks an entry downed (removed from the site, out of the expedition for the rest of
 // the match, returned to its owner's roster only after the match ends - the design doc:
-// "Routed creatures are out of the expedition but are yours again after the match").
-function routEntry(state, entry) {
-	entry.routed = true;
+// "Downed creatures are out of the expedition but are yours again after the match").
+function downEntry(state, entry) {
+	entry.downed = true;
 	entry.currentHold = 0;
 	state.board[entry.siteId][entry.player] = state.board[entry.siteId][entry.player].filter(
 		(e) => e.recordId !== entry.recordId,
 	);
 	const p = state.players[entry.player];
-	state.players[entry.player] = { ...p, routed: [...p.routed, entry.recordId] };
+	state.players[entry.player] = { ...p, downed: [...p.downed, entry.recordId] };
 }
 
 // ---------------------------------------------------------------------------
 // Judge phase
 // ---------------------------------------------------------------------------
 
+/*
+	applyBolsterRecovery(state) - the Ruling's first step (docs/design/
+	reclamation-base-redesign.md assumption 19).
+
+	Bolster measured inert by ablation in the first measurements: lifting a grade of strain
+	only ever gave a creature more hold, which is what hold already does. Recovery is the
+	one thing hold cannot do. Every ally standing at a world where a bolsterer stands gets
+	back rules.bolsterRecovery of the damage it took this round, times the bolsterer's
+	presence scale (assumption 17's charisma job), never above its own fullHold. A downed
+	creature is off the world and recovers nothing. One `recover` event per creature that
+	recovered, logged before the judge event so the table can tell that part of the Ruling
+	before the worlds are read.
+*/
+function applyBolsterRecovery(state) {
+	const rules = rulesOf(state);
+	const share = typeof rules.bolsterRecovery === 'number' ? rules.bolsterRecovery : 0;
+	if (share <= 0) {
+		return;
+	}
+	currentFrame(state).sites.forEach((site) => {
+		['A', 'B'].forEach((player) => {
+			const bolster = bolsterInForce(state, site, player);
+			if (!bolster) {
+				return;
+			}
+			state.board[site.id][player].forEach((entry) => {
+				if (entry.downed || !(entry.damage > 0)) {
+					return;
+				}
+				const wanted = round1(entry.damage * share * bolster.scale);
+				const amount = round1(Math.min(wanted, entry.damage));
+				if (amount <= 0) {
+					return;
+				}
+				entry.damage = round1(entry.damage - amount);
+				entry.currentHold = round1(entry.fullHold - entry.damage);
+				entry.hurt = entry.damage > 0;
+				logEvent(state, {
+					type: 'recover',
+					recordId: entry.recordId,
+					site: site.id,
+					bolster: bolster.recordId,
+					amount,
+					remaining: entry.currentHold,
+				});
+			});
+		});
+	});
+}
+
 function judge(state) {
 	const frame = currentFrame(state);
-	let s = { ...state, players: { ...state.players }, board: cloneBoard(state.board) };
+	let s = { ...state, players: { ...state.players }, board: cloneBoard(state.board), resolutionLog: [...state.resolutionLog] };
+
+	// assumption 19: allies recover under a bolster before the Court reads the world
+	applyBolsterRecovery(s);
 
 	// The Court reads one number per side: the total hold still standing at the world
 	// (assumption 5 makes that number the whole outcome model). `resilient` recovered a
-	// creature from the stagger STATUS, and there is no such status any more, so the
+	// creature from the hurt STATUS, and there is no such status any more, so the
 	// trait is no longer read here; see the base redesign's "Traits that remain".
 	const siteResults = {};
 	frame.sites.forEach((site) => {
@@ -1319,7 +1520,7 @@ function judge(state) {
 			fullHold: e.fullHold,
 			damage: e.damage || 0,
 			role: e.role,
-			staggered: !!e.staggered,
+			hurt: !!e.hurt,
 		});
 		const entriesA = s.board[site.id].A.map(entryView);
 		const entriesB = s.board[site.id].B.map(entryView);
@@ -1394,7 +1595,7 @@ function judge(state) {
 		...s,
 		frameIndex: nextFrameIndex,
 		board: emptyBoardForFrame(nextFrame),
-		vanguardRelocated: { A: false, B: false },
+		swiftMoved: { A: [], B: [] },
 		players: {
 			A: { ...s.players.A, passed: false, firstPasser: false },
 			B: { ...s.players.B, passed: false, firstPasser: false },
@@ -1464,7 +1665,11 @@ export function getPublicState(state, handler) {
 					fullHold: e.fullHold,
 					damage: e.damage || 0,
 					role: e.role,
-					staggered: !!e.staggered,
+					// Pass 2 vocabulary (assumption 17): hit and standing is `hurt`, driven
+					// to zero is `downed`. Speed rides along so the plinth can print it.
+					hurt: !!e.hurt,
+					downed: !!e.downed,
+					speed: speedOf(e.record),
 					bolstered: !!e.bolstered,
 				});
 			});
@@ -1485,34 +1690,6 @@ export function getPublicState(state, handler) {
 		return count;
 	};
 
-	// canRelocateVanguard: only the world's starter ever has the option, so this is
-	// false outright for the non-starter side (per handler, not just "self").
-	function canRelocate(who) {
-		if (state.starter !== who) {
-			return false;
-		}
-		if (state.phase !== 'deploy') {
-			return false;
-		}
-		if (state.vanguardRelocated[who]) {
-			return false;
-		}
-		return !state.players[who].passed;
-	}
-
-	// the handler's own vanguard (first-sent creature this world), own side only - the
-	// opponent's identity stays hidden even when it happens to be a hidden send, since
-	// "which creature is their vanguard" is exactly the kind of identity getPublicState
-	// otherwise withholds for the opponent.
-	function ownVanguardRecordId(who) {
-		const entries = boardEntriesFor(state, who);
-		if (entries.length === 0) {
-			return null;
-		}
-		const earliest = entries.reduce((e1, e2) => (!e1 || e2.sentIndex < e1.sentIndex ? e2 : e1), null);
-		return earliest ? earliest.recordId : null;
-	}
-
 	function viewOf(who, isSelf) {
 		const p = state.players[who];
 		const base = {
@@ -1520,11 +1697,10 @@ export function getPublicState(state, handler) {
 			sentCount: p.sentCount,
 			holding: p.holding,
 			withdrawn: p.withdrawn,
-			routed: p.routed,
+			downed: p.downed,
 			passed: p.passed,
 			sitesWon: p.sitesWon,
 			hiddenSentThisRound: hiddenCountThisRound(who),
-			canRelocateVanguard: canRelocate(who),
 			// SENDABLE plus this round's trailing-seat bonus, if any (Pass 2's roster-economy
 			// lever); sitesWon is already public, so this reveals nothing the opponent
 			// couldn't derive themselves.
@@ -1534,7 +1710,10 @@ export function getPublicState(state, handler) {
 			return {
 				...base,
 				roster: p.roster,
-				vanguardRecordId: ownVanguardRecordId(who),
+				// assumption 20: the handler's own creatures that may still move this round.
+				// Own side only, like the roster itself: which of the opponent's creatures
+				// are swift is not something the board tells you.
+				movableRecordIds: movableRecordIdsFor(state, who),
 				// the Loki line: which of THIS handler's own roster record ids are flagged
 				// "returned" (withdrawn from a lost world, sendable again at
 				// RETURNED_SEND_COST) - own-side only, same as the roster itself, since the
@@ -1578,12 +1757,12 @@ export function getPublicState(state, handler) {
 }
 
 /*
-	blowAmountAgainst is exported alongside the board helpers so the table's send preview
+	attackPowerAgainst is exported alongside the board helpers so the table's send preview
 	can read the engine's own arithmetic rather than keeping a second copy of it in the
 	UI (docs/design/reclamation-base-redesign.md, "Interface consequences": the preview
 	shows "the likely target and the number it would lose").
 */
 export {
 	prepareEntry, currentFrame, siteById, allBoardEntries, boardEntriesFor, findEntry,
-	currentHoldOf, blowAmountAgainst,
+	currentHoldOf, attackPowerAgainst,
 };

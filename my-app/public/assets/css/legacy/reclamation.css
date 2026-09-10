@@ -3249,6 +3249,7 @@
 .rec-plinth--sent .rec-plinth-art,
 .rec-plinth--holding .rec-plinth-art,
 .rec-plinth--routed .rec-plinth-art,
+.rec-plinth--downed .rec-plinth-art,
 .rec-plinth--away .rec-plinth-art { filter: grayscale(1); opacity: 0.5; }
 .rec-plinth--disabled { opacity: 0.7; }
 .rec-plinth--suggested { border-color: color-mix(in srgb, var(--g-lamp-amber) 60%, var(--g-seam)); }
@@ -4323,3 +4324,75 @@
    creature is lifted, so the height changes with the lift, never with the hover */
 .rec-site-floor .rec-site-midline:has(.rec-ghost-plan) { min-height: 136px; }
 .rec-ghost-plan { background: transparent; }
+
+/* -------------------------------------------------------------------------
+   PASS 2: EVERY ATTRIBUTE A JOB
+   (docs/design/reclamation-base-redesign.md, "Pass 2"). The vocabulary moved
+   from rout/stagger to downed/hurt, the vanguard fall-back became the swift
+   move, and the plinth and the dossier print the attribute lanes. The older
+   class names (.rec-figure--threat-rout, .rec-figure-flash--stagger) are the
+   console's own and are left where they are; what changed is the words.
+   ------------------------------------------------------------------------- */
+
+/* a threat that would down the creature: the same red the rout mark carried */
+.rec-figure-threat--downed { background: var(--g-lamp-red); }
+.rec-figure--threat-downed .rec-figure-plate { outline: 1px solid var(--g-lamp-red); }
+
+/* the Ruling's recovery, flashed over the figure whose bulb just came back up */
+.rec-figure-flash--recover { color: var(--g-brass-light); }
+
+/* the swift move: one button per creature that may still move this round */
+.rec-move-btn { display: inline-flex; align-items: center; gap: 4px; }
+.rec-move-btn .rec-glyph { width: 14px; height: 14px; }
+
+/* the attribute marks beside the speed number on a plinth */
+.rec-plinth-lanes {
+	display: inline-flex;
+	gap: 3px;
+	align-items: center;
+	margin-left: 4px;
+	color: var(--g-ink-low);
+}
+.rec-plinth-lane { display: inline-flex; }
+.rec-plinth-lane .rec-glyph { width: 12px; height: 12px; }
+.rec-plinth-lane--swift { color: var(--g-el); }
+.rec-plinth-lane--willful { color: var(--g-brass-light); }
+
+/* the dossier's Lanes block, and the same list on the intro */
+.rec-lane-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+.rec-lane {
+	display: flex;
+	align-items: baseline;
+	gap: 5px;
+	font-size: var(--g-size-tiny);
+	color: var(--g-ink-mid);
+}
+.rec-lane-glyph { width: 12px; height: 12px; flex: 0 0 auto; align-self: center; color: var(--g-el); }
+.rec-lane-text { flex: 1 1 auto; }
+.rec-lane-word {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink);
+	flex: 0 0 auto;
+}
+.rec-intro-lanes { gap: 5px; }
+.rec-intro-lanes .rec-lane { flex-wrap: wrap; }
+
+/* a downed creature in the roster and on the bench: the old routed paint */
+.rec-slot-tag--downed { color: var(--g-lamp-red); }
+.rec-plinth-tag--downed { color: var(--g-lamp-red); }
+
+/* what a bolster gave back, beside the hold the Court counted */
+.rec-report-creature-recovered {
+	font-variant-numeric: tabular-nums;
+	color: var(--g-brass-light);
+}

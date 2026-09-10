@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import { recommendSend } from '../reclamationAdvice';
 import { buildRosters } from '../../../../gameplay/expedition/roster';
-import { createMatch, send, pass, relocateVanguard, getPublicState } from '../../../../gameplay/expedition/expeditionRules';
+import { createMatch, send, pass, moveSwift, getPublicState } from '../../../../gameplay/expedition/expeditionRules';
 import { getWorlds } from '../../../../gameplay/expedition/sites';
 
 /*
@@ -25,7 +25,7 @@ describe('recommendSend', () => {
 		expect(rec.label).toMatch(/^Send .+ to /);
 		expect(rec.reason).toMatch(/holds [0-9.]+ at .+, which nobody has claimed yet\./);
 		// the reason ends on the role sentence, the one sentence the whole table prints
-		expect(rec.reason).toMatch(/(Strikes one enemy here for [0-9.]+|Strikes everyone here for [0-9.]+|Bolsters allies here against the world|Shields allies here from the largest blow|Stands here and throws nothing)\.$/);
+		expect(rec.reason).toMatch(/(Attacks one enemy here for [0-9.]+|Sweeps everyone here for [0-9.]+|Bolsters allies here against the world, and recovers what they lose|Shields allies here from the largest attack|Stands here and throws nothing)\.$/);
 	});
 
 	test('the recommended send is legal', () => {
@@ -72,8 +72,9 @@ describe('recommendSend', () => {
 				match = pass(match, seat);
 			} else if (rec.type === 'send') {
 				match = send(match, seat, rec.recordId, rec.siteId, rec.hidden);
-			} else if (rec.type === 'relocate') {
-				match = relocateVanguard(match, seat, rec.siteId) || match;
+			} else if (rec.type === 'move') {
+				// assumption 20: a swift move does not spend the turn
+				match = moveSwift(match, seat, rec.recordId, rec.siteId) || match;
 			} else {
 				break;
 			}

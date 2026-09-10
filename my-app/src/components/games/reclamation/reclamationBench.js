@@ -1,11 +1,14 @@
 import React from 'react';
-import { InfoGlyph, HiddenGlyph, RoleGlyph } from './reclamationGlyphs';
+import {
+	InfoGlyph, HiddenGlyph, RoleGlyph, SwiftGlyph, WillfulGlyph, InstinctGlyph,
+} from './reclamationGlyphs';
 import XalianImage from '../../xalianImage';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
 import { team } from '../../../constants/designTokens';
 import { slotStateOf, siteHoldsFor } from './reclamationRoster';
 import { speciesLabel, formatHold, roleSentence } from './reclamationNarration';
-import { prepare, initiativeOf } from '../../../gameplay/expedition/creatureOnTable';
+import { prepare, speedOf } from '../../../gameplay/expedition/creatureOnTable';
+import { attributeLanes } from './reclamationPreview';
 import { SENDABLE, RETURNED_SEND_COST } from '../../../gameplay/expedition/expeditionInterpretation';
 
 /*
@@ -21,8 +24,13 @@ import { SENDABLE, RETURNED_SEND_COST } from '../../../gameplay/expedition/exped
 	become the buttons. The wizard's steps are gone: lift a creature, press a world.
 
 	The bench head carries what the deploy panel used to: the state of the turn, the
-	sends left, fall back, hidden, pass. Every number is the engine's, through
-	siteHoldsFor() and prepare().
+	sends left, the swift moves available this round, hidden, pass. Every number is the
+	engine's, through siteHoldsFor() and prepare().
+
+	PASS 2 ("every attribute a job"): each plinth prints the creature's speed and, beside
+	it, a mark per attribute lane that is doing something - a wing for swift, an upright
+	bar for willful, an eye for keen or dull instinct - each carrying its lane sentence as
+	its title, the same sentence the dossier's Lanes block prints.
 */
 
 // a lamp is lit for a hold that would matter at a world: two-thirds of the printed
@@ -44,10 +52,13 @@ function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspec
 	const holds = inHand ? siteHoldsFor(record, view, you) : null;
 	const readAt = prepare(record, view.frame.sites[0], null, 0, { rules: view.rules });
 	const stealthy = readAt.stealthy;
-	// the base redesign's one glyph per creature: the role it plays at Resolve, the same
+	// the base redesign's one glyph per creature: the role it plays at the Clash, the same
 	// on the bench as on the plinth on the table and in the dossier
 	const role = readAt.role;
 	const roleLine = roleSentence(role, readAt.blowMagnitude);
+	// the attribute lanes that are actually doing something for this creature: the marks
+	// beside the speed number, each with its own lane sentence (Pass 2, assumption 17)
+	const laneMarks = attributeLanes(readAt, view.rules).filter((l) => l.glyph);
 	const el = record.element.primary;
 	const classes = ['rec-plinth', `rec-plinth--${slot.state}`];
 	if (armed) classes.push('rec-plinth--armed');
@@ -56,7 +67,7 @@ function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspec
 	const bestId = holds ? holds.reduce((a, b) => (b.hold > a.hold ? b : a)).site.id : null;
 	const title = inHand
 		? (armed ? 'Lifted. Press a world to send it there, or press again to set it down.' : holds.map((h) => `${h.site.world.planet} ${formatHold(h.hold)}`).join(' · '))
-		: slot.state === 'sent' ? `Sent to ${slot.site.world.planet}` : slot.state === 'holding' ? 'Holding a world won earlier' : slot.state === 'routed' ? 'Routed out of the Proving' : 'Withdrawn';
+		: slot.state === 'sent' ? `Sent to ${slot.site.world.planet}` : slot.state === 'holding' ? 'Holding a world won earlier' : slot.state === 'downed' ? 'Downed, out of the Proving' : 'Withdrawn';
 	return (
 		<div className={classes.join(' ')} data-slot={record.id} data-slot-state={slot.state}>
 			<button
@@ -82,7 +93,18 @@ function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspec
 						<RoleGlyph role={role} />
 					</span>
 				)}
-				<span className="rec-plinth-init g-mono" title="Initiative: the higher blows land first when the worlds resolve">{Math.round(initiativeOf(record))}</span>
+				<span className="rec-plinth-init g-mono" title="Speed: the faster attacks land first when the worlds resolve">{Math.round(speedOf(record))}</span>
+				{laneMarks.length > 0 && (
+					<span className="rec-plinth-lanes" aria-label="What this creature's attributes do here">
+						{laneMarks.map((mark) => (
+							<span className={`rec-plinth-lane rec-plinth-lane--${mark.glyph}`} key={mark.key} title={mark.text} aria-label={mark.text} data-lane-mark={mark.glyph}>
+								{mark.glyph === 'swift' && <SwiftGlyph />}
+								{mark.glyph === 'willful' && <WillfulGlyph />}
+								{(mark.glyph === 'keen' || mark.glyph === 'dull') && <InstinctGlyph lane={mark.glyph} />}
+							</span>
+						))}
+					</span>
+				)}
 				{inHand && holds && (
 					<span className="rec-lamps" aria-label="Where it holds well">
 						{holds.map((h) => (
@@ -96,7 +118,7 @@ function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspec
 				)}
 				{!inHand && (
 					<span className={`rec-plinth-tag rec-plinth-tag--${slot.state}`}>
-						{slot.state === 'sent' ? slot.site.world.planet : slot.state === 'holding' ? 'holding' : slot.state === 'routed' ? 'routed' : 'away'}
+						{slot.state === 'sent' ? slot.site.world.planet : slot.state === 'holding' ? 'holding' : slot.state === 'downed' ? 'downed' : 'away'}
 					</span>
 				)}
 				{inHand && returned && (
@@ -131,14 +153,14 @@ function ReclamationBench({
 	armedRecordId,
 	recommendation,
 	sendHidden,
-	relocating,
-	vanguard,
+	movingRecordId,
+	movable,
 	onArm,
 	onInspect,
 	onHoverRecord,
 	onToggleHidden,
 	onPass,
-	onBeginRelocate,
+	onBeginMove,
 	rivalBeat,
 }) {
 	const me = view.players[you];
@@ -154,7 +176,9 @@ function ReclamationBench({
 	const armedRead = armed ? prepare(armed, view.frame.sites[0], null, 0, { rules: view.rules }) : null;
 	const armedStealthy = !!(armedRead && armedRead.stealthy);
 	const showHidden = armedStealthy && (advanced || (rec && rec.hidden));
-	const showFallback = !!vanguard && (advanced || (recommendation && recommendation.type === 'relocate'));
+	// assumption 20: a swift creature already on the table may move once a round, and it
+	// does not spend the turn. One button per creature that still may.
+	const movers = movable || [];
 
 	let heading;
 	let lead;
@@ -164,9 +188,10 @@ function ReclamationBench({
 	} else if (me.passed) {
 		heading = 'You have passed';
 		lead = 'Passing is permanent for this round. The rival finishes its deploy alone.';
-	} else if (relocating) {
-		heading = 'Fall back';
-		lead = 'Press a world to move your vanguard there. This does not spend your turn.';
+	} else if (movingRecordId) {
+		const mover = movers.find((m) => m.record.id === movingRecordId);
+		heading = mover ? `Move ${speciesLabel(mover.record)}` : 'Move';
+		lead = 'Press a world to move it there. It is swift, so this does not spend your turn.';
 	} else if (step === 2) {
 		heading = `${speciesLabel(armed)} is lifted`;
 		// the lead is the role sentence, the same one the dossier and the plinth print
@@ -205,17 +230,19 @@ function ReclamationBench({
 								<span>Send hidden</span>
 							</label>
 						)}
-						{showFallback && (
+						{movers.map((mover) => (
 							<button
+								key={mover.record.id}
 								type="button"
-								className={`g-btn rec-fallback-btn${relocating ? ' rec-fallback-btn--active' : ''}`}
-								onClick={onBeginRelocate}
-								data-fallback
-								title="You placed your first creature knowing nothing. Once per round it may fall back to another world in the frame, without spending your turn."
+								className={`g-btn rec-fallback-btn rec-move-btn${movingRecordId === mover.record.id ? ' rec-fallback-btn--active' : ''}`}
+								onClick={() => onBeginMove && onBeginMove(mover.record.id)}
+								data-move={mover.record.id}
+								title="Swift: it may move to another world of the frame once a round, without spending your turn."
 							>
-								{relocating ? 'Choose a world' : `Fall back ${speciesLabel(vanguard)}`}
+								<SwiftGlyph />
+								{movingRecordId === mover.record.id ? 'Choose a world' : `Move ${speciesLabel(mover.record)}`}
 							</button>
-						)}
+						))}
 						<button
 							type="button"
 							className={`g-btn rec-pass-btn${recommendation && recommendation.type === 'pass' ? ' rec-pass-btn--suggested' : ''}`}
@@ -231,7 +258,7 @@ function ReclamationBench({
 			</header>
 			{/* the lead rides on its own line under the head: with a creature lifted it is the
 			    role sentence, the same one the plinth, the dossier and the ghost preview print */}
-			{(sendsLeft === 0 || step === 2) && (
+			{(sendsLeft === 0 || step === 2 || movingRecordId) && (
 				<p className="rec-bench-lead g-body" data-bench-lead>{lead}</p>
 			)}
 			<div className="rec-plinths" role="list">

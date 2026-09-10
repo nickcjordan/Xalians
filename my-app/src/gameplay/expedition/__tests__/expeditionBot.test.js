@@ -1,4 +1,4 @@
-import { createMatch, send, pass, getPublicState, createRngState, nextRandom, relocateVanguard } from '../expeditionRules.js';
+import { createMatch, send, pass, getPublicState, createRngState, nextRandom, moveSwift } from '../expeditionRules.js';
 import { chooseSend, roleValueOf, RIVALS, DEFAULT_RIVAL_ID, rivalById } from '../expeditionBot.js';
 import { ROSTER_SIZE, SENDABLE } from '../expeditionInterpretation.js';
 
@@ -102,12 +102,12 @@ function playMatch(rosterA, rosterB, worlds, seed, rivals = {}) {
 			let action = chooseSend(publicState, state.players[handler].roster, handler, botRng, rivals[handler]);
 			actionLog.push({ handler, frameIndex: state.frameIndex, ...action });
 
-			if (action.type === 'relocate') {
-				const relocated = relocateVanguard(state, handler, action.siteId);
-				if (!relocated) {
-					throw new Error(`illegal relocate action: ${JSON.stringify(action)} for ${handler}`);
+			if (action.type === 'move') {
+				const moved = moveSwift(state, handler, action.recordId, action.siteId);
+				if (!moved) {
+					throw new Error(`illegal swift move: ${JSON.stringify(action)} for ${handler}`);
 				}
-				state = relocated;
+				state = moved;
 				// same as the simulator: relocating does not end the turn, so ask again
 				const publicStateAfter = getPublicState(state, handler);
 				action = chooseSend(publicStateAfter, state.players[handler].roster, handler, botRng, rivals[handler]);
@@ -369,12 +369,12 @@ describe('rivals', () => {
 			turn: 'A',
 			starter: 'A',
 			board: { s0: { A: [{ recordId: 'A_ally', record: ally, sentIndex: 0, hidden: false }], B: [] } },
-			staggered: {},
+			hurt: {},
 			wardedBy: {},
 			snared: {},
 			players: {
-				A: { rosterCount: 1, sentCount: 1, holding: 0, withdrawn: 0, routed: 0, passed: false, sitesWon: 0, hiddenSentThisRound: 0, canRelocateVanguard: false, roster: ownRoster, vanguardRecordId: 'A_ally' },
-				B: { rosterCount: 12, sentCount: 0, holding: 0, withdrawn: 0, routed: 0, passed: false, sitesWon: 0, hiddenSentThisRound: 0 },
+				A: { rosterCount: 1, sentCount: 1, holding: 0, withdrawn: 0, downed: 0, passed: false, sitesWon: 0, hiddenSentThisRound: 0, roster: ownRoster, movableRecordIds: [] },
+				B: { rosterCount: 12, sentCount: 0, holding: 0, withdrawn: 0, downed: 0, passed: false, sitesWon: 0, hiddenSentThisRound: 0 },
 			},
 		};
 
@@ -470,5 +470,75 @@ describe('rivals', () => {
 		const brokerRate = brokerHidden / brokerSends;
 		const proctorRate = proctorHidden / proctorSends;
 		expect(brokerRate).toBeGreaterThan(proctorRate);
+	});
+});
+
+/*
+	The swift move (docs/design/reclamation-base-redesign.md assumption 20). The bot only
+	ever proposes a move the engine will accept, so the test drives the proposal straight
+	into moveSwift rather than asserting on the scorer's internals.
+*/
+describe('chooseSend: swift creatures move', () => {
+	function swiftRoster(prefix) {
+		const roster = [];
+		for (let i = 0; i < ROSTER_SIZE; i++) {
+			roster.push(makeRecord(`${prefix}_${i}`, { attributes: { agility: 90, reflex: 90 } }));
+		}
+		return roster;
+	}
+
+	test('every move the bot proposes names one of its own movable creatures and is legal', () => {
+		let state = createMatch({
+			rosterA: swiftRoster('A'), rosterB: swiftRoster('B'),
+			worlds: makeWorlds(), seed: 'bot-swift-seed',
+		});
+		const rng = makeRng('bot-swift-rng');
+		let proposals = 0;
+		let guard = 0;
+		while (state.phase === 'deploy' && guard < 200) {
+			guard++;
+			const handler = state.turn;
+			if (handler === null) {
+				break;
+			}
+			const view = getPublicState(state, handler);
+			const action = chooseSend(view, state.players[handler].roster, handler, rng, null);
+			if (action.type === 'move') {
+				proposals++;
+				expect(view.players[handler].movableRecordIds).toContain(action.recordId);
+				const moved = moveSwift(state, handler, action.recordId, action.siteId);
+				expect(moved).not.toBeNull();
+				state = moved;
+				continue;
+			}
+			state = action.type === 'send'
+				? send(state, handler, action.recordId, action.siteId, action.hidden)
+				: pass(state, handler);
+			expect(state).not.toBeNull();
+		}
+		// an all-swift board is exactly the case the rule exists for, so it must fire
+		expect(proposals).toBeGreaterThan(0);
+	});
+
+	test('proposes no move at all under the swiftMove ablation', () => {
+		let state = createMatch({
+			rosterA: swiftRoster('A'), rosterB: swiftRoster('B'),
+			worlds: makeWorlds(), seed: 'bot-swift-off-seed', rules: { swiftMove: false },
+		});
+		const rng = makeRng('bot-swift-off-rng');
+		let guard = 0;
+		while (state.phase === 'deploy' && guard < 200) {
+			guard++;
+			const handler = state.turn;
+			if (handler === null) {
+				break;
+			}
+			const view = getPublicState(state, handler);
+			const action = chooseSend(view, state.players[handler].roster, handler, rng, null);
+			expect(action.type).not.toBe('move');
+			state = action.type === 'send'
+				? send(state, handler, action.recordId, action.siteId, action.hidden)
+				: pass(state, handler);
+		}
 	});
 });

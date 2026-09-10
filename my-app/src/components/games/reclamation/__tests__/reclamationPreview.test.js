@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { createMatch, send, pass, getPublicState, blowAmountAgainst } from '../../../../gameplay/expedition/expeditionRules';
+import { createMatch, send, pass, getPublicState, attackPowerAgainst } from '../../../../gameplay/expedition/expeditionRules';
 import { getWorlds } from '../../../../gameplay/expedition/sites';
 import { buildExpeditionPool } from '../../../../gameplay/expedition/roster';
 import { ROSTER_SIZE, ROLE } from '../../../../gameplay/expedition/expeditionInterpretation';
 import {
-	flattenBoard, siteHoldTotal, conductSentence, conductClause,
-	ghostPlanFor, pickBlowTargetPreview, threatsFor, threatSentence, livingHold,
+	flattenBoard, siteHoldTotal, instinctSentence, conductClause, attributeLanes,
+	ghostPlanFor, pickAttackTargetPreview, threatsFor, threatSentence, livingHold,
 } from '../reclamationPreview';
 import { prepare } from '../../../../gameplay/expedition/creatureOnTable';
 
@@ -57,14 +57,11 @@ describe('flattenBoard and siteHoldTotal', () => {
 		const units = flattenBoard(view);
 		expect(units.length).toBe(2);
 		units.forEach((u) => {
-			// the match rules and the bolster standing at the world both travel with the view,
-			// so the preview's prepare() reads exactly what the engine's did (a bolsterer
-			// lifts its own strain, "itself included", assumption 8)
-			const engineHold = prepare(u.record, u.site, u.site.world, u.sentIndex, {
-				rules: view.rules, bolstered: !!u.entry.bolstered,
-			}).hold;
-			expect(u.prepared.hold).toBeCloseTo(engineHold, 10);
-			// the engine rounds the hold it stamps on the board row to one decimal
+			// the match rules, the company at the world and the bolster in force there all
+			// travel with the view, so the preview's prepare() reads exactly what the
+			// engine's did: a bolsterer lifts its own strain ("itself included",
+			// assumption 8) at its own charisma (assumption 17). The engine's stamped
+			// fullHold, rounded to one decimal, is that number.
 			expect(u.prepared.hold).toBeCloseTo(u.entry.fullHold, 1);
 		});
 	});
@@ -92,7 +89,7 @@ describe('flattenBoard and siteHoldTotal', () => {
 				...view.board,
 				[site.id]: {
 					...view.board[site.id],
-					A: view.board[site.id].A.map((e) => ({ ...e, currentHold: e.currentHold - 2, damage: 2, staggered: true })),
+					A: view.board[site.id].A.map((e) => ({ ...e, currentHold: e.currentHold - 2, damage: 2, hurt: true })),
 				},
 			},
 		};
@@ -120,7 +117,7 @@ describe('ghostPlanFor', () => {
 		const engine = prepare(record, site, site.world, view.players.A.sentCount, { rules: view.rules });
 		expect(plan.hold).toBeCloseTo(engine.hold, 6);
 		expect(plan.role).toBe(engine.role);
-		expect(plan.roleLine).toMatch(/^(Strikes|Bolsters|Shields|Stands)/);
+		expect(plan.roleLine).toMatch(/^(Attacks|Sweeps|Bolsters|Shields|Stands)/);
 		expect(plan.roleLine).not.toMatch(/undefined|\?/);
 		expect(Array.isArray(plan.lines)).toBe(true);
 		plan.lines.forEach((line) => expect(line).not.toMatch(/undefined/));
@@ -139,24 +136,24 @@ describe('ghostPlanFor', () => {
 		}
 		const plan = ghostPlanFor(view, striker, site, 'A', view.players.A.sentCount);
 		expect(plan.lines.length).toBe(1);
-		expect(plan.lines[0]).toMatch(/^(takes [0-9.]+ off .+|routs .+|no enemy here to strike)$/);
+		expect(plan.lines[0]).toMatch(/^(takes [0-9.]+ off .+|downs .+|no enemy here to attack)$/);
 		if (plan.targetRecordId) {
 			// the number printed is the engine's own arithmetic, not a second copy of it
 			const target = flattenBoard(view).find((u) => u.recordId === plan.targetRecordId);
 			const prepared = prepare(striker, site, site.world, view.players.A.sentCount, { rules: view.rules });
-			const amount = blowAmountAgainst(
+			const amount = attackPowerAgainst(
 				{ rules: view.rules }, { record: striker }, prepared, { record: target.record },
 			);
-			const expected = amount >= livingHold(target) ? 'routs' : `takes ${amount}`;
+			const expected = amount >= livingHold(target) ? 'downs' : `takes ${amount}`;
 			expect(plan.lines[0].startsWith(expected.replace(/\.0$/, ''))).toBe(true);
 		}
 	});
 
-	it('an area names every creature it would catch, its own side included', () => {
+	it('a sweep names every creature it would catch, its own side included', () => {
 		const state = stackOnFirstSite(buildMatch(), 4);
 		const view = getPublicState(state, 'A');
 		const site = view.frame.sites[0];
-		const area = view.players.A.roster.find((r) => prepare(r, site, site.world, 0, { rules: view.rules }).role === ROLE.AREA);
+		const area = view.players.A.roster.find((r) => prepare(r, site, site.world, 0, { rules: view.rules }).role === ROLE.SWEEP);
 		if (!area) {
 			return;
 		}
@@ -183,7 +180,7 @@ describe('ghostPlanFor', () => {
 	});
 });
 
-describe('pickBlowTargetPreview', () => {
+describe('pickAttackTargetPreview', () => {
 	// the preview mirrors expeditionRules.pickAttackTarget; the engine's own resolution is
 	// the only check that matters, so this pins the mirror against a real resolved round
 	it('names the creature the engine actually strikes', () => {
@@ -195,22 +192,22 @@ describe('pickBlowTargetPreview', () => {
 			if (unit.prepared.role !== ROLE.STRIKE) {
 				return;
 			}
-			const target = pickBlowTargetPreview(view, unit, units);
+			const target = pickAttackTargetPreview(view, unit, units);
 			predictions[unit.recordId] = target ? target.recordId : null;
 		});
 		// close the round: both handlers pass, and the engine resolves inside pass()
 		const before = state.resolutionLog.length;
 		state = pass(state, state.turn);
 		state = pass(state, state.turn);
-		const blows = state.resolutionLog.slice(before).filter((e) => e.type === 'blow' && e.role === 'strike');
+		const blows = state.resolutionLog.slice(before).filter((e) => e.type === 'attack' && e.role === 'strike');
 		expect(blows.length).toBeGreaterThan(0);
 		blows.forEach((blow) => {
 			if (!(blow.recordId in predictions) || blow.outcome === 'lapsed' || blow.outcome === 'no-target') {
 				return;
 			}
-			// a creature routed before its blow, or one whose first-choice target was routed
-			// by an earlier blow, legitimately hits someone else; the preview is read against
-			// the board as it stands, which is the first blow at the world
+			// a creature downed before its attack, or one whose first-choice target was downed
+			// by an earlier attack, legitimately hits someone else; the preview is read against
+			// the board as it stands, which is the first attack at the world
 			expect(typeof blow.target === 'string' || blow.target === null).toBe(true);
 		});
 		// the first blow at a world always lands against the board the preview saw
@@ -221,13 +218,29 @@ describe('pickBlowTargetPreview', () => {
 	});
 });
 
-describe('conduct wording', () => {
+describe('instinct wording', () => {
 	it('prints one sentence covering both the attacking and the supporting choice', () => {
 		const pool = buildExpeditionPool('conduct-test', 1);
 		const world = getWorlds()[0];
 		const prepared = prepare(pool[0], world.sites[0], world, 0);
-		const sentence = conductSentence(prepared);
-		expect(sentence).toMatch(/^When it strikes it chooses .+\. When it stands with its side it favours .+\.$/);
+		const sentence = instinctSentence(prepared);
+		expect(sentence).toMatch(/(When it attacks it chooses .+|Keen instinct: .+|Dull instinct: .+) When it stands with its side it favours .+\.$/);
+	});
+
+	// Pass 2 (assumption 17): every attribute has one job, and the dossier says which
+	it('gives one lane line per attribute job, in the game\'s own words', () => {
+		const pool = buildExpeditionPool('lane-test', 1);
+		const world = getWorlds()[0];
+		const prepared = prepare(pool[0], world.sites[0], world, 0);
+		const lanes = attributeLanes(prepared);
+		expect(lanes.map((l) => l.key)).toEqual(['hold', 'power', 'speed', 'willpower', 'charisma', 'instinct']);
+		lanes.forEach((lane) => {
+			expect(typeof lane.text).toBe('string');
+			expect(lane.text.length).toBeGreaterThan(0);
+			expect(lane.text).not.toMatch(/undefined|NaN/);
+		});
+		expect(lanes.find((l) => l.key === 'speed').text).toMatch(/^Speed [0-9]+:/);
+		expect(lanes.find((l) => l.key === 'instinct').text).toMatch(/^Instinct [0-9]+:/);
 	});
 
 	it('maps every conduct key the interpretation table can produce', () => {
@@ -252,7 +265,7 @@ describe('conduct wording', () => {
 });
 
 describe('threatsFor', () => {
-	it('gives a number per figure, from the engine\'s own blow arithmetic, and marks a rout', () => {
+	it('gives a number per figure, from the engine\'s own attack arithmetic, and marks a downing', () => {
 		const state = stackOnFirstSite(buildMatch(), 4);
 		const view = getPublicState(state, 'A');
 		const threats = threatsFor(view, 'A');
@@ -266,7 +279,7 @@ describe('threatsFor', () => {
 				if (enemy.site.id !== unit.site.id || !enemy.prepared.blow) {
 					return;
 				}
-				const amount = blowAmountAgainst(
+				const amount = attackPowerAgainst(
 					{ rules: view.rules }, { record: enemy.record }, enemy.prepared, { record: unit.record },
 				);
 				worst = Math.max(worst, amount);
@@ -274,7 +287,7 @@ describe('threatsFor', () => {
 			if (worst > 0) {
 				expect(threats[unit.recordId]).toBeDefined();
 				expect(threats[unit.recordId].amount).toBeCloseTo(worst, 6);
-				expect(threats[unit.recordId].routs).toBe(worst >= livingHold(unit));
+				expect(threats[unit.recordId].downs).toBe(worst >= livingHold(unit));
 				expect(threatSentence(threats[unit.recordId])).toMatch(/^loses [0-9.]+ to .+$/);
 			} else {
 				expect(threats[unit.recordId]).toBeUndefined();

@@ -23,7 +23,10 @@
 */
 
 import { prepare, traitKeywordsOf, magnitudeAgainst, roleOf, round1 } from './creatureOnTable.js';
-import { ROLE, SENDABLE, SITES_TO_CLINCH, FRAMES_PER_MATCH, RETURNED_SEND_COST } from './expeditionInterpretation.js';
+import {
+	ROLE, SENDABLE, SITES_TO_CLINCH, FRAMES_PER_MATCH, RETURNED_SEND_COST,
+	presenceScaleOf, instinctLaneOf,
+} from './expeditionInterpretation.js';
 
 // --- tunables ----------------------------------------------------------------------
 
@@ -114,6 +117,24 @@ function bolsterPresent(publicState, siteId, seat) {
 	);
 }
 
+// the presence scale of the strongest bolsterer standing here, since charisma prices what
+// a bolster restores and bolsters never stack (assumption 17). 1 where none stands, which
+// is what holdAtSite treats as "no bolster".
+function bolsterScaleAt(publicState, siteId, seat) {
+	const rules = rulesOf(publicState);
+	let best = null;
+	visibleEntries(publicState, siteId, seat).forEach((e) => {
+		if (e.hidden || roleOf(e.record, rules) !== ROLE.BOLSTER) {
+			return;
+		}
+		const scale = presenceScaleOf(e.record, rules);
+		if (best === null || scale > best) {
+			best = scale;
+		}
+	});
+	return best === null ? 1 : best;
+}
+
 function siteHoldTotal(publicState, siteId, seat) {
 	return visibleEntries(publicState, siteId, seat).reduce((sum, e) => sum + holdOf(publicState, siteId, e), 0);
 }
@@ -129,77 +150,81 @@ function traitsOf(record) {
 	return traitKeywordsOf(record);
 }
 
-// --- the vanguard falls back ---------------------------------------------------------
+// --- swift creatures move -------------------------------------------------------------
 
-// "the vanguard falls back": the round's starter placed their first creature this world
-// with no information; once per world, before passing, they may relocate it. Scored the
-// same way a fresh send is scored (flip a losing/tied site, or secure a winning one), but
-// against the DELTA of moving: what the current site loses versus what the destination
-// gains, since the vanguard's hold at its current site is already counted in that site's
-// margin above (leaving costs exactly what staying was worth there).
-function evaluateVanguardRelocation(publicState, handler, margins, weights) {
+/*
+	"Swift creatures move" (docs/design/reclamation-base-redesign.md assumption 20), which
+	replaced the vanguard fall-back. The bot scores a move exactly the way it scores a fresh
+	send, but against the DELTA of moving: what the creature's current world loses versus
+	what the destination gains, since its hold is already counted in the current world's
+	margin (leaving costs exactly what staying was worth there). Every swift creature that
+	has not moved this round is considered, and at most one move is proposed per turn.
+*/
+function evaluateSwiftMoves(publicState, handler, margins, weights) {
 	const me = publicState.players[handler];
-	if (!me.canRelocateVanguard || !me.vanguardRecordId) {
+	const movable = me.movableRecordIds || [];
+	if (movable.length === 0) {
 		return null;
 	}
 	const frame = publicState.frame;
-	let fromSiteId = null;
-	let vanguardEntry = null;
-	frame.sites.forEach((site) => {
-		const found = (publicState.board[site.id][handler] || []).find((e) => e.recordId === me.vanguardRecordId);
-		if (found) {
-			fromSiteId = site.id;
-			vanguardEntry = found;
-		}
-	});
-	if (!vanguardEntry || !vanguardEntry.record) {
-		return null; // defensive: should always be visible to its own handler
-	}
 
-	const fromHold = prepareAt(publicState, fromSiteId, vanguardEntry).hold
-		+ roleValueOf(publicState, vanguardEntry.record, siteFromPublic(publicState, fromSiteId), vanguardEntry.sentIndex, handler);
-	const fromMargin = margins[fromSiteId];
-	// value of STAYING put, in the same units evaluateSend/candidates use below: a site
-	// currently flippable/securable is worth losing if the vanguard leaves, so "staying"
-	// is worth whatever the vanguard is currently contributing to that site's margin.
-	const stayValue = fromMargin <= 0 ? (fromHold > -fromMargin ? weights.flipValue : (2 * fromHold) / (1 - fromMargin)) : weights.secureValue * (fromHold / fromMargin);
-
-	let best = null;
-	frame.sites.forEach((site) => {
-		if (site.id === fromSiteId) {
-			return;
-		}
-		const prepared = prepare(vanguardEntry.record, site, null, vanguardEntry.sentIndex, {
-			rules: rulesOf(publicState),
-			bolstered: bolsterPresent(publicState, site.id, handler),
+	let overall = null;
+	movable.forEach((recordId) => {
+		let fromSiteId = null;
+		let entry = null;
+		frame.sites.forEach((site) => {
+			const found = (publicState.board[site.id][handler] || []).find((e) => e.recordId === recordId);
+			if (found) {
+				fromSiteId = site.id;
+				entry = found;
+			}
 		});
-		const h = prepared.hold + roleValueOf(publicState, vanguardEntry.record, site, vanguardEntry.sentIndex, handler, prepared);
-		const m = margins[site.id];
-		// margin at the destination as it would be AFTER arriving (m does not yet include
-		// the vanguard's own hold there, since it currently stands elsewhere)
-		const afterMargin = m + h;
-		let moveValue;
-		if (m <= 0) {
-			moveValue = afterMargin > 0 ? weights.flipValue : (2 * h) / (1 - m);
-		} else {
-			moveValue = weights.secureValue * (h / (m + h));
+		if (!entry || !entry.record) {
+			return; // defensive: a handler's own creatures are always visible to it
 		}
-		moveValue -= weights.holdCost * h;
-		if (prepared.strainLevel === 'severe') {
-			moveValue -= 1;
-		}
-		// net value of relocating here: what arriving is worth, minus what staying was
-		// worth (leaving a site that was flipping the match is a real cost, not free)
-		const net = moveValue - stayValue;
-		if (!best || net > best.net) {
-			best = { siteId: site.id, net, moveValue };
-		}
+
+		const fromHold = prepareAt(publicState, fromSiteId, entry).hold
+			+ roleValueOf(publicState, entry.record, siteFromPublic(publicState, fromSiteId), entry.sentIndex, handler);
+		const fromMargin = margins[fromSiteId];
+		// value of STAYING put, in the same units the send candidates use: a world currently
+		// flippable or securable is worth losing if this creature leaves, so "staying" is
+		// worth whatever it is currently contributing to that world's margin.
+		const stayValue = fromMargin <= 0
+			? (fromHold > -fromMargin ? weights.flipValue : (2 * fromHold) / (1 - fromMargin))
+			: weights.secureValue * (fromHold / fromMargin);
+
+		frame.sites.forEach((site) => {
+			if (site.id === fromSiteId) {
+				return;
+			}
+			const prepared = prepare(entry.record, site, null, entry.sentIndex, {
+				rules: rulesOf(publicState),
+				bolstered: bolsterPresent(publicState, site.id, handler),
+				bolsterScale: bolsterScaleAt(publicState, site.id, handler),
+			});
+			const h = prepared.hold + roleValueOf(publicState, entry.record, site, entry.sentIndex, handler, prepared);
+			const m = margins[site.id];
+			// margin at the destination as it would be AFTER arriving (m does not yet include
+			// this creature's hold there, since it currently stands elsewhere)
+			const afterMargin = m + h;
+			let moveValue;
+			if (m <= 0) {
+				moveValue = afterMargin > 0 ? weights.flipValue : (2 * h) / (1 - m);
+			} else {
+				moveValue = weights.secureValue * (h / (m + h));
+			}
+			moveValue -= weights.holdCost * h;
+			if (prepared.strainLevel === 'severe') {
+				moveValue -= 1;
+			}
+			const net = moveValue - stayValue;
+			if (!overall || net > overall.net) {
+				overall = { recordId, siteId: site.id, net, moveValue };
+			}
+		});
 	});
 
-	if (!best) {
-		return null;
-	}
-	return best;
+	return overall;
 }
 
 // applies hideBias to the base hiding rule (canHide && the send is not already safely
@@ -288,6 +313,7 @@ export function scoreSends(publicState, ownRoster, handler, rival) {
 			const prepared = prepare(record, site, null, me.sentCount, {
 				rules: rulesOf(publicState),
 				bolstered: bolsterPresent(publicState, site.id, handler),
+				bolsterScale: bolsterScaleAt(publicState, site.id, handler),
 			});
 			// what this send moves the world's margin by: its own hold, plus what its role
 			// is worth standing here (the base redesign's four roles)
@@ -336,13 +362,13 @@ export function scoreSends(publicState, ownRoster, handler, rival) {
 
 /*
 	chooseSend(publicState, ownRoster, handler, rng, rival) ->
-		{ type: 'send', recordId, siteId, hidden } | { type: 'relocate', siteId, reason } |
+		{ type: 'send', recordId, siteId, hidden } | { type: 'move', recordId, siteId, reason } |
 		{ type: 'pass', reason }
 
 	rival is optional and defaults to the Court proctor (the bot as it always was); see
 	RIVALS below for the five handlers and rivalById for the lookup with a safe fallback.
 	The candidate scoring itself lives in scoreSends above; this function is the policy
-	layer over it (relocation, the pass rules, the near-equal pick, the hide bias).
+	layer over it (the swift move, the pass rules, the near-equal pick, the hide bias).
 */
 export function chooseSend(publicState, ownRoster, handler, rng, rival) {
 	const weights = weightsFor(rival);
@@ -353,13 +379,13 @@ export function chooseSend(publicState, ownRoster, handler, rng, rival) {
 	}
 
 	const frame = publicState.frame;
-	const relocateMargins = {};
+	const moveMargins = {};
 	frame.sites.forEach((s) => {
-		relocateMargins[s.id] = siteMargin(publicState, s.id, handler, weights);
+		moveMargins[s.id] = siteMargin(publicState, s.id, handler, weights);
 	});
-	const relocation = evaluateVanguardRelocation(publicState, handler, relocateMargins, weights);
-	if (relocation && relocation.net > 0 && relocation.moveValue > weights.minSendValue) {
-		return { type: 'relocate', siteId: relocation.siteId, reason: 'vanguard-falls-back' };
+	const swiftMove = evaluateSwiftMoves(publicState, handler, moveMargins, weights);
+	if (swiftMove && swiftMove.net > 0 && swiftMove.moveValue > weights.minSendValue) {
+		return { type: 'move', recordId: swiftMove.recordId, siteId: swiftMove.siteId, reason: 'swift-move' };
 	}
 
 	const scored = scoreSends(publicState, ownRoster, handler, rival);
@@ -451,8 +477,8 @@ export function chooseSend(publicState, ownRoster, handler, rng, rival) {
 	- strike:  the amount it would take off its conduct target, capped by that target's
 	           remaining hold (removing eight from a creature holding three is worth
 	           three, not eight)
-	- area:    the same, summed over every visible enemy at the world, minus the same
-	           summed over its own allies there, since an area catches both sides
+	- sweep:   the same, summed over every visible enemy at the world, minus the same
+	           summed over its own allies there, since a sweep catches both sides
 	- shield:  the largest enemy blow at the world it would cancel
 	- bolster: the hold it restores to its allies there, itself included
 
@@ -469,8 +495,8 @@ function rawBlowAmount(publicState, siteId, attackerEntry, victimEntry, attacker
 	}
 	const rules = rulesOf(publicState);
 	let amount = magnitudeAgainst(attackerEntry.record, prepared.blow, victimEntry.record);
-	if (prepared.role === ROLE.AREA) {
-		amount *= rules && typeof rules.areaDiscount === 'number' ? rules.areaDiscount : 0.6;
+	if (prepared.role === ROLE.SWEEP) {
+		amount *= rules && typeof rules.sweepDiscount === 'number' ? rules.sweepDiscount : 0.6;
 	}
 	if (traitsOf(victimEntry.record).includes('armored')) {
 		const reduction = rules && typeof rules.armoredReduction === 'number' ? rules.armoredReduction : 0.25;
@@ -479,16 +505,43 @@ function rawBlowAmount(publicState, siteId, attackerEntry, victimEntry, attacker
 	return round1(Math.max(0, amount));
 }
 
-// the enemy the actor's conduct is most likely to pick, read from public information.
-// A compact reading of expeditionInterpretation.CONDUCT_BY_ARCHETYPE's attacking lines:
-// the weakest-seeking lines take the lowest hold, the strongest-seeking lines the
-// highest, and everything else falls back to the earliest send, which is the engine's
-// own default.
-function conductTargetGuess(publicState, siteId, prepared, enemies) {
+/*
+	The enemy the actor is most likely to hit, read from public information.
+
+	Instinct decides which lane it reads (docs/design/reclamation-base-redesign.md
+	assumption 17), through the same instinctLaneOf the engine's own pick uses, so the
+	preview and the engine can never disagree about the lane:
+
+	- keen: the enemy this attack can down, else the one it takes the most off
+	- dull: the enemy sent earliest
+	- conduct: the archetype's line, read compactly (the weakest-seeking lines take the
+	  lowest hold, the strongest-seeking lines the highest, everything else the earliest
+	  send, which is the engine's own default)
+
+	The bot still reads the conduct lane compactly rather than replaying the engine's full
+	pick; that is recorded friction from the first measurements and is unchanged here.
+*/
+function conductTargetGuess(publicState, siteId, prepared, enemies, selfEntry) {
 	if (enemies.length === 0) {
 		return null;
 	}
 	const holds = enemies.map((e) => ({ entry: e, hold: holdOf(publicState, siteId, e) }));
+	const lane = instinctLaneOf(prepared.record, rulesOf(publicState));
+	if (lane === 'dull') {
+		return holds.reduce((best, c) => (c.entry.sentIndex < best.entry.sentIndex ? c : best)).entry;
+	}
+	if (lane === 'keen') {
+		const actor = selfEntry || { recordId: prepared.record.id, record: prepared.record, sentIndex: prepared.sentIndex };
+		const withPower = holds.map((c) => ({
+			...c,
+			power: rawBlowAmount(publicState, siteId, actor, c.entry, prepared),
+		}));
+		const downable = withPower.filter((c) => c.power >= c.hold);
+		if (downable.length > 0) {
+			return downable.reduce((best, c) => (c.hold > best.hold ? c : best)).entry;
+		}
+		return withPower.reduce((best, c) => (Math.min(c.power, c.hold) > Math.min(best.power, best.hold) ? c : best)).entry;
+	}
 	const line = prepared.conduct.attacking;
 	const strongest = ['strongestEnemyInReach', 'enemyThreateningWeakestAlly', 'enemyWithHighestMagnitude'];
 	const weakest = ['weakestEnemyInReach', 'slowerEnemyWeakestFirst', 'enemyRoutableElseWeakest', 'enemyWithLowestMagnitude'];
@@ -519,14 +572,14 @@ export function roleValueOf(publicState, record, site, sentIndex, handler, prepa
 	const self = { recordId: record.id, record, sentIndex, currentHold: view.hold };
 
 	if (view.role === ROLE.STRIKE) {
-		const target = conductTargetGuess(publicState, site.id, view, enemies);
+		const target = conductTargetGuess(publicState, site.id, view, enemies, self);
 		if (!target) {
 			return 0;
 		}
 		return Math.min(rawBlowAmount(publicState, site.id, self, target, view), holdOf(publicState, site.id, target));
 	}
 
-	if (view.role === ROLE.AREA) {
+	if (view.role === ROLE.SWEEP) {
 		const gain = enemies.reduce(
 			(sum, e) => sum + Math.min(rawBlowAmount(publicState, site.id, self, e, view), holdOf(publicState, site.id, e)),
 			0,
@@ -559,15 +612,18 @@ export function roleValueOf(publicState, record, site, sentIndex, handler, prepa
 		// engine will pay it out (expeditionRules.resolveWorld, the shield step)
 		const rules = rulesOf(publicState);
 		const cap = (rules && rules.shieldCap) || 'none';
+		// charisma scales the fraction the shielder actually cancels, clamped at the whole
+		// attack, exactly as the engine's shield step does (assumption 17)
+		const scale = Math.min(1, presenceScaleOf(record, rules));
 		if (cap === 'ownHold') {
-			return round1(Math.min(largest, view.hold));
+			return round1(Math.min(largest, view.hold) * scale);
 		}
 		if (cap === 'half') {
-			// the blow is cancelled but half of it comes off the shielder, so the net worth
-			// to the world's margin is half the blow
-			return round1(largest / 2);
+			// the attack is cancelled but half of it comes off the shielder, so the net
+			// worth to the world's margin is half of what it cancels
+			return round1((largest * scale) / 2);
 		}
-		return round1(largest);
+		return round1(largest * scale);
 	}
 
 	if (view.role === ROLE.BOLSTER) {
@@ -576,14 +632,17 @@ export function roleValueOf(publicState, record, site, sentIndex, handler, prepa
 		if (bolsterPresent(publicState, site.id, seat)) {
 			return 0;
 		}
+		// charisma prices what this bolsterer restores (assumption 17), so the scale that
+		// travels into every recomputation below is the ARRIVING creature's own
+		const bolsterScale = presenceScaleOf(record, rulesOf(publicState));
 		let restored = 0;
 		allies.forEach((ally) => {
 			const before = prepareAt(publicState, site.id, ally).hold;
-			const after = prepareAt(publicState, site.id, ally, { bolstered: true }).hold;
+			const after = prepareAt(publicState, site.id, ally, { bolstered: true, bolsterScale }).hold;
 			restored += Math.max(0, after - before);
 		});
 		const selfBefore = prepare(record, site, null, sentIndex, { rules: rulesOf(publicState) }).hold;
-		const selfAfter = prepare(record, site, null, sentIndex, { rules: rulesOf(publicState), bolstered: true }).hold;
+		const selfAfter = prepare(record, site, null, sentIndex, { rules: rulesOf(publicState), bolstered: true, bolsterScale }).hold;
 		restored += Math.max(0, selfAfter - selfBefore);
 		return round1(restored);
 	}

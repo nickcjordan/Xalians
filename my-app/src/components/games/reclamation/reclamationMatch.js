@@ -5,14 +5,14 @@ import ReclamationInspect from './reclamationInspect';
 import ReclamationLog from './reclamationLog';
 import { ReclamationReport, buildMatchReport } from './reclamationReport';
 import {
-	send, pass, relocateVanguard, getPublicState,
+	send, pass, moveSwift, getPublicState,
 	createRngState, nextRandom,
 } from '../../../gameplay/expedition/expeditionRules';
 import { chooseSend, rivalById, DEFAULT_RIVAL_ID } from '../../../gameplay/expedition/expeditionBot';
 import { prepare, strainMultiplierFor } from '../../../gameplay/expedition/creatureOnTable';
 import { SENDABLE, SITES_TO_CLINCH, FRAMES_PER_MATCH } from '../../../gameplay/expedition/expeditionInterpretation';
 import {
-	speciesLabel, formatHold, classifyEvent, narrateEvent, cueForEvent, narrateRelocate,
+	speciesLabel, formatHold, classifyEvent, narrateEvent, cueForEvent, narrateSwiftMove,
 	narrateSend, narratePass, narrateJudge, narrateMatchEnd,
 } from './reclamationNarration';
 import { flattenBoard, prepareWithCompanions, siteHoldTotal, threatsFor, threatSentence, ghostPlanFor } from './reclamationPreview';
@@ -53,9 +53,9 @@ const THEM = 'B';
 	match state, turns clicks into engine calls, drives the bot on a timer, and plays the
 	resolution log back one event at a time.
 
-	THE BASE (docs/design/reclamation-base-redesign.md). The round is Deploy, Resolve,
-	Judge, and only Deploy is a phase anyone sits in: Resolve and Judge run inside the
-	engine's pass() the moment the second handler passes. So there is no Orders panel and
+	THE BASE (docs/design/reclamation-base-redesign.md). The round is Deploy, Clash,
+	Ruling, and only Deploy is a phase anyone sits in: the Clash and the Ruling run inside
+	the engine's pass() the moment the second handler passes. So there is no Orders panel and
 	no Go button; the driver watches every pass (yours and the rival's) and, when the
 	state that comes back has moved to the next frame or ended the match, freezes the
 	board as it stood and plays the round's events back over it, world by world.
@@ -80,10 +80,12 @@ class ReclamationMatch extends React.Component {
 			notice: null,
 			armedRecordId: null,
 			sendHidden: false,
-			relocating: false,
+			// assumption 20: the swift creature armed to move, if any. A move does not spend
+			// the turn, so this is its own arming, separate from armedRecordId.
+			movingRecordId: null,
 			inspect: null, // { record, site }
 			// resolution playback
-			playback: null, // { events, index, snapshotBoard, staggeredAt }
+			playback: null, // { events, index, snapshotBoard, hurtAt }
 			pendingAfterPlayback: null,
 			verdicts: null,
 			judgedFrame: null,
@@ -225,7 +227,7 @@ class ReclamationMatch extends React.Component {
 						role: e.role || prepared.role,
 						printed: full,
 						hold: live,
-						staggered: !!e.staggered,
+						hurt: !!e.hurt,
 					};
 				});
 			});
@@ -245,6 +247,10 @@ class ReclamationMatch extends React.Component {
 			sitesWon: { A: view.players.A.sitesWon, B: view.players.B.sitesWon },
 			winner: view.winner,
 			playing: !!this.state.playback,
+			// the event being told right now, so a check can wait for one kind of moment
+			// (a recovery, say) rather than guessing at a timer
+			currentEvent: this.state.playback && this.state.playback.current
+				? this.state.playback.current.type : null,
 			rosterIds: (view.players[YOU].roster || []).map((r) => r.id),
 			format: formatHold,
 			telemetry: () => this.props.telemetry && this.props.telemetry.snapshot(),
@@ -252,11 +258,11 @@ class ReclamationMatch extends React.Component {
 	};
 
 	/*
-		The engine's pass() runs resolve() AND judge() in one call, so the moment the second
+		The engine's Clash AND Ruling run inside one pass() call, so the moment the second
 		handler passes the live state has already moved to the next world. Replaying the
 		round against that state would draw the wrong board, so while playback runs the
-		table renders a FROZEN copy of the view as it stood the instant before resolution,
-		with stagger and rout applied by the events replayed so far. Once playback ends the
+		table renders a FROZEN copy of the view as it stood the instant before the clash,
+		with every hurt, downing and recovery applied by the events replayed so far. Once playback ends the
 		live view takes over again.
 	*/
 	view() {
@@ -274,64 +280,17 @@ class ReclamationMatch extends React.Component {
 	}
 
 	/*
-		The pre-resolution view with every effect of the events told so far applied: each
-		creature at the hold the last blow left it with (the event's own `remaining`),
-		routed ones off the world, hit ones flagged staggered, and a rival's hidden send
-		revealed the moment it acts (assumption 9: a hidden blow lands first).
+		The pre-clash view with every effect of the events told so far applied: each
+		creature at the hold the last attack left it with (the event's own `remaining`),
+		downed ones off the world, hit ones flagged hurt, recovered ones lifted back by
+		their `recover` event, and a rival's hidden send revealed the moment it acts
+		(assumption 9: a hidden attack lands first).
 
 		The balance bar and the bulbs both read off this, so the world moves by each
-		number as it is told, which is the whole of "Resolve told per world".
+		number as it is told, which is the whole of "the Clash told per world".
 	*/
 	applyPlaybackEffects(playback) {
-		const base = playback.frozenView;
-		const staggered = {};
-		const routed = new Set();
-		const holdNow = {};
-		const damageNow = {};
-		const revealed = new Set();
-		for (let i = 0; i < playback.index; i++) {
-			const event = playback.events[i];
-			if (event.type === 'blow' || event.type === 'area' || event.type === 'shield') {
-				revealed.add(event.recordId);
-			}
-			if (event.type !== 'blow' || !event.target) {
-				continue;
-			}
-			if (event.outcome === 'routed') {
-				routed.add(event.target);
-				holdNow[event.target] = 0;
-			} else if (event.outcome === 'staggered') {
-				staggered[event.target] = true;
-				holdNow[event.target] = event.remaining;
-				damageNow[event.target] = (damageNow[event.target] || 0) + event.amount;
-			}
-		}
-		const board = {};
-		base.frame.sites.forEach((site) => {
-			board[site.id] = { A: [], B: [] };
-		});
-		base.frame.sites.forEach((site) => {
-			['A', 'B'].forEach((seat) => {
-				(base.board[site.id][seat] || []).forEach((entry) => {
-					if (routed.has(entry.recordId)) {
-						return;
-					}
-					if (entry.revealPending && !revealed.has(entry.recordId)) {
-						return;
-					}
-					const hold = holdNow[entry.recordId];
-					board[site.id][seat].push(typeof hold === 'number'
-						? {
-							...entry,
-							currentHold: hold,
-							damage: damageNow[entry.recordId] || entry.damage || 0,
-							staggered: true,
-						}
-						: entry);
-				});
-			});
-		});
-		return { ...base, board, staggered };
+		return playbackEffects(playback.frozenView, playback.events, playback.index);
 	}
 
 	appendLog = (line) => {
@@ -423,8 +382,8 @@ class ReclamationMatch extends React.Component {
 			return;
 		}
 		if (e.key === 'Escape') {
-			if (this.state.armedRecordId || this.state.relocating || this.state.inspect) {
-				this.setState({ armedRecordId: null, relocating: false, inspect: null, sendHidden: false });
+			if (this.state.armedRecordId || this.state.movingRecordId || this.state.inspect) {
+				this.setState({ armedRecordId: null, movingRecordId: null, inspect: null, sendHidden: false });
 			}
 			return;
 		}
@@ -460,22 +419,28 @@ class ReclamationMatch extends React.Component {
 		const before = match;
 		const lines = [];
 		const arrivals = [];
-		let fellBack = null;
+		let moved = null;
 
 		let publicState = getPublicState(match, THEM);
 		let action = chooseSend(publicState, match.players[THEM].roster, THEM, rngLike, this.rival);
 
-		// relocate does not consume the turn: apply it, then ask again for the send/pass
-		if (action.type === 'relocate') {
-			const relocated = relocateVanguard(match, THEM, action.siteId);
-			if (relocated) {
-				const ev = relocated.resolutionLog[relocated.resolutionLog.length - 1];
-				const from = this.siteName(match, ev.fromSite);
-				const to = this.siteName(match, ev.toSite);
-				lines.push(`The rival's vanguard falls back from ${from} to ${to}.`);
-				fellBack = { from, to, recordId: ev.recordId, siteId: ev.toSite };
+		// a swift move does not consume the turn: apply it, then ask again for the send/pass
+		if (action.type === 'move') {
+			const record = this.findRecordOnBoard(match, action.recordId);
+			const next = moveSwift(match, THEM, action.recordId, action.siteId);
+			if (next) {
+				const ev = next.resolutionLog[next.resolutionLog.length - 1];
+				const from = this.siteName(match, ev.from);
+				const to = this.siteName(match, ev.to);
+				const sentence = narrateSwiftMove(ev, {
+					actorName: `The rival's ${speciesLabel(record)}`,
+					fromSiteName: from,
+					toSiteName: to,
+				});
+				lines.push(sentence);
+				moved = { sentence, recordId: ev.recordId, siteId: ev.to };
 				arrivals.push(ev.recordId);
-				match = relocated;
+				match = next;
 				publicState = getPublicState(match, THEM);
 				action = chooseSend(publicState, match.players[THEM].roster, THEM, rngLike, this.rival);
 			}
@@ -499,9 +464,7 @@ class ReclamationMatch extends React.Component {
 					seat: THEM,
 					short: 'The rival sent',
 					siteId: action.hidden ? null : action.siteId,
-					text: fellBack
-						? `The rival's vanguard falls back to ${fellBack.to}, and ${sentence.charAt(0).toLowerCase()}${sentence.slice(1)}`
-						: sentence,
+					text: moved ? `${moved.sentence} ${sentence}` : sentence,
 				};
 			}
 		} else {
@@ -512,8 +475,8 @@ class ReclamationMatch extends React.Component {
 					kind: 'rival-pass',
 					seat: THEM,
 					short: 'The rival passed',
-					text: fellBack
-						? `The rival's vanguard falls back to ${fellBack.to}, and the rival passes for this round.`
+					text: moved
+						? `${moved.sentence} The rival passes for this round.`
 						: 'The rival passes for this round. Nothing you send now can be answered.',
 				};
 			}
@@ -531,7 +494,7 @@ class ReclamationMatch extends React.Component {
 		this.appendLogLines(lines);
 		this.cue('rival');
 		if (arrivals.length > 0) {
-			this.arrive(arrivals, (fellBack && !beat.siteId) ? fellBack.siteId : beat.siteId, THEM);
+			this.arrive(arrivals, (moved && !beat.siteId) ? moved.siteId : beat.siteId, THEM);
 		}
 		this.beat(beat);
 		this.commitStep(before, next, {});
@@ -602,7 +565,7 @@ class ReclamationMatch extends React.Component {
 		this.setState((prev) => ({
 			armedRecordId: prev.armedRecordId === recordId ? null : recordId,
 			sendHidden: false,
-			relocating: false,
+			movingRecordId: null,
 		}));
 	};
 
@@ -611,35 +574,35 @@ class ReclamationMatch extends React.Component {
 	};
 
 	handleSiteClick = (siteId) => {
-		const { match, armedRecordId, relocating, sendHidden } = this.state;
+		const { match, armedRecordId, movingRecordId, sendHidden } = this.state;
 		if (this.state.playback) {
 			this.notice('The round is still resolving.');
 			return;
 		}
-		if (relocating) {
-			const next = relocateVanguard(match, YOU, siteId);
+		if (movingRecordId) {
+			const record = this.findRecordOnBoard(match, movingRecordId);
+			const next = moveSwift(match, YOU, movingRecordId, siteId);
 			if (!next) {
-				this.notice('Your vanguard cannot fall back there. It must be a different world, and only once per round.');
+				this.notice('It cannot move there. It must be another world of the frame, and a swift creature moves only once a round.');
 				return;
 			}
 			const ev = next.resolutionLog[next.resolutionLog.length - 1];
-			const record = this.findRecordOnBoard(match, ev.recordId);
-			const line = narrateRelocate(ev, {
-				actorName: record ? speciesLabel(record) : 'Your vanguard',
-				fromSiteName: this.siteName(match, ev.fromSite),
-				toSiteName: this.siteName(match, ev.toSite),
+			const line = narrateSwiftMove(ev, {
+				actorName: record ? speciesLabel(record) : 'Your swift creature',
+				fromSiteName: this.siteName(match, ev.from),
+				toSiteName: this.siteName(match, ev.to),
 			});
 			this.appendLog(line);
-			this.arrive([ev.recordId], ev.toSite, YOU);
-			this.beat({ kind: 'your-relocate', seat: YOU, short: 'Fell back', text: line });
+			this.arrive([ev.recordId], ev.to, YOU);
+			this.beat({ kind: 'your-relocate', seat: YOU, short: 'Moved', text: line });
 			if (this.props.telemetry) {
-				// relocate does not spend the deploy turn (see the class doc comment), so the
-				// decision window is closed as 'relocate' and immediately reopened: the player
+				// a swift move does not spend the deploy turn (see the class doc comment), so
+				// the decision window is closed as 'move' and immediately reopened: the player
 				// is still mid-turn and will send or pass next.
-				this.props.telemetry.decisionEnd('deploy', 'relocate', { round: match.frameIndex });
+				this.props.telemetry.decisionEnd('deploy', 'move', { round: match.frameIndex });
 				this.props.telemetry.decisionStart('deploy', { round: match.frameIndex });
 			}
-			this.setState({ match: next, relocating: false }, this.afterEngineStep);
+			this.setState({ match: next, movingRecordId: null }, this.afterEngineStep);
 			return;
 		}
 		if (!armedRecordId) {
@@ -669,7 +632,13 @@ class ReclamationMatch extends React.Component {
 		if (this.props.telemetry) {
 			this.props.telemetry.decisionEnd('deploy', 'send', { round: match.frameIndex });
 		}
-		this.setState({ match: next, armedRecordId: null, sendHidden: false, hoverSiteId: null, hoverRecordId: null }, this.afterEngineStep);
+		// a send can close the round on its own: the engine auto-passes a handler with no
+		// legal send left (expeditionRules.autoPassIfNoLegalSend), so both sides can end up
+		// passed inside this one call and the round resolves. It therefore goes through
+		// commitStep like every other engine step, or that round's clash is never told.
+		this.commitStep(match, next, {
+			armedRecordId: null, sendHidden: false, hoverSiteId: null, hoverRecordId: null,
+		});
 	};
 
 	// your own send, told the same way as the rival's: log line, arrival, callout
@@ -718,21 +687,30 @@ class ReclamationMatch extends React.Component {
 		if (this.props.telemetry) {
 			this.props.telemetry.decisionEnd('deploy', 'pass', { round: match.frameIndex });
 		}
-		this.commitStep(match, next, { armedRecordId: null, relocating: false });
+		this.commitStep(match, next, { armedRecordId: null, movingRecordId: null });
 	};
 
-	beginRelocate = () => {
+	/*
+		Arm a swift creature to move (assumption 20). `movableRecordIds` comes from the
+		engine's own view of your side, so the button only appears for a creature the
+		engine would actually let move.
+	*/
+	beginMove = (recordId) => {
 		const view = this.view();
-		if (!view.players[YOU].canRelocateVanguard) {
-			this.notice('Only this round’s starter may fall back, once, before passing.');
+		const movable = view.players[YOU].movableRecordIds || [];
+		if (!movable.includes(recordId)) {
+			this.notice('That creature is not swift enough to move, or it has already moved this round.');
 			return;
 		}
-		if (!view.players[YOU].vanguardRecordId) {
-			this.notice('You have sent nothing yet, so there is no vanguard to fall back.');
-			return;
-		}
-		this.setState({ relocating: true, armedRecordId: null });
-		this.notice('Click another site to fall the vanguard back. This does not spend your turn.');
+		const record = this.findRecordOnBoard(this.state.match, recordId);
+		this.setState((prev) => ({
+			movingRecordId: prev.movingRecordId === recordId ? null : recordId,
+			armedRecordId: null,
+		}), () => {
+			if (this.state.movingRecordId) {
+				this.notice(`Press another world to move ${record ? speciesLabel(record) : 'it'} there. This does not spend your turn.`);
+			}
+		});
 	};
 
 	// ------------------------------------------------------------------
@@ -773,19 +751,24 @@ class ReclamationMatch extends React.Component {
 		beginResolution - freeze the board as it stood with both handlers passed and
 		nothing resolved, then play the round's new events over it.
 
-		The engine resolves one world at a time already, but the frame's own order is what
+		The engine clashes one world at a time already, but the frame's own order is what
 		the table tells them in, so the events are re-grouped by site in frame order and the
 		Court's ruling is kept for last.
 	*/
 	beginResolution = (before, next, extra) => {
 		const frameBefore = before.frames[before.frameIndex];
 		const boardBefore = this.snapshotBoard(before);
-		const events = this.sequenceEvents(next.resolutionLog.slice(before.resolutionLog.length), frameBefore);
-		// the whole public view with both sides in and nothing resolved: the board the
+		// a swift move was told when it happened, during Deploy; leaving it in the playback
+		// only makes the table pause on a step with nothing to say
+		const newEvents = next.resolutionLog
+			.slice(before.resolutionLog.length)
+			.filter((e) => e.type !== 'swift-move');
+		const events = this.sequenceEvents(newEvents, frameBefore);
+		// the whole public view with both sides in and nothing clashed yet: the board the
 		// playback draws (see view()). The engine reveals every hidden creature at the
 		// start of resolution, so our own hidden sends are already visible here.
 		const frozenView = getPublicState(before, YOU);
-		// the rival's hidden sends are filtered out of the public view, but resolution
+		// the rival's hidden sends are filtered out of the public view, but the clash
 		// reveals them, so the frozen board carries them marked to be revealed by playback;
 		// without this a world could go to the rival while its tray said no one stood there
 		frameBefore.sites.forEach((site) => {
@@ -818,9 +801,9 @@ class ReclamationMatch extends React.Component {
 				this.props.telemetry.coachDismissed({ beforeFirstOrders: false });
 			}
 		}
-		this.appendLog('Both handlers have passed. The worlds resolve.');
+		this.appendLog('Both handlers have passed. The worlds clash.');
 		this.cutBeats();
-		this.beat({ kind: 'resolve', seat: null, short: 'Resolving', text: 'Both handlers have passed. Each world resolves in turn, hidden blows first.' });
+		this.beat({ kind: 'resolve', seat: null, short: 'The clash', text: 'Both handlers have passed. Each world clashes in turn, hidden attacks first.' });
 		this.playbackStartedAt = Date.now();
 		this.setState({
 			match: next,
@@ -836,12 +819,12 @@ class ReclamationMatch extends React.Component {
 			verdicts: null,
 			judged: false,
 			armedRecordId: null,
-			relocating: false,
+			movingRecordId: null,
 		}, this.stepPlayback);
 	};
 
 	// the round told per world: every event of the first world, then the second, then the
-	// third, then the Court's ruling (the base redesign's "Resolve told per world")
+	// third, then the Court's ruling (the base redesign's "the Clash told per world")
 	sequenceEvents = (events, frame) => {
 		const ordered = [];
 		frame.sites.forEach((site) => {
@@ -859,8 +842,8 @@ class ReclamationMatch extends React.Component {
 		return ordered;
 	};
 
-	// a flat index of every creature on the table just before resolution: its record, its
-	// world and its side, so the sentences can name a creature that has since been routed
+	// a flat index of every creature on the table just before the clash: its record, its
+	// world and its side, so the sentences can name a creature that has since been downed
 	// off the board.
 	snapshotBoard = (match) => {
 		const view = getPublicState(match, YOU);
@@ -875,7 +858,7 @@ class ReclamationMatch extends React.Component {
 			};
 		});
 		// hidden rival creatures are invisible in the handler's own view; fall back to the
-		// raw board for narration once resolution has revealed them.
+		// raw board for narration once the clash has revealed them.
 		const frame = match.frames[match.frameIndex];
 		frame.sites.forEach((site) => {
 			['A', 'B'].forEach((seat) => {
@@ -959,16 +942,16 @@ class ReclamationMatch extends React.Component {
 	};
 
 	/*
-		tellEvent - one resolution event, told as one sentence in the log.
+		tellEvent - one clash or ruling event, told as one sentence in the log.
 
 		Names carry their side: the provisional pool repeats species, so "Stonebrawler
-		routs Stonebrawler" needs "your" and "the rival's" to be readable. A blow the
+		downs Stonebrawler" needs "your" and "the rival's" to be readable. An attack the
 		shield cancelled gets no sentence of its own; the shield event says it.
 	*/
 	tellEvent = (event, playback) => {
 		const kind = classifyEvent(event);
 		const snap = playback.boardBefore;
-		if (kind === 'vanguard-relocate') {
+		if (kind === 'swift-move') {
 			return; // already narrated as it happened during deploy
 		}
 		if (kind === 'judge') {
@@ -977,24 +960,45 @@ class ReclamationMatch extends React.Component {
 			this.appendLogLines(narrateJudge(event, { siteNames, you: YOU }));
 			return;
 		}
-		if (kind !== 'blow' && kind !== 'area' && kind !== 'shield') {
+		if (kind !== 'attack' && kind !== 'sweep' && kind !== 'shield' && kind !== 'recover') {
 			return;
 		}
 		const sided = (u) => (u.seat === YOU ? `your ${speciesLabel(u.record)}` : `the rival's ${speciesLabel(u.record)}`);
 		const actor = snap[event.recordId];
-		// a shield names the creature whose blow it cancelled; a blow names its target
+		// a shield names the creature whose attack it cancelled; an attack names its target
 		const otherId = kind === 'shield' ? event.cancelled : event.target;
 		const other = otherId ? snap[otherId] : null;
+		const bolster = kind === 'recover' && event.bolster ? snap[event.bolster] : null;
 		const site = event.site ? playback.frame.sites.find((s) => s.id === event.site) : null;
 		const sentence = narrateEvent(event, {
 			actorName: actor ? sided(actor) : 'A creature',
 			targetName: other ? sided(other) : undefined,
+			bolsterName: bolster ? speciesLabel(bolster.record) : undefined,
+			// assumption 18: a hurt attacker lands less, so the sentence names the condition
+			actorHurt: (kind === 'attack' || kind === 'sweep') && this.wasHurtBefore(event, playback),
 			siteName: site ? site.name : (actor ? actor.siteName : undefined),
 			worldName: site ? site.world.planet : undefined,
 		});
 		if (sentence) {
 			this.appendLog(capitalize(sentence));
 		}
+	};
+
+	/*
+		wasHurtBefore(event, playback) - had this attacker already been hit when its own
+		attack landed? The engine's `power` already carries the scaled number
+		(assumption 18); this only decides whether the sentence names the condition.
+	*/
+	wasHurtBefore = (event, playback) => {
+		const index = playback.events.indexOf(event);
+		const upTo = index < 0 ? playback.events.length : index;
+		for (let i = 0; i < upTo; i++) {
+			const e = playback.events[i];
+			if (e.type === 'attack' && e.target === event.recordId && e.outcome === 'hurt') {
+				return true;
+			}
+		}
+		return false;
 	};
 
 	finishPlayback = () => {
@@ -1100,7 +1104,7 @@ class ReclamationMatch extends React.Component {
 						return;
 					}
 					const prepared = prepareWithCompanions(view, e.record, site, e.sentIndex, seat, e.recordId);
-					// blows subtract (assumption 5): the engine keeps the live hold on the
+					// attacks subtract (assumption 5): the engine keeps the live hold on the
 					// board row, and the meter draws the gap back up to the untouched one as
 					// what the round has taken
 					const full = typeof e.fullHold === 'number' ? e.fullHold : prepared.hold;
@@ -1110,7 +1114,7 @@ class ReclamationMatch extends React.Component {
 						hold: live,
 						role: e.role !== undefined ? e.role : prepared.role,
 						blowMagnitude: prepared.blowMagnitude,
-						staggered: live < full,
+						hurt: live < full,
 						strainLevel: prepared.strainLevel,
 						isHome: prepared.isHome,
 						// the hold it would have here unstrained: the meter draws the difference
@@ -1178,9 +1182,9 @@ class ReclamationMatch extends React.Component {
 	// the status strip
 	// ------------------------------------------------------------------
 	whatAClickDoes(view) {
-		const { armedRecordId, relocating, playback } = this.state;
+		const { armedRecordId, movingRecordId, playback } = this.state;
 		if (playback) {
-			return 'The round is resolving. Skip, or press space, to jump to the ruling.';
+			return 'The worlds are clashing. Skip, or press space, to jump to the ruling.';
 		}
 		if (view.phase === 'matchEnd') {
 			return 'The Proving is over. The report says how it went; start a new one to play again.';
@@ -1191,8 +1195,9 @@ class ReclamationMatch extends React.Component {
 		if (view.turn !== YOU) {
 			return 'The rival is deciding. Press space to hurry it.';
 		}
-		if (relocating) {
-			return 'Click a site to fall your vanguard back to it. This does not spend your turn.';
+		if (movingRecordId) {
+			const record = this.findRecordOnBoard(this.state.match, movingRecordId);
+			return `Press another world to move ${record ? speciesLabel(record) : 'it'} there. It is swift, so this does not spend your turn.`;
 		}
 		if (armedRecordId) {
 			const record = view.players[YOU].roster.find((r) => r.id === armedRecordId);
@@ -1213,7 +1218,7 @@ class ReclamationMatch extends React.Component {
 
 	turnText(view) {
 		if (this.state.playback) {
-			return 'Resolving';
+			return 'The clash';
 		}
 		const rivalBeat = this.rivalBeat();
 		if (rivalBeat && view.phase === 'deploy' && !this.state.judged) {
@@ -1240,9 +1245,9 @@ class ReclamationMatch extends React.Component {
 		const deciding = waiting && !rivalBeat;
 		const turnLabel = this.turnText(view);
 		const lampKind = yourTurn ? 'amber' : waiting ? 'red' : 'off';
-		const phaseLabel = this.state.playback ? 'Resolve'
+		const phaseLabel = this.state.playback ? 'Clash'
 			: view.phase === 'matchEnd' ? 'Charter'
-				: this.state.judged ? 'Judge' : 'Deploy';
+				: this.state.judged ? 'Ruling' : 'Deploy';
 		// a pip is keyed on whether it is lit, so lighting one remounts it and it pops
 		const pips = (n) => Array.from({ length: SITES_TO_CLINCH }).map((_, i) => (
 			<span className={`rec-pip${i < n ? ' rec-pip--lit' : ''}`} key={`${i}-${i < n ? 'lit' : 'dark'}`} />
@@ -1345,7 +1350,7 @@ class ReclamationMatch extends React.Component {
 		const rec = this.recommendation(view);
 		// the suggested site is marked once its creature is the chosen one
 		const recommendedSiteId = rec && rec.type === 'send' && this.state.armedRecordId === rec.recordId ? rec.siteId
-			: rec && rec.type === 'relocate' && this.state.relocating ? rec.siteId : null;
+			: rec && rec.type === 'move' && this.state.movingRecordId === rec.recordId ? rec.siteId : null;
 		// simple mode has no rail; the bench lives under the worlds and the dossier is the
 		// only thing that opens one
 		const deployPanelOpen = view.phase === 'deploy' && !playback && !judged;
@@ -1364,25 +1369,30 @@ class ReclamationMatch extends React.Component {
 		/*
 			The threat read (the base redesign's "Interface consequences"): each of your
 			figures carries the number it would lose this round to the worst visible enemy
-			blow at its own world, and a rout mark when that number reaches its remaining
-			hold. It is a number now, not a level, because blows subtract.
+			attack at its own world, and a downed mark when that number reaches its
+			remaining hold. It is a number now, not a level, because attacks subtract.
 		*/
 		const threatMap = deploying ? threatsFor(view, YOU) : {};
 		const threats = {};
 		Object.keys(threatMap).forEach((id) => {
 			// simple and advanced differ only in how much arithmetic is printed: simple marks
-			// only the blow that would rout, advanced prints every number
-			if (simple && !threatMap[id].routs) {
+			// only the attack that would down, advanced prints every number
+			if (simple && !threatMap[id].downs) {
 				return;
 			}
 			threats[id] = {
-				level: threatMap[id].routs ? 'rout' : 'amount',
+				level: threatMap[id].downs ? 'downed' : 'amount',
 				amount: formatHold(threatMap[id].amount),
 				text: threatSentence(threatMap[id]),
 			};
 		});
 		const coaching = this.isSimple() && !this.state.coached && view.frameIndex === 0 && deploying;
 		const holdingIds = [...me.holding, ...them.holding];
+		// assumption 20: your swift creatures that may still move this round, as the bench's
+		// move buttons. The engine's own list, so a button never offers an illegal move.
+		const movable = deploying && view.turn === YOU
+			? (me.movableRecordIds || []).map((id) => ({ record: this.findRecordOnBoard(this.state.match, id) })).filter((m) => m.record)
+			: [];
 
 		// what to light on the table: the creature the ghost would strike, or the event
 		// being told during resolution
@@ -1393,9 +1403,15 @@ class ReclamationMatch extends React.Component {
 		}
 		if (playback && playback.current) {
 			const kind = classifyEvent(playback.current);
-			if (kind === 'blow' || kind === 'area' || kind === 'shield') {
+			if (kind === 'attack' || kind === 'sweep' || kind === 'shield') {
 				highlights.acting = playback.current.recordId;
 				highlights.hit = playback.current.target || null;
+				highlights.flash = flashFor(playback.current);
+			}
+			if (kind === 'recover') {
+				// a recovery moves the creature's own bulb, so it lights as the acted-on one
+				highlights.acting = playback.current.bolster || null;
+				highlights.hit = playback.current.recordId;
 				highlights.flash = flashFor(playback.current);
 			}
 		}
@@ -1425,12 +1441,11 @@ class ReclamationMatch extends React.Component {
 							you={YOU}
 							holds={holds}
 							totals={totals}
-							staggered={view.staggered}
+							hurt={view.hurt}
 							ghosts={ghosts}
 							verdicts={verdicts}
 							armedRecordId={this.state.armedRecordId}
-							relocating={this.state.relocating}
-							vanguardRecordId={me.vanguardRecordId}
+							movingRecordId={this.state.movingRecordId}
 							clickable={clickable}
 							recommendedSiteId={recommendedSiteId}
 							holdingIds={holdingIds}
@@ -1473,14 +1488,14 @@ class ReclamationMatch extends React.Component {
 								armedRecordId={this.state.armedRecordId}
 								recommendation={rec}
 								sendHidden={this.state.sendHidden}
-								relocating={this.state.relocating}
-								vanguard={me.canRelocateVanguard && me.vanguardRecordId ? this.findRecordOnBoard(this.state.match, me.vanguardRecordId) : null}
+								movingRecordId={this.state.movingRecordId}
+								movable={movable}
 								onArm={this.armRecord}
 								onInspect={(record) => this.inspectRecord(record, null)}
 								onHoverRecord={(id) => this.setState({ hoverRecordId: id })}
 								onToggleHidden={this.toggleHidden}
 								onPass={this.handlePass}
-								onBeginRelocate={this.beginRelocate}
+								onBeginMove={this.beginMove}
 								rivalBeat={this.rivalBeat()}
 							/>
 						)}
@@ -1538,21 +1553,93 @@ function writeCoached() {
 	}
 }
 
-// the word that pops over a creature as a blow lands on it during playback: the number
+/*
+	playbackEffects(frozenView, events, index) -> the frozen view with every effect of the
+	first `index` events applied: each creature at the hold the last attack left it with
+	(the event's own `remaining`), downed ones off the world, hit ones flagged hurt,
+	recovered ones lifted back by their `recover` event (assumption 19), and a rival's
+	hidden send revealed the moment it acts (assumption 9).
+
+	Pure and exported so the playback can be tested without a table:
+	see __tests__/reclamationPlayback.test.js.
+*/
+export function playbackEffects(frozenView, events, index) {
+	const base = frozenView;
+	const hurt = {};
+	const downed = new Set();
+	const holdNow = {};
+	const damageNow = {};
+	const revealed = new Set();
+	for (let i = 0; i < index; i++) {
+		const event = events[i];
+		if (event.type === 'attack' || event.type === 'sweep' || event.type === 'shield') {
+			revealed.add(event.recordId);
+		}
+		// the Ruling's recovery moves the bulb back up before the Court reads the world
+		if (event.type === 'recover') {
+			holdNow[event.recordId] = event.remaining;
+			damageNow[event.recordId] = Math.max(0, (damageNow[event.recordId] || 0) - event.amount);
+			continue;
+		}
+		if (event.type !== 'attack' || !event.target) {
+			continue;
+		}
+		if (event.outcome === 'downed') {
+			downed.add(event.target);
+			holdNow[event.target] = 0;
+		} else if (event.outcome === 'hurt') {
+			hurt[event.target] = true;
+			holdNow[event.target] = event.remaining;
+			damageNow[event.target] = (damageNow[event.target] || 0) + event.power;
+		}
+	}
+	const board = {};
+	base.frame.sites.forEach((site) => {
+		board[site.id] = { A: [], B: [] };
+	});
+	base.frame.sites.forEach((site) => {
+		['A', 'B'].forEach((seat) => {
+			(base.board[site.id][seat] || []).forEach((entry) => {
+				if (downed.has(entry.recordId)) {
+					return;
+				}
+				if (entry.revealPending && !revealed.has(entry.recordId)) {
+					return;
+				}
+				const hold = holdNow[entry.recordId];
+				board[site.id][seat].push(typeof hold === 'number'
+					? {
+						...entry,
+						currentHold: hold,
+						damage: damageNow[entry.recordId] || entry.damage || 0,
+						hurt: true,
+					}
+					: entry);
+			});
+		});
+	});
+	return { ...base, board, hurt };
+}
+
+// the word that pops over a creature as an attack lands on it during playback: the number
 // it lost, or the outcome where there is no number (the base redesign: every point counts)
-function flashFor(event) {
+export function flashFor(event) {
 	if (!event) {
 		return null;
 	}
 	if (event.type === 'shield') {
 		return event.cancelled ? { kind: 'ward', text: 'cancelled' } : null;
 	}
-	if (event.type !== 'blow') {
+	if (event.type === 'recover') {
+		return { kind: 'recover', text: `+${formatHold(event.amount)}` };
+	}
+	if (event.type !== 'attack') {
 		return null;
 	}
 	switch (event.outcome) {
-		case 'routed': return { kind: 'rout', text: 'routed' };
-		case 'staggered': return { kind: 'stagger', text: `-${formatHold(event.amount)}` };
+		// the class names are the console's own; the words are Pass 2's
+		case 'downed': return { kind: 'rout', text: 'downed' };
+		case 'hurt': return { kind: 'stagger', text: `-${formatHold(event.power)}` };
 		case 'cancelled': return { kind: 'ward', text: 'cancelled' };
 		default: return null;
 	}
