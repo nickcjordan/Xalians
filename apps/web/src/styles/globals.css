@@ -160,8 +160,8 @@
 	/* Level-0 surfaces carry a faint 32px layout grid; nothing else does. */
 	.surface-0 {
 		background-image:
-			linear-gradient(color-mix(in srgb, var(--color-ink) 4.5%, transparent) 1px, transparent 1px),
-			linear-gradient(90deg, color-mix(in srgb, var(--color-ink) 4.5%, transparent) 1px, transparent 1px);
+			linear-gradient(color-mix(in srgb, var(--color-ink) 3%, transparent) 1px, transparent 1px),
+			linear-gradient(90deg, color-mix(in srgb, var(--color-ink) 3%, transparent) 1px, transparent 1px);
 		background-size: 32px 32px;
 		background-position: -1px -1px;
 	}

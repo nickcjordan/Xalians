@@ -100,7 +100,7 @@ function AvatarSection() {
             <p className="text-body text-ink-2">Account identity: a square level-2 plate with a hairline edge and initials in the legend face.</p>
             <div className="mt-6 flex flex-wrap items-end gap-8">
                 <Demo label="sm, image">
-                    <Avatar size="sm"><AvatarImage src="/xalians_dna_logo.svg" alt="" /><AvatarFallback>NJ</AvatarFallback></Avatar>
+                    <Avatar size="sm"><AvatarFallback>NJ</AvatarFallback></Avatar>
                 </Demo>
                 <Demo label="md, fallback">
                     <Avatar size="md"><AvatarFallback>NJ</AvatarFallback></Avatar>

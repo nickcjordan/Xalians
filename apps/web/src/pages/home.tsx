@@ -87,7 +87,7 @@ function Home() {
 								<Link
 									key={world.key}
 									to={routeFor('world', world.key)}
-									className={`el-${world.element} group flex flex-col items-start gap-1 overflow-hidden border border-edge bg-s1 pb-2 transition-colors duration-1 ease-out hover:border-edge-strong hover:bg-s2 focus-visible:outline-2 focus-visible:outline-ring`}
+									className={`el-${world.element} mass-el group flex flex-col items-start gap-1 overflow-hidden border border-edge bg-s1 pb-2 hover:border-edge-strong hover:bg-s2 focus-visible:outline-2 focus-visible:outline-ring`}
 								>
 									<div className="flex aspect-square w-full items-center justify-center bg-el/24">
 										<img
@@ -114,7 +114,7 @@ function Home() {
 							<Link
 								key={s.id || s.name}
 								to={routeFor('species', s.name.toLowerCase())}
-								className={`el-${s.type.toLowerCase()} flex w-[140px] shrink-0 snap-start flex-col items-center gap-2 overflow-hidden border border-edge bg-s1 pb-3 transition-colors duration-1 ease-out hover:border-edge-strong hover:bg-s2 focus-visible:outline-2 focus-visible:outline-ring sm:w-auto sm:shrink`}
+								className={`el-${s.type.toLowerCase()} mass-el flex w-[140px] shrink-0 snap-start flex-col items-center gap-2 overflow-hidden border border-edge bg-s1 pb-3 hover:border-edge-strong hover:bg-s2 focus-visible:outline-2 focus-visible:outline-ring sm:w-auto sm:shrink`}
 							>
 								<div className="aspect-square w-full bg-el">
 									<XalianImage colored speciesName={s.name} primaryType={s.type} moreClasses="w-full" />

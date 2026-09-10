@@ -96,7 +96,7 @@ export default function Index() {
                     <Input
                         className="min-w-48 flex-[1_1_16rem]"
                         type="search"
-                        placeholder="SEARCH ENTRIES"
+                        placeholder="Search entries"
                         aria-label="Search entries"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
