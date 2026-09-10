@@ -45,7 +45,7 @@ function BeginOrResumeCard({ story }) {
 					</p>
 				</div>
 				{/* The one forward action on this screen: the primary key. */}
-				<Button asChild className="shrink-0">
+				<Button asChild className="shrink-0 max-sm:w-full">
 					<Link to={lore.routeFor('era', resumedPart.era.key)}>
 						Resume Part {resumedPart.order}, {resumedPart.era.name}
 					</Link>
@@ -62,7 +62,7 @@ function BeginOrResumeCard({ story }) {
 				<h2 className="type-heading m-0 mb-1">{story.title}</h2>
 				<p className="m-0 font-body text-body text-ink-2">{story.parts.length} parts, one per era.</p>
 			</div>
-			<Button asChild className="shrink-0">
+			<Button asChild className="shrink-0 max-sm:w-full">
 				<Link to={lore.routeFor('era', firstPart.era.key)}>
 					Begin Part 1, {firstPart.era.name}
 				</Link>
