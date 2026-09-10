@@ -1,3 +1,5 @@
+const log = require('../log.js');
+
 module.exports = {
 	buildXalianError: buildXalianError,
 	buildError: buildError,
@@ -5,7 +7,7 @@ module.exports = {
 	buildResponse: buildResponse,
 	buildXalianUsersTableItem: buildXalianUsersTableItem,
 	buildXalianTableItem: buildXalianTableItem,
-    buildBatchGetParams: buildBatchGetParams,
+	buildBatchGetParams: buildBatchGetParams,
 };
 
 function buildXalianError(errorCode, errorMessage, status = 400) {
@@ -19,18 +21,27 @@ function buildXalianError(errorCode, errorMessage, status = 400) {
 	};
 }
 
-function buildError(e, status = 500) {
-	console.error('Error JSON: ', JSON.stringify(e, null, 2));
-	// console.log('Error', err);
+// Never serializes the caught error into the response body: that would leak DynamoDB
+// error names, table names, and internal request ids to the client. The real error is
+// logged server-side only; the client gets a fixed shape plus a request id to correlate.
+function buildError(e, requestId) {
+	log.error('Unhandled error', {
+		requestId: requestId,
+		errorName: e && e.name,
+		errorMessage: e && e.message,
+	});
 	return {
-		statusCode: status,
+		statusCode: 500,
 		headers: { 'content-type': 'application/json' },
-		body: JSON.stringify(e),
+		body: JSON.stringify({
+			errorCode: 'INTERNAL_ERROR',
+			errorMessage: 'Unexpected error',
+			requestId: requestId,
+		}),
 	};
 }
 
 function buildSuccess(text = 'ok') {
-	console.log('Success: ' + text);
 	return {
 		statusCode: 200,
 		headers: {
@@ -49,7 +60,6 @@ function buildResponse(status, body) {
 			'content-type': 'application/json',
 		},
 		body: JSON.stringify(body),
-		// body: body
 	};
 }
 
@@ -82,4 +92,4 @@ function buildBatchGetParams(ids) {
 			},
 		},
 	};
-};
+}

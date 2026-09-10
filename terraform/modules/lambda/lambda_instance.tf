@@ -83,6 +83,12 @@ variable "authorization_type" {
   type        = string
 }
 
+variable "authorizer_id" {
+  description = "id of the aws_apigatewayv2_authorizer to attach when authorization_type requires one (e.g. JWT); left null for NONE"
+  type        = string
+  default     = null
+}
+
 
 #########################################################
 #####    API GATEWAY LAMBDA INTEGRATION INSTANCE    #####
@@ -102,6 +108,7 @@ resource "aws_apigatewayv2_route" "lambda_function_route" {
   api_id             = var.apigw_lambda_id
   route_key          = var.apigw_lambda_route_key
   authorization_type = var.authorization_type
+  authorizer_id      = var.authorizer_id
   target             = "integrations/${aws_apigatewayv2_integration.lambda_apigw_integration.id}"
 }
 

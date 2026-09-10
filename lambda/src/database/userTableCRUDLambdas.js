@@ -1,278 +1,197 @@
-// const xalianBuilder = require('../xalianBuilder.js');
-// const translator = require('../translator.js');
-
-// const AWS = require("aws-sdk");
-// AWS.config.setPromisesDependency(require("bluebird"));
-// const dynamoDb = new AWS.DynamoDB.DocumentClient();
-
 const delegate = require('./userDbDelegate.js');
 const xalianDelegate = require('./xalianDbDelegate.js');
 const builder = require('./responseBuilder.js');
+const log = require('../log.js');
+const { ApiError, requireSubject } = require('../auth.js');
 
+function requestId(context, event) {
+	return (context && context.awsRequestId) || (event && event.requestContext && event.requestContext.requestId);
+}
+
+function respondToError(e, reqId, callback) {
+	if (e instanceof ApiError) {
+		callback(null, builder.buildXalianError(e.code, e.message, e.status));
+	} else {
+		callback(null, builder.buildError(e, reqId));
+	}
+}
+
+function publicProfile(user) {
+	return {
+		userId: user.userId,
+		xalianIds: user.xalianIds,
+	};
+}
+
+// GET /db/user. Subject comes from the JWT, never from the client. With no userId query
+// param the caller gets their own full record; with a userId param that matches the
+// subject, same thing; with a userId param for someone else, only the public profile
+// (userId + xalianIds, optionally populated xalians) is returned.
 module.exports.retrieveXalianUser = (event, context, callback) => {
+	const reqId = requestId(context, event);
 	try {
-		console.log('event :: \n' + JSON.stringify(event, null, 2));
-		if (!event.queryStringParameters.userId) {
-			callback(null, builder.buildXalianError('BAD_REQUEST', 'No userId found in query string parameters'));
+		const subject = requireSubject(event);
+		const params = event.queryStringParameters || {};
+		const requestedUserId = params.userId ? params.userId.toLowerCase() : null;
+		const targetUserId = requestedUserId || subject;
+		const isOwnProfile = targetUserId === subject;
+		const shouldPopulateXalians = params.populateXalians === 'true';
+
+		delegate.getUser(
+			targetUserId,
+			function onSuccess(user) {
+				const respond = (body) => {
+					const response = builder.buildResponse(200, body);
+					log.info('retrieveXalianUser success', { requestId: reqId, targetUserId, isOwnProfile });
+					callback(undefined, response);
+				};
+
+				if (shouldPopulateXalians && user.xalianIds && user.xalianIds.length > 0) {
+					xalianDelegate.getXalianBatch(
+						user.xalianIds,
+						function onSuccess(xalians) {
+							if (isOwnProfile) {
+								user.xalians = xalians;
+								respond(user);
+							} else {
+								const profile = publicProfile(user);
+								profile.xalians = xalians;
+								respond(profile);
+							}
+						},
+						function onFail(error) {
+							respondToError(error, reqId, callback);
+						}
+					);
+				} else {
+					respond(isOwnProfile ? user : publicProfile(user));
+				}
+			},
+			function onNotFound() {
+				callback(null, builder.buildXalianError('USER_NOT_FOUND', 'Did not find user with userId=' + targetUserId));
+			},
+			function onFail(error) {
+				respondToError(error, reqId, callback);
+			}
+		);
+	} catch (e) {
+		respondToError(e, reqId, callback);
+	}
+};
+
+// POST /db/user. Ignores any userId in the body; the record is always created for the
+// subject. Idempotent: an existing record is left untouched (see
+// userDbDelegate.createUser's ConditionExpression).
+module.exports.createXalianUser = (event, context, callback) => {
+	const reqId = requestId(context, event);
+	try {
+		const subject = requireSubject(event);
+		const user = { userId: subject, xalianIds: [] };
+
+		delegate.createUser(
+			user,
+			function onSuccess() {
+				log.info('createXalianUser success', { requestId: reqId, userId: subject });
+				callback(undefined, builder.buildSuccess());
+			},
+			function onFail(error) {
+				respondToError(error, reqId, callback);
+			}
+		);
+	} catch (e) {
+		respondToError(e, reqId, callback);
+	}
+};
+
+/*
+	Updates the caller's own user record given a hard coded action keyword. The subject
+	always comes from the JWT; any userId in the body is ignored.
+
+	ACTIONS:
+		ADD_XALIAN_ID
+		REMOVE_XALIAN_ID
+		REMOVE_TOKENS
+
+	ADD_TOKENS is rejected: token issuance is server-only.
+*/
+module.exports.updateXalianUser = (event, context, callback) => {
+	const reqId = requestId(context, event);
+	try {
+		const subject = requireSubject(event);
+		const request = event.body ? JSON.parse(event.body) : {};
+		const userId = subject;
+
+		if (request.action === 'ADD_TOKENS') {
+			callback(null, builder.buildXalianError('FORBIDDEN_ACTION', 'Token issuance is server-only', 403));
+			return;
 		}
-		let userId = event.queryStringParameters.userId.toLowerCase();
-		console.log('inbound userId=' + userId);
 
 		delegate.getUser(
 			userId,
 			function onSuccess(user) {
-				if (event.queryStringParameters.populateXalians && event.queryStringParameters.populateXalians === 'true') {
-					if (user.xalianIds && user.xalianIds.length > 0) {
-						console.log('populating xalians');
-						xalianDelegate.getXalianBatch(
-							user.xalianIds,
-						function onSuccess(xalians) {
-							user.xalians = xalians;
-							let response = builder.buildResponse(200, user);
-							console.log(`SUCCESS :: returning response:\n${JSON.stringify(response, null, 2)}`);
-							callback(undefined, response);
-						},
-						function onFail(error) {
-							console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
-							callback(null, builder.buildError(error));
-						}
-						);
+				var updatedXalianIds = user.xalianIds || [];
+				var attributes = user.attributes || {};
+				var existingTokens = attributes.tokens || 0;
+
+				if (request.action === 'REMOVE_XALIAN_ID') {
+					const index = updatedXalianIds.indexOf(request.value);
+					if (index > -1) {
+						updatedXalianIds.splice(index, 1);
+						updateUserXalianIds(userId, updatedXalianIds, reqId, callback);
 					} else {
-						let response = builder.buildResponse(200, user);
-						console.log(`SUCCESS :: returning response:\n${JSON.stringify(response, null, 2)}`);
-						callback(undefined, response);
+						callback(null, builder.buildXalianError('XALIAN_NOT_FOUND_IN_USER', 'Did not find xalian with xalianId=' + request.value));
+					}
+				} else if (request.action === 'ADD_XALIAN_ID') {
+					updatedXalianIds.push(request.value);
+					updateUserXalianIds(userId, updatedXalianIds, reqId, callback);
+				} else if (request.action === 'REMOVE_TOKENS') {
+					let tokensToRemove = parseInt(request.value);
+					if (tokensToRemove > existingTokens) {
+						callback(null, builder.buildXalianError('INSUFFICIENT_TOKENS', `User tokens [${existingTokens}] was not enough to remove requested [${tokensToRemove}]`));
+					} else {
+						attributes.tokens = existingTokens - tokensToRemove;
+						updateUserAttributes(userId, attributes, reqId, callback);
 					}
 				} else {
-					let response = builder.buildResponse(200, user);
-					console.log(`SUCCESS :: returning response:\n${JSON.stringify(response, null, 2)}`);
-					callback(undefined, response);
+					callback(null, builder.buildXalianError('UNKNOWN_ACTION', 'Update action [' + request.action + '] is not valid'));
 				}
 			},
 			function onNotFound() {
 				callback(null, builder.buildXalianError('USER_NOT_FOUND', 'Did not find user with userId=' + userId));
 			},
 			function onFail(error) {
-				console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
-				callback(null, builder.buildError(error));
+				respondToError(error, reqId, callback);
 			}
 		);
 	} catch (e) {
-		callback(null, builder.buildError(e));
+		respondToError(e, reqId, callback);
 	}
 };
 
-module.exports.createXalianUser = (event, context, callback) => {
-	const user = JSON.parse(event.body);
-
-	console.log(`inbound event: ` + JSON.stringify(event, null, 2));
-	console.log(`inbound user: ` + JSON.stringify(user, null, 2));
-
-	try {
-		delegate.createUser(
-			user,
-			function onSuccess() {
-				callback(undefined, builder.buildSuccess());
-			},
-			function onFail(error) {
-				console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
-				callback(null, builder.buildError(error));
-			}
-		);
-	} catch (e) {
-		console.log('ERROR: ' + JSON.stringify(e.errorMessage, null, 2));
-		// callback(builder.buildError(e.errorMessage));
-		callback(null, builder.buildXalianError('UNKNOWN_ERROR', 'error json = ' + JSON.stringify(e)));
-	}
-};
-
-/* 
-	Updates user given certain hard coded key words to define the update action
-
-	ACTIONS:
-		ADD_XALIAN_ID
-		REMOVE_XALIAN_ID
-
-*/
-// module.exports.updateXalianUser = (event, context, callback) => {
-// 	const request = JSON.parse(event.body);
-// 	console.log(`action=${request.action} :: userId=${request.userId} :: value=${request.value}`);
-
-// 	delegate.getUser(
-// 		request.userId,
-// 		function onSuccess(user) {
-// 			var updatedXalianIds = user.xalianIds || [];
-// 			if (request.action === 'REMOVE_XALIAN_ID') {
-// 				const index = updatedXalianIds.indexOf(request.value);
-// 				if (index > -1) {
-// 					updatedXalianIds.splice(index, 1);
-// 				} else {
-// 					callback(null, builder.buildXalianError('XALIAN_NOT_FOUND_IN_USER', 'Did not find xalian with xalianId=' + request.value));
-// 				}
-// 			} else if (request.action === 'ADD_XALIAN_ID') {
-// 				updatedXalianIds.push(request.value);
-// 			} else {
-// 				callback(null, builder.buildXalianError('UNKNOWN_ACTION', 'Update action [' + request.action + '] is not valid'));
-// 			}
-// 			delegate.updateUserXalianIds(
-// 				request.userId,
-// 				updatedXalianIds,
-// 				function onSuccess() {
-// 					callback(null, builder.buildSuccess());
-// 				},
-// 				function onFail(error) {
-// 					console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
-// 					callback(null, builder.buildError(error));
-// 				}
-// 			);
-// 		},
-// 		function onNotFound() {
-// 			callback(null, builder.buildXalianError('USER_NOT_FOUND', 'Did not find user with userId=' + request.userId));
-// 		},
-// 		function onFail(error) {
-// 			console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
-// 			callback(null, builder.buildError(error));
-// 		}
-// 	);
-// };
-
-/* 
-	Updates user given certain hard coded key words to define the update action
-
-	ACTIONS:
-		ADD_XALIAN_ID
-		REMOVE_XALIAN_ID
-		ADD_TOKENS
-		REMOVE_TOKENS
-
-*/
-
-module.exports.updateXalianUser = (event, context, callback) => {
-	const request = JSON.parse(event.body);
-	console.log(`action=${request.action} :: userId=${request.userId} :: value=${request.value}`);
-
-	const userId = request.userId.toLowerCase();
-
-	delegate.getUser(
-		userId,
-		function onSuccess(user) {
-
-			console.log('got user to update: \n' + JSON.stringify(user));
-			var updatedXalianIds = user.xalianIds || [];
-			var attributes = user.attributes || {};
-			var existingTokens = attributes.tokens || 0;
-
-			if (request.action === 'REMOVE_XALIAN_ID') {
-				const index = updatedXalianIds.indexOf(request.value);
-				if (index > -1) {
-					updatedXalianIds.splice(index, 1);
-					updateUserXalianIds(userId, updatedXalianIds, callback);
-				} else {
-					callback(null, builder.buildXalianError('XALIAN_NOT_FOUND_IN_USER', 'Did not find xalian with xalianId=' + request.value));
-				}
-			} else if (request.action === 'ADD_XALIAN_ID') {
-				updatedXalianIds.push(request.value);
-				updateUserXalianIds(userId, updatedXalianIds, callback);
-			} else if (request.action === 'ADD_TOKENS') {
-				attributes.tokens =  existingTokens + parseInt(request.value);
-				updateUserAttributes(userId, attributes, callback);
-			} else if (request.action === 'REMOVE_TOKENS') {
-				let tokensToRemove = parseInt(request.value);
-				if (tokensToRemove > existingTokens) {
-					callback(null, builder.buildXalianError('INSUFFICIENT_TOKENS', `User tokens [${existingTokens}] was not enough to remove requested [${tokensToRemove}]`));
-				} else {
-					attributes.tokens =  existingTokens - tokensToRemove;
-					updateUserAttributes(userId, attributes, callback);
-				}
-			} else {
-				callback(null, builder.buildXalianError('UNKNOWN_ACTION', 'Update action [' + request.action + '] is not valid'));
-			}
-		},
-		function onNotFound() {
-			callback(null, builder.buildXalianError('USER_NOT_FOUND', 'Did not find user with userId=' + request.userId));
-		},
-		function onFail(error) {
-			console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
-			callback(null, builder.buildError(error));
-		}
-	);
-};
-
-
-function updateUserXalianIds(userId, updatedXalianIds, callback) {
+function updateUserXalianIds(userId, updatedXalianIds, reqId, callback) {
 	delegate.updateUserXalianIds(
 		userId,
 		updatedXalianIds,
 		function onSuccess() {
+			log.info('updateXalianUser success', { requestId: reqId, userId, action: 'UPDATE_XALIAN_IDS' });
 			callback(null, builder.buildSuccess());
 		},
 		function onFail(error) {
-			console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
-			callback(null, builder.buildError(error));
+			respondToError(error, reqId, callback);
 		}
 	);
 }
 
-function updateUserAttributes(userId, updatedAttributes, callback) {
+function updateUserAttributes(userId, updatedAttributes, reqId, callback) {
 	delegate.updateUserAttributes(
 		userId,
 		updatedAttributes,
 		function onSuccess() {
+			log.info('updateXalianUser success', { requestId: reqId, userId, action: 'UPDATE_ATTRIBUTES' });
 			callback(null, builder.buildSuccess());
 		},
 		function onFail(error) {
-			console.log(`ERROR :: ${JSON.stringify(error, null, 2)}`);
-			callback(null, builder.buildError(error));
+			respondToError(error, reqId, callback);
 		}
 	);
 }
-// module.exports.deleteXalian = (event, context, callback) => {
-//   const req = JSON.parse(event.body);
-//   const xalianId = req.xalianId;
-
-//   dynamoDb.put(
-//     {
-//       TableName: TABLE_NAME,
-//       Item: req,
-//     },
-//     function (err, data) {
-//       if (err) {
-//         console.log('Error', err);
-//         callback(null, {
-//           statusCode: 500,
-//           body: JSON.stringify({
-//             message: 'Error occurred: ' + err.message
-//           })
-//         })
-//       } else {
-//         console.log('Success', data);
-//         callback(null, {
-//           statusCode: 200,
-//           body: {}
-//         })
-//       }
-//     });
-// };
-
-// module.exports.queryXalians = (event, context, callback) => {
-//   const req = JSON.parse(event.body);
-//   const xalianId = req.xalianId;
-
-//   var params = {
-//     ExpressionAttributeValues: {
-//       ':s': 2,
-//       ':e': 9,
-//       ':topic': 'PHRASE'
-//      },
-//    KeyConditionExpression: 'Season = :s and Episode > :e',
-//    FilterExpression: 'contains (Subtitle, :topic)',
-//    TableName: 'EPISODES_TABLE'
-//   };
-
-//   docClient.query(params, function(err, data) {
-//     if (err) {
-//       console.log('Error', err);
-//     } else {
-//       console.log('Success', data.Items);
-//     }
-//   });
-// };

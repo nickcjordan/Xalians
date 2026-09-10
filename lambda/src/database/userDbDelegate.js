@@ -2,6 +2,7 @@ const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, GetCommand, PutCommand, UpdateCommand } = require('@aws-sdk/lib-dynamodb');
 const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const builder = require('./responseBuilder.js');
+const log = require('../log.js');
 
 const TABLE_NAME = 'XalianUsersTable';
 
@@ -14,7 +15,6 @@ module.exports = {
 
 function getUser(id, onSuccess, onNotFound, onFail) {
 	try {
-		console.log('inbound userId=' + id);
 		var params = {
 			TableName: TABLE_NAME,
 			Key: {
@@ -25,8 +25,6 @@ function getUser(id, onSuccess, onNotFound, onFail) {
 		dynamoDb.send(new GetCommand(params))
 			.then((data) => {
 				if (data.Item) {
-
-					console.log(`SUCCESS :: data:\n${JSON.stringify(data.Item, null, 2)}`);
 					var attributes = data.Item.attributes || {};
 					var user = {
 						userId: data.Item.userId,
@@ -39,7 +37,7 @@ function getUser(id, onSuccess, onNotFound, onFail) {
 					onNotFound();
 				}
 			}, (err) => {
-				console.log(`ERROR :: ${JSON.stringify(err, null, 2)}`);
+				log.error('getUser failed', { userId: id, errorName: err && err.name });
 				onFail(err);
 			});
 	} catch (e) {
@@ -51,14 +49,22 @@ function createUser(user, onSuccess, onFail) {
 	try {
 		var params = {
 			TableName: TABLE_NAME,
-			Item: builder.buildXalianUsersTableItem(user)
+			Item: builder.buildXalianUsersTableItem(user),
+			// Idempotent create: a record that already exists is left untouched and the
+			// caller still gets a success response, so a repeated lazy-create on sign-in
+			// never clobbers existing xalianIds/attributes.
+			ConditionExpression: 'attribute_not_exists(userId)',
 		};
 
 		dynamoDb.send(new PutCommand(params))
 			.then(() => {
 				onSuccess();
 			}, (err) => {
-				onFail(err);
+				if (err && err.name === 'ConditionalCheckFailedException') {
+					onSuccess();
+				} else {
+					onFail(err);
+				}
 			});
 	} catch (e) {
 		onFail(e);
