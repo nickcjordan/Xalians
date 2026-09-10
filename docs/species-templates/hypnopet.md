@@ -19,14 +19,17 @@ The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` te
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### fields (4 of 5)
+### fields (5 of 5)
 
 - **origin**: Created by the Telypso Generator as service animals and therapists for the insane Vallerii imprisoned there, using its empathic healing to balance and treat patients.
 - **habitat**: The fungal forests and mists of Telypso, though many now travel the stars as healers.
 - **feeding**: It grazes on what the overgrowth puts out.
 - **behavior**: It reads the state of whoever is near it and steadies them. When its horn pulses and swirls with color it hypnotizes whoever is watching and locks them in a trance, which once sedated patients in dangerous manias and now serves King Kozrak as crowd control on rebellious worlds.
+- **company**: It keeps close to its patients.
 
-Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). All five are required (Nick, 2026-09-10, later the same day): a consumer that reads a field must never find it missing, so where the canon is silent the field carries the plainest reading the record supports, hedged in the encyclopedia voice where the record itself is lost, and Nick rules on it with the rest. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
+
+Fields required (Nick, 2026-09-10): filled company ("It keeps close to its patients."). Source reading: the teaser, the diet key and the planet history; where they are silent the phrase is the plainest reading of the record and is flagged for Nick with the batch.
 
 ## Description status
 

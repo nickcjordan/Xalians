@@ -19,7 +19,8 @@
     "origin": "Thought to have been designed to clear the thick brush of Floria.",
     "habitat": "The underforests beneath the World Tree canopies.",
     "feeding": "It feeds as it works, on the growth it opens up and whatever the opening turns up.",
-    "behavior": "It sets its feet, reads the ground, and fells standing growth in long low arcs of the blade on its trunk, then holds the lane it has cut."
+    "behavior": "It sets its feet, reads the ground, and fells standing growth in long low arcs of the blade on its trunk, then holds the lane it has cut.",
+    "company": "It moves in herds through the underforest."
   },
   "physiology": {
     "corporeality": "corporeal",

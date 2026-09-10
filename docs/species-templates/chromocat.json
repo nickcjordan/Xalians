@@ -18,7 +18,9 @@
     ],
     "origin": "Made to harvest the vast crop yields of Luminax's fields, cutting through grain with the ionized blades behind its front paws.",
     "habitat": "The sunward face of Luminax, among the old fields, oases and solar farms.",
-    "behavior": "It enters a photonic state and crosses ground at the speed of light, so it seems to teleport around a fight, harassing its opponent with rapid cuts too fast to react to."
+    "feeding": "It eats what the fields and oases give, meat and grain alike.",
+    "behavior": "It enters a photonic state and crosses ground at the speed of light, so it seems to teleport around a fight, harassing its opponent with rapid cuts too fast to react to.",
+    "company": "It worked the fields in numbers. Today it fights alone."
   },
   "physiology": {
     "corporeality": "corporeal",

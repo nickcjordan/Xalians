@@ -17,7 +17,9 @@
     ],
     "origin": "One of the crystal-bearing forms the Luminax Generator grew to survive the light of the twin suns while working the fields.",
     "habitat": "The sunward face of Luminax.",
-    "behavior": "It is calm and slow and holds still, and the gems on its head transmit powerful light energy when it is provoked."
+    "feeding": "It feeds on the light of the twin suns through the gems on its head.",
+    "behavior": "It is calm and slow and holds still, and the gems on its head transmit powerful light energy when it is provoked.",
+    "company": "It lives alone."
   },
   "physiology": {
     "corporeality": "corporeal",

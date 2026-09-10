@@ -19,7 +19,8 @@
     "origin": "Made by the Drainov Generator to survive a world of acid swamps and industrial waste.",
     "habitat": "The acid swamps and derelict chemical plants of Drainov.",
     "feeding": "With only two teeth, it dissolves its prey with the toxic mist it expels from the tube in its mouth.",
-    "behavior": "It hunts by scent through smog too thick to see in."
+    "behavior": "It hunts by scent through smog too thick to see in.",
+    "company": "It hunts alone in the smog."
   },
   "physiology": {
     "corporeality": "corporeal",

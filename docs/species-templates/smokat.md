@@ -20,14 +20,17 @@ The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description
 
 Rewritten 2026-09-09 for the ghost register (see the amendment of that date); draft until Nick signs it off.
 
-### fields (4 of 5)
+### fields (5 of 5)
 
 - **origin**: One of the non-corporeal Xalians the abandoned Phantiri Generator produced after it rewrote itself under Leviticus Overdrive.
 - **habitat**: The Dreadscape of Phantiri, inside its windless fog.
 - **feeding**: It takes nothing in and feeds on nothing.
 - **behavior**: It holds a feline shape, climbs and springs where the footing is bad, and instantly atomizes into a cloud of smoke for a sneak attack or a quick escape.
+- **company**: It hunts alone.
 
-Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). All five are required (Nick, 2026-09-10, later the same day): a consumer that reads a field must never find it missing, so where the canon is silent the field carries the plainest reading the record supports, hedged in the encyclopedia voice where the record itself is lost, and Nick rules on it with the rest. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
+
+Fields required (Nick, 2026-09-10): filled company ("It hunts alone."). Source reading: the teaser, the diet key and the planet history; where they are silent the phrase is the plainest reading of the record and is flagged for Nick with the batch.
 
 ## Source text
 

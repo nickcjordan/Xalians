@@ -15,9 +15,11 @@
       "Wide hood behind the head",
       "Tail ending in a rattle shaped like a lotus flower"
     ],
+    "origin": "One of the desert forms the Syndicate's stolen prototype Generator produced on Endessa. No record says what it was made for.",
     "habitat": "Buried beneath the rolling dunes of Endessa.",
     "feeding": "It bites with a venom that drains the victim's water and leaves it to die of dehydration.",
-    "behavior": "It hides beneath the sand and emits a subsonic vibration from the rattle on its tail that lures and mesmerizes opponents long enough for it to draw near and strike. It spreads its hood and shows its fangs before it does."
+    "behavior": "It hides beneath the sand and emits a subsonic vibration from the rattle on its tail that lures and mesmerizes opponents long enough for it to draw near and strike. It spreads its hood and shows its fangs before it does.",
+    "company": "It hunts alone."
   },
   "physiology": {
     "corporeality": "corporeal",

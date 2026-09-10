@@ -19,7 +19,9 @@
     ],
     "origin": "Designed by Magmuth's corporations as a tinkerer and let loose in the lightless mining shafts to fix and maintain the makeshift equipment the Vallerii sent down.",
     "habitat": "The old mining shafts of Magmuth and the crag networks above them.",
-    "behavior": "It climbs and leaps rather than crossing open ground, swinging from its tail as readily as from a hand. Underground it takes machinery apart and puts it back together. On the surface it is erratic, and it sets fires where they least belong."
+    "feeding": "It eats what it finds in the shafts and on the surface, whatever it is.",
+    "behavior": "It climbs and leaps rather than crossing open ground, swinging from its tail as readily as from a hand. Underground it takes machinery apart and puts it back together. On the surface it is erratic, and it sets fires where they least belong.",
+    "company": "It keeps to itself, shaped by the isolation of the deep tunnels."
   },
   "physiology": {
     "corporeality": "corporeal",
