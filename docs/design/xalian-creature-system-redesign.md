@@ -420,6 +420,8 @@ No stamped rarity tier in the record. Rarity is **emergent** from independent ax
 
 ## 11. Duel derivation sketch (phase 2 — worked example, do not build yet)
 
+Status 2026-09-10 (orchestrator recommendation, overridable by Nick): build this layer as the next feature after the trait pool re-run against the ratified lore, as a pure function from a species record and a minted creature to a duel piece inside the typed rules package (packages/rules), with the derivation table in this section as its spec and a test per row. It is the first real consumer of the creature system and therefore its first test under the levers-not-stone rule; friction it turns up is reported in the moment. The species.json canFly and attackRange traits are retired the day it lands. Not started.
+
 Illustrative only, to prove the derivation layer works: HP = f(vitality, resilience); Power = f(strength, ability intensity); Guard = f(resilience, guard-ish traits); movement squares = f(agility); attack range = f(ability archetype/delivery); stamina pool = f(endurance); evasion = f(reflex); Airborne = flight ≥ 6; `spectral` → phase-movement; `anchor` → immune to push + full-speed flag carry; affinity ≥ 50 → dual-type for STAB/effectiveness; `ward`/`mend`/`snare` abilities → non-damage board actions. The duel's current mock-JSON squads get regenerated from the new engine when this phase starts.
 
 ## 12. Open questions
