@@ -3,7 +3,7 @@
  * Extracts the SVG path for one glyph from a TTF, at a fixed cap height, and
  * prints it plus its advance width. Written for the brand wordmark's "X"
  * (docs/DESIGN_SYSTEM.md section 8: "Iceland's X is converted to a path
- * once (opentype.js)"), so my-app/src/components/brand/wordmarkX.js can
+ * once (opentype.js)"), so apps/web/src/components/brand/wordmarkX.js can
  * hardcode the result rather than shipping the font file or opentype.js at
  * runtime.
  *

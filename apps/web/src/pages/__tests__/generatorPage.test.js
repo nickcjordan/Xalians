@@ -3,7 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 
-import sampleGraviclaw from '../../../../docs/design/sample-record-graviclaw.json';
+import sampleGraviclaw from '../../../../../docs/design/sample-record-graviclaw.json';
 
 // The API module and the navbar are the page's two outside edges. The navbar
 // drags in Amplify, GSAP and the whole brand lockup, none of which this test is

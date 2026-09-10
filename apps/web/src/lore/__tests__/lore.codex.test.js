@@ -1,7 +1,7 @@
 // Structural validation for the Codex builder (scripts/buildCodex.js).
 // Contract: docs/design/xalian-lore-codex.md, section "Tests".
 //
-// The builder lives outside my-app/ (repo-root scripts/), so it is loaded
+// The builder lives outside apps/web/ (repo-root scripts/), so it is loaded
 // with createRequire rather than a Vite import -- it is plain CommonJS Node
 // code with no bundler-specific syntax, and createRequire resolves relative
 // to this test file without needing it to sit inside src/.
@@ -9,7 +9,7 @@ import { describe, it, expect } from 'vitest';
 import { createRequire } from 'module';
 
 const require = createRequire(import.meta.url);
-const { build } = require('../../../../scripts/buildCodex.js');
+const { build } = require('../../../../../scripts/buildCodex.js');
 
 const result = build();
 const { markdown, html, json, llms, warnings } = result;
@@ -118,7 +118,7 @@ describe('Codex builder (scripts/buildCodex.js)', () => {
 		// Codex's own Encyclopedia section excludes xalians (species are the
 		// Bestiary instead), so the true total is read from the source file
 		// rather than bundle.entries, which is already filtered.
-		const encyclopediaData = require('../../../../docs/encyclopedia/encyclopedia.json');
+		const encyclopediaData = require('../../../../../docs/encyclopedia/encyclopedia.json');
 		const preambleDigits = (preamble.match(/\d+/g) || []).map(Number).sort((a, b) => a - b);
 		const expectedCounts = [
 			bundle.worlds.length,
@@ -132,7 +132,7 @@ describe('Codex builder (scripts/buildCodex.js)', () => {
 
 	it('no raw registry key appears in the Bestiary section outside of code spans', () => {
 		const require = createRequire(import.meta.url);
-		const registriesData = require('../../../../docs/species-templates/registries.json');
+		const registriesData = require('../../../../../docs/species-templates/registries.json');
 		const keys = new Set();
 		for (const list of ['attributes', 'archetypes', 'traits', 'elements', 'capabilities', 'senses', 'anatomy', 'channels', 'actions']) {
 			for (const item of registriesData[list] || []) keys.add(item.key);

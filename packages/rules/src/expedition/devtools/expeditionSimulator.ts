@@ -5,7 +5,7 @@
 	Bot-vs-bot batch simulator for Expedition. Run via the shared esbuild runner (this
 	package uses static ESM/JSON imports, so plain `node` cannot load it directly):
 
-		node my-app/scripts/runNode.cjs \
+		node apps/web/scripts/runNode.cjs \
 			packages/rules/src/expedition/devtools/expeditionSimulator.ts --matches=300 --seed=7
 
 	Flags:

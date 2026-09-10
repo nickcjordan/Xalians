@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 import RecordView from '../RecordView';
-import sampleGraviclaw from '../../../../../docs/design/sample-record-graviclaw.json';
+import sampleGraviclaw from '../../../../../../docs/design/sample-record-graviclaw.json';
 
 /**
  * The record view against the checked-in sample record (real generator output,

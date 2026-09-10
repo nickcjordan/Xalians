@@ -13,7 +13,7 @@
 	This must be run from the repo root — every output path below resolves relative to
 	process.cwd(), not to this file:
 
-		node my-app/scripts/runNode.cjs packages/rules/src/generator/devtools/simulateGenerator.ts [--n=200] [--seed=batch-2026-09-07] [--calibrate]
+		node apps/web/scripts/runNode.cjs packages/rules/src/generator/devtools/simulateGenerator.ts [--n=200] [--seed=batch-2026-09-07] [--calibrate]
 
 	--n         records per ratified species (default 200)
 	--seed      seed prefix for the batch; each species gets "<seed>-<speciesKey>" so a

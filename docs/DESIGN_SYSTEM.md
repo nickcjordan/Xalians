@@ -181,7 +181,7 @@ Under reduced motion `globals.css` sets every animation and transition to near z
 
 ## 8. Brand
 
-- **The mark is the DNA X** (`my-app/src/svg/logo/xalians_dna_logo.svg`), drawn in `--g-viable-hi`. It stays. It is also the favicon and the app icon.
+- **The mark is the DNA X** (`apps/web/src/svg/logo/xalians_dna_logo.svg`), drawn in `--g-viable-hi`. It stays. It is also the favicon and the app icon.
 - **The wordmark is "XALIANS" set in Iceland** (Google Fonts, by Ivan Gladkikh), ruled 2026-09-09 after a scan of thirty-two free faces with designer-made cuts or engineered character. Iceland is squared like Saira with its joins broken open at the corners, the way the original wordmark's were, and it is calm enough for a navbar. It is used only in the lockup; nowhere else on the site.
 - **The lockup** is the helix at left, then the word, in `--g-viable-hi`. In the navbar the helix is 28 pixels tall and the word 22; on the home splash the helix is 84 and the word 64. A stacked form (helix over the word, small and wide) is the app-icon and splash form.
 - **The morph stays.** On the home splash the word arrives, its X is an SVG path, and GSAP MorphSVG morphs that path into the helix's strands as the rungs fade in; the helix then holds as the mark. Iceland's X is converted to a path once (opentype.js) and split at its crossing so the three-piece morph from the current build still works. In the navbar the resting state is the word with its letter X.
@@ -201,16 +201,16 @@ The vehicle changed on 2026-09-09 (Nick: strip all Bootstrap; shadcn on Tailwind
 
 | File | Role |
 |---|---|
-| `my-app/src/styles/tokens.css` | **The tokens**, as the Tailwind theme. The only file in the app holding a raw color, font name or size: the room and surfaces, edges, ink, the viable signal, status, the 14 element hues, the four faces, the type scale, radius 0, the one float shadow, the breakpoints. |
-| `my-app/src/styles/globals.css` | The semantic layer over the tokens: shadcn's variables mapped onto the contract, the `el-*` element scope, the chamfer and cut utilities, the `type-*` roles, the helix strokes and keyframes. No values, only references. |
-| `my-app/src/constants/designTokens.js`, `colorConstants.js` | The JavaScript half of the palette for recharts, GSAP and SVG. Must equal the tokens. |
-| `my-app/src/__tests__/tokens.test.js` | Fails if `tokens.css` and `designTokens.js` disagree, or if any other stylesheet under `src` carries a raw hex. |
-| `my-app/src/components/ui/*.tsx` | shadcn components restyled to the contract (the inventory below). Add one with `npx shadcn@latest add <name>` and restyle it here. |
-| `my-app/src/components/system/*.tsx` | House components and page templates (the inventory below). |
-| `my-app/src/pages/styleGuidePage.tsx`, `my-app/src/pages/styleguide/*.tsx` | `/styleguide`: every component in every state, rendered from the real code. The reference an agent checks before building anything. The page holds the foundations; the section files hold the rest. |
-| `my-app/src/pages/system/*.tsx` | The status pages: `/404` and the router fallback, `/dev/error` for the boundary. |
-| `my-app/src/__tests__/designSystem.test.js`, `systemGuards.test.js` | Fail if a page is unclassified (`data-tier`), if a component under `ui` or `system` is not on the style guide, or if a chrome file carries a raw hex, a version 3 class or a Bootstrap import. |
-| `my-app/public/assets/css/legacy/*` | Legacy: the version 3 system (`system.css`), the old template (`style.css`), and the immersive pages' own stylesheets. Read only by the immersive pages until each gets its brief, which deletes its share. Never add a rule; never load on a chrome page. |
+| `apps/web/src/styles/tokens.css` | **The tokens**, as the Tailwind theme. The only file in the app holding a raw color, font name or size: the room and surfaces, edges, ink, the viable signal, status, the 14 element hues, the four faces, the type scale, radius 0, the one float shadow, the breakpoints. |
+| `apps/web/src/styles/globals.css` | The semantic layer over the tokens: shadcn's variables mapped onto the contract, the `el-*` element scope, the chamfer and cut utilities, the `type-*` roles, the helix strokes and keyframes. No values, only references. |
+| `apps/web/src/constants/designTokens.js`, `colorConstants.js` | The JavaScript half of the palette for recharts, GSAP and SVG. Must equal the tokens. |
+| `apps/web/src/__tests__/tokens.test.js` | Fails if `tokens.css` and `designTokens.js` disagree, or if any other stylesheet under `src` carries a raw hex. |
+| `apps/web/src/components/ui/*.tsx` | shadcn components restyled to the contract (the inventory below). Add one with `npx shadcn@latest add <name>` and restyle it here. |
+| `apps/web/src/components/system/*.tsx` | House components and page templates (the inventory below). |
+| `apps/web/src/pages/styleGuidePage.tsx`, `apps/web/src/pages/styleguide/*.tsx` | `/styleguide`: every component in every state, rendered from the real code. The reference an agent checks before building anything. The page holds the foundations; the section files hold the rest. |
+| `apps/web/src/pages/system/*.tsx` | The status pages: `/404` and the router fallback, `/dev/error` for the boundary. |
+| `apps/web/src/__tests__/designSystem.test.js`, `systemGuards.test.js` | Fail if a page is unclassified (`data-tier`), if a component under `ui` or `system` is not on the style guide, or if a chrome file carries a raw hex, a version 3 class or a Bootstrap import. |
+| `apps/web/public/assets/css/legacy/*` | Legacy: the version 3 system (`system.css`), the old template (`style.css`), and the immersive pages' own stylesheets. Read only by the immersive pages until each gets its brief, which deletes its share. Never add a rule; never load on a chrome page. |
 | `docs/design/v4-foundations.html`, `docs/design/v4-chrome.html` | The ratified proposal pages. |
 | `docs/design/terminal-mockups.html` | Version 3, kept as the record of what was tried. |
 | `scripts/design/snap.js` | Screenshot harness: every route at desktop and phone with overflow and console-error checks. Run it before claiming visual work is done. |

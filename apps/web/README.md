@@ -15,7 +15,7 @@ A Vite + React 17 frontend for Xalians, hosted on S3 at `xalians.com`.
 
 Species, elements, moves, lore, and the other game data JSON live in the `@xalians/content`
 workspace package (`packages/content/json` at the repo root), imported directly
-(`import species from '@xalians/content/species.json'`). It is not copied into `my-app/src`
+(`import species from '@xalians/content/species.json'`). It is not copied into `apps/web/src`
 anymore; edit the files under `packages/content/json` and the change is live for both this
 app and `apps/api`.
 

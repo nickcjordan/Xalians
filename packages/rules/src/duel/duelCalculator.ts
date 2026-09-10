@@ -1,7 +1,7 @@
 /*
 	Duel: pathfinding, movement/attack range and the attack-result formula.
 
-	Moved from my-app/src/gameplay/duel/duelCalculator.js (issue #184, the duel half of
+	Moved from apps/web/src/gameplay/duel/duelCalculator.js (issue #184, the duel half of
 	the packages/rules move; PR #199 did the same for expedition). The old file pulled
 	in six things via require(): three collapse here -
 	  - constants/attackCalculationConstants.js -> only BASE_BOTTOM_VAR was used; it now

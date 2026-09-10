@@ -18,7 +18,7 @@
 //                                 abilityCatalog.neutral[action] that are untagged or
 //                                 tagged with that instrument, deduplicated by lowercase name
 //
-// Data inputs are read from packages/content/json/ (the source copies), not the my-app build
+// Data inputs are read from packages/content/json/ (the source copies), not the apps/web build
 // copies. Run directly (`node scripts/checkCatalogCoverage.js`) it writes
 // docs/ability-catalog/COVERAGE.md and prints the roster totals. Used as a module, it
 // exports computeCoverage() and renderReport(coverage) so the vitest suite next to the
@@ -39,7 +39,7 @@ function loadJson(name) {
 	return JSON.parse(fs.readFileSync(path.join(JSON_DIR, name), 'utf8'));
 }
 
-// constants.ts (moved into packages/rules out of my-app in the backend modernization's
+// constants.ts (moved into packages/rules out of apps/web in the backend modernization's
 // rules-package pass) is TypeScript ESM with only static exports and
 // erasable type syntax (type-only imports, inline annotations, no enums/namespaces), so a
 // plain require() works under Node's built-in type stripping plus its synchronous

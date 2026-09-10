@@ -5,7 +5,7 @@ import { ROSTER_SIZE } from '@xalians/rules/expedition/expeditionInterpretation'
 /*
 	ReclamationDraft coverage.
 
-	@testing-library/react is not in my-app's devDependencies (checked package.json;
+	@testing-library/react is not in apps/web's devDependencies (checked package.json;
 	only @testing-library/jest-dom is present, and nothing else in this repo renders a
 	component under Vitest), so this file does not mount the component. It instead
 	exercises the pure helpers the component is built on (draft.js), the same helpers a

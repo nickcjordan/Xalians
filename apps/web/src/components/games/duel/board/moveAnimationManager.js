@@ -1,8 +1,8 @@
 /*
 	Duel: move/attack animation timeline builder. UI code (gsap, document.getElementById),
-	so it stays in my-app while the pure duel rules moved to packages/rules/src/duel
+	so it stays in apps/web while the pure duel rules moved to packages/rules/src/duel
 	(issue #184, the duel half of the packages/rules move). Moved from
-	my-app/src/gameplay/duel/moveAnimationManager.js.
+	apps/web/src/gameplay/duel/moveAnimationManager.js.
 */
 import * as duelUtil from '@xalians/rules/duel/boardUtil';
 import * as duelConstants from '@xalians/rules/duel/duelGameConstants';

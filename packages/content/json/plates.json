@@ -1,5 +1,5 @@
 {
-  "_about": "Era plates: one painted frontispiece per part of The Story. Source of truth for which image sits above which era and what its caption says. Images live in my-app/public/assets/img/lore/eras/<key>.jpg (1536x768) with a -768 variant for phones. Generated locally with Z-Image-Turbo in flat gouache; run and seed recorded so a plate can be regenerated. Captions are plain statements of what the plate shows, drawn from ratified lore only.",
+  "_about": "Era plates: one painted frontispiece per part of The Story. Source of truth for which image sits above which era and what its caption says. Images live in apps/web/public/assets/img/lore/eras/<key>.jpg (1536x768) with a -768 variant for phones. Generated locally with Z-Image-Turbo in flat gouache; run and seed recorded so a plate can be regenerated. Captions are plain statements of what the plate shows, drawn from ratified lore only.",
   "style": "flat gouache, open palette",
   "plates": [
     {

@@ -14,8 +14,8 @@
 //
 // Exports build(): { markdown, text, html, json, llms, warnings } without
 // touching the filesystem. When run directly (`node scripts/buildCodex.js`)
-// writes my-app/public/lore/xalia.{md,txt,html,json} and
-// my-app/public/llms.txt, creating the directory, and prints a word count
+// writes apps/web/public/lore/xalia.{md,txt,html,json} and
+// apps/web/public/llms.txt, creating the directory, and prints a word count
 // and any warnings.
 
 const fs = require('fs');
@@ -72,7 +72,7 @@ function fail(message) {
 }
 
 // ---- registries: resolve a key to its display name, mirroring
-// my-app/src/lore/species.js resolveRegistry() but in plain Node against the
+// apps/web/src/lore/species.js resolveRegistry() but in plain Node against the
 // docs/ source registries.json (array-of-{key,name,nature} per vocabulary,
 // physiology nested one level deeper by field). ----
 
@@ -743,13 +743,13 @@ module.exports = { build };
 
 if (require.main === module) {
 	const result = build();
-	const outDir = path.join(ROOT, 'my-app', 'public', 'lore');
+	const outDir = path.join(ROOT, 'apps/web', 'public', 'lore');
 	fs.mkdirSync(outDir, { recursive: true });
 	fs.writeFileSync(path.join(outDir, 'xalia.md'), result.markdown);
 	fs.writeFileSync(path.join(outDir, 'xalia.txt'), result.text);
 	fs.writeFileSync(path.join(outDir, 'xalia.html'), result.html);
 	fs.writeFileSync(path.join(outDir, 'xalia.json'), result.json);
-	fs.writeFileSync(path.join(ROOT, 'my-app', 'public', 'llms.txt'), result.llms);
+	fs.writeFileSync(path.join(ROOT, 'apps/web', 'public', 'llms.txt'), result.llms);
 
 	const wordCount = result.markdown.trim().split(/\s+/).length;
 	console.log(`Wrote Codex: ${wordCount} words.`);

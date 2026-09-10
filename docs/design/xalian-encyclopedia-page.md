@@ -13,7 +13,7 @@ Nick's steers that shape this design: species detail is built on the creature te
 | # | Assumption / Decision | Confidence | Supporting Evidence |
 |---|---|---|---|
 | 1 | The page ships as one route family under `/encyclopedia`, and the old `/glossary`, `/planets`, `/species` pages stay untouched until Nick says swap. | 95%: Nick said he will "probably end up scrapping all that" but did not say when. | Nick, 2026-09-02 |
-| 2 | Every data file the page reads lives in `lambda/src/json/` and reaches the frontend through the existing `copy-json` step; no new build plumbing. | 95%: the internal companion already names this as the flip plan. | `docs/encyclopedia/ENCYCLOPEDIA-INTERNAL.md` "Relationship to the shipped bundle"; `my-app/package.json` `copy-json` |
+| 2 | Every data file the page reads lives in `lambda/src/json/` and reaches the frontend through the existing `copy-json` step; no new build plumbing. | 95%: the internal companion already names this as the flip plan. | `docs/encyclopedia/ENCYCLOPEDIA-INTERNAL.md` "Relationship to the shipped bundle"; `apps/web/package.json` `copy-json` |
 | 3 | `planetRecords.json` (untracked on every branch, one reverted commit) is committed as-is and read through a single adapter, so the planet redesign can replace its physical block without touching the UI. | 85%: the planet redesign doc says it supersedes and extends this file rather than replacing it, and Nick asked for a light touch on planets. | `docs/design/xalian-planet-system-redesign.md` Context; Nick, 2026-09-02 |
 | 4 | Migrated species records are bundled by a script into one `speciesRecords.json` (ratified templates only, never the `*-run.*` files), and the Bestiary renders a unified view from either a template or a legacy stub. | 85%: 27 of 29 species were still stubs when written; all 29 ship since 2026-09-03. | `docs/species-templates/` listing; `.claude/skills/migrate-species/SKILL.md` §7 outputs |
 | 5 | Registry vocabularies (traits, archetypes, physiology enums, capabilities, instruments, actions, special senses) are extracted into `registries.json` as key, display name, and one-line nature, generated from the ratified definitions in the migrate-species skill. | 80%: the creature redesign ratified "vocabularies are registry data" but no machine-readable file exists yet. | `docs/design/xalian-creature-system-redesign.md` §2 "Vocabularies are registry data"; skill §5.2, 5.3, 5.5, 5.6, 5.7 |
@@ -23,7 +23,7 @@ Nick's steers that shape this design: species detail is built on the creature te
 | 9 | Auto-linking of entry titles in prose is deterministic and mechanical (longest title first, whole-word, first occurrence per paragraph), consistent with the encyclopedia's rule that `related` links are mechanical, never thematic. | 85% | `docs/encyclopedia/README.md` "Rules of the road" |
 | 10 | The galaxy map is an inline SVG whose positions come from canon (Telypso at the core, Grimedes and Zolton on the rim, Stonera in Cybele, Phantiri in Wraithix) and is otherwise arranged for legibility; it is a locator, not a star chart. Planet GIFs are the fallback and the detail-page globe. | 70%: Nick wants to see it and may prefer the GIFs. | Nick, 2026-09-02; `planets.json` histories |
 | 11 | Shared page CSS goes in `public/assets/css/encyclopedia.css` (shell, search, prose, layout helpers); each section component imports its own `<Component>.css` beside it so parallel agents never edit one file. All prefixed `.enc-`, only `--g-*` tokens, no new hex. | 95% | `docs/DESIGN_SYSTEM.md` "Rules for new work"; build day 2026-09-02 |
-| 12 | React Router v5 nested routes under one lazy page; no router upgrade. | 95% | `my-app/src/App.js` |
+| 12 | React Router v5 nested routes under one lazy page; no router upgrade. | 95% | `apps/web/src/App.js` |
 | 13 | The work happens on `feat/encyclopedia`, branched from `data/ability-catalog` (which contains master), in the worktree `C:/dev/src/xalians-encyclopedia`, because the encyclopedia and chronicle data live on the catalog branch. | 90% | `git merge-base` check, 2026-09-02 |
 
 ## 1. Information architecture and routes
@@ -66,7 +66,7 @@ Per Nick's ruling on 2026-09-03 (one source location per kind of data), species 
 ## 3. Module layout (one folder per agent)
 
 ```
-my-app/src/lore/                    data layer, no React, fully unit-tested
+apps/web/src/lore/                    data layer, no React, fully unit-tested
   index.js                          public API (below); the only import the UI uses
   loaders.js                        imports the JSON, builds the maps once
   entries.js                        entry index, related resolution, appears-in
@@ -78,7 +78,7 @@ my-app/src/lore/                    data layer, no React, fully unit-tested
   routeFor.js                       the one route convention (re-exported)
   __tests__/                        vitest: integrity + behavior
 
-my-app/src/components/encyclopedia/ UI, one file per section plus shared parts
+apps/web/src/components/encyclopedia/ UI, one file per section plus shared parts
   EncyclopediaShell.js              masthead, section tabs, search field, outlet
   ReadingRoom.js
   GalaxyMap.js                      inline SVG, element-scoped worlds, hover cards
@@ -91,8 +91,8 @@ my-app/src/components/encyclopedia/ UI, one file per section plus shared parts
   EntryHoverCard.js
   LoreSearch.js
 
-my-app/src/pages/encyclopediaPage.js   lazy route shell with the nested <Switch>
-my-app/public/assets/css/encyclopedia.css
+apps/web/src/pages/encyclopediaPage.js   lazy route shell with the nested <Switch>
+apps/web/public/assets/css/encyclopedia.css
 scripts/bundleLore.js  scripts/extractRegistries.js
 ```
 
@@ -178,7 +178,7 @@ Only `.g-*` components and `--g-*` tokens. Panels matte, screens the only lit th
 
 ## 7. Libraries
 
-- `minisearch` (client search, no dependencies, MIT). Added to `my-app`.
+- `minisearch` (client search, no dependencies, MIT). Added to `apps/web`.
 - No icon library: the system has no glyph vocabulary and adding one would introduce a second visual voice.
 - No new animation library: GSAP is already present; the map and rail need only CSS transitions.
 

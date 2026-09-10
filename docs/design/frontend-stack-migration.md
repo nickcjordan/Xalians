@@ -12,7 +12,7 @@ The frontend is a Vite app, React 17, React Router 5, 222 JavaScript files with 
 
 | # | Assumption / Decision | Confidence | Supporting Evidence |
 |---|---|---|---|
-| 1 | React upgrades 17 to 18 in the first phase. Every dependency allows 18 except `react-gsap`, which is used by one 13-line file and is replaced with direct GSAP calls. | 90% — peer ranges checked with `npm view` | `my-app/src/components/animations/fadeAnimation.js`, `package.json` |
+| 1 | React upgrades 17 to 18 in the first phase. Every dependency allows 18 except `react-gsap`, which is used by one 13-line file and is replaced with direct GSAP calls. | 90% — peer ranges checked with `npm view` | `apps/web/src/components/animations/fadeAnimation.js`, `package.json` |
 | 2 | Tailwind 4 with the Vite plugin and CSS-first `@theme`; no `tailwind.config.js`. | 95% — current major, matches shadcn's current CLI | tailwindcss 4.3.3 on npm |
 | 3 | shadcn components are generated as TypeScript (`.tsx`) under `src/components/ui`; the rest of the app stays JavaScript and converts only when a file is rewritten. `tsconfig.json` sets `allowJs` and the `@/` alias. | 85% — shadcn's JS mode is second-class; mixing is supported by Vite and Vitest | shadcn 4.21 docs; `vite.config.js` esbuild include |
 | 4 | Tailwind's preflight is **not** loaded until Bootstrap's stylesheet is unlinked, so the two resets never fight. Phase 1 imports only the theme and utilities layers. | 90% | Tailwind 4 layered imports |

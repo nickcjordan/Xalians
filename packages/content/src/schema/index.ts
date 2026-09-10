@@ -1,5 +1,5 @@
 // Re-exports every schema in this package plus its z.infer type. This is the single
-// import surface both apps/api and my-app use ("@xalians/content/schema"); import
+// import surface both apps/api and apps/web use ("@xalians/content/schema"); import
 // individual files directly only from inside this package.
 export * from './registries.ts';
 export * from './record.ts';

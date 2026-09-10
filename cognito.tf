@@ -3,7 +3,7 @@
 #####   TRIGGER (issue #182)                           ##
 #########################################################
 # Fixes #182. Moves the Cognito post-confirmation trigger out of the Amplify-managed
-# function `xalianSignUpSignInResourcePostConfirmation` (my-app/amplify/backend/function/
+# function `xalianSignUpSignInResourcePostConfirmation` (apps/web/amplify/backend/function/
 # xalianSignUpSignInResourcePostConfirmation, deleted in this change) into Terraform +
 # apps/api, alongside every other handler. The user pool itself
 # (us-east-1_dDy7NYWbz, live since 2022, created by Amplify) is imported below so the

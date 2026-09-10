@@ -2,7 +2,7 @@
 	Expedition (Reclamation) public API, per docs/design/frontend-backend-data-sharing.md
 	decision 7: the rules move to packages/rules so the server can referee when
 	multiplayer lands and the client keeps the same functions for previews. Re-exports the
-	whole module set the site (my-app's reclamation components and pages) and the devtools
+	whole module set the site (apps/web's reclamation components and pages) and the devtools
 	already consume; games import from here (`@xalians/rules/expedition`) rather than
 	reaching into individual files, the same convention packages/rules/src/index.ts uses
 	for the generator.

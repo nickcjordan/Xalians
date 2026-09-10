@@ -1,5 +1,5 @@
 // Schemas for the two planet files: planets.json (legacy, still rendered by
-// my-app/src/pages/planetPage.js) and planetRecords.json (the ratified structured
+// apps/web/src/pages/planetPage.js) and planetRecords.json (the ratified structured
 // version, physical + Generator "report" + history). Both carry long-form authored prose
 // history paragraphs, which are validated structurally (array of non-empty strings), not
 // word by word.

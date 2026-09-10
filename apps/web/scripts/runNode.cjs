@@ -2,13 +2,13 @@
 /*
 	Run an ESM entry from this package under plain node.
 
-	Files under my-app/src use static ESM and JSON imports that node cannot load
+	Files under apps/web/src use static ESM and JSON imports that node cannot load
 	directly (the package has no "type": "module" and the JSON imports carry no import
 	attribute). This bundles the entry with esbuild (already installed as vite's
 	dependency), writes the bundle next to the entry as a hidden .cjs file, runs it, and
 	deletes it. Everything after the entry path is passed through as process.argv.
 
-		node my-app/scripts/runNode.cjs <entry.js> [args...]
+		node apps/web/scripts/runNode.cjs <entry.js> [args...]
 
 	Used by the generator batch simulator and the Reclamation bot-vs-bot simulator.
 */
@@ -18,7 +18,7 @@ const { buildSync } = require('esbuild');
 
 const entry = process.argv[2];
 if (!entry) {
-	console.error('usage: node my-app/scripts/runNode.cjs <entry.js> [args...]');
+	console.error('usage: node apps/web/scripts/runNode.cjs <entry.js> [args...]');
 	process.exit(2);
 }
 const entryPath = path.resolve(entry);

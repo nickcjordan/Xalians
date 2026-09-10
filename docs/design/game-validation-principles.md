@@ -96,7 +96,7 @@ Do these before the first outside player, so their time leaves evidence:
 
 The tools for kinds 1 and 3 exist in the repo; kinds 2 and 4 are run by hand or by agent when a pass calls for them.
 
-- Kind 1: `my-app/src/gameplay/expedition/devtools/expeditionValidation.js` (naive-policy regret, option spread, point of no return, ablation, draft dominance) and `expeditionSimulator.js` (balance report, seat fairness, rival ladder). Results are recorded in `reclamation-play-enhancements.md` with the date and seed.
+- Kind 1: `apps/web/src/gameplay/expedition/devtools/expeditionValidation.js` (naive-policy regret, option spread, point of no return, ablation, draft dominance) and `expeditionSimulator.js` (balance report, seat fairness, rival ladder). Results are recorded in `reclamation-play-enhancements.md` with the date and seed.
 - Kind 2: the rulebook is `reclamation-design.md`; positions come from seeded matches at `/reclamation?seed=N&rival=id`.
 - Kind 3: the Proving notes panel on the match report and the local telemetry in `reclamationTelemetry.js`; export from the report.
 - Kind 4: the adversarial critic loop already used for the table's visual passes, with the rubric above.

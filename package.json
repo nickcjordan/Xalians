@@ -4,8 +4,7 @@
   "private": true,
   "workspaces": [
     "apps/*",
-    "packages/*",
-    "my-app"
+    "packages/*"
   ],
   "scripts": {
     "test": "npm test --workspaces --if-present",
