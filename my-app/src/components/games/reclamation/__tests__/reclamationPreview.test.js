@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { createMatch, send, pass, getPublicState, attackPowerAgainst } from '../../../../gameplay/expedition/expeditionRules';
-import { getWorlds } from '../../../../gameplay/expedition/sites';
-import { buildExpeditionPool } from '../../../../gameplay/expedition/roster';
-import { ROSTER_SIZE, ROLE } from '../../../../gameplay/expedition/expeditionInterpretation';
+import { createMatch, send, pass, getPublicState, attackPowerAgainst } from '@xalians/rules/expedition/expeditionRules';
+import { getWorlds } from '@xalians/rules/expedition/sites';
+import { buildExpeditionPool } from '@xalians/rules/expedition/roster';
+import { ROSTER_SIZE, ROLE } from '@xalians/rules/expedition/expeditionInterpretation';
 import {
 	flattenBoard, siteHoldTotal, instinctSentence, conductClause, attributeLanes,
 	ghostPlanFor, pickAttackTargetPreview, threatsFor, threatSentence, livingHold,
 } from '../reclamationPreview';
-import { prepare } from '../../../../gameplay/expedition/creatureOnTable';
+import { prepare } from '@xalians/rules/expedition/creatureOnTable';
 
 const SEED = 'preview-test';
 

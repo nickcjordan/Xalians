@@ -11,12 +11,13 @@
 	game logic: the engine takes whatever records it is given.
 */
 
-import { generateBatch } from '@xalians/rules/generator';
-import { createRngState, nextRandom } from './expeditionRules.js';
-import { ROSTER_SIZE } from './expeditionInterpretation.js';
+import { generateBatch } from '../generator/index.ts';
+import type { XalianRecord } from '@xalians/content/schema';
+import { createRngState, nextRandom } from './expeditionRules.ts';
+import { ROSTER_SIZE } from './expeditionInterpretation.ts';
 
 // Fisher-Yates over the engine's own PRNG so the deal is reproducible from the seed
-function shuffleWithRng(array, rngState) {
+function shuffleWithRng(array: XalianRecord[], rngState: number): XalianRecord[] {
 	const result = array.slice();
 	let state = rngState;
 	for (let i = result.length - 1; i > 0; i--) {
@@ -34,15 +35,25 @@ function shuffleWithRng(array, rngState) {
 	buildExpeditionPool(seed, size) -> records
 	One generated creature per species, cycling, until `size` records exist.
 */
-export function buildExpeditionPool(seed, size) {
+export function buildExpeditionPool(seed: string | number, size: number): XalianRecord[] {
 	return generateBatch(size, `${seed}-pool`);
+}
+
+export interface BuildRostersOptions {
+	poolSize?: number;
+}
+
+export interface Rosters {
+	rosterA: XalianRecord[];
+	rosterB: XalianRecord[];
+	pool: XalianRecord[];
 }
 
 /*
 	buildRosters(seed, options) -> { rosterA, rosterB, pool }
 	options.poolSize (default 60): how many creatures to generate before dealing.
 */
-export function buildRosters(seed, options = {}) {
+export function buildRosters(seed: string | number, options: BuildRostersOptions = {}): Rosters {
 	const poolSize = options.poolSize || 60;
 	const pool = buildExpeditionPool(seed, poolSize);
 	const shuffled = shuffleWithRng(pool, createRngState(`${seed}-rosterbuild`));

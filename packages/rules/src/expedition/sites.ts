@@ -16,17 +16,24 @@
 
 import rawSites from '@xalians/content/sites.json';
 import planetRecords from '@xalians/content/planetRecords.json';
+import type { PlanetRecordEntry, Sites } from '@xalians/content/schema';
+import type { World, WorldFacts } from './types.ts';
 
-const PLANETS_BY_NAME = new Map((Array.isArray(planetRecords) ? planetRecords : []).map((p) => [p.name, p]));
+// planetRecords.json is read structurally here (facts joined onto a world by planet name)
+// rather than through PlanetRecordsSchema.parse, which is @xalians/content's own job; the
+// cast documents the shape this module actually reads off it.
+const PLANETS_BY_NAME = new Map<string, PlanetRecordEntry>(
+	(Array.isArray(planetRecords) ? (planetRecords as PlanetRecordEntry[]) : []).map((p) => [p.name, p]),
+);
 
 // The planet record behind a world: terrain, physical band, hazards, the Generator
 // report. Everything the table shows about a world beyond its sites comes from here.
-function planetFacts(planetName) {
+function planetFacts(planetName: string): Omit<WorldFacts, 'planet' | 'element'> {
 	const p = PLANETS_BY_NAME.get(planetName);
 	if (!p) {
 		return {};
 	}
-	const report = p.report || {};
+	const report = p.report || ({} as PlanetRecordEntry['report']);
 	return {
 		planetKey: p.key,
 		terrain: p.physical ? p.physical.terrainLabel : undefined,
@@ -40,7 +47,7 @@ function planetFacts(planetName) {
 
 // Converts the { [PlanetName]: [site, site, site] } shape into the flat per-world array
 // the engine consumes: [{ planet, element, sites: [site, site, site] }].
-export function normalizeSitesJson(raw) {
+export function normalizeSitesJson(raw: Sites | null | undefined): World[] | null {
 	if (!raw || typeof raw !== 'object') {
 		return null;
 	}
@@ -48,7 +55,7 @@ export function normalizeSitesJson(raw) {
 	if (planetNames.length === 0) {
 		return null;
 	}
-	const worlds = planetNames.map((planetName) => {
+	const worlds: Array<World | null> = planetNames.map((planetName) => {
 		const siteList = raw[planetName];
 		if (!Array.isArray(siteList) || siteList.length === 0) {
 			return null;
@@ -63,16 +70,16 @@ export function normalizeSitesJson(raw) {
 	if (worlds.some((w) => w === null)) {
 		return null;
 	}
-	return worlds;
+	return worlds as World[];
 }
 
-const WORLDS = normalizeSitesJson(rawSites);
+const WORLDS = normalizeSitesJson(rawSites as Sites);
 
 /*
 	getWorlds() -> [{ planet, element, sites: [site, site, site], planetKey, terrain,
 	temperatureC, gravityVsEarth, hazards, terrainFeatures, images }, ...14 worlds]
 	The planet facts come from planetRecords.json (the encyclopedia's planet source).
 */
-export function getWorlds() {
-	return WORLDS;
+export function getWorlds(): World[] {
+	return WORLDS || [];
 }

@@ -24,11 +24,16 @@
 	site keeps working unchanged.
 */
 
-import { prepare, traitKeywordsOf, magnitudeAgainst, roleOf, round1 } from './creatureOnTable.js';
+import type { XalianRecord } from '@xalians/content/schema';
+import { prepare, traitKeywordsOf, magnitudeAgainst, roleOf, round1 } from './creatureOnTable.ts';
 import {
 	ROLE, SENDABLE, SITES_TO_CLINCH, FRAMES_PER_MATCH, RETURNED_SEND_COST,
 	presenceScaleOf, instinctLaneOf,
-} from './expeditionInterpretation.js';
+} from './expeditionInterpretation.ts';
+import type {
+	Act, BotAction, FrameSite, PreparedCreature, PublicPlayerView, PublicState, Rival,
+	RivalWeights, RngLike, Role as RoleType, ScoredSends, Seat, SendCandidate, StakeChoice,
+} from './types.ts';
 
 // --- tunables ----------------------------------------------------------------------
 
@@ -149,13 +154,13 @@ export const STAKE_VISIBLE_WEIGHT = 0.5;
 */
 export const STAKE_ROSTER_DEPTH = 5;
 
-function otherSeat(seat) {
+function otherSeat(seat: Seat): Seat {
 	return seat === 'A' ? 'B' : 'A';
 }
 
 // merges a rival's weights over the module's own tunables, so a caller that never passes a
 // rival gets the exact constants above, and a rival only needs to name the knobs it changes.
-function weightsFor(rival) {
+function weightsFor(rival: Rival | null | undefined): RivalWeights {
 	const w = (rival && rival.weights) || {};
 	return {
 		flipValue: w.flipValue ?? FLIP_VALUE,
@@ -175,28 +180,31 @@ function weightsFor(rival) {
 	};
 }
 
-function siteFromPublic(publicState, siteId) {
+function siteFromPublic(publicState: PublicState, siteId: string): FrameSite | undefined {
 	return publicState.frame.sites.find((s) => s.id === siteId);
 }
 
-function visibleEntries(publicState, siteId, seat) {
+// board entries as getPublicState prints them; this module never sees a full BoardEntry
+type PublicEntry = PublicState['board'][string][Seat][number];
+
+function visibleEntries(publicState: PublicState, siteId: string, seat: Seat): PublicEntry[] {
 	return (publicState.board[siteId][seat] || []).filter((e) => e.record);
 }
 
 // the match's rules travel on the public state (hold compression, magnitude scale, role
 // ablations), so every number the bot reads is the number the engine will use
-function rulesOf(publicState) {
+function rulesOf(publicState: PublicState | null | undefined) {
 	return (publicState && publicState.rules) || null;
 }
 
-function prepareAt(publicState, siteId, entry, opts = {}) {
+function prepareAt(publicState: PublicState, siteId: string, entry: PublicEntry, opts: Record<string, unknown> = {}): PreparedCreature {
 	return prepare(entry.record, siteFromPublic(publicState, siteId), null, entry.sentIndex, {
 		rules: rulesOf(publicState),
 		...opts,
 	});
 }
 
-function holdOf(publicState, siteId, entry) {
+function holdOf(publicState: PublicState, siteId: string, entry: PublicEntry): number {
 	// the board already carries the engine's own current hold for every visible creature;
 	// prepare() is the fallback for a view built before the field existed
 	if (typeof entry.currentHold === 'number') {
@@ -206,7 +214,7 @@ function holdOf(publicState, siteId, entry) {
 }
 
 // does a bolsterer of this seat already stand at this site?
-function bolsterPresent(publicState, siteId, seat) {
+function bolsterPresent(publicState: PublicState, siteId: string, seat: Seat): boolean {
 	return visibleEntries(publicState, siteId, seat).some(
 		(e) => !e.hidden && roleOf(e.record, rulesOf(publicState)) === ROLE.BOLSTER,
 	);
@@ -215,9 +223,9 @@ function bolsterPresent(publicState, siteId, seat) {
 // the presence scale of the strongest bolsterer standing here, since charisma prices what
 // a bolster restores and bolsters never stack (assumption 17). 1 where none stands, which
 // is what holdAtSite treats as "no bolster".
-function bolsterScaleAt(publicState, siteId, seat) {
+function bolsterScaleAt(publicState: PublicState, siteId: string, seat: Seat): number {
 	const rules = rulesOf(publicState);
-	let best = null;
+	let best: number | null = null;
 	visibleEntries(publicState, siteId, seat).forEach((e) => {
 		if (e.hidden || roleOf(e.record, rules) !== ROLE.BOLSTER) {
 			return;
@@ -233,18 +241,18 @@ function bolsterScaleAt(publicState, siteId, seat) {
 // what one world counts toward the Charter this round: 1 normally, 2 where one handler
 // staked it and 3 where both did (assumption 22). Read off the public state's own `stakes`
 // view so the bot and the engine can never price a world differently.
-function stakeValueAt(publicState, siteId) {
+function stakeValueAt(publicState: PublicState, siteId: string): number {
 	const stakes = publicState && publicState.stakes;
 	const entry = stakes && stakes[siteId];
 	return entry && typeof entry.countedValue === 'number' ? entry.countedValue : 1;
 }
 
-function siteHoldTotal(publicState, siteId, seat) {
+function siteHoldTotal(publicState: PublicState, siteId: string, seat: Seat): number {
 	return visibleEntries(publicState, siteId, seat).reduce((sum, e) => sum + holdOf(publicState, siteId, e), 0);
 }
 
 // my visible hold minus theirs at one site, before any guess about hidden sends
-function visibleMargin(publicState, siteId, seat) {
+function visibleMargin(publicState: PublicState, siteId: string, seat: Seat): number {
 	return siteHoldTotal(publicState, siteId, seat) - siteHoldTotal(publicState, siteId, otherSeat(seat));
 }
 
@@ -263,7 +271,7 @@ function visibleMargin(publicState, siteId, seat) {
 	spread and larger values a sharper guess. Exported for the devtools and the table's
 	advice, which show the handler what the bot thinks is where.
 */
-export function readUnseen(publicState, seat, weights = weightsFor(null)) {
+export function readUnseen(publicState: PublicState, seat: Seat, weights: RivalWeights = weightsFor(null)) {
 	const opp = publicState.players[otherSeat(seat)];
 	const sites = publicState.frame.sites;
 	// a hidden send is one of the sends the handler was already anticipating, not an extra
@@ -274,13 +282,13 @@ export function readUnseen(publicState, seat, weights = weightsFor(null)) {
 	const hiddenOut = opp.hiddenSentThisRound || 0;
 	const n = opp.passed ? hiddenOut : Math.max(hiddenOut, Math.max(0, weights.anticipation));
 	const h = weights.hiddenHoldGuess;
-	const out = {};
+	const out: Record<string, number> = {};
 	if (n === 0 || !(h > 0)) {
 		sites.forEach((s) => { out[s.id] = 0; });
 		return Object.defineProperties(out, {
 			shares: { value: {}, enumerable: false },
 			unseen: { value: 0, enumerable: false },
-		});
+		}) as typeof out & { shares: Record<string, number>; unseen: number };
 	}
 	const gains = sites.map((site) => {
 		// the rival's margin at this world is the negative of mine
@@ -298,7 +306,7 @@ export function readUnseen(publicState, seat, weights = weightsFor(null)) {
 	const sharp = Math.max(0, weights.readSharpness);
 	const raised = gains.map((g) => (sharp === 0 ? 1 : Math.pow(g, sharp)));
 	const total = raised.reduce((a, b) => a + b, 0);
-	const shares = {};
+	const shares: Record<string, number> = {};
 	sites.forEach((site, i) => {
 		const share = total > 0 ? raised[i] / total : 1 / sites.length;
 		shares[site.id] = share;
@@ -309,7 +317,7 @@ export function readUnseen(publicState, seat, weights = weightsFor(null)) {
 	return Object.defineProperties(out, {
 		shares: { value: shares, enumerable: false },
 		unseen: { value: n * h, enumerable: false },
-	});
+	}) as typeof out & { shares: Record<string, number>; unseen: number };
 }
 
 /*
@@ -318,7 +326,7 @@ export function readUnseen(publicState, seat, weights = weightsFor(null)) {
 	lead secureValue * h / (m + h). One function so the send, the swift move and the
 	hidden read all price a world the same way.
 */
-function worthAt(h, m, weights) {
+function worthAt(h: number, m: number, weights: RivalWeights): number {
 	if (m <= 0) {
 		return h > -m ? weights.flipValue : (2 * h) / (1 - m);
 	}
@@ -339,9 +347,9 @@ function worthAt(h, m, weights) {
 	one to four points on three seeds, because it stopped seeing flips that were there).
 	With no hidden send out there is one hypothesis: the board as it looks.
 */
-function hypothesesOf(publicState, handler, weights, read) {
+function hypothesesOf(publicState: PublicState, handler: Seat, weights: RivalWeights, read: ReturnType<typeof readUnseen>) {
 	const sites = publicState.frame.sites;
-	const visible = {};
+	const visible: Record<string, number> = {};
 	sites.forEach((s) => { visible[s.id] = visibleMargin(publicState, s.id, handler); });
 	if (!read || !(read.unseen > 0)) {
 		return [{ p: 1, margins: visible }];
@@ -356,12 +364,12 @@ function hypothesesOf(publicState, handler, weights, read) {
 }
 
 // my visible hold minus theirs, less the unseen hold the read puts at this site
-function siteMargin(publicState, siteId, seat, weights, read) {
-	const unseen = (read || readUnseen(publicState, seat, weights))[siteId] || 0;
-	return visibleMargin(publicState, siteId, seat) - unseen;
+function siteMargin(publicState: PublicState, siteId: string, seat: Seat, weights: RivalWeights, read?: ReturnType<typeof readUnseen>): number {
+	const resolved = read || readUnseen(publicState, seat, weights);
+	return visibleMargin(publicState, siteId, seat) - (resolved[siteId] || 0);
 }
 
-function traitsOf(record) {
+function traitsOf(record: XalianRecord): string[] {
 	return traitKeywordsOf(record);
 }
 
@@ -375,7 +383,9 @@ function traitsOf(record) {
 	margin (leaving costs exactly what staying was worth there). Every swift creature that
 	has not moved this round is considered, and at most one move is proposed per turn.
 */
-function evaluateSwiftMoves(publicState, handler, margins, weights) {
+interface SwiftMoveResult { recordId: string; siteId: string; net: number; moveValue: number }
+
+function evaluateSwiftMoves(publicState: PublicState, handler: Seat, margins: Record<string, number>, weights: RivalWeights): SwiftMoveResult | null {
 	const me = publicState.players[handler];
 	const movable = me.movableRecordIds || [];
 	if (movable.length === 0) {
@@ -383,10 +393,10 @@ function evaluateSwiftMoves(publicState, handler, margins, weights) {
 	}
 	const frame = publicState.frame;
 
-	let overall = null;
+	let overall: SwiftMoveResult | null = null;
 	movable.forEach((recordId) => {
-		let fromSiteId = null;
-		let entry = null;
+		let fromSiteId: string | null = null;
+		let entry: PublicEntry | null = null;
 		frame.sites.forEach((site) => {
 			const found = (publicState.board[site.id][handler] || []).find((e) => e.recordId === recordId);
 			if (found) {
@@ -394,13 +404,15 @@ function evaluateSwiftMoves(publicState, handler, margins, weights) {
 				entry = found;
 			}
 		});
-		if (!entry || !entry.record) {
+		if (!entry || !(entry as PublicEntry).record || !fromSiteId) {
 			return; // defensive: a handler's own creatures are always visible to it
 		}
+		const foundEntry = entry as PublicEntry;
+		const foundSiteId = fromSiteId as string;
 
-		const fromHold = prepareAt(publicState, fromSiteId, entry).hold
-			+ roleValueOf(publicState, entry.record, siteFromPublic(publicState, fromSiteId), entry.sentIndex, handler);
-		const fromMargin = margins[fromSiteId];
+		const fromHold = prepareAt(publicState, foundSiteId, foundEntry).hold
+			+ roleValueOf(publicState, foundEntry.record, siteFromPublic(publicState, foundSiteId) as FrameSite, foundEntry.sentIndex, handler);
+		const fromMargin = margins[foundSiteId];
 		// value of STAYING put, in the same units the send candidates use: a world currently
 		// flippable or securable is worth losing if this creature leaves, so "staying" is
 		// worth whatever it is currently contributing to that world's margin.
@@ -409,15 +421,15 @@ function evaluateSwiftMoves(publicState, handler, margins, weights) {
 			: weights.secureValue * (fromHold / fromMargin);
 
 		frame.sites.forEach((site) => {
-			if (site.id === fromSiteId) {
+			if (site.id === foundSiteId) {
 				return;
 			}
-			const prepared = prepare(entry.record, site, null, entry.sentIndex, {
+			const prepared = prepare(foundEntry.record, site, null, foundEntry.sentIndex, {
 				rules: rulesOf(publicState),
 				bolstered: bolsterPresent(publicState, site.id, handler),
 				bolsterScale: bolsterScaleAt(publicState, site.id, handler),
 			});
-			const h = prepared.hold + roleValueOf(publicState, entry.record, site, entry.sentIndex, handler, prepared);
+			const h = prepared.hold + roleValueOf(publicState, foundEntry.record, site, foundEntry.sentIndex, handler, prepared);
 			const m = margins[site.id];
 			// margin at the destination as it would be AFTER arriving (m does not yet include
 			// this creature's hold there, since it currently stands elsewhere)
@@ -448,7 +460,7 @@ function evaluateSwiftMoves(publicState, handler, margins, weights) {
 // how often a qualifying send is actually hidden (a coin flip weighted by the bias); above
 // 1, the excess (hideBias - 1, capped at 1) is the chance of hiding EVEN WHEN the base rule
 // would send openly, so a bias of 2 hides every stealthy send regardless of the board.
-function applyHideBias(baseRuleSaysHide, canHide, hideBias, rng) {
+function applyHideBias(baseRuleSaysHide: boolean, canHide: boolean, hideBias: number, rng: RngLike | null | undefined): boolean {
 	if (!canHide) {
 		return false;
 	}
@@ -485,7 +497,15 @@ function applyHideBias(baseRuleSaysHide, canHide, hideBias, rng) {
 	  priced the way the Loki line's extra unit already is, and a send the remaining cap
 	  cannot afford to hide is marked unaffordable rather than discounted.
 */
-function priceHiding(publicState, weights, candidate) {
+interface HidingCandidate {
+	record: XalianRecord;
+	roleValue?: number;
+	effect?: number;
+	cost?: number;
+	capRemaining?: number;
+}
+
+function priceHiding(publicState: PublicState, weights: RivalWeights, candidate: HidingCandidate): { hideValue: number; hideCost: number; hideAffordable: boolean } {
 	const rules = rulesOf(publicState);
 	const { record, roleValue = 0, effect = 0, cost = 1, capRemaining = 0 } = candidate;
 	const canHide = traitsOf(record).includes('stealthy') && (!rules || rules.hiddenSends !== false);
@@ -530,7 +550,7 @@ function priceHiding(publicState, weights, candidate) {
 	candidates is sorted best value first; each entry is
 	{ record, site, prepared, margin, value, flips, cost }.
 */
-export function scoreSends(publicState, ownRoster, handler, rival) {
+export function scoreSends(publicState: PublicState, ownRoster: XalianRecord[], handler: Seat, rival?: Rival | null): ScoredSends {
 	const weights = weightsFor(rival);
 	const me = publicState.players[handler];
 	const opp = publicState.players[otherSeat(handler)];
@@ -540,7 +560,7 @@ export function scoreSends(publicState, ownRoster, handler, rival) {
 	// the expected margins (visible less the read's haircut) drive the pass rules and are
 	// what the candidates report; the candidates' VALUES are averaged over the read's
 	// hypotheses instead (hypothesesOf above)
-	const margins = {};
+	const margins: Record<string, number> = {};
 	frame.sites.forEach((s) => {
 		margins[s.id] = siteMargin(publicState, s.id, handler, weights, read);
 	});
@@ -572,7 +592,7 @@ export function scoreSends(publicState, ownRoster, handler, rival) {
 	const capRemaining = sendableCap - me.sentCount;
 
 	// score every (creature, site)
-	const candidates = [];
+	const candidates: SendCandidate[] = [];
 	ownRoster.forEach((record) => {
 		const cost = returnedIds.has(record.id) ? RETURNED_SEND_COST : 1;
 		if (cost > capRemaining) {
@@ -604,15 +624,16 @@ export function scoreSends(publicState, ownRoster, handler, rival) {
 			if (cost > 1) {
 				value -= weights.holdCost * h * (cost - 1);
 			}
+			const hiding = priceHiding(publicState, weights, {
+				record, roleValue, effect: h, cost, capRemaining,
+			});
 			candidates.push({
 				record, site, prepared, margin: m, value, flips: m <= 0 && h > -m, cost,
 				roleValue, effect: h, role: prepared.role,
 				// what hiding this particular send is worth, priced against all three of
 				// pass 3's hiding levers (assumption 21). chooseSend reads it rather than
 				// recomputing the first-strike bonus itself.
-				...priceHiding(publicState, weights, {
-					record, site, roleValue, effect: h, cost, capRemaining, handler,
-				}),
+				...hiding,
 			});
 		});
 	});
@@ -645,7 +666,7 @@ export function scoreSends(publicState, ownRoster, handler, rival) {
 	The candidate scoring itself lives in scoreSends above; this function is the policy
 	layer over it (the swift move, the pass rules, the near-equal pick, the hide bias).
 */
-export function chooseSend(publicState, ownRoster, handler, rng, rival) {
+export function chooseSend(publicState: PublicState, ownRoster: XalianRecord[], handler: Seat, rng?: RngLike | null, rival?: Rival | null): BotAction {
 	const weights = weightsFor(rival);
 	const me = publicState.players[handler];
 	const opp = publicState.players[otherSeat(handler)];
@@ -655,7 +676,7 @@ export function chooseSend(publicState, ownRoster, handler, rng, rival) {
 
 	const frame = publicState.frame;
 	const read = readUnseen(publicState, handler, weights);
-	const moveMargins = {};
+	const moveMargins: Record<string, number> = {};
 	frame.sites.forEach((s) => {
 		moveMargins[s.id] = siteMargin(publicState, s.id, handler, weights, read);
 	});
@@ -768,7 +789,7 @@ export function chooseSend(publicState, ownRoster, handler, rng, rival) {
 	Reads public information only, plus this handler's own roster, exactly like chooseSend.
 	Consumes no RNG.
 */
-export function chooseStake(publicState, ownRoster, handler, rival) {
+export function chooseStake(publicState: PublicState, ownRoster: XalianRecord[], handler: Seat, rival?: Rival | null): StakeChoice | null {
 	const rules = rulesOf(publicState);
 	if (rules && rules.stake === false) {
 		return null;
@@ -782,7 +803,7 @@ export function chooseStake(publicState, ownRoster, handler, rival) {
 	}
 
 	const frame = publicState.frame;
-	const meanHoldAt = {};
+	const meanHoldAt: Record<string, number> = {};
 	frame.sites.forEach((site) => {
 		const holds = ownRoster
 			.map((record) => prepare(record, site, null, 0, { rules }).hold)
@@ -792,7 +813,7 @@ export function chooseStake(publicState, ownRoster, handler, rival) {
 	});
 	const across = frame.sites.reduce((sum, site) => sum + meanHoldAt[site.id], 0) / frame.sites.length;
 
-	let best = null;
+	let best: { siteId: string; edge: number } | null = null;
 	frame.sites.forEach((site) => {
 		if (!stakeable.has(site.id)) {
 			return;
@@ -807,14 +828,15 @@ export function chooseStake(publicState, ownRoster, handler, rival) {
 	if (!best) {
 		return null;
 	}
+	const chosen = best as { siteId: string; edge: number };
 
 	const behind = me.sitesWon < opp.sitesWon;
 	const eagerness = weights.stakeEagerness > 0 ? weights.stakeEagerness : 1;
 	const threshold = (behind ? STAKE_THRESHOLD_BEHIND : STAKE_THRESHOLD_AHEAD) / eagerness;
-	if (best.edge < threshold) {
+	if (chosen.edge < threshold) {
 		return null;
 	}
-	return { type: 'stake', siteId: best.siteId, edge: round1(best.edge) };
+	return { type: 'stake', siteId: chosen.siteId, edge: round1(chosen.edge) };
 }
 
 // --- what a role is worth at a world -------------------------------------------------
@@ -840,8 +862,8 @@ export function chooseStake(publicState, ownRoster, handler, rival) {
 */
 
 // the amount `attacker` would take off `victim`, before the cap
-function rawBlowAmount(publicState, siteId, attackerEntry, victimEntry, attackerPrepared) {
-	const prepared = attackerPrepared || prepareAt(publicState, siteId, attackerEntry);
+function rawBlowAmount(publicState: PublicState, siteId: string, attackerEntry: { record: XalianRecord }, victimEntry: { record: XalianRecord }, attackerPrepared?: PreparedCreature): number {
+	const prepared = attackerPrepared || prepareAt(publicState, siteId, attackerEntry as PublicEntry);
 	if (!prepared.blow) {
 		return 0;
 	}
@@ -873,7 +895,7 @@ function rawBlowAmount(publicState, siteId, attackerEntry, victimEntry, attacker
 	The bot still reads the conduct lane compactly rather than replaying the engine's full
 	pick; that is recorded friction from the first measurements and is unchanged here.
 */
-function conductTargetGuess(publicState, siteId, prepared, enemies, selfEntry) {
+function conductTargetGuess(publicState: PublicState, siteId: string, prepared: PreparedCreature, enemies: PublicEntry[], selfEntry?: { recordId: string; record: XalianRecord; sentIndex: number } | null): PublicEntry | null {
 	if (enemies.length === 0) {
 		return null;
 	}
@@ -904,16 +926,17 @@ function conductTargetGuess(publicState, siteId, prepared, enemies, selfEntry) {
 		return holds.reduce((best, c) => (c.hold < best.hold ? c : best)).entry;
 	}
 	if (line === 'enemyMostVulnerableToElement') {
+		const fallbackAct: Act = { action: 'strike', class: null, magnitude: 1, printedMagnitude: 1, name: 'fallback' };
 		return holds.reduce((best, c) => {
-			const eff = magnitudeAgainst(prepared.record, prepared.blow || { magnitude: 1 }, c.entry.record);
-			const bestEff = magnitudeAgainst(prepared.record, prepared.blow || { magnitude: 1 }, best.entry.record);
+			const eff = magnitudeAgainst(prepared.record, prepared.blow || fallbackAct, c.entry.record);
+			const bestEff = magnitudeAgainst(prepared.record, prepared.blow || fallbackAct, best.entry.record);
 			return eff > bestEff ? c : best;
 		}).entry;
 	}
 	return holds.reduce((best, c) => (c.entry.sentIndex < best.entry.sentIndex ? c : best)).entry;
 }
 
-export function roleValueOf(publicState, record, site, sentIndex, handler, prepared) {
+export function roleValueOf(publicState: PublicState, record: XalianRecord, site: FrameSite, sentIndex: number, handler: Seat, prepared?: PreparedCreature): number {
 	const seat = handler;
 	const opponentSeat = otherSeat(handler);
 	const view = prepared || prepare(record, site, null, sentIndex, { rules: rulesOf(publicState) });
@@ -946,17 +969,17 @@ export function roleValueOf(publicState, record, site, sentIndex, handler, prepa
 	if (view.role === ROLE.SHIELD) {
 		// the largest enemy blow standing here, capped by what it could actually take off
 		// the ally it would land on (the weakest of my creatures there, this one included)
-		const protectees = [...allies, self];
+		const protectees: Array<PublicEntry | typeof self> = [...allies, self];
 		const weakest = protectees.reduce(
-			(best, e) => (holdOf(publicState, site.id, e) < holdOf(publicState, site.id, best) ? e : best),
+			(best, e) => (holdOf(publicState, site.id, e as PublicEntry) < holdOf(publicState, site.id, best as PublicEntry) ? e : best),
 			protectees[0],
 		);
 		let largest = 0;
 		enemies.forEach((enemy) => {
 			const enemyPrepared = prepareAt(publicState, site.id, enemy);
 			const amount = Math.min(
-				rawBlowAmount(publicState, site.id, enemy, weakest, enemyPrepared),
-				holdOf(publicState, site.id, weakest),
+				rawBlowAmount(publicState, site.id, enemy, weakest as PublicEntry, enemyPrepared),
+				holdOf(publicState, site.id, weakest as PublicEntry),
 			);
 			largest = Math.max(largest, amount);
 		});
@@ -1017,7 +1040,7 @@ export function roleValueOf(publicState, record, site, sentIndex, handler, prepa
 // a weights override (see weightsFor above for the keys and defaults) plus fiction. Every
 // weight not named here keeps the module's default, so an empty weights object is the
 // proctor exactly. Per docs/design/reclamation-play-enhancements.md "Pass 1: the rivals".
-export const RIVALS = [
+export const RIVALS: Rival[] = [
 	{
 		id: 'envoy',
 		tag: 'Rations the roster',
@@ -1113,6 +1136,6 @@ export const DEFAULT_RIVAL_ID = 'proctor';
 
 // looks up a rival by id, falling back to the proctor for an unknown or missing id so a
 // caller with a stale or corrupt saved choice always gets a legal, unsurprising opponent.
-export function rivalById(id) {
-	return RIVALS.find((r) => r.id === id) || RIVALS.find((r) => r.id === DEFAULT_RIVAL_ID);
+export function rivalById(id: string | null | undefined): Rival {
+	return (RIVALS.find((r) => r.id === id) || RIVALS.find((r) => r.id === DEFAULT_RIVAL_ID)) as Rival;
 }

@@ -1,8 +1,8 @@
 import { describe, test, expect } from 'vitest';
 import { recommendSend } from '../reclamationAdvice';
-import { buildRosters } from '../../../../gameplay/expedition/roster';
-import { createMatch, send, pass, moveSwift, getPublicState } from '../../../../gameplay/expedition/expeditionRules';
-import { getWorlds } from '../../../../gameplay/expedition/sites';
+import { buildRosters } from '@xalians/rules/expedition/roster';
+import { createMatch, send, pass, moveSwift, getPublicState } from '@xalians/rules/expedition/expeditionRules';
+import { getWorlds } from '@xalians/rules/expedition/sites';
 
 /*
 	Simple mode's recommendation: the bot's own pick for the handler's seat, with a

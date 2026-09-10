@@ -1,8 +1,8 @@
 import React from 'react';
-import { prepare } from '../../../gameplay/expedition/creatureOnTable';
+import { prepare } from '@xalians/rules/expedition/creatureOnTable';
 import {
 	HOME_GROUND_MULTIPLIER, ARMORED_REDUCTION, STRAIN_MULTIPLIER, SEVERE_STRAIN_MULTIPLIER,
-} from '../../../gameplay/expedition/expeditionInterpretation';
+} from '@xalians/rules/expedition/expeditionInterpretation';
 import { instinctSentence, attributeLanes } from './reclamationPreview';
 import { speciesLabel, formatHold, roleSentence } from './reclamationNarration';
 import { RoleGlyph, SwiftGlyph, WillfulGlyph, InstinctGlyph } from './reclamationGlyphs';
@@ -11,7 +11,7 @@ import {
 	speciesFacts, archetypeLabel, traitName, traitNature,
 	elementName, sizeLine, toleranceLine, breathesLine, coveringName, bodyPlanName,
 } from './reclamationVocabulary';
-import { TRAIT } from '../../../gameplay/expedition/expeditionInterpretation';
+import { TRAIT } from '@xalians/rules/expedition/expeditionInterpretation';
 
 // the traits this game reads (design doc, "Instinct"); every other trait is shown but marked
 // as not yet read by the table

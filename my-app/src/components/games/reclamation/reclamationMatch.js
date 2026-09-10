@@ -7,10 +7,10 @@ import { ReclamationReport, buildMatchReport } from './reclamationReport';
 import {
 	send, pass, moveSwift, stakeWorld, getPublicState,
 	createRngState, nextRandom,
-} from '../../../gameplay/expedition/expeditionRules';
-import { chooseSend, chooseStake, rivalById, DEFAULT_RIVAL_ID } from '../../../gameplay/expedition/expeditionBot';
-import { prepare, strainMultiplierFor } from '../../../gameplay/expedition/creatureOnTable';
-import { SENDABLE, SITES_TO_CLINCH, FRAMES_PER_MATCH } from '../../../gameplay/expedition/expeditionInterpretation';
+} from '@xalians/rules/expedition/expeditionRules';
+import { chooseSend, chooseStake, rivalById, DEFAULT_RIVAL_ID } from '@xalians/rules/expedition/expeditionBot';
+import { prepare, strainMultiplierFor } from '@xalians/rules/expedition/creatureOnTable';
+import { SENDABLE, SITES_TO_CLINCH, FRAMES_PER_MATCH } from '@xalians/rules/expedition/expeditionInterpretation';
 import {
 	speciesLabel, formatHold, classifyEvent, narrateEvent, cueForEvent, narrateSwiftMove,
 	narrateSend, narratePass, narrateJudge, narrateMatchEnd, narrateStake, countWord,

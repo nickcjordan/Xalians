@@ -3,8 +3,8 @@ import XalianImage from '../../xalianImage';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
 import { team } from '../../../constants/designTokens';
 import { speciesLabel, formatHold } from './reclamationNarration';
-import { rateForDraft, botDraft } from '../../../gameplay/expedition/draft.js';
-import { ROSTER_SIZE } from '../../../gameplay/expedition/expeditionInterpretation.js';
+import { rateForDraft, botDraft } from '@xalians/rules/expedition/draft';
+import { ROSTER_SIZE } from '@xalians/rules/expedition/expeditionInterpretation';
 import { HiddenGlyph } from './reclamationGlyphs';
 
 /*

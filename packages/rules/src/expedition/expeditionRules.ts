@@ -8,7 +8,7 @@
 	design's tributeRules.js used, so the bot/tests/a future UI reducer can use a single
 	"did this work" check.
 
-	The engine takes `worlds` as an input to createMatch rather than importing sites.js
+	The engine takes `worlds` as an input to createMatch rather than importing sites.ts
 	itself, per the task's own guidance: the engine should not know where data lives.
 
 	Since "The Proving" (docs/design/reclamation-design.md, 2026-09-04) a round is a
@@ -38,10 +38,11 @@
 	`resolutionLog` plus `lastJudgeResult` are what it narrates.
 */
 
+import type { XalianRecord } from '@xalians/content/schema';
 import {
 	prepare, magnitudeAgainst, holdAtSite, targetMatchupMultiplier, traitKeywordsOf,
 	roleOf, round1, isSwift, speedOf,
-} from './creatureOnTable.js';
+} from './creatureOnTable.ts';
 import {
 	ROSTER_SIZE,
 	SENDABLE,
@@ -77,7 +78,12 @@ import {
 	STAKE_BOTH_VALUE,
 	DRAFT_POOL_SIZE,
 	DRAFT_DISTINCT_SPECIES,
-} from './expeditionInterpretation.js';
+} from './expeditionInterpretation.ts';
+import type {
+	Board, BoardEntry, Conduct, Frame, FrameSite, LogEvent, MatchState, PlayerState,
+	PreparedCreature, PublicBoardEntry, PublicPlayerView, PublicState, Role, Rules,
+	RulesInput, Seat, ShieldCap, World,
+} from './types.ts';
 
 // ---------------------------------------------------------------------------
 // deterministic PRNG - mulberry32, identical implementation to the first design's
@@ -85,8 +91,8 @@ import {
 // this package has no runtime dependency on ../tribute/.
 // ---------------------------------------------------------------------------
 
-export function createRngState(seed) {
-	let s;
+export function createRngState(seed: string | number): number {
+	let s: number;
 	if (typeof seed === 'number') {
 		s = seed >>> 0;
 	} else {
@@ -99,7 +105,7 @@ export function createRngState(seed) {
 	return s >>> 0;
 }
 
-export function nextRandom(rngState) {
+export function nextRandom(rngState: number): { value: number; nextState: number } {
 	let a = rngState >>> 0;
 	a |= 0;
 	a = (a + 0x6d2b79f5) | 0;
@@ -110,12 +116,12 @@ export function nextRandom(rngState) {
 	return { value, nextState: a >>> 0 };
 }
 
-function nextInt(rngState, maxExclusive) {
+function nextInt(rngState: number, maxExclusive: number): { value: number; nextState: number } {
 	const { value, nextState } = nextRandom(rngState);
 	return { value: Math.floor(value * maxExclusive), nextState };
 }
 
-function shuffle(array, rngState) {
+function shuffle<T>(array: T[], rngState: number): { array: T[]; nextState: number } {
 	const result = array.slice();
 	let state = rngState;
 	for (let i = result.length - 1; i > 0; i--) {
@@ -133,7 +139,8 @@ function shuffle(array, rngState) {
 // ---------------------------------------------------------------------------
 
 export class ExpeditionRuleError extends Error {
-	constructor(code, message) {
+	code: string;
+	constructor(code: string, message?: string) {
 		super(message || code);
 		this.name = 'ExpeditionRuleError';
 		this.code = code;
@@ -141,11 +148,11 @@ export class ExpeditionRuleError extends Error {
 }
 
 // the match's rules object, defaulted for any state built before the field existed
-function rulesOf(state) {
+function rulesOf(state: MatchState | null | undefined): Rules {
 	return (state && state.rules) || DEFAULT_RULES;
 }
 
-function otherPlayer(player) {
+function otherPlayer(player: Seat): Seat {
 	return player === 'A' ? 'B' : 'A';
 }
 
@@ -153,7 +160,7 @@ function otherPlayer(player) {
 // match setup
 // ---------------------------------------------------------------------------
 
-function validateRosterInput(roster, label) {
+function validateRosterInput(roster: XalianRecord[], label: string): void {
 	if (!roster || !Array.isArray(roster)) {
 		throw new ExpeditionRuleError('INVALID_ROSTER', `${label}: roster must be an array`);
 	}
@@ -166,7 +173,7 @@ function validateRosterInput(roster, label) {
 	}
 }
 
-function validateWorldsInput(worlds) {
+function validateWorldsInput(worlds: World[]): void {
 	if (!Array.isArray(worlds) || worlds.length < WORLDS_PER_MATCH) {
 		throw new ExpeditionRuleError('INVALID_WORLDS', `worlds must be an array of at least ${WORLDS_PER_MATCH} world entries`);
 	}
@@ -177,8 +184,8 @@ function validateWorldsInput(worlds) {
 	});
 }
 
-function emptyBoardForFrame(frame) {
-	const board = {};
+function emptyBoardForFrame(frame: Frame): Board {
+	const board: Board = {};
 	frame.sites.forEach((site) => {
 		board[site.id] = { A: [], B: [] };
 	});
@@ -186,7 +193,7 @@ function emptyBoardForFrame(frame) {
 }
 
 // the world as a site carries it: everything the world entry says except its site list
-function worldFacts(world) {
+function worldFacts(world: World) {
 	const { sites, ...facts } = world;
 	return facts;
 }
@@ -200,19 +207,19 @@ function worldFacts(world) {
 	table twice: a frame is { index, sites: [site with .world] }, and a site on the table
 	is the authored site plus the facts of the world it belongs to.
 */
-function drawFrames(worlds, rngState) {
+function drawFrames(worlds: World[], rngState: number): { frames: Frame[]; nextState: number } {
 	let state = rngState;
 	const { array: shuffledWorlds, nextState: afterShuffle } = shuffle(worlds, state);
 	state = afterShuffle;
 	const drawn = shuffledWorlds.slice(0, WORLDS_PER_MATCH);
-	const frames = [];
+	const frames: Frame[] = [];
 	for (let f = 0; f < FRAMES_PER_MATCH; f++) {
-		const sites = [];
+		const sites: FrameSite[] = [];
 		for (let w = 0; w < WORLDS_PER_FRAME; w++) {
 			const world = drawn[f * WORLDS_PER_FRAME + w];
 			const { value: siteIndex, nextState } = nextInt(state, world.sites.length);
 			state = nextState;
-			sites.push({ ...world.sites[siteIndex], world: worldFacts(world) });
+			sites.push({ ...world.sites[siteIndex], world: worldFacts(world) } as FrameSite);
 		}
 		// `stakes` is the per-frame record of who staked which world this round
 		// (docs/design/reclamation-base-redesign.md assumption 22), keyed by handler; the
@@ -222,14 +229,6 @@ function drawFrames(worlds, rngState) {
 	return { frames, nextState: state };
 }
 
-/*
-	createMatch({rosterA, rosterB, worlds, seed}) -> initial match state, phase 'deploy'
-	on frame 1.
-
-	Draws the frames (see drawFrames) and picks a random starter; "there is no Court
-	Favor", so the only things decided randomly here are which worlds, at which sites, in
-	which order, and who starts round 1.
-*/
 // ---------------------------------------------------------------------------
 // the rules object: one ablation switch per lever
 // ---------------------------------------------------------------------------
@@ -275,7 +274,7 @@ function drawFrames(worlds, rngState) {
 	- bolsterFloor: hold given to an ally already comfortable (assumption 8).
 	- armoredReduction: the fraction taken off an attack against an armored creature.
 	- shieldCap: how a cancel is priced, 'none' | 'ownHold' | 'half' (see resolveWorld's
-	  shield step for what each does and why the lever exists).
+	  shield step for what each setting does and why the lever exists).
 	- willfulThreshold / keenInstinct / dullInstinct / swiftSpeed: the attribute cuts.
 	- trailingBonus: 0 by default since assumption 20 cut the catch-up send; the key stays
 	  so an ablation row can put it back.
@@ -290,9 +289,9 @@ function drawFrames(worlds, rngState) {
 	  counts one), which is the ablation row the stake has to beat (assumption 22).
 	- draftPoolSize / draftDistinctSpecies: the draft's shape (assumption 23). Neither is
 	  read by the engine itself; they travel on the rules object so one --rules flag moves
-	  the draft the same way it moves every other lever, and draft.js reads them from there.
+	  the draft the same way it moves every other lever, and draft.ts reads them from there.
 */
-export const DEFAULT_RULES = {
+export const DEFAULT_RULES: Rules = {
 	hiddenSends: true,
 	lokiLine: true,
 	trailingBonus: ROSTER_TRAILING_BONUS,
@@ -305,7 +304,7 @@ export const DEFAULT_RULES = {
 	sweepDiscount: SWEEP_DISCOUNT,
 	bolsterFloor: BOLSTER_FLOOR,
 	armoredReduction: ARMORED_REDUCTION,
-	shieldCap: SHIELD_CAP,
+	shieldCap: SHIELD_CAP as ShieldCap,
 	willful: true,
 	willfulThreshold: WILLFUL_THRESHOLD,
 	presenceScale: true,
@@ -325,10 +324,10 @@ export const DEFAULT_RULES = {
 };
 
 // merges a caller's partial rules over the defaults, so a batch only names what it moves
-function normalizeRules(rules) {
+function normalizeRules(rules: RulesInput | null | undefined): Rules {
 	const r = rules || {};
-	const roles = (r && r.roles) || {};
-	const num = (value, fallback) => (typeof value === 'number' ? value : fallback);
+	const roles = r.roles || {};
+	const num = (value: unknown, fallback: number) => (typeof value === 'number' ? value : fallback);
 	return {
 		hiddenSends: r.hiddenSends !== undefined ? !!r.hiddenSends : DEFAULT_RULES.hiddenSends,
 		lokiLine: r.lokiLine !== undefined ? !!r.lokiLine : DEFAULT_RULES.lokiLine,
@@ -346,7 +345,7 @@ function normalizeRules(rules) {
 		sweepDiscount: num(r.sweepDiscount, DEFAULT_RULES.sweepDiscount),
 		bolsterFloor: num(r.bolsterFloor, DEFAULT_RULES.bolsterFloor),
 		armoredReduction: num(r.armoredReduction, DEFAULT_RULES.armoredReduction),
-		shieldCap: SHIELD_CAPS.includes(r.shieldCap) ? r.shieldCap : DEFAULT_RULES.shieldCap,
+		shieldCap: (SHIELD_CAPS as readonly string[]).includes(r.shieldCap as string) ? (r.shieldCap as ShieldCap) : DEFAULT_RULES.shieldCap,
 		// Pass 2 (assumptions 17 to 20)
 		willful: r.willful !== undefined ? !!r.willful : DEFAULT_RULES.willful,
 		willfulThreshold: num(r.willfulThreshold, DEFAULT_RULES.willfulThreshold),
@@ -368,7 +367,15 @@ function normalizeRules(rules) {
 	};
 }
 
-export function createMatch({ rosterA, rosterB, worlds, seed, rules }) {
+export interface CreateMatchArgs {
+	rosterA: XalianRecord[];
+	rosterB: XalianRecord[];
+	worlds: World[];
+	seed: string | number;
+	rules?: RulesInput | null;
+}
+
+export function createMatch({ rosterA, rosterB, worlds, seed, rules }: CreateMatchArgs): MatchState {
 	validateRosterInput(rosterA, 'rosterA');
 	validateRosterInput(rosterB, 'rosterB');
 	validateWorldsInput(worlds);
@@ -380,9 +387,9 @@ export function createMatch({ rosterA, rosterB, worlds, seed, rules }) {
 
 	const { value: starterRoll, nextState: afterStarter } = nextInt(rngState, 2);
 	rngState = afterStarter;
-	const starter = starterRoll === 0 ? 'A' : 'B';
+	const starter: Seat = starterRoll === 0 ? 'A' : 'B';
 
-	const playerState = (roster) => ({
+	const playerState = (roster: XalianRecord[]): PlayerState => ({
 		roster: roster.slice(), // records never sent; shrinks as records are sent
 		sentCount: 0,
 		holding: [], // record ids currently holding a won site (stay in that world's model)
@@ -428,32 +435,32 @@ export function createMatch({ rosterA, rosterB, worlds, seed, rules }) {
 // board helpers
 // ---------------------------------------------------------------------------
 
-function currentFrame(state) {
+function currentFrame(state: MatchState): Frame {
 	return state.frames[state.frameIndex];
 }
 
-function siteById(frame, siteId) {
+function siteById(frame: Frame, siteId: string): FrameSite | null {
 	return frame.sites.find((s) => s.id === siteId) || null;
 }
 
 // every creature-on-board entry across all sites for one player
-function boardEntriesFor(state, player) {
+function boardEntriesFor(state: MatchState, player: Seat): BoardEntry[] {
 	const frame = currentFrame(state);
-	const entries = [];
+	const entries: BoardEntry[] = [];
 	frame.sites.forEach((site) => {
 		state.board[site.id][player].forEach((entry) => entries.push(entry));
 	});
 	return entries;
 }
 
-function allBoardEntries(state) {
+function allBoardEntries(state: MatchState): BoardEntry[] {
 	return [...boardEntriesFor(state, 'A'), ...boardEntriesFor(state, 'B')];
 }
 
-function findEntry(state, recordId) {
+function findEntry(state: MatchState, recordId: string): { entry: BoardEntry; site: FrameSite; player: Seat } | null {
 	const frame = currentFrame(state);
 	for (const site of frame.sites) {
-		for (const player of ['A', 'B']) {
+		for (const player of ['A', 'B'] as Seat[]) {
 			const found = state.board[site.id][player].find((e) => e.recordId === recordId);
 			if (found) {
 				return { entry: found, site, player };
@@ -463,7 +470,7 @@ function findEntry(state, recordId) {
 	return null;
 }
 
-function recordById(state, player, recordId) {
+function recordById(state: MatchState, player: Seat, recordId: string): XalianRecord | null {
 	return state.players[player].roster.find((r) => r.id === recordId)
 		|| allBoardEntries(state).map((e) => e.record).find((r) => r.id === recordId)
 		|| null;
@@ -472,7 +479,7 @@ function recordById(state, player, recordId) {
 // pack-bonded/solitary counts at a site: kin = same species, ally = any other creature on
 // the same side at the same site. A creature still hidden is not company anyone can stand
 // with, so it is left out until it reveals at Resolve.
-function siteCompanions(state, site, player, excludingRecordId) {
+function siteCompanions(state: MatchState, site: FrameSite, player: Seat, excludingRecordId: string): BoardEntry[] {
 	return state.board[site.id][player].filter(
 		(e) => e.recordId !== excludingRecordId && !e.hidden && !e.downed,
 	);
@@ -480,7 +487,7 @@ function siteCompanions(state, site, player, excludingRecordId) {
 
 // the role a board entry actually plays under this match's rules (a role switched off by
 // rules.roles degrades, see creatureOnTable.roleOf)
-function roleOfEntry(state, entry) {
+function roleOfEntry(state: MatchState, entry: BoardEntry): Role {
 	return roleOf(entry.record, rulesOf(state));
 }
 
@@ -491,13 +498,13 @@ function roleOfEntry(state, entry) {
 	Bolsters never stack: one bolsterer and three bolsterers lift exactly one grade. A
 	bolsterer still hidden does not bolster, for the same reason it is not company.
 */
-function bolsterersAtSite(state, site, player) {
+function bolsterersAtSite(state: MatchState, site: FrameSite, player: Seat): BoardEntry[] {
 	return state.board[site.id][player].filter(
 		(e) => !e.hidden && !e.downed && roleOfEntry(state, e) === ROLE.BOLSTER,
 	);
 }
 
-function bolsterAtSite(state, site, player) {
+function bolsterAtSite(state: MatchState, site: FrameSite, player: Seat): boolean {
 	return bolsterersAtSite(state, site, player).length > 0;
 }
 
@@ -506,9 +513,9 @@ function bolsterAtSite(state, site, player) {
 	never stack (assumption 8) and charisma prices what one restores (assumption 17). Two
 	bolsterers lift exactly one grade, at the better charisma of the two.
 */
-function bolsterInForce(state, site, player) {
+function bolsterInForce(state: MatchState, site: FrameSite, player: Seat): { recordId: string; scale: number } | null {
 	const rules = rulesOf(state);
-	let best = null;
+	let best: { recordId: string; scale: number } | null = null;
 	bolsterersAtSite(state, site, player).forEach((e) => {
 		const scale = presenceScaleOf(e.record, rules);
 		if (!best || scale > best.scale) {
@@ -519,7 +526,7 @@ function bolsterInForce(state, site, player) {
 }
 
 // the hold options for one entry: pack/solitary company, bolster, and the match rules
-function holdOptionsFor(state, entry, site) {
+function holdOptionsFor(state: MatchState, entry: BoardEntry, site: FrameSite) {
 	const companions = siteCompanions(state, site, entry.player, entry.recordId);
 	const bolster = bolsterInForce(state, site, entry.player);
 	return {
@@ -541,8 +548,8 @@ function holdOptionsFor(state, entry, site) {
 	(an arrival, a departure, a down) without either forgetting damage already dealt or
 	double-counting it, which assumption 8 requires of bolster.
 */
-function recomputeHoldsAtSite(state, site) {
-	['A', 'B'].forEach((player) => {
+function recomputeHoldsAtSite(state: MatchState, site: FrameSite): void {
+	(['A', 'B'] as Seat[]).forEach((player) => {
 		state.board[site.id][player].forEach((entry) => {
 			if (entry.downed) {
 				return;
@@ -562,7 +569,7 @@ function recomputeHoldsAtSite(state, site) {
 
 // every site of the current frame, recomputed. Returns a NEW state with a cloned board,
 // so the deploy-phase action functions keep their "return a new state" contract.
-function withRecomputedHolds(state) {
+function withRecomputedHolds(state: MatchState): MatchState {
 	const next = { ...state, board: cloneBoard(state.board) };
 	currentFrame(next).sites.forEach((site) => recomputeHoldsAtSite(next, site));
 	return next;
@@ -577,7 +584,7 @@ function withRecomputedHolds(state) {
 // trailing-seat compensation - see judge()'s trailingBonus computation). state.trailingBonus
 // is per-frame and defaults to 0 for both sides on frame 1 and whenever the two sides are
 // level, so a match that never trails plays exactly as it did before this lever shipped.
-function sendableCapFor(state, player) {
+function sendableCapFor(state: MatchState, player: Seat): number {
 	const bonus = (state.trailingBonus && state.trailingBonus[player]) || 0;
 	return SENDABLE + bonus;
 }
@@ -590,7 +597,7 @@ function sendableCapFor(state, player) {
 	their sum: each is a price on the same one send, and stacking them could make a send
 	illegal that neither price alone forbids.
 */
-function sendCostFor(playerState, recordId, hidden = false, rules = DEFAULT_RULES) {
+function sendCostFor(playerState: PlayerState, recordId: string, hidden = false, rules: Rules = DEFAULT_RULES): number {
 	const returnedCost = (playerState.returned || []).includes(recordId) ? RETURNED_SEND_COST : 1;
 	const hiddenCost = hidden && typeof rules.hiddenSendCost === 'number' ? rules.hiddenSendCost : 1;
 	return Math.max(returnedCost, hiddenCost);
@@ -599,7 +606,7 @@ function sendCostFor(playerState, recordId, hidden = false, rules = DEFAULT_RULE
 // the records this handler could still send OPENLY. Hiding is always optional, so a
 // hidden send's own price (assumption 21) never makes a handler's turn illegal: a creature
 // too expensive to hide can still be sent in the open.
-function sendableRoster(playerState, cap) {
+function sendableRoster(playerState: PlayerState, cap: number): XalianRecord[] {
 	if (playerState.sentCount >= cap) {
 		return [];
 	}
@@ -607,7 +614,7 @@ function sendableRoster(playerState, cap) {
 	return playerState.roster.filter((r) => sendCostFor(playerState, r.id) <= remaining);
 }
 
-export function hasLegalSend(state, player) {
+export function hasLegalSend(state: MatchState, player: Seat): boolean {
 	if (state.phase != 'deploy') {
 		return false;
 	}
@@ -622,7 +629,7 @@ export function hasLegalSend(state, player) {
 // Deploy phase
 // ---------------------------------------------------------------------------
 
-function isPlayersDeployTurn(state, player) {
+function isPlayersDeployTurn(state: MatchState, player: Seat): boolean {
 	return state.phase === 'deploy' && state.turn === player;
 }
 
@@ -634,7 +641,7 @@ function isPlayersDeployTurn(state, player) {
 	sent so far by you, hidden only if the creature is stealthy. Any number of creatures may
 	stand at a site.
 */
-export function send(state, handler, recordId, siteId, hidden = false) {
+export function send(state: MatchState, handler: Seat, recordId: string, siteId: string, hidden = false): MatchState | null {
 	if (!isPlayersDeployTurn(state, handler)) {
 		return null;
 	}
@@ -669,7 +676,7 @@ export function send(state, handler, recordId, siteId, hidden = false) {
 	}
 
 	const sentIndex = p.sentCount;
-	const entry = {
+	const entry: BoardEntry = {
 		recordId,
 		record,
 		player: handler,
@@ -718,7 +725,7 @@ export function send(state, handler, recordId, siteId, hidden = false) {
 	RESOLVES and is JUDGED in this one call (see the phase note in the file header), so
 	the state that comes back is either the next round's deploy or 'matchEnd'.
 */
-export function pass(state, handler) {
+export function pass(state: MatchState, handler: Seat): MatchState | null {
 	if (!isPlayersDeployTurn(state, handler)) {
 		return null;
 	}
@@ -740,7 +747,7 @@ export function pass(state, handler) {
 
 // the deploy end: Resolve then Judge, in one step, exactly as commitOrders used to run
 // them before the Orders phase was removed (assumption 1).
-function runResolveAndJudge(state) {
+function runResolveAndJudge(state: MatchState): MatchState {
 	return judge(resolve({ ...state, phase: 'resolve', turn: null }));
 }
 
@@ -765,7 +772,7 @@ function runResolveAndJudge(state) {
 	passed, this handler has already sent this round, or the site is not one of this
 	frame's three.
 */
-export function stakeWorld(state, handler, siteId) {
+export function stakeWorld(state: MatchState, handler: Seat, siteId: string): MatchState | null {
 	if (state.phase !== 'deploy') {
 		return null;
 	}
@@ -805,7 +812,7 @@ export function stakeWorld(state, handler, siteId) {
 // the sites this handler may still stake this round: empty once it has staked, sent, or
 // passed, or where the rule is off. Own side only in spirit, though a stake is public the
 // moment it is made.
-export function stakeableSiteIdsFor(state, handler) {
+export function stakeableSiteIdsFor(state: MatchState, handler: Seat): string[] {
 	if (state.phase !== 'deploy' || !rulesOf(state).stake) {
 		return [];
 	}
@@ -836,7 +843,7 @@ export function stakeableSiteIdsFor(state, handler) {
 	the creature is not swift (or rules.swiftMove is off), it has already moved this round,
 	the target site is not in this frame, or it is the site the creature already stands on.
 */
-export function moveSwift(state, handler, recordId, siteId) {
+export function moveSwift(state: MatchState, handler: Seat, recordId: string, siteId: string): MatchState | null {
 	if (!isPlayersDeployTurn(state, handler)) {
 		return null;
 	}
@@ -882,7 +889,7 @@ export function moveSwift(state, handler, recordId, siteId) {
 	};
 
 	const nextSwiftMoved = { ...state.swiftMoved, [handler]: [...moved, recordId] };
-	const nextResolutionLog = [...state.resolutionLog, {
+	const nextResolutionLog: LogEvent[] = [...state.resolutionLog, {
 		type: 'swift-move',
 		recordId,
 		handler,
@@ -902,7 +909,7 @@ export function moveSwift(state, handler, recordId, siteId) {
 
 // the handler's own creatures that may still move this round (assumption 20). Own side
 // only: which of the opponent's creatures are swift is not something the board tells you.
-export function movableRecordIdsFor(state, handler) {
+export function movableRecordIdsFor(state: MatchState, handler: Seat): string[] {
 	if (state.phase !== 'deploy') {
 		return [];
 	}
@@ -916,26 +923,26 @@ export function movableRecordIdsFor(state, handler) {
 		.map((e) => e.recordId);
 }
 
-function advanceDeployTurn(state, actingPlayer) {
+function advanceDeployTurn(state: MatchState, actingPlayer: Seat): MatchState {
 	let next = otherPlayer(actingPlayer);
 	let s = { ...state, turn: next };
 	return autoPassIfNoLegalSend(s);
 }
 
-function advanceDeployTurnAfterPass(state, actingPlayer) {
+function advanceDeployTurnAfterPass(state: MatchState, actingPlayer: Seat): MatchState {
 	const next = otherPlayer(actingPlayer);
 	let s = { ...state, turn: next };
 	return autoPassIfNoLegalSend(s);
 }
 
 // "If a handler has no legal send they are auto-passed."
-function autoPassIfNoLegalSend(state) {
+function autoPassIfNoLegalSend(state: MatchState): MatchState {
 	let s = state;
 	for (let i = 0; i < 2; i++) {
 		if (s.phase !== 'deploy') {
 			return s;
 		}
-		const current = s.turn;
+		const current = s.turn as Seat;
 		const p = s.players[current];
 		if (p.passed) {
 			const other = otherPlayer(current);
@@ -964,14 +971,14 @@ function autoPassIfNoLegalSend(state) {
 // player never names a target; conduct picks it from the board as it stands at Resolve)
 // ---------------------------------------------------------------------------
 
-function isAlive(entry) {
+function isAlive(entry: BoardEntry): boolean {
 	return !entry.downed;
 }
 
 // Sealed worlds (assumption 3): a blow only ever reaches creatures at its own site. The
 // old contact/reach/projection distinction bought nothing once no act reached further
 // than the site, so it is gone from targeting entirely.
-function enemiesAtSite(entry, entriesSnapshot) {
+function enemiesAtSite(entry: BoardEntry, entriesSnapshot: BoardEntry[]): BoardEntry[] {
 	const opponent = otherPlayer(entry.player);
 	return entriesSnapshot.filter((e) => e.player === opponent && e.siteId === entry.siteId && isAlive(e));
 }
@@ -982,21 +989,29 @@ function enemiesAtSite(entry, entriesSnapshot) {
 	(assumption 5). Kept as a function, rather than read off the entry everywhere, so a
 	caller holding a state built before the round started still gets a number.
 */
-function currentHoldOf(state, e) {
+function currentHoldOf(state: MatchState, e: BoardEntry): number {
 	if (typeof e.currentHold === 'number') {
 		return e.currentHold;
 	}
 	const frame = currentFrame(state);
-	const site = siteById(frame, e.siteId);
+	const site = siteById(frame, e.siteId) as FrameSite;
 	const { value } = holdAtSite(e.record, site, site.world, holdOptionsFor(state, e, site));
 	return round1(value);
+}
+
+interface AttackCandidate extends BoardEntry {
+	_hold: number;
+	_magnitude: number;
+	_speed: number;
+	_hurt: boolean;
+	_eff?: number;
 }
 
 // "menacing creatures draw attacks aimed at their site's weakest ally to themselves."
 // Applied as a final redirect once a candidate target is chosen: if the chosen target is
 // the weakest-held creature at its site (by its own side's holds) and a menacing
 // companion stands at that same site, the blow redirects to the menacing companion.
-function applyMenacingRedirect(candidate, state) {
+function applyMenacingRedirect<T extends BoardEntry>(candidate: T | null, state: MatchState): T | null {
 	if (!candidate) {
 		return candidate;
 	}
@@ -1010,11 +1025,11 @@ function applyMenacingRedirect(candidate, state) {
 		return candidate;
 	}
 	const menacer = withHold.find((c) => c.entry.recordId !== candidate.recordId && c.prepared.menacing);
-	return menacer ? menacer.entry : candidate;
+	return (menacer ? menacer.entry : candidate) as T;
 }
 
-function pickAttackTarget(state, entry, conduct, entriesSnapshot) {
-	const candidates = enemiesAtSite(entry, entriesSnapshot).map((e) => ({
+function pickAttackTarget(state: MatchState, entry: BoardEntry, conduct: Conduct, entriesSnapshot: BoardEntry[]): AttackCandidate | null {
+	const candidates: AttackCandidate[] = enemiesAtSite(entry, entriesSnapshot).map((e) => ({
 		...e,
 		_hold: currentHoldOf(state, e),
 		_magnitude: prepareEntry(state, e).blowMagnitude,
@@ -1042,8 +1057,8 @@ function pickAttackTarget(state, entry, conduct, entriesSnapshot) {
 		const downable = withPower.filter((x) => x.power >= x.c._hold);
 		const pool = downable.length > 0 ? downable : withPower;
 		// among the enemies it can down, the biggest scalp; otherwise the most hold removed
-		const key = downable.length > 0 ? (x) => x.c._hold : (x) => Math.min(x.power, x.c._hold);
-		const keenPick = pool.reduce((best, x) => {
+		const key = downable.length > 0 ? (x: typeof withPower[number]) => x.c._hold : (x: typeof withPower[number]) => Math.min(x.power, x.c._hold);
+		const keenPick = pool.reduce((best: typeof withPower[number] | null, x) => {
 			if (!best) {
 				return x;
 			}
@@ -1055,56 +1070,56 @@ function pickAttackTarget(state, entry, conduct, entriesSnapshot) {
 		return applyMenacingRedirect(keenPick ? keenPick.c : null, state);
 	}
 	if (lane === 'dull') {
-		const dullPick = candidates.reduce((best, c) => (!best || c.sentIndex < best.sentIndex ? c : best), null);
+		const dullPick = candidates.reduce((best: AttackCandidate | null, c) => (!best || c.sentIndex < best.sentIndex ? c : best), null);
 		return applyMenacingRedirect(dullPick, state);
 	}
 
-	let chosen = null;
+	let chosen: AttackCandidate | null = null;
 	switch (conduct.attacking) {
 		case 'weakestEnemyInReach': {
 			// "hurt" is now simply "already hit and still standing" (assumption 6)
 			const hurt = candidates.filter((c) => c._hurt);
 			const pool = hurt.length > 0 ? hurt : candidates;
-			chosen = pool.reduce((best, c) => (!best || c._hold < best._hold ? c : best), null);
+			chosen = pool.reduce((best: AttackCandidate | null, c) => (!best || c._hold < best._hold ? c : best), null);
 			break;
 		}
 		case 'strongestEnemyInReach':
-			chosen = candidates.reduce((best, c) => (!best || c._hold > best._hold ? c : best), null);
+			chosen = candidates.reduce((best: AttackCandidate | null, c) => (!best || c._hold > best._hold ? c : best), null);
 			break;
 		case 'enemySentEarliest':
-			chosen = candidates.reduce((best, c) => (!best || c.sentIndex < best.sentIndex ? c : best), null);
+			chosen = candidates.reduce((best: AttackCandidate | null, c) => (!best || c.sentIndex < best.sentIndex ? c : best), null);
 			break;
 		case 'enemyThreateningWeakestAlly':
 			// sealed worlds (assumption 3) leave only this site's allies to protect, so the
 			// old "candidates at the weakest ally's site" filter collapses to "the hardest
 			// enemy standing here", which is the enemy threatening every ally at once
-			chosen = candidates.reduce((best, c) => (!best || c._hold > best._hold ? c : best), null);
+			chosen = candidates.reduce((best: AttackCandidate | null, c) => (!best || c._hold > best._hold ? c : best), null);
 			break;
 		case 'enemyWithLowestMagnitude':
-			chosen = candidates.reduce((best, c) => (!best || c._magnitude < best._magnitude ? c : best), null);
+			chosen = candidates.reduce((best: AttackCandidate | null, c) => (!best || c._magnitude < best._magnitude ? c : best), null);
 			break;
 		case 'slowerEnemyWeakestFirst': {
 			const slower = candidates.filter((c) => c._speed < prepared.speed);
 			const pool = slower.length > 0 ? slower : candidates;
-			chosen = pool.reduce((best, c) => (!best || c._hold < best._hold ? c : best), null);
+			chosen = pool.reduce((best: AttackCandidate | null, c) => (!best || c._hold < best._hold ? c : best), null);
 			break;
 		}
 		case 'enemyMostVulnerableToElement':
 			chosen = pickMostVulnerableToElement(entry, candidates);
 			break;
 		case 'enemyWithHighestMagnitude':
-			chosen = candidates.reduce((best, c) => (!best || c._magnitude > best._magnitude ? c : best), null);
+			chosen = candidates.reduce((best: AttackCandidate | null, c) => (!best || c._magnitude > best._magnitude ? c : best), null);
 			break;
 		case 'enemyRoutableElseWeakest': {
 			// subtraction makes "downable" exact: the blow this creature would land on
 			// that target is at least the target's whole remaining hold (assumption 5)
 			const downable = candidates.filter((c) => attackPowerAgainst(state, entry, prepared, c) >= c._hold);
 			const pool = downable.length > 0 ? downable : candidates;
-			chosen = pool.reduce((best, c) => (!best || c._hold < best._hold ? c : best), null);
+			chosen = pool.reduce((best: AttackCandidate | null, c) => (!best || c._hold < best._hold ? c : best), null);
 			break;
 		}
 		default:
-			chosen = candidates.reduce((best, c) => (!best || c.sentIndex < best.sentIndex ? c : best), null);
+			chosen = candidates.reduce((best: AttackCandidate | null, c) => (!best || c.sentIndex < best.sentIndex ? c : best), null);
 	}
 
 	// temperament: high boldness prefers the stronger of two close candidates, low
@@ -1112,7 +1127,7 @@ function pickAttackTarget(state, entry, conduct, entriesSnapshot) {
 	// candidates that tie the chosen hold.
 	const conductView = prepared.conduct;
 	if (chosen && candidates.length > 1) {
-		const tiedByHold = candidates.filter((c) => c._hold === chosen._hold);
+		const tiedByHold = candidates.filter((c) => c._hold === (chosen as AttackCandidate)._hold);
 		if (tiedByHold.length > 1) {
 			if (conductView.isHighBoldness) {
 				chosen = tiedByHold.reduce((best, c) => (c._hold > best._hold ? c : best));
@@ -1134,10 +1149,10 @@ function pickAttackTarget(state, entry, conduct, entriesSnapshot) {
 	return chosen;
 }
 
-function pickMostVulnerableToElement(entry, candidates) {
-	return candidates.reduce((best, c) => {
+function pickMostVulnerableToElement(entry: BoardEntry, candidates: AttackCandidate[]): AttackCandidate | null {
+	return candidates.reduce((best: AttackCandidate | null, c) => {
 		const eff = targetMatchupMultiplier(entry.record, c.record);
-		if (!best || eff > best._eff) {
+		if (!best || eff > (best._eff as number)) {
 			return { ...c, _eff: eff };
 		}
 		return best;
@@ -1148,9 +1163,9 @@ function pickMostVulnerableToElement(entry, candidates) {
 // prepared-entry view
 // ---------------------------------------------------------------------------
 
-function prepareEntry(state, entry) {
+function prepareEntry(state: MatchState, entry: BoardEntry): PreparedCreature {
 	const frame = currentFrame(state);
-	const site = siteById(frame, entry.siteId);
+	const site = siteById(frame, entry.siteId) as FrameSite;
 	return prepare(entry.record, site, site.world, entry.sentIndex, holdOptionsFor(state, entry, site));
 }
 
@@ -1158,12 +1173,12 @@ function prepareEntry(state, entry) {
 // Resolve phase
 // ---------------------------------------------------------------------------
 
-function logEvent(state, event) {
+function logEvent(state: MatchState, event: LogEvent): void {
 	state.resolutionLog.push(event);
 }
 
-function cloneBoard(board) {
-	const next = {};
+function cloneBoard(board: Board): Board {
+	const next: Board = {};
 	Object.keys(board).forEach((siteId) => {
 		next[siteId] = {
 			A: board[siteId].A.map((e) => ({ ...e })),
@@ -1173,9 +1188,17 @@ function cloneBoard(board) {
 	return next;
 }
 
-function findLiveEntry(state, recordId) {
+function findLiveEntry(state: MatchState, recordId: string): BoardEntry | null {
 	const found = findEntry(state, recordId);
 	return found ? found.entry : null;
+}
+
+interface OrderMeta {
+	entry: BoardEntry;
+	speed: number;
+	strained: boolean;
+	hidden: boolean;
+	wasHidden: boolean;
 }
 
 /*
@@ -1188,9 +1211,9 @@ function findLiveEntry(state, recordId) {
 	the rules.hiddenFirst lever puts it back for an ablation row only (the hidden group
 	lands first, in speed order among themselves).
 */
-function buildResolutionOrder(state, entries) {
+function buildResolutionOrder(state: MatchState, entries: BoardEntry[]): OrderMeta[] {
 	const rules = rulesOf(state);
-	const withMeta = entries.map((e) => {
+	const withMeta: OrderMeta[] = entries.map((e) => {
 		const prepared = prepareEntry(state, e);
 		return {
 			entry: e,
@@ -1202,7 +1225,7 @@ function buildResolutionOrder(state, entries) {
 	});
 
 	const useSpeed = rules.speed;
-	function bySpeedThenSent(x, y) {
+	function bySpeedThenSent(x: OrderMeta, y: OrderMeta): number {
 		if (!useSpeed) {
 			return x.entry.sentIndex - y.entry.sentIndex;
 		}
@@ -1232,7 +1255,7 @@ function buildResolutionOrder(state, entries) {
 	rules.sweepDiscount when the actor is a sweep, less rules.armoredReduction when the
 	target is armored.
 */
-function attackPowerAgainst(state, actorEntry, preparedActor, targetEntry) {
+function attackPowerAgainst(state: MatchState, actorEntry: BoardEntry, preparedActor: PreparedCreature, targetEntry: BoardEntry): number {
 	const rules = rulesOf(state);
 	const blow = preparedActor.blow;
 	if (!blow) {
@@ -1256,8 +1279,8 @@ function attackPowerAgainst(state, actorEntry, preparedActor, targetEntry) {
 	counts as company and as a bolster from the moment resolution starts. Which creatures
 	WERE hidden is kept on `wasHidden` for the ordering and the log.
 */
-function resolve(state) {
-	const s = {
+function resolve(state: MatchState): MatchState {
+	const s: MatchState = {
 		...state,
 		resolutionLog: [...state.resolutionLog],
 		board: cloneBoard(state.board),
@@ -1274,6 +1297,17 @@ function resolve(state) {
 	return s;
 }
 
+interface Declaration {
+	entry: BoardEntry;
+	role: Role;
+	hidden: boolean;
+	first: boolean;
+	target?: AttackCandidate | null;
+	victims?: Array<{ victim: BoardEntry; amount: number }>;
+	amount: number;
+	cancelledAgainst: Partial<Record<Seat, { recordId: string; fraction: number }>>;
+}
+
 /*
 	resolveWorld(state, site) - one world's resolution, in three steps.
 
@@ -1288,9 +1322,9 @@ function resolve(state) {
 	   under the rules.hiddenFirst lever), each scaled by how much hold its attacker has left (assumption 18). An attack
 	   whose attacker has already been downed does not land, which is what makes speed matter.
 */
-function resolveWorld(state, site) {
+function resolveWorld(state: MatchState, site: FrameSite): void {
 	const rules = rulesOf(state);
-	const present = ['A', 'B'].reduce((all, player) => all.concat(state.board[site.id][player].filter(isAlive)), []);
+	const present = (['A', 'B'] as Seat[]).reduce<BoardEntry[]>((all, player) => all.concat(state.board[site.id][player].filter(isAlive)), []);
 	if (present.length === 0) {
 		return;
 	}
@@ -1304,7 +1338,7 @@ function resolveWorld(state, site) {
 		the striker would have thrown in the open.
 	*/
 	const hiddenPower = typeof rules.hiddenPower === 'number' ? rules.hiddenPower : 1;
-	const declarations = [];
+	const declarations: Declaration[] = [];
 	order.forEach((item) => {
 		const entry = item.entry;
 		const prepared = prepareEntry(state, entry);
@@ -1366,19 +1400,19 @@ function resolveWorld(state, site) {
 		shield is reduced proportionally across that side's victims rather than being all
 		or nothing.
 	*/
-	function amountAgainstSide(declaration, side) {
+	function amountAgainstSide(declaration: Declaration, side: Seat): number {
 		if (declaration.cancelledAgainst[side]) {
 			return 0;
 		}
 		if (declaration.role === ROLE.STRIKE) {
 			return declaration.target && declaration.target.player === side ? declaration.amount : 0;
 		}
-		return declaration.victims
+		return (declaration.victims || [])
 			.filter((v) => v.victim.player === side)
 			.reduce((sum, v) => sum + v.amount, 0);
 	}
 
-	['A', 'B'].forEach((side) => {
+	(['A', 'B'] as Seat[]).forEach((side) => {
 		const shielders = order
 			.map((item) => item.entry)
 			.filter((e) => e.player === side && prepareEntry(state, e).role === ROLE.SHIELD);
@@ -1387,7 +1421,7 @@ function resolveWorld(state, site) {
 			if (!shielder || shielder.downed) {
 				return; // downed by an earlier shielder's own half-share
 			}
-			let best = null;
+			let best: Declaration | null = null;
 			let bestAmount = 0;
 			declarations.forEach((declaration) => {
 				const amount = amountAgainstSide(declaration, side);
@@ -1413,10 +1447,10 @@ function resolveWorld(state, site) {
 			// charisma scales the cancel and can never take it past the whole attack
 			fraction = Math.min(1, fraction * scale);
 			const cancelledAmount = round1(bestAmount * fraction);
-			best.cancelledAgainst[side] = { recordId: shielder.recordId, fraction };
+			(best as Declaration).cancelledAgainst[side] = { recordId: shielder.recordId, fraction };
 
 			let selfDamage = 0;
-			let selfOutcome = null;
+			let selfOutcome: string | null = null;
 			if (cap === 'half' && cancelledAmount > 0) {
 				selfDamage = round1(cancelledAmount / 2);
 				const result = applyBlow(state, site, shielder, selfDamage);
@@ -1427,7 +1461,7 @@ function resolveWorld(state, site) {
 				type: 'shield',
 				recordId: shielder.recordId,
 				site: site.id,
-				cancelled: best.entry.recordId,
+				cancelled: (best as Declaration).entry.recordId,
 				amount: cancelledAmount,
 				fraction: round1(fraction),
 				selfDamage,
@@ -1471,7 +1505,7 @@ function resolveWorld(state, site) {
 	deciding who is standing at the end. Declaration is unscaled, so a shield still reads
 	the attack the striker meant to throw.
 */
-function hurtFactorOf(state, entry) {
+function hurtFactorOf(state: MatchState, entry: BoardEntry): number {
 	if (!rulesOf(state).hurtAttacksLess) {
 		return 1;
 	}
@@ -1483,7 +1517,7 @@ function hurtFactorOf(state, entry) {
 	return Math.max(0, Math.min(1, current / full));
 }
 
-function landStrike(state, site, declaration, hurtFactor = 1) {
+function landStrike(state: MatchState, site: FrameSite, declaration: Declaration, hurtFactor = 1): void {
 	const base = {
 		type: 'attack',
 		recordId: declaration.entry.recordId,
@@ -1524,7 +1558,7 @@ function landStrike(state, site, declaration, hurtFactor = 1) {
 	});
 }
 
-function landSweep(state, site, declaration, hurtFactor = 1) {
+function landSweep(state: MatchState, site: FrameSite, declaration: Declaration, hurtFactor = 1): void {
 	const cancelledSides = Object.keys(declaration.cancelledAgainst);
 	logEvent(state, {
 		type: 'sweep',
@@ -1532,12 +1566,12 @@ function landSweep(state, site, declaration, hurtFactor = 1) {
 		role: ROLE.SWEEP,
 		site: site.id,
 		power: round1(declaration.amount * hurtFactor),
-		hitCount: declaration.victims.length,
+		hitCount: (declaration.victims || []).length,
 		hidden: declaration.hidden,
 		cancelled: cancelledSides.length > 0,
 		cancelledAgainst: cancelledSides,
 	});
-	declaration.victims.forEach(({ victim, amount }) => {
+	(declaration.victims || []).forEach(({ victim, amount }) => {
 		const base = {
 			type: 'attack',
 			recordId: declaration.entry.recordId,
@@ -1569,7 +1603,7 @@ function landSweep(state, site, declaration, hurtFactor = 1) {
 	out of the Proving. Anything else that took a hit and is still standing is hurt,
 	which is a word for the narration and nothing more (assumption 6).
 */
-function applyBlow(state, site, targetEntry, amount) {
+function applyBlow(state: MatchState, site: FrameSite, targetEntry: BoardEntry, amount: number): { remaining: number; outcome: string } {
 	targetEntry.damage = round1((targetEntry.damage || 0) + amount);
 	targetEntry.currentHold = round1(targetEntry.fullHold - targetEntry.damage);
 	if (targetEntry.currentHold <= 0) {
@@ -1585,7 +1619,7 @@ function applyBlow(state, site, targetEntry, amount) {
 // Marks an entry downed (removed from the site, out of the expedition for the rest of
 // the match, returned to its owner's roster only after the match ends - the design doc:
 // "Downed creatures are out of the expedition but are yours again after the match").
-function downEntry(state, entry) {
+function downEntry(state: MatchState, entry: BoardEntry): void {
 	entry.downed = true;
 	entry.currentHold = 0;
 	state.board[entry.siteId][entry.player] = state.board[entry.siteId][entry.player].filter(
@@ -1612,14 +1646,14 @@ function downEntry(state, entry) {
 	recovered, logged before the judge event so the table can tell that part of the Ruling
 	before the worlds are read.
 */
-function applyBolsterRecovery(state) {
+function applyBolsterRecovery(state: MatchState): void {
 	const rules = rulesOf(state);
 	const share = typeof rules.bolsterRecovery === 'number' ? rules.bolsterRecovery : 0;
 	if (share <= 0) {
 		return;
 	}
 	currentFrame(state).sites.forEach((site) => {
-		['A', 'B'].forEach((player) => {
+		(['A', 'B'] as Seat[]).forEach((player) => {
 			const bolster = bolsterInForce(state, site, player);
 			if (!bolster) {
 				return;
@@ -1628,7 +1662,7 @@ function applyBolsterRecovery(state) {
 				if (entry.downed || !(entry.damage > 0)) {
 					return;
 				}
-				const wanted = round1(entry.damage * share * bolster.scale);
+				const wanted = round1(entry.damage * share * (bolster as { scale: number }).scale);
 				const amount = round1(Math.min(wanted, entry.damage));
 				if (amount <= 0) {
 					return;
@@ -1640,7 +1674,7 @@ function applyBolsterRecovery(state) {
 					type: 'recover',
 					recordId: entry.recordId,
 					site: site.id,
-					bolster: bolster.recordId,
+					bolster: (bolster as { recordId: string }).recordId,
 					amount,
 					remaining: entry.currentHold,
 				});
@@ -1649,9 +1683,18 @@ function applyBolsterRecovery(state) {
 	});
 }
 
-function judge(state) {
+interface SiteResult {
+	holdA: number;
+	holdB: number;
+	winner: Seat | null;
+	entries: Record<Seat, PublicBoardEntry[]>;
+	staked: Seat[];
+	countedValue: number;
+}
+
+function judge(state: MatchState): MatchState {
 	const frame = currentFrame(state);
-	let s = { ...state, players: { ...state.players }, board: cloneBoard(state.board), resolutionLog: [...state.resolutionLog] };
+	let s: MatchState = { ...state, players: { ...state.players }, board: cloneBoard(state.board), resolutionLog: [...state.resolutionLog] };
 
 	// assumption 19: allies recover under a bolster before the Court reads the world
 	applyBolsterRecovery(s);
@@ -1668,8 +1711,8 @@ function judge(state) {
 		world always has.
 	*/
 	const stakes = frame.stakes || {};
-	const stakedBy = (siteId) => ['A', 'B'].filter((who) => stakes[who] === siteId);
-	const countedValueOf = (siteId) => {
+	const stakedBy = (siteId: string): Seat[] => (['A', 'B'] as Seat[]).filter((who) => stakes[who] === siteId);
+	const countedValueOf = (siteId: string): number => {
 		const by = stakedBy(siteId);
 		if (by.length >= 2) {
 			return STAKE_BOTH_VALUE;
@@ -1677,21 +1720,28 @@ function judge(state) {
 		return by.length === 1 ? STAKE_SITE_VALUE : 1;
 	};
 
-	const siteResults = {};
+	const siteResults: Record<string, SiteResult> = {};
 	frame.sites.forEach((site) => {
-		const entryView = (e) => ({
+		const entryView = (e: BoardEntry) => ({
 			recordId: e.recordId,
+			record: e.record,
 			hold: currentHoldOf(s, e),
 			fullHold: e.fullHold,
 			damage: e.damage || 0,
 			role: e.role,
 			hurt: !!e.hurt,
-		});
+			sentIndex: e.sentIndex,
+			hidden: e.hidden,
+			currentHold: e.currentHold,
+			downed: e.downed,
+			speed: speedOf(e.record),
+			bolstered: e.bolstered,
+		}) as unknown as PublicBoardEntry & { hold: number };
 		const entriesA = s.board[site.id].A.map(entryView);
 		const entriesB = s.board[site.id].B.map(entryView);
 		const holdA = entriesA.reduce((sum, e) => sum + e.hold, 0);
 		const holdB = entriesB.reduce((sum, e) => sum + e.hold, 0);
-		let winner = null;
+		let winner: Seat | null = null;
 		if (holdA > holdB) {
 			winner = 'A';
 		} else if (holdB > holdA) {
@@ -1705,7 +1755,7 @@ function judge(state) {
 		};
 	});
 
-	['A', 'B'].forEach((player) => {
+	(['A', 'B'] as Seat[]).forEach((player) => {
 		const opponent = otherPlayer(player);
 		frame.sites.forEach((site) => {
 			const result = siteResults[site.id];
@@ -1756,7 +1806,7 @@ function judge(state) {
 	const nextStarter = otherPlayer(s.starter);
 	// the trailingBonus lever is a number, not a switch: rules.trailingBonus replaces the
 	// ROSTER_TRAILING_BONUS constant, so 0 removes the compensation entirely.
-	const trailingBonus = { A: 0, B: 0 };
+	const trailingBonus: Record<Seat, number> = { A: 0, B: 0 };
 	if (sitesWonA !== sitesWonB) {
 		trailingBonus[sitesWonA < sitesWonB ? 'A' : 'B'] = rulesOf(s).trailingBonus;
 	}
@@ -1786,7 +1836,7 @@ function judge(state) {
 	creatures still unsent wins; then the one who passed first in the final round; then
 	the non-starter of the final round."
 */
-function decideMatchWinner(state) {
+function decideMatchWinner(state: MatchState): Seat {
 	const sitesA = state.players.A.sitesWon;
 	const sitesB = state.players.B.sitesWon;
 	if (sitesA !== sitesB) {
@@ -1814,13 +1864,13 @@ function decideMatchWinner(state) {
 	only) and hidden creatures' identity and site
 	(shows that a hidden send happened this round and how many). Never exposes the seed.
 */
-export function getPublicState(state, handler) {
+export function getPublicState(state: MatchState, handler: Seat): PublicState {
 	const opponent = otherPlayer(handler);
 	const frame = currentFrame(state);
 
-	function sanitizeBoardSite(siteId) {
-		const view = { A: [], B: [] };
-		['A', 'B'].forEach((player) => {
+	function sanitizeBoardSite(siteId: string): Record<Seat, PublicBoardEntry[]> {
+		const view: Record<Seat, PublicBoardEntry[]> = { A: [], B: [] };
+		(['A', 'B'] as Seat[]).forEach((player) => {
 			state.board[siteId][player].forEach((e) => {
 				if (e.hidden && player === opponent) {
 					return; // identity and site both hidden
@@ -1850,12 +1900,12 @@ export function getPublicState(state, handler) {
 		return view;
 	}
 
-	const board = {};
+	const board: Record<string, Record<Seat, PublicBoardEntry[]>> = {};
 	frame.sites.forEach((site) => {
 		board[site.id] = sanitizeBoardSite(site.id);
 	});
 
-	const hiddenCountThisRound = (player) => {
+	const hiddenCountThisRound = (player: Seat): number => {
 		let count = 0;
 		Object.values(state.board).forEach((siteBoard) => {
 			count += siteBoard[player].filter((e) => e.hidden).length;
@@ -1863,9 +1913,9 @@ export function getPublicState(state, handler) {
 		return count;
 	};
 
-	function viewOf(who, isSelf) {
+	function viewOf(who: Seat, isSelf: boolean): PublicPlayerView {
 		const p = state.players[who];
-		const base = {
+		const base: PublicPlayerView = {
 			rosterCount: p.roster.length,
 			sentCount: p.sentCount,
 			holding: p.holding,
@@ -1928,10 +1978,10 @@ export function getPublicState(state, handler) {
 			arithmetic itself. Both are public: a stake is a declaration, never a hidden one.
 		*/
 		stakes: (() => {
-			const view = {};
+			const view: Record<string, { by: Seat[]; countedValue: number }> = {};
 			const stakes = (frame && frame.stakes) || {};
 			frame.sites.forEach((site) => {
-				const by = ['A', 'B'].filter((who) => stakes[who] === site.id);
+				const by = (['A', 'B'] as Seat[]).filter((who) => stakes[who] === site.id);
 				view[site.id] = {
 					by,
 					countedValue: by.length >= 2 ? STAKE_BOTH_VALUE : (by.length === 1 ? STAKE_SITE_VALUE : 1),
@@ -1952,7 +2002,7 @@ export function getPublicState(state, handler) {
 		players: {
 			[handler]: viewOf(handler, true),
 			[opponent]: viewOf(opponent, false),
-		},
+		} as Record<Seat, PublicPlayerView>,
 	};
 }
 

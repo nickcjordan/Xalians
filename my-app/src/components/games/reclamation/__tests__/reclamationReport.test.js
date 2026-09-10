@@ -2,9 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { act } from 'react-dom/test-utils';
 import { describe, it, expect, afterEach } from 'vitest';
-import { createMatch, send, pass, moveSwift, getPublicState, createRngState, nextRandom } from '../../../../gameplay/expedition/expeditionRules';
-import { chooseSend } from '../../../../gameplay/expedition/expeditionBot';
-import { ROSTER_SIZE } from '../../../../gameplay/expedition/expeditionInterpretation';
+import { createMatch, send, pass, moveSwift, getPublicState, createRngState, nextRandom } from '@xalians/rules/expedition/expeditionRules';
+import { chooseSend } from '@xalians/rules/expedition/expeditionBot';
+import { ROSTER_SIZE } from '@xalians/rules/expedition/expeditionInterpretation';
 import { buildMatchReport, ReclamationReport } from '../reclamationReport';
 
 /*
