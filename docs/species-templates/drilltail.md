@@ -18,23 +18,14 @@ The lore block holds three prose fields. `description` is Nick's teaser, carried
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits (105 words)
+### fields (4 of 5)
 
-It holds the haphazard wells and cavern networks that fortune-seekers drilled beneath the dunes, workings the Xalians who took them over still pump. It reads what moves overhead through the ground rather than by eye, and it wears a target down over repeated passes rather than settling it in one. Endessa's twin suns make the open surface lethal to cross, so it moves at the low hours or swims through loose particulate instead of walking on it. It signals by drumming through rock and sand, the only channel a shaft carries. The dunes cost heat and water, and its body gives up little of either.
+- **origin**: Used by wildcatters who could not afford larger drilling Xalians like the Frackworm.
+- **habitat**: The wells and cavern networks beneath Endessa's dunes.
+- **feeding**: It hunts by darting in and out of the surface and ambushing prey with its scissor-like claws.
+- **behavior**: It tunnels quickly with the small drill on its tail, and it feels what moves overhead through the ground.
 
-| Claim | Source |
-|---|---|
-| haphazard wells and cavern networks drilled beneath the dunes by fortune-seekers | Endessa history paragraph 10, on rogue fortune-seekers drilling haphazard wells in large cavern networks deep beneath the surface; Generator report terrain, subsurface excavation tunnel networks |
-| the Xalians who took the workings over still pump them | Endessa history paragraph 16, the Xalians who had made their living in the tunnels continued to drill, pumping Nightcap out barrel after barrel |
-| reads what moves overhead through the ground rather than by eye | record `senses.special: tremorsense` against `senses.sight` 35 to 55; Generator report fauna, vibration-hunting forms |
-| wears a target down over repeated passes | Endessa Generator report fauna, predation strategy: attrition; record `diet: carnivore` |
-| the twin suns make the open surface lethal to cross | Endessa history paragraph 10 on the twin suns blazing through a cloudless sky; Generator report terrain notes, surface insolation lethal without adaptation, dual-star |
-| moves at the low hours | Generator report mobility, sprint viable in low-insolation hours |
-| swims through loose particulate instead of walking on it | Generator report mobility, burrow optimal including sustained particulate-swimming; output priorities, particulate locomotion |
-| signals by drumming through rock and sand | record `communication: ["vibration"]` |
-| the dunes cost heat and water, and its body gives up little of either | Generator report hazards, thermal load and desiccation; output priorities, water retention and thermal shielding |
-
-No pack or solitary sentence is written: `pack-bonded` was cut on 2026-09-07 for want of a source and `solitary` was never listed.
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ## Sources
 

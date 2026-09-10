@@ -16,8 +16,11 @@
       "Long trailing hollow tentacles, open at the ends",
       "Bare untextured surface"
     ],
-    "habits": "It travels in herd distribution rather than alone, and its amorphous form lets the hurricane-force winds of the lower skies sweep it up and set it down again unharmed. The tentacles do the work. They draw the slush of the deeper atmosphere up hollow tubes and keep the Benthane that comes up with the food, and the same tubes reverse to pull a thing in against its will, to put it off at pressure, or to blast it cold with the coolant. Being almost entirely hydrogen, it can spray flammable gas as well. For what that filtering leaves behind it is shepherded, herded and milked. What kills it is the sky it lives in, sulfuric cloud contact and island collision.",
-    "biomeNiche": "the cloud layers of Saiphus's lower atmosphere, where Benthane plumes rise"
+    "origin": "Domesticated for the Benthane industry, which milks the Benthane its tentacles vacuum up along with its food.",
+    "habitat": "The cloud layers of Saiphus's lower atmosphere.",
+    "feeding": "It grazes on the biochemicals and atmospheric plankton in the gas-liquid slush of the deeper atmosphere, drawing them up through its long trailing tentacles.",
+    "behavior": "When threatened it pulls opponents in with suction, jets air at high pressure, blasts freezing Benthane from its tentacles, or sprays flammable hydrogen.",
+    "company": "It travels in free-floating herds."
   },
   "physiology": {
     "corporeality": "corporeal",

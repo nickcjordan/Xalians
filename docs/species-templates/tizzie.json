@@ -17,8 +17,10 @@
       "Long-fingered gripping hands",
       "Long thin tail ending in a flat spiral disc, the lure"
     ],
-    "habits": "It lives up in the bioluminescent fungal forests of Telypso, moving along the branches and taking its food from what those forests give. It is quick in the branches and hard to hold there. The Generator raised it to counterbalance the psychic energies of the deranged Vallerii the Imperial Houses marooned on the world, and the work was meant as treatment rather than injury, the subject a patient to be settled and folded back into the mind of the planet. Since the Nemesis Plague reached Telypso's sanctuaries and turned the creatures of the world against one another, Tizzies turn on each other, and they have only the one way of doing it.",
-    "biomeNiche": "the bioluminescent fungal forests and dense flora of Telypso"
+    "origin": "Raised by the Telypso Generator to counterbalance the psychic energies of the deranged Vallerii marooned on the world, as treatment rather than injury.",
+    "habitat": "The branches of Telypso's bioluminescent fungal forests.",
+    "feeding": "It takes its food from what the forests give.",
+    "behavior": "It uses its tail to draw attention to its big hypnotic eyes, and once eye contact is made it attacks from inside your mind. Since the Nemesis Plague turned Telypso's creatures against one another, Tizzies turn on each other the same way."
   },
   "physiology": {
     "corporeality": "corporeal",

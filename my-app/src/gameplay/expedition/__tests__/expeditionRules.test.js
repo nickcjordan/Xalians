@@ -1,5 +1,6 @@
 import {
-	createMatch, send, pass, getPublicState, moveSwift, DEFAULT_RULES,
+	createMatch, send, pass, getPublicState, moveSwift, stakeWorld, stakeableSiteIdsFor,
+	DEFAULT_RULES,
 	ExpeditionRuleError, hasLegalSend, prepareEntry, currentFrame, findEntry, currentHoldOf,
 } from '../expeditionRules.js';
 import {
@@ -7,6 +8,8 @@ import {
 	ROSTER_TRAILING_BONUS, ROLE, HOLD_FLOOR, HOLD_CEILING, MAGNITUDE_SCALE, SWEEP_DISCOUNT,
 	BOLSTER_FLOOR, ARMORED_REDUCTION, SHIELD_CAP, WILLFUL_THRESHOLD, KEEN_INSTINCT,
 	DULL_INSTINCT, SWIFT_SPEED, BOLSTER_RECOVERY,
+	HIDDEN_SEND_COST, HIDDEN_FIRST_NEEDS_COMPANY, HIDDEN_POWER, STAKE_ENABLED,
+	STAKE_SITE_VALUE, STAKE_BOTH_VALUE, DRAFT_POOL_SIZE, DRAFT_DISTINCT_SPECIES,
 } from '../expeditionInterpretation.js';
 
 /*
@@ -1231,6 +1234,13 @@ describe('rules ablation switches', () => {
 			swiftSpeed: SWIFT_SPEED,
 			hurtAttacksLess: true,
 			bolsterRecovery: BOLSTER_RECOVERY,
+			// Pass 3's levers (assumptions 21 to 23)
+			hiddenSendCost: HIDDEN_SEND_COST,
+			hiddenFirstNeedsCompany: HIDDEN_FIRST_NEEDS_COMPANY,
+			hiddenPower: HIDDEN_POWER,
+			stake: STAKE_ENABLED,
+			draftPoolSize: DRAFT_POOL_SIZE,
+			draftDistinctSpecies: DRAFT_DISTINCT_SPECIES,
 		});
 		// assumption 20 cut the catch-up send, so the shipped default is zero
 		expect(state.rules.trailingBonus).toBe(0);
@@ -1603,5 +1613,302 @@ describe('Pass 2: the attribute rules', () => {
 		expect(row.downed).toBe(false);
 		expect(typeof row.speed).toBe('number');
 		expect(row.staggered).toBeUndefined();
+	});
+});
+
+
+/*
+	PASS 3 (docs/design/reclamation-base-redesign.md assumptions 21 to 23): the price of
+	hiding, the stake, and the draft's shape. Each lever is a rules key, so every test below
+	names the setting it is measuring rather than relying on the shipped default.
+*/
+
+function stealthyRosterOf(prefix, overrides = {}) {
+	return makeRoster(prefix, () => ({ traits: { guaranteed: ['stealthy'], rolled: [] }, ...overrides }));
+}
+
+describe('pass 3: the price of hiding (assumption 21)', () => {
+	test('hiddenSendCost charges a hidden send against the round\'s sendable cap', () => {
+		const rosterA = stealthyRosterOf('S');
+		const state = createMatch({
+			rosterA, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'hidden-cost-seed',
+			rules: { hiddenSendCost: 2 },
+		});
+		const siteId = currentFrame(state).sites[0].id;
+		const forced = { ...state, turn: 'A' };
+
+		const openSend = send(forced, 'A', rosterA[0].id, siteId, false);
+		expect(openSend.players.A.sentCount).toBe(1);
+
+		const hiddenSend = send(forced, 'A', rosterA[0].id, siteId, true);
+		expect(hiddenSend.players.A.sentCount).toBe(2);
+	});
+
+	test('a hidden send the remaining cap cannot afford is illegal, but the open send is not', () => {
+		const rosterA = stealthyRosterOf('S');
+		let state = createMatch({
+			rosterA, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'hidden-cap-seed',
+			rules: { hiddenSendCost: 2 },
+		});
+		const siteId = currentFrame(state).sites[0].id;
+		// one unit of the cap left
+		state = { ...state, turn: 'A', players: { ...state.players, A: { ...state.players.A, sentCount: SENDABLE - 1 } } };
+		expect(send(state, 'A', rosterA[0].id, siteId, true)).toBeNull();
+		expect(send(state, 'A', rosterA[0].id, siteId, false)).not.toBeNull();
+	});
+
+	test('a returned creature sent hidden pays the larger of the two prices, not their sum', () => {
+		const rosterA = stealthyRosterOf('S');
+		let state = createMatch({
+			rosterA, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'hidden-loki-seed',
+			rules: { hiddenSendCost: 2 },
+		});
+		const siteId = currentFrame(state).sites[0].id;
+		state = {
+			...state,
+			turn: 'A',
+			players: { ...state.players, A: { ...state.players.A, returned: [rosterA[0].id] } },
+		};
+		const sent = send(state, 'A', rosterA[0].id, siteId, true);
+		expect(sent.players.A.sentCount).toBe(2);
+	});
+
+	test('hiddenFirstNeedsCompany: a lone hidden attacker loses hidden-first, one with company keeps it', () => {
+		// a slow hidden striker against a fast open striker: with hidden-first the hidden
+		// creature's attack is the first event of the world, without it the fast one's is
+		const slowHidden = makeRecord('slow', {
+			traits: { guaranteed: ['stealthy'], rolled: [] },
+			attributes: { strength: 80, vitality: 60, endurance: 60, agility: 5, reflex: 5, intelligence: 50, willpower: 20, instinct: 50, charisma: 50, resilience: 60 },
+		});
+		const fastOpen = makeRecord('fast', {
+			attributes: { strength: 80, vitality: 60, endurance: 60, agility: 95, reflex: 95, intelligence: 50, willpower: 20, instinct: 50, charisma: 50, resilience: 60 },
+		});
+
+		function firstAttackerAt(rules, withCompany) {
+			const rosterA = makeRoster('A').map((r, i) => {
+				if (i === 0) { return { ...slowHidden, id: 'A_0' }; }
+				if (i === 1) { return { ...fastOpen, id: 'A_1' }; }
+				return r;
+			});
+			const rosterB = makeRoster('B').map((r, i) => (i === 0 ? { ...fastOpen, id: 'B_0' } : r));
+			let state = createMatch({ rosterA, rosterB, worlds: makeWorlds(), seed: 'company-seed', rules });
+			const siteId = currentFrame(state).sites[0].id;
+			state = { ...state, turn: 'A' };
+			state = send(state, 'A', 'A_0', siteId, true);
+			if (withCompany) {
+				state = { ...state, turn: 'A' };
+				state = send(state, 'A', 'A_1', siteId, false);
+			}
+			state = { ...state, turn: 'B' };
+			state = send(state, 'B', 'B_0', siteId, false);
+			state = pass(state, 'A');
+			state = pass(state, 'B');
+			const attacks = state.resolutionLog.filter((e) => e.type === 'attack' && e.site === siteId);
+			return attacks.length > 0 ? attacks[0].recordId : null;
+		}
+
+		// company is irrelevant while the rule is off: the hidden creature always goes first
+		expect(firstAttackerAt({ hiddenFirstNeedsCompany: false }, false)).toBe('A_0');
+		// with the rule on, a lone hidden creature waits its turn behind the fast opener
+		expect(firstAttackerAt({ hiddenFirstNeedsCompany: true }, false)).toBe('B_0');
+		// with a companion standing at the world, hidden-first applies again
+		expect(firstAttackerAt({ hiddenFirstNeedsCompany: true }, true)).toBe('A_0');
+	});
+
+	test('hiddenPower scales an attack thrown from hiding and leaves an open attack alone', () => {
+		function powerOfFirstAttack(hiddenPower, hidden) {
+			const attacker = makeRecord('att', {
+				traits: { guaranteed: ['stealthy'], rolled: [] },
+				attributes: { strength: 90, vitality: 60, endurance: 60, agility: 90, reflex: 90, intelligence: 50, willpower: 20, instinct: 50, charisma: 50, resilience: 60 },
+			});
+			const rosterA = makeRoster('A').map((r, i) => (i === 0 ? { ...attacker, id: 'A_0' } : r));
+			let state = createMatch({
+				rosterA, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'hidden-power-seed',
+				rules: { hiddenPower },
+			});
+			const siteId = currentFrame(state).sites[0].id;
+			state = { ...state, turn: 'A' };
+			state = send(state, 'A', 'A_0', siteId, hidden);
+			state = { ...state, turn: 'B' };
+			state = send(state, 'B', state.players.B.roster[0].id, siteId, false);
+			state = pass(state, 'A');
+			state = pass(state, 'B');
+			const attack = state.resolutionLog.find((e) => e.type === 'attack' && e.recordId === 'A_0');
+			return attack ? attack.power : 0;
+		}
+
+		const openFull = powerOfFirstAttack(1, false);
+		const hiddenFull = powerOfFirstAttack(1, true);
+		const hiddenHalf = powerOfFirstAttack(0.5, true);
+		const openHalf = powerOfFirstAttack(0.5, false);
+		expect(openFull).toBeGreaterThan(0);
+		expect(hiddenFull).toBeCloseTo(openFull, 5);
+		expect(hiddenHalf).toBeCloseTo(hiddenFull / 2, 1);
+		// an open attack is untouched by the hidden price
+		expect(openHalf).toBeCloseTo(openFull, 5);
+	});
+});
+
+describe('pass 3: the stake (assumption 22)', () => {
+	function stakeMatch(seed = 'stake-seed', rules = {}) {
+		return createMatch({ rosterA: makeRoster('A'), rosterB: makeRoster('B'), worlds: makeWorlds(), seed, rules });
+	}
+
+	test('stakes one of the round\'s worlds, without spending the turn', () => {
+		const state = stakeMatch();
+		const siteId = currentFrame(state).sites[1].id;
+		const staked = stakeWorld(state, 'A', siteId);
+		expect(staked).not.toBeNull();
+		expect(currentFrame(staked).stakes.A).toBe(siteId);
+		expect(staked.players.A.stakeUsed).toBe(true);
+		// the turn is untouched: staking is a declaration, not an action of the alternation
+		expect(staked.turn).toBe(state.turn);
+		expect(staked.resolutionLog.some((e) => e.type === 'stake' && e.handler === 'A' && e.site === siteId && e.round === 0)).toBe(true);
+	});
+
+	test('is legal on either handler\'s turn and illegal for a site outside the frame', () => {
+		const state = stakeMatch('stake-turn-seed');
+		const other = state.turn === 'A' ? 'B' : 'A';
+		expect(stakeWorld(state, other, currentFrame(state).sites[0].id)).not.toBeNull();
+		expect(stakeWorld(state, 'A', 'no-such-site')).toBeNull();
+	});
+
+	test('is once per Proving and gone after the handler\'s first send of the round', () => {
+		let state = stakeMatch('stake-once-seed');
+		const sites = currentFrame(state).sites;
+		state = stakeWorld(state, 'A', sites[0].id);
+		expect(stakeWorld(state, 'A', sites[1].id)).toBeNull();
+
+		let other = stakeMatch('stake-sent-seed');
+		const otherSites = currentFrame(other).sites;
+		other = { ...other, turn: 'A' };
+		expect(stakeableSiteIdsFor(other, 'A').length).toBe(WORLDS_PER_FRAME);
+		other = send(other, 'A', other.players.A.roster[0].id, otherSites[0].id);
+		expect(stakeableSiteIdsFor(other, 'A')).toEqual([]);
+		expect(stakeWorld(other, 'A', otherSites[1].id)).toBeNull();
+		// the opponent has not sent yet, so its own stake is still open
+		expect(stakeableSiteIdsFor(other, 'B').length).toBe(WORLDS_PER_FRAME);
+	});
+
+	test('rules.stake false makes the stake illegal and leaves every world counting one', () => {
+		const state = stakeMatch('stake-off-seed', { stake: false });
+		expect(stakeWorld(state, 'A', currentFrame(state).sites[0].id)).toBeNull();
+		expect(stakeableSiteIdsFor(state, 'A')).toEqual([]);
+	});
+
+	/*
+		A world the winner holds outright, staked by nobody, by one handler, or by both. The
+		roster is built so side A always holds more at the world it is sent to, so the only
+		thing moving between the three cases is what the Ruling counts it as.
+	*/
+	function judgedStake(stakers, seed) {
+		const strongA = () => makeRecord('sA', { attributes: { strength: 50, vitality: 90, endurance: 90, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 90 } });
+		const weakB = () => makeRecord('wB', { attributes: { strength: 50, vitality: 20, endurance: 20, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 20 } });
+		let state = createMatch({
+			rosterA: makeRoster('A', () => strongA()),
+			rosterB: makeRoster('B', () => weakB()),
+			worlds: makeWorlds(),
+			seed,
+		});
+		const siteId = currentFrame(state).sites[0].id;
+		stakers.forEach((who) => {
+			state = stakeWorld(state, who, siteId);
+		});
+		state = { ...state, turn: 'A' };
+		state = send(state, 'A', state.players.A.roster[0].id, siteId);
+		state = { ...state, turn: 'B' };
+		state = send(state, 'B', state.players.B.roster[0].id, siteId);
+		state = pass(state, 'A');
+		state = pass(state, 'B');
+		const judgeEvent = state.resolutionLog.find((e) => e.type === 'judge');
+		return { state, siteId, judgeEvent, result: judgeEvent.siteResults[siteId] };
+	}
+
+	test('an unstaked world counts one, a staked world two, a world both staked three', () => {
+		const none = judgedStake([], 'stake-count-none');
+		expect(none.result.winner).toBe('A');
+		expect(none.result.countedValue).toBe(1);
+		expect(none.result.staked).toEqual([]);
+		expect(none.state.players.A.sitesWon).toBe(1);
+
+		const one = judgedStake(['A'], 'stake-count-one');
+		expect(one.result.countedValue).toBe(STAKE_SITE_VALUE);
+		expect(one.result.staked).toEqual(['A']);
+		expect(one.state.players.A.sitesWon).toBe(STAKE_SITE_VALUE);
+
+		const both = judgedStake(['A', 'B'], 'stake-count-both');
+		expect(both.result.countedValue).toBe(STAKE_BOTH_VALUE);
+		expect(both.result.staked).toEqual(['A', 'B']);
+		expect(both.state.players.A.sitesWon).toBe(STAKE_BOTH_VALUE);
+		// the judge event carries the stakes themselves, so the report can read them
+		expect(both.judgeEvent.stakes).toEqual({ A: both.siteId, B: both.siteId });
+	});
+
+	test('a staked world that ties counts nothing for either side', () => {
+		const equal = () => makeRecord('eq', {
+			archetype: { key: 'survivor', favors: [] },
+			abilities: [{ name: 'Mend', signature: false, instrument: 'voice', action: 'mend', medium: 'light', intensity: 40 }],
+		});
+		let state = createMatch({
+			rosterA: makeRoster('A', () => equal()),
+			rosterB: makeRoster('B', () => equal()),
+			worlds: makeWorlds(),
+			seed: 'stake-tie-seed',
+		});
+		const siteId = currentFrame(state).sites[0].id;
+		state = stakeWorld(state, 'A', siteId);
+		state = { ...state, turn: 'A' };
+		state = send(state, 'A', state.players.A.roster[0].id, siteId);
+		state = { ...state, turn: 'B' };
+		state = send(state, 'B', state.players.B.roster[0].id, siteId);
+		state = pass(state, 'A');
+		state = pass(state, 'B');
+		const judgeEvent = state.resolutionLog.find((e) => e.type === 'judge');
+		expect(judgeEvent.siteResults[siteId].winner).toBeNull();
+		expect(judgeEvent.siteResults[siteId].countedValue).toBe(STAKE_SITE_VALUE);
+		expect(state.players.A.sitesWon).toBe(0);
+		expect(state.players.B.sitesWon).toBe(0);
+	});
+
+	test('a stake can clinch the match at SITES_TO_CLINCH, since the clinch is unchanged', () => {
+		const strongA = () => makeRecord('sA', { attributes: { strength: 50, vitality: 90, endurance: 90, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 90 } });
+		const weakB = () => makeRecord('wB', { attributes: { strength: 50, vitality: 20, endurance: 20, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 20 } });
+		let state = createMatch({
+			rosterA: makeRoster('A', () => strongA()),
+			rosterB: makeRoster('B', () => weakB()),
+			worlds: makeWorlds(),
+			seed: 'stake-clinch-seed',
+		});
+		// three worlds already held: one STAKED world is worth the two that clinch, where an
+		// unstaked one would leave the Proving open at four
+		state = { ...state, players: { ...state.players, A: { ...state.players.A, sitesWon: SITES_TO_CLINCH - STAKE_SITE_VALUE } } };
+		const siteId = currentFrame(state).sites[0].id;
+		state = stakeWorld(state, 'A', siteId);
+		state = { ...state, turn: 'A' };
+		state = send(state, 'A', state.players.A.roster[0].id, siteId);
+		state = { ...state, turn: 'A' };
+		state = pass(state, 'A');
+		if (state.phase === 'deploy') {
+			state = pass(state, 'B');
+		}
+		expect(state.players.A.sitesWon).toBe(SITES_TO_CLINCH);
+		expect(state.phase).toBe('matchEnd');
+		expect(state.winner).toBe('A');
+		expect(state.matchEndReason).toBe('clinched');
+	});
+
+	test('getPublicState exposes the stakes per site, stakeUsed, and the hidden send price', () => {
+		let state = stakeMatch('stake-public-seed');
+		const sites = currentFrame(state).sites;
+		state = stakeWorld(state, 'A', sites[0].id);
+		const view = getPublicState(state, 'B');
+		expect(view.stakes[sites[0].id]).toEqual({ by: ['A'], countedValue: STAKE_SITE_VALUE });
+		expect(view.stakes[sites[1].id]).toEqual({ by: [], countedValue: 1 });
+		expect(view.players.A.stakeUsed).toBe(true);
+		expect(view.players.B.stakeUsed).toBe(false);
+		expect(view.hiddenSendCost).toBe(DEFAULT_RULES.hiddenSendCost);
+		// own-side only, like the roster: B reads its own remaining stake choices
+		expect(view.players.B.stakeableSiteIds.length).toBe(WORLDS_PER_FRAME);
+		expect(view.players.A.stakeableSiteIds).toBeUndefined();
 	});
 });

@@ -20,22 +20,13 @@ The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits (101 words)
+### fields (3 of 5)
 
-It was generated among the water-breathing Xalians put into Poseidas's seas once those seas rose and turned acid, and it lives in the water around the rigs, which the planet's Xalians went on building deeper and deeper beneath the ocean to stay clear of the storms above. It tolerates depth and it tolerates company, moving without aggression inside the settlement perimeters. What it does catch it holds, folding its whole length around a swimmer and keeping it under. Twice a year the blooms come up and saturate the surface with toxic microbes, and the water it keeps to is deep water.
+- **origin**: One of the water-breathing Xalians the Poseidas Generator produced once the seas rose and turned acidic.
+- **habitat**: The water around and beneath Poseidas's rigs and underwater cities.
+- **behavior**: It is at home on land but far more dangerous in water, where its slender frame and webbed feet carry it. What it catches it wraps its whole length around and holds under.
 
-| Claim | Source |
-|---|---|
-| generated among the water-breathing Xalians put into the seas once they rose and turned acid | planet: "Soon, aquatic, water-breathing Xalians capable of surviving in its rising and acidifying oceans began to populate the sea, manning ECHELON’s rigs and replacing the dwindling Vallerii population." |
-| lives in the water around the rigs | record `lore.biomeNiche`; planet: "they would go on to man Poseidas’s rigs in the absence of their masters" |
-| the rigs were built deeper and deeper beneath the ocean to stay clear of the storms | planet: "building them deeper and deeper beneath the ocean in order to avoid the tumultuous storms and toxic microbes that racked its surface." |
-| tolerates depth | Poseidas Generator report `outputPriorities`, depth tolerance, and `mobility.swim` note, depth tolerance stratifies population distribution; record `capabilities.swim` [70, 92] |
-| tolerates company, moving without aggression inside the settlement perimeters | Poseidas Generator report `fauna.observations`, aggression suppressed within settlement perimeters, and `outputPriorities`, low-aggression settlement compatibility |
-| what it catches it holds, folding its whole length around a swimmer and keeping it under | record `traits.pool.grappling` at 100; record `signatureAbility`, Sixteenfold Undertow |
-| twice a year the blooms come up and saturate the surface with toxic microbes, and the water it keeps to is deep water | record `lore.biomeNiche`, the deep-city waters; planet: "twice a year, a vicious storm season in Poseidas’s distant polar regions would cause an upwelling of nutrients from the sea floor" and "the world’s air, particularly near its shores, would semiannually become saturated with toxic microbes that had been kicked up and made airborne by the waves and the wind, infecting and killing off the Vallerii settlers."; Poseidas Generator report `hazards`, semiannual toxic bloom events with airborne microbial dispersal at surface |
-
-Nothing from the old upgraded description was lost: its body appositive is Nick's teaser again, its generated-among clause and its rig-and-storms clause are in habits above. No feeding sentence was authored at all: the record's `diet` reads `omnivore` as the no-evidence fallback, the Poseidas report's filtration metabolism is a planet-wide output priority, and neither source shows this species feeding, so habits says nothing about what it eats.
-
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ## Sources
 

@@ -4,10 +4,10 @@ import XalianNavbar from '../../components/navbar';
 import ReclamationMatch from '../../components/games/reclamation/reclamationMatch';
 import { HoldMeter } from '../../components/games/reclamation/reclamationFigure';
 import { PhaseGlyph, RivalGlyph } from '../../components/games/reclamation/reclamationGlyphs';
-import { buildDraftPools, botDraft, validateKeep } from '../../gameplay/expedition/draft';
+import { buildDraftPools, botDraft, validateKeep, draftOptionsFromRules } from '../../gameplay/expedition/draft';
 import ReclamationDraft from '../../components/games/reclamation/reclamationDraft';
 import { createSound } from '../../components/games/reclamation/reclamationSound';
-import { createMatch } from '../../gameplay/expedition/expeditionRules';
+import { createMatch, DEFAULT_RULES } from '../../gameplay/expedition/expeditionRules';
 import { getWorlds } from '../../gameplay/expedition/sites';
 import { RIVALS, DEFAULT_RIVAL_ID, rivalById } from '../../gameplay/expedition/expeditionBot';
 import { ROSTER_SIZE, SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH, FRAMES_PER_MATCH, WORLDS_PER_FRAME } from '../../gameplay/expedition/expeditionInterpretation';
@@ -105,7 +105,7 @@ function RivalPlates({ rivalId, onChange }) {
 // how a round goes, as three glyphs with a word each (the base redesign: Deploy, Clash,
 // Ruling; there is no Orders phase and a creature's role is fixed at send)
 const PHASES = [
-	{ kind: 'deploy', word: 'Deploy', note: 'send a creature, move a swift one, or pass' },
+	{ kind: 'deploy', word: 'Deploy', note: 'send a creature, move a swift one, stake a world, or pass' },
 	{ kind: 'clash', word: 'Clash', note: 'attacks subtract from hold, fastest first' },
 	{ kind: 'ruling', word: 'Ruling', note: 'bolsters recover, then more hold takes the world' },
 ];
@@ -157,7 +157,8 @@ class ReclamationPage extends React.Component {
 			// what the running table was given when it mounted, so a resume restores the log,
 			// the squad order and the rival's dice as well as the engine state
 			resume: null,
-			// the draft: eighteen dealt, twelve kept, before the frame is entered
+			// the draft: fifteen dealt, twelve kept, before the frame is entered (Pass 3,
+			// assumption 23; the pool size is a rules lever, read through draftOptionsFromRules)
 			draft: null,
 			soundOn: false,
 		};
@@ -213,11 +214,13 @@ class ReclamationPage extends React.Component {
 		this.setState({ rivalId });
 	};
 
-	// the draft comes first: eighteen creatures dealt to each side under the seed, the
+	// the draft comes first: fifteen creatures dealt to each side under the seed, the
 	// nine worlds of the Proving shown, and the handler keeps twelve; the rival keeps its
-	// own twelve by its habit
+	// own twelve by its habit. The pool's size and shape are rules levers (assumption 23),
+	// so they are read off the same rules object the match will be created under rather
+	// than written here.
 	begin = (seed) => {
-		const { poolA, poolB, frames } = buildDraftPools(seed);
+		const { poolA, poolB, frames } = buildDraftPools(seed, draftOptionsFromRules(DEFAULT_RULES));
 		clearMatch();
 		this.draftUsedAuto = false;
 		this.setState({ seed, draft: { poolA, poolB, frames, keepIds: [] }, resume: null, saved: null, match: null });
@@ -481,8 +484,8 @@ class ReclamationPage extends React.Component {
 							<summary className="rec-fiction-summary">Why the frame</summary>
 							<div className="g-screen rec-rules-screen">
 								<div className="g-screen-line">The worlds were lost to war and plague, and no expedition goes in blind. Before Kozrak grants a Charter over a world, the claim is proved on the Court's <strong>frame</strong>: the Generators' own models of the fourteen worlds, run on Poseidas without the Generators. Only the fighting is simulated. The Charter, and the Tokens that come with it, are real.</div>
-								<div className="g-screen-line">Each round the frame loads three worlds side by side, every one at a different site of its surface, and no world is loaded twice in a Proving. When both handlers have passed, every world clashes at once: each creature does the one thing its nature does there, attacks subtract from hold, and a creature driven to nothing is downed out of the Proving. Creatures on a won world stay in its model to hold the claim; the rest withdraw; either way they are out of the Proving. A pass is permanent for the round. A stealthy creature may be sent hidden, and its attack lands before all others.</div>
-								<div className="g-screen-line">Attacks land in speed order, and a creature already hurt attacks for less, in proportion to the hold it has left, so hitting first shapes the whole exchange. A swift creature already on a world may step to another world of the frame once a round, without spending a turn. At the Ruling, allies standing with a bolster recover half of what the round took from them before the Court reads the worlds. Nothing is given to the side that is behind: there is no catch-up send, and every world is won on what you put on it.</div>
+								<div className="g-screen-line">Each round the frame loads three worlds side by side, every one at a different site of its surface, and no world is loaded twice in a Proving. When both handlers have passed, every world clashes at once: each creature does the one thing its nature does there, attacks subtract from hold, and a creature driven to nothing is downed out of the Proving. Creatures on a won world stay in its model to hold the claim; the rest withdraw; either way they are out of the Proving. A pass is permanent for the round. A stealthy creature may be sent hidden: the send costs two of your ten, and its attack lands before all others, at three quarters power.</div>
+								<div className="g-screen-line">Attacks land in speed order, and a creature already hurt attacks for less, in proportion to the hold it has left, so hitting first shapes the whole exchange. A swift creature already on a world may step to another world of the frame once a round, without spending a turn. At the Ruling, allies standing with a bolster recover half of what the round took from them before the Court reads the worlds. Once a Proving, before your first send of a round, either handler may stake one of the round's worlds: it then counts two toward the Charter for whoever holds it at the Ruling, three if both handlers staked it, and nothing at all if it is tied. Nothing is given to the side that is behind: there is no catch-up send, the stake is a risk you choose and it doubles the loss as readily as the gain, and every world is won on what you put on it.</div>
 							</div>
 						</details>
 					</div>

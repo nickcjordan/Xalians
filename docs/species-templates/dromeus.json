@@ -18,8 +18,10 @@
       "Hooked toe claws",
       "Long plumed tail"
     ],
-    "habits": "Magmuth's corporations designed it for the transient mineral islands, where a cooling flow gives only a brief window before the ground opens underfoot, and it was built to cross one inside that window. It hunts on those hardened flats and eats what it runs down. The ash storms and the sulfuric air of that world pass over it without harm, and it picks a moving shape out of the haze from a long way off. It still runs the ash fields, where the blood feuds that arose from the company wars have never ended.",
-    "biomeNiche": "the ash fields and hardened lava flows of Magmuth's transient islands"
+    "origin": "Magmuth's mining corporations designed it to cross the transient mineral islands, where a cooling lava flow gives only a short window before the ground opens again.",
+    "habitat": "The hardened lava flats and ash fields of Magmuth.",
+    "feeding": "It hunts on the flats and eats whatever it can run down.",
+    "behavior": "It runs. When it reaches speed it spreads its wings, launches itself at its prey, and bites."
   },
   "physiology": {
     "corporeality": "corporeal",

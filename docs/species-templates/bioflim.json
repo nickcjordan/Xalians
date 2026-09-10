@@ -17,8 +17,10 @@
       "Pseudopods for reaching",
       "Drips and runnels where the slime sags"
     ],
-    "habits": "Drainov's Generator made it for a world of bubbling acid swamps, steaming corrosive rain, asphyxiating fumes, and slow-drifting clouds of neurotoxic gases, and it draws no breath from any of them. It moves through the acid swamps rather than over them, and slowly: the substrate of that world is unreliable and this is not a body that hurries. It feeds on whatever it settles over, of any kind, and it reads what approaches through the ground rather than seeing it. The planet is now held by a loose conglomerate of Vallerii space pirates and interstellar crime syndicates, and it still rains burning refuse, industrial waste, and hazardous materials on the swamps below. Its own working life is long.",
-    "biomeNiche": "the acid swamps and reopened chemical plants of Drainov"
+    "origin": "Made by the Drainov Generator to live in the planet's acid swamps and chemical waste.",
+    "habitat": "The acid swamps and derelict chemical plants of Drainov.",
+    "feeding": "It feeds on whatever it settles over.",
+    "behavior": "It moves slowly, flowing through the swamps rather than over them, and its slime continually regrows the rocky shell around it."
   },
   "physiology": {
     "corporeality": "corporeal",

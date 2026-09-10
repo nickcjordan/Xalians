@@ -1,5 +1,5 @@
 import { createMatch, send, pass, getPublicState, createRngState, nextRandom, moveSwift } from '../expeditionRules.js';
-import { chooseSend, roleValueOf, RIVALS, DEFAULT_RIVAL_ID, rivalById } from '../expeditionBot.js';
+import { chooseSend, chooseStake, scoreSends, roleValueOf, RIVALS, DEFAULT_RIVAL_ID, rivalById } from '../expeditionBot.js';
 import { ROSTER_SIZE, SENDABLE } from '../expeditionInterpretation.js';
 
 /*
@@ -288,7 +288,7 @@ describe('full bot-vs-bot match', () => {
 describe('rivals', () => {
 	test('RIVALS has five profiles in ladder order with the required shape', () => {
 		expect(RIVALS).toHaveLength(5);
-		expect(RIVALS.map((r) => r.id)).toEqual(['envoy', 'heir', 'broker', 'proctor', 'windsailor']);
+		expect(RIVALS.map((r) => r.id)).toEqual(['envoy', 'broker', 'proctor', 'windsailor', 'heir']);
 		// the ladder is the measured order, weakest first
 		const marks = RIVALS.map((r) => r.measured.vsProctor);
 		expect(marks.slice().sort((a, b) => a - b)).toEqual(marks);
@@ -540,5 +540,132 @@ describe('chooseSend: swift creatures move', () => {
 				? send(state, handler, action.recordId, action.siteId, action.hidden)
 				: pass(state, handler);
 		}
+	});
+});
+
+
+/*
+	PASS 3 (docs/design/reclamation-base-redesign.md assumptions 21 and 22). The bot has to
+	price hiding against all three hiding levers and has to be able to take the stake, both
+	from public information only.
+*/
+describe('pass 3: the bot prices hiding (assumption 21)', () => {
+	function stealthMatch(rules) {
+		const rosterA = makeRoster('A', () => ({ traits: { guaranteed: ['stealthy'], rolled: [] } }));
+		return createMatch({ rosterA, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'hide-price-seed', rules });
+	}
+
+	function hideValuesOf(rules) {
+		const state = stealthMatch(rules);
+		const view = getPublicState(state, 'A');
+		const scored = scoreSends(view, state.players.A.roster, 'A', null);
+		return scored.candidates;
+	}
+
+	it('every candidate carries a priced hide value, a hide cost and whether the cap affords it', () => {
+		hideValuesOf({}).forEach((c) => {
+			expect(typeof c.hideValue).toBe('number');
+			expect(typeof c.hideCost).toBe('number');
+			expect(typeof c.hideAffordable).toBe('boolean');
+		});
+	});
+
+	it('a hidden send costs more against the cap under hiddenSendCost, and is worth less', () => {
+		const free = hideValuesOf({ hiddenSendCost: 1 });
+		const priced = hideValuesOf({ hiddenSendCost: 2 });
+		expect(free[0].hideCost).toBe(1);
+		expect(priced[0].hideCost).toBe(2);
+		expect(priced[0].hideValue).toBeLessThan(free[0].hideValue);
+	});
+
+	it('hiddenFirst off leaves hiding worth nothing to gain and never positive', () => {
+		hideValuesOf({ hiddenFirst: false }).forEach((c) => {
+			expect(c.hideValue).toBeLessThanOrEqual(0);
+		});
+	});
+
+	it('a creature that cannot hide is priced at zero and marked unaffordable', () => {
+		const state = createMatch({ rosterA: makeRoster('A'), rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'no-hide-seed' });
+		const view = getPublicState(state, 'A');
+		const scored = scoreSends(view, state.players.A.roster, 'A', null);
+		scored.candidates.forEach((c) => {
+			expect(c.hideValue).toBe(0);
+			expect(c.hideAffordable).toBe(false);
+		});
+	});
+
+	it('never proposes a hidden send under the hiddenSends ablation', () => {
+		const state = stealthMatch({ hiddenSends: false });
+		const view = getPublicState(state, state.turn);
+		const action = chooseSend(view, state.players[state.turn].roster, state.turn, null, null);
+		expect(action.hidden).toBeFalsy();
+	});
+});
+
+describe('pass 3: the bot and the stake (assumption 22)', () => {
+	function freshView(seed, rules) {
+		const state = createMatch({ rosterA: makeRoster('A'), rosterB: makeRoster('B'), worlds: makeWorlds(), seed, rules });
+		return { state, view: getPublicState(state, 'A') };
+	}
+
+	it('proposes only a world of the round, or nothing at all', () => {
+		const { state, view } = freshView('bot-stake-seed');
+		const wanted = chooseStake(view, state.players.A.roster, 'A', null);
+		if (wanted) {
+			expect(wanted.type).toBe('stake');
+			expect(view.frame.sites.some((s) => s.id === wanted.siteId)).toBe(true);
+		} else {
+			expect(wanted).toBeNull();
+		}
+	});
+
+	it('never proposes a stake when the rule is off, or when the handler has no stake left', () => {
+		const off = freshView('bot-stake-off-seed', { stake: false });
+		expect(chooseStake(off.view, off.state.players.A.roster, 'A', null)).toBeNull();
+
+		const on = freshView('bot-stake-used-seed');
+		const used = {
+			...on.view,
+			players: { ...on.view.players, A: { ...on.view.players.A, stakeableSiteIds: [] } },
+		};
+		expect(chooseStake(used, on.state.players.A.roster, 'A', null)).toBeNull();
+	});
+
+	it('a keener rival stakes on a thinner edge than a cautious one', () => {
+		// the same board read by the two ends of the eagerness ladder: whenever the envoy
+		// (0.6) stakes, the windsailor (1.5) stakes too, since the threshold is divided by
+		// eagerness and both read the same edge
+		const windsailor = rivalById('windsailor');
+		const envoy = rivalById('envoy');
+		let envoyStakes = 0;
+		let windsailorStakes = 0;
+		['s1', 's2', 's3', 's4', 's5', 's6'].forEach((seed) => {
+			const { state, view } = freshView(seed);
+			const roster = state.players.A.roster;
+			const e = chooseStake(view, roster, 'A', envoy);
+			const w = chooseStake(view, roster, 'A', windsailor);
+			if (e) {
+				envoyStakes++;
+				expect(w).not.toBeNull();
+			}
+			if (w) {
+				windsailorStakes++;
+			}
+		});
+		expect(windsailorStakes).toBeGreaterThanOrEqual(envoyStakes);
+	});
+
+	it('prices a staked world above an unstaked one in scoreSends', () => {
+		const { state, view } = freshView('bot-stake-value-seed');
+		const siteId = view.frame.sites[0].id;
+		const staked = {
+			...view,
+			stakes: { ...view.stakes, [siteId]: { by: ['A'], countedValue: 2 } },
+		};
+		const before = scoreSends(view, state.players.A.roster, 'A', null)
+			.candidates.find((c) => c.site.id === siteId);
+		const after = scoreSends(staked, state.players.A.roster, 'A', null)
+			.candidates.find((c) => c.site.id === siteId);
+		expect(after.value).toBeGreaterThan(before.value);
 	});
 });

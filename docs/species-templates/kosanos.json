@@ -16,8 +16,10 @@
       "Single long trunk arching over the back, ending in a blade as long as the body",
       "Short upturned tail"
     ],
-    "habits": "It works the underforests beneath the World Tree canopies, where open ground is scarce and obstruction makes the going slow, felling standing growth in long low arcs of the blade. It sets its feet and reads the tremor in the ground before it swings. It feeds as it works, on the growth it opens and on what the opening turns up. The toxic fungal blooms of the understory do not take in its hide, and what the brush tears in that hide closes over again. It holds the lane it has cut, in a forest whose answer to cutting is growth, entanglement and regrowth rather than a fight, and it gapes its long teeth at whatever comes down that lane.",
-    "biomeNiche": "the dense underforests and marshy wetlands beneath the World Tree canopies"
+    "origin": "Thought to have been designed to clear the thick brush of Floria.",
+    "habitat": "The underforests beneath the World Tree canopies.",
+    "feeding": "It feeds as it works, on the growth it opens up and whatever the opening turns up.",
+    "behavior": "It sets its feet, reads the ground, and fells standing growth in long low arcs of the blade on its trunk, then holds the lane it has cut."
   },
   "physiology": {
     "corporeality": "corporeal",

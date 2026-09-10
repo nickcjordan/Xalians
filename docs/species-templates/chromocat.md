@@ -21,24 +21,13 @@ The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carrie
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits (115 words)
+### fields (3 of 5)
 
-It works the sunward face, where the fields it was made for still stand among crystalline-leafed oases and the silver grids of the old solar farms. Nothing conceals anything on that ground, the sightlines being unbroken, so it does not stalk: it crosses in the open and is simply there, the blades behind its front paws having opened the cut before the crossing reads as movement at all. It eats what the fields hold, of any kind. Its albino coat is the ordinary sunward integument against a cumulative radiation load, and it works now among the expanding blast zones the misfiring Stellaris Superstructure burns into the surface, on ground held under King Kozrak's martial law.
+- **origin**: Made to harvest the vast crop yields of Luminax's fields, cutting through grain with the ionized blades behind its front paws.
+- **habitat**: The sunward face of Luminax, among the old fields, oases and solar farms.
+- **behavior**: It enters a photonic state and crosses ground at the speed of light, so it seems to teleport around a fight, harassing its opponent with rapid cuts too fast to react to.
 
-| Claim | Source |
-|---|---|
-| It works the sunward face | record `lore.biomeNiche`; planetRecords.json luminax `report.terrain.features`, the sunward entries; planets.json Luminax history paragraph 0, the tidally locked daylight face |
-| The fields still stand among crystalline-leafed oases and the silver grids of the old solar farms | planetRecords.json luminax `report.terrain.features`: crystalline-leafed flora oases and legacy solar farm grids; planets.json Luminax history paragraph 7, the solar farms seen as great shining silver grids from space |
-| Nothing conceals anything on that ground, the sightlines being unbroken, so it does not stalk | planetRecords.json luminax `report.mobility.sprint` and `report.mobility.flight`, both noting sightlines unbroken and concealment unavailable sunward; record `traits.pool` carries no stealthy entry, cut 2026-09-07 |
-| It crosses in the open and is simply there | species.json: "their ability to enter a photonic-state and leap through fields at the speed of light"; record `capabilities.sprint [80, 98]` |
-| The blades behind its front paws | species.json: "two sickle-shaped blades infused with pure ionized radiation that extend backwards from its front paws"; art (a striated crescent sweeping back behind each front paw); record `physiology.anatomy: blades` |
-| Having opened the cut before the crossing reads as movement at all | species.json: "barraging them with rapid cuts in a slice-and-dice pattern so swift that reaction becomes nearly impossible" |
-| It eats what the fields hold, of any kind | record `physiology.diet: omnivore` |
-| Its albino coat is the ordinary sunward integument against a cumulative radiation load | planetRecords.json luminax `report.fauna.observations`, radiation-tolerant integument universal sunward with albino coats as its first example; `report.hazards`, cumulative radiation load; record `traits.pool.resistant` |
-| It works now among the expanding blast zones the misfiring Stellaris Superstructure burns into the surface | planetRecords.json luminax `report.terrain.features`, ION-9 misfire blast zones, expanding; planets.json Luminax history paragraph 11 |
-| On ground held under King Kozrak's martial law | planets.json Luminax history paragraph 13 |
-
-The glare clause of the first pass was cut for room; the radiation load already carries what the sunward face does to this body.
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ## Judgments
 

@@ -17,8 +17,9 @@
       "Two thin antennae",
       "Bare hide"
     ],
-    "habits": "It was generated among the water-breathing Xalians put into Poseidas's seas once those seas rose and turned acid, and it lives in the water around the rigs, which the planet's Xalians went on building deeper and deeper beneath the ocean to stay clear of the storms above. It tolerates depth and it tolerates company, moving without aggression inside the settlement perimeters. What it does catch it holds, folding its whole length around a swimmer and keeping it under. Twice a year the blooms come up and saturate the surface with toxic microbes, and the water it keeps to is deep water.",
-    "biomeNiche": "a swimmer and rig hand of the deep-city waters, at home in an acidifying global ocean"
+    "origin": "One of the water-breathing Xalians the Poseidas Generator produced once the seas rose and turned acidic.",
+    "habitat": "The water around and beneath Poseidas's rigs and underwater cities.",
+    "behavior": "It is at home on land but far more dangerous in water, where its slender frame and webbed feet carry it. What it catches it wraps its whole length around and holds under."
   },
   "physiology": {
     "corporeality": "corporeal",

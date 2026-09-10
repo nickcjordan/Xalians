@@ -8,11 +8,12 @@ import { ROSTER_SIZE } from '../../../gameplay/expedition/expeditionInterpretati
 import { HiddenGlyph } from './reclamationGlyphs';
 
 /*
-	ReclamationDraft — keep twelve of eighteen before the Proving.
+	ReclamationDraft — keep twelve of fifteen before the Proving.
 
 	Per docs/design/reclamation-play-enhancements.md "Pass 3, the draft": the frame
 	shows its first three worlds (and, in full, all nine the Proving will load) and
-	eighteen generated creatures; the handler keeps twelve; the rival drafts by its own
+	fifteen generated creatures (Pass 3, assumption 23: the pool was eighteen and the keep
+	of twelve always cut the same bottom third); the handler keeps twelve; the rival drafts by its own
 	style. This component is the handler's half of that: it renders the pool as a grid
 	of cards built like the bench's plinths (portrait, name, lamps), lets the handler
 	toggle which twelve they keep, and reports state up through onToggle/onConfirm. It
@@ -109,7 +110,7 @@ function ReclamationDraft({ pool, frames, keepIds, onToggle, onKeepAll, onConfir
 		<section className="rec-draft" aria-label="The draft">
 			<header className="rec-draft-head">
 				<span className="rec-draft-kicker">The draft</span>
-				<h2 className="rec-draft-heading">Keep twelve of eighteen</h2>
+				<h2 className="rec-draft-heading">Keep twelve of fifteen</h2>
 				<span className="rec-draft-count g-mono">{kept.size}/{ROSTER_SIZE}</span>
 			</header>
 			<div className="rec-draft-worlds">

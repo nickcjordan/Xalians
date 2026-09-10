@@ -15,8 +15,10 @@
       "Scissor-like pincer claws on the forelimbs",
       "Segmented tail arched over the back, ending in a helical drill"
     ],
-    "habits": "It holds the haphazard wells and cavern networks that fortune-seekers drilled beneath the dunes, workings the Xalians who took them over still pump. It reads what moves overhead through the ground rather than by eye, and it wears a target down over repeated passes rather than settling it in one. Endessa's twin suns make the open surface lethal to cross, so it moves at the low hours or swims through loose particulate instead of walking on it. It signals by drumming through rock and sand, the only channel a shaft carries. The dunes cost heat and water, and its body gives up little of either.",
-    "biomeNiche": "the packed sand and deep cavern networks of Endessa's Nightcap wells"
+    "origin": "Used by wildcatters who could not afford larger drilling Xalians like the Frackworm.",
+    "habitat": "The wells and cavern networks beneath Endessa's dunes.",
+    "feeding": "It hunts by darting in and out of the surface and ambushing prey with its scissor-like claws.",
+    "behavior": "It tunnels quickly with the small drill on its tail, and it feels what moves overhead through the ground."
   },
   "physiology": {
     "corporeality": "corporeal",

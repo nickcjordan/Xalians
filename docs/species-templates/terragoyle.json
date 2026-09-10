@@ -16,8 +16,10 @@
       "Bare muscled hide",
       "Long tail ending in a cradle, with a ball of stone levitating above it"
     ],
-    "habits": "It holds the rim above a planetary strip-mine that spirals down into the Chasm, where Kozrak's enforcers work Stonera's war refugees for whatever the liquid metal below is worth, and it holds that rim in a line rather than alone. Most of the time it holds it as a statue, vitals arrested, spending no more than the rubble around it. The ground carries a footfall to it long before anything shows against the gray sky, and then it is up in the static-crackling air with the stone riding over the cradle of its tail, flinging boulders and gravel down onto whatever is climbing. Going up into that air costs it something every time.",
-    "biomeNiche": "the rim of the Chasm strip-mine, perched over a hollow of liquid metal"
+    "origin": "Used to airlift debris out of Stonera's strip mines with its levitating tail.",
+    "habitat": "The edges of the Chasm on Stonera.",
+    "behavior": "It stands guard over the perimeter in a statue-like state, hibernating to conserve energy until it senses a threat. Then it rises into the sky and uses its tail to levitate boulders and fling them across the Chasm, or carpet-bombs intruders with strafing runs of gravel and rock.",
+    "company": "It stands in a line with others along the rim."
   },
   "physiology": {
     "corporeality": "corporeal",

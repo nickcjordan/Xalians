@@ -21,20 +21,14 @@ The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` te
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits
+### fields (4 of 5)
 
-Its ground is not continuous. The habitable band of Saiphus is a scatter of buoyant islands separated by a sea of clouds and dense fog, and it crosses the gaps, one of the great leaping animals the Saiphus Generator raised to bound between islands as if gravity held no sway over them. It grazes the rolling plains such an island carries and drinks from the deep canyons where vapor condenses into water. It listens and it moves: sulfuric cloud banks sweep across the sky without warning, the storms do not stop, and a descent into the fluid layer below the islands is not recoverable.
+- **origin**: One of the leaping animals the Saiphus Generator raised to bound between the floating islands as if gravity held no sway over them.
+- **habitat**: The floating islands of Saiphus and the gaps between them.
+- **feeding**: It grazes the rolling plains of the islands and drinks where vapor condenses in the canyons.
+- **behavior**: It jumps so high it seems to fly, then comes missiling down on its enemy like a battering ram.
 
-| Claim | Source |
-|---|---|
-| Its ground is not continuous: the habitable band of Saiphus is a scatter of buoyant islands separated by a sea of clouds and dense fog | planets.json Saiphus paragraph 1, "Separated by a sea of clouds and dense fog, these floating islands range in size from little more than flying boulders to landmasses that are hundreds of miles across"; planetRecords.json saiphus report terrain feature, buoyant island archipelago |
-| It crosses the gaps, one of the great leaping animals the Saiphus Generator raised to bound between islands as if gravity held no sway over them | planets.json Saiphus paragraph 5, "great leaping animals that bounded between islands as if gravity held no sway over them"; planetRecords.json saiphus report mobility sprint, optimal, "inter-island leaping on high-mass builds"; record `traits.pool.ramming` and `capabilities.leap` 82 to 97 |
-| Grazes the rolling plains such an island carries and drinks from the deep canyons where vapor condenses into water | planets.json Saiphus paragraph 1, "clusters of rolling plains carrying fruitful vegetation and deep canyons in which vapors condense and form reserves of potable water"; record `physiology.diet: omnivore` |
-| It listens | record `physiology.senses.hearing` 70 to 90; `attributes.reflex` 65 to 85 |
-| Sulfuric cloud banks sweep across the sky without warning | planetRecords.json saiphus report terrain feature, mobile sulfuric cloud banks, and hazards, sulfuric cloud contact; planets.json Saiphus paragraph 2, "Sulfuric acid clouds sweep haphazardly across the sky, choking the life out of anything they happen to touch" |
-| The storms do not stop | planetRecords.json saiphus report terrain feature, continuous planetary-scale storm systems |
-| A descent into the fluid layer below the islands is not recoverable | planetRecords.json saiphus report mobility swim, unsupported, "descent into the fluid layer is not recoverable"; hazards, unrecoverable descent |
-
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ## Sources
 

@@ -20,22 +20,13 @@ The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carrie
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits
+### fields (3 of 5)
 
-The Stonera Generator made it for a world that crosses the Jorian Belt once a year and takes a planetwide bombardment of asteroids and meteors for it. Rapid subsurface retreat is the primary survival adaptation there, and nothing this animal does it does better than dig. Its ground is the fissured rock and the crater fields, which it works from beneath. The dust-saturated air of that world crackles with continuous static discharge, and the charge passes over it without harm. Stonera is now a planetary strip-mine spiraling into the Chasm under King Kozrak's enforcers. It eats what the ground and the rubble hold, of any kind, and signals through the stone rather than across it.
+- **origin**: Made by the Stonera Generator for a world that takes a planetwide bombardment every year, where going underground fast is what keeps a creature alive.
+- **habitat**: The fissured rock and crater fields of Stonera, worked from beneath.
+- **behavior**: When spooked it digs itself underground and leaves only its tail of explosive barbs exposed. If provoked it fires a few of them, and its regenerative power quickly grows more.
 
-| Claim | Source |
-|---|---|
-| The Stonera Generator made it for that world | planets.json Stonera history paragraphs 3 and 4: the economic decision to establish a Xalian Generator, and the Xalians that could quickly dig their way to safety |
-| Stonera crosses the Jorian Belt once a year and takes a planetwide bombardment of asteroids and meteors for it | planets.json Stonera history paragraph 1; planetRecords.json stonera `report.terrain.notes`, annual Jorian Belt transit producing sustained meteoric bombardment |
-| Rapid subsurface retreat is the primary survival adaptation there | planetRecords.json stonera `report.mobility.burrow`, optimal, rapid subsurface retreat is the primary survival adaptation |
-| Nothing this animal does it does better than dig | record `capabilities.burrow [70, 92]`, the highest band in the record |
-| Its ground is the fissured rock and the crater fields, which it works from beneath | planets.json Stonera history paragraph 1, deep fissures and rocky craters; planetRecords.json stonera `report.terrain.features`, impact-cratered ridge systems; record `lore.biomeNiche` |
-| The dust-saturated air of that world crackles with continuous static discharge | planetRecords.json stonera `report.terrain.features`, atmospheric dust saturation with static discharge; planets.json Stonera history paragraph 1 |
-| The charge passes over it without harm | record `traits.pool.insulated` |
-| Stonera is now a planetary strip-mine spiraling into the Chasm under King Kozrak's enforcers | planets.json Stonera history paragraph 9 |
-| It eats what the ground and the rubble hold, of any kind | record `physiology.diet: omnivore` |
-| It signals through the stone rather than across it | record `physiology.communication: [vibration]` |
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ## Judgments
 

@@ -15,8 +15,9 @@
       "Narrow deer-like head",
       "A pair of long thin antennae swept back from the crown"
     ],
-    "habits": "Veridium's crust is worked metal with veins of heavy metals striking deep into it, and the Foromeer opens those veins. It works among the factory trenches and forge districts, where molten pours and machinery running without regard to proximity are the ordinary risks, and its plating takes them. The manufactory rings so loudly across the gunmetal surface that it mutes all other sound, so the creature reads the ground it is braced on and answers by drumming rather than by call. Injuries close over on their own. Since Source Code 606 released the Veridians from their robotic masters the demand for the factories has troughed, and the planet's Xalians now tinker with salvaged drones and machines.",
-    "biomeNiche": "the ore-filled soil and heavy-metal veins of Veridium's mineral crust"
+    "origin": "Thought to have been used for mineral excavation on Veridium, its drill-like horns breaking through the strongest material.",
+    "habitat": "The ore-filled crust and heavy-metal veins of Veridium, among its factory trenches and forge districts.",
+    "behavior": "It opens the metal veins with its horns. It signals by drumming through the ground rather than by call, since the manufactory is too loud for anything else."
   },
   "physiology": {
     "corporeality": "corporeal",

@@ -53,10 +53,52 @@ export const NEAR_WINDOW = 0.25;
 // 1 also allows hiding on sends the rule would otherwise send openly, up to "always hide a
 // stealthy creature" at 2. See applyHideBias below for the exact math.
 export const HIDE_BIAS = 1;
+/*
+	What concealment alone is worth, in hold units, apart from landing first. A hidden send
+	is unseen at Deploy, and the opponent's own margin reading discounts every world by
+	hiddenHoldGuess for each hidden send it knows was made, so hiding distorts what the
+	rival thinks it is looking at even when the creature has nothing to attack. Without
+	this a presence, or a striker sent to a world with no enemy on it yet, would price
+	hiding at exactly zero and never hide, which is not how a bluffer plays.
+*/
+export const HIDE_CONCEALMENT_VALUE = 1;
 // when set, the handler may pass early on frame 1 or 2 while holding a majority even if the
 // opponent has not passed yet, to bait overspend. 0 is the bot as it was (it never gives up
 // the last word while the opponent can still answer).
 export const BAIT_PASS = 0;
+/*
+	The stake (docs/design/reclamation-base-redesign.md assumption 22). A handler stakes when
+	one of the round's worlds suits its remaining roster better than the others by a margin;
+	the margin it demands is smaller when it is behind on worlds, because a stake is a
+	chosen risk and a trailing handler is the one who needs one. STAKE_EAGERNESS is a
+	rival-weighted habit: the threshold is DIVIDED by it, so a keener rival stakes on a
+	thinner edge and a cautious one waits for a world it is sure of.
+*/
+export const STAKE_EAGERNESS = 1;
+/*
+	The edge, in hold units, a world must have over the round's average before this handler
+	stakes it. Set 2026-09-10 by a sweep at 200 matches, seed 7 (thresholds 2.6, 3.6, 4.4,
+	4.8, 5.2 against the STAKE_ROSTER_DEPTH reading): Provings staked 78, 49.5, 30, 22 and
+	17 percent, and the staker's win rate on its staked world against its own unstaked
+	worlds of the same round 47.1/45.6, 43.4/47.5, 53.3/49.0, 47.7/49.3 and 50.0/50.8.
+	4.4 is the setting that sits inside the 20 to 60 percent usage gauge AND is the only one
+	where the staker holds its staked world more often than the worlds it did not stake, so
+	the stake is not a trap at the bot's level of play.
+*/
+export const STAKE_THRESHOLD_BEHIND = 4.4;
+// the edge demanded when level or ahead: "only on a strongly favored world"
+export const STAKE_THRESHOLD_AHEAD = 8.0;
+// how much of the visible margin at a world counts toward its edge. The stake is declared
+// before the handler's first send of the round, so the board is usually near empty and the
+// roster's fit for the world is most of what there is to read.
+export const STAKE_VISIBLE_WEIGHT = 0.5;
+/*
+	How many of the handler's remaining creatures the stake reads at a world. A stake is a
+	claim about the creatures the handler will actually SEND there, not about its whole
+	bench, and the sendable cap means only a handful of them ever stand at any one world -
+	so the edge is read off the best few holds rather than the roster mean.
+*/
+export const STAKE_ROSTER_DEPTH = 5;
 
 function otherSeat(seat) {
 	return seat === 'A' ? 'B' : 'A';
@@ -76,7 +118,9 @@ function weightsFor(rival) {
 		overspendAllowance: w.overspendAllowance ?? OVERSPEND_ALLOWANCE,
 		nearWindow: w.nearWindow ?? NEAR_WINDOW,
 		hideBias: w.hideBias ?? HIDE_BIAS,
+		concealmentValue: w.concealmentValue ?? HIDE_CONCEALMENT_VALUE,
 		baitPass: w.baitPass ?? BAIT_PASS,
+		stakeEagerness: w.stakeEagerness ?? STAKE_EAGERNESS,
 	};
 }
 
@@ -133,6 +177,15 @@ function bolsterScaleAt(publicState, siteId, seat) {
 		}
 	});
 	return best === null ? 1 : best;
+}
+
+// what one world counts toward the Charter this round: 1 normally, 2 where one handler
+// staked it and 3 where both did (assumption 22). Read off the public state's own `stakes`
+// view so the bot and the engine can never price a world differently.
+function stakeValueAt(publicState, siteId) {
+	const stakes = publicState && publicState.stakes;
+	const entry = stakes && stakes[siteId];
+	return entry && typeof entry.countedValue === 'number' ? entry.countedValue : 1;
 }
 
 function siteHoldTotal(publicState, siteId, seat) {
@@ -252,6 +305,60 @@ function applyHideBias(baseRuleSaysHide, canHide, hideBias, rng) {
 }
 
 /*
+	priceHiding(publicState, weights, candidate) -> { hideValue, hideCost, hideAffordable }
+
+	THE PRICE OF HIDING (docs/design/reclamation-base-redesign.md assumption 21). Hiding
+	used to be worth exactly the blow the creature would land first, and cost nothing. Each
+	of pass 3's three levers is priced here, in the same hold units every other number in
+	scoreSends is in, so the bot never proposes a hidden send that is worse than the open
+	one and never proposes one the engine would reject:
+
+	- rules.hiddenFirst (and rules.hiddenFirstNeedsCompany): the gain. Going first is worth
+	  the creature's role value, because an attack that lands before the reply lands
+	  unhurt and may take its target off the world entirely. With hiddenFirstNeedsCompany
+	  on, that gain is zero unless one of this handler's creatures already stands at the
+	  world, which is exactly the condition the engine will read at Resolve.
+	- rules.hiddenPower: the loss. An attack from hiding lands at hiddenPower of its power,
+	  whether or not it goes first, so hiding costs (1 - hiddenPower) of the role value.
+	- rules.hiddenSendCost: the cap. Extra units against the round's sendable cap are
+	  priced the way the Loki line's extra unit already is, and a send the remaining cap
+	  cannot afford to hide is marked unaffordable rather than discounted.
+*/
+function priceHiding(publicState, weights, candidate) {
+	const rules = rulesOf(publicState);
+	const { record, site, roleValue = 0, effect = 0, cost = 1, capRemaining = 0, handler } = candidate;
+	const canHide = traitsOf(record).includes('stealthy') && (!rules || rules.hiddenSends !== false);
+	if (!canHide) {
+		return { hideValue: 0, hideCost: cost, hideAffordable: false };
+	}
+	const hiddenSendCost = rules && typeof rules.hiddenSendCost === 'number' ? rules.hiddenSendCost : 1;
+	const hiddenPower = rules && typeof rules.hiddenPower === 'number' ? rules.hiddenPower : 1;
+	const hiddenFirstOn = !rules || rules.hiddenFirst !== false;
+	const needsCompany = !!(rules && rules.hiddenFirstNeedsCompany);
+	const hasCompany = (publicState.board[site.id][handler] || []).length > 0;
+
+	const goesFirst = hiddenFirstOn && (!needsCompany || hasCompany);
+	// concealmentValue is a rival-weighted habit, not a rules discount: the engine charges
+	// both seats the same hiddenSendCost, and this is only how much a given handler BELIEVES
+	// an unseen send is worth. A bluffer reads it higher than a proctor does.
+	const firstGain = (goesFirst ? roleValue * hiddenPower : 0) + weights.concealmentValue;
+	const powerLoss = (1 - hiddenPower) * roleValue;
+	const hideCost = Math.max(cost, hiddenSendCost);
+	// The extra units a hidden send costs against the round's cap, priced the way the Loki
+	// line's extra unit already is - and divided by hideBias, because hideBias is exactly
+	// "how much this handler likes hiding", so a broker weighs the send it gives up less
+	// than a proctor does. Without this the price of hiding flattened every rival's habit
+	// onto the same hidden rate (measured 2026-09-10: at hiddenSendCost 2 the broker's rate
+	// fell to the proctor's on all three seeds), which would cost the ladder a character.
+	const capPenalty = (weights.holdCost * effect * (hideCost - cost)) / Math.max(0.25, weights.hideBias);
+	return {
+		hideValue: round1(firstGain - powerLoss - capPenalty),
+		hideCost,
+		hideAffordable: hideCost <= capRemaining,
+	};
+}
+
+/*
 	scoreSends(publicState, ownRoster, handler, rival) -> {
 		candidates, best, margins, weights, remainingSends, capRemaining, evenShare,
 		framesAfterThis, mustHold, sitesWinning, sitesLosing, myOnBoard, sendableCap,
@@ -327,6 +434,11 @@ export function scoreSends(publicState, ownRoster, handler, rival) {
 			} else {
 				value = weights.secureValue * (h / (m + h));
 			}
+			// a staked world is worth two toward the Charter, three if both handlers staked
+			// it (assumption 22), so it is worth spending proportionally more on. Without
+			// this the stake would be a declaration the bot never acted on, and the staker
+			// would double a world it then played exactly as it played the other two.
+			value *= stakeValueAt(publicState, site.id);
 			value *= Math.pow(weights.stackDiscount, stacked);
 			value -= weights.holdCost * h;
 			if (prepared.strainLevel === 'severe') {
@@ -338,6 +450,12 @@ export function scoreSends(publicState, ownRoster, handler, rival) {
 			candidates.push({
 				record, site, prepared, margin: m, value, flips: m <= 0 && h > -m, cost,
 				roleValue, effect: h, role: prepared.role,
+				// what hiding this particular send is worth, priced against all three of
+				// pass 3's hiding levers (assumption 21). chooseSend reads it rather than
+				// recomputing the first-strike bonus itself.
+				...priceHiding(publicState, weights, {
+					record, site, roleValue, effect: h, cost, capRemaining, handler,
+				}),
 			});
 		});
 	});
@@ -447,9 +565,11 @@ export function chooseSend(publicState, ownRoster, handler, rng, rival) {
 	// the creature would land. A blow that would be worth nothing here (a presence, or a
 	// striker with nothing to hit) gains nothing from going first, and is sent openly
 	// unless the site is contested on hold alone.
+	// Pass 3 (assumption 21): the worth of hiding THIS send is priced in scoreSends by
+	// priceHiding, against all three hiding levers at once, so a lever that makes hiding
+	// worthless (or unaffordable) turns the bot off it without any rule here changing.
 	const rulesAllowHiding = !publicState.rules || publicState.rules.hiddenSends !== false;
-	const hiddenFirstOn = !publicState.rules || publicState.rules.hiddenFirst !== false;
-	const hideBonus = hiddenFirstOn ? (pick.roleValue || 0) : 0;
+	const hideBonus = Math.max(0, pick.hideValue || 0);
 	const effect = pick.prepared.hold + hideBonus;
 	const resultMargin = pick.margin + effect;
 	// "securing a lead" is unchanged in spirit: the send leaves the site far enough ahead
@@ -458,11 +578,85 @@ export function chooseSend(publicState, ownRoster, handler, rng, rival) {
 	// the hold it puts on the table.
 	const securesALead = resultMargin >= pick.prepared.hold;
 	const rivalCanStillAnswer = !opp.passed;
-	const baseRuleSaysHide = canHide && rivalCanStillAnswer && !securesALead && effect >= pick.margin;
-	const wantsHidden = applyHideBias(baseRuleSaysHide, canHide, weights.hideBias, rng);
+	// hiding has to be worth something and has to be affordable against the round's cap
+	// before the base rule is even consulted (assumption 21)
+	const hidingPays = (pick.hideValue || 0) > 0 && pick.hideAffordable !== false;
+	const baseRuleSaysHide = canHide && hidingPays && rivalCanStillAnswer && !securesALead && effect >= pick.margin;
+	const wantsHidden = applyHideBias(baseRuleSaysHide, canHide && hidingPays, weights.hideBias, rng);
 	const hidden = rulesAllowHiding && wantsHidden;
 
 	return { type: 'send', recordId: pick.record.id, siteId: pick.site.id, hidden };
+}
+
+// --- the stake ------------------------------------------------------------------------
+
+/*
+	chooseStake(publicState, ownRoster, handler, rival) -> { type: 'stake', siteId, edge } | null
+
+	THE STAKE (docs/design/reclamation-base-redesign.md assumption 22). Before its first
+	send of a round, a handler may stake one of the round's three worlds, once per Proving:
+	whoever holds it at the Ruling counts it two toward the Charter, three if both staked
+	it, and a tie counts nothing. It is a chosen risk, never a gift, so the bot only takes
+	it where its own remaining roster reads the world better than the other two.
+
+	The edge of a world is how much better this handler's REMAINING roster holds there than
+	at the round's average world, plus a share of whatever margin is already visible on the
+	board (usually nothing, since the stake is declared before the first send). The
+	threshold that edge must clear is STAKE_THRESHOLD_BEHIND when this handler is behind on
+	worlds and STAKE_THRESHOLD_AHEAD when it is level or ahead - "when ahead, only on a
+	strongly favored world" - and both are divided by the rival's stakeEagerness, so the
+	windsailor stakes sooner than the envoy on the same board.
+
+	Reads public information only, plus this handler's own roster, exactly like chooseSend.
+	Consumes no RNG.
+*/
+export function chooseStake(publicState, ownRoster, handler, rival) {
+	const rules = rulesOf(publicState);
+	if (rules && rules.stake === false) {
+		return null;
+	}
+	const weights = weightsFor(rival);
+	const me = publicState.players[handler];
+	const opp = publicState.players[otherSeat(handler)];
+	const stakeable = new Set(me.stakeableSiteIds || []);
+	if (stakeable.size === 0 || ownRoster.length === 0) {
+		return null;
+	}
+
+	const frame = publicState.frame;
+	const meanHoldAt = {};
+	frame.sites.forEach((site) => {
+		const holds = ownRoster
+			.map((record) => prepare(record, site, null, 0, { rules }).hold)
+			.sort((a, b) => b - a)
+			.slice(0, STAKE_ROSTER_DEPTH);
+		meanHoldAt[site.id] = holds.reduce((a, b) => a + b, 0) / holds.length;
+	});
+	const across = frame.sites.reduce((sum, site) => sum + meanHoldAt[site.id], 0) / frame.sites.length;
+
+	let best = null;
+	frame.sites.forEach((site) => {
+		if (!stakeable.has(site.id)) {
+			return;
+		}
+		const visible = siteHoldTotal(publicState, site.id, handler)
+			- siteHoldTotal(publicState, site.id, otherSeat(handler));
+		const edge = (meanHoldAt[site.id] - across) + STAKE_VISIBLE_WEIGHT * visible;
+		if (!best || edge > best.edge) {
+			best = { siteId: site.id, edge };
+		}
+	});
+	if (!best) {
+		return null;
+	}
+
+	const behind = me.sitesWon < opp.sitesWon;
+	const eagerness = weights.stakeEagerness > 0 ? weights.stakeEagerness : 1;
+	const threshold = (behind ? STAKE_THRESHOLD_BEHIND : STAKE_THRESHOLD_AHEAD) / eagerness;
+	if (best.edge < threshold) {
+		return null;
+	}
+	return { type: 'stake', siteId: best.siteId, edge: round1(best.edge) };
 }
 
 // --- what a role is worth at a world -------------------------------------------------
@@ -654,8 +848,11 @@ export function roleValueOf(publicState, record, site, sentIndex, handler, prepa
 // --- the rivals ------------------------------------------------------------------------
 
 // Five rival handlers, in ladder order: the simulator's measured win rate as side A
-// against the proctor (200 matches, seed 11, 2026-09-05; the 95 percent interval is about
-// plus or minus 7 points), printed on each as `measured.vsProctor` so the intro can say it.
+// against the proctor (200 matches, seed 11, re-measured 2026-09-10 for the pass 3 game;
+// the 95 percent interval is about plus or minus 7 points), printed on each as
+// `measured.vsProctor` so the intro can say it. The order moved with that re-measurement:
+// pricing hiding cost the broker its place near the top, the heir's stacking gained most
+// from the priced game, and the windsailor came back to the middle.
 // The order is re-measured whenever a weight moves; it is never asserted. The proctor is
 // the default rival. `tag` is the two-to-four-word habit printed on the intro plate;
 // `style` is the full sentence, shown on pointing. Each is the bot's own tunables with
@@ -670,25 +867,12 @@ export const RIVALS = [
 		faction: 'the Zolto',
 		home: 'Zolton',
 		style: 'Rations the roster and waits, refusing to spend past its even share until the frame forces its hand.',
-		measured: { vsProctor: 0.375 },
+		measured: { vsProctor: 0.435 },
 		weights: {
+			stakeEagerness: 0.6,
 			overspendAllowance: 0,
 			holdCost: 0.4,
 			minSendValue: 3,
-		},
-	},
-	{
-		id: 'heir',
-		tag: 'Stacks a lead',
-		name: 'Heir of the Thousand Families',
-		faction: 'the Thousand Families',
-		home: 'Valleron',
-		style: 'Secures a lead and stacks it deeper rather than chase the board, and rarely gambles on the near-equal pick.',
-		measured: { vsProctor: 0.39 },
-		weights: {
-			stackDiscount: 0.95,
-			secureValue: 5,
-			nearWindow: 0.1,
 		},
 	},
 	{
@@ -698,9 +882,29 @@ export const RIVALS = [
 		faction: 'the Drainov Syndicate',
 		home: 'Drainov',
 		style: 'Keeps its creatures hidden until the last moment and bets you cannot tell a bluff from a real threat.',
-		measured: { vsProctor: 0.445 },
+		measured: { vsProctor: 0.44 },
 		weights: {
-			hideBias: 1.8,
+			stakeEagerness: 1.2,
+			/*
+				Retuned 2026-09-10 for the priced game (pass 3 set hiddenSendCost 2 and
+				hiddenPower 0.75, assumption 21). At 1.8 the broker went on hiding as though
+				hiding were still free and fell to 28.5 percent against the proctor, the
+				weakest rival on the ladder by fourteen points. Sweep over hideBias 1.0 /
+				1.3 / 1.6 against concealmentValue 1 / 2 / 3 (200 matches, seed 11, against
+				the proctor whose own hidden rate is 6.9 percent):
+
+					1.0: win 48.0 / 50.0 / 50.0, hidden rate 6.4 / 6.2 / 5.2
+					1.3: win 44.0 / 42.0 / 40.5, hidden rate 8.1 / 8.0 / 7.6
+					1.6: win 36.0 / 35.0 / 35.0, hidden rate 10.4 / 10.2 / 9.9
+
+				At 1.0 the broker stops being a bluffer at all: its hidden rate drops BELOW
+				the proctor's, which is the one thing its habit may not do. 1.3 with the
+				default concealment is the setting that puts it back at the top of the 40 to
+				45 band while it still hides half again as often as the proctor. The habit is
+				unchanged in kind - hide and bait - only less indiscriminate, which is what
+				a bluffer does once bluffing costs a send.
+			*/
+			hideBias: 1.3,
 			hiddenHoldGuess: 2,
 			baitPass: 1,
 		},
@@ -713,6 +917,7 @@ export const RIVALS = [
 		home: 'Poseidas',
 		style: 'Runs the frame by the book, holding what it has and spending only when a world is worth it.',
 		measured: { vsProctor: 0.48 },
+		// the proctor is the module's own tunables exactly, stakeEagerness 1 included
 		weights: {},
 	},
 	{
@@ -722,12 +927,28 @@ export const RIVALS = [
 		faction: 'the Windsailors',
 		home: 'Saiphus',
 		style: 'Piles into every world at once and flips a losing site on the thinnest excuse, roster be damned.',
-		measured: { vsProctor: 0.545 },
+		measured: { vsProctor: 0.485 },
 		weights: {
+			stakeEagerness: 1.5,
 			flipValue: 14,
 			stackDiscount: 0.4,
 			minSendValue: 0.5,
 			overspendAllowance: 3,
+		},
+	},
+	{
+		id: 'heir',
+		tag: 'Stacks a lead',
+		name: 'Heir of the Thousand Families',
+		faction: 'the Thousand Families',
+		home: 'Valleron',
+		style: 'Secures a lead and stacks it deeper rather than chase the board, and rarely gambles on the near-equal pick.',
+		measured: { vsProctor: 0.515 },
+		weights: {
+			stakeEagerness: 0.8,
+			stackDiscount: 0.95,
+			secureValue: 5,
+			nearWindow: 0.1,
 		},
 	},
 ];

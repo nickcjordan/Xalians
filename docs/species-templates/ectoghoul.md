@@ -18,22 +18,14 @@ The lore block holds three prose fields. `description` is Nick's teaser, carried
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits (105 words)
+### fields (4 of 5)
 
-It ranges the corpse islands of the Dreadscape, the macabre forests of splayed limbs and the tarry oceans that seep from the compressing layers of a planetwide mass grave, and it goes through what stands in the way rather than around it. The moon-weapon appears to target only organic, cellular life, so it passes freely over the ground where the organic workforce fell. It takes nothing in and feeds on nothing, so the ranging is not a hunt: what it looks for in other Xalians is their nerve, the cackle first, then the vanishing and the reappearing, then the ectoplasm. Nothing issues it orders now.
+- **origin**: One of the non-corporeal Xalians the abandoned Phantiri Generator produced after it rewrote itself under Leviticus Overdrive.
+- **habitat**: The Dreadscape of Phantiri.
+- **feeding**: It takes nothing in and feeds on nothing.
+- **behavior**: It zips across the Dreadscape cackling, disappears and reappears at will, passes through surfaces, and zaps its opponents with blasts of gooey ectoplasm. It seems to amuse itself by terrorizing other Xalians.
 
-| Claim | Source |
-|---|---|
-| Ranges the corpse islands of the Dreadscape, the forests of splayed limbs and the tarry oceans | Phantiri history paragraph 12, on the Dreadscape's islands of corpses covered in macabre forests of splayed limbs and deep tarry oceans formed from the fluids that eek out of a planetwide mass grave |
-| It goes through what stands in the way rather than around it | species.json: "passing through surfaces"; record `physiology.corporeality: non-corporeal` and `traits.pool.phasing` at 100 |
-| The moon-weapon appears to target only organic, cellular life | Phantiri history paragraph 13, which states it with that hedge; the hedge is kept |
-| So it passes freely over the ground where the organic workforce fell | Generator report mobility, flight not-applicable because current output is non-corporeal and matter does not obstruct transit; Generator report output notes, survival duration under current conditions was zero across all trials |
-| It takes nothing in and feeds on nothing, so the ranging is not a hunt | record `physiology.diet: none`, `physiology.breathes: []` |
-| What it looks for in other Xalians is their nerve | species.json: "They seem to amuse themselves by terrorizing other Xalians" |
-| The cackle first, then the vanishing and the reappearing, then the ectoplasm | species.json: "emitting a terrifying cackle wherever they go" and "disappearing and re-appearing at will, passing through surfaces, and zapping their opponents with blasts of gooey ectoplasm" |
-| Nothing issues it orders now | Phantiri history paragraph 11, the excavation fleet going radio silent, all findings sealed and classified, and the Wraithix System marked as restricted space into perpetuity |
-
-No pack or solitary sentence is written. The Phantiri report's proximity-aversion territoriality line is explicitly about other populations, so it does not carry a group or isolation claim for this species; `solitary` stays cut. The Leviticus Overdrive origin sentence of the first pass was cut for room: it is the Generator's act, not the creature's, and the moon-weapon line carries the same world fact.
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ## Sources
 

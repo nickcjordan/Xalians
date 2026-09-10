@@ -17,25 +17,14 @@ The lore block holds three prose fields. `description` is Nick's teaser, already
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits (119 words)
+### fields (4 of 5)
 
-It hunts under a sky of permanent night, where the only light is infrared, and it registers mass and motion rather than looking for it. It does not chase. It lies under the wetland surface and opens a collapse point in the water above it, so the prey arrives at the pincers on its own; the pincers then shut with a weight the arm does not have, and what is caught is not let go. Faced with something too large to draw in, it fixes itself to the bottom and stops being movable. It makes no call, no cry, and no signal of any kind. The Grimedites watch the galaxy's edge for APEX's return; it keeps the wetlands below.
+- **origin**: Thought to come from the laboratory experiments on Grimedes, rumored to be ECHELON black sites, that produced the planet's gravity-bending Xalians.
+- **habitat**: The foggy wetlands of Grimedes, just beneath the surface.
+- **feeding**: It lurks under the water and draws prey to its claws with a miniature black hole rather than chasing it.
+- **behavior**: It snaps its claws shut with a force many times its mass, cutting through the hardest materials. Against something too large to draw in, it roots itself to the ground and becomes an immovable wall of chitin.
 
-| Claim | Source |
-|---|---|
-| A sky of permanent night where the only light is infrared | Grimedes history paragraph 0, on a world cloaked in perpetual night around a dying brown dwarf emitting almost no visible light beyond the shortest infrared bands; Generator report terrain notes, illumination infrared only |
-| Registers mass and motion rather than looking | Grimedes Generator report fauna, sensory apparatus registers mass and motion; output priorities, non-visual sensory systems; record `senses.sight` 20 to 45 against `senses.special: void-sense` |
-| It does not chase | Grimedes Generator report fauna, extant fauna substitute gravitational manipulation for the majority of pursuit locomotion; record `capabilities.sprint` 15 to 35 |
-| It lies under the wetland surface and opens a collapse point in the water above it | species.json: "lurks just beneath the foggy wetlands of Grimedes, using its bizarre control over the intensification of gravitational waves to generate miniature black holes in the water"; Grimedes Generator report fauna, wetland forms generate submerged collapse-points |
-| So the prey arrives at the pincers on its own | species.json: "draw its helpless prey right into its clutches" |
-| The pincers shut with a weight the arm does not have | species.json: "snap them shut with a force many times heavier than their implied mass" |
-| What is caught is not let go | record `traits.pool.grappling`; species.json: "severing through even the hardest of materials with crushing pressure" |
-| Faced with something too large to draw in, it fixes itself to the bottom and stops being movable | species.json: "When facing larger foes, the Graviclaw can use its powers to root itself to the ground, becoming an immovable wall of chitin."; record `traits.pool.anchored` |
-| No call, no cry, no signal of any kind | record `physiology.communication: []`, which the enum defines as mute |
-| The Grimedites watch the galaxy's edge for APEX's return | Grimedes history paragraph 9, on the newest generation of Grimedites standing at the edge of the galaxy to watch the endless black and guard against APEX's inevitable return |
-| It keeps the wetlands below | record `lore.biomeNiche`; Generator report terrain features, fog-covered wetland systems |
-
-No pack or solitary sentence is written: `solitary` was cut on 2026-09-07 and `pack-bonded` is absent from the pool. The test-subject and ECHELON black-site origin of the first pass was cut for room; it is a fact about how the species was made rather than how it lives now, and the walkthrough's judgment lines keep it.
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ## Description status
 

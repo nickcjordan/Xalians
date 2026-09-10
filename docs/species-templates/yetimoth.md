@@ -18,19 +18,14 @@ Split applied 2026-09-09. `lore.description` was already the `species.json` text
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits (120 words)
+### fields (4 of 5)
 
-Its ground is the high-security complexes of the frozen tundra and the waste immediately outside them, where the ones too tough or too feral for indoor work were just as useful for discouraging an escape. It does not work alone; the pattern is formation, and one of them holding a line assumes others beside it. A corridor is closed by standing in it and drawing the frost out of the air until the way is a wall, and whatever is left on the wrong side of that wall is cased in the same ice and held there until the fists arrive. The commissions that posted it there are centuries gone, and the guard pattern is still what the Generator prints.
+- **origin**: Formed the rank and file of Krystos's prison guards in ancient times.
+- **habitat**: The high-security prison complexes of Krystos's frozen tundra and the waste outside them.
+- **behavior**: It forms thick sheets of ice from thin air, armoring itself, walling off escape routes in frost, or encasing an opponent until it can lumber close enough to pummel it with its ice-gauntleted fists.
+- **company**: It holds a line with others beside it.
 
-| Claim | Source |
-|---|---|
-| Its ground is the high-security complexes of the frozen tundra | `lore.biomeNiche`; Krystos history paragraph 7, several high-security prison complexes with the emerging stock of sturdy Xalians manning the penitentiaries |
-| And the waste immediately outside them, where the tougher or more feral were useful for discouraging an escape | Krystos history paragraph 7, those tough enough or feral enough to remain in the arctic wastelands outside being just as useful for deterring prisoners from seeking to escape |
-| Does not work alone; the pattern is formation | the teaser's own rank-and-file sentence, which is a species sentence; `traits.pool.pack-bonded` 27, whose sole evidence is that clause |
-| A corridor is closed by standing in it and drawing the frost out of the air until the way is a wall | species.json: "they could also form thick sheets of ice from thin air" and "blocking off escape routes in walls of frost"; record `conduits` hide for ice |
-| Whatever is left on the wrong side of that wall is cased in the same ice | species.json: "encapsulating their opponents" |
-| And held there until the fists arrive | species.json: "until they could lumber over close enough to pummel them into submission with their meaty, ice-gauntleted fists"; record `physiology.anatomy: fists` and `conduits` fists for ice |
-| The commissions are centuries gone and the guard pattern is still what the Generator prints | Krystos report fauna observation, guard-pattern forms retained from penal commissions; `traits.pool` required `territorial` |
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ### Claims considered and left out
 

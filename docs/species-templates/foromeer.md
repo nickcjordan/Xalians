@@ -18,25 +18,13 @@ The lore block holds three prose fields. `description` is Nick's teaser, carried
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits (116 words)
+### fields (3 of 5)
 
-Veridium's crust is worked metal with veins of heavy metals striking deep into it, and the Foromeer opens those veins. It works among the factory trenches and forge districts, where molten pours and machinery running without regard to proximity are the ordinary risks, and its plating takes them. The manufactory rings so loudly across the gunmetal surface that it mutes all other sound, so the creature reads the ground it is braced on and answers by drumming rather than by call. Injuries close over on their own. Since Source Code 606 released the Veridians from their robotic masters the demand for the factories has troughed, and the planet's Xalians now tinker with salvaged drones and machines.
+- **origin**: Thought to have been used for mineral excavation on Veridium, its drill-like horns breaking through the strongest material.
+- **habitat**: The ore-filled crust and heavy-metal veins of Veridium, among its factory trenches and forge districts.
+- **behavior**: It opens the metal veins with its horns. It signals by drumming through the ground rather than by call, since the manufactory is too loud for anything else.
 
-| Claim | Source |
-|---|---|
-| Veridium's crust is worked metal with veins of heavy metals striking deep into it | Veridium history paragraph 0, on veins of heavy metals striking their way deep into the dull metallic crust; Generator report terrain, worked metal to maximum sensor depth |
-| the Foromeer opens those veins | `species.json` Foromeer, the excavation purpose and the horns that break through the strongest of material, carried in `lore.description`; record `signatureAbility` Vein Breaker |
-| factory trenches and forge districts | Veridium Generator report terrain features, factory trench systems and active forge districts |
-| molten pours and machinery running without regard to proximity are the ordinary risks | Veridium Generator report hazards, industrial machinery operating without regard to proximity, discharge arcs, molten pours |
-| its plating takes them | Generator report fauna, furnace-tolerant plated forms; output priorities, plated chassis; record `covering: plating` |
-| the manufactory rings so loudly that it mutes all other sound | Veridium history paragraph 4, on the cacophony of the world's manufactory ringing across its gunmetal surface and muting out all other sounds |
-| reads the ground it is braced on | record `senses.special: tremorsense` against `senses.hearing` 20 to 40 |
-| answers by drumming rather than by call | record `communication: ["vibration"]`, no `vocal` |
-| injuries close over on their own | Generator report output priorities, self-repair routines; fauna, self-repairing frame architectures; legacy `recoveryRating` high; record `traits.pool.regenerative` |
-| Source Code 606 released the Veridians from their robotic masters | Veridium history paragraph 8, on Source Code 606 burning away APEX's control of the world and releasing the Veridians from the oversight of their robotic masters |
-| the demand for the factories has troughed, and the planet's Xalians now tinker with salvaged drones and machines | Veridium history paragraph 9, on demand for Veridium's factories having troughed and its current inhabitants tinkering with salvaged drones, robots and machines |
-
-No pack or solitary sentence is written: `solitary` was cut on 2026-09-07 for want of a source, and the Veridium report says nothing about group life.
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ## Judgment lines
 

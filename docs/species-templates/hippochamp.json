@@ -17,8 +17,10 @@
       "Thick tail coiled in a spiral",
       "Smooth hide"
     ],
-    "habits": "Its ground is a fleet: rig upon rig in interlocking nets of floating industrial zones, each trawling a global ocean for algae. It works in crews rather than alone. It breathes as readily in water as in air, so it can drop below the surface when the storm systems come over the rigs and when the semiannual bloom lays toxic microbes across the waves, which is the same reason the rigs themselves were built deeper and deeper beneath the ocean. It feeds on what the rigs and the water under them yield. Inside the settlement perimeters its aggression stays suppressed, and it saves what force it has for what comes at the rigs from outside them.",
-    "biomeNiche": "the interlocking floating industrial zones of Poseidas's hydro-processing fleets"
+    "origin": "Designed as emergency response crews for the hydro-processing rigs of Poseidas, putting out electrical and chemical fires and holding off pirates after the Algael.",
+    "habitat": "The floating rig fleets on Poseidas's global ocean, above and below the surface.",
+    "behavior": "It patrols the rigs and hoses down fires and threats alike with the steady stream from its snout. When storms or the toxic algae blooms come over the rigs it drops below the surface.",
+    "company": "It works in crews."
   },
   "physiology": {
     "corporeality": "corporeal",

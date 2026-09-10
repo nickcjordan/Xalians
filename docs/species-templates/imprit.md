@@ -20,24 +20,13 @@ The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` te
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits (119 words)
+### fields (3 of 5)
 
-Its ground is the legacy shafts, which hold where fresh excavation would open onto magma seepage, and the crag networks above them, the only ground on Magmuth that stays put between flow shifts. It climbs and leaps that ground rather than crossing the open, swinging from the tail as readily as from a hand. What it finds down there it takes apart and puts back together, gripping and turning with bare digits rather than hooks or claws, and the makeshift equipment it was left with is still what it works on. Above ground it is far less predictable, and it leaves fire behind it in places that had none. Firestorms and pyroclastic flows pass over it without marking it.
+- **origin**: Designed by Magmuth's corporations as a tinkerer and let loose in the lightless mining shafts to fix and maintain the makeshift equipment the Vallerii sent down.
+- **habitat**: The old mining shafts of Magmuth and the crag networks above them.
+- **behavior**: It climbs and leaps rather than crossing open ground, swinging from its tail as readily as from a hand. Underground it takes machinery apart and puts it back together. On the surface it is erratic, and it sets fires where they least belong.
 
-| Claim | Source |
-|---|---|
-| Its ground is the legacy shafts, which hold where fresh excavation would open onto magma seepage | planetRecords.json magmuth report terrain feature, legacy mining shafts; report mobility burrow note, "legacy shafts hold; new excavation intersects magma seepage" |
-| And the crag networks above them, the only ground that stays put between flow shifts | planetRecords.json magmuth report mobility climb note, "crag networks are the only persistent ground"; sprint note, "surface transit windows between flow shifts are brief" |
-| Climbs and leaps that ground rather than crossing the open | record `capabilities.climb` 78 to 95 and `capabilities.leap` 70 to 90; planetRecords.json magmuth report mobility sprint note on brief transit windows |
-| Swinging from the tail as readily as from a hand | species.json: "using their tails to swing through the air from place to place"; record `physiology.anatomy: tail` |
-| What it finds down there it takes apart and puts back together | species.json: "designed in ancient times as natural tinkerers" and "left to their own devices to fix and maintain the often makeshift mining equipment"; record `attributes.intelligence` 62 to 80 |
-| Gripping and turning with bare digits rather than hooks or claws | art (bare spread digits and bare soles, no claws drawn); record `capabilities.manipulation` 74 to 92 |
-| The makeshift equipment it was left with is still what it works on | species.json: "the often makeshift mining equipment sent deep into the earth by the Vallerii" |
-| Above ground it is far less predictable | species.json: "they are known for being entirely erratic" and "When released from their claustrophobic confines and set loose on the surface" |
-| And it leaves fire behind it in places that had none | species.json: "setting fires where they least belong" |
-| Firestorms and pyroclastic flows pass over it without marking it | planetRecords.json magmuth report hazards, firestorms and pyroclastic flows; report fauna observation, heat-shielded integument universal; record `traits.pool.hardened` 100 |
-
-The diet clause and the stillness-then-output clause of the first pass were cut for room; the predation-pattern line still stands in the judgment section.
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ## Judgments, each with its source
 

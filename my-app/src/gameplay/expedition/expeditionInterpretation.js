@@ -182,6 +182,62 @@ export const BOLSTER_RECOVERY = 0.5;
 // world, in initiative order among the hidden.
 export const HIDDEN_FIRST = true;
 
+/*
+	PASS 3: THE PRICE OF HIDING (docs/design/reclamation-base-redesign.md assumption 21).
+
+	Pass 2 measured always-hidden at 46.5 percent against a 51.0 proctor mirror, four and
+	a half points under it, against an eight-point bar. Hidden-first plus
+	hurt-attacks-for-less is a strong pair: the hidden creature lands first and unhurt, and
+	every reply is already scaled down. Three variants price it, each a rules key so the
+	sweep can read them alone and in combination:
+
+	- HIDDEN_SEND_COST: what a hidden send costs against the round's sendable cap, charged
+	  exactly the way RETURNED_SEND_COST is (see expeditionRules.sendCostFor). 1 is free,
+	  the pass 2 setting; 2 makes hiding cost a send.
+	- HIDDEN_FIRST_NEEDS_COMPANY: when true a hidden creature's attack only lands first if
+	  another creature of its own side stands at that world, so hiding is a coordinated
+	  play rather than a solo ambush.
+	- HIDDEN_POWER: the multiplier on an attack thrown from hiding.
+
+	Set 2026-09-10 by a sweep over all eight combinations, 200 matches on each of seeds 7,
+	13 and 21. Always-hidden's gap under the proctor mirror, by seed:
+
+		baseline (free, always first, full power)  7.5 / 4.5 / 1.5   hidden rate 6.0 / 3.4 / 3.3
+		a  cost 2                                 19.5 / 22.5 / 10.5 hidden rate 7.0 / 5.1 / 4.7
+		b  needs company                           8.0 / 0.0 / 2.5   hidden rate 9.3 / 6.7 / 6.7
+		c  power 0.75                             11.0 / 4.0 / 3.5   hidden rate 9.1 / 6.0 / 6.0
+		a+b                                       31.5 / 23.0 / 16.5 hidden rate 3.2 / 2.1 / 2.6
+		a+c                                       20.0 / 22.0 / 17.0 hidden rate 7.8 / 6.2 / 5.9
+		b+c                                        9.5 / 4.5 / 6.0   hidden rate 8.7 / 6.5 / 6.1
+		a+b+c                                     33.0 / 23.5 / 23.0 hidden rate 2.7 / 2.0 / 2.0
+
+	The gauge is an eight-point gap on all three seeds, a hidden send rate still between 5
+	and 15 percent, and the broker's hidden rate still above the proctor's. Neither b nor c
+	alone reaches the gap on any seed but the first; a alone reaches it everywhere but
+	leaves the hidden rate at 4.7 percent on seed 21, three tenths under the band; anything
+	carrying b prices hiding out of the game altogether (2 to 3 percent). a+c is the
+	smallest combination that meets all three gauges on all three seeds, and is the setting
+	below. The broker stays above the proctor on every one of them (+5.4 / +4.1 / +4.3).
+
+	OVERRIDABLE (levers, not stone): a alone misses the rate band by 0.3 points on one seed,
+	which is inside the noise of 200 matches. If Nick wants one lever rather than two, set
+	hiddenPower back to 1 and the game keeps a 19.5 / 22.5 / 10.5 gap.
+*/
+export const HIDDEN_SEND_COST = 2;
+export const HIDDEN_FIRST_NEEDS_COMPANY = false;
+export const HIDDEN_POWER = 0.75;
+
+/*
+	PASS 3: THE STAKE (assumption 22). A comeback avenue as a chosen risk, never a gift.
+	Before Deploy in any round each handler may stake one of the round's worlds, once per
+	Proving: it counts STAKE_SITE_VALUE toward the Charter for whoever holds it at the
+	Ruling, and STAKE_BOTH_VALUE when both handlers staked the same world. A tie counts
+	nothing, as a tied world always has.
+*/
+export const STAKE_ENABLED = true;
+export const STAKE_SITE_VALUE = 2;
+export const STAKE_BOTH_VALUE = 3;
+
 // Armored (the base, "Traits that remain"): blows against an armored creature are
 // reduced by this fraction.
 export const ARMORED_REDUCTION = 0.25;
@@ -220,6 +276,37 @@ export const WORLDS_PER_FRAME = 3;
 export const WORLDS_PER_MATCH = FRAMES_PER_MATCH * WORLDS_PER_FRAME;
 // every authored world carries this many sites; the frame loads one of them
 export const SITES_PER_WORLD = 3;
+
+/*
+	PASS 3: THE DRAFT'S SHAPE (assumption 23). Seventeen of twenty-nine species sat outside
+	the 30 to 90 percent keep band because a keep of twelve from eighteen by total order
+	always cuts the same bottom third. Two levers, both rules keys so the sweep can read
+	them alone and together:
+
+	- DRAFT_POOL_SIZE: how many creatures each side is dealt before keeping ROSTER_SIZE.
+	  A smaller pool cuts less, so more of what is dealt survives.
+	- DRAFT_DISTINCT_SPECIES: deal a species-distinct pool, so no species is dealt twice
+	  to the same handler and the keep cannot be a run of the same best species.
+
+	Set 2026-09-10 by the variant sweep (200 matches, seed 7). Species outside the 30 to 90
+	keep band: eighteen-and-deal-as-dealt 17 (five under 30, twelve over 90), fifteen 17
+	(one under 30, sixteen over 90), the distinct deal 17 (five under, twelve over), both
+	together 20. FRICTION: none of the three reaches the "10 or under" gauge, and the
+	arithmetic says none can. The mean keep rate is ROSTER_SIZE / poolSize by construction -
+	66.7 percent at eighteen, 80 percent at fifteen - so a smaller pool moves the whole
+	distribution toward the top of the band as fast as it lifts its floor. The band needs
+	the SPREAD of the ratings narrowed, which is a change to what the draft values, not to
+	how many creatures it is dealt.
+
+	Fifteen is chosen as the best of the three on the readings that are not arithmetic:
+	dead species fall from five to one, the one dominant species (luceras, kept above 80
+	with its keeper winning above 60) disappears, and every role's keeper win rate stays
+	inside the 40 to 60 fairness band (bolster 48.6, shield 49.8, strike 51.1, sweep 49.2).
+	The distinct deal removes the dominant species too but leaves all five dead ones, and
+	both levers together are worse than either alone.
+*/
+export const DRAFT_POOL_SIZE = 15;
+export const DRAFT_DISTINCT_SPECIES = false;
 
 // Trailing-seat compensation, Pass 2's roster-economy lever (docs/design/
 // reclamation-play-enhancements.md "Pass 2 levers"): the side holding fewer worlds after a

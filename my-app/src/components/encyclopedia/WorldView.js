@@ -6,7 +6,7 @@ import XalianImage from '../xalianImage';
 import Connections from './Connections';
 import { useVisit, useReadMark, markRead, useResume } from './trail';
 import { SectionHead } from '@/components/system/masthead';
-import { SpecPlate, RecordRow, Tile, TileBar, TileArt, TileMeta, EmptyState } from '@/components/system/record';
+import { SpecPlate, RecordRow, Tile, TileArt, TileMeta, EmptyState } from '@/components/system/record';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
@@ -333,7 +333,6 @@ export default function WorldView() {
                         <div className="grid grid-cols-2 gap-3 gap-y-4 sm:grid-cols-3 sm:gap-4 sm:gap-y-5 md:grid-cols-4 min-[1080px]:grid-cols-5 xl:grid-cols-6">
                             {world.nativeSpecies.map((s) => (
                                 <Tile as={Link} key={s.key} to={lore.routeFor('species', s.key)} className={`el-${s.element}`}>
-                                    <TileBar />
                                     <TileArt className="bg-el p-[4%]">
                                         <XalianImage
                                             colored

@@ -19,20 +19,14 @@ Split applied 2026-09-09. `lore.description` is Nick's teaser from `species.json
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits (114 words)
+### fields (4 of 5)
 
-It hunts by scent rather than by sight, working a smog too thick to see through and coming to its prey on the smell of it alone. Its ground is the acid swamps and the derelict chemical plants of the factoryscape, where abandoned facilities still run themselves and still fail. The Generator that shaped it was built to fill a world of acid swamps and industrial waste with life capable of surviving there at all, and nothing on that world burns it: not the corrosive rain, not the swamps it wades, not the agent it carries. A body opened in a fight discharges through the breach, which is true of everything printed on Drainov.
+- **origin**: Made by the Drainov Generator to survive a world of acid swamps and industrial waste.
+- **habitat**: The acid swamps and derelict chemical plants of Drainov.
+- **feeding**: With only two teeth, it dissolves its prey with the toxic mist it expels from the tube in its mouth.
+- **behavior**: It hunts by scent through smog too thick to see in.
 
-| Claim | Source |
-|---|---|
-| hunts by scent rather than sight | `physiology.senses.smell` [60, 85] against `sight` [40, 60]; Drainov report mobility note on flight, airborne particulates degrade tissue and instrumentation |
-| a smog too thick to see through | Drainov history paragraph 3, a desolated hellscape blanketed in a miasma of toxic smog; planet data Terrain, Gaseous Smog |
-| comes to its prey | `physiology.diet` carnivore, settled by the teaser's own word prey. Written as prey and not as a carcass: nothing makes this species a scavenger |
-| its ground is the acid swamps and the derelict chemical plants of the factoryscape | `lore.biomeNiche`; Drainov history paragraph 1, the world turned into a sprawling factoryscape, and paragraph 3, urban decay melting into acid swamps |
-| abandoned facilities still run themselves and still fail | Drainov history paragraph 3, abandoned processing facilities and chemical plants continuing to chug along on automated systems with very few safety measures, and annual meltdowns, explosions and leaks; Drainov report terrain note, automated legacy facilities continue uncommanded operation with periodic containment failure |
-| nothing on that world burns it: corrosive rain, swamps, its own agent | Drainov report fauna observation, full-spectrum toxin immunity universal; output priorities chemical immunity and containment-grade integument; history paragraph 5, the Xalians adapting to bubbling acid swamps, steaming corrosive rain, asphyxiating fumes and neurotoxic gases; `traits.pool.resistant` 55 |
-| a body opened in a fight discharges through the breach, which is true of everything printed on Drainov | Drainov report fauna observation, reactive discharge on structural breach; `traits.pool.volatile` 25 |
-| the Generator was built to fill a world of acid swamps and industrial waste with life capable of surviving there at all | Drainov history paragraph 5, the Generator bioengineering new forms of life capable of surviving within the planet's hostile wastelands |
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ### Sentences dropped from the pre-split description
 

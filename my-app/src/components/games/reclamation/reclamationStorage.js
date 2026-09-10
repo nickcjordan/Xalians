@@ -15,11 +15,14 @@ import { GENERATOR_VERSION } from '../../../gameplay/generator/constants.js';
 /*
 	THE BASE (docs/design/reclamation-base-redesign.md): the saved match shape changed
 	with the round (no orders, no committed map, a mutable currentHold on every board
-	row), so the key is bumped to v2. A v1 save cannot be resumed and is not offered: it
-	is removed the first time this module is asked for a match.
+	row), so the key was bumped to v2. Pass 3's stake (assumption 22) put `stakes` on
+	every frame and `stakeUsed` on every player, so a v2 save would resume into a match
+	the table cannot read the Charter arithmetic off; the key is bumped again to v3.
+	An older save cannot be resumed and is not offered: every legacy key is removed the
+	first time this module is asked for a match.
 */
-const MATCH_KEY = 'reclamation.match.v2';
-const LEGACY_MATCH_KEYS = ['reclamation.match.v1'];
+const MATCH_KEY = 'reclamation.match.v3';
+const LEGACY_MATCH_KEYS = ['reclamation.match.v1', 'reclamation.match.v2'];
 const HISTORY_KEY = 'reclamation.history.v1';
 const RIVAL_KEY = 'reclamation.rival';
 const MATCH_VERSION = 1;

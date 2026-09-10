@@ -23,23 +23,14 @@ The lore split (Nick, 2026-09-09). `lore.description` was already the species.js
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits (113 words)
+### fields (4 of 5)
 
-It holds the rim above a planetary strip-mine that spirals down into the Chasm, where Kozrak's enforcers work Stonera's war refugees for whatever the liquid metal below is worth, and it holds that rim in a line rather than alone. Most of the time it holds it as a statue, vitals arrested, spending no more than the rubble around it. The ground carries a footfall to it long before anything shows against the gray sky, and then it is up in the static-crackling air with the stone riding over the cradle of its tail, flinging boulders and gravel down onto whatever is climbing. Going up into that air costs it something every time.
+- **origin**: Used to airlift debris out of Stonera's strip mines with its levitating tail.
+- **habitat**: The edges of the Chasm on Stonera.
+- **behavior**: It stands guard over the perimeter in a statue-like state, hibernating to conserve energy until it senses a threat. Then it rises into the sky and uses its tail to levitate boulders and fling them across the Chasm, or carpet-bombs intruders with strafing runs of gravel and rock.
+- **company**: It stands in a line with others along the rim.
 
-| Claim | Source |
-|---|---|
-| Holds the rim above a planetary strip-mine that spirals down into the Chasm | species.json: "Terragoyles can be found lining the edges of the Chasm"; planet: "A planetary strip-mine now dominates the Chasm, spiraling deep into the hollow earth"; record `lore.biomeNiche` and `traits.pool.territorial` at 100 |
-| Kozrak's enforcers work Stonera's war refugees for whatever the liquid metal below is worth | planet: "where Kozrak’s enforcers exploit Stonera’s war-torn refugees as a captive labor force, squeezing them for every last ounce of profit to be made" and "a gaping hole now descends into a deep ocean of liquified metal and rich minerals of unimaginable value" |
-| Holds that rim in a line rather than alone | species.json: "Terragoyles can be found lining the edges of the Chasm" (the one sentence in either source that puts more than one of them on the ground at once) |
-| Most of the time it holds it as a statue, vitals arrested, spending no more than the rubble around it | species.json: "now stand guard over the perimeter in a statue-like state, hibernating to conserve their energy until a threat is detected"; record `traits.pool.dormant` |
-| The ground carries a footfall to it before anything shows against the gray sky | record `senses.special`, `tremorsense`; record `physiology.senses.hearing` [60, 85] against `sight` [55, 80]; planet: "The debris from such collisions have launched enormous swathes of dirt into the air, dying the sky a dusty grey" |
-| Then it is up in the static-crackling air | species.json: "When awoken, Terragoyles rise high into the sky"; planet: "the rubbing of these particulates in the atmosphere generates colossal static discharges that crackle pervasively in the lower atmosphere"; report `terrain.features`, atmospheric dust saturation with static discharge; record `traits.pool.insulated` |
-| With the stone riding over the cradle of its tail | art (a five-pointed cradle at the tail tip with the stone held clear above it); species.json: "elongated tails tipped with a levitating ball of stone" |
-| Flinging boulders and gravel down onto whatever is climbing | species.json: "using their tails to levitate boulders and fling them like great flying catapults across the Chasm beneath them or to carpet bomb intruders with strafing runs of gravel and rock as they soar overhead" |
-| Going up into that air costs it something every time | Stonera Generator report `mobility.flight`, inefficient, debris and static exposure |
-
-No feeding claim was authored: neither source shows this species feeding, and `physiology.diet` reads `omnivore` as the no-evidence fallback, so habits says nothing about what it eats. The Jorian Belt bombardment clause of the first pass was cut for room; the dusty sky and the static in the air still carry it, and the field now spends its length on what the creature does from the rim rather than on what falls on it.
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ## Description status
 

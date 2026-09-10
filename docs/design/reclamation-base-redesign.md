@@ -147,6 +147,47 @@ Settings: `swiftSpeed` 65 (sweep 65/75/85: 4.7, 2.5 and 0.8 moves a match; 85 fa
 - **Lanes** (top quartile minus bottom quartile site win rate): strength +9.1, instinct +7.4, resilience +6.5, endurance +5.8, vitality +3.3 carry weight; agility, reflex and willpower do not resolve at 200 matches; intelligence (-5.2) and charisma (-7.4) read negative because they are high on the roles that win worlds less (sweeps and presences), so those two lanes measure the role, not the attribute. A per-role split of the lane reading is the next refinement.
 - **Ablation.** Carrying weight: hidden sends, the Loki line, speed order (envoy moves), hidden-first, sweep, bolster (the role, now the second-heaviest rule: broker falls from 44 to 33.5 without it), shield, hurt-attacks-for-less (downs 3.65 without it), willful, the swift move (envoy 38 to 32, downs 3.6, the heaviest new rule). Not measurable at 200 matches: bolster recovery, presence scale, instinct lanes. Each of those three fixes a legibility problem the ablation cannot see (a bolster that does something at every contested world; presences that differ by creature; targeting that follows a stat the player can read), and recovery cannot be raised into measurability without breaking the presence-first gauge, so all three stay as they are, recorded as levers.
 
+## Pass 3: the price of hiding, the stake, and the draft's shape (2026-09-10)
+
+Nick's brief: "go ahead and dive into the next set of adjustments." The three open levers from pass 2, each tested as variants behind rules keys and shipped on the measurement, per the levers-not-stone rule (recommendation applied, recorded as overridable).
+
+**The price of hiding.** Always-hidden sits within five points of the proctor's mirror on most seeds; hidden-first plus hurt-attacks-for-less makes a hidden send nearly free. Variants: (a) a hidden send costs two against the sendable cap (`hiddenSendCost` 2); (b) hidden-first is lost when the hidden creature is the only attacker of its side at the world (`hiddenFirstNeedsCompany`); (c) an attack from hiding lands at reduced power (`hiddenPower` 0.75). Gauge: always-hidden at least eight points under the mirror on three seeds, hidden send rate still between 5 and 15 percent, the broker's hidden rate still above the proctor's.
+
+**The stake, a comeback avenue as a chosen risk.** Before Deploy in any round, either handler may stake one of the round's worlds, once per Proving: that world counts two toward the Charter for whoever holds it at the Ruling (a tie counts nothing). Both handlers may stake in the same round, on the same or different worlds; a world staked by both counts three. Clinch at five is unchanged, so a stake can end a Proving early for either side. Bot: stakes when behind and one of the round's worlds favors its roster (its mean hold there against the rival's), or when ahead only if that world is strongly favored (windsailor's habit stakes sooner, envoy's later). Gauge: comeback rate back toward 30 to 40 without a gift; stake used in a healthy share of Provings (20 to 60 percent); the staker wins the staked world at least as often as an unstaked one, else it is a trap.
+
+**The draft's shape.** 17 of 29 species sit outside the keep band because a keep of twelve from eighteen by total order always cuts the same bottom third. Variants: (a) keep twelve of fifteen (`DRAFT_POOL_SIZE` 15); (b) the deal is species-distinct, eighteen different species (`draftDistinctSpecies`); (c) both. Gauge: species outside the 30 to 90 keep band, dead species count, roles still on one bar.
+
+**Measurement refinement.** The per-attribute lane reading is split per role, so intelligence and charisma are read within sweeps and presences rather than against strikers.
+
+| # | Assumption / Decision | Confidence | Supporting Evidence |
+|---|---|---|---|
+| 21 | Hiding gets a price chosen by the sweep above | 75% (pass 2 measurement; three variants, the gauge decides) | pass 2 measurements |
+| 22 | The stake is the first comeback avenue: a chosen risk open to both sides, once per Proving, never a gift | 70% (Nick, 2026-09-09: "if they wanted to take a chance"; chance itself stays out) | this pass |
+| 23 | The draft's shape moves by the smallest change that brings the keep band within reach: pool size or a species-distinct deal | 65% (first measurements: a rating-ordered keep cannot reach the band at 12 of 18) | first and pass 2 measurements |
+
+### Pass 3 measurements (2026-09-10, 200 matches per configuration)
+
+**The price of hiding.** Gap is the proctor's mirror minus the always-hidden policy, on seeds 7, 13 and 21; the hidden rate is the hidden share of all sends.
+
+| Variant | Gap | Hidden rate | Broker minus proctor |
+|---|---|---|---|
+| unpriced (pass 2) | 7.5 / 4.5 / 1.5 | 6.0 / 3.4 / 3.3 | +9.4 / +7.9 / +8.4 |
+| cost 2 | 19.5 / 22.5 / 10.5 | 7.0 / 5.1 / 4.7 | +6.0 / +4.7 / +4.9 |
+| first only with company | 8.0 / 0.0 / 2.5 | 9.3 / 6.7 / 6.7 | +7.0 / +5.8 / +6.0 |
+| power 0.75 | 11.0 / 4.0 / 3.5 | 9.1 / 6.0 / 6.0 | +7.4 / +6.2 / +6.6 |
+| cost 2 and power 0.75 (shipped) | 20.0 / 22.0 / 17.0 | 7.8 / 6.2 / 5.9 | +5.4 / +4.1 / +4.3 |
+| cost 2 and company | 31.5 / 23.0 / 16.5 | 3.2 / 2.1 / 2.6 | out of band |
+
+Cost 2 with power 0.75 is the smallest combination that clears every gauge on every seed. Pricing hiding broke the broker (43 to 28.5 against the proctor, its `hideBias` 1.8 having been tuned when hiding was free); it is retuned to `hideBias` 1.3 with a per-rival `concealmentValue` weight in the bot (not an engine discount), and reads 44 against the proctor on the tuning seed and 37.5 on seed 7. The rival ladder was re-measured (seed 11): envoy 43.5, broker 44.0, proctor 48.0, windsailor 48.5, heir 51.5, so the intro's order is now envoy, broker, proctor, windsailor, heir.
+
+**The stake.** Taken in 31.5 to 35 percent of Provings, 78 to 94 percent of them by the trailing side. The staker holds its staked world 46 to 57 percent of the time against 42 to 53 for its unstaked worlds that round, inside the interval on every seed and reversing between seeds: the stake is variance-neutral, which is what a chosen risk should be. Comeback rate 28.8 with the stake against 27.2 without, inside the interval; the stake is a chance taken, not a comeback engine, and the comeback band (30 to 40) stays unmet. An asymmetric stake (counting two only for the staker) would move the number and was rejected as a gift under Nick's ruling. The ladder is unmoved by the stake.
+
+**The draft.** Mean keep rate is twelve over the pool by construction (67 percent at eighteen, 80 at fifteen), so no pool size can bring every species into a 30 to 90 band: 17 of 29 stay outside at eighteen, at fifteen, and at eighteen species-distinct; fifteen with a distinct deal reads 20. Fifteen ships on the readings that are not arithmetic: dead species from five to one (dromeus), the one dominant species gone, every role's keeper win rate inside the band (bolster 47.4, shield 50.3, strike 51.8, sweep 48.1). Fire is still the one dead element. The keep-band gauge is retired in favor of "no dead species, no dominant species"; what remains is a lever on what `rateForDraft` values.
+
+**Lanes per role** (top quartile minus bottom quartile site win rate): the overall row hid what the roles show. Vitality reads +0.9 overall but +10.5 within strikes and +11.6 within sweeps; strength +8.6 within strikes; willpower +7.6 within strikes and +5.7 within presences; instinct +6.7 within presences; speed (agility, reflex) positive only within presences (+5.5, +6.6) and negative within attackers (down to -11.5 for reflex within sweeps), which says a fast attacker is sent into fights it does not win and a fast presence is placed well. Intelligence and charisma read flat to negative within every role: those two lanes are the weakest and the next to look at.
+
+**Final baseline (seed 7).** Proctor mirror 47.5; greedy 0, always-stack 0, never-contest 1.5, random 11.5, pass-early 20.5, always-hidden 27.5 (from 46.5), presence-first 40.5. Spread 5.8 near-best, dominant on 12.6 percent. Downs 2.8 to 3.1 a match. Resolution changes the leader at 17.8 percent of contested worlds (band 25 to 40, unmet, unchanged in kind since the first pass). Comeback 28.8 (band 30 to 40, unmet). Decided after round 1 50 percent (reported, not a target). Ablation: hiding unpriced is the heaviest new row; no stake, bolster recovery and instinct lanes move nothing measurable at 200 matches.
+
 ## Open items
 
 - Whether menacing should merge into shield (a weaker cousin that draws rather than cancels).
