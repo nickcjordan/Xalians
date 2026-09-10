@@ -275,19 +275,12 @@ export default function SpeciesView() {
                         </div>
                     )}
 
-                    {view.habits && (
-                        <div className="flex flex-col gap-1">
-                            <h3 className="type-heading m-0 text-[19px]">Habits</h3>
-                            <p className="m-0 font-body text-body text-ink-2">{view.habits}</p>
+                    {Array.isArray(view.fields) && view.fields.length > 0 && view.fields.map((field) => (
+                        <div key={field.key} className="flex flex-col gap-1">
+                            <h3 className="type-heading m-0 text-[19px]">{field.label}</h3>
+                            <p className="m-0 font-body text-body text-ink-2">{field.text}</p>
                         </div>
-                    )}
-
-                    {view.biomeNiche && (
-                        <div className="flex flex-col gap-1">
-                            <h3 className="type-heading m-0 text-[19px]">Niche</h3>
-                            <p className="m-0 font-body text-body text-ink-2">{view.biomeNiche}</p>
-                        </div>
-                    )}
+                    ))}
                 </div>
             </div>
 

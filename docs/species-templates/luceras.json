@@ -16,8 +16,10 @@
       "Long whiskers",
       "Whip tail longer than the body, ending in a spiked plume"
     ],
-    "habits": "Its ground is not continuous. The habitable band of Saiphus is a scatter of buoyant islands separated by a sea of clouds and dense fog, and it crosses the gaps, one of the great leaping animals the Saiphus Generator raised to bound between islands as if gravity held no sway over them. It grazes the rolling plains such an island carries and drinks from the deep canyons where vapor condenses into water. It listens and it moves: sulfuric cloud banks sweep across the sky without warning, the storms do not stop, and a descent into the fluid layer below the islands is not recoverable.",
-    "biomeNiche": "the gaps between the floating islands of Saiphus's upper-atmosphere life band"
+    "origin": "One of the leaping animals the Saiphus Generator raised to bound between the floating islands as if gravity held no sway over them.",
+    "habitat": "The floating islands of Saiphus and the gaps between them.",
+    "feeding": "It grazes the rolling plains of the islands and drinks where vapor condenses in the canyons.",
+    "behavior": "It jumps so high it seems to fly, then comes missiling down on its enemy like a battering ram."
   },
   "physiology": {
     "corporeality": "corporeal",

@@ -25,8 +25,7 @@ function buildLegacyView(species) {
 		portrait: { svgName: species.key },
 		description: raw.description,
 		appearance: undefined,
-		habits: undefined,
-		biomeNiche: undefined,
+		fields: undefined,
 		entry: getEntry(species.key),
 		legacy: {
 			height: raw.height,
@@ -148,8 +147,7 @@ function buildTemplateView(species, template) {
 		portrait: { svgName: species.key },
 		description: template.lore.description,
 		appearance: template.lore.appearance,
-		habits: template.lore.habits,
-		biomeNiche: template.lore.biomeNiche,
+		fields: ['origin', 'habitat', 'feeding', 'behavior', 'company'].filter((k) => template.lore[k]).map((k) => ({ key: k, label: k.charAt(0).toUpperCase() + k.slice(1), text: template.lore[k] })),
 		entry: getEntry(species.key),
 		record: {
 			physiology: buildPhysiology(template.physiology),

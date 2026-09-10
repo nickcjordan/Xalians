@@ -17,8 +17,9 @@
       "Long curved claws on the forelimbs",
       "Very long banded tail with a hooked tip"
     ],
-    "habits": "It comes off the prototype Generator the Syndicate stole and smuggled to Endessa to man the drilling, and it keeps to the cavern networks that run deep beneath the dunes, where Nightcap is still pumped out barrel after barrel. It reads the ground through what it stands on, and down there it hears more than it sees. Tunnel collapse is a common death in those workings, and its plating is what it meets one with. Above ground the twin suns allow only the low hours, and it crosses in them.",
-    "biomeNiche": "the dunes and cavern networks of Endessa"
+    "origin": "One of the Xalians the Syndicate's stolen prototype Generator produced to work the drilling on Endessa.",
+    "habitat": "The dunes and cavern networks of Endessa, crossing the surface only in the low hours.",
+    "behavior": "It rolls into a ball inside its scaly exoskeleton to protect itself, and it feels the ground through its plating."
   },
   "physiology": {
     "corporeality": "corporeal",

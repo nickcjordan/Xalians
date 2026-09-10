@@ -174,7 +174,13 @@ let species = null, planet = null;
   const speciesAll = JSON.parse(fs.readFileSync(path.join(dir, 'species.json'), 'utf8'));
   // planetRecords.json is the planet source (rebuilt 2026-09-02): history prose, physical.derived.gravityEarth, environment.habitableBandC.
   // planets.json is legacy; its data-block values stay in the quotation corpus only so records validated before the rebuild keep passing.
-  const recPath = path.join(dir, 'planetRecords.json');
+  // 2026-09-10: the committed planetRecords.json (rebuilt on main) carries no environment.habitableBandC; the 2026-09-02 rebuild that
+  // does is only in the C:/dev/src/Xalians checkout. Prefer whichever copy carries the band the temperature rule needs, and warn when
+  // the worktree copy does not (issue filed; the band belongs in the committed file).
+  const recCandidates = SOURCE_DIRS.map(d => path.join(d, 'planetRecords.json')).filter(f => fs.existsSync(f));
+  const hasBand = f => { try { const j = JSON.parse(fs.readFileSync(f, 'utf8')); return (Array.isArray(j) ? j : Object.values(j)).some(pl => pl && pl.environment && pl.environment.habitableBandC); } catch (e) { return false; } };
+  const recPath = recCandidates.find(hasBand) || recCandidates[0] || path.join(dir, 'planetRecords.json');
+  if (recCandidates[0] && recPath !== recCandidates[0]) warn('source.planet.band', 'the planetRecords.json in ' + path.dirname(recCandidates[0]) + ' has no environment.habitableBandC; using ' + recPath + ' for the habitable band');
   const legacyPath = path.join(dir, 'planets.json');
   const recordsAll = fs.existsSync(recPath) ? JSON.parse(fs.readFileSync(recPath, 'utf8')) : null;
   const legacyAll = fs.existsSync(legacyPath) ? JSON.parse(fs.readFileSync(legacyPath, 'utf8')) : [];
@@ -251,8 +257,8 @@ if (T) {
   // lore
   const L = T.lore || {};
   // lore split (Nick, 2026-09-09): description is Nick's teaser and must be the species.json text verbatim;
-  // appearance (a list of defining presentation qualities, Nick 2026-09-09) and habits (behavior and ecology, prose 40 to 120 words).
-  if (species && normalize(L.description) !== normalize(species.description)) fail('lore.description.verbatim', 'lore.description must be the species.json description verbatim (it is the teaser; presentation goes in lore.appearance and behavior in lore.habits)');
+  // appearance (a list of defining presentation qualities, Nick 2026-09-09) and five short optional fields (Nick 2026-09-10): origin, habitat, feeding, behavior, company.
+  if (species && normalize(L.description) !== normalize(species.description)) fail('lore.description.verbatim', 'lore.description must be the species.json description verbatim (it is the teaser; presentation goes in lore.appearance and the rest in the five short fields)');
   checkProse('lore.description', L.description, 'lore.description');
   if ('body' in L) fail('lore.extra', 'lore.body is struck (Nick, 2026-09-09); presentation is the lore.appearance list');
   if (!Array.isArray(L.appearance) || L.appearance.length < 3 || L.appearance.length > 10) fail('lore.appearance', 'lore.appearance must be a list of 3 to 10 defining presentation qualities');
@@ -268,12 +274,22 @@ if (T) {
     if (/\bunarmored\b/i.test(e)) fail('lore.appearance.default', 'lore.appearance[' + i + '] states a default (every hide is unarmored unless armor is named)');
     if (/\bno\s+\w+,\s*(no\s+)?\w+\b/i.test(e)) warn('lore.appearance.absence', 'lore.appearance[' + i + '] lists absent anatomy; keep only when the absence is the form itself (a limbless body), never a parts inventory');
   });
-  if (typeof L.habits !== 'string' || !L.habits.trim()) fail('lore.habits', 'lore.habits missing (how it lives now)');
-  else checkProse('lore.habits', L.habits, 'lore.habits', { wordRange: [40, 120] });
+  if ('habits' in L) fail('lore.extra', 'lore.habits is struck (Nick, 2026-09-10); use the five short fields origin, habitat, feeding, behavior, company');
+  const FIELDS = ['origin', 'habitat', 'feeding', 'behavior', 'company'];
+  let fieldCount = 0;
+  for (const k of FIELDS) {
+    if (!(k in L)) continue;
+    fieldCount++;
+    const v = L[k];
+    if (typeof v !== 'string' || !v.trim()) { fail('lore.' + k, 'lore.' + k + ' is present but empty; leave an unsourced field out instead'); continue; }
+    checkProse('lore.' + k, v, 'lore.' + k);
+    const w = v.trim().split(/\s+/).length; if (w > 70) fail('lore.' + k + '.length', 'lore.' + k + ' is ' + w + ' words; a field is one to three plain sentences');
+    if (/\bits ground\b/i.test(v)) fail('lore.' + k + '.template', 'lore.' + k + ' uses the struck template phrase "its ground"');
+  }
+  if (fieldCount < 2) fail('lore.fields', 'fewer than two of the five short fields are present; habitat and behavior are expected for nearly every species');
   if ('descriptionStatus' in L) fail('lore.extra', 'lore.descriptionStatus is metadata, not a creature fact; status lives in docs/species-templates/lore-status.json');
   if ('amendments' in T) fail('template.extra', 'amendments is metadata, not a creature fact; record amendments in the walkthrough changelog');
-  if (typeof L.biomeNiche !== 'string' || !L.biomeNiche.trim()) fail('lore.biomeNiche', 'biomeNiche missing');
-  else if (EM_DASH.test(L.biomeNiche)) fail('lore.biomeNiche.emdash', 'biomeNiche contains an em-dash');
+  if ('biomeNiche' in L) fail('lore.extra', 'lore.biomeNiche is struck (Nick, 2026-09-10); habitat carries it');
 
   // physiology
   const P = T.physiology || {};
@@ -509,7 +525,7 @@ if (MD) {
     // reset per line so one stray quote cannot mis-pair the rest of the document.
     const skillPath = path.join(ROOT, '.claude', 'skills', 'migrate-species', 'SKILL.md');
     const skillText = fs.existsSync(skillPath) ? fold(fs.readFileSync(skillPath, 'utf8')) : '';
-    const own = [T && T.lore && T.lore.description, T && T.lore && Array.isArray(T.lore.appearance) && T.lore.appearance.join(' '), T && T.lore && T.lore.habits, T && T.signatureAbility && T.signatureAbility.description, ENC && ENC.definition].filter(Boolean).map(fold).join(' \n ');
+    const own = [T && T.lore && T.lore.description, T && T.lore && Array.isArray(T.lore.appearance) && T.lore.appearance.join(' '), T && T.lore && ['origin', 'habitat', 'feeding', 'behavior', 'company'].map((k) => T.lore[k]).filter(Boolean).join(' '), T && T.signatureAbility && T.signatureAbility.description, ENC && ENC.definition].filter(Boolean).map(fold).join(' \n ');
     const quotes = [];
     let inFence = false;
     let inDenials = false;

@@ -21,23 +21,14 @@ The lore block holds three prose fields. `description` is Nick's teaser, carried
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits (94 words)
+### fields (4 of 5)
 
-Magmuth's corporations designed it for the transient mineral islands, where a cooling flow gives only a brief window before the ground opens underfoot, and it was built to cross one inside that window. It hunts on those hardened flats and eats what it runs down. The ash storms and the sulfuric air of that world pass over it without harm, and it picks a moving shape out of the haze from a long way off. It still runs the ash fields, where the blood feuds that arose from the company wars have never ended.
+- **origin**: Magmuth's mining corporations designed it to cross the transient mineral islands, where a cooling lava flow gives only a short window before the ground opens again.
+- **habitat**: The hardened lava flats and ash fields of Magmuth.
+- **feeding**: It hunts on the flats and eats whatever it can run down.
+- **behavior**: It runs. When it reaches speed it spreads its wings, launches itself at its prey, and bites.
 
-| Claim | Source |
-|---|---|
-| Magmuth's corporations designed it | Magmuth history paragraph 4, on the corporations designing all manner of Xalians to extract the planet's metals, minerals and gases |
-| for the transient mineral islands | Magmuth history paragraph 3, on the transient islands formed from hardened lava being replete with heavy metals; paragraph 4, the mineral laden islands as mining zones |
-| a cooling flow gives only a brief window before the ground opens underfoot | Magmuth history paragraph 1, on lava flows forming temporary islands by rapid cooling; Generator report mobility, sprint note that surface transit windows between flow shifts are brief |
-| built to cross one inside that window | Generator report output priorities, burst locomotion; record `capabilities.sprint` 80 to 98 |
-| hunts on the hardened flats and eats what it runs down | Magmuth history paragraph 1, hardened lava flows as desolate expanses of obsidian and basalt; record `diet: carnivore` |
-| ash storms and sulfuric air pass over it without harm | Magmuth history paragraph 2, on volcanic smoke lacing the atmosphere with sulfuric ash and toxic fumes, and on violent ash storms; Generator report fauna, heat-shielded integument universal; output priorities, thermal shielding |
-| picks a moving shape out of the haze from a long way off | record `senses.sight` 70 to 90; Magmuth history paragraph 2, acrid air thick with volcanic smoke |
-| still runs the ash fields | Magmuth history paragraph 1, almost everything on Magmuth covered in a thick layer of ash; Generator report terrain, ash deposition near total |
-| the blood feuds that arose from the company wars have never ended | Magmuth history paragraph 7, on internecine warfare fueled by old blood feuds that arose from the company wars |
-
-Written toward but not written: the draft's loose-groups hunting sentence was dropped on the orchestrator's instruction as unsourced, so no pack or solitary sentence appears and `pack-bonded` stays cut.
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ## Judgment lines
 

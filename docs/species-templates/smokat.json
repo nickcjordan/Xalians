@@ -17,8 +17,10 @@
       "Long tail whose tip trails off into loose smoke",
       "Nearly weightless"
     ],
-    "habits": "It is one of the non-corporeal Xalians the abandoned Generator began producing once it rewrote itself under Leviticus Overdrive, after the moon weapon ended everything organic it had made. It holds a feline shape over the Dreadscape, the wasteland of piled Xalian remains that buried the obelisks of the old world, and the moon-weapon, which targets organic life, passes over it. It climbs and springs where the footing is bad and comes apart into smoke when it needs to cross open ground or close on something unseen. It takes nothing in and feeds on nothing; what it hunts for is the pounce itself. The fog over that ground stands windless and never lifts, and it works from inside it.",
-    "biomeNiche": "the thick haze over the corpse islands of the Dreadscape"
+    "origin": "One of the non-corporeal Xalians the abandoned Phantiri Generator produced after it rewrote itself under Leviticus Overdrive.",
+    "habitat": "The Dreadscape of Phantiri, inside its windless fog.",
+    "feeding": "It takes nothing in and feeds on nothing.",
+    "behavior": "It holds a feline shape, climbs and springs where the footing is bad, and instantly atomizes into a cloud of smoke for a sneak attack or a quick escape."
   },
   "physiology": {
     "corporeality": "non-corporeal",

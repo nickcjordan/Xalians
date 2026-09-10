@@ -17,8 +17,9 @@
       "Broad clawed hands",
       "Large bushy tail"
     ],
-    "habits": "It feeds on charge and takes nothing else, working the deep canyons and metallic peaks where Zolton's energy cycle lays down visible rivers of electricity that surge like wire currents over the crust. Storage is the rare answer on that world; most cataloged forms conduct the current and pass it along, and every one of them avoids the black lightning dead zones without exception. It keeps to canyons saturated with dense freezing gases and has no use for the warm end of its world. The Generator that made it was set on Zolton because black lightning did no harm to inorganic matter, so any loss of labor could simply be replenished.",
-    "biomeNiche": "the deep canyons and metallic peaks of Zolton, where ground-borne lightning surges over the crust"
+    "habitat": "The deep canyons and metallic peaks of Zolton, where ground-borne lightning surges over the crust. It keeps clear of the black lightning dead zones.",
+    "feeding": "It feeds on electrical charge from its surroundings and on nothing else.",
+    "behavior": "It stores the charge it gathers in its alloy bones and releases the shock into enemies through its claws."
   },
   "physiology": {
     "corporeality": "corporeal",

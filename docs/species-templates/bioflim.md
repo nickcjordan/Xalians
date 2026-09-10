@@ -20,23 +20,14 @@ The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carrie
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits
+### fields (4 of 5)
 
-Drainov's Generator made it for a world of bubbling acid swamps, steaming corrosive rain, asphyxiating fumes, and slow-drifting clouds of neurotoxic gases, and it draws no breath from any of them. It moves through the acid swamps rather than over them, and slowly: the substrate of that world is unreliable and this is not a body that hurries. It feeds on whatever it settles over, of any kind, and it reads what approaches through the ground rather than seeing it. The planet is now held by a loose conglomerate of Vallerii space pirates and interstellar crime syndicates, and it still rains burning refuse, industrial waste, and hazardous materials on the swamps below. Its own working life is long.
+- **origin**: Made by the Drainov Generator to live in the planet's acid swamps and chemical waste.
+- **habitat**: The acid swamps and derelict chemical plants of Drainov.
+- **feeding**: It feeds on whatever it settles over.
+- **behavior**: It moves slowly, flowing through the swamps rather than over them, and its slime continually regrows the rocky shell around it.
 
-| Claim | Source |
-|---|---|
-| Drainov's Generator made it for that world | planets.json Drainov history paragraph 5: the Generator bioengineering new forms of life capable of surviving within the planet's hostile wastelands |
-| Bubbling acid swamps, steaming corrosive rain, asphyxiating fumes, and slow-drifting clouds of neurotoxic gases | planets.json Drainov history paragraph 5, the adaptation sentence, restated |
-| It draws no breath from any of them | record `physiology.breathes: []` |
-| It moves through the acid swamps rather than over them, and slowly | record `environmentalTolerance.ambientMedia: [gas, liquid]` with `capabilities.swim [30, 50]` and `sprint [3, 15]`; planetRecords.json drainov `report.mobility.swim` viable, chemically immune forms only |
-| The substrate of that world is unreliable | planetRecords.json drainov `report.mobility.sprint` inefficient, substrate integrity unreliable |
-| This is not a body that hurries | record `capabilities.sprint [3, 15]`, `agility [5, 20]`; the legacy speed gauge is low |
-| It feeds on whatever it settles over, of any kind | record `physiology.diet: omnivore` |
-| It reads what approaches through the ground rather than seeing it | record `senses.special: [tremorsense]` against `senses.sight [20, 40]` |
-| The planet is now held by a loose conglomerate of Vallerii space pirates and interstellar crime syndicates | planets.json Drainov history paragraph 7 |
-| It still rains burning refuse, industrial waste, and hazardous materials on the swamps below | planets.json Drainov history paragraph 4; planetRecords.json drainov `report.terrain.features`, ongoing orbital debris infall and corrosive precipitation |
-| Its own working life is long | record `physiology.lifespan: long` |
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ## Description status
 

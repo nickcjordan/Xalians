@@ -19,24 +19,14 @@ The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` te
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits
+### fields (4 of 5)
 
-It works the underforests beneath the World Tree canopies, where open ground is scarce and obstruction makes the going slow, felling standing growth in long low arcs of the blade. It sets its feet and reads the tremor in the ground before it swings. It feeds as it works, on the growth it opens and on what the opening turns up. The toxic fungal blooms of the understory do not take in its hide, and what the brush tears in that hide closes over again. It holds the lane it has cut, in a forest whose answer to cutting is growth, entanglement and regrowth rather than a fight, and it gapes its long teeth at whatever comes down that lane.
+- **origin**: Thought to have been designed to clear the thick brush of Floria.
+- **habitat**: The underforests beneath the World Tree canopies.
+- **feeding**: It feeds as it works, on the growth it opens up and whatever the opening turns up.
+- **behavior**: It sets its feet, reads the ground, and fells standing growth in long low arcs of the blade on its trunk, then holds the lane it has cut.
 
-| Claim | Source |
-|---|---|
-| Works the underforests beneath the World Tree canopies | planets.json Floria paragraph 7, the World Trees whose "thick canopies had shaded the underforests"; planetRecords.json floria report terrain feature, understory fungal thickets; record `lore.biomeNiche` |
-| Open ground is scarce and obstruction makes the going slow | planetRecords.json floria report terrain notes, "Open ground: none of significance."; report mobility sprint, inefficient, "ground-level obstruction density" |
-| Fells standing growth in long low arcs of the blade | record `signatureAbility` Understory Reaping and `instruments: blades`; species.json, designed to clear the thick brush of Floria |
-| Sets its feet before it swings | record `traits.pool.anchored` 100 |
-| Reads the tremor in the ground | record `physiology.senses.special: tremorsense` |
-| Feeds as it works, on the growth it opens and on what the opening turns up | record `physiology.diet: omnivore` |
-| The toxic fungal blooms of the understory do not take in its hide | planetRecords.json floria report hazards, toxic fungal blooms; planets.json Floria paragraph 8, "massive infestations of toxic fungi"; record `traits.pool.resistant` |
-| What the brush tears in that hide closes over again | planetRecords.json floria report output priorities, regenerative tissue; record `traits.pool.regenerative` |
-| Holds the lane it has cut | record `traits.pool.territorial` |
-| In a forest whose answer to cutting is growth, entanglement and regrowth rather than a fight | planetRecords.json floria report fauna observation, "territorial strategy: growth, entanglement, and regrowth in place of engagement"; planets.json Floria paragraph 8, the coordinated response to any attempt to clear ground |
-| Gapes its long teeth at whatever comes down that lane | art (broad gape, long tapering teeth); record `physiology.anatomy: jaws` |
-
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ## Sources
 

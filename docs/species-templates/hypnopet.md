@@ -19,22 +19,14 @@ The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` te
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits (119 words)
+### fields (4 of 5)
 
-It lives among Telypso's fungal forests and smothering mists, on ground that deforms with whatever mood is passing through it, and it grazes on what that overgrowth puts out. It reads the state of whatever stands near it and answers in feeling as much as in sound, steadying what is unsteady and settling what will not settle on its own. When feeling is not enough the horn takes over: the color climbs and turns, the eyes watching it stop tracking anything else, and the body goes quiet whether or not it meant to. Since the plague reached the world there is more of that work than there has ever been, and a body this small does not last long.
+- **origin**: Created by the Telypso Generator as service animals and therapists for the insane Vallerii imprisoned there, using its empathic healing to balance and treat patients.
+- **habitat**: The fungal forests and mists of Telypso, though many now travel the stars as healers.
+- **feeding**: It grazes on what the overgrowth puts out.
+- **behavior**: It reads the state of whoever is near it and steadies them. When its horn pulses and swirls with color it hypnotizes whoever is watching and locks them in a trance, which once sedated patients in dangerous manias and now serves King Kozrak as crowd control on rebellious worlds.
 
-| Claim | Source |
-|---|---|
-| Lives among Telypso's fungal forests and smothering mists | planets.json Telypso paragraph 2, "Towering forests of mushrooms ascended from humid, smothering mists"; planetRecords.json telypso report terrain feature, fungal forest systems; record `lore.biomeNiche` |
-| On ground that deforms with whatever mood is passing through it | planetRecords.json telypso report terrain feature, terrain deformation correlated with ambient emotional state |
-| Grazes on what that overgrowth puts out | record `physiology.diet: omnivore` |
-| Reads the state of whatever stands near it | record `physiology.senses.special: psychic`; planetRecords.json telypso report fauna observation, empathic forms with emotional-state regulation function |
-| Answers in feeling as much as in sound | record `physiology.communication: telepathic`, alongside `vocal` and `display` |
-| Steadies what is unsteady, settles what will not settle on its own | planetRecords.json telypso report output priorities, psychic stabilization capacity and emotional regulation function |
-| When feeling is not enough the horn takes over: the color climbs and turns | species.json: "When their horn begins to pulse and swirl with psychedelic color"; record `physiology.anatomy: crest` and `conduits` crest for psychic |
-| The eyes watching it stop tracking anything else, and the body goes quiet whether or not it meant to | species.json: "it hypnotizes others and locks them in a trance, which was useful for sedating patients when they entered into dangerous bouts of mania"; record `traits.pool.hypnotic` at 100 |
-| Since the plague reached the world there is more of that work than there has ever been | planetRecords.json telypso report fauna observation, ambient psychic distress has increased since plague onset, inter-population aggression rising in affected sectors; planets.json Telypso paragraph 7, "the world now screams in psychic pain" |
-| A body this small does not last long | record `physiology.lifespan: short` and `physiology.size` |
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ## Description status
 

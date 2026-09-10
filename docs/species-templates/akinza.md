@@ -22,20 +22,13 @@ The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carrie
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits
+### fields (3 of 5)
 
-It belongs to the feral stock that came out of the Krystos Generator after the impact, when the debris blotted out the sun and the machine turned from dainty and graceful creatures to lifeforms capable of surviving the harsh, frozen tundra. Its ground is the arctic wastelands outside the high-security prison complexes rather than the penitentiary halls, where such creatures proved just as useful for deterring any prisoners from seeking to escape. Blizzard cycles and sustained lethal cold are the conditions it works in, and the dark hours are the ones it keeps. It takes what the permafrost gives, of any kind.
+- **origin**: Feral stock from the Krystos Generator after the impact, when the machine turned from making dainty, graceful creatures to lifeforms that could survive the frozen tundra.
+- **habitat**: The arctic wastes outside the prison complexes of Krystos.
+- **behavior**: It moves at night, using its stealth and night vision to go unseen. Creatures like it proved useful for discouraging prisoners from trying to escape.
 
-| Claim | Source |
-|---|---|
-| It belongs to the feral stock that came out of the Krystos Generator after the impact | planets.json Krystos history paragraphs 4 to 7: the impact event, and the emerging stock of Xalians on the frozen world |
-| The debris blotted out the sun | planets.json Krystos history paragraph 5: the atmospheric debris blotting out the sun and all warmth that accompanied it |
-| The machine turned from dainty and graceful creatures to lifeforms capable of surviving the harsh, frozen tundra | planets.json Krystos history paragraph 6, the Generator sentence, restated |
-| Its ground is the arctic wastelands outside the high-security prison complexes rather than the penitentiary halls | planets.json Krystos history paragraph 7: the sturdy stock manned the penitentiaries while the feral stock remained in the arctic wastelands outside; record `lore.biomeNiche` |
-| Such creatures proved just as useful for deterring any prisoners from seeking to escape | planets.json Krystos history paragraph 7, same sentence; planetRecords.json krystos `report.fauna.observations` guard-pattern forms retained from penal commissions |
-| It takes what the permafrost gives, of any kind | record `physiology.diet: omnivore` |
-| Blizzard cycles and sustained lethal cold are the conditions it works in | planetRecords.json krystos `report.hazards`: sustained lethal cold, blizzard cycles; record `environmentalTolerance.temperatureC [-60, -10]` |
-| The dark hours are the ones it keeps | record `traits.pool.nocturnal` at 100 and `lore.biomeNiche`, worked at night |
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ## Source sentences
 

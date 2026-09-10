@@ -20,21 +20,14 @@ The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` te
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits
+### fields (4 of 5)
 
-Its ground is a fleet: rig upon rig in interlocking nets of floating industrial zones, each trawling a global ocean for algae. It works in crews rather than alone. It breathes as readily in water as in air, so it can drop below the surface when the storm systems come over the rigs and when the semiannual bloom lays toxic microbes across the waves, which is the same reason the rigs themselves were built deeper and deeper beneath the ocean. It feeds on what the rigs and the water under them yield. Inside the settlement perimeters its aggression stays suppressed, and it saves what force it has for what comes at the rigs from outside them.
+- **origin**: Designed as emergency response crews for the hydro-processing rigs of Poseidas, putting out electrical and chemical fires and holding off pirates after the Algael.
+- **habitat**: The floating rig fleets on Poseidas's global ocean, above and below the surface.
+- **behavior**: It patrols the rigs and hoses down fires and threats alike with the steady stream from its snout. When storms or the toxic algae blooms come over the rigs it drops below the surface.
+- **company**: It works in crews.
 
-| Claim | Source |
-|---|---|
-| Its ground is a fleet, rig upon rig in interlocking nets of floating industrial zones trawling a global ocean for algae | planets.json Poseidas paragraph 7, "rig upon rig that formed interlocking nets of giant floating industrial zones, each of them trawling the ocean for as much algae as possible"; planetRecords.json poseidas report terrain feature, global ocean; record `lore.biomeNiche` |
-| It works in crews rather than alone | species.json, "emergency response crews"; record `traits.pool.pack-bonded` |
-| Breathes as readily in water as in air | record `physiology.breathes: [gas, liquid]` and `environmentalTolerance.ambientMedia` |
-| Drops below the surface when storm systems come over the rigs and when the semiannual bloom lays toxic microbes across the waves | planetRecords.json poseidas report hazards, surface storm systems and semiannual toxic bloom events with airborne microbial dispersal at surface |
-| That is the same reason the rigs themselves were built deeper and deeper beneath the ocean | planets.json Poseidas paragraph 10, "building them deeper and deeper beneath the ocean in order to avoid the tumultuous storms and toxic microbes that racked its surface" |
-| Feeds on what the rigs and the water under them yield | record `physiology.diet: omnivore` (no source sentence shows it feeding; the record field is the anchor) |
-| Aggression stays suppressed inside the settlement perimeters | planetRecords.json poseidas report fauna observation, aggression suppressed within settlement perimeters; output priority, low-aggression settlement compatibility |
-| Saves its force for what comes at the rigs from outside them | species.json, defense against pirates seeking to steal Algael; record `traits.pool.protective` 100 |
-
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ## Description status
 
