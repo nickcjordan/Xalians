@@ -3065,11 +3065,21 @@
 .lr-field-encounter { scroll-margin-top: 82px; }
 .lr-simple-plan-reason { margin: 14px 0 0; padding: 11px 13px; color: var(--g-ink-mid); background: var(--g-hull); line-height: 1.45; }
 .lr-simple-plan-reason strong { color: var(--g-phosphor); }
-.lr-simple-plan-crew { display: grid; grid-template-columns: 1fr 30px 1fr 36px 1.2fr; align-items: center; gap: 5px; margin-top: 16px; }
-.lr-simple-plan-crew > span { display: grid; gap: 6px; padding: 12px; background: var(--g-hull); }
+.lr-simple-plan-crew { display: grid; grid-template-columns: 1fr 30px 1.25fr 30px 1fr; align-items: stretch; gap: 5px; margin-top: 16px; }
+.lr-simple-plan-crew > span { position:relative; display: grid; align-content:start; gap: 6px; padding: 13px 12px 13px 42px; border-top:2px solid #55594c; background: var(--g-hull); }
+.lr-simple-plan-crew > span > i { position:absolute; left:12px; top:14px; color:var(--g-hazard); font-size:18px; }
+.lr-simple-plan-crew > span.is-support { border-color:var(--g-phosphor); }
+.lr-simple-plan-crew > span.is-support > i { color:var(--g-phosphor); }
+.lr-simple-plan-crew > span.is-reserve { border-color:#6f887d; }
 .lr-simple-plan-crew small { color: var(--g-ink-low); font: 700 9px/1 var(--g-font-mono); text-transform: uppercase; }
 .lr-simple-plan-crew strong { color: var(--g-ink); font: 600 13px/1.3 var(--g-font-mono); text-transform: uppercase; }
-.lr-simple-plan-crew > svg { color: var(--g-hazard); text-align: center; }
+.lr-simple-plan-crew em { color:var(--g-ink-mid); font:500 11px/1.35 var(--g-font-sans); }
+.lr-simple-plan-crew > i,.lr-simple-plan-crew > svg { color: var(--g-hazard); text-align: center; }
+.lr-simple-plan-outlook { display:flex; align-items:center; justify-content:center; gap:9px; margin:7px 0 0; padding:9px 12px; background:#11140f; font-family:var(--g-font-mono); text-transform:uppercase; }
+.lr-simple-plan-outlook span { color:var(--g-ink-low); font-size:9px; }
+.lr-simple-plan-outlook strong { color:var(--g-phosphor); font-size:12px; }
+.lr-customize-plan { opacity:.72; font-size:11px!important; }
+.lr-customize-plan:hover,.lr-customize-plan:focus-visible { opacity:1; }
 .lr-simple-plan-cost,
 .lr-simple-result-cost { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-top: 9px; }
 .lr-simple-plan-projections { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 7px; margin-top: 9px; }

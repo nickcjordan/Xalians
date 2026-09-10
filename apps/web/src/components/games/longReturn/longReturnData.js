@@ -159,10 +159,10 @@ export const MISSION = {
       surveyFocus: 'the waterline, hanging gantry, and intake channel',
       relayChannels: ['vibration', 'telepathic'],
       hazards: [
-        { id: 'conductive-brine', label: 'Conductive brine', detail: 'The flood carries a dormant Electric charge.', sense: 'smell', threshold: 58, special: 'electroreception', strain: 1, pressure: 1 }
+        { id: 'conductive-brine', label: 'Conductive brine', detail: 'The flood carries a dormant Electric charge.', sense: 'smell', threshold: 58, special: 'electroreception', strain: 2, pressure: 2 }
       ],
       routes: [
-        { id: 'gantry', title: 'Cross the hanging gantry', description: 'Stay dry, move lightly, and trust the old suspension bolts.', difficulty: 63, pressure: 1, salvage: 1,
+        { id: 'gantry', title: 'Cross the hanging gantry', description: 'Stay dry, move lightly, and trust the old suspension bolts.', difficulty: 63, pressure: 0, salvage: 1,
           consequence: { id: 'quiet-entry', label: 'Quiet entry', detail: 'The turbine bank ahead remains dormant.', future: 'Makes the upper catwalk easier in the next scene.' },
           outcomes: {
             clean: 'The gantry bows once, then settles. The crew reaches the far seal without waking the machinery beyond it.',

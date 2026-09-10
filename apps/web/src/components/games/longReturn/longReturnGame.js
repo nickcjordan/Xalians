@@ -400,7 +400,8 @@ function safestPlanForRoute(route, crew, strain, spentAbilities, scan) {
 }
 
 function routeAdvantage(plan, plans) {
-  if (plan.unresolvedHazards.length || plan.nativeRisk) return plan.nativeRisk ? 'Possible encounter' : 'Unresolved danger';
+  if (plan.unresolvedHazards.length || plan.nativeRisk) return plan.nativeRisk ? 'Risk native contact' : 'Gamble for a larger haul';
+  if (plans.some((entry) => entry.unresolvedHazards.length || entry.nativeRisk)) return 'Predictable route';
   if (plan.route.activeEffects && plan.route.activeEffects.length) return plan.route.activeEffects[0].label;
   const crewCost = plan.knownLeadStrain + plan.baseSupportStrain;
   const lowestCrew = Math.min(...plans.map((entry) => entry.knownLeadStrain + entry.baseSupportStrain));
@@ -438,6 +439,13 @@ function trapDialogTab(event) {
   const last = focusable[focusable.length - 1];
   if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
   else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+}
+
+function supportRoleForPlan(plan) {
+  const alone = plan.rawMethodScore - plan.difficulty;
+  if (alone < 0 && plan.margin >= 0) return 'Turns a failed attempt into a passage';
+  if (alone < 14 && plan.margin >= 14) return 'Prevents the lead from losing 1 energy';
+  return 'Stands ready if the lead loses control';
 }
 
 function MechanicsModal({ open, onClose }) {
@@ -796,7 +804,7 @@ function LongReturnGame() {
           : phase === 'assign' && !routeId
             ? { stage: 'Step 2 of 3 · Route', title: 'Choose one route', hint: 'Select a card to preview your choice. Command recommends a route only when the known advantage is clear.', icon: 'bi-signpost-split' }
             : phase === 'assign'
-              ? { stage: 'Step 3 of 3 · Plan', title: 'Review the crew, then cross', hint: 'Still preparing. Only “Cross now” sends the crew into the route.', icon: 'bi-people' }
+              ? { stage: 'Step 3 of 3 · Ready to act', title: 'Everyone crosses—review each role', hint: 'Lead acts, support can change the outcome, and reserve travels safely. “Cross now” performs the action.', icon: 'bi-people' }
               : { stage: 'Crossing resolved', title: objectiveReached ? 'Review the result, then continue or extract' : 'Review the result, then continue', hint: 'Read “What changed” before deciding how far to push the crew.', icon: 'bi-clipboard-check', resolved: true };
 
   React.useEffect(() => {
@@ -855,6 +863,7 @@ function LongReturnGame() {
     const nativeRisk = scene.encounter && scene.encounter.routeId === entry.id && (!encounterResolution || encounterResolution.resolution === 'unresolved');
     return { ...plan, nativeRisk, risk: plan.risk + (nativeRisk ? encounterResolution ? 18 : 26 : 0) };
   }).filter(Boolean) : [], [scene, scan, crew, strain, spentAbilities, encounterResolution]);
+  const routeRewardBaseline = simpleRoutePlans.length ? Math.min(...simpleRoutePlans.map((entry) => entry.route.salvage)) : 0;
   const routeRecommendation = useMemo(() => recommendationFor(simpleRoutePlans), [simpleRoutePlans]);
   const lowestRiskPlan = simpleRoutePlans.reduce((best, entry) => !best || entry.risk < best.risk ? entry : best, null);
   const pendingRoutePlan = simpleRoutePlans.find((entry) => entry.route.id === pendingRouteId) || null;
@@ -1513,7 +1522,7 @@ function LongReturnGame() {
                         <span className="lr-simple-route-head"><em>{recommended ? 'Recommended' : advantage}</em><b>{plan.route.title}</b></span>
                         <p>{plan.route.description}</p>
                         <div className="lr-route-memory-slot">{plan.route.activeEffects && plan.route.activeEffects.map((effect) => <span className="lr-route-memory" key={effect.flag}><i className="bi bi-diagram-3-fill" /><b>{effect.label}:</b> {effect.difficulty < 0 ? `this route is easier by ${Math.abs(effect.difficulty)}` : `this route is harder by ${effect.difficulty}`}</span>)}</div>
-                        <RouteTradeoff plan={plan} strain={strain} pressure={pressure} companion={companion} />
+                        <RouteTradeoff plan={plan} rewardBaseline={routeRewardBaseline} strain={strain} pressure={pressure} companion={companion} />
                         <b className="lr-simple-route-action">{selected ? <><i className="bi bi-check-circle-fill" /> Selected</> : <>Select this route <i className="bi bi-arrow-right" /></>}</b>
                       </button>
                       <details className="lr-route-analysis"><summary><BiIcon cls="bi-info-circle" /> See analysis</summary><p>Best available plan: {plan.lead.species} leads with {plan.method.label}, supported by {plan.support.species}. Crew score {plan.teamScore} against target {plan.difficulty}. {plan.unresolvedHazards.length ? 'Hidden danger may still change the final cost.' : 'All route hazards are accounted for.'}</p></details>
@@ -1530,13 +1539,20 @@ function LongReturnGame() {
 
               {route && guidanceLevel === 'simple' && !simpleCustomizing && suggestedPlan && (
                 <div className="lr-simple-plan">
-                  <div className="lr-simple-plan-head"><i className="bi bi-stars" /><div><span><i className="bi bi-signpost-split" /> {route.title}</span><h3>{suggestedPlan.lead.species} leads with {suggestedPlan.method.label}</h3></div></div>
-                  <div className="lr-simple-plan-crew"><span><small>Lead</small><strong>{suggestedPlan.lead.species}</strong></span><i className="bi bi-plus" /><span><small>Support</small><strong>{suggestedPlan.support.species}</strong></span><i className="bi bi-arrow-right" /><span><small>Likely passage</small><strong>{suggestedPlan.label}</strong></span></div>
+                  <div className="lr-simple-plan-head"><i className="bi bi-check2-circle" /><div><span><i className="bi bi-signpost-split" /> {route.title}</span><h3>Crew plan ready</h3></div></div>
+                  <div className="lr-simple-plan-crew" aria-label="Every creature crosses; each has a different role">
+                    <span className="is-lead"><i className="bi bi-play-fill" /><small>Lead acts</small><strong>{suggestedPlan.lead.species}</strong><em>{suggestedPlan.method.label}</em></span>
+                    <i className="bi bi-arrow-right" />
+                    <span className="is-support"><i className="bi bi-shield-fill-check" /><small>Support changes the attempt</small><strong>{suggestedPlan.support.species}</strong><em>{supportRoleForPlan(suggestedPlan)}</em></span>
+                    <i className="bi bi-arrow-right" />
+                    {(() => { const planReserve = crew.find((member) => member.id !== suggestedPlan.lead.id && member.id !== suggestedPlan.support.id); return <span className="is-reserve"><i className="bi bi-people-fill" /><small>Reserve still crosses</small><strong>{planReserve ? planReserve.species : 'Remaining crew'}</strong><em>No crossing energy spent</em></span>; })()}
+                  </div>
+                  <div className={`lr-simple-plan-outlook lr-outcome-summary--${suggestedPlan.quality}`}><span>These roles produce</span><strong>{suggestedPlan.label}</strong></div>
                   <div className="lr-simple-plan-projections"><RouteTradeoff plan={suggestedPlan} stabilityCost={Math.max(0, suggestedPlan.knownPressure - (useCommand && !suggestedPlan.naturalReaction ? 1 : 0))} reward={false} strain={strain} pressure={pressure} companion={companion} /></div>
                   <details className="lr-plan-analysis"><summary><i className="bi bi-info-circle" /> Why this crew?</summary><p>{suggestedPlan.lead.species} contributes the strongest available match for {suggestedPlan.method.label}. {suggestedPlan.support.species} adds {suggestedPlan.supportBonus} support, producing team score {suggestedPlan.teamScore} against target {suggestedPlan.difficulty}.</p></details>
                   {!suggestedPlan.naturalReaction && commands > 0 && <label className="lr-simple-override"><input type="checkbox" checked={useCommand} onChange={(event) => setUseCommand(event.target.checked)} /><span>Use 1 command to preserve 1 annex stability</span></label>}
                   <div className="lr-simple-plan-actions">
-                    <button type="button" className="lr-simple-secondary" onClick={() => setSimpleCustomizing(true)}><i className="bi bi-sliders" /> Customize crew plan</button>
+                    <button type="button" className="lr-simple-secondary lr-customize-plan" onClick={() => setSimpleCustomizing(true)}><i className="bi bi-sliders" /> Advanced: customize crew plan</button>
                     <button type="button" className="lr-simple-secondary" onClick={changeRoute}><i className="bi bi-arrow-left" /> Back to routes</button>
                     <button type="button" className="g-btn g-btn--primary lr-cross-now" onClick={() => commit(suggestedPlan)}><i className="bi bi-play-fill" /> Cross now<small>Take action · costs apply</small></button>
                   </div>

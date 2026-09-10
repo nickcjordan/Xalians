@@ -69,6 +69,11 @@ export default function ActionTransition({ action, onComplete, soundEnabled = tr
   const skip = () => final ? onComplete() : setIndex(events.length - 1);
   const art = sceneArtFor(action.scene);
   const performance = methodPerformance(action.method);
+  const recap = !encounter && result ? [
+    ...crewChanges.filter((change) => change.added > 0).map((change) => ({ kind: 'energy', icon: 'bi-lightning-charge-fill', label: change.creature.species, value: `−${change.added} energy` })),
+    result.instabilityChange.added > 0 ? { kind: 'stability', icon: 'bi-building', label: 'Annex', value: `−${result.instabilityChange.added} stability` } : null,
+    result.salvage > 0 ? { kind: 'salvage', icon: 'bi-box-seam', label: 'Mission haul', value: `+${result.salvage} salvage` } : null
+  ].filter(Boolean) : [];
 
   return <div className={`lr-action-curtain event-${current.kind} is-${art.tone} performance-${performance.id}`} style={{ '--action-accent': art.accent }} role="dialog" aria-modal="true" aria-label={encounter ? 'Encounter discovered' : 'Crossing in progress'} onKeyDown={(event) => { if (event.key === 'Tab') { event.preventDefault(); closeButtonRef.current?.focus(); } }}>
     <div className="lr-action-art" style={{ backgroundImage: `url(${art.src})` }} />
@@ -93,6 +98,7 @@ export default function ActionTransition({ action, onComplete, soundEnabled = tr
 
     {!encounter && <div className="lr-sequence-crew"><CreatureStatus creature={action.lead} change={crewChanges.find((change) => change.creature.id === action.lead.id)} events={events} index={index} role="lead" />{action.support && <CreatureStatus creature={action.support} change={crewChanges.find((change) => change.creature.id === action.support.id)} events={events} index={index} role="support" />}</div>}
 
+    {final && !encounter && <section className="lr-sequence-recap" aria-label="Crossing changes"><header><i className="bi bi-check-circle-fill" /><span><small>Crossing complete</small><strong>Changes held for review</strong></span></header><div>{recap.length ? recap.map((item) => <span className={`is-${item.kind}`} key={`${item.kind}-${item.label}`}><i className={`bi ${item.icon}`} /><small>{item.label}</small><strong>{item.value}</strong></span>) : <span className="is-safe"><i className="bi bi-shield-check" /><small>Crew and annex</small><strong>No resources lost</strong></span>}</div></section>}
     <section className="lr-sequence-caption" key={`${index}-${current.kind}`} aria-live="polite"><i className={`bi ${icons[current.kind]}`} /><div><small>{current.kind === 'complete' ? 'Crossing complete' : current.kind === 'decision' ? 'Contact established' : 'In progress'}</small><strong>{current.message}</strong></div><span>{index + 1} / {events.length}</span></section>
     <button ref={closeButtonRef} type="button" onClick={skip}>{final ? encounter ? 'Choose response' : 'Continue to result' : 'Skip to outcome'} <i className="bi bi-arrow-right" /></button>
   </div>;

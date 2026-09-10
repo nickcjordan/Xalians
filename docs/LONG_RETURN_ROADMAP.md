@@ -20,6 +20,7 @@ Prove Scene 2 as a complete vertical slice: scout → contact → response → r
 - [x] Carry the Scene 2 encounter result into the route map, crossing, and Scene 3 arrival art.
   - Done when help, withdrawal, confrontation, and detour each leave recognizable evidence.
 - [ ] Run a complete Scene 2 comprehension and keyboard/mobile validation pass.
+  - Latest player pass found the route trade-off, crew-role meaning, and consequence pacing insufficiently intuitive; the route contract and persistent action recap have been rebuilt and now need another uncoached pass.
 
 ## Decision quality and creature expression
 

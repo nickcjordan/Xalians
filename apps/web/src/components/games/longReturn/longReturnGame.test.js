@@ -110,7 +110,8 @@ describe('Long Return Simple mode', () => {
     renderGame();
     enterSimpleRouteChoice(container);
     choosePreferredRoute(container);
-    expect(container.querySelector('.lr-simple-plan-head').textContent).toMatch(/Hippochamp.*leads with/i);
+    expect(container.querySelector('.lr-simple-plan-head').textContent).toMatch(/Crew plan ready/i);
+    expect(container.querySelector('.lr-simple-plan-crew').textContent).toMatch(/Lead acts.*Hippochamp.*Support changes the attempt.*Reserve still crosses/is);
     expect(findButton(container, /use this plan/i)).toBeUndefined();
     click(container, /cross now/i);
     expect(container.querySelector('[role="dialog"][aria-label="Crossing in progress"]')).toBeTruthy();
@@ -383,7 +384,7 @@ describe('Long Return Simple mode', () => {
     expect(container.querySelector('.lr-simple-routes')).toBeFalsy();
     expect(document.activeElement).toBe(container.querySelector('.lr-current-action'));
     expect(container.querySelector('.lr-route-confirmed')).toBeNull();
-    expect(container.querySelector('.lr-simple-plan-head').textContent).toMatch(/leads with/i);
+    expect(container.querySelector('.lr-simple-plan-head').textContent).toMatch(/Crew plan ready/i);
     expect(findButton(container, /back to routes/i)).toBeTruthy();
     click(container, /back to routes/i);
     expect(container.querySelectorAll('.lr-simple-routes > article')).toHaveLength(2);
@@ -439,12 +440,12 @@ describe('Long Return Simple mode', () => {
     click(container, /choose a route/i);
     expect(container.querySelector('.lr-route-guidance')).toBeNull();
     expect(container.querySelector('.lr-salvage-explainer')).toBeNull();
-    expect(container.querySelectorAll('.lr-route-tradeoff .lr-hud-salvage')).toHaveLength(2);
-    expect(container.querySelectorAll('.lr-route-tradeoff .lr-hud-salvage .bi-box-seam')).toHaveLength(3);
+    expect(container.querySelectorAll('.lr-route-tradeoff .lr-route-reward')).toHaveLength(2);
+    expect(container.querySelectorAll('.lr-route-tradeoff .lr-route-reward .bi-box-seam')).toHaveLength(2);
     const comparisons = container.querySelectorAll('.lr-route-tradeoff');
     expect(comparisons[0].querySelectorAll('.lr-hud-meter')).toHaveLength(2);
-    expect(comparisons[1].querySelectorAll('.lr-hud-meter.is-unknown')).toHaveLength(2);
-    expect(comparisons[1].textContent).toMatch(/route beyond sensor range.*outcome unknown/i);
+    expect(comparisons[1].querySelectorAll('.lr-hidden-risk')).toHaveLength(1);
+    expect(comparisons[1].textContent).toMatch(/unscouted gamble.*cost can rise/i);
     expect(comparisons[1].textContent).not.toContain('0 known');
     expect(container.querySelectorAll('.lr-simple-route-head')[1].textContent).not.toContain('Easier on the crew');
     expect(container.querySelectorAll('.lr-projection-track').length).toBeGreaterThan(0);
@@ -452,7 +453,7 @@ describe('Long Return Simple mode', () => {
     expect(container.querySelectorAll('.lr-route-analysis')).toHaveLength(2);
     choosePreferredRoute(container);
     expect(container.querySelector('.lr-simple-plan-projections')).toBeTruthy();
-    expect(container.querySelectorAll('.lr-simple-plan-projections .lr-hud-meter.is-unknown')).toHaveLength(2);
+    expect(container.querySelectorAll('.lr-simple-plan-projections .lr-hidden-risk')).toHaveLength(1);
     expect(container.textContent).not.toMatch(/No strain expected|No change expected/);
     expect(container.querySelector('.lr-plan-analysis')).toBeTruthy();
   });

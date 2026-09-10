@@ -12,19 +12,18 @@ function render(changes = {}, props = {}) {
 test('confirmed zero stays visibly distinct from an unknown cost', () => {
   const known = render();
   expect(known.querySelector('.lr-hud-clean').textContent).toMatch(/No resources at risk/i);
-  expect(known.querySelectorAll('.is-unknown')).toHaveLength(0);
+  expect(known.querySelector('.lr-route-contract').textContent).toMatch(/Predictable crossing/i);
   const unknown = render({ unresolvedHazards: [{ id: 'hidden' }] });
-  expect(unknown.querySelectorAll('.lr-hud-meter.is-unknown')).toHaveLength(2);
-  expect(unknown.querySelector('.is-energy .lr-hud-meter-label > b').textContent).toMatch(/outcome unknown/i);
-  expect(unknown.querySelectorAll('.lr-hud-unknown-signal')).toHaveLength(2);
-  expect(unknown.querySelectorAll('.lr-hud-pips > i.is-threatened')).toHaveLength(0);
+  expect(unknown.querySelector('.lr-route-contract').textContent).toMatch(/Unscouted gamble/i);
+  expect(unknown.querySelector('.lr-hidden-risk').textContent).toMatch(/Cost can rise/i);
+  expect(unknown.querySelectorAll('.lr-hud-meter')).toHaveLength(0);
 });
 
-test('keeps creature costs separate while marking uncertain lanes', () => {
+test('keeps known costs visible while separating the unresolved risk', () => {
   const root = render({ knownLeadStrain: 2, baseSupportStrain: 1, knownPressure: 2, nativeRisk: true });
   expect(root.querySelectorAll('.lr-hud-meter.is-energy')).toHaveLength(2);
-  expect(root.querySelectorAll('.lr-hud-meter.is-unknown')).toHaveLength(2);
-  expect(root.querySelector('.lr-hud-meter.is-stability').getAttribute('aria-label')).toContain('outcome unknown');
+  expect(root.querySelector('.lr-hud-meter.is-stability').getAttribute('aria-label')).toContain('2 spent');
+  expect(root.querySelectorAll('.lr-hidden-risk')).toHaveLength(1);
 });
 
 test('known losses dim the exact pips threatened by the choice', () => {
@@ -37,6 +36,11 @@ test('does not leak hidden damage amounts, identity, or which resource a hazard 
   const a = render({ unresolvedHazards: [{ id: 'secret-a', strain: 99, pressure: 0 }] });
   const b = render({ unresolvedHazards: [{ id: 'secret-b', strain: 0, pressure: 45 }] });
   expect(a.innerHTML).toBe(b.innerHTML);
+});
+
+test('frames additional salvage as the reward for accepting unresolved risk', () => {
+  const root = render({ unresolvedHazards: [{ id: 'hidden' }] }, { rewardBaseline: 1 });
+  expect(root.querySelector('.lr-route-contract').textContent).toMatch(/\+1 more than safer route/i);
 });
 
 test('previews a ready field companion as the cause of one preserved energy', () => {

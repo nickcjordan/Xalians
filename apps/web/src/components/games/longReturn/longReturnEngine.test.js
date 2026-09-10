@@ -69,7 +69,7 @@ describe('Long Return prototype engine', () => {
     const method = methodOptions(lead, route, [])[0];
     const hidden = resolveScene({ scene, route, lead, support, method, scan: { revealedIds: [] }, useCommand: true });
     const revealed = resolveScene({ scene, route, lead, support, method, scan: { revealedIds: ['conductive-brine'] }, useCommand: true });
-    expect(hidden.pressure).toBe(revealed.pressure + 1);
+    expect(hidden.pressure).toBe(revealed.pressure + scene.hazards[0].pressure);
     expect(hidden.leadStrain).toBeGreaterThan(revealed.leadStrain);
   });
 
