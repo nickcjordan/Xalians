@@ -14,6 +14,7 @@ import { StatTile, KeyValueList, Timeline, TimelineItem, Callout, DataBlock } fr
 import { SearchField, FilterBar } from "@/components/system/filters"
 import { DataTable, type Column } from "@/components/system/data-table"
 import { IdentityRow } from "@/components/system/identity"
+import { ErrorBoundary } from "@/components/system/status"
 
 /**
  * Brief B ("patterns") sections for /styleguide (docs/DESIGN_SYSTEM.md
@@ -63,7 +64,7 @@ function A11yLiveDemo() {
   const [message, setMessage] = React.useState("")
   return (
     <div>
-      <p className="type-legend mb-2">Live region — press the button</p>
+      <p className="type-legend mb-2">Live region: press the button</p>
       <Button
         type="button"
         variant="secondary"
@@ -129,6 +130,17 @@ function DataTableDemo() {
   )
 }
 
+function BoundaryDemo() {
+  const [broken, setBroken] = React.useState(false)
+  if (broken) throw new Error("The style guide threw on purpose.")
+  return (
+    <div className="mt-3 flex items-center gap-3">
+      <Button variant="secondary" onClick={() => setBroken(true)}>Throw a render error</Button>
+      <span className="font-body text-small text-ink-2">The boundary catches it and renders ErrorPage in place; Try again resets it.</span>
+    </div>
+  )
+}
+
 const SECTIONS: { id: string; label: string; node: React.ReactNode }[] = [
   {
     id: "templates",
@@ -141,7 +153,7 @@ const SECTIONS: { id: string; label: string; node: React.ReactNode }[] = [
           full-size markup is unchanged.
         </p>
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
-          <TemplateFrame caption="IndexPage — encyclopedia species and worlds, the account collection">
+          <TemplateFrame caption="IndexPage: encyclopedia species and worlds, the account collection">
             <IndexPage
               masthead={{ kicker: "Encyclopedia", title: "Species" }}
               filters={
@@ -169,7 +181,7 @@ const SECTIONS: { id: string; label: string; node: React.ReactNode }[] = [
             </IndexPage>
           </TemplateFrame>
 
-          <TemplateFrame caption="RecordPage — species record, world record, generator result">
+          <TemplateFrame caption="RecordPage: species record, world record, generator result">
             <RecordPage
               masthead={{ kicker: "Species", title: "Hypnopet", beside: <Badge variant="chip" className="el-psychic">psychic</Badge> }}
               breadcrumb={<p className="type-legend m-0">Encyclopedia / Species / Hypnopet</p>}
@@ -179,7 +191,7 @@ const SECTIONS: { id: string; label: string; node: React.ReactNode }[] = [
             />
           </TemplateFrame>
 
-          <TemplateFrame caption="FormPage — account settings, any setup screen">
+          <TemplateFrame caption="FormPage: account settings, any setup screen">
             <FormPage
               masthead={{ kicker: "Account", title: "Settings" }}
               primary={<Button>Save</Button>}
@@ -189,7 +201,7 @@ const SECTIONS: { id: string; label: string; node: React.ReactNode }[] = [
             </FormPage>
           </TemplateFrame>
 
-          <TemplateFrame caption="ResultsPage — duel and Reclamation results, training scores">
+          <TemplateFrame caption="ResultsPage: duel and Reclamation results, training scores">
             <ResultsPage
               masthead={{ kicker: "Duel", title: "Match report" }}
               outcome={<Badge variant="ok">Won</Badge>}
@@ -222,6 +234,12 @@ const SECTIONS: { id: string; label: string; node: React.ReactNode }[] = [
             <Link to="/dev/error">Open /dev/error</Link>
           </Button>
         </div>
+        <div className="mt-6 border border-edge bg-s0 p-4">
+          <p className="type-legend m-0">Error boundary</p>
+          <ErrorBoundary>
+            <BoundaryDemo />
+          </ErrorBoundary>
+        </div>
         <p className="mt-3 font-body text-small text-ink-2">
           Offline is not a route: <code className="type-data">OfflinePage</code> renders itself only while
           <code className="type-data"> navigator.onLine</code> is false, and retries automatically on the browser&apos;s
@@ -239,7 +257,7 @@ const SECTIONS: { id: string; label: string; node: React.ReactNode }[] = [
         <p className="text-body text-ink-2">A skip link, a visually hidden label, and a polite live region for announcements.</p>
         <div className="mt-6 flex flex-col gap-6">
           <div>
-            <p className="type-legend mb-2">Skip link — press Tab from here</p>
+            <p className="type-legend mb-2">Skip link: press Tab from here</p>
             <div tabIndex={-1} className="relative border border-edge bg-s0 p-6">
               <SkipLink href="#a11y" />
               <p className="font-body text-small text-ink-2">Tab into this box; the skip link appears top-left.</p>
@@ -333,7 +351,7 @@ const SECTIONS: { id: string; label: string; node: React.ReactNode }[] = [
     node: (
       <>
         <SectionHead title="Data table" />
-        <p className="text-body text-ink-2">Sortable columns, a selected row, and the empty state — the four species rows also shown in Record.</p>
+        <p className="text-body text-ink-2">Sortable columns, a selected row, and the empty state, on the four species rows from the record section.</p>
         <div className="mt-6 flex flex-col gap-8">
           <DataTableDemo />
           <div>

@@ -1,6 +1,6 @@
 ---
 name: build-ui
-description: Build or change anything visual on xalians.com (a page, a component, a game screen, a modal, a chart color) under the version 4 design system on the shadcn and Tailwind stack. Use before touching a className, any stylesheet, designTokens.js, colorConstants.js, or the style guide, and when adding a new page or area. Walks the tier decision, the component check, the accent and status rules, and ends with the paint check.
+description: Build or change anything visual on xalians.com (a page, a component, a game screen, a modal, a chart color) under the version 4 design system on the shadcn and Tailwind stack. Use before touching a className, any stylesheet, designTokens.js, colorConstants.js, or the style guide, and when adding a new page or area. Walks the tier decision, the component check, the accent and status rules, accessibility, and ends with the paint check.
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 
@@ -27,13 +27,13 @@ Write the answer as the first comment in the file and set it on the root:
 
 ## Step 2: use what exists
 
-Open `/styleguide` (`src/pages/styleGuidePage.tsx`): every component in the system is rendered there once, from the real code. Chrome uses only these:
+Open `/styleguide` (`src/pages/styleGuidePage.tsx` plus `src/pages/styleguide/*.tsx`): every component in the system is rendered there once, from the real code. The full inventory is section 10.1 of the contract. Chrome uses only these:
 
-- `src/components/ui/*`: shadcn, restyled. Button (variants `default` for the one forward action, `secondary`, `outline`, `ghost`, `destructive`, `link`), Badge (`chip`, `chip-outline` for elements; `default`, `ok`, `warn`, `danger`, `info` for state), Card (`panel`, `recessed`, `raised`, `glass`, `link`), Input, Textarea, Select, Checkbox, Switch, Slider, ToggleGroup, Tabs (and `tabTriggerClass` for router links), Dialog, AlertDialog, Sheet, DropdownMenu, Popover, Tooltip, Accordion, Table, Pagination, Breadcrumb, Progress, Separator, Kbd, Alert, ScrollArea, RadioGroup, Form, Label, sonner's `toast`.
-- `src/components/system/*`: the house pieces. Shell, Masthead, SectionHead; SpecPlate, RecordRow, Meter, MoveSet, EmptyState, Tile; HelixMark, HelixSpinner, BrandLockup.
-- Icons: `lucide-react`, sizes `size-3.5`, `size-4`, `size-5`, `size-6`.
+- `src/components/ui/*`: shadcn, restyled. Actions: Button (`default` for the one forward action, `secondary`, `outline`, `ghost`, `destructive`, `link`), ButtonGroup, Toggle, ToggleGroup. Inputs: Input, Textarea, InputGroup, NativeSelect, Select, Checkbox, RadioGroup, Switch, Slider, Label, Form, the Field set. Choosing: Command and CommandDialog, Combobox, Tabs (and `tabTriggerClass` for router links). Content: Card (`panel`, `recessed`, `raised`, `glass`, `link`), Badge (`chip`, `chip-outline` for elements; `default`, `ok`, `warn`, `danger`, `info` for state), Avatar, AspectRatio, Separator, ScrollArea, Collapsible, Accordion, Alert, Kbd, Progress. Overlays: Dialog, AlertDialog, Sheet (desktop), Drawer (phone), Popover, HoverCard, DropdownMenu, Tooltip, sonner's `toast`. Data: Table, Chart, Pagination, Breadcrumb.
+- `src/components/system/*`: the house pieces. Shell, Masthead, SectionHead; the page templates IndexPage, RecordPage, FormPage, ResultsPage (start a new page from one of these); NotFoundPage, ErrorPage, OfflinePage, ErrorBoundary; SkipLink, VisuallyHidden, LiveRegion; SpecPlate, RecordRow, Meter, MoveSet, EmptyState, Tile; Stepper; StatTile, KeyValueList, Timeline, Callout, DataBlock; SearchField, FilterBar; DataTable; IdentityRow; HelixMark, HelixSpinner, BrandLockup.
+- Icons: `lucide-react`, sizes `size-3.5`, `size-4`, `size-5`, `size-6`; one icon per meaning (contract section 16).
 
-If the component you need is not there, **add it to the system**: `npx shadcn@latest add <name>` then restyle it to the contract in `src/components/ui`, or a new file in `src/components/system` when it is a house pattern used three or more times; then a section on the style guide. Never style a one-off inline that a system piece should own. A featured component may be new, but every color, face, size and corner in it is a token class.
+If the component you need is not there, **add it to the system**: `npx shadcn@latest add <name>` then restyle it to the contract in `src/components/ui`, or a new file in `src/components/system` when it is a house pattern used three or more times; then a section in the matching file under `src/pages/styleguide/` and its path in `V4_IMPORTS`. `systemGuards.test.js` fails until the style guide imports it. Never style a one-off inline that a system piece should own. A featured component may be new, but every color, face, size and corner in it is a token class.
 
 ## Step 3: color by rule
 
@@ -59,7 +59,8 @@ Controls say what happens in plain words. States use the world's registry words 
 1. `cd my-app && yarn test --run && npx tsc --noEmit -p tsconfig.json`.
 2. With the dev server up, from the repo root: `node scripts/design/snap.js --out untracked/snaps <route> ...`. Open the PNGs at both widths. Check: nothing overflows, no console errors, contrast holds, focus is visible, the accent appears only where the rule allows, the fonts are Saira, Atkinson Hyperlegible and Martian Mono and not a fallback.
 3. If you changed anything in `src/components/ui` or `src/components/system`, also snap `/styleguide`.
-4. Only then report done. Never present visual work without a check that could have failed.
+4. Tab through the page once: the skip link appears first, every control takes the ring, every overlay traps and returns focus (contract section 15).
+5. Only then report done. Never present visual work without a check that could have failed.
 
 ## Step 7: report friction
 

@@ -3,7 +3,7 @@ import { Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 /**
- * A horizontal (vertical under `sm`) rail of numbered steps
+ * A horizontal (stacked under `sm`) rail of numbered square markers
  * (docs/DESIGN_SYSTEM.md section 6, control states). Controlled by `value`,
  * the 0-based index of the current step among its `Step` children.
  */
@@ -23,7 +23,7 @@ function Stepper({
       <ol
         data-slot="stepper"
         className={cn(
-          "m-0 flex list-none flex-col gap-4 p-0 sm:flex-row sm:items-start sm:gap-0",
+          "m-0 flex list-none flex-col gap-4 p-0 sm:flex-row sm:items-center sm:gap-0",
           className
         )}
         {...props}
@@ -50,45 +50,26 @@ function Step({ className, label, index = 0, ...props }: StepProps) {
       data-slot="step"
       data-status={status}
       aria-current={status === "current" ? "step" : undefined}
-      className={cn("flex flex-1 items-center gap-3 sm:flex-col sm:items-stretch sm:gap-2", className)}
+      className={cn("flex items-center gap-3 sm:flex-1", className)}
       {...props}
     >
-      <div className="flex items-center gap-3 sm:w-full">
-        <span
-          className={cn(
-            "type-data flex size-6 shrink-0 items-center justify-center rounded-full border text-[12px]",
-            status === "done" && "border-viable bg-viable text-room",
-            status === "current" && "border-viable text-ink",
-            status === "upcoming" && "border-edge-strong text-ink-3"
-          )}
-        >
-          {status === "done" ? <Check className="size-3.5" /> : index + 1}
-        </span>
-        {!isLast ? (
-          <span
-            aria-hidden="true"
-            className={cn(
-              "h-px flex-1 sm:hidden",
-              status === "done" ? "bg-viable" : "bg-edge"
-            )}
-          />
-        ) : null}
-      </div>
       <span
         className={cn(
-          "type-legend",
-          status === "upcoming" ? "text-ink-3" : "text-ink"
+          "type-data flex size-6 shrink-0 items-center justify-center border text-[12px]",
+          status === "done" && "border-viable bg-viable text-room",
+          status === "current" && "border-viable text-ink",
+          status === "upcoming" && "border-edge-strong text-ink-3"
         )}
       >
+        {status === "done" ? <Check className="size-3.5" /> : index + 1}
+      </span>
+      <span className={cn("type-legend whitespace-nowrap", status === "upcoming" ? "text-ink-3" : "text-ink")}>
         {label}
       </span>
       {!isLast ? (
         <span
           aria-hidden="true"
-          className={cn(
-            "hidden h-px flex-1 self-center sm:block",
-            status === "done" ? "bg-viable" : "bg-edge"
-          )}
+          className={cn("mx-2 hidden h-px flex-1 sm:block", status === "done" ? "bg-viable" : "bg-edge")}
         />
       ) : null}
     </li>

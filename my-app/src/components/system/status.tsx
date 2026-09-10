@@ -8,7 +8,7 @@ import XalianNavbar from "@/components/navbar"
 /**
  * The pages a site needs before it has content (docs/DESIGN_SYSTEM.md
  * section 6, empty/error states; section 10, `data-tier`). All three keep
- * the navbar and `data-tier="chrome"` — a person is never dropped into a
+ * the navbar and `data-tier="chrome"`; a person is never dropped into a
  * blank room, even when something has gone wrong.
  */
 
@@ -87,7 +87,7 @@ function ErrorPage({ error, onRetry }: { error?: unknown; onRetry?: () => void }
           </>
         }
       >
-        <pre className="type-data w-full overflow-x-auto border border-edge bg-s0 p-4 text-small text-ink-2">{message}</pre>
+        <pre className="type-data w-full break-words whitespace-pre-wrap border border-edge bg-s0 p-4 text-small text-ink-2">{message}</pre>
       </StatusBody>
     </StatusFrame>
   )

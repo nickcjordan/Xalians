@@ -32,8 +32,10 @@ const CSS_DIR = path.join(__dirname, '..', '..', 'public', 'assets', 'css', 'leg
 const STYLEGUIDE_PATH = path.join(PAGES_DIR, 'styleGuidePage.tsx');
 const STYLEGUIDE_DIR = path.join(PAGES_DIR, 'styleguide');
 /** The page plus its section files under pages/styleguide/. */
-const readStyleguide = () => [STYLEGUIDE_PATH, ...fs.readdirSync(STYLEGUIDE_DIR).map((f) => path.join(STYLEGUIDE_DIR, f))].map((f) => fs.readFileSync(f, 'utf8')).join('
-');
+const readStyleguide = () =>
+	[STYLEGUIDE_PATH, ...fs.readdirSync(STYLEGUIDE_DIR).map((f) => path.join(STYLEGUIDE_DIR, f))]
+		.map((f) => fs.readFileSync(f, 'utf8'))
+		.join('\n');
 
 /** Every *.js under src/pages/, recursively, with paths relative to src/pages/. */
 const listPageFiles = (dir, base) => {

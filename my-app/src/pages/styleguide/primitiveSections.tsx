@@ -239,7 +239,7 @@ function DrawerSection() {
     return (
         <section id="drawer" className="mt-12">
             <SectionHead title="Drawer" />
-            <p className="text-body text-ink-2">The phone bottom sheet. On desktop widths, <code className="font-data text-small">Sheet</code> is the choice instead — shown here side by side.</p>
+            <p className="text-body text-ink-2">The phone bottom sheet. On desktop widths, <code className="font-data text-small">Sheet</code> is the choice instead; both are shown here.</p>
             <div className="mt-6 flex flex-wrap gap-8">
                 <Demo label="Drawer (phone)">
                     <Drawer>
@@ -288,8 +288,10 @@ function AspectRatioSection() {
                     </AspectRatio>
                 </Demo>
                 <Demo label="16:9, world">
-                    <AspectRatio ratio={16 / 9} className="w-full el-water bg-el/12">
-                        <XalianImage colored speciesName="Hippochamp" primaryType="water" moreClasses="w-full" />
+                    <AspectRatio ratio={16 / 9} className="w-full el-water bg-el overflow-hidden">
+                        <div className="flex size-full items-center justify-center">
+                            <XalianImage colored speciesName="Hippochamp" primaryType="water" moreClasses="w-full shrink-0" />
+                        </div>
                     </AspectRatio>
                 </Demo>
             </div>

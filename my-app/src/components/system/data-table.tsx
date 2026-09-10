@@ -11,7 +11,7 @@ import { EmptyState } from "@/components/system/record"
  * sortable columns as real header buttons, an optional row link, an
  * optional selectable mode, and an `EmptyState` when `rows` is empty. Stays
  * a table under `sm`, inside `overflow-x-auto` (the primitive already
- * wraps it) — it does not collapse into cards.
+ * wraps it); it does not collapse into cards.
  */
 
 type Align = "start" | "end"

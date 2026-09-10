@@ -85,7 +85,9 @@ describe('chrome files stay on the version 4 stack', () => {
 		const name = rel(file);
 		const src = read(file);
 		it(`${name} has no raw hex color`, () => {
-			const hit = src.split('\n').find((line) => RAW_HEX.test(line) && !/^\s*(\/\/|\*|\/\*)/.test(line));
+			// Attribute selectors such as [stroke='#ccc'] match recharts' defaults to
+			// override them; they are not a color we paint.
+			const hit = src.split('\n').find((line) => RAW_HEX.test(line.replace(/\[[^\]]*=['"][^'"]*['"]\]/g, '')) && !/^\s*(\/\/|\*|\/\*)/.test(line));
 			expect(hit, hit).toBeUndefined();
 		});
 		it(`${name} has no version 3 .g-* class`, () => {

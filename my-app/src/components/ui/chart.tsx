@@ -10,7 +10,7 @@ import type { TooltipValueType } from "recharts"
  * as CSS variables per series, so a series can read `var(--color-viable)`
  * etc. from `tokens.css` directly; only inline SVG `fill` (the pie/bar cell
  * colors) cannot read a CSS variable and takes the value from
- * `@/constants/designTokens` instead — see the style guide demo.
+ * `@/constants/designTokens` instead; see the style guide demo.
  */
 
 // Format: { THEME_NAME: CSS_SELECTOR }
