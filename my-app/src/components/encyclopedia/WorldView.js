@@ -333,7 +333,7 @@ export default function WorldView() {
                         <div className="grid grid-cols-2 gap-3 gap-y-4 sm:grid-cols-3 sm:gap-4 sm:gap-y-5 md:grid-cols-4 min-[1080px]:grid-cols-5 xl:grid-cols-6">
                             {world.nativeSpecies.map((s) => (
                                 <Tile as={Link} key={s.key} to={lore.routeFor('species', s.key)} className={`el-${s.element}`}>
-                                    <TileArt className="bg-el p-[4%]">
+                                    <TileArt>
                                         <XalianImage
                                             colored
                                             speciesName={s.name}

@@ -19,7 +19,7 @@ function BestiaryTile({ species: s }) {
     const read = useReadMark('species', s.key);
     return (
         <Tile as={Link} to={lore.routeFor('species', s.key)} className={`el-${s.element}`}>
-            <TileArt className="bg-el p-[4%]">
+            <TileArt>
                 <XalianImage colored speciesName={s.name} primaryType={s.element} moreClasses="w-full" />
             </TileArt>
             <TileMeta>
