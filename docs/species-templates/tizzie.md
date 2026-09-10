@@ -28,11 +28,13 @@ Appearance list (Nick, 2026-09-09, second pass after his corrections): one prese
 - **habitat**: The branches of Telypso's bioluminescent fungal forests.
 - **feeding**: It takes its food from what the forests give.
 - **behavior**: It uses its tail to draw attention to its big hypnotic eyes, and once eye contact is made it attacks from inside your mind. Since the Nemesis Plague turned Telypso's creatures against one another, Tizzies turn on each other the same way.
-- **company**: It lives among others of its kind in the branches, and since the Plague they turn on each other.
+- **company**: It lives among others of its kind in the branches.
 
 Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). All five are required (Nick, 2026-09-10, later the same day): a consumer that reads a field must never find it missing, so where the canon is silent the field carries the plainest reading the record supports, hedged in the encyclopedia voice where the record itself is lost, and Nick rules on it with the rest. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
-Fields required (Nick, 2026-09-10): filled company ("It lives among others of its kind in the branches, and since the Plague they turn on each other."). Source reading: the teaser, the diet key and the planet history; where they are silent the phrase is the plainest reading of the record and is flagged for Nick with the batch.
+Batch three sign-off (Nick, 2026-09-10): company amended on the orchestrator's recommendation, overridable: was 'It lives among others of its kind in the branches, and since the Plague they turn on each other.'.
+
+Fields required (Nick, 2026-09-10): filled company ("It lives among others of its kind in the branches."). Source reading: the teaser, the diet key and the planet history; where they are silent the phrase is the plainest reading of the record and is flagged for Nick with the batch.
 
 ### Sentences dropped from the pre-split description
 

@@ -24,7 +24,7 @@
         "origin": "Feral stock from the Krystos Generator after the impact, when the machine turned from making dainty, graceful creatures to lifeforms that could survive the frozen tundra.",
         "habitat": "The arctic wastes outside the prison complexes of Krystos.",
         "feeding": "It forages the tundra at night and eats what it finds.",
-        "behavior": "It moves at night, using its stealth and night vision to go unseen. Creatures like it proved useful for discouraging prisoners from trying to escape.",
+        "behavior": "It moves at night, using its stealth and night vision to go unseen.",
         "company": "It goes alone."
       },
       "physiology": {
@@ -4755,7 +4755,7 @@
         "habitat": "The branches of Telypso's bioluminescent fungal forests.",
         "feeding": "It takes its food from what the forests give.",
         "behavior": "It uses its tail to draw attention to its big hypnotic eyes, and once eye contact is made it attacks from inside your mind. Since the Nemesis Plague turned Telypso's creatures against one another, Tizzies turn on each other the same way.",
-        "company": "It lives among others of its kind in the branches, and since the Plague they turn on each other."
+        "company": "It lives among others of its kind in the branches."
       },
       "physiology": {
         "corporeality": "corporeal",

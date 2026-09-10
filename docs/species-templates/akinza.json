@@ -20,7 +20,7 @@
     "origin": "Feral stock from the Krystos Generator after the impact, when the machine turned from making dainty, graceful creatures to lifeforms that could survive the frozen tundra.",
     "habitat": "The arctic wastes outside the prison complexes of Krystos.",
     "feeding": "It forages the tundra at night and eats what it finds.",
-    "behavior": "It moves at night, using its stealth and night vision to go unseen. Creatures like it proved useful for discouraging prisoners from trying to escape.",
+    "behavior": "It moves at night, using its stealth and night vision to go unseen.",
     "company": "It goes alone."
   },
   "physiology": {
