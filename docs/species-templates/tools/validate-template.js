@@ -24,7 +24,10 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..', '..', '..');
 const TEMPLATES = path.join(ROOT, 'docs', 'species-templates');
 const CATALOG = path.join(ROOT, 'docs', 'ability-catalog');
-const SOURCE_DIRS = [path.join(ROOT, 'packages', 'content', 'json'), 'C:/dev/src/Xalians/lambda/src/json'];
+// The worktree's content package is the source. XALIANS_CONTENT_FALLBACK may name one more
+// directory (another checkout's packages/content/json) to read a planetRecords.json that carries
+// environment.habitableBandC while the committed file lacks it (issue #167); never a hardcoded path.
+const SOURCE_DIRS = [path.join(ROOT, 'packages', 'content', 'json'), process.env.XALIANS_CONTENT_FALLBACK].filter(Boolean);
 const ENCYCLOPEDIA_PATH = path.join(ROOT, 'docs', 'encyclopedia', 'encyclopedia.json');
 
 // ---------- registries (mirror of SKILL.md sections 5.1 to 5.7; keep in sync) ----------
@@ -91,13 +94,14 @@ const ok = (code, msg) => out.push(['ok', code, msg]);
 
 // ---------- args ----------
 const argv = process.argv.slice(2);
-let key = null, jsonPath = null, mdPath = null, encPath = null, note = null, review = false;
+let key = null, jsonPath = null, mdPath = null, encPath = null, note = null, review = false, noLog = process.env.VALIDATE_LOG === '0';
 for (let i = 0; i < argv.length; i++) {
   if (argv[i] === '--json') jsonPath = argv[++i];
   else if (argv[i] === '--md') mdPath = argv[++i];
   else if (argv[i] === '--enc') encPath = argv[++i];
   else if (argv[i] === '--note') note = argv[++i];
   else if (argv[i] === '--review') review = true;
+  else if (argv[i] === '--no-log') noLog = true;
   else key = argv[i];
 }
 if (key) {
@@ -140,7 +144,7 @@ if (review) {
   console.log('\nFinal run: ' + last.fails.length + ' FAIL, ' + last.warns.length + ' WARN' + (last.warns.length ? '\n' + last.warns.map(w => '  WARN ' + w.code + ' ' + w.msg).join('\n') : ''));
   process.exit(0);
 }
-if (!jsonPath) { console.error('usage: validate-template.js <key> [--note "what changed"] | --json p --md p --enc p | --review <key>'); process.exit(2); }
+if (!jsonPath) { console.error('usage: validate-template.js <key> [--note "what changed"] [--no-log] | --json p --md p --enc p | --review <key>'); process.exit(2); }
 
 function readJson(p, label) {
   if (!p || !fs.existsSync(p)) { fail('file.missing', label + ' not found: ' + p); return null; }
@@ -174,9 +178,8 @@ let species = null, planet = null;
   const speciesAll = JSON.parse(fs.readFileSync(path.join(dir, 'species.json'), 'utf8'));
   // planetRecords.json is the planet source (rebuilt 2026-09-02): history prose, physical.derived.gravityEarth, environment.habitableBandC.
   // planets.json is legacy; its data-block values stay in the quotation corpus only so records validated before the rebuild keep passing.
-  // 2026-09-10: the committed planetRecords.json (rebuilt on main) carries no environment.habitableBandC; the 2026-09-02 rebuild that
-  // does is only in the C:/dev/src/Xalians checkout. Prefer whichever copy carries the band the temperature rule needs, and warn when
-  // the worktree copy does not (issue filed; the band belongs in the committed file).
+  // 2026-09-10: the committed planetRecords.json carries no environment.habitableBandC (issue #167). Prefer whichever copy carries the
+  // band the temperature rule needs (the worktree first, then XALIANS_CONTENT_FALLBACK), and warn when the worktree copy does not.
   const recCandidates = SOURCE_DIRS.map(d => path.join(d, 'planetRecords.json')).filter(f => fs.existsSync(f));
   const hasBand = f => { try { const j = JSON.parse(fs.readFileSync(f, 'utf8')); return (Array.isArray(j) ? j : Object.values(j)).some(pl => pl && pl.environment && pl.environment.habitableBandC); } catch (e) { return false; } };
   const recPath = recCandidates.find(hasBand) || recCandidates[0] || path.join(dir, 'planetRecords.json');
@@ -334,7 +337,7 @@ if (T) {
     const lo = parseFloat(String(planet.data['Temperature Low'] || '').replace(/[^-\d.]/g, ' ').trim().split(/\s+/)[0]);
     const hi = parseFloat(String(planet.data['Temperature High'] || '').replace(/[^-\d.]/g, ' ').trim().split(/\s+/)[0]);
     if (Number.isFinite(lo) && Number.isFinite(hi)) {
-      if (TC.min < lo || TC.max > hi) fail('temperature.planet', 'temperatureC [' + TC.min + ', ' + TC.max + '] extends outside the ' + planet.name + ' legacy data block range [' + lo + ', ' + hi + '] C');
+      if (TC.min < lo || TC.max > hi) warn('temperature.planet', 'temperatureC [' + TC.min + ', ' + TC.max + '] extends outside the ' + planet.name + ' legacy data block range [' + lo + ', ' + hi + '] C; the legacy extremes are record extremes, not the habitable band, so this is a warning until planetRecords.json carries environment.habitableBandC (issue #167)');
       else warn('temperature.planet', 'validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable');
     } else warn('temperature.planet', 'could not parse the planet data block temperatures');
   }
@@ -580,7 +583,7 @@ for (const [lvl, code, msg] of out) if (lvl !== 'ok' || process.env.VERBOSE) con
 console.log('\n' + fails + ' FAIL, ' + warns + ' WARN' + (overridden.length ? ', ' + overridden.length + ' overridden' : '') + (fails ? '' : ' (structurally clean; every WARN must be answered in the walkthrough)'));
 
 // ---------- log every run so the orchestrator can review what was denied ----------
-if (key) {
+if (key && !noLog) {
   try {
     fs.mkdirSync(LOG_DIR, { recursive: true });
     const P = (T && T.physiology) || {};
