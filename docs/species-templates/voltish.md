@@ -12,12 +12,12 @@ Split applied 2026-09-09. `lore.description` is Nick's teaser from `species.json
 
 ### appearance (7 entries)
 
-- Tall long-limbed quadruped, crouched low
+- Tall long-limbed biped, crouched low
 - Shaggy fur coat
 - Bones and claws of conductive metal alloy
 - Narrow head with a long muzzle
 - Upright pointed ears
-- Broad clawed forepaws that grip like hands
+- Broad clawed hands
 - Large bushy tail
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
@@ -241,6 +241,7 @@ Both WARNs are answered in the Validator warnings answered section above.
 
 - 2026-09-02, after the independent validation and the orchestrator's own look at the art: the validator failed the run on its art reading, and the orchestrator's own look agrees: the tall spiked structure is a raised forelimb ending in five splayed claws reaching into the lightning, not a crest; the creature crouches on one forelimb and two hind legs; the planted feet are clawless pads. `crest` removed from anatomy and instruments (instruments now claws, jaws, tail); `display` communication dropped with it; `manipulation` raised to 40 to 60 on a clawed grasping hand. `bodyPlan` stays `quadruped` under the amended rule (a forelimb bears weight in the art). The signature action changed from `beam` to `strike`: the source says it releases the shock into enemies and names the claws as conductive, which is contact, not a projected bolt; `claws: electric` conduit kept on the conductive-claws sentence plus the art's claws raised into the storm. Description: the 'stand in the path of a current' flourish, the crossing-and-drawing behavior, 'turned such bodies on its enemies' and the Kozrak patrols close were unsourced; rewritten to the source sentence and two planet facts. Two authored clauses that the run had placed in double quotes are noted here as the run's error. Description now 70 words.
 - 2026-09-09, Nick asked for the physiology to be re-run against the art after the appearance-list pass. Result: the record already reflects the 2026-09-02 amendment (no crest, instruments claws/jaws/tail, manipulation 40 to 60, claws as the electric conduit, signature strike); only the walkthrough art reading and the lore text had drifted back to the crest, and both are corrected. Body plan stays `quadruped` on the ratified selection rule (a planted forelimb bears weight at rest) and on precedent: Imprit and Terragoyle are quadrupeds that use their forepaws as hands. No `fists` key added: the registry's `claws` already covers the hooking, gripping digits the art shows, and the raised paw gathers charge rather than striking. Overridable by Nick: if he wants the Voltish read as a knuckle-walking biped, `bodyPlan` flips to `biped` and `manipulation` rises to about 55 to 75.
+- 2026-09-09, Nick ruled: Voltish is a biped. `bodyPlan` quadruped -> biped; `manipulation` 40 to 60 -> 55 to 75 (clawed hands); appearance entries reworded to biped and clawed hands. Everything else stands.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [-60, 45] to [-55, 35] (intersection) against the rebuilt planet record's habitable band [-55, 35] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 0.89.
 - 2026-09-07, trait evidence bar (Nick): cut perceptive, solitary, pack-bonded, luminous, reflective, armored; pool expected count 3.45 to 2.10.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored perceptive (35, class 4, `senses.special` electroreception), armored (10, class 4, `composition.secondary` metal); cut none; expected count 2.10 to 2.55.
