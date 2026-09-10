@@ -174,7 +174,13 @@ let species = null, planet = null;
   const speciesAll = JSON.parse(fs.readFileSync(path.join(dir, 'species.json'), 'utf8'));
   // planetRecords.json is the planet source (rebuilt 2026-09-02): history prose, physical.derived.gravityEarth, environment.habitableBandC.
   // planets.json is legacy; its data-block values stay in the quotation corpus only so records validated before the rebuild keep passing.
-  const recPath = path.join(dir, 'planetRecords.json');
+  // 2026-09-10: the committed planetRecords.json (rebuilt on main) carries no environment.habitableBandC; the 2026-09-02 rebuild that
+  // does is only in the C:/dev/src/Xalians checkout. Prefer whichever copy carries the band the temperature rule needs, and warn when
+  // the worktree copy does not (issue filed; the band belongs in the committed file).
+  const recCandidates = SOURCE_DIRS.map(d => path.join(d, 'planetRecords.json')).filter(f => fs.existsSync(f));
+  const hasBand = f => { try { const j = JSON.parse(fs.readFileSync(f, 'utf8')); return (Array.isArray(j) ? j : Object.values(j)).some(pl => pl && pl.environment && pl.environment.habitableBandC); } catch (e) { return false; } };
+  const recPath = recCandidates.find(hasBand) || recCandidates[0] || path.join(dir, 'planetRecords.json');
+  if (recCandidates[0] && recPath !== recCandidates[0]) warn('source.planet.band', 'the planetRecords.json in ' + path.dirname(recCandidates[0]) + ' has no environment.habitableBandC; using ' + recPath + ' for the habitable band');
   const legacyPath = path.join(dir, 'planets.json');
   const recordsAll = fs.existsSync(recPath) ? JSON.parse(fs.readFileSync(recPath, 'utf8')) : null;
   const legacyAll = fs.existsSync(legacyPath) ? JSON.parse(fs.readFileSync(legacyPath, 'utf8')) : [];
