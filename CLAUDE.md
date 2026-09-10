@@ -143,29 +143,46 @@ Combat math lives in `legacy/gameplay/attackCalculator.js` — a multiplicative 
 
 ### Lambdas and API
 
-`apps/api/src/handlers/*.ts` are the six route handlers, each `export const handler = withApi(fn, opts)`. `withApi` (`src/lib/api.ts`) parses and validates the body/query against a zod schema, derives the subject from the JWT claims (`src/lib/auth.ts`), calls the route function, serializes `{status, body}` into the Lambda response, maps a thrown `ApiError` to its status/errorCode and anything else to a logged 500 with a request id, and emits one structured log line per request. Persistence goes through promise-returning repositories (`src/repositories/users.ts`, `src/repositories/xalians.ts`) over one shared `DynamoDBDocumentClient` (`src/lib/db.ts`) — no callbacks anywhere in this tree.
+`apps/api/src/handlers/*.ts` are the nine route handlers, each `export const handler = withApi(fn, opts)`. `withApi` (`src/lib/api.ts`) parses and validates the body, query, and path params against zod schemas (`src/lib/schemas.ts`), derives the subject from the JWT claims (`src/lib/auth.ts`, reads both payload 1.0 and 2.0 claim shapes), calls the route function, serializes `{status, body}` into the Lambda response, maps a thrown `ApiError` to its status and errorCode and anything else to a logged 500 with a request id, and emits one structured log line per request (never headers or bodies). Persistence goes through promise-returning repositories (`src/repositories/users.ts`, `xalians.ts`, `registry.ts`) over one shared `DynamoDBDocumentClient` (`src/lib/db.ts`); user mutations use condition expressions (atomic `list_append` and indexed `REMOVE` for the id list, a `>=` condition for token spends), batch reads chunk at 100 keys and retry `UnprocessedKeys`. No callbacks anywhere in this tree.
 
-Terraform wires one Lambda + API Gateway route per handler via the reusable `terraform/modules/lambda` module (`main.tf` lines ~255–400):
+Two creature flows coexist until issue #180 lands:
+
+- **Legacy showroom** (the shape every current page renders): `GET /xalian` runs the legacy engine anonymously and returns `{ xalian, signature }`, an HMAC-SHA256 over canonical JSON (`src/lib/signing.ts`, secret `XALIAN_SIGNING_SECRET` from a `random_password` in `main.tf`, injected only into the two functions that sign and verify). `POST /db/xalian` verifies the signature, requires `createTimestamp` within 24 hours, persists to `XalianTable`, and appends the id to the caller's user record in one call. A client cannot keep stats it invented.
+- **Registry** (the ratified record from `@xalians/rules`): `POST /xalians` generates server-side with a server-drawn seed, validates against `XalianRecordSchema`, persists to `XalianRegistry` (hash `xalianId`, GSI `byOwner` on `ownerId` + `generatedAt`) under the caller, returns 201. `GET /xalians` lists an owner's records newest first with a cursor; `GET /xalians/{xalianId}` reads one. No page renders these yet (#180).
+
+Identity is the lowercased Cognito username from the JWT; a client-supplied `userId` is only ever "which profile to view" (`GET /db/user?userId=` returns the public profile: `userId` and `xalianIds`). The caller's own `GET /db/user` creates the record lazily if it is missing. `PATCH /db/user` accepts only `REMOVE_XALIAN_ID`; adding is a server-side effect of keeping, and token accounting is server-only (`ADD_TOKENS`, `REMOVE_TOKENS`, `ADD_XALIAN_ID` return 403).
+
+Terraform wires one Lambda + API Gateway route per handler via the reusable `terraform/modules/lambda` module (payload format 2.0, Cognito JWT authorizer `aws_apigatewayv2_authorizer.cognito`):
 
 | Route | Handler bundle | Auth |
 |---|---|---|
-| `GET /xalian` | `generateXalian/index.handler` | NONE |
+| `GET /xalian` | `generateXalian/index.handler` | NONE (throttled: burst 10, rate 5) |
 | `POST /db/xalian` | `createXalian/index.handler` | JWT |
-| `GET /db/xalian` | `retrieveXalian/index.handler` | JWT |
-| `GET /db/xalians` | `retrieveXalian/index.handler` (same bundle as the single-id route) | JWT |
+| `GET /db/xalian`, `GET /db/xalians` | `retrieveXalian/index.handler` | JWT |
 | `GET /db/user` | `retrieveUser/index.handler` | JWT |
 | `POST /db/user` | `createUser/index.handler` | JWT |
 | `PATCH /db/user` | `updateUser/index.handler` | JWT |
+| `POST /xalians` | `generateRegistryXalian/index.handler` | JWT |
+| `GET /xalians` | `listRegistryXalians/index.handler` | JWT |
+| `GET /xalians/{xalianId}` | `retrieveRegistryXalian/index.handler` | JWT |
 
-Adding an endpoint means: new `src/handlers/<name>.ts` exporting `handler` → new `module "..._lambda_module"` block in `main.tf` pointing `lambda_handler_path` at `<name>/index.handler` → `terraform apply`.
+Adding an endpoint means: new `src/handlers/<name>.ts` exporting `handler`, a zod schema for its input, a test under `apps/api/test`, and a new `module "..._lambda_module"` block in `main.tf` pointing `lambda_handler_path` at `<name>/index.handler` (pass `has_environment = true` plus `environment_variables` only if it needs a secret). Merging applies it.
 
-Every handler is bundled independently by esbuild (`apps/api/esbuild.config.mjs`, `npm run build -w apps/api`) to `apps/api/dist/<name>/index.mjs`: ESM, platform node, target node22, `@aws-sdk/*` left external (the `nodejs22.x` runtime provides it), everything else — `zod`, `@xalians/content` JSON, the legacy CommonJS engine — bundled in. `terraform`'s `archive_file` zips `apps/api/dist` directly; there is no excludes list and nothing is staged into `node_modules` before `terraform apply`, because the bundle has no runtime dependency on the workspace at all. `uuid` is gone; `xalianBuilder.js` uses `crypto.randomUUID()`.
+Every handler is bundled independently by esbuild (`apps/api/esbuild.config.mjs`, `npm run build -w apps/api`) to `apps/api/dist/<name>/index.mjs`: ESM, platform node, target node22, `@aws-sdk/*` external (the `nodejs22.x` runtime provides it), everything else (`zod`, `@xalians/content` JSON, `@xalians/rules` TypeScript, the legacy CommonJS engine) bundled in. `archive_file` zips `apps/api/dist` directly; the bundle has no runtime dependency on the workspace.
 
-Two API Gateway stages exist (`prod`, `test`) mapped to `api.xalians.com` and `testapi.xalians.com`. The frontend hardcodes `https://api.xalians.com/prod/...` in `my-app/src/utils/dbApi.js`.
+The three DynamoDB tables (`XalianTable`, `XalianUsersTable`, `XalianRegistry`) are Terraform-managed with point-in-time recovery and `prevent_destroy`; the Lambda role's inline policy names their ARNs exactly. Terraform state lives in the `xalians-terraform-state-*` S3 bucket with a lockfile; CI plans on every PR and applies on merge through the GitHub OIDC role in `github-oidc.tf`, which can manage its own policy, so permission additions apply from CI (the one-time bootstrap was done 2026-09-10).
+
+Two API Gateway stages exist (`prod`, `test`) mapped to `api.xalians.com` and `testapi.xalians.com`, both with default throttling (burst 50, rate 20). The frontend hardcodes `https://api.xalians.com/prod/...` in `my-app/src/utils/dbApi.js`.
+
+### Shared packages
+
+- `packages/content` (`@xalians/content`): every game data and lore JSON (`json/`) plus zod schemas (`src/schema`, exported as `@xalians/content/schema`) for each file, the ratified creature record, and the user record. `z.infer` types from these schemas are the only shared TypeScript types across the API and the site. `npm test -w packages/content` validates every bundled file; `npm run check:bundle -w packages/content` fails when `docs/` and the committed bundle disagree (CI runs both).
+- `packages/rules` (`@xalians/rules`): the ratified creature generator in strict TypeScript (`src/generator`), consumed by the site, the registry handler, and `scripts/checkCatalogCoverage.js`. Its integration test generates 200 records and validates each against `XalianRecordSchema`. Duel and expedition rules still live under `my-app/src/gameplay` (#184).
+- Both ship TypeScript source with no build step; Vite, Vitest, esbuild, and Node 22.18+ read `.ts` directly.
 
 ### Frontend (`my-app/`)
 
-Vite + React Router v5 (`App.js` is the full route table) + react-bootstrap. `vite.config.js` holds the JSX-in-`.js` loader, the CRA-style `ReactComponent` SVG import shim (vite-plugin-svgr), and the CommonJS shim for the `module.exports` files still copied from `apps/api/` by the (currently unused, kept only for the follow-up PR that deletes it) `copy-js` script. Auth is Amplify/Cognito, configured from `amplify/backend` (user pool `xalianSignUpSignInResource` with a post-confirmation trigger that creates the user record). The `/db/*` routes are Cognito-JWT-authorized; `dbApi.js` sends `Authorization: Bearer <idToken>` from `Auth.currentSession()`.
+Vite + React Router v5 (`App.js` is the full route table) + react-bootstrap. `vite.config.js` holds the JSX-in-`.js` loader, the CRA-style `ReactComponent` SVG import shim (vite-plugin-svgr), and the CommonJS shim for the legacy duel files under `src/gameplay` and `src/constants` that still use `module.exports` (they stopped being copies of `apps/api` when the copy scripts were deleted; #184 retires them). Auth is Amplify/Cognito, configured from `amplify/backend` (user pool `xalianSignUpSignInResource` with a post-confirmation trigger that adds the user to the standard group; the user record itself is created lazily by the API on the first authenticated `GET /db/user`). The `/db/*` routes are Cognito-JWT-authorized; `dbApi.js` sends `Authorization: Bearer <idToken>` from `Auth.currentSession()`.
 
 Game data JSON is **a shared workspace package, not a build-time copy**: `packages/content/json/` is imported directly by both `apps/api` and `my-app` as `@xalians/content/<name>.json`. Edit the files there; there is nothing to re-sync. The encyclopedia, chronicle, registries, and species records are generated into `packages/content/json/` by `node scripts/bundleLore.js` from `docs/`, so edit those under `docs/` and bundle first.
 
@@ -188,5 +205,8 @@ Game data JSON is **a shared workspace package, not a build-time copy**: `packag
 
 - Root-level `sandbox.js`, `jsonManipulator.js`, and the `my-app/src/pages/sandbox*.js` / `testPage.js` files are throwaway experiment scratchpads, not part of the app.
 - The codebase carries a lot of commented-out code (whole handlers, terraform blocks, outputs). Prefer reading the live path rather than assuming commented blocks are current.
-- Terraform state is local and gitignored; `main.tf`, `variables.tf`, and `outputs.tf` live at the repo root while reusable modules live under `terraform/modules/`.
-- Lambda runtime is pinned to `nodejs22.x` in `terraform/modules/lambda/lambda_instance.tf` — engine code must stay compatible with it.
+- Terraform state is remote (S3 backend with lockfile, see `main.tf`); `main.tf`, `variables.tf`, `outputs.tf`, and `github-oidc.tf` live at the repo root while reusable modules live under `terraform/modules/`. Never `terraform apply` by hand unless CI cannot do it for itself (a permission the CI role does not yet have).
+- Lambda runtime is pinned to `nodejs22.x` in `terraform/modules/lambda/lambda_instance.tf`; engine code must stay compatible with it.
+- The root `package-lock.json` is generated on Windows. npm records only the current platform's native binaries (npm/cli#4828), so the root `package.json` pins the Linux variants of rollup, esbuild, Tailwind oxide, lightningcss, and TypeScript as `optionalDependencies`. Move those pins whenever one of those packages is upgraded, and add a `linux-x64-gnu` pin for any new package that ships platform binaries, or CI on ubuntu fails at startup.
+- `.npmrc` sets `legacy-peer-deps=true`: strict peer resolution livelocks on a `maplibre-gl` conflict inside the Amplify UI package (documented in the file). Do not remove it without re-testing `npm install` from scratch.
+- The two Amplify-managed Cognito functions live outside CI; the post-confirmation trigger was updated in place with the AWS CLI on 2026-09-10 and the repo template matches it (#182 moves them into Terraform).

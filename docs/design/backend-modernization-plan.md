@@ -1,5 +1,7 @@
 # Backend modernization plan
 
+Status: executed 2026-09-10. Waves A to D merged (PRs #152, #153, #154, #155, #156, #157, #168, #173, #175, #178, #179, #186, #187). Deviations from the plan as written: B2 moved only the generator into `packages/rules` (legacy duel constants and attack calculator stay with the duel, #184); D1 kept the legacy showroom flow by signing records (HMAC) instead of generating on keep, so the generator page is unchanged; the Cognito trigger was updated in place with the AWS CLI rather than through Amplify (#182); `serial` is not tracked per owner yet. Follow-ups: #180, #181, #182, #183, #184.
+
 Execution plan for `docs/design/backend-modernization-audit.md`, approved by Nick on 2026-09-10 ("on board for everything"). It fixes the 22 audit findings through eight pull requests in four waves, each implemented by a delegated agent in its own worktree and reviewed by the orchestrating session before the next wave starts. It also adopts the layout recommended the same morning in `docs/design/frontend-backend-data-sharing.md` (branch `design/data-sharing`), with one deliberate deviation recorded below.
 
 ## Context
