@@ -22,19 +22,13 @@ Split applied 2026-09-09. `lore.description` is Nick's teaser from `species.json
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits (111 words)
+### fields (3 of 5)
 
-It feeds on charge and takes nothing else, working the deep canyons and metallic peaks where Zolton's energy cycle lays down visible rivers of electricity that surge like wire currents over the crust. Storage is the rare answer on that world; most cataloged forms conduct the current and pass it along, and every one of them avoids the black lightning dead zones without exception. It keeps to canyons saturated with dense freezing gases and has no use for the warm end of its world. The Generator that made it was set on Zolton because black lightning did no harm to inorganic matter, so any loss of labor could simply be replenished.
+- **habitat**: The deep canyons and metallic peaks of Zolton, where ground-borne lightning surges over the crust. It keeps clear of the black lightning dead zones.
+- **feeding**: It feeds on electrical charge from its surroundings and on nothing else.
+- **behavior**: It stores the charge it gathers in its alloy bones and releases the shock into enemies through its claws.
 
-| Claim | Source |
-|---|---|
-| feeds on charge and takes nothing else | `physiology.diet` energy-feeder; `physiology.senses.special` electroreception |
-| works the deep canyons and metallic peaks | `lore.biomeNiche`; Zolton history paragraph 1, a mountainous world of deep canyons and craggy spires whose metallic peaks act as natural lightning rods; Zolton report terrain features |
-| the energy cycle lays down visible rivers of electricity surging like wire currents over the crust | Zolton history paragraph 3, the energy dissipating into the canyon network and forming visible rivers of electricity that surged like wire currents over the crust; Zolton report terrain feature, active cyclical surface current rivers |
-| storage is the rare answer; most forms conduct the current and pass it along | Zolton report fauna observation, universal adaptation of energy conduction and redirection with storage in a minority of lineages (the line Nick softened on 2026-09-08 precisely so this species could stand as the exception) |
-| every cataloged form avoids the black lightning dead zones without exception | Zolton report fauna observation, black lightning dead zones avoided by all cataloged forms without exception |
-| keeps to canyons saturated with dense freezing gases, no use for the warm end | Zolton history paragraph 1, deep canyons saturated with dense, freezing gases; `environmentalTolerance.temperatureC` -55 to 35 against a habitable band that runs to 35; Zolton report hazard, cryogenic canyon exposure; `traits.pool.hardened` 16 |
-| the Generator was set there because black lightning did no harm to inorganic matter and any loss of labor could simply be replenished | Zolton history paragraph 5, the corporate proposal to withdraw Vallerii workforces and establish a Generator, since black lightning did no damage to inorganic matter and the Generator could simply continue replenishing any loss of labor |
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ### Sentences dropped from the pre-split description
 

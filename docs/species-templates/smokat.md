@@ -20,22 +20,14 @@ The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description
 
 Rewritten 2026-09-09 for the ghost register (see the amendment of that date); draft until Nick signs it off.
 
-### habits (117 words)
+### fields (4 of 5)
 
-It is one of the non-corporeal Xalians the abandoned Generator began producing once it rewrote itself under Leviticus Overdrive, after the moon weapon ended everything organic it had made. It holds a feline shape over the Dreadscape, the wasteland of piled Xalian remains that buried the obelisks of the old world, and the moon-weapon, which targets organic life, passes over it. It climbs and springs where the footing is bad and comes apart into smoke when it needs to cross open ground or close on something unseen. It takes nothing in and feeds on nothing; what it hunts for is the pounce itself. The fog over that ground stands windless and never lifts, and it works from inside it.
+- **origin**: One of the non-corporeal Xalians the abandoned Phantiri Generator produced after it rewrote itself under Leviticus Overdrive.
+- **habitat**: The Dreadscape of Phantiri, inside its windless fog.
+- **feeding**: It takes nothing in and feeds on nothing.
+- **behavior**: It holds a feline shape, climbs and springs where the footing is bad, and instantly atomizes into a cloud of smoke for a sneak attack or a quick escape.
 
-| Claim | Source |
-|---|---|
-| one of the non-corporeal Xalians the abandoned Generator produced once it rewrote itself under Leviticus Overdrive | Phantiri history: the abandoned Generator, unable to keep organic Xalians alive, rewrote itself (Leviticus Overdrive) to produce non-corporeal ghost Xalians; Generator report output priorities, non-corporeal architectures exclusively |
-| the moon weapon ended everything organic | Phantiri history: the reawakened weapon on the moon annihilates all organic life on sight; report hazards |
-| holds a feline shape | species: feline shaped in normal form; record composition gas (a body of smoke that holds a shape at rest) |
-| the Dreadscape of piled remains that buried the obelisks | Phantiri history, the Dreadscape |
-| the moon weapon targets organic life and passes over it | Phantiri history; Ectoghoul habits carry the same reading |
-| climbs and springs; comes apart into smoke to cross ground or close unseen | species: atomize into a cloud of smoke for a sneak attack or quick evasion; record climb and leap bands |
-| takes nothing in | record diet none, the ghost-register default for a body with no way to take anything in |
-| windless fog that never lifts | Generator report and biomeNiche, the thick haze over the corpse islands |
-
-Draft until Nick signs it off.
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ## Source text
 

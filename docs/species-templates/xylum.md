@@ -18,20 +18,12 @@ Split applied 2026-09-09. `lore.description` is Nick's teaser from `species.json
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits (115 words)
+### fields (2 of 5)
 
-Floria's understory carries massive infestations of toxic fungi, and they do not take in it. Ground disturbed above answers with every one of those limbs coming up out of it, and it meets what crosses its ground by growing over it rather than by giving way; a limb torn from it grows back. That is the answer the whole planet makes to cutting and clearing, growth and entanglement and regrowth in place of engagement. Vallerii activity here never grew past small settlements, research labs and exploration parties, and the ground beneath the World Trees was never built on. Some say the oldest Xalians of Floria were born from the first seeds of the Genesis Prototype.
+- **habitat**: Underground in Floria's understory, beneath the World Trees, where it absorbs its power.
+- **behavior**: It stays buried. When the ground above it is disturbed its tentacles come up out of the soil and wrap whatever is there, and a tentacle torn off grows back.
 
-| Claim | Source |
-|---|---|
-| Floria's understory carries massive infestations of toxic fungi | Floria history paragraph 8, massive infestations of toxic fungi; Floria report hazard, toxic fungal blooms; report terrain feature, understory fungal thickets |
-| they do not take in it | `traits.pool.resistant` 22, whose entire support is that fungal load on a body buried in the same soil layer |
-| ground disturbed above answers with every one of those limbs coming up out of it | art: six serrated limbs rising and curling outward from the buried mass; Floria history paragraph 8, any endeavor to build met with stampeding plant-like Xalians and freakish overgrowths |
-| it meets what crosses its ground by growing over it rather than by giving way | Floria report fauna observation, territorial strategy of growth, entanglement and regrowth in place of engagement; `traits.pool.territorial` 25 |
-| a limb torn from it grows back | legacy `recoveryRating` high, the one legacy rating that maps to this trait; Floria report output priority, regenerative tissue; `traits.pool.regenerative` 35 |
-| that is the answer the whole planet makes to cutting and clearing | Floria report fauna observation, coordinated ecosystem response to cutting and clearing confirmed at planetary scale |
-| Vallerii activity never grew past small settlements, research labs and exploration parties, and the ground beneath the World Trees was never built on | Floria history paragraph 8, the planet hostile to military bases, urban centers and industrial zones, with Vallerii activity remaining limited to small settlements, research labs and exploration parties |
-| some say the oldest Xalians of Floria were born from the first seeds of the Genesis Prototype | Floria history paragraph 10, with the source's own hedge preserved and the Xylum not named as one of them |
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ### Sentences dropped from the pre-split description and draft
 

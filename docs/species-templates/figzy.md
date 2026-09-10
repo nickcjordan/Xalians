@@ -20,24 +20,13 @@ The lore block holds three prose fields. `description` is Nick's teaser, carried
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits (117 words)
+### fields (3 of 5)
 
-The Telypso Generator built it to counterbalance the unstable auras of the Vallerii marooned planetside, treating them as patients rather than removing them, and it was one of the small psychic bodies that emerged from the fungal forests to steady what the deranged left behind. It still works that way, putting itself between a distressed mind and whatever is agitating it, holding the one quiet and driving the other back with a burst that leaves its open hands. Telypso's ambient field amplifies whatever state it meets, and its own stays steady. The Nemesis Plague has set the creatures of Telypso against one another, and a Figzy that trusts no one raises its hands against its own kind.
+- **origin**: Made by the Telypso Generator to help settle the unstable minds of the Vallerii marooned on the world, whom it treats as patients.
+- **habitat**: The fungal forests and bioluminescent jungles of Telypso.
+- **behavior**: It is small, deceptively smart, and docile with those it trusts. It puts itself between a distressed mind and whatever is agitating it, holding one quiet and driving the other back with a burst from its open hands.
 
-| Claim | Source |
-|---|---|
-| the Telypso Generator built it to counterbalance the unstable auras of the Vallerii marooned planetside | Telypso history paragraph 6, on the Generator sensing their unstable auras and churning out Xalians whose psychic energies could counterbalance those of the brainsick creatures, once the most insane and demented of the Vallerii began finding themselves marooned planetside |
-| treating them as patients rather than removing them | Telypso history paragraph 6, on the Generator treating the prisoners as patients, set against the same paragraph's rejected alternative of Xalians tasked with removing such Vallerii |
-| one of the small psychic bodies that emerged from the fungal forests | Telypso history paragraph 6, on psychic Xalians emerging from the fungal forests; record `lore.biomeNiche` |
-| to steady what the deranged left behind | Telypso history paragraph 6, on intrusive thoughts and erratic behaviors leaving psychic impressions that had to be rectified to keep Telypso in harmony |
-| puts itself between a distressed mind and whatever is agitating it, holding the one quiet | Telypso Generator report fauna, empathic forms with emotional-state regulation function; output priorities, psychic stabilization capacity and emotional regulation function, stated here as this creature's own act |
-| drives the other back with a burst that leaves its open hands | record `signatureAbility` Small Hands of the Psychosphere, instrument `mind`, action `burst`; `conduits` mind and fists for psychic; art: the starburst separated from the body in front of the raised hands |
-| Telypso's ambient field amplifies whatever state it meets | Telypso Generator report hazards, ambient psychic amplification of observer state |
-| its own stays steady | Generator report output priorities, distress-tolerance thresholds; record `traits.pool.mind-sealed` |
-| the plague has set the creatures of Telypso against one another | Telypso history paragraph 7, on waves of spiritual sorrow tainting the creatures of Telypso and turning them against one another |
-| a Figzy that trusts no one raises its hands against its own kind | the ratified turn of the previous record text, joining the teaser's trust condition to the paragraph above; no new fact |
-
-No pack or solitary sentence is written: `pack-bonded` was cut on 2026-09-07 and `solitary` was never listed.
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ## Description status
 

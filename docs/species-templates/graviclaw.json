@@ -16,8 +16,10 @@
       "One massive pincer claw as long as the torso",
       "Small head on heavy shoulders"
     ],
-    "habits": "It hunts under a sky of permanent night, where the only light is infrared, and it registers mass and motion rather than looking for it. It does not chase. It lies under the wetland surface and opens a collapse point in the water above it, so the prey arrives at the pincers on its own; the pincers then shut with a weight the arm does not have, and what is caught is not let go. Faced with something too large to draw in, it fixes itself to the bottom and stops being movable. It makes no call, no cry, and no signal of any kind. The Grimedites watch the galaxy's edge for APEX's return; it keeps the wetlands below.",
-    "biomeNiche": "submerged ambusher in the foggy wetlands beneath Grimedes' thick, stalky undergrowth"
+    "origin": "Thought to come from the laboratory experiments on Grimedes, rumored to be ECHELON black sites, that produced the planet's gravity-bending Xalians.",
+    "habitat": "The foggy wetlands of Grimedes, just beneath the surface.",
+    "feeding": "It lurks under the water and draws prey to its claws with a miniature black hole rather than chasing it.",
+    "behavior": "It snaps its claws shut with a force many times its mass, cutting through the hardest materials. Against something too large to draw in, it roots itself to the ground and becomes an immovable wall of chitin."
   },
   "physiology": {
     "corporeality": "corporeal",

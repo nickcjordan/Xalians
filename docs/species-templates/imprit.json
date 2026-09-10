@@ -17,8 +17,9 @@
       "Bare gripping hands and feet",
       "Long whip tail with a scythe-like tip"
     ],
-    "habits": "Its ground is the legacy shafts, which hold where fresh excavation would open onto magma seepage, and the crag networks above them, the only ground on Magmuth that stays put between flow shifts. It climbs and leaps that ground rather than crossing the open, swinging from the tail as readily as from a hand. What it finds down there it takes apart and puts back together, gripping and turning with bare digits rather than hooks or claws, and the makeshift equipment it was left with is still what it works on. Above ground it is far less predictable, and it leaves fire behind it in places that had none. Firestorms and pyroclastic flows pass over it without marking it.",
-    "biomeNiche": "the lightless mining shafts sunk under Magmuth's obsidian islands"
+    "origin": "Designed by Magmuth's corporations as a tinkerer and let loose in the lightless mining shafts to fix and maintain the makeshift equipment the Vallerii sent down.",
+    "habitat": "The old mining shafts of Magmuth and the crag networks above them.",
+    "behavior": "It climbs and leaps rather than crossing open ground, swinging from its tail as readily as from a hand. Underground it takes machinery apart and puts it back together. On the surface it is erratic, and it sets fires where they least belong."
   },
   "physiology": {
     "corporeality": "corporeal",

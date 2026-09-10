@@ -22,20 +22,14 @@ Split applied 2026-09-09. `lore.description` is Nick's teaser, carried from `spe
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits (112 words)
+### fields (4 of 5)
 
-It lives up in the bioluminescent fungal forests of Telypso, moving along the branches and taking its food from what those forests give. It is quick in the branches and hard to hold there. The Generator raised it to counterbalance the psychic energies of the deranged Vallerii the Imperial Houses marooned on the world, and the work was meant as treatment rather than injury, the subject a patient to be settled and folded back into the mind of the planet. Since the Nemesis Plague reached Telypso's sanctuaries and turned the creatures of the world against one another, Tizzies turn on each other, and they have only the one way of doing it.
+- **origin**: Raised by the Telypso Generator to counterbalance the psychic energies of the deranged Vallerii marooned on the world, as treatment rather than injury.
+- **habitat**: The branches of Telypso's bioluminescent fungal forests.
+- **feeding**: It takes its food from what the forests give.
+- **behavior**: It uses its tail to draw attention to its big hypnotic eyes, and once eye contact is made it attacks from inside your mind. Since the Nemesis Plague turned Telypso's creatures against one another, Tizzies turn on each other the same way.
 
-| Claim | Source |
-|---|---|
-| lives in the bioluminescent fungal forests of Telypso | `lore.biomeNiche`; Telypso history paragraph 6, psychic Xalians emerging from the fungal forests; Telypso Generator report terrain feature, fungal forest systems |
-| moves along the branches | art: the hanging posture; `capabilities.climb` [65, 90] |
-| takes its food from what those forests give | `physiology.diet` omnivore, the registry fallback recorded for this species; no source shows it feeding, so the claim states only that it eats where it lives |
-| quick in the branches and hard to hold there | `capabilities.climb` [65, 90] and `leap` [40, 65]; `attributes.agility` [55, 82]; legacy `speedRating` high |
-| raised to counterbalance the psychic energies of the deranged Vallerii the Imperial Houses marooned on the world | Telypso history paragraph 5, the Imperial Houses leaving Telypso as a cosmic asylum and sending the most unstable and mentally deranged of the Vallerii there; paragraph 6, the Generator churning out Xalians whose psychic energies could counterbalance those of the brainsick creatures populating the planet |
-| the work was meant as treatment rather than injury, the subject a patient folded back into the mind of the planet | Telypso history paragraph 6, the Generator treating the prisoners as patients and merging them into the mind of the rest of Telypso's psychosphere; Telypso report fauna observation, population function is therapeutic per this unit's standing directive |
-| since the plague reached the sanctuaries and turned the creatures of the world against one another, Tizzies turn on each other, and have only the one way of doing it | Telypso history paragraph 7, the Nemesis Plague reaching Telypso's sanctuaries and tainting the creatures of Telypso, turning them against one another; Telypso report fauna observation, inter-population aggression rising in affected sectors |
-| no company sentence is written | deliberate: no source states pack or solitary for this species, and both were cut from the trait pool on 2026-09-07 for want of evidence |
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ### Sentences dropped from the pre-split description
 

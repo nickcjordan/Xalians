@@ -17,8 +17,11 @@
       "Long streamer feathers trailing from the head",
       "Taloned gripping feet"
     ],
-    "habits": "It works the canopy stratum of the World Trees, where flight within and above the branches is the efficient way to move and the obstructed ground below is not worth running on. It hunts without chasing. The opened bill and the sweet smell bring the insect in, and whatever the saliva touches stops moving; what stops moving is eaten, and it takes nothing but meat. It keeps company, and a body of them holds its stretch of forest the way the rest of Floria does, by growth, entanglement, and regrowth in place of engagement, and anything entering the deep groves gets the same stillness and the same meal. The toxic fungal blooms of the underforest do not trouble it.",
-    "biomeNiche": "flowering meadows and jungle canopy of the Florian underforests"
+    "origin": "Used by Vallerii scientists and explorers as mobile bug repellent on Florian ventures, trapping insects with its saliva.",
+    "habitat": "The canopy of Floria's World Trees and its flowery meadows, where its plumage camouflages it.",
+    "feeding": "It eats only meat. It attracts insects with its floral display and sweet-smelling saliva, and the sedative in the saliva paralyzes them.",
+    "behavior": "It flits between the trees and hunts without chasing, waiting with its bill open. Its sedative has since been enhanced, and it paralyzes and consumes anything that threatens the sacred parts of the jungle.",
+    "company": "It lives in swarms."
   },
   "physiology": {
     "corporeality": "corporeal",

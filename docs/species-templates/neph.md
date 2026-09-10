@@ -19,22 +19,15 @@ The lore split of 2026-09-09 (Nick): `lore.description` is the `species.json` te
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits (120 words)
+### fields (5 of 5)
 
-It travels in herd distribution rather than alone, and its amorphous form lets the hurricane-force winds of the lower skies sweep it up and set it down again unharmed. The tentacles do the work. They draw the slush of the deeper atmosphere up hollow tubes and keep the Benthane that comes up with the food, and the same tubes reverse to pull a thing in against its will, to put it off at pressure, or to blast it cold with the coolant. Being almost entirely hydrogen, it can spray flammable gas as well. For what that filtering leaves behind it is shepherded, herded and milked. What kills it is the sky it lives in, sulfuric cloud contact and island collision.
+- **origin**: Domesticated for the Benthane industry, which milks the Benthane its tentacles vacuum up along with its food.
+- **habitat**: The cloud layers of Saiphus's lower atmosphere.
+- **feeding**: It grazes on the biochemicals and atmospheric plankton in the gas-liquid slush of the deeper atmosphere, drawing them up through its long trailing tentacles.
+- **behavior**: When threatened it pulls opponents in with suction, jets air at high pressure, blasts freezing Benthane from its tentacles, or sprays flammable hydrogen.
+- **company**: It travels in free-floating herds.
 
-| Claim | Source |
-|---|---|
-| Travels in herd distribution rather than alone | planetRecords.json saiphus report fauna observation, "buoyant grazing forms in herd distribution"; record `traits.pool.pack-bonded` |
-| Its amorphous form lets the hurricane-force winds of the lower skies sweep it up and set it down again unharmed | planets.json Saiphus paragraph 5, "Their amorphous forms allowed them to be swept up and deposited harmlessly by the hurricane-force winds that plagued the lower skies" |
-| The tentacles draw the slush of the deeper atmosphere up hollow tubes and keep the Benthane that comes up with the food | species.json: "grazing off of the biochemicals and atmospheric plankton contained in the gas-liquid slush of Saiphus's deeper atmosphere using long, trailing tentacles that vacuum up valuable Benthane along with their food"; art (each tentacle drawn as a hollow tube, open at the end); record `physiology.diet: herbivore` |
-| The same tubes reverse to pull a thing in against its will, or to put it off at pressure | species.json: "these same tentacles can be used to pull in opponents with considerable suction or to jettison air at high pressure" |
-| Or to blast it cold with the coolant | species.json: "expel jets of Benthane gas, which is typically used a coolant for starship engines, from their tentacles in order to blast their enemies with freezing air" |
-| Being almost entirely hydrogen, it can spray flammable gas as well | species.json: "being composed almost entirely hydrogen means that the Neph can also spray their enemies with bouts of flammable gas"; record `traits.pool.volatile` 100 |
-| For what that filtering leaves behind it is shepherded, herded and milked | planetRecords.json saiphus report fauna observation, "under pastoral management"; planets.json Saiphus paragraph 5, "the pastoral activity of shepherding and “milking” Benthane gas from flocks of peaceful, roaming Nephs" |
-| What kills it is sulfuric cloud contact and island collision | planetRecords.json saiphus report hazards, sulfuric cloud contact and island collision |
-
-The smell-over-sight clause and the ignited-flocks clause of the first pass were cut for room; both remain in the judgment section, and the hydrogen fact is now carried by what the creature does with it rather than by what was done to it.
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ## Description status
 

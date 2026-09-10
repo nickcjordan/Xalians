@@ -18,22 +18,13 @@ The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits (95 words)
+### fields (3 of 5)
 
-It lies buried and reads the ground it lies in, and it moves through loose particulate as readily as a swimmer moves through water. It hunts by vibration and it kills by attrition: what has been bitten is left to fail rather than fought down. Water is the thing worth taking on a world whose oceans were vaporized and whose dunes now lie over glass, and water is what it takes. The ground it holds is open dune, and it holds it from underneath. It spreads the hood and shows the fangs before it strikes.
+- **habitat**: Buried beneath the rolling dunes of Endessa.
+- **feeding**: It bites with a venom that drains the victim's water and leaves it to die of dehydration.
+- **behavior**: It hides beneath the sand and emits a subsonic vibration from the rattle on its tail that lures and mesmerizes opponents long enough for it to draw near and strike. It spreads its hood and shows its fangs before it does.
 
-| Claim | Source |
-|---|---|
-| lies buried and reads the ground it lies in | species: "hides beneath the sand"; record `physiology.senses.special` carries `tremorsense` and `traits.pool.stealthy` sits at 100 |
-| moves through loose particulate as readily as a swimmer moves through water | Endessa Generator report `mobility.burrow`, optimal, including sustained particulate-swimming, and `outputPriorities`, particulate locomotion; record `capabilities.burrow` [60, 85] |
-| hunts by vibration | Endessa Generator report `fauna.observations`, subsurface ambush forms and vibration-hunting forms, and `hazards`, vibration-triggered predation |
-| kills by attrition: what has been bitten is left to fail rather than fought down | Endessa Generator report `fauna.observations`, predation strategy attrition; record `signatureAbility`, Thirst of the Endless Sea, and `traits.pool.toxic` at 100 |
-| water is the thing worth taking on a world whose oceans were vaporized and whose dunes now lie over glass | planet: "By the end of the siege, Endessa’s oceans had been vaporized, and the entire surface of the planetary sea floor had been turned to glass." and "Over the course of thousands of years, the glass surface of Endessa broke down into particulates, turning the planet into an unforgiving desert expanse comprised of vast seas of endless rolling dunes and arid, sweltering heat."; Endessa Generator report `outputPriorities`, water retention |
-| the ground it holds is open dune, and it holds it from underneath | record `lore.biomeNiche`, buried in the rolling dunes of Endessa; species: "hides beneath the sand"; Endessa Generator report `fauna.observations`, subsurface ambush forms |
-| spreads the hood and shows the fangs before it strikes | art: the flared hood and the bared fangs, a threat display; record `traits.pool.menacing` |
-
-Nothing from the old upgraded description was lost: its hood-and-rattling-tail appositive is in body, its vaporized-oceans and buried-in-the-sand clauses are in habits, and its lure-and-venom sentence is Nick's teaser again. No feeding schedule and no job on the wells was authored for this species. The fact-check pass cut a clause placing it above the Nightcap cavern networks: that drilling context belongs to Endessa broadly and to Scalatto's sourced origin, and this record's own `biomeNiche` puts it in the open dunes.
-
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ## Judgment lines
 

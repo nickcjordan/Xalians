@@ -20,25 +20,15 @@ The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carrie
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits (119 words)
+### fields (5 of 5)
 
-It works the canopy stratum of the World Trees, where flight within and above the branches is the efficient way to move and the obstructed ground below is not worth running on. It hunts without chasing. The opened bill and the sweet smell bring the insect in, and whatever the saliva touches stops moving; what stops moving is eaten, and it takes nothing but meat. It keeps company, and a body of them holds its stretch of forest the way the rest of Floria does, by growth, entanglement, and regrowth in place of engagement, and anything entering the deep groves gets the same stillness and the same meal. The toxic fungal blooms of the underforest do not trouble it.
+- **origin**: Used by Vallerii scientists and explorers as mobile bug repellent on Florian ventures, trapping insects with its saliva.
+- **habitat**: The canopy of Floria's World Trees and its flowery meadows, where its plumage camouflages it.
+- **feeding**: It eats only meat. It attracts insects with its floral display and sweet-smelling saliva, and the sedative in the saliva paralyzes them.
+- **behavior**: It flits between the trees and hunts without chasing, waiting with its bill open. Its sedative has since been enhanced, and it paralyzes and consumes anything that threatens the sacred parts of the jungle.
+- **company**: It lives in swarms.
 
-| Claim | Source |
-|---|---|
-| It works the canopy stratum of the World Trees | planetRecords.json floria `report.fauna.observations` canopy stratum of branch-runners and fliers; `report.terrain.features` World Tree crowns at city scale |
-| Flight within and above the branches is the efficient way to move | planetRecords.json floria `report.mobility.flight` optimal, within and above canopy |
-| The obstructed ground below is not worth running on | planetRecords.json floria `report.mobility.sprint` inefficient, ground-level obstruction density |
-| It hunts without chasing; the opened bill and the sweet smell bring the insect in | species.json: "when they open their mouths that 'flower' blooms" and "They attract insects with their sweet, syrupy smelling saliva and vibrant floral display"; record `capabilities.sprint [15, 30]` against `flight [70, 88]` |
-| Whatever the saliva touches stops moving | species.json: "their saliva contains a powerful sedative which paralyzes anything that it comes in contact with" |
-| What stops moving is eaten, and it takes nothing but meat | species.json: "paralyzing and consuming all who dare to threaten"; record `physiology.diet: carnivore` |
-| It keeps company | species.json: the description states that the species moves and holds ground in swarms; record `traits.pool.pack-bonded` |
-| A body of them holds its stretch of forest | record `traits.pool.territorial` at 100, required; species.json: "protect the most sacred parts of" its jungles |
-| By growth, entanglement, and regrowth in place of engagement | planetRecords.json floria `report.fauna.observations`, the territorial strategy line |
-| Anything entering the deep groves gets the same stillness and the same meal | species.json: "paralyzing and consuming all who dare to threaten the pristineness of their forests" |
-| The toxic fungal blooms of the underforest do not trouble it | planetRecords.json floria `report.hazards` toxic fungal blooms; record `traits.pool.resistant` |
-
-The lifespan and plague clause of the first pass was cut for room; it restates `physiology.lifespan` and a planet fact that says nothing about how this bird lives.
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ## Judgments
 

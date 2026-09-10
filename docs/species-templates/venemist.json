@@ -16,8 +16,10 @@
       "A tube in the mouth that sprays toxic mist",
       "Long tail"
     ],
-    "habits": "It hunts by scent rather than by sight, working a smog too thick to see through and coming to its prey on the smell of it alone. Its ground is the acid swamps and the derelict chemical plants of the factoryscape, where abandoned facilities still run themselves and still fail. The Generator that shaped it was built to fill a world of acid swamps and industrial waste with life capable of surviving there at all, and nothing on that world burns it: not the corrosive rain, not the swamps it wades, not the agent it carries. A body opened in a fight discharges through the breach, which is true of everything printed on Drainov.",
-    "biomeNiche": "acid swamps and the derelict chemical plants of Drainov's factoryscape"
+    "origin": "Made by the Drainov Generator to survive a world of acid swamps and industrial waste.",
+    "habitat": "The acid swamps and derelict chemical plants of Drainov.",
+    "feeding": "With only two teeth, it dissolves its prey with the toxic mist it expels from the tube in its mouth.",
+    "behavior": "It hunts by scent through smog too thick to see in."
   },
   "physiology": {
     "corporeality": "corporeal",

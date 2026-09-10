@@ -21,8 +21,9 @@
           "Slender arms ending in clawed hands",
           "Long plumed tail"
         ],
-        "habits": "It belongs to the feral stock that came out of the Krystos Generator after the impact, when the debris blotted out the sun and the machine turned from dainty and graceful creatures to lifeforms capable of surviving the harsh, frozen tundra. Its ground is the arctic wastelands outside the high-security prison complexes rather than the penitentiary halls, where such creatures proved just as useful for deterring any prisoners from seeking to escape. Blizzard cycles and sustained lethal cold are the conditions it works in, and the dark hours are the ones it keeps. It takes what the permafrost gives, of any kind.",
-        "biomeNiche": "the arctic wastelands outside the prison complexes, worked at night"
+        "origin": "Feral stock from the Krystos Generator after the impact, when the machine turned from making dainty, graceful creatures to lifeforms that could survive the frozen tundra.",
+        "habitat": "The arctic wastes outside the prison complexes of Krystos.",
+        "behavior": "It moves at night, using its stealth and night vision to go unseen. Creatures like it proved useful for discouraging prisoners from trying to escape."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -204,8 +205,11 @@
           "Long streamer feathers trailing from the head",
           "Taloned gripping feet"
         ],
-        "habits": "It works the canopy stratum of the World Trees, where flight within and above the branches is the efficient way to move and the obstructed ground below is not worth running on. It hunts without chasing. The opened bill and the sweet smell bring the insect in, and whatever the saliva touches stops moving; what stops moving is eaten, and it takes nothing but meat. It keeps company, and a body of them holds its stretch of forest the way the rest of Floria does, by growth, entanglement, and regrowth in place of engagement, and anything entering the deep groves gets the same stillness and the same meal. The toxic fungal blooms of the underforest do not trouble it.",
-        "biomeNiche": "flowering meadows and jungle canopy of the Florian underforests"
+        "origin": "Used by Vallerii scientists and explorers as mobile bug repellent on Florian ventures, trapping insects with its saliva.",
+        "habitat": "The canopy of Floria's World Trees and its flowery meadows, where its plumage camouflages it.",
+        "feeding": "It eats only meat. It attracts insects with its floral display and sweet-smelling saliva, and the sedative in the saliva paralyzes them.",
+        "behavior": "It flits between the trees and hunts without chasing, waiting with its bill open. Its sedative has since been enhanced, and it paralyzes and consumes anything that threatens the sacred parts of the jungle.",
+        "company": "It lives in swarms."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -391,8 +395,10 @@
           "Pseudopods for reaching",
           "Drips and runnels where the slime sags"
         ],
-        "habits": "Drainov's Generator made it for a world of bubbling acid swamps, steaming corrosive rain, asphyxiating fumes, and slow-drifting clouds of neurotoxic gases, and it draws no breath from any of them. It moves through the acid swamps rather than over them, and slowly: the substrate of that world is unreliable and this is not a body that hurries. It feeds on whatever it settles over, of any kind, and it reads what approaches through the ground rather than seeing it. The planet is now held by a loose conglomerate of Vallerii space pirates and interstellar crime syndicates, and it still rains burning refuse, industrial waste, and hazardous materials on the swamps below. Its own working life is long.",
-        "biomeNiche": "the acid swamps and reopened chemical plants of Drainov"
+        "origin": "Made by the Drainov Generator to live in the planet's acid swamps and chemical waste.",
+        "habitat": "The acid swamps and derelict chemical plants of Drainov.",
+        "feeding": "It feeds on whatever it settles over.",
+        "behavior": "It moves slowly, flowing through the swamps rather than over them, and its slime continually regrows the rocky shell around it."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -574,8 +580,9 @@
           "Clawed paws",
           "Long thick tail"
         ],
-        "habits": "It works the sunward face, where the fields it was made for still stand among crystalline-leafed oases and the silver grids of the old solar farms. Nothing conceals anything on that ground, the sightlines being unbroken, so it does not stalk: it crosses in the open and is simply there, the blades behind its front paws having opened the cut before the crossing reads as movement at all. It eats what the fields hold, of any kind. Its albino coat is the ordinary sunward integument against a cumulative radiation load, and it works now among the expanding blast zones the misfiring Stellaris Superstructure burns into the surface, on ground held under King Kozrak's martial law.",
-        "biomeNiche": "the cultivated fields of Luminax's sunward face"
+        "origin": "Made to harvest the vast crop yields of Luminax's fields, cutting through grain with the ionized blades behind its front paws.",
+        "habitat": "The sunward face of Luminax, among the old fields, oases and solar farms.",
+        "behavior": "It enters a photonic state and crosses ground at the speed of light, so it seems to teleport around a fight, harassing its opponent with rapid cuts too fast to react to."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -763,8 +770,9 @@
           "Tall pointed ears",
           "Thick tail ending in a fan of explosive barbs"
         ],
-        "habits": "The Stonera Generator made it for a world that crosses the Jorian Belt once a year and takes a planetwide bombardment of asteroids and meteors for it. Rapid subsurface retreat is the primary survival adaptation there, and nothing this animal does it does better than dig. Its ground is the fissured rock and the crater fields, which it works from beneath. The dust-saturated air of that world crackles with continuous static discharge, and the charge passes over it without harm. Stonera is now a planetary strip-mine spiraling into the Chasm under King Kozrak's enforcers. It eats what the ground and the rubble hold, of any kind, and signals through the stone rather than across it.",
-        "biomeNiche": "tunneler in the fissured rock and craters of Stonera"
+        "origin": "Made by the Stonera Generator for a world that takes a planetwide bombardment every year, where going underground fast is what keeps a creature alive.",
+        "habitat": "The fissured rock and crater fields of Stonera, worked from beneath.",
+        "behavior": "When spooked it digs itself underground and leaves only its tail of explosive barbs exposed. If provoked it fires a few of them, and its regenerative power quickly grows more."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -948,8 +956,9 @@
           "Broad blunt muzzle",
           "Open hands with an opposable digit"
         ],
-        "habits": "Luminax's Generator grew its Xalians with albino features or with prismatic crystal so that they could survive the brilliant light of the twin suns while they worked the fields, and this is one of the crystal-bearing forms. Its ground is the sunward face, among the oases of translucent, alabaster flora, where radiation-tolerant integument is universal and the cumulative radiation load is the standing hazard. The misfiring panels of the Stellaris Superstructure are burning new sun-scorched blast zones into that surface, and some of the world's Xalians have survived in the residual radiation left in them. It does not graze and it does not hunt: it takes in energy. It is slow, and it holds still.",
-        "biomeNiche": "the sunward oases of translucent, crystalline-leaved flora on Luminax"
+        "origin": "One of the crystal-bearing forms the Luminax Generator grew to survive the light of the twin suns while working the fields.",
+        "habitat": "The sunward face of Luminax.",
+        "behavior": "It is calm and slow and holds still, and the gems on its head transmit powerful light energy when it is provoked."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -1132,8 +1141,10 @@
           "Scissor-like pincer claws on the forelimbs",
           "Segmented tail arched over the back, ending in a helical drill"
         ],
-        "habits": "It holds the haphazard wells and cavern networks that fortune-seekers drilled beneath the dunes, workings the Xalians who took them over still pump. It reads what moves overhead through the ground rather than by eye, and it wears a target down over repeated passes rather than settling it in one. Endessa's twin suns make the open surface lethal to cross, so it moves at the low hours or swims through loose particulate instead of walking on it. It signals by drumming through rock and sand, the only channel a shaft carries. The dunes cost heat and water, and its body gives up little of either.",
-        "biomeNiche": "the packed sand and deep cavern networks of Endessa's Nightcap wells"
+        "origin": "Used by wildcatters who could not afford larger drilling Xalians like the Frackworm.",
+        "habitat": "The wells and cavern networks beneath Endessa's dunes.",
+        "feeding": "It hunts by darting in and out of the surface and ambushing prey with its scissor-like claws.",
+        "behavior": "It tunnels quickly with the small drill on its tail, and it feels what moves overhead through the ground."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -1320,8 +1331,10 @@
           "Hooked toe claws",
           "Long plumed tail"
         ],
-        "habits": "Magmuth's corporations designed it for the transient mineral islands, where a cooling flow gives only a brief window before the ground opens underfoot, and it was built to cross one inside that window. It hunts on those hardened flats and eats what it runs down. The ash storms and the sulfuric air of that world pass over it without harm, and it picks a moving shape out of the haze from a long way off. It still runs the ash fields, where the blood feuds that arose from the company wars have never ended.",
-        "biomeNiche": "the ash fields and hardened lava flows of Magmuth's transient islands"
+        "origin": "Magmuth's mining corporations designed it to cross the transient mineral islands, where a cooling lava flow gives only a short window before the ground opens again.",
+        "habitat": "The hardened lava flats and ash fields of Magmuth.",
+        "feeding": "It hunts on the flats and eats whatever it can run down.",
+        "behavior": "It runs. When it reaches speed it spreads its wings, launches itself at its prey, and bites."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -1504,8 +1517,10 @@
           "Ghost-like tail for a body, trailing off into drifting particles",
           "Never touches the ground"
         ],
-        "habits": "It ranges the corpse islands of the Dreadscape, the macabre forests of splayed limbs and the tarry oceans that seep from the compressing layers of a planetwide mass grave, and it goes through what stands in the way rather than around it. The moon-weapon appears to target only organic, cellular life, so it passes freely over the ground where the organic workforce fell. It takes nothing in and feeds on nothing, so the ranging is not a hunt: what it looks for in other Xalians is their nerve, the cackle first, then the vanishing and the reappearing, then the ectoplasm. Nothing issues it orders now.",
-        "biomeNiche": "drifting scavenger of the Dreadscape corpse islands and tarry oceans"
+        "origin": "One of the non-corporeal Xalians the abandoned Phantiri Generator produced after it rewrote itself under Leviticus Overdrive.",
+        "habitat": "The Dreadscape of Phantiri.",
+        "feeding": "It takes nothing in and feeds on nothing.",
+        "behavior": "It zips across the Dreadscape cackling, disappears and reappears at will, passes through surfaces, and zaps its opponents with blasts of gooey ectoplasm. It seems to amuse itself by terrorizing other Xalians."
       },
       "physiology": {
         "corporeality": "non-corporeal",
@@ -1687,8 +1702,9 @@
           "Very large eyes",
           "Small hands"
         ],
-        "habits": "The Telypso Generator built it to counterbalance the unstable auras of the Vallerii marooned planetside, treating them as patients rather than removing them, and it was one of the small psychic bodies that emerged from the fungal forests to steady what the deranged left behind. It still works that way, putting itself between a distressed mind and whatever is agitating it, holding the one quiet and driving the other back with a burst that leaves its open hands. Telypso's ambient field amplifies whatever state it meets, and its own stays steady. The Nemesis Plague has set the creatures of Telypso against one another, and a Figzy that trusts no one raises its hands against its own kind.",
-        "biomeNiche": "the fungal forests and bioluminescent jungles of Telypso"
+        "origin": "Made by the Telypso Generator to help settle the unstable minds of the Vallerii marooned on the world, whom it treats as patients.",
+        "habitat": "The fungal forests and bioluminescent jungles of Telypso.",
+        "behavior": "It is small, deceptively smart, and docile with those it trusts. It puts itself between a distressed mind and whatever is agitating it, holding one quiet and driving the other back with a burst from its open hands."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -1876,8 +1892,9 @@
           "Narrow deer-like head",
           "A pair of long thin antennae swept back from the crown"
         ],
-        "habits": "Veridium's crust is worked metal with veins of heavy metals striking deep into it, and the Foromeer opens those veins. It works among the factory trenches and forge districts, where molten pours and machinery running without regard to proximity are the ordinary risks, and its plating takes them. The manufactory rings so loudly across the gunmetal surface that it mutes all other sound, so the creature reads the ground it is braced on and answers by drumming rather than by call. Injuries close over on their own. Since Source Code 606 released the Veridians from their robotic masters the demand for the factories has troughed, and the planet's Xalians now tinker with salvaged drones and machines.",
-        "biomeNiche": "the ore-filled soil and heavy-metal veins of Veridium's mineral crust"
+        "origin": "Thought to have been used for mineral excavation on Veridium, its drill-like horns breaking through the strongest material.",
+        "habitat": "The ore-filled crust and heavy-metal veins of Veridium, among its factory trenches and forge districts.",
+        "behavior": "It opens the metal veins with its horns. It signals by drumming through the ground rather than by call, since the manufactory is too loud for anything else."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -2061,8 +2078,9 @@
           "A single small eye on the collar behind the head",
           "Vents along the body that spray its slurry"
         ],
-        "habits": "It works the cavern networks beneath the dunes, boring through loose glass sand and packed substrate the way another body moves through water, and it does not come up: the surface under Endessa's suns is deadly to anything without shielding, and everything it needs is below. It reads the ground by tremor, since there is nothing to see down there, and the same tremor carries it to whatever else hunts by vibration in that ground. Heat, dryness and tunnel collapse are the standing hazards of that work and it goes on through all three, and where the Nightcap has pooled it sets its head against the seam and fractures it.",
-        "biomeNiche": "the cavern networks and excavation tunnels beneath Endessa's dunes, boring to the old ocean-floor substrate"
+        "origin": "Generated by the Syndicate's stolen prototype Generator to open Nightcap wells for the wildcatters and the Nightcap Barons.",
+        "habitat": "The cavern networks beneath Endessa's dunes, down to the dead sea floor. It does not come to the surface.",
+        "behavior": "It bores through sand and substrate, sets its head against a seam, and forces its pressurized slurry in until the rock fractures and the Nightcap drains toward the well."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -2249,8 +2267,10 @@
           "One massive pincer claw as long as the torso",
           "Small head on heavy shoulders"
         ],
-        "habits": "It hunts under a sky of permanent night, where the only light is infrared, and it registers mass and motion rather than looking for it. It does not chase. It lies under the wetland surface and opens a collapse point in the water above it, so the prey arrives at the pincers on its own; the pincers then shut with a weight the arm does not have, and what is caught is not let go. Faced with something too large to draw in, it fixes itself to the bottom and stops being movable. It makes no call, no cry, and no signal of any kind. The Grimedites watch the galaxy's edge for APEX's return; it keeps the wetlands below.",
-        "biomeNiche": "submerged ambusher in the foggy wetlands beneath Grimedes' thick, stalky undergrowth"
+        "origin": "Thought to come from the laboratory experiments on Grimedes, rumored to be ECHELON black sites, that produced the planet's gravity-bending Xalians.",
+        "habitat": "The foggy wetlands of Grimedes, just beneath the surface.",
+        "feeding": "It lurks under the water and draws prey to its claws with a miniature black hole rather than chasing it.",
+        "behavior": "It snaps its claws shut with a force many times its mass, cutting through the hardest materials. Against something too large to draw in, it roots itself to the ground and becomes an immovable wall of chitin."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -2439,8 +2459,10 @@
           "Thick tail coiled in a spiral",
           "Smooth hide"
         ],
-        "habits": "Its ground is a fleet: rig upon rig in interlocking nets of floating industrial zones, each trawling a global ocean for algae. It works in crews rather than alone. It breathes as readily in water as in air, so it can drop below the surface when the storm systems come over the rigs and when the semiannual bloom lays toxic microbes across the waves, which is the same reason the rigs themselves were built deeper and deeper beneath the ocean. It feeds on what the rigs and the water under them yield. Inside the settlement perimeters its aggression stays suppressed, and it saves what force it has for what comes at the rigs from outside them.",
-        "biomeNiche": "the interlocking floating industrial zones of Poseidas's hydro-processing fleets"
+        "origin": "Designed as emergency response crews for the hydro-processing rigs of Poseidas, putting out electrical and chemical fires and holding off pirates after the Algael.",
+        "habitat": "The floating rig fleets on Poseidas's global ocean, above and below the surface.",
+        "behavior": "It patrols the rigs and hoses down fires and threats alike with the steady stream from its snout. When storms or the toxic algae blooms come over the rigs it drops below the surface.",
+        "company": "It works in crews."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -2630,8 +2652,10 @@
           "Very large eyes",
           "Large springing hind legs"
         ],
-        "habits": "It lives among Telypso's fungal forests and smothering mists, on ground that deforms with whatever mood is passing through it, and it grazes on what that overgrowth puts out. It reads the state of whatever stands near it and answers in feeling as much as in sound, steadying what is unsteady and settling what will not settle on its own. When feeling is not enough the horn takes over: the color climbs and turns, the eyes watching it stop tracking anything else, and the body goes quiet whether or not it meant to. Since the plague reached the world there is more of that work than there has ever been, and a body this small does not last long.",
-        "biomeNiche": "the bioluminescent fungal forests and mist-smothered jungles of Telypso, working among the world's marooned Vallerii patients"
+        "origin": "Created by the Telypso Generator as service animals and therapists for the insane Vallerii imprisoned there, using its empathic healing to balance and treat patients.",
+        "habitat": "The fungal forests and mists of Telypso, though many now travel the stars as healers.",
+        "feeding": "It grazes on what the overgrowth puts out.",
+        "behavior": "It reads the state of whoever is near it and steadies them. When its horn pulses and swirls with color it hypnotizes whoever is watching and locks them in a trance, which once sedated patients in dangerous manias and now serves King Kozrak as crowd control on rebellious worlds."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -2821,8 +2845,9 @@
           "Bare gripping hands and feet",
           "Long whip tail with a scythe-like tip"
         ],
-        "habits": "Its ground is the legacy shafts, which hold where fresh excavation would open onto magma seepage, and the crag networks above them, the only ground on Magmuth that stays put between flow shifts. It climbs and leaps that ground rather than crossing the open, swinging from the tail as readily as from a hand. What it finds down there it takes apart and puts back together, gripping and turning with bare digits rather than hooks or claws, and the makeshift equipment it was left with is still what it works on. Above ground it is far less predictable, and it leaves fire behind it in places that had none. Firestorms and pyroclastic flows pass over it without marking it.",
-        "biomeNiche": "the lightless mining shafts sunk under Magmuth's obsidian islands"
+        "origin": "Designed by Magmuth's corporations as a tinkerer and let loose in the lightless mining shafts to fix and maintain the makeshift equipment the Vallerii sent down.",
+        "habitat": "The old mining shafts of Magmuth and the crag networks above them.",
+        "behavior": "It climbs and leaps rather than crossing open ground, swinging from its tail as readily as from a hand. Underground it takes machinery apart and puts it back together. On the surface it is erratic, and it sets fires where they least belong."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -3010,8 +3035,10 @@
           "Single long trunk arching over the back, ending in a blade as long as the body",
           "Short upturned tail"
         ],
-        "habits": "It works the underforests beneath the World Tree canopies, where open ground is scarce and obstruction makes the going slow, felling standing growth in long low arcs of the blade. It sets its feet and reads the tremor in the ground before it swings. It feeds as it works, on the growth it opens and on what the opening turns up. The toxic fungal blooms of the understory do not take in its hide, and what the brush tears in that hide closes over again. It holds the lane it has cut, in a forest whose answer to cutting is growth, entanglement and regrowth rather than a fight, and it gapes its long teeth at whatever comes down that lane.",
-        "biomeNiche": "the dense underforests and marshy wetlands beneath the World Tree canopies"
+        "origin": "Thought to have been designed to clear the thick brush of Floria.",
+        "habitat": "The underforests beneath the World Tree canopies.",
+        "feeding": "It feeds as it works, on the growth it opens up and whatever the opening turns up.",
+        "behavior": "It sets its feet, reads the ground, and fells standing growth in long low arcs of the blade on its trunk, then holds the lane it has cut."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -3197,8 +3224,10 @@
           "Long whiskers",
           "Whip tail longer than the body, ending in a spiked plume"
         ],
-        "habits": "Its ground is not continuous. The habitable band of Saiphus is a scatter of buoyant islands separated by a sea of clouds and dense fog, and it crosses the gaps, one of the great leaping animals the Saiphus Generator raised to bound between islands as if gravity held no sway over them. It grazes the rolling plains such an island carries and drinks from the deep canyons where vapor condenses into water. It listens and it moves: sulfuric cloud banks sweep across the sky without warning, the storms do not stop, and a descent into the fluid layer below the islands is not recoverable.",
-        "biomeNiche": "the gaps between the floating islands of Saiphus's upper-atmosphere life band"
+        "origin": "One of the leaping animals the Saiphus Generator raised to bound between the floating islands as if gravity held no sway over them.",
+        "habitat": "The floating islands of Saiphus and the gaps between them.",
+        "feeding": "It grazes the rolling plains of the islands and drinks where vapor condenses in the canyons.",
+        "behavior": "It jumps so high it seems to fly, then comes missiling down on its enemy like a battering ram."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -3377,8 +3406,11 @@
           "Long trailing hollow tentacles, open at the ends",
           "Bare untextured surface"
         ],
-        "habits": "It travels in herd distribution rather than alone, and its amorphous form lets the hurricane-force winds of the lower skies sweep it up and set it down again unharmed. The tentacles do the work. They draw the slush of the deeper atmosphere up hollow tubes and keep the Benthane that comes up with the food, and the same tubes reverse to pull a thing in against its will, to put it off at pressure, or to blast it cold with the coolant. Being almost entirely hydrogen, it can spray flammable gas as well. For what that filtering leaves behind it is shepherded, herded and milked. What kills it is the sky it lives in, sulfuric cloud contact and island collision.",
-        "biomeNiche": "the cloud layers of Saiphus's lower atmosphere, where Benthane plumes rise"
+        "origin": "Domesticated for the Benthane industry, which milks the Benthane its tentacles vacuum up along with its food.",
+        "habitat": "The cloud layers of Saiphus's lower atmosphere.",
+        "feeding": "It grazes on the biochemicals and atmospheric plankton in the gas-liquid slush of the deeper atmosphere, drawing them up through its long trailing tentacles.",
+        "behavior": "When threatened it pulls opponents in with suction, jets air at high pressure, blasts freezing Benthane from its tentacles, or sprays flammable hydrogen.",
+        "company": "It travels in free-floating herds."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -3560,8 +3592,9 @@
           "Two thin antennae",
           "Bare hide"
         ],
-        "habits": "It was generated among the water-breathing Xalians put into Poseidas's seas once those seas rose and turned acid, and it lives in the water around the rigs, which the planet's Xalians went on building deeper and deeper beneath the ocean to stay clear of the storms above. It tolerates depth and it tolerates company, moving without aggression inside the settlement perimeters. What it does catch it holds, folding its whole length around a swimmer and keeping it under. Twice a year the blooms come up and saturate the surface with toxic microbes, and the water it keeps to is deep water.",
-        "biomeNiche": "a swimmer and rig hand of the deep-city waters, at home in an acidifying global ocean"
+        "origin": "One of the water-breathing Xalians the Poseidas Generator produced once the seas rose and turned acidic.",
+        "habitat": "The water around and beneath Poseidas's rigs and underwater cities.",
+        "behavior": "It is at home on land but far more dangerous in water, where its slender frame and webbed feet carry it. What it catches it wraps its whole length around and holds under."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -3750,8 +3783,9 @@
           "Long curved claws on the forelimbs",
           "Very long banded tail with a hooked tip"
         ],
-        "habits": "It comes off the prototype Generator the Syndicate stole and smuggled to Endessa to man the drilling, and it keeps to the cavern networks that run deep beneath the dunes, where Nightcap is still pumped out barrel after barrel. It reads the ground through what it stands on, and down there it hears more than it sees. Tunnel collapse is a common death in those workings, and its plating is what it meets one with. Above ground the twin suns allow only the low hours, and it crosses in them.",
-        "biomeNiche": "the dunes and cavern networks of Endessa"
+        "origin": "One of the Xalians the Syndicate's stolen prototype Generator produced to work the drilling on Endessa.",
+        "habitat": "The dunes and cavern networks of Endessa, crossing the surface only in the low hours.",
+        "behavior": "It rolls into a ball inside its scaly exoskeleton to protect itself, and it feels the ground through its plating."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -3936,8 +3970,10 @@
           "Long tail whose tip trails off into loose smoke",
           "Nearly weightless"
         ],
-        "habits": "It is one of the non-corporeal Xalians the abandoned Generator began producing once it rewrote itself under Leviticus Overdrive, after the moon weapon ended everything organic it had made. It holds a feline shape over the Dreadscape, the wasteland of piled Xalian remains that buried the obelisks of the old world, and the moon-weapon, which targets organic life, passes over it. It climbs and springs where the footing is bad and comes apart into smoke when it needs to cross open ground or close on something unseen. It takes nothing in and feeds on nothing; what it hunts for is the pounce itself. The fog over that ground stands windless and never lifts, and it works from inside it.",
-        "biomeNiche": "the thick haze over the corpse islands of the Dreadscape"
+        "origin": "One of the non-corporeal Xalians the abandoned Phantiri Generator produced after it rewrote itself under Leviticus Overdrive.",
+        "habitat": "The Dreadscape of Phantiri, inside its windless fog.",
+        "feeding": "It takes nothing in and feeds on nothing.",
+        "behavior": "It holds a feline shape, climbs and springs where the footing is bad, and instantly atomizes into a cloud of smoke for a sneak attack or a quick escape."
       },
       "physiology": {
         "corporeality": "non-corporeal",
@@ -4117,8 +4153,10 @@
           "Bare muscled hide",
           "Long tail ending in a cradle, with a ball of stone levitating above it"
         ],
-        "habits": "It holds the rim above a planetary strip-mine that spirals down into the Chasm, where Kozrak's enforcers work Stonera's war refugees for whatever the liquid metal below is worth, and it holds that rim in a line rather than alone. Most of the time it holds it as a statue, vitals arrested, spending no more than the rubble around it. The ground carries a footfall to it long before anything shows against the gray sky, and then it is up in the static-crackling air with the stone riding over the cradle of its tail, flinging boulders and gravel down onto whatever is climbing. Going up into that air costs it something every time.",
-        "biomeNiche": "the rim of the Chasm strip-mine, perched over a hollow of liquid metal"
+        "origin": "Used to airlift debris out of Stonera's strip mines with its levitating tail.",
+        "habitat": "The edges of the Chasm on Stonera.",
+        "behavior": "It stands guard over the perimeter in a statue-like state, hibernating to conserve energy until it senses a threat. Then it rises into the sky and uses its tail to levitate boulders and fling them across the Chasm, or carpet-bombs intruders with strafing runs of gravel and rock.",
+        "company": "It stands in a line with others along the rim."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -4309,8 +4347,9 @@
           "Long thin tail",
           "Surrounded by a swarm of summoned flying familiars, toothed like piranhas"
         ],
-        "habits": "It was generated on Grimedes not as a labor force but as a test subject, one of the Xalians the Vallerii experimented on in laboratories rumored to be black sites for ECHELON. It hunts the thick, stalky undergrowth of a world cloaked in perpetual night, taking its bearings by ear rather than by eye, and it keeps its own body inside the wheeling cloud it holds so that nothing can tell which shape is the one that matters. Whatever hears that cloud coming breaks and runs. The newest generation of its kind stands at the edge of the galaxy and watches the endless black.",
-        "biomeNiche": "the thick stalky undergrowth of the flat, lightless plains of Grimedes"
+        "origin": "One of the Xalians experimented on in the laboratories of Grimedes, rumored to be ECHELON black sites, rather than a labor form.",
+        "habitat": "The thick, stalky undergrowth of Grimedes, in permanent night.",
+        "behavior": "In battle it summons a swarm of small flying familiars with teeth like piranhas and controls them with its mind, attacking or defending as one unit. It keeps its own body inside the swarm so nothing can tell which shape matters."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -4488,8 +4527,9 @@
           "Wide hood behind the head",
           "Tail ending in a rattle shaped like a lotus flower"
         ],
-        "habits": "It lies buried and reads the ground it lies in, and it moves through loose particulate as readily as a swimmer moves through water. It hunts by vibration and it kills by attrition: what has been bitten is left to fail rather than fought down. Water is the thing worth taking on a world whose oceans were vaporized and whose dunes now lie over glass, and water is what it takes. The ground it holds is open dune, and it holds it from underneath. It spreads the hood and shows the fangs before it strikes.",
-        "biomeNiche": "buried in the rolling dunes of Endessa"
+        "habitat": "Buried beneath the rolling dunes of Endessa.",
+        "feeding": "It bites with a venom that drains the victim's water and leaves it to die of dehydration.",
+        "behavior": "It hides beneath the sand and emits a subsonic vibration from the rattle on its tail that lures and mesmerizes opponents long enough for it to draw near and strike. It spreads its hood and shows its fangs before it does."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -4676,8 +4716,10 @@
           "Long-fingered gripping hands",
           "Long thin tail ending in a flat spiral disc, the lure"
         ],
-        "habits": "It lives up in the bioluminescent fungal forests of Telypso, moving along the branches and taking its food from what those forests give. It is quick in the branches and hard to hold there. The Generator raised it to counterbalance the psychic energies of the deranged Vallerii the Imperial Houses marooned on the world, and the work was meant as treatment rather than injury, the subject a patient to be settled and folded back into the mind of the planet. Since the Nemesis Plague reached Telypso's sanctuaries and turned the creatures of the world against one another, Tizzies turn on each other, and they have only the one way of doing it.",
-        "biomeNiche": "the bioluminescent fungal forests and dense flora of Telypso"
+        "origin": "Raised by the Telypso Generator to counterbalance the psychic energies of the deranged Vallerii marooned on the world, as treatment rather than injury.",
+        "habitat": "The branches of Telypso's bioluminescent fungal forests.",
+        "feeding": "It takes its food from what the forests give.",
+        "behavior": "It uses its tail to draw attention to its big hypnotic eyes, and once eye contact is made it attacks from inside your mind. Since the Nemesis Plague turned Telypso's creatures against one another, Tizzies turn on each other the same way."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -4866,8 +4908,10 @@
           "A tube in the mouth that sprays toxic mist",
           "Long tail"
         ],
-        "habits": "It hunts by scent rather than by sight, working a smog too thick to see through and coming to its prey on the smell of it alone. Its ground is the acid swamps and the derelict chemical plants of the factoryscape, where abandoned facilities still run themselves and still fail. The Generator that shaped it was built to fill a world of acid swamps and industrial waste with life capable of surviving there at all, and nothing on that world burns it: not the corrosive rain, not the swamps it wades, not the agent it carries. A body opened in a fight discharges through the breach, which is true of everything printed on Drainov.",
-        "biomeNiche": "acid swamps and the derelict chemical plants of Drainov's factoryscape"
+        "origin": "Made by the Drainov Generator to survive a world of acid swamps and industrial waste.",
+        "habitat": "The acid swamps and derelict chemical plants of Drainov.",
+        "feeding": "With only two teeth, it dissolves its prey with the toxic mist it expels from the tube in its mouth.",
+        "behavior": "It hunts by scent through smog too thick to see in."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -5054,8 +5098,9 @@
           "Broad clawed hands",
           "Large bushy tail"
         ],
-        "habits": "It feeds on charge and takes nothing else, working the deep canyons and metallic peaks where Zolton's energy cycle lays down visible rivers of electricity that surge like wire currents over the crust. Storage is the rare answer on that world; most cataloged forms conduct the current and pass it along, and every one of them avoids the black lightning dead zones without exception. It keeps to canyons saturated with dense freezing gases and has no use for the warm end of its world. The Generator that made it was set on Zolton because black lightning did no harm to inorganic matter, so any loss of labor could simply be replenished.",
-        "biomeNiche": "the deep canyons and metallic peaks of Zolton, where ground-borne lightning surges over the crust"
+        "habitat": "The deep canyons and metallic peaks of Zolton, where ground-borne lightning surges over the crust. It keeps clear of the black lightning dead zones.",
+        "feeding": "It feeds on electrical charge from its surroundings and on nothing else.",
+        "behavior": "It stores the charge it gathers in its alloy bones and releases the shock into enemies through its claws."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -5244,8 +5289,8 @@
           "An eye on either side of the body at the soil line",
           "Plant tissue throughout"
         ],
-        "habits": "Floria's understory carries massive infestations of toxic fungi, and they do not take in it. Ground disturbed above answers with every one of those limbs coming up out of it, and it meets what crosses its ground by growing over it rather than by giving way; a limb torn from it grows back. That is the answer the whole planet makes to cutting and clearing, growth and entanglement and regrowth in place of engagement. Vallerii activity here never grew past small settlements, research labs and exploration parties, and the ground beneath the World Trees was never built on. Some say the oldest Xalians of Floria were born from the first seeds of the Genesis Prototype.",
-        "biomeNiche": "the buried soil layer of the underforests, beneath the canopies of the World Trees"
+        "habitat": "Underground in Floria's understory, beneath the World Trees, where it absorbs its power.",
+        "behavior": "It stays buried. When the ground above it is disturbed its tentacles come up out of the soil and wrap whatever is there, and a tentacle torn off grows back."
       },
       "physiology": {
         "corporeality": "corporeal",
@@ -5429,8 +5474,10 @@
           "Enormous tusks of pure ice, sweeping wider than the shoulders",
           "Heavy fists"
         ],
-        "habits": "Its ground is the high-security complexes of the frozen tundra and the waste immediately outside them, where the ones too tough or too feral for indoor work were just as useful for discouraging an escape. It does not work alone; the pattern is formation, and one of them holding a line assumes others beside it. A corridor is closed by standing in it and drawing the frost out of the air until the way is a wall, and whatever is left on the wrong side of that wall is cased in the same ice and held there until the fists arrive. The commissions that posted it there are centuries gone, and the guard pattern is still what the Generator prints.",
-        "biomeNiche": "the high-security prison complexes of the frozen tundra"
+        "origin": "Formed the rank and file of Krystos's prison guards in ancient times.",
+        "habitat": "The high-security prison complexes of Krystos's frozen tundra and the waste outside them.",
+        "behavior": "It forms thick sheets of ice from thin air, armoring itself, walling off escape routes in frost, or encasing an opponent until it can lumber close enough to pummel it with its ice-gauntleted fists.",
+        "company": "It holds a line with others beside it."
       },
       "physiology": {
         "corporeality": "corporeal",

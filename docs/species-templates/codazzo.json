@@ -17,8 +17,9 @@
       "Tall pointed ears",
       "Thick tail ending in a fan of explosive barbs"
     ],
-    "habits": "The Stonera Generator made it for a world that crosses the Jorian Belt once a year and takes a planetwide bombardment of asteroids and meteors for it. Rapid subsurface retreat is the primary survival adaptation there, and nothing this animal does it does better than dig. Its ground is the fissured rock and the crater fields, which it works from beneath. The dust-saturated air of that world crackles with continuous static discharge, and the charge passes over it without harm. Stonera is now a planetary strip-mine spiraling into the Chasm under King Kozrak's enforcers. It eats what the ground and the rubble hold, of any kind, and signals through the stone rather than across it.",
-    "biomeNiche": "tunneler in the fissured rock and craters of Stonera"
+    "origin": "Made by the Stonera Generator for a world that takes a planetwide bombardment every year, where going underground fast is what keeps a creature alive.",
+    "habitat": "The fissured rock and crater fields of Stonera, worked from beneath.",
+    "behavior": "When spooked it digs itself underground and leaves only its tail of explosive barbs exposed. If provoked it fires a few of them, and its regenerative power quickly grows more."
   },
   "physiology": {
     "corporeality": "corporeal",

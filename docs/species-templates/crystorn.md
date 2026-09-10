@@ -18,20 +18,13 @@ The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carrie
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits
+### fields (3 of 5)
 
-Luminax's Generator grew its Xalians with albino features or with prismatic crystal so that they could survive the brilliant light of the twin suns while they worked the fields, and this is one of the crystal-bearing forms. Its ground is the sunward face, among the oases of translucent, alabaster flora, where radiation-tolerant integument is universal and the cumulative radiation load is the standing hazard. The misfiring panels of the Stellaris Superstructure are burning new sun-scorched blast zones into that surface, and some of the world's Xalians have survived in the residual radiation left in them. It does not graze and it does not hunt: it takes in energy. It is slow, and it holds still.
+- **origin**: One of the crystal-bearing forms the Luminax Generator grew to survive the light of the twin suns while working the fields.
+- **habitat**: The sunward face of Luminax.
+- **behavior**: It is calm and slow and holds still, and the gems on its head transmit powerful light energy when it is provoked.
 
-| Claim | Source |
-|---|---|
-| Luminax's Generator grew its Xalians with albino features or with prismatic crystal so that they could survive the brilliant light of the twin suns while they worked the fields | planets.json Luminax history paragraph 6, restated at the class scope the sentence itself uses |
-| This is one of the crystal-bearing forms | record `composition.secondary: mineral` and `physiology.anatomy` includes horns; art: the faceted crystal crown |
-| Its ground is the sunward face, among the oases of translucent, alabaster flora | planets.json Luminax history paragraph 5; planetRecords.json luminax `report.terrain.features`, sunward crystalline-leafed flora oases; record `lore.biomeNiche` |
-| Radiation-tolerant integument is universal there and the cumulative radiation load is the standing hazard | planetRecords.json luminax `report.fauna.observations` and `report.hazards`; record `traits.pool.resistant` |
-| It does not graze and it does not hunt: it takes in energy | record `physiology.diet: energy-feeder` |
-| It is slow | record `capabilities.sprint [10, 30]`, `agility [12, 32]`; the legacy speed gauge is low |
-| And it holds still | record `archetypeWeights` led by sage, bulwark and stalwart with nothing agile or predatory listed, and `signatureAbility.description`, which is a still body releasing its light |
-| The misfiring panels of the Stellaris Superstructure are burning new sun-scorched blast zones into that surface, and some of the world's Xalians have survived in the residual radiation left in them | planets.json Luminax history paragraphs 11 and 12; planetRecords.json luminax `report.terrain.features`, ION-9 misfire blast zones, expanding |
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ## Description status
 

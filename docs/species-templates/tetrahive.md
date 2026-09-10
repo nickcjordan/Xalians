@@ -22,22 +22,13 @@ The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description
 
 Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
-### habits (104 words)
+### fields (3 of 5)
 
-It was generated on Grimedes not as a labor force but as a test subject, one of the Xalians the Vallerii experimented on in laboratories rumored to be black sites for ECHELON. It hunts the thick, stalky undergrowth of a world cloaked in perpetual night, taking its bearings by ear rather than by eye, and it keeps its own body inside the wheeling cloud it holds so that nothing can tell which shape is the one that matters. Whatever hears that cloud coming breaks and runs. The newest generation of its kind stands at the edge of the galaxy and watches the endless black.
+- **origin**: One of the Xalians experimented on in the laboratories of Grimedes, rumored to be ECHELON black sites, rather than a labor form.
+- **habitat**: The thick, stalky undergrowth of Grimedes, in permanent night.
+- **behavior**: In battle it summons a swarm of small flying familiars with teeth like piranhas and controls them with its mind, attacking or defending as one unit. It keeps its own body inside the swarm so nothing can tell which shape matters.
 
-| Claim | Source |
-|---|---|
-| generated on Grimedes not as a labor force but as a test subject | planet: "unlike most worlds, the Xalians on Grimedes were not intended to serve as a labor force, but as a population of test subjects for experimentation" |
-| one of the Xalians the Vallerii experimented on in laboratories rumored to be black sites for ECHELON | planet: "insisted on studying its effects on the Xalian population, leading to all manner of horrific experiments" and "Rumor has it that many of these facilities were in fact black sites for covert research funded by ECHELON’s most classified R&D divisions." The source's hedge is kept |
-| hunts the thick, stalky undergrowth of a world cloaked in perpetual night | planet: "came to be covered in a layer of thick, stalky undergrowth" and "the planet Grimedes is surrounded in a cloak of perpetual night"; record `physiology.diet` is `carnivore` |
-| takes its bearings by ear rather than by eye | record `physiology.senses.hearing` [60, 85] against `sight` [30, 55]; Grimedes Generator report `outputPriorities`, non-visual sensory systems, and `terrain.notes`, illumination infrared only |
-| keeps its own body inside the wheeling cloud it holds, so nothing can tell which shape matters | art: the central figure is the same silhouette as the roughly twenty small copies ringing it; record `traits.pool.slippery` |
-| whatever hears that cloud coming breaks and runs | record `traits.pool` and the `signatureAbility`, Unbidden Legion; a claim about flight response only, with no claim about any effect on a Xalian mind |
-| the newest generation of its kind stands at the edge of the galaxy and watches the endless black | planet: "the newest generation of Grimedites now serve a vital role in the galaxy of Xalia" and "the Grimedites stand at the edge of the galaxy, trusted or perhaps condemned to watch the endless black" |
-
-Nothing from the old upgraded description was lost: its body appositive and tail are in body, its test-subject and black-site clauses and its undergrowth and rim-watch clauses are in habits, and its conjuring clause is Nick's teaser again. No gravity, shadow-copy or temporal claim is made: the Grimedes history gives those to other lineages.
-
+Habits split (Nick, 2026-09-10): the habits paragraph and biomeNiche are struck. Five short optional fields, one question each, in ordinary language: origin (who generated it and what for), habitat (where it lives now), feeding (how it eats), behavior (how it goes about its business), company (alone, pairs, crews, swarms). A field is left out when no source supports it. Planet history stays in the planet records; a field names the world only where the creature itself is involved. No sign-off lines, no hazard sentences written to justify traits. Draft until Nick signs off.
 
 ## Source text
 

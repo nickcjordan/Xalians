@@ -15,8 +15,10 @@
       "Ghost-like tail for a body, trailing off into drifting particles",
       "Never touches the ground"
     ],
-    "habits": "It ranges the corpse islands of the Dreadscape, the macabre forests of splayed limbs and the tarry oceans that seep from the compressing layers of a planetwide mass grave, and it goes through what stands in the way rather than around it. The moon-weapon appears to target only organic, cellular life, so it passes freely over the ground where the organic workforce fell. It takes nothing in and feeds on nothing, so the ranging is not a hunt: what it looks for in other Xalians is their nerve, the cackle first, then the vanishing and the reappearing, then the ectoplasm. Nothing issues it orders now.",
-    "biomeNiche": "drifting scavenger of the Dreadscape corpse islands and tarry oceans"
+    "origin": "One of the non-corporeal Xalians the abandoned Phantiri Generator produced after it rewrote itself under Leviticus Overdrive.",
+    "habitat": "The Dreadscape of Phantiri.",
+    "feeding": "It takes nothing in and feeds on nothing.",
+    "behavior": "It zips across the Dreadscape cackling, disappears and reappears at will, passes through surfaces, and zaps its opponents with blasts of gooey ectoplasm. It seems to amuse itself by terrorizing other Xalians."
   },
   "physiology": {
     "corporeality": "non-corporeal",

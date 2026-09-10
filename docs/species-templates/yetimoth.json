@@ -15,8 +15,10 @@
       "Enormous tusks of pure ice, sweeping wider than the shoulders",
       "Heavy fists"
     ],
-    "habits": "Its ground is the high-security complexes of the frozen tundra and the waste immediately outside them, where the ones too tough or too feral for indoor work were just as useful for discouraging an escape. It does not work alone; the pattern is formation, and one of them holding a line assumes others beside it. A corridor is closed by standing in it and drawing the frost out of the air until the way is a wall, and whatever is left on the wrong side of that wall is cased in the same ice and held there until the fists arrive. The commissions that posted it there are centuries gone, and the guard pattern is still what the Generator prints.",
-    "biomeNiche": "the high-security prison complexes of the frozen tundra"
+    "origin": "Formed the rank and file of Krystos's prison guards in ancient times.",
+    "habitat": "The high-security prison complexes of Krystos's frozen tundra and the waste outside them.",
+    "behavior": "It forms thick sheets of ice from thin air, armoring itself, walling off escape routes in frost, or encasing an opponent until it can lumber close enough to pummel it with its ice-gauntleted fists.",
+    "company": "It holds a line with others beside it."
   },
   "physiology": {
     "corporeality": "corporeal",
