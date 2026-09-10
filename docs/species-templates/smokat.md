@@ -20,9 +20,9 @@ The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description
 
 Rewritten 2026-09-09 for the ghost register (see the amendment of that date); draft until Nick signs it off.
 
-### habits (123 words)
+### habits (117 words)
 
-It is one of the non-corporeal Xalians the abandoned Generator began producing once it rewrote itself under Leviticus Overdrive, after the weapon on the moon had ended everything organic it had made before. It holds a feline shape over the Dreadscape, the wasteland of piled Xalian remains that buried the obelisks of the old world, and the moon-weapon, which targets organic life, passes over it. It climbs and springs where the footing is bad and comes apart into smoke when it needs to cross open ground or close on something unseen. It takes nothing in and feeds on nothing; what it hunts for is the pounce itself. The fog over that ground stands windless and never lifts, and it works from inside it.
+It is one of the non-corporeal Xalians the abandoned Generator began producing once it rewrote itself under Leviticus Overdrive, after the moon weapon ended everything organic it had made. It holds a feline shape over the Dreadscape, the wasteland of piled Xalian remains that buried the obelisks of the old world, and the moon-weapon, which targets organic life, passes over it. It climbs and springs where the footing is bad and comes apart into smoke when it needs to cross open ground or close on something unseen. It takes nothing in and feeds on nothing; what it hunts for is the pounce itself. The fog over that ground stands windless and never lifts, and it works from inside it.
 
 | Claim | Source |
 |---|---|
