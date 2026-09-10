@@ -52,6 +52,8 @@ import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { Kbd } from '@/components/ui/kbd';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+// Brief A primitives, rendered by PRIMITIVE_SECTIONS below: @/components/ui/avatar, @/components/ui/collapsible, @/components/ui/hover-card, @/components/ui/command, @/components/ui/combobox, @/components/ui/drawer, @/components/ui/aspect-ratio, @/components/ui/input-group, @/components/ui/field, @/components/ui/button-group, @/components/ui/chart, @/components/ui/native-select
+import { SECTIONS as PRIMITIVE_SECTIONS } from './styleguide/primitiveSections';
 
 /**
  * The design system reference, version 4 on the new stack
@@ -79,6 +81,7 @@ const SECTIONS: { id: string; label: string }[] = [
     { id: 'overlays', label: 'Overlays' },
     { id: 'data', label: 'Data' },
     { id: 'icons', label: 'Icons' },
+    ...PRIMITIVE_SECTIONS.map(({ id, label }) => ({ id, label })),
 ];
 
 const ELEMENTS = [
@@ -602,6 +605,10 @@ function StyleGuidePage() {
                         ))}
                     </div>
                 </section>
+
+                {PRIMITIVE_SECTIONS.map((s) => (
+                    <React.Fragment key={s.id}>{s.node}</React.Fragment>
+                ))}
 
             </Shell>
         </main>

@@ -75,6 +75,18 @@ const V4_IMPORTS = [
 	'@/components/system/brand',
 	'@/components/system/record',
 	'@/components/system/masthead',
+	'@/components/ui/avatar',
+	'@/components/ui/collapsible',
+	'@/components/ui/hover-card',
+	'@/components/ui/command',
+	'@/components/ui/combobox',
+	'@/components/ui/drawer',
+	'@/components/ui/aspect-ratio',
+	'@/components/ui/input-group',
+	'@/components/ui/field',
+	'@/components/ui/button-group',
+	'@/components/ui/chart',
+	'@/components/ui/native-select',
 ];
 
 /**
