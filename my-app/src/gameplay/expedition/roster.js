@@ -1,17 +1,17 @@
 /*
 	Expedition — building the two rosters from real creatures.
 
-	The generator (../generator) expands seeds into creature records from the 29 ratified
-	species templates. This module deals a pool of generated creatures and cuts it into
-	two rosters, deterministically under the match seed, so `?seed=N` replays the same
-	expedition with the same creatures.
+	The generator (@xalians/rules/generator) expands seeds into creature records from the
+	29 ratified species templates. This module deals a pool of generated creatures and
+	cuts it into two rosters, deterministically under the match seed, so `?seed=N`
+	replays the same expedition with the same creatures.
 
 	The pool cycles every species evenly before shuffling, so a roster of twelve is a
 	spread across worlds and elements rather than twelve of one thing. Nothing here is
 	game logic: the engine takes whatever records it is given.
 */
 
-import { generateBatch } from '../generator/index.js';
+import { generateBatch } from '@xalians/rules/generator';
 import { createRngState, nextRandom } from './expeditionRules.js';
 import { ROSTER_SIZE } from './expeditionInterpretation.js';
 

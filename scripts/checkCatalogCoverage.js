@@ -4,8 +4,8 @@
 // instrument x action x medium cell, and at least 30 total reachable names per species,
 // and says coverage claims come only from this checker. This script is that checker.
 //
-// Reachability mirrors the generator exactly (my-app/src/gameplay/generator/generate.js
-// `allowedActions` and `nameCandidates`, constants.js `ELEMENT_ADJACENCY` and
+// Reachability mirrors the generator exactly (packages/rules/src/generator/generate.ts
+// `allowedActions` and `nameCandidates`, constants.ts `ELEMENT_ADJACENCY` and
 // `CONDUIT_ACTIONS_BY_MEDIUM`), not a reinterpretation of it:
 //
 //   instruments = template.instruments
@@ -29,7 +29,7 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
 const JSON_DIR = path.join(ROOT, 'packages', 'content', 'json');
-const CONSTANTS_PATH = path.join(ROOT, 'my-app', 'src', 'gameplay', 'generator', 'constants.js');
+const CONSTANTS_PATH = path.join(ROOT, 'packages', 'rules', 'src', 'generator', 'constants.ts');
 const REPORT_PATH = path.join(ROOT, 'docs', 'ability-catalog', 'COVERAGE.md');
 
 const THIN_CELL_FLOOR = 6;
@@ -39,10 +39,17 @@ function loadJson(name) {
 	return JSON.parse(fs.readFileSync(path.join(JSON_DIR, name), 'utf8'));
 }
 
-// constants.js is an ESM file (`export const ...`) with only static exports, so a plain
-// require() works under modern Node (the CJS loader detects and translates it). Fall back
-// to a source-eval that only strips the `export` keyword, so the two tables are never
-// hand-duplicated here, if require() ever stops working under a Node downgrade.
+// constants.ts (moved into packages/rules out of my-app in the backend modernization's
+// rules-package pass) is TypeScript ESM with only static exports and
+// erasable type syntax (type-only imports, inline annotations, no enums/namespaces), so a
+// plain require() works under Node's built-in type stripping plus its synchronous
+// require(esm) support — both need Node 22.18 or later (CI pins actions/setup-node to
+// 22.x, which must resolve to at least that; local dev on Node 24 has always worked).
+// The source-eval fallback below only ever stripped the `export` keyword, so it is a
+// last resort for a much older Node and is not guaranteed against today's file (it now
+// carries a `import type { ... } from './types.ts'` line and inline type annotations
+// that a bare `new Function` cannot parse); it is kept only so the two tables are never
+// hand-duplicated here, and only matters if require() itself stops working.
 function loadConstants() {
 	try {
 		return require(CONSTANTS_PATH);

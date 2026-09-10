@@ -8,15 +8,15 @@
 	temperament. The record it produces is the shape in docs/design/
 	xalian-creature-data-structure.md: nature only, no game numbers. Games derive.
 
-	It is React-free and imports no game code. It lives under my-app/src/gameplay for now,
-	next to the games that consume it; when the Lambda mints real Scrambler Tokens this
-	file moves to packages/rules unchanged (it is plain ES module code with no browser
-	dependencies).
+	It is React-free and imports no game code. It lives in packages/rules now (moved out
+	of my-app unchanged, B2 of the backend modernization plan) so it can be shared by the
+	frontend and the Lambda that will mint real Scrambler Tokens.
 
-	Everything tunable is in ./constants.js and pinned by GENERATOR_VERSION.
+	Everything tunable is in ./constants.ts and pinned by GENERATOR_VERSION.
 */
 
-import { makeRng } from './prng.js';
+import { makeRng } from './prng.ts';
+import type { Rng } from './prng.ts';
 import {
 	GENERATOR_VERSION,
 	SCHEMA_VERSION,
@@ -40,17 +40,38 @@ import {
 	TEMPERAMENT_ATTRIBUTE_PULL,
 	TEMPERAMENT_JITTER,
 	TEMPERAMENT_TILTS,
-} from './constants.js';
+} from './constants.ts';
+import type {
+	AbilityCatalog,
+	AttributeKey,
+	Band,
+	CatalogEntry,
+	Chirality,
+	ElementKey,
+	Finish,
+	GenerateBatchArgs,
+	GenerateXalianArgs,
+	Registries,
+	SpeciesTemplate,
+	XalianRecord,
+} from './types.ts';
+
+// record.ts's nested shapes have no standalone exported name (they're inline in
+// XalianRecord), so this package names them locally for its own intermediate results.
+type RecordArchetype = XalianRecord['archetype'];
+type RecordElement = XalianRecord['element'];
+type RecordPhysiology = XalianRecord['physiology'];
+type RecordAbility = XalianRecord['abilities'][number];
 
 // ---------------------------------------------------------------------------
 // helpers
 // ---------------------------------------------------------------------------
 
-function clamp(n, lo, hi) {
+function clamp(n: number, lo: number, hi: number): number {
 	return Math.max(lo, Math.min(hi, n));
 }
 
-function band(value, fallback) {
+function band(value: unknown, fallback: Band): Band {
 	if (Array.isArray(value) && value.length === 2 && typeof value[0] === 'number' && typeof value[1] === 'number') {
 		return [Math.min(value[0], value[1]), Math.max(value[0], value[1])];
 	}
@@ -58,19 +79,19 @@ function band(value, fallback) {
 }
 
 // where a rolled value sits in its band, 0 at the bottom and 1 at the top
-function percentile(value, [lo, hi]) {
+function percentile(value: number, [lo, hi]: Band): number {
 	if (hi <= lo) {
 		return 0.5;
 	}
 	return clamp((value - lo) / (hi - lo), 0, 1);
 }
 
-function rollInBand(rng, [lo, hi]) {
+function rollInBand(rng: Rng, [lo, hi]: Band): number {
 	return rng.range(lo, hi);
 }
 
 // favored attributes skew toward the band top: best of FAVORED_DRAWS draws
-function rollFavoredInBand(rng, [lo, hi]) {
+function rollFavoredInBand(rng: Rng, [lo, hi]: Band): number {
 	let best = lo;
 	for (let i = 0; i < FAVORED_DRAWS; i++) {
 		best = Math.max(best, rng.range(lo, hi));
@@ -82,16 +103,21 @@ function rollFavoredInBand(rng, [lo, hi]) {
 // steps
 // ---------------------------------------------------------------------------
 
-function rollArchetype(rng, template, registries) {
-	const weights = Object.entries(template.archetypeWeights || { balanced: 100 });
-	const key = rng.weighted(weights);
+function rollArchetype(rng: Rng, template: SpeciesTemplate, registries: Registries): RecordArchetype {
+	const weights = Object.entries(template.archetypeWeights || { balanced: 100 }) as Array<[string, number]>;
+	const key = rng.weighted(weights) as string;
 	const row = (registries.archetypes || []).find((a) => a.key === key);
 	return { key, favors: row && Array.isArray(row.favors) ? row.favors.slice() : [] };
 }
 
-function rollAttributes(rng, template, archetype) {
-	const attributes = {};
-	const bands = {};
+interface AttributesResult {
+	attributes: Record<AttributeKey, number>;
+	bands: Record<AttributeKey, Band>;
+}
+
+function rollAttributes(rng: Rng, template: SpeciesTemplate, archetype: RecordArchetype): AttributesResult {
+	const attributes = {} as Record<AttributeKey, number>;
+	const bands = {} as Record<AttributeKey, Band>;
 	ATTRIBUTE_KEYS.forEach((key) => {
 		const b = band(template.attributes && template.attributes[key], [30, 70]);
 		bands[key] = b;
@@ -100,49 +126,57 @@ function rollAttributes(rng, template, archetype) {
 	return { attributes, bands };
 }
 
-function rollPhysiology(rng, template) {
-	const src = template.physiology || {};
-	const size = src.size || {};
+interface PhysiologyResult {
+	physiology: RecordPhysiology;
+	heightBand: Band;
+	weightBand: Band;
+	capabilityBands: Record<string, Band>;
+	senseBands: Record<string, Band>;
+}
+
+function rollPhysiology(rng: Rng, template: SpeciesTemplate): PhysiologyResult {
+	const src = template.physiology || ({} as SpeciesTemplate['physiology']);
+	const size = src.size || ({} as SpeciesTemplate['physiology']['size']);
 	const heightBand = band(size.heightCm, [100, 200]);
 	const weightBand = band(size.weightKg, [50, 150]);
 	// a band that starts under 5 (a floating Neph weighs a few kilograms) keeps one
 	// decimal so its whole band is reachable; everything else rolls whole units
-	const sizeRound = (value, [lo]) => (lo < 5 ? Math.round(value * 10) / 10 : Math.round(value));
+	const sizeRound = (value: number, [lo]: Band) => (lo < 5 ? Math.round(value * 10) / 10 : Math.round(value));
 	const heightCm = sizeRound(heightBand[0] + (heightBand[1] - heightBand[0]) * rng.float(), heightBand);
 	// weight follows height with some scatter, so a tall individual is usually heavy too
 	const heightP = percentile(heightCm, heightBand);
 	const weightP = clamp(heightP + (rng.float() - 0.5) * 0.5, 0, 1);
 	const weightKg = sizeRound(weightBand[0] + (weightBand[1] - weightBand[0]) * weightP, weightBand);
 
-	const capabilities = {};
-	const capabilityBands = {};
+	const capabilities = {} as RecordPhysiology['capabilities'];
+	const capabilityBands: Record<string, Band> = {};
 	CAPABILITY_KEYS.forEach((key) => {
 		const b = band(src.capabilities && src.capabilities[key], [0, 0]);
 		capabilityBands[key] = b;
 		capabilities[key] = rollInBand(rng, b);
 	});
 
-	const senses = {};
-	const senseBands = {};
+	const senses = {} as RecordPhysiology['senses'];
+	const senseBands: Record<string, Band> = {};
 	GRADED_SENSE_KEYS.forEach((key) => {
 		const b = band(src.senses && src.senses[key], [0, 0]);
 		senseBands[key] = b;
 		senses[key] = rollInBand(rng, b);
 	});
-	if (Array.isArray(src.senses && src.senses.special) && src.senses.special.length > 0) {
+	if (src.senses && Array.isArray(src.senses.special) && src.senses.special.length > 0) {
 		senses.special = src.senses.special.slice();
 	}
 
 	const chiralityRule = src.genome && src.genome.chirality;
-	const chirality = chiralityRule === 'achiral' ? 'achiral' : (rng.chance(0.5) ? 'levo' : 'dextro');
+	const chirality: Chirality = chiralityRule === 'achiral' ? 'achiral' : (rng.chance(0.5) ? 'levo' : 'dextro');
 
-	const composition = { primary: (src.composition && src.composition.primary) || 'flesh' };
+	const composition: RecordPhysiology['composition'] = { primary: (src.composition && src.composition.primary) || 'flesh' };
 	if (src.composition && src.composition.secondary) {
 		composition.secondary = src.composition.secondary;
 	}
 
 	const tolerance = src.environmentalTolerance || {};
-	const physiology = {
+	const physiology: RecordPhysiology = {
 		corporeality: src.corporeality || 'corporeal',
 		composition,
 		bodyPlan: src.bodyPlan || 'biped',
@@ -167,11 +201,21 @@ function rollPhysiology(rng, template) {
 	return { physiology, heightBand, weightBand, capabilityBands, senseBands };
 }
 
-function rollAffinities(rng, template) {
-	const primary = template.element;
-	const affinities = { [primary]: 100 };
+interface AffinitiesResult {
+	element: RecordElement;
+	secondary: ElementKey | null;
+}
+
+function rollAffinities(rng: Rng, template: SpeciesTemplate): AffinitiesResult {
+	// template.element is validated against the closed element enum by
+	// SpeciesTemplateSchema (packages/content/src/schema/speciesTemplate.ts) at bundle
+	// parse time in index.ts, but registries.json-derived key enums infer as a bare
+	// `string` (see the note in ./types.ts), so this package's own ElementKey union is
+	// narrower than the schema's; the cast asserts what parsing already guaranteed.
+	const primary = template.element as ElementKey;
+	const affinities: RecordElement['affinities'] = { [primary]: 100 };
 	const graph = ELEMENT_ADJACENCY[primary] || [];
-	let secondary = null;
+	let secondary: ElementKey | null = null;
 	if (graph.length > 0 && rng.chance(SECONDARY_AFFINITY_CHANCE)) {
 		secondary = rng.pick(graph);
 		affinities[secondary] = rng.range(1, 99);
@@ -179,8 +223,20 @@ function rollAffinities(rng, template) {
 	return { element: { primary, affinities }, secondary };
 }
 
+// the context a trait tilt or a temperament tilt reads from the already-rolled body
+interface TiltContext {
+	physiology: RecordPhysiology;
+	heightBand: Band;
+	weightBand: Band;
+	capabilityBands: Record<string, Band>;
+	senseBands: Record<string, Band>;
+	attributes: Record<AttributeKey, number>;
+	attributeBands: Record<AttributeKey, Band>;
+	element: RecordElement;
+}
+
 // the quantity a tilt reads, as a 0..1 percentile of its band
-function tiltPercentile(spec, ctx) {
+function tiltPercentile(spec: { on: string }, ctx: TiltContext): number {
 	const [kind, name] = spec.on.split(':');
 	switch (kind) {
 		case 'mass':
@@ -188,21 +244,21 @@ function tiltPercentile(spec, ctx) {
 		case 'height':
 			return percentile(ctx.physiology.heightCm, ctx.heightBand);
 		case 'capability':
-			return percentile(ctx.physiology.capabilities[name], ctx.capabilityBands[name]);
+			return percentile(ctx.physiology.capabilities[name as keyof RecordPhysiology['capabilities']], ctx.capabilityBands[name]);
 		case 'attribute':
-			return percentile(ctx.attributes[name], ctx.attributeBands[name]);
+			return percentile(ctx.attributes[name as AttributeKey], ctx.attributeBands[name as AttributeKey]);
 		case 'senses': {
 			const ps = GRADED_SENSE_KEYS.map((k) => percentile(ctx.physiology.senses[k], ctx.senseBands[k]));
 			return ps.reduce((a, b) => a + b, 0) / ps.length;
 		}
 		case 'affinity':
-			return clamp((ctx.element.affinities[name] || 0) / 100, 0, 1);
+			return clamp((ctx.element.affinities[name as ElementKey] || 0) / 100, 0, 1);
 		default:
 			return 0.5;
 	}
 }
 
-function tiltedPercent(key, percent, ctx) {
+function tiltedPercent(key: string, percent: number, ctx: TiltContext): number {
 	if (percent >= 100) {
 		return 100;
 	}
@@ -218,11 +274,11 @@ function tiltedPercent(key, percent, ctx) {
 	return clamp(Math.round(percent * factor), 1, 99);
 }
 
-function rollTraits(rng, template, ctx) {
+function rollTraits(rng: Rng, template: SpeciesTemplate, ctx: TiltContext): string[] {
 	const pool = (template.traits && template.traits.pool) || {};
 	const tilted = Object.keys(pool)
-		.filter((key) => pool[key] > 0)
-		.map((key) => ({ key, percent: tiltedPercent(key, pool[key], ctx) }));
+		.filter((key) => (pool[key] ?? 0) > 0)
+		.map((key) => ({ key, percent: tiltedPercent(key, pool[key] ?? 0, ctx) }));
 
 	// a non-corporeal body phases whether or not the template listed it
 	if (ctx.physiology.corporeality === 'non-corporeal' && !tilted.some((t) => t.key === 'phasing')) {
@@ -231,8 +287,8 @@ function rollTraits(rng, template, ctx) {
 
 	// exclusion partners: the higher percent rolls first, its partner skips if it lands
 	const order = tilted.slice().sort((a, b) => b.percent - a.percent);
-	const landed = [];
-	const partnerOf = (key) => {
+	const landed: string[] = [];
+	const partnerOf = (key: string) => {
 		const pair = TRAIT_EXCLUSIONS.find((p) => p.includes(key));
 		return pair ? pair.find((k) => k !== key) : null;
 	};
@@ -249,7 +305,7 @@ function rollTraits(rng, template, ctx) {
 	return Object.keys(pool).concat(['phasing']).filter((k, i, arr) => landed.includes(k) && arr.indexOf(k) === i);
 }
 
-function rollFinish(rng) {
+function rollFinish(rng: Rng): Finish {
 	const r = rng.float();
 	let acc = 0;
 	for (const [finish, odds] of FINISH_ODDS) {
@@ -261,16 +317,16 @@ function rollFinish(rng) {
 	return 'standard';
 }
 
-function instrumentRow(registries, instrument) {
+function instrumentRow(registries: Registries, instrument: string): string[] {
 	const table = registries.instrumentActions || {};
 	return Array.isArray(table[instrument]) ? table[instrument] : [];
 }
 
-function allowedActions(registries, template, instrument, medium) {
+function allowedActions(registries: Registries, template: SpeciesTemplate, instrument: string, medium: string): string[] {
 	const row = instrumentRow(registries, instrument).slice();
 	const conduits = template.conduits || {};
 	if (conduits[instrument] === medium) {
-		(CONDUIT_ACTIONS_BY_MEDIUM[medium] || []).forEach((a) => {
+		(CONDUIT_ACTIONS_BY_MEDIUM[medium as ElementKey] || []).forEach((a) => {
 			if (!row.includes(a)) {
 				row.push(a);
 			}
@@ -285,30 +341,30 @@ function allowedActions(registries, template, instrument, medium) {
 	[name, tags, heft] otherwise. Heft is 1 small, 2 ordinary, 3 grand, computed at bundle
 	time; an entry that omits it is heft 2.
 */
-function entryName(e) {
+function entryName(e: CatalogEntry): string {
 	return Array.isArray(e) ? e[0] : e;
 }
 
-function entryAllows(e, instrument) {
+function entryAllows(e: CatalogEntry, instrument: string): boolean {
 	return !Array.isArray(e) || e[1].length === 0 || e[1].includes(instrument);
 }
 
-function entryHeft(e) {
+function entryHeft(e: CatalogEntry): number {
 	return Array.isArray(e) && typeof e[2] === 'number' ? e[2] : 2;
 }
 
 // name candidates: the medium's cell for the action plus the neutral pool, filtered to
 // names this instrument may carry and names this creature has not used yet
-function nameCandidates(catalog, medium, action, instrument, usedNames) {
+function nameCandidates(catalog: AbilityCatalog, medium: string, action: string, instrument: string, usedNames: Set<string>) {
 	const cell = (catalog.elements && catalog.elements[medium] && catalog.elements[medium][action]) || [];
 	const neutral = (catalog.neutral && catalog.neutral[action]) || [];
-	const pick = (list) => list.filter((e) => entryAllows(e, instrument) && !usedNames.has(entryName(e).toLowerCase()));
+	const pick = (list: CatalogEntry[]) => list.filter((e) => entryAllows(e, instrument) && !usedNames.has(entryName(e).toLowerCase()));
 	return { owned: pick(cell), neutral: pick(neutral) };
 }
 
 // the heft a rolled intensity asks for: a light hit gets a small name, a heavy one gets a
 // grand name (redesign doc 8c, hardening Decision 9)
-function targetHeft(intensity) {
+function targetHeft(intensity: number): number {
 	if (intensity < HEFT_BANDS[0]) {
 		return 1;
 	}
@@ -316,18 +372,25 @@ function targetHeft(intensity) {
 }
 
 // draw one name from a candidate list, weighted toward the target heft
-function drawName(rng, entries, wanted) {
-	return rng.weighted(entries.map((e) => {
+function drawName(rng: Rng, entries: CatalogEntry[], wanted: number): string {
+	return rng.weighted(entries.map((e): [string, number] => {
 		const distance = Math.abs(entryHeft(e) - wanted);
 		const weight = HEFT_MATCH_WEIGHTS[Math.min(distance, HEFT_MATCH_WEIGHTS.length - 1)];
 		return [entryName(e), weight];
-	}));
+	})) as string;
 }
 
-function rollAbilities(rng, template, element, secondary, registries, catalog) {
-	const signatureSrc = template.signatureAbility || {};
+function rollAbilities(
+	rng: Rng,
+	template: SpeciesTemplate,
+	element: RecordElement,
+	secondary: ElementKey | null,
+	registries: Registries,
+	catalog: AbilityCatalog,
+): RecordAbility[] {
+	const signatureSrc = template.signatureAbility || ({} as SpeciesTemplate['signatureAbility']);
 	const sigBand = band(signatureSrc.intensity, [60, 90]);
-	const signature = {
+	const signature: RecordAbility = {
 		name: signatureSrc.name || 'Signature',
 		signature: true,
 		instrument: signatureSrc.instrument || 'body',
@@ -339,9 +402,9 @@ function rollAbilities(rng, template, element, secondary, registries, catalog) {
 		signature.description = signatureSrc.description;
 	}
 
-	const abilities = [signature];
-	const usedNames = new Set([signature.name.toLowerCase()]);
-	const usedActions = new Set([signature.action]);
+	const abilities: RecordAbility[] = [signature];
+	const usedNames = new Set<string>([signature.name.toLowerCase()]);
+	const usedActions = new Set<string>([signature.action]);
 	const instruments = Array.isArray(template.instruments) && template.instruments.length > 0 ? template.instruments : ['body'];
 	const count = rng.range(ROLLED_ABILITY_COUNT[0], ROLLED_ABILITY_COUNT[1]);
 
@@ -363,7 +426,7 @@ function rollAbilities(rng, template, element, secondary, registries, catalog) {
 		const wanted = targetHeft(intensity);
 		// owned names carry the element's texture; the neutral pool is the fallback the
 		// catalog notes reserve for thin cells
-		let name;
+		let name: string;
 		if (owned.length > 0 && (neutral.length === 0 || rng.chance(0.8))) {
 			name = drawName(rng, owned, wanted);
 		} else if (neutral.length > 0) {
@@ -385,10 +448,10 @@ function rollAbilities(rng, template, element, secondary, registries, catalog) {
 	return abilities;
 }
 
-function rollTemperament(rng, attributes, archetype, traits) {
-	const temperament = {};
+function rollTemperament(rng: Rng, attributes: Record<AttributeKey, number>, archetype: RecordArchetype, traits: string[]) {
+	const temperament = {} as XalianRecord['temperament'];
 	TEMPERAMENT_KEYS.forEach((axis) => {
-		const spec = TEMPERAMENT_TILTS[axis] || { attributes: [] };
+		const spec = TEMPERAMENT_TILTS[axis] || { attributes: [] as AttributeKey[] };
 		let center = 50;
 		if (spec.attributes && spec.attributes.length > 0) {
 			const mean = spec.attributes.reduce((n, k) => n + (attributes[k] || 50), 0) / spec.attributes.length;
@@ -426,18 +489,18 @@ function rollTemperament(rng, attributes, archetype, traits) {
 	registries:  registries.json (archetype favors, instrument action rows)
 	catalog:     abilityCatalog.json (name cells)
 */
-export function generateXalian({ template, seed, origin, serial, generatedAt, registries, catalog }) {
+export function generateXalian({ template, seed, origin, serial, generatedAt, registries, catalog }: GenerateXalianArgs): XalianRecord {
 	if (!template || !template.key) {
 		throw new Error('generateXalian: a species template with a key is required');
 	}
 	const root = makeRng(`${template.key}|${seed}|${GENERATOR_VERSION}`);
 
-	const archetype = rollArchetype(root.fork('archetype'), template, registries || {});
+	const archetype = rollArchetype(root.fork('archetype'), template, registries || ({} as Registries));
 	const { attributes, bands: attributeBands } = rollAttributes(root.fork('attributes'), template, archetype);
 	const phys = rollPhysiology(root.fork('physiology'), template);
 	const { element, secondary } = rollAffinities(root.fork('affinity'), template);
 
-	const tiltContext = {
+	const tiltContext: TiltContext = {
 		physiology: phys.physiology,
 		heightBand: phys.heightBand,
 		weightBand: phys.weightBand,
@@ -449,7 +512,7 @@ export function generateXalian({ template, seed, origin, serial, generatedAt, re
 	};
 	const traits = rollTraits(root.fork('traits'), template, tiltContext);
 	const finish = rollFinish(root.fork('appearance'));
-	const abilities = rollAbilities(root.fork('abilities'), template, element, secondary, registries || {}, catalog || {});
+	const abilities = rollAbilities(root.fork('abilities'), template, element, secondary, registries || ({} as Registries), catalog || ({} as AbilityCatalog));
 	const temperament = rollTemperament(root.fork('temperament'), attributes, archetype, traits);
 	const id = `xal_${root.fork('id').hex(20)}`;
 
@@ -480,11 +543,11 @@ export function generateXalian({ template, seed, origin, serial, generatedAt, re
 	  -> array of records, cycling through the templates in order so a batch of N covers
 	     every species about N / templates.length times. Deterministic under seed.
 */
-export function generateBatch({ templates, seed, count, registries, catalog, generatedAt }) {
+export function generateBatch({ templates, seed, count, registries, catalog, generatedAt }: GenerateBatchArgs): XalianRecord[] {
 	if (!Array.isArray(templates) || templates.length === 0) {
 		return [];
 	}
-	const records = [];
+	const records: XalianRecord[] = [];
 	for (let i = 0; i < count; i++) {
 		const template = templates[i % templates.length];
 		const serial = Math.floor(i / templates.length) + 1;

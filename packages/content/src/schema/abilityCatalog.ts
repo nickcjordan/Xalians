@@ -37,3 +37,6 @@ export const AbilityCatalogSchema = z.object({
 });
 
 export type AbilityCatalog = z.infer<typeof AbilityCatalogSchema>;
+// Exported so consumers (packages/rules's generator) that walk individual cell entries
+// have a name for one, instead of reaching into AbilityCatalog['neutral'][action][number].
+export type CatalogEntry = z.infer<typeof CatalogNameEntrySchema>;

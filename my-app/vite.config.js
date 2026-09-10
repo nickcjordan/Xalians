@@ -83,6 +83,9 @@ export default defineConfig(({ mode }) => ({
 		// The game-data JSON in the @xalians/content workspace package is imported
 		// by the engine code under test. Keep it in Vite's module graph rather than
 		// handing it to Node's loader, which would demand `with { type: 'json' }`.
-		server: { deps: { inline: [/@xalians\/content\/.*\.json$/] } },
+		// @xalians/rules ships TypeScript source with no build step (packages/rules,
+		// B2 of the backend modernization plan); inline it too so Vitest transforms
+		// the .ts files itself rather than handing them to Node's ESM loader.
+		server: { deps: { inline: [/@xalians\/content\/.*\.json$/, /@xalians\/rules/] } },
 	},
 }));

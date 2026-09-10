@@ -9,7 +9,7 @@
 */
 
 import registries from '@xalians/content/registries.json';
-import { speciesDisplayName, getSpeciesTemplate } from '../../../gameplay/generator/index.js';
+import { speciesDisplayName, getSpeciesTemplate } from '@xalians/rules/generator';
 
 function toMap(list) {
 	return new Map((list || []).map((item) => [item.key, item]));

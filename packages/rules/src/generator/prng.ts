@@ -24,9 +24,29 @@
 	so callers do not care; only the numbers moved, which is what GENERATOR_VERSION pins.
 */
 
+export interface Rng {
+	// uniform in [0, 1)
+	float(): number;
+	// integer in [0, maxExclusive)
+	int(maxExclusive: number): number;
+	// integer in [lo, hi] inclusive
+	range(lo: number, hi: number): number;
+	// true with probability p
+	chance(p: number): boolean;
+	pick<T>(array: T[]): T;
+	// entries: [[key, weight], ...]; weights need not sum to anything
+	weighted<T>(entries: Array<[T, number]>): T | undefined;
+	// hex string of n characters
+	hex(n: number): string;
+	// an independent sub-stream for one generation step
+	fork(label: string): Rng;
+}
+
+type Seed = string | number;
+
 // cyrb128: a seed string to four well-mixed 32-bit words. Numbers are stringified so a
 // numeric seed and its decimal spelling mean the same stream.
-function cyrb128(seed) {
+function cyrb128(seed: Seed): [number, number, number, number] {
 	const str = String(seed);
 	let h1 = 1779033703;
 	let h2 = 3144134277;
@@ -43,7 +63,7 @@ function cyrb128(seed) {
 	h2 = Math.imul(h4 ^ (h2 >>> 22), 2869860233);
 	h3 = Math.imul(h1 ^ (h3 >>> 17), 951274213);
 	h4 = Math.imul(h2 ^ (h4 >>> 19), 2716044179);
-	const words = [(h1 ^ h2 ^ h3 ^ h4) >>> 0, (h2 ^ h1) >>> 0, (h3 ^ h1) >>> 0, (h4 ^ h1) >>> 0];
+	const words: [number, number, number, number] = [(h1 ^ h2 ^ h3 ^ h4) >>> 0, (h2 ^ h1) >>> 0, (h3 ^ h1) >>> 0, (h4 ^ h1) >>> 0];
 	// xoshiro's all-zero state is a fixed point; it is unreachable in practice but cheap
 	// to rule out.
 	if (words[0] === 0 && words[1] === 0 && words[2] === 0 && words[3] === 0) {
@@ -53,7 +73,7 @@ function cyrb128(seed) {
 }
 
 // xoshiro128**: 128 bits of state, one uniform in [0, 1) per step.
-function makeXoshiro([w0, w1, w2, w3]) {
+function makeXoshiro([w0, w1, w2, w3]: [number, number, number, number]): () => number {
 	let a = w0 >>> 0;
 	let b = w1 >>> 0;
 	let c = w2 >>> 0;
@@ -72,33 +92,33 @@ function makeXoshiro([w0, w1, w2, w3]) {
 	};
 }
 
-export function makeRng(seed) {
+export function makeRng(seed: Seed): Rng {
 	const next = makeXoshiro(cyrb128(seed));
-	const rng = {
+	const rng: Rng = {
 		// uniform in [0, 1)
 		float() {
 			return next();
 		},
 		// integer in [0, maxExclusive)
-		int(maxExclusive) {
+		int(maxExclusive: number) {
 			return Math.floor(rng.float() * maxExclusive);
 		},
 		// integer in [lo, hi] inclusive
-		range(lo, hi) {
+		range(lo: number, hi: number) {
 			if (hi <= lo) {
 				return lo;
 			}
 			return lo + Math.floor(rng.float() * (hi - lo + 1));
 		},
 		// true with probability p
-		chance(p) {
+		chance(p: number) {
 			return rng.float() < p;
 		},
-		pick(array) {
+		pick<T>(array: T[]): T {
 			return array[rng.int(array.length)];
 		},
 		// entries: [[key, weight], ...]; weights need not sum to anything
-		weighted(entries) {
+		weighted<T>(entries: Array<[T, number]>): T | undefined {
 			const total = entries.reduce((n, [, w]) => n + Math.max(0, w), 0);
 			if (total <= 0) {
 				return entries.length > 0 ? entries[0][0] : undefined;
@@ -113,7 +133,7 @@ export function makeRng(seed) {
 			return entries[entries.length - 1][0];
 		},
 		// hex string of n characters
-		hex(n) {
+		hex(n: number) {
 			let out = '';
 			while (out.length < n) {
 				out += Math.floor(rng.float() * 0x100000000).toString(16).padStart(8, '0');
@@ -121,7 +141,7 @@ export function makeRng(seed) {
 			return out.slice(0, n);
 		},
 		// an independent sub-stream for one generation step
-		fork(label) {
+		fork(label: string) {
 			return makeRng(`${seed}|${label}`);
 		},
 	};

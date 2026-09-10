@@ -1,4 +1,4 @@
-import { speciesDisplayName, getSpeciesTemplate } from '../../../gameplay/generator/index.js';
+import { speciesDisplayName, getSpeciesTemplate } from '@xalians/rules/generator';
 
 /*
 	Reclamation - plain-sentence narration of the engine's resolution log.
