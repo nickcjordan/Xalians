@@ -203,7 +203,7 @@ function ReclamationWorld({
 				<div className="rec-hidden-banner rec-rise" data-hidden-banner>
 					<ReclamationSilhouette count={hiddenEnemyCount} />
 					<span className="rec-hidden-banner-text">
-						The rival has {hiddenEnemyCount === 1 ? 'a creature' : `${hiddenEnemyCount} creatures`} hidden somewhere in the frame. It is revealed when the worlds clash, and it attacks first.
+						The rival has {hiddenEnemyCount === 1 ? 'a creature' : `${hiddenEnemyCount} creatures`} hidden somewhere in the frame. It is revealed when the worlds clash.
 					</span>
 				</div>
 			)}

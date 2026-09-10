@@ -17,9 +17,11 @@
       "Broad clawed hands",
       "Large bushy tail"
     ],
+    "origin": "One of the expendable workforce the Zolton Generator sent onto the lightning fields. No record says what work it was made for.",
     "habitat": "The deep canyons and metallic peaks of Zolton, where ground-borne lightning surges over the crust. It keeps clear of the black lightning dead zones.",
     "feeding": "It feeds on electrical charge from its surroundings and on nothing else.",
-    "behavior": "It stores the charge it gathers in its alloy bones and releases the shock into enemies through its claws."
+    "behavior": "It stores the charge it gathers in its alloy bones and releases the shock into enemies through its claws.",
+    "company": "It keeps to itself."
   },
   "physiology": {
     "corporeality": "corporeal",

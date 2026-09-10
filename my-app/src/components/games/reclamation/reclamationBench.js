@@ -208,9 +208,12 @@ function ReclamationBench({
 		heading = `${speciesLabel(armed)} is lifted`;
 		// the lead is the role sentence, the same one the dossier and the plinth print
 		lead = `${roleSentence(armedRead.role, armedRead.blowMagnitude)}. Press a world to send it there; each world shows what it would hold and what it would do.`;
-		// armed AND hidden: the whole price of hiding, in one line (assumption 21)
+		// armed AND hidden: the whole price of hiding, in one line (assumption 21).
+		// The price clause only appears when hiding actually costs extra (hiddenSendCost > 1);
+		// at the default cost of one it is a send like any other, so nothing is said about price.
 		if (sendHidden && armedStealthy) {
-			lead = `${lead} Hidden: lands first at three quarters power, costs ${numberWord(hiddenCost)} sends.`;
+			const hiddenPrice = hiddenCost > 1 ? ` It costs ${numberWord(hiddenCost)} sends.` : '';
+			lead = `${lead} Hidden: the rival will not see it until the worlds clash.${hiddenPrice}`;
 		}
 	} else {
 		heading = 'Lift a creature';
@@ -254,9 +257,11 @@ function ReclamationBench({
 						{showHidden && (
 							<label
 								className={`g-check rec-hidden-toggle${hiddenAffordable ? '' : ' rec-hidden-toggle--unaffordable'}`}
-								title={hiddenAffordable
-									? `A stealthy creature may be sent hidden: the rival learns that you sent something, not what or where, until the worlds clash. It lands first, at three quarters power, and costs ${hiddenCost} of your ${cap} sends.`
-									: `A hidden send costs ${hiddenCost} sends and you have ${sendsLeft} left.`}
+								title={hiddenCost > 1
+									? (hiddenAffordable
+										? `A stealthy creature may be sent hidden: the rival learns that you sent something, not what or where, until the worlds clash. It costs ${hiddenCost} of your ${cap} sends.`
+										: `A hidden send costs ${hiddenCost} sends and you have ${sendsLeft} left.`)
+									: 'A stealthy creature may be sent hidden: the rival learns that you sent something, not what or where, until the worlds clash.'}
 							>
 								<input
 									type="checkbox"
@@ -267,9 +272,11 @@ function ReclamationBench({
 								/>
 								<span className="g-check-box" />
 								<span>Send hidden</span>
-								<span className="rec-hidden-price g-mono" data-hidden-price>
-									{hiddenAffordable ? `costs ${hiddenCost} sends` : 'not enough sends left'}
-								</span>
+								{hiddenCost > 1 && (
+									<span className="rec-hidden-price g-mono" data-hidden-price>
+										{hiddenAffordable ? `costs ${hiddenCost} sends` : 'not enough sends left'}
+									</span>
+								)}
 							</label>
 						)}
 						{movers.map((mover) => (

@@ -19,7 +19,9 @@
     ],
     "origin": "One of the water-breathing Xalians the Poseidas Generator produced once the seas rose and turned acidic.",
     "habitat": "The water around and beneath Poseidas's rigs and underwater cities.",
-    "behavior": "It is at home on land but far more dangerous in water, where its slender frame and webbed feet carry it. What it catches it wraps its whole length around and holds under."
+    "feeding": "It eats what it catches in the water and what it finds on land.",
+    "behavior": "It is at home on land but far more dangerous in water, where its slender frame and webbed feet carry it. What it catches it wraps its whole length around and holds under.",
+    "company": "It works among the other water-breathing Xalians of the rigs."
   },
   "physiology": {
     "corporeality": "corporeal",

@@ -18,7 +18,8 @@
     "origin": "Used by wildcatters who could not afford larger drilling Xalians like the Frackworm.",
     "habitat": "The wells and cavern networks beneath Endessa's dunes.",
     "feeding": "It hunts by darting in and out of the surface and ambushing prey with its scissor-like claws.",
-    "behavior": "It tunnels quickly with the small drill on its tail, and it feels what moves overhead through the ground."
+    "behavior": "It tunnels quickly with the small drill on its tail, and it feels what moves overhead through the ground.",
+    "company": "Wildcatters kept several at a time. Left to itself it hunts alone."
   },
   "physiology": {
     "corporeality": "corporeal",

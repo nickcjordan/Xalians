@@ -15,8 +15,11 @@
       "An eye on either side of the body at the soil line",
       "Plant tissue throughout"
     ],
+    "origin": "Grown by the Genesis Prototype on Floria, the first Generator, which ran wild and filled the world with forms like it. No record says what it was made for.",
     "habitat": "Underground in Floria's understory, beneath the World Trees, where it absorbs its power.",
-    "behavior": "It stays buried. When the ground above it is disturbed its tentacles come up out of the soil and wrap whatever is there, and a tentacle torn off grows back."
+    "feeding": "It draws its power from the ground beneath the World Trees and eats nothing.",
+    "behavior": "It stays buried. When the ground above it is disturbed its tentacles come up out of the soil and wrap whatever is there, and a tentacle torn off grows back.",
+    "company": "It lies alone under the soil."
   },
   "physiology": {
     "corporeality": "corporeal",

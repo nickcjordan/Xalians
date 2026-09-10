@@ -71,7 +71,6 @@ import {
 	presenceScaleOf,
 	// Pass 3 (assumptions 21 and 22): the price of hiding, and the stake
 	HIDDEN_SEND_COST,
-	HIDDEN_FIRST_NEEDS_COMPANY,
 	HIDDEN_POWER,
 	STAKE_ENABLED,
 	STAKE_SITE_VALUE,
@@ -252,8 +251,9 @@ function drawFrames(worlds, rngState) {
 	  removes the lever without changing any other code path.
 	- speed: false resolves everything in sent order (sentIndex, the same tiebreak
 	  buildResolutionOrder already falls back to) instead of by speed.
-	- hiddenFirst: false drops assumption 9, so a hidden creature's blow waits its turn in
-	  initiative order like everyone else's.
+	- hiddenFirst: the pass 2 combat bonus (assumption 9, a hidden creature's blow lands
+	  first at its world). OFF since pass 4 (assumption 24): hiding is concealment only,
+	  and the key is a lever so an ablation row can put the bonus back.
 	- roles: { sweep, bolster, shield } - a role switched off degrades every creature that
 	  has it. A sweep becomes a plain strike; a presence becomes a plain holder, present at
 	  the world and counted in its hold and nothing more (creatureOnTable.roleOf).
@@ -282,10 +282,10 @@ function drawFrames(worlds, rngState) {
 
 	Pass 3's levers (docs/design/reclamation-base-redesign.md assumptions 21 to 23):
 	- hiddenSendCost: what a hidden send costs against the round's sendable cap, charged
-	  the same way RETURNED_SEND_COST is (assumption 21, variant a).
-	- hiddenFirstNeedsCompany: hidden-first only applies while another creature of the
-	  hidden creature's side stands at that world (assumption 21, variant b).
-	- hiddenPower: the multiplier on an attack thrown from hiding (assumption 21, variant c).
+	  the same way RETURNED_SEND_COST is (assumption 21, variant a). 1 since pass 4.
+	- hiddenPower: the multiplier on an attack thrown from hiding (assumption 21,
+	  variant c). 1 since pass 4. Both prices were patches on the hidden-first bonus and
+	  went with it (assumption 24); the keys stay so the priced game can be measured.
 	- stake: false removes the stake entirely (stakeWorld returns null and every world
 	  counts one), which is the ablation row the stake has to beat (assumption 22).
 	- draftPoolSize / draftDistinctSpecies: the draft's shape (assumption 23). Neither is
@@ -318,7 +318,6 @@ export const DEFAULT_RULES = {
 	bolsterRecovery: BOLSTER_RECOVERY,
 	// Pass 3 (assumptions 21 to 23)
 	hiddenSendCost: HIDDEN_SEND_COST,
-	hiddenFirstNeedsCompany: HIDDEN_FIRST_NEEDS_COMPANY,
 	hiddenPower: HIDDEN_POWER,
 	stake: STAKE_ENABLED,
 	draftPoolSize: DRAFT_POOL_SIZE,
@@ -361,8 +360,6 @@ function normalizeRules(rules) {
 		bolsterRecovery: num(r.bolsterRecovery, DEFAULT_RULES.bolsterRecovery),
 		// Pass 3 (assumptions 21 to 23)
 		hiddenSendCost: num(r.hiddenSendCost, DEFAULT_RULES.hiddenSendCost),
-		hiddenFirstNeedsCompany: r.hiddenFirstNeedsCompany !== undefined
-			? !!r.hiddenFirstNeedsCompany : DEFAULT_RULES.hiddenFirstNeedsCompany,
 		hiddenPower: num(r.hiddenPower, DEFAULT_RULES.hiddenPower),
 		stake: r.stake !== undefined ? !!r.stake : DEFAULT_RULES.stake,
 		draftPoolSize: num(r.draftPoolSize, DEFAULT_RULES.draftPoolSize),
@@ -588,8 +585,8 @@ function sendableCapFor(state, player) {
 /*
 	The send cost for one record, against the round's sendable cap: RETURNED_SEND_COST if it
 	is flagged `returned` (the Loki line - a creature back in the roster after its world was
-	lost), rules.hiddenSendCost when it is sent hidden (the price of hiding, assumption 21),
-	1 otherwise. A returned creature sent hidden pays the LARGER of the two rather than
+	lost), rules.hiddenSendCost when it is sent hidden (assumption 21; 1 since pass 4, so
+	a hidden send is priced like any other), 1 otherwise. A returned creature sent hidden pays the LARGER of the two rather than
 	their sum: each is a price on the same one send, and stacking them could make a send
 	illegal that neither price alone forbids.
 */
@@ -1185,27 +1182,21 @@ function findLiveEntry(state, recordId) {
 	buildResolutionOrder(state, entries) -> entries in the order their blows land at one
 	world.
 
-	Hidden first (assumption 9): a creature sent hidden strikes before everyone else at
-	its world, in speed order among the hidden. Then the rest, by speed, with
-	strained creatures last, ties to the earlier send. The speed ablation resolves
-	purely in sent order, and the hiddenFirst ablation drops the hidden group entirely so
-	a hidden creature waits its turn like anyone else.
+	By speed, strained creatures last, ties to the earlier send. The speed ablation
+	resolves purely in sent order. Since pass 4 (assumption 24) a creature sent hidden
+	waits its turn like anyone else: the hidden-first bonus of assumption 9 is off, and
+	the rules.hiddenFirst lever puts it back for an ablation row only (the hidden group
+	lands first, in speed order among themselves).
 */
 function buildResolutionOrder(state, entries) {
 	const rules = rulesOf(state);
-	// the price of hiding, variant b (assumption 21): with hiddenFirstNeedsCompany on, a
-	// hidden creature's attack only lands first while another creature of its own side
-	// stands at the world. Company is read off the entries present at this world at
-	// Resolve, the hidden creature itself excluded, so a lone ambusher waits its turn.
-	const needsCompany = !!rules.hiddenFirstNeedsCompany;
 	const withMeta = entries.map((e) => {
 		const prepared = prepareEntry(state, e);
-		const hasCompany = entries.some((other) => other.player === e.player && other.recordId !== e.recordId);
 		return {
 			entry: e,
 			speed: prepared.speed,
 			strained: prepared.strainLevel !== 'none',
-			hidden: !!e.wasHidden && (!needsCompany || hasCompany),
+			hidden: !!e.wasHidden,
 			wasHidden: !!e.wasHidden,
 		};
 	});
@@ -1293,8 +1284,8 @@ function resolve(state) {
 	2. SHIELD. For each side, each shielder standing there cancels the largest attack
 	   declared against its own side, one attack per shielder. Against a sweep it cancels
 	   the sweep's effect on its own side only, so the other side still takes it.
-	3. LAND. The attacks land in resolution order (hidden first, then speed, strained
-	   last), each scaled by how much hold its attacker has left (assumption 18). An attack
+	3. LAND. The attacks land in resolution order (speed, strained last; hidden first only
+	   under the rules.hiddenFirst lever), each scaled by how much hold its attacker has left (assumption 18). An attack
 	   whose attacker has already been downed does not land, which is what makes speed matter.
 */
 function resolveWorld(state, site) {
@@ -1307,12 +1298,10 @@ function resolveWorld(state, site) {
 
 	// ---- 1. declare ----
 	/*
-		The price of hiding, variant c (assumption 21): an attack thrown from hiding lands at
-		rules.hiddenPower of its power. It is applied at DECLARATION, not at landing, so a
-		shielder reads the attack it will actually have to cancel rather than the one the
-		striker would have thrown in the open. It is read off `wasHidden`, not the ordering
-		flag: a lone hidden creature that lost hidden-first to variant b was still hiding,
-		and still pays for it.
+		rules.hiddenPower (assumption 21, variant c; 1 since pass 4): an attack thrown from
+		hiding lands at this share of its power. Applied at DECLARATION, not at landing, so
+		a shielder reads the attack it will actually have to cancel rather than the one
+		the striker would have thrown in the open.
 	*/
 	const hiddenPower = typeof rules.hiddenPower === 'number' ? rules.hiddenPower : 1;
 	const declarations = [];

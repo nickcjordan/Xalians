@@ -19,7 +19,8 @@
     "origin": "One of the leaping animals the Saiphus Generator raised to bound between the floating islands as if gravity held no sway over them.",
     "habitat": "The floating islands of Saiphus and the gaps between them.",
     "feeding": "It grazes the rolling plains of the islands and drinks where vapor condenses in the canyons.",
-    "behavior": "It jumps so high it seems to fly, then comes missiling down on its enemy like a battering ram."
+    "behavior": "It jumps so high it seems to fly, then comes missiling down on its enemy like a battering ram.",
+    "company": "It grazes in groups."
   },
   "physiology": {
     "corporeality": "corporeal",

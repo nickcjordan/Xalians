@@ -17,7 +17,9 @@
 
 	Five rival handlers (RIVALS, below) are the same bot with its tunables overridden by a
 	weights set, so the ladder is one engine playing five styles rather than five separate
-	implementations. The Court proctor is the bot exactly as it always was: chooseSend
+	implementations. RIVALS is in ladder order (weakest first, by `measured.vsProctor`,
+	re-measured 2026-09-10 for the reading bot at 400 to 1000 matches on seeds 7, 13 and
+	21: envoy 41, heir 47, proctor 48, broker 48.5, windsailor 50.5). The Court proctor is the bot exactly as it always was: chooseSend
 	takes an optional rival argument that defaults to the proctor, so every existing call
 	site keeps working unchanged.
 */
@@ -39,8 +41,55 @@ export const SECURE_VALUE = 3;
 export const STACK_DISCOUNT = 0.6;
 // cost per point of hold spent: a cheap flip beats an expensive one
 export const HOLD_COST = 0.2;
-// an enemy hidden send is treated as this much unseen hold at every site
-export const HIDDEN_HOLD_GUESS = 4;
+/*
+	THE HIDDEN READ (docs/design/reclamation-base-redesign.md assumption 24). Since pass 4
+	hiding is concealment only: a hidden send lands in speed order at full power and costs
+	one send, and all it does is keep the rival from knowing which creature went where
+	until the Clash. That is worth exactly as much as it makes the rival guess wrong, so
+	the bot has to guess. It knows how many hidden sends the rival has made this round
+	(publicState.players[x].hiddenSentThisRound, public information), it assumes each is
+	worth HIDDEN_HOLD_GUESS of hold and effect, and it spreads that unseen hold across the
+	round's worlds by where the rival would most want it (readUnseen below): the worlds
+	the rival is losing by less than one creature, then the worlds it is winning
+	narrowly, then the rest, priced with the bot's own flip and secure values as though
+	the rival scored sends the way it does. READ_SHARPNESS is how hard the guess leans on
+	that reading: 0 spreads the unseen hold evenly across the three worlds (a handler who
+	knows something is out there but not where), 1 spreads it in proportion to the
+	reading, higher values concentrate it on the single likeliest world. A rival can set
+	either knob: a handler that does not read at all is hiddenHoldGuess 0.
+
+	Set 2026-09-10 by head-to-head sweeps at 1000 matches on seeds 7, 13 and 21 (each row
+	is the variant's win rate against the setting it is compared with):
+
+		guess 8 vs guess 4          66.6 / 65.5 / 62.8
+		guess 10 vs guess 4         63.8 / 64.2 / 61.7
+		guess 12 vs guess 4         60.7 / 56.2 / 61.6
+		guess 6 vs guess 4          53.6 / 55.7 / 54.1
+		sharpness 0 vs 1 (guess 8)  55.7 / 56.8 / 56.7
+		anticipation 2 vs 1         44.5 / 46.8 / 43.0
+
+	So the guess is 8 (about one creature's hold at the compressed spread) and the spread
+	is EVEN: the sharper guess about WHERE the rival would send, priced off the visible
+	board, measured worse than no guess at all, on every seed. At the bot's level the read
+	is worth having because it stops the handler treating a world as settled while the
+	rival can still answer, not because it can tell where the answer will come. The
+	sharpness lever stays for a rival that wants a hunch.
+*/
+export const HIDDEN_HOLD_GUESS = 8;
+export const READ_SHARPNESS = 0;
+/*
+	ANTICIPATION. Measured 2026-09-10 while building the hidden read: a handler that
+	always assumed one unseen rival creature was on its way, spread by the read above,
+	beat the proctor that did not by 62 to 63 percent on three seeds at 1000 matches (68
+	to 72 at the settings above), and the handler that ignored unseen creatures altogether
+	by 71 to 72. Nothing about that
+	is hiding: a rival who has not passed will send again, and its next send is exactly
+	as unknown as a hidden one. So the read counts the rival's sends still to come this
+	round along with the ones it has hidden: ANTICIPATION is how many more sends the
+	handler expects from a rival who has not passed (0 is the pass 3 bot, which scored
+	the board as if the rival would never move again).
+*/
+export const ANTICIPATION = 1;
 // below this best-candidate value, pass rather than spend
 export const MIN_SEND_VALUE = 1.5;
 // sends allowed on a world beyond its even share of what remains, when a flip is on offer
@@ -114,6 +163,8 @@ function weightsFor(rival) {
 		stackDiscount: w.stackDiscount ?? STACK_DISCOUNT,
 		holdCost: w.holdCost ?? HOLD_COST,
 		hiddenHoldGuess: w.hiddenHoldGuess ?? HIDDEN_HOLD_GUESS,
+		readSharpness: w.readSharpness ?? READ_SHARPNESS,
+		anticipation: w.anticipation ?? ANTICIPATION,
 		minSendValue: w.minSendValue ?? MIN_SEND_VALUE,
 		overspendAllowance: w.overspendAllowance ?? OVERSPEND_ALLOWANCE,
 		nearWindow: w.nearWindow ?? NEAR_WINDOW,
@@ -192,11 +243,122 @@ function siteHoldTotal(publicState, siteId, seat) {
 	return visibleEntries(publicState, siteId, seat).reduce((sum, e) => sum + holdOf(publicState, siteId, e), 0);
 }
 
-// my visible hold minus theirs, with a haircut for every hidden send they have made
-function siteMargin(publicState, siteId, seat, weights) {
+// my visible hold minus theirs at one site, before any guess about hidden sends
+function visibleMargin(publicState, siteId, seat) {
+	return siteHoldTotal(publicState, siteId, seat) - siteHoldTotal(publicState, siteId, otherSeat(seat));
+}
+
+/*
+	readUnseen(publicState, seat, weights) -> { [siteId]: unseenHold }  (+ .shares, .unseen)
+
+	The read (see HIDDEN_HOLD_GUESS and ANTICIPATION above). Every hidden send the rival
+	has made this round, plus weights.anticipation sends still to come if it has not
+	passed, is assumed to be worth weights.hiddenHoldGuess, and that total is spread
+	across the round's worlds in proportion to how much the rival would gain by adding one
+	creature there, read with this handler's own flip and secure values off the visible
+	board: a flip (the rival is behind by less than the guess) is worth flipValue, a
+	partial contest 2h / (1 + deficit), a narrow secure secureValue * h / (lead + h), each
+	discounted by stackDiscount for every rival creature already standing there. The
+	shares are raised to weights.readSharpness before they are normalized, so 0 is an even
+	spread and larger values a sharper guess. Exported for the devtools and the table's
+	advice, which show the handler what the bot thinks is where.
+*/
+export function readUnseen(publicState, seat, weights = weightsFor(null)) {
 	const opp = publicState.players[otherSeat(seat)];
-	const unseen = (opp.hiddenSentThisRound || 0) * weights.hiddenHoldGuess;
-	return siteHoldTotal(publicState, siteId, seat) - siteHoldTotal(publicState, siteId, otherSeat(seat)) - unseen;
+	const sites = publicState.frame.sites;
+	// a hidden send is one of the sends the handler was already anticipating, not an extra
+	// one: the unseen count is the larger of the two while the rival can still send, and
+	// only the hidden sends once it has passed. (Adding them instead made the read's
+	// weight jump every time the rival hid, which measured as hiding helping or hurting
+	// the hider by five points depending only on the anticipation setting.)
+	const hiddenOut = opp.hiddenSentThisRound || 0;
+	const n = opp.passed ? hiddenOut : Math.max(hiddenOut, Math.max(0, weights.anticipation));
+	const h = weights.hiddenHoldGuess;
+	const out = {};
+	if (n === 0 || !(h > 0)) {
+		sites.forEach((s) => { out[s.id] = 0; });
+		return Object.defineProperties(out, {
+			shares: { value: {}, enumerable: false },
+			unseen: { value: 0, enumerable: false },
+		});
+	}
+	const gains = sites.map((site) => {
+		// the rival's margin at this world is the negative of mine
+		const m = -visibleMargin(publicState, site.id, seat);
+		let gain;
+		if (m <= 0) {
+			gain = h > -m ? weights.flipValue : (2 * h) / (1 - m);
+		} else {
+			gain = weights.secureValue * (h / (m + h));
+		}
+		const stacked = (publicState.board[site.id][otherSeat(seat)] || []).length;
+		gain *= Math.pow(weights.stackDiscount, stacked);
+		return Math.max(0, gain);
+	});
+	const sharp = Math.max(0, weights.readSharpness);
+	const raised = gains.map((g) => (sharp === 0 ? 1 : Math.pow(g, sharp)));
+	const total = raised.reduce((a, b) => a + b, 0);
+	const shares = {};
+	sites.forEach((site, i) => {
+		const share = total > 0 ? raised[i] / total : 1 / sites.length;
+		shares[site.id] = share;
+		out[site.id] = round1(n * h * share);
+	});
+	// the shares and the unseen total ride along, non-enumerable so the per-site map
+	// still reads as a plain { siteId: hold } to anything that iterates it
+	return Object.defineProperties(out, {
+		shares: { value: shares, enumerable: false },
+		unseen: { value: n * h, enumerable: false },
+	});
+}
+
+/*
+	The worth of putting `h` of hold and effect at a world whose margin (mine minus
+	theirs) is `m`: a flip is worth flipValue, a partial contest 2h / (1 - m), adding to a
+	lead secureValue * h / (m + h). One function so the send, the swift move and the
+	hidden read all price a world the same way.
+*/
+function worthAt(h, m, weights) {
+	if (m <= 0) {
+		return h > -m ? weights.flipValue : (2 * h) / (1 - m);
+	}
+	return weights.secureValue * (h / (m + h));
+}
+
+/*
+	hypothesesOf(publicState, handler, weights, read) -> [{ p, margins }]
+
+	The hidden read as a set of guesses rather than a haircut. Under each hypothesis every
+	hidden creature the rival has out this round stands at one world, that world's margin
+	is the visible margin less the whole unseen total, and the other two worlds are as
+	they look; the hypothesis has the read's share for that world as its weight. A send
+	is then valued as the weighted average of its worth under each guess, which is what
+	keeps a phantom half-creature at every world from tipping the flip thresholds the
+	scoring is built on (measured 2026-09-10: subtracting the spread-out guess from every
+	margin made the reading handler WORSE than one that ignored hidden sends entirely,
+	one to four points on three seeds, because it stopped seeing flips that were there).
+	With no hidden send out there is one hypothesis: the board as it looks.
+*/
+function hypothesesOf(publicState, handler, weights, read) {
+	const sites = publicState.frame.sites;
+	const visible = {};
+	sites.forEach((s) => { visible[s.id] = visibleMargin(publicState, s.id, handler); });
+	if (!read || !(read.unseen > 0)) {
+		return [{ p: 1, margins: visible }];
+	}
+	return sites
+		.map((site) => {
+			const p = read.shares[site.id] || 0;
+			const margins = { ...visible, [site.id]: visible[site.id] - read.unseen };
+			return { p, margins };
+		})
+		.filter((hyp) => hyp.p > 0);
+}
+
+// my visible hold minus theirs, less the unseen hold the read puts at this site
+function siteMargin(publicState, siteId, seat, weights, read) {
+	const unseen = (read || readUnseen(publicState, seat, weights))[siteId] || 0;
+	return visibleMargin(publicState, siteId, seat) - unseen;
 }
 
 function traitsOf(record) {
@@ -307,17 +469,16 @@ function applyHideBias(baseRuleSaysHide, canHide, hideBias, rng) {
 /*
 	priceHiding(publicState, weights, candidate) -> { hideValue, hideCost, hideAffordable }
 
-	THE PRICE OF HIDING (docs/design/reclamation-base-redesign.md assumption 21). Hiding
-	used to be worth exactly the blow the creature would land first, and cost nothing. Each
-	of pass 3's three levers is priced here, in the same hold units every other number in
-	scoreSends is in, so the bot never proposes a hidden send that is worse than the open
-	one and never proposes one the engine would reject:
+	What hiding this send is worth, in the same hold units every other number in scoreSends
+	is in. Since pass 4 (assumption 24) hiding is concealment only, so in the shipped game
+	this is weights.concealmentValue and nothing else: the rules levers below are all at
+	their off settings and only an ablation row turns them on. They stay priced so the bot
+	never proposes a hidden send that is worse than the open one under any lever, and
+	never one the engine would reject:
 
-	- rules.hiddenFirst (and rules.hiddenFirstNeedsCompany): the gain. Going first is worth
-	  the creature's role value, because an attack that lands before the reply lands
-	  unhurt and may take its target off the world entirely. With hiddenFirstNeedsCompany
-	  on, that gain is zero unless one of this handler's creatures already stands at the
-	  world, which is exactly the condition the engine will read at Resolve.
+	- rules.hiddenFirst: the pass 2 gain. Going first is worth the creature's role value,
+	  because an attack that lands before the reply lands unhurt and may take its target
+	  off the world entirely.
 	- rules.hiddenPower: the loss. An attack from hiding lands at hiddenPower of its power,
 	  whether or not it goes first, so hiding costs (1 - hiddenPower) of the role value.
 	- rules.hiddenSendCost: the cap. Extra units against the round's sendable cap are
@@ -326,18 +487,14 @@ function applyHideBias(baseRuleSaysHide, canHide, hideBias, rng) {
 */
 function priceHiding(publicState, weights, candidate) {
 	const rules = rulesOf(publicState);
-	const { record, site, roleValue = 0, effect = 0, cost = 1, capRemaining = 0, handler } = candidate;
+	const { record, roleValue = 0, effect = 0, cost = 1, capRemaining = 0 } = candidate;
 	const canHide = traitsOf(record).includes('stealthy') && (!rules || rules.hiddenSends !== false);
 	if (!canHide) {
 		return { hideValue: 0, hideCost: cost, hideAffordable: false };
 	}
 	const hiddenSendCost = rules && typeof rules.hiddenSendCost === 'number' ? rules.hiddenSendCost : 1;
 	const hiddenPower = rules && typeof rules.hiddenPower === 'number' ? rules.hiddenPower : 1;
-	const hiddenFirstOn = !rules || rules.hiddenFirst !== false;
-	const needsCompany = !!(rules && rules.hiddenFirstNeedsCompany);
-	const hasCompany = (publicState.board[site.id][handler] || []).length > 0;
-
-	const goesFirst = hiddenFirstOn && (!needsCompany || hasCompany);
+	const goesFirst = !!(rules && rules.hiddenFirst);
 	// concealmentValue is a rival-weighted habit, not a rules discount: the engine charges
 	// both seats the same hiddenSendCost, and this is only how much a given handler BELIEVES
 	// an unseen send is worth. A bluffer reads it higher than a proctor does.
@@ -379,10 +536,15 @@ export function scoreSends(publicState, ownRoster, handler, rival) {
 	const opp = publicState.players[otherSeat(handler)];
 	const frame = publicState.frame;
 
+	const read = readUnseen(publicState, handler, weights);
+	// the expected margins (visible less the read's haircut) drive the pass rules and are
+	// what the candidates report; the candidates' VALUES are averaged over the read's
+	// hypotheses instead (hypothesesOf above)
 	const margins = {};
 	frame.sites.forEach((s) => {
-		margins[s.id] = siteMargin(publicState, s.id, handler, weights);
+		margins[s.id] = siteMargin(publicState, s.id, handler, weights, read);
 	});
+	const hypotheses = hypothesesOf(publicState, handler, weights, read);
 
 	// me.sendableCap is SENDABLE plus this round's trailing-seat bonus, if any (Pass 2's
 	// roster-economy lever); falls back to the plain SENDABLE constant for any caller that
@@ -428,12 +590,7 @@ export function scoreSends(publicState, ownRoster, handler, rival) {
 			const h = prepared.hold + roleValue;
 			const m = margins[site.id];
 			const stacked = (publicState.board[site.id][handler] || []).length;
-			let value;
-			if (m <= 0) {
-				value = h > -m ? weights.flipValue : (2 * h) / (1 - m);
-			} else {
-				value = weights.secureValue * (h / (m + h));
-			}
+			let value = hypotheses.reduce((sum, hyp) => sum + hyp.p * worthAt(h, hyp.margins[site.id], weights), 0);
 			// a staked world is worth two toward the Charter, three if both handlers staked
 			// it (assumption 22), so it is worth spending proportionally more on. Without
 			// this the stake would be a declaration the bot never acted on, and the staker
@@ -497,9 +654,10 @@ export function chooseSend(publicState, ownRoster, handler, rng, rival) {
 	}
 
 	const frame = publicState.frame;
+	const read = readUnseen(publicState, handler, weights);
 	const moveMargins = {};
 	frame.sites.forEach((s) => {
-		moveMargins[s.id] = siteMargin(publicState, s.id, handler, weights);
+		moveMargins[s.id] = siteMargin(publicState, s.id, handler, weights, read);
 	});
 	const swiftMove = evaluateSwiftMoves(publicState, handler, moveMargins, weights);
 	if (swiftMove && swiftMove.net > 0 && swiftMove.moveValue > weights.minSendValue) {
@@ -867,46 +1025,38 @@ export const RIVALS = [
 		faction: 'the Zolto',
 		home: 'Zolton',
 		style: 'Rations the roster and waits, refusing to spend past its even share until the frame forces its hand.',
-		measured: { vsProctor: 0.435 },
+		measured: { vsProctor: 0.41 },
 		weights: {
 			stakeEagerness: 0.6,
 			overspendAllowance: 0,
-			holdCost: 0.4,
+			/*
+				Retuned 2026-09-10 for the reading bot (pass 4). The envoy used to ration
+				by pricing hold at holdCost 0.4 as well; under the read, which values a
+				send by its average worth across the rival's possible answers, that
+				doubled price left it at 7 to 9 percent against the proctor. Sweep at 400
+				matches on seeds 7, 13 and 21: holdCost 0.4 with minSendValue 3 read
+				9.3 / 7.0 / 9.5, 0.3 with 2 read 28 / 29 / 32, 0.2 with 3 read 42.5 /
+				40.3 / 40.8, overspend 0 alone 44 / 41.3 / 41.8. The default hold cost
+				with the high bar on a send keeps the character (it still refuses to
+				spend past its share, and still waits for a send worth three) inside the
+				40 to 45 band.
+			*/
 			minSendValue: 3,
 		},
 	},
 	{
-		id: 'broker',
-		tag: 'Hides and baits',
-		name: 'Syndicate broker',
-		faction: 'the Drainov Syndicate',
-		home: 'Drainov',
-		style: 'Keeps its creatures hidden until the last moment and bets you cannot tell a bluff from a real threat.',
-		measured: { vsProctor: 0.44 },
+		id: 'heir',
+		tag: 'Stacks a lead',
+		name: 'Heir of the Thousand Families',
+		faction: 'the Thousand Families',
+		home: 'Valleron',
+		style: 'Secures a lead and stacks it deeper rather than chase the board, and rarely gambles on the near-equal pick.',
+		measured: { vsProctor: 0.47 },
 		weights: {
-			stakeEagerness: 1.2,
-			/*
-				Retuned 2026-09-10 for the priced game (pass 3 set hiddenSendCost 2 and
-				hiddenPower 0.75, assumption 21). At 1.8 the broker went on hiding as though
-				hiding were still free and fell to 28.5 percent against the proctor, the
-				weakest rival on the ladder by fourteen points. Sweep over hideBias 1.0 /
-				1.3 / 1.6 against concealmentValue 1 / 2 / 3 (200 matches, seed 11, against
-				the proctor whose own hidden rate is 6.9 percent):
-
-					1.0: win 48.0 / 50.0 / 50.0, hidden rate 6.4 / 6.2 / 5.2
-					1.3: win 44.0 / 42.0 / 40.5, hidden rate 8.1 / 8.0 / 7.6
-					1.6: win 36.0 / 35.0 / 35.0, hidden rate 10.4 / 10.2 / 9.9
-
-				At 1.0 the broker stops being a bluffer at all: its hidden rate drops BELOW
-				the proctor's, which is the one thing its habit may not do. 1.3 with the
-				default concealment is the setting that puts it back at the top of the 40 to
-				45 band while it still hides half again as often as the proctor. The habit is
-				unchanged in kind - hide and bait - only less indiscriminate, which is what
-				a bluffer does once bluffing costs a send.
-			*/
-			hideBias: 1.3,
-			hiddenHoldGuess: 2,
-			baitPass: 1,
+			stakeEagerness: 0.8,
+			stackDiscount: 0.95,
+			secureValue: 5,
+			nearWindow: 0.1,
 		},
 	},
 	{
@@ -921,34 +1071,40 @@ export const RIVALS = [
 		weights: {},
 	},
 	{
+		id: 'broker',
+		tag: 'Hides and baits',
+		name: 'Syndicate broker',
+		faction: 'the Drainov Syndicate',
+		home: 'Drainov',
+		style: 'Keeps its creatures hidden until the last moment and bets you cannot tell a bluff from a real threat.',
+		measured: { vsProctor: 0.485 },
+		weights: {
+			stakeEagerness: 1.2,
+			/*
+				Pass 4 (assumption 24): hiding is concealment only and free, so the broker
+				hides every stealthy creature it sends (2 is "always hide a stealthy
+				creature" in applyHideBias). The pass 3 retune to 1.3 was for the priced
+				game and is superseded; the broker's hidden rate has to sit above the
+				proctor's, which is the one thing its habit may not fail to do.
+			*/
+			hideBias: 2,
+			baitPass: 1,
+		},
+	},
+	{
 		id: 'windsailor',
 		tag: 'Contests every world',
 		name: 'Windsailor crew',
 		faction: 'the Windsailors',
 		home: 'Saiphus',
 		style: 'Piles into every world at once and flips a losing site on the thinnest excuse, roster be damned.',
-		measured: { vsProctor: 0.485 },
+		measured: { vsProctor: 0.505 },
 		weights: {
 			stakeEagerness: 1.5,
 			flipValue: 14,
 			stackDiscount: 0.4,
 			minSendValue: 0.5,
 			overspendAllowance: 3,
-		},
-	},
-	{
-		id: 'heir',
-		tag: 'Stacks a lead',
-		name: 'Heir of the Thousand Families',
-		faction: 'the Thousand Families',
-		home: 'Valleron',
-		style: 'Secures a lead and stacks it deeper rather than chase the board, and rarely gambles on the near-equal pick.',
-		measured: { vsProctor: 0.515 },
-		weights: {
-			stakeEagerness: 0.8,
-			stackDiscount: 0.95,
-			secureValue: 5,
-			nearWindow: 0.1,
 		},
 	},
 ];

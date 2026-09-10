@@ -46,11 +46,16 @@ class XalianImage extends React.Component {
 
 		if (this.props.colored) {
 			let primaryVar = `var(--color-el-${this.props.primaryType.toLowerCase()})`;
+			// The wash is printed, not flat: the same fine grain the room wears,
+			// over a vignette that deepens the hue toward the edges (Nick
+			// 2026-09-10: a texture, but not halftone dots). `flat` turns it off.
+			let grain = this.props.flat ? '' : "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.16 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\") 0 0 / 120px 120px, ";
+			let edge = (v) => `color-mix(in srgb, ${v} 80%, black)`;
 			if (this.props.secondaryType) {
 				let secondaryVar = `var(--color-el-${this.props.secondaryType.toLowerCase()})`;
-				wrapperStyle = { background: `linear-gradient(135deg, ${primaryVar} 15%, ${secondaryVar} 85%)` };
+				wrapperStyle = { background: `${grain}radial-gradient(circle, transparent 55%, rgba(0, 0, 0, 0.2) 100%), linear-gradient(135deg, ${primaryVar} 15%, ${secondaryVar} 85%)` };
 			} else {
-				wrapperStyle = { background: `radial-gradient(circle, ${primaryVar} 65%, ${primaryVar} 100%)` };
+				wrapperStyle = { background: `${grain}radial-gradient(circle, ${primaryVar} 50%, ${edge(primaryVar)} 100%)` };
 			}
 		}
 

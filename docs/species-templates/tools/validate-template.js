@@ -257,7 +257,7 @@ if (T) {
   // lore
   const L = T.lore || {};
   // lore split (Nick, 2026-09-09): description is Nick's teaser and must be the species.json text verbatim;
-  // appearance (a list of defining presentation qualities, Nick 2026-09-09) and five short optional fields (Nick 2026-09-10): origin, habitat, feeding, behavior, company.
+  // appearance (a list of defining presentation qualities, Nick 2026-09-09) and five short required fields (Nick 2026-09-10): origin, habitat, feeding, behavior, company.
   if (species && normalize(L.description) !== normalize(species.description)) fail('lore.description.verbatim', 'lore.description must be the species.json description verbatim (it is the teaser; presentation goes in lore.appearance and the rest in the five short fields)');
   checkProse('lore.description', L.description, 'lore.description');
   if ('body' in L) fail('lore.extra', 'lore.body is struck (Nick, 2026-09-09); presentation is the lore.appearance list');
@@ -278,15 +278,14 @@ if (T) {
   const FIELDS = ['origin', 'habitat', 'feeding', 'behavior', 'company'];
   let fieldCount = 0;
   for (const k of FIELDS) {
-    if (!(k in L)) continue;
+    if (!(k in L)) { fail('lore.' + k, 'lore.' + k + ' is missing; all five short fields are required (Nick, 2026-09-10): where the canon is silent, write the plainest reading the record supports and flag it for Nick'); continue; }
     fieldCount++;
     const v = L[k];
-    if (typeof v !== 'string' || !v.trim()) { fail('lore.' + k, 'lore.' + k + ' is present but empty; leave an unsourced field out instead'); continue; }
+    if (typeof v !== 'string' || !v.trim()) { fail('lore.' + k, 'lore.' + k + ' is present but empty; all five short fields are required'); continue; }
     checkProse('lore.' + k, v, 'lore.' + k);
     const w = v.trim().split(/\s+/).length; if (w > 70) fail('lore.' + k + '.length', 'lore.' + k + ' is ' + w + ' words; a field is one to three plain sentences');
     if (/\bits ground\b/i.test(v)) fail('lore.' + k + '.template', 'lore.' + k + ' uses the struck template phrase "its ground"');
   }
-  if (fieldCount < 2) fail('lore.fields', 'fewer than two of the five short fields are present; habitat and behavior are expected for nearly every species');
   if ('descriptionStatus' in L) fail('lore.extra', 'lore.descriptionStatus is metadata, not a creature fact; status lives in docs/species-templates/lore-status.json');
   if ('amendments' in T) fail('template.extra', 'amendments is metadata, not a creature fact; record amendments in the walkthrough changelog');
   if ('biomeNiche' in L) fail('lore.extra', 'lore.biomeNiche is struck (Nick, 2026-09-10); habitat carries it');

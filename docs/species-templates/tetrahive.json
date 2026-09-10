@@ -19,7 +19,9 @@
     ],
     "origin": "One of the Xalians experimented on in the laboratories of Grimedes, rumored to be ECHELON black sites, rather than a labor form.",
     "habitat": "The thick, stalky undergrowth of Grimedes, in permanent night.",
-    "behavior": "In battle it summons a swarm of small flying familiars with teeth like piranhas and controls them with its mind, attacking or defending as one unit. It keeps its own body inside the swarm so nothing can tell which shape matters."
+    "feeding": "It eats what its swarm brings down.",
+    "behavior": "In battle it summons a swarm of small flying familiars with teeth like piranhas and controls them with its mind, attacking or defending as one unit. It keeps its own body inside the swarm so nothing can tell which shape matters.",
+    "company": "It goes with its swarm and nothing else."
   },
   "physiology": {
     "corporeality": "corporeal",

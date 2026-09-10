@@ -20,7 +20,8 @@
     "origin": "Made by the Drainov Generator to live in the planet's acid swamps and chemical waste.",
     "habitat": "The acid swamps and derelict chemical plants of Drainov.",
     "feeding": "It feeds on whatever it settles over.",
-    "behavior": "It moves slowly, flowing through the swamps rather than over them, and its slime continually regrows the rocky shell around it."
+    "behavior": "It moves slowly, flowing through the swamps rather than over them, and its slime continually regrows the rocky shell around it.",
+    "company": "It lives alone."
   },
   "physiology": {
     "corporeality": "corporeal",

@@ -178,12 +178,30 @@ export const HURT_ATTACKS_LESS = true;
 */
 export const BOLSTER_RECOVERY = 0.5;
 
-// Hidden first (assumption 9): a hidden creature's blow lands before all others at its
-// world, in initiative order among the hidden.
-export const HIDDEN_FIRST = true;
+/*
+	PASS 4: CONCEALMENT ONLY (docs/design/reclamation-base-redesign.md assumption 24).
+
+	Hiding used to bundle two things: information (the rival sees that a creature was
+	sent, not which or where, until the Clash) and a combat bonus (assumption 9, the hidden
+	creature's attack landed before everyone else's at its world). The bonus is what made
+	the always-hidden policy sit within five points of the proctor's mirror in pass 2, and
+	pass 3 priced it with two patches (a send cost and a power cut) that made "hidden"
+	read as a tuning problem rather than as hiding. Nick, 2026-09-10: strip hiding to the
+	information half. A hidden send now costs one send like any other, lands in speed
+	order like any other, at full power. What it is worth is whether it makes the rival
+	guess wrong, which the bot now does (expeditionBot's hidden read, weights.readSharpness).
+
+	The three keys below stay as levers so an ablation row can put the old bonus or the
+	old prices back and measure them; none of them is on in the shipped game.
+*/
+// the pass 2 combat bonus: a hidden creature's attack lands before all others at its
+// world. Off since pass 4; an ablation lever only.
+export const HIDDEN_FIRST = false;
 
 /*
 	PASS 3: THE PRICE OF HIDING (docs/design/reclamation-base-redesign.md assumption 21).
+	SUPERSEDED by pass 4 (assumption 24): both prices are off. The sweep below is kept as
+	the record of what pricing the combat bonus cost, for the ablation rows that put it back.
 
 	Pass 2 measured always-hidden at 46.5 percent against a 51.0 proctor mirror, four and
 	a half points under it, against an eight-point bar. Hidden-first plus
@@ -194,9 +212,8 @@ export const HIDDEN_FIRST = true;
 	- HIDDEN_SEND_COST: what a hidden send costs against the round's sendable cap, charged
 	  exactly the way RETURNED_SEND_COST is (see expeditionRules.sendCostFor). 1 is free,
 	  the pass 2 setting; 2 makes hiding cost a send.
-	- HIDDEN_FIRST_NEEDS_COMPANY: when true a hidden creature's attack only lands first if
-	  another creature of its own side stands at that world, so hiding is a coordinated
-	  play rather than a solo ambush.
+	- (variant b, hidden-first only with company, was removed with pass 4: it priced a
+	  bonus that no longer exists.)
 	- HIDDEN_POWER: the multiplier on an attack thrown from hiding.
 
 	Set 2026-09-10 by a sweep over all eight combinations, 200 matches on each of seeds 7,
@@ -223,9 +240,8 @@ export const HIDDEN_FIRST = true;
 	which is inside the noise of 200 matches. If Nick wants one lever rather than two, set
 	hiddenPower back to 1 and the game keeps a 19.5 / 22.5 / 10.5 gap.
 */
-export const HIDDEN_SEND_COST = 2;
-export const HIDDEN_FIRST_NEEDS_COMPANY = false;
-export const HIDDEN_POWER = 0.75;
+export const HIDDEN_SEND_COST = 1;
+export const HIDDEN_POWER = 1;
 
 /*
 	PASS 3: THE STAKE (assumption 22). A comeback avenue as a chosen risk, never a gift.

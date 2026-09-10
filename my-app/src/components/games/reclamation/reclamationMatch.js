@@ -288,7 +288,7 @@ class ReclamationMatch extends React.Component {
 		creature at the hold the last attack left it with (the event's own `remaining`),
 		downed ones off the world, hit ones flagged hurt, recovered ones lifted back by
 		their `recover` event, and a rival's hidden send revealed the moment it acts
-		(assumption 9: a hidden attack lands first).
+		(assumption 9: hidden creatures are revealed when they act, not before).
 
 		The balance bar and the bulbs both read off this, so the world moves by each
 		number as it is told, which is the whole of "the Clash told per world".
@@ -903,7 +903,7 @@ class ReclamationMatch extends React.Component {
 		}
 		this.appendLog('Both handlers have passed. The worlds clash.');
 		this.cutBeats();
-		this.beat({ kind: 'resolve', seat: null, short: 'The clash', text: 'Both handlers have passed. Each world clashes in turn, hidden attacks first.' });
+		this.beat({ kind: 'resolve', seat: null, short: 'The clash', text: 'Both handlers have passed. Each world clashes in turn, fastest first.' });
 		this.playbackStartedAt = Date.now();
 		this.setState({
 			match: next,

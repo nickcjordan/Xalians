@@ -21,7 +21,8 @@
     "origin": "Magmuth's mining corporations designed it to cross the transient mineral islands, where a cooling lava flow gives only a short window before the ground opens again.",
     "habitat": "The hardened lava flats and ash fields of Magmuth.",
     "feeding": "It hunts on the flats and eats whatever it can run down.",
-    "behavior": "It runs. When it reaches speed it spreads its wings, launches itself at its prey, and bites."
+    "behavior": "It runs. When it reaches speed it spreads its wings, launches itself at its prey, and bites.",
+    "company": "It runs in packs."
   },
   "physiology": {
     "corporeality": "corporeal",

@@ -12,7 +12,7 @@ const cardVariants = cva(
     variants: {
       variant: {
         panel: "border-edge bg-s1 p-6 shadow-[inset_0_1px_0_var(--color-edge-hi)]",
-        recessed: "border-edge bg-s0 p-6",
+        recessed: "surface-0 border-edge bg-s0 p-6",
         raised: "border-edge bg-s2 p-6 shadow-[inset_0_1px_0_var(--color-edge-hi)]",
         glass: "chamfer border-0 p-6 text-ink",
         link: "border-edge bg-s1 p-0 no-underline transition-[background-color,border-color] duration-1 ease-out hover:border-edge-strong hover:bg-s2 focus-visible:outline-2 focus-visible:outline-ring",
