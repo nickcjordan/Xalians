@@ -8,7 +8,15 @@
   ],
   "lore": {
     "description": "This creature digs its body underground when spooked, exposing only its tail made of explosive barbs. If provoked, it won't hesitate to fire off a few projectiles, as its regenerative power can quickly grow more.",
-    "body": "A small fur-covered biped, under a meter tall and light, with digging claws, spines, and a tail made of explosive barbs that regrow after they are fired. It is a burrower above everything else, quick to go underground, and it reads the ground it lies in better than it sees.",
+    "appearance": [
+      "Small fox-like biped",
+      "Lightly built",
+      "Fur coat",
+      "Spiny ridge down the neck and back",
+      "Long digging claws on the forelimbs",
+      "Tall pointed ears",
+      "Thick tail ending in a fan of explosive barbs"
+    ],
     "habits": "The Stonera Generator made it for a world that crosses the Jorian Belt once a year and takes a planetwide bombardment of asteroids and meteors for it. Rapid subsurface retreat is the primary survival adaptation there, and nothing this animal does it does better than dig. Its ground is the fissured rock and the crater fields, which it works from beneath. The dust-saturated air of that world crackles with continuous static discharge, and the charge passes over it without harm. Stonera is now a planetary strip-mine spiraling into the Chasm under King Kozrak's enforcers. It eats what the ground and the rubble hold, of any kind, and signals through the stone rather than across it.",
     "biomeNiche": "tunneler in the fissured rock and craters of Stonera"
   },

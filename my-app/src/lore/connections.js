@@ -86,7 +86,7 @@ for (const species of legacySpeciesList) {
 	const template = templateRecordsByKey.get(species.key);
 	// the 2026-09-09 lore split: the teaser plus the body and habits prose are the species' text
 	const description = template
-		? [template.lore.description, template.lore.body, template.lore.habits].filter(Boolean).join(' ')
+		? [template.lore.description, Array.isArray(template.lore.appearance) ? template.lore.appearance.join(". ") : undefined, template.lore.habits].filter(Boolean).join(' ')
 		: species.raw.description;
 	if (description) {
 		textUnits.push({ kind: 'species', key: species.key, label: `Species: ${species.name}`, text: description });

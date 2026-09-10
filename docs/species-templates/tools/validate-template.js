@@ -24,7 +24,7 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..', '..', '..');
 const TEMPLATES = path.join(ROOT, 'docs', 'species-templates');
 const CATALOG = path.join(ROOT, 'docs', 'ability-catalog');
-const SOURCE_DIRS = ['C:/dev/src/Xalians/lambda/src/json', path.join(ROOT, 'lambda', 'src', 'json')];
+const SOURCE_DIRS = [path.join(ROOT, 'lambda', 'src', 'json'), 'C:/dev/src/Xalians/lambda/src/json'];
 const ENCYCLOPEDIA_PATH = path.join(ROOT, 'docs', 'encyclopedia', 'encyclopedia.json');
 
 // ---------- registries (mirror of SKILL.md sections 5.1 to 5.7; keep in sync) ----------
@@ -251,11 +251,23 @@ if (T) {
   // lore
   const L = T.lore || {};
   // lore split (Nick, 2026-09-09): description is Nick's teaser and must be the species.json text verbatim;
-  // body (physical) and habits (behavior and ecology) are authored prose, 40 to 120 words each.
-  if (species && normalize(L.description) !== normalize(species.description)) fail('lore.description.verbatim', 'lore.description must be the species.json description verbatim (it is the teaser; physical and behavioral prose go in lore.body and lore.habits)');
+  // appearance (a list of defining presentation qualities, Nick 2026-09-09) and habits (behavior and ecology, prose 40 to 120 words).
+  if (species && normalize(L.description) !== normalize(species.description)) fail('lore.description.verbatim', 'lore.description must be the species.json description verbatim (it is the teaser; presentation goes in lore.appearance and behavior in lore.habits)');
   checkProse('lore.description', L.description, 'lore.description');
-  if (typeof L.body !== 'string' || !L.body.trim()) fail('lore.body', 'lore.body missing (the physical description)');
-  else checkProse('lore.body', L.body, 'lore.body', { wordRange: [25, 120] });
+  if ('body' in L) fail('lore.extra', 'lore.body is struck (Nick, 2026-09-09); presentation is the lore.appearance list');
+  if (!Array.isArray(L.appearance) || L.appearance.length < 3 || L.appearance.length > 10) fail('lore.appearance', 'lore.appearance must be a list of 3 to 10 defining presentation qualities');
+  else L.appearance.forEach((e, i) => {
+    if (typeof e !== 'string' || !e.trim()) { fail('lore.appearance.entry', 'lore.appearance[' + i + '] is empty'); return; }
+    proseFieldsChecked.push(['lore.appearance[' + i + ']', e]);
+    if (EM_DASH.test(e)) fail('lore.appearance.emdash', 'lore.appearance[' + i + '] contains an em-dash');
+    if (/\d/.test(e)) fail('lore.appearance.measurement', 'lore.appearance[' + i + '] carries a number; sizes are relative words, the measurements live in physiology.size');
+    const w = e.trim().split(/\s+/).length; if (w > 16) fail('lore.appearance.length', 'lore.appearance[' + i + '] is ' + w + ' words; an entry is one quality, at most 16 words');
+    if (/\b(drawn|rendered|reads as|silhouette|artwork|image)\b/i.test(e)) fail('lore.appearance.art', 'lore.appearance[' + i + '] describes the drawing rather than the creature');
+    if (/\b(largest|biggest|smallest|only|first|last|oldest|rarest|strongest|fastest)\b/i.test(e)) fail('lore.appearance.definitive', 'lore.appearance[' + i + '] makes a definitive claim that would fence future lore (Nick, 2026-09-09)');
+    if (/\b(blind|deaf|keen|acute|sharp-eyed|sees|hears|smells|senses)\b/i.test(e)) fail('lore.appearance.capability', 'lore.appearance[' + i + '] states a sense capability; the list is physical presentation only (an eye is a feature, blindness is not)');
+    if (/\bunarmored\b/i.test(e)) fail('lore.appearance.default', 'lore.appearance[' + i + '] states a default (every hide is unarmored unless armor is named)');
+    if (/\bno\s+\w+,\s*(no\s+)?\w+\b/i.test(e)) warn('lore.appearance.absence', 'lore.appearance[' + i + '] lists absent anatomy; keep only when the absence is the form itself (a limbless body), never a parts inventory');
+  });
   if (typeof L.habits !== 'string' || !L.habits.trim()) fail('lore.habits', 'lore.habits missing (how it lives now)');
   else checkProse('lore.habits', L.habits, 'lore.habits', { wordRange: [40, 120] });
   if ('descriptionStatus' in L) fail('lore.extra', 'lore.descriptionStatus is metadata, not a creature fact; status lives in docs/species-templates/lore-status.json');
@@ -497,7 +509,7 @@ if (MD) {
     // reset per line so one stray quote cannot mis-pair the rest of the document.
     const skillPath = path.join(ROOT, '.claude', 'skills', 'migrate-species', 'SKILL.md');
     const skillText = fs.existsSync(skillPath) ? fold(fs.readFileSync(skillPath, 'utf8')) : '';
-    const own = [T && T.lore && T.lore.description, T && T.lore && T.lore.body, T && T.lore && T.lore.habits, T && T.signatureAbility && T.signatureAbility.description, ENC && ENC.definition].filter(Boolean).map(fold).join(' \n ');
+    const own = [T && T.lore && T.lore.description, T && T.lore && Array.isArray(T.lore.appearance) && T.lore.appearance.join(' '), T && T.lore && T.lore.habits, T && T.signatureAbility && T.signatureAbility.description, ENC && ENC.definition].filter(Boolean).map(fold).join(' \n ');
     const quotes = [];
     let inFence = false;
     let inDenials = false;

@@ -8,11 +8,15 @@ The artwork is a flat black silhouette of a single creature, front-on, standing 
 
 Split applied 2026-09-09. `lore.description` was already the `species.json` text verbatim and is unchanged. This species had no upgraded description to re-cut, so body and habits are authored fresh, and both are written around the teaser rather than over it: the ice sheets, the near-impenetrable armor, the walls of frost, the encapsulating and the ice-gauntleted fists are all the teaser's and appear in neither field.
 
-### body (51 words)
+### appearance (5 entries)
 
-A hulking, white-furred ape with the head of a mammoth, over two meters tall and near four hundred kilograms, with tusks of pure ice, mineral grown from flesh, a trunk, and heavy fists. It is slow, and it does not climb or leap. It hears and smells better than it sees.
+- Hulking ape standing upright
+- Shaggy white fur
+- Head of a mammoth, with a domed skull, fanned ears and a long trunk
+- Enormous tusks of pure ice, sweeping wider than the shoulders
+- Heavy fists
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits (120 words)
 

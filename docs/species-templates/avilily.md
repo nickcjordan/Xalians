@@ -8,11 +8,17 @@ The artwork is a solid black silhouette of a single bird in flight, seen from it
 
 The lore split of 2026-09-09 (Nick): `lore.description` is Nick's teaser, carried from `lambda/src/json/species.json` verbatim and never edited here. `body` and `habits` are authored below, with every claim ledgered.
 
-### body (61 words)
+### appearance (7 entries)
 
-A small green bird, under half a meter and light, in bright floral plumage. Its beak resembles the closed petals of a flower and opens like one blooming; it has a crest, wings that carry it, taloned feet and a tail. Flight is what it does, and on the ground it is slow. It sees and smells better than it hears.
+- Small bird
+- Bright green floral plumage
+- Beak like the closed petals of a flower, opening into a bloom
+- Feathered crest
+- Broad wings
+- Long streamer feathers trailing from the head
+- Taloned gripping feet
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits (119 words)
 

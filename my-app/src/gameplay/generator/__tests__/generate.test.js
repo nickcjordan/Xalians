@@ -60,9 +60,9 @@ describe('generator: every ratified species honors the record contract', () => {
 	const templateByKey = new Map(TEMPLATES.map((t) => [t.key, t]));
 	const names = allNames();
 
-	test('29 species, each generated', () => {
-		expect(TEMPLATES.length).toBe(29);
-		expect(new Set(batch.map((r) => r.species)).size).toBe(29);
+	test('30 species, each generated', () => {
+		expect(TEMPLATES.length).toBe(30);
+		expect(new Set(batch.map((r) => r.species)).size).toBe(30);
 	});
 
 	test('attributes are all ten, inside the species band', () => {

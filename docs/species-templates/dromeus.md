@@ -8,11 +8,18 @@ The image is a single black silhouette of one creature, a raptor-shaped theropod
 
 The lore block holds three prose fields. `description` is Nick's teaser, carried from `species.json` verbatim and never edited here. `body` and `habits` are authored below under the lore split of 2026-09-09, re-cut from the stub-upgrade draft of 2026-09-08 with the orchestrator's edit applied.
 
-### body (69 words)
+### appearance (8 entries)
 
-A partly feathered ground bird with lizard features, standing on two legs, under a meter tall and light for its height. It has jaws of sharp teeth, clawed forelimbs, taloned feet, wings, and a tail; the feathers cover only part of it, bare hide showing between. It is built for the sprint above everything, with a strong leap and only a brief, low flight, and it hunts by sight.
+- Ground bird with lizard features, on two legs
+- Light for its height
+- Partly feathered, with bare hide between
+- Narrow lizard-like head with jaws of sharp teeth
+- Clawed forelimbs held clear of the ground
+- Plumed wings along the arms
+- Hooked toe claws
+- Long plumed tail
 
-Record-only register (Nick, approved 2026-09-09): ground bird, lizard features, partial feathering, sharp teeth and the wings are the teaser; two legs, claws, talons, tail and hide are record anatomy; the size feel is the record size band; sprint, leap, flight and sight are record bands. No clause is taken from the drawing.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits (94 words)
 

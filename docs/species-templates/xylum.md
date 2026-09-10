@@ -8,11 +8,15 @@ The render is a solid black silhouette on white. A single bulbous, roughly ovoid
 
 Split applied 2026-09-09. `lore.description` is Nick's teaser from `species.json`, verbatim. The pre-split upgraded description and the 2026-09-08 stub-upgrade draft are re-cut into body and habits below, with the orchestrator's edit applied ('a limb cut off it comes back' becomes 'a limb torn from it grows back').
 
-### body (53 words)
+### appearance (5 entries)
 
-A giant organism of thick, intertwined roots that act as tentacles, three to four meters tall, plant tissue throughout, bare, with spines on it. It lives mostly underground and burrows well; it does not run or leap. It is nearly blind and hears little, and it feels the ground it is rooted in.
+- Giant squid-like organism, inverted, its mantle buried below the soil
+- Six thick root-like tentacles rising from the body, serrated along the edges
+- A mouth at the base where the tentacles meet
+- An eye on either side of the body at the soil line
+- Plant tissue throughout
 
-Record-only register (Nick, 2026-09-09, pattern approved on Chromocat, Dromeus and Imprit): every clause is the teaser, record anatomy, covering, composition and size, or record capability and sense bands. No clause is taken from the drawing; the art reading above keeps those observations.
+Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
 
 ### habits (115 words)
 

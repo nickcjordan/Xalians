@@ -8,7 +8,15 @@
   ],
   "lore": {
     "description": "Four-legged creatures resembling a seahorse that patrol the various hydro-processing fleets on Poseidas, Hippochamps were designed as emergency response crews for the various electrical and chemical fires that occur on rigs, as well as a means of defense against pirates seeking to steal valuable Algael. Their long, trunk-like snouts serve as high-pressure water cannons, and can maintain a steady stream that allows them to hose down fires and threats alike.",
-    "body": "A four-legged creature resembling a seahorse, about a meter and a third at the shoulder and a hundred and forty kilograms, with a long trunk-like snout that works as a high-pressure water cannon, a crest, spines, hooves and a tail, all under smooth hide. It swims well and runs adequately, and its senses are ordinary.",
+    "appearance": [
+      "Four-legged, horse-bodied and seahorse-headed",
+      "Long trunk-like snout, a water cannon",
+      "Sail-like crest from brow to neck",
+      "Fin-like spines continuing along the back",
+      "Blunt hooves",
+      "Thick tail coiled in a spiral",
+      "Smooth hide"
+    ],
     "habits": "Its ground is a fleet: rig upon rig in interlocking nets of floating industrial zones, each trawling a global ocean for algae. It works in crews rather than alone. It breathes as readily in water as in air, so it can drop below the surface when the storm systems come over the rigs and when the semiannual bloom lays toxic microbes across the waves, which is the same reason the rigs themselves were built deeper and deeper beneath the ocean. It feeds on what the rigs and the water under them yield. Inside the settlement perimeters its aggression stays suppressed, and it saves what force it has for what comes at the rigs from outside them.",
     "biomeNiche": "the interlocking floating industrial zones of Poseidas's hydro-processing fleets"
   },

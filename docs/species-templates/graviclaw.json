@@ -8,7 +8,14 @@
   ],
   "lore": {
     "description": "With the black-shelled body of a crab and an upright torso, the centaur-like crustacean known as the Graviclaw lurks just beneath the foggy wetlands of Grimedes, using its bizarre control over the intensification of gravitational waves to generate miniature black holes in the water and draw its helpless prey right into its clutches. Graviclaws can strengthen the gravitational pull of their massive claws in order to snap them shut with a force many times heavier than their implied mass, severing through even the hardest of materials with crushing pressure. When facing larger foes, the Graviclaw can use its powers to root itself to the ground, becoming an immovable wall of chitin.",
-    "body": "A centaur-like crustacean with the black-shelled body of a crab and an upright torso rising from it, on many legs, with massive claws. Chitin shell throughout, with mineral grown into it. It stands near two meters and carries most of a quarter ton. It swims, burrows and grips well but is slow on its feet; it sees poorly and senses by means other than the ordinary five.",
+    "appearance": [
+      "Centaur-like crustacean, crab body below and upright torso above",
+      "Black chitin shell",
+      "Heavy for its height",
+      "Many jointed legs",
+      "One massive pincer claw as long as the torso",
+      "Small head on heavy shoulders"
+    ],
     "habits": "It hunts under a sky of permanent night, where the only light is infrared, and it registers mass and motion rather than looking for it. It does not chase. It lies under the wetland surface and opens a collapse point in the water above it, so the prey arrives at the pincers on its own; the pincers then shut with a weight the arm does not have, and what is caught is not let go. Faced with something too large to draw in, it fixes itself to the bottom and stops being movable. It makes no call, no cry, and no signal of any kind. The Grimedites watch the galaxy's edge for APEX's return; it keeps the wetlands below.",
     "biomeNiche": "submerged ambusher in the foggy wetlands beneath Grimedes' thick, stalky undergrowth"
   },

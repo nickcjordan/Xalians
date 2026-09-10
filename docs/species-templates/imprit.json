@@ -8,7 +8,15 @@
   ],
   "lore": {
     "description": "Imprits are demonic looking creatures, resembling flaming, horned monkeys backed by long tails with scythe-like tips. Imprits possess fire-retardant fur that protects their bodies from the flammable oils they secrete, allowing them to survive despite being in a state of constant immolation.  They are remarkably intelligent among other Xalians, having been designed in ancient times as natural tinkerers and let loose into the various lightless mining shafts of Magmuth, where they were left to their own devices to fix and maintain the often makeshift mining equipment sent deep into the earth by the Vallerii. Today, they are known for being entirely erratic, likely driven mad by the isolation of the deep tunnels in which they tinkered and toiled. When released from their claustrophobic confines and set loose on the surface, Imprits take ecstatic pleasure from using their tails to swing through the air from place to place and setting fires where they least belong.",
-    "body": "A small horned monkey, fur-covered and burning: the flammable oil it secretes keeps it in a constant state of immolation, and its fire-retardant fur is what lets it survive that. It goes on all fours and has fangs, gripping hands, and a long tail ending in a scythe-like tip that it swings from. It is a climber and a leaper with clever hands, not a runner, and it hears better than it sees.",
+    "appearance": [
+      "Small horned monkey on all fours",
+      "Fire-retardant fur",
+      "Wreathed in constant flame",
+      "Heavy curved horns",
+      "Long fangs",
+      "Bare gripping hands and feet",
+      "Long whip tail with a scythe-like tip"
+    ],
     "habits": "Its ground is the legacy shafts, which hold where fresh excavation would open onto magma seepage, and the crag networks above them, the only ground on Magmuth that stays put between flow shifts. It climbs and leaps that ground rather than crossing the open, swinging from the tail as readily as from a hand. What it finds down there it takes apart and puts back together, gripping and turning with bare digits rather than hooks or claws, and the makeshift equipment it was left with is still what it works on. Above ground it is far less predictable, and it leaves fire behind it in places that had none. Firestorms and pyroclastic flows pass over it without marking it.",
     "biomeNiche": "the lightless mining shafts sunk under Magmuth's obsidian islands"
   },
