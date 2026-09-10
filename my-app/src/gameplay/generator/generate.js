@@ -10,7 +10,7 @@
 
 	It is React-free and imports no game code. It lives under my-app/src/gameplay for now,
 	next to the games that consume it; when the Lambda mints real Scrambler Tokens this
-	file moves to lambda/src/ unchanged (it is plain ES module code with no browser
+	file moves to packages/rules unchanged (it is plain ES module code with no browser
 	dependencies).
 
 	Everything tunable is in ./constants.js and pinned by GENERATOR_VERSION.

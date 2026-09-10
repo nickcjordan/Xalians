@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
-import speciesRecords from '../../../json/speciesRecords.json';
-import registries from '../../../json/registries.json';
-import catalog from '../../../json/abilityCatalog.json';
+import speciesRecords from '@xalians/content/speciesRecords.json';
+import registries from '@xalians/content/registries.json';
+import catalog from '@xalians/content/abilityCatalog.json';
 import { ELEMENT_ADJACENCY, CONDUIT_ACTIONS_BY_MEDIUM } from '../constants.js';
 
 /*
@@ -11,7 +11,7 @@ import { ELEMENT_ADJACENCY, CONDUIT_ACTIONS_BY_MEDIUM } from '../constants.js';
 	automated checker (scripts/checkCatalogCoverage.js, docs/ability-catalog/COVERAGE.md,
 	regenerate with `node scripts/checkCatalogCoverage.js` from the repo root); this test
 	only re-checks the two floors against the my-app JSON copies so a regression here is
-	caught by `yarn test`, not only by the standalone script.
+	caught by `npm test`, not only by the standalone script.
 
 	Reachability mirrors generate.js's own `allowedActions` and `nameCandidates` exactly
 	(docs/design/xalian-creature-system-hardening.md Decision 10): instruments come from

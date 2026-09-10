@@ -1,5 +1,5 @@
 import Home from './pages/home';
-import species from './json/species.json';
+import species from '@xalians/content/species.json';
 // import ProjectPage from './pages/projectPage';
 // import FAQPage from './pages/faqPage';
 // import DesignerPage from './pages/designerPage';

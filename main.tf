@@ -100,34 +100,23 @@ resource "aws_s3_bucket" "lambda_bucket" {
 }
 
 # lambda zip
+#
+# apps/api no longer carries the shared game data or its own node_modules
+# (npm workspaces hoist to the root node_modules). Before this runs, CI runs
+# `npm run build:api` (scripts/stageApiContent.js), which stages the four JSON
+# files the legacy engine reads at runtime into apps/api/dist-content/ (the
+# fallback in apps/api/src/tools.js reads from there) and copies apps/api's
+# runtime npm dependencies into apps/api/node_modules/ if npm hoisted them.
+# Both are gitignored and rebuilt every run. test/ and the lockfile never
+# need to ship.
 data "archive_file" "lambda_zip_file" {
   type        = "zip"
-  source_dir  = "${path.module}/lambda"
+  source_dir  = "${path.module}/apps/api"
   output_path = "${path.module}/generate_xalian_lambda.zip"
 
-  # The engine only loads elements/species/qualifiers/moves. The rest of lambda/src/json
-  # lives here because it is the source of truth for the frontend's copy-json step, so it
-  # stays in the repo but does not need to ship inside the function bundle.
   excludes = [
-    "src/json/planets.json",
-    "src/json/planetRecords.json",
-    "src/json/planetStatus.json",
-    "src/json/glossary.json",
-    "src/json/typeEffectivenessMatrix.json",
-    "src/json/populated_moves.json",
-    "src/json/helping_moves.json",
-    "src/json/current_xalian.json",
-    "src/json/abilityCatalog.json",
-    "src/json/chronicle.json",
-    "src/json/encyclopedia.json",
-    "src/json/gradeCalibration.json",
-    "src/json/narration.json",
-    "src/json/plates.json",
-    "src/json/registries.json",
-    "src/json/sites.json",
-    "src/json/speciesRecords.json",
-    "src/json/tour.json",
-    "src/json/mock",
+    "test",
+    "package-lock.json",
   ]
 }
 

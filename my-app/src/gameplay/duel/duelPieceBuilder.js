@@ -1,7 +1,7 @@
 
 import * as duelConstants from './duelGameConstants'; 
 import * as translator from '../../utils/valueTranslator';
-import species from '../../json/species.json';
+import species from '@xalians/content/species.json';
 
 export function buildDuelPiece(xalian) {
     let stAttackPts = translator.statRangeToInteger(xalian.stats["standardAttackPoints"].range);

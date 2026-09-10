@@ -3,9 +3,8 @@
 
 	Per docs/design/reclamation-design.md ("The world and its sites"): each world has an
 	element and three sites, each with its own environment (medium, temperature band).
-	Canonical data lives at lambda/src/json/sites.json, copied to my-app/src/json/sites.json
-	by the copy-json build step, authored in the lore voice and validated against the
-	planet histories. Shape:
+	Canonical data lives at packages/content/json/sites.json (the @xalians/content workspace
+	package), authored in the lore voice and validated against the planet histories. Shape:
 
 		{ [PlanetName]: [ { id, name, planet, element, environment: { medium,
 			temperatureC: {min,max} }, description, source } x3 ] }
@@ -15,8 +14,8 @@
 	pass and the engine stays ignorant of where data lives.
 */
 
-import rawSites from '../../json/sites.json';
-import planetRecords from '../../json/planetRecords.json';
+import rawSites from '@xalians/content/sites.json';
+import planetRecords from '@xalians/content/planetRecords.json';
 
 const PLANETS_BY_NAME = new Map((Array.isArray(planetRecords) ? planetRecords : []).map((p) => [p.name, p]));
 

@@ -98,7 +98,7 @@ describe('Codex builder (scripts/buildCodex.js)', () => {
 		expect(/\bNaN\b/.test(markdown)).toBe(false);
 		// "null" appears once in authored canon prose (the Phantiri
 		// environmental report: "null acoustic and trace signature",
-		// lambda/src/json/planetRecords.json), not as a stray JS token. Assert
+		// packages/content/json/planetRecords.json), not as a stray JS token. Assert
 		// there is exactly that one occurrence rather than banning the word
 		// outright, so a real bug producing a stray `null` still fails this test.
 		const nullMatches = markdown.match(/\bnull\b/g) || [];

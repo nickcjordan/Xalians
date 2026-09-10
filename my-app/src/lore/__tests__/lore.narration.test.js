@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import narrationData from '../../json/narration.json';
-import encyclopediaData from '../../json/encyclopedia.json';
-import planetRecordsData from '../../json/planetRecords.json';
+import narrationData from '@xalians/content/narration.json';
+import encyclopediaData from '@xalians/content/encyclopedia.json';
+import planetRecordsData from '@xalians/content/planetRecords.json';
 
 const planetKeys = new Set(planetRecordsData.map((p) => p.key));
 const planetsByKey = new Map(planetRecordsData.map((p) => [p.key, p]));

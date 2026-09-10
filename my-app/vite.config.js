@@ -70,7 +70,7 @@ export default defineConfig(({ mode }) => ({
 	},
 
 	build: {
-		// CI and `yarn deploy` sync `build/` to S3. Keep CRA's directory.
+		// CI and `npm run deploy` sync `build/` to S3. Keep CRA's directory.
 		outDir: 'build',
 	},
 
@@ -80,9 +80,9 @@ export default defineConfig(({ mode }) => ({
 		setupFiles: ['./src/setupTests.js'],
 		// Same discovery rule react-scripts used.
 		include: ['src/**/__tests__/**/*.js', 'src/**/*.{spec,test}.js'],
-		// The game-data JSON copied into src/json is imported by the engine code
-		// under test. Keep it in Vite's module graph rather than handing it to
-		// Node's loader, which would demand `with { type: 'json' }`.
-		server: { deps: { inline: [/\/src\/json\/.*\.json$/] } },
+		// The game-data JSON in the @xalians/content workspace package is imported
+		// by the engine code under test. Keep it in Vite's module graph rather than
+		// handing it to Node's loader, which would demand `with { type: 'json' }`.
+		server: { deps: { inline: [/@xalians\/content\/.*\.json$/] } },
 	},
 }));

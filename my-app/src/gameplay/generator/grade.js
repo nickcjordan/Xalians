@@ -18,7 +18,7 @@
 	               the calibration table, before one exists to grade against.
 
 	gradeWithBundledCalibration(record, template) grades against the checked-in
-	my-app/src/json/gradeCalibration.json copy, for callers that just want a percentile
+	@xalians/content gradeCalibration.json, for callers that just want a percentile
 	without carrying the calibration table themselves.
 
 	Every number in GRADE_WEIGHTS is a tuned lever (CLAUDE.md, "levers, not stone"), not a
@@ -27,7 +27,7 @@
 	(devtools/simulateGenerator.js --calibrate) before the new numbers mean anything.
 */
 import { ATTRIBUTE_KEYS, FINISH_ODDS } from './constants.js';
-import bundledCalibration from '../../json/gradeCalibration.json';
+import bundledCalibration from '@xalians/content/gradeCalibration.json';
 
 export const GRADE_WEIGHTS = {
 	// traits: sum over the template's trait pool of -log2(p) for a landed entry below

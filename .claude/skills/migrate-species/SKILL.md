@@ -484,7 +484,7 @@ Temperament is five stored axes (boldness, curiosity, energy, aggression, sociab
 - `C:\dev\src\xalians-catalog\docs\species-templates\<key>.md` (the walkthrough with quotes, thin-combo findings, open questions)
 - The entry appended to `docs/encyclopedia/encyclopedia.json`'s `entries` array (no side file)
 - Report per-field summary and every open question in your final message.
-- **After Nick ratifies** (orchestrator, not the migration agent): add the key to `docs/species-templates/RATIFIED.json`, run `node scripts/bundleLore.js` from the repo root and `yarn copy-json` from `my-app/`, and confirm the species page at `/encyclopedia/species/<key>` renders the template (the page resolves every registry key through `docs/species-templates/registries.json`; a key missing there prints raw, so add its row first). Unratified templates never ship: the bundler reads only the manifest.
+- **After Nick ratifies** (orchestrator, not the migration agent): add the key to `docs/species-templates/RATIFIED.json`, run `node scripts/bundleLore.js` from the repo root, and confirm the species page at `/encyclopedia/species/<key>` renders the template (the page resolves every registry key through `docs/species-templates/registries.json`; a key missing there prints raw, so add its row first). Unratified templates never ship: the bundler reads only the manifest.
 
 ## 8. Species needing authored anatomy
 

@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 const constants = require('./constants/constants.js');
 
 module.exports = {
@@ -43,16 +44,24 @@ function getPropsFromFile(fullfileName) {
     }
 }
 
+// Shared game data (elements, species, qualifiers, moves) lives in the
+// @xalians/content workspace package, not under this app. In dev and test
+// (npm workspaces linked, CWD irrelevant) require.resolve finds it on the
+// module path. In the deployed Lambda zip the workspace package is not
+// present (the zip is built from apps/api alone), so scripts/stageApiContent.js
+// (run in CI before `terraform apply`) copies the four engine JSON files into
+// apps/api/dist-content/, and that is the fallback below. This staging step
+// goes away in PR C2 once esbuild bundles the @xalians/content imports directly.
 function getObject(fileName) {
     return JSON.parse(getJson(fileName));
 }
 
 function getJson(fileName) {
     try {
-        return getJsonFromFile("./src/json/" + fileName + ".json");
+        return getJsonFromFile(require.resolve('@xalians/content/' + fileName + '.json'));
     } catch (err) {
         try {
-            return getJsonFromFile("./lambda/src/json/" + fileName + ".json");
+            return getJsonFromFile(path.join(__dirname, '..', 'dist-content', fileName + '.json'));
         } catch (e) {
             console.error(err);
         }

@@ -7,8 +7,8 @@ import { parse } from 'acorn';
  * mattered which was which. Vite only converts CommonJS inside node_modules,
  * so this plugin does the same job for a fixed list of first-party files:
  *
- *   - `src/constants/` and `src/gameplay/` are overwritten from `lambda/src` by
- *     `yarn copy-js`, and lambda runs CommonJS on nodejs12, so those say
+ *   - `src/constants/` and `src/gameplay/` are overwritten from `apps/api/src` by
+ *     `npm run copy-js`, and the Lambda runs CommonJS, so those say
  *     `module.exports = {...}`. The app-owned files beside them
  *     (`colorConstants.js`, `designTokens.js`, `gameplay/duel/duelCalculator.js`)
  *     are written in the same style, the last one mixing `require` with ESM

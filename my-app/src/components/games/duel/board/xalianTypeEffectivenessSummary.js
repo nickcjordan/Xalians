@@ -1,7 +1,7 @@
 import React from 'react';
 import XalianSpeciesBadge from '../../../xalianSpeciesBadge';
-import typeEffectivenessMatrix from '../../../../json/typeEffectivenessMatrix.json';
-import species from '../../../../json/species.json';
+import typeEffectivenessMatrix from '@xalians/content/typeEffectivenessMatrix.json';
+import species from '@xalians/content/species.json';
 
 class XalianTypeEffectivenessSummary extends React.Component {
 

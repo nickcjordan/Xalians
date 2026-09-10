@@ -1,8 +1,8 @@
-const tools = require('./lambda/src/tools.js');
+const tools = require('./apps/api/src/tools.js');
 const fs = require('fs')
 const axios = require("axios").default;
-const statConstants = require('./lambda/src/constants/statConstants.js');
-const ratingValueConstants = require('./lambda/src/constants/ratingValueConstants.js');
+const statConstants = require('./apps/api/src/constants/statConstants.js');
+const ratingValueConstants = require('./apps/api/src/constants/ratingValueConstants.js');
 
 
 // fix("elements");
@@ -279,7 +279,7 @@ function alterJson(fileName) {
 // }
 
 function fixJson(fileName) {
-    const data = fs.readFileSync("lambda/src/json/" + fileName + ".json", 'utf8');
+    const data = fs.readFileSync("packages/content/json/" + fileName + ".json", 'utf8');
     var nodes = JSON.parse(data.toString());
 
     var newNodes = [];
@@ -302,7 +302,7 @@ function fixJson(fileName) {
         return 0;
     });
 
-    fs.writeFileSync("lambda/src/json/redone_" + fileName + ".json", JSON.stringify(newNodes, null, 2));
+    fs.writeFileSync("packages/content/json/redone_" + fileName + ".json", JSON.stringify(newNodes, null, 2));
 }
 
 function sortJson(fileName) {

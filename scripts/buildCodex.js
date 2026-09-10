@@ -10,7 +10,7 @@
 //   docs/species-templates/RATIFIED.json
 //   docs/species-templates/registries.json
 //   docs/species-templates/<key>.json  (one per ratified species)
-//   lambda/src/json/planetRecords.json
+//   packages/content/json/planetRecords.json
 //
 // Exports build(): { markdown, text, html, json, llms, warnings } without
 // touching the filesystem. When run directly (`node scripts/buildCodex.js`)
@@ -159,7 +159,7 @@ function build() {
 	const narration = J('docs', 'encyclopedia', 'narration.json');
 	const ratified = J('docs', 'species-templates', 'RATIFIED.json');
 	const registriesData = J('docs', 'species-templates', 'registries.json');
-	const planetRecords = J('lambda', 'src', 'json', 'planetRecords.json');
+	const planetRecords = J('packages', 'content', 'json', 'planetRecords.json');
 
 	const registries = buildRegistryMaps(registriesData);
 

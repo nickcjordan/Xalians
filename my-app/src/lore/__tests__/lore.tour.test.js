@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import tourData from '../../json/tour.json';
-import encyclopediaData from '../../json/encyclopedia.json';
-import chronicleData from '../../json/chronicle.json';
-import planetRecordsData from '../../json/planetRecords.json';
+import tourData from '@xalians/content/tour.json';
+import encyclopediaData from '@xalians/content/encyclopedia.json';
+import chronicleData from '@xalians/content/chronicle.json';
+import planetRecordsData from '@xalians/content/planetRecords.json';
 
 const eraKeys = new Set(chronicleData.eras.map((e) => e.key));
 const planetKeys = new Set(planetRecordsData.map((p) => p.key));

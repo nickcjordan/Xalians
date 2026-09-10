@@ -1,6 +1,6 @@
 // Clamps every Reclamation site's temperature band to its planet's habitable band.
 //
-// Why: the 42 sites in lambda/src/json/sites.json were authored before the species
+// Why: the 42 sites in packages/content/json/sites.json were authored before the species
 // records existed and several span the planet's physical extremes (the Ash Wastes of
 // Magmuth run 65 to 355 C). The ratified species records band every species inside its
 // planet's habitable band (docs/species-templates/RULINGS.md, "Planet rebuild"), so a
@@ -21,7 +21,7 @@ const fs = require('fs');
 const path = require('path');
 
 const root = path.join(__dirname, '..');
-const jsonDir = path.join(root, 'lambda', 'src', 'json');
+const jsonDir = path.join(root, 'packages', 'content', 'json');
 const sitesPath = path.join(jsonDir, 'sites.json');
 const sites = JSON.parse(fs.readFileSync(sitesPath, 'utf8'));
 const species = JSON.parse(fs.readFileSync(path.join(jsonDir, 'speciesRecords.json'), 'utf8')).records;

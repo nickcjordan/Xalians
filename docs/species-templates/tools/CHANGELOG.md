@@ -27,3 +27,4 @@ One dated line per change, written by the orchestrator after a denial review. Ea
 - 2026-09-08: pool shape WARNs (Nick): `traits.pool.required` outside one to two at 100, `traits.pool.rolledSum` outside 90 to 110, `traits.pool.size` above six entries.
 
 - 2026-09-09: SOURCE_DIRS now prefers the worktree own lambda/src/json over the C:/dev/src/Xalians checkout; the old order validated the Frackworm teaser against another checkout and failed a verbatim match that was true.
+- 2026-09-10: SOURCE_DIRS' first entry repointed from `lambda/src/json` to `packages/content/json` (backend modernization PR B1, `chore/workspace`): the game data JSON moved into the `@xalians/content` workspace package. The `C:/dev/src/Xalians/lambda/src/json` fallback is unchanged; that checkout has not moved its `lambda/` directory.

@@ -1,15 +1,15 @@
 // Loads the lore JSON bundle once and builds the lookup maps every other
 // module in src/lore/ works from. No React; plain ES modules.
 
-import encyclopediaData from '../json/encyclopedia.json';
-import chronicleData from '../json/chronicle.json';
-import planetRecordsData from '../json/planetRecords.json';
-import speciesData from '../json/species.json';
-import speciesRecordsData from '../json/speciesRecords.json';
-import registriesData from '../json/registries.json';
-import tourData from '../json/tour.json';
-import narrationData from '../json/narration.json';
-import platesData from '../json/plates.json';
+import encyclopediaData from '@xalians/content/encyclopedia.json';
+import chronicleData from '@xalians/content/chronicle.json';
+import planetRecordsData from '@xalians/content/planetRecords.json';
+import speciesData from '@xalians/content/species.json';
+import speciesRecordsData from '@xalians/content/speciesRecords.json';
+import registriesData from '@xalians/content/registries.json';
+import tourData from '@xalians/content/tour.json';
+import narrationData from '@xalians/content/narration.json';
+import platesData from '@xalians/content/plates.json';
 
 // ---- entries -------------------------------------------------------------
 

@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { act } from 'react-dom/test-utils';
 import { MemoryRouter, Route } from 'react-router-dom';
-import encyclopedia from '../../json/encyclopedia.json';
+import encyclopedia from '@xalians/content/encyclopedia.json';
 import Pronunciation from '../../components/encyclopedia/Pronunciation';
 import EntryView from '../../components/encyclopedia/EntryView';
 import EncyclopediaShell from '../../components/encyclopedia/EncyclopediaShell';

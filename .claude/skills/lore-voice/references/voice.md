@@ -1,6 +1,6 @@
 # Xalians Voice Analysis
 
-Every quoted line below is verbatim from `lambda/src/json/planets.json`, `species.json`, or `glossary.json`. Read the exemplars, not just the rules — the rules are a summary of what the exemplars do.
+Every quoted line below is verbatim from `packages/content/json/planets.json`, `species.json`, or `glossary.json`. Read the exemplars, not just the rules — the rules are a summary of what the exemplars do.
 
 ## Sentence-level fingerprint
 

@@ -4,7 +4,8 @@ on:
   push:
     branches: [main]
     paths:
-      - "lambda/**"
+      - "apps/api/**"
+      - "packages/**"
       # glob rather than a list of filenames: a new root-level .tf file must
       # trigger the apply that manages it. github-oidc.tf was added in #66 and
       # would not have deployed under the old explicit list.
@@ -36,17 +37,18 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
-          cache-dependency-path: lambda/package-lock.json
+          cache-dependency-path: package-lock.json
 
-      - name: Install lambda dependencies (shipped in the zip)
-        working-directory: lambda
-        run: npm ci --omit=dev
+      - name: Install dependencies
+        run: npm ci
 
       - name: Backend tests
-        working-directory: lambda
-        run: npm test
+        run: npm test -w apps/api
+
+      - name: Stage shared content into the Lambda zip
+        run: npm run build:api
 
       - uses: hashicorp/setup-terraform@v3
         with:

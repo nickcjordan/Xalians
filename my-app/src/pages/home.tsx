@@ -7,7 +7,7 @@ import XaliansLogoDnaAnimated from '../components/animations/xaliansLogoDnaAnima
 import XalianImage from '../components/xalianImage';
 import { routeFor } from '../lore/routeFor';
 import * as lore from '../lore';
-import species from '../json/species.json';
+import species from '@xalians/content/species.json';
 
 import { Shell } from '@/components/system/masthead';
 import { Button } from '@/components/ui/button';

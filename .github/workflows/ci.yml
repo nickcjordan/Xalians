@@ -8,26 +8,20 @@ jobs:
   build:
     name: Build frontend
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: my-app
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: yarn
-          cache-dependency-path: my-app/yarn.lock
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile --ignore-engines
-
-      - name: Sync shared game data and engine code from lambda/
-        run: yarn copy-json && yarn copy-js
+        run: npm ci
 
       - name: Test
-        run: yarn test --run --passWithNoTests
+        run: npm test -w my-app -- --run --passWithNoTests
 
       - name: Build
-        run: yarn build
+        run: npm run build -w my-app
