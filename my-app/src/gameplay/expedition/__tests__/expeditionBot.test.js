@@ -1,5 +1,5 @@
 import { createMatch, send, pass, getPublicState, createRngState, nextRandom, moveSwift } from '../expeditionRules.js';
-import { chooseSend, chooseStake, scoreSends, roleValueOf, RIVALS, DEFAULT_RIVAL_ID, rivalById } from '../expeditionBot.js';
+import { chooseSend, chooseStake, scoreSends, roleValueOf, readUnseen, RIVALS, DEFAULT_RIVAL_ID, rivalById, HIDE_CONCEALMENT_VALUE } from '../expeditionBot.js';
 import { ROSTER_SIZE, SENDABLE } from '../expeditionInterpretation.js';
 
 /*
@@ -288,7 +288,7 @@ describe('full bot-vs-bot match', () => {
 describe('rivals', () => {
 	test('RIVALS has five profiles in ladder order with the required shape', () => {
 		expect(RIVALS).toHaveLength(5);
-		expect(RIVALS.map((r) => r.id)).toEqual(['envoy', 'broker', 'proctor', 'windsailor', 'heir']);
+		expect(RIVALS.map((r) => r.id)).toEqual(['envoy', 'heir', 'proctor', 'broker', 'windsailor']);
 		// the ladder is the measured order, weakest first
 		const marks = RIVALS.map((r) => r.measured.vsProctor);
 		expect(marks.slice().sort((a, b) => a - b)).toEqual(marks);
@@ -578,9 +578,14 @@ describe('pass 3: the bot prices hiding (assumption 21)', () => {
 		expect(priced[0].hideValue).toBeLessThan(free[0].hideValue);
 	});
 
-	it('hiddenFirst off leaves hiding worth nothing to gain and never positive', () => {
-		hideValuesOf({ hiddenFirst: false }).forEach((c) => {
-			expect(c.hideValue).toBeLessThanOrEqual(0);
+	it('pass 4: in the shipped game hiding is worth concealment alone, and the hiddenFirst lever adds the first strike back', () => {
+		hideValuesOf({}).forEach((c) => {
+			expect(c.hideValue).toBe(HIDE_CONCEALMENT_VALUE);
+			expect(c.hideCost).toBe(1);
+			expect(c.hideAffordable).toBe(true);
+		});
+		hideValuesOf({ hiddenFirst: true }).forEach((c) => {
+			expect(c.hideValue).toBeCloseTo(c.roleValue + HIDE_CONCEALMENT_VALUE, 1);
 		});
 	});
 

@@ -8,7 +8,7 @@ import {
 	ROSTER_TRAILING_BONUS, ROLE, HOLD_FLOOR, HOLD_CEILING, MAGNITUDE_SCALE, SWEEP_DISCOUNT,
 	BOLSTER_FLOOR, ARMORED_REDUCTION, SHIELD_CAP, WILLFUL_THRESHOLD, KEEN_INSTINCT,
 	DULL_INSTINCT, SWIFT_SPEED, BOLSTER_RECOVERY,
-	HIDDEN_SEND_COST, HIDDEN_FIRST_NEEDS_COMPANY, HIDDEN_POWER, STAKE_ENABLED,
+	HIDDEN_SEND_COST, HIDDEN_POWER, STAKE_ENABLED,
 	STAKE_SITE_VALUE, STAKE_BOTH_VALUE, DRAFT_POOL_SIZE, DRAFT_DISTINCT_SPECIES,
 } from '../expeditionInterpretation.js';
 
@@ -385,12 +385,12 @@ describe('the round: Deploy, Resolve, Judge', () => {
 	});
 });
 
-describe('resolution order: hidden first, then initiative, strained last', () => {
-	function twoAtOneSite(recordA, recordB, seed, hiddenA = false) {
+describe('resolution order: speed, strained last (hidden first only under its lever)', () => {
+	function twoAtOneSite(recordA, recordB, seed, hiddenA = false, rules) {
 		const worlds = makeWorlds();
 		const rosterA = makeRoster('A').map((r, i) => (i === 0 ? { ...recordA, id: 'A_0' } : r));
 		const rosterB = makeRoster('B').map((r, i) => (i === 0 ? { ...recordB, id: 'B_0' } : r));
-		let state = createMatch({ rosterA, rosterB, worlds, seed });
+		let state = createMatch({ rosterA, rosterB, worlds, seed, rules });
 		state = state.starter === 'A' ? state : { ...state, starter: 'A', turn: 'A' };
 		const frame = currentFrame(state);
 		state = send(state, 'A', 'A_0', frame.sites[0].id, hiddenA);
@@ -405,7 +405,23 @@ describe('resolution order: hidden first, then initiative, strained last', () =>
 		...over,
 	});
 
-	test('a hidden creature blows first, however slow it is (assumption 9)', () => {
+	test('pass 4 (assumption 24): a hidden creature waits its turn in speed order like anyone else', () => {
+		const slowHidden = striker('slow-hidden0', {
+			traits: { guaranteed: ['stealthy'], rolled: [] },
+			attributes: { strength: 60, vitality: 60, endurance: 70, agility: 1, reflex: 1, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
+		});
+		const fast = striker('fast0', {
+			attributes: { strength: 60, vitality: 60, endurance: 70, agility: 99, reflex: 99, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
+		});
+		const state = twoAtOneSite(slowHidden, fast, 'hidden-first-seed', true);
+		const blows = state.resolutionLog.filter((e) => e.type === 'attack');
+		expect(blows[0].recordId).toBe('B_0');
+		// the creature was hidden until the Clash, and the log still says so
+		const own = blows.find((e) => e.recordId === 'A_0');
+		expect(own.hidden).toBe(true);
+	});
+
+	test('under the hiddenFirst lever a hidden creature blows first, however slow it is (the pass 2 bonus)', () => {
 		const slowHidden = striker('slow-hidden', {
 			traits: { guaranteed: ['stealthy'], rolled: [] },
 			attributes: { strength: 60, vitality: 60, endurance: 70, agility: 1, reflex: 1, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
@@ -413,7 +429,7 @@ describe('resolution order: hidden first, then initiative, strained last', () =>
 		const fast = striker('fast', {
 			attributes: { strength: 60, vitality: 60, endurance: 70, agility: 99, reflex: 99, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
 		});
-		const state = twoAtOneSite(slowHidden, fast, 'hidden-first-seed', true);
+		const state = twoAtOneSite(slowHidden, fast, 'hidden-first-seed', true, { hiddenFirst: true });
 		const blows = state.resolutionLog.filter((e) => e.type === 'attack');
 		expect(blows[0].recordId).toBe('A_0');
 		expect(blows[0].hidden).toBe(true);
@@ -1214,7 +1230,7 @@ describe('rules ablation switches', () => {
 			lokiLine: true,
 			trailingBonus: ROSTER_TRAILING_BONUS,
 			speed: true,
-			hiddenFirst: true,
+			hiddenFirst: false,
 			roles: { sweep: true, bolster: true, shield: true },
 			holdFloor: HOLD_FLOOR,
 			holdCeiling: HOLD_CEILING,
@@ -1236,7 +1252,6 @@ describe('rules ablation switches', () => {
 			bolsterRecovery: BOLSTER_RECOVERY,
 			// Pass 3's levers (assumptions 21 to 23)
 			hiddenSendCost: HIDDEN_SEND_COST,
-			hiddenFirstNeedsCompany: HIDDEN_FIRST_NEEDS_COMPANY,
 			hiddenPower: HIDDEN_POWER,
 			stake: STAKE_ENABLED,
 			draftPoolSize: DRAFT_POOL_SIZE,
@@ -1627,7 +1642,18 @@ function stealthyRosterOf(prefix, overrides = {}) {
 	return makeRoster(prefix, () => ({ traits: { guaranteed: ['stealthy'], rolled: [] }, ...overrides }));
 }
 
-describe('pass 3: the price of hiding (assumption 21)', () => {
+describe('pass 3: the price of hiding (assumption 21), kept as levers since pass 4 (assumption 24)', () => {
+	test('the shipped game prices a hidden send like any other and lands it at full power', () => {
+		expect(DEFAULT_RULES.hiddenSendCost).toBe(1);
+		expect(DEFAULT_RULES.hiddenPower).toBe(1);
+		expect(DEFAULT_RULES.hiddenFirst).toBe(false);
+		const rosterA = stealthyRosterOf('S');
+		const state = createMatch({ rosterA, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'hidden-free-seed' });
+		const siteId = currentFrame(state).sites[0].id;
+		const hiddenSend = send({ ...state, turn: 'A' }, 'A', rosterA[0].id, siteId, true);
+		expect(hiddenSend.players.A.sentCount).toBe(1);
+	});
+
 	test('hiddenSendCost charges a hidden send against the round\'s sendable cap', () => {
 		const rosterA = stealthyRosterOf('S');
 		const state = createMatch({
@@ -1671,48 +1697,6 @@ describe('pass 3: the price of hiding (assumption 21)', () => {
 		};
 		const sent = send(state, 'A', rosterA[0].id, siteId, true);
 		expect(sent.players.A.sentCount).toBe(2);
-	});
-
-	test('hiddenFirstNeedsCompany: a lone hidden attacker loses hidden-first, one with company keeps it', () => {
-		// a slow hidden striker against a fast open striker: with hidden-first the hidden
-		// creature's attack is the first event of the world, without it the fast one's is
-		const slowHidden = makeRecord('slow', {
-			traits: { guaranteed: ['stealthy'], rolled: [] },
-			attributes: { strength: 80, vitality: 60, endurance: 60, agility: 5, reflex: 5, intelligence: 50, willpower: 20, instinct: 50, charisma: 50, resilience: 60 },
-		});
-		const fastOpen = makeRecord('fast', {
-			attributes: { strength: 80, vitality: 60, endurance: 60, agility: 95, reflex: 95, intelligence: 50, willpower: 20, instinct: 50, charisma: 50, resilience: 60 },
-		});
-
-		function firstAttackerAt(rules, withCompany) {
-			const rosterA = makeRoster('A').map((r, i) => {
-				if (i === 0) { return { ...slowHidden, id: 'A_0' }; }
-				if (i === 1) { return { ...fastOpen, id: 'A_1' }; }
-				return r;
-			});
-			const rosterB = makeRoster('B').map((r, i) => (i === 0 ? { ...fastOpen, id: 'B_0' } : r));
-			let state = createMatch({ rosterA, rosterB, worlds: makeWorlds(), seed: 'company-seed', rules });
-			const siteId = currentFrame(state).sites[0].id;
-			state = { ...state, turn: 'A' };
-			state = send(state, 'A', 'A_0', siteId, true);
-			if (withCompany) {
-				state = { ...state, turn: 'A' };
-				state = send(state, 'A', 'A_1', siteId, false);
-			}
-			state = { ...state, turn: 'B' };
-			state = send(state, 'B', 'B_0', siteId, false);
-			state = pass(state, 'A');
-			state = pass(state, 'B');
-			const attacks = state.resolutionLog.filter((e) => e.type === 'attack' && e.site === siteId);
-			return attacks.length > 0 ? attacks[0].recordId : null;
-		}
-
-		// company is irrelevant while the rule is off: the hidden creature always goes first
-		expect(firstAttackerAt({ hiddenFirstNeedsCompany: false }, false)).toBe('A_0');
-		// with the rule on, a lone hidden creature waits its turn behind the fast opener
-		expect(firstAttackerAt({ hiddenFirstNeedsCompany: true }, false)).toBe('B_0');
-		// with a companion standing at the world, hidden-first applies again
-		expect(firstAttackerAt({ hiddenFirstNeedsCompany: true }, true)).toBe('A_0');
 	});
 
 	test('hiddenPower scales an attack thrown from hiding and leaves an open attack alone', () => {
