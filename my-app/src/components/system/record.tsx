@@ -128,7 +128,7 @@ function EmptyState({
   ...props
 }: React.ComponentProps<"div"> & { legend: React.ReactNode }) {
   return (
-    <div data-slot="empty-state" className={cn("border border-edge bg-s0 p-6", className)} {...props}>
+    <div data-slot="empty-state" className={cn("surface-0 border border-edge bg-s0 p-6", className)} {...props}>
       <p className="type-legend mb-3">{legend}</p>
       <div className="font-body text-body text-ink-2">{children}</div>
     </div>
@@ -149,7 +149,7 @@ function Tile({
   return (
     <Comp
       data-slot="tile"
-      className={cn(cardVariants({ variant: "link" }), "block overflow-hidden p-0", className)}
+      className={cn(cardVariants({ variant: "link" }), "mass-el block overflow-hidden p-0", className)}
       {...props}
     />
   )

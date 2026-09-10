@@ -10,14 +10,14 @@ const buttonVariants = cva(
       variant: {
         /* The one accent-filled key per screen (contract section 6). */
         default:
-          "cut-key bg-primary text-primary-foreground hover:bg-viable-hi active:bg-viable-lo",
+          "key-primary text-primary-foreground",
         /* Outline at rest; fills only on hover and press. */
         destructive:
-          "border border-plague bg-transparent text-plague-outline-ink hover:bg-plague-tint active:bg-plague active:text-plague-ink",
+          "mass-key [--mass:color-mix(in_srgb,var(--color-plague)_55%,black)] border border-plague bg-transparent text-plague-outline-ink hover:bg-plague-tint active:bg-plague active:text-plague-ink",
         secondary:
-          "border border-edge bg-s2 text-ink shadow-[inset_0_1px_0_var(--color-edge-hi)] hover:bg-s3 active:bg-s1",
+          "mass-key border border-edge bg-s2 text-ink hover:bg-s3 active:bg-s1",
         outline:
-          "border border-edge-strong bg-transparent text-ink hover:bg-s1",
+          "mass-key border border-edge-strong bg-transparent text-ink hover:bg-s1",
         ghost: "text-ink-2 hover:bg-s1 hover:text-ink active:bg-s0",
         link: "h-auto px-0 font-body text-body normal-case tracking-normal text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink",
       },

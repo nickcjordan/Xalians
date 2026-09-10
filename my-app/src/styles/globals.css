@@ -98,6 +98,82 @@
 		clip-path: polygon(calc(var(--cut) - 1px) 0, 100% 0, 100% calc(100% - var(--cut) + 1px), calc(100% - var(--cut) + 1px) 100%, 0 100%, 0 calc(var(--cut) - 1px));
 	}
 
+	/* Depth, round two (section 5, proposed 2026-09-10): thickness means
+	   pressable. Every pressable thing stands on a solid mass offset down and
+	   to the right (the chamfer's corner), lifts a pixel under the pointer and
+	   drops flat when pressed. The mass is flat and unlit: the ink for level-2
+	   keys, the darker viable under the primary, the element dimmed under a
+	   tile. Flat things (cards, badges, content chips, slots) carry none. */
+	.mass-key {
+		--mass: var(--color-ink-3);
+		--thick: 3px;
+		box-shadow: inset 0 1px 0 var(--color-edge-hi), var(--thick) var(--thick) 0 0 var(--mass);
+		transition: transform 120ms ease-out, box-shadow 120ms ease-out, background-color 120ms ease-out, color 120ms ease-out, border-color 120ms ease-out;
+	}
+	.mass-key:hover { transform: translate(-1px, -1px); box-shadow: inset 0 1px 0 var(--color-edge-hi), calc(var(--thick) + 1px) calc(var(--thick) + 1px) 0 0 var(--mass); }
+	.mass-key:active { transform: translate(var(--thick), var(--thick)); box-shadow: inset 0 1px 0 var(--color-edge-hi); }
+	/* A selected segment is already pressed: it loses its mass but does not
+	   move, so a tight row stays aligned; its neighbors standing proud say the
+	   rest. */
+	.mass-key[data-state="on"],
+	.mass-key[aria-pressed="true"] { box-shadow: inset 0 1px 0 var(--color-edge-hi); }
+	.mass-key[data-state="on"]:hover,
+	.mass-key[aria-pressed="true"]:hover { transform: none; }
+	.mass-key:disabled { transform: none; box-shadow: none; }
+
+	.key-primary {
+		--key-face: var(--color-viable);
+		--key-mass: var(--color-viable-lo);
+		--thick: 4px;
+		position: relative;
+		isolation: isolate;
+		background: transparent;
+		transition: transform 120ms ease-out;
+	}
+	.key-primary::before,
+	.key-primary::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+		transition: background-color 120ms ease-out, transform 120ms ease-out;
+	}
+	.key-primary::before { z-index: -1; background: var(--key-face); }
+	.key-primary::after { z-index: -2; background: var(--key-mass); transform: translate(var(--thick), var(--thick)); }
+	.key-primary:hover { --key-face: var(--color-viable-hi); transform: translate(-1px, -1px); }
+	.key-primary:hover::after { transform: translate(calc(var(--thick) + 1px), calc(var(--thick) + 1px)); }
+	.key-primary:active { --key-face: var(--color-viable-lo); transform: translate(var(--thick), var(--thick)); }
+	.key-primary:active::after { transform: translate(0, 0); }
+	.key-primary:disabled { transform: none; }
+	.key-primary:disabled::after { display: none; }
+
+	/* An element tile is a plate you can lift: its mass is its own hue, dimmed. */
+	.mass-el {
+		--thick: 4px;
+		--mass: color-mix(in srgb, var(--color-el) 45%, black);
+		box-shadow: var(--thick) var(--thick) 0 0 var(--mass);
+		transition: transform 120ms ease-out, box-shadow 120ms ease-out, background-color 120ms ease-out, border-color 120ms ease-out;
+	}
+	.mass-el:hover { transform: translate(-1px, -1px); box-shadow: calc(var(--thick) + 1px) calc(var(--thick) + 1px) 0 0 var(--mass); }
+	.mass-el:active { transform: translate(var(--thick), var(--thick)); box-shadow: 0 0 0 0 var(--mass); }
+
+	/* Level-0 surfaces carry a faint 32px layout grid; nothing else does. */
+	.surface-0 {
+		background-image:
+			linear-gradient(color-mix(in srgb, var(--color-ink) 4.5%, transparent) 1px, transparent 1px),
+			linear-gradient(90deg, color-mix(in srgb, var(--color-ink) 4.5%, transparent) 1px, transparent 1px);
+		background-size: 32px 32px;
+		background-position: -1px -1px;
+	}
+
+	/* The room is not a flat fill: a faint grain and an edge vignette. */
+	[data-tier="chrome"] {
+		background-image:
+			linear-gradient(90deg, rgba(0, 0, 0, 0.22), transparent 14%, transparent 86%, rgba(0, 0, 0, 0.22)),
+			url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.85 0 0 0 0 0.82 0 0 0 0 0.75 0 0 0 0.05 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+		background-size: 100% 100%, 160px 160px;
+	}
+
 	/* Clip only, no edge layer: for filled surfaces such as the primary key. */
 	.cut { clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px); }
 	.cut-key { clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
@@ -140,3 +216,7 @@
    the old template paints every bare <a> mint; on the new stack a link is the
    ink of its text unless a class says otherwise. */
 a { color: inherit; }
+/* The old template paints <body> its own near-black with !important; a page's <main> starts
+   below the navbar and its masthead margin collapses through it, so the body
+   showed as a darker strip under the navbar on every chrome page. */
+body { background-color: var(--color-room) !important; }
