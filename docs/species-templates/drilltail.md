@@ -105,7 +105,7 @@ Word count 108, one paragraph, present tense, ends on a plain present-tense fact
 
 ## Trait pool
 
-Pool shape of 2026-09-08. Two required traits sit at 100 and the rolled set shares exactly 100 between three entries, so an individual expects one extra trait and landing all three is rare. Expected count: 2 + 100/100 = 3.00. No exclusion pair is present: `pack-bonded` stays cut by the evidence bar and `solitary` was never listed.
+Pool shape re-run of 2026-09-10 (see Trait re-run below for what changed and why). Two required traits sit at 100 and the rolled set shares exactly 100 between four entries, six entries in all, the cap. Expected count: 2 + 100/100 = 3.00. No exclusion pair is present: `pack-bonded` stays cut by the evidence bar and `solitary` is now rolled, not required, so it is never at 100 alongside its excluded partner.
 
 ### Required
 
@@ -118,19 +118,26 @@ Pool shape of 2026-09-08. Two required traits sit at 100 and the rolled set shar
 
 | Trait | Share | Evidence |
 |---|---|---|
-| `slippery` | 45 | Strongest of the rolled set. The `evasionRating` of high in `species.json` is one of the two legacy ratings that map to a trait and it maps to slippery, which ranks it first among the rolled entries. |
-| `hardened` | 30 | A planet-wide adaptation rather than the point of this creature. The Endessa Generator environmental report lists thermal load and desiccation among the planet's hazards, water retention and thermal shielding are two of its three output priorities, and the fauna line on desiccation-immune surface-crossing forms covers this body. Rolled, not required, because the species description is about boring and hunting, not about enduring the dunes. |
-| `perceptive` | 25 | The weakest class, a record field: `physiology.senses.special` carries tremorsense. A senses entry never makes a trait required, since a trait must not restate a field the record already carries, so it takes the smallest share. |
+| `slippery` | 35 | Strongest of the rolled set. The `evasionRating` of high in `species.json` is one of the two legacy ratings that map to a trait and it maps to slippery, which ranks it first among the rolled entries. |
+| `hardened` | 25 | A planet-wide adaptation rather than the point of this creature. The Endessa Generator environmental report lists thermal load and desiccation among the planet's hazards, water retention and thermal shielding are two of its three output priorities, and the fauna line on desiccation-immune surface-crossing forms covers this body. Rolled, not required, because the species description is about boring and hunting, not about enduring the dunes. |
+| `solitary` | 20 | The ratified `lore.company` field states it directly: "Left to itself it hunts alone." This is a species-level behavior statement, not an argument from absence, so it clears the evidence bar the pre-lore-fields pass could not clear. Kept below `slippery` and `hardened` because the same field opens by noting the creature is normally kept in numbers by its owners, so a solitary disposition is the default only once it is left to itself. |
+| `perceptive` | 20 | A record field: `physiology.senses.special` carries tremorsense. A senses entry never makes a trait required, since a trait must not restate a field the record already carries, so it takes the smallest share. |
 
-Traits I considered and left out: `nocturnal`, because nothing in either source names night habits and Endessa's twin suns are the opposite register; `anchored`, because the body is defined by movement; `ramming`, because the tail bores rather than delivering a moving blow; `foresighted`, because neither source claims foresight; `menacing`, `hypnotic`, `inspiring`, `regenerative`, `healing`, and `protective`, because nothing supports them.
+Traits I considered and left out: `nocturnal`, because nothing in either source, including the ratified `habitat` and `feeding` fields, names night habits, and Endessa's twin suns are the opposite register; `anchored`, because the body is defined by movement; `ramming`, because the tail bores rather than delivering a moving blow; `foresighted`, because neither source claims foresight; `pack-bonded`, because the company field's "Wildcatters kept several at a time" describes ownership practice, not the creature's own instinct to coordinate, and it is the exclusion partner of the now-rolled `solitary`; `menacing`, `hypnotic`, `inspiring`, `regenerative`, `healing`, and `protective`, because nothing supports them.
 
 #### Cut by the evidence bar (2026-09-07)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
-| `pack-bonded` | 15 | No source sentence and no ratified field: plural usage in the description is not a statement about group living, and the Endessa report says nothing about group life. |
-| `toxic` | 5 | Class 4 fails: anatomy carries no spines and no stinger, the organ is a drill, and no agent is described anywhere. |
-| `resistant` | 60 | Ruling B: its only support was the abrasion, heat, and desiccation of the dune surface. Endessa's report hazards are thermal load, desiccation, tunnel collapse, and vibration-triggered predation, none of which is contamination. Those same hazards now carry `hardened` instead, added on 2026-09-08; `resistant` stays cut. |
+| `pack-bonded` | 15 | No source sentence and no ratified field: plural usage in the description is not a statement about group living, and the Endessa report says nothing about group life. Still cut on the 2026-09-10 re-run: the new `company` field ("Wildcatters kept several at a time. Left to itself it hunts alone.") describes ownership, not instinct, and it is `solitary`'s excluded partner, which the field does support and which is restored instead. |
+| `toxic` | 5 | Class 4 fails: anatomy carries no spines and no stinger, the organ is a drill, and no agent is described anywhere. Not restored: none of the five ratified fields name a delivered agent. |
+| `resistant` | 60 | Ruling B: its only support was the abrasion, heat, and desiccation of the dune surface. Endessa's report hazards are thermal load, desiccation, tunnel collapse, and vibration-triggered predation, none of which is contamination. Those same hazards now carry `hardened` instead, added on 2026-09-08; `resistant` stays cut. Not affected by the lore fields, which add no contamination evidence. |
+
+#### Trait re-run (2026-09-10)
+
+Every ratified species field is now source text on the same footing as the teaser, the art, and the planet record (docs/species-templates/lore-status.json confirms `appearance` and `fields` both ratified for Drilltail). Re-checked all five fields against the existing pool: `origin` and `habitat` add nothing beyond what the teaser and planet record already carried; `feeding` restates the ambush behavior already captured by `stealthy`; `behavior` ("it feels what moves overhead through the ground") restates the `tremorsense` special sense already captured by `perceptive`, so no new trait follows from it. `company` is the one field with new information: "Wildcatters kept several at a time. Left to itself it hunts alone." states outright that the creature is solitary once ownership is removed from the picture.
+
+Change: added `solitary` at 20, cut from `perceptive` (25 to 20) and `hardened` (30 to 25) and `slippery` (45 to 35) to make room within the 100-percent rolled budget and the six-entry cap, keeping the relative order (slippery still strongest, perceptive still weakest) unchanged. `pack-bonded`, the exclusion partner, stays cut: the same company sentence that supports `solitary` attributes the numbers to "wildcatters," an ownership practice, not to the creature's own instinct to coordinate, so it does not clear the bar the way `solitary` does.
 
 ## Element
 
@@ -179,13 +186,16 @@ The lifespan rubric's armored-covering clause pushes this species to `long`, mea
 
 ## Validator output
 
-Final run after the pool-shape pass of 2026-09-08, `node docs/species-templates/tools/validate-template.js drilltail`:
+Final run after the 2026-09-10 trait re-run, `node docs/species-templates/tools/validate-template.js drilltail`:
 
 ```
-0 FAIL, 0 WARN (structurally clean; every WARN must be answered in the walkthrough)
+WARN temperature.planet             validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable
+
+0 FAIL, 1 WARN (structurally clean; every WARN must be answered in the walkthrough)
+logged to docs\species-templates\validation-log\drilltail.jsonl
 ```
 
-The earlier `signature.action.matrix` WARN no longer fires; the signature is tail / strike, inside the tail row. The trait checks `traits.pool.required`, `traits.pool.rolledSum` and `traits.pool.size` are all silent.
+The remaining WARN is the pre-existing, unrelated `temperature.planet` infrastructure note (issue #167, the committed `planetRecords.json` lacks `environment.habitableBandC` in this checkout so the script falls back to the legacy `planets.json` range); it does not concern the trait pool and is unchanged by this pass. The trait checks `traits.pool.required`, `traits.pool.rolledSum` and `traits.pool.size` are all silent, confirming the new six-entry pool (two required at 100, four rolled summing to exactly 100) is structurally clean.
 
 ## Orchestrator amendments
 

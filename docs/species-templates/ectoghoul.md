@@ -147,37 +147,48 @@ Primary `ghost`, from the species `type` field, stored at affinity 100. On-graph
 
 ## Step 9. Trait pool
 
-Pool shape of 2026-09-08. Two required traits at 100, and four rolled entries sharing exactly 100. Expected count: 2 + 100/100 = 3.00. Six entries in total, the maximum a pool may list. No exclusion pair is present, since `solitary` was cut by the evidence bar and `pack-bonded` was never listed.
+Pool shape re-run of 2026-09-10 (see the subsection below for what changed and why). Two required traits at 100, and four rolled entries sharing exactly 100. Expected count: 2 + 100/100 = 3.00. Six entries in total, the maximum a pool may list. No exclusion pair is present: `solitary` is rolled, not at 100, and `pack-bonded` is not listed.
 
 ### Required
 
 | Trait | Evidence |
 |---|---|
 | `phasing` | The body fact. Species: "passing through surfaces"; planet: "with no corporeal bodies to speak of". `corporeality` is non-corporeal, and a non-corporeal body carries the key on every individual by registry rule. |
-| `menacing` | The behavior the description is built around, and the act the signature ability is named for. Species: "emitting a terrifying cackle wherever they go" and "amuse themselves by terrorizing other Xalians". Both clauses of the second source sentence turn on it, and it is species-sourced rather than planet-sourced. |
+| `menacing` | The behavior the description is built around, and the act the signature ability is named for. Species: "emitting a terrifying cackle wherever they go" and "amuse themselves by terrorizing other Xalians". Ratified lore.behavior restates it: "It seems to amuse itself by terrorizing other Xalians." Both readings turn on it, and it is species-sourced rather than planet-sourced. |
 
 ### Rolled (shares sum to 100)
 
 | Trait | Share | Evidence |
 |---|---|---|
-| `stealthy` | 35 | Strongest of the rolled set: a species sentence about its own behavior. Species: "disappearing and re-appearing at will". It does not become required because the same sentence has it announcing itself with a cackle wherever it goes, so the two behaviors sit in tension in the source. |
-| `slippery` | 30 | The `evasionRating` of high in `species.json` is one of the two legacy ratings that map to a trait, which ranks it next. It overlaps `phasing` heavily, so it rides in the rolled set rather than doubling the required one. |
-| `resistant` | 20 | A planet-wide fact. Planet: the Dreadscape is "deep, tarry oceans formed from the fluids that eek out from the ever-compressing layers of a planetwide mass grave", which is a contaminated place to live rather than a temperature, a pressure, or a charge. Low, because the body's immunity to the moon weapon comes from having no cells at all rather than from hardiness. |
-| `hardened` | 15 | The weakest entry, resting on a record field: `environmentalTolerance.ambientMedia` carries vacuum, which is the far end of the thin-air extreme the registry gives this key. Kept small and rolled, since no source sentence makes enduring the physical extremes the point of the creature. |
+| `solitary` | 35 | Now sourced directly: the ratified `lore.company` field states "It roams alone, and it seeks out other Xalians only to torment them." This is a company field naming a definite pattern (roams alone) rather than an absence of evidence, so it clears the bar that stopped the trait in the first pass. Kept in the rolled tier rather than promoted to required, because required is reserved here for the body fact (`phasing`) and the signature-tied behavior (`menacing`); solitary is a real but secondary fact about the same creature. |
+| `stealthy` | 30 | A species sentence about its own behavior. Species: "disappearing and re-appearing at will". It does not become required because the same sentence has it announcing itself with a cackle wherever it goes, so the two behaviors sit in tension in the source. |
+| `slippery` | 20 | The `evasionRating` of high in `species.json` is one of the two legacy ratings that map to a trait. It overlaps `phasing` heavily, so it rides in the rolled set rather than doubling the required one. |
+| `resistant` | 15 | A planet-wide fact. Planet: the Dreadscape is "deep, tarry oceans formed from the fluids that eek out from the ever-compressing layers of a planetwide mass grave", which is a contaminated place to live rather than a temperature, a pressure, or a charge. Low, because the body's immunity to the moon weapon comes from having no cells at all rather than from hardiness. |
 
-Traits the body could plausibly carry that I left out, with reasons: `armored` (covering is `mist` and no anatomy gives an armored aspect), `anchored` (a drifting body is the opposite), `regenerative` (nothing shows it repairing), `healing`, `protective`, and `inspiring` (it is explicitly described terrorizing), `ramming` (no mass and no sprint band), `volatile` and `reflective` (nothing shows it reacting when struck), `mind-sealed` (untested in the source), `telekinetic` (no source sentence), `pack-bonded` (no group-living sentence).
+Traits the body could plausibly carry that I left out, with reasons: `armored` (covering is `mist` and no anatomy gives an armored aspect), `anchored` (a drifting body is the opposite), `regenerative` (nothing shows it repairing), `healing`, `protective`, and `inspiring` (it is explicitly described terrorizing), `ramming` (no mass and no sprint band), `volatile` and `reflective` (nothing shows it reacting when struck), `mind-sealed` (untested in any source, ratified or legacy), `telekinetic` (no source sentence), `pack-bonded` (excluded by `solitary`, and no group-living sentence exists anyway), `hardened` (dropped this pass, see below), `nocturnal`, `toxic`, `luminous`, `hypnotic`, `foresighted`, `perceptive` (all still cut; the ratified fields add nothing new for any of the six, see the cut table).
 
-#### Cut by the evidence bar (2026-09-07)
+#### Trait re-run (2026-09-10)
 
-| Trait | Former percent | Evidence class that failed |
-|---|---|---|
-| `nocturnal` | 40 | Class 3 fails: Phantiri's report terrain lists persistent windless fog and gives no darkness fact, so there is no dark-world statement to adapt to. |
-| `toxic` | 30 | Class 4 fails: anatomy is jaws, tail, and body, with no spines and no stinger, and no agent is described for the ectoplasm. |
-| `solitary` | 25 | Class 3 fails on kind: Phantiri's report notes proximity-aversion territoriality in other populations, but a planet-wide fact may carry only an environmental adaptation, never a behavioral trait. |
-| `luminous` | 12 | Class 4 fails: `physiology.anatomy` declares no light-organs, and green is a named color rather than emitted light. |
-| `hypnotic` | 8 | Class 4 fails: the signature ability's action is terrorize, not a hypnotic act, so the record's own signature names a different trait. |
-| `foresighted` | 4 | No source sentence: neither source claims precognition. |
-| `perceptive` | 20 | Cut on 2026-09-08 by the tightened bar: `senses.special` is empty, and the graded bands that carried the entry, sight [50, 75] and hearing [45, 70], both fall under the new upper-bound floor of 80. |
+The lore.appearance list and the five short lore fields are now ratified sources (`lore-status.json`: ectoghoul appearance ratified, fields ratified, batch two). Re-checked every trait against them:
+
+- `origin`, `habitat`, `feeding` add nothing new: origin restates the Leviticus Overdrive body fact already behind `phasing`; habitat just names the Dreadscape, already the setting for the existing evidence; feeding confirms `diet: none`, which no pool trait reads from.
+- `behavior` restates the species description (cackling, disappearing and reappearing, passing through surfaces, the ectoplasm blast, terrorizing) without adding a new fact, so it reinforces `menacing` and `stealthy` but changes no percent on its own.
+- `company` is new and decisive: "It roams alone, and it seeks out other Xalians only to torment them." This directly ratifies `solitary`, which the first pass cut for lack of exactly this kind of sentence (see the cut table below, restored line). `solitary` is added to the pool at 35.
+- `appearance` (five entries) restates body facts already covered (mist, no limbs, the skull impression, the trailing tail, never touching the ground); nothing here changes an existing percent or adds a new trait.
+
+Adding `solitary` at 35 without breaking the six-entry cap required cutting one existing rolled trait. `hardened` (formerly 15) is cut: it was already flagged in the first pass as the weakest entry, resting on a record field (`ambientMedia` carrying `vacuum`, with no source sentence making physical-extreme endurance the point of the creature), so it is the correct one to give up. `stealthy` and `slippery` are trimmed from 35/30 to 30/20 and `resistant` from 20 to 15 to make room, on the same relative ordering as before (strongest species-sourced behavior first, then the legacy evasion gauge, then the weakest planet-wide fact). Expected count is unchanged at 3.00, since required traits still number two and the rolled tier still sums to exactly 100.
+
+##### Cut by the evidence bar (2026-09-07), with this pass's restorations
+
+| Trait | Former percent | Evidence class that failed | Restored this pass? |
+|---|---|---|---|
+| `nocturnal` | 40 | Class 3 fails: Phantiri's report terrain lists persistent windless fog and gives no darkness fact, so there is no dark-world statement to adapt to. | No: `habitat` only names the Dreadscape; no ratified field states darkness. |
+| `toxic` | 30 | Class 4 fails: anatomy is jaws, tail, and body, with no spines and no stinger, and no agent is described for the ectoplasm. | No: `behavior` restates the ectoplasm blast but still names no agent. |
+| `solitary` | 25 | Class 3 fails on kind: Phantiri's report notes proximity-aversion territoriality in other populations, but a planet-wide fact may carry only an environmental adaptation, never a behavioral trait. | **Yes.** The ratified `company` field is a species-level sentence, not a planet-wide one, so the class-3 objection no longer applies. Restored at 35 in the rolled tier. |
+| `luminous` | 12 | Class 4 fails: `physiology.anatomy` declares no light-organs, and green is a named color rather than emitted light. | No: no ratified field mentions light. |
+| `hypnotic` | 8 | Class 4 fails: the signature ability's action is terrorize, not a hypnotic act, so the record's own signature names a different trait. | No: unchanged. |
+| `foresighted` | 4 | No source sentence: neither source claims precognition. | No: no ratified field claims it either. |
+| `perceptive` | 20 | Cut on 2026-09-08 by the tightened bar: `senses.special` is empty, and the graded bands that carried the entry, sight [50, 75] and hearing [45, 70], both fall under the new upper-bound floor of 80. | No: no ratified field touches senses. |
 
 ## Step 10. Signature ability
 
@@ -265,15 +276,16 @@ Third, and smallest. I listed `jaws` in anatomy and made it the third instrument
 
 ## Validator output
 
-Final run after the pool-shape pass of 2026-09-08:
+Final run after the trait re-run of 2026-09-10:
 
 ```
+WARN temperature.planet             validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable
 WARN instruments.predicate.source   channel "secretion" has a source-text predicate (an emitted substance); the validator agent must confirm the quoted sentence
 
-0 FAIL, 1 WARN (structurally clean; every WARN must be answered in the walkthrough)
+0 FAIL, 2 WARN (structurally clean; every WARN must be answered in the walkthrough)
 ```
 
-The remaining WARN is the instrument predicate, answered in the `## Script denials` section under 'Answers to every WARN'. The old `traits.expected` WARN no longer fires: the pool shape puts the expected count at 3.00. The trait checks `traits.pool.required`, `traits.pool.rolledSum` and `traits.pool.size` are all silent.
+Neither WARN concerns the trait pool. `instruments.predicate.source` is the instrument predicate, answered in the `## Script denials` section under 'Answers to every WARN'. `temperature.planet` is infrastructural: `planetRecords.json`'s Phantiri entry carries `physical.temperatureC` rather than `environment.habitableBandC`, so the script falls back to validating against the legacy planets.json extremes, which is the intended fallback behavior (see the script comment at issue #167) rather than a defect in this record. The trait checks `traits.pool.required`, `traits.pool.rolledSum`, `traits.pool.size` and `traits.exclusion` are all silent, confirming the re-run pool (two required at 100, four rolled summing to 100, six entries, no exclusion pair at 100) is within shape.
 
 ## Orchestrator amendments
 

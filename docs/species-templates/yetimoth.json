@@ -163,9 +163,9 @@
     "pool": {
       "armored": 100,
       "territorial": 100,
-      "menacing": 30,
-      "pack-bonded": 27,
-      "anchored": 23,
+      "pack-bonded": 35,
+      "menacing": 25,
+      "anchored": 20,
       "hardened": 20
     }
   },

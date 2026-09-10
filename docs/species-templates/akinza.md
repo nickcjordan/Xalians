@@ -146,23 +146,35 @@ Legacy `statRatings` are used only as a relative gauge per operating rule 6: `sp
 
 ### Trait pool (required 2, rolled sum 100, expected count 3.00)
 
-Iteration four applies Nick's pool shape of 2026-09-08. Two entries are required and four are rolled, the rolled shares sum to exactly 100, and the pool holds six entries, the maximum. Expected count falls from 6.36 to 3.00. An individual always carries the two required traits and expects about one more; the chance it lands none of the four rolled entries is 0.65 times 0.70 times 0.80 times 0.85, which is 0.309, so a little under a third of Akinzas carry the required pair alone.
+Pool shape, 2026-09-10 re-run: the lore split of 2026-09-09 and the five-field ratification of 2026-09-10 (`lore-status.json` marks `appearance` and `fields` `ratified` for Akinza) put `lore.appearance` and the five short fields on the same footing as the teaser, the art, and the planet record as pool sources (skill section 6, procedure step 9). This pass re-derives the pool from all four source classes rather than carrying the 2026-09-08 shape forward unexamined. Two entries are required and four are rolled, the rolled shares sum to exactly 100, and the pool holds six entries, the maximum. Expected count is unchanged at 3.00: an individual always carries the two required traits and expects about one more from the four rolled entries.
 
 #### Required
 
 | Trait | Evidence |
 |---|---|
-| `stealthy` | The species' whole entry is one sentence and this is what it is about: incredible stealth carrying the creature through the night with ease. The signature ability, Silence of the Long Night, is the same act, and the archetype row leads with prowler. This is the behavior the description is built around, so it defines the species. |
-| `nocturnal` | The same sentence makes the night the point of the creature twice over, once in night vision and once in moving through the night, and the ability is named for it. A planet-wide adaptation is required only where the species' own description makes it the point, and Krystos being permanently dark is the setting rather than the reason: the reason is that this animal's one stated fact is that it works after dark. |
+| `stealthy` | The species' whole entry is one sentence and this is what it is about: incredible stealth carrying the creature through the night with ease. The signature ability, Silence of the Long Night, is the same act, and the archetype row leads with prowler. This is the behavior the description is built around, so it defines the species. Reinforced by the ratified `lore.behavior` field: "It moves at night, using its stealth and night vision to go unseen." |
+| `nocturnal` | The same sentence makes the night the point of the creature twice over, once in night vision and once in moving through the night, and the ability is named for it. A planet-wide adaptation is required only where the species' own description makes it the point, and Krystos being permanently dark is the setting rather than the reason: the reason is that this animal's one stated fact is that it works after dark, echoed again by the ratified `lore.behavior` field above. |
 
 #### Rolled (shares sum to 100)
 
 | Trait | Share | Evidence |
 |---|---|---|
-| `slippery` | 35 | Class 5, Nick's legacy `statRatings` for the Akinza in `lambda/src/json/species.json`, where `evasionRating` reads high. Under the 2026-09-08 shape a high legacy rating ranks its trait first among the rolled entries without setting an absolute percent, so it takes the largest share rather than a fixed one. |
-| `perceptive` | 30 | The species sentence names night vision, a claim about this animal's own senses rather than a planet-wide one. The record's sight band of 70 to 95 clears the 80 line and supports it, but a graded band or a senses list may never make the trait required, since a trait must not restate a field the record already carries. |
-| `territorial` | 20 | Krystos `report.fauna.observations` records guard-pattern forms retained from penal commissions, with no quantifier, and the record's ratified `lore.description` places this species in the feral stock left outside the prison complexes, which proved useful for deterring escape. Denying passage rather than pursuing is the registry definition, so the planet-wide line covers this species' form. |
-| `hardened` | 15 | Krystos `report.hazards` opens with sustained lethal cold and `report.outputPriorities` names cold-proof insulation, which a fur-covered native working the open surface must carry. Rolled rather than required because the species' own description is about the dark and not about the cold. |
+| `solitary` | 35 | The ratified `lore.company` field states it directly: "It goes alone." This is a species-level source that did not exist at the prior pass; the trait was cut on 2026-09-07 for resting on absence alone, and that gap is now closed. `pack-bonded` stays out of the pool: nothing in any source shows this animal working with others, and this field states the opposite. |
+| `perceptive` | 25 | The species sentence names night vision, a claim about this animal's own senses rather than a planet-wide one, echoed by the ratified `lore.behavior` field: "using its stealth and night vision to go unseen." The record's sight band of 70 to 95 clears the 80 line and supports it, but a graded band or a senses list may never make the trait required, since a trait must not restate a field the record already carries, so this stays rolled. |
+| `territorial` | 25 | Krystos `report.fauna.observations` records guard-pattern forms retained from penal commissions, and the ratified `lore.habitat` field now anchors this species itself in that ground: "The arctic wastes outside the prison complexes of Krystos." The ratified `lore.origin` field adds that the Akinza is "Feral stock from the Krystos Generator after the impact", the cohort left to range that ground rather than serve inside the walls. Denying passage rather than pursuing is the registry definition, so this now rests on the species' own ratified fields rather than the planet-wide report alone. |
+| `hardened` | 15 | Krystos `report.hazards` opens with sustained lethal cold and `report.outputPriorities` names cold-proof insulation, which a fur-covered native working the open surface must carry, consistent with the ratified `lore.origin` field's "lifeforms that could survive the frozen tundra." Rolled rather than required because the species' own description and fields are about the dark and the hunt, not about the cold. |
+
+Traits considered and left out, with reasons: `slippery` (cut this run: its only support was ever the legacy `evasionRating` of high, and that is not one of the four source classes this run draws from per procedure step 9; the freed slot went to `solitary` on stronger, species-level evidence), `pack-bonded` (the losing member of the exclusion pair; the ratified `lore.company` field, "It goes alone.", states the opposite directly), `armored` (no plating, casing, or spines in the art; the covering is `fur` and the surface key is `hide`), `anchored` (a light runner is the opposite), `phasing` (corporeal, and nothing suggests it), `regenerative` (no source), `healing`, `protective`, and `inspiring` (nothing shows it acting for others; the ratified `lore.company` field rules this out directly), `ramming` (a light frame that strikes with claws, not mass), `toxic`, `volatile`, and `reflective` (no source of any kind), `hypnotic`, `mind-sealed`, and `telekinetic` (no mental register anywhere in any source), `luminous` (a creature whose function is not being seen would be actively harmed by it, and nothing in the art glows), `menacing` (the planet-wide sentence about the wasteland stock stretched to a behavior trait; no ratified field speaks to deterrence as this species' own act), `dormant` (its only support was the Krystos metabolic-suspension output priority, a planet-wide line naming a form category with no species-level tie, and no ratified field changes that), `resistant` (its only support was thermal, already carried by `hardened`, and the Krystos hazard list names no toxin, corrosion, radiation, or hostile atmosphere), `foresighted` (no source sentence in any class; rare-band value only).
+
+#### Trait re-run (2026-09-10)
+
+Sources newly available this run: the ratified `lore.appearance` list and the five ratified short fields, alongside the teaser, the art, and the planet record already in use. Changes from the previous (2026-09-08) pool:
+
+- Added `solitary` at 35 (new entry): the ratified `lore.company` field, "It goes alone.", is a direct, quotable species-level source that did not exist at the 2026-09-08 pass. The trait was cut on 2026-09-07 explicitly for lacking this (it was 'argued from absence, no group shown in the sentence'); the evidence bar is now met, so it returns.
+- Removed `slippery` (was 35): its only support was ever the legacy `evasionRating` of high, which is not one of the source classes this run draws from; it is dropped to make room for `solitary` on stronger evidence, and the pool stays at the six-entry cap.
+- `perceptive`: 30 to 25, evidence unchanged in kind (species sentence on night vision) but now also echoed by the ratified `lore.behavior` field; percent trimmed only to keep the rolled total at 100 after the swap.
+- `territorial`: 20 to 25, now additionally sourced from the ratified `lore.habitat` and `lore.origin` fields, which place this species itself in the wasteland cohort rather than resting on the planet-wide fauna line alone; percent raised to reflect the stronger, more direct sourcing.
+- `hardened` unchanged at 15; `stealthy` and `nocturnal` unchanged at 100 each, both now additionally echoed by the ratified `lore.behavior` field.
 
 #### Cut by the pool shape (2026-09-08, iteration four)
 
@@ -180,9 +192,11 @@ Iteration four applies Nick's pool shape of 2026-09-08. Two entries are required
 | `menacing` | 8 | planet-wide sentence about the wasteland stock stretched to a behavior trait |
 | `foresighted` | 4 | no source sentence; rare-band value only |
 
-Traits the body could plausibly carry that were left out, with reasons: `armored` (no plating, casing, or spines in the art; the covering is `fur` and the surface key is `hide`), `anchored` (a light runner is the opposite), `phasing` (corporeal, and nothing suggests it), `regenerative` (no source), `healing` and `protective` and `inspiring` (nothing shows it acting for others; the planet history in fact separates this stock from the guards), `ramming` (a light frame that strikes with claws, not mass), `toxic` and `volatile` and `reflective` (no source of any kind), `hypnotic` and `mind-sealed` and `telekinetic` (no mental register anywhere in either source), `luminous` (a creature whose function is not being seen would be actively harmed by it, and nothing in the art glows).
+Restored by the 2026-09-10 lore re-run: `solitary`, cut here for resting on absence alone (the table above says it was 'argued from absence, no group shown in the sentence'), is restored at 35 in the current pool because the newly ratified `lore.company` field, "It goes alone.", is exactly the species-level source this table found missing. `pack-bonded` stays cut: no ratified field states the opposite of `solitary`'s claim, and this field states it directly. `menacing` also stays cut: no ratified field speaks to deterrence as this species' own act, only the same planet-wide sentence that failed here in 2026-09-07.
 
-Under the 2026-09-08 pool shape two entries are required, `stealthy` and `nocturnal`, and four roll for about one further slot, so individuals differ. Both exclusion partners were cut by the 2026-09-07 evidence bar, so neither `solitary` nor `pack-bonded` is in the pool.
+Traits the body could plausibly carry that were left out, with reasons (updated 2026-09-10 for the ratified fields; see the Trait re-run subsection above for the full current reasoning): `armored` (no plating, casing, or spines in the art; the covering is `fur` and the surface key is `hide`), `anchored` (a light runner is the opposite), `phasing` (corporeal, and nothing suggests it), `regenerative` (no source), `healing` and `protective` and `inspiring` (nothing shows it acting for others; the ratified `lore.company` field, "It goes alone.", rules this out directly), `ramming` (a light frame that strikes with claws, not mass), `toxic` and `volatile` and `reflective` (no source of any kind), `hypnotic` and `mind-sealed` and `telekinetic` (no mental register anywhere in any source), `luminous` (a creature whose function is not being seen would be actively harmed by it, and nothing in the art glows).
+
+Under the current pool shape two entries are required, `stealthy` and `nocturnal`, and four roll for about one further slot, so individuals differ. The exclusion pair now holds one member: `solitary` is in the pool at 35, on the strength of the ratified `lore.company` field, while `pack-bonded` remains out because no source shows the opposite of what that field states.
 
 ### Instruments
 
@@ -262,17 +276,16 @@ Only one, and it is the `diet` call. The registry's fallback for a flesh body wi
 
 ## Validator output
 
-Final run, from the worktree root: `node docs/species-templates/tools/validate-template.js akinza --note ...`
+Final run, after the 2026-09-10 trait re-run, from the worktree root: `node docs/species-templates/tools/validate-template.js akinza`
 
 ```
-WARN traits.expected                expected trait count 3.58 is above 3.5; confirm the species is meant to carry that many
-WARN signature.description.elementkey signature description uses element key word(s) as plain words: air (allowed only as ordinary English, never as a type label)
+WARN temperature.planet             validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable
 WARN enc.definition.elementkey      encyclopedia definition uses element key word(s) as plain words: light (allowed only as ordinary English, never as a type label)
 
-0 FAIL, 3 WARN (structurally clean; every WARN must be answered in the walkthrough)
+0 FAIL, 2 WARN (structurally clean; every WARN must be answered in the walkthrough)
 ```
 
-All three WARNs are answered in the Script denials section above.
+`enc.definition.elementkey` is answered in the Script denials section above (ordinary English use of "light", not a type label; no change). `temperature.planet` is a pre-existing infrastructure gap (the committed `planetRecords.json` carries no `environment.habitableBandC`, tracked as issue #167 per the validator script's own comment) unrelated to this trait re-run; it does not concern the trait pool and nothing in this pass changed the temperature band. The earlier `traits.expected` WARN no longer appears because the expected count is unchanged at 3.00, below the script's 3.5 threshold; the earlier `signature.description.elementkey` WARN concerned the signature description, which this trait re-run did not touch, and does not reappear on this run. Both remain answered historically in the Script denials section above.
 
 ## Orchestrator amendments
 
@@ -286,3 +299,4 @@ All three WARNs are answered in the Script denials section above.
 - 2026-09-08, trait evidence bar iteration three (Nick): added hardened, dormant, territorial; raised slippery; cut none; expected count 2.66 to 6.36.
 - 2026-09-08, pool shape (Nick): required stealthy, nocturnal; rolled slippery 35, perceptive 30, territorial 20, hardened 15; expected count 6.36 to 3.00.
 - 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
+- 2026-09-10, trait re-run (ratified lore fields now a pool source): added `solitary` 35 on the ratified `lore.company` field, "It goes alone."; cut `slippery` (legacy stat only, not a valid source class for this run); raised `territorial` 20 to 25 on the ratified `lore.habitat` and `lore.origin` fields; trimmed `perceptive` 30 to 25 to keep the rolled total at 100; `hardened` unchanged at 15; expected count unchanged at 3.00.

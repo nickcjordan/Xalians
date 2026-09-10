@@ -165,9 +165,10 @@
     "pool": {
       "armored": 100,
       "stealthy": 100,
-      "slippery": 45,
-      "hardened": 30,
-      "perceptive": 25
+      "slippery": 35,
+      "hardened": 25,
+      "solitary": 20,
+      "perceptive": 20
     }
   },
   "instruments": [

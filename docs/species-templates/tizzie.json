@@ -167,9 +167,10 @@
   "traits": {
     "pool": {
       "hypnotic": 100,
-      "perceptive": 55,
-      "healing": 37,
-      "foresighted": 8
+      "perceptive": 45,
+      "healing": 35,
+      "pack-bonded": 15,
+      "foresighted": 5
     }
   },
   "instruments": [

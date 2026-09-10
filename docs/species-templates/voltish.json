@@ -167,10 +167,10 @@
     "pool": {
       "insulated": 100,
       "volatile": 30,
-      "menacing": 22,
-      "resistant": 20,
-      "hardened": 16,
-      "perceptive": 12
+      "solitary": 22,
+      "hardened": 20,
+      "menacing": 18,
+      "perceptive": 10
     }
   },
   "instruments": [

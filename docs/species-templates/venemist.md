@@ -105,21 +105,35 @@ Primary `chemical`, fixed by the species entry type Chemical. On-graph secondari
 
 ## Trait pool
 
-Pool shape, 2026-09-08 ruling: one required trait and three rolled entries whose shares sum to 100. Iteration three had `toxic`, `resistant` and `volatile` all at 100; only `toxic` is what this species is in its own lore, so the other two drop into the rolled set.
+Re-run of 2026-09-10 (see the Trait re-run subsection below). The lore split of 2026-09-09/10 ratified `lore.appearance` and the five short fields as sources on the same footing as the teaser, the art and the planet record (`docs/species-templates/lore-status.json`: venemist `appearance: ratified`, `fields: ratified`). Pool shape, 2026-09-08 ruling carried forward: one required trait and the rolled entries share 100 between them. Iteration three had `toxic`, `resistant` and `volatile` all at 100; only `toxic` is what this species is in its own lore, so the other two drop into the rolled set. This pass adds two entries the ratified `behavior` and `company` fields now support, within the six-entry cap.
 
 **Required**
 
 | Trait | Evidence |
 |---|---|
-| `toxic` | The species is a living chemical weapon, which the ruling names as the case where a chemical adaptation is the point of the creature. `species`: "The toxic mist expelled from a tube in its mouth helps to dissolve its prey." The tube is `vents` in `physiology.anatomy`, it is the instrument of the signature ability Dissolution Veil, and the same source sentence says the body cannot feed without it, `species`: "With only 2 teeth". Body-demanded: every individual carries the tube. |
+| `toxic` | The species is a living chemical weapon, which the ruling names as the case where a chemical adaptation is the point of the creature. `species`: "The toxic mist expelled from a tube in its mouth helps to dissolve its prey." The tube is `vents` in `physiology.anatomy`, it is the instrument of the signature ability Dissolution Veil, and the same source sentence says the body cannot feed without it, `species`: "With only 2 teeth". Body-demanded: every individual carries the tube. Reinforced by the ratified `feeding` field: "With only two teeth, it dissolves its prey with the toxic mist it expels from the tube in its mouth." |
 
 **Rolled (shares sum to 100)**
 
 | Trait | Share | Evidence |
 |---|---|---|
-| `resistant` | 55 | Strongest of the rolled set, on the heaviest planet evidence in the batch. The Drainov Generator Environmental Report records full-spectrum toxin immunity across the planet's fauna, lists chemical immunity and filtration organs among its output priorities, and names the atmosphere first among its hazards. `planet`: "The Xalians on Drainov quickly adapted to not only the smog and industrial waste common to the world but also to its bubbling acid swamps, steaming corrosive rain, asphyxiating fumes, slow-drifting clouds of neurotoxic gases, and virulent pathogens." It is a planet-wide adaptation and the species' own sentence is about dissolving prey rather than about surviving the swamp, so it is rolled rather than required. Demoted from 100. |
-| `volatile` | 25 | The same report records reactive discharge on structural breach as a fauna observation, a planet-wide observation that covers this body's form: the one agent this species carries is a corrosive mist held under pressure in a tube seated in its jaws. A fauna observation ranks below the hazard-and-output load behind `resistant`. Demoted from 100. |
-| `perceptive` | 20 | A record field, the weakest of the three classes here. `physiology.senses.smell` is graded [60, 85], whose top clears the bound of 80, and `hearing` is [55, 80]. `physiology.senses.special` is absent and no Drainov output priority names a sensory system, so nothing raises it. |
+| `resistant` | 40 | Strongest of the rolled set, on the heaviest planet evidence in the batch. The Drainov Generator Environmental Report records full-spectrum toxin immunity across the planet's fauna, lists chemical immunity and filtration organs among its output priorities, and names the atmosphere first among its hazards. `planet`: "The Xalians on Drainov quickly adapted to not only the smog and industrial waste common to the world but also to its bubbling acid swamps, steaming corrosive rain, asphyxiating fumes, slow-drifting clouds of neurotoxic gases, and virulent pathogens." It is a planet-wide adaptation and the species' own sentence is about dissolving prey rather than about surviving the swamp, so it is rolled rather than required. Share reduced from 55 to make room for the two restored entries below; still the largest share in the pool. |
+| `volatile` | 20 | The same report records reactive discharge on structural breach as a fauna observation, a planet-wide observation that covers this body's form: the one agent this species carries is a corrosive mist held under pressure in a tube seated in its jaws. A fauna observation ranks below the hazard-and-output load behind `resistant`. Share reduced from 25. |
+| `solitary` | 20 | Restored on this pass. The ratified `company` field states plainly: "It hunts alone in the smog." This is the direct sourced statement the 2026-09-07 cut said was missing, when it was still argued from absence with no sentence or ratified field behind it. A company field states the living and hunting arrangement, not the mechanical bonus every solitary individual gets, so the share sits alongside `volatile` rather than at a body-demanded level. |
+| `stealthy` | 12 | Restored on this pass, at a reduced share. The ratified `behavior` field states: "It hunts by scent through smog too thick to see in." The 2026-09-07 cut asked for a hiding or ambush sentence to pair with the low burrow band; a predator that closes on prey through smog too thick for sight to work is closing unseen, which is exactly the trait's definition of moving unseen until it acts. The share stays modest because the sentence describes how the creature finds prey (by scent, in poor visibility) rather than a deliberate concealment behavior, so the reading is supportive rather than certain. |
+| `perceptive` | 8 | A record field, the weakest evidence class here. `physiology.senses.smell` is graded [60, 85], whose top clears the bound of 80, and `hearing` is [55, 80]. `physiology.senses.special` is absent and no Drainov output priority names a sensory system, so nothing raises it. Share reduced from 20 to make room for the two restored entries, since it remains the weakest-evidenced entry in the pool. |
+
+#### Trait re-run (2026-09-10)
+
+Every change from the 2026-09-08 pool-shape ruling, with the reason:
+
+- Added `solitary` at 20. The ratified `company` field, "It hunts alone in the smog.", is a direct source that answers the exact gap the 2026-09-07 cut named. Per the migration skill's rule that a ratified `company` field is source for `solitary` or `pack-bonded`, this is no longer an argument from silence.
+- Added `stealthy` at 12. The ratified `behavior` field, "It hunts by scent through smog too thick to see in.", is a behavior-field sentence supporting the trait the 2026-09-07 cut said had no hiding or ambush sentence to pair with it; hunting by scent through smog too thick for sight is functionally moving unseen until the strike lands. The share is kept low because the sentence supports rather than states concealment outright.
+- `resistant` reduced from 55 to 40, `volatile` from 25 to 20, and `perceptive` from 20 to 8, so the five rolled shares still sum to exactly 100 with two new entries added; the pool holds six entries total (1 required, 5 rolled), at the cap. `resistant` and `volatile` keep their relative order and stay the two strongest rolled entries, since nothing in the newly ratified fields adds to or subtracts from their planet-report evidence; `perceptive` absorbs the largest proportional cut because it was already flagged as the weakest of the three classes before this pass.
+- `pack-bonded` is not restored: the same `company` field that supports `solitary` ("It hunts alone in the smog.") is direct evidence against its exclusion partner, so the cut stands for the opposite reason than before (previously silence, now a contradicting sentence).
+- Expected trait count after this pass: (100 + 40 + 20 + 20 + 12 + 8) / 100 = 2.00, unchanged from the pre-restoration figure, because the two additions were funded by proportional cuts to the existing three rather than by inflating the total.
+
+Cuts restored this pass: `solitary` and `stealthy`, from the table below, on the strength of the ratified `company` and `behavior` fields respectively. `pack-bonded` is not restored: it is `solitary`'s exclusion partner and the same new field argues against it.
 
 #### Cut by the evidence bar (2026-09-07)
 
@@ -129,7 +143,9 @@ Pool shape, 2026-09-08 ruling: one required trait and three rolled entries whose
 | `solitary` | 30 | still argued from absence; no sentence and no ratified field states it |
 | `pack-bonded` | 20 | still argued from the same silence; the exclusion partner has no sentence or field either, so both stay out |
 
-- Expected trait count after the pool shape: (100 + 55 + 25 + 20) / 100 = 2.00, down from the 3.35 of iteration three. The chance an individual lands none of the three rolled traits is 0.45 times 0.75 times 0.80, which is 27.0 percent. Pool size is four entries, inside the cap of six, and no exclusion pair is present, since neither `solitary` nor `pack-bonded` survived the 2026-09-07 bar.
+Restored 2026-09-10: `solitary` (the ratified `company` field, "It hunts alone in the smog.", is the sourced sentence this cut said was missing) and `stealthy` (the ratified `behavior` field, "It hunts by scent through smog too thick to see in.", is the hiding-adjacent sentence the cut said was absent), both at reduced shares from their pre-cut guesses (30 to 20, 40 to 12) since the new sentences support rather than certify the traits at their old, ungrounded levels. `pack-bonded` is not restored: the same field that restores `solitary` states the opposite of pack behavior.
+
+- Expected trait count after the pool shape: (100 + 40 + 20 + 20 + 12 + 8) / 100 = 2.00. The chance an individual lands none of the five rolled traits is 0.60 times 0.80 times 0.80 times 0.88 times 0.92, which is 31.0 percent. Pool size is six entries, at the cap, and no exclusion pair is present at 100, since `pack-bonded` did not survive either the 2026-09-07 bar or this re-run.
 - `resistant` re-checked under the narrowed 2026-09-08 definition and kept in the pool: its support is the toxin, acid, corrosive-rain and pathogen load of Drainov, which is contamination and chemically hostile air, the exact scope the definition retains. No part of it rests on thin atmosphere, dust, static discharge or temperature. What changed is only its standing: a planet-wide adaptation is required when the species' own description makes it the point of the creature, and this description is about dissolving prey, so it is rolled.
 - `volatile` and `perceptive` both fall well below `resistant` in the share split, in the order the evidence classes rank: a planet fauna observation covering this form, then a record field.
 - No `hardened`, `insulated`, `dormant` or `territorial`: the Drainov hazards are atmosphere, hydrosphere, precipitation, substrate and a subset of the fauna, all chemical rather than thermal, barometric or electrical, and the report names no metabolic suspension and no guard or territorial pattern.
@@ -191,13 +207,15 @@ Values with no supporting source sentence, listed so the guesses are on the reco
 ## WARN answers
 
 - `conduits.source` for vents and chemical: answered above under Instruments and conduits. The sentence is species: "The toxic mist expelled from a tube in its mouth helps to dissolve its prey." The art shows the mist leaving the tube as a spreading cone.
+- `temperature.planet` (validated against the legacy `planets.json` extremes only; `planetRecords.json` habitable band unavailable): a script infrastructure note, not a trait-pool question; the temperature band is untouched by the 2026-09-10 trait re-run and was already re-banded against `planetRecords.json` in the 2026-09-02 planet-rebuild amendment below.
 - Any other WARN the final run raises is answered in the section that owns the field; see the pasted output below.
 
 ## Script denials
 
 Every FAIL the script raised on any run of this key, with the value proposed and what was done.
 
-- Run 1, code md.quote. I wrote the swim-capability evidence as a quotation reading 'acid swamps that mire the surface'. The script found no verbatim match, correctly: the planet history reads 'the acidic swamps that mire the surface', with acidic rather than acid and a leading article. I had shortened it while transcribing. Fixed by quoting the sentence exactly. The denial was legitimate and my original was simply a transcription error, not a better idea. No other FAIL was raised on any run.
+- Run 1, code md.quote. I wrote the swim-capability evidence as a quotation reading 'acid swamps that mire the surface'. The script found no verbatim match, correctly: the planet history reads 'the acidic swamps that mire the surface', with acidic rather than acid and a leading article. I had shortened it while transcribing. Fixed by quoting the sentence exactly. The denial was legitimate and my original was simply a transcription error, not a better idea. No other FAIL was raised on any run through the 2026-09-08 pool-shape iteration.
+- Run 2026-09-10 (trait re-run), code md.quote. The first draft of the `solitary` rolled-table row quoted the 2026-09-07 cut table's own wording, "still argued from absence; no sentence and no ratified field states it", in double quotes. The script correctly failed it: that phrase is this walkthrough's own earlier text, not species or planet source, so double quotes were the wrong convention. Fixed by rewriting the sentence in single-quote convention (my own words, not a quotation) rather than working around the check. The denial was legitimate.
 
 ## Notes
 
@@ -211,13 +229,14 @@ The whole identity of the Venemist is a spray organ seated in its mouth, and the
 
 ## Validator output
 
-Final run (run 2):
+Final run (trait re-run, 2026-09-10):
 
 ```
+WARN temperature.planet             validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable
 WARN conduits.source                conduit vents for chemical: the validator agent must confirm the sentence or art showing the element leaving through this part
 
-0 FAIL, 1 WARN (structurally clean; every WARN must be answered in the walkthrough)
-logged to docsspecies-templatesalidation-logenemist.jsonl
+0 FAIL, 2 WARN (structurally clean; every WARN must be answered in the walkthrough)
+logged to docs\species-templates\validation-log\venemist.jsonl
 ```
 
 ## Orchestrator amendments
