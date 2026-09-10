@@ -59,6 +59,10 @@ import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { Kbd } from '@/components/ui/kbd';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+// Brief B ("patterns") sections, built from @/components/system/layout, @/components/system/status,
+// @/components/system/a11y, @/components/system/stepper, @/components/system/readouts,
+// @/components/system/filters, @/components/system/data-table, @/components/system/identity.
+import { SECTIONS as PATTERN_SECTIONS } from './styleguide/patternSections';
 
 /**
  * The design system reference, version 4 on the new stack
@@ -87,6 +91,7 @@ const SECTIONS: { id: string; label: string }[] = [
     { id: 'overlays', label: 'Overlays' },
     { id: 'data', label: 'Data' },
     { id: 'icons', label: 'Icons' },
+    ...PATTERN_SECTIONS.map(({ id, label }) => ({ id, label })),
 ];
 
 const ELEMENTS = [
@@ -676,6 +681,10 @@ function StyleGuidePage() {
                         ))}
                     </div>
                 </section>
+
+                {PATTERN_SECTIONS.map((s) => (
+                    <section key={s.id} id={s.id} className="mt-12">{s.node}</section>
+                ))}
 
             </Shell>
         </main>

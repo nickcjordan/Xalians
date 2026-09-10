@@ -75,6 +75,14 @@ const V4_IMPORTS = [
 	'@/components/system/brand',
 	'@/components/system/record',
 	'@/components/system/masthead',
+	'@/components/system/layout',
+	'@/components/system/status',
+	'@/components/system/a11y',
+	'@/components/system/stepper',
+	'@/components/system/readouts',
+	'@/components/system/filters',
+	'@/components/system/data-table',
+	'@/components/system/identity',
 ];
 
 /**
