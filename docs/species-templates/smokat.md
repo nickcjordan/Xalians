@@ -10,31 +10,32 @@ The lore split (Nick, 2026-09-09) puts Nick's teaser back into `lore.description
 
 ### appearance (7 entries)
 
-- Lean feline-shaped biped
-- Smooth hide
+- Lean feline shape held in a body of smoke, standing on two legs
+- Surface of smoke with no firm edge
 - Long muzzle
 - Pointed tufted ears
 - Clawed paws
-- Long tail whose tip trails off into smoke
-- Smoke rising off the body
+- Long tail whose tip trails off into loose smoke
+- Nearly weightless
 
-Appearance list (Nick, 2026-09-09, second pass after his corrections): one presentation quality per entry; relative size words only; physical presentation only (no sense capability, no behavior); no absent-anatomy entries unless the absence is the form itself; no defaults such as "unarmored"; no definitive claims that would fence future lore; the art is a source for major visible features but never for how a feature is shaped, angled or counted. Every list re-checked against the artwork by the orchestrator on this pass.
+Rewritten 2026-09-09 for the ghost register (see the amendment of that date); draft until Nick signs it off.
 
-### habits (82 words)
+### habits (123 words)
 
-It came off the secret Generator the Vallerii left in the bowels of Phantiri, put there to supply the laborers who did the heavy lifting at the dig sites, and it hunts now above the Dreadscape, the wasteland of piled Xalian remains that buried the obelisks of the old world. It climbs and springs where the footing is bad, and it takes what crosses beneath it. The fog over that ground stands windless and never lifts, and it works from inside it.
+It is one of the non-corporeal Xalians the abandoned Generator began producing once it rewrote itself under Leviticus Overdrive, after the weapon on the moon had ended everything organic it had made before. It holds a feline shape over the Dreadscape, the wasteland of piled Xalian remains that buried the obelisks of the old world, and the moon-weapon, which targets organic life, passes over it. It climbs and springs where the footing is bad and comes apart into smoke when it needs to cross open ground or close on something unseen. It takes nothing in and feeds on nothing; what it hunts for is the pounce itself. The fog over that ground stands windless and never lifts, and it works from inside it.
 
 | Claim | Source |
 |---|---|
-| came off the secret Generator the Vallerii left in the bowels of Phantiri | planet: "But the Vallerii had left behind a secret Xalian Generator in the bowels of Phantiri" |
-| put there to supply the laborers who did the heavy lifting at the dig sites | planet: "They would need Xalian laborers after all, to do the heavy lifting necessary to uncover the answers to the one question that now plagued them." and "Ever more dig sites continued to uncover stranger and stranger artifacts" |
-| hunts now above the Dreadscape, a wasteland of piled Xalian remains that buried the obelisks of the old world | planet: "its frantic activity forever changed the surface of the entire planet, burying the obelisks of the ancient Phantiri under mountains upon mountains of Xalian corpses" and "blanketed in a vast wasteland known as the Dreadscape"; record `lore.biomeNiche` |
-| the fog over that ground stands windless and never lifts, and it works from inside it | Phantiri `data.Terrain`, thick haze; Phantiri Generator report `terrain.features`, persistent windless fog; record `traits.pool.stealthy` at 100 and `nocturnal` |
-| climbs and springs where the footing is bad | record `capabilities.climb` [55, 80], `leap` [55, 80], `sprint` [60, 85] |
-| takes what crosses beneath it | record `physiology.diet` is `omnivore` |
+| one of the non-corporeal Xalians the abandoned Generator produced once it rewrote itself under Leviticus Overdrive | Phantiri history: the abandoned Generator, unable to keep organic Xalians alive, rewrote itself (Leviticus Overdrive) to produce non-corporeal ghost Xalians; Generator report output priorities, non-corporeal architectures exclusively |
+| the moon weapon ended everything organic | Phantiri history: the reawakened weapon on the moon annihilates all organic life on sight; report hazards |
+| holds a feline shape | species: feline shaped in normal form; record composition gas (a body of smoke that holds a shape at rest) |
+| the Dreadscape of piled remains that buried the obelisks | Phantiri history, the Dreadscape |
+| the moon weapon targets organic life and passes over it | Phantiri history; Ectoghoul habits carry the same reading |
+| climbs and springs; comes apart into smoke to cross ground or close unseen | species: atomize into a cloud of smoke for a sneak attack or quick evasion; record climb and leap bands |
+| takes nothing in | record diet none, the ghost-register default for a body with no way to take anything in |
+| windless fog that never lifts | Generator report and biomeNiche, the thick haze over the corpse islands |
 
-Clauses dropped from the old upgraded description, with the reason: 'and gather itself again' (the reassembly half of the atomizing act) and 'uses the same trick for quick evasion and sneak attacks' were both cut, because both restate Nick's teaser, which now carries them in its own words; nothing they asserted is lost, and the record's `signatureAbility` still states the re-forming.
-
+Draft until Nick signs it off.
 
 ## Source text
 
@@ -222,6 +223,8 @@ $ node docs/species-templates/tools/validate-template.js smokat
 Two WARNs were raised across the run and both were answered by revision rather than argument. `traits.expected` fired at 3.99 on the first pool; I dropped `menacing` and trimmed three percents, bringing the expected count to 3.44. `enc.definition.name` fired because the encyclopedia definition did not name the species; I rewrote it to open with `The Smokat is`. Both were fair calls.
 
 ## Orchestrator amendments
+
+- 2026-09-09, Nick ruled that Phantiri Xalians are non-corporeal across the board, since the Leviticus Overdrive rewrite is the point of that world's story. The record moves to the ghost register: corporeality non-corporeal; composition gas (a body of smoke that holds a feline shape at rest); covering mist; anatomy hide replaced by body; weight 0.5 to 3 kg against the legacy 77 kg, which was a flesh reading; lifespan ageless (cut 1 of the lifespan rubric widened the same day to every non-corporeal body, reported as a lever); diet none; breathes nothing; flight 20 to 45 as drifting smoke; manipulation 20 to 40; vitality and resilience lowered for a body with nothing to bruise. Trait pool reshaped: phasing 100 and stealthy 100 required, slippery 40, nocturnal 25, perceptive 20, resistant 15 rolled. Instruments, signature (an ambush through the claws in the ghost medium) and archetype weights stand. Habits rewritten to the Overdrive origin; the earlier habits paragraph, which had it coming off the secret Generator as a supplier to organic laborers, contradicted the planet and is withdrawn. Appearance list rewritten and returned to draft.
 
 - 2026-09-02, after the independent validation: `diet` changed from `carnivore` to `omnivore` under the ratified selection rule (a sneak-attack sentence is fighting, not feeding, and a flesh body with no feeding sentence defaults to `omnivore`); the Leviticus Overdrive clause was cut from the description because that regime produces non-corporeal Xalians and the Smokat is flesh; the Encyclopedia definition dropped the unsourced lethal-stakes clause and no longer says the smoke reassembles elsewhere, which read as teleportation. `manipulation` [30, 55] stands: `claws` is grasping anatomy in the validator's list, and the skill now states that list explicitly.
 - 2026-09-02, voice (Nick): the invented collapsing-gallery and overseer clause and the dramatic closing line were cut; the description now ends on the stub's own facts (quick evasion and sneak attacks). Word count 95.

@@ -3741,51 +3741,49 @@
       "lore": {
         "description": "Feline shaped in normal form, this clever creature can instantly atomize into a cloud of smoke for a sneak attack or quick evasion.",
         "appearance": [
-          "Lean feline-shaped biped",
-          "Smooth hide",
+          "Lean feline shape held in a body of smoke, standing on two legs",
+          "Surface of smoke with no firm edge",
           "Long muzzle",
           "Pointed tufted ears",
           "Clawed paws",
-          "Long tail whose tip trails off into smoke",
-          "Smoke rising off the body"
+          "Long tail whose tip trails off into loose smoke",
+          "Nearly weightless"
         ],
-        "habits": "It came off the secret Generator the Vallerii left in the bowels of Phantiri, put there to supply the laborers who did the heavy lifting at the dig sites, and it hunts now above the Dreadscape, the wasteland of piled Xalian remains that buried the obelisks of the old world. It climbs and springs where the footing is bad, and it takes what crosses beneath it. The fog over that ground stands windless and never lifts, and it works from inside it.",
+        "habits": "It is one of the non-corporeal Xalians the abandoned Generator began producing once it rewrote itself under Leviticus Overdrive, after the weapon on the moon had ended everything organic it had made before. It holds a feline shape over the Dreadscape, the wasteland of piled Xalian remains that buried the obelisks of the old world, and the moon-weapon, which targets organic life, passes over it. It climbs and springs where the footing is bad and comes apart into smoke when it needs to cross open ground or close on something unseen. It takes nothing in and feeds on nothing; what it hunts for is the pounce itself. The fog over that ground stands windless and never lifts, and it works from inside it.",
         "biomeNiche": "the thick haze over the corpse islands of the Dreadscape"
       },
       "physiology": {
-        "corporeality": "corporeal",
+        "corporeality": "non-corporeal",
         "composition": {
-          "primary": "flesh"
+          "primary": "gas"
         },
         "bodyPlan": "biped",
         "anatomy": [
           "claws",
           "jaws",
           "tail",
-          "hide"
+          "body"
         ],
-        "covering": "hide",
+        "covering": "mist",
         "size": {
           "heightCm": [
             150,
             185
           ],
           "weightKg": [
-            58,
-            84
+            0.5,
+            3
           ]
         },
-        "lifespan": "standard",
+        "lifespan": "ageless",
         "genome": {
           "chirality": "rolled"
         },
-        "diet": "omnivore",
+        "diet": "none",
         "communication": [
           "vocal"
         ],
-        "breathes": [
-          "gas"
-        ],
+        "breathes": [],
         "environmentalTolerance": {
           "ambientMedia": [
             "gas"
@@ -3797,8 +3795,8 @@
         },
         "capabilities": {
           "flight": [
-            0,
-            0
+            20,
+            45
           ],
           "swim": [
             10,
@@ -3821,8 +3819,8 @@
             80
           ],
           "manipulation": [
-            30,
-            55
+            20,
+            40
           ]
         },
         "senses": {
@@ -3852,8 +3850,8 @@
           70
         ],
         "vitality": [
-          35,
-          60
+          25,
+          50
         ],
         "endurance": [
           35,
@@ -3884,16 +3882,16 @@
           50
         ],
         "resilience": [
-          25,
-          50
+          20,
+          45
         ]
       },
       "traits": {
         "pool": {
+          "phasing": 100,
           "stealthy": 100,
-          "slippery": 100,
-          "phasing": 35,
-          "nocturnal": 30,
+          "slippery": 40,
+          "nocturnal": 25,
           "perceptive": 20,
           "resistant": 15
         }

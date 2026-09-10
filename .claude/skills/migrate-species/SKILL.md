@@ -163,6 +163,8 @@ Rules (trait model ratified by Nick 2026-09-02): the pool lists each trait the s
 | plant | Floria | growth and territory | water, chemical, psychic |
 | electric | Zolton | storm and surge, chain and link | light, air, metal |
 | ghost | Phantiri | incorporeality and dread | dark, psychic |
+
+**Phantiri is non-corporeal across the board (Nick, 2026-09-09).** Every species generated on Phantiri is `non-corporeal`: the Leviticus Overdrive rewrite is the point of that world, the moon weapon ends organic life on sight, and the Generator report lists non-corporeal architectures exclusively. A flesh reading of a Phantiri species is a migration error, not a lore exception.
 | rock | Stonera | permanence and immovability | metal, sand, fire |
 | chemical | Drainov | reaction and corrosion | fire, metal, water |
 | air | Saiphus | wind and freedom | electric, water, ice |
@@ -285,7 +287,7 @@ Senses beyond sight, hearing, and smell. Each must be supported by a source sent
 
 Bands of a working life. Apply the cuts in order: composition first, then mass and metabolic intensity, then home-world harshness. Mass means the midpoint of the weight band authored in the size step, which precedes this one; when the size band is not yet authored, use the legacy weight as the gauge. For a `swarm` plan with a central body, the central body is what lives and dies, so its mass is the gauge and the swarm clause of cut 3 does not apply; the swarm clause is for a species that is the swarm. "Armored" below means an armored covering (`chitin`, `plating`, `crystal`) or the `shell` anatomy key, not the trait.
 
-1. Spectral and energy bodies are `ageless` (still killable).
+1. Spectral and energy bodies, and every non-corporeal body whatever its composition, are `ageless` (still killable). (Widened 2026-09-09 for the Smokat: a smoke body is not short-lived by mass.)
 2. Mineral and metal bodies are `enduring`; a mineral or metal secondary on a flesh body does not change the band. This band is not moved by harshness.
 3. Flesh, plant, slime, and gas bodies, by mass: below 20 kg are `fleeting` when the body is a swarm or a conjured-unit body (disposable by nature), and `short` otherwise, including a small flier that merely gathers in numbers (Nick, 2026-09-02: Avilily is `short`); 20 kg up to and including 200 kg are `standard`; above 200 kg are `long`. Then, after the mass cut, one adjustment: a body the description calls cold, slow, or long-lived, or that carries an armored covering, moves up one band (never past `long`). Cut 4 (harshness) is applied last.
 4. Harshness moves a flesh, plant, slime, or gas body one band down only when the description says the environment shortens its life.
