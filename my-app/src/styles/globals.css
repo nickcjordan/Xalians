@@ -196,3 +196,7 @@
    the old template paints every bare <a> mint; on the new stack a link is the
    ink of its text unless a class says otherwise. */
 a { color: inherit; }
+/* The old template paints <body> #0d0d0d !important; a page's <main> starts
+   below the navbar and its masthead margin collapses through it, so the body
+   showed as a darker strip under the navbar on every chrome page. */
+body { background-color: var(--color-room) !important; }
