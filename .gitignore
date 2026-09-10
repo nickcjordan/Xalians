@@ -65,3 +65,7 @@ generate_xalian_lambda.zip
 
 # local scratch (design snapshots, session logs)
 untracked/
+
+# read-only AWS CLI captures used to write terraform/import config against; never commit
+# live account data
+.live/
