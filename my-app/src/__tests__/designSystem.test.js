@@ -37,13 +37,18 @@ const readStyleguide = () =>
 		.map((f) => fs.readFileSync(f, 'utf8'))
 		.join('\n');
 
-/** Every *.js under src/pages/, recursively, with paths relative to src/pages/. */
+/**
+ * Every *.js under src/pages/, recursively, with paths relative to src/pages/.
+ * `__tests__` directories are skipped: a page's test is not a page and never
+ * classifies itself.
+ */
 const listPageFiles = (dir, base) => {
 	base = base || dir;
 	let out = [];
 	for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
 		const full = path.join(dir, entry.name);
 		if (entry.isDirectory()) {
+			if (entry.name === '__tests__') continue;
 			out = out.concat(listPageFiles(full, base));
 		} else if (entry.isFile() && entry.name.endsWith('.js')) {
 			out.push(path.relative(base, full).split(path.sep).join('/'));

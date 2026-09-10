@@ -1,6 +1,6 @@
-// GET /xalians (D1, the registry). Without ownerId, lists the caller's own generated
-// records; with ownerId, lists that owner's -- registry records are public, like the
-// legacy collection view (retrieveUser.ts's populateXalians path).
+// GET /xalians (the registry). Without ownerId, lists the caller's own generated records;
+// with ownerId, lists that owner's -- registry records are public, and this is how a
+// profile page reads someone's creatures now that the user record no longer carries any.
 import { withApi } from '../lib/api.ts';
 import { ListRegistryXaliansQuerySchema } from '../lib/schemas.ts';
 import * as registryRepo from '../repositories/registry.ts';

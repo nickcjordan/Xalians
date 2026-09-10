@@ -1,8 +1,8 @@
 // Promise-returning repository for XalianRegistry (hash key xalianId, GSI byOwner on
-// ownerId + generatedAt). This is the new table for server-generated, ratified records
-// (D1); it does not touch the legacy XalianTable/XalianUsersTable, which keep serving the
-// showroom keep flow (see repositories/xalians.ts, repositories/users.ts).
-import { GetCommand, PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb';
+// ownerId + generatedAt). This is the only table holding creatures: the legacy XalianTable
+// and its code path were retired with issue #180, and XalianUsersTable now carries nothing
+// but account identity (see repositories/users.ts).
+import { DeleteCommand, GetCommand, PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import type { XalianRecord } from '@xalians/content/schema';
 import { ddb } from '../lib/db.ts';
 import * as log from '../lib/log.ts';
@@ -48,6 +48,28 @@ export async function putRecord(ownerId: string, record: XalianRecord): Promise<
       throw new XalianAlreadyExistsError(record.id);
     }
     log.error('putRecord failed', { xalianId: record.id, errorName: err instanceof Error ? err.name : typeof err });
+    throw err;
+  }
+}
+
+// The whole item, ownerId included. Reading a record is open to any authenticated caller,
+// so getRecord below is the common path; this exists for the writes that must first check
+// who owns the thing (releaseRegistryXalian.ts).
+export async function getItem(xalianId: string): Promise<RegistryItem | null> {
+  try {
+    const result = await ddb.send(new GetCommand({ TableName: TABLE_NAME, Key: { xalianId } }));
+    return (result.Item as RegistryItem | undefined) ?? null;
+  } catch (err) {
+    log.error('getItem failed', { xalianId, errorName: err instanceof Error ? err.name : typeof err });
+    throw err;
+  }
+}
+
+export async function deleteRecord(xalianId: string): Promise<void> {
+  try {
+    await ddb.send(new DeleteCommand({ TableName: TABLE_NAME, Key: { xalianId } }));
+  } catch (err) {
+    log.error('deleteRecord failed', { xalianId, errorName: err instanceof Error ? err.name : typeof err });
     throw err;
   }
 }

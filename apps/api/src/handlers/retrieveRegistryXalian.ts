@@ -1,7 +1,6 @@
-// GET /xalians/{xalianId} (D1, the registry). Any authenticated caller may read any
-// registry record (they are public, like the legacy collection view); ownership only
-// gates generation and future spends. 404 XALIAN_NOT_FOUND here, unlike the legacy
-// /db/xalian route which keeps its historical 400 XALIAN_NOT_FOUND for compatibility.
+// GET /xalians/{xalianId} (the registry). Any authenticated caller may read any registry
+// record -- they are public. Ownership gates writing, not reading: generating, releasing
+// (DELETE /xalians/{xalianId}) and future spends.
 import { ApiError, withApi } from '../lib/api.ts';
 import { RetrieveRegistryXalianParamsSchema } from '../lib/schemas.ts';
 import * as registryRepo from '../repositories/registry.ts';

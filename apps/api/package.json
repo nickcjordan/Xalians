@@ -2,7 +2,7 @@
   "name": "@xalians/api",
   "version": "1.0.0",
   "private": true,
-  "description": "Xalian generation engine and CRUD lambdas. TypeScript handlers over promise-based repositories, bundled per handler by esbuild to dist/<name>/index.mjs. @aws-sdk/* is external at bundle time because nodejs22.x provides it at runtime. src/legacy/ is the old CommonJS generation engine (allowJs), kept only to serve GET /xalian and POST /db/xalian until Wave D moves generation onto @xalians/rules.",
+  "description": "The Xalians HTTP API: registry and account lambdas. TypeScript handlers over promise-based repositories, bundled per handler by esbuild to dist/<name>/index.mjs. @aws-sdk/* is external at bundle time because nodejs22.x provides it at runtime. Creature generation is @xalians/rules; the old CommonJS engine and its routes were deleted with issue #180.",
   "type": "module",
   "scripts": {
     "build": "node esbuild.config.mjs",
