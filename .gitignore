@@ -68,3 +68,7 @@ untracked/
 
 # Paint-check screenshots (issue #180 and after): local evidence, never committed.
 .screenshots/
+
+# read-only AWS CLI captures used to write terraform/import config against; never commit
+# live account data
+.live/

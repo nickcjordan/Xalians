@@ -21,6 +21,7 @@ import {
   MediumPhaseKeySchema,
   TraitKeySchema,
 } from './registries.ts';
+import { GRADED_SENSE_KEYS, SPECIAL_SENSE_KEYS } from '../registriesConst.ts';
 
 // The 10 frozen attributes and the 5 temperament axes are always all present (the
 // "explicit-none" contract: universal dimensions are never omitted), so each is spelled
@@ -41,6 +42,11 @@ const AttributeBlockSchema = z.object({
   resilience: zeroToHundred,
 });
 
+// The five temperament axes are not a registries.json list (temperament is a fixed part
+// of the record shape, not a species-editable registry), so this object schema is the one
+// hand-authored source for the axis names; TemperamentKey below derives from its own keys
+// rather than duplicating them, and packages/rules/src/generator/types.ts re-exports that
+// type instead of hand-writing the union (issue #181).
 const TemperamentSchema = z.object({
   boldness: zeroToHundred,
   curiosity: zeroToHundred,
@@ -48,6 +54,8 @@ const TemperamentSchema = z.object({
   aggression: zeroToHundred,
   sociability: zeroToHundred,
 });
+
+export type TemperamentKey = keyof z.infer<typeof TemperamentSchema>;
 
 const CapabilitiesSchema = z.object({
   flight: zeroToHundred,
@@ -62,14 +70,13 @@ const CapabilitiesSchema = z.object({
 // registries.senses lists sight/hearing/smell (always-present, graded) plus six special
 // senses (echolocation, tremorsense, electroreception, psychic, heat-sense, void-sense),
 // which are additive extras named in the `special` list only when the creature has them.
-const SpecialSenseKeySchema = z.enum([
-  'echolocation',
-  'tremorsense',
-  'electroreception',
-  'psychic',
-  'heat-sense',
-  'void-sense',
-]);
+// Both halves of the split are generated from registries.json's `special` flag into
+// GRADED_SENSE_KEYS / SPECIAL_SENSE_KEYS (registriesConst.ts, scripts/bundleLore.js), so
+// this file names the schemas but does not hand-list the keys a second time.
+export const GradedSenseKeySchema = z.enum(GRADED_SENSE_KEYS);
+export type GradedSenseKey = z.infer<typeof GradedSenseKeySchema>;
+
+const SpecialSenseKeySchema = z.enum(SPECIAL_SENSE_KEYS);
 
 const SensesSchema = z.object({
   sight: zeroToHundred,
@@ -77,6 +84,13 @@ const SensesSchema = z.object({
   smell: zeroToHundred,
   special: z.array(SpecialSenseKeySchema).optional(),
 });
+
+// Instance-level chirality is levo/dextro (rolled 50/50) or achiral (species-declared) --
+// see the TODO(lever) note where this is used in PhysiologySchema.genome below. Named and
+// exported here so packages/rules/src/generator/types.ts can re-export the type instead
+// of hand-writing the union (issue #181).
+const ChiralitySchema = z.enum(['levo', 'dextro', 'achiral']);
+export type Chirality = z.infer<typeof ChiralitySchema>;
 
 const ProvenanceSchema = z.object({
   seed: z.string().min(1),
@@ -115,7 +129,7 @@ const PhysiologySchema = z
     // MODE, not this domain, so it is intentionally not reused here.
     // TODO(lever): if a future registries.json revision adds the instance-value domain,
     // point this at it instead of the literal enum.
-    genome: z.object({ chirality: z.enum(['levo', 'dextro', 'achiral']) }),
+    genome: z.object({ chirality: ChiralitySchema }),
     diet: DietKeySchema,
     communication: z.array(CommunicationKeySchema),
     breathes: z.array(MediumPhaseKeySchema),
@@ -177,9 +191,15 @@ const AbilitySchema = z.object({
   description: z.string().min(1).optional(),
 });
 
+// Not a registries.json list -- a fixed cosmetic-rarity enum defined here, the one
+// hand-authored source; packages/rules/src/generator/types.ts re-exports the type
+// (issue #181).
+const FinishSchema = z.enum(['standard', 'gleam', 'prismatic', 'eclipse']);
+export type Finish = z.infer<typeof FinishSchema>;
+
 const AppearanceSchema = z
   .object({
-    finish: z.enum(['standard', 'gleam', 'prismatic', 'eclipse']),
+    finish: FinishSchema,
   })
   // Reserved fields may be added to appearance later (cosmetic overlay is documented as
   // "global rarity overlay", not a closed record); passthrough keeps unknown future keys

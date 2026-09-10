@@ -43,6 +43,8 @@ import {
 } from './constants.ts';
 import type {
 	AbilityCatalog,
+	ActionKey,
+	ArchetypeKey,
 	AttributeKey,
 	Band,
 	CatalogEntry,
@@ -51,8 +53,10 @@ import type {
 	Finish,
 	GenerateBatchArgs,
 	GenerateXalianArgs,
+	InstrumentKey,
 	Registries,
 	SpeciesTemplate,
+	TraitKey,
 	XalianRecord,
 } from './types.ts';
 
@@ -105,9 +109,16 @@ function rollFavoredInBand(rng: Rng, [lo, hi]: Band): number {
 
 function rollArchetype(rng: Rng, template: SpeciesTemplate, registries: Registries): RecordArchetype {
 	const weights = Object.entries(template.archetypeWeights || { balanced: 100 }) as Array<[string, number]>;
-	const key = rng.weighted(weights) as string;
+	// template.archetypeWeights is keyed by ArchetypeKeySchema, so every entry key is
+	// already an ArchetypeKey; rng.weighted only narrows to what it was handed.
+	const key = rng.weighted(weights) as ArchetypeKey;
 	const row = (registries.archetypes || []).find((a) => a.key === key);
-	return { key, favors: row && Array.isArray(row.favors) ? row.favors.slice() : [] };
+	// registries.archetypes entries carry `favors` as the generic RegistryEntry shape
+	// (z.array(z.string())), not narrowed to AttributeKey -- registries.ts keeps that entry
+	// shape untyped by design (the test suite cross-checks favors against the attribute
+	// union instead of duplicating it in the type). The cast asserts what the test
+	// guarantees.
+	return { key, favors: row && Array.isArray(row.favors) ? (row.favors.slice() as AttributeKey[]) : [] };
 }
 
 interface AttributesResult {
@@ -258,7 +269,7 @@ function tiltPercentile(spec: { on: string }, ctx: TiltContext): number {
 	}
 }
 
-function tiltedPercent(key: string, percent: number, ctx: TiltContext): number {
+function tiltedPercent(key: TraitKey, percent: number, ctx: TiltContext): number {
 	if (percent >= 100) {
 		return 100;
 	}
@@ -274,9 +285,14 @@ function tiltedPercent(key: string, percent: number, ctx: TiltContext): number {
 	return clamp(Math.round(percent * factor), 1, 99);
 }
 
-function rollTraits(rng: Rng, template: SpeciesTemplate, ctx: TiltContext): string[] {
-	const pool = (template.traits && template.traits.pool) || {};
-	const tilted = Object.keys(pool)
+function rollTraits(rng: Rng, template: SpeciesTemplate, ctx: TiltContext): TraitKey[] {
+	// template.traits.pool is keyed by TraitKeySchema (Partial<Record<TraitKey, number>>);
+	// Object.keys always returns string[] regardless of the record's key type (a TS
+	// limitation, not a narrowing gap), so every key pulled off it here is cast back to
+	// TraitKey, which is what the record actually contains.
+	const pool = ((template.traits && template.traits.pool) || {}) as Partial<Record<TraitKey, number>>;
+	const poolKeys = Object.keys(pool) as TraitKey[];
+	const tilted = poolKeys
 		.filter((key) => (pool[key] ?? 0) > 0)
 		.map((key) => ({ key, percent: tiltedPercent(key, pool[key] ?? 0, ctx) }));
 
@@ -287,8 +303,8 @@ function rollTraits(rng: Rng, template: SpeciesTemplate, ctx: TiltContext): stri
 
 	// exclusion partners: the higher percent rolls first, its partner skips if it lands
 	const order = tilted.slice().sort((a, b) => b.percent - a.percent);
-	const landed: string[] = [];
-	const partnerOf = (key: string) => {
+	const landed: TraitKey[] = [];
+	const partnerOf = (key: TraitKey) => {
 		const pair = TRAIT_EXCLUSIONS.find((p) => p.includes(key));
 		return pair ? pair.find((k) => k !== key) : null;
 	};
@@ -302,7 +318,7 @@ function rollTraits(rng: Rng, template: SpeciesTemplate, ctx: TiltContext): stri
 		}
 	});
 	// stored in template order so two individuals of a species list traits alike
-	return Object.keys(pool).concat(['phasing']).filter((k, i, arr) => landed.includes(k) && arr.indexOf(k) === i);
+	return poolKeys.concat(['phasing']).filter((k, i, arr) => landed.includes(k) && arr.indexOf(k) === i);
 }
 
 function rollFinish(rng: Rng): Finish {
@@ -317,16 +333,16 @@ function rollFinish(rng: Rng): Finish {
 	return 'standard';
 }
 
-function instrumentRow(registries: Registries, instrument: string): string[] {
+function instrumentRow(registries: Registries, instrument: InstrumentKey): ActionKey[] {
 	const table = registries.instrumentActions || {};
 	return Array.isArray(table[instrument]) ? table[instrument] : [];
 }
 
-function allowedActions(registries: Registries, template: SpeciesTemplate, instrument: string, medium: string): string[] {
+function allowedActions(registries: Registries, template: SpeciesTemplate, instrument: InstrumentKey, medium: ElementKey): ActionKey[] {
 	const row = instrumentRow(registries, instrument).slice();
 	const conduits = template.conduits || {};
 	if (conduits[instrument] === medium) {
-		(CONDUIT_ACTIONS_BY_MEDIUM[medium as ElementKey] || []).forEach((a) => {
+		(CONDUIT_ACTIONS_BY_MEDIUM[medium] || []).forEach((a) => {
 			if (!row.includes(a)) {
 				row.push(a);
 			}
@@ -345,7 +361,7 @@ function entryName(e: CatalogEntry): string {
 	return Array.isArray(e) ? e[0] : e;
 }
 
-function entryAllows(e: CatalogEntry, instrument: string): boolean {
+function entryAllows(e: CatalogEntry, instrument: InstrumentKey): boolean {
 	return !Array.isArray(e) || e[1].length === 0 || e[1].includes(instrument);
 }
 
@@ -355,7 +371,7 @@ function entryHeft(e: CatalogEntry): number {
 
 // name candidates: the medium's cell for the action plus the neutral pool, filtered to
 // names this instrument may carry and names this creature has not used yet
-function nameCandidates(catalog: AbilityCatalog, medium: string, action: string, instrument: string, usedNames: Set<string>) {
+function nameCandidates(catalog: AbilityCatalog, medium: ElementKey, action: ActionKey, instrument: InstrumentKey, usedNames: Set<string>) {
 	const cell = (catalog.elements && catalog.elements[medium] && catalog.elements[medium][action]) || [];
 	const neutral = (catalog.neutral && catalog.neutral[action]) || [];
 	const pick = (list: CatalogEntry[]) => list.filter((e) => entryAllows(e, instrument) && !usedNames.has(entryName(e).toLowerCase()));
@@ -405,7 +421,7 @@ function rollAbilities(
 	const abilities: RecordAbility[] = [signature];
 	const usedNames = new Set<string>([signature.name.toLowerCase()]);
 	const usedActions = new Set<string>([signature.action]);
-	const instruments = Array.isArray(template.instruments) && template.instruments.length > 0 ? template.instruments : ['body'];
+	const instruments: InstrumentKey[] = Array.isArray(template.instruments) && template.instruments.length > 0 ? template.instruments : ['body'];
 	const count = rng.range(ROLLED_ABILITY_COUNT[0], ROLLED_ABILITY_COUNT[1]);
 
 	let attempts = 0;

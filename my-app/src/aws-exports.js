@@ -17,13 +17,6 @@ const awsmobile = {
         passwordPolicyCharacters: [],
     },
     aws_cognito_verification_mechanisms: ['EMAIL'],
-    aws_cloud_logic_custom: [
-        {
-            name: 'AdminQueries',
-            endpoint: 'https://mqzl3wz9lh.execute-api.us-east-1.amazonaws.com/dev',
-            region: 'us-east-1',
-        },
-    ],
 };
 
 export default awsmobile;

@@ -165,9 +165,11 @@
   "traits": {
     "pool": {
       "armored": 100,
-      "ramming": 45,
-      "hardened": 35,
-      "perceptive": 20
+      "ramming": 30,
+      "nocturnal": 25,
+      "hardened": 20,
+      "solitary": 15,
+      "perceptive": 10
     }
   },
   "instruments": [

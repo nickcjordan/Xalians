@@ -166,8 +166,8 @@
     "pool": {
       "telekinetic": 100,
       "territorial": 100,
-      "dormant": 35,
-      "anchored": 25,
+      "dormant": 40,
+      "anchored": 20,
       "perceptive": 20,
       "insulated": 20
     }

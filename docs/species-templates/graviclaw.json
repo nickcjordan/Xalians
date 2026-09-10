@@ -165,10 +165,10 @@
     "pool": {
       "armored": 100,
       "anchored": 100,
-      "grappling": 32,
-      "stealthy": 28,
+      "grappling": 36,
+      "solitary": 26,
       "telekinetic": 22,
-      "nocturnal": 18
+      "stealthy": 16
     }
   },
   "instruments": [

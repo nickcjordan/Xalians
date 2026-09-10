@@ -109,28 +109,38 @@ Primary is `psychic`, from the species type and the home planet Telypso. Seconda
 
 ## Trait pool
 
-Reshaped on 2026-09-08 under Nick's pool shape: two required traits at 100, four rolled entries whose percents sum to exactly 100, and six entries in all, which is the ceiling. The expected count falls from 5.75 to 3.00, and an individual lands no rolled trait at all 30.9 percent of the time. No exclusion pair is active, because neither `pack-bonded` nor `solitary` is listed.
+Reshaped on 2026-09-08 under Nick's pool shape, re-run 2026-09-10 against the now-ratified `lore.appearance` and five short fields: two required traits at 100, four rolled entries whose percents sum to exactly 100, and six entries in all, which is the ceiling. The expected count is 3.00, and an individual lands no rolled trait at all 30.9 percent of the time (0.6 x 0.7 x 0.8 x 0.9). No exclusion pair is active, because neither `pack-bonded` nor `solitary` is listed.
 
 Required
 
 | Trait | Evidence |
 |---|---|
-| `healing` | The behavior the description is built around and the purpose the species was printed for, stated as a natural ability of the animal rather than as a disposition. Evidence (species): "their natural empathic healing abilities served to balance and treat patients", and the present-day sentence has the same animals working as healers among the stars. |
-| `hypnotic` | The other half of the same description, carried by an organ every individual has, and the act the signature ability is built on. Evidence (species): "it hypnotizes others and locks them in a trance", with the organ stated for the whole species in "a single color-changing unicorn horn atop their heads". The registry key caps exactly where the source does, at entrancing and dulling the will to act. |
+| `healing` | The behavior the description is built around and the purpose the species was printed for, stated as a natural ability of the animal rather than as a disposition. Evidence (species): "their natural empathic healing abilities served to balance and treat patients", and the present-day sentence has the same animals working as healers among the stars. The ratified `origin` field restates the same purpose in its own words: "using its empathic healing to balance and treat patients." |
+| `hypnotic` | The other half of the same description, carried by an organ every individual has, and the act the signature ability is built on. Evidence (species): "it hypnotizes others and locks them in a trance", with the organ stated for the whole species in "a single color-changing unicorn horn atop their heads". The registry key caps exactly where the source does, at entrancing and dulling the will to act. The ratified `appearance` entry "Single color-changing unicorn horn atop the head" and the ratified `behavior` field, "When its horn pulses and swirls with color it hypnotizes whoever is watching and locks them in a trance", both restate the same organ and act. |
 
-Both required slots go to behavior, which is the exception the pool shape allows rather than the usual body-fact-then-behavior pair: no body fact is fielded here, since the covering is `fur`, the body is corporeal, and the anatomy carries `crest`, `hide` and `body` with no light organ. The golden glow is therefore a description sentence rather than a record field, and it takes a rolled entry below.
+Both required slots go to behavior, which is the exception the pool shape allows rather than the usual body-fact-then-behavior pair: no body fact is fielded here, since the covering is `fur`, the body is corporeal, and the anatomy carries `crest`, `hide` and `body` with no light organ. The golden glow is therefore a rolled entry below rather than a body-demanded fact, since the anatomy and covering fields do not carry it.
 
 Rolled (shares sum to 100)
 
 | Trait | Share | Evidence |
 |---|---|---|
-| `regenerative` | 35 | First of the rolled set by rule: Nick's legacy `statRatings` in `lambda/src/json/species.json` set `recoveryRating` to high for this species, and a high legacy rating ranks a trait first among the rolled entries without setting an absolute percent. No sentence shows this body closing its own wounds, which is why the rating ranks it rather than requiring it. |
-| `luminous` | 30 | A species sentence about the species' own body, stated as part of what a Hypnopet is. Evidence (species): "Hypnopets resemble glowing, golden-furred bunny rabbits with a single color-changing unicorn horn atop their heads." Held out of the required set because the glow is neither a body field nor the behavior the creature is built around. |
-| `protective` | 20 | A species sentence about the species' own purpose, service animals and therapists set to look after patients. Ranked below `luminous` because it is a disposition inferred from the role rather than a stated ability of the body, and because the shielding reading overlaps the required `healing` entry. |
-| `perceptive` | 15 | Record fields only: `physiology.senses.special` carries `psychic` and `physiology.senses.hearing` is banded 70 to 90, an upper bound past 80. A special sense is evidence for this trait and never makes it required, because a trait must not restate a field the record already carries. |
+| `luminous` | 40 | Strongest of the rolled set on this pass. Evidence (species): "Hypnopets resemble glowing, golden-furred bunny rabbits with a single color-changing unicorn horn atop their heads." The ratified `appearance` list now states the same quality as a defining presentation entry in its own right, "Glowing golden fur", rather than only a clause inside the teaser, which is why the share moves up from the previous pass. Held out of the required set because the glow is neither a `covering` or `anatomy` field nor the behavior the signature is built on. |
+| `regenerative` | 30 | Nick's legacy `statRatings` in `species.json` set `recoveryRating` to high for this species, and a high legacy rating ranks a trait first among the candidates for a rolled entry without setting an absolute percent. No sentence shows this body closing its own wounds, which is why the rating ranks it rather than requiring it. |
+| `protective` | 20 | A species sentence about the species' own purpose, service animals and therapists set to look after patients. The ratified `company` field now states the same disposition directly for this species, "It keeps close to its patients", rather than only inferring it from the role. Ranked below `luminous` and `regenerative` because the shielding reading still overlaps the required `healing` entry. |
+| `perceptive` | 10 | Record fields only: `physiology.senses.special` carries `psychic` and `physiology.senses.hearing` is banded 70 to 90, an upper bound past 80. A special sense is evidence for this trait and never makes it required, because a trait must not restate a field the record already carries. |
 
+Traits considered and left out, with reasons: `armored`, because no armored covering or shell appears in either source; `phasing`, because the body is corporeal and nothing shows physical interactions passing through it; `menacing`, because nothing shows it eroding courage, its effect being a trance rather than fear; `stealthy`, because nothing shows it moving unseen and the body glows, which argues against it; `nocturnal`, because the planet history names an ultraviolet sun and lit jungles rather than perpetual night, so there is no environmental demand; `pack-bonded` and `solitary`, because the ratified `company` field, "It keeps close to its patients", is about proximity to the patients it treats rather than about living alone or among its own kind, so it does not settle either exclusion partner; and `toxic`, `volatile`, `reflective`, `ramming`, `anchored`, and `resistant`, because nothing in either source supports any of them.
 
-Traits considered and left out, with reasons: `armored`, because no armored covering or shell appears in either source; `phasing`, because the body is corporeal and nothing shows physical interactions passing through it; `menacing`, because nothing shows it eroding courage, its effect being a trance rather than fear; `stealthy`, because nothing shows it moving unseen and the body glows, which argues against it; `nocturnal`, because the planet history names an ultraviolet sun and lit jungles rather than perpetual night, so there is no environmental demand; and `toxic`, `volatile`, `reflective`, `ramming`, `anchored`, `resistant`, and `solitary`, because nothing in either source supports any of them and `solitary` would contradict the pack-bonded reading of healers traveling together.
+#### Trait re-run (2026-09-10)
+
+Sources newly available for this pass: the ratified `lore.appearance` list and the five short lore fields (`origin`, `habitat`, `feeding`, `behavior`, `company`), none of which existed when the 2026-09-08 pool below was authored.
+
+- `luminous` raised from 30 to 40 and moved to the top of the rolled set. The ratified `appearance` entry "Glowing golden fur" now states the glow as a defining presentation quality in its own right, not only a clause inside the teaser, which strengthens the evidence without making it a body-demanded field (neither `covering` nor `anatomy` carries a light organ).
+- `protective` unchanged in rank but now cites the ratified `company` field, "It keeps close to its patients", as direct species-specific evidence for the disposition, instead of resting only on the inferred purpose of the role.
+- `healing` and `hypnotic` (both required, unchanged at 100) now also cite the ratified `origin` and `behavior` fields, which restate the same purpose and act in their own words rather than adding a new fact.
+- `regenerative` and `perceptive` are otherwise unchanged in evidence; their shares were adjusted (35 to 30, and 15 to 10) only to keep the rolled set summing to exactly 100 once `luminous` moved up.
+- No trait was added or cut on this pass: the `company` field was checked against `pack-bonded` and `solitary` and settles neither (it describes proximity to patients, not group living), so the exclusion pair stays out of the pool as before.
+- Expected count is unchanged at 3.00, since the two required traits and the rolled total are the same shape; only the internal split of the rolled 100 moved.
 
 #### Cut by the evidence bar (2026-09-07)
 
@@ -144,6 +154,8 @@ Traits considered and left out, with reasons: `armored`, because no armored cove
 | `foresighted` | 5 | pool full, weaker evidence |
 
 Pool expected count 5.00 to 3.30 in iteration one, then 3.30 to 3.75 in iteration two once `perceptive` was restored. No surviving percent was changed in either pass. Iteration three on 2026-09-08 moved it from 3.75 to 5.75: `perceptive` raised to 100 on the psychic special sense, `luminous` raised to 100 on the species sentence, `regenerative` added at 100 on the legacy recovery rating, and `foresighted` restored at 5 on the Telypso report. Nothing was cut, and no surviving rolled percent moved. The Telypso hazard list and output priorities were checked against the new keys and name none of them: ambient psychic amplification, environmental reactivity and navigational unreliability are not contamination, physical extremes or charge, so `resistant`, `hardened` and `insulated` all stay at 0. The pool shape of the same date then replaced iteration three: `healing` and `hypnotic` stay at 100 as the two required traits, `regenerative`, `luminous`, `perceptive` and `protective` became rolled entries summing to exactly 100, and `foresighted` was cut for the six-entry ceiling. Its Telypso evidence survives, the fauna observations recording anticipatory-response forms among the world's output, but it is the weakest candidate in the pool and the rolled slots were spent on stronger ones. Expected count 5.75 to 3.00.
+
+None of this table's cuts are restored on the 2026-09-10 pass: `inspiring`, `slippery`, and `mind-sealed` remain unsupported by any ratified field; `pack-bonded` is still unsettled (the new `company` field describes proximity to patients, not group living); `telekinetic` and `foresighted` remain out for lack of any species-specific source, ratified or otherwise. The pool's growth on this pass is entirely evidence strengthening `luminous` and `protective`, not a restoration from this table.
 
 ## Instruments
 
@@ -209,12 +221,17 @@ The body plan is the one call I am not comfortable making alone. The description
 
 ## Validator output
 
+Final run after the trait re-run of 2026-09-10:
+
 ```
-WARN traits.expected                expected trait count 5.30 is above 3.5; confirm the species is meant to carry that many
-WARN signature.action.matrix        signature action "snare" is outside the allowed set for crest [beam, burst, terrorize, ward] (allowed by rule 4; justify)
+WARN temperature.planet             validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable
+WARN conduits.source                conduit crest for psychic: the validator agent must confirm the sentence or art showing the element leaving through this part
 
 0 FAIL, 2 WARN (structurally clean; every WARN must be answered in the walkthrough)
+logged to docs/species-templates/validation-log/hypnopet.jsonl
 ```
+
+The `traits.expected` and `signature.action.matrix` WARNs from the earlier pool no longer fire: the re-run pool's expected count is 3.00, under the 3.5 threshold that triggered the first, and the signature pairing was already answered under the ratified rule-4 exception. `temperature.planet` is a tooling note about which planet data file the script fell back to, not a judgment about the band itself, and does not concern the trait pool. The conduit WARN is the conduit-source check on the `crest` to `psychic` conduit, answered in the Signature ability section above.
 
 ## Orchestrator amendments
 
@@ -228,3 +245,4 @@ WARN signature.action.matrix        signature action "snare" is outside the allo
 - 2026-09-08, pool shape (Nick): required healing, hypnotic; rolled regenerative 35, luminous 30, protective 20, perceptive 15; expected count 5.75 to 3.00.
 - 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
 - 2026-09-09, lore overlap lever: habits (and body where changed) rewritten so the defining act is present from its own angle.
+- 2026-09-10, trait re-run: rolled `luminous` raised 30 to 40 (ratified `appearance` entry "Glowing golden fur"), `protective` cites the ratified `company` field, `regenerative` lowered 35 to 30 and `perceptive` lowered 15 to 10 to keep the rolled sum at 100; expected count unchanged at 3.00.

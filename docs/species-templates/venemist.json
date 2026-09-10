@@ -163,9 +163,11 @@
   "traits": {
     "pool": {
       "toxic": 100,
-      "resistant": 55,
-      "volatile": 25,
-      "perceptive": 20
+      "resistant": 40,
+      "volatile": 20,
+      "solitary": 20,
+      "stealthy": 12,
+      "perceptive": 8
     }
   },
   "instruments": [

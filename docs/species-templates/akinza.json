@@ -162,9 +162,9 @@
     "pool": {
       "stealthy": 100,
       "nocturnal": 100,
-      "slippery": 35,
-      "perceptive": 30,
-      "territorial": 20,
+      "solitary": 35,
+      "perceptive": 25,
+      "territorial": 25,
       "hardened": 15
     }
   },

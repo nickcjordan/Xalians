@@ -164,10 +164,10 @@
     "pool": {
       "toxic": 100,
       "stealthy": 100,
-      "hypnotic": 40,
-      "hardened": 25,
-      "perceptive": 20,
-      "menacing": 15
+      "hypnotic": 35,
+      "menacing": 25,
+      "solitary": 25,
+      "hardened": 15
     }
   },
   "instruments": [

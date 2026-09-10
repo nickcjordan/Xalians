@@ -69,42 +69,46 @@ Read from the body and the legacy relative gauge. `agility [62, 85]` and `reflex
 
 Primary `plant` from the species entry type. On graph secondaries for plant are water, chemical, and psychic; I do not pick one. `affinityOdds` omitted, so the species inherits the 75/25 baseline. A case exists for tilting chemical up, since the sedative saliva is chemistry, but the species is not shown to be more prone to a second affinity than any other creature, and the odds field governs how often an affinity appears at all, not which one. Left at baseline.
 
-### Trait pool (required 2, rolled sum 100, expected count 3.00)
+### Trait pool (required 3, rolled sum 100, expected count 4.00)
 
-Iteration four applies Nick's pool shape of 2026-09-08. Two entries are required and four are rolled, the rolled shares sum to exactly 100, and the pool holds six entries, the maximum. Expected count falls from 6.30 to 3.00. The chance an individual lands none of the rolled entries is 0.65 times 0.70 times 0.80 times 0.85, which is 0.309.
+Re-run of 2026-09-10: the pool is re-derived from scratch under the same pool shape, now with `lore.appearance` and the five ratified short fields on equal footing with the teaser, the art, and the planet record as sources (procedure step 9). Three entries are required and three are rolled, the rolled shares sum to exactly 100, and the pool holds six entries, the maximum. Expected count rises from 3.00 to 4.00 because the ratified `company` field promotes `pack-bonded` from a hedged rolled share to an unhedged required trait; see the re-run subsection below for why.
 
 #### Required
 
 | Trait | Evidence |
 |---|---|
-| `toxic` | Body fact, stated of the species without a qualifier: the saliva contains a powerful sedative that paralyzes what it touches. A body that manufactures a paralytic agent carries it in every individual, and the signature ability, Blossoming Ambuscade, is that agent applied. |
-| `territorial` | The behavior the description is built around: swarms hold the most sacred parts of Floria's jungles and paralyze and consume whatever threatens them. Holding claimed ground against anything that enters it is the registry definition, and Floria `report.fauna.observations` states the same strategy for the population, growth and entanglement and regrowth in place of engagement. |
+| `toxic` | Body fact, stated of the species without a qualifier: the saliva contains a powerful sedative that paralyzes what it touches. `feeding`: "the sedative in the saliva paralyzes them." A body that manufactures a paralytic agent carries it in every individual, and the signature ability, Blossoming Ambuscade, is that agent applied. |
+| `territorial` | The behavior the description is built around: swarms hold the most sacred parts of Floria's jungles and paralyze and consume whatever threatens them. `behavior`: "it paralyzes and consumes anything that threatens the sacred parts of the jungle." Holding claimed ground against anything that enters it is the registry definition, and Floria `report.fauna.observations` states the same strategy for the population, growth and entanglement and regrowth in place of engagement. |
+| `pack-bonded` | The ratified `company` field states the fact without qualifier: `company`: "It lives in swarms." A company field this plain is source on the same footing as a body-demanded fact (procedure step 9), and nothing in the record contradicts it: `origin`'s "Used by Vallerii scientists and explorers as mobile bug repellent" describes how the Vallerii historically handled single specimens, not a claim that the species' own social structure is solitary. `solitary` is not in the pool, so the exclusion rule is not engaged. |
 
 #### Rolled (shares sum to 100)
 
 | Trait | Share | Evidence |
 |---|---|---|
-| `stealthy` | 35 | A species sentence about this bird's own behavior, camouflaging into the flowery meadows as it travels, and concealment until it acts is the registry definition. Strongest of the rolled entries, since it rests on the species' own line and nothing has to be borrowed for it. |
-| `pack-bonded` | 30 | A species sentence again, the swarms that hold the sacred jungle. Below the camouflage entry because the same description also shows single Avililies carried alone by Vallerii explorers as mobile repellent, so acting in numbers is a strong tendency rather than the whole species. `solitary` is not in the pool, so the exclusion pair never both roll. |
-| `resistant` | 20 | Class 3, a planet-wide hazard. Floria `report.hazards` lists toxic fungal blooms, which under the narrowed definition is contamination, and a bird that carries a potent agent in its own mouth is a plausible carrier of the tolerance. A hazard is ordinary evidence rather than a demand under the new shape, so it rolls. |
-| `perceptive` | 15 | Class 4, a ratified field of the record. `physiology.senses` grades sight at 65 to 85, whose top clears the 80 line. The senses list may never raise this to required, so it takes the smallest share. |
+| `stealthy` | 50 | Two independent sentences now carry this: the species description's "camouflaging into the planet's many flowery meadows as they travel" and `habitat`: "the canopy of Floria's World Trees and its flowery meadows, where its plumage camouflages it." Concealment until it acts is the registry definition. Strongest of the rolled entries because it now rests on both the teaser and a dedicated field rather than one line alone. |
+| `resistant` | 29 | Class 3, a planet-wide hazard. Floria `report.hazards` lists toxic fungal blooms, which under the narrowed definition is contamination, and a bird that carries a potent agent in its own mouth is a plausible carrier of the tolerance. A hazard is ordinary evidence rather than a demand under the pool shape, so it rolls. |
+| `perceptive` | 21 | Class 4, a ratified field of the record. `physiology.senses` grades sight at 65 to 85, whose top clears the 80 line. The senses list may never raise this to required, so it takes the smallest share. |
 
-#### Cut by the pool shape (2026-09-08, iteration four)
+Rescaled proportionally from the prior 35/20/15 (summing to 70) once `pack-bonded`'s 30-point rolled share moved to the required row, keeping the same relative ranking: stealthy still leads, perceptive still trails.
 
-| Trait | Former percent | Reason |
-|---|---|---|
-| `regenerative` | 100 | Its only support was the Floria output priority naming regenerative tissue, and an output priority alone never brings a trait into a pool. Floria's fauna observations name regrowth as a territorial strategy of the flora-integrated forms rather than a healing body, and no species sentence shows this bird repairing itself. |
-| `protective` | 35 | Pool full, weaker evidence. It rests on the same sentence that carries the required `territorial` entry, and its object is a place rather than another creature, which is a partial fit at best. Spending a rolled slot on a second reading of one sentence is the weakest use of the six. |
+#### Traits considered and left out
 
-#### Cut by the evidence bar (2026-09-07, iterations one and two)
+- `grappling`: `appearance` newly lists "Taloned gripping feet," a body part that could support it, but neither the `behavior` field nor the description shows the bird using its feet to hold prey; the described capture mechanism is entirely the beak and saliva ("waiting with its bill open," "the sedative in the saliva paralyzes them"). Left out for want of a behavior-level source, and the pool is already at the six-entry cap.
+- `healing`, no source anywhere; `armored` and `anchored`, the body is unarmored and airborne and both are contradicted; `regenerative`, no source in any field, including the new ones; `phasing`, corporeal with no ghost register; `ramming`, an eight kilogram bird is not a living ram; `volatile` and `reflective`, no source; `menacing`, the description gives it lethality but never fear; `foresighted` and `telekinetic`, rare traits with no source hook, and I will not spend a rare slot for flavor; `mind-sealed`, no source; `nocturnal`, Floria is not a dark world and no sentence puts this bird in the night; `luminous`, the plumage is bright but bright is color, not emitted light; `protective`, the object of its territorial defense is a place, not another creature, and none of the five new fields adds a creature-directed reading.
 
-| Trait | Former percent | Evidence class that failed |
-|---|---|---|
-| `slippery` | 40 | body-type plausibility from the art (a small body on long wings); the walkthrough concedes no sentence shows it escaping a hold |
-| `hypnotic` | 15 | an appearance phrase ("vibrant floral display") stretched to a behavior; no sentence shows it entrancing anything |
-| `inspiring` | 10 | a restatement of the kept `pack-bonded` sentence plus an argument from absence, since no sentence shows it doing anything for an ally |
+#### Trait re-run (2026-09-10)
 
-Traits considered and left out, with reasons: `healing`, no source anywhere; `armored` and `anchored`, the body is unarmored and airborne and both are contradicted; `regenerative`, no source; `phasing`, corporeal with no ghost register; `ramming`, an eight kilogram bird is not a living ram; `volatile` and `reflective`, no source; `menacing`, the description gives it lethality but never fear; `foresighted` and `telekinetic`, rare traits with no source hook, and I will not spend a rare slot for flavor; `mind-sealed`, no source; `nocturnal`, Floria is not a dark world and no sentence puts this bird in the night; `luminous`, the plumage is bright but bright is color, not emitted light.
+- `pack-bonded`: promoted from a rolled 30 to a required 100. Reason: the new ratified `company` field, "It lives in swarms," is unhedged, unlike the description's swarm sentence which sat alongside a separate clause about individual specimens serving as mobile bug repellent. That clause is now understood to be about historical Vallerii handling of single birds (`origin`), not the species' natural company, so it no longer counts against `pack-bonded`. This makes three required traits a justified special case: the record's own dedicated fields independently and without hedge pin three separate defining facts (what it does to prey, what it defends, and how it lives).
+- `stealthy`, `resistant`, `perceptive`: rescaled from 35/20/15 to 50/29/21 (see Rolled table) so the rolled set still sums to exactly 100 after `pack-bonded` left it; no ranking changed.
+- `grappling`: considered new on the strength of the `appearance` entry "Taloned gripping feet" but not added; see Traits considered and left out.
+
+**Cut by the evidence bar (2026-09-07, iterations one and two), now reviewed against the five new fields:**
+
+| Trait | Former percent | Evidence class that failed | Restored? |
+|---|---|---|---|
+| `slippery` | 40 | body-type plausibility from the art (a small body on long wings); the walkthrough concedes no sentence shows it escaping a hold | No. None of the five new fields shows the bird escaping a grab, pin, or snare. |
+| `hypnotic` | 15 | an appearance phrase ("vibrant floral display") stretched to a behavior; no sentence shows it entrancing anything | No. `feeding` restates the same display and saliva lure but as an ability that paralyzes, not an effect that entrances and holds attention. |
+| `inspiring` | 10 | a restatement of the kept `pack-bonded` sentence plus an argument from absence, since no sentence shows it doing anything for an ally | No. `company` confirms swarm life but says nothing about bolstering other Avililies; the field restores `pack-bonded`, not `inspiring`. |
 
 ### Instruments
 
@@ -113,6 +117,14 @@ Traits considered and left out, with reasons: `healing`, no source anywhere; `ar
 - `talons`: in anatomy from the art, the grip a canopy bird takes and holds with.
 
 `conduits` of `secretion` to `plant`: the predicate is that a source shows the element's power leaving the body through that part. The saliva is the plant element's growth and territory register made liquid and it leaves the body and acts on a target, species, "a powerful sedative which paralyzes anything that it comes in contact with". Note that `secretion` already carries `snare` in its own allowed-actions row, so the conduit is a lore declaration here rather than a mechanical necessity, and it is declared because the sentence supports it.
+
+#### Orchestrator review of the 2026-09-10 trait re-run
+
+Final pool: `{"toxic":100,"territorial":100,"pack-bonded":40,"stealthy":30,"resistant":18,"perceptive":12}` (the agent's pool was `{"toxic":100,"territorial":100,"pack-bonded":100,"stealthy":50,"resistant":29,"perceptive":21}`). pack-bonded returned to the rolled set at the top share (was promoted to required at 100 on the company field). A social fact is not a body fact: the required slots are for anatomy, covering, corporeality and the act the description is built around; a ratified company line sets the top rolled share, never 100 (orchestrator ruling 2026-09-10, applied across the batch). Rolled set resummed to 100.
+
+#### Orchestrator review of the 2026-09-10 trait re-run
+
+Final pool: `{"toxic":100,"territorial":100,"pack-bonded":40,"stealthy":30,"resistant":18,"perceptive":12}` (the agent's pool was `{"toxic":100,"territorial":100,"pack-bonded":40,"stealthy":30,"resistant":18,"perceptive":12}`). pack-bonded returned to the rolled set at the top share (was promoted to required at 100 on the company field). A social fact is not a body fact: the required slots are for anatomy, covering, corporeality and the act the description is built around; a ratified company line sets the top rolled share, never 100 (orchestrator ruling 2026-09-10, applied across the batch). Rolled set resummed to 100.
 
 ### Signature ability
 
@@ -152,6 +164,8 @@ None. The validator script raised no FAIL on any run of this key; the first run 
 - `instruments.predicate.source`, the `secretion` channel predicate needs a confirming sentence: the sentence is species, "their saliva contains a powerful sedative which paralyzes anything that it comes in contact with", with the lure half at "They attract insects with their sweet, syrupy smelling saliva". An emitted substance that leaves the body and acts on what it touches is exactly the predicate.
 - `conduits.source`, the `secretion` to `plant` conduit needs a confirming sentence: same sentence. The saliva is the species' element power leaving the body through that channel and terminating on a target. As noted in the instruments section, the conduit is not load bearing here, since `snare` is already in the `secretion` physical row, so if the orchestrator judges the predicate unmet the conduit can be dropped without touching the signature.
 - `enc.definition.name`, the definition did not name the species: legitimate, and fixed. The entry now opens on the species name.
+- 2026-09-10 re-run, `traits.pool.required`, 3 traits at 100 against the one-or-two guideline: answered as a justified special case above (Trait pool, Trait re-run subsection). Each of the three, `toxic`, `territorial`, and `pack-bonded`, is independently pinned by its own unhedged, dedicated source (a body fact, the description's own behavior sentence, and the ratified `company` field respectively), which is what the pool shape rule asks a three-required exception to show.
+- 2026-09-10 re-run, `temperature.planet`, validated against the legacy `planets.json` extremes only because `planetRecords.json` carries no `environment.habitableBandC` field in this worktree: out of scope for this trait-pool re-run, not touched, and not a trait-pool concern.
 
 ## Notes
 
@@ -164,12 +178,15 @@ Should the Avilily's lure be modeled as communication at all? The registry rules
 
 ## Validator output
 
+Final run (2026-09-10 trait re-run):
+
 ```
-WARN traits.expected                expected trait count 3.90 is above 3.5; confirm the species is meant to carry that many
+WARN temperature.planet             validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable
+WARN traits.pool.required           3 traits at 100; the guideline is one, two at most, three only as a justified special case
 WARN instruments.predicate.source   channel "secretion" has a source-text predicate (an emitted substance); the validator agent must confirm the quoted sentence
-WARN conduits.source                conduit secretion for plant: the validator agent must confirm the sentence or art showing the element leaving through this part
 
 0 FAIL, 3 WARN (structurally clean; every WARN must be answered in the walkthrough)
+logged to docs\species-templates\validation-log\avilily.jsonl
 ```
 
 ## Orchestrator amendments
@@ -183,3 +200,4 @@ WARN conduits.source                conduit secretion for plant: the validator a
 - 2026-09-08, pool shape (Nick): required toxic, territorial; rolled stealthy 35, pack-bonded 30, resistant 20, perceptive 15; expected count 6.30 to 3.00.
 - 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
 - 2026-09-09, lore overlap lever: habits (and body where changed) rewritten so the defining act is present from its own angle.
+- 2026-09-10, trait re-run: `lore.appearance` and the five ratified short fields (`origin`, `habitat`, `feeding`, `behavior`, `company`) admitted as pool sources on the same footing as the teaser, the art, and the planet record. `pack-bonded` promoted from a rolled 30 to a required 100 on the ratified `company` field, "It lives in swarms," which is unhedged where the prior evidence carried an implicit hedge; `stealthy`, `resistant`, `perceptive` rescaled 35/20/15 to 50/29/21 to keep the rolled set at exactly 100 with the pool at three required plus three rolled, six entries, the cap. `grappling` considered on the new `appearance` entry "Taloned gripping feet" and left out for want of a behavior-level source. No other cut trait was restored; `slippery`, `hypnotic`, and `inspiring` remain cut on review against the five new fields.

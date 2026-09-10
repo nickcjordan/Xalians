@@ -165,10 +165,10 @@
     "pool": {
       "toxic": 100,
       "territorial": 100,
-      "stealthy": 35,
-      "pack-bonded": 30,
-      "resistant": 20,
-      "perceptive": 15
+      "pack-bonded": 40,
+      "stealthy": 30,
+      "resistant": 18,
+      "perceptive": 12
     }
   },
   "instruments": [

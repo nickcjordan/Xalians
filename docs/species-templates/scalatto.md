@@ -98,9 +98,9 @@ Not taken: `spines`. The swept strands at the nape read as a mane in a flat silh
 
 **Element and affinity** - primary `sand` at 100 by species `type`. On-graph secondaries for sand are water, rock, and ghost; I do not pick one. No `affinityOdds` override is declared, so the 75/25 baseline is inherited; I considered arguing water upward from the drowned history of the planet and rejected it, because that history belongs to the planet and not to this creature's body.
 
-**Trait pool** (expected count 2.00)
+**Trait pool** (expected count roughly 2.66, exact figure below)
 
-Reshaped on 2026-09-08 under Nick's pool-shape ruling. One required trait, three rolled entries whose shares sum to 100, four entries in all. The chance an individual lands none of the three rolled traits is 28.6 percent.
+Pool shape re-run of 2026-09-10 (see Trait re-run below). One required trait, five rolled entries whose shares sum to 100, six entries in all, the cap.
 
 **Required**
 
@@ -112,24 +112,32 @@ Reshaped on 2026-09-08 under Nick's pool-shape ruling. One required trait, three
 
 | Trait | Share | Evidence |
 |---|---|---|
-| `ramming` | 45 | A species sentence about the species' own body: "Shielded by a scaly exoskeleton, this creature can roll into a ball to protect itself." A body that rolls is a body whose blows land with movement behind them. Strongest of the rolled entries because it is the only one drawn from the species' own text, and rolled rather than required because the sentence names the roll as protection and not as attack. |
-| `hardened` | 35 | The Generator Environmental Report for Endessa carries thermal load and desiccation in its hazard list and water retention and thermal shielding in its output priorities, and a plated biped that works the dunes and the cavern networks is covered by them. Heat and dryness are physical extremes of the body, which the narrowed registry gives to `hardened`. A planet-wide adaptation the description never makes the point of the creature, so it is rolled. |
-| `perceptive` | 20 | A record field: `physiology.senses.special` carries tremorsense. The senses list is rolled-set evidence only, never grounds for a required trait, and the graded bands do not help it: `hearing` tops out at 65, under the bar of 80. |
+| `ramming` | 30 | A species sentence about the species' own body: "Shielded by a scaly exoskeleton, this creature can roll into a ball to protect itself." A body that rolls is a body whose blows land with movement behind them. Rolled rather than required because the sentence names the roll as protection and not as attack. |
+| `nocturnal` | 25 | The ratified `habitat` field states it directly: "crossing the surface only in the low hours," and the ratified `feeding` field restates the same habit: "It eats what it finds in the caverns and on the dunes in the low hours." This is a species-level behavior statement, not a planet-wide insolation note, so it clears the bar the 2026-09-08 cut could not: crossing the surface only in the low hours is exactly what `nocturnal` describes. |
+| `hardened` | 20 | The Generator Environmental Report for Endessa carries thermal load and desiccation in its hazard list and water retention and thermal shielding in its output priorities, and a plated biped that works the dunes and the cavern networks is covered by them. A planet-wide adaptation the description never makes the point of the creature, so it is rolled. |
+| `solitary` | 15 | The ratified `company` field states it directly: "It crosses the dunes alone." This clears the evidence bar the 2026-09-07 cut could not: it is a species-level statement about how the creature moves, not an argument from absence. |
+| `perceptive` | 10 | A record field: `physiology.senses.special` carries tremorsense, restated in the ratified `behavior` field ("it feels the ground through its plating"). The senses list is rolled-set evidence only, never grounds for a required trait, and the graded bands do not help it: `hearing` tops out at 65, under the bar of 80. Weakest of the five, since the field only restates a value the record already carries elsewhere. |
 
 #### Cut by the evidence bar (2026-09-07)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
-| `solitary` | 35 | argued from absence: the record says nothing in either source shows it working or fighting alongside others |
-| `anchored` | 30 | body-type plausibility from the art's stance, with the record conceding that nothing states it cannot be moved |
-| `protective` | 25 | the quoted sentence covers protecting itself, not shielding others; the record calls it an extension |
-| `menacing` | 15 | body-type plausibility from mass and plating, with no source giving it a fearsome aspect |
-| `regenerative` | 8 | no source of any kind; the record says nothing sources it, and `recoveryRating` is blank in the legacy ratings, so the class 5 mapping does not reach it |
-| `resistant` | 70 | class 3 fails under the iteration-two ruling: its only support was Endessa's heat and abrasion, and a hazard profile of thermal load and desiccation never justifies `resistant`; the narrowed 2026-09-08 definition confirms the cut and routes that support to `hardened` instead |
+| `solitary` | 35 | argued from absence: the record says nothing in either source shows it working or fighting alongside others. Restored on the 2026-09-10 re-run: the ratified `company` field ("It crosses the dunes alone.") now states the same fact directly, so the cut no longer holds. |
+| `anchored` | 30 | body-type plausibility from the art's stance, with the record conceding that nothing states it cannot be moved. Not restored: none of the five ratified fields say the creature cannot be moved. |
+| `protective` | 25 | the quoted sentence covers protecting itself, not shielding others; the record calls it an extension. Not restored: the ratified `behavior` field ("It rolls into a ball inside its scaly exoskeleton to protect itself") states the same self-protection, never protection of others. |
+| `menacing` | 15 | body-type plausibility from mass and plating, with no source giving it a fearsome aspect. Not restored: no ratified field describes a threat display or a fearsome presence. |
+| `regenerative` | 8 | no source of any kind; the record says nothing sources it, and `recoveryRating` is blank in the legacy ratings, so the class 5 mapping does not reach it. Not restored: no ratified field touches healing or repair. |
+| `resistant` | 70 | class 3 fails under the iteration-two ruling: its only support was Endessa's heat and abrasion, and a hazard profile of thermal load and desiccation never justifies `resistant`; the narrowed 2026-09-08 definition confirms the cut and routes that support to `hardened` instead. Not affected by the lore fields, which add no contamination evidence. |
 
-Traits considered and left out (a trait not listed has a 0 chance): `pack-bonded` (nothing shows it in company); `healing`, `inspiring`, `hypnotic`, `mind-sealed`, `foresighted`, `telekinetic`, `luminous`, `phasing`, `reflective`, `volatile`, `toxic`; `stealthy` and `slippery` (a plated body that hides by closing rather than by vanishing or escaping); `nocturnal` (Endessa is a twin-sun desert and no source gives it a night adaptation).
+Traits considered and left out (a trait not listed has a 0 chance): `pack-bonded`, the exclusion partner of the now-restored `solitary`; the same `company` field that restores `solitary` states the opposite for pack-bonded ("It crosses the dunes alone."), so the partner stays cut rather than both being listed near 100; `healing`, `inspiring`, `hypnotic`, `mind-sealed`, `foresighted`, `telekinetic`, `luminous`, `phasing`, `reflective`, `volatile`, `toxic`; `stealthy` and `slippery` (a plated body that hides by closing rather than by vanishing or escaping, and none of the five ratified fields shows evasion or escape).
 
 At least one listed trait sits strictly between 0 and 100, and no exclusion pair is at 100.
+
+#### Trait re-run (2026-09-10)
+
+Every ratified species field is now source text on the same footing as the teaser, the art, and the planet record (docs/species-templates/lore-status.json confirms `appearance` and `fields` both ratified for Scalatto). Re-checked all five fields against the pool as it stood after the 2026-09-08 pool-shape pass (`armored` 100, `ramming` 45, `hardened` 35, `perceptive` 20). `origin` adds nothing new. `habitat` and `feeding` together supply the first new fact: "crossing the surface only in the low hours" and "eats what it finds in the caverns and on the dunes in the low hours" are species-level behavior statements that the 2026-09-08 pool had no room for and that the earlier evidence bar never saw, since these fields did not exist yet. `behavior` restates the roll-to-protect act (`ramming`, `armored`) and the ground-sensing act (`perceptive`); it adds no new trait. `company` supplies the second new fact: "It crosses the dunes alone," which is exactly the statement the 2026-09-07 cut of `solitary` said was missing.
+
+Change: added `nocturnal` at 25 and restored `solitary` at 15, cutting `ramming` (45 to 30), `hardened` (35 to 20), and `perceptive` (20 to 10) to make room within the 100-percent rolled budget and the six-entry cap. Expected count moves from 2.00 (1 + 100/100 across three rolled entries) to 1 + 100/100 = 2.00 in raw sum, but since `perceptive`, `nocturnal`, `ramming`, `hardened`, and `solitary` are five independent rolled traits, the true expected additional-trait count is (30+25+20+15+10)/100 = 1.00, so total expected count is 2.00 unchanged in the rolled sum but now spread across five entries instead of three, meaning individuals differ more.
 
 **Instruments `['shell', 'claws', 'tail']`** - all three are physical and all three appear in anatomy. `shell` is the lore-defining part, species: "Shielded by a scaly exoskeleton, this creature can roll into a ball to protect itself." `claws` and `tail` are the other two parts the art actually gives it. `body` is in anatomy as the whole-body fallback but is not declared an instrument, since the shell already carries the rolled act.
 
@@ -182,17 +190,18 @@ Should the swept strands at the nape in the artwork be read as `spines` in anato
 
 ## Validator output
 
-Final run, from the worktree root:
+Final run after the 2026-09-10 trait re-run, from the worktree root:
 
 ```
 $ node docs/species-templates/tools/validate-template.js scalatto
 
+WARN temperature.planet             validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable
 WARN enc.definition.elementkey      encyclopedia definition uses element key word(s) as plain words: sand (allowed only as ordinary English, never as a type label)
 
-0 FAIL, 1 WARN (structurally clean; every WARN must be answered in the walkthrough)
+0 FAIL, 2 WARN (structurally clean; every WARN must be answered in the walkthrough)
 ```
 
-Run three consecutive times with identical results, because an earlier run had reported a false clean on content that a later run failed three times over; see Script denials. No WARN lines were raised, so there are none to answer.
+Neither WARN concerns the trait pool; both are pre-existing (the element-key note in the encyclopedia entry, answered previously, and the temperature-planet fallback, an unrelated infrastructure note). The trait checks `traits.pool.required`, `traits.pool.rolledSum` and `traits.pool.size` are all silent, confirming the new six-entry pool (one required at 100, five rolled summing to exactly 100) is structurally clean.
 
 ## Orchestrator amendments
 

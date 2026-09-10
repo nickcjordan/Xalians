@@ -161,9 +161,10 @@
   "traits": {
     "pool": {
       "luminous": 100,
-      "reflective": 40,
-      "resistant": 35,
-      "mind-sealed": 25
+      "solitary": 40,
+      "reflective": 25,
+      "resistant": 20,
+      "mind-sealed": 15
     }
   },
   "instruments": [

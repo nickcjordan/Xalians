@@ -27,7 +27,7 @@ import { getSpeciesTemplates, generateBatch, GENERATOR_VERSION } from '../index.
 import registriesJson from '@xalians/content/registries.json';
 import { ATTRIBUTE_KEYS, FINISH_ODDS } from '../constants.ts';
 import { scoreRecord } from '../grade.ts';
-import type { Band, Registries, SpeciesTemplate, XalianRecord } from '../types.ts';
+import type { ArchetypeKey, Band, Registries, SpeciesTemplate, TraitKey, XalianRecord } from '../types.ts';
 
 const registries = registriesJson as unknown as Registries;
 
@@ -191,7 +191,10 @@ function speciesStats(template: SpeciesTemplate, records: XalianRecord[]): Speci
 	const weightSum = Object.values(weights).reduce<number>((a, b) => a + (b ?? 0), 0) || 1;
 	const buildCounts = new Map<string, number>();
 	records.forEach((r) => buildCounts.set(r.archetype.key, (buildCounts.get(r.archetype.key) || 0) + 1));
-	const buildRows: BuildRow[] = Object.keys(weights).map((key) => ({
+	// Object.keys always returns string[] regardless of the record's key type (a TS
+	// limitation, not a narrowing gap); cast back to the literal key type the record
+	// actually contains, same as generate.ts's rollTraits.
+	const buildRows: BuildRow[] = (Object.keys(weights) as ArchetypeKey[]).map((key) => ({
 		key,
 		authoredShare: pct(weights[key] ?? 0, weightSum),
 		observedShare: pct(buildCounts.get(key) || 0, n),
@@ -199,7 +202,7 @@ function speciesStats(template: SpeciesTemplate, records: XalianRecord[]): Speci
 
 	// trait landed rate vs authored percent, and observed trait count distribution
 	const pool = (template.traits && template.traits.pool) || {};
-	const traitRows: TraitRow[] = Object.keys(pool).map((key) => {
+	const traitRows: TraitRow[] = (Object.keys(pool) as TraitKey[]).map((key) => {
 		const landed = records.filter((r) => r.traits.includes(key)).length;
 		return { key, authoredPercent: pool[key] ?? 0, observedRate: pct(landed, n) };
 	});
@@ -293,7 +296,7 @@ function rosterStats(templates: SpeciesTemplate[], perSpecies: Map<string, Xalia
 		const records = perSpecies.get(t.key) || [];
 		const weights = t.archetypeWeights || { balanced: 100 };
 		const weightSum = Object.values(weights).reduce<number>((a, b) => a + (b ?? 0), 0) || 1;
-		Object.keys(weights).forEach((key) => {
+		(Object.keys(weights) as ArchetypeKey[]).forEach((key) => {
 			const expected = (records.length * (weights[key] ?? 0)) / weightSum;
 			expectedBuildCounts.set(key, (expectedBuildCounts.get(key) || 0) + expected);
 		});

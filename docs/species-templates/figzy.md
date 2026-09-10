@@ -132,28 +132,38 @@ Primary `psychic`, fixed by the species entry's `type` of `Psychic`. Secondaries
 
 ## Trait pool
 
-Pool shape of 2026-09-08. One required trait at 100 and four rolled entries sharing exactly 100. Expected count: 1 + 100/100 = 2.00.
+Pool shape of 2026-09-08, re-run 2026-09-10 against the now-ratified `lore.appearance` and five short fields. Two required traits at 100 and three rolled entries sharing exactly 100. Expected count: 2 + 100/100 = 3.00.
 
 ### Required
 
 | Trait | Evidence |
 |---|---|
-| `telekinetic` | The behavior the species owns. The stub gives it one power claim, "What this creature lacks in stature it makes up for with its incredible magical abilities", and the art fixes what that looks like: the starburst floats free of the body in front of the raised open hands, an effect acting at a distance with nothing touching the target. That is the registry key for moving things without touching them, and the signature ability terminates on the `mind` channel for the same reason. No body fact demands a trait: the Figzy is corporeal flesh under an ordinary covering, so it carries one required trait rather than two. |
+| `telekinetic` | The signature act. The stub gives it one power claim, "What this creature lacks in stature it makes up for with its incredible magical abilities", and the art fixes what that looks like: the starburst floats free of the body in front of the raised open hands, an effect acting at a distance with nothing touching the target. That is the registry key for moving things without touching them, and the signature ability terminates on the `mind` channel for the same reason. |
+| `protective` | The disposition the ratified `behavior` field states outright, not inferred from a planet-wide sentence: "It puts itself between a distressed mind and whatever is agitating it, holding one quiet and driving the other back with a burst from its open hands." Putting itself between a threatened party and the threat is the registry's own definition of `protective`, "instinct to shield and protect others", stated as what a Figzy does, not what some individuals might do. This is a second required trait, the special-case bar met because the behavior field states it as universally as the signature act. |
 
 ### Rolled (shares sum to 100)
 
 | Trait | Share | Evidence |
 |---|---|---|
-| `hypnotic` | 35 | Strongest of the rolled set. Planet: "Soon, psychic Xalians capable of targeting and influencing emotion, thought, and perception were emerging from the fungal forests – creatures that could enter dreams or induce hypnosis - all in the hopes of harmonizing Telypso’s life, both old and new." That is the Generator's stated output class for this species' own kind on its own planet, so it is an origin fact, but it covers a class rather than this creature specifically. |
-| `perceptive` | 30 | A record field: `physiology.senses.special` carries psychic, and the art makes the two enormous ears and two very large eyes the dominant features of the body. A senses entry never makes a trait required, since a trait must not restate a field the record already carries. |
-| `mind-sealed` | 27 | A planet-wide environmental adaptation. The Telypso Generator environmental report lists ambient psychic amplification of observer state among the planet's hazards and distress-tolerance thresholds among its output priorities, so a mind the ambient field cannot sway is what the world selects for. |
-| `foresighted` | 8 | The rare key, inside its 5 to 10 band. The Telypso report lists anticipatory-response forms among the planet's fauna, and the species' own register is a psychic one, which is the narrow case where this key still rolls at all. |
+| `perceptive` | 55 | Strongest of the rolled set. `physiology.senses.special` carries psychic, and the ratified `appearance` list names "Very large ears" and "Very large eyes" as defining presentation qualities in their own right, not only an art reading. A senses or appearance entry never makes a trait required, since a trait must not restate a field the record already carries. |
+| `mind-sealed` | 35 | A planet-wide environmental adaptation, which the rule permits: the Telypso Generator environmental report lists ambient psychic amplification of observer state among the planet's hazards and distress-tolerance thresholds among its output priorities, so a mind the ambient field cannot sway is what the world selects for. |
+| `foresighted` | 10 | The rare key, inside its 5 to 10 band. The Telypso report lists anticipatory-response forms among the planet's fauna, and the species' own register is a psychic one, which is the narrow case where this key still rolls at all. |
 
 Legacy `statRatings` add nothing to the shares: `specialAttackRating` and `speedRating` are high, and neither maps to a trait; `evasionRating` is empty, so `slippery` stays out.
 
-Traits the body could plausibly carry that I left out, with reasons: `luminous` (the art draws no light organ, and Telypso's glow is not the creature's); `nocturnal` (Telypso is not a night world); `solitary` and `pack-bonded` (nothing shows either); `armored`, `anchored`, `ramming`, `toxic`, `volatile`, `reflective`, `regenerative`, `resistant`, `phasing`, `menacing` (no source or art support, and `menacing` is contradicted by the stub's docility).
+Traits the body could plausibly carry that I left out, with reasons: `luminous` (the art draws no light organ, and Telypso's glow is not the creature's); `nocturnal` (Telypso is not a night world); `solitary` and `pack-bonded` (the ratified `company` field, "It stays with those it trusts", is about loyalty to individuals it has come to trust, not about whether it lives alone or with its own kind, so it does not settle either exclusion partner); `armored`, `anchored`, `ramming`, `toxic`, `volatile`, `reflective`, `regenerative`, `resistant`, `phasing`, `menacing` (no source or art support, and `menacing` is contradicted by the description's docility).
 
-#### Cut by the evidence bar (2026-09-07)
+#### Trait re-run (2026-09-10)
+
+Sources newly available for this pass: the ratified `lore.appearance` list and the five short lore fields (`origin`, `habitat`, `feeding`, `behavior`, `company`), none of which existed when the pool below was authored.
+
+- `protective` restored and promoted to required at 100. The 2026-09-07 cut read its only support as Telypso's report giving emotional-regulation function as a planet-wide output priority, which the rule bars from justifying a behavior. The ratified `behavior` field now states the same act directly for this species: "It puts itself between a distressed mind and whatever is agitating it, holding one quiet and driving the other back with a burst from its open hands." That is species-level evidence, not a planet-wide inference, and it reads as universal to the species rather than as individual variance, so it takes the second required slot alongside `telekinetic`.
+- `hypnotic` removed. Its only support, before and after this pass, is the planet-wide class sentence "creatures that could enter dreams or induce hypnosis", which the pool-shape rule bars from justifying a behavior trait for one species. None of the five ratified fields or the appearance list gives the Figzy itself an entrancing act (the behavior field describes shielding and a projected burst, not a trance), so on a from-scratch re-derivation the trait no longer clears the bar. This is a stricter application of the existing rule rather than new lore, flagged as overridable: if Nick reads the planet class sentence as sufficient after all, `hypnotic` can return at a low rolled percent.
+- `perceptive` raised from 30 to 55 and its evidence line now also cites the ratified `appearance` entries "Very large ears" and "Very large eyes" alongside the senses field, strengthening rather than changing the earlier reading.
+- `mind-sealed` raised from 27 to 35 and `foresighted` raised from 8 to 10, both to keep the rolled set summing to 100 once `protective` moved to required; neither's underlying evidence changed.
+- Expected count moves from 2.00 to 3.00 (two required traits instead of one).
+
+##### Cut by the evidence bar (2026-09-07)
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
@@ -164,7 +174,11 @@ Traits the body could plausibly carry that I left out, with reasons: `luminous` 
 | `stealthy` | 20 | Argued from absence: no source sentence shows the Figzy hiding. |
 | `pack-bonded` | 20 | Planet fact stretched to behavior: Telypso's shared dream is a world fact, not a statement that this species lives in groups. |
 
-(`foresighted` was cut here on 2026-09-07 at 8 and restored on 2026-09-08 on the Telypso anticipatory-response line; it is no longer cut.)
+(`foresighted` was cut here on 2026-09-07 at 8 and restored on 2026-09-08 on the Telypso anticipatory-response line; it is no longer cut.) Restored on 2026-09-10: `protective`, now on the ratified `behavior` field rather than the planet-wide output-priority line that failed it in 2026-09-07. Still cut: `healing` (no ratified field shows the Figzy restoring anything; the behavior field's "holding one quiet" is the shielding act already carried by `protective`, not a restoration), `slippery`, `inspiring`, `stealthy`, and `pack-bonded` (the ratified `company` field is about trust in individuals, not about group living, so it does not revive this cut).
+
+#### Orchestrator review of the 2026-09-10 trait re-run
+
+Final pool: `{"telekinetic":100,"protective":100,"perceptive":45,"mind-sealed":30,"hypnotic":15,"foresighted":10}` (the agent's pool was `{"telekinetic":100,"protective":100,"perceptive":55,"mind-sealed":35,"foresighted":10}`). hypnotic restored at a low rolled share (the agent cut it as planet-wide only). The ratified behavior field, "holding one quiet and driving the other back with a burst from its open hands", is a species-level act that matches the registry definition of hypnotic (entrances and holds attention, dulling the will to act), so it clears the bar at a modest share. Rolled set resummed to 100.
 
 ## Signature ability
 
@@ -221,17 +235,18 @@ Two FAILs were raised on the first run. Both were legitimate denials and both we
 
 ## Validator output
 
-Final run after the pool-shape pass of 2026-09-08:
+Final run after the trait re-run of 2026-09-10:
 
 ```
+WARN temperature.planet             validated against the legacy planets.json extremes only; planetRecords.json habitable band unavailable
 WARN conduits.source                conduit mind for psychic: the validator agent must confirm the sentence or art showing the element leaving through this part
 WARN conduits.source                conduit fists for psychic: the validator agent must confirm the sentence or art showing the element leaving through this part
 
-0 FAIL, 2 WARN (structurally clean; every WARN must be answered in the walkthrough)
+0 FAIL, 3 WARN (structurally clean; every WARN must be answered in the walkthrough)
 logged to docs/species-templates/validation-log/figzy.jsonl
 ```
 
-Both WARNs are the conduit-source check on the conduits Nick added on 2026-09-02; the sentence and art behind them are the stub's magical abilities line and the starburst released from the raised hands, recorded in the amendments below. The old `signature.action.matrix` WARN no longer fires, since the declared conduits cover the pairing. The trait checks `traits.pool.required`, `traits.pool.rolledSum` and `traits.pool.size` are all silent.
+The two conduit WARNs are the conduit-source check on the conduits Nick added on 2026-09-02; the sentence and art behind them are the stub's magical abilities line and the starburst released from the raised hands, recorded in the amendments below. `temperature.planet` is a tooling note about which planet data file the script fell back to, not a judgment about the band itself; it does not concern the trait pool. The trait checks `traits.pool.required`, `traits.pool.rolledSum` and `traits.pool.size` are all silent on the re-run pool (two required at 100, three rolled summing to 100, five entries total, under the six-entry cap).
 
 ## Open questions for Nick
 
@@ -252,3 +267,4 @@ Both WARNs are the conduit-source check on the conduits Nick added on 2026-09-02
 - 2026-09-08, trait evidence bar iteration three (Nick): added `foresighted` (8, Telypso anticipatory-response forms, qualified evidence so restored at its authored percent); raised `perceptive` (70 to 100, psychic special sense); cut nothing, since the pool carries no `resistant`; expected count 1.75 to 2.13.
 - 2026-09-08, pool shape (Nick): required `telekinetic`; rolled `hypnotic` 35, `perceptive` 30, `mind-sealed` 27, `foresighted` 8; expected count 2.13 to 2.00.
 - 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
+- 2026-09-10, trait re-run: required `protective` added (100, ratified `behavior` field), `hypnotic` removed (its only support is a planet-wide class sentence, which the rule bars for a behavior trait), `perceptive` raised 30 to 55, `mind-sealed` raised 27 to 35, `foresighted` raised 8 to 10; expected count 2.00 to 3.00.

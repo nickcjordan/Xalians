@@ -45,9 +45,9 @@ Fields required (Nick, 2026-09-10): filled company ("It lurks alone."). Source r
 
 No other anatomy key has a source sentence. There are no jaws, spines, tail, or antennae in either source, so none are declared.
 
-### Trait pool (pool shape, 2026-09-08)
+### Trait pool (pool shape, re-run 2026-09-10)
 
-Two required traits at 100 and four rolled entries sharing exactly 100, six in total, which is the maximum a pool may list. Expected count: 2 + 100/100 = 3.00. Reworked later the same day when `grappling` entered the registry: it takes the top rolled share and `perceptive`, the weakest-evidenced entry, drops into the cut table to keep the pool at six.
+Two required traits at 100 and four rolled entries sharing exactly 100, six in total, which is the maximum a pool may list. Expected count: 2 + 100/100 = 3.00. This is the trait re-run against the now-ratified `lore.appearance` list and the five short fields (`origin`, `habitat`, `feeding`, `behavior`, `company`), which sit on the same evidentiary footing as the teaser, the art and the planet record. The company field brings `solitary` back in with a direct, unhedged quote; the registry rarity band for `telekinetic` (2 to 8 percent) is also enforced here, which the pre-rerun pool had not applied.
 
 #### Required
 
@@ -56,14 +56,29 @@ Two required traits at 100 and four rolled entries sharing exactly 100, six in t
 | `armored` | The body fact. species: "the black-shelled body of a crab" and "an immovable wall of chitin". A shelled, chitin-covered body carries the key on every individual, which also satisfies the validator `traits.armored` check rather than overriding it. | species |
 | `anchored` | The behavior the description is built around. species: "the Graviclaw can use its powers to root itself to the ground, becoming an immovable wall of chitin". The registry definition is a body that cannot be moved against its will, which is what the sentence states outright. | species |
 
+A third required slot was considered for `solitary` given how unhedged the company field reads, but it is not a body fact and it is not the behavior the signature is built on (that is the capture-and-crush act `anchored` and `grappling` already carry), so it stays in the rolled set rather than becoming the justified special case for a third required entry.
+
 #### Rolled (shares sum to 100)
 
 | Trait | Share | Evidence | Source |
 |---|---|---|---|
-| `grappling` | 32 | Strongest of the rolled set: two species sentences about the creature's own claws, and the one thing its signature ability is built on. species: "Graviclaws can strengthen the gravitational pull of their massive claws in order to snap them shut with a force many times heavier than their implied mass", and species: it draws "its helpless prey right into its clutches". A pincer that closes with far more force than its mass implies, on a body whose whole hunting method ends with prey held in the claws, is the registry key exactly: stronger holding what it has caught. It is rolled rather than required because the two required entries are already the body facts the description leads with, and the pool shape allows two. |
-| `stealthy` | 28 | A species sentence about its own behavior. species: "lurks just beneath the foggy wetlands of Grimedes". Lurking submerged until it strikes is the registry sense of moving unseen until it acts. | species |
-| `telekinetic` | 22 | Also a species sentence: "using its bizarre control over the intensification of gravitational waves to generate miniature black holes in the water and draw its helpless prey right into its clutches" is moving things without touching them. Below `stealthy` because the description frames the pull as a hunting mechanism that terminates in the claws, not as a constant state. | species |
-| `nocturnal` | 18 | A planet-wide adaptation. The Grimedes Generator environmental report gives low-light metabolism as one of its three output priorities. Rolled rather than required, because nothing in the species entry makes night adaptation the point of this creature; its own niche sentence is about fog and water, not darkness. | planet report |
+| `grappling` | 40 | Strongest of the rolled set: two species sentences about the creature's own claws, and the one thing its signature ability is built on. species: "Graviclaws can strengthen the gravitational pull of their massive claws in order to snap them shut with a force many times heavier than their implied mass", and species: it draws "its helpless prey right into its clutches"; behavior: "It snaps its claws shut with a force many times its mass, cutting through the hardest materials." A pincer that closes with far more force than its mass implies, on a body whose whole hunting method ends with prey held in the claws, is the registry key exactly: stronger holding what it has caught. |
+| `solitary` | 32 | New: the ratified company field states plainly, company: "It lurks alone." That is a direct, unhedged statement about the creature's own company, not an inference from the singular grammar of a hunting description, and it is source evidence on the same footing as the teaser. Ranked second because it is a company fact rather than the body's dominant hunting method. |
+| `stealthy` | 22 | A species sentence about its own behavior. species: "lurks just beneath the foggy wetlands of Grimedes", reinforced by habitat: "The foggy wetlands of Grimedes, just beneath the surface." Lurking submerged until it strikes is the registry sense of moving unseen until it acts. |
+| `telekinetic` | 6 | Also a species sentence: "using its bizarre control over the intensification of gravitational waves to generate miniature black holes in the water and draw its helpless prey right into its clutches", reinforced by feeding: "It lurks under the water and draws prey to its claws with a miniature black hole rather than chasing it." Held to the registry's rare-trait band (`foresighted` or `telekinetic` at 2 to 8 percent) rather than the 22 the pre-rerun pool carried; the description frames the pull as a hunting mechanism that terminates in the claws, not as a constant state, which is consistent with a rare roll rather than a common one. |
+
+Sum: 40 + 32 + 22 + 6 = 100.
+
+`nocturnal` is cut from the pool on this pass (see the re-run table below): it is the weakest of the five candidates competing for four rolled slots once `solitary` earned its place on a ratified, species-specific field, and its own evidence is planet-wide report language rather than anything in the species' own lore.
+
+#### Trait re-run (2026-09-10)
+
+| Change | Reason |
+|---|---|
+| `solitary` added at 32 (rolled) | Restored by the new ratified `company` field: "It lurks alone." This is the exact case the re-run exists for, a fact that had no ratified source sentence before `lore.company` existed and now has an unhedged one. |
+| `telekinetic` cut from 22 to 6 | Not new evidence, a standing-rule correction: section 5.3 bands `telekinetic` (and `foresighted`) at 2 to 8 percent as rare traits, and the prior pool's 22 sat outside that band. The supporting quote is unchanged; only the percent was wrong. |
+| `nocturnal` removed (was 18) | The pool is capped at six entries. With `solitary` now sourced in and `telekinetic` correctly narrowed, `nocturnal` is the weakest of the five candidates for four rolled slots: its only evidence is the planet-wide Generator report (low-light metabolism as an output priority), which the pool shape treats as a weaker class than a species-specific ratified field or a direct species sentence. Nothing in the new `habitat` or `behavior` fields makes night the point of this creature; `habitat` names fog and depth, not darkness. |
+| `grappling` re-shared from 32 to 40, `stealthy` re-shared from 28 to 22 | Reallocated so the four rolled shares still sum to exactly 100 after `nocturnal`'s 18 points and half of `telekinetic`'s cut 16 points were redistributed; `grappling` remains the single strongest rolled entry (it is what the signature ability is built on) and `stealthy` now has a second reinforcing quote from the ratified `habitat` field. |
 
 #### Cut by the evidence bar (2026-09-07), by the pool shape (2026-09-08), and by the new keys (2026-09-08)
 
@@ -74,13 +89,15 @@ Two required traits at 100 and four rolled entries sharing exactly 100, six in t
 | `menacing` | 30 | Class 2 fails: the raised open pincer in the art carries the gravitational vortex, so the feature depicts the gravity ability rather than a threat display, and the wall of chitin sentence states immobility, not a threat. |
 | `perceptive` | 18 | pool full, weaker evidence: its only support was a record field, `physiology.senses.special` carries void-sense, plus the Grimedes output priority of non-visual sensory systems. Every kept entry rests on a species sentence or, in `nocturnal`'s case, on a planet-wide adaptation named as an output priority and a hazard together, so when `grappling` entered the pool this was the weakest of seven candidates for six slots. |
 
-`pack-bonded` stays absent from the pool: it was excluded by `solitary`, and `solitary` is now cut as well, so neither is rolled.
+Which of these cuts the 2026-09-10 re-run restores: only `solitary`, and only because `lore.company` now exists and states it outright ("It lurks alone."). `foresighted`, `menacing`, and `perceptive` are unchanged by the new lore fields: nothing in `appearance` or the five short fields adds a courage-eroding sentence, a foresight claim, or species-specific perception evidence beyond the record's existing `senses.special: void-sense`, so all three stay cut.
 
-`nocturnal` was cut on 2026-09-07, restored at 100 on 2026-09-08, and now sits in the rolled set at 22. The Grimedes Generator report's output priority of low-light metabolism is real evidence, but it is a fact of the world the Generator builds for rather than the point of this particular creature, and under the pool shape a planet-wide adaptation is rolled unless the species' own description makes it the point. Graviclaw's description is about fog, water, gravity and armor, so the entry rolls.
+`pack-bonded` stays absent from the pool: `solitary` is back in the rolled set (not at 100), so the exclusion pair is not at risk, but `pack-bonded` still has no source sentence of its own.
 
-`grappling` is the case the new key was written for. Before 2026-09-08 the record had nowhere to put the claws: `telekinetic` carries the pull that brings prey in, and `armored` carries the shell, but the closing grip that severs the hardest of materials and holds what it has caught had no key at all, and the strain went into the signature ability alone. The key now takes it, and the signature Point of No Return reads as the trait in action rather than as an unsupported exception.
+`nocturnal` was cut on 2026-09-07, restored at 100 on 2026-09-08, rolled at 18 on the same day, and is cut again on 2026-09-10 to make room for `solitary`; see the re-run table above.
 
-`foresighted` was added at 100 on 2026-09-08 and is removed from the pool on the same day under the pool shape. Nick's ruling reads the Grimedes anticipatory-response observation as evidence for `perceptive`, which the same line already names, rather than for `foresighted`, and leaves `foresighted` to species whose own description claims foresight or whose form line names it. Neither source claims foresight for this species, so the key is out. This is the fix the iteration-three friction note asked for, applied.
+`grappling` is the case the new key was written for on 2026-09-08. Before that date the record had nowhere to put the claws: `telekinetic` carries the pull that brings prey in, and `armored` carries the shell, but the closing grip that severs the hardest of materials and holds what it has caught had no key at all, and the strain went into the signature ability alone. The key now takes it, and the signature Point of No Return reads as the trait in action rather than as an unsupported exception.
+
+`foresighted` was added at 100 on 2026-09-08 and removed from the pool on the same day under the pool shape. Nick's ruling reads the Grimedes anticipatory-response observation as evidence for `perceptive`, which the same line already names, rather than for `foresighted`, and leaves `foresighted` to species whose own description claims foresight or whose form line names it. Neither source claims foresight for this species, so the key stays out on this re-run too.
 
 ### Physiology
 
@@ -136,6 +153,10 @@ Legacy `statRatings` were used only as a relative gauge; they mark `standardAtta
 
 Primary `dark` from the species `type` field. Secondaries are whatever the graph allows for this element (`ghost`, `psychic`, `ice`); no secondary is picked here. `affinityOdds` is omitted, so the 75/25 baseline is inherited; nothing in the source justifies an override.
 
+#### Orchestrator review of the 2026-09-10 trait re-run
+
+Final pool: `{"armored":100,"anchored":100,"grappling":36,"solitary":26,"telekinetic":22,"stealthy":16}` (the agent's pool was `{"armored":100,"anchored":100,"grappling":40,"solitary":32,"stealthy":22,"telekinetic":6}`). telekinetic restored to its prior 22 (the agent cut it to 6 on the rare-trait band). The 2 to 8 percent band is the default for a species whose sources merely suggest the trait; a species whose description is built on moving things without touching them (the miniature black hole that draws prey, the gravitational rooting) carries it at what the evidence supports, as Terragoyle does at 100. Rolled set resummed to 100.
+
 ### Signature ability
 
 The lore-defining act, quoted: "using its bizarre control over the intensification of gravitational waves to generate miniature black holes in the water and draw its helpless prey right into its clutches."
@@ -171,10 +192,11 @@ No thin combos found. Nothing was padded.
 
 ## Answers to validator WARNs
 
-Two WARNs, both the same class:
+Three WARNs on the current run:
 
 1. `signature.description.elementkey`: the signature description uses the word water as ordinary English, describing the standing water of the wetland the creature hunts in, sourced from "generate miniature black holes in the water". It is not a type label.
 2. `enc.definition.elementkey`: the same word, in the same ordinary-English sense, in the encyclopedia definition.
+3. `temperature.planet` (new on this pass): `temperatureC` [-60, 5] reads as outside the Grimedes legacy data block range [-6, 93] C. This is the known, tracked issue #167: the script is still comparing against the legacy record-extremes range rather than `environment.habitableBandC`, which is not yet present in `planetRecords.json`. The 2026-09-02 orchestrator amendment already re-banded this field against the rebuilt planet record's habitable band of [-60, 5] C, which this range matches exactly (it is the full habitable band, not a sub-band), so the value is correct and the warning is the tracked gap, not a new problem introduced by the trait re-run.
 
 ## Open questions for Nick
 
@@ -182,17 +204,18 @@ Only one. The description says the Graviclaw generates its black holes "in the w
 
 ## Validator output
 
-Final run after the pool-shape pass of 2026-09-08:
+Final run after the 2026-09-10 trait re-run:
 
 ```
+WARN temperature.planet             temperatureC [-60, 5] extends outside the Grimedes legacy data block range [-6, 93] C; the legacy extremes are record extremes, not the habitable band, so this is a warning until planetRecords.json carries environment.habitableBandC (issue #167)
 WARN conduits.source                conduit pincers for dark: the validator agent must confirm the sentence or art showing the element leaving through this part
 WARN signature.description.elementkey signature description uses element key word(s) as plain words: water (allowed only as ordinary English, never as a type label)
 WARN enc.definition.elementkey      encyclopedia definition uses element key word(s) as plain words: water (allowed only as ordinary English, never as a type label)
 
-0 FAIL, 3 WARN (structurally clean; every WARN must be answered in the walkthrough)
+0 FAIL, 4 WARN (structurally clean; every WARN must be answered in the walkthrough)
 ```
 
-All three are pre-existing and answered below and in the amendments: the conduit rests on the source sentence about strengthening the gravitational pull of the claws, and the two element-key lines are the ordinary English word for the wetland the creature hunts in, not a type label. The trait checks `traits.pool.required`, `traits.pool.rolledSum` and `traits.pool.size` are all silent.
+All four are pre-existing (none introduced by the trait re-run) and answered below and in the amendments: the new `temperature.planet` line is the tracked gap of issue #167 against an already-correct value, the conduit rests on the source sentence about strengthening the gravitational pull of the claws, and the two element-key lines are the ordinary English word for the wetland the creature hunts in, not a type label. The trait checks `traits.pool.required`, `traits.pool.rolledSum` and `traits.pool.size` are all silent, confirming the re-run pool (two required at 100, four rolled summing to 100) is structurally sound.
 
 ## Script denials
 
@@ -217,3 +240,4 @@ All three are pre-existing and answered below and in the amendments: the conduit
 - 2026-09-08, new keys (Nick): `grappling` added to the registry as a body stronger holding what it has caught, and it enters the rolled set at the top share on the claws that snap shut with a force many times heavier than their implied mass and draw prey into its clutches; `perceptive` (18) cut to the table above with the reason pool full, weaker evidence; the rolled set re-shared as `grappling` 32, `stealthy` 28, `telekinetic` 22, `nocturnal` 18; required unchanged at `armored` and `anchored`; pool holds at six, the cap; expected count 3.00 unchanged.
 - 2026-09-09, lore split (Nick): description reverted to species.json; body and habits authored; descriptionStatus removed.
 - 2026-09-09, lore overlap lever: habits (and body where changed) rewritten so the defining act is present from its own angle.
+- 2026-09-10, trait re-run: `lore.appearance` and the five short fields are now ratified and stand as source on the same footing as the teaser, the art, and the planet record. `solitary` restored to the rolled set at 32 on the ratified `company` field, "It lurks alone."; `telekinetic` corrected from 22 to 6 to sit inside the registry's rare-trait band (2 to 8 percent), a standing rule the pre-rerun pool had not applied; `nocturnal` cut from the rolled set (was 18) to keep the pool at six once `solitary` earned its place; `grappling` and `stealthy` re-shared to 40 and 22 so the rolled set still sums to 100. Expected count unchanged at 3.00.

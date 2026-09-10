@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { getSpecies, getSpeciesList } from '../index';
+import speciesRecords from '@xalians/content/speciesRecords.json';
 
 describe('SpeciesView', () => {
 	it('builds a template view for a ratified species', () => {
@@ -62,9 +63,10 @@ describe('SpeciesView', () => {
 		expect(view.record.instruments.some((i) => i.key === 'swarm')).toBe(true);
 	});
 
-	it('getSpeciesList is sorted by name and covers all 30 species', () => {
+	it('getSpeciesList is sorted by name and covers every ratified species', () => {
 		const list = getSpeciesList();
-		expect(list.length).toBe(30);
+		expect(speciesRecords.records.length).toBeGreaterThan(0);
+		expect(list.length).toBe(speciesRecords.records.length);
 		const names = list.map((s) => s.name);
 		const sorted = [...names].sort((a, b) => a.localeCompare(b));
 		expect(names).toEqual(sorted);

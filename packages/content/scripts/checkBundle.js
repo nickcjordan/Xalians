@@ -19,6 +19,7 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.join(__dirname, '..', '..', '..');
 const committedDir = path.join(repoRoot, 'packages', 'content', 'json');
+const committedSrcDir = path.join(repoRoot, 'packages', 'content', 'src');
 
 // The exact set of files scripts/bundleLore.js and scripts/bundleAbilityCatalog.js write.
 // tour.json, narration.json and plates.json are conditional on the docs/ source existing;
@@ -35,6 +36,13 @@ const BUNDLED_FILES = [
   'abilityCatalog.json',
 ];
 
+// registriesConst.ts is TypeScript, not JSON, and is committed under packages/content/src/
+// rather than packages/content/json/ -- see scripts/bundleLore.js. bundleLore.js writes it
+// flat into CONTENT_BUNDLE_OUT_DIR (this script's scratchDir) alongside the JSON files, so
+// it reads from the same freshPath base as BUNDLED_FILES above; only the committed side
+// differs.
+const SRC_FILES = ['registriesConst.ts'];
+
 function normalize(text) {
   return text.replace(/\r\n/g, '\n');
 }
@@ -49,22 +57,25 @@ function main() {
     });
 
     const stale = [];
-    for (const file of BUNDLED_FILES) {
+    const checkOne = (file, committedPath) => {
       const freshPath = path.join(scratchDir, file);
-      const committedPath = path.join(committedDir, file);
       if (!fs.existsSync(freshPath)) {
         // A bundler input is missing (e.g. a docs/ source file was deleted); not this
         // script's job to diagnose further, but it should not silently pass.
         stale.push(`${file} (bundler did not produce this file; run node scripts/bundleLore.js to see why)`);
-        continue;
+        return;
       }
       const fresh = normalize(fs.readFileSync(freshPath, 'utf8'));
       const committed = fs.existsSync(committedPath) ? normalize(fs.readFileSync(committedPath, 'utf8')) : null;
       if (committed !== fresh) {
         stale.push(file);
       }
-    }
+    };
 
+    for (const file of BUNDLED_FILES) checkOne(file, path.join(committedDir, file));
+    for (const file of SRC_FILES) checkOne(file, path.join(committedSrcDir, file));
+
+    const totalChecked = BUNDLED_FILES.length + SRC_FILES.length;
     if (stale.length > 0) {
       console.error('Content bundle is stale relative to its authoring source in docs/:');
       for (const file of stale) console.error(`  - ${file}`);
@@ -73,7 +84,7 @@ function main() {
       process.exit(1);
     }
 
-    console.log(`Content bundle is up to date (${BUNDLED_FILES.length} files checked).`);
+    console.log(`Content bundle is up to date (${totalChecked} files checked).`);
   } finally {
     fs.rmSync(scratchDir, { recursive: true, force: true });
   }
