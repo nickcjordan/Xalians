@@ -290,7 +290,7 @@ function AspectRatioSection() {
                 <Demo label="16:9, world">
                     <AspectRatio ratio={16 / 9} className="w-full el-water bg-el overflow-hidden">
                         <div className="flex size-full items-center justify-center">
-                            <XalianImage colored speciesName="Hippochamp" primaryType="water" moreClasses="w-full shrink-0" />
+                            <XalianImage colored speciesName="Hippochamp" primaryType="water" moreClasses="h-full w-auto shrink-0" />
                         </div>
                     </AspectRatio>
                 </Demo>

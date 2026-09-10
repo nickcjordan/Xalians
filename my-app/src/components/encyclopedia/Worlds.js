@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import * as lore from '../../lore';
-import { Tile, TileBar, TileArt, TileMeta } from '@/components/system/record';
+import { Tile, TileArt, TileMeta } from '@/components/system/record';
 
 function sentenceCase(text) {
     if (!text) return text;
@@ -23,7 +23,6 @@ export default function Worlds() {
         <div className="grid grid-cols-2 gap-3 gap-y-4 sm:grid-cols-3 sm:gap-4 sm:gap-y-5 md:grid-cols-4 min-[1080px]:grid-cols-5 xl:grid-cols-6">
             {worlds.map((world) => (
                 <Tile as={Link} key={world.key} to={lore.routeFor('world', world.key)} className={`el-${world.element}`}>
-                    <TileBar />
                     <TileArt>
                         <img
                             src={`/${world.images.planet}`}

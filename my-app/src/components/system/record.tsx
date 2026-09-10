@@ -155,10 +155,6 @@ function Tile({
   )
 }
 
-function TileBar({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="tile-bar" className={cn("h-[3px] bg-el", className)} {...props} />
-}
-
 function TileArt({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -173,5 +169,5 @@ function TileMeta({ className, ...props }: React.ComponentProps<"div">) {
   return <div data-slot="tile-meta" className={cn("px-4 pb-4 pt-3", className)} {...props} />
 }
 
-export { SpecPlate, RecordRow, Meter, MoveSet, EmptyState, Tile, TileBar, TileArt, TileMeta }
+export { SpecPlate, RecordRow, Meter, MoveSet, EmptyState, Tile, TileArt, TileMeta }
 export type { SpecEntry, Move }
