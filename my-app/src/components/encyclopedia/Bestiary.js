@@ -8,7 +8,6 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Toggle } from '@/components/ui/toggle';
-import { tabTriggerClass } from '@/components/ui/tabs';
 
 const ELEMENTS = [
     'fire', 'water', 'dark', 'light', 'plant', 'electric', 'ghost', 'rock',
@@ -81,32 +80,17 @@ export default function Bestiary() {
     return (
         <div>
             <div
-                className="mb-3 flex flex-wrap gap-0.5 max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:[mask-image:linear-gradient(to_right,black_calc(100%-40px),transparent)]"
+                className="mb-4 flex max-sm:overflow-x-auto max-sm:[mask-image:linear-gradient(to_right,black_calc(100%-40px),transparent)]"
                 role="group"
                 aria-label="Filter by element"
                 ref={elementRowRef}
             >
-                <button
-                    type="button"
-                    data-state={element === 'all' ? 'active' : 'inactive'}
-                    className={`${tabTriggerClass} max-sm:shrink-0`}
-                    aria-pressed={element === 'all'}
-                    onClick={() => setElement('all')}
-                >
-                    All
-                </button>
-                {ELEMENTS.map((el) => (
-                    <button
-                        key={el}
-                        type="button"
-                        data-state={element === el ? 'active' : 'inactive'}
-                        className={`${tabTriggerClass} max-sm:shrink-0`}
-                        aria-pressed={element === el}
-                        onClick={() => setElement(el)}
-                    >
-                        {el}
-                    </button>
-                ))}
+                <ToggleGroup type="single" value={element} onValueChange={(v) => v && setElement(v)} variant="outline" className="max-sm:flex-nowrap" aria-label="Element">
+                    <ToggleGroupItem value="all" className="max-sm:shrink-0">All</ToggleGroupItem>
+                    {ELEMENTS.map((el) => (
+                        <ToggleGroupItem key={el} value={el} className="max-sm:shrink-0">{el}</ToggleGroupItem>
+                    ))}
+                </ToggleGroup>
             </div>
 
             <div className="mb-5 flex flex-wrap items-center gap-3 max-sm:flex-row max-sm:flex-wrap">

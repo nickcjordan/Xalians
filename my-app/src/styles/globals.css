@@ -111,10 +111,14 @@
 		transition: transform 120ms ease-out, box-shadow 120ms ease-out, background-color 120ms ease-out, color 120ms ease-out, border-color 120ms ease-out;
 	}
 	.mass-key:hover { transform: translate(-1px, -1px); box-shadow: inset 0 1px 0 var(--color-edge-hi), calc(var(--thick) + 1px) calc(var(--thick) + 1px) 0 0 var(--mass); }
-	.mass-key:active,
+	.mass-key:active { transform: translate(var(--thick), var(--thick)); box-shadow: inset 0 1px 0 var(--color-edge-hi); }
+	/* A selected segment is already pressed: it loses its mass but does not
+	   move, so a tight row stays aligned; its neighbors standing proud say the
+	   rest. */
 	.mass-key[data-state="on"],
-	.mass-key[aria-pressed="true"] { transform: translate(var(--thick), var(--thick)); box-shadow: inset 0 1px 0 var(--color-edge-hi); }
-	.mass-key[data-state="on"]:hover { transform: translate(var(--thick), var(--thick)); }
+	.mass-key[aria-pressed="true"] { box-shadow: inset 0 1px 0 var(--color-edge-hi); }
+	.mass-key[data-state="on"]:hover,
+	.mass-key[aria-pressed="true"]:hover { transform: none; }
 	.mass-key:disabled { transform: none; box-shadow: none; }
 
 	.key-primary {
