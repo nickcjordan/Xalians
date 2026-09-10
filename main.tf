@@ -155,6 +155,11 @@ resource "aws_apigatewayv2_api" "lambda" {
 }
 
 resource "aws_apigatewayv2_stage" "prod" {
+  # route_settings names "GET /xalians/showroom"; API Gateway rejects the stage update
+  # when that route does not exist yet, so the stage must wait for the module that
+  # creates it (seen on the 2026-09-10 apply that introduced the route).
+  depends_on = [module.showroom_xalian_lambda_module]
+
   api_id = aws_apigatewayv2_api.lambda.id
 
   name        = "prod"
@@ -196,6 +201,11 @@ resource "aws_apigatewayv2_stage" "prod" {
 }
 
 resource "aws_apigatewayv2_stage" "test" {
+  # route_settings names "GET /xalians/showroom"; API Gateway rejects the stage update
+  # when that route does not exist yet, so the stage must wait for the module that
+  # creates it (seen on the 2026-09-10 apply that introduced the route).
+  depends_on = [module.showroom_xalian_lambda_module]
+
   api_id = aws_apigatewayv2_api.lambda.id
 
   name        = "test"
