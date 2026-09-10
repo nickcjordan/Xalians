@@ -77,11 +77,13 @@ const KEEP = {
   'Jolt|electric/mend': 'a jolt restarts a heart; electric mend idiom',
 };
 // HOLD: needs Nick's ruling (the religious-register ward/mend split is already queued for him).
-const HOLD = {
-  'Benediction|light/mend': 'religious register ward/mend split, queued for Nick',
+const HOLD = {};
+// 2026-09-10, Nick: the religious register belongs to both ward and mend, so these stay.
+Object.assign(KEEP, {
+  'Benediction|light/mend': 'religious register belongs to both ward and mend (Nick, 2026-09-10)',
   'Blessing|light/mend': 'same',
   'Grace|light/mend': 'same',
-};
+});
 // class 3 NEUTRAL-layer rows: keep every element placement except explicit action failures listed here.
 const NEUTRAL_LAYER_ACTION_FAILS = new Set([
   'Vault|rock/terrorize', 'Jolt Strike|electric/ambush', 'Sweeping Strike|air/ambush', 'Sweeping Charge|air/ambush',
