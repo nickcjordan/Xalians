@@ -136,6 +136,20 @@ resource "aws_iam_role_policy" "github_terraform" {
         Resource = "arn:aws:logs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:log-group:*"
       },
       {
+        # API Gateway stage access logging is delivered through the CloudWatch Logs
+        # "log delivery" API, whose actions are not resource-scoped. UpdateStage on a
+        # stage with access_log_settings fails without these (seen on the 2026-09-10
+        # apply that added throttling to both stages).
+        Sid    = "LogDelivery"
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogDelivery", "logs:GetLogDelivery", "logs:UpdateLogDelivery",
+          "logs:DeleteLogDelivery", "logs:ListLogDeliveries", "logs:PutResourcePolicy",
+          "logs:DescribeResourcePolicies", "logs:DescribeLogGroups",
+        ]
+        Resource = "*"
+      },
+      {
         Sid    = "Route53Zone"
         Effect = "Allow"
         Action = [

@@ -94,3 +94,5 @@ Each phase merges to `main` on its own so the site stays deployable throughout.
 - No raw hex or font names outside `tokens.css`.
 - One component per concern from `src/components/ui`; do not hand-roll a modal, menu or tooltip.
 - Verify by paint at 1440 and 390 before reporting, using `scripts/design/snap.js`.
+
+On 2026-09-10 the component set was completed (docs/DESIGN_SYSTEM.md section 10.1): eleven more primitives, the page templates, status pages, accessibility pieces, readouts, filters and the data table, with `systemGuards.test.js` guarding the style guide and the chrome tier. The four dead recharts chart components and the smoke emitter were deleted in the same change; `Chart` is the one chart wrapper.

@@ -17,6 +17,13 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Toggle } from '@/components/ui/toggle';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from '@/components/ui/form';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Bold, Italic } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
@@ -52,6 +59,9 @@ import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { Kbd } from '@/components/ui/kbd';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+// The rest of the system, one file per brief so the page stays readable.
+import { SECTIONS as PRIMITIVE_SECTIONS } from './styleguide/primitiveSections';
+import { SECTIONS as PATTERN_SECTIONS } from './styleguide/patternSections';
 
 /**
  * The design system reference, version 4 on the new stack
@@ -68,6 +78,7 @@ const SECTIONS: { id: string; label: string }[] = [
     { id: 'depth', label: 'Depth and corners' },
     { id: 'controls', label: 'Controls' },
     { id: 'inputs', label: 'Inputs' },
+    { id: 'forms', label: 'Forms' },
     { id: 'chips-badges', label: 'Chips and badges' },
     { id: 'tabs', label: 'Tabs' },
     { id: 'loading', label: 'Loading' },
@@ -79,6 +90,8 @@ const SECTIONS: { id: string; label: string }[] = [
     { id: 'overlays', label: 'Overlays' },
     { id: 'data', label: 'Data' },
     { id: 'icons', label: 'Icons' },
+    ...PRIMITIVE_SECTIONS.map(({ id, label }) => ({ id, label })),
+    ...PATTERN_SECTIONS.map(({ id, label }) => ({ id, label })),
 ];
 
 const ELEMENTS = [
@@ -113,6 +126,51 @@ function Swatch({ label, className, style, labelClassName }: { label: string; cl
         <div className={`flex h-20 items-end p-2 ${className}`} style={style}>
             <span className={`type-legend ${labelClassName}`}>{label}</span>
         </div>
+    );
+}
+
+const sampleSchema = z.object({
+    name: z.string().min(2, 'Names need at least two letters.').regex(/^[A-Za-z]+$/, 'Names use letters only. Remove spaces and punctuation.'),
+    world: z.string().min(1, 'Choose a home world.'),
+});
+
+function SampleForm() {
+    const form = useForm<z.infer<typeof sampleSchema>>({
+        resolver: zodResolver(sampleSchema),
+        defaultValues: { name: 'hypno pet!', world: '' },
+        mode: 'onTouched',
+    });
+    React.useEffect(() => { form.trigger(); }, [form]);
+    return (
+        <Form {...form}>
+            <form className="flex flex-col gap-4" onSubmit={form.handleSubmit(() => toast.success('Kept.'))}>
+                <FormField control={form.control} name="name" render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl><Input {...field} /></FormControl>
+                        <FormDescription>What this Xalian is called in your collection.</FormDescription>
+                        <FormMessage className="text-small text-plague-outline-ink" />
+                    </FormItem>
+                )} />
+                <FormField control={form.control} name="world" render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Home world</FormLabel>
+                        <Select value={field.value} onValueChange={field.onChange}>
+                            <FormControl><SelectTrigger className="w-full"><SelectValue placeholder="Choose a world" /></SelectTrigger></FormControl>
+                            <SelectContent>
+                                <SelectItem value="telypso">Telypso</SelectItem>
+                                <SelectItem value="magmuth">Magmuth</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <FormMessage className="text-small text-plague-outline-ink" />
+                    </FormItem>
+                )} />
+                <div className="flex gap-3">
+                    <Button type="submit">Keep</Button>
+                    <Button type="button" variant="secondary" onClick={() => form.reset()}>Reset</Button>
+                </div>
+            </form>
+        </Form>
     );
 }
 
@@ -285,7 +343,28 @@ function StyleGuidePage() {
                                 <ToggleGroupItem value="5">5</ToggleGroupItem>
                                 <ToggleGroupItem value="6">6</ToggleGroupItem>
                             </ToggleGroup>
+                            <div className="flex items-center gap-2">
+                                <Toggle aria-label="Bold" defaultPressed><Bold /></Toggle>
+                                <Toggle aria-label="Italic"><Italic /></Toggle>
+                                <Toggle aria-label="Disabled" disabled><Bold /></Toggle>
+                                <span className="type-legend">Toggle: pressed, rest, disabled</span>
+                            </div>
                         </div>
+                    </Card>
+                </section>
+
+                {/* ---- forms ---- */}
+                <section id="forms" className="mt-12">
+                    <SectionHead title="Forms" />
+                    <p className="text-body text-ink-2">A form is react-hook-form with a zod schema inside the Form parts: label, control, description, message. Submit is the one primary key; errors say what is wrong and how to fix it. Long content scrolls inside a ScrollArea, never the dialog.</p>
+                    <Card variant="panel" className="mt-6 grid gap-6 md:grid-cols-2">
+                        <SampleForm />
+                        <ScrollArea className="h-56 border border-edge bg-s0 p-4">
+                            <p className="type-legend">Scroll area</p>
+                            {Array.from({ length: 12 }, (_, i) => (
+                                <p key={i} className="mt-3 text-body text-ink-2">Entry {i + 1}. The Vallerii built Xalian Generators to bioengineer life adapted to each planet's extreme environment.</p>
+                            ))}
+                        </ScrollArea>
                     </Card>
                 </section>
 
@@ -602,6 +681,13 @@ function StyleGuidePage() {
                         ))}
                     </div>
                 </section>
+
+                {PRIMITIVE_SECTIONS.map((s) => (
+                    <React.Fragment key={s.id}>{s.node}</React.Fragment>
+                ))}
+                {PATTERN_SECTIONS.map((s) => (
+                    <section key={s.id} id={s.id} className="mt-12">{s.node}</section>
+                ))}
 
             </Shell>
         </main>
