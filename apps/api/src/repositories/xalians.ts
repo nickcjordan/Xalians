@@ -93,15 +93,33 @@ export async function getXalianBatch(xalianIds: string[]): Promise<unknown[]> {
   }
 }
 
+export class XalianAlreadyExistsError extends Error {
+  constructor(xalianId: string) {
+    super(`xalian ${xalianId} already exists`);
+    this.name = 'XalianAlreadyExistsError';
+  }
+}
+
+// ConditionExpression guards the keep flow (audit F2 / D1): a xalian can only be kept
+// once, so a retried or duplicated keep request fails loudly instead of silently
+// overwriting whatever was persisted first.
 export async function createXalian(xalian: { xalianId: string; speciesId: string; [key: string]: unknown }): Promise<void> {
-  await ddb.send(
-    new PutCommand({
-      TableName: TABLE_NAME,
-      Item: {
-        speciesId: xalian.speciesId,
-        xalianId: xalian.xalianId,
-        attributes: xalian,
-      },
-    })
-  );
+  try {
+    await ddb.send(
+      new PutCommand({
+        TableName: TABLE_NAME,
+        Item: {
+          speciesId: xalian.speciesId,
+          xalianId: xalian.xalianId,
+          attributes: xalian,
+        },
+        ConditionExpression: 'attribute_not_exists(xalianId)',
+      })
+    );
+  } catch (err) {
+    if (err instanceof Error && err.name === 'ConditionalCheckFailedException') {
+      throw new XalianAlreadyExistsError(xalian.xalianId);
+    }
+    throw err;
+  }
 }

@@ -30,18 +30,24 @@ const STAT_ROWS: [string, string, string][] = [
 ];
 
 function GeneratorPage() {
-	const [xalian, setXalian] = React.useState<any>(null);
+	// Holds the whole { xalian, signature } envelope generateXalian returns. `xalian` is
+	// the legacy shape every render below already expects; `signature` only matters to
+	// saveXalian, which sends the envelope back unchanged so the server can verify the
+	// stats were never edited client-side.
+	const [envelope, setEnvelope] = React.useState<any>(null);
 	const [isLoading, setIsLoading] = React.useState(true);
 	const [isGenerating, setIsGenerating] = React.useState(false);
 	const [loggedInUser, setLoggedInUser] = React.useState<any>(null);
 	const [jsonOpen, setJsonOpen] = React.useState(false);
 
+	const xalian = envelope ? envelope.xalian : null;
+
 	const getXalian = React.useCallback(() => {
 		setIsGenerating(true);
 		xalianApi
 			.callGenerateXalian()
-			.then((x: any) => {
-				setXalian(x);
+			.then((e: any) => {
+				setEnvelope(e);
 				setIsLoading(false);
 				setIsGenerating(false);
 			})
@@ -58,10 +64,10 @@ function GeneratorPage() {
 
 	const saveXalian = () => {
 		setIsLoading(true);
-		// create the xalian record first so the user record never references a xalian that doesn't exist
+		// Keeping is one call: the server verifies the signature, persists, and appends
+		// the id to the caller's user record itself.
 		dbApi
-			.callCreateXalian(xalian)
-			.then(() => dbApi.callUpdateUserAddXalian(loggedInUser.username, xalian.xalianId))
+			.callKeepXalian(envelope)
 			.then(() => {
 				setIsLoading(false);
 				toast.success(`${xalian.species.name} kept.`);

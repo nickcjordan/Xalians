@@ -16,6 +16,10 @@ terraform {
       source  = "hashicorp/archive"
       version = "~> 2.2"
     }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.6"
+    }
   }
 
   required_version = ">= 1.10"
@@ -79,11 +83,29 @@ resource "aws_iam_role_policy" "dynamodb_policy" {
         Resource = [
           "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/XalianTable",
           "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/XalianUsersTable",
+          # XalianRegistry (D1): the two entries above are exact table names, not a
+          # table-level wildcard, so the new registry table needs its own ARN here. The
+          # index wildcard below already covers its byOwner GSI.
+          "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/XalianRegistry",
           "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/Xalian*/index/*",
         ]
       },
     ]
   })
+}
+#####                                               #####
+#########################################################
+
+#########################################################
+#####          XALIAN SIGNING SECRET (F2)           #####
+#########################################################
+# HMAC secret for the legacy showroom keep flow (audit F2 / D1, apps/api/src/lib/signing.ts):
+# GET /xalian (GenerateXalian) signs the record it returns; POST /db/xalian
+# (TableCreateXalian) verifies that signature before persisting, so a client can no longer
+# keep a record it fabricated or tampered with. Only those two functions receive it.
+resource "random_password" "xalian_signing_secret" {
+  length  = 48
+  special = false
 }
 #####                                               #####
 #########################################################
@@ -267,6 +289,9 @@ module "generate_xalian_lambda_module" {
   apigw_lambda_route_key          = "GET /xalian"
   base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
   authorization_type              = "NONE"
+  environment_variables = {
+    XALIAN_SIGNING_SECRET = random_password.xalian_signing_secret.result
+  }
 }
 #####                                               #####
 #########################################################
@@ -290,6 +315,9 @@ module "table_create_xalian_lambda_module" {
   base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
   authorization_type              = "JWT"
   authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
+  environment_variables = {
+    XALIAN_SIGNING_SECRET = random_password.xalian_signing_secret.result
+  }
 }
 #####                                               #####
 #########################################################
@@ -399,6 +427,72 @@ module "table_update_xalian_user_lambda_module" {
   lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
   iam_role_arn                    = aws_iam_role.lambda_exec.arn
   apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
+  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type              = "JWT"
+  authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
+}
+#####                                               #####
+#########################################################
+
+#########################################################
+#####               LAMBDA INSTANCE                 #####
+##          Generate Registry Xalian Lambda (D1)       ##
+#########################################################
+module "generate_registry_xalian_lambda_module" {
+  source = "./terraform/modules/lambda"
+
+  function_name                   = "GenerateRegistryXalian"
+  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
+  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
+  lambda_handler_path             = "generateRegistryXalian/index.handler"
+  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
+  iam_role_arn                    = aws_iam_role.lambda_exec.arn
+  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
+  apigw_lambda_route_key          = "POST /xalians"
+  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type              = "JWT"
+  authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
+}
+#####                                               #####
+#########################################################
+
+#########################################################
+#####               LAMBDA INSTANCE                 #####
+##           List Registry Xalians Lambda (D1)         ##
+#########################################################
+module "list_registry_xalians_lambda_module" {
+  source = "./terraform/modules/lambda"
+
+  function_name                   = "ListRegistryXalians"
+  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
+  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
+  lambda_handler_path             = "listRegistryXalians/index.handler"
+  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
+  iam_role_arn                    = aws_iam_role.lambda_exec.arn
+  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
+  apigw_lambda_route_key          = "GET /xalians"
+  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type              = "JWT"
+  authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
+}
+#####                                               #####
+#########################################################
+
+#########################################################
+#####               LAMBDA INSTANCE                 #####
+##          Retrieve Registry Xalian Lambda (D1)       ##
+#########################################################
+module "retrieve_registry_xalian_lambda_module" {
+  source = "./terraform/modules/lambda"
+
+  function_name                   = "RetrieveRegistryXalian"
+  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
+  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
+  lambda_handler_path             = "retrieveRegistryXalian/index.handler"
+  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
+  iam_role_arn                    = aws_iam_role.lambda_exec.arn
+  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
+  apigw_lambda_route_key          = "GET /xalians/{xalianId}"
   base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
   authorization_type              = "JWT"
   authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
@@ -933,6 +1027,47 @@ import {
 import {
   to = aws_dynamodb_table.xalian_users_table
   id = "XalianUsersTable"
+}
+
+# XalianRegistry (D1): the table for server-generated, ratified records (@xalians/rules
+# XalianRecord). New, not imported -- Terraform creates it on apply. hash key xalianId
+# (the record's own id) with a byOwner GSI (ownerId + generatedAt, newest first) for
+# listing a caller's own generated Xalians. prevent_destroy for the same reason as the two
+# legacy tables: this holds real user data the moment the first record is generated.
+resource "aws_dynamodb_table" "xalian_registry" {
+  name         = "XalianRegistry"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "xalianId"
+
+  attribute {
+    name = "xalianId"
+    type = "S"
+  }
+
+  attribute {
+    name = "ownerId"
+    type = "S"
+  }
+
+  attribute {
+    name = "generatedAt"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name            = "byOwner"
+    hash_key        = "ownerId"
+    range_key       = "generatedAt"
+    projection_type = "ALL"
+  }
+
+  point_in_time_recovery {
+    enabled = true
+  }
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 #####                                               #####
 #########################################################
