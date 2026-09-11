@@ -91,6 +91,8 @@ Every finalist is read aloud and compared with the full roster. Record:
 - whether spelling depends on decorative punctuation or gratuitous rare letters;
 - whether it sounds too close to an existing creature, world, institution, substance, or major character.
 
+A coined name must also survive a spoken round trip. Give the written name to a reader without coaching, ask them to say it, and compare what another listener or speech-to-text system hears. Speech recognition is not an authority on pronunciation, but a large mismatch is evidence that the spelling does not carry the intended sound. Do not tell the reader they pronounced an unclear name incorrectly; revise the name or explicitly accept that friction.
+
 No single opening letter, ending, syllable count, or naming mode is banned. Repetition becomes a problem when several recent additions lean on the same device or when two creatures become difficult to distinguish in speech or print.
 
 Species names remain one word unless a future concept gives a compelling reason to change the roster convention. Apply plain English pronunciation rather than inventing a hidden pronunciation rule.
@@ -118,6 +120,10 @@ Each full creature proposal records:
 - pronunciation and sound intent;
 - roster-diversity findings;
 - exact and case-insensitive repository collision results.
+
+Every ratified species template also carries a required top-level `nameOrigin` string immediately after `name`. It explains the roots or tonal logic in one or two plain sentences. It is editorial encyclopedia content, not in-world testimony and not a game key. A tonal coinage such as Figzy says so directly rather than inventing false roots. An uncertain derivation is resolved with the creator before ratification; the field never presents an inference as authorial fact.
+
+The species template is the source of truth for this field. Encyclopedia species views display it alongside the name and existing pronunciation without duplicating it into the general encyclopedia-entry record. Generated individual records do not need to copy it unless a future offline consumer cannot resolve the species template.
 
 This is a decision record, not an algorithm that selects the highest numerical score. A name may pass every mechanical check and still be dull. Final judgment favors memorability, fit, and roster variety.
 
