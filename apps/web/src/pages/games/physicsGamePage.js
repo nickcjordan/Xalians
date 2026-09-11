@@ -28,14 +28,22 @@ class PhysicsGamePage extends React.Component {
 
 
 	componentDidMount() {
-        InertiaPlugin.track("#target", "x,y"); 
-     
-        gsap.set('#figzy-body', { transformOrigin: '50%, bottom'});
-        gsap.set('#figzy-inside-spinner, #figzy-outside-spinner', { transformOrigin: '50%, 50%' });
-        gsap.to('#figzy-inside-spinner, #figzy-outside-spinner', {scale: ((this.state.powerValue + 50) / 100)});
-
         // window.addEventListener('resize', this.updateSize);
 		this.updateSize(() => {
+            // The arena is conditional on `size`, so these nodes do not exist
+            // until the state update above has committed. Initialise GSAP from
+            // this callback instead of asking it to animate missing targets.
+            const target = document.getElementById('target');
+            const arena = document.getElementById('arena');
+            const figzyBody = document.getElementById('figzy-body');
+            const figzySpinners = document.querySelectorAll('#figzy-inside-spinner, #figzy-outside-spinner');
+            if (!target || !arena || !figzyBody || figzySpinners.length === 0) return;
+
+            InertiaPlugin.track(target, "x,y");
+            gsap.set(figzyBody, { transformOrigin: '50%, bottom'});
+            gsap.set(figzySpinners, { transformOrigin: '50%, 50%' });
+            gsap.to(figzySpinners, {scale: ((this.state.powerValue + 50) / 100)});
+
             // Draggable.create('#figzy-outside-spinner', {
 
                 // gsap.to('#target', {
@@ -44,8 +52,8 @@ class PhysicsGamePage extends React.Component {
                 //     }
                 // });
 
-            Draggable.create('#target', {
-                bounds: document.getElementById("arena"),
+            Draggable.create(target, {
+                bounds: arena,
                 // edgeResistance: 1,
                 type: 'x,y',
                 inertia: true,
