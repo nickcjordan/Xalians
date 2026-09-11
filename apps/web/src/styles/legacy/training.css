@@ -3,7 +3,7 @@
  *
  * The Match and Physics modules can render directly or inside the chrome
  * Training Grounds shell. Keep their board geometry here so unrelated
- * immersive routes do not inherit it from style.css.
+ * unrelated immersive routes do not inherit it from the shared foundation.
  */
 
 /* The Match card back still uses the pre-XalianImage SVG wrapper. */

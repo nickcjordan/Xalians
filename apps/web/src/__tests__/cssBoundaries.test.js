@@ -20,6 +20,7 @@ describe('legacy CSS ownership boundaries', () => {
 
 		expect(html).not.toMatch(/assets\/css\/legacy/);
 		expect(html).not.toMatch(/(?:tokens|system|style|typeColors|duel|duel-playground|reclamation)\.css/);
+		expect(fs.existsSync(path.join(WEB_ROOT, 'src/styles/legacy/style.css'))).toBe(false);
 	});
 
 	const ownership = {
@@ -59,7 +60,7 @@ describe('legacy CSS ownership boundaries', () => {
 		const css = read('src/styles/legacy/immersive.css');
 		const imports = [...css.matchAll(/@import ['"]\.\/([^'"]+)['"]/g)].map((match) => match[1]);
 
-		expect(imports).toEqual(['tokens.css', 'system.css', 'style.css']);
+		expect(imports).toEqual(['tokens.css', 'system.css']);
 	});
 
 	it('keeps the retired element-colour utility contract deleted', () => {
@@ -76,7 +77,7 @@ describe('legacy CSS ownership boundaries', () => {
 	});
 
 	it('keeps training board geometry out of the shared immersive stylesheet', () => {
-		const sharedCss = read('src/styles/legacy/style.css');
+		const sharedCss = read('src/styles/legacy/system.css');
 		const trainingCss = read('src/styles/legacy/training.css');
 		const trainingSelectors = [
 			'.xalian-image-wrapper',
@@ -91,16 +92,19 @@ describe('legacy CSS ownership boundaries', () => {
 		];
 
 		trainingSelectors.forEach((selector) => {
-			expect(sharedCss).not.toContain(selector);
+			const exactRule = new RegExp(`(^|})\\s*${selector.replace('.', '\\.')}\\s*\\{`, 'm');
+			expect(sharedCss).not.toMatch(exactRule);
 			expect(trainingCss).toContain(selector);
 		});
 	});
 
-	it('keeps the residual shared stylesheet at element-level defaults only', () => {
-		const css = read('src/styles/legacy/style.css');
-		const stripped = css.replace(/\/\*[\s\S]*?\*\//g, '');
+	it('keeps immersive element defaults at the end of the terminal foundation', () => {
+		const css = read('src/styles/legacy/system.css');
+		const marker = css.indexOf('IMMERSIVE ELEMENT DEFAULTS');
 
-		expect(stripped).not.toMatch(/(^|})\s*[.#][\w-]+/m);
+		expect(marker).toBeGreaterThan(0);
+		expect(css.indexOf('body {', marker)).toBeGreaterThan(marker);
+		expect(css.indexOf('::-webkit-scrollbar', marker)).toBeGreaterThan(marker);
 		expect(css).not.toContain('vertically-center-contents');
 		expect(css).not.toContain('.themed-modal');
 	});
@@ -114,7 +118,6 @@ describe('legacy CSS ownership boundaries', () => {
 	});
 
 	it('keeps retired landing-page template sections and their assets deleted', () => {
-		const css = read('src/styles/legacy/style.css');
 		const retiredSectionMarkers = [
 			'# Custom Theme',
 			'# Preloader',
@@ -129,16 +132,19 @@ describe('legacy CSS ownership boundaries', () => {
 			'# Footer',
 		];
 
-		retiredSectionMarkers.forEach((marker) => expect(css).not.toContain(marker));
-		expect(css).not.toContain('ProcrastinatingPixie');
-		expect(css).not.toContain('vault.jpg');
+		const executableSource = sourceFiles(SRC_ROOT)
+			.map((file) => fs.readFileSync(file, 'utf8'))
+			.join('\n');
+
+		retiredSectionMarkers.forEach((marker) => expect(executableSource).not.toContain(marker));
+		expect(executableSource).not.toContain('ProcrastinatingPixie');
+		expect(executableSource).not.toContain('vault.jpg');
 		expect(fs.existsSync(path.join(WEB_ROOT, 'public/assets/css/fonts/ProcrastinatingPixie-WyVOO.ttf'))).toBe(false);
 		expect(fs.existsSync(path.join(WEB_ROOT, 'public/assets/fonts/ProcrastinatingPixie-WyVOO.ttf'))).toBe(false);
 		expect(fs.existsSync(path.join(WEB_ROOT, 'public/assets/img/background/vault.jpg'))).toBe(false);
 	});
 
 	it('keeps the retired Bootstrap navbar contract out of shared CSS', () => {
-		const styleCss = read('src/styles/legacy/style.css');
 		const systemCss = read('src/styles/legacy/system.css');
 		const navbarSource = read('src/components/navbar.tsx');
 		const retiredSelectors = [
@@ -151,16 +157,13 @@ describe('legacy CSS ownership boundaries', () => {
 		];
 
 		retiredSelectors.forEach((selector) => {
-			expect(styleCss).not.toContain(selector);
 			expect(systemCss).not.toContain(selector);
 		});
-		expect(styleCss).not.toContain('# Navigation Menu');
 		expect(systemCss).not.toContain('CONSOLE HEADER');
 		expect(navbarSource).not.toContain('react-bootstrap');
 	});
 
 	it('keeps unreachable chrome-page sections out of immersive CSS', () => {
-		const styleCss = read('src/styles/legacy/style.css');
 		const systemCss = read('src/styles/legacy/system.css');
 		const retiredSelectors = [
 			'.generator-page-gradient-overlay',
@@ -171,7 +174,7 @@ describe('legacy CSS ownership boundaries', () => {
 			'.record-strip',
 		];
 
-		retiredSelectors.forEach((selector) => expect(styleCss).not.toContain(selector));
+		retiredSelectors.forEach((selector) => expect(systemCss).not.toContain(selector));
 		expect(systemCss).toContain('.g-panel > p:last-child');
 	});
 });

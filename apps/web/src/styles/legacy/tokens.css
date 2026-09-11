@@ -2,8 +2,8 @@
  * COMPATIBILITY SHIM — temporary, delete when the last --x-* reference is gone.
  * =============================================================================
  * The design system now lives in system.css under the --g-* namespace. A lot of
- * older CSS in style.css still asks for --x-* names, and rewriting every one of
- * those rules in a single pass would be a large, risky diff for no visual gain.
+ * older route CSS still asks for --x-* names, and rewriting every one of those
+ * rules in a single pass would be a large, risky diff for no visual gain.
  *
  * So this file re-points the old names at the new ones. Legacy rules keep
  * working and immediately pick up the retrofuture palette, and pages can be

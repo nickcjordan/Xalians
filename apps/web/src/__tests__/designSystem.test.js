@@ -115,8 +115,6 @@ const V4_IMPORTS = [
  * their colours onto tokens; they may never grow it.
  */
 const LEGACY_HEX_BASELINE = {
-	// The residual file contains only element-level immersive defaults.
-	'style.css': 7,
 	'duel.css': 1,
 	'duel-playground.css': 11,
 	'tokens.css': 29,
@@ -233,9 +231,12 @@ describe('design system structure', () => {
 	});
 
 	describe('no new raw hex in CSS', () => {
-		it('system.css confines hex to :root and [data-terminal] blocks', () => {
+		it('system.css confines hex to token/material blocks and the final legacy defaults', () => {
 			const css = fs.readFileSync(SYSTEM_PATH, 'utf8');
-			const stripped = css.replace(/\/\*[\s\S]*?\*\//g, '');
+			const defaultsMarker = css.indexOf('IMMERSIVE ELEMENT DEFAULTS');
+			const foundation = css.slice(0, defaultsMarker);
+			const defaults = css.slice(defaultsMarker);
+			const stripped = foundation.replace(/\/\*[\s\S]*?\*\//g, '');
 			// Neither :root nor any [data-terminal="x"] block in this file contains
 			// a nested rule (they are flat custom-property declarations), so a
 			// non-greedy "selector { ... }" match captures each one whole. Remove
@@ -245,6 +246,8 @@ describe('design system structure', () => {
 				''
 			);
 			expect(withoutAllowedBlocks.match(/#[0-9a-fA-F]{3,8}\b/g)).toBeNull();
+			expect(defaultsMarker).toBeGreaterThan(0);
+			expect(countHex(defaults)).toBeLessThanOrEqual(7);
 		});
 
 		Object.entries(LEGACY_HEX_BASELINE).forEach(([file, baseline]) => {

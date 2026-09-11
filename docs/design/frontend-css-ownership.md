@@ -11,8 +11,8 @@ This inventory defines which route or layer owns every non-component stylesheet.
 | `src/styles/tokens.css` | 4,392 | Every route | Application entry | Retain as the v4 token/Tailwind source of truth. |
 | `src/styles/globals.css` | 11,487 | Every route | Application entry | Retain only resets, page ground, semantic mappings, and documented global utilities. Audit again after the legacy layer leaves. |
 | `src/styles/legacy/tokens.css` | 3,189 | Immersive v3 terminals | Imported through lazy `immersive.css` only | Merge required values into the immersive token block, then delete the aliases. |
-| `src/styles/legacy/system.css` | 108,853 at baseline; 104,758 after the fifth selector cut and one live rule transfer | Duel match/reference, Reclamation, training games, Long Return | Imported through lazy `immersive.css` only | Split the v3 terminal foundation from dead v4 duplicates and route/component sections. This is the main shared-ownership audit. |
-| `src/styles/legacy/style.css` | 84,843 at baseline; 885 after six selector cuts | Element-level defaults for remaining immersive pages; zero class/id selectors remain | Imported last through lazy `immersive.css` only | Fold into the terminal foundation after confirming the final cascade order, then delete this residual file. |
+| `src/styles/legacy/system.css` | 108,853 at baseline; 105,759 after selector cleanup, one live rule transfer, and the final element-default fold | Duel match/reference, Reclamation, training games, Long Return | Imported through lazy `immersive.css` only | Split the v3 terminal foundation from dead v4 duplicates and route/component sections. This is the main shared-ownership audit. |
+| `src/styles/legacy/style.css` | 84,843 at baseline; deleted after six selector cuts and an exact final cascade fold | None | None | Retired. Its last 885 bytes contained only element defaults now kept at the end of `system.css`. |
 | `src/styles/legacy/training.css` | 2,897 after the Match helper transfer | Xalian Match and Physics board geometry/controls | Imported after `immersive.css` by the two training game entries | Route-family owned; replace only with a deliberate training-game redesign. |
 | `src/styles/legacy/typeColors.css` | 2,616 | None; deleted in the third selector-audit slice | None | Retired. Its 42 utility selectors had no effective executable consumer. |
 | `src/styles/legacy/duel.css` | 46,022 | Live Duel match and Duel affordance reference | Imported by `duelPage.js` and `duelPlaygroundPage.js` | Route-owned; remove only with a Duel immersive redesign. |
@@ -96,8 +96,16 @@ The badge alignment moves into the shared component's existing style object, whi
 
 Focused ownership/design-system tests, typecheck, 52 files / 1,032 tests, dependency audit, production build, and every tightened budget pass. The eleven-route desktop/mobile matrix has no page/console errors or new overflow. Desktop Duel setup and Physics are byte-identical to deployed production; the other animated or randomized paints remain visually unchanged. A started Match renders 16 two-sided cards, and a started Duel renders 64 cells plus eight aligned, painted badges at both widths.
 
+PR [#235, Retire residual shared CSS selectors](https://github.com/nickcjordan/Xalians/pull/235) merged as `1b1f7f6`. CI run `34619819891`, Terraform-plan run `34619819877`, and production deploy `34620056308` passed with empty annotation streams. Linux reproduced the local test, audit, asset, and budget evidence; the live eleven-route matrix plus active Match and Duel checks matched local behavior.
+
+## Final shared-file consolidation
+
+The remaining 885-byte `style.css` contains only element defaults and no class/id selectors. Appending it unchanged to the end of `system.css` preserves its exact cascade position; removing its import and file leaves `immersive.css` with the two explicit layers it actually owns: aliases, then terminal foundation/defaults. The emitted `immersive-B5YtPtE8.css` asset is byte-identical before and after at 57.63/11.79 kB, which is stronger visual evidence than a screenshot comparison for this source-only consolidation.
+
+Focused ownership/design-system tests, typecheck, 52 files / 1,031 tests, dependency audit, production build, and every existing budget pass.
+
 ## Remaining audit sequence
 
-1. Continue the selector-use report for residual `style.css` and the non-foundation sections of `system.css`; verify ambiguous selectors and library-generated state classes in the browser before deletion.
-2. Audit the remaining shared rules in `style.css`; delete further confirmed dead selectors and move any surviving route-only rules to the narrowest owner.
+1. Continue the selector-use report for non-foundation sections of `system.css`; verify ambiguous selectors and library-generated state classes in the browser before deletion.
+2. Move any surviving route-only rules from `system.css` to the narrowest owner.
 3. Tighten route CSS budgets after every deletion, then remove Tailwind's temporary `important` interop once no legacy specificity requires it.
