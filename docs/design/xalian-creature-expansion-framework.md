@@ -98,6 +98,8 @@ Build in dependency order so later choices cannot quietly contradict earlier one
 8. Signature instrument/action/medium and its plain baseline behavior.
 9. Conduits only where a source shows the element leaving through a particular part.
 10. Appearance qualities and the five presentation fields.
+11. Species name, using the [creature naming system](./creature-naming-system.md) only after the defining pieces above are stable.
+12. Signature title, after its physical act and mechanical fields are fixed.
 
 At every step, compare the draft to its contrast set and record the coverage delta. If the defining difference disappears when the proper nouns are removed, the concept is not distinct enough.
 
