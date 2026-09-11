@@ -8,6 +8,8 @@ Version 4 was ruled by Nick on 2026-09-08 and 2026-09-09 after the version 3 "on
 
 **Scope, ruled by Nick 2026-09-11: the games are out of scope for design work until they are built.** Reclamation, the duel board and reference, Long Return and the training games are all still being designed as games, so restyling them now would be spent twice. They are also the immersive tier, which is allowed to look like itself rather than like the chrome, so the cost of leaving them on version 3 is low. What is in scope is everything a visitor reads and operates: the home page, the encyclopedia, the generator, the account pages and the chrome around all of it. A game page is worth touching only when it is genuinely broken, when a change is cheap and self-contained, or when its own build work reaches the point of needing a look.
 
+**The five descriptors (ratified 2026-09-11).** New work is checked against these before it is checked against any rule below. The interface is an **instrument**: it is operated, and its controls look like they can be. It is **warm**: the neutrals carry a hue, and nothing is a pure gray or a pure black. It is **printed**: surfaces have grain and washes have vignettes, because nothing here is a flat fill. It is **physical**: a thing that can be pressed has thickness, and a thing that cannot does not. It is **quiet**: the accent is rare, the world lives in the content, and the interface does not compete with it.
+
 For interaction vocabulary, game-feel standards, quality scoring, playtest questions, and the living decision registry, also read [`GAME_EXPERIENCE_QUALITY_GUIDE.md`](./GAME_EXPERIENCE_QUALITY_GUIDE.md). This document defines how the interface looks; that guide defines how a game experience should communicate and behave.
 
 ## 1. The three tiers
@@ -138,12 +140,26 @@ The version 3 faces (Barlow Condensed, Barlow, IBM Plex Mono, Special Elite and 
 - **Space** is a 4 point scale: 4, 8, 12, 16, 24, 32, 48, 64 (`--g-1` to `--g-8`).
 - **Corners are square.** No radius anywhere except dots and toggles. Ruled 2026-09-09.
 - **The chamfer is the signature shape**, reserved for emphasis: a twelve pixel cut at top left and bottom right on the **glass tier** (live data), and an eight pixel cut on the **one primary key** per screen. Nothing else is cut. The cut echoes the logo's corners, and because it is rare it marks what is live and what is next. It is drawn as two clipped layers (an edge-colored layer and a one pixel inset surface layer) so the hairline follows the contour; `.g-glass` and `.g-key--primary` carry this and nothing else needs to.
-- **Depth is low.** Surfaces are told apart by tone and a hairline edge with one inset top highlight. Levels: page (`--g-room`), 0, 1, 2, glass, floating. Drop shadows exist only on things that float over the page: modal, drawer, popover, toast, menu, search results. The one shadow they cast is `--g-shadow-float`; no page CSS writes a literal shadow.
+- **Surfaces are told apart by tone,** a hairline edge and one inset top highlight, not by light. Levels: page (`--color-room`), 0, 1, 2, glass, floating. Nothing is lit, nothing glows, nothing is beveled.
 - The room keeps a very faint grain and edge vignette. It is not a flat fill.
 
-**Under review, not ratified (opened 2026-09-10).** The site currently carries more depth than the three bullets above describe: keys, toggles and tiles cast a solid diagonal mass down and to the right, in ink-3 under level-2 keys, viable-lo under the primary, and the element at 45 percent black under tiles. A pressed segment loses its mass without moving; flat things such as cards, badges and chips have none. The proposal is `docs/design/v4-pressed-plate.html`, the live comparison is the "Depth, round two" section of `/styleguide`, and the working phrase is that depth is thickness rather than light, so thickness means pressable. **Nick has not ruled on it.** Until he does, this section and section 13 describe the older, flatter rule while the site runs ahead of them. Do not remove the mass as a contract violation, and do not extend it to anything new.
+### 5.1 Depth is thickness (ratified 2026-09-11)
+
+**Thickness means pressable.** An object that can be pressed stands off the surface behind it and casts a solid, unblurred mass. An object that cannot has none. That is the whole rule, and it only carries meaning because most things stay flat.
+
+- **Direction is diagonal**, down and to the right, echoing the chamfer corner. Never straight down, never up, never to the left.
+- **The mass is colored by what it belongs to**, never by a generic shadow color: the ink under ordinary keys, `--color-viable-lo` under the primary key, a darkened plague under destructive, and the element's own hue at 45 percent black under a tile.
+- **Thickness comes from a token**, never a literal: `--thickness-key`, `--thickness-primary`, `--thickness-tile`. The primary key is the thickest thing on a screen.
+- **Pressing moves the object into its own mass.** Hover lifts it by one pixel and the mass grows by one. Active translates by the full thickness and the mass disappears. Disabled has neither.
+- **A selected segment is already pressed:** it loses its mass without moving, so a row of filters stays aligned and its unselected neighbors standing proud carry the message.
+- **What stays flat:** cards, panels, badges, chips, inputs, slots, meters, the masthead, anything purely being read. Adding mass to one of these is what would destroy the rule.
+- **Floating is a separate thing.** Modals, drawers, popovers, toasts, menus and search results cast `--shadow-float`, a real blurred drop shadow, because they float over the page rather than standing on it. No page CSS writes a literal shadow of either kind.
+
+**Set aside, 2026-09-11, after being built and judged live:** mass straight down rather than diagonal, mass on filter chips, mass under the switch knob, slots that sink into an inset lip, and a record number printed on the plate. Do not reintroduce one without a ruling.
 
 ## 6. Controls and states
+
+Every control in this section is pressable, so every one of them carries thickness (section 5.1): the mass in its own color, cast diagonally, taken back on press.
 
 Four ranks of button, five states each. Focus is always a two pixel ring in `--g-viable-hi`, offset two.
 
@@ -289,7 +305,8 @@ Each step is one PR, verified by paint with `scripts/design/snap.js`, auto-merge
 - Stat tile rows and equal-card feature grids on the home page. They are dashboard and marketing shapes.
 - Skeleton screens.
 - Rounded corners and pills, except dots and toggles.
-- Drop shadows on things that do not float. **Under review since 2026-09-10:** the solid diagonal mass now on keys and tiles is not a drop shadow in the blurred sense, but it is a shadow on something that does not float, and it is live. See the note at the end of section 5; Nick has not ruled.
+- Blurred drop shadows on anything that does not float. The solid diagonal mass under a pressable object (section 5.1) is not one of these and is the only shadow a resting object may cast.
+- Mass on anything that cannot be pressed. A card or a badge with thickness breaks what thickness means.
 - Whole-page scanlines, noise overlays, glow on surfaces, pulsing anything.
 - Fallout signals: Pip-Boy green as a screen wash, hazard yellow, atomic iconography. The mint is an accent on a full-color site, never a monochrome screen.
 - Orange as the accent. Withdrawn 2026-09-08.

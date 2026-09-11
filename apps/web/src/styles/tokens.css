@@ -114,6 +114,14 @@
 	--radius-full: 9999px;
 	--shadow-float: 0 12px 28px rgba(0, 0, 0, 0.45);
 
+	/* Thickness: how far a pressable object stands off the surface behind it,
+	   cast down and to the right. The primary key is the thickest thing on any
+	   screen; ordinary keys and tiles are one step under it. Ratified
+	   2026-09-11. */
+	--thickness-key: 3px;
+	--thickness-primary: 4px;
+	--thickness-tile: 4px;
+
 	/* --- motion (section 7) --- */
 	--ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
 	--ease-in: cubic-bezier(0.6, 0, 0.8, 0.4);

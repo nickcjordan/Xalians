@@ -106,7 +106,7 @@
 	   tile. Flat things (cards, badges, content chips, slots) carry none. */
 	.mass-key {
 		--mass: var(--color-ink-3);
-		--thick: 3px;
+		--thick: var(--thickness-key);
 		box-shadow: inset 0 1px 0 var(--color-edge-hi), var(--thick) var(--thick) 0 0 var(--mass);
 		transition: transform 120ms ease-out, box-shadow 120ms ease-out, background-color 120ms ease-out, color 120ms ease-out, border-color 120ms ease-out;
 	}
@@ -124,7 +124,7 @@
 	.key-primary {
 		--key-face: var(--color-viable);
 		--key-mass: var(--color-viable-lo);
-		--thick: 4px;
+		--thick: var(--thickness-primary);
 		position: relative;
 		isolation: isolate;
 		background: transparent;
@@ -149,7 +149,7 @@
 
 	/* An element tile is a plate you can lift: its mass is its own hue, dimmed. */
 	.mass-el {
-		--thick: 4px;
+		--thick: var(--thickness-tile);
 		--mass: color-mix(in srgb, var(--color-el) 45%, black);
 		box-shadow: var(--thick) var(--thick) 0 0 var(--mass);
 		transition: transform 120ms ease-out, box-shadow 120ms ease-out, background-color 120ms ease-out, border-color 120ms ease-out;

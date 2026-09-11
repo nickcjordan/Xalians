@@ -8,6 +8,10 @@ allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 
 Read `docs/DESIGN_SYSTEM.md` in full first; it is the contract for what things look like. `docs/design/frontend-stack-migration.md` is the contract for how they are built: Tailwind 4 tokens, shadcn components restyled to the system, Lucide icons, no Bootstrap. This skill is the order of operations.
 
+## Step 0: the five descriptors
+
+Instrument, warm, printed, physical, quiet. Before anything else, check the thing you are about to build against them: it is operated rather than read at, its neutrals carry a hue, its surfaces have grain rather than flat fill, it has thickness if and only if it can be pressed, and it does not compete with the content. See the top of `docs/DESIGN_SYSTEM.md`.
+
 ## Step 1: which tier
 
 Answer before writing markup: **does this screen read, browse, configure or manage, or is it play in progress?**
