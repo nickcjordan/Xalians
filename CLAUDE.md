@@ -175,6 +175,12 @@ Game data JSON is **a shared workspace package, not a build-time copy**: `packag
 - **Where things live.** Tokens: `apps/web/src/styles/tokens.css` (the only file with a raw color, font name or size) mirrored by `src/constants/designTokens.js` and held equal by `src/__tests__/tokens.test.js`. Semantic layer, element scope, chamfer, type roles: `src/styles/globals.css`. Components: `src/components/ui` (shadcn) and `src/components/system` (house pieces); `/styleguide` (`src/pages/styleGuidePage.tsx`) renders every one of them. `designSystem.test.js` fails if a page is unclassified or the style guide stops importing the system. `scripts/design/snap.js` is the paint-check harness.
 - **Legacy, do not extend.** The immersive pages (duel board and playground, Reclamation, training games, Long Return) still read `public/assets/css/legacy/*` (the v3 system, the old template, their page stylesheets) until each gets its immersive brief, which deletes those files. Never add a rule there and never load them on a chrome page.
 
+## Worktrees
+
+Agent sessions cut worktrees as siblings of this repo (`../xalians-<topic>`). When one is finished, `git worktree remove` it; when a session dies and leaves the directory behind, `npm run wt` reports what is residue and `npm run wt -- --prune --yes` deletes it.
+
+Use the script rather than deleting by hand. `rm -rf` is denied globally on Nick's machine, deliberately, and the script is where the safety rules live instead: it never touches the repo itself, a registered worktree, anything that still has a `.git` entry, the local art toolkit, or anything over 2 GB; it unlinks junctions instead of following them (a junctioned `node_modules` once ate the shared install); and it stops the stale dev servers that hold a doomed directory open on Windows, but only ones whose own command line points inside it. It also offers the untracked `my-app/` that worktrees cut before the `apps/web` rename still carry.
+
 ## Conventions and gotchas
 
 - Root-level `sandbox.js`, `jsonManipulator.js`, and the `apps/web/src/pages/sandbox*.js` / `testPage.js` files are throwaway experiment scratchpads, not part of the app.
