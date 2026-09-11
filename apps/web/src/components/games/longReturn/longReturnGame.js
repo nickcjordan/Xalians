@@ -396,33 +396,55 @@ function safestPlanForRoute(route, crew, strain, spentAbilities, scan) {
   return plans.sort((a, b) => a.risk - b.risk || b.margin - a.margin)[0] || null;
 }
 
-function routeAdvantage(plan, plans) {
-  if (plan.unresolvedHazards.length || plan.nativeRisk) return plan.nativeRisk ? 'Risk native contact' : 'Gamble for a larger haul';
-  if (plans.some((entry) => entry.unresolvedHazards.length || entry.nativeRisk)) return 'Predictable route';
+export function routeAdvantage(plan, plans) {
+  const uncertainty = (entry) => entry.unresolvedHazards.length + (entry.nativeRisk ? 1 : 0);
+  const currentUncertainty = uncertainty(plan);
+  const uncertaintyCounts = plans.map(uncertainty);
+  const leastUncertainty = Math.min(...uncertaintyCounts);
+  const mostUncertainty = Math.max(...uncertaintyCounts);
+  if (currentUncertainty === leastUncertainty && leastUncertainty < mostUncertainty) return 'Predictable route';
+  if (currentUncertainty === mostUncertainty && leastUncertainty < mostUncertainty) return plan.nativeRisk ? 'Risk native contact' : 'Gamble for a larger haul';
   if (plan.route.activeEffects && plan.route.activeEffects.length) return plan.route.activeEffects[0].label;
   const crewCost = plan.knownLeadStrain + plan.baseSupportStrain;
   const lowestCrew = Math.min(...plans.map((entry) => entry.knownLeadStrain + entry.baseSupportStrain));
   const lowestInstability = Math.min(...plans.map((entry) => entry.knownPressure));
   const highestSalvage = Math.max(...plans.map((entry) => entry.route.salvage));
+  const uniquelyLowestInstability = plan.knownPressure === lowestInstability && plans.filter((entry) => entry.knownPressure === lowestInstability).length === 1;
+  const uniquelyHighestSalvage = plan.route.salvage === highestSalvage && plans.filter((entry) => entry.route.salvage === highestSalvage).length === 1;
   if (crewCost === lowestCrew && plans.filter((entry) => entry.knownLeadStrain + entry.baseSupportStrain === lowestCrew).length === 1) return 'Easier on the crew';
-  if (plan.knownPressure === lowestInstability && plans.filter((entry) => entry.knownPressure === lowestInstability).length === 1) return 'Keeps the annex quieter';
-  if (plan.route.salvage === highestSalvage && plans.filter((entry) => entry.route.salvage === highestSalvage).length === 1) return 'More salvage';
+  if (uniquelyLowestInstability && uniquelyHighestSalvage) return 'Protects annex · more salvage';
+  if (uniquelyLowestInstability) return 'Protects annex stability';
+  if (uniquelyHighestSalvage) return 'More salvage';
   return plan.unresolvedHazards.length || plan.nativeRisk ? 'Uncertain route' : 'Balanced approach';
 }
 
-function recommendationFor(plans) {
+export function recommendationFor(plans) {
   if (plans.length < 2) return plans[0] ? { plan: plans[0], reason: 'This is the only viable route.' } : null;
   const ranked = [...plans].sort((a, b) => a.risk - b.risk);
   const [best, second] = ranked;
-  if (second.risk - best.risk < 10) return null;
   const bestUncertainty = best.unresolvedHazards.length + (best.nativeRisk ? 1 : 0);
   const secondUncertainty = second.unresolvedHazards.length + (second.nativeRisk ? 1 : 0);
-  if (bestUncertainty > secondUncertainty) return null;
-  const crewDifference = (second.knownLeadStrain + second.baseSupportStrain) - (best.knownLeadStrain + best.baseSupportStrain);
+  const bestCrewCost = best.knownLeadStrain + best.baseSupportStrain;
+  const secondCrewCost = second.knownLeadStrain + second.baseSupportStrain;
+  // A recommendation means there is no meaningful sacrifice hidden behind the badge.
+  // If the safer route asks for more of any visible resource or gives up salvage,
+  // leave the decision to the player and let the route labels carry the trade-off.
+  const clearlyDominates = bestCrewCost <= secondCrewCost
+    && best.knownPressure <= second.knownPressure
+    && bestUncertainty <= secondUncertainty
+    && best.route.salvage >= second.route.salvage
+    && (bestCrewCost < secondCrewCost
+      || best.knownPressure < second.knownPressure
+      || bestUncertainty < secondUncertainty
+      || best.route.salvage > second.route.salvage);
+  if (!clearlyDominates || best.margin < 0) return null;
+  const crewDifference = secondCrewCost - bestCrewCost;
   const instabilityDifference = second.knownPressure - best.knownPressure;
+  const salvageDifference = best.route.salvage - second.route.salvage;
   const reasons = [];
   if (crewDifference > 0) reasons.push(`${crewDifference} less projected energy use`);
   if (instabilityDifference > 0) reasons.push(`${instabilityDifference} less stability loss`);
+  if (salvageDifference > 0) reasons.push(`${salvageDifference} more salvage`);
   if (best.unresolvedHazards.length < second.unresolvedHazards.length) reasons.push('fewer unresolved hazards');
   if (best.nativeRisk !== second.nativeRisk && !best.nativeRisk) reasons.push('avoids likely native contact');
   return { plan: best, reason: reasons.length ? reasons.join(' and ') : 'a substantially safer known crossing' };
@@ -438,11 +460,28 @@ function trapDialogTab(event) {
   else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
 }
 
-function supportRoleForPlan(plan) {
+export function supportRoleForPlan(plan) {
+  if (plan.baseSupportStrain > 0) return `Intervenes · spends ${plan.baseSupportStrain} energy`;
   const alone = plan.rawMethodScore - plan.difficulty;
   if (alone < 0 && plan.margin >= 0) return 'Turns a failed attempt into a passage';
   if (alone < 14 && plan.margin >= 14) return 'Prevents the lead from losing 1 energy';
-  return 'Backup role · no energy spent unless needed';
+  return 'Backup role · no energy projected';
+}
+
+export function encounterNarrative({ archetype, option, nativeName, actorName, scoutName }) {
+  const actor = actorName || 'The crew';
+  if (option.companion) return `${nativeName} accepts the crew's help and follows at a cautious distance. It may intervene once during a later crossing.`;
+  if (option.resolution === 'detour') return 'The crew backs away before the encounter escalates and returns to the route junction.';
+  if (option.resolution === 'unresolved') return `${scoutName || actor} breaks contact and returns with a warning. The native still occupies the route.`;
+  if (archetype === 'territorial') {
+    if (option.id === 'distract' || option.id === 'challenge') return `${actor} draws ${nativeName} away from the passage. The crew slips through while it defends the decoy territory.`;
+    return `${actor} establishes a boundary the ${nativeName} accepts. It withdraws into the hull and leaves the passage open.`;
+  }
+  if (archetype === 'trapped') {
+    if (option.id === 'pin-rig' || option.id === 'force-arms') return `${actor} wrenches the authentication arms apart. ${nativeName} escapes as the damaged rig records the intrusion.`;
+    return `${actor} stills the authentication arms. ${nativeName} escapes into a side duct and its panicked signal fades from the lock.`;
+  }
+  return `${actor} forces enough space to continue. The native retreats deeper into the machinery.`;
 }
 
 function MechanicsModal({ open, onClose }) {
@@ -950,17 +989,13 @@ function LongReturnGame() {
     cueChanges({ energy: affected && (option.scoutStrain || option.crewStrain) ? { [affected.id]: option.scoutStrain || option.crewStrain } : {}, stability: option.instability || 0 });
     if (option.companion) setCompanion({ creature: encounterCreature, ready: true, benefit: scene.encounter.companionBenefit });
     const archetype = scene.encounter.archetype || 'injured';
-    const narrative = option.companion
-      ? `${encounterCreature.species} accepts the crew's help and follows at a cautious distance. It may intervene once during a later crossing.`
-      : archetype === 'territorial' && option.resolution === 'cleared'
-        ? `${affected ? affected.species : 'The crew'} establishes a boundary the ${encounterCreature.species} accepts. It withdraws into the hull and leaves the passage open.`
-        : archetype === 'trapped' && option.resolution === 'cleared'
-          ? `${affected ? affected.species : 'The crew'} stills the authentication arms. The ${encounterCreature.species} escapes into a side duct and its panicked signal fades from the lock.`
-      : option.resolution === 'cleared'
-        ? `${affected ? affected.species : 'The crew'} forces enough space to continue. The native retreats deeper into the machinery.`
-        : option.resolution === 'detour'
-          ? 'The crew backs away before the encounter escalates and returns to the route junction.'
-          : `${encounterState.scout.species} breaks contact and returns with a warning. The native still occupies the underdeck.`;
+    const narrative = encounterNarrative({
+      archetype,
+      option,
+      nativeName: encounterCreature.species,
+      actorName: affected ? affected.species : null,
+      scoutName: encounterState.scout ? encounterState.scout.species : null
+    });
     const result = { ...option, affected, narrative };
     const energyCost = option.scoutStrain || option.crewStrain || 0;
     const helper = option.companion ? crew.find((member) => option.label.includes(member.species)) : null;

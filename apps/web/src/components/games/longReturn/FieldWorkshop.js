@@ -10,9 +10,14 @@ export default function FieldWorkshop({ crew, strain, pressure, salvage, command
   if (receipt) return <section className="lr-field-receipt" role="status"><BiIcon cls="bi bi-check-circle" /><div><strong>Field work complete</strong><p>{receipt.result}</p><small>{receipt.cost} salvage spent · {salvage} still carried</small></div></section>;
   if (!options.length) return null;
   return <details className="lr-workshop">
-    <summary><BiIcon cls="bi bi-tools" /><span><strong>Put salvage to work</strong><small>Recover energy or reinforce the annex</small></span><b>{salvage} carried <BiIcon cls="bi bi-chevron-down" /></b></summary>
+    <summary><BiIcon cls="bi bi-tools" /><span><strong>Repair now—or bank the haul</strong><small>Trade final salvage for energy or stability</small></span><b>{salvage} carried <BiIcon cls="bi bi-chevron-down" /></b></summary>
     <div className="lr-workshop-body">
-      <p>One field action per crossing. Spend part of your haul now, or keep it for extraction.</p>
+      <div className="lr-workshop-bank" aria-label={`Keep all ${salvage} salvage for extraction`}>
+        <BiIcon cls="bi bi-box-seam" />
+        <span><small>Keep the haul</small><strong>Bank +{salvage} at extraction</strong></span>
+        <em>No repair now</em>
+      </div>
+      <p>Or spend salvage on one field repair before continuing.</p>
       <div className="lr-workshop-options">{options.map(option => <button type="button" key={option.id} disabled={!!option.disabled} aria-pressed={selected === option.id} title={option.reason} onClick={() => setSelected(option.id)}>
         <BiIcon cls={`bi ${option.kind === 'recover' ? 'bi-lightning-charge-fill' : option.kind === 'brace' ? 'bi-shield-check' : 'bi-broadcast-pin'}`} />
         <strong>{option.title}</strong>
