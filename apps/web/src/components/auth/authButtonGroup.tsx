@@ -3,9 +3,7 @@
 // accent-filled forward action (docs/DESIGN_SYSTEM.md section 3.1).
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Hub } from '@aws-amplify/core';
-import { Auth } from '@aws-amplify/auth';
-import { store } from 'state-pool';
+import { Hub } from 'aws-amplify/utils';
 
 import * as authUtil from '../../utils/authUtil';
 
@@ -36,7 +34,9 @@ function AuthButtonGroup({ authAlertCallback, size = "default" }: AuthButtonGrou
 	const [password, setPassword] = React.useState<string | undefined>();
 
 	const handleSignInEvent = React.useCallback(
-		(data: any) => {
+		async () => {
+			const data = await authUtil.currentUser();
+			if (!data) return;
 			const authState = authUtil.buildAuthState(data);
 			setLoggedInUser(authState);
 			authAlertCallback(authState);
@@ -50,7 +50,7 @@ function AuthButtonGroup({ authAlertCallback, size = "default" }: AuthButtonGrou
 	}, [authAlertCallback]);
 
 	React.useEffect(() => {
-		Auth.currentUserInfo().then((data: any) => {
+		authUtil.currentUser().then((data: any) => {
 			if (data && data.attributes) {
 				setLoggedInUser(authUtil.buildAuthState(data));
 			}
@@ -58,23 +58,18 @@ function AuthButtonGroup({ authAlertCallback, size = "default" }: AuthButtonGrou
 
 		const authListener = (data: any) => {
 			switch (data.payload.event) {
-				case 'signIn':
-					handleSignInEvent(data.payload.data);
+				case 'signedIn':
+					handleSignInEvent();
 					break;
-				case 'signOut':
+				case 'signedOut':
 					handleSignOutEvent();
-					break;
-				case 'signIn_failure':
-					if (data.payload.data.code === 'UserNotConfirmedException') {
-						setVerifyEmailModalShow(true);
-					}
 					break;
 				default:
 					break;
 			}
 		};
-		Hub.listen('auth', authListener);
-		return () => Hub.remove('auth', authListener);
+		const stopListening = Hub.listen('auth', authListener);
+		return stopListening;
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -97,7 +92,6 @@ function AuthButtonGroup({ authAlertCallback, size = "default" }: AuthButtonGrou
 	};
 
 	const handleSignOut = () => {
-		store.clear();
 		authUtil.signOut();
 	};
 

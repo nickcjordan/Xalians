@@ -65,9 +65,10 @@ function SignUpModal({ show, onHide, callback }: SignUpModalProps) {
 			})
 			.catch((error: any) => {
 				setIsThinking(false);
-				if (error.code === 'UsernameExistsException') {
+				const code = error && (error.name || error.code);
+				if (code === 'UsernameExistsException') {
 					form.setError('username', { message: 'Username already exists.' });
-				} else if (error.code === 'InvalidPasswordException') {
+				} else if (code === 'InvalidPasswordException') {
 					form.setError('password', { message: error.message || 'Password does not meet requirements.' });
 				} else {
 					toast.error((error && error.message) || 'Sign up failed. Please try again.');

@@ -21,7 +21,19 @@
     "url": "^0.11.0"
   },
   "overrides": {
-    "maplibre-gl": "1.15.3"
+    "boardgame.io": {
+      "@koa/cors": "5.0.0",
+      "koa": "2.16.4",
+      "koa-socket-2": {
+        "socket.io": "4.8.3"
+      },
+      "react-cookies": {
+        "cookie": "0.7.2"
+      },
+      "svelte": "5.57.0"
+    },
+    "socket.io-parser": "4.2.7",
+    "ws": "8.21.3"
   },
   "optionalDependencies": {
     "@esbuild/linux-x64": "0.28.2",

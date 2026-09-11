@@ -30,8 +30,7 @@ import {
   Link
 } from "react-router-dom";
 
-import { Amplify } from '@aws-amplify/core';
-import '@aws-amplify/auth';
+import { Amplify } from 'aws-amplify';
 import awsconfig from './aws-exports';
 
 import { Provider } from 'react-redux'

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Hub } from '@aws-amplify/core';
+import { Hub } from 'aws-amplify/utils';
 import { toast } from 'sonner';
 import type { XalianRecord } from '@xalians/content/schema';
 
@@ -121,16 +121,18 @@ function GeneratorPage() {
 
 	React.useEffect(() => {
 		const authListener = (data: any) => {
-			if (data.payload.event === 'signIn') {
+			if (data.payload.event === 'signedIn') {
 				setSignInShow(false);
-				setLoggedInUser(authUtil.buildAuthState(data.payload.data));
+				authUtil.currentUser().then((user: any) => {
+					if (user) setLoggedInUser(authUtil.buildAuthState(user));
+				});
 			}
-			if (data.payload.event === 'signOut') {
+			if (data.payload.event === 'signedOut') {
 				setLoggedInUser(null);
 			}
 		};
-		Hub.listen('auth', authListener);
-		return () => Hub.remove('auth', authListener);
+		const stopListening = Hub.listen('auth', authListener);
+		return stopListening;
 	}, []);
 
 	return (

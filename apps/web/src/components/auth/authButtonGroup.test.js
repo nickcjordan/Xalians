@@ -4,15 +4,12 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 
-vi.mock('@aws-amplify/core', () => ({
+vi.mock('aws-amplify/utils', () => ({
 	Hub: { listen: vi.fn(), remove: vi.fn() },
 }));
 
-vi.mock('@aws-amplify/auth', () => ({
-	Auth: { currentUserInfo: vi.fn().mockResolvedValue(null) },
-}));
-
 vi.mock('../../utils/authUtil', () => ({
+	currentUser: vi.fn().mockResolvedValue(null),
 	buildAuthState: vi.fn(),
 	signIn: vi.fn(),
 	signOut: vi.fn().mockResolvedValue(true),

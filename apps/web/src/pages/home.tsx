@@ -5,9 +5,7 @@ import { Link } from 'react-router-dom';
 import XalianNavbar from '../components/navbar';
 import XaliansLogoDnaAnimated from '../components/animations/xaliansLogoDnaAnimated';
 import XalianImage from '../components/xalianImage';
-import { routeFor } from '../lore/routeFor';
-import * as lore from '../lore';
-import species from '@xalians/content/species.json';
+import { species, worlds } from 'virtual:xalians-home-data';
 
 import { Shell } from '@/components/system/masthead';
 import { Button } from '@/components/ui/button';
@@ -56,7 +54,6 @@ const DESTINATIONS = [
 
 function Home() {
 	const [featuredSpecies] = React.useState(pickRandomSpecies);
-	const worlds = lore.getWorlds();
 
 	return (
 		<main className="min-h-screen bg-room text-ink font-body" data-tier="chrome">
@@ -86,12 +83,12 @@ function Home() {
 							{worlds.map((world: any) => (
 								<Link
 									key={world.key}
-									to={routeFor('world', world.key)}
+									to={`/encyclopedia/worlds/${world.key}`}
 									className={`el-${world.element} mass-el group flex flex-col items-start gap-1 overflow-hidden border border-edge bg-s1 pb-2 hover:border-edge-strong hover:bg-s2 focus-visible:outline-2 focus-visible:outline-ring`}
 								>
 									<div className="flex aspect-square w-full items-center justify-center bg-el/24">
 										<img
-											src={`/${world.images.planet}`}
+											src={`/${world.planetImage}`}
 											alt={`${world.name} globe`}
 											className="h-[68%] w-[68%] object-contain sm:h-[76%] sm:w-[76%]"
 										/>
@@ -113,7 +110,7 @@ function Home() {
 						{featuredSpecies.map((s: any) => (
 							<Link
 								key={s.id || s.name}
-								to={routeFor('species', s.name.toLowerCase())}
+								to={`/encyclopedia/species/${s.name.toLowerCase()}`}
 								className={`el-${s.type.toLowerCase()} mass-el flex w-[140px] shrink-0 snap-start flex-col items-center gap-2 overflow-hidden border border-edge bg-s1 pb-3 hover:border-edge-strong hover:bg-s2 focus-visible:outline-2 focus-visible:outline-ring sm:w-auto sm:shrink`}
 							>
 								<div className="aspect-square w-full bg-el">

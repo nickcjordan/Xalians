@@ -2,8 +2,7 @@
 // so it keeps its own data-tier="chrome" and uses only v4 primitives.
 import * as React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Hub } from '@aws-amplify/core';
-import { Auth } from '@aws-amplify/auth';
+import { Hub } from 'aws-amplify/utils';
 import { Menu } from 'lucide-react';
 
 import AuthButtonGroup from './auth/authButtonGroup';
@@ -68,7 +67,7 @@ function XalianNavbar({ authAlertCallback }: XalianNavbarProps) {
 				setHidden(true);
 			}
 		};
-		Hub.listen('navbar-channel', hubListener);
+		const stopListening = Hub.listen('navbar-channel', hubListener);
 
 		let lastScrollTop = window.scrollY;
 		const mountedAt = Date.now();
@@ -89,14 +88,14 @@ function XalianNavbar({ authAlertCallback }: XalianNavbarProps) {
 		};
 		window.addEventListener('scroll', scrollListener);
 
-		Auth.currentUserInfo().then((data: any) => {
+		authUtil.currentUser().then((data: any) => {
 			if (data && data.attributes) {
 				handleUserAuthAction(authUtil.buildAuthState(data));
 			}
 		});
 
 		return () => {
-			Hub.remove('navbar-channel', hubListener);
+			stopListening();
 			window.removeEventListener('scroll', scrollListener);
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps

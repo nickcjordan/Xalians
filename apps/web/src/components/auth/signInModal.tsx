@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Hub } from '@aws-amplify/core';
 import { toast } from 'sonner';
 
 import * as authUtil from '../../utils/authUtil';
@@ -41,23 +40,6 @@ function SignInModal({ show, onHide, callback, mustVerifyEmailCallback, username
 		defaultValues: { username: username || '', password: password || '' },
 	});
 
-	React.useEffect(() => {
-		const authListener = (data: any) => {
-			if (data.payload.event === 'signIn_failure') {
-				if (data.payload.data.code === 'UserNotConfirmedException') {
-					onHide();
-					mustVerifyEmailCallback(form.getValues('username'));
-				} else if (data.payload.data.code === 'UserNotFoundException') {
-					form.setError('username', { message: 'User not found.' });
-				}
-				setIsThinking(false);
-			}
-		};
-		Hub.listen('auth', authListener);
-		return () => Hub.remove('auth', authListener);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
 	const closeModal = () => {
 		setIsThinking(false);
 		form.reset();
@@ -74,9 +56,13 @@ function SignInModal({ show, onHide, callback, mustVerifyEmailCallback, username
 				closeModal();
 			})
 			.catch((e: any) => {
-				// UserNotConfirmedException / UserNotFoundException are handled by
-				// the 'auth' Hub listener above; surface everything else here.
-				if (e && e.code !== 'UserNotConfirmedException' && e.code !== 'UserNotFoundException') {
+				const code = e && (e.name || e.code);
+				if (code === 'UserNotConfirmedException') {
+					onHide();
+					mustVerifyEmailCallback(values.username);
+				} else if (code === 'UserNotFoundException') {
+					form.setError('username', { message: 'User not found.' });
+				} else {
 					toast.error(e.message || 'Sign in failed.');
 				}
 				setIsThinking(false);

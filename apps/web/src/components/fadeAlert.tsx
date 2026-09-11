@@ -3,7 +3,7 @@
 // sonner toasts. Renders nothing itself — the toast is drawn by <Toaster />
 // in App.js. Mounted once, from the navbar, so it exists on every page.
 import * as React from 'react';
-import { Hub } from '@aws-amplify/core';
+import { Hub } from 'aws-amplify/utils';
 import { toast } from 'sonner';
 
 const VARIANT_TO_TOAST: Record<string, (message: string) => void> = {
@@ -24,8 +24,8 @@ function FadeAlert() {
 			const emit = VARIANT_TO_TOAST[req.variant] || ((m: string) => toast(m));
 			emit(message || 'Notice');
 		};
-		Hub.listen('alert', alertListener);
-		return () => Hub.remove('alert', alertListener);
+		const stopListening = Hub.listen('alert', alertListener);
+		return stopListening;
 	}, []);
 
 	return null;
