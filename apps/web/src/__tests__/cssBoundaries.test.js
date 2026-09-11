@@ -65,4 +65,28 @@ describe('legacy CSS ownership boundaries', () => {
 			: [];
 		expect(publicCss).toEqual([]);
 	});
+
+	it('keeps retired landing-page template sections and their assets deleted', () => {
+		const css = read('src/styles/legacy/style.css');
+		const retiredSectionMarkers = [
+			'# Custom Theme',
+			'# Preloader',
+			'# Disable aos animation delay on mobile devices',
+			'# Splash Section',
+			'# Planet Xalia Section',
+			'# Tokens Section',
+			'# Team',
+			'# Story',
+			'# Contact',
+			'# Breadcrumbs',
+			'# Footer',
+		];
+
+		retiredSectionMarkers.forEach((marker) => expect(css).not.toContain(marker));
+		expect(css).not.toContain('ProcrastinatingPixie');
+		expect(css).not.toContain('vault.jpg');
+		expect(fs.existsSync(path.join(WEB_ROOT, 'public/assets/css/fonts/ProcrastinatingPixie-WyVOO.ttf'))).toBe(false);
+		expect(fs.existsSync(path.join(WEB_ROOT, 'public/assets/fonts/ProcrastinatingPixie-WyVOO.ttf'))).toBe(false);
+		expect(fs.existsSync(path.join(WEB_ROOT, 'public/assets/img/background/vault.jpg'))).toBe(false);
+	});
 });
