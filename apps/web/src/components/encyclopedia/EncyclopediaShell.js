@@ -209,7 +209,7 @@ export default function EncyclopediaShell({ children }) {
                     <NavLink
                         key={s.to}
                         to={s.to}
-                        exact={s.exact}
+                        end={s.exact}
                         className={tabTriggerClass}
                         aria-current={s === activeSection ? 'page' : undefined}
                     >

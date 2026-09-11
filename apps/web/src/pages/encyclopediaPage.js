@@ -1,6 +1,6 @@
 // Tier: chrome. Reference reading -- browses and searches the archive, no play surface.
 import React, { useEffect, useRef } from 'react';
-import { Switch, Route, Redirect, useRouteMatch, useLocation, useParams } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
 import * as lore from '../lore';
 import XalianNavbar from '../components/navbar';
 import EncyclopediaShell from '../components/encyclopedia/EncyclopediaShell';
@@ -24,22 +24,30 @@ import { EmptyState } from '@/components/system/record';
 function RedirectToEra() {
     const { era } = useParams();
     const location = useLocation();
-    return <Redirect to={{ pathname: lore.routeFor('era', era), hash: location.hash }} />;
+    return <Navigate replace to={{ pathname: lore.routeFor('era', era), search: location.search, hash: location.hash }} />;
 }
 
 function RedirectToStory() {
     const location = useLocation();
-    return <Redirect to={{ pathname: lore.routeFor('story'), hash: location.hash }} />;
+    return <Navigate replace to={{ pathname: lore.routeFor('story'), search: location.search, hash: location.hash }} />;
 }
 
 function RedirectTourBeat() {
     const { beat } = useParams();
+    const location = useLocation();
     const to = lore.getEraForBeat(beat) ? lore.routeFor('tour', beat) : lore.routeFor('story');
-    return <Redirect to={to} />;
+    const [pathname, routeHash] = to.split('#');
+    return (
+        <Navigate
+            replace
+            to={{ pathname, search: location.search, hash: location.hash || (routeHash ? `#${routeHash}` : '') }}
+        />
+    );
 }
 
 function RedirectTour() {
-    return <Redirect to={lore.routeFor('story')} />;
+    const location = useLocation();
+    return <Navigate replace to={{ pathname: lore.routeFor('story'), search: location.search, hash: location.hash }} />;
 }
 
 /**
@@ -50,7 +58,6 @@ function RedirectTour() {
  * src/lore (never the JSON). Contract: docs/design/xalian-encyclopedia-story-pass.md
  */
 export default function EncyclopediaPage() {
-    const { path } = useRouteMatch();
     const location = useLocation();
     // null until the first effect runs, so a cold load with a hash still
     // scrolls to its anchor (a bookmark or a shared chapter link).
@@ -88,7 +95,7 @@ export default function EncyclopediaPage() {
         return true;
     }
 
-    // React Router v5 does not reset scroll on navigation. Reset to the top
+    // React Router does not reset scroll on navigation. Reset to the top
     // on a route change (a different pathname), unless the new location
     // carries a hash: then let the target element's scrollIntoView win. A
     // hash-only change on the *same* pathname (e.g. a Connections sample
@@ -132,27 +139,27 @@ export default function EncyclopediaPage() {
         <main className="min-h-screen bg-room font-body text-ink" data-tier="chrome">
             <XalianNavbar />
             <EncyclopediaShell>
-                <Switch>
-                    <Route exact path={`${path}`}><ReadingRoom /></Route>
-                    <Route exact path={`${path}/story`}><Story /></Route>
-                    <Route exact path={`${path}/story/:era`}><Story /></Route>
-                    <Route exact path={`${path}/worlds`}><Worlds /></Route>
-                    <Route exact path={`${path}/worlds/:key`}><WorldView /></Route>
-                    <Route exact path={`${path}/species`}><Bestiary /></Route>
-                    <Route exact path={`${path}/species/:key`}><SpeciesView /></Route>
-                    <Route exact path={`${path}/powers`}><Powers /></Route>
-                    <Route exact path={`${path}/index`}><Index /></Route>
-                    <Route exact path={`${path}/index/:key`}><EntryView /></Route>
+                <Routes>
+                    <Route index element={<ReadingRoom />} />
+                    <Route path="story" element={<Story />} />
+                    <Route path="story/:era" element={<Story />} />
+                    <Route path="worlds" element={<Worlds />} />
+                    <Route path="worlds/:key" element={<WorldView />} />
+                    <Route path="species" element={<Bestiary />} />
+                    <Route path="species/:key" element={<SpeciesView />} />
+                    <Route path="powers" element={<Powers />} />
+                    <Route path="index" element={<Index />} />
+                    <Route path="index/:key" element={<EntryView />} />
                     {/* Retired routes: First Survey, Chronicle and Read collapsed into
                         The Story (docs/design/xalian-encyclopedia-story-pass.md). */}
-                    <Route exact path={`${path}/tour`}><RedirectTour /></Route>
-                    <Route exact path={`${path}/tour/:beat`}><RedirectTourBeat /></Route>
-                    <Route exact path={`${path}/chronicle`}><RedirectToStory /></Route>
-                    <Route exact path={`${path}/chronicle/:era`}><RedirectToEra /></Route>
-                    <Route exact path={`${path}/read`}><RedirectToStory /></Route>
-                    <Route exact path={`${path}/read/:era`}><RedirectToEra /></Route>
-                    <Route><EmptyState legend="Not found">No record at this address.</EmptyState></Route>
-                </Switch>
+                    <Route path="tour" element={<RedirectTour />} />
+                    <Route path="tour/:beat" element={<RedirectTourBeat />} />
+                    <Route path="chronicle" element={<RedirectToStory />} />
+                    <Route path="chronicle/:era" element={<RedirectToEra />} />
+                    <Route path="read" element={<RedirectToStory />} />
+                    <Route path="read/:era" element={<RedirectToEra />} />
+                    <Route path="*" element={<EmptyState legend="Not found">No record at this address.</EmptyState>} />
+                </Routes>
             </EncyclopediaShell>
         </main>
     );

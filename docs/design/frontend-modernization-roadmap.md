@@ -184,7 +184,7 @@ Legacy CSS ownership audit.
 - Deploy: [frontend run 34622085179](https://github.com/nickcjordan/Xalians/actions/runs/34622085179) passed its production build, S3 sync, and CloudFront invalidation with an empty job-annotation response.
 - Production verification: the served HTML contains exactly one audited Google Fonts stylesheet plus both preconnects. All eleven route entries render without loading/error residue at 1,440×900 and 390×844, and the active field-terminal typography remains visually identical to the local reviewed build.
 
-### 4. Cognito authentication integration coverage — In progress
+### 4. Cognito authentication integration coverage — Complete
 
 **Scope**
 
@@ -210,9 +210,12 @@ Prefer after route modernization if test helpers would otherwise be rewritten tw
 - Contract and deterministic scenario matrix: [`docs/design/frontend-auth-integration.md`](frontend-auth-integration.md).
 - Focused local verification: six auth/account/generator suites / 32 tests cover verified, unverified, signed-out, expired/absent-token, invalid-credential, generic service-error, protected API, and anonymous-generation paths.
 - Full local verification: typecheck, 55 files / 1,054 tests, zero production vulnerabilities, production build, and every bundle budget pass. Browser smoke confirms the signed-out account recovery surface, sign-in dialog/client validation, and anonymous showroom generation at desktop and phone widths without using or storing real credentials.
-- PR, CI, deployment, and production smoke evidence pending.
+- PR: [#238, Cover frontend authentication integration](https://github.com/nickcjordan/Xalians/pull/238), merged as `e2370bd` on 2026-09-11.
+- CI: [CI run 34623107821](https://github.com/nickcjordan/Xalians/actions/runs/34623107821) and [Terraform-plan run 34623107801](https://github.com/nickcjordan/Xalians/actions/runs/34623107801) passed; Linux reproduced 55 frontend files / 1,054 tests, 12 content files / 37 tests, zero dependency vulnerabilities, and every bundle budget. All three job-annotation responses were empty.
+- Deploy: [frontend run 34623269872](https://github.com/nickcjordan/Xalians/actions/runs/34623269872) passed its production build, S3 sync, and CloudFront invalidation with an empty job-annotation response.
+- Production verification: signed-out `/account`, the sign-in dialog and client-side validation, phone layout, and the anonymous Generator showroom all rendered without loading/error residue. No real credentials were entered or stored.
 
-### 5. React Router modernization — Planned
+### 5. React Router modernization — In progress
 
 **Scope**
 
@@ -235,7 +238,11 @@ Coordinate with CSS route loading so both changes agree on route boundaries. Kee
 
 **Evidence / links**
 
-Pending.
+- Migration contract, route inventory, and compatibility decision: [`docs/design/frontend-router-migration.md`](frontend-router-migration.md).
+- Implementation: `react-router-dom` 7.18.3 replaces 5.3.4; route elements, `Routes`, `Navigate`, `useNavigate`, relative encyclopedia routes, `NavLink end`, and typed upstream declarations replace every v5-only API and the blanket local module shim.
+- Deterministic route verification: two new suites / 36 tests cover the application and encyclopedia boundaries, canonical/deep/dynamic routes, catch-alls, and all retired redirects with search/hash state. The tests exposed and now guard a v7 structured-path incompatibility in the retired tour-beat redirect.
+- Local verification: typecheck, 57 frontend files / 1,090 tests, zero production vulnerabilities, production build, and every bundle budget pass. Browser checks cover direct numeric-species and retired-tour links, query/hash preservation, navbar navigation, back/forward, deep story loading, and the catch-all at desktop and phone widths. A discovered long-path phone overflow is fixed and remeasured at 390 px content width in a 390 px viewport with no console errors.
+- PR, CI, deployment, and production smoke evidence pending.
 
 ### 6. Redux Toolkit and React runtime — Planned
 
@@ -323,6 +330,7 @@ Pending.
 | 2026-09-11 | Keep application builds on Node 22 while upgrading action runtime majors. | GitHub's warning concerns the Node runtime bundled by each action. Changing the app runtime in the same slice would add unrelated risk. |
 | 2026-09-11 | Preserve distinct terminal typography until actual selectors and routes are audited. | Visual character is a product constraint; request-count reduction alone does not justify flattening it. |
 | 2026-09-11 | Separate router modernization from React/Redux modernization. | Each has independent breaking APIs and deserves isolated regression evidence. |
+| 2026-09-11 | Move React 18 to `react-router-dom` 7.18.3; defer React Router 8 and its package-import change to the React 19 workstream. | Router 7 is the current compatible upgrade for this deliberately isolated slice. Router 8 requires React 19.2.7 or newer and removes `react-router-dom`, which would collapse two independently risky migrations into one review. |
 | 2026-09-11 | Frackworm is ratified and live. The earlier species-art replacement concern applies to Tetrahive, not Avili/Avilily. | Prevent stale art assumptions from entering frontend regression work. |
 
 ## Change log
@@ -339,6 +347,7 @@ Pending.
 | 2026-09-11 | Completed the first selector-audit deletion and began the training-style ownership split from deployed `main` at `9394d49`. | [PR #230](https://github.com/nickcjordan/Xalians/pull/230); clean CI/deploy annotations, shipped bundle reduction, and live cross-game evidence recorded in workstream 2. |
 | 2026-09-11 | Completed the training-style ownership split and began removing the retired type-colour utility contract from deployed `main` at `82f6b9d`. | [PR #231](https://github.com/nickcjordan/Xalians/pull/231); clean CI/deploy annotations, shipped bundle and route-JavaScript reductions, and live cross-game evidence recorded in workstream 2. |
 | 2026-09-11 | Completed the type-colour utility deletion and resumed the residual shared-selector audit from deployed `main` at `b3d73d0`. | [PR #232](https://github.com/nickcjordan/Xalians/pull/232); clean CI/deploy annotations, shipped CSS reduction, and live type-badge evidence recorded in workstream 2. |
+| 2026-09-11 | Completed the authentication integration slice and began React Router modernization from deployed `main` at `e2370bd`. | [PR #238](https://github.com/nickcjordan/Xalians/pull/238); authentication evidence is complete in workstream 4. Router implementation, 36 route-contract tests, full local gates, and browser evidence are recorded in workstream 5; PR pending. |
 | 2026-09-11 | Completed the retired-navbar CSS deletion and continued the residual selector audit from deployed `main` at `9e3924b`. | [PR #233](https://github.com/nickcjordan/Xalians/pull/233); clean CI/deploy annotations, shipped CSS reduction, and live desktop/mobile navigation evidence recorded in workstream 2. |
 | 2026-09-11 | Completed the unreachable chrome-page CSS deletion and continued the residual selector audit from deployed `main` at `1129875`. | [PR #234](https://github.com/nickcjordan/Xalians/pull/234); clean CI/deploy annotations, shipped CSS reduction, and live cross-route evidence recorded in workstream 2. |
 | 2026-09-11 | Completed the residual shared-selector deletion and folded the final element defaults from deployed `main` at `1b1f7f6`. | [PR #235](https://github.com/nickcjordan/Xalians/pull/235); clean CI/deploy annotations, shipped CSS reduction, and live active-game evidence recorded in workstream 2. |

@@ -127,8 +127,7 @@ function XalianNavbar({ authAlertCallback }: XalianNavbarProps) {
 							<NavLink
 								key={link.href}
 								to={link.href}
-								exact={link.href === '/'}
-								activeClassName=""
+								end={link.href === '/'}
 								className={navLinkClass}
 								aria-current={isActiveRoute(location.pathname, link.href) ? 'page' : undefined}
 							>
@@ -162,8 +161,7 @@ function XalianNavbar({ authAlertCallback }: XalianNavbarProps) {
 									<SheetClose asChild key={link.href}>
 										<NavLink
 											to={link.href}
-											exact={link.href === '/'}
-											activeClassName=""
+											end={link.href === '/'}
 											className="border-0 border-b border-edge bg-transparent px-1 py-3 font-legend text-[13px] font-medium uppercase tracking-legend text-ink-2 aria-[current=page]:text-viable-hi"
 											aria-current={isActiveRoute(location.pathname, link.href) ? 'page' : undefined}
 										>

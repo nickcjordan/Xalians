@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import * as lore from '../../lore';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -42,7 +42,7 @@ const WRAITHIX_MOON = { x: 155, y: 210 };
 const PIN_OFFSET = { x: 16, y: -16 };
 
 function WorldEventPin({ world, events, eraKey, onHover, onLeave }) {
-	const history = useHistory();
+	const navigate = useNavigate();
 	const pos = POSITIONS[world.key];
 	// A single firm event routes straight to its own chronicle anchor; more
 	// than one routes to the era, filtered to this world, so the reader can
@@ -52,7 +52,7 @@ function WorldEventPin({ world, events, eraKey, onHover, onLeave }) {
 			? lore.routeFor('event', `${eraKey}:${events[0].key}`)
 			: `${lore.routeFor('era', eraKey)}?world=${world.key}`;
 
-	const go = () => history.push(route);
+	const go = () => navigate(route);
 	const onKeyDown = (e) => {
 		if (e.key === 'Enter' || e.key === ' ') {
 			e.preventDefault();
@@ -101,7 +101,7 @@ function WorldEventPin({ world, events, eraKey, onHover, onLeave }) {
 }
 
 function WorldMark({ world, compact, lit, dimLabel, era, onHover, onLeave }) {
-	const history = useHistory();
+	const navigate = useNavigate();
 	const pos = POSITIONS[world.key];
 	if (!pos) return null;
 	// With an era selected and this world lit in it, the record worth opening
@@ -110,7 +110,7 @@ function WorldMark({ world, compact, lit, dimLabel, era, onHover, onLeave }) {
 	const route =
 		era && lit !== false ? `${lore.routeFor('era', era)}?world=${world.key}` : lore.routeFor('world', world.key);
 
-	const go = () => history.push(route);
+	const go = () => navigate(route);
 	const onKeyDown = (e) => {
 		if (e.key === 'Enter' || e.key === ' ') {
 			e.preventDefault();
