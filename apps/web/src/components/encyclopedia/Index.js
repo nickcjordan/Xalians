@@ -108,7 +108,7 @@ export default function Index() {
                         <button
                             type="button"
                             data-state={category === 'all' ? 'active' : 'inactive'}
-                            className={`${tabTriggerClass} max-sm:shrink-0`}
+                            className={`${tabTriggerClass} max-sm:min-h-11 max-sm:shrink-0`}
                             aria-pressed={category === 'all'}
                             onClick={() => setCategory('all')}
                         >
@@ -119,7 +119,7 @@ export default function Index() {
                                 key={c}
                                 type="button"
                                 data-state={category === c ? 'active' : 'inactive'}
-                                className={`${tabTriggerClass} max-sm:shrink-0`}
+                                className={`${tabTriggerClass} max-sm:min-h-11 max-sm:shrink-0`}
                                 aria-pressed={category === c}
                                 onClick={() => setCategory(c)}
                             >
