@@ -75,7 +75,7 @@ function Ability({ ability }: { ability: XalianRecord['abilities'][number] }) {
 				{', through '}
 				<span title={medium.nature}>{medium.name.toLowerCase()}</span>.
 			</p>
-			{ability.description ? <p className="mt-2 mb-0 font-body text-body text-ink">{ability.description}</p> : null}
+			{ability.description ? <p className="measure mt-2 mb-0 font-body text-body text-ink">{ability.description}</p> : null}
 		</li>
 	);
 }

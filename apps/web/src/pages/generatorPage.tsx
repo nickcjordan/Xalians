@@ -159,7 +159,7 @@ function GeneratorPage() {
 					<Card variant="glass" className="mb-6 flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
 						<div className="min-w-0">
 							<p className="type-legend m-0">Generator profile</p>
-							<p className="mt-1 m-0 font-body text-small text-ink-2">
+							<p className="measure mt-1 m-0 font-body text-small text-ink-2">
 								Showroom prints commoners: standard finish, no rare traits, a single element. Unrestricted
 								is the full generator. This control is temporary while the economy is being explored.
 							</p>

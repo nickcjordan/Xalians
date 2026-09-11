@@ -130,7 +130,7 @@ function EmptyState({
   return (
     <div data-slot="empty-state" className={cn("surface-0 border border-edge bg-s0 p-6", className)} {...props}>
       <p className="type-legend mb-3">{legend}</p>
-      <div className="font-body text-body text-ink-2">{children}</div>
+      <div className="measure font-body text-body text-ink-2">{children}</div>
     </div>
   )
 }
