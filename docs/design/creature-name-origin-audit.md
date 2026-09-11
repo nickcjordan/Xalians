@@ -84,7 +84,7 @@ Completed on 2026-09-10:
 
 1. `nameOrigin` is required by `SpeciesTemplateSchema` and the template validator.
 2. All 30 ratified templates carry the field, and the content bundle has been rebuilt.
-3. The current Sinterel working-name record carries an explicitly provisional origin; every future full proposal must supply one.
+3. The current Sonalloy proposal carries a complete origin record; every future full proposal must supply one.
 4. The species lore adapter exposes the field and the encyclopedia species view displays it before the longer description.
 5. Content, lore, Codex, and completeness tests cover the contract.
 6. The generated Codex prints the origin in every Bestiary record.

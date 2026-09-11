@@ -1,14 +1,14 @@
-# Sinterel: first full creature proposal
+# Sonalloy: first full creature proposal
 
 ## Proposal boundary
 
-Sinterel is the recommended realization of the approved Veridium metallurgical-restorer brief. It is a design proposal, not a ratified species. Its complete candidate record is kept in [sinterel.json](./sinterel.json), outside the bundled species directory, so review state never becomes a field in creature data and the creature cannot enter generation accidentally.
+Sonalloy is the recommended realization of the approved Veridium metallurgical-restorer brief. It is a design proposal, not a ratified species. Its complete candidate record is kept in [sonalloy.json](./sonalloy.json), outside the bundled species directory, so review state never becomes a field in creature data and the creature cannot enter generation accidentally.
 
 The proposal should advance to art and population testing only after its identity and record are approved. It should enter `docs/species-templates`, the content bundle, and `RATIFIED.json` only at the later ratification gate.
 
 ## Identity
 
-The Sinterel is a low, six-legged organism made of living metal. It moves through Veridium's factory trenches and gantries, finds structural damage by drumming across it, secretes warm mobile alloy into the break, and works the repair with fine tendrils while broad pincers hold the damaged body or structure still.
+The Sonalloy is a low, six-legged organism made of living metal. It moves through Veridium's factory trenches and gantries, finds structural damage by drumming across it, secretes warm mobile alloy into the break, and works the repair with fine tendrils while broad pincers hold the damaged body or structure still.
 
 This is restoration as a bodily sequence:
 
@@ -44,7 +44,7 @@ It is not a machine carrying a repair tool. Feeding keeps its alloy mobile, its 
 
 **Ruin Made Whole** uses `secretion / mend / metal` at intensity 40 to 80.
 
-Plain behavior: the Sinterel fills damage with living alloy, forms it into a support lattice, and holds the target steady until the repair bears weight.
+Plain behavior: the Sonalloy fills damage with living alloy, forms it into a support lattice, and holds the target steady until the repair bears weight.
 
 The signature uses `mend` because it restores the user or another creature. The Healing trait's contract does not allow metal flavor to restrict legal targets. On a metal body, the alloy becomes replacement structure; on flesh, plant, mineral, slime, or another body, it acts as a fitted graft, brace, and temporary support through which recovery occurs. That keeps the fiction specific while preserving the universal target rule.
 
@@ -61,13 +61,13 @@ The base bands are intentionally uneven rather than broadly excellent:
 - Charisma is modest; cooperative repair is a behavior, not social command.
 - Two traits are universal and the rolled pool contributes one expected additional trait, for an expected trait count of 3.0 before exclusions.
 
-At 72 to 98 centimeters tall and 220 to 360 kilograms, the Sinterel is low enough to work beneath machinery but heavy enough to read as a dense metal organism under Veridium's 1.83 Earth gravity. Six load-bearing legs distribute that mass and make climbing credible without making it fast.
+At 72 to 98 centimeters tall and 220 to 360 kilograms, the Sonalloy is low enough to work beneath machinery but heavy enough to read as a dense metal organism under Veridium's 1.83 Earth gravity. Six load-bearing legs distribute that mass and make climbing credible without making it fast.
 
-The repair material is finite. Heat is the creature's energy source, while pieces of scrap are folded into its internal alloy reserve as replacement mass. A Sinterel that has spent that reserve can still brace damage but cannot continue filling fractures until it has replenished itself. This prevents the restorative act from reading as costless matter creation.
+The repair material is finite. Heat is the creature's energy source, while pieces of scrap are folded into its internal alloy reserve as replacement mass. A Sonalloy that has spent that reserve can still brace damage but cannot continue filling fractures until it has replenished itself. This prevents the restorative act from reading as costless matter creation.
 
 ## Coverage delta if ratified
 
-| Coverage concern | Current roster | Effect of Sinterel |
+| Coverage concern | Current roster | Effect of Sonalloy |
 | --- | --- | --- |
 | Metal species | Foromeer only | Metal gains a second species with an opposite ecological and mechanical identity |
 | Veridium species | Foromeer only | Veridium gains a non-excavation fauna lane |
@@ -82,15 +82,15 @@ These gains come from one concept. No unused sense, anatomy part, archetype, or 
 
 ### Against Foromeer
 
-Foromeer is tall, bipedal, flesh beneath metallic plating, strength-led, and built to drill through material. Sinterel is low, multiped, metal throughout, mind-and-resilience-led, and built to rejoin material. Foromeer's best movement is burrowing; Sinterel cannot meaningfully burrow and instead climbs industrial structures. Removing both names and element labels still leaves breaker versus restorer.
+Foromeer is tall, bipedal, flesh beneath metallic plating, strength-led, and built to drill through material. Sonalloy is low, multiped, metal throughout, mind-and-resilience-led, and built to rejoin material. Foromeer's best movement is burrowing; Sonalloy cannot meaningfully burrow and instead climbs industrial structures. Removing both names and element labels still leaves breaker versus restorer.
 
 ### Against Voltish
 
-Voltish is a flesh-and-metal biped that stores environmental charge and releases it through alloy claws. Sinterel does not store or project electricity, has no claws, and uses metal as transferred repair material. Discharge arcs remain a hazard rather than becoming its identity.
+Voltish is a flesh-and-metal biped that stores environmental charge and releases it through alloy claws. Sonalloy does not store or project electricity, has no claws, and uses metal as transferred repair material. Discharge arcs remain a hazard rather than becoming its identity.
 
 ### Against Crystorn
 
-Crystorn is a plated mineral quadruped whose crystal horns focus stored light into a beam. Sinterel is mobile on gantries, lacks a radiant core or horn emitter, and performs a contact repair through substance, bracing, and fine manipulation.
+Crystorn is a plated mineral quadruped whose crystal horns focus stored light into a beam. Sonalloy is mobile on gantries, lacks a radiant core or horn emitter, and performs a contact repair through substance, bracing, and fine manipulation.
 
 ## Risks considered and rejected
 
@@ -104,13 +104,11 @@ Crystorn is a plated mineral quadruped whose crystal horns focus stored light in
 
 ## Naming pass
 
-The first spoken round trip failed: the intended **SIN-ter-el** was heard and transcribed as `Centerel`. That does not mean the reader pronounced it incorrectly. It means the written and spoken forms do not transmit one another reliably enough. `Sinterel` remains only the proposal file's temporary identifier while a replacement name is selected; its derivation is retained below as the record of why the candidate was originally considered.
-
 The repository previously had a broad naming convention, not a complete selection system: creature names should sound like their function and tend toward readable portmanteaus or mashups. It did not require the name to come after the design, document its roots, explore different construction modes, or compare sound and spelling against the roster. The [creature naming system](../creature-naming-system.md) now supplies those missing gates.
 
 ### Name brief
 
-| Input | Sinterel answer |
+| Input | Sonalloy answer |
 | --- | --- |
 | Defining act | Rejoins a damaged body or structure with worked living alloy |
 | Material or anatomy | Bare metal body, six gripping legs, pincers, tendrils, seam vents |
@@ -118,26 +116,23 @@ The repository previously had a broad naming convention, not a complete selectio
 | Temperament | Attentive, persistent, deliberate, helpful without being socially commanding |
 | Sound intent | Softer and more flowing than Foromeer, but still carrying a metallic center |
 
-Root palette: `sinter`, `sentinel`, `seam`, `suture`, `alloy`, `forge`, `join`, `lattice`, `tendril`, and `whole`.
+Root palette: `sonic`, `resonance`, `alloy`, `anneal`, `seam`, `suture`, `join`, `lattice`, `tendril`, `whole`, and Italian `saldare` (to join, weld, or heal).
 
 ### Candidate set
 
 | Mode | Candidate | Decision |
 | --- | --- | --- |
 | Transparent compound | Seamwright | Clear, but reads as an occupation or tool-user rather than an organism |
-| Transparent compound | Forgeweaver | Evocative, but overstates weaving and sounds more magical than bodily |
-| Fused roots | Sintervine | Keeps the joining process but overpromises plant-like anatomy |
-| Fused roots | Allotril | Alloy plus tendril, but difficult to parse aloud and visually close to a chemical trade name |
-| Transformed root | Sintera | Readable, but its open ending leans toward the existing planet-name register |
-| Transformed root | Sutrel | Compact, but too close to suture alone and loses the metal process |
+| Transparent compound | Alloywright | Precisely describes the work, but sounds like a profession rather than a species |
+| Fused roots | Tendraloy | Readable fusion of `tendril` and `alloy`, but emphasizes anatomy more than the full behavior |
+| Fused roots | Resoneal | Joins `resonance` and `anneal`, but its intended pronunciation is not reliably recoverable from its spelling |
+| Transformed foreign root | Saldrel | Draws on Italian `saldare` and `tendril`, but can be heard as “saw drill,” pointing toward the wrong function |
 | Tonal coinage | Velori | Patient and flowing, but insufficiently connected to the creature |
-| Hybrid | Sinterel | Selected: a compression of `sinter` and `sentinel`, with both roots serving defining facts |
+| Hybrid | Sonalloy | Selected: a fusion of `sonic` and `alloy`, joining the two defining halves of its repair sequence |
 
-`Sinterel` is pronounced **SIN-ter-el**, three syllables. `Sinter` names the heat-assisted joining process at the center of its body and signature. `Sentinel` contributes the watchful maintainer that detects damage and responds to it. The overlap keeps the derivation abstract: the result is neither a tool name nor a literal registry summary.
+`Sonalloy` is pronounced **son-AL-loy**, three syllables. `Sonic` supplies the vibration and returned sound through which the creature maps a fracture. `Alloy` supplies the living metal it transfers into the break and shapes into a repair. The name therefore follows the creature from diagnosis into restoration without reading as a tool, occupation, or ability title.
 
-The first draft was driven primarily by `sinter` and softened with a creature-like ending. The systematic re-audit strengthens that derivation through the independently relevant `sentinel` root rather than pretending the complete two-root explanation existed before the naming framework did.
-
-In roster sound, it has a softer three-syllable cadence than the hard compounds used by several function-forward species. Its `Sint-` opening and `-erel` ending do not duplicate a current species, and it does not rely on X or Z for alienness. It shares an initial S with Smokat and Scalatto, but neither the full opening sound nor the ending is close in speech.
+In roster sound, it has a distinct three-syllable cadence and an `-alloy` ending unused by any current species. Its recognizable roots are intended to make the written form recoverable after hearing it, while their fusion remains abstract enough to function as a creature name. It does not rely on decorative X or Z spelling, and its central stress gives it a different rhythm from Smokat and Scalatto despite the shared initial S.
 
 ### Signature-title candidates
 
@@ -149,7 +144,7 @@ The completed act is not merely an unbroken object being made. It takes existing
 
 The proposal recommends these decisions as a package:
 
-1. **Name:** `Sinterel`, from `sinter` plus `sentinel`, with a sound deliberately softer than Veridium's breaker. It is the post-design recommendation and has no current repository collision.
+1. **Name:** `Sonalloy`, from `sonic` plus `alloy`, with a sound deliberately softer than Veridium's breaker. It is the post-design recommendation and has no current repository collision.
 2. **Silhouette:** low hexapod with separate front pincers and two fine tendrils. This is the minimum anatomy that makes stable bracing and precise seam work simultaneously visible.
 3. **Healing scope:** retain universal mechanical targeting and let living alloy act as replacement, graft, brace, or recovery scaffold according to the target.
 4. **Enduring lifespan:** accept centuries as a direct consequence of ongoing material replacement, without escalating to `ageless`.
@@ -165,4 +160,5 @@ If these judgments hold, the next gate is concept art followed by an art-to-reco
 - Channel source: pass; the secretion is established in the description, appearance, feeding, behavior, and signature.
 - Signature instrument/action relationship: pass; `secretion` directly permits `mend` without an exception.
 - Ability-catalog reachability: 81 reachable instrument/action/medium cells, zero thin cells, and 3,962 distinct valid generated names against the 30-name floor.
-- Repository collisions: none for `Sinterel` or `Ruin Made Whole` in current species and ability data.
+- Repository collisions: none for `Sonalloy` or `Ruin Made Whole` in current species and ability data.
+- Spoken round trip: still required before ratification; the written-name review does not substitute for an uncoached read-aloud check.

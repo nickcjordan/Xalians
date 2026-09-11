@@ -13,7 +13,7 @@ The generated [coverage ledger](./CREATURE-EXPANSION-COVERAGE.md) answers the fi
 
 The first application of this process is recorded in [Creature Expansion Target Briefs 01](./creature-expansion-target-briefs-01.md).
 
-The first complete proposal produced from an approved target brief is [Sinterel](./creature-proposals/sinterel.md), kept outside the ratified species bundle until its review gates are complete.
+The first complete proposal produced from an approved target brief is [Sonalloy](./creature-proposals/sonalloy.md), kept outside the ratified species bundle until its review gates are complete.
 
 ## Sources of truth
 

@@ -1,14 +1,14 @@
 {
-  "key": "sinterel",
-  "name": "Sinterel",
-  "nameOrigin": "A working-name compression of sinter, a heat-assisted joining process, and sentinel, reflecting a watchful maintainer that detects and repairs damage; the final species name remains under review.",
+  "key": "sonalloy",
+  "name": "Sonalloy",
+  "nameOrigin": "A fusion of sonic and alloy, naming the vibrations it uses to locate damage and the living metal it works into the repair.",
   "element": "metal",
   "homePlanet": "veridium",
   "generatorPlanets": [
     "veridium"
   ],
   "lore": {
-    "description": "A low six-limbed creature of living metal, the Sinterel climbs Veridium's gantries and draws warm alloy from vents along its body, working it into damaged creatures and structures with a pair of fine tendrils and broad pincers.",
+    "description": "A low six-limbed creature of living metal, the Sonalloy climbs Veridium's gantries and draws warm alloy from vents along its body, working it into damaged creatures and structures with a pair of fine tendrils and broad pincers.",
     "appearance": [
       "A low broad body made entirely of satin-finished metal",
       "Six jointed load-bearing legs tipped with split gripping pads",
@@ -17,10 +17,10 @@
       "Narrow vents between the body segments that release bright liquid alloy",
       "A bare unplated surface crossed by slow-moving lines of forge glow"
     ],
-    "origin": "The Veridium Generator produced Sinterels to maintain metal-shaping fauna and factory systems in forge districts where damage accumulates faster than ordinary crews can answer it.",
+    "origin": "The Veridium Generator produced Sonalloys to maintain metal-shaping fauna and factory systems in forge districts where damage accumulates faster than ordinary crews can answer it.",
     "habitat": "They move along factory trenches, gantries, salvage fields, and the cooler banks of Veridium's liquid metal channels.",
     "feeding": "They draw heat from forge districts and passing metal channels, retaining enough of it to keep a reserve of seam alloy mobile inside the body, and fold small pieces of scrap into that reserve to replace material spent on repairs.",
-    "behavior": "A Sinterel drums across a damaged surface to map the break, braces it with its pincers, and uses its tendrils to work secreted alloy through the fracture until the joined material bears weight again.",
+    "behavior": "A Sonalloy drums across a damaged surface to map the break, braces it with its pincers, and uses its tendrils to work secreted alloy through the fracture until the joined material bears weight again.",
     "company": "Several may converge on widespread damage and coordinate through alternating patterns of seam glow, but they separate once the damaged area is stable."
   },
   "physiology": {
@@ -181,7 +181,7 @@
       40,
       80
     ],
-    "description": "The Sinterel floods a wound or fracture with living alloy, then draws the support lattice tight with its tendrils while its pincers hold the damaged body still."
+    "description": "The Sonalloy floods a wound or fracture with living alloy, then draws the support lattice tight with its tendrils while its pincers hold the damaged body still."
   },
   "conduits": {
     "secretion": "metal"
