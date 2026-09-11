@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { act } from 'react-dom/test-utils';
-import LongReturnGame from './longReturnGame';
+import LongReturnGame, { encounterNarrative, recommendationFor, routeAdvantage, supportRoleForPlan } from './longReturnGame';
 import { readCheckpoint } from './expeditionSave';
 
 vi.mock('../../xalianImage', () => ({ default: function MockXalianImage() { return <div data-testid="creature-portrait" />; } }));
@@ -503,5 +503,55 @@ describe('Long Return Simple mode', () => {
     selectRecommendedScout(container);
     expect(container.textContent).toContain('Trapped Signal-Mimic');
     expect(container.textContent).toMatch(/Release it from the arms|Mark the safe controls/i);
+  });
+});
+
+describe('Long Return decision language', () => {
+  const plan = (overrides = {}) => ({
+    route: { id: 'route', salvage: 2, activeEffects: [] },
+    knownLeadStrain: 1,
+    baseSupportStrain: 0,
+    knownPressure: 1,
+    unresolvedHazards: [],
+    nativeRisk: false,
+    risk: 20,
+    margin: 8,
+    rawMethodScore: 70,
+    difficulty: 68,
+    ...overrides
+  });
+
+  test('does not recommend a safer route when it gives up a visible resource', () => {
+    const safer = plan({ route: { id: 'safer', salvage: 1, activeEffects: [] }, risk: 5 });
+    const richer = plan({ route: { id: 'richer', salvage: 3, activeEffects: [] }, risk: 30, unresolvedHazards: [{ id: 'hidden' }] });
+    expect(recommendationFor([safer, richer])).toBeNull();
+  });
+
+  test('recommends only a route that clearly dominates the alternative', () => {
+    const best = plan({ route: { id: 'best', salvage: 3, activeEffects: [] }, knownLeadStrain: 0, knownPressure: 0, risk: 2, margin: 18 });
+    const worse = plan({ route: { id: 'worse', salvage: 2, activeEffects: [] }, knownLeadStrain: 1, knownPressure: 1, risk: 24, unresolvedHazards: [{ id: 'hidden' }] });
+    const recommendation = recommendationFor([best, worse]);
+    expect(recommendation.plan).toBe(best);
+    expect(recommendation.reason).toMatch(/1 less projected energy use.*1 less stability loss.*1 more salvage/i);
+  });
+
+  test('gives same-risk routes distinct player-facing trade-off labels', () => {
+    const largerHaul = plan({ route: { id: 'stabilize', salvage: 5, activeEffects: [] }, knownLeadStrain: 1, knownPressure: 1, unresolvedHazards: [{ id: 'dust' }] });
+    const lowerEnergy = plan({ route: { id: 'blackbox', salvage: 3, activeEffects: [] }, knownLeadStrain: 0, knownPressure: 3, unresolvedHazards: [{ id: 'dust' }] });
+    expect(routeAdvantage(largerHaul, [largerHaul, lowerEnergy])).toBe('Protects annex · more salvage');
+    expect(routeAdvantage(lowerEnergy, [largerHaul, lowerEnergy])).toBe('Easier on the crew');
+  });
+
+  test('states when support is projected to spend energy', () => {
+    expect(supportRoleForPlan(plan({ baseSupportStrain: 1 }))).toBe('Intervenes · spends 1 energy');
+    expect(supportRoleForPlan(plan())).toBe('Backup role · no energy projected');
+  });
+
+  test('gives territorial responses distinct outcome stories', () => {
+    const signal = encounterNarrative({ archetype: 'territorial', option: { id: 'signal-space', resolution: 'cleared' }, nativeName: 'Ectoghoul', actorName: 'Graviclaw' });
+    const distract = encounterNarrative({ archetype: 'territorial', option: { id: 'distract', resolution: 'cleared' }, nativeName: 'Ectoghoul', actorName: 'Graviclaw' });
+    expect(signal).toMatch(/boundary/i);
+    expect(distract).toMatch(/draws Ectoghoul away/i);
+    expect(distract).not.toBe(signal);
   });
 });

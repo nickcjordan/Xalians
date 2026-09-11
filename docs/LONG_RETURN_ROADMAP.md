@@ -4,6 +4,21 @@ This is the living execution checklist for the playable prototype. It complement
 
 Status key: `[ ]` queued · `[-]` active · `[x]` validated
 
+## Active milestone — full-mission release candidate
+
+Carry the clarity established in the opening through every ending. This pass is complete only when the live game—not merely the engine—can be played from briefing through voluntary extraction, forced extraction, and deep retrieval without an unexplained choice or silent state change.
+
+- [x] Replay all seven scenes in Simple mode and record the first point where route stakes, crew roles, or consequences stop being immediately legible.
+- [x] Exercise voluntary extraction, forced extraction, and deep retrieval as distinct end-to-end UI paths.
+- [x] Verify that salvage presents a real repair-now versus bank-for-score decision at every field-work opportunity.
+- [x] Verify that a recruited companion visibly changes a later crossing, then becomes visibly spent.
+- [x] Audit every transition family for meaningful beats, persistent receipts, skip behavior, and reduced-motion equivalence.
+- [x] Complete keyboard, narrow responsive, 200% text, reload/checkpoint, and sound-off passes on the final flow.
+- [x] Convert every defect found above into regression coverage, then rerun the complete web suite and production build.
+- [ ] Open a fresh PR from this worktree only after rebasing onto the latest `main` and obtaining a clean merge state.
+
+Validation record (2026-09-10): live Simple-mode runs reached voluntary extraction (5/7), forced extraction with the Index retained (5/7), and deep retrieval (7/7). The deep run recruited Xylum, consumed its one intervention, spent salvage on both energy recovery and annex bracing, and banked the remainder. Sound-off, 200% zoom, and a narrower-than-mobile-breakpoint zoom pass retained reachable route, back, and commit controls. Automated coverage validates keyboard focus, checkpoint recovery, duplicate-cost prevention, and the same ending families; the complete web suite passed 996 tests across 44 files and the Vite production build completed.
+
 ## Current milestone — one excellent decision loop
 
 Prove Scene 2 as a complete vertical slice: scout → contact → response → route → plan → crossing → persistent consequence. A fresh player should understand every trade-off without opening Game Rules.
