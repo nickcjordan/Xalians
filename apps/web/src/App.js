@@ -1,4 +1,3 @@
-import Home from './pages/home';
 import species from '@xalians/content/species.json';
 // import ProjectPage from './pages/projectPage';
 // import FAQPage from './pages/faqPage';
@@ -31,7 +30,8 @@ import {
   Link
 } from "react-router-dom";
 
-import Amplify from 'aws-amplify';
+import { Amplify } from '@aws-amplify/core';
+import '@aws-amplify/auth';
 import awsconfig from './aws-exports';
 
 import { Provider } from 'react-redux'
@@ -40,8 +40,9 @@ import { Toaster } from '@/components/ui/sonner';
 import { ErrorBoundary } from '@/components/system/status';
 import store from './store/store';
 
+Amplify.configure(awsconfig);
 
-// const Home = lazy(() => import('./pages/home'));
+const Home = lazy(() => import('./pages/home'));
 const StyleGuidePage = lazy(() => import('./pages/styleGuidePage'));
 const GeneratorPage = lazy(() => import('./pages/generatorPage'));
 const UserAccountPage = lazy(() => import('./pages/userAccountPage'));
@@ -79,8 +80,6 @@ function RedirectSpecies({ match }) {
 class App extends React.Component {
 
   render() {
-    Amplify.configure(awsconfig);
-
     return (
       <Provider store={store}>
 

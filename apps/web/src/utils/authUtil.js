@@ -1,10 +1,4 @@
-import { Hub, Logger } from 'aws-amplify';
-import { Auth } from 'aws-amplify';
-import {store} from 'state-pool';
-// import Amplify from 'aws-amplify';
-// import awsconfig from '../aws-exports';
-
-// Amplify.configure(awsconfig);
+import { Auth } from '@aws-amplify/auth';
 // const listener = (data) => {
 //     console.log('inbound event data:\n' + JSON.stringify(data.payload, null, 2));
 //     switch (data.payload.event) {

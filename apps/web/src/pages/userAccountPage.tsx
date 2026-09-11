@@ -8,7 +8,7 @@
 // more; what becomes of those roughly 70 records is Nick's decision (#180).
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Hub } from 'aws-amplify';
+import { Hub } from '@aws-amplify/core';
 import { Trash2 } from 'lucide-react';
 import type { XalianRecord } from '@xalians/content/schema';
 import { speciesDisplayName } from '@xalians/rules/generator';

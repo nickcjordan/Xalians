@@ -53,7 +53,7 @@ export default defineConfig(({ mode }) => ({
 	},
 
 	define: {
-		// aws-amplify 4 reaches for Node's `global`; webpack polyfilled it, Vite
+		// Amplify 4 reaches for Node's `global`; webpack polyfilled it, Vite
 		// does not. `process.env.NODE_ENV` needs nothing: Vite replaces it itself.
 		global: 'globalThis',
 	},
@@ -67,6 +67,17 @@ export default defineConfig(({ mode }) => ({
 	build: {
 		// CI and `npm run deploy` sync `build/` to S3. Keep CRA's directory.
 		outDir: 'build',
+		rollupOptions: {
+			output: {
+				// Auth is required by the global navbar, but it changes much less
+				// often than application code. Give Amplify and its Cognito/AWS
+				// dependency graph a stable cache boundary instead of baking that
+				// whole graph into the entry chunk on every deploy.
+				manualChunks: {
+					'vendor-auth': ['@aws-amplify/core', '@aws-amplify/auth'],
+				},
+			},
+		},
 	},
 
 	test: {

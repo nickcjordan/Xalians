@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Hub } from 'aws-amplify';
+import { Hub } from '@aws-amplify/core';
 import { toast } from 'sonner';
 import type { XalianRecord } from '@xalians/content/schema';
 
