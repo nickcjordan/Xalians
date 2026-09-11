@@ -11,6 +11,7 @@ import type {
 	AttributeKey,
 	CapabilityKey,
 	ElementKey,
+	Finish,
 	FinishOdds,
 	GradedSenseKey,
 	TemperamentKey,
@@ -143,4 +144,40 @@ export const TEMPERAMENT_TILTS: Record<TemperamentKey, TemperamentTiltSpec> = {
 		archetypes: { predator: 10, berserker: 12, juggernaut: 6, prowler: 4, bulwark: -6, survivor: -6, sage: -8, seeker: -4 },
 	},
 	sociability: { attributes: ['charisma'], traits: { 'pack-bonded': 16, solitary: -16, inspiring: 8 } },
+};
+
+/*
+	Showroom profile (issue #197, docs/design/xalians-platform-vision-and-economy.md
+	section 3): a generator lever, not an entitlement check. Nick's 2026-09-10 direction
+	is a visible toggle on the site so the two modes can be compared live, with real
+	gating parked until tokens exist -- see apps/web's generator page toggle and
+	apps/api's showroom/registry handlers. A profiled generation still draws from every
+	rng fork exactly as the full profile does (rollAffinities, rollTraits and rollFinish
+	in generate.ts all consume the same draws either way); the profile only constrains the
+	outcome afterward, so the same seed under both profiles agrees on every unconstrained
+	field.
+
+	rareTraitMaxPercent: species trait pools in speciesRecords.json use percents from 5 up
+	to 100 (5, 8, 10, 12, 13, 14, 15, 16, 18, 20, 22, 25, 26, 30, 35, 36, 38, 40, 45, 100 are
+	the values actually used as of 2026-09-10). 20 draws the line just above the 15/18
+	cluster: a showroom pull can still land the common 20-45 percent traits but never the
+	long tail of sub-20 rarities, which is the ratified "no rare trait outcomes" intent.
+
+	secondaryAffinityChance: 0 means a showroom creature is always single-element; this
+	profile does not touch SECONDARY_AFFINITY_CHANCE itself (that stays the lever for the
+	full profile), it just discards a landed secondary after the roll.
+
+	Species-weight gap (still open): the ratified line also says "common-tier species
+	weights only," but speciesRecords.json templates carry no rarity or weight field, and
+	both the showroom handler and generateBatch already pick species uniformly. `tier` in
+	grade.ts is a computed display label on a finished record, not a species property, so
+	there is nothing to constrain species selection against yet. That half of the ratified
+	line needs a per-species rarity field before it can be implemented; flagged on issue
+	#197 rather than worked around here.
+*/
+export const SHOWROOM_RARE_TRAIT_MAX_PERCENT = 20;
+export const SHOWROOM_PROFILE = {
+	finish: 'standard' as Finish,
+	rareTraitMaxPercent: SHOWROOM_RARE_TRAIT_MAX_PERCENT,
+	secondaryAffinityChance: 0,
 };

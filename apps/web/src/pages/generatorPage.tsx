@@ -18,6 +18,7 @@ import { Callout } from '@/components/system/readouts';
 import { LiveRegion } from '@/components/system/a11y';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
 /**
  * Tier: chrome. The Generator: pull the lever, watch a creature that has never
@@ -34,6 +35,23 @@ import { Button } from '@/components/ui/button';
 type Mode = 'showroom' | 'owned';
 type AuthUser = { username: string; hasVerifiedEmail: boolean } | null;
 
+// issue #197: the generator profile is a real lever now (packages/rules), not just a
+// showroom-vs-owned mode. This toggle is exploratory rather than enforcement -- Nick's
+// 2026-09-10 direction is a visible control so the two modes can be compared on the live
+// site while gating good creatures behind tokens is still parked. It is remembered for
+// the session only (sessionStorage), never a persisted account setting.
+type GeneratorProfile = 'showroom' | 'full';
+const PROFILE_STORAGE_KEY = 'xalians.generatorProfile';
+
+function readStoredProfile(): GeneratorProfile {
+	try {
+		const stored = window.sessionStorage.getItem(PROFILE_STORAGE_KEY);
+		return stored === 'full' ? 'full' : 'showroom';
+	} catch {
+		return 'showroom';
+	}
+}
+
 function GeneratorPage() {
 	const [record, setRecord] = React.useState<XalianRecord | null>(null);
 	const [mode, setMode] = React.useState<Mode>('showroom');
@@ -42,14 +60,15 @@ function GeneratorPage() {
 	const [signInShow, setSignInShow] = React.useState(false);
 	const [verifyEmailShow, setVerifyEmailShow] = React.useState(false);
 	const [pendingUsername, setPendingUsername] = React.useState<string | undefined>();
+	const [profile, setProfile] = React.useState<GeneratorProfile>(() => readStoredProfile());
 
 	const signedIn = !!loggedInUser;
 
-	const generate = React.useCallback((asOwner: boolean) => {
+	const generate = React.useCallback((asOwner: boolean, forProfile: GeneratorProfile) => {
 		setIsGenerating(true);
 		const request = asOwner
-			? dbApi.callGenerateXalian()
-			: dbApi.callShowroomXalian().then((result: any) => result.record);
+			? dbApi.callGenerateXalian(undefined, forProfile)
+			: dbApi.callShowroomXalian(forProfile).then((result: any) => result.record);
 		return request
 			.then((generated: XalianRecord) => {
 				setRecord(generated);
@@ -60,6 +79,17 @@ function GeneratorPage() {
 				setIsGenerating(false);
 				toast.error('The Generator did not answer. Pull the lever again.');
 			});
+	}, []);
+
+	const handleProfileChange = React.useCallback((value: string) => {
+		if (value !== 'showroom' && value !== 'full') return;
+		setProfile(value);
+		try {
+			window.sessionStorage.setItem(PROFILE_STORAGE_KEY, value);
+		} catch {
+			// sessionStorage unavailable (private mode, blocked site data); the choice
+			// just does not survive a reload, which is fine for a session-only control.
+		}
 	}, []);
 
 	// The session is resolved here rather than waited for from the navbar: the
@@ -85,7 +115,7 @@ function GeneratorPage() {
 	// The first record is always a showroom pull, even for a signed-in visitor:
 	// arriving on the page should never spend anything or write to the registry.
 	React.useEffect(() => {
-		generate(false);
+		generate(false, profile);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -118,11 +148,32 @@ function GeneratorPage() {
 								: 'The showroom prints commoners, and prints them all day. Sign in and what it prints is yours to keep.'
 						}
 						aside={
-							<Button disabled={isGenerating} onClick={() => generate(signedIn)}>
+							<Button disabled={isGenerating} onClick={() => generate(signedIn, profile)}>
 								{record ? 'Generate another' : 'Generate a Xalian'}
 							</Button>
 						}
 					/>
+
+					<Card variant="glass" className="mb-6 flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+						<div className="min-w-0">
+							<p className="type-legend m-0">Generator profile</p>
+							<p className="mt-1 m-0 font-body text-small text-ink-2">
+								Showroom prints commoners: standard finish, no rare traits, a single element. Unrestricted
+								is the full generator. This control is temporary while the economy is being explored.
+							</p>
+						</div>
+						<ToggleGroup
+							type="single"
+							variant="outline"
+							value={profile}
+							onValueChange={(value) => { if (value) handleProfileChange(value); }}
+							aria-label="Generator profile"
+							className="shrink-0"
+						>
+							<ToggleGroupItem value="showroom">Showroom</ToggleGroupItem>
+							<ToggleGroupItem value="full">Unrestricted</ToggleGroupItem>
+						</ToggleGroup>
+					</Card>
 
 					<LiveRegion>
 						{isGenerating ? 'Generating a Xalian' : record ? `Generated a ${record.species}` : ''}
@@ -166,7 +217,7 @@ function GeneratorPage() {
 						<EmptyState legend="No Xalian yet">
 							Pull the lever and the Generator prints one.
 							<div className="mt-3">
-								<Button onClick={() => generate(signedIn)}>Generate a Xalian</Button>
+								<Button onClick={() => generate(signedIn, profile)}>Generate a Xalian</Button>
 							</div>
 						</EmptyState>
 					)}

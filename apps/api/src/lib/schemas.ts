@@ -29,14 +29,32 @@ export const UpdateUserBodySchema = z.discriminatedUnion('action', [
 ]);
 export type UpdateUserBody = z.infer<typeof UpdateUserBodySchema>;
 
+// The showroom lever (issue #197, docs/design/xalians-platform-vision-and-economy.md
+// section 3): 'full' is the unconstrained generator, 'showroom' pins finish to standard,
+// drops rare trait outcomes and never rolls a secondary affinity. Shared by both routes
+// below so the two default differently on purpose (see each schema's comment).
+const GeneratorProfileSchema = z.enum(['full', 'showroom']);
+
 // POST /xalians (the registry). species is optional; when given it must be a ratified
 // species key (checked against @xalians/rules's getSpeciesTemplates() in the handler, not
 // here, since that is a runtime lookup against the bundled templates, not a static shape
-// check). Omitted, the handler draws one uniformly.
+// check). Omitted, the handler draws one uniformly. profile is optional and defaults to
+// 'full': a signed-in caller gets the unrestricted generator unless the site's visible
+// toggle asks for the showroom preview instead.
 export const GenerateRegistryXalianBodySchema = z.object({
   species: z.string().min(1).optional(),
+  profile: GeneratorProfileSchema.optional(),
 });
 export type GenerateRegistryXalianBody = z.infer<typeof GenerateRegistryXalianBodySchema>;
+
+// GET /xalians/showroom. profile is optional and defaults to 'showroom': this route is
+// anonymous, so the query parameter is client-supplied and is deliberately not a gate
+// while the toggle exists (see showroomXalian.ts's handler comment) -- it just lets the
+// same visible toggle flip the anonymous branch too.
+export const ShowroomXalianQuerySchema = z.object({
+  profile: GeneratorProfileSchema.optional(),
+});
+export type ShowroomXalianQuery = z.infer<typeof ShowroomXalianQuerySchema>;
 
 // GET /xalians. Without ownerId, lists the caller's own records; with ownerId, lists that
 // owner's (registry records are public). limit is coerced from the query string and capped

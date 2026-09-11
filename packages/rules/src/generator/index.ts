@@ -67,5 +67,6 @@ export function generateBatch(count: number, seed: string | number, options: Gen
 		registries,
 		catalog,
 		generatedAt: options.generatedAt,
+		profile: options.profile,
 	});
 }
