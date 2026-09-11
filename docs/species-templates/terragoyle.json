@@ -1,6 +1,7 @@
 {
   "key": "terragoyle",
   "name": "Terragoyle",
+  "nameOrigin": "A fusion of terra and gargoyle, matching a stone-moving, horned bat-like guardian that waits in a statue-like state.",
   "element": "rock",
   "homePlanet": "stonera",
   "generatorPlanets": [

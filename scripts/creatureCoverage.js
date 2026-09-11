@@ -45,6 +45,10 @@ function render() {
   const registries = read('registries.json');
   const planets = read('planetRecords.json');
   const records = bundle.records;
+  const missingNameOrigins = records.filter((record) => typeof record.nameOrigin !== 'string' || !record.nameOrigin.trim());
+  if (missingNameOrigins.length) {
+    throw new Error(`Ratified species missing nameOrigin: ${missingNameOrigins.map((record) => record.key).join(', ')}`);
+  }
   const planetByKey = new Map(planets.map((planet) => [planet.key, planet]));
   const lines = [];
 

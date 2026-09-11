@@ -260,6 +260,12 @@ export default function SpeciesView() {
                 </div>
 
                 <div className="flex min-w-0 flex-col gap-4 max-sm:order-2">
+                    {view.nameOrigin && (
+                        <div className="flex flex-col gap-1">
+                            <h3 className="type-heading m-0 text-[19px]">Name origin</h3>
+                            <p className="m-0 font-body text-body text-ink-2">{view.nameOrigin}</p>
+                        </div>
+                    )}
                     <Prose text={view.description} except={view.entry && view.entry.key} />
 
                     {Array.isArray(view.appearance) && view.appearance.length > 0 && (

@@ -1,6 +1,7 @@
 {
   "key": "frackworm",
   "name": "Frackworm",
+  "nameOrigin": "A compound of fracking, the pressure-fracturing process it performs, and worm, its body form.",
   "element": "sand",
   "homePlanet": "endessa",
   "generatorPlanets": [

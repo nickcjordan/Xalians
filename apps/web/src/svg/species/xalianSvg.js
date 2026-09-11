@@ -2,7 +2,7 @@ import React from 'react';
 
 import { ReactComponent as XylumSVG } from './xylum.svg';
 import { ReactComponent as DromeusSVG } from './dromeus.svg';
-import { ReactComponent as TetrahiveSVG } from './tetrahive.svg';
+import { ReactComponent as VespersynSVG } from './vespersyn.svg';
 import { ReactComponent as BioflimSVG } from './bioflim.svg';
 import { ReactComponent as SmokatSVG } from './smokat.svg';
 import { ReactComponent as NewtapedeSVG } from './newtapede.svg';
@@ -50,7 +50,7 @@ class XalianSVG extends React.Component {
         let speciesName = this.props.name;
         if (speciesName == 'xylum') { return <XylumSVG style={this.props.style} className={this.props.className} /> }
         if (speciesName == 'dromeus') { return <DromeusSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'tetrahive') { return <TetrahiveSVG style={this.props.style} className={this.props.className} /> }
+        if (speciesName == 'vespersyn') { return <VespersynSVG style={this.props.style} className={this.props.className} /> }
         if (speciesName == 'bioflim') { return <BioflimSVG style={this.props.style} className={this.props.className} /> }
         if (speciesName == 'smokat') { return <SmokatSVG style={this.props.style} className={this.props.className} /> }
         if (speciesName == 'newtapede') { return <NewtapedeSVG style={this.props.style} className={this.props.className} /> }

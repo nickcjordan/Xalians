@@ -1,19 +1,19 @@
-# Tetrahive migration: independent validation report
+# Vespersyn migration: independent validation report
 
-Sources read in full: the Tetrahive entry in `lambda/src/json/species.json` (Xalians repo) and the entire Grimedes entry (`history` array plus `data` block) in `lambda/src/json/planets.json`. Registry read from `.claude/skills/migrate-species/SKILL.md` sections 2 through 6 only. Collision check performed independently against all 14 `consolidated-*.md` files and `neutral-pools.md`. No other template, no `RULINGS.md`, no `docs/design/`, no `CLAUDE.md`, no memory file, and no prior `*.validation.md` was read.
+Sources read in full: the Vespersyn entry in `lambda/src/json/species.json` (Xalians repo) and the entire Grimedes entry (`history` array plus `data` block) in `lambda/src/json/planets.json`. Registry read from `.claude/skills/migrate-species/SKILL.md` sections 2 through 6 only. Collision check performed independently against all 14 `consolidated-*.md` files and `neutral-pools.md`. No other template, no `RULINGS.md`, no `docs/design/`, no `CLAUDE.md`, no memory file, and no prior `*.validation.md` was read.
 
 ## Step 1: validator script output (verbatim)
 
 ```
 0 FAIL, 0 WARN (structurally clean; every WARN must be answered in the walkthrough)
-logged to docs\species-templates\validation-log\tetrahive.jsonl
+logged to docs\species-templates\validation-log\vespersyn.jsonl
 ```
 
-Cross-checked against `docs/species-templates/validation-log/tetrahive.jsonl`: three logged runs. Run 1 recorded `fails: [{"code":"md.emdash","msg":"walkthrough contains an em-dash"}]` and `warns: [{"code":"enc.definition.name","msg":"definition does not name the species"}]`. Runs 2 and 3 both record `fails: []`, `warns: []`. This matches the walkthrough's own Script denials section exactly (one FAIL fixed by replacing an em-dash with a colon in the Authored fields list, one WARN answered by rewriting the encyclopedia opening to name the species). No discrepancy between the log and the walkthrough's account of it.
+Cross-checked against `docs/species-templates/validation-log/vespersyn.jsonl`: three logged runs. Run 1 recorded `fails: [{"code":"md.emdash","msg":"walkthrough contains an em-dash"}]` and `warns: [{"code":"enc.definition.name","msg":"definition does not name the species"}]`. Runs 2 and 3 both record `fails: []`, `warns: []`. This matches the walkthrough's own Script denials section exactly (one FAIL fixed by replacing an em-dash with a colon in the Authored fields list, one WARN answered by rewriting the encyclopedia opening to name the species). No discrepancy between the log and the walkthrough's account of it.
 
 ## Step 2: upgraded description, clause by clause
 
-Full text: "A single creature distributed across a cloud of small flying bodies, each one little more than a set of teeth, all of them held together and directed by one mind. The Generator on Grimedes was funded to produce test subjects rather than a labor force, and a body that could be divided, counted, and reassembled was ideal for measuring what the black hole was doing to living matter. What the observatories bred instead was a predator that never presents a target. In the present day the Tetrahive scatters over the stalky undergrowth of the flats, thins to nothing when struck, and closes again as one unit on whatever it has decided is prey, which is the sort of watchman the rim keeps now." (123 words.)
+Full text: "A single creature distributed across a cloud of small flying bodies, each one little more than a set of teeth, all of them held together and directed by one mind. The Generator on Grimedes was funded to produce test subjects rather than a labor force, and a body that could be divided, counted, and reassembled was ideal for measuring what the black hole was doing to living matter. What the observatories bred instead was a predator that never presents a target. In the present day the Vespersyn scatters over the stalky undergrowth of the flats, thins to nothing when struck, and closes again as one unit on whatever it has decided is prey, which is the sort of watchman the rim keeps now." (123 words.)
 
 | Clause | Verdict | Basis |
 |---|---|---|
@@ -32,7 +32,7 @@ Full text: "A single creature distributed across a cloud of small flying bodies,
 
 **Net finding:** two clauses are invented facts, not fair connectives: "the observatories bred" (misattributes creation from the Generator to the observatories) and "thins to nothing when struck" (a specific damage-response behavior with zero textual support). A third clause, "never presents a target," is unsupported tactical color stated as established fact rather than flagged as inference. The walkthrough's own clause table does not surface any of these three as authored/inferred; it presents all ten rows as sourced, which overstates the description's grounding.
 
-**On "summons a swarm" becoming "the creature IS the swarm":** this is a substantive reframing of what kind of entity a Tetrahive is, not merely a cosmetic dodge of the no-summoning rule. The legacy stub reads naturally as a single controller entity that calls forth a separate swarm of familiars and commands it ("It controls the swarm with its mind"), which implies a controller/subject duality. The template collapses that duality: `bodyPlan: swarm` makes the many bodies the creature itself, with no separate controller. This is explicitly sanctioned by section 2 ("a swarm's units are extensions of one body") and is the correct resolution available under the registry, but it is not a change of framing alone; it changes the reading of "controls... with its mind" from an external command relationship to internal self-coordination. This should be called a **necessary and licensed reinterpretation of canon**, not "a rewrite of framing, not of fact" as the walkthrough states — the walkthrough's own characterization slightly understates what it did.
+**On "summons a swarm" becoming "the creature IS the swarm":** this is a substantive reframing of what kind of entity a Vespersyn is, not merely a cosmetic dodge of the no-summoning rule. The legacy stub reads naturally as a single controller entity that calls forth a separate swarm of familiars and commands it ("It controls the swarm with its mind"), which implies a controller/subject duality. The template collapses that duality: `bodyPlan: swarm` makes the many bodies the creature itself, with no separate controller. This is explicitly sanctioned by section 2 ("a swarm's units are extensions of one body") and is the correct resolution available under the registry, but it is not a change of framing alone; it changes the reading of "controls... with its mind" from an external command relationship to internal self-coordination. This should be called a **necessary and licensed reinterpretation of canon**, not "a rewrite of framing, not of fact" as the walkthrough states — the walkthrough's own characterization slightly understates what it did.
 
 **Voice rules (section 3):** word count 123 (60-140 range: pass), single paragraph, present tense, appositive opening ("A single creature distributed across..."), engineered purpose stated (test-subject funding), present-day turn anchored to a named location ("the flats," "the rim"), no game mechanics vocabulary, no em-dash (confirmed programmatically), American English. Formally compliant.
 
@@ -40,7 +40,7 @@ Full text: "A single creature distributed across a cloud of small flying bodies,
 
 **Signature description**: "The scattered bodies fall in from every side at once and strip the target as a single closing mouth." SUPPORTED — direct paraphrase of "with teeth like piranhas" plus "attacking or defending as one unit." No mechanics, no em-dash. Passes.
 
-**Encyclopedia definition**: "The Tetrahive is a predator of Grimedes whose body is a cloud of small flying units, each carrying a set of teeth, held together and directed by one mind. It attacks and defends as a single unit, closing on a target from every side and thinning apart again when struck."
+**Encyclopedia definition**: "The Vespersyn is a predator of Grimedes whose body is a cloud of small flying units, each carrying a set of teeth, held together and directed by one mind. It attacks and defends as a single unit, closing on a target from every side and thinning apart again when struck."
 
 | Clause | Verdict |
 |---|---|
@@ -87,7 +87,7 @@ Encyclopedia register (leads with category noun, no element key named, no flouri
 
 ## Step 5: signature audit
 
-- Collision check: independently grepped all 14 `consolidated-*.md` files and `neutral-pools.md` for "tetrahive" and "convocation of teeth" (case-insensitive) and for "convocation" alone. Zero hits in all three searches. No collision, no reservation.
+- Collision check: independently grepped all 14 `consolidated-*.md` files and `neutral-pools.md` for "vespersyn" and "convocation of teeth" (case-insensitive) and for "convocation" alone. Zero hits in all three searches. No collision, no reservation.
 - Instrument `swarm`: correctly NOT `mind`, per the pilot-lesson rule that the instrument is where the effect terminates on the target. The walkthrough's rejection of `mind` is a correct, non-trivial application of that rule (the stub's "controls the swarm with its mind" describes the physics, not the landing point).
 - Action `rake`: in the allowed-actions set for `swarm` (`cloud, strike, drain, snare, rake, terrorize`) per section 5.7. Confirmed.
 - Medium `dark`: primary element, automatic cover.
@@ -97,7 +97,7 @@ Encyclopedia register (leads with category noun, no element key named, no flouri
 
 ## Step 6: canon compliance scan (all three files)
 
-Programmatic scan for em-dashes, "mint" (crypto vocabulary), and gendered pronouns (he/she/his/her/him) across `tetrahive.json`, `tetrahive.md`, and `tetrahive.encyclopedia.json`: zero hits in every file for every pattern. Manual read of all three files found no spoken-language claim (`communication: []` is correct), no teleportation, no true invisibility, no puppeting/possession, no time reversal, and no permanent transformation. The "summons" framing is correctly resolved into a swarm body plan rather than left as literal life-creation (see Step 2 discussion of what this reframing costs). No nuclear-age military register detected.
+Programmatic scan for em-dashes, "mint" (crypto vocabulary), and gendered pronouns (he/she/his/her/him) across `vespersyn.json`, `vespersyn.md`, and `vespersyn.encyclopedia.json`: zero hits in every file for every pattern. Manual read of all three files found no spoken-language claim (`communication: []` is correct), no teleportation, no true invisibility, no puppeting/possession, no time reversal, and no permanent transformation. The "summons" framing is correctly resolved into a swarm body plan rather than left as literal life-creation (see Step 2 discussion of what this reframing costs). No nuclear-age military register detected.
 
 ## Step 7: adversarial scan, descending confidence
 
@@ -110,8 +110,8 @@ Programmatic scan for em-dashes, "mint" (crypto vocabulary), and gendered pronou
 
 ## Verdicts
 
-**Template (`tetrahive.json`): PASS.** All structural constraints hold (verified independently: exclusion pairs, guaranteed/rolledCount arithmetic, manipulation cap, breathes-subset-of-ambientMedia, temperature within planet range, signature action legal for its instrument, signature medium on-graph, no shell/hide co-occurrence). No invented facts live in the JSON itself; the invented material is confined to prose fields.
+**Template (`vespersyn.json`): PASS.** All structural constraints hold (verified independently: exclusion pairs, guaranteed/rolledCount arithmetic, manipulation cap, breathes-subset-of-ambientMedia, temperature within planet range, signature action legal for its instrument, signature medium on-graph, no shell/hide co-occurrence). No invented facts live in the JSON itself; the invented material is confined to prose fields.
 
-**Walkthrough (`tetrahive.md`): FAIL.** Failing items: (1) the upgraded-description clause table presents "the observatories bred" and "thins to nothing when struck" as sourced when they are invented facts not supported by either allowed source; (2) "never presents a target" is stated without being flagged as inference; (3) the Authored fields section, which is supposed to be the complete record of every unsourced claim, omits these three prose facts even though it is otherwise a complete and accurate list for every JSON field. The script-denial and validator-output sections are honest and verified accurate against the log.
+**Walkthrough (`vespersyn.md`): FAIL.** Failing items: (1) the upgraded-description clause table presents "the observatories bred" and "thins to nothing when struck" as sourced when they are invented facts not supported by either allowed source; (2) "never presents a target" is stated without being flagged as inference; (3) the Authored fields section, which is supposed to be the complete record of every unsourced claim, omits these three prose facts even though it is otherwise a complete and accurate list for every JSON field. The script-denial and validator-output sections are honest and verified accurate against the log.
 
-**Encyclopedia (`tetrahive.encyclopedia.json`): FAIL.** Failing item: it inherits the unsupported "thinning apart again when struck" claim from the description. Register form (category-noun lead, no element key, no flourish) is otherwise compliant, and the WARN-driven rewrite naming the species is a genuine improvement over the first draft.
+**Encyclopedia (`vespersyn.encyclopedia.json`): FAIL.** Failing item: it inherits the unsupported "thinning apart again when struck" claim from the description. Register form (category-noun lead, no element key, no flourish) is otherwise compliant, and the WARN-driven rewrite naming the species is a genuine improvement over the first draft.

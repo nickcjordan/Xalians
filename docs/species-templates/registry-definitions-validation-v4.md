@@ -40,7 +40,7 @@ Values assigned from description + art + draft rules alone. CLEAN = the rule set
 |---|---|---|---|---|---|---|
 | 1 | Xylum | `multiped` CLEAN (draft's own rooted-body note) | `plant` CLEAN | **SPLIT** `bare` vs `hide` (finding 1: no default covers a plant body) | **SPLIT** `photosynthetic` (fallback) vs `energy-feeder` ("absorbs its power" underground) — finding 2 | `long` CLEAN (plant, 237 kg > 200) |
 | 2 | Dromeus | **SPLIT** `biped` vs `avian` (finding 9) | `flesh` CLEAN | `feathers` FALLBACK (partial-surface rule: "partially feathered" is explicitly not the covering, so the rest of the trunk decides; art shows a scaled/lizard trunk, so `scales` is also reachable) — **SPLIT** `feathers` vs `scales` | `carnivore` CLEAN ("sink their teeth into their prey") | `standard` CLEAN (flesh, 46 kg) |
-| 3 | Tetrahive | `swarm` CLEAN (priority order; RULINGS.md agrees) | `flesh` CLEAN | `fur` FALLBACK (bat body, no surface word; art shows a furred bat, so `fur` over `bare`) | `carnivore` CLEAN ("teeth like piranhas", attacking as one unit) — **SPLIT** with `omnivore` fallback, since the description shows fighting, not feeding, and the rule says fighting is not evidence | `short` CLEAN (flesh, 12 kg < 20, no disposable-life sentence) |
+| 3 | Vespersyn | `swarm` CLEAN (priority order; RULINGS.md agrees) | `flesh` CLEAN | `fur` FALLBACK (bat body, no surface word; art shows a furred bat, so `fur` over `bare`) | `carnivore` CLEAN ("teeth like piranhas", attacking as one unit) — **SPLIT** with `omnivore` fallback, since the description shows fighting, not feeding, and the rule says fighting is not evidence | `short` CLEAN (flesh, 12 kg < 20, no disposable-life sentence) |
 | 4 | Bioflim | `amorphous` CLEAN (slime, no fixed outline) | `slime` primary, `mineral` secondary CLEAN (draft's own example) | `plating` CLEAN ("thick rocky exoskeleton" over a slime body; not grown chitin) | `carnivore` CLEAN ("acid slime", dissolving) — **SPLIT** with `none`, since nothing shows it consuming anything | `long` CLEAN (slime, 417 kg > 200; armored adjustment capped at `long`) |
 | 5 | Smokat | `quadruped` CLEAN (art: feline on four legs; the rearing pose does not override) | `flesh` CLEAN (transient-state rule excludes the smoke form) | `fur` CLEAN (feline) | `carnivore` CLEAN ("sneak attack") — **SPLIT** with `omnivore`, no consuming sentence | `standard` CLEAN (flesh, 77 kg) |
 | 6 | Newtapede | `multiped` CLEAN ("16 legged") | `flesh` CLEAN | `bare` FALLBACK (hide-vs-bare rule; amphibian, no rugged-surface sentence) | `omnivore` FALLBACK (no feeding sentence, flesh body) | `standard` CLEAN (flesh, 92 kg) |
@@ -76,7 +76,7 @@ Values assigned from description + art + draft rules alone. CLEAN = the rule set
 | Xylum | diet | `photosynthetic` vs `energy-feeder` |
 | Dromeus | bodyPlan | `biped` vs `avian` |
 | Dromeus | covering | `feathers` vs `scales` |
-| Tetrahive | diet | `carnivore` vs `omnivore` |
+| Vespersyn | diet | `carnivore` vs `omnivore` |
 | Bioflim | diet | `carnivore` vs `none` |
 | Smokat | diet | `carnivore` vs `omnivore` |
 | Crystorn | bodyPlan | `biped` vs `quadruped` |
@@ -105,7 +105,7 @@ Values assigned from description + art + draft rules alone. CLEAN = the rule set
 
 **Value sets.** All six sets match the ratified sets exactly. `corporeality` (2), `composition` (8), `bodyPlan` (9), `covering` (9), `diet` (6), `communication` (5), phases (3), `senses.special` (6), `lifespan` (6), `genome.chirality` (2), `capabilities` (7), `actions` (16) — each checked against the design doc, skill section 5.5, and the validator's `ENUMS` and `CAPABILITIES` constants. No value is added, dropped, or renamed. The anatomy count (34) and channel count (7) are cited correctly and correctly deferred to section 5.6.
 
-**Ratified rulings.** No contradiction found with the 2026-09-02 one-surface-key ruling, the artwork-as-source ruling, the conjured-familiar ruling (the `swarm` bullet and the Tetrahive disambiguation both match RULINGS.md), or the trait-model ruling (the draft correctly writes `armored` and `phasing` at 100 rather than as guaranteed traits). The Graviclaw amphibious and `hide`-removed rulings are consistent with what the draft's covering rule produces (`chitin`, and `shell` rather than `hide`).
+**Ratified rulings.** No contradiction found with the 2026-09-02 one-surface-key ruling, the artwork-as-source ruling, the conjured-familiar ruling (the `swarm` bullet and the Vespersyn disambiguation both match RULINGS.md), or the trait-model ruling (the draft correctly writes `armored` and `phasing` at 100 rather than as guaranteed traits). The Graviclaw amphibious and `hide`-removed rulings are consistent with what the draft's covering rule produces (`chitin`, and `shell` rather than `hide`).
 
 **Anatomy registry and allowed-actions matrix.** The draft's restated standing rules (functional not material, external only, one surface key, a crab's claws are `pincers`) match section 5.6 verbatim in substance. The 16 actions and the grain ruling match section 5.7. See finding 13 for the stale table in the ability-grammar draft.
 

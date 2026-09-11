@@ -137,6 +137,7 @@ const SignatureAbilityTemplateSchema = z.object({
 export const SpeciesTemplateSchema = z.object({
   key: z.string().min(1),
   name: z.string().min(1),
+  nameOrigin: z.string().min(1),
   element: ElementKeySchema,
   homePlanet: z.string().min(1),
   generatorPlanets: z.array(z.string().min(1)).min(1),

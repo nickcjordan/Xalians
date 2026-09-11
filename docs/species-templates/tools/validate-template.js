@@ -242,6 +242,7 @@ if (T) {
   if (!isLower(T.key || '')) fail('key', 'key must be a lowercase string');
   if (species && T.key !== species.name.toLowerCase()) fail('key.match', 'key "' + T.key + '" should be the lowercase species name "' + species.name.toLowerCase() + '"');
   if (species && T.name !== species.name) fail('name.match', 'name "' + T.name + '" must equal the species.json name "' + species.name + '"');
+  if (typeof T.nameOrigin !== 'string' || !T.nameOrigin.trim()) fail('nameOrigin', 'nameOrigin must be a non-empty string explaining the name roots or tonal logic');
   const elementOk = checkEnum('element', T.element, Object.keys(ELEMENTS), 'element');
   if (elementOk && species && T.element !== species.type.toLowerCase()) fail('element.match', 'element "' + T.element + '" does not match species.json type "' + species.type + '"');
   if (!isLower(T.homePlanet || '')) fail('homePlanet.case', 'homePlanet must be lowercase');

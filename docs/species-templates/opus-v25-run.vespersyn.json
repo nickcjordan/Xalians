@@ -1,13 +1,13 @@
 {
-  "key": "tetrahive",
-  "name": "Tetrahive",
+  "key": "vespersyn",
+  "name": "Vespersyn",
   "element": "dark",
   "homePlanet": "grimedes",
   "generatorPlanets": [
     "grimedes"
   ],
   "lore": {
-    "description": "A cloud of small flying bodies, each little more than a mouth of teeth like a piranha's, the Tetrahive is one creature distributed across many, every unit held to a single mind. The Xalians of Grimedes were built as test subjects rather than a labor force, and the Vallerii, convinced the black hole lay behind the planet's strange occurrences, insisted on studying its effects on the Xalian population. A body that could be divided and counted suited that work, and the Generator, believed to have been funded by ECHELON, obliged. Today the Tetrahive hunts over the thick, stalky undergrowth of the flats, attacking and defending as one unit, and takes its place among the Grimedites who watch the endless black for the return of APEX.",
+    "description": "A cloud of small flying bodies, each little more than a mouth of teeth like a piranha's, the Vespersyn is one creature distributed across many, every unit held to a single mind. The Xalians of Grimedes were built as test subjects rather than a labor force, and the Vallerii, convinced the black hole lay behind the planet's strange occurrences, insisted on studying its effects on the Xalian population. A body that could be divided and counted suited that work, and the Generator, believed to have been funded by ECHELON, obliged. Today the Vespersyn hunts over the thick, stalky undergrowth of the flats, attacking and defending as one unit, and takes its place among the Grimedites who watch the endless black for the return of APEX.",
     "descriptionStatus": "upgraded",
     "biomeNiche": "hunts above the thick, stalky undergrowth of Grimedes' unlit flats"
   },

@@ -18,6 +18,16 @@ describe('speciesRecords.json', () => {
     expect(new Set(keys).size).toBe(keys.length);
   });
 
+  it('requires a documented origin for every species name', () => {
+    for (const record of bundle.records) {
+      expect(record.nameOrigin.trim(), record.key).not.toBe('');
+    }
+
+    const missingNameOrigin = clone(bundle.records[0]) as unknown as Record<string, unknown>;
+    delete missingNameOrigin.nameOrigin;
+    expect(SpeciesTemplateSchema.safeParse(missingNameOrigin).success).toBe(false);
+  });
+
   it('rejects authoring-rule drift that would change generated populations', () => {
     const base = clone(bundle.records[0]);
 

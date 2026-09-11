@@ -1,6 +1,7 @@
 {
-  "key": "tetrahive",
-  "name": "Tetrahive",
+  "key": "vespersyn",
+  "name": "Vespersyn",
+  "nameOrigin": "A blend of the Latin vesper, evening, and Greek syn, together, reflecting a creature of perpetual night that moves its familiars as one unit.",
   "element": "dark",
   "homePlanet": "grimedes",
   "generatorPlanets": [

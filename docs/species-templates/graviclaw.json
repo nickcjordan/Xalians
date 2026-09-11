@@ -1,6 +1,7 @@
 {
   "key": "graviclaw",
   "name": "Graviclaw",
+  "nameOrigin": "A compression of gravity and claw, naming the force it controls and the massive pincer where that force terminates.",
   "element": "dark",
   "homePlanet": "grimedes",
   "generatorPlanets": [

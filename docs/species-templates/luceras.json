@@ -1,6 +1,7 @@
 {
   "key": "luceras",
   "name": "Luceras",
+  "nameOrigin": "A stylized blend of Latin lepus, hare, and Greek keras, horn, matching its long-eared bounding frame and paired ram-like horns.",
   "element": "air",
   "homePlanet": "saiphus",
   "generatorPlanets": [

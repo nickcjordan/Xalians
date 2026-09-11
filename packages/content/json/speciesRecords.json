@@ -5,6 +5,7 @@
     {
       "key": "akinza",
       "name": "Akinza",
+      "nameOrigin": "A compressed blend of Norwegian kanin, rabbit, and German Katze, cat, reflecting its feline frame and oversized rabbit-like ears.",
       "element": "ice",
       "homePlanet": "krystos",
       "generatorPlanets": [
@@ -191,6 +192,7 @@
     {
       "key": "avilily",
       "name": "Avilily",
+      "nameOrigin": "A blend of avian and lily, joining its small bird body to its flower-like plumage and blooming beak.",
       "element": "plant",
       "homePlanet": "floria",
       "generatorPlanets": [
@@ -381,6 +383,7 @@
     {
       "key": "bioflim",
       "name": "Bioflim",
+      "nameOrigin": "A stylized transposition of biofilm, evoking the regenerating slime layer that continually forms its protective surface.",
       "element": "chemical",
       "homePlanet": "drainov",
       "generatorPlanets": [
@@ -568,6 +571,7 @@
     {
       "key": "chromocat",
       "name": "Chromocat",
+      "nameOrigin": "A fusion of chroma, color or light, and cat, reflecting its photonic feline nature beneath an ordinarily albino coat.",
       "element": "light",
       "homePlanet": "luminax",
       "generatorPlanets": [
@@ -760,6 +764,7 @@
     {
       "key": "codazzo",
       "name": "Codazzo",
+      "nameOrigin": "Derived from the Italian coda, tail, naming the creature's exposed tail weapon and defining silhouette.",
       "element": "rock",
       "homePlanet": "stonera",
       "generatorPlanets": [
@@ -951,6 +956,7 @@
     {
       "key": "crystorn",
       "name": "Crystorn",
+      "nameOrigin": "A compression of crystal and horn, naming the paired head gems through which it releases stored light.",
       "element": "light",
       "homePlanet": "luminax",
       "generatorPlanets": [
@@ -1139,6 +1145,7 @@
     {
       "key": "drilltail",
       "name": "Drilltail",
+      "nameOrigin": "A direct compound naming the drill at the end of its tail.",
       "element": "sand",
       "homePlanet": "endessa",
       "generatorPlanets": [
@@ -1328,6 +1335,7 @@
     {
       "key": "dromeus",
       "name": "Dromeus",
+      "nameOrigin": "From the Greek dromeus, runner, reflecting the creature's defining ground speed and running launch.",
       "element": "fire",
       "homePlanet": "magmuth",
       "generatorPlanets": [
@@ -1519,6 +1527,7 @@
     {
       "key": "ectoghoul",
       "name": "Ectoghoul",
+      "nameOrigin": "A compound of ecto, evoking ectoplasm, and ghoul, matching its spectral body and delight in terror.",
       "element": "ghost",
       "homePlanet": "phantiri",
       "generatorPlanets": [
@@ -1703,6 +1712,7 @@
     {
       "key": "figzy",
       "name": "Figzy",
+      "nameOrigin": "A playful, whimsical coinage chosen to fit the creature's mischievous spirit rather than describe a literal body part.",
       "element": "psychic",
       "homePlanet": "telypso",
       "generatorPlanets": [
@@ -1898,6 +1908,7 @@
     {
       "key": "foromeer",
       "name": "Foromeer",
+      "nameOrigin": "A blend of Italian foro, hole, and meerkat, matching an upright creature whose drill hands bore through material for excavation.",
       "element": "metal",
       "homePlanet": "veridium",
       "generatorPlanets": [
@@ -2086,6 +2097,7 @@
     {
       "key": "frackworm",
       "name": "Frackworm",
+      "nameOrigin": "A compound of fracking, the pressure-fracturing process it performs, and worm, its body form.",
       "element": "sand",
       "homePlanet": "endessa",
       "generatorPlanets": [
@@ -2278,6 +2290,7 @@
     {
       "key": "graviclaw",
       "name": "Graviclaw",
+      "nameOrigin": "A compression of gravity and claw, naming the force it controls and the massive pincer where that force terminates.",
       "element": "dark",
       "homePlanet": "grimedes",
       "generatorPlanets": [
@@ -2470,6 +2483,7 @@
     {
       "key": "hippochamp",
       "name": "Hippochamp",
+      "nameOrigin": "A shortening of hippocamp, whose Greek roots evoke horse and sea monster, matching its horse body and seahorse head.",
       "element": "water",
       "homePlanet": "poseidas",
       "generatorPlanets": [
@@ -2665,6 +2679,7 @@
     {
       "key": "hypnopet",
       "name": "Hypnopet",
+      "nameOrigin": "A compound of hypnosis and pet, reflecting its trance-producing horn and origin as a therapeutic service animal.",
       "element": "psychic",
       "homePlanet": "telypso",
       "generatorPlanets": [
@@ -2858,6 +2873,7 @@
     {
       "key": "imprit",
       "name": "Imprit",
+      "nameOrigin": "A compression of imp and sprite, matching its small demonic appearance and supernatural, erratic fire behavior.",
       "element": "fire",
       "homePlanet": "magmuth",
       "generatorPlanets": [
@@ -3051,6 +3067,7 @@
     {
       "key": "kosanos",
       "name": "Kosanos",
+      "nameOrigin": "A joining of Polish kosa, scythe, and nos, nose, naming the broad cutting blade at the end of its long trunk.",
       "element": "plant",
       "homePlanet": "floria",
       "generatorPlanets": [
@@ -3242,6 +3259,7 @@
     {
       "key": "luceras",
       "name": "Luceras",
+      "nameOrigin": "A stylized blend of Latin lepus, hare, and Greek keras, horn, matching its long-eared bounding frame and paired ram-like horns.",
       "element": "air",
       "homePlanet": "saiphus",
       "generatorPlanets": [
@@ -3426,6 +3444,7 @@
     {
       "key": "neph",
       "name": "Neph",
+      "nameOrigin": "A clipping of the Greek nephos, cloud, for the colossal creature that lives and feeds in Saiphus's atmosphere.",
       "element": "air",
       "homePlanet": "saiphus",
       "generatorPlanets": [
@@ -3611,6 +3630,7 @@
     {
       "key": "newtapede",
       "name": "Newtapede",
+      "nameOrigin": "A fusion of newt and centipede, matching its amphibious body and sixteen-legged segmented form.",
       "element": "water",
       "homePlanet": "poseidas",
       "generatorPlanets": [
@@ -3804,6 +3824,7 @@
     {
       "key": "scalatto",
       "name": "Scalatto",
+      "nameOrigin": "A blend of scale and the French tatou, armadillo, matching its scaly armor and ability to roll into a protective ball.",
       "element": "sand",
       "homePlanet": "endessa",
       "generatorPlanets": [
@@ -3995,6 +4016,7 @@
     {
       "key": "smokat",
       "name": "Smokat",
+      "nameOrigin": "A fusion of smoke and cat, naming its feline silhouette and ability to atomize into smoke.",
       "element": "ghost",
       "homePlanet": "phantiri",
       "generatorPlanets": [
@@ -4180,6 +4202,7 @@
     {
       "key": "terragoyle",
       "name": "Terragoyle",
+      "nameOrigin": "A fusion of terra and gargoyle, matching a stone-moving, horned bat-like guardian that waits in a statue-like state.",
       "element": "rock",
       "homePlanet": "stonera",
       "generatorPlanets": [
@@ -4372,8 +4395,9 @@
       }
     },
     {
-      "key": "tetrahive",
-      "name": "Tetrahive",
+      "key": "vespersyn",
+      "name": "Vespersyn",
+      "nameOrigin": "A blend of the Latin vesper, evening, and Greek syn, together, reflecting a creature of perpetual night that moves its familiars as one unit.",
       "element": "dark",
       "homePlanet": "grimedes",
       "generatorPlanets": [
@@ -4559,6 +4583,7 @@
     {
       "key": "thirstaserp",
       "name": "Thirstaserp",
+      "nameOrigin": "A fusion of thirst and serpent, naming its snake-like body and the venom that drains a victim's water.",
       "element": "sand",
       "homePlanet": "endessa",
       "generatorPlanets": [
@@ -4748,6 +4773,7 @@
     {
       "key": "tizzie",
       "name": "Tizzie",
+      "nameOrigin": "A playful respelling of tizzy, a state of agitation or confusion, matching its spiral display and psychic disorientation.",
       "element": "psychic",
       "homePlanet": "telypso",
       "generatorPlanets": [
@@ -4943,6 +4969,7 @@
     {
       "key": "venemist",
       "name": "Venemist",
+      "nameOrigin": "A fusion of venom and mist, naming the toxic cloud it sprays to dissolve prey.",
       "element": "chemical",
       "homePlanet": "drainov",
       "generatorPlanets": [
@@ -5135,6 +5162,7 @@
     {
       "key": "voltish",
       "name": "Voltish",
+      "nameOrigin": "Built from volt, the measure associated with electricity, with a softened ending that turns it into a creature name.",
       "element": "electric",
       "homePlanet": "zolton",
       "generatorPlanets": [
@@ -5330,6 +5358,7 @@
     {
       "key": "xylum",
       "name": "Xylum",
+      "nameOrigin": "A stylization of xylem, the plant tissue that transports water and minerals, matching its rooted body and underground feeding.",
       "element": "plant",
       "homePlanet": "floria",
       "generatorPlanets": [
@@ -5519,6 +5548,7 @@
     {
       "key": "yetimoth",
       "name": "Yetimoth",
+      "nameOrigin": "A fusion of yeti and mammoth, matching its hulking white-furred ape body and mammoth head.",
       "element": "ice",
       "homePlanet": "krystos",
       "generatorPlanets": [

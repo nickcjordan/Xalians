@@ -50,26 +50,26 @@ No flight claim (record `capabilities.flight` is 0 to 0). No projected element (
 
 ---
 
-## 2. Tetrahive (Grimedes, Dark)
+## 2. Vespersyn (Grimedes, Dark)
 
 **Current `species.json` text (29 words):**
 
 > "When in battle, this creature summons a swarm of small flying familiars with teeth like piranhas. It controls the swarm with its mind, attacking or defending as one unit."
 
-**Ratified record text (`docs/species-templates/tetrahive.json`, `lore.description`, 116 words):**
+**Ratified record text (`docs/species-templates/vespersyn.json`, `lore.description`, 116 words):**
 
-> "A small winged thing with a long whipping tail, the Tetrahive fights by conjuring a swarm of little flying familiars with teeth like piranhas, holding every one of them in its mind and moving them as a single unit to attack or defend. It was generated on Grimedes not to serve as a labor force but as a test subject, one product of the experiments the Vallerii ran on the Xalian population in laboratories that rumor holds were black sites for ECHELON. It hunts the thick, stalky undergrowth of a world cloaked in perpetual night, and the newest generation of its kind now stands at the edge of the galaxy and watches the endless black."
+> "A small winged thing with a long whipping tail, the Vespersyn fights by conjuring a swarm of little flying familiars with teeth like piranhas, holding every one of them in its mind and moving them as a single unit to attack or defend. It was generated on Grimedes not to serve as a labor force but as a test subject, one product of the experiments the Vallerii ran on the Xalian population in laboratories that rumor holds were black sites for ECHELON. It hunts the thick, stalky undergrowth of a world cloaked in perpetual night, and the newest generation of its kind now stands at the edge of the galaxy and watches the endless black."
 
 **DRAFT (140 words):**
 
-> A small winged thing with a long whipping tail, the Tetrahive fights by conjuring a swarm of little flying familiars with teeth like piranhas, holding every one of them in its mind and moving them as a single unit to attack or defend. It was generated on Grimedes not as a labor force but as a test subject, one of the Xalians the Vallerii experimented on in laboratories rumored to be black sites for ECHELON. It hunts the thick, stalky undergrowth of a world cloaked in perpetual night, taking its bearings by ear, not by eye, and it keeps its own body inside the wheeling cloud so nothing can tell which shape it is. Whatever hears the swarm coming breaks and runs. The newest generation of its kind stands at the edge of the galaxy and watches the endless black.
+> A small winged thing with a long whipping tail, the Vespersyn fights by conjuring a swarm of little flying familiars with teeth like piranhas, holding every one of them in its mind and moving them as a single unit to attack or defend. It was generated on Grimedes not as a labor force but as a test subject, one of the Xalians the Vallerii experimented on in laboratories rumored to be black sites for ECHELON. It hunts the thick, stalky undergrowth of a world cloaked in perpetual night, taking its bearings by ear, not by eye, and it keeps its own body inside the wheeling cloud so nothing can tell which shape it is. Whatever hears the swarm coming breaks and runs. The newest generation of its kind stands at the edge of the galaxy and watches the endless black.
 
 **Fact-check ledger**
 
 | Claim | Source | Class |
 |---|---|---|
 | small winged body, long whipping tail | record `anatomy` wings/claws/tail/body, `size` 60 to 90 cm; art (bat-shaped body, broad membranous wings, long whip tail curled at the tip) | kept |
-| conjures a swarm of small flying familiars with piranha teeth, held in its mind, moved as one unit to attack or defend | `species.json` Tetrahive; record `signatureAbility` Unbidden Legion; art (roughly twenty small copies ringing the central figure) | kept |
+| conjures a swarm of small flying familiars with piranha teeth, held in its mind, moved as one unit to attack or defend | `species.json` Vespersyn; record `signatureAbility` Unbidden Legion; art (roughly twenty small copies ringing the central figure) | kept |
 | generated on Grimedes as a test subject rather than a labor force | Grimedes history paragraph 4, "the Xalians on Grimedes were not intended to serve as a labor force, but as a population of test subjects for experimentation" | kept |
 | experimented on in laboratories that rumor holds were black sites for ECHELON | Grimedes history paragraph 3, "Rumor has it that many of these facilities were in fact black sites for covert research funded by ECHELON's most classified R&D divisions"; hedge preserved | kept |
 | hunts the thick, stalky undergrowth of a world cloaked in perpetual night | Grimedes `data.Terrain`, "Thick Stalky Undergrowth"; history paragraph 0, "surrounded in a cloak of perpetual night"; record `diet: carnivore` | kept |
@@ -261,7 +261,7 @@ No burrowing and no hiding claim (record `capabilities.burrow` 0 to 10; `stealth
 | Species | Draft word count | Cut-table traits newly supported | Pool traits promoted to species-level evidence |
 |---|---|---|---|
 | Kosanos | 132 | `menacing` | anchored, perceptive, resistant, regenerative, territorial |
-| Tetrahive | 140 | `menacing`, `stealthy` | nocturnal, slippery, perceptive |
+| Vespersyn | 140 | `menacing`, `stealthy` | nocturnal, slippery, perceptive |
 | Xylum | 139 | `menacing` | anchored, territorial, resistant, regenerative, perceptive |
 | Figzy | 138 | `protective`, `healing` | telekinetic, perceptive |
 | Dromeus | 137 | `pack-bonded` | hardened, resistant, perceptive |

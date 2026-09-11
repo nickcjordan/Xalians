@@ -51,7 +51,7 @@ External lexical checks establish only that a proposed root has the stated meani
 | Scalatto | A blend of `scale` and French `tatou`, armadillo, matching its scaly armor and ability to roll into a protective ball. | High lexical and creature fit | Ready as a multilingual reconstruction |
 | Smokat | A fusion of `smoke` and `cat`, naming its feline silhouette and ability to atomize into smoke. | High | Ready |
 | Terragoyle | A fusion of `terra` and `gargoyle`, matching a stone-moving, horned bat-like guardian that waits in a statue-like state. | High | Ready |
-| Tetrahive | `Tetra` and `hive` are readable roots, and hive fits the controlled familiar swarm, but the current creature record does not explain what the four in `tetra` denotes. | Medium | Confirm the meaning of `tetra` |
+| Vespersyn | A blend of Latin `vesper`, evening, and Greek `syn`, together, reflecting a creature of perpetual night that moves its familiar swarm as one unit. | High | Ready; replaces Tetrahive |
 | Thirstaserp | A fusion of `thirst` and `serpent`, naming the snake-like body and the venom that drains a victim's water. | High | Ready |
 | Tizzie | Likely a respelling of `tizzy`, a state of agitation or confusion, matching the spiral display and psychic disorientation. | Medium | Confirm creator intent |
 | Venemist | A fusion of `venom` and `mist`, naming the toxic cloud it sprays to dissolve prey. | High | Ready |
@@ -59,11 +59,9 @@ External lexical checks establish only that a proposed root has the stated meani
 | Xylum | A stylization of `xylem`, the plant tissue that transports water and minerals, matching its body of roots and underground feeding. | High | Ready |
 | Yetimoth | A fusion of `yeti` and `mammoth`, matching its hulking white-furred ape body and mammoth head; the shared ending compresses `mammoth` to `moth`. | High | Ready |
 
-## Remaining creator decision
+## Creator decision
 
-The multilingual pass leaves one substantive problem:
-
-1. **Tetrahive:** `hive` accurately names its mentally controlled familiar swarm, but `tetra` ordinarily contributes the idea of four. Nothing in the ratified creature record makes four part of the creature's anatomy, swarm, behavior, or history. Publishing that derivation would either leave half the name unexplained or invent a creature fact to justify it.
+The roster pass is resolved. Nick approved **Vespersyn** to replace **Tetrahive** on 2026-09-10, removing the unsupported implication of four while retaining the creature's night-world and unified-swarm identity.
 
 Akinza, Foromeer, and Luceras can keep their names under the explicitly identified retrofit origins above. Kosanos and Scalatto are strong enough that their reconstructed roots may well be the original ones, but the eventual encyclopedia wording should describe what the names blend, not claim access to the creator's memory.
 
@@ -71,7 +69,7 @@ Bioflim, Codazzo, Dromeus, Imprit, Neph, and Tizzie also have sufficiently coher
 
 ### Tetrahive replacement pass
 
-The preferred replacement is **Vespersyn** (`VES-per-sin`), blending Latin `vesper`, evening, with Greek `syn`, together. It abstracts the creature's two defining facts: it belongs to a world of perpetual night, and it holds a cloud of familiars together as one unit. The exact name has no repository collision; its external exact-name scan found no established creature or entertainment property. Its spoken round trip still requires creator testing.
+The approved replacement is **Vespersyn** (`VES-per-sin`), blending Latin `vesper`, evening, with Greek `syn`, together. It abstracts the creature's two defining facts: it belongs to a world of perpetual night, and it holds a cloud of familiars together as one unit. The exact name has no repository collision; its external exact-name scan found no established creature or entertainment property.
 
 Alternatives were rejected as follows:
 
@@ -80,12 +78,14 @@ Alternatives were rejected as follows:
 - **Myriarch**, from myriad and ruler, has excellent conceptual fit but collides with an existing fantasy creature name.
 - **Noxorus**, from night and chorus, is sonically clean but collides with a published fiction title.
 
-## Implementation after confirmation
+## Implementation
 
-1. Add required `nameOrigin` to `SpeciesTemplateSchema`.
-2. Populate all ratified templates and rebuild `speciesRecords.json`.
-3. Add `nameOrigin` to the Sinterel replacement-name pass and every future proposal.
-4. Expose it from the species lore adapter and display it immediately below pronunciation or before the longer creature description.
-5. Add schema, rendering, and completeness tests.
-6. Update the Codex bestiary build to print it.
-7. Add coverage generation that fails when a ratified species lacks the field.
+Completed on 2026-09-10:
+
+1. `nameOrigin` is required by `SpeciesTemplateSchema` and the template validator.
+2. All 30 ratified templates carry the field, and the content bundle has been rebuilt.
+3. The current Sinterel working-name record carries an explicitly provisional origin; every future full proposal must supply one.
+4. The species lore adapter exposes the field and the encyclopedia species view displays it before the longer description.
+5. Content, lore, Codex, and completeness tests cover the contract.
+6. The generated Codex prints the origin in every Bestiary record.
+7. Creature coverage generation stops with an error if any ratified species lacks the field.

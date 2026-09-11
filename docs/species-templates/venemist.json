@@ -1,6 +1,7 @@
 {
   "key": "venemist",
   "name": "Venemist",
+  "nameOrigin": "A fusion of venom and mist, naming the toxic cloud it sprays to dissolve prey.",
   "element": "chemical",
   "homePlanet": "drainov",
   "generatorPlanets": [

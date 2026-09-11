@@ -31,7 +31,7 @@ Snapshot: 30 ratified species; species bundle 1.1.0; registry 1.0.0.
 | Scalatto (scalatto) | sand / Endessa | biped; flesh; chitin | burrow, sprint, manipulation | tremorsense | armored | bulwark 46% | shell / ward / sand |
 | Smokat (smokat) | ghost / Phantiri | biped; gas; mist | climb, sprint, leap | none | phasing, stealthy | prowler 40% | claws / ambush / ghost |
 | Terragoyle (terragoyle) | rock / Stonera | quadruped; flesh; hide | flight, climb, leap, manipulation | tremorsense | telekinetic, territorial | bulwark 45% | tail / hurl / rock |
-| Tetrahive (tetrahive) | dark / Grimedes | swarm; flesh; hide | flight, climb, leap | none | commanding | sage 42% | swarm / cloud / dark |
+| Vespersyn (vespersyn) | dark / Grimedes | swarm; flesh; hide | flight, climb, leap | none | commanding | sage 42% | swarm / cloud / dark |
 | Thirstaserp (thirstaserp) | sand / Endessa | serpentine; flesh; scales | burrow, sprint, leap | tremorsense | toxic, stealthy | predator 50% | jaws / drain / sand |
 | Tizzie (tizzie) | psychic / Telypso | biped; flesh; fur | climb, sprint, leap, manipulation | psychic | hypnotic | virtuoso 40% | gaze / snare / psychic |
 | Venemist (venemist) | chemical / Drainov | quadruped; flesh; fur | sprint, leap | none | toxic | predator 46% | vents / spray / chemical |
@@ -45,7 +45,7 @@ Snapshot: 30 ratified species; species bundle 1.1.0; registry 1.0.0.
 | --- | --- | --- | --- |
 | fire | Magmuth | 2 | Dromeus, Imprit |
 | water | Poseidas | 2 | Hippochamp, Newtapede |
-| dark | Grimedes | 2 | Graviclaw, Tetrahive |
+| dark | Grimedes | 2 | Graviclaw, Vespersyn |
 | light | Luminax | 2 | Chromocat, Crystorn |
 | plant | Floria | 3 | Avilily, Kosanos, Xylum |
 | electric | Zolton | 1 | Voltish |

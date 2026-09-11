@@ -252,7 +252,7 @@ Entries whose title appears in zero world history paragraphs and zero species de
 | Scalatto | xalians |
 | Smokat | xalians |
 | Spacer's Tea | substances |
-| Tetrahive | xalians |
+| Vespersyn | xalians |
 | Tizzie | xalians |
 | Venemist | xalians |
 | Voltish | xalians |

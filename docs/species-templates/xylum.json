@@ -1,6 +1,7 @@
 {
   "key": "xylum",
   "name": "Xylum",
+  "nameOrigin": "A stylization of xylem, the plant tissue that transports water and minerals, matching its rooted body and underground feeding.",
   "element": "plant",
   "homePlanet": "floria",
   "generatorPlanets": [

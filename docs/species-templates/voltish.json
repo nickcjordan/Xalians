@@ -1,6 +1,7 @@
 {
   "key": "voltish",
   "name": "Voltish",
+  "nameOrigin": "Built from volt, the measure associated with electricity, with a softened ending that turns it into a creature name.",
   "element": "electric",
   "homePlanet": "zolton",
   "generatorPlanets": [

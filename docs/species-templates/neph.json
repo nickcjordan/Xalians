@@ -1,6 +1,7 @@
 {
   "key": "neph",
   "name": "Neph",
+  "nameOrigin": "A clipping of the Greek nephos, cloud, for the colossal creature that lives and feeds in Saiphus's atmosphere.",
   "element": "air",
   "homePlanet": "saiphus",
   "generatorPlanets": [

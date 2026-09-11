@@ -1,6 +1,7 @@
 {
   "key": "bioflim",
   "name": "Bioflim",
+  "nameOrigin": "A stylized transposition of biofilm, evoking the regenerating slime layer that continually forms its protective surface.",
   "element": "chemical",
   "homePlanet": "drainov",
   "generatorPlanets": [

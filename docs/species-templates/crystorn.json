@@ -1,6 +1,7 @@
 {
   "key": "crystorn",
   "name": "Crystorn",
+  "nameOrigin": "A compression of crystal and horn, naming the paired head gems through which it releases stored light.",
   "element": "light",
   "homePlanet": "luminax",
   "generatorPlanets": [

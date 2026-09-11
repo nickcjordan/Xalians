@@ -121,7 +121,7 @@ Collisions across creatures are expected and desirable (shared names enable inte
 
 - **Dromeus** (Fire; instruments `talons`, `jaws`; rolled Rock affinity 40): signature "Ignition Sprint" + rolled "Molten Talon Rake" (talons × rake × fire, intensity 6) + "Bedrock Fang Crush" (jaws × crush × rock — the affinity made visible, intensity 4).
 - **Xylum** (Plant; instruments `roots`, `tendrils`): "Thorned Root Snare", "Verdant Mending" (tendrils × mend), "Bramble Vise" (roots × crush).
-- **Tetrahive** (Dark; instrument `swarm`, innate `mind`): "Entropic Swarm Veil" (swarm × cloud), "Graving Will Snare" (mind × snare), "Umbra Rake".
+- **Vespersyn** (Dark; instrument `swarm`, innate `mind`): "Entropic Swarm Veil" (swarm × cloud), "Graving Will Snare" (mind × snare), "Umbra Rake".
 
 ## Review points for Nick
 

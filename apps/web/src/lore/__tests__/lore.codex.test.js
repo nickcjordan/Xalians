@@ -156,6 +156,14 @@ describe('Codex builder (scripts/buildCodex.js)', () => {
 		expect(leaked, `leaked registry keys: ${JSON.stringify(leaked)}`).toEqual([]);
 	});
 
+	it('prints every species name origin in the Bestiary and structured bundle', () => {
+		for (const species of bundle.species) {
+			expect(species.nameOrigin, species.key).toBeTruthy();
+			expect(markdown).toContain(`**Name origin:** ${species.nameOrigin}`);
+			expect(html).toContain(`<strong>Name origin:</strong> ${species.nameOrigin}`);
+		}
+	});
+
 	it('warnings is empty (every history paragraph carries an era)', () => {
 		expect(warnings).toEqual([]);
 	});

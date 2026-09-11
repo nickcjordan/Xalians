@@ -1,6 +1,7 @@
 {
   "key": "codazzo",
   "name": "Codazzo",
+  "nameOrigin": "Derived from the Italian coda, tail, naming the creature's exposed tail weapon and defining silhouette.",
   "element": "rock",
   "homePlanet": "stonera",
   "generatorPlanets": [

@@ -10,6 +10,7 @@ describe('SpeciesView', () => {
 		expect(view.key).toBe('graviclaw');
 		expect(view.portrait.svgName).toBe('graviclaw');
 		expect(view.record).toBeDefined();
+		expect(view.nameOrigin).toContain('gravity');
 		expect(view.legacy).toBeUndefined();
 	});
 
@@ -54,7 +55,7 @@ describe('SpeciesView', () => {
 	});
 
 	it('resolves instrument names from the anatomy/channel registries', () => {
-		const view = getSpecies('tetrahive');
+		const view = getSpecies('vespersyn');
 		expect(view.record.instruments.length).toBeGreaterThan(0);
 		for (const instrument of view.record.instruments) {
 			expect(instrument.name).toBeTruthy();

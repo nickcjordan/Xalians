@@ -117,7 +117,7 @@ PlanetView = { key, name, element, images, physical, report, chapters: [{ index,
 getSpeciesList() -> [SpeciesView]                          sorted by name
 getSpecies(key) -> SpeciesView | undefined
 SpeciesView = {
-  key, name, element, homePlanet, planet: PlanetView,
+  key, name, nameOrigin?, element, homePlanet, planet: PlanetView,
   source: 'template' | 'legacy',
   portrait: { svgName },                                   the name XalianImage expects
   description, appearance?: string[], fields?: {key,label,text}[], entry?: Entry,   // appearance list (2026-09-09) and the five short fields (2026-09-10) replace body, habits and biomeNiche

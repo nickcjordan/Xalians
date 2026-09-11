@@ -1,6 +1,6 @@
-# Tetrahive migration walkthrough
+# Vespersyn migration walkthrough
 
-Species key `tetrahive`, element `dark`, home planet `grimedes`. Sources read in full: the Tetrahive entry in `species.json` and the entire Grimedes `history` array plus its `data` block in `planets.json`. Nothing else was read for canon.
+Species key `vespersyn`, element `dark`, home planet `grimedes`. Sources read in full: the Vespersyn entry in `species.json` and the entire Grimedes `history` array plus its `data` block in `planets.json`. Nothing else was read for canon.
 
 ## Source text of record
 
@@ -96,7 +96,7 @@ Primary `dark`, fixed by the species `type` field. Secondaries are whatever the 
 
 `guaranteed`: `slippery`. The body cannot be held because it is not one object. Evidence, species: "attacking or defending as one unit" applied to "a swarm of small flying familiars"; a grab, pin, or snare closes on a fraction of the creature. The legacy high evasion rating is the corroborating relative gauge.
 
-`rolledCount` `[1, 2]`, so a Tetrahive carries two or three traits total, inside the 1 to 3 rule.
+`rolledCount` `[1, 2]`, so a Vespersyn carries two or three traits total, inside the 1 to 3 rule.
 
 | Pool trait | Weight | Source | Evidence |
 |---|---|---|---|
@@ -117,7 +117,7 @@ The lore-defining act, quoted: "It controls the swarm with its mind, attacking o
 - `action`: `rake`. Under the grain ruling, slash, cut, and tear are all `rake`, and piranha teeth stripping a target is tearing, not a single stabbing `strike`. `rake` is in the allowed set for `swarm`.
 - `medium`: `dark`, the primary element, so cover is automatic.
 - `intensity` `[40, 80]`: a wide band on a species whose whole output scales with how much of the cloud arrives.
-- `name`: `Convocation of Teeth`. Grander register, no possessive, no hyphen, ASCII only, two content words plus a preposition, which the signature exemption allows. Catalog search for the species name across all fourteen `consolidated-*.md` files and `neutral-pools.md` found no ledger note reserving a signature for Tetrahive, so the name is coined rather than inherited. Collision scan for the exact name, case insensitive, across all fourteen consolidated files and the neutral pools: no hit.
+- `name`: `Convocation of Teeth`. Grander register, no possessive, no hyphen, ASCII only, two content words plus a preposition, which the signature exemption allows. Catalog search for the species name across all fourteen `consolidated-*.md` files and `neutral-pools.md` found no ledger note reserving a signature for Vespersyn, so the name is coined rather than inherited. Collision scan for the exact name, case insensitive, across all fourteen consolidated files and the neutral pools: no hit.
 - `description`: `The scattered bodies fall in from every side at once and strip the target as a single closing mouth.` Canon voice, no mechanics, no element key words.
 
 ## Thin-combo findings
@@ -159,17 +159,17 @@ Run 1 raised one FAIL and one WARN. Both are recorded here.
 |---|---|---|---|---|
 | 1 | The Authored fields bullet list used em-dash separators, for example `covering: bare` followed by an em-dash and the reason. | `FAIL md.emdash walkthrough contains an em-dash` | Every em-dash in the walkthrough replaced with a colon. | No. The denial is correct and the rule is a standing project rule; this was my own slip in list punctuation, not a judgment call. |
 
-WARN answered, run 1: `WARN enc.definition.name definition does not name the species`. The original encyclopedia definition opened with the category noun `A Grimedes predator` and never used the word Tetrahive. The encyclopedia register calls for leading with the category noun, but the entry is also a lookup record, so it should say its own name. I rewrote the opening to `The Tetrahive is a predator of Grimedes`, which keeps the definitional lead and names the species. This is a real improvement, not a workaround.
+WARN answered, run 1: `WARN enc.definition.name definition does not name the species`. The original encyclopedia definition opened with the category noun `A Grimedes predator` and never used the word Vespersyn. The encyclopedia register calls for leading with the category noun, but the entry is also a lookup record, so it should say its own name. I rewrote the opening to `The Vespersyn is a predator of Grimedes`, which keeps the definitional lead and names the species. This is a real improvement, not a workaround.
 
 No script rule looks wrong to me on this species. Nothing was denied that I would argue for restoring.
 
 ## Validator output
 
-Final run, `node docs/species-templates/tools/validate-template.js tetrahive`:
+Final run, `node docs/species-templates/tools/validate-template.js vespersyn`:
 
 ```
 0 FAIL, 0 WARN (structurally clean; every WARN must be answered in the walkthrough)
-logged to docs\species-templates\validation-log\tetrahive.jsonl
+logged to docs\species-templates\validation-log\vespersyn.jsonl
 ```
 
 ## Orchestrator amendments

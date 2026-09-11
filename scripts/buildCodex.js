@@ -408,6 +408,7 @@ function build() {
 			return {
 				key: t.key,
 				name: t.name,
+				nameOrigin: t.nameOrigin,
 				elementName: resolveName(registries.elements, t.element, `species ${t.key} element`),
 				homeWorldName: homeWorld.name,
 				otherWorlds,
@@ -522,6 +523,7 @@ function build() {
 	md.push('## The Bestiary', '');
 	for (const s of bestiarySection) {
 		md.push(`### ${s.name}`, '');
+		md.push(`**Name origin:** ${s.nameOrigin}`, '');
 		const dataParts = [
 			`**Element:** ${s.elementName}`,
 			`**Home world:** ${s.homeWorldName}`,
@@ -643,6 +645,7 @@ function build() {
 	h.push('<h2>The Bestiary</h2>');
 	for (const s of bestiarySection) {
 		h.push(`<h3>${esc(s.name)}</h3>`);
+		h.push(`<p><strong>Name origin:</strong> ${esc(s.nameOrigin)}</p>`);
 		const dataParts = [
 			`<strong>Element:</strong> ${esc(s.elementName)}`,
 			`<strong>Home world:</strong> ${esc(s.homeWorldName)}`,

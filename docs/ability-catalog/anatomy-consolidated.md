@@ -39,12 +39,12 @@ Catch-all (1): `body` (whole-body mass as instrument: ram, roll, slam, atomize).
 - `voice` — predicate: `communication` contains `vocal`.
 - `breath` — predicate: `breathes` is non-empty (a lovely free consequence of the environmental block). Neph, Hippochamp delivery.
 - `secretion` — species-declared emitted-substance channel (Bioflim, Avilily, Venemist, Thirstaserp, Ectoghoul, Neph). No record predicate beyond declaration; authoring must justify from lore.
-- `swarm` — predicate: `bodyPlan == swarm`. Tetrahive.
+- `swarm` — predicate: `bodyPlan == swarm`. Vespersyn.
 - `aura` — **CUT from launch** (demand sweep: zero species demand it; additive-forever means it can return the day a species needs it).
 
 ## Species coverage check (all 29)
 
-Directly covered by lore-demanded keys: Xylum (roots, tendrils), Dromeus (jaws, wings), Tetrahive (swarm channel + jaws), Bioflim (hide + secretion), Voltish (claws, body), Tizzie (tail + gaze/mind), Crystorn (crest), Codazzo (tail, spines), Foromeer (hide, horns), Venemist (jaws + secretion), Kosanos (blades, tail), Imprit (tail, hide), Scalatto (hide, shell, body), Avilily (beak + secretion), Thirstaserp (jaws, tail, rattle + secretion), Graviclaw (pincers, hide), Yetimoth (tusks, fists), Chromocat (claws, blades), Ectoghoul (tail + secretion), Hippochamp (trunk + breath), Neph (tendrils + breath/secretion), Terragoyle (tail, wings), Hypnopet (crest), Drilltail (stinger, pincers, claws).
+Directly covered by lore-demanded keys: Xylum (roots, tendrils), Dromeus (jaws, wings), Vespersyn (swarm channel + jaws), Bioflim (hide + secretion), Voltish (claws, body), Tizzie (tail + gaze/mind), Crystorn (crest), Codazzo (tail, spines), Foromeer (hide, horns), Venemist (jaws + secretion), Kosanos (blades, tail), Imprit (tail, hide), Scalatto (hide, shell, body), Avilily (beak + secretion), Thirstaserp (jaws, tail, rattle + secretion), Graviclaw (pincers, hide), Yetimoth (tusks, fists), Chromocat (claws, blades), Ectoghoul (tail + secretion), Hippochamp (trunk + breath), Neph (tendrils + breath/secretion), Terragoyle (tail, wings), Hypnopet (crest), Drilltail (stinger, pincers, claws).
 
 Need authored anatomy at migration (lore names no clean part — same class as the buried-auto-trait pass): Smokat (`body`; pseudopods candidate), Newtapede (`body`; authoring may add jaws/claws), Luceras (`body`; hind-leg ram is body-level), Figzy (mind channel; needs at least `body`), Akinza (needs authored parts — likely claws/jaws for an ice stalker).
 

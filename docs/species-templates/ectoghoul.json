@@ -1,6 +1,7 @@
 {
   "key": "ectoghoul",
   "name": "Ectoghoul",
+  "nameOrigin": "A compound of ecto, evoking ectoplasm, and ghoul, matching its spectral body and delight in terror.",
   "element": "ghost",
   "homePlanet": "phantiri",
   "generatorPlanets": [

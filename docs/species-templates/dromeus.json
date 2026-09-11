@@ -1,6 +1,7 @@
 {
   "key": "dromeus",
   "name": "Dromeus",
+  "nameOrigin": "From the Greek dromeus, runner, reflecting the creature's defining ground speed and running launch.",
   "element": "fire",
   "homePlanet": "magmuth",
   "generatorPlanets": [

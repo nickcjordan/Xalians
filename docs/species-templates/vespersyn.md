@@ -1,6 +1,6 @@
-# Tetrahive migration walkthrough
+# Vespersyn migration walkthrough
 
-Sources read in full: the `Tetrahive` entry in `species.json`, the `Grimedes` entry in `planets.json` (whole `history` array plus the `data` block), and the artwork at `docs/species-templates/art/tetrahive.png`. No summary document, prior template, or design doc was read.
+Sources read in full: the `Vespersyn` entry in `species.json`, the `Grimedes` entry in `planets.json` (whole `history` array plus the `data` block), and the artwork at `docs/species-templates/art/vespersyn.png`. No summary document, prior template, or design doc was read.
 
 ## Reading of the art
 
@@ -171,7 +171,7 @@ Which of these cuts the 2026-09-10 re-run restores: only `solitary`, and only be
 
 ## Signature ability
 
-Catalog ledger scan: a case-insensitive search of every `consolidated-*.md` and `neutral-pools.md` for `Tetrahive` returned no matches, so no prior signature is reserved for this species and the name is coined fresh.
+Catalog ledger scan: a case-insensitive search of every `consolidated-*.md` and `neutral-pools.md` for `Vespersyn` returned no matches, so no prior signature is reserved for this species and the name is coined fresh.
 
 The lore-defining act is the whole species description: "When in battle, this creature summons a swarm of small flying familiars with teeth like piranhas. It controls the swarm with its mind, attacking or defending as one unit."
 
@@ -227,7 +227,7 @@ I believe this FAIL is a **false positive** and I passed the point with `--note`
 
 This is the same class of friction the Graviclaw walkthrough recorded on 2026-09-07: a table whose job is to summarize a prior justification cannot cite that justification in quotation marks, since `md.quote` verifies every double-quoted span against the sources rather than against the walkthrough's own earlier text. Not a false positive; the fix is correct. Smallest fix if it recurs across the roster: exempt double-quoted text inside a `#### Trait re-run` or `#### Cut by the evidence bar` heading's table from `md.quote`.
 
-A second WARN cleared in the same pass was `enc.definition.name`: the encyclopedia definition originally opened `A small winged Xalian of Grimedes...` and did not name the species. It now opens `The Tetrahive is a small winged Xalian of Grimedes...`. That is a legitimate catch, not a denial.
+A second WARN cleared in the same pass was `enc.definition.name`: the encyclopedia definition originally opened `A small winged Xalian of Grimedes...` and did not name the species. It now opens `The Vespersyn is a small winged Xalian of Grimedes...`. That is a legitimate catch, not a denial.
 
 
 ## WARN answers
@@ -249,7 +249,7 @@ The one call I am least sure of is `anatomy.fangs`. The only teeth either source
 Final run after the 2026-09-10 trait re-run:
 
 ```
-$ node docs/species-templates/tools/validate-template.js tetrahive
+$ node docs/species-templates/tools/validate-template.js vespersyn
 
 WARN temperature.planet             temperatureC [-60, 5] extends outside the Grimedes legacy data block range [-6, 93] C; the legacy extremes are record extremes, not the habitable band, so this is a warning until planetRecords.json carries environment.habitableBandC (issue #167)
 
@@ -264,9 +264,9 @@ The one WARN is answered above in `## WARN answers`: it is the tracked gap of is
   - `fangs` removed from anatomy. The only teeth in either source belong to the familiars, which are projections; the art shows the central body with a closed, toothless mouth.
   - `mind` removed from instruments, `senses.special: psychic` removed, `communication` set to `[]`. All three derived from the one sentence "It controls the swarm with its mind", which describes the inward hold on its own familiars; that hold is what the `swarm` channel already models. Nothing in the sources shows the mind acting outward on a target or on another creature. Instruments are now `swarm`, `claws`.
   - `stealthy` removed from the trait pool: its only support was the planet-wide perpetual-night sentence.
-  - The description's lineage clause ('its swarm belongs to the same body of research that yielded organisms able to manipulate shadows to create copies of sentient life') was invented: the planet history lists those outputs side by side and never ties the Tetrahive to them. Replaced with the sourced test-subject and black-site facts only. The Encyclopedia definition was rewritten to the same facts.
+  - The description's lineage clause ('its swarm belongs to the same body of research that yielded organisms able to manipulate shadows to create copies of sentient life') was invented: the planet history lists those outputs side by side and never ties the Vespersyn to them. Replaced with the sourced test-subject and black-site facts only. The Encyclopedia definition was rewritten to the same facts.
   - Before: {"anatomy":["wings","claws","tail","fangs","body"],"instruments":["swarm","mind","claws"],"communication":["telepathic"],"special":["psychic"],"pool":{"nocturnal":5,"mind-sealed":4,"slippery":3,"stealthy":3,"perceptive":2,"menacing":2,"solitary":1}}
-  - Encyclopedia before: The Tetrahive is a small winged Xalian of Grimedes that conjures a swarm of toothed flying familiars and moves them as a single unit by will alone. It was generated on that world as a test subject rather than a laborer, and its projected swarm descends from the same Grimedite research that produced organisms able to copy sentient life out of shadow.
+  - Encyclopedia before: The Vespersyn is a small winged Xalian of Grimedes that conjures a swarm of toothed flying familiars and moves them as a single unit by will alone. It was generated on that world as a test subject rather than a laborer, and its projected swarm descends from the same Grimedite research that produced organisms able to copy sentient life out of shadow.
 
 - 2026-09-02, trait model change (Nick): traits are now independent per-trait percents with no count. Converted by the orchestrator from {"guaranteed":[],"rolledCount":[1,2],"pool":{"nocturnal":5,"mind-sealed":4,"slippery":3,"perceptive":2,"menacing":2,"solitary":1}} to {"nocturnal":95,"slippery":45,"mind-sealed":35,"perceptive":20,"menacing":20,"solitary":10}. nocturnal at 95 because the species is generated for a world of perpetual night (environmental adaptation, per the amended evidence rule); the rest keep their relative order from the run at modest percents. Expected count 2.25.
 - 2026-09-02, correction after the trait-model audit: the conversion note above says the rest kept their relative order; in fact `stealthy` had already been removed in the earlier amendment and `slippery` (45) now sits above `mind-sealed` (35) because a creature whose body is mostly conjured units is hard to hold, which the run's own reasoning supported. The pool as converted is authoritative.
@@ -278,7 +278,7 @@ The one WARN is answered above in `## WARN answers`: it is the tracked gap of is
 - 2026-09-02, archetype scale (Nick): `archetypeWeights` converted from relative 1 to 5 weights to percents summing to 100 by largest remainder, order preserved: skirmisher 33, sage 27, prowler 20, seeker 13, sovereign 7 (was skirmisher 5, sage 4, prowler 3, seeker 2, sovereign 1).
 - 2026-09-02, archetype rethink (Nick): the converted row kept the old 5-4-3-2-1 ladder shape shared by every record, so the distribution was re-authored on this species alone: sage 42, skirmisher 24, sovereign 18, seeker 16 (was skirmisher 33, sage 27, prowler 20, seeker 13, sovereign 7). Reasoning: a mind first (willpower is its highest band, the legion is conjured and held by will), quick in the body second; sovereign raised because commanding a swarm is charisma and will; prowler dropped, nothing in its sources is a stalker.
 - 2026-09-02, planet rebuild: `temperatureC` re-banded from [-6, 34] to [-60, 5] (full habitable band (the old sub-band barely overlapped it)) against the rebuilt planet record's habitable band [-60, 5] C; the old band was validated against the legacy planetary extremes, which are not survivable. Any gravity figure cited in this walkthrough predates the rebuild; the current value is `physical.derived.gravityEarth` = 0.44.
-- 2026-09-07, hardening pass: the trait section was rewritten under the percent model; the table now lists exactly the six pool entries in `tetrahive.json` with their percents, in the order the audit's correction established, and drops `stealthy`, which the JSON never carried.
+- 2026-09-07, hardening pass: the trait section was rewritten under the percent model; the table now lists exactly the six pool entries in `vespersyn.json` with their percents, in the order the audit's correction established, and drops `stealthy`, which the JSON never carried.
 - 2026-09-07, trait evidence bar (Nick): cut `slippery`, `perceptive`, `menacing`, `solitary`; pool expected count 2.25 to 1.30.
 - 2026-09-07, trait evidence bar iteration two (Nick): restored `slippery`, `perceptive`; cut none; expected count 1.30 to 1.95.
 - 2026-09-08, trait evidence bar iteration three (Nick): added `foresighted` at 100; raised `nocturnal` 95 to 100, `slippery` 45 to 100, `perceptive` 20 to 100; cut none; expected count 1.95 to 4.35.

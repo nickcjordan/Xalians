@@ -16,6 +16,7 @@ function buildLegacyView(species) {
 	return {
 		key: species.key,
 		name: species.name,
+		nameOrigin: undefined,
 		element: species.element,
 		homePlanet: species.homePlanet,
 		get planet() {
@@ -138,6 +139,7 @@ function buildTemplateView(species, template) {
 	return {
 		key: species.key,
 		name: template.name,
+		nameOrigin: template.nameOrigin,
 		element: template.element,
 		homePlanet: template.homePlanet,
 		get planet() {

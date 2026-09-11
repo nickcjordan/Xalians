@@ -1,6 +1,7 @@
 {
   "key": "chromocat",
   "name": "Chromocat",
+  "nameOrigin": "A fusion of chroma, color or light, and cat, reflecting its photonic feline nature beneath an ordinarily albino coat.",
   "element": "light",
   "homePlanet": "luminax",
   "generatorPlanets": [

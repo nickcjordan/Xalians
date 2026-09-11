@@ -22,7 +22,7 @@ Total records: 6000.
 | sage | 6.3% | 6.5% |
 | seeker | 3.4% | 3.1% |
 | skirmisher | 13.5% | 13.3% |
-| sovereign | 2.8% | 2.7% |
+| sovereign | 2.9% | 2.7% |
 | stalwart | 4.4% | 4.7% |
 | survivor | 10.8% | 10.3% |
 | vanguard | 1.8% | 1.9% |
@@ -30,43 +30,43 @@ Total records: 6000.
 
 ### Secondary affinity
 
-Observed share with a secondary: 25.4% (target 25%). Share of secondaries at or above strength 50: 50.4% (of 1525 with a secondary).
+Observed share with a secondary: 25.4% (target 25%). Share of secondaries at or above strength 50: 49.6% (of 1527 with a secondary).
 
 Strength histogram, deciles 1-10 through 91-99:
 
 | 1-10 | 11-20 | 21-30 | 31-40 | 41-50 | 51-60 | 61-70 | 71-80 | 81-90 | 91-99 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 169 | 145 | 162 | 155 | 146 | 163 | 155 | 159 | 146 | 125 |
+| 168 | 144 | 165 | 158 | 154 | 163 | 153 | 156 | 144 | 122 |
 
 ### Finish, observed vs odds
 
 | finish | observed | expected |
 | --- | --- | --- |
-| standard | 5848 | 5833.5 |
+| standard | 5849 | 5833.5 |
 | eclipse | 1 | 1.5 |
 | prismatic | 13 | 15.0 |
-| gleam | 138 | 150.0 |
+| gleam | 137 | 150.0 |
 
 ### Trait count distribution, roster-wide
 
-0: 0 (0.0%), 1: 960 (16.0%), 2: 2201 (36.7%), 3: 1908 (31.8%), 4: 763 (12.7%), 5+: 168 (2.8%)
+0: 0 (0.0%), 1: 966 (16.1%), 2: 2200 (36.7%), 3: 1904 (31.7%), 4: 761 (12.7%), 5+: 169 (2.8%)
 
 ### Action mix across rolled abilities
 
 | action | count | share |
 | --- | --- | --- |
-| crush | 2206 | 14.8% |
-| shove | 2053 | 13.7% |
-| strike | 1986 | 13.3% |
+| crush | 2199 | 14.7% |
+| shove | 2046 | 13.7% |
+| strike | 1984 | 13.3% |
 | ward | 1399 | 9.4% |
-| snare | 1183 | 7.9% |
-| drain | 935 | 6.3% |
-| rake | 907 | 6.1% |
+| snare | 1175 | 7.9% |
+| drain | 937 | 6.3% |
+| rake | 916 | 6.1% |
 | burst | 810 | 5.4% |
-| terrorize | 664 | 4.4% |
+| terrorize | 667 | 4.5% |
 | lash | 641 | 4.3% |
+| ambush | 516 | 3.5% |
 | hurl | 512 | 3.4% |
-| ambush | 510 | 3.4% |
 | mend | 422 | 2.8% |
 | spray | 292 | 2.0% |
 | cloud | 253 | 1.7% |
@@ -77,21 +77,21 @@ Strength histogram, deciles 1-10 through 91-99:
 | medium | count | share |
 | --- | --- | --- |
 | sand | 1845 | 12.3% |
-| psychic | 1513 | 10.1% |
+| psychic | 1508 | 10.1% |
 | plant | 1362 | 9.1% |
 | water | 1111 | 7.4% |
-| ghost | 1050 | 7.0% |
+| ghost | 1054 | 7.1% |
 | rock | 1025 | 6.9% |
 | fire | 1019 | 6.8% |
 | chemical | 1017 | 6.8% |
-| dark | 1009 | 6.8% |
+| dark | 1006 | 6.7% |
 | ice | 987 | 6.6% |
 | light | 966 | 6.5% |
 | air | 920 | 6.2% |
 | metal | 594 | 4.0% |
 | electric | 530 | 3.5% |
 
-Share of rolled abilities using the secondary medium: 10.1% (of 14948 rolled abilities).
+Share of rolled abilities using the secondary medium: 10.1% (of 14944 rolled abilities).
 
 Mean favored-vs-unfavored attribute band-position lift, averaged across species: 17.3 points (0-100 scale).
 
@@ -1124,33 +1124,33 @@ Ability name diversity: 0.50 (705 abilities rolled).
 
 Size mean: height 169.0 cm (band position 0.54), weight 371.3 kg (band position 0.55).
 
-### Tetrahive (`tetrahive`), n = 200
+### Vespersyn (`vespersyn`), n = 200
 
 Attributes (mean, band position 0-1):
 
 | attribute | mean | band position |
 | --- | --- | --- |
-| strength | 25.1 | 0.51 |
-| vitality | 35.2 | 0.51 |
-| endurance | 41.6 | 0.46 |
-| agility | 68.7 | 0.55 |
-| reflex | 63.1 | 0.52 |
-| intelligence | 59.5 | 0.58 |
-| willpower | 74.7 | 0.59 |
-| instinct | 53.4 | 0.53 |
-| charisma | 37.1 | 0.49 |
-| resilience | 30.1 | 0.51 |
+| strength | 24.4 | 0.47 |
+| vitality | 35.1 | 0.51 |
+| endurance | 42.7 | 0.51 |
+| agility | 69.1 | 0.56 |
+| reflex | 63.6 | 0.54 |
+| intelligence | 59.6 | 0.58 |
+| willpower | 75.0 | 0.60 |
+| instinct | 52.5 | 0.50 |
+| charisma | 38.2 | 0.53 |
+| resilience | 29.9 | 0.50 |
 
-Favored mean band position: 0.66. Unfavored: 0.49. Lift: 17.2 points.
+Favored mean band position: 0.67. Unfavored: 0.49. Lift: 17.9 points.
 
 Build shares (observed vs authored weight):
 
 | archetype | observed | authored |
 | --- | --- | --- |
-| sage | 39.0% | 42.0% |
-| skirmisher | 27.5% | 24.0% |
-| sovereign | 17.5% | 18.0% |
-| seeker | 16.0% | 16.0% |
+| sage | 38.5% | 42.0% |
+| skirmisher | 28.5% | 24.0% |
+| sovereign | 18.5% | 18.0% |
+| seeker | 14.5% | 16.0% |
 
 Trait landed rate vs authored percent:
 
@@ -1158,16 +1158,16 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | commanding | 100.0 | 100.0% |
 | nocturnal | 30.0 | 31.0% |
-| solitary | 26.0 | 27.0% |
-| stealthy | 22.0 | 25.0% |
-| slippery | 12.0 | 12.5% |
-| perceptive | 10.0 | 10.5% |
+| solitary | 26.0 | 29.5% |
+| stealthy | 22.0 | 27.0% |
+| slippery | 12.0 | 7.0% |
+| perceptive | 10.0 | 6.0% |
 
-Observed trait count mean: 2.06 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 59 (29.5%), 2: 82 (41.0%), 3: 47 (23.5%), 4: 12 (6.0%), 5+: 0 (0.0%)
+Observed trait count mean: 2.00 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 65 (32.5%), 2: 81 (40.5%), 3: 43 (21.5%), 4: 10 (5.0%), 5+: 1 (0.5%)
 
-Ability name diversity: 0.64 (703 abilities rolled).
+Ability name diversity: 0.64 (699 abilities rolled).
 
-Size mean: height 74.8 cm (band position 0.49), weight 11.9 kg (band position 0.49).
+Size mean: height 75.6 cm (band position 0.52), weight 12.2 kg (band position 0.53).
 
 ### Thirstaserp (`thirstaserp`), n = 200
 

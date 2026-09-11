@@ -46,9 +46,9 @@ Five entries added after a source-only rewrite and an independent validation pas
 
 Merged the 29 migrated species Encyclopedia entries from `docs/species-templates/<key>.encyclopedia.json` into `encyclopedia.json`. Total entries: 72 -> 100 (28 new species entries added, plus the pre-existing `neph` glossary entry replaced with its ratified species-migration definition). Definitions were carried verbatim, unedited, per the source's ratified prose.
 
-**Keys merged (29):** akinza, avilily, bioflim, chromocat, codazzo, crystorn, drilltail, dromeus, ectoghoul, figzy, foromeer, graviclaw, hippochamp, hypnopet, imprit, kosanos, luceras, neph, newtapede, scalatto, smokat, terragoyle, tetrahive, thirstaserp, tizzie, venemist, voltish, xylum, yetimoth.
+**Keys merged (29):** akinza, avilily, bioflim, chromocat, codazzo, crystorn, drilltail, dromeus, ectoghoul, figzy, foromeer, graviclaw, hippochamp, hypnopet, imprit, kosanos, luceras, neph, newtapede, scalatto, smokat, terragoyle, vespersyn, thirstaserp, tizzie, venemist, voltish, xylum, yetimoth.
 
-**Convention decision — duplicate candidate files excluded.** `docs/species-templates/` contained 32 `*.encyclopedia.json` files, not 29: three (`opus-v21-run.graviclaw`, `sonnet-run.graviclaw`, `opus-v25-run.tetrahive`) are alternate-model draft runs of species that already have a canonical file (`graviclaw`, `tetrahive`), distinguished only by a run-id prefix and slightly different prose. Only the plain-named 29 files were treated as ratified; the three run-variant files were left untouched and unmerged.
+**Convention decision — duplicate candidate files excluded.** `docs/species-templates/` contained 32 `*.encyclopedia.json` files, not 29: three (`opus-v21-run.graviclaw`, `sonnet-run.graviclaw`, `opus-v25-run.vespersyn`) are alternate-model draft runs of species that already have a canonical file (`graviclaw`, `vespersyn`), distinguished only by a run-id prefix and slightly different prose. Only the plain-named 29 files were treated as ratified; the three run-variant files were left untouched and unmerged.
 
 **`related` extraction convention followed.** Reused the existing rule from the glossary merge: a literal, case-insensitive, word-boundary scan of each entry's title text against every OTHER entry's definition (not stemmed or pluralized). Each species' home planet linked automatically where the planet name appears in its own definition text (all 29 species definitions name their home planet). Applied consistently, including "The Chasm" matching lowercase "the Chasm" in the Terragoyle definition under case-insensitivity.
 
@@ -78,7 +78,7 @@ Merged the 29 migrated species Encyclopedia entries from `docs/species-templates
 | scalatto | endessa |
 | smokat | dreadscape, imperial-houses, phantiri |
 | terragoyle | stonera, the-chasm |
-| tetrahive | grimedes |
+| vespersyn | grimedes |
 | thirstaserp | endessa, thousand-families |
 | tizzie | telypso |
 | venemist | drainov |

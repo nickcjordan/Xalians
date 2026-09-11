@@ -1,6 +1,7 @@
 {
   "key": "drilltail",
   "name": "Drilltail",
+  "nameOrigin": "A direct compound naming the drill at the end of its tail.",
   "element": "sand",
   "homePlanet": "endessa",
   "generatorPlanets": [

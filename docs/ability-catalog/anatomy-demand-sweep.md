@@ -19,7 +19,7 @@ Source files: `c:\dev\src\Xalians\lambda\src\json\species.json`, `C:\Users\njord
 - `wings` — "spread their wings to temporarily take flight"
 - `talons` (candidate, weak) — ground bird with lizard features running at speed; no explicit claw/talon phrase, so not confirmed, listed as a soft candidate only
 
-### 3. Tetrahive (Dark, Grimedes)
+### 3. Vespersyn (Dark, Grimedes)
 "a swarm of small flying familiars with teeth like piranhas"
 - `swarm` — "summons a swarm of small flying familiars"
 - `jaws` — "teeth like piranhas" (the swarm members' biting instrument)
@@ -189,7 +189,7 @@ Source files: `c:\dev\src\Xalians\lambda\src\json\species.json`, `C:\Users\njord
 
 | Instrument key | Kind (per doc) | Classification | Species-demanded match | Notes |
 |---|---|---|---|---|
-| `jaws` | physical | PHYSICAL | Dromeus (teeth), Tetrahive (swarm's teeth), Venemist (2 teeth), Thirstaserp (bitten/venom) | Clean match, multiple species confirm. |
+| `jaws` | physical | PHYSICAL | Dromeus (teeth), Vespersyn (swarm's teeth), Venemist (2 teeth), Thirstaserp (bitten/venom) | Clean match, multiple species confirm. |
 | `beak` | physical | PHYSICAL | Avilily ("beaks resemble ... flower") | Clean, single confirming species; grammar doc notes this key was added specifically for Avilily. |
 | `crest` | physical | PHYSICAL | Crystorn (head-gems), Hypnopet (unicorn horn, contested vs `horns`) | Grammar doc explicitly notes `crest` was added for Crystorn and Hypnopet. Confirmed demanded. |
 | `talons` | physical | PHYSICAL | No confirmed species match | Dromeus is a soft/weak candidate (lizard-bird, no explicit talon phrase). FLAG: instrument exists but no species description explicitly demands `talons` distinct from `claws`. |
@@ -212,7 +212,7 @@ Source files: `c:\dev\src\Xalians\lambda\src\json\species.json`, `C:\Users\njord
 | `aura` | innate | NON-PHYSICAL | No confirmed species match | FLAG: zero species descriptions demand a self-radiating field ability by name. |
 | `mind` | innate | NON-PHYSICAL | Tizzie ("attack from within your mind"), Figzy ("incredible magical abilities") | Clean, mind-like by definition; validates against psychic trait, not anatomy. |
 | `secretion` | innate | NON-PHYSICAL (a produced substance, not a fixed part) | Bioflim (acid slime), Avilily (sedative saliva), Venemist (toxic mist), Thirstaserp (venom), Ectoghoul (ectoplasm), Neph (Benthane gas) | Heavily demanded as a functional ability across many species, though it is explicitly NOT anatomy (it's a produced substance) — correctly classified innate/non-physical per the doc. |
-| `swarm` | innate | NON-PHYSICAL | Tetrahive ("summons a swarm of ... familiars") | Clean confirm; swarm-summoning is an ability, not a body part, correctly innate. |
+| `swarm` | innate | NON-PHYSICAL | Vespersyn ("summons a swarm of ... familiars") | Clean confirm; swarm-summoning is an ability, not a body part, correctly innate. |
 | `roots` | physical | PHYSICAL | Xylum ("thick, intertwined roots") | Clean, single confirming species; grammar doc's own worked example uses Xylum's roots. |
 
 ### Instruments whose wording is a body part but too vague to be one anatomy key
