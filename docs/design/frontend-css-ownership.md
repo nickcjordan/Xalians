@@ -1,6 +1,6 @@
 # Frontend CSS ownership audit
 
-Last audited: 2026-09-11 on the type-colour utility deletion branch based on deployed `origin/main` `82f6b9d5718cd6f88f7882738a36a8297ba5ce60`
+Last audited: 2026-09-11 on the residual shared-selector audit branch based on deployed `origin/main` `b3d73d014cc20b5d978015db143927567bfab5df`
 
 This inventory defines which route or layer owns every non-component stylesheet. Its purpose is to make page-wide leakage visible and to support deleting the legacy layer in measured slices. Source-local Tailwind and shadcn classes remain governed by `docs/DESIGN_SYSTEM.md` and are not duplicated here.
 
@@ -11,8 +11,8 @@ This inventory defines which route or layer owns every non-component stylesheet.
 | `src/styles/tokens.css` | 4,392 | Every route | Application entry | Retain as the v4 token/Tailwind source of truth. |
 | `src/styles/globals.css` | 11,487 | Every route | Application entry | Retain only resets, page ground, semantic mappings, and documented global utilities. Audit again after the legacy layer leaves. |
 | `src/styles/legacy/tokens.css` | 3,189 | Immersive v3 terminals | Imported through lazy `immersive.css` only | Merge required values into the immersive token block, then delete the aliases. |
-| `src/styles/legacy/system.css` | 108,853 | Duel match/reference, Reclamation, training games, Long Return | Imported through lazy `immersive.css` only | Split the v3 terminal foundation from dead v4 duplicates and route/component sections. This is the main shared-ownership audit. |
-| `src/styles/legacy/style.css` | 84,843 at baseline; 49,830 after the first two selector cuts | Older shared immersive selectors; retired template and training-only sections are deleted or extracted | Imported through lazy `immersive.css` only | Continue proving residual selectors live/dead and move any remaining route rules behind their narrow entries. |
+| `src/styles/legacy/system.css` | 108,853 at baseline; 104,635 after the navbar cut | Duel match/reference, Reclamation, training games, Long Return | Imported through lazy `immersive.css` only | Split the v3 terminal foundation from dead v4 duplicates and route/component sections. This is the main shared-ownership audit. |
+| `src/styles/legacy/style.css` | 84,843 at baseline; 43,246 after the first four selector cuts | Older shared immersive selectors; retired template, navbar, and training-only sections are deleted or extracted | Imported through lazy `immersive.css` only | Continue proving residual selectors live/dead and move any remaining route rules to the narrowest owner. |
 | `src/styles/legacy/training.css` | 2,325 | Xalian Match and Physics board geometry/controls | Imported after `immersive.css` by the two training game entries | Route-family owned; replace only with a deliberate training-game redesign. |
 | `src/styles/legacy/typeColors.css` | 2,616 | None; deleted in the third selector-audit slice | None | Retired. Its 42 utility selectors had no effective executable consumer. |
 | `src/styles/legacy/duel.css` | 46,022 | Live Duel match and Duel affordance reference | Imported by `duelPage.js` and `duelPlaygroundPage.js` | Route-owned; remove only with a Duel immersive redesign. |
@@ -65,6 +65,16 @@ All 42 background, text, and border utility selectors in `typeColors.css` have n
 Deleting the 2,616-byte stylesheet reduces the shared built immersive asset from 88.98 kB raw / 17.56 kB gzip to 86.84 kB / 17.28 kB. Training's complete CSS graph becomes 88.58 kB / 17.90 kB. The Duel-reference, Reclamation, Long Return, training, and nested-Duel raw CSS budgets tighten to the measured output with approximately five-percent headroom.
 
 Local typecheck, 52 files / 1,029 tests, dependency audit, production build, and bundle budgets pass. Desktop/mobile smoke covers all seven immersive entries without page/console errors or new overflow. A started Duel renders 64 cells and eight correctly painted type badges at both widths, with no retired class in their DOM; Duel reference retains only its already-recorded phone overflow.
+
+PR [#232, Remove retired element color utilities](https://github.com/nickcjordan/Xalians/pull/232) merged as `b3d73d0`. CI run `34616121035`, Terraform-plan run `34616121096`, and production deploy `34616290498` passed with empty annotation streams. The deployed asset measurements and live route/game checks matched the local evidence.
+
+## Fourth selector-audit slice
+
+The current `navbar.tsx` uses semantic navigation plus Tailwind/shadcn and emits none of the old BootstrapMade or React-Bootstrap navbar classes. The contiguous desktop/mobile navigation block in `style.css` and both `.xalian-navbar` sections in `system.css` therefore have no executable or library-generated consumer. Deleting them removes 449 lines / 10,468 source bytes and tightens the `style.css` raw-hex ceiling from 102 to its new count of 40.
+
+The shared immersive asset falls from 86.84 kB raw / 17.28 kB gzip to 80.70 kB / 16.27 kB. Training's complete CSS graph becomes 82.44 kB / 16.89 kB. All affected route budgets tighten around the measured output, and the ownership guard prevents the retired class contract or a `react-bootstrap` Navbar dependency from returning.
+
+Local typecheck, 52 files / 1,030 tests, dependency audit, production build, and tightened bundle budgets pass. Desktop/mobile smoke covers eleven chrome and immersive entries without page/console errors or new overflow. The desktop bar and opened phone sheet each expose all seven primary links; deterministic Duel setup, Physics, Long Return, and Reclamation-phone screenshots are byte-identical before/after, and a started Duel renders all 64 cells cleanly at both widths.
 
 ## Remaining audit sequence
 
