@@ -1478,9 +1478,8 @@
 	.rec-act-chip { min-width: 52px; }
 }
 
-/* style.css (the old template) forces `section h3` and `section p` to 1.5em / 1.25em
-   with !important below 1024px, which is exactly the width the site headings must stay
-   small at; matched on specificity and importance rather than restyled */
+/* These declarations retain the compact site labels that survived the retired
+   template's old responsive text override. */
 @media (max-width: 1200px) {
 	.rec-site h3.rec-site-name { font-size: var(--g-size-micro) !important; }
 	.rec-site p.rec-site-env { font-size: 0.5625rem !important; }
